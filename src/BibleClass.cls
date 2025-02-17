@@ -23,16 +23,18 @@ Option Compare Text
 'License along with this library; if not, visit
 'http://www.gnu.org/licenses/lgpl-3.0.txt
 
-'=======================================================================
+'=================================================================================
 ' Author:   Peter F. Ennis
 ' Date:     February 16, 2025
 ' Comment:  Create class for QA of word Bible (REV)
-'=======================================================================
+' History:  See comment details, basChangeLogBibleClass, commit messages on GitHub
+' GitHub:   https://github.com/adaept/BibleClass
+'=================================================================================
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
 Private Const BibleClassVERSION As String = "0.0.1"
-Private Const BibleClassVERSION_DATE As String = "February 16, 2025"
+Private Const BibleClassVERSION_DATE As String = "February 17, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
@@ -78,7 +80,7 @@ PROC_EXIT:
     Exit Property
 
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TheBibleClassTests of Class BibleClassClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TheBibleClassTests of Class BibleClass"
     Resume PROC_EXIT
 
 End Property
@@ -125,7 +127,7 @@ PROC_EXIT:
     Exit Function
 
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunBibleClassTests of Class BibleClassClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunBibleClassTests of Class BibleClass"
     Resume PROC_EXIT
 
 End Function

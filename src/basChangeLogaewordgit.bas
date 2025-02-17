@@ -7,18 +7,24 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #015 -
-' #014 -
-' #013 -
+' #020 -
+' #019 -
+' #018 -
+' #017 -
+' #016 -
 ' #009 - Add setup info to the docm source file
 ' #006 - Can't execute code in break mode - error after doc saved from template and opened. Use error trapping in ThisDocument
 '=============================================================================================================================
 '
-' 20240210 - v006
+' 20250217 - v007
+    ' FIXED - #015 - Delete unused code: ThisIsAnAddIn, OutputListOfWordProperties, DeleteVBAModulesAndUserForms
+    ' FIXED - #014 - Update usage instruction in basTESTaewordgitClass
+    ' FIXED - #013 - Configure aewordgit owner as adaept
+' 20250210 - v006
     ' FIXED - #012 - If current folder is not aewordgit then export to src as user default
-' 20240209 - v005
+' 20250209 - v005
     ' FIXED - #011 - Add Yes No MessageBox when deleting src *.* files so as to confirm correct setup location
-' 20240207 - v004
+' 20250207 - v004
     ' FIXED - #010 - Error 448 when running EXPORT_THE_CODE, varDebug not passed correctly
     ' FIXED - #008 - Update to use c:\adaept\aewordgit\src\ as default - repo is now in the github adaept organization
     ' OBSOLETE - #004 - Add an About setion in Ambigram tab to show version and logo

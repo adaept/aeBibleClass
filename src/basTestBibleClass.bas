@@ -34,10 +34,6 @@ Public Function BibleClassTest(Optional ByVal varDebug As Variant) As Boolean
         Debug.Print , "varDebug is Not Used"
     End If
 
-Test1:
-    '=============
-    ' TEST 1
-    '=============
     Debug.Print
     Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
     Debug.Print "1. BibleClassTest => TheBibleClassTests"

@@ -23,18 +23,18 @@ Option Compare Text
 'License along with this library; if not, visit
 'http://www.gnu.org/licenses/lgpl-3.0.txt
 
-'=======================================================================
+'================================================================================
 ' Author:   Peter F. Ennis
 ' Date:     September 3, 2018
 ' Comment:  Create class for revision control of word VBA
-' History:  See comment details, basChangeLog, commit messages on GitHub
-' GitHub:   https://github.com/peterennis/aewordgit
-'=======================================================================
+' History:  See comment details, basChangeLogaewordgit, commit messages on GitHub
+' GitHub:   https://github.com/adaept/aewordgit
+'================================================================================
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const aewordgitVERSION As String = "0.0.6"
-Private Const aewordgitVERSION_DATE As String = "February 10, 2025"
+Private Const aewordgitVERSION As String = "0.0.7"
+Private Const aewordgitVERSION_DATE As String = "February 17, 2025"
 
 Private Type mySetupType
     SourceFolder As String
@@ -56,7 +56,6 @@ Private Sub Class_Initialize()
     ' Ref: http://www.cadalyst.com/cad/autocad/programming-with-class-part-1-5050
     ' Ref: http://www.bigresource.com/Tracker/Track-vb-cyJ1aJEyKj/
     ' Ref: http://stackoverflow.com/questions/1731052/is-there-a-way-to-overload-the-constructor-initialize-procedure-for-a-class-in
-
     On Error GoTo 0
     'MsgBox Application.VBE.ActiveVBProject.Name
     'MsgBox Application.Caption
@@ -95,9 +94,7 @@ Public Property Let SourceFolder(ByVal strSourceFolder As String)
 End Property
 
 Public Property Get DocumentTheWordCode(Optional ByVal varDebug As Variant) As Boolean
-
     On Error GoTo PROC_ERR
-
     'MsgBox "DocumentTheWordCode"
     If IsMissing(varDebug) Then
         Debug.Print "Get DocumentTheWordCode"
@@ -119,22 +116,6 @@ PROC_ERR:
     Resume PROC_EXIT
 
 End Property
-
-Private Function ThisIsAnAddIn(ByVal strAddIn As String, Optional ByVal varDebug As Variant) As Boolean
-    Dim rw As Byte
-    Dim varAddIn As Variant
-    ThisIsAnAddIn = False
-    rw = 1
-    For Each varAddIn In Application.AddIns
-        If Not IsMissing(varDebug) Then Debug.Print varAddIn.name, varAddIn.Installed
-        If varAddIn.name = strAddIn Then
-            ThisIsAnAddIn = True
-            Exit Function
-        Else
-            rw = rw + 1
-        End If
-    Next
-End Function
 
 Private Function aeDocumentTheWordCode(Optional ByVal varDebug As Variant) As Boolean
 
@@ -249,53 +230,6 @@ PROC_ERR:
 
 End Sub
 
-Private Sub OutputListOfWordProperties(Optional ByVal varDebug As Variant)
-    ' Ref: http://stackoverflow.com/questions/17406585/vba-set-custom-document-property
-    ' Workbook.BuiltinDocumentProperties Property
-    ' Ref: http://msdn.microsoft.com/en-us/library/bb220896.aspx
-
-    On Error GoTo PROC_ERR
-
-    Dim wdoc As Document
-    Set wdoc = Application.ActiveDocument
-
-    Dim docProp As DocumentProperty
-    Dim strExportPathFileName As String
-    Dim fle As Integer
-
-    fle = FreeFile()
-    strExportPathFileName = FolderWithVBAProjectFiles & "\OutputListOfWordProperties.txt"
-    Open strExportPathFileName For Output As #fle
-
-    If Not IsMissing(varDebug) Then Debug.Print "OutputListOfWordProperties"
-
-    ' Ref: http://stackoverflow.com/questions/16642362/how-to-get-the-following-code-to-continue-on-error
-    For Each docProp In wdoc.CustomDocumentProperties
-        If Not IsMissing(varDebug) Then Debug.Print , docProp.name & ": " & docProp.Value
-        Print #fle, docProp.name & ": " & docProp.Value
-    Next
-
-    For Each docProp In ActiveDocument.BuiltInDocumentProperties
-        If Not IsMissing(varDebug) Then Debug.Print , docProp.name & ": " & docProp.Value
-        Print #fle, docProp.name & ": " & docProp.Value
-    Next
-
-PROC_EXIT:
-    Close fle
-    Set wdoc = Nothing
-    Exit Sub
-
-PROC_ERR:
-    If Err = -2147467259 Then     ' Method 'Value' of object ... failed
-        'MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OutputListOfWordProperties of Class aewordgitClass"
-        Resume Next
-    Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OutputListOfWordProperties of Class aewordgitClass"
-        Resume PROC_EXIT
-    End If
-
-End Sub
-
 Private Function FolderWithVBAProjectFiles() As String
 
     On Error GoTo PROC_ERR
@@ -365,26 +299,4 @@ PROC_ERR:
     End If
 
 End Function
-
-Private Function DeleteVBAModulesAndUserForms() As Boolean
-
-    On Error GoTo 0
-    Dim objProject As Object
-    Set objProject = CreateObject("VBIDE.VBProject")
-
-    Dim objComponent As Object
-    Set objComponent = CreateObject("VBIDE.VBComponent")
-
-    Set objProject = ActiveDocument.VBProject
-
-    For Each objComponent In objProject.VBComponents
-        If objComponent.Type = vbext_ct_Document Then
-            ' ThisDocument we do nothing
-        Else
-            objProject.VBComponents.Remove objComponent
-        End If
-    Next objComponent
-
-End Function
-
 
