@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTestBibleClass"
+Attribute VB_Name = "basTestaeBibleClass"
 Option Explicit
 Option Compare Text
 Option Private Module
@@ -15,18 +15,18 @@ Option Private Module
 Public Function RUN_THE_TESTS(Optional ByVal varDebug As Variant) As Boolean
     On Error GoTo 0
     If IsMissing(varDebug) Then
-        BibleClassTest
+        aeBibleClassTest
     Else
-        BibleClassTest varDebug:="varDebug"
+        aeBibleClassTest varDebug:="varDebug"
     End If
 End Function
 
-Public Function BibleClassTest(Optional ByVal varDebug As Variant) As Boolean
+Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
 
     On Error GoTo PROC_ERR
 
-    Dim oWordBibleObjects As BibleClass
-    Set oWordBibleObjects = New BibleClass
+    Dim oWordBibleObjects As aeBibleClass
+    Set oWordBibleObjects = New aeBibleClass
 
     Dim bln1 As Boolean
 
@@ -36,8 +36,8 @@ Public Function BibleClassTest(Optional ByVal varDebug As Variant) As Boolean
 
     Debug.Print
     Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
-    Debug.Print "1. BibleClassTest => TheBibleClassTests"
-    Debug.Print "BibleClassTest"
+    Debug.Print "1. aeBibleClassTest => TheBibleClassTests"
+    Debug.Print "aeBibleClassTest"
     If IsMissing(varDebug) Then
         Debug.Print , "varDebug IS missing so no parameter is passed to TheBibleClassTests"
         Debug.Print , "DEBUGGING IS OFF"
@@ -54,11 +54,11 @@ PROC_EXIT:
 
 PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
-        MsgBox "VBA Project Not Trusted", vbCritical, "BibleClassTest"
+        MsgBox "VBA Project Not Trusted", vbCritical, "aeBibleClassTest"
         Stop
         'Resume PROC_EXIT
     Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure BibleClassTest of Module basTestBibleClass"
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeBibleClassTest of Module basTestaeBibleClass"
         Resume PROC_EXIT
     End If
 

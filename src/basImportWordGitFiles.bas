@@ -4,7 +4,9 @@ Option Compare Text
 Option Private Module
 
 Public Sub ImportWordBibleFiles()
-    'Call ImportVBAFile("C:\adaept\Bible\src\BibleClass.cls")
+    'Call ImportVBAFile("C:\adaept\Bible\src\aeBibleClass.cls")
+    'Call ImportVBAFile("C:\adaept\Bible\src\basChangeLogaeBibleClass.bas")
+    'Call ImportVBAFile("C:\adaept\Bible\src\basTestaeBibleClass.bas")
 End Sub
 
 Public Sub ImportWordGitFiles()

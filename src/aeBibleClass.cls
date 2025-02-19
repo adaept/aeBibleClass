@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "BibleClass"
+Attribute VB_Name = "aeBibleClass"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.1"
-Private Const BibleClassVERSION_DATE As String = "February 17, 2025"
+Private Const BibleClassVERSION As String = "0.0.2"
+Private Const BibleClassVERSION_DATE As String = "February 19, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
@@ -55,6 +55,7 @@ Private Sub Class_Terminate()
     On Error GoTo 0
     Debug.Print
     Debug.Print "Class_Terminate"
+    Debug.Print , Application.VBE.ActiveVBProject.name
     Debug.Print , "BibleClass VERSION: " & BibleClassVERSION
     Debug.Print , "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
 End Sub
