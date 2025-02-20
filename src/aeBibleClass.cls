@@ -115,6 +115,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
+            Debug.Print "Test Num", "Result", "Expected", "Pass/Fail"
+            RunTest (0)
+            RunTest (1)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             ' Add your code here for when the user selects No
@@ -132,3 +135,113 @@ PROC_ERR:
     Resume PROC_EXIT
 
 End Function
+
+Private Function RunTest(num As Integer) As Boolean
+    Select Case num
+    Case 0
+        Debug.Print "Test = " & num, CountDoubleSpaces, 0, "???"
+    Case 1
+        Debug.Print "Test = " & num, CountDoubleSpacesInShapes, 0, "???"
+    Case 2
+        Debug.Print "Test = " & num
+    Case Else
+        Debug.Print "The test number is outside the accepted range"
+    End Select
+End Function
+
+Private Function CountDoubleSpaces() As Integer
+    Dim doc As Document
+    Dim rng As Range
+    Dim doubleSpaceCount As Long
+    
+    doubleSpaceCount = 0
+    Set doc = ActiveDocument
+    Set rng = doc.Content
+    
+    With rng.Find
+        .text = "  " ' Double space
+        .Format = False
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchCase = False
+        .MatchWholeWord = False
+        .MatchWildcards = False
+        .MatchSoundsLike = False
+        .MatchAllWordForms = False
+        
+        Do While .Execute
+            doubleSpaceCount = doubleSpaceCount + 1
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+    
+    CountDoubleSpaces = doubleSpaceCount
+End Function
+
+' Function to count occurrences of a substring in a string
+Function CountOccurrences(ByVal text As String, ByVal substring As String) As Long
+    Dim pos, count As Long
+    pos = 1
+    count = 0
+    Do While InStr(pos, text, substring) > 0
+        pos = InStr(pos, text, substring) + Len(substring)
+        count = count + 1
+    Loop
+    
+    CountOccurrences = count
+End Function
+
+' count double spaces inside shapes, including those within groups, with error handling
+Private Function CountDoubleSpacesInShapes() As Integer
+    Dim doc As Document
+    Dim shp As Shape
+    Dim groupShp As Shape
+    Dim doubleSpaceCount As Long
+
+    doubleSpaceCount = 0
+    Set doc = ActiveDocument
+    
+    On Error Resume Next  ' Ignore errors and continue
+    For Each shp In doc.Shapes
+        Call ProcessShape(shp, doubleSpaceCount)
+    Next shp
+    On Error GoTo 0  ' Turn off error handling
+    
+    ' Display the count of double spaces in shapes
+    CountDoubleSpacesInShapes = doubleSpaceCount
+End Function
+
+Sub ProcessShape(ByVal shp As Shape, ByRef doubleSpaceCount As Long)
+    Dim textRange As Range
+    Dim shapeText As String
+    
+    ' Check if the shape has a text frame
+    If shp.Type = msoGroup Then
+        ' Process each shape within the group
+        Dim groupShp As Shape
+        For Each groupShp In shp.GroupItems
+            Call ProcessShape(groupShp, doubleSpaceCount)
+        Next groupShp
+    Else
+        If Not shp.TextFrame Is Nothing Then
+            If shp.TextFrame.HasText Then
+                ' Get the text range within the shape
+                Set textRange = shp.TextFrame.textRange
+                ' Get the text content of the shape
+                shapeText = textRange.text
+                ' Count double spaces in the shape's text
+                doubleSpaceCount = doubleSpaceCount + CountOccurrences(shapeText, "  ")
+            End If
+        ElseIf Not shp.TextFrame2 Is Nothing Then
+            If shp.TextFrame2.HasText Then
+                ' Get the text range within the shape
+                Set textRange = shp.TextFrame2.textRange
+                ' Get the text content of the shape
+                shapeText = textRange.text
+                ' Count double spaces in the shape's text
+                doubleSpaceCount = doubleSpaceCount + CountOccurrences(shapeText, "  ")
+            End If
+        End If
+    End If
+End Sub
+

@@ -6,7 +6,7 @@ Option Private Module
 Public Sub ImportWordBibleFiles()
     'Call ImportVBAFile("C:\adaept\Bible\src\aeBibleClass.cls")
     'Call ImportVBAFile("C:\adaept\Bible\src\basChangeLogaeBibleClass.bas")
-    'Call ImportVBAFile("C:\adaept\Bible\src\basTestaeBibleClass.bas")
+    'Call ImportVBAFile("C:\adaept\Bible\src\basTESTaeBibleClass.bas")
 End Sub
 
 Public Sub ImportWordGitFiles()

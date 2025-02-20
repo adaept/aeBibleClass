@@ -35,7 +35,7 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
     End If
 
     Debug.Print
-    Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+    Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
     Debug.Print "1. aeBibleClassTest => TheBibleClassTests"
     Debug.Print "aeBibleClassTest"
     If IsMissing(varDebug) Then
@@ -46,7 +46,7 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
         Debug.Print , "varDebug IS NOT missing so blnDebug is set to True"
         bln1 = oWordBibleObjects.TheBibleClassTests("WithDebugging")
     End If
-    Debug.Print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+    Debug.Print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     Debug.Print
 
 PROC_EXIT:
