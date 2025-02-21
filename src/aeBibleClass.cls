@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.2"
-Private Const BibleClassVERSION_DATE As String = "February 19, 2025"
+Private Const BibleClassVERSION As String = "0.0.3"
+Private Const BibleClassVERSION_DATE As String = "February 21, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
@@ -115,9 +115,12 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
-            Debug.Print "Test Num", "Result", "Expected", "Pass/Fail"
+            Debug.Print "Pass/Fail", "Test Num", "Result", "Expected", "Function"
             RunTest (0)
             RunTest (1)
+            RunTest (2)
+            RunTest (3)
+            RunTest (4)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             ' Add your code here for when the user selects No
@@ -139,14 +142,79 @@ End Function
 Private Function RunTest(num As Integer) As Boolean
     Select Case num
     Case 0
-        Debug.Print "Test = " & num, CountDoubleSpaces, 0, "???"
+        Debug.Print "???", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
     Case 1
-        Debug.Print "Test = " & num, CountDoubleSpacesInShapes, 0, "???"
+        Debug.Print "???", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
     Case 2
-        Debug.Print "Test = " & num
+        Debug.Print "???", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
+    Case 3
+        Debug.Print "???", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
+    Case 4
+        Debug.Print "???", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountWhiteSpaceAndCarriageReturn()
+    Dim rng As Range
+    Dim count As Long
+
+    Set rng = ActiveDocument.Content
+    rng.Find.ClearFormatting
+    rng.Find.Font.Color = wdColorWhite
+
+    ' Set the Find properties
+    With rng.Find
+        .text = " ^13"
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchWildcards = False
+    End With
+
+    count = 0
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+
+    CountWhiteSpaceAndCarriageReturn = count
+End Function
+
+Private Function CountDoubleTabs() As Integer
+    Dim doc As Document
+    Dim rng As Range
+    Dim count As Long
+
+    count = 0
+    Set doc = ActiveDocument
+    Set rng = doc.Content
+
+    Do While rng.Find.Execute(FindText:="^t^t", Forward:=True, Wrap:=wdFindStop)
+        count = count + 1
+        rng.Collapse Direction:=wdCollapseEnd ' Move the range to the end of the found text
+    Loop
+
+    CountDoubleTabs = count
+End Function
+
+Private Function CountSpaceFollowedByCarriageReturn()
+    Dim doc As Document
+    Dim rng As Range
+    Dim count As Long
+
+    count = 0
+    Set doc = ActiveDocument
+    Set rng = doc.Content
+
+    Do While rng.Find.Execute(FindText:=" ^13", Forward:=True, Wrap:=wdFindStop)
+        count = count + 1
+        rng.Collapse Direction:=wdCollapseEnd ' Move the range to the end of the found text
+    Loop
+
+    CountSpaceFollowedByCarriageReturn = count
 End Function
 
 Private Function CountDoubleSpaces() As Integer

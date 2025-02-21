@@ -10,12 +10,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #010 -
 ' #009 -
 ' #008 -
-' #007 -
-' #006 -
-' #005 -
 '=============================================================================================================================
 '
-    ' FIXED - #004 - Add test to count double spaces in doc and in shapes - including groups
+' 20250221 - v003
+    ' FIXED - #007 - Add test to count space followed by carriage return with white font color
+    ' FIXED - #006 - Add test to count number of double tabs
+    ' FIXED - #005 - Add test to count space followed by carriage
+    ' FIXED - #004 - Add tests to count double spaces in doc, and in shapes including groups
     ' FIXED - #003 - Change module name to basTESTaeBibleClass
 ' 20250219 - v002
     ' FIXED - #002 - Update class name to aeBibleClass
