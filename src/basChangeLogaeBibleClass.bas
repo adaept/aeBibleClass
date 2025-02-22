@@ -7,11 +7,16 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #015 -
+' #014 -
+' #013 -
+' #012 -
+' #011 -
 ' #010 -
 ' #009 -
-' #008 -
 '=============================================================================================================================
 '
+    ' FIXED - #008 - Add test to count quadruple paragraph marks
 ' 20250221 - v003
     ' FIXED - #007 - Add test to count space followed by carriage return with white font color
     ' FIXED - #006 - Add test to count number of double tabs

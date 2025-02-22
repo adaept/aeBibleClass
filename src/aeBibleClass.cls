@@ -107,11 +107,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     
     ' Display the message box with "Yes" and "No" buttons
     response = MsgBox("Run Bible Class Tests", vbYesNo + vbQuestion, "RunBibleClassTests")
-    ' Handle the user's response
     Select Case response
         Case vbYes
             'MsgBox "You chose Yes.", vbInformation, "Response"
-            ' Add your code here for when the user selects Yes
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
@@ -121,9 +119,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (2)
             RunTest (3)
             RunTest (4)
+            RunTest (5)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
-            ' Add your code here for when the user selects No
             Debug.Print ">>>RunBibleClassTests = NO"
             Exit Function
     End Select
@@ -151,9 +149,36 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
     Case 4
         Debug.Print "???", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
+    Case 5
+        Debug.Print "???", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountQuadrupleParagraphMarks()
+    Dim rng As Range
+    Dim count As Long
+    
+    Set rng = ActiveDocument.Content
+    rng.Find.ClearFormatting
+    
+    With rng.Find
+        .text = "^13^13^13^13"
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = False
+    End With
+    
+    count = 0
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+    
+    CountQuadrupleParagraphMarks = count
 End Function
 
 Private Function CountWhiteSpaceAndCarriageReturn()
