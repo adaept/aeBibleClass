@@ -121,6 +121,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (4)
             RunTest (5)
             RunTest (6)
+            RunTest (7)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -154,9 +155,40 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy(???)", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
     Case 6
         Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
+    Case 7
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountStyleWithNumberAndSpace()
+    Dim rng As Range
+    Dim count As Long
+    Dim styleName As String
+
+    styleName = "Verse marker"
+
+    Set rng = ActiveDocument.Content
+    rng.Find.ClearFormatting
+    rng.Find.Style = styleName
+
+    With rng.Find
+        .text = "[0-9] "
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchWildcards = True
+    End With
+
+    count = 0
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+
+    CountStyleWithNumberAndSpace = count
 End Function
 
 Private Function CountStyleWithSpaceAndNumber() As Integer

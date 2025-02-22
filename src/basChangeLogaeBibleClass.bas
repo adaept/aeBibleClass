@@ -11,9 +11,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #014 -
 ' #013 -
 ' #012 -
-' #011 -
 '=============================================================================================================================
 '
+    ' FIXED - #011 - Add test to count style with number and space
     ' FIXED - #010 - Add copy(???) to output as placeholder for revision under test
     ' FIXED - #009 - Add test to count style with space and number
     ' FIXED - #008 - Add test to count quadruple paragraph marks
