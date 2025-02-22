@@ -113,13 +113,14 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
-            Debug.Print "Pass/Fail", "Test Num", "Result", "Expected", "Function"
+            Debug.Print "Pass/Fail", "Copy(???)", "Test Num", "Result", "Expected", "Function"
             RunTest (0)
             RunTest (1)
             RunTest (2)
             RunTest (3)
             RunTest (4)
             RunTest (5)
+            RunTest (6)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -140,20 +141,51 @@ End Function
 Private Function RunTest(num As Integer) As Boolean
     Select Case num
     Case 0
-        Debug.Print "???", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
     Case 1
-        Debug.Print "???", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
     Case 2
-        Debug.Print "???", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
     Case 3
-        Debug.Print "???", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
     Case 4
-        Debug.Print "???", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
     Case 5
-        Debug.Print "???", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
+    Case 6
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountStyleWithSpaceAndNumber() As Integer
+    Dim rng As Range
+    Dim count As Long
+    Dim styleName As String
+
+    styleName = "cvmarker"
+
+    Set rng = ActiveDocument.Content
+    rng.Find.ClearFormatting
+    rng.Find.Style = styleName
+
+    With rng.Find
+        .text = " [0-9]"
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchWildcards = True
+    End With
+
+    count = 0
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+
+    CountStyleWithSpaceAndNumber = count
 End Function
 
 Private Function CountQuadrupleParagraphMarks()

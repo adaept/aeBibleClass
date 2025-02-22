@@ -12,10 +12,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #013 -
 ' #012 -
 ' #011 -
-' #010 -
-' #009 -
 '=============================================================================================================================
 '
+    ' FIXED - #010 - Add copy(???) to output as placeholder for revision under test
+    ' FIXED - #009 - Add test to count style with space and number
     ' FIXED - #008 - Add test to count quadruple paragraph marks
 ' 20250221 - v003
     ' FIXED - #007 - Add test to count space followed by carriage return with white font color
