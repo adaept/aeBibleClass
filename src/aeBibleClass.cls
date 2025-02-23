@@ -122,6 +122,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (5)
             RunTest (6)
             RunTest (7)
+            RunTest (8)
+            RunTest (9)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -157,12 +159,66 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
     Case 7
         Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
+    Case 8
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
+    Case 9
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountNonBreakingSpaces, 0, "CountNonBreakingSpaces"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
 End Function
 
-Private Function CountStyleWithNumberAndSpace()
+Private Function CountNonBreakingSpaces() As Integer
+    Dim rng As Range
+    Dim count As Long
+
+    Set rng = ActiveDocument.Content
+    rng.Find.ClearFormatting
+
+    With rng.Find
+        .text = "^s"
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = False
+    End With
+
+    count = 0
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+
+    CountNonBreakingSpaces = count
+End Function
+
+Private Function CountPeriodSpaceLeftParenthesis() As Integer
+    Dim rng As Range
+    Dim count As Long
+    
+    Set rng = ActiveDocument.Content
+    rng.Find.ClearFormatting
+    
+    With rng.Find
+        .text = ". ("
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = False
+    End With
+    
+    count = 0
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+    
+    CountPeriodSpaceLeftParenthesis = count
+End Function
+
+Private Function CountStyleWithNumberAndSpace() As Integer
     Dim rng As Range
     Dim count As Long
     Dim styleName As String
@@ -220,7 +276,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
     CountStyleWithSpaceAndNumber = count
 End Function
 
-Private Function CountQuadrupleParagraphMarks()
+Private Function CountQuadrupleParagraphMarks() As Integer
     Dim rng As Range
     Dim count As Long
     
@@ -245,7 +301,7 @@ Private Function CountQuadrupleParagraphMarks()
     CountQuadrupleParagraphMarks = count
 End Function
 
-Private Function CountWhiteSpaceAndCarriageReturn()
+Private Function CountWhiteSpaceAndCarriageReturn() As Integer
     Dim rng As Range
     Dim count As Long
 
@@ -289,7 +345,7 @@ Private Function CountDoubleTabs() As Integer
     CountDoubleTabs = count
 End Function
 
-Private Function CountSpaceFollowedByCarriageReturn()
+Private Function CountSpaceFollowedByCarriageReturn() As Integer
     Dim doc As Document
     Dim rng As Range
     Dim count As Long

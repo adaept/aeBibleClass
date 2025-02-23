@@ -7,12 +7,17 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #020 -
+' #019 -
+' #018 -
+' #017 -
+' #016 -
 ' #015 -
 ' #014 -
-' #013 -
-' #012 -
 '=============================================================================================================================
 '
+    ' FIXED - #013 - Add test to count number of nonbreaking spaces
+    ' FIXED - #012 - Add test to count number of period space left parenthesis
     ' FIXED - #011 - Add test to count style with number and space
     ' FIXED - #010 - Add copy(???) to output as placeholder for revision under test
     ' FIXED - #009 - Add test to count style with space and number
