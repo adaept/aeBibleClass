@@ -124,6 +124,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (7)
             RunTest (8)
             RunTest (9)
+            RunTest (10)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -163,9 +164,48 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy(???)", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
     Case 9
         Debug.Print "???", "Copy(???)", "Test = " & num, CountNonBreakingSpaces, 0, "CountNonBreakingSpaces"
+    Case 10
+        Debug.Print "???", "Copy(???)", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountFindNumberDashNumber() As Integer
+    Dim rng As Range
+    Dim searchPattern As String
+    Dim userInterrupt As VbMsgBoxResult
+    Dim count As Integer
+    
+    searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
+    count = 0
+
+    Set rng = ActiveDocument.Content
+    With rng.Find
+        .text = searchPattern
+        .MatchWildcards = True
+        .Forward = True
+        .Wrap = wdFindStop
+
+        Do While .Execute
+            ' Move the selection to the found text
+            rng.Select
+            count = count + 1
+            'userInterrupt = MsgBox("Found: " & rng.text, vbOKCancel)
+
+            ' Check for user interruption
+            'If userInterrupt = vbCancel Then
+            '    MsgBox "Search interrupted. Total found: " & count
+            '    Exit Function
+            'End If
+
+            ' Collapse the range to the end of the found text
+            rng.Collapse Direction:=wdCollapseEnd
+            rng.End = ActiveDocument.Content.End
+        Loop
+    End With
+
+    CountFindNumberDashNumber = count
 End Function
 
 Private Function CountNonBreakingSpaces() As Integer
@@ -307,7 +347,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
-    rng.Find.Font.Color = wdColorWhite
+    rng.Find.font.Color = wdColorWhite
 
     ' Set the Find properties
     With rng.Find

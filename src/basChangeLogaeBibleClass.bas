@@ -13,9 +13,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #017 -
 ' #016 -
 ' #015 -
-' #014 -
 '=============================================================================================================================
 '
+    ' FIXED - #014 - Add test for count number dash number
     ' FIXED - #013 - Add test to count number of nonbreaking spaces
     ' FIXED - #012 - Add test to count number of period space left parenthesis
     ' FIXED - #011 - Add test to count style with number and space
