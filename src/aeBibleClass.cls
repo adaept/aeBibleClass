@@ -113,7 +113,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
-            Debug.Print "Pass/Fail", "Copy(???)", "Test Num", "Result", "Expected", "Function"
+            Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
             RunTest (0)
             RunTest (1)
             RunTest (2)
@@ -125,6 +125,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (8)
             RunTest (9)
             RunTest (10)
+            RunTest (11)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -145,30 +146,60 @@ End Function
 Private Function RunTest(num As Integer) As Boolean
     Select Case num
     Case 0
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
     Case 1
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
     Case 2
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
     Case 3
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
     Case 4
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
     Case 5
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
     Case 6
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
     Case 7
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
     Case 8
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
     Case 9
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountNonBreakingSpaces, 0, "CountNonBreakingSpaces"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountNonBreakingSpaces, 0, "CountNonBreakingSpaces"
     Case 10
-        Debug.Print "???", "Copy(???)", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
+    Case 11
+        Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountNumberDashNumberInFootnotes() As Integer
+    Dim searchPattern As String
+    Dim count As Integer
+    Dim footnote As footnote
+    Dim rng As Range
+    Dim matches As Object
+    Dim regEx As Object
+
+    searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
+    count = 0
+
+    ' Create a regular expression object
+    Set regEx = CreateObject("VBScript.RegExp")
+    regEx.Global = True
+    regEx.IgnoreCase = True
+    regEx.pattern = searchPattern
+
+    ' Search in footnotes only
+    For Each footnote In ActiveDocument.Footnotes
+        Set rng = footnote.Range
+        ' Find matches using regular expressions
+        Set matches = regEx.Execute(rng.text)
+        count = count + matches.count
+    Next footnote
+
+    CountNumberDashNumberInFootnotes = count
 End Function
 
 Private Function CountFindNumberDashNumber() As Integer
