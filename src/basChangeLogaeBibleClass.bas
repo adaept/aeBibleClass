@@ -7,12 +7,17 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #025 -
+' #024 -
+' #023 -
+' #022 -
+' #021 -
 ' #020 -
-' #019 - Add test to count cr/number/number/space
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #019 - Add module for interactive slow tests not in aeBibleClass
     ' FIXED - #015 - Add test for count number dash number in footnotes only
     ' FIXED - #018 - Update Copy(???) in test runner to default Copy () as current version
     ' FIXED - #014 - Add test for count number dash number
