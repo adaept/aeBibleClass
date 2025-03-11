@@ -3,7 +3,7 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
-Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
+Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 ' Interactive search of 31,102 Bible verses, at 1000 per run,
 ' to find any spaces after "Verse marker" style.
 ' It takes 2 minutes per run of one thousand.
@@ -69,5 +69,31 @@ Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     Else
         Debug.Print "Total numbers found: " & count
     End If
+End Sub
+
+Public Sub PrintBibleHeading1Info()
+' This will print the count, heading text, page number, and document position of each Heading 1 in your document to the Immediate Window
+' (press `Ctrl + G` to view the Immediate Window if it's not already visible).
+
+    Dim para As Paragraph
+    Dim headingText As String
+    Dim pageNumber As Long
+    Dim docPosition As Long
+    Dim count As Integer
+    
+    count = 0
+    ' Loop through all paragraphs in the document
+    For Each para In ActiveDocument.Paragraphs
+        ' Check if the paragraph style is Heading 1
+        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
+            count = count + 1
+            headingText = para.Range.text
+            pageNumber = para.Range.Information(wdActiveEndPageNumber)
+            docPosition = para.Range.Start
+            
+            ' Print the heading text, page number, and document position to the console
+            Debug.Print count & ": " & "Heading: " & headingText & " | Page: " & pageNumber & " | Position: " & docPosition
+        End If
+    Next para
 End Sub
 
