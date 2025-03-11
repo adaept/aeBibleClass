@@ -10,7 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #025 -
 ' #024 -
 ' #023 -
-' #022 -
+' #022 - Add routine to print book h1, chapter h2, verse number - based on #021
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
