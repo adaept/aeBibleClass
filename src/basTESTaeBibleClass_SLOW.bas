@@ -97,3 +97,45 @@ Public Sub PrintBibleHeading1Info()
     Next para
 End Sub
 
+Sub PrintBibleBookHeadings()
+' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
+    
+    Dim headingLabel As String
+    Dim para As Paragraph
+    Dim foundHeading1 As Boolean
+    
+    ' Prompt the user to enter the Heading 1 label
+    headingLabel = InputBox("Enter the Heading 1 label:")
+    headingLabel = UCase(headingLabel)
+    
+    foundHeading1 = False
+    
+    ' Loop through all paragraphs in the document
+    For Each para In ActiveDocument.Paragraphs
+        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
+            ' Check if the Heading 1 matches the input label
+            If para.Range.text = headingLabel & vbCr Then
+                ' Get the text of the Heading 1 without the extra carriage return
+                Debug.Print Replace(para.Range.text, vbCr, "")
+                foundHeading1 = True
+            ElseIf foundHeading1 Then
+                ' Stop when the next Heading 1 is found
+                Exit For
+            End If
+        End If
+        
+        ' If Heading 1 is found, start processing
+        If foundHeading1 Then
+            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
+                ' Get the text of the Heading 2 without the extra carriage return
+                Debug.Print Replace(para.Range.text, vbCr, "")
+            End If
+        End If
+    Next para
+    
+    ' Display a message if no headings are found
+    If Not foundHeading1 Then
+        MsgBox "No headings found with the specified label.", vbExclamation
+    End If
+End Sub
+

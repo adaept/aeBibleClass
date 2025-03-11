@@ -11,11 +11,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 -
 ' #023 -
 ' #022 -
-' #021 -
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #021 - Add routine to print Bible book headings
     ' FIXED - #020 - Add routine to print Bible book heading details - could be used as manual page number verification
     ' FIXED - #019 - Add module for interactive slow tests not in aeBibleClass
     ' FIXED - #015 - Add test for count number dash number in footnotes only
