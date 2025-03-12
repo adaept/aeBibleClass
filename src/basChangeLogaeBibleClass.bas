@@ -7,14 +7,19 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #030 -
+' #029 -
+' #028 -
+' #027 -
+' #026 -
 ' #025 -
-' #024 -
-' #023 -
-' #022 - Add routine to print book h1, chapter h2, verse number - based on #021
+' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #022 - Add routine to print book h1, chapter h2, verse number - based on #021
+    ' FIXED - #023 - PrintBibleHeading1Info outputs the CR of Heading 1. Remove it so output is all on one line
     ' FIXED - #021 - Add routine to print Bible book headings
     ' FIXED - #020 - Add routine to print Bible book heading details - could be used as manual page number verification
     ' FIXED - #019 - Add module for interactive slow tests not in aeBibleClass

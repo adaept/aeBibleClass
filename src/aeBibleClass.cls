@@ -180,22 +180,22 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
     Dim footnote As footnote
     Dim rng As Range
     Dim matches As Object
-    Dim regEx As Object
+    Dim regex As Object
 
     searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
     count = 0
 
     ' Create a regular expression object
-    Set regEx = CreateObject("VBScript.RegExp")
-    regEx.Global = True
-    regEx.IgnoreCase = True
-    regEx.pattern = searchPattern
+    Set regex = CreateObject("VBScript.RegExp")
+    regex.Global = True
+    regex.IgnoreCase = True
+    regex.pattern = searchPattern
 
     ' Search in footnotes only
     For Each footnote In ActiveDocument.Footnotes
         Set rng = footnote.Range
         ' Find matches using regular expressions
-        Set matches = regEx.Execute(rng.text)
+        Set matches = regex.Execute(rng.text)
         count = count + matches.count
     Next footnote
 

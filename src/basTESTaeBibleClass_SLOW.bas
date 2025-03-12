@@ -92,12 +92,12 @@ Public Sub PrintBibleHeading1Info()
             docPosition = para.Range.Start
             
             ' Print the heading text, page number, and document position to the console
-            Debug.Print count & ": " & "Heading: " & headingText & " | Page: " & pageNumber & " | Position: " & docPosition
+            Debug.Print count & ": " & "Heading: " & Replace(headingText, vbCr, "") & " | Page: " & pageNumber & " | Position: " & docPosition
         End If
     Next para
 End Sub
 
-Sub PrintBibleBookHeadings()
+Public Sub PrintBibleBookHeadings()
 ' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
     
     Dim headingLabel As String
@@ -136,6 +136,180 @@ Sub PrintBibleBookHeadings()
     ' Display a message if no headings are found
     If Not foundHeading1 Then
         MsgBox "No headings found with the specified label.", vbExclamation
+    End If
+End Sub
+
+Public Sub PrintBibleBookHeadingsVerseNumbers()
+' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
+' Update to write out verse numbers
+    
+    Dim headingLabel As String
+    Dim para As Paragraph
+    Dim foundHeading1, foundHeading2 As Boolean
+    
+    ' Prompt the user to enter the Heading 1 label
+    headingLabel = InputBox("Enter the Heading 1 label:")
+    headingLabel = UCase(headingLabel)
+    
+    foundHeading1 = False
+    foundHeading2 = False
+    
+    ' Loop through all paragraphs in the document
+    For Each para In ActiveDocument.Paragraphs
+        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
+            ' Check if the Heading 1 matches the input label
+            If para.Range.text = headingLabel & vbCr Then
+                ' Get the text of the Heading 1 without the extra carriage return
+                Debug.Print Replace(para.Range.text, vbCr, "")
+                foundHeading1 = True
+            ElseIf foundHeading1 Then
+                ' Stop when the next Heading 1 is found
+                Exit For
+            End If
+        End If
+        
+        ' If Heading 1 is found, start processing
+        If foundHeading1 Then
+            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
+                Debug.Print
+                ' Get the text of the Heading 2 without the extra carriage return
+                Debug.Print Replace(para.Range.text, vbCr, "")
+                foundHeading2 = True
+            ElseIf foundHeading2 Then
+                ' Get numbers from character style
+                ExtractNumbersFromParagraph para, "Verse marker"
+                'ExtractNumbersFromParagraph2 para, "cvmarker"
+            End If
+        End If
+    Next para
+
+    ' Display a message if no headings are found
+    If Not foundHeading1 Then
+        MsgBox "No headings found with the specified label.", vbExclamation
+    End If
+End Sub
+
+Private Sub ExtractNumbersFromParagraph(para As Paragraph, styleName As String)
+' The regex pattern `[0-9]{1,}` is used to match numbers of any length,
+' then check if each match has the specified character style and collect the numbers.
+' To ensure the style information is preserved when calling the routine from another subroutine,
+' we need to pass the paragraph and the style name as parameters.
+' The `Selection.Find` method is used to search for numbers in the specified character style within the paragraph.
+' The `MatchWildcards` property is set to `True` to enable regex-like searching.
+' The routine loops through all matches and collects the numbers formatted with the specified character style.
+
+    Dim rng As Range
+    Dim foundNumbers As Collection
+    Dim num As String
+    Dim result As String
+    Dim arr() As String
+    Dim i As Integer
+    
+    Set foundNumbers = New Collection
+    
+    ' Set the range to the paragraph
+    Set rng = para.Range
+    
+    ' Initialize the find object
+    With rng.Find
+        .ClearFormatting
+        .text = "[0-9]{1,}"
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchWildcards = True
+        .Style = styleName
+    End With
+    
+    ' Find all matches in the paragraph
+    Do While rng.Find.Execute
+        ' Check if the match is formatted with the specified character style
+        If rng.Style = styleName Then
+            num = Trim(rng.text)
+            ' Add the number to the collection
+            foundNumbers.Add num
+        End If
+        ' Move the range to the next character to continue the search
+        rng.Start = rng.End + 1
+        rng.End = para.Range.End
+    Loop
+    
+    ' Convert the collection to a comma-separated string
+    If foundNumbers.count > 0 Then
+        ReDim arr(1 To foundNumbers.count)
+        For i = 1 To foundNumbers.count
+            arr(i) = foundNumbers(i)
+        Next i
+        result = Join(arr, ", ")
+        Debug.Print result
+    End If
+End Sub
+
+Private Sub ExtractNumbersFromParagraph2(para As Paragraph, styleName As String)
+' The `rng.Find` method is used to search for ranges with the specified character style within the paragraph.
+' A regex object is used to find numbers within the styled ranges.
+' The numbers are collected and printed as a comma-separated list.
+    
+    Dim rng As Range
+    Dim foundNumbers As Collection
+    Dim num As String
+    Dim result As String
+    Dim arr() As String
+    Dim i As Integer
+    
+    DoEvents ' Allows the system to process other events
+    Set foundNumbers = New Collection
+    
+    ' Set the range to the paragraph
+    Set rng = para.Range
+    
+    ' Initialize the find object
+    With rng.Find
+        .ClearFormatting
+        .Style = styleName
+        .text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+    End With
+    
+    ' Find all ranges with the specified style
+    Do While rng.Find.Execute
+        'Debug.Print "Found styled range: " & rng.text, rng.Style.NameLocal
+        ' Check if the range contains numbers
+        If rng.Style = styleName Then
+            ' Create a regex object to find numbers within the styled range
+            Dim regex As Object
+            Dim matches As Object
+            Dim match As Variant
+            
+            Set regex = CreateObject("VBScript.RegExp")
+            regex.pattern = "[0-9]{1,}" ' Pattern to match numbers
+            regex.Global = True
+            
+            ' Find all matches in the styled range text
+            Set matches = regex.Execute(rng.text)
+            
+            ' Loop through each match
+            For Each match In matches
+                num = Trim(match.Value)
+                ' Add the number to the collection
+                foundNumbers.Add num
+            Next match
+        End If
+        ' Move the range to the next character to continue the search
+        rng.Start = rng.End + 1
+        rng.End = para.Range.End
+    Loop
+    
+    ' Convert the collection to a comma-separated string
+    If foundNumbers.count > 0 Then
+        ReDim arr(1 To foundNumbers.count)
+        For i = 1 To foundNumbers.count
+            arr(i) = foundNumbers(i)
+        Next i
+        result = Join(arr, ", ")
+        Debug.Print result
     End If
 End Sub
 
