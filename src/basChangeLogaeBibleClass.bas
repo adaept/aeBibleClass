@@ -9,15 +9,15 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #030 -
 ' #029 -
-' #028 -
-' #027 -
-' #026 -
-' #025 -
+' #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding
+' #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub
+' #025 - Check if para is continuous break or section break next page then read the next para
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
     ' FIXED - #022 - Add routine to print book h1, chapter h2, verse number - based on #021
     ' FIXED - #023 - PrintBibleHeading1Info outputs the CR of Heading 1. Remove it so output is all on one line
     ' FIXED - #021 - Add routine to print Bible book headings

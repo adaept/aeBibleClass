@@ -141,12 +141,19 @@ End Sub
 
 Public Sub PrintBibleBookHeadingsVerseNumbers()
 ' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
-' Update to write out verse numbers
+' Updated to write out verse numbers.
+' Before processing each paragraph, check if it contains a continuous page break and handle it accordingly.
     
+    On Error GoTo ErrorHandler
+
     Dim headingLabel As String
     Dim para As Paragraph
+    Dim paraText As String
     Dim foundHeading1, foundHeading2 As Boolean
-    
+    Dim char As String
+    Dim asciiValue As Integer
+    Dim hexValue As String
+   
     ' Prompt the user to enter the Heading 1 label
     headingLabel = InputBox("Enter the Heading 1 label:")
     headingLabel = UCase(headingLabel)
@@ -155,38 +162,64 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
     foundHeading2 = False
     
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.Paragraphs
-        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
+10    For Each para In ActiveDocument.Paragraphs
+20        paraText = para.Range.text
+        ' Remove formatting characters
+30        paraText = Replace(paraText, vbCr, "") ' Paragraph mark
+40        paraText = Replace(paraText, vbTab, "") ' Tab character
+50        paraText = Replace(paraText, "^b", "") ' Section break
+60        paraText = Replace(paraText, "^m", "") ' Continuous section break
+          
+70        If Len(paraText) = 0 Then
+71            hexValue = "00" ' Hex value for an empty paragraph
+72            Debug.Print "> Paragraph is empty. Hex value: " & hexValue
+73        ElseIf Len(paraText) < 3 Then
+74            Debug.Print "> Len(paraText) = " & Len(paraText)
+75            char = Mid(paraText, 1, 1)
+76            asciiValue = Asc(char)
+77            hexValue = Hex(asciiValue)
+78            Debug.Print "1> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue
+79            ', Asc(Mid(paraText, 2, 1))
+80        End If
+
+110        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then         ' Process paragraph
             ' Check if the Heading 1 matches the input label
-            If para.Range.text = headingLabel & vbCr Then
-                ' Get the text of the Heading 1 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
-                foundHeading1 = True
-            ElseIf foundHeading1 Then
+120            If paraText = headingLabel Then
+130                foundHeading1 = True
+140                foundHeading2 = False
+150            ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
-                Exit For
-            End If
-        End If
+160                Stop
+170                Exit For
+180            End If
+190        End If
         
         ' If Heading 1 is found, start processing
-        If foundHeading1 Then
-            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
-                Debug.Print
+200        If foundHeading1 Then
+210            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
+220                Debug.Print
                 ' Get the text of the Heading 2 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
-                foundHeading2 = True
-            ElseIf foundHeading2 Then
+230                Debug.Print Replace(para.Range.text, vbCr, "")
+240                foundHeading2 = True
+250            ElseIf foundHeading2 And foundHeading1 Then
                 ' Get numbers from character style
-                ExtractNumbersFromParagraph para, "Verse marker"
-                'ExtractNumbersFromParagraph2 para, "cvmarker"
-            End If
-        End If
-    Next para
+                'ExtractNumbersFromParagraph para, "Verse marker"
+260                ExtractNumbersFromParagraph2 para, "cvmarker"
+270            End If
+280        End If
+290        DoEvents ' Allow Word to process other events
+300    Next para
 
     ' Display a message if no headings are found
-    If Not foundHeading1 Then
-        MsgBox "No headings found with the specified label.", vbExclamation
-    End If
+310    If Not foundHeading1 Then
+320        MsgBox "No headings found with the specified label.", vbExclamation
+330    End If
+
+ErrorHandler:
+340    MsgBox "Err = " & Err.Number & " Erl = " & Erl & " An error occurred: " & Err.Description, vbCritical
+    ' Optionally close the document or perform other cleanup
+    'ThisDocument.Close SaveChanges:=wdDoNotSaveChanges
+350    End
 End Sub
 
 Private Sub ExtractNumbersFromParagraph(para As Paragraph, styleName As String)
