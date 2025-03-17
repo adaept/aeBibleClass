@@ -52,53 +52,59 @@ Sub PrintFontProperties()
     End With
 End Sub
 
-Sub PrintBibleBookHeadingsVerseNumbers()
-' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
-' Update to write out verse numbers
-    
-    Dim headingLabel As String
+Sub ListUsedStylesWithCount()
+    Dim doc As Document
+    Dim style As style
+    Dim usedStyles As Collection
     Dim para As Paragraph
-    Dim foundHeading1, foundHeading2 As Boolean
+    Dim rng As Range
+    Dim charRange As Range
+    Dim i As Integer
+    Dim styleName As String
     
-    ' Prompt the user to enter the Heading 1 label
-    headingLabel = InputBox("Enter the Heading 1 label:")
-    headingLabel = UCase(headingLabel)
+    Set doc = ActiveDocument
+    Set usedStyles = New Collection
     
-    foundHeading1 = False
-    foundHeading2 = False
-    
-    ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.Paragraphs
-        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
-            ' Check if the Heading 1 matches the input label
-            If para.Range.text = headingLabel & vbCr Then
-                ' Get the text of the Heading 1 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
-                foundHeading1 = True
-            ElseIf foundHeading1 Then
-                ' Stop when the next Heading 1 is found
-                Exit For
-            End If
-        End If
-        
-        ' If Heading 1 is found, start processing
-        If foundHeading1 Then
-            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
-                Debug.Print
-                ' Get the text of the Heading 2 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
-                foundHeading2 = True
-            ElseIf foundHeading2 Then
-                ' Update here and add routine to get numbers from character style
-                Debug.Print "Num",
-            End If
-        End If
+    ' Loop through all paragraphs to find used paragraph styles
+    For Each para In doc.Paragraphs
+        styleName = para.style.NameLocal
+        On Error Resume Next
+        usedStyles.Add styleName, styleName
+        On Error GoTo 0
     Next para
     
-    ' Display a message if no headings are found
-    If Not foundHeading1 Then
-        MsgBox "No headings found with the specified label.", vbExclamation
-    End If
+    ' Loop through all story ranges to find used character styles and font styles
+    For Each rng In doc.StoryRanges
+        Do While Not rng Is Nothing
+            ' Check for character styles
+            For Each charRange In rng.Characters
+                If charRange.style.Type = wdStyleTypeCharacter Then
+                    styleName = charRange.style.NameLocal
+                    On Error Resume Next
+                    usedStyles.Add styleName, styleName
+                    On Error GoTo 0
+                End If
+                ' Check for font styles
+                If charRange.font.name <> "" Then
+                    styleName = "Font: " & charRange.font.name
+                    On Error Resume Next
+                    usedStyles.Add styleName, styleName
+                    On Error GoTo 0
+                End If
+            Next charRange
+            Set rng = rng.NextStoryRange
+        Loop
+    Next rng
+    
+    ' Print styles to the Immediate Window
+    Debug.Print "Styles in Use:"
+    For i = 1 To usedStyles.count
+        Debug.Print usedStyles(i)
+    Next i
+    
+    ' Print total count of styles
+    Debug.Print "Total Styles in Use: " & usedStyles.count
 End Sub
+
 
 

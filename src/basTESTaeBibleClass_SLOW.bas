@@ -24,7 +24,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     ' Set the search parameters
     With Selection.Find
         .text = searchText
-        .Style = styleName
+        .style = styleName
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
@@ -85,7 +85,7 @@ Public Sub PrintBibleHeading1Info()
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 1
-        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
+        If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             count = count + 1
             headingText = para.Range.text
             pageNumber = para.Range.Information(wdActiveEndPageNumber)
@@ -112,7 +112,7 @@ Public Sub PrintBibleBookHeadings()
     
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
-        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
+        If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
             If para.Range.text = headingLabel & vbCr Then
                 ' Get the text of the Heading 1 without the extra carriage return
@@ -126,7 +126,7 @@ Public Sub PrintBibleBookHeadings()
         
         ' If Heading 1 is found, start processing
         If foundHeading1 Then
-            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
+            If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
                 ' Get the text of the Heading 2 without the extra carriage return
                 Debug.Print Replace(para.Range.text, vbCr, "")
             End If
@@ -162,64 +162,64 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
     foundHeading2 = False
     
     ' Loop through all paragraphs in the document
-10    For Each para In ActiveDocument.Paragraphs
-20        paraText = para.Range.text
+    For Each para In ActiveDocument.Paragraphs
+        paraText = para.Range.text
         ' Remove formatting characters
-30        paraText = Replace(paraText, vbCr, "") ' Paragraph mark
-40        paraText = Replace(paraText, vbTab, "") ' Tab character
-50        paraText = Replace(paraText, "^b", "") ' Section break
-60        paraText = Replace(paraText, "^m", "") ' Continuous section break
+        paraText = Replace(paraText, vbCr, "") ' Paragraph mark
+        paraText = Replace(paraText, vbTab, "") ' Tab character
+        paraText = Replace(paraText, "^b", "") ' Section break
+        paraText = Replace(paraText, "^m", "") ' Continuous section break
           
-70        If Len(paraText) = 0 Then
-71            hexValue = "00" ' Hex value for an empty paragraph
-72            Debug.Print "> Paragraph is empty. Hex value: " & hexValue
-73        ElseIf Len(paraText) < 3 Then
-74            Debug.Print "> Len(paraText) = " & Len(paraText)
-75            char = Mid(paraText, 1, 1)
-76            asciiValue = Asc(char)
-77            hexValue = Hex(asciiValue)
-78            Debug.Print "1> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue
-79            ', Asc(Mid(paraText, 2, 1))
-80        End If
+        If Len(paraText) = 0 Then
+            hexValue = "00" ' Hex value for an empty paragraph
+            Debug.Print "> Paragraph is empty. Hex value: " & hexValue
+        ElseIf Len(paraText) < 3 Then
+            Debug.Print "> Len(paraText) = " & Len(paraText)
+            char = Mid(paraText, 1, 1)
+            asciiValue = Asc(char)
+            hexValue = Hex(asciiValue)
+            Debug.Print "1> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue
+            ', Asc(Mid(paraText, 2, 1))
+        End If
 
-110        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then         ' Process paragraph
+        If para.style = ActiveDocument.Styles(wdStyleHeading1) Then         ' Process paragraph
             ' Check if the Heading 1 matches the input label
-120            If paraText = headingLabel Then
-130                foundHeading1 = True
-140                foundHeading2 = False
-150            ElseIf foundHeading1 Then
+            If paraText = headingLabel Then
+                foundHeading1 = True
+                foundHeading2 = False
+            ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
-160                Stop
-170                Exit For
-180            End If
-190        End If
+                Stop
+                Exit For
+            End If
+        End If
         
         ' If Heading 1 is found, start processing
-200        If foundHeading1 Then
-210            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
-220                Debug.Print
+        If foundHeading1 Then
+            If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
+                Debug.Print
                 ' Get the text of the Heading 2 without the extra carriage return
-230                Debug.Print Replace(para.Range.text, vbCr, "")
-240                foundHeading2 = True
-250            ElseIf foundHeading2 And foundHeading1 Then
+                Debug.Print Replace(para.Range.text, vbCr, "")
+                foundHeading2 = True
+            ElseIf foundHeading2 And foundHeading1 Then
                 ' Get numbers from character style
                 'ExtractNumbersFromParagraph para, "Verse marker"
-260                ExtractNumbersFromParagraph2 para, "cvmarker"
-270            End If
-280        End If
-290        DoEvents ' Allow Word to process other events
-300    Next para
+                ExtractNumbersFromParagraph2 para, "cvmarker"
+            End If
+        End If
+        DoEvents ' Allow Word to process other events
+    Next para
 
     ' Display a message if no headings are found
-310    If Not foundHeading1 Then
-320        MsgBox "No headings found with the specified label.", vbExclamation
-330    End If
+    If Not foundHeading1 Then
+        MsgBox "No headings found with the specified label.", vbExclamation
+    End If
 
 ErrorHandler:
-340    MsgBox "Err = " & Err.Number & " Erl = " & Erl & " An error occurred: " & Err.Description, vbCritical
+    MsgBox "Err = " & Err.Number & " Erl = " & Erl & " An error occurred: " & Err.Description, vbCritical
     ' Optionally close the document or perform other cleanup
     'ThisDocument.Close SaveChanges:=wdDoNotSaveChanges
-350    End
+    End
 End Sub
 
 Private Sub ExtractNumbersFromParagraph(para As Paragraph, styleName As String)
@@ -251,13 +251,13 @@ Private Sub ExtractNumbersFromParagraph(para As Paragraph, styleName As String)
         .Wrap = wdFindStop
         .Format = True
         .MatchWildcards = True
-        .Style = styleName
+        .style = styleName
     End With
     
     ' Find all matches in the paragraph
     Do While rng.Find.Execute
         ' Check if the match is formatted with the specified character style
-        If rng.Style = styleName Then
+        If rng.style = styleName Then
             num = Trim(rng.text)
             ' Add the number to the collection
             foundNumbers.Add num
@@ -299,7 +299,7 @@ Private Sub ExtractNumbersFromParagraph2(para As Paragraph, styleName As String)
     ' Initialize the find object
     With rng.Find
         .ClearFormatting
-        .Style = styleName
+        .style = styleName
         .text = ""
         .Forward = True
         .Wrap = wdFindStop
@@ -310,7 +310,7 @@ Private Sub ExtractNumbersFromParagraph2(para As Paragraph, styleName As String)
     Do While rng.Find.Execute
         'Debug.Print "Found styled range: " & rng.text, rng.Style.NameLocal
         ' Check if the range contains numbers
-        If rng.Style = styleName Then
+        If rng.style = styleName Then
             ' Create a regex object to find numbers within the styled range
             Dim regex As Object
             Dim matches As Object
@@ -343,6 +343,94 @@ Private Sub ExtractNumbersFromParagraph2(para As Paragraph, styleName As String)
         Next i
         result = Join(arr, ", ")
         Debug.Print result
+    End If
+End Sub
+
+Private Sub ListAscii12Characters()
+    Dim rng As Range
+    Dim count As Long
+    Dim positions As String
+    Dim startPos As Long
+    
+    ' Set the range to the entire document
+    Set rng = ActiveDocument.Content
+    
+    ' Initialize the count and positions
+    count = 0
+    positions = ""
+    
+    ' Find all ASCII 12 characters and record their positions
+    With rng.Find
+        .text = Chr(12) ' Chr(12) represents the ASCII 12 character
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchCase = False
+        .MatchWholeWord = False
+        .MatchWildcards = False
+        .MatchSoundsLike = False
+        .MatchAllWordForms = False
+        Do While .Execute
+            count = count + 1
+            startPos = rng.Start
+            positions = positions & "Position " & count & ": " & startPos & vbCrLf
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+    
+    ' Display the positions of ASCII 12 characters
+    If count > 0 Then
+        Debug.Print "There are " & count & " ASCII 12 characters in the document at the following positions:" & vbCrLf & positions
+    Else
+        MsgBox "No ASCII 12 characters found in the document.", vbInformation, "ASCII 12 Characters"
+    End If
+End Sub
+
+Private Sub ListAndReviewAscii12Characters()
+    Dim rng As Range
+    Dim count As Long
+    Dim startPos As Long
+    Dim response As VbMsgBoxResult
+    
+    ' Set the range to the entire document
+    Set rng = ActiveDocument.Content
+    
+    ' Initialize the count
+    count = 0
+    
+    ' Find all ASCII 12 characters and record their positions
+    With rng.Find
+        .text = Chr(12) ' Chr(12) represents the ASCII 12 character
+        .Replacement.text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchCase = False
+        .MatchWholeWord = False
+        .MatchWildcards = False
+        .MatchSoundsLike = False
+        .MatchAllWordForms = False
+        Do While .Execute
+            count = count + 1
+            startPos = rng.Start
+            Debug.Print "Position " & count & ": " & startPos
+            rng.Collapse wdCollapseEnd
+            
+            ' Navigate to the position in the document
+            ActiveDocument.Range(startPos, startPos).Select
+            
+            ' Ask if the user wants to continue
+            response = MsgBox("ASCII 12 character found at position " & startPos & ". Do you want to continue?", vbYesNo + vbQuestion, "Review ASCII 12 Characters")
+            If response = vbNo Then
+                Exit Sub
+            End If
+        Loop
+    End With
+    
+    ' Display a message if no ASCII 12 characters are found
+    If count = 0 Then
+        MsgBox "No ASCII 12 characters found in the document.", vbInformation, "ASCII 12 Characters"
     End If
 End Sub
 
