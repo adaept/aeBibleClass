@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.3"
-Private Const BibleClassVERSION_DATE As String = "February 21, 2025"
+Private Const BibleClassVERSION As String = "0.0.4"
+Private Const BibleClassVERSION_DATE As String = "March 17, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
@@ -126,6 +126,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (9)
             RunTest (10)
             RunTest (11)
+            RunTest (12)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -169,9 +170,36 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
     Case 11
         Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
+    Case 12
+        Debug.Print "???", "Copy ()", "Test = " & num, CountFormFeedCharacters, 0, "CountFormFeedCharacters"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountFormFeedCharacters() As Integer
+    Dim para As Paragraph
+    Dim paraText As String
+    Dim i As Integer
+    Dim char As String
+    Dim asciiValue As Integer
+    Dim formFeedCount As Long
+
+    formFeedCount = 0
+
+    For Each para In ActiveDocument.Paragraphs
+        paraText = para.Range.text
+        For i = 1 To Len(paraText)
+            char = Mid(paraText, i, 1)
+            asciiValue = Asc(char)
+            If asciiValue = 12 Then
+                formFeedCount = formFeedCount + 1
+            End If
+        Next i
+    Next para
+
+    'Debug.Print "Number of form feed characters: " & formFeedCount
+    CountFormFeedCharacters = formFeedCount
 End Function
 
 Private Function CountNumberDashNumberInFootnotes() As Integer

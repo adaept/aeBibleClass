@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #030 -
-' #029 -
-' #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding
+' #035 -
+' #034 -
+' #033 -
+' #032 -
+' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
+' #030 - Add routine to remove Form feed chars as they are not needed in docx
+' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
 ' #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub
 ' #025 - Check if para is continuous break or section break next page then read the next para
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
@@ -17,6 +21,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+' 20250317 - v004
+    ' FIXED - #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding
     ' FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
     ' FIXED - #022 - Add routine to print book h1, chapter h2, verse number - based on #021
     ' FIXED - #023 - PrintBibleHeading1Info outputs the CR of Heading 1. Remove it so output is all on one line
