@@ -8,8 +8,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=============================================================================================================================
 ' Tasks:
 ' #035 -
-' #034 -
-' #033 -
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
 ' #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub
@@ -19,6 +17,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #034 - Add routine to count of all paragraphs types
+    ' FIXED - #033 - Add Hello World custom menu tab as example for ribbon integration
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks
     ' FIXED - #030 - Add routine to count and review Form feed char positions. Needed in docx as part of page and section breaks
 ' 20250317 - v004

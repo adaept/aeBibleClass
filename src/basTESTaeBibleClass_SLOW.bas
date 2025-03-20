@@ -75,7 +75,7 @@ Public Sub PrintBibleHeading1Info()
 ' This will print the count, heading text, page number, and document position of each Heading 1 in your document to the Immediate Window
 ' (press `Ctrl + G` to view the Immediate Window if it's not already visible).
 
-    Dim para As Paragraph
+    Dim para As paragraph
     Dim headingText As String
     Dim pageNumber As Long
     Dim docPosition As Long
@@ -101,7 +101,7 @@ Public Sub PrintBibleBookHeadings()
 ' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
     
     Dim headingLabel As String
-    Dim para As Paragraph
+    Dim para As paragraph
     Dim foundHeading1 As Boolean
     
     ' Prompt the user to enter the Heading 1 label
@@ -147,9 +147,9 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
     On Error GoTo ErrorHandler
 
     Dim headingLabel As String
-    Dim para As Paragraph
+    Dim para As paragraph
     Dim paraText As String
-    Dim foundHeading1, foundHeading2 As Boolean
+    Dim foundHeading1 As Boolean
     Dim char As String
     Dim asciiValue As Integer
     Dim hexValue As String
@@ -159,7 +159,6 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
     headingLabel = UCase(headingLabel)
     
     foundHeading1 = False
-    foundHeading2 = False
     
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
@@ -171,24 +170,30 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
         paraText = Replace(paraText, "^m", "") ' Continuous section break
           
         If Len(paraText) = 0 Then
-            hexValue = "00" ' Hex value for an empty paragraph
-            Debug.Print "> Paragraph is empty. Hex value: " & hexValue
+            'hexValue = "00" ' Hex value for an empty paragraph
+            'Debug.Print "> Paragraph is empty. Hex value: " & hexValue
         ElseIf Len(paraText) < 3 Then
             Debug.Print "> Len(paraText) = " & Len(paraText)
             char = Mid(paraText, 1, 1)
             asciiValue = Asc(char)
             hexValue = Hex(asciiValue)
             Debug.Print "1> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue
-            ', Asc(Mid(paraText, 2, 1))
+            If Len(paraText) = 2 Then
+                char = Mid(paraText, 2, 1)
+                asciiValue = Asc(char)
+                hexValue = Hex(asciiValue)
+                Debug.Print "2> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue
+            End If
         End If
 
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then         ' Process paragraph
             ' Check if the Heading 1 matches the input label
             If paraText = headingLabel Then
+                Debug.Print para.Range.text
                 foundHeading1 = True
-                foundHeading2 = False
             ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
+                Debug.Print para.Range.text
                 Stop
                 Exit For
             End If
@@ -200,8 +205,6 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
                 Debug.Print
                 ' Get the text of the Heading 2 without the extra carriage return
                 Debug.Print Replace(para.Range.text, vbCr, "")
-                foundHeading2 = True
-            ElseIf foundHeading2 And foundHeading1 Then
                 ' Get numbers from character style
                 'ExtractNumbersFromParagraph para, "Verse marker"
                 ExtractNumbersFromParagraph2 para, "cvmarker"
@@ -222,7 +225,7 @@ ErrorHandler:
     End
 End Sub
 
-Private Sub ExtractNumbersFromParagraph(para As Paragraph, styleName As String)
+Private Sub ExtractNumbersFromParagraph(para As paragraph, styleName As String)
 ' The regex pattern `[0-9]{1,}` is used to match numbers of any length,
 ' then check if each match has the specified character style and collect the numbers.
 ' To ensure the style information is preserved when calling the routine from another subroutine,
@@ -278,7 +281,7 @@ Private Sub ExtractNumbersFromParagraph(para As Paragraph, styleName As String)
     End If
 End Sub
 
-Private Sub ExtractNumbersFromParagraph2(para As Paragraph, styleName As String)
+Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
 ' The `rng.Find` method is used to search for ranges with the specified character style within the paragraph.
 ' A regex object is used to find numbers within the styled ranges.
 ' The numbers are collected and printed as a comma-separated list.
@@ -433,4 +436,159 @@ Private Sub ListAndReviewAscii12Characters()
         MsgBox "No ASCII 12 characters found in the document.", vbInformation, "ASCII 12 Characters"
     End If
 End Sub
+
+Sub CountParagraphsTypes()
+' Slow running routine ~10+ minutes
+
+    Dim doc As Document
+    Dim para As paragraph
+    Dim totalParagraphs As Long
+    Dim emptyParagraphs As Long
+    Dim pageBreakParagraphs As Long
+    Dim columnBreakParagraphs As Long
+    Dim textWrappingBreakParagraphs As Long
+    Dim nextPageSectionBreakParagraphs As Long
+    Dim continuousSectionBreakParagraphs As Long
+    Dim evenPageSectionBreakParagraphs As Long
+    Dim oddPageSectionBreakParagraphs As Long
+    Dim paraIndex As Long
+    Dim debugFile As String
+    Dim fileNum As Integer
+    Dim continueProcessing As VbMsgBoxResult
+    Dim pageBreakIndices As String
+    Dim columnBreakIndices As String
+    Dim textWrappingBreakIndices As String
+    Dim nextPageSectionBreakIndices As String
+    Dim continuousSectionBreakIndices As String
+    Dim evenPageSectionBreakIndices As String
+    Dim oddPageSectionBreakIndices As String
+    
+    ' Initialize counts and indices
+    totalParagraphs = 0
+    emptyParagraphs = 0
+    pageBreakParagraphs = 0
+    columnBreakParagraphs = 0
+    textWrappingBreakParagraphs = 0
+    nextPageSectionBreakParagraphs = 0
+    continuousSectionBreakParagraphs = 0
+    evenPageSectionBreakParagraphs = 0
+    oddPageSectionBreakParagraphs = 0
+    paraIndex = 0
+    pageBreakIndices = ""
+    columnBreakIndices = ""
+    textWrappingBreakIndices = ""
+    nextPageSectionBreakIndices = ""
+    continuousSectionBreakIndices = ""
+    evenPageSectionBreakIndices = ""
+    oddPageSectionBreakIndices = ""
+    
+    ' Set the document to the active document
+    Set doc = ActiveDocument
+    
+    ' Set the debug file path to the current document directory
+    debugFile = doc.Path & "\ParagraphsCountDebugTestFile.txt"
+    
+    ' Delete the old debug file if it exists
+    If Dir(debugFile) <> "" Then
+        Kill debugFile
+    End If
+    
+    ' Open the debug file for writing
+    fileNum = FreeFile
+    Open debugFile For Output As fileNum
+    Close fileNum
+    
+    ' Loop through each paragraph in the document
+    For Each para In doc.Paragraphs
+        paraIndex = paraIndex + 1
+        totalParagraphs = totalParagraphs + 1
+        
+        ' Check if the paragraph is empty
+        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+            emptyParagraphs = emptyParagraphs + 1
+        End If
+        
+        ' Check for different types of breaks using Find method
+        With para.Range.Find
+            .ClearFormatting
+            .text = "^m"
+            If .Execute Then
+                textWrappingBreakParagraphs = textWrappingBreakParagraphs + 1
+                textWrappingBreakIndices = textWrappingBreakIndices & paraIndex & ", "
+            End If
+            .text = "^b"
+            If .Execute Then
+                columnBreakParagraphs = columnBreakParagraphs + 1
+                columnBreakIndices = columnBreakIndices & paraIndex & ", "
+            End If
+        End With
+        
+        ' Check for different types of section breaks
+        If para.Range.Sections.count > 0 Then
+            Select Case para.Range.Sections(1).PageSetup.SectionStart
+                Case wdSectionNewPage
+                    nextPageSectionBreakParagraphs = nextPageSectionBreakParagraphs + 1
+                    nextPageSectionBreakIndices = nextPageSectionBreakIndices & paraIndex & ", "
+                Case wdSectionContinuous
+                    continuousSectionBreakParagraphs = continuousSectionBreakParagraphs + 1
+                    continuousSectionBreakIndices = continuousSectionBreakIndices & paraIndex & ", "
+                Case wdSectionEvenPage
+                    evenPageSectionBreakParagraphs = evenPageSectionBreakParagraphs + 1
+                    evenPageSectionBreakIndices = evenPageSectionBreakIndices & paraIndex & ", "
+                Case wdSectionOddPage
+                    oddPageSectionBreakParagraphs = oddPageSectionBreakParagraphs + 1
+                    oddPageSectionBreakIndices = oddPageSectionBreakIndices & paraIndex & ", "
+            End Select
+        End If
+        
+'        ' Prompt user to continue processing after every 100 paragraphs
+'        If paraIndex Mod 100 = 0 Then
+'            continueProcessing = MsgBox("Continue processing?", vbYesNo + vbQuestion, "Continue?")
+'            If continueProcessing = vbNo Then
+'                Exit For
+'            End If
+'        End If
+        
+        ' Allow the system to process other events
+        DoEvents
+    Next para
+    
+    ' Remove trailing commas and spaces
+    If Len(pageBreakIndices) > 0 Then pageBreakIndices = Left(pageBreakIndices, Len(pageBreakIndices) - 2)
+    If Len(columnBreakIndices) > 0 Then columnBreakIndices = Left(columnBreakIndices, Len(columnBreakIndices) - 2)
+    If Len(textWrappingBreakIndices) > 0 Then textWrappingBreakIndices = Left(textWrappingBreakIndices, Len(textWrappingBreakIndices) - 2)
+    If Len(nextPageSectionBreakIndices) > 0 Then nextPageSectionBreakIndices = Left(nextPageSectionBreakIndices, Len(nextPageSectionBreakIndices) - 2)
+    If Len(continuousSectionBreakIndices) > 0 Then continuousSectionBreakIndices = Left(continuousSectionBreakIndices, Len(continuousSectionBreakIndices) - 2)
+    If Len(evenPageSectionBreakIndices) > 0 Then evenPageSectionBreakIndices = Left(evenPageSectionBreakIndices, Len(evenPageSectionBreakIndices) - 2)
+    If Len(oddPageSectionBreakIndices) > 0 Then oddPageSectionBreakIndices = Left(oddPageSectionBreakIndices, Len(oddPageSectionBreakIndices) - 2)
+    
+    ' Append the final results to the debug file
+    AppendToFile debugFile, "Paragraphs with Page Break: " & pageBreakIndices
+    AppendToFile debugFile, "Paragraphs with Column Break: " & columnBreakIndices
+    AppendToFile debugFile, "Paragraphs with Text Wrapping Break: " & textWrappingBreakIndices
+    AppendToFile debugFile, "Paragraphs with Section Break (Next Page): " & nextPageSectionBreakIndices
+    AppendToFile debugFile, "Paragraphs with Section Break (Continuous): " & continuousSectionBreakIndices
+    AppendToFile debugFile, "Paragraphs with Section Break (Even Page): " & evenPageSectionBreakIndices
+    AppendToFile debugFile, "Paragraphs with Section Break (Odd Page): " & oddPageSectionBreakIndices
+    
+    ' Print the counts to the console (Immediate Window)
+    Debug.Print "Total Paragraphs: " & totalParagraphs
+    Debug.Print "Empty Paragraphs: " & emptyParagraphs
+    Debug.Print "Paragraphs with Page Break: " & pageBreakParagraphs
+    Debug.Print "Paragraphs with Column Break: " & columnBreakParagraphs
+    Debug.Print "Paragraphs with Text Wrapping Break: " & textWrappingBreakParagraphs
+    Debug.Print "Paragraphs with Section Break (Next Page): " & nextPageSectionBreakParagraphs
+    Debug.Print "Paragraphs with Section Break (Continuous): " & continuousSectionBreakParagraphs
+    Debug.Print "Paragraphs with Section Break (Even Page): " & evenPageSectionBreakParagraphs
+    Debug.Print "Paragraphs with Section Break (Odd Page): " & oddPageSectionBreakParagraphs
+End Sub
+
+Sub AppendToFile(filePath As String, text As String)
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    Open filePath For Append As fileNum
+    Print #fileNum, text
+    Close fileNum
+End Sub
+
 
