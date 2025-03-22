@@ -328,7 +328,7 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
             
             ' Loop through each match
             For Each match In matches
-                num = Trim(match.Value)
+                num = Trim(match.value)
                 ' Add the number to the collection
                 foundNumbers.Add num
             Next match

@@ -126,6 +126,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (9)
             RunTest (10)
             RunTest (11)
+            RunTest (12)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -144,6 +145,7 @@ PROC_ERR:
 End Function
 
 Private Function RunTest(num As Integer) As Boolean
+    On Error GoTo PROC_ERR
     Select Case num
     Case 0
         Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
@@ -169,9 +171,64 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
     Case 11
         Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
+    Case 12
+        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasWithNoThemeColor, 0, "CountEmptyParasWithNoThemeColor"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
+
+PROC_EXIT:
+    Exit Function
+    
+PROC_ERR:
+    Debug.Print "Error in Test num = " & num, "Function RunTest"
+    End
+End Function
+
+Private Function CountEmptyParasWithNoThemeColor()
+' The Font.Color property wdColorAutomatic = -1 indicates no theme color
+
+    Dim para As paragraph
+    Dim rng As Range
+    Dim emptyParaCount As Integer
+    Dim themeColorUsed As Boolean
+    Dim totalParaCount As Integer
+    Dim colorCounts As Object
+    Dim colorKey As String
+    
+    Set colorCounts = CreateObject("Scripting.Dictionary")
+    emptyParaCount = 0
+    totalParaCount = ActiveDocument.Paragraphs.count
+    
+    For Each para In ActiveDocument.Paragraphs
+        Set rng = para.Range
+        themeColorUsed = False
+        
+        ' Check if the paragraph is empty
+        If Len(rng.text) = 1 Then ' Only the paragraph mark
+            ' Check if the theme color is used
+            If rng.font.TextColor.ObjectThemeColor <> -1 Then  ' wdNotThemeColor
+                themeColorUsed = True
+                colorKey = CStr(rng.font.TextColor.ObjectThemeColor)
+                
+                If Not colorCounts.Exists(colorKey) Then
+                    colorCounts.Add colorKey, 0
+                End If
+                
+                colorCounts(colorKey) = colorCounts(colorKey) + 1
+                emptyParaCount = emptyParaCount + 1
+            End If
+        End If
+    Next para
+    
+    Debug.Print "Total number of paragraphs: " & totalParaCount
+    Debug.Print "Number of empty paragraphs using theme color: " & emptyParaCount
+    
+    ' Print out the color count for each empty paragraph
+    Dim key As Variant
+    For Each key In colorCounts.Keys
+        Debug.Print "Theme color " & key & " used in " & colorCounts(key) & " empty paragraphs."
+    Next key
 End Function
 
 Private Function CountNumberDashNumberInFootnotes() As Integer

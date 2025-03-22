@@ -7,16 +7,36 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #035 -
+' #055 -
+' #054 -
+' #053 -
+' #052 -
+' #051 -
+' #050 - Error Test num = 11 Function RunTest - need to fix it
+' #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1
+' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
+' #047 - Research diff code that will display like GitHub for comparison with
+' #046 - Update style of cv marker to be smaller than Verse marker
+' #045 - Test call to SILAS from robbon using customUI.xml OnHelloWorldButtonClick routine
+' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
+' #043 - Add extract to USFM routine
+' #042 - Add readme to aewordgit
+' #041 - Add auto-generated TOC for maps
+' #040 - Add figure headings to maps - use map vs fig?
+' #039 - Replace manual TOC with auto-generated version
+' #038 - Add test for no empty para after h2 heading
+' #037 - Add updated maps in color
+' #036 - Add test for h1 pages that have heading
+' #035 - Add test for page numbers of h1 on odd or even pages
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
-' #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub
-' #025 - Check if para is continuous break or section break next page then read the next para
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
+    ' OBSOLETE - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types
     ' FIXED - #033 - Add Hello World custom menu tab as example for ribbon integration
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks
