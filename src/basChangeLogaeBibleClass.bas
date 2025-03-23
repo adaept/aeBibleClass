@@ -10,10 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #055 -
 ' #054 -
 ' #053 -
-' #052 -
-' #051 -
-' #050 - Error Test num = 11 Function RunTest - need to fix it
-' #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
 ' #046 - Update style of cv marker to be smaller than Verse marker
@@ -35,6 +31,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+' 20250325 - v005
+    ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
+    ' FIXED - #051 - Add Yes/No continuation message to RunTest error
+    ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it
+    ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1
     ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
     ' OBSOLETE - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types

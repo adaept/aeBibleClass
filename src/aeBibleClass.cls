@@ -33,13 +33,16 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.4"
-Private Const BibleClassVERSION_DATE As String = "March 17, 2025"
+Private Const BibleClassVERSION As String = "0.0.5"
+Private Const BibleClassVERSION_DATE As String = "March 23, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
 Private Const vbext_ct_MSForm As Long = 3
 Private Const vbext_ct_Document As Long = 100
+'
+' Define the word constant in this class module
+Private Const wdNotThemeColor As Long = -1
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -181,13 +184,21 @@ PROC_EXIT:
     Exit Function
     
 PROC_ERR:
-    Debug.Print "Error in Test num = " & num, "Function RunTest"
+    Dim answer As Integer
+    answer = MsgBox("Err = " & Err.Number & " " & Err.Description & vbCrLf & "Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
+    If answer = vbYes Then
+        'MsgBox "You chose to continue.", vbInformation, "Continue"
+        Resume
+    Else
+        'MsgBox "You chose to stop.", vbInformation, "Stop"
+        'Exit Sub
+    End If
+    'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
 End Function
 
 Private Function CountEmptyParasWithNoThemeColor()
-' The Font.Color property wdColorAutomatic = -1 indicates no theme color
-
+' The value of wdNotThemeColor is -1. This constant indicates that no theme color is applied.
     Dim para As paragraph
     Dim rng As Range
     Dim emptyParaCount As Integer
@@ -207,7 +218,7 @@ Private Function CountEmptyParasWithNoThemeColor()
         ' Check if the paragraph is empty
         If Len(rng.text) = 1 Then ' Only the paragraph mark
             ' Check if the theme color is used
-            If rng.font.TextColor.ObjectThemeColor <> -1 Then  ' wdNotThemeColor
+            If rng.font.TextColor.ObjectThemeColor <> wdNotThemeColor Then
                 themeColorUsed = True
                 colorKey = CStr(rng.font.TextColor.ObjectThemeColor)
                 
@@ -221,42 +232,56 @@ Private Function CountEmptyParasWithNoThemeColor()
         End If
     Next para
     
-    Debug.Print "Total number of paragraphs: " & totalParaCount
-    Debug.Print "Number of empty paragraphs using theme color: " & emptyParaCount
-    
+    'Debug.Print "Total number of paragraphs: " & totalParaCount
+    'Debug.Print "Number of empty paragraphs using theme color: " & emptyParaCount
+
     ' Print out the color count for each empty paragraph
-    Dim key As Variant
-    For Each key In colorCounts.Keys
-        Debug.Print "Theme color " & key & " used in " & colorCounts(key) & " empty paragraphs."
-    Next key
+    'Dim key As Variant
+    'For Each key In colorCounts.Keys
+    '    Debug.Print "Theme color " & key & " used in " & colorCounts(key) & " empty paragraphs."
+    'Next key
+    CountEmptyParasWithNoThemeColor = emptyParaCount
 End Function
 
 Private Function CountNumberDashNumberInFootnotes() As Integer
-    Dim searchPattern As String
-    Dim count As Integer
     Dim footnote As footnote
     Dim rng As Range
-    Dim matches As Object
-    Dim regex As Object
-
-    searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
-    count = 0
-
-    ' Create a regular expression object
-    Set regex = CreateObject("VBScript.RegExp")
-    regex.Global = True
-    regex.IgnoreCase = True
-    regex.pattern = searchPattern
-
-    ' Search in footnotes only
+    Dim matchCount As Integer
+    Dim i As Integer
+    Dim char As String
+    
+    matchCount = 0
+    
     For Each footnote In ActiveDocument.Footnotes
         Set rng = footnote.Range
-        ' Find matches using regular expressions
-        Set matches = regex.Execute(rng.text)
-        count = count + matches.count
+        For i = 1 To Len(rng.text)
+            char = Mid(rng.text, i, 1)
+            
+            ' Check for a digit followed by a dash followed by another digit
+            If IsNumeric(char) Then
+                If i < Len(rng.text) And Mid(rng.text, i + 1, 1) = "-" Then
+                    If i + 1 < Len(rng.text) And IsNumeric(Mid(rng.text, i + 2, 1)) Then
+                        matchCount = matchCount + 1
+                        i = i + 2 ' Skip the next two characters as they are part of the match
+                    End If
+                End If
+            End If
+        Next i
+        DoEvents
     Next footnote
 
-    CountNumberDashNumberInFootnotes = count
+    'Debug.Print "Number of 'number-dash-number' matches in footnotes: " & matchCount
+    CountNumberDashNumberInFootnotes = matchCount
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function CountNumberDashNumberInFootnotes of Class BibleClass"
+    Debug.Print "!!! Error in Test 11 !!!"
+    Debug.Print "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function CountNumberDashNumberInFootnotes of Class BibleClass"
+    Resume PROC_EXIT
+
 End Function
 
 Private Function CountFindNumberDashNumber() As Integer
