@@ -92,6 +92,12 @@ PROC_ERR:
 End Property
 
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
+    Dim startTime As Double
+    Dim endTime As Double
+    Dim runTime As Double
+    
+    ' Record the start time
+    startTime = Timer
 
     'MsgBox "RunBibleClassTests"
     On Error GoTo PROC_ERR
@@ -139,6 +145,16 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Exit Function
     End Select
 
+    ' Record the end time
+    endTime = Timer
+    
+    ' Calculate the runtime
+    runTime = endTime - startTime
+    
+    ' Output the runtime in seconds and hundredths of a second
+    'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
+    Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+
     RunBibleClassTests = True
 
 PROC_EXIT:
@@ -151,6 +167,13 @@ PROC_ERR:
 End Function
 
 Private Function RunTest(num As Integer) As Boolean
+    Dim startTime As Double
+    Dim endTime As Double
+    Dim runTime As Double
+    
+    ' Record the start timer for each test
+    startTime = Timer
+    
     On Error GoTo PROC_ERR
     Select Case num
     Case 0
@@ -185,6 +208,12 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "The test number is outside the accepted range"
     End Select
 
+    endTime = Timer
+    runTime = endTime - startTime
+    
+    ' Output the runtime in seconds and hundredths of a second
+    'MsgBox "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
+    Debug.Print "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
 PROC_EXIT:
     Exit Function
     
@@ -449,12 +478,14 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
     Dim rng As Range
     Dim count As Long
     Dim styleName As String
-
+    Dim firstFound As Boolean
+    
     styleName = "cvmarker"
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
     rng.Find.style = styleName
+    firstFound = False
 
     With rng.Find
         .text = " [0-9]"
@@ -468,6 +499,11 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
     count = 0
     Do While rng.Find.Execute
         count = count + 1
+            If Not firstFound Then
+                rng.Select
+                firstFound = True
+                Exit Do ' Exit the loop after finding the first match
+            End If
         rng.Collapse wdCollapseEnd
     Loop
 
@@ -496,6 +532,14 @@ Private Function CountQuadrupleParagraphMarks() As Integer
         rng.Collapse wdCollapseEnd
     Loop
     
+    'MsgBox "CountQuadrupleParagraphMarks = " & count
+    'Dim answer As Integer
+    'answer = MsgBox("CountQuadrupleParagraphMarks Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
+    'If answer = vbYes Then
+    '    Resume
+    'Else
+    '    Stop
+    'End If
     CountQuadrupleParagraphMarks = count
 End Function
 

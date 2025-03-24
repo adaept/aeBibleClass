@@ -9,8 +9,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #060 -
 ' #059 -
-' #058 -
-' #057 -
+' #057 - Add ability to run only a specific test
 ' #055 - Update RunTest so expected gets values from Expected string array
 ' #053 - Add test for Footnote Reference followed by a space
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
@@ -34,6 +33,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #058 - Add timer to each test and output total runtime of all tests
     ' FIXED - #054 - Add string array Expected to aeBibleClass to and initialize with RunTest expected values
     ' FIXED - #056 - Add test for white paragraph marks
 ' 20250323 - v005
