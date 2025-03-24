@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #055 -
-' #054 -
-' #053 -
+' #060 -
+' #059 -
+' #058 -
+' #057 -
+' #055 - Update RunTest so expected gets values from Expected string array
+' #053 - Add test for Footnote Reference followed by a space
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
 ' #046 - Update style of cv marker to be smaller than Verse marker
@@ -31,7 +34,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
-' 20250325 - v005
+    ' FIXED - #054 - Add string array Expected to aeBibleClass to and initialize with RunTest expected values
+    ' FIXED - #056 - Add test for white paragraph marks
+' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
     ' FIXED - #051 - Add Yes/No continuation message to RunTest error
     ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it

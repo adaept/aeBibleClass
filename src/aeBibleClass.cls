@@ -43,6 +43,8 @@ Private Const vbext_ct_Document As Long = 100
 '
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
+' Define the Expected results for RunTest    1 2 3 4 5 6 7 8 9 10 11 12 13
+Private Const cstrExpectedArray As String = "0,0,0,0,0,0,0,7,1, 2, 0, 0, 0"
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -130,6 +132,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (10)
             RunTest (11)
             RunTest (12)
+            RunTest (13)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -169,13 +172,15 @@ Private Function RunTest(num As Integer) As Boolean
     Case 8
         Debug.Print "???", "Copy ()", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
     Case 9
-        Debug.Print "???", "Copy ()", "Test = " & num, CountNonBreakingSpaces, 0, "CountNonBreakingSpaces"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountNonBreakingSpaces, 1, "CountNonBreakingSpaces"
     Case 10
         Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
     Case 11
         Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
     Case 12
         Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasWithNoThemeColor, 0, "CountEmptyParasWithNoThemeColor"
+    Case 13
+        Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteParagraphMarks, 0, "CountWhiteParagraphMarks"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -195,6 +200,46 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountWhiteParagraphMarks() As Integer
+    Dim doc As Document
+    Dim rng As Range
+    Dim count As Integer
+    Dim firstFound As Boolean
+    
+    Set doc = ActiveDocument
+    count = 0
+    firstFound = False
+    
+    ' Initialize the range to search the entire document
+    Set rng = doc.Content
+    
+    ' Use the Find method to locate white paragraph marks
+    With rng.Find
+        .ClearFormatting
+        .font.Color = RGB(255, 255, 255) ' RGB value for white
+        .text = "^p"
+        .Forward = True
+        .Wrap = wdFindStop
+        
+        ' Loop through all occurrences
+        Do While .Execute
+            ' Check if the found paragraph mark has the white color
+            If rng.font.Color = RGB(255, 255, 255) Then
+                count = count + 1
+                ' Go to the first white paragraph mark found
+                If Not firstFound Then
+                    rng.Select
+                    firstFound = True
+                End If
+            End If
+        Loop
+    End With
+    
+    ' Display the count of white paragraph marks
+    'MsgBox "Number of white paragraph marks: " & count
+    CountWhiteParagraphMarks = count
 End Function
 
 Private Function CountEmptyParasWithNoThemeColor()
