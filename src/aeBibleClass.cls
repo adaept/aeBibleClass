@@ -45,6 +45,8 @@ Private Const vbext_ct_Document As Long = 100
 Private Const wdNotThemeColor As Long = -1
 ' Define the Expected results for RunTest    1 2 3 4 5 6 7 8 9 10 11 12 13
 Private Const cstrExpectedArray As String = "0,0,0,0,0,0,0,7,1, 2, 0, 0, 0"
+' Default use is to not time all tests individually
+Private Const bTimeAllTests As Boolean = False
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -153,7 +155,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
-    Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    If Not bTimeAllTests Then Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
 
     RunBibleClassTests = True
 
@@ -213,7 +215,8 @@ Private Function RunTest(num As Integer) As Boolean
     
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
-    Debug.Print "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
+    If bTimeAllTests Then Debug.Print "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
+
 PROC_EXIT:
     Exit Function
     
