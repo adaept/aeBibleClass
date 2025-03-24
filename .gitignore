@@ -1,6 +1,7 @@
 ko.*
 *.xsl
 /maps
+/Bibles
 
 #################
 ## Microsoft Word
