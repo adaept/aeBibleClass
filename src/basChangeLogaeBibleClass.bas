@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #064 -
 ' #063 -
 ' #062 -
-' #061 -
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
 ' #057 - Add ability to run only a specific test
 ' #055 - Update RunTest so expected gets values from Expected string array
@@ -37,9 +36,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
-    ' FIXED - #054 - Add string array Expected to aeBibleClass to and initialize with RunTest expected values
+    ' OBSOLETE - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #056 - Add test for white paragraph marks
 ' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error

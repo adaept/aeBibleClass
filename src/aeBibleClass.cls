@@ -43,10 +43,10 @@ Private Const vbext_ct_Document As Long = 100
 '
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
-' Define the Expected results for RunTest    1 2 3 4 5 6 7 8 9 10 11 12 13
-Private Const cstrExpectedArray As String = "0,0,0,0,0,0,0,7,1, 2, 0, 0, 0"
 ' Default use is to not time all tests individually
 Private Const bTimeAllTests As Boolean = False
+' Used to store Expected results
+Private oneBasedArray As Variant
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -93,6 +93,50 @@ PROC_ERR:
 
 End Property
 
+Function ConvertToOneBasedArray(values As Variant) As Variant
+    Dim strArray() As String
+    Dim i As Integer
+    
+    ' Resize the array to start from index 1
+    ReDim strArray(1 To UBound(values) - LBound(values) + 1)
+    
+    ' Store the values in the array starting from index 1
+    For i = 1 To UBound(values) - LBound(values) + 1
+        strArray(i) = values(i - 1 + LBound(values))
+    Next i
+    
+    ' Return the 1-based array
+    ConvertToOneBasedArray = strArray
+End Function
+
+Private Sub Expected1BasedArray()
+    Dim values As Variant
+    Dim i As Integer
+    Dim outputString As String
+    
+    ' Define the Expected RunTest result values to store in the array
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0)
+    
+    ' Convert to a 1-based array
+    oneBasedArray = ConvertToOneBasedArray(values)
+    
+    ' Output the values in the 1-based array
+    'For i = 1 To UBound(oneBasedArray)
+    '    Debug.Print "Index " & i & ": " & oneBasedArray(i)
+    'Next i
+
+    ' Access the array elements to write a string output on one line
+    For i = LBound(oneBasedArray) To UBound(oneBasedArray)
+        outputString = outputString & "Test(" & i & ")" & oneBasedArray(i) & " "
+    Next i
+    ' Trim the trailing space
+    outputString = Trim(outputString)
+
+    Debug.Print outputString
+
+End Sub
+
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
     Dim startTime As Double
     Dim endTime As Double
@@ -126,8 +170,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
+            Call Expected1BasedArray
             Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
-            RunTest (0)
             RunTest (1)
             RunTest (2)
             RunTest (3)
@@ -141,6 +185,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (11)
             RunTest (12)
             RunTest (13)
+            RunTest (14)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -178,33 +223,33 @@ Private Function RunTest(num As Integer) As Boolean
     
     On Error GoTo PROC_ERR
     Select Case num
-    Case 0
-        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
     Case 1
-        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
     Case 2
-        Debug.Print "???", "Copy ()", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
     Case 3
-        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
     Case 4
-        Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
     Case 5
-        Debug.Print "???", "Copy ()", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
     Case 6
-        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
     Case 7
-        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
     Case 8
-        Debug.Print "???", "Copy ()", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
     Case 9
-        Debug.Print "???", "Copy ()", "Test = " & num, CountNonBreakingSpaces, 1, "CountNonBreakingSpaces"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
     Case 10
-        Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountNonBreakingSpaces, 1, "CountNonBreakingSpaces"
     Case 11
-        Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
     Case 12
-        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasWithNoThemeColor, 0, "CountEmptyParasWithNoThemeColor"
+        Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
     Case 13
+        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasWithNoThemeColor, 0, "CountEmptyParasWithNoThemeColor"
+    Case 14
         Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteParagraphMarks, 0, "CountWhiteParagraphMarks"
     Case Else
         Debug.Print "The test number is outside the accepted range"
