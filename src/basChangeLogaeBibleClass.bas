@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #080 -
 ' #079 -
 ' #078 -
-' #077 -
 ' #076 - Update all Arial Black emphasis to the style
 ' #075 - Make style for Arial Black 8 pt emphasis
 ' #074 - Set start of all Heading 1 to 144 points and other relavent sections
@@ -34,20 +33,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '               Adopts smart quotes and includes nested quotes for clarity.
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
-' #068 - Check Exek 1 to 26 for proper use of "'" and Ezek 39 to end of book for "'"
-'        Double quotes to indicate the start and end of the direct speech.
-'        Single quotes within the double quotes to emphasize the words spoken by God.
-'        Closing double quotes to complete the direct speech.
-'           Opening double quote: “ (ASCII code: 147 or Unicode: U+201C)
-'           Closing double quote: ” (ASCII code: 148 or Unicode: U+201D)
-'           Opening single quote: ‘ (ASCII code: 145 or Unicode: U+2018)
-'           Closing single quote: ’ (ASCII code: 146 or Unicode: U+2019)
-'        These smart quotes are different from the straight quotes (" and ') which have ASCII codes 34 and 39, respectively.
-'        To insert these characters manually, you can use the following key combinations in Word:
-'           Opening double quote: Alt + 0147
-'           Closing double quote: Alt + 0148
-'           Opening single quote: Alt + 0145
-'           Closing single quote: Alt + 0146
 ' #067 - Add test to Count Red Footnote References
 ' #066 - Add tests to count paragraphs, empty,
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
@@ -73,7 +58,21 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
-    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
+    ' FIXED - #077 - Check Ezek for three in a row closing quotes
+    ' FIXED - #068 - Check Ezek 1 to 26 for proper use of "'" and Ezek 39 to end of book for "'"
+'        Double quotes to indicate the start and end of the direct speech.
+'        Single quotes within the double quotes to emphasize the words spoken by God.
+'        Closing double quotes to complete the direct speech.
+'           Opening double quote: “ (ASCII code: 147 or Unicode: U+201C)
+'           Closing double quote: ” (ASCII code: 148 or Unicode: U+201D)
+'           Opening single quote: ‘ (ASCII code: 145 or Unicode: U+2018)
+'           Closing single quote: ’ (ASCII code: 146 or Unicode: U+2019)
+'        These smart quotes are different from the straight quotes (" and ') which have ASCII codes 34 and 39, respectively.
+'        To insert these characters manually, you can use the following key combinations in Word:
+'           Opening double quote: Alt + 0147
+'           Closing double quote: Alt + 0148
+'           Opening single quote: Alt + 0145
+'           Closing single quote: Alt + 0146    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
     ' FIXED - #063 - Update RunTest so it will allow a range of tests to be run (15 tests range)
     ' FIXED - #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
     ' OBSOLETE - Replaced with #062 - #036 - Add test for h1 pages that have heading
