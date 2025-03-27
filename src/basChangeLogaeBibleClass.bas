@@ -7,8 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #075 -
-' #074 -
+' #080 -
+' #079 -
+' #078 -
+' #077 -
+' #076 - Update all Arial Black emphasis to the style
+' #075 - Make style for Arial Black 8 pt emphasis
+' #074 - Set start of all Heading 1 to 144 points and other relavent sections
 ' #073 - Run test to verify count of red footnote reference is zero
 ' #072 - Check red footnote reference from Genesis
 ' #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
@@ -45,16 +50,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Closing single quote: Alt + 0146
 ' #067 - Add test to Count Red Footnote References
 ' #066 - Add tests to count paragraphs, empty,
-' #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
-' #064 - When bTimeAllTests is True it does not show total time
-' #063 - Update RunTest to it will allow a range of tests to be run
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
 ' #057 - Add ability to run only a specific test
 ' #053 - Add test for Footnote Reference followed by a space
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
 ' #046 - Update style of cv marker to be smaller than Verse marker
-' #045 - Test call to SILAS from robbon using customUI.xml OnHelloWorldButtonClick routine
+' #045 - Test call to SILAS from ribbon using customUI.xml OnHelloWorldButtonClick routine
 ' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
 ' #043 - Add extract to USFM routine
 ' #042 - Add readme to aewordgit
@@ -68,9 +70,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
-' #016 - Add funtion to print pass/fail based on comparing Result with Expected
+' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
+    ' FIXED - #063 - Update RunTest so it will allow a range of tests to be run (15 tests range)
+    ' FIXED - #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
     ' OBSOLETE - Replaced with #062 - #036 - Add test for h1 pages that have heading
     ' FIXED - #062 - Add test for Sections With Different FirstPage selected
     ' FIXED - #055 - Update RunTest so expected gets values from Expected string array

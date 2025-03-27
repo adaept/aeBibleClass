@@ -213,7 +213,7 @@ Test16:     RunTest (16)
     
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
-    If Not bTimeAllTests Then Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
 
     RunBibleClassTests = True
 
