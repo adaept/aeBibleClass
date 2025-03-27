@@ -44,7 +44,8 @@ Private Const vbext_ct_Document As Long = 100
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
-Private Const bTimeAllTests As Boolean = False
+Private Const bTimeAllTests As Boolean = True
+Private Const bGoTo16 As Boolean = True
 ' Used to store Expected results
 Private oneBasedArray As Variant
 
@@ -115,8 +116,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18 19 20
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0)
     
     ' Convert to a 1-based array
     oneBasedArray = ConvertToOneBasedArray(values)
@@ -126,13 +127,21 @@ Private Sub Expected1BasedArray()
     '    Debug.Print "Index " & i & ": " & oneBasedArray(i)
     'Next i
 
-    ' Access the array elements to write a string output on one line
-    For i = LBound(oneBasedArray) To UBound(oneBasedArray)
+    ' Access the array elements to write a string output of 15 expected results on one line
+    For i = LBound(oneBasedArray) To 15
         outputString = outputString & "Test(" & i & ")" & oneBasedArray(i) & " "
+        ' Trim the trailing space
+        outputString = Trim(outputString)
     Next i
-    ' Trim the trailing space
-    outputString = Trim(outputString)
+    Debug.Print outputString
 
+    ' Next results
+    outputString = ""
+    For i = 16 To UBound(oneBasedArray)
+        outputString = outputString & "Test(" & i & ")" & oneBasedArray(i) & " "
+        ' Trim the trailing space
+        outputString = Trim(outputString)
+    Next i
     Debug.Print outputString
 
 End Sub
@@ -172,6 +181,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error GoTo PROC_ERR
             Call Expected1BasedArray
             Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+            If bGoTo16 Then GoTo Test16
             RunTest (1)
             RunTest (2)
             RunTest (3)
@@ -186,6 +196,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (12)
             RunTest (13)
             RunTest (14)
+            RunTest (15)
+Test16:     RunTest (16)
+            RunTest (17)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -251,6 +264,12 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasWithNoThemeColor, 0, "CountEmptyParasWithNoThemeColor"
     Case 14
         Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteParagraphMarks, 0, "CountWhiteParagraphMarks"
+    Case 15
+        Debug.Print "???", "Copy ()", "Test = " & num, CountSectionsWithDifferentFirstPage, -1, "CountSectionsWithDifferentFirstPage"
+    Case 16
+        Debug.Print "???", "Copy ()", "Test = " & num, CountTotalParagraphs, -1, "CountTotalParagraphs"
+    Case 17
+        Debug.Print "???", "Copy ()", "Test = " & num, CountRedFootnoteReferences, 0, "CountRedFootnoteReferences"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -277,6 +296,57 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountRedFootnoteReferences() As Integer
+    Dim footnote As footnote
+    Dim redCount As Long
+    Dim redColor As Long
+    
+    ' Define the red color using RGB values
+    redColor = RGB(255, 0, 0)
+    
+    ' Initialize the count
+    redCount = 0
+    
+    ' Loop through each footnote in the document
+    For Each footnote In ActiveDocument.Footnotes
+        If footnote.Reference.font.Color = redColor Then
+            redCount = redCount + 1
+        End If
+    Next footnote
+    
+    ' Print the count to the console
+    'Debug.Print "Number of footnote references with red font: " & redCount
+    CountRedFootnoteReferences = redCount
+End Function
+
+Private Function CountTotalParagraphs() As Long
+    CountTotalParagraphs = ActiveDocument.Paragraphs.count
+End Function
+
+Private Function CountSectionsWithDifferentFirstPage() As Integer
+    Dim doc As Document
+    Dim sec As Section
+    Dim count As Integer
+    
+    Application.ScreenUpdating = False
+    
+    Set doc = ActiveDocument
+    count = 0
+    
+    ' Loop through each section in the document
+    For Each sec In doc.Sections
+        ' Check if the section does not have "Different First Page" selected
+        If sec.PageSetup.DifferentFirstPageHeaderFooter Then
+            count = count + 1
+        End If
+    Next sec
+    
+    Application.ScreenUpdating = True
+    
+    'MsgBox "Number of sections with 'Different First Page' selected: " & count
+    CountSectionsWithDifferentFirstPage = count
 End Function
 
 Private Function CountWhiteParagraphMarks() As Integer
