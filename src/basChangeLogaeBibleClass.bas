@@ -7,13 +7,49 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #065 -
-' #064 -
-' #063 -
-' #062 -
+' #075 -
+' #074 -
+' #073 - Run test to verify count of red footnote reference is zero
+' #072 - Check red footnote reference from Genesis
+' #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
+' #070 - Word automatically adjusts smart quotes to match the context of the text
+'        Add test for Verse marker followed by any closing quote
+' #069 - Use WEB.doc to get a proper count of "'" and make sure REV is correct
+'        Verify smart quotes
+'        Several Bible versions use smart quotes for opening and closing quotations,
+'        including the triple quote style for verses like Ezekiel 39:7
+'        Additional example versions that follow this style:
+'           New International Version (NIV):
+'               Uses smart quotes for direct speech and often includes nested quotes for emphasis.
+'           English Standard Version (ESV):
+'               Employs smart quotes and follows similar formatting conventions for nested quotations.
+'           New Living Translation (NLT):
+'               Uses smart quotes and maintains clear distinctions between different levels of speech.
+'           New King James Version (NKJV):
+'               Adopts smart quotes and includes nested quotes for clarity.
+'           Christian Standard Bible (CSB):
+'               Utilizes smart quotes and nested quotations for direct speech.
+' #068 - Check Exek 1 to 26 for proper use of "'" and Ezek 39 to end of book for "'"
+'        Double quotes to indicate the start and end of the direct speech.
+'        Single quotes within the double quotes to emphasize the words spoken by God.
+'        Closing double quotes to complete the direct speech.
+'           Opening double quote: “ (ASCII code: 147 or Unicode: U+201C)
+'           Closing double quote: ” (ASCII code: 148 or Unicode: U+201D)
+'           Opening single quote: ‘ (ASCII code: 145 or Unicode: U+2018)
+'           Closing single quote: ’ (ASCII code: 146 or Unicode: U+2019)
+'        These smart quotes are different from the straight quotes (" and ') which have ASCII codes 34 and 39, respectively.
+'        To insert these characters manually, you can use the following key combinations in Word:
+'           Opening double quote: Alt + 0147
+'           Closing double quote: Alt + 0148
+'           Opening single quote: Alt + 0145
+'           Closing single quote: Alt + 0146
+' #067 - Add test to Count Red Footnote References
+' #066 - Add tests to count paragraphs, empty,
+' #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
+' #064 - When bTimeAllTests is True it does not show total time
+' #063 - Update RunTest to it will allow a range of tests to be run
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
 ' #057 - Add ability to run only a specific test
-' #055 - Update RunTest so expected gets values from Expected string array
 ' #053 - Add test for Footnote Reference followed by a space
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
@@ -27,7 +63,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #039 - Replace manual TOC with auto-generated version
 ' #038 - Add test for no empty para after h2 heading
 ' #037 - Add updated maps in color
-' #036 - Add test for h1 pages that have heading
 ' #035 - Add test for page numbers of h1 on odd or even pages
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
@@ -36,6 +71,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add funtion to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' OBSOLETE - Replaced with #062 - #036 - Add test for h1 pages that have heading
+    ' FIXED - #062 - Add test for Sections With Different FirstPage selected
+    ' FIXED - #055 - Update RunTest so expected gets values from Expected string array
     ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
