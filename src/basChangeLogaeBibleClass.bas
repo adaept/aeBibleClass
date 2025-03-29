@@ -7,12 +7,21 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #085 -
-' #084 -
-' #083 -
+' #095 -
+' #094 -
+' #093 -
+' #092 -
+' #091 -
+' #090 -
+' #089 -
+' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
+' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
+' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
+' #085 - Add routine to tools to check the vertical position of a paragraph
+' #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
+' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #082 - Fix Word paragraph style so no empty paragraphs are needed
 ' #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
-' #079 - Resolve issue around name of REV Bible
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
 ' #075 - Add style for Arial Black 8 pt emphasis.
 ' #073 - Run test to verify count of red footnote reference is zero
@@ -50,7 +59,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #041 - Add auto-generated TOC for maps
 ' #040 - Add figure headings to maps - use map vs fig?
 ' #039 - Replace manual TOC with auto-generated version
-' #038 - Add test for no empty para after h2 heading
 ' #037 - Add updated maps in color
 ' #035 - Add test for page numbers of h1 on odd or even pages
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
@@ -60,6 +68,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #038 - Add test for no empty para after h2 headings in doc - total count should be 0
+    ' FIXED - #079 - Resolve issue around name of REV Bible - see #083
     ' FIXED - #078 - Add test to count number of h1 heading, should be 66 for Bible books
     ' FIXED - #074 - Set Heading 1 to 144 points before, follows section break so each book is on a new page with
     '           no empty first para, and delete existing 144 pt empty para

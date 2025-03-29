@@ -44,7 +44,7 @@ Private Const vbext_ct_Document As Long = 100
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
-Private Const bTimeAllTests As Boolean = True
+Private Const bTimeAllTests As Boolean = False
 Private Const bGoTo16 As Boolean = True
 ' Used to store Expected results
 Private oneBasedArray As Variant
@@ -116,8 +116,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18 19 20
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0)
     
     ' Convert to a 1-based array
     oneBasedArray = ConvertToOneBasedArray(values)
@@ -200,6 +200,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
 Test16:     RunTest (16)
             RunTest (17)
             RunTest (18)
+            RunTest (19)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -273,6 +274,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountRedFootnoteReferences, 0, "CountRedFootnoteReferences"
     Case 18
         Debug.Print "???", "Copy ()", "Test = " & num, CountHeading1, 66, "CountHeading1"
+    Case 19
+        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasAfterH2, 0, "CountEmptyParasAfterH2"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -299,6 +302,34 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountEmptyParasAfterH2() As Integer
+    Dim para As paragraph
+    Dim emptyParaCount As Long
+    Dim nextPara As paragraph
+    
+    ' Initialize the count
+    emptyParaCount = 0
+    
+    ' Loop through each paragraph in the document
+    For Each para In ActiveDocument.Paragraphs
+        ' Check if the paragraph style is Heading 2
+        If para.style = ActiveDocument.Styles("Heading 2") Then
+            ' Check the next paragraph
+            Set nextPara = para.Range.Next(Unit:=wdParagraph, count:=1).Paragraphs(1)
+            If Not nextPara Is Nothing Then
+                ' Check if the next paragraph is empty
+                If Len(Trim(nextPara.Range.text)) = 1 Then ' Adjusted to check for a single paragraph mark
+                    emptyParaCount = emptyParaCount + 1
+                End If
+            End If
+        End If
+    Next para
+    
+    ' Print the count to the console
+    'Debug.Print "Number of empty paragraphs immediately after Heading 2: " & emptyParaCount
+    CountEmptyParasAfterH2 = emptyParaCount
 End Function
 
 Private Function CountHeading1() As Integer
