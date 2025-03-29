@@ -117,7 +117,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18 19 20
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66)
     
     ' Convert to a 1-based array
     oneBasedArray = ConvertToOneBasedArray(values)
@@ -129,7 +129,7 @@ Private Sub Expected1BasedArray()
 
     ' Access the array elements to write a string output of 15 expected results on one line
     For i = LBound(oneBasedArray) To 15
-        outputString = outputString & "Test(" & i & ")" & oneBasedArray(i) & " "
+        outputString = outputString & " Test(" & i & ")" & oneBasedArray(i) & " "
         ' Trim the trailing space
         outputString = Trim(outputString)
     Next i
@@ -138,7 +138,7 @@ Private Sub Expected1BasedArray()
     ' Next results
     outputString = ""
     For i = 16 To UBound(oneBasedArray)
-        outputString = outputString & "Test(" & i & ")" & oneBasedArray(i) & " "
+        outputString = outputString & " Test(" & i & ")" & oneBasedArray(i) & " "
         ' Trim the trailing space
         outputString = Trim(outputString)
     Next i
@@ -199,6 +199,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (15)
 Test16:     RunTest (16)
             RunTest (17)
+            RunTest (18)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -270,6 +271,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountTotalParagraphs, -1, "CountTotalParagraphs"
     Case 17
         Debug.Print "???", "Copy ()", "Test = " & num, CountRedFootnoteReferences, 0, "CountRedFootnoteReferences"
+    Case 18
+        Debug.Print "???", "Copy ()", "Test = " & num, CountHeading1, 66, "CountHeading1"
     Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -296,6 +299,26 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountHeading1() As Integer
+    Dim para As paragraph
+    Dim heading1Count As Long
+    
+    ' Initialize the count
+    heading1Count = 0
+    
+    ' Loop through each paragraph in the document
+    For Each para In ActiveDocument.Paragraphs
+        ' Check if the paragraph style is Heading 1
+        If para.style = ActiveDocument.Styles("Heading 1") Then
+            heading1Count = heading1Count + 1
+        End If
+    Next para
+    
+    ' Print the count to the console
+    'Debug.Print "Number of Heading 1 paragraphs: " & heading1Count
+    CountHeading1 = heading1Count
 End Function
 
 Private Function CountRedFootnoteReferences() As Integer

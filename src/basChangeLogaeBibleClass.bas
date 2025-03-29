@@ -7,14 +7,16 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #080 -
-' #079 -
-' #078 -
-' #076 - Update all Arial Black emphasis to the style
-' #075 - Make style for Arial Black 8 pt emphasis
-' #074 - Set start of all Heading 1 to 144 points and other relavent sections
+' #085 -
+' #084 -
+' #083 -
+' #082 - Fix Word paragraph style so no empty paragraphs are needed
+' #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
+' #079 - Resolve issue around name of REV Bible
+' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
+' #075 - Add style for Arial Black 8 pt emphasis.
 ' #073 - Run test to verify count of red footnote reference is zero
-' #072 - Check red footnote reference from Genesis
+' #072 - Check red footnote reference from Genesis to end of Study Bible
 ' #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote
@@ -58,6 +60,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #078 - Add test to count number of h1 heading, should be 66 for Bible books
+    ' FIXED - #074 - Set Heading 1 to 144 points before, follows section break so each book is on a new page with
+    '           no empty first para, and delete existing 144 pt empty para
+    ' FIXED - #081 - Check Books with only one chapter and verify references only use verse number per SBL abbreviations
+    '           Obad, Phlm, 2 John, 3 John, Jude
     ' FIXED - #077 - Check Ezek for three in a row closing quotes
     ' FIXED - #068 - Check Ezek 1 to 26 for proper use of "'" and Ezek 39 to end of book for "'"
 '        Double quotes to indicate the start and end of the direct speech.
