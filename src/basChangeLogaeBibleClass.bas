@@ -24,9 +24,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
 ' #075 - Add style for Arial Black 8 pt emphasis.
-' #073 - Run test to verify count of red footnote reference is zero
-' #072 - Check red footnote reference from Genesis to end of Study Bible
-' #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure REV is correct
@@ -68,6 +65,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #073 - Run test to verify count of red footnote reference is zero
+    ' FIXED - #072 - Check red footnote reference from Genesis to end of Study Bible
+    ' FIXED - #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
     ' FIXED - #038 - Add test for no empty para after h2 headings in doc - total count should be 0
     ' FIXED - #079 - Resolve issue around name of REV Bible - see #083
     ' FIXED - #078 - Add test to count number of h1 heading, should be 66 for Bible books
