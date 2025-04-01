@@ -117,7 +117,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0)
     
     ' Convert to a 1-based array
     oneBasedArray = ConvertToOneBasedArray(values)
@@ -201,6 +201,7 @@ Test16:     RunTest (16)
             RunTest (17)
             RunTest (18)
             RunTest (19)
+            RunTest (20)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -276,7 +277,9 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountHeading1, 66, "CountHeading1"
     Case 19
         Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasAfterH2, 0, "CountEmptyParasAfterH2"
-    Case Else
+    Case 20
+        Debug.Print "???", "Copy ()", "Test = " & num, CountFootnotesFollowedByDigit, 0, "CountFootnotesFollowedByDigit"
+   Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
 
@@ -302,6 +305,49 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountFootnotesFollowedByDigit() As Integer
+    Dim doc As Document
+    Dim footnote As footnote
+    Dim rng As Range
+    Dim digitCount As Long
+    Dim debugInfo As String
+    Dim asciiValue As Integer
+    
+    ' Initialize variables
+    Set doc = ActiveDocument
+    digitCount = 0
+    debugInfo = "Footnote References and Following Characters (ASCII Values):" & vbCrLf
+    
+    ' Loop through each footnote in the document
+    For Each footnote In doc.Footnotes
+        Set rng = footnote.Reference
+        rng.Collapse wdCollapseEnd ' Collapse the range to the end of the footnote reference
+        rng.MoveEnd wdCharacter, 1 ' Move the range to include the next character
+        
+        ' Get the ASCII value of the character
+        asciiValue = Asc(rng.text)
+        
+        ' Check if the character after the footnote reference is a digit (ASCII values 48-57)
+        If asciiValue >= 48 And asciiValue <= 57 Then
+            digitCount = digitCount + 1
+        End If
+        
+        ' Add debug information
+        debugInfo = debugInfo & "Footnote " & footnote.Index & ": '" & rng.text & "' (ASCII: " & asciiValue & ")" & vbCrLf
+    Next footnote
+    
+    ' Display the count of footnote references followed by a digit
+    'MsgBox "Number of footnote references followed by a digit: " & digitCount
+    
+    ' Display debug information
+    'MsgBox debugInfo
+    'Debug.Print debugInfo
+ 
+    ' Print the result to the console
+    'Debug.Print "Number of footnote references followed by a digit: " & digitCount
+    CountFootnotesFollowedByDigit = digitCount
 End Function
 
 Private Function CountEmptyParasAfterH2() As Integer
