@@ -11,9 +11,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #094 -
 ' #093 -
 ' #092 -
-' #091 -
-' #090 -
-' #089 -
+' #091 - Add test for CountSpacesAfterFootnotes
+' #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
+' #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
 ' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
