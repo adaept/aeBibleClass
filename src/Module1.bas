@@ -718,47 +718,4 @@ Sub ChangeSpecificColor()
     Call ChangeFontColorRGB(255, 0, 1, 255, 0, 0)
 End Sub
 
-Sub CountSpacesAfterFootnotes()
-    Dim doc As Document
-    Dim footnote As footnote
-    Dim rng As Range
-    Dim spaceCount As Long
-    Dim debugInfo As String
-    Dim asciiValue As Integer
-    
-    ' Initialize variables
-    Set doc = ActiveDocument
-    spaceCount = 0
-    debugInfo = "Footnote References and Following Characters (ASCII Values):" & vbCrLf
-    
-    ' Loop through each footnote in the document
-    For Each footnote In doc.Footnotes
-        Set rng = footnote.Reference
-        rng.Collapse wdCollapseEnd ' Collapse the range to the end of the footnote reference
-        rng.MoveEnd wdCharacter, 1 ' Move the range to include the next character
-        
-        ' Get the ASCII value of the character
-        asciiValue = Asc(rng.text)
-        
-        ' Exclude ASCII value 13 (carriage return)
-        If asciiValue <> 13 Then
-            ' Add debug information
-            If asciiValue <> 32 Then    ' space (ASCII value 32)
-                debugInfo = debugInfo & "Fn " & footnote.Index & ": '" & rng.text & "' (ASC " & asciiValue & "), "
-            End If
-            
-            If asciiValue = 32 Then
-                spaceCount = spaceCount + 1
-            End If
-        End If
-    Next footnote
-    
-    ' Display the count of spaces after footnote references
-    'MsgBox "Number of spaces after footnote references: " & spaceCount
-    ' Display debug information
-    'MsgBox debugInfo
-    
-    ' Print the result to the console
-    Debug.Print "Number of spaces after footnote references: " & spaceCount
-    Debug.Print debugInfo
-End Sub
+

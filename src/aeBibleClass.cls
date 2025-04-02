@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.5"
-Private Const BibleClassVERSION_DATE As String = "March 23, 2025"
+Private Const BibleClassVERSION As String = "0.0.6"
+Private Const BibleClassVERSION_DATE As String = "April 2, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
@@ -116,8 +116,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1)
     
     ' Convert to a 1-based array
     oneBasedArray = ConvertToOneBasedArray(values)
@@ -202,6 +202,7 @@ Test16:     RunTest (16)
             RunTest (18)
             RunTest (19)
             RunTest (20)
+            RunTest (21)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -279,6 +280,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasAfterH2, 0, "CountEmptyParasAfterH2"
     Case 20
         Debug.Print "???", "Copy ()", "Test = " & num, CountFootnotesFollowedByDigit, 0, "CountFootnotesFollowedByDigit"
+    Case 21
+        Debug.Print "???", "Copy ()", "Test = " & num, CountSpacesAfterFootnotes, -1, "CountSpacesAfterFootnotes"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -305,6 +308,53 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountSpacesAfterFootnotes() As Integer
+' Also shows Footnote References and Following Characters (ASCII Values)
+    Dim doc As Document
+    Dim footnote As footnote
+    Dim rng As Range
+    Dim spaceCount As Long
+    Dim debugInfo As String
+    Dim asciiValue As Integer
+    
+    ' Initialize variables
+    Set doc = ActiveDocument
+    spaceCount = 0
+    debugInfo = "Footnote References and Following Characters (ASCII Values):" & vbCrLf
+    
+    ' Loop through each footnote in the document
+    For Each footnote In doc.Footnotes
+        Set rng = footnote.Reference
+        rng.Collapse wdCollapseEnd ' Collapse the range to the end of the footnote reference
+        rng.MoveEnd wdCharacter, 1 ' Move the range to include the next character
+        
+        ' Get the ASCII value of the character
+        asciiValue = Asc(rng.text)
+        
+        ' Exclude ASCII value 13 (carriage return)
+        If asciiValue <> 13 Then
+            ' Add debug information
+            If asciiValue <> 32 Then    ' space (ASCII value 32)
+                debugInfo = debugInfo & "Fn " & footnote.Index & ": '" & rng.text & "' (ASC " & asciiValue & "), "
+            End If
+            
+            If asciiValue = 32 Then
+                spaceCount = spaceCount + 1
+            End If
+        End If
+    Next footnote
+    
+    ' Display the count of spaces after footnote references
+    'MsgBox "Number of spaces after footnote references: " & spaceCount
+    ' Display debug information
+    'MsgBox debugInfo
+    
+    ' Print the result to the console
+    'Debug.Print "Number of spaces after footnote references: " & spaceCount
+    Debug.Print debugInfo
+    CountSpacesAfterFootnotes = spaceCount
 End Function
 
 Private Function CountFootnotesFollowedByDigit() As Integer

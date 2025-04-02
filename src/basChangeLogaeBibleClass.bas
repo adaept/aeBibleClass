@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #095 -
 ' #094 -
 ' #093 -
-' #091 - Add test for CountSpacesAfterFootnotes
 ' #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
 ' #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
@@ -64,6 +63,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+' 20250402 - v006
+    ' FIXED - #091 - Add test for CountSpacesAfterFootnotes - also shows Footnote References and Following Chars (ASCII Val)
     ' FIXED - #092 - Add test for CountFootnotesFollowedByDigit
     ' FIXED - #073 - Run test to verify count of red footnote reference is zero
     ' FIXED - #072 - Check red footnote reference from Genesis to end of Study Bible
