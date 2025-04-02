@@ -47,7 +47,7 @@ Private Const wdNotThemeColor As Long = -1
 Private Const bTimeAllTests As Boolean = False
 Private Const bGoTo16 As Boolean = True
 ' Used to store Expected results
-Private oneBasedArray As Variant
+Private oneBasedExpectedArray As Variant
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -120,16 +120,16 @@ Private Sub Expected1BasedArray()
     values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1)
     
     ' Convert to a 1-based array
-    oneBasedArray = ConvertToOneBasedArray(values)
+    oneBasedExpectedArray = ConvertToOneBasedArray(values)
     
     ' Output the values in the 1-based array
-    'For i = 1 To UBound(oneBasedArray)
-    '    Debug.Print "Index " & i & ": " & oneBasedArray(i)
+    'For i = 1 To UBound(oneBasedExpectedArray)
+    '    Debug.Print "Index " & i & ": " & oneBasedExpectedArray(i)
     'Next i
 
     ' Access the array elements to write a string output of 15 expected results on one line
-    For i = LBound(oneBasedArray) To 15
-        outputString = outputString & " Test(" & i & ")" & oneBasedArray(i) & " "
+    For i = LBound(oneBasedExpectedArray) To 15
+        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
         ' Trim the trailing space
         outputString = Trim(outputString)
     Next i
@@ -137,8 +137,8 @@ Private Sub Expected1BasedArray()
 
     ' Next results
     outputString = ""
-    For i = 16 To UBound(oneBasedArray)
-        outputString = outputString & " Test(" & i & ")" & oneBasedArray(i) & " "
+    For i = 16 To UBound(oneBasedExpectedArray)
+        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
         ' Trim the trailing space
         outputString = Trim(outputString)
     Next i
@@ -234,6 +234,9 @@ Private Function RunTest(num As Integer) As Boolean
     Dim startTime As Double
     Dim endTime As Double
     Dim runTime As Double
+    Dim PassFail As String
+    Dim Result As Integer
+    Dim Expected As Integer
     
     ' Record the start timer for each test
     startTime = Timer
@@ -241,7 +244,14 @@ Private Function RunTest(num As Integer) As Boolean
     On Error GoTo PROC_ERR
     Select Case num
     Case 1
-        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpaces, 0, "CountDoubleSpaces"
+        Result = CountDoubleSpaces
+        Expected = oneBasedExpectedArray(1)
+        If Result = Expected Then
+            PassFail = "PASS"
+        Else
+            PassFail = "FAIL"
+        End If
+        Debug.Print PassFail, "Copy ()", "Test = " & num, Result, Expected, "CountDoubleSpaces"
     Case 2
         Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
     Case 3
@@ -271,9 +281,23 @@ Private Function RunTest(num As Integer) As Boolean
     Case 15
         Debug.Print "???", "Copy ()", "Test = " & num, CountSectionsWithDifferentFirstPage, -1, "CountSectionsWithDifferentFirstPage"
     Case 16
-        Debug.Print "???", "Copy ()", "Test = " & num, CountTotalParagraphs, -1, "CountTotalParagraphs"
+        Result = CountTotalParagraphs
+        Expected = oneBasedExpectedArray(16)
+        If Result = Expected Then
+            PassFail = "PASS"
+        Else
+            PassFail = "FAIL"
+        End If
+        Debug.Print PassFail, "Copy ()", "Test = " & num, Result, Expected, "CountTotalParagraphs"
     Case 17
-        Debug.Print "???", "Copy ()", "Test = " & num, CountRedFootnoteReferences, 0, "CountRedFootnoteReferences"
+        Result = CountRedFootnoteReferences
+        Expected = oneBasedExpectedArray(17)
+        If Result = Expected Then
+            PassFail = "PASS"
+        Else
+            PassFail = "FAIL"
+        End If
+        Debug.Print PassFail, "Copy ()", "Test = " & num, Result, Expected, "CountRedFootnoteReferences"
     Case 18
         Debug.Print "???", "Copy ()", "Test = " & num, CountHeading1, 66, "CountHeading1"
     Case 19

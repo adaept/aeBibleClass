@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #095 -
 ' #094 -
-' #093 -
 ' #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
 ' #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
@@ -19,7 +18,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #082 - Fix Word paragraph style so no empty paragraphs are needed
-' #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
 ' #075 - Add style for Arial Black 8 pt emphasis.
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
@@ -63,6 +61,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #093 - Add initial PassFail test for result and expected
+    ' FIXED - #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
 ' 20250402 - v006
     ' FIXED - #091 - Add test for CountSpacesAfterFootnotes - also shows Footnote References and Following Chars (ASCII Val)
     ' FIXED - #092 - Add test for CountFootnotesFollowedByDigit
