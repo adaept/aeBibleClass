@@ -45,9 +45,12 @@ Private Const vbext_ct_Document As Long = 100
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
 Private Const bTimeAllTests As Boolean = False
-Private Const bGoTo16 As Boolean = True
+Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
+Private Result As Integer
+Private Expected As Integer
+'=====================================================
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -117,11 +120,11 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
-    
+
     ' Output the values in the 1-based array
     'For i = 1 To UBound(oneBasedExpectedArray)
     '    Debug.Print "Index " & i & ": " & oneBasedExpectedArray(i)
@@ -231,13 +234,109 @@ PROC_ERR:
 
 End Function
 
+Private Function GetPassFail(TestNum As Integer) As String
+    Dim PassFail As String
+
+    ' Set explicit fail unless the test passes
+    GetPassFail = "FAIL!!!"
+    Select Case TestNum
+    Case 1
+        Result = CountDoubleSpaces
+        Expected = oneBasedExpectedArray(1)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 2
+        Result = CountDoubleSpacesInShapes
+        Expected = oneBasedExpectedArray(2)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 3
+        Result = CountSpaceFollowedByCarriageReturn
+        Expected = oneBasedExpectedArray(3)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 4
+        Result = CountDoubleTabs
+        Expected = oneBasedExpectedArray(4)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 5
+        Result = CountWhiteSpaceAndCarriageReturn
+        Expected = oneBasedExpectedArray(5)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 6
+        Result = CountQuadrupleParagraphMarks
+        Expected = oneBasedExpectedArray(6)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 7
+        Result = CountStyleWithSpaceAndNumber
+        Expected = oneBasedExpectedArray(7)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 8
+        Result = CountStyleWithNumberAndSpace
+        Expected = oneBasedExpectedArray(8)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 9
+        Result = CountPeriodSpaceLeftParenthesis
+        Expected = oneBasedExpectedArray(9)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 10
+        Result = CountNonBreakingSpaces
+        Expected = oneBasedExpectedArray(10)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 11
+        Result = CountFindNumberDashNumber
+        Expected = oneBasedExpectedArray(11)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 12
+        Result = CountNumberDashNumberInFootnotes
+        Expected = oneBasedExpectedArray(12)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 13
+        Result = CountEmptyParasWithNoThemeColor
+        Expected = oneBasedExpectedArray(13)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 14
+        Result = CountWhiteParagraphMarks
+        Expected = oneBasedExpectedArray(14)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 15
+        Result = CountSectionsWithDifferentFirstPage
+        Expected = oneBasedExpectedArray(15)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 16
+        Result = CountTotalParagraphs
+        Expected = oneBasedExpectedArray(16)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 17
+        Result = CountRedFootnoteReferences
+        Expected = oneBasedExpectedArray(17)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 18
+        Result = CountHeading1
+        Expected = oneBasedExpectedArray(18)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 19
+        Result = CountEmptyParasAfterH2
+        Expected = oneBasedExpectedArray(19)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 20
+        Result = CountFootnotesFollowedByDigit
+        Expected = oneBasedExpectedArray(20)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 21
+        Result = CountSpacesAfterFootnotes
+        Expected = oneBasedExpectedArray(21)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 22
+        Result = CountEmptyParagraphs
+        Expected = oneBasedExpectedArray(21)
+        If Result = Expected Then GetPassFail = "PASS"
+   Case Else
+        Debug.Print "The test number is outside the accepted range"
+    End Select
+End Function
+
 Private Function RunTest(num As Integer) As Boolean
     Dim startTime As Double
     Dim endTime As Double
     Dim runTime As Double
-    Dim PassFail As String
-    Dim Result As Integer
-    Dim Expected As Integer
     
     ' Record the start timer for each test
     startTime = Timer
@@ -245,70 +344,49 @@ Private Function RunTest(num As Integer) As Boolean
     On Error GoTo PROC_ERR
     Select Case num
     Case 1
-        Result = CountDoubleSpaces
-        Expected = oneBasedExpectedArray(1)
-        If Result = Expected Then
-            PassFail = "PASS"
-        Else
-            PassFail = "FAIL"
-        End If
-        Debug.Print PassFail, "Copy ()", "Test = " & num, Result, Expected, "CountDoubleSpaces"
+        Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, Result, Expected, "CountDoubleSpaces"
     Case 2
-        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleSpacesInShapes, 0, "CountDoubleSpacesInShapes"
+        Debug.Print GetPassFail(2), "Copy ()", "Test = " & num, Result, Expected, "CountDoubleSpacesInShapes"
     Case 3
-        Debug.Print "???", "Copy ()", "Test = " & num, CountSpaceFollowedByCarriageReturn, 0, "CountSpaceFollowedByCarriageReturn"
+        Debug.Print GetPassFail(3), "Copy ()", "Test = " & num, Result, Expected, "CountSpaceFollowedByCarriageReturn"
     Case 4
-        Debug.Print "???", "Copy ()", "Test = " & num, CountDoubleTabs, 0, "CountDoubleTabs"
+        Debug.Print GetPassFail(4), "Copy ()", "Test = " & num, Result, Expected, "CountDoubleTabs"
     Case 5
-        Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteSpaceAndCarriageReturn, 0, "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print GetPassFail(5), "Copy ()", "Test = " & num, Result, Expected, "CountWhiteSpaceAndCarriageReturn"
     Case 6
-        Debug.Print "???", "Copy ()", "Test = " & num, CountQuadrupleParagraphMarks, 0, "CountQuadrupleParagraphMarks"
+        Debug.Print GetPassFail(6), "Copy ()", "Test = " & num, Result, Expected, "CountQuadrupleParagraphMarks"
     Case 7
-        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithSpaceAndNumber, 0, "CountStyleWithSpaceAndNumber"
+        Debug.Print GetPassFail(7), "Copy ()", "Test = " & num, Result, Expected, "CountStyleWithSpaceAndNumber"
     Case 8
-        Debug.Print "???", "Copy ()", "Test = " & num, CountStyleWithNumberAndSpace, 0, "CountStyleWithNumberAndSpace"
+        Debug.Print GetPassFail(8), "Copy ()", "Test = " & num, Result, Expected, "CountStyleWithNumberAndSpace"
     Case 9
-        Debug.Print "???", "Copy ()", "Test = " & num, CountPeriodSpaceLeftParenthesis, 7, "CountPeriodSpaceLeftParenthesis"
+        Debug.Print GetPassFail(9), "Copy ()", "Test = " & num, Result, Expected, "CountPeriodSpaceLeftParenthesis"
     Case 10
-        Debug.Print "???", "Copy ()", "Test = " & num, CountNonBreakingSpaces, 1, "CountNonBreakingSpaces"
+        Debug.Print GetPassFail(10), "Copy ()", "Test = " & num, Result, Expected, "CountNonBreakingSpaces"
     Case 11
-        Debug.Print "???", "Copy ()", "Test = " & num, CountFindNumberDashNumber, 2, "CountFindNumberDashNumber"
+        Debug.Print GetPassFail(11), "Copy ()", "Test = " & num, Result, Expected, "CountFindNumberDashNumber"
     Case 12
-        Debug.Print "???", "Copy ()", "Test = " & num, CountNumberDashNumberInFootnotes, 0, "CountNumberDashNumberInFootnotes"
+        Debug.Print GetPassFail(12), "Copy ()", "Test = " & num, Result, Expected, "CountNumberDashNumberInFootnotes"
     Case 13
-        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasWithNoThemeColor, 0, "CountEmptyParasWithNoThemeColor"
+        Debug.Print GetPassFail(13), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParasWithNoThemeColor"
     Case 14
-        Debug.Print "???", "Copy ()", "Test = " & num, CountWhiteParagraphMarks, 0, "CountWhiteParagraphMarks"
+        Debug.Print GetPassFail(14), "Copy ()", "Test = " & num, Result, Expected, "CountWhiteParagraphMarks"
     Case 15
-        Debug.Print "???", "Copy ()", "Test = " & num, CountSectionsWithDifferentFirstPage, -1, "CountSectionsWithDifferentFirstPage"
+        Debug.Print GetPassFail(15), "Copy ()", "Test = " & num, Result, Expected, "CountSectionsWithDifferentFirstPage"
     Case 16
-        Result = CountTotalParagraphs
-        Expected = oneBasedExpectedArray(16)
-        If Result = Expected Then
-            PassFail = "PASS"
-        Else
-            PassFail = "FAIL"
-        End If
-        Debug.Print PassFail, "Copy ()", "Test = " & num, Result, Expected, "CountTotalParagraphs"
+        Debug.Print GetPassFail(16), "Copy ()", "Test = " & num, Result, Expected, "CountTotalParagraphs"
     Case 17
-        Result = CountRedFootnoteReferences
-        Expected = oneBasedExpectedArray(17)
-        If Result = Expected Then
-            PassFail = "PASS"
-        Else
-            PassFail = "FAIL"
-        End If
-        Debug.Print PassFail, "Copy ()", "Test = " & num, Result, Expected, "CountRedFootnoteReferences"
+        Debug.Print GetPassFail(17), "Copy ()", "Test = " & num, Result, Expected, "CountRedFootnoteReferences"
     Case 18
-        Debug.Print "???", "Copy ()", "Test = " & num, CountHeading1, 66, "CountHeading1"
+        Debug.Print GetPassFail(18), "Copy ()", "Test = " & num, Result, Expected, "CountHeading1"
     Case 19
-        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParasAfterH2, 0, "CountEmptyParasAfterH2"
+        Debug.Print GetPassFail(19), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParasAfterH2"
     Case 20
-        Debug.Print "???", "Copy ()", "Test = " & num, CountFootnotesFollowedByDigit, 0, "CountFootnotesFollowedByDigit"
+        Debug.Print GetPassFail(20), "Copy ()", "Test = " & num, Result, Expected, "CountFootnotesFollowedByDigit"
     Case 21
-        Debug.Print "???", "Copy ()", "Test = " & num, CountSpacesAfterFootnotes, -1, "CountSpacesAfterFootnotes"
+        Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, Result, Expected, "CountSpacesAfterFootnotes"
     Case 22
-        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParagraphs, -1, "CountEmptyParagraphs"
+        Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphs"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -662,7 +740,6 @@ PROC_ERR:
     Debug.Print "!!! Error in Test 11 !!!"
     Debug.Print "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function CountNumberDashNumberInFootnotes of Class BibleClass"
     Resume PROC_EXIT
-
 End Function
 
 Private Function CountFindNumberDashNumber() As Integer
@@ -809,6 +886,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
             If Not firstFound Then
                 rng.Select
                 firstFound = True
+                'Stop
                 Exit Do ' Exit the loop after finding the first match
             End If
         rng.Collapse wdCollapseEnd

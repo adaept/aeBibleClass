@@ -54,9 +54,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
-' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
     ' FIXED - #066 - Add tests to count paragraphs, empty,
     ' FIXED - See #073 - #067 - Add test to Count Red Footnote References
     ' FIXED - See #091 - #053 - Add test for Footnote Reference followed by a space

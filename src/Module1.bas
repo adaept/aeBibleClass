@@ -698,4 +698,3 @@ Sub ChangeSpecificColor()
     Call ChangeFontColorRGB(255, 0, 1, 255, 0, 0)
 End Sub
 
-
