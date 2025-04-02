@@ -116,8 +116,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21
-    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -203,6 +203,7 @@ Test16:     RunTest (16)
             RunTest (19)
             RunTest (20)
             RunTest (21)
+            RunTest (22)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -306,6 +307,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print "???", "Copy ()", "Test = " & num, CountFootnotesFollowedByDigit, 0, "CountFootnotesFollowedByDigit"
     Case 21
         Debug.Print "???", "Copy ()", "Test = " & num, CountSpacesAfterFootnotes, -1, "CountSpacesAfterFootnotes"
+    Case 22
+        Debug.Print "???", "Copy ()", "Test = " & num, CountEmptyParagraphs, -1, "CountEmptyParagraphs"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -332,6 +335,18 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountEmptyParagraphs() As Long
+    Dim para As paragraph
+    Dim count As Long
+    count = 0
+    For Each para In ActiveDocument.Paragraphs
+        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+            count = count + 1
+        End If
+    Next para
+    CountEmptyParagraphs = count
 End Function
 
 Private Function CountSpacesAfterFootnotes() As Integer

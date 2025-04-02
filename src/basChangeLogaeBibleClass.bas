@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #095 -
 ' #094 -
 ' #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
-' #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
 ' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
@@ -37,11 +36,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '               Adopts smart quotes and includes nested quotes for clarity.
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
-' #067 - Add test to Count Red Footnote References
-' #066 - Add tests to count paragraphs, empty,
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
 ' #057 - Add ability to run only a specific test
-' #053 - Add test for Footnote Reference followed by a space
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
 ' #046 - Update style of cv marker to be smaller than Verse marker
@@ -61,6 +57,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #016 - Add function to print pass/fail based on comparing Result with Expected
 '=============================================================================================================================
 '
+    ' FIXED - #066 - Add tests to count paragraphs, empty,
+    ' FIXED - See #073 - #067 - Add test to Count Red Footnote References
+    ' FIXED - See #091 - #053 - Add test for Footnote Reference followed by a space
+    ' FIXED - #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
     ' FIXED - #093 - Add initial PassFail test for result and expected
     ' FIXED - #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
 ' 20250402 - v006

@@ -128,8 +128,6 @@ Sub GoToParagraphIndex()
 End Sub
 
 Sub CountParagraphs()
-    Dim totalParagraphs As Long
-    Dim emptyParagraphs As Long
     Dim columnBreakParagraphs As Long
     Dim textWrappingBreakParagraphs As Long
     Dim nextPageSectionBreakParagraphs As Long
@@ -147,8 +145,6 @@ Sub CountParagraphs()
     End If
     
     ' Count paragraphs
-    totalParagraphs = CountTotalParagraphs()
-    emptyParagraphs = CountEmptyParagraphs()
     columnBreakParagraphs = CountColumnBreakParagraphs()
     textWrappingBreakParagraphs = CountTextWrappingBreakParagraphs()
     nextPageSectionBreakParagraphs = CountNextPageSectionBreakParagraphs()
@@ -176,22 +172,6 @@ Sub CountParagraphs()
     AppendToFile debugFile, "Paragraphs with Section Break (Even Page): " & evenPageSectionBreakParagraphs
     AppendToFile debugFile, "Paragraphs with Section Break (Odd Page): " & oddPageSectionBreakParagraphs
 End Sub
-
-Function CountTotalParagraphs() As Long
-    CountTotalParagraphs = ActiveDocument.Paragraphs.count
-End Function
-
-Function CountEmptyParagraphs() As Long
-    Dim para As paragraph
-    Dim count As Long
-    count = 0
-    For Each para In ActiveDocument.Paragraphs
-        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
-            count = count + 1
-        End If
-    Next para
-    CountEmptyParagraphs = count
-End Function
 
 Function CountColumnBreakParagraphs() As Long
     Dim rng As Range
