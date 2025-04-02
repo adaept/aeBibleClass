@@ -631,45 +631,6 @@ Sub UpdateBlackToAutomatic()
     MsgBox "All black font colors have been updated to automatic."
 End Sub
 
-Sub ListAndCountFontColors()
-    Dim rng As Range
-    Dim colorDict As Object
-    Dim colorKey As Variant
-    Dim colorCount As Long
-    Dim r As Long, g As Long, b As Long
-    
-    ' Create a dictionary to store color counts
-    Set colorDict = CreateObject("Scripting.Dictionary")
-    
-    ' Loop through each word in the document
-    For Each rng In ActiveDocument.Words
-        ' Get the RGB values of the font color
-        r = (rng.font.Color And &HFF)
-        g = (rng.font.Color \ &H100 And &HFF)
-        b = (rng.font.Color \ &H10000 And &HFF)
-        
-        ' Create a key for the color in hex format
-        colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)
-        
-        ' Count the color occurrences
-        If colorDict.Exists(colorKey) Then
-            colorDict(colorKey) = colorDict(colorKey) + 1
-        Else
-            colorDict.Add colorKey, 1
-        End If
-    Next rng
-    
-    ' Print the results to the console
-    For Each colorKey In colorDict.Keys
-        colorCount = colorDict(colorKey)
-        r = CLng("&H" & Left(colorKey, 2))
-        g = CLng("&H" & Mid(colorKey, 3, 2))
-        b = CLng("&H" & Right(colorKey, 2))
-        
-        Debug.Print "Color: RGB(" & r & ", " & g & ", " & b & ") - Hex: #" & colorKey & " - Count: " & colorCount
-    Next colorKey
-End Sub
-
 Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, newG As Long, newB As Long)
     Dim rng As Range
     Dim oldColor As Long
@@ -695,6 +656,17 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
 End Sub
 
 Sub ChangeSpecificColor()
-    Call ChangeFontColorRGB(255, 0, 1, 255, 0, 0)
+    'Call ChangeFontColorRGB(255, 0, 1, 255, 0, 0)
+    Call ChangeFontColorRGB(37, 37, 37, 0, 0, 0)
 End Sub
 
+Sub TestGetColorNameFromHex()
+    Dim hexColor As String
+    Dim colorName As String
+    
+    hexColor = "#FF0000" ' Example hex color
+    colorName = GetColorNameFromHex(hexColor)
+    
+    'MsgBox "The color name for " & hexColor & " is " & colorName
+    Debug.Print "The color name for " & hexColor & " is " & colorName
+End Sub

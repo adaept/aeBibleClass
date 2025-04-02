@@ -83,4 +83,76 @@ Sub DeleteCustomUIXML()
     MsgBox "CustomUI XML parts deleted successfully!"
 End Sub
 
+Function GetColorNameFromHex(hexColor As String) As String
+    Dim colorName As String
+    
+    ' Convert hex to uppercase for consistency
+    hexColor = UCase(hexColor)
+    
+    ' Determine the color name based on the hex value
+    Select Case hexColor
+        Case "#FF0000"
+            colorName = "Red"
+        Case "#00FF00"
+            colorName = "Green"
+        Case "#0000FF"
+            colorName = "Blue"
+        Case "#FFFF00"
+            colorName = "Yellow"
+        Case "#FFA500"
+            colorName = "Orange"
+        Case "#800080"
+            colorName = "Purple"
+        Case "#FFFFFF"
+            colorName = "White"
+        Case "#000000"
+            colorName = "Black"
+        Case "#808080"
+            colorName = "Gray"
+        Case Else
+            colorName = "Unknown Color"
+    End Select
+    
+    ' Return the color name
+    GetColorNameFromHex = colorName
+End Function
+
+Sub ListAndCountFontColors()
+    Dim rng As Range
+    Dim colorDict As Object
+    Dim colorKey As Variant
+    Dim colorCount As Long
+    Dim r As Long, g As Long, b As Long
+    
+    ' Create a dictionary to store color counts
+    Set colorDict = CreateObject("Scripting.Dictionary")
+    
+    ' Loop through each word in the document
+    For Each rng In ActiveDocument.Words
+        ' Get the RGB values of the font color
+        r = (rng.font.Color And &HFF)
+        g = (rng.font.Color \ &H100 And &HFF)
+        b = (rng.font.Color \ &H10000 And &HFF)
+        
+        ' Create a key for the color in hex format
+        colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)
+        
+        ' Count the color occurrences
+        If colorDict.Exists(colorKey) Then
+            colorDict(colorKey) = colorDict(colorKey) + 1
+        Else
+            colorDict.Add colorKey, 1
+        End If
+    Next rng
+    
+    ' Print the results to the console
+    For Each colorKey In colorDict.Keys
+        colorCount = colorDict(colorKey)
+        r = CLng("&H" & Left(colorKey, 2))
+        g = CLng("&H" & Mid(colorKey, 3, 2))
+        b = CLng("&H" & Right(colorKey, 2))
+        
+        Debug.Print "Color: RGB(" & r & ", " & g & ", " & b & ") - Hex: #" & colorKey & " - Count: " & colorCount & " - " & GetColorNameFromHex("#" & colorKey)
+    Next colorKey
+End Sub
 

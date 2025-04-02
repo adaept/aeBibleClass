@@ -8,8 +8,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=============================================================================================================================
 ' Tasks:
 ' #095 -
-' #094 -
-' #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
 ' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
@@ -56,6 +54,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 '=============================================================================================================================
 '
+    ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
+    ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
     ' FIXED - #066 - Add tests to count paragraphs, empty,
     ' FIXED - See #073 - #067 - Add test to Count Red Footnote References
