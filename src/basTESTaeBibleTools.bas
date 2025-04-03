@@ -97,16 +97,18 @@ Function GetColorNameFromHex(hexColor As String) As String
             colorName = "Green"
         Case "#0000FF"
             colorName = "Blue"
-        Case "#FFFF00"
-            colorName = "Yellow"
+        Case "#FFD700"
+            colorName = "Gold"
         Case "#FFA500"
             colorName = "Orange"
-        Case "#800080"
+        Case "#663399"
             colorName = "Purple"
         Case "#FFFFFF"
             colorName = "White"
         Case "#000000"
             colorName = "Black"
+        Case "#800000"
+            colorName = "Dark Red"
         Case "#808080"
             colorName = "Gray"
         Case Else
@@ -130,9 +132,9 @@ Sub ListAndCountFontColors()
     ' Loop through each word in the document
     For Each rng In ActiveDocument.Words
         ' Get the RGB values of the font color
-        r = (rng.font.Color And &HFF)
-        g = (rng.font.Color \ &H100 And &HFF)
-        b = (rng.font.Color \ &H10000 And &HFF)
+        r = (rng.font.color And &HFF)
+        g = (rng.font.color \ &H100 And &HFF)
+        b = (rng.font.color \ &H10000 And &HFF)
         
         ' Create a key for the color in hex format
         colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)

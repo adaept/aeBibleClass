@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #100 -
-' #099 -
-' #098 -
+' #105 -
+' #104 -
+' #103 -
+' #102 -
+' #101 -
+' #100 - Continue check multipage view from 300 for orphans of H2
 ' #097 - Some footnote references reset to red - why? - fix it to be consistent style
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
@@ -56,6 +59,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #099 - Add test to count number of colors in Footnote Reference
+    ' FIXED - #098 - Add test to count number of Footnote References
     ' FIXED - #096 - Add test for count/delete empty para before H2, related #084
     ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
     ' OBSOLETE - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing

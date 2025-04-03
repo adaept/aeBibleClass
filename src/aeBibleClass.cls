@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -208,6 +208,8 @@ Test16:     RunTest (16)
             RunTest (21)
             RunTest (22)
             RunTest (23)
+            RunTest (24)
+            RunTest (25)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -333,6 +335,14 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountDeleteEmptyParagraphsBeforeHeading2
         Expected = oneBasedExpectedArray(23)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 24
+        Result = CountFootnoteReferences
+        Expected = oneBasedExpectedArray(24)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 25
+        Result = CountFootnoteReferenceColors
+        Expected = oneBasedExpectedArray(25)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -394,6 +404,10 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphs"
     Case 23
         Debug.Print GetPassFail(23), "Copy ()", "Test = " & num, Result, Expected, "CountDeleteEmptyParagraphsBeforeHeading2"
+    Case 24
+        Debug.Print GetPassFail(24), "Copy ()", "Test = " & num, Result, Expected, "CountFootnoteReferences"
+    Case 25
+        Debug.Print GetPassFail(25), "Copy ()", "Test = " & num, Result, Expected, "CountFootnoteReferenceColors"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -420,6 +434,55 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountFootnoteReferenceColors() As Integer
+    Dim doc As Document
+    Set doc = ActiveDocument
+   
+    Dim footnoteColors As Collection
+    Set footnoteColors = New Collection
+    
+    Dim footnote As footnote
+    Dim colorHex As String
+    
+    For Each footnote In doc.Footnotes
+        colorHex = ColorToHex(footnote.Reference.font.color)
+        On Error Resume Next
+        footnoteColors.Add colorHex, colorHex
+        On Error GoTo 0
+    Next footnote
+       
+    Dim colorList As String
+    colorList = "Colors of Footnote References in Hex: "
+    
+    Dim color As Variant
+    Dim colorCount As Integer
+    colorCount = 0
+    For Each color In footnoteColors
+        colorCount = colorCount + 1
+        colorList = colorList & color & vbCrLf
+    Next color
+    
+    'MsgBox colorList
+    'Debug.Print colorList
+    CountFootnoteReferenceColors = colorCount
+End Function
+
+Private Function ColorToHex(color As Long) As String
+    ColorToHex = Right("000000" & Hex(color), 6)
+End Function
+
+Private Function CountFootnoteReferences() As Integer
+    Dim doc As Document
+    Set doc = ActiveDocument
+    
+    Dim footnoteCount As Integer
+    footnoteCount = doc.Footnotes.count
+       
+    ' Display the results
+    'MsgBox "Number of Footnote References: " & footnoteCount
+    CountFootnoteReferences = footnoteCount
 End Function
 
 Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
@@ -524,7 +587,7 @@ Private Function CountSpacesAfterFootnotes() As Integer
     
     ' Print the result to the console
     'Debug.Print "Number of spaces after footnote references: " & spaceCount
-    Debug.Print debugInfo
+    'Debug.Print debugInfo
     CountSpacesAfterFootnotes = spaceCount
 End Function
 
@@ -632,7 +695,7 @@ Private Function CountRedFootnoteReferences() As Integer
     
     ' Loop through each footnote in the document
     For Each footnote In ActiveDocument.Footnotes
-        If footnote.Reference.font.Color = redColor Then
+        If footnote.Reference.font.color = redColor Then
             redCount = redCount + 1
         End If
     Next footnote
@@ -686,7 +749,7 @@ Private Function CountWhiteParagraphMarks() As Integer
     ' Use the Find method to locate white paragraph marks
     With rng.Find
         .ClearFormatting
-        .font.Color = RGB(255, 255, 255) ' RGB value for white
+        .font.color = RGB(255, 255, 255) ' RGB value for white
         .text = "^p"
         .Forward = True
         .Wrap = wdFindStop
@@ -694,7 +757,7 @@ Private Function CountWhiteParagraphMarks() As Integer
         ' Loop through all occurrences
         Do While .Execute
             ' Check if the found paragraph mark has the white color
-            If rng.font.Color = RGB(255, 255, 255) Then
+            If rng.font.color = RGB(255, 255, 255) Then
                 count = count + 1
                 ' Go to the first white paragraph mark found
                 If Not firstFound Then
@@ -988,7 +1051,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
-    rng.Find.font.Color = wdColorWhite
+    rng.Find.font.color = wdColorWhite
 
     ' Set the Find properties
     With rng.Find
