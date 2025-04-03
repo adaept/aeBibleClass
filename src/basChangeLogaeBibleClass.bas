@@ -7,12 +7,15 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #095 -
+' #100 -
+' #099 -
+' #098 -
+' #097 - Some footnote references reset to red - why? - fix it to be consistent style
+' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
 ' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
 ' #085 - Add routine to tools to check the vertical position of a paragraph
-' #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #082 - Fix Word paragraph style so no empty paragraphs are needed
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
@@ -51,9 +54,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
-' #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
 '=============================================================================================================================
 '
+    ' FIXED - #096 - Add test for count/delete empty para before H2, related #084
+    ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
+    ' OBSOLETE - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
     ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
     ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected

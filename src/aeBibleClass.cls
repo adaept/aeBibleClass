@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -207,6 +207,7 @@ Test16:     RunTest (16)
             RunTest (20)
             RunTest (21)
             RunTest (22)
+            RunTest (23)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -326,7 +327,11 @@ Private Function GetPassFail(TestNum As Integer) As String
         If Result = Expected Then GetPassFail = "PASS"
     Case 22
         Result = CountEmptyParagraphs
-        Expected = oneBasedExpectedArray(21)
+        Expected = oneBasedExpectedArray(22)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 23
+        Result = CountDeleteEmptyParagraphsBeforeHeading2
+        Expected = oneBasedExpectedArray(23)
         If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
@@ -387,6 +392,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, Result, Expected, "CountSpacesAfterFootnotes"
     Case 22
         Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphs"
+    Case 23
+        Debug.Print GetPassFail(23), "Copy ()", "Test = " & num, Result, Expected, "CountDeleteEmptyParagraphsBeforeHeading2"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -413,6 +420,53 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
+    Dim doc As Document
+    Dim para As paragraph
+    Dim deletionCount As Long
+    Dim emptyCount As Long
+    Dim userResponse As VbMsgBoxResult
+    
+    ' Initialize variables
+    Set doc = ActiveDocument
+    deletionCount = 0
+    emptyCount = 0
+    
+    ' Loop through each paragraph in the document
+    For Each para In doc.Paragraphs
+        ' Check if the paragraph style is Heading 2
+        If para.style = "Heading 2" Then
+            ' Check if the previous paragraph exists and is not a section break
+            If Not para.Previous Is Nothing Then
+                ' Ensure the previous paragraph is not a section break
+                If para.Previous.Range.Information(wdActiveEndAdjustedPageNumber) = para.Range.Information(wdActiveEndAdjustedPageNumber) Then
+                    ' Check if the previous paragraph is empty
+                    If Len(Trim(para.Previous.Range.text)) = 1 Then ' Empty paragraph has a length of 1 (paragraph mark)
+                        emptyCount = emptyCount + 1
+                        ' Prompt the user before deletion
+                        'userResponse = MsgBox("Empty paragraph found before Heading 2. Do you want to delete it?", vbYesNoCancel + vbQuestion, "Delete Empty Paragraph")
+                        'If userResponse = vbYes Then
+                        '    para.Previous.Range.Delete ' Delete the empty paragraph
+                        '    deletionCount = deletionCount + 1
+                        'ElseIf userResponse = vbCancel Then
+                        '    Exit For
+                        'End If
+                    End If
+                End If
+            End If
+            
+            ' Stop after 3 deletions
+            'If deletionCount >= 3 Then
+            '    Exit For
+            'End If
+        End If
+    Next para
+    
+    ' Display the number of empty paragraphs found and deleted
+    'MsgBox "Number of empty paragraphs found: " & emptyCount & vbCrLf & "Number of empty paragraphs deleted: " & deletionCount
+    CountDeleteEmptyParagraphsBeforeHeading2 = deletionCount
 End Function
 
 Private Function CountEmptyParagraphs() As Long
