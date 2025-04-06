@@ -207,7 +207,7 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
                 Debug.Print Replace(para.Range.text, vbCr, "")
                 ' Get numbers from character style
                 'ExtractNumbersFromParagraph para, "Verse marker"
-                ExtractNumbersFromParagraph2 para, "cvmarker"
+                ExtractNumbersFromParagraph2 para, "Chapter Verse marker"
             End If
         End If
         DoEvents ' Allow Word to process other events

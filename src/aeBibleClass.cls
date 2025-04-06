@@ -492,6 +492,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
     Dim emptyCount As Long
     Dim userResponse As VbMsgBoxResult
     
+    Application.ScreenUpdating = False
     ' Initialize variables
     Set doc = ActiveDocument
     deletionCount = 0
@@ -526,6 +527,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
             'End If
         End If
     Next para
+    Application.ScreenUpdating = True
     
     ' Display the number of empty paragraphs found and deleted
     'MsgBox "Number of empty paragraphs found: " & emptyCount & vbCrLf & "Number of empty paragraphs deleted: " & deletionCount
@@ -826,6 +828,7 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
     Dim i As Integer
     Dim char As String
     
+    Application.ScreenUpdating = False
     matchCount = 0
     
     For Each footnote In ActiveDocument.Footnotes
@@ -845,7 +848,8 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
         Next i
         DoEvents
     Next footnote
-
+    Application.ScreenUpdating = True
+    
     'Debug.Print "Number of 'number-dash-number' matches in footnotes: " & matchCount
     CountNumberDashNumberInFootnotes = matchCount
 
@@ -981,7 +985,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
     Dim styleName As String
     Dim firstFound As Boolean
     
-    styleName = "cvmarker"
+    styleName = "Chapter Verse marker"
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting

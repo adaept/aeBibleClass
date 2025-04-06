@@ -8,12 +8,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=============================================================================================================================
 ' Tasks:
 ' #105 -
-' #104 -
-' #103 -
-' #102 -
-' #101 -
 ' #100 - Continue check multipage view from 300 for orphans of H2
-' #097 - Some footnote references reset to red - why? - fix it to be consistent style
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
@@ -59,6 +54,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #104 - Add routine to set Winword as high priority for vba
+    ' FIXED - #103 - Use UpdateCharacterStyle in batches from a page number
+    ' FIXED - #102 - Add LongRunningProcessCode skeleton to allow resume and percent completed output to console
+    ' FIXED - #097 - Some footnote references reset to red - why? - fix it to be consistent style using font color automatic
+    ' FIXED - #101 - Update cvmarker to Chapter Verse marker
     ' FIXED - #099 - Add test to count number of colors in Footnote Reference
     ' FIXED - #098 - Add test to count number of Footnote References
     ' FIXED - #096 - Add test for count/delete empty para before H2, related #084
