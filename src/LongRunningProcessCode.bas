@@ -44,42 +44,6 @@ Sub LoadProgress()
     On Error GoTo 0
 End Sub
 
-Sub GoToPageNumber(pageNumber As Integer)
-    ' Move the selection to the specified page number
-    Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, count:=pageNumber
-End Sub
-
-Sub GoToPageAndProcessParagraphs(pageNumber As Integer)
-    Dim doc As Document
-    Dim para As paragraph
-    Dim rng As Range
-    Dim updateCount As Integer
-
-    ' Set the document and initialize the update count
-    Set doc = ActiveDocument
-    updateCount = 0
-
-    ' Move the selection to the specified page number
-    Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, count:=pageNumber
-
-    ' Loop through each paragraph starting from the specified page
-    For Each para In doc.Paragraphs
-        ' Check if the paragraph is on or after the specified page
-        If para.Range.Information(wdActiveEndPageNumber) >= pageNumber Then
-            ' Process the paragraph (example: update character style)
-            For Each rng In para.Range.Characters
-                If rng.style = "YourCharacterStyle" Then ' Replace with your character style name
-                    rng.style = "YourCharacterStyle" ' Apply the same or new character style
-                    updateCount = updateCount + 1
-                    ' Stop after the first 12 updates
-                    If updateCount >= 12 Then Exit Sub
-                    DoEvents ' Keep the application responsive
-                End If
-            Next rng
-        End If
-    Next para
-End Sub
-
 Sub SetWordHighPriority()
     Dim objWMIService As Object
     Dim colProcesses As Object
