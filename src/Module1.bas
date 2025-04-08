@@ -28,7 +28,7 @@ Sub PrintFontProperties()
         Debug.Print "Bold: " & .Bold
         Debug.Print "Italic: " & .Italic
         Debug.Print "Underline: " & .Underline
-        Debug.Print "Color: " & .Color
+        Debug.Print "Color: " & .color
         Debug.Print "StrikeThrough: " & .StrikeThrough
         Debug.Print "DoubleStrikeThrough: " & .DoubleStrikeThrough
         Debug.Print "Subscript: " & .Subscript
@@ -81,6 +81,11 @@ Sub PrintBibleBook()
         End If
         
         If startProcessing Then
+            
+            If Len(Trim(para.Range.text)) = 1 Then   ' Skip empty paragraph
+                GoTo EmptyPara
+            End If
+
             If para.style = "Heading 2" Then
                 Debug.Print "Heading 2: " & para.Range.text
                 heading2Found = True
@@ -92,6 +97,7 @@ Sub PrintBibleBook()
         If heading1Found And para.style = "Heading 1" And InStr(para.Range.text, heading1Name) = 0 Then
             Exit For
         End If
+EmptyPara:
     Next para
 End Sub
 
@@ -490,6 +496,18 @@ Sub SearchParagraphs()
     End If
 End Sub
 
+Function CountEmptyParagraphs() As Long
+    Dim para As paragraph
+    Dim count As Long
+    count = 0
+    For Each para In ActiveDocument.Paragraphs
+        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+            count = count + 1
+        End If
+    Next para
+    CountEmptyParagraphs = count
+End Function
+
 Sub CountEmptyParagraphsWithAutomaticFont()
     Dim doc As Document
     Dim para As paragraph
@@ -501,7 +519,7 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
-        If Len(para.Range.text) = 1 And para.Range.font.Color = wdColorAutomatic Then
+        If Len(para.Range.text) = 1 And para.Range.font.color = wdColorAutomatic Then
             count = count + 1
         End If
     Next para
@@ -548,7 +566,7 @@ Sub DetectFontColors()
         colorUsed = False
         themeColorUsed = False
         
-        If rng.font.Color <> wdColorAutomatic Then
+        If rng.font.color <> wdColorAutomatic Then
             colorUsed = True
         End If
         
@@ -561,34 +579,6 @@ Sub DetectFontColors()
             Exit Sub
         End If
     Next para
-End Sub
-
-Sub UpdateEmptyParasToNoThemeColor()
-' Set the Font.Color property to wdColorAutomatic, which effectively removes any theme color
-    Dim para As paragraph
-    Dim rng As Range
-    Dim totalParaCount As Integer
-    Dim updatedParaCount As Integer
-    
-    totalParaCount = ActiveDocument.Paragraphs.count
-    updatedParaCount = 0
-    
-    For Each para In ActiveDocument.Paragraphs
-        Set rng = para.Range
-        
-        ' Check if the paragraph is empty
-        If Len(rng.text) = 1 Then ' Only the paragraph mark
-            ' Check if the theme color is not wdColorAutomatic
-            If rng.font.Color <> wdColorAutomatic Then
-                ' Update the font color to wdColorAutomatic
-                rng.font.Color = wdColorAutomatic
-                updatedParaCount = updatedParaCount + 1
-            End If
-        End If
-    Next para
-    
-    Debug.Print "Total number of paragraphs: " & totalParaCount
-    Debug.Print "Number of empty paragraphs updated to no theme color: " & updatedParaCount
 End Sub
 
 Sub UpdateBlackToAutomatic()
@@ -608,9 +598,9 @@ Sub UpdateBlackToAutomatic()
             ' Loop through each character in the range
             With rng.Find
                 .ClearFormatting
-                .font.Color = wdColorBlack
+                .font.color = wdColorBlack
                 .Replacement.ClearFormatting
-                .Replacement.font.Color = wdColorAutomatic
+                .Replacement.font.color = wdColorAutomatic
                 .text = ""
                 .Replacement.text = ""
                 .Forward = True
@@ -644,13 +634,13 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
     ' Loop through each word in the document
     For Each rng In ActiveDocument.Words
         ' Extract the RGB values of the current font color
-        r = (rng.font.Color And &HFF)
-        g = (rng.font.Color \ &H100 And &HFF)
-        b = (rng.font.Color \ &H10000 And &HFF)
+        r = (rng.font.color And &HFF)
+        g = (rng.font.color \ &H100 And &HFF)
+        b = (rng.font.color \ &H10000 And &HFF)
         
         ' Compare the RGB values directly
         If r = oldR And g = oldG And b = oldB Then
-            rng.font.Color = newColor
+            rng.font.color = newColor
         End If
     Next rng
 End Sub
@@ -660,13 +650,69 @@ Sub ChangeSpecificColor()
     Call ChangeFontColorRGB(37, 37, 37, 0, 0, 0)
 End Sub
 
-Sub TestGetColorNameFromHex()
+Sub EnsureFootnoteReferenceStyleColor()
+    Dim doc As Document
+    Dim para As paragraph
+    Dim rng As Range
     Dim hexColor As String
-    Dim colorName As String
+    Dim rgbColor As Long
+    Dim count As Integer
     
-    hexColor = "#FF0000" ' Example hex color
-    colorName = GetColorNameFromHex(hexColor)
+    ' Set the desired hex color (e.g., purple: #663399)
+    hexColor = "#663399"
     
-    'MsgBox "The color name for " & hexColor & " is " & colorName
-    Debug.Print "The color name for " & hexColor & " is " & colorName
+    ' Convert hex color to RGB
+    rgbColor = HexToRGB(hexColor)
+    
+    ' Initialize variables
+    Set doc = ActiveDocument
+    
+    count = 0
+    ' Loop through each paragraph in the document
+    For Each para In doc.Paragraphs
+        ' Check if the paragraph style is Footnote Reference
+        If para.style = "Footnote Reference" Then
+            count = count + 1
+            Set rng = para.Range
+            ' Check if the style color is correctly set to the desired color
+            If rng.font.color <> rgbColor Then
+                ' Set the style color to the desired color
+                rng.font.color = rgbColor
+            End If
+        End If
+    Next para
+    
+    ' Display a message indicating the process is complete
+    'MsgBox "Footnote Reference styles checked and updated to the desired color where necessary."
+    Debug.Print "Count of Footnote Reference = " & count
 End Sub
+
+Function HexToRGB(hexColor As String) As Long
+    Dim r As Long, g As Long, b As Long
+    
+    ' Remove the "#" character if present
+    hexColor = Replace(hexColor, "#", "")
+    
+    ' Convert hex to RGB components
+    r = CLng("&H" & Mid(hexColor, 1, 2))
+    g = CLng("&H" & Mid(hexColor, 3, 2))
+    b = CLng("&H" & Mid(hexColor, 5, 2))
+    
+    ' Combine RGB components into a single Long value
+    HexToRGB = RGB(r, g, b)
+End Function
+
+Sub ReapplyFootnoteReferenceStyle()
+    Dim footnote As footnote
+    Dim doc As Document
+    
+    Set doc = ActiveDocument
+    
+    ' Loop through all footnotes in the document
+    For Each footnote In doc.Footnotes
+        ' Apply the Footnote Reference style to each footnote reference
+        footnote.Reference.style = doc.Styles("Footnote Reference")
+    Next footnote
+End Sub
+
+

@@ -349,48 +349,8 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
     End If
 End Sub
 
-Private Sub ListAscii12Characters()
-    Dim rng As Range
-    Dim count As Long
-    Dim positions As String
-    Dim startPos As Long
-    
-    ' Set the range to the entire document
-    Set rng = ActiveDocument.Content
-    
-    ' Initialize the count and positions
-    count = 0
-    positions = ""
-    
-    ' Find all ASCII 12 characters and record their positions
-    With rng.Find
-        .text = Chr(12) ' Chr(12) represents the ASCII 12 character
-        .Replacement.text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = False
-        .MatchCase = False
-        .MatchWholeWord = False
-        .MatchWildcards = False
-        .MatchSoundsLike = False
-        .MatchAllWordForms = False
-        Do While .Execute
-            count = count + 1
-            startPos = rng.Start
-            positions = positions & "Position " & count & ": " & startPos & vbCrLf
-            rng.Collapse wdCollapseEnd
-        Loop
-    End With
-    
-    ' Display the positions of ASCII 12 characters
-    If count > 0 Then
-        Debug.Print "There are " & count & " ASCII 12 characters in the document at the following positions:" & vbCrLf & positions
-    Else
-        MsgBox "No ASCII 12 characters found in the document.", vbInformation, "ASCII 12 Characters"
-    End If
-End Sub
-
-Private Sub ListAndReviewAscii12Characters()
+Sub ListAndReviewAscii12Characters()
+' Ascii 12 is Form Feed, FF, Page Break
     Dim rng As Range
     Dim count As Long
     Dim startPos As Long
