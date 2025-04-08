@@ -97,6 +97,8 @@ Function GetColorNameFromHex(hexColor As String) As String
             colorName = "Green"
         Case "#006400"
             colorName = "Dark Green"
+        Case "#50C878"
+            colorName = "Emerald"
         Case "#0000FF"
             colorName = "Blue"
         Case "#FFD700"

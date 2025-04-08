@@ -7,7 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #105 -
+' #110 -
+' #109 -
+' #108 -
+' #107 -
+' #106 -
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
@@ -54,6 +58,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #105 - Update chapter and verse markers to orange and emerald
     ' FIXED - #104 - Add routine to set Winword as high priority for vba
     ' FIXED - #103 - Use UpdateCharacterStyle in batches from a page number
     ' FIXED - #102 - Add LongRunningProcessCode skeleton to allow resume and percent completed output to console
