@@ -162,3 +162,20 @@ Sub ListAndCountFontColors()
     Next colorKey
 End Sub
 
+Sub GetVerticalPositionOfCursorParagraph()
+' Get the position of the para where the cursor is
+    Dim doc As Document
+    Dim rng As Range
+    Dim paraPos As Single
+    
+    Set doc = ActiveDocument
+    Set rng = Selection.Paragraphs(1).Range
+    
+    ' Get the vertical position of the paragraph relative to the page
+    paraPos = rng.Information(wdVerticalPositionRelativeToPage)
+    
+    ' Display the vertical position
+    MsgBox "Vertical Position of the paragraph with the cursor: " & paraPos & " points"
+End Sub
+
+

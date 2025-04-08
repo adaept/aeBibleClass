@@ -17,7 +17,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
 ' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
-' #085 - Add routine to tools to check the vertical position of a paragraph
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #082 - Fix Word paragraph style so no empty paragraphs are needed
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
@@ -58,6 +57,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #085 - Add routine to tools to check the vertical position of a paragraph
 ' 20250408 - v007
     ' FIXED - #105 - Update chapter and verse markers to orange and emerald
     ' FIXED - #104 - Add routine to set Winword as high priority for vba
