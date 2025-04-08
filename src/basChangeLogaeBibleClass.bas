@@ -58,6 +58,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+' 20250408 - v007
     ' FIXED - #105 - Update chapter and verse markers to orange and emerald
     ' FIXED - #104 - Add routine to set Winword as high priority for vba
     ' FIXED - #103 - Use UpdateCharacterStyle in batches from a page number

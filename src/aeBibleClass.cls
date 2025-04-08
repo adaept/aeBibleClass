@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.6"
-Private Const BibleClassVERSION_DATE As String = "April 2, 2025"
+Private Const BibleClassVERSION As String = "0.0.7"
+Private Const BibleClassVERSION_DATE As String = "April 8, 2025"
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
