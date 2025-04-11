@@ -7,18 +7,17 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #110 -
-' #109 -
-' #108 -
-' #107 -
-' #106 -
+' #115 -
+' #114 -
+' #112 - Clear all tab stops from para headers, default is 0.1", add one tab to empty headers
+' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
+' #108 - Add test for all line feed to have a space before
+' #106 - Fix H1 pages to use line feed in text as appropriate
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
-' #087 - Set 1st and 2nd or 1st paras after H1 to style CustomParaAfterH1 and verify vertical pos of Bbs
-' #086 - Define style CustomParaAfterH1 so that vertical position of Brief background summary (Bbs) is consistent
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
-' #082 - Fix Word paragraph style so no empty paragraphs are needed
+' #082 - Fix Word paragraph style so minimal empty paragraphs are needed
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
 ' #075 - Add style for Arial Black 8 pt emphasis.
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
@@ -57,6 +56,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #107 - Fix lamentations to use  manual line break (line feed) with Lamentation style
+    ' FIXED - #113 - Add test for empty and non empty header paragraphs
+    ' FIXED - #111 - Fix empty paragraphs in text boxes
+    ' FIXED - #110 - Fix empty paragraphs in footers
+    ' FIXED - #087 - Set 1st/2nd paras after H1 to CustomParaAfterH1 or CustomParaAfterH1-2nd and verify vertical pos of Bbs
+    ' FIXED - #086 - Define style CustomParaAfterH1 for vertical position of Brief background summary (Bbs)
     ' FIXED - #085 - Add routine to tools to check the vertical position of a paragraph
 ' 20250408 - v007
     ' FIXED - #105 - Update chapter and verse markers to orange and emerald

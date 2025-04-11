@@ -133,255 +133,6 @@ Sub GoToParagraphIndex()
     End If
 End Sub
 
-Sub CountParagraphs()
-    Dim columnBreakParagraphs As Long
-    Dim textWrappingBreakParagraphs As Long
-    Dim nextPageSectionBreakParagraphs As Long
-    Dim continuousSectionBreakParagraphs As Long
-    Dim evenPageSectionBreakParagraphs As Long
-    Dim oddPageSectionBreakParagraphs As Long
-    Dim debugFile As String
-    
-    ' Set the debug file path to the current document directory
-    debugFile = ActiveDocument.Path & "\DebugTestFile.txt"
-    
-    ' Delete the old debug file if it exists
-    If Dir(debugFile) <> "" Then
-        Kill debugFile
-    End If
-    
-    ' Count paragraphs
-    columnBreakParagraphs = CountColumnBreakParagraphs()
-    textWrappingBreakParagraphs = CountTextWrappingBreakParagraphs()
-    nextPageSectionBreakParagraphs = CountNextPageSectionBreakParagraphs()
-    continuousSectionBreakParagraphs = CountContinuousSectionBreakParagraphs()
-    evenPageSectionBreakParagraphs = CountEvenPageSectionBreakParagraphs()
-    oddPageSectionBreakParagraphs = CountOddPageSectionBreakParagraphs()
-    
-    ' Print the counts to the console (Immediate Window)
-    Debug.Print "Total Paragraphs: " & totalParagraphs
-    Debug.Print "Empty Paragraphs: " & emptyParagraphs
-    Debug.Print "Paragraphs with Column Break: " & columnBreakParagraphs
-    Debug.Print "Paragraphs with Text Wrapping Break: " & textWrappingBreakParagraphs
-    Debug.Print "Paragraphs with Section Break (Next Page): " & nextPageSectionBreakParagraphs
-    Debug.Print "Paragraphs with Section Break (Continuous): " & continuousSectionBreakParagraphs
-    Debug.Print "Paragraphs with Section Break (Even Page): " & evenPageSectionBreakParagraphs
-    Debug.Print "Paragraphs with Section Break (Odd Page): " & oddPageSectionBreakParagraphs
-    
-    ' Append the final results to the debug file
-    AppendToFile debugFile, "Total Paragraphs: " & totalParagraphs
-    AppendToFile debugFile, "Empty Paragraphs: " & emptyParagraphs
-    AppendToFile debugFile, "Paragraphs with Column Break: " & columnBreakParagraphs
-    AppendToFile debugFile, "Paragraphs with Text Wrapping Break: " & textWrappingBreakParagraphs
-    AppendToFile debugFile, "Paragraphs with Section Break (Next Page): " & nextPageSectionBreakParagraphs
-    AppendToFile debugFile, "Paragraphs with Section Break (Continuous): " & continuousSectionBreakParagraphs
-    AppendToFile debugFile, "Paragraphs with Section Break (Even Page): " & evenPageSectionBreakParagraphs
-    AppendToFile debugFile, "Paragraphs with Section Break (Odd Page): " & oddPageSectionBreakParagraphs
-End Sub
-
-Function CountColumnBreakParagraphs() As Long
-    Dim rng As Range
-    Dim count As Long
-    
-    ' Initialize count
-    count = 0
-    
-    ' Set the range to the entire document
-    Set rng = ActiveDocument.Content
-    
-    ' Use the Find method to search for column breaks (^b)
-    With rng.Find
-        .ClearFormatting
-        .text = "^b"
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = False
-        .MatchCase = False
-        .MatchWholeWord = False
-        .MatchWildcards = False
-        .MatchSoundsLike = False
-        .MatchAllWordForms = False
-        
-        ' Loop through all occurrences of column breaks
-        Do While .Execute
-            count = count + 1
-        Loop
-    End With
-    
-    CountColumnBreakParagraphs = count
-End Function
-
-Function CountColumnBreakParagraphsSlowDebug() As Long
-    Dim para As paragraph
-    Dim count As Long
-    Dim rng As Range
-    Dim debugFile As String
-    Dim fileNum As Integer
-    Dim paraIndex As Long
-    
-    ' Initialize count and paragraph index
-    count = 0
-    paraIndex = 0
-    
-    ' Set the debug file path to the current document directory
-    debugFile = ActiveDocument.Path & "\DebugColumnBreaks.txt"
-    
-    ' Delete the old debug file if it exists
-    If Dir(debugFile) <> "" Then
-        Kill debugFile
-    End If
-    
-    ' Open the debug file for writing
-    fileNum = FreeFile
-    Open debugFile For Output As fileNum
-    
-    ' Loop through each paragraph in the document
-    For Each para In ActiveDocument.Paragraphs
-        paraIndex = paraIndex + 1
-        Set rng = para.Range
-        With rng.Find
-            .ClearFormatting
-            .text = "^b"
-            .Forward = True
-            .Wrap = wdFindStop
-            .Format = False
-            .MatchCase = False
-            .MatchWholeWord = False
-            .MatchWildcards = False
-            .MatchSoundsLike = False
-            .MatchAllWordForms = False
-            
-            If .Execute Then
-                count = count + 1
-                Print #fileNum, "Paragraph " & paraIndex & " contains a column break (^b)"
-            End If
-        End With
-    Next para
-    
-    ' Close the debug file
-    Close fileNum
-    
-    CountColumnBreakParagraphsSlowDebug = count
-End Function
-
-Function CountColumnBreakParagraphsOptimized() As Long
-    Dim rng As Range
-    Dim count As Long
-    Dim debugFile As String
-    Dim fileNum As Integer
-    Dim paraText As String
-    
-    ' Initialize count
-    count = 0
-    
-    ' Set the debug file path to the current document directory
-    debugFile = ActiveDocument.Path & "\DebugColumnBreaksOptimized.txt"
-    
-    ' Delete the old debug file if it exists
-    If Dir(debugFile) <> "" Then
-        Kill debugFile
-    End If
-    
-    ' Open the debug file for writing
-    fileNum = FreeFile
-    Open debugFile For Output As fileNum
-    
-    ' Set the range to the entire document
-    Set rng = ActiveDocument.Content
-    
-    ' Use the Find method to search for column breaks (^b)
-    With rng.Find
-        .ClearFormatting
-        .text = "^b"
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = False
-        .MatchCase = False
-        .MatchWholeWord = False
-        .MatchWildcards = False
-        .MatchSoundsLike = False
-        .MatchAllWordForms = False
-        
-        ' Loop through all occurrences of column breaks
-        Do While .Execute
-            count = count + 1
-            paraText = Left(rng.text, Len(rng.text) - 1) ' Remove paragraph mark
-            Print #fileNum, "Paragraph text: " & paraText & " contains a column break (^b)"
-        Loop
-    End With
-    
-    ' Close the debug file
-    Close fileNum
-    
-    CountColumnBreakParagraphsOptimized = count
-End Function
-
-Sub CompareDebugFiles()
-    Dim debugFile1 As String
-    Dim debugFile2 As String
-    Dim fileNum1 As Integer
-    Dim fileNum2 As Integer
-    Dim line1 As String
-    Dim line2 As String
-    Dim paraTexts1 As Collection
-    Dim paraTexts2 As Collection
-    Dim item As Variant
-    Dim differences As String
-    
-    ' Set the debug file paths
-    debugFile1 = ActiveDocument.Path & "\DebugColumnBreaks.txt"
-    debugFile2 = ActiveDocument.Path & "\DebugColumnBreaksOptimized.txt"
-    
-    ' Initialize collections
-    Set paraTexts1 = New Collection
-    Set paraTexts2 = New Collection
-    
-    ' Read the first debug file and store paragraph texts
-    fileNum1 = FreeFile
-    Open debugFile1 For Input As fileNum1
-    Do While Not EOF(fileNum1)
-        Line Input #fileNum1, line1
-        paraTexts1.Add Mid(line1, 16) ' Extract paragraph text
-    Loop
-    Close fileNum1
-    
-    ' Read the second debug file and store paragraph texts
-    fileNum2 = FreeFile
-    Open debugFile2 For Input As fileNum2
-    Do While Not EOF(fileNum2)
-        Line Input #fileNum2, line2
-        paraTexts2.Add Mid(line2, 16) ' Extract paragraph text
-    Loop
-    Close fileNum2
-    
-    ' Compare the collections and find differences
-    differences = "Differences found:" & vbCrLf
-    For Each item In paraTexts1
-        If Not IsInCollection(paraTexts2, item) Then
-            differences = differences & "Paragraph text: " & item & " not found in optimized results" & vbCrLf
-        End If
-    Next item
-    For Each item In paraTexts2
-        If Not IsInCollection(paraTexts1, item) Then
-            differences = differences & "Paragraph text: " & item & " not found in original results" & vbCrLf
-        End If
-    Next item
-    
-    ' Display the differences
-    MsgBox differences, vbInformation, "Comparison Results"
-End Sub
-
-Function IsInCollection(col As Collection, value As Variant) As Boolean
-    Dim item As Variant
-    IsInCollection = False
-    For Each item In col
-        If item = value Then
-            IsInCollection = True
-            Exit Function
-        End If
-    Next item
-End Function
-
 Function CountTextWrappingBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
@@ -714,5 +465,135 @@ Sub ReapplyFootnoteReferenceStyle()
         footnote.Reference.style = doc.Styles("Footnote Reference")
     Next footnote
 End Sub
+
+Function FirstPageFooterNotEmpty() As Boolean
+    Dim doc As Document
+    Dim footerRange As Range
+    
+    ' Set the document
+    Set doc = ActiveDocument
+    
+    ' Get the range of the footer on the first page
+    Set footerRange = doc.Sections(1).Footers(wdHeaderFooterPrimary).Range
+    
+    ' Check if the footer is not empty
+    If Len(Trim(footerRange.text)) > 0 Then
+        'MsgBox "The footer on the first page is not empty."
+        FirstPageFooterNotEmpty = True
+    Else
+        'MsgBox "The footer on the first page is empty."
+        FirstPageFooterNotEmpty = False
+    End If
+End Function
+
+Function IsEmptyParagraph(p As paragraph) As Boolean
+' Function to check if a paragraph is truly empty
+    IsEmptyParagraph = (Len(p.Range.text) = 1 And p.Range.text = vbCr)
+End Function
+
+Sub CountTotallyEmptyParagraphs()
+    Dim doc As Document
+    Dim para As paragraph
+    Dim sec As Section
+    Dim hdr As HeaderFooter
+    Dim ftr As HeaderFooter
+    Dim footnote As footnote
+    Dim shp As Shape
+    Dim emptyParaCount As Long
+    Dim emptyParaCountHeaders As Long
+    Dim emptyParaCountFooters As Long
+    Dim emptyParaCountFootnotes As Long
+    Dim emptyParaCountTextBoxes As Long
+    Dim grandTotal As Long
+    Dim pageNum As Long
+    
+    Set doc = ActiveDocument
+        
+    ' Count empty paragraphs in the main document
+    emptyParaCount = 0
+    For Each para In doc.Paragraphs
+        If IsEmptyParagraph(para) Then
+            emptyParaCount = emptyParaCount + 1
+        End If
+    Next para
+    
+    ' Count empty paragraphs in headers
+    emptyParaCountHeaders = 0
+    For Each sec In doc.Sections
+        For Each hdr In sec.Headers
+            For Each para In hdr.Range.Paragraphs
+                If IsEmptyParagraph(para) Then
+                    emptyParaCountHeaders = emptyParaCountHeaders + 1
+                End If
+            Next para
+        Next hdr
+    Next sec
+    
+    ' Count empty paragraphs in footers and print page number to console
+    emptyParaCountFooters = 0
+    For Each sec In doc.Sections
+        For Each ftr In sec.Footers
+            For Each para In ftr.Range.Paragraphs
+                ' Work around as IsEmptyParagraph does not work on first page with space as footer
+                If Not FirstPageFooterNotEmpty Then
+                    emptyParaCountFooters = emptyParaCountFooters + 1
+                    ' Print page number to console
+                    pageNum = para.Range.Information(wdActiveEndPageNumber)
+                    Debug.Print "Empty paragraph found in footer on page: " & pageNum
+                    ' Stop at the location of the first empty paragraph found in a footer
+                    para.Range.Select
+                    'MsgBox "Found an empty paragraph in a footer. Stopping at this location."
+                    Debug.Print "Found an empty paragraph in a footer. Stopping at this location."
+                    Exit Sub
+                End If
+            Next para
+        Next ftr
+    Next sec
+    
+    ' Count empty paragraphs in footnotes
+    emptyParaCountFootnotes = 0
+    For Each footnote In doc.Footnotes
+        For Each para In footnote.Range.Paragraphs
+            If IsEmptyParagraph(para) Then
+                emptyParaCountFootnotes = emptyParaCountFootnotes + 1
+            End If
+        Next para
+    Next footnote
+    
+    ' Count empty paragraphs in text boxes and stop at the first one found
+    emptyParaCountTextBoxes = 0
+    For Each shp In doc.Shapes
+        If shp.Type = msoTextBox Then
+            For Each para In shp.TextFrame.textRange.Paragraphs
+                If IsEmptyParagraph(para) Then
+                    emptyParaCountTextBoxes = emptyParaCountTextBoxes + 1
+                    ' Stop at the location of the first empty paragraph found in a text box
+                    para.Range.Select
+                    'MsgBox "Found an empty paragraph in a text box. Stopping at this location."
+                    Debug.Print "Found an empty paragraph in a text box. Stopping at this location."
+                    Exit Sub
+                End If
+            Next para
+        End If
+    Next shp
+    
+    ' Calculate grand total
+    grandTotal = emptyParaCount + emptyParaCountHeaders + emptyParaCountFooters + emptyParaCountFootnotes + emptyParaCountTextBoxes
+    
+    ' Display counts
+    'MsgBox "Empty Paragraphs in Main Document: " & emptyParaCount & vbCrLf & _
+    '       "Empty Paragraphs in Headers: " & emptyParaCountHeaders & vbCrLf & _
+    '       "Empty Paragraphs in Footers: " & emptyParaCountFooters & vbCrLf & _
+    '       "Empty Paragraphs in Footnotes: " & emptyParaCountFootnotes & vbCrLf & _
+    '       "Empty Paragraphs in Text Boxes: " & emptyParaCountTextBoxes & vbCrLf & _
+    '       "Grand Total: " & grandTotal
+    Debug.Print "Empty Paragraphs in Main Document: " & emptyParaCount & vbCrLf & _
+           "Empty Paragraphs in Headers: " & emptyParaCountHeaders & vbCrLf & _
+           "Empty Paragraphs in Footers: " & emptyParaCountFooters & vbCrLf & _
+           "Empty Paragraphs in Footnotes: " & emptyParaCountFootnotes & vbCrLf & _
+           "Empty Paragraphs in Text Boxes: " & emptyParaCountTextBoxes & vbCrLf & _
+           "Grand Total: " & grandTotal
+End Sub
+
 
 

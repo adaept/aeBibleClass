@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -210,6 +210,8 @@ Test16:     RunTest (16)
             RunTest (23)
             RunTest (24)
             RunTest (25)
+            RunTest (26)
+            RunTest (27)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -343,6 +345,14 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountFootnoteReferenceColors
         Expected = oneBasedExpectedArray(25)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 26
+        Result = CheckAllHeaders("Empty")
+        Expected = oneBasedExpectedArray(26)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 27
+        Result = CheckAllHeaders("NotEmpty")
+        Expected = oneBasedExpectedArray(27)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -408,6 +418,10 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(24), "Copy ()", "Test = " & num, Result, Expected, "CountFootnoteReferences"
     Case 25
         Debug.Print GetPassFail(25), "Copy ()", "Test = " & num, Result, Expected, "CountFootnoteReferenceColors"
+    Case 26
+        Debug.Print GetPassFail(26), "Copy ()", "Test = " & num, Result, Expected, "CheckAllHeaders(" & "Empty" & ")"
+    Case 27
+        Debug.Print GetPassFail(27), "Copy ()", "Test = " & num, Result, Expected, "CheckAllHeaders(" & "NotEmpty" & ")"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -434,6 +448,71 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
+' Identifies headers with only paragraph marks as empty. Checks if the header contains any visible text or characters beyond just paragraph marks.
+'1. Sets the active document.
+'2. Initializes counters for empty headers, not empty headers, and total headers.
+'3. Loops through all sections in the document.
+'4. Defines the range of the header in each section.
+'5. Checks if the header is empty by iterating through each paragraph in the header range and ensuring it contains more than just a paragraph mark.
+'6. Updates the counters based on whether the header is empty or not.
+'7. Displays a message box with the total number of headers, the number of empty headers, and the number of not empty headers.    Dim doc As Document
+    Dim sectionIndex As Integer
+    Dim headerRange As Range
+    Dim para As paragraph
+    Dim isEmpty As Boolean
+    Dim emptyCount As Integer
+    Dim notEmptyCount As Integer
+    Dim totalHeaders As Integer
+    
+    ' Set the document
+    Dim doc As Document
+    Set doc = ActiveDocument
+    
+    ' Initialize counters
+    emptyCount = 0
+    notEmptyCount = 0
+    totalHeaders = 0
+    
+    ' Loop through all sections
+    For sectionIndex = 1 To doc.Sections.count
+        ' Get the range of the header in the current section
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        
+        ' Check if the header is empty
+        isEmpty = True
+        For Each para In headerRange.Paragraphs
+            If Len(Trim(para.Range.text)) > 1 Then ' Check if paragraph contains more than just a paragraph mark
+                isEmpty = False
+                Exit For
+            End If
+        Next para
+        
+        ' Update counters
+        totalHeaders = totalHeaders + 1
+        If isEmpty Then
+            emptyCount = emptyCount + 1
+        Else
+            notEmptyCount = notEmptyCount + 1
+        End If
+    Next sectionIndex
+    
+    'Debug.Print "Total headers: " & totalHeaders & vbCrLf & _
+    '       "Empty headers: " & emptyCount & vbCrLf & _
+    '       "Not empty headers: " & notEmptyCount
+    
+    If EmptyOrNotEmpty = "Empty" Then
+        CheckAllHeaders = emptyCount
+        Exit Function
+    ElseIf EmptyOrNotEmpty = "NotEmpty" Then
+        CheckAllHeaders = notEmptyCount
+        Exit Function
+    Else
+        MsgBox "Parameter not valid", vbCritical, "CheckAllHeaders"
+        Stop
+    End If
 End Function
 
 Private Function CountFootnoteReferenceColors() As Integer
