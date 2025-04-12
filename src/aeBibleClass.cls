@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -212,6 +212,8 @@ Test16:     RunTest (16)
             RunTest (25)
             RunTest (26)
             RunTest (27)
+            RunTest (28)
+            RunTest (29)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -353,6 +355,14 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CheckAllHeaders("NotEmpty")
         Expected = oneBasedExpectedArray(27)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 28
+        Result = CountTabFollowedByParagraphMarkInHeaders
+        Expected = oneBasedExpectedArray(28)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 29
+        Result = CountParagraphsWithoutTabInHeaders
+        Expected = oneBasedExpectedArray(29)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -422,6 +432,10 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(26), "Copy ()", "Test = " & num, Result, Expected, "CheckAllHeaders(" & "Empty" & ")"
     Case 27
         Debug.Print GetPassFail(27), "Copy ()", "Test = " & num, Result, Expected, "CheckAllHeaders(" & "NotEmpty" & ")"
+    Case 28
+        Debug.Print GetPassFail(28), "Copy ()", "Test = " & num, Result, Expected, "CountTabFollowedByParagraphMarkInHeaders"
+    Case 29
+        Debug.Print GetPassFail(29), "Copy ()", "Test = " & num, Result, Expected, "CountParagraphsWithoutTabInHeaders"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -448,6 +462,94 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountParagraphsWithoutTabInHeaders() As Integer
+    Dim doc As Document
+    Dim sectionIndex As Integer
+    Dim headerRange As Range
+    Dim para As paragraph
+    Dim count As Integer
+    Dim totalCount As Integer
+    
+    ' Set the document
+    Set doc = ActiveDocument
+    
+    ' Initialize the total count
+    totalCount = 0
+    
+    ' Loop through all sections
+    For sectionIndex = 1 To doc.Sections.count
+        ' Get the range of the header in the current section
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        
+        ' Initialize the count for the current header
+        count = 0
+        
+        ' Loop through each paragraph in the header range
+        For Each para In headerRange.Paragraphs
+            ' Check if the paragraph does not contain a tab
+            If InStr(para.Range.text, vbTab) = 0 Then
+                count = count + 1
+            End If
+        Next para
+        
+        ' Update the total count
+        totalCount = totalCount + count
+        
+        ' Display the count for the current header
+        'MsgBox "Section " & sectionIndex & " header has " & count & " paragraphs without a tab."
+        'Debug.Print "Section " & sectionIndex & " header has " & count & " paragraphs without a tab."
+    Next sectionIndex
+    
+    ' Display the total count
+    'MsgBox "Total paragraphs without a tab in all headers: " & totalCount
+    'Debug.Print "Total paragraphs without a tab in all headers: " & totalCount
+    CountParagraphsWithoutTabInHeaders = totalCount
+End Function
+
+Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
+    Dim doc As Document
+    Dim sectionIndex As Integer
+    Dim headerRange As Range
+    Dim para As paragraph
+    Dim count As Integer
+    Dim totalCount As Integer
+    
+    ' Set the document
+    Set doc = ActiveDocument
+    
+    ' Initialize the total count
+    totalCount = 0
+    
+    ' Loop through all sections
+    For sectionIndex = 1 To doc.Sections.count
+        ' Get the range of the header in the current section
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        
+        ' Initialize the count for the current header
+        count = 0
+        
+        ' Loop through each paragraph in the header range
+        For Each para In headerRange.Paragraphs
+            ' Check if the paragraph contains a tab followed by a paragraph mark
+            If InStr(para.Range.text, vbTab & vbCr) > 0 Then
+                count = count + 1
+            End If
+        Next para
+        
+        ' Update the total count
+        totalCount = totalCount + count
+        
+        ' Display the count for the current header
+        'MsgBox "Section " & sectionIndex & " header has " & count & " paragraphs with a tab followed by a paragraph mark."
+        'Debug.Print "Section " & sectionIndex & " header has " & count & " paragraphs with a tab followed by a paragraph mark."
+    Next sectionIndex
+    
+    ' Display the total count
+    'MsgBox "Total paragraphs with a tab followed by a paragraph mark in all headers: " & totalCount
+    'Debug.Print "Total paragraphs with a tab followed by a paragraph mark in all headers: " & totalCount
+    CountTabFollowedByParagraphMarkInHeaders = totalCount
 End Function
 
 Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer

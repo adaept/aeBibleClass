@@ -595,5 +595,3 @@ Sub CountTotallyEmptyParagraphs()
            "Grand Total: " & grandTotal
 End Sub
 
-
-
