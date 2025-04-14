@@ -11,8 +11,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #124 -
 ' #123 -
 ' #122 -
-' #121 -
-' #120 - Add test for "TheHeaders" style as there should be only one paragraph mark per section
+' #121 - Update debug output for Test(x) to be 15 per line
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #115 - Add style "TheFooters" based on "TheHeaders"
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
@@ -61,6 +60,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #120 - Add test for "TheHeaders" style as there should be only one paragraph mark per section
     ' FIXED - #118 - Add test for use of "Header" style, should be 0 as "TheHeaders" has to be used instead
     ' FIXED - #112 - Clear all tab stops from para headers, default is 0.1", add one tab to empty headers
     ' FIXED - #117 - See #113 - Add test to count tab followed by paragraph mark in headers

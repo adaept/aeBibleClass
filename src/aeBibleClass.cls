@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -215,6 +215,7 @@ Test16:     RunTest (16)
             RunTest (28)
             RunTest (29)
             RunTest (30)
+            RunTest (31)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -368,6 +369,10 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountHeaderStyleUsage
         Expected = oneBasedExpectedArray(30)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 31
+        Result = CountParagraphMarksPerHeaderSection
+        Expected = oneBasedExpectedArray(31)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -443,6 +448,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(29), "Copy ()", "Test = " & num, Result, Expected, "CountParagraphsWithoutTabInHeaders"
     Case 30
         Debug.Print GetPassFail(30), "Copy ()", "Test = " & num, Result, Expected, "CountHeaderStyleUsage"
+    Case 31
+        Debug.Print GetPassFail(31), "Copy ()", "Test = " & num, Result, Expected, "CountParagraphMarksPerHeaderSection"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -469,6 +476,40 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountParagraphMarksPerHeaderSection() As Integer
+    Dim doc As Document
+    Dim sectionIndex As Integer
+    Dim headerRange As Range
+    Dim paraCount As Integer
+    
+    ' Set the document
+    Set doc = ActiveDocument
+    paraCount = 1
+    
+    ' Loop through all sections
+    For sectionIndex = 1 To doc.Sections.count
+        ' Get the range of the header in the current section
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        
+        ' Count the number of paragraphs in the header
+        paraCount = headerRange.Paragraphs.count
+        
+        ' Print the result to the console
+        'Debug.Print "Section " & sectionIndex & " header has " & paraCount & " paragraph(s)."
+        
+        ' Check if the paragraph count is more than one
+        If paraCount > 1 Then
+            MsgBox "Section " & sectionIndex & " header has more than one paragraph mark. Stopping at this section."
+            Exit Function
+        End If
+    Next sectionIndex
+    
+    ' Display a message indicating the count is complete
+    'MsgBox "Count of paragraph marks per header section is " & paraCount
+    'Debug.Print "Count of paragraph marks per header section is " & paraCount
+    CountParagraphMarksPerHeaderSection = paraCount
 End Function
 
 Private Function CountHeaderStyleUsage() As Integer
