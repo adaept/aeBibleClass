@@ -138,9 +138,18 @@ Private Sub Expected1BasedArray()
     Next i
     Debug.Print outputString
 
+    ' Next 15 results
+    outputString = ""
+    For i = 16 To 30
+        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+        ' Trim the trailing space
+        outputString = Trim(outputString)
+    Next i
+    Debug.Print outputString
+    
     ' Next results
     outputString = ""
-    For i = 16 To UBound(oneBasedExpectedArray)
+    For i = 31 To UBound(oneBasedExpectedArray)
         outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
         ' Trim the trailing space
         outputString = Trim(outputString)

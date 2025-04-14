@@ -11,9 +11,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #124 -
 ' #123 -
 ' #122 -
-' #121 - Update debug output for Test(x) to be 15 per line
 ' #116 - Check use of Gentium font (make it unnecessary?)
-' #115 - Add style "TheFooters" based on "TheHeaders"
+' #115 - Add style "TheFooters" based on "TheHeaders" and update all footer sections
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #108 - Add test for all line feed to have a space before
 ' #106 - Fix H1 pages to use line feed in text as appropriate
@@ -60,13 +59,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #121 - Update debug output of Expected1BasedArray for Test(x) to be 15 per line
     ' FIXED - #120 - Add test for "TheHeaders" style as there should be only one paragraph mark per section
     ' FIXED - #118 - Add test for use of "Header" style, should be 0 as "TheHeaders" has to be used instead
     ' FIXED - #112 - Clear all tab stops from para headers, default is 0.1", add one tab to empty headers
     ' FIXED - #117 - See #113 - Add test to count tab followed by paragraph mark in headers
     ' FIXED - #119 - See #113 - Add test to count paragraph mark in headers that does not have a tab
     ' FIXED - #114 - Add style "TheHeaders"
-    ' FIXED - #107 - Fix lamentations to use  manual line break (line feed) with Lamentation style
+    ' FIXED - #107 - Fix lamentations to use manual line break (line feed) with Lamentation style
     ' FIXED - #113 - Add test for empty and non empty header paragraphs
     ' FIXED - #111 - Fix empty paragraphs in text boxes
     ' FIXED - #110 - Fix empty paragraphs in footers
