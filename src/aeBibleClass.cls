@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -214,6 +214,7 @@ Test16:     RunTest (16)
             RunTest (27)
             RunTest (28)
             RunTest (29)
+            RunTest (30)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -363,6 +364,10 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountParagraphsWithoutTabInHeaders
         Expected = oneBasedExpectedArray(29)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 30
+        Result = CountHeaderStyleUsage
+        Expected = oneBasedExpectedArray(30)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -436,6 +441,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(28), "Copy ()", "Test = " & num, Result, Expected, "CountTabFollowedByParagraphMarkInHeaders"
     Case 29
         Debug.Print GetPassFail(29), "Copy ()", "Test = " & num, Result, Expected, "CountParagraphsWithoutTabInHeaders"
+    Case 30
+        Debug.Print GetPassFail(30), "Copy ()", "Test = " & num, Result, Expected, "CountHeaderStyleUsage"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -462,6 +469,45 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountHeaderStyleUsage() As Integer
+    Dim doc As Document
+    Dim rng As Range
+    Dim styleName As String
+    Dim count As Integer
+    
+    ' Set the document
+    Set doc = ActiveDocument
+    
+    ' Define the style name to search for
+    styleName = "Header"
+    
+    ' Initialize the range to search
+    Set rng = doc.Content
+    
+    ' Initialize the count
+    count = 0
+    
+    ' Search for the style "Header"
+    With rng.Find
+        .ClearFormatting
+        .style = styleName
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchWildcards = False
+        
+        ' Loop through all instances of the style "Header"
+        Do While .Execute
+            count = count + 1
+        Loop
+    End With
+    
+    ' Display the count
+    'MsgBox "The style 'Header' is used " & count & " times in the document."
+    'Debug.Print "The style 'Header' is used " & count & " times in the document."
+    CountHeaderStyleUsage = count
 End Function
 
 Private Function CountParagraphsWithoutTabInHeaders() As Integer
