@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -225,6 +225,8 @@ Test16:     RunTest (16)
             RunTest (29)
             RunTest (30)
             RunTest (31)
+            RunTest (32)
+            RunTest (33)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -382,6 +384,14 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountParagraphMarksPerHeaderSection
         Expected = oneBasedExpectedArray(31)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 32
+        Result = CountLinefeed
+        Expected = oneBasedExpectedArray(32)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 33
+        Result = CountLinefeed(" ")
+        Expected = oneBasedExpectedArray(33)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -459,6 +469,10 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(30), "Copy ()", "Test = " & num, Result, Expected, "CountHeaderStyleUsage"
     Case 31
         Debug.Print GetPassFail(31), "Copy ()", "Test = " & num, Result, Expected, "CountParagraphMarksPerHeaderSection"
+    Case 32
+        Debug.Print GetPassFail(32), "Copy ()", "Test = " & num, Result, Expected, "CountLinefeed"
+    Case 33
+        Debug.Print GetPassFail(33), "Copy ()", "Test = " & num, Result, Expected, "CountLinefeed(" & """ """ & ")"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -485,6 +499,46 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountLinefeed(Optional space As Variant) As Integer
+' Search in doc
+    Dim doc As Document
+    Dim rng As Range
+    Dim findText As String
+    Dim count As Integer
+    
+    If IsMissing(space) Then
+        'Debug.Print "IsMissing space"
+        findText = "^l"
+    Else
+        'Debug.Print "Space Is Not Missing"
+        findText = " {1}^l"     ' space followed by linefeed
+    End If
+    
+    ' Set the document
+    Set doc = ActiveDocument
+       
+    ' Search in the main document content
+    Set rng = doc.Content
+    
+    With rng.Find
+        .text = findText
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = True
+        
+        ' Loop through all instances and count them
+        Do While .Execute
+            count = count + 1
+        Loop
+    End With
+    
+    ' Display the count
+    'MsgBox "Number of matches found: " & count
+    'Debug.Print "Number of matches found: " & count
+    CountLinefeed = count
 End Function
 
 Private Function CountParagraphMarksPerHeaderSection() As Integer
@@ -1362,7 +1416,7 @@ Private Function CountDoubleTabs() As Integer
     Set doc = ActiveDocument
     Set rng = doc.Content
 
-    Do While rng.Find.Execute(FindText:="^t^t", Forward:=True, Wrap:=wdFindStop)
+    Do While rng.Find.Execute(findText:="^t^t", Forward:=True, Wrap:=wdFindStop)
         count = count + 1
         rng.Collapse Direction:=wdCollapseEnd ' Move the range to the end of the found text
     Loop
@@ -1379,7 +1433,7 @@ Private Function CountSpaceFollowedByCarriageReturn() As Integer
     Set doc = ActiveDocument
     Set rng = doc.Content
 
-    Do While rng.Find.Execute(FindText:=" ^13", Forward:=True, Wrap:=wdFindStop)
+    Do While rng.Find.Execute(findText:=" ^13", Forward:=True, Wrap:=wdFindStop)
         count = count + 1
         rng.Collapse Direction:=wdCollapseEnd ' Move the range to the end of the found text
     Loop
