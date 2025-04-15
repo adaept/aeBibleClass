@@ -357,7 +357,7 @@ Sub ListAndReviewAscii12Characters()
     Dim response As VbMsgBoxResult
     
     ' Set the range to the entire document
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     
     ' Initialize the count
     count = 0

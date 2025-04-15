@@ -119,8 +119,8 @@ Private Sub Expected1BasedArray()
     Dim outputString As String
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509, 116, 116)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -227,6 +227,8 @@ Test16:     RunTest (16)
             RunTest (31)
             RunTest (32)
             RunTest (33)
+            RunTest (34)
+            RunTest (35)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -392,6 +394,14 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountLinefeed(" ")
         Expected = oneBasedExpectedArray(33)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 34
+        Result = CountManualLineBreaksAndWithSpace
+        Expected = oneBasedExpectedArray(34)
+        If Result = Expected Then GetPassFail = "PASS"
+    Case 35
+        Result = CountManualLineBreaksAndWithSpace(" ")
+        Expected = oneBasedExpectedArray(35)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -473,6 +483,10 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(32), "Copy ()", "Test = " & num, Result, Expected, "CountLinefeed"
     Case 33
         Debug.Print GetPassFail(33), "Copy ()", "Test = " & num, Result, Expected, "CountLinefeed(" & """ """ & ")"
+    Case 34
+        Debug.Print GetPassFail(34), "Copy ()", "Test = " & num, Result, Expected, "CountManualLineBreaksAndWithSpace"
+    Case 35
+        Debug.Print GetPassFail(35), "Copy ()", "Test = " & num, Result, Expected, "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -501,6 +515,52 @@ PROC_ERR:
     End
 End Function
 
+Private Function CountManualLineBreaksAndWithSpace(Optional space As Variant) As Integer
+    Dim fn As footnote
+    Dim totalBreaks As Long
+    Dim breaksWithSpaceBefore As Long
+    Dim i As Long
+    Dim content As String
+    Dim currentChar As String
+    Dim prevChar As String
+
+    totalBreaks = 0
+    breaksWithSpaceBefore = 0
+
+    For Each fn In ActiveDocument.Footnotes
+        content = fn.Range.text
+        For i = 1 To Len(content)
+            currentChar = Mid(content, i, 1)
+            If Asc(currentChar) = 11 Then ' Chr(11) = manual line break
+                totalBreaks = totalBreaks + 1
+                If i > 1 Then
+                    prevChar = Mid(content, i - 1, 1)
+                    If prevChar = " " Then
+                        breaksWithSpaceBefore = breaksWithSpaceBefore + 1
+                    End If
+                End If
+            End If
+        Next i
+    Next fn
+
+    'MsgBox "Total manual line breaks: " & totalBreaks & vbCrLf & _
+    '       " of which are preceded by a space: " & breaksWithSpaceBefore, vbInformation
+    'Debug.Print "Total manual line breaks: " & totalBreaks & vbCrLf & _
+    '       " of which are preceded by a space: " & breaksWithSpaceBefore
+    If CStr(space) = " " Then
+        'Debug.Print "Space"
+        CountManualLineBreaksAndWithSpace = breaksWithSpaceBefore
+        Exit Function
+    End If
+    If IsMissing(space) Then
+        'Debug.Print "No Argument"
+        CountManualLineBreaksAndWithSpace = totalBreaks
+    Else
+        MsgBox "Invalid Argument", vbCritical
+        Stop
+    End If
+End Function
+
 Private Function CountLinefeed(Optional space As Variant) As Integer
 ' Search in doc
     Dim doc As Document
@@ -520,7 +580,7 @@ Private Function CountLinefeed(Optional space As Variant) As Integer
     Set doc = ActiveDocument
        
     ' Search in the main document content
-    Set rng = doc.Content
+    Set rng = doc.content
     
     With rng.Find
         .text = findText
@@ -588,7 +648,7 @@ Private Function CountHeaderStyleUsage() As Integer
     styleName = "Header"
     
     ' Initialize the range to search
-    Set rng = doc.Content
+    Set rng = doc.content
     
     ' Initialize the count
     count = 0
@@ -1077,7 +1137,7 @@ Private Function CountWhiteParagraphMarks() As Integer
     firstFound = False
     
     ' Initialize the range to search the entire document
-    Set rng = doc.Content
+    Set rng = doc.content
     
     ' Use the Find method to locate white paragraph marks
     With rng.Find
@@ -1203,7 +1263,7 @@ Private Function CountFindNumberDashNumber() As Integer
     searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
     count = 0
 
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     With rng.Find
         .text = searchPattern
         .MatchWildcards = True
@@ -1224,7 +1284,7 @@ Private Function CountFindNumberDashNumber() As Integer
 
             ' Collapse the range to the end of the found text
             rng.Collapse Direction:=wdCollapseEnd
-            rng.End = ActiveDocument.Content.End
+            rng.End = ActiveDocument.content.End
         Loop
     End With
 
@@ -1235,7 +1295,7 @@ Private Function CountNonBreakingSpaces() As Integer
     Dim rng As Range
     Dim count As Long
 
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
 
     With rng.Find
@@ -1260,7 +1320,7 @@ Private Function CountPeriodSpaceLeftParenthesis() As Integer
     Dim rng As Range
     Dim count As Long
     
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
     
     With rng.Find
@@ -1288,7 +1348,7 @@ Private Function CountStyleWithNumberAndSpace() As Integer
 
     styleName = "Verse marker"
 
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
     rng.Find.style = styleName
 
@@ -1318,7 +1378,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
     
     styleName = "Chapter Verse marker"
 
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
     rng.Find.style = styleName
     firstFound = False
@@ -1351,7 +1411,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
     Dim rng As Range
     Dim count As Long
     
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
     
     With rng.Find
@@ -1384,7 +1444,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
     Dim rng As Range
     Dim count As Long
 
-    Set rng = ActiveDocument.Content
+    Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
     rng.Find.font.color = wdColorWhite
 
@@ -1414,7 +1474,7 @@ Private Function CountDoubleTabs() As Integer
 
     count = 0
     Set doc = ActiveDocument
-    Set rng = doc.Content
+    Set rng = doc.content
 
     Do While rng.Find.Execute(findText:="^t^t", Forward:=True, Wrap:=wdFindStop)
         count = count + 1
@@ -1431,7 +1491,7 @@ Private Function CountSpaceFollowedByCarriageReturn() As Integer
 
     count = 0
     Set doc = ActiveDocument
-    Set rng = doc.Content
+    Set rng = doc.content
 
     Do While rng.Find.Execute(findText:=" ^13", Forward:=True, Wrap:=wdFindStop)
         count = count + 1
@@ -1448,7 +1508,7 @@ Private Function CountDoubleSpaces() As Integer
     
     doubleSpaceCount = 0
     Set doc = ActiveDocument
-    Set rng = doc.Content
+    Set rng = doc.content
     
     With rng.Find
         .text = "  " ' Double space

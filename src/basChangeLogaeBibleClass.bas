@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #130 -
+' #129 -
+' #128 -
+' #127 -
+' #126 -
 ' #125 -
-' #124 -
-' #123 -
+' #123 - Add file TestReport.txt output additional to console result for GitHub tracking
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #108 - Add test for all line feed to have a space before
@@ -57,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #124 - Add test for count linefeed and space linefeed in footnotes
     ' FIXED - #122 - Add test for count linefeed and space linefeed in doc
     ' FIXED - #115 - Add style "TheFooters" based on "TheHeaders" and update all footer sections, use Noto Sans font
     ' FIXED - #121 - Update debug output of Expected1BasedArray for Test(x) to be 15 per line
