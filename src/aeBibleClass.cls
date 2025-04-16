@@ -50,6 +50,8 @@ Private Const bGoTo16 As Boolean = False
 Private oneBasedExpectedArray As Variant
 Private Result As Integer
 Private Expected As Integer
+Private TestReportFileName As String
+Private testFileNum As Integer
 '=====================================================
 
 Private Sub Class_Initialize()
@@ -114,9 +116,23 @@ Function ConvertToOneBasedArray(values As Variant) As Variant
 End Function
 
 Private Sub Expected1BasedArray()
+    Dim doc As Document
     Dim values As Variant
     Dim i As Integer
     Dim outputString As String
+
+    Set doc = ActiveDocument
+    TestReportFileName = doc.Path & "\TestReport.txt"
+    
+    ' Delete the old debug file if it exists
+    If Dir(TestReportFileName) <> "" Then
+        Kill TestReportFileName
+    End If
+    
+    ' Open the debug file for writing
+    testFileNum = FreeFile
+    Open TestReportFileName For Output As testFileNum
+    Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35)
@@ -137,7 +153,8 @@ Private Sub Expected1BasedArray()
         outputString = Trim(outputString)
     Next i
     Debug.Print outputString
-
+    AppendToFile TestReportFileName, outputString
+    
     ' Next 15 results
     outputString = ""
     For i = 16 To 30
@@ -146,6 +163,7 @@ Private Sub Expected1BasedArray()
         outputString = Trim(outputString)
     Next i
     Debug.Print outputString
+    AppendToFile TestReportFileName, outputString
     
     ' Next results
     outputString = ""
@@ -155,7 +173,16 @@ Private Sub Expected1BasedArray()
         outputString = Trim(outputString)
     Next i
     Debug.Print outputString
+    AppendToFile TestReportFileName, outputString
 
+End Sub
+
+Sub AppendToFile(filePath As String, text As String)
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    Open filePath For Append As fileNum
+    Print #fileNum, text
+    Close fileNum
 End Sub
 
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
@@ -193,6 +220,10 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error GoTo PROC_ERR
             Call Expected1BasedArray
             Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+            '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
+            AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
+            AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
+            
             If bGoTo16 Then GoTo Test16
             RunTest (1)
             RunTest (2)
@@ -244,7 +275,8 @@ Test16:     RunTest (16)
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
     Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
-
+    AppendToFile TestReportFileName, "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    
     RunBibleClassTests = True
 
 PROC_EXIT:
