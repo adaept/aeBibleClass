@@ -105,7 +105,7 @@ Sub UpdateCharacterStyle(pageNumber As Integer)
     Debug.Print "Starting at Page " & pageNumber
 
     ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         ' Check if the paragraph is on or after the specified page
         If para.Range.Information(wdActiveEndPageNumber) >= pageNumber Then
             ' Process the paragraph (example: update character style)
@@ -140,7 +140,7 @@ Sub LongProcessSkeletonWithConsoleProgress()
     Set doc = ActiveDocument
         
     Dim totalParagraphs As Long
-    totalParagraphs = doc.Paragraphs.count
+    totalParagraphs = doc.paragraphs.count
         
     Dim batchSize As Long
     batchSize = 50 ' Number of paragraphs to update in each phase

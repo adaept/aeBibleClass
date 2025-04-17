@@ -68,7 +68,7 @@ Sub PrintBibleBook()
     heading2Found = False
     
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
             If InStr(para.Range.text, heading1Name) > 0 Then
                 Debug.Print "Heading 1: " & para.Range.text
@@ -119,9 +119,9 @@ Sub GoToParagraphIndex()
     targetIndex = InputBox("Enter the index of the paragraph you want to go to:")
     
     ' Validate the entered index
-    If targetIndex > 0 And targetIndex <= ActiveDocument.Paragraphs.count Then
+    If targetIndex > 0 And targetIndex <= ActiveDocument.paragraphs.count Then
         paraIndex = 1
-        For Each para In ActiveDocument.Paragraphs
+        For Each para In ActiveDocument.paragraphs
             If paraIndex = targetIndex Then
                 para.Range.Select
                 Exit Sub
@@ -129,7 +129,7 @@ Sub GoToParagraphIndex()
             paraIndex = paraIndex + 1
         Next para
     Else
-        MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.Paragraphs.count & "."
+        MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.paragraphs.count & "."
     End If
 End Sub
 
@@ -137,7 +137,7 @@ Function CountTextWrappingBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         With para.Range.Find
             .ClearFormatting
             .text = "^m"
@@ -153,7 +153,7 @@ Function CountNextPageSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         If para.Range.Sections.count > 0 Then
             If para.Range.Sections(1).PageSetup.SectionStart = wdSectionNewPage Then
                 count = count + 1
@@ -167,7 +167,7 @@ Function CountContinuousSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         If para.Range.Sections.count > 0 Then
             If para.Range.Sections(1).PageSetup.SectionStart = wdSectionContinuous Then
                 count = count + 1
@@ -181,7 +181,7 @@ Function CountEvenPageSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         If para.Range.Sections.count > 0 Then
             If para.Range.Sections(1).PageSetup.SectionStart = wdSectionEvenPage Then
                 count = count + 1
@@ -195,7 +195,7 @@ Function CountOddPageSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         If para.Range.Sections.count > 0 Then
             If para.Range.Sections(1).PageSetup.SectionStart = wdSectionOddPage Then
                 count = count + 1
@@ -226,7 +226,7 @@ Sub SearchParagraphs()
     foundFirst = False
     
     ' Loop through all paragraphs in the document
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         ' Check if the paragraph contains only a page break or continuous page break
         If para.Range.text = Chr(12) Or para.Range.text = Chr(14) Then
             count = count + 1
@@ -247,18 +247,6 @@ Sub SearchParagraphs()
     End If
 End Sub
 
-Function CountEmptyParagraphs() As Long
-    Dim para As paragraph
-    Dim count As Long
-    count = 0
-    For Each para In ActiveDocument.Paragraphs
-        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
-            count = count + 1
-        End If
-    Next para
-    CountEmptyParagraphs = count
-End Function
-
 Sub CountEmptyParagraphsWithAutomaticFont()
     Dim doc As Document
     Dim para As paragraph
@@ -268,7 +256,7 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     count = 0
     
     ' Loop through all paragraphs in the document
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
         If Len(para.Range.text) = 1 And para.Range.font.color = wdColorAutomatic Then
             count = count + 1
@@ -288,7 +276,7 @@ Sub GoToParagraphByCount(paragraphNumber As Integer)
     count = 0
     
     ' Loop through all paragraphs in the document
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         count = count + 1
         ' Check if the current paragraph is the one we want to go to
         If count = paragraphNumber Then
@@ -311,7 +299,7 @@ Sub DetectFontColors()
     
     paraCount = 0
     
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         paraCount = paraCount + 1
         Set rng = para.Range
         colorUsed = False
@@ -420,7 +408,7 @@ Sub EnsureFootnoteReferenceStyleColor()
     
     count = 0
     ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         ' Check if the paragraph style is Footnote Reference
         If para.style = "Footnote Reference" Then
             count = count + 1
@@ -511,7 +499,7 @@ Sub CountTotallyEmptyParagraphs()
         
     ' Count empty paragraphs in the main document
     emptyParaCount = 0
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         If IsEmptyParagraph(para) Then
             emptyParaCount = emptyParaCount + 1
         End If
@@ -521,7 +509,7 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountHeaders = 0
     For Each sec In doc.Sections
         For Each hdr In sec.Headers
-            For Each para In hdr.Range.Paragraphs
+            For Each para In hdr.Range.paragraphs
                 If IsEmptyParagraph(para) Then
                     emptyParaCountHeaders = emptyParaCountHeaders + 1
                 End If
@@ -533,7 +521,7 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountFooters = 0
     For Each sec In doc.Sections
         For Each ftr In sec.Footers
-            For Each para In ftr.Range.Paragraphs
+            For Each para In ftr.Range.paragraphs
                 ' Work around as IsEmptyParagraph does not work on first page with space as footer
                 If Not FirstPageFooterNotEmpty Then
                     emptyParaCountFooters = emptyParaCountFooters + 1
@@ -553,7 +541,7 @@ Sub CountTotallyEmptyParagraphs()
     ' Count empty paragraphs in footnotes
     emptyParaCountFootnotes = 0
     For Each footnote In doc.Footnotes
-        For Each para In footnote.Range.Paragraphs
+        For Each para In footnote.Range.paragraphs
             If IsEmptyParagraph(para) Then
                 emptyParaCountFootnotes = emptyParaCountFootnotes + 1
             End If
@@ -564,7 +552,7 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountTextBoxes = 0
     For Each shp In doc.Shapes
         If shp.Type = msoTextBox Then
-            For Each para In shp.TextFrame.textRange.Paragraphs
+            For Each para In shp.TextFrame.textRange.paragraphs
                 If IsEmptyParagraph(para) Then
                     emptyParaCountTextBoxes = emptyParaCountTextBoxes + 1
                     ' Stop at the location of the first empty paragraph found in a text box
@@ -594,4 +582,5 @@ Sub CountTotallyEmptyParagraphs()
            "Empty Paragraphs in Text Boxes: " & emptyParaCountTextBoxes & vbCrLf & _
            "Grand Total: " & grandTotal
 End Sub
+
 

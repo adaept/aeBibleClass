@@ -83,7 +83,7 @@ Public Sub PrintBibleHeading1Info()
     
     count = 0
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         ' Check if the paragraph style is Heading 1
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             count = count + 1
@@ -111,7 +111,7 @@ Public Sub PrintBibleBookHeadings()
     foundHeading1 = False
     
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
             If para.Range.text = headingLabel & vbCr Then
@@ -161,7 +161,7 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
     foundHeading1 = False
     
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.Paragraphs
+    For Each para In ActiveDocument.paragraphs
         paraText = para.Range.text
         ' Remove formatting characters
         paraText = Replace(paraText, vbCr, "") ' Paragraph mark
@@ -459,7 +459,7 @@ Sub CountParagraphsTypes()
     Close fileNum
     
     ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
+    For Each para In doc.paragraphs
         paraIndex = paraIndex + 1
         totalParagraphs = totalParagraphs + 1
         

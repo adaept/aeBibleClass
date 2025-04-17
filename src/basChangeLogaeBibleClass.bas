@@ -8,9 +8,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=============================================================================================================================
 ' Tasks:
 ' #130 -
-' #129 -
-' #128 -
-' #127 -
 ' #123 - Add file TestReport.txt output additional to console result for GitHub tracking
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
@@ -59,6 +56,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #129 - Add DoEvents in long loops so console results are processed
+    ' FIXED - #128 - Update test CountEmptyParagraphs for speed
+    ' FIXED - #127 - Update test CountNumberDashNumberInFootnotes with fast algorithm
     ' FIXED - #126 - Update test CountDeleteEmptyParagraphsBeforeHeading2 with fast algorithm from ChatGPT
     ' FIXED - #125 - Add test to count number of footers with style "Footer"
     ' FIXED - #124 - Add test for count linefeed and space linefeed in footnotes

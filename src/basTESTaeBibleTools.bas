@@ -169,7 +169,7 @@ Sub GetVerticalPositionOfCursorParagraph()
     Dim paraPos As Single
     
     Set doc = ActiveDocument
-    Set rng = Selection.Paragraphs(1).Range
+    Set rng = Selection.paragraphs(1).Range
     
     ' Get the vertical position of the paragraph relative to the page
     paraPos = rng.Information(wdVerticalPositionRelativeToPage)
