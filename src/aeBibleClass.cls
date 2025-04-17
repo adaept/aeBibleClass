@@ -380,7 +380,7 @@ Private Function GetPassFail(TestNum As Integer) As String
         Expected = oneBasedExpectedArray(21)
         If Result = Expected Then GetPassFail = "PASS"
     Case 22
-        Result = CountEmptyParagraphs
+        Result = CountEmptyParagraphsWithFormatting
         Expected = oneBasedExpectedArray(22)
         If Result = Expected Then GetPassFail = "PASS"
     Case 23
@@ -497,7 +497,7 @@ Private Function RunTest(num As Integer) As Boolean
     Case 21
         Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, Result, Expected, "CountSpacesAfterFootnotes"
     Case 22
-        Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphs"
+        Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphsWithFormatting"
     Case 23
         Debug.Print GetPassFail(23), "Copy ()", "Test = " & num, Result, Expected, "CountDeleteEmptyParagraphsBeforeHeading2"
     Case 24
@@ -984,7 +984,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
     CountDeleteEmptyParagraphsBeforeHeading2 = count
 End Function
 
-Private Function CountEmptyParagraphs() As Long
+Private Function CountEmptyParagraphsWithFormatting() As Long
 ' To maximize speed and accuracy, stay in the Paragraphs collection (for true Word structure),
 ' but avoid anything expensive — no .Range.Text, .Style, etc. unless needed.
     Dim para As paragraph
@@ -1012,7 +1012,7 @@ Private Function CountEmptyParagraphs() As Long
     'MsgBox "Accurate empty paragraph count: " & count, vbInformation
     'Debug.Print "Accurate empty paragraph count: " & count
     
-    CountEmptyParagraphs = count
+    CountEmptyParagraphsWithFormatting = count
 End Function
 
 Private Function CountSpacesAfterFootnotes() As Integer
@@ -1108,7 +1108,7 @@ End Function
 Private Function CountEmptyParasAfterH2() As Integer
     Dim para As paragraph
     Dim emptyParaCount As Long
-    Dim nextPara As paragraph
+    Dim NextPara As paragraph
     
     ' Initialize the count
     emptyParaCount = 0
@@ -1118,10 +1118,10 @@ Private Function CountEmptyParasAfterH2() As Integer
         ' Check if the paragraph style is Heading 2
         If para.style = ActiveDocument.Styles("Heading 2") Then
             ' Check the next paragraph
-            Set nextPara = para.Range.Next(Unit:=wdParagraph, count:=1).paragraphs(1)
-            If Not nextPara Is Nothing Then
+            Set NextPara = para.Range.Next(Unit:=wdParagraph, count:=1).paragraphs(1)
+            If Not NextPara Is Nothing Then
                 ' Check if the next paragraph is empty
-                If Len(Trim(nextPara.Range.text)) = 1 Then ' Adjusted to check for a single paragraph mark
+                If Len(Trim(NextPara.Range.text)) = 1 Then ' Adjusted to check for a single paragraph mark
                     emptyParaCount = emptyParaCount + 1
                 End If
             End If

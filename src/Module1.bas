@@ -583,4 +583,76 @@ Sub CountTotallyEmptyParagraphs()
            "Grand Total: " & grandTotal
 End Sub
 
+Sub FindFirstEmptyParagraphAndCountTypes()
+    Dim para As paragraph
+    Dim paraText As String
+    Dim paraRange As Range
+    Dim sectionBreakFound As Boolean
+    Dim nextChar As String
+    
+    Dim trulyEmptyCount As Long
+    Dim sectionFormattedEmptyCount As Long
+    Dim firstFound As Boolean
+
+    trulyEmptyCount = 0
+    sectionFormattedEmptyCount = 0
+    firstFound = False
+
+    For Each para In ActiveDocument.paragraphs
+        Set paraRange = para.Range
+        paraText = Trim(paraRange.text)
+
+        ' Remove final paragraph mark if present
+        If Len(paraText) > 0 Then
+            If Right(paraText, 1) = Chr(13) Or Right(paraText, 1) = Chr(11) Then
+                paraText = Left(paraText, Len(paraText) - 1)
+            End If
+        End If
+
+        ' Only process if the paragraph is effectively empty
+        If paraText = "" Then
+            sectionBreakFound = False
+
+            ' Check for section break characters in the paragraph
+            If InStr(paraRange.text, Chr(12)) > 0 Then
+                sectionBreakFound = True
+            End If
+
+            ' Check if the paragraph spans multiple sections
+            If paraRange.Sections.count > 1 Then
+                sectionBreakFound = True
+            End If
+
+            ' Check the next character only if not at end of doc
+            If paraRange.End < ActiveDocument.content.End Then
+                nextChar = paraRange.Next(Unit:=wdCharacter, count:=1).text
+                If nextChar = Chr(12) Then
+                    sectionBreakFound = True
+                End If
+            End If
+
+            ' Count accordingly
+            If sectionBreakFound Then
+                sectionFormattedEmptyCount = sectionFormattedEmptyCount + 1
+            Else
+                trulyEmptyCount = trulyEmptyCount + 1
+
+                If Not firstFound Then
+                    paraRange.Select
+                    firstFound = True
+                End If
+            End If
+        End If
+    Next para
+
+    ' Final message
+    MsgBox "Empty paragraph counts:" & vbCrLf & _
+           "- Truly empty (no section formatting): " & trulyEmptyCount & vbCrLf & _
+           "- Empty with section formatting: " & sectionFormattedEmptyCount, vbInformation, "Paragraph Summary"
+           
+    If Not firstFound Then
+        MsgBox "No truly empty paragraph found to select.", vbExclamation
+    End If
+End Sub
+
 
