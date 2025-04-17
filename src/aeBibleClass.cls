@@ -44,7 +44,7 @@ Private Const vbext_ct_Document As Long = 100
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
-Private Const bTimeAllTests As Boolean = False
+Private Const bTimeAllTests As Boolean = True
 Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
@@ -135,8 +135,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509, 116, 116)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35   36)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509, 116, 116, 0)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -260,6 +260,7 @@ Test16:     RunTest (16)
             RunTest (33)
             RunTest (34)
             RunTest (35)
+            RunTest (36)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -434,6 +435,10 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountManualLineBreaksAndWithSpace(" ")
         Expected = oneBasedExpectedArray(35)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 36
+        Result = CountFooterParagraphsWithFooterStyle
+        Expected = oneBasedExpectedArray(36)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -519,6 +524,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(34), "Copy ()", "Test = " & num, Result, Expected, "CountManualLineBreaksAndWithSpace"
     Case 35
         Debug.Print GetPassFail(35), "Copy ()", "Test = " & num, Result, Expected, "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+    Case 36
+        Debug.Print GetPassFail(36), "Copy ()", "Test = " & num, Result, Expected, "CountFooterParagraphsWithFooterStyle"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -545,6 +552,33 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountFooterParagraphsWithFooterStyle() As Integer
+    Dim sec As Section
+    Dim hdrftr As HeaderFooter
+    Dim para As paragraph
+    Dim count As Long
+
+    count = 0
+
+    ' Loop through all sections in the document
+    For Each sec In ActiveDocument.Sections
+        ' Only check footers
+        For Each hdrftr In sec.Footers
+            If hdrftr.Exists Then
+                For Each para In hdrftr.Range.Paragraphs
+                    If para.style = "Footer" Then
+                        count = count + 1
+                    End If
+                Next para
+            End If
+        Next hdrftr
+    Next sec
+
+    'MsgBox "Number of paragraphs in footers with the style 'Footer': " & count, vbInformation
+    'Debug.Print "Number of paragraphs in footers with the style 'Footer': " & count
+    CountFooterParagraphsWithFooterStyle = count
 End Function
 
 Private Function CountManualLineBreaksAndWithSpace(Optional space As Variant) As Integer
@@ -909,52 +943,34 @@ Private Function CountFootnoteReferences() As Integer
 End Function
 
 Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
-    Dim doc As Document
+' Avoids indexing (.Item(i)) — slow in Word.
+' Does not call .Style unless needed.
+' Only trims the text once per loop.
+' Dramatically faster!
     Dim para As paragraph
-    Dim deletionCount As Long
-    Dim emptyCount As Long
-    Dim userResponse As VbMsgBoxResult
-    
-    Application.ScreenUpdating = False
-    ' Initialize variables
-    Set doc = ActiveDocument
-    deletionCount = 0
-    emptyCount = 0
-    
-    ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
-        ' Check if the paragraph style is Heading 2
+    Dim prevText As String
+    Dim prevIsEmpty As Boolean
+    Dim count As Long
+
+    count = 0
+    prevIsEmpty = False
+
+    ' Loop through paragraphs only once
+    For Each para In ActiveDocument.Range.Paragraphs
         If para.style = "Heading 2" Then
-            ' Check if the previous paragraph exists and is not a section break
-            If Not para.Previous Is Nothing Then
-                ' Ensure the previous paragraph is not a section break
-                If para.Previous.Range.Information(wdActiveEndAdjustedPageNumber) = para.Range.Information(wdActiveEndAdjustedPageNumber) Then
-                    ' Check if the previous paragraph is empty
-                    If Len(Trim(para.Previous.Range.text)) = 1 Then ' Empty paragraph has a length of 1 (paragraph mark)
-                        emptyCount = emptyCount + 1
-                        ' Prompt the user before deletion
-                        'userResponse = MsgBox("Empty paragraph found before Heading 2. Do you want to delete it?", vbYesNoCancel + vbQuestion, "Delete Empty Paragraph")
-                        'If userResponse = vbYes Then
-                        '    para.Previous.Range.Delete ' Delete the empty paragraph
-                        '    deletionCount = deletionCount + 1
-                        'ElseIf userResponse = vbCancel Then
-                        '    Exit For
-                        'End If
-                    End If
-                End If
+            If prevIsEmpty Then
+                count = count + 1
             End If
-            
-            ' Stop after 3 deletions
-            'If deletionCount >= 3 Then
-            '    Exit For
-            'End If
         End If
+
+        ' Determine if current paragraph is empty (ignoring whitespace)
+        prevText = Trim(para.Range.text)
+        prevIsEmpty = (prevText = "" Or prevText = Chr(13)) ' Chr(13) is vbCr
     Next para
-    Application.ScreenUpdating = True
-    
-    ' Display the number of empty paragraphs found and deleted
-    'MsgBox "Number of empty paragraphs found: " & emptyCount & vbCrLf & "Number of empty paragraphs deleted: " & deletionCount
-    CountDeleteEmptyParagraphsBeforeHeading2 = deletionCount
+
+    'MsgBox "Fast count of 'Heading 2' paragraphs preceded by an empty paragraph: " & count, vbInformation
+    'Debug.Print "Fast count of 'Heading 2' paragraphs preceded by an empty paragraph: " & count
+    CountDeleteEmptyParagraphsBeforeHeading2 = count
 End Function
 
 Private Function CountEmptyParagraphs() As Long
