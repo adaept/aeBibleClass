@@ -44,7 +44,7 @@ Private Const vbext_ct_Document As Long = 100
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
-Private Const bTimeAllTests As Boolean = True
+Private Const bTimeAllTests As Boolean = False
 Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
@@ -135,8 +135,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35   36 37)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509, 116, 116, 0, 19)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 150, 0, 1000, 1, 0, 145, 75, 70, 0, 1, 509, 509, 116, 116, 0, 20, 150)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -219,8 +219,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
             Call Expected1BasedArray
-            Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+            Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
             '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
+            Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
             AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
             AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
             
@@ -262,6 +263,7 @@ Test16:     RunTest (16)
             RunTest (35)
             RunTest (36)
             RunTest (37)
+            RunTest (38)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -377,7 +379,7 @@ Private Function GetPassFail(TestNum As Integer) As String
         Expected = oneBasedExpectedArray(20)
         If Result = Expected Then GetPassFail = "PASS"
     Case 21
-        Result = CountSpacesAfterFootnotes
+        Result = CountNotSpacesAfterFootnoteReferences
         Expected = oneBasedExpectedArray(21)
         If Result = Expected Then GetPassFail = "PASS"
     Case 22
@@ -444,6 +446,10 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountTabOnlyParagraphs
         Expected = oneBasedExpectedArray(37)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 38
+        Result = CountEmptyParagraphs
+        Expected = oneBasedExpectedArray(38)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -500,7 +506,7 @@ Private Function RunTest(num As Integer) As Boolean
     Case 20
         Debug.Print GetPassFail(20), "Copy ()", "Test = " & num, Result, Expected, "CountFootnotesFollowedByDigit"
     Case 21
-        Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, Result, Expected, "CountSpacesAfterFootnotes"
+        Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, Result, Expected, "CountNotSpacesAfterFootnoteReferences"
     Case 22
         Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphsWithFormatting"
     Case 23
@@ -533,6 +539,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(36), "Copy ()", "Test = " & num, Result, Expected, "CountFooterParagraphsWithFooterStyle"
     Case 37
         Debug.Print GetPassFail(37), "Copy ()", "Test = " & num, Result, Expected, "CountTabOnlyParagraphs"
+    Case 38
+        Debug.Print GetPassFail(38), "Copy ()", "Test = " & num, Result, Expected, "CountEmptyParagraphs"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -559,6 +567,18 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountEmptyParagraphs() As Long
+    Dim para As paragraph
+    Dim count As Long
+    count = 0
+    For Each para In ActiveDocument.paragraphs
+        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+            count = count + 1
+        End If
+    Next para
+    CountEmptyParagraphs = count
 End Function
 
 Private Function CountTabOnlyParagraphs() As Integer
@@ -1052,18 +1072,20 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
     CountEmptyParagraphsWithFormatting = count
 End Function
 
-Private Function CountSpacesAfterFootnotes() As Integer
+Private Function CountNotSpacesAfterFootnoteReferences() As Integer
 ' Also shows Footnote References and Following Characters (ASCII Values)
     Dim doc As Document
     Dim footnote As footnote
     Dim rng As Range
     Dim spaceCount As Long
+    Dim notSpaceCount As Long
     Dim debugInfo As String
     Dim asciiValue As Integer
     
     ' Initialize variables
     Set doc = ActiveDocument
     spaceCount = 0
+    notSpaceCount = 0
     debugInfo = "Footnote References and Following Characters (ASCII Values):" & vbCrLf
     
     ' Loop through each footnote in the document
@@ -1080,6 +1102,7 @@ Private Function CountSpacesAfterFootnotes() As Integer
             ' Add debug information
             If asciiValue <> 32 Then    ' space (ASCII value 32)
                 debugInfo = debugInfo & "Fn " & footnote.Index & ": '" & rng.text & "' (ASC " & asciiValue & "), "
+                notSpaceCount = notSpaceCount + 1
             End If
             
             If asciiValue = 32 Then
@@ -1096,7 +1119,7 @@ Private Function CountSpacesAfterFootnotes() As Integer
     ' Print the result to the console
     'Debug.Print "Number of spaces after footnote references: " & spaceCount
     'Debug.Print debugInfo
-    CountSpacesAfterFootnotes = spaceCount
+    CountNotSpacesAfterFootnoteReferences = notSpaceCount
 End Function
 
 Private Function CountFootnotesFollowedByDigit() As Integer

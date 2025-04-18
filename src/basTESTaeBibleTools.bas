@@ -178,4 +178,65 @@ Sub GetVerticalPositionOfCursorParagraph()
     MsgBox "Vertical Position of the paragraph with the cursor: " & paraPos & " points"
 End Sub
 
+Sub FindFirstSectionWithDifferentFirstPage()
+    Dim sec As Section
+    Dim i As Long
+
+    For i = 1 To ActiveDocument.Sections.count
+        Set sec = ActiveDocument.Sections(i)
+
+        ' Check if Different First Page is enabled
+        If sec.PageSetup.DifferentFirstPageHeaderFooter = True Then
+            ' Select the header of the first page in this section
+            sec.Headers(wdHeaderFooterFirstPage).Range.Select
+
+            MsgBox "Found in Section " & i & ": 'Different First Page' is enabled.", vbInformation
+            Exit Sub
+        End If
+    Next i
+
+    MsgBox "No sections with 'Different First Page' found.", vbInformation
+End Sub
+
+Sub FindFirstPageWithEmptyHeader()
+    Dim sec As Section
+    Dim hdr As HeaderFooter
+    Dim hdrText As String
+    Dim i As Long
+    Dim hdrType As Variant  ' Must be Variant for Array() to work
+
+    For i = 1 To ActiveDocument.Sections.count
+        Set sec = ActiveDocument.Sections(i)
+
+        For Each hdrType In Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
+            Set hdr = sec.Headers(hdrType)
+
+            If hdr.Exists And Not hdr.LinkToPrevious Then
+                hdrText = Trim(hdr.Range.text)
+
+                If Right(hdrText, 1) = Chr(13) Then
+                    hdrText = Left(hdrText, Len(hdrText) - 1)
+                End If
+
+                If hdrText = "" Then
+                    hdr.Range.Select
+                    MsgBox "Found empty header in Section " & i & " (" & HeaderTypeName(hdrType) & ").", vbInformation
+                    Exit Sub
+                End If
+            End If
+        Next hdrType
+    Next i
+
+    MsgBox "No empty headers found.", vbInformation
+End Sub
+
+Function HeaderTypeName(hdrType As Variant) As String
+    Select Case hdrType
+        Case wdHeaderFooterPrimary: HeaderTypeName = "Primary"
+        Case wdHeaderFooterFirstPage: HeaderTypeName = "First Page"
+        Case wdHeaderFooterEvenPages: HeaderTypeName = "Even Pages"
+        Case Else: HeaderTypeName = "Unknown"
+    End Select
+End Function
+
 

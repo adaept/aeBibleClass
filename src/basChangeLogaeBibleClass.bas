@@ -7,13 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #135 -
-' #134 -
+' #140 -
+' #139 -
+' #138 -
 ' #133 - Store actual result is 1 based results array for comparison without recalc
 ' #123 - Add file TestReport.txt output additional to console result for GitHub tracking
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
-' #108 - Add test for all line feed to have a space before
 ' #106 - Fix H1 pages to use line feed in text as appropriate
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
@@ -58,6 +58,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #137 - Update test to notSpaceCount CountNotSpacesAfterFootnoteReferences
+    ' FIXED - #108 - Add test for all line feed to have a space before (Test 32 and 33)
+    ' FIXED - #136 - Add back test for CountEmptyParagraphs
+    ' FIXED - #135 - Fix sections where different first page is selected - deselect them
+    ' FIXED - #134 - Output debug formatting header to console for comma spacing
     ' FIXED - #131 - Add DoEvents to number dash number search and stop switch to doc window for ISBN
     ' FIXED - #132 - Add test for tab paragraph mark only
     ' FIXED - #130 - Update CountEmptyParagraphs to CountEmptyParagraphsWithFormatting
