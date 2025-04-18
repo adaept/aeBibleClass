@@ -3,4 +3,4 @@ Test(16)-1 Test(17)0 Test(18)66 Test(19)0 Test(20)0 Test(21)-1 Test(22)-1 Test(2
 Test(31)1 Test(32)509 Test(33)509 Test(34)116 Test(35)116 Test(36)0 Test(37)19
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
-Total Total Runtime: 24.96 seconds
+Total Total Runtime: 22.98 seconds

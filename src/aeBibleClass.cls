@@ -564,7 +564,7 @@ End Function
 Private Function CountTabOnlyParagraphs() As Integer
 ' The final paragraph in a Word document always includes an extra paragraph mark that you can't delete.
 ' The extra count is usually the final paragraph, which Word always includes and may contain leftover tab formatting.
-' This code filters that out for accurate results.
+' This code can filter that out.
     Dim para As paragraph
     Dim countTabOnly As Long
     Dim paraText As String
@@ -576,7 +576,8 @@ Private Function CountTabOnlyParagraphs() As Integer
 
         ' Skip final paragraph if it's the only one and contains just tab+CR
         If para.Range.End = ActiveDocument.content.End And paraText = vbTab & vbCr Then
-            ' Do nothing — skip this one
+            ' Comment out to skip this one if desired
+            countTabOnly = countTabOnly + 1
         Else
             ' Count if exactly tab + paragraph mark
             If paraText = vbTab & vbCr Then
@@ -1384,6 +1385,7 @@ Private Function CountFindNumberDashNumber() As Integer
             ' Collapse the range to the end of the found text
             rng.Collapse Direction:=wdCollapseEnd
             rng.End = ActiveDocument.content.End
+            DoEvents
         Loop
     End With
 
