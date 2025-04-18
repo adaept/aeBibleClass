@@ -48,6 +48,7 @@ Private Const bTimeAllTests As Boolean = False
 Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
+Private ResultArray(1 To 45) As Integer
 Private Result As Integer
 Private Expected As Integer
 Private TestReportFileName As String
@@ -99,10 +100,23 @@ PROC_ERR:
 
 End Property
 
-Function ConvertToOneBasedArray(values As Variant) As Variant
+Private Sub InitializeGlobalResultArrayToMinusOne()
+    Dim i As Integer
+    For i = 1 To 45
+        ResultArray(i) = -1
+    Next i
+    ' Optional: Print to Immediate window to confirm
+    'For i = 1 To 45
+    '    Debug.Print "ResultArray(" & i & ") = " & ResultArray(i),
+    'Next i
+End Sub
+
+Private Function ConvertToOneBasedArray(values As Variant) As Variant
     Dim strArray() As String
     Dim i As Integer
-    
+
+    InitializeGlobalResultArrayToMinusOne
+
     ' Resize the array to start from index 1
     ReDim strArray(1 To UBound(values) - LBound(values) + 1)
     

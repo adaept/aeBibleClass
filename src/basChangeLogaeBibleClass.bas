@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #140 -
 ' #139 -
-' #138 -
 ' #133 - Store actual result is 1 based results array for comparison without recalc
 ' #123 - Add file TestReport.txt output additional to console result for GitHub tracking
 ' #116 - Check use of Gentium font (make it unnecessary?)
@@ -58,6 +57,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #138 - Create 1 based array for storing results
     ' FIXED - #137 - Update test to notSpaceCount CountNotSpacesAfterFootnoteReferences
     ' FIXED - #108 - Add test for all line feed to have a space before (Test 32 and 33)
     ' FIXED - #136 - Add back test for CountEmptyParagraphs
