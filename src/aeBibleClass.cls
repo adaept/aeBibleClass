@@ -135,8 +135,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35   36)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509, 116, 116, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15  16  17 18  19 20 21  22  23 24    25 26 27   28  29  30 31 32   33   34   35   36 37)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, -1, -1, 0, 66, 0, 0, -1, -1, 0, 1000, 1, 0, 145, 73, 72, 0, 1, 509, 509, 116, 116, 0, 19)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -261,6 +261,7 @@ Test16:     RunTest (16)
             RunTest (34)
             RunTest (35)
             RunTest (36)
+            RunTest (37)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -439,6 +440,10 @@ Private Function GetPassFail(TestNum As Integer) As String
         Result = CountFooterParagraphsWithFooterStyle
         Expected = oneBasedExpectedArray(36)
         If Result = Expected Then GetPassFail = "PASS"
+    Case 37
+        Result = CountTabOnlyParagraphs
+        Expected = oneBasedExpectedArray(37)
+        If Result = Expected Then GetPassFail = "PASS"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -526,6 +531,8 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(35), "Copy ()", "Test = " & num, Result, Expected, "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
     Case 36
         Debug.Print GetPassFail(36), "Copy ()", "Test = " & num, Result, Expected, "CountFooterParagraphsWithFooterStyle"
+    Case 37
+        Debug.Print GetPassFail(37), "Copy ()", "Test = " & num, Result, Expected, "CountTabOnlyParagraphs"
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -552,6 +559,35 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function CountTabOnlyParagraphs() As Integer
+' The final paragraph in a Word document always includes an extra paragraph mark that you can't delete.
+' The extra count is usually the final paragraph, which Word always includes and may contain leftover tab formatting.
+' This code filters that out for accurate results.
+    Dim para As paragraph
+    Dim countTabOnly As Long
+    Dim paraText As String
+
+    countTabOnly = 0
+
+    For Each para In ActiveDocument.paragraphs
+        paraText = para.Range.text
+
+        ' Skip final paragraph if it's the only one and contains just tab+CR
+        If para.Range.End = ActiveDocument.content.End And paraText = vbTab & vbCr Then
+            ' Do nothing — skip this one
+        Else
+            ' Count if exactly tab + paragraph mark
+            If paraText = vbTab & vbCr Then
+                countTabOnly = countTabOnly + 1
+            End If
+        End If
+    Next para
+
+    'MsgBox "Paragraphs with only a tab and paragraph mark: " & countTabOnly, vbInformation
+    'Debug.Print "Paragraphs with only a tab and paragraph mark: " & countTabOnly
+    CountTabOnlyParagraphs = countTabOnly
 End Function
 
 Private Function CountFooterParagraphsWithFooterStyle() As Integer

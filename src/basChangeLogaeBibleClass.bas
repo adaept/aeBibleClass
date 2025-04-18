@@ -7,11 +7,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #135
-' #134
-' #133
-' #132
-' #131
+' #135 -
+' #134 -
+' #133 - Store actual result is 1 based results array for comparison without recalc
+' #131 - Reset number dash number search and stop switch to doc window for ISBN
 ' #123 - Add file TestReport.txt output additional to console result for GitHub tracking
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
@@ -60,6 +59,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #132 - Add test for tab paragraph mark only
     ' FIXED - #130 - Update CountEmptyParagraphs to CountEmptyParagraphsWithFormatting
     ' FIXED - #129 - Add DoEvents in long loops so console results are processed
     ' FIXED - #128 - Update test CountEmptyParagraphs for speed
