@@ -3,6 +3,8 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
 ' Default Usage:
 ' Run in immediate window:
 '   RUN_THE_TESTS

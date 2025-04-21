@@ -3,6 +3,8 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
 Sub ListCustomXMLParts()
     Dim xmlPart As CustomXMLPart
     Dim i As Integer

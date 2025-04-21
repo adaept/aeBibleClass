@@ -3,6 +3,8 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
 Public Sub ImportWordBibleFiles()
     'Call ImportVBAFile("C:\adaept\Bible\src\aeBibleClass.cls")
     'Call ImportVBAFile("C:\adaept\Bible\src\basChangeLogaeBibleClass.bas")

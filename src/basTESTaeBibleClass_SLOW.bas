@@ -3,6 +3,8 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
 Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 ' Interactive search of 31,102 Bible verses, at 1000 per run,
 ' to find any spaces after "Verse marker" style.

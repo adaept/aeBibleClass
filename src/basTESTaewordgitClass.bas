@@ -3,6 +3,8 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
 ' Default Usage:
 ' The following folders are used if no custom configuration is provided:
 '   aewordgitType.SourceFolder = "C:\adaept\aewordgit\src\"
