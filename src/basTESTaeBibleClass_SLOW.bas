@@ -237,7 +237,7 @@ Private Sub ExtractNumbersFromParagraph(para As paragraph, styleName As String)
     Dim rng As Range
     Dim foundNumbers As Collection
     Dim num As String
-    Dim Result As String
+    Dim result As String
     Dim arr() As String
     Dim i As Integer
     
@@ -276,8 +276,8 @@ Private Sub ExtractNumbersFromParagraph(para As paragraph, styleName As String)
         For i = 1 To foundNumbers.count
             arr(i) = foundNumbers(i)
         Next i
-        Result = Join(arr, ", ")
-        Debug.Print Result
+        result = Join(arr, ", ")
+        Debug.Print result
     End If
 End Sub
 
@@ -289,7 +289,7 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
     Dim rng As Range
     Dim foundNumbers As Collection
     Dim num As String
-    Dim Result As String
+    Dim result As String
     Dim arr() As String
     Dim i As Integer
     
@@ -344,8 +344,8 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
         For i = 1 To foundNumbers.count
             arr(i) = foundNumbers(i)
         Next i
-        Result = Join(arr, ", ")
-        Debug.Print Result
+        result = Join(arr, ", ")
+        Debug.Print result
     End If
 End Sub
 

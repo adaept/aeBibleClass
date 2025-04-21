@@ -235,11 +235,11 @@ Private Function FolderWithVBAProjectFiles() As String
     On Error GoTo PROC_ERR
     
     Dim WshShell As Object
-    Dim FSO As Object
+    Dim fso As Object
     Dim SpecialPath, fullPath, directoryName As String
 
     Set WshShell = CreateObject("WScript.Shell")
-    Set FSO = CreateObject("Scripting.FileSystemObject")
+    Set fso = CreateObject("Scripting.FileSystemObject")
 
     SpecialPath = WshShell.SpecialFolders("MyDocuments")
 
@@ -259,13 +259,13 @@ Private Function FolderWithVBAProjectFiles() As String
     ElseIf IsNull(aewordgitSourceFolder) Then
         If Right$(SpecialPath, 1) <> "\" Then SpecialPath = SpecialPath & "\"
 
-        If FSO.FolderExists(SpecialPath & "VBAProjectFiles") = False Then
+        If fso.FolderExists(SpecialPath & "VBAProjectFiles") = False Then
             On Error Resume Next
             MkDir SpecialPath & "VBAProjectFiles"
             On Error GoTo 0
         End If
 
-        If FSO.FolderExists(SpecialPath & "VBAProjectFiles") = True Then
+        If fso.FolderExists(SpecialPath & "VBAProjectFiles") = True Then
             FolderWithVBAProjectFiles = SpecialPath & "VBAProjectFiles"
         Else
             FolderWithVBAProjectFiles = "Error"
@@ -276,7 +276,7 @@ Private Function FolderWithVBAProjectFiles() As String
     End If
     
     'MsgBox "FolderWithVBAProjectFiles=" & FolderWithVBAProjectFiles
-    If Not FSO.FolderExists(FolderWithVBAProjectFiles) Then
+    If Not fso.FolderExists(FolderWithVBAProjectFiles) Then
         MsgBox "FolderWithVBAProjectFiles Error" & vbCrLf & _
             "FolderWithVBAProjectFiles = " & FolderWithVBAProjectFiles & vbCrLf & _
             "Does NOT exist!", vbCritical, "FolderWithVBAProjectFiles"
