@@ -1,3 +1,74 @@
-﻿Hello World 🌐🌎 Easter 👑🐇🥚
-✅❌✅❌✅❌✅❌✅❌✅
+﻿Hello, World! 🌐🌎 Easter 👑🐇🥚
+✅❌✅❌✅❌✅❌✅❌✅❌
 
+// 🌍 Standard "Hello, World!" outputs in various languages
+
+🇺🇸 English (English)
+Hello, World!
+/ˈhɛl.oʊ ˈwɝːld/
+
+🇩🇪 Deutsch (German)
+Hallo, Welt!
+/ˈha.loː vɛlt/
+
+🇳🇴 Norsk (Norwegian)
+Hallo, Verden!
+/ˈhɑ.lu ˈvær.dən/
+
+🇫🇮 Suomi (Finnish)
+Hei, maailma!
+/hei ˈmɑi̯.li.mɑ/
+🎨 Alt script (Tengwar-style): 𐐐𐐯𐐴 𐐣𐐪𐐴𐐣𐐲𐐲 (purely for fun; not standard)
+
+🇵🇱 Polski (Polish)
+Witaj, świecie!
+/ˈvʲi.taj ˈɕfʲɛ.t͡ɕɛ/
+
+🇷🇺 Русский (Russian)
+Привет, мир!
+/prʲɪˈvʲet mʲir/
+
+🇺🇦 Українська (Ukrainian)
+Привіт, світе!
+/prɪˈʋit ˈsʲʋite/
+
+🇬🇷 Ελληνικά (Greek)
+Γειά σου, κόσμε!
+/ʝa su ˈkozme/
+
+🇮🇱 עברית (Hebrew)
+שלום, עולם!
+/ʃaˈlom oˈlam/
+
+🇸🇦 العربية (Arabic)
+مرحبًا، أيها العالم!
+/marˈħaban ʾayyuhā l-ʿālam/
+
+🇹🇭 ไทย (Thai)
+สวัสดี, โลก!
+/sà.wàt.diː lôːk/
+
+🇯🇵 日本語 (Japanese)
+こんにちは世界！
+/kon.ni.chi.wa se.kai/
+
+🇰🇷 한국어 (Korean)
+안녕하세요, 세계!
+/an.nyŏng.ha.se.yo se.gye/
+
+🇨🇳 简体中文 (Chinese Simplified)
+你好，世界！
+/nǐ hǎo shì jiè/
+
+🇹🇼 繁體中文 (Chinese Traditional)
+你好，世界！
+/nǐ hǎo shì jiè/
+
+🇮🇪 Gaeilge (Irish)
+Dia duit, a dhomhain!
+/dʲiə dɪtʲ ə ɣəunʲ/
+🎨 Ogham: ᚇᚔᚐ ᚇᚒᚔᚈ (decorative only)
+
+🏴 Gàidhlig (Scottish Gaelic)
+Halò, a Shaoghail!
+/haˈlɔː ə ˈhɯːəl̪ˠ/
