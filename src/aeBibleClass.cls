@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const BibleClassVERSION As String = "0.0.7"
-Private Const BibleClassVERSION_DATE As String = "April 8, 2025"
+Private BibleClassVERSION As String
+Private BibleClassVERSION_DATE As String
 
 Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
@@ -49,7 +49,7 @@ Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private ResultArray(1 To 45) As Integer
-Private Result As Integer
+Private result As Integer
 Private Expected As Integer
 Private TestReportFileName As String
 Private testFileNum As Integer
@@ -63,6 +63,8 @@ Private Sub Class_Initialize()
         Application.Caption = Application.VBE.ActiveVBProject.name & " " & BibleClassVERSION
     End If
     Debug.Print "Class_Initialize"
+    BibleClassVERSION = "0.0.8"
+    BibleClassVERSION_DATE = "April 20, 2025"
  End Sub
 
 Private Sub Class_Terminate()
