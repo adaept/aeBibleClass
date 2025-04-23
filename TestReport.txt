@@ -3,4 +3,42 @@ Test(16)-1 Test(17)0 Test(18)66 Test(19)0 Test(20)0 Test(21)3 Test(22)150 Test(2
 Test(31)1 Test(32)509 Test(33)509 Test(34)116 Test(35)116 Test(36)0 Test(37)20 Test(38)150
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
-Total Total Runtime: 22.58 seconds
+PASS          Copy ()       Test = 1      0             0             CountDoubleSpaces
+PASS          Copy ()       Test = 2      0             0             CountDoubleSpacesInShapes
+PASS          Copy ()       Test = 3      0             0             CountSpaceFollowedByCarriageReturn
+PASS          Copy ()       Test = 4      0             0             CountDoubleTabs
+PASS          Copy ()       Test = 5      0             0             CountWhiteSpaceAndCarriageReturn
+PASS          Copy ()       Test = 6      0             0             CountQuadrupleParagraphMarks
+PASS          Copy ()       Test = 7      0             0             CountStyleWithSpaceAndNumber
+PASS          Copy ()       Test = 8      0             0             CountStyleWithNumberAndSpace
+PASS          Copy ()       Test = 9      7             7             CountPeriodSpaceLeftParenthesis
+PASS          Copy ()       Test = 10     1             2             CountNonBreakingSpaces
+PASS          Copy ()       Test = 11     2             2             CountFindNumberDashNumber
+PASS          Copy ()       Test = 12     0             0             CountNumberDashNumberInFootnotes
+PASS          Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
+PASS          Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
+PASS          Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
+FAIL!!!          Copy ()       Test = 16     16163         -1            CountTotalParagraphs
+PASS          Copy ()       Test = 17     0             0             CountRedFootnoteReferences
+PASS          Copy ()       Test = 18     66            66            CountHeading1
+PASS          Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
+PASS          Copy ()       Test = 20     0             0             CountFootnotesFollowedByDigit
+PASS          Copy ()       Test = 21     3             3             CountNotSpacesAfterFootnoteReferences
+PASS          Copy ()       Test = 22     150           150           CountEmptyParagraphsWithFormatting
+PASS          Copy ()       Test = 23     0             0             CountDeleteEmptyParagraphsBeforeHeading2
+PASS          Copy ()       Test = 24     1000          1000          CountFootnoteReferences
+PASS          Copy ()       Test = 25     1             1             CountFootnoteReferenceColors
+PASS          Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
+PASS          Copy ()       Test = 27     145           145           CheckAllHeaders(NotEmpty)
+PASS          Copy ()       Test = 28     75            75            CountTabFollowedByParagraphMarkInHeaders
+PASS          Copy ()       Test = 29     70            70            CountParagraphsWithoutTabInHeaders
+PASS          Copy ()       Test = 30     0             0             CountHeaderStyleUsage
+PASS          Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
+PASS          Copy ()       Test = 32     509           509           CountLinefeed
+PASS          Copy ()       Test = 33     509           509           CountLinefeed(" ")
+PASS          Copy ()       Test = 34     116           116           CountManualLineBreaksAndWithSpace
+PASS          Copy ()       Test = 35     116           116           CountManualLineBreaksAndWithSpace(" ")
+PASS          Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle
+PASS          Copy ()       Test = 37     20            20            CountTabOnlyParagraphs
+PASS          Copy ()       Test = 38     150           150           CountEmptyParagraphs
+Total Total Runtime: 42.78 seconds

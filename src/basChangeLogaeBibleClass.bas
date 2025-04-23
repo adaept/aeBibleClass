@@ -7,11 +7,15 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #150 -
+' #149 -
+' #148 -
+' #147 -
+' #146 -
 ' #145 -
-' #144 -
-' #143 -
-' #142 -
-' #123 - Add file TestReport.txt output additional to console result for GitHub tracking
+' #144 - Add code for checking fonts used
+' #143 - Clone original SILAS as Jim put it on GitHub
+' #142 - Consider VBA routine to output TOC for verification - see #039
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #106 - Fix H1 pages to use line feed in text as appropriate
@@ -19,7 +23,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
-' #082 - Fix Word paragraph style so minimal empty paragraphs are needed
 ' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
 ' #075 - Add style for Arial Black 8 pt emphasis.
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
@@ -43,14 +46,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #057 - Add ability to run only a specific test
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
-' #046 - Update style of cv marker to be smaller than Verse marker
 ' #045 - Test call to SILAS from ribbon using customUI.xml OnHelloWorldButtonClick routine
 ' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
 ' #043 - Add extract to USFM routine
 ' #042 - Add readme to aewordgit
 ' #041 - Add auto-generated TOC for maps
 ' #040 - Add figure headings to maps - use map vs fig?
-' #039 - Replace manual TOC with auto-generated version
 ' #037 - Add updated maps in color
 ' #035 - Add test for page numbers of h1 on odd or even pages
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
@@ -58,6 +59,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
+    ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
+    ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed
+    ' OBSOLETE - #039 - Replace manual TOC with auto-generated version (this is too slow)
     ' FIXED - #141 - Update UTF8bom-Template.txt with multiple language sample of "Hello, World!" ala C style, plus phonetics
 ' 20250420 - v008
     ' FIXED - #140 - Set version info as global variables and assign in Class_Initialize
