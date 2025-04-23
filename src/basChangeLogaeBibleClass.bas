@@ -13,7 +13,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #147 -
 ' #146 -
 ' #145 -
-' #144 - Add code for checking fonts used
 ' #143 - Clone original SILAS as Jim put it on GitHub
 ' #142 - Consider VBA routine to output TOC for verification - see #039
 ' #116 - Check use of Gentium font (make it unnecessary?)
@@ -59,6 +58,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #144 - Add code for checking fonts used
     ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
     ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed

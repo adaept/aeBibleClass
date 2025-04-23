@@ -241,4 +241,34 @@ Function HeaderTypeName(hdrType As Variant) As String
     End Select
 End Function
 
+Sub OptimizedListFontsInDocument()
+    Dim fontList As New Collection
+    Dim doc As Document
+    Dim para As paragraph
+    Dim rng As Range
+    Dim fontName As String
+    Dim i As Integer
+    
+    Set doc = ActiveDocument
+
+    ' Loop through each paragraph in the document
+    For Each para In doc.paragraphs
+        Set rng = para.Range
+        fontName = rng.font.name
+        On Error Resume Next
+        ' Add unique fonts to the collection
+        fontList.Add fontName, fontName
+        On Error GoTo 0
+    Next para
+    
+    ' Display the fonts in a message box
+    Dim fontOutput As String
+    fontOutput = "Fonts used in the document:" & vbCrLf
+    For i = 1 To fontList.count
+        fontOutput = fontOutput & "- " & fontList(i) & vbCrLf
+    Next i
+    'MsgBox fontOutput, vbInformation, "Fonts in Document"
+    Debug.Print fontOutput
+End Sub
+
 
