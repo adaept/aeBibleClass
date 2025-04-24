@@ -7,12 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #155 -
+' #154 -
+' #153 -
+' #152 -
+' #151 -
 ' #150 -
-' #149 -
-' #148 -
-' #147 -
-' #146 -
-' #145 -
+' #148 - Add version info to TestReport output
 ' #143 - Clone original SILAS as Jim put it on GitHub
 ' #142 - Consider VBA routine to output TOC for verification - see #039
 ' #116 - Check use of Gentium font (make it unnecessary?)
@@ -58,6 +59,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #147 - Add date/time output to TestReport
+    ' FIXED - #145 - Add global const TestReportFlag for optional output using OutputTestReport function
+    ' FIXED - #146 - TestReport FAIL!!!! message is not correctly aligned - pad PASS to be "PASS    "
+    ' FIXED - #149 - Replace Expected with oneBasedExpectedArray(x) as appropriate
     ' FIXED - #144 - Add code for checking fonts used
     ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker

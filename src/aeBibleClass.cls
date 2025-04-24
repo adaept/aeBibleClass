@@ -50,9 +50,9 @@ Private Const bGoTo16 As Boolean = False
 Private oneBasedExpectedArray As Variant
 Private ResultArray(1 To 45) As Integer
 Private result As Integer
-Private Expected As Integer
 Private TestReportFileName As String
 Private testFileNum As Integer
+Private Const TestReportFlag As Boolean = True
 '=====================================================
 
 Private Sub Class_Initialize()
@@ -169,7 +169,7 @@ Private Sub Expected1BasedArray()
         outputString = Trim(outputString)
     Next i
     Debug.Print outputString
-    AppendToFile TestReportFileName, outputString
+    If TestReportFlag Then AppendToFile TestReportFileName, outputString
     
     ' Next 15 results
     outputString = ""
@@ -179,7 +179,7 @@ Private Sub Expected1BasedArray()
         outputString = Trim(outputString)
     Next i
     Debug.Print outputString
-    AppendToFile TestReportFileName, outputString
+    If TestReportFlag Then AppendToFile TestReportFileName, outputString
     
     ' Next results
     outputString = ""
@@ -189,7 +189,7 @@ Private Sub Expected1BasedArray()
         outputString = Trim(outputString)
     Next i
     Debug.Print outputString
-    AppendToFile TestReportFileName, outputString
+    If TestReportFlag Then AppendToFile TestReportFileName, outputString
 
 End Sub
 
@@ -200,6 +200,10 @@ Sub AppendToFile(filePath As String, text As String)
     Print #fileNum, text
     Close fileNum
 End Sub
+
+Private Function LogMessage(msg As String) As String
+    LogMessage = "[" & Format(Now, "yyyy-mm-dd hh:nn:ss") & "] " & msg
+End Function
 
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
     Dim startTime As Double
@@ -238,8 +242,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
             '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
             Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
-            AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
-            AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
+            If TestReportFlag Then AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
+            If TestReportFlag Then AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
             
             If bGoTo16 Then GoTo Test16
             RunTest (1)
@@ -295,7 +299,10 @@ Test16:     RunTest (16)
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
     Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
-    AppendToFile TestReportFileName, "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    If TestReportFlag Then AppendToFile TestReportFileName, "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    
+    Debug.Print LogMessage("Completed")
+    If TestReportFlag Then AppendToFile TestReportFileName, LogMessage("Completed")
     
     RunBibleClassTests = True
 
@@ -312,160 +319,122 @@ Private Function GetPassFail(TestNum As Integer) As String
     Dim PassFail As String
 
     ' Set explicit fail unless the test passes
-    GetPassFail = "FAIL!!!"
+    GetPassFail = "FAIL!!!!"
     Select Case TestNum
     Case 1
         ResultArray(1) = CountDoubleSpaces
-        Expected = oneBasedExpectedArray(1)
-        If ResultArray(1) = Expected Then GetPassFail = "PASS"
+        If ResultArray(1) = oneBasedExpectedArray(1) Then GetPassFail = "PASS    "
     Case 2
         ResultArray(2) = CountDoubleSpacesInShapes
-        Expected = oneBasedExpectedArray(2)
-        If ResultArray(2) = Expected Then GetPassFail = "PASS"
+        If ResultArray(2) = oneBasedExpectedArray(2) Then GetPassFail = "PASS    "
     Case 3
         ResultArray(3) = CountSpaceFollowedByCarriageReturn
-        Expected = oneBasedExpectedArray(3)
-        If ResultArray(3) = Expected Then GetPassFail = "PASS"
+        If ResultArray(3) = oneBasedExpectedArray(3) Then GetPassFail = "PASS    "
     Case 4
         ResultArray(4) = CountDoubleTabs
-        Expected = oneBasedExpectedArray(4)
-        If ResultArray(4) = Expected Then GetPassFail = "PASS"
+        If ResultArray(4) = oneBasedExpectedArray(4) Then GetPassFail = "PASS    "
     Case 5
         ResultArray(5) = CountWhiteSpaceAndCarriageReturn
-        Expected = oneBasedExpectedArray(5)
-        If ResultArray(5) = Expected Then GetPassFail = "PASS"
+        If ResultArray(5) = oneBasedExpectedArray(5) Then GetPassFail = "PASS    "
     Case 6
         ResultArray(6) = CountQuadrupleParagraphMarks
-        Expected = oneBasedExpectedArray(6)
-        If ResultArray(6) = Expected Then GetPassFail = "PASS"
+        If ResultArray(6) = oneBasedExpectedArray(6) Then GetPassFail = "PASS    "
     Case 7
         ResultArray(7) = CountStyleWithSpaceAndNumber
-        Expected = oneBasedExpectedArray(7)
-        If ResultArray(7) = Expected Then GetPassFail = "PASS"
+        If ResultArray(7) = oneBasedExpectedArray(7) Then GetPassFail = "PASS    "
     Case 8
         ResultArray(8) = CountStyleWithNumberAndSpace
-        Expected = oneBasedExpectedArray(8)
-        If ResultArray(8) = Expected Then GetPassFail = "PASS"
+        If ResultArray(8) = oneBasedExpectedArray(8) Then GetPassFail = "PASS    "
     Case 9
         ResultArray(9) = CountPeriodSpaceLeftParenthesis
-        Expected = oneBasedExpectedArray(9)
-        If ResultArray(9) = Expected Then GetPassFail = "PASS"
+        If ResultArray(9) = oneBasedExpectedArray(9) Then GetPassFail = "PASS    "
     Case 10
         ResultArray(10) = CountNonBreakingSpaces
-        Expected = oneBasedExpectedArray(10)
-        If ResultArray(10) = Expected Then GetPassFail = "PASS"
+        If ResultArray(10) = oneBasedExpectedArray(10) Then GetPassFail = "PASS    "
     Case 11
         ResultArray(11) = CountFindNumberDashNumber
-        Expected = oneBasedExpectedArray(11)
-        If ResultArray(11) = Expected Then GetPassFail = "PASS"
+        If ResultArray(11) = oneBasedExpectedArray(11) Then GetPassFail = "PASS    "
     Case 12
         ResultArray(12) = CountNumberDashNumberInFootnotes
-        Expected = oneBasedExpectedArray(12)
-        If ResultArray(12) = Expected Then GetPassFail = "PASS"
+        If ResultArray(12) = oneBasedExpectedArray(12) Then GetPassFail = "PASS    "
     Case 13
         ResultArray(13) = CountEmptyParasWithNoThemeColor
-        Expected = oneBasedExpectedArray(13)
-        If ResultArray(13) = Expected Then GetPassFail = "PASS"
+        If ResultArray(13) = oneBasedExpectedArray(13) Then GetPassFail = "PASS    "
     Case 14
         ResultArray(14) = CountWhiteParagraphMarks
-        Expected = oneBasedExpectedArray(14)
-        If ResultArray(14) = Expected Then GetPassFail = "PASS"
+        If ResultArray(14) = oneBasedExpectedArray(14) Then GetPassFail = "PASS    "
     Case 15
         ResultArray(15) = CountSectionsWithDifferentFirstPage
-        Expected = oneBasedExpectedArray(15)
-        If ResultArray(15) = Expected Then GetPassFail = "PASS"
+        If ResultArray(15) = oneBasedExpectedArray(15) Then GetPassFail = "PASS    "
     Case 16
         ResultArray(16) = CountTotalParagraphs
-        Expected = oneBasedExpectedArray(16)
-        If ResultArray(16) = Expected Then GetPassFail = "PASS"
+        If ResultArray(16) = oneBasedExpectedArray(16) Then GetPassFail = "PASS    "
     Case 17
         ResultArray(17) = CountRedFootnoteReferences
-        Expected = oneBasedExpectedArray(17)
-        If ResultArray(17) = Expected Then GetPassFail = "PASS"
+        If ResultArray(17) = oneBasedExpectedArray(17) Then GetPassFail = "PASS    "
     Case 18
         ResultArray(18) = CountHeading1
-        Expected = oneBasedExpectedArray(18)
-        If ResultArray(18) = Expected Then GetPassFail = "PASS"
+        If ResultArray(18) = oneBasedExpectedArray(18) Then GetPassFail = "PASS    "
     Case 19
         ResultArray(19) = CountEmptyParasAfterH2
-        Expected = oneBasedExpectedArray(19)
-        If ResultArray(19) = Expected Then GetPassFail = "PASS"
+        If ResultArray(19) = oneBasedExpectedArray(19) Then GetPassFail = "PASS    "
     Case 20
         ResultArray(20) = CountFootnotesFollowedByDigit
-        Expected = oneBasedExpectedArray(20)
-        If ResultArray(20) = Expected Then GetPassFail = "PASS"
+        If ResultArray(20) = oneBasedExpectedArray(20) Then GetPassFail = "PASS    "
     Case 21
         ResultArray(21) = CountNotSpacesAfterFootnoteReferences
-        Expected = oneBasedExpectedArray(21)
-        If ResultArray(21) = Expected Then GetPassFail = "PASS"
+        If ResultArray(21) = oneBasedExpectedArray(21) Then GetPassFail = "PASS    "
     Case 22
         ResultArray(22) = CountEmptyParagraphsWithFormatting
-        Expected = oneBasedExpectedArray(22)
-        If ResultArray(22) = Expected Then GetPassFail = "PASS"
+        If ResultArray(22) = oneBasedExpectedArray(22) Then GetPassFail = "PASS    "
     Case 23
         ResultArray(23) = CountDeleteEmptyParagraphsBeforeHeading2
-        Expected = oneBasedExpectedArray(23)
-        If ResultArray(23) = Expected Then GetPassFail = "PASS"
+        If ResultArray(23) = oneBasedExpectedArray(23) Then GetPassFail = "PASS    "
     Case 24
         ResultArray(24) = CountFootnoteReferences
-        Expected = oneBasedExpectedArray(24)
-        If ResultArray(24) = Expected Then GetPassFail = "PASS"
+        If ResultArray(24) = oneBasedExpectedArray(24) Then GetPassFail = "PASS    "
     Case 25
         ResultArray(25) = CountFootnoteReferenceColors
-        Expected = oneBasedExpectedArray(25)
-        If ResultArray(25) = Expected Then GetPassFail = "PASS"
+        If ResultArray(25) = oneBasedExpectedArray(25) Then GetPassFail = "PASS    "
     Case 26
         ResultArray(26) = CheckAllHeaders("Empty")
-        Expected = oneBasedExpectedArray(26)
-        If ResultArray(26) = Expected Then GetPassFail = "PASS"
+        If ResultArray(26) = oneBasedExpectedArray(26) Then GetPassFail = "PASS    "
     Case 27
         ResultArray(27) = CheckAllHeaders("NotEmpty")
-        Expected = oneBasedExpectedArray(27)
-        If ResultArray(27) = Expected Then GetPassFail = "PASS"
+        If ResultArray(27) = oneBasedExpectedArray(27) Then GetPassFail = "PASS    "
     Case 28
         ResultArray(28) = CountTabFollowedByParagraphMarkInHeaders
-        Expected = oneBasedExpectedArray(28)
-        If ResultArray(28) = Expected Then GetPassFail = "PASS"
+        If ResultArray(28) = oneBasedExpectedArray(28) Then GetPassFail = "PASS    "
     Case 29
         ResultArray(29) = CountParagraphsWithoutTabInHeaders
-        Expected = oneBasedExpectedArray(29)
-        If ResultArray(29) = Expected Then GetPassFail = "PASS"
+        If ResultArray(29) = oneBasedExpectedArray(29) Then GetPassFail = "PASS    "
     Case 30
         ResultArray(30) = CountHeaderStyleUsage
-        Expected = oneBasedExpectedArray(30)
-        If ResultArray(30) = Expected Then GetPassFail = "PASS"
+        If ResultArray(30) = oneBasedExpectedArray(30) Then GetPassFail = "PASS    "
     Case 31
         ResultArray(31) = CountParagraphMarksPerHeaderSection
-        Expected = oneBasedExpectedArray(31)
-        If ResultArray(31) = Expected Then GetPassFail = "PASS"
+        If ResultArray(31) = oneBasedExpectedArray(31) Then GetPassFail = "PASS    "
     Case 32
         ResultArray(32) = CountLinefeed
-        Expected = oneBasedExpectedArray(32)
-        If ResultArray(32) = Expected Then GetPassFail = "PASS"
+        If ResultArray(32) = oneBasedExpectedArray(32) Then GetPassFail = "PASS    "
     Case 33
         ResultArray(33) = CountLinefeed(" ")
-        Expected = oneBasedExpectedArray(33)
-        If ResultArray(33) = Expected Then GetPassFail = "PASS"
+        If ResultArray(33) = oneBasedExpectedArray(33) Then GetPassFail = "PASS    "
     Case 34
         ResultArray(34) = CountManualLineBreaksAndWithSpace
-        Expected = oneBasedExpectedArray(34)
-        If ResultArray(34) = Expected Then GetPassFail = "PASS"
+        If ResultArray(34) = oneBasedExpectedArray(34) Then GetPassFail = "PASS    "
     Case 35
         ResultArray(35) = CountManualLineBreaksAndWithSpace(" ")
-        Expected = oneBasedExpectedArray(35)
-        If ResultArray(35) = Expected Then GetPassFail = "PASS"
+        If ResultArray(35) = oneBasedExpectedArray(35) Then GetPassFail = "PASS    "
     Case 36
         ResultArray(36) = CountFooterParagraphsWithFooterStyle
-        Expected = oneBasedExpectedArray(36)
-        If ResultArray(36) = Expected Then GetPassFail = "PASS"
+        If ResultArray(36) = oneBasedExpectedArray(36) Then GetPassFail = "PASS    "
     Case 37
         ResultArray(37) = CountTabOnlyParagraphs
-        Expected = oneBasedExpectedArray(37)
-        If ResultArray(37) = Expected Then GetPassFail = "PASS"
+        If ResultArray(37) = oneBasedExpectedArray(37) Then GetPassFail = "PASS    "
     Case 38
         ResultArray(38) = CountEmptyParagraphs
-        Expected = oneBasedExpectedArray(38)
-        If ResultArray(38) = Expected Then GetPassFail = "PASS"
+        If ResultArray(38) = oneBasedExpectedArray(38) Then GetPassFail = "PASS    "
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -489,119 +458,119 @@ Private Function RunTest(num As Integer) As Boolean
     On Error GoTo PROC_ERR
     Select Case num
     Case 1
-        Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, ResultArray(1), Expected, "CountDoubleSpaces"
-        AppendToFile TestReportFileName, GetPassFail(1) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(1))) & Fixed14Str(CStr(Expected)) & "CountDoubleSpaces"
+        Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, ResultArray(1), oneBasedExpectedArray(1), "CountDoubleSpaces"
+        If TestReportFlag Then OutputTestReport (1)
     Case 2
-        Debug.Print GetPassFail(2), "Copy ()", "Test = " & num, ResultArray(2), Expected, "CountDoubleSpacesInShapes"
-        AppendToFile TestReportFileName, GetPassFail(2) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(2))) & Fixed14Str(CStr(Expected)) & "CountDoubleSpacesInShapes"
+        Debug.Print GetPassFail(2), "Copy ()", "Test = " & num, ResultArray(2), oneBasedExpectedArray(2), "CountDoubleSpacesInShapes"
+        If TestReportFlag Then OutputTestReport (2)
     Case 3
-        Debug.Print GetPassFail(3), "Copy ()", "Test = " & num, ResultArray(3), Expected, "CountSpaceFollowedByCarriageReturn"
-        AppendToFile TestReportFileName, GetPassFail(3) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(3))) & Fixed14Str(CStr(Expected)) & "CountSpaceFollowedByCarriageReturn"
+        Debug.Print GetPassFail(3), "Copy ()", "Test = " & num, ResultArray(3), oneBasedExpectedArray(3), "CountSpaceFollowedByCarriageReturn"
+        If TestReportFlag Then OutputTestReport (3)
     Case 4
-        Debug.Print GetPassFail(4), "Copy ()", "Test = " & num, ResultArray(4), Expected, "CountDoubleTabs"
-        AppendToFile TestReportFileName, GetPassFail(4) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(4))) & Fixed14Str(CStr(Expected)) & "CountDoubleTabs"
+        Debug.Print GetPassFail(4), "Copy ()", "Test = " & num, ResultArray(4), oneBasedExpectedArray(4), "CountDoubleTabs"
+        If TestReportFlag Then OutputTestReport (4)
     Case 5
-        Debug.Print GetPassFail(5), "Copy ()", "Test = " & num, ResultArray(5), Expected, "CountWhiteSpaceAndCarriageReturn"
-        AppendToFile TestReportFileName, GetPassFail(5) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(5))) & Fixed14Str(CStr(Expected)) & "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print GetPassFail(5), "Copy ()", "Test = " & num, ResultArray(5), oneBasedExpectedArray(5), "CountWhiteSpaceAndCarriageReturn"
+        If TestReportFlag Then OutputTestReport (5)
     Case 6
-        Debug.Print GetPassFail(6), "Copy ()", "Test = " & num, ResultArray(6), Expected, "CountQuadrupleParagraphMarks"
-        AppendToFile TestReportFileName, GetPassFail(6) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(6))) & Fixed14Str(CStr(Expected)) & "CountQuadrupleParagraphMarks"
+        Debug.Print GetPassFail(6), "Copy ()", "Test = " & num, ResultArray(6), oneBasedExpectedArray(6), "CountQuadrupleParagraphMarks"
+        If TestReportFlag Then OutputTestReport (6)
     Case 7
-        Debug.Print GetPassFail(7), "Copy ()", "Test = " & num, ResultArray(7), Expected, "CountStyleWithSpaceAndNumber"
-        AppendToFile TestReportFileName, GetPassFail(7) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(7))) & Fixed14Str(CStr(Expected)) & "CountStyleWithSpaceAndNumber"
+        Debug.Print GetPassFail(7), "Copy ()", "Test = " & num, ResultArray(7), oneBasedExpectedArray(7), "CountStyleWithSpaceAndNumber"
+        If TestReportFlag Then OutputTestReport (7)
     Case 8
-        Debug.Print GetPassFail(8), "Copy ()", "Test = " & num, ResultArray(8), Expected, "CountStyleWithNumberAndSpace"
-        AppendToFile TestReportFileName, GetPassFail(8) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(8))) & Fixed14Str(CStr(Expected)) & "CountStyleWithNumberAndSpace"
+        Debug.Print GetPassFail(8), "Copy ()", "Test = " & num, ResultArray(8), oneBasedExpectedArray(8), "CountStyleWithNumberAndSpace"
+        If TestReportFlag Then OutputTestReport (8)
     Case 9
-        Debug.Print GetPassFail(9), "Copy ()", "Test = " & num, ResultArray(9), Expected, "CountPeriodSpaceLeftParenthesis"
-        AppendToFile TestReportFileName, GetPassFail(9) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(9))) & Fixed14Str(CStr(Expected)) & "CountPeriodSpaceLeftParenthesis"
+        Debug.Print GetPassFail(9), "Copy ()", "Test = " & num, ResultArray(9), oneBasedExpectedArray(9), "CountPeriodSpaceLeftParenthesis"
+        If TestReportFlag Then OutputTestReport (9)
     Case 10
-        Debug.Print GetPassFail(10), "Copy ()", "Test = " & num, ResultArray(10), Expected, "CountNonBreakingSpaces"
-        AppendToFile TestReportFileName, GetPassFail(11) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(10))) & Fixed14Str(CStr(Expected)) & "CountNonBreakingSpaces"
+        Debug.Print GetPassFail(10), "Copy ()", "Test = " & num, ResultArray(10), oneBasedExpectedArray(10), "CountNonBreakingSpaces"
+        If TestReportFlag Then OutputTestReport (10)
     Case 11
-        Debug.Print GetPassFail(11), "Copy ()", "Test = " & num, ResultArray(11), Expected, "CountFindNumberDashNumber"
-        AppendToFile TestReportFileName, GetPassFail(11) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(11))) & Fixed14Str(CStr(Expected)) & "CountFindNumberDashNumber"
+        Debug.Print GetPassFail(11), "Copy ()", "Test = " & num, ResultArray(11), oneBasedExpectedArray(11), "CountFindNumberDashNumber"
+        If TestReportFlag Then OutputTestReport (11)
     Case 12
-        Debug.Print GetPassFail(12), "Copy ()", "Test = " & num, ResultArray(12), Expected, "CountNumberDashNumberInFootnotes"
-        AppendToFile TestReportFileName, GetPassFail(12) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(12))) & Fixed14Str(CStr(Expected)) & "CountNumberDashNumberInFootnotes"
+        Debug.Print GetPassFail(12), "Copy ()", "Test = " & num, ResultArray(12), oneBasedExpectedArray(12), "CountNumberDashNumberInFootnotes"
+        If TestReportFlag Then OutputTestReport (12)
     Case 13
-        Debug.Print GetPassFail(13), "Copy ()", "Test = " & num, ResultArray(13), Expected, "CountEmptyParasWithNoThemeColor"
-        AppendToFile TestReportFileName, GetPassFail(13) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(13))) & Fixed14Str(CStr(Expected)) & "CountEmptyParasWithNoThemeColor"
+        Debug.Print GetPassFail(13), "Copy ()", "Test = " & num, ResultArray(13), oneBasedExpectedArray(13), "CountEmptyParasWithNoThemeColor"
+        If TestReportFlag Then OutputTestReport (13)
     Case 14
-        Debug.Print GetPassFail(14), "Copy ()", "Test = " & num, ResultArray(14), Expected, "CountWhiteParagraphMarks"
-        AppendToFile TestReportFileName, GetPassFail(14) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(14))) & Fixed14Str(CStr(Expected)) & "CountWhiteParagraphMarks"
+        Debug.Print GetPassFail(14), "Copy ()", "Test = " & num, ResultArray(14), oneBasedExpectedArray(14), "CountWhiteParagraphMarks"
+        If TestReportFlag Then OutputTestReport (14)
     Case 15
-        Debug.Print GetPassFail(15), "Copy ()", "Test = " & num, ResultArray(15), Expected, "CountSectionsWithDifferentFirstPage"
-        AppendToFile TestReportFileName, GetPassFail(15) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(15))) & Fixed14Str(CStr(Expected)) & "CountSectionsWithDifferentFirstPage"
+        Debug.Print GetPassFail(15), "Copy ()", "Test = " & num, ResultArray(15), oneBasedExpectedArray(15), "CountSectionsWithDifferentFirstPage"
+        If TestReportFlag Then OutputTestReport (15)
     Case 16
-        Debug.Print GetPassFail(16), "Copy ()", "Test = " & num, ResultArray(16), Expected, "CountTotalParagraphs"
-        AppendToFile TestReportFileName, GetPassFail(16) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(16))) & Fixed14Str(CStr(Expected)) & "CountTotalParagraphs"
+        Debug.Print GetPassFail(16), "Copy ()", "Test = " & num, ResultArray(16), oneBasedExpectedArray(16), "CountTotalParagraphs"
+        If TestReportFlag Then OutputTestReport (16)
     Case 17
-        Debug.Print GetPassFail(17), "Copy ()", "Test = " & num, ResultArray(17), Expected, "CountRedFootnoteReferences"
-        AppendToFile TestReportFileName, GetPassFail(17) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(17))) & Fixed14Str(CStr(Expected)) & "CountRedFootnoteReferences"
+        Debug.Print GetPassFail(17), "Copy ()", "Test = " & num, ResultArray(17), oneBasedExpectedArray(17), "CountRedFootnoteReferences"
+        If TestReportFlag Then OutputTestReport (17)
     Case 18
-        Debug.Print GetPassFail(18), "Copy ()", "Test = " & num, ResultArray(18), Expected, "CountHeading1"
-        AppendToFile TestReportFileName, GetPassFail(18) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(18))) & Fixed14Str(CStr(Expected)) & "CountHeading1"
+        Debug.Print GetPassFail(18), "Copy ()", "Test = " & num, ResultArray(18), oneBasedExpectedArray(18), "CountHeading1"
+        If TestReportFlag Then OutputTestReport (18)
     Case 19
-        Debug.Print GetPassFail(19), "Copy ()", "Test = " & num, ResultArray(19), Expected, "CountEmptyParasAfterH2"
-        AppendToFile TestReportFileName, GetPassFail(19) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(19))) & Fixed14Str(CStr(Expected)) & "CountEmptyParasAfterH2"
+        Debug.Print GetPassFail(19), "Copy ()", "Test = " & num, ResultArray(19), oneBasedExpectedArray(19), "CountEmptyParasAfterH2"
+        If TestReportFlag Then OutputTestReport (19)
     Case 20
-        Debug.Print GetPassFail(20), "Copy ()", "Test = " & num, ResultArray(20), Expected, "CountFootnotesFollowedByDigit"
-        AppendToFile TestReportFileName, GetPassFail(20) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(20))) & Fixed14Str(CStr(Expected)) & "CountFootnotesFollowedByDigit"
+        Debug.Print GetPassFail(20), "Copy ()", "Test = " & num, ResultArray(20), oneBasedExpectedArray(20), "CountFootnotesFollowedByDigit"
+        If TestReportFlag Then OutputTestReport (20)
     Case 21
-        Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, ResultArray(21), Expected, "CountNotSpacesAfterFootnoteReferences"
-        AppendToFile TestReportFileName, GetPassFail(21) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(21))) & Fixed14Str(CStr(Expected)) & "CountNotSpacesAfterFootnoteReferences"
+        Debug.Print GetPassFail(21), "Copy ()", "Test = " & num, ResultArray(21), oneBasedExpectedArray(21), "CountNotSpacesAfterFootnoteReferences"
+        If TestReportFlag Then OutputTestReport (21)
     Case 22
-        Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, ResultArray(22), Expected, "CountEmptyParagraphsWithFormatting"
-        AppendToFile TestReportFileName, GetPassFail(22) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(22))) & Fixed14Str(CStr(Expected)) & "CountEmptyParagraphsWithFormatting"
+        Debug.Print GetPassFail(22), "Copy ()", "Test = " & num, ResultArray(22), oneBasedExpectedArray(22), "CountEmptyParagraphsWithFormatting"
+        If TestReportFlag Then OutputTestReport (22)
     Case 23
-        Debug.Print GetPassFail(23), "Copy ()", "Test = " & num, ResultArray(23), Expected, "CountDeleteEmptyParagraphsBeforeHeading2"
-        AppendToFile TestReportFileName, GetPassFail(23) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(23))) & Fixed14Str(CStr(Expected)) & "CountDeleteEmptyParagraphsBeforeHeading2"
+        Debug.Print GetPassFail(23), "Copy ()", "Test = " & num, ResultArray(23), oneBasedExpectedArray(23), "CountDeleteEmptyParagraphsBeforeHeading2"
+        If TestReportFlag Then OutputTestReport (23)
     Case 24
-        Debug.Print GetPassFail(24), "Copy ()", "Test = " & num, ResultArray(24), Expected, "CountFootnoteReferences"
-        AppendToFile TestReportFileName, GetPassFail(24) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(24))) & Fixed14Str(CStr(Expected)) & "CountFootnoteReferences"
+        Debug.Print GetPassFail(24), "Copy ()", "Test = " & num, ResultArray(24), oneBasedExpectedArray(24), "CountFootnoteReferences"
+        If TestReportFlag Then OutputTestReport (24)
     Case 25
-        Debug.Print GetPassFail(25), "Copy ()", "Test = " & num, ResultArray(25), Expected, "CountFootnoteReferenceColors"
-        AppendToFile TestReportFileName, GetPassFail(25) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(25))) & Fixed14Str(CStr(Expected)) & "CountFootnoteReferenceColors"
+        Debug.Print GetPassFail(25), "Copy ()", "Test = " & num, ResultArray(25), oneBasedExpectedArray(25), "CountFootnoteReferenceColors"
+        If TestReportFlag Then OutputTestReport (25)
     Case 26
-        Debug.Print GetPassFail(26), "Copy ()", "Test = " & num, ResultArray(26), Expected, "CheckAllHeaders(" & "Empty" & ")"
-        AppendToFile TestReportFileName, GetPassFail(26) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(26))) & Fixed14Str(CStr(Expected)) & "CheckAllHeaders(" & "Empty" & ")"
+        Debug.Print GetPassFail(26), "Copy ()", "Test = " & num, ResultArray(26), oneBasedExpectedArray(26), "CheckAllHeaders(" & "Empty" & ")"
+        If TestReportFlag Then OutputTestReport (26)
     Case 27
-        Debug.Print GetPassFail(27), "Copy ()", "Test = " & num, ResultArray(27), Expected, "CheckAllHeaders(" & "NotEmpty" & ")"
-        AppendToFile TestReportFileName, GetPassFail(27) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(27))) & Fixed14Str(CStr(Expected)) & "CheckAllHeaders(" & "NotEmpty" & ")"
+        Debug.Print GetPassFail(27), "Copy ()", "Test = " & num, ResultArray(27), oneBasedExpectedArray(27), "CheckAllHeaders(" & "NotEmpty" & ")"
+        If TestReportFlag Then OutputTestReport (27)
     Case 28
-        Debug.Print GetPassFail(28), "Copy ()", "Test = " & num, ResultArray(28), Expected, "CountTabFollowedByParagraphMarkInHeaders"
-        AppendToFile TestReportFileName, GetPassFail(28) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(28))) & Fixed14Str(CStr(Expected)) & "CountTabFollowedByParagraphMarkInHeaders"
+        Debug.Print GetPassFail(28), "Copy ()", "Test = " & num, ResultArray(28), oneBasedExpectedArray(28), "CountTabFollowedByParagraphMarkInHeaders"
+        If TestReportFlag Then OutputTestReport (28)
     Case 29
-        Debug.Print GetPassFail(29), "Copy ()", "Test = " & num, ResultArray(29), Expected, "CountParagraphsWithoutTabInHeaders"
-        AppendToFile TestReportFileName, GetPassFail(29) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(29))) & Fixed14Str(CStr(Expected)) & "CountParagraphsWithoutTabInHeaders"
+        Debug.Print GetPassFail(29), "Copy ()", "Test = " & num, ResultArray(29), oneBasedExpectedArray(29), "CountParagraphsWithoutTabInHeaders"
+        If TestReportFlag Then OutputTestReport (29)
     Case 30
-        Debug.Print GetPassFail(30), "Copy ()", "Test = " & num, ResultArray(30), Expected, "CountHeaderStyleUsage"
-        AppendToFile TestReportFileName, GetPassFail(30) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(30))) & Fixed14Str(CStr(Expected)) & "CountHeaderStyleUsage"
+        Debug.Print GetPassFail(30), "Copy ()", "Test = " & num, ResultArray(30), oneBasedExpectedArray(30), "CountHeaderStyleUsage"
+        If TestReportFlag Then OutputTestReport (30)
     Case 31
-        Debug.Print GetPassFail(31), "Copy ()", "Test = " & num, ResultArray(31), Expected, "CountParagraphMarksPerHeaderSection"
-        AppendToFile TestReportFileName, GetPassFail(31) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(31))) & Fixed14Str(CStr(Expected)) & "CountParagraphMarksPerHeaderSection"
+        Debug.Print GetPassFail(31), "Copy ()", "Test = " & num, ResultArray(31), oneBasedExpectedArray(31), "CountParagraphMarksPerHeaderSection"
+        If TestReportFlag Then OutputTestReport (31)
     Case 32
-        Debug.Print GetPassFail(32), "Copy ()", "Test = " & num, ResultArray(32), Expected, "CountLinefeed"
-        AppendToFile TestReportFileName, GetPassFail(32) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(32))) & Fixed14Str(CStr(Expected)) & "CountLinefeed"
+        Debug.Print GetPassFail(32), "Copy ()", "Test = " & num, ResultArray(32), oneBasedExpectedArray(32), "CountLinefeed"
+        If TestReportFlag Then OutputTestReport (32)
     Case 33
-        Debug.Print GetPassFail(33), "Copy ()", "Test = " & num, ResultArray(33), Expected, "CountLinefeed(" & """ """ & ")"
-        AppendToFile TestReportFileName, GetPassFail(33) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(33))) & Fixed14Str(CStr(Expected)) & "CountLinefeed(" & """ """ & ")"
+        Debug.Print GetPassFail(33), "Copy ()", "Test = " & num, ResultArray(33), oneBasedExpectedArray(33), "CountLinefeed(" & """ """ & ")"
+        If TestReportFlag Then OutputTestReport (33)
     Case 34
-        Debug.Print GetPassFail(34), "Copy ()", "Test = " & num, ResultArray(34), Expected, "CountManualLineBreaksAndWithSpace"
-        AppendToFile TestReportFileName, GetPassFail(34) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(34))) & Fixed14Str(CStr(Expected)) & "CountManualLineBreaksAndWithSpace"
+        Debug.Print GetPassFail(34), "Copy ()", "Test = " & num, ResultArray(34), oneBasedExpectedArray(34), "CountManualLineBreaksAndWithSpace"
+        If TestReportFlag Then OutputTestReport (34)
     Case 35
-        Debug.Print GetPassFail(35), "Copy ()", "Test = " & num, ResultArray(35), Expected, "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
-        AppendToFile TestReportFileName, GetPassFail(35) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(35))) & Fixed14Str(CStr(Expected)) & "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+        Debug.Print GetPassFail(35), "Copy ()", "Test = " & num, ResultArray(35), oneBasedExpectedArray(35), "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+        If TestReportFlag Then OutputTestReport (35)
     Case 36
-        Debug.Print GetPassFail(36), "Copy ()", "Test = " & num, ResultArray(36), Expected, "CountFooterParagraphsWithFooterStyle"
-        AppendToFile TestReportFileName, GetPassFail(36) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(36))) & Fixed14Str(CStr(Expected)) & "CountFooterParagraphsWithFooterStyle"
+        Debug.Print GetPassFail(36), "Copy ()", "Test = " & num, ResultArray(36), oneBasedExpectedArray(36), "CountFooterParagraphsWithFooterStyle"
+        If TestReportFlag Then OutputTestReport (36)
     Case 37
-        Debug.Print GetPassFail(37), "Copy ()", "Test = " & num, ResultArray(37), Expected, "CountTabOnlyParagraphs"
-        AppendToFile TestReportFileName, GetPassFail(37) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(37))) & Fixed14Str(CStr(Expected)) & "CountTabOnlyParagraphs"
+        Debug.Print GetPassFail(37), "Copy ()", "Test = " & num, ResultArray(37), oneBasedExpectedArray(37), "CountTabOnlyParagraphs"
+        If TestReportFlag Then OutputTestReport (37)
     Case 38
-        Debug.Print GetPassFail(38), "Copy ()", "Test = " & num, ResultArray(38), Expected, "CountEmptyParagraphs"
-        AppendToFile TestReportFileName, GetPassFail(38) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(38))) & Fixed14Str(CStr(Expected)) & "CountEmptyParagraphs"
+        Debug.Print GetPassFail(38), "Copy ()", "Test = " & num, ResultArray(38), oneBasedExpectedArray(38), "CountEmptyParagraphs"
+        If TestReportFlag Then OutputTestReport (38)
    Case Else
         Debug.Print "The test number is outside the accepted range"
     End Select
@@ -628,6 +597,89 @@ PROC_ERR:
     End If
     'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
     End
+End Function
+
+Private Function OutputTestReport(num As Integer) As Boolean
+    Select Case num
+    Case 1
+        AppendToFile TestReportFileName, GetPassFail(1) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(1))) & Fixed14Str(CStr(oneBasedExpectedArray(1))) & "CountDoubleSpaces"
+    Case 2
+        AppendToFile TestReportFileName, GetPassFail(2) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(2))) & Fixed14Str(CStr(oneBasedExpectedArray(2))) & "CountDoubleSpacesInShapes"
+    Case 3
+        AppendToFile TestReportFileName, GetPassFail(3) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(3))) & Fixed14Str(CStr(oneBasedExpectedArray(3))) & "CountSpaceFollowedByCarriageReturn"
+    Case 4
+        AppendToFile TestReportFileName, GetPassFail(4) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(4))) & Fixed14Str(CStr(oneBasedExpectedArray(4))) & "CountDoubleTabs"
+    Case 5
+        AppendToFile TestReportFileName, GetPassFail(5) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(5))) & Fixed14Str(CStr(oneBasedExpectedArray(5))) & "CountWhiteSpaceAndCarriageReturn"
+    Case 6
+        AppendToFile TestReportFileName, GetPassFail(6) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(6))) & Fixed14Str(CStr(oneBasedExpectedArray(6))) & "CountQuadrupleParagraphMarks"
+    Case 7
+        AppendToFile TestReportFileName, GetPassFail(7) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(7))) & Fixed14Str(CStr(oneBasedExpectedArray(7))) & "CountStyleWithSpaceAndNumber"
+    Case 8
+        AppendToFile TestReportFileName, GetPassFail(8) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(8))) & Fixed14Str(CStr(oneBasedExpectedArray(8))) & "CountStyleWithNumberAndSpace"
+    Case 9
+        AppendToFile TestReportFileName, GetPassFail(9) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(9))) & Fixed14Str(CStr(oneBasedExpectedArray(9))) & "CountPeriodSpaceLeftParenthesis"
+    Case 10
+        AppendToFile TestReportFileName, GetPassFail(11) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(10))) & Fixed14Str(CStr(oneBasedExpectedArray(10))) & "CountNonBreakingSpaces"
+    Case 11
+        AppendToFile TestReportFileName, GetPassFail(11) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(11))) & Fixed14Str(CStr(oneBasedExpectedArray(11))) & "CountFindNumberDashNumber"
+    Case 12
+        AppendToFile TestReportFileName, GetPassFail(12) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(12))) & Fixed14Str(CStr(oneBasedExpectedArray(12))) & "CountNumberDashNumberInFootnotes"
+    Case 13
+        AppendToFile TestReportFileName, GetPassFail(13) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(13))) & Fixed14Str(CStr(oneBasedExpectedArray(13))) & "CountEmptyParasWithNoThemeColor"
+    Case 14
+        AppendToFile TestReportFileName, GetPassFail(14) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(14))) & Fixed14Str(CStr(oneBasedExpectedArray(14))) & "CountWhiteParagraphMarks"
+    Case 15
+        AppendToFile TestReportFileName, GetPassFail(15) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(15))) & Fixed14Str(CStr(oneBasedExpectedArray(15))) & "CountSectionsWithDifferentFirstPage"
+    Case 16
+        AppendToFile TestReportFileName, GetPassFail(16) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(16))) & Fixed14Str(CStr(oneBasedExpectedArray(16))) & "CountTotalParagraphs"
+    Case 17
+        AppendToFile TestReportFileName, GetPassFail(17) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(17))) & Fixed14Str(CStr(oneBasedExpectedArray(17))) & "CountRedFootnoteReferences"
+    Case 18
+        AppendToFile TestReportFileName, GetPassFail(18) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(18))) & Fixed14Str(CStr(oneBasedExpectedArray(18))) & "CountHeading1"
+    Case 19
+        AppendToFile TestReportFileName, GetPassFail(19) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(19))) & Fixed14Str(CStr(oneBasedExpectedArray(19))) & "CountEmptyParasAfterH2"
+    Case 20
+        AppendToFile TestReportFileName, GetPassFail(20) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(20))) & Fixed14Str(CStr(oneBasedExpectedArray(20))) & "CountFootnotesFollowedByDigit"
+    Case 21
+        AppendToFile TestReportFileName, GetPassFail(21) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(21))) & Fixed14Str(CStr(oneBasedExpectedArray(21))) & "CountNotSpacesAfterFootnoteReferences"
+    Case 22
+        AppendToFile TestReportFileName, GetPassFail(22) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(22))) & Fixed14Str(CStr(oneBasedExpectedArray(22))) & "CountEmptyParagraphsWithFormatting"
+    Case 23
+        AppendToFile TestReportFileName, GetPassFail(23) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(23))) & Fixed14Str(CStr(oneBasedExpectedArray(23))) & "CountDeleteEmptyParagraphsBeforeHeading2"
+    Case 24
+        AppendToFile TestReportFileName, GetPassFail(24) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(24))) & Fixed14Str(CStr(oneBasedExpectedArray(24))) & "CountFootnoteReferences"
+    Case 25
+        AppendToFile TestReportFileName, GetPassFail(25) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(25))) & Fixed14Str(CStr(oneBasedExpectedArray(25))) & "CountFootnoteReferenceColors"
+    Case 26
+        AppendToFile TestReportFileName, GetPassFail(26) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(26))) & Fixed14Str(CStr(oneBasedExpectedArray(26))) & "CheckAllHeaders(" & "Empty" & ")"
+    Case 27
+        AppendToFile TestReportFileName, GetPassFail(27) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(27))) & Fixed14Str(CStr(oneBasedExpectedArray(27))) & "CheckAllHeaders(" & "NotEmpty" & ")"
+    Case 28
+        AppendToFile TestReportFileName, GetPassFail(28) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(28))) & Fixed14Str(CStr(oneBasedExpectedArray(28))) & "CountTabFollowedByParagraphMarkInHeaders"
+    Case 29
+        AppendToFile TestReportFileName, GetPassFail(29) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(29))) & Fixed14Str(CStr(oneBasedExpectedArray(29))) & "CountParagraphsWithoutTabInHeaders"
+    Case 30
+        AppendToFile TestReportFileName, GetPassFail(30) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(30))) & Fixed14Str(CStr(oneBasedExpectedArray(30))) & "CountHeaderStyleUsage"
+    Case 31
+        AppendToFile TestReportFileName, GetPassFail(31) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(31))) & Fixed14Str(CStr(oneBasedExpectedArray(31))) & "CountParagraphMarksPerHeaderSection"
+    Case 32
+        AppendToFile TestReportFileName, GetPassFail(32) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(32))) & Fixed14Str(CStr(oneBasedExpectedArray(32))) & "CountLinefeed"
+    Case 33
+        AppendToFile TestReportFileName, GetPassFail(33) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(33))) & Fixed14Str(CStr(oneBasedExpectedArray(33))) & "CountLinefeed(" & """ """ & ")"
+    Case 34
+        AppendToFile TestReportFileName, GetPassFail(34) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(34))) & Fixed14Str(CStr(oneBasedExpectedArray(34))) & "CountManualLineBreaksAndWithSpace"
+    Case 35
+        AppendToFile TestReportFileName, GetPassFail(35) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(35))) & Fixed14Str(CStr(oneBasedExpectedArray(35))) & "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+    Case 36
+        AppendToFile TestReportFileName, GetPassFail(36) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(36))) & Fixed14Str(CStr(oneBasedExpectedArray(36))) & "CountFooterParagraphsWithFooterStyle"
+    Case 37
+        AppendToFile TestReportFileName, GetPassFail(37) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(37))) & Fixed14Str(CStr(oneBasedExpectedArray(37))) & "CountTabOnlyParagraphs"
+    Case 38
+        AppendToFile TestReportFileName, GetPassFail(38) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(38))) & Fixed14Str(CStr(oneBasedExpectedArray(38))) & "CountEmptyParagraphs"
+   Case Else
+        Debug.Print "The test number is outside the accepted range"
+    End Select
 End Function
 
 Private Function CountEmptyParagraphs() As Long
