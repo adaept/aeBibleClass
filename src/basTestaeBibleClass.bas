@@ -18,8 +18,11 @@ Public Function RUN_THE_TESTS(Optional ByVal varDebug As Variant) As Boolean
     On Error GoTo 0
     If IsMissing(varDebug) Then
         aeBibleClassTest
-    Else
+    ElseIf varDebug = "varDebug" Then
+        Debug.Print "Running in varDebug Mode!"
         aeBibleClassTest varDebug:="varDebug"
+    ElseIf VarType(varDebug) = vbInteger Then
+        aeBibleClassTest varDebug:=varDebug
     End If
 End Function
 
@@ -44,9 +47,14 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
         Debug.Print , "varDebug IS missing so no parameter is passed to TheBibleClassTests"
         Debug.Print , "DEBUGGING IS OFF"
         bln1 = oWordBibleObjects.TheBibleClassTests()
-    Else
+    ElseIf varDebug = "varDebug" Then
         Debug.Print , "varDebug IS NOT missing so blnDebug is set to True"
         bln1 = oWordBibleObjects.TheBibleClassTests("WithDebugging")
+    ElseIf VarType(varDebug) = vbInteger Then
+        'Debug.Print "Running Test " & varDebug
+        bln1 = oWordBibleObjects.TheBibleClassTests(varDebug)
+    Else
+        Debug.Print "Unexpected Parameter !!!"
     End If
     Debug.Print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     Debug.Print

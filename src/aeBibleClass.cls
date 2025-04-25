@@ -53,7 +53,8 @@ Private result As Integer
 Private TestReportFileName As String
 Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True
-'=====================================================
+Private OneTest As Integer  ' Stores the value to run a single test
+'==================================================================
 
 Private Sub Class_Initialize()
     On Error GoTo 0
@@ -65,6 +66,8 @@ Private Sub Class_Initialize()
     Debug.Print "Class_Initialize"
     BibleClassVERSION = "0.0.8"
     BibleClassVERSION_DATE = "April 20, 2025"
+    ' Reset OneTest for each run
+    OneTest = 0
  End Sub
 
 Private Sub Class_Terminate()
@@ -76,7 +79,7 @@ Private Sub Class_Terminate()
     Debug.Print , "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
 End Sub
 
-Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
+Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Integer
 
     On Error GoTo PROC_ERR
 
@@ -86,13 +89,20 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Bo
         Debug.Print , "varDebug IS missing so no parameter is passed to RunBibleClassTests"
         Debug.Print , "DEBUGGING IS OFF"
         TheBibleClassTests = RunBibleClassTests
-    Else
+    ElseIf varDebug = "varDebug" Then
         Debug.Print "Get TheBibleClassTests"
-        Debug.Print , "varDebug IS NOT missing so a variant parameter is passed to RunBibleClassTests"
+        Debug.Print , "varDebug = " & """varDebug""" & " and IS NOT missing so blnDebug is set to True"
         Debug.Print , "DEBUGGING TURNED ON"
         TheBibleClassTests = RunBibleClassTests(varDebug)
+    ElseIf VarType(varDebug) = vbInteger Then
+        Debug.Print "Get TheBibleClassTests"
+        OneTest = varDebug
+        Debug.Print ">Running Test " & OneTest
+        TheBibleClassTests = RunBibleClassTests(OneTest)
+    Else
+        Debug.Print "Unexpected Type Parameter for varDebug !!!"
     End If
-
+    
 PROC_EXIT:
     Exit Property
 
@@ -223,9 +233,12 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     If IsMissing(varDebug) Then
         Debug.Print , "varDebug IS missing so blnDebug of RunBibleClassTests is set to False"
         Debug.Print , "DEBUGGING IS OFF"
-    Else
-        Debug.Print , "varDebug IS NOT missing so blnDebug of RunBibleClassTests is set to True"
+    ElseIf varDebug = "varDebug" Then
+        Debug.Print , "varDebug = " & """varDebug""" & " and IS NOT missing so blnDebug is set to True"
         Debug.Print , "NOW DEBUGGING..."
+    ElseIf VarType(varDebug) = vbInteger And OneTest <> 0 Then
+        Debug.Print ">>Running Test " & OneTest
+    Else
     End If
     
     Dim response As VbMsgBoxResult
@@ -238,12 +251,18 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             On Error Resume Next
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
+                        
             Call Expected1BasedArray
             Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
             '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
             Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
             If TestReportFlag Then AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
             If TestReportFlag Then AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
+            
+            If OneTest <> 0 Then
+                RunTest (OneTest)
+                Exit Function
+            End If
             
             If bGoTo16 Then GoTo Test16
             RunTest (1)

@@ -43,7 +43,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
-' #057 - Add ability to run only a specific test
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
 ' #045 - Test call to SILAS from ribbon using customUI.xml OnHelloWorldButtonClick routine
@@ -59,6 +58,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #057 - Add ability to run only a specific test
     ' FIXED - #147 - Add date/time output to TestReport
     ' FIXED - #145 - Add global const TestReportFlag for optional output using OutputTestReport function
     ' FIXED - #146 - TestReport FAIL!!!! message is not correctly aligned - pad PASS to be "PASS    "
