@@ -126,7 +126,7 @@ Function GetColorNameFromHex(hexColor As String) As String
 End Function
 
 Sub ListAndCountFontColors()
-    Dim rng As Range
+    Dim rng As range
     Dim colorDict As Object
     Dim colorKey As Variant
     Dim colorCount As Long
@@ -167,11 +167,11 @@ End Sub
 Sub GetVerticalPositionOfCursorParagraph()
 ' Get the position of the para where the cursor is
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim paraPos As Single
     
     Set doc = ActiveDocument
-    Set rng = Selection.paragraphs(1).Range
+    Set rng = Selection.paragraphs(1).range
     
     ' Get the vertical position of the paragraph relative to the page
     paraPos = rng.Information(wdVerticalPositionRelativeToPage)
@@ -188,9 +188,9 @@ Sub FindFirstSectionWithDifferentFirstPage()
         Set sec = ActiveDocument.Sections(i)
 
         ' Check if Different First Page is enabled
-        If sec.PageSetup.DifferentFirstPageHeaderFooter = True Then
+        If sec.pageSetup.DifferentFirstPageHeaderFooter = True Then
             ' Select the header of the first page in this section
-            sec.Headers(wdHeaderFooterFirstPage).Range.Select
+            sec.Headers(wdHeaderFooterFirstPage).range.Select
 
             MsgBox "Found in Section " & i & ": 'Different First Page' is enabled.", vbInformation
             Exit Sub
@@ -214,14 +214,14 @@ Sub FindFirstPageWithEmptyHeader()
             Set hdr = sec.Headers(hdrType)
 
             If hdr.Exists And Not hdr.LinkToPrevious Then
-                hdrText = Trim(hdr.Range.text)
+                hdrText = Trim(hdr.range.text)
 
                 If Right(hdrText, 1) = Chr(13) Then
                     hdrText = Left(hdrText, Len(hdrText) - 1)
                 End If
 
                 If hdrText = "" Then
-                    hdr.Range.Select
+                    hdr.range.Select
                     MsgBox "Found empty header in Section " & i & " (" & HeaderTypeName(hdrType) & ").", vbInformation
                     Exit Sub
                 End If
@@ -245,7 +245,7 @@ Sub OptimizedListFontsInDocument()
     Dim fontList As New Collection
     Dim doc As Document
     Dim para As paragraph
-    Dim rng As Range
+    Dim rng As range
     Dim fontName As String
     Dim i As Integer
     
@@ -253,7 +253,7 @@ Sub OptimizedListFontsInDocument()
 
     ' Loop through each paragraph in the document
     For Each para In doc.paragraphs
-        Set rng = para.Range
+        Set rng = para.range
         fontName = rng.font.name
         On Error Resume Next
         ' Add unique fonts to the collection
@@ -269,6 +269,106 @@ Sub OptimizedListFontsInDocument()
     Next i
     'MsgBox fontOutput, vbInformation, "Fonts in Document"
     Debug.Print fontOutput
+End Sub
+
+Sub FindGentiumFromParagraph()
+    Dim startParaNum As Long
+    Dim para As paragraph
+    Dim rng As range
+    Dim charRange As range
+    Dim i As Long, p As Long
+    Dim totalParas As Long
+
+    ' Ask user where to start
+    startParaNum = val(InputBox("Enter paragraph number to start from:", "Start From Paragraph", 1))
+    If startParaNum < 1 Then Exit Sub
+
+    totalParas = ActiveDocument.paragraphs.count
+    If startParaNum > totalParas Then
+        MsgBox "There are only " & totalParas & " paragraphs in the document.", vbExclamation
+        Exit Sub
+    End If
+
+    p = 0
+    For Each para In ActiveDocument.paragraphs
+        p = p + 1
+        If p < startParaNum Then GoTo NextPara
+
+        Set rng = para.range
+        rng.End = rng.End - 1 ' Exclude paragraph mark
+
+        For i = 1 To rng.Characters.count Step 10 ' Check every 10 chars
+            Set charRange = rng.Characters(i)
+            If charRange.font.name = "Gentium" Then
+                charRange.Select
+                MsgBox "Found Gentium font at paragraph " & p, vbInformation
+                Application.StatusBar = False
+                Exit Sub
+            End If
+        Next i
+
+        If p Mod 100 = 0 Then
+            Application.StatusBar = "Scanning paragraph " & p & " of " & totalParas & "..."
+            DoEvents
+        End If
+
+NextPara:
+    Next para
+
+    Application.StatusBar = False
+    MsgBox "Gentium font not found starting from paragraph " & startParaNum & ".", vbExclamation
+End Sub
+
+Sub ListNonMainFonts_ByParagraph()
+    Dim fontDict As Object
+    Set fontDict = CreateObject("Scripting.Dictionary")
+
+    Dim storyRange As range
+    Dim para As paragraph
+    Dim fontName As String
+    Dim fontCount As Long
+    Dim scannedParas As Long
+
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Scanning fonts outside main text..."
+
+    For Each storyRange In ActiveDocument.StoryRanges
+        If storyRange.StoryType <> wdMainTextStory Then
+            Do
+                For Each para In storyRange.paragraphs
+                    scannedParas = scannedParas + 1
+                    fontName = para.range.font.name
+                    If Len(fontName) > 0 Then
+                        If Not fontDict.Exists(fontName) Then
+                            fontDict.Add fontName, 1
+                            fontCount = fontCount + 1
+                        End If
+                    End If
+
+                    If scannedParas Mod 20 = 0 Then
+                        Application.StatusBar = "Scanned " & scannedParas & " paragraphs... Fonts found: " & fontCount
+                        DoEvents
+                    End If
+                Next para
+                Set storyRange = storyRange.NextStoryRange
+            Loop While Not storyRange Is Nothing
+        End If
+    Next storyRange
+
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+
+    If fontDict.count = 0 Then
+        MsgBox "No fonts found outside main text.", vbInformation
+    Else
+        Dim output As String, key As Variant
+        output = "Fonts outside main document text:" & vbCrLf & vbCrLf
+        For Each key In fontDict.Keys
+            output = output & "- " & key & vbCrLf
+        Next key
+        'MsgBox output, vbInformation, "Non-Main Fonts"
+        Debug.Print output
+    End If
 End Sub
 
 
