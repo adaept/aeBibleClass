@@ -89,9 +89,9 @@ Public Sub PrintBibleHeading1Info()
         ' Check if the paragraph style is Heading 1
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             count = count + 1
-            headingText = para.Range.text
-            pageNumber = para.Range.Information(wdActiveEndPageNumber)
-            docPosition = para.Range.Start
+            headingText = para.range.text
+            pageNumber = para.range.Information(wdActiveEndPageNumber)
+            docPosition = para.range.Start
             
             ' Print the heading text, page number, and document position to the console
             Debug.Print count & ": " & "Heading: " & Replace(headingText, vbCr, "") & " | Page: " & pageNumber & " | Position: " & docPosition
@@ -116,9 +116,9 @@ Public Sub PrintBibleBookHeadings()
     For Each para In ActiveDocument.paragraphs
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
-            If para.Range.text = headingLabel & vbCr Then
+            If para.range.text = headingLabel & vbCr Then
                 ' Get the text of the Heading 1 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
+                Debug.Print Replace(para.range.text, vbCr, "")
                 foundHeading1 = True
             ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
@@ -130,7 +130,7 @@ Public Sub PrintBibleBookHeadings()
         If foundHeading1 Then
             If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
                 ' Get the text of the Heading 2 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
+                Debug.Print Replace(para.range.text, vbCr, "")
             End If
         End If
     Next para
@@ -164,7 +164,7 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
     
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.paragraphs
-        paraText = para.Range.text
+        paraText = para.range.text
         ' Remove formatting characters
         paraText = Replace(paraText, vbCr, "") ' Paragraph mark
         paraText = Replace(paraText, vbTab, "") ' Tab character
@@ -191,11 +191,11 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then         ' Process paragraph
             ' Check if the Heading 1 matches the input label
             If paraText = headingLabel Then
-                Debug.Print para.Range.text
+                Debug.Print para.range.text
                 foundHeading1 = True
             ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
-                Debug.Print para.Range.text
+                Debug.Print para.range.text
                 Stop
                 Exit For
             End If
@@ -206,7 +206,7 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
             If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
                 Debug.Print
                 ' Get the text of the Heading 2 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
+                Debug.Print Replace(para.range.text, vbCr, "")
                 ' Get numbers from character style
                 'ExtractNumbersFromParagraph para, "Verse marker"
                 ExtractNumbersFromParagraph2 para, "Chapter Verse marker"
@@ -236,7 +236,7 @@ Private Sub ExtractNumbersFromParagraph(para As paragraph, styleName As String)
 ' The `MatchWildcards` property is set to `True` to enable regex-like searching.
 ' The routine loops through all matches and collects the numbers formatted with the specified character style.
 
-    Dim rng As Range
+    Dim rng As range
     Dim foundNumbers As Collection
     Dim num As String
     Dim result As String
@@ -246,7 +246,7 @@ Private Sub ExtractNumbersFromParagraph(para As paragraph, styleName As String)
     Set foundNumbers = New Collection
     
     ' Set the range to the paragraph
-    Set rng = para.Range
+    Set rng = para.range
     
     ' Initialize the find object
     With rng.Find
@@ -269,7 +269,7 @@ Private Sub ExtractNumbersFromParagraph(para As paragraph, styleName As String)
         End If
         ' Move the range to the next character to continue the search
         rng.Start = rng.End + 1
-        rng.End = para.Range.End
+        rng.End = para.range.End
     Loop
     
     ' Convert the collection to a comma-separated string
@@ -288,7 +288,7 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
 ' A regex object is used to find numbers within the styled ranges.
 ' The numbers are collected and printed as a comma-separated list.
     
-    Dim rng As Range
+    Dim rng As range
     Dim foundNumbers As Collection
     Dim num As String
     Dim result As String
@@ -299,7 +299,7 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
     Set foundNumbers = New Collection
     
     ' Set the range to the paragraph
-    Set rng = para.Range
+    Set rng = para.range
     
     ' Initialize the find object
     With rng.Find
@@ -337,7 +337,7 @@ Private Sub ExtractNumbersFromParagraph2(para As paragraph, styleName As String)
         End If
         ' Move the range to the next character to continue the search
         rng.Start = rng.End + 1
-        rng.End = para.Range.End
+        rng.End = para.range.End
     Loop
     
     ' Convert the collection to a comma-separated string
@@ -353,7 +353,7 @@ End Sub
 
 Sub ListAndReviewAscii12Characters()
 ' Ascii 12 is Form Feed, FF, Page Break
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
     Dim startPos As Long
     Dim response As VbMsgBoxResult
@@ -383,7 +383,7 @@ Sub ListAndReviewAscii12Characters()
             rng.Collapse wdCollapseEnd
             
             ' Navigate to the position in the document
-            ActiveDocument.Range(startPos, startPos).Select
+            ActiveDocument.range(startPos, startPos).Select
             
             ' Ask if the user wants to continue
             response = MsgBox("ASCII 12 character found at position " & startPos & ". Do you want to continue?", vbYesNo + vbQuestion, "Review ASCII 12 Characters")
@@ -466,12 +466,12 @@ Sub CountParagraphsTypes()
         totalParagraphs = totalParagraphs + 1
         
         ' Check if the paragraph is empty
-        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+        If Len(para.range.text) = 1 And para.range.text = vbCr Then
             emptyParagraphs = emptyParagraphs + 1
         End If
         
         ' Check for different types of breaks using Find method
-        With para.Range.Find
+        With para.range.Find
             .ClearFormatting
             .text = "^m"
             If .Execute Then
@@ -486,8 +486,8 @@ Sub CountParagraphsTypes()
         End With
         
         ' Check for different types of section breaks
-        If para.Range.Sections.count > 0 Then
-            Select Case para.Range.Sections(1).PageSetup.SectionStart
+        If para.range.Sections.count > 0 Then
+            Select Case para.range.Sections(1).pageSetup.sectionStart
                 Case wdSectionNewPage
                     nextPageSectionBreakParagraphs = nextPageSectionBreakParagraphs + 1
                     nextPageSectionBreakIndices = nextPageSectionBreakIndices & paraIndex & ", "
