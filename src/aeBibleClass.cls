@@ -162,7 +162,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 150, 0, 1000, 1, 0, 145, 75, 70, 0, 1, 509, 509, 116, 116, 0, 20, 150)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 151, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 20, 151)
     
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -706,7 +706,7 @@ Private Function CountEmptyParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.paragraphs
-        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+        If Len(para.range.text) = 1 And para.range.text = vbCr Then
             count = count + 1
         End If
     Next para
@@ -724,10 +724,10 @@ Private Function CountTabOnlyParagraphs() As Integer
     countTabOnly = 0
 
     For Each para In ActiveDocument.paragraphs
-        paraText = para.Range.text
+        paraText = para.range.text
 
         ' Skip final paragraph if it's the only one and contains just tab+CR
-        If para.Range.End = ActiveDocument.content.End And paraText = vbTab & vbCr Then
+        If para.range.End = ActiveDocument.content.End And paraText = vbTab & vbCr Then
             ' Comment out to skip this one if desired
             countTabOnly = countTabOnly + 1
         Else
@@ -756,9 +756,12 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
         ' Only check footers
         For Each hdrftr In sec.Footers
             If hdrftr.Exists Then
-                For Each para In hdrftr.Range.paragraphs
+                For Each para In hdrftr.range.paragraphs
                     If para.style = "Footer" Then
                         count = count + 1
+                        para.range.Select
+                        Debug.Print "Found paragraph with Footer style. Stopping at this location."
+                        Stop
                     End If
                 Next para
             End If
@@ -783,7 +786,7 @@ Private Function CountManualLineBreaksAndWithSpace(Optional space As Variant) As
     breaksWithSpaceBefore = 0
 
     For Each fn In ActiveDocument.Footnotes
-        content = fn.Range.text
+        content = fn.range.text
         For i = 1 To Len(content)
             currentChar = Mid(content, i, 1)
             If Asc(currentChar) = 11 Then ' Chr(11) = manual line break
@@ -819,7 +822,7 @@ End Function
 Private Function CountLinefeed(Optional space As Variant) As Integer
 ' Search in doc
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim findText As String
     Dim count As Integer
     
@@ -863,7 +866,7 @@ End Function
 Private Function CountParagraphMarksPerHeaderSection() As Integer
     Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As range
     Dim paraCount As Integer
     
     ' Set the document
@@ -873,7 +876,7 @@ Private Function CountParagraphMarksPerHeaderSection() As Integer
     ' Loop through all sections
     For sectionIndex = 1 To doc.Sections.count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).range
         
         ' Count the number of paragraphs in the header
         paraCount = headerRange.paragraphs.count
@@ -896,7 +899,7 @@ End Function
 
 Private Function CountHeaderStyleUsage() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim styleName As String
     Dim count As Integer
     
@@ -936,7 +939,7 @@ End Function
 Private Function CountParagraphsWithoutTabInHeaders() As Integer
     Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As range
     Dim para As paragraph
     Dim count As Integer
     Dim totalCount As Integer
@@ -950,7 +953,7 @@ Private Function CountParagraphsWithoutTabInHeaders() As Integer
     ' Loop through all sections
     For sectionIndex = 1 To doc.Sections.count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).range
         
         ' Initialize the count for the current header
         count = 0
@@ -958,7 +961,7 @@ Private Function CountParagraphsWithoutTabInHeaders() As Integer
         ' Loop through each paragraph in the header range
         For Each para In headerRange.paragraphs
             ' Check if the paragraph does not contain a tab
-            If InStr(para.Range.text, vbTab) = 0 Then
+            If InStr(para.range.text, vbTab) = 0 Then
                 count = count + 1
             End If
         Next para
@@ -980,7 +983,7 @@ End Function
 Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
     Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As range
     Dim para As paragraph
     Dim count As Integer
     Dim totalCount As Integer
@@ -994,7 +997,7 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
     ' Loop through all sections
     For sectionIndex = 1 To doc.Sections.count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).range
         
         ' Initialize the count for the current header
         count = 0
@@ -1002,7 +1005,7 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
         ' Loop through each paragraph in the header range
         For Each para In headerRange.paragraphs
             ' Check if the paragraph contains a tab followed by a paragraph mark
-            If InStr(para.Range.text, vbTab & vbCr) > 0 Then
+            If InStr(para.range.text, vbTab & vbCr) > 0 Then
                 count = count + 1
             End If
         Next para
@@ -1031,7 +1034,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
 '6. Updates the counters based on whether the header is empty or not.
 '7. Displays a message box with the total number of headers, the number of empty headers, and the number of not empty headers.    Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As range
     Dim para As paragraph
     Dim isEmpty As Boolean
     Dim emptyCount As Integer
@@ -1050,12 +1053,12 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
     ' Loop through all sections
     For sectionIndex = 1 To doc.Sections.count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).range
         
         ' Check if the header is empty
         isEmpty = True
         For Each para In headerRange.paragraphs
-            If Len(Trim(para.Range.text)) > 1 Then ' Check if paragraph contains more than just a paragraph mark
+            If Len(Trim(para.range.text)) > 1 Then ' Check if paragraph contains more than just a paragraph mark
                 isEmpty = False
                 Exit For
             End If
@@ -1152,7 +1155,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
 
     Application.ScreenUpdating = False
     ' Loop through paragraphs only once
-    For Each para In ActiveDocument.Range.paragraphs
+    For Each para In ActiveDocument.range.paragraphs
         paraCount = paraCount + 1
         If para.style = "Heading 2" Then
             If prevIsEmpty Then
@@ -1161,7 +1164,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
         End If
 
         ' Determine if current paragraph is empty (ignoring whitespace)
-        prevText = Trim(para.Range.text)
+        prevText = Trim(para.range.text)
         prevIsEmpty = (prevText = "" Or prevText = Chr(13)) ' Chr(13) is vbCr
         ' Keep Word responsive every 500 paragraphs
         If paraCount Mod 500 = 0 Then DoEvents
@@ -1177,7 +1180,7 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
 ' To maximize speed and accuracy, stay in the Paragraphs collection (for true Word structure),
 ' but avoid anything expensive — no .Range.Text, .Style, etc. unless needed.
     Dim para As paragraph
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
     Dim paraCount As Long
 
@@ -1190,7 +1193,7 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
     For Each para In ActiveDocument.paragraphs
         paraCount = paraCount + 1
         ' Work directly with Range.Text but trim just once
-        If LenB(Trim$(Replace(para.Range.text, vbCr, ""))) = 0 Then
+        If LenB(Trim$(Replace(para.range.text, vbCr, ""))) = 0 Then
             count = count + 1
         End If
         ' Keep Word responsive every 500 paragraphs
@@ -1208,7 +1211,7 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Integer
 ' Also shows Footnote References and Following Characters (ASCII Values)
     Dim doc As Document
     Dim footnote As footnote
-    Dim rng As Range
+    Dim rng As range
     Dim spaceCount As Long
     Dim notSpaceCount As Long
     Dim debugInfo As String
@@ -1257,7 +1260,7 @@ End Function
 Private Function CountFootnotesFollowedByDigit() As Integer
     Dim doc As Document
     Dim footnote As footnote
-    Dim rng As Range
+    Dim rng As range
     Dim digitCount As Long
     Dim debugInfo As String
     Dim asciiValue As Integer
@@ -1310,10 +1313,10 @@ Private Function CountEmptyParasAfterH2() As Integer
         ' Check if the paragraph style is Heading 2
         If para.style = ActiveDocument.Styles("Heading 2") Then
             ' Check the next paragraph
-            Set NextPara = para.Range.Next(Unit:=wdParagraph, count:=1).paragraphs(1)
+            Set NextPara = para.range.Next(Unit:=wdParagraph, count:=1).paragraphs(1)
             If Not NextPara Is Nothing Then
                 ' Check if the next paragraph is empty
-                If Len(Trim(NextPara.Range.text)) = 1 Then ' Adjusted to check for a single paragraph mark
+                If Len(Trim(NextPara.range.text)) = 1 Then ' Adjusted to check for a single paragraph mark
                     emptyParaCount = emptyParaCount + 1
                 End If
             End If
@@ -1385,7 +1388,7 @@ Private Function CountSectionsWithDifferentFirstPage() As Integer
     ' Loop through each section in the document
     For Each sec In doc.Sections
         ' Check if the section does not have "Different First Page" selected
-        If sec.PageSetup.DifferentFirstPageHeaderFooter Then
+        If sec.pageSetup.DifferentFirstPageHeaderFooter Then
             count = count + 1
         End If
     Next sec
@@ -1398,7 +1401,7 @@ End Function
 
 Private Function CountWhiteParagraphMarks() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim count As Integer
     Dim firstFound As Boolean
     
@@ -1439,7 +1442,7 @@ End Function
 Private Function CountEmptyParasWithNoThemeColor()
 ' The value of wdNotThemeColor is -1. This constant indicates that no theme color is applied.
     Dim para As paragraph
-    Dim rng As Range
+    Dim rng As range
     Dim emptyParaCount As Integer
     Dim themeColorUsed As Boolean
     Dim totalParaCount As Integer
@@ -1451,7 +1454,7 @@ Private Function CountEmptyParasWithNoThemeColor()
     totalParaCount = ActiveDocument.paragraphs.count
     
     For Each para In ActiveDocument.paragraphs
-        Set rng = para.Range
+        Set rng = para.range
         themeColorUsed = False
         
         ' Check if the paragraph is empty
@@ -1500,7 +1503,7 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
 
     ' Loop through all footnotes
     For Each fn In ActiveDocument.Footnotes
-        Set matches = regex.Execute(fn.Range.text)
+        Set matches = regex.Execute(fn.range.text)
         matchCount = matchCount + matches.count
     Next fn
 
@@ -1510,7 +1513,7 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
 End Function
 
 Private Function CountFindNumberDashNumber() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim searchPattern As String
     Dim userInterrupt As VbMsgBoxResult
     Dim count As Integer
@@ -1548,7 +1551,7 @@ Private Function CountFindNumberDashNumber() As Integer
 End Function
 
 Private Function CountNonBreakingSpaces() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
 
     Set rng = ActiveDocument.content
@@ -1573,7 +1576,7 @@ Private Function CountNonBreakingSpaces() As Integer
 End Function
 
 Private Function CountPeriodSpaceLeftParenthesis() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
     
     Set rng = ActiveDocument.content
@@ -1598,7 +1601,7 @@ Private Function CountPeriodSpaceLeftParenthesis() As Integer
 End Function
 
 Private Function CountStyleWithNumberAndSpace() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
     Dim styleName As String
 
@@ -1627,7 +1630,7 @@ Private Function CountStyleWithNumberAndSpace() As Integer
 End Function
 
 Private Function CountStyleWithSpaceAndNumber() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
     Dim styleName As String
     Dim firstFound As Boolean
@@ -1664,7 +1667,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
 End Function
 
 Private Function CountQuadrupleParagraphMarks() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
     
     Set rng = ActiveDocument.content
@@ -1697,7 +1700,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
 End Function
 
 Private Function CountWhiteSpaceAndCarriageReturn() As Integer
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
 
     Set rng = ActiveDocument.content
@@ -1725,7 +1728,7 @@ End Function
 
 Private Function CountDoubleTabs() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
 
     count = 0
@@ -1742,7 +1745,7 @@ End Function
 
 Private Function CountSpaceFollowedByCarriageReturn() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim count As Long
 
     count = 0
@@ -1759,7 +1762,7 @@ End Function
 
 Private Function CountDoubleSpaces() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As range
     Dim doubleSpaceCount As Long
     
     doubleSpaceCount = 0
@@ -1820,7 +1823,7 @@ Private Function CountDoubleSpacesInShapes() As Integer
 End Function
 
 Sub ProcessShape(ByVal shp As Shape, ByRef doubleSpaceCount As Long)
-    Dim textRange As Range
+    Dim textRange As range
     Dim shapeText As String
     
     ' Check if the shape has a text frame

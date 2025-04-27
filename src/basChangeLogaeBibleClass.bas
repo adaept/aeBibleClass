@@ -10,11 +10,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #155 -
 ' #154 -
 ' #153 -
-' #152 -
-' #151 -
-' #150 -
+' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
+' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
-' #143 - Clone original SILAS as Jim put it on GitHub
 ' #142 - Consider VBA routine to output TOC for verification - see #039
 ' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
@@ -58,6 +56,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #152 - Update test 36 to stop if Footer style found
+    ' FIXED - #143 - Clone original SILAS as Jim put it on GitHub
     ' FIXED - #057 - Add ability to run only a specific test
     ' FIXED - #147 - Add date/time output to TestReport
     ' FIXED - #145 - Add global const TestReportFlag for optional output using OutputTestReport function
