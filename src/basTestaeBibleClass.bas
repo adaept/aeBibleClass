@@ -6,8 +6,10 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 ' Default Usage:
-' Run in immediate window:
+' Run all tests in immediate window:
 '   RUN_THE_TESTS
+' Run a specific test in immediate window:
+'   RUN_THE_TESTS(1)
 ' Show debug output in immediate window:
 '   RUN_THE_TESTS("varDebug")
 ' Version is set in BibleClassVERSION As String
