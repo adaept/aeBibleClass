@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #160 -
+' #159 -
+' #158 -
+' #157 -
+' #156 -
 ' #155 -
 ' #154 -
-' #153 -
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
@@ -56,6 +60,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #153 - Add code for GetExactVerticalScroll - return the scroll percentage rounded to three decimal places
     ' FIXED - #152 - Update test 36 to stop if Footer style found
     ' FIXED - #143 - Clone original SILAS as Jim put it on GitHub
     ' FIXED - #057 - Add ability to run only a specific test
