@@ -7,8 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #165 -
-' #164 -
+' #170 -
+' #169 -
+' #168 -
+' #167 -
+' #166 -
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
 ' #160 - Add DOCVARIABLEs for all New Testament books
@@ -59,6 +62,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #165 - Add code FastFindArialBlack8ptNormalStyleSkipEmphasisBlack
+    ' FIXED - #164 - Create style EmphasisBlack
     ' FIXED - #163 - Add code for CheckOpenFontsWithDownloads
     ' FIXED - #159 - Run TestPageNumbers to verify page numbers stored in all Old Testament DOCVARIABLEs
     ' FIXED - #158 - Add restart capability from location to FindNextHeading1OnVisiblePage

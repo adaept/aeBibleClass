@@ -62,4 +62,58 @@ Function IsFontInstalled(fontName As String) As Boolean
     On Error GoTo 0
 End Function
 
+Sub CreateEmphasisBlackStyle()
+    Dim charStyle As style
+    
+    ' Check if the style already exists
+    On Error Resume Next
+    Set charStyle = ActiveDocument.Styles("EmphasisBlack")
+    On Error GoTo 0
+
+    ' If the style doesn't exist, create it
+    If charStyle Is Nothing Then
+        Set charStyle = ActiveDocument.Styles.Add(name:="EmphasisBlack", Type:=wdStyleTypeCharacter)
+    End If
+
+    ' Apply formatting
+    With charStyle.font
+        .name = "Arial Black"
+        .Size = 8
+        .Bold = True
+    End With
+
+    ' Add to style gallery
+    charStyle.Priority = 1
+    charStyle.QuickStyle = True
+
+    MsgBox "Character style 'EmphasisBlack' created and added to the Style Gallery.", vbInformation
+End Sub
+
+Sub FastFindArialBlack8ptNormalStyleSkipEmphasisBlack()
+    Dim rng As range
+    Set rng = ActiveDocument.content
+
+    With rng.Find
+        .ClearFormatting
+        .style = ActiveDocument.Styles("Normal")
+        .font.name = "Arial Black"
+        .font.Size = 8
+        .text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+
+        Do While .Execute
+            ' Check if character style is NOT EmphasisBlack
+            If Not rng.Characters(1).style = "EmphasisBlack" Then
+                rng.Select
+                MsgBox "Found matching text (not EmphasisBlack).", vbInformation
+                Exit Sub
+            End If
+            rng.Collapse wdCollapseEnd
+        Loop
+
+        MsgBox "No matching text found (excluding EmphasisBlack).", vbExclamation
+    End With
+End Sub
 
