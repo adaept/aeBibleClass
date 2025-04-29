@@ -744,7 +744,7 @@ Private Function CountTabOnlyParagraphs() As Integer
 End Function
 
 Private Function CountFooterParagraphsWithFooterStyle() As Integer
-    Dim sec As Section
+    Dim sec As section
     Dim hdrftr As HeaderFooter
     Dim para As paragraph
     Dim count As Long
@@ -1377,7 +1377,7 @@ End Function
 
 Private Function CountSectionsWithDifferentFirstPage() As Integer
     Dim doc As Document
-    Dim sec As Section
+    Dim sec As section
     Dim count As Integer
     
     Application.ScreenUpdating = False
@@ -1805,8 +1805,8 @@ End Function
 ' count double spaces inside shapes, including those within groups, with error handling
 Private Function CountDoubleSpacesInShapes() As Integer
     Dim doc As Document
-    Dim shp As Shape
-    Dim groupShp As Shape
+    Dim shp As shape
+    Dim groupShp As shape
     Dim doubleSpaceCount As Long
 
     doubleSpaceCount = 0
@@ -1822,14 +1822,14 @@ Private Function CountDoubleSpacesInShapes() As Integer
     CountDoubleSpacesInShapes = doubleSpaceCount
 End Function
 
-Sub ProcessShape(ByVal shp As Shape, ByRef doubleSpaceCount As Long)
+Sub ProcessShape(ByVal shp As shape, ByRef doubleSpaceCount As Long)
     Dim textRange As range
     Dim shapeText As String
     
     ' Check if the shape has a text frame
     If shp.Type = msoGroup Then
         ' Process each shape within the group
-        Dim groupShp As Shape
+        Dim groupShp As shape
         For Each groupShp In shp.GroupItems
             Call ProcessShape(groupShp, doubleSpaceCount)
         Next groupShp

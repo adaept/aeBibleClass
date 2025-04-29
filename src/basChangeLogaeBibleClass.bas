@@ -11,8 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #159 -
 ' #158 -
 ' #157 -
-' #156 -
-' #154 - Add test for DOCVARIABLE Genesis, give it a page value, if wrong show error for updating
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
@@ -59,6 +57,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #154 - Add test for DOCVARIABLE "Gen", give it a page value, if wrong show error for updating
+    ' FIXED - #156 - Add code FindDocVariableEverywhere
     ' FIXED - #155 - Add code for FindNextHeading1OnVisiblePage and remember found location for next search
     ' FIXED - #153 - Add code for GetExactVerticalScroll - return the scroll percentage rounded to three decimal places
     ' FIXED - #152 - Update test 36 to stop if Footer style found

@@ -181,7 +181,7 @@ Sub GetVerticalPositionOfCursorParagraph()
 End Sub
 
 Sub FindFirstSectionWithDifferentFirstPage()
-    Dim sec As Section
+    Dim sec As section
     Dim i As Long
 
     For i = 1 To ActiveDocument.Sections.count
@@ -201,7 +201,7 @@ Sub FindFirstSectionWithDifferentFirstPage()
 End Sub
 
 Sub FindFirstPageWithEmptyHeader()
-    Dim sec As Section
+    Dim sec As section
     Dim hdr As HeaderFooter
     Dim hdrText As String
     Dim i As Long
