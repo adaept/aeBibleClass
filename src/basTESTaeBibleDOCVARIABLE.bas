@@ -5,25 +5,30 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Private lastFoundLocation As range
-Const wdHeaderStory As Integer = 6
-Const wdFooterStory As Integer = 7
-Const wdFootnoteStory As Integer = 4
-Const wdEndnoteStory As Integer = 5
+Public lastFoundLocation As range
+Private Const wdHeaderStory As Integer = 6
+Private Const wdFooterStory As Integer = 7
+Private Const wdFootnoteStory As Integer = 4
+Private Const wdEndnoteStory As Integer = 5
 
-Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String) As Boolean
+Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Optional ByVal restartVal As Variant) As Boolean
     Dim doc As Document
     Dim para As paragraph
     Dim paraPageNum As Integer
     Dim textFound As Boolean
     Dim startRange As range
     Dim headingText As String
+    Dim counter As Long
 
     ' Set the active document
     Set doc = ActiveDocument
 
-    ' Check if we have a previously found location to continue from
-    If lastFoundLocation Is Nothing Then
+    If Not IsMissing(restartVal) Then
+        ' Set the range to start from the specified location
+        Debug.Print "Restarting from location " & restartVal
+        Set startRange = doc.range(Start:=restartVal, End:=doc.content.End)
+    ElseIf lastFoundLocation Is Nothing Then
+        ' Check if we have a previously found location to continue from
         ' Start at the beginning of the specified page
         Debug.Print ">bookPage = " & bookPage, "textH1 = " & textH1
         Set startRange = doc.GoTo(What:=wdGoToPage, Which:=wdGoToAbsolute, count:=bookPage)
@@ -37,6 +42,8 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String) As
     textFound = False
     ' Initialize an empty string to store Heading 1 text
     headingText = ""
+    ' Initialize the counter
+    counter = 0
 
     ' Iterate through paragraphs starting from the specified range
     For Each para In doc.paragraphs
@@ -69,6 +76,13 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String) As
                     Exit Function ' Exit after finding the first Heading 1
                 End If
             End If
+        End If
+        ' Increment the counter
+        counter = counter + 1
+
+        ' Call DoEvents intermittently (e.g., every 100 iterations)
+        If counter Mod 100 = 0 Then
+            DoEvents
         End If
     Next para
 
@@ -320,6 +334,38 @@ Sub SetDocVariables()
     ActiveDocument.Variables("Judg").value = 187
     ActiveDocument.Variables("Ruth").value = 202
     ActiveDocument.Variables("1Sam").value = 206
+    ActiveDocument.Variables("2Sam").value = 229
+    ActiveDocument.Variables("1Kgs").value = 248
+    ActiveDocument.Variables("2Kgs").value = 271
+    ActiveDocument.Variables("1Chr").value = 293
+    ActiveDocument.Variables("2Chr").value = 313
+    ActiveDocument.Variables("Ezra").value = 338
+    ActiveDocument.Variables("Neh").value = 346
+    ActiveDocument.Variables("Esth").value = 357
+    ActiveDocument.Variables("Job").value = 364
+    ActiveDocument.Variables("Ps").value = 383
+    ActiveDocument.Variables("Prov").value = 427
+    ActiveDocument.Variables("Eccl").value = 443
+    ActiveDocument.Variables("Song").value = 449
+    ActiveDocument.Variables("Isa").value = 454
+    ActiveDocument.Variables("Jer").value = 491
+    ActiveDocument.Variables("Lam").value = 531
+    ActiveDocument.Variables("Ezek").value = 537
+    ActiveDocument.Variables("Dan").value = 574
+    ActiveDocument.Variables("Jos").value = 586
+    ActiveDocument.Variables("Joel").value = 593
+    ActiveDocument.Variables("Amos").value = 596
+    ActiveDocument.Variables("Obad").value = 601
+    ActiveDocument.Variables("Jonah").value = 603
+    ActiveDocument.Variables("Mic").value = 606
+    ActiveDocument.Variables("Nah").value = 611
+    ActiveDocument.Variables("Hab").value = 614
+    ActiveDocument.Variables("Zeph").value = 617
+    ActiveDocument.Variables("Hag").value = 620
+    ActiveDocument.Variables("Zech").value = 622
+    ActiveDocument.Variables("Mal").value = 629
+    ' New Testament
+'    ActiveDocument.Variables("Gen").value = 20
     'MsgBox "DOCVARIABLE values set successfully!"
     Debug.Print "DOCVARIABLE values set successfully!"
 End Sub
@@ -332,12 +378,89 @@ Sub ListMyDocVariables()
 End Sub
 
 Sub TestPageNumbers()
-    Set lastFoundLocation = Nothing
+    GoTo Continue
+    
+    ' Old Testament
     VerifyBookNameFromDocVariable "Gen", "Genesis"
-    Debug.Print ">>lastFoundLocation = " & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
     VerifyBookNameFromDocVariable "Exod", "Exodus"
-    Debug.Print ">>lastFoundLocation = " & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
     VerifyBookNameFromDocVariable "Lev", "Leviticus"
-    Debug.Print ">>lastFoundLocation = " & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Num", "Numbers"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Deut", "Deuteronomy"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Josh", "Joshua"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Judg", "Judges"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Ruth", "Ruth"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+Continue:
+    'Exit Sub
+    VerifyBookNameFromDocVariable "1Sam", "1 Samuel"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Sam", "2 Samuel"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1Kgs", "1 Kings"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Kgs", "2 Kings"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1Chr", "1 Chronicles"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Chr", "2 Chronicles"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Ezra", "Ezra"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Neh", "Nehemiah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Esth", "Esther"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Job", "Job"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Ps", "Psalms"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Prov", "Proverbs"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Eccl", "Ecclesiastes"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Song", "Solomon"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Isa", "Isaiah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Jer", "Jeremiah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Lam", "Lamentations"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Ezek", "Ezekiel"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Dan", "Daniel"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Hos", "Hoseah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Joel", "Joel"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Amos", "Amos"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Obad", "Obadiah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Jonah", "Jonah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Mic", "Micah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Nah", "Nahum"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Hab", "Habakkuk"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Zeph", "Zephaniah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Hag", "Haggai"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Zech", "Zechariah"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Mal", "Malachi"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    ' New Testament
     Debug.Print "Done!!!"
 End Sub

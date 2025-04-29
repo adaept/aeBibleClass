@@ -7,10 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #160 -
-' #159 -
-' #158 -
-' #157 -
+' #165 -
+' #164 -
+' #163 -
+' #162 - Update routines to allow page num checks for Heading 0 sections
+' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
+' #160 - Add DOCVARIABLEs for all New Testament books
+' #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
@@ -57,6 +60,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #159 - Run TestPageNumbers to verify page numbers stored in all Old Testament DOCVARIABLEs
+    ' FIXED - #158 - Add restart capability from location to FindNextHeading1OnVisiblePage
     ' FIXED - #154 - Add test for DOCVARIABLE "Gen", give it a page value, if wrong show error for updating
     ' FIXED - #156 - Add code FindDocVariableEverywhere
     ' FIXED - #155 - Add code for FindNextHeading1OnVisiblePage and remember found location for next search
