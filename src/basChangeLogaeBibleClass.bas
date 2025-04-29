@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #165 -
 ' #164 -
-' #163 -
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
 ' #160 - Add DOCVARIABLEs for all New Testament books
@@ -60,6 +59,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #163 - Add code for CheckOpenFontsWithDownloads
     ' FIXED - #159 - Run TestPageNumbers to verify page numbers stored in all Old Testament DOCVARIABLEs
     ' FIXED - #158 - Add restart capability from location to FindNextHeading1OnVisiblePage
     ' FIXED - #154 - Add test for DOCVARIABLE "Gen", give it a page value, if wrong show error for updating
@@ -153,10 +153,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '        Double quotes to indicate the start and end of the direct speech.
 '        Single quotes within the double quotes to emphasize the words spoken by God.
 '        Closing double quotes to complete the direct speech.
-'           Opening double quote: “ (ASCII code: 147 or Unicode: U+201C)
-'           Closing double quote: ” (ASCII code: 148 or Unicode: U+201D)
-'           Opening single quote: ‘ (ASCII code: 145 or Unicode: U+2018)
-'           Closing single quote: ’ (ASCII code: 146 or Unicode: U+2019)
+'           Opening double quote:   (ASCII code: 147 or Unicode: U+201C)
+'           Closing double quote:   (ASCII code: 148 or Unicode: U+201D)
+'           Opening single quote:   (ASCII code: 145 or Unicode: U+2018)
+'           Closing single quote:   (ASCII code: 146 or Unicode: U+2019)
 '        These smart quotes are different from the straight quotes (" and ') which have ASCII codes 34 and 39, respectively.
 '        To insert these characters manually, you can use the following key combinations in Word:
 '           Opening double quote: Alt + 0147
@@ -211,4 +211,5 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #002 - Update class name to aeBibleClass
 ' 20250217 - v001
     ' FIXED - #001 - Create Bible Class base template, initial test module, and change log
+
 
