@@ -9,8 +9,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #170 -
 ' #169 -
-' #168 -
-' #167 -
+' #168 - Add style for emphasised Words of Jesus - EmphasisRed?
+' #167 - Add test for FastFindArialBlack8ptNormalStyleSkipEmphasisBlack to return 0 when completed
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
 ' #160 - Add DOCVARIABLEs for all New Testament books
