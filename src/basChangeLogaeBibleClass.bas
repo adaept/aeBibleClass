@@ -7,10 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #175 -
+' #174 -
+' #173 -
+' #172 -
+' #171 -
 ' #170 -
-' #169 -
 ' #168 - Add style for emphasised Words of Jesus - EmphasisRed?
-' #167 - Add test for FastFindArialBlack8ptNormalStyleSkipEmphasisBlack to return 0 when completed
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
 ' #160 - Add DOCVARIABLEs for all New Testament books
@@ -61,6 +64,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #169 - Add code for FindNotEmphasisBlackRed to return 0 when completed
+    ' FIXED - #167 - Rename FastFindArialBlack8ptNormalStyleSkipEmphasisBlack to FindNotEmphasisBlackRed
     ' FIXED - #166 - Update FastFindArialBlack8ptNormalStyleSkipEmphasisBlack to also check font color Auatomatic
     ' FIXED - #165 - Add code FastFindArialBlack8ptNormalStyleSkipEmphasisBlack
     ' FIXED - #164 - Create style EmphasisBlack

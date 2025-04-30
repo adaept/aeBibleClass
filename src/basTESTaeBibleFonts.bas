@@ -90,10 +90,15 @@ Sub CreateEmphasisBlackStyle()
     MsgBox "Character style 'EmphasisBlack' created and added to the Style Gallery.", vbInformation
 End Sub
 
-Sub FastFindArialBlack8ptNormalStyleSkipEmphasisBlack()
+Sub FindNotEmphasisBlackRed()
+' This is a fast find for Arial Black, 8pt, NormalStyle that will not skip over
+' text that is of the style EmphasisBlack
+' When count is 0 there is no more text needed setting for style EmphasisBlack
     Dim rng As range
     Set rng = ActiveDocument.content
+    Dim count As Integer
 
+    count = 0
     With rng.Find
         .ClearFormatting
         .style = ActiveDocument.Styles("Normal")
@@ -109,13 +114,14 @@ Sub FastFindArialBlack8ptNormalStyleSkipEmphasisBlack()
             ' Check if character style is NOT EmphasisBlack
             If Not rng.Characters(1).style = "EmphasisBlack" Then
                 rng.Select
+                count = count + 1
                 MsgBox "Found matching text (not EmphasisBlack).", vbInformation
                 Exit Sub
             End If
             rng.Collapse wdCollapseEnd
         Loop
 
-        MsgBox "No matching text found (excluding EmphasisBlack).", vbExclamation
+        If count = 0 Then MsgBox "count = 0, No matching text found (excluding EmphasisBlack).", vbExclamation
     End With
 End Sub
 
