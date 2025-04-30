@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #169 -
 ' #168 -
 ' #167 -
-' #166 -
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
 ' #160 - Add DOCVARIABLEs for all New Testament books
@@ -62,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #166 - Update FastFindArialBlack8ptNormalStyleSkipEmphasisBlack to also check font color Auatomatic
     ' FIXED - #165 - Add code FastFindArialBlack8ptNormalStyleSkipEmphasisBlack
     ' FIXED - #164 - Create style EmphasisBlack
     ' FIXED - #163 - Add code for CheckOpenFontsWithDownloads

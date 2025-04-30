@@ -84,6 +84,7 @@ Sub CreateEmphasisBlackStyle()
 
     ' Add to style gallery
     charStyle.Priority = 1
+    
     charStyle.QuickStyle = True
 
     MsgBox "Character style 'EmphasisBlack' created and added to the Style Gallery.", vbInformation
@@ -98,6 +99,7 @@ Sub FastFindArialBlack8ptNormalStyleSkipEmphasisBlack()
         .style = ActiveDocument.Styles("Normal")
         .font.name = "Arial Black"
         .font.Size = 8
+        .font.color = wdColorAutomatic
         .text = ""
         .Forward = True
         .Wrap = wdFindStop
