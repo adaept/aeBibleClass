@@ -161,9 +161,9 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 151, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 20, 151)
-    
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 151, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 20, 151, 0, 0)
+
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
 
@@ -303,6 +303,8 @@ Test16:     RunTest (16)
             RunTest (36)
             RunTest (37)
             RunTest (38)
+            RunTest (39)
+            RunTest (40)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -337,6 +339,7 @@ End Function
 Private Function GetPassFail(TestNum As Integer) As String
     Dim PassFail As String
 
+    On Error GoTo 0
     ' Set explicit fail unless the test passes
     GetPassFail = "FAIL!!!!"
     Select Case TestNum
@@ -454,8 +457,14 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 38
         ResultArray(38) = CountEmptyParagraphs
         If ResultArray(38) = oneBasedExpectedArray(38) Then GetPassFail = "PASS    "
+    Case 39
+        ResultArray(39) = CountParagraphMarks_ArialBlack
+        If ResultArray(39) = oneBasedExpectedArray(39) Then GetPassFail = "PASS    "
+    Case 40
+        ResultArray(40) = CountParagraphMarks_ArialBlackDarkRed
+        If ResultArray(40) = oneBasedExpectedArray(40) Then GetPassFail = "PASS    "
    Case Else
-        Debug.Print "The test number is outside the accepted range"
+        Debug.Print ">The test number is outside the accepted range"
     End Select
 End Function
 
@@ -590,8 +599,14 @@ Private Function RunTest(num As Integer) As Boolean
     Case 38
         Debug.Print GetPassFail(38), "Copy ()", "Test = " & num, ResultArray(38), oneBasedExpectedArray(38), "CountEmptyParagraphs"
         If TestReportFlag Then OutputTestReport (38)
+    Case 39
+        Debug.Print GetPassFail(39), "Copy ()", "Test = " & num, ResultArray(39), oneBasedExpectedArray(39), "CountParagraphMarks_ArialBlack"
+        If TestReportFlag Then OutputTestReport (39)
+    Case 40
+        Debug.Print GetPassFail(40), "Copy ()", "Test = " & num, ResultArray(40), oneBasedExpectedArray(40), "CountParagraphMarks_ArialBlackDarkRed"
+        If TestReportFlag Then OutputTestReport (40)
    Case Else
-        Debug.Print "The test number is outside the accepted range"
+        Debug.Print ">>The test number is outside the accepted range"
     End Select
 
     endTime = Timer
@@ -619,6 +634,7 @@ PROC_ERR:
 End Function
 
 Private Function OutputTestReport(num As Integer) As Boolean
+    On Error GoTo 0
     Select Case num
     Case 1
         AppendToFile TestReportFileName, GetPassFail(1) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(1))) & Fixed14Str(CStr(oneBasedExpectedArray(1))) & "CountDoubleSpaces"
@@ -696,9 +712,81 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(37) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(37))) & Fixed14Str(CStr(oneBasedExpectedArray(37))) & "CountTabOnlyParagraphs"
     Case 38
         AppendToFile TestReportFileName, GetPassFail(38) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(38))) & Fixed14Str(CStr(oneBasedExpectedArray(38))) & "CountEmptyParagraphs"
+    Case 39
+        AppendToFile TestReportFileName, GetPassFail(39) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(39))) & Fixed14Str(CStr(oneBasedExpectedArray(39))) & "CountParagraphMarks_ArialBlack"
+    Case 40
+        AppendToFile TestReportFileName, GetPassFail(40) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(40))) & Fixed14Str(CStr(oneBasedExpectedArray(40))) & "CountParagraphMarks_ArialBlackDarkRed"
    Case Else
-        Debug.Print "The test number is outside the accepted range"
+        Debug.Print ">>>The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
+    Dim para As paragraph
+    Dim paraRange As range
+    Dim totalCount As Long
+    Dim foundFirst As Boolean
+    Dim fontColor As WdColor
+
+    totalCount = 0
+    foundFirst = False
+
+    For Each para In ActiveDocument.paragraphs
+        Set paraRange = para.range
+        paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
+
+        With paraRange.font
+            fontColor = .color
+            If .name = "Arial Black" And _
+               .Size = 8 And _
+               (fontColor = wdColorDarkRed) Then
+
+                totalCount = totalCount + 1
+                If Not foundFirst Then
+                    paraRange.Select
+                    foundFirst = True
+                End If
+            End If
+        End With
+    Next para
+
+    'MsgBox "Total matching paragraph marks: " & totalCount, vbInformation
+    'Debug.Print "totalCount = " & totalCount
+    CountParagraphMarks_ArialBlackDarkRed = totalCount
+End Function
+
+Private Function CountParagraphMarks_ArialBlack() As Integer
+    Dim para As paragraph
+    Dim paraRange As range
+    Dim totalCount As Long
+    Dim foundFirst As Boolean
+    Dim fontColor As WdColor
+
+    totalCount = 0
+    foundFirst = False
+
+    For Each para In ActiveDocument.paragraphs
+        Set paraRange = para.range
+        paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
+
+        With paraRange.font
+            fontColor = .color
+            If .name = "Arial Black" And _
+               .Size = 8 And _
+               (fontColor = wdColorAutomatic Or fontColor = wdColorBlack) Then
+
+                totalCount = totalCount + 1
+                If Not foundFirst Then
+                    paraRange.Select
+                    foundFirst = True
+                End If
+            End If
+        End With
+    Next para
+
+    'MsgBox "Total matching paragraph marks: " & totalCount, vbInformation
+    'Debug.Print "totalCount = " & totalCount
+    CountParagraphMarks_ArialBlack = totalCount
 End Function
 
 Private Function CountEmptyParagraphs() As Long
