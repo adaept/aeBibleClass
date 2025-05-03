@@ -162,7 +162,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 151, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 20, 151, 0, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 19, 153, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -452,7 +452,7 @@ Private Function GetPassFail(TestNum As Integer) As String
         ResultArray(36) = CountFooterParagraphsWithFooterStyle
         If ResultArray(36) = oneBasedExpectedArray(36) Then GetPassFail = "PASS    "
     Case 37
-        ResultArray(37) = CountTabOnlyParagraphs
+        ResultArray(37) = CountDocTabOnlyParagraphs
         If ResultArray(37) = oneBasedExpectedArray(37) Then GetPassFail = "PASS    "
     Case 38
         ResultArray(38) = CountEmptyParagraphs
@@ -594,7 +594,7 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(36), "Copy ()", "Test = " & num, ResultArray(36), oneBasedExpectedArray(36), "CountFooterParagraphsWithFooterStyle"
         If TestReportFlag Then OutputTestReport (36)
     Case 37
-        Debug.Print GetPassFail(37), "Copy ()", "Test = " & num, ResultArray(37), oneBasedExpectedArray(37), "CountTabOnlyParagraphs"
+        Debug.Print GetPassFail(37), "Copy ()", "Test = " & num, ResultArray(37), oneBasedExpectedArray(37), "CountDocTabOnlyParagraphs"
         If TestReportFlag Then OutputTestReport (37)
     Case 38
         Debug.Print GetPassFail(38), "Copy ()", "Test = " & num, ResultArray(38), oneBasedExpectedArray(38), "CountEmptyParagraphs"
@@ -709,7 +709,7 @@ Private Function OutputTestReport(num As Integer) As Boolean
     Case 36
         AppendToFile TestReportFileName, GetPassFail(36) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(36))) & Fixed14Str(CStr(oneBasedExpectedArray(36))) & "CountFooterParagraphsWithFooterStyle"
     Case 37
-        AppendToFile TestReportFileName, GetPassFail(37) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(37))) & Fixed14Str(CStr(oneBasedExpectedArray(37))) & "CountTabOnlyParagraphs"
+        AppendToFile TestReportFileName, GetPassFail(37) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(37))) & Fixed14Str(CStr(oneBasedExpectedArray(37))) & "CountDocTabOnlyParagraphs"
     Case 38
         AppendToFile TestReportFileName, GetPassFail(38) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(38))) & Fixed14Str(CStr(oneBasedExpectedArray(38))) & "CountEmptyParagraphs"
     Case 39
@@ -801,7 +801,7 @@ Private Function CountEmptyParagraphs() As Long
     CountEmptyParagraphs = count
 End Function
 
-Private Function CountTabOnlyParagraphs() As Integer
+Private Function CountDocTabOnlyParagraphs() As Integer
 ' The final paragraph in a Word document always includes an extra paragraph mark that you can't delete.
 ' The extra count is usually the final paragraph, which Word always includes and may contain leftover tab formatting.
 ' This code can filter that out.
@@ -828,7 +828,7 @@ Private Function CountTabOnlyParagraphs() As Integer
 
     'MsgBox "Paragraphs with only a tab and paragraph mark: " & countTabOnly, vbInformation
     'Debug.Print "Paragraphs with only a tab and paragraph mark: " & countTabOnly
-    CountTabOnlyParagraphs = countTabOnly
+    CountDocTabOnlyParagraphs = countTabOnly
 End Function
 
 Private Function CountFooterParagraphsWithFooterStyle() As Integer
