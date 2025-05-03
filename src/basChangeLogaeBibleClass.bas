@@ -7,8 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #180 -
+' #179 -
+' #178 -
+' #177 -
+' #176 -
 ' #175 -
-' #174 -
+' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
