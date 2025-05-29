@@ -1,0 +1,1042 @@
+=== Layout Report ===
+Doc: Peter-USE REFINED English Bible CONTENTS.docm
+Total Sections: 147
+
+
+Section 1: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 2: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 3: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 4: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 5: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 6: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: Continuous
+
+Section 7: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 8: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 9: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 10: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 11: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 12: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 13: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 14: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 15: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 16: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 17: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 18: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 19: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 20: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 21: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 22: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 23: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 24: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 25: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 26: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 27: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 28: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 29: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 30: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 31: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 32: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 33: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 34: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 35: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 36: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 37: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 38: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 39: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 40: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 41: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 42: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 43: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 44: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 45: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 46: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 47: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 48: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 49: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 50: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 51: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 52: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 53: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 54: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 55: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 56: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 57: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 58: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 59: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 60: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 61: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 62: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 63: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 64: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 65: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 66: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 67: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 68: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 69: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 70: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 71: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 72: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 73: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 74: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 75: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 76: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 77: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 78: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 79: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 80: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 81: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 82: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 83: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 84: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 85: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 86: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 87: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 88: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 89: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 90: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 91: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 92: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 93: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 94: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 95: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 96: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 97: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 98: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 99: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 100: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 101: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 102: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 103: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 104: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 105: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 106: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 107: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 108: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 109: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 110: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 111: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 112: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 113: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 114: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 115: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 116: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 117: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 118: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 119: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 120: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 121: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 122: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 123: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 124: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 125: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 126: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 127: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 128: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 129: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 130: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 131: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 132: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 133: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 134: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 135: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 136: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 137: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 138: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 139: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 140: 
+Page: Portrait, Size: B5 (JIS), Columns: 2
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 141: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 142: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 143: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 144: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 145: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 146: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Section 147: 
+Page: Portrait, Size: B5 (JIS), Columns: 1
+Margins (inches): Top: 0.76, Bottom: 0.76, Left: 0.76, Right: 0.60, Gutter: 0.14
+Header Distance: 0.32, Footer Distance: 0.32
+Borders: Top: None, Bottom: None, Left: None, Right: None
+Section Break: New Page
+
+Summary: 
+Sections with 1 Column: 81
+Sections with 2 Columns: 66
+Sections with Odd Page Breaks: 0
+Sections with Even Page Breaks: 0
+Sections with Continuous Breaks: 1
+Sections with New Page Breaks: 146
+
