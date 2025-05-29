@@ -1,4 +1,19 @@
 Attribute VB_Name = "Module1"
+Option Explicit
+Option Compare Text
+Option Private Module
+
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
+Public Const wdThemeColorNone As Long = -1
+Public Const wdPaperB5Jis As Integer = 11
+Private Sections1Col As Integer
+Private Sections2Col As Integer
+Private SectionsOddPageBreaks As Integer
+Private SectionsEvenPageBreaks As Integer
+Private SectionsContinuousBreaks As Integer
+Private SectionsNewPageBreaks As Integer
+
 Sub ViewCodeDetails()
     Dim selectedText As String
     Dim msg As String
@@ -70,8 +85,8 @@ Sub PrintBibleBook()
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
-            If InStr(para.Range.text, heading1Name) > 0 Then
-                Debug.Print "Heading 1: " & para.Range.text
+            If InStr(para.range.text, heading1Name) > 0 Then
+                Debug.Print "Heading 1: " & para.range.text
                 startProcessing = True
                 heading1Found = True
             Else
@@ -82,26 +97,26 @@ Sub PrintBibleBook()
         
         If startProcessing Then
             
-            If Len(Trim(para.Range.text)) = 1 Then   ' Skip empty paragraph
+            If Len(Trim(para.range.text)) = 1 Then   ' Skip empty paragraph
                 GoTo EmptyPara
             End If
 
             If para.style = "Heading 2" Then
-                Debug.Print "Heading 2: " & para.Range.text
+                Debug.Print "Heading 2: " & para.range.text
                 heading2Found = True
             ElseIf heading2Found Then
-                Debug.Print para.Range.text
+                Debug.Print para.range.text
             End If
         End If
         
-        If heading1Found And para.style = "Heading 1" And InStr(para.Range.text, heading1Name) = 0 Then
+        If heading1Found And para.style = "Heading 1" And InStr(para.range.text, heading1Name) = 0 Then
             Exit For
         End If
 EmptyPara:
     Next para
 End Sub
 
-Function IsParagraphEmpty(paragraph As Range) As Boolean
+Function IsParagraphEmpty(paragraph As range) As Boolean
     ' Check if the paragraph is empty
     If Len(paragraph.text) = 1 And paragraph.text = vbCr Then
         IsParagraphEmpty = True
@@ -123,7 +138,7 @@ Sub GoToParagraphIndex()
         paraIndex = 1
         For Each para In ActiveDocument.paragraphs
             If paraIndex = targetIndex Then
-                para.Range.Select
+                para.range.Select
                 Exit Sub
             End If
             paraIndex = paraIndex + 1
@@ -138,7 +153,7 @@ Function CountTextWrappingBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.paragraphs
-        With para.Range.Find
+        With para.range.Find
             .ClearFormatting
             .text = "^m"
             If .Execute Then
@@ -154,8 +169,8 @@ Function CountNextPageSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.paragraphs
-        If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionNewPage Then
+        If para.range.Sections.count > 0 Then
+            If para.range.Sections(1).pageSetup.sectionStart = wdSectionNewPage Then
                 count = count + 1
             End If
         End If
@@ -168,8 +183,8 @@ Function CountContinuousSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.paragraphs
-        If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionContinuous Then
+        If para.range.Sections.count > 0 Then
+            If para.range.Sections(1).pageSetup.sectionStart = wdSectionContinuous Then
                 count = count + 1
             End If
         End If
@@ -182,8 +197,8 @@ Function CountEvenPageSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.paragraphs
-        If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionEvenPage Then
+        If para.range.Sections.count > 0 Then
+            If para.range.Sections(1).pageSetup.sectionStart = wdSectionEvenPage Then
                 count = count + 1
             End If
         End If
@@ -196,8 +211,8 @@ Function CountOddPageSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.paragraphs
-        If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionOddPage Then
+        If para.range.Sections.count > 0 Then
+            If para.range.Sections(1).pageSetup.sectionStart = wdSectionOddPage Then
                 count = count + 1
             End If
         End If
@@ -228,10 +243,10 @@ Sub SearchParagraphs()
     ' Loop through all paragraphs in the document
     For Each para In doc.paragraphs
         ' Check if the paragraph contains only a page break or continuous page break
-        If para.Range.text = Chr(12) Or para.Range.text = Chr(14) Then
+        If para.range.text = Chr(12) Or para.range.text = Chr(14) Then
             count = count + 1
             If Not foundFirst Then
-                firstOccurrenceIndex = para.Range.Start
+                firstOccurrenceIndex = para.range.Start
                 foundFirst = True
             End If
         End If
@@ -243,7 +258,7 @@ Sub SearchParagraphs()
     
     ' Go to the first result in the document
     If firstOccurrenceIndex <> -1 Then
-        doc.Range(firstOccurrenceIndex, firstOccurrenceIndex).Select
+        doc.range(firstOccurrenceIndex, firstOccurrenceIndex).Select
     End If
 End Sub
 
@@ -258,7 +273,7 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     ' Loop through all paragraphs in the document
     For Each para In doc.paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
-        If Len(para.Range.text) = 1 And para.Range.font.color = wdColorAutomatic Then
+        If Len(para.range.text) = 1 And para.range.font.color = wdColorAutomatic Then
             count = count + 1
         End If
     Next para
@@ -281,7 +296,7 @@ Sub GoToParagraphByCount(paragraphNumber As Integer)
         ' Check if the current paragraph is the one we want to go to
         If count = paragraphNumber Then
             ' Select the paragraph
-            para.Range.Select
+            para.range.Select
             Exit Sub
         End If
     Next para
@@ -292,7 +307,7 @@ End Sub
  
 Sub DetectFontColors()
     Dim para As paragraph
-    Dim rng As Range
+    Dim rng As range
     Dim colorUsed As Boolean
     Dim themeColorUsed As Boolean
     Dim paraCount As Integer
@@ -301,7 +316,7 @@ Sub DetectFontColors()
     
     For Each para In ActiveDocument.paragraphs
         paraCount = paraCount + 1
-        Set rng = para.Range
+        Set rng = para.range
         colorUsed = False
         themeColorUsed = False
         
@@ -322,8 +337,8 @@ End Sub
 
 Sub UpdateBlackToAutomatic()
     Dim doc As Document
-    Dim rng As Range
-    Dim storyRange As Range
+    Dim rng As range
+    Dim storyRange As range
     
     Set doc = ActiveDocument
     
@@ -361,7 +376,7 @@ Sub UpdateBlackToAutomatic()
 End Sub
 
 Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, newG As Long, newB As Long)
-    Dim rng As Range
+    Dim rng As range
     Dim oldColor As Long
     Dim newColor As Long
     Dim r As Long, g As Long, b As Long
@@ -392,7 +407,7 @@ End Sub
 Sub EnsureFootnoteReferenceStyleColor()
     Dim doc As Document
     Dim para As paragraph
-    Dim rng As Range
+    Dim rng As range
     Dim hexColor As String
     Dim rgbColor As Long
     Dim count As Integer
@@ -412,7 +427,7 @@ Sub EnsureFootnoteReferenceStyleColor()
         ' Check if the paragraph style is Footnote Reference
         If para.style = "Footnote Reference" Then
             count = count + 1
-            Set rng = para.Range
+            Set rng = para.range
             ' Check if the style color is correctly set to the desired color
             If rng.font.color <> rgbColor Then
                 ' Set the style color to the desired color
@@ -456,13 +471,13 @@ End Sub
 
 Function FirstPageFooterNotEmpty() As Boolean
     Dim doc As Document
-    Dim footerRange As Range
+    Dim footerRange As range
     
     ' Set the document
     Set doc = ActiveDocument
     
     ' Get the range of the footer on the first page
-    Set footerRange = doc.Sections(1).Footers(wdHeaderFooterPrimary).Range
+    Set footerRange = doc.Sections(1).Footers(wdHeaderFooterPrimary).range
     
     ' Check if the footer is not empty
     If Len(Trim(footerRange.text)) > 0 Then
@@ -476,17 +491,17 @@ End Function
 
 Function IsEmptyParagraph(p As paragraph) As Boolean
 ' Function to check if a paragraph is truly empty
-    IsEmptyParagraph = (Len(p.Range.text) = 1 And p.Range.text = vbCr)
+    IsEmptyParagraph = (Len(p.range.text) = 1 And p.range.text = vbCr)
 End Function
 
 Sub CountTotallyEmptyParagraphs()
     Dim doc As Document
     Dim para As paragraph
-    Dim sec As Section
+    Dim sec As section
     Dim hdr As HeaderFooter
     Dim ftr As HeaderFooter
     Dim footnote As footnote
-    Dim shp As Shape
+    Dim shp As shape
     Dim emptyParaCount As Long
     Dim emptyParaCountHeaders As Long
     Dim emptyParaCountFooters As Long
@@ -509,9 +524,12 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountHeaders = 0
     For Each sec In doc.Sections
         For Each hdr In sec.Headers
-            For Each para In hdr.Range.paragraphs
+            For Each para In hdr.range.paragraphs
                 If IsEmptyParagraph(para) Then
                     emptyParaCountHeaders = emptyParaCountHeaders + 1
+                    para.range.Select
+                    Debug.Print "Found an empty paragraph in a Header. Stopping at this location."
+                    Exit Sub
                 End If
             Next para
         Next hdr
@@ -521,15 +539,15 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountFooters = 0
     For Each sec In doc.Sections
         For Each ftr In sec.Footers
-            For Each para In ftr.Range.paragraphs
+            For Each para In ftr.range.paragraphs
                 ' Work around as IsEmptyParagraph does not work on first page with space as footer
                 If Not FirstPageFooterNotEmpty Then
                     emptyParaCountFooters = emptyParaCountFooters + 1
                     ' Print page number to console
-                    pageNum = para.Range.Information(wdActiveEndPageNumber)
+                    pageNum = para.range.Information(wdActiveEndPageNumber)
                     Debug.Print "Empty paragraph found in footer on page: " & pageNum
                     ' Stop at the location of the first empty paragraph found in a footer
-                    para.Range.Select
+                    para.range.Select
                     'MsgBox "Found an empty paragraph in a footer. Stopping at this location."
                     Debug.Print "Found an empty paragraph in a footer. Stopping at this location."
                     Exit Sub
@@ -541,7 +559,7 @@ Sub CountTotallyEmptyParagraphs()
     ' Count empty paragraphs in footnotes
     emptyParaCountFootnotes = 0
     For Each footnote In doc.Footnotes
-        For Each para In footnote.Range.paragraphs
+        For Each para In footnote.range.paragraphs
             If IsEmptyParagraph(para) Then
                 emptyParaCountFootnotes = emptyParaCountFootnotes + 1
             End If
@@ -556,7 +574,7 @@ Sub CountTotallyEmptyParagraphs()
                 If IsEmptyParagraph(para) Then
                     emptyParaCountTextBoxes = emptyParaCountTextBoxes + 1
                     ' Stop at the location of the first empty paragraph found in a text box
-                    para.Range.Select
+                    para.range.Select
                     'MsgBox "Found an empty paragraph in a text box. Stopping at this location."
                     Debug.Print "Found an empty paragraph in a text box. Stopping at this location."
                     Exit Sub
@@ -583,10 +601,10 @@ Sub CountTotallyEmptyParagraphs()
            "Grand Total: " & grandTotal
 End Sub
 
-Sub FindFirstEmptyParagraphAndCountTypes()
+Sub CountTypesTrulyEmptyParagraph()
     Dim para As paragraph
     Dim paraText As String
-    Dim paraRange As Range
+    Dim paraRange As range
     Dim sectionBreakFound As Boolean
     Dim nextChar As String
     
@@ -599,7 +617,7 @@ Sub FindFirstEmptyParagraphAndCountTypes()
     firstFound = False
 
     For Each para In ActiveDocument.paragraphs
-        Set paraRange = para.Range
+        Set paraRange = para.range
         paraText = Trim(paraRange.text)
 
         ' Remove final paragraph mark if present
@@ -646,13 +664,280 @@ Sub FindFirstEmptyParagraphAndCountTypes()
     Next para
 
     ' Final message
-    MsgBox "Empty paragraph counts:" & vbCrLf & _
+    'MsgBox "Empty paragraph counts:" & vbCrLf & _
+    '       "- Truly empty (no section formatting): " & trulyEmptyCount & vbCrLf & _
+    '       "- Empty with section formatting: " & sectionFormattedEmptyCount, vbInformation, "Paragraph Summary"
+    Debug.Print "Empty paragraph counts:" & vbCrLf & _
            "- Truly empty (no section formatting): " & trulyEmptyCount & vbCrLf & _
-           "- Empty with section formatting: " & sectionFormattedEmptyCount, vbInformation, "Paragraph Summary"
-           
+           "- Empty with section formatting: " & sectionFormattedEmptyCount
+
     If Not firstFound Then
         MsgBox "No truly empty paragraph found to select.", vbExclamation
     End If
 End Sub
 
+Sub FindSpecificFontOutsideMainBody()
+    Dim targetFont As String
+    targetFont = "Gentium" ' <-- change this to the font you want to find
+
+    Dim storyRange As range
+    Dim para As paragraph
+    Dim fontName As String
+
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Searching for font: " & targetFont
+
+    For Each storyRange In ActiveDocument.StoryRanges
+        If storyRange.StoryType <> wdMainTextStory Then
+            Do
+                For Each para In storyRange.paragraphs
+                    fontName = para.range.font.name
+                    If StrComp(fontName, targetFont, vbTextCompare) = 0 Then
+                        para.range.Select
+                        Application.StatusBar = False
+                        Application.ScreenUpdating = True
+                        MsgBox "Found font '" & targetFont & "' in non-main content.", vbInformation
+                        Exit Sub
+                    End If
+                Next para
+                Set storyRange = storyRange.NextStoryRange
+            Loop While Not storyRange Is Nothing
+        End If
+    Next storyRange
+
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    MsgBox "Font '" & targetFont & "' not found outside the main text.", vbInformation
+End Sub
+
+Sub CreateTemplateWithoutText()
+    Dim doc As Document
+    Dim templateDoc As Document
+    Dim templatePath As String
+    
+    ' Get the current active document
+    Set doc = ActiveDocument
+    
+    ' Create a new blank document based on styles and configurations from the original document
+    Set templateDoc = Documents.Add
+    
+    ' Copy the entire content from the original document (styles and configurations)
+    doc.range.Copy
+    
+    ' Paste the copied content into the new document (keeping the formatting)
+    templateDoc.range.PasteAndFormat wdFormatOriginalFormatting
+    
+    ' Remove all the text from the new document (leave the styles and formatting)
+    templateDoc.content.Delete
+    
+    ' Specify the path to save the template as a macro-enabled template
+    templatePath = "C:\adaept\aeBibleClass\BibleTemplate.dotm" ' Modify this path as needed
+    
+    ' Save as a Word macro-enabled template (.dotm) using the numeric value 13
+    ' 13 = wdFormatTemplateMacroEnabled (macro-enabled template)
+    templateDoc.SaveAs2 fileName:=templatePath, FileFormat:=13 ' 13 = wdFormatTemplateMacroEnabled
+    
+    ' Close the new template document
+    templateDoc.Close
+    
+    ' Notify the user
+    MsgBox "Template without text has been saved successfully as: " & templatePath
+End Sub
+
+Function GetVerticalAlignmentName(valign As WdVerticalAlignment) As String
+    Select Case valign
+        Case wdAlignVerticalTop: GetVerticalAlignmentName = "Top"
+        Case wdAlignVerticalCenter: GetVerticalAlignmentName = "Center"
+        Case wdAlignVerticalJustify: GetVerticalAlignmentName = "Justify"
+        Case wdAlignVerticalBottom: GetVerticalAlignmentName = "Bottom"
+        Case Else: GetVerticalAlignmentName = "Unknown"
+    End Select
+End Function
+
+Sub PrintCompactSectionLayoutInfo()
+    Dim sec As section
+    Dim i As Long
+    Dim nOneCol As Long, nTwoCol As Long
+    Dim nEvenPageBreak As Long, nOddPageBreak As Long
+    Dim nContinuousBreak As Long, nNewPageBreak As Long
+    Dim outputFile As String
+    Dim outputText As String
+    outputFile = "C:\adaept\aeBibleClass\DocumentLayoutReport.txt"  ' Change to your desired path
+
+    ' Open the text file to write
+    Open outputFile For Output As #1
+    
+    ' Write Header to the file
+    outputText = "=== Layout Report ===" & vbCrLf
+    outputText = outputText & "Doc: " & ActiveDocument.name & vbCrLf
+    outputText = outputText & "Total Sections: " & ActiveDocument.Sections.count & vbCrLf & vbCrLf
+    Print #1, outputText
+    
+    For i = 1 To ActiveDocument.Sections.count
+        Set sec = ActiveDocument.Sections(i)
+        
+        outputText = "Section " & i & ": " & vbCrLf
+        outputText = outputText & "Page: " & IIf(sec.pageSetup.orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
+                    "Size: " & GetPaperSizeName(sec.pageSetup.paperSize) & ", " & _
+                    "Columns: " & sec.pageSetup.TextColumns.count & vbCrLf
+        If sec.pageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
+        
+        ' Margins
+        outputText = outputText & "Margins (inches): " & _
+                    "Top: " & PointsToInches(sec.pageSetup.topMargin) & ", " & _
+                    "Bottom: " & PointsToInches(sec.pageSetup.bottomMargin) & ", " & _
+                    "Left: " & PointsToInches(sec.pageSetup.leftMargin) & ", " & _
+                    "Right: " & PointsToInches(sec.pageSetup.rightMargin) & ", " & _
+                    "Gutter: " & PointsToInches(sec.pageSetup.gutter) & vbCrLf
+        
+        ' Line Numbering
+        If sec.pageSetup.LineNumbering.Active Then
+            outputText = outputText & "Line Numbers: " & sec.pageSetup.LineNumbering.StartingNumber & ", " & _
+                        "Increment: " & sec.pageSetup.LineNumbering.CountBy & vbCrLf
+        End If
+        
+        ' Header/Footer settings
+        outputText = outputText & "Header Distance: " & PointsToInches(sec.pageSetup.HeaderDistance) & ", " & _
+                    "Footer Distance: " & PointsToInches(sec.pageSetup.FooterDistance) & vbCrLf
+        
+        ' Borders (if any)
+        outputText = outputText & "Borders: " & _
+                    "Top: " & GetBorderStyle(sec.Borders(wdBorderTop)) & ", " & _
+                    "Bottom: " & GetBorderStyle(sec.Borders(wdBorderBottom)) & ", " & _
+                    "Left: " & GetBorderStyle(sec.Borders(wdBorderLeft)) & ", " & _
+                    "Right: " & GetBorderStyle(sec.Borders(wdBorderRight)) & vbCrLf
+        
+        ' Section Break Type
+        Select Case sec.pageSetup.sectionStart
+            Case wdSectionNewPage
+                outputText = outputText & "Section Break: New Page" & vbCrLf
+                nNewPageBreak = nNewPageBreak + 1
+            Case wdSectionOddPage
+                outputText = outputText & "Section Break: Odd Page" & vbCrLf
+                nOddPageBreak = nOddPageBreak + 1
+            Case wdSectionEvenPage
+                outputText = outputText & "Section Break: Even Page" & vbCrLf
+                nEvenPageBreak = nEvenPageBreak + 1
+            Case wdSectionContinuous
+                outputText = outputText & "Section Break: Continuous" & vbCrLf
+                nContinuousBreak = nContinuousBreak + 1
+            Case Else
+                outputText = outputText & "Section Break: None" & vbCrLf
+        End Select
+        
+        ' Write section data to file
+        Print #1, outputText
+        outputText = "" ' Reset outputText for the next section
+    Next i
+    
+    ' Summary of Sections
+    outputText = "Summary: " & vbCrLf
+    outputText = outputText & "Sections with 1 Column: " & nOneCol & vbCrLf
+    Sections1Col = nOneCol
+    Debug.Print "Sections1Col = " & nOneCol
+    outputText = outputText & "Sections with 2 Columns: " & nTwoCol & vbCrLf
+    Sections2Col = nTwoCol
+    Debug.Print "Sections2Col = " & nTwoCol
+    outputText = outputText & "Sections with Odd Page Breaks: " & nOddPageBreak & vbCrLf
+    SectionsOddPageBreaks = nOddPageBreak
+    Debug.Print "SectionsOddPageBreaks = " & nOddPageBreak
+    outputText = outputText & "Sections with Even Page Breaks: " & nEvenPageBreak & vbCrLf
+    SectionsEvenPageBreaks = nEvenPageBreak
+    Debug.Print "SectionsEvenPageBreaks = " & nEvenPageBreak
+    outputText = outputText & "Sections with Continuous Breaks: " & nContinuousBreak & vbCrLf
+    SectionsContinuousBreaks = nContinuousBreak
+    Debug.Print "SectionsContinuousBreaks = " & nContinuousBreak
+    outputText = outputText & "Sections with New Page Breaks: " & nNewPageBreak & vbCrLf
+    SectionsNewPageBreaks = nNewPageBreak
+    Debug.Print "SectionsNewPageBreaks = " & nNewPageBreak
+    Print #1, outputText
+    
+    ' Close the file
+    Close #1
+
+    'MsgBox "Layout report saved to: " & outputFile, vbInformation
+End Sub
+
+Function PointsToInches(Points As Single) As String
+    PointsToInches = Format(Points / 72, "0.00")
+End Function
+
+Function GetPaperSizeName(paperSizeValue As WdPaperSize) As String
+    Select Case paperSizeValue
+        Case wdPaperA4: GetPaperSizeName = "A4"
+        Case wdPaperLetter: GetPaperSizeName = "Letter"
+        Case wdPaperLegal: GetPaperSizeName = "Legal"
+        Case 11: GetPaperSizeName = "B5 (JIS)" 'wdPaperB5Jis
+        Case Else: GetPaperSizeName = "Other (" & paperSizeValue & ")"
+    End Select
+End Function
+
+Function GetBorderStyle(border As border) As String
+    If border.LineStyle = wdLineStyleNone Then
+        GetBorderStyle = "None"
+    Else
+        GetBorderStyle = border.LineStyle & ", Color: " & border.color
+    End If
+End Function
+
+Sub CountTabParagraphsFull()
+    Dim doc As Document
+    Dim sec As section
+    Dim hdr As HeaderFooter
+    Dim ftr As HeaderFooter
+    Dim para As paragraph
+    Dim rng As range
+    Dim bodyCount As Long
+    Dim headerCount As Long
+    Dim footerCount As Long
+    Dim grandTotal As Long
+    
+    Set doc = ActiveDocument
+    bodyCount = 0
+    headerCount = 0
+    footerCount = 0
+
+    ' Count in main document body
+    For Each para In doc.paragraphs
+        Set rng = para.range
+        rng.End = rng.End - 1 ' Exclude the final paragraph mark
+        If rng.text = vbTab Then
+            bodyCount = bodyCount + 1
+        End If
+    Next para
+
+    ' Count in headers and footers across all sections
+    For Each sec In doc.Sections
+        For Each hdr In sec.Headers
+            For Each para In hdr.range.paragraphs
+                Set rng = para.range
+                rng.End = rng.End - 1
+                If rng.text = vbTab Then
+                    headerCount = headerCount + 1
+                End If
+            Next para
+        Next hdr
+        
+        For Each ftr In sec.Footers
+            For Each para In ftr.range.paragraphs
+                Set rng = para.range
+                rng.End = rng.End - 1
+                If rng.text = vbTab Then
+                    footerCount = footerCount + 1
+                End If
+            Next para
+        Next ftr
+    Next sec
+
+    ' Calculate grand total
+    grandTotal = bodyCount + headerCount + footerCount
+
+    ' Display results
+    MsgBox "Tab-Only Paragraphs Count:" & vbCrLf & _
+           "Document Body: " & bodyCount & vbCrLf & _
+           "Headers: " & headerCount & vbCrLf & _
+           "Footers: " & footerCount & vbCrLf & _
+           "Grand Total: " & grandTotal, _
+           vbInformation, "Tab Paragraph Count"
+End Sub
 
