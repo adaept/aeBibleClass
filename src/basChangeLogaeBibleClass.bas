@@ -10,9 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #180 -
 ' #179 -
 ' #178 -
-' #177 -
-' #176 -
-' #175 -
+' #177 - Check tabernacle references in Exodus and update footnote 103 accordingly
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
@@ -23,15 +21,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
 ' #142 - Consider VBA routine to output TOC for verification - see #039
-' #116 - Check use of Gentium font (make it unnecessary?)
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #106 - Fix H1 pages to use line feed in text as appropriate
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
-' #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
-' #075 - Add style for Arial Black 8 pt emphasis.
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure REV is correct
@@ -65,6 +60,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+' 20250529 - v009
+    ' FIXED - #176 - Define Normal style as Calibri 9 to fix #175
+    ' FIXED - #175 - Gentium font found at para 13964 - procedure FindGentiumFromParagraph, use GoToParagraph to check
+    ' FIXED - #116 - Check use of Gentium font (make it unnecessary?) - See #175
+    ' FIXED - #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
+    ' FIXED - #075 - Add style for Arial Black 8 pt emphasis.
     ' FIXED - #173 - Rename CountTabOnlyParagraphs to CountDocTabOnlyParagraphs
     ' FIXED - #172 - Add test for CountParagraphMarks_ArialBlackDarkRed - 8pt, Automatic or Black, paragraph marks only
     ' FIXED - #171 - Add test for CountParagraphMarks_ArialBlack - 8pt, Automatic or Black, paragraph marks only
