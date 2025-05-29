@@ -319,6 +319,12 @@ NextPara:
     MsgBox "Gentium font not found starting from paragraph " & startParaNum & ".", vbExclamation
 End Sub
 
+Sub GoToParagraph()
+    Dim paraNum As Integer
+    paraNum = (InputBox("Enter paragraph number:", "Goto Paragraph Number", 1))
+    ActiveDocument.paragraphs(paraNum).range.Select
+End Sub
+
 Sub ListNonMainFonts_ByParagraph()
     Dim fontDict As Object
     Set fontDict = CreateObject("Scripting.Dictionary")
