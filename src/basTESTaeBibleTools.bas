@@ -377,4 +377,254 @@ Sub ListNonMainFonts_ByParagraph()
     End If
 End Sub
 
+Sub TestComp()
+    CompareDocuments "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.docx", "C:\Users\peter\OneDrive\Documents\Peter-USE REFINED English Bible CONTENTS - Copy (49).docx"
+End Sub
+
+Sub CompareDocuments(original As String, modified As String)
+' e.g. original = "C:\Path\To\Original.docx"
+' e.g. "C:\Path\To\Modified.docx"
+' - Original Document – The initial version of the document before changes were made.
+' - Modified Document – The updated version that includes changes.
+' - Comparison Document – The newly generated document that highlights differences between the original and modified versions.
+' - The **comparison document** is a completely **new document** that shows changes such as insertions, deletions, and formatting modifications.
+' - The **original** and **modified** documents remain **unchanged**—Word does **not** alter them.
+' wdGranularityWordLevel
+' - CompareFormatting (True) – Marks differences in formatting (e.g., font changes, bold/italic modifications).
+' - CompareCaseChanges (True) – Highlights changes in letter case (e.g., "word" vs. "Word").
+' - CompareWhitespace (True) – Tracks differences in spaces, paragraph breaks, and other whitespace variations.
+' - CompareTables (True) – Compares changes within tables, including cell modifications.
+' These options allow for a detailed comparison of documents, ensuring that even subtle changes are detected.
+'
+    Dim docOriginal As Document
+    Dim docModified As Document
+    Dim docComparison As Document
+    Dim lastSlashPos As Integer
+    Dim filePath As String
+    
+    lastSlashPos = InStrRev(original, "\") ' Find last occurrence of "\"
+    If lastSlashPos > 0 Then
+        filePath = Left(original, lastSlashPos) ' Get everything before the last "\"
+    Else
+        filePath = "" ' No path found, return empty string
+    End If
+    
+    ' Open the original and modified documents
+    Set docOriginal = Documents.Open(original)
+    Set docModified = Documents.Open(modified)
+    
+    ' Create a comparison document
+    Set docComparison = Application.CompareDocuments(docOriginal, docModified, wdCompareDestinationNew, _
+        wdGranularityWordLevel, False, True, False, False)
+    
+    ' Save comparison result
+    docComparison.SaveAs filePath & "\Comparison.docx"
+    
+    MsgBox "Comparison complete! See the document for tracked changes."
+End Sub
+
+Sub GoToVerseSBL()
+    On Error GoTo ErrHandler
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Searching for verse..."
+    
+    Dim userInput As String
+    userInput = InputBox("Enter verse (e.g., 1 Sam 1:1):", "Go to Verse")
+    If Trim(userInput) = "" Then Exit Sub
+    
+    Dim bookAbbr As String, chapNum As String, verseNum As String
+    Dim parts() As String, subParts() As String
+    
+    ' Parse the input
+    parts = Split(userInput, ":")
+    If UBound(parts) <> 1 Then
+        MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
+        Exit Sub
+    End If
+    verseNum = Trim(parts(1))
+    subParts = Split(Trim(parts(0)))
+    If UBound(subParts) = 0 Then
+        bookAbbr = Trim(parts(0))
+        chapNum = "1"
+    Else
+        Dim i As Long
+        bookAbbr = ""
+        For i = 0 To UBound(subParts) - 1
+            bookAbbr = bookAbbr & subParts(i) & " "
+        Next i
+        bookAbbr = Trim(bookAbbr)
+        chapNum = Trim(subParts(UBound(subParts)))
+    End If
+    
+    Dim fullBookName As String
+    fullBookName = GetFullBookName(bookAbbr)
+    If fullBookName = "" Then
+        MsgBox "Book not found: " & bookAbbr, vbExclamation
+        Exit Sub
+    End If
+
+    ' Find the Heading 1 for the book
+    Dim para As paragraph, foundBook As Boolean
+    For Each para In ActiveDocument.paragraphs
+        If para.style = "Heading 1" Then
+            If Trim(para.range.text) Like "*" & fullBookName & "*" Then
+                para.range.Select
+                foundBook = True
+                MsgBox "Book found. Searching for chapter " & chapNum, vbInformation
+                Exit For
+            End If
+        End If
+    Next para
+    If Not foundBook Then
+        MsgBox "Book heading not found: " & fullBookName, vbExclamation
+        Exit Sub
+    End If
+    
+    ' Find the Heading 2 for the chapter
+    Dim chapFound As Boolean
+    For Each para In ActiveDocument.paragraphs
+        If para.range.Start < Selection.range.Start Then GoTo SkipChapter
+        If para.style = "Heading 2" Then
+            If Trim(para.range.text) Like "*Chapter " & chapNum & "*" Then
+                para.range.Select
+                chapFound = True
+                Exit For
+            End If
+        End If
+SkipChapter:
+    Next para
+    If Not chapFound Then
+        MsgBox "Chapter not found: " & chapNum, vbExclamation
+        Exit Sub
+    End If
+
+    ' Limit search range to current chapter
+    Dim chapStart As Long, chapEnd As Long
+    chapStart = Selection.range.Start
+    chapEnd = ActiveDocument.content.End
+    For Each para In ActiveDocument.paragraphs
+        If para.range.Start > chapStart And para.style = "Heading 2" Then
+            chapEnd = para.range.Start
+            Exit For
+        End If
+    Next para
+
+    ' Search for verse number within "Verse marker" style
+    Dim r As range
+    Dim charCount As Long, found As Boolean
+    charCount = chapStart
+    Do While charCount < chapEnd
+        Set r = ActiveDocument.range(charCount, charCount + 1)
+        If r.Characters(1).style = "Verse marker" Then
+            Dim verseStr As String, j As Long
+            verseStr = ""
+            For j = 0 To 2 ' Check up to 3 digits
+                If charCount + j >= chapEnd Then Exit For
+                If IsNumeric(ActiveDocument.range(charCount + j, charCount + j + 1).text) Then
+                    verseStr = verseStr & ActiveDocument.range(charCount + j, charCount + j + 1).text
+                Else
+                    Exit For
+                End If
+            Next j
+            If verseStr = verseNum Then
+                ActiveDocument.range(charCount, charCount + Len(verseStr)).Select
+                found = True
+                Exit Do
+            End If
+        End If
+        charCount = charCount + 1
+        If charCount Mod 100 = 0 Then DoEvents
+    Loop
+    If Not found Then
+        MsgBox "Verse not found: " & verseNum, vbExclamation
+    End If
+
+Cleanup:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error during verse search: " & Err.Description, vbCritical
+    Resume Cleanup
+End Sub
+
+Function GetFullBookName(abbr As String) As String
+    Dim bookMap As Object
+    Set bookMap = CreateObject("Scripting.Dictionary")
+    
+    bookMap.Add "Gen", "Genesis"
+    bookMap.Add "Exod", "Exodus"
+    bookMap.Add "Lev", "Leviticus"
+    bookMap.Add "Num", "Numbers"
+    bookMap.Add "Deut", "Deuteronomy"
+    bookMap.Add "Josh", "Joshua"
+    bookMap.Add "Judg", "Judges"
+    bookMap.Add "Ruth", "Ruth"
+    bookMap.Add "1 Sam", "1 Samuel"
+    bookMap.Add "2 Sam", "2 Samuel"
+    bookMap.Add "1 Kgs", "1 Kings"
+    bookMap.Add "2 Kgs", "2 Kings"
+    bookMap.Add "1 Chr", "1 Chronicles"
+    bookMap.Add "2 Chr", "2 Chronicles"
+    bookMap.Add "Ezra", "Ezra"
+    bookMap.Add "Neh", "Nehemiah"
+    bookMap.Add "Esth", "Esther"
+    bookMap.Add "Job", "Job"
+    bookMap.Add "Ps", "Psalms"
+    bookMap.Add "Prov", "Proverbs"
+    bookMap.Add "Eccl", "Ecclesiastes"
+    bookMap.Add "Song", "Song of Solomon"
+    bookMap.Add "Isa", "Isaiah"
+    bookMap.Add "Jer", "Jeremiah"
+    bookMap.Add "Lam", "Lamentations"
+    bookMap.Add "Ezek", "Ezekiel"
+    bookMap.Add "Dan", "Daniel"
+    bookMap.Add "Hos", "Hosea"
+    bookMap.Add "Joel", "Joel"
+    bookMap.Add "Amos", "Amos"
+    bookMap.Add "Obad", "Obadiah"
+    bookMap.Add "Jonah", "Jonah"
+    bookMap.Add "Mic", "Micah"
+    bookMap.Add "Nah", "Nahum"
+    bookMap.Add "Hab", "Habakkuk"
+    bookMap.Add "Zeph", "Zephaniah"
+    bookMap.Add "Hag", "Haggai"
+    bookMap.Add "Zech", "Zechariah"
+    bookMap.Add "Mal", "Malachi"
+    bookMap.Add "Matt", "Matthew"
+    bookMap.Add "Mark", "Mark"
+    bookMap.Add "Luke", "Luke"
+    bookMap.Add "John", "John"
+    bookMap.Add "Acts", "Acts"
+    bookMap.Add "Rom", "Romans"
+    bookMap.Add "1 Cor", "1 Corinthians"
+    bookMap.Add "2 Cor", "2 Corinthians"
+    bookMap.Add "Gal", "Galatians"
+    bookMap.Add "Eph", "Ephesians"
+    bookMap.Add "Phil", "Philippians"
+    bookMap.Add "Col", "Colossians"
+    bookMap.Add "1 Thess", "1 Thessalonians"
+    bookMap.Add "2 Thess", "2 Thessalonians"
+    bookMap.Add "1 Tim", "1 Timothy"
+    bookMap.Add "2 Tim", "2 Timothy"
+    bookMap.Add "Titus", "Titus"
+    bookMap.Add "Phlm", "Philemon"
+    bookMap.Add "Heb", "Hebrews"
+    bookMap.Add "Jas", "James"
+    bookMap.Add "1 Pet", "1 Peter"
+    bookMap.Add "2 Pet", "2 Peter"
+    bookMap.Add "1 John", "1 John"
+    bookMap.Add "2 John", "2 John"
+    bookMap.Add "3 John", "3 John"
+    bookMap.Add "Jude", "Jude"
+    bookMap.Add "Rev", "Revelation"
+    
+    abbr = Trim(abbr)
+    If bookMap.Exists(abbr) Then
+        GetFullBookName = bookMap(abbr)
+    Else
+        GetFullBookName = ""
+    End If
+End Function
 

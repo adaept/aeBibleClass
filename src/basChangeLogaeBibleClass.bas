@@ -7,10 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #185 -
+' #184 -
+' #183 -
+' #182 -
+' #181 -
 ' #180 -
-' #179 -
-' #178 -
-' #177 - Check tabernacle references in Exodus and update footnote 103 accordingly
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
@@ -60,6 +62,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #179 - Add compare documents routine
+    ' FIXED - #178 - Add SBL goto verse routine
+    ' FIXED - #177 - Check tabernacle references in Exodus and update footnote 103 accordingly
 ' 20250529 - v009
     ' FIXED - #176 - Define Normal style as Calibri 9 to fix #175
     ' FIXED - #175 - Gentium font found at para 13964 - procedure FindGentiumFromParagraph, use GoToParagraph to check
