@@ -1,4 +1,4 @@
-﻿Hello, World! 🌐🌎 Easter 👑🐇🥚
+Hello, World! 🌐🌎 Easter 👑🐇🥚
 ✅❌✅❌✅❌✅❌✅❌✅❌
 
 // 🌍 Standard "Hello, World!" outputs in various languages
@@ -72,3 +72,5 @@ Dia duit, a dhomhain!
 🏴 Gàidhlig (Scottish Gaelic)
 Halò, a Shaoghail!
 /haˈlɔː ə ˈhɯːəl̪ˠ/
+
+
