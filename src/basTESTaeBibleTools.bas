@@ -437,11 +437,15 @@ Sub GoToVerseSBL()
     
     ' Parse the input
     parts = Split(userInput, ":")
-    If UBound(parts) <> 1 Then
+    If UBound(parts) = 0 Then   ' Only the chapter number was provided
+        verseNum = 1
+        'MsgBox "Verse number not found", vbExclamation
+        'Exit Sub
+    ElseIf UBound(parts) <> 1 Then
         MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
         Exit Sub
     End If
-    verseNum = Trim(parts(1))
+    If verseNum <> 1 Then verseNum = Trim(parts(1))
     subParts = Split(Trim(parts(0)))
     If UBound(subParts) = 0 Then
         bookAbbr = Trim(parts(0))
@@ -574,7 +578,7 @@ Function GetFullBookName(abbr As String) As String
     bookMap.Add "Ps", "Psalms"
     bookMap.Add "Prov", "Proverbs"
     bookMap.Add "Eccl", "Ecclesiastes"
-    bookMap.Add "Song", "Song of Solomon"
+    bookMap.Add "Song", "Solomon"
     bookMap.Add "Isa", "Isaiah"
     bookMap.Add "Jer", "Jeremiah"
     bookMap.Add "Lam", "Lamentations"

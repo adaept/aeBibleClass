@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #183 -
 ' #182 -
 ' #181 -
-' #180 -
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
@@ -62,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #180 - GoToVerseSBL fails with invalid format if only chapter entered - update so it finds verse 1
     ' FIXED - #179 - Add compare documents routine
     ' FIXED - #178 - Add SBL goto verse routine
     ' FIXED - #177 - Check tabernacle references in Exodus and update footnote 103 accordingly
