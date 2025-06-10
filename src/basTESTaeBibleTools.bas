@@ -439,13 +439,15 @@ Sub GoToVerseSBL()
     parts = Split(userInput, ":")
     If UBound(parts) = 0 Then   ' Only the chapter number was provided
         verseNum = 1
+        GoTo Chapter
         'MsgBox "Verse number not found", vbExclamation
         'Exit Sub
     ElseIf UBound(parts) <> 1 Then
         MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
         Exit Sub
     End If
-    If verseNum <> 1 Then verseNum = Trim(parts(1))
+    verseNum = Trim(parts(1))
+Chapter:
     subParts = Split(Trim(parts(0)))
     If UBound(subParts) = 0 Then
         bookAbbr = Trim(parts(0))
