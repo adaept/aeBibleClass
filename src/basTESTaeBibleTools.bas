@@ -77,7 +77,7 @@ Sub DeleteCustomUIXML()
     For i = xmlParts.count To 1 Step -1
         Set xmlPart = xmlParts(i)
         If xmlPart.NamespaceURI = "http://schemas.microsoft.com/office/2006/01/customui" Or _
-           xmlPart.NamespaceURI = "http://schemas.microsoft.com/office/2009/07/customui" Then
+                xmlPart.NamespaceURI = "http://schemas.microsoft.com/office/2009/07/customui" Then
             xmlPart.Delete
         End If
     Next i
@@ -429,7 +429,7 @@ Sub GoToVerseSBL()
     Application.StatusBar = "Searching for verse..."
     
     Dim userInput As String
-    userInput = InputBox("Enter verse (e.g., 1 Sam 1:1):", "Go to Verse")
+    userInput = InputBox("Enter verse (e.g., 1 Sam 1:1):", "Go to Verse (SBL Format)")
     If Trim(userInput) = "" Then Exit Sub
     
     Dim bookAbbr As String, chapNum As String, verseNum As String
@@ -470,13 +470,17 @@ Chapter:
     End If
 
     ' Find the Heading 1 for the book
+    Dim theBook As String
     Dim para As paragraph, foundBook As Boolean
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
-            If Trim(para.range.text) Like "*" & fullBookName & "*" Then
+            theBook = Trim(para.range.text)
+            theBook = UCase(Replace(para.range.text, vbCr, ""))
+            If theBook Like "*" & fullBookName & "*" Then
                 para.range.Select
                 foundBook = True
-                MsgBox "Book found. Searching for chapter " & chapNum, vbInformation
+                'Debug.Print theBook, fullBookName
+                MsgBox "Book found. Searching for chapter or verse " & chapNum, vbInformation
                 Exit For
             End If
         End If
@@ -487,10 +491,21 @@ Chapter:
     End If
     
     ' Find the Heading 2 for the chapter
+    Dim theChapter As String
     Dim chapFound As Boolean
     For Each para In ActiveDocument.paragraphs
+        'Debug.Print para.range.Start, Selection.range.Start
         If para.range.Start < Selection.range.Start Then GoTo SkipChapter
         If para.style = "Heading 2" Then
+            Select Case theBook     ' Books of only one chapter
+                Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
+                    verseNum = chapNum
+                    chapNum = 1
+                    chapFound = True
+                    'MsgBox "The name " & theBook & " is in the list!", vbInformation
+                Case Else
+                    'MsgBox "The name is NOT in the list!", vbExclamation
+            End Select
             If Trim(para.range.text) Like "*Chapter " & chapNum & "*" Then
                 para.range.Select
                 chapFound = True
