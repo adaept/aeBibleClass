@@ -452,14 +452,21 @@ Chapter:
     If UBound(subParts) = 0 Then
         bookAbbr = Trim(parts(0))
         chapNum = "1"
+    ElseIf (subParts(0) = "1" Or subParts(0) = "2") And UBound(subParts) = 1 Then
+        bookAbbr = subParts(0) & " " & subParts(1)
+        'Debug.Print bookAbbr
+        chapNum = 1
     Else
         Dim i As Long
         bookAbbr = ""
         For i = 0 To UBound(subParts) - 1
             bookAbbr = bookAbbr & subParts(i) & " "
+            'Debug.Print bookAbbr
         Next i
         bookAbbr = Trim(bookAbbr)
+        'Debug.Print ">", bookAbbr
         chapNum = Trim(subParts(UBound(subParts)))
+        'Debug.Print ">>", chapNum
     End If
     
     Dim fullBookName As String

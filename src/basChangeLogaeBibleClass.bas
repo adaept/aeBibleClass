@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #190 -
+' #189 -
+' #188 -
+' #187 -
+' #186 -
 ' #185 -
-' #184 -
-' #183 -
+' #184 - Add test for Footnote Text to count those that are have any bold text
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
@@ -24,11 +28,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #106 - Fix H1 pages to use line feed in text as appropriate
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
-' #088 - Add test for Footnote Reference to list those that do not have bold in the paragraph
+' #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote
-' #069 - Use WEB.doc to get a proper count of "'" and make sure REV is correct
+' #069 - Use WEB.doc to get a proper count of "'" and make sure RWB is correct
 '        Verify smart quotes
 '        Several Bible versions use smart quotes for opening and closing quotations,
 '        including the triple quote style for verses like Ezekiel 39:7
@@ -59,6 +63,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #183 - Error "1 Sam" - book not found, also for all books starting with a number, should return e.g. "1 Sam 1:1"
     ' FIXED - #182 - GoToVerseSBL search for Jude 5 fails (only 1 chapter) - solve for Obad, Phlm, 2 John, 3 John, Jude - see #081
     ' FIXED - #181 - #180 GoToVerseSBL regression for Gen 2:2
     ' FIXED - #180 - GoToVerseSBL fails with invalid format if only chapter entered - update so it finds verse 1
