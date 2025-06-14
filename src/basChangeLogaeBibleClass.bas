@@ -10,9 +10,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #190 -
 ' #189 -
 ' #188 -
-' #187 -
-' #186 -
-' #185 -
+' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
+' #185 - Add ribbon with bible search button for GoToVerseSBL - (combo box also?)
 ' #184 - Add test for Footnote Text to count those that are have any bold text
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
@@ -63,6 +62,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #187 - Error Ps 37:19 is finding Isaiah 37:19 - Look for PSALM as H2 instead of CHAPTER
     ' FIXED - #183 - Error "1 Sam" - book not found, also for all books starting with a number, should return e.g. "1 Sam 1:1"
     ' FIXED - #182 - GoToVerseSBL search for Jude 5 fails (only 1 chapter) - solve for Obad, Phlm, 2 John, 3 John, Jude - see #081
     ' FIXED - #181 - #180 GoToVerseSBL regression for Gen 2:2

@@ -429,7 +429,7 @@ Sub GoToVerseSBL()
     Application.StatusBar = "Searching for verse..."
     
     Dim userInput As String
-    userInput = InputBox("Enter verse (e.g., 1 Sam 1:1):", "Go to Verse (SBL Format)")
+    userInput = InputBox("Enter verse (e.g. 1 Sam 1:1):", "Go to Verse (SBL Format)")
     If Trim(userInput) = "" Then Exit Sub
     
     Dim bookAbbr As String, chapNum As String, verseNum As String
@@ -437,6 +437,7 @@ Sub GoToVerseSBL()
     
     ' Parse the input
     parts = Split(userInput, ":")
+    Debug.Print "UBound(parts) = " & UBound(parts)
     If UBound(parts) = 0 Then   ' Only the chapter number was provided
         verseNum = 1
         GoTo Chapter
@@ -454,14 +455,14 @@ Chapter:
         chapNum = "1"
     ElseIf (subParts(0) = "1" Or subParts(0) = "2") And UBound(subParts) = 1 Then
         bookAbbr = subParts(0) & " " & subParts(1)
-        'Debug.Print bookAbbr
+        'Debug.Print "a:", bookAbbr
         chapNum = 1
     Else
         Dim i As Long
         bookAbbr = ""
         For i = 0 To UBound(subParts) - 1
             bookAbbr = bookAbbr & subParts(i) & " "
-            'Debug.Print bookAbbr
+            'Debug.Print "b:", bookAbbr
         Next i
         bookAbbr = Trim(bookAbbr)
         'Debug.Print ">", bookAbbr
@@ -471,6 +472,7 @@ Chapter:
     
     Dim fullBookName As String
     fullBookName = GetFullBookName(bookAbbr)
+    'Debug.Print ">>>", fullBookName
     If fullBookName = "" Then
         MsgBox "Book not found: " & bookAbbr, vbExclamation
         Exit Sub
@@ -483,6 +485,7 @@ Chapter:
         If para.style = "Heading 1" Then
             theBook = Trim(para.range.text)
             theBook = UCase(Replace(para.range.text, vbCr, ""))
+            'Debug.Print theBook
             If theBook Like "*" & fullBookName & "*" Then
                 para.range.Select
                 foundBook = True
@@ -497,7 +500,7 @@ Chapter:
         Exit Sub
     End If
     
-    ' Find the Heading 2 for the chapter
+    ' Find the Heading 2 for the chapter or psalm
     Dim theChapter As String
     Dim chapFound As Boolean
     For Each para In ActiveDocument.paragraphs
@@ -513,7 +516,8 @@ Chapter:
                 Case Else
                     'MsgBox "The name is NOT in the list!", vbExclamation
             End Select
-            If Trim(para.range.text) Like "*Chapter " & chapNum & "*" Then
+            If Trim(para.range.text) Like "*Chapter " & chapNum & "*" _
+                    Or Trim(para.range.text) Like "*Psalm " & chapNum & "*" Then
                 para.range.Select
                 chapFound = True
                 Exit For
