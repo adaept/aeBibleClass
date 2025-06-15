@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #190 -
-' #189 -
+' #195 -
+' #194 -
+' #193 -
+' #192 -
+' #191 - Add test to verify all correct Verse Marker per book
+' #190 - Add test to verify all correct Chapter Verse Marker per book
 ' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
 ' #185 - Add ribbon with bible search button for GoToVerseSBL - (combo box also?)
 ' #184 - Add test for Footnote Text to count those that are have any bold text
@@ -61,6 +65,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #189 - Update map for min case and selection for single chapter verses
     ' FIXED - #188 - Create an Excel file for a list of map options to Books, add min matches
     ' FIXED - #187 - Error Ps 37:19 is finding Isaiah 37:19 - Look for PSALM as H2 instead of CHAPTER
     ' FIXED - #183 - Error "1 Sam" - book not found, also for all books starting with a number, should return e.g. "1 Sam 1:1"
