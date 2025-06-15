@@ -489,7 +489,7 @@ Chapter:
             If theBook Like "*" & fullBookName & "*" Then
                 para.range.Select
                 foundBook = True
-                'Debug.Print theBook, fullBookName
+                'Debug.Print bookAbbr, theBook, fullBookName
                 MsgBox "Book found. Searching for chapter or verse " & chapNum, vbInformation
                 Exit For
             End If

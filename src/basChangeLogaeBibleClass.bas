@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #190 -
 ' #189 -
-' #188 -
 ' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
 ' #185 - Add ribbon with bible search button for GoToVerseSBL - (combo box also?)
 ' #184 - Add test for Footnote Text to count those that are have any bold text
@@ -62,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #188 - Create an Excel file for a list of map options to Books, add min matches
     ' FIXED - #187 - Error Ps 37:19 is finding Isaiah 37:19 - Look for PSALM as H2 instead of CHAPTER
     ' FIXED - #183 - Error "1 Sam" - book not found, also for all books starting with a number, should return e.g. "1 Sam 1:1"
     ' FIXED - #182 - GoToVerseSBL search for Jude 5 fails (only 1 chapter) - solve for Obad, Phlm, 2 John, 3 John, Jude - see #081
