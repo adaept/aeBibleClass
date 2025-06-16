@@ -1,14 +1,17 @@
-Attribute VB_Name = "basHelloWorld"
+Attribute VB_Name = "basBibleRibbon"
 Option Explicit
 Option Compare Text
 Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+Sub OnGoToVerseSblClick(control As IRibbonControl)
+    Call GoToVerseSBL
+End Sub
+
 Sub OnHelloWorldButtonClick(control As IRibbonControl)
     MsgBox "Hello SILAS World!" & vbCrLf & _
                 "GetVScroll  = " & GetExactVerticalScroll
-    
 End Sub
 
 Function GetExactVerticalScroll() As Double

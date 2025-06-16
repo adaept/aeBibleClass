@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #195 -
 ' #194 -
 ' #193 -
-' #192 -
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
 ' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
@@ -65,6 +64,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #192 - Add ribbon button for GoToVerseSBL
     ' FIXED - #189 - Update map for min case and selection for single chapter verses
     ' FIXED - #188 - Create an Excel file for a list of map options to Books, add min matches
     ' FIXED - #187 - Error Ps 37:19 is finding Isaiah 37:19 - Look for PSALM as H2 instead of CHAPTER
