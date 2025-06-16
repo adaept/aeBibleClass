@@ -6,7 +6,7 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Sub ListCustomXMLParts()
-    Dim xmlPart As CustomXMLPart
+    Dim xmlPart As customXMLPart
     Dim i As Integer
     i = 1
     For Each xmlPart In ThisDocument.CustomXMLParts
@@ -16,15 +16,28 @@ Sub ListCustomXMLParts()
 End Sub
 
 Sub ListCustomXMLSchemas()
-    Dim xmlPart As CustomXMLPart
+    Dim xmlPart As customXMLPart
     For Each xmlPart In ActiveDocument.CustomXMLParts
         Debug.Print xmlPart.NamespaceURI
     Next xmlPart
-    'MsgBox "Check the Immediate Window (Ctrl + G) for schema URIs."
+End Sub
+
+Sub AddCustomUIXML()
+    Dim xmlPart As customXMLPart
+    Dim xmlContent As String
+    ' Define XML structure
+    xmlContent = "<?xml version='1.0' encoding='UTF-8'?>" & _
+                 "<customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui'>" & _
+                 "<ribbon><tabs><tab id='CustomTab' label='My Tab'></tab></tabs></ribbon>" & _
+                 "</customUI>"
+    ' Add XML part to document
+    Set xmlPart = ActiveDocument.CustomXMLParts.Add(xmlContent)
+
+    MsgBox "CustomUI XML added successfully!"
 End Sub
 
 Sub RemoveDuplicateCustomXMLParts()
-    Dim xmlPart As CustomXMLPart
+    Dim xmlPart As customXMLPart
     Dim xmlParts As CustomXMLParts
     Dim essentialParts As Collection
     Dim duplicateParts As Collection
@@ -74,7 +87,7 @@ Function IsPartInCollection(col As Collection, partName As String) As Boolean
 End Function
 
 Sub DeleteCustomUIXML()
-    Dim xmlPart As CustomXMLPart
+    Dim xmlPart As customXMLPart
     Dim xmlParts As CustomXMLParts
     Dim i As Integer
     
@@ -498,7 +511,7 @@ Chapter:
                 para.range.Select
                 foundBook = True
                 'Debug.Print bookAbbr, theBook, fullBookName
-                MsgBox "Book found. Searching for chapter or verse " & chapNum, vbInformation
+                'MsgBox "Book found. Searching for chapter or verse " & chapNum, vbInformation
                 Exit For
             End If
         End If

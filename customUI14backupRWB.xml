@@ -1,0 +1,19 @@
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon>
+    <tabs>
+      <tab id="RWB" label="Refined Word Bible">
+        <group id="TestGroup" label="Bible Class Group">
+          <button id="GoToMyVerse" label="GoTo Verse " onAction="OnGoToVerseSblClick"/>
+          <button id="HelloWorldButton2" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton3" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton4" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton5" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton6" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton7" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton8" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="HelloWorldButton9" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
