@@ -8,12 +8,19 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Sub ListCustomXMLParts()
     Dim xmlPart As CustomXMLPart
     Dim i As Integer
-    
     i = 1
     For Each xmlPart In ThisDocument.CustomXMLParts
         Debug.Print "Custom XML Part " & i & ": " & xmlPart.XML
         i = i + 1
     Next xmlPart
+End Sub
+
+Sub ListCustomXMLSchemas()
+    Dim xmlPart As CustomXMLPart
+    For Each xmlPart In ActiveDocument.CustomXMLParts
+        Debug.Print xmlPart.NamespaceURI
+    Next xmlPart
+    'MsgBox "Check the Immediate Window (Ctrl + G) for schema URIs."
 End Sub
 
 Sub RemoveDuplicateCustomXMLParts()
