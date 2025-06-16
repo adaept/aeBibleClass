@@ -7,13 +7,17 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #200 -
+' #199 -
+' #198 -
+' #197 -
+' #196 -
 ' #195 -
 ' #194 -
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
 ' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
-' #185 - Add ribbon with bible search button for GoToVerseSBL - (combo box also?)
-' #184 - Add test for Footnote Text to count those that are have any bold text
+' #184 - Add test for Footnote Text to count those that have any bold text
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
@@ -23,7 +27,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
-' #142 - Consider VBA routine to output TOC for verification - see #039
+' #142 - Add routine to output book names and pages for TOC manual verification - see #039
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #106 - Fix H1 pages to use line feed in text as appropriate
 ' #100 - Continue check multipage view from 300 for orphans of H2
@@ -63,6 +67,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #185 - Add ribbon with bible search button for GoToVerseSBL
     ' FIXED - #193 - Manually export RWB ribbon xml to a file by copying from Office RibbonX Editor
     ' FIXED - #192 - Add ribbon button for GoToVerseSBL
     ' FIXED - #189 - Update map for min case and selection for single chapter verses
