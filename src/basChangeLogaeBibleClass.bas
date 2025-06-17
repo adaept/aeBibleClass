@@ -12,8 +12,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #198 -
 ' #197 -
 ' #196 -
-' #195 -
-' #194 -
+' #195 - Improve verse find - Ps 119:176 most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
 ' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
@@ -67,6 +66,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #194 - Set cursor to spinning when searching and restore on completion
     ' FIXED - #185 - Add ribbon with bible search button for GoToVerseSBL
     ' FIXED - #193 - Manually export RWB ribbon xml to a file by copying from Office RibbonX Editor
     ' FIXED - #192 - Add ribbon button for GoToVerseSBL

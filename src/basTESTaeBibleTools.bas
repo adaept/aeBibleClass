@@ -5,6 +5,11 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+' Use Windows API to change cursor
+Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
+    ByVal hInstance As Long, ByVal lpCursorName As Long) As Long
+Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
+
 Sub ListCustomXMLParts()
     Dim xmlPart As customXMLPart
     Dim i As Integer
@@ -445,7 +450,6 @@ End Sub
 
 Sub GoToVerseSBL()
     On Error GoTo ErrHandler
-    Application.ScreenUpdating = False
     Application.StatusBar = "Searching for verse..."
     
     Dim userInput As String
@@ -456,15 +460,21 @@ Sub GoToVerseSBL()
     Dim bookAbbr As String, chapNum As String, verseNum As String
     Dim parts() As String, subParts() As String
     
+    Dim hWaitCursor As Long
+    ' Set spinning cursor manually
+    hWaitCursor = LoadCursor(0, 32514) ' 32514 = Busy (Hourglass)
+    SetCursor hWaitCursor
+    Application.ScreenUpdating = False  ' Prevent flickering
+
     ' Parse the input
     parts = Split(userInput, ":")
     'Debug.Print "UBound(parts) = " & UBound(parts)
-    If UBound(parts) = 0 Then   ' Only the chapter number was provided
+    If UBound(parts) = 0 Then   ' Only the ~chapter~ number was provided
         verseNum = 1
         GoTo Chapter
-        'MsgBox "Verse number not found", vbExclamation
-        'Exit Sub
     ElseIf UBound(parts) <> 1 Then
+        Application.ScreenUpdating = True   ' Restore normal UI
+        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
         MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
         Exit Sub
     End If
@@ -495,6 +505,8 @@ Chapter:
     fullBookName = GetFullBookName(bookAbbr)
     'Debug.Print ">>>", fullBookName
     If fullBookName = "" Then
+        Application.ScreenUpdating = True   ' Restore normal UI
+        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
         MsgBox "Book not found: " & bookAbbr, vbExclamation
         Exit Sub
     End If
@@ -517,6 +529,8 @@ Chapter:
         End If
     Next para
     If Not foundBook Then
+        Application.ScreenUpdating = True   ' Restore normal UI
+        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
         MsgBox "Book heading not found: " & fullBookName, vbExclamation
         Exit Sub
     End If
@@ -547,6 +561,8 @@ Chapter:
 SkipChapter:
     Next para
     If Not chapFound Then
+        Application.ScreenUpdating = True   ' Restore normal UI
+        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
         MsgBox "Chapter not found: " & chapNum, vbExclamation
         Exit Sub
     End If
@@ -586,14 +602,15 @@ SkipChapter:
             End If
         End If
         charCount = charCount + 1
-        If charCount Mod 100 = 0 Then DoEvents
+        If charCount Mod 1000 = 0 Then DoEvents
     Loop
     If Not found Then
         MsgBox "Verse not found: " & verseNum, vbExclamation
     End If
 
 Cleanup:
-    Application.ScreenUpdating = True
+    Application.ScreenUpdating = True   ' Restore normal UI
+    SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
     Application.StatusBar = False
     Exit Sub
 
