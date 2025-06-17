@@ -662,6 +662,7 @@ Function GetFullBookName(abbr As String) As String
     bookMap.Add UCase("Pr"), "Proverbs"
     bookMap.Add UCase("Eccl"), "Ecclesiastes"
     bookMap.Add UCase("Ec"), "Ecclesiastes"
+    bookMap.Add UCase("Ecc"), "Ecclesiastes"
     bookMap.Add UCase("Song"), "Solomon"
     bookMap.Add UCase("S"), "Solomon"
     bookMap.Add UCase("Isa"), "Isaiah"
