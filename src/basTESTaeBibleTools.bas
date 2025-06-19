@@ -666,6 +666,7 @@ Function GetFullBookName(abbr As String) As String
     bookMap.Add UCase("Song"), "Solomon"
     bookMap.Add UCase("S"), "Solomon"
     bookMap.Add UCase("Isa"), "Isaiah"
+    bookMap.Add UCase("Is"), "Isaiah"
     bookMap.Add UCase("I"), "Isaiah"
     bookMap.Add UCase("Jer"), "Jeremiah"
     bookMap.Add UCase("Je"), "Jeremiah"
