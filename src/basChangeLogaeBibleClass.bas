@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #200 -
 ' #199 -
-' #198 -
 ' #195 - Improve verse find - Ps 119:176 most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
@@ -64,6 +63,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #198 - Add adaept prototype about button to ribbon
     ' FIXED - #197 - Add Is to book map for Isaiah
     ' FIXED - #196 - Add bookMap Ecc "Ecclesiastes"
     ' FIXED - #194 - Set cursor to spinning when searching and restore on completion

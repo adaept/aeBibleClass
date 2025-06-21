@@ -10,9 +10,18 @@ Sub OnGoToVerseSblClick(control As IRibbonControl)
 End Sub
 
 Sub OnHelloWorldButtonClick(control As IRibbonControl)
-    MsgBox "Hello SILAS World!" & vbCrLf & _
+    MsgBox "Hello, SILAS World!" & vbCrLf & _
                 "GetVScroll  = " & GetExactVerticalScroll
 End Sub
+
+Sub adaeptAbout(control As IRibbonControl)
+    MsgBox "Hello, adaept World!" & vbCrLf & _
+                "adaeptMsg  = " & adaeptMsg, vbInformation, "About adaept"
+End Sub
+
+Function adaeptMsg() As String
+    adaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
+End Function
 
 Function GetExactVerticalScroll() As Double
 ' Return the scroll percentage rounded to three decimal places
