@@ -12,6 +12,8 @@
           <button id="HelloWorldButton7" label="Hello World" onAction="OnHelloWorldButtonClick"/>
           <button id="HelloWorldButton8" label="Hello World" onAction="OnHelloWorldButtonClick"/>
           <button id="HelloWorldButton9" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <separator id="sep1" />
+          <button id="adaeptButton" label="About" image="adaept" size="large" onAction="adaeptAbout"/>
         </group>
       </tab>
     </tabs>
