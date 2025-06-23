@@ -14,7 +14,11 @@ Sub OnHelloWorldButtonClick(control As IRibbonControl)
                 "GetVScroll  = " & GetExactVerticalScroll
 End Sub
 
-Sub adaeptAbout(control As IRibbonControl)
+Sub OnGoToH1ButtonClick(control As IRibbonControl)
+    Call GoToH1
+End Sub
+
+Sub OnAdaeptAboutClick(control As IRibbonControl)
     MsgBox "Hello, adaept World!" & vbCrLf & _
                 "adaeptMsg  = " & adaeptMsg, vbInformation, "About adaept"
 End Sub
@@ -22,6 +26,39 @@ End Sub
 Function adaeptMsg() As String
     adaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
+
+Sub GoToH1()
+    Dim pattern As String
+    Dim para As paragraph
+    Dim paraText As String
+    Dim matchFound As Boolean
+
+    pattern = InputBox("Enter a Heading 1 pattern to match (use * and ? wildcards):", "Go To Bible Book")
+    If pattern = "" Then Exit Sub ' User canceled
+    matchFound = False
+
+    ' Disable UI updates for speed
+    Application.ScreenUpdating = False
+
+    For Each para In ActiveDocument.paragraphs
+        If para.style = "Heading 1" Then
+            paraText = Trim$(para.range.text)
+            If paraText Like pattern Then
+                para.range.Select
+                ' Move insertion point (cursor) without selecting text
+                ActiveDocument.range(para.range.Start, para.range.Start).Select
+                matchFound = True
+                Exit For
+            End If
+        End If
+    Next para
+
+    Application.ScreenUpdating = True
+
+    If Not matchFound Then
+        MsgBox "No Heading 1 matches pattern: " & pattern, vbExclamation
+    End If
+End Sub
 
 Function GetExactVerticalScroll() As Double
 ' Return the scroll percentage rounded to three decimal places
