@@ -553,3 +553,112 @@ Sub AppendToFile(filePath As String, text As String)
     Close fileNum
 End Sub
 
+Sub FindNextVerseMarkerSequence()
+' Search for char style "Chapter Verse marker" followed by char style "Verse marker"
+' with space of "Normal" style before and after.
+' ~200 secs and there should be no matches.
+    Dim doc As Document
+    Dim searchRange As range
+    Dim chapterRng As range, nextRng As range
+    Dim found As Boolean
+    Dim progressCount As Long
+    Dim tStart As Single
+
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Starting search..."
+
+    Set doc = ActiveDocument
+    found = False
+    tStart = Timer
+
+    Set searchRange = doc.range(0, doc.content.End)
+
+    ' Begin search for Chapter Verse marker
+    With searchRange.Find
+        .ClearFormatting
+        .text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .style = "Chapter Verse marker"
+        .Execute
+    End With
+
+    Do While searchRange.Find.found
+        Set chapterRng = searchRange.Duplicate
+
+        ' Attempt to get the next character styled as Verse marker
+        If chapterRng.End + 1 <= doc.content.End Then
+            Set nextRng = doc.range(Start:=chapterRng.End, End:=chapterRng.End + 1)
+        Else
+            searchRange.Start = chapterRng.End
+            searchRange.End = doc.content.End
+            searchRange.Find.Execute
+            GoTo ContinueLoop
+        End If
+
+        If nextRng.Characters.count = 1 Then
+            If nextRng.style = "Verse marker" Then
+                Dim beforeChar As range, afterChar As range
+
+                ' Before chapter
+                If chapterRng.Start > 0 Then
+                    Set beforeChar = doc.range(Start:=chapterRng.Start - 1, End:=chapterRng.Start)
+                Else
+                    GoTo ContinueLoop
+                End If
+
+                ' After verse
+                If nextRng.End + 1 <= doc.content.End Then
+                    Set afterChar = doc.range(Start:=nextRng.End, End:=nextRng.End + 1)
+                Else
+                    GoTo ContinueLoop
+                End If
+
+                ' Safety checks
+                If beforeChar.Characters.count < 1 Or afterChar.Characters.count < 1 Then
+                    Debug.Print "Invalid character count at " & chapterRng.Start
+                    chapterRng.Select
+                    MsgBox "Cannot access one of the surrounding characters. Stopping for inspection.", vbExclamation
+                    Exit Sub
+                End If
+
+                ' Check styles and spaces
+                If Trim(beforeChar.text) = "" And beforeChar.style = "Normal" Then
+                    If Trim(afterChar.text) = "" And afterChar.style = "Normal" Then
+                        ' Found match
+                        chapterRng.Start = beforeChar.Start
+                        nextRng.End = afterChar.End
+                        doc.range(chapterRng.Start, nextRng.End).Select
+                        MsgBox "Match found at position " & chapterRng.Start, vbInformation
+                        found = True
+                        Stop
+                        Exit Do
+                    End If
+                End If
+            End If
+        End If
+
+ContinueLoop:
+        ' Continue search
+        searchRange.Start = chapterRng.End
+        searchRange.End = doc.content.End
+        searchRange.Find.Execute
+
+        progressCount = progressCount + 1
+        If progressCount Mod 100 = 0 Then
+            Application.StatusBar = "Searching... character " & searchRange.Start
+            DoEvents
+        End If
+    Loop
+
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+
+    If Not found Then
+        MsgBox "No more matches found.", vbInformation
+    End If
+
+    Debug.Print "Elapsed: " & Format(Timer - tStart, "0.00") & " sec"
+End Sub
+
