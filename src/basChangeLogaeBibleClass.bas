@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #205 -
 ' #204 -
-' #203 -
 ' #195 - Improve verse find - Ps 119:176 most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
@@ -64,6 +63,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #203 - Add DOCVARIABLEs for New Testament
     ' FIXED - #202 - Move GoToVerseSBL to ribbon module
     ' FIXED - #201 - Add synch-to-onedrive.bat for adaept folders
     ' FIXED - #200 - Add search for Chapter and Verse marker styles preceded and followed by a space

@@ -324,6 +324,8 @@ Function SearchShapeForVariable(shape As shape, variableName As String) As Boole
 End Function
 
 Sub SetDocVariables()
+    GoTo NewTestament
+    
     ' Old Testament
     ActiveDocument.Variables("Gen").value = 20
     ActiveDocument.Variables("Exod").value = 58
@@ -331,7 +333,7 @@ Sub SetDocVariables()
     ActiveDocument.Variables("Num").value = 109
     ActiveDocument.Variables("Deut").value = 140
     ActiveDocument.Variables("Josh").value = 166
-    ActiveDocument.Variables("Judg").value = 187
+    ActiveDocument.Variables("Judg").value = 184
     ActiveDocument.Variables("Ruth").value = 202
     ActiveDocument.Variables("1Sam").value = 206
     ActiveDocument.Variables("2Sam").value = 229
@@ -352,7 +354,7 @@ Sub SetDocVariables()
     ActiveDocument.Variables("Lam").value = 531
     ActiveDocument.Variables("Ezek").value = 537
     ActiveDocument.Variables("Dan").value = 574
-    ActiveDocument.Variables("Jos").value = 586
+    ActiveDocument.Variables("Hos").value = 586
     ActiveDocument.Variables("Joel").value = 593
     ActiveDocument.Variables("Amos").value = 596
     ActiveDocument.Variables("Obad").value = 601
@@ -364,8 +366,35 @@ Sub SetDocVariables()
     ActiveDocument.Variables("Hag").value = 620
     ActiveDocument.Variables("Zech").value = 622
     ActiveDocument.Variables("Mal").value = 629
-    ' New Testament
-'    ActiveDocument.Variables("Gen").value = 20
+
+NewTestament:
+    ActiveDocument.Variables("Matt").value = 634
+    ActiveDocument.Variables("Mark").value = 661
+    ActiveDocument.Variables("Luke").value = 678
+    ActiveDocument.Variables("John").value = 706
+    ActiveDocument.Variables("Acts").value = 728
+    ActiveDocument.Variables("Rom").value = 753
+    ActiveDocument.Variables("1Cor").value = 764
+    ActiveDocument.Variables("2Cor").value = 775
+    ActiveDocument.Variables("Gal").value = 783
+    ActiveDocument.Variables("Eph").value = 788
+    ActiveDocument.Variables("Phil").value = 793
+    ActiveDocument.Variables("Col").value = 797
+    ActiveDocument.Variables("1Thess").value = 801
+    ActiveDocument.Variables("2Thess").value = 805
+    ActiveDocument.Variables("1Tim").value = 807
+    ActiveDocument.Variables("2Tim").value = 811
+    ActiveDocument.Variables("Tit").value = 814
+    ActiveDocument.Variables("Phlm").value = 817
+    ActiveDocument.Variables("Heb").value = 819
+    ActiveDocument.Variables("Jas").value = 828
+    ActiveDocument.Variables("1Pet").value = 832
+    ActiveDocument.Variables("2Pet").value = 836
+    ActiveDocument.Variables("1John").value = 839
+    ActiveDocument.Variables("2John").value = 843
+    ActiveDocument.Variables("3John").value = 845
+    ActiveDocument.Variables("Jude").value = 847
+    ActiveDocument.Variables("Rev").value = 849
     'MsgBox "DOCVARIABLE values set successfully!"
     Debug.Print "DOCVARIABLE values set successfully!"
 End Sub
@@ -377,8 +406,19 @@ Sub ListMyDocVariables()
     Next
 End Sub
 
+Sub DeleteDocVariable()
+    Dim varName As String
+    varName = "xxxJos" ' Change this to the name of your variable
+
+    On Error Resume Next
+    ActiveDocument.Variables(varName).Delete
+    On Error GoTo 0
+
+    ActiveDocument.Fields.Update ' Refresh any DOCVARIABLE fields
+End Sub
+
 Sub TestPageNumbers()
-    GoTo Continue
+    GoTo NewTestament
     
     ' Old Testament
     VerifyBookNameFromDocVariable "Gen", "Genesis"
@@ -397,8 +437,6 @@ Sub TestPageNumbers()
     Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
     VerifyBookNameFromDocVariable "Ruth", "Ruth"
     Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
-Continue:
-    'Exit Sub
     VerifyBookNameFromDocVariable "1Sam", "1 Samuel"
     Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
     VerifyBookNameFromDocVariable "2Sam", "2 Samuel"
@@ -461,6 +499,68 @@ Continue:
     Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
     VerifyBookNameFromDocVariable "Mal", "Malachi"
     Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
-    ' New Testament
+    Debug.Print "Done Old Testament !!!"
+
+NewTestament:
+    Dim rng As range
+    Set rng = ActiveDocument.GoTo(What:=1, Which:=1, name:="630")
+    rng.Select
+
+    VerifyBookNameFromDocVariable "Matt", "Matthew"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Mark", "Mark"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Luke", "Luke"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "John", "John"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Acts", "Acts"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Rom", "Romans"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1Cor", "1 Corinthians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Cor", "2 Corinthians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Gal", "Galations"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Eph", "Ephesians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Phil", "Philippians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Col", "Colossians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1Thess", "1 Thessalonians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Thess", "2 Thessalonians"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1Tim", "1 Timothy"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Tim", "2 Timothy"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Tit", "Titus"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Phlm", "Philemon"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Heb", "Hebrews"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Jas", "James"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1Pet", "1 Peter"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2Pet", "2 Peter"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "1John", "1 John"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "2John", "2 John"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "3John", "3 John"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Jude", "Jude"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    VerifyBookNameFromDocVariable "Rev", "Revelation"
+    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print "Done New Testament !!!"
     Debug.Print "Done!!!"
 End Sub
