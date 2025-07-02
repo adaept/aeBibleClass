@@ -19,8 +19,16 @@ Sub OnHelloWorldButtonClick(control As IRibbonControl)
                 "GetVScroll  = " & GetExactVerticalScroll
 End Sub
 
+Sub OnPrevButtonClick(control As IRibbonControl)
+    Call PrevButton
+End Sub
+
 Sub OnGoToH1ButtonClick(control As IRibbonControl)
     Call GoToH1
+End Sub
+
+Sub OnNextButtonClick(control As IRibbonControl)
+    Call NextButton
 End Sub
 
 Sub OnAdaeptAboutClick(control As IRibbonControl)
@@ -342,6 +350,14 @@ Function GetFullBookName(abbr As String) As String
         GetFullBookName = ""
     End If
 End Function
+
+Sub PrevButton()
+    MsgBox "Prev"
+End Sub
+
+Sub NextButton()
+    MsgBox "Next"
+End Sub
 
 Sub GoToH1()
     Dim pattern As String
