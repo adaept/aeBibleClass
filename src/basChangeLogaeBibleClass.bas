@@ -7,9 +7,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #210 -
+' #209 -
+' #208 -
+' #207 -
+' #206 -
 ' #205 -
-' #204 -
-' #195 - Improve verse find - Ps 119:176 most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
+' #204 - Add prev- next- book buttons to ribbon
+' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
 ' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
@@ -18,8 +23,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
-' #160 - Add DOCVARIABLEs for all New Testament books
-' #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
@@ -50,11 +53,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
 ' #047 - Research diff code that will display like GitHub for comparison with
-' #045 - Test call to SILAS from ribbon using customUI.xml OnHelloWorldButtonClick routine
 ' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
 ' #043 - Add extract to USFM routine
 ' #042 - Add readme to aewordgit
-' #041 - Add auto-generated TOC for maps
 ' #040 - Add figure headings to maps - use map vs fig?
 ' #037 - Add updated maps in color
 ' #035 - Add test for page numbers of h1 on odd or even pages
@@ -63,6 +64,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' OBSOLETE - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
+    ' FIXED - #045 - Test call to SILAS from ribbon using customUI14.xml OnHelloWorldButtonClick routine
+    ' OBSOLETE - #041 - Add auto-generated TOC for maps : auto gen too slow
+    ' FIXED - See #203 - #160 - Add DOCVARIABLEs for all New Testament books
     ' FIXED - #203 - Add DOCVARIABLEs for New Testament
     ' FIXED - #202 - Move GoToVerseSBL to ribbon module
     ' FIXED - #201 - Add synch-to-onedrive.bat for adaept folders
