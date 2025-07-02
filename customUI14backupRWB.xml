@@ -15,7 +15,7 @@
           <separator id="sep1" />
           <button id="GoToPrevButton" label="Prev" imageMso="BrowseNext" size="large" onAction="OnPrevButtonClick"/>
           <button id="GoToH1Button" label="GoTo Book" imageMso="GoToHeader" size="large" onAction="OnGoToH1ButtonClick"/>
-          <button id="GoToNextButton" label="Next" imageMso="BrowsePrevious" size="large" onAction="OnNextvButtonClick"/>
+          <button id="GoToNextButton" label="Next" imageMso="BrowsePrevious" size="large" onAction="OnNextButtonClick"/>
           <separator id="sep2" />
           <button id="adaeptButton" label="About" image="adaept" size="large" onAction="OnAdaeptAboutClick"/>
         </group>
