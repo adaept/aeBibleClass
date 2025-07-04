@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #208 -
 ' #207 -
 ' #206 -
-' #205 - Goto next book on next- button click (Note: getEnabled is flaky so do not use for now)
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
@@ -63,6 +62,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
     ' Updated - Fixed - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
     ' OBSOLETE - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
     ' FIXED - #045 - Test call to SILAS from ribbon using customUI14.xml OnHelloWorldButtonClick routine

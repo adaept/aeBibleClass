@@ -381,12 +381,50 @@ Function GetFullBookName(abbr As String) As String
     End If
 End Function
 
-Sub PrevButton()
-    MsgBox "Prev"
-End Sub
-
 Sub NextButton()
-    MsgBox "Next"
+    'GoToNextHeading1Circular()
+    Dim doc As Document
+    Dim searchRange As range
+    Dim selEnd As Long
+    Dim found As Boolean
+
+    Set doc = ActiveDocument
+    selEnd = Selection.End
+    found = False
+
+    ' Search forward: from current position to end
+    Set searchRange = doc.range(selEnd, doc.content.End)
+    With searchRange.Find
+        .ClearFormatting
+        .style = doc.Styles("Heading 1")
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .text = ""
+        found = .Execute
+    End With
+
+    ' If not found, wrap: from beginning to current position
+    If Not found Then
+        Set searchRange = doc.range(0, selEnd)
+        With searchRange.Find
+            .ClearFormatting
+            .style = doc.Styles("Heading 1")
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .text = ""
+            found = .Execute
+        End With
+    End If
+
+    ' If found, position cursor at end of heading to prepare for next search
+    If found Then
+        Selection.SetRange searchRange.End, searchRange.End
+        ActiveWindow.ScrollIntoView Selection.range, True
+    Else
+        MsgBox "No Heading 1 found in the document.", vbInformation
+    End If
 End Sub
 
 Sub GoToH1()
