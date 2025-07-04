@@ -9,25 +9,55 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
     ByVal hInstance As Long, ByVal lpCursorName As Long) As Long
 Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
+' Global ribbon object and button state flags
+Public ribbonUI As IRibbonUI
+Public ribbonIsReady As Boolean
+Public btnNextEnabled As Boolean
+
+' Initialize early
+Public Sub AutoExec()
+    Debug.Print "In AutoExec routine"
+    btnNextEnabled = True
+End Sub
+
+Public Sub RibbonOnLoad(ribbon As IRibbonUI)
+    Set ribbonUI = ribbon
+    ribbonIsReady = True
+    Debug.Print "Ribbon ready at: " & Format(Now, "hh:nn:ss")
+    ' Invalidate a specific control only at initialization
+    ribbonUI.InvalidateControl "GoToNextButton"
+    ' Optional: force ribbon refresh after init
+'    ribbonUI.Invalidate
+    Call EnableButtonsRoutine
+End Sub
+
+Sub EnableButtonsRoutine()
+    Debug.Print "In EnableButtonsRoutine"
+    btnNextEnabled = True
+    ribbonUI.InvalidateControl "GoToNextButton"
+End Sub
+
+' Callback to dynamically enable or disable buttons
+Public Function GetNextEnabled(control As IRibbonControl) As Boolean
+    ' Make sure var is set to account for ribbon load timing mismatch
+    If isEmpty(btnNextEnabled) Then btnNextEnabled = True
+    GetNextEnabled = btnNextEnabled
+End Function
 
 Sub OnGoToVerseSblClick(control As IRibbonControl)
     Call GoToVerseSBL
 End Sub
 
 Sub OnHelloWorldButtonClick(control As IRibbonControl)
-    MsgBox "Hello, SILAS World!" & vbCrLf & _
+   MsgBox "Hello, SILAS World!" & vbCrLf & _
                 "GetVScroll  = " & GetExactVerticalScroll
-End Sub
-
-Sub OnPrevButtonClick(control As IRibbonControl)
-    Call PrevButton
 End Sub
 
 Sub OnGoToH1ButtonClick(control As IRibbonControl)
     Call GoToH1
 End Sub
 
-Sub OnNextButtonClick(control As IRibbonControl)
+Public Sub OnNextButtonClick(control As IRibbonControl)
     Call NextButton
 End Sub
 
@@ -414,4 +444,5 @@ Function GetExactVerticalScroll() As Double
     ' Round to 3 decimal places
     GetExactVerticalScroll = Round(scrollPercentage, 3)
 End Function
+
 
