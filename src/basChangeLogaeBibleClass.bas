@@ -9,9 +9,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #210 -
 ' #209 -
-' #208 -
-' #207 -
-' #206 -
+' #208 - Make style for Dating, Authorship, and Refer to maps - with 5pt spacing before and update all H1 pages
+' #207 - Check H1 pages for consistent use of superscript as in 2nd etc,
+' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
@@ -26,7 +26,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #148 - Add version info to TestReport output
 ' #142 - Add routine to output book names and pages for TOC manual verification - see #039
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
-' #106 - Fix H1 pages to use line feed in text as appropriate
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style
@@ -62,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
     ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
     ' Updated - Fixed - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
     ' OBSOLETE - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
