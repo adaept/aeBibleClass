@@ -7,10 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #210 -
-' #209 -
-' #208 - Make style for Dating, Authorship, and Refer to maps - with 5pt spacing before and update all H1 pages
-' #207 - Check H1 pages for consistent use of superscript as in 2nd etc,
+' #215 -
+' #214 -
+' #213 -
+' #212 -
+' #211 -
+' #210 - Add nav button to ribbon for [[Heading 0]] sections
+' #209 - Add DOCVARIABLEs for [[Heading 0]]sections
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
@@ -20,7 +23,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #162 - Update routines to allow page num checks for Heading 0 sections
-' #161 - Create Heading 0 style for other sections that are not the Bible and add DOCVARIABLEs
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
@@ -61,6 +63,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #161 - Create [[Heading 0]] hidden text markers for other sections that are not the Bible
+    ' FIXED - #208 - Make style for Dating, Authorship, and Refer to maps - with 6pt spacing before and update all H1 pages
+    ' FIXED - #207 - Check H1 pages for consistent use of superscript as in 2nd etc.
     ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
     ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
     ' Updated - Fixed - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
