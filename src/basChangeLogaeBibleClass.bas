@@ -9,24 +9,20 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks:
 ' #215 -
 ' #214 -
-' #213 -
-' #212 -
-' #211 -
-' #210 - Add nav button to ribbon for [[Heading 0]] sections
-' #209 - Add DOCVARIABLEs for [[Heading 0]]sections
+' #213 - Add test for CountFindNotEmphasisRed = 0 when all have been set
+' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
+' #211 - Add test for CountBoldFootnotes_WordLevel
+' #210 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
-' #186 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
 ' #184 - Add test for Footnote Text to count those that have any bold text
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
-' #162 - Update routines to allow page num checks for Heading 0 sections
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #148 - Add version info to TestReport output
-' #142 - Add routine to output book names and pages for TOC manual verification - see #039
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
@@ -63,7 +59,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
-    ' FIXED - #161 - Create [[Heading 0]] hidden text markers for other sections that are not the Bible
+    ' FIXED - #142 - Add routine to output book names and pages for TOC manual verification - see #039
+    ' FIXED - #209 - Add Section Nav button to ribbon for bookmarked Heading_00 to Heading_12 sections
+    ' FIXED - #186 See #209 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
+    ' FIXED - #162 See #209 - Update routines to allow page num checks for Heading 0 sections
+    ' FIXED - #161 See #209 - Create bookmarkers for other sections that are not the Bible
     ' FIXED - #208 - Make style for Dating, Authorship, and Refer to maps - with 6pt spacing before and update all H1 pages
     ' FIXED - #207 - Check H1 pages for consistent use of superscript as in 2nd etc.
     ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
