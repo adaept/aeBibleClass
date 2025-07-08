@@ -7,8 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #220 -
+' #219 -
+' #218 -
+' #217 -
+' #216 -
 ' #215 -
-' #214 -
+' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #213 - Add test for CountFindNotEmphasisRed = 0 when all have been set
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
 ' #211 - Add test for CountBoldFootnotes_WordLevel
