@@ -14,7 +14,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #216 -
 ' #215 -
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
-' #213 - Add test for CountFindNotEmphasisRed = 0 when all have been set
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
 ' #211 - Add test for CountBoldFootnotes_WordLevel
 ' #210 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
@@ -64,6 +63,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #213 - Add test for Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = 0 when all have been set
     ' FIXED - #142 - Add routine to output book names and pages for TOC manual verification - see #039
     ' FIXED - #209 - Add Section Nav button to ribbon for bookmarked Heading_00 to Heading_12 sections
     ' FIXED - #186 See #209 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;

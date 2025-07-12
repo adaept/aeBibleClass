@@ -161,8 +161,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 19, 153, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16  17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 2, 0, 0, 0, 0, -1, 0, 66, 0, 0, 3, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 509, 509, 116, 116, 0, 19, 153, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -305,6 +305,7 @@ Test16:     RunTest (16)
             RunTest (38)
             RunTest (39)
             RunTest (40)
+            RunTest (41)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -463,7 +464,10 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 40
         ResultArray(40) = CountParagraphMarks_ArialBlackDarkRed
         If ResultArray(40) = oneBasedExpectedArray(40) Then GetPassFail = "PASS    "
-   Case Else
+    Case 41
+        ResultArray(41) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+        If ResultArray(41) = oneBasedExpectedArray(40) Then GetPassFail = "PASS    "
+    Case Else
         Debug.Print ">The test number is outside the accepted range"
     End Select
 End Function
@@ -605,6 +609,9 @@ Private Function RunTest(num As Integer) As Boolean
     Case 40
         Debug.Print GetPassFail(40), "Copy ()", "Test = " & num, ResultArray(40), oneBasedExpectedArray(40), "CountParagraphMarks_ArialBlackDarkRed"
         If TestReportFlag Then OutputTestReport (40)
+    Case 41
+        Debug.Print GetPassFail(41), "Copy ()", "Test = " & num, ResultArray(41), oneBasedExpectedArray(41), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
+        If TestReportFlag Then OutputTestReport (41)
    Case Else
         Debug.Print ">>The test number is outside the accepted range"
     End Select
@@ -716,9 +723,57 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(39) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(39))) & Fixed14Str(CStr(oneBasedExpectedArray(39))) & "CountParagraphMarks_ArialBlack"
     Case 40
         AppendToFile TestReportFileName, GetPassFail(40) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(40))) & Fixed14Str(CStr(oneBasedExpectedArray(40))) & "CountParagraphMarks_ArialBlackDarkRed"
+    Case 41
+        AppendToFile TestReportFileName, GetPassFail(41) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(40))) & Fixed14Str(CStr(oneBasedExpectedArray(41))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
    Case Else
         Debug.Print ">>>The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
+    Dim rng As range
+    Dim totalCount As Long
+    Dim foundFirst As Boolean
+    Dim docRange As range
+
+    Set docRange = ActiveDocument.content
+    totalCount = 0
+    foundFirst = False
+
+    Set rng = docRange.Duplicate
+
+    With rng.Find
+        .ClearFormatting
+        .style = ActiveDocument.Styles("Words of Jesus")
+        .font.name = "Arial Black"
+        .font.Size = 8
+        .font.color = wdColorDarkRed
+        .text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+
+        Do While .Execute
+            If rng.Characters(1).style <> "EmphasisRed" Then
+                totalCount = totalCount + 1
+
+                If Not foundFirst Then
+                    rng.Select
+                    foundFirst = True
+                End If
+            End If
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    If foundFirst Then
+        MsgBox "First match selected. Total matches (excluding EmphasisRed): " & totalCount, vbInformation
+        Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = totalCount
+    Else
+        'MsgBox "No matching text found (excluding EmphasisRed or wrong color).", vbExclamation
+        'Debug.Print "NotEmphasisRed totalCount = " & totalCount
+        Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = totalCount
+    End If
 End Function
 
 Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
