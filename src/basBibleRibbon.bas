@@ -13,6 +13,7 @@ Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) 
 Public ribbonUI As IRibbonUI
 Public ribbonIsReady As Boolean
 Public btnNextEnabled As Boolean
+Dim bookmarkIndex As Long
 
 ' Initialize early
 Public Sub AutoExec()
@@ -51,6 +52,10 @@ End Sub
 Sub OnHelloWorldButtonClick(control As IRibbonControl)
    MsgBox "Hello, SILAS World!" & vbCrLf & _
                 "GetVScroll  = " & GetExactVerticalScroll
+End Sub
+
+Sub OnSectionButtonClick(control As IRibbonControl)
+    Call GoToSection
 End Sub
 
 Sub OnGoToH1ButtonClick(control As IRibbonControl)
@@ -381,6 +386,66 @@ Function GetFullBookName(abbr As String) As String
     End If
 End Function
 
+Sub GoToSection()
+    'NavigateToNextBookmark()
+    Dim bmList As Collection
+    Set bmList = GetBookmarkList()
+    
+    If bmList.count = 0 Then
+        MsgBox "No bookmarks found.", vbExclamation
+        Exit Sub
+    End If
+
+    bookmarkIndex = bookmarkIndex + 1
+    If bookmarkIndex > bmList.count Then bookmarkIndex = 1
+
+    bmList.item(bookmarkIndex).range.Select
+End Sub
+
+Function GetBookmarkList() As Collection
+    Dim bmColl As New Collection
+    Dim bm As Bookmark
+
+    For Each bm In ActiveDocument.Bookmarks
+        bmColl.Add bm
+    Next bm
+
+    Set GetBookmarkList = bmColl
+End Function
+
+Sub GoToH1()
+    Dim pattern As String
+    Dim para As paragraph
+    Dim paraText As String
+    Dim matchFound As Boolean
+
+    pattern = InputBox("Enter a Heading 1 pattern to match (use * and ? wildcards):", "Go To Bible Book")
+    If pattern = "" Then Exit Sub ' User canceled
+    matchFound = False
+
+    ' Disable UI updates for speed
+    Application.ScreenUpdating = False
+
+    For Each para In ActiveDocument.paragraphs
+        If para.style = "Heading 1" Then
+            paraText = Trim$(para.range.text)
+            If paraText Like pattern Then
+                para.range.Select
+                ' Move insertion point (cursor) without selecting text
+                ActiveDocument.range(para.range.Start, para.range.Start).Select
+                matchFound = True
+                Exit For
+            End If
+        End If
+    Next para
+
+    Application.ScreenUpdating = True
+
+    If Not matchFound Then
+        MsgBox "No Heading 1 matches pattern: " & pattern, vbExclamation
+    End If
+End Sub
+
 Sub NextButton()
     'GoToNextHeading1Circular()
     Dim doc As Document
@@ -427,39 +492,6 @@ Sub NextButton()
     End If
 End Sub
 
-Sub GoToH1()
-    Dim pattern As String
-    Dim para As paragraph
-    Dim paraText As String
-    Dim matchFound As Boolean
-
-    pattern = InputBox("Enter a Heading 1 pattern to match (use * and ? wildcards):", "Go To Bible Book")
-    If pattern = "" Then Exit Sub ' User canceled
-    matchFound = False
-
-    ' Disable UI updates for speed
-    Application.ScreenUpdating = False
-
-    For Each para In ActiveDocument.paragraphs
-        If para.style = "Heading 1" Then
-            paraText = Trim$(para.range.text)
-            If paraText Like pattern Then
-                para.range.Select
-                ' Move insertion point (cursor) without selecting text
-                ActiveDocument.range(para.range.Start, para.range.Start).Select
-                matchFound = True
-                Exit For
-            End If
-        End If
-    Next para
-
-    Application.ScreenUpdating = True
-
-    If Not matchFound Then
-        MsgBox "No Heading 1 matches pattern: " & pattern, vbExclamation
-    End If
-End Sub
-
 Function GetExactVerticalScroll() As Double
 ' Return the scroll percentage rounded to three decimal places
     Dim visibleStart As Long
@@ -482,5 +514,4 @@ Function GetExactVerticalScroll() As Double
     ' Round to 3 decimal places
     GetExactVerticalScroll = Round(scrollPercentage, 3)
 End Function
-
 
