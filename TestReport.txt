@@ -1,6 +1,6 @@
 Test(1)0 Test(2)0 Test(3)0 Test(4)0 Test(5)0 Test(6)0 Test(7)0 Test(8)0 Test(9)7 Test(10)1 Test(11)2 Test(12)0 Test(13)0 Test(14)0 Test(15)0
-Test(16)-1 Test(17)0 Test(18)66 Test(19)0 Test(20)0 Test(21)3 Test(22)153 Test(23)0 Test(24)1000 Test(25)1 Test(26)0 Test(27)147 Test(28)77 Test(29)70 Test(30)0
-Test(31)1 Test(32)509 Test(33)509 Test(34)116 Test(35)116 Test(36)0 Test(37)19 Test(38)153 Test(39)0 Test(40)0
+Test(16)16454 Test(17)0 Test(18)66 Test(19)0 Test(20)0 Test(21)3 Test(22)153 Test(23)0 Test(24)1000 Test(25)1 Test(26)0 Test(27)147 Test(28)77 Test(29)70 Test(30)0
+Test(31)1 Test(32)646 Test(33)646 Test(34)117 Test(35)117 Test(36)0 Test(37)19 Test(38)153 Test(39)0 Test(40)0 Test(41)0
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
 PASS              Copy ()       Test = 1      0             0             CountDoubleSpaces
@@ -18,7 +18,7 @@ PASS              Copy ()       Test = 12     0             0             CountN
 PASS              Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
-FAIL!!!!          Copy ()       Test = 16     16218         -1            CountTotalParagraphs
+PASS              Copy ()       Test = 16     16454         16454         CountTotalParagraphs
 PASS              Copy ()       Test = 17     0             0             CountRedFootnoteReferences
 PASS              Copy ()       Test = 18     66            66            CountHeading1
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
@@ -34,14 +34,15 @@ PASS              Copy ()       Test = 28     77            77            CountT
 PASS              Copy ()       Test = 29     70            70            CountParagraphsWithoutTabInHeaders
 PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
-FAIL!!!!          Copy ()       Test = 32     522           509           CountLinefeed
-FAIL!!!!          Copy ()       Test = 33     522           509           CountLinefeed(" ")
-PASS              Copy ()       Test = 34     116           116           CountManualLineBreaksAndWithSpace
-PASS              Copy ()       Test = 35     116           116           CountManualLineBreaksAndWithSpace(" ")
+PASS              Copy ()       Test = 32     646           646           CountLinefeed
+FAIL!!!!          Copy ()       Test = 33     642           646           CountLinefeed(" ")
+PASS              Copy ()       Test = 34     117           117           CountManualLineBreaksAndWithSpace
+PASS              Copy ()       Test = 35     117           117           CountManualLineBreaksAndWithSpace(" ")
 PASS              Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle
 PASS              Copy ()       Test = 37     19            19            CountDocTabOnlyParagraphs
 PASS              Copy ()       Test = 38     153           153           CountEmptyParagraphs
 PASS              Copy ()       Test = 39     0             0             CountParagraphMarks_ArialBlack
 PASS              Copy ()       Test = 40     0             0             CountParagraphMarks_ArialBlackDarkRed
-Total Total Runtime: 50.61 seconds
-[2025-05-02 19:11:04] Completed
+PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+Total Total Runtime: 45.55 seconds
+[2025-07-12 16:10:27] Completed
