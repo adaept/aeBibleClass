@@ -90,7 +90,15 @@ Sub CreateEmphasisBlackStyle()
     MsgBox "Character style 'EmphasisBlack' created and added to the Style Gallery.", vbInformation
 End Sub
 
-Sub FindNotEmphasisBlackRed(fontColor As String)
+Function CountFindNotEmphasisBlack()
+    CountFindNotEmphasisBlack = FindNotEmphasisBlackRed("Automatic")
+End Function
+
+Function CountFindNotEmphasisRed()
+    CountFindNotEmphasisRed = FindNotEmphasisBlackRed("Dark Red")
+End Function
+
+Function FindNotEmphasisBlackRed(fontColor As String) As Integer
 ' fontColor = Automatic - Arial Black, 8pt, "Normal" Style
 ' fontColor = Dark Red - Arial Black, 8pt, "Words of Jesus" Style
 ' This is a fast that will skip over text that is of the style EmphasisBlack or EmphasisRed
@@ -100,91 +108,52 @@ Sub FindNotEmphasisBlackRed(fontColor As String)
     Set rng = ActiveDocument.content
     Dim totalCount As Integer
     Dim wordColor As Long
-    Dim wordStyle As String
-    Dim myStyle As String
+    Dim wordStyle As style
+    Dim myStyle As style
 
     If fontColor = "Automatic" Then
         wordColor = wdColorAutomatic
-        wordStyle = "Normal"
-        myStyle = "EmphasisBlack"
+        Set wordStyle = ActiveDocument.Styles("Normal")
+        Set myStyle = ActiveDocument.Styles("EmphasisBlack")
     ElseIf fontColor = "Dark Red" Then
         wordColor = wdColorDarkRed
-        wordStyle = "Words of Jesus"
-        myStyle = "EmphasisRed"
+        Set wordStyle = ActiveDocument.Styles("Words of Jesus")
+        Set myStyle = ActiveDocument.Styles("EmphasisRed")
     Else
         MsgBox "Incorrect parameter. Automatic or Dark Red expected!", vbCritical, "FindNotEmphasisBlackRed"
         Stop
     End If
 
+    'Debug.Print "wordStyle = " & wordStyle, "wordColor = " & wordColor, "wdColorDarkRed = " & wdColorDarkRed, _
+                    "myStyle = " & myStyle
     totalCount = 0
     With rng.Find
         .ClearFormatting
         .style = ActiveDocument.Styles(wordStyle)
         .font.name = "Arial Black"
-        .font.Size = 8
+        .font.Size = 9
         .font.color = wordColor
         .text = ""
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
 
+    Debug.Print ".style = " & rng.Find.style
         Do While .Execute
             ' Check if character style is NOT EmphasisBlack or EmphasisRed
             If Not rng.Characters(1).style = myStyle Then
                 rng.Select
                 totalCount = totalCount + 1
                 MsgBox "Found matching text (not " & myStyle & ").", vbInformation
-                Exit Sub
+                Exit Function
             End If
             rng.Collapse wdCollapseEnd
         Loop
 
-        If totalCount = 0 Then MsgBox "totalCount = 0, No matching text found (excluding EmphasisBlack).", vbExclamation
+        'If totalCount = 0 Then MsgBox "totalCount = 0, No matching text found (excluding EmphasisBlack).", vbExclamation
     End With
     'Debug.Print "totalCount = " & totalCount
-End Sub
+End Function
 
-Sub FindAndCount_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
-    Dim rng As range
-    Dim totalCount As Long
-    Dim foundFirst As Boolean
-    Dim docRange As range
-
-    Set docRange = ActiveDocument.content
-    totalCount = 0
-    foundFirst = False
-
-    Set rng = docRange.Duplicate
-
-    With rng.Find
-        .ClearFormatting
-        .style = ActiveDocument.Styles("Words of Jesus")
-        .font.name = "Arial Black"
-        .font.Size = 8
-        .font.color = wdColorDarkRed
-        .text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = True
-
-        Do While .Execute
-            If rng.Characters(1).style <> "EmphasisRed" Then
-                totalCount = totalCount + 1
-
-                If Not foundFirst Then
-                    rng.Select
-                    foundFirst = True
-                End If
-            End If
-            rng.Collapse wdCollapseEnd
-        Loop
-    End With
-
-    If foundFirst Then
-        MsgBox "First match selected. Total matches (excluding EmphasisRed): " & totalCount, vbInformation
-    Else
-        MsgBox "No matching text found (excluding EmphasisRed or wrong color).", vbExclamation
-    End If
-End Sub
 
 
