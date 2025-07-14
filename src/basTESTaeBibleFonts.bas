@@ -131,14 +131,14 @@ Function FindNotEmphasisBlackRed(fontColor As String) As Integer
         .ClearFormatting
         .style = ActiveDocument.Styles(wordStyle)
         .font.name = "Arial Black"
-        .font.Size = 9
+        .font.Size = 8
         .font.color = wordColor
         .text = ""
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
 
-    Debug.Print ".style = " & rng.Find.style
+        'Debug.Print ".style = " & rng.Find.style
         Do While .Execute
             ' Check if character style is NOT EmphasisBlack or EmphasisRed
             If Not rng.Characters(1).style = myStyle Then

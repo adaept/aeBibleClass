@@ -12,7 +12,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #218 -
 ' #217 -
 ' #216 -
-' #215 -
+' #215 - Add test for paragraph mark only - Calibri 9 Dark Red - should be color Automatic
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
 ' #211 - Add test for CountBoldFootnotes_WordLevel

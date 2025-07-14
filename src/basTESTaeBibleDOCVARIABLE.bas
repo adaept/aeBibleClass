@@ -324,11 +324,11 @@ Function SearchShapeForVariable(shape As shape, variableName As String) As Boole
 End Function
 
 Sub SetDocVariables()
-    GoTo NewTestament
+    'GoTo NewTestament
     
     ' Old Testament
     ActiveDocument.Variables("Gen").value = 20
-    ActiveDocument.Variables("Exod").value = 58
+    ActiveDocument.Variables("Exod").value = 57
     ActiveDocument.Variables("Lev").value = 87
     ActiveDocument.Variables("Num").value = 109
     ActiveDocument.Variables("Deut").value = 140
