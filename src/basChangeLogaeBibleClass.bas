@@ -11,11 +11,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #219 -
 ' #218 -
 ' #217 -
-' #216 -
+' #216 - Error with H1 count of 66 vs 59 for show/hide true false
 ' #215 - Add test for paragraph mark only - Calibri 9 Dark Red - should be color Automatic
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
-' #211 - Add test for CountBoldFootnotes_WordLevel
 ' #210 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
@@ -63,6 +62,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #211 - Add test for CountBoldFootnotesWordLevel
     ' FIXED - #213 - Add test for Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = 0 when all have been set
     ' FIXED - #142 - Add routine to output book names and pages for TOC manual verification - see #039
     ' FIXED - #209 - Add Section Nav button to ribbon for bookmarked Heading_00 to Heading_12 sections
