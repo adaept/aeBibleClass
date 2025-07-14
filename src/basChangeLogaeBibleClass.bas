@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #219 -
 ' #218 -
 ' #217 -
-' #216 - Error with H1 count of 66 vs 59 for show/hide true false
 ' #215 - Add test for paragraph mark only - Calibri 9 Dark Red - should be color Automatic
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
@@ -62,6 +61,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #216 - Error with H1 count of 66 vs 59 for show/hide true false
+'       Problem list = "Joshua", "2 Kings", "Nehemiah", "Habakkuk", "Haggai", "Philemon", "1 Peter"
+'           The issue wasn’t with the styles or outline levels themselves, but with invisible or corrupted inline content
+'           (probably non-printing characters or hidden formatting) hiding in those paragraphs. When one cleaned one (Joshua),
+'           it likely triggered a reflow/re-rendering in Word that corrected the others.
+'       Solution - Click at the end of the word "Joshua" and press Delete Then press Enter once.
+'           This clears any hidden/invisible content after the heading text that may prevent proper recognition.
+'           Reselect the paragraph and reapply Heading 1 style
     ' FIXED - #211 - Add test for CountBoldFootnotesWordLevel
     ' FIXED - #213 - Add test for Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = 0 when all have been set
     ' FIXED - #142 - Add routine to output book names and pages for TOC manual verification - see #039
