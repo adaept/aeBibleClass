@@ -11,15 +11,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #219 -
 ' #218 -
 ' #217 -
-' #215 - Add test for paragraph mark only - Calibri 9 Dark Red - should be color Automatic
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
-' #210 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
-' #184 - Add test for Footnote Text to count those that have any bold text
 ' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
@@ -61,6 +58,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #210 - See #213 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
+    ' FIXED - #184 - See #211 - Add test for Footnote Text to count those that have any bold text
+    ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic
     ' FIXED - #216 - Error with H1 count of 66 vs 59 for show/hide true false
 '       Problem list = "Joshua", "2 Kings", "Nehemiah", "Habakkuk", "Haggai", "Philemon", "1 Peter"
 '           The issue wasn’t with the styles or outline levels themselves, but with invisible or corrupted inline content

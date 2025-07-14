@@ -161,8 +161,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16456, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 646, 646, 117, 117, 0, 19, 153, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16473, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 648, 648, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -307,6 +307,7 @@ Test16:     RunTest (16)
             RunTest (40)
             RunTest (41)
             RunTest (42)
+            RunTest (43)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -469,10 +470,13 @@ Private Function GetPassFail(TestNum As Integer) As String
         ResultArray(41) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
         If ResultArray(41) = oneBasedExpectedArray(41) Then GetPassFail = "PASS    "
     Case 42
-        ResultArray(42) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+        ResultArray(42) = CountBoldFootnotesWordLevel
         If ResultArray(42) = oneBasedExpectedArray(42) Then GetPassFail = "PASS    "
+    Case 43
+        ResultArray(43) = CountDarkRedStyledParagraphMarks
+        If ResultArray(43) = oneBasedExpectedArray(43) Then GetPassFail = "PASS    "
     Case Else
-        Debug.Print ">The test number is outside the accepted range"
+        Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
 End Function
 
@@ -619,8 +623,11 @@ Private Function RunTest(num As Integer) As Boolean
     Case 42
         Debug.Print GetPassFail(42), "Copy ()", "Test = " & num, ResultArray(42), oneBasedExpectedArray(42), "CountBoldFootnotesWordLevel"
         If TestReportFlag Then OutputTestReport (42)
+    Case 43
+        Debug.Print GetPassFail(43), "Copy ()", "Test = " & num, ResultArray(43), oneBasedExpectedArray(43), "CountDarkRedStyledParagraphMarks"
+        If TestReportFlag Then OutputTestReport (43)
    Case Else
-        Debug.Print ">>The test number is outside the accepted range"
+        Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
 
     endTime = Timer
@@ -734,9 +741,50 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(41) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(41))) & Fixed14Str(CStr(oneBasedExpectedArray(41))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
         AppendToFile TestReportFileName, GetPassFail(42) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(42))) & Fixed14Str(CStr(oneBasedExpectedArray(42))) & "CountBoldFootnotesWordLevel"
+    Case 43
+        AppendToFile TestReportFileName, GetPassFail(43) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(43))) & Fixed14Str(CStr(oneBasedExpectedArray(43))) & "CountDarkRedStyledParagraphMarks"
    Case Else
-        Debug.Print ">>>The test number is outside the accepted range"
+        Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountDarkRedStyledParagraphMarks()
+    Dim rng As range
+    Dim totalMatches As Long
+    Dim found As Boolean
+
+    Set rng = ActiveDocument.content
+    totalMatches = 0
+    found = False
+
+    With rng.Find
+        .ClearFormatting
+        .text = "^13"
+        .font.name = "Calibri"
+        .font.Size = 9
+        .font.color = wdColorDarkRed
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+
+        Do While .Execute
+            totalMatches = totalMatches + 1
+
+            If Not found Then
+                rng.Select ' Move cursor to the first matching styled paragraph mark
+                found = True
+            End If
+
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    'MsgBox "Total styled paragraph marks found: " & totalMatches & vbCrLf & _
+           IIf(found, "Cursor moved to first match.", "No matching paragraph marks found."), _
+           vbInformation, "Search Complete"
+    'Debug.Print "Total styled paragraph marks found: " & totalMatches & vbCrLf & _
+           IIf(found, "Cursor moved to first match.", "No matching paragraph marks found.")
+    CountDarkRedStyledParagraphMarks = totalMatches
 End Function
 
 Private Function CountBoldFootnotesWordLevel()
