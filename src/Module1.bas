@@ -941,30 +941,5 @@ Sub CountTabParagraphsFull()
            vbInformation, "Tab Paragraph Count"
 End Sub
 
-Sub CountBoldFootnotes_WordLevel()
-    Dim ft As footnote
-    Dim word As range
-    Dim boldCount As Long
-    Dim hasBold As Boolean
 
-    For Each ft In ActiveDocument.Footnotes
-        hasBold = False
-
-        If ft.range.style = "Footnote Text" Then
-            For Each word In ft.range.Words
-                If word.font.Bold = True Then
-                    boldCount = boldCount + 1
-                    hasBold = True
-                    Exit For
-                End If
-            Next word
-        End If
-    Next ft
-
-    If boldCount > 0 Then
-        MsgBox boldCount & " footnotes contain bold words in 'Footnote Text' style.", vbInformation
-    Else
-        MsgBox "No bold words found in 'Footnote Text' footnotes.", vbInformation
-    End If
-End Sub
 
