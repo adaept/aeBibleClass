@@ -7,10 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #220 -
-' #219 -
-' #218 -
-' #217 -
+' #225 -
+' #224 -
+' #223 -
+' #222 -
+' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
@@ -58,6 +59,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #220 - Update DOCVARIABLEs based on results of PrintHeading1sByLogicalPage
+    ' FIXED - #219 - Add routine to count search hits with match case true
+    ' FIXED - #218 - Add routine to print logical page numbers with Heading 1, in a list, for Bible book page check
+    ' FIXED - #217 - Update "I am The lord" to "I am the Lord" x42
     ' FIXED - #210 - See #213 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
     ' FIXED - #184 - See #211 - Add test for Footnote Text to count those that have any bold text
     ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic

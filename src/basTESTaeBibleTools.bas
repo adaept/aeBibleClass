@@ -443,5 +443,63 @@ Sub CompareDocuments(original As String, modified As String)
     MsgBox "Comparison complete! See the document for tracked changes."
 End Sub
 
+Sub CountSearchHits()
+    Dim searchTerm As String
+    Dim count As Long
+    Dim rng As range
 
+    searchTerm = InputBox("Enter the text to search for:")
+    If Len(searchTerm) = 0 Then Exit Sub
 
+    count = 0
+    Set rng = ActiveDocument.content
+    With rng.Find
+        .text = searchTerm
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchCase = True
+        .MatchWholeWord = False
+        .MatchWildcards = False
+
+        Do While .Execute
+            count = count + 1
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    MsgBox "Found " & count & " instance(s) of '" & searchTerm & "'.", vbInformation
+End Sub
+
+Sub PrintHeading1sByLogicalPage()
+    Dim i As Long
+    Dim maxPage As Long
+    Dim pageRange As range
+    Dim para As paragraph
+    Dim headingText As String
+    Dim foundHeading As Boolean
+
+    maxPage = ActiveDocument.range.Information(wdNumberOfPagesInDocument)
+
+    Debug.Print "=== Heading 1s by Logical Page (GoTo ^H) ==="
+
+    For i = 1 To maxPage
+        Set pageRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=i)
+        Set pageRange = pageRange.GoTo(What:=wdGoToBookmark, name:="\page") ' Get full page range
+
+        foundHeading = False
+
+        For Each para In pageRange.paragraphs
+            If para.style = "Heading 1" Then
+                headingText = Replace(para.range.text, vbCr, "")
+                Debug.Print "Logical Page " & i & ": " & headingText
+                foundHeading = True
+                Exit For ' Only report first Heading 1 per page
+            End If
+        Next para
+
+        If Not foundHeading Then
+            ' Optional: Debug.Print "Logical Page " & i & ": No Heading 1"
+        End If
+    Next i
+End Sub
