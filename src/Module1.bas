@@ -941,5 +941,116 @@ Sub CountTabParagraphsFull()
            vbInformation, "Tab Paragraph Count"
 End Sub
 
+Sub CompareHeading1sWithShowHideToggle()
+    Dim showList As Collection, hideList As Collection
+    Dim i As Long, j As Long, k As Long
+    Dim jShow(1 To 66) As Integer, kHide(1 To 66) As Integer
+    Dim showTrue As String, showFalse As String
+    Dim maxPage As Long
+    Dim headingText As String
+    Dim pageRange As range
+    Dim para As paragraph
+    Dim originalShowAll As Boolean
 
+    Set showList = New Collection
+    Set hideList = New Collection
+    maxPage = ActiveDocument.range.Information(wdNumberOfPagesInDocument)
+
+    ' --- Preserve original Show/Hide state ---
+    originalShowAll = ActiveWindow.View.ShowAll
+
+    Debug.Print "=== Comparison of Heading 1s with Show/Hide ON vs OFF ==="
+
+    ' --- Pass 1: Show/Hide ON ---
+    ActiveWindow.View.ShowAll = True
+    j = 0
+    For i = 1 To maxPage
+        Set pageRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=i)
+        Set pageRange = pageRange.GoTo(What:=wdGoToBookmark, name:="\page")
+
+        headingText = ""
+        For Each para In pageRange.paragraphs
+            If para.style = "Heading 1" Then
+                headingText = Replace(para.range.text, vbCr, "")
+                showList.Add headingText
+                j = j + 1
+                jShow(j) = j
+                showTrue = showTrue & " " & jShow(j) & ">" & i & "," & headingText
+                'Debug.Print " " & jShow(j) & ">" & i & "," & headingText,
+                Exit For
+            End If
+        Next para
+    Next i
+    Debug.Print showTrue
+    Debug.Print "length = " & Len(showTrue)
+
+    ' --- Pass 2: Show/Hide OFF ---
+    ActiveWindow.View.ShowAll = False
+    k = 0
+    For i = 1 To maxPage
+        Set pageRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=i)
+        Set pageRange = pageRange.GoTo(What:=wdGoToBookmark, name:="\page")
+
+        headingText = ""
+        For Each para In pageRange.paragraphs
+            If para.style = "Heading 1" Then
+                headingText = Replace(para.range.text, vbCr, "")
+                hideList.Add headingText
+                k = k + 1
+                kHide(k) = k
+                showFalse = showFalse & " " & kHide(k) & ">" & i & "," & headingText
+                'Debug.Print " " & kHide(k) & ">" & i & "," & headingText,
+                Exit For
+            End If
+        Next para
+    Next i
+    Debug.Print showFalse
+    Debug.Print "length = " & Len(showFalse)
+
+    ' --- Restore original Show/Hide state ---
+    ActiveWindow.View.ShowAll = originalShowAll
+
+    Debug.Print "! Comparison complete."
+End Sub
+
+Sub CheckShowHideStatus()
+    Dim directStatus As Boolean
+    Dim inferredStatus As Boolean
+
+    directStatus = ActiveWindow.View.ShowAll
+    inferredStatus = IsShowHideOn_Indirect()
+
+    Debug.Print "=== Show/Hide Diagnostic ==="
+    Debug.Print "Direct method (View.ShowAll): " & IIf(directStatus, "ON", "OFF")
+    Debug.Print "Inferred method (formatting visibility): " & IIf(inferredStatus, "ON", "OFF")
+
+    If directStatus <> inferredStatus Then
+        Debug.Print "Discrepancy detected between direct and inferred methods!"
+    Else
+        Debug.Print "Both methods agree on Show/Hide status."
+    End If
+    Debug.Print "============================"
+End Sub
+
+Function IsShowHideOn_Indirect() As Boolean
+    Dim testPara As paragraph
+    Dim testText As String
+    Dim tempRange As range
+
+    ' Insert a temporary paragraph with a tab and space
+    Set tempRange = ActiveDocument.range
+    tempRange.Collapse Direction:=wdCollapseEnd
+    Set testPara = ActiveDocument.paragraphs.Add
+    testPara.range.text = "Test" & vbTab & " " & vbCr
+
+    ' Check for visible formatting marks (tab or non-breaking space)
+    If InStr(testPara.range.text, Chr(160)) > 0 Or InStr(testPara.range.text, Chr(9)) > 0 Then
+        IsShowHideOn_Indirect = True
+    Else
+        IsShowHideOn_Indirect = False
+    End If
+
+    ' Clean up
+    testPara.range.Delete
+End Function
 
