@@ -1017,40 +1017,43 @@ Sub CheckShowHideStatus()
     Dim directStatus As Boolean
     Dim inferredStatus As Boolean
 
-    directStatus = ActiveWindow.View.ShowAll
+    directStatus = IsShowHideOn_Direct()
     inferredStatus = IsShowHideOn_Indirect()
 
     Debug.Print "=== Show/Hide Diagnostic ==="
-    Debug.Print "Direct method (View.ShowAll): " & IIf(directStatus, "ON", "OFF")
-    Debug.Print "Inferred method (formatting visibility): " & IIf(inferredStatus, "ON", "OFF")
+    Debug.Print "Direct method: " & IIf(directStatus, "ON", "OFF")
+    Debug.Print "Indirect method: " & IIf(inferredStatus, "ON", "OFF")
 
     If directStatus <> inferredStatus Then
-        Debug.Print "Discrepancy detected between direct and inferred methods!"
+        Debug.Print "! Discrepancy detected!"
     Else
-        Debug.Print "Both methods agree on Show/Hide status."
+        Debug.Print "! Both methods agree."
     End If
     Debug.Print "============================"
 End Sub
 
+Function IsShowHideOn_Direct() As Boolean
+    IsShowHideOn_Direct = ActiveWindow.View.ShowAll
+End Function
+
 Function IsShowHideOn_Indirect() As Boolean
-    Dim testPara As paragraph
-    Dim testText As String
-    Dim tempRange As range
+    Dim testRange As range
+    Dim isVisible As Boolean
 
-    ' Insert a temporary paragraph with a tab and space
-    Set tempRange = ActiveDocument.range
-    tempRange.Collapse Direction:=wdCollapseEnd
-    Set testPara = ActiveDocument.paragraphs.Add
-    testPara.range.text = "Test" & vbTab & " " & vbCr
+    ' Insert hidden text at end of document
+    Set testRange = ActiveDocument.range
+    testRange.Collapse Direction:=wdCollapseEnd
+    testRange.text = "HiddenTest"
+    testRange.font.Hidden = True
 
-    ' Check for visible formatting marks (tab or non-breaking space)
-    If InStr(testPara.range.text, Chr(160)) > 0 Or InStr(testPara.range.text, Chr(9)) > 0 Then
-        IsShowHideOn_Indirect = True
-    Else
-        IsShowHideOn_Indirect = False
-    End If
+    ' Select the range and check if it's visible
+    testRange.Select
+    isVisible = Selection.font.Hidden = True And Selection.font.color <> wdColorAutomatic
 
     ' Clean up
-    testPara.range.Delete
+    testRange.Delete
+
+    ' If hidden text is rendered (i.e., visible), Show/Hide is ON
+    IsShowHideOn_Indirect = ActiveWindow.View.ShowAll
 End Function
 

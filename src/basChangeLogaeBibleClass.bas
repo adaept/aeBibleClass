@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #230 -
+' #229 -
+' #228 -
+' #227 -
+' #226 -
 ' #225 -
-' #224 -
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
@@ -57,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #224 - Fix error in CheckShowHideStatus to make it reliable
     ' FIXED - #223 - Add routine with two different ways to check Show/Hide status
     ' FIXED - #222 - Add routine to compare Heading 1s with Show/Hide toggled
     ' FIXED - #220 - Update DOCVARIABLEs based on results of PrintHeading1sByLogicalPage

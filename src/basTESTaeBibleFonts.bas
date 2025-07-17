@@ -51,13 +51,13 @@ End Sub
 
 Function IsFontInstalled(fontName As String) As Boolean
     Dim TestDoc As Document
-    Dim TestRange As range
+    Dim testRange As range
     On Error Resume Next
     Set TestDoc = Documents.Add(Visible:=False)
-    Set TestRange = TestDoc.content
-    TestRange.text = "Test"
-    TestRange.font.name = fontName
-    IsFontInstalled = (TestRange.font.name = fontName)
+    Set testRange = TestDoc.content
+    testRange.text = "Test"
+    testRange.font.name = fontName
+    IsFontInstalled = (testRange.font.name = fontName)
     TestDoc.Close SaveChanges:=False
     On Error GoTo 0
 End Function
