@@ -13,7 +13,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #232 -
 ' #231 -
 ' #230 -
-' #229 - Add test to verify all necessary settings of Word are enabled
+' #229 - Add code to verify all necessary settings of Word are enabled - basWordSettingsDiagnostic
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
