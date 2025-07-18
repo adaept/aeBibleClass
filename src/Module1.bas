@@ -1013,47 +1013,7 @@ Sub CompareHeading1sWithShowHideToggle()
     Debug.Print "! Comparison complete."
 End Sub
 
-Sub CheckShowHideStatus()
-    Dim directStatus As Boolean
-    Dim inferredStatus As Boolean
-
-    directStatus = IsShowHideOn_Direct()
-    inferredStatus = IsShowHideOn_Indirect()
-
-    Debug.Print "=== Show/Hide Diagnostic ==="
-    Debug.Print "Direct method: " & IIf(directStatus, "ON", "OFF")
-    Debug.Print "Indirect method: " & IIf(inferredStatus, "ON", "OFF")
-
-    If directStatus <> inferredStatus Then
-        Debug.Print "! Discrepancy detected!"
-    Else
-        Debug.Print "! Both methods agree."
-    End If
-    Debug.Print "============================"
-End Sub
-
-Function IsShowHideOn_Direct() As Boolean
-    IsShowHideOn_Direct = ActiveWindow.View.ShowAll
-End Function
-
-Function IsShowHideOn_Indirect() As Boolean
-    Dim testRange As range
-    Dim isVisible As Boolean
-
-    ' Insert hidden text at end of document
-    Set testRange = ActiveDocument.range
-    testRange.Collapse Direction:=wdCollapseEnd
-    testRange.text = "HiddenTest"
-    testRange.font.Hidden = True
-
-    ' Select the range and check if it's visible
-    testRange.Select
-    isVisible = Selection.font.Hidden = True And Selection.font.color <> wdColorAutomatic
-
-    ' Clean up
-    testRange.Delete
-
-    ' If hidden text is rendered (i.e., visible), Show/Hide is ON
-    IsShowHideOn_Indirect = ActiveWindow.View.ShowAll
+Function CheckShowHideStatus() As Boolean
+    CheckShowHideStatus = ActiveWindow.View.ShowAll
 End Function
 
