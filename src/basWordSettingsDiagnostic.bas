@@ -8,13 +8,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' === WordSettingsDiagnostic.bas ===
 ' === Main entry point ===
 Sub RunWordSettingsAudit(Optional saveToFile As Boolean = False)
-    Dim currentSettings As Dictionary
-    Dim targetSettings As Dictionary
-    Dim discrepancies As Dictionary
+    Dim currentSettings As Object
+    Dim targetSettings As Object
+    Dim discrepancies As Object
     Dim outputText As String
-    
+
+    ' Create all dictionaries using late binding
     Set currentSettings = GetCurrentWordSettings()
-    Set targetSettings = LoadTargetBaseline() ' Modify this to load from file or static reference
+    Set targetSettings = LoadTargetBaseline()
     Set discrepancies = CompareSettings(currentSettings, targetSettings)
 
     outputText = FormatDiagnostics(currentSettings, targetSettings, discrepancies)
@@ -38,7 +39,9 @@ Function GetCurrentWordSettings() As Object
         'settings.Add "ShowPasteOptions", .ShowPasteOptions     - only available in Excel
         'settings.Add "AllowClickAndType", .AllowClickAndType   - not defined in the Word VBA Options object
         settings.Add "EnableSound", .EnableSound
-        settings.Add "CheckGrammarWithSpelling", .CheckGrammarWithSpelling
+        'settings.Add "CheckGrammarWithSpelling", .CheckGrammarWithSpelling - not defined in Word 365 VBA
+        ' Editor-based grammar settings are not exposed via VBA
+        settings.Add "GrammarCheckStatus", "Not accessible via VBA (Editor-based)"
         'settings.Add "ShowAllFormattingMarks", .ShowAllFormattingMarks     - not defined in Word VBA
         'settings.Add "ShowTextBoundaries", .ShowTextBoundaries             - not a member of the Options object in Word VBA
         settings.Add "ShowTextBoundaries", GetShowTextBoundaries()         '- workaround
@@ -65,15 +68,15 @@ Function GetShowTextBoundaries() As Variant
 End Function
 
 ' === Define or Load a baseline (can be replaced with a loader from external file) ===
-Function LoadTargetBaseline() As Dictionary
+Function LoadTargetBaseline() As Object
     Dim baseline As Object
     Set baseline = CreateObject("Scripting.Dictionary")
     baseline.Add "EnableLivePreview", True
-    baseline.Add "ShowPasteOptions", True
-    baseline.Add "AllowClickAndType", True
+    'baseline.Add "ShowPasteOptions", True
+    'baseline.Add "AllowClickAndType", True
     baseline.Add "EnableSound", False
-    baseline.Add "CheckGrammarWithSpelling", True
-    baseline.Add "ShowAllFormattingMarks", False
+    'baseline.Add "CheckGrammarWithSpelling", True
+    'baseline.Add "ShowAllFormattingMarks", False
     baseline.Add "ShowTextBoundaries", False
     baseline.Add "OptimizeForWord97", False
     baseline.Add "SaveInterval", 10
@@ -90,6 +93,7 @@ Function CompareSettings(current As Object, target As Object) As Object
     ' Loop through keys in target dictionary
     For Each key In target.Keys
         If current.Exists(key) Then
+            'Debug.Print ">" & key
             If current(key) <> target(key) Then
                 discrepancies.Add key, "Current: " & current(key) & " | Expected: " & target(key)
             End If
