@@ -1013,7 +1013,3 @@ Sub CompareHeading1sWithShowHideToggle()
     Debug.Print "! Comparison complete."
 End Sub
 
-Function CheckShowHideStatus() As Boolean
-    CheckShowHideStatus = ActiveWindow.View.ShowAll
-End Function
-

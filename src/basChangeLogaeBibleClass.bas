@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #235 -
+' #234 -
+' #233 -
+' #232 -
+' #231 -
 ' #230 -
-' #229 -
-' #228 -
+' #229 - Add test to verify all necessary settings of Word are enabled
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
@@ -60,6 +64,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #228 - Abort tests if Show/Hide is not set
     ' FIXED - #227 - Update CheckShowHideStatus as ActiveWindow.View.ShowAll is the only reliable source of truth
     ' FIXED - #224 - Fix error in CheckShowHideStatus to make it reliable
     ' FIXED - #223 - Add routine with two different ways to check Show/Hide status

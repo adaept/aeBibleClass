@@ -82,6 +82,11 @@ End Sub
 Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Integer
 
     On Error GoTo PROC_ERR
+    
+    If Not CheckShowHideStatus Then
+        MsgBox "Show/Hide is NOT set!", vbCritical, "HALT!"
+        Stop
+    End If
 
     'MsgBox "TheBibleClassTests"
     If IsMissing(varDebug) Then
@@ -111,6 +116,10 @@ PROC_ERR:
     Resume PROC_EXIT
 
 End Property
+
+Function CheckShowHideStatus() As Boolean
+    CheckShowHideStatus = ActiveWindow.View.ShowAll
+End Function
 
 Private Sub InitializeGlobalResultArrayToMinusOne()
     Dim i As Integer
