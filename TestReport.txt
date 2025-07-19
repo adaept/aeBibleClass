@@ -46,7 +46,14 @@ PASS              Copy ()       Test = 40     0             0             CountP
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
 PASS              Copy ()       Test = 42     0             0             CountBoldFootnotesWordLevel
 PASS              Copy ()       Test = 43     0             0             CountDarkRedStyledParagraphMarks
-Total Total Runtime: 112.80 seconds
-[2025-07-19 14:44:58] Completed
+Total Total Runtime: 118.01 seconds
+[2025-07-19 17:52:54] Completed
 BibleClass VERSION: 0.1.0
 BibleClass VERSION_DATE: July 19, 2025
+== Word Build Info ==
+Application Name: Microsoft Word
+Platform Version: 16.0
+Platform Build: 16.0.18925
+Full Version String: Microsoft Word 16.0 (16.0.18925)
+Marketing Version: 2506 (Build 18925.20158)
+Source: Microsoft 365 Current Channel, July 2025 update

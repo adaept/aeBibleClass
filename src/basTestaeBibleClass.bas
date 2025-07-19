@@ -42,7 +42,7 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
     End If
 
     Debug.Print
-    Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
+    Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
     Debug.Print "1. aeBibleClassTest => TheBibleClassTests"
     Debug.Print "aeBibleClassTest"
     If IsMissing(varDebug) Then
@@ -58,7 +58,7 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
     Else
         Debug.Print "Unexpected Parameter !!!"
     End If
-    Debug.Print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+    Debug.Print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     Debug.Print
 
 PROC_EXIT:

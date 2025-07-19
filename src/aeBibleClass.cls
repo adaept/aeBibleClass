@@ -342,6 +342,9 @@ Test16:     RunTest (16)
     Debug.Print "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
     If TestReportFlag Then AppendToFile TestReportFileName, "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
 
+    Debug.Print LogWordBuildInfo
+    If TestReportFlag Then AppendToFile TestReportFileName, LogWordBuildInfo
+
     RunBibleClassTests = True
 
 PROC_EXIT:
@@ -351,6 +354,20 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunBibleClassTests of Class BibleClass"
     Resume PROC_EXIT
 
+End Function
+
+Private Function LogWordBuildInfo() As String
+    Dim info As String
+    info = "== Word Build Info ==" & vbCrLf
+    info = info & "Application Name: " & Application.name & vbCrLf
+    info = info & "Platform Version: " & Application.Version & vbCrLf
+    info = info & "Platform Build: " & Application.Build & vbCrLf
+    info = info & "Full Version String: " & Application.name & " " & Application.Version & " (" & Application.Build & ")" & vbCrLf
+    info = info & "Marketing Version: 2506 (Build 18925.20158)" & vbCrLf
+    info = info & "Source: Microsoft 365 Current Channel, July 2025 update"
+    'Debug.Print info
+    'MsgBox info, vbInformation, "Word Version Details"
+    LogWordBuildInfo = info
 End Function
 
 Private Function GetPassFail(TestNum As Integer) As String
