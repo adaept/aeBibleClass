@@ -34,21 +34,33 @@ End Sub
 Function GetCurrentWordSettings() As Object
     Dim settings As Object
     Set settings = CreateObject("Scripting.Dictionary")
+
     With Options
         settings.Add "EnableLivePreview", .EnableLivePreview
-        'settings.Add "ShowPasteOptions", .ShowPasteOptions     - only available in Excel
-        'settings.Add "AllowClickAndType", .AllowClickAndType   - not defined in the Word VBA Options object
         settings.Add "EnableSound", .EnableSound
-        'settings.Add "CheckGrammarWithSpelling", .CheckGrammarWithSpelling - not defined in Word 365 VBA
-        ' Editor-based grammar settings are not exposed via VBA
-        settings.Add "GrammarCheckStatus", "Not accessible via VBA (Editor-based)"
-        'settings.Add "ShowAllFormattingMarks", .ShowAllFormattingMarks     - not defined in Word VBA
-        'settings.Add "ShowTextBoundaries", .ShowTextBoundaries             - not a member of the Options object in Word VBA
-        settings.Add "ShowTextBoundaries", GetShowTextBoundaries()         '- workaround
-        settings.Add "OptimizeForWord97", ActiveDocument.OptimizeForWord97
         settings.Add "SaveInterval", .SaveInterval
         settings.Add "BackgroundSave", .BackgroundSave
     End With
+
+    ' View-dependent workaround
+    settings.Add "ShowTextBoundaries", GetShowTextBoundaries()
+
+    ' Document-level setting
+    settings.Add "OptimizeForWord97", ActiveDocument.OptimizeForWord97
+
+    ' Editor settings - not exposed via VBA
+    settings.Add "GrammarCheckStatus", "Not accessible via VBA (Editor-based)"
+
+    ' Startup options - UI only
+    settings.Add "ShowStartScreenOnLaunch", "Manual check: File > Options > General > Startup Options"
+    settings.Add "MiniToolbarOnSelection", "Manual check: File > Options > General > User Interface Options"
+    settings.Add "OpenUneditableFilesInReadingView", "Manual check: File > Options > General > Startup Options"
+    settings.Add "ShowTellMeBox", "Manual check: File > Options > General > User Interface Options"
+    settings.Add "EditorGrammarStyle", "Manual check: Home tab > Editor > Customize Suggestions"
+    settings.Add "AutocorrectOptions", "Manual check: File > Options > Proofing > AutoCorrect Options"
+    settings.Add "StyleSuggestions", "Manual check: Home tab > Editor > Customize Suggestions"
+    settings.Add "FormatConsistencyChecker", "Manual check: File > Options > Advanced > Keep track of formatting"
+
     Set GetCurrentWordSettings = settings
 End Function
 
@@ -123,6 +135,13 @@ Function FormatDiagnostics(current As Object, target As Object, issues As Object
     result = result & vbCrLf & "== Full Current Settings ==" & vbCrLf
     For Each key In current.Keys
         result = result & key & ": " & current(key) & vbCrLf
+    Next key
+
+    result = result & vbCrLf & "== Manual UI Verifications ==" & vbCrLf
+    For Each key In current.Keys
+        If InStr(current(key), "Manual check:") > 0 Then
+            result = result & key & ": " & current(key) & vbCrLf
+        End If
     Next key
 
     FormatDiagnostics = result
