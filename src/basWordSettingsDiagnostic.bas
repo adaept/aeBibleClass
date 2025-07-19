@@ -120,6 +120,9 @@ End Function
 ' === Format diagnostics for output ===
 Function FormatDiagnostics(current As Object, target As Object, issues As Object) As String
     Dim result As String
+    Dim key As Variant
+    Const manualFlag As String = "[ ]" & " Manual check: "
+
     result = "== Word 365 Diagnostic Audit ==" & vbCrLf
     result = result & "Date: " & Format(Now, "yyyy-mm-dd hh:nn") & vbCrLf & vbCrLf
 
@@ -127,24 +130,39 @@ Function FormatDiagnostics(current As Object, target As Object, issues As Object
     If issues.count = 0 Then
         result = result & "None. All settings match baseline." & vbCrLf
     Else
-        Dim key As Variant
         For Each key In issues.Keys
             result = result & key & ": " & issues(key) & vbCrLf
         Next key
     End If
+
     result = result & vbCrLf & "== Full Current Settings ==" & vbCrLf
     For Each key In current.Keys
-        result = result & key & ": " & current(key) & vbCrLf
+        Select Case True
+            Case InStr(current(key), "Manual check:") > 0
+                result = result & "? " & key & ": " & current(key) & vbCrLf
+            Case InStr(current(key), "Not accessible") > 0 Or InStr(current(key), "Unsupported") > 0
+                result = result & "? " & key & ": " & current(key) & vbCrLf
+            Case Else
+                result = result & "[ ] " & key & ": " & FormatBoolean(current(key)) & vbCrLf
+        End Select
     Next key
 
     result = result & vbCrLf & "== Manual UI Verifications ==" & vbCrLf
     For Each key In current.Keys
-        If InStr(current(key), "Manual check:") > 0 Then
-            result = result & key & ": " & current(key) & vbCrLf
+        If InStr(current(key), "File > Options") > 0 Or InStr(current(key), "Editor") > 0 Then
+            result = result & manualFlag & key & " — " & current(key) & vbCrLf
         End If
     Next key
 
     FormatDiagnostics = result
+End Function
+
+Function FormatBoolean(value As Variant) As String
+    If VarType(value) = vbBoolean Then
+        FormatBoolean = IIf(value, "On", "Off")
+    Else
+        FormatBoolean = value
+    End If
 End Function
 
 ' === Save report to file ===
