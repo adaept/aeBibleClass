@@ -23,7 +23,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
-' #148 - Add version info to TestReport output
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
@@ -60,6 +59,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+' 20250719 - v010
+    ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
     ' OBSOLETE - #230 - Add code to fix Footnote Reference by reapplying style
     ' FIXED - #225 - Add code to verify Show/Hide is True when tests are run else stop with error message

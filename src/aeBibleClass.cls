@@ -64,8 +64,8 @@ Private Sub Class_Initialize()
         Application.Caption = Application.VBE.ActiveVBProject.name & " " & BibleClassVERSION
     End If
     Debug.Print "Class_Initialize"
-    BibleClassVERSION = "0.0.9"
-    BibleClassVERSION_DATE = "May 29, 2025"
+    BibleClassVERSION = "0.1.0"
+    BibleClassVERSION_DATE = "July 19, 2025"
     ' Reset OneTest for each run
     OneTest = 0
  End Sub
@@ -336,7 +336,12 @@ Test16:     RunTest (16)
     
     Debug.Print LogMessage("Completed")
     If TestReportFlag Then AppendToFile TestReportFileName, LogMessage("Completed")
-    
+
+    Debug.Print "BibleClass VERSION: " & BibleClassVERSION
+    If TestReportFlag Then AppendToFile TestReportFileName, "BibleClass VERSION: " & BibleClassVERSION
+    Debug.Print "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
+    If TestReportFlag Then AppendToFile TestReportFileName, "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
+
     RunBibleClassTests = True
 
 PROC_EXIT:
