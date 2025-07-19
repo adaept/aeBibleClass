@@ -504,44 +504,112 @@ Sub PrintHeading1sByLogicalPage()
     Next i
 End Sub
 
-Sub FixFootnoteReferencesByReapplyingStyle()
-    Dim i As Long
-    Dim totalChecked As Long
-    Dim totalFixed As Long
-    Dim refRange As range
+Sub FixAndDiagnoseFootnoteReferences()
     Dim doc As Document
+    Dim fn As footnote
+    Dim fnRef As range
+    Dim totalChecked As Long
+    Dim totalIncorrect As Long
+    Dim firstIncorrectPos As Long
+    Dim firstFound As Boolean
+    Dim mismatchDetail As String
 
     Set doc = ActiveDocument
+    totalChecked = 0
+    totalIncorrect = 0
+    firstFound = False
 
-    For i = 1 To doc.Footnotes.count
-        Set refRange = doc.Footnotes(i).Reference
+    Debug.Print "FixAndDiagnoseFootnoteReferences"
+    Debug.Print "Checking only footnote REFERENCE marks in main text..."
+
+    For Each fn In doc.Footnotes
+        Set fnRef = fn.Reference
         totalChecked = totalChecked + 1
 
-        ' Check if not using the correct style
-        If refRange.style <> wdStyleFootnoteReference Then
-            refRange.style = wdStyleFootnoteReference
-            totalFixed = totalFixed + 1
-            If totalFixed = 1 Then
-                Debug.Print "First incorrect style fixed at char position: " & refRange.Start
+        If totalChecked Mod 100 = 0 Then
+            Debug.Print "Checked: " & totalChecked & " references..."
+        End If
+
+        If Not IsCorrectFootnoteFormat(fnRef, mismatchDetail) Then
+            totalIncorrect = totalIncorrect + 1
+
+            ' Attempt fix
+            fnRef.font.Reset
+            fnRef.style = doc.Styles("Footnote Reference")
+            With fnRef.font
+                .name = "Segoe UI"
+                .Size = 8
+                .Bold = True
+                .color = wdColorBlue
+                .Superscript = True
+            End With
+
+            If Not firstFound Then
+                firstIncorrectPos = fnRef.Start
+                firstFound = True
+                Debug.Print "First incorrect formatting at character position: " & firstIncorrectPos
+                Debug.Print "Mismatch details: " & vbCrLf & mismatchDetail
             End If
         End If
+    Next fn
 
-        ' Optional: Force style attributes in case the style is applied but overridden
-        With refRange.font
-            .name = "Segoe UI"
-            .Size = 8
-            .Bold = True
-            .color = wdColorBlue
-            .Superscript = True
-        End With
+    Debug.Print "Total checked: " & totalChecked
+    Debug.Print "Total incorrect: " & totalIncorrect
 
-        If totalChecked Mod 100 = 0 Then
-            Debug.Print "Checked: " & totalChecked
-        End If
-    Next i
-
-    MsgBox "Footnote references checked: " & totalChecked & vbCrLf & _
-           "Footnote references fixed: " & totalFixed, vbInformation
+    If firstFound Then
+        ' Move to the first incorrect reference (in main text)
+        Selection.HomeKey Unit:=wdStory
+        Selection.MoveRight Unit:=wdCharacter, count:=firstIncorrectPos
+        Selection.Select
+    Else
+        MsgBox "All footnote reference formatting is correct."
+    End If
 End Sub
 
+Function IsCorrectFootnoteFormat(rng As range, ByRef mismatch As String) As Boolean
+    mismatch = ""
+    IsCorrectFootnoteFormat = True
+    With rng.font
+        If rng.style <> "Footnote Reference" Then
+            mismatch = mismatch & " - Style: " & rng.style & vbCrLf
+            IsCorrectFootnoteFormat = False
+        End If
+        If .name <> "Segoe UI" Then
+            mismatch = mismatch & " - Font Name: " & .name & vbCrLf
+            IsCorrectFootnoteFormat = False
+        End If
+        If .Size <> 8 Then
+            mismatch = mismatch & " - Size: " & .Size & vbCrLf
+            IsCorrectFootnoteFormat = False
+        End If
+        If .Bold <> True Then
+            mismatch = mismatch & " - Bold: " & .Bold & vbCrLf
+            IsCorrectFootnoteFormat = False
+        End If
+        If .color <> wdColorBlue Then
+            mismatch = mismatch & " - Color: " & .color & vbCrLf
+            IsCorrectFootnoteFormat = False
+        End If
+        If .Superscript <> True Then
+            mismatch = mismatch & " - Superscript: " & .Superscript & vbCrLf
+            IsCorrectFootnoteFormat = False
+        End If
+    End With
+End Function
+
+Sub FixFootnoteNumberStyleInText()
+    Dim fn As footnote
+    Dim paraRange As range
+    Dim firstRun As range
+
+    For Each fn In ActiveDocument.Footnotes
+        Set paraRange = fn.range.paragraphs(1).range
+        Set firstRun = paraRange.Words(1) ' Usually the footnote number
+
+        ' Apply Footnote Reference style
+        firstRun.style = ActiveDocument.Styles("Footnote Reference")
+    Next fn
+
+    MsgBox "Footnote Reference style reapplied to footnote numbers in footnote text.", vbInformation
+End Sub
 
