@@ -456,19 +456,6 @@ Function HexToRGB(hexColor As String) As Long
     HexToRGB = RGB(r, g, b)
 End Function
 
-Sub ReapplyFootnoteReferenceStyle()
-    Dim footnote As footnote
-    Dim doc As Document
-    
-    Set doc = ActiveDocument
-    
-    ' Loop through all footnotes in the document
-    For Each footnote In doc.Footnotes
-        ' Apply the Footnote Reference style to each footnote reference
-        footnote.Reference.style = doc.Styles("Footnote Reference")
-    Next footnote
-End Sub
-
 Function FirstPageFooterNotEmpty() As Boolean
     Dim doc As Document
     Dim footerRange As range
@@ -1012,4 +999,74 @@ Sub CompareHeading1sWithShowHideToggle()
 
     Debug.Print "! Comparison complete."
 End Sub
+
+Sub CountAndDiagnoseFootnoteFormatting()
+    Dim doc As Document
+    Dim i As Long
+    Dim ref As range
+    Dim fn As footnote
+    Dim errCount As Long
+    Dim totalChecked As Long
+    Dim posReported As Boolean
+
+    Set doc = ActiveDocument
+    errCount = 0
+    totalChecked = 0
+    posReported = False
+
+    Debug.Print "Checking Footnote References..."
+
+    ' Check main doc footnote references
+    For i = 1 To doc.Footnotes.count
+        Set ref = doc.Footnotes(i).Reference
+        totalChecked = totalChecked + 1
+
+        If Not IsFootnoteRefFormattedCorrectly(ref) Then
+            errCount = errCount + 1
+            If Not posReported Then
+                Debug.Print "First incorrect formatting at character position: " & ref.Start
+                Debug.Print "Mismatch details:"
+                Debug.Print " - Font Name: " & ref.font.name
+                Debug.Print " - Font Size: " & ref.font.Size
+                Debug.Print " - Font Color: " & ref.font.color
+                Debug.Print " - Superscript: " & ref.font.Superscript
+                posReported = True
+            End If
+        End If
+
+        If i Mod 100 = 0 Then Debug.Print "Checked: " & i & " footnotes..."
+    Next i
+
+    ' Check footnote numbers inside footnote text
+    For Each fn In doc.Footnotes
+        Set ref = fn.range.paragraphs(1).range.Words(1)
+        totalChecked = totalChecked + 1
+
+        If Not IsFootnoteRefFormattedCorrectly(ref) Then
+            errCount = errCount + 1
+            If Not posReported Then
+                Debug.Print "First incorrect footnote text number formatting at: " & ref.Start
+                Debug.Print "Mismatch details:"
+                Debug.Print " - Font Name: " & ref.font.name
+                Debug.Print " - Font Size: " & ref.font.Size
+                Debug.Print " - Font Color: " & ref.font.color
+                Debug.Print " - Superscript: " & ref.font.Superscript
+                posReported = True
+            End If
+        End If
+    Next fn
+
+    Debug.Print "Total checked: " & totalChecked
+    Debug.Print "Total incorrect: " & errCount
+End Sub
+
+Function IsFootnoteRefFormattedCorrectly(rng As range) As Boolean
+    With rng.font
+        IsFootnoteRefFormattedCorrectly = (.name = "Segoe UI" Or .name = "Segoe UI Bold") _
+            And .Size = 8 _
+            And .color = wdColorBlue _
+            And .Superscript = True
+    End With
+End Function
+
 
