@@ -12,9 +12,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #233 -
 ' #232 -
 ' #231 -
-' #230 -
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
-' #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #212 - Add test for CountFindNotEmphasisBlack = 0 when all have been set
@@ -63,6 +61,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #230 - Add code to fix Footnote Reference by reapplying style
+    ' FIXED - #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
     ' FIXED - #229 - Add code to verify all necessary settings of Word are enabled - basWordSettingsDiagnostic
     ' FIXED - #228 - Abort tests if Show/Hide is not set
     ' FIXED - #227 - Update CheckShowHideStatus as ActiveWindow.View.ShowAll is the only reliable source of truth

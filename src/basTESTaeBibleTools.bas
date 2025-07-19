@@ -503,3 +503,45 @@ Sub PrintHeading1sByLogicalPage()
         End If
     Next i
 End Sub
+
+Sub FixFootnoteReferencesByReapplyingStyle()
+    Dim i As Long
+    Dim totalChecked As Long
+    Dim totalFixed As Long
+    Dim refRange As range
+    Dim doc As Document
+
+    Set doc = ActiveDocument
+
+    For i = 1 To doc.Footnotes.count
+        Set refRange = doc.Footnotes(i).Reference
+        totalChecked = totalChecked + 1
+
+        ' Check if not using the correct style
+        If refRange.style <> wdStyleFootnoteReference Then
+            refRange.style = wdStyleFootnoteReference
+            totalFixed = totalFixed + 1
+            If totalFixed = 1 Then
+                Debug.Print "First incorrect style fixed at char position: " & refRange.Start
+            End If
+        End If
+
+        ' Optional: Force style attributes in case the style is applied but overridden
+        With refRange.font
+            .name = "Segoe UI"
+            .Size = 8
+            .Bold = True
+            .color = wdColorBlue
+            .Superscript = True
+        End With
+
+        If totalChecked Mod 100 = 0 Then
+            Debug.Print "Checked: " & totalChecked
+        End If
+    Next i
+
+    MsgBox "Footnote references checked: " & totalChecked & vbCrLf & _
+           "Footnote references fixed: " & totalFixed, vbInformation
+End Sub
+
+
