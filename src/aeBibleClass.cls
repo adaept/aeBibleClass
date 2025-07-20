@@ -48,7 +48,7 @@ Private Const bTimeAllTests As Boolean = False
 Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
-Private ResultArray(1 To 45) As Integer
+Private ResultArray(1 To 60) As Integer
 Private result As Integer
 Private TestReportFileName As String
 Private testFileNum As Integer
@@ -123,11 +123,11 @@ End Function
 
 Private Sub InitializeGlobalResultArrayToMinusOne()
     Dim i As Integer
-    For i = 1 To 45
+    For i = 1 To 60
         ResultArray(i) = -1
     Next i
     ' Optional: Print to Immediate window to confirm
-    'For i = 1 To 45
+    'For i = 1 To 60
     '    Debug.Print "ResultArray(" & i & ") = " & ResultArray(i),
     'Next i
 End Sub
@@ -170,8 +170,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -202,7 +202,17 @@ Private Sub Expected1BasedArray()
     
     ' Next results
     outputString = ""
-    For i = 31 To UBound(oneBasedExpectedArray)
+    For i = 31 To 45
+        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+        ' Trim the trailing space
+        outputString = Trim(outputString)
+    Next i
+    Debug.Print outputString
+    If TestReportFlag Then AppendToFile TestReportFileName, outputString
+
+    ' Next results
+    outputString = ""
+    For i = 46 To UBound(oneBasedExpectedArray)
         outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
         ' Trim the trailing space
         outputString = Trim(outputString)
@@ -318,6 +328,8 @@ Test16:     RunTest (16)
             RunTest (42)
             RunTest (43)
             RunTest (44)
+            RunTest (45)
+            RunTest (46)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -510,6 +522,12 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 44
         ResultArray(44) = CountParagraphMarks_CalibriDarkRed
         If ResultArray(44) = oneBasedExpectedArray(44) Then GetPassFail = "PASS    "
+    Case 45
+        ResultArray(45) = CountFindNotEmphasisBlack
+        If ResultArray(45) = oneBasedExpectedArray(45) Then GetPassFail = "PASS    "
+    Case 46
+        ResultArray(46) = CountFindNotEmphasisRed
+        If ResultArray(46) = oneBasedExpectedArray(46) Then GetPassFail = "PASS    "
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -664,6 +682,12 @@ Private Function RunTest(num As Integer) As Boolean
     Case 44
         Debug.Print GetPassFail(44), "Copy ()", "Test = " & num, ResultArray(44), oneBasedExpectedArray(44), "CountParagraphMarks_CalibriDarkRed"
         If TestReportFlag Then OutputTestReport (44)
+    Case 45
+        Debug.Print GetPassFail(45), "Copy ()", "Test = " & num, ResultArray(45), oneBasedExpectedArray(45), "CountFindNotEmphasisBlack"
+        If TestReportFlag Then OutputTestReport (45)
+    Case 46
+        Debug.Print GetPassFail(46), "Copy ()", "Test = " & num, ResultArray(46), oneBasedExpectedArray(46), "CountFindNotEmphasisRed"
+        If TestReportFlag Then OutputTestReport (46)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -783,9 +807,78 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(43) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(43))) & Fixed14Str(CStr(oneBasedExpectedArray(43))) & "CountDarkRedStyledParagraphMarks"
     Case 44
         AppendToFile TestReportFileName, GetPassFail(44) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(44))) & Fixed14Str(CStr(oneBasedExpectedArray(44))) & "CountParagraphMarks_CalibriDarkRed"
+    Case 45
+        AppendToFile TestReportFileName, GetPassFail(45) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(45))) & Fixed14Str(CStr(oneBasedExpectedArray(45))) & "CountFindNotEmphasisBlack"
+    Case 46
+        AppendToFile TestReportFileName, GetPassFail(46) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(46))) & Fixed14Str(CStr(oneBasedExpectedArray(46))) & "CountFindNotEmphasisRed"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
+End Function
+
+Function CountFindNotEmphasisBlack()
+    CountFindNotEmphasisBlack = FindNotEmphasisBlackRed("Automatic")
+End Function
+
+Function CountFindNotEmphasisRed()
+    CountFindNotEmphasisRed = FindNotEmphasisBlackRed("Dark Red")
+End Function
+
+Function FindNotEmphasisBlackRed(fontColor As String) As Integer
+' fontColor = Automatic - Arial Black, 8pt, "Normal" Style
+' fontColor = Dark Red - Arial Black, 8pt, "Words of Jesus" Style
+' This is fast and will skip over text that is of the style EmphasisBlack or EmphasisRed
+' When count is 0 there is no more text that needs setting for style EmphasisBlack or EmphasisRed
+
+    Dim rng As range
+    Set rng = ActiveDocument.content
+    Dim totalCount As Integer
+    Dim wordColor As Long
+    Dim wordStyle As style
+    Dim myStyle As style
+
+    If fontColor = "Automatic" Then
+        wordColor = wdColorAutomatic
+        Set wordStyle = ActiveDocument.Styles("Normal")
+        Set myStyle = ActiveDocument.Styles("EmphasisBlack")
+    ElseIf fontColor = "Dark Red" Then
+        wordColor = wdColorDarkRed
+        Set wordStyle = ActiveDocument.Styles("Words of Jesus")
+        Set myStyle = ActiveDocument.Styles("EmphasisRed")
+    Else
+        MsgBox "Incorrect parameter. Automatic or Dark Red expected!", vbCritical, "FindNotEmphasisBlackRed"
+        Stop
+    End If
+
+    'Debug.Print "wordStyle = " & wordStyle, "wordColor = " & wordColor, "wdColorDarkRed = " & wdColorDarkRed, _
+                    "myStyle = " & myStyle
+    totalCount = 0
+    With rng.Find
+        .ClearFormatting
+        .style = ActiveDocument.Styles(wordStyle)
+        .font.name = "Arial Black"
+        .font.Size = 8
+        .font.color = wordColor
+        .text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+
+        'Debug.Print ".style = " & rng.Find.style
+        Do While .Execute
+            ' Check if character style is NOT EmphasisBlack or EmphasisRed
+            If Not rng.Characters(1).style = myStyle Then
+                rng.Select
+                totalCount = totalCount + 1
+                MsgBox "Found matching text (not " & myStyle & ").", vbInformation
+                Exit Function
+            End If
+            rng.Collapse wdCollapseEnd
+        Loop
+
+        'If totalCount = 0 Then MsgBox "totalCount = 0, No matching text found (excluding EmphasisBlack).", vbExclamation
+    End With
+    'Debug.Print "totalCount = " & totalCount
 End Function
 
 Private Function CountParagraphMarks_CalibriDarkRed() As Integer
