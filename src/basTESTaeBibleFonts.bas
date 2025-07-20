@@ -131,7 +131,7 @@ Function FindNotEmphasisBlackRed(fontColor As String) As Integer
         .ClearFormatting
         .style = ActiveDocument.Styles(wordStyle)
         .font.name = "Arial Black"
-        .font.Size = 8
+        .font.Size = 9
         .font.color = wordColor
         .text = ""
         .Forward = True

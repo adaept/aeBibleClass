@@ -170,8 +170,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16474, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 648, 648, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -317,6 +317,7 @@ Test16:     RunTest (16)
             RunTest (41)
             RunTest (42)
             RunTest (43)
+            RunTest (44)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -506,6 +507,9 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 43
         ResultArray(43) = CountDarkRedStyledParagraphMarks
         If ResultArray(43) = oneBasedExpectedArray(43) Then GetPassFail = "PASS    "
+    Case 44
+        ResultArray(44) = CountParagraphMarks_CalibriDarkRed
+        If ResultArray(44) = oneBasedExpectedArray(44) Then GetPassFail = "PASS    "
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -657,6 +661,9 @@ Private Function RunTest(num As Integer) As Boolean
     Case 43
         Debug.Print GetPassFail(43), "Copy ()", "Test = " & num, ResultArray(43), oneBasedExpectedArray(43), "CountDarkRedStyledParagraphMarks"
         If TestReportFlag Then OutputTestReport (43)
+    Case 44
+        Debug.Print GetPassFail(44), "Copy ()", "Test = " & num, ResultArray(44), oneBasedExpectedArray(44), "CountParagraphMarks_CalibriDarkRed"
+        If TestReportFlag Then OutputTestReport (44)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -774,9 +781,46 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(42) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(42))) & Fixed14Str(CStr(oneBasedExpectedArray(42))) & "CountBoldFootnotesWordLevel"
     Case 43
         AppendToFile TestReportFileName, GetPassFail(43) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(43))) & Fixed14Str(CStr(oneBasedExpectedArray(43))) & "CountDarkRedStyledParagraphMarks"
+    Case 44
+        AppendToFile TestReportFileName, GetPassFail(44) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(44))) & Fixed14Str(CStr(oneBasedExpectedArray(44))) & "CountParagraphMarks_CalibriDarkRed"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function CountParagraphMarks_CalibriDarkRed() As Integer
+    Dim para As paragraph
+    Dim paraRange As range
+    Dim totalCount As Long
+    Dim foundFirst As Boolean
+    Dim fontColor As WdColor
+
+    totalCount = 0
+    foundFirst = False
+
+    For Each para In ActiveDocument.paragraphs
+        Set paraRange = para.range
+        paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
+
+        With paraRange.font
+            fontColor = .color
+            If .name = "Calibri" And _
+               .Size = 9 And _
+               (fontColor = wdColorDarkRed) Then
+
+                totalCount = totalCount + 1
+                If Not foundFirst Then
+                    paraRange.Select
+                    foundFirst = True
+                    'Stop
+                End If
+            End If
+        End With
+    Next para
+
+    'MsgBox "Total matching paragraph marks: " & totalCount, vbInformation
+    'Debug.Print "totalCount = " & totalCount
+    CountParagraphMarks_CalibriDarkRed = totalCount
 End Function
 
 Private Function CountDarkRedStyledParagraphMarks()
@@ -1501,7 +1545,9 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Integer
             ' Add debug information
             If asciiValue <> 32 Then    ' space (ASCII value 32)
                 debugInfo = debugInfo & "Fn " & footnote.Index & ": '" & rng.text & "' (ASC " & asciiValue & "), "
+                'Debug.Print debugInfo
                 notSpaceCount = notSpaceCount + 1
+                'Stop
             End If
             
             If asciiValue = 32 Then
