@@ -170,8 +170,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -330,6 +330,7 @@ Test16:     RunTest (16)
             RunTest (44)
             RunTest (45)
             RunTest (46)
+            RunTest (47)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -528,6 +529,9 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 46
         ResultArray(46) = CountFindNotEmphasisRed
         If ResultArray(46) = oneBasedExpectedArray(46) Then GetPassFail = "PASS    "
+    Case 47
+        ResultArray(47) = CountTabOnlyParagraphs("Footer")
+        If ResultArray(47) = oneBasedExpectedArray(47) Then GetPassFail = "PASS    "
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -688,6 +692,9 @@ Private Function RunTest(num As Integer) As Boolean
     Case 46
         Debug.Print GetPassFail(46), "Copy ()", "Test = " & num, ResultArray(46), oneBasedExpectedArray(46), "CountFindNotEmphasisRed"
         If TestReportFlag Then OutputTestReport (46)
+    Case 47
+        Debug.Print GetPassFail(47), "Copy ()", "Test = " & num, ResultArray(47), oneBasedExpectedArray(47), "CountTabOnlyParagraphs(" & """Footer""" & ")"
+        If TestReportFlag Then OutputTestReport (47)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -811,20 +818,58 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(45) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(45))) & Fixed14Str(CStr(oneBasedExpectedArray(45))) & "CountFindNotEmphasisBlack"
     Case 46
         AppendToFile TestReportFileName, GetPassFail(46) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(46))) & Fixed14Str(CStr(oneBasedExpectedArray(46))) & "CountFindNotEmphasisRed"
+    Case 47
+        AppendToFile TestReportFileName, GetPassFail(47) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(47))) & Fixed14Str(CStr(oneBasedExpectedArray(47))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
 End Function
 
-Function CountFindNotEmphasisBlack()
+Private Function CountTabOnlyParagraphs(areaType As String) As Long
+    Dim sec As section
+    Dim hdrFtr As HeaderFooter
+    Dim para As paragraph
+    Dim count As Long
+    Dim paraText As String
+
+    Dim targetType As WdHeaderFooterIndex
+    Select Case LCase(areaType)
+        Case "header": targetType = wdHeaderFooterPrimary
+        Case "footer": targetType = wdHeaderFooterPrimary
+        Case Else
+            MsgBox "Invalid parameter. Use 'Header' or 'Footer'.", vbCritical
+            Exit Function
+    End Select
+
+    For Each sec In ActiveDocument.Sections
+        If LCase(areaType) = "header" Then
+            Set hdrFtr = sec.Headers(targetType)
+        Else
+            Set hdrFtr = sec.Footers(targetType)
+        End If
+
+        If hdrFtr.Exists Then
+            For Each para In hdrFtr.range.paragraphs
+                paraText = Replace(para.range.text, vbCr, "")
+                paraText = Replace(paraText, vbLf, "")
+                paraText = Trim(paraText)
+                If paraText = vbTab Then count = count + 1
+            Next para
+        End If
+    Next sec
+
+    CountTabOnlyParagraphs = count
+End Function
+
+Private Function CountFindNotEmphasisBlack()
     CountFindNotEmphasisBlack = FindNotEmphasisBlackRed("Automatic")
 End Function
 
-Function CountFindNotEmphasisRed()
+Private Function CountFindNotEmphasisRed()
     CountFindNotEmphasisRed = FindNotEmphasisBlackRed("Dark Red")
 End Function
 
-Function FindNotEmphasisBlackRed(fontColor As String) As Integer
+Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
 ' fontColor = Automatic - Arial Black, 8pt, "Normal" Style
 ' fontColor = Dark Red - Arial Black, 8pt, "Words of Jesus" Style
 ' This is fast and will skip over text that is of the style EmphasisBlack or EmphasisRed
@@ -1144,7 +1189,7 @@ End Function
 
 Private Function CountFooterParagraphsWithFooterStyle() As Integer
     Dim sec As section
-    Dim hdrftr As HeaderFooter
+    Dim hdrFtr As HeaderFooter
     Dim para As paragraph
     Dim count As Long
 
@@ -1153,9 +1198,9 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
     ' Loop through all sections in the document
     For Each sec In ActiveDocument.Sections
         ' Only check footers
-        For Each hdrftr In sec.Footers
-            If hdrftr.Exists Then
-                For Each para In hdrftr.range.paragraphs
+        For Each hdrFtr In sec.Footers
+            If hdrFtr.Exists Then
+                For Each para In hdrFtr.range.paragraphs
                     If para.style = "Footer" Then
                         count = count + 1
                         para.range.Select
@@ -1164,7 +1209,7 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
                     End If
                 Next para
             End If
-        Next hdrftr
+        Next hdrFtr
     Next sec
 
     'MsgBox "Number of paragraphs in footers with the style 'Footer': " & count, vbInformation

@@ -1,7 +1,7 @@
 Test(1)0 Test(2)0 Test(3)0 Test(4)0 Test(5)0 Test(6)0 Test(7)0 Test(8)0 Test(9)7 Test(10)1 Test(11)0 Test(12)0 Test(13)0 Test(14)0 Test(15)0
 Test(16)16471 Test(17)0 Test(18)66 Test(19)0 Test(20)0 Test(21)0 Test(22)153 Test(23)0 Test(24)1000 Test(25)1 Test(26)0 Test(27)147 Test(28)77 Test(29)70 Test(30)0
 Test(31)1 Test(32)649 Test(33)649 Test(34)117 Test(35)117 Test(36)0 Test(37)19 Test(38)153 Test(39)0 Test(40)0 Test(41)0 Test(42)0 Test(43)0 Test(44)0 Test(45)0
-Test(46)0
+Test(46)0 Test(47)2
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
 PASS              Copy ()       Test = 1      0             0             CountDoubleSpaces
@@ -50,8 +50,9 @@ PASS              Copy ()       Test = 43     0             0             CountD
 PASS              Copy ()       Test = 44     0             0             CountParagraphMarks_CalibriDarkRed
 PASS              Copy ()       Test = 45     0             0             CountFindNotEmphasisBlack
 PASS              Copy ()       Test = 46     0             0             CountFindNotEmphasisRed
-Total Total Runtime: 130.01 seconds
-[2025-07-20 13:24:10] Completed
+PASS              Copy ()       Test = 47     2             2             CountTabOnlyParagraphs("Footer")
+Total Total Runtime: 195.59 seconds
+[2025-07-20 15:03:15] Completed
 BibleClass VERSION: 0.1.0
 BibleClass VERSION_DATE: July 19, 2025
 == Word Build Info ==
