@@ -613,3 +613,87 @@ Sub FixFootnoteNumberStyleInText()
     MsgBox "Footnote Reference style reapplied to footnote numbers in footnote text.", vbInformation
 End Sub
 
+Sub RepairVerseMarkersOnPage_SafeVerbose(pageNum As Long)
+    Dim pgRange As range, ch As range, prefix As range
+    Dim charTxt As String, charPos As Single, prefixTxt As String, prefixStyle As String
+    Dim seenStarts As Object, fixedCount As Long
+    Dim sectionColumns As Integer, columnWidth As Single
+    Dim sectionLeft As Single, columnSpacing As Single
+    Dim pageWidth As Single, gutter As Single
+    Dim isEvenPage As Boolean, colIndex As Integer, colStart As Single
+
+    Set seenStarts = CreateObject("Scripting.Dictionary")
+    fixedCount = 0
+
+    Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
+    DoEvents
+    Selection.MoveRight Unit:=wdCharacter, count:=1
+    Set pgRange = ActiveDocument.range(Start:=Selection.Start, End:=Selection.Bookmarks("\Page").range.End)
+
+    With pgRange.Sections(1).pageSetup
+        sectionColumns = .TextColumns.count
+        gutter = .gutter
+        pageWidth = .pageWidth
+        columnSpacing = .TextColumns(1).SpaceAfter
+        columnWidth = (pageWidth - .leftMargin - .rightMargin - ((sectionColumns - 1) * columnSpacing)) / sectionColumns
+        isEvenPage = (pageNum Mod 2 = 0)
+        sectionLeft = IIf(.MirrorMargins And isEvenPage, gutter + .leftMargin, .leftMargin)
+    End With
+
+    Debug.Print "=== Detailed Repair Pass on Page " & pageNum & " ==="
+    Debug.Print "Columns: " & sectionColumns & ", Gutter: " & gutter & ", PageWidth: " & pageWidth
+    Debug.Print "Calculated column width: " & Format(columnWidth, "0.0") & ", Spacing: " & Format(columnSpacing, "0.0")
+    Debug.Print "Effective section left: " & Format(sectionLeft, "0.0")
+    Debug.Print ""
+
+    For Each ch In pgRange.Characters
+        If seenStarts.Exists(ch.Start) Then GoTo ContinueLoop
+        seenStarts.Add ch.Start, True
+
+        charTxt = Replace(ch.text, vbCr, "")
+        charTxt = Replace(charTxt, Chr(11), "")
+        charTxt = Replace(charTxt, Chr(160), "")
+        If Len(charTxt) <> 1 Or Not IsNumeric(charTxt) Then GoTo ContinueLoop
+        If ch.style.NameLocal <> "Chapter Verse marker" Then GoTo ContinueLoop
+        If ch.font.color <> RGB(255, 165, 0) Then GoTo ContinueLoop
+
+        charPos = ch.Information(wdHorizontalPositionRelativeToPage)
+
+        For colIndex = 0 To sectionColumns - 1
+            colStart = sectionLeft + colIndex * (columnWidth + columnSpacing)
+            If Abs(charPos - colStart) < 10 Then
+                If ch.Start > 0 Then
+                    Set prefix = ActiveDocument.range(ch.Start - 1, ch.Start)
+                    prefixTxt = Replace(prefix.text, Chr(160), "")
+                    On Error Resume Next
+                    prefixStyle = prefix.style.NameLocal
+                    On Error GoTo 0
+
+                    If prefixTxt = " " And prefixStyle <> "Chapter Verse marker" Then
+                        Debug.Print "? Marker '" & charTxt & "' fixed at Pos " & Format(charPos, "0.0") & _
+                                    " (Column " & (colIndex + 1) & ") | Reason: Space before styled digit fragment" & _
+                                    " | Prefix style: " & prefixStyle & ", Prefix char: '" & prefixTxt & "'"
+                        prefix.text = vbCr
+                        fixedCount = fixedCount + 1
+                    Else
+                        Debug.Print "- Skipped marker '" & charTxt & "' at Pos " & Format(charPos, "0.0") & _
+                                    " | Prefix not a plain space or style conflict"
+                    End If
+                End If
+                Exit For
+            End If
+        Next colIndex
+
+ContinueLoop:
+    Next ch
+
+    Debug.Print ""
+    If fixedCount = 0 Then
+        Debug.Print "No verse markers were repaired on page " & pageNum & "."
+        MsgBox "No qualifying verse markers found on page " & pageNum & ".", vbInformation
+    Else
+        Debug.Print "=== " & fixedCount & " marker(s) repaired ==="
+        MsgBox fixedCount & " verse marker(s) repaired on page " & pageNum & ".", vbInformation
+    End If
+End Sub
+
