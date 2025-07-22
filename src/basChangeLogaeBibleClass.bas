@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
+' #245 -
+' #244 -
+' #243 -
+' #242 -
+' #241 -
 ' #240 -
-' #239 -
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
@@ -56,6 +60,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #239 - Add routine ReportDigitAtCursor_Diagnostics_Expanded
     ' FIXED - #238 - Update Chapter Verse marker repair tool with latest RepairWrappedVerseMarkerPrefixes_AdjacencyWithContext_Navigate
     ' FIXED - #237 - Add diagnostic code to get character information around the cursor position
     ' FIXED - #236 - Add routine to report Report Page Layout Metrics for a particular page

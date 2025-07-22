@@ -684,7 +684,7 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
     Dim numCols As Integer, isEven As Boolean
     Dim gutter As Single, pageWidth As Single
     Dim leftMargin As Single, rightMargin As Single
-    Dim spacing As Single, columnWidth As Single
+    Dim Spacing As Single, columnWidth As Single
     Dim sectionLeft As Single, colStart As Single
     Dim logBuffer As String, i As Integer
 
@@ -696,8 +696,8 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
     pageWidth = sectionSetup.pageWidth
     leftMargin = sectionSetup.leftMargin
     rightMargin = sectionSetup.rightMargin
-    spacing = sectionSetup.TextColumns(1).SpaceAfter
-    columnWidth = (pageWidth - leftMargin - rightMargin - ((numCols - 1) * spacing)) / numCols
+    Spacing = sectionSetup.TextColumns(1).SpaceAfter
+    columnWidth = (pageWidth - leftMargin - rightMargin - ((numCols - 1) * Spacing)) / numCols
     isEven = (pageNum Mod 2 = 0)
     sectionLeft = IIf(sectionSetup.MirrorMargins And isEven, gutter + leftMargin, leftMargin)
 
@@ -709,11 +709,11 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
     logBuffer = logBuffer & "Gutter: " & Format(gutter, "0.0") & vbCrLf
     logBuffer = logBuffer & "Column Count: " & numCols & vbCrLf
     logBuffer = logBuffer & "Column Width: " & Format(columnWidth, "0.0") & vbCrLf
-    logBuffer = logBuffer & "Spacing Between Columns: " & Format(spacing, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Spacing Between Columns: " & Format(Spacing, "0.0") & vbCrLf
     logBuffer = logBuffer & "Section Left Edge: " & Format(sectionLeft, "0.0") & vbCrLf
 
     For i = 0 To numCols - 1
-        colStart = sectionLeft + i * (columnWidth + spacing)
+        colStart = sectionLeft + i * (columnWidth + Spacing)
         logBuffer = logBuffer & "? Column " & (i + 1) & " starts at: " & Format(colStart, "0.0") & vbCrLf
     Next i
 
@@ -764,4 +764,56 @@ Function RGBToString(rgbVal As Long) As String
     RGBToString = "(" & (rgbVal And &HFF) & "," & ((rgbVal \ 256) And &HFF) & "," & ((rgbVal \ 65536) And &HFF) & ")"
 End Function
 
+Sub ReportDigitAtCursor_Diagnostics_Expanded()
+    Dim rng As range
+    Set rng = Selection.range
+    If rng.Characters.count = 0 Then
+        MsgBox "No character selected.", vbExclamation
+        Exit Sub
+    End If
+
+    Dim ch As range
+    Set ch = rng.Characters(1)
+    Dim txt As String: txt = ch.text
+    Dim ascCode As Long: ascCode = AscW(txt)
+    Dim fontNameAscii As String: fontNameAscii = ch.font.NameAscii
+    Dim fontNameFarEast As String: fontNameFarEast = ch.font.NameFarEast
+    Dim fontNameOther As String: fontNameOther = ch.font.NameOther
+    Dim fontSize As Single: fontSize = ch.font.Size
+    Dim fontColor As Long: fontColor = ch.font.color
+    Dim styleName As String: styleName = ch.style.NameLocal
+    Dim baseStyle As String
+    On Error Resume Next
+    baseStyle = ch.style.baseStyle
+    On Error GoTo 0
+
+    Debug.Print "=== Character at Cursor ==="
+    Debug.Print "Value: '" & txt & "' | ASCII: " & ascCode
+    Debug.Print "Style: " & styleName
+    Debug.Print "Base Style: " & IIf(baseStyle = "", "(none)", baseStyle)
+
+    Debug.Print "Font Names:"
+    Debug.Print "> NameAscii: " & fontNameAscii
+    Debug.Print "> NameFarEast: " & fontNameFarEast
+    Debug.Print "> NameOther: " & fontNameOther
+    Debug.Print "Font Size: " & fontSize & " pt"
+    Debug.Print "Font Color: " & fontColor & " (RGB: " & _
+        (fontColor Mod 256) & "," & ((fontColor \ 256) Mod 256) & "," & (fontColor \ 65536) & ")"
+    Debug.Print "Bold: " & ch.font.Bold & " | Italic: " & ch.font.Italic & " | Underline: " & ch.font.Underline
+
+    Debug.Print "--- Prefix (1 char before) ---"
+    If ch.Start > 1 Then
+        Dim prefix As range
+        Set prefix = ActiveDocument.range(ch.Start - 1, ch.Start)
+        Debug.Print "Value: '" & prefix.text & "' | ASCII: " & AscW(prefix.text)
+        Debug.Print "Style: " & prefix.style.NameLocal
+        Debug.Print "Font Name: " & prefix.font.name
+        Debug.Print "Font Color: " & prefix.font.color & " (RGB: " & _
+            (prefix.font.color Mod 256) & "," & ((prefix.font.color \ 256) Mod 256) & "," & (prefix.font.color \ 65536) & ")"
+    Else
+        Debug.Print "(No character before this one.)"
+    End If
+
+    MsgBox "Expanded character diagnostics logged.", vbInformation
+End Sub
 
