@@ -613,71 +613,6 @@ Sub FixFootnoteNumberStyleInText()
     MsgBox "Footnote Reference style reapplied to footnote numbers in footnote text.", vbInformation
 End Sub
 
-Sub RepairWrappedVerseMarkerPrefixes_AdjacencyWithContext_Navigate(pageNum As Long)
-    Dim pgRange As range, ch As range, prefixCh As range
-    Dim pageStart As Long, pageEnd As Long
-    Dim txt As String, style As String
-    Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
-    Dim prefixY As Single, digitY As Single
-    Dim fixCount As Long, logBuffer As String
-    Dim nextWords As String, lookAhead As range, wCount As Integer
-
-    fixCount = 0
-    logBuffer = "=== Wrapped Prefix Repair on Page " & pageNum & " ===" & vbCrLf
-
-    ' Get page range and position
-    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
-    pageStart = pgRange.Start
-    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
-    pageEnd = pgRange.Start - 1
-    Set pgRange = ActiveDocument.range(pageStart, pageEnd)
-
-    For Each ch In pgRange.Characters
-        txt = Trim(ch.text)
-        style = ch.style.NameLocal
-
-        If Len(txt) = 1 And IsNumeric(txt) And style = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
-            If ch.Start > pageStart Then
-                Set prefixCh = ActiveDocument.range(ch.Start - 1, ch.Start)
-                prefixTxt = prefixCh.text
-                prefixStyle = prefixCh.style.NameLocal
-                prefixAsc = AscW(prefixTxt)
-                prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
-                digitY = ch.Information(wdVerticalPositionRelativeToPage)
-
-                If (prefixAsc = 32 Or prefixAsc = 160) And prefixStyle = "Normal" Then
-                    If Abs(prefixY - digitY) < 25 Then
-                        ' Capture next two words after the digit
-                        nextWords = ""
-                        Set lookAhead = ActiveDocument.range(ch.Start + 1, ch.Start + 80)
-                        wCount = 0
-                        Dim token As range
-                        For Each token In lookAhead.Words
-                            If token.text Like "*^13*" Then Exit For
-                            If Trim(token.text) <> "" Then
-                                nextWords = nextWords & Trim(token.text) & " "
-                                wCount = wCount + 1
-                                If wCount = 2 Then Exit For
-                            End If
-                        Next token
-
-                        prefixCh.text = vbCr
-                        fixCount = fixCount + 1
-                        logBuffer = logBuffer & "? Repaired prefix before digit '" & txt & "' @ Y=" & Format(digitY, "0.0") & _
-                                    " | Next words: “" & Trim(nextWords) & "”" & vbCrLf
-                    End If
-                End If
-            End If
-        End If
-    Next ch
-
-    ' Output and navigate
-    logBuffer = logBuffer & "=== " & fixCount & " marker(s) repaired on page " & pageNum & " ==="
-    Debug.Print logBuffer
-    MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
-    Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
-End Sub
-
 Sub ReportPageLayoutMetrics(pageNum As Long)
     Dim pgRange As range
     Dim sectionSetup As pageSetup
@@ -816,4 +751,310 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
 
     MsgBox "Expanded character diagnostics logged.", vbInformation
 End Sub
+
+Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
+    Dim pgRange As range, ch As range, scanRange As range
+    Dim pageStart As Long, pageEnd As Long
+    Dim logBuffer As String
+    Dim chapterMarker As String, verseDigits As String, combinedNumber As String
+    Dim markerStart As Long, markerEnd As Long, verseEnd As Long
+    Dim digitPosX As Single, digitPosY As Single
+    Dim wordRange As range, token As range, nextWords As String, wCount As Integer
+
+    logBuffer = "=== Chapter–Verse Visual Number Check on Page " & pageNum & " ===" & vbCrLf
+
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    pageStart = pgRange.Start
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
+    pageEnd = pgRange.Start - 1
+    Set pgRange = ActiveDocument.range(pageStart, pageEnd)
+
+    Dim i As Long
+    i = pageStart
+    Do While i < pageEnd
+        Set ch = ActiveDocument.range(i, i + 1)
+        If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+            chapterMarker = ch.text
+            markerStart = i
+            markerEnd = i + 1
+            Do While markerEnd < pageEnd
+                Set scanRange = ActiveDocument.range(markerEnd, markerEnd + 1)
+                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
+                        chapterMarker = chapterMarker & scanRange.text
+                        markerEnd = markerEnd + 1
+                    Else
+                        Exit Do
+                    End If
+                Else
+                    Exit Do
+                End If
+            Loop
+
+            digitPosX = ch.Information(wdHorizontalPositionRelativeToPage)
+            digitPosY = ch.Information(wdVerticalPositionRelativeToPage)
+
+            verseDigits = ""
+            verseEnd = markerEnd
+            Do While verseEnd < pageEnd
+                Set scanRange = ActiveDocument.range(verseEnd, verseEnd + 1)
+                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                    If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
+                        verseDigits = verseDigits & scanRange.text
+                        verseEnd = verseEnd + 1
+                    Else
+                        Exit Do
+                    End If
+                Else
+                    Exit Do
+                End If
+            Loop
+
+            nextWords = ""
+            Set wordRange = ActiveDocument.range(verseEnd, verseEnd + 80)
+            wCount = 0
+            For Each token In wordRange.Words
+                If token.text Like "*^13*" Then Exit For
+                If Trim(token.text) <> "" Then
+                    nextWords = nextWords & Trim(token.text) & " "
+                    wCount = wCount + 1
+                    If wCount = 2 Then Exit For
+                End If
+            Next token
+
+            If Len(verseDigits) = 0 Then
+                logBuffer = logBuffer & "! Chapter '" & chapterMarker & "' @ X=" & Format(digitPosX, "0.0") & _
+                    " | No styled Verse marker digits found | Next words: “" & Trim(nextWords) & "”" & vbCrLf
+            Else
+                combinedNumber = chapterMarker & verseDigits
+                If Left(combinedNumber, Len(chapterMarker)) = chapterMarker Then
+                    logBuffer = logBuffer & "* Chapter '" & chapterMarker & "' ? Verse '" & combinedNumber & "' @ X=" & Format(digitPosX, "0.0") & _
+                        " | ? Valid | Next words: “" & Trim(nextWords) & "”" & vbCrLf
+                Else
+                    logBuffer = logBuffer & "! Chapter '" & chapterMarker & "' ? Verse '" & combinedNumber & "' @ X=" & Format(digitPosX, "0.0") & _
+                        " | ? Mismatch | Next words: “" & Trim(nextWords) & "”" & vbCrLf
+                End If
+            End If
+
+            i = verseEnd
+        Else
+            i = i + 1
+        End If
+    Loop
+
+    logBuffer = logBuffer & "=== Audit complete ==="
+    Debug.Print logBuffer
+    MsgBox "Visual prefix check with context logged for page " & pageNum & ".", vbInformation
+End Sub
+
+Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
+    Dim pgRange As range, ch As range, scanRange As range
+    Dim pageStart As Long, pageEnd As Long
+    Dim txt As String, styleName As String
+    Dim fontName As String, fontSize As Single, fontColor As Long
+    Dim charPosX As Single, charPosY As Single
+    Dim digitBlock As String, blockStyle As String, blockColor As Long
+    Dim blockStart As Long, blockEnd As Long, logBuffer As String
+
+    logBuffer = "=== Marker Summary for Page " & pageNum & " ===" & vbCrLf
+
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    pageStart = pgRange.Start
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
+    pageEnd = pgRange.Start - 1
+    Set pgRange = ActiveDocument.range(pageStart, pageEnd)
+
+    Dim i As Long
+    i = pageStart
+    Do While i < pageEnd
+        Set ch = ActiveDocument.range(i, i + 1)
+        txt = Trim(ch.text)
+        styleName = ch.style.NameLocal
+
+        If Len(txt) = 1 And IsNumeric(txt) Then
+            If styleName = "Chapter Verse marker" Or styleName = "Verse marker" Then
+                digitBlock = txt
+                blockStyle = styleName
+                blockColor = ch.font.color
+                blockStart = i
+                blockEnd = i + 1
+
+                Do While blockEnd < pageEnd
+                    Set scanRange = ActiveDocument.range(blockEnd, blockEnd + 1)
+                    If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                        If scanRange.style.NameLocal = blockStyle And scanRange.font.color = blockColor Then
+                            digitBlock = digitBlock & scanRange.text
+                            blockEnd = blockEnd + 1
+                        Else
+                            Exit Do
+                        End If
+                    Else
+                        Exit Do
+                    End If
+                Loop
+
+                Set ch = ActiveDocument.range(blockStart, blockStart + 1)
+                fontName = ch.font.name
+                fontSize = ch.font.Size
+                charPosX = ch.Information(wdHorizontalPositionRelativeToPage)
+                charPosY = ch.Information(wdVerticalPositionRelativeToPage)
+
+                logBuffer = logBuffer & "[" & IIf(blockStyle = "Chapter Verse marker", "Chapter", "Verse") & "] '" & digitBlock & "' @ X=" & Format(charPosX, "0.0") & ", Y=" & Format(charPosY, "0.0") & _
+                    " | Font: " & fontName & " " & fontSize & "pt | RGB: (" & (blockColor Mod 256) & "," & ((blockColor \ 256) Mod 256) & "," & (blockColor \ 65536) & ")" & _
+                    " | Pos: " & blockStart & "–" & (blockEnd - 1) & vbCrLf
+
+                i = blockEnd
+                GoTo ContinueLoop
+            End If
+        End If
+
+        i = i + 1
+ContinueLoop:
+    Loop
+
+    logBuffer = logBuffer & "=== Summary complete ==="
+    Debug.Print logBuffer
+    MsgBox "Condensed diagnostics logged.", vbInformation
+    Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
+End Sub
+
+Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
+    ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
+    ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
+    ' And replace `MsgBox` line with: fixCount = fixCount
+    Dim pgRange As range, ch As range, scanRange As range, prefixCh As range
+    Dim pageStart As Long, pageEnd As Long
+    Dim chapterMarker As String, verseDigits As String, combinedNumber As String
+    Dim markerStart As Long, markerEnd As Long, verseEnd As Long
+    Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
+    Dim prefixY As Single, digitY As Single, digitX As Single
+    Dim nextWords As String, lookAhead As range, token As range, wCount As Integer
+    Dim logBuffer As String
+
+    fixCount = 0
+    logBuffer = "=== Smart Prefix Repair on Page " & pageNum & " ===" & vbCrLf
+
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    pageStart = pgRange.Start
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
+    pageEnd = pgRange.Start - 1
+
+    Dim i As Long
+    i = pageStart
+    Do While i < pageEnd
+        Set ch = ActiveDocument.range(i, i + 1)
+        If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+            ' Assemble chapter marker block
+            chapterMarker = ch.text
+            markerStart = i
+            markerEnd = i + 1
+            Do While markerEnd < pageEnd
+                Set scanRange = ActiveDocument.range(markerEnd, markerEnd + 1)
+                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
+                        chapterMarker = chapterMarker & scanRange.text
+                        markerEnd = markerEnd + 1
+                    Else
+                        Exit Do
+                    End If
+                Else
+                    Exit Do
+                End If
+            Loop
+
+            digitY = ch.Information(wdVerticalPositionRelativeToPage)
+            digitX = ch.Information(wdHorizontalPositionRelativeToPage)
+
+            ' Assemble verse marker block
+            verseDigits = ""
+            verseEnd = markerEnd
+            Do While verseEnd < pageEnd
+                Set scanRange = ActiveDocument.range(verseEnd, verseEnd + 1)
+                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                    If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
+                        verseDigits = verseDigits & scanRange.text
+                        verseEnd = verseEnd + 1
+                    Else
+                        Exit Do
+                    End If
+                Else
+                    Exit Do
+                End If
+            Loop
+
+            If Len(verseDigits) > 0 Then
+                combinedNumber = chapterMarker & verseDigits
+
+                ' Prefix check
+                If markerStart > pageStart Then
+                    Set prefixCh = ActiveDocument.range(markerStart - 1, markerStart)
+                    prefixTxt = prefixCh.text
+                    prefixStyle = prefixCh.style.NameLocal
+                    prefixAsc = AscW(prefixTxt)
+                    prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
+
+                    If (prefixAsc = 32 Or prefixAsc = 160) And prefixStyle = "Normal" Then
+                        If Abs(prefixY - digitY) < 25 Then
+                            nextWords = ""
+                            Set lookAhead = ActiveDocument.range(verseEnd, verseEnd + 80)
+                            wCount = 0
+                            For Each token In lookAhead.Words
+                                If token.text Like "*^13*" Then Exit For
+                                If Trim(token.text) <> "" Then
+                                    nextWords = nextWords & Trim(token.text) & " "
+                                    wCount = wCount + 1
+                                    If wCount = 2 Then Exit For
+                                End If
+                            Next token
+
+                            ' Column edge logic
+                            If digitX < 50 Then
+                                prefixCh.text = vbCr
+                                logBuffer = logBuffer & "? Repaired prefix before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | Break inserted | Next words: “" & Trim(nextWords) & "”" & vbCrLf
+                            Else
+                                prefixCh.text = ""
+                                logBuffer = logBuffer & "? Removed space before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | No break | Next words: “" & Trim(nextWords) & "”" & vbCrLf
+                            End If
+
+                            fixCount = fixCount + 1
+                        End If
+                    End If
+                End If
+
+                i = verseEnd
+            Else
+                i = markerEnd
+            End If
+        Else
+            i = i + 1
+        End If
+    Loop
+
+    logBuffer = logBuffer & "=== " & fixCount & " markers repaired on page " & pageNum & " ==="
+    Debug.Print logBuffer
+    'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
+    fixCount = fixCount
+    Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
+End Sub
+
+Sub RunRepairWrappedVerseMarkers_Across5Pages_From(startPage As Long)
+    Dim totalFixes As Long, pgFixCount As Long
+    Dim logBuffer As String
+
+    logBuffer = "=== Multi-Page Repair Runner from Page " & startPage & " ===" & vbCrLf
+
+    Dim p As Long
+    For p = startPage To startPage + 4
+        pgFixCount = 0
+        RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage p, pgFixCount
+        logBuffer = logBuffer & "Page " & p & ": " & pgFixCount & " repair(s)" & vbCrLf
+        totalFixes = totalFixes + pgFixCount
+    Next p
+
+    logBuffer = logBuffer & "=== Total repairs across 5 pages: " & totalFixes & " ==="
+    Debug.Print logBuffer
+    MsgBox "Multi-page repair complete. See Immediate Window for breakdown.", vbInformation
+    Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
+End Sub
+
 
