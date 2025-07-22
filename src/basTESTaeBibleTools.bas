@@ -741,3 +741,46 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
     MsgBox "Layout metrics for page " & pageNum & " printed to Immediate window.", vbInformation
 End Sub
 
+Sub ReportDigitAtCursor_Diagnostics()
+    Dim selRange As range, ch As range, prefix As range
+    Dim txt As String, style As String
+    Dim posX As Single, posY As Single
+    Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
+    Dim prefixX As Single, prefixY As Single
+
+    Set selRange = Selection.range
+    Set ch = ActiveDocument.range(selRange.Start, selRange.Start + 1)
+    txt = ch.text
+    style = ch.style.NameLocal
+    posX = ch.Information(wdHorizontalPositionRelativeToPage)
+    posY = ch.Information(wdVerticalPositionRelativeToPage)
+
+    Debug.Print "=== Character at Cursor ==="
+    Debug.Print "Value: '" & txt & "' | ASCII: " & AscW(txt)
+    Debug.Print "Style: " & style
+    Debug.Print "Font Color: " & ch.font.color & " (RGB: " & _
+                RGBToString(ch.font.color) & ")"
+    Debug.Print "Position: X=" & Format(posX, "0.0") & " pts, Y=" & Format(posY, "0.0") & " pts"
+
+    If ch.Start > 0 Then
+        Set prefix = ActiveDocument.range(ch.Start - 1, ch.Start)
+        prefixTxt = prefix.text
+        prefixStyle = prefix.style.NameLocal
+        prefixAsc = AscW(prefixTxt)
+        prefixX = prefix.Information(wdHorizontalPositionRelativeToPage)
+        prefixY = prefix.Information(wdVerticalPositionRelativeToPage)
+
+        Debug.Print "--- Prefix (1 char before) ---"
+        Debug.Print "Value: '" & prefixTxt & "' | ASCII: " & prefixAsc
+        Debug.Print "Style: " & prefixStyle
+        Debug.Print "Position: X=" & Format(prefixX, "0.0") & " pts, Y=" & Format(prefixY, "0.0") & " pts"
+    Else
+        Debug.Print "--- No prefix (at start of document) ---"
+    End If
+End Sub
+
+Function RGBToString(rgbVal As Long) As String
+    RGBToString = "(" & (rgbVal And &HFF) & "," & ((rgbVal \ 256) And &HFF) & "," & ((rgbVal \ 65536) And &HFF) & ")"
+End Function
+
+
