@@ -690,10 +690,54 @@ ContinueLoop:
     Debug.Print ""
     If fixedCount = 0 Then
         Debug.Print "No verse markers were repaired on page " & pageNum & "."
-        MsgBox "No qualifying verse markers found on page " & pageNum & ".", vbInformation
+        'MsgBox "No qualifying verse markers found on page " & pageNum & ".", vbInformation
     Else
-        Debug.Print "=== " & fixedCount & " marker(s) repaired ==="
-        MsgBox fixedCount & " verse marker(s) repaired on page " & pageNum & ".", vbInformation
+        Debug.Print "=== " & fixedCount & " marker(s) repaired on page " & pageNum & "==="
+        'MsgBox fixedCount & " verse marker(s) repaired on page " & pageNum & ".", vbInformation
     End If
+End Sub
+
+Sub ReportPageLayoutMetrics(pageNum As Long)
+    Dim pgRange As range
+    Dim sectionSetup As pageSetup
+    Dim numCols As Integer, isEven As Boolean
+    Dim gutter As Single, pageWidth As Single
+    Dim leftMargin As Single, rightMargin As Single
+    Dim spacing As Single, columnWidth As Single
+    Dim sectionLeft As Single, colStart As Single
+    Dim logBuffer As String, i As Integer
+
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    Set sectionSetup = pgRange.Sections(1).pageSetup
+
+    numCols = sectionSetup.TextColumns.count
+    gutter = sectionSetup.gutter
+    pageWidth = sectionSetup.pageWidth
+    leftMargin = sectionSetup.leftMargin
+    rightMargin = sectionSetup.rightMargin
+    spacing = sectionSetup.TextColumns(1).SpaceAfter
+    columnWidth = (pageWidth - leftMargin - rightMargin - ((numCols - 1) * spacing)) / numCols
+    isEven = (pageNum Mod 2 = 0)
+    sectionLeft = IIf(sectionSetup.MirrorMargins And isEven, gutter + leftMargin, leftMargin)
+
+    logBuffer = "=== Layout Metrics for Page " & pageNum & " ===" & vbCrLf
+    logBuffer = logBuffer & "Mirror Margins: " & sectionSetup.MirrorMargins & vbCrLf
+    logBuffer = logBuffer & "Page Width: " & Format(pageWidth, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Left Margin: " & Format(leftMargin, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Right Margin: " & Format(rightMargin, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Gutter: " & Format(gutter, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Column Count: " & numCols & vbCrLf
+    logBuffer = logBuffer & "Column Width: " & Format(columnWidth, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Spacing Between Columns: " & Format(spacing, "0.0") & vbCrLf
+    logBuffer = logBuffer & "Section Left Edge: " & Format(sectionLeft, "0.0") & vbCrLf
+
+    For i = 0 To numCols - 1
+        colStart = sectionLeft + i * (columnWidth + spacing)
+        logBuffer = logBuffer & "? Column " & (i + 1) & " starts at: " & Format(colStart, "0.0") & vbCrLf
+    Next i
+
+    logBuffer = logBuffer & "=== End of Layout Report ==="
+    Debug.Print logBuffer
+    MsgBox "Layout metrics for page " & pageNum & " printed to Immediate window.", vbInformation
 End Sub
 
