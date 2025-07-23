@@ -1057,4 +1057,16 @@ Sub RunRepairWrappedVerseMarkers_Across5Pages_From(startPage As Long)
     Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
 End Sub
 
+Sub UnlinkHeadingNumbering()
+    Dim para As paragraph
+
+    For Each para In ActiveDocument.paragraphs
+        If para.style = ActiveDocument.Styles("Heading 1") _
+        Or para.style = ActiveDocument.Styles("Heading 2") Then
+            para.range.ListFormat.RemoveNumbers
+        End If
+    Next
+
+    MsgBox "Numbering removed from Heading 1 and Heading 2 paragraphs.", vbInformation
+End Sub
 
