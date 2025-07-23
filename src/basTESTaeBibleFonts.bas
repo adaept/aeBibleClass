@@ -225,4 +225,69 @@ Sub RedefinePictureCaptionStyle_NotoSans()
     MsgBox "'Picture Caption' style redefined to Noto Sans, 9pt.", vbInformation
 End Sub
 
+Sub Identify_ArialUnicodeMS_Paragraphs()
+    Dim para As paragraph
+    Dim paraIndex As Long
+    Dim secIndex As Long
+    Dim hfIndex As Long
+    Dim hfTypes As Variant
+    Dim hfKind As Variant
+    Dim logBuffer As String
+    Dim sec As section
+    Dim hf As HeaderFooter
+    Dim fontName As String
+
+    logBuffer = "=== Arial Unicode MS Paragraph Identification ===" & vbCrLf
+
+    ' Scan body
+    paraIndex = 0
+    For Each para In ActiveDocument.paragraphs
+        paraIndex = paraIndex + 1
+        fontName = para.range.Characters(1).font.name
+        If fontName = "Arial Unicode MS" Then
+            logBuffer = logBuffer & "[Body] Para #" & paraIndex & " - Style: " & para.style & vbCrLf
+            logBuffer = logBuffer & "Text: " & Left(para.range.text, 120) & vbCrLf & vbCrLf
+        End If
+    Next para
+
+    ' Header/footer types
+    hfTypes = Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
+
+    ' Scan headers/footers
+    secIndex = 0
+    For Each sec In ActiveDocument.Sections
+        secIndex = secIndex + 1
+        For Each hfKind In hfTypes
+            Set hf = sec.Headers(hfKind)
+            If hf.Exists Then
+                paraIndex = 0
+                For Each para In hf.range.paragraphs
+                    paraIndex = paraIndex + 1
+                    fontName = para.range.Characters(1).font.name
+                    If fontName = "Arial Unicode MS" Then
+                        logBuffer = logBuffer & "[Header] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
+                        logBuffer = logBuffer & "Style: " & para.style & vbCrLf
+                        logBuffer = logBuffer & "Text: " & Left(para.range.text, 120) & vbCrLf & vbCrLf
+                    End If
+                Next
+            End If
+            Set hf = sec.Footers(hfKind)
+            If hf.Exists Then
+                paraIndex = 0
+                For Each para In hf.range.paragraphs
+                    paraIndex = paraIndex + 1
+                    fontName = para.range.Characters(1).font.name
+                    If fontName = "Arial Unicode MS" Then
+                        logBuffer = logBuffer & "[Footer] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
+                        logBuffer = logBuffer & "Style: " & para.style & vbCrLf
+                        logBuffer = logBuffer & "Text: " & Left(para.range.text, 120) & vbCrLf & vbCrLf
+                    End If
+                Next
+            End If
+        Next hfKind
+    Next sec
+
+    Debug.Print logBuffer
+    MsgBox "Arial Unicode MS detection complete. See Immediate Window.", vbInformation
+End Sub
 

@@ -7,7 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #245 -
+' #250 -
+' #249 -
+' #248 -
+' #247 -
+' #246 -
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
@@ -55,6 +59,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs
     ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2
     ' FIXED - #243 - Add code RedefinePictureCaptionStyle_NotoSans, step 3 of removing Lieration Sans Narrow reference
     ' FIXED - #242 - Add code RedefineFootnoteNormalStyle_NotoSans, step 2 of removing Lieration Sans Narrow reference
