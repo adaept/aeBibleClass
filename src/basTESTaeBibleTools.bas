@@ -752,6 +752,32 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
     MsgBox "Expanded character diagnostics logged.", vbInformation
 End Sub
 
+Sub LogExpandedMarkerContext()
+    Dim sel As range: Set sel = Selection.range
+    Dim i As Long, chCount As Long
+    Dim contextText As String, contextAscii As String, contextHex As String
+
+    chCount = sel.Characters.count
+    Debug.Print "=== Marker Diagnostic ==="
+    Debug.Print "Selection Start=" & sel.Start & " | End=" & sel.End
+    Debug.Print "Selection Text='" & Replace(sel.text, vbCr, "[CR]") & "'"
+
+    For i = 1 To chCount
+        Dim ch As String: ch = sel.Characters(i).text
+        Dim ascVal As Integer: ascVal = Asc(ch)
+        Dim hexVal As String: hexVal = Hex(ascVal)
+
+        contextText = "[" & i & "] '" & Replace(ch, vbCr, "[CR]") & "'"
+        contextAscii = " ASCII=" & ascVal
+        contextHex = " Hex=" & hexVal
+
+        Debug.Print contextText & contextAscii & contextHex
+    Next i
+
+    Debug.Print "Style: " & sel.style & " | Font: " & sel.font.name
+    Debug.Print "=== End of Diagnostic ===" & vbCrLf
+End Sub
+
 Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     Dim pgRange As range, ch As range, scanRange As range
     Dim pageStart As Long, pageEnd As Long
@@ -1090,7 +1116,8 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
             End If
 
             If Not didRepair Then
-                Debug.Print "- Skipped marker '" & Trim(markerText) & "' | No action"
+                Debug.Print "- Skipped marker '" & Trim(markerText) & "' | ASCII=" & Asc(Left(markerText, 1)) & _
+                " | Page=" & pgNum & " | Style=" & rng.style & " | Font=" & rng.font.name & " | Start=" & rng.Start
             End If
         End If
     Next para
@@ -1129,7 +1156,7 @@ Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
 
         ' Replace this with your actual repair logic
         ' Ensure spaceRepairs(i) and breakRepairs(i) are incremented during the repair
-        Call SmartPrefixRepairOnPage_WithDiagnostics(pageNum, spaceRepairs(i), breakRepairs(i))
+        Call SmartPrefixRepairOnPage(pageNum, spaceRepairs(i), breakRepairs(i))
 
         timeStamps(i) = Round(Timer - t1, 2)
     Next i
@@ -1156,6 +1183,36 @@ Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
         resultRow = resultRow & breakRepairs(i)
         If i < 10 Then resultRow = resultRow & ","
     Next i
+    Debug.Print resultRow
+    ts.WriteLine resultRow
+    ts.Close
+End Sub
+
+Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
+    Const ForecastFile As String = "RepairRunnerForecast.txt"
+    Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
+    Dim filePath As String: filePath = ThisDocument.Path & "\" & ForecastFile
+
+    Dim fs As Object, ts As Object
+    Set fs = CreateObject("Scripting.FileSystemObject")
+
+    If fs.FileExists(filePath) = False Then
+        Set ts = fs.CreateTextFile(filePath, True)
+        ts.WriteLine "SessionID,PageNum," & _
+            "Time," & "SpaceRepairs," & "BreakRepairs"
+    Else
+        Set ts = fs.OpenTextFile(filePath, 8, True)
+    End If
+
+    Dim tStart As Single, tElapsed As Single
+    Dim spaceCount As Long, breakCount As Long
+
+    tStart = Timer
+    Call SmartPrefixRepairOnPage(pgNum, spaceCount, breakCount)
+    tElapsed = Round(Timer - tStart, 2)
+
+    Dim resultRow As String
+    resultRow = SessionID & "," & pgNum & "," & tElapsed & "," & spaceCount & "," & breakCount
     Debug.Print resultRow
     ts.WriteLine resultRow
     ts.Close
