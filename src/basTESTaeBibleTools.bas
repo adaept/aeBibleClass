@@ -1070,3 +1070,56 @@ Sub UnlinkHeadingNumbering()
     MsgBox "Numbering removed from Heading 1 and Heading 2 paragraphs.", vbInformation
 End Sub
 
+Sub StartRepairTimingSession(StartPageNum As Long)
+    Const ForecastFile As String = "RepairRunnerForecast.txt"
+    Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
+
+    Dim fs As Object, ts As Object
+    Set fs = CreateObject("Scripting.FileSystemObject")
+    Set ts = fs.OpenTextFile(ThisDocument.Path & "\" & ForecastFile, 8, True) ' Append mode
+
+    Dim i As Long, t0 As Single, t1 As Single
+    Dim timeStamps(1 To 10) As Single
+    Dim totalTime As Single, forecastTime As Single
+    Dim forecastPages As Long
+
+    t0 = Timer
+    For i = 1 To 10
+        t1 = Timer
+        ' Placeholder call: actual repair code will go here later
+        Call DummyRepairPageTimerOnly(StartPageNum + i - 1)
+        timeStamps(i) = Round(Timer - t1, 2)
+    Next i
+    totalTime = Round(Timer - t0, 2)
+
+    ' Forecast excludes pages likely to be headers (low timing)
+    For i = 1 To 10
+        If timeStamps(i) >= 0.1 Then
+            forecastTime = forecastTime + timeStamps(i)
+            forecastPages = forecastPages + 1
+        End If
+    Next i
+    If forecastPages > 0 Then
+        forecastTime = Round(forecastTime / forecastPages * 10, 2)
+    Else
+        forecastTime = 0
+    End If
+
+    ' Compile debug string
+    Dim resultRow As String
+    resultRow = SessionID & "," & StartPageNum & ","
+    For i = 1 To 10: resultRow = resultRow & timeStamps(i) & ",": Next i
+    resultRow = resultRow & totalTime & "," & forecastTime
+
+    Debug.Print resultRow
+    ts.WriteLine resultRow
+    ts.Close
+End Sub
+
+Sub DummyRepairPageTimerOnly(pgNum As Long)
+    ' Placeholder page-level logic for timing only
+    Dim dummyWait As Single
+    dummyWait = Timer
+    Do While Timer < dummyWait + 0.05: DoEvents: Loop
+End Sub
+
