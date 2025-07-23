@@ -778,6 +778,30 @@ Sub LogExpandedMarkerContext()
     Debug.Print "=== End of Diagnostic ===" & vbCrLf
 End Sub
 
+Sub FindInvisibleFormFeeds_InPages(startPage As Long)
+    Dim para As paragraph, rng As range
+    Dim pgNum As Long
+    Dim i As Long, pgTarget As Long
+
+    pgTarget = startPage + 9
+    Debug.Print "=== Scanning for Chr(12) from Page " & startPage & " to " & pgTarget & " ==="
+
+    For Each para In ActiveDocument.paragraphs
+        Set rng = para.range
+        pgNum = rng.Information(wdActiveEndPageNumber)
+
+        If pgNum >= startPage And pgNum <= pgTarget Then
+            If InStr(rng.text, Chr(12)) > 0 Then
+                Debug.Print "[Page " & pgNum & "] Chr(12) found at Start=" & rng.Start
+                Debug.Print "Text='" & Replace(rng.text, Chr(12), "[FF]") & "'"
+                Debug.Print "Style=" & rng.style & " | Font=" & rng.font.name
+            End If
+        End If
+    Next para
+
+    Debug.Print "=== End of Scan ===" & vbCrLf
+End Sub
+
 Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     Dim pgRange As range, ch As range, scanRange As range
     Dim pageStart As Long, pageEnd As Long
