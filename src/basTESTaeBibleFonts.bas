@@ -173,5 +173,56 @@ Sub RedefineFootnoteNormalStyle_NotoSans()
     MsgBox "'Footnote normal' style updated to Noto Sans, 7pt.", vbInformation
 End Sub
 
+Sub AuditStyleUsage_PictureCaption()
+    Dim para As paragraph
+    Dim hitCount As Long
+    Dim logBuffer As String
+    Dim s As style
+
+    logBuffer = "=== Audit: Paragraph Style Usage for 'Picture Caption' ===" & vbCrLf
+
+    On Error Resume Next
+    Set s = ActiveDocument.Styles("Picture Caption")
+    If s Is Nothing Then
+        MsgBox "Style 'Picture Caption' not found in this document.", vbExclamation
+        Exit Sub
+    End If
+    On Error GoTo 0
+
+    For Each para In ActiveDocument.paragraphs
+        If para.style = s Then
+            hitCount = hitCount + 1
+            logBuffer = logBuffer & "* Paragraph at Char " & para.range.Start & " -> """ & _
+                Replace(Left(para.range.text, 40), vbCr, "") & "...""" & vbCrLf
+        End If
+    Next para
+
+    logBuffer = logBuffer & vbCrLf & "Total 'Picture Caption' style instances: " & hitCount
+    Debug.Print logBuffer
+    MsgBox "Audit complete. See Immediate Window for details.", vbInformation
+End Sub
+
+Sub RedefinePictureCaptionStyle_NotoSans()
+    Dim s As style
+    On Error Resume Next
+    Set s = ActiveDocument.Styles("Picture Caption")
+    If s Is Nothing Then
+        MsgBox "'Picture Caption' style not found in this document.", vbExclamation
+        Exit Sub
+    End If
+    On Error GoTo 0
+
+    With s.font
+        .name = "Noto Sans"
+        .Size = 9
+        .Bold = False
+        .Italic = False
+        .Underline = wdUnderlineNone
+        .color = wdColorAutomatic
+    End With
+
+    Debug.Print "? 'Picture Caption' style updated to Noto Sans, 9pt."
+    MsgBox "'Picture Caption' style redefined to Noto Sans, 9pt.", vbInformation
+End Sub
 
 
