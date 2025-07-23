@@ -7,7 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #250 -
+' #255 -
+' #254 -
+' #253 -
+' #252 -
+' #251 -
 ' #247 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
@@ -54,6 +58,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #250 - Wire up dummy repair test with stats collection logic
     ' FIXED - #249 - Add skeleton for StartRepairTimingSession
     ' FIXED - #248 - Update repair tool for 10 pages
     ' FIXED - #174 - Add tests for count tab para in headers and footers
