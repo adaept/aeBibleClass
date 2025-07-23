@@ -170,8 +170,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -331,6 +331,7 @@ Test16:     RunTest (16)
             RunTest (45)
             RunTest (46)
             RunTest (47)
+            RunTest (48)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -532,6 +533,9 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 47
         ResultArray(47) = CountTabOnlyParagraphs("Footer")
         If ResultArray(47) = oneBasedExpectedArray(47) Then GetPassFail = "PASS    "
+    Case 48
+        ResultArray(48) = AuditLiberationSansNarrowStyleDetails
+        If ResultArray(48) = oneBasedExpectedArray(48) Then GetPassFail = "PASS    "
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -695,6 +699,9 @@ Private Function RunTest(num As Integer) As Boolean
     Case 47
         Debug.Print GetPassFail(47), "Copy ()", "Test = " & num, ResultArray(47), oneBasedExpectedArray(47), "CountTabOnlyParagraphs(" & """Footer""" & ")"
         If TestReportFlag Then OutputTestReport (47)
+    Case 48
+        Debug.Print GetPassFail(48), "Copy ()", "Test = " & num, ResultArray(48), oneBasedExpectedArray(48), "AuditLiberationSansNarrowStyleDetails"
+        If TestReportFlag Then OutputTestReport (48)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -820,9 +827,45 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(46) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(46))) & Fixed14Str(CStr(oneBasedExpectedArray(46))) & "CountFindNotEmphasisRed"
     Case 47
         AppendToFile TestReportFileName, GetPassFail(47) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(47))) & Fixed14Str(CStr(oneBasedExpectedArray(47))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
+    Case 48
+        AppendToFile TestReportFileName, GetPassFail(48) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(48))) & Fixed14Str(CStr(oneBasedExpectedArray(48))) & "AuditLiberationSansNarrowStyleDetails"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
+End Function
+
+Private Function AuditLiberationSansNarrowStyleDetails() As Integer
+    Dim s As style
+    Dim logBuffer As String
+    Dim fName As String, fSize As Variant, pStyleType As String
+    Dim styleCount As Long
+
+    logBuffer = "=== Liberation Sans Narrow Style Definitions ===" & vbCrLf
+
+    For Each s In ActiveDocument.Styles
+        On Error Resume Next
+        fName = s.font.name
+        fSize = s.font.Size
+        If fName = "Liberation Sans Narrow" Then
+            styleCount = styleCount + 1
+            Select Case s.Type
+                Case wdStyleTypeParagraph: pStyleType = "Paragraph"
+                Case wdStyleTypeCharacter: pStyleType = "Character"
+                Case wdStyleTypeTable: pStyleType = "Table"
+                Case wdStyleTypeList: pStyleType = "List"
+                Case Else: pStyleType = "Other"
+            End Select
+            logBuffer = logBuffer & _
+                "- Style: “" & s.NameLocal & "” | Type: " & pStyleType & _
+                " | Font Size: " & fSize & vbCrLf
+        End If
+        On Error GoTo 0
+    Next s
+
+    'logBuffer = logBuffer & vbCrLf & "Total styles using Liberation Sans Narrow: " & styleCount
+    'Debug.Print logBuffer
+    'MsgBox "Style details printed. See Immediate Window.", vbInformation
+    AuditLiberationSansNarrowStyleDetails = styleCount
 End Function
 
 Private Function CountTabOnlyParagraphs(areaType As String) As Long
