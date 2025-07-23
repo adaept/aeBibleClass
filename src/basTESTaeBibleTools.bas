@@ -1037,21 +1037,21 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
 End Sub
 
-Sub RunRepairWrappedVerseMarkers_Across5Pages_From(startPage As Long)
+Sub RunRepairWrappedVerseMarkers_Across10Pages_From(startPage As Long)
     Dim totalFixes As Long, pgFixCount As Long
     Dim logBuffer As String
 
     logBuffer = "=== Multi-Page Repair Runner from Page " & startPage & " ===" & vbCrLf
 
     Dim p As Long
-    For p = startPage To startPage + 4
+    For p = startPage To startPage + 9
         pgFixCount = 0
         RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage p, pgFixCount
         logBuffer = logBuffer & "Page " & p & ": " & pgFixCount & " repair(s)" & vbCrLf
         totalFixes = totalFixes + pgFixCount
     Next p
 
-    logBuffer = logBuffer & "=== Total repairs across 5 pages: " & totalFixes & " ==="
+    logBuffer = logBuffer & "=== Total repairs across 10 pages: " & totalFixes & " ==="
     Debug.Print logBuffer
     MsgBox "Multi-page repair complete. See Immediate Window for breakdown.", vbInformation
     Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
