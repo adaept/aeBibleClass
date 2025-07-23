@@ -137,5 +137,41 @@ Sub RedefineFootnoteStyle_NotoSans()
     MsgBox "->Footnote<- style updated to Noto Sans, 7pt.", vbInformation
 End Sub
 
+Sub AuditStyleUsage_FootnoteNormal()
+    Dim para As paragraph
+    Dim hitCount As Long
+    Dim logBuffer As String
+
+    logBuffer = "=== Audit: Paragraph Style Usage for 'Footnote normal' ===" & vbCrLf
+
+    For Each para In ActiveDocument.paragraphs
+        If para.style = ActiveDocument.Styles("Footnote normal") Then
+            hitCount = hitCount + 1
+            logBuffer = logBuffer & "* Paragraph at Char " & para.range.Start & " -> """ & _
+            Replace(Left(para.range.text, 40), vbCr, "") & "...""" & vbCrLf
+        End If
+    Next para
+
+    logBuffer = logBuffer & vbCrLf & "Total 'Footnote normal' style instances: " & hitCount
+    Debug.Print logBuffer
+    MsgBox "Audit complete. See Immediate Window for details.", vbInformation
+End Sub
+
+Sub RedefineFootnoteNormalStyle_NotoSans()
+    Dim s As style
+    Set s = ActiveDocument.Styles("Footnote normal")
+
+    With s.font
+        .name = "Noto Sans"
+        .Size = 7
+        .Bold = False
+        .Italic = False
+        .Underline = wdUnderlineNone
+        .color = wdColorAutomatic
+    End With
+
+    MsgBox "'Footnote normal' style updated to Noto Sans, 7pt.", vbInformation
+End Sub
+
 
 
