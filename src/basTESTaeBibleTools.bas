@@ -1058,11 +1058,22 @@ End Sub
 Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
+    Dim filePath As String: filePath = ThisDocument.Path & "\" & ForecastFile
 
     Dim fs As Object, ts As Object
     Set fs = CreateObject("Scripting.FileSystemObject")
-    Set ts = fs.OpenTextFile(ThisDocument.Path & "\" & ForecastFile, 8, True)
 
+    If fs.FileExists(filePath) = False Then
+        Set ts = fs.CreateTextFile(filePath, True)
+        ts.WriteLine "SessionID,StartPageNum," & _
+            "Time1,Time2,Time3,Time4,Time5,Time6,Time7,Time8,Time9,Time10," & _
+            "TotalTime,ForecastTime," & _
+            "Space1,Space2,Space3,Space4,Space5,Space6,Space7,Space8,Space9,Space10," & _
+            "Break1,Break2,Break3,Break4,Break5,Break6,Break7,Break8,Break9,Break10"
+    Else
+        Set ts = fs.OpenTextFile(filePath, 8, True)
+    End If
+    
     Dim i As Long, t0 As Single, t1 As Single
     Dim timeStamps(1 To 10) As Single
     Dim spaceRepairs(1 To 10) As Long, breakRepairs(1 To 10) As Long
