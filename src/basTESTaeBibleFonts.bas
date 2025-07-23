@@ -42,11 +42,15 @@ Sub CheckOpenFontsWithDownloads()
         End If
     Next i
 
-    MsgBox "Open Font Availability Report:" & vbCrLf & vbCrLf & _
+    'MsgBox "Open Font Availability Report:" & vbCrLf & vbCrLf & _
            "Installed Fonts:" & vbCrLf & InstalledFonts & vbCrLf & _
            "Missing Fonts:" & vbCrLf & MissingFonts & _
            IIf(DownloadLinks <> "", vbCrLf & "Download Missing Fonts:" & vbCrLf & DownloadLinks, ""), _
            vbInformation, "Open Font Check"
+    Debug.Print "Open Font Availability Report:" & vbCrLf & vbCrLf & _
+           "Installed Fonts:" & vbCrLf & InstalledFonts & vbCrLf & _
+           "Missing Fonts:" & vbCrLf & MissingFonts & _
+           IIf(DownloadLinks <> "", vbCrLf & "Download Missing Fonts:" & vbCrLf & DownloadLinks, "")
 End Sub
 
 Function IsFontInstalled(fontName As String) As Boolean
@@ -90,6 +94,48 @@ Sub CreateEmphasisBlackStyle()
     MsgBox "Character style 'EmphasisBlack' created and added to the Style Gallery.", vbInformation
 End Sub
 
+Sub AuditStyleUsage_Footnote()
+    Dim r As range, hitCount As Long
+    Dim logBuffer As String
+
+    logBuffer = "=== Audit: Style Usage for ->Footnote<- ===" & vbCrLf
+
+    Set r = ActiveDocument.content
+    With r.Find
+        .ClearFormatting
+        .style = ActiveDocument.Styles("Footnote")
+        .text = ""
+        .Format = True
+        .Forward = True
+        .Wrap = wdFindStop
+        Do While .Execute
+            hitCount = hitCount + 1
+            logBuffer = logBuffer & "* Style hit at Char " & r.Start & " ? ->" & Left(r.text, 40) & "...<-" & vbCrLf
+            r.Start = r.Start + 1
+            r.End = ActiveDocument.content.End
+        Loop
+    End With
+
+    logBuffer = logBuffer & vbCrLf & "Total ->Footnote<- style instances: " & hitCount
+    Debug.Print logBuffer
+    MsgBox "Audit complete. See Immediate Window for details.", vbInformation
+End Sub
+
+Sub RedefineFootnoteStyle_NotoSans()
+    Dim s As style
+    Set s = ActiveDocument.Styles("Footnote")
+
+    With s.font
+        .name = "Noto Sans"
+        .Size = 7
+        .Bold = False
+        .Italic = False
+        .Underline = wdUnderlineNone
+        .color = wdColorAutomatic
+    End With
+
+    MsgBox "->Footnote<- style updated to Noto Sans, 7pt.", vbInformation
+End Sub
 
 
 
