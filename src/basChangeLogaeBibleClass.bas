@@ -10,7 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #250 -
 ' #249 -
 ' #248 -
-' #247 -
+' #247 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
@@ -18,14 +18,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book
 ' #190 - Add test to verify all correct Chapter Verse Marker per book
-' #174 - Add tests for count tab para in headers and footers
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
 ' #100 - Continue check multipage view from 300 for orphans of H2
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
-' #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote
@@ -58,6 +56,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #174 - Add tests for count tab para in headers and footers
+    ' FIXED - #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style
     ' FIXED - #246 - Add test for styles using Liberation Sans Narrow
     ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs
     ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2
