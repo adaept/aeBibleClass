@@ -1055,6 +1055,49 @@ Sub SmartPrefixRepairOnPage_WithDiagnostics(pgNum As Long, ByRef spaceCount As L
     Next j
 End Sub
 
+Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
+    Dim para As paragraph
+    Dim rng As range
+    Dim markerText As String
+    Dim didRepair As Boolean
+    Dim paraStyle As String
+
+    Debug.Print "=== Smart Prefix Repair on Page " & pgNum & " ==="
+
+    For Each para In ActiveDocument.paragraphs
+        Set rng = para.range
+        paraStyle = rng.style
+
+        ' Filter to page range if needed (layout-aware paging can be added later)
+        If InStr(paraStyle, "Verse") > 0 Then
+            markerText = rng.text
+            didRepair = False
+
+            ' Sample condition: insert vbCr if prefix wrapped to previous line
+            If InStr(markerText, " ") = 1 Then
+                rng.InsertBefore vbCr
+                breakCount = breakCount + 1
+                didRepair = True
+                Debug.Print "? Repaired prefix before '" & Trim(markerText) & "' | Break inserted"
+            End If
+
+            ' Sample condition: remove space if extra space precedes marker
+            If Left(markerText, 1) = " " Then
+                rng.Characters(1).Delete
+                spaceCount = spaceCount + 1
+                didRepair = True
+                Debug.Print "? Removed space before '" & Trim(markerText) & "'"
+            End If
+
+            If Not didRepair Then
+                Debug.Print "- Skipped marker '" & Trim(markerText) & "' | No action"
+            End If
+        End If
+    Next para
+
+    Debug.Print "=== End of Repairs for Page " & pgNum & " ==="
+End Sub
+
 Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
