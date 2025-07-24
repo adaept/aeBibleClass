@@ -39,6 +39,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     Dim prefixY As Single, digitY As Single, digitX As Single
     Dim nextWords As String, lookAhead As range, token As range, wCount As Integer
     Dim logBuffer As String
+    Dim ascii12Count As Long
 
     fixCount = 0
     logBuffer = "=== Smart Prefix Repair on Page " & pageNum & " ===" & vbCrLf
@@ -93,6 +94,12 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
 
             If Len(verseDigits) > 0 Then
                 combinedNumber = chapterMarker & verseDigits
+                
+            If Len(combinedNumber) = 1 And AscW(combinedNumber) = 12 Then
+                ascii12Count = ascii12Count + 1
+                i = verseEnd
+                GoTo SkipLogging
+            End If
 
                 ' Prefix check
                 If markerStart > pageStart Then
@@ -137,9 +144,11 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
         Else
             i = i + 1
         End If
+SkipLogging:
     Loop
 
     logBuffer = logBuffer & "=== " & fixCount & " markers repaired on page " & pageNum & " ==="
+    logBuffer = logBuffer & vbCrLf & "ASCII 12 audit: " & ascii12Count & " marker(s) on page " & pageNum & " contain Chr(12)" & vbCrLf
     Debug.Print logBuffer
     'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
     fixCount = fixCount
