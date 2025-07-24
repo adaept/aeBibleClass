@@ -1,4 +1,4 @@
-Attribute VB_Name = "LongRunningProcessCode"
+Attribute VB_Name = "XLongRunningProcessCode"
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Dim lastProcessedParagraph As Long

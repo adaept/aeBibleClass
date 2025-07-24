@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTESTaeBibleDOCVARIABLE"
+Attribute VB_Name = "XbasTESTaeBibleDOCVARIABLE"
 Option Explicit
 Option Compare Text
 Option Private Module

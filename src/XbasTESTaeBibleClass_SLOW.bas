@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTESTaeBibleClass_SLOW"
+Attribute VB_Name = "XbasTESTaeBibleClass_SLOW"
 Option Explicit
 Option Compare Text
 Option Private Module
