@@ -7,7 +7,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #255 -
+' #260 -
+' #259 -
+' #258 -
+' #257 -
 ' #247 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
@@ -54,6 +57,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #256 - Update SmartPrefixRepairOnPage to give a count of Ascii 12 chars
+    ' FIXED - #255 - Update SmartPrefixRepairOnPage for details on unprintable characters
     ' FIXED - #254 - Add code for FindInvisibleFormFeeds_InPages
     ' FIXED - #253 - Add code for LogExpandedMarkerContext
     ' FIXED - #252 - Add code SmartPrefixRepairOnPage with Diagnostic Counter

@@ -1105,12 +1105,18 @@ Sub SmartPrefixRepairOnPage_WithDiagnostics(pgNum As Long, ByRef spaceCount As L
     Next j
 End Sub
 
+Sub SmartyOne()
+    Dim sCount As Long, bCount As Long
+    Call SmartPrefixRepairOnPage(210, sCount, bCount)
+End Sub
+
 Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
     Dim para As paragraph
     Dim rng As range
     Dim markerText As String
     Dim didRepair As Boolean
     Dim paraStyle As String
+    Dim ascii12Count As Long
 
     Debug.Print "=== Smart Prefix Repair on Page " & pgNum & " ==="
 
@@ -1118,12 +1124,17 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
         Set rng = para.range
         paraStyle = rng.style
 
-        ' Filter to page range if needed (layout-aware paging can be added later)
         If InStr(paraStyle, "Verse") > 0 Then
             markerText = rng.text
+
+            ' Ignore Chr(12) artifacts completely
+            If Len(markerText) = 1 And Asc(markerText) = 12 Then
+                ascii12Count = ascii12Count + 1
+                GoTo NextPara
+            End If
+
             didRepair = False
 
-            ' Sample condition: insert vbCr if prefix wrapped to previous line
             If InStr(markerText, " ") = 1 Then
                 rng.InsertBefore vbCr
                 breakCount = breakCount + 1
@@ -1131,7 +1142,6 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
                 Debug.Print "? Repaired prefix before '" & Trim(markerText) & "' | Break inserted"
             End If
 
-            ' Sample condition: remove space if extra space precedes marker
             If Left(markerText, 1) = " " Then
                 rng.Characters(1).Delete
                 spaceCount = spaceCount + 1
@@ -1139,13 +1149,30 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
                 Debug.Print "? Removed space before '" & Trim(markerText) & "'"
             End If
 
+            ' Diagnostic block for skipped markers (excluding Chr(12))
             If Not didRepair Then
-                Debug.Print "- Skipped marker '" & Trim(markerText) & "' | ASCII=" & Asc(Left(markerText, 1)) & _
-                " | Page=" & pgNum & " | Style=" & rng.style & " | Font=" & rng.font.name & " | Start=" & rng.Start
+                Debug.Print "- Skipped marker '" & Trim(markerText) & "'"
+                Debug.Print "  ASCII codes for first few characters:"
+                Dim i As Long, limit As Long
+                If Len(markerText) < 5 Then
+                    limit = Len(markerText)
+                Else
+                    limit = 5
+                End If
+                For i = 1 To limit
+                    Dim ch As String
+                    Dim ascVal As Integer
+                    ch = Mid(markerText, i, 1)
+                    ascVal = Asc(ch)
+                    Debug.Print "    Char " & i & ": '" & Replace(ch, vbCr, "[CR]") & "' | ASCII=" & ascVal & " | Hex=" & Hex(ascVal)
+                Next i
+                Debug.Print "  Style=" & rng.style & " | Font=" & rng.font.name & " | Start=" & rng.Start & " | Page=" & pgNum
             End If
         End If
+NextPara:
     Next para
 
+    Debug.Print "Chr(12) marker count on Page " & pgNum & ": " & ascii12Count
     Debug.Print "=== End of Repairs for Page " & pgNum & " ==="
 End Sub
 
