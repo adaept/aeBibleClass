@@ -6,6 +6,19 @@ _Audit-safe layout standards, suffix diagnostics, and repair architecture for ve
 
 This guide defines diagnostic rules and layout behavior used in automated repairs and pre-sweep evaluations of verse marker blocks across paginated documents. It captures typographic integrity, audit history, session tracking, and editorial safety.
 
+## 🧩 Code Architecture Overview
+
+The Editorial Design and Style Guide (EDSG) works in conjunction with VBA code embedded in a `.DOCM` file. The operation of the code is modular and audit-driven, with the following components:
+
+- **`aeBibleClass`**  
+  A class module responsible for running a battery of 40+ diagnostic tests on document content. These tests cover layout integrity, style consistency, suffix behavior, and marker structure.
+
+- **`aewordgitClass`**  
+  A class module used to export VBA code and audit logs to GitHub. It supports version tracking, task development, and collaborative refinement of repair logic.
+
+- **`basWordRepairRunner`**  
+  A standard module that executes layout diagnostics and automated repairs. It applies rules defined in EDSG to ensure safe, reversible, and editorially sound modifications.
+
 ---
 
 ## 🧭 Layout Roles and Styles
