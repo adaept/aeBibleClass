@@ -40,6 +40,11 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     Dim nextWords As String, lookAhead As range, token As range, wCount As Integer
     Dim logBuffer As String
     Dim ascii12Count As Long
+    Dim ascii160MissingCount As Long
+    Dim suffix160Count As Long
+    Dim suffixHairSpaceCount As Long
+    Dim suffixSpaceCount As Long
+    Dim suffixOtherCount As Long
 
     fixCount = 0
     logBuffer = "=== Smart Prefix Repair on Page " & pageNum & " ===" & vbCrLf
@@ -94,13 +99,33 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
 
             If Len(verseDigits) > 0 Then
                 combinedNumber = chapterMarker & verseDigits
+            
+                Dim chInfo As range
+                Set chInfo = ActiveDocument.range(verseEnd, verseEnd + 1)
+                'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.text)
                 
-            If Len(combinedNumber) = 1 And AscW(combinedNumber) = 12 Then
-                ascii12Count = ascii12Count + 1
-                i = verseEnd
-                GoTo SkipLogging
-            End If
+                Dim suffixCh As range
+                Set suffixCh = ActiveDocument.range(verseEnd, verseEnd + 1)
+                Dim suffixAsc As Long
+                suffixAsc = AscW(suffixCh.text)
 
+                Select Case suffixAsc
+                    Case 160: suffix160Count = suffix160Count + 1
+                    Case 8239: suffixHairSpaceCount = suffixHairSpaceCount + 1
+                    Case 32: suffixSpaceCount = suffixSpaceCount + 1
+                    Case Else: suffixOtherCount = suffixOtherCount + 1
+                End Select
+
+                ' Optional diagnostic
+                'Debug.Print "Suffix [" & combinedNumber & "] ASCII=" & suffixAsc & " Style=" & suffixCh.style.NameLocal & " Font=" & suffixCh.font.name & " Size=" & suffixCh.font.Size
+                
+                ' Chr(12) audit
+                If Len(combinedNumber) = 1 And AscW(combinedNumber) = 12 Then
+                    ascii12Count = ascii12Count + 1
+                    i = verseEnd
+                    GoTo SkipLogging
+                End If
+                
                 ' Prefix check
                 If markerStart > pageStart Then
                     Set prefixCh = ActiveDocument.range(markerStart - 1, markerStart)
@@ -148,7 +173,8 @@ SkipLogging:
     Loop
 
     logBuffer = logBuffer & "=== " & fixCount & " markers repaired on page " & pageNum & " ==="
-    logBuffer = logBuffer & vbCrLf & "ASCII 12 audit: " & ascii12Count & " marker(s) on page " & pageNum & " contain Chr(12)" & vbCrLf
+    logBuffer = logBuffer & vbCrLf & "ASCII 12 audit: " & ascii12Count & " marker(s) on page " & pageNum & " contain Chr(12)"
+    logBuffer = logBuffer & vbCrLf & "ASCII 160 audit: " & ascii160MissingCount & " marker(s) on page " & pageNum & " missing Chr(160) suffix" & vbCrLf
     Debug.Print logBuffer
     'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
     fixCount = fixCount
