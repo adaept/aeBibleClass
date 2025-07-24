@@ -19,6 +19,138 @@ The Editorial Design and Style Guide (EDSG) works in conjunction with VBA code e
 - **`basWordRepairRunner`**  
   A standard module that executes layout diagnostics and automated repairs. It applies rules defined in EDSG to ensure safe, reversible, and editorially sound modifications.
 
+## 🧠 EDSG Development Module Manifest (Items 1–10)
+
+### **VBA Development Routines**
+
+Purpose-built scaffolding to:
+
+- Ensure all macro logic is auditable and version-aware.
+- Maintain reversible transitions between Word and GitHub.
+- Provide test harnesses that simulate layout, suffix, and style variants.
+- Respect editorial boundaries—never modify punctuation or core content.
+
+### 1. `basBibleRibbon`
+
+- Applies macros from a custom Word Ribbon
+- Extendable using Office RibbonX Editor.
+- Designed for Office 365 Word only.
+
+### 2. `basChangeLogaeBibleClass`
+
+Change log engine for `aeBibleClass` operations:
+
+- Timestamped, suffix-aware log entries.
+- Captures transformations of sacred/editorial text.
+- Supports layout boundary reconciliation and suffix audits.
+
+### 3. `basChangeLogaewordgit`
+
+Tracks automation-driven changes for `aewordgit` routines:
+
+- Records macro-induced layout and style shifts.
+- Links macro sessions with Git-exportable artifacts.
+- Supports suffix normalization and audit-friendly exports.
+
+### 4. `basImportWordGitFiles`
+
+Git-to-Word rehydration tool:
+
+- Applies macros from Git-exported modules back to Word safely.
+- Verifies suffix resolution, style inheritance, and layout sanity.
+- Supports preview loops and skip-logging before macro activation.
+- Easily adaptable with direct access to the code.
+
+### 5. `basTESTaeBibleClass`
+
+Test initiator for BibleClass routines:
+
+- Simulates Word inheritance quirks and suffix variants.
+- Validates repairs against editorial safety constraints.
+- Logs skipped cases with ASCII + style context.
+
+### 6. `basTESTaeBibleFonts`
+
+Project font related routines:
+
+- 
+- 
+- 
+
+### 7. `basTESTaeBibleTools`
+
+Project development tools:
+
+- 
+- 
+- 
+
+### 8. `basTESTaewordgitClass`
+
+Initiator for Git-bound Word exports:
+
+- Runs dry-export tests for macro readability and fidelity.
+- Audits namespace integrity and suffix tracking completeness.
+- 
+
+### 9. `basWordRepairRunner`
+
+Document QA development tools:
+
+- 
+- 
+- 
+
+### 10. `basWordSettingsDiagnostic`
+
+Word environment QA tools:
+
+- 
+- 
+- 
+
+---
+
+## 🔄 EDSG Workflow — Word Automation Lifecycle
+
+1. **Source Document in Word**
+   - Contains layout anomalies, suffix variants, and legacy styles.
+
+2. **aeBibleClass Macros**
+   - Repairs layout and suffix inconsistencies.
+   - Respects editorial boundaries and punctuation integrity.
+
+3. **basChangeLogaeBibleClass**
+   - Logs macro actions with timestamp, style context, and audit notes.
+   - Records layout boundaries, suffix findings, and skipped cases.
+
+4. **basTESTaeBibleClass**
+   - Runs simulated tests using fake layouts or edge-case paragraphs.
+   - Validates macro safety, logs skipped repairs with full ASCII trace.
+
+5. **Macro Export to GitHub**
+   - Macro modules, diagnostic reports, and style audits are versioned.
+
+6. **basChangeLogaewordgit**
+   - Captures export session context: suffix stats, macro results, and style map.
+   - Tracks performance and module evolution across runs.
+
+7. **basTESTaewordgitClass**
+   - Dry-runs Git-bound macros for compatibility and namespace sanity.
+   - Verifies macro readability and layout assumptions.
+
+8. **GitHub Repository**
+   - Stores modular code, suffix audit outputs, and diagnostic histories.
+   - Supports rollback, team collaboration, and public reference.
+
+9. **basImportWordGitFiles**
+   - Safely rehydrates macro modules back into Word.
+   - Allows preview/confirm flow, skips unsafe cases, maintains suffix state.
+
+10. **Final Document Pass in Word**
+    - Clean, audited, repaired document with full changelog support.
+    - Suffix reports and audit logs retained for tracking or next-run forecasting.
+
 ---
 
 ## 🧭 Layout Roles and Styles
