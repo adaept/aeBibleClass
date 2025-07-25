@@ -386,6 +386,57 @@ Use a low-density test document or select 2–3 sample pages:
 
 ---
 
+## 📄 Copilot Pages: Workflow Guide (July 2025)
+
+## Overview
+
+Copilot Pages is best used as a stable workspace for audit logs, macro iterations, and suffix tracking—not for fluid, spontaneous debugging. It offers editability, persistent context, and structured layout, but lacks the conversational nuance of chat.
+
+---
+
+## 🔍 Pages vs Chat Usage Matrix
+
+| Task Type                   | Best Used In | Reasoning                                                  |
+|----------------------------|--------------|------------------------------------------------------------|
+| Macro iterations           | Pages        | Audit-friendly revisions with editable history             |
+| Style audit logs           | Pages        | Add summaries, CSV-style breakdowns, suffix notes          |
+| Punctuation-edge cases     | Chat         | Better for rapid-fire context and emotional nuance         |
+| Font repair tracking       | Pages        | Consolidate detection notes and outcome logs               |
+| Session instability analysis| Both        | Track failures in Pages, troubleshoot live in chat         |
+
+---
+
+## 🚀 How to Start a Page
+
+- Hover over any Copilot response  
+- Click **“Edit in a page”**  
+- Or, create one manually via the “Pages” tab in the sidebar  
+- Pages are auto-saved and support markdown-style formatting
+
+---
+
+## 💡 Tips for Clarity and Auditability
+
+- Use headers like `# Layout Drift Audit — July 25`  
+- Log skipped cases, suffix anomalies, repair summaries  
+- Ask Copilot to refactor code, summarize output, or reformat content live within the Page
+
+---
+
+## 🧱 Why Pages Feel Clunky (Today)
+
+- No conversational turn-taking or inline commentary  
+- Less intuitive than chat for real-time diagnostics  
+- Ideal for persistent records, not exploratory reasoning
+
+---
+
+## 📘 Official Help Resource
+
+Visit: [Copilot Pages Help](http://aka.ms/copilot-pages-help)
+
+---
+
 ## 🧑‍🔬 Follow-up Issues
 
 - 🧠 Section 144: Header=77 (M) and Section 146: Header=73 (I)—are those initial glyphs from chapter metadata? Might be worth flagging for suffix tracking. (TestHeaderFooterStyleScan)
