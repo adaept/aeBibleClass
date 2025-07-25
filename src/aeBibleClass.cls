@@ -170,8 +170,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -332,6 +332,7 @@ Test16:     RunTest (16)
             RunTest (46)
             RunTest (47)
             RunTest (48)
+            RunTest (49)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -536,6 +537,9 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 48
         ResultArray(48) = AuditLiberationSansNarrowStyleDetails
         If ResultArray(48) = oneBasedExpectedArray(48) Then GetPassFail = "PASS    "
+    Case 49
+        ResultArray(49) = CountAuditStyles_ToFile
+        If ResultArray(49) = oneBasedExpectedArray(49) Then GetPassFail = "PASS    "
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -702,6 +706,9 @@ Private Function RunTest(num As Integer) As Boolean
     Case 48
         Debug.Print GetPassFail(48), "Copy ()", "Test = " & num, ResultArray(48), oneBasedExpectedArray(48), "AuditLiberationSansNarrowStyleDetails"
         If TestReportFlag Then OutputTestReport (48)
+    Case 49
+        Debug.Print GetPassFail(49), "Copy ()", "Test = " & num, ResultArray(49), oneBasedExpectedArray(49), "CountAuditStyles_ToFile"
+        If TestReportFlag Then OutputTestReport (49)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -829,9 +836,59 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(47) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(47))) & Fixed14Str(CStr(oneBasedExpectedArray(47))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
     Case 48
         AppendToFile TestReportFileName, GetPassFail(48) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(48))) & Fixed14Str(CStr(oneBasedExpectedArray(48))) & "AuditLiberationSansNarrowStyleDetails"
+    Case 49
+        AppendToFile TestReportFileName, GetPassFail(49) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(49))) & Fixed14Str(CStr(oneBasedExpectedArray(49))) & "CountAuditStyles_ToFile"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
+End Function
+
+Public Function CountAuditStyles_ToFile() As Long
+    Dim rng As range
+    Dim para As paragraph
+    Dim paraStyle As String
+    Dim paraCount As Long
+    Dim keyCount As Long
+    Dim styleDict As Object
+    Set styleDict = CreateObject("Scripting.Dictionary")
+
+    ' Build the distribution
+    For Each rng In ActiveDocument.StoryRanges
+        Do
+            For Each para In rng.paragraphs
+                paraStyle = para.style.NameLocal
+                paraCount = paraCount + 1
+                If Not styleDict.Exists(paraStyle) Then
+                    styleDict.Add paraStyle, 1
+                Else
+                    styleDict(paraStyle) = styleDict(paraStyle) + 1
+                End If
+            Next para
+            Set rng = rng.NextStoryRange
+        Loop Until rng Is Nothing
+    Next rng
+
+    ' Output to text file beside the document
+    Dim fso As Object, outFile As Object, outputPath As String
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    outputPath = fso.GetParentFolderName(ActiveDocument.FullName) & "\Style Usage Distribution.txt"
+    Set outFile = fso.CreateTextFile(outputPath, True)
+
+    outFile.WriteLine "=== Style Usage Distribution ==="
+    Dim key As Variant
+    keyCount = 0
+    For Each key In styleDict.Keys
+        keyCount = keyCount + 1
+        'Debug.Print keyCount, key, styleDict(key)
+        outFile.WriteLine key & ": " & styleDict(key)
+    Next key
+    outFile.WriteLine "Total paragraphs (all styles): " & paraCount
+    outFile.Close
+
+    'Debug.Print "Style usage written to:" & vbCrLf & outputPath
+    'MsgBox "Style usage written to:" & vbCrLf & outputPath, vbInformation, "Audit Complete"
+    'Debug.Print "keyCount = " & keyCount
+    CountAuditStyles_ToFile = keyCount
 End Function
 
 Private Function AuditLiberationSansNarrowStyleDetails() As Integer
