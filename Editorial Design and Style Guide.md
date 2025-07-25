@@ -235,3 +235,159 @@ Suffixes should only follow complete digit blocks and pass style filter for `"Ve
 Layout repair must never override editorial meaning. This guide exists to preserve structural integrity, typographic consistency, and auditable decision paths—so that every automation is reversible, explainable, and safe.
 
 ---
+
+## 🔧 Suggested Refinement Targets for Audit Suite
+
+### 📊 Paragraph Audit Drift
+
+- **Trigger:** Test 16 mismatch (`16853` vs. `16471`)
+- **Action:**  
+  - Export paragraph context (style, section, shape type) when count differs from expected.
+  - Add optional logging toggle for shape vs. inline content distinction.
+
+---
+
+### 📋 Header/Footer Audit Enhancement
+
+- **Goal:** Improve granularity of tab-only paragraphs in headers/footers.
+- **Action:**  
+  - Split counts by shape type (textboxes vs. inline)
+  - Include adjacent style info for anomaly detection
+
+---
+
+### 🎯 Style Coverage Analysis
+
+- **Goal:** Detect unused or ghost styles inflating style pools.
+- **Action:**  
+  - Compare defined styles vs. applied styles.
+  - Flag unused styles with section and frequency metadata.
+
+---
+
+### 🛡️ Redundancy Audit
+
+- **Goal:** Catch unintentional function reuse across tests.
+- **Action:**  
+  - Script to flag identical function calls in adjacent test cases.
+  - Use `Repeatable` or `IntentionalRepeat` flags to whitelist exceptions.
+
+---
+
+### 📈 Forecast & Runtime Metrics
+
+- **Goal:** Tie audit density to performance profiling.
+- **Action:**  
+  - Log runtime per test
+  - Add density metric (`Hits/Minute`) to forecast audit cost
+  - Export to CSV with `SessionID` for historical tracking
+
+---
+
+### 🕵️‍♂️ Suffix Anomaly Deep-Dive
+
+- **Goal:** Extend Hair Space and NBSP audit to adjacent punctuation
+- **Action:**  
+  - Track context before/after suffixes
+  - Log anomalies with full ASCII and style signature
+
+---
+
+## 🧠 Word Style Management – Manual Restart Guide
+
+This document outlines a modular strategy to safely reinitiate the Word Style Management thread after a prior session crash. Designed for stability, traceability, and iterative development.
+
+---
+
+### 🧩 Stepwise Restart (No History Required)
+
+### 1. Clarify Scope
+
+Define target focus:
+
+- Layout drift
+- Style inheritance
+- Suffix audits
+- Font cleanup
+
+Set intent:
+
+- Diagnostics only
+- Include auto-repair logic
+
+### 2. Select Module for Reactivation
+
+Recommended starting points:
+
+- `StyleUsageDistribution()` — audits style counts per page
+- `TrackLayoutDrift()` — detects visual drift across multi-column regions
+- `SuffixAuditTracker()` — logs suffix types per paragraph and page
+
+### 3. Session Context Setup
+
+Configure session parameters:
+
+- Assign new Session ID (timestamp-based or manual)
+- Logging preferences:
+  - Verbosity level
+  - ASCII layout mapping
+  - Skipped case tracking
+- Export options:
+  - CSV
+  - Embedded comment logs
+  - GitHub-ready output
+
+### 4. Minimal Test Run
+
+Use a low-density test document or select 2–3 sample pages:
+
+- Isolate visual drift or suffix anomalies
+- Collect clean debug output
+- Verify correctness before scaling to full document
+
+---
+
+## 🔧 Optional Enhancements
+
+### Performance Modules
+
+- Timing analysis
+- Forecast tracking (to support session comparisons)
+
+### Layout Anomaly Detection
+
+- Split marker boundaries
+- Visual misalignment across columns/pages
+
+### Font Diagnostics
+
+- Legacy font detection in headers, footers, and main body
+- Font drift across sections and styles
+
+---
+
+## ✅ Action Summary
+
+| Task                        | Status     |
+|----------------------------|------------|
+| Define scope               | 🔲 Pending |
+| Select module              | 🔲 Pending |
+| Configure session context  | 🔲 Pending |
+| Launch test document       | 🔲 Pending |
+| Apply optional enhancements| 🔲 Optional |
+
+---
+
+## 🧮 Version Control Recommendations
+
+- Save module scripts per version with timestamp in GitHub
+- Track suffix normalization metrics and export per run
+- Use commit messages to annotate layout quirks and engine decisions
+
+---
+
+## 🧑‍🔬 Follow-up Issues
+
+- 🧠 Section 144: Header=77 (M) and Section 146: Header=73 (I)—are those initial glyphs from chapter metadata? Might be worth flagging for suffix tracking. (TestHeaderFooterStyleScan)
+
+- 🔍 Section 147’s tab-tab (ASCII=9) pairing may mark an empty pair or control-only layout. Could use that as a soft indicator for skipped suffix density? (TestHeaderFooterStyleScan)
