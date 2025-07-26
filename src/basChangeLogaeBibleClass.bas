@@ -16,7 +16,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #268 - Timings of TestReport to go in csv log file with session ID for each run
 ' #267 - Add code for CompleteAuditPageLayout
 ' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post
-' #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP
 ' #259 - Remove old code that regressed
 ' #247 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
@@ -64,6 +63,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!!
     ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile
     ' FIXED - #264 - Add test for Style Usage Distribution
     ' FIXED - #263 - Add CountAuditStyles_ToFile

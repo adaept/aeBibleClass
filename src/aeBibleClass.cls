@@ -54,6 +54,7 @@ Private TestReportFileName As String
 Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True
 Private OneTest As Integer  ' Stores the value to run a single test
+Private skipNum As Integer  ' Used for heavy tests to skip
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -279,8 +280,13 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             If TestReportFlag Then AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
             
             If OneTest <> 0 Then
-                RunTest (OneTest)
-                Exit Function
+                'If OneTest = 42 Then
+                '    Call RunTest(OneTest, "SKIP")
+                '    Exit Function
+                'Else
+                    RunTest (OneTest)
+                    Exit Function
+                'End If
             End If
             
             If bGoTo16 Then GoTo Test16
@@ -325,7 +331,7 @@ Test16:     RunTest (16)
             RunTest (39)
             RunTest (40)
             RunTest (41)
-            RunTest (42)
+            Call RunTest(42, 42)
             RunTest (43)
             RunTest (44)
             RunTest (45)
@@ -544,6 +550,8 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 50
         ResultArray(50) = SummarizeHeaderFooterAuditToFile
         If ResultArray(50) = oneBasedExpectedArray(50) Then GetPassFail = "PASS    "
+    Case 999
+        GetPassFail = "SKIP!!!!"
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -556,7 +564,7 @@ Private Function Fixed14Str(MyResult As String) As String
     'Debug.Print "[12345678901234]"
 End Function
 
-Private Function RunTest(num As Integer) As Boolean
+Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolean
     Dim startTime As Double
     Dim endTime As Double
     Dim runTime As Double
@@ -690,8 +698,13 @@ Private Function RunTest(num As Integer) As Boolean
         Debug.Print GetPassFail(41), "Copy ()", "Test = " & num, ResultArray(41), oneBasedExpectedArray(41), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
         If TestReportFlag Then OutputTestReport (41)
     Case 42
-        Debug.Print GetPassFail(42), "Copy ()", "Test = " & num, ResultArray(42), oneBasedExpectedArray(42), "CountBoldFootnotesWordLevel"
-        If TestReportFlag Then OutputTestReport (42)
+        If SkipTest = 42 Then
+            Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(42), "CountBoldFootnotesWordLevel"
+            If TestReportFlag Then Call OutputTestReport(42, 42)
+        Else
+            If TestReportFlag Then OutputTestReport (42)
+            Debug.Print GetPassFail(42), "Copy ()", "Test = " & num, ResultArray(42), oneBasedExpectedArray(42), "CountBoldFootnotesWordLevel"
+        End If
     Case 43
         Debug.Print GetPassFail(43), "Copy ()", "Test = " & num, ResultArray(43), oneBasedExpectedArray(43), "CountDarkRedStyledParagraphMarks"
         If TestReportFlag Then OutputTestReport (43)
@@ -744,7 +757,7 @@ PROC_ERR:
     End
 End Function
 
-Private Function OutputTestReport(num As Integer) As Boolean
+Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) As Boolean
     On Error GoTo 0
     Select Case num
     Case 1
@@ -830,7 +843,11 @@ Private Function OutputTestReport(num As Integer) As Boolean
     Case 41
         AppendToFile TestReportFileName, GetPassFail(41) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(41))) & Fixed14Str(CStr(oneBasedExpectedArray(41))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
-        AppendToFile TestReportFileName, GetPassFail(42) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(42))) & Fixed14Str(CStr(oneBasedExpectedArray(42))) & "CountBoldFootnotesWordLevel"
+        If SkipTest = 42 Then
+            AppendToFile TestReportFileName, GetPassFail(999) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str("SKIPPED") & Fixed14Str(CStr(oneBasedExpectedArray(42))) & "CountBoldFootnotesWordLevel"
+        Else
+            AppendToFile TestReportFileName, GetPassFail(42) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(42))) & Fixed14Str(CStr(oneBasedExpectedArray(42))) & "CountBoldFootnotesWordLevel"
+        End If
     Case 43
         AppendToFile TestReportFileName, GetPassFail(43) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(43))) & Fixed14Str(CStr(oneBasedExpectedArray(43))) & "CountDarkRedStyledParagraphMarks"
     Case 44
@@ -847,6 +864,8 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(49) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(49))) & Fixed14Str(CStr(oneBasedExpectedArray(49))) & "CountAuditStyles_ToFile"
     Case 50
         AppendToFile TestReportFileName, GetPassFail(50) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(50))) & "SummarizeHeaderFooterAuditToFile"
+    Case 999
+        AppendToFile TestReportFileName, GetPassFail(999) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(50))) & "SummarizeHeaderFooterAuditToFile"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
