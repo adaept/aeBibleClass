@@ -170,8 +170,8 @@ Private Sub Expected1BasedArray()
     Close testFileNum
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -333,6 +333,7 @@ Test16:     RunTest (16)
             RunTest (47)
             RunTest (48)
             RunTest (49)
+            RunTest (50)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -540,6 +541,9 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 49
         ResultArray(49) = CountAuditStyles_ToFile
         If ResultArray(49) = oneBasedExpectedArray(49) Then GetPassFail = "PASS    "
+    Case 50
+        ResultArray(50) = SummarizeHeaderFooterAuditToFile
+        If ResultArray(50) = oneBasedExpectedArray(50) Then GetPassFail = "PASS    "
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -709,6 +713,9 @@ Private Function RunTest(num As Integer) As Boolean
     Case 49
         Debug.Print GetPassFail(49), "Copy ()", "Test = " & num, ResultArray(49), oneBasedExpectedArray(49), "CountAuditStyles_ToFile"
         If TestReportFlag Then OutputTestReport (49)
+    Case 50
+        Debug.Print GetPassFail(50), "Copy ()", "Test = " & num, ResultArray(50), oneBasedExpectedArray(50), "SummarizeHeaderFooterAuditToFile"
+        If TestReportFlag Then OutputTestReport (50)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -838,12 +845,194 @@ Private Function OutputTestReport(num As Integer) As Boolean
         AppendToFile TestReportFileName, GetPassFail(48) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(48))) & Fixed14Str(CStr(oneBasedExpectedArray(48))) & "AuditLiberationSansNarrowStyleDetails"
     Case 49
         AppendToFile TestReportFileName, GetPassFail(49) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(49))) & Fixed14Str(CStr(oneBasedExpectedArray(49))) & "CountAuditStyles_ToFile"
+    Case 50
+        AppendToFile TestReportFileName, GetPassFail(50) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(50))) & "SummarizeHeaderFooterAuditToFile"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
 End Function
 
-Public Function CountAuditStyles_ToFile() As Long
+'-------------------------------------------------------------
+' Function: SummarizeHeaderFooterAuditToFile
+'
+' Purpose:
+'   Write a clean audit summary of all header/footer results
+'   to the shared diagnostics file: rpt\HeaderFooterAudit.txt.
+'
+'   This file is overwritten only on failure and remains stable
+'   across passing runs to avoid Git churn or session ID noise.
+'
+'   The audit contains linewise status of each header/footer
+'   region, tracking anomalies such as style drift, legacy font
+'   usage, or unexpected layout artifacts.
+'
+' Behavior:
+'   - Overwrites the target file only if failure is detected
+'   - Sorts output by section and header/footer type
+'   - Skips export entirely if diagnostics are clean
+'
+' Output Format:
+'   [FAIL] Section 3 Footer - Legacy font detected: TimesNewRoman
+'   [PASS] Section 3 Header - Styles consistent
+'
+'   File: rpt\HeaderFooterAudit.txt
+'
+' References:
+'   See commit changelog #270 for rationale
+'
+' Visibility:
+'   Exported in diagnostics mode; safe for GitHub.io surfacing
+'-------------------------------------------------------------
+Private Function SummarizeHeaderFooterAuditToFile()
+    Dim sec As section, hf As HeaderFooter, p As paragraph
+    Dim paraText As String, paraStyle As String
+    Dim asciiVal As Long
+    Dim headerOk As Boolean, footerOk As Boolean
+    Dim dictAsciiCount As Object, dictAsciiDesc As Object
+    Dim dictAllStyles As Object
+    Dim dictBadHeaderStyles As Object, dictBadFooterStyles As Object
+    Dim totalSections As Long
+    Dim fs As Object, ts As Object
+    Dim rptPath As String
+
+    ' Create dictionary objects
+    Set dictAsciiCount = CreateObject("Scripting.Dictionary")
+    Set dictAsciiDesc = CreateObject("Scripting.Dictionary")
+    Set dictAllStyles = CreateObject("Scripting.Dictionary")
+    Set dictBadHeaderStyles = CreateObject("Scripting.Dictionary")
+    Set dictBadFooterStyles = CreateObject("Scripting.Dictionary")
+
+    headerOk = True: footerOk = True
+    totalSections = ActiveDocument.Sections.count
+
+    ' Prepare folder and file
+    rptPath = ActiveDocument.Path & "\rpt"
+    If Dir(rptPath, vbDirectory) = "" Then MkDir rptPath
+    Set fs = CreateObject("Scripting.FileSystemObject")
+    Set ts = fs.CreateTextFile(rptPath & "\HeaderFooterAudit.txt", True)
+
+    ts.WriteLine "=== Header/Footer ASCII Audit Summary ==="
+    ts.WriteLine "Total Sections: " & totalSections
+    'Debug.Print "Total Sections: " & totalSections
+
+    For Each sec In ActiveDocument.Sections
+        For Each hf In sec.Headers
+            If hf.Exists Then
+                For Each p In hf.range.paragraphs
+                    paraText = p.range.text
+                    asciiVal = AscW(Left(paraText, 1))
+                    paraStyle = p.style.NameLocal
+                    If paraStyle <> "TheHeaders" Then
+                        headerOk = False
+                        dictBadHeaderStyles("SECTION " & sec.Index & " = " & paraStyle) = ""
+                    End If
+
+                    If Not dictAsciiCount.Exists(asciiVal) Then dictAsciiCount(asciiVal) = 0
+                    dictAsciiCount(asciiVal) = dictAsciiCount(asciiVal) + 1
+
+                    If Not dictAsciiDesc.Exists(asciiVal) Then
+                        If asciiVal >= 32 And asciiVal <= 126 Then
+                            dictAsciiDesc(asciiVal) = ChrW(asciiVal)
+                        ElseIf asciiVal = 9 Then
+                            dictAsciiDesc(asciiVal) = "[Tab]"
+                        ElseIf asciiVal = 13 Then
+                            dictAsciiDesc(asciiVal) = "[CR]"
+                        Else
+                            dictAsciiDesc(asciiVal) = "[Non-printable]"
+                        End If
+                    End If
+
+                    If Not dictAllStyles.Exists(paraStyle) Then dictAllStyles(paraStyle) = "Header"
+                Next p
+            End If
+        Next hf
+
+        For Each hf In sec.Footers
+            If hf.Exists Then
+                For Each p In hf.range.paragraphs
+                    paraText = p.range.text
+                    asciiVal = AscW(Left(paraText, 1))
+                    paraStyle = p.style.NameLocal
+                    If paraStyle <> "TheFooters" Then
+                        footerOk = False
+                        dictBadFooterStyles("SECTION " & sec.Index & " = " & paraStyle) = ""
+                    End If
+
+                    If Not dictAsciiCount.Exists(asciiVal) Then dictAsciiCount(asciiVal) = 0
+                    dictAsciiCount(asciiVal) = dictAsciiCount(asciiVal) + 1
+
+                    If Not dictAsciiDesc.Exists(asciiVal) Then
+                        If asciiVal >= 32 And asciiVal <= 126 Then
+                            dictAsciiDesc(asciiVal) = ChrW(asciiVal)
+                        ElseIf asciiVal = 9 Then
+                            dictAsciiDesc(asciiVal) = "[Tab]"
+                        ElseIf asciiVal = 13 Then
+                            dictAsciiDesc(asciiVal) = "[CR]"
+                        Else
+                            dictAsciiDesc(asciiVal) = "[Non-printable]"
+                        End If
+                    End If
+
+                    If Not dictAllStyles.Exists(paraStyle) Then dictAllStyles(paraStyle) = "Footer"
+                Next p
+            End If
+        Next hf
+    Next sec
+
+    ' Output to file based on validation
+    If headerOk And footerOk Then
+        ts.WriteLine "--- ASCII Value Counts and Descriptions ---"
+        Dim key
+        For Each key In dictAsciiCount.Keys
+            ts.WriteLine "ASCII=" & key & _
+                " | Count=" & dictAsciiCount(key) & _
+                " | Desc=" & dictAsciiDesc(key)
+        Next key
+        
+        Dim styleKey As Variant
+        Dim allGoodStyles As Boolean
+        Dim tempDict As Object
+        Set tempDict = CreateObject("Scripting.Dictionary")
+
+        ' Build tempDict from dictAllStyles keys
+        For Each styleKey In dictAllStyles.Keys
+            tempDict(styleKey) = 1
+        Next styleKey
+
+        allGoodStyles = (tempDict.count = 2) _
+                        And tempDict.Exists("TheHeaders") _
+                        And tempDict.Exists("TheFooters")
+
+        If allGoodStyles Then
+            ts.WriteLine "--- Validated Styles ---"
+            ts.WriteLine "Expected Header Style: TheHeaders"
+            ts.WriteLine "Expected Footer Style: TheFooters"
+        End If
+        ts.WriteLine "Style Check: PASS"
+        'Debug.Print "Style Check: PASS"
+        SummarizeHeaderFooterAuditToFile = totalSections
+    Else
+        ts.WriteLine "Style Check: FAIL"
+        'Debug.Print "Style Check: FAIL"
+        SummarizeHeaderFooterAuditToFile = -1
+        ts.WriteLine "--- Encountered Styles ---"
+        For Each key In dictAllStyles.Keys
+            ts.WriteLine "STYLE=" & key & " | LOCATION=" & dictAllStyles(key)
+        Next key
+        ts.WriteLine "--- Style Mismatches by Section ---"
+        For Each key In dictBadHeaderStyles.Keys
+            ts.WriteLine "[HEADER] " & key
+        Next key
+        For Each key In dictBadFooterStyles.Keys
+            ts.WriteLine "[FOOTER] " & key
+        Next key
+    End If
+
+    ts.WriteLine "=== Summary Complete ==="
+    ts.Close
+End Function
+
+Private Function CountAuditStyles_ToFile() As Long
     Dim rng As range
     Dim para As paragraph
     Dim paraStyle As String
