@@ -7,12 +7,17 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '=============================================================================================================================
 ' Tasks:
-' #270 -
-' #269 -
-' #268 -
-' #267 -
-' #266 -
-' #265 -
+' #275 -
+' #274 -
+' #273 -
+' #272 -
+' #271 -
+' #270 - Add test for SummarizeHeaderFooterAuditToFile
+' #269 - All reports to be output to rpt folder
+' #268 - Timings of TestReport to go in csv log file with session ID for each run
+' #267 - Add code for CompleteAuditPageLayout
+' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post
+' #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP
 ' #259 - Remove old code that regressed
 ' #247 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
