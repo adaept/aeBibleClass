@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #273 -
 ' #272 -
 ' #271 - Add routine headers for targeting github.io docs in future
-' #269 - All reports to be output to rpt folder
 ' #268 - Timings of TestReport to go in csv log file with session ID for each run
 ' #267 - Add code for CompleteAuditPageLayout
 ' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post
@@ -63,6 +62,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #269 - All reports to be output to rpt folder
     ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!!
     ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile
     ' FIXED - #264 - Add test for Style Usage Distribution
