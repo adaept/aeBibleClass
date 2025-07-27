@@ -19,6 +19,33 @@ The Editorial Design and Style Guide (EDSG) works in conjunction with VBA code e
 - **`basWordRepairRunner`**  
   A standard module that executes layout diagnostics and automated repairs. It applies rules defined in EDSG to ensure safe, reversible, and editorially sound modifications.
 
+## Architecture Overview: DOCM-Coupled Macro System
+
+This project centers around a tightly integrated authoring and diagnostic workflow using a `.DOCM` file as the canonical source for macro logic. The system leverages a class-based structure, `aewordgitClass`, to maintain strong editorial coupling and reproducible audits.
+
+### Key Design Features
+
+- **Source-of-Truth DOCM**  
+  All macro development occurs within the live `.DOCM` that hosts the book. No detached `.macros` folder is needed—logic lives where it operates.
+
+- **Export Path: `/src` Directory**  
+  The `aewordgitClass` automates structured export of macros and diagnostics into the `/src` subdirectory. This ensures a clean, traceable history tied to the actual content.
+
+- **Audit-Friendly Deliverables**  
+  When a clean deliverable is needed, Word's native "Save As" feature generates a `.DOCX`, safely separating output from tooling without losing context.
+
+- **Version Control Alignment**  
+  Since `/src` reflects exactly what runs inside the `.DOCM`, it’s GitHub-ready and fully auditable. No risk of logic drift or unsynced updates.
+
+### Strategic Benefits
+
+- Editorial safety is baked in—tools run only in the environment they’re built for.
+- Change tracking and reproducibility are frictionless and version-linked.
+- No duplication between macro storage and deployment paths.
+- Output files remain clean, isolated, and free of embedded tooling history.
+
+---
+
 ## 🧠 EDSG Development Module Manifest (Items 1–10)
 
 ### **VBA Development Routines**
@@ -439,6 +466,20 @@ Visit: [Copilot Pages Help](http://aka.ms/copilot-pages-help)
 
 ## 🧑‍🔬 Follow-up Issues
 
+1. **Add code routine header summary and description**
+   - Standardize VBA routine headers with purpose, inputs, and return behavior.
+
+2. **Develop GitHub.io output process**
+   - Define tooling and structure to render code output as documentation on GitHub.io.
+
+3. **Enhance BibleClass timing diagnostics**
+   - Update timing output to write test durations into `"RunTest timing results.txt"` in CSV format.
+   - Include session ID for traceability.
+
+4. **Document aeBibleClass and aewordgitClass**
+   - Provide overview of roles, workflows, and integration points for both classes.
+
+4. **Section 144**
 - 🧠 Section 144: Header=77 (M) and Section 146: Header=73 (I)—are those initial glyphs from chapter metadata? Might be worth flagging for suffix tracking. (TestHeaderFooterStyleScan)
 
 - 🔍 Section 147’s tab-tab (ASCII=9) pairing may mark an empty pair or control-only layout. Could use that as a soft indicator for skipped suffix density? (TestHeaderFooterStyleScan)
