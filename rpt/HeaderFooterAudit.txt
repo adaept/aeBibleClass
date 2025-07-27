@@ -1,0 +1,30 @@
+=== Header/Footer ASCII Audit Summary ===
+Total Sections: 147
+--- ASCII Value Counts and Descriptions ---
+ASCII=9 | Count=79 | Desc=[Tab]
+ASCII=105 | Count=4 | Desc=i
+ASCII=84 | Count=2 | Desc=T
+ASCII=49 | Count=149 | Desc=1
+ASCII=71 | Count=2 | Desc=G
+ASCII=69 | Count=6 | Desc=E
+ASCII=76 | Count=3 | Desc=L
+ASCII=78 | Count=3 | Desc=N
+ASCII=68 | Count=2 | Desc=D
+ASCII=74 | Count=9 | Desc=J
+ASCII=82 | Count=3 | Desc=R
+ASCII=50 | Count=8 | Desc=2
+ASCII=80 | Count=4 | Desc=P
+ASCII=83 | Count=1 | Desc=S
+ASCII=73 | Count=2 | Desc=I
+ASCII=72 | Count=4 | Desc=H
+ASCII=65 | Count=2 | Desc=A
+ASCII=79 | Count=1 | Desc=O
+ASCII=77 | Count=5 | Desc=M
+ASCII=90 | Count=2 | Desc=Z
+ASCII=67 | Count=2 | Desc=C
+ASCII=51 | Count=1 | Desc=3
+--- Validated Styles ---
+Expected Header Style: TheHeaders
+Expected Footer Style: TheFooters
+Style Check: PASS
+=== Summary Complete ===
