@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #285 -
 ' #284 -
 ' #283 -
-' #282 -
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
 ' #279 - Add routine to define H2 style and reapply it in the project
@@ -66,6 +65,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '====================================================================================================================================
 '
+    ' FIXED - #282 - Update guide with 'Example of Tags use for Audit Clarity' [doc]
     ' FIXED - #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273
     ' FIXED - #277 - Define standard for types of "Tasks" to use with git commit messages [doc]
     ' FIXED - #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass [bug]
