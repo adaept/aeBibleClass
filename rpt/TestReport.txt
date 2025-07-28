@@ -54,8 +54,8 @@ PASS              Copy ()       Test = 47     2             2             CountT
 FAIL!!!!          Copy ()       Test = 48     1             0             AuditLiberationSansNarrowStyleDetails
 PASS              Copy ()       Test = 49     16            16            CountAuditStyles_ToFile
 PASS              Copy ()       Test = 50     147           147           SummarizeHeaderFooterAuditToFile
-Total Total Runtime: 99.78 seconds
-[2025-07-26 16:33:16] Completed
+Total Total Runtime: 92.55 seconds
+[2025-07-27 18:16:46] Completed
 BibleClass VERSION: 0.1.0
 BibleClass VERSION_DATE: July 19, 2025
 == Word Build Info ==

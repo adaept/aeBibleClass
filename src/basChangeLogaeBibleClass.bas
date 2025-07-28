@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #279 -
 ' #278 -
 ' #277 -
-' #276 -
 ' #274 - Adjust output of 'Style Usage Distribution.txt' to rpt folder
 ' #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass
 ' #271 - Add routine headers for targeting github.io docs in future
@@ -65,6 +64,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '=============================================================================================================================
 '
+    ' FIXED - #276 - git mv TestReport to rpt/ and delete old version
     ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md"
     ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System
     ' FIXED - #269 - All reports to be output to rpt folder
