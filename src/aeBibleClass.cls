@@ -48,8 +48,9 @@ Private Const bTimeAllTests As Boolean = True
 Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
-Private ResultArray(1 To 50) As Long
-Private TestTimingArray(0 To 50) As Double
+Private Const MaxTests = 50
+Private ResultArray(1 To MaxTests) As Long
+Private TestTimingArray(0 To MaxTests) As Double
 Private TestSessionID As String
 Private result As Integer
 Private TestReportFileName As String
@@ -129,15 +130,15 @@ Private Sub InitializeGlobalResultArrayToMinusOne()
     On Error GoTo PROC_ERR
 
 1    Dim i As Integer, j As Integer
-2    For i = 1 To 50
+2    For i = 1 To MaxTests
 3        ResultArray(i) = -1
 4    Next i
 5    ' Session ID to be stored in TestTimingArray(0)
-6    For j = 0 To 50
+6    For j = 0 To MaxTests
 7        TestTimingArray(j) = -1
 8    Next j
     ' Optional: Print to Immediate window to confirm
-    'For i = 1 To 50
+    'For i = 1 To MaxTests
     '    Debug.Print "ResultArray(" & i & ") = " & ResultArray(i),
     'Next i
 
