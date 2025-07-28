@@ -1107,7 +1107,7 @@ End Sub
 
 Sub SmartyOne()
     Dim sCount As Long, bCount As Long
-    Call SmartPrefixRepairOnPage(210, sCount, bCount)
+    Call SmartPrefixRepairOnPage(235, sCount, bCount)
 End Sub
 
 Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
@@ -1117,6 +1117,7 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
     Dim didRepair As Boolean
     Dim paraStyle As String
     Dim ascii12Count As Long
+    Dim missing160Count As Long
 
     Debug.Print "=== Smart Prefix Repair on Page " & pgNum & " ==="
 
@@ -1124,10 +1125,11 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
         Set rng = para.range
         paraStyle = rng.style
 
-        If InStr(paraStyle, "Verse") > 0 Then
+        ' Only process green "Verse marker" paragraphs
+        If InStr(paraStyle, "Verse marker") > 0 Then
             markerText = rng.text
 
-            ' Ignore Chr(12) artifacts completely
+            ' Skip and count layout wrappers: lone Chr(12)
             If Len(markerText) = 1 And Asc(markerText) = 12 Then
                 ascii12Count = ascii12Count + 1
                 GoTo NextPara
@@ -1135,13 +1137,15 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
 
             didRepair = False
 
-            If InStr(markerText, " ") = 1 Then
+            ' Column-aware prefix repair: if verse starts in left column (1)
+            If rng.Information(wdStartOfRangeColumnNumber) = 1 Then
                 rng.InsertBefore vbCr
                 breakCount = breakCount + 1
                 didRepair = True
-                Debug.Print "? Repaired prefix before '" & Trim(markerText) & "' | Break inserted"
+                Debug.Print "? Repaired prefix (wrapped to left column) before '" & Trim(markerText) & "'"
             End If
 
+            ' Remove space if leading whitespace present
             If Left(markerText, 1) = " " Then
                 rng.Characters(1).Delete
                 spaceCount = spaceCount + 1
@@ -1149,7 +1153,7 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
                 Debug.Print "? Removed space before '" & Trim(markerText) & "'"
             End If
 
-            ' Diagnostic block for skipped markers (excluding Chr(12))
+            ' Diagnostics for skipped cases
             If Not didRepair Then
                 Debug.Print "- Skipped marker '" & Trim(markerText) & "'"
                 Debug.Print "  ASCII codes for first few characters:"
@@ -1166,6 +1170,12 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
                     ascVal = Asc(ch)
                     Debug.Print "    Char " & i & ": '" & Replace(ch, vbCr, "[CR]") & "' | ASCII=" & ascVal & " | Hex=" & Hex(ascVal)
                 Next i
+
+                ' Check if last character is missing expected Chr(160)
+                If Len(markerText) = 0 Or Asc(Right(markerText, 1)) <> 160 Then
+                    missing160Count = missing160Count + 1
+                End If
+
                 Debug.Print "  Style=" & rng.style & " | Font=" & rng.font.name & " | Start=" & rng.Start & " | Page=" & pgNum
             End If
         End If
@@ -1173,6 +1183,7 @@ NextPara:
     Next para
 
     Debug.Print "Chr(12) marker count on Page " & pgNum & ": " & ascii12Count
+    Debug.Print "Missing Chr(160) count on Page " & pgNum & ": " & missing160Count
     Debug.Print "=== End of Repairs for Page " & pgNum & " ==="
 End Sub
 
@@ -1333,5 +1344,110 @@ Sub DummyRepairPageTimerOnly(pgNum As Long)
     Dim dummyWait As Single
     dummyWait = Timer
     Do While Timer < dummyWait + 0.05: DoEvents: Loop
+End Sub
+
+Sub ReapplyTheFootersToAllFooters()
+    Dim sec As section
+    Dim hf As HeaderFooter
+    Dim p As paragraph
+    Dim prevStyle As String
+    Dim asciiVal As Long
+    Dim paraText As String
+
+    Debug.Print "=== Reapply 'TheFooters' Style Start ==="
+
+    For Each sec In ActiveDocument.Sections
+        Debug.Print "SECTION " & sec.Index
+
+        For Each hf In sec.Footers
+            If hf.Exists Then
+                For Each p In hf.range.paragraphs
+                    paraText = p.range.text
+                    asciiVal = AscW(Left(paraText, 1))
+                    prevStyle = p.style.NameLocal
+                    p.style = "TheFooters"
+
+                    Debug.Print "  Footer paragraph updated: " & _
+                                "PrevStyle='" & prevStyle & "' | ASCII=" & asciiVal & " | HEX=" & Hex(asciiVal)
+                Next p
+            End If
+        Next hf
+
+        Debug.Print "----------------------------------------"
+    Next sec
+
+    Debug.Print "=== Style Reapplication Complete ==="
+End Sub
+
+'------------------------------------------------------------------------------
+' Macro Name : GetHeadingDefinitionsWithDescriptions
+' Author     : Peter + Copilot
+' Description:
+'   Retrieves style properties for Heading 1 and Heading 2 from the active document.
+'   Includes font, paragraph formatting, outline level, and full color diagnostics.
+'   Color output includes raw Word color value (Long), RGB breakdown, and Hex string.
+'
+' Output:
+'   Printed to Immediate Window (Ctrl+G) for audit purposes.
+'   Example line: Color: -16777216, RGB(0,0,0), #000000
+'
+' Dependencies:
+'   Requires Word constants (e.g., wdAlignParagraphCenter) to be available.
+'   All style names must exist in the document or error handling should be added.
+'
+' Future Extensions:
+'   - Export to CSV or Markdown
+'   - Include suffix tracking, style inheritance, or font audit flags
+'   - Integrate session-aware tracking or timing metrics
+'------------------------------------------------------------------------------
+Sub GetHeadingDefinitionsWithDescriptions()
+    Dim headingStyles As Variant
+    headingStyles = Array("Heading 1", "Heading 2")
+    
+    Dim s As style
+    Dim info As String
+    Dim styleName As Variant
+    Dim alignValue As Integer
+    Dim alignText As String
+    
+    Dim clr As Long
+    Dim r As Long, g As Long, b As Long
+    Dim hexColor As String
+
+    For Each styleName In headingStyles
+        Set s = ActiveDocument.Styles(styleName)
+        alignValue = s.ParagraphFormat.Alignment
+        
+        Select Case alignValue
+            Case wdAlignParagraphLeft: alignText = "Left"
+            Case wdAlignParagraphCenter: alignText = "Center"
+            Case wdAlignParagraphRight: alignText = "Right"
+            Case wdAlignParagraphJustify: alignText = "Justified"
+            Case wdAlignParagraphDistribute: alignText = "Distributed"
+            Case wdAlignParagraphThaiJustify: alignText = "Thai Distributed"
+            Case Else: alignText = "Unknown"
+        End Select
+        
+        clr = s.font.color
+        r = clr Mod 256
+        g = (clr \ 256) Mod 256
+        b = (clr \ 65536) Mod 256
+        hexColor = "#" & Right$("0" & Hex(r), 2) & Right$("0" & Hex(g), 2) & Right$("0" & Hex(b), 2)
+
+        info = "Style: " & styleName & vbCrLf
+        info = info & "  Font Name: " & s.font.name & vbCrLf
+        info = info & "  Font Size: " & s.font.Size & vbCrLf
+        info = info & "  Bold: " & s.font.Bold & vbCrLf
+        info = info & "  Italic: " & s.font.Italic & vbCrLf
+        info = info & "  Color: " & clr & ", RGB(" & r & "," & g & "," & b & "), " & hexColor & vbCrLf
+        info = info & "  Alignment: " & alignValue & " (" & alignText & ")" & vbCrLf
+        info = info & "  Space Before: " & s.ParagraphFormat.SpaceBefore & vbCrLf
+        info = info & "  Space After: " & s.ParagraphFormat.SpaceAfter & vbCrLf
+        info = info & "  Line Spacing: " & s.ParagraphFormat.LineSpacing & vbCrLf
+        info = info & "  Outline Level: " & s.ParagraphFormat.OutlineLevel & vbCrLf
+        info = info & String(40, "-") & vbCrLf
+        
+        Debug.Print info
+    Next styleName
 End Sub
 
