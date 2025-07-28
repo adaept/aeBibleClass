@@ -1462,3 +1462,27 @@ Sub UpdateHeading2KeepWithNext()
     Debug.Print "Heading 2 style updated: KeepWithNext = True"
 End Sub
 
+Sub EnforceHeading2ParagraphWidowOrphan()
+    Dim para As paragraph
+    For Each para In ActiveDocument.paragraphs
+        If para.style = ActiveDocument.Styles("Heading 2") Then '
+            With para
+                .WidowControl = True    ' enforces both widow and orphan control for that paragraph
+                '.OrphanControl = True - Not needed,
+            End With
+        End If
+    Next para
+    Debug.Print "[repair] Widow/Orphan enforced at paragraph level for Heading 2"
+End Sub
+
+Sub DisableKeepLinesTogetherForHeading2()
+    Dim para As paragraph
+    For Each para In ActiveDocument.paragraphs
+        If para.style = ActiveDocument.Styles("Heading 2") Then
+            para.KeepTogether = False
+        End If
+    Next para
+    Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
+End Sub
+
+
