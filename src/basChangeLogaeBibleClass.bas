@@ -5,26 +5,30 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-'=============================================================================================================================
-' Tasks:
-' #280 -
-' #279 -
-' #278 -
-' #277 - Define standard for types of "Tasks" to use with git commit messages
+'====================================================================================================================================
+' Tasks: [doc] [test] [bug] [perf]
+' #285 -
+' #284 -
+' #283 -
+' #282 -
+' #281 - Explain methodology of Test Driven Development [doc]
+' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
+' #279 - Add routine to define H2 style and reapply it in the project
+' #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273
 ' #274 - Adjust output of 'Style Usage Distribution.txt' to rpt folder
-' #271 - Add routine headers for targeting github.io docs in future
+' #271 - Add routine headers for targeting github.io docs in future [doc]
 ' #268 - Timings of TestReport to go in csv log file with session ID for each run
 ' #267 - Add code for CompleteAuditPageLayout
 ' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post
 ' #259 - Remove old code that regressed
-' #247 - Add code to define H1 and H2 exactly and apply to all
+' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
-' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification
+' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
-' #206 - Add test for all H1 pages to verify no paragraphs have indent setting
+' #206 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
 ' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
-' #191 - Add test to verify all correct Verse Marker per book
-' #190 - Add test to verify all correct Chapter Verse Marker per book
+' #191 - Add test to verify all correct Verse Marker per book [test]
+' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing
@@ -33,7 +37,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
-'        Add test for Verse marker followed by any closing quote
+'        Add test for Verse marker followed by any closing quote [test]
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure RWB is correct
 '        Verify smart quotes
 '        Several Bible versions use smart quotes for opening and closing quotations,
@@ -49,31 +53,32 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '               Adopts smart quotes and includes nested quotes for clarity.
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
-' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes
+' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
 ' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
-' #047 - Research diff code that will display like GitHub for comparison with
+' #047 - Research diff code that will display like GitHub for comparison with verse versions
 ' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
 ' #043 - Add extract to USFM routine
 ' #042 - Add readme to aewordgit
 ' #040 - Add figure headings to maps - use map vs fig?
 ' #037 - Add updated maps in color
-' #035 - Add test for page numbers of h1 on odd or even pages
+' #035 - Add test for page numbers of h1 on odd or even pages [test]
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
-'=============================================================================================================================
+'====================================================================================================================================
 '
-    ' FIXED - #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass
+    ' FIXED - #277 - Define standard for types of "Tasks" to use with git commit messages [doc]
+    ' FIXED - #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass [bug]
     ' FIXED - #276 - git mv TestReport to rpt/ and delete old version
     ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md"
     ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System
     ' FIXED - #269 - All reports to be output to rpt folder
     ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!!
     ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile
-    ' FIXED - #264 - Add test for Style Usage Distribution
-    ' FIXED - #263 - Add CountAuditStyles_ToFile
+    ' FIXED - #264 - Add test for Style Usage Distribution [test]
+    ' FIXED - #263 - Add CountAuditStyles_ToFile [test]
     ' FIXED - #262 - Update code module names to match EDSG manifest
-    ' FIXED - #261 - Add initial Editorial Design and Style Guide
+    ' FIXED - #261 - Add initial Editorial Design and Style Guide [doc]
     ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a count of Ascii 160 chars and any other e.g. hair space
     ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a count of Ascii 12 chars
     ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing
@@ -86,9 +91,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #250 - Wire up dummy repair test with stats collection logic
     ' FIXED - #249 - Add skeleton for StartRepairTimingSession
     ' FIXED - #248 - Update repair tool for 10 pages
-    ' FIXED - #174 - Add tests for count tab para in headers and footers
-    ' FIXED - #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style
-    ' FIXED - #246 - Add test for styles using Liberation Sans Narrow
+    ' FIXED - #174 - Add tests for count tab para in headers and footers [test]
+    ' FIXED - #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style [test]
+    ' FIXED - #246 - Add test for styles using Liberation Sans Narrow [test]
     ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs
     ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2
     ' FIXED - #243 - Add code RedefinePictureCaptionStyle_NotoSans, step 3 of removing Lieration Sans Narrow reference
@@ -100,9 +105,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #237 - Add diagnostic code to get character information around the cursor position
     ' FIXED - #236 - Add routine to report Report Page Layout Metrics for a particular page
     ' FIXED - #235 - Add code to repair "Chapter Verse marker" per page, add vbCr if on column edge with space before, defrag as needed
-    ' FIXED - #234 - Add test to count footers that have only a tab character
-    ' FIXED - #212 - Add test for CountFindNotEmphasisBlack = 0 and CountFindNotEmphasisRed = 0 when all have been set
-    ' FIXED - #233 - Add test for CountParagraphMarks_CalibriDarkRed
+    ' FIXED - #234 - Add test to count footers that have only a tab character [test]
+    ' FIXED - #212 - Add test for CountFindNotEmphasisBlack = 0 and CountFindNotEmphasisRed = 0 when all have been set [test]
+    ' FIXED - #233 - Add test for CountParagraphMarks_CalibriDarkRed [test]
     ' FIXED - #232 - Add word version into to output and test report
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
@@ -120,8 +125,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #218 - Add routine to print logical page numbers with Heading 1, in a list, for Bible book page check
     ' FIXED - #217 - Update "I am The lord" to "I am the Lord" x42
     ' FIXED - #210 - See #213 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
-    ' FIXED - #184 - See #211 - Add test for Footnote Text to count those that have any bold text
-    ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic
+    ' FIXED - #184 - See #211 - Add test for Footnote Text to count those that have any bold text [test]
+    ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic [test]
     ' FIXED - #216 - Error with H1 count of 66 vs 59 for show/hide true false
 '       Problem list = "Joshua", "2 Kings", "Nehemiah", "Habakkuk", "Haggai", "Philemon", "1 Peter"
 '           The issue wasn’t with the styles or outline levels themselves, but with invisible or corrupted inline content
@@ -130,8 +135,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '       Solution - Click at the end of the word "Joshua" and press Delete Then press Enter once.
 '           This clears any hidden/invisible content after the heading text that may prevent proper recognition.
 '           Reselect the paragraph and reapply Heading 1 style
-    ' FIXED - #211 - Add test for CountBoldFootnotesWordLevel
-    ' FIXED - #213 - Add test for Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = 0 when all have been set
+    ' FIXED - #211 - Add test for CountBoldFootnotesWordLevel [test]
+    ' FIXED - #213 - Add test for Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = 0 when all have been set [test]
     ' FIXED - #142 - Add routine to output book names and pages for TOC manual verification - see #039
     ' FIXED - #209 - Add Section Nav button to ribbon for bookmarked Heading_00 to Heading_12 sections
     ' FIXED - #186 See #209 - Add ribbon button for index sections - Intro etc.; OT; NT; Maps; DP;
@@ -175,8 +180,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #076 - Update all Arial Black emphasis to new style. It should demonstrate significance in EDP.
     ' FIXED - #075 - Add style for Arial Black 8 pt emphasis.
     ' FIXED - #173 - Rename CountTabOnlyParagraphs to CountDocTabOnlyParagraphs
-    ' FIXED - #172 - Add test for CountParagraphMarks_ArialBlackDarkRed - 8pt, Automatic or Black, paragraph marks only
-    ' FIXED - #171 - Add test for CountParagraphMarks_ArialBlack - 8pt, Automatic or Black, paragraph marks only
+    ' FIXED - #172 - Add test for CountParagraphMarks_ArialBlackDarkRed - 8pt, Automatic or Black, paragraph marks only [test]
+    ' FIXED - #171 - Add test for CountParagraphMarks_ArialBlack - 8pt, Automatic or Black, paragraph marks only [test]
     ' FIXED - #168 - Add style for emphasized Words of Jesus - EmphasisRed
     ' FIXED - #169 - Add code for FindNotEmphasisBlackRed to return 0 when completed
     ' FIXED - #167 - Rename FastFindArialBlack8ptNormalStyleSkipEmphasisBlack to FindNotEmphasisBlackRed
@@ -208,31 +213,31 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #139 - Add UTF8bom-Template.txt with BunnyEgg emoji for Easter using :emojisense in VS Code
     ' FIXED - #133 - Store actual result is 1 based results array for comparison without recalc
     ' FIXED - #138 - Create 1 based array for storing results
-    ' FIXED - #137 - Update test to notSpaceCount CountNotSpacesAfterFootnoteReferences
-    ' FIXED - #108 - Add test for all line feed to have a space before (Test 32 and 33)
-    ' FIXED - #136 - Add back test for CountEmptyParagraphs
+    ' FIXED - #137 - Update test to notSpaceCount CountNotSpacesAfterFootnoteReferences [test]
+    ' FIXED - #108 - Add test for all line feed to have a space before (Test 32 and 33) [test]
+    ' FIXED - #136 - Add back test for CountEmptyParagraphs [test]
     ' FIXED - #135 - Fix sections where different first page is selected - deselect them
     ' FIXED - #134 - Output debug formatting header to console for comma spacing
     ' FIXED - #131 - Add DoEvents to number dash number search and stop switch to doc window for ISBN
-    ' FIXED - #132 - Add test for tab paragraph mark only
+    ' FIXED - #132 - Add test for tab paragraph mark only [test]
     ' FIXED - #130 - Update CountEmptyParagraphs to CountEmptyParagraphsWithFormatting
     ' FIXED - #129 - Add DoEvents in long loops so console results are processed
-    ' FIXED - #128 - Update test CountEmptyParagraphs for speed
-    ' FIXED - #127 - Update test CountNumberDashNumberInFootnotes with fast algorithm
-    ' FIXED - #126 - Update test CountDeleteEmptyParagraphsBeforeHeading2 with fast algorithm from ChatGPT
-    ' FIXED - #125 - Add test to count number of footers with style "Footer"
-    ' FIXED - #124 - Add test for count linefeed and space linefeed in footnotes
-    ' FIXED - #122 - Add test for count linefeed and space linefeed in doc
+    ' FIXED - #128 - Update test CountEmptyParagraphs for speed [test] [perf]
+    ' FIXED - #127 - Update test CountNumberDashNumberInFootnotes with fast algorithm [test] [perf]
+    ' FIXED - #126 - Update test CountDeleteEmptyParagraphsBeforeHeading2 with fast algorithm from ChatGPT [test] [perf]
+    ' FIXED - #125 - Add test to count number of footers with style "Footer" [test]
+    ' FIXED - #124 - Add test for count linefeed and space linefeed in footnotes [test]
+    ' FIXED - #122 - Add test for count linefeed and space linefeed in doc [test]
     ' FIXED - #115 - Add style "TheFooters" based on "TheHeaders" and update all footer sections, use Noto Sans font
     ' FIXED - #121 - Update debug output of Expected1BasedArray for Test(x) to be 15 per line
-    ' FIXED - #120 - Add test for "TheHeaders" style as there should be only one paragraph mark per section
-    ' FIXED - #118 - Add test for use of "Header" style, should be 0 as "TheHeaders" has to be used instead
+    ' FIXED - #120 - Add test for "TheHeaders" style as there should be only one paragraph mark per section [test]
+    ' FIXED - #118 - Add test for use of "Header" style, should be 0 as "TheHeaders" has to be used instead [test]
     ' FIXED - #112 - Clear all tab stops from para headers, default is 0.1", add one tab to empty headers
-    ' FIXED - #117 - See #113 - Add test to count tab followed by paragraph mark in headers
-    ' FIXED - #119 - See #113 - Add test to count paragraph mark in headers that does not have a tab
+    ' FIXED - #117 - See #113 - Add test to count tab followed by paragraph mark in headers [test]
+    ' FIXED - #119 - See #113 - Add test to count paragraph mark in headers that does not have a tab [test]
     ' FIXED - #114 - Add style "TheHeaders"
     ' FIXED - #107 - Fix lamentations to use manual line break (line feed) with Lamentation style
-    ' FIXED - #113 - Add test for empty and non empty header paragraphs
+    ' FIXED - #113 - Add test for empty and non empty header paragraphs [test]
     ' FIXED - #111 - Fix empty paragraphs in text boxes
     ' FIXED - #110 - Fix empty paragraphs in footers
     ' FIXED - #087 - Set 1st/2nd paras after H1 to CustomParaAfterH1 or CustomParaAfterH1-2nd and verify vertical pos of Bbs
@@ -245,29 +250,29 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #102 - Add LongRunningProcessCode skeleton to allow resume and percent completed output to console
     ' FIXED - #097 - Some footnote references reset to red - why? - fix it to be consistent style using font color automatic
     ' FIXED - #101 - Update cvmarker to Chapter Verse marker
-    ' FIXED - #099 - Add test to count number of colors in Footnote Reference
-    ' FIXED - #098 - Add test to count number of Footnote References
-    ' FIXED - #096 - Add test for count/delete empty para before H2, related #084
+    ' FIXED - #099 - Add test to count number of colors in Footnote Reference [test]
+    ' FIXED - #098 - Add test to count number of Footnote References [test]
+    ' FIXED - #096 - Add test for count/delete empty para before H2, related #084 [test]
     ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
     ' OBSOLETE - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
     ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
     ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
-    ' FIXED - #066 - Add tests to count paragraphs, empty,
+    ' FIXED - #066 - Add tests to count paragraphs, empty, [test]
     ' FIXED - See #073 - #067 - Add test to Count Red Footnote References
     ' FIXED - See #091 - #053 - Add test for Footnote Reference followed by a space
     ' FIXED - #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
     ' FIXED - #093 - Add initial PassFail test for result and expected
     ' FIXED - #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
 ' 20250402 - v006
-    ' FIXED - #091 - Add test for CountSpacesAfterFootnotes - also shows Footnote References and Following Chars (ASCII Val)
-    ' FIXED - #092 - Add test for CountFootnotesFollowedByDigit
-    ' FIXED - #073 - Run test to verify count of red footnote reference is zero
+    ' FIXED - #091 - Add test for CountSpacesAfterFootnotes - also shows Footnote References and Following Chars (ASCII Val) [test]
+    ' FIXED - #092 - Add test for CountFootnotesFollowedByDigit [test]
+    ' FIXED - #073 - Run test to verify count of red footnote reference is zero [test]
     ' FIXED - #072 - Check red footnote reference from Genesis to end of Study Bible
     ' FIXED - #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
-    ' FIXED - #038 - Add test for no empty para after h2 headings in doc - total count should be 0
+    ' FIXED - #038 - Add test for no empty para after h2 headings in doc - total count should be 0 [test]
     ' FIXED - #079 - Resolve issue around name of REV Bible - see #083
-    ' FIXED - #078 - Add test to count number of h1 heading, should be 66 for Bible books
+    ' FIXED - #078 - Add test to count number of h1 heading, should be 66 for Bible books [test]
     ' FIXED - #074 - Set Heading 1 to 144 points before, follows section break so each book is on a new page with
     '           no empty first para, and delete existing 144 pt empty para
     ' FIXED - #081 - Check Books with only one chapter and verify references only use verse number per SBL abbreviations
@@ -290,18 +295,18 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #063 - Update RunTest so it will allow a range of tests to be run (15 tests range)
     ' FIXED - #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
     ' OBSOLETE - Replaced with #062 - #036 - Add test for h1 pages that have heading
-    ' FIXED - #062 - Add test for Sections With Different FirstPage selected
+    ' FIXED - #062 - Add test for Sections With Different FirstPage selected [test]
     ' FIXED - #055 - Update RunTest so expected gets values from Expected string array
     ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
     ' OBSOLETE - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
-    ' FIXED - #056 - Add test for white paragraph marks
+    ' FIXED - #056 - Add test for white paragraph marks [test]
 ' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
     ' FIXED - #051 - Add Yes/No continuation message to RunTest error
-    ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it
-    ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1
+    ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it [test]
+    ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1 [test]
     ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
     ' OBSOLETE - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types
@@ -309,27 +314,27 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks
     ' FIXED - #030 - Add routine to count and review Form feed char positions. Needed in docx as part of page and section breaks
 ' 20250317 - v004
-    ' FIXED - #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding
+    ' FIXED - #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding [test]
     ' FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
     ' FIXED - #022 - Add routine to print book h1, chapter h2, verse number - based on #021
     ' FIXED - #023 - PrintBibleHeading1Info outputs the CR of Heading 1. Remove it so output is all on one line
     ' FIXED - #021 - Add routine to print Bible book headings
     ' FIXED - #020 - Add routine to print Bible book heading details - could be used as manual page number verification
     ' FIXED - #019 - Add module for interactive slow tests not in aeBibleClass
-    ' FIXED - #015 - Add test for count number dash number in footnotes only
+    ' FIXED - #015 - Add test for count number dash number in footnotes only [test]
     ' FIXED - #018 - Update Copy(???) in test runner to default Copy () as current version
-    ' FIXED - #014 - Add test for count number dash number
-    ' FIXED - #013 - Add test to count number of nonbreaking spaces
-    ' FIXED - #012 - Add test to count number of period space left parenthesis
-    ' FIXED - #011 - Add test to count style with number and space
+    ' FIXED - #014 - Add test for count number dash number [test]
+    ' FIXED - #013 - Add test to count number of nonbreaking spaces [test]
+    ' FIXED - #012 - Add test to count number of period space left parenthesis [test]
+    ' FIXED - #011 - Add test to count style with number and space [test]
     ' FIXED - #010 - Add copy(???) to output as placeholder for revision under test
-    ' FIXED - #009 - Add test to count style with space and number
-    ' FIXED - #008 - Add test to count quadruple paragraph marks
+    ' FIXED - #009 - Add test to count style with space and number [test]
+    ' FIXED - #008 - Add test to count quadruple paragraph marks [test]
 ' 20250221 - v003
-    ' FIXED - #007 - Add test to count space followed by carriage return with white font color
-    ' FIXED - #006 - Add test to count number of double tabs
-    ' FIXED - #005 - Add test to count space followed by carriage
-    ' FIXED - #004 - Add tests to count double spaces in doc, and in shapes including groups
+    ' FIXED - #007 - Add test to count space followed by carriage return with white font color [test]
+    ' FIXED - #006 - Add test to count number of double tabs [test]
+    ' FIXED - #005 - Add test to count space followed by carriage [test]
+    ' FIXED - #004 - Add tests to count double spaces in doc, and in shapes including groups [test]
     ' FIXED - #003 - Change module name to basTESTaeBibleClass
 ' 20250219 - v002
     ' FIXED - #002 - Update class name to aeBibleClass
