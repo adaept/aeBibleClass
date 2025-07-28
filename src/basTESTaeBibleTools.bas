@@ -1445,9 +1445,20 @@ Sub GetHeadingDefinitionsWithDescriptions()
         info = info & "  Space After: " & s.ParagraphFormat.SpaceAfter & vbCrLf
         info = info & "  Line Spacing: " & s.ParagraphFormat.LineSpacing & vbCrLf
         info = info & "  Outline Level: " & s.ParagraphFormat.OutlineLevel & vbCrLf
+        info = info & "  Keep With Next: " & s.ParagraphFormat.KeepWithNext & vbCrLf
         info = info & String(40, "-") & vbCrLf
         
         Debug.Print info
     Next styleName
+End Sub
+
+Sub UpdateHeading2KeepWithNext()
+    Dim s As style
+    Set s = ActiveDocument.Styles("Heading 2")
+    
+    ' Apply KeepWithNext to paragraph formatting
+    s.ParagraphFormat.KeepWithNext = True
+
+    Debug.Print "Heading 2 style updated: KeepWithNext = True"
 End Sub
 
