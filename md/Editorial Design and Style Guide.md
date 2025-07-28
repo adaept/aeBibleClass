@@ -479,7 +479,24 @@ Visit: [Copilot Pages Help](http://aka.ms/copilot-pages-help)
 4. **Document aeBibleClass and aewordgitClass**
    - Provide overview of roles, workflows, and integration points for both classes.
 
-4. **Section 144**
+5. **Section 144**
+
 - 🧠 Section 144: Header=77 (M) and Section 146: Header=73 (I)—are those initial glyphs from chapter metadata? Might be worth flagging for suffix tracking. (TestHeaderFooterStyleScan)
 
 - 🔍 Section 147’s tab-tab (ASCII=9) pairing may mark an empty pair or control-only layout. Could use that as a soft indicator for skipped suffix density? (TestHeaderFooterStyleScan)
+
+### 🛠️ Example of Tags use for Audit Clarity
+
+- **ssot-fix**: Centralized array initialization logic via `InitializeGlobalResultArrayToMinusOne` to enforce Single Source of Truth across test macros.
+- **array-init**: Resolved `Error 9` by explicitly `ReDim`-ing `ResultArray` before assignment, ensuring safe bounds and default values.
+
+🔍 Context:
+Commit [`f846de0`](https://github.com/adaept/aeBibleClass/commit/f846de0e0203e1ad96e4679ede8611f5ae40c93f) addressed a subscript error caused by uninitialized array dimensions. This fix standardizes array setup and improves macro resilience.
+
+📁 Suggested Audit Entry:
+
+```csv
+SessionID,Timestamp,Macro,FixType,Tags,Outcome
+SSOT-2025-07-28-01,2025-07-28 14:07,InitializeGlobalResultArrayToMinusOne,Error 9 Fix,"ssot-fix,array-init",Resolved
+```
+
