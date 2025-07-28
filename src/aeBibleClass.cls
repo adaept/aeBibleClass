@@ -44,11 +44,13 @@ Private Const vbext_ct_Document As Long = 100
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
-Private Const bTimeAllTests As Boolean = False
+Private Const bTimeAllTests As Boolean = True
 Private Const bGoTo16 As Boolean = False
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
-Private ResultArray(1 To 60) As Integer
+Private ResultArray(1 To 50) As Long
+Private TestTimingArray(0 To 50) As Double
+Private TestSessionID As String
 Private result As Integer
 Private TestReportFileName As String
 Private testFileNum As Integer
@@ -123,19 +125,35 @@ Function CheckShowHideStatus() As Boolean
 End Function
 
 Private Sub InitializeGlobalResultArrayToMinusOne()
-    Dim i As Integer
-    For i = 1 To 60
-        ResultArray(i) = -1
-    Next i
+
+    On Error GoTo PROC_ERR
+
+1    Dim i As Integer, j As Integer
+2    For i = 1 To 50
+3        ResultArray(i) = -1
+4    Next i
+5    ' Session ID to be stored in TestTimingArray(0)
+6    For j = 0 To 50
+7        TestTimingArray(j) = -1
+8    Next j
     ' Optional: Print to Immediate window to confirm
-    'For i = 1 To 60
+    'For i = 1 To 50
     '    Debug.Print "ResultArray(" & i & ") = " & ResultArray(i),
     'Next i
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure InitializeGlobalResultArrayToMinusOne of Class BibleClass"
+    Resume PROC_EXIT
 End Sub
 
 Private Function ConvertToOneBasedArray(values As Variant) As Variant
     Dim strArray() As String
     Dim i As Integer
+
+    On Error GoTo PROC_ERR
 
     InitializeGlobalResultArrayToMinusOne
 
@@ -149,6 +167,13 @@ Private Function ConvertToOneBasedArray(values As Variant) As Variant
     
     ' Return the 1-based array
     ConvertToOneBasedArray = strArray
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertToOneBasedArray of Class BibleClass"
+    Resume PROC_EXIT
 End Function
 
 Private Sub Expected1BasedArray()
@@ -157,8 +182,17 @@ Private Sub Expected1BasedArray()
     Dim i As Integer
     Dim outputString As String
 
+    On Error GoTo PROC_ERR
+
     Set doc = ActiveDocument
-    TestReportFileName = doc.Path & "\TestReport.txt"
+    If Len(doc.Path) = 0 Then
+        MsgBox "ActiveDocument has not been saved. Cannot set TestReportFileName.", vbCritical
+        Stop
+        Exit Sub
+    End If
+
+    Set doc = ActiveDocument
+    TestReportFileName = doc.Path & "\rpt\TestReport.txt"
     
     ' Delete the old debug file if it exists
     If Dir(TestReportFileName) <> "" Then
@@ -221,6 +255,12 @@ Private Sub Expected1BasedArray()
     Debug.Print outputString
     If TestReportFlag Then AppendToFile TestReportFileName, outputString
 
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Expected1BasedArray of Class BibleClass"
+    Resume PROC_EXIT
 End Sub
 
 '=====================================================================================
@@ -415,7 +455,6 @@ PROC_EXIT:
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunBibleClassTests of Class BibleClass"
     Resume PROC_EXIT
-
 End Function
 
 Private Function LogWordBuildInfo() As String
@@ -435,7 +474,8 @@ End Function
 Private Function GetPassFail(TestNum As Integer) As String
     Dim PassFail As String
 
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
+    
     ' Set explicit fail unless the test passes
     GetPassFail = "FAIL!!!!"
     Select Case TestNum
@@ -594,6 +634,14 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetPassFail of Class BibleClass"
+    Resume PROC_EXIT
+    
 End Function
 
 Private Function Fixed14Str(MyResult As String) As String
@@ -612,6 +660,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     startTime = Timer
     
     On Error GoTo PROC_ERR
+
     Select Case num
     Case 1
         Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, ResultArray(1), oneBasedExpectedArray(1), "CountDoubleSpaces"
@@ -791,13 +840,24 @@ PROC_ERR:
     Else
         'MsgBox "You chose to stop.", vbInformation, "Stop"
         'Exit Sub
+        'Stop
     End If
-    'Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
+    Debug.Print "!!! Error in Test num = " & num, "Function RunTest !!!"
+    If num = 1 Then
+        Debug.Print ">(1)"
+        Debug.Print GetPassFail(1)
+        Debug.Print "num = " & num
+        Debug.Print "ResultArray(1) = " & ResultArray(1)
+        Debug.Print "oneBasedExpectedArray(1) = " & oneBasedExpectedArray
+        Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, ResultArray(1), oneBasedExpectedArray(1), "CountDoubleSpaces"
+    End If
+    Stop
     End
 End Function
 
 Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) As Boolean
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
+    
     Select Case num
     Case 1
         AppendToFile TestReportFileName, GetPassFail(1) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(1))) & Fixed14Str(CStr(oneBasedExpectedArray(1))) & "CountDoubleSpaces"
@@ -908,6 +968,14 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OutPutTestReport of Class BibleClass"
+    Resume PROC_EXIT
+
 End Function
 
 '-------------------------------------------------------------
