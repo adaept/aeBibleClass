@@ -1485,4 +1485,83 @@ Sub DisableKeepLinesTogetherForHeading2()
     Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
 End Sub
 
+'==============================================
+' ValidateTaskInChangelogModule
+'----------------------------------------------
+' Purpose:
+'   Validates that a permalink pointing to a line in the ChangeLog.bas
+'   corresponds to a task tag (e.g. #293) that appears inside a delimited
+'   block within the same module.
+'
+' Inputs:
+'   - GitHub permalink with fragment ID (e.g. https://...#L17)
+'   - Hardcoded path to ChangeLog.bas
+'
+' Behavior:
+'   - Extracts line number from permalink
+'   - Reads line N from the ChangeLog.bas file
+'   - Parses the first #NNN task tag found on that line
+'   - Scans ChangeLog.bas for `=============` block boundaries
+'   - Confirms that the tag appears within one of those blocks
+'
+' Output:
+'   - [OK] #NNN found within module block
+'   - [FAIL] with specific reason (tag missing, not found, bad line number)
+'
+' Audit Notes:
+'   - Logs only via Debug.Print (ASCII-safe, no UI interference)
+'   - No assumptions about module layout beyond `=============` fences
+'   - Does not modify any content — purely read-only audit
+'   - Suitable for changelog integrity checks in version-controlled macros
+'==============================================
+Sub ValidateTaskInChangelogModule()
+    Dim permalink As String
+    permalink = InputBox("Paste permalink (with #Lnn):")
+
+    Dim lineNum As Long
+    lineNum = val(Split(permalink, "#L")(1))
+
+    Dim changelogModulePath As String
+    changelogModulePath = "C:\adaept\aeBibleClass\src\basChangeLogaeBibleClass.bas" ' Change as needed
+
+    Dim fs As Object: Set fs = CreateObject("Scripting.FileSystemObject")
+    Dim ts As Object: Set ts = fs.OpenTextFile(changelogModulePath, 1)
+
+    Dim i As Long, lineText As String
+    For i = 1 To lineNum
+        If ts.AtEndOfStream Then Debug.Print "[FAIL] Line number too large": ts.Close: Exit Sub
+        lineText = ts.ReadLine
+    Next
+    ts.Close
+
+    ' Extract #NNN tag from line
+    Dim tag As String, w
+    For Each w In Split(lineText, " ")
+        If Left(w, 1) = "#" And IsNumeric(Mid(w, 2)) Then tag = w: Exit For
+    Next
+
+    If tag = "" Then Debug.Print "[FAIL] No #NNN task tag found at line " & lineNum: Exit Sub
+
+    ' Re-open and scan for matching task inside ========= block
+    Set ts = fs.OpenTextFile(changelogModulePath, 1)
+    Dim insideBlock As Boolean: insideBlock = False
+    Dim found As Boolean: found = False
+
+    Do While Not ts.AtEndOfStream
+        Dim ln As String: ln = ts.ReadLine
+        If InStr(ln, "===") > 0 Then
+            insideBlock = Not insideBlock
+        ElseIf insideBlock And InStr(ln, tag) > 0 Then
+            found = True: Exit Do
+        End If
+    Loop
+    ts.Close
+
+    If found Then
+        Debug.Print "[OK] " & tag & " found within module block"
+    Else
+        Debug.Print "[FAIL] " & tag & " not found in any block"
+    End If
+End Sub
+
 

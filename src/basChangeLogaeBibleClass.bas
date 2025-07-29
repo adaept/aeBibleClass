@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #299 -
 ' #298 -
 ' #297 -
-' #296 - Add code for ValidateTaskInChangelogModule
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '====================================================================================================================================
 '
+    ' FIXED - #296 - Add code for ValidateTaskInChangelogModule
     ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2
     ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl
     ' FIXED - #284 - Update Heading 2 KeepWithNext [audit]
