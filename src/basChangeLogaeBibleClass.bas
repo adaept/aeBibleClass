@@ -6,15 +6,15 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code]
 ' #300 -
 ' #299 -
 ' #298 -
 ' #297 -
-' #296 -
-' #295 -
-' #294 - Cut a 0.1.1 release and tag it on GitHub
-' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n)
+' #296 - Add code for ValidateTaskInChangelogModule
+' #295 - Verify use of late binding in all code base so there is no need to set references [code]
+' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
+' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - Add md doc that shows clearly the wokflow for GitHub integration [doc] [flow]
 ' #290 - Add test for count of H1 with style
