@@ -6,11 +6,21 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit]
-' #290 -
-' #289 -
-' #288 -
-' #287 -
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp]
+' #300 -
+' #299 -
+' #298 -
+' #297 -
+' #296 -
+' #295 -
+' #294 - Cut a 0.1.1 release and tag it on GitHub
+' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n)
+' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
+' #291 - Add md doc that shows clearly the wokflow for GitHub integration [doc] [flow]
+' #290 - Add test for count of H1 with style
+' #289 - Add test for count of H2 with style
+' #288 - Create md doc file describing use of Tasks labels [doc]
+' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr]
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
 ' #279 - Add routine to define H2 style and reapply it in the project
@@ -18,7 +28,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #271 - Add routine headers for targeting github.io docs in future [doc]
 ' #268 - Timings of TestReport to go in csv log file with session ID for each run
 ' #267 - Add code for CompleteAuditPageLayout
-' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post
+' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
 ' #259 - Remove old code that regressed
 ' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all
 ' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
