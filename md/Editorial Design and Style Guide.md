@@ -500,3 +500,15 @@ SessionID,Timestamp,Macro,FixType,Tags,Outcome
 SSOT-2025-07-28-01,2025-07-28 14:07,InitializeGlobalResultArrayToMinusOne,Error 9 Fix,"ssot-fix,array-init",Resolved
 ```
 
+Audit entries document task tag resolutions and include the following components:
+
+- `## [#TAG]` — Task identifier and brief title
+- `- **Fixed in:**` — One or more commit hashes linked to corresponding GitHub commits
+- `- **File:**` — Source file affected
+- `- **Line:**` — Hyperlinked line number of the task fix or validation
+- `- **Summary:**` — Clear description of the change or fix implemented
+- `- **Audit Result:**` — Status confirmation, e.g., `[OK] #TAG found within module block`
+
+🔍 This format is used **only in Markdown-based audit logs** (e.g. `.md` docs within `docs/` or repository root) and is UTF-8 compatible. It supports typographic characters, emojis, and rich formatting where appropriate.
+
+💡 Separate ASCII-only output is reserved for VBA immediate window diagnostics, debug print streams, and terminal-style audit macros. These outputs remain formatting-neutral and export-safe.
