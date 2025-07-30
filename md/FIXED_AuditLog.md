@@ -1,5 +1,18 @@
 # Audits for Commit Log
 
+## [#299] Final validator update and audit format clarification
+
+- **Fixed in:** [`ff2aa10`](https://github.com/adaept/aeBibleClass/commit/ff2aa102a1aabcd00f330c6475693527ff79c200)
+- **File:** `md/Editorial Design and Style Guide.md`
+- **Line:** [L503](https://github.com/adaept/aeBibleClass/commit/ff2aa102a1aabcd00f330c6475693527ff79c200#diff-0ef90a4f6297d8bd3147bdae1da9222de0a0a1b9ea1f82a86f0178671d227029R503)
+- **Summary:** Added formal specification of Markdown audit log format, clarifying UTF-8 compatibility and distinction from ASCII-only macro diagnostics.
+- **Audit Result:** ✅ `[OK] Markdown audit format spec added and aligned with validator logic`
+
+- **Fixed in:** [`53f1ade`](https://github.com/adaept/aeBibleClass/commit/53f1ade0e531a31021ea794ce1aa1f6f9fcfa96e)
+- **File:** `md/FIXED_AuditLog.md`
+- **Summary:** Regenerated audit entry for #299 with UTF-8 Markdown formatting. Clarified audit log format specification for future reference.
+- **Audit Result:** ✅ `[OK] Markdown audit entry and format spec updated`
+
 ## [#299] Add initial README and Bias Guard md files
 
 - **Fixed in:**
