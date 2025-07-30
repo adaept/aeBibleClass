@@ -1,5 +1,15 @@
 # Audits for Commit Log
 
+## [#298] Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS
+
+- **Fixed in:**
+  - [`026b45f`](https://github.com/adaept/aeBibleClass/commit/026b45f0cc180ed0de5733240264b368bcc654eb)
+  - [`1f712f0`](https://github.com/adaept/aeBibleClass/commit/1f712f01ff7bcdb504ba2e906e8e5244a834ad03)
+- **File:** `basChangeLogaeBibleClass.bas`
+- **Line:** [L12](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L12)
+- **Summary:** Refactored changelog entry and implemented SSOT logic with Select Case validation.
+- **Audit Result:** `[OK] #298 found within module block`
+
 ## [#297] Create file to hold Audits for Commit Log
 
 - **Fixed in:**
