@@ -13,7 +13,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #302 -
 ' #301 -
 ' #300 -
-' #299 - Add initial README and Bias Guard md files [doc] [cp]
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
@@ -78,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '====================================================================================================================================
 '
+    ' FIXED - #299 - Add initial README and Bias Guard md files [doc] [cp]
     ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS
     ' FIXED - #297 - Create file to hold Audits for Commit Log
     ' FIXED - #296 - Add code for ValidateTaskInChangelogModule
