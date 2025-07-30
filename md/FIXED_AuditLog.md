@@ -1,5 +1,17 @@
 # Audits for Commit Log
 
+## [#299] Add initial README and Bias Guard md files
+
+- **Fixed in:**
+  - [`39a147b`](https://github.com/adaept/aeBibleClass/commit/39a147bd719b01da113dc4d367cf1dec1d319b96)
+  - [`7e84cde`](https://github.com/adaept/aeBibleClass/commit/7e84cdee435d95084af20518ef3b76b5240633fb)
+- **File:** `basChangeLogaeBibleClass.bas`
+- **Line:** [L12](https://github.com/adaept/aeBibleClass/blob/main/src/basChangeLogaeBibleClass.bas#L12)
+- **Summary:** Task #299 added to changelog block. Markdown documentation introduced:
+  - `README.md`: Project scope, platform notes, and guiding principles
+  - `Bias Guard.md`: Audit alignment rationale and integration notes
+- **Audit Result:** ✅ `[OK] #299 found within module block`
+
 ## [#298] Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS
 
 - **Fixed in:**
