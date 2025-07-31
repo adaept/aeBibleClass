@@ -965,7 +965,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 50
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
     Case 999
-        AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
+        AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
    Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -1159,6 +1159,31 @@ Private Function SummarizeHeaderFooterAuditToFile()
     ts.Close
 End Function
 
+'==============================================================
+' CountAuditStyles_ToFile
+' --------------------------------------------------------------
+' Purpose : Audits paragraph style usage across all story ranges
+'           in the active Word document and outputs a frequency
+'           distribution report to an external ASCII text file.
+'
+' Returns : Long - the number of unique styles detected.
+'
+' Behavior:
+' - Iterates all story ranges (main text, headers, footers, etc.).
+' - Counts paragraph occurrences per style using a Scripting.Dictionary.
+' - Outputs results as "Style: Count" pairs, plus total paragraph count.
+' - Writes to "\rpt\Style Usage Distribution.txt".
+' - Skips UI prompts; uses silent logging for audit pipelines.
+'
+' Notes   :
+' - Respects editorial boundaries by auditing only - no content changes.
+' - Compatible with audit-friendly workflows and batch diagnostics.
+' - Output is ASCII-only to maximize portability and diff clarity.
+' - Assumes the "\rpt\" folder exists; add directory creation if needed.
+'
+' Author  : Peter
+' Last Modified : 20250731
+'==============================================================
 Private Function CountAuditStyles_ToFile() As Long
     Dim rng As range
     Dim para As paragraph
@@ -1187,8 +1212,9 @@ Private Function CountAuditStyles_ToFile() As Long
     ' Output to text file beside the document
     Dim fso As Object, outFile As Object, outputPath As String
     Set fso = CreateObject("Scripting.FileSystemObject")
-    outputPath = fso.GetParentFolderName(ActiveDocument.FullName) & "\Style Usage Distribution.txt"
+    outputPath = fso.GetParentFolderName(ActiveDocument.FullName) & "\rpt\Style Usage Distribution.txt"
     Set outFile = fso.CreateTextFile(outputPath, True)
+    Debug.Print "outputPath = " & outputPath
 
     outFile.WriteLine "=== Style Usage Distribution ==="
     Dim key As Variant
