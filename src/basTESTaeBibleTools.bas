@@ -5,6 +5,13 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+Private Sections1Col As Integer
+Private Sections2Col As Integer
+Private SectionsOddPageBreaks As Integer
+Private SectionsEvenPageBreaks As Integer
+Private SectionsContinuousBreaks As Integer
+Private SectionsNewPageBreaks As Integer
+
 Sub ListCustomXMLParts()
     Dim xmlPart As customXMLPart
     Dim i As Integer
@@ -1564,4 +1571,138 @@ Sub ValidateTaskInChangelogModule()
     End If
 End Sub
 
+'==============================================================
+' PrintCompactSectionLayoutInfo
+' --------------------------------------------------------------
+' Purpose : Generates a detailed layout report of all sections in
+'           the active Word document, including orientation,
+'           page size, column count, margin settings, borders,
+'           and section break types.
+'
+' Outputs : ASCII text file summarizing layout characteristics,
+'           written to: C:\adaept\aeBibleClass\rpt\DocumentLayoutReport.txt
+'
+' Behavior:
+' - Iterates through all sections using ActiveDocument.Sections.
+' - Aggregates column counts, break types, border styles, and
+'   various layout metrics per section.
+' - Converts margin and spacing values from points to inches.
+' - Uses silent output with Debug.Print for diagnostic logging.
+' - Tracks aggregate layout counts (e.g., number of sections with
+'   two columns or odd page breaks) and assigns them to globals.
+'
+' Notes   :
+' - Requires external functions: GetPaperSizeName, GetBorderStyle,
+'   and PointsToInches — these must be present for successful output.
+' - Assumes target directory exists; no path creation is performed.
+' - File output is line-oriented and portable for audit pipelines.
+' - No content modification occurs; strictly layout reporting.
+'
+' Author  : Peter
+' Last Modified : 20250731
+'==============================================================
+Sub PrintCompactSectionLayoutInfo()
+    Dim sec As section
+    Dim i As Long
+    Dim nOneCol As Long, nTwoCol As Long
+    Dim nEvenPageBreak As Long, nOddPageBreak As Long
+    Dim nContinuousBreak As Long, nNewPageBreak As Long
+    Dim outputFile As String
+    Dim outputText As String
+    outputFile = "C:\adaept\aeBibleClass\rpt\DocumentLayoutReport.txt"  ' Change to desired path
+
+    ' Open the text file to write
+    Open outputFile For Output As #1
+    
+    ' Write Header to the file
+    outputText = "=== Layout Report ===" & vbCrLf
+    outputText = outputText & "Doc: " & ActiveDocument.name & vbCrLf
+    outputText = outputText & "Total Sections: " & ActiveDocument.Sections.count & vbCrLf & vbCrLf
+    Print #1, outputText
+    
+    For i = 1 To ActiveDocument.Sections.count
+        Set sec = ActiveDocument.Sections(i)
+        
+        outputText = "Section " & i & ": " & vbCrLf
+        outputText = outputText & "Page: " & IIf(sec.pageSetup.orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
+                    "Size: " & GetPaperSizeName(sec.pageSetup.paperSize) & ", " & _
+                    "Columns: " & sec.pageSetup.TextColumns.count & vbCrLf
+        If sec.pageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
+        
+        ' Margins
+        outputText = outputText & "Margins (inches): " & _
+                    "Top: " & PointsToInches(sec.pageSetup.topMargin) & ", " & _
+                    "Bottom: " & PointsToInches(sec.pageSetup.bottomMargin) & ", " & _
+                    "Left: " & PointsToInches(sec.pageSetup.leftMargin) & ", " & _
+                    "Right: " & PointsToInches(sec.pageSetup.rightMargin) & ", " & _
+                    "Gutter: " & PointsToInches(sec.pageSetup.gutter) & vbCrLf
+        
+        ' Line Numbering
+        If sec.pageSetup.LineNumbering.Active Then
+            outputText = outputText & "Line Numbers: " & sec.pageSetup.LineNumbering.StartingNumber & ", " & _
+                        "Increment: " & sec.pageSetup.LineNumbering.CountBy & vbCrLf
+        End If
+        
+        ' Header/Footer settings
+        outputText = outputText & "Header Distance: " & PointsToInches(sec.pageSetup.HeaderDistance) & ", " & _
+                    "Footer Distance: " & PointsToInches(sec.pageSetup.FooterDistance) & vbCrLf
+        
+        ' Borders (if any)
+        outputText = outputText & "Borders: " & _
+                    "Top: " & GetBorderStyle(sec.Borders(wdBorderTop)) & ", " & _
+                    "Bottom: " & GetBorderStyle(sec.Borders(wdBorderBottom)) & ", " & _
+                    "Left: " & GetBorderStyle(sec.Borders(wdBorderLeft)) & ", " & _
+                    "Right: " & GetBorderStyle(sec.Borders(wdBorderRight)) & vbCrLf
+        
+        ' Section Break Type
+        Select Case sec.pageSetup.sectionStart
+            Case wdSectionNewPage
+                outputText = outputText & "Section Break: New Page" & vbCrLf
+                nNewPageBreak = nNewPageBreak + 1
+            Case wdSectionOddPage
+                outputText = outputText & "Section Break: Odd Page" & vbCrLf
+                nOddPageBreak = nOddPageBreak + 1
+            Case wdSectionEvenPage
+                outputText = outputText & "Section Break: Even Page" & vbCrLf
+                nEvenPageBreak = nEvenPageBreak + 1
+            Case wdSectionContinuous
+                outputText = outputText & "Section Break: Continuous" & vbCrLf
+                nContinuousBreak = nContinuousBreak + 1
+            Case Else
+                outputText = outputText & "Section Break: None" & vbCrLf
+        End Select
+        
+        ' Write section data to file
+        Print #1, outputText
+        outputText = "" ' Reset outputText for the next section
+    Next i
+    
+    ' Summary of Sections
+    outputText = "Summary: " & vbCrLf
+    outputText = outputText & "Sections with 1 Column: " & nOneCol & vbCrLf
+    Sections1Col = nOneCol
+    Debug.Print "Sections1Col = " & nOneCol
+    outputText = outputText & "Sections with 2 Columns: " & nTwoCol & vbCrLf
+    Sections2Col = nTwoCol
+    Debug.Print "Sections2Col = " & nTwoCol
+    outputText = outputText & "Sections with Odd Page Breaks: " & nOddPageBreak & vbCrLf
+    SectionsOddPageBreaks = nOddPageBreak
+    Debug.Print "SectionsOddPageBreaks = " & nOddPageBreak
+    outputText = outputText & "Sections with Even Page Breaks: " & nEvenPageBreak & vbCrLf
+    SectionsEvenPageBreaks = nEvenPageBreak
+    Debug.Print "SectionsEvenPageBreaks = " & nEvenPageBreak
+    outputText = outputText & "Sections with Continuous Breaks: " & nContinuousBreak & vbCrLf
+    SectionsContinuousBreaks = nContinuousBreak
+    Debug.Print "SectionsContinuousBreaks = " & nContinuousBreak
+    outputText = outputText & "Sections with New Page Breaks: " & nNewPageBreak & vbCrLf
+    SectionsNewPageBreaks = nNewPageBreak
+    Debug.Print "SectionsNewPageBreaks = " & nNewPageBreak
+    Print #1, outputText
+    
+    ' Close the file
+    Close #1
+
+    'MsgBox "Layout report saved to: " & outputFile, vbInformation
+    Debug.Print "Layout report saved to: " & outputFile
+End Sub
 
