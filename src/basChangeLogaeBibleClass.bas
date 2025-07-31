@@ -9,8 +9,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code]
 ' #305 -
 ' #304 -
-' #303 -
-' #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder
+' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
+' #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header
 ' #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
@@ -20,7 +20,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #290 - Add test for count of H1 with style
 ' #289 - Add test for count of H2 with style
 ' #288 - Create md doc file describing use of Tasks labels [doc]
-' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr]
+' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr] [cp]
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
 ' #279 - Add routine to define H2 style and reapply it in the project
