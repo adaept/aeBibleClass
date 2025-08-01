@@ -6,9 +6,13 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip]
+' #310 -
+' #309 -
+' #308 -
+' #307 -
+' #306 -
 ' #305 -
-' #304 -
 ' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
 ' #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
@@ -74,6 +78,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '====================================================================================================================================
 '
+    ' FIXED - #304 - Add task type [wip] - it will prepend the task commits until replaced by FIXED
     ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header
     ' FIXED - #301 - 999 AppendToFile should be "SKIPPED" [bug]
 'Sq ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [doc]
