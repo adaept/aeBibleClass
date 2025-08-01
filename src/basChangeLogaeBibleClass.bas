@@ -6,26 +6,27 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip]
+' #310 -
+' #309 -
+' #308 -
+' #307 -
+' #306 -
 ' #305 -
-' #304 -
-' #303 -
-' #302 -
-' #301 -
-' #300 -
+' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
+' #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
-' #291 - Add md doc that shows clearly the wokflow for GitHub integration [doc] [flow]
+' #291 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
 ' #290 - Add test for count of H1 with style
 ' #289 - Add test for count of H2 with style
 ' #288 - Create md doc file describing use of Tasks labels [doc]
-' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr]
+' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr] [cp]
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
 ' #279 - Add routine to define H2 style and reapply it in the project
-' #274 - Adjust output of 'Style Usage Distribution.txt' to rpt folder
 ' #271 - Add routine headers for targeting github.io docs in future [doc]
 ' #268 - Timings of TestReport to go in csv log file with session ID for each run
 ' #267 - Add code for CompleteAuditPageLayout
@@ -77,6 +78,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '====================================================================================================================================
 '
+    ' FIXED - #304 - Add task type [wip] - it will prepend the task commits until replaced by FIXED
+    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header
+    ' FIXED - #301 - 999 AppendToFile should be "SKIPPED" [bug]
+'Sq ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [doc]
     ' FIXED - #299 - Add initial README and Bias Guard md files [doc] [cp]
     ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS
     ' FIXED - #297 - Create file to hold Audits for Commit Log
