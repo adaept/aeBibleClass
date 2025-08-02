@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
 ' #310 -
 ' #309 -
-' #305 - Check header writing standard, vbnet vs. vba [cp] [clean]
 ' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
@@ -37,11 +36,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
-' #150 - Add module for free fonts setup and testing
-' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
-' #100 - Continue check multipage view from 300 for orphans of H2
+' #150 - Add module for free fonts setup and testing [idea]
+' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
-' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
+' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote [test]
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure RWB is correct
@@ -60,20 +58,22 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
-' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
-' #047 - Research diff code that will display like GitHub for comparison with verse versions
-' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
-' #043 - Add extract to USFM routine
-' #042 - Add readme to aewordgit
-' #040 - Add figure headings to maps - use map vs fig?
-' #037 - Add updated maps in color
+' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition [idea]
+' #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
+' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference [feat]
+' #043 - Add extract to USFM routine [feat]
+' #042 - Add readme to aewordgit [doc]
+' #040 - Add figure headings to maps - use map vs fig? [idea]
+' #037 - Add updated maps in color [feat]
 ' #035 - Add test for page numbers of h1 on odd or even pages [test]
-' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
-' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
-' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
+' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
+' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
+' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
-    ' FIXED - #308 - Update all use of TestReportFlag to - If TestReportFlag And OneTest = 0
+    ' FIXED - #305 - Check header writing standard, vbnet vs. vba, use style ' ============== [cp] [clean]
+    ' [obso] #100 - Continue check multipage view from 300 for orphans of H2
+    ' FIXED - #308 - Update all use of TestReportFlag to -> If TestReportFlag And OneTest = 0
     ' FIXED - #307 - Remove bGoTo16, not needed with use of run single test [obso] [clean]
     ' FIXED - #306 - Add audit log from squash #274 [doc] [audit]
     ' FIXED - #279 - Add routine to define H2 style and reapply it in the project, add code header [impr] [code]
