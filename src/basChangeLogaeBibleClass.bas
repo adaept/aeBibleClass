@@ -12,8 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #313 -
 ' #312 -
 ' #311 -
-' #310 -
-' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
@@ -73,7 +71,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
-'Sq
+    ' FIXED - #295 - See #309 - Verify use of late binding in all code base so there is no need to set references [code]
+'Sq ' FIXED - #310 - Add code to locally auto tag a version release and push it to GitHub
     ' FIXED - #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
     ' FIXED - #309 - Add code to scan modules in .docm to flag early-bound object declarations [code]
     ' FIXED - #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
