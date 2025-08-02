@@ -112,6 +112,17 @@ Sub DeleteCustomUIXML()
     MsgBox "CustomUI XML parts deleted successfully!"
 End Sub
 
+' ========================================================================================
+' Function:     GetColorNameFromHex
+' Purpose:      Translates a hexadecimal color string (e.g., "#FF0000") into a human-readable
+'               color name. Useful for diagnostics, audit logs, or UI labeling in scripts.
+' Inputs:       hexColor [String] - A color code in hexadecimal format, e.g., "#FF0000"
+' Returns:      [String] - The corresponding color name, or "Unknown Color" if not matched.
+' Author:       Peter
+' Last Updated: 2025-08-02
+' Notes:        - Hex code is normalized to uppercase for consistent comparison.
+'               - Expand CASE block as needed for additional named colors.
+' ========================================================================================
 Function GetColorNameFromHex(hexColor As String) As String
     Dim colorName As String
     
@@ -1386,7 +1397,7 @@ Sub ReapplyTheFootersToAllFooters()
     Debug.Print "=== Style Reapplication Complete ==="
 End Sub
 
-'------------------------------------------------------------------------------
+' =============================================================================
 ' Macro Name : GetHeadingDefinitionsWithDescriptions
 ' Author     : Peter + Copilot
 ' Description:
@@ -1406,7 +1417,7 @@ End Sub
 '   - Export to CSV or Markdown
 '   - Include suffix tracking, style inheritance, or font audit flags
 '   - Integrate session-aware tracking or timing metrics
-'------------------------------------------------------------------------------
+' =============================================================================
 Sub GetHeadingDefinitionsWithDescriptions()
     Dim headingStyles As Variant
     headingStyles = Array("Heading 1", "Heading 2")
