@@ -7,12 +7,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Const wdThemeColorNone As Long = -1
 Public Const wdPaperB5Jis As Integer = 11
-Private Sections1Col As Integer
-Private Sections2Col As Integer
-Private SectionsOddPageBreaks As Integer
-Private SectionsEvenPageBreaks As Integer
-Private SectionsContinuousBreaks As Integer
-Private SectionsNewPageBreaks As Integer
 
 Sub ViewCodeDetails()
     Dim selectedText As String
@@ -741,110 +735,6 @@ Function GetVerticalAlignmentName(valign As WdVerticalAlignment) As String
     End Select
 End Function
 
-Sub PrintCompactSectionLayoutInfo()
-    Dim sec As section
-    Dim i As Long
-    Dim nOneCol As Long, nTwoCol As Long
-    Dim nEvenPageBreak As Long, nOddPageBreak As Long
-    Dim nContinuousBreak As Long, nNewPageBreak As Long
-    Dim outputFile As String
-    Dim outputText As String
-    outputFile = "C:\adaept\aeBibleClass\DocumentLayoutReport.txt"  ' Change to your desired path
-
-    ' Open the text file to write
-    Open outputFile For Output As #1
-    
-    ' Write Header to the file
-    outputText = "=== Layout Report ===" & vbCrLf
-    outputText = outputText & "Doc: " & ActiveDocument.name & vbCrLf
-    outputText = outputText & "Total Sections: " & ActiveDocument.Sections.count & vbCrLf & vbCrLf
-    Print #1, outputText
-    
-    For i = 1 To ActiveDocument.Sections.count
-        Set sec = ActiveDocument.Sections(i)
-        
-        outputText = "Section " & i & ": " & vbCrLf
-        outputText = outputText & "Page: " & IIf(sec.pageSetup.orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
-                    "Size: " & GetPaperSizeName(sec.pageSetup.paperSize) & ", " & _
-                    "Columns: " & sec.pageSetup.TextColumns.count & vbCrLf
-        If sec.pageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
-        
-        ' Margins
-        outputText = outputText & "Margins (inches): " & _
-                    "Top: " & PointsToInches(sec.pageSetup.topMargin) & ", " & _
-                    "Bottom: " & PointsToInches(sec.pageSetup.bottomMargin) & ", " & _
-                    "Left: " & PointsToInches(sec.pageSetup.leftMargin) & ", " & _
-                    "Right: " & PointsToInches(sec.pageSetup.rightMargin) & ", " & _
-                    "Gutter: " & PointsToInches(sec.pageSetup.gutter) & vbCrLf
-        
-        ' Line Numbering
-        If sec.pageSetup.LineNumbering.Active Then
-            outputText = outputText & "Line Numbers: " & sec.pageSetup.LineNumbering.StartingNumber & ", " & _
-                        "Increment: " & sec.pageSetup.LineNumbering.CountBy & vbCrLf
-        End If
-        
-        ' Header/Footer settings
-        outputText = outputText & "Header Distance: " & PointsToInches(sec.pageSetup.HeaderDistance) & ", " & _
-                    "Footer Distance: " & PointsToInches(sec.pageSetup.FooterDistance) & vbCrLf
-        
-        ' Borders (if any)
-        outputText = outputText & "Borders: " & _
-                    "Top: " & GetBorderStyle(sec.Borders(wdBorderTop)) & ", " & _
-                    "Bottom: " & GetBorderStyle(sec.Borders(wdBorderBottom)) & ", " & _
-                    "Left: " & GetBorderStyle(sec.Borders(wdBorderLeft)) & ", " & _
-                    "Right: " & GetBorderStyle(sec.Borders(wdBorderRight)) & vbCrLf
-        
-        ' Section Break Type
-        Select Case sec.pageSetup.sectionStart
-            Case wdSectionNewPage
-                outputText = outputText & "Section Break: New Page" & vbCrLf
-                nNewPageBreak = nNewPageBreak + 1
-            Case wdSectionOddPage
-                outputText = outputText & "Section Break: Odd Page" & vbCrLf
-                nOddPageBreak = nOddPageBreak + 1
-            Case wdSectionEvenPage
-                outputText = outputText & "Section Break: Even Page" & vbCrLf
-                nEvenPageBreak = nEvenPageBreak + 1
-            Case wdSectionContinuous
-                outputText = outputText & "Section Break: Continuous" & vbCrLf
-                nContinuousBreak = nContinuousBreak + 1
-            Case Else
-                outputText = outputText & "Section Break: None" & vbCrLf
-        End Select
-        
-        ' Write section data to file
-        Print #1, outputText
-        outputText = "" ' Reset outputText for the next section
-    Next i
-    
-    ' Summary of Sections
-    outputText = "Summary: " & vbCrLf
-    outputText = outputText & "Sections with 1 Column: " & nOneCol & vbCrLf
-    Sections1Col = nOneCol
-    Debug.Print "Sections1Col = " & nOneCol
-    outputText = outputText & "Sections with 2 Columns: " & nTwoCol & vbCrLf
-    Sections2Col = nTwoCol
-    Debug.Print "Sections2Col = " & nTwoCol
-    outputText = outputText & "Sections with Odd Page Breaks: " & nOddPageBreak & vbCrLf
-    SectionsOddPageBreaks = nOddPageBreak
-    Debug.Print "SectionsOddPageBreaks = " & nOddPageBreak
-    outputText = outputText & "Sections with Even Page Breaks: " & nEvenPageBreak & vbCrLf
-    SectionsEvenPageBreaks = nEvenPageBreak
-    Debug.Print "SectionsEvenPageBreaks = " & nEvenPageBreak
-    outputText = outputText & "Sections with Continuous Breaks: " & nContinuousBreak & vbCrLf
-    SectionsContinuousBreaks = nContinuousBreak
-    Debug.Print "SectionsContinuousBreaks = " & nContinuousBreak
-    outputText = outputText & "Sections with New Page Breaks: " & nNewPageBreak & vbCrLf
-    SectionsNewPageBreaks = nNewPageBreak
-    Debug.Print "SectionsNewPageBreaks = " & nNewPageBreak
-    Print #1, outputText
-    
-    ' Close the file
-    Close #1
-
-    'MsgBox "Layout report saved to: " & outputFile, vbInformation
-End Sub
-
 Function PointsToInches(Points As Single) As String
     PointsToInches = Format(Points / 72, "0.00")
 End Function
@@ -1068,5 +958,134 @@ Function IsFootnoteRefFormattedCorrectly(rng As range) As Boolean
             And .Superscript = True
     End With
 End Function
+
+Sub TestPageRangeEnd()
+    Selection.GoTo What:=wdGoToPage, name:="70"
+    Selection.MoveRight Unit:=wdCharacter, count:=1
+    Dim pageEnd As Long
+    pageEnd = Selection.Bookmarks("\Page").range.End
+    Selection.GoTo What:=wdGoToPage, name:="71"
+    Selection.MoveRight Unit:=wdCharacter, count:=1
+    Dim page71Start As Long
+    page71Start = Selection.Start
+    Debug.Print "Page 70 ends at: " & pageEnd
+    Debug.Print "Page 71 starts at: " & page71Start
+End Sub
+
+Sub AuditFontUsage_ParagraphsAndHeadersFooters()
+    Dim para As paragraph
+    Dim fontMap As Object
+    Dim fName As String
+    Dim keyVar As Variant
+    Dim logBuffer As String
+    Dim sec As section
+    Dim hf As HeaderFooter
+    Dim hfTypes As Variant
+    Dim hfKind As Variant
+
+    Set fontMap = CreateObject("Scripting.Dictionary")
+
+    ' Scan body paragraphs
+    For Each para In ActiveDocument.paragraphs
+        fName = para.range.Characters(1).font.name
+        If Not fontMap.Exists(fName) Then
+            fontMap.Add fName, 1
+        Else
+            fontMap(fName) = fontMap(fName) + 1
+        End If
+    Next para
+
+    ' Define header/footer types
+    hfTypes = Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
+
+    ' Scan header/footer paragraphs
+    For Each sec In ActiveDocument.Sections
+        For Each hfKind In hfTypes
+            Set hf = sec.Headers(hfKind)
+            If hf.Exists Then
+                For Each para In hf.range.paragraphs
+                    fName = para.range.Characters(1).font.name
+                    If Not fontMap.Exists(fName) Then
+                        fontMap.Add fName, 1
+                    Else
+                        fontMap(fName) = fontMap(fName) + 1
+                    End If
+                Next para
+            End If
+
+            Set hf = sec.Footers(hfKind)
+            If hf.Exists Then
+                For Each para In hf.range.paragraphs
+                    fName = para.range.Characters(1).font.name
+                    If Not fontMap.Exists(fName) Then
+                        fontMap.Add fName, 1
+                    Else
+                        fontMap(fName) = fontMap(fName) + 1
+                    End If
+                Next para
+            End If
+        Next hfKind
+    Next sec
+
+    ' Output results
+    logBuffer = "=== Font Usage Across Body, Headers, and Footers ===" & vbCrLf
+    For Each keyVar In fontMap.Keys
+        logBuffer = logBuffer & "- " & keyVar & ": " & fontMap(keyVar) & " paragraph(s)" & vbCrLf
+    Next
+
+    Debug.Print logBuffer
+    MsgBox "Full font audit complete. See Immediate Window.", vbInformation
+End Sub
+
+Public Sub xxxRunTestCase(ByVal intTestIndex As Integer)
+    Dim dblStart As Double, dblEnd As Double
+    Dim varActualResult As Variant, varExpectedResult As Variant
+    Dim varOutcome As String, varRuntime As Double
+    'Dim objTest As aeTestResult
+    'Set objTest = New aeTestResult
+
+    Select Case intTestIndex
+        Case 9
+            Debug.Print "Running Test 9: CountPeriodSpaceLeftParenthesis"
+            dblStart = Timer
+
+            'varActualResult = CountPeriodSpaceLeftParenthesis()
+            varExpectedResult = 7
+            varOutcome = IIf(varActualResult = varExpectedResult, "PASS", "FAIL")
+
+            dblEnd = Timer
+            varRuntime = Round(dblEnd - dblStart, 2)
+
+            Debug.Print varOutcome, vbTab, "Copy ()", vbTab, _
+                        "Test = 9", vbTab, varActualResult, vbTab, _
+                        varExpectedResult, vbTab, "CountPeriodSpaceLeftParenthesis"
+            Debug.Print "Routine Runtime:", Format(varRuntime, "0.00"), "seconds"
+
+            'With objTest
+            '    .Index = 9
+            '    .FunctionName = "CountPeriodSpaceLeftParenthesis"
+            '    .ActualResult = varActualResult
+            '    .ExpectedResult = varExpectedResult
+            '    .Outcome = varOutcome
+            '    .RoutineRuntimeSeconds = varRuntime
+            'End With
+
+        Case 10 To 12 ' Dummy scaffolds—extend when needed
+            'objTest.Index = intTestIndex
+            'objTest.FunctionName = "Function_" & intTestIndex
+            'objTest.ExpectedResult = 0
+            'objTest.ActualResult = 0
+            'objTest.Outcome = "PASS"
+            'objTest.RoutineRuntimeSeconds = 0.25 ' Stub time
+            'Debug.Print "Test", intTestIndex, "executed (dummy scaffold)"
+
+        Case Else
+            Debug.Print "Test index not recognized:", intTestIndex
+    End Select
+
+    ' Optionally save objTest to an array or export structure here
+
+End Sub
+
 
 

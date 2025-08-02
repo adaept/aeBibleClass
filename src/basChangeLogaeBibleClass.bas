@@ -6,34 +6,31 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
+' #315 -
+' #314 -
+' #313 -
+' #312 -
+' #311 -
 ' #310 -
-' #309 -
-' #308 -
-' #307 -
-' #306 -
-' #305 -
-' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
-' #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
-' #291 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
-' #290 - Add test for count of H1 with style
-' #289 - Add test for count of H2 with style
+' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
+' #290 - Add test for count of H1 with style [test]
+' #289 - Add test for count of H2 with style [test]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
 ' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr] [cp]
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
-' #279 - Add routine to define H2 style and reapply it in the project
-' #271 - Add routine headers for targeting github.io docs in future [doc]
-' #268 - Timings of TestReport to go in csv log file with session ID for each run
-' #267 - Add code for CompleteAuditPageLayout
+' #271 - Add routine headers for targeting github.io docs in future [doc] [cp]
+' #268 - Timings of TestReport to go in csv log file with session ID for each run [impr]
+' #267 - Add code for CompleteAuditPageLayout [code]
 ' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
-' #259 - Remove old code that regressed
-' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all
-' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
+' #259 - Remove old code that regressed [clean]
+' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
+' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus [impr]
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
@@ -42,11 +39,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
 ' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
-' #150 - Add module for free fonts setup and testing
-' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes
-' #100 - Continue check multipage view from 300 for orphans of H2
+' #150 - Add module for free fonts setup and testing [idea]
+' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
-' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael
+' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
 ' #070 - Word automatically adjusts smart quotes to match the context of the text
 '        Add test for Verse marker followed by any closing quote [test]
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure RWB is correct
@@ -65,79 +61,88 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
-' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition
-' #047 - Research diff code that will display like GitHub for comparison with verse versions
-' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference
-' #043 - Add extract to USFM routine
-' #042 - Add readme to aewordgit
-' #040 - Add figure headings to maps - use map vs fig?
-' #037 - Add updated maps in color
+' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition [idea]
+' #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
+' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference [feat]
+' #043 - Add extract to USFM routine [feat]
+' #042 - Add readme to aewordgit [doc]
+' #040 - Add figure headings to maps - use map vs fig? [idea]
+' #037 - Add updated maps in color [feat]
 ' #035 - Add test for page numbers of h1 on odd or even pages [test]
-' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output
-' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress
-' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
+' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
+' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
+' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
+    ' FIXED - #309 - Add code to scan modules in .docm to flag early-bound object declarations [code]
+    ' FIXED - #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
+    ' FIXED - #305 - Check header writing standard, vbnet vs. vba, use style ' ============== [cp] [clean]
+    ' [obso] #100 - Continue check multipage view from 300 for orphans of H2
+    ' FIXED - #308 - Update all use of TestReportFlag to -> If TestReportFlag And OneTest = 0 [bug]
+    ' FIXED - #307 - Remove bGoTo16, not needed with use of run single test [obso] [clean]
+    ' FIXED - #306 - Add audit log from squash #274 [doc] [audit]
+    ' FIXED - #279 - Add routine to define H2 style and reapply it in the project, add code header [impr] [code]
+'Sq ' FIXED - #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
     ' FIXED - #304 - Add task type [wip] - it will prepend the task commits until replaced by FIXED
-    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header
+    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header [doc]
     ' FIXED - #301 - 999 AppendToFile should be "SKIPPED" [bug]
-'Sq ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [doc]
+    ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [doc]
     ' FIXED - #299 - Add initial README and Bias Guard md files [doc] [cp]
-    ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS
-    ' FIXED - #297 - Create file to hold Audits for Commit Log
-    ' FIXED - #296 - Add code for ValidateTaskInChangelogModule
-    ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2
-    ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl
+    ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS [impr]
+    ' FIXED - #297 - Create file to hold Audits for Commit Log [feat]
+    ' FIXED - #296 - Add code for ValidateTaskInChangelogModule [code]
+    ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2 [doc]
+    ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl [doc]
     ' FIXED - #284 - Update Heading 2 KeepWithNext [audit]
     ' FIXED - #283 - Add code GetHeadingDefinitionsWithDescriptions to tools [audit]
     ' FIXED - #282 - Update guide with 'Example of Tags use for Audit Clarity' [doc]
-    ' FIXED - #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273
+    ' FIXED - #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273 [impr]
     ' FIXED - #277 - Define standard for types of "Tasks" to use with git commit messages [doc]
     ' FIXED - #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass [bug]
-    ' FIXED - #276 - git mv TestReport to rpt/ and delete old version
-    ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md"
-    ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System
-    ' FIXED - #269 - All reports to be output to rpt folder
-    ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!!
-    ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile
+    ' FIXED - #276 - git mv TestReport to rpt/ and delete old version [impr]
+    ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md" [doc]
+    ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System [doc]
+    ' FIXED - #269 - All reports to be output to rpt folder [feat]
+    ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!! [feat]
+    ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile [test]
     ' FIXED - #264 - Add test for Style Usage Distribution [test]
     ' FIXED - #263 - Add CountAuditStyles_ToFile [test]
-    ' FIXED - #262 - Update code module names to match EDSG manifest
+    ' FIXED - #262 - Update code module names to match EDSG manifest [doc] [impr]
     ' FIXED - #261 - Add initial Editorial Design and Style Guide [doc]
-    ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a count of Ascii 160 chars and any other e.g. hair space
-    ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a count of Ascii 12 chars
-    ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing
-    ' OBSOLETE REGRESSION - #256 - Update SmartPrefixRepairOnPage to give a count of Ascii 12 chars
-    ' FIXED - #255 - Update SmartPrefixRepairOnPage for details on unprintable characters
-    ' FIXED - #254 - Add code for FindInvisibleFormFeeds_InPages
-    ' FIXED - #253 - Add code for LogExpandedMarkerContext
-    ' FIXED - #252 - Add code SmartPrefixRepairOnPage with Diagnostic Counter
-    ' FIXED - #251 - Add header to csv forecast output file
-    ' FIXED - #250 - Wire up dummy repair test with stats collection logic
-    ' FIXED - #249 - Add skeleton for StartRepairTimingSession
-    ' FIXED - #248 - Update repair tool for 10 pages
+    ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a count of Ascii 160 chars and any other e.g. hair space [impr]
+    ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a count of Ascii 12 chars [impr]
+    ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing [impr]
+    ' [obso] [regr] - #256 - Update SmartPrefixRepairOnPage to give a count of Ascii 12 chars
+    ' FIXED - #255 - Update SmartPrefixRepairOnPage for details on unprintable characters [impr]
+    ' FIXED - #254 - Add code for FindInvisibleFormFeeds_InPages [code]
+    ' FIXED - #253 - Add code for LogExpandedMarkerContext [code]
+    ' FIXED - #252 - Add code SmartPrefixRepairOnPage with Diagnostic Counter [code]
+    ' FIXED - #251 - Add header to csv forecast output file [feat]
+    ' FIXED - #250 - Wire up dummy repair test with stats collection logic [impr]
+    ' FIXED - #249 - Add skeleton for StartRepairTimingSession [impr]
+    ' FIXED - #248 - Update repair tool for 10 pages [impr]
     ' FIXED - #174 - Add tests for count tab para in headers and footers [test]
     ' FIXED - #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style [test]
     ' FIXED - #246 - Add test for styles using Liberation Sans Narrow [test]
-    ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs
-    ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2
-    ' FIXED - #243 - Add code RedefinePictureCaptionStyle_NotoSans, step 3 of removing Lieration Sans Narrow reference
-    ' FIXED - #242 - Add code RedefineFootnoteNormalStyle_NotoSans, step 2 of removing Lieration Sans Narrow reference
-    ' FIXED - #241 - Add code RedefineFootnoteStyle_NotoSans, step 1 of removing Lieration Sans Narrow reference
-    ' FIXED - #240 - Update all repair code and add runner for checking 5 pages at a time
-    ' FIXED - #239 - Add routine ReportDigitAtCursor_Diagnostics_Expanded
+    ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs [code]
+    ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2 [bug]
+    ' FIXED - #243 - Add code RedefinePictureCaptionStyle_NotoSans, step 3 of removing Lieration Sans Narrow reference [impr]
+    ' FIXED - #242 - Add code RedefineFootnoteNormalStyle_NotoSans, step 2 of removing Lieration Sans Narrow reference [impr]
+    ' FIXED - #241 - Add code RedefineFootnoteStyle_NotoSans, step 1 of removing Liberation Sans Narrow reference [impr]
+    ' FIXED - #240 - Update all repair code and add runner for checking 5 pages at a time [impr]
+    ' FIXED - #239 - Add routine ReportDigitAtCursor_Diagnostics_Expanded [code]
     ' FIXED - #238 - Update Chapter Verse marker repair tool with latest RepairWrappedVerseMarkerPrefixes_AdjacencyWithContext_Navigate
-    ' FIXED - #237 - Add diagnostic code to get character information around the cursor position
-    ' FIXED - #236 - Add routine to report Report Page Layout Metrics for a particular page
-    ' FIXED - #235 - Add code to repair "Chapter Verse marker" per page, add vbCr if on column edge with space before, defrag as needed
+    ' FIXED - #237 - Add diagnostic code to get character information around the cursor position [code]
+    ' FIXED - #236 - Add routine to report Report Page Layout Metrics for a particular page [feat]
+    ' FIXED - #235 - Add code to repair "Chapter Verse marker" per page, add vbCr if on column edge with space before, defrag as needed [impr]
     ' FIXED - #234 - Add test to count footers that have only a tab character [test]
     ' FIXED - #212 - Add test for CountFindNotEmphasisBlack = 0 and CountFindNotEmphasisRed = 0 when all have been set [test]
     ' FIXED - #233 - Add test for CountParagraphMarks_CalibriDarkRed [test]
-    ' FIXED - #232 - Add word version into to output and test report
+    ' FIXED - #232 - Add word version into to output and test report [doc]
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
-    ' OBSOLETE - #230 - Add code to fix Footnote Reference by reapplying style
+    ' [obso] - #230 - Add code to fix Footnote Reference by reapplying style
     ' FIXED - #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
     ' FIXED - #229 - Add code to verify all necessary settings of Word are enabled - basWordSettingsDiagnostic
     ' FIXED - #228 - Abort tests if Show/Hide is not set
@@ -171,10 +176,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #207 - Check H1 pages for consistent use of superscript as in 2nd etc.
     ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
     ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
-    ' Updated - Fixed - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
-    ' OBSOLETE - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
+    ' [impr] - FIXED - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
+    ' [obso] - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
     ' FIXED - #045 - Test call to SILAS from ribbon using customUI14.xml OnHelloWorldButtonClick routine
-    ' OBSOLETE - #041 - Add auto-generated TOC for maps : auto gen too slow
+    ' [obso] - #041 - Add auto-generated TOC for maps : auto gen too slow
     ' FIXED - See #203 - #160 - Add DOCVARIABLEs for all New Testament books
     ' FIXED - #203 - Add DOCVARIABLEs for New Testament
     ' FIXED - #202 - Move GoToVerseSBL to ribbon module
@@ -231,7 +236,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
     ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed
-    ' OBSOLETE - #039 - Replace manual TOC with auto-generated version (this is too slow)
+    ' [obso] - #039 - Replace manual TOC with auto-generated version (this is too slow)
     ' FIXED - #141 - Update UTF8bom-Template.txt with multiple language sample of "Hello, World!" ala C style, plus phonetics
 ' 20250420 - v008
     ' FIXED - #140 - Set version info as global variables and assign in Class_Initialize
@@ -279,7 +284,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #098 - Add test to count number of Footnote References [test]
     ' FIXED - #096 - Add test for count/delete empty para before H2, related #084 [test]
     ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
-    ' OBSOLETE - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
+    ' [obso] - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
     ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
     ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
@@ -319,13 +324,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Closing single quote: Alt + 0146    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
     ' FIXED - #063 - Update RunTest so it will allow a range of tests to be run (15 tests range)
     ' FIXED - #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
-    ' OBSOLETE - Replaced with #062 - #036 - Add test for h1 pages that have heading
+    ' [obso] - Replaced with #062 - #036 - Add test for h1 pages that have heading
     ' FIXED - #062 - Add test for Sections With Different FirstPage selected [test]
     ' FIXED - #055 - Update RunTest so expected gets values from Expected string array
     ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
-    ' OBSOLETE - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
+    ' [obso] - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #056 - Add test for white paragraph marks [test]
 ' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
@@ -333,7 +338,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it [test]
     ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1 [test]
     ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
-    ' OBSOLETE - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
+    ' [obso] - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types
     ' FIXED - #033 - Add Hello World custom menu tab as example for ribbon integration
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks

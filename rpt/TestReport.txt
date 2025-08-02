@@ -54,14 +54,14 @@ PASS              Copy ()       Test = 47     2             2             CountT
 FAIL!!!!          Copy ()       Test = 48     1             0             AuditLiberationSansNarrowStyleDetails
 PASS              Copy ()       Test = 49     16            16            CountAuditStyles_ToFile
 PASS              Copy ()       Test = 50     147           147           SummarizeHeaderFooterAuditToFile
-Total Total Runtime: 162.89 seconds
-[2025-07-29 18:00:05] Completed
+Total Total Runtime: 98.93 seconds
+[2025-08-02 12:39:37] Completed
 BibleClass VERSION: 0.1.0
 BibleClass VERSION_DATE: July 19, 2025
 == Word Build Info ==
 Application Name: Microsoft Word
 Platform Version: 16.0
-Platform Build: 16.0.18925
-Full Version String: Microsoft Word 16.0 (16.0.18925)
+Platform Build: 16.0.19029
+Full Version String: Microsoft Word 16.0 (16.0.19029)
 Marketing Version: 2506 (Build 18925.20158)
 Source: Microsoft 365 Current Channel, July 2025 update

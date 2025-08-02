@@ -1,5 +1,42 @@
 # Audits for Commit Log
 
+## [#301] AppendToFile should be "SKIPPED" [bug]
+
+- **Fixed in:** [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
+- **File:** `basChangeLogaeBibleClass.bas`
+- **Line:** [L185](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L185)
+- **Summary:** Corrected mislabeling of AppendToFile output; SKIPPED now outputs cleanly during session when required.
+- **Audit Result:** ✅ `[OK] Logic fix verified via commit message and diagnostic trail`
+
+---
+
+## [#302] Move PrintCompactSectionLayoutInfo to basTESTaeBibleTools and update output path
+
+- **Fixed in:** [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
+- **File:** `basTESTaeBibleTools.bas`
+- **Line:** [L1](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basTESTaeBibleTools.bas#L1)
+- **Summary:** Relocated macro for compact section layout reporting; updated output path to `rpt` folder and added header for audit context.
+- **Audit Result:** ✅ `[OK] Macro relocation and output path audit confirmed`
+
+---
+
+## [#304] Add task type [wip] for pre-resolution changelog tagging
+
+- **Fixed in:** [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
+- **File:** `basChangeLogaeBibleClass.bas`
+- **Line:** [L187](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L187)
+- **Summary:** Introduced `[wip]` task type for early commit tagging—enables staging of partial fixes without audit disruption.
+- **Audit Result:** ✅ `[OK] Task type logic operational and format-compatible`
+
+## [#274] Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header
+
+- **Fixed in:**
+  - [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
+- **File:** `basChangeLogaeBibleClass.bas`
+- **Line:** [L12](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L12)
+- **Summary:** Updated output path logic and added documentation header for style usage report.
+- **Audit Result:** ✅ `[OK] #274 found within module block`
+
 ## [#299] Final validator update and audit format clarification
 
 - **Fixed in:** [`ff2aa10`](https://github.com/adaept/aeBibleClass/commit/ff2aa102a1aabcd00f330c6475693527ff79c200)
@@ -33,7 +70,7 @@
 - **File:** `basChangeLogaeBibleClass.bas`
 - **Line:** [L12](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L12)
 - **Summary:** Refactored changelog entry and implemented SSOT logic with Select Case validation.
-- **Audit Result:** `[OK] #298 found within module block`
+- **Audit Result:** ✅ `[OK] #298 found within module block`
 
 ## [#297] Create file to hold Audits for Commit Log
 
@@ -43,7 +80,7 @@
 - **File:** `basChangeLogaeBibleClass.bas`
 - **Line:** [L14](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L14)
 - **Summary:** Added FIXED_AuditLog.md and updated changelog to include task #297.
-- **Audit Result:** `[OK] #297 found within module block`
+- **Audit Result:** ✅ `[OK] #297 found within module block`
 
 ## [#296] ValidateTaskInChangelogModule
 
@@ -51,4 +88,4 @@
 - **File:** `basChangeLogaeBibleClass.bas`
 - **Line:** [L14](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L14)
 - **Summary:** Added validation macro to confirm task tags appear within changelog blocks.
-- **Audit Result:** `[OK] #296 found within module block`
+- **Audit Result:** ✅ `[OK] #296 found within module block`

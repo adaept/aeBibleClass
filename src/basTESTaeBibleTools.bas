@@ -112,6 +112,17 @@ Sub DeleteCustomUIXML()
     MsgBox "CustomUI XML parts deleted successfully!"
 End Sub
 
+' ========================================================================================
+' Function:     GetColorNameFromHex
+' Purpose:      Translates a hexadecimal color string (e.g., "#FF0000") into a human-readable
+'               color name. Useful for diagnostics, audit logs, or UI labeling in scripts.
+' Inputs:       hexColor [String] - A color code in hexadecimal format, e.g., "#FF0000"
+' Returns:      [String] - The corresponding color name, or "Unknown Color" if not matched.
+' Author:       Peter
+' Last Updated: 2025-08-02
+' Notes:        - Hex code is normalized to uppercase for consistent comparison.
+'               - Expand CASE block as needed for additional named colors.
+' ========================================================================================
 Function GetColorNameFromHex(hexColor As String) As String
     Dim colorName As String
     
@@ -152,6 +163,21 @@ Function GetColorNameFromHex(hexColor As String) As String
     GetColorNameFromHex = colorName
 End Function
 
+' =================================================================================================
+' Subroutine:   ListAndCountFontColors
+' Purpose:      Iterates over all words in the active Word document, extracts the RGB font color,
+'               and tallies occurrences per unique color. Outputs formatted results to the console
+'               including color name via GetColorNameFromHex.
+' Inputs:       None (operates on ActiveDocument)
+' Outputs:      Debug.Print output of RGB, Hex, count, and resolved color name
+' Dependencies: Requires GetColorNameFromHex(hexColor As String) function to be present
+' Author:       Peter
+' Last Updated: 2025-08-02
+' Notes:        - Hex keys are zero-padded for consistency
+'               - Font.Color property is bitmasked and decomposed manually
+'               - Does not account for style inheritance or partial selections
+'               - Expansion possible to handle suffix-aware grouping or paragraph-level aggregation
+' =================================================================================================
 Sub ListAndCountFontColors()
     Dim rng As range
     Dim colorDict As Object
@@ -1386,7 +1412,7 @@ Sub ReapplyTheFootersToAllFooters()
     Debug.Print "=== Style Reapplication Complete ==="
 End Sub
 
-'------------------------------------------------------------------------------
+' =============================================================================
 ' Macro Name : GetHeadingDefinitionsWithDescriptions
 ' Author     : Peter + Copilot
 ' Description:
@@ -1406,7 +1432,7 @@ End Sub
 '   - Export to CSV or Markdown
 '   - Include suffix tracking, style inheritance, or font audit flags
 '   - Integrate session-aware tracking or timing metrics
-'------------------------------------------------------------------------------
+' =============================================================================
 Sub GetHeadingDefinitionsWithDescriptions()
     Dim headingStyles As Variant
     headingStyles = Array("Heading 1", "Heading 2")
@@ -1459,37 +1485,43 @@ Sub GetHeadingDefinitionsWithDescriptions()
     Next styleName
 End Sub
 
-Sub UpdateHeading2KeepWithNext()
+' ======================================================================
+' Macro Name   : CreateDefinitionForH2
+' Purpose      : Enforces layout and paragraph rules for Heading 2 style.
+'                - Enables KeepWithNext on Heading 2 paragraph style.
+'                - Applies WidowControl to each Heading 2 paragraph.
+'                - Explicitly disables KeepTogether to prevent override.
+' Audit Notes  : Logs all repair actions to Immediate Window.
+'                Does NOT alter any content, punctuation, or quotes.
+'                Applies paragraph-level enforcement only where style = "Heading 2"
+' Safety Level : Editorial-safe. No deletions or format coercion.
+' Last Updated : [add date]
+' Author       : [optional]
+' ======================================================================
+Sub CreateDefinitionForH2()
+    ' Update Heading 2 Keep With Next
     Dim s As style
     Set s = ActiveDocument.Styles("Heading 2")
     
     ' Apply KeepWithNext to paragraph formatting
     s.ParagraphFormat.KeepWithNext = True
-
     Debug.Print "Heading 2 style updated: KeepWithNext = True"
-End Sub
 
-Sub EnforceHeading2ParagraphWidowOrphan()
+    ' Enforce Heading 2 Paragraph Widow Orphan
+    ' Disable KeepLines Together For Heading 2
     Dim para As paragraph
     For Each para In ActiveDocument.paragraphs
         If para.style = ActiveDocument.Styles("Heading 2") Then '
             With para
                 .WidowControl = True    ' enforces both widow and orphan control for that paragraph
                 '.OrphanControl = True - Not needed,
+                para.KeepTogether = False
             End With
         End If
     Next para
     Debug.Print "[repair] Widow/Orphan enforced at paragraph level for Heading 2"
-End Sub
-
-Sub DisableKeepLinesTogetherForHeading2()
-    Dim para As paragraph
-    For Each para In ActiveDocument.paragraphs
-        If para.style = ActiveDocument.Styles("Heading 2") Then
-            para.KeepTogether = False
-        End If
-    Next para
     Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
+
 End Sub
 
 '==============================================
@@ -1705,4 +1737,154 @@ Sub PrintCompactSectionLayoutInfo()
     'MsgBox "Layout report saved to: " & outputFile, vbInformation
     Debug.Print "Layout report saved to: " & outputFile
 End Sub
+
+' =========================
+' Subroutine:   FlagEarlyBindingRoutines_LateBound
+' Purpose:      Scans modules in .docm to flag early-bound object declarations.
+'               Classifies hits as [EXTERNAL], [CUSTOM], [ENUM], [WORD], etc.
+' Inputs:       IncludeWordTypes [Boolean], IncludeEnums [Boolean]
+' Outputs:      Debug.Print log entries per flagged declaration
+' Dependencies: Late binding only - safe for all environments
+' Notes:        Suppresses primitive types, ambiguous declarations, and optionally Word enums
+' Author:       Peter (collab w/ Copilot)
+' Last Updated: 2025-08-02
+' =========================
+Sub FlagEarlyBindingRoutines_LateBound()
+    Const IncludeWordTypes As Boolean = False
+    Const IncludeEnums As Boolean = False
+
+    Dim vbProj As Object, vbComps As Object, comp As Object, codeMod As Object
+    Dim lineNum As Long, procName As String, procType As Long
+    Dim codeLine As String, i As Long
+
+    Dim baseTypes As Variant, wordTypes As Variant, knownEnums As Variant
+
+    baseTypes = Array("As String", "As Integer", "As Long", "As Double", "As Boolean", "As Variant", _
+                      "As Byte", "As Currency", "As Date", "As Object", "As Single")
+
+    wordTypes = Array("As Range", "As Paragraph", "As Section", "As Style", "As Shape", "As Field", _
+                      "As HeaderFooter", "As Footnote", "As EndNote", "As Table", "As Bookmark", _
+                      "As Document", "As Collection", "As New Collection", "As Selection", _
+                      "As customXMLPart", "As CustomXMLParts")
+
+    knownEnums = Array("As WdColor", "As WdHeaderFooterIndex", "As WdStoryType", "As VbMsgBoxResult", _
+                       "As MsoTriState", "As MsoShapeType", "As MsoTextOrientation", "As WdCollapseDirection")
+
+    Set vbProj = ThisDocument.VBProject
+    Set vbComps = vbProj.VBComponents
+
+    For Each comp In vbComps
+        Set codeMod = comp.CodeModule
+        lineNum = 1
+        Do While lineNum < codeMod.CountOfLines
+            procName = codeMod.ProcOfLine(lineNum, procType)
+            If procName <> "" Then
+                For i = lineNum To lineNum + codeMod.ProcCountLines(procName, procType) - 1
+                    codeLine = Trim(codeMod.Lines(i, 1))
+                    If InStr(codeLine, "Dim ") > 0 Or InStr(codeLine, "ReDim ") > 0 Then
+                        If ShouldFlag(codeLine, baseTypes, wordTypes, knownEnums, IncludeWordTypes, IncludeEnums) Then
+                            Debug.Print FlagLabel(codeLine) & " " & comp.name & "::" & procName & " | Line " & i & ": " & codeLine
+                        End If
+                    End If
+                Next i
+                lineNum = lineNum + codeMod.ProcCountLines(procName, procType)
+            Else
+                lineNum = lineNum + 1
+            End If
+        Loop
+    Next comp
+End Sub
+
+' =========================
+' Function:     ShouldFlag
+' Purpose:      Determines whether a code line should be flagged for early binding
+' Inputs:       codeLine [String] - a trimmed code line
+'               baseTypes [Array] - primitive suffixes
+'               wordTypes [Array] - suppressible Word object suffixes
+'               knownEnums [Array] - suppressible Word/VBA enums
+'               IncludeWord [Boolean] - flag Word types
+'               IncludeEnums [Boolean] - flag enums
+' Returns:      [Boolean] - True to flag, False to suppress
+' =========================
+Function ShouldFlag(codeLine As String, baseTypes As Variant, wordTypes As Variant, knownEnums As Variant, _
+                    IncludeWord As Boolean, IncludeEnums As Boolean) As Boolean
+    If IsPrimitiveType(codeLine, baseTypes) Then Exit Function
+    If IsWordNative(codeLine, wordTypes) And Not IncludeWord Then Exit Function
+    If IsEnumType(codeLine, knownEnums) And Not IncludeEnums Then Exit Function
+    ShouldFlag = True
+End Function
+
+' =========================
+' Function:     FlagLabel
+' Purpose:      Returns a classification label for early-bound declarations
+' Inputs:       codeLine [String] - line to evaluate
+' Returns:      [String] - e.g. "[EXTERNAL]", "[CUSTOM]", "[ENUM]", "[WORD]"
+' =========================
+Function FlagLabel(codeLine As String) As String
+    Dim lowered As String: lowered = LCase(codeLine)
+    If lowered Like "*as excel.*" Or lowered Like "*as filesystem*" Or lowered Like "*as scripting.*" Then
+        FlagLabel = "[EXTERNAL]"
+    ElseIf lowered Like "*as ae*" Or lowered Like "*as xae*" Then
+        FlagLabel = "[CUSTOM]"
+    ElseIf lowered Like "*as wd*" Or lowered Like "*as vbmsgbox*" Or lowered Like "*as mso*" Then
+        FlagLabel = "[ENUM]"
+    ElseIf lowered Like "*as range*" Or lowered Like "*as paragraph*" Then
+        FlagLabel = "[WORD]"
+    Else
+        FlagLabel = "[UNCLASSIFIED]"
+    End If
+End Function
+
+' =========================
+' Function:     IsPrimitiveType
+' Purpose:      Checks if a declaration is one of the base VBA types
+' Inputs:       lineText [String] - Dim line
+'               baseTypes [Array] - primitive suffixes
+' Returns:      [Boolean]
+' =========================
+Function IsPrimitiveType(lineText As String, baseTypes As Variant) As Boolean
+    Dim suffix As Variant
+    For Each suffix In baseTypes
+        If InStr(lineText, suffix) > 0 Then
+            IsPrimitiveType = True
+            Exit Function
+        End If
+    Next suffix
+    IsPrimitiveType = False
+End Function
+
+' =========================
+' Function:     IsWordNative
+' Purpose:      Identifies declarations using Word-native object types
+' Inputs:       lineText [String], wordTypes [Array]
+' Returns:      [Boolean]
+' =========================
+Function IsWordNative(lineText As String, wordTypes As Variant) As Boolean
+    Dim suffix As Variant
+    For Each suffix In wordTypes
+        If InStr(lineText, suffix) > 0 Then
+            IsWordNative = True
+            Exit Function
+        End If
+    Next suffix
+    IsWordNative = False
+End Function
+
+' =========================
+' Function:     IsEnumType
+' Purpose:      Identifies declarations using Word or VBA enum types
+' Inputs:       lineText [String], knownEnums [Array]
+' Returns:      [Boolean]
+' =========================
+Function IsEnumType(lineText As String, knownEnums As Variant) As Boolean
+    Dim suffix As Variant
+    For Each suffix In knownEnums
+        If InStr(lineText, suffix) > 0 Then
+            IsEnumType = True
+            Exit Function
+        End If
+    Next suffix
+    IsEnumType = False
+End Function
+
 
