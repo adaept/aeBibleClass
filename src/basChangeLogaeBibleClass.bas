@@ -9,8 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
 ' #310 -
 ' #309 -
-' #308 -
-' #307 -
 ' #305 - Check header writing standard, vbnet vs. vba [cp] [clean]
 ' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
@@ -75,6 +73,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para
 '====================================================================================================================================
 '
+    ' FIXED - #308 - Update all use of TestReportFlag to - If TestReportFlag And OneTest = 0
+    ' FIXED - #307 - Remove bGoTo16, not needed with use of run single test [obso] [clean]
     ' FIXED - #306 - Add audit log from squash #274 [doc] [audit]
     ' FIXED - #279 - Add routine to define H2 style and reapply it in the project, add code header [impr] [code]
 'Sq ' FIXED - #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
