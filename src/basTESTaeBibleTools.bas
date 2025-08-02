@@ -163,6 +163,21 @@ Function GetColorNameFromHex(hexColor As String) As String
     GetColorNameFromHex = colorName
 End Function
 
+' =================================================================================================
+' Subroutine:   ListAndCountFontColors
+' Purpose:      Iterates over all words in the active Word document, extracts the RGB font color,
+'               and tallies occurrences per unique color. Outputs formatted results to the console
+'               including color name via GetColorNameFromHex.
+' Inputs:       None (operates on ActiveDocument)
+' Outputs:      Debug.Print output of RGB, Hex, count, and resolved color name
+' Dependencies: Requires GetColorNameFromHex(hexColor As String) function to be present
+' Author:       Peter
+' Last Updated: 2025-08-02
+' Notes:        - Hex keys are zero-padded for consistency
+'               - Font.Color property is bitmasked and decomposed manually
+'               - Does not account for style inheritance or partial selections
+'               - Expansion possible to handle suffix-aware grouping or paragraph-level aggregation
+' =================================================================================================
 Sub ListAndCountFontColors()
     Dim rng As range
     Dim colorDict As Object
