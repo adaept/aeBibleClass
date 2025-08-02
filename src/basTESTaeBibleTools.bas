@@ -1738,3 +1738,153 @@ Sub PrintCompactSectionLayoutInfo()
     Debug.Print "Layout report saved to: " & outputFile
 End Sub
 
+' =========================
+' Subroutine:   FlagEarlyBindingRoutines_LateBound
+' Purpose:      Scans modules in .docm to flag early-bound object declarations.
+'               Classifies hits as [EXTERNAL], [CUSTOM], [ENUM], [WORD], etc.
+' Inputs:       IncludeWordTypes [Boolean], IncludeEnums [Boolean]
+' Outputs:      Debug.Print log entries per flagged declaration
+' Dependencies: Late binding only - safe for all environments
+' Notes:        Suppresses primitive types, ambiguous declarations, and optionally Word enums
+' Author:       Peter (collab w/ Copilot)
+' Last Updated: 2025-08-02
+' =========================
+Sub FlagEarlyBindingRoutines_LateBound()
+    Const IncludeWordTypes As Boolean = False
+    Const IncludeEnums As Boolean = False
+
+    Dim vbProj As Object, vbComps As Object, comp As Object, codeMod As Object
+    Dim lineNum As Long, procName As String, procType As Long
+    Dim codeLine As String, i As Long
+
+    Dim baseTypes As Variant, wordTypes As Variant, knownEnums As Variant
+
+    baseTypes = Array("As String", "As Integer", "As Long", "As Double", "As Boolean", "As Variant", _
+                      "As Byte", "As Currency", "As Date", "As Object", "As Single")
+
+    wordTypes = Array("As Range", "As Paragraph", "As Section", "As Style", "As Shape", "As Field", _
+                      "As HeaderFooter", "As Footnote", "As EndNote", "As Table", "As Bookmark", _
+                      "As Document", "As Collection", "As New Collection", "As Selection", _
+                      "As customXMLPart", "As CustomXMLParts")
+
+    knownEnums = Array("As WdColor", "As WdHeaderFooterIndex", "As WdStoryType", "As VbMsgBoxResult", _
+                       "As MsoTriState", "As MsoShapeType", "As MsoTextOrientation", "As WdCollapseDirection")
+
+    Set vbProj = ThisDocument.VBProject
+    Set vbComps = vbProj.VBComponents
+
+    For Each comp In vbComps
+        Set codeMod = comp.CodeModule
+        lineNum = 1
+        Do While lineNum < codeMod.CountOfLines
+            procName = codeMod.ProcOfLine(lineNum, procType)
+            If procName <> "" Then
+                For i = lineNum To lineNum + codeMod.ProcCountLines(procName, procType) - 1
+                    codeLine = Trim(codeMod.Lines(i, 1))
+                    If InStr(codeLine, "Dim ") > 0 Or InStr(codeLine, "ReDim ") > 0 Then
+                        If ShouldFlag(codeLine, baseTypes, wordTypes, knownEnums, IncludeWordTypes, IncludeEnums) Then
+                            Debug.Print FlagLabel(codeLine) & " " & comp.name & "::" & procName & " | Line " & i & ": " & codeLine
+                        End If
+                    End If
+                Next i
+                lineNum = lineNum + codeMod.ProcCountLines(procName, procType)
+            Else
+                lineNum = lineNum + 1
+            End If
+        Loop
+    Next comp
+End Sub
+
+' =========================
+' Function:     ShouldFlag
+' Purpose:      Determines whether a code line should be flagged for early binding
+' Inputs:       codeLine [String] - a trimmed code line
+'               baseTypes [Array] - primitive suffixes
+'               wordTypes [Array] - suppressible Word object suffixes
+'               knownEnums [Array] - suppressible Word/VBA enums
+'               IncludeWord [Boolean] - flag Word types
+'               IncludeEnums [Boolean] - flag enums
+' Returns:      [Boolean] - True to flag, False to suppress
+' =========================
+Function ShouldFlag(codeLine As String, baseTypes As Variant, wordTypes As Variant, knownEnums As Variant, _
+                    IncludeWord As Boolean, IncludeEnums As Boolean) As Boolean
+    If IsPrimitiveType(codeLine, baseTypes) Then Exit Function
+    If IsWordNative(codeLine, wordTypes) And Not IncludeWord Then Exit Function
+    If IsEnumType(codeLine, knownEnums) And Not IncludeEnums Then Exit Function
+    ShouldFlag = True
+End Function
+
+' =========================
+' Function:     FlagLabel
+' Purpose:      Returns a classification label for early-bound declarations
+' Inputs:       codeLine [String] - line to evaluate
+' Returns:      [String] - e.g. "[EXTERNAL]", "[CUSTOM]", "[ENUM]", "[WORD]"
+' =========================
+Function FlagLabel(codeLine As String) As String
+    Dim lowered As String: lowered = LCase(codeLine)
+    If lowered Like "*as excel.*" Or lowered Like "*as filesystem*" Or lowered Like "*as scripting.*" Then
+        FlagLabel = "[EXTERNAL]"
+    ElseIf lowered Like "*as ae*" Or lowered Like "*as xae*" Then
+        FlagLabel = "[CUSTOM]"
+    ElseIf lowered Like "*as wd*" Or lowered Like "*as vbmsgbox*" Or lowered Like "*as mso*" Then
+        FlagLabel = "[ENUM]"
+    ElseIf lowered Like "*as range*" Or lowered Like "*as paragraph*" Then
+        FlagLabel = "[WORD]"
+    Else
+        FlagLabel = "[UNCLASSIFIED]"
+    End If
+End Function
+
+' =========================
+' Function:     IsPrimitiveType
+' Purpose:      Checks if a declaration is one of the base VBA types
+' Inputs:       lineText [String] - Dim line
+'               baseTypes [Array] - primitive suffixes
+' Returns:      [Boolean]
+' =========================
+Function IsPrimitiveType(lineText As String, baseTypes As Variant) As Boolean
+    Dim suffix As Variant
+    For Each suffix In baseTypes
+        If InStr(lineText, suffix) > 0 Then
+            IsPrimitiveType = True
+            Exit Function
+        End If
+    Next suffix
+    IsPrimitiveType = False
+End Function
+
+' =========================
+' Function:     IsWordNative
+' Purpose:      Identifies declarations using Word-native object types
+' Inputs:       lineText [String], wordTypes [Array]
+' Returns:      [Boolean]
+' =========================
+Function IsWordNative(lineText As String, wordTypes As Variant) As Boolean
+    Dim suffix As Variant
+    For Each suffix In wordTypes
+        If InStr(lineText, suffix) > 0 Then
+            IsWordNative = True
+            Exit Function
+        End If
+    Next suffix
+    IsWordNative = False
+End Function
+
+' =========================
+' Function:     IsEnumType
+' Purpose:      Identifies declarations using Word or VBA enum types
+' Inputs:       lineText [String], knownEnums [Array]
+' Returns:      [Boolean]
+' =========================
+Function IsEnumType(lineText As String, knownEnums As Variant) As Boolean
+    Dim suffix As Variant
+    For Each suffix In knownEnums
+        If InStr(lineText, suffix) > 0 Then
+            IsEnumType = True
+            Exit Function
+        End If
+    Next suffix
+    IsEnumType = False
+End Function
+
+

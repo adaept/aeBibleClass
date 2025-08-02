@@ -1111,7 +1111,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
     ' Output to file based on validation
     If headerOk And footerOk Then
         ts.WriteLine "--- ASCII Value Counts and Descriptions ---"
-        Dim key
+        Dim key As Variant
         For Each key In dictAsciiCount.Keys
             ts.WriteLine "ASCII=" & key & _
                 " | Count=" & dictAsciiCount(key) & _
