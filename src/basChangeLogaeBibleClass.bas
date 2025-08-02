@@ -6,32 +6,32 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
 ' #310 -
 ' #309 -
 ' #308 -
 ' #307 -
-' #306 -
-' #305 -
+' #306 - Add audit log from squash #274 [doc] [audit]
+' #305 - Check header writing standard, vbnet vs. vba [cp] [clean]
 ' #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
 ' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
-' #291 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
-' #290 - Add test for count of H1 with style
-' #289 - Add test for count of H2 with style
+' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
+' #290 - Add test for count of H1 with style [test]
+' #289 - Add test for count of H2 with style [test]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
 ' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr] [cp]
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
-' #271 - Add routine headers for targeting github.io docs in future [doc]
-' #268 - Timings of TestReport to go in csv log file with session ID for each run
-' #267 - Add code for CompleteAuditPageLayout
+' #271 - Add routine headers for targeting github.io docs in future [doc] [cp]
+' #268 - Timings of TestReport to go in csv log file with session ID for each run [impr]
+' #267 - Add code for CompleteAuditPageLayout [code]
 ' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
-' #259 - Remove old code that regressed
-' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all
-' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus
+' #259 - Remove old code that regressed [clean]
+' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
+' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus [impr]
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
@@ -107,7 +107,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a count of Ascii 160 chars and any other e.g. hair space
     ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a count of Ascii 12 chars
     ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing
-    ' OBSOLETE REGRESSION - #256 - Update SmartPrefixRepairOnPage to give a count of Ascii 12 chars
+    ' [obso] [regr] - #256 - Update SmartPrefixRepairOnPage to give a count of Ascii 12 chars
     ' FIXED - #255 - Update SmartPrefixRepairOnPage for details on unprintable characters
     ' FIXED - #254 - Add code for FindInvisibleFormFeeds_InPages
     ' FIXED - #253 - Add code for LogExpandedMarkerContext
@@ -137,7 +137,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
-    ' OBSOLETE - #230 - Add code to fix Footnote Reference by reapplying style
+    ' [obso] - #230 - Add code to fix Footnote Reference by reapplying style
     ' FIXED - #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
     ' FIXED - #229 - Add code to verify all necessary settings of Word are enabled - basWordSettingsDiagnostic
     ' FIXED - #228 - Abort tests if Show/Hide is not set
@@ -171,10 +171,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #207 - Check H1 pages for consistent use of superscript as in 2nd etc.
     ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
     ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
-    ' Updated - Fixed - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
-    ' OBSOLETE - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
+    ' [impr] - FIXED - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
+    ' [obso] - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
     ' FIXED - #045 - Test call to SILAS from ribbon using customUI14.xml OnHelloWorldButtonClick routine
-    ' OBSOLETE - #041 - Add auto-generated TOC for maps : auto gen too slow
+    ' [obso] - #041 - Add auto-generated TOC for maps : auto gen too slow
     ' FIXED - See #203 - #160 - Add DOCVARIABLEs for all New Testament books
     ' FIXED - #203 - Add DOCVARIABLEs for New Testament
     ' FIXED - #202 - Move GoToVerseSBL to ribbon module
@@ -231,7 +231,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
     ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed
-    ' OBSOLETE - #039 - Replace manual TOC with auto-generated version (this is too slow)
+    ' [obso] - #039 - Replace manual TOC with auto-generated version (this is too slow)
     ' FIXED - #141 - Update UTF8bom-Template.txt with multiple language sample of "Hello, World!" ala C style, plus phonetics
 ' 20250420 - v008
     ' FIXED - #140 - Set version info as global variables and assign in Class_Initialize
@@ -279,7 +279,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #098 - Add test to count number of Footnote References [test]
     ' FIXED - #096 - Add test for count/delete empty para before H2, related #084 [test]
     ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
-    ' OBSOLETE - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
+    ' [obso] - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
     ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
     ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
@@ -319,13 +319,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Closing single quote: Alt + 0146    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
     ' FIXED - #063 - Update RunTest so it will allow a range of tests to be run (15 tests range)
     ' FIXED - #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
-    ' OBSOLETE - Replaced with #062 - #036 - Add test for h1 pages that have heading
+    ' [obso] - Replaced with #062 - #036 - Add test for h1 pages that have heading
     ' FIXED - #062 - Add test for Sections With Different FirstPage selected [test]
     ' FIXED - #055 - Update RunTest so expected gets values from Expected string array
     ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
-    ' OBSOLETE - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
+    ' [obso] - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #056 - Add test for white paragraph marks [test]
 ' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
@@ -333,7 +333,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it [test]
     ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1 [test]
     ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
-    ' OBSOLETE - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
+    ' [obso] - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types
     ' FIXED - #033 - Add Hello World custom menu tab as example for ribbon integration
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks
