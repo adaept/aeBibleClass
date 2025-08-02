@@ -191,13 +191,15 @@ Private Sub Expected1BasedArray()
         Exit Sub
     End If
 
-    Set doc = ActiveDocument
-    TestReportFileName = doc.Path & "\rpt\TestReport.txt"
-      
-    ' Open the debug file for writing
-    testFileNum = FreeFile
-    Open TestReportFileName For Output As testFileNum
-    Close testFileNum
+    If OneTest = 0 Then
+        ' Do not make new TestReportFileName for single tests
+        Set doc = ActiveDocument
+        TestReportFileName = doc.Path & "\rpt\TestReport.txt"
+        ' Open the debug file for writing
+        testFileNum = FreeFile
+        Open TestReportFileName For Output As testFileNum
+        Close testFileNum
+    End If
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50)
