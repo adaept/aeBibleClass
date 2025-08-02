@@ -67,8 +67,8 @@ Private Sub Class_Initialize()
         Application.Caption = Application.VBE.ActiveVBProject.name & " " & BibleClassVERSION
     End If
     Debug.Print "Class_Initialize"
-    BibleClassVERSION = "0.1.0"
-    BibleClassVERSION_DATE = "July 19, 2025"
+    BibleClassVERSION = "0.1.1"
+    BibleClassVERSION_DATE = "August 2, 2025"
     ' Reset OneTest for each run
     OneTest = 0
  End Sub

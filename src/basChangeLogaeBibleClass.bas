@@ -14,7 +14,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #311 -
 ' #310 -
 ' #295 - Verify use of late binding in all code base so there is no need to set references [code]
-' #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
@@ -74,6 +73,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
+'Sq
+    ' FIXED - #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
     ' FIXED - #309 - Add code to scan modules in .docm to flag early-bound object declarations [code]
     ' FIXED - #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
     ' FIXED - #305 - Check header writing standard, vbnet vs. vba, use style ' ============== [cp] [clean]
@@ -82,7 +83,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #307 - Remove bGoTo16, not needed with use of run single test [obso] [clean]
     ' FIXED - #306 - Add audit log from squash #274 [doc] [audit]
     ' FIXED - #279 - Add routine to define H2 style and reapply it in the project, add code header [impr] [code]
-'Sq ' FIXED - #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
+    ' FIXED - #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
     ' FIXED - #304 - Add task type [wip] - it will prepend the task commits until replaced by FIXED
     ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header [doc]
     ' FIXED - #301 - 999 AppendToFile should be "SKIPPED" [bug]
