@@ -73,67 +73,67 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '
     ' FIXED - #305 - Check header writing standard, vbnet vs. vba, use style ' ============== [cp] [clean]
     ' [obso] #100 - Continue check multipage view from 300 for orphans of H2
-    ' FIXED - #308 - Update all use of TestReportFlag to -> If TestReportFlag And OneTest = 0
+    ' FIXED - #308 - Update all use of TestReportFlag to -> If TestReportFlag And OneTest = 0 [bug]
     ' FIXED - #307 - Remove bGoTo16, not needed with use of run single test [obso] [clean]
     ' FIXED - #306 - Add audit log from squash #274 [doc] [audit]
     ' FIXED - #279 - Add routine to define H2 style and reapply it in the project, add code header [impr] [code]
 'Sq ' FIXED - #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
     ' FIXED - #304 - Add task type [wip] - it will prepend the task commits until replaced by FIXED
-    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header
+    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header [doc]
     ' FIXED - #301 - 999 AppendToFile should be "SKIPPED" [bug]
     ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [doc]
     ' FIXED - #299 - Add initial README and Bias Guard md files [doc] [cp]
-    ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS
-    ' FIXED - #297 - Create file to hold Audits for Commit Log
-    ' FIXED - #296 - Add code for ValidateTaskInChangelogModule
-    ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2
-    ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl
+    ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS [impr]
+    ' FIXED - #297 - Create file to hold Audits for Commit Log [feat]
+    ' FIXED - #296 - Add code for ValidateTaskInChangelogModule [code]
+    ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2 [doc]
+    ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl [doc]
     ' FIXED - #284 - Update Heading 2 KeepWithNext [audit]
     ' FIXED - #283 - Add code GetHeadingDefinitionsWithDescriptions to tools [audit]
     ' FIXED - #282 - Update guide with 'Example of Tags use for Audit Clarity' [doc]
-    ' FIXED - #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273
+    ' FIXED - #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273 [impr]
     ' FIXED - #277 - Define standard for types of "Tasks" to use with git commit messages [doc]
     ' FIXED - #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass [bug]
-    ' FIXED - #276 - git mv TestReport to rpt/ and delete old version
-    ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md"
-    ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System
-    ' FIXED - #269 - All reports to be output to rpt folder
-    ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!!
-    ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile
+    ' FIXED - #276 - git mv TestReport to rpt/ and delete old version [impr]
+    ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md" [doc]
+    ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System [doc]
+    ' FIXED - #269 - All reports to be output to rpt folder [feat]
+    ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!! [feat]
+    ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile [test]
     ' FIXED - #264 - Add test for Style Usage Distribution [test]
     ' FIXED - #263 - Add CountAuditStyles_ToFile [test]
-    ' FIXED - #262 - Update code module names to match EDSG manifest
+    ' FIXED - #262 - Update code module names to match EDSG manifest [doc] [impr]
     ' FIXED - #261 - Add initial Editorial Design and Style Guide [doc]
-    ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a count of Ascii 160 chars and any other e.g. hair space
-    ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a count of Ascii 12 chars
-    ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing
+    ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a count of Ascii 160 chars and any other e.g. hair space [impr]
+    ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a count of Ascii 12 chars [impr]
+    ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing [impr]
     ' [obso] [regr] - #256 - Update SmartPrefixRepairOnPage to give a count of Ascii 12 chars
-    ' FIXED - #255 - Update SmartPrefixRepairOnPage for details on unprintable characters
-    ' FIXED - #254 - Add code for FindInvisibleFormFeeds_InPages
-    ' FIXED - #253 - Add code for LogExpandedMarkerContext
-    ' FIXED - #252 - Add code SmartPrefixRepairOnPage with Diagnostic Counter
-    ' FIXED - #251 - Add header to csv forecast output file
-    ' FIXED - #250 - Wire up dummy repair test with stats collection logic
-    ' FIXED - #249 - Add skeleton for StartRepairTimingSession
-    ' FIXED - #248 - Update repair tool for 10 pages
+    ' FIXED - #255 - Update SmartPrefixRepairOnPage for details on unprintable characters [impr]
+    ' FIXED - #254 - Add code for FindInvisibleFormFeeds_InPages [code]
+    ' FIXED - #253 - Add code for LogExpandedMarkerContext [code]
+    ' FIXED - #252 - Add code SmartPrefixRepairOnPage with Diagnostic Counter [code]
+    ' FIXED - #251 - Add header to csv forecast output file [feat]
+    ' FIXED - #250 - Wire up dummy repair test with stats collection logic [impr]
+    ' FIXED - #249 - Add skeleton for StartRepairTimingSession [impr]
+    ' FIXED - #248 - Update repair tool for 10 pages [impr]
     ' FIXED - #174 - Add tests for count tab para in headers and footers [test]
     ' FIXED - #088 - Add tests for Footnote Reference (in doc and footnote) to count those that are not bold with correct style [test]
     ' FIXED - #246 - Add test for styles using Liberation Sans Narrow [test]
-    ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs
-    ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2
-    ' FIXED - #243 - Add code RedefinePictureCaptionStyle_NotoSans, step 3 of removing Lieration Sans Narrow reference
-    ' FIXED - #242 - Add code RedefineFootnoteNormalStyle_NotoSans, step 2 of removing Lieration Sans Narrow reference
-    ' FIXED - #241 - Add code RedefineFootnoteStyle_NotoSans, step 1 of removing Lieration Sans Narrow reference
-    ' FIXED - #240 - Update all repair code and add runner for checking 5 pages at a time
-    ' FIXED - #239 - Add routine ReportDigitAtCursor_Diagnostics_Expanded
+    ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs [code]
+    ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2 [bug]
+    ' FIXED - #243 - Add code RedefinePictureCaptionStyle_NotoSans, step 3 of removing Lieration Sans Narrow reference [impr]
+    ' FIXED - #242 - Add code RedefineFootnoteNormalStyle_NotoSans, step 2 of removing Lieration Sans Narrow reference [impr]
+    ' FIXED - #241 - Add code RedefineFootnoteStyle_NotoSans, step 1 of removing Liberation Sans Narrow reference [impr]
+    ' FIXED - #240 - Update all repair code and add runner for checking 5 pages at a time [impr]
+    ' FIXED - #239 - Add routine ReportDigitAtCursor_Diagnostics_Expanded [code]
     ' FIXED - #238 - Update Chapter Verse marker repair tool with latest RepairWrappedVerseMarkerPrefixes_AdjacencyWithContext_Navigate
-    ' FIXED - #237 - Add diagnostic code to get character information around the cursor position
-    ' FIXED - #236 - Add routine to report Report Page Layout Metrics for a particular page
-    ' FIXED - #235 - Add code to repair "Chapter Verse marker" per page, add vbCr if on column edge with space before, defrag as needed
+    ' FIXED - #237 - Add diagnostic code to get character information around the cursor position [code]
+    ' FIXED - #236 - Add routine to report Report Page Layout Metrics for a particular page [feat]
+    ' FIXED - #235 - Add code to repair "Chapter Verse marker" per page, add vbCr if on column edge with space before, defrag as needed [impr]
     ' FIXED - #234 - Add test to count footers that have only a tab character [test]
     ' FIXED - #212 - Add test for CountFindNotEmphasisBlack = 0 and CountFindNotEmphasisRed = 0 when all have been set [test]
     ' FIXED - #233 - Add test for CountParagraphMarks_CalibriDarkRed [test]
-    ' FIXED - #232 - Add word version into to output and test report
+    ' FIXED - #232 - Add word version into to output and test report [doc]
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
