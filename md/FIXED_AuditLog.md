@@ -1,5 +1,70 @@
 # Audits for Commit Log
 
+## [#294] Cut a 0.1.1 release and tag it on GitHub
+
+- **Fixed in:** [`b6f95f5`](https://github.com/adaept/aeBibleClass/commit/b6f95f5a1d2a8c2428f8a69146ef5566fb5c14b2)
+- **Files:**
+  - [`aeBibleClass.cls`](https://github.com/adaept/aeBibleClass/blob/b6f95f5/src/aeBibleClass.cls)
+  - [`basChangeLogaeBibleClass.bas`](https://github.com/adaept/aeBibleClass/blob/b6f95f5/src/basChangeLogaeBibleClass.bas)
+- **Summary:** Tagged release `v0.1.1` and updated changelog to reflect finalized fixes and documentation.
+- **Audit Result:** ✅ `[OK] Release cut and changelog updated`
+
+## [#300] Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `md/Compact Audit Strategy.md`
+- **Line:** [L1](https://github.com/adaept/aeBibleClass/blob/7af31303/src/md/Compact%20Audit%20Strategy.md#L1)
+- **Summary:** Introduced strategy document for squashed audit commits to reduce GitHub noise and improve changelog clarity.
+- **Audit Result:** ✅ `[OK] Strategy doc added and changelog updated`
+
+## [#279] Add routine to define H2 style and reapply it in the project
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `basTESTaeBibleTools.bas`
+- **Line:** [L1](https://github.com/adaept/aeBibleClass/blob/7af31303/src/basTESTaeBibleTools.bas#L1)
+- **Summary:** Added macro to define and reapply H2 style across project documents; includes header and [impr] tag.
+- **Audit Result:** ✅ `[OK] Style macro added and changelog updated`
+
+## [#306] Add audit log from squash #274
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `md/FIXED_AuditLog.md`
+- **Line:** [L1](https://github.com/adaept/aeBibleClass/blob/7af31303/src/md/FIXED_AuditLog.md#L1)
+- **Summary:** Inserted audit entry for previously squashed fix #274 to preserve traceability.
+- **Audit Result:** ✅ `[OK] Squash audit entry added`
+
+## [#307] Remove bGoTo16, not needed with use of run single test
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `basTESTaeBibleTools.bas`
+- **Line:** [L42](https://github.com/adaept/aeBibleClass/blob/7af31303/src/basTESTaeBibleTools.bas#L42)
+- **Summary:** Removed obsolete flag `bGoTo16`; logic now handled by single test runner.
+- **Audit Result:** ✅ `[OK] Obsolete flag removed cleanly`
+
+## [#308] Update all use of TestReportFlag to - If TestReportFlag And OneTest = 0
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `basTESTaeBibleTools.bas`
+- **Line:** [L55](https://github.com/adaept/aeBibleClass/blob/7af31303/src/basTESTaeBibleTools.bas#L55)
+- **Summary:** Refactored conditional logic to suppress report output during single test runs.
+- **Audit Result:** ✅ `[OK] TestReportFlag logic updated`
+
+## [#303] Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `basTESTaeBibleTools.bas`
+- **Line:** [L61](https://github.com/adaept/aeBibleClass/blob/7af31303/src/basTESTaeBibleTools.bas#L61)
+- **Summary:** Corrected logic to prevent full report overwrite when running a single test.
+- **Audit Result:** ✅ `[OK] Single test logic corrected`
+
+## [#309] Add code to scan modules in .docm to flag early-bound object declarations
+
+- **Fixed in:** [`7af3130`](https://github.com/adaept/aeBibleClass/commit/7af31303b2dae7204f23d6e0d5916307eaf38b05)
+- **File:** `basTESTaeBibleTools.bas`
+- **Line:** [L75](https://github.com/adaept/aeBibleClass/blob/7af31303/src/basTESTaeBibleTools.bas#L75)
+- **Summary:** Added macro to scan `.docm` modules for early-bound declarations to support audit and refactor.
+- **Audit Result:** ✅ `[OK] Early-bound scan macro added`
+
 ## [#301] AppendToFile should be "SKIPPED" [bug]
 
 - **Fixed in:** [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
@@ -8,8 +73,6 @@
 - **Summary:** Corrected mislabeling of AppendToFile output; SKIPPED now outputs cleanly during session when required.
 - **Audit Result:** ✅ `[OK] Logic fix verified via commit message and diagnostic trail`
 
----
-
 ## [#302] Move PrintCompactSectionLayoutInfo to basTESTaeBibleTools and update output path
 
 - **Fixed in:** [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
@@ -17,8 +80,6 @@
 - **Line:** [L1](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basTESTaeBibleTools.bas#L1)
 - **Summary:** Relocated macro for compact section layout reporting; updated output path to `rpt` folder and added header for audit context.
 - **Audit Result:** ✅ `[OK] Macro relocation and output path audit confirmed`
-
----
 
 ## [#304] Add task type [wip] for pre-resolution changelog tagging
 
@@ -30,8 +91,7 @@
 
 ## [#274] Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header
 
-- **Fixed in:**
-  - [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
+- **Fixed in:** [`47faa14`](https://github.com/adaept/aeBibleClass/commit/47faa142c479a485167755cef65eb87290399504)
 - **File:** `basChangeLogaeBibleClass.bas`
 - **Line:** [L12](https://github.com/adaept/aeBibleClass/blob/fcc07412eddc3c3498affa5c0955c1a3db0a9779/src/basChangeLogaeBibleClass.bas#L12)
 - **Summary:** Updated output path logic and added documentation header for style usage report.
