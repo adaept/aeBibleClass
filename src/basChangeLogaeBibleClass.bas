@@ -11,7 +11,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #314 -
 ' #313 -
 ' #312 -
-' #311 -
+' [wip] #311 - Use SSOT for TestReportFlag check in RunTest
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]

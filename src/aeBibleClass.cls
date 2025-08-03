@@ -105,7 +105,7 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As In
     ElseIf VarType(varDebug) = vbInteger Then
         Debug.Print "Get TheBibleClassTests"
         OneTest = varDebug
-        Debug.Print ">Running Test " & OneTest
+        Debug.Print ">Running Test OneTest = varDebug", "varDebug = " & varDebug
         TheBibleClassTests = RunBibleClassTests(OneTest)
     Else
         Debug.Print "Unexpected Type Parameter for varDebug !!!"
@@ -333,7 +333,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
         Debug.Print , "varDebug = " & """varDebug""" & " and IS NOT missing so blnDebug is set to True"
         Debug.Print , "NOW DEBUGGING..."
     ElseIf VarType(varDebug) = vbInteger And OneTest <> 0 Then
-        Debug.Print ">>Running Test " & OneTest
+        Debug.Print ">>Running Test " & OneTest, "varDebug = " & varDebug
     Else
     End If
     
@@ -351,16 +351,17 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Call Expected1BasedArray
             
             If OneTest <> 0 Then
-                'If OneTest = 42 Then
-                '    Call RunTest(OneTest, "SKIP")
-                '    Exit Function
-                'Else
+                If OneTest = 42 Then
+                    'Debug.Print "$$$ 42, SKIP"
+                    Call RunTest(OneTest, "SKIP")
+                    Exit Function
+                Else
                     Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
                     '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
                     Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
                     RunTest (OneTest)
                     Exit Function
-                'End If
+                End If
             End If
             
             Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
@@ -410,7 +411,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (39)
             RunTest (40)
             RunTest (41)
-            Call RunTest(42, 42)
+            Call RunTest(42, "SKIP")
             RunTest (43)
             RunTest (44)
             RunTest (45)
@@ -665,165 +666,177 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Select Case num
     Case 1
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpaces"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 2
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpacesInShapes"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 3
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSpaceFollowedByCarriageReturn"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 4
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleTabs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 5
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteSpaceAndCarriageReturn"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 6
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountQuadrupleParagraphMarks"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 7
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithSpaceAndNumber"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 8
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithNumberAndSpace"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 9
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPeriodSpaceLeftParenthesis"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 10
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNonBreakingSpaces"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 11
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNumberDashNumber"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 12
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumberDashNumberInFootnotes"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 13
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasWithNoThemeColor"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 14
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteParagraphMarks"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 15
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSectionsWithDifferentFirstPage"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 16
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTotalParagraphs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 17
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountRedFootnoteReferences"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 18
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading1"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 19
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasAfterH2"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 20
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnotesFollowedByDigit"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 21
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNotSpacesAfterFootnoteReferences"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 22
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithFormatting"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 23
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDeleteEmptyParagraphsBeforeHeading2"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 24
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferences"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 25
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferenceColors"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 26
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "Empty" & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 27
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "NotEmpty" & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 28
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabFollowedByParagraphMarkInHeaders"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 29
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphsWithoutTabInHeaders"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 30
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeaderStyleUsage"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 31
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksPerHeaderSection"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 32
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 33
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed(" & """ """ & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 34
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 35
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 36
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFooterParagraphsWithFooterStyle"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 37
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDocTabOnlyParagraphs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 38
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 39
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlack"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 40
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlackDarkRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 41
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 42
-        If SkipTest = num Then
+        If Not IsMissing(SkipTest) Then             ' = num Then
+            Debug.Print ">> num = " & num, "SkipTest = " & SkipTest
             Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
-            If TestReportFlag And OneTest = 0 Then Call OutputTestReport(num, num)
+            'If TestReportFlag And OneTest = 0 Then Call OutputTestReport(num, num)
         Else
-            If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+            Debug.Print ">> Expected Routine Runtime ~ 80 seconds"
+            'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
             Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
         End If
     Case 43
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDarkRedStyledParagraphMarks"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 44
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_CalibriDarkRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 45
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 46
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 47
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabOnlyParagraphs(" & """Footer""" & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 48
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditLiberationSansNarrowStyleDetails"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 49
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAuditStyles_ToFile"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 50
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+        'If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
+    Debug.Print "!!! OneTest = " & OneTest, "num = " & num
 
-    'Debug.Print "OneTest = " & OneTest
-    
+    If TestReportFlag And OneTest = 0 And IsMissing(SkipTest) Then
+        Debug.Print "A>", "num = " & num
+        Call OutputTestReport(num)
+    ElseIf TestReportFlag And OneTest = 0 And Not IsMissing(SkipTest) Then
+        Debug.Print "B>", "num = " & num, "SkipTest = " & SkipTest
+        Call OutputTestReport(num, SkipTest)
+        'Stop
+    End If
+        'Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
+        'Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
+
     endTime = Timer
     runTime = endTime - startTime
     
@@ -945,7 +958,8 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 41
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
-        If SkipTest = num Then
+        If SkipTest = "SKIP" Then
+            Debug.Print "%%% AppendToFile 999", "num = " & num
             AppendToFile TestReportFileName, GetPassFail(999) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str("SKIPPED") & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
         Else
             AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
