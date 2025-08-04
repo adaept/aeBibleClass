@@ -195,7 +195,7 @@ Private Sub Expected1BasedArray()
         ' Do not make new TestReportFileName for single tests
         Set doc = ActiveDocument
         TestReportFileName = doc.Path & "\rpt\TestReport.txt"
-        ' Open the debug file for writing
+        ' Open the debug file for writing - this will create a new file each time
         testFileNum = FreeFile
         Open TestReportFileName For Output As testFileNum
         Close testFileNum
@@ -270,8 +270,8 @@ End Sub
 '
 ' Parameters:
 '   filePath (String) - Either:
-'       (a) Just a filename (e.g., "Log.txt") ? saved in rpt folder
-'       (b) Full path override ? used as-is
+'       (a) Just a filename (e.g., "Log.txt"): saved in rpt folder
+'       (b) Full path override: used as-is
 '   text (String) - The line of text to be appended (no trailing newline needed)
 '
 ' Behavior:
@@ -310,6 +310,41 @@ End Sub
 Private Function LogMessage(msg As String) As String
     LogMessage = "[" & Format(Now, "yyyy-mm-dd hh:nn:ss") & "] " & msg
 End Function
+
+Private Function GenerateSessionID() As String
+    ' Format: YYYYMMDD-HHMMSS
+    GenerateSessionID = Format(Now, "yyyymmdd-hhnnss")
+End Function
+
+Private Sub RunTotalTimeTestSession(testOutcome As String)
+    Dim SessionID As String
+    SessionID = GenerateSessionID()
+
+    Dim folderPath As String
+    folderPath = ActiveDocument.Path & "\rpt"
+    If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
+
+    Dim reportName As String
+    reportName = "TotalTimeReport.txt"
+    
+    Dim FileExists As Boolean
+    FileExists = (Dir(folderPath & "\" & reportName) <> "")
+    Debug.Print "FileExists = " & FileExists, "reportName = " & reportName
+    
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    
+    Open folderPath & "\" & reportName For Append As #fileNum
+    If Not FileExists Then
+        Print #fileNum, "SessionID, TotalTime"
+    End If
+    Close #fileNum
+
+    Call AppendToFile("TotalTimeReport.txt", SessionID & ", " & testOutcome)
+    
+    'MsgBox "Test complete. Session ID: " & sessionID, vbInformation
+    Debug.Print "RunTotalTimeTestSession complete. Session ID: " & SessionID
+End Sub
 
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
     Dim startTime As Double
@@ -359,7 +394,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
                     Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
                     '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
                     Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
-                    RunTest (OneTest)
+                    Call RunTest(OneTest)
                     Exit Function
                 End If
             End If
@@ -434,8 +469,12 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
-    Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
-    If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    Dim TheTotalRuntime As String
+    TheTotalRuntime = Format(runTime, "0.00")
+    Debug.Print "The Total Runtime: " & TheTotalRuntime & " seconds"
+    If TestReportFlag And OneTest = 0 Then Call RunTotalTimeTestSession(TheTotalRuntime)
+    
+    If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "The Total Runtime: " & TheTotalRuntime & " seconds"
     
     Debug.Print LogMessage("Completed")
     If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, LogMessage("Completed")
@@ -448,7 +487,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
 
     Debug.Print LogWordBuildInfo
     If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, LogWordBuildInfo
-
+    
     RunBibleClassTests = True
 
 PROC_EXIT:

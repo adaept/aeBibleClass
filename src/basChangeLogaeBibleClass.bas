@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #315 -
 ' #314 -
 ' #313 -
-' #312 -
 ' [wip] #311 - Use SSOT for TestReportFlag check in RunTest
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
@@ -22,7 +21,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #281 - Explain methodology of Test Driven Development [doc]
 ' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
 ' #271 - Add routine headers for targeting github.io docs in future [doc] [cp]
-' #268 - Timings of TestReport to go in csv log file with session ID for each run [impr]
+' #268 - Timings of all TestReports to go in csv log file with session ID for each run [impr]
 ' #267 - Add code for CompleteAuditPageLayout [code]
 ' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
 ' #259 - Remove old code that regressed [clean]
@@ -71,6 +70,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
+    ' FIXED - #312 - Total time of TestReport to go in csv file in rpt with Session ID
     ' FIXED - #295 - See #309 - Verify use of late binding in all code base so there is no need to set references [code]
 'Sq ' FIXED - #310 - Add code to locally auto tag a version release and push it to GitHub
     ' FIXED - #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
