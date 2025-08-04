@@ -9,8 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
 ' #315 -
 ' #314 -
-' #313 -
-' [wip] #311 - Use SSOT for TestReportFlag check in RunTest
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
@@ -19,7 +17,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #288 - Create md doc file describing use of Tasks labels [doc]
 ' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr] [cp]
 ' #281 - Explain methodology of Test Driven Development [doc]
-' #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
 ' #271 - Add routine headers for targeting github.io docs in future [doc] [cp]
 ' #268 - Timings of all TestReports to go in csv log file with session ID for each run [impr]
 ' #267 - Add code for CompleteAuditPageLayout [code]
@@ -70,6 +67,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
+    ' FIXED - #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
+    ' FIXED - #313 See #280 - Update routine name and definition for H2 to include count
+    ' FIXED - #311 See #312 - Use SSOT for TestReportFlag check in RunTest [impr]
     ' FIXED - #312 - Total time of TestReport to go in csv file in rpt with Session ID
     ' FIXED - #295 - See #309 - Verify use of late binding in all code base so there is no need to set references [code]
 'Sq ' FIXED - #310 - Add code to locally auto tag a version release and push it to GitHub
