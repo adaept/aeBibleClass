@@ -105,7 +105,7 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As In
     ElseIf VarType(varDebug) = vbInteger Then
         Debug.Print "Get TheBibleClassTests"
         OneTest = varDebug
-        Debug.Print ">Running Test " & OneTest
+        Debug.Print ">Running Test OneTest = varDebug", "varDebug = " & varDebug
         TheBibleClassTests = RunBibleClassTests(OneTest)
     Else
         Debug.Print "Unexpected Type Parameter for varDebug !!!"
@@ -195,7 +195,7 @@ Private Sub Expected1BasedArray()
         ' Do not make new TestReportFileName for single tests
         Set doc = ActiveDocument
         TestReportFileName = doc.Path & "\rpt\TestReport.txt"
-        ' Open the debug file for writing
+        ' Open the debug file for writing - this will create a new file each time
         testFileNum = FreeFile
         Open TestReportFileName For Output As testFileNum
         Close testFileNum
@@ -270,8 +270,8 @@ End Sub
 '
 ' Parameters:
 '   filePath (String) - Either:
-'       (a) Just a filename (e.g., "Log.txt") ? saved in rpt folder
-'       (b) Full path override ? used as-is
+'       (a) Just a filename (e.g., "Log.txt"): saved in rpt folder
+'       (b) Full path override: used as-is
 '   text (String) - The line of text to be appended (no trailing newline needed)
 '
 ' Behavior:
@@ -307,9 +307,77 @@ Sub AppendToFile(filePath As String, text As String)
     Close fileNum
 End Sub
 
+'============================================================
+' Routine: LogMessage
+' Purpose: Returns a timestamped message string for logging.
+' Inputs:
+'   - msg: The message content to be timestamped.
+' Returns:
+'   - String formatted as "[YYYY-MM-DD HH:NN:SS] message"
+' Notes:
+'   - Used for diagnostics or trace logging.
+'============================================================
 Private Function LogMessage(msg As String) As String
     LogMessage = "[" & Format(Now, "yyyy-mm-dd hh:nn:ss") & "] " & msg
 End Function
+
+'============================================================
+' Routine: GenerateSessionID
+' Purpose: Creates a unique session identifier based on current time.
+' Returns:
+'   - String formatted as "YYYYMMDD-HHNNSS"
+' Notes:
+'   - Used to tag test sessions for time-based traceability.
+'============================================================
+Private Function GenerateSessionID() As String
+    ' Format: YYYYMMDD-HHMMSS
+    GenerateSessionID = Format(Now, "yyyymmdd-hhnnss")
+End Function
+
+'============================================================
+' Routine: RunTotalTimeTestSession
+' Purpose: Runs a timing test and logs outcome with session ID.
+' Inputs:
+'   - testOutcome: String summary of timing result.
+' Actions:
+'   - Generates a unique SessionID.
+'   - Ensures a \rpt folder exists in document path.
+'   - Creates or appends to TotalTimeReport.txt.
+'   - Logs header if new file.
+'   - Appends session outcome to file using AppendToFile.
+'   - Outputs session ID to immediate window.
+' Notes:
+'   - External dependency: AppendToFile routine must exist.
+'============================================================
+Private Sub RunTotalTimeTestSession(testOutcome As String)
+    Dim SessionID As String
+    SessionID = GenerateSessionID()
+
+    Dim folderPath As String
+    folderPath = ActiveDocument.Path & "\rpt"
+    If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
+
+    Dim reportName As String
+    reportName = "TotalTimeReport.txt"
+    
+    Dim FileExists As Boolean
+    FileExists = (Dir(folderPath & "\" & reportName) <> "")
+    'Debug.Print "FileExists = " & FileExists, "reportName = " & reportName
+    
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    
+    Open folderPath & "\" & reportName For Append As #fileNum
+    If Not FileExists Then
+        Print #fileNum, "SessionID, TotalTime"
+    End If
+    Close #fileNum
+
+    Call AppendToFile("TotalTimeReport.txt", SessionID & ", " & testOutcome)
+    
+    'MsgBox "Test complete. Session ID: " & sessionID, vbInformation
+    Debug.Print "RunTotalTimeTestSession complete. Session ID: " & SessionID
+End Sub
 
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
     Dim startTime As Double
@@ -333,7 +401,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
         Debug.Print , "varDebug = " & """varDebug""" & " and IS NOT missing so blnDebug is set to True"
         Debug.Print , "NOW DEBUGGING..."
     ElseIf VarType(varDebug) = vbInteger And OneTest <> 0 Then
-        Debug.Print ">>Running Test " & OneTest
+        Debug.Print ">>Running Test " '& OneTest, "varDebug = " & varDebug
     Else
     End If
     
@@ -351,16 +419,17 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Call Expected1BasedArray
             
             If OneTest <> 0 Then
-                'If OneTest = 42 Then
-                '    Call RunTest(OneTest, "SKIP")
-                '    Exit Function
-                'Else
+                If OneTest = 42 Then
+                    'Debug.Print "$$$ 42, SKIP"
+                    Call RunTest(OneTest, "SKIP")
+                    Exit Function
+                Else
                     Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
                     '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
                     Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
-                    RunTest (OneTest)
+                    Call RunTest(OneTest)
                     Exit Function
-                'End If
+                End If
             End If
             
             Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
@@ -410,7 +479,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (39)
             RunTest (40)
             RunTest (41)
-            Call RunTest(42, 42)
+            Call RunTest(42, "SKIP")
             RunTest (43)
             RunTest (44)
             RunTest (45)
@@ -433,8 +502,12 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Runtime: " & Format(runTime, "0.00") & " seconds"
-    Debug.Print "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
-    If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "Total Total Runtime: " & Format(runTime, "0.00") & " seconds"
+    Dim TheTotalRuntime As String
+    TheTotalRuntime = Format(runTime, "0.00")
+    Debug.Print "The Total Runtime: " & TheTotalRuntime & " seconds"
+    If TestReportFlag And OneTest = 0 Then Call RunTotalTimeTestSession(TheTotalRuntime)
+    
+    If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "The Total Runtime: " & TheTotalRuntime & " seconds"
     
     Debug.Print LogMessage("Completed")
     If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, LogMessage("Completed")
@@ -447,7 +520,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
 
     Debug.Print LogWordBuildInfo
     If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, LogWordBuildInfo
-
+    
     RunBibleClassTests = True
 
 PROC_EXIT:
@@ -645,6 +718,13 @@ PROC_ERR:
     
 End Function
 
+'=========================================================================
+' Routine : Fixed14Str
+' Purpose : Pads the input string to a fixed width of 14 characters.
+' Input   : MyResult - String to be padded.
+' Output  : String of exactly 14 characters, right-padded with spaces.
+' Notes   : Useful for column-aligned output or diagnostics.
+'=========================================================================
 Private Function Fixed14Str(MyResult As String) As String
     Const fixedWidth = 14
     Fixed14Str = Left(MyResult & String(fixedWidth, " "), fixedWidth)
@@ -665,165 +745,124 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Select Case num
     Case 1
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpaces"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 2
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpacesInShapes"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 3
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSpaceFollowedByCarriageReturn"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 4
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleTabs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 5
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteSpaceAndCarriageReturn"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 6
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountQuadrupleParagraphMarks"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 7
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithSpaceAndNumber"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 8
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithNumberAndSpace"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 9
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPeriodSpaceLeftParenthesis"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 10
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNonBreakingSpaces"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 11
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNumberDashNumber"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 12
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumberDashNumberInFootnotes"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 13
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasWithNoThemeColor"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 14
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteParagraphMarks"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 15
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSectionsWithDifferentFirstPage"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 16
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTotalParagraphs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 17
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountRedFootnoteReferences"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 18
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading1"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 19
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasAfterH2"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 20
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnotesFollowedByDigit"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 21
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNotSpacesAfterFootnoteReferences"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 22
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithFormatting"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 23
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDeleteEmptyParagraphsBeforeHeading2"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 24
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferences"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 25
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferenceColors"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 26
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "Empty" & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 27
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "NotEmpty" & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 28
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabFollowedByParagraphMarkInHeaders"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 29
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphsWithoutTabInHeaders"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 30
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeaderStyleUsage"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 31
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksPerHeaderSection"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 32
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 33
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed(" & """ """ & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 34
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 35
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 36
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFooterParagraphsWithFooterStyle"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 37
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDocTabOnlyParagraphs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 38
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphs"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 39
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlack"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 40
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlackDarkRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 41
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 42
-        If SkipTest = num Then
+        If Not IsMissing(SkipTest) Then             ' = num Then
+            'Debug.Print ">> num = " & num, "SkipTest = " & SkipTest
             Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
-            If TestReportFlag And OneTest = 0 Then Call OutputTestReport(num, num)
         Else
-            If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
+            Debug.Print ">> Expected Routine Runtime ~ 80 seconds"
             Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
         End If
     Case 43
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDarkRedStyledParagraphMarks"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 44
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_CalibriDarkRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 45
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 46
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 47
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabOnlyParagraphs(" & """Footer""" & ")"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 48
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditLiberationSansNarrowStyleDetails"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 49
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAuditStyles_ToFile"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
     Case 50
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
-        If TestReportFlag And OneTest = 0 Then OutputTestReport (num)
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
+    'Debug.Print "!!! OneTest = " & OneTest, "num = " & num
 
-    'Debug.Print "OneTest = " & OneTest
-    
+    If TestReportFlag And OneTest = 0 And IsMissing(SkipTest) Then
+        'Debug.Print "A>", "num = " & num
+        Call OutputTestReport(num)
+    ElseIf TestReportFlag And OneTest = 0 And Not IsMissing(SkipTest) Then
+        'Debug.Print "B>", "num = " & num, "SkipTest = " & SkipTest
+        Call OutputTestReport(num, SkipTest)
+        'Stop
+    End If
+
     endTime = Timer
     runTime = endTime - startTime
     
@@ -945,7 +984,8 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 41
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
-        If SkipTest = num Then
+        If SkipTest = "SKIP" Then
+            Debug.Print "%%% AppendToFile 999", "num = " & num
             AppendToFile TestReportFileName, GetPassFail(999) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str("SKIPPED") & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
         Else
             AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
@@ -981,7 +1021,7 @@ PROC_ERR:
 
 End Function
 
-'-------------------------------------------------------------
+'=========================================================================
 ' Function: SummarizeHeaderFooterAuditToFile
 '
 ' Purpose:
@@ -1011,7 +1051,7 @@ End Function
 '
 ' Visibility:
 '   Exported in diagnostics mode; safe for GitHub.io surfacing
-'-------------------------------------------------------------
+'=========================================================================
 Private Function SummarizeHeaderFooterAuditToFile()
     Dim sec As section, hf As HeaderFooter, p As paragraph
     Dim paraText As String, paraStyle As String
@@ -1163,7 +1203,7 @@ End Function
 
 '==============================================================
 ' CountAuditStyles_ToFile
-' --------------------------------------------------------------
+' -------------------------------------------------------------
 ' Purpose : Audits paragraph style usage across all story ranges
 '           in the active Word document and outputs a frequency
 '           distribution report to an external ASCII text file.
