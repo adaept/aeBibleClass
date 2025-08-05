@@ -47,7 +47,7 @@ Private Const wdNotThemeColor As Long = -1
 Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
-Private Const MaxTests = 50
+Private Const MaxTests = 51
 Private ResultArray(1 To MaxTests) As Long
 Private TestTimingArray(0 To MaxTests) As Double
 Private TestSessionID As String
@@ -105,7 +105,7 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As In
     ElseIf VarType(varDebug) = vbInteger Then
         Debug.Print "Get TheBibleClassTests"
         OneTest = varDebug
-        Debug.Print ">Running Test OneTest = varDebug", "varDebug = " & varDebug
+        Debug.Print ">Running Test OneTest = varDebug"  ', "varDebug = " & varDebug
         TheBibleClassTests = RunBibleClassTests(OneTest)
     Else
         Debug.Print "Unexpected Type Parameter for varDebug !!!"
@@ -202,8 +202,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147, 1189)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -488,6 +488,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (48)
             RunTest (49)
             RunTest (50)
+            RunTest (51)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -703,6 +704,9 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 50
         ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
         If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
+    Case 51
+        ResultArray(TestNum) = CountAndCreateDefinitionForH2
+        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 999
         GetPassFail = "SKIP!!!!"
     Case Else
@@ -849,6 +853,8 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAuditStyles_ToFile"
     Case 50
         Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
+    Case 51
+        Debug.Print GetPassFail(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1006,6 +1012,8 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAuditStyles_ToFile"
     Case 50
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
+    Case 51
+        AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
     Case 999
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
    Case Else
@@ -1019,6 +1027,59 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OutPutTestReport of Class BibleClass"
     Resume PROC_EXIT
 
+End Function
+
+' ======================================================================
+' Macro Name   : CountAndCreateDefinitionForH2
+' Purpose      : Enforces layout and paragraph rules for Heading 2 style.
+'                - Enables KeepWithNext on Heading 2 paragraph style.
+'                - Applies WidowControl to each Heading 2 paragraph.
+'                - Explicitly disables KeepTogether to prevent override.
+'                - Provides a total count of H2
+' Audit Notes  : Logs all repair actions to Immediate Window.
+'                Does NOT alter any content, punctuation, or quotes.
+'                Applies paragraph-level enforcement only where style = "Heading 2"
+' Safety Level : Editorial-safe. No deletions or format coercion.
+' Last Updated : 20250805
+' Author       : Peter
+' ======================================================================
+Private Function CountAndCreateDefinitionForH2()
+    ' Update Heading 2 Keep With Next
+    Dim count As Long
+    count = 0
+
+    Application.ScreenUpdating = False
+
+    Dim s As style
+    Set s = ActiveDocument.Styles("Heading 2")
+    
+    ' Apply KeepWithNext to paragraph formatting
+    s.ParagraphFormat.KeepWithNext = True
+    'Debug.Print "Heading 2 style updated: KeepWithNext = True"
+
+    ' Enforce Heading 2 Paragraph Widow Orphan
+    ' Disable KeepLines Together For Heading 2
+    Dim para As paragraph
+    For Each para In ActiveDocument.paragraphs
+        If para.style = ActiveDocument.Styles("Heading 2") Then
+            count = count + 1
+            With para
+                .WidowControl = True    ' enforces both widow and orphan control for that paragraph
+                '.OrphanControl = True - Not needed,
+                para.KeepTogether = False
+            End With
+            
+            If count Mod 50 = 0 Then
+                DoEvents  ' Keep UI responsive every 50 updates
+            End If
+        End If
+    Next para
+    
+    Application.ScreenUpdating = True
+    'Debug.Print "[repair] Widow/Orphan enforced at paragraph level for Heading 2"
+    'Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
+    'Debug.Print "count = " & count
+    CountAndCreateDefinitionForH2 = count
 End Function
 
 '=========================================================================

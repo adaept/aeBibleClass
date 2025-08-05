@@ -1485,51 +1485,6 @@ Sub GetHeadingDefinitionsWithDescriptions()
     Next styleName
 End Sub
 
-' ======================================================================
-' Macro Name   : CountAndCreateDefinitionForH2
-' Purpose      : Enforces layout and paragraph rules for Heading 2 style.
-'                - Enables KeepWithNext on Heading 2 paragraph style.
-'                - Applies WidowControl to each Heading 2 paragraph.
-'                - Explicitly disables KeepTogether to prevent override.
-'                - Provides a total count of H2
-' Audit Notes  : Logs all repair actions to Immediate Window.
-'                Does NOT alter any content, punctuation, or quotes.
-'                Applies paragraph-level enforcement only where style = "Heading 2"
-' Safety Level : Editorial-safe. No deletions or format coercion.
-' Last Updated : [add date]
-' Author       : [optional]
-' ======================================================================
-Sub CountAndCreateDefinitionForH2()
-    ' Update Heading 2 Keep With Next
-    Dim count As Long
-    count = 0
-    
-    Dim s As style
-    Set s = ActiveDocument.Styles("Heading 2")
-    
-    ' Apply KeepWithNext to paragraph formatting
-    s.ParagraphFormat.KeepWithNext = True
-    Debug.Print "Heading 2 style updated: KeepWithNext = True"
-
-    ' Enforce Heading 2 Paragraph Widow Orphan
-    ' Disable KeepLines Together For Heading 2
-    Dim para As paragraph
-    For Each para In ActiveDocument.paragraphs
-        If para.style = ActiveDocument.Styles("Heading 2") Then
-            count = count + 1
-            With para
-                .WidowControl = True    ' enforces both widow and orphan control for that paragraph
-                '.OrphanControl = True - Not needed,
-                para.KeepTogether = False
-            End With
-        End If
-    Next para
-    Debug.Print "[repair] Widow/Orphan enforced at paragraph level for Heading 2"
-    Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
-    Debug.Print "count = " & count
-
-End Sub
-
 '==============================================
 ' ValidateTaskInChangelogModule
 '----------------------------------------------
