@@ -55,8 +55,8 @@ FAIL!!!!          Copy ()       Test = 48     1             0             AuditL
 PASS              Copy ()       Test = 49     16            16            CountAuditStyles_ToFile
 PASS              Copy ()       Test = 50     147           147           SummarizeHeaderFooterAuditToFile
 PASS              Copy ()       Test = 51     1189          1189          CountAndCreateDefinitionForH2
-The Total Runtime: 198.80 seconds
-[2025-08-05 13:13:48] Completed
+The Total Runtime: 107.00 seconds
+[2025-08-05 15:54:50] Completed
 BibleClass VERSION: 0.1.1
 BibleClass VERSION_DATE: August 2, 2025
 == Word Build Info ==

@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #320 -
 ' #319 -
 ' #318 -
-' #317 -
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
@@ -70,6 +69,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #317 - Use SSOT so GetPassFail is called only once per test, and results are stored in GetPassFailArray
     ' FIXED - #316 - Uses SSOT in GetPassFail to remove code duplication
     ' FIXED - #290 - Add test for count of H1 with style [test]
     ' FIXED - #315 - Add code to make CountAndCreateDefinitionForH2 responsive
