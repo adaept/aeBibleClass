@@ -7,8 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
+' #320 -
+' #319 -
+' #318 -
+' #317 -
+' #316 -
 ' #315 -
-' #314 -
+' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
