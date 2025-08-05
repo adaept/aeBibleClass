@@ -49,7 +49,7 @@ Private Const bTimeAllTests As Boolean = True
 Private oneBasedExpectedArray As Variant
 Private Const MaxTests = 51
 Private ResultArray(1 To MaxTests) As Long
-Private TestTimingArray(0 To MaxTests) As Double
+Private TestTimingArray(0 To MaxTests) As Variant
 Private TestSessionID As String
 Private result As Integer
 Private TestReportFileName As String
@@ -556,162 +556,114 @@ Private Function GetPassFail(TestNum As Integer) As String
     Select Case TestNum
     Case 1
         ResultArray(TestNum) = CountDoubleSpaces
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 2
         ResultArray(TestNum) = CountDoubleSpacesInShapes
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 3
         ResultArray(TestNum) = CountSpaceFollowedByCarriageReturn
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 4
         ResultArray(TestNum) = CountDoubleTabs
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 5
         ResultArray(TestNum) = CountWhiteSpaceAndCarriageReturn
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 6
         ResultArray(TestNum) = CountQuadrupleParagraphMarks
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 7
         ResultArray(TestNum) = CountStyleWithSpaceAndNumber
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 8
         ResultArray(TestNum) = CountStyleWithNumberAndSpace
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 9
         ResultArray(TestNum) = CountPeriodSpaceLeftParenthesis
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 10
         ResultArray(TestNum) = CountNonBreakingSpaces
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 11
         ResultArray(TestNum) = CountFindNumberDashNumber
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 12
         ResultArray(TestNum) = CountNumberDashNumberInFootnotes
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 13
         ResultArray(TestNum) = CountEmptyParasWithNoThemeColor
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 14
         ResultArray(TestNum) = CountWhiteParagraphMarks
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 15
         ResultArray(TestNum) = CountSectionsWithDifferentFirstPage
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 16
         ResultArray(TestNum) = CountTotalParagraphs
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 17
         ResultArray(TestNum) = CountRedFootnoteReferences
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 18
         ResultArray(TestNum) = CountHeading1
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 19
         ResultArray(TestNum) = CountEmptyParasAfterH2
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 20
         ResultArray(TestNum) = CountFootnotesFollowedByDigit
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 21
         ResultArray(TestNum) = CountNotSpacesAfterFootnoteReferences
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 22
         ResultArray(TestNum) = CountEmptyParagraphsWithFormatting
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 23
         ResultArray(TestNum) = CountDeleteEmptyParagraphsBeforeHeading2
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 24
         ResultArray(TestNum) = CountFootnoteReferences
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 25
         ResultArray(TestNum) = CountFootnoteReferenceColors
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 26
         ResultArray(TestNum) = CheckAllHeaders("Empty")
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 27
         ResultArray(TestNum) = CheckAllHeaders("NotEmpty")
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 28
         ResultArray(TestNum) = CountTabFollowedByParagraphMarkInHeaders
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 29
         ResultArray(TestNum) = CountParagraphsWithoutTabInHeaders
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 30
         ResultArray(TestNum) = CountHeaderStyleUsage
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 31
         ResultArray(TestNum) = CountParagraphMarksPerHeaderSection
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 32
         ResultArray(TestNum) = CountLinefeed
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 33
         ResultArray(TestNum) = CountLinefeed(" ")
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 34
         ResultArray(TestNum) = CountManualLineBreaksAndWithSpace
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 35
         ResultArray(TestNum) = CountManualLineBreaksAndWithSpace(" ")
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 36
         ResultArray(TestNum) = CountFooterParagraphsWithFooterStyle
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 37
         ResultArray(TestNum) = CountDocTabOnlyParagraphs
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 38
         ResultArray(TestNum) = CountEmptyParagraphs
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 39
         ResultArray(TestNum) = CountParagraphMarks_ArialBlack
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 40
         ResultArray(TestNum) = CountParagraphMarks_ArialBlackDarkRed
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 41
         ResultArray(TestNum) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 42
         ResultArray(TestNum) = CountBoldFootnotesWordLevel
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 43
         ResultArray(TestNum) = CountDarkRedStyledParagraphMarks
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 44
         ResultArray(TestNum) = CountParagraphMarks_CalibriDarkRed
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 45
         ResultArray(TestNum) = CountFindNotEmphasisBlack
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 46
         ResultArray(TestNum) = CountFindNotEmphasisRed
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 47
         ResultArray(TestNum) = CountTabOnlyParagraphs("Footer")
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 48
         ResultArray(TestNum) = AuditLiberationSansNarrowStyleDetails
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 49
         ResultArray(TestNum) = CountAuditStyles_ToFile
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 50
         ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 51
         ResultArray(TestNum) = CountAndCreateDefinitionForH2
-        If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
     Case 999
         GetPassFail = "SKIP!!!!"
+        Exit Function
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
+    
+    If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then GetPassFail = "PASS    "
 
 PROC_EXIT:
     Exit Function
@@ -991,7 +943,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
         If SkipTest = "SKIP" Then
-            Debug.Print "%%% AppendToFile 999", "num = " & num
+            'Debug.Print "%%% AppendToFile 999", "num = " & num
             AppendToFile TestReportFileName, GetPassFail(999) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str("SKIPPED") & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
         Else
             AppendToFile TestReportFileName, GetPassFail(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
