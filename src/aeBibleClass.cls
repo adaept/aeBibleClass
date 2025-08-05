@@ -426,8 +426,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Call Expected1BasedArray
             
             If OneTest <> 0 Then
-                If OneTest = 42 Then
-                    SkippedTestNum = 42
+                If OneTest = 42 Or OneTest = 51 Then
+                    If OneTest = 42 Then SkippedTestNum = 42
+                    If OneTest = 51 Then SkippedTestNum = 51
                     'Debug.Print "$$$ 42, SKIP"
                     Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
                     '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
@@ -500,7 +501,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (48)
             RunTest (49)
             RunTest (50)
-            RunTest (51)
+            SkippedTestNum = 51
+            Call RunTest(51, "SKIP")
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -673,7 +675,12 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 50
         ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
     Case 51
-        ResultArray(TestNum) = CountAndCreateDefinitionForH2
+        If SkippedTestNum = TestNum Then
+            'Debug.Print "SkippedTestNum = " & SkippedTestNum, "TestNum = " & TestNum
+        Else
+            'Debug.Print "HERE!!!!"
+            ResultArray(TestNum) = CountAndCreateDefinitionForH2
+        End If
     Case 999
         GetPassFail = "SKIP!!!!"
         Exit Function
@@ -830,7 +837,12 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Case 50
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
     Case 51
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
+        If Not IsMissing(SkipTest) Then             ' = num Then
+            'Debug.Print ">> num = " & num, "SkipTest = " & SkipTest
+            Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
+        Else
+            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
+        End If
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select

@@ -54,9 +54,9 @@ PASS              Copy ()       Test = 47     2             2             CountT
 FAIL!!!!          Copy ()       Test = 48     1             0             AuditLiberationSansNarrowStyleDetails
 PASS              Copy ()       Test = 49     16            16            CountAuditStyles_ToFile
 PASS              Copy ()       Test = 50     147           147           SummarizeHeaderFooterAuditToFile
-PASS              Copy ()       Test = 51     1189          1189          CountAndCreateDefinitionForH2
-The Total Runtime: 107.00 seconds
-[2025-08-05 15:54:50] Completed
+FAIL!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
+The Total Runtime: 48.06 seconds
+[2025-08-05 16:45:47] Completed
 BibleClass VERSION: 0.1.1
 BibleClass VERSION_DATE: August 2, 2025
 == Word Build Info ==

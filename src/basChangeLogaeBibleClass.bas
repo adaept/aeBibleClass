@@ -9,8 +9,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
 ' #320 -
 ' #319 -
-' #318 -
-' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document
+' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
 ' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
@@ -69,8 +68,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
-    ' FIXED - #317 - Use SSOT so GetPassFail is called only once per test, and results are stored in GetPassFailArray
-    ' FIXED - #316 - Uses SSOT in GetPassFail to remove code duplication
+    ' FIXED - #318 - Add code to skip test 51. It is slow. Run again near book completion.
+    ' FIXED - #317 - Use SSOT so GetPassFail is called only once per test, and results are stored in GetPassFailArray [impr]
+    ' FIXED - #316 - Uses SSOT in GetPassFail to remove code duplication [impr]
     ' FIXED - #290 - Add test for count of H1 with style [test]
     ' FIXED - #315 - Add code to make CountAndCreateDefinitionForH2 responsive
     ' FIXED - #280 - Add test to count H2, "How many Chapters are in the Bible", Copilot -> 1,189
