@@ -307,15 +307,48 @@ Sub AppendToFile(filePath As String, text As String)
     Close fileNum
 End Sub
 
+'============================================================
+' Routine: LogMessage
+' Purpose: Returns a timestamped message string for logging.
+' Inputs:
+'   - msg: The message content to be timestamped.
+' Returns:
+'   - String formatted as "[YYYY-MM-DD HH:NN:SS] message"
+' Notes:
+'   - Used for diagnostics or trace logging.
+'============================================================
 Private Function LogMessage(msg As String) As String
     LogMessage = "[" & Format(Now, "yyyy-mm-dd hh:nn:ss") & "] " & msg
 End Function
 
+'============================================================
+' Routine: GenerateSessionID
+' Purpose: Creates a unique session identifier based on current time.
+' Returns:
+'   - String formatted as "YYYYMMDD-HHNNSS"
+' Notes:
+'   - Used to tag test sessions for time-based traceability.
+'============================================================
 Private Function GenerateSessionID() As String
     ' Format: YYYYMMDD-HHMMSS
     GenerateSessionID = Format(Now, "yyyymmdd-hhnnss")
 End Function
 
+'============================================================
+' Routine: RunTotalTimeTestSession
+' Purpose: Runs a timing test and logs outcome with session ID.
+' Inputs:
+'   - testOutcome: String summary of timing result.
+' Actions:
+'   - Generates a unique SessionID.
+'   - Ensures a \rpt folder exists in document path.
+'   - Creates or appends to TotalTimeReport.txt.
+'   - Logs header if new file.
+'   - Appends session outcome to file using AppendToFile.
+'   - Outputs session ID to immediate window.
+' Notes:
+'   - External dependency: AppendToFile routine must exist.
+'============================================================
 Private Sub RunTotalTimeTestSession(testOutcome As String)
     Dim SessionID As String
     SessionID = GenerateSessionID()
@@ -685,6 +718,13 @@ PROC_ERR:
     
 End Function
 
+'=========================================================================
+' Routine : Fixed14Str
+' Purpose : Pads the input string to a fixed width of 14 characters.
+' Input   : MyResult - String to be padded.
+' Output  : String of exactly 14 characters, right-padded with spaces.
+' Notes   : Useful for column-aligned output or diagnostics.
+'=========================================================================
 Private Function Fixed14Str(MyResult As String) As String
     Const fixedWidth = 14
     Fixed14Str = Left(MyResult & String(fixedWidth, " "), fixedWidth)
@@ -981,7 +1021,7 @@ PROC_ERR:
 
 End Function
 
-'-------------------------------------------------------------
+'=========================================================================
 ' Function: SummarizeHeaderFooterAuditToFile
 '
 ' Purpose:
@@ -1011,7 +1051,7 @@ End Function
 '
 ' Visibility:
 '   Exported in diagnostics mode; safe for GitHub.io surfacing
-'-------------------------------------------------------------
+'=========================================================================
 Private Function SummarizeHeaderFooterAuditToFile()
     Dim sec As section, hf As HeaderFooter, p As paragraph
     Dim paraText As String, paraStyle As String
@@ -1163,7 +1203,7 @@ End Function
 
 '==============================================================
 ' CountAuditStyles_ToFile
-' --------------------------------------------------------------
+' -------------------------------------------------------------
 ' Purpose : Audits paragraph style usage across all story ranges
 '           in the active Word document and outputs a frequency
 '           distribution report to an external ASCII text file.
