@@ -45,7 +45,7 @@ Private Sub ImportVBAFile(myCodeFile As String)
     ' fullPath = "C:\path\to\your\exported\file.bas" ' Change this to the actual path of your .bas or .cls file
     fullPath = myCodeFile
     ' Get the file name using VBA built-in functions
-    fileName = Mid(fullPath, InStrRev(fullPath, "\") + 1)
+    fileName = mid(fullPath, InStrRev(fullPath, "\") + 1)
     ' Remove the extension
     vbCompName = Left(fileName, InStrRev(fileName, ".") - 1)
     

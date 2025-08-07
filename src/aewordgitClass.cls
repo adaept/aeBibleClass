@@ -248,7 +248,7 @@ Private Function FolderWithVBAProjectFiles() As String
     ' Get the full path of the active document
     fullPath = ActiveDocument.Path
     ' Extract the directory name from the full path
-    directoryName = Mid(fullPath, InStrRev(fullPath, "\") + 1)
+    directoryName = mid(fullPath, InStrRev(fullPath, "\") + 1)
 
     If aewordgitSourceFolder = "default" And directoryName = "aewordgit" Then
         FolderWithVBAProjectFiles = aewordgitType.SourceFolder

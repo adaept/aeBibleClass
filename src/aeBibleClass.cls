@@ -1764,11 +1764,11 @@ Private Function CountManualLineBreaksAndWithSpace(Optional space As Variant) As
     For Each fn In ActiveDocument.Footnotes
         content = fn.range.text
         For i = 1 To Len(content)
-            currentChar = Mid(content, i, 1)
+            currentChar = mid(content, i, 1)
             If Asc(currentChar) = 11 Then ' Chr(11) = manual line break
                 totalBreaks = totalBreaks + 1
                 If i > 1 Then
-                    prevChar = Mid(content, i - 1, 1)
+                    prevChar = mid(content, i - 1, 1)
                     If prevChar = " " Then
                         breaksWithSpaceBefore = breaksWithSpaceBefore + 1
                     ElseIf prevChar <> " " Then

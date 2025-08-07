@@ -176,12 +176,12 @@ Public Sub PrintBibleBookHeadingsVerseNumbers()
             'Debug.Print "> Paragraph is empty. Hex value: " & hexValue
         ElseIf Len(paraText) < 3 Then
             Debug.Print "> Len(paraText) = " & Len(paraText)
-            char = Mid(paraText, 1, 1)
+            char = mid(paraText, 1, 1)
             asciiValue = Asc(char)
             hexValue = Hex(asciiValue)
             Debug.Print "1> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue
             If Len(paraText) = 2 Then
-                char = Mid(paraText, 2, 1)
+                char = mid(paraText, 2, 1)
                 asciiValue = Asc(char)
                 hexValue = Hex(asciiValue)
                 Debug.Print "2> Character: " & char & " ASCII value: " & asciiValue & " Hex value: " & hexValue

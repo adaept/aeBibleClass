@@ -75,6 +75,50 @@ Function adaeptMsg() As String
     adaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
 
+Function GetParaIndexSafe(rng As range) As Long
+' Search Isa 23:42 (intentional false verse number) scanned nearly 9,000 paragraphs in under a quarter second,
+' with full interruptibility and no layout lock
+    Dim r As range
+    Set r = ActiveDocument.range(0, 0)
+
+    Dim idx As Long: idx = 1
+    Dim tickStart As Single: tickStart = Timer
+    Dim tickNow As Single
+
+    Do While r.Start < rng.Start
+        Set r = r.Next(Unit:=wdParagraph)
+        idx = idx + 1
+
+        If idx Mod 500 = 0 Then
+            tickNow = Timer
+            'Debug.Print "Step " & idx & " ? Range.Start=" & r.Start & " | Elapsed=" & Format(tickNow - tickStart, "0.00") & "s"
+            If tickNow - tickStart > 5 Then
+                Debug.Print "> Timeout: Paragraph scan exceeded 5 seconds. Breaking out."
+                GetParaIndexSafe = -2
+                Exit Function
+            End If
+        End If
+    Loop
+
+    If r.Start = rng.Start Then
+        'Debug.Print ">> Found match at paragraph #" & idx
+        GetParaIndexSafe = idx
+    Else
+        'Debug.Print ">>> No exact match. Closest index: " & idx
+        GetParaIndexSafe = -1
+    End If
+End Function
+
+Function StyleTypeLabel(st As WdStyleType) As String
+    Select Case st
+        Case wdStyleTypeParagraph: StyleTypeLabel = "Paragraph"
+        Case wdStyleTypeCharacter: StyleTypeLabel = "Character"
+        Case wdStyleTypeTable:     StyleTypeLabel = "Table"
+        Case wdStyleTypeList:      StyleTypeLabel = "List"
+        Case Else:                 StyleTypeLabel = "Unknown"
+    End Select
+End Function
+
 Sub GoToVerseSBL()
     On Error GoTo ErrHandler
     Application.StatusBar = "Searching for verse..."
@@ -83,7 +127,10 @@ Sub GoToVerseSBL()
     userInput = InputBox("Enter verse (e.g. 1 Sam 1:1):", "Go to Verse (SBL Format)")
     userInput = UCase(userInput)
     If Trim(userInput) = "" Then Exit Sub
-    
+
+    Dim tickStartSBL As Single: tickStartSBL = Timer
+    Dim tickNowSBL As Single
+
     Dim bookAbbr As String, chapNum As String, verseNum As String
     Dim parts() As String, subParts() As String
     
@@ -165,28 +212,78 @@ Chapter:
     ' Find the Heading 2 for the chapter or psalm
     Dim theChapter As String
     Dim chapFound As Boolean
+
     For Each para In ActiveDocument.paragraphs
-        'Debug.Print para.range.Start, Selection.range.Start
         If para.range.Start < Selection.range.Start Then GoTo SkipChapter
+
         If para.style = "Heading 2" Then
-            Select Case theBook     ' Books of only one chapter
-                Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
-                    verseNum = chapNum
-                    chapNum = 1
-                    chapFound = True
-                    'MsgBox "The name " & theBook & " is in the list!", vbInformation
-                Case Else
-                    'MsgBox "The name is NOT in the list!", vbExclamation
+            Select Case theBook  ' Books of only one chapter
+            Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
+                verseNum = chapNum
+                chapNum = 1
+                chapFound = True
+            Case Else
+                ' Multi-chapter books—continue
             End Select
+
             If Trim(para.range.text) Like "*Chapter " & chapNum & "*" _
                     Or Trim(para.range.text) Like "*Psalm " & chapNum & "*" Then
+
                 para.range.Select
+
+                Dim idx As Long
+                idx = GetParaIndexSafe(para.range)
+
+                Select Case idx
+                Case Is >= 1
+                    'Debug.Print "Jumped to paragraph #" & idx
+                Case -1
+                    'Debug.Print "Paragraph not found."
+                Case -2
+                    'Debug.Print "Scan timed out—possible layout stall."
+                End Select
+                
+                Dim styleName As String
+                styleName = Trim(para.style.NameLocal)
+                Dim s As style
+
+                styleName = para.style ' This is a Variant containing the name
+                Set s = ActiveDocument.Styles(styleName)
+
+                'Debug.Print "Style: " & s.NameLocal & _
+                    " | Type=" & StyleTypeLabel(s.Type) & _
+                    " | OutlineLevel=" & s.ParagraphFormat.OutlineLevel & _
+                    " | Content=" & Trim(Replace(para.range.text, vbCr, ""))
+
+                Dim suffixChar As String
+                Dim suffixCode As Integer
+                suffixChar = Right(Trim(para.range.text), 1)
+
+                If Len(suffixChar) = 1 Then
+                    suffixCode = Asc(suffixChar)
+    
+                    Select Case suffixCode
+                    Case 0 To 31, 127
+                        'Debug.Print "Suffix: [ASCII " & suffixCode & "]"
+                    Case Else
+                        'Debug.Print "Suffix: '" & suffixChar & "' [ASCII " & suffixCode & "]"
+                    End Select
+                Else
+                    'Debug.Print "Suffix: [None]"
+                End If
+
                 chapFound = True
+                Dim chapterIdx As Long
+                chapterIdx = idx
+                'Debug.Print "chapterIdx = " & idx
+
+                'Stop
                 Exit For
             End If
         End If
 SkipChapter:
     Next para
+
     If Not chapFound Then
         Application.ScreenUpdating = True   ' Restore normal UI
         SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
@@ -194,55 +291,69 @@ SkipChapter:
         Exit Sub
     End If
 
-    ' Limit search range to current chapter
-    Dim chapStart As Long, chapEnd As Long
-    chapStart = Selection.range.Start
-    chapEnd = ActiveDocument.content.End
-    For Each para In ActiveDocument.paragraphs
-        If para.range.Start > chapStart And para.style = "Heading 2" Then
-            chapEnd = para.range.Start
+    Dim p As paragraph
+    Dim v As Long
+    Dim targetVerse As String: targetVerse = verseNum
+    Dim charStyleName As String: charStyleName = "Verse marker"
+    Dim tickStart As Single: tickStart = Timer
+    Dim tickLimit As Single: tickLimit = tickStart + 5
+    Dim maxScan As Long: maxScan = 5000
+    Dim found As Boolean
+    Dim normalized As String
+
+    Debug.Print "Starting verse marker scan from paragraph #" & idx
+
+    For v = idx + 1 To idx + maxScan
+        If Timer > tickLimit Then
+            Debug.Print "Timeout: Scan exceeded 5 seconds. Aborting."
             Exit For
         End If
-    Next para
 
-    ' Search for verse number within "Verse marker" style
-    Dim r As range
-    Dim charCount As Long, found As Boolean
-    charCount = chapStart
-    Do While charCount < chapEnd
-        Set r = ActiveDocument.range(charCount, charCount + 1)
-        If r.Characters(1).style = "Verse marker" Then
-            Dim verseStr As String, j As Long
-            verseStr = ""
-            For j = 0 To 2 ' Check up to 3 digits
-                If charCount + j >= chapEnd Then Exit For
-                If IsNumeric(ActiveDocument.range(charCount + j, charCount + j + 1).text) Then
-                    verseStr = verseStr & ActiveDocument.range(charCount + j, charCount + j + 1).text
-                Else
+        Set p = ActiveDocument.paragraphs(v)
+        Dim styleNameH2 As String: styleNameH2 = Trim(p.style.NameLocal)
+
+        If InStr(styleNameH2, "Heading 2") > 0 Then
+            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')"
+            MsgBox "No verse " & verseNum & " found in Chapter " & chapNum, vbCritical
+            Exit For
+        End If
+
+        Dim rng As range: Set rng = p.range.Duplicate
+        With rng.Find
+            .ClearFormatting
+            .style = charStyleName
+            .text = ""
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            Do While .Execute
+                normalized = Replace(rng.text, ChrW(8239), "")
+                If normalized = targetVerse Then
+                    Debug.Print "Found verse '" & targetVerse & "' at paragraph #" & v
+                    rng.Select
+                    found = True
                     Exit For
                 End If
-            Next j
-            If verseStr = verseNum Then
-                ActiveDocument.range(charCount, charCount + Len(verseStr)).Select
-                found = True
-                Exit Do
-            End If
-        End If
-        charCount = charCount + 1
-        If charCount Mod 1000 = 0 Then DoEvents
-    Loop
-    If Not found Then
-        MsgBox "Verse not found: " & verseNum, vbExclamation
-    End If
+                rng.Start = rng.End ' Move to next match
+                rng.End = p.range.End
+            Loop
+        End With
+
+        If found Then Exit For
+    Next v
+    Debug.Print "Scan complete. Elapsed time: " & Format(Timer - tickStart, "0.00") & " seconds."
 
 Cleanup:
+    tickNowSBL = Timer
+    Debug.Print "GoToVerseSBL complete. Elapsed time: " & Format(tickNowSBL - tickStartSBL, "0.00") & " seconds."
+
     Application.ScreenUpdating = True   ' Restore normal UI
     SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
     Application.StatusBar = False
     Exit Sub
 
 ErrHandler:
-    MsgBox "Error during verse search: " & Err.Description, vbCritical
+    MsgBox "Erl = " & Erl & " Error during verse search: " & Err.Description, vbCritical
     Resume Cleanup
 End Sub
 

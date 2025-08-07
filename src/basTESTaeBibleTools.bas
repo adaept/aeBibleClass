@@ -210,7 +210,7 @@ Sub ListAndCountFontColors()
     For Each colorKey In colorDict.Keys
         colorCount = colorDict(colorKey)
         r = CLng("&H" & Left(colorKey, 2))
-        g = CLng("&H" & Mid(colorKey, 3, 2))
+        g = CLng("&H" & mid(colorKey, 3, 2))
         b = CLng("&H" & Right(colorKey, 2))
         
         Debug.Print "Color: RGB(" & r & ", " & g & ", " & b & ") - Hex: #" & colorKey & " - Count: " & colorCount & " - " & GetColorNameFromHex("#" & colorKey)
@@ -1199,7 +1199,7 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
                 For i = 1 To limit
                     Dim ch As String
                     Dim ascVal As Integer
-                    ch = Mid(markerText, i, 1)
+                    ch = mid(markerText, i, 1)
                     ascVal = Asc(ch)
                     Debug.Print "    Char " & i & ": '" & Replace(ch, vbCr, "[CR]") & "' | ASCII=" & ascVal & " | Hex=" & Hex(ascVal)
                 Next i
@@ -1537,7 +1537,7 @@ Sub ValidateTaskInChangelogModule()
     ' Extract #NNN tag from line
     Dim tag As String, w
     For Each w In Split(lineText, " ")
-        If Left(w, 1) = "#" And IsNumeric(Mid(w, 2)) Then tag = w: Exit For
+        If Left(w, 1) = "#" And IsNumeric(mid(w, 2)) Then tag = w: Exit For
     Next
 
     If tag = "" Then Debug.Print "[FAIL] No #NNN task tag found at line " & lineNum: Exit Sub

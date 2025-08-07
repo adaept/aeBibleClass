@@ -7,8 +7,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
-' #320 -
-' #319 -
+' #325 -
+' #324 -
+' #323 -
+' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
 ' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
@@ -27,7 +29,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #206 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
-' #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
 ' #191 - Add test to verify all correct Verse Marker per book [test]
 ' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
 ' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
@@ -68,6 +69,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
+    ' FIXED - #321 - Update GoToVerseSBL to use GetParaIndexSafe and speed up verse search [impr]
+    ' [obso] #320 - Add code to FindVerseFromLogicalPage [impr]
+    ' [obso] #319 - Return logical page number when searching for a chapter [impr]
     ' FIXED - #318 - Add code to skip test 51. It is slow. Run again near book completion.
     ' FIXED - #317 - Use SSOT so GetPassFail is called only once per test, and results are stored in GetPassFailArray [impr]
     ' FIXED - #316 - Uses SSOT in GetPassFail to remove code duplication [impr]
