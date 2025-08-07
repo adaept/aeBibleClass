@@ -11,6 +11,8 @@ Private SectionsOddPageBreaks As Integer
 Private SectionsEvenPageBreaks As Integer
 Private SectionsContinuousBreaks As Integer
 Private SectionsNewPageBreaks As Integer
+' Module-level buffer
+Dim HeadingBuffer As Object ' Late-bound Dictionary
 
 Sub ListCustomXMLParts()
     Dim xmlPart As customXMLPart
@@ -1848,4 +1850,108 @@ Function IsEnumType(lineText As String, knownEnums As Variant) As Boolean
     IsEnumType = False
 End Function
 
+'====================================================================
+' BuildHeadingIndexToCSV
+' Scans document for Heading 1 and Heading 2 styles and writes index
+' to a CSV-compatible text file with cleaned paragraph text.
+' Author: Peter | Date: 20250807
+'====================================================================
+Sub BuildHeadingIndexToCSV()
+    Dim para As paragraph
+    Dim paraIndex As Long
+    Dim headingLevel As String
+    Dim csvPath As String
+    Dim fileNum As Integer
+    
+    'csvPath = Environ("USERPROFILE") & "\Desktop\HeadingIndex.csv"
+    csvPath = "C:\adaept\aeBibleClass\rpt\HeadingIndex.txt"
+    fileNum = FreeFile
+    
+    Open csvPath For Output As #fileNum
+    Print #fileNum, "Index,Style,Text"
+
+    Dim cleanText As String
+    paraIndex = 1
+    For Each para In ActiveDocument.paragraphs
+        
+        headingLevel = para.style
+        
+        If headingLevel = "Heading 1" Or headingLevel = "Heading 2" Then
+            cleanText = Trim(Replace(para.range.text, vbCr, ""))
+            cleanText = Trim(Replace(cleanText, vbLf, ""))
+            cleanText = Replace(cleanText, """", "'") ' Escape quotes for CSV
+            Print #fileNum, paraIndex & "," & headingLevel & ",""" & cleanText & """"
+        End If
+        
+        paraIndex = paraIndex + 1
+    Next para
+    
+    Close #fileNum
+    MsgBox "Heading index written to CSV: " & csvPath
+End Sub
+
+'====================================================================
+' LoadHeadingIndexFromCSV
+' Loads previously saved heading index into memory buffer (Dictionary)
+' for fast lookup and navigation.
+' Author: Peter | Date: 20250807
+'====================================================================
+Sub LoadHeadingIndexFromCSV()
+    Dim csvPath As String
+    Dim fileNum As Integer
+    Dim line As String
+    Dim parts() As String
+    
+    Set HeadingBuffer = CreateObject("Scripting.Dictionary")
+    'csvPath = Environ("USERPROFILE") & "\Desktop\HeadingIndex.csv"
+    csvPath = "C:\adaept\aeBibleClass\rpt\HeadingIndex.txt"
+    
+    If Dir(csvPath) = "" Then
+        MsgBox "CSV file not found: " & csvPath
+        Exit Sub
+    End If
+    
+    fileNum = FreeFile
+    Open csvPath For Input As #fileNum
+    Line Input #fileNum, line ' Skip header
+    
+    Do While Not EOF(fileNum)
+        Line Input #fileNum, line
+        parts = Split(line, ",")
+        If UBound(parts) >= 2 Then
+            HeadingBuffer(parts(0)) = parts(2)
+        End If
+    Loop
+    
+    Close #fileNum
+    MsgBox "Heading index loaded into memory. " & HeadingBuffer.count & " entries."
+End Sub
+
+'====================================================================
+' GoToHeadingByIndex
+' Prompts user for paragraph index and navigates to that location.
+' Requires HeadingBuffer to be loaded.
+' Author: Peter | Date: 20250807
+'====================================================================
+Sub GoToHeadingByIndex()
+    Dim targetIndex As String
+    Dim paraIndex As Long
+    
+    If HeadingBuffer Is Nothing Then
+        MsgBox "Heading buffer not loaded. Run LoadHeadingIndexFromCSV first."
+        Exit Sub
+    End If
+    
+    targetIndex = InputBox("Enter the paragraph index to jump to:")
+    If IsNumeric(targetIndex) Then
+        paraIndex = CLng(targetIndex)
+        If paraIndex > 0 And paraIndex <= ActiveDocument.paragraphs.count Then
+            ActiveDocument.paragraphs(paraIndex).range.Select
+        Else
+            MsgBox "Invalid index. Must be between 1 and " & ActiveDocument.paragraphs.count
+        End If
+    Else
+        MsgBox "Please enter a numeric value."
+    End If
+End Sub
 

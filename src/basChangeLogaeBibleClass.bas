@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
-' #325 -
-' #324 -
-' #323 -
+' #330 -
+' #329 -
+' #328 -
+' #327 -
+' #326 -
+' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
@@ -69,6 +72,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #323 - See #322 - Create index file for H1 and H2 as csv text for speedy lookup [feat] [perf]
+    ' FIXED - #325 - Add md for Efficient Book-Chapter Navigation with Pre-Indexed Lookup Table [doc]
     ' FIXED - #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
     ' FIXED - #321 - Update GoToVerseSBL to use GetParaIndexSafe and speed up verse search [impr]
     ' [obso] #320 - Add code to FindVerseFromLogicalPage [impr]
