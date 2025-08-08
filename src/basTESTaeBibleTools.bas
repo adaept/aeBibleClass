@@ -1224,7 +1224,7 @@ End Sub
 
 Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     Const ForecastFile As String = "RepairRunnerForecast.txt"
-    Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
+    Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
     Dim filePath As String: filePath = ThisDocument.Path & "\" & ForecastFile
 
     Dim fs As Object, ts As Object
@@ -1272,7 +1272,7 @@ Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     End If
 
     Dim resultRow As String
-    resultRow = SessionID & "," & StartPageNum & ","
+    resultRow = sessionID & "," & StartPageNum & ","
     For i = 1 To 10: resultRow = resultRow & timeStamps(i) & ",": Next i
     resultRow = resultRow & totalTime & "," & forecastTime & ","
     For i = 1 To 10: resultRow = resultRow & spaceRepairs(i) & ",": Next i
@@ -1287,7 +1287,7 @@ End Sub
 
 Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
     Const ForecastFile As String = "RepairRunnerForecast.txt"
-    Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
+    Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
     Dim filePath As String: filePath = ThisDocument.Path & "\" & ForecastFile
 
     Dim fs As Object, ts As Object
@@ -1309,7 +1309,7 @@ Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
     tElapsed = Round(Timer - tStart, 2)
 
     Dim resultRow As String
-    resultRow = SessionID & "," & pgNum & "," & tElapsed & "," & spaceCount & "," & breakCount
+    resultRow = sessionID & "," & pgNum & "," & tElapsed & "," & spaceCount & "," & breakCount
     Debug.Print resultRow
     ts.WriteLine resultRow
     ts.Close
@@ -1330,7 +1330,7 @@ End Sub
 
 Sub StartRepairTimingSession(StartPageNum As Long)
     Const ForecastFile As String = "RepairRunnerForecast.txt"
-    Dim SessionID As String: SessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
+    Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
 
     Dim fs As Object, ts As Object
     Set fs = CreateObject("Scripting.FileSystemObject")
@@ -1365,7 +1365,7 @@ Sub StartRepairTimingSession(StartPageNum As Long)
 
     ' Compile debug string
     Dim resultRow As String
-    resultRow = SessionID & "," & StartPageNum & ","
+    resultRow = sessionID & "," & StartPageNum & ","
     For i = 1 To 10: resultRow = resultRow & timeStamps(i) & ",": Next i
     resultRow = resultRow & totalTime & "," & forecastTime
 

@@ -357,8 +357,8 @@ End Function
 '   - External dependency: AppendToFile routine must exist.
 '============================================================
 Private Sub RunTotalTimeTestSession(testOutcome As String)
-    Dim SessionID As String
-    SessionID = GenerateSessionID()
+    Dim sessionID As String
+    sessionID = GenerateSessionID()
 
     Dim folderPath As String
     folderPath = ActiveDocument.Path & "\rpt"
@@ -380,10 +380,10 @@ Private Sub RunTotalTimeTestSession(testOutcome As String)
     End If
     Close #fileNum
 
-    Call AppendToFile("TotalTimeReport.txt", SessionID & ", " & testOutcome)
+    Call AppendToFile("TotalTimeReport.txt", sessionID & ", " & testOutcome)
     
     'MsgBox "Test complete. Session ID: " & sessionID, vbInformation
-    Debug.Print "RunTotalTimeTestSession complete. Session ID: " & SessionID
+    Debug.Print "RunTotalTimeTestSession complete. Session ID: " & sessionID
 End Sub
 
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean

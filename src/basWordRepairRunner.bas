@@ -7,23 +7,37 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     Dim totalFixes As Long, pgFixCount As Long
-    Dim logBuffer As String
-    Dim numPages As Long
-    numPages = 0
+    Dim numPages As Long: numPages = 0 ' Adjust if scanning more than one page
 
-    logBuffer = "=== Multi-Page Repair Runner from Page " & startPage & " ===" & vbCrLf
+    Dim sessionID As String
+    sessionID = Format(Now, "yyyyMMdd_HHmmss")
 
+    Dim logPath As String
+    'logPath = Environ("USERPROFILE") & "\Documents\RepairLog.csv"
+    logPath = "C:\adaept\aeBibleClass\rpt\RepairLog.txt"
+
+    Dim logFile As Integer
+    logFile = FreeFile
+
+    ' Create file with header if it doesn't exist
+    If Dir(logPath) = "" Then
+        Open logPath For Output As #logFile
+        Print #logFile, "SessionID,PageNum,Repairs"
+        Close #logFile
+    End If
+
+    ' Append results
+    Open logPath For Append As #logFile
     Dim p As Long
     For p = startPage To startPage + numPages
         pgFixCount = 0
         RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage p, pgFixCount
-        logBuffer = logBuffer & "Page " & p & ": " & pgFixCount & " repair(s)" & vbCrLf
+        Print #logFile, sessionID & "," & p & "," & pgFixCount
         totalFixes = totalFixes + pgFixCount
     Next p
+    Close #logFile
 
-    logBuffer = logBuffer & "=== Total repairs across " & numPages + 1 & " pages: " & totalFixes & " ==="
-    Debug.Print logBuffer
-    MsgBox "Multi-page repair complete. See Immediate Window for breakdown.", vbInformation
+    'MsgBox "Repair complete. CSV log updated at:" & vbCrLf & logPath, vbInformation
     Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
 End Sub
 
@@ -151,10 +165,10 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                             ' Column edge logic
                             If digitX < 50 Then
                                 prefixCh.text = vbCr
-                                logBuffer = logBuffer & "? Repaired prefix before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | Break inserted | Next words:  " & Trim(nextWords) & " " & vbCrLf
+                                logBuffer = logBuffer & "> Repaired prefix before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | Break inserted | Next words:  " & Trim(nextWords) & " " & vbCrLf
                             Else
                                 prefixCh.text = ""
-                                logBuffer = logBuffer & "? Removed space before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | No break | Next words:  " & Trim(nextWords) & " " & vbCrLf
+                                logBuffer = logBuffer & "> Removed space before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | No break | Next words:  " & Trim(nextWords) & " " & vbCrLf
                             End If
 
                             fixCount = fixCount + 1
