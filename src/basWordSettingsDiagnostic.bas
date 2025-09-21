@@ -176,3 +176,111 @@ Sub SaveReportToFile(reportText As String, fileName As String)
     Print #fileNum, reportText
     Close #fileNum
 End Sub
+
+Sub ShowAllStyles()
+    Dim s As style
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
+            Debug.Print "STYLE: " & s.NameLocal & _
+                        " | InUse: " & s.InUse & _
+                        " | QuickStyle: " & s.QuickStyle
+        End If
+    Next s
+End Sub
+
+Sub ShowMyStyles()
+    Dim s As style
+    Dim msg As String
+    Dim styleCount As Integer
+
+    msg = "Styles actively applied in body, headers, and footers:" & vbCrLf & vbCrLf
+    styleCount = 0
+
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
+            If StyleIsAppliedAnywhere(s.NameLocal) Then
+                styleCount = styleCount + 1
+                msg = msg & s.NameLocal & vbTab & _
+                      "QuickStyle=" & s.QuickStyle & vbCrLf
+
+                Debug.Print "STYLE: " & s.NameLocal & _
+                            " | QuickStyle=" & s.QuickStyle
+            End If
+        End If
+    Next s
+
+    If styleCount = 0 Then
+        msg = "No styles matched usage in body or header/footer ranges."
+        Debug.Print "INFO: No styles matched extended usage criteria."
+    End If
+
+    MsgBox msg, vbInformation, "Extended Style Audit"
+End Sub
+
+Function StyleIsAppliedAnywhere(sName As String) As Boolean
+    Dim p As paragraph
+    Dim sec As section
+
+    On Error Resume Next
+
+    ' Body paragraphs
+    For Each p In ActiveDocument.paragraphs
+        If p.style = sName Then
+            StyleIsAppliedAnywhere = True
+            Exit Function
+        End If
+    Next p
+
+    ' Headers and footers
+    For Each sec In ActiveDocument.Sections
+        Dim hdrFtr As HeaderFooter
+        For Each hdrFtr In sec.Headers
+            For Each p In hdrFtr.range.paragraphs
+                If p.style = sName Then
+                    StyleIsAppliedAnywhere = True
+                    Exit Function
+                End If
+            Next p
+        Next hdrFtr
+        For Each hdrFtr In sec.Footers
+            For Each p In hdrFtr.range.paragraphs
+                If p.style = sName Then
+                    StyleIsAppliedAnywhere = True
+                    Exit Function
+                End If
+            Next p
+        Next hdrFtr
+    Next sec
+
+    On Error GoTo 0
+End Function
+
+Function StyleIsApplied(sName As String) As Boolean
+    Dim p As paragraph
+    On Error Resume Next
+    For Each p In ActiveDocument.paragraphs
+        If p.style = sName Then
+            StyleIsApplied = True
+            Exit Function
+        End If
+    Next p
+    On Error GoTo 0
+End Function
+
+Sub HideUnusedStyles()
+    Dim s As style
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
+            If Not s.InUse Then
+                On Error Resume Next
+                s.QuickStyle = False ' Hide from Ribbon gallery only
+                On Error GoTo 0
+            End If
+        End If
+    Next s
+    MsgBox "Quick Style Gallery cleaned. Pane visibility cannot be modified via VBA.", vbInformation
+End Sub
+
+
+
+
