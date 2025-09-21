@@ -13,7 +13,6 @@ Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     sessionID = Format(Now, "yyyyMMdd_HHmmss")
 
     Dim logPath As String
-    'logPath = Environ("USERPROFILE") & "\Documents\RepairLog.csv"
     logPath = "C:\adaept\aeBibleClass\rpt\RepairLog.txt"
 
     Dim logFile As Integer
@@ -146,6 +145,8 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                     prefixTxt = prefixCh.text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
+                    Debug.Print chapterMarker & ":" & verseDigits, prefixAsc    ', combinedNumber
+
                     prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
 
                     If (prefixAsc = 32 Or prefixAsc = 160) And prefixStyle = "Normal" Then
@@ -174,6 +175,10 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                             fixCount = fixCount + 1
                         End If
                     End If
+                'End If
+                ElseIf markerStart = pageStart Then
+                    logBuffer = logBuffer & "> Marker '" & combinedNumber & "' is at the very start of page " & pageNum & vbCrLf
+                    Debug.Print chapterMarker & ":" & verseDigits, "SoP"    ', combinedNumber
                 End If
 
                 i = verseEnd
