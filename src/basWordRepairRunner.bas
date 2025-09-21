@@ -69,6 +69,11 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
 
     Dim i As Long
     i = pageStart
+    Dim headerText As String
+    headerText = GetPageHeaderText(pageNum)
+    'Debug.Print "Page " & pageNum & " header: " & headerText
+    logBuffer = logBuffer & "Header for page " & pageNum & ": " & headerText & vbCrLf
+    
     Do While i < pageEnd
         Set ch = ActiveDocument.range(i, i + 1)
         If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
@@ -145,7 +150,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                     prefixTxt = prefixCh.text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
-                    Debug.Print chapterMarker & ":" & verseDigits, prefixAsc    ', combinedNumber
+                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits, prefixAsc    ', combinedNumber
 
                     prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
 
@@ -177,8 +182,8 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                     End If
                 'End If
                 ElseIf markerStart = pageStart Then
-                    logBuffer = logBuffer & "> Marker '" & combinedNumber & "' is at the very start of page " & pageNum & vbCrLf
-                    Debug.Print chapterMarker & ":" & verseDigits, "SoP"    ', combinedNumber
+                    logBuffer = logBuffer & "Marker '" & combinedNumber & "' is at the very start of page " & pageNum & vbCrLf
+                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits, "SoP"    ', combinedNumber
                 End If
 
                 i = verseEnd
@@ -199,4 +204,29 @@ SkipLogging:
     fixCount = fixCount
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
 End Sub
+
+Function GetPageHeaderText(pgNum As Long) As String
+    Dim rng As range
+    Dim sec As section
+    Dim hdr As HeaderFooter
+    
+    ' Get range for the page
+    Set rng = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pgNum))
+    Set sec = rng.Sections(1)   ' Page belongs to exactly one Section
+    
+    ' Default to primary header
+    Set hdr = sec.Headers(wdHeaderFooterPrimary)
+    
+    ' If primary is empty, check for first-page or even-page headers
+    'If Len(hdr.range.text) = 0 Then
+    '    If sec.Headers(wdHeaderFooterFirstPage).Exists Then
+    '        Set hdr = sec.Headers(wdHeaderFooterFirstPage)
+    '    ElseIf sec.Headers(wdHeaderFooterEvenPages).Exists Then
+    '        Set hdr = sec.Headers(wdHeaderFooterEvenPages)
+    '    End If
+    'End If
+    
+    ' Clean up the header text (Word stores an end-of-cell marker)
+    GetPageHeaderText = Trim(Replace(hdr.range.text, Chr(13), " "))
+End Function
 
