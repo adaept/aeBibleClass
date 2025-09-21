@@ -21,7 +21,7 @@ Sub ViewCodeDetails()
 
     ' Loop through each character in the selected text
     For i = 1 To Len(selectedText)
-        msg = msg & "Character " & i & ": " & Mid(selectedText, i, 1) & " (ASCII: " & Asc(Mid(selectedText, i, 1)) & ")" & vbCrLf
+        msg = msg & "Character " & i & ": " & mid(selectedText, i, 1) & " (ASCII: " & Asc(mid(selectedText, i, 1)) & ")" & vbCrLf
     Next i
 
     ' Display the code details in a message box
@@ -442,9 +442,9 @@ Function HexToRGB(hexColor As String) As Long
     hexColor = Replace(hexColor, "#", "")
     
     ' Convert hex to RGB components
-    r = CLng("&H" & Mid(hexColor, 1, 2))
-    g = CLng("&H" & Mid(hexColor, 3, 2))
-    b = CLng("&H" & Mid(hexColor, 5, 2))
+    r = CLng("&H" & mid(hexColor, 1, 2))
+    g = CLng("&H" & mid(hexColor, 3, 2))
+    b = CLng("&H" & mid(hexColor, 5, 2))
     
     ' Combine RGB components into a single Long value
     HexToRGB = RGB(r, g, b)
@@ -1035,56 +1035,6 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
 
     Debug.Print logBuffer
     MsgBox "Full font audit complete. See Immediate Window.", vbInformation
-End Sub
-
-Public Sub xxxRunTestCase(ByVal intTestIndex As Integer)
-    Dim dblStart As Double, dblEnd As Double
-    Dim varActualResult As Variant, varExpectedResult As Variant
-    Dim varOutcome As String, varRuntime As Double
-    'Dim objTest As aeTestResult
-    'Set objTest = New aeTestResult
-
-    Select Case intTestIndex
-        Case 9
-            Debug.Print "Running Test 9: CountPeriodSpaceLeftParenthesis"
-            dblStart = Timer
-
-            'varActualResult = CountPeriodSpaceLeftParenthesis()
-            varExpectedResult = 7
-            varOutcome = IIf(varActualResult = varExpectedResult, "PASS", "FAIL")
-
-            dblEnd = Timer
-            varRuntime = Round(dblEnd - dblStart, 2)
-
-            Debug.Print varOutcome, vbTab, "Copy ()", vbTab, _
-                        "Test = 9", vbTab, varActualResult, vbTab, _
-                        varExpectedResult, vbTab, "CountPeriodSpaceLeftParenthesis"
-            Debug.Print "Routine Runtime:", Format(varRuntime, "0.00"), "seconds"
-
-            'With objTest
-            '    .Index = 9
-            '    .FunctionName = "CountPeriodSpaceLeftParenthesis"
-            '    .ActualResult = varActualResult
-            '    .ExpectedResult = varExpectedResult
-            '    .Outcome = varOutcome
-            '    .RoutineRuntimeSeconds = varRuntime
-            'End With
-
-        Case 10 To 12 ' Dummy scaffolds—extend when needed
-            'objTest.Index = intTestIndex
-            'objTest.FunctionName = "Function_" & intTestIndex
-            'objTest.ExpectedResult = 0
-            'objTest.ActualResult = 0
-            'objTest.Outcome = "PASS"
-            'objTest.RoutineRuntimeSeconds = 0.25 ' Stub time
-            'Debug.Print "Test", intTestIndex, "executed (dummy scaffold)"
-
-        Case Else
-            Debug.Print "Test index not recognized:", intTestIndex
-    End Select
-
-    ' Optionally save objTest to an array or export structure here
-
 End Sub
 
 
