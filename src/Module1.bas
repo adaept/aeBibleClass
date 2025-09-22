@@ -380,7 +380,7 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
     newColor = RGB(newR, newG, newB)
     
     ' Loop through each word in the document
-    For Each rng In ActiveDocument.Words
+    For Each rng In ActiveDocument.words
         ' Extract the RGB values of the current font color
         r = (rng.font.color And &HFF)
         g = (rng.font.color \ &H100 And &HFF)
@@ -929,7 +929,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
 
     ' Check footnote numbers inside footnote text
     For Each fn In doc.Footnotes
-        Set ref = fn.range.paragraphs(1).range.Words(1)
+        Set ref = fn.range.paragraphs(1).range.words(1)
         totalChecked = totalChecked + 1
 
         If Not IsFootnoteRefFormattedCorrectly(ref) Then

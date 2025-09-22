@@ -5,7 +5,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
+Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     Dim totalFixes As Long, pgFixCount As Long
     Dim numPages As Long: numPages = 0 ' Adjust if scanning more than one page
 
@@ -40,7 +40,7 @@ Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
 End Sub
 
-Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
+Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
@@ -159,7 +159,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                             nextWords = ""
                             Set lookAhead = ActiveDocument.range(verseEnd, verseEnd + 80)
                             wCount = 0
-                            For Each token In lookAhead.Words
+                            For Each token In lookAhead.words
                                 If token.text Like "*^13*" Then Exit For
                                 If Trim(token.text) <> "" Then
                                     nextWords = nextWords & Trim(token.text) & " "
@@ -205,7 +205,7 @@ SkipLogging:
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
 End Sub
 
-Function GetPageHeaderText(pgNum As Long) As String
+Public Function GetPageHeaderText(pgNum As Long) As String
     Dim rng As range
     Dim sec As section
     Dim hdr As HeaderFooter
@@ -227,6 +227,24 @@ Function GetPageHeaderText(pgNum As Long) As String
     'End If
     
     ' Clean up the header text (Word stores an end-of-cell marker)
-    GetPageHeaderText = Trim(Replace(hdr.range.text, Chr(13), " "))
+    GetPageHeaderText = TitleCase(Trim(Replace(hdr.range.text, Chr(13), " ")))
+End Function
+
+Public Function TitleCase(ByVal txt As String) As String
+    Dim words() As String
+    Dim i As Integer
+
+    ' Split the sentence into words
+    words = Split(LCase(txt), " ")
+
+    ' Capitalize each word
+    For i = 0 To UBound(words)
+        If Len(words(i)) > 0 Then
+            words(i) = UCase(Left(words(i), 1)) & mid(words(i), 2)
+        End If
+    Next i
+
+    ' Recombine the words into a sentence
+    TitleCase = Join(words, " ")
 End Function
 

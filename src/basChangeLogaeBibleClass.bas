@@ -10,8 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #335 -
 ' #334 -
 ' #333 -
-' #332 -
-' #331 -
+' #331 - Add function GetVerseText for console output
 ' #328 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
 ' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
@@ -72,6 +71,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #332 - Add function TitleCase to convert header output
     ' FIXED - #330 - Add function GetPageHeaderText and return it in debug output for Chapter/Verse
     ' FIXED - #329 - Chapter/Verse output missing when marker is at start of page
     ' FIXED - #327 - Re-run BuildHeadingIndexToCSV to review changes after fixes up to page 225 [audit]

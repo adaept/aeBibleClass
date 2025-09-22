@@ -1542,7 +1542,7 @@ Private Function CountBoldFootnotesWordLevel()
         hasBold = False
 
         If ft.range.style = "Footnote Text" Then
-            For Each word In ft.range.Words
+            For Each word In ft.range.words
                 If word.font.Bold = True Then
                     boldCount = boldCount + 1
                     hasBold = True
