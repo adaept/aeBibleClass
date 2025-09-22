@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #335 -
 ' #334 -
 ' #331 - Add function GetVerseText for console output
-' #328 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
 ' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
@@ -70,6 +69,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' [regr] #328 - See #333 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
     ' FIXED - #333 - Comment out ThisDocument.cls code as it interferes with clean export to docx
     ' FIXED - #332 - Add function TitleCase to convert header output
     ' FIXED - #330 - Add function GetPageHeaderText and return it in debug output for Chapter/Verse
@@ -163,7 +163,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
-    ' [obso] - #230 - Add code to fix Footnote Reference by reapplying style
+    ' [obso] #230 - Add code to fix Footnote Reference by reapplying style
     ' FIXED - #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
     ' FIXED - #229 - Add code to verify all necessary settings of Word are enabled - basWordSettingsDiagnostic
     ' FIXED - #228 - Abort tests if Show/Hide is not set
@@ -197,10 +197,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #207 - Check H1 pages for consistent use of superscript as in 2nd etc.
     ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
     ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
-    ' [impr] - FIXED - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
-    ' [obso] - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
+    ' [impr] FIXED - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
+    ' [obso] #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
     ' FIXED - #045 - Test call to SILAS from ribbon using customUI14.xml OnHelloWorldButtonClick routine
-    ' [obso] - #041 - Add auto-generated TOC for maps : auto gen too slow
+    ' [obso] #041 - Add auto-generated TOC for maps : auto gen too slow
     ' FIXED - See #203 - #160 - Add DOCVARIABLEs for all New Testament books
     ' FIXED - #203 - Add DOCVARIABLEs for New Testament
     ' FIXED - #202 - Move GoToVerseSBL to ribbon module
@@ -257,7 +257,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
     ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed
-    ' [obso] - #039 - Replace manual TOC with auto-generated version (this is too slow)
+    ' [obso] #039 - Replace manual TOC with auto-generated version (this is too slow)
     ' FIXED - #141 - Update UTF8bom-Template.txt with multiple language sample of "Hello, World!" ala C style, plus phonetics
 ' 20250420 - v008
     ' FIXED - #140 - Set version info as global variables and assign in Class_Initialize
@@ -305,7 +305,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #098 - Add test to count number of Footnote References [test]
     ' FIXED - #096 - Add test for count/delete empty para before H2, related #084 [test]
     ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
-    ' [obso] - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
+    ' [obso] #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
     ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
     ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
@@ -351,7 +351,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
-    ' [obso] - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
+    ' [obso] #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #056 - Add test for white paragraph marks [test]
 ' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
@@ -359,7 +359,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it [test]
     ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1 [test]
     ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
-    ' [obso] - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
+    ' [obso] #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types
     ' FIXED - #033 - Add Hello World custom menu tab as example for ribbon integration
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks
