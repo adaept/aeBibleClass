@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
+' #340 -
+' #339 -
+' #338 -
+' #337 -
+' #336 -
 ' #335 -
-' #334 -
 ' #331 - Add function GetVerseText for console output
 ' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
@@ -69,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #334 - Normalize page to one verse per para and add count of CRs added
     ' [regr] #328 - See #333 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
     ' FIXED - #333 - Comment out ThisDocument.cls code as it interferes with clean export to docx
     ' FIXED - #332 - Add function TitleCase to convert header output
