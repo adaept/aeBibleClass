@@ -21,6 +21,12 @@ Public Sub AutoExec()
     btnNextEnabled = True
 End Sub
 
+'Public Function UserConfirmed(promptText As String, Optional promptTitle As String = "Hide User Interface?") As Boolean
+'    Dim response As VbMsgBoxResult
+'    response = MsgBox(promptText, vbYesNo + vbQuestion, promptTitle)
+'    UserConfirmed = (response = vbYes)
+'End Function
+
 Public Sub RibbonOnLoad(ribbon As IRibbonUI)
     Set ribbonUI = ribbon
     ribbonIsReady = True
