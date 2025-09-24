@@ -11,9 +11,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #339 -
 ' #338 -
 ' #337 -
-' #336 -
-' #335 -
-' #331 - Add function GetVerseText for console output
+' #336 - Gen 41:45 console output shows a box for manual line break (Shift+Enter) - needs special consideration for file output
 ' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
@@ -73,6 +71,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #335 - Add routine SaveAsPDF_NoOpen to avoid auto-open of the PDF with Edge
+    ' FIXED - #331 - Add function GetVerseText for console output
     ' FIXED - #334 - Normalize page to one verse per para and add count of CRs added
     ' [regr] #328 - See #333 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
     ' FIXED - #333 - Comment out ThisDocument.cls code as it interferes with clean export to docx

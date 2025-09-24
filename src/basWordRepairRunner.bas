@@ -5,6 +5,29 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+Public Sub SaveAsPDF_NoOpen()
+    ' Overwrite the existing PDF file silently — without prompting or warning
+    Dim startTime As Single
+    Dim endTime As Single
+    Dim duration As Single
+    Dim pdfPath As String
+
+    ' Start timer
+    startTime = Timer
+    Debug.Print "Expected time ~112 seconds"
+    
+    pdfPath = "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.pdf"
+    ActiveDocument.ExportAsFixedFormat OutputFileName:=pdfPath, _
+        ExportFormat:=wdExportFormatPDF, _
+        OpenAfterExport:=False
+
+    ' End timer
+    endTime = Timer
+    duration = endTime - startTime
+    ' Print duration to Immediate Window
+    Debug.Print "PDF export completed in " & Format(duration, "0.00") & " seconds."
+End Sub
+
 Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     Dim totalFixes As Long, pgFixCount As Long
     Dim numPages As Long: numPages = 0 ' Adjust if scanning more than one page
