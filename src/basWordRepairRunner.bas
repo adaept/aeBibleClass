@@ -14,7 +14,7 @@ Public Sub SaveAsPDF_NoOpen()
 
     ' Start timer
     startTime = Timer
-    Debug.Print "Expected time ~112 seconds"
+    Debug.Print "Expected time ~130 seconds"
     
     pdfPath = "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.pdf"
     ActiveDocument.ExportAsFixedFormat OutputFileName:=pdfPath, _

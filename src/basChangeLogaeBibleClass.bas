@@ -67,10 +67,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #035 - Add test for page numbers of h1 on odd or even pages [test]
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
-' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
     ' FIXED - #335 - Add routine SaveAsPDF_NoOpen to avoid auto-open of the PDF with Edge
     ' FIXED - #331 - Add function GetVerseText for console output
     ' FIXED - #334 - Normalize page to one verse per para and add count of CRs added
@@ -371,7 +371,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #030 - Add routine to count and review Form feed char positions. Needed in docx as part of page and section breaks
 ' 20250317 - v004
     ' FIXED - #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding [test]
-    ' FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
+    ' [obso] FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
     ' FIXED - #022 - Add routine to print book h1, chapter h2, verse number - based on #021
     ' FIXED - #023 - PrintBibleHeading1Info outputs the CR of Heading 1. Remove it so output is all on one line
     ' FIXED - #021 - Add routine to print Bible book headings
