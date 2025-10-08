@@ -10,9 +10,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #340 -
 ' #339 -
 ' #338 -
-' #337 -
-' #336 - Gen 41:45 console output shows a box for manual line break (Shift+Enter) - needs special consideration for file output
-' #324 - Add index generation code to ribbon
+' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
+' #324 - Add index generation code to ribbon [impr] [feat]
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
@@ -70,15 +69,16 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #337 - Josh 12:24 prints "CHAPTER 13" with console text for RunRepairWrappedVerseMarkers_Across_Pages_From. Same for all H2 [bug]
     ' [obso] #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
-    ' FIXED - #335 - Add routine SaveAsPDF_NoOpen to avoid auto-open of the PDF with Edge
-    ' FIXED - #331 - Add function GetVerseText for console output
-    ' FIXED - #334 - Normalize page to one verse per para and add count of CRs added
+    ' FIXED - #335 - Add routine SaveAsPDF_NoOpen to avoid auto-open of the PDF with Edge [code]
+    ' FIXED - #331 - Add function GetVerseText for console output [feat]
+    ' FIXED - #334 - Normalize page to one verse per para and add count of CRs added [feat]
     ' [regr] #328 - See #333 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
-    ' FIXED - #333 - Comment out ThisDocument.cls code as it interferes with clean export to docx
-    ' FIXED - #332 - Add function TitleCase to convert header output
-    ' FIXED - #330 - Add function GetPageHeaderText and return it in debug output for Chapter/Verse
-    ' FIXED - #329 - Chapter/Verse output missing when marker is at start of page
+    ' FIXED - #333 - Comment out ThisDocument.cls code as it interferes with clean export to docx [bug]
+    ' FIXED - #332 - Add function TitleCase to convert header output [code]
+    ' FIXED - #330 - Add function GetPageHeaderText and return it in debug output for Chapter/Verse [feat]
+    ' FIXED - #329 - Chapter/Verse output missing when marker is at start of page [bug]
     ' FIXED - #327 - Re-run BuildHeadingIndexToCSV to review changes after fixes up to page 225 [audit]
     ' FIXED - #326 - Update RunRepairWrappedVerseMarkers_Across_Pages_From to have SessionID and log [impr]
     ' FIXED - #323 - See #322 - Create index file for H1 and H2 as csv text for speedy lookup [feat] [perf]

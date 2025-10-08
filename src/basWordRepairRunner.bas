@@ -248,7 +248,7 @@ SkipLogging:
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
 End Sub
 
-Public Function GetPageHeaderText(pgNum As Long) As String
+Private Function GetPageHeaderText(pgNum As Long) As String
     Dim rng As range
     Dim sec As section
     Dim hdr As HeaderFooter
@@ -274,7 +274,7 @@ Public Function GetPageHeaderText(pgNum As Long) As String
     GetPageHeaderText = TitleCase(Trim(Replace(hdr.range.text, Chr(13), " ")))
 End Function
 
-Public Function TitleCase(ByVal txt As String) As String
+Private Function TitleCase(ByVal txt As String) As String
     Dim words() As String
     Dim i As Integer
 
@@ -292,10 +292,11 @@ Public Function TitleCase(ByVal txt As String) As String
     TitleCase = Join(words, " ")
 End Function
 
-Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
+Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
     Dim verseContentEnd As Long
     Dim nextPos As Long
     Dim scanCh As range
+    Dim txt As String
     
     verseContentEnd = pageEnd
     nextPos = verseContentStart
@@ -314,6 +315,17 @@ Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
         nextPos = nextPos + 1
     Loop
     
-    GetVerseText = Trim(ActiveDocument.range(verseContentStart, verseContentEnd).text)
+    txt = Trim(ActiveDocument.range(verseContentStart, verseContentEnd).text)
+    
+    If InStrRev(txt, "CHAPTER ") > 0 Then
+        Dim pos As Long
+        pos = InStrRev(txt, "CHAPTER ")
+        If pos > 0 Then
+            txt = Trim$(Left$(txt, pos - 1))
+        End If
+    End If
+    
+    GetVerseText = txt
 End Function
+
 
