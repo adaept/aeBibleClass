@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
 ' #340 -
 ' #339 -
-' #338 -
 ' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
 ' #324 - Add index generation code to ribbon [impr] [feat]
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
@@ -69,6 +68,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #338 - Use tab separator for console output of routine RunRepairWrappedVerseMarkers_Across_Pages_From [bug]
     ' FIXED - #337 - Josh 12:24 prints "CHAPTER 13" with console text for RunRepairWrappedVerseMarkers_Across_Pages_From. Same for all H2 [bug]
     ' [obso] #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
     ' FIXED - #335 - Add routine SaveAsPDF_NoOpen to avoid auto-open of the PDF with Edge [code]

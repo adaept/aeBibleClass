@@ -179,7 +179,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                     prefixTxt = prefixCh.text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
-                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits, Replace(verseText, Chr(13), " ")   ',prefixAsc, combinedNumber
+                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits & vbTab & Replace(verseText, Chr(13), " ")   ',prefixAsc, combinedNumber
 
                     prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
 
@@ -225,7 +225,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                     End If
                 ElseIf markerStart = pageStart Then
                     logBuffer = logBuffer & "Marker '" & combinedNumber & "' is at the very start of page " & pageNum & vbCrLf
-                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits, Trim(Replace(verseText, Chr(13), " "))    ',"SoP", combinedNumber
+                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits & vbTab & Trim(Replace(verseText, Chr(13), " "))    ',"SoP", combinedNumber
                 End If
 
                 i = verseEnd
