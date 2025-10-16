@@ -51,20 +51,20 @@ Public Function GetNextEnabled(control As IRibbonControl) As Boolean
     GetNextEnabled = btnNextEnabled
 End Function
 
-Sub OnGoToVerseSblClick(control As IRibbonControl)
+Public Sub OnGoToVerseSblClick(control As IRibbonControl)
     Call GoToVerseSBL
 End Sub
 
-Sub OnHelloWorldButtonClick(control As IRibbonControl)
+Public Sub OnHelloWorldButtonClick(control As IRibbonControl)
    MsgBox "Hello, SILAS World!" & vbCrLf & _
                 "GetVScroll  = " & GetExactVerticalScroll
 End Sub
 
-Sub OnSectionButtonClick(control As IRibbonControl)
+Public Sub OnSectionButtonClick(control As IRibbonControl)
     Call GoToSection
 End Sub
 
-Sub OnGoToH1ButtonClick(control As IRibbonControl)
+Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
     Call GoToH1
 End Sub
 
@@ -72,16 +72,16 @@ Public Sub OnNextButtonClick(control As IRibbonControl)
     Call NextButton
 End Sub
 
-Sub OnAdaeptAboutClick(control As IRibbonControl)
+Public Sub OnAdaeptAboutClick(control As IRibbonControl)
     MsgBox "Hello, adaept World!" & vbCrLf & _
                 "adaeptMsg  = " & adaeptMsg, vbInformation, "About adaept"
 End Sub
 
-Function adaeptMsg() As String
+Private Function adaeptMsg() As String
     adaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
 
-Function GetParaIndexSafe(rng As range) As Long
+Private Function GetParaIndexSafe(rng As range) As Long
 ' Search Isa 23:42 (intentional false verse number) scanned nearly 9,000 paragraphs in under a quarter second,
 ' with full interruptibility and no layout lock
     Dim r As range
@@ -115,7 +115,7 @@ Function GetParaIndexSafe(rng As range) As Long
     End If
 End Function
 
-Function StyleTypeLabel(st As WdStyleType) As String
+Private Function StyleTypeLabel(st As WdStyleType) As String
     Select Case st
         Case wdStyleTypeParagraph: StyleTypeLabel = "Paragraph"
         Case wdStyleTypeCharacter: StyleTypeLabel = "Character"
@@ -125,19 +125,19 @@ Function StyleTypeLabel(st As WdStyleType) As String
     End Select
 End Function
 
-Sub GoToVerseSBL()
+Public Sub GoToVerseSBL()
     On Error GoTo ErrHandler
     Application.StatusBar = "Searching for verse..."
     
-    Dim userInput As String
+    Dim userInput As String, i As Long
     userInput = InputBox("Enter verse (e.g. 1 Sam 1:1):", "Go to Verse (SBL Format)")
-    userInput = UCase(userInput)
+    userInput = Trim(UCase(userInput))
     If Trim(userInput) = "" Then Exit Sub
 
     Dim tickStartSBL As Single: tickStartSBL = Timer
     Dim tickNowSBL As Single
 
-    Dim bookAbbr As String, chapNum As String, verseNum As String
+    Dim bookAbbr As String, chapNum As String, verseNum As String, paraIndex As Long
     Dim parts() As String, subParts() As String
     
     Dim hWaitCursor As Long
@@ -147,16 +147,47 @@ Sub GoToVerseSBL()
     Application.ScreenUpdating = False  ' Prevent flickering
 
     ' Parse the input
-    parts = Split(userInput, ":")
-    'Debug.Print "UBound(parts) = " & UBound(parts)
-    If UBound(parts) = 0 Then   ' Only the ~chapter~ number was provided
+    parts = ParseParts(userInput, ":")
+    Debug.Print "UBound(parts) = " & UBound(parts)
+   
+    Dim fullBookName As String
+    If UBound(parts) = 0 Then   ' No ":" delimeter is used
+        Select Case Left(parts(0), 1)  ' Book starts with a number
+            Case "1", "2", "3"
+                'Debug.Print "Starts with 1, 2, or 3 " & "'" & parts(0) & "'"
+                ' If the rightmost character is not a digit then we have a Book name only
+                bookAbbr = Trim(parts(0))
+                If Not (Right(userInput, 1) Like "#") Then
+                    fullBookName = GetFullBookName(bookAbbr)
+                    ' Optional default chapNum = "1" and verseNum = "1"
+                    Debug.Print "Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
+                    FindBookH1 fullBookName, paraIndex
+                End If
+            Case Else
+                'Debug.Print "Does not start with 1, 2, or 3 " & "'" & parts(0) & "'"
+                bookAbbr = Trim(parts(0))
+                ' If the rightmost character is not a digit then we have a Book name only
+                If Not (Right(userInput, 1) Like "#") Then
+                    fullBookName = GetFullBookName(bookAbbr)
+                    ' Optional default chapNum = "1" and verseNum = "1"
+                    Debug.Print "Does Not Start with 1, 2, or 3 " & "fullBookName = " & fullBookName
+                    FindBookH1 fullBookName, paraIndex
+                Else    ' Found digits indicate a chapter number then set verseNum = "1"
+                     
+                End If
+        End Select
+        Debug.Print "paraIndex = " & paraIndex
+
+Selection.range.Select  ' re-activate the cursor
+Exit Sub                ' temp stop
+
         verseNum = 1
         GoTo Chapter
-    ElseIf UBound(parts) <> 1 Then
-        Application.ScreenUpdating = True   ' Restore normal UI
-        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
-        MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
-        Exit Sub
+'    ElseIf UBound(parts) <> 1 Then
+'        Application.ScreenUpdating = True   ' Restore normal UI
+'        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
+'        MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
+'        Exit Sub
     End If
     verseNum = Trim(parts(1))
 Chapter:
@@ -167,23 +198,21 @@ Chapter:
     ElseIf (subParts(0) = "1" Or subParts(0) = "2") And UBound(subParts) = 1 Then
         bookAbbr = subParts(0) & " " & subParts(1)
         'Debug.Print "a:", bookAbbr
-        chapNum = 1
+        chapNum = "1"
     Else
-        Dim i As Long
         bookAbbr = ""
         For i = 0 To UBound(subParts) - 1
             bookAbbr = bookAbbr & subParts(i) & " "
             'Debug.Print "b:", bookAbbr
         Next i
         bookAbbr = Trim(bookAbbr)
-        'Debug.Print ">", bookAbbr
+        Debug.Print ">", bookAbbr
         chapNum = Trim(subParts(UBound(subParts)))
-        'Debug.Print ">>", chapNum
+        Debug.Print ">>", chapNum
     End If
     
-    Dim fullBookName As String
     fullBookName = GetFullBookName(bookAbbr)
-    'Debug.Print ">>>", fullBookName
+    Debug.Print "a>>>", fullBookName
     If fullBookName = "" Then
         Application.ScreenUpdating = True   ' Restore normal UI
         SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
@@ -191,45 +220,64 @@ Chapter:
         Exit Sub
     End If
 
-    ' Find the Heading 1 for the book
-    Dim theBook As String
-    Dim para As paragraph, foundBook As Boolean
-    For Each para In ActiveDocument.paragraphs
-        If para.style = "Heading 1" Then
-            theBook = Trim(para.range.text)
-            theBook = UCase(Replace(para.range.text, vbCr, ""))
-            'Debug.Print theBook
-            If theBook Like "*" & fullBookName & "*" Then
-                para.range.Select
-                foundBook = True
-                'Debug.Print bookAbbr, theBook, fullBookName
-                'MsgBox "Book found. Searching for chapter or verse " & chapNum, vbInformation
-                Exit For
-            End If
-        End If
-    Next para
-    If Not foundBook Then
-        Application.ScreenUpdating = True   ' Restore normal UI
-        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
-        MsgBox "Book heading not found: " & fullBookName, vbExclamation
-        Exit Sub
-    End If
+'    ' Find the Heading 1 for the book
+'    Dim theBook As String
+'    Dim para As paragraph, foundBook As Boolean, bookIdx As Integer
+'    bookIdx = 0
+'    For Each para In ActiveDocument.paragraphs
+'        bookIdx = bookIdx + 1
+'        If para.style = "Heading 1" Then
+'            theBook = Trim(para.range.text)
+'            theBook = UCase(Replace(para.range.text, vbCr, ""))
+'            'Debug.Print "b>>>", theBook
+'            If theBook Like "*" & fullBookName & "*" Then
+'                para.range.Select
+'                Application.Selection.range.GoTo
+'                foundBook = True
+'                Debug.Print "c>>>", bookAbbr, theBook, fullBookName, "#" & bookIdx
+'                Debug.Print "Book found. Searching for chapter or verse " & chapNum
+'                'Stop
+'                Exit For
+'            End If
+'        End If
+'    Next para
+    
+'    If Not foundBook Then
+'        Application.ScreenUpdating = True   ' Restore normal UI
+'        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
+'        MsgBox "Book heading not found: " & fullBookName, vbExclamation
+'        Exit Sub
+'    End If
     
     ' Find the Heading 2 for the chapter or psalm
-    Dim theChapter As String
-    Dim chapFound As Boolean
+    Dim theChapter As String, chapFound As Boolean, chapIdx As Long, paraIdx As Long, bookIdx As Long, j As Long
 
-    For Each para In ActiveDocument.paragraphs
+    ' chapIdx is set to the found book paragraph index
+    Dim para As paragraph, theBook As String
+    chapIdx = bookIdx
+    For j = chapIdx To ActiveDocument.paragraphs.count
+        Set para = ActiveDocument.paragraphs(j)
         If para.range.Start < Selection.range.Start Then GoTo SkipChapter
+        'Debug.Print "Paragraph #" & j & ": " & Left(para.range.text, 40)
 
         If para.style = "Heading 2" Then
             Select Case theBook  ' Books of only one chapter
-            Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
-                verseNum = chapNum
-                chapNum = 1
-                chapFound = True
-            Case Else
-                ' Multi-chapter books—continue
+                Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
+                    Dim tmp As String
+                    Debug.Print "verse = " & verseNum, "chapter = " & chapNum
+                    If chapNum > 1 Then verseNum = chapNum
+                    chapNum = 1
+                    'Debug.Print "verse = " & verseNum, "chapter = " & chapNum
+                    para.range.Select
+                    Application.Selection.range.GoTo
+                    Selection.Collapse Direction:=wdCollapseEnd
+                    chapFound = True
+                    chapIdx = j
+                    Debug.Print "!Paragraph #" & chapIdx, chapNum, verseNum
+                    'Stop
+                    Exit For
+                Case Else
+                    ' Multi-chapter books—continue
             End Select
 
             If Trim(para.range.text) Like "*Chapter " & chapNum & "*" _
@@ -239,10 +287,11 @@ Chapter:
 
                 Dim idx As Long
                 idx = GetParaIndexSafe(para.range)
+                'Debug.Print "idx = " & idx
 
                 Select Case idx
                 Case Is >= 1
-                    'Debug.Print "Jumped to paragraph #" & idx
+                    Debug.Print "Jumped to paragraph #" & idx
                 Case -1
                     'Debug.Print "Paragraph not found."
                 Case -2
@@ -279,16 +328,17 @@ Chapter:
                 End If
 
                 chapFound = True
-                Dim chapterIdx As Long
-                chapterIdx = idx
-                'Debug.Print "chapterIdx = " & idx
-
-                'Stop
+                chapIdx = idx
+                Debug.Print "chapIdx = " & idx
+                Application.Selection.range.GoTo
+                Stop
                 Exit For
             End If
         End If
 SkipChapter:
-    Next para
+    chapIdx = j
+    'xxxNext para
+    Next j
 
     If Not chapFound Then
         Application.ScreenUpdating = True   ' Restore normal UI
@@ -307,6 +357,7 @@ SkipChapter:
     Dim found As Boolean
     Dim normalized As String
 
+    idx = chapIdx
     Debug.Print "Starting verse marker scan from paragraph #" & idx
 
     For v = idx + 1 To idx + maxScan
@@ -319,7 +370,11 @@ SkipChapter:
         Dim styleNameH2 As String: styleNameH2 = Trim(p.style.NameLocal)
 
         If InStr(styleNameH2, "Heading 2") > 0 Then
-            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')"
+            Dim pageNum As Long
+            paraIndex = v ' your known paragraph index
+            pageNum = ActiveDocument.paragraphs(paraIndex).range.Information(wdActiveEndPageNumber) - 2 ' to get actual page number of doc using ^H
+            'MsgBox "Paragraph " & paraIndex & " is on page " & pageNum
+            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')", Left(para.range.text, 40), "Page " & pageNum
             MsgBox "No verse " & verseNum & " found in Chapter " & chapNum, vbCritical
             Exit For
         End If
@@ -359,11 +414,61 @@ Cleanup:
     Exit Sub
 
 ErrHandler:
-    MsgBox "Erl = " & Erl & " Error during verse search: " & Err.Description, vbCritical
+    MsgBox "Erl = " & Erl & " Err = " & Err & vbCrLf & Err.Description, vbCritical, "Error during verse search "
     Resume Cleanup
 End Sub
 
-Function GetFullBookName(abbr As String) As String
+Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
+                        Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
+    Debug.Print "chapNum = " & chapNum, "verseNum = " & verseNum
+    ' Find the Heading 1 for the book
+    Dim theBook As String
+    Dim para As paragraph, foundBook As Boolean, bookIdx As Integer
+    bookIdx = 0
+    For Each para In ActiveDocument.paragraphs
+        bookIdx = bookIdx + 1
+        If para.style = "Heading 1" Then
+            theBook = Trim(para.range.text)
+            theBook = UCase(Replace(para.range.text, vbCr, ""))
+            'Debug.Print "FindBookH1: >", theBook, fullBookName
+            If theBook Like "*" & fullBookName & "*" Then
+                para.range.Select
+                Application.Selection.range.GoTo
+                Selection.Collapse Direction:=wdCollapseEnd
+                foundBook = True
+                Debug.Print "FindBookH1: >>", "Book found '" & fullBookName & "'", "#" & bookIdx
+                paraIndex = bookIdx
+                'Stop
+                Exit For
+            End If
+        End If
+    Next para
+    Debug.Print "FindBookH1: Exiting!"
+End Sub
+
+Private Function ParseParts(ByVal userInput As String, Optional ByVal delimiter As String = ":") As String()
+    Dim parts() As String
+    Dim i As Long
+
+    ' Split input safely
+    parts = Split(userInput, delimiter)
+
+    ' Debug output
+    Debug.Print "=== ParseParts Debug ==="
+    Debug.Print "Input: """ & userInput & """"
+    Debug.Print "Delimiter: """ & delimiter & """"
+    Debug.Print "Parts found: " & UBound(parts) - LBound(parts) + 1
+
+    For i = LBound(parts) To UBound(parts)
+        Debug.Print "Part " & i & ": " & parts(i)
+    Next i
+    Debug.Print "========================"
+
+    ' Return result
+    ParseParts = parts
+End Function
+
+Private Function GetFullBookName(abbr As String) As String
     Dim bookMap As Object
     Set bookMap = CreateObject("Scripting.Dictionary")
     
@@ -466,8 +571,10 @@ Function GetFullBookName(abbr As String) As String
     bookMap.Add UCase("Col"), "Colossians"
     bookMap.Add UCase("C"), "Colossians"
     bookMap.Add UCase("1 Thess"), "1 Thessalonians"
+    bookMap.Add UCase("1 The"), "1 Thessalonians"
     bookMap.Add UCase("1 Th"), "1 Thessalonians"
     bookMap.Add UCase("2 Thess"), "2 Thessalonians"
+    bookMap.Add UCase("2 The"), "1 Thessalonians"
     bookMap.Add UCase("2 Th"), "2 Thessalonians"
     bookMap.Add UCase("1 Tim"), "1 Timothy"
     bookMap.Add UCase("1 Ti"), "1 Timothy"
@@ -496,8 +603,9 @@ Function GetFullBookName(abbr As String) As String
     bookMap.Add UCase("Re"), "Revelation"
     
     abbr = UCase(Trim(abbr))
+    Debug.Print "GetFullBookName: ", "abbr = " & abbr
     If bookMap.Exists(abbr) Then
-        GetFullBookName = bookMap(abbr)
+        GetFullBookName = UCase(bookMap(abbr))
     Else
         GetFullBookName = ""
     End If
@@ -519,7 +627,7 @@ Sub GoToSection()
     bmList.item(bookmarkIndex).range.Select
 End Sub
 
-Function GetBookmarkList() As Collection
+Private Function GetBookmarkList() As Collection
     Dim bmColl As New Collection
     Dim bm As Bookmark
 
@@ -530,7 +638,7 @@ Function GetBookmarkList() As Collection
     Set GetBookmarkList = bmColl
 End Function
 
-Sub GoToH1()
+Private Sub GoToH1()
     Dim pattern As String
     Dim para As paragraph
     Dim paraText As String
@@ -563,7 +671,7 @@ Sub GoToH1()
     End If
 End Sub
 
-Sub NextButton()
+Private Sub NextButton()
     'GoToNextHeading1Circular()
     Dim doc As Document
     Dim searchRange As range
@@ -609,7 +717,7 @@ Sub NextButton()
     End If
 End Sub
 
-Function GetExactVerticalScroll() As Double
+Private Function GetExactVerticalScroll() As Double
 ' Return the scroll percentage rounded to three decimal places
     Dim visibleStart As Long
     Dim totalLength As Long

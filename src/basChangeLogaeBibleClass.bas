@@ -6,9 +6,19 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
-' #340 -
-' #339 -
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr] [refac]
+' #350 -
+' #349 -
+' #348 -
+' #347 -
+' #346 -
+' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
+' #344 - Search for '3 Joh' fails silently in FindBookH1 [bug]
+' #343 - Add [refac] as type task for Refactor
+' #342 - Add routine FindBookH1 [refac]
+' #341 - Add ParseAndReportParts routine to check user input
+' #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug]
+' #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug]
 ' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
 ' #324 - Add index generation code to ribbon [impr] [feat]
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
