@@ -10,8 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #350 -
 ' #349 -
 ' #348 -
-' #347 -
-' #346 -
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
 ' #344 - Search for '3 Joh' fails silently in FindBookH1 [bug]
 ' #343 - Add [refac] as type task for Refactor
@@ -78,6 +76,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #347 - If book is not found the verse search jumps to Genesis but cursor should not move [bug]
+    ' FIXED - #346 - Add function IsOneChapterBook [refac]
     ' FIXED - #338 - Use tab separator for console output of routine RunRepairWrappedVerseMarkers_Across_Pages_From [bug]
     ' FIXED - #337 - Josh 12:24 prints "CHAPTER 13" with console text for RunRepairWrappedVerseMarkers_Across_Pages_From. Same for all H2 [bug]
     ' [obso] #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
