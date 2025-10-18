@@ -389,7 +389,7 @@ Cleanup:
     Exit Sub
 
 ErrHandler:
-    MsgBox "Erl = " & Erl & " Err = " & Err & vbCrLf & Err.Description, vbCritical, "Error during verse search "
+    MsgBox "Erl = " & Erl & " Err = " & Err & vbCrLf & Err.Description, vbCritical, "Error during Bible verse search "
     Resume Cleanup
 End Sub
 
@@ -426,7 +426,7 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
             theBook = Trim(para.range.text)
             theBook = UCase(Replace(para.range.text, vbCr, ""))
             'Debug.Print "FindBookH1: >", theBook, fullBookName
-            If theBook = fullBookName Then       'Like "*" & fullBookName & "*" Then
+            If theBook = fullBookName Then
                 para.range.Select
                 Application.Selection.range.GoTo
                 Selection.Collapse Direction:=wdCollapseEnd
@@ -441,8 +441,8 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
         End If
     Next para
     RestoreCursor savedPos
-    Debug.Print "FindBookH1: >> Book not found: " & "'" & fullBookName & "'", "'" & bookAbbr & "'"
-    'MsgBox "FindBookH1: >> Book not found: " & "'" & fullBookName & "'", vbExclamation
+    Debug.Print "FindBookH1: >> Book not found: " & "'" & fullBookName & "'" & " for '" & bookAbbr & "'"
+    MsgBox "FindBookH1: >> Book not found: " & "'" & fullBookName & "'" & " for '" & bookAbbr & "'", vbExclamation, "Bible"
 End Sub
 
 Private Function ParseParts(ByVal userInput As String, Optional ByVal delimiter As String = ":") As String()
@@ -638,7 +638,7 @@ Private Sub GoToH1()
     Dim paraText As String
     Dim matchFound As Boolean
 
-    pattern = InputBox("Enter a Heading 1 pattern to match (use * and ? wildcards):", "Go To Bible Book")
+    pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
     If pattern = "" Then Exit Sub ' User canceled
     matchFound = False
 
@@ -648,7 +648,7 @@ Private Sub GoToH1()
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
             paraText = Trim$(para.range.text)
-            If paraText Like pattern Then
+            If paraText Like "*" & UCase(pattern) & "*" Then
                 para.range.Select
                 ' Move insertion point (cursor) without selecting text
                 ActiveDocument.range(para.range.Start, para.range.Start).Select
@@ -659,9 +659,11 @@ Private Sub GoToH1()
     Next para
 
     Application.ScreenUpdating = True
-
+    Selection.range.Select  ' Re-select current range to restore cursor
+    DoEvents  ' Allows UI refresh
+    
     If Not matchFound Then
-        MsgBox "No Heading 1 matches pattern: " & pattern, vbExclamation
+        MsgBox "Book not found! No Heading 1 matches pattern: '" & pattern & "'", vbExclamation, "Bible"
     End If
 End Sub
 
