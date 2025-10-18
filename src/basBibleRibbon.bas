@@ -668,18 +668,18 @@ Private Sub GoToH1()
 End Sub
 
 Private Sub NextButton()
-    'GoToNextHeading1Circular()
     Dim doc As Document
     Dim searchRange As range
-    Dim selEnd As Long
+    Dim paraEnd As Long
     Dim found As Boolean
 
     Set doc = ActiveDocument
-    selEnd = Selection.End
     found = False
 
-    ' Search forward: from current position to end
-    Set searchRange = doc.range(selEnd, doc.content.End)
+    ' Move start past current paragraph to avoid re-matching
+    paraEnd = Selection.paragraphs(1).range.End
+    Set searchRange = doc.range(paraEnd, doc.content.End)
+
     With searchRange.Find
         .ClearFormatting
         .style = doc.Styles("Heading 1")
@@ -690,9 +690,9 @@ Private Sub NextButton()
         found = .Execute
     End With
 
-    ' If not found, wrap: from beginning to current position
+    ' If not found, wrap: from beginning to current paragraph start
     If Not found Then
-        Set searchRange = doc.range(0, selEnd)
+        Set searchRange = doc.range(0, paraEnd)
         With searchRange.Find
             .ClearFormatting
             .style = doc.Styles("Heading 1")
@@ -704,9 +704,9 @@ Private Sub NextButton()
         End With
     End If
 
-    ' If found, position cursor at end of heading to prepare for next search
+    ' If found, move cursor to start of heading
     If found Then
-        Selection.SetRange searchRange.End, searchRange.End
+        Selection.SetRange searchRange.Start, searchRange.Start
         ActiveWindow.ScrollIntoView Selection.range, True
     Else
         MsgBox "No Heading 1 found in the document.", vbInformation

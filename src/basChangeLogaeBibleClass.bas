@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr] [refac]
+' #355 -
+' #354 -
+' #353 -
+' #352 -
+' #351 -
 ' #350 -
-' #349 -
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
 ' #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug]
 ' #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug]
@@ -71,11 +75,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
-    ' FIXED - #348 - Update search of GoToH1 so pattern does not need to use * or ? - matching the style of abbr in GetFullBookName
+    ' FIXED - #349 - GoTo Book Next finds the next para - positioning error from select work around [bug]
+    ' FIXED - #348 - Update search of GoToH1 so pattern does not need to use * or ? - matching the style of abbr in GetFullBookName [impr]
     ' FIXED - #344 - Search for '3 Joh' fails silently in FindBookH1 [bug]
-    ' FIXED - #343 - Add [refac] as type task for Refactor
+    ' FIXED - #343 - Add [refac] as type task for Refactor [impr]
     ' FIXED - #342 - Add routine FindBookH1 [refac]
-    ' FIXED - #341 - Add ParseParts routine to check user input
+    ' FIXED - #341 - Add ParseParts routine to check user input [impr] [refac]
     ' FIXED - #347 - If book is not found the verse search jumps to Genesis but cursor should not move [bug]
     ' FIXED - #346 - Add function IsOneChapterBook [refac]
     ' FIXED - #338 - Use tab separator for console output of routine RunRepairWrappedVerseMarkers_Across_Pages_From [bug]
