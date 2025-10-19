@@ -162,20 +162,39 @@ Public Sub GoToVerseSBL()
                 If Not (Right(userInput, 1) Like "#") Then
                     fullBookName = GetFullBookName(bookAbbr)
                     ' Optional default chapNum = "1" and verseNum = "1"
-                    Debug.Print "Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
+                    Debug.Print "a>Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
                     FindBookH1 fullBookName, paraIndex
+                Else
+                    ' we have digits that indicate a chapter or verse
+                    chapNum = ExtractTrailingDigits(bookAbbr)
+                    verseNum = "1"
+                    bookAbbr = LeftUntilLastSpace(bookAbbr)
+                    fullBookName = GetFullBookName(bookAbbr)
+                    Debug.Print "^Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
+                    If IsOneChapterBook(fullBookName) Then
+                        verseNum = chapNum
+                        chapNum = "1"
+                    End If
+                    Debug.Print "^bookAbbr = " & bookAbbr, "fullBookName = " & fullBookName, "chapNum = " & chapNum, "verseNum = " & verseNum
                 End If
             Case Else
-                'Debug.Print "Does not start with 1, 2, or 3 " & "'" & parts(0) & "'"
+                Debug.Print "@Does not start with 1, 2, or 3 " & "'" & parts(0) & "'"
                 bookAbbr = Trim(parts(0))
+                Debug.Print "bookAbbr = " & bookAbbr
                 ' If the rightmost character is not a digit then we have a Book name only
                 If Not (Right(userInput, 1) Like "#") Then
                     fullBookName = GetFullBookName(bookAbbr)
                     ' Optional default chapNum = "1" and verseNum = "1"
-                    Debug.Print "Does Not Start with 1, 2, or 3 " & "fullBookName = " & fullBookName
+                    Debug.Print "b>Does Not Start with 1, 2, or 3 " & "fullBookName = " & fullBookName
                     FindBookH1 fullBookName, paraIndex
                 Else    ' Found digits indicate a chapter number then set verseNum = "1"
-                     
+                     chapNum = ExtractTrailingDigits(userInput)
+                     If chapNum = "1" Then
+                        verseNum = 1
+                    Else
+                        verseNum = chapNum
+                    End If
+                    Debug.Print "c>Digits found in " & "fullBookName = " & fullBookName, "chapNum = " & chapNum, "verseNume = " & verseNum
                 End If
         End Select
         Debug.Print "paraIndex = " & paraIndex
@@ -393,6 +412,37 @@ ErrHandler:
     Resume Cleanup
 End Sub
 
+Private Function LeftUntilLastSpace(ByVal txt As String) As String
+    Dim lastSpacePos As Long
+
+    ' Find the first space from the right
+    lastSpacePos = InStrRev(txt, " ")
+
+    If lastSpacePos > 0 Then
+        LeftUntilLastSpace = Left(txt, lastSpacePos - 1)
+    Else
+        LeftUntilLastSpace = txt  ' No space found, return full string
+    End If
+End Function
+
+Private Function ExtractTrailingDigits(ByVal txt As String) As String
+    Dim i As Long, ch As String, result As String
+    result = ""
+
+    ' Scan backwards, collecting up to 3 digits
+    For i = Len(txt) To 1 Step -1
+        ch = mid(txt, i, 1)
+        If ch Like "#" Then
+            result = ch & result
+            If Len(result) = 3 Then Exit For
+        Else
+            Exit For  ' Stop at first non-digit
+        End If
+    Next i
+
+    ExtractTrailingDigits = result
+End Function
+
 Private Function IsOneChapterBook(book As String) As Boolean
     Select Case book  ' Books of only one chapter
         Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
@@ -413,7 +463,7 @@ End Sub
 
 Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
                         Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
-    Debug.Print "chapNum = " & chapNum, "verseNum = " & verseNum
+    Debug.Print "FindBookH1: >>", "chapNum = " & chapNum, "verseNum = " & verseNum
     savedPos = SaveCursor()
     ' Find the Heading 1 for the book
     Dim theBook As String

@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #353 -
 ' #352 -
 ' #351 -
-' #350 -
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
 ' #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug]
 ' #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug]
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #350 - Add function ExtractTrailingDigits that extracts the last 1~3 digits from a string and LeftUntilLastSpace
     ' FIXED - #349 - GoTo Book Next finds the next para - positioning error from select work around [bug]
     ' FIXED - #348 - Update search of GoToH1 so pattern does not need to use * or ? - matching the style of abbr in GetFullBookName [impr]
     ' FIXED - #344 - Search for '3 Joh' fails silently in FindBookH1 [bug]
