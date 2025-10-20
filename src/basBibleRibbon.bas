@@ -167,15 +167,17 @@ Public Sub GoToVerseSBL()
                 Else
                     ' we have digits that indicate a chapter or verse
                     chapNum = ExtractTrailingDigits(bookAbbr)
-                    verseNum = "1"
-                    bookAbbr = LeftUntilLastSpace(bookAbbr)
-                    fullBookName = GetFullBookName(bookAbbr)
-                    Debug.Print "^Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
                     If IsOneChapterBook(fullBookName) Then
                         verseNum = chapNum
                         chapNum = "1"
+                    Else
+                        verseNum = "1"
                     End If
+                    bookAbbr = LeftUntilLastSpace(bookAbbr)
+                    fullBookName = GetFullBookName(bookAbbr)
+                    Debug.Print "^Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
                     Debug.Print "^bookAbbr = " & bookAbbr, "fullBookName = " & fullBookName, "chapNum = " & chapNum, "verseNum = " & verseNum
+                    FindBookH1 fullBookName, paraIndex, chapNum, verseNum
                 End If
             Case Else
                 Debug.Print "@Does not start with 1, 2, or 3 " & "'" & parts(0) & "'"
@@ -637,10 +639,16 @@ Private Function GetFullBookName(abbr As String) As String
     bookMap.Add UCase("2 Pet"), "2 Peter"
     bookMap.Add UCase("2 P"), "2 Peter"
     bookMap.Add UCase("1 John"), "1 John"
+    bookMap.Add UCase("1 Joh"), "1 John"
+    bookMap.Add UCase("1 Jo"), "1 John"
     bookMap.Add UCase("1 J"), "1 John"
     bookMap.Add UCase("2 John"), "2 John"
+    bookMap.Add UCase("2 Joh"), "2 John"
+    bookMap.Add UCase("2 Jo"), "2 John"
     bookMap.Add UCase("2 J"), "2 John"
     bookMap.Add UCase("3 John"), "3 John"
+    bookMap.Add UCase("3 Joh"), "3 John"
+    bookMap.Add UCase("3 Jo"), "3 John"
     bookMap.Add UCase("3 J"), "3 John"
     bookMap.Add UCase("Jude"), "Jude"
     bookMap.Add UCase("Rev"), "Revelation"
