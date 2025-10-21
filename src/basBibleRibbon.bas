@@ -167,14 +167,14 @@ Public Sub GoToVerseSBL()
                 Else
                     ' we have digits that indicate a chapter or verse
                     chapNum = ExtractTrailingDigits(bookAbbr)
+                    bookAbbr = LeftUntilLastSpace(bookAbbr)
+                    fullBookName = GetFullBookName(bookAbbr)
                     If IsOneChapterBook(fullBookName) Then
                         verseNum = chapNum
                         chapNum = "1"
                     Else
                         verseNum = "1"
                     End If
-                    bookAbbr = LeftUntilLastSpace(bookAbbr)
-                    fullBookName = GetFullBookName(bookAbbr)
                     Debug.Print "^Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
                     Debug.Print "^bookAbbr = " & bookAbbr, "fullBookName = " & fullBookName, "chapNum = " & chapNum, "verseNum = " & verseNum
                     FindBookH1 fullBookName, paraIndex, chapNum, verseNum

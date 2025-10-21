@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr] [refac]
+' #360 -
+' #359 -
+' #358 -
+' #357 -
+' #356 -
 ' #355 -
-' #354 -
 ' #352 - Add routine to find verse based on a given H2 paragraph index [impr] [refac]
 ' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
@@ -73,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #354 - Error setting values of chapNum and verseNum for IsOneChapterBook [bug]
     ' FIXED - #353 - Error for '1 Joh' Book not found in FindBookH1 [bug]
     ' FIXED - #350 - Add function ExtractTrailingDigits that extracts the last 1~3 digits from a string and LeftUntilLastSpace
     ' FIXED - #349 - GoTo Book Next finds the next para - positioning error from select work around [bug]
