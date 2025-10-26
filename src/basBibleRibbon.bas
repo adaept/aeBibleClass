@@ -432,41 +432,43 @@ Private Sub RestoreCursor(ByVal savedPos As Long)
 End Sub
 
 Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
-                        Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
-    Debug.Print "FindBookH1: >>", "chapNum = " & chapNum, "verseNum = " & verseNum
+                               Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
+    Debug.Print "FindBookH1: >> chapNum = " & chapNum, "verseNum = " & verseNum
     savedPos = SaveCursor()
-    ' Find the Heading 1 for the book
-    Dim theBook As String
-    theBook = ""
-    Dim para As paragraph, foundBook As Boolean, bookIdx As Integer
-    bookIdx = 0
-    foundBook = False
-    For Each para In ActiveDocument.paragraphs
-        bookIdx = bookIdx + 1
-        If para.style = "Heading 1" Then
-            theBook = Trim(para.range.text)
-            theBook = UCase(Replace(para.range.text, vbCr, ""))
-            'Debug.Print "FindBookH1: >>", "theBook = " & theBook, "fullBookName = " & fullBookName
-            If theBook = fullBookName Then
-                para.range.Select
-                Application.Selection.range.GoTo
-                Selection.Collapse Direction:=wdCollapseEnd
-                foundBook = True
-                Debug.Print "FindBookH1: >> Book found", "'" & theBook & "'", "'" & fullBookName & "'", "#" & bookIdx
-                paraIndex = bookIdx
-                'Stop
+ 
+    Dim r As range
+    Set r = ActiveDocument.paragraphs(1).range
+
+    Dim paraText As String, bookFound As Boolean
+    Dim paraCount As Long: paraCount = 1
+    bookFound = False
+
+    Do While Not r Is Nothing
+        If r.paragraphs(1).style = "Heading 1" Then
+            paraText = UCase(Replace(Trim$(r.text), vbCr, ""))
+            If paraText = UCase(fullBookName) Then
+                bookFound = True
+                paraIndex = paraCount
+                Debug.Print "FindBookH1: >> Book found", "'" & paraText & "'", "#" & paraIndex, "bookFound = " & bookFound
+
+                ' Move cursor safely
+                With ActiveDocument.paragraphs(paraIndex).range
+                    .Select
+                    Selection.Collapse Direction:=wdCollapseStart
+                End With
+
+                ' Call next routine
                 FindChapterH2 fullBookName, paraIndex, chapNum, verseNum
-            Else
-                'Debug.Print "FindBookH1: >> Book not found: " & "'" & fullBookName & "'"
+                Exit Sub
             End If
         End If
-    Next para
+        paraCount = paraCount + 1
+        Set r = r.Next(Unit:=wdParagraph)
+    Loop
 
-    If Not foundBook Then
-        RestoreCursor savedPos
-        Debug.Print "FindBookH1: >> Book not found: " & "'" & fullBookName & "'" & " for '" & bookAbbr & "'"
-        MsgBox "FindBookH1: >> Book not found: " & "'" & fullBookName & "'" & " for '" & bookAbbr & "'", vbExclamation, "Bible"
-    End If
+    If Not bookFound Then RestoreCursor savedPos
+    Debug.Print "FindBookH1: >> Book not found: '" & fullBookName & "'", "bookFound = " & bookFound
+    MsgBox "Book not found: '" & fullBookName & "'", vbExclamation, "Bible"
 End Sub
 
 Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
@@ -492,7 +494,7 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
                     .Select
                     Selection.Collapse Direction:=wdCollapseStart
                 End With
-                Debug.Print "FindChapterH2: >>>", "Cursor moved to paraIndex = " & paraIndex; ""
+                Debug.Print "FindChapterH2: >>>", "Cursor moved to paraIndex = #" & paraIndex; ""
                 Exit Sub
             End If
         End If
