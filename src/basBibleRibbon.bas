@@ -4,6 +4,7 @@ Option Compare Text
 Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+Public headingData(1 To 66, 0 To 1) As Variant
 Private savedPos As Long
 Private bookAbbr As String
 
@@ -38,12 +39,15 @@ Public Sub RibbonOnLoad(ribbon As IRibbonUI)
     ' Optional: force ribbon refresh after init
 '    ribbonUI.Invalidate
     Call EnableButtonsRoutine
+    
 End Sub
 
 Sub EnableButtonsRoutine()
     Debug.Print "In EnableButtonsRoutine"
     btnNextEnabled = True
     ribbonUI.InvalidateControl "GoToNextButton"
+    CaptureHeading1s
+    LogHeadingData
 End Sub
 
 ' Callback to dynamically enable or disable buttons
@@ -390,36 +394,28 @@ End Sub
 '   - Log file stored in rpt folder
 '=============================================================================================
 Sub LogHeadingData()
-    Static headingData(1 To 66, 0 To 1) As Variant
-    Static sessionID As String
     Static lastParaStarts(1 To 66) As Long
     Dim i As Long
     Dim fPath As String
     Dim fNum As Integer
     Dim updatedCount As Long
-
-    ' Initialize session ID if not already set
-    If sessionID = "" Then
-        sessionID = Format(Now, "yyyymmdd_hhnnss")
-    End If
+    Dim logLine As String
 
     ' Define file path
     fPath = "C:\adaept\aeBibleClass\rpt\HeadingLog.txt"
     fNum = FreeFile
 
-    ' Open file for appending
-    Open fPath For Append As #fNum
-    Print #fNum, "=== Heading Data Log [" & sessionID & "] ==="
-
     updatedCount = 0
     For i = 1 To 66
         If Not isEmpty(headingData(i, 0)) Then
-            ' Print to Immediate Window
             Debug.Print "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
-
-            ' Only write if para start has changed
             If headingData(i, 1) <> lastParaStarts(i) Then
-                Print #fNum, "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
+                If updatedCount = 0 Then
+                    Open fPath For Append As #fNum
+                    Print #fNum, "=== Log Update: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ==="
+                End If
+                logLine = "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
+                Print #fNum, logLine
                 lastParaStarts(i) = headingData(i, 1)
                 updatedCount = updatedCount + 1
             End If
@@ -428,10 +424,9 @@ Sub LogHeadingData()
 
     If updatedCount > 0 Then
         Print #fNum, "Updated entries: " & updatedCount
-        Print #fNum, "Timestamp: " & Format(Now, "yyyy-mm-dd hh:nn:ss")
         Print #fNum, String(40, "-")
+        Close #fNum
     End If
-    Close #fNum
 
     Debug.Print "LogHeadingData: " & updatedCount & " entries written to " & fPath
 End Sub
@@ -444,7 +439,6 @@ End Sub
 '   - Audit-traceable: logs execution status to Immediate Window
 '===========================================================================================
 Public Sub CaptureHeading1s()
-    Static headingData(1 To 66, 0 To 1) As Variant
     Static hasRun As Boolean
     Dim para As paragraph
     Dim i As Long
