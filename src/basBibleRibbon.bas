@@ -387,48 +387,54 @@ ErrHandler:
 End Sub
 
 '=============================================================================================
-' Purpose: Print headingData to Immediate Window and write updated entries to session log file
-'   - Only updates entries where para start has changed
-'   - Session ID is persistent per session
-'   - Appends timestamped updates for audit traceability
-'   - Log file stored in rpt folder
+' Maintain a persistent 66-row CSV file + header, with session-aware ParaIndex updates
+' sessionID,Heading1,BookName,ParaIndex
+'   - Only updates ParaIndex and timestamp if changed
+'   - Entire file is rewritten each time
+'   - Prior values are preserved for unchanged rows
+'   - Git-friendly: diffs show timestamped changes only
 '=============================================================================================
 Sub LogHeadingData()
-    Static lastParaStarts(1 To 66) As Long
-    Dim i As Long
+    Const ROWS As Long = 66
     Dim fPath As String
+    Dim sessionStamp As String
+    Dim i As Long
     Dim fNum As Integer
-    Dim updatedCount As Long
-    Dim logLine As String
+    Dim csvLines(1 To ROWS) As String
+    Static lastParaStarts(1 To ROWS) As Long
+    Static lastBookNames(1 To ROWS) As String
+    Static lastTimestamps(1 To ROWS) As String
+    Dim changed As Boolean
 
-    ' Define file path
+    ' Define persistent CSV path
     fPath = "C:\adaept\aeBibleClass\rpt\HeadingLog.txt"
-    fNum = FreeFile
+    sessionStamp = Format(Now, "yyyy-mm-dd hh:nn:ss")
 
-    updatedCount = 0
-    For i = 1 To 66
+    For i = 1 To ROWS
         If Not isEmpty(headingData(i, 0)) Then
-            Debug.Print "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
             If headingData(i, 1) <> lastParaStarts(i) Then
-                If updatedCount = 0 Then
-                    Open fPath For Append As #fNum
-                    Print #fNum, "=== Log Update: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ==="
-                End If
-                logLine = "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
-                Print #fNum, logLine
                 lastParaStarts(i) = headingData(i, 1)
-                updatedCount = updatedCount + 1
+                lastBookNames(i) = headingData(i, 0)
+                lastTimestamps(i) = sessionStamp
+                changed = True
             End If
         End If
+        csvLines(i) = lastTimestamps(i) & ",H1[" & i & "]," & lastBookNames(i) & "," & lastParaStarts(i)
     Next i
 
-    If updatedCount > 0 Then
-        Print #fNum, "Updated entries: " & updatedCount
-        Print #fNum, String(40, "-")
-        Close #fNum
-    End If
+    fNum = FreeFile
+    Open fPath For Output As #fNum
+    Print #fNum, "sessionID,Heading1,BookName,ParaIndex"
+    For i = 1 To ROWS
+        Print #fNum, csvLines(i)
+    Next i
+    Close #fNum
 
-    Debug.Print "LogHeadingData: " & updatedCount & " entries written to " & fPath
+    If changed Then
+        Debug.Print "LogHeadingData: File updated at " & sessionStamp
+    Else
+        Debug.Print "LogHeadingData: No changes detected — file preserved"
+    End If
 End Sub
 
 '===========================================================================================
@@ -453,7 +459,7 @@ Public Sub CaptureHeading1s()
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
             If i > 66 Then Exit For
-            paraText = Replace(para.range.text, vbCrLf, "")
+            paraText = Trim(Replace(para.range.text, vbCr, ""))
             headingData(i, 0) = paraText
             headingData(i, 1) = para.range.Start
             i = i + 1

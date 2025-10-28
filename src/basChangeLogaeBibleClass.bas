@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #365 -
 ' #364 -
 ' #363 -
-' #362 -
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
 ' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #362 - Update LogHeadingData.txt for csv output per line of H1 with sessionID and paraIndex updated on change [feat] [impr]
     ' FIXED - #361 - LogHeadingData.txt is empty on first run of CaptureHeading1s [bug]
     ' FIXED - #360 - Add Judge to GetFullBookName [impr]
     ' FIXED - #359 - Add routine to print headingData to Immediate Window and write updated entries to session log file [code]
