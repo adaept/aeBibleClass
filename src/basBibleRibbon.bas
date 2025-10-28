@@ -382,6 +382,94 @@ ErrHandler:
     Resume Cleanup
 End Sub
 
+'=============================================================================================
+' Purpose: Print headingData to Immediate Window and write updated entries to session log file
+'   - Only updates entries where para start has changed
+'   - Session ID is persistent per session
+'   - Appends timestamped updates for audit traceability
+'   - Log file stored in rpt folder
+'=============================================================================================
+Sub LogHeadingData()
+    Static headingData(1 To 66, 0 To 1) As Variant
+    Static sessionID As String
+    Static lastParaStarts(1 To 66) As Long
+    Dim i As Long
+    Dim fPath As String
+    Dim fNum As Integer
+    Dim updatedCount As Long
+
+    ' Initialize session ID if not already set
+    If sessionID = "" Then
+        sessionID = Format(Now, "yyyymmdd_hhnnss")
+    End If
+
+    ' Define file path
+    fPath = "C:\adaept\aeBibleClass\rpt\HeadingLog.txt"
+    fNum = FreeFile
+
+    ' Open file for appending
+    Open fPath For Append As #fNum
+    Print #fNum, "=== Heading Data Log [" & sessionID & "] ==="
+
+    updatedCount = 0
+    For i = 1 To 66
+        If Not isEmpty(headingData(i, 0)) Then
+            ' Print to Immediate Window
+            Debug.Print "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
+
+            ' Only write if para start has changed
+            If headingData(i, 1) <> lastParaStarts(i) Then
+                Print #fNum, "H1[" & i & "]: " & headingData(i, 0) & " @ " & headingData(i, 1)
+                lastParaStarts(i) = headingData(i, 1)
+                updatedCount = updatedCount + 1
+            End If
+        End If
+    Next i
+
+    If updatedCount > 0 Then
+        Print #fNum, "Updated entries: " & updatedCount
+        Print #fNum, "Timestamp: " & Format(Now, "yyyy-mm-dd hh:nn:ss")
+        Print #fNum, String(40, "-")
+    End If
+    Close #fNum
+
+    Debug.Print "LogHeadingData: " & updatedCount & " entries written to " & fPath
+End Sub
+
+'===========================================================================================
+' Purpose: Capture Heading 1 text and paragraph index into a static array (1 to 66, 0 to 1)
+'   - Only runs once per session
+'   - Heading text excludes vbCrLf
+'   - Optimized for speed and reproducibility
+'   - Audit-traceable: logs execution status to Immediate Window
+'===========================================================================================
+Public Sub CaptureHeading1s()
+    Static headingData(1 To 66, 0 To 1) As Variant
+    Static hasRun As Boolean
+    Dim para As paragraph
+    Dim i As Long
+    Dim paraText As String
+
+    If hasRun Then
+        Debug.Print "CaptureHeading1s: Already executed this session."
+        Exit Sub
+    End If
+
+    i = 1
+    For Each para In ActiveDocument.paragraphs
+        If para.style = "Heading 1" Then
+            If i > 66 Then Exit For
+            paraText = Replace(para.range.text, vbCrLf, "")
+            headingData(i, 0) = paraText
+            headingData(i, 1) = para.range.Start
+            i = i + 1
+        End If
+    Next para
+
+    hasRun = True
+    Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries."
+End Sub
+
 Private Function LeftUntilLastSpace(ByVal txt As String) As String
     Dim lastSpacePos As Long
 

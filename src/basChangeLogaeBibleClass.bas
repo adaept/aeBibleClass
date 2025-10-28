@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr] [refac]
+' #365 -
+' #364 -
+' #363 -
+' #362 -
+' #361 -
 ' #360 -
-' #359 -
-' #358 -
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
 ' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
@@ -74,6 +77,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #359 - Add routine to print headingData to Immediate Window and write updated entries to session log file [code]
+    ' FIXED - #358 - Add routine to capture Heading 1 text and paragraph index into a static array (1 to 66, 0 to 1) [code]
     ' FIXED - #356 - Speed up FindBookH1 [impr] [refac]
     ' FIXED - #352 - Add routine to find verse based on a given H2 paragraph index [impr] [refac]
     ' FIXED - #355 - Set bookMap to static so it is initialized only once per session and avoid overhead, simplify use of UCase [impr]
