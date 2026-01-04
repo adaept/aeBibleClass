@@ -6,10 +6,14 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr] [refac]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
+' #370 -
+' #369 -
+' #368 -
+' #367 -
+' #366 -
 ' #365 -
-' #364 -
-' #363 -
+' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
 ' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
@@ -74,6 +78,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #364 - Add initial scaffolding for USFM export [feat]
     ' FIXED - #362 - Update LogHeadingData.txt for csv output per line of H1 with sessionID and paraIndex updated on change [feat] [impr]
     ' FIXED - #361 - LogHeadingData.txt is empty on first run of CaptureHeading1s [bug]
     ' FIXED - #360 - Add Judge to GetFullBookName [impr]
