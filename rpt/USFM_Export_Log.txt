@@ -44,3 +44,49 @@
 2026-01-04 14:33:36 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
 2026-01-04 14:33:36 | Execution time: 0.07 seconds
 2026-01-04 14:33:36 | === USFM EXPORT END ===
+2026-01-04 15:47:09 | === USFM EXPORT START ===
+2026-01-04 15:47:09 | Page range: 18 to 19
+2026-01-04 15:47:09 | Beginning paragraph scan...
+2026-01-04 15:47:09 | Converted paragraph (Plain Text): \p 	
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p The
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p Old Testament
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p also known as
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p The Hebrew Bible
+2026-01-04 15:47:09 | Converted paragraph (Plain Text): \p 
+2026-01-04 15:47:09 | Mapped form feed to \pb for style: Plain Text
+2026-01-04 15:47:09 | Converted paragraph (Heading 1): \s1 GENESIS
+2026-01-04 15:47:09 | Converted paragraph (CustomParaAfterH1): \mt2 THE FIRST BOOK OF MOSES
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p Brief background summary
+2026-01-04 15:47:09 | Converted paragraph (DatAuthRef): \ip Dating:
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p Traditional scholarship held that this book was partly produced during the re
+2026-01-04 15:47:09 | Converted paragraph (DatAuthRef): \ip Authorship:
+2026-01-04 15:47:09 | Converted paragraph (Normal): \p Modern scholarship sees this book as a combination of the Yahwist Tradition a
+2026-01-04 15:47:09 | Converted paragraph (DatAuthRef): \ip Refer to the maps for additional background information.
+2026-01-04 15:47:09 | Converted paragraph (Plain Text): \p 
+2026-01-04 15:47:09 | Mapped form feed to \pb for style: Plain Text
+2026-01-04 15:47:09 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-04 15:47:09 | Execution time: 0.09 seconds
+2026-01-04 15:47:09 | === USFM EXPORT END ===
+2026-01-04 15:53:57 | === USFM EXPORT START ===
+2026-01-04 15:53:57 | Page range: 18 to 19
+2026-01-04 15:53:57 | Beginning paragraph scan...
+2026-01-04 15:53:57 | Converted paragraph (Plain Text): \p 	
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p The
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p Old Testament
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p also known as
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p The Hebrew Bible
+2026-01-04 15:53:57 | Converted paragraph (Plain Text): \p 
+2026-01-04 15:53:57 | Mapped form feed to \pb for style: Plain Text
+2026-01-04 15:53:57 | Converted paragraph (Heading 1): \s1 GENESIS
+2026-01-04 15:53:57 | Converted paragraph (CustomParaAfterH1): \mt2 THE FIRST BOOK OF MOSES
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p Brief background summary
+2026-01-04 15:53:57 | Converted paragraph (DatAuthRef): \ip Dating:
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p Traditional scholarship held that this book was partly produced during the re
+2026-01-04 15:53:57 | Converted paragraph (DatAuthRef): \ip Authorship:
+2026-01-04 15:53:57 | Converted paragraph (Normal): \p Modern scholarship sees this book as a combination of the Yahwist Tradition a
+2026-01-04 15:53:57 | Converted paragraph (DatAuthRef): \ip Refer to the maps for additional background information.
+2026-01-04 15:53:57 | Converted paragraph (Plain Text): \p 
+2026-01-04 15:53:57 | Mapped form feed to \pb for style: Plain Text
+2026-01-04 15:53:57 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-04 15:53:57 | Execution time: 0.07 seconds
+2026-01-04 15:53:57 | === USFM EXPORT END ===
