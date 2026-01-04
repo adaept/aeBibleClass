@@ -100,7 +100,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     Dim txt As String
 
     styleName = p.style
-    txt = Trim(p.range.text)
+    txt = CleanTextForUTF8(Trim(p.range.text))
 
     ' Normalize form feed-only paragraphs
     If txt = Chr(12) Then
@@ -156,6 +156,26 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     End Select
 
     LogEvent "Converted paragraph (" & styleName & "): " & Left(ConvertParagraphToUSFM, 80)
+End Function
+
+Private Function CleanTextForUTF8(ByVal s As String) As String
+    ' Remove soft hyphens and other invisible Unicode artifacts
+    s = Replace(s, ChrW(&HAD), "")      ' Soft hyphen
+    s = Replace(s, ChrW(&H2011), "-")   ' Non-breaking hyphen ? normal hyphen
+    s = Replace(s, ChrW(&H200B), "")    ' Zero-width space
+    s = Replace(s, ChrW(&H200C), "")    ' Zero-width non-joiner
+    s = Replace(s, ChrW(&H200D), "")    ' Zero-width joiner
+
+    ' Remove any leftover control characters except CR/LF/TAB
+    Dim i As Long, out As String, ch As String
+    For i = 1 To Len(s)
+        ch = mid$(s, i, 1)
+        If AscW(ch) >= 32 Or AscW(ch) = 9 Or AscW(ch) = 10 Or AscW(ch) = 13 Then
+            out = out & ch
+        End If
+    Next i
+
+    CleanTextForUTF8 = out
 End Function
 
 Private Function OLD_ConvertParagraphToUSFM(ByVal p As paragraph) As String
@@ -246,8 +266,8 @@ Private Sub LogEvent(ByVal msg As String)
     Dim logPath As String
 
     logPath = LOG_FILE
-    logLine = Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & msg & vbCrLf
-
+    logLine = CleanTextForUTF8(Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & msg & vbCrLf)
+    
     Set stm = CreateObject("ADODB.Stream")
 
     On Error GoTo ErrHandler

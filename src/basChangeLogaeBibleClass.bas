@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #370 -
 ' #369 -
 ' #368 -
-' #367 - UTF-8 output for USFM and Log files are including manual hyphenation characters [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #367 - UTF-8 output for USFM and Log files are including manual hyphenation characters [bug]
     ' FIXED - #366 - Write USFM file and Log file as UTF-8 with no BOM marker to be safe for Paratext
     ' FIXED - #364 - Add initial scaffolding for USFM export [feat]
     ' FIXED - #362 - Update LogHeadingData.txt for csv output per line of H1 with sessionID and paraIndex updated on change [feat] [impr]
