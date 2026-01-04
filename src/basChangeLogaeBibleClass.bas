@@ -11,8 +11,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #369 -
 ' #368 -
 ' #367 -
-' #366 -
-' #365 -
+' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
 ' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
@@ -78,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #366 - Write USFM file and Log file as UTF-8 with no BOM marker to be safe for Paratext
     ' FIXED - #364 - Add initial scaffolding for USFM export [feat]
     ' FIXED - #362 - Update LogHeadingData.txt for csv output per line of H1 with sessionID and paraIndex updated on change [feat] [impr]
     ' FIXED - #361 - LogHeadingData.txt is empty on first run of CaptureHeading1s [bug]

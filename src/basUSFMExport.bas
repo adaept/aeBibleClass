@@ -97,6 +97,69 @@ End Function
 ' ============================================================================================
 Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     Dim styleName As String
+    Dim txt As String
+
+    styleName = p.style
+    txt = Trim(p.range.text)
+
+    ' Normalize form feed-only paragraphs
+    If txt = Chr(12) Then
+        ConvertParagraphToUSFM = "\pb"
+        LogEvent "Mapped form feed to \pb for style: " & styleName
+        Exit Function
+    End If
+
+    ' Ignore pure whitespace
+    If Len(Replace(txt, vbTab, "")) = 0 Then
+        ConvertParagraphToUSFM = ""
+        LogEvent "Ignored empty/whitespace paragraph for style: " & styleName
+        Exit Function
+    End If
+
+    Select Case styleName
+
+        Case "Heading 1"
+            ' Currently: \s1 GENESIS
+            ' EXPAND: For strict USFM, consider \mt1 for book title instead of \s1.
+            ConvertParagraphToUSFM = "\s1 " & txt
+
+        Case "CustomParaAfterH1"
+            ' "THE FIRST BOOK OF MOSES"
+            ' EXPAND: For strict USFM, consider \mt2 or \d.
+            ConvertParagraphToUSFM = "\mt2 " & txt
+
+        Case "DatAuthRef"
+            ' "Dating:", "Authorship:", "Refer to the maps..."
+            ' EXPAND: Use \is2 for sub-headings, \ip for prose.
+            If Right$(txt, 1) = ":" Then
+                ConvertParagraphToUSFM = "\is2 " & Left$(txt, Len(txt) - 1)
+            Else
+                ConvertParagraphToUSFM = "\ip " & txt
+            End If
+
+        Case "Plain Text"
+            ' Currently used for tabs, blanks, and form feeds.
+            ' We already handled form feeds and blanks above.
+            ' For any remaining Plain Text, treat as a normal paragraph.
+            ConvertParagraphToUSFM = "\p " & txt
+
+        Case "Normal"
+            ' This is overloaded: titles, headings, and paragraphs.
+            ' EXPAND: Use positional logic (e.g., first Normal lines before any \s1 ? \mt1/\mt2).
+            ConvertParagraphToUSFM = "\p " & txt
+
+        Case Else
+            ' Strict fallback: never emit raw text.
+            ConvertParagraphToUSFM = "\p " & txt
+            LogEvent "USFM DEFAULT MAP (\p) for style: " & styleName
+
+    End Select
+
+    LogEvent "Converted paragraph (" & styleName & "): " & Left(ConvertParagraphToUSFM, 80)
+End Function
+
+Private Function OLD_ConvertParagraphToUSFM(ByVal p As paragraph) As String
+    Dim styleName As String
     styleName = p.style
 
     ' ---------------------------------------------------------
@@ -108,30 +171,30 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
         Case "Verse"
             ' EXPAND: Add verse-number extraction
-            ConvertParagraphToUSFM = "\v " & Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = "\v " & Trim(p.range.text)
 
         Case "Paragraph"
-            ConvertParagraphToUSFM = "\p " & Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = "\p " & Trim(p.range.text)
 
         Case "Heading 1"
-            ConvertParagraphToUSFM = "\s1 " & Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = "\s1 " & Trim(p.range.text)
 
         Case "Heading 2"
-            ConvertParagraphToUSFM = "\s2 " & Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = "\s2 " & Trim(p.range.text)
 
         Case "Poetry 1"
-            ConvertParagraphToUSFM = "\q1 " & Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = "\q1 " & Trim(p.range.text)
 
         Case "Poetry 2"
-            ConvertParagraphToUSFM = "\q2 " & Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = "\q2 " & Trim(p.range.text)
 
         Case Else
             ' EXPAND: Add more mappings
-            ConvertParagraphToUSFM = Trim(p.range.text)
+            OLD_ConvertParagraphToUSFM = Trim(p.range.text)
 
     End Select
 
-    LogEvent "Converted paragraph (" & styleName & "): " & Left(ConvertParagraphToUSFM, 80)
+    LogEvent "Converted paragraph (" & styleName & "): " & Left(OLD_ConvertParagraphToUSFM, 80)
 End Function
 
 ' ============================================================================================
@@ -177,20 +240,78 @@ End Function
 ' LOGGING
 ' ============================================================================================
 Private Sub LogEvent(ByVal msg As String)
-    Dim f As Integer: f = FreeFile
-    Open LOG_FILE For Append As #f
-    Print #f, Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & msg
-    Close #f
+    Dim stm As Object
+    Dim existing As String
+    Dim logLine As String
+    Dim logPath As String
+
+    logPath = LOG_FILE
+    logLine = Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & msg & vbCrLf
+
+    Set stm = CreateObject("ADODB.Stream")
+
+    On Error GoTo ErrHandler
+
+    ' ------------------------------------------------------------
+    ' If the log file exists, read it first (UTF-8), then append.
+    ' ------------------------------------------------------------
+    If Dir(logPath) <> "" Then
+        stm.Type = 2                ' adTypeText
+        stm.Charset = "UTF-8"
+        stm.Open
+        stm.LoadFromFile logPath
+        existing = stm.ReadText
+        stm.Close
+    Else
+        existing = ""
+    End If
+
+    ' ------------------------------------------------------------
+    ' Write combined content back as UTF-8
+    ' ------------------------------------------------------------
+    stm.Open
+    stm.Type = 2
+    stm.Charset = "UTF-8"
+    stm.WriteText existing & logLine
+    stm.Position = 0
+    stm.saveToFile logPath, 2       ' adSaveCreateOverWrite
+    stm.Close
+
+    Set stm = Nothing
+    Exit Sub
+
+ErrHandler:
+    ' Fallback: at least try to write something
+    Debug.Print "LogEvent UTF-8 ERROR: "; Err.Number; Err.Description
 End Sub
 
 ' ============================================================================================
 ' FILE OUTPUT
 ' ============================================================================================
 Private Sub WriteTextFile(ByVal filePath As String, ByVal content As String)
-    Dim f As Integer: f = FreeFile
-    Open filePath For Output As #f
-    Print #f, content
-    Close #f
+    ' Writes UTF-8 without BOM (Paratext-safe)
+    Dim stm As Object
+    Set stm = CreateObject("ADODB.Stream")
+
+    On Error GoTo ErrHandler
+
+    ' Configure stream for UTF-8 text
+    stm.Type = 2                 ' adTypeText
+    stm.Charset = "UTF-8"
+    stm.Open
+
+    stm.WriteText content
+    stm.Position = 0
+
+    ' Save to file (overwrite)
+    stm.saveToFile filePath, 2   ' adSaveCreateOverWrite
+
+    stm.Close
+    Set stm = Nothing
+    Exit Sub
+
+ErrHandler:
+    LogEvent "ERROR writing UTF-8 file: " & Err.Number & " - " & Err.Description
 End Sub
 
 ' ============================================================================================
