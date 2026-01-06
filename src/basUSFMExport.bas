@@ -30,7 +30,7 @@ Attribute VB_Name = "basUSFMExport"
 '       - A consistent style schema in the Word document
 '
 '  EXPANSION NEEDED:
-'       - Full style ? USFM mapping table
+'       - Full style -> USFM mapping table
 '       - Footnote and cross-reference extraction
 '       - Verse-number detection logic
 '       - Poetry, lists, introductions, study notes
@@ -119,13 +119,12 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     Select Case styleName
 
         Case "Heading 1"
-            ' Currently: \s1 GENESIS
-            ' EXPAND: For strict USFM, consider \mt1 for book title instead of \s1.
-            ConvertParagraphToUSFM = "\s1 " & txt
+            ' For strict USFM, use \mt1 for book title instead of \s1.
+            ConvertParagraphToUSFM = "\mt1 " & txt
 
         Case "CustomParaAfterH1"
             ' "THE FIRST BOOK OF MOSES"
-            ' EXPAND: For strict USFM, consider \mt2 or \d.
+            ' For strict USFM, consider \mt2 or \d.
             ConvertParagraphToUSFM = "\mt2 " & txt
 
         Case "DatAuthRef"
