@@ -1,0 +1,19 @@
+﻿2026-01-05 18:17:40 | === USFM VALIDATION START ===
+2026-01-05 18:17:40 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-05 18:17:40 | === USFM VALIDATION END ===
+2026-01-06 16:14:14 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 16:14:14 | === USFM VALIDATION END ===
+2026-01-06 16:20:28 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 16:20:28 | === USFM VALIDATION END ===
+2026-01-06 16:29:14 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 16:29:14 | Line 16: Unknown marker '\cl' ? \cl CHAPTER 1
+2026-01-06 16:29:14 | Line 48: Unknown marker '\cl' ? \cl CHAPTER 2
+2026-01-06 16:29:14 | === USFM VALIDATION END ===
+2026-01-06 16:33:09 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 16:33:09 | Line 16: Unknown marker '\cl' ? \cl CHAPTER 1
+2026-01-06 16:33:09 | Line 48: Unknown marker '\cl' ? \cl CHAPTER 2
+2026-01-06 16:33:09 | === USFM VALIDATION END ===
+2026-01-06 16:40:30 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 16:40:30 | === USFM VALIDATION END ===
+2026-01-06 16:41:46 | Validating file: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 16:41:46 | === USFM VALIDATION END ===

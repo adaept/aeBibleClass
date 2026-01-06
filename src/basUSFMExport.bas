@@ -45,6 +45,7 @@ Option Explicit
 ' -----------------------------
 Private Const LOG_FILE As String = "C:\adaept\aeBibleClass\rpt\USFM_Export_Log.txt"
 Private Const OUTPUT_FILE As String = "C:\adaept\aeBibleClass\rpt\ExportedBible.usfm"
+Private Const VALIDATOR_LOG As String = "C:\adaept\aeBibleClass\rpt\USFM_Validator_Log.txt"
 
 ' ============================================================================================
 ' PUBLIC ENTRY POINT
@@ -66,6 +67,8 @@ Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
     usfm = ConvertRangeToUSFM(rng)
 
     WriteTextFile OUTPUT_FILE, usfm
+    ValidateUSFMFile OUTPUT_FILE
+    
     LogEvent "USFM written to: " & OUTPUT_FILE
 
     LogEvent "Execution time: " & Format(Timer - t0, "0.00") & " seconds"
@@ -136,6 +139,10 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
                 ConvertParagraphToUSFM = "\ip " & txt
             End If
 
+        Case "Heading 2"
+            ' "CHAPTER 1" ? \cl CHAPTER 1
+            ConvertParagraphToUSFM = "\cl " & txt
+        
         Case "Plain Text"
             ' Currently used for tabs, blanks, and form feeds.
             ' We already handled form feeds and blanks above.
@@ -175,6 +182,171 @@ Private Function CleanTextForUTF8(ByVal s As String) As String
     Next i
 
     CleanTextForUTF8 = out
+End Function
+
+Private Sub LogValidator(ByVal msg As String)
+    Dim stm As Object
+    Dim existing As String
+    Dim logLine As String
+    Dim logPath As String
+
+    logPath = VALIDATOR_LOG
+    logLine = CleanTextForUTF8(Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & msg & vbCrLf)
+
+    Set stm = CreateObject("ADODB.Stream")
+
+    On Error GoTo ErrHandler
+
+    ' Read existing UTF-8 content if present
+    If Dir(logPath) <> "" Then
+        stm.Type = 2
+        stm.Charset = "UTF-8"
+        stm.Open
+        stm.LoadFromFile logPath
+        existing = stm.ReadText
+        stm.Close
+    Else
+        existing = ""
+    End If
+
+    ' Write combined content back as UTF-8
+    stm.Open
+    stm.Type = 2
+    stm.Charset = "UTF-8"
+    stm.WriteText existing & logLine
+    stm.Position = 0
+    stm.saveToFile logPath, 2
+    stm.Close
+
+    Set stm = Nothing
+    Exit Sub
+
+ErrHandler:
+    Debug.Print "Validator UTF-8 ERROR: "; Err.Number; Err.Description
+End Sub
+
+Public Sub ValidateUSFMFile(ByVal filePath As String)
+    Dim stm As Object
+    Dim content As String
+    Dim lines() As String
+    Dim i As Long
+    Dim line As String
+    Dim marker As String
+
+    'LogValidator "=== USFM VALIDATION START ==="
+    LogValidator "Validating file: " & filePath
+
+    On Error GoTo ErrHandler
+
+    ' Load UTF-8 file
+    Set stm = CreateObject("ADODB.Stream")
+    stm.Type = 2
+    stm.Charset = "UTF-8"
+    stm.Open
+    stm.LoadFromFile filePath
+    content = stm.ReadText
+    stm.Close
+
+    lines = Split(content, vbCrLf)
+
+    For i = 0 To UBound(lines)
+        line = CleanTextForUTF8(lines(i))
+
+        ' Skip blank lines
+        If Trim(line) = "" Then
+            GoTo NextLine
+        End If
+
+        ' 1. Must start with "\" unless it's a continuation line
+        If Left$(Trim(line), 1) <> "\" Then
+            LogValidator "Line " & (i + 1) & ": Missing USFM marker ? " & line
+            GoTo NextLine
+        End If
+
+        ' Extract marker
+        marker = ExtractUSFMMarker(line)
+
+        ' 2. Validate marker name
+        If Not IsKnownUSFMMarker(marker) Then
+            LogValidator "Line " & (i + 1) & ": Unknown marker '" & marker & "' ? " & line
+        End If
+
+        ' 3. Marker must be followed by space unless it's a standalone marker
+        If Not MarkerAllowsNoSpace(marker) Then
+            If Len(line) > Len(marker) + 1 Then
+                If mid$(line, Len(marker) + 1, 1) <> " " Then
+                    LogValidator "Line " & (i + 1) & ": Missing space after marker '" & marker & "' ? " & line
+                End If
+            End If
+        End If
+
+        ' 4. Check for empty content after markers that require content
+        If MarkerRequiresContent(marker) Then
+            If Len(Trim(mid$(line, Len(marker) + 2))) = 0 Then
+                LogValidator "Line " & (i + 1) & ": Marker '" & marker & "' missing content ? " & line
+            End If
+        End If
+
+NextLine:
+    Next i
+    
+    LogValidator "=== USFM VALIDATION END ==="
+    Exit Sub
+
+ErrHandler:
+    LogValidator "ERROR validating USFM: " & Err.Number & " - " & Err.Description
+End Sub
+
+Private Function ExtractUSFMMarker(ByVal line As String) As String
+    Dim i As Long
+    If Left$(line, 1) <> "\" Then
+        ExtractUSFMMarker = ""
+        Exit Function
+    End If
+
+    For i = 2 To Len(line)
+        If mid$(line, i, 1) = " " Or mid$(line, i, 1) = "*" Then
+            ExtractUSFMMarker = Left$(line, i - 1)
+            Exit Function
+        End If
+    Next i
+
+    ExtractUSFMMarker = line
+End Function
+
+Private Function IsKnownUSFMMarker(ByVal m As String) As Boolean
+    Select Case m
+        Case "\p", "\m", "\q", "\q1", "\q2", "\q3", _
+             "\s1", "\s2", "\s3", _
+             "\ip", "\ipi", "\im", "\is1", "\is2", "\is3", _
+             "\mt1", "\mt2", "\mt3", "\d", _
+             "\pb", "\v", "\c", "\cl", "\r"
+            IsKnownUSFMMarker = True
+        Case Else
+            IsKnownUSFMMarker = False
+    End Select
+End Function
+
+Private Function MarkerAllowsNoSpace(ByVal m As String) As Boolean
+    Select Case m
+        Case "\pb", "\c"
+            MarkerAllowsNoSpace = True
+        Case Else
+            MarkerAllowsNoSpace = False
+    End Select
+End Function
+
+Private Function MarkerRequiresContent(ByVal m As String) As Boolean
+    Select Case m
+        Case "\p", "\m", "\q", "\q1", "\q2", "\q3", _
+             "\s1", "\s2", "\s3", _
+             "\ip", "\ipi", "\im", "\is1", "\is2", "\is3", _
+             "\mt1", "\mt2", "\mt3", "\d", _
+             "\r"
+            MarkerRequiresContent = True
+        Case Else
+            MarkerRequiresContent = False
+    End Select
 End Function
 
 Private Function OLD_ConvertParagraphToUSFM(ByVal p As paragraph) As String

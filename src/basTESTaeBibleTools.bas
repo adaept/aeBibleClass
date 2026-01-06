@@ -1743,7 +1743,7 @@ Sub FlagEarlyBindingRoutines_LateBound()
             procName = codeMod.ProcOfLine(lineNum, procType)
             If procName <> "" Then
                 For i = lineNum To lineNum + codeMod.ProcCountLines(procName, procType) - 1
-                    codeLine = Trim(codeMod.Lines(i, 1))
+                    codeLine = Trim(codeMod.lines(i, 1))
                     If InStr(codeLine, "Dim ") > 0 Or InStr(codeLine, "ReDim ") > 0 Then
                         If ShouldFlag(codeLine, baseTypes, wordTypes, knownEnums, IncludeWordTypes, IncludeEnums) Then
                             Debug.Print FlagLabel(codeLine) & " " & comp.name & "::" & procName & " | Line " & i & ": " & codeLine
