@@ -1,58 +1,60 @@
-﻿2026-01-06 16:41:46 | === USFM EXPORT START ===
-2026-01-06 16:41:46 | Page range: 18 to 20
-2026-01-06 16:41:46 | Beginning paragraph scan...
-2026-01-06 16:41:46 | Converted paragraph (Plain Text): \p 	
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p The
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p Old Testament
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p also known as
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p The Hebrew Bible
-2026-01-06 16:41:46 | Converted paragraph (Plain Text): \p 
-2026-01-06 16:41:46 | Ignored empty/whitespace paragraph for style: Plain Text
-2026-01-06 16:41:46 | Converted paragraph (Heading 1): \mt1 GENESIS
-2026-01-06 16:41:46 | Converted paragraph (CustomParaAfterH1): \mt2 THE FIRST BOOK OF MOSES
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p Brief background summary
-2026-01-06 16:41:46 | Converted paragraph (DatAuthRef): \ip Dating:
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p Traditional scholarship held that this book was partly produced during the re
-2026-01-06 16:41:46 | Converted paragraph (DatAuthRef): \ip Authorship:
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p Modern scholarship sees this book as a combination of the Yahwist Tradition a
-2026-01-06 16:41:46 | Converted paragraph (DatAuthRef): \ip Refer to the maps for additional background information.
-2026-01-06 16:41:46 | Converted paragraph (Plain Text): \p 
-2026-01-06 16:41:46 | Ignored empty/whitespace paragraph for style: Plain Text
-2026-01-06 16:41:46 | Converted paragraph (Heading 2): \cl CHAPTER 1
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 11 In the beginning, God created the heavens and the earth.
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 12 The earth was formless and empty. Darkness was on the surface of the deep 
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 13 God said, “Let there be light,” and there was light.
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 14 God saw the light, and saw that it was good. God divided the light from th
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 15 God called the light “day”, and the darkness he called “night”. There was 
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 16 God said, “Let there be an expanse in the middle of the waters, and let it
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 17 God made the expanse, and divided the waters which were under the expanse 
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 18 God called the expanse “sky”. There was evening and there was morning, a s
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 19 God said, “Let the waters under the sky be gathered together to one place,
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 110 God called the dry land “earth”, and the gathering together of the waters
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 111 God said, “Let the earth yield grass, herbs yielding seeds, and fruit tre
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 112 The earth yielded grass, herbs yielding seed after their kind, and trees 
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 113 There was evening and there was morning, a third day.
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 114 God said, “Let there be lights in the expanse of the sky to divide the da
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 115 and let them be for lights in the expanse of the sky to give light on the
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 116 God made the two great lights: the greater light to rule the day, and the
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 117 God set them in the expanse of the sky to give light to the earth,
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 118 and to rule over the day and over the night, and to divide the light from
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 119 There was evening and there was morning, a fourth day.
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 120 God said, “Let the waters abound with living creatures, and let birds fly
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 121 God created the large sea creatures and every living creature that moves,
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 122 God blessed them, saying, “Be fruitful, and multiply, and fill the waters
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 123 There was evening and there was morning, a fifth day.
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 124 God said, “Let the earth produce living creatures after their kind, lives
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 125 God made the animals of the earth after their kind, and the livestock aft
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 126 God said, “Let us make man in our image, after our likeness. Let them hav
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 127 God created man in his own image. In God’s image he created him; male and
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 128 God blessed them. God said to them, “Be fruitful, multiply, fill the eart
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 129 God said, “Behold, I have given you every herb yielding seed, which is on
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 130 To every animal of the earth, and to every bird of the sky, and to everyt
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 131 God saw everything that he had made, and, behold, it was very good. There
-2026-01-06 16:41:46 | Converted paragraph (Heading 2): \cl CHAPTER 2
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 21 The heavens, the earth, and all their vast array were finished.
-2026-01-06 16:41:46 | Converted paragraph (Normal): \p 22 On the seventh day God finished his work which he had done; and he rested 
-2026-01-06 16:41:46 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
-2026-01-06 16:41:46 | Execution time: 0.13 seconds
-2026-01-06 16:41:46 | === USFM EXPORT END ===
+﻿2026-01-06 18:36:04 | === USFM EXPORT START ===
+2026-01-06 18:36:04 | Page range: 18 to 20
+2026-01-06 18:36:04 | Beginning paragraph scan...
+2026-01-06 18:36:04 | Converted paragraph (Plain Text): \p 	
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p The
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p Old Testament
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p also known as
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p The Hebrew Bible
+2026-01-06 18:36:04 | Converted paragraph (Plain Text): \p 
+2026-01-06 18:36:04 | Ignored empty/whitespace paragraph for style: Plain Text
+2026-01-06 18:36:04 | Converted paragraph (Heading 1): \mt1 GENESIS
+2026-01-06 18:36:04 | Converted paragraph (CustomParaAfterH1): \mt2 THE FIRST BOOK OF MOSES
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p Brief background summary
+2026-01-06 18:36:04 | Converted paragraph (DatAuthRef): \ip Dating:
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p Traditional scholarship held that this book was partly produced during the re
+2026-01-06 18:36:04 | Converted paragraph (DatAuthRef): \ip Authorship:
+2026-01-06 18:36:04 | Converted paragraph (Normal): \p Modern scholarship sees this book as a combination of the Yahwist Tradition a
+2026-01-06 18:36:04 | Converted paragraph (DatAuthRef): \ip Refer to the maps for additional background information.
+2026-01-06 18:36:04 | Converted paragraph (Plain Text): \p 
+2026-01-06 18:36:04 | Ignored empty/whitespace paragraph for style: Plain Text
+2026-01-06 18:36:04 | Converted paragraph (Heading 2): \cl CHAPTER 1
+\c 1
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 1 In the beginning, God created the heavens and the earth.
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 2 The earth was formless and empty. Darkness was on the surface of the deep a
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 3 God said, “Let there be light,” and there was light.
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 4 God saw the light, and saw that it was good. God divided the light from the
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 5 God called the light “day”, and the darkness he called “night”. There was e
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 6 God said, “Let there be an expanse in the middle of the waters, and let it 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 7 God made the expanse, and divided the waters which were under the expanse f
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 8 God called the expanse “sky”. There was evening and there was morning, a se
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 9 God said, “Let the waters under the sky be gathered together to one place, 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 10 God called the dry land “earth”, and the gathering together of the waters 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 11 God said, “Let the earth yield grass, herbs yielding seeds, and fruit tree
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 12 The earth yielded grass, herbs yielding seed after their kind, and trees b
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 13 There was evening and there was morning, a third day.
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 14 God said, “Let there be lights in the expanse of the sky to divide the day
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 15 and let them be for lights in the expanse of the sky to give light on the 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 16 God made the two great lights: the greater light to rule the day, and the 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 17 God set them in the expanse of the sky to give light to the earth,
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 18 and to rule over the day and over the night, and to divide the light from 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 19 There was evening and there was morning, a fourth day.
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 20 God said, “Let the waters abound with living creatures, and let birds fly 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 21 God created the large sea creatures and every living creature that moves, 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 22 God blessed them, saying, “Be fruitful, and multiply, and fill the waters 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 23 There was evening and there was morning, a fifth day.
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 24 God said, “Let the earth produce living creatures after their kind, livest
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 25 God made the animals of the earth after their kind, and the livestock afte
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 26 God said, “Let us make man in our image, after our likeness. Let them have
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 27 God created man in his own image. In God’s image he created him; male and 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 28 God blessed them. God said to them, “Be fruitful, multiply, fill the earth
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 29 God said, “Behold, I have given you every herb yielding seed, which is on 
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 30 To every animal of the earth, and to every bird of the sky, and to everyth
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 31 God saw everything that he had made, and, behold, it was very good. There 
+2026-01-06 18:36:04 | Converted paragraph (Heading 2): \cl CHAPTER 2
+\c 2
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 1 The heavens, the earth, and all their vast array were finished.
+2026-01-06 18:36:04 | Converted paragraph (Normal): \v 2 On the seventh day God finished his work which he had done; and he rested o
+2026-01-06 18:36:04 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-06 18:36:04 | Execution time: 0.41 seconds
+2026-01-06 18:36:04 | === USFM EXPORT END ===
