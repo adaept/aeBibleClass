@@ -113,8 +113,8 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     styleName = Trim$(p.style.NameLocal)
     txt = CleanTextForUTF8(Trim$(p.range.text))
 
-    LogEvent "STYLE=[" & styleName & "] RAW=[" & txt & "]"
-    LogEvent "CHARSTYLE=[" & p.range.Characters(1).style & "]"
+    'LogEvent "STYLE=[" & styleName & "] RAW=[" & txt & "]"
+    'LogEvent "CHARSTYLE=[" & p.range.Characters(1).style & "]"
 
     '===========================================================
     ' 0. FORM FEED / WHITESPACE HANDLING

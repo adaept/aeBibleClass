@@ -1,163 +1,61 @@
-﻿2026-01-08 15:39:39 | === USFM EXPORT START ===
-2026-01-08 15:39:39 | Page range: 18 to 20
-2026-01-08 15:39:39 | Beginning paragraph scan...
-2026-01-08 15:39:39 | STYLE=[Plain Text] RAW=[	]
-2026-01-08 15:39:39 | CHARSTYLE=[Plain Text]
-2026-01-08 15:39:39 | Converted (Plain Text): \p 	
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[Old Testament]
-2026-01-08 15:39:39 | CHARSTYLE=[Book Title]
-2026-01-08 15:39:39 | Converted (Normal): \mt1 Old Testament
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[also known as]
-2026-01-08 15:39:39 | CHARSTYLE=[Normal]
-2026-01-08 15:39:39 | Converted (Normal): \mt2 also known as
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[The Hebrew Bible]
-2026-01-08 15:39:39 | CHARSTYLE=[Normal]
-2026-01-08 15:39:39 | Converted (Normal): \mt3 The Hebrew Bible
-2026-01-08 15:39:39 | STYLE=[Plain Text] RAW=[]
-2026-01-08 15:39:39 | CHARSTYLE=[Plain Text]
-2026-01-08 15:39:39 | Converted (Plain Text): \p 
-2026-01-08 15:39:39 | STYLE=[Plain Text] RAW=[]
-2026-01-08 15:39:39 | CHARSTYLE=[Plain Text]
-2026-01-08 15:39:39 | Ignored whitespace paragraph
-2026-01-08 15:39:39 | Converted (Plain Text): 
-2026-01-08 15:39:39 | STYLE=[Heading 1] RAW=[GENESIS]
-2026-01-08 15:39:39 | CHARSTYLE=[Heading 1]
-2026-01-08 15:39:39 | Converted (Heading 1): \mt1 GENESIS
-2026-01-08 15:39:39 | STYLE=[CustomParaAfterH1] RAW=[THE FIRST BOOK OF MOSES]
-2026-01-08 15:39:39 | CHARSTYLE=[CustomParaAfterH1]
-2026-01-08 15:39:39 | Converted (CustomParaAfterH1): \mt2 THE FIRST BOOK OF MOSES
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[Brief background summary]
-2026-01-08 15:39:39 | CHARSTYLE=[Normal]
-2026-01-08 15:39:39 | Converted (Normal): \p Brief background summary
-2026-01-08 15:39:39 | STYLE=[DatAuthRef] RAW=[Dating:]
-2026-01-08 15:39:39 | CHARSTYLE=[DatAuthRef]
-2026-01-08 15:39:39 | Converted (DatAuthRef): \ip Dating:
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[Traditional scholarship held that this book was partly produced during the reign of Solomon and other parts in the middle of the 5th century BC. However, more modern scholars believe it was produced in the 6th century BC, during the Babylonian exile and the 5th century post-exilic period.]
-2026-01-08 15:39:39 | CHARSTYLE=[Normal]
-2026-01-08 15:39:39 | Converted (Normal): \p Traditional scholarship held that this book was partly produced during the re
-2026-01-08 15:39:39 | STYLE=[DatAuthRef] RAW=[Authorship:]
-2026-01-08 15:39:39 | CHARSTYLE=[DatAuthRef]
-2026-01-08 15:39:39 | Converted (DatAuthRef): \ip Authorship:
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[Modern scholarship sees this book as a combination of the Yahwist Tradition and the Priestly Tradition, with various writers involved in its creation, over time. Traditional scholars saw another tradition, called the Elohist Tradition, in this book. However, modern scholarship tends to see the Elohist Tradition as simply a variation of the Yahwist Tradition. The Priestly Tradition is also regarded by some modern scholars as a variation of the Yahwist Tradition.]
-2026-01-08 15:39:39 | CHARSTYLE=[Normal]
-2026-01-08 15:39:39 | Converted (Normal): \p Modern scholarship sees this book as a combination of the Yahwist Tradition a
-2026-01-08 15:39:39 | STYLE=[DatAuthRef] RAW=[Refer to the maps for additional background information.]
-2026-01-08 15:39:39 | CHARSTYLE=[DatAuthRef]
-2026-01-08 15:39:39 | Converted (DatAuthRef): \ip Refer to the maps for additional background information.
-2026-01-08 15:39:39 | STYLE=[Plain Text] RAW=[]
-2026-01-08 15:39:39 | CHARSTYLE=[Plain Text]
-2026-01-08 15:39:39 | Converted (Plain Text): \p 
-2026-01-08 15:39:39 | STYLE=[Plain Text] RAW=[]
-2026-01-08 15:39:39 | CHARSTYLE=[Plain Text]
-2026-01-08 15:39:39 | Ignored whitespace paragraph
-2026-01-08 15:39:39 | Converted (Plain Text): 
-2026-01-08 15:39:39 | STYLE=[Heading 2] RAW=[CHAPTER 1]
-2026-01-08 15:39:39 | CHARSTYLE=[Heading 2]
-2026-01-08 15:39:39 | Converted (Heading 2): \cl CHAPTER 1
+﻿2026-01-08 15:46:16 | === USFM EXPORT START ===
+2026-01-08 15:46:16 | Page range: 18 to 20
+2026-01-08 15:46:17 | Beginning paragraph scan...
+2026-01-08 15:46:17 | Converted (Plain Text): \p 	
+2026-01-08 15:46:17 | Converted (Normal): \mt1 Old Testament
+2026-01-08 15:46:17 | Converted (Normal): \mt2 also known as
+2026-01-08 15:46:17 | Converted (Normal): \mt3 The Hebrew Bible
+2026-01-08 15:46:17 | Converted (Plain Text): \p 
+2026-01-08 15:46:17 | Ignored whitespace paragraph
+2026-01-08 15:46:17 | Converted (Plain Text): 
+2026-01-08 15:46:17 | Converted (Heading 1): \mt1 GENESIS
+2026-01-08 15:46:17 | Converted (CustomParaAfterH1): \mt2 THE FIRST BOOK OF MOSES
+2026-01-08 15:46:17 | Converted (Normal): \p Brief background summary
+2026-01-08 15:46:17 | Converted (DatAuthRef): \ip Dating:
+2026-01-08 15:46:17 | Converted (Normal): \p Traditional scholarship held that this book was partly produced during the re
+2026-01-08 15:46:17 | Converted (DatAuthRef): \ip Authorship:
+2026-01-08 15:46:17 | Converted (Normal): \p Modern scholarship sees this book as a combination of the Yahwist Tradition a
+2026-01-08 15:46:17 | Converted (DatAuthRef): \ip Refer to the maps for additional background information.
+2026-01-08 15:46:17 | Converted (Plain Text): \p 
+2026-01-08 15:46:17 | Ignored whitespace paragraph
+2026-01-08 15:46:17 | Converted (Plain Text): 
+2026-01-08 15:46:17 | Converted (Heading 2): \cl CHAPTER 1
 \c 1
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[11 In the beginning, God created the heavens and the earth.]
-2026-01-08 15:39:39 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:39 | Converted (Normal): \v 1 In the beginning, God created the heavens and the earth.
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[12 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.]
-2026-01-08 15:39:39 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:39 | Converted (Normal): \v 2 The earth was formless and empty. Darkness was on the surface of the deep a
-2026-01-08 15:39:39 | STYLE=[Normal] RAW=[13 God said, “Let there be light,” and there was light.]
-2026-01-08 15:39:39 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 3 God said, “Let there be light,” and there was light.
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[14 God saw the light, and saw that it was good. God divided the light from the darkness.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 4 God saw the light, and saw that it was good. God divided the light from the
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[15 God called the light “day”, and the darkness he called “night”. There was evening and there was morning, the first day.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 5 God called the light “day”, and the darkness he called “night”. There was e
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[16 God said, “Let there be an expanse in the middle of the waters, and let it divide the waters from the waters.”]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 6 God said, “Let there be an expanse in the middle of the waters, and let it 
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[17 God made the expanse, and divided the waters which were under the expanse from the waters which were above the expanse; and it was so.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 7 God made the expanse, and divided the waters which were under the expanse f
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[18 God called the expanse “sky”. There was evening and there was morning, a second day.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 8 God called the expanse “sky”. There was evening and there was morning, a se
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[19 God said, “Let the waters under the sky be gathered together to one place, and let the dry land appear;” and it was so.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 9 God said, “Let the waters under the sky be gathered together to one place, 
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[110 God called the dry land “earth”, and the gathering together of the waters he called “seas”. God saw that it was good.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 10 God called the dry land “earth”, and the gathering together of the waters 
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[111 God said, “Let the earth yield grass, herbs yielding seeds, and fruit trees bearing fruit after their kind, with their seeds in it, on the earth;” and it was so.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 11 God said, “Let the earth yield grass, herbs yielding seeds, and fruit tree
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[112 The earth yielded grass, herbs yielding seed after their kind, and trees bearing fruit, with their seeds in it, after their kind; and God saw that it was good.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 12 The earth yielded grass, herbs yielding seed after their kind, and trees b
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[113 There was evening and there was morning, a third day.]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:40 | Converted (Normal): \v 13 There was evening and there was morning, a third day.
-2026-01-08 15:39:40 | STYLE=[Normal] RAW=[114 God said, “Let there be lights in the expanse of the sky to divide the day from the night; and let them be for signs to mark seasons, days, and years;]
-2026-01-08 15:39:40 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 14 God said, “Let there be lights in the expanse of the sky to divide the day
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[115 and let them be for lights in the expanse of the sky to give light on the earth;” and it was so.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 15 and let them be for lights in the expanse of the sky to give light on the 
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[116 God made the two great lights: the greater light to rule the day, and the lesser light to rule the night. He also made the stars.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 16 God made the two great lights: the greater light to rule the day, and the 
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[117 God set them in the expanse of the sky to give light to the earth,]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 17 God set them in the expanse of the sky to give light to the earth,
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[118 and to rule over the day and over the night, and to divide the light from the darkness. God saw that it was good.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 18 and to rule over the day and over the night, and to divide the light from 
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[119 There was evening and there was morning, a fourth day.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 19 There was evening and there was morning, a fourth day.
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[120 God said, “Let the waters abound with living creatures, and let birds fly above the earth in the open expanse of the sky.”]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 20 God said, “Let the waters abound with living creatures, and let birds fly 
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[121 God created the large sea creatures and every living creature that moves, with which the waters swarmed, after their kind, and every winged bird after its kind. God saw that it was good.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 21 God created the large sea creatures and every living creature that moves, 
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[122 God blessed them, saying, “Be fruitful, and multiply, and fill the waters in the seas, and let birds multiply on the earth.”]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 22 God blessed them, saying, “Be fruitful, and multiply, and fill the waters 
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[123 There was evening and there was morning, a fifth day.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 23 There was evening and there was morning, a fifth day.
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[124 God said, “Let the earth produce living creatures after their kind, livestock, creeping things, and animals of the earth after their kind;” and it was so.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:41 | Converted (Normal): \v 24 God said, “Let the earth produce living creatures after their kind, livest
-2026-01-08 15:39:41 | STYLE=[Normal] RAW=[125 God made the animals of the earth after their kind, and the livestock after their kind, and everything that creeps on the ground after its kind. God saw that it was good.]
-2026-01-08 15:39:41 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 25 God made the animals of the earth after their kind, and the livestock afte
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[126 God said, “Let us make man in our image, after our likeness. Let them have dominion over the fish of the sea, and over the birds of the sky, and over the livestock, and over all the earth, and over every creeping thing that creeps on the earth.”]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 26 God said, “Let us make man in our image, after our likeness. Let them have
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[127 God created man in his own image. In God’s image he created him; male and female he created them.]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 27 God created man in his own image. In God’s image he created him; male and 
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[128 God blessed them. God said to them, “Be fruitful, multiply, fill the earth, and subdue it. Have dominion over the fish of the sea, over the birds of the sky, and over every living thing that moves on the earth.”]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 28 God blessed them. God said to them, “Be fruitful, multiply, fill the earth
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[129 God said, “Behold, I have given you every herb yielding seed, which is on the surface of all the earth, and every tree, which bears fruit yielding seed. It will be your food.]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 29 God said, “Behold, I have given you every herb yielding seed, which is on 
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[130 To every animal of the earth, and to every bird of the sky, and to everything that creeps on the earth, in which there is life, I have given every green herb for food;” and it was so.]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 30 To every animal of the earth, and to every bird of the sky, and to everyth
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[131 God saw everything that he had made, and, behold, it was very good. There was evening and there was morning, a sixth day.]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 31 God saw everything that he had made, and, behold, it was very good. There 
-2026-01-08 15:39:42 | STYLE=[Heading 2] RAW=[CHAPTER 2]
-2026-01-08 15:39:42 | CHARSTYLE=[Heading 2]
-2026-01-08 15:39:42 | Converted (Heading 2): \cl CHAPTER 2
+2026-01-08 15:46:17 | Converted (Normal): \v 1 In the beginning, God created the heavens and the earth.
+2026-01-08 15:46:17 | Converted (Normal): \v 2 The earth was formless and empty. Darkness was on the surface of the deep a
+2026-01-08 15:46:17 | Converted (Normal): \v 3 God said, “Let there be light,” and there was light.
+2026-01-08 15:46:17 | Converted (Normal): \v 4 God saw the light, and saw that it was good. God divided the light from the
+2026-01-08 15:46:17 | Converted (Normal): \v 5 God called the light “day”, and the darkness he called “night”. There was e
+2026-01-08 15:46:17 | Converted (Normal): \v 6 God said, “Let there be an expanse in the middle of the waters, and let it 
+2026-01-08 15:46:18 | Converted (Normal): \v 7 God made the expanse, and divided the waters which were under the expanse f
+2026-01-08 15:46:18 | Converted (Normal): \v 8 God called the expanse “sky”. There was evening and there was morning, a se
+2026-01-08 15:46:18 | Converted (Normal): \v 9 God said, “Let the waters under the sky be gathered together to one place, 
+2026-01-08 15:46:18 | Converted (Normal): \v 10 God called the dry land “earth”, and the gathering together of the waters 
+2026-01-08 15:46:18 | Converted (Normal): \v 11 God said, “Let the earth yield grass, herbs yielding seeds, and fruit tree
+2026-01-08 15:46:18 | Converted (Normal): \v 12 The earth yielded grass, herbs yielding seed after their kind, and trees b
+2026-01-08 15:46:18 | Converted (Normal): \v 13 There was evening and there was morning, a third day.
+2026-01-08 15:46:18 | Converted (Normal): \v 14 God said, “Let there be lights in the expanse of the sky to divide the day
+2026-01-08 15:46:18 | Converted (Normal): \v 15 and let them be for lights in the expanse of the sky to give light on the 
+2026-01-08 15:46:19 | Converted (Normal): \v 16 God made the two great lights: the greater light to rule the day, and the 
+2026-01-08 15:46:19 | Converted (Normal): \v 17 God set them in the expanse of the sky to give light to the earth,
+2026-01-08 15:46:19 | Converted (Normal): \v 18 and to rule over the day and over the night, and to divide the light from 
+2026-01-08 15:46:19 | Converted (Normal): \v 19 There was evening and there was morning, a fourth day.
+2026-01-08 15:46:19 | Converted (Normal): \v 20 God said, “Let the waters abound with living creatures, and let birds fly 
+2026-01-08 15:46:19 | Converted (Normal): \v 21 God created the large sea creatures and every living creature that moves, 
+2026-01-08 15:46:19 | Converted (Normal): \v 22 God blessed them, saying, “Be fruitful, and multiply, and fill the waters 
+2026-01-08 15:46:19 | Converted (Normal): \v 23 There was evening and there was morning, a fifth day.
+2026-01-08 15:46:19 | Converted (Normal): \v 24 God said, “Let the earth produce living creatures after their kind, livest
+2026-01-08 15:46:19 | Converted (Normal): \v 25 God made the animals of the earth after their kind, and the livestock afte
+2026-01-08 15:46:20 | Converted (Normal): \v 26 God said, “Let us make man in our image, after our likeness. Let them have
+2026-01-08 15:46:20 | Converted (Normal): \v 27 God created man in his own image. In God’s image he created him; male and 
+2026-01-08 15:46:20 | Converted (Normal): \v 28 God blessed them. God said to them, “Be fruitful, multiply, fill the earth
+2026-01-08 15:46:20 | Converted (Normal): \v 29 God said, “Behold, I have given you every herb yielding seed, which is on 
+2026-01-08 15:46:20 | Converted (Normal): \v 30 To every animal of the earth, and to every bird of the sky, and to everyth
+2026-01-08 15:46:20 | Converted (Normal): \v 31 God saw everything that he had made, and, behold, it was very good. There 
+2026-01-08 15:46:21 | Converted (Heading 2): \cl CHAPTER 2
 \c 2
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[21 The heavens, the earth, and all their vast array were finished.]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:42 | Converted (Normal): \v 1 The heavens, the earth, and all their vast array were finished.
-2026-01-08 15:39:42 | STYLE=[Normal] RAW=[22 On the seventh day God finished his work which he had done; and he rested on the seventh day from all his work which he had done.]
-2026-01-08 15:39:42 | CHARSTYLE=[Chapter Verse marker]
-2026-01-08 15:39:43 | Converted (Normal): \v 2 On the seventh day God finished his work which he had done; and he rested o
-2026-01-08 15:39:43 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
-2026-01-08 15:39:43 | Execution time: 3.87 seconds
-2026-01-08 15:39:43 | === USFM EXPORT END ===
+2026-01-08 15:46:21 | Converted (Normal): \v 1 The heavens, the earth, and all their vast array were finished.
+2026-01-08 15:46:21 | Converted (Normal): \v 2 On the seventh day God finished his work which he had done; and he rested o
+2026-01-08 15:46:21 | USFM written to: C:\adaept\aeBibleClass\rpt\ExportedBible.usfm
+2026-01-08 15:46:21 | Execution time: 4.48 seconds
+2026-01-08 15:46:21 | === USFM EXPORT END ===
