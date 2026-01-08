@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #373 -
 ' #372 -
 ' #371 -
-' #370 -
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
@@ -79,6 +78,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #370 - Update USFM export for two layer detection model: paragraph and character-level semantics
     ' FIXED - #369 - Update USFM exporter for style definition "Chapter Verse marker" (orange), "Verse marker" (green)
     ' FIXED - #368 - Add a strict USFM validator that logs structural issues to a separate log file in UTF-8 format that uses current code.
     ' FIXED - #367 - UTF-8 output for USFM and Log files are including manual hyphenation characters [bug]

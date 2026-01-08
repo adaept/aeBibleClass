@@ -47,6 +47,7 @@ Private Const LOG_FILE As String = "C:\adaept\aeBibleClass\rpt\USFM_Export_Log.t
 Private Const OUTPUT_FILE As String = "C:\adaept\aeBibleClass\rpt\ExportedBible.usfm"
 Private Const VALIDATOR_LOG As String = "C:\adaept\aeBibleClass\rpt\USFM_Validator_Log.txt"
 Private currentChapter As Long
+Private bookTitleLevel As Long   ' 0 = none, 1 = next is mt2, 2 = next is mt3
 
 ' ============================================================================================
 ' PUBLIC ENTRY POINT
@@ -54,6 +55,8 @@ Private currentChapter As Long
 Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
     Dim t0 As Double: t0 = Timer
     currentChapter = 0
+    bookTitleLevel = 0
+    
     LogEvent "=== USFM EXPORT START ==="
     LogEvent "Page range: " & startPage & " to " & endPage
 
@@ -107,37 +110,85 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     Dim verseNum As Long
     Dim verseText As String
 
-    styleName = p.style
-    txt = CleanTextForUTF8(Trim(p.range.text))
+    styleName = Trim$(p.style.NameLocal)
+    txt = CleanTextForUTF8(Trim$(p.range.text))
 
-    ' Normalize form feed-only paragraphs
+    LogEvent "STYLE=[" & styleName & "] RAW=[" & txt & "]"
+    LogEvent "CHARSTYLE=[" & p.range.Characters(1).style & "]"
+
+    '===========================================================
+    ' 0. FORM FEED / WHITESPACE HANDLING
+    '===========================================================
     If txt = Chr(12) Then
         ConvertParagraphToUSFM = "\pb"
-        LogEvent "Mapped form feed to \pb for style: " & styleName
-        Exit Function
+        GoTo LogAndExit
     End If
 
-    ' Ignore pure whitespace
     If Len(Replace(txt, vbTab, "")) = 0 Then
         ConvertParagraphToUSFM = ""
-        LogEvent "Ignored empty/whitespace paragraph for style: " & styleName
-        Exit Function
+        LogEvent "Ignored whitespace paragraph"
+        GoTo LogAndExit
     End If
 
+    '===========================================================
+    ' 1. CHARACTER-STYLE SEMANTICS (highest priority)
+    '===========================================================
+
+    ' --- Book Title (character style) ---
+    If ParagraphHasCharStyle(p, "Book Title") Then
+        ConvertParagraphToUSFM = "\mt1 " & txt
+        bookTitleLevel = 1
+        GoTo LogAndExit
+    End If
+
+    ' --- Chapter marker (character style) ---
+    If ParagraphHasCharStyle(p, "Chapter Verse marker") Then
+        Dim chapTxt As String
+        chapTxt = ExtractCharStyleText(p, "Chapter Verse marker")
+
+        If IsNumeric(chapTxt) Then
+            currentChapter = CLng(chapTxt)
+            ConvertParagraphToUSFM = "\c " & currentChapter
+        Else
+            ConvertParagraphToUSFM = "\rem INVALID CHAPTER MARKER: " & chapTxt
+        End If
+
+        GoTo LogAndExit
+    End If
+
+    ' --- Verse marker (character style) ---
+    If ParagraphHasCharStyle(p, "Verse marker") Then
+        Dim vTxt As String
+        vTxt = ExtractCharStyleText(p, "Verse marker")
+
+        If IsNumeric(vTxt) Then
+            verseNum = CLng(vTxt)
+            verseText = Trim$(Replace(txt, vTxt, ""))
+            ConvertParagraphToUSFM = "\v " & verseNum & " " & verseText
+        Else
+            ConvertParagraphToUSFM = "\rem INVALID VERSE MARKER: " & vTxt
+        End If
+
+        GoTo LogAndExit
+    End If
+
+    '===========================================================
+    ' 2. PARAGRAPH-STYLE SEMANTICS (your existing logic)
+    '===========================================================
     Select Case styleName
 
-        '===========================================================
-        ' BOOK TITLES
-        '===========================================================
+        Case "Book Title"
+            ConvertParagraphToUSFM = "\mt1 " & txt
+            bookTitleLevel = 1
+
         Case "Heading 1"
             ConvertParagraphToUSFM = "\mt1 " & txt
+            bookTitleLevel = 1
 
         Case "CustomParaAfterH1"
             ConvertParagraphToUSFM = "\mt2 " & txt
+            bookTitleLevel = 0   ' explicitly end any title sequence
 
-        '===========================================================
-        ' CHAPTER LABELS (e.g., "CHAPTER 1")
-        '===========================================================
         Case "Heading 2"
             chapNum = ExtractTrailingNumber(txt)
             If chapNum > 0 Then
@@ -147,31 +198,6 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
                 ConvertParagraphToUSFM = "\cl " & txt
             End If
 
-        '===========================================================
-        ' EXPLICIT CHAPTER NUMBER PARAGRAPH (if you ever use it)
-        '===========================================================
-        Case "Chapter Verse marker"
-            If IsNumeric(txt) Then
-                currentChapter = CLng(txt)
-                ConvertParagraphToUSFM = "\c " & currentChapter
-            Else
-                ConvertParagraphToUSFM = "\rem INVALID CHAPTER MARKER: " & txt
-            End If
-
-        '===========================================================
-        ' EXPLICIT VERSE NUMBER PARAGRAPH (rare)
-        '===========================================================
-        Case "Verse marker"
-            If IsNumeric(txt) Then
-                verseNum = CLng(txt)
-                ConvertParagraphToUSFM = "\v " & verseNum
-            Else
-                ConvertParagraphToUSFM = "\rem INVALID VERSE MARKER: " & txt
-            End If
-
-        '===========================================================
-        ' INTRODUCTORY MATERIAL
-        '===========================================================
         Case "DatAuthRef"
             If Right$(txt, 1) = ":" Then
                 ConvertParagraphToUSFM = "\is2 " & Left$(txt, Len(txt) - 1)
@@ -179,32 +205,56 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
                 ConvertParagraphToUSFM = "\ip " & txt
             End If
 
-        '===========================================================
-        ' NORMAL / PLAIN TEXT — VERSE OR PARAGRAPH (STYLE-AWARE ONLY)
-        '===========================================================
         Case "Plain Text", "Normal"
-            If TryParseChapterVerseFromStyles(p, chapNum, verseNum, verseText) Then
+            If bookTitleLevel = 1 Then
+                ConvertParagraphToUSFM = "\mt2 " & txt
+                bookTitleLevel = 2
+
+            ElseIf bookTitleLevel = 2 Then
+                ConvertParagraphToUSFM = "\mt3 " & txt
+                bookTitleLevel = 0
+
+            ElseIf TryParseChapterVerseFromStyles(p, chapNum, verseNum, verseText) Then
                 If chapNum > 0 Then currentChapter = chapNum
                 ConvertParagraphToUSFM = "\v " & verseNum & " " & verseText
+
             Else
                 ConvertParagraphToUSFM = "\p " & txt
             End If
 
-        '===========================================================
-        ' STRICT FALLBACK
-        '===========================================================
         Case Else
             If TryParseChapterVerseFromStyles(p, chapNum, verseNum, verseText) Then
                 If chapNum > 0 Then currentChapter = chapNum
                 ConvertParagraphToUSFM = "\v " & verseNum & " " & verseText
             Else
                 ConvertParagraphToUSFM = "\p " & txt
-                LogEvent "USFM DEFAULT MAP (\p) for style: " & styleName
             End If
 
     End Select
 
-    LogEvent "Converted paragraph (" & styleName & "): " & Left(ConvertParagraphToUSFM, 80)
+LogAndExit:
+    LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+End Function
+
+Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As Boolean
+    Dim r As range
+    For Each r In p.range.words
+        If r.style = styleName Then
+            ParagraphHasCharStyle = True
+            Exit Function
+        End If
+    Next
+End Function
+
+Private Function ExtractCharStyleText(p As paragraph, styleName As String) As String
+    Dim r As range
+    Dim buf As String
+    For Each r In p.range.words
+        If r.style = styleName Then
+            buf = buf & r.text
+        End If
+    Next
+    ExtractCharStyleText = Trim$(buf)
 End Function
 
 Private Function TryParseChapterVerseFromStyles( _
