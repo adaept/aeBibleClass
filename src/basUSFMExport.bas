@@ -124,9 +124,10 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
         GoTo LogAndExit
     End If
 
-    If Len(Replace(txt, vbTab, "")) = 0 Then
+    ' --- EFFECTIVE EMPTY CHECK ---
+    If IsEffectivelyEmpty(txt) Then
         ConvertParagraphToUSFM = ""
-        LogEvent "Ignored whitespace paragraph"
+        LogEvent "Ignored effectively-empty paragraph"
         GoTo LogAndExit
     End If
 
@@ -234,6 +235,21 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
 LogAndExit:
     LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+End Function
+
+Function IsEffectivelyEmpty(txt As String) As Boolean
+    Dim t As String
+    t = Trim$(txt)
+
+    ' Remove tabs, NBSP, CR, LF, Unicode spaces
+    t = Replace(t, vbTab, "")
+    t = Replace(t, ChrW(160), "")   ' NBSP
+    t = Replace(t, ChrW(8203), "")  ' zero-width space
+    t = Replace(t, ChrW(65279), "") ' BOM
+    t = Replace(t, vbCr, "")
+    t = Replace(t, vbLf, "")
+
+    IsEffectivelyEmpty = (Len(t) = 0)
 End Function
 
 Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As Boolean
