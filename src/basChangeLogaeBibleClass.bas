@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #375 -
 ' #374 -
 ' #373 -
-' #372 -
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #372 - Remove blank lines after verses - from \v in code
     ' FIXED - #371 - Add IsEffectivelyEmpty function to remove extraneous empty lines in exported USFM
     ' FIXED - #370 - Update USFM export for two layer detection model: paragraph and character-level semantics
     ' FIXED - #369 - Update USFM exporter for style definition "Chapter Verse marker" (orange), "Verse marker" (green)

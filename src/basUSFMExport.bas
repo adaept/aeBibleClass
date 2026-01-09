@@ -87,13 +87,29 @@ Private Function ConvertRangeToUSFM(ByVal rng As range) As String
     Dim p As paragraph
     Dim sb As String
     Dim line As String
+    Dim parts() As String
+    Dim i As Long
 
     LogEvent "Beginning paragraph scan..."
 
     For Each p In rng.paragraphs
         line = ConvertParagraphToUSFM(p)
+
         If Len(line) > 0 Then
-            sb = sb & line & vbCrLf
+
+            ' --- FIX: handle multi-line USFM output safely ---
+            If InStr(line, vbCrLf) > 0 Then
+                parts = Split(line, vbCrLf)
+                For i = LBound(parts) To UBound(parts)
+                    If Len(parts(i)) > 0 Then
+                        sb = sb & parts(i) & vbCrLf
+                    End If
+                Next i
+
+            Else
+                sb = sb & line & vbCrLf
+            End If
+
         End If
     Next p
 
@@ -112,6 +128,10 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
     styleName = Trim$(p.style.NameLocal)
     txt = CleanTextForUTF8(Trim$(p.range.text))
+
+    ' Normalize out any embedded CR/LF coming from Word
+    txt = Replace$(txt, vbCr, "")
+    txt = Replace$(txt, vbLf, "")
 
     'LogEvent "STYLE=[" & styleName & "] RAW=[" & txt & "]"
     'LogEvent "CHARSTYLE=[" & p.range.Characters(1).style & "]"
@@ -165,7 +185,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
         If IsNumeric(vTxt) Then
             verseNum = CLng(vTxt)
             verseText = Trim$(Replace(txt, vTxt, ""))
-            ConvertParagraphToUSFM = "\v " & verseNum & " " & verseText
+            ConvertParagraphToUSFM = MakeVerseLine(verseNum, verseText)
         Else
             ConvertParagraphToUSFM = "\rem INVALID VERSE MARKER: " & vTxt
         End If
@@ -217,8 +237,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
             ElseIf TryParseChapterVerseFromStyles(p, chapNum, verseNum, verseText) Then
                 If chapNum > 0 Then currentChapter = chapNum
-                ConvertParagraphToUSFM = "\v " & verseNum & " " & verseText
-
+                ConvertParagraphToUSFM = MakeVerseLine(verseNum, verseText)
             Else
                 ConvertParagraphToUSFM = "\p " & txt
             End If
@@ -226,7 +245,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
         Case Else
             If TryParseChapterVerseFromStyles(p, chapNum, verseNum, verseText) Then
                 If chapNum > 0 Then currentChapter = chapNum
-                ConvertParagraphToUSFM = "\v " & verseNum & " " & verseText
+                ConvertParagraphToUSFM = MakeVerseLine(verseNum, verseText)
             Else
                 ConvertParagraphToUSFM = "\p " & txt
             End If
@@ -235,6 +254,15 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
 LogAndExit:
     LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+End Function
+
+Private Function MakeVerseLine(ByVal verseNum As Long, ByVal verseText As String) As String
+    ' Normalize CR/LF from Word
+    verseText = Replace$(verseText, vbCr, "")
+    verseText = Replace$(verseText, vbLf, "")
+    verseText = Trim$(verseText)
+
+    MakeVerseLine = "\v " & verseNum & " " & verseText
 End Function
 
 Function IsEffectivelyEmpty(txt As String) As Boolean
@@ -551,45 +579,6 @@ Private Function MarkerRequiresContent(ByVal m As String) As Boolean
         Case Else
             MarkerRequiresContent = False
     End Select
-End Function
-
-Private Function OLD_ConvertParagraphToUSFM(ByVal p As paragraph) As String
-    Dim styleName As String
-    styleName = p.style
-
-    ' ---------------------------------------------------------
-    ' EXPAND HERE:
-    '   Map your Word styles to USFM markers.
-    '   This is the core of the exporter.
-    ' ---------------------------------------------------------
-    Select Case styleName
-
-        Case "Verse"
-            ' EXPAND: Add verse-number extraction
-            OLD_ConvertParagraphToUSFM = "\v " & Trim(p.range.text)
-
-        Case "Paragraph"
-            OLD_ConvertParagraphToUSFM = "\p " & Trim(p.range.text)
-
-        Case "Heading 1"
-            OLD_ConvertParagraphToUSFM = "\s1 " & Trim(p.range.text)
-
-        Case "Heading 2"
-            OLD_ConvertParagraphToUSFM = "\s2 " & Trim(p.range.text)
-
-        Case "Poetry 1"
-            OLD_ConvertParagraphToUSFM = "\q1 " & Trim(p.range.text)
-
-        Case "Poetry 2"
-            OLD_ConvertParagraphToUSFM = "\q2 " & Trim(p.range.text)
-
-        Case Else
-            ' EXPAND: Add more mappings
-            OLD_ConvertParagraphToUSFM = Trim(p.range.text)
-
-    End Select
-
-    LogEvent "Converted paragraph (" & styleName & "): " & Left(OLD_ConvertParagraphToUSFM, 80)
 End Function
 
 ' ============================================================================================
