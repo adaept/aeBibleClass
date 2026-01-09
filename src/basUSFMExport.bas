@@ -198,8 +198,8 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     '===========================================================
     Select Case styleName
 
-        Case "Book Title"
-            ConvertParagraphToUSFM = "\mt1 " & txt
+        Case "Book Title", "Heading 1"
+            ConvertParagraphToUSFM = MakeTitleLine(1, txt)
             bookTitleLevel = 1
 
         Case "Heading 1"
@@ -207,7 +207,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
             bookTitleLevel = 1
 
         Case "CustomParaAfterH1"
-            ConvertParagraphToUSFM = "\mt2 " & txt
+            ConvertParagraphToUSFM = MakeTitleLine(2, txt)
             bookTitleLevel = 0   ' explicitly end any title sequence
 
         Case "Heading 2"
@@ -223,11 +223,11 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
         Case "Plain Text", "Normal"
             If bookTitleLevel = 1 Then
-                ConvertParagraphToUSFM = "\mt2 " & txt
+                ConvertParagraphToUSFM = MakeTitleLine(2, txt)
                 bookTitleLevel = 2
 
             ElseIf bookTitleLevel = 2 Then
-                ConvertParagraphToUSFM = "\mt3 " & txt
+                ConvertParagraphToUSFM = MakeTitleLine(3, txt)
                 bookTitleLevel = 0
 
             ElseIf TryParseChapterVerseFromStyles(p, chapNum, verseNum, verseText) Then
@@ -249,6 +249,15 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
 LogAndExit:
     LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+End Function
+
+Private Function MakeTitleLine(ByVal level As Long, ByVal txt As String) As String
+    ' Normalize CR/LF
+    txt = Replace$(txt, vbCr, "")
+    txt = Replace$(txt, vbLf, "")
+    txt = Trim$(txt)
+
+    MakeTitleLine = "\mt" & CStr(level) & " " & txt
 End Function
 
 Private Function MakeChapterLines(ByVal chapNum As Long, ByVal clText As String) As String
