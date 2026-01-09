@@ -216,7 +216,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
         Case "DatAuthRef"
             If Right$(txt, 1) = ":" Then
-                ConvertParagraphToUSFM = "\is2 " & Left$(txt, Len(txt) - 1)
+                ConvertParagraphToUSFM = "\is2 " & txt
             Else
                 ConvertParagraphToUSFM = "\ip " & txt
             End If
