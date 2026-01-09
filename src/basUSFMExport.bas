@@ -684,7 +684,7 @@ End Sub
 ' FILE OUTPUT
 ' ============================================================================================
 Private Sub WriteTextFile(ByVal filePath As String, ByVal content As String)
-    ' Writes UTF-8 without BOM (Paratext-safe)
+    ' Writes UTF-8 with BOM (still Paratext-safe)
     Dim stm As Object
     Set stm = CreateObject("ADODB.Stream")
 
@@ -692,7 +692,7 @@ Private Sub WriteTextFile(ByVal filePath As String, ByVal content As String)
 
     ' Configure stream for UTF-8 text
     stm.Type = 2                 ' adTypeText
-    stm.Charset = "UTF-8"
+    stm.Charset = "UTF-8"        ' ADODB.Stream always writes a BOM (EF BB BF) with these 2 lines
     stm.Open
 
     stm.WriteText content
