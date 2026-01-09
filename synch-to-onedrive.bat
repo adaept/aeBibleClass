@@ -10,8 +10,8 @@ if not exist "%DESTINATION%" (
     mkdir "%DESTINATION%"
 )
 
-:: Copy new files only (no overwrite)
-xcopy "%SOURCE%\*" "%DESTINATION%\" /E /I /Y /D /C
+:: Copy only when file content changes, and show only changed files
+robocopy "%SOURCE%" "%DESTINATION%" /E /XC /XN /XO /NFL /NDL /NJH /NJS /NP /NS /NC
 
 echo Sync complete. Only new or updated files were copied.
 pause
