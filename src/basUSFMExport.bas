@@ -212,12 +212,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
         Case "Heading 2"
             chapNum = ExtractTrailingNumber(txt)
-            If chapNum > 0 Then
-                currentChapter = chapNum
-                ConvertParagraphToUSFM = "\cl " & txt & vbCrLf & "\c " & chapNum
-            Else
-                ConvertParagraphToUSFM = "\cl " & txt
-            End If
+            ConvertParagraphToUSFM = MakeChapterLines(chapNum, txt)
 
         Case "DatAuthRef"
             If Right$(txt, 1) = ":" Then
@@ -254,6 +249,18 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
 
 LogAndExit:
     LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+End Function
+
+Private Function MakeChapterLines(ByVal chapNum As Long, ByVal clText As String) As String
+    clText = Replace$(clText, vbCr, "")
+    clText = Replace$(clText, vbLf, "")
+    clText = Trim$(clText)
+
+    If chapNum > 0 Then
+        MakeChapterLines = "\cl " & clText & vbCrLf & "\c " & chapNum
+    Else
+        MakeChapterLines = "\cl " & clText
+    End If
 End Function
 
 Private Function MakeVerseLine(ByVal verseNum As Long, ByVal verseText As String) As String
