@@ -215,11 +215,10 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
             ConvertParagraphToUSFM = MakeChapterLines(chapNum, txt)
 
         Case "DatAuthRef"
-            If Right$(txt, 1) = ":" Then
-                ConvertParagraphToUSFM = "\is2 " & txt
-            Else
-                ConvertParagraphToUSFM = "\ip " & txt
-            End If
+            If Right$(txt, 1) = ":" Then ConvertParagraphToUSFM = "\is2 " & txt
+                
+        Case "Brief"
+            ConvertParagraphToUSFM = "\ip " & txt
 
         Case "Plain Text", "Normal"
             If bookTitleLevel = 1 Then
