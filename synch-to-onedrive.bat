@@ -1,17 +1,31 @@
 @echo off
 setlocal
 
-:: === Configuration ===
 set "SOURCE=C:\adaept"
 set "DESTINATION=%UserProfile%\OneDrive\Documents"
 
-:: Create destination folder if it doesn't exist
 if not exist "%DESTINATION%" (
-    mkdir "%DESTINATION%"
+    md "%DESTINATION%"
 )
 
-:: Copy only when file content changes, and show only changed files
-robocopy "%SOURCE%" "%DESTINATION%" /E /XC /XN /XO /NFL /NDL /NJH /NJS /NP /NS /NC
+REM Convert Windows paths to WSL format
+for /f "usebackq delims=" %%A in (`wsl wslpath -u "%SOURCE%"`) do set "WSL_SRC=%%A"
+for /f "usebackq delims=" %%B in (`wsl wslpath -u "%DESTINATION%"`) do set "WSL_DST=%%B"
 
-echo Sync complete. Only new or updated files were copied.
+echo Syncing from WSL source: %WSL_SRC%
+echo Syncing to WSL dest:   %WSL_DST%
+
+REM Now call rsync with properly escaped exclude patterns
+wsl -- bash -lc "rsync -a --update --info=name1,progress2 --exclude=\"*/venv/**\" \"%WSL_SRC%/\" \"%WSL_DST%/\""
+
+echo Sync complete.
 pause
+
+
+
+REM xcopy "%SOURCE%\*" "%DESTINATION%\" /E /I /Y /D /C
+
+REM robocopy "%SOURCE%" "%DESTINATION%" /E /M /FFT /NP /NDL /NJH /NJS /NC /NS
+
+REM echo Sync complete.
+REM pause
