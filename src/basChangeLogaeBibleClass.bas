@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #334.v59 -
 ' #333.v59 -
 ' #332.v59 -
-' #331.v59 -
 ' #328 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
 ' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
@@ -72,6 +71,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #331.v59 - Create routine to delete all modules and re-import for v59 to force complete resolve against used type libraries
     ' FIXED - #330.v59 - Import basUSFMExport from main branch causes change to use .Words vs .words : Resolves against the Word type library
     ' FIXED - #329.v59 - Add basUSFMExport from main branch
     ' FIXED - #327 - Re-run BuildHeadingIndexToCSV to review changes after fixes up to page 225 [audit]
