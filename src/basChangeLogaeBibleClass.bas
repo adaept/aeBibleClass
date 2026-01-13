@@ -6,18 +6,14 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
-' #375 -
-' #374 -
-' #365 - Map styles to USFM markers [wip]
-' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
-' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
-' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
-' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
-' #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug]
-' #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug]
-' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
-' #324 - Add index generation code to ribbon [impr] [feat]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [cp] [code] [wip] [clean] [obso] [regr]
+' #335.v59 -
+' #334.v59 -
+' #333.v59 -
+' #332.v59 -
+' #331.v59 -
+' #328 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
+' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
@@ -72,48 +68,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #035 - Add test for page numbers of h1 on odd or even pages [test]
 ' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
 ' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
+' #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
 '====================================================================================================================================
 '
 'Sq
-    ' FIXED - #373 - Add style "Brief" for 'Brief background summary' as USFM \ip
-    ' FIXED - #372 - Remove blank lines after verses - from \v in code
-    ' FIXED - #371 - Add IsEffectivelyEmpty function to remove extraneous empty lines in exported USFM
-    ' FIXED - #370 - Update USFM export for two layer detection model: paragraph and character-level semantics
-    ' FIXED - #369 - Update USFM exporter for style definition "Chapter Verse marker" (orange), "Verse marker" (green)
-    ' FIXED - #368 - Add a strict USFM validator that logs structural issues to a separate log file in UTF-8 format that uses current code.
-    ' FIXED - #367 - UTF-8 output for USFM and Log files are including manual hyphenation characters [bug]
-    ' FIXED - #366 - Write USFM file and Log file as UTF-8 with no BOM marker to be safe for Paratext
-    ' FIXED - #364 - Add initial scaffolding for USFM export [feat]
-    ' FIXED - #362 - Update LogHeadingData.txt for csv output per line of H1 with sessionID and paraIndex updated on change [feat] [impr]
-    ' FIXED - #361 - LogHeadingData.txt is empty on first run of CaptureHeading1s [bug]
-    ' FIXED - #360 - Add Judge to GetFullBookName [impr]
-    ' FIXED - #359 - Add routine to print headingData to Immediate Window and write updated entries to session log file [code]
-    ' FIXED - #358 - Add routine to capture Heading 1 text and paragraph index into a static array (1 to 66, 0 to 1) [code]
-    ' FIXED - #356 - Speed up FindBookH1 [impr] [refac]
-    ' FIXED - #352 - Add routine to find verse based on a given H2 paragraph index [impr] [refac]
-    ' FIXED - #355 - Set bookMap to static so it is initialized only once per session and avoid overhead, simplify use of UCase [impr]
-    ' FIXED - #354 - Error setting values of chapNum and verseNum for IsOneChapterBook [bug]
-    ' FIXED - #353 - Error for '1 Joh' Book not found in FindBookH1 [bug]
-    ' FIXED - #350 - Add function ExtractTrailingDigits that extracts the last 1~3 digits from a string and LeftUntilLastSpace
-    ' FIXED - #349 - GoTo Book Next finds the next para - positioning error from select work around [bug]
-    ' FIXED - #348 - Update search of GoToH1 so pattern does not need to use * or ? - matching the style of abbr in GetFullBookName [impr]
-    ' FIXED - #344 - Search for '3 Joh' fails silently in FindBookH1 [bug]
-    ' FIXED - #343 - Add [refac] as type task for Refactor [impr]
-    ' FIXED - #342 - Add routine FindBookH1 [refac]
-    ' FIXED - #341 - Add ParseParts routine to check user input [impr] [refac]
-    ' FIXED - #347 - If book is not found the verse search jumps to Genesis but cursor should not move [bug]
-    ' FIXED - #346 - Add function IsOneChapterBook [refac]
-    ' FIXED - #338 - Use tab separator for console output of routine RunRepairWrappedVerseMarkers_Across_Pages_From [bug]
-    ' FIXED - #337 - Josh 12:24 prints "CHAPTER 13" with console text for RunRepairWrappedVerseMarkers_Across_Pages_From. Same for all H2 [bug]
-    ' [obso] #024 - ExtractNumbersFromParagraph2 using DoEvents. Still unresponsive after Genesis 50, fifth para [bug]
-    ' FIXED - #335 - Add routine SaveAsPDF_NoOpen to avoid auto-open of the PDF with Edge [code]
-    ' FIXED - #331 - Add function GetVerseText for console output [feat]
-    ' FIXED - #334 - Normalize page to one verse per para and add count of CRs added [feat]
-    ' [regr] #328 - See #333 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
-    ' FIXED - #333 - Comment out ThisDocument.cls code as it interferes with clean export to docx [bug]
-    ' FIXED - #332 - Add function TitleCase to convert header output [code]
-    ' FIXED - #330 - Add function GetPageHeaderText and return it in debug output for Chapter/Verse [feat]
-    ' FIXED - #329 - Chapter/Verse output missing when marker is at start of page [bug]
+    ' FIXED - #330.v59 - Import basUSFMExport from main branch causes change to use .Words vs .words : Resolves against the Word type library
+    ' FIXED - #329.v59 - Add basUSFMExport from main branch
     ' FIXED - #327 - Re-run BuildHeadingIndexToCSV to review changes after fixes up to page 225 [audit]
     ' FIXED - #326 - Update RunRepairWrappedVerseMarkers_Across_Pages_From to have SessionID and log [impr]
     ' FIXED - #323 - See #322 - Create index file for H1 and H2 as csv text for speedy lookup [feat] [perf]
@@ -203,7 +163,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
-    ' [obso] #230 - Add code to fix Footnote Reference by reapplying style
+    ' [obso] - #230 - Add code to fix Footnote Reference by reapplying style
     ' FIXED - #225 - Add code to verify Show/Hide is True when tests are run else stop with error message
     ' FIXED - #229 - Add code to verify all necessary settings of Word are enabled - basWordSettingsDiagnostic
     ' FIXED - #228 - Abort tests if Show/Hide is not set
@@ -237,10 +197,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #207 - Check H1 pages for consistent use of superscript as in 2nd etc.
     ' FIXED - #106 - Fix H1 pages to use line feed in text as appropriate
     ' FIXED - #205 - Goto next book on next- button click in constant cycle (Note: getEnabled is flaky so do not use for now)
-    ' [impr] FIXED - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
-    ' [obso] #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
+    ' [impr] - FIXED - #204 - Add next- book button to ribbon : Refer also to customUI14backupRWB.xml
+    ' [obso] - #157 - Add Word OT DOCVARIABLEs, Ctrl + F9 field brackets { }, right-click the field, select Update Field - verify
     ' FIXED - #045 - Test call to SILAS from ribbon using customUI14.xml OnHelloWorldButtonClick routine
-    ' [obso] #041 - Add auto-generated TOC for maps : auto gen too slow
+    ' [obso] - #041 - Add auto-generated TOC for maps : auto gen too slow
     ' FIXED - See #203 - #160 - Add DOCVARIABLEs for all New Testament books
     ' FIXED - #203 - Add DOCVARIABLEs for New Testament
     ' FIXED - #202 - Move GoToVerseSBL to ribbon module
@@ -297,7 +257,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
     ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed
-    ' [obso] #039 - Replace manual TOC with auto-generated version (this is too slow)
+    ' [obso] - #039 - Replace manual TOC with auto-generated version (this is too slow)
     ' FIXED - #141 - Update UTF8bom-Template.txt with multiple language sample of "Hello, World!" ala C style, plus phonetics
 ' 20250420 - v008
     ' FIXED - #140 - Set version info as global variables and assign in Class_Initialize
@@ -345,7 +305,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #098 - Add test to count number of Footnote References [test]
     ' FIXED - #096 - Add test for count/delete empty para before H2, related #084 [test]
     ' FIXED - #084 - Update Heading 2 style paragraph to before 12 pt and delete the previous empty para
-    ' [obso] #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
+    ' [obso] - #017 - Add optional variant to aeBibleClass for indicating Copy (x) under testing
     ' FIXED - #094 - Add test to List And Count Font Colors, and print the name from a conversion function
     ' FIXED - #090 - Work through Count Spaces After Footnotes debug output and fix as appropriate, split from ch/v numbers
     ' FIXED - #016 - Add function to print pass/fail based on comparing Result with Expected
@@ -391,7 +351,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #061 - Add variant get array function of Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #059 - Add boolean flag to class to turn off timing for all tests
     ' FIXED - #058 - Add timer to each test and output total runtime of all tests
-    ' [obso] #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
+    ' [obso] - #054 - Add string array Expected to aeBibleClass and initialize with RunTest expected values
     ' FIXED - #056 - Add test for white paragraph marks [test]
 ' 20250323 - v005
     ' FIXED - #052 - Add vba message box with yes/no choice to continue or stop for RunTest error
@@ -399,14 +359,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #050 - Error Test num = 11 Function RunTest - need to fix it [test]
     ' FIXED - #049 - Add test for count of empty paragraphs with no theme color, wdColorAutomatic = -1 [test]
     ' FIXED - #025 (Ref #034) - Check if para is continuous break or section break next page then read the next para
-    ' [obso] #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
+    ' [obso] - #027 - Create SILAS dir and add Normal.dot then extract the code to GitHub - code provided by Jim
     ' FIXED - #034 - Add routine to count of all paragraphs types
     ' FIXED - #033 - Add Hello World custom menu tab as example for ribbon integration
     ' FIXED - #032 - Revert RunTest (12) as form feeds are needed in page and section breaks
     ' FIXED - #030 - Add routine to count and review Form feed char positions. Needed in docx as part of page and section breaks
 ' 20250317 - v004
     ' FIXED - #028 - Add test to count Hex 12 i.e. Form feed - it can cause Word not responding [test]
-    ' [obso] FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
+    ' FIXED - #026 - Add debugging code to deal with empty paragrahs in ExtractNumbersFromParagraph2
     ' FIXED - #022 - Add routine to print book h1, chapter h2, verse number - based on #021
     ' FIXED - #023 - PrintBibleHeading1Info outputs the CR of Heading 1. Remove it so output is all on one line
     ' FIXED - #021 - Add routine to print Bible book headings

@@ -5,29 +5,6 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Public Sub SaveAsPDF_NoOpen()
-    ' Overwrite the existing PDF file silently — without prompting or warning
-    Dim startTime As Single
-    Dim endTime As Single
-    Dim duration As Single
-    Dim pdfPath As String
-
-    ' Start timer
-    startTime = Timer
-    Debug.Print "Expected time ~130 seconds"
-    
-    pdfPath = "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.pdf"
-    ActiveDocument.ExportAsFixedFormat OutputFileName:=pdfPath, _
-        ExportFormat:=wdExportFormatPDF, _
-        OpenAfterExport:=False
-
-    ' End timer
-    endTime = Timer
-    duration = endTime - startTime
-    ' Print duration to Immediate Window
-    Debug.Print "PDF export completed in " & Format(duration, "0.00") & " seconds."
-End Sub
-
 Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     Dim totalFixes As Long, pgFixCount As Long
     Dim numPages As Long: numPages = 0 ' Adjust if scanning more than one page
@@ -63,7 +40,7 @@ Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
     Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
 End Sub
 
-Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
+Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
@@ -81,9 +58,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     Dim suffixHairSpaceCount As Long
     Dim suffixSpaceCount As Long
     Dim suffixOtherCount As Long
-    Dim ascii13InsertCount As Long
-    
-    ascii13InsertCount = 0
+
     fixCount = 0
     logBuffer = "=== Smart Prefix Repair on Page " & pageNum & " ===" & vbCrLf
 
@@ -94,11 +69,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 
     Dim i As Long
     i = pageStart
-    Dim headerText As String
-    headerText = GetPageHeaderText(pageNum)
-    'Debug.Print "Page " & pageNum & " header: " & headerText
-    logBuffer = logBuffer & "Header for page " & pageNum & ": " & headerText & vbCrLf
-    
     Do While i < pageEnd
         Set ch = ActiveDocument.range(i, i + 1)
         If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
@@ -142,11 +112,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 
             If Len(verseDigits) > 0 Then
                 combinedNumber = chapterMarker & verseDigits
-    
-                ' NEW: get verse text via helper function
-                Dim verseText As String
-                verseText = GetVerseText(pageEnd, verseEnd)
-    
+            
                 Dim chInfo As range
                 Set chInfo = ActiveDocument.range(verseEnd, verseEnd + 1)
                 'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.text)
@@ -179,8 +145,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                     prefixTxt = prefixCh.text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
-                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits & vbTab & Replace(verseText, Chr(13), " ")   ',prefixAsc, combinedNumber
-
                     prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
 
                     If (prefixAsc = 32 Or prefixAsc = 160) And prefixStyle = "Normal" Then
@@ -188,7 +152,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                             nextWords = ""
                             Set lookAhead = ActiveDocument.range(verseEnd, verseEnd + 80)
                             wCount = 0
-                            For Each token In lookAhead.words
+                            For Each token In lookAhead.Words
                                 If token.text Like "*^13*" Then Exit For
                                 If Trim(token.text) <> "" Then
                                     nextWords = nextWords & Trim(token.text) & " "
@@ -209,23 +173,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                             fixCount = fixCount + 1
                         End If
                     End If
-                
-                    ' --- NEW: Ensure each verse starts on its own line (after repair logic) ---
-                    'If markerStart > pageStart Then
-                    Dim versePrefix As range
-                    Set versePrefix = ActiveDocument.range(markerStart - 1, markerStart)
-    
-                    ' If the char before the marker is not already a CR, insert one
-                    If AscW(versePrefix.text) <> 13 Then
-                        versePrefix.text = versePrefix.text & Chr(13)
-                        ascii13InsertCount = ascii13InsertCount + 1
-                        fixCount = fixCount + 1
-                       'Debug.Print "> Inserted CR before " & combinedNumber & " on page " & pageNum
-                        'logBuffer = logBuffer & "> Inserted CR before " & combinedNumber & " on page " & pageNum & vbCrLf
-                    End If
-                ElseIf markerStart = pageStart Then
-                    logBuffer = logBuffer & "Marker '" & combinedNumber & "' is at the very start of page " & pageNum & vbCrLf
-                    Debug.Print headerText & " " & chapterMarker & ":" & verseDigits & vbTab & Trim(Replace(verseText, Chr(13), " "))    ',"SoP", combinedNumber
                 End If
 
                 i = verseEnd
@@ -240,92 +187,10 @@ SkipLogging:
 
     logBuffer = logBuffer & "=== " & fixCount & " markers repaired on page " & pageNum & " ==="
     logBuffer = logBuffer & vbCrLf & "ASCII 12 audit: " & ascii12Count & " marker(s) on page " & pageNum & " contain Chr(12)"
-    logBuffer = logBuffer & vbCrLf & "ASCII 160 audit: " & ascii160MissingCount & " marker(s) on page " & pageNum & " missing Chr(160) suffix"
-    logBuffer = logBuffer & vbCrLf & "ASCII 13 audit: " & ascii13InsertCount & " marker(s) on page " & pageNum & " inserted Chr(13)" & vbCrLf
+    logBuffer = logBuffer & vbCrLf & "ASCII 160 audit: " & ascii160MissingCount & " marker(s) on page " & pageNum & " missing Chr(160) suffix" & vbCrLf
     Debug.Print logBuffer
     'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
     fixCount = fixCount
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
 End Sub
-
-Private Function GetPageHeaderText(pgNum As Long) As String
-    Dim rng As range
-    Dim sec As section
-    Dim hdr As HeaderFooter
-    
-    ' Get range for the page
-    Set rng = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pgNum))
-    Set sec = rng.Sections(1)   ' Page belongs to exactly one Section
-    
-    ' Default to primary header
-    Set hdr = sec.Headers(wdHeaderFooterPrimary)
-    
-    ' NOTE: Does not apply in this Bible doc
-    ' If primary is empty, check for first-page or even-page headers
-    'If Len(hdr.range.text) = 0 Then
-    '    If sec.Headers(wdHeaderFooterFirstPage).Exists Then
-    '        Set hdr = sec.Headers(wdHeaderFooterFirstPage)
-    '    ElseIf sec.Headers(wdHeaderFooterEvenPages).Exists Then
-    '        Set hdr = sec.Headers(wdHeaderFooterEvenPages)
-    '    End If
-    'End If
-    
-    ' Clean up the header text (Word stores an end-of-cell marker)
-    GetPageHeaderText = TitleCase(Trim(Replace(hdr.range.text, Chr(13), " ")))
-End Function
-
-Private Function TitleCase(ByVal txt As String) As String
-    Dim words() As String
-    Dim i As Integer
-
-    ' Split the sentence into words
-    words = Split(LCase(txt), " ")
-
-    ' Capitalize each word
-    For i = 0 To UBound(words)
-        If Len(words(i)) > 0 Then
-            words(i) = UCase(Left(words(i), 1)) & mid(words(i), 2)
-        End If
-    Next i
-
-    ' Recombine the words into a sentence
-    TitleCase = Join(words, " ")
-End Function
-
-Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
-    Dim verseContentEnd As Long
-    Dim nextPos As Long
-    Dim scanCh As range
-    Dim txt As String
-    
-    verseContentEnd = pageEnd
-    nextPos = verseContentStart
-    
-    Do While nextPos < pageEnd
-        Set scanCh = ActiveDocument.range(nextPos, nextPos + 1)
-        
-        If Len(Trim(scanCh.text)) = 1 And IsNumeric(scanCh.text) Then
-            If (scanCh.style.NameLocal = "Chapter Verse marker" And scanCh.font.color = RGB(255, 165, 0)) _
-               Or (scanCh.style.NameLocal = "Verse marker" And scanCh.font.color = RGB(80, 200, 120)) Then
-                verseContentEnd = nextPos
-                Exit Do
-            End If
-        End If
-        
-        nextPos = nextPos + 1
-    Loop
-    
-    txt = Trim(ActiveDocument.range(verseContentStart, verseContentEnd).text)
-    
-    If InStrRev(txt, "CHAPTER ") > 0 Then
-        Dim pos As Long
-        pos = InStrRev(txt, "CHAPTER ")
-        If pos > 0 Then
-            txt = Trim$(Left$(txt, pos - 1))
-        End If
-    End If
-    
-    GetVerseText = txt
-End Function
-
 

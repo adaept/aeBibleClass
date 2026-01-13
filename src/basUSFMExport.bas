@@ -1,4 +1,8 @@
 Attribute VB_Name = "basUSFMExport"
+Option Explicit
+Option Compare Text
+Option Private Module
+
 ' Prompt:
 ' The current code for Word Bible audit is here: https://github.com/adaept/aeBibleClass/blob/main/src/basWordRepairRunner.bas#L31
 ' Use the code as the base for style information etc. as needed to create an initial USFM export routine for VBA.
@@ -37,8 +41,6 @@ Attribute VB_Name = "basUSFMExport"
 '       - Multi-column or side-bar content handling
 '
 ' ============================================================================================
-
-Option Explicit
 
 ' -----------------------------
 ' CONFIGURATION
@@ -297,7 +299,7 @@ End Function
 
 Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As Boolean
     Dim r As range
-    For Each r In p.range.words
+    For Each r In p.range.Words
         If r.style = styleName Then
             ParagraphHasCharStyle = True
             Exit Function
@@ -308,7 +310,7 @@ End Function
 Private Function ExtractCharStyleText(p As paragraph, styleName As String) As String
     Dim r As range
     Dim buf As String
-    For Each r In p.range.words
+    For Each r In p.range.Words
         If r.style = styleName Then
             buf = buf & r.text
         End If
@@ -716,4 +718,5 @@ End Sub
 ' ============================================================================================
 ' END MODULE
 ' ============================================================================================
+
 

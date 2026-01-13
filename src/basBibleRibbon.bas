@@ -4,9 +4,6 @@ Option Compare Text
 Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
-Public headingData(1 To 66, 0 To 1) As Variant
-Private savedPos As Long
-Private bookAbbr As String
 
 ' Use Windows API to change cursor
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -39,15 +36,12 @@ Public Sub RibbonOnLoad(ribbon As IRibbonUI)
     ' Optional: force ribbon refresh after init
 '    ribbonUI.Invalidate
     Call EnableButtonsRoutine
-    
 End Sub
 
 Sub EnableButtonsRoutine()
     Debug.Print "In EnableButtonsRoutine"
     btnNextEnabled = True
     ribbonUI.InvalidateControl "GoToNextButton"
-    CaptureHeading1s
-    LogHeadingData
 End Sub
 
 ' Callback to dynamically enable or disable buttons
@@ -135,15 +129,15 @@ Public Sub GoToVerseSBL()
     On Error GoTo ErrHandler
     Application.StatusBar = "Searching for verse..."
     
-    Dim userInput As String, i As Long
+    Dim userInput As String
     userInput = InputBox("Enter verse (e.g. 1 Sam 1:1):", "Go to Verse (SBL Format)")
-    userInput = Trim(UCase(userInput))
+    userInput = UCase(userInput)
     If Trim(userInput) = "" Then Exit Sub
 
     Dim tickStartSBL As Single: tickStartSBL = Timer
     Dim tickNowSBL As Single
 
-    Dim chapNum As String, verseNum As String, paraIndex As Long
+    Dim bookAbbr As String, chapNum As String, verseNum As String
     Dim parts() As String, subParts() As String
     
     Dim hWaitCursor As Long
@@ -153,64 +147,16 @@ Public Sub GoToVerseSBL()
     Application.ScreenUpdating = False  ' Prevent flickering
 
     ' Parse the input
-    parts = ParseParts(userInput, ":")
-    Debug.Print "GoToVerseSBL: UBound(parts) = " & UBound(parts)
-   
-    Dim fullBookName As String
-    If UBound(parts) = 0 Then   ' No ":" delimeter is used
-        Select Case Left(parts(0), 1)  ' Book starts with a number
-            Case "1", "2", "3"
-                'Debug.Print "GoToVerseSBL: Starts with 1, 2, or 3 " & "'" & parts(0) & "'"
-                ' If the rightmost character is not a digit then we have a Book name only
-                bookAbbr = Trim(parts(0))
-                If Not (Right(userInput, 1) Like "#") Then
-                    fullBookName = GetFullBookName(bookAbbr)
-                    ' Optional default chapNum = "1" and verseNum = "1"
-                    Debug.Print "GoToVerseSBL: a>Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
-                    FindBookH1 fullBookName, paraIndex
-                Else
-                    ' we have digits that indicate a chapter or verse
-                    chapNum = ExtractTrailingDigits(bookAbbr)
-                    bookAbbr = LeftUntilLastSpace(bookAbbr)
-                    fullBookName = GetFullBookName(bookAbbr)
-                    If IsOneChapterBook(fullBookName) Then
-                        verseNum = chapNum
-                        chapNum = "1"
-                    Else
-                        verseNum = "1"
-                    End If
-                    Debug.Print "GoToVerseSBL: ^Starts with 1, 2, or 3 " & "fullBookName = " & fullBookName
-                    Debug.Print "GoToVerseSBL: ^bookAbbr = " & bookAbbr, "fullBookName = " & fullBookName, "chapNum = " & chapNum, "verseNum = " & verseNum
-                    FindBookH1 fullBookName, paraIndex, chapNum, verseNum
-                End If
-            Case Else
-                Debug.Print "GoToVerseSBL: @Does not start with 1, 2, or 3 " & "'" & parts(0) & "'"
-                bookAbbr = Trim(parts(0))
-                Debug.Print "GoToVerseSBL: bookAbbr = " & bookAbbr
-                ' If the rightmost character is not a digit then we have a Book name only
-                If Not (Right(userInput, 1) Like "#") Then
-                    fullBookName = GetFullBookName(bookAbbr)
-                    ' Optional default chapNum = "1" and verseNum = "1"
-                    Debug.Print "GoToVerseSBL: b>Does Not Start with 1, 2, or 3 " & "fullBookName = " & fullBookName
-                    FindBookH1 fullBookName, paraIndex
-                Else    ' Found digits indicate a chapter number then set verseNum = "1"
-                    chapNum = ExtractTrailingDigits(userInput)
-                    verseNum = 1
-                    Dim spacePos As Long
-                    spacePos = InStr(bookAbbr, " ")
-                    bookAbbr = Left(bookAbbr, spacePos - 1)
-                    fullBookName = UCase(GetFullBookName(bookAbbr))
-                    Debug.Print "GoToVerseSBL: c>Digits found in " & "fullBookName = " & fullBookName, "chapNum = " & chapNum, "verseNume = " & verseNum, "paraIndex = " & paraIndex
-                    FindBookH1 fullBookName, paraIndex, chapNum, verseNum
-                End If
-        End Select
-        Debug.Print "GoToVerseSBL: paraIndex = " & paraIndex
-
-Selection.range.Select  ' re-activate the cursor
-GoTo Cleanup    ' for Exit Sub temp stop
-
+    parts = Split(userInput, ":")
+    'Debug.Print "UBound(parts) = " & UBound(parts)
+    If UBound(parts) = 0 Then   ' Only the ~chapter~ number was provided
         verseNum = 1
         GoTo Chapter
+    ElseIf UBound(parts) <> 1 Then
+        Application.ScreenUpdating = True   ' Restore normal UI
+        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
+        MsgBox "Invalid format. Use format like '1 Sam 1:1'", vbExclamation
+        Exit Sub
     End If
     verseNum = Trim(parts(1))
 Chapter:
@@ -223,29 +169,69 @@ Chapter:
         'Debug.Print "a:", bookAbbr
         chapNum = "1"
     Else
+        Dim i As Long
         bookAbbr = ""
         For i = 0 To UBound(subParts) - 1
             bookAbbr = bookAbbr & subParts(i) & " "
             'Debug.Print "b:", bookAbbr
         Next i
         bookAbbr = Trim(bookAbbr)
-        Debug.Print ">", bookAbbr
+        'Debug.Print ">", bookAbbr
         chapNum = Trim(subParts(UBound(subParts)))
-        Debug.Print ">>", chapNum
+        'Debug.Print ">>", chapNum
     End If
     
+    Dim fullBookName As String
     fullBookName = GetFullBookName(bookAbbr)
-    Debug.Print "a>>>", fullBookName
+    'Debug.Print ">>>", fullBookName
     If fullBookName = "" Then
         Application.ScreenUpdating = True   ' Restore normal UI
         SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
         MsgBox "Book not found: " & bookAbbr, vbExclamation
         Exit Sub
     End If
- 
 
+    ' Find the Heading 1 for the book
+    Dim theBook As String
+    Dim para As paragraph, foundBook As Boolean
+    For Each para In ActiveDocument.paragraphs
+        If para.style = "Heading 1" Then
+            theBook = Trim(para.range.text)
+            theBook = UCase(Replace(para.range.text, vbCr, ""))
+            'Debug.Print theBook
+            If theBook Like "*" & fullBookName & "*" Then
+                para.range.Select
+                foundBook = True
+                'Debug.Print bookAbbr, theBook, fullBookName
+                'MsgBox "Book found. Searching for chapter or verse " & chapNum, vbInformation
+                Exit For
+            End If
+        End If
+    Next para
+    If Not foundBook Then
+        Application.ScreenUpdating = True   ' Restore normal UI
+        SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
+        MsgBox "Book heading not found: " & fullBookName, vbExclamation
+        Exit Sub
+    End If
+    
+    ' Find the Heading 2 for the chapter or psalm
+    Dim theChapter As String
+    Dim chapFound As Boolean
 
-Dim para As paragraph
+    For Each para In ActiveDocument.paragraphs
+        If para.range.Start < Selection.range.Start Then GoTo SkipChapter
+
+        If para.style = "Heading 2" Then
+            Select Case theBook  ' Books of only one chapter
+            Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
+                verseNum = chapNum
+                chapNum = 1
+                chapFound = True
+            Case Else
+                ' Multi-chapter books—continue
+            End Select
+
             If Trim(para.range.text) Like "*Chapter " & chapNum & "*" _
                     Or Trim(para.range.text) Like "*Psalm " & chapNum & "*" Then
 
@@ -253,11 +239,10 @@ Dim para As paragraph
 
                 Dim idx As Long
                 idx = GetParaIndexSafe(para.range)
-                'Debug.Print "idx = " & idx
 
                 Select Case idx
                 Case Is >= 1
-                    Debug.Print "Jumped to paragraph #" & idx
+                    'Debug.Print "Jumped to paragraph #" & idx
                 Case -1
                     'Debug.Print "Paragraph not found."
                 Case -2
@@ -293,20 +278,18 @@ Dim para As paragraph
                     'Debug.Print "Suffix: [None]"
                 End If
 
-                'chapFound = True
-                'chapIdx = idx
-                'Debug.Print "chapIdx = " & idx
-                Application.Selection.range.GoTo
-                Stop
-                'Exit For
-            End If
-        'End If
-SkipChapter:
-    'chapIdx = j
-    'xxxNext para
-    'Next j
+                chapFound = True
+                Dim chapterIdx As Long
+                chapterIdx = idx
+                'Debug.Print "chapterIdx = " & idx
 
-Dim chapFound As Boolean
+                'Stop
+                Exit For
+            End If
+        End If
+SkipChapter:
+    Next para
+
     If Not chapFound Then
         Application.ScreenUpdating = True   ' Restore normal UI
         SetCursor LoadCursor(0, 32512)      ' Restore default arrow cursor
@@ -324,8 +307,6 @@ Dim chapFound As Boolean
     Dim found As Boolean
     Dim normalized As String
 
-Dim chapIdx As Long
-    idx = chapIdx
     Debug.Print "Starting verse marker scan from paragraph #" & idx
 
     For v = idx + 1 To idx + maxScan
@@ -338,11 +319,7 @@ Dim chapIdx As Long
         Dim styleNameH2 As String: styleNameH2 = Trim(p.style.NameLocal)
 
         If InStr(styleNameH2, "Heading 2") > 0 Then
-            Dim pageNum As Long
-            paraIndex = v ' your known paragraph index
-            pageNum = ActiveDocument.paragraphs(paraIndex).range.Information(wdActiveEndPageNumber) - 2 ' to get actual page number of doc using ^H
-            'MsgBox "Paragraph " & paraIndex & " is on page " & pageNum
-            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')", Left(para.range.text, 40), "Page " & pageNum
+            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')"
             MsgBox "No verse " & verseNum & " found in Chapter " & chapNum, vbCritical
             Exit For
         End If
@@ -382,403 +359,145 @@ Cleanup:
     Exit Sub
 
 ErrHandler:
-    MsgBox "Erl = " & Erl & " Err = " & Err & vbCrLf & Err.Description, vbCritical, "Error during Bible verse search "
+    MsgBox "Erl = " & Erl & " Error during verse search: " & Err.Description, vbCritical
     Resume Cleanup
 End Sub
 
-'=============================================================================================
-' Maintain a persistent 66-row CSV file + header, with session-aware ParaIndex updates
-' sessionID,Heading1,BookName,ParaIndex
-'   - Only updates ParaIndex and timestamp if changed
-'   - Entire file is rewritten each time
-'   - Prior values are preserved for unchanged rows
-'   - Git-friendly: diffs show timestamped changes only
-'=============================================================================================
-Sub LogHeadingData()
-    Const ROWS As Long = 66
-    Dim fPath As String
-    Dim sessionStamp As String
-    Dim i As Long
-    Dim fNum As Integer
-    Dim csvLines(1 To ROWS) As String
-    Static lastParaStarts(1 To ROWS) As Long
-    Static lastBookNames(1 To ROWS) As String
-    Static lastTimestamps(1 To ROWS) As String
-    Dim changed As Boolean
-
-    ' Define persistent CSV path
-    fPath = "C:\adaept\aeBibleClass\rpt\HeadingLog.txt"
-    sessionStamp = Format(Now, "yyyy-mm-dd hh:nn:ss")
-
-    For i = 1 To ROWS
-        If Not isEmpty(headingData(i, 0)) Then
-            If headingData(i, 1) <> lastParaStarts(i) Then
-                lastParaStarts(i) = headingData(i, 1)
-                lastBookNames(i) = headingData(i, 0)
-                lastTimestamps(i) = sessionStamp
-                changed = True
-            End If
-        End If
-        csvLines(i) = lastTimestamps(i) & ",H1[" & i & "]," & lastBookNames(i) & "," & lastParaStarts(i)
-    Next i
-
-    fNum = FreeFile
-    Open fPath For Output As #fNum
-    Print #fNum, "sessionID,Heading1,BookName,ParaIndex"
-    For i = 1 To ROWS
-        Print #fNum, csvLines(i)
-    Next i
-    Close #fNum
-
-    If changed Then
-        Debug.Print "LogHeadingData: File updated at " & sessionStamp
-    Else
-        Debug.Print "LogHeadingData: No changes detected — file preserved"
-    End If
-End Sub
-
-'===========================================================================================
-' Purpose: Capture Heading 1 text and paragraph index into a static array (1 to 66, 0 to 1)
-'   - Only runs once per session
-'   - Heading text excludes vbCrLf
-'   - Optimized for speed and reproducibility
-'   - Audit-traceable: logs execution status to Immediate Window
-'===========================================================================================
-Public Sub CaptureHeading1s()
-    Static hasRun As Boolean
-    Dim para As paragraph
-    Dim i As Long
-    Dim paraText As String
-
-    If hasRun Then
-        Debug.Print "CaptureHeading1s: Already executed this session."
-        Exit Sub
-    End If
-
-    i = 1
-    For Each para In ActiveDocument.paragraphs
-        If para.style = "Heading 1" Then
-            If i > 66 Then Exit For
-            paraText = Trim(Replace(para.range.text, vbCr, ""))
-            headingData(i, 0) = paraText
-            headingData(i, 1) = para.range.Start
-            i = i + 1
-        End If
-    Next para
-
-    hasRun = True
-    Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries."
-End Sub
-
-Private Function LeftUntilLastSpace(ByVal txt As String) As String
-    Dim lastSpacePos As Long
-
-    ' Find the first space from the right
-    lastSpacePos = InStrRev(txt, " ")
-
-    If lastSpacePos > 0 Then
-        LeftUntilLastSpace = Left(txt, lastSpacePos - 1)
-    Else
-        LeftUntilLastSpace = txt  ' No space found, return full string
-    End If
-End Function
-
-Private Function ExtractTrailingDigits(ByVal txt As String) As String
-    Dim i As Long, ch As String, result As String
-    result = ""
-
-    ' Scan backwards, collecting up to 3 digits
-    For i = Len(txt) To 1 Step -1
-        ch = mid(txt, i, 1)
-        If ch Like "#" Then
-            result = ch & result
-            If Len(result) = 3 Then Exit For
-        Else
-            Exit For  ' Stop at first non-digit
-        End If
-    Next i
-
-    ExtractTrailingDigits = result
-End Function
-
-Private Function IsOneChapterBook(book As String) As Boolean
-    Select Case book  ' Books of only one chapter
-        Case "OBADIAH", "PHILEMON", "2 JOHN", "3 JOHN", "JUDE"
-            IsOneChapterBook = True
-        Case Else
-            IsOneChapterBook = False
-    End Select
-End Function
-
-Private Function SaveCursor() As Long
-    SaveCursor = Selection.Start
-End Function
-
-Private Sub RestoreCursor(ByVal savedPos As Long)
-    Selection.SetRange savedPos, savedPos
-    Selection.Collapse Direction:=wdCollapseStart
-End Sub
-
-Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
-                               Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
-    Debug.Print "FindBookH1: >> chapNum = " & chapNum, "verseNum = " & verseNum
-    savedPos = SaveCursor()
- 
-    Dim r As range
-    Set r = ActiveDocument.paragraphs(1).range
-
-    Dim paraText As String, bookFound As Boolean
-    Dim paraCount As Long: paraCount = 1
-    bookFound = False
-
-    Do While Not r Is Nothing
-        If r.paragraphs(1).style = "Heading 1" Then
-            paraText = UCase(Replace(Trim$(r.text), vbCr, ""))
-            If paraText = UCase(fullBookName) Then
-                bookFound = True
-                paraIndex = paraCount
-                Debug.Print "FindBookH1: >> Book found", "'" & paraText & "'", "#" & paraIndex, "bookFound = " & bookFound
-
-                ' Move cursor safely
-                With ActiveDocument.paragraphs(paraIndex).range
-                    .Select
-                    Selection.Collapse Direction:=wdCollapseStart
-                End With
-
-                ' Call next routine
-                FindChapterH2 fullBookName, paraIndex, chapNum, verseNum
-                Exit Sub
-            End If
-        End If
-        paraCount = paraCount + 1
-        Set r = r.Next(Unit:=wdParagraph)
-    Loop
-
-    If Not bookFound Then RestoreCursor savedPos
-    Debug.Print "FindBookH1: >> Book not found: '" & fullBookName & "'", "bookFound = " & bookFound
-    MsgBox "Book not found: '" & fullBookName & "'", vbExclamation, "Bible"
-End Sub
-
-Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
-    Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
-    Dim chapTag1 As String, chapTag2 As String
-    Dim r As range
-    Dim paraText As String
-    Dim count As Long
-
-    chapTag1 = "Chapter " & chapNum
-    chapTag2 = "PSALM " & chapNum
-
-    Set r = ActiveDocument.paragraphs(paraIndex).range
-    count = 0
-
-    Do While Not r Is Nothing
-        If r.style = "Heading 2" Then
-            paraText = Trim$(r.text)
-            If InStr(1, paraText, chapTag1, vbTextCompare) > 0 Or _
-                InStr(1, paraText, chapTag2, vbTextCompare) > 0 Then
-                paraIndex = paraIndex + count
-                With ActiveDocument.paragraphs(paraIndex).range
-                    .Select
-                    Selection.Collapse Direction:=wdCollapseStart
-                End With
-                Debug.Print "FindChapterH2: >>>", "Cursor moved to paraIndex = #" & paraIndex; ""
-                Exit Sub
-            End If
-        End If
-        count = count + 1
-        Set r = r.Next(Unit:=wdParagraph, count:=1)
-    Loop
-
-    MsgBox "Chapter not found: '" & fullBookName & "' Chapter = " & chapNum, vbExclamation, "Bible"
-End Sub
-
-Private Function ParseParts(ByVal userInput As String, Optional ByVal delimiter As String = ":") As String()
-    Dim parts() As String
-    Dim i As Long
-
-    parts = Split(userInput, delimiter)
-
-    Debug.Print "ParseParts: Input: """ & userInput & """"
-    Debug.Print "ParseParts: Delimiter: """ & delimiter & """"
-    Debug.Print "ParseParts: Parts found: " & UBound(parts) - LBound(parts) + 1
-
-    For i = LBound(parts) To UBound(parts)
-        Debug.Print "Part " & i & ": " & parts(i)
-    Next i
-
-    ParseParts = parts
-End Function
-
-Private Function GetFullBookName(abbr As String) As String
-    Static bookMap As Object
-    Dim key As String
-
-    ' Initialize once
-    If bookMap Is Nothing Then
-        Set bookMap = CreateObject("Scripting.Dictionary")
-        With bookMap
-            .Add "GEN", "Genesis"
-            .Add "GE", "Genesis"
-            .Add "EXOD", "Exodus"
-            .Add "EXO", "Exodus"
-            .Add "EX", "Exodus"
-            .Add "LEV", "Leviticus"
-            .Add "LE", "Leviticus"
-            .Add "NUM", "Numbers"
-            .Add "NU", "Numbers"
-            .Add "DEUT", "Deuteronomy"
-            .Add "DEU", "Deuteronomy"
-            .Add "DE", "Deuteronomy"
-            .Add "JOSH", "Joshua"
-            .Add "JOS", "Joshua"
-            .Add "JUDG", "Judges"
-            .Add "JUDGE", "Judges"
-            .Add "RUTH", "Ruth"
-            .Add "RUT", "Ruth"
-            .Add "RU", "Ruth"
-            .Add "1 SAM", "1 Samuel"
-            .Add "1 SA", "1 Samuel"
-            .Add "1 S", "1 Samuel"
-            .Add "2 SAM", "2 Samuel"
-            .Add "2 SA", "2 Samuel"
-            .Add "2 S", "2 Samuel"
-            .Add "1 KGS", "1 Kings"
-            .Add "1 K", "1 Kings"
-            .Add "2 KGS", "2 Kings"
-            .Add "2 K", "2 Kings"
-            .Add "1 CHR", "1 Chronicles"
-            .Add "1 CH", "1 Chronicles"
-            .Add "2 CHR", "2 Chronicles"
-            .Add "2 CH", "2 Chronicles"
-            .Add "EZRA", "Ezra"
-            .Add "EZR", "Ezra"
-            .Add "NEH", "Nehemiah"
-            .Add "NE", "Nehemiah"
-            .Add "ESTH", "Esther"
-            .Add "ES", "Esther"
-            .Add "JOB", "Job"
-            .Add "PS", "Psalms"
-            .Add "PSALM", "Psalms"
-            .Add "PROV", "Proverbs"
-            .Add "PRO", "Proverbs"
-            .Add "PR", "Proverbs"
-            .Add "ECCL", "Ecclesiastes"
-            .Add "ECC", "Ecclesiastes"
-            .Add "EC", "Ecclesiastes"
-            .Add "SONG", "Solomon"
-            .Add "S", "Solomon"
-            .Add "ISA", "Isaiah"
-            .Add "IS", "Isaiah"
-            .Add "I", "Isaiah"
-            .Add "JER", "Jeremiah"
-            .Add "JE", "Jeremiah"
-            .Add "LAM", "Lamentations"
-            .Add "LA", "Lamentations"
-            .Add "EZEK", "Ezekiel"
-            .Add "EZE", "Ezekiel"
-            .Add "DAN", "Daniel"
-            .Add "DA", "Daniel"
-            .Add "HOS", "Hosea"
-            .Add "HO", "Hosea"
-            .Add "JOEL", "Joel"
-            .Add "JOE", "Joel"
-            .Add "AMOS", "Amos"
-            .Add "AM", "Amos"
-            .Add "OBAD", "Obadiah"
-            .Add "OBA", "Obadiah"
-            .Add "OB", "Obadiah"
-            .Add "O", "Obadiah"
-            .Add "JONAH", "Jonah"
-            .Add "JON", "Jonah"
-            .Add "MIC", "Micah"
-            .Add "MI", "Micah"
-            .Add "NAH", "Nahum"
-            .Add "NA", "Nahum"
-            .Add "HAB", "Habakkuk"
-            .Add "ZEPH", "Zephaniah"
-            .Add "ZEP", "Zephaniah"
-            .Add "HAG", "Haggai"
-            .Add "ZECHh", "Zechariah"
-            .Add "ZEC", "Zechariah"
-            .Add "MAL", "Malachi"
-            .Add "MATT", "Matthew"
-            .Add "MAT", "Matthew"
-            .Add "MARK", "Mark"
-            .Add "MAR", "Mark"
-            .Add "LUKE", "Luke"
-            .Add "LUK", "Luke"
-            .Add "LU", "Luke"
-            .Add "JOHN", "John"
-            .Add "JOH", "John"
-            .Add "ACTS", "Acts"
-            .Add "ACT", "Acts"
-            .Add "AC", "Acts"
-            .Add "ROM", "Romans"
-            .Add "RO", "Romans"
-            .Add "1 COR", "1 Corinthians"
-            .Add "1 CO", "1 Corinthians"
-            .Add "2 COR", "2 Corinthians"
-            .Add "2 CO", "2 Corinthians"
-            .Add "GAL", "Galatians"
-            .Add "GA", "Galatians"
-            .Add "EPH", "Ephesians"
-            .Add "EP", "Ephesians"
-            .Add "PHIL", "Philippians"
-            .Add "PHILI", "Philippians"
-            .Add "COL", "Colossians"
-            .Add "CO", "Colossians"
-            .Add "C", "Colossians"
-            .Add "1 THESS", "1 Thessalonians"
-            .Add "1 THES", "1 Thessalonians"
-            .Add "1 THE", "1 Thessalonians"
-            .Add "1 TH", "1 Thessalonians"
-            .Add "2 THESS", "2 Thessalonians"
-            .Add "2 THES", "2 Thessalonians"
-            .Add "2 THE", "2 Thessalonians"
-            .Add "2 TH", "2 Thessalonians"
-            .Add "1 TIM", "1 Timothy"
-            .Add "1 TI", "1 Timothy"
-            .Add "2 TIM", "2 Timothy"
-            .Add "2 TI", "2 Timothy"
-            .Add "TITUS", "Titus"
-            .Add "T", "Titus"
-            .Add "PHLM", "Philemon"
-            .Add "PHILE", "Philemon"
-            .Add "HEB", "Hebrews"
-            .Add "HE", "Hebrews"
-            .Add "JAS", "James"
-            .Add "JAM", "James"
-            .Add "JA", "James"
-            .Add "1 PET", "1 Peter"
-            .Add "1 PE", "1 Peter"
-            .Add "1 P", "1 Peter"
-            .Add "2 PET", "2 Peter"
-            .Add "2 PE", "2 Peter"
-            .Add "2 P", "2 Peter"
-            .Add "1 JOHN", "1 John"
-            .Add "1 JOH", "1 John"
-            .Add "1 JO", "1 John"
-            .Add "1 J", "1 John"
-            .Add "2 JOHN", "2 John"
-            .Add "2 JOH", "2 John"
-            .Add "2 JO", "2 John"
-            .Add "2 J", "2 John"
-            .Add "3 JOHN", "3 John"
-            .Add "3 JOH", "3 John"
-            .Add "3 JO", "3 John"
-            .Add "3 J", "3 John"
-            .Add "JUDE", "Jude"
-            .Add "REV", "Revelation"
-            .Add "RE", "Revelation"
-        End With
-    End If
-
-    key = UCase(Trim(abbr))
-    Debug.Print "GetFullBookName: abbr = " & key
-
-    If bookMap.Exists(key) Then
-        GetFullBookName = bookMap(key)
+Function GetFullBookName(abbr As String) As String
+    Dim bookMap As Object
+    Set bookMap = CreateObject("Scripting.Dictionary")
+    
+    bookMap.Add UCase("Gen"), "Genesis"
+    bookMap.Add UCase("Ge"), "Genesis"
+    bookMap.Add UCase("Exod"), "Exodus"
+    bookMap.Add UCase("Ex"), "Exodus"
+    bookMap.Add UCase("Lev"), "Leviticus"
+    bookMap.Add UCase("Le"), "Leviticus"
+    bookMap.Add UCase("Num"), "Numbers"
+    bookMap.Add UCase("Nu"), "Numbers"
+    bookMap.Add UCase("Deut"), "Deuteronomy"
+    bookMap.Add UCase("De"), "Deuteronomy"
+    bookMap.Add UCase("Josh"), "Joshua"
+    bookMap.Add UCase("Jos"), "Joshua"
+    bookMap.Add UCase("Judg"), "Judges"
+    bookMap.Add UCase("Ruth"), "Ruth"
+    bookMap.Add UCase("Ru"), "Ruth"
+    bookMap.Add UCase("1 Sam"), "1 Samuel"
+    bookMap.Add UCase("1 S"), "1 Samuel"
+    bookMap.Add UCase("2 Sam"), "2 Samuel"
+    bookMap.Add UCase("2 S"), "2 Samuel"
+    bookMap.Add UCase("1 Kgs"), "1 Kings"
+    bookMap.Add UCase("1 K"), "1 Kings"
+    bookMap.Add UCase("2 Kgs"), "2 Kings"
+    bookMap.Add UCase("2 K"), "2 Kings"
+    bookMap.Add UCase("1 Chr"), "1 Chronicles"
+    bookMap.Add UCase("1 Ch"), "1 Chronicles"
+    bookMap.Add UCase("2 Chr"), "2 Chronicles"
+    bookMap.Add UCase("2 Ch"), "2 Chronicles"
+    bookMap.Add UCase("Ezra"), "Ezra"
+    bookMap.Add UCase("Ezr"), "Ezra"
+    bookMap.Add UCase("Neh"), "Nehemiah"
+    bookMap.Add UCase("Ne"), "Nehemiah"
+    bookMap.Add UCase("Esth"), "Esther"
+    bookMap.Add UCase("Es"), "Esther"
+    bookMap.Add UCase("Job"), "Job"
+    bookMap.Add UCase("Ps"), "Psalms"
+    bookMap.Add UCase("Prov"), "Proverbs"
+    bookMap.Add UCase("Pr"), "Proverbs"
+    bookMap.Add UCase("Eccl"), "Ecclesiastes"
+    bookMap.Add UCase("Ec"), "Ecclesiastes"
+    bookMap.Add UCase("Ecc"), "Ecclesiastes"
+    bookMap.Add UCase("Song"), "Solomon"
+    bookMap.Add UCase("S"), "Solomon"
+    bookMap.Add UCase("Isa"), "Isaiah"
+    bookMap.Add UCase("Is"), "Isaiah"
+    bookMap.Add UCase("I"), "Isaiah"
+    bookMap.Add UCase("Jer"), "Jeremiah"
+    bookMap.Add UCase("Je"), "Jeremiah"
+    bookMap.Add UCase("Lam"), "Lamentations"
+    bookMap.Add UCase("La"), "Lamentations"
+    bookMap.Add UCase("Ezek"), "Ezekiel"
+    bookMap.Add UCase("Eze"), "Ezekiel"
+    bookMap.Add UCase("Dan"), "Daniel"
+    bookMap.Add UCase("Da"), "Daniel"
+    bookMap.Add UCase("Hos"), "Hosea"
+    bookMap.Add UCase("Ho"), "Hosea"
+    bookMap.Add UCase("Joel"), "Joel"
+    bookMap.Add UCase("Joe"), "Joel"
+    bookMap.Add UCase("Amos"), "Amos"
+    bookMap.Add UCase("Am"), "Amos"
+    bookMap.Add UCase("Obad"), "Obadiah"
+    bookMap.Add UCase("O"), "Obadiah"
+    bookMap.Add UCase("Jonah"), "Jonah"
+    bookMap.Add UCase("Jon"), "Jonah"
+    bookMap.Add UCase("Mic"), "Micah"
+    bookMap.Add UCase("Mi"), "Micah"
+    bookMap.Add UCase("Nah"), "Nahum"
+    bookMap.Add UCase("Na"), "Nahum"
+    bookMap.Add UCase("Hab"), "Habakkuk"
+    bookMap.Add UCase("Zeph"), "Zephaniah"
+    bookMap.Add UCase("Zep"), "Zephaniah"
+    bookMap.Add UCase("Hag"), "Haggai"
+    bookMap.Add UCase("Zech"), "Zechariah"
+    bookMap.Add UCase("Zec"), "Zechariah"
+    bookMap.Add UCase("Mal"), "Malachi"
+    bookMap.Add UCase("Matt"), "Matthew"
+    bookMap.Add UCase("Mat"), "Matthew"
+    bookMap.Add UCase("Mark"), "Mark"
+    bookMap.Add UCase("Mar"), "Mark"
+    bookMap.Add UCase("Luke"), "Luke"
+    bookMap.Add UCase("Lu"), "Luke"
+    bookMap.Add UCase("John"), "John"
+    bookMap.Add UCase("Joh"), "John"
+    bookMap.Add UCase("Acts"), "Acts"
+    bookMap.Add UCase("Ac"), "Acts"
+    bookMap.Add UCase("Rom"), "Romans"
+    bookMap.Add UCase("Ro"), "Romans"
+    bookMap.Add UCase("1 Cor"), "1 Corinthians"
+    bookMap.Add UCase("1 Co"), "1 Corinthians"
+    bookMap.Add UCase("2 Cor"), "2 Corinthians"
+    bookMap.Add UCase("2 Co"), "2 Corinthians"
+    bookMap.Add UCase("Gal"), "Galatians"
+    bookMap.Add UCase("Ga"), "Galatians"
+    bookMap.Add UCase("Eph"), "Ephesians"
+    bookMap.Add UCase("Ep"), "Ephesians"
+    bookMap.Add UCase("Phil"), "Philippians"
+    bookMap.Add UCase("Phili"), "Philippians"
+    bookMap.Add UCase("Col"), "Colossians"
+    bookMap.Add UCase("C"), "Colossians"
+    bookMap.Add UCase("1 Thess"), "1 Thessalonians"
+    bookMap.Add UCase("1 Th"), "1 Thessalonians"
+    bookMap.Add UCase("2 Thess"), "2 Thessalonians"
+    bookMap.Add UCase("2 Th"), "2 Thessalonians"
+    bookMap.Add UCase("1 Tim"), "1 Timothy"
+    bookMap.Add UCase("1 Ti"), "1 Timothy"
+    bookMap.Add UCase("2 Tim"), "2 Timothy"
+    bookMap.Add UCase("2 Ti"), "2 Timothy"
+    bookMap.Add UCase("Titus"), "Titus"
+    bookMap.Add UCase("T"), "Titus"
+    bookMap.Add UCase("Phlm"), "Philemon"
+    bookMap.Add UCase("Phile"), "Philemon"
+    bookMap.Add UCase("Heb"), "Hebrews"
+    bookMap.Add UCase("He"), "Hebrews"
+    bookMap.Add UCase("Jas"), "James"
+    bookMap.Add UCase("Ja"), "James"
+    bookMap.Add UCase("1 Pet"), "1 Peter"
+    bookMap.Add UCase("1 P"), "1 Peter"
+    bookMap.Add UCase("2 Pet"), "2 Peter"
+    bookMap.Add UCase("2 P"), "2 Peter"
+    bookMap.Add UCase("1 John"), "1 John"
+    bookMap.Add UCase("1 J"), "1 John"
+    bookMap.Add UCase("2 John"), "2 John"
+    bookMap.Add UCase("2 J"), "2 John"
+    bookMap.Add UCase("3 John"), "3 John"
+    bookMap.Add UCase("3 J"), "3 John"
+    bookMap.Add UCase("Jude"), "Jude"
+    bookMap.Add UCase("Rev"), "Revelation"
+    bookMap.Add UCase("Re"), "Revelation"
+    
+    abbr = UCase(Trim(abbr))
+    If bookMap.Exists(abbr) Then
+        GetFullBookName = bookMap(abbr)
     Else
         GetFullBookName = ""
     End If
@@ -817,7 +536,7 @@ Private Sub GoToH1()
     Dim paraText As String
     Dim matchFound As Boolean
 
-    pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
+    pattern = InputBox("Enter a Heading 1 pattern to match (use * and ? wildcards):", "Go To Bible Book")
     If pattern = "" Then Exit Sub ' User canceled
     matchFound = False
 
@@ -827,7 +546,7 @@ Private Sub GoToH1()
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
             paraText = Trim$(para.range.text)
-            If paraText Like "*" & UCase(pattern) & "*" Then
+            If paraText Like pattern Then
                 para.range.Select
                 ' Move insertion point (cursor) without selecting text
                 ActiveDocument.range(para.range.Start, para.range.Start).Select
@@ -838,27 +557,25 @@ Private Sub GoToH1()
     Next para
 
     Application.ScreenUpdating = True
-    Selection.range.Select  ' Re-select current range to restore cursor
-    DoEvents  ' Allows UI refresh
-    
+
     If Not matchFound Then
-        MsgBox "Book not found! No Heading 1 matches pattern: '" & pattern & "'", vbExclamation, "Bible"
+        MsgBox "No Heading 1 matches pattern: " & pattern, vbExclamation
     End If
 End Sub
 
 Private Sub NextButton()
+    'GoToNextHeading1Circular()
     Dim doc As Document
     Dim searchRange As range
-    Dim paraEnd As Long
+    Dim selEnd As Long
     Dim found As Boolean
 
     Set doc = ActiveDocument
+    selEnd = Selection.End
     found = False
 
-    ' Move start past current paragraph to avoid re-matching
-    paraEnd = Selection.paragraphs(1).range.End
-    Set searchRange = doc.range(paraEnd, doc.content.End)
-
+    ' Search forward: from current position to end
+    Set searchRange = doc.range(selEnd, doc.content.End)
     With searchRange.Find
         .ClearFormatting
         .style = doc.Styles("Heading 1")
@@ -869,9 +586,9 @@ Private Sub NextButton()
         found = .Execute
     End With
 
-    ' If not found, wrap: from beginning to current paragraph start
+    ' If not found, wrap: from beginning to current position
     If Not found Then
-        Set searchRange = doc.range(0, paraEnd)
+        Set searchRange = doc.range(0, selEnd)
         With searchRange.Find
             .ClearFormatting
             .style = doc.Styles("Heading 1")
@@ -883,9 +600,9 @@ Private Sub NextButton()
         End With
     End If
 
-    ' If found, move cursor to start of heading
+    ' If found, position cursor at end of heading to prepare for next search
     If found Then
-        Selection.SetRange searchRange.Start, searchRange.Start
+        Selection.SetRange searchRange.End, searchRange.End
         ActiveWindow.ScrollIntoView Selection.range, True
     Else
         MsgBox "No Heading 1 found in the document.", vbInformation

@@ -191,7 +191,7 @@ Sub ListAndCountFontColors()
     Set colorDict = CreateObject("Scripting.Dictionary")
     
     ' Loop through each word in the document
-    For Each rng In ActiveDocument.words
+    For Each rng In ActiveDocument.Words
         ' Get the RGB values of the font color
         r = (rng.font.color And &HFF)
         g = (rng.font.color \ &H100 And &HFF)
@@ -639,7 +639,7 @@ Sub FixFootnoteNumberStyleInText()
 
     For Each fn In ActiveDocument.Footnotes
         Set paraRange = fn.range.paragraphs(1).range
-        Set firstRun = paraRange.words(1) ' Usually the footnote number
+        Set firstRun = paraRange.Words(1) ' Usually the footnote number
 
         ' Apply Footnote Reference style
         firstRun.style = ActiveDocument.Styles("Footnote Reference")
@@ -898,7 +898,7 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
             nextWords = ""
             Set wordRange = ActiveDocument.range(verseEnd, verseEnd + 80)
             wCount = 0
-            For Each token In wordRange.words
+            For Each token In wordRange.Words
                 If token.text Like "*^13*" Then Exit For
                 If Trim(token.text) <> "" Then
                     nextWords = nextWords & Trim(token.text) & " "
@@ -1083,7 +1083,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                             nextWords = ""
                             Set lookAhead = ActiveDocument.range(verseEnd, verseEnd + 80)
                             wCount = 0
-                            For Each token In lookAhead.words
+                            For Each token In lookAhead.Words
                                 If token.text Like "*^13*" Then Exit For
                                 If Trim(token.text) <> "" Then
                                     nextWords = nextWords & Trim(token.text) & " "
