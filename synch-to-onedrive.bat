@@ -1,10 +1,82 @@
 @echo off
-setlocal
+setlocal ENABLEDELAYEDEXPANSION
 
-set "SOURCE=C:\adaept\aeBibleClass"
-set "DESTINATION=%UserProfile%\OneDrive\Backups\adaept\aeBibleClass"
+REM ============================================================
+REM  DEFINE YOUR FOLDER OPTIONS HERE
+REM ============================================================
+REM Option 0 = default (current setup)
+set "FOLDER_0=aeBibleClass"
 
+REM Options 1–9 = additional folders under C:\adaept
+set "FOLDER_1=Project1"
+set "FOLDER_2=Project2"
+set "FOLDER_3=Project3"
+set "FOLDER_4=Project4"
+set "FOLDER_5=Project5"
+set "FOLDER_6=Project6"
+set "FOLDER_7=Project7"
+set "FOLDER_8=Project8"
+set "FOLDER_9=Project9"
+
+REM ============================================================
+REM  DISPLAY MENU
+REM ============================================================
+echo.
+echo Select a folder to sync:
+echo   0. %FOLDER_0%   (default)
+echo   1. %FOLDER_1%
+echo   2. %FOLDER_2%
+echo   3. %FOLDER_3%
+echo   4. %FOLDER_4%
+echo   5. %FOLDER_5%
+echo   6. %FOLDER_6%
+echo   7. %FOLDER_7%
+echo   8. %FOLDER_8%
+echo   9. %FOLDER_9%
+echo.
+
+set /p "CHOICE=Enter option (0-9, default=0): "
+
+REM ============================================================
+REM  DEFAULT IF ENTER PRESSED
+REM ============================================================
+if "%CHOICE%"=="" set "CHOICE=0"
+
+REM ============================================================
+REM  VALIDATE INPUT
+REM ============================================================
+echo %CHOICE%| findstr /r "^[0-9]$" >nul
+if errorlevel 1 (
+    echo Invalid selection: %CHOICE%
+    echo Must be a single digit 0-9
+    pause
+    exit /b 1
+)
+
+REM ============================================================
+REM  RESOLVE SELECTED FOLDER
+REM ============================================================
+set "SELECTED=!FOLDER_%CHOICE%!"
+
+echo.
+echo Selected option %CHOICE%: %SELECTED%
+echo.
+
+REM ============================================================
+REM  BUILD SOURCE AND DESTINATION PATHS
+REM ============================================================
+set "SOURCE=C:\adaept\%SELECTED%"
+set "DESTINATION=%UserProfile%\OneDrive\Backups\adaept\%SELECTED%"
+
+echo SOURCE:      %SOURCE%
+echo DESTINATION: %DESTINATION%
+echo.
+
+REM ============================================================
+REM  CREATE DESTINATION IF NEEDED
+REM ============================================================
 if not exist "%DESTINATION%" (
+    echo Creating destination folder...
     md "%DESTINATION%"
 )
 
@@ -16,8 +88,12 @@ for /f "usebackq delims=" %%A in (`wsl wslpath -u "%SOURCE%"`) do set "WSL_SRC=%
 for /f "usebackq delims=" %%B in (`wsl wslpath -u "%DESTINATION%"`) do set "WSL_DST=%%B"
 
 echo Syncing from WSL source: %WSL_SRC%
-echo Syncing to WSL dest:   %WSL_DST%
+echo Syncing to WSL dest:     %WSL_DST%
+echo.
 
+REM ============================================================
+REM  EXISTING RSYNC COMMAND HERE
+REM ============================================================
 REM Add this to the command line for a dry run
 REM --dry-run
 
@@ -26,13 +102,12 @@ wsl -- bash -lc ^
   --checksum ^
   --itemize-changes ^
   --info=stats1 ^
-  --exclude='**/venv/**' ^
-  --exclude='**/.git/**' ^
-  --exclude='**/node_modules/**' ^
-  --exclude='/~$*' ^
-  --exclude='**/~$*' ^
-  --exclude='**/~*.tmp' ^
-  --exclude='**/*.wbk' ^
+  --exclude='.git/' ^
+  --exclude='node_modules/' ^
+  --exclude='venv/' ^
+  --exclude='~[$]*' ^
+  --exclude='~*.tmp' ^
+  --exclude='*.wbk' ^
   \"%WSL_SRC%/\" \"%WSL_DST%/\""
 
 echo Sync complete.
