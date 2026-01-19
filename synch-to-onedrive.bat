@@ -8,7 +8,7 @@ REM Option 0 = default (current setup)
 set "FOLDER_0=aeBibleClass"
 
 REM Options 1–9 = additional folders under C:\adaept
-set "FOLDER_1=Project1"
+set "FOLDER_1=aedh"
 set "FOLDER_2=Project2"
 set "FOLDER_3=Project3"
 set "FOLDER_4=Project4"
