@@ -10,7 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #335.v59 -
 ' #334.v59 -
 ' #333.v59 -
-' #332.v59 -
+' #332.v59 - Use No-Width Optional Break as needed to remove some paragraph markers (See Job 20-22)
 ' #328 - Add code in ThisDocument to show/hide the word interface but keep the custom ribbon
 ' #324 - Add index generation code to ribbon
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
