@@ -1955,3 +1955,200 @@ Sub GoToHeadingByIndex()
     End If
 End Sub
 
+' ==================================================================================================
+' Routine:      ShowUnicodeOfSingleCharacterSelection
+'
+' Purpose:      Identifies the Unicode character currently selected in Word and prints a complete,
+'               Immediate-Window-safe diagnostic report. Supports both:
+'                   - Single UTF-16 code units (BMP characters)
+'                   - Valid surrogate pairs (Unicode > U+FFFF)
+'
+' Behavior:     - Rejects selections of zero characters.
+'               - Rejects selections of more than one logical character.
+'               - Accepts:
+'                     (1) Exactly one UTF-16 code unit, OR
+'                     (2) Exactly two UTF-16 code units forming a valid surrogate pair.
+'
+' Output:       Prints to the Immediate Window:
+'                   - Unicode code point (U+XXXX or U+XXXXX)
+'                   - Decimal value
+'                   - UTF-16 code units
+'                   - Escape sequence (\uXXXX or \UXXXXXXXX)
+'                   - Word Special Character description (if applicable)
+'
+' Notes:        - The Immediate Window cannot display Unicode glyphs, so the routine prints only
+'                 descriptive representations.
+'               - Calls WordSpecialCharacterName() to map characters to the names used in
+'                 Word's Insert > Symbol > Special Characters dialog.
+'
+' Author:       Peter Ennis
+' Last Updated: 20260130
+' ==================================================================================================
+Public Sub ShowUnicodeOfSingleCharacterSelection()
+    Dim r As range
+    Dim count As Long
+    Dim s As String
+    Dim codeUnit1 As Long, codeUnit2 As Long
+    Dim scalar As Long
+    Dim escapeSeq As String
+    Dim desc As String
+
+    Set r = Selection.range
+    count = r.Characters.count
+
+    ' Enforce exactly one logical character
+    If count = 0 Then
+        Debug.Print "Error: No character selected."
+        Exit Sub
+    ElseIf count > 2 Then
+        Debug.Print "Error: Selection contains more than one character (" & count & ")."
+        Exit Sub
+    End If
+
+    s = r.text
+    codeUnit1 = AscW(mid$(s, 1, 1))
+
+    ' --- BMP CHARACTER ---
+    If count = 1 Then
+        scalar = codeUnit1
+        escapeSeq = "\u" & Right$("0000" & Hex$(scalar), 4)
+
+        desc = WordSpecialCharacterName(scalar)
+
+        Debug.Print "BMP character"
+        Debug.Print "Unicode code point: U+" & Hex$(scalar)
+        Debug.Print "Decimal value: " & scalar
+        Debug.Print "UTF-16 unit: " & Hex$(codeUnit1)
+        Debug.Print "Escape sequence: " & escapeSeq
+        If desc <> "" Then Debug.Print "Description: " & desc
+        Exit Sub
+    End If
+
+    ' --- POSSIBLE SURROGATE PAIR ---
+    codeUnit2 = AscW(mid$(s, 2, 1))
+
+    If codeUnit1 >= &HD800 And codeUnit1 <= &HDBFF _
+       And codeUnit2 >= &HDC00 And codeUnit2 <= &HDFFF Then
+
+        scalar = &H10000 + ((codeUnit1 - &HD800) * &H400) + (codeUnit2 - &HDC00)
+        escapeSeq = "\U" & Right$("00000000" & Hex$(scalar), 8)
+
+        Debug.Print "Surrogate pair (valid)"
+        Debug.Print "Unicode code point: U+" & Hex$(scalar)
+        Debug.Print "Decimal value: " & scalar
+        Debug.Print "UTF-16 units: " & Hex$(codeUnit1) & " " & Hex$(codeUnit2)
+        Debug.Print "Escape sequence: " & escapeSeq
+        Debug.Print "Description: (no Word Special Character name for non-BMP characters)"
+    Else
+        Debug.Print "Error: Two-character selection is not a valid surrogate pair."
+    End If
+End Sub
+
+' ==================================================================================================
+' Function:     WordSpecialCharacterName
+'
+' Purpose:      Returns the descriptive name of a character *exactly as it appears* in the
+'               Word Insert > Symbol > Special Characters dialog.
+'
+' Input:        codePoint - Unicode code point (Long) for the selected character.
+'
+' Output:       String    - The Word UI name for the character, or "" if the character does not
+'                           appear in the Special Characters list.
+'
+' Behavior:     - Matches only characters that Word exposes in the Special Characters tab.
+'               - Order of Select Case blocks matches the order shown in the Word dialog for
+'                 easy comparison and maintenance.
+'               - Includes both Unicode characters and Word control characters (line break,
+'                 column break, page break, etc.) where applicable.
+'
+' Notes:        - This function does not attempt to name characters outside the Special
+'                 Characters list.
+'               - Surrogate-pair characters do not appear in the Special Characters dialog.
+'
+' Author:       Peter Ennis
+' Last Updated: 20260130
+' ==================================================================================================
+Public Function WordSpecialCharacterName(codePoint As Long) As String
+    ' Order matches Word: Insert > Symbol > More Symbols > Special Characters
+
+    Select Case codePoint
+        ' 1. Em Dash
+        Case &H2014
+            WordSpecialCharacterName = "Em Dash"
+        ' 2. En Dash
+        Case &H2013
+            WordSpecialCharacterName = "En Dash"
+        ' 3. Optional Hyphen (Soft Hyphen)
+        Case &HAD
+            WordSpecialCharacterName = "Optional Hyphen"
+        ' 4. Nonbreaking Hyphen
+        Case &H2011
+            WordSpecialCharacterName = "Nonbreaking Hyphen"
+        ' 5. Nonbreaking Space
+        Case &HA0
+            WordSpecialCharacterName = "Nonbreaking Space"
+        ' 6. Copyright Symbol
+        Case &HA9
+            WordSpecialCharacterName = "Copyright Symbol"
+        ' 7. Registered Trademark Symbol
+        Case &HAE
+            WordSpecialCharacterName = "Registered Trademark Symbol"
+        ' 8. Trademark Symbol
+        Case &H2122
+            WordSpecialCharacterName = "Trademark Symbol"
+        ' 9. Ellipsis
+        Case &H2026
+            WordSpecialCharacterName = "Ellipsis"
+        ' 10. Single Opening Quote
+        Case &H2018
+            WordSpecialCharacterName = "Single Opening Quote"
+        ' 11. Single Closing Quote
+        Case &H2019
+            WordSpecialCharacterName = "Single Closing Quote"
+        ' 12. Double Opening Quote
+        Case &H201C
+            WordSpecialCharacterName = "Double Opening Quote"
+        ' 13. Double Closing Quote
+        Case &H201D
+            WordSpecialCharacterName = "Double Closing Quote"
+        ' 14. Paragraph Mark
+        ' (also U+00B6 as a symbol, but Word's special character is the control char)
+        Case 13
+            WordSpecialCharacterName = "Paragraph Mark"
+        ' 15. Section Mark
+        Case &HA7
+            WordSpecialCharacterName = "Section Mark"
+        ' 16. En Space
+        Case &H2002
+            WordSpecialCharacterName = "En Space"
+        ' 17. Em Space
+        Case &H2003
+            WordSpecialCharacterName = "Em Space"
+        ' 18. 1/4 Em Space (Four-per-em space)
+        Case &H2005
+            WordSpecialCharacterName = "1/4 Em Space"
+        ' 19. No-Width Optional Break (zero-width space)
+        Case &H200B
+            WordSpecialCharacterName = "No-Width Optional Break"
+        ' 20. No-Width Non Joiner (ZWNJ)
+        Case &H200C
+            WordSpecialCharacterName = "No-Width Non Joiner"
+        ' 21. No-Width Joiner (ZWJ)
+        Case &H200D
+            WordSpecialCharacterName = "No-Width Joiner"
+        ' 22. Line Break
+        Case 11
+            WordSpecialCharacterName = "Line Break"
+        ' 23. Column Break
+        Case 14
+            WordSpecialCharacterName = "Column Break"
+        ' 24. Page Break
+        Case 12
+            WordSpecialCharacterName = "Page Break"
+        ' (If your build of Word shows any additional items, we can append them here.)
+
+        Case Else
+            WordSpecialCharacterName = ""
+    End Select
+End Function
+

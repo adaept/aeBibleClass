@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
-' #375 -
-' #374 -
+' #380 -
+' #379 -
+' #378 -
+' #377 -
+' #376 -
+' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
@@ -75,6 +79,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #375 - Add routine to Show Unicode Of Single Character Selection and account for surrogate pairs as needed [feat]
     ' FIXED - #373 - Add style "Brief" for 'Brief background summary' as USFM \ip
     ' FIXED - #372 - Remove blank lines after verses - from \v in code
     ' FIXED - #371 - Add IsEffectivelyEmpty function to remove extraneous empty lines in exported USFM

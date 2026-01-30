@@ -219,7 +219,7 @@ Sub FindDocVariableEverywhere()
     ' Second: Search for DOCVARIABLE in the main document body
     For Each field In doc.Fields
         If field.Type = wdFieldDocVariable Then
-            If InStr(1, field.Code.text, variableName, vbTextCompare) > 0 Then
+            If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                 ' Select the field and stop at its location
                 field.Select
                 variableFound = True
@@ -234,7 +234,7 @@ Sub FindDocVariableEverywhere()
         ' Check headers
         For Each field In section.Headers(wdHeaderFooterPrimary).range.Fields
             If field.Type = wdFieldDocVariable Then
-                If InStr(1, field.Code.text, variableName, vbTextCompare) > 0 Then
+                If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a header.", vbInformation, "Variable Found"
@@ -246,7 +246,7 @@ Sub FindDocVariableEverywhere()
         ' Check footers
         For Each field In section.Footers(wdHeaderFooterPrimary).range.Fields
             If field.Type = wdFieldDocVariable Then
-                If InStr(1, field.Code.text, variableName, vbTextCompare) > 0 Then
+                If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a footer.", vbInformation, "Variable Found"
@@ -260,7 +260,7 @@ Sub FindDocVariableEverywhere()
     For Each note In doc.Footnotes
         For Each field In note.range.Fields
             If field.Type = wdFieldDocVariable Then
-                If InStr(1, field.Code.text, variableName, vbTextCompare) > 0 Then
+                If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a footnote.", vbInformation, "Variable Found"
@@ -274,7 +274,7 @@ Sub FindDocVariableEverywhere()
     For Each endNote In doc.Endnotes
         For Each field In endNote.range.Fields
             If field.Type = wdFieldDocVariable Then
-                If InStr(1, field.Code.text, variableName, vbTextCompare) > 0 Then
+                If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in an endnote.", vbInformation, "Variable Found"
@@ -303,7 +303,7 @@ Function SearchShapeForVariable(shape As shape, variableName As String) As Boole
         Set textFrameRange = shape.TextFrame.textRange
         For Each field In textFrameRange.Fields
             If field.Type = wdFieldDocVariable Then
-                If InStr(1, field.Code.text, variableName, vbTextCompare) > 0 Then
+                If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     ' Select the shape and notify the user
                     shape.Select
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a nested shape.", vbInformation, "Variable Found"
