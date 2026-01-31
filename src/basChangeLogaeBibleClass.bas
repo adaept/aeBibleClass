@@ -10,7 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #380 -
 ' #379 -
 ' #378 -
-' #377 -
+' #377 - Add contractions code to test suite
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]

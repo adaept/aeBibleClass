@@ -48,7 +48,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Integer
-Private Const MaxTests = 51
+Private Const MaxTests = 52
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -59,6 +59,7 @@ Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True
 Private OneTest As Integer  ' Stores the value to run a single test
 Private skipNum As Integer  ' Used for heavy tests to skip
+Private Const ApostropheCodePoint As Long = &H2019
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -209,8 +210,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147, 1189)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16    17  18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 649, 649, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147, 1189, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -450,6 +451,9 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
             If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
             
+            Dim Apostrophe As String
+            Apostrophe = ChrW$(ApostropheCodePoint)
+
             RunTest (1)
             RunTest (2)
             RunTest (3)
@@ -503,6 +507,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (50)
             SkippedTestNum = 51
             Call RunTest(51, "SKIP")
+            RunTest (52)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -681,6 +686,8 @@ Private Function GetPassFail(TestNum As Integer) As String
             'Debug.Print "HERE!!!!"
             ResultArray(TestNum) = CountAndCreateDefinitionForH2
         End If
+    Case 52
+        ResultArray(TestNum) = CountContraction("wouldn" & ApostropheCodePoint & "t")
     Case 999
         GetPassFail = "SKIP!!!!"
         Exit Function
@@ -843,6 +850,8 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         Else
             Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
         End If
+    Case 52
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountContraction(" & """wouldn""" & ApostropheCodePoint & """t""" & ")"
    Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1002,6 +1011,37 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
     Case 51
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+'Here
+    Case 52
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountContraction(" & """wouldn""" & ApostropheCodePoint & """t""" & ")"
+    Case 53
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 54
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 55
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 56
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 51
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 57
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 51
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 58
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 59
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 60
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 61
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 62
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 63
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+    Case 64
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
     Case 999
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
    Case Else
@@ -1016,6 +1056,70 @@ PROC_ERR:
     Resume PROC_EXIT
 
 End Function
+
+'==============================================================================
+' Function: CountContraction
+'
+' Purpose:
+'   Counts occurrences of a specific English contraction in the active document
+'   using Word's native Find engine. The search is case-insensitive and optimized
+'   for performance on large documents.
+'
+' Caveats:
+'   - Matches only literal text using Word VBA's Find object.
+'   - Will NOT find contraction substrings embedded within a larger word
+'     (e.g., "it's" inside "Spirit's"), even though Ctrl+H may appear to do so.
+'     This is a known difference between the Word UI search and the VBA Find API.
+'   - Designed for standalone contractions (whole words), not sub-word matches.
+'
+' Parameters:
+'   contraction  The contraction to search for, using Unicode U+2019 (ChrW(&H2019))
+'
+' Returns:
+'   The number of matches found.
+'==============================================================================
+Private Function CountContraction(ByVal contraction As String) As Long
+    Dim rng As range
+    Dim count As Long
+
+    Set rng = ActiveDocument.content
+    count = 0
+
+    With rng.Find
+        .ClearFormatting
+        .text = contraction
+        .MatchCase = False
+        .MatchWholeWord = False
+        .MatchWildcards = False
+        .Wrap = wdFindStop
+    End With
+
+    Do While rng.Find.Execute
+        count = count + 1
+        rng.Collapse wdCollapseEnd
+    Loop
+
+    CountContraction = count
+End Function
+
+Public Sub TestContractionsExamples()
+    Dim Apostrophe As String
+    Apostrophe = ChrW(&H2019)
+
+    'Debug.Print "Count of wouldn't  = " & CountContraction("wouldn" & Apostrophe & "t")
+    'Debug.Print "Count of isn't     = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of let's     = " & CountContraction("let" & Apostrophe & "s")
+    'Debug.Print "Count of i'm       = " & CountContraction("i" & Apostrophe & "m")
+    'Debug.Print "Count of hasn't    = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of didn't    = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of don't     = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of haven't   = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of weren't   = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of aren't    = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of can't     = " & CountContraction("isn" & Apostrophe & "t")
+    'Debug.Print "Count of shouldn't = " & CountContraction("wouldn" & Apostrophe & "t")
+    'Debug.Print "Count of it's      = " & CountContraction("wouldn" & Apostrophe & "t")
+End Sub
 
 ' ======================================================================
 ' Macro Name   : CountAndCreateDefinitionForH2
@@ -1482,7 +1586,7 @@ Private Function CountParagraphMarks_CalibriDarkRed() As Integer
                 If Not foundFirst Then
                     paraRange.Select
                     foundFirst = True
-                    'Stop
+                    Stop
                 End If
             End If
         End With
