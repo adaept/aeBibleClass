@@ -1,8 +1,8 @@
 === Header/Footer ASCII Audit Summary ===
 Total Sections: 147
 --- ASCII Value Counts and Descriptions ---
-ASCII=9 | Count=79 | Desc=[Tab]
-ASCII=105 | Count=4 | Desc=i
+ASCII=9 | Count=80 | Desc=[Tab]
+ASCII=105 | Count=3 | Desc=i
 ASCII=84 | Count=2 | Desc=T
 ASCII=49 | Count=149 | Desc=1
 ASCII=71 | Count=2 | Desc=G

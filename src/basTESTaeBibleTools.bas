@@ -2068,10 +2068,10 @@ End Sub
 ' Author:       Peter Ennis
 ' Last Updated: 20260130
 ' ==================================================================================================
-Public Function WordSpecialCharacterName(codePoint As Long) As String
+Public Function WordSpecialCharacterName(codepoint As Long) As String
     ' Order matches Word: Insert > Symbol > More Symbols > Special Characters
 
-    Select Case codePoint
+    Select Case codepoint
         ' 1. Em Dash
         Case &H2014
             WordSpecialCharacterName = "Em Dash"

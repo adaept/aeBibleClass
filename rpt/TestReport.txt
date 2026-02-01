@@ -1,12 +1,13 @@
 Test(1)0 Test(2)0 Test(3)0 Test(4)0 Test(5)0 Test(6)0 Test(7)0 Test(8)0 Test(9)7 Test(10)1 Test(11)0 Test(12)0 Test(13)0 Test(14)0 Test(15)0
 Test(16)16471 Test(17)0 Test(18)66 Test(19)0 Test(20)0 Test(21)0 Test(22)153 Test(23)0 Test(24)1000 Test(25)1 Test(26)0 Test(27)147 Test(28)77 Test(29)70 Test(30)0
-Test(31)1 Test(32)649 Test(33)649 Test(34)117 Test(35)117 Test(36)0 Test(37)19 Test(38)153 Test(39)0 Test(40)0 Test(41)0 Test(42)0 Test(43)0 Test(44)0 Test(45)0
-Test(46)0 Test(47)2 Test(48)0 Test(49)16 Test(50)147 Test(51)1189
+Test(31)1 Test(32)982 Test(33)982 Test(34)117 Test(35)117 Test(36)0 Test(37)19 Test(38)153 Test(39)0 Test(40)0 Test(41)0 Test(42)0 Test(43)0 Test(44)0 Test(45)0
+Test(46)0 Test(47)2 Test(48)0 Test(49)16 Test(50)147 Test(51)1189 Test(52)0 Test(53)0 Test(54)0 Test(55)16 Test(56)0 Test(57)0 Test(58)0 Test(59)0 Test(60)0
+
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
-PASS              Copy ()       Test = 1      0             0             CountDoubleSpaces
+FAIL!!!!          Copy ()       Test = 1      2             0             CountDoubleSpaces
 PASS              Copy ()       Test = 2      0             0             CountDoubleSpacesInShapes
-PASS              Copy ()       Test = 3      0             0             CountSpaceFollowedByCarriageReturn
+FAIL!!!!          Copy ()       Test = 3      2             0             CountSpaceFollowedByCarriageReturn
 PASS              Copy ()       Test = 4      0             0             CountDoubleTabs
 PASS              Copy ()       Test = 5      0             0             CountWhiteSpaceAndCarriageReturn
 PASS              Copy ()       Test = 6      0             0             CountQuadrupleParagraphMarks
@@ -19,7 +20,7 @@ PASS              Copy ()       Test = 12     0             0             CountN
 PASS              Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
-FAIL!!!!          Copy ()       Test = 16     24817         16471         CountTotalParagraphs
+FAIL!!!!          Copy ()       Test = 16     28114         16471         CountTotalParagraphs
 PASS              Copy ()       Test = 17     0             0             CountRedFootnoteReferences
 PASS              Copy ()       Test = 18     66            66            CountHeading1
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
@@ -35,8 +36,8 @@ PASS              Copy ()       Test = 28     77            77            CountT
 PASS              Copy ()       Test = 29     70            70            CountParagraphsWithoutTabInHeaders
 PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
-FAIL!!!!          Copy ()       Test = 32     1163          649           CountLinefeed
-FAIL!!!!          Copy ()       Test = 33     1160          649           CountLinefeed(" ")
+PASS              Copy ()       Test = 32     982           982           CountLinefeed
+PASS              Copy ()       Test = 33     982           982           CountLinefeed(" ")
 FAIL!!!!          Copy ()       Test = 34     120           117           CountManualLineBreaksAndWithSpace
 FAIL!!!!          Copy ()       Test = 35     120           117           CountManualLineBreaksAndWithSpace(" ")
 PASS              Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle
@@ -47,22 +48,35 @@ PASS              Copy ()       Test = 40     0             0             CountP
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
 SKIP!!!!          Copy ()       Test = 42     SKIPPED       0             CountBoldFootnotesWordLevel
 PASS              Copy ()       Test = 43     0             0             CountDarkRedStyledParagraphMarks
-FAIL!!!!          Copy ()       Test = 44     12            0             CountParagraphMarks_CalibriDarkRed
+PASS              Copy ()       Test = 44     0             0             CountParagraphMarks_CalibriDarkRed
 PASS              Copy ()       Test = 45     0             0             CountFindNotEmphasisBlack
 PASS              Copy ()       Test = 46     0             0             CountFindNotEmphasisRed
-PASS              Copy ()       Test = 47     2             2             CountTabOnlyParagraphs("Footer")
+FAIL!!!!          Copy ()       Test = 47     3             2             CountTabOnlyParagraphs("Footer")
 FAIL!!!!          Copy ()       Test = 48     1             0             AuditLiberationSansNarrowStyleDetails
-PASS              Copy ()       Test = 49     16            16            CountAuditStyles_ToFile
+FAIL!!!!          Copy ()       Test = 49     17            16            CountAuditStyles_ToFile
 PASS              Copy ()       Test = 50     147           147           SummarizeHeaderFooterAuditToFile
 FAIL!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
-The Total Runtime: 204.13 seconds
-[2025-10-26 16:05:16] Completed
-BibleClass VERSION: 0.1.1
-BibleClass VERSION_DATE: August 2, 2025
+PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction("wouldn't")
+PASS              Copy ()       Test = 53     0             0             U+2019 CountContraction("isn't")
+PASS              Copy ()       Test = 54     0             0             U+2019 CountContraction("let's")
+PASS              Copy ()       Test = 55     16            16            U+2019 CountContraction("i'm")
+PASS              Copy ()       Test = 56     0             0             U+2019 CountContraction("hasn't")
+PASS              Copy ()       Test = 57     0             0             U+2019 CountContraction("didn't")
+PASS              Copy ()       Test = 58     0             0             U+2019 CountContraction("don't")
+PASS              Copy ()       Test = 59     0             0             U+2019 CountContraction("haven't")
+PASS              Copy ()       Test = 60     0             0             U+2019 CountContraction("weren't")
+PASS              Copy ()       Test = 61     0             0             U+2019 CountContraction("aren't")
+PASS              Copy ()       Test = 62     0             0             U+2019 CountContraction("can't")
+PASS              Copy ()       Test = 63     0             0             U+2019 CountContraction("shouldn't")
+PASS              Copy ()       Test = 64     0             0             U+2019 CountContraction("it's")
+The Total Runtime: 196.41 seconds
+[2026-02-01 15:54:26] Completed
+BibleClass VERSION: 0.1.2
+BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
 Application Name: Microsoft Word
 Platform Version: 16.0
-Platform Build: 16.0.19231
-Full Version String: Microsoft Word 16.0 (16.0.19231)
+Platform Build: 16.0.19530
+Full Version String: Microsoft Word 16.0 (16.0.19530)
 Marketing Version: 2506 (Build 18925.20158)
 Source: Microsoft 365 Current Channel, July 2025 update

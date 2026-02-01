@@ -1,13 +1,14 @@
 === Style Usage Distribution ===
-Normal: 23012
+Normal: 26235
 Title: 1
 Plain Text: 26
 List Paragraph: 80
 Heading 1: 66
 CustomParaAfterH1: 61
+Brief: 66
 DatAuthRef: 198
 Heading 2: 1188
-Paragraph Continuation: 149
+Paragraph Continuation: 157
 CustomParaAfterH1-2nd: 5
 Psalms BOOK: 5
 Lamentation: 152
@@ -15,4 +16,4 @@ Footnote Text: 1000
 TheHeaders: 157
 Header: 13
 TheFooters: 14
-Total paragraphs (all styles): 26127
+Total paragraphs (all styles): 29424

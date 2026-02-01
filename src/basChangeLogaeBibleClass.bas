@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #380 -
 ' #379 -
 ' #378 -
-' #377 - Add contractions code to test suite
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
@@ -78,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #377 - Add contractions code to test suite
     ' FIXED - #376 - Add routine to count use of English contractions e.g. can't, for inclusion in test suite [feat]
     ' FIXED - #375 - Add routine to Show Unicode Of Single Character Selection and account for surrogate pairs as needed [feat]
     ' FIXED - #373 - Add style "Brief" for 'Brief background summary' as USFM \ip
