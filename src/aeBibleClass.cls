@@ -211,7 +211,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1555,10 +1555,19 @@ Private Function CountTabOnlyParagraphs(areaType As String) As Long
 
         If hdrFtr.Exists Then
             For Each para In hdrFtr.range.paragraphs
+
+                ' Move the cursor to this paragraph in the footer
+                para.range.Select
+
                 paraText = Replace(para.range.text, vbCr, "")
                 paraText = Replace(paraText, vbLf, "")
                 paraText = Trim(paraText)
-                If paraText = vbTab Then count = count + 1
+
+                If paraText = vbTab Then
+                    count = count + 1
+                    'Debug.Print "count = " & count
+                    'Stop   ' Execution halts with the cursor at the footer location
+                End If
             Next para
         End If
     Next sec

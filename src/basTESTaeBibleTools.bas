@@ -2153,3 +2153,52 @@ Public Function WordSpecialCharacterName(codepoint As Long) As String
     End Select
 End Function
 
+Public Sub FindTabsInAllFooters()
+    Dim sec As section
+    Dim hdrFtr As HeaderFooter
+    Dim rng As range
+    Dim secStartPage As Long
+    Dim secEndPage As Long
+    Dim secRange As range
+
+    For Each sec In ActiveDocument.Sections
+
+        ' Get section page range in document page numbers
+        Set secRange = sec.range
+
+        secRange.Collapse wdCollapseStart
+        secStartPage = secRange.Information(wdActiveEndPageNumber)
+
+        secRange.Collapse wdCollapseEnd
+        secEndPage = secRange.Information(wdActiveEndPageNumber)
+
+        For Each hdrFtr In sec.Footers
+            If hdrFtr.Exists Then
+                Set rng = hdrFtr.range
+
+                With rng.Find
+                    .ClearFormatting
+                    .text = "^t"
+                    .Forward = True
+                    .Wrap = wdFindStop
+                    .Execute
+
+                    Do While .found
+                        Debug.Print "Section " & sec.index & _
+                                    ", Footer type " & hdrFtr.index & _
+                                    ", applies to pages " & secStartPage & _
+                                    "–" & secEndPage
+
+                        rng.Select
+                        Stop
+
+                        rng.Collapse wdCollapseEnd
+                        .Execute
+                    Loop
+                End With
+            End If
+        Next hdrFtr
+    Next sec
+End Sub
+
+
