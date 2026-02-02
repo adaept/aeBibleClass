@@ -61,6 +61,7 @@ Private OneTest As Integer  ' Stores the value to run a single test
 Private skipNum As Integer  ' Used for heavy tests to skip
 Private Const AposCP As Long = &H2019  'Apostrophe Code Point
 Private Apostrophe As String
+Private ContractionArrayValues As Variant
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -278,6 +279,13 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Sub CreateContractionArray()
+    ContractionArrayValues = ConvertToOneBasedArray(Array( _
+        "wouldn't", "isn't", "let's", "i'm", "hasn't", "didn't", "don't", "haven't", "weren't", "aren't", "can't", "shouldn't", "it's" _
+        ))
+    ' Now: LBound(values) = 1, UBound(values) = 13, values(1) = "wouldn't", values(13) = "it's"
+End Sub
+
 '=====================================================================================
 ' AppendToFile - Centralized diagnostic output writer for Word macro sessions
 '
@@ -437,6 +445,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             ' Set up arrays for actual and expected results
             Call InitializeGlobalResultArrayToMinusOne
             Call Expected1BasedArray
+            ' Set up array of contractions
+            Call CreateContractionArray
             
             If OneTest <> 0 Then
                 If OneTest = 42 Or OneTest = 51 Then
@@ -901,13 +911,13 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
             Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
         End If
     Case 52
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """wouldn't""" & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(1) & ")"
     Case 53
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """isn't""" & ")"
     Case 54
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """let's""" & ")"
     Case 55
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """i'm""" & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(4) & ")"
     Case 56
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """'t""" & ")"
     Case 57
