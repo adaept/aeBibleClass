@@ -1382,7 +1382,8 @@ Sub DummyRepairPageTimerOnly(pgNum As Long)
 End Sub
 
 Sub ReapplyTheFootersToAllFooters()
-    Dim sec As section
+    Dim sec As word.section
+    
     Dim hf As HeaderFooter
     Dim p As paragraph
     Dim prevStyle As String
@@ -1392,7 +1393,7 @@ Sub ReapplyTheFootersToAllFooters()
     Debug.Print "=== Reapply 'TheFooters' Style Start ==="
 
     For Each sec In ActiveDocument.Sections
-        Debug.Print "SECTION " & sec.Index
+        Debug.Print "SECTION " & sec.index
 
         For Each hf In sec.Footers
             If hf.Exists Then

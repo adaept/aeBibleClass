@@ -165,8 +165,6 @@ Private Function ConvertToOneBasedArray(values As Variant) As Variant
 
     On Error GoTo PROC_ERR
 
-    InitializeGlobalResultArrayToMinusOne
-
     ' Resize the array to start from index 1
     ReDim strArray(1 To UBound(values) - LBound(values) + 1)
     
@@ -212,8 +210,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55  56 57 58 59 60 61 62 63 64)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147, 1189, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -436,6 +434,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Debug.Print ">>>RunBibleClassTests = YES"
             On Error GoTo PROC_ERR
                         
+            ' Set up arrays for actual and expected results
+            Call InitializeGlobalResultArrayToMinusOne
             Call Expected1BasedArray
             
             If OneTest <> 0 Then
@@ -1315,7 +1315,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
                     paraStyle = p.style.NameLocal
                     If paraStyle <> "TheHeaders" Then
                         headerOk = False
-                        dictBadHeaderStyles("SECTION " & sec.Index & " = " & paraStyle) = ""
+                        dictBadHeaderStyles("SECTION " & sec.index & " = " & paraStyle) = ""
                     End If
 
                     If Not dictAsciiCount.Exists(asciiVal) Then dictAsciiCount(asciiVal) = 0
@@ -1346,7 +1346,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
                     paraStyle = p.style.NameLocal
                     If paraStyle <> "TheFooters" Then
                         footerOk = False
-                        dictBadFooterStyles("SECTION " & sec.Index & " = " & paraStyle) = ""
+                        dictBadFooterStyles("SECTION " & sec.index & " = " & paraStyle) = ""
                     End If
 
                     If Not dictAsciiCount.Exists(asciiVal) Then dictAsciiCount(asciiVal) = 0
@@ -1707,7 +1707,7 @@ End Function
 
 Private Function CountBoldFootnotesWordLevel()
     Dim ft As footnote
-    Dim word As range
+    Dim aword As range
     Dim boldCount As Long
     Dim hasBold As Boolean
 
@@ -1715,13 +1715,13 @@ Private Function CountBoldFootnotesWordLevel()
         hasBold = False
 
         If ft.range.style = "Footnote Text" Then
-            For Each word In ft.range.words
-                If word.font.Bold = True Then
+            For Each aword In ft.range.words
+                If aword.font.Bold = True Then
                     boldCount = boldCount + 1
                     hasBold = True
                     Exit For
                 End If
-            Next word
+            Next aword
         End If
     Next ft
 
@@ -2387,7 +2387,7 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Integer
         If asciiValue <> 13 Then
             ' Add debug information
             If asciiValue <> 32 Then    ' space (ASCII value 32)
-                debugInfo = debugInfo & "Fn " & footnote.Index & ": '" & rng.text & "' (ASC " & asciiValue & "), "
+                debugInfo = debugInfo & "Fn " & footnote.index & ": '" & rng.text & "' (ASC " & asciiValue & "), "
                 'Debug.Print debugInfo
                 notSpaceCount = notSpaceCount + 1
                 'Stop
@@ -2438,7 +2438,7 @@ Private Function CountFootnotesFollowedByDigit() As Integer
         End If
         
         ' Add debug information
-        debugInfo = debugInfo & "Footnote " & footnote.Index & ": '" & rng.text & "' (ASCII: " & asciiValue & ")" & vbCrLf
+        debugInfo = debugInfo & "Footnote " & footnote.index & ": '" & rng.text & "' (ASCII: " & asciiValue & ")" & vbCrLf
     Next footnote
     
     ' Display the count of footnote references followed by a digit
