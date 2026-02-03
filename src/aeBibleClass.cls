@@ -280,7 +280,17 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub CreateContractionArray()
+Private Function ContractionArrayU(idx As Integer) As String
+    ' Replace `'` with unicode value in the string, Apostrophe, =ChrW$(AposCP), &H2019
+    Dim Curly As String
+    Curly = ChrW(&H2019)  ' RIGHT SINGLE QUOTATION MARK
+    
+    'Debug.Print ">ContractionArrayValues(idx) = " & ContractionArrayValues(idx)
+    ContractionArrayU = Replace(ContractionArrayValues(idx), "'", Curly, 1, 1)
+    'Debug.Print ">ContractionArrayU) = " & ContractionArrayU
+End Function
+
+Private Sub CreateContractionArray()
     ContractionArrayValues = ConvertToOneBasedArray(Array( _
         "wouldn't", "isn't", "let's", "i'm", "hasn't", "didn't", "don't", "haven't", "weren't", "aren't", "can't", "shouldn't", "it's" _
         ))
@@ -722,7 +732,9 @@ Private Function GetPassFail(TestNum As Integer) As String
             ResultArray(TestNum) = CountAndCreateDefinitionForH2
         End If
     Case 52
-        ResultArray(TestNum) = CountContraction("wouldn" & Apostrophe & "t")
+        Dim contra As String
+        contra = ContractionArrayU(TestNum - CARTS + 1)
+        ResultArray(TestNum) = CountContraction(contra)
     Case 53
         ResultArray(TestNum) = CountContraction("ins" & Apostrophe & "t")
     Case 54
@@ -912,7 +924,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
             Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
         End If
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(num - CARTS + 1) & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1073,7 +1085,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 51
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64
-        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & ContractionArrayValues(num - CARTS + 1) & ")"
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
     Case 999
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
     Case Else

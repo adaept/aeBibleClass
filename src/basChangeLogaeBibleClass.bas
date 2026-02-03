@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #385 -
 ' #384 -
 ' #383 -
-' #382 - Add function to replace `'` with  Apostrophe, =ChrW$(AposCP), when calling GetPassFail routine for ResultArray 52+
 ' #381 - Add test for count of "spirit's", expected 1
 ' #378 - Simplify use of contraction code [refac]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
@@ -80,6 +79,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #382 - Add function to replace `'` with  Apostrophe, =ChrW$(AposCP), when calling GetPassFail routine for ResultArray 52+
     ' FIXED - #380 - Create Contraction Array and verify in RunTest 52 and 55
     ' FIXED - #379 - Separate initialization of actual and expected result arrays from conversion to 1-base array
     ' FIXED - #377 - Add contractions code to test suite [impr]
