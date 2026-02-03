@@ -10,7 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #385 -
 ' #384 -
 ' #383 -
-' #382 -
+' #382 - Add function to replace `'` with  Apostrophe, =ChrW$(AposCP), when calling GetPassFail routine for ResultArray 52+
 ' #381 - Add test for count of "spirit's", expected 1
 ' #378 - Simplify use of contraction code [refac]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
