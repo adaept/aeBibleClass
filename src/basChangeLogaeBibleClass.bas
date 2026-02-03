@@ -11,7 +11,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #384 -
 ' #383 -
 ' #382 -
-' #381 -
+' #381 - Add test for count of "spirit's", expected 1
 ' #378 - Simplify use of contraction code [refac]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
