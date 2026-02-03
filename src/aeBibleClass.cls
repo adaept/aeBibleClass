@@ -48,7 +48,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Integer
-Private Const MaxTests = 64
+Private Const MaxTests = 65
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -212,8 +212,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -290,9 +290,9 @@ End Function
 
 Private Sub CreateContractionArray()
     ContractionArrayValues = ConvertToOneBasedArray(Array( _
-        "wouldn't", "isn't", "let's", "i'm", "hasn't", "didn't", "don't", "haven't", "weren't", "aren't", "can't", "shouldn't", "it's" _
+        "wouldn't", "isn't", "let's", "i'm", "hasn't", "didn't", "don't", "haven't", "weren't", "aren't", "can't", "shouldn't", "it's", "spirit's" _
         ))
-    ' Now: LBound(values) = 1, UBound(values) = 13, values(1) = "wouldn't", values(13) = "it's"
+    ' Now: LBound(values) = 1, UBound(values) = 13, values(1) = "wouldn't", values(14) = "spirit's"
 End Sub
 
 '=====================================================================================
@@ -548,6 +548,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (62)
             RunTest (63)
             RunTest (64)
+            RunTest (65)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -729,7 +730,7 @@ Private Function GetPassFail(TestNum As Integer) As String
         Else            'Debug.Print "HERE!!!!"
             ResultArray(TestNum) = CountAndCreateDefinitionForH2
         End If
-    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         Dim contra As String
         contra = ContractionArrayU(TestNum - CARTS + 1)
         ResultArray(TestNum) = CountContraction(contra)
@@ -896,7 +897,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         Else
             Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
         End If
-    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
@@ -1057,7 +1058,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
     Case 51
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
-    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
     Case 999
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
