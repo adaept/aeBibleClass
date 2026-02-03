@@ -281,12 +281,10 @@ PROC_ERR:
 End Sub
 
 Private Function ContractionArrayU(idx As Integer) As String
-    ' Replace `'` with unicode value in the string, Apostrophe, =ChrW$(AposCP), &H2019
-    Dim Curly As String
-    Curly = ChrW(&H2019)  ' RIGHT SINGLE QUOTATION MARK
+    ' Replace `'` with unicode value in the string, Apostrophe, =ChrW$(AposCP), &H2019, RIGHT SINGLE QUOTATION MARK
     
     'Debug.Print ">ContractionArrayValues(idx) = " & ContractionArrayValues(idx)
-    ContractionArrayU = Replace(ContractionArrayValues(idx), "'", Curly, 1, 1)
+    ContractionArrayU = Replace(ContractionArrayValues(idx), "'", Apostrophe, 1, 1)
     'Debug.Print ">ContractionArrayU) = " & ContractionArrayU
 End Function
 
@@ -731,36 +729,11 @@ Private Function GetPassFail(TestNum As Integer) As String
         Else            'Debug.Print "HERE!!!!"
             ResultArray(TestNum) = CountAndCreateDefinitionForH2
         End If
-    Case 52
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64
         Dim contra As String
         contra = ContractionArrayU(TestNum - CARTS + 1)
         ResultArray(TestNum) = CountContraction(contra)
-    Case 53
-        ResultArray(TestNum) = CountContraction("ins" & Apostrophe & "t")
-    Case 54
-        ResultArray(TestNum) = CountContraction("let" & Apostrophe & "s")
-    Case 55
-        ResultArray(TestNum) = CountContraction("i" & Apostrophe & "m")
-        'Debug.Print ">i'm = " & CountContraction("i" & Apostrophe & "m")
-        'Debug.Print ">i & Apostrophe & m = " & "i" & Apostrophe & "m"
-    Case 56
-        ResultArray(TestNum) = CountContraction("hasn" & Apostrophe & "t")
-    Case 57
-        ResultArray(TestNum) = CountContraction("didn" & Apostrophe & "t")
-    Case 58
-        ResultArray(TestNum) = CountContraction("don" & Apostrophe & "t")
-    Case 59
-        ResultArray(TestNum) = CountContraction("haven" & Apostrophe & "t")
-    Case 60
-        ResultArray(TestNum) = CountContraction("weren" & Apostrophe & "t")
-    Case 61
-        ResultArray(TestNum) = CountContraction("aren" & Apostrophe & "t")
-    Case 62
-        ResultArray(TestNum) = CountContraction("can" & Apostrophe & "t")
-    Case 63
-        ResultArray(TestNum) = CountContraction("shouldn" & Apostrophe & "t")
-    Case 64
-        ResultArray(TestNum) = CountContraction("it" & Apostrophe & "s")
+
     Case 999
         GetPassFail = "SKIP!!!!"
         Exit Function
@@ -1823,7 +1796,7 @@ Private Function CountParagraphMarks_ArialBlack() As Integer
                 If Not foundFirst Then
                     paraRange.Select
                     foundFirst = True
-                    Stop
+                    'Stop
                 End If
             End If
         End With

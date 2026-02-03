@@ -7,7 +7,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Const wdThemeColorNone As Long = -1
 Public Const wdPaperB5Jis As Integer = 11
-Private ContractionArrayValues As Variant
 
 Sub ViewCodeDetails()
     Dim selectedText As String
@@ -1037,45 +1036,4 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
     Debug.Print logBuffer
     MsgBox "Full font audit complete. See Immediate Window.", vbInformation
 End Sub
-
-Private Function ConvertToOneBasedArray(values As Variant) As Variant
-    Dim strArray() As String
-    Dim i As Integer
-
-    'On Error GoTo PROC_ERR
-
-    ' Resize the array to start from index 1
-    ReDim strArray(1 To UBound(values) - LBound(values) + 1)
-    
-    ' Store the values in the array starting from index 1
-    For i = 1 To UBound(values) - LBound(values) + 1
-        strArray(i) = values(i - 1 + LBound(values))
-    Next i
-    
-    ' Return the 1-based array
-    ConvertToOneBasedArray = strArray
-End Function
-
-Sub CreateContractionArray()
-    ContractionArrayValues = ConvertToOneBasedArray(Array( _
-        "wouldn't", "isn't", "let's", "i'm", "hasn't", "didn't", "don't", "haven't", "weren't", "aren't", "can't", "shouldn't", "it's" _
-        ))
-    ' Now: LBound(values) = 1, UBound(values) = 13, values(1) = "wouldn't", values(13) = "it's"
-End Sub
-
-Function ContractionArrayU(idx As Integer) As String
-    ' Replace `'` with unicode value in the string, Apostrophe, =ChrW$(AposCP), &H2019
-    Dim Curly As String
-    Curly = ChrW(&H2019)  ' RIGHT SINGLE QUOTATION MARK
-    
-    Call CreateContractionArray
-    Debug.Print ">ContractionArrayValues = " & ContractionArrayValues(idx)
-
-    ContractionArrayU = Replace(ContractionArrayValues(idx), "'", Curly, 1, 1)
-' Example Test for Immediate window
-' ?ContractionArrayU(4)
-' >ContractionArrayValues = i'm
-' i’m
-End Function
-
 

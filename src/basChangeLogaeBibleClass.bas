@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #384 -
 ' #383 -
 ' #381 - Add test for count of "spirit's", expected 1
-' #378 - Simplify use of contraction code [refac]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
@@ -79,6 +78,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #378 - Simplify use of contraction code [refac]
     ' FIXED - #382 - Add function to replace `'` with  Apostrophe, =ChrW$(AposCP), when calling GetPassFail routine for ResultArray 52+
     ' FIXED - #380 - Create Contraction Array and verify in RunTest 52 and 55
     ' FIXED - #379 - Separate initialization of actual and expected result arrays from conversion to 1-base array
