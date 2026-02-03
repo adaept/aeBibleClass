@@ -59,9 +59,10 @@ Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True
 Private OneTest As Integer  ' Stores the value to run a single test
 Private skipNum As Integer  ' Used for heavy tests to skip
-Private Const AposCP As Long = &H2019  'Apostrophe Code Point
+Private Const AposCP As Long = &H2019  ' Apostrophe Code Point
 Private Apostrophe As String
 Private ContractionArrayValues As Variant
+Private Const CARTS As Integer = 52    ' Contraction Array RunTest Start
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -911,13 +912,13 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
             Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
         End If
     Case 52
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(1) & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(num - CARTS + 1) & ")"
     Case 53
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """isn't""" & ")"
     Case 54
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """let's""" & ")"
     Case 55
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(4) & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayValues(num - CARTS + 1) & ")"
     Case 56
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """'t""" & ")"
     Case 57
