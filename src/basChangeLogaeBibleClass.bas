@@ -49,9 +49,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
-' #070 - Word automatically adjusts smart quotes to match the context of the text
-'        Add test for NNBSP followed by any right single closing quote (U+202F followed by U+2019) [test]
-'        Add test for NNBSP followed by any right double closing quote (U+201D followed by U+2019) [test]
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure RWB is correct
 '        Verify smart quotes
 '        Several Bible versions use smart quotes for opening and closing quotations,
@@ -81,6 +78,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #070 - Word automatically adjusts smart quotes to match the context of the text
+    '                   Add test for NNBSP followed by any right single closing quote (U+202F followed by U+2019) [test]
+    '                   Add test for NNBSP followed by any right double closing quote (U+202F followed by U+201D) [test]
     ' FIXED - #384 - Add a function MakeUnicodeSeq that will make a string from 1~3 U code points
     ' FIXED - #383 - Add test for space followed by U+2019
     ' FIXED - #381 - Add test for count of "spirit's", expected 1
@@ -235,13 +235,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #184 - See #211 - Add test for Footnote Text to count those that have any bold text [test]
     ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic [test]
     ' FIXED - #216 - Error with H1 count of 66 vs 59 for show/hide true false
-'       Problem list = "Joshua", "2 Kings", "Nehemiah", "Habakkuk", "Haggai", "Philemon", "1 Peter"
-'           The issue wasn’t with the styles or outline levels themselves, but with invisible or corrupted inline content
-'           (probably non-printing characters or hidden formatting) hiding in those paragraphs. When one cleaned one (Joshua),
-'           it likely triggered a reflow/re-rendering in Word that corrected the others.
-'       Solution - Click at the end of the word "Joshua" and press Delete Then press Enter once.
-'           This clears any hidden/invisible content after the heading text that may prevent proper recognition.
-'           Reselect the paragraph and reapply Heading 1 style
+    '    Problem list = "Joshua", "2 Kings", "Nehemiah", "Habakkuk", "Haggai", "Philemon", "1 Peter"
+    '        The issue wasn’t with the styles or outline levels themselves, but with invisible or corrupted inline content
+    '        (probably non-printing characters or hidden formatting) hiding in those paragraphs. When one cleaned one (Joshua),
+    '        it likely triggered a reflow/re-rendering in Word that corrected the others.
+    '    Solution - Click at the end of the word "Joshua" and press Delete Then press Enter once.
+    '        This clears any hidden/invisible content after the heading text that may prevent proper recognition.
+    '        Reselect the paragraph and reapply Heading 1 style
     ' FIXED - #211 - Add test for CountBoldFootnotesWordLevel [test]
     ' FIXED - #213 - Add test for Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed = 0 when all have been set [test]
     ' FIXED - #142 - Add routine to output book names and pages for TOC manual verification - see #039
@@ -386,19 +386,19 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     '           Obad, Phlm, 2 John, 3 John, Jude
     ' FIXED - #077 - Check Ezek for three in a row closing quotes
     ' FIXED - #068 - Check Ezek 1 to 26 for proper use of "'" and Ezek 39 to end of book for "'"
-'        Double quotes to indicate the start and end of the direct speech.
-'        Single quotes within the double quotes to emphasize the words spoken by God.
-'        Closing double quotes to complete the direct speech.
-'           Opening double quote:   (ASCII code: 147 or Unicode: U+201C)
-'           Closing double quote:   (ASCII code: 148 or Unicode: U+201D)
-'           Opening single quote:   (ASCII code: 145 or Unicode: U+2018)
-'           Closing single quote:   (ASCII code: 146 or Unicode: U+2019)
-'        These smart quotes are different from the straight quotes (" and ') which have ASCII codes 34 and 39, respectively.
-'        To insert these characters manually, you can use the following key combinations in Word:
-'           Opening double quote: Alt + 0147
-'           Closing double quote: Alt + 0148
-'           Opening single quote: Alt + 0145
-'           Closing single quote: Alt + 0146    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
+    '     Double quotes to indicate the start and end of the direct speech.
+    '     Single quotes within the double quotes to emphasize the words spoken by God.
+    '     Closing double quotes to complete the direct speech.
+    '        Opening double quote:   (ASCII code: 147 or Unicode: U+201C)
+    '        Closing double quote:   (ASCII code: 148 or Unicode: U+201D)
+    '        Opening single quote:   (ASCII code: 145 or Unicode: U+2018)
+    '        Closing single quote:   (ASCII code: 146 or Unicode: U+2019)
+    '     These smart quotes are different from the straight quotes (" and ') which have ASCII codes 34 and 39, respectively.
+    '     To insert these characters manually, you can use the following key combinations in Word:
+    '        Opening double quote: Alt + 0147
+    '        Closing double quote: Alt + 0148
+    '        Opening single quote: Alt + 0145
+    '        Closing single quote: Alt + 0146    ' FIXED - #064 - When bTimeAllTests is True it does not show total time
     ' FIXED - #063 - Update RunTest so it will allow a range of tests to be run (15 tests range)
     ' FIXED - #065 - Add module basTESTaeBibleTools for routines that are useful to tests outside of the class
     ' [obso] - Replaced with #062 - #036 - Add test for h1 pages that have heading
@@ -447,5 +447,4 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #002 - Update class name to aeBibleClass
 ' 20250217 - v001
     ' FIXED - #001 - Create Bible Class base template, initial test module, and change log
-
 

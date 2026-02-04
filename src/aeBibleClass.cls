@@ -48,7 +48,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Integer
-Private Const MaxTests = 66
+Private Const MaxTests = 68
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -62,7 +62,9 @@ Private skipNum As Integer  ' Used for heavy tests to skip
 Private Const AposCP As Long = &H2019  ' Apostrophe Code Point
 Private Apostrophe As String
 Private ContractionArrayValues As Variant
+Private contra As String               ' Contraction
 Private Const CARTS As Integer = 52    ' Contraction Array RunTest Start
+Private UnicodeString As String        ' A string of up to 3 code points
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -212,8 +214,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -288,6 +290,10 @@ Private Function MakeUnicodeSeq(cp1 As Long, Optional cp2 As Long = 0, Optional 
     If cp3 <> 0 Then s = s & ChrW(cp3)
 
     MakeUnicodeSeq = s
+End Function
+
+Function ProcessUnicode(s As String) As String
+    ProcessUnicode = s   ' return the string exactly as received
 End Function
 
 Private Function ContractionArrayU(idx As Integer) As String
@@ -561,6 +567,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (64)
             RunTest (65)
             RunTest (66)
+            RunTest (67)
+            RunTest (68)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -743,10 +751,14 @@ Private Function GetPassFail(TestNum As Integer) As String
             ResultArray(TestNum) = CountAndCreateDefinitionForH2
         End If
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
-        Dim contra As String
         contra = ContractionArrayU(TestNum - CARTS + 1)
         ResultArray(TestNum) = CountContraction(contra)
-
+    Case 67
+        UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H202F, &H2019))  ' NNBSP U+202F followed by RSQM U+2019
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+    Case 68
+        UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H202F, &H201D))  ' NNBSP U+202F followed by RDQM U+201D
+        ResultArray(TestNum) = CountContraction(UnicodeString)
     Case 999
         GetPassFail = "SKIP!!!!"
         Exit Function
@@ -911,6 +923,8 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         End If
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
+    Case 67, 68
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountUnicodeSeq([" & UnicodeString & "])"    ' Using [] to delineate unicode string in test output
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1072,6 +1086,8 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
+    Case 67, 68
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountUnicodeSeq([" & UnicodeString & "])"    ' Using [] to delineate unicode string in test output
     Case 999
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
     Case Else
@@ -1102,8 +1118,15 @@ End Function
 '     This is a known difference between the Word UI search and the VBA Find API.
 '   - Designed for standalone contractions (whole words), not sub-word matches.
 '
+' Additional:
+'   - Can also accept up to 3 code points as a string when not calling
+'     the contraction array.
+'
 ' Parameters:
 '   contraction  The contraction to search for, using Unicode U+2019 (ChrW(&H2019))
+'                Tests 52~66
+'   or           A Unicode string of up to 3 code points
+'                Tests 67~
 '
 ' Returns:
 '   The number of matches found.
