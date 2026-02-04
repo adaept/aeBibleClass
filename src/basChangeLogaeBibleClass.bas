@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
+' #390 -
+' #389 -
+' #388 -
+' #387 -
+' #386 -
 ' #385 -
-' #384 -
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
@@ -77,6 +81,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #384 - Add a function MakeUnicodeSeq that will make a string from 1~3 U code points
     ' FIXED - #383 - Add test for space followed by U+2019
     ' FIXED - #381 - Add test for count of "spirit's", expected 1
     ' FIXED - #378 - Simplify use of contraction code [refac]

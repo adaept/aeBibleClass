@@ -280,6 +280,16 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Private Function MakeUnicodeSeq(cp1 As Long, Optional cp2 As Long = 0, Optional cp3 As Long = 0) As String
+    Dim s As String
+    s = ChrW(cp1)
+
+    If cp2 <> 0 Then s = s & ChrW(cp2)
+    If cp3 <> 0 Then s = s & ChrW(cp3)
+
+    MakeUnicodeSeq = s
+End Function
+
 Private Function ContractionArrayU(idx As Integer) As String
     ' Replace `'` with unicode value in the string, Apostrophe, =ChrW$(AposCP), &H2019, RIGHT SINGLE QUOTATION MARK
     
