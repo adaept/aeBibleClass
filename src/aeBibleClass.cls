@@ -58,7 +58,8 @@ Private TestReportFileName As String
 Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True
 Private OneTest As Integer  ' Stores the value to run a single test
-Private skipNum As Integer  ' Used for heavy tests to skip
+'xxxPrivate skipNum As Integer  ' Used for heavy tests to skip
+Private SkipTestArray As Variant       ' Used for heavy tests to skip
 Private Const AposCP As Long = &H2019  ' Apostrophe Code Point
 Private Apostrophe As String
 Private ContractionArrayValues As Variant
@@ -148,7 +149,7 @@ Private Sub InitializeGlobalResultArrayToMinusOne()
     Next j
     ' Initialize GetPassFailArray
     For k = 1 To MaxTests
-        GetPassFailArray(k) = "-1-1-1-1"  ' Possible values are "PASS    ", "FAIL!!!!", "SKIP!!!!"
+        GetPassFailArray(k) = "x1x1x1x1"  ' Possible values are "PASS    ", "FAIL!!!!", "SKIP!!!!"
     Next k
     ' Optional: Print to Immediate window to confirm
     'For i = 1 To MaxTests
@@ -281,6 +282,23 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Expected1BasedArray of Class BibleClass"
     Resume PROC_EXIT
 End Sub
+
+'==================================================================
+' Manually update with values of tests that are to be skipped
+'==================================================================
+Private Sub MakeSkipTestArray()
+    SkipTestArray = Array(42, 51)
+End Sub
+
+Private Function IsSkipTest(ByVal n As Long) As Boolean
+    Dim i As Long
+    For i = LBound(SkipTestArray) To UBound(SkipTestArray)
+        If SkipTestArray(i) = n Then
+            IsSkipTest = True
+            Exit Function
+        End If
+    Next i
+End Function
 
 Private Function MakeUnicodeSeq(cp1 As Long, Optional cp2 As Long = 0, Optional cp3 As Long = 0) As String
     Dim s As String
@@ -470,13 +488,13 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
                         
             ' Set up arrays for actual and expected results
             Call InitializeGlobalResultArrayToMinusOne
+            Call MakeSkipTestArray
             Call Expected1BasedArray
             ' Set up array of contractions
             Call CreateContractionArray
             
             If OneTest <> 0 Then
-                If OneTest = 42 Or OneTest = 51 Then
-                    If OneTest = 42 Then SkippedTestNum = 42
+                If OneTest = 51 Then
                     If OneTest = 51 Then SkippedTestNum = 51
                     'Debug.Print "$$$ 42, SKIP"
                     Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
@@ -540,8 +558,11 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (39)
             RunTest (40)
             RunTest (41)
-            SkippedTestNum = 42
-            Call RunTest(42, "SKIP")
+            If IsSkipTest(42) Then
+                Call RunTest(42, "SKIP")
+            Else
+                RunTest (42)
+            End If
             RunTest (43)
             RunTest (44)
             RunTest (45)
@@ -550,8 +571,11 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (48)
             RunTest (49)
             RunTest (50)
-            SkippedTestNum = 51
-            Call RunTest(51, "SKIP")
+            If IsSkipTest(51) Then
+                Call RunTest(51, "SKIP")
+            Else
+                RunTest (51)
+            End If
             RunTest (52)
             RunTest (53)
             RunTest (54)
@@ -631,12 +655,16 @@ Private Function U(codepoint As Long) As String
 End Function
 
 Private Function GetPassFail(TestNum As Integer) As String
-    Dim PassFail As String
-
     On Error GoTo PROC_ERR
     
     ' Set explicit fail unless the test passes
     GetPassFail = "FAIL!!!!"
+    
+    ' Set explicit skip if the test is skipped
+    If IsSkipTest(TestNum) Then
+        GetPassFailArray(TestNum) = "SKIP!!!!"
+        Exit Function
+    End If
     
     Select Case TestNum
     Case 1
@@ -722,12 +750,7 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 41
         ResultArray(TestNum) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
     Case 42
-        If SkippedTestNum = TestNum Then
-            'Debug.Print "SkippedTestNum = " & SkippedTestNum, "TestNum = " & TestNum
-        Else
-            'Debug.Print "HERE!!!!"
-            ResultArray(TestNum) = CountBoldFootnotesWordLevel
-        End If
+        ResultArray(TestNum) = CountBoldFootnotesWordLevel
     Case 43
         ResultArray(TestNum) = CountDarkRedStyledParagraphMarks
     Case 44
@@ -759,9 +782,6 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 68
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H202F, &H201D))  ' NNBSP U+202F followed by RDQM U+201D
         ResultArray(TestNum) = CountContraction(UnicodeString)
-    Case 999
-        GetPassFail = "SKIP!!!!"
-        Exit Function
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -891,13 +911,8 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Case 41
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
-        If Not IsMissing(SkipTest) Then             ' = num Then
-            'Debug.Print ">> num = " & num, "SkipTest = " & SkipTest
-            Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
-        Else
-            Debug.Print ">> Expected Routine Runtime ~ 80 seconds"
-            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
-        End If
+        'Debug.Print ">> Expected Routine Runtime ~ 80 seconds"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
     Case 43
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDarkRedStyledParagraphMarks"
     Case 44
@@ -1060,12 +1075,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 41
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
-        If SkipTest = "SKIP" Then
-            'Debug.Print "%%% AppendToFile 999", "num = " & num
-            AppendToFile TestReportFileName, GetPassFail(999) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str("SKIPPED") & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
-        Else
-            AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
-        End If
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
     Case 43
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDarkRedStyledParagraphMarks"
     Case 44
