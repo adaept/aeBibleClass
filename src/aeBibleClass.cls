@@ -58,7 +58,6 @@ Private TestReportFileName As String
 Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True
 Private OneTest As Integer  ' Stores the value to run a single test
-'xxxPrivate skipNum As Integer  ' Used for heavy tests to skip
 Private SkipTestArray As Variant       ' Used for heavy tests to skip
 Private Const AposCP As Long = &H2019  ' Apostrophe Code Point
 Private Apostrophe As String
@@ -303,10 +302,8 @@ End Function
 Private Function MakeUnicodeSeq(cp1 As Long, Optional cp2 As Long = 0, Optional cp3 As Long = 0) As String
     Dim s As String
     s = ChrW(cp1)
-
     If cp2 <> 0 Then s = s & ChrW(cp2)
     If cp3 <> 0 Then s = s & ChrW(cp3)
-
     MakeUnicodeSeq = s
 End Function
 
@@ -494,21 +491,11 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Call CreateContractionArray
             
             If OneTest <> 0 Then
-                If OneTest = 51 Then
-                    If OneTest = 51 Then SkippedTestNum = 51
-                    'Debug.Print "$$$ 42, SKIP"
-                    Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
-                    '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
-                    Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
-                    Call RunTest(OneTest, "SKIP")
-                    Exit Function
-                Else
-                    Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
-                    '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
-                    Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
-                    Call RunTest(OneTest)
-                    Exit Function
-                End If
+                Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
+                '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
+                Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+                Call RunTest(OneTest)
+                Exit Function
             End If
             
             Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
@@ -654,11 +641,8 @@ Private Function U(codepoint As Long) As String
     U = ChrW(codepoint)
 End Function
 
-Private Function GetPassFail(TestNum As Integer) As String
+Private Function GetPassFail(TestNum As Integer) As Boolean
     On Error GoTo PROC_ERR
-    
-    ' Set explicit fail unless the test passes
-    GetPassFail = "FAIL!!!!"
     
     ' Set explicit skip if the test is skipped
     If IsSkipTest(TestNum) Then
@@ -768,11 +752,7 @@ Private Function GetPassFail(TestNum As Integer) As String
     Case 50
         ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
     Case 51
-        If SkippedTestNum = TestNum Then
-            'Debug.Print "SkippedTestNum = " & SkippedTestNum, "TestNum = " & TestNum
-        Else            'Debug.Print "HERE!!!!"
-            ResultArray(TestNum) = CountAndCreateDefinitionForH2
-        End If
+        ResultArray(TestNum) = CountAndCreateDefinitionForH2
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
         contra = ContractionArrayU(TestNum - CARTS + 1)
         ResultArray(TestNum) = CountContraction(contra)
@@ -930,12 +910,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Case 50
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
     Case 51
-        If Not IsMissing(SkipTest) Then             ' = num Then
-            'Debug.Print ">> num = " & num, "SkipTest = " & SkipTest
-            Debug.Print GetPassFail(999), "Copy ()", "Test = " & num, -1, oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
-        Else
-            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
-        End If
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
     Case 67, 68

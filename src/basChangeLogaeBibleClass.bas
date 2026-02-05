@@ -11,13 +11,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #389 -
 ' #388 -
 ' #387 -
-' #386 -
-' #385 - Simplify SKIP test process should always return Result -1, fix for Test 42 and 51, DRY [bug] [refac]
+' #386 - Add code for DebugHeader, DRY [refac]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
 ' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
-' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before and after ":"
+' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before & after ":" [impr]
 ' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
 ' #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug]
 ' #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug]
@@ -78,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #385 - Simplify SKIP test process should always return Result -1, fix for Test 42 and 51, DRY [bug] [refac]
     ' FIXED - #070 - Word automatically adjusts smart quotes to match the context of the text
     '                   Add test for NNBSP followed by any right single closing quote (U+202F followed by U+2019) [test]
     '                   Add test for NNBSP followed by any right double closing quote (U+202F followed by U+201D) [test]
