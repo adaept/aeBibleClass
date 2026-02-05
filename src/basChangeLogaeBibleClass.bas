@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #389 -
 ' #388 -
 ' #387 -
-' #386 - Add code for DebugHeader, DRY [refac]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #386 - Add code for DebugAndReportHeader, DRY [refac]
     ' FIXED - #385 - Simplify SKIP test process should always return Result -1, fix for Test 42 and 51, DRY [bug] [refac]
     ' FIXED - #070 - Word automatically adjusts smart quotes to match the context of the text
     '                   Add test for NNBSP followed by any right single closing quote (U+202F followed by U+2019) [test]

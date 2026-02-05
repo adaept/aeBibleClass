@@ -446,6 +446,12 @@ Private Sub RunTotalTimeTestSession(testOutcome As String)
     Debug.Print "RunTotalTimeTestSession complete. Session ID: " & sessionID
 End Sub
 
+Private Sub DebugAndReportHeader()
+    Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
+    '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
+    Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+End Sub
+
 Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boolean
     Dim startTime As Double
     Dim endTime As Double
@@ -491,16 +497,12 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             Call CreateContractionArray
             
             If OneTest <> 0 Then
-                Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
-                '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
-                Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+                DebugAndReportHeader
                 Call RunTest(OneTest)
                 Exit Function
             End If
             
-            Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
-            '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
-            Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
+            DebugAndReportHeader
             If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "1234567890123412345678901234123456789012341234567890123412345678901234"
             If TestReportFlag And OneTest = 0 Then AppendToFile TestReportFileName, "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
             
