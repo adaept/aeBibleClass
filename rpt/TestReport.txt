@@ -20,7 +20,7 @@ PASS              Copy ()       Test = 12     0             0             CountN
 PASS              Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
-FAIL!!!!          Copy ()       Test = 16     28133         16471         CountTotalParagraphs
+FAIL!!!!          Copy ()       Test = 16     28134         16471         CountTotalParagraphs
 PASS              Copy ()       Test = 17     0             0             CountRedFootnoteReferences
 PASS              Copy ()       Test = 18     66            66            CountHeading1
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
@@ -56,25 +56,25 @@ FAIL!!!!          Copy ()       Test = 48     1             0             AuditL
 FAIL!!!!          Copy ()       Test = 49     17            16            CountAuditStyles_ToFile
 PASS              Copy ()       Test = 50     147           147           SummarizeHeaderFooterAuditToFile
 SKIP!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
-PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction(wouldn’t)
-PASS              Copy ()       Test = 53     0             0             U+2019 CountContraction(isn’t)
-PASS              Copy ()       Test = 54     0             0             U+2019 CountContraction(let’s)
-FAIL!!!!          Copy ()       Test = 55     16            0             U+2019 CountContraction(i’m)
-PASS              Copy ()       Test = 56     0             0             U+2019 CountContraction(hasn’t)
-PASS              Copy ()       Test = 57     0             0             U+2019 CountContraction(didn’t)
-PASS              Copy ()       Test = 58     0             0             U+2019 CountContraction(don’t)
-PASS              Copy ()       Test = 59     0             0             U+2019 CountContraction(haven’t)
-PASS              Copy ()       Test = 60     0             0             U+2019 CountContraction(weren’t)
-PASS              Copy ()       Test = 61     0             0             U+2019 CountContraction(aren’t)
-PASS              Copy ()       Test = 62     0             0             U+2019 CountContraction(can’t)
-PASS              Copy ()       Test = 63     0             0             U+2019 CountContraction(shouldn’t)
-PASS              Copy ()       Test = 64     0             0             U+2019 CountContraction(it’s)
-PASS              Copy ()       Test = 65     1             1             U+2019 CountContraction(spirit’s)
-PASS              Copy ()       Test = 66     0             0             U+2019 CountContraction( ’)
-PASS              Copy ()       Test = 67     0             0             CountUnicodeSeq([ ’])
-PASS              Copy ()       Test = 68     0             0             CountUnicodeSeq([ ”])
-The Total Runtime: 215.28 seconds
-[2026-02-06 12:58:44] Completed
+PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction("wouldn’t")
+PASS              Copy ()       Test = 53     0             0             U+2019 CountContraction("isn’t")
+PASS              Copy ()       Test = 54     0             0             U+2019 CountContraction("let’s")
+FAIL!!!!          Copy ()       Test = 55     16            0             U+2019 CountContraction("i’m")
+PASS              Copy ()       Test = 56     0             0             U+2019 CountContraction("hasn’t")
+PASS              Copy ()       Test = 57     0             0             U+2019 CountContraction("didn’t")
+PASS              Copy ()       Test = 58     0             0             U+2019 CountContraction("don’t")
+PASS              Copy ()       Test = 59     0             0             U+2019 CountContraction("haven’t")
+PASS              Copy ()       Test = 60     0             0             U+2019 CountContraction("weren’t")
+PASS              Copy ()       Test = 61     0             0             U+2019 CountContraction("aren’t")
+PASS              Copy ()       Test = 62     0             0             U+2019 CountContraction("can’t")
+PASS              Copy ()       Test = 63     0             0             U+2019 CountContraction("shouldn’t")
+PASS              Copy ()       Test = 64     0             0             U+2019 CountContraction("it’s")
+PASS              Copy ()       Test = 65     1             1             U+2019 CountContraction("spirit’s")
+PASS              Copy ()       Test = 66     0             0             U+2019 CountContraction(" ’")
+PASS              Copy ()       Test = 67     0             0             CountUnicodeSeq([" ’"])
+PASS              Copy ()       Test = 68     0             0             CountUnicodeSeq([" ”"])
+The Total Runtime: 90.86 seconds
+[2026-02-06 15:29:14] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==

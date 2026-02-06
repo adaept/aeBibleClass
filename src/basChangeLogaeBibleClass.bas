@@ -12,9 +12,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #393 -
 ' #392 -
 ' #391 -
-' #390 -
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
-' #387 - Latest report timings indicate tests 42 and 51 are run when they should be skipped [bug] [regr] [audit]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
@@ -61,6 +59,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #390 - Create routine to output U+ text from MakeUnicodeSeq and include in test 67, 68 debug and file output
+    ' [obso] - #387 - Latest report timings indicate tests 42 and 51 are run when they should be skipped [bug] [regr] [audit]
     ' [obsp] - #206 - See #247 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
     ' [obso] - #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition [idea]
     ' [obso] - #268 - Timings of all TestReports to go in csv log file with session ID for each run [impr]

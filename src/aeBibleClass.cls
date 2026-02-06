@@ -65,6 +65,7 @@ Private ContractionArrayValues As Variant
 Private contra As String               ' Contraction
 Private Const CARTS As Integer = 52    ' Contraction Array RunTest Start
 Private UnicodeString As String        ' A string of up to 3 code points
+Private UnicodeLabelU As String        ' The UnicodeString label in U+ form
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -299,11 +300,25 @@ Private Function IsSkipTest(ByVal n As Long) As Boolean
     Next i
 End Function
 
+Private Function HexToUnicodeLabel(cp As Long) As String
+    HexToUnicodeLabel = "U+" & Right$("0000" & Hex$(cp), 4)
+End Function
+
 Private Function MakeUnicodeSeq(cp1 As Long, Optional cp2 As Long = 0, Optional cp3 As Long = 0) As String
     Dim s As String
     s = ChrW(cp1)
-    If cp2 <> 0 Then s = s & ChrW(cp2)
-    If cp3 <> 0 Then s = s & ChrW(cp3)
+    UnicodeLabelU = HexToUnicodeLabel(cp1) & ","
+    'Debug.Print "1: " & UnicodeLabelU
+    If cp2 <> 0 Then
+        s = s & ChrW(cp2)
+        UnicodeLabelU = UnicodeLabelU & HexToUnicodeLabel(cp2) & ","
+        'Debug.Print "2: " & UnicodeLabelU
+    End If
+    If cp3 <> 0 Then
+        s = s & ChrW(cp3)
+        UnicodeLabelU = UnicodeLabelU & HexToUnicodeLabel(cp3)
+        'Debug.Print "3"; " & UnicodeLabelU"
+    End If
     MakeUnicodeSeq = s
 End Function
 
@@ -916,7 +931,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 67, 68
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountUnicodeSeq(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountUnicodeSeq(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
