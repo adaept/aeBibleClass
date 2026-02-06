@@ -1089,7 +1089,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 67, 68
-        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountUnicodeSeq([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountUnicodeSeq([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 999
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
     Case Else
