@@ -7,8 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
+' #395 -
+' #394 -
+' #393 -
+' #392 -
+' #391 -
 ' #390 -
-' #389 -
+' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #387 - Latest report timings indicate tests 42 and 51 are run when they should be skipped [bug] [regr] [audit]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
@@ -22,26 +27,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #324 - Add index generation code to ribbon [impr] [feat]
 ' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
-' #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc] [cp]
-' #292 - Add md doc describing use of Copilot for documentation creation [doc] [cp]
-' #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
-' #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr] [cp]
-' #281 - Explain methodology of Test Driven Development [doc]
-' #271 - Add routine headers for targeting github.io docs in future [doc] [cp]
-' #268 - Timings of all TestReports to go in csv log file with session ID for each run [impr]
-' #267 - Add code for CompleteAuditPageLayout [code]
-' #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
-' #259 - Remove old code that regressed [clean]
 ' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
-' #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus [impr]
 ' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
-' #206 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
 ' #191 - Add test to verify all correct Verse Marker per book [test]
 ' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
-' #170 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
-' #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
 ' #150 - Add module for free fonts setup and testing [idea]
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
@@ -62,10 +53,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           Christian Standard Bible (CSB):
 '               Utilizes smart quotes and nested quotations for direct speech.
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
-' #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition [idea]
 ' #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
-' #044 - Add extract to text file routine with book chapter reference - see web.txt from openbible.com as reference [feat]
-' #043 - Add extract to USFM routine [feat]
 ' #042 - Add readme to aewordgit [doc]
 ' #040 - Add figure headings to maps - use map vs fig? [idea]
 ' #037 - Add updated maps in color [feat]
@@ -73,6 +61,24 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' [obsp] - #206 - See #247 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
+    ' [obso] - #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition [idea]
+    ' [obso] - #268 - Timings of all TestReports to go in csv log file with session ID for each run [impr]
+    ' [obso] - #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
+    ' [obso] - #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
+    ' [obso ] #267 - Add code for CompleteAuditPageLayout [code]
+    ' [obso] - #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
+    ' [obso] - #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus [impr]
+    ' FIXED - #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr]
+    ' [obso] - #292 - Add md doc describing use of Copilot for documentation creation [doc]
+    ' [obso] - #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc]
+    ' [obso] - #271 - Add routine headers for targeting github.io docs in future [doc] [wip]
+    ' [obso] - #170 - See #389 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
+    ' FIXED - #044 [wip] - See # 338, #337, #326, #258 - Add extract to text file routine with book chapter reference -
+    '           see web.txt from openbible.com as reference [feat]
+    ' [obso] - #281 - Explain methodology of Test Driven Development [doc]
+    ' [obso] - #259 - Remove old code that regressed [clean]
+    ' [obso] - #043 - See #365 - Add extract to USFM routine [feat]
     ' [obso] - #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
     ' [obso] - #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
     ' FIXED - #388 - Quotes missing in contraction array debug and file output [bug]
