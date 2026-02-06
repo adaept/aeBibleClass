@@ -9,8 +9,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
 ' #390 -
 ' #389 -
-' #388 -
-' #387 -
+' #387 - Latest report timings indicate tests 42 and 51 are run when they should be skipped [bug] [regr] [audit]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
 ' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
@@ -71,11 +70,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #040 - Add figure headings to maps - use map vs fig? [idea]
 ' #037 - Add updated maps in color [feat]
 ' #035 - Add test for page numbers of h1 on odd or even pages [test]
-' #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
-' #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
+    ' [obso] - #029 - Add versions of usfm_sb.sty to the SILAS folder to be able to track progress [idea]
+    ' FIXED - #388 - Quotes missing in contraction array debug and file output [bug]
     ' FIXED - #386 - Add code for DebugAndReportHeader, DRY [refac]
     ' FIXED - #385 - Simplify SKIP test process should always return Result -1, fix for Test 42 and 51, DRY [bug] [refac]
     ' FIXED - #070 - Word automatically adjusts smart quotes to match the context of the text

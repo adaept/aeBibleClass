@@ -914,9 +914,9 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Case 51
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 67, 68
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountUnicodeSeq([" & UnicodeString & "])"    ' Using [] to delineate unicode string in test output
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountUnicodeSeq(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1072,9 +1072,9 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 51
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
-        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & ContractionArrayU(num - CARTS + 1) & ")"
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 67, 68
-        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountUnicodeSeq([" & UnicodeString & "])"    ' Using [] to delineate unicode string in test output
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountUnicodeSeq([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 999
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(50))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SKIPPED"
     Case Else
@@ -1635,7 +1635,7 @@ Private Function CountParagraphMarks_CalibriDarkRed() As Integer
                 If Not foundFirst Then
                     paraRange.Select
                     foundFirst = True
-                    Stop
+                    'Stop
                 End If
             End If
         End With

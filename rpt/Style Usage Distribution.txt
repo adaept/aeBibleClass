@@ -1,5 +1,5 @@
 === Style Usage Distribution ===
-Normal: 26234
+Normal: 26254
 Title: 1
 Plain Text: 26
 List Paragraph: 80
@@ -16,4 +16,4 @@ Footnote Text: 1000
 TheHeaders: 157
 Header: 13
 TheFooters: 14
-Total paragraphs (all styles): 29423
+Total paragraphs (all styles): 29443
