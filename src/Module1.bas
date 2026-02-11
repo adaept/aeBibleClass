@@ -1037,3 +1037,64 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
     MsgBox "Full font audit complete. See Immediate Window.", vbInformation
 End Sub
 
+Function CenturyRangeToYears(StartCentury As Long, EndCentury As Long) As String
+    Dim sStart As Long, sEnd As Long
+    Dim eStart As Long, eEnd As Long
+    Dim Era As String
+
+    ' AD (positive centuries)
+    If StartCentury > 0 And EndCentury > 0 Then
+        Era = "AD"
+
+        ' Start of first century in range
+        sStart = (StartCentury - 1) * 100 + 1
+        ' End of last century in range
+        eEnd = EndCentury * 100
+
+        CenturyRangeToYears = CStr(sStart) & " to " & CStr(eEnd) & " Years " & Era
+        Exit Function
+    End If
+
+    ' BC (negative centuries)
+    If StartCentury < 0 And EndCentury < 0 Then
+        Era = "BC"
+
+        ' Convert to positive for math
+        StartCentury = Abs(StartCentury)
+        EndCentury = Abs(EndCentury)
+
+        ' BC counts backward
+        sStart = EndCentury * 100
+        eEnd = (StartCentury - 1) * 100 + 1
+
+        CenturyRangeToYears = CStr(sStart) & " to " & CStr(eEnd) & " Years " & Era
+        Exit Function
+    End If
+
+    ' Mixed BC/AD ranges are historically invalid
+    CenturyRangeToYears = ""
+End Function
+
+Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef someCount As Long)
+    ' Passes someCount by reference, initiaize to -1 when calling and assign actual result at end of routine
+    Dim pgRange As range
+    Dim pageStart As Long, pageEnd As Long
+    
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNumStart))
+    pageStart = pgRange.Start
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNumEnd))
+    pageEnd = pgRange.Start - 1
+    Debug.Print "pageStart = " & pageStart
+    Debug.Print "pageEnd   = " & pageEnd
+    Debug.Print "someCount = " & someCount
+
+    someCount = 40
+    Debug.Print "someCount = " & someCount
+
+    Dim i As Long
+    i = pageStart
+    
+    
+
+End Sub
+

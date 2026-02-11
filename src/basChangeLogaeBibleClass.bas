@@ -10,8 +10,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #395 -
 ' #394 -
 ' #393 -
-' #392 -
-' #391 -
+' #392 - All Bible text paragraphs should be justified. Make test to count (from P20-900+???) left justified. Expect 0 result [test]
+' #391 - Create a test to count all 1st 2nd 3rd etc. abbreviations - goal is to - 0, 1st Century ->
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
