@@ -1098,3 +1098,140 @@ Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef some
 
 End Sub
 
+'===============================================================================
+' Procedure : CountNumericOrdinals
+' Author    : Peter Ennis
+'
+' Purpose   :
+'   Counts numeric ordinal abbreviations in the active Word document
+'   (e.g., 1st, 2nd, 3rd, 4th, etc.), where the ordinal suffix is formatted
+'   as superscript.
+'
+'   Only the suffix characters are counted:
+'       st, nd, rd, th
+'
+'   The numeric portion itself is not counted.
+'
+' Design    :
+'   This routine is optimized for very large documents (e.g., Bible or
+'   scholarly texts) containing thousands of numeric references such as
+'   chapter and verse numbers.
+'
+'   To ensure acceptable performance and prevent "Word Not Responding"
+'   behavior, the code:
+'     - Searches ONLY for superscripted ordinal suffixes (rare text)
+'     - Avoids character-by-character scanning
+'     - Avoids wildcard searches combined with formatting
+'     - Uses Word's Find engine in its most efficient configuration
+'
+' Method    :
+'   1. Iterates through the literal suffixes: "st", "nd", "rd", "th"
+'   2. Uses Find with formatting enabled to locate superscripted matches
+'   3. Verifies the immediately preceding character is a digit (0-9)
+'   4. Tallies counts per suffix and maintains a grand total
+'
+' Review Mode:
+'   Controlled by the Boolean variable "showReview" within the procedure.
+'
+'     True  - Each found ordinal is selected and displayed with a Yes/No
+'             confirmation dialog for manual review.
+'     False - Silent, high-performance counting only (recommended for
+'             large documents).
+'
+' Output    :
+'   Displays a summary message box reporting:
+'     - Count of each ordinal suffix (st / nd / rd / th)
+'     - Total number of numeric ordinals found
+'
+' Notes     :
+'   - Superscript formatting is required for a match.
+'   - Non-superscript ordinals are intentionally ignored.
+'   - Roman numerals and spelled-out ordinals (e.g., "first") are not matched.
+'   - The document is not modified.
+'
+'===============================================================================
+Sub CountNumericOrdinals()
+
+    Dim cntST As Long, cntND As Long, cntRD As Long, cntTH As Long
+    Dim TOTAL As Long
+    Dim showReview As Boolean
+
+    ' ===== TOGGLE REVIEW MODE =====
+    showReview = False
+    ' ==============================
+
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Counting numeric ordinals..."
+
+    Dim suffixes As Variant
+    suffixes = Array("st", "nd", "rd", "th")
+
+    Dim doc As Document
+    Set doc = ActiveDocument
+
+    Dim i As Long
+    For i = LBound(suffixes) To UBound(suffixes)
+
+        Application.StatusBar = "Scanning superscript '" & suffixes(i) & "'..."
+        DoEvents
+
+        Dim rng As range
+        Set rng = doc.content
+
+        With rng.Find
+            .ClearFormatting
+            .text = suffixes(i)
+            .MatchWildcards = False
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .font.Superscript = True   ' REQUIRED
+        End With
+
+        Do While rng.Find.Execute
+
+            ' Check preceding character ONLY
+            If rng.Start > doc.content.Start Then
+                If doc.range(rng.Start - 1, rng.Start).text Like "[0-9]" Then
+
+                    Select Case suffixes(i)
+                        Case "st": cntST = cntST + 1
+                        Case "nd": cntND = cntND + 1
+                        Case "rd": cntRD = cntRD + 1
+                        Case "th": cntTH = cntTH + 1
+                    End Select
+
+                    TOTAL = TOTAL + 1
+
+                    If showReview Then
+                        rng.Select
+                        If MsgBox("Found ordinal: " & _
+                                  doc.range(rng.Start - 1, rng.End).text & vbCrLf & _
+                                  "Continue?", _
+                                  vbYesNo + vbQuestion, _
+                                  "Review Ordinal") = vbNo Then GoTo Done
+                    End If
+                End If
+            End If
+
+            rng.Collapse wdCollapseEnd
+            DoEvents   ' keeps Word responsive
+        Loop
+    Next i
+
+Done:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+
+    Debug.Print _
+        "Numeric Ordinal Suffix Counts:" & vbCrLf & _
+        "st: " & cntST & vbCrLf & _
+        "nd: " & cntND & vbCrLf & _
+        "rd: " & cntRD & vbCrLf & _
+        "th: " & cntTH & vbCrLf & _
+        "TOTAL: " & TOTAL & vbCrLf & _
+        "Ordinal Count Results"
+
+End Sub
+
+

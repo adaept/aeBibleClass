@@ -7,11 +7,17 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
-' #395 -
-' #394 -
-' #393 -
-' #392 - All Bible text paragraphs should be justified. Make test to count (from P20-900+???) left justified. Expect 0 result [test]
+' #400 -
+' #399 -
+' #398 - Fix RunRepairWrappedVerseMarkers_Across_Pages_From so it DOES NOT put one verse per para for v59 [bug]
+' #397 - Add global OneVersePerPara to separate v59 branch from Main [impr]
+' #396 - Export - Psalms 110:7     He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
+' #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
+' #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
+' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
+' #392 - All Bible text paragraphs should be justified. Make test to count (from P18-916) left justified. Expect 0 result [test]
 ' #391 - Create a test to count all 1st 2nd 3rd etc. abbreviations - goal is to - 0, 1st Century ->
+'           CountNumericOrdinals Numeric Ordinal Suffix Counts: st: 7 nd: 12 rd: 4 th: 44 TOTAL: 67
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
