@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
-' #400 -
-' #399 -
+' #405 -
+' #404 -
+' #403 -
+' #402 -
+' #401 -
+' #400 - Check #399 with WEB/WEBU doc/USFM data [idea]
 ' #398 - Fix RunRepairWrappedVerseMarkers_Across_Pages_From so it DOES NOT put one verse per para for v59 [bug]
 ' #397 - Add global OneVersePerPara to separate v59 branch from Main [impr]
 ' #396 - Export - Psalms 110:7     He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
@@ -65,6 +69,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #399 - Add test to count - Double Opening Quote, Single Opening Quote, Double Opening Quote [test]
     ' FIXED - #390 - Create routine to output U+ text from MakeUnicodeSeq and include in test 67, 68 debug and file output
     ' [obso] - #387 - Latest report timings indicate tests 42 and 51 are run when they should be skipped [bug] [regr] [audit]
     ' [obsp] - #206 - See #247 - Add test for all H1 pages to verify no paragraphs have indent setting [test]

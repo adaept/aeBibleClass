@@ -410,7 +410,7 @@ End Function
 Private Function CleanTextForUTF8(ByVal s As String) As String
     ' Remove soft hyphens and other invisible Unicode artifacts
     s = Replace(s, ChrW(&HAD), "")      ' Soft hyphen
-    s = Replace(s, ChrW(&H2011), "-")   ' Non-breaking hyphen ? normal hyphen
+    s = Replace(s, ChrW(&H2011), "-")   ' Non-breaking hyphen, normal hyphen
     s = Replace(s, ChrW(&H200B), "")    ' Zero-width space
     s = Replace(s, ChrW(&H200C), "")    ' Zero-width non-joiner
     s = Replace(s, ChrW(&H200D), "")    ' Zero-width joiner
