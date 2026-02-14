@@ -337,9 +337,9 @@ End Function
 Private Sub CreateContractionArray()
     ContractionArrayValues = ConvertToOneBasedArray(Array( _
         "wouldn't", "isn't", "let's", "i'm", "hasn't", "didn't", "don't", "haven't", "weren't", "aren't", "can't", "shouldn't", "it's", _
-        "spirit's", " '" _
+        "spirit's" _
         ))
-    ' Now: LBound(values) = 1, UBound(values) = 13, values(1) = "wouldn't", values(15) = " '"
+    ' Now: LBound(values) = 1, UBound(values) = 14, values(1) = "wouldn't", values(14) = "spirit's"
 End Sub
 
 '=====================================================================================
@@ -772,9 +772,12 @@ Private Function GetPassFail(TestNum As Integer) As Boolean
         ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
     Case 51
         ResultArray(TestNum) = CountAndCreateDefinitionForH2
-    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         contra = ContractionArrayU(TestNum - CARTS + 1)
         ResultArray(TestNum) = CountContraction(contra)
+    Case 66
+        UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H20, &H2019))    ' Space U+0020 followed by RSQM U+2019
+        ResultArray(TestNum) = CountContraction(UnicodeString)
     Case 67
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H202F, &H2019))  ' NNBSP U+202F followed by RSQM U+2019
         ResultArray(TestNum) = CountContraction(UnicodeString)
@@ -936,9 +939,9 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
     Case 51
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
-    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
-    Case 67, 68, 69, 70
+    Case 66, 67, 68, 69, 70
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountUnicodeSeq(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
@@ -1094,9 +1097,9 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
     Case 51
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
-    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
+    Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
-    Case 67, 68, 69, 70
+    Case 66, 67, 68, 69, 70
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountUnicodeSeq([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
@@ -1162,25 +1165,6 @@ Private Function CountContraction(ByVal contraction As String) As Long
 
     CountContraction = count
 End Function
-
-Public Sub TestContractionsExamples()
-    Dim Apostrophe As String
-    Apostrophe = ChrW(&H2019)
-
-    'Debug.Print "Count of wouldn't  = " & CountContraction("wouldn" & Apostrophe & "t")
-    'Debug.Print "Count of isn't     = " & CountContraction("isn" & Apostrophe & "t")
-    'Debug.Print "Count of let's     = " & CountContraction("let" & Apostrophe & "s")
-    'Debug.Print "Count of i'm       = " & CountContraction("i" & Apostrophe & "m")
-    'Debug.Print "Count of hasn't    = " & CountContraction("hasn" & Apostrophe & "t")
-    'Debug.Print "Count of didn't    = " & CountContraction("didn" & Apostrophe & "t")
-    'Debug.Print "Count of don't     = " & CountContraction("don" & Apostrophe & "t")
-    'Debug.Print "Count of haven't   = " & CountContraction("haven" & Apostrophe & "t")
-    'Debug.Print "Count of weren't   = " & CountContraction("weren" & Apostrophe & "t")
-    'Debug.Print "Count of aren't    = " & CountContraction("aren" & Apostrophe & "t")
-    'Debug.Print "Count of can't     = " & CountContraction("can" & Apostrophe & "t")
-    'Debug.Print "Count of shouldn't = " & CountContraction("shouldn" & Apostrophe & "t")
-    'Debug.Print "Count of it's      = " & CountContraction("it" & Apostrophe & "s")
-End Sub
 
 ' ======================================================================
 ' Macro Name   : CountAndCreateDefinitionForH2
