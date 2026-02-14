@@ -10,9 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #410 -
 ' #409 -
 ' #408 -
-' #407 -
-' #406 -
-' #405 -
+' #407 - When searching for U+0020,U+201D the result is 0. Using Ctrl+H returns 1 in the footer [bug]
 ' #403 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
@@ -72,6 +70,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #406 - CountUnicodeSeq is not used. CountContraction is the correct function, typo [bug]
+    ' FIXED - #405 - Add test for space followed by right double closing quote: U+0020, U+201D [test]
     ' FIXED - #404 - Move test 66 " '" outside of CreateContractionArray so that it is with the UniCode character tests [refac]
     ' FIXED - #401 - Add test to count - Double Opening Quote, Single Opening Quote, Double Opening Quote [test]
     ' FIXED - #399 - Add test to count - Double Opening Quote, Single Opening Quote, Double Opening Quote [test]
