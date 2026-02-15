@@ -9,8 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
 ' #410 -
 ' #409 -
-' #408 -
-' #407 - When searching for U+0020,U+201D the result is 0. Using Ctrl+H returns 1 in the footer [bug]
 ' #403 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
@@ -70,6 +68,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #408 - Add code from Module1 for #407 wip commit to aeBibleClass and then clean up
+    ' FIXED - #407 - When searching for U+0020,U+201D the result is 0. Using Ctrl+H returns 1 in the footer [bug]
     ' FIXED - #406 - CountUnicodeSeq is not used. CountContraction is the correct function, typo [bug]
     ' FIXED - #405 - Add test for space followed by right double closing quote: U+0020, U+201D [test]
     ' FIXED - #404 - Move test 66 " '" outside of CreateContractionArray so that it is with the UniCode character tests [refac]

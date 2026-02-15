@@ -7,7 +7,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Const wdThemeColorNone As Long = -1
 Public Const wdPaperB5Jis As Integer = 11
-Public UnicodeLabelU As String        ' The UnicodeString label in U+ form
 
 Sub ViewCodeDetails()
     Dim selectedText As String
@@ -1233,75 +1232,5 @@ Done:
         "TOTAL: " & TOTAL & vbCrLf & _
         "Ordinal Count Results"
 
-End Sub
-
-Function CountContraction(ByVal contraction As String) As Long
-    Dim s As range
-    Dim count As Long
-
-    count = 0
-
-    For Each s In ActiveDocument.StoryRanges
-        count = count + CountInStory(s, contraction)
-    Next
-
-    CountContraction = count
-End Function
-
-Function CountInStory(rng As range, contraction As String) As Long
-    Dim count As Long
-    count = 0
-
-    With rng.Find
-        .ClearFormatting
-        .text = contraction
-        .MatchCase = False
-        .MatchWholeWord = False
-        .MatchWildcards = False
-        .Wrap = wdFindStop
-    End With
-
-    Do While rng.Find.Execute
-        count = count + 1
-        rng.Collapse wdCollapseEnd
-    Loop
-
-    CountInStory = count
-End Function
-
-Function ProcessUnicode(s As String) As String
-    ProcessUnicode = s   ' return the string exactly as received
-End Function
-
-Function HexToUnicodeLabel(cp As Long) As String
-    HexToUnicodeLabel = "U+" & Right$("0000" & Hex$(cp), 4)
-End Function
-
-Private Function MakeUnicodeSeq(cp1 As Long, Optional cp2 As Long = 0, Optional cp3 As Long = 0) As String
-    Dim s As String
-    s = ChrW(cp1)
-    UnicodeLabelU = HexToUnicodeLabel(cp1) & ","
-    'Debug.Print "1: " & UnicodeLabelU
-    If cp2 <> 0 Then
-        s = s & ChrW(cp2)
-        UnicodeLabelU = UnicodeLabelU & HexToUnicodeLabel(cp2) & ","
-        'Debug.Print "2: " & UnicodeLabelU
-    End If
-    If cp3 <> 0 Then
-        s = s & ChrW(cp3)
-        UnicodeLabelU = UnicodeLabelU & HexToUnicodeLabel(cp3)
-        'Debug.Print "3"; " & UnicodeLabelU"
-    End If
-    MakeUnicodeSeq = s
-End Function
-
-Sub TestContraction()
-    Dim UnicodeString As String
-    Dim result As Long
-
-    UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H20, &H201D))
-    result = CountContraction(UnicodeString)
-
-    Debug.Print "Result = " & result
 End Sub
 

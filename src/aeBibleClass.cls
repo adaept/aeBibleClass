@@ -1132,6 +1132,7 @@ End Function
 '     (e.g., "it's" inside "Spirit's"), even though Ctrl+H may appear to do so.
 '     This is a known difference between the Word UI search and the VBA Find API.
 '   - Designed for standalone contractions (whole words), not sub-word matches.
+'   - 20260215 Updated to use CountInStory (doc, footnotes, etc.)
 '
 ' Additional:
 '   - Can also accept up to 3 code points as a string when not calling
@@ -1147,17 +1148,27 @@ End Function
 '   The number of matches found.
 '==============================================================================
 Private Function CountContraction(ByVal contraction As String) As Long
-    Dim rng As range
+    Dim s As range
     Dim count As Long
 
-    Set rng = ActiveDocument.content
+    count = 0
+
+    For Each s In ActiveDocument.StoryRanges
+        count = count + CountInStory(s, contraction)
+    Next
+
+    CountContraction = count
+End Function
+
+Private Function CountInStory(rng As range, contraction As String) As Long
+    Dim count As Long
     count = 0
 
     With rng.Find
         .ClearFormatting
         .text = contraction
         .MatchCase = False
-        .MatchWholeWord = True
+        .MatchWholeWord = False
         .MatchWildcards = False
         .Wrap = wdFindStop
     End With
@@ -1167,7 +1178,7 @@ Private Function CountContraction(ByVal contraction As String) As Long
         rng.Collapse wdCollapseEnd
     Loop
 
-    CountContraction = count
+    CountInStory = count
 End Function
 
 ' ======================================================================
