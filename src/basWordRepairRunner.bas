@@ -4,6 +4,18 @@ Option Compare Text
 Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+Private OneVersePerParaRepair As Boolean
+
+'===============================================================
+' Returns True if the active document filename starts with "v59"
+'===============================================================
+Private Function FileNameStartsWithV59() As Boolean
+    Dim fileName As String
+
+    ' Get filename only (no path)
+    fileName = ActiveDocument.name
+    FileNameStartsWithV59 = (LCase$(Left$(fileName, 3)) = "v59")
+End Function
 
 Public Sub SaveAsPDF_NoOpen()
     ' Overwrite the existing PDF file silently — without prompting or warning
@@ -47,6 +59,13 @@ Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
         Print #logFile, "SessionID,PageNum,Repairs"
         Close #logFile
     End If
+
+    If FileNameStartsWithV59 Then
+        OneVersePerParaRepair = False
+    Else
+        OneVersePerParaRepair = True
+    End If
+    Debug.Print "OneVersePerParaRepair = " & OneVersePerParaRepair
 
     ' Append results
     Open logPath For Append As #logFile
@@ -215,13 +234,15 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                     Dim versePrefix As range
                     Set versePrefix = ActiveDocument.range(markerStart - 1, markerStart)
     
-                    ' If the char before the marker is not already a CR, insert one
-                    If AscW(versePrefix.text) <> 13 Then
-                        versePrefix.text = versePrefix.text & Chr(13)
-                        ascii13InsertCount = ascii13InsertCount + 1
-                        fixCount = fixCount + 1
-                       'Debug.Print "> Inserted CR before " & combinedNumber & " on page " & pageNum
-                        'logBuffer = logBuffer & "> Inserted CR before " & combinedNumber & " on page " & pageNum & vbCrLf
+                    If OneVersePerParaRepair Then
+                        ' If the char before the marker is not already a CR, insert one
+                        If AscW(versePrefix.text) <> 13 Then
+                            versePrefix.text = versePrefix.text & Chr(13)
+                            ascii13InsertCount = ascii13InsertCount + 1
+                            fixCount = fixCount + 1
+                            'Debug.Print "> Inserted CR before " & combinedNumber & " on page " & pageNum
+                            'logBuffer = logBuffer & "> Inserted CR before " & combinedNumber & " on page " & pageNum & vbCrLf
+                        End If
                     End If
                 ElseIf markerStart = pageStart Then
                     logBuffer = logBuffer & "Marker '" & combinedNumber & "' is at the very start of page " & pageNum & vbCrLf
