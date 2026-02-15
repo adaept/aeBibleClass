@@ -13,7 +13,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
 ' #398 - Fix RunRepairWrappedVerseMarkers_Across_Pages_From so it DOES NOT put one verse per para for v59 [bug]
-' #397 - Add global OneVersePerPara to separate v59 branch from Main [impr]
 ' #396 - Export - Psalms 110:7     He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
 ' #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
 ' #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
@@ -68,6 +67,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #397 - Add global OneVersePerPara to separate v59 branch from Main [impr]
     ' FIXED - #408 - Add code from Module1 for #407 wip commit to aeBibleClass and then clean up
     ' FIXED - #407 - When searching for U+0020,U+201D the result is 0. Using Ctrl+H returns 1 in the footer [bug]
     ' FIXED - #406 - CountUnicodeSeq is not used. CountContraction is the correct function, typo [bug]

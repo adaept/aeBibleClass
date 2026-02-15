@@ -66,6 +66,7 @@ Private contra As String               ' Contraction
 Private Const CARTS As Integer = 52    ' Contraction Array RunTest Start
 Private UnicodeString As String        ' A string of up to 3 code points
 Private UnicodeLabelU As String        ' The UnicodeString label in U+ form
+Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 or other branch set False
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -82,6 +83,12 @@ Private Sub Class_Initialize()
     OneTest = 0
     SkippedTestNum = 0
     Apostrophe = ChrW$(AposCP)
+    If FileNameStartsWithV59 Then
+        OneVersePerPara = False
+    Else
+        OneVersePerPara = True
+    End If
+    Debug.Print "OneVersePerPara = " & OneVersePerPara
 End Sub
 
 Private Sub Class_Terminate()
@@ -98,6 +105,7 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As In
     On Error GoTo PROC_ERR
     
     If Not CheckShowHideStatus Then
+        ' Make sure all hidden characters are visible
         MsgBox "Show/Hide is NOT set!", vbCritical, "HALT!"
         Stop
     End If
@@ -133,6 +141,17 @@ End Property
 
 Function CheckShowHideStatus() As Boolean
     CheckShowHideStatus = ActiveWindow.View.ShowAll
+End Function
+
+'===============================================================
+' Returns True if the active document filename starts with "v59"
+'===============================================================
+Private Function FileNameStartsWithV59() As Boolean
+    Dim fileName As String
+
+    ' Get filename only (no path)
+    fileName = ActiveDocument.name
+    FileNameStartsWithV59 = (LCase$(Left$(fileName, 3)) = "v59")
 End Function
 
 Private Sub InitializeGlobalResultArrayToMinusOne()

@@ -106,12 +106,12 @@ Sub GitAutoTagRelease()
 
     ' Navigate to repo and tag release
     shellCmd = "cmd.exe /c cd /d """ & sRepoPath & """ && git tag -a " & sTag & " -m """ & sMessage & """"
-    cmdOutput = wsh.Exec(shellCmd).StdOut.ReadAll
+    cmdOutput = wsh.exec(shellCmd).StdOut.ReadAll
     Debug.Print "[TAG] " & cmdOutput
 
     ' Push the tag to GitHub
     shellCmd = "cmd.exe /c cd /d """ & sRepoPath & """ && git push origin " & sTag
-    cmdOutput = wsh.Exec(shellCmd).StdOut.ReadAll
+    cmdOutput = wsh.exec(shellCmd).StdOut.ReadAll
     Debug.Print "[PUSH] " & cmdOutput
 
     MsgBox "Git tag " & sTag & " created and pushed successfully.", vbInformation
@@ -134,7 +134,7 @@ Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
     Dim cmd As String, execObj As Object, result As String
 
     cmd = "cmd.exe /c cd /d """ & sRepoPath & """ && git tag"
-    Set execObj = wsh.Exec(cmd)
+    Set execObj = wsh.exec(cmd)
     result = execObj.StdOut.ReadAll
 
     If InStr(result, sTag) > 0 Then
