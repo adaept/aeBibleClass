@@ -48,7 +48,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Integer
-Private Const MaxTests = 71
+Private Const MaxTests = 72
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -234,8 +234,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -619,6 +619,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (69)
             RunTest (70)
             RunTest (71)
+            RunTest (72)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -813,6 +814,10 @@ Private Function GetPassFail(TestNum As Integer) As Boolean
     Case 71
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H201D, &H2019, &H201D))  ' Double Closing Quote, Single Closing Quote, Double Closing Quote
         ResultArray(TestNum) = CountContraction(UnicodeString)
+    Case 72
+        If OneVersePerPara Then
+            ResultArray(TestNum) = HasLeftAlignedParagraph(18, 931)
+        End If
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -966,6 +971,10 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 66, 67, 68, 69, 70, 71
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountContraction(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+    Case 72
+        If OneVersePerPara Then
+            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(18, 931)"
+        End If
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1124,6 +1133,10 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 66, 67, 68, 69, 70, 71
         AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountContraction([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+    Case 72
+        If OneVersePerPara Then
+            AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(18, 931)"
+        End If
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -1136,6 +1149,93 @@ PROC_ERR:
     Resume PROC_EXIT
 
 End Function
+
+'====================================================================
+' Function: HasLeftAlignedParagraph
+'
+' Purpose:
+'   Determines whether at least one LEFT-ALIGNED paragraph exists
+'   between two PRINTED page numbers (inclusive) in the main document
+'   body, using Word's native Find engine for speed and accuracy.
+'
+' Parameters:
+'   startPage (Long) - Printed page number where the search begins.
+'   endPage   (Long) - Printed page number where the search ends.
+'
+' Returns:
+'   Long
+'     1  > A left-aligned paragraph exists within the page range.
+'     0  > No left-aligned paragraph exists within the page range.
+'
+' Behavior:
+'   - Uses Selection.Find (same engine as Ctrl+H).
+'   - Searches forward only and DOES NOT wrap.
+'   - Page comparison is based on ADJUSTED page numbering, so it
+'     correctly handles Roman numerals, restarts, and mixed formats.
+'
+' Performance:
+'   Optimized for very large documents.
+'   Typically executes in < 1 second (Ctrl+H equivalent speed).
+'
+' Limitations / Notes:
+'   - Searches only the Main Text Story (no headers, footers, notes).
+'   - Detects actual paragraph alignment, not style definitions.
+'   - Stops immediately after the first match is found.
+'
+'====================================================================
+Private Function HasLeftAlignedParagraph( _
+    ByVal startPage As Long, _
+    ByVal endPage As Long) As Long
+
+    Dim sel As Selection
+    Dim foundPage As Long
+    Dim found As Boolean
+
+    Set sel = Application.Selection
+
+    ' 1. Go to START page by PRINTED page number
+    GoToAdjustedPage startPage
+
+    ' 2. Setup paragraph-format-only Find (Ctrl+H equivalent)
+    With sel.Find
+        .ClearFormatting
+        .text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .ParagraphFormat.Alignment = wdAlignParagraphLeft
+    End With
+
+    ' 3. Execute Find
+    found = sel.Find.Execute
+
+    If Not found Then
+        HasLeftAlignedParagraph = 0
+        Exit Function
+    End If
+
+    ' 4. Read PRINTED page number
+    foundPage = sel.Information(wdActiveEndAdjustedPageNumber)
+    'Debug.Print "foundPage = " & foundPage
+
+    ' 5. Compare against end page (printed)
+    If foundPage <= endPage Then
+        HasLeftAlignedParagraph = 1
+    Else
+        HasLeftAlignedParagraph = 0
+    End If
+End Function
+
+Private Sub GoToAdjustedPage(ByVal targetPage As Long)
+    Dim sel As Selection
+    Set sel = Application.Selection
+
+    sel.HomeKey wdStory
+    Do
+        If sel.Information(wdActiveEndAdjustedPageNumber) = targetPage Then Exit Do
+        sel.GoTo What:=wdGoToPage, Which:=wdGoToNext
+    Loop
+End Sub
 
 '==============================================================================
 ' Function: CountContraction
