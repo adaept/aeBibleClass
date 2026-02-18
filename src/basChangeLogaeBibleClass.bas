@@ -8,7 +8,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
 ' #410 -
-' #409 -
 ' #403 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
@@ -65,6 +64,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #409 - Create initial SBL Unified EBNF design for Bible citation parser
     ' FIXED - #392 - All Bible text paragraphs should be justified. Make test to count (from P18-931) left justified. Expect 0 result [test]
     ' FIXED - #398 - Fix RunRepairWrappedVerseMarkers_Across_Pages_From so it DOES NOT put one verse per para for v59 [bug]
     ' FIXED - #397 - Add global OneVersePerPara to separate v59 branch from Main [impr]
