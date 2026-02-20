@@ -227,3 +227,429 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Enforce chapter/verse bounds
 ' Normalize output (Book Chapter:VerseSpec)
 
+Public Type BibleBook
+    BookID As Long      ' 1-66
+    Canonical As String ' "Genesis"
+End Type
+
+Public Function GetCanonicalBookTable() As Object
+    Static books As Object
+
+    If books Is Nothing Then
+        Set books = CreateObject("Scripting.Dictionary")
+
+        books.Add 1, Array(1, "Genesis")
+        books.Add 2, Array(2, "Exodus")
+        books.Add 3, Array(3, "Leviticus")
+        books.Add 4, Array(4, "Numbers")
+        books.Add 5, Array(5, "Deuteronomy")
+        books.Add 6, Array(6, "Joshua")
+        books.Add 7, Array(7, "Judges")
+        books.Add 8, Array(8, "Ruth")
+        books.Add 9, Array(9, "1 Samuel")
+        books.Add 10, Array(10, "2 Samuel")
+        books.Add 11, Array(11, "1 Kings")
+        books.Add 12, Array(12, "2 Kings")
+        books.Add 13, Array(13, "1 Chronicles")
+        books.Add 14, Array(14, "2 Chronicles")
+        books.Add 15, Array(15, "Ezra")
+        books.Add 16, Array(16, "Nehemiah")
+        books.Add 17, Array(17, "Esther")
+        books.Add 18, Array(18, "Job")
+        books.Add 19, Array(19, "Psalms")
+        books.Add 20, Array(20, "Proverbs")
+        books.Add 21, Array(21, "Ecclesiastes")
+        books.Add 22, Array(22, "Solomon")
+        books.Add 23, Array(23, "Isaiah")
+        books.Add 24, Array(24, "Jeremiah")
+        books.Add 25, Array(25, "Lamentations")
+        books.Add 26, Array(26, "Ezekiel")
+        books.Add 27, Array(27, "Daniel")
+        books.Add 28, Array(28, "Hosea")
+        books.Add 29, Array(29, "Joel")
+        books.Add 30, Array(30, "Amos")
+        books.Add 31, Array(31, "Obadiah")
+        books.Add 32, Array(32, "Jonah")
+        books.Add 33, Array(33, "Micah")
+        books.Add 34, Array(34, "Nahum")
+        books.Add 35, Array(35, "Habakkuk")
+        books.Add 36, Array(36, "Zephaniah")
+        books.Add 37, Array(37, "Haggai")
+        books.Add 38, Array(38, "Zechariah")
+        books.Add 39, Array(39, "Malachi")
+        books.Add 40, Array(40, "Matthew")
+        books.Add 41, Array(41, "Mark")
+        books.Add 42, Array(42, "Luke")
+        books.Add 43, Array(43, "John")
+        books.Add 44, Array(44, "Acts")
+        books.Add 45, Array(45, "Romans")
+        books.Add 46, Array(46, "1 Corinthians")
+        books.Add 47, Array(47, "2 Corinthians")
+        books.Add 48, Array(48, "Galatians")
+        books.Add 49, Array(49, "Ephesians")
+        books.Add 50, Array(50, "Philippians")
+        books.Add 51, Array(51, "Colossians")
+        books.Add 52, Array(52, "1 Thessalonians")
+        books.Add 53, Array(53, "2 Thessalonians")
+        books.Add 54, Array(54, "1 Timothy")
+        books.Add 55, Array(55, "2 Timothy")
+        books.Add 56, Array(56, "Titus")
+        books.Add 57, Array(57, "Philemon")
+        books.Add 58, Array(58, "Hebrews")
+        books.Add 59, Array(59, "James")
+        books.Add 60, Array(60, "1 Peter")
+        books.Add 61, Array(61, "2 Peter")
+        books.Add 62, Array(62, "1 John")
+        books.Add 63, Array(63, "2 John")
+        books.Add 64, Array(64, "3 John")
+        books.Add 65, Array(65, "Jude")
+        books.Add 66, Array(66, "Revelation")
+    End If
+
+    Set GetCanonicalBookTable = books
+End Function
+
+Private Function GetBookAliasMap() As Object
+    Static aliasMap As Object
+    ' Single-letter aliases are not allowed due to potential false positives
+    ' Sort form allowed, common in Europe, (International / Critical Apparatus Style)
+
+    If aliasMap Is Nothing Then
+        Set aliasMap = CreateObject("Scripting.Dictionary")
+
+        ' Genesis
+        aliasMap.Add "GEN", 1
+        aliasMap.Add "GE", 1
+        aliasMap.Add "GN", 1
+
+        ' Exodus
+        aliasMap.Add "EXOD", 2
+        aliasMap.Add "EXO", 2
+        aliasMap.Add "EX", 2
+
+        ' Leviticus
+        aliasMap.Add "LEV", 3
+        aliasMap.Add "LE", 3
+        aliasMap.Add "LV", 3
+        
+        ' Numbers
+        aliasMap.Add "NUM", 4
+        aliasMap.Add "NU", 4
+        aliasMap.Add "NM", 4
+        
+        ' Deuteronomy
+        aliasMap.Add "DEUT", 5
+        aliasMap.Add "DEU", 5
+        aliasMap.Add "DE", 5
+        aliasMap.Add "DT", 5
+              
+        ' Joshua
+        aliasMap.Add "JOSH", 6
+        aliasMap.Add "JOS", 6
+        
+        ' Judges
+        aliasMap.Add "JUDGE", 7
+        aliasMap.Add "JUDG", 7
+        aliasMap.Add "JGS", 7
+        
+        ' Ruth
+        aliasMap.Add "RUT", 8
+        aliasMap.Add "RU", 8
+        
+        ' 1 Samuel
+        aliasMap.Add "1 SAM", 9
+        aliasMap.Add "1 SA", 9
+        aliasMap.Add "1 SM", 9
+        
+        ' 2 Samuel
+        aliasMap.Add "2 SAM", 10
+        aliasMap.Add "2 SA", 10
+        aliasMap.Add "2 SM", 10
+        
+        ' 1 Kings
+        aliasMap.Add "1 KGS", 11
+        aliasMap.Add "1 KING", 11
+        aliasMap.Add "1 KIN", 11
+        aliasMap.Add "1 KI", 11
+        
+        ' 2 Kings
+        aliasMap.Add "2 KGS", 12
+        aliasMap.Add "2 KING", 12
+        aliasMap.Add "2 KIN", 12
+        aliasMap.Add "2 KI", 12
+
+        ' 1 Chronicles
+        aliasMap.Add "1 CHRON", 13
+        aliasMap.Add "1 CHRO", 13
+        aliasMap.Add "1 CHR", 13
+        aliasMap.Add "1 CH", 13
+
+        ' 2 Chronicles
+        aliasMap.Add "2 CHRON", 14
+        aliasMap.Add "2 CHRO", 14
+        aliasMap.Add "2 CHR", 14
+        aliasMap.Add "2 CH", 14
+
+        ' Ezra
+        aliasMap.Add "EZR", 15
+
+        ' Nehemiah
+        aliasMap.Add "NEH", 16
+        aliasMap.Add "NE", 16
+
+        ' Esther
+        aliasMap.Add "ESTH", 17
+        aliasMap.Add "EST", 17
+        aliasMap.Add "ES", 17
+
+        ' Job
+        aliasMap.Add "JOB", 18
+        aliasMap.Add "JB", 18
+
+        ' Psalms
+        aliasMap.Add "PSALM", 19
+        aliasMap.Add "PSA", 19
+        aliasMap.Add "PS", 19
+
+        ' Proverbs
+        aliasMap.Add "PROV", 20
+        aliasMap.Add "PRO", 20
+        aliasMap.Add "PR", 20
+        aliasMap.Add "PRV", 20
+
+        ' Ecclesiastes
+        aliasMap.Add "ECCL", 21
+        aliasMap.Add "ECC", 21
+        aliasMap.Add "EC", 21
+
+        ' Solomon
+        aliasMap.Add "SOLO", 22
+        aliasMap.Add "SOL", 22
+        aliasMap.Add "SO", 22
+        aliasMap.Add "SONG", 22
+        aliasMap.Add "SG", 22
+
+        ' Isaiah
+        aliasMap.Add "ISA", 23
+        aliasMap.Add "IS", 23
+
+        ' Jeremiah
+        aliasMap.Add "JER", 24
+        aliasMap.Add "JE", 24
+
+        ' Lamentations
+        aliasMap.Add "LAM", 25
+        aliasMap.Add "LA", 25
+
+        ' Ezekiel
+        aliasMap.Add "EZEK", 26
+        aliasMap.Add "EZE", 26
+        aliasMap.Add "EZ", 26
+
+        ' Daniel
+        aliasMap.Add "DAN", 27
+        aliasMap.Add "DA", 27
+        aliasMap.Add "DN", 27
+
+        ' Hosea
+        aliasMap.Add "HOS", 28
+        aliasMap.Add "HO", 28
+
+        ' Joel
+        aliasMap.Add "JOE", 29
+        aliasMap.Add "JL", 29
+
+        ' Amos
+        aliasMap.Add "AMO", 30
+        aliasMap.Add "AM", 30
+
+        ' Obadiah
+        aliasMap.Add "OBAD", 31
+        aliasMap.Add "OBA", 31
+        aliasMap.Add "OB", 31
+
+        ' Jonah
+        aliasMap.Add "JONA", 32
+        aliasMap.Add "JON", 32
+
+        ' Micah
+        aliasMap.Add "MIC", 33
+        aliasMap.Add "MI", 33
+
+        ' Nahum
+        aliasMap.Add "NAH", 34
+        aliasMap.Add "NA", 34
+
+        ' Habakkuk
+        aliasMap.Add "HAB", 35
+        aliasMap.Add "HA", 35
+        aliasMap.Add "HB", 35
+
+        ' Zephaniah
+        aliasMap.Add "ZEPH", 36
+        aliasMap.Add "ZEP", 36
+        
+        ' Haggai
+        aliasMap.Add "HAG", 37
+        aliasMap.Add "HG", 37
+        
+        ' Zechariah
+        aliasMap.Add "ZECH", 38
+        aliasMap.Add "ZEC", 38
+        
+        ' Malachi
+        aliasMap.Add "MAL", 39
+        
+        ' Matthew
+        aliasMap.Add "MATT", 40
+        aliasMap.Add "MAT", 40
+        aliasMap.Add "MT", 40
+        
+        ' Mark
+        aliasMap.Add "MAR", 41
+        aliasMap.Add "MK", 41
+        
+        ' Luke
+        aliasMap.Add "LUK", 42
+        aliasMap.Add "LU", 42
+        aliasMap.Add "LK", 42
+        
+        ' John
+        aliasMap.Add "JOH", 43
+        aliasMap.Add "JN", 43
+        
+        ' Acts
+        aliasMap.Add "ACT", 44
+        aliasMap.Add "AC", 44
+        
+        ' Romans
+        aliasMap.Add "ROM", 45
+        aliasMap.Add "RO", 45
+        
+        ' 1 Corinthians
+        aliasMap.Add "1 COR", 46
+        aliasMap.Add "1 CO", 46
+        
+        ' 2 Corinthians
+        aliasMap.Add "2 COR", 47
+        aliasMap.Add "2 CO", 47
+        
+        ' Galatians
+        aliasMap.Add "GAL", 48
+        aliasMap.Add "GA", 48
+        
+        ' Ephesians
+        aliasMap.Add "EPH", 49
+        aliasMap.Add "EP", 49
+        
+        ' Philippians
+        aliasMap.Add "PHILI", 50
+        aliasMap.Add "PHIL", 50
+        
+        ' Colossians
+        aliasMap.Add "COL", 51
+        aliasMap.Add "CO", 51
+        
+        ' 1 Thessalonians
+        aliasMap.Add "1 THESS", 52
+        aliasMap.Add "1 THES", 52
+        aliasMap.Add "1 THE", 52
+        aliasMap.Add "1 THS", 52
+        
+        ' 2 Thessalonians
+        aliasMap.Add "2 THESS", 53
+        aliasMap.Add "2 THES", 53
+        aliasMap.Add "2 THE", 53
+        aliasMap.Add "2 THS", 53
+        
+        ' 1 Timothy
+        aliasMap.Add "1 TIM", 54
+        aliasMap.Add "1 TI", 54
+        aliasMap.Add "1 TM", 54
+        
+        ' 2 Timothy
+        aliasMap.Add "2 TIM", 55
+        aliasMap.Add "2 TI", 55
+        aliasMap.Add "2 TM", 55
+        
+        ' Titus
+        aliasMap.Add "TIT", 56
+        aliasMap.Add "TI", 56
+        
+        ' Philemon
+        aliasMap.Add "PHILE", 57
+        aliasMap.Add "PHLM", 57
+        
+        ' Hebrews
+        aliasMap.Add "HEB", 58
+        aliasMap.Add "HE", 58
+        
+        ' James
+        aliasMap.Add "JAM", 59
+        aliasMap.Add "JA", 59
+        aliasMap.Add "JAS", 59
+        
+        ' 1 Peter
+        aliasMap.Add "1 PET", 60
+        aliasMap.Add "1 PE", 60
+        aliasMap.Add "1 PT", 60
+        
+        ' 2 Peter
+        aliasMap.Add "2 PET", 61
+        aliasMap.Add "2 PE", 61
+        aliasMap.Add "2 PT", 61
+        
+        ' 1 John
+        aliasMap.Add "1 JOH", 62
+        aliasMap.Add "1 JN", 62
+        
+        ' 2 John
+        aliasMap.Add "2 JOH", 63
+        aliasMap.Add "2 JN", 63
+        
+        ' 3 John
+        aliasMap.Add "3 JOH", 64
+        aliasMap.Add "3 JN", 64
+        
+        ' Jude
+        aliasMap.Add "JUD", 65
+        
+        ' Revelation
+        aliasMap.Add "REV", 66
+        aliasMap.Add "RE", 66
+        aliasMap.Add "RV", 66
+    End If
+
+    Set GetBookAliasMap = aliasMap
+End Function
+
+Public Function ResolveBook(abbr As String, _
+                            Optional BookID As Long) As String
+    Dim key As String
+    Dim aliasMap As Object
+    Dim books As Object
+    Dim entry As Variant
+
+    key = UCase(Trim(abbr))
+    Set aliasMap = GetBookAliasMap
+
+    If Not aliasMap.Exists(key) Then Exit Function
+
+    BookID = aliasMap(key)
+    Set books = GetCanonicalBookTable
+
+    entry = books(BookID)
+    ResolveBook = entry(1)   ' Canonical name
+End Function
+
+Public Sub Test_ResolveBook()
+    Debug.Print "GEN  > "; ResolveBook("GEN")
+    Debug.Print "Gn   > "; ResolveBook("Gn")
+    Debug.Print "1 JN > "; ResolveBook("1 JN")
+    Debug.Print "1 JOH> "; ResolveBook("1 JOH")
+    Debug.Print "REV  > "; ResolveBook("REV")
+
+    Debug.Print "BAD  > "; ResolveBook("XYZ")
+End Sub
+
+
