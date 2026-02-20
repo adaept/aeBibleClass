@@ -7,10 +7,19 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
-' #415 -
-' #414 -
-' #413 -
-' #411 - Fix reloading of all code routine to include SBL EBNF module
+' #425 -
+' #424 -
+' #423 -
+' #422 -
+' #421 -
+' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
+' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
+' #417 - Add an SBL auto-corrector
+' #416 - Emit fix suggestions (1 JN ? 1 John)
+' #415 - Normalize case for output [impr]
+' #414 - Enforce no verse ranges across chapters [impr]
+' #413 - Enforce SBL punctuation (: vs .) [impr]
+' #411 - Fix reloading of all code routine to include SBL EBNF module [bug]
 ' #403 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
@@ -67,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #420 - Add function GetSBLCanonicalBookTable
     ' FIXED - #412 - Add resolver checks for EBNF module
     ' FIXED - #410 - Define canonical Bible book list for Excel/Access-style normalization [refac]
     ' FIXED - #409 - Create initial SBL Unified EBNF design for Bible citation parser
