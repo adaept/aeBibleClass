@@ -228,7 +228,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Normalize output (Book Chapter:VerseSpec)
 
 Public Type BibleBook
-    BookID As Long      ' 1-66
+    bookID As Long      ' 1-66
     Canonical As String ' "Genesis"
 End Type
 
@@ -309,7 +309,7 @@ Public Function GetCanonicalBookTable() As Object
     Set GetCanonicalBookTable = books
 End Function
 
-Private Function GetBookAliasMap() As Object
+Public Function GetBookAliasMap() As Object
     Static aliasMap As Object
     ' Single-letter aliases are not allowed due to potential false positives
     ' Sort form allowed, common in Europe, (International / Critical Apparatus Style)
@@ -624,22 +624,25 @@ Private Function GetBookAliasMap() As Object
 End Function
 
 Public Function ResolveBook(abbr As String, _
-                            Optional BookID As Long) As String
+                            Optional bookID As Long) As String
     Dim key As String
     Dim aliasMap As Object
     Dim books As Object
-    Dim entry As Variant
+    Dim b As Variant
 
-    key = UCase(Trim(abbr))
+    key = UCase$(Trim$(abbr))
     Set aliasMap = GetBookAliasMap
 
-    If Not aliasMap.Exists(key) Then Exit Function
+    If Not aliasMap.Exists(key) Then
+        Debug.Print "BAD  > ResolveBook(" & key & ")"
+        Err.Raise vbObjectError + 10, , "Unknown book alias: " & abbr
+    End If
 
-    BookID = aliasMap(key)
+    bookID = aliasMap(key)
     Set books = GetCanonicalBookTable
 
-    entry = books(BookID)
-    ResolveBook = entry(1)   ' Canonical name
+    b = books.item(bookID)     ' SAFE
+    ResolveBook = b(1)         ' Canonical name
 End Function
 
 Public Sub Test_ResolveBook()
@@ -650,6 +653,73 @@ Public Sub Test_ResolveBook()
     Debug.Print "REV  > "; ResolveBook("REV")
 
     Debug.Print "BAD  > "; ResolveBook("XYZ")
+End Sub
+
+Public Sub Test_ResolveBook_Strict()
+    Debug.Assert ResolveBook("GEN") = "Genesis"
+    Debug.Assert ResolveBook("GN") = "Genesis"
+    Debug.Assert ResolveBook("1 JN") = "1 John"
+    Debug.Assert ResolveBook("1 JOH") = "1 John"
+    Debug.Assert ResolveBook("REV") = "Revelation"
+    Debug.Assert ResolveBook("XYZ") = ""
+End Sub
+
+Public Sub Test_AllBookAliases_STRICT()
+    Dim aliasMap As Object
+    Dim books As Object
+    Dim k As Variant
+    Dim bookID As Long
+    Dim canonicalActual As String
+    Dim failures As Long
+
+    Set aliasMap = GetBookAliasMap
+    Set books = GetCanonicalBookTable
+
+    Debug.Print "=== STRICT Alias Validation ==="
+
+    For Each k In aliasMap.Keys
+        On Error GoTo AliasFail
+
+        canonicalActual = ResolveBook(CStr(k), bookID)
+
+        ' 1. BookID must be in canonical range
+        If bookID < 1 Or bookID > 66 Then
+            Debug.Print "FAIL (INVALID BOOK ID): "; k; " ? "; bookID
+            failures = failures + 1
+            GoTo NextAlias
+        End If
+
+        ' 2. BookID must exist in canonical table
+        If Not books.Exists(bookID) Then
+            Debug.Print "FAIL (MISSING CANONICAL): "; k; " ? "; bookID
+            failures = failures + 1
+            GoTo NextAlias
+        End If
+
+        ' 3. Canonical name must match
+        If canonicalActual <> books(bookID)(1) Then
+            Debug.Print "FAIL (NAME MISMATCH): "; k; _
+                        " ? "; canonicalActual; _
+                        " (expected "; books(bookID)(1); ")"
+            failures = failures + 1
+        End If
+
+NextAlias:
+        On Error GoTo 0
+    Next k
+
+    If failures = 0 Then
+        Debug.Print "PASS: All aliases are canonical and valid."
+    Else
+        Debug.Print "FAILURES: "; failures
+    End If
+    Exit Sub
+
+AliasFail:
+    Debug.Print "FAIL (ERROR): "; k; " > "; Err.Description
+    Err.Clear
+    failures = failures + 1
+    Resume NextAlias
 End Sub
 
 
