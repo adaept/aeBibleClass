@@ -227,14 +227,35 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' | any   | >SX    |
 ' NOTE: <END> represents the EOF token in debug output
 
-'=====================================================
-' 3. Semantic Post-Processing
-' (Outside Deterministic Finite Automaton (DFA))
+'============================================================================
+' 3. Semantic Post-Processing is outside Deterministic Finite Automaton (DFA)
 ' Handled after a successful parse:
 ' Normalize prefixes > I > 1
 ' Collapse whitespace > single space
 ' Validate book name via SBL alias table
 ' Resolve single-chapter books
+'   ----------------------------------------------
+'   Single-Chapter Book Chapter Inference Rule
+'   ----------------------------------------------
+'   If a citation targets a single-chapter book and the input omits
+'   an explicit chapter number, the chapter is inferred as 1.
+'
+'   Implementation Convention:
+'   - chapter = 0  => chapter omitted by user
+'   - chapter = 1  => chapter explicitly provided
+'
+'   Rewrite Rule:
+'   - <Book> <Verse>            => <Book> 1:<Verse>
+'   - <Book> <Chapter>          => unchanged
+'   - <Book> <Chapter>:<Verse>  => unchanged
+'
+'   This inference is applied ONLY during semantic post-processing
+'   after successful DFA parsing.
+' Single-chapter rewrite rule:
+'   If a reference targets a single-chapter book AND no chapter
+'   was specified in the citation, rewrite <Book> <Verse>
+'   as <Book> 1:<Verse>.
+'   If a chapter is explicitly provided, no rewrite occurs.
 ' Enforce chapter/verse bounds
 ' Normalize output (Book Chapter:VerseSpec)
 
@@ -445,6 +466,67 @@ Public Function GetSBLCanonicalBookTable() As Object
     End If
 
     Set GetSBLCanonicalBookTable = sbl
+End Function
+
+Public Sub ValidateBookSBL( _
+        ByVal bookID As Long, _
+        ByVal InputBook As String)
+
+    Dim sbl As Object
+    Dim expected As String
+
+    Set sbl = GetSBLCanonicalBookTable
+
+    If Not sbl.Exists(bookID) Then
+        Err.Raise vbObjectError + 400, , _
+            "Book not defined in SBL canon: " & bookID
+    End If
+
+    expected = sbl(bookID)
+
+    If UCase(Trim(InputBook)) <> expected Then
+        Err.Raise vbObjectError + 401, , _
+            "Non-SBL book form. Expected '" & expected & _
+            "', got '" & InputBook & "'"
+    End If
+End Sub
+
+Public Function GetSingleChapterBookSet() As Object
+    Static sc As Object
+
+    If sc Is Nothing Then
+        Set sc = CreateObject("Scripting.Dictionary")
+        ' Old Testament
+        sc.Add 31, True   ' Obadiah
+        ' New Testament
+        sc.Add 57, True   ' Philemon
+        sc.Add 63, True   ' 2 John
+        sc.Add 64, True   ' 3 John
+        sc.Add 65, True   ' Jude
+    End If
+
+    Set GetSingleChapterBookSet = sc
+End Function
+
+Public Function RewriteSingleChapterRef( _
+        ByVal bookID As Long, _
+        ByVal chapter As Long, _
+        ByVal verse As Long) As String
+
+    Dim sc As Object
+    Set sc = GetSingleChapterBookSet
+
+    ' Only rewrite when:
+    ' 1) book is single-chapter
+    ' 2) chapter was omitted (chapter = 0)
+    If sc.Exists(bookID) And chapter = 0 Then
+        RewriteSingleChapterRef = "1:" & verse
+    ElseIf verse > 0 Then
+        RewriteSingleChapterRef = chapter & ":" & verse
+    Else
+        RewriteSingleChapterRef = CStr(chapter)
+    End If
+
 End Function
 
 Public Function GetBookAliasMap() As Object

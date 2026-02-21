@@ -9,9 +9,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
 ' #425 -
 ' #424 -
-' #423 -
-' #422 -
-' #421 -
+' #423 - Add test harness module [impr] [feat]
+' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25)
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
 ' #417 - Add an SBL auto-corrector
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #421 - Add single-chapter book rewriting (Jude 5 > Jude 1:5) [impr]
     ' FIXED - #420 - Add function GetSBLCanonicalBookTable
     ' FIXED - #412 - Add resolver checks for EBNF module
     ' FIXED - #410 - Define canonical Bible book list for Excel/Access-style normalization [refac]

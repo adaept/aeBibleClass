@@ -210,10 +210,10 @@ Selection.range.Select  ' re-activate the cursor
 GoTo Cleanup    ' for Exit Sub temp stop
 
         verseNum = 1
-        GoTo Chapter
+        GoTo chapter
     End If
     verseNum = Trim(parts(1))
-Chapter:
+chapter:
     subParts = Split(Trim(parts(0)))
     If UBound(subParts) = 0 Then
         bookAbbr = Trim(parts(0))
