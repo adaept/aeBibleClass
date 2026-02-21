@@ -6,6 +6,8 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Sub Test_SemanticFlow_NoParser()
+    ResetBookAliasMap
+    
     Debug.Print "======================================"
     Debug.Print " Test_SemanticFlow_NoParser"
     Debug.Print " (Parser intentionally NOT implemented)"

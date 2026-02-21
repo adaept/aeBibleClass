@@ -5,6 +5,8 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+Private aliasMap As Object
+
 '=======================================
 ' SBL Scripture Citation - Unified EBNF
 '=======================================
@@ -268,6 +270,11 @@ Public Enum CitationMode
     CitationAny = 0     ' Accept all known aliases
     CitationSBL = 1     ' Enforce SBL Handbook rules
 End Enum
+
+Public Sub ResetBookAliasMap()
+    Set aliasMap = Nothing
+End Sub
+
 Public Function IsValidSBLAlias(bookID As Long, aliasText As String) As Boolean
     Dim canonical As String
     Dim books As Object
@@ -530,7 +537,6 @@ Public Function RewriteSingleChapterRef( _
 End Function
 
 Public Function GetBookAliasMap() As Object
-    Static aliasMap As Object
     ' Single-letter aliases are not allowed due to potential false positives
     ' Sort form allowed, common in Europe, (International / Critical Apparatus Style)
 
@@ -782,6 +788,7 @@ Public Function GetBookAliasMap() As Object
         aliasMap.Add "3 JN", 64
         
         ' Jude
+        aliasMap.Add "JUDE", 65
         aliasMap.Add "JUD", 65
         
         ' Revelation

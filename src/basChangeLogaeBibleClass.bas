@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
+' #430 -
+' #429 -
+' #428 -
+' #427 -
+' #426 -
 ' #425 -
-' #424 -
-' #423 - Add test harness module [impr] [feat]
 ' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25)
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
@@ -75,6 +78,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #424 - Allow reset of AliasMap when running test harness (no use of Static) [bug]
+    ' FIXED - #423 - Update initial test harness module [bug]
     ' FIXED - #421 - Add single-chapter book rewriting (Jude 5 > Jude 1:5) [impr]
     ' FIXED - #420 - Add function GetSBLCanonicalBookTable
     ' FIXED - #412 - Add resolver checks for EBNF module
