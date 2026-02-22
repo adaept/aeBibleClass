@@ -6,14 +6,13 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
+' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #435 -
 ' #434 -
 ' #433 -
 ' #432 -
 ' #431 -
-' #430 -
-' #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr]
+' #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr] [opt]
 ' #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
 ' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
@@ -80,6 +79,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #430 - Add a validator that asserts alias coverage completeness
     ' FIXED - #428 - Any book name that may appear as parser output must exist as a key in the alias map [bug]
     ' FIXED - #427 - Book-resolver table is not wired up for full canonical names yet [bug]
     ' FIXED - #426 - Parser stub feeds the semantic pipeline without changing it

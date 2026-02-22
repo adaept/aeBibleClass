@@ -600,6 +600,42 @@ Public Function RewriteSingleChapterRef( _
 
 End Function
 
+Public Function ValidateAliasCoverage( _
+        Optional ByRef report As String = "" _
+    ) As Boolean
+
+    Dim books As Object
+    Dim aliasMap As Object
+    Dim missing As Collection
+    Dim k As Variant
+    Dim canon As String
+
+    Set books = GetCanonicalBookTable
+    Set aliasMap = GetBookAliasMap
+    Set missing = New Collection
+
+    For Each k In books.Keys
+        canon = UCase$(books(k)(1))   ' Canonical name
+
+        If Not aliasMap.Exists(canon) Then
+            missing.Add canon
+        End If
+    Next k
+
+    If missing.count > 0 Then
+        Dim i As Long
+        report = "Missing canonical aliases:" & vbCrLf
+        For i = 1 To missing.count
+            report = report & "  - " & missing(i) & vbCrLf
+        Next i
+
+        ValidateAliasCoverage = False
+    Else
+        report = "Alias coverage complete (canonical names present)."
+        ValidateAliasCoverage = True
+    End If
+End Function
+
 Public Function GetBookAliasMap() As Object
     ' Single-letter aliases are not allowed due to potential false positives
     ' Sort form allowed, common in Europe, (International / Critical Apparatus Style)
@@ -824,7 +860,7 @@ Public Function GetBookAliasMap() As Object
         aliasMap.Add "2 COR", 47
         aliasMap.Add "2 CO", 47
         ' Galatians
-        aliasMap.Add "GALATIAN", 48
+        aliasMap.Add "GALATIANS", 48
         aliasMap.Add "GAL", 48
         aliasMap.Add "GA", 48
         ' Ephesians

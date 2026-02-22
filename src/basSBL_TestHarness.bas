@@ -53,6 +53,32 @@ Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
     ParseReferenceStub = p
 End Function
 
+Public Sub Test_AliasCoverage()
+' Assert that every canonical book name (upper-cased) exists as a key in the alias map
+'   Uses GetCanonicalBookTable
+'   Uses GetBookAliasMap
+'   Canonical name is normalized as UCase(Canonical)
+'   Does not mutate state
+'   Emits diagnostics
+    Debug.Print ""
+    Debug.Print "=== Alias Coverage Validation ==="
+
+    Dim msg As String
+    Dim ok As Boolean
+
+    ok = ValidateAliasCoverage(msg)
+
+    Debug.Print msg
+
+    If Not ok Then
+        Debug.Print "RESULT: FAIL"
+    Else
+        Debug.Print "RESULT: PASS"
+    End If
+
+    Debug.Print "==============================="
+End Sub
+
 Public Sub Test_SemanticFlow_WithParserStub()
     ResetBookAliasMap
 
@@ -190,13 +216,24 @@ End Sub
 
 
 Public Sub Report_TODOs()
-    Debug.Print "=== NOT IMPLEMENTED / TODO ==="
+    Debug.Print "=== NOT IMPLEMENTED / TODO ============================"
     Debug.Print "- Replace ParseReferenceStub with real tokenizer + DFA"
     Debug.Print "- Multi-token book names (1 John, Song of Songs)"
     Debug.Print "- Roman numeral prefixes"
     Debug.Print "- Verse list/range parsing"
     Debug.Print "- Structured parse errors"
-    Debug.Print "=============================="
+    Debug.Print "- Optional future validator hardening"
+    Debug.Print "    This validator can be extended to assert:"
+    Debug.Print "      - each book has >= 1 non-canonical alias"
+    Debug.Print "      - no alias maps to multiple books"
+    Debug.Print "      - SBL-strict aliases form a closed subset"
+    Debug.Print "      - alias casing normalization consistency"
+    Debug.Print "======================================================="
 End Sub
 
+Public Sub Run_All_SBL_Tests()
+    ResetBookAliasMap
+    Test_AliasCoverage
+    Test_SemanticFlow_WithParserStub
+End Sub
 
