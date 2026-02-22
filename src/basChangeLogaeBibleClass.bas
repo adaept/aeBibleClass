@@ -7,25 +7,27 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac]
+' #435 -
+' #434 -
+' #433 -
+' #432 -
+' #431 -
 ' #430 -
-' #429 -
-' #428 -
-' #427 -
-' #426 -
-' #425 -
-' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25)
+' #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr]
+' #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
+' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
-' #417 - Add an SBL auto-corrector
+' #417 - Add an SBL auto-corrector [feat]
 ' #416 - Emit fix suggestions (1 JN ? 1 John)
 ' #415 - Normalize case for output [impr]
 ' #414 - Enforce no verse ranges across chapters [impr]
 ' #413 - Enforce SBL punctuation (: vs .) [impr]
 ' #411 - Fix reloading of all code routine to include SBL EBNF module [bug]
-' #403 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
+' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
-' #396 - Export - Psalms 110:7     He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
+' #396 - Export - Psalms 110:7 He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
 ' #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
 ' #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
@@ -78,6 +80,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #428 - Any book name that may appear as parser output must exist as a key in the alias map [bug]
+    ' FIXED - #427 - Book-resolver table is not wired up for full canonical names yet [bug]
+    ' FIXED - #426 - Parser stub feeds the semantic pipeline without changing it
     ' FIXED - #424 - Allow reset of AliasMap when running test harness (no use of Static) [bug]
     ' FIXED - #423 - Update initial test harness module [bug]
     ' FIXED - #421 - Add single-chapter book rewriting (Jude 5 > Jude 1:5) [impr]

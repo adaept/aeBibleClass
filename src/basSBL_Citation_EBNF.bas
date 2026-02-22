@@ -267,8 +267,8 @@ Public Type BibleBook
 End Type
 
 Public Enum CitationMode
-    CitationAny = 0     ' Accept all known aliases
-    CitationSBL = 1     ' Enforce SBL Handbook rules
+    ModeGeneric = 0   ' Accept common abbreviations
+    ModeSBL = 1       ' Enforce SBL Study Bible rules
 End Enum
 
 Public Sub ResetBookAliasMap()
@@ -293,7 +293,7 @@ End Function
 Public Function ResolveBookStrict( _
         abbr As String, _
         Optional bookID As Long, _
-        Optional mode As CitationMode = CitationAny _
+        Optional mode As CitationMode = ModeGeneric _
     ) As String
 
     Dim canonical As String
@@ -302,7 +302,7 @@ Public Function ResolveBookStrict( _
     canonical = ResolveBook(abbr, bookID)
 
     ' Step 2: Validate (NEW)
-    If mode = CitationSBL Then
+    If mode = ModeSBL Then
         If Not IsValidSBLAlias(bookID, abbr) Then
             Err.Raise vbObjectError + 20, , _
                 "Non-SBL book form: '" & abbr & _
@@ -498,6 +498,70 @@ Public Sub ValidateBookSBL( _
     End If
 End Sub
 
+Public Function ValidateSBLReference( _
+        bookID As Long, _
+        canonicalName As String, _
+        Chapter As Long, _
+        VerseSpec As String, _
+        mode As CitationMode) As Boolean
+
+    ' Generic mode: always valid at this layer
+    If mode = ModeGeneric Then
+        ValidateSBLReference = True
+        Exit Function
+    End If
+
+    ' ---------- SBL MODE BELOW ----------
+
+    ' 1. Book must exist in canonical table
+    If Not GetCanonicalBookTable.Exists(bookID) Then
+        Debug.Print "SBL FAIL: Unknown BookID " & bookID
+        Exit Function
+    End If
+
+    ' 2. Canonical name must match SBL form EXACTLY
+    ' (SBL is case-insensitive in print, but normalized internally)
+    Dim canon As Variant
+    canon = GetCanonicalBookTable(bookID)
+
+    If UCase(canon(1)) <> UCase(canonicalName) Then
+        Debug.Print "SBL FAIL: Non-canonical book name"
+        Exit Function
+    End If
+
+    ' 3. Chapter rules
+    If Chapter < 0 Then
+        Debug.Print "SBL FAIL: Invalid chapter number"
+        Exit Function
+    End If
+
+    ' 4. Single-chapter book rules
+    If GetSingleChapterBookSet.Exists(bookID) Then
+        If Chapter > 1 Then
+            Debug.Print "SBL FAIL: Chapter > 1 for single-chapter book"
+            Exit Function
+        End If
+    Else
+        If Chapter = 0 Then
+            Debug.Print "SBL FAIL: Chapter required for multi-chapter book"
+            Exit Function
+        End If
+    End If
+
+    ' 5. Verse spec must exist
+    If Len(VerseSpec) = 0 Then
+        Debug.Print "SBL FAIL: Missing verse specification"
+        Exit Function
+    End If
+
+    ' NOTE:
+    ' Verse range bounds (max verse per chapter)
+    ' are intentionally NOT enforced here yet.
+    ' That is a later enhancement.
+
+    ValidateSBLReference = True
+End Function
+
 Public Function GetSingleChapterBookSet() As Object
     Static sc As Object
 
@@ -517,7 +581,7 @@ End Function
 
 Public Function RewriteSingleChapterRef( _
         ByVal bookID As Long, _
-        ByVal chapter As Long, _
+        ByVal Chapter As Long, _
         ByVal verse As Long) As String
 
     Dim sc As Object
@@ -526,12 +590,12 @@ Public Function RewriteSingleChapterRef( _
     ' Only rewrite when:
     ' 1) book is single-chapter
     ' 2) chapter was omitted (chapter = 0)
-    If sc.Exists(bookID) And chapter = 0 Then
+    If sc.Exists(bookID) And Chapter = 0 Then
         RewriteSingleChapterRef = "1:" & verse
     ElseIf verse > 0 Then
-        RewriteSingleChapterRef = chapter & ":" & verse
+        RewriteSingleChapterRef = Chapter & ":" & verse
     Else
-        RewriteSingleChapterRef = CStr(chapter)
+        RewriteSingleChapterRef = CStr(Chapter)
     End If
 
 End Function
@@ -544,70 +608,87 @@ Public Function GetBookAliasMap() As Object
         Set aliasMap = CreateObject("Scripting.Dictionary")
 
         ' Genesis
+        aliasMap.Add "GENESIS", 1
         aliasMap.Add "GEN", 1
         aliasMap.Add "GE", 1
         aliasMap.Add "GN", 1
         ' Exodus
+        aliasMap.Add "EXODUS", 2
         aliasMap.Add "EXOD", 2
         aliasMap.Add "EXO", 2
         aliasMap.Add "EX", 2
         ' Leviticus
+        aliasMap.Add "LEVITICUS", 3
         aliasMap.Add "LEV", 3
         aliasMap.Add "LE", 3
         aliasMap.Add "LV", 3
         ' Numbers
+        aliasMap.Add "NUMBERS", 4
         aliasMap.Add "NUM", 4
         aliasMap.Add "NU", 4
         aliasMap.Add "NM", 4
         ' Deuteronomy
+        aliasMap.Add "DEUTERONOMY", 5
         aliasMap.Add "DEUT", 5
         aliasMap.Add "DEU", 5
         aliasMap.Add "DE", 5
         aliasMap.Add "DT", 5
         ' Joshua
+        aliasMap.Add "JOSHUA", 6
         aliasMap.Add "JOSH", 6
         aliasMap.Add "JOS", 6
         ' Judges
+        aliasMap.Add "JUDGES", 7
         aliasMap.Add "JUDGE", 7
         aliasMap.Add "JUDG", 7
         aliasMap.Add "JGS", 7
         ' Ruth
+        aliasMap.Add "RUTH", 8
         aliasMap.Add "RUT", 8
         aliasMap.Add "RU", 8
         ' 1 Samuel
+        aliasMap.Add "1 SAMUEL", 9
         aliasMap.Add "1 SAM", 9
         aliasMap.Add "1 SA", 9
         aliasMap.Add "1 SM", 9
         ' 2 Samuel
+        aliasMap.Add "2 SAMUEL", 10
         aliasMap.Add "2 SAM", 10
         aliasMap.Add "2 SA", 10
         aliasMap.Add "2 SM", 10
         ' 1 Kings
+        aliasMap.Add "1 KINGS", 11
         aliasMap.Add "1 KGS", 11
         aliasMap.Add "1 KING", 11
         aliasMap.Add "1 KIN", 11
         aliasMap.Add "1 KI", 11
         ' 2 Kings
+        aliasMap.Add "2 KINGS", 12
         aliasMap.Add "2 KGS", 12
         aliasMap.Add "2 KING", 12
         aliasMap.Add "2 KIN", 12
         aliasMap.Add "2 KI", 12
         ' 1 Chronicles
+        aliasMap.Add "1 CHRONICLES", 13
         aliasMap.Add "1 CHRON", 13
         aliasMap.Add "1 CHRO", 13
         aliasMap.Add "1 CHR", 13
         aliasMap.Add "1 CH", 13
         ' 2 Chronicles
+        aliasMap.Add "2 CHRONICLES", 14
         aliasMap.Add "2 CHRON", 14
         aliasMap.Add "2 CHRO", 14
         aliasMap.Add "2 CHR", 14
         aliasMap.Add "2 CH", 14
         ' Ezra
+        aliasMap.Add "EZRA", 15
         aliasMap.Add "EZR", 15
         ' Nehemiah
+        aliasMap.Add "NEHEMIAH", 16
         aliasMap.Add "NEH", 16
         aliasMap.Add "NE", 16
         ' Esther
+        aliasMap.Add "ESTHER", 17
         aliasMap.Add "ESTH", 17
         aliasMap.Add "EST", 17
         aliasMap.Add "ES", 17
@@ -615,183 +696,215 @@ Public Function GetBookAliasMap() As Object
         aliasMap.Add "JOB", 18
         aliasMap.Add "JB", 18
         ' Psalms
+        aliasMap.Add "PSALMS", 19
         aliasMap.Add "PSALM", 19
         aliasMap.Add "PSA", 19
         aliasMap.Add "PS", 19
         ' Proverbs
+        aliasMap.Add "PROVERBS", 20
         aliasMap.Add "PROV", 20
         aliasMap.Add "PRO", 20
         aliasMap.Add "PR", 20
         aliasMap.Add "PRV", 20
         ' Ecclesiastes
+        aliasMap.Add "ECCLESIASTES", 21
         aliasMap.Add "ECCL", 21
         aliasMap.Add "ECC", 21
         aliasMap.Add "EC", 21
         ' Solomon
+        aliasMap.Add "SOLOMON", 22
         aliasMap.Add "SOLO", 22
         aliasMap.Add "SOL", 22
         aliasMap.Add "SO", 22
         aliasMap.Add "SONG", 22
         aliasMap.Add "SG", 22
         ' Isaiah
+        aliasMap.Add "ISAIAH", 23
         aliasMap.Add "ISA", 23
         aliasMap.Add "IS", 23
         ' Jeremiah
+        aliasMap.Add "JEREMIAH", 24
         aliasMap.Add "JER", 24
         aliasMap.Add "JE", 24
         ' Lamentations
+        aliasMap.Add "LAMENTATIONS", 25
         aliasMap.Add "LAM", 25
         aliasMap.Add "LA", 25
         ' Ezekiel
+        aliasMap.Add "EZEKIEL", 26
         aliasMap.Add "EZEK", 26
         aliasMap.Add "EZE", 26
         aliasMap.Add "EZ", 26
         ' Daniel
+        aliasMap.Add "DANIEL", 27
         aliasMap.Add "DAN", 27
         aliasMap.Add "DA", 27
         aliasMap.Add "DN", 27
         ' Hosea
+        aliasMap.Add "HOSEA", 28
         aliasMap.Add "HOS", 28
         aliasMap.Add "HO", 28
         ' Joel
+        aliasMap.Add "JOEL", 29
         aliasMap.Add "JOE", 29
         aliasMap.Add "JL", 29
         ' Amos
+        aliasMap.Add "AMOS", 30
         aliasMap.Add "AMO", 30
         aliasMap.Add "AM", 30
         ' Obadiah
+        aliasMap.Add "OBADIAH", 31
         aliasMap.Add "OBAD", 31
         aliasMap.Add "OBA", 31
         aliasMap.Add "OB", 31
         ' Jonah
+        aliasMap.Add "JONAH", 32
         aliasMap.Add "JONA", 32
         aliasMap.Add "JON", 32
         ' Micah
+        aliasMap.Add "MICAH", 33
         aliasMap.Add "MIC", 33
         aliasMap.Add "MI", 33
         ' Nahum
+        aliasMap.Add "NAHUM", 34
         aliasMap.Add "NAH", 34
         aliasMap.Add "NA", 34
         ' Habakkuk
+        aliasMap.Add "HABAKKUK", 35
         aliasMap.Add "HAB", 35
         aliasMap.Add "HA", 35
         aliasMap.Add "HB", 35
         ' Zephaniah
+        aliasMap.Add "ZEPHANIAH", 36
         aliasMap.Add "ZEPH", 36
         aliasMap.Add "ZEP", 36
         ' Haggai
+        aliasMap.Add "HAGGAI", 37
         aliasMap.Add "HAG", 37
         aliasMap.Add "HG", 37
         ' Zechariah
+        aliasMap.Add "ZECHARIAH", 38
         aliasMap.Add "ZECH", 38
         aliasMap.Add "ZEC", 38
         ' Malachi
+        aliasMap.Add "MALACHI", 39
         aliasMap.Add "MAL", 39
         ' Matthew
+        aliasMap.Add "MATTHEW", 40
         aliasMap.Add "MATT", 40
         aliasMap.Add "MAT", 40
         aliasMap.Add "MT", 40
         ' Mark
+        aliasMap.Add "MARK", 41
         aliasMap.Add "MAR", 41
         aliasMap.Add "MK", 41
         ' Luke
+        aliasMap.Add "LUKE", 42
         aliasMap.Add "LUK", 42
         aliasMap.Add "LU", 42
         aliasMap.Add "LK", 42
         ' John
+        aliasMap.Add "JOHN", 43
         aliasMap.Add "JOH", 43
         aliasMap.Add "JN", 43
         ' Acts
+        aliasMap.Add "ACTS", 44
         aliasMap.Add "ACT", 44
         aliasMap.Add "AC", 44
         ' Romans
+        aliasMap.Add "ROMANS", 45
         aliasMap.Add "ROM", 45
         aliasMap.Add "RO", 45
         ' 1 Corinthians
+        aliasMap.Add "1 CORINTHIANS", 46
         aliasMap.Add "1 COR", 46
         aliasMap.Add "1 CO", 46
         ' 2 Corinthians
+        aliasMap.Add "2 CORINTHIANS", 47
         aliasMap.Add "2 COR", 47
         aliasMap.Add "2 CO", 47
         ' Galatians
+        aliasMap.Add "GALATIAN", 48
         aliasMap.Add "GAL", 48
         aliasMap.Add "GA", 48
         ' Ephesians
+        aliasMap.Add "EPHESIANS", 49
         aliasMap.Add "EPH", 49
         aliasMap.Add "EP", 49
         ' Philippians
+        aliasMap.Add "PHILIPPIANS", 50
         aliasMap.Add "PHILI", 50
         aliasMap.Add "PHIL", 50
         ' Colossians
+        aliasMap.Add "COLOSSIANS", 51
         aliasMap.Add "COL", 51
         aliasMap.Add "CO", 51
-        
         ' 1 Thessalonians
+        aliasMap.Add "1 THESSALONIANS", 52
         aliasMap.Add "1 THESS", 52
         aliasMap.Add "1 THES", 52
         aliasMap.Add "1 THE", 52
         aliasMap.Add "1 THS", 52
-        
         ' 2 Thessalonians
+        aliasMap.Add "2 THESSALONIANS", 53
         aliasMap.Add "2 THESS", 53
         aliasMap.Add "2 THES", 53
         aliasMap.Add "2 THE", 53
         aliasMap.Add "2 THS", 53
-        
         ' 1 Timothy
+        aliasMap.Add "1 TIMOTHY", 54
         aliasMap.Add "1 TIM", 54
         aliasMap.Add "1 TI", 54
         aliasMap.Add "1 TM", 54
-        
         ' 2 Timothy
+        aliasMap.Add "2 TIMOTHY", 55
         aliasMap.Add "2 TIM", 55
         aliasMap.Add "2 TI", 55
         aliasMap.Add "2 TM", 55
-        
         ' Titus
+        aliasMap.Add "TITUS", 56
         aliasMap.Add "TIT", 56
         aliasMap.Add "TI", 56
-        
         ' Philemon
+        aliasMap.Add "PHILEMON", 57
         aliasMap.Add "PHILE", 57
         aliasMap.Add "PHLM", 57
-        
         ' Hebrews
+        aliasMap.Add "HEBREWS", 58
         aliasMap.Add "HEB", 58
         aliasMap.Add "HE", 58
-        
         ' James
+        aliasMap.Add "JAMES", 59
         aliasMap.Add "JAM", 59
         aliasMap.Add "JA", 59
         aliasMap.Add "JAS", 59
-        
         ' 1 Peter
+        aliasMap.Add "1 PETER", 60
         aliasMap.Add "1 PET", 60
         aliasMap.Add "1 PE", 60
         aliasMap.Add "1 PT", 60
-        
         ' 2 Peter
+        aliasMap.Add "2 PETER", 61
         aliasMap.Add "2 PET", 61
         aliasMap.Add "2 PE", 61
         aliasMap.Add "2 PT", 61
-        
         ' 1 John
+        aliasMap.Add "1 JOHN", 62
         aliasMap.Add "1 JOH", 62
         aliasMap.Add "1 JN", 62
-        
         ' 2 John
+        aliasMap.Add "2 JOHN", 63
         aliasMap.Add "2 JOH", 63
         aliasMap.Add "2 JN", 63
-        
         ' 3 John
+        aliasMap.Add "3 JOHN", 64
         aliasMap.Add "3 JOH", 64
         aliasMap.Add "3 JN", 64
-        
         ' Jude
         aliasMap.Add "JUDE", 65
         aliasMap.Add "JUD", 65
-        
         ' Revelation
+        aliasMap.Add "REVELATION", 66
         aliasMap.Add "REV", 66
         aliasMap.Add "RE", 66
         aliasMap.Add "RV", 66
