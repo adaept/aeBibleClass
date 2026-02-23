@@ -261,6 +261,47 @@ Private aliasMap As Object
 ' Enforce chapter/verse bounds
 ' Normalize output (Book Chapter:VerseSpec)
 
+' What makes the compressed verse-map approach strong in your architecture is:
+' 1. Data Is Data
+'   The validator now does only this:
+'     - Is chapter valid?
+'     - Is verse valid?
+'   It does not know Bible structure.
+'   All structural knowledge lives in metadata.
+'   Proper separation of concerns
+' 2. Deterministic O(1) Lookup
+'   With fixed-width packed strings:
+'     maxV = CLng(mid$(map, (Chapter - 1) * 2 + 1, 2))
+'       - No loops
+'       - No Select Case
+'       - No Split
+'       - No dictionary building
+'       - Just direct addressing
+' 3. It Scales Without Growing Code
+'   Adding all 66 books:
+'     - Adds Data
+'     - Adds zero logic
+'     - Validator Not does
+'   Good boundary design
+' 4. It Matches the Design Philosophy
+'   Parser stub isolated
+'   Resolver isolated
+'   Semantic validator isolated
+'   Canonical table authoritative
+' 5. The Key Benefit
+'   Can now do things like:
+'     - SBL mode: strict bounds enforced
+'     - Generic mode: bounds skipped
+'     - Future: translation-specific verse maps (LXX, Vulgate, etc.)
+'               Without touching validator logic
+'               Just swap metadata source
+'   Next more advanced refinement would be:
+'     - Precompute the verse maps once
+'     - Cache them in a module-level structure
+'     - Make lookup entirely allocation-free
+'
+' The design has moved from string parsing to formal citation semantics - a big architectural leap.
+
 Public Enum CitationMode
     ModeGeneric = 0   ' Accept common abbreviations
     ModeSBL = 1       ' Enforce SBL Study Bible rules
@@ -324,72 +365,72 @@ Public Function GetCanonicalBookTable() As Object
     If books Is Nothing Then
         Set books = CreateObject("Scripting.Dictionary")
 
-        books.Add 1, Array(1, "Genesis")
-        books.Add 2, Array(2, "Exodus")
-        books.Add 3, Array(3, "Leviticus")
-        books.Add 4, Array(4, "Numbers")
-        books.Add 5, Array(5, "Deuteronomy")
-        books.Add 6, Array(6, "Joshua")
-        books.Add 7, Array(7, "Judges")
-        books.Add 8, Array(8, "Ruth")
-        books.Add 9, Array(9, "1 Samuel")
-        books.Add 10, Array(10, "2 Samuel")
-        books.Add 11, Array(11, "1 Kings")
-        books.Add 12, Array(12, "2 Kings")
-        books.Add 13, Array(13, "1 Chronicles")
-        books.Add 14, Array(14, "2 Chronicles")
-        books.Add 15, Array(15, "Ezra")
-        books.Add 16, Array(16, "Nehemiah")
-        books.Add 17, Array(17, "Esther")
-        books.Add 18, Array(18, "Job")
-        books.Add 19, Array(19, "Psalms")
-        books.Add 20, Array(20, "Proverbs")
-        books.Add 21, Array(21, "Ecclesiastes")
-        books.Add 22, Array(22, "Solomon")
-        books.Add 23, Array(23, "Isaiah")
-        books.Add 24, Array(24, "Jeremiah")
-        books.Add 25, Array(25, "Lamentations")
-        books.Add 26, Array(26, "Ezekiel")
-        books.Add 27, Array(27, "Daniel")
-        books.Add 28, Array(28, "Hosea")
-        books.Add 29, Array(29, "Joel")
-        books.Add 30, Array(30, "Amos")
-        books.Add 31, Array(31, "Obadiah")
-        books.Add 32, Array(32, "Jonah")
-        books.Add 33, Array(33, "Micah")
-        books.Add 34, Array(34, "Nahum")
-        books.Add 35, Array(35, "Habakkuk")
-        books.Add 36, Array(36, "Zephaniah")
-        books.Add 37, Array(37, "Haggai")
-        books.Add 38, Array(38, "Zechariah")
-        books.Add 39, Array(39, "Malachi")
-        books.Add 40, Array(40, "Matthew")
-        books.Add 41, Array(41, "Mark")
-        books.Add 42, Array(42, "Luke")
-        books.Add 43, Array(43, "John")
-        books.Add 44, Array(44, "Acts")
-        books.Add 45, Array(45, "Romans")
-        books.Add 46, Array(46, "1 Corinthians")
-        books.Add 47, Array(47, "2 Corinthians")
-        books.Add 48, Array(48, "Galatians")
-        books.Add 49, Array(49, "Ephesians")
-        books.Add 50, Array(50, "Philippians")
-        books.Add 51, Array(51, "Colossians")
-        books.Add 52, Array(52, "1 Thessalonians")
-        books.Add 53, Array(53, "2 Thessalonians")
-        books.Add 54, Array(54, "1 Timothy")
-        books.Add 55, Array(55, "2 Timothy")
-        books.Add 56, Array(56, "Titus")
-        books.Add 57, Array(57, "Philemon")
-        books.Add 58, Array(58, "Hebrews")
-        books.Add 59, Array(59, "James")
-        books.Add 60, Array(60, "1 Peter")
-        books.Add 61, Array(61, "2 Peter")
-        books.Add 62, Array(62, "1 John")
-        books.Add 63, Array(63, "2 John")
-        books.Add 64, Array(64, "3 John")
-        books.Add 65, Array(65, "Jude")
-        books.Add 66, Array(66, "Revelation")
+        books.Add 1, Array(1, "Genesis", 50)
+        books.Add 2, Array(2, "Exodus", 40)
+        books.Add 3, Array(3, "Leviticus", 27)
+        books.Add 4, Array(4, "Numbers", 36)
+        books.Add 5, Array(5, "Deuteronomy", 34)
+        books.Add 6, Array(6, "Joshua", 24)
+        books.Add 7, Array(7, "Judges", 21)
+        books.Add 8, Array(8, "Ruth", 4)
+        books.Add 9, Array(9, "1 Samuel", 31)
+        books.Add 10, Array(10, "2 Samuel", 24)
+        books.Add 11, Array(11, "1 Kings", 22)
+        books.Add 12, Array(12, "2 Kings", 25)
+        books.Add 13, Array(13, "1 Chronicles", 29)
+        books.Add 14, Array(14, "2 Chronicles", 36)
+        books.Add 15, Array(15, "Ezra", 10)
+        books.Add 16, Array(16, "Nehemiah", 13)
+        books.Add 17, Array(17, "Esther", 10)
+        books.Add 18, Array(18, "Job", 42)
+        books.Add 19, Array(19, "Psalms", 150)
+        books.Add 20, Array(20, "Proverbs", 31)
+        books.Add 21, Array(21, "Ecclesiastes", 12)
+        books.Add 22, Array(22, "Solomon", 8)
+        books.Add 23, Array(23, "Isaiah", 66)
+        books.Add 24, Array(24, "Jeremiah", 52)
+        books.Add 25, Array(25, "Lamentations", 5)
+        books.Add 26, Array(26, "Ezekiel", 48)
+        books.Add 27, Array(27, "Daniel", 12)
+        books.Add 28, Array(28, "Hosea", 14)
+        books.Add 29, Array(29, "Joel", 3)
+        books.Add 30, Array(30, "Amos", 9)
+        books.Add 31, Array(31, "Obadiah", 1)
+        books.Add 32, Array(32, "Jonah", 4)
+        books.Add 33, Array(33, "Micah", 7)
+        books.Add 34, Array(34, "Nahum", 7)
+        books.Add 35, Array(35, "Habakkuk", 3)
+        books.Add 36, Array(36, "Zephaniah", 3)
+        books.Add 37, Array(37, "Haggai", 2)
+        books.Add 38, Array(38, "Zechariah", 14)
+        books.Add 39, Array(39, "Malachi", 4)
+        books.Add 40, Array(40, "Matthew", 28)
+        books.Add 41, Array(41, "Mark", 16)
+        books.Add 42, Array(42, "Luke", 24)
+        books.Add 43, Array(43, "John", 21)
+        books.Add 44, Array(44, "Acts", 28)
+        books.Add 45, Array(45, "Romans", 16)
+        books.Add 46, Array(46, "1 Corinthians", 16)
+        books.Add 47, Array(47, "2 Corinthians", 13)
+        books.Add 48, Array(48, "Galatians", 6)
+        books.Add 49, Array(49, "Ephesians", 6)
+        books.Add 50, Array(50, "Philippians", 4)
+        books.Add 51, Array(51, "Colossians", 4)
+        books.Add 52, Array(52, "1 Thessalonians", 5)
+        books.Add 53, Array(53, "2 Thessalonians", 3)
+        books.Add 54, Array(54, "1 Timothy", 6)
+        books.Add 55, Array(55, "2 Timothy", 4)
+        books.Add 56, Array(56, "Titus", 3)
+        books.Add 57, Array(57, "Philemon", 1)
+        books.Add 58, Array(58, "Hebrews", 13)
+        books.Add 59, Array(59, "James", 5)
+        books.Add 60, Array(60, "1 Peter", 5)
+        books.Add 61, Array(61, "2 Peter", 3)
+        books.Add 62, Array(62, "1 John", 5)
+        books.Add 63, Array(63, "2 John", 1)
+        books.Add 64, Array(64, "3 John", 1)
+        books.Add 65, Array(65, "Jude", 1)
+        books.Add 66, Array(66, "Revelation", 22)
     End If
 
     Set GetCanonicalBookTable = books
@@ -493,6 +534,20 @@ Public Sub ValidateBookSBL( _
     End If
 End Sub
 
+Public Function GetMaxChapter(bookID As Long) As Long
+    Dim books As Object
+    Dim b As Variant
+
+    Set books = GetCanonicalBookTable
+
+    If Not books.Exists(bookID) Then
+        Err.Raise vbObjectError + 20, , "Unknown BookID in GetMaxChapter"
+    End If
+
+    b = books(bookID)
+    GetMaxChapter = CLng(b(2))
+End Function
+
 Public Function ValidateSBLReference( _
         bookID As Long, _
         canonicalName As String, _
@@ -527,6 +582,14 @@ Public Function ValidateSBLReference( _
     ' 3. Chapter rules
     If Chapter < 1 Then
         Debug.Print "SBL FAIL: Chapter must be >= 1"
+        Exit Function
+    End If
+
+    Dim maxCh As Long
+    maxCh = GetMaxChapter(bookID)
+    
+    If Chapter > maxCh Then
+        Debug.Print "SBL FAIL: Chapter exceeds max (" & maxCh & ")"
         Exit Function
     End If
 
