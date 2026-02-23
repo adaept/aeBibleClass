@@ -5,25 +5,28 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Public Type ParsedReference
-    ' Only structure needed for test harness
-    RawInput   As String
-    BookAlias  As String   ' e.g. "JUDE", "ROM"
-    Chapter    As Long     ' 0 if omitted
-    VerseSpec  As String   ' always string ("5", "1-3", "3,5")
-End Type
+Public Enum ExpectedFailureStage
+    FailNone = 0
+    FailResolveBook = 1
+    FailSemantic = 2
+End Enum
 
 Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
     Dim p As ParsedReference
     p.RawInput = inputText
 
+    Debug.Print "  [Stub] Raw input = >" & inputText & "<"
+
     Dim parts() As String
-    parts = Split(Trim(inputText), " ")
+    parts = Split(Trim$(inputText), " ")
 
     '----------------------------------
     ' Book alias (first token)
     '----------------------------------
     p.BookAlias = UCase$(parts(0))
+    Debug.Print "  [Stub] Parsed alias = >" & p.BookAlias & "<"
+    ' Semantic guardd to check for null failures
+    Debug.Assert p.BookAlias <> vbNullString
 
     '----------------------------------
     ' No chapter/verse provided
@@ -229,6 +232,119 @@ Public Sub Report_TODOs()
     Debug.Print "      - SBL-strict aliases form a closed subset"
     Debug.Print "      - alias casing normalization consistency"
     Debug.Print "======================================================="
+End Sub
+
+Public Sub Test_SemanticFlow_WithParserStub_Negative()
+    ResetBookAliasMap
+
+    Debug.Print "=========================================="
+    Debug.Print " Test_SemanticFlow_WithParserStub_Negative"
+    Debug.Print "=========================================="
+
+    Dim failReason As String
+    failReason = ""
+    
+    Dim failures As Long
+    failures = 0
+
+    ' RawInput, ExpectValid
+    ' Jude 0        => Verse 0 invalid
+    ' Jude 999      => Verse out of range
+    ' Jude 1:0      => Explicit verse 0
+    ' Romans 0:1    => Chapter 0 invalid for multi-chapter book
+    ' Romans 999:1  => Chapter out of range
+    ' Genesis 1:999 => Verse out of range
+    
+    Dim tests As Variant
+    tests = Array( _
+        Array("Jude 0", FailSemantic), _
+        Array("Jude 999", FailSemantic), _
+        Array("Jude 1:0", FailSemantic), _
+        Array("Romans 0:1", FailSemantic), _
+        Array("Romans 999:1", FailSemantic), _
+        Array("Genesis 1:999", FailSemantic) _
+    )
+    
+    Dim i As Long
+    For i = LBound(tests) To UBound(tests)
+
+        Debug.Print ""
+        Debug.Print "INPUT: "; tests(i)(0)
+
+'x        Dim BookAlias As String
+'x        Dim chapter As Long
+'x        Dim verseSpec As String
+
+        ' -----------------------------
+        ' Parser stub phase
+        ' -----------------------------
+        Dim parsed As ParsedReference
+        parsed = ParseReferenceStub(tests(i)(0))
+
+        Debug.Print "  ParseReferenceStub:"
+        Debug.Print "    -> Alias:   "; parsed.BookAlias
+        Debug.Print "    -> Chapter: "; parsed.Chapter
+        Debug.Print "    -> Verse:   "; parsed.VerseSpec
+
+        ' -----------------------------
+        ' Resolver phase
+        ' -----------------------------
+        Dim bookName As String
+        Dim bookID As Long
+        
+        On Error Resume Next
+        bookName = ResolveBook(parsed.BookAlias, bookID)
+        
+        If Err.Number <> 0 Then
+            Debug.Print "  ResolveBook ERROR: "; Err.Description
+        
+            If tests(i)(1) = FailResolveBook Then
+                Debug.Print "  RESULT: PASS (ResolveBook failed as expected)"
+            Else
+                Debug.Print "  RESULT: FAIL (ResolveBook failed unexpectedly)"
+                failures = failures + 1
+            End If
+        
+            Err.Clear
+            On Error GoTo 0
+            GoTo NextTest
+        End If
+        
+        On Error GoTo 0
+        
+        Debug.Print "  Resolver:"
+        Debug.Print "    -> BookID:     "; bookID
+        Debug.Print "    -> Canonical:  "; bookName
+
+        ' -----------------------------
+        ' Semantic validation phase
+        ' -----------------------------
+        Dim isValid As Boolean
+
+        isValid = ValidateSBLReference( _
+                    bookID, _
+                    bookName, _
+                    parsed.Chapter, _
+                    parsed.VerseSpec, _
+                    ModeSBL)
+
+        Debug.Print "  ValidateSBLReference:"
+        Debug.Print "    -> Valid: "; isValid
+
+        If isValid <> tests(i)(1) Then
+            Debug.Print "  FAIL: expected validity = "; tests(i)(1)
+            failures = failures + 1
+        Else
+            Debug.Print "  RESULT: PASS"
+        End If
+
+NextTest:
+    Next i
+
+    Debug.Print ""
+    Debug.Print "======================================"
+    Debug.Print "FAILURES: "; failures
+    Debug.Print "======================================"
 End Sub
 
 Public Sub Run_All_SBL_Tests()

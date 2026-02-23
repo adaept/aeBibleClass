@@ -7,11 +7,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #435 -
-' #434 -
-' #433 -
-' #432 -
-' #431 -
+' #440 -
+' #439 -
+' #438 -
+' #437 -
+' #436 -
+' #435 - For later: Check Chapter upper bound, Verse upper bound
+' #434 - Add full boundary enforcement: Chapter lower bound, Verse lower bound, Single-chapter special rule
+' #431 - Freeze parser stub scope, Strengthen semantic validator with tests, Add negative tests, Swap parser stub for real parser
 ' #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr] [opt]
 ' #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
 ' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
@@ -79,6 +82,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #433 - Track failure reason strings (diagnostic only): Do not change control flow, Do not add new layers, Only record why a stage failed
+    ' FIXED - #432 - Add negative tests: ResolveBook should succeed, ValidateSBLReference should fail, If ResolveBook fails, that is a test failure, not a pass.
     ' FIXED - #430 - Add a validator that asserts alias coverage completeness
     ' FIXED - #428 - Any book name that may appear as parser output must exist as a key in the alias map [bug]
     ' FIXED - #427 - Book-resolver table is not wired up for full canonical names yet [bug]

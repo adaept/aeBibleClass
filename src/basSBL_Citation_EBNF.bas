@@ -261,11 +261,6 @@ Private aliasMap As Object
 ' Enforce chapter/verse bounds
 ' Normalize output (Book Chapter:VerseSpec)
 
-Public Type BibleBook
-    bookID As Long      ' 1-66
-    canonical As String ' "Genesis"
-End Type
-
 Public Enum CitationMode
     ModeGeneric = 0   ' Accept common abbreviations
     ModeSBL = 1       ' Enforce SBL Study Bible rules
