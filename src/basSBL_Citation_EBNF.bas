@@ -525,8 +525,8 @@ Public Function ValidateSBLReference( _
     End If
 
     ' 3. Chapter rules
-    If Chapter < 0 Then
-        Debug.Print "SBL FAIL: Invalid chapter number"
+    If Chapter < 1 Then
+        Debug.Print "SBL FAIL: Chapter must be >= 1"
         Exit Function
     End If
 
@@ -536,16 +536,25 @@ Public Function ValidateSBLReference( _
             Debug.Print "SBL FAIL: Chapter > 1 for single-chapter book"
             Exit Function
         End If
-    Else
-        If Chapter = 0 Then
-            Debug.Print "SBL FAIL: Chapter required for multi-chapter book"
-            Exit Function
-        End If
     End If
 
     ' 5. Verse spec must exist
     If Len(VerseSpec) = 0 Then
         Debug.Print "SBL FAIL: Missing verse specification"
+        Exit Function
+    End If
+    
+    Dim v As Long
+    
+    If Not IsNumeric(VerseSpec) Then
+        Debug.Print "SBL FAIL: Non-numeric verse"
+        Exit Function
+    End If
+    
+    v = CLng(VerseSpec)
+    
+    If v < 1 Then
+        Debug.Print "SBL FAIL: Verse must be >= 1"
         Exit Function
     End If
 

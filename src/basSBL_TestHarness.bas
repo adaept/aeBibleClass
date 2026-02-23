@@ -257,12 +257,12 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
     
     Dim tests As Variant
     tests = Array( _
-        Array("Jude 0", FailSemantic), _
-        Array("Jude 999", FailSemantic), _
-        Array("Jude 1:0", FailSemantic), _
-        Array("Romans 0:1", FailSemantic), _
-        Array("Romans 999:1", FailSemantic), _
-        Array("Genesis 1:999", FailSemantic) _
+        Array("Jude 0", False), _
+        Array("Jude 999", False), _
+        Array("Jude 1:0", False), _
+        Array("Romans 0:1", False), _
+        Array("Romans 999:1", False), _
+        Array("Genesis 1:999", False) _
     )
     
     Dim i As Long
@@ -270,10 +270,6 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
 
         Debug.Print ""
         Debug.Print "INPUT: "; tests(i)(0)
-
-'x        Dim BookAlias As String
-'x        Dim chapter As Long
-'x        Dim verseSpec As String
 
         ' -----------------------------
         ' Parser stub phase
