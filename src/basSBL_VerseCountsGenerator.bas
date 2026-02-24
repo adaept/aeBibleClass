@@ -136,4 +136,74 @@ Public Sub GeneratePackedVerseStrings_FromDictionary()
     Next bookID
 End Sub
 
-
+Public Sub Debug_VerifyPackedVerseMap()
+    Dim maps As Variant
+    maps = GetPackedVerseMap()
+    
+    Dim d As Object
+    Set d = GetVerseCounts()
+    
+    Dim bookID As Long
+    Dim chapters As Variant
+    Dim packed As String
+    Dim i As Long
+    Dim totalBooks As Long
+    Dim totalChapters As Long
+    Dim errorCount As Long
+    
+    Debug.Print "======================================="
+    Debug.Print " VERIFY PACKED VERSE MAP"
+    Debug.Print "======================================="
+    For bookID = 1 To 66
+        If Not d.Exists(bookID) Then
+            Debug.Print "Missing book in dictionary: "; bookID
+            errorCount = errorCount + 1
+            GoTo NextBook
+        End If
+        
+        chapters = d(bookID)
+        packed = maps(bookID)
+        
+        If packed = "" Then
+            Debug.Print "Missing packed string: Book "; bookID
+            errorCount = errorCount + 1
+            GoTo NextBook
+        End If
+        totalBooks = totalBooks + 1
+        
+        ' Length check
+        If Len(packed) <> (UBound(chapters) + 1) * 3 Then
+            Debug.Print "LENGTH ERROR Book "; bookID; _
+                        " Expected="; (UBound(chapters) + 1) * 3; _
+                        " Actual="; Len(packed)
+            errorCount = errorCount + 1
+        End If
+        
+        ' Value check
+        For i = LBound(chapters) To UBound(chapters)
+            totalChapters = totalChapters + 1
+            
+            If CLng(mid$(packed, i * 3 + 1, 3)) <> chapters(i) Then
+                Debug.Print "VALUE ERROR Book "; bookID; _
+                            " Chapter "; i + 1; _
+                            " Expected="; chapters(i); _
+                            " Actual="; CLng(mid$(packed, i * 3 + 1, 3))
+                errorCount = errorCount + 1
+            End If
+        Next i
+        
+NextBook:
+    Next bookID
+    
+    Debug.Print "---------------------------------------"
+    Debug.Print "Books Verified:    "; totalBooks
+    Debug.Print "Chapters Verified: "; totalChapters
+    Debug.Print "Errors Found:      "; errorCount
+    
+    If errorCount = 0 Then
+        Debug.Print "RESULT: PASS"
+    Else
+        Debug.Print "RESULT: FAIL"
+    End If
+    Debug.Print "======================================="
+End Sub

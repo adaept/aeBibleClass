@@ -10,8 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #445 -
 ' #444 -
 ' #443 -
-' #442 -
-' #441 -
 ' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
 ' #438 - Add an audit routine that validates MaxChapter against this data [impr]
 ' #436 - Check Verse upper bound [feat]
@@ -83,6 +81,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #442 - Verify packed verse map [impr]
+    ' FIXED - #441 - Correct the Production Implementation (Use Packed Map Only) - runtime GetMaxVerse should not call GetVerseCounts() [bug]
     ' FIXED - #440 - Add the packed verse map using GeneratePackedVerseStrings_FromDictionary and call it from function GetPackedVerseMap [feat]
     ' FIXED - #437 - Generate the packed fixed-width strings automatically [impr]
     ' FIXED - #435 - Check Chapter upper bound - See commit 'Update basSBL_Citation_EBNF.bas'
