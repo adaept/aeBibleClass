@@ -302,18 +302,11 @@ Private aliasMap As Object
 '
 ' The design has moved from string parsing to formal citation semantics - a big architectural leap.
 
-' Each chapter is stored as:
-'   Right$("00" & verseCount, 2)
-' So:
-'   1 Print "01"
-'   9 Print "09"
-'   31 Print "31"
-'   176 => would require 3 digits (only Psalm 119 exceeds 99)
 ' Special case:
-'   Psalm 119 has 176 verses => must use 3 digits for Psalms
-'   So we will use:
-'   2-digit packing for all books except Psalms
-'   3-digit packing for Psalms only
+'   Psalm 119 has 176 verses => must use 3 digits for verses
+' Each chapter's verse count is stored as:
+'    - Right$("000" & verseCount, 3)
+'    - Fixed-width 3-digit packing is used for ALL books.
 
 Public Enum CitationMode
     ModeGeneric = 0   ' Accept common abbreviations
