@@ -7,12 +7,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #440 -
-' #439 -
-' #438 -
-' #437 -
-' #436 -
-' #435 - For later: Check Chapter upper bound, Verse upper bound
+' #445 -
+' #444 -
+' #443 -
+' #442 -
+' #441 -
+' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
+' #438 - Add an audit routine that validates MaxChapter against this data [impr]
+' #436 - Check Verse upper bound [feat]
 ' #431 - Freeze parser stub scope, Strengthen semantic validator with tests, Add negative tests, Swap parser stub for real parser
 ' #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr] [opt]
 ' #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
@@ -81,6 +83,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #440 - Add the packed verse map using GeneratePackedVerseStrings_FromDictionary and call it from function GetPackedVerseMap [feat]
+    ' FIXED - #437 - Generate the packed fixed-width strings automatically [impr]
+    ' FIXED - #435 - Check Chapter upper bound - See commit 'Update basSBL_Citation_EBNF.bas'
     ' FIXED - #434 - Add full boundary enforcement: Chapter lower bound, Verse lower bound, Single-chapter special rule
     ' FIXED - #433 - Track failure reason strings (diagnostic only): Do not change control flow, Do not add new layers, Only record why a stage failed
     ' FIXED - #432 - Add negative tests: ResolveBook should succeed, ValidateSBLReference should fail, If ResolveBook fails, that is a test failure, not a pass.
