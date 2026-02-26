@@ -343,9 +343,115 @@ NextTest:
     Debug.Print "======================================"
 End Sub
 
+Public Sub Test_GetMaxVerse()
+
+    Dim failCount As Long
+    Dim result As Long
+    
+    Debug.Print ""
+    Debug.Print "---- Test_GetMaxVerse ----"
+    
+    ' ========================
+    ' POSITIVE TESTS
+    ' ========================
+    
+    On Error GoTo FailHandler
+    
+    result = GetMaxVerse(1, 1)          ' Genesis 1
+    If result <> 31 Then FailTest failCount, "Genesis 1", 31, result
+    
+    result = GetMaxVerse(19, 119)       ' Psalms 119
+    If result <> 176 Then FailTest failCount, "Psalms 119", 176, result
+    
+    result = GetMaxVerse(65, 1)         ' Jude 1
+    If result <> 25 Then FailTest failCount, "Jude 1", 25, result
+    
+    result = GetMaxVerse(66, 22)        ' Revelation 22
+    If result <> 21 Then FailTest failCount, "Revelation 22", 21, result
+    
+    
+    ' ========================
+    ' NEGATIVE TESTS
+    ' ========================
+    
+    On Error Resume Next
+    
+    Err.Clear
+    result = GetMaxVerse(1, 999)
+    If Err.Number = 0 Then
+        Debug.Print "FAIL: Invalid chapter not rejected"
+        failCount = failCount + 1
+    End If
+    Err.Clear
+    
+    result = GetMaxVerse(999, 1)
+    If Err.Number = 0 Then
+        Debug.Print "FAIL: Invalid book not rejected"
+        failCount = failCount + 1
+    End If
+    Err.Clear
+    
+    result = GetMaxVerse(19, 0)
+    If Err.Number = 0 Then
+        Debug.Print "FAIL: Chapter zero not rejected"
+        failCount = failCount + 1
+    End If
+    Err.Clear
+    
+    On Error GoTo 0
+    
+    ' ========================
+    ' SUMMARY
+    ' ========================
+    
+    If failCount = 0 Then
+        Debug.Print "Test_GetMaxVerse: PASS"
+    Else
+        Debug.Print "Test_GetMaxVerse: FAIL (" & failCount & " errors)"
+    End If
+    
+    Exit Sub
+    
+FailHandler:
+    Debug.Print "Unexpected runtime error in Test_GetMaxVerse"
+    Debug.Print "Error: "; Err.Number; Err.Description
+    failCount = failCount + 1
+    Resume Next
+
+End Sub
+
+Private Sub FailTest(ByRef failCount As Long, _
+                     ByVal label As String, _
+                     ByVal expected As Long, _
+                     ByVal actual As Long)
+    Debug.Print "FAIL: "; label; _
+                " Expected="; expected; _
+                " Actual="; actual
+    
+    failCount = failCount + 1
+End Sub
+
 Public Sub Run_All_SBL_Tests()
+    Debug.Print ""
+    Debug.Print "=========================================="
+    Debug.Print " MASTER TEST HARNESS"
+    Debug.Print "=========================================="
+    
+    ' --- Verify structural integrity first ---
+    If Not VerifyPackedVerseMap() Then
+        Debug.Print "ABORTING TESTS: Packed verse map invalid."
+        Exit Sub
+    End If
+    
+    ' --- Run functional tests only if structure valid ---
     ResetBookAliasMap
     Test_AliasCoverage
     Test_SemanticFlow_WithParserStub
+    Test_GetMaxVerse
+    Test_SemanticFlow_WithParserStub_Negative
+    ' Add other test suites here
+    
+    Debug.Print "=========================================="
+    Debug.Print " ALL TESTS COMPLETE"
+    Debug.Print "=========================================="
 End Sub
-
