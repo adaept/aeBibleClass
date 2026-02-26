@@ -556,30 +556,26 @@ End Function
 
 Public Function GetMaxVerse(bookID As Long, Chapter As Long) As Long
     Dim maps As Variant
-    maps = GetPackedVerseMap()
-    
+    maps = GetPackedVerseMap()   ' actually raw map now
+
+    'Debug.Print "Book:", bookID
+    'Debug.Print "LBound:", LBound(maps(bookID))
+    'Debug.Print "UBound:", UBound(maps(bookID))
+    'Debug.Print "Chapter:", Chapter
+
     If bookID < 1 Or bookID > 66 Then
         Err.Raise vbObjectError + 41, , "Invalid BookID"
     End If
-    
-    Dim packed As String
-    packed = maps(bookID)
-    
-    If packed = "" Then
-        Err.Raise vbObjectError + 42, , "Packed verse map missing"
+
+    If Not IsArray(maps(bookID)) Then
+        Err.Raise vbObjectError + 42, , "Chapter map missing"
     End If
-    
-    Dim maxCh As Long
-    maxCh = Len(packed) \ 3
-    
-    If Chapter < 1 Or Chapter > maxCh Then
+
+    If Chapter < 1 Or Chapter > UBound(maps(bookID)) + 1 Then
         Err.Raise vbObjectError + 40, , "Invalid chapter for book"
     End If
     
-    Dim pos As Long
-    pos = (Chapter - 1) * 3 + 1
-    
-    GetMaxVerse = CLng(mid$(packed, pos, 3))
+    GetMaxVerse = maps(bookID)(Chapter - 1)
 End Function
 
 Public Function GetPackedVerseMap() As Variant
