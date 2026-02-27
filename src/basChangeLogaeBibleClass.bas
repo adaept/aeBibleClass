@@ -9,9 +9,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #450 -
 ' #449 -
-' #448 -
-' #447 -
-' #446 -
+' #448 - Stub Must Normalize Single-Chapter Books - Belongs in the Parser (Not Validator)
 ' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
 ' #438 - Add an audit routine that validates MaxChapter against this data [impr]
 ' #436 - Check Verse upper bound [feat]
@@ -83,6 +81,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #447 - Normalize at Data construction boundary - the correct architectural layer
+    ' FIXED - #446 - Enforce 1-Based array usage with assert statements and update documentation
     ' FIXED - #445 - Fix GetMaxVerse for 0 based maps array [regr][bug]
     ' FIXED - #444 - Fix error in dictionary and GetVerseCounts [bug]
     ' FIXED - #443 - Verify Packed map integrity automatically, abort test harness if corrupted, no silent execution, no manual step required

@@ -7,6 +7,110 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Private aliasMap As Object
 
+' Design Goals:
+'
+' 1. VBA coding often causes Type Mismatch and Bounds errors due to 0 vs. 1 based arrays.
+'    Bible books in the Protestant Canon are numbered 1-66.
+'    This design will enforce 1-Based arrays throughout the system and use
+'    Assert statements to raise errors immediately for any 0-Based array usage.
+'
+' 2. Parser Workflow:
+'    The reference engine will follow this strict pipeline:
+'    ------------------------------------------------------------
+'    Stage 1: Input Normalization
+'    ------------------------------------------------------------
+'      - Trim whitespace
+'      - Collapse multiple spaces
+'      - Normalize Unicode punctuation (e.g., smart quotes, en-dash)
+'      - Preserve original input for diagnostics
+'
+'    ------------------------------------------------------------
+'    Stage 2: Lexical Tokenization
+'    ------------------------------------------------------------
+'      - Extract book token(s)
+'      - Extract numeric tokens
+'      - Detect colon separator
+'      - Detect range/list separators (future)
+'      - Output a lightweight token structure
+'
+'      Output:
+'         RawAlias  As String
+'         Num1      As Long
+'         Num2      As Long
+'         HasColon  As Boolean
+'
+'    ------------------------------------------------------------
+'    Stage 3: Alias Resolution
+'    ------------------------------------------------------------
+'      - Normalize alias casing (upper invariant)
+'      - Resolve alias ? BookID (1-66)
+'      - Assert:
+'           BookID >= 1 And BookID <= 66
+'      - Reject ambiguous or unmapped aliases
+'
+'    ------------------------------------------------------------
+'    Stage 4: Structural Interpretation
+'    ------------------------------------------------------------
+'      Apply canonical rules:
+'
+'      If HasColon = True Then
+'          Chapter = Num1
+'          Verse   = Num2
+'      Else
+'          If GetChapterCount(BookID) = 1 Then
+'              Chapter = 1
+'              Verse   = Num1
+'          Else
+'              Chapter = Num1
+'              Verse   = 0  ' chapter-only reference
+'          End If
+'      End If
+'
+'      Assert:
+'          Chapter >= 0
+'          Verse >= 0
+'
+'    ------------------------------------------------------------
+'    Stage 5: Semantic Validation
+'    ------------------------------------------------------------
+'      - Chapter >= 1
+'      - Chapter <= MaxChapter(BookID)
+'      - If Verse > 0:
+'            Verse >= 1
+'            Verse <= MaxVerse(BookID, Chapter)
+'
+'      - All structural arrays must be 1-based:
+'            LBound(chapters) = 1
+'            LBound(verses)   = 1
+'
+'    ------------------------------------------------------------
+'    Stage 6: Canonical Normalization
+'    ------------------------------------------------------------
+'      Produce normalized SBL-style output:
+'
+'          ChapterOnly:  "8"
+'          FullRef:      "8:1"
+'
+'      Do NOT emit Chapter 0 or Verse 0.
+'
+'    ------------------------------------------------------------
+'    Stage 7: Structured Result Object
+'    ------------------------------------------------------------
+'      Return a typed structure:
+'
+'          Type ScriptureRef
+'              BookID    As Long
+'              Chapter   As Long
+'              Verse     As Long
+'              IsValid   As Boolean
+'              ErrorCode As Long
+'              ErrorText As String
+'          End Type
+'
+'      Parser never raises user-facing errors.
+'      Only invariant violations raise internal Err.Raise.
+'
+
 '=======================================
 ' SBL Scripture Citation - Unified EBNF
 '=======================================
@@ -554,14 +658,22 @@ Public Function GetMaxChapter(bookID As Long) As Long
     GetMaxChapter = CLng(b(2))
 End Function
 
+Public Sub AssertOneBased(arr As Variant, context As String)
+    If LBound(arr) <> 1 Then
+        Err.Raise vbObjectError + 900, , _
+            "0-Based array detected in " & context
+    End If
+End Sub
+
 Public Function GetMaxVerse(bookID As Long, Chapter As Long) As Long
     Dim maps As Variant
-    maps = GetPackedVerseMap()   ' actually raw map now
+    maps = GetChapterVerseMap()   ' actually raw map now
 
     'Debug.Print "Book:", bookID
     'Debug.Print "LBound:", LBound(maps(bookID))
     'Debug.Print "UBound:", UBound(maps(bookID))
     'Debug.Print "Chapter:", Chapter
+    AssertOneBased maps(bookID), "GetMaxVerse chapters"
 
     If bookID < 1 Or bookID > 66 Then
         Err.Raise vbObjectError + 41, , "Invalid BookID"
@@ -575,34 +687,33 @@ Public Function GetMaxVerse(bookID As Long, Chapter As Long) As Long
         Err.Raise vbObjectError + 40, , "Invalid chapter for book"
     End If
     
-    GetMaxVerse = maps(bookID)(Chapter - 1)
+    GetMaxVerse = maps(bookID)(Chapter)
 End Function
 
-Public Function GetPackedVerseMap() As Variant
+Public Function GetChapterVerseMap() As Variant
+
     Static cached As Variant
+    
     If isEmpty(cached) Then
+        
         Dim d As Object
         Set d = GetVerseCounts()
         
         Dim maps(1 To 66) As Variant
         Dim bookID As Long
-        Dim chapters As Variant
-        Dim c As Long
-        Dim temp() As Long
         
         For bookID = 1 To 66
-            chapters = d(bookID)
-            ReDim temp(LBound(chapters) To UBound(chapters))  ' create temp array
-            For c = LBound(chapters) To UBound(chapters)
-                temp(c) = chapters(c)                         ' copy each chapter
-            Next c
-            maps(bookID) = temp                               ' assign temp array to element
+            maps(bookID) = d(bookID)
+            AssertOneBased maps(bookID), "GetChapterVerseMap chapters"
         Next bookID
+        
+        AssertOneBased maps, "GetChapterVerseMap books"
         
         cached = maps
     End If
     
-    GetPackedVerseMap = cached
+    GetChapterVerseMap = cached
+    
 End Function
 
 Public Function ValidateSBLReference( _
