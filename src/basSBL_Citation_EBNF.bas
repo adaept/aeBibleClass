@@ -23,6 +23,27 @@ Private aliasMap As Object
 '      - Collapse multiple spaces
 '      - Normalize Unicode punctuation (e.g., smart quotes, en-dash)
 '      - Preserve original input for diagnostics
+'      - Task:
+'           - NormalizeInput(rawInput As String) As String
+'           - NOTE: Full normalization will be implemented in NormalizeInput
+'      - Current Code
+'           - Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
+'        and it is performing:
+'           Stage 1 (partial)
+'           Stage 2 (primitive token split)
+'           Stage 4 (structural interpretation - incomplete: single-chapter inference not fully implemented)
+'      - Tested In:
+'           - Public Sub Test_SemanticFlow_WithParserStub()
+'   CURRENT IMPLEMENTATION STATUS:
+'   - Trim whitespace Y
+'   - Preserve original input Y
+'   - Collapse multiple spaces N (pending)
+'   - Unicode normalization N (pending)
+'
+' NOTE:
+'   Currently implemented inline in ParseReferenceStub.
+'   Will be refactored to:
+'       NormalizeInput(rawInput As String) As String
 '
 '    ------------------------------------------------------------
 '    Stage 2: Lexical Tokenization

@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #455 -
+' #454 -
+' #453 -
+' #452 -
+' #451 -
 ' #450 -
-' #449 -
 ' #448 - Stub Must Normalize Single-Chapter Books - Belongs in the Parser (Not Validator)
 ' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
 ' #438 - Add an audit routine that validates MaxChapter against this data [impr]
@@ -81,6 +85,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #449 - Update documentation to reflect status of Stage 1: Input Normalization [doc]
     ' FIXED - #447 - Normalize at Data construction boundary - the correct architectural layer
     ' FIXED - #446 - Enforce 1-Based array usage with assert statements and update documentation
     ' FIXED - #445 - Fix GetMaxVerse for 0 based maps array [regr][bug]
