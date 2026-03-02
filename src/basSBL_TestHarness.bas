@@ -82,6 +82,17 @@ Public Sub Test_AliasCoverage()
     Debug.Print "==============================="
 End Sub
 
+Public Sub Test_TokenizeReference()
+    Dim t As LexTokens
+    
+    t = TokenizeReference("Jude 1:5")
+    
+    Debug.Assert t.RawAlias = "Jude"
+    Debug.Assert t.Num1 = 1
+    Debug.Assert t.Num2 = 5
+    Debug.Assert t.HasColon = True
+End Sub
+
 Public Sub Test_SemanticFlow_WithParserStub()
     ResetBookAliasMap
 

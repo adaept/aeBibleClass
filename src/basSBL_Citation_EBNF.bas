@@ -48,17 +48,50 @@ Private aliasMap As Object
 '    ------------------------------------------------------------
 '    Stage 2: Lexical Tokenization
 '    ------------------------------------------------------------
-'      - Extract book token(s)
-'      - Extract numeric tokens
-'      - Detect colon separator
-'      - Detect range/list separators (future)
-'      - Output a lightweight token structure
-'
-'      Output:
-'         RawAlias  As String
-'         Num1      As Long
-'         Num2      As Long
-'         HasColon  As Boolean
+'    PURPOSE:
+'       Convert normalized input string into primitive lexical tokens.
+'       This stage performs ZERO semantic interpretation.
+'    INPUT:
+'       normalizedInput As String
+'           (Output of Stage 1: NormalizeInput)
+'    CURRENT IMPLEMENTATION:
+'       Public Function TokenizeReference(ByVal normalizedInput As String) As LexTokens
+'    CURRENT BEHAVIOR:
+'       - Splits on single space
+'       - First token => RawAlias
+'       - Second token (if present) => numeric reference block
+'       - Detects colon separator
+'       - Extracts up to two numeric values
+'    OUTPUT STRUCTURE:
+'       Type LexTokens
+'           RawAlias As String   ' First token only (multi-word books NOT yet supported)
+'           Num1     As Long     ' Chapter OR single numeric
+'           Num2     As Long     ' Verse if colon present, else 0
+'           HasColon As Boolean  ' True if ":" detected
+'       End Type
+'    LIMITATIONS (INTENTIONAL - STAGE 3 WILL HANDLE):
+'       - Multi-word book names (e.g., "1 John", "Song of Solomon")
+'       - Range detection (1-3)
+'       - List detection (1,3,5)
+'       - Validation of numeric correctness
+'       - Canonical resolution of alias
+'    DESIGN RULE:
+'       Stage 2 extracts structure only.
+'       Stage 3 will interpret meaning.
+'    TEST HARNESS:
+'       Public Sub Test_TokenizeReference()
+'    STATUS:
+'       Y Book token extraction
+'       Y Numeric extraction (single or colon pair)
+'       Y Colon detection
+'       N Range/list parsing (future)
+'       N Multi-token book support (future)
+'    ASSUMPTION:
+'         Stage 1 guarantees single-space separation.
+'    NOTE:
+'       No numeric validation is performed here.
+'       Invalid numeric strings will raise runtime error.
+'       Validation belongs to Stage 3.
 '
 '    ------------------------------------------------------------
 '    Stage 3: Alias Resolution
@@ -441,6 +474,44 @@ End Enum
 Public Sub ResetBookAliasMap()
     Set aliasMap = Nothing
 End Sub
+
+Public Function TokenizeReference(ByVal normalizedInput As String) As LexTokens
+    
+    Dim t As LexTokens
+    
+    Dim parts() As String
+    parts = Split(normalizedInput, " ")
+    
+    '----------------------------------
+    ' Book alias (first token only)
+    ' NOTE: multi-token books not yet implemented
+    '----------------------------------
+    t.RawAlias = parts(0)
+    
+    If UBound(parts) = 0 Then
+        TokenizeReference = t
+        Exit Function
+    End If
+    
+    Dim refPart As String
+    refPart = parts(1)
+    
+    If InStr(refPart, ":") > 0 Then
+        Dim subParts() As String
+        subParts = Split(refPart, ":")
+        
+        t.Num1 = CLng(subParts(0))
+        t.Num2 = CLng(subParts(1))
+        t.HasColon = True
+    Else
+        t.Num1 = CLng(refPart)
+        t.Num2 = 0
+        t.HasColon = False
+    End If
+    
+    TokenizeReference = t
+    
+End Function
 
 Public Function IsValidSBLAlias(bookID As Long, aliasText As String) As Boolean
     Dim canonical As String

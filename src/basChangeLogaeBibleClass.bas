@@ -10,9 +10,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #455 -
 ' #454 -
 ' #453 -
-' #452 -
-' #451 -
-' #450 -
+' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
+' #451 - Refactor ParseReferenceStub into proper stage calls
+'           normalized = NormalizeInput(input), tokens = TokenizeReference(normalized), parsed = InterpretTokens(tokens)
 ' #448 - Stub Must Normalize Single-Chapter Books - Belongs in the Parser (Not Validator)
 ' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
 ' #438 - Add an audit routine that validates MaxChapter against this data [impr]
@@ -85,6 +85,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #450 - Update doc and architectural structure for Stage 2: Lexical Tokenization
     ' FIXED - #449 - Update documentation to reflect status of Stage 1: Input Normalization [doc]
     ' FIXED - #447 - Normalize at Data construction boundary - the correct architectural layer
     ' FIXED - #446 - Enforce 1-Based array usage with assert statements and update documentation

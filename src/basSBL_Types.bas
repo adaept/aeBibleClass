@@ -9,3 +9,10 @@ Public Type ParsedReference
     VerseSpec  As String   ' always string ("5", "1-3", "3,5")
 End Type
 
+Public Type LexTokens
+    RawAlias As String
+    Num1     As Long
+    Num2     As Long
+    HasColon As Boolean
+End Type
+
