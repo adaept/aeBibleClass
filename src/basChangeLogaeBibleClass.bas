@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #460 -
+' #459 -
+' #458 -
+' #457 -
+' #456 -
 ' #455 -
-' #454 -
-' #453 -
+' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
 ' #451 - Refactor ParseReferenceStub into proper stage calls
 '           normalized = NormalizeInput(input), tokens = TokenizeReference(normalized), parsed = InterpretTokens(tokens)
@@ -85,6 +89,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #454 - Update documentation pipeline overview of 7 stages
     ' FIXED - #450 - Update doc and architectural structure for Stage 2: Lexical Tokenization
     ' FIXED - #449 - Update documentation to reflect status of Stage 1: Input Normalization [doc]
     ' FIXED - #447 - Normalize at Data construction boundary - the correct architectural layer

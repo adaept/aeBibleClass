@@ -14,10 +14,28 @@ Private aliasMap As Object
 '    This design will enforce 1-Based arrays throughout the system and use
 '    Assert statements to raise errors immediately for any 0-Based array usage.
 '
-' 2. Parser Workflow:
-'    The reference engine will follow this strict pipeline:
-'    ------------------------------------------------------------
+' 2. Parser Workflow (Pipeline Overview)
+'    The reference engine follows a strict multi-stage pipeline.
+'    Each stage has a single responsibility.
+'    No stage may perform work assigned to another stage.
+'
 '    Stage 1: Input Normalization
+'    Stage 2: Lexical Tokenization
+'    Stage 3: Alias Resolution
+'    Stage 4: Structural Interpretation
+'    Stage 5: Semantic Validation
+'    Stage 6: Canonical Normalization
+'    Stage 7: Structured Result Object
+'
+'    Design Principle:
+'       Later stages may depend on earlier stages.
+'       Earlier stages must never depend on later stages.
+'    Invariant:
+'       No user-facing errors are raised during parsing.
+'       Only internal invariant violations may Err.Raise.
+'
+'    ------------------------------------------------------------
+'    Stage 1: Input Normalization (Normalize)
 '    ------------------------------------------------------------
 '      - Trim whitespace
 '      - Collapse multiple spaces
@@ -46,7 +64,7 @@ Private aliasMap As Object
 '       NormalizeInput(rawInput As String) As String
 '
 '    ------------------------------------------------------------
-'    Stage 2: Lexical Tokenization
+'    Stage 2: Lexical Tokenization (Tokenize)
 '    ------------------------------------------------------------
 '    PURPOSE:
 '       Convert normalized input string into primitive lexical tokens.
@@ -93,76 +111,187 @@ Private aliasMap As Object
 '       Invalid numeric strings will raise runtime error.
 '       Validation belongs to Stage 3.
 '
-'    ------------------------------------------------------------
-'    Stage 3: Alias Resolution
-'    ------------------------------------------------------------
-'      - Normalize alias casing (upper invariant)
-'      - Resolve alias ? BookID (1-66)
-'      - Assert:
-'           BookID >= 1 And BookID <= 66
-'      - Reject ambiguous or unmapped aliases
+'   ------------------------------------------------------------
+'   Stage 3: Alias Resolution (Resolve Alias => BookID
+'   ------------------------------------------------------------
+'   PURPOSE:
+'       Resolve lexical alias to canonical BookID.
+'   INPUT:
+'       tokens.RawAlias
+'   OUTPUT:
+'       BookID As Long
+'   RESPONSIBILITIES:
+'       - Uppercase normalization
+'       - Alias dictionary lookup
+'       - Reject unknown alias
+'       - Reject ambiguous alias
+'   DOES NOT:
+'       - Interpret numeric meaning
+'       - Validate chapter/verse
+'
+'    -----------------------------------------------------------------
+'    Stage 4: Structural Interpretation (Determine structural meaning)
+'    -----------------------------------------------------------------
+'    PURPOSE:
+'       Convert lexical numeric tokens into structural Chapter/Verse
+'       values using canonical metadata (BookID).
+'    INPUT:
+'       BookID   As Long
+'       tokens   As LexTokens
+'    OUTPUT:
+'       Chapter  As Long
+'       Verse    As Long
+'    RESPONSIBILITY:
+'       Determine structural meaning ONLY.
+'       Do NOT perform bounds validation.
+'    LOGIC:
+'       If tokens.HasColon = True Then
+'           Chapter = tokens.Num1
+'           Verse   = tokens.Num2
+'       Else
+'           If GetChapterCount(BookID) = 1 Then
+'               ' Single-chapter book (e.g., Jude)
+'               Chapter = 1
+'               Verse   = tokens.Num1
+'           Else
+'               ' Multi-chapter book
+'               Chapter = tokens.Num1
+'               Verse   = 0   ' Chapter-only reference
+'           End If
+'       End If
+'    STRUCTURAL ASSERTIONS (not semantic validation):
+'       Chapter >= 0
+'       Verse   >= 0
+'    IMPORTANT:
+'       Stage 4 determines structure only.
+'       Stage 5 validates:
+'           - Chapter >= 1
+'           - Chapter <= MaxChapter(BookID)
+'           - Verse bounds
+'    DESIGN RULE:
+'       Structural interpretation must not depend on
+'       chapter/verse bounds.
 '
 '    ------------------------------------------------------------
-'    Stage 4: Structural Interpretation
+'    Stage 5: Semantic Validation (Validate against canon)
 '    ------------------------------------------------------------
-'      Apply canonical rules:
-'
-'      If HasColon = True Then
-'          Chapter = Num1
-'          Verse   = Num2
-'      Else
-'          If GetChapterCount(BookID) = 1 Then
-'              Chapter = 1
-'              Verse   = Num1
-'          Else
-'              Chapter = Num1
-'              Verse   = 0  ' chapter-only reference
-'          End If
-'      End If
-'
-'      Assert:
-'          Chapter >= 0
-'          Verse >= 0
-'
-'    ------------------------------------------------------------
-'    Stage 5: Semantic Validation
-'    ------------------------------------------------------------
-'      - Chapter >= 1
-'      - Chapter <= MaxChapter(BookID)
-'      - If Verse > 0:
-'            Verse >= 1
-'            Verse <= MaxVerse(BookID, Chapter)
-'
-'      - All structural arrays must be 1-based:
-'            LBound(chapters) = 1
-'            LBound(verses)   = 1
-'
-'    ------------------------------------------------------------
-'    Stage 6: Canonical Normalization
-'    ------------------------------------------------------------
-'      Produce normalized SBL-style output:
-'
-'          ChapterOnly:  "8"
-'          FullRef:      "8:1"
-'
-'      Do NOT emit Chapter 0 or Verse 0.
+'    PURPOSE:
+'       Validate structural Chapter/Verse values against
+'       canonical book metadata.
+'    INPUT:
+'       BookID   As Long
+'       Chapter  As Long
+'       Verse    As Long
+'    OUTPUT:
+'       IsValid   As Boolean
+'       ErrorCode As Long
+'       ErrorText As String
+'    VALIDATION RULES:
+'       1. Chapter must be within canonical bounds:
+'               Chapter >= 1
+'               Chapter <= MaxChapter(BookID)
+'       2. Verse rules:
+'           If Verse = 0 Then
+'               ' Chapter-only reference ? valid if Chapter valid
+'           If Verse > 0 Then
+'               Verse >= 1
+'               Verse <= MaxVerse(BookID, Chapter)
+'    CANONICAL ARRAY INVARIANTS:
+'       - Chapter metadata arrays must be 1-based
+'             LBound(chapterArray) = 1
+'       - Verse metadata arrays must be 1-based
+'             LBound(verseArray) = 1
+'       These are internal invariants.
+'       Violations raise Err.Raise (engine defect).
+'    FAILURE MODEL:
+'       - Validation failures do NOT raise runtime errors.
+'       - Instead:
+'             IsValid   = False
+'             ErrorCode = <defined constant>
+'             ErrorText = <human-readable explanation>
+'       - Only invariant violations (engine corruption)
+'         may raise Err.Raise.
+'    DESIGN RULE:
+'       Stage 5 enforces canonical correctness.
+'       It must not alter Chapter or Verse.
 '
 '    ------------------------------------------------------------
-'    Stage 7: Structured Result Object
+'    Stage 6: Canonical Normalization (Output Formatting)
 '    ------------------------------------------------------------
-'      Return a typed structure:
+'    PURPOSE:
+'       Convert validated structural values into a canonical
+'       SBL-style reference string.
+'    INPUT:
+'       BookID  As Long
+'       Chapter As Long
+'       Verse   As Long
+'    PRECONDITION:
+'       Stage 5 validation has succeeded.
+'       Chapter and Verse are canonically valid.
+'    OUTPUT:
+'       NormalizedRef As String
+'    FORMAT RULES:
+'       If Verse = 0 Then
+'           NormalizedRef = CStr(Chapter)
+'       If Verse > 0 Then
+'           NormalizedRef = CStr(Chapter) & ":" & CStr(Verse)
+'    EXAMPLES:
+'       Chapter-only reference:
+'           "8"
+'       Full reference:
+'           "8:1"
+'    RESTRICTIONS:
+'       - Do NOT emit Chapter = 0
+'       - Do NOT emit Verse   = 0 in output
+'       - Do NOT perform validation here
+'       - Do NOT modify structural values
+'    DESIGN RULE:
+'       Stage 6 is pure formatting.
+'       It must not depend on canonical metadata.
 '
-'          Type ScriptureRef
-'              BookID    As Long
-'              Chapter   As Long
-'              Verse     As Long
-'              IsValid   As Boolean
-'              ErrorCode As Long
-'              ErrorText As String
-'          End Type
-'
-'      Parser never raises user-facing errors.
-'      Only invariant violations raise internal Err.Raise.
+'    ------------------------------------------------------------
+'    Stage 7: Structured Result Object (Emit Result)
+'    ------------------------------------------------------------
+'    PURPOSE:
+'       Produce the final typed result object returned by the parser.
+'    INPUT:
+'       BookID    As Long
+'       Chapter   As Long
+'       Verse     As Long
+'       IsValid   As Boolean
+'       ErrorCode As Long
+'       ErrorText As String
+'    OUTPUT:
+'       Type ScriptureRef
+'           BookID    As Long
+'           Chapter   As Long
+'           Verse     As Long
+'           IsValid   As Boolean
+'           ErrorCode As Long
+'           ErrorText As String
+'       End Type
+'    OBJECT STATE RULES:
+'       If IsValid = True Then
+'           ErrorCode = 0
+'           ErrorText = ""
+'       If IsValid = False Then
+'           BookID may be 0
+'           Chapter and Verse may be 0
+'           ErrorCode must be non-zero
+'           ErrorText must describe the failure
+'    FAILURE MODEL:
+'       - The parser NEVER raises user-facing runtime errors.
+'       - All user input errors are reported via:
+'             IsValid   = False
+'             ErrorCode <> 0
+'             ErrorText <> ""
+'       - Only internal invariant violations
+'         (e.g., corrupted canonical metadata)
+'         may raise Err.Raise.
+'    DESIGN RULE:
+'       Stage 7 performs no parsing, no validation,
+'       and no formatting.
+'       It only packages the final state.
 '
 
 '=======================================
