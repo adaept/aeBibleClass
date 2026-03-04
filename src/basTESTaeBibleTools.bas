@@ -422,13 +422,13 @@ Sub ListNonMainFonts_ByParagraph()
     If fontDict.count = 0 Then
         MsgBox "No fonts found outside main text.", vbInformation
     Else
-        Dim output As String, key As Variant
-        output = "Fonts outside main document text:" & vbCrLf & vbCrLf
+        Dim Output As String, key As Variant
+        Output = "Fonts outside main document text:" & vbCrLf & vbCrLf
         For Each key In fontDict.Keys
-            output = output & "- " & key & vbCrLf
+            Output = Output & "- " & key & vbCrLf
         Next key
         'MsgBox output, vbInformation, "Non-Main Fonts"
-        Debug.Print output
+        Debug.Print Output
     End If
 End Sub
 

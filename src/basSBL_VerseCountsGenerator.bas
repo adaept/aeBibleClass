@@ -189,8 +189,8 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
     Dim totalExpected As Long
     Dim diff As Long
     
-    Dim isValid As Boolean
-    isValid = True
+    Dim IsValid As Boolean
+    IsValid = True
     
     ' Load packed map
     packedArr = GetChapterVerseMap()
@@ -224,7 +224,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
         diff = chapterCount - expectedChapters
         
         If diff <> 0 Then
-            isValid = False
+            IsValid = False
         End If
         
         If verbose Then
@@ -237,7 +237,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
     Next bookID
     
     If totalChapters <> totalExpected Then
-        isValid = False
+        IsValid = False
     End If
     
     If verbose Then
@@ -247,7 +247,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
         Debug.Print "DIFFERENCE:              " & (totalChapters - totalExpected)
     End If
     
-    VerifyPackedVerseMap = isValid
+    VerifyPackedVerseMap = IsValid
 
 End Function
 

@@ -169,9 +169,9 @@ Public Sub Test_SemanticFlow_WithParserStub()
         ' Semantic Validation Phase (SBL)
         '---------------------------------------
         Dim semanticMsg As String
-        Dim isValid As Boolean
+        Dim IsValid As Boolean
 
-        isValid = ValidateSBLReference( _
+        IsValid = ValidateSBLReference( _
                     bookID, _
                     bookName, _
                     parsed.Chapter, _
@@ -179,9 +179,9 @@ Public Sub Test_SemanticFlow_WithParserStub()
                     ModeSBL)
 
         Debug.Print "  ValidateSBLReference:"
-        Debug.Print "    -> Valid: "; isValid
+        Debug.Print "    -> Valid: "; IsValid
 
-        If isValid <> tests(i)(2) Then
+        If IsValid <> tests(i)(2) Then
             Debug.Print "  FAIL: semantic validity mismatch"
             testFailed = True
         End If
@@ -189,7 +189,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
         '---------------------------------------
         ' Rewrite Phase (single-chapter books)
         '---------------------------------------
-        If isValid Then
+        If IsValid Then
             Dim rewritten As String
             rewritten = RewriteSingleChapterRef( _
                             bookID, _
@@ -326,9 +326,9 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
         ' -----------------------------
         ' Semantic validation phase
         ' -----------------------------
-        Dim isValid As Boolean
+        Dim IsValid As Boolean
 
-        isValid = ValidateSBLReference( _
+        IsValid = ValidateSBLReference( _
                     bookID, _
                     bookName, _
                     parsed.Chapter, _
@@ -336,9 +336,9 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
                     ModeSBL)
 
         Debug.Print "  ValidateSBLReference:"
-        Debug.Print "    -> Valid: "; isValid
+        Debug.Print "    -> Valid: "; IsValid
 
-        If isValid <> tests(i)(1) Then
+        If IsValid <> tests(i)(1) Then
             Debug.Print "  FAIL: expected validity = "; tests(i)(1)
             failures = failures + 1
         Else

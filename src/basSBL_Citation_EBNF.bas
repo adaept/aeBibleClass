@@ -436,12 +436,41 @@ Private aliasMap As Object
 '       It only packages the final canonical state.
 '       ScriptureRef is immutable after return.
 '
+'   =======================================
+'   Extension Strategy Overview
+'   =======================================
+'   Introduce the following:
+'   -  Core Reference Engine (Stages 1-7)
+'   => Extension Layer (Optional)
+'   => Extended Result Object
+'   NOTE: The core parser remains untouched and deterministic.
+'   See - basSBL_Citation_EBNF_Extension
 
-'=======================================
-' SBL Scripture Citation - Unified EBNF
-'=======================================
+'=====================================================
+' SBL Scripture Citation - Structural EBNF
+' Aligned to 7-Stage Deterministic Parser
+'=====================================================
+' PURPOSE:
+'   Defines structural syntax only.
+'   No semantic validation is expressed here.
+'   Canonical bounds enforcement occurs in Stage 5.
+' NOTE:
+'   This grammar describes lexical and structural form.
+'   It does NOT:
+'       - Validate book identity
+'       - Validate chapter/verse bounds
+'       - Normalize aliases
+'       - Enforce canonical metadata
+'=====================================================
+' Top-Level
+'=====================================================
 ' Citation
 '    ::= WS? Reference (WS? RefSep WS? Reference)* WS?
+' RefSep
+'    ::= ";" | ","
+'=====================================================
+' Core Reference
+'=====================================================
 ' Reference
 '    ::= BookRef (WS ChapterSpec)?
 ' BookRef
@@ -452,12 +481,19 @@ Private aliasMap As Object
 '    ::= "1" | "2" | "3"
 ' RomanPrefix
 '    ::= "I" | "II" | "III"
-' NOTE: Prefix may be adjacent to BookWord (e.g., "1John", "IJohn")
+' NOTE:
+'   Prefix may be adjacent to BookName
+'   (e.g., "1John", "IJohn")
 ' BookName
 '    ::= BookWord (WS BookWord)*
 ' BookWord
-'    ::= Letter+ ("." )?
-' NOTE: BOOK_WORD may include a trailing . but never internal punctuation
+'    ::= Letter+ "."?
+' CONSTRAINT (Structural Only):
+'   - No internal punctuation.
+'   - Trailing period permitted.
+'=====================================================
+' Chapter / Verse Structure
+'=====================================================
 ' ChapterSpec
 '    ::= Chapter
 '     | Chapter ":" VerseSpec
@@ -473,35 +509,62 @@ Private aliasMap As Object
 '    ::= Verse | VerseRange
 ' VerseRange
 '    ::= Verse "-" Verse
-' Verse
-'    ::= Digit+ VerseSuffix?
-' NOTE: VerseSuffix letters (e.g., "a", "b") are captured
-'       during tokenization and validated in post-processing
-' VerseSuffix
-'    ::= Letter
+'=====================================================
+' Atomic Numeric Units
+'=====================================================
 ' Chapter
 '    ::= Digit+
-' RefSep
-'    ::= ";" | ","
+' Verse
+'    ::= Digit+ VerseSuffix?
+' VerseSuffix
+'    ::= Letter
+' NOTE:
+'   VerseSuffix (e.g., "a", "b") is lexically captured.
+'   Canonical validity is enforced post-parse.
+'=====================================================
+' Lexical Primitives
+'=====================================================
 ' WS
 '    ::= " " { " " }
 ' Letter
 '    ::= "A"..."Z" | "a"..."z"
 ' Digit
 '    ::= "0"..."9"
+'=====================================================
+' Parser Alignment Notes
+'=====================================================
+' Stage 2:
+'   Performs tokenization according to this grammar.
+' Stage 3:
+'   Resolves BookRef ? BookID via alias dictionary.
+' Stage 4:
+'   Interprets structural meaning:
+'       - Chapter-only
+'       - Chapter:Verse
+'       - Single-chapter inference (semantic layer)
+' Stage 5:
+'   Enforces semantic constraints:
+'       - AliasFound = True
+'       - Chapter >= 1
+'       - Chapter <= MaxChapter(BookID)
+'       - Verse bounds
+' Stage 6:
+'   Produces canonical SBL formatting.
+' Stage 7:
+'   Emits immutable ScriptureRef result object.
+'=====================================================
+' Canonical Normal Form (Post-Validation Output)
+'=====================================================
+' Single reference:
+'     <CanonicalBookName> <Chapter>
+'     <CanonicalBookName> <Chapter>:<Verse>
+' Lists and ranges preserve structural form
+' after semantic validation.
+'=====================================================
 ' NOTE: This DFA validates structural syntax only.
 '       Semantic constraints are enforced post-parse.
 '=====================================================
-' Embedded Extension Hooks (Implicit but Intentional)
-'=====================================================
-' The grammar is designed to allow future expansion without structural change:
-' Single-chapter books > semantic rewrite (Jude 5 ? Jude 1:5)
-' Abbreviations / aliases > BookWord resolution table
-' Verse lists & ranges > already supported
-' Multiple references > ; and ,
-' Roman numeral normalization > Prefix
-' Language variants > alternate BookName lexemes
-' Pericope titles / version tags > append after Reference
+
 '=====================================================
 ' Canonical Normal Form (Post-Parse Contract)
 '=====================================================
