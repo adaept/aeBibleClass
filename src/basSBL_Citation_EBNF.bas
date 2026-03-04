@@ -7,12 +7,51 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Private aliasMap As Object
 
+' ================================================================
+' SCRIPTURE REFERENCE PARSER - FORMAL CONTRACT
+' ================================================================
+' 1. ParseReference(rawInput As String) is a total function:
+'       It returns exactly one ScriptureRef for every input string.
+' 2. The parser never raises user-facing runtime errors.
+' 3. All user input errors are reported via ScriptureRef:
+'       IsValid=False, ErrorCode<>0, ErrorText<>"".
+' 4. If IsValid=True then:
+'       BookID => [1..66],
+'       Chapter >= 1,
+'       Verse >= 0,
+'       ErrorCode=0,
+'       ErrorText="",
+'       NormalizedRef<>"".
+' 5. If IsValid=False then:
+'       NormalizedRef="", ErrorCode<>0.
+' 6. Raw input is discarded; no input text is preserved.
+' 7. Each stage (1-7) is single-responsibility and side-effect free.
+' 8. No stage performs responsibilities assigned to another stage.
+' 9. Canonical metadata is authoritative and immutable.
+'10. Validation is deterministic: first failure wins.
+'11. Formatting is canonical SBL-style and alias-independent.
+'12. Only internal invariant violations may raise Err.Raise.
+'
+' ================================================================
 ' Design Goals:
 '
 ' 1. VBA coding often causes Type Mismatch and Bounds errors due to 0 vs. 1 based arrays.
 '    Bible books in the Protestant Canon are numbered 1-66.
-'    This design will enforce 1-Based arrays throughout the system and use
-'    Assert statements to raise errors immediately for any 0-Based array usage.
+'    This design will enforce 1-Based arrays throughout the system and use Assert statements
+'    to raise errors immediately for any 0-Based array usage.
+'    It makem sure that the code and documentation are in synch, so strict task separation is used.
+'    The test harness should follow the same principle, and documentation be updated to include
+'    code routine names as part of the development strategy.
+' 1a. - We are building:
+'       - A disciplined, testable VBA module(s)
+'       - With documentation synchronized to code
+'       - With stage-specific harness testing
+'       - With architectural clarity as a primary goal
+'       - For a validation-heavy parser, stage isolation is gold.
+'     - That creates:
+'       - A formal trace from documentation => procedure
+'       - A test harness entry point per stage
+'       - A maintenance roadmap.
 '
 ' 2. Parser Workflow (Pipeline Overview)
 '    The reference engine follows a strict multi-stage pipeline.
@@ -37,31 +76,39 @@ Private aliasMap As Object
 '    ------------------------------------------------------------
 '    Stage 1: Input Normalization (Normalize)
 '    ------------------------------------------------------------
-'      - Trim whitespace
-'      - Collapse multiple spaces
-'      - Normalize Unicode punctuation (e.g., smart quotes, en-dash)
-'      - Preserve original input for diagnostics
-'      - Task:
-'           - NormalizeInput(rawInput As String) As String
-'           - NOTE: Full normalization will be implemented in NormalizeInput
-'      - Current Code
-'           - Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
-'        and it is performing:
-'           Stage 1 (partial)
-'           Stage 2 (primitive token split)
-'           Stage 4 (structural interpretation - incomplete: single-chapter inference not fully implemented)
-'      - Tested In:
-'           - Public Sub Test_SemanticFlow_WithParserStub()
-'   CURRENT IMPLEMENTATION STATUS:
-'   - Trim whitespace Y
-'   - Preserve original input Y
-'   - Collapse multiple spaces N (pending)
-'   - Unicode normalization N (pending)
-'
-' NOTE:
-'   Currently implemented inline in ParseReferenceStub.
-'   Will be refactored to:
-'       NormalizeInput(rawInput As String) As String
+'    PURPOSE:
+'       Normalize raw input string into a canonical internal
+'       working form suitable for tokenization.
+'    INPUT:
+'       rawInput As String
+'    OUTPUT:
+'       normalizedInput As String
+'    RESPONSIBILITIES:
+'       - Trim leading/trailing whitespace
+'       - Collapse multiple internal spaces to single space
+'       - Normalize Unicode punctuation (e.g., smart quotes, en-dash)
+'    NON-RESPONSIBILITIES:
+'       - No alias resolution
+'       - No numeric parsing
+'       - No structural interpretation
+'       - No validation
+'       - No logging or diagnostic preservation
+'    DESIGN DECISION:
+'       Raw input is NOT preserved.
+'       The parser is intentionally stateless and does not
+'       retain original user input.
+'    FAILURE MODEL:
+'       - Never raises user-facing errors.
+'       - Returns normalized string (possibly empty).
+'    CURRENT IMPLEMENTATION STATUS:
+'       - Trim whitespace Y
+'       - Preserve original input N (intentionally omitted)
+'       - Collapse multiple spaces N (pending)
+'       - Unicode normalization N (pending)
+'    NOTE:
+'       Currently partially implemented inline in ParseReferenceStub.
+'       Will be refactored to:
+'           NormalizeInput(rawInput As String) As String
 '
 '    ------------------------------------------------------------
 '    Stage 2: Lexical Tokenization (Tokenize)
@@ -79,55 +126,108 @@ Private aliasMap As Object
 '       - First token => RawAlias
 '       - Second token (if present) => numeric reference block
 '       - Detects colon separator
-'       - Extracts up to two numeric values
+'       - Extracts up to two numeric substrings
 '    OUTPUT STRUCTURE:
 '       Type LexTokens
-'           RawAlias As String   ' First token only (multi-word books NOT yet supported)
-'           Num1     As Long     ' Chapter OR single numeric
-'           Num2     As Long     ' Verse if colon present, else 0
-'           HasColon As Boolean  ' True if ":" detected
+'           RawAlias    As String
+'           Num1        As Long
+'           Num2        As Long
+'           HasColon    As Boolean
+'           Num1IsValid As Boolean
+'           Num2IsValid As Boolean
 '       End Type
+'    NUMERIC HANDLING RULE:
+'       - Numeric conversion must NEVER raise runtime errors.
+'       - Use safe parsing (e.g., IsNumeric check or guarded CLng).
+'       - If conversion fails:
+'             NumXIsValid = False
+'             NumX = 0
+'       Stage 2 does NOT determine whether values are
+'       canonically valid - only whether they are numeric.
 '    LIMITATIONS (INTENTIONAL - STAGE 3 WILL HANDLE):
 '       - Multi-word book names (e.g., "1 John", "Song of Solomon")
 '       - Range detection (1-3)
 '       - List detection (1,3,5)
-'       - Validation of numeric correctness
-'       - Canonical resolution of alias
+'       - Canonical validation of chapter/verse
+'       - Alias resolution
 '    DESIGN RULE:
-'       Stage 2 extracts structure only.
-'       Stage 3 will interpret meaning.
+'       Stage 2 extracts lexical structure only.
+'       Stage 2 NEVER raises runtime errors for malformed input.
+'       Stage 3 interprets meaning.
+'    ASSUMPTION:
+'         Stage 1 guarantees single-space separation.
+'    FAILURE MODEL:
+'       - Invalid numeric text does NOT raise error.
+'       - Invalid numeric text is structurally flagged.
+'       - Structural errors are interpreted in Stage 3.
 '    TEST HARNESS:
 '       Public Sub Test_TokenizeReference()
 '    STATUS:
 '       Y Book token extraction
 '       Y Numeric extraction (single or colon pair)
 '       Y Colon detection
+'       Y Safe numeric parsing (required)
 '       N Range/list parsing (future)
 '       N Multi-token book support (future)
-'    ASSUMPTION:
-'         Stage 1 guarantees single-space separation.
-'    NOTE:
-'       No numeric validation is performed here.
-'       Invalid numeric strings will raise runtime error.
-'       Validation belongs to Stage 3.
 '
-'   ------------------------------------------------------------
-'   Stage 3: Alias Resolution (Resolve Alias => BookID
-'   ------------------------------------------------------------
-'   PURPOSE:
-'       Resolve lexical alias to canonical BookID.
-'   INPUT:
-'       tokens.RawAlias
-'   OUTPUT:
-'       BookID As Long
-'   RESPONSIBILITIES:
-'       - Uppercase normalization
-'       - Alias dictionary lookup
-'       - Reject unknown alias
-'       - Reject ambiguous alias
-'   DOES NOT:
-'       - Interpret numeric meaning
-'       - Validate chapter/verse
+'    ------------------------------------------------------------
+'    Stage 3: Alias Resolution (Resolve Book Identity)
+'    ------------------------------------------------------------
+'    PURPOSE:
+'       Resolve RawAlias into canonical BookID.
+'       Preserve lexical numeric tokens without interpreting them.
+'    INPUT:
+'       LexTokens
+'           RawAlias    As String
+'           Num1        As Long
+'           Num2        As Long
+'           HasColon    As Boolean
+'           Num1IsValid As Boolean
+'           Num2IsValid As Boolean
+'    OUTPUT:
+'       Type ParsedRef
+'           BookID      As Long   ' 0 if alias unresolved
+'           AliasFound  As Boolean
+'           ' Forwarded lexical state (UNINTERPRETED)
+'           Num1        As Long
+'           Num2        As Long
+'           HasColon    As Boolean
+'           Num1IsValid As Boolean
+'           Num2IsValid As Boolean
+'           ' Structural fields NOT assigned in Stage 3
+'           Chapter     As Long   ' Uninitialized here
+'           Verse       As Long   ' Uninitialized here
+'       End Type
+'    RESPONSIBILITIES:
+'       1. Normalize RawAlias (case-insensitive lookup).
+'       2. Lookup alias in canonical alias dictionary.
+'       3. If found:
+'              BookID = canonical ID (1-66)
+'              AliasFound = True
+'          If NOT found:
+'              BookID = 0
+'              AliasFound = False
+'       4. Forward Num1/Num2/HasColon and validity flags unchanged.
+'    NON-RESPONSIBILITIES:
+'       - Does NOT assign Chapter or Verse.
+'       - No structural interpretation.
+'       - No chapter/verse validation.
+'       - No canonical bounds checking.
+'       - No formatting.
+'    FAILURE PROPAGATION RULE:
+'       Stage 3 NEVER raises runtime errors.
+'       Alias resolution failure does NOT terminate parsing.
+'       Instead:
+'           AliasFound = False
+'           BookID     = 0
+'       Lexical numeric failures are preserved and forwarded.
+'    DESIGN INVARIANT:
+'       BookID = 0 is the ONLY legal representation
+'       of unresolved book identity.
+'       No negative BookID values.
+'    DESIGN RULE:
+'       Stage 3 establishes canonical identity ONLY.
+'       Structural meaning begins in Stage 4.
 '
 '    -----------------------------------------------------------------
 '    Stage 4: Structural Interpretation (Determine structural meaning)
@@ -136,151 +236,189 @@ Private aliasMap As Object
 '       Convert lexical numeric tokens into structural Chapter/Verse
 '       values using canonical metadata (BookID).
 '    INPUT:
-'       BookID   As Long
-'       tokens   As LexTokens
-'    OUTPUT:
-'       Chapter  As Long
-'       Verse    As Long
+'       ParsedRef from Stage 3:
+'           BookID
+'           AliasFound
+'           Num1
+'           Num2
+'           Num1IsValid
+'           Num2IsValid
+'           HasColon
+'    OUTPUT (updates ParsedRef):
+'           Chapter As Long
+'           Verse   As Long
 '    RESPONSIBILITY:
-'       Determine structural meaning ONLY.
-'       Do NOT perform bounds validation.
+'       Stage 4 is the SOLE owner of structural interpretation.
+'       It assigns Chapter and Verse exactly once.
+'    PRECONDITION:
+'       None. Must tolerate:
+'           - BookID = 0
+'           - Invalid numeric tokens
 '    LOGIC:
-'       If tokens.HasColon = True Then
-'           Chapter = tokens.Num1
-'           Verse   = tokens.Num2
-'       Else
+'       ' Default structural assignment (no metadata reliance)
+'       Chapter = Num1
+'       Verse   = 0
+'       ' If colon present, explicit Chapter:Verse structure
+'       If HasColon = True Then
+'           Verse = Num2
+'           Exit Stage
+'       End If
+'       ' No colon present
+'       ' Metadata may be consulted ONLY if alias resolved
+'       If AliasFound = True And Num1IsValid = True Then
 '           If GetChapterCount(BookID) = 1 Then
 '               ' Single-chapter book (e.g., Jude)
 '               Chapter = 1
-'               Verse   = tokens.Num1
-'           Else
-'               ' Multi-chapter book
-'               Chapter = tokens.Num1
-'               Verse   = 0   ' Chapter-only reference
+'               Verse   = Num1
 '           End If
 '       End If
+'    STRUCTURAL RULES:
+'       - Stage 4 NEVER changes Num1 or Num2.
+'       - Stage 4 NEVER converts invalid numeric tokens into valid ones.
+'       - Stage 4 NEVER performs range checking.
+'       - Stage 4 assigns Chapter/Verse exactly once.
 '    STRUCTURAL ASSERTIONS (not semantic validation):
 '       Chapter >= 0
 '       Verse   >= 0
 '    IMPORTANT:
 '       Stage 4 determines structure only.
 '       Stage 5 validates:
+'           - AliasFound = True
+'           - Num1IsValid / Num2IsValid
 '           - Chapter >= 1
 '           - Chapter <= MaxChapter(BookID)
 '           - Verse bounds
 '    DESIGN RULE:
 '       Structural interpretation must not depend on
 '       chapter/verse bounds.
+'       Metadata (GetChapterCount) may be consulted ONLY
+'       when BookID is valid.
 '
 '    ------------------------------------------------------------
-'    Stage 5: Semantic Validation (Validate against canon)
+'    Stage 5: Canonical Validation (Validate reference)
 '    ------------------------------------------------------------
 '    PURPOSE:
-'       Validate structural Chapter/Verse values against
-'       canonical book metadata.
+'       Determine whether the structurally interpreted reference
+'       is canonically valid.
 '    INPUT:
-'       BookID   As Long
-'       Chapter  As Long
-'       Verse    As Long
+'       ParsedRef from Stage 4:
+'           BookID      As Long
+'           AliasFound  As Boolean
+'           Chapter     As Long
+'           Verse       As Long
+'           HasColon    As Boolean
+'           Num1IsValid As Boolean
+'           Num2IsValid As Boolean
 '    OUTPUT:
 '       IsValid   As Boolean
 '       ErrorCode As Long
 '       ErrorText As String
-'    VALIDATION RULES:
-'       1. Chapter must be within canonical bounds:
-'               Chapter >= 1
-'               Chapter <= MaxChapter(BookID)
-'       2. Verse rules:
-'           If Verse = 0 Then
-'               ' Chapter-only reference ? valid if Chapter valid
-'           If Verse > 0 Then
-'               Verse >= 1
-'               Verse <= MaxVerse(BookID, Chapter)
-'    CANONICAL ARRAY INVARIANTS:
-'       - Chapter metadata arrays must be 1-based
-'             LBound(chapterArray) = 1
-'       - Verse metadata arrays must be 1-based
-'             LBound(verseArray) = 1
-'       These are internal invariants.
-'       Violations raise Err.Raise (engine defect).
-'    FAILURE MODEL:
-'       - Validation failures do NOT raise runtime errors.
-'       - Instead:
-'             IsValid   = False
-'             ErrorCode = <defined constant>
-'             ErrorText = <human-readable explanation>
-'       - Only invariant violations (engine corruption)
-'         may raise Err.Raise.
-'    DESIGN RULE:
-'       Stage 5 enforces canonical correctness.
-'       It must not alter Chapter or Verse.
+'    RESPONSIBILITY:
+'       - Validate canonical correctness only.
+'       - Do NOT modify Chapter or Verse.
+'       - Do NOT format output.
+'       - Do NOT raise runtime errors.
+'    VALIDATION ORDER (STRICT PRECEDENCE):
+'       1. Alias resolution
+'       2. Lexical numeric validity
+'       3. Structural minimums (>=1)
+'       4. Chapter upper bound
+'       5. Verse upper bound
+'    FIRST FAILURE WINS.
 '
 '    ------------------------------------------------------------
 '    Stage 6: Canonical Normalization (Output Formatting)
 '    ------------------------------------------------------------
 '    PURPOSE:
-'       Convert validated structural values into a canonical
-'       SBL-style reference string.
+'       Produce canonical SBL-style reference string including
+'       canonical Book Name.
 '    INPUT:
 '       BookID  As Long
 '       Chapter As Long
 '       Verse   As Long
 '    PRECONDITION:
 '       Stage 5 validation has succeeded.
-'       Chapter and Verse are canonically valid.
+'       Therefore the following invariants hold:
+'           BookID  => [1..66]
+'           Chapter >= 1
+'           Chapter <= MaxChapter(BookID)
+'           If Verse = 0:
+'               Reference is chapter-only
+'           If Verse > 0:
+'               Verse = MaxVerse(BookID, Chapter)
 '    OUTPUT:
 '       NormalizedRef As String
-'    FORMAT RULES:
+'    LOGIC:
+'       CanonicalBookName = GetCanonicalBookName(BookID)
 '       If Verse = 0 Then
-'           NormalizedRef = CStr(Chapter)
-'       If Verse > 0 Then
-'           NormalizedRef = CStr(Chapter) & ":" & CStr(Verse)
-'    EXAMPLES:
-'       Chapter-only reference:
-'           "8"
-'       Full reference:
-'           "8:1"
+'           ' Chapter-only reference
+'           NormalizedRef = CanonicalBookName & " " & _
+'                           CStr(Chapter)
+'       Else
+'           ' Chapter + Verse reference
+'           NormalizedRef = CanonicalBookName & " " & _
+'                           CStr(Chapter) & ":" & CStr(Verse)
+'       End If
+'    FORMAT RULES:
+'       - Exactly one space between BookName and Chapter.
+'       - No trailing spaces.
+'       - No zero-padding.
+'       - No leading zeros.
+'       - No alias text allowed.
 '    RESTRICTIONS:
-'       - Do NOT emit Chapter = 0
-'       - Do NOT emit Verse   = 0 in output
-'       - Do NOT perform validation here
-'       - Do NOT modify structural values
+'       - Do NOT perform validation here.
+'       - Do NOT modify structural values.
+'       - Do NOT consult alias dictionary.
+'       - Do NOT emit output if Stage 5 failed.
 '    DESIGN RULE:
-'       Stage 6 is pure formatting.
-'       It must not depend on canonical metadata.
+'       Stage 6 is a pure formatting function.
+'       Given valid canonical input,
+'       output is uniquely determined.
 '
 '    ------------------------------------------------------------
-'    Stage 7: Structured Result Object (Emit Result)
+'    Stage 7: Structured Result Object (Emit Immutable Result)
 '    ------------------------------------------------------------
 '    PURPOSE:
-'       Produce the final typed result object returned by the parser.
+'       Construct and return the final immutable ScriptureRef
+'           result object.
+'       ParseReference() must always return a ScriptureRef,
+'           never Nothing, never uninitialized.
 '    INPUT:
-'       BookID    As Long
-'       Chapter   As Long
-'       Verse     As Long
-'       IsValid   As Boolean
-'       ErrorCode As Long
-'       ErrorText As String
+'       Final state from Stage 5 and (if valid) Stage 6.
 '    OUTPUT:
-'       Type ScriptureRef
-'           BookID    As Long
-'           Chapter   As Long
-'           Verse     As Long
-'           IsValid   As Boolean
-'           ErrorCode As Long
-'           ErrorText As String
+'       Public Type ScriptureRef
+'           BookID        As Long
+'           Chapter       As Long
+'           Verse         As Long
+'           NormalizedRef As String
+'           IsValid       As Boolean
+'           ErrorCode     As Long
+'           ErrorText     As String
 '       End Type
-'    OBJECT STATE RULES:
+'    CONSTRUCTION RULE:
+'       ScriptureRef is constructed exactly once
+'       inside ParseReference().
+'       No other procedure may partially construct it.
+'    STATE INVARIANTS:
 '       If IsValid = True Then
-'           ErrorCode = 0
-'           ErrorText = ""
+'           BookID        => [1..66]
+'           Chapter       >= 1
+'           Verse         >= 0
+'           ErrorCode     = 0
+'           ErrorText     = ""
+'           NormalizedRef <> ""
 '       If IsValid = False Then
+'           NormalizedRef = ""
+'           ErrorCode     <> 0
+'           ErrorText     <> ""
 '           BookID may be 0
 '           Chapter and Verse may be 0
-'           ErrorCode must be non-zero
-'           ErrorText must describe the failure
+'    ILLEGAL STATES (MUST NEVER OCCUR):
+'       IsValid = True  AND ErrorCode <> 0
+'       IsValid = True  AND NormalizedRef = ""
+'       IsValid = False AND ErrorCode = 0
 '    FAILURE MODEL:
-'       - The parser NEVER raises user-facing runtime errors.
+'       - Parser NEVER raises user-facing runtime errors.
 '       - All user input errors are reported via:
 '             IsValid   = False
 '             ErrorCode <> 0
@@ -288,10 +426,15 @@ Private aliasMap As Object
 '       - Only internal invariant violations
 '         (e.g., corrupted canonical metadata)
 '         may raise Err.Raise.
+'       - Because RawInput is discarded:
+'           ErrorText must never embed raw user input.
 '    DESIGN RULE:
-'       Stage 7 performs no parsing, no validation,
-'       and no formatting.
-'       It only packages the final state.
+'       Stage 7 performs:
+'           - No parsing
+'           - No validation
+'           - No metadata lookup
+'       It only packages the final canonical state.
+'       ScriptureRef is immutable after return.
 '
 
 '=======================================
