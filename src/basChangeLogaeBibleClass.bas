@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #460 -
 ' #459 -
-' #458 -
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -87,6 +86,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #458 - Add routine names directly under each "Stage Alignment" section
     ' FIXED - #457 - Update to formally express grammar in EBNF for 7 stage design
     ' FIXED - #455 - Refine contracts for 7 stages and add a 12-line formal "Parser Contract" header at the top of the module
     ' FIXED - #454 - Update documentation pipeline overview of 7 stages

@@ -436,15 +436,6 @@ Private aliasMap As Object
 '       It only packages the final canonical state.
 '       ScriptureRef is immutable after return.
 '
-'   =======================================
-'   Extension Strategy Overview
-'   =======================================
-'   Introduce the following:
-'   -  Core Reference Engine (Stages 1-7)
-'   => Extension Layer (Optional)
-'   => Extended Result Object
-'   NOTE: The core parser remains untouched and deterministic.
-'   See - basSBL_Citation_EBNF_Extension
 
 '=====================================================
 ' SBL Scripture Citation - Structural EBNF
@@ -563,6 +554,104 @@ Private aliasMap As Object
 '=====================================================
 ' NOTE: This DFA validates structural syntax only.
 '       Semantic constraints are enforced post-parse.
+'=====================================================
+
+'=====================================================
+' Parser Alignment to Implementation (7-Stage Model)
+'=====================================================
+' Stage 1 - Preprocessing / Normalization
+' -----------------------------------------------------
+' Routine:
+'     Private Function Stage1_NormalizeInput( _
+'         ByVal rawInput As String) As String
+' Responsibility:
+'     - Trim leading/trailing whitespace
+'     - Normalize internal whitespace
+'     - Standardize dash characters if required
+'     - Discard raw input after normalization
+' -----------------------------------------------------
+' Stage 2 - Lexical Tokenization
+' -----------------------------------------------------
+' Routine:
+'     Private Function Stage2_LexicalScan( _
+'         ByVal normalizedInput As String) As LexTokens
+' Responsibility:
+'     - Extract RawAlias
+'     - Extract Num1, Num2
+'     - Detect HasColon
+'     - Detect lexical numeric validity
+'     - Capture VerseSuffix (if applicable)
+' -----------------------------------------------------
+' Stage 3 - Alias Resolution (Canonical Identity)
+' -----------------------------------------------------
+' Routine:
+'     Private Function Stage3_ResolveAlias( _
+'         ByVal tokens As LexTokens) As ParsedRef
+' Responsibility:
+'     - Resolve RawAlias ? BookID
+'     - Set AliasFound flag
+'     - Forward lexical numeric tokens unchanged
+'     - Do NOT assign Chapter/Verse
+' -----------------------------------------------------
+' Stage 4 - Structural Interpretation
+' -----------------------------------------------------
+' Routine:
+'     Private Sub Stage4_InterpretStructure( _
+'         ByRef state As ParsedRef)
+' Responsibility:
+'     - Assign Chapter and Verse exactly once
+'     - Apply colon structure logic
+'     - Apply single-chapter inference
+'     - Do NOT validate bounds
+' -----------------------------------------------------
+' Stage 5 - Canonical Semantic Validation
+' -----------------------------------------------------
+' Routine:
+'     Private Sub Stage5_ValidateCanonical( _
+'         ByRef state As ParsedRef)
+' Responsibility:
+'     - Enforce validation matrix
+'     - First-failure-wins ordering
+'     - Assign ErrorCode / ErrorText
+'     - Set IsValid flag
+'     - Do NOT modify structural values
+' -----------------------------------------------------
+' Stage 6 - Canonical Normalization (Formatting)
+' -----------------------------------------------------
+' Routine:
+'     Private Sub Stage6_FormatCanonical( _
+'         ByRef state As ParsedRef)
+' Responsibility:
+'     - Produce canonical SBL-style string
+'     - Use canonical BookName from metadata
+'     - Execute only if IsValid = True
+'     - Do NOT perform validation
+' -----------------------------------------------------
+' Stage 7 - Immutable Result Emission
+' -----------------------------------------------------
+' Routine:
+'     Private Function Stage7_EmitResult( _
+'         ByVal state As ParsedRef) As ScriptureRef
+' Responsibility:
+'     - Enforce object state invariants
+'     - Construct final ScriptureRef
+'     - Guarantee total-function return
+'     - Perform no parsing or validation
+' -----------------------------------------------------
+' Public Entry Point
+' -----------------------------------------------------
+' Routine:
+'     Public Function ParseReference( _
+'         ByVal rawInput As String) As ScriptureRef
+'
+' Execution Order:
+'     1. normalized  = Stage1_NormalizeInput(rawInput)
+'     2. tokens      = Stage2_LexicalScan(normalized)
+'     3. state       = Stage3_ResolveAlias(tokens)
+'     4. Stage4_InterpretStructure state
+'     5. Stage5_ValidateCanonical state
+'     6. Stage6_FormatCanonical state
+'     7. ParseReference = Stage7_EmitResult(state)
 '=====================================================
 
 '=====================================================
@@ -754,6 +843,7 @@ Private aliasMap As Object
 ' Enforce chapter/verse bounds
 ' Normalize output (Book Chapter:VerseSpec)
 
+' NOTES:
 ' What makes the compressed verse-map approach strong in your architecture is:
 ' 1. Data Is Data
 '   The validator now does only this:
