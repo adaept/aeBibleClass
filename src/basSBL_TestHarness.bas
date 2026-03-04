@@ -5,6 +5,13 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+' FIXME - Test harness should be updated to use these routines
+'Test_Stage2_LexicalScan()
+'Test_Stage3_ResolveAlias()
+'Test_Stage4_InterpretStructure()
+'Test_Stage5_ValidateCanonical()
+'Test_Stage6_FormatCanonical()
+
 Public Enum ExpectedFailureStage
     FailNone = 0
     FailResolveBook = 1

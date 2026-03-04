@@ -655,193 +655,146 @@ Private aliasMap As Object
 '=====================================================
 
 '=====================================================
-' Canonical Normal Form (Post-Parse Contract)
+' Deterministic Structural DFA
+' Aligned to 7-Stage Parser Architecture
 '=====================================================
-' <BookName> <Chapter>:<VerseSpec>   (lists and ranges preserved)
-
+' PURPOSE:
+'   Defines lexical token stream and structural syntax only.
+' SCOPE:
+'   This DFA:
+'       - Validates structural ordering of tokens
+'       - Detects lists and ranges syntactically
+'   This DFA does NOT:
+'       - Validate canonical book identity
+'       - Enforce chapter/verse bounds
+'       - Perform single-chapter inference
+'       - Rewrite structure
+'       - Normalize aliases
+'   Semantic processing occurs in:
+'       Stage 3 - Alias Resolution
+'       Stage 4 - Structural Interpretation
+'       Stage 5 - Canonical Validation
 '=====================================================
-' 1. Token Stream Definition
-' 1.1 Token Types
-' | Token           | Description                            | Examples          |
-' | --------------- | -------------------------------------- | ----------------- |
-' | BOOK_WORD       | Alphabetic word, optional trailing `.` | Genesis, Gen.     |
-' | PREFIX_ARABIC   | Arabic numeric prefix                  | 1, 2, 3           |
-' | PREFIX_ROMAN    | Roman numeral prefix                   | I, II, III        |
-' | DIGITS          | One or more digits                     | 1, 23, 150        |
-' | COLON           | Chapter-verse separator                | :                 |
-' | DASH            | Range separator                        | -                 |
-' | COMMA           | List separator                         | ,                 |
-' | SEMICOLON       | Reference separator                    | ;                 |
-' | WS              | One or more spaces (collapsed)         | " "               |
-' | EOF             | displayed as <END> in debug output     |                   |
-
+' 1. Token Stream Definition (Stage 2 Output)
 '=====================================================
-' 1.2 Tokenization Rules (Critical)
-' Collapse whitespace ? emit a single WS
-' Case-insensitive for BOOK_WORD, PREFIX_ROMAN
-' BOOK_WORD may include a trailing . but never internal punctuation
-' DIGITS is greedy
-' : - , ; are single-character tokens
-' Whitespace is significant only between book and chapter
-
+' Token Types
+' ------------------------------------------------------------
+' | Token           | Description                            |
+' | --------------- | -------------------------------------- |
+' | BOOK_WORD       | Alphabetic word, optional trailing .   |
+' | PREFIX_ARABIC   | 1 | 2 | 3                              |
+' | PREFIX_ROMAN    | I | II | III                           |
+' | DIGITS          | One or more digits                     |
+' | COLON           | :                                      |
+' | DASH            | -                                      |
+' | COMMA           | ,                                      |
+' | SEMICOLON       | ;                                      |
+' | WS              | One or more spaces (collapsed)         |
+' | EOF             | End-of-input                           |
+' ------------------------------------------------------------
+' Tokenization Rules:
+' ------------------------------------------------------------
+'   - Whitespace collapsed to single WS
+'   - DIGITS is greedy
+'   - Case-insensitive BOOK_WORD and PREFIX_ROMAN
+'   - No internal punctuation in BOOK_WORD
 '=====================================================
-' 1.3 Example Token Streams
-' Input:
-' I Cor. 13:1-3,5; Rom 8:1
-' Tokens:
-' PREFIX_ROMAN ("I")
-' WS
-' BOOK_WORD ("Cor.")
-' WS
-' DIGITS ("13")
-' COLON
-' DIGITS ("1")
-' DASH
-' DIGITS ("3")
-' COMMA
-' DIGITS ("5")
-' SEMICOLON
-' WS
-' BOOK_WORD ("Rom")
-' WS
-' DIGITS ("8")
-' COLON
-' DIGITS ("1")
-' EOF
-
+' 2. Deterministic State Machine (Structural Only)
 '=====================================================
-' 2. Deterministic State Machine
-'=====================================================
-' NOTE ON STATE NUMBERING
-' State S5 is intentionally unused.
-' An earlier grammar revision included an intermediate
-' post-chapter state that was eliminated during DFA
-' minimization. State numbers were preserved to keep
-' historical continuity with test data, debug traces,
-' and documentation.
-'
-' State numbering is symbolic and not ordinal.
-' This is a single-pass, left-to-right DFA.
+' NOTE:
+'   This is a single-pass left-to-right DFA.
+'   State numbering is symbolic.
 '=====================================================
 ' 2.1 State Definitions
-' | State | Meaning                | Accepting |
-' | ----- | ---------------------- | --------- |
-' | S0    | Start                  | X         |
-' | S1    | Reading numeric prefix | X         |
-' | S2    | Reading book name      | X         |
-' | S3    | Expecting chapter      | X         |
-' | S4    | Reading chapter        | ^         |
-' | S6    | Reading verse          | ^         |
-' | S7    | After dash (range)     | X         |
-' | S8    | After comma (list)     | X         |
-' | SX    | Error                  | X         |
-
-'=====================================================
-' 2.2 State Transition Table
-' Legend:
-' >Sx   transition to state Sx
-' X     non-accepting
-' ^     conditionally accepting (see Acceptance Rules)
-' SX    error state (terminal)
-'----------------------------------------------
-' Acceptance Rules(EXPLICIT)
-' A state marked ^ is accepting only if the next token is:
-' <END> => ACCEPT (end of citation)
-' SEMICOLON => >S0 (start next reference)
-' Any other token from an accepting state => SX.
-' NOTE: Transitions to >ACCEPT and >S0 are shown explicitly
-' for readability; acceptance is governed by the rules above.
-'----------------------------------------------
-' S0 - Start:
-' | Token           | Action |
-' | --------------- | ------ |
-' | WS              | >S0    |
-' | PREFIX_ARABIC   | >S1    |
-' | PREFIX_ROMAN    | >S1    |
-' | BOOK_WORD       | >S2    |
-' | otherwise       | >SX    |
-' S1 - Prefix:
-' | Token       | Action |
-' | ----------- | ------ |
-' | WS          | >S2    |
-' | BOOK_WORD   | >S2    |
-' | otherwise   | >SX    |
-' S2 - Book Name:
-' | Token       | Action |
-' | ----------- | ------ |
-' | BOOK_WORD   | >S2    |
-' | WS          | >S3    |
-' | otherwise   | >SX    |
-' S3 - Expect Chapter:
-' | Token     | Action |
-' | --------- | ------ |
-' | DIGITS    | >S4    |
-' | otherwise | >SX    |
-' S4 - Chapter(^):
-' | Token       | Action   |
-' | ----------- | -------- |
-' | DIGITS      | >S4      |
-' | COLON       | >S6      |
-' | DASH        | >S7      |
-' | <END>       | >ACCEPT  |
-' | SEMICOLON   | >S0      |
-' | otherwise   | >SX      |
-' S6 - Verse(^):
-' | Token       | Action   |
-' | ----------- | -------- |
-' | DIGITS      | >S6      |
-' | DASH        | >S7      |
-' | COMMA       | >S8      |
-' | <END>       | >ACCEPT  |
-' | SEMICOLON   | >S0      |
-' | otherwise   | >SX      |
-' S7 - After Dash (Range)
-' | Token     | Action |
-' | --------- | ------ |
-' | DIGITS    | >S6    |
-' | otherwise | >SX    |
-' S8 - After Comma (List)
-' | Token     | Action |
-' | --------- | ------ |
-' | DIGITS    | >S6    |
-' | otherwise | >SX    |
+' -------------------------------------------------
+' | State | Meaning                   | Accepting |
+' | ----- | ------------------------- | --------- |
+' | S0    | Start                     | No        |
+' | S1    | Reading numeric prefix    | No        |
+' | S2    | Reading book name         | No        |
+' | S3    | Expecting chapter digits  | No        |
+' | S4    | Reading chapter digits    | Yes*      |
+' | S6    | Reading verse digits      | Yes*      |
+' | S7    | After dash                | No        |
+' | S8    | After comma               | No        |
+' | SX    | Error                     | No        |
+' -------------------------------------------------
+' *Accepting states require EOF or SEMICOLON next.
+'==================================================
+' 2.2 Transition Table
+' -------------------------------------------------
+' S0 - Start
+'   WS              -> S0
+'   PREFIX_*        -> S1
+'   BOOK_WORD       -> S2
+'   otherwise       -> SX
+' S1 - Prefix
+'   WS              -> S2
+'   BOOK_WORD       -> S2
+'   otherwise       -> SX
+' S2 - Book Name
+'   BOOK_WORD       -> S2
+'   WS              -> S3
+'   otherwise       -> SX
+' S3 - Expect Chapter
+'   DIGITS          -> S4
+'   otherwise       -> SX
+' S4 - Chapter (Accepting*)
+'   DIGITS          -> S4
+'   COLON           -> S6
+'   DASH            -> S7
+'   SEMICOLON       -> S0
+'   EOF             -> ACCEPT
+'   otherwise       -> SX
+' S6 - Verse (Accepting*)
+'   DIGITS          -> S6
+'   DASH            -> S7
+'   COMMA           -> S8
+'   SEMICOLON       -> S0
+'   EOF             -> ACCEPT
+'   otherwise       -> SX
+' S7 - After Dash
+'   DIGITS          -> S6
+'   otherwise       -> SX
+' S8 - After Comma
+'   DIGITS          -> S6
+'   otherwise       -> SX
 ' SX - Error
-' | Token | Action |
-' | ----- | ------ |
-' | any   | >SX    |
-' NOTE: <END> represents the EOF token in debug output
-
-'============================================================================
-' 3. Semantic Post-Processing is outside Deterministic Finite Automaton (DFA)
-' Handled after a successful parse:
-' Normalize prefixes > I > 1
-' Collapse whitespace > single space
-' Validate book name via SBL alias table
-' Resolve single-chapter books
-'   ----------------------------------------------
-'   Single-Chapter Book Chapter Inference Rule
-'   ----------------------------------------------
-'   If a citation targets a single-chapter book and the input omits
-'   an explicit chapter number, the chapter is inferred as 1.
-'
-'   Implementation Convention:
-'   - chapter = 0  => chapter omitted by user
-'   - chapter = 1  => chapter explicitly provided
-'
-'   Rewrite Rule:
-'   - <Book> <Verse>            => <Book> 1:<Verse>
-'   - <Book> <Chapter>          => unchanged
-'   - <Book> <Chapter>:<Verse>  => unchanged
-'
-'   This inference is applied ONLY during semantic post-processing
-'   after successful DFA parsing.
-' Single-chapter rewrite rule:
-'   If a reference targets a single-chapter book AND no chapter
-'   was specified in the citation, rewrite <Book> <Verse>
-'   as <Book> 1:<Verse>.
-'   If a chapter is explicitly provided, no rewrite occurs.
-' Enforce chapter/verse bounds
-' Normalize output (Book Chapter:VerseSpec)
+'   any             -> SX
+'=====================================================
+' 3. Structural Acceptance Conditions
+'=====================================================
+' A reference is structurally valid if:
+'   - Final state is S4 or S6
+'   - AND next token is EOF or SEMICOLON
+' All other terminal states are structural errors.
+'=====================================================
+' 4. Post-DFA Processing (Outside DFA Scope)
+'=====================================================
+' After structural acceptance:
+' Stage 3:
+'   Resolve BookRef -> BookID
+' Stage 4:
+'   Assign Chapter and Verse exactly once
+'   Apply single-chapter inference if applicable
+' Stage 5:
+'   Enforce canonical validation matrix:
+'       - AliasFound = True
+'       - Chapter >= 1
+'       - Chapter <= MaxChapter(BookID)
+'       - Verse bounds
+' Stage 6:
+'   Format canonical SBL reference
+' Stage 7:
+'   Emit immutable ScriptureRef result
+'=====================================================
+' 5. Canonical Output Form (After Stage 6)
+'=====================================================
+' <CanonicalBookName> <Chapter>
+' <CanonicalBookName> <Chapter>:<Verse>
+' Lists and ranges are preserved structurally
+' but validated semantically in Stage 5.
+'=====================================================
 
 ' NOTES:
 ' What makes the compressed verse-map approach strong in your architecture is:
