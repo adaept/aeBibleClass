@@ -70,14 +70,13 @@ Public Sub Test_AliasCoverage()
 '   Canonical name is normalized as UCase(Canonical)
 '   Does not mutate state
 '   Emits diagnostics
-    Debug.Print ""
-    Debug.Print "=== Alias Coverage Validation ==="
+    Debug.Print "------------------------------------------"
+    Debug.Print "   Alias Coverage Validation"
+    Debug.Print "------------------------------------------"
 
     Dim msg As String
     Dim ok As Boolean
-
     ok = ValidateAliasCoverage(msg)
-
     Debug.Print msg
 
     If Not ok Then
@@ -85,8 +84,6 @@ Public Sub Test_AliasCoverage()
     Else
         Debug.Print "RESULT: PASS"
     End If
-
-    Debug.Print "==============================="
 End Sub
 
 Public Sub Test_TokenizeReference()
@@ -234,7 +231,6 @@ NextTest:
 
     Report_TODOs
 End Sub
-
 
 Public Sub Report_TODOs()
     Debug.Print "=== NOT IMPLEMENTED / TODO ============================"
@@ -452,24 +448,162 @@ End Sub
 Public Sub Run_All_SBL_Tests()
     Debug.Print ""
     Debug.Print "=========================================="
-    Debug.Print " MASTER TEST HARNESS"
+    Debug.Print " SBL PARSER TEST HARNESS"
     Debug.Print "=========================================="
-    
-    ' --- Verify structural integrity first ---
+    '------------------------------------------
+    ' Structural verification
+    '------------------------------------------
     If Not VerifyPackedVerseMap() Then
-        Debug.Print "ABORTING TESTS: Packed verse map invalid."
+        Debug.Print "ABORTING: Packed verse map invalid."
         Exit Sub
     End If
-    
-    ' --- Run functional tests only if structure valid ---
     ResetBookAliasMap
+    '------------------------------------------
+    ' Stage tests
+    '------------------------------------------
     Test_AliasCoverage
-    Test_SemanticFlow_WithParserStub
+    Test_Stage2_LexicalScan
+    Test_Stage3_ResolveAlias
+    Test_Stage4_InterpretStructure
+    Test_Stage5_ValidateCanonical
+    Test_Stage6_FormatCanonical
     Test_GetMaxVerse
-    Test_SemanticFlow_WithParserStub_Negative
-    ' Add other test suites here
-    
+    Debug.Print ""
     Debug.Print "=========================================="
     Debug.Print " ALL TESTS COMPLETE"
     Debug.Print "=========================================="
 End Sub
+
+Public Sub Test_Stage2_LexicalScan()
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage2_LexicalScan"
+    Debug.Print "------------------------------------------"
+
+    Dim t As LexTokens
+    t = TokenizeReference("Jude 1:5")
+    Debug.Assert t.RawAlias = "Jude"
+    Debug.Assert t.Num1 = 1
+    Debug.Assert t.Num2 = 5
+    Debug.Assert t.HasColon = True
+    Debug.Print "Jude 1:5 -> PASS"
+    
+    t = TokenizeReference("Romans 8")
+    Debug.Assert t.RawAlias = "Romans"
+    Debug.Assert t.Num1 = 8
+    Debug.Assert t.HasColon = False
+    Debug.Print "Romans 8 -> PASS"
+End Sub
+
+Public Sub Test_Stage3_ResolveAlias()
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage3_ResolveAlias"
+    Debug.Print "------------------------------------------"
+
+    Dim tokens As LexTokens
+    Dim bookID As Long
+    Dim canonical As String
+    
+    tokens = TokenizeReference("Jude 1:5")
+    canonical = ResolveBook(tokens.RawAlias, bookID)
+    Debug.Assert bookID = 65
+    Debug.Assert canonical = "Jude"
+    Debug.Print "Alias 'Jude' -> BookID 65 PASS"
+
+    tokens = TokenizeReference("Genesis 1:1")
+    canonical = ResolveBook(tokens.RawAlias, bookID)
+    Debug.Assert bookID = 1
+    Debug.Print "Alias 'Genesis' -> PASS"
+End Sub
+
+Public Function InterpretStructure(ByRef t As LexTokens) As ParsedReference
+    Dim p As ParsedReference
+
+    '----------------------------------------
+    ' Propagate alias
+    '----------------------------------------
+    p.BookAlias = UCase$(t.RawAlias)
+    Debug.Assert t.RawAlias <> vbNullString
+    '----------------------------------------
+    ' Structural interpretation
+    '----------------------------------------
+    If t.HasColon Then
+        ' Book Chapter:Verse
+        p.Chapter = t.Num1
+        p.VerseSpec = CStr(t.Num2)
+    Else
+        If t.Num1 > 0 Then
+            ' Ambiguous case (chapter or verse)
+            p.Chapter = 0
+            p.VerseSpec = CStr(t.Num1)
+        Else
+            ' Book-only reference
+            p.Chapter = 0
+            p.VerseSpec = ""
+        End If
+    End If
+    InterpretStructure = p
+End Function
+
+Public Sub Test_Stage4_InterpretStructure()
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage4_InterpretStructure"
+    Debug.Print "------------------------------------------"
+
+    Dim tokens As LexTokens
+    Dim ref As ParsedReference
+
+    tokens = TokenizeReference("Jude 5")
+    ref = InterpretStructure(tokens)
+    Debug.Assert ref.Chapter = 0
+    Debug.Assert ref.VerseSpec = "5"
+    Debug.Print "Jude 5 interpreted correctly"
+
+    tokens = TokenizeReference("Romans 8:1")
+    ref = InterpretStructure(tokens)
+    Debug.Assert ref.Chapter = 8
+    Debug.Assert ref.VerseSpec = "1"
+    Debug.Print "Romans 8:1 interpreted correctly"
+End Sub
+
+Public Sub Test_Stage5_ValidateCanonical()
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage5_ValidateCanonical"
+    Debug.Print "------------------------------------------"
+
+    Dim valid As Boolean
+    valid = ValidateSBLReference(65, "Jude", 0, "5", ModeSBL)
+    Debug.Assert valid = True
+    Debug.Print "Jude 5 -> PASS"
+
+    valid = ValidateSBLReference(65, "Jude", 1, "0", ModeSBL, True)
+    Debug.Assert valid = False
+    Debug.Print "Jude 1:0 -> correctly rejected"
+    
+    valid = ValidateSBLReference(45, "Romans", 999, "1", ModeSBL, True)
+    Debug.Assert valid = False
+    Debug.Print "Romans 999:1 -> correctly rejected"
+End Sub
+
+Public Sub Test_Stage6_FormatCanonical()
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage6_FormatCanonical"
+    Debug.Print "------------------------------------------"
+
+    Dim result As String
+
+    result = RewriteSingleChapterRef(65, 0, 5)
+    Debug.Assert result = "1:5"
+    Debug.Print "Jude 5 rewritten -> 1:5 PASS"
+
+    result = RewriteSingleChapterRef(45, 8, 1)
+    Debug.Assert result = "8:1"
+    Debug.Print "Romans 8:1 unchanged PASS"
+End Sub
+
+
+

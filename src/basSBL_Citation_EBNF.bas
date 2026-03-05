@@ -1191,7 +1191,8 @@ Public Function ValidateSBLReference( _
         canonicalName As String, _
         Chapter As Long, _
         VerseSpec As String, _
-        mode As CitationMode) As Boolean
+        mode As CitationMode, _
+        Optional silent As Boolean = False) As Boolean
 
     ' Generic mode: always valid at this layer
     If mode = ModeGeneric Then
@@ -1199,8 +1200,23 @@ Public Function ValidateSBLReference( _
         Exit Function
     End If
 
+    '------------------------------------------
+    ' Normalize single-chapter shorthand
+    '------------------------------------------
+    If Chapter = 0 And VerseSpec <> "" Then
+        If GetMaxChapter(bookID) = 1 Then
+            ' Single-chapter book
+            ' Example: Jude 5 -> Jude 1:5
+            Chapter = 1
+        Else
+            ' Multi-chapter book
+            ' Example: Romans 8 -> Romans 8
+            Chapter = CLng(VerseSpec)
+            VerseSpec = ""
+        End If
+    End If
+    
     ' ---------- SBL MODE BELOW ----------
-
     ' 1. Book must exist in canonical table
     If Not GetCanonicalBookTable.Exists(bookID) Then
         Debug.Print "SBL FAIL: Unknown BookID " & bookID
@@ -1219,15 +1235,16 @@ Public Function ValidateSBLReference( _
 
     ' 3. Chapter rules
     If Chapter < 1 Then
-        Debug.Print "SBL FAIL: Chapter must be >= 1"
+        If Not silent Then Debug.Print "SBL FAIL: Chapter must be >= 1"
+        ValidateSBLReference = False
         Exit Function
     End If
 
     Dim maxCh As Long
     maxCh = GetMaxChapter(bookID)
-    
     If Chapter > maxCh Then
-        Debug.Print "SBL FAIL: Chapter exceeds max (" & maxCh & ")"
+        If Not silent Then Debug.Print "SBL FAIL: Chapter exceeds max (" & maxCh & ")"
+        ValidateSBLReference = False
         Exit Function
     End If
 
@@ -1255,7 +1272,8 @@ Public Function ValidateSBLReference( _
     v = CLng(VerseSpec)
     
     If v < 1 Then
-        Debug.Print "SBL FAIL: Verse must be >= 1"
+        If Not silent Then Debug.Print "SBL FAIL: Verse must be >= 1"
+        ValidateSBLReference = False
         Exit Function
     End If
 
