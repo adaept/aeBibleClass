@@ -69,7 +69,7 @@ Public Sub Test_AliasCoverage()
 
     Dim msg As String
     Dim ok As Boolean
-    ok = ValidateAliasCoverage(msg)
+    ok = AliasCoverage(msg)
     Debug.Print msg
 
     If Not ok Then
@@ -82,8 +82,7 @@ End Sub
 Public Sub Test_TokenizeReference()
     Dim t As LexTokens
     
-    t = TokenizeReference("Jude 1:5")
-    
+    t = LexicalScan("Jude 1:5")
     Debug.Assert t.RawAlias = "Jude"
     Debug.Assert t.Num1 = 1
     Debug.Assert t.Num2 = 5
@@ -144,7 +143,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
         Dim bookID As Long
 
         On Error Resume Next
-        bookName = ResolveBook(parsed.BookAlias, bookID)
+        bookName = ResolveAlias(parsed.BookAlias, bookID)
         If Err.Number <> 0 Then
             Debug.Print "  ERROR: ResolveBook failed"
             failures = failures + 1
@@ -296,7 +295,7 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
         Dim bookID As Long
         
         On Error Resume Next
-        bookName = ResolveBook(parsed.BookAlias, bookID)
+        bookName = ResolveAlias(parsed.BookAlias, bookID)
         
         If Err.Number <> 0 Then
             Debug.Print "  ResolveBook ERROR: "; Err.Description
@@ -453,6 +452,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage4_InterpretStructure
     Test_Stage5_ValidateCanonical
     Test_Stage6_FormatCanonical
+    Test_Stage6_FormatCanonical_FailureDemo
     Test_GetMaxVerse
     TestSummary
 End Sub
@@ -464,13 +464,13 @@ Public Sub Test_Stage2_LexicalScan()
     Debug.Print "------------------------------------------"
 
     Dim t As LexTokens
-    t = TokenizeReference("Jude 1:5")
+    t = LexicalScan("Jude 1:5")
     AssertEqual "Jude", t.RawAlias, "Alias parsed"
     AssertEqual 1, t.Num1, "Chapter parsed"
     AssertEqual 5, t.Num2, "Verse parsed"
     AssertTrue t.HasColon, "Colon detected"
 
-    t = TokenizeReference("Romans 8")
+    t = LexicalScan("Romans 8")
     AssertEqual "Romans", t.RawAlias, "Alias parsed"
     AssertEqual 8, t.Num1, "Number parsed"
     AssertTrue Not t.HasColon, "No colon detected"
@@ -486,13 +486,13 @@ Public Sub Test_Stage3_ResolveAlias()
     Dim bookID As Long
     Dim canonical As String
 
-    tokens = TokenizeReference("Jude 1:5")
-    canonical = ResolveBook(tokens.RawAlias, bookID)
+    tokens = LexicalScan("Jude 1:5")
+    canonical = ResolveAlias(tokens.RawAlias, bookID)
     AssertEqual 65, bookID, "Jude BookID"
     AssertEqual "Jude", canonical, "Jude canonical"
 
-    tokens = TokenizeReference("Genesis 1:1")
-    canonical = ResolveBook(tokens.RawAlias, bookID)
+    tokens = LexicalScan("Genesis 1:1")
+    canonical = ResolveAlias(tokens.RawAlias, bookID)
     AssertEqual 1, bookID, "Genesis BookID"
     AssertEqual "Genesis", canonical, "Genesis canonical"
 End Sub
@@ -535,12 +535,12 @@ Public Sub Test_Stage4_InterpretStructure()
     Dim tokens As LexTokens
     Dim ref As ParsedReference
 
-    tokens = TokenizeReference("Jude 5")
+    tokens = LexicalScan("Jude 5")
     ref = InterpretStructure(tokens)
     AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
     AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
 
-    tokens = TokenizeReference("Romans 8:1")
+    tokens = LexicalScan("Romans 8:1")
     ref = InterpretStructure(tokens)
     AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
     AssertEqual "1", ref.VerseSpec, "Romans verse interpreted"
@@ -577,5 +577,18 @@ Public Sub Test_Stage6_FormatCanonical()
     AssertEqual "8:1", result, "Romans unchanged"
 End Sub
 
+Public Sub Test_Stage6_FormatCanonical_FailureDemo()
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage6_FormatCanonical (Failure Demo)"
+    Debug.Print "------------------------------------------"
+
+    Dim result As String
+    ' Call the real formatter
+    result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
+
+    ' Deliberate wrong expected value
+    AssertEqual "5", result, "Canonical rewrite for Jude"
+End Sub
 
 

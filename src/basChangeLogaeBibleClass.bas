@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #470 -
+' #469 -
+' #468 -
+' #467 -
+' #466 -
 ' #465 -
-' #464 -
-' #462 - Make AssertTrue show diagnostic information when a test fails
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -87,6 +90,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #464 - Match Test_Stagex... to actual routine names
+    ' FIXED - #462 - Make AssertTrue show diagnostic information when a test fails, include a fail demo routine as example [impr]
     ' FIXED - #463 - Update all tests to use new assert framework
     ' FIXED - #461 - Update current test harness into something much closer to a real unit-test framework [refac]
     ' FIXED - #460 - Update Test harness to use these stage name routines
