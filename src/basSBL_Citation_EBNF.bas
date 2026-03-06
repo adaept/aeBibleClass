@@ -853,35 +853,108 @@ Public Sub ResetBookAliasMap()
     Set aliasMap = Nothing
 End Sub
 
-Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
-    
+Public Function ParseReference( _
+        ByVal inputRef As String, _
+        Optional ByVal mode As CitationMode = ModeGeneric _
+    ) As String
+
     Dim t As LexTokens
+    Dim bookID As Long
+    Dim canonical As String
+    Dim Chapter As Long
+    Dim VerseSpec As String
+    Dim verse As Long
+    Dim formatted As String
+
+    '------------------------------------------
+    ' Stage 2 - Lexical scan
+    '------------------------------------------
+    t = LexicalScan(inputRef)
+    '------------------------------------------
+    ' Stage 3 - Resolve alias
+    '------------------------------------------
+    canonical = ResolveBookStrict(t.RawAlias, bookID, mode)
+    '------------------------------------------
+    ' Stage 4 - Interpret structure
+    '------------------------------------------
+    Dim maxCh As Long
+    maxCh = GetMaxChapter(bookID)
     
-    Dim parts() As String
-    parts = Split(normalizedInput, " ")
-    
-    '----------------------------------
-    ' Book alias (first token only)
-    ' NOTE: multi-token books not yet implemented
-    '----------------------------------
-    t.RawAlias = parts(0)
-    
-    If UBound(parts) = 0 Then
-        LexicalScan = t
-        Exit Function
+    If t.HasColon Then
+        ' Book Chapter:Verse
+        Chapter = t.Num1
+        VerseSpec = CStr(t.Num2)
+    Else
+        If maxCh = 1 Then
+            ' Single chapter book (Jude 5 -> 1:5)
+            Chapter = 0
+            VerseSpec = CStr(t.Num1)
+        Else
+            ' Multi chapter book (Romans 8)
+            Chapter = t.Num1
+            VerseSpec = ""
+        End If
     End If
-    
+    '------------------------------------------
+    ' Stage 5 - Canonical validation
+    '------------------------------------------
+    If Not ValidateSBLReference(bookID, canonical, Chapter, VerseSpec, mode) Then
+        Err.Raise vbObjectError + 600, , "Invalid scripture reference"
+    End If
+    '------------------------------------------
+    ' Stage 6 - Canonical formatting
+    '------------------------------------------
+    If VerseSpec = "" Then
+        ' Chapter-only reference
+        formatted = CStr(Chapter)
+    Else
+        ' Verse reference
+        formatted = RewriteSingleChapterRef(bookID, Chapter, CLng(VerseSpec))
+    End If
+    ParseReference = canonical & " " & formatted
+End Function
+
+Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
+    Dim t As LexTokens
+    Dim parts() As String
     Dim refPart As String
-    refPart = parts(1)
     
+    parts = Split(Trim$(normalizedInput), " ")
+    
+    Select Case UBound(parts)
+        Case 0
+            ' Example: "Genesis"
+            t.RawAlias = parts(0)
+            LexicalScan = t
+            Exit Function
+        Case 1
+            ' Example: "Romans 8"
+            t.RawAlias = parts(0)
+            refPart = parts(1)
+        Case Else
+            ' Example: "3 John 4"
+            ' Example: "1 Corinthians 13:4"
+            t.RawAlias = parts(0) & " " & parts(1)
+            refPart = parts(2)
+    End Select
+    '----------------------------------
+    ' Parse numeric portion
+    '----------------------------------
     If InStr(refPart, ":") > 0 Then
         Dim subParts() As String
         subParts = Split(refPart, ":")
-        
+        If Not IsNumeric(subParts(0)) Or Not IsNumeric(subParts(1)) Then
+            Err.Raise vbObjectError + 1000, , _
+                "Invalid numeric reference: " & refPart
+        End If
         t.Num1 = CLng(subParts(0))
         t.Num2 = CLng(subParts(1))
         t.HasColon = True
     Else
+        If Not IsNumeric(refPart) Then
+            Err.Raise vbObjectError + 1001, , _
+                "Invalid numeric reference: " & refPart
+        End If
         t.Num1 = CLng(refPart)
         t.Num2 = 0
         t.HasColon = False

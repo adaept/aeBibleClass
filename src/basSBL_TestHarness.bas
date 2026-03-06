@@ -455,6 +455,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage5_ValidateCanonical
     Test_Stage6_FormatCanonical
     Test_Stage6_FormatCanonical_FailureDemo
+    Test_Stage7_EndToEnd
     Test_GetMaxVerse
     TestSummary
 End Sub
@@ -595,4 +596,23 @@ Public Sub Test_Stage6_FormatCanonical_FailureDemo()
     End If
 End Sub
 
+Public Sub Test_Stage7_EndToEnd()
+    Dim result As String
 
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage7_EndToEnd"
+    Debug.Print "------------------------------------------"
+
+    result = ParseReference("Jude 5")
+    AssertEqual "Jude 1:5", result, "Jude single-chapter expansion"
+
+    result = ParseReference("Romans 8")
+    AssertEqual "Romans 8", result, "Romans chapter reference"
+
+    result = ParseReference("3 John 4")
+    AssertEqual "3 John 1:4", result, "3 John expansion"
+
+    result = ParseReference("Genesis 1:1")
+    AssertEqual "Genesis 1:1", result, "Genesis unchanged"
+End Sub
