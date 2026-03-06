@@ -5,6 +5,8 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+Private Const RUN_FAILURE_DEMOS As Boolean = False
+
 Public Enum ExpectedFailureStage
     FailNone = 0
     FailResolveBook = 1
@@ -578,17 +580,19 @@ Public Sub Test_Stage6_FormatCanonical()
 End Sub
 
 Public Sub Test_Stage6_FormatCanonical_FailureDemo()
-    Debug.Print ""
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage6_FormatCanonical (Failure Demo)"
-    Debug.Print "------------------------------------------"
-
-    Dim result As String
-    ' Call the real formatter
-    result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
-
-    ' Deliberate wrong expected value
-    AssertEqual "5", result, "Canonical rewrite for Jude"
+    If RUN_FAILURE_DEMOS Then
+        Debug.Print ""
+        Debug.Print "------------------------------------------"
+        Debug.Print " Test_Stage6_FormatCanonical (Failure Demo)"
+        Debug.Print "------------------------------------------"
+    
+        Dim result As String
+        ' Call the real formatter
+        result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
+    
+        ' Deliberate wrong expected value
+        AssertEqual "5", result, "Canonical rewrite for Jude"
+    End If
 End Sub
 
 

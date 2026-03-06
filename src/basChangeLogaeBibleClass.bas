@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #468 -
 ' #467 -
 ' #466 -
-' #465 -
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -90,6 +89,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #465 - Add RUN_FAILURE_DEMOS guard
     ' FIXED - #464 - Match Test_Stagex... to actual routine names
     ' FIXED - #462 - Make AssertTrue show diagnostic information when a test fails, include a fail demo routine as example [impr]
     ' FIXED - #463 - Update all tests to use new assert framework
