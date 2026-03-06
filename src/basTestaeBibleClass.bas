@@ -131,13 +131,13 @@ End Sub
 '=======================================================================================
 Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
     Dim wsh As Object: Set wsh = CreateObject("WScript.Shell")
-    Dim cmd As String, execObj As Object, result As String
+    Dim cmd As String, execObj As Object, Result As String
 
     cmd = "cmd.exe /c cd /d """ & sRepoPath & """ && git tag"
     Set execObj = wsh.exec(cmd)
-    result = execObj.StdOut.ReadAll
+    Result = execObj.StdOut.ReadAll
 
-    If InStr(result, sTag) > 0 Then
+    If InStr(Result, sTag) > 0 Then
         Debug.Print "[TAG CHECK] Tag '" & sTag & "' already exists."
         GitTagExists = True
     Else

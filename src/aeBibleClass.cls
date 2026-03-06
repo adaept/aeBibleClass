@@ -53,7 +53,7 @@ Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
 Private TestSessionID As String
-Private result As Integer
+Private Result As Integer
 Private TestReportFileName As String
 Private testFileNum As Integer
 Private Const TestReportFlag As Boolean = True

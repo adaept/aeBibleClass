@@ -484,21 +484,21 @@ Private Function LeftUntilLastSpace(ByVal txt As String) As String
 End Function
 
 Private Function ExtractTrailingDigits(ByVal txt As String) As String
-    Dim i As Long, ch As String, result As String
-    result = ""
+    Dim i As Long, ch As String, Result As String
+    Result = ""
 
     ' Scan backwards, collecting up to 3 digits
     For i = Len(txt) To 1 Step -1
         ch = mid(txt, i, 1)
         If ch Like "#" Then
-            result = ch & result
-            If Len(result) = 3 Then Exit For
+            Result = ch & Result
+            If Len(Result) = 3 Then Exit For
         Else
             Exit For  ' Stop at first non-digit
         End If
     Next i
 
-    ExtractTrailingDigits = result
+    ExtractTrailingDigits = Result
 End Function
 
 Private Function IsOneChapterBook(book As String) As Boolean

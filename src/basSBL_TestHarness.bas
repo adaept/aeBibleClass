@@ -354,7 +354,7 @@ End Sub
 Public Sub Test_GetMaxVerse()
 
     Dim failCount As Long
-    Dim result As Long
+    Dim Result As Long
     
     Debug.Print ""
     Debug.Print "---- Test_GetMaxVerse ----"
@@ -365,17 +365,17 @@ Public Sub Test_GetMaxVerse()
     
     On Error GoTo FailHandler
     
-    result = GetMaxVerse(1, 1)          ' Genesis 1
-    If result <> 31 Then FailTest failCount, "Genesis 1", 31, result
+    Result = GetMaxVerse(1, 1)          ' Genesis 1
+    If Result <> 31 Then FailTest failCount, "Genesis 1", 31, Result
     
-    result = GetMaxVerse(19, 119)       ' Psalms 119
-    If result <> 176 Then FailTest failCount, "Psalms 119", 176, result
+    Result = GetMaxVerse(19, 119)       ' Psalms 119
+    If Result <> 176 Then FailTest failCount, "Psalms 119", 176, Result
     
-    result = GetMaxVerse(65, 1)         ' Jude 1
-    If result <> 25 Then FailTest failCount, "Jude 1", 25, result
+    Result = GetMaxVerse(65, 1)         ' Jude 1
+    If Result <> 25 Then FailTest failCount, "Jude 1", 25, Result
     
-    result = GetMaxVerse(66, 22)        ' Revelation 22
-    If result <> 21 Then FailTest failCount, "Revelation 22", 21, result
+    Result = GetMaxVerse(66, 22)        ' Revelation 22
+    If Result <> 21 Then FailTest failCount, "Revelation 22", 21, Result
     
     
     ' ========================
@@ -385,21 +385,21 @@ Public Sub Test_GetMaxVerse()
     On Error Resume Next
     
     Err.Clear
-    result = GetMaxVerse(1, 999)
+    Result = GetMaxVerse(1, 999)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Invalid chapter not rejected"
         failCount = failCount + 1
     End If
     Err.Clear
     
-    result = GetMaxVerse(999, 1)
+    Result = GetMaxVerse(999, 1)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Invalid book not rejected"
         failCount = failCount + 1
     End If
     Err.Clear
     
-    result = GetMaxVerse(19, 0)
+    Result = GetMaxVerse(19, 0)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Chapter zero not rejected"
         failCount = failCount + 1
@@ -457,6 +457,21 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage6_FormatCanonical_FailureDemo
     Test_Stage7_EndToEnd
     Test_GetMaxVerse
+    '-----------------------------
+    ' Embedded Extension Hooks
+    '-----------------------------
+    'The order is:
+    '   - Update DFA documentation
+    '   - Define Stage-8 contract
+    '   - Write Test_Stage8_ListDetection
+    '   - Implement Stage-8 code
+    '   - Enable test in runner
+    '   Stages 9 and 10 will follow the same sequence.
+    'Test_Stage8_ListDetection
+    'Test_Stage9_RangeDetection
+    'Test_Stage10_RangeComposition
+    'Test_Stage10_ListComposition
+    'Test_ParseReferenceExtended
     TestSummary
 End Sub
 
@@ -572,12 +587,12 @@ Public Sub Test_Stage6_FormatCanonical()
     Debug.Print " Test_Stage6_FormatCanonical"
     Debug.Print "------------------------------------------"
 
-    Dim result As String
-    result = RewriteSingleChapterRef(65, 0, 5)
-    AssertEqual "1:5", result, "Jude single-chapter rewrite"
+    Dim Result As String
+    Result = RewriteSingleChapterRef(65, 0, 5)
+    AssertEqual "1:5", Result, "Jude single-chapter rewrite"
 
-    result = RewriteSingleChapterRef(45, 8, 1)
-    AssertEqual "8:1", result, "Romans unchanged"
+    Result = RewriteSingleChapterRef(45, 8, 1)
+    AssertEqual "8:1", Result, "Romans unchanged"
 End Sub
 
 Public Sub Test_Stage6_FormatCanonical_FailureDemo()
@@ -587,32 +602,32 @@ Public Sub Test_Stage6_FormatCanonical_FailureDemo()
         Debug.Print " Test_Stage6_FormatCanonical (Failure Demo)"
         Debug.Print "------------------------------------------"
     
-        Dim result As String
+        Dim Result As String
         ' Call the real formatter
-        result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
+        Result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
     
         ' Deliberate wrong expected value
-        AssertEqual "5", result, "Canonical rewrite for Jude"
+        AssertEqual "5", Result, "Canonical rewrite for Jude"
     End If
 End Sub
 
 Public Sub Test_Stage7_EndToEnd()
-    Dim result As String
+    Dim Result As String
 
     Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage7_EndToEnd"
     Debug.Print "------------------------------------------"
 
-    result = ParseReference("Jude 5")
-    AssertEqual "Jude 1:5", result, "Jude single-chapter expansion"
+    Result = ParseReference("Jude 5")
+    AssertEqual "Jude 1:5", Result, "Jude single-chapter expansion"
 
-    result = ParseReference("Romans 8")
-    AssertEqual "Romans 8", result, "Romans chapter reference"
+    Result = ParseReference("Romans 8")
+    AssertEqual "Romans 8", Result, "Romans chapter reference"
 
-    result = ParseReference("3 John 4")
-    AssertEqual "3 John 1:4", result, "3 John expansion"
+    Result = ParseReference("3 John 4")
+    AssertEqual "3 John 1:4", Result, "3 John expansion"
 
-    result = ParseReference("Genesis 1:1")
-    AssertEqual "Genesis 1:1", result, "Genesis unchanged"
+    Result = ParseReference("Genesis 1:1")
+    AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
 End Sub

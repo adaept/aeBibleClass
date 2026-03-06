@@ -66,17 +66,17 @@ End Function
 
 Function GetShowTextBoundaries() As Variant
     On Error Resume Next
-    Dim result As Variant
+    Dim Result As Variant
 
     ' Only check if view is Print Layout or Web Layout
     Select Case ActiveWindow.View.Type
         Case wdPrintView, wdWebView
-            result = ActiveWindow.View.ShowTextBoundaries
+            Result = ActiveWindow.View.ShowTextBoundaries
         Case Else
-            result = "Unsupported view mode: " & ActiveWindow.View.Type
+            Result = "Unsupported view mode: " & ActiveWindow.View.Type
     End Select
 
-    GetShowTextBoundaries = result
+    GetShowTextBoundaries = Result
 End Function
 
 ' === Define or Load a baseline (can be replaced with a loader from external file) ===
@@ -119,42 +119,42 @@ End Function
 
 ' === Format diagnostics for output ===
 Function FormatDiagnostics(current As Object, target As Object, issues As Object) As String
-    Dim result As String
+    Dim Result As String
     Dim key As Variant
     Const manualFlag As String = "[ ]" & " Manual check: "
 
-    result = "== Word 365 Diagnostic Audit ==" & vbCrLf
-    result = result & "Date: " & Format(Now, "yyyy-mm-dd hh:nn") & vbCrLf & vbCrLf
+    Result = "== Word 365 Diagnostic Audit ==" & vbCrLf
+    Result = Result & "Date: " & Format(Now, "yyyy-mm-dd hh:nn") & vbCrLf & vbCrLf
 
-    result = result & "== Discrepancies ==" & vbCrLf
+    Result = Result & "== Discrepancies ==" & vbCrLf
     If issues.count = 0 Then
-        result = result & "None. All settings match baseline." & vbCrLf
+        Result = Result & "None. All settings match baseline." & vbCrLf
     Else
         For Each key In issues.Keys
-            result = result & key & ": " & issues(key) & vbCrLf
+            Result = Result & key & ": " & issues(key) & vbCrLf
         Next key
     End If
 
-    result = result & vbCrLf & "== Full Current Settings ==" & vbCrLf
+    Result = Result & vbCrLf & "== Full Current Settings ==" & vbCrLf
     For Each key In current.Keys
         Select Case True
             Case InStr(current(key), "Manual check:") > 0
-                result = result & "? " & key & ": " & current(key) & vbCrLf
+                Result = Result & "? " & key & ": " & current(key) & vbCrLf
             Case InStr(current(key), "Not accessible") > 0 Or InStr(current(key), "Unsupported") > 0
-                result = result & "? " & key & ": " & current(key) & vbCrLf
+                Result = Result & "? " & key & ": " & current(key) & vbCrLf
             Case Else
-                result = result & "[ ] " & key & ": " & FormatBoolean(current(key)) & vbCrLf
+                Result = Result & "[ ] " & key & ": " & FormatBoolean(current(key)) & vbCrLf
         End Select
     Next key
 
-    result = result & vbCrLf & "== Manual UI Verifications ==" & vbCrLf
+    Result = Result & vbCrLf & "== Manual UI Verifications ==" & vbCrLf
     For Each key In current.Keys
         If InStr(current(key), "File > Options") > 0 Or InStr(current(key), "Editor") > 0 Then
-            result = result & manualFlag & key & " — " & current(key) & vbCrLf
+            Result = Result & manualFlag & key & " — " & current(key) & vbCrLf
         End If
     Next key
 
-    FormatDiagnostics = result
+    FormatDiagnostics = Result
 End Function
 
 Function FormatBoolean(value As Variant) As String

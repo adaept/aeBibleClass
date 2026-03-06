@@ -7,29 +7,24 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #475 -
+' #474 -
+' #473 -
+' #472 -
+' #471 -
 ' #470 -
-' #469 -
-' #468 -
+' #468 - Update DFA documentation for Extension Hooks
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
 ' #451 - Refactor ParseReferenceStub into proper stage calls
 '           normalized = NormalizeInput(input), tokens = TokenizeReference(normalized), parsed = InterpretTokens(tokens)
-' #448 - Stub Must Normalize Single-Chapter Books - Belongs in the Parser (Not Validator)
 ' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
-' #438 - Add an audit routine that validates MaxChapter against this data [impr]
-' #436 - Check Verse upper bound [feat]
-' #431 - Freeze parser stub scope, Strengthen semantic validator with tests, Add negative tests, Swap parser stub for real parser
-' #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr] [opt]
-' #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
 ' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
 ' #417 - Add an SBL auto-corrector [feat]
 ' #416 - Emit fix suggestions (1 JN ? 1 John)
-' #415 - Normalize case for output [impr]
-' #414 - Enforce no verse ranges across chapters [impr]
-' #413 - Enforce SBL punctuation (: vs .) [impr]
 ' #411 - Fix reloading of all code routine to include SBL EBNF module [bug]
 ' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
@@ -55,14 +50,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
 ' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
-' #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
 ' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
 ' #191 - Add test to verify all correct Verse Marker per book [test]
 ' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
 ' #150 - Add module for free fonts setup and testing [idea]
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
-' #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
 ' #069 - Use WEB.doc to get a proper count of "'" and make sure RWB is correct
 '        Verify smart quotes
 '        Several Bible versions use smart quotes for opening and closing quotations,
@@ -80,13 +73,25 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '               Utilizes smart quotes and nested quotations for direct speech.
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
 ' #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
-' #042 - Add readme to aewordgit [doc]
 ' #040 - Add figure headings to maps - use map vs fig? [idea]
 ' #037 - Add updated maps in color [feat]
-' #035 - Add test for page numbers of h1 on odd or even pages [test]
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #469 - Clean up task list, mark tasks [obso] that have been dealt with through 7-Stage design
+    ' FIXED - #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
+    ' [obso] - #438 - Add an audit routine that validates MaxChapter against the data structure [impr]
+    ' [obso] - #436 - Check Verse upper bound [feat]
+    ' [obso] - #429 - Generate the canonical-name aliases automatically from GetCanonicalBookTable [impr] [opt]
+    ' [obso] - #448 - Stub Must Normalize Single-Chapter Books - Belongs in the Parser (Not Validator)
+    ' [obso] - #415 - Normalize case for output [impr]
+    ' [obso] - #414 - Enforce no verse ranges across chapters [impr]
+    ' [obso] - #413 - Enforce SBL punctuation (: vs .) [impr]
+    ' [obso] - #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
+    ' [obso] - #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
+    ' [obso] - #042 - Add readme to aewordgit [doc]
+    ' [obso] - #035 - Add test for page numbers of h1 on odd or even pages [test]
+    ' FIXED - #431 - Freeze parser stub scope, Strengthen semantic validator with tests, Add negative tests, Swap parser stub for real parser
     ' FIXED - #467 - Update LexicalScan (with multi-word book support)
     ' FIXED - #466 - Add End-To-End test
     ' FIXED - #465 - Add RUN_FAILURE_DEMOS guard
