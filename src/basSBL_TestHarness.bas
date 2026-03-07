@@ -668,10 +668,23 @@ Public Sub Test_Stage8_ListDetection()
     ' Test 4 - list containing range
     '------------------------------------------
     t = ListDetection("John 3:16-18,20")
-    If t.IsList And UBound(t.Segments) = 1 Then
+    If t.IsList _
+       And UBound(t.Segments) = 1 _
+       And t.Segments(0) = "John 3:16-18" _
+       And t.Segments(1) = "20" Then
         Debug.Print "PASS: range preserved inside list"
     Else
         Debug.Print "FAIL: range incorrectly split"
+    End If
+    '------------------------------------------
+    ' Test 5 - mixed whitespace
+    '------------------------------------------
+    ' Optional as whitespace normalization should already be handled in Stage 1
+    t = ListDetection("John 3:16 , 18 , 20")
+    If t.IsList And UBound(t.Segments) = 2 Then
+        Debug.Print "PASS: whitespace tolerated"
+    Else
+        Debug.Print "FAIL: whitespace handling"
     End If
 End Sub
 

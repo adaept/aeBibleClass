@@ -727,6 +727,7 @@ Private aliasMap As Object
 '   Stage 8 executes before Stage 9.
 '   Lists are segmented before range interpretation occurs.
 ' Range interpretation is handled in Stage 9.
+' Stage 9 operates on individual Stage 8 segments.
 '=====================================================
 
 '=====================================================

@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #473 -
 ' #472 -
 ' #471 -
-' #470 -
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #470 - Extend Test 4 slightly to guarantee future code changes cannot alter the segmentation silently
     ' FIXED - #468 - Update DFA documentation for Extension Hooks Stage 8 initial skeleton, test, and code - lexical only
     ' FIXED - #469 - Clean up task list, mark tasks [obso] that have been dealt with through 7-Stage design
     ' FIXED - #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
