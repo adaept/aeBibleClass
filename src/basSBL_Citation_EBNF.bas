@@ -655,6 +655,81 @@ Private aliasMap As Object
 '=====================================================
 
 '=====================================================
+' Extension Layer Classification
+'=====================================================
+' The core parser (Stages 1-7) is modeled as a deterministic
+' structural DFA that produces a single atomic ScriptureRef.
+'
+' *** Extension stages operate OUTSIDE the DFA and must never ***
+' ***      influence the DFA state machine.                   ***
+'
+' These stages are strictly lexical segmentation layers.
+' Stage 8  List Detection
+' Stage 9  Range Detection
+' Stage 10 Composition
+'
+' Responsibility boundaries:
+' Stage 8
+'   Detect top-level list separators
+'   Output ListTokens
+' Stage 9
+'   Detect reference ranges
+'   Output RangeTokens
+' Stage 10
+'   Compose atomic ScriptureRef results into:
+'       ScriptureList
+'       ScriptureRange
+'
+' The DFA always processes a single atomic reference.
+'=====================================================
+
+'=====================================================
+' Stage 8 - List Detection (Extension Layer)
+'=====================================================
+' Purpose
+'   Detect multiple references separated by list delimiters.
+' Supported separators
+'   ,  comma
+'   ;  semicolon
+' Examples
+'   John 3:16,18,20
+'   John 3,4,5
+'   John 3:16; 4:1
+' Output
+'   Type ListTokens
+'       IsList As Boolean
+'       Segments() As String
+'   End Type
+' Rules
+'   1. Detection is lexical only.
+'   2. No interpretation of structure occurs.
+'   3. Segments are returned exactly as written.
+'   4. If no separator is found, IsList=False.
+' Determinism
+'   Stage 8 MUST NOT perform:
+'       - alias resolution
+'       - verse validation
+'       - canonical formatting
+'   These remain Stage 3-6 responsibilities.
+' List Detection Rule
+'   Separators are recognized only at the top lexical level.
+'   Stage 8 must not split inside a detected range.
+'Example Input:
+'   John 3:16-18,20
+' Output segments:
+'   John 3:16-18
+'   20
+' NOT:
+'   John 3:16
+'   18
+'   20
+' Stage Ordering
+'   Stage 8 executes before Stage 9.
+'   Lists are segmented before range interpretation occurs.
+' Range interpretation is handled in Stage 9.
+'=====================================================
+
+'=====================================================
 ' Deterministic Structural DFA
 ' Aligned to 7-Stage Parser Architecture
 '=====================================================
@@ -852,6 +927,35 @@ End Enum
 Public Sub ResetBookAliasMap()
     Set aliasMap = Nothing
 End Sub
+
+Public Function ListDetection(ByVal RawInput As String) As ListTokens
+    Dim Result As ListTokens
+    Dim parts() As String
+
+    If InStr(RawInput, ",") > 0 Then
+        parts = Split(RawInput, ",")
+
+        Result.IsList = True
+        Result.Segments = parts
+
+        ListDetection = Result
+        Exit Function
+    End If
+
+
+    If InStr(RawInput, ";") > 0 Then
+        parts = Split(RawInput, ";")
+
+        Result.IsList = True
+        Result.Segments = parts
+
+        ListDetection = Result
+        Exit Function
+    End If
+
+    Result.IsList = False
+    ListDetection = Result
+End Function
 
 Public Function ParseReference( _
         ByVal inputRef As String, _

@@ -29,7 +29,6 @@ Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
     Debug.Print "  [Stub] Parsed alias = >" & p.BookAlias & "<"
     ' Semantic guardd to check for null failures
     Debug.Assert p.BookAlias <> vbNullString
-
     '----------------------------------
     ' No chapter/verse provided
     '----------------------------------
@@ -39,7 +38,6 @@ Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
         ParseReferenceStub = p
         Exit Function
     End If
-
     '----------------------------------
     ' Chapter or Chapter:Verse
     '----------------------------------
@@ -467,7 +465,7 @@ Public Sub Run_All_SBL_Tests()
     '   - Implement Stage-8 code
     '   - Enable test in runner
     '   Stages 9 and 10 will follow the same sequence.
-    'Test_Stage8_ListDetection
+    Test_Stage8_ListDetection
     'Test_Stage9_RangeDetection
     'Test_Stage10_RangeComposition
     'Test_Stage10_ListComposition
@@ -631,3 +629,49 @@ Public Sub Test_Stage7_EndToEnd()
     Result = ParseReference("Genesis 1:1")
     AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
 End Sub
+
+Public Sub Test_Stage8_ListDetection()
+    Debug.Print
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage8_ListDetection"
+    Debug.Print "------------------------------------------"
+
+    Dim t As ListTokens
+    '------------------------------------------
+    ' Test 1 - comma list
+    '------------------------------------------
+    t = ListDetection("John 3:16,18,20")
+    If t.IsList And UBound(t.Segments) = 2 Then
+        Debug.Print "PASS: comma list detected"
+    Else
+        Debug.Print "FAIL: comma list detection"
+    End If
+    '------------------------------------------
+    ' Test 2 - semicolon list
+    '------------------------------------------
+    t = ListDetection("John 3:16; 4:1")
+    If t.IsList And UBound(t.Segments) = 1 Then
+        Debug.Print "PASS: semicolon list detected"
+    Else
+        Debug.Print "FAIL: semicolon list detection"
+    End If
+    '------------------------------------------
+    ' Test 3 - single reference
+    '------------------------------------------
+    t = ListDetection("John 3:16")
+    If Not t.IsList Then
+        Debug.Print "PASS: single reference not list"
+    Else
+        Debug.Print "FAIL: false list detection"
+    End If
+    '------------------------------------------
+    ' Test 4 - list containing range
+    '------------------------------------------
+    t = ListDetection("John 3:16-18,20")
+    If t.IsList And UBound(t.Segments) = 1 Then
+        Debug.Print "PASS: range preserved inside list"
+    Else
+        Debug.Print "FAIL: range incorrectly split"
+    End If
+End Sub
+

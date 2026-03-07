@@ -16,3 +16,7 @@ Public Type LexTokens
     HasColon As Boolean
 End Type
 
+Public Type ListTokens
+    IsList As Boolean
+    Segments() As String
+End Type
