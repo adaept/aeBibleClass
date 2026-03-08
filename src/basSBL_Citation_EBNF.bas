@@ -736,9 +736,30 @@ Private aliasMap As Object
 ' Purpose
 '   Detect reference ranges using hyphen or en dash.
 ' Supported separators
-'   -  hyphen
-'   –  en dash
-' Examples
+'   -  = ASCII hyphen-minus  (ChrW(45))
+'   –  = Unicode en dash     (ChrW(&H2013))
+'-----------------------------------------------------
+' A Note on Range Delimiter Characters
+'-----------------------------------------------------
+' The parser supports two range delimiters:
+' ASCII hyphen-minus
+'   Character: "-"
+'   Unicode:   U+002D
+'   VBA:       ChrW(45)
+' Unicode en dash
+'   Character: "–"
+'   Unicode:   U+2013
+'   VBA:       ChrW(&H2013)
+' NOTE
+'   The VBA Immediate Window may not display the en dash
+'   correctly. In Git it may appear as a placeholder.
+'   Therefore code comparisons should use ChrW values.
+' Example
+'   If ch = "-" Or ch = ChrW(&H2013) Then
+'       ' range delimiter comparison code
+'   End If
+'-----------------------------------------------------
+' Example Input
 '   John 3:16-18
 '   John 3-5
 '   John 3:16-4:2
@@ -778,6 +799,8 @@ Private aliasMap As Object
 '    RangeDetection("John 3:16-18") -> Range
 '    RangeDetection("20") -> Not a range
 '=====================================================
+
+
 
 '=====================================================
 ' Deterministic Structural DFA
