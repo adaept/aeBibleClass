@@ -140,10 +140,10 @@ Public Sub Test_SemanticFlow_WithParserStub()
         ' Resolver Phase
         '---------------------------------------
         Dim bookName As String
-        Dim bookID As Long
+        Dim BookID As Long
 
         On Error Resume Next
-        bookName = ResolveAlias(parsed.BookAlias, bookID)
+        bookName = ResolveAlias(parsed.BookAlias, BookID)
         If Err.Number <> 0 Then
             Debug.Print "  ERROR: ResolveBook failed"
             failures = failures + 1
@@ -153,10 +153,10 @@ Public Sub Test_SemanticFlow_WithParserStub()
         On Error GoTo 0
 
         Debug.Print "  Resolver:"
-        Debug.Print "    -> BookID:    "; bookID
+        Debug.Print "    -> BookID:    "; BookID
         Debug.Print "    -> Canonical: "; bookName
 
-        If bookID <> tests(i)(1) Then
+        If BookID <> tests(i)(1) Then
             Debug.Print "  FAIL: BookID mismatch"
             testFailed = True
         End If
@@ -168,7 +168,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
         Dim IsValid As Boolean
 
         IsValid = ValidateSBLReference( _
-                    bookID, _
+                    BookID, _
                     bookName, _
                     parsed.Chapter, _
                     parsed.VerseSpec, _
@@ -188,7 +188,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
         If IsValid Then
             Dim rewritten As String
             rewritten = RewriteSingleChapterRef( _
-                            bookID, _
+                            BookID, _
                             parsed.Chapter, _
                             CLng(parsed.VerseSpec))
 
@@ -292,10 +292,10 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
         ' Resolver phase
         ' -----------------------------
         Dim bookName As String
-        Dim bookID As Long
+        Dim BookID As Long
         
         On Error Resume Next
-        bookName = ResolveAlias(parsed.BookAlias, bookID)
+        bookName = ResolveAlias(parsed.BookAlias, BookID)
         
         If Err.Number <> 0 Then
             Debug.Print "  ResolveBook ERROR: "; Err.Description
@@ -315,7 +315,7 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
         On Error GoTo 0
         
         Debug.Print "  Resolver:"
-        Debug.Print "    -> BookID:     "; bookID
+        Debug.Print "    -> BookID:     "; BookID
         Debug.Print "    -> Canonical:  "; bookName
 
         ' -----------------------------
@@ -324,7 +324,7 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
         Dim IsValid As Boolean
 
         IsValid = ValidateSBLReference( _
-                    bookID, _
+                    BookID, _
                     bookName, _
                     parsed.Chapter, _
                     parsed.VerseSpec, _
@@ -499,17 +499,17 @@ Public Sub Test_Stage3_ResolveAlias()
     Debug.Print "------------------------------------------"
 
     Dim tokens As LexTokens
-    Dim bookID As Long
+    Dim BookID As Long
     Dim canonical As String
 
     tokens = LexicalScan("Jude 1:5")
-    canonical = ResolveAlias(tokens.RawAlias, bookID)
-    AssertEqual 65, bookID, "Jude BookID"
+    canonical = ResolveAlias(tokens.RawAlias, BookID)
+    AssertEqual 65, BookID, "Jude BookID"
     AssertEqual "Jude", canonical, "Jude canonical"
 
     tokens = LexicalScan("Genesis 1:1")
-    canonical = ResolveAlias(tokens.RawAlias, bookID)
-    AssertEqual 1, bookID, "Genesis BookID"
+    canonical = ResolveAlias(tokens.RawAlias, BookID)
+    AssertEqual 1, BookID, "Genesis BookID"
     AssertEqual "Genesis", canonical, "Genesis canonical"
 End Sub
 
@@ -698,8 +698,11 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 1 - verse range
     '------------------------------------------
-    r = RangeDetection("John 3:16-18")
+    If Not IsRangeSegment("John 3:16-18") Then
+        Debug.Print "FAIL: IsRangeSegment verse range"
+    End If
 
+    r = RangeDetection("John 3:16-18")
     If r.IsRange _
        And r.LeftRaw = "John 3:16" _
        And r.RightRaw = "18" Then
@@ -710,8 +713,11 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 2 - chapter range
     '------------------------------------------
-    r = RangeDetection("John 3-5")
+    If Not IsRangeSegment("John 3-5") Then
+        Debug.Print "FAIL: IsRangeSegment chapter range"
+    End If
 
+    r = RangeDetection("John 3-5")
     If r.IsRange _
        And r.LeftRaw = "John 3" _
        And r.RightRaw = "5" Then
@@ -722,14 +728,17 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 3 - cross chapter range
     '------------------------------------------
-    r = RangeDetection("John 3:16-4:2")
+    If Not IsRangeSegment("John 3:16-4:2") Then
+        Debug.Print "FAIL: IsRangeSegment cross chapter"
+    End If
 
+    r = RangeDetection("John 3:16-4:2")
     If r.IsRange _
        And r.LeftRaw = "John 3:16" _
        And r.RightRaw = "4:2" Then
         Debug.Print "PASS: cross chapter range detected"
     Else
-        Debug.Print "FAIL: cross chapter range detection"
+        Debug.Print "FAIL: cross chapter range detected"
     End If
     '------------------------------------------
     ' Test 4 - en dash
@@ -746,8 +755,11 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 5 - not a range
     '------------------------------------------
-    r = RangeDetection("John 3:16")
+    If IsRangeSegment("John 3:16") Then
+        Debug.Print "FAIL: IsRangeSegment false positive"
+    End If
 
+    r = RangeDetection("John 3:16")
     If Not r.IsRange Then
         Debug.Print "PASS: single reference not range"
     Else

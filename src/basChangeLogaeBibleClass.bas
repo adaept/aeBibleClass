@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #480 -
+' #479 -
+' #478 -
+' #477 -
+' #476 -
 ' #475 -
-' #474 -
-' #473 -
+' #474 - Add Stage 10 documentation and code
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -74,6 +78,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #473 - Introduce IsRangeSegment for further clarity when using hypen and en dash
     ' FIXED - #472 - Update Stage 9 doc to show clear distinction of hyphen and en dash (immediate window output is not clear enough)
     ' FIXED - #471 - Implement Stage 9 Range Detection
     ' FIXED - #470 - Extend Test 4 slightly to guarantee future code changes cannot alter the segmentation silently

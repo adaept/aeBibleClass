@@ -153,15 +153,15 @@ Public Sub GeneratePackedVerseStrings_FromDictionary()
     Dim d As Object
     Set d = GetVerseCounts()
     
-    Dim bookID As Long
+    Dim BookID As Long
     Dim chapters As Variant
     Dim c As Long
     Dim packed As String
     
     Debug.Print "===== PACKED VERSE MAP ====="
-    For bookID = 1 To 66
-        If d.Exists(bookID) Then
-            chapters = d(bookID)
+    For BookID = 1 To 66
+        If d.Exists(BookID) Then
+            chapters = d(BookID)
             packed = ""
             
             For c = LBound(chapters) To UBound(chapters)
@@ -170,11 +170,11 @@ Public Sub GeneratePackedVerseStrings_FromDictionary()
             
             ' Safety validation
             Debug.Assert Len(packed) = (UBound(chapters) - LBound(chapters) + 1) * 3
-            Debug.Print "maps(" & bookID & ") = """ & packed & """"
+            Debug.Print "maps(" & BookID & ") = """ & packed & """"
         Else
-            Debug.Print "Book " & bookID & " NOT FOUND"
+            Debug.Print "Book " & BookID & " NOT FOUND"
         End If
-    Next bookID
+    Next BookID
 End Sub
 
 Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) As Boolean
@@ -182,7 +182,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
     Dim packedArr As Variant
     Dim expectedCounts As Variant
     
-    Dim bookID As Long
+    Dim BookID As Long
     Dim chapterCount As Long
     Dim expectedChapters As Long
     Dim totalChapters As Long
@@ -206,11 +206,11 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
         Debug.Print String(60, "=")
     End If
     
-    For bookID = 1 To 66
+    For BookID = 1 To 66
         
         ' ----- Packed chapter count -----
-        If IsArray(packedArr(bookID)) Then
-            chapterCount = UBound(packedArr(bookID)) - LBound(packedArr(bookID)) + 1
+        If IsArray(packedArr(BookID)) Then
+            chapterCount = UBound(packedArr(BookID)) - LBound(packedArr(BookID)) + 1
         Else
             chapterCount = 0
         End If
@@ -218,7 +218,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
         totalChapters = totalChapters + chapterCount
         
         ' ----- Canonical expected count (Array() is 0-based) -----
-        expectedChapters = expectedCounts(bookID - 1)
+        expectedChapters = expectedCounts(BookID - 1)
         totalExpected = totalExpected + expectedChapters
         
         diff = chapterCount - expectedChapters
@@ -228,13 +228,13 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
         End If
         
         If verbose Then
-            Debug.Print "Book " & bookID & _
+            Debug.Print "Book " & BookID & _
                         " | " & chapterCount & _
                         " | " & expectedChapters & _
                         " | " & diff
         End If
                     
-    Next bookID
+    Next BookID
     
     If totalChapters <> totalExpected Then
         IsValid = False

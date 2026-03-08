@@ -1030,39 +1030,62 @@ Public Function ListDetection(ByVal RawInput As String) As ListTokens
     ListDetection = Result
 End Function
 
-Public Function RangeDetection(ByVal RawInput As String) As RangeTokens
+'===========================================================
+' RangeDetection Stage 9
+' Detects and tokenizes reference ranges
+' Example
+'   John 3:16-18
+'       LeftRaw  = "John 3:16"
+'       RightRaw = "18"
+'===========================================================
+Public Function RangeDetection(ByVal segment As String) As RangeTokens
     Dim r As RangeTokens
-    Dim dashPos As Long
-    Dim s As String
 
-    s = RawInput
-    '------------------------------------------
-    ' detect hyphen
-    '------------------------------------------
-    dashPos = InStr(s, "-")
-    '------------------------------------------
-    ' detect en dash if hyphen not present
-    '------------------------------------------
-    If dashPos = 0 Then
-        dashPos = InStr(s, "–")
-    End If
-    '------------------------------------------
-    ' no range delimiter
-    '------------------------------------------
-    If dashPos = 0 Then
+    If Not IsRangeSegment(segment) Then
         r.IsRange = False
         RangeDetection = r
         Exit Function
     End If
-    '------------------------------------------
-    ' split expressions
-    '------------------------------------------
-    r.IsRange = True
 
-    r.LeftRaw = Trim(Left$(s, dashPos - 1))
-    r.RightRaw = Trim(mid$(s, dashPos + 1))
+    Dim dashPos As Long
+    Dim enDash As String
+    enDash = ChrW(8211)
+
+    dashPos = InStr(segment, "-")
+    If dashPos = 0 Then
+        dashPos = InStr(segment, enDash)
+    End If
+
+    r.IsRange = True
+    r.LeftRaw = Trim(Left(segment, dashPos - 1))
+    r.RightRaw = Trim(mid(segment, dashPos + 1))
 
     RangeDetection = r
+End Function
+
+'===========================================================
+' IsRangeSegment
+'   Determines if a segment contains a range separator.
+' Supported separators:
+'   Hyphen  (-) ASCII 45
+'   En dash (–) Unicode U+2013
+' NOTE
+' Use ChrW(8211) so the source code does not depend
+' on editors correctly displaying the en dash.
+'===========================================================
+Public Function IsRangeSegment(ByVal segment As String) As Boolean
+    Dim enDash As String
+    enDash = ChrW(8211)   ' Unicode U+2013
+
+    If InStr(segment, "-") > 0 Then
+        IsRangeSegment = True
+        Exit Function
+    End If
+
+    If InStr(segment, enDash) > 0 Then
+        IsRangeSegment = True
+        Exit Function
+    End If
 End Function
 
 Public Function ParseReference( _
@@ -1071,11 +1094,11 @@ Public Function ParseReference( _
     ) As String
 
     Dim t As LexTokens
-    Dim bookID As Long
+    Dim BookID As Long
     Dim canonical As String
     Dim Chapter As Long
     Dim VerseSpec As String
-    Dim verse As Long
+    Dim Verse As Long
     Dim formatted As String
 
     '------------------------------------------
@@ -1085,12 +1108,12 @@ Public Function ParseReference( _
     '------------------------------------------
     ' Stage 3 - Resolve alias
     '------------------------------------------
-    canonical = ResolveBookStrict(t.RawAlias, bookID, mode)
+    canonical = ResolveBookStrict(t.RawAlias, BookID, mode)
     '------------------------------------------
     ' Stage 4 - Interpret structure
     '------------------------------------------
     Dim maxCh As Long
-    maxCh = GetMaxChapter(bookID)
+    maxCh = GetMaxChapter(BookID)
     
     If t.HasColon Then
         ' Book Chapter:Verse
@@ -1110,7 +1133,7 @@ Public Function ParseReference( _
     '------------------------------------------
     ' Stage 5 - Canonical validation
     '------------------------------------------
-    If Not ValidateSBLReference(bookID, canonical, Chapter, VerseSpec, mode) Then
+    If Not ValidateSBLReference(BookID, canonical, Chapter, VerseSpec, mode) Then
         Err.Raise vbObjectError + 600, , "Invalid scripture reference"
     End If
     '------------------------------------------
@@ -1121,7 +1144,7 @@ Public Function ParseReference( _
         formatted = CStr(Chapter)
     Else
         ' Verse reference
-        formatted = RewriteSingleChapterRef(bookID, Chapter, CLng(VerseSpec))
+        formatted = RewriteSingleChapterRef(BookID, Chapter, CLng(VerseSpec))
     End If
     ParseReference = canonical & " " & formatted
 End Function
@@ -1175,13 +1198,13 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
     LexicalScan = t
 End Function
 
-Public Function IsValidSBLAlias(bookID As Long, aliasText As String) As Boolean
+Public Function IsValidSBLAlias(BookID As Long, aliasText As String) As Boolean
     Dim canonical As String
     Dim books As Object
     Dim expected As String
 
     Set books = GetCanonicalBookTable
-    canonical = books(bookID)(1)    ' e.g. "1 John"
+    canonical = books(BookID)(1)    ' e.g. "1 John"
 
     ' Normalize both sides
     expected = UCase$(canonical)
@@ -1192,18 +1215,18 @@ End Function
 
 Public Function ResolveBookStrict( _
         abbr As String, _
-        Optional bookID As Long, _
+        Optional BookID As Long, _
         Optional mode As CitationMode = ModeGeneric _
     ) As String
 
     Dim canonical As String
 
     ' Step 1: Resolve (existing logic)
-    canonical = ResolveAlias(abbr, bookID)
+    canonical = ResolveAlias(abbr, BookID)
 
     ' Step 2: Validate (NEW)
     If mode = ModeSBL Then
-        If Not IsValidSBLAlias(bookID, abbr) Then
+        If Not IsValidSBLAlias(BookID, abbr) Then
             Err.Raise vbObjectError + 20, , _
                 "Non-SBL book form: '" & abbr & _
                 "'. Expected '" & canonical & "'"
@@ -1376,7 +1399,7 @@ Public Function GetSBLCanonicalBookTable() As Object
 End Function
 
 Public Sub ValidateBookSBL( _
-        ByVal bookID As Long, _
+        ByVal BookID As Long, _
         ByVal InputBook As String)
 
     Dim sbl As Object
@@ -1384,12 +1407,12 @@ Public Sub ValidateBookSBL( _
 
     Set sbl = GetSBLCanonicalBookTable
 
-    If Not sbl.Exists(bookID) Then
+    If Not sbl.Exists(BookID) Then
         Err.Raise vbObjectError + 400, , _
-            "Book not defined in SBL canon: " & bookID
+            "Book not defined in SBL canon: " & BookID
     End If
 
-    expected = sbl(bookID)
+    expected = sbl(BookID)
 
     If UCase(Trim(InputBook)) <> expected Then
         Err.Raise vbObjectError + 401, , _
@@ -1398,17 +1421,17 @@ Public Sub ValidateBookSBL( _
     End If
 End Sub
 
-Public Function GetMaxChapter(bookID As Long) As Long
+Public Function GetMaxChapter(BookID As Long) As Long
     Dim books As Object
     Dim b As Variant
 
     Set books = GetCanonicalBookTable
 
-    If Not books.Exists(bookID) Then
+    If Not books.Exists(BookID) Then
         Err.Raise vbObjectError + 20, , "Unknown BookID in GetMaxChapter"
     End If
 
-    b = books(bookID)
+    b = books(BookID)
     GetMaxChapter = CLng(b(2))
 End Function
 
@@ -1419,7 +1442,7 @@ Public Sub AssertOneBased(arr As Variant, context As String)
     End If
 End Sub
 
-Public Function GetMaxVerse(bookID As Long, Chapter As Long) As Long
+Public Function GetMaxVerse(BookID As Long, Chapter As Long) As Long
     Dim maps As Variant
     maps = GetChapterVerseMap()   ' actually raw map now
 
@@ -1427,21 +1450,21 @@ Public Function GetMaxVerse(bookID As Long, Chapter As Long) As Long
     'Debug.Print "LBound:", LBound(maps(bookID))
     'Debug.Print "UBound:", UBound(maps(bookID))
     'Debug.Print "Chapter:", Chapter
-    AssertOneBased maps(bookID), "GetMaxVerse chapters"
+    AssertOneBased maps(BookID), "GetMaxVerse chapters"
 
-    If bookID < 1 Or bookID > 66 Then
+    If BookID < 1 Or BookID > 66 Then
         Err.Raise vbObjectError + 41, , "Invalid BookID"
     End If
 
-    If Not IsArray(maps(bookID)) Then
+    If Not IsArray(maps(BookID)) Then
         Err.Raise vbObjectError + 42, , "Chapter map missing"
     End If
 
-    If Chapter < 1 Or Chapter > UBound(maps(bookID)) + 1 Then
+    If Chapter < 1 Or Chapter > UBound(maps(BookID)) + 1 Then
         Err.Raise vbObjectError + 40, , "Invalid chapter for book"
     End If
     
-    GetMaxVerse = maps(bookID)(Chapter)
+    GetMaxVerse = maps(BookID)(Chapter)
 End Function
 
 Public Function GetChapterVerseMap() As Variant
@@ -1454,12 +1477,12 @@ Public Function GetChapterVerseMap() As Variant
         Set d = GetVerseCounts()
         
         Dim maps(1 To 66) As Variant
-        Dim bookID As Long
+        Dim BookID As Long
         
-        For bookID = 1 To 66
-            maps(bookID) = d(bookID)
-            AssertOneBased maps(bookID), "GetChapterVerseMap chapters"
-        Next bookID
+        For BookID = 1 To 66
+            maps(BookID) = d(BookID)
+            AssertOneBased maps(BookID), "GetChapterVerseMap chapters"
+        Next BookID
         
         AssertOneBased maps, "GetChapterVerseMap books"
         
@@ -1471,7 +1494,7 @@ Public Function GetChapterVerseMap() As Variant
 End Function
 
 Public Function ValidateSBLReference( _
-        bookID As Long, _
+        BookID As Long, _
         canonicalName As String, _
         Chapter As Long, _
         VerseSpec As String, _
@@ -1488,7 +1511,7 @@ Public Function ValidateSBLReference( _
     ' Normalize single-chapter shorthand
     '------------------------------------------
     If Chapter = 0 And VerseSpec <> "" Then
-        If GetMaxChapter(bookID) = 1 Then
+        If GetMaxChapter(BookID) = 1 Then
             ' Single-chapter book
             ' Example: Jude 5 -> Jude 1:5
             Chapter = 1
@@ -1502,15 +1525,15 @@ Public Function ValidateSBLReference( _
     
     ' ---------- SBL MODE BELOW ----------
     ' 1. Book must exist in canonical table
-    If Not GetCanonicalBookTable.Exists(bookID) Then
-        Debug.Print "SBL FAIL: Unknown BookID " & bookID
+    If Not GetCanonicalBookTable.Exists(BookID) Then
+        Debug.Print "SBL FAIL: Unknown BookID " & BookID
         Exit Function
     End If
 
     ' 2. Canonical name must match SBL form EXACTLY
     ' (SBL is case-insensitive in print, but normalized internally)
     Dim canon As Variant
-    canon = GetCanonicalBookTable(bookID)
+    canon = GetCanonicalBookTable(BookID)
 
     If UCase(canon(1)) <> UCase(canonicalName) Then
         Debug.Print "SBL FAIL: Non-canonical book name"
@@ -1525,7 +1548,7 @@ Public Function ValidateSBLReference( _
     End If
 
     Dim maxCh As Long
-    maxCh = GetMaxChapter(bookID)
+    maxCh = GetMaxChapter(BookID)
     If Chapter > maxCh Then
         If Not silent Then Debug.Print "SBL FAIL: Chapter exceeds max (" & maxCh & ")"
         ValidateSBLReference = False
@@ -1533,7 +1556,7 @@ Public Function ValidateSBLReference( _
     End If
 
     ' 4. Single-chapter book rules
-    If GetSingleChapterBookSet.Exists(bookID) Then
+    If GetSingleChapterBookSet.Exists(BookID) Then
         If Chapter > 1 Then
             Debug.Print "SBL FAIL: Chapter > 1 for single-chapter book"
             Exit Function
@@ -1562,7 +1585,7 @@ Public Function ValidateSBLReference( _
     End If
 
     Dim maxV As Long
-    maxV = GetMaxVerse(bookID, Chapter)
+    maxV = GetMaxVerse(BookID, Chapter)
     
     If v > maxV Then
         Debug.Print "SBL FAIL: Verse exceeds max (" & maxV & ")"
@@ -1607,9 +1630,9 @@ Public Function InterpretStructure(t As LexTokens) As ParsedReference
 End Function
 
 Public Function RewriteSingleChapterRef( _
-        ByVal bookID As Long, _
+        ByVal BookID As Long, _
         ByVal Chapter As Long, _
-        ByVal verse As Long) As String
+        ByVal Verse As Long) As String
 
     Dim sc As Object
     Set sc = GetSingleChapterBookSet
@@ -1617,10 +1640,10 @@ Public Function RewriteSingleChapterRef( _
     ' Only rewrite when:
     ' 1) book is single-chapter
     ' 2) chapter was omitted (chapter = 0)
-    If sc.Exists(bookID) And Chapter = 0 Then
-        RewriteSingleChapterRef = "1:" & verse
-    ElseIf verse > 0 Then
-        RewriteSingleChapterRef = Chapter & ":" & verse
+    If sc.Exists(BookID) And Chapter = 0 Then
+        RewriteSingleChapterRef = "1:" & Verse
+    ElseIf Verse > 0 Then
+        RewriteSingleChapterRef = Chapter & ":" & Verse
     Else
         RewriteSingleChapterRef = CStr(Chapter)
     End If
@@ -1977,7 +2000,7 @@ Public Function GetBookAliasMap() As Object
 End Function
 
 Public Function ResolveAlias(abbr As String, _
-                            Optional bookID As Long) As String
+                            Optional BookID As Long) As String
     Dim key As String
     Dim aliasMap As Object
     Dim books As Object
@@ -1991,10 +2014,10 @@ Public Function ResolveAlias(abbr As String, _
         Err.Raise vbObjectError + 10, , "Unknown book alias: " & abbr
     End If
 
-    bookID = aliasMap(key)
+    BookID = aliasMap(key)
     Set books = GetCanonicalBookTable
 
-    b = books.item(bookID)     ' SAFE
+    b = books.item(BookID)     ' SAFE
     ResolveAlias = b(1)         ' Canonical name
 End Function
 
@@ -2002,7 +2025,7 @@ Public Sub xxxTest_AllBookAliases_STRICT()
     Dim aliasMap As Object
     Dim books As Object
     Dim k As Variant
-    Dim bookID As Long
+    Dim BookID As Long
     Dim canonicalActual As String
     Dim failures As Long
 
@@ -2014,27 +2037,27 @@ Public Sub xxxTest_AllBookAliases_STRICT()
     For Each k In aliasMap.Keys
         On Error GoTo AliasFail
 
-        canonicalActual = ResolveAlias(CStr(k), bookID)
+        canonicalActual = ResolveAlias(CStr(k), BookID)
 
         ' 1. BookID must be in canonical range
-        If bookID < 1 Or bookID > 66 Then
-            Debug.Print "FAIL (INVALID BOOK ID): "; k; " ? "; bookID
+        If BookID < 1 Or BookID > 66 Then
+            Debug.Print "FAIL (INVALID BOOK ID): "; k; " ? "; BookID
             failures = failures + 1
             GoTo NextAlias
         End If
 
         ' 2. BookID must exist in canonical table
-        If Not books.Exists(bookID) Then
-            Debug.Print "FAIL (MISSING CANONICAL): "; k; " ? "; bookID
+        If Not books.Exists(BookID) Then
+            Debug.Print "FAIL (MISSING CANONICAL): "; k; " ? "; BookID
             failures = failures + 1
             GoTo NextAlias
         End If
 
         ' 3. Canonical name must match
-        If canonicalActual <> books(bookID)(1) Then
+        If canonicalActual <> books(BookID)(1) Then
             Debug.Print "FAIL (NAME MISMATCH): "; k; _
                         " ? "; canonicalActual; _
-                        " (expected "; books(bookID)(1); ")"
+                        " (expected "; books(BookID)(1); ")"
             failures = failures + 1
         End If
 
