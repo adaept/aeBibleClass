@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #479 -
 ' #478 -
 ' #477 -
-' #476 -
 ' #474 - Add Stage 10 documentation and code
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #476 - Update extension architecture and explain invariant Stages 1-7
     ' FIXED - #475 - Add AssertFalse to make test harness cleaner
     ' FIXED - #473 - Introduce IsRangeSegment for further clarity when using hypen and en dash
     ' FIXED - #472 - Update Stage 9 doc to show clear distinction of hyphen and en dash (immediate window output is not clear enough)

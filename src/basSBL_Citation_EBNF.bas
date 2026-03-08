@@ -663,11 +663,16 @@ Private aliasMap As Object
 ' *** Extension stages operate OUTSIDE the DFA and must never ***
 ' ***      influence the DFA state machine.                   ***
 '
+' Invariant
+'   Stages 1-7 must only parse atomic references.
+'   Extension stages must not modify or bypass
+'   core validation logic.
 ' These stages are strictly lexical segmentation layers.
-' Stage 8  List Detection
-' Stage 9  Range Detection
-' Stage 10 Composition
-'
+'   Stage 8  List Detection
+'   Stage 9  Range Detection
+'   Stage 10 RangeComposition
+'   Stage 11 ListComposition
+'   Stage 12 ExtendedParse
 ' Responsibility boundaries:
 ' Stage 8
 '   Detect top-level list separators
