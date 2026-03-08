@@ -20,3 +20,10 @@ Public Type ListTokens
     IsList As Boolean
     Segments() As String
 End Type
+
+Public Type RangeTokens
+    IsRange As Boolean
+    LeftRaw As String
+    RightRaw As String
+End Type
+

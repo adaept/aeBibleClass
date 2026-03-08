@@ -727,7 +727,56 @@ Private aliasMap As Object
 '   Stage 8 executes before Stage 9.
 '   Lists are segmented before range interpretation occurs.
 ' Range interpretation is handled in Stage 9.
-' Stage 9 operates on individual Stage 8 segments.
+' Stage 9 evaluates each segment independently.
+'=====================================================
+
+'=====================================================
+' Stage 9 - Range Detection (Extension Layer)
+'=====================================================
+' Purpose
+'   Detect reference ranges using hyphen or en dash.
+' Supported separators
+'   -  hyphen
+'   –  en dash
+' Examples
+'   John 3:16-18
+'   John 3-5
+'   John 3:16-4:2
+' Output
+'   Type RangeTokens
+'       IsRange As Boolean
+'       LeftRaw  As String
+'       RightRaw As String
+'   End Type
+' Rules
+'   1. Detection is lexical only.
+'   2. No interpretation of structure occurs.
+'   3. Left and Right expressions are returned exactly as written.
+'   4. If no range delimiter exists, IsRange=False.
+' Determinism
+'   Stage 9 MUST NOT perform:
+'       - alias resolution
+'       - verse validation
+'       - canonical formatting
+'   These remain Stage 3-6 responsibilities.
+' Stage Ordering
+'   Stage 8 executes before Stage 9.
+' Example
+'   Input:
+'       John 3:16-18,20
+'   Stage 8 output:
+'       John 3:16-18
+'       20
+'   Stage 9 then evaluates each segment independently.
+' Range Detection Rule
+'   A range delimiter must appear after the first numeric token.
+' This prevents false detection in book prefixes such as:
+'   1-2 Samuel
+' Stage-9 must remain lexical only and must not interpret structure.
+' Deterministic Structural DFA intact because Stage-9 remains outside the core parser.
+' Stage 9 Evaluation:
+'    RangeDetection("John 3:16-18") -> Range
+'    RangeDetection("20") -> Not a range
 '=====================================================
 
 '=====================================================
@@ -956,6 +1005,41 @@ Public Function ListDetection(ByVal RawInput As String) As ListTokens
 
     Result.IsList = False
     ListDetection = Result
+End Function
+
+Public Function RangeDetection(ByVal RawInput As String) As RangeTokens
+    Dim r As RangeTokens
+    Dim dashPos As Long
+    Dim s As String
+
+    s = RawInput
+    '------------------------------------------
+    ' detect hyphen
+    '------------------------------------------
+    dashPos = InStr(s, "-")
+    '------------------------------------------
+    ' detect en dash if hyphen not present
+    '------------------------------------------
+    If dashPos = 0 Then
+        dashPos = InStr(s, "–")
+    End If
+    '------------------------------------------
+    ' no range delimiter
+    '------------------------------------------
+    If dashPos = 0 Then
+        r.IsRange = False
+        RangeDetection = r
+        Exit Function
+    End If
+    '------------------------------------------
+    ' split expressions
+    '------------------------------------------
+    r.IsRange = True
+
+    r.LeftRaw = Trim(Left$(s, dashPos - 1))
+    r.RightRaw = Trim(mid$(s, dashPos + 1))
+
+    RangeDetection = r
 End Function
 
 Public Function ParseReference( _

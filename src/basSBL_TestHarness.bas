@@ -466,7 +466,7 @@ Public Sub Run_All_SBL_Tests()
     '   - Enable test in runner
     '   Stages 9 and 10 will follow the same sequence.
     Test_Stage8_ListDetection
-    'Test_Stage9_RangeDetection
+    Test_Stage9_RangeDetection
     'Test_Stage10_RangeComposition
     'Test_Stage10_ListComposition
     'Test_ParseReferenceExtended
@@ -685,6 +685,73 @@ Public Sub Test_Stage8_ListDetection()
         Debug.Print "PASS: whitespace tolerated"
     Else
         Debug.Print "FAIL: whitespace handling"
+    End If
+End Sub
+
+Public Sub Test_Stage9_RangeDetection()
+    Debug.Print
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage9_RangeDetection"
+    Debug.Print "------------------------------------------"
+
+    Dim r As RangeTokens
+    '------------------------------------------
+    ' Test 1 - verse range
+    '------------------------------------------
+    r = RangeDetection("John 3:16-18")
+
+    If r.IsRange _
+       And r.LeftRaw = "John 3:16" _
+       And r.RightRaw = "18" Then
+        Debug.Print "PASS: verse range detected"
+    Else
+        Debug.Print "FAIL: verse range detection"
+    End If
+    '------------------------------------------
+    ' Test 2 - chapter range
+    '------------------------------------------
+    r = RangeDetection("John 3-5")
+
+    If r.IsRange _
+       And r.LeftRaw = "John 3" _
+       And r.RightRaw = "5" Then
+        Debug.Print "PASS: chapter range detected"
+    Else
+        Debug.Print "FAIL: chapter range detection"
+    End If
+    '------------------------------------------
+    ' Test 3 - cross chapter range
+    '------------------------------------------
+    r = RangeDetection("John 3:16-4:2")
+
+    If r.IsRange _
+       And r.LeftRaw = "John 3:16" _
+       And r.RightRaw = "4:2" Then
+        Debug.Print "PASS: cross chapter range detected"
+    Else
+        Debug.Print "FAIL: cross chapter range detection"
+    End If
+    '------------------------------------------
+    ' Test 4 - en dash
+    '------------------------------------------
+    r = RangeDetection("John 3:16–18")
+
+    If r.IsRange _
+       And r.LeftRaw = "John 3:16" _
+       And r.RightRaw = "18" Then
+        Debug.Print "PASS: en dash range detected"
+    Else
+        Debug.Print "FAIL: en dash detection"
+    End If
+    '------------------------------------------
+    ' Test 5 - not a range
+    '------------------------------------------
+    r = RangeDetection("John 3:16")
+
+    If Not r.IsRange Then
+        Debug.Print "PASS: single reference not range"
+    Else
+        Debug.Print "FAIL: false range detection"
     End If
 End Sub
 
