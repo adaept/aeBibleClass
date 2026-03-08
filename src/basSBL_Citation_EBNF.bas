@@ -1108,6 +1108,70 @@ Public Sub ResetBookAliasMap()
     Set aliasMap = Nothing
 End Sub
 
+Public Function CanonicalFromRef(r As ScriptureRef) As String
+    Dim books As Object
+    Dim b As Variant
+    Dim name As String
+
+    Set books = GetCanonicalBookTable
+    b = books.item(r.BookID)
+    name = b(1)   ' canonical book name
+
+    If r.Verse = 0 Then
+        CanonicalFromRef = name & " " & r.Chapter
+    Else
+        CanonicalFromRef = name & " " & r.Chapter & ":" & r.Verse
+    End If
+End Function
+
+'=====================================================
+' ComposeList
+' Stage 11
+'   Parses a list of scripture references.
+' Items may be:
+'   ScriptureRef
+'   ScriptureRange
+' Example
+'   "John 3:16, 18"
+'   "John 3:16-18, 20"
+'=====================================================
+Public Function ComposeList(ByVal raw As String) As Collection
+    Dim parts() As String
+    Dim p As Variant
+    Dim Items As New Collection
+    Dim segment As String
+    Dim r As ScriptureRange
+
+    ' Normalize separators
+    raw = Replace(raw, ";", ",")
+    parts = Split(raw, ",")
+    For Each p In parts
+        segment = Trim$(p)
+        If IsRangeSegment(segment) Then
+            r = ComposeRange(segment)
+        
+            Dim startText As String
+            Dim endText As String
+        
+            startText = CanonicalFromRef(r.StartRef)
+            ' If same book, omit book name on right side
+            If r.StartRef.BookID = r.EndRef.BookID Then
+                endText = CStr(r.EndRef.Chapter)
+                If r.EndRef.Verse <> 0 Then
+                    endText = endText & ":" & r.EndRef.Verse
+                End If
+            Else
+                endText = CanonicalFromRef(r.EndRef)
+            End If
+            Items.Add startText & "-" & endText
+        Else
+            Items.Add ParseReference(segment)
+        End If
+    Next p
+
+    Set ComposeList = Items
+End Function
+
 Public Function ListDetection(ByVal RawInput As String) As ListTokens
     Dim Result As ListTokens
     Dim parts() As String
@@ -1231,6 +1295,8 @@ Public Function ParseReference( _
         ByVal inputRef As String, _
         Optional ByVal mode As CitationMode = ModeGeneric _
     ) As String
+' ParseReference()  -> canonical string
+' ParseReferenceRef() -> structured reference
 
     Dim t As LexTokens
     Dim BookID As Long
@@ -1354,6 +1420,8 @@ Public Function ParseReferenceRef( _
         ByVal inputRef As String, _
         Optional ByVal mode As CitationMode = ModeGeneric _
     ) As ScriptureRef
+' ParseReference()  -> canonical string
+' ParseReferenceRef() -> structured reference
 
     Dim canon As String
     canon = ParseReference(inputRef, mode)
@@ -1382,6 +1450,69 @@ Public Function ParseReferenceRef( _
     End If
 
     ParseReferenceRef = r
+End Function
+
+Public Function IsListSegment(ByVal raw As String) As Boolean
+    ' A list is indicated by comma or semicolon
+    If InStr(raw, ",") > 0 Then
+        IsListSegment = True
+        Exit Function
+    End If
+
+    If InStr(raw, ";") > 0 Then
+        IsListSegment = True
+        Exit Function
+    End If
+
+    IsListSegment = False
+End Function
+
+'=====================================================
+' ParseScripture
+'   Final public API for the SBL parser.
+' Returns:
+'   String      (single reference)
+'   String      (range)
+'   Collection  (list)
+'=====================================================
+Public Function ParseScripture(ByVal raw As String) As Variant
+
+    raw = Trim$(raw)
+    '------------------------------------------
+    ' List
+    '------------------------------------------
+    If IsListSegment(raw) Then
+        Set ParseScripture = ComposeList(raw)
+        Exit Function
+    End If
+    '------------------------------------------
+    ' Range
+    '------------------------------------------
+    If IsRangeSegment(raw) Then
+        Dim r As ScriptureRange
+        r = ComposeRange(raw)
+
+        Dim startText As String
+        Dim endText As String
+
+        startText = CanonicalFromRef(r.StartRef)
+        If r.StartRef.BookID = r.EndRef.BookID Then
+            endText = CStr(r.EndRef.Chapter)
+
+            If r.EndRef.Verse <> 0 Then
+                endText = endText & ":" & r.EndRef.Verse
+            End If
+        Else
+            endText = CanonicalFromRef(r.EndRef)
+        End If
+
+        ParseScripture = startText & "-" & endText
+        Exit Function
+    End If
+    '------------------------------------------
+    ' Single reference
+    '------------------------------------------
+    ParseScripture = ParseReference(raw)
 End Function
 
 Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens

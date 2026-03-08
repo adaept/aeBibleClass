@@ -468,8 +468,8 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage8_ListDetection
     Test_Stage9_RangeDetection
     Test_Stage10_RangeComposition
-    'Test_Stage10_ListComposition
-    'Test_ParseReferenceExtended
+    Test_Stage11_ListComposition
+    Test_Stage12_FinalParser
     TestSummary
 End Sub
 
@@ -769,3 +769,61 @@ Public Sub Test_Stage10_RangeComposition()
     AssertEqual 3, r.EndRef.Verse, "cross end verse"
 End Sub
 
+Public Sub Test_Stage11_ListComposition()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage11_ListComposition"
+    Debug.Print "------------------------------------------"
+
+    Dim Items As Collection
+    '------------------------------------------
+    ' Simple reference list
+    '------------------------------------------
+    Set Items = ComposeList("John 3:16, John 3:18")
+
+    AssertEqual 2, Items.count, "two references parsed"
+    AssertEqual "John 3:16", Items(1), "first reference"
+    AssertEqual "John 3:18", Items(2), "second reference"
+    '------------------------------------------
+    ' Range inside list
+    '------------------------------------------
+    Set Items = ComposeList("John 3:16-18, John 3:20")
+
+    AssertEqual 2, Items.count, "range + reference"
+    AssertEqual "John 3:16-3:18", Items(1), "range canonical"
+    AssertEqual "John 3:20", Items(2), "second reference"
+    '------------------------------------------
+    ' Semicolon separation
+    '------------------------------------------
+    Set Items = ComposeList("Romans 8; Romans 9")
+
+    AssertEqual 2, Items.count, "semicolon list"
+End Sub
+
+Public Sub Test_Stage12_FinalParser()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage12_FinalParser"
+    Debug.Print "------------------------------------------"
+
+    Dim Result As Variant
+    Dim Items As Collection
+    '------------------------------------------
+    ' Single reference
+    '------------------------------------------
+    Result = ParseScripture("John 3:16")
+    AssertEqual "John 3:16", Result, "single reference"
+    '------------------------------------------
+    ' Range
+    '------------------------------------------
+    Result = ParseScripture("John 3:16-18")
+    AssertEqual "John 3:16-3:18", Result, "range parsed"
+    '------------------------------------------
+    ' List
+    '------------------------------------------
+    Set Items = ParseScripture("John 3:16, John 3:18")
+    AssertEqual 2, Items.count, "list parsed"
+    '------------------------------------------
+    ' Mixed list + range
+    '------------------------------------------
+    Set Items = ParseScripture("John 3:16-18, John 3:20")
+    AssertEqual 2, Items.count, "mixed parsed"
+End Sub

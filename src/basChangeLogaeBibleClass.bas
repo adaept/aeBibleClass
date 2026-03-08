@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #480 -
 ' #479 -
 ' #478 -
-' #477 -
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #477 - Add test and code for Stages 11, 12
     ' FIXED - #474 - Add new architecture Stage 10, 11, 12, documentation. Test and code for Stage 10
     ' FIXED - #476 - Update extension architecture and explain invariant Stages 1-7
     ' FIXED - #475 - Add AssertFalse to make test harness cleaner
