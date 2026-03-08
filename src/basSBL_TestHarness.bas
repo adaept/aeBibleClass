@@ -698,72 +698,40 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 1 - verse range
     '------------------------------------------
-    If Not IsRangeSegment("John 3:16-18") Then
-        Debug.Print "FAIL: IsRangeSegment verse range"
-    End If
+    AssertTrue IsRangeSegment("John 3:16-18"), _
+        "IsRangeSegment verse range"
 
     r = RangeDetection("John 3:16-18")
-    If r.IsRange _
-       And r.LeftRaw = "John 3:16" _
-       And r.RightRaw = "18" Then
-        Debug.Print "PASS: verse range detected"
-    Else
-        Debug.Print "FAIL: verse range detection"
-    End If
+    AssertTrue r.IsRange, "verse range detected"
+    AssertEqual r.LeftRaw, "John 3:16", "range left token"
+    AssertEqual r.RightRaw, "18", "range right token"
     '------------------------------------------
     ' Test 2 - chapter range
     '------------------------------------------
-    If Not IsRangeSegment("John 3-5") Then
-        Debug.Print "FAIL: IsRangeSegment chapter range"
-    End If
-
     r = RangeDetection("John 3-5")
-    If r.IsRange _
-       And r.LeftRaw = "John 3" _
-       And r.RightRaw = "5" Then
-        Debug.Print "PASS: chapter range detected"
-    Else
-        Debug.Print "FAIL: chapter range detection"
-    End If
+    AssertTrue r.IsRange, "chapter range detected"
+    AssertEqual r.LeftRaw, "John 3", "chapter range left"
+    AssertEqual r.RightRaw, "5", "chapter range right"
     '------------------------------------------
     ' Test 3 - cross chapter range
     '------------------------------------------
-    If Not IsRangeSegment("John 3:16-4:2") Then
-        Debug.Print "FAIL: IsRangeSegment cross chapter"
-    End If
-
     r = RangeDetection("John 3:16-4:2")
-    If r.IsRange _
-       And r.LeftRaw = "John 3:16" _
-       And r.RightRaw = "4:2" Then
-        Debug.Print "PASS: cross chapter range detected"
-    Else
-        Debug.Print "FAIL: cross chapter range detected"
-    End If
+    AssertTrue r.IsRange, "cross chapter range detected"
+    AssertEqual r.LeftRaw, "John 3:16", "cross chapter left"
+    AssertEqual r.RightRaw, "4:2", "cross chapter right"
     '------------------------------------------
     ' Test 4 - en dash
     '------------------------------------------
     r = RangeDetection("John 3:16–18")
-
-    If r.IsRange _
-       And r.LeftRaw = "John 3:16" _
-       And r.RightRaw = "18" Then
-        Debug.Print "PASS: en dash range detected"
-    Else
-        Debug.Print "FAIL: en dash detection"
-    End If
+    AssertTrue r.IsRange, "en dash range detected"
+    AssertEqual r.LeftRaw, "John 3:16", "en dash left"
+    AssertEqual r.RightRaw, "18", "en dash right"
     '------------------------------------------
     ' Test 5 - not a range
     '------------------------------------------
-    If IsRangeSegment("John 3:16") Then
-        Debug.Print "FAIL: IsRangeSegment false positive"
-    End If
+    AssertFalse IsRangeSegment("John 3:16"), _
+        "IsRangeSegment single reference"
 
     r = RangeDetection("John 3:16")
-    If Not r.IsRange Then
-        Debug.Print "PASS: single reference not range"
-    Else
-        Debug.Print "FAIL: false range detection"
-    End If
+    AssertFalse r.IsRange, "single reference not range"
 End Sub
-

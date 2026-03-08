@@ -43,6 +43,17 @@ Public Sub AssertEqual(expected As Variant, actual As Variant, label As String)
     End If
 End Sub
 
+'===========================================================
+' AssertFalse
+'===========================================================
+Public Sub AssertFalse(ByVal condition As Boolean, ByVal message As String)
+    If condition Then
+        Debug.Print "FAIL: " & message
+    Else
+        Debug.Print "PASS: " & message
+    End If
+End Sub
+
 Public Sub TestStart()
     gTestsRun = 0
     gTestsFailed = 0
