@@ -467,7 +467,7 @@ Public Sub Run_All_SBL_Tests()
     '   Stages 9 and 10 will follow the same sequence.
     Test_Stage8_ListDetection
     Test_Stage9_RangeDetection
-    'Test_Stage10_RangeComposition
+    Test_Stage10_RangeComposition
     'Test_Stage10_ListComposition
     'Test_ParseReferenceExtended
     TestSummary
@@ -735,3 +735,37 @@ Public Sub Test_Stage9_RangeDetection()
     r = RangeDetection("John 3:16")
     AssertFalse r.IsRange, "single reference not range"
 End Sub
+
+Public Sub Test_Stage10_RangeComposition()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage10_RangeComposition"
+    Debug.Print "------------------------------------------"
+
+    Dim r As ScriptureRange
+    '------------------------------------------
+    ' Verse shorthand
+    '------------------------------------------
+    r = ComposeRange("John 3:16-18")
+
+    AssertEqual 3, r.StartRef.Chapter, "start chapter"
+    AssertEqual 16, r.StartRef.Verse, "start verse"
+
+    AssertEqual 3, r.EndRef.Chapter, "end chapter"
+    AssertEqual 18, r.EndRef.Verse, "end verse"
+    '------------------------------------------
+    ' Chapter shorthand
+    '------------------------------------------
+    r = ComposeRange("John 3-5")
+    AssertEqual 3, r.StartRef.Chapter, "chapter start"
+    AssertEqual 5, r.EndRef.Chapter, "chapter end"
+    '------------------------------------------
+    ' Cross-chapter range
+    '------------------------------------------
+    r = ComposeRange("Genesis 1:31-2:3")
+    AssertEqual 1, r.StartRef.Chapter, "cross start chapter"
+    AssertEqual 31, r.StartRef.Verse, "cross start verse"
+
+    AssertEqual 2, r.EndRef.Chapter, "cross end chapter"
+    AssertEqual 3, r.EndRef.Verse, "cross end verse"
+End Sub
+

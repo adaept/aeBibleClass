@@ -31,7 +31,12 @@ Private aliasMap As Object
 '10. Validation is deterministic: first failure wins.
 '11. Formatting is canonical SBL-style and alias-independent.
 '12. Only internal invariant violations may raise Err.Raise.
-'
+' *** Later stages are are described in the ***
+' ***     Extension Layer Classification    ***
+' Extension Layer Invariant
+'   Stages 1-7 parse atomic references only.
+'   Stages 8-12 must not modify the behavior of
+'   the atomic parser.
 ' ================================================================
 ' Design Goals:
 '
@@ -670,9 +675,14 @@ Private aliasMap As Object
 ' These stages are strictly lexical segmentation layers.
 '   Stage 8  List Detection
 '   Stage 9  Range Detection
-'   Stage 10 RangeComposition
-'   Stage 11 ListComposition
-'   Stage 12 ExtendedParse
+'   Stage 10 RangeComposition   -> builds ranges
+'   Stage 11 ListComposition    -> builds lists
+'   Stage 12 ExtendedParse      -> orchestrate pipeline
+'Recursion
+'   Stage-12 may call ParseReferenceExtended() recursively
+'   when processing list segments. This allows nested list
+'   and range structures to be parsed without additional
+'   grammar rules.
 ' Responsibility boundaries:
 ' Stage 8
 '   Detect top-level list separators
@@ -805,7 +815,99 @@ Private aliasMap As Object
 '    RangeDetection("20") -> Not a range
 '=====================================================
 
+'=====================================================
+' Stage 10 - RangeComposition (Extension Layer)
+'=====================================================
+' Purpose
+'   Construct a ScriptureRange from the tokens produced
+'   by Stage 9 (RangeDetection).
+' Stage-10 does not perform lexical parsing.
+'   It only composes structured results using the atomic parser.
+' Composition Type
+'   ScriptureRange
+' Rules
+'   1. Stage-10 must call ParseReference() for both
+'      sides of the detected range.
+'   2. LeftRaw and RightRaw must be parsed independently.
+'   3. Stage-10 must not modify ScriptureRef.
+' Atomic Parser Guarantee
+'   ParseReference() remains the only function that
+'   produces ScriptureRef.
+' Example Input
+'   John 3:16-18
+' Stage 9
+'   RangeTokens
+'       LeftRaw  = "John 3:16"
+'       RightRaw = "18"
+' Stage 10
+'   ScriptureRange
+'       StartRef -> ScriptureRef(John 3:16)
+'       EndRef   -> ScriptureRef(John 3:18)
+'=====================================================
 
+'=====================================================
+' Stage 11 - ListComposition (Extension Layer)
+'=====================================================
+' Purpose
+'   Combine segmented references into a ScriptureList.
+' Stage-11 operates on the segments produced by
+'   Stage 8 (ListDetection).
+' Composition Type
+'   ScriptureList
+' Rules
+'   1. Each segment must be processed independently.
+'   2. Stage-11 must determine whether a segment is
+'      a range using Stage 9.
+'   3. Range segments must be composed using Stage 10.
+'   4. Non-range segments must be parsed using
+'      ParseReference().
+' Result
+'   ScriptureList.Items() may contain
+'       ScriptureRef
+'       ScriptureRange
+' Example Input
+'   John 3:16-18,20
+' Stage 8
+'   Segments
+'       John 3:16-18
+'       20
+' Stage 9
+'   Segment 1 -> Range
+'   Segment 2 -> Single
+' Stage 11
+'   ScriptureList
+'       Item 1 -> ScriptureRange
+'       Item 2 -> ScriptureRef
+'=====================================================
+
+'=====================================================
+' Stage 12 - ExtendedParse (Extension Entry Point)
+'=====================================================
+' Purpose
+'   Provide a high-level parser capable of handling
+'   lists and ranges.
+' Stage-12 orchestrates the extension pipeline while
+'   preserving the atomic parser contract.
+' Pipeline
+'   Stage 8  ListDetection
+'   Stage 9  RangeDetection
+'   Stage 10 RangeComposition
+'   Stage 11 ListComposition
+' Return Types
+'   ScriptureRef
+'   ScriptureRange
+'   ScriptureList
+' Atomic Parser Guarantee
+'   Stages 1-7 remain responsible for parsing
+'   atomic references only.
+' Example Input
+'   John 3:16-18,20; 4:1-3
+' Result
+'   ScriptureList
+'       Item 1 -> ScriptureRange (3:16-3:18)
+'       Item 2 -> ScriptureRef   (3:20)
+'       Item 3 -> ScriptureRange (4:1-4:3)
+'=====================================================
 
 '=====================================================
 ' Deterministic Structural DFA
@@ -1093,6 +1195,38 @@ Public Function IsRangeSegment(ByVal segment As String) As Boolean
     End If
 End Function
 
+Public Function ComposeRange(ByVal raw As String) As ScriptureRange
+    Dim tokens As RangeTokens
+    Dim r As ScriptureRange
+    Dim StartRef As ScriptureRef
+    Dim EndRef As ScriptureRef
+    Dim normalizedRight As String
+
+    '------------------------------------------
+    ' Stage 9 - Tokenize range
+    '------------------------------------------
+    tokens = RangeDetection(raw)
+    '------------------------------------------
+    ' Parse left side normally
+    '------------------------------------------
+    StartRef = ParseReferenceRef(tokens.LeftRaw)
+    '------------------------------------------
+    ' Normalize right side BEFORE parsing
+    '------------------------------------------
+    normalizedRight = ExpandRightSide(tokens.LeftRaw, tokens.RightRaw)
+    '------------------------------------------
+    ' Parse normalized right side
+    '------------------------------------------
+    EndRef = ParseReferenceRef(normalizedRight)
+    '------------------------------------------
+    ' Build range
+    '------------------------------------------
+    r.StartRef = StartRef
+    r.EndRef = EndRef
+
+    ComposeRange = r
+End Function
+
 Public Function ParseReference( _
         ByVal inputRef As String, _
         Optional ByVal mode As CitationMode = ModeGeneric _
@@ -1152,6 +1286,102 @@ Public Function ParseReference( _
         formatted = RewriteSingleChapterRef(BookID, Chapter, CLng(VerseSpec))
     End If
     ParseReference = canonical & " " & formatted
+End Function
+
+'=====================================================
+' ExpandRightSide
+'   Expands shorthand range tokens so they become valid
+'   canonical references for the atomic parser.
+' Examples
+'   John 3:16-18   -> John 3:18
+'   Matt 5:3-12    -> Matt 5:12
+'   John 3-5       -> John 5
+'   Gen 1:31-2:3   -> Gen 2:3
+'=====================================================
+Private Function ExpandRightSide( _
+        ByVal LeftRaw As String, _
+        ByVal RightRaw As String _
+    ) As String
+
+    Dim leftParts() As String
+    leftParts = Split(LeftRaw, " ")
+
+    Dim book As String
+    book = leftParts(0)
+    '------------------------------------------
+    ' Case 1: Right side already includes book
+    '------------------------------------------
+    If InStr(RightRaw, " ") > 0 Then
+        ExpandRightSide = RightRaw
+        Exit Function
+    End If
+    '------------------------------------------
+    ' Case 2: Cross chapter range (2:3)
+    '------------------------------------------
+    If InStr(RightRaw, ":") > 0 Then
+        ExpandRightSide = book & " " & RightRaw
+        Exit Function
+    End If
+    '------------------------------------------
+    ' Case 3: Verse shorthand
+    '------------------------------------------
+    If InStr(leftParts(1), ":") > 0 Then
+        Dim cv() As String
+        cv = Split(leftParts(1), ":")
+
+        ExpandRightSide = book & " " & cv(0) & ":" & RightRaw
+        Exit Function
+    End If
+    '------------------------------------------
+    ' Case 4: Chapter shorthand
+    '------------------------------------------
+    ExpandRightSide = book & " " & RightRaw
+End Function
+
+'=====================================================
+' ParseReferenceRef
+' Adapter for extension stages (Stage 10+).
+'   The atomic parser (ParseReference) returns canonical
+'   reference text. This adapter converts that canonical
+'   string into a ScriptureRef structure.
+' Example
+'   ParseReference("John 3:16")
+'       -> "John 3:16"
+'   ParseReferenceRef("John 3:16")
+'       -> ScriptureRef(BookID=43, Chapter=3, Verse=16)
+'=====================================================
+Public Function ParseReferenceRef( _
+        ByVal inputRef As String, _
+        Optional ByVal mode As CitationMode = ModeGeneric _
+    ) As ScriptureRef
+
+    Dim canon As String
+    canon = ParseReference(inputRef, mode)
+
+    Dim r As ScriptureRef
+    Dim parts() As String
+    Dim cv() As String
+    Dim BookID As Long
+
+    parts = Split(canon, " ")
+    '------------------------------------------
+    ' Resolve book ID again from canonical name
+    '------------------------------------------
+    Call ResolveBookStrict(parts(0), BookID, mode)
+    r.BookID = BookID
+    '------------------------------------------
+    ' Parse chapter / verse
+    '------------------------------------------
+    If InStr(parts(1), ":") > 0 Then
+        cv = Split(parts(1), ":")
+        r.Chapter = CLng(cv(0))
+        r.Verse = CLng(cv(1))
+    Else
+        r.Chapter = CLng(parts(1))
+        r.Verse = 0
+    End If
+
+    ParseReferenceRef = r
 End Function
 
 Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
