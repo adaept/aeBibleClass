@@ -53,8 +53,8 @@ End Type
 '   John 3:16–4:2
 '===========================================================
 Public Type ScriptureRange
-    StartRef As ScriptureRef
-    EndRef As ScriptureRef
+    StartRef  As ScriptureRef
+    EndRef    As ScriptureRef
     ErrorCode As Long
     ErrorText As String
 End Type
@@ -67,8 +67,11 @@ End Type
 '===========================================================
 Public Type ScriptureList
     IsValid As Boolean
-    Items() As Variant   ' ScriptureRef or ScriptureRange
-                         ' Using Variant allows nested structures
+    ItemType() As Integer
+        ' 1 = ScriptureRef
+        ' 2 = ScriptureRange
+    Refs() As ScriptureRef
+    Ranges() As ScriptureRange
     ErrorCode As Long
     ErrorText As String
 End Type

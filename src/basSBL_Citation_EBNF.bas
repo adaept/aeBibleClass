@@ -1124,53 +1124,118 @@ Public Function CanonicalFromRef(r As ScriptureRef) As String
     End If
 End Function
 
+Private Function PackRef(r As ScriptureRef) As Variant
+    PackRef = Array("REF", r.BookID, r.Chapter, r.Verse)
+End Function
+
+Private Function PackRange(r As ScriptureRange) As Variant
+    Dim s As ScriptureRef
+    Dim e As ScriptureRef
+    s = r.StartRef
+    e = r.EndRef
+    PackRange = Array("RANGE", _
+                      s.BookID, s.Chapter, s.Verse, _
+                      e.BookID, e.Chapter, e.Verse)
+End Function
+
+Public Function CanonicalFromRange(rg As ScriptureRange) As String
+    Dim startText As String, endText As String
+    startText = CanonicalFromRef(rg.StartRef)
+    If rg.StartRef.BookID = rg.EndRef.BookID Then
+        endText = CStr(rg.EndRef.Chapter)
+        If rg.EndRef.Verse <> 0 Then
+            endText = endText & ":" & rg.EndRef.Verse
+        End If
+    Else
+        endText = CanonicalFromRef(rg.EndRef)
+    End If
+    CanonicalFromRange = startText & "-" & endText
+End Function
+
+Public Function ComposeList(raw As String) As Collection
+    Dim list As ScriptureList
+    Dim Result As New Collection
+    Dim i As Long
+    ComposeList_Internal raw, list
+    For i = LBound(list.ItemType) To UBound(list.ItemType)
+        Select Case list.ItemType(i)
+        Case 1
+            Result.Add CanonicalFromRef(list.Refs(i))
+        Case 2
+            Result.Add CanonicalFromRange(list.Ranges(i))
+        End Select
+    Next i
+    Set ComposeList = Result
+End Function
+
 '=====================================================
-' ComposeList
+' ComposeList_Internal
 ' Stage 11
 '   Parses a list of scripture references.
-' Items may be:
+'
+' Items in the resulting ScriptureList.Items() array
+' may contain either:
 '   ScriptureRef
 '   ScriptureRange
-' Example
+' A Variant array is used because VBA Collections
+' cannot store UDT structures. Variant arrays *can*
+' store copies of UDT values safely.
+' Examples
 '   "John 3:16, 18"
 '   "John 3:16-18, 20"
+' Contextual shorthand supported:
+'   "John 3:16, 18, 20-22"
+'       inherits book/chapter from previous item
+' Pipeline stages used
+'   Stage 8  - ListDetection
+'   Stage 9  - IsRangeSegment
+'   Stage 10 - ParseReferenceRef
+'   Stage 11 - ComposeRange
 '=====================================================
-Public Function ComposeList(ByVal raw As String) As Collection
-    Dim parts() As String
-    Dim p As Variant
-    Dim Items As New Collection
-    Dim segment As String
-    Dim r As ScriptureRange
+Public Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
+    Dim t As ListTokens
+    Dim i As Long
+    Dim count As Long
+    Dim capacity As Long
 
-    ' Normalize separators
-    raw = Replace(raw, ";", ",")
-    parts = Split(raw, ",")
-    For Each p In parts
-        segment = Trim$(p)
-        If IsRangeSegment(segment) Then
-            r = ComposeRange(segment)
-        
-            Dim startText As String
-            Dim endText As String
-        
-            startText = CanonicalFromRef(r.StartRef)
-            ' If same book, omit book name on right side
-            If r.StartRef.BookID = r.EndRef.BookID Then
-                endText = CStr(r.EndRef.Chapter)
-                If r.EndRef.Verse <> 0 Then
-                    endText = endText & ":" & r.EndRef.Verse
-                End If
-            Else
-                endText = CanonicalFromRef(r.EndRef)
-            End If
-            Items.Add startText & "-" & endText
-        Else
-            Items.Add ParseReference(segment)
+    capacity = 8
+    ReDim Result.ItemType(0 To capacity - 1)
+    ReDim Result.Refs(0 To capacity - 1)
+    ReDim Result.Ranges(0 To capacity - 1)
+    '------------------------------------------
+    ' Stage 8 - list detection
+    '------------------------------------------
+    t = ListDetection(raw)
+    For i = LBound(t.Segments) To UBound(t.Segments)
+        ' grow arrays if needed
+        If count >= capacity Then
+            capacity = capacity * 2
+            ReDim Preserve Result.ItemType(0 To capacity - 1)
+            ReDim Preserve Result.Refs(0 To capacity - 1)
+            ReDim Preserve Result.Ranges(0 To capacity - 1)
         End If
-    Next p
-
-    Set ComposeList = Items
-End Function
+        '------------------------------------------
+        ' Stage 9 - range detection
+        '------------------------------------------
+        If IsRangeSegment(t.Segments(i)) Then
+            Result.ItemType(count) = 2
+            Result.Ranges(count) = ComposeRange(t.Segments(i))
+        Else
+            Result.ItemType(count) = 1
+            Result.Refs(count) = ParseReferenceRef(t.Segments(i))
+        End If
+        count = count + 1
+    Next i
+    '------------------------------------------
+    ' trim arrays to actual size
+    '------------------------------------------
+    If count > 0 Then
+        ReDim Preserve Result.ItemType(0 To count - 1)
+        ReDim Preserve Result.Refs(0 To count - 1)
+        ReDim Preserve Result.Ranges(0 To count - 1)
+    End If
+    Result.IsValid = True
+End Sub
 
 Public Function ListDetection(ByVal RawInput As String) As ListTokens
     Dim Result As ListTokens
@@ -1247,12 +1312,10 @@ End Function
 Public Function IsRangeSegment(ByVal segment As String) As Boolean
     Dim enDash As String
     enDash = ChrW(8211)   ' Unicode U+2013
-
     If InStr(segment, "-") > 0 Then
         IsRangeSegment = True
         Exit Function
     End If
-
     If InStr(segment, enDash) > 0 Then
         IsRangeSegment = True
         Exit Function
@@ -1266,29 +1329,14 @@ Public Function ComposeRange(ByVal raw As String) As ScriptureRange
     Dim EndRef As ScriptureRef
     Dim normalizedRight As String
 
-    '------------------------------------------
-    ' Stage 9 - Tokenize range
-    '------------------------------------------
     tokens = RangeDetection(raw)
-    '------------------------------------------
-    ' Parse left side normally
-    '------------------------------------------
     StartRef = ParseReferenceRef(tokens.LeftRaw)
-    '------------------------------------------
-    ' Normalize right side BEFORE parsing
-    '------------------------------------------
     normalizedRight = ExpandRightSide(tokens.LeftRaw, tokens.RightRaw)
-    '------------------------------------------
-    ' Parse normalized right side
-    '------------------------------------------
     EndRef = ParseReferenceRef(normalizedRight)
-    '------------------------------------------
-    ' Build range
-    '------------------------------------------
     r.StartRef = StartRef
     r.EndRef = EndRef
 
-    ComposeRange = r
+    ComposeRange = r   ' returns Variant instead of UDT
 End Function
 
 Public Function ParseReference( _
@@ -1319,7 +1367,6 @@ Public Function ParseReference( _
     '------------------------------------------
     Dim maxCh As Long
     maxCh = GetMaxChapter(BookID)
-    
     If t.HasColon Then
         ' Book Chapter:Verse
         Chapter = t.Num1
@@ -1467,17 +1514,9 @@ Public Function IsListSegment(ByVal raw As String) As Boolean
     IsListSegment = False
 End Function
 
-'=====================================================
-' ParseScripture
-'   Final public API for the SBL parser.
-' Returns:
-'   String      (single reference)
-'   String      (range)
-'   Collection  (list)
-'=====================================================
 Public Function ParseScripture(ByVal raw As String) As Variant
-
     raw = Trim$(raw)
+
     '------------------------------------------
     ' List
     '------------------------------------------
@@ -1494,18 +1533,16 @@ Public Function ParseScripture(ByVal raw As String) As Variant
 
         Dim startText As String
         Dim endText As String
-
         startText = CanonicalFromRef(r.StartRef)
+
         If r.StartRef.BookID = r.EndRef.BookID Then
             endText = CStr(r.EndRef.Chapter)
-
             If r.EndRef.Verse <> 0 Then
                 endText = endText & ":" & r.EndRef.Verse
             End If
         Else
             endText = CanonicalFromRef(r.EndRef)
         End If
-
         ParseScripture = startText & "-" & endText
         Exit Function
     End If

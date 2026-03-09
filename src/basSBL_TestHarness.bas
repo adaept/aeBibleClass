@@ -350,38 +350,27 @@ NextTest:
 End Sub
 
 Public Sub Test_GetMaxVerse()
-
     Dim failCount As Long
     Dim Result As Long
     
     Debug.Print ""
     Debug.Print "---- Test_GetMaxVerse ----"
-    
     ' ========================
     ' POSITIVE TESTS
     ' ========================
-    
     On Error GoTo FailHandler
-    
     Result = GetMaxVerse(1, 1)          ' Genesis 1
     If Result <> 31 Then FailTest failCount, "Genesis 1", 31, Result
-    
     Result = GetMaxVerse(19, 119)       ' Psalms 119
     If Result <> 176 Then FailTest failCount, "Psalms 119", 176, Result
-    
     Result = GetMaxVerse(65, 1)         ' Jude 1
     If Result <> 25 Then FailTest failCount, "Jude 1", 25, Result
-    
     Result = GetMaxVerse(66, 22)        ' Revelation 22
     If Result <> 21 Then FailTest failCount, "Revelation 22", 21, Result
-    
-    
     ' ========================
     ' NEGATIVE TESTS
     ' ========================
-    
     On Error Resume Next
-    
     Err.Clear
     Result = GetMaxVerse(1, 999)
     If Err.Number = 0 Then
@@ -389,33 +378,27 @@ Public Sub Test_GetMaxVerse()
         failCount = failCount + 1
     End If
     Err.Clear
-    
     Result = GetMaxVerse(999, 1)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Invalid book not rejected"
         failCount = failCount + 1
     End If
     Err.Clear
-    
     Result = GetMaxVerse(19, 0)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Chapter zero not rejected"
         failCount = failCount + 1
     End If
     Err.Clear
-    
     On Error GoTo 0
-    
     ' ========================
     ' SUMMARY
     ' ========================
-    
     If failCount = 0 Then
         Debug.Print "Test_GetMaxVerse: PASS"
     Else
         Debug.Print "Test_GetMaxVerse: FAIL (" & failCount & " errors)"
     End If
-    
     Exit Sub
     
 FailHandler:
@@ -423,7 +406,6 @@ FailHandler:
     Debug.Print "Error: "; Err.Number; Err.Description
     failCount = failCount + 1
     Resume Next
-
 End Sub
 
 Private Sub FailTest(ByRef failCount As Long, _
@@ -746,10 +728,8 @@ Public Sub Test_Stage10_RangeComposition()
     ' Verse shorthand
     '------------------------------------------
     r = ComposeRange("John 3:16-18")
-
     AssertEqual 3, r.StartRef.Chapter, "start chapter"
     AssertEqual 16, r.StartRef.Verse, "start verse"
-
     AssertEqual 3, r.EndRef.Chapter, "end chapter"
     AssertEqual 18, r.EndRef.Verse, "end verse"
     '------------------------------------------
@@ -764,9 +744,31 @@ Public Sub Test_Stage10_RangeComposition()
     r = ComposeRange("Genesis 1:31-2:3")
     AssertEqual 1, r.StartRef.Chapter, "cross start chapter"
     AssertEqual 31, r.StartRef.Verse, "cross start verse"
-
     AssertEqual 2, r.EndRef.Chapter, "cross end chapter"
     AssertEqual 3, r.EndRef.Verse, "cross end verse"
+End Sub
+
+Public Sub PrintScriptureList(list As ScriptureList)
+    Dim i As Long
+    Dim refIndex As Long
+    Dim rangeIndex As Long
+
+    refIndex = 0
+    rangeIndex = 0
+    For i = LBound(list.ItemType) To UBound(list.ItemType)
+        Select Case list.ItemType(i)
+            Case 1  ' ScriptureRef
+                Debug.Print CanonicalFromRef(list.Refs(refIndex))
+                refIndex = refIndex + 1
+            Case 2  ' ScriptureRange
+                Debug.Print CanonicalFromRef(list.Ranges(rangeIndex).StartRef) & _
+                            "-" & _
+                            CanonicalFromRef(list.Ranges(rangeIndex).EndRef)
+                rangeIndex = rangeIndex + 1
+            Case Else
+                Debug.Print "Unknown item type at index "; i
+        End Select
+    Next i
 End Sub
 
 Public Sub Test_Stage11_ListComposition()
@@ -779,7 +781,6 @@ Public Sub Test_Stage11_ListComposition()
     ' Simple reference list
     '------------------------------------------
     Set Items = ComposeList("John 3:16, John 3:18")
-
     AssertEqual 2, Items.count, "two references parsed"
     AssertEqual "John 3:16", Items(1), "first reference"
     AssertEqual "John 3:18", Items(2), "second reference"
@@ -787,7 +788,6 @@ Public Sub Test_Stage11_ListComposition()
     ' Range inside list
     '------------------------------------------
     Set Items = ComposeList("John 3:16-18, John 3:20")
-
     AssertEqual 2, Items.count, "range + reference"
     AssertEqual "John 3:16-3:18", Items(1), "range canonical"
     AssertEqual "John 3:20", Items(2), "second reference"
@@ -795,7 +795,6 @@ Public Sub Test_Stage11_ListComposition()
     ' Semicolon separation
     '------------------------------------------
     Set Items = ComposeList("Romans 8; Romans 9")
-
     AssertEqual 2, Items.count, "semicolon list"
 End Sub
 
