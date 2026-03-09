@@ -910,6 +910,45 @@ Private aliasMap As Object
 '=====================================================
 
 '=====================================================
+' Stage 11 / 13 - ComposeList / Contextual Shorthand
+'=====================================================
+' Public API: ComposeList(raw As String) As Collection
+' Purpose:
+'   Parses a list of scripture references from a string and returns
+'   a collection of canonical references as strings.
+' Supported forms:
+'   - Single references: "John 3:16"
+'   - Ranges: "John 3:16-18" (same chapter) or "John 3:16-4:2" (cross-chapter)
+'   - Lists: separated by comma or semicolon: "John 3:16, 18; 4:1"
+'   - Contextual shorthand:
+'       * Missing chapter: inherits from previous reference or range
+'       * Missing book: inherits from previous
+'       * Example: "3:16-4:2, 5" ? "John 3:16-4:2, John 4:5"
+' Rules / Notes:
+'   1. Cross-chapter ranges update the "current chapter" context
+'      for the next shorthand references.
+'   2. Single verses without chapter are interpreted in the chapter
+'      of the last segment's end (range or single reference).
+'   3. Canonical output prefers minimal representation:
+'       * "John 3:16-18" instead of "John 3:16-3:18"
+'       * Chapter repetition is omitted unless necessary
+' Examples:
+'   Input: "John 3:16, 18, 20-22"
+'       Output: "John 3:16", "John 3:18", "John 3:20-22"
+'   Input: "3:16-4:2, 5"
+'       Output: "John 3:16-4:2", "John 4:5"
+'   Input: "Romans 8; Romans 9"
+'       Output: "Romans 8", "Romans 9"
+' Implementation:
+'   - Stage 11 parses the raw string into segments (ListTokens)
+'   - Stage 12 composes each segment into a ScriptureRef or ScriptureRange
+'   - Stage 13 applies **contextual shorthand** rules and produces
+'     canonical output strings.
+' Output:
+'   - Collection of canonical strings (e.g., "John 3:16-4:2", "John 4:5")
+'=====================================================
+
+'=====================================================
 ' Deterministic Structural DFA
 ' Aligned to 7-Stage Parser Architecture
 '=====================================================
