@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #485 -
 ' #484 -
 ' #483 -
-' #482 -
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
@@ -68,6 +67,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #482 - Move all Types into Citation_EBNF module
     ' FIXED - #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
     ' FIXED - #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
     ' FIXED - #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
