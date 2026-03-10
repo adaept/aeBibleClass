@@ -597,10 +597,19 @@ Public Sub Test_Stage7_EndToEnd()
     AssertEqual "Romans 8", Result, "Romans chapter reference"
     Result = ParseReference("3 John 4")
     AssertEqual "3 John 1:4", Result, "3 John expansion"
-    Result = ParseReference("1 Jn")
-    AssertEqual "1 John 1:1", Result, "1 Jn expansion"
     Result = ParseReference("Genesis 1:1")
     AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
+    '------------------------------------------
+    ' Book-only expansion
+    '------------------------------------------
+    Result = ParseReference("John")
+    AssertEqual "John 1:1", Result, "John book expansion"
+    Result = ParseReference("1 Jn")
+    AssertEqual "1 John 1:1", Result, "1 Jn expansion"
+    Result = ParseReference("Jude")
+    AssertEqual "Jude 1:1", Result, "Jude book expansion"
+    Result = ParseReference("Romans")
+    AssertEqual "Romans 1:1", Result, "Romans book expansion"
 End Sub
 
 Public Sub Test_Stage8_ListDetection()

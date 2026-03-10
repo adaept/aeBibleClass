@@ -11,18 +11,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #484 -
 ' #483 -
 ' #482 -
-' #481 -
-' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
-' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
-' #451 - Refactor ParseReferenceStub into proper stage calls
-'           normalized = NormalizeInput(input), tokens = TokenizeReference(normalized), parsed = InterpretTokens(tokens)
-' #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
-' #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
 ' #417 - Add an SBL auto-corrector [feat]
-' #416 - Emit fix suggestions (1 JN -> 1 John 1:1)
 ' #411 - Fix reloading of all code routine to include SBL EBNF module [bug]
 ' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
@@ -76,6 +68,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
+    ' FIXED - #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
+    ' FIXED - #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
+    ' FIXED - #451 - Refactor ParseReferenceStub into proper stage calls
+    '                   normalized = NormalizeInput(input), tokens = TokenizeReference(normalized), parsed = InterpretTokens(tokens)
+    ' FIXED - #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
+    ' FIXED - #416 - Emit fix suggestions (1 JN -> 1 John 1:1)
+    ' FIXED - #481 - See #480 - Update code base and test to deal with Book-Only Reference Handling
     ' FIXED - #480 - See #416 - Add to Stage 4 documentation - Book-Only Reference Handling
     ' FIXED - #479 - Add documentation for Stage 11 / 13 - ComposeList / Contextual Shorthand
     ' FIXED - #478 - Fix ScriptureList type to avoid UDT coerce error for late-bound function. Adjust code and tests as needed [bug]

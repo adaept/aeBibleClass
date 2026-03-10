@@ -1451,10 +1451,12 @@ Public Function ParseReference( _
     ' Stage 6 - Canonical formatting
     '------------------------------------------
     If VerseSpec = "" Then
-        ' Chapter-only reference
-        formatted = CStr(Chapter)
+        If Chapter = 0 Then
+            formatted = RewriteSingleChapterRef(BookID, 0, 0)
+        Else
+            formatted = CStr(Chapter)
+        End If
     Else
-        ' Verse reference
         formatted = RewriteSingleChapterRef(BookID, Chapter, CLng(VerseSpec))
     End If
     ParseReference = canonical & " " & formatted
@@ -1611,13 +1613,35 @@ Public Function ParseScripture(ByVal raw As String) As Variant
     ParseScripture = ParseReference(raw)
 End Function
 
+'=====================================================
+' LexicalScan
+'    Stage 2 of the SBL parser pipeline.
+' Purpose:
+'   Splits a normalized scripture reference into:
+'       RawAlias  -> book alias
+'       Num1      -> chapter
+'       Num2      -> verse
+'       HasColon  -> indicates verse present
+' Special Handling:
+'   Book aliases beginning with a number (e.g. "1 John",
+'   "2 Tim", "3 Jn") may appear without a numeric
+'   reference (e.g. "1 Jn").
+'   In this case the entire input is treated as the
+'   RawAlias and numeric parsing is skipped. Later
+'   stages will expand this to Chapter 1 Verse 1.
+' Examples:
+'   "Genesis"            -> RawAlias="Genesis"
+'   "Romans 8"           -> RawAlias="Romans", Num1=8
+'   "John 3:16"          -> RawAlias="John", Num1=3, Num2=16
+'   "1 Jn"               -> RawAlias="1 Jn"
+'   "1 Corinthians 13:4" -> RawAlias="1 Corinthians"
+'=====================================================
 Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
     Dim t As LexTokens
     Dim parts() As String
     Dim refPart As String
-    
+
     parts = Split(Trim$(normalizedInput), " ")
-    
     Select Case UBound(parts)
         Case 0
             ' Example: "Genesis"
@@ -1626,8 +1650,16 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
             Exit Function
         Case 1
             ' Example: "Romans 8"
-            t.RawAlias = parts(0)
-            refPart = parts(1)
+            ' Example: "1 Jn" (numeric-leading alias)
+            If IsNumeric(parts(0)) Then
+                ' Entire input is a book alias
+                t.RawAlias = parts(0) & " " & parts(1)
+                LexicalScan = t
+                Exit Function
+            Else
+                t.RawAlias = parts(0)
+                refPart = parts(1)
+            End If
         Case Else
             ' Example: "3 John 4"
             ' Example: "1 Corinthians 13:4"
@@ -1648,8 +1680,7 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
         t.Num2 = CLng(subParts(1))
         t.HasColon = True
     Else
-        If Len(refPart) = 0 Then refPart = "1:1"
-        If Not IsNumeric(Split(refPart, ":")(0)) Then
+        If Not IsNumeric(refPart) Then
             Err.Raise vbObjectError + 1001, , _
                 "Invalid numeric reference: " & refPart
         End If
@@ -1657,7 +1688,7 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
         t.Num2 = 0
         t.HasColon = False
     End If
-    
+
     LexicalScan = t
 End Function
 
@@ -2081,15 +2112,38 @@ Public Function GetSingleChapterBookSet() As Object
 End Function
 
 Public Function InterpretStructure(t As LexTokens) As ParsedReference
+
     Dim ref As ParsedReference
-    ' Use existing RewriteSingleChapterRef for single-chapter conversion
+    Dim BookID As Long
+
+    BookID = GetBookAliasMap(t.RawAlias)
+
     ref.Chapter = t.Num1
     ref.VerseSpec = t.Num2
-    If ref.Chapter = 0 And GetSingleChapterBookSet.Exists(GetBookAliasMap(t.RawAlias)) Then
+
+    '-----------------------------------------
+    ' Single-chapter books
+    ' Example: Jude 5 ? 1:5
+    '-----------------------------------------
+    If ref.Chapter = 0 And GetSingleChapterBookSet.Exists(BookID) Then
         ref.VerseSpec = t.Num1
         ref.Chapter = 1
     End If
+
+    '-----------------------------------------
+    ' BOOK-ONLY NORMALIZATION
+    ' Example: John ? 1:1
+    '-----------------------------------------
+    If ref.Chapter = 0 Then
+        ref.Chapter = 1
+    End If
+
+    If ref.VerseSpec = 0 Then
+        ref.VerseSpec = 1
+    End If
+
     InterpretStructure = ref
+
 End Function
 
 Public Function RewriteSingleChapterRef( _
@@ -2099,16 +2153,34 @@ Public Function RewriteSingleChapterRef( _
 
     Dim sc As Object
     Set sc = GetSingleChapterBookSet
-
-    ' Only rewrite when:
-    ' 1) book is single-chapter
-    ' 2) chapter was omitted (chapter = 0)
+    '-----------------------------------------
+    ' BOOK ONLY
+    ' Example: John ? 1:1
+    '-----------------------------------------
+    If Chapter = 0 And Verse = 0 Then
+        RewriteSingleChapterRef = "1:1"
+        Exit Function
+    End If
+    '-----------------------------------------
+    ' Single-chapter books
+    ' Example: Jude 5 ? 1:5
+    '-----------------------------------------
     If sc.Exists(BookID) And Chapter = 0 Then
         RewriteSingleChapterRef = "1:" & Verse
-    ElseIf Verse > 0 Then
+        Exit Function
+    End If
+    '-----------------------------------------
+    ' Normal reference
+    '-----------------------------------------
+    If Verse > 0 Then
         RewriteSingleChapterRef = Chapter & ":" & Verse
     Else
-        RewriteSingleChapterRef = CStr(Chapter)
+        ' Chapter-only reference OR book-only reference
+        If Chapter = 0 Then
+            RewriteSingleChapterRef = "1:1"
+        Else
+            RewriteSingleChapterRef = CStr(Chapter)
+        End If
     End If
 End Function
 
