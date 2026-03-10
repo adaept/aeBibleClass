@@ -467,7 +467,6 @@ Public Sub Test_Stage2_LexicalScan()
     AssertEqual 1, t.Num1, "Chapter parsed"
     AssertEqual 5, t.Num2, "Verse parsed"
     AssertTrue t.HasColon, "Colon detected"
-
     t = LexicalScan("Romans 8")
     AssertEqual "Romans", t.RawAlias, "Alias parsed"
     AssertEqual 8, t.Num1, "Number parsed"
@@ -488,7 +487,6 @@ Public Sub Test_Stage3_ResolveAlias()
     canonical = ResolveAlias(tokens.RawAlias, BookID)
     AssertEqual 65, BookID, "Jude BookID"
     AssertEqual "Jude", canonical, "Jude canonical"
-
     tokens = LexicalScan("Genesis 1:1")
     canonical = ResolveAlias(tokens.RawAlias, BookID)
     AssertEqual 1, BookID, "Genesis BookID"
@@ -537,7 +535,6 @@ Public Sub Test_Stage4_InterpretStructure()
     ref = InterpretStructure(tokens)
     AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
     AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
-
     tokens = LexicalScan("Romans 8:1")
     ref = InterpretStructure(tokens)
     AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
@@ -553,10 +550,8 @@ Public Sub Test_Stage5_ValidateCanonical()
     Dim valid As Boolean
     valid = ValidateSBLReference(65, "Jude", 0, "5", ModeSBL)
     AssertTrue valid, "Jude 5 valid"
-    
     valid = ValidateSBLReference(65, "Jude", 1, "0", ModeSBL, True)
     AssertTrue Not valid, "Jude 1:0 rejected"
-    
     valid = ValidateSBLReference(45, "Romans", 999, "1", ModeSBL, True)
     AssertTrue Not valid, "Romans 999:1 rejected"
 End Sub
@@ -570,7 +565,6 @@ Public Sub Test_Stage6_FormatCanonical()
     Dim Result As String
     Result = RewriteSingleChapterRef(65, 0, 5)
     AssertEqual "1:5", Result, "Jude single-chapter rewrite"
-
     Result = RewriteSingleChapterRef(45, 8, 1)
     AssertEqual "8:1", Result, "Romans unchanged"
 End Sub
@@ -585,7 +579,6 @@ Public Sub Test_Stage6_FormatCanonical_FailureDemo()
         Dim Result As String
         ' Call the real formatter
         Result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
-    
         ' Deliberate wrong expected value
         AssertEqual "5", Result, "Canonical rewrite for Jude"
     End If
@@ -593,7 +586,6 @@ End Sub
 
 Public Sub Test_Stage7_EndToEnd()
     Dim Result As String
-
     Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage7_EndToEnd"
@@ -601,13 +593,12 @@ Public Sub Test_Stage7_EndToEnd()
 
     Result = ParseReference("Jude 5")
     AssertEqual "Jude 1:5", Result, "Jude single-chapter expansion"
-
     Result = ParseReference("Romans 8")
     AssertEqual "Romans 8", Result, "Romans chapter reference"
-
     Result = ParseReference("3 John 4")
     AssertEqual "3 John 1:4", Result, "3 John expansion"
-
+    Result = ParseReference("1 Jn")
+    AssertEqual "1 John 1:1", Result, "1 Jn expansion"
     Result = ParseReference("Genesis 1:1")
     AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
 End Sub
@@ -682,7 +673,6 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     AssertTrue IsRangeSegment("John 3:16-18"), _
         "IsRangeSegment verse range"
-
     r = RangeDetection("John 3:16-18")
     AssertTrue r.IsRange, "verse range detected"
     AssertEqual r.LeftRaw, "John 3:16", "range left token"
@@ -713,7 +703,6 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     AssertFalse IsRangeSegment("John 3:16"), _
         "IsRangeSegment single reference"
-
     r = RangeDetection("John 3:16")
     AssertFalse r.IsRange, "single reference not range"
 End Sub

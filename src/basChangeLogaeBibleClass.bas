@@ -7,7 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #480 -
+' #485 -
+' #484 -
+' #483 -
+' #482 -
+' #481 -
 ' #456 - Design extension hooks for future features (ranges, lists, multi-word books) without breaking the contract
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #452 - Temporarily harden parts = Split(normalizedInput, " ") with a quick loop to skip empty tokens
@@ -18,7 +22,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
 ' #417 - Add an SBL auto-corrector [feat]
-' #416 - Emit fix suggestions (1 JN ? 1 John)
+' #416 - Emit fix suggestions (1 JN -> 1 John 1:1)
 ' #411 - Fix reloading of all code routine to include SBL EBNF module [bug]
 ' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
@@ -72,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #480 - See #416 - Add to Stage 4 documentation - Book-Only Reference Handling
     ' FIXED - #479 - Add documentation for Stage 11 / 13 - ComposeList / Contextual Shorthand
     ' FIXED - #478 - Fix ScriptureList type to avoid UDT coerce error for late-bound function. Adjust code and tests as needed [bug]
     ' FIXED - #477 - Add test and code for Stages 11, 12

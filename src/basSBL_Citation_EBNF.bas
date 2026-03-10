@@ -298,6 +298,26 @@ Private aliasMap As Object
 '       chapter/verse bounds.
 '       Metadata (GetChapterCount) may be consulted ONLY
 '       when BookID is valid.
+'    =====================================================
+'    Book-Only Reference Handling
+'    =====================================================
+'    If a reference contains only a book alias and no
+'    numeric component, the parser defaults to:
+'       Chapter = 1
+'       Verse   = 1
+'    Example:
+'       Input:  "John"
+'       Output: "John 1:1"
+'       Input:  "1 Jn"
+'       Output: "1 John 1:1"
+'    Rationale:
+'       This behavior matches common Bible software
+'       navigation conventions and provides a safe
+'       canonical anchor for book-level references.
+'    Implementation:
+'       When refPart is empty, it is internally
+'       replaced with "1:1" before numeric validation.
+'    =====================================================
 '
 '    ------------------------------------------------------------
 '    Stage 5: Canonical Validation (Validate reference)
@@ -1628,7 +1648,8 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
         t.Num2 = CLng(subParts(1))
         t.HasColon = True
     Else
-        If Not IsNumeric(refPart) Then
+        If Len(refPart) = 0 Then refPart = "1:1"
+        If Not IsNumeric(Split(refPart, ":")(0)) Then
             Err.Raise vbObjectError + 1001, , _
                 "Invalid numeric reference: " & refPart
         End If
