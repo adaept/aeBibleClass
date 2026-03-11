@@ -452,6 +452,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage10_RangeComposition
     Test_Stage11_ListComposition
     Test_Stage12_FinalParser
+    Test_Stage13_ContextShorthand
     TestSummary
 End Sub
 
@@ -823,4 +824,51 @@ Public Sub Test_Stage12_FinalParser()
     '------------------------------------------
     Set Items = ParseScripture("John 3:16-18, John 3:20")
     AssertEqual 2, Items.count, "mixed parsed"
+End Sub
+
+Public Sub Test_Stage13_ContextShorthand()
+    Dim c As Collection
+    Dim v
+
+    Debug.Print "====================================="
+    Debug.Print "Stage 13 Contextual Shorthand Tests"
+    Debug.Print "====================================="
+    '------------------------------------------
+    ' Test 1
+    '------------------------------------------
+    Set c = ComposeList("John 3:16, 18, 20-22")
+    Debug.Print "Test 1"
+    For Each v In c
+        Debug.Print v
+    Next
+    'Expected
+    'John 3:16
+    'John 3:18
+    'John 3:20-22
+    '------------------------------------------
+    ' Test 2
+    '------------------------------------------
+    Set c = ComposeList("John 3:16-4:2, 5")
+    Debug.Print
+    Debug.Print "Test 2"
+    For Each v In c
+        Debug.Print v
+    Next
+    'Expected
+    'John 3:16-4:2
+    'John 4:5
+    '------------------------------------------
+    ' Test 3
+    '------------------------------------------
+    Set c = ComposeList("Romans 8; 9")
+    Debug.Print
+    Debug.Print "Test 3"
+    For Each v In c
+        Debug.Print v
+    Next
+    'Expected
+    'Romans 8
+    'Romans 9
+    Debug.Print
+    Debug.Print "Stage 13 tests complete."
 End Sub

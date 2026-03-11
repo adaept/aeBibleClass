@@ -1,10 +1,4 @@
 Attribute VB_Name = "basSBL_Citation_EBNF"
-Option Explicit
-Option Compare Text
-Option Private Module
-
-Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
-
 'Copyright (c) 2018-2026 Peter F. Ennis
 'This library is free software; you can redistribute it and/or
 'modify it under the terms of the GNU Lesser General Public
@@ -20,7 +14,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 ' ================================================================
 ' Author:   Peter F. Ennis
-' Date:     March 10, 2026
+' Date:     March 10, 2025
 ' Comment:  Bible Citation Parser for Word 365 VBA
 '           - This is a Deterministic Structural Parser (DSP)
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
@@ -852,9 +846,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' These stages are strictly lexical segmentation layers.
 '   Stage 8  List Detection
 '   Stage 9  Range Detection
-'   Stage 10 RangeComposition   -> builds ranges
-'   Stage 11 ListComposition    -> builds lists
-'   Stage 12 ExtendedParse      -> orchestrate pipeline
+'   Stage 10 RangeComposition     -> builds ranges
+'   Stage 11 ListComposition      -> builds lists
+'   Stage 12 ExtendedParse        -> orchestrate pipeline
+'   Stage 13 ContextualShorthand
 'Recursion
 '   Stage-12 may call ParseReferenceExtended() recursively
 '   when processing list segments. This allows nested list
@@ -1380,6 +1375,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '    Right$("000" & verseCount, 3)
 ' This ensures constant-width indexing for direct addressing.
 
+Option Explicit
+Option Compare Text
+Option Private Module
+
+Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+
 Public Type ParsedReference
     ' Only structure needed for test harness
     RawInput   As String
@@ -1460,6 +1461,17 @@ Public Enum CitationMode
     ModeSBL = 1       ' Enforce SBL Study Bible rules
 End Enum
 
+'===========================================================
+' ContextState (Stage 13 internal only)
+'   - Tracks the inherited book/chapter while resolving
+'     contextual shorthand.
+' This type is NOT returned outside Stage 13.
+'===========================================================
+Private Type ContextState
+    BookID As Integer
+    Chapter As Integer
+End Type
+
 Private aliasMap As Object
 
 Public Sub ResetBookAliasMap()
@@ -1514,7 +1526,12 @@ Public Function ComposeList(raw As String) As Collection
     Dim list As ScriptureList
     Dim Result As New Collection
     Dim i As Long
+
     ComposeList_Internal raw, list
+    '------------------------------------------
+    ' Stage 13 - Contextual Shorthand Expansion
+    '------------------------------------------
+    ApplyContextShorthand list
     For i = LBound(list.ItemType) To UBound(list.ItemType)
         Select Case list.ItemType(i)
         Case 1
@@ -1523,6 +1540,7 @@ Public Function ComposeList(raw As String) As Collection
             Result.Add CanonicalFromRange(list.Ranges(i))
         End Select
     Next i
+
     Set ComposeList = Result
 End Function
 
@@ -1555,6 +1573,10 @@ Public Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
     Dim i As Long
     Dim count As Long
     Dim capacity As Long
+    Dim prevRef As ScriptureRef
+    Dim havePrev As Boolean
+    Dim seg As String
+    Dim p As Long
 
     capacity = 8
     ReDim Result.ItemType(0 To capacity - 1)
@@ -1565,22 +1587,53 @@ Public Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
     '------------------------------------------
     t = ListDetection(raw)
     For i = LBound(t.Segments) To UBound(t.Segments)
+        '------------------------------------------
         ' grow arrays if needed
+        '------------------------------------------
         If count >= capacity Then
             capacity = capacity * 2
             ReDim Preserve Result.ItemType(0 To capacity - 1)
             ReDim Preserve Result.Refs(0 To capacity - 1)
             ReDim Preserve Result.Ranges(0 To capacity - 1)
         End If
+        seg = Trim$(t.Segments(i))
         '------------------------------------------
         ' Stage 9 - range detection
         '------------------------------------------
-        If IsRangeSegment(t.Segments(i)) Then
-            Result.ItemType(count) = 2
-            Result.Ranges(count) = ComposeRange(t.Segments(i))
+        If IsRangeSegment(seg) Then
+            '------------------------------------------
+            ' Stage 13 shorthand numeric range
+            '------------------------------------------
+            If havePrev And IsNumericRange(seg) Then
+                p = InStr(seg, "-")
+                Result.ItemType(count) = 2
+                Result.Ranges(count).StartRef.BookID = prevRef.BookID
+                Result.Ranges(count).StartRef.Chapter = prevRef.Chapter
+                Result.Ranges(count).StartRef.Verse = CLng(Left$(seg, p - 1))
+                Result.Ranges(count).EndRef.BookID = prevRef.BookID
+                Result.Ranges(count).EndRef.Chapter = prevRef.Chapter
+                Result.Ranges(count).EndRef.Verse = CLng(mid$(seg, p + 1))
+            Else
+                Result.ItemType(count) = 2
+                Result.Ranges(count) = ComposeRange(seg)
+            End If
+            prevRef = Result.Ranges(count).EndRef
+            havePrev = True
         Else
-            Result.ItemType(count) = 1
-            Result.Refs(count) = ParseReferenceRef(t.Segments(i))
+            '------------------------------------------
+            ' Stage 13 shorthand single verse
+            '------------------------------------------
+            If havePrev And IsNumeric(seg) And InStr(seg, ":") = 0 Then
+                Result.ItemType(count) = 1
+                Result.Refs(count).BookID = prevRef.BookID
+                Result.Refs(count).Chapter = prevRef.Chapter
+                Result.Refs(count).Verse = CLng(seg)
+            Else
+                Result.ItemType(count) = 1
+                Result.Refs(count) = ParseReferenceRef(seg)
+            End If
+            prevRef = Result.Refs(count)
+            havePrev = True
         End If
         count = count + 1
     Next i
@@ -1595,27 +1648,78 @@ Public Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
     Result.IsValid = True
 End Sub
 
+'=====================================================
+' ApplyContextShorthand
+' Stage 13
+'   Expands contextual shorthand by inheriting
+'   BookID and Chapter from the previous reference.
+' Examples:
+'   John 3:16, 18
+'       -> John 3:16
+'       -> John 3:18
+'   John 3:16-4:2, 5
+'       -> John 3:16-4:2
+'       -> John 4:5
+'=====================================================
+Private Sub ApplyContextShorthand(ByRef list As ScriptureList)
+    Dim i As Long
+    Dim currentBook As Integer
+    Dim currentChapter As Integer
+
+    For i = LBound(list.ItemType) To UBound(list.ItemType)
+        Select Case list.ItemType(i)
+        '------------------------------------------
+        ' Single reference
+        '------------------------------------------
+        Case 1
+            If list.Refs(i).BookID = 0 Then
+                list.Refs(i).BookID = currentBook
+            End If
+            If list.Refs(i).Chapter = 0 Then
+                list.Refs(i).Chapter = currentChapter
+            End If
+            currentBook = list.Refs(i).BookID
+            currentChapter = list.Refs(i).Chapter
+        '------------------------------------------
+        ' Range
+        '------------------------------------------
+        Case 2
+            With list.Ranges(i)
+                If .StartRef.BookID = 0 Then
+                    .StartRef.BookID = currentBook
+                End If
+                If .StartRef.Chapter = 0 Then
+                    .StartRef.Chapter = currentChapter
+                End If
+                If .EndRef.BookID = 0 Then
+                    .EndRef.BookID = .StartRef.BookID
+                End If
+                If .EndRef.Chapter = 0 Then
+                    .EndRef.Chapter = .StartRef.Chapter
+                End If
+                currentBook = .EndRef.BookID
+                currentChapter = .EndRef.Chapter
+            End With
+        End Select
+    Next i
+End Sub
+
 Public Function ListDetection(ByVal RawInput As String) As ListTokens
     Dim Result As ListTokens
     Dim parts() As String
 
     If InStr(RawInput, ",") > 0 Then
         parts = Split(RawInput, ",")
-
         Result.IsList = True
         Result.Segments = parts
-
         ListDetection = Result
         Exit Function
     End If
 
-
     If InStr(RawInput, ";") > 0 Then
         parts = Split(RawInput, ";")
-
         Result.IsList = True
         Result.Segments = parts
-
         ListDetection = Result
         Exit Function
     End If
@@ -2831,6 +2935,15 @@ Public Function GetBookAliasMap() As Object
     End If
 
     Set GetBookAliasMap = aliasMap
+End Function
+
+Private Function IsNumericRange(ByVal seg As String) As Boolean
+    Dim p As Long
+    p = InStr(seg, "-")
+    If p = 0 Then Exit Function
+    IsNumericRange = _
+        IsNumeric(Left$(seg, p - 1)) And _
+        IsNumeric(mid$(seg, p + 1))
 End Function
 
 Public Function ResolveAlias(abbr As String, _

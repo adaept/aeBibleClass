@@ -7,10 +7,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #490 -
-' #489 -
-' #488 -
-' #487 - Add test and code for Stage 13 - Contextual Shorthand Expansion
+' #495 -
+' #494 -
+' #493 -
+' #492 - Add a step for Verse Boundary Validation
+' #491 - Add a step for Cross-Book Range Validation
+' #490 - Add a step for Chapter/Book Expansion Awareness
+' #489 - Add a step for Canonical Verse Ordering
+' #488 - Add a step called span normalization or range consolidation
 ' #484 - Store the Verse Map as a Byte Array [impr]
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
@@ -69,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #487 - Add test and code for Stage 13 - Contextual Shorthand Expansion
     ' FIXED - #485 - Update documentation for Stage 13 - Contextual Shorthand Expansion
     ' FIXED - #486 - Rename basChangeLog files to include underscore
     ' FIXED - #483 - Add license LGPL3 and tighten up documentation to include Book-only expansion parsing
