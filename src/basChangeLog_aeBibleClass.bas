@@ -10,8 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #490 -
 ' #489 -
 ' #488 -
-' #487 -
-' #485 - Add test and code for Stage 13 - Contextual Shorthand Expansion
+' #487 - Add test and code for Stage 13 - Contextual Shorthand Expansion
 ' #484 - Store the Verse Map as a Byte Array [impr]
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
@@ -70,6 +69,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #485 - Update documentation for Stage 13 - Contextual Shorthand Expansion
     ' FIXED - #486 - Rename basChangeLog files to include underscore
     ' FIXED - #483 - Add license LGPL3 and tighten up documentation to include Book-only expansion parsing
     ' FIXED - #482 - Move all Types into Citation_EBNF module

@@ -1091,40 +1091,88 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Stage 13 - Contextual Shorthand Expansion
 '            (Post-Parser Context Layer)
 '=====================================================
-' Public API: ComposeList(raw As String) As Collection
+' Public API:
+'     ComposeList(raw As String) As Collection
 ' Purpose:
-'   Parses a list of scripture references from a string and returns
-'   a collection of canonical references as strings.
-' Supported forms:
-'   - Single references: "John 3:16"
-'   - Ranges: "John 3:16-18" (same chapter) or "John 3:16-4:2" (cross-chapter)
-'   - Lists: separated by comma or semicolon: "John 3:16, 18; 4:1"
-'   - Contextual shorthand:
-'       * Missing chapter: inherits from previous reference or range
-'       * Missing book: inherits from previous
-'       * Example: "3:16-4:2, 5" ? "John 3:16-4:2, John 4:5"
-' Rules / Notes:
-'   1. Cross-chapter ranges update the "current chapter" context
-'      for the next shorthand references.
-'   2. Single verses without chapter are interpreted in the chapter
-'      of the last segment's end (range or single reference).
-'   3. Canonical output prefers minimal representation:
-'       * "John 3:16-18" instead of "John 3:16-3:18"
-'       * Chapter repetition is omitted unless necessary
-' Examples:
-'   Input: "John 3:16, 18, 20-22"
-'       Output: "John 3:16", "John 3:18", "John 3:20-22"
-'   Input: "3:16-4:2, 5"
-'       Output: "John 3:16-4:2", "John 4:5"
-'   Input: "Romans 8; Romans 9"
-'       Output: "Romans 8", "Romans 9"
-' Implementation:
-'   - Stage 11 parses the raw string into segments (ListTokens)
-'   - Stage 12 composes each segment into a ScriptureRef or ScriptureRange
-'   - Stage 13 applies **contextual shorthand** rules and produces
-'     canonical output strings.
+'     Parses a list of scripture references from a string and returns
+'     a collection of canonical reference strings.
+' Supported Forms:
+'   Single references
+'       "John 3:16"
+'   Ranges
+'       Same chapter:      "John 3:16-18"
+'       Cross chapter:     "John 3:16-4:2"
+'   Lists
+'       "John 3:16, 18; 4:1"
+'   Contextual shorthand
+'       Missing book    -> inherited from previous segment
+'       Missing chapter -> inherited from current context
+' Example:
+'   "3:16-4:2, 5"
+'       -> "John 3:16-4:2"
+'       -> "John 4:5"
+'-----------------------------------------------------
+' Context State
+'-----------------------------------------------------
+' During processing the engine maintains:
+'       CurrentBook
+'       CurrentChapter
+' Context is updated after each resolved segment.
+'-----------------------------------------------------
+' Processing Order
+'-----------------------------------------------------
+' Segments are processed left-to-right.
+' Context updates occur after each resolved segment.
+'-----------------------------------------------------
+' Range Context Rules
+'-----------------------------------------------------
+' After a range resolves, the context chapter becomes
+' the ending chapter of the range.
+' Example:
+'   "John 3:16-4:2, 5"
+' Range resolved:
+'   John 3:16-4:2
+' Context becomes:
+'   Book = John
+'   Chapter = 4
+' Next segment:
+'   5 -> John 4:5
+'-----------------------------------------------------
+' Canonical Output Rules
+'-----------------------------------------------------
+' Same-chapter ranges collapse chapter repetition:
+'       John 3:16-18
+' Cross-chapter ranges preserve both chapters:
+'       John 3:16-4:2
+' Single verses always include book and chapter:
+'       John 3:16
+'-----------------------------------------------------
+' Examples
+'-----------------------------------------------------
+' Input:
+'       "John 3:16, 18, 20-22"
 ' Output:
-'   - Collection of canonical strings (e.g., "John 3:16-4:2", "John 4:5")
+'       "John 3:16"
+'       "John 3:18"
+'       "John 3:20-22"
+' Input:
+'       "3:16-4:2, 5"
+' Output:
+'       "John 3:16-4:2"
+'       "John 4:5"
+' Input:
+'       "Romans 8; 9"
+' Output:
+'       "Romans 8"
+'       "Romans 9"
+'-----------------------------------------------------
+' Implementation
+'-----------------------------------------------------
+'   Stage 11  -> ListTokens (segment structure)
+'   Stage 12  -> ScriptureRef / ScriptureRange objects
+'   Stage 13  -> Contextual shorthand resolution
+' Output:
+'   Collection of canonical reference strings
 '=====================================================
 
 '=====================================================
