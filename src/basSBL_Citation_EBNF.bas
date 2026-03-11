@@ -5,8 +5,48 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+'Copyright (c) 2018-2026 Peter F. Ennis
+'This library is free software; you can redistribute it and/or
+'modify it under the terms of the GNU Lesser General Public
+'License as published by the Free Software Foundation;
+'version 3.0 or (at your option) any later version.
+'This library is distributed in the hope that it will be useful,
+'but WITHOUT ANY WARRANTY; without even the implied warranty of
+'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+'Lesser General Public License for more details.
+'You should have received a copy of the GNU Lesser General Public
+'License along with this library; if not, visit
+'https://www.gnu.org/licenses/lgpl-3.0.txt
+
 ' ================================================================
-' SCRIPTURE REFERENCE PARSER - FORMAL CONTRACT
+' Author:   Peter F. Ennis
+' Date:     March 10, 2026
+' Comment:  Bible Citation Parser for Word 365 VBA
+'           - This is a Deterministic Structural Parser (DSP)
+' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
+' GitHub:   https://github.com/adaept/aeBibleClass
+' ================================================================
+' The parser correctly handles three expansion classes:
+'   Book-only expansion
+'   Single-chapter book normalization
+'   Verse shorthand expansion
+' Those three transformations together form the complete
+' canonicalization layer of the reference parser.
+'
+'========================================================
+' PARSER PIPELINE
+'========================================================
+' Stage 1  LexicalScan
+' Stage 2  ResolveAlias
+' Stage 3  InterpretStructure
+' Stage 4  ValidateCanonical
+' Stage 5  RewriteSingleChapterRef
+' Stage 6  ComposeCanonicalReference
+' Stage 7  FinalParser
+' Stages 8–12 implement list and range extensions.
+'
+' ================================================================
+'  SCRIPTURE REFERENCE PARSER - FORMAL CONTRACT
 ' ================================================================
 ' 1. ParseReference(rawInput As String) is a total function:
 '       It returns exactly one ScriptureRef for every input string.
@@ -16,19 +56,120 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 4. If IsValid=True then:
 '       BookID => [1..66],
 '       Chapter >= 1,
-'       Verse >= 0,
+'       Canonical output always includes a verse number.
+'           Verse >= 0
+'           Verse = 0 means the user did not specify a verse.
+'           The canonicalization layer expands this to verse 1.
+'           Examples:
+'           Input           Internal State         Canonical Output
+'           -------------------------------------------------------
+'           Romans 8        Chapter=8  Verse=0     Romans 8:1
+'           John            Chapter=1  Verse=1     John 1:1
+'           Jude 5          Chapter=0  Verse=5     Jude 1:5
 '       ErrorCode=0,
 '       ErrorText="",
 '       NormalizedRef<>"".
 ' 5. If IsValid=False then:
 '       NormalizedRef="", ErrorCode<>0.
-' 6. Raw input is discarded; no input text is preserved.
-' 7. Each stage (1-7) is single-responsibility and side-effect free.
+' 6. Raw input is not stored in the returned ScriptureRef.
+'    Only normalized canonical output is preserved.
+' 7. Each stage (1-7) performs a single responsibility
+'    and does not mutate external state.
 ' 8. No stage performs responsibilities assigned to another stage.
 ' 9. Canonical metadata is authoritative and immutable.
-'10. Validation is deterministic: first failure wins.
-'11. Formatting is canonical SBL-style and alias-independent.
-'12. Only internal invariant violations may raise Err.Raise.
+'    - Canonical Book ID Mapping
+'       1  Genesis
+'       2  Exodus
+'       3  Leviticus
+'       4  Numbers
+'       5  Deuteronomy
+'       6  Joshua
+'       7  Judges
+'       8  Ruth
+'       9  1 Samuel
+'      10  2 Samuel
+'      11  1 Kings
+'      12  2 Kings
+'      13
+'      14
+'      15
+'      16
+'      17
+'      18
+'      19
+'      20
+'      21
+'      22
+'      23
+'      24
+'      25
+'      26
+'      27
+'      28
+'      29
+'      30
+'      31
+'      32
+'      33
+'      34
+'      35
+'      36
+'      37
+'      38
+'      39
+'      40
+'      41
+'      42
+'      43
+'      44
+'      45
+'      46
+'      47
+'      48
+'      49
+'      50
+'      51
+'      52
+'      53
+'      54
+'      55
+'      56
+'      57
+'      58
+'      59
+'      60
+'      61
+'      62
+'      63
+'      64
+'      65
+'      66
+' 10. Validation is deterministic: first failure wins.
+' 11. Formatting is canonical SBL-style and alias-independent.
+' 12. Only internal invariant violations may raise the Err.Raise error.
+' 13. Scripture structure is defined entirely by metadata.
+'     The parser contains no hard-coded knowledge of Bible structure.
+'     All information about books, chapters, and verse counts is stored
+'     in metadata tables.
+'     Examples of metadata:
+'        - Canonical book list (BookID ? BookName)
+'        - Number of chapters per book
+'        - Maximum verses per chapter
+'     The parser reads this metadata when validating references.
+'     Therefore validation rules such as:
+'        "Genesis has 50 chapters"
+'        "Romans 16 has 27 verses"
+'     are not implemented in code. They are enforced by metadata lookups.
+'     Example validation flow:
+'        Input:  Romans 16:30
+'        Parser checks metadata:
+'            GetMaxVerse(BookID=45, Chapter=16) ? 27
+'        Because 30 > 27, the reference is rejected.
+'     Benefits of metadata-driven structure:
+'        - Parser code remains generic and simple.
+'        - Structural data can be corrected without changing code.
+'        - The same parser can support alternate canons or
+'          translations by swapping metadata tables.
 ' *** Later stages are are described in the ***
 ' ***     Extension Layer Classification    ***
 ' Extension Layer Invariant
@@ -36,13 +177,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '   Stages 8-12 must not modify the behavior of
 '   the atomic parser.
 ' ================================================================
+'
 ' Design Goals:
 '
 ' 1. VBA coding often causes Type Mismatch and Bounds errors due to 0 vs. 1 based arrays.
 '    Bible books in the Protestant Canon are numbered 1-66.
 '    This design will enforce 1-Based arrays throughout the system and use Assert statements
 '    to raise errors immediately for any 0-Based array usage.
-'    It makem sure that the code and documentation are in synch, so strict task separation is used.
+'    It makes sure that the code and documentation are in synch, so strict task separation is used.
 '    The test harness should follow the same principle, and documentation be updated to include
 '    code routine names as part of the development strategy.
 ' 1a. - We are building:
@@ -259,8 +401,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '           - Invalid numeric tokens
 '    LOGIC:
 '       ' Default structural assignment (no metadata reliance)
-'       Chapter = Num1
-'       Verse   = 0
+'           Chapter = Num1
+'           Verse   = 0
+'       If Num1IsValid = False And HasColon = False Then
+'       ' Book-only reference
+'           Chapter = 1
+'           Verse = 1
 '       ' If colon present, explicit Chapter:Verse structure
 '       If HasColon = True Then
 '           Verse = Num2
@@ -486,9 +632,21 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Core Reference
 '=====================================================
 ' Reference
-'    ::= BookRef (WS ChapterSpec)?
+'    ::= BookRef
+'     |  BookRef WS ChapterSpec
 ' BookRef
 '    ::= Prefix? WS? BookName
+'-----------------------------------------------------
+' Book-only references are permitted.
+'    When no ChapterSpec is present, the reference is
+'    normalized to the first verse of the book.
+' Examples
+'    John      -> John 1:1
+'    Romans    -> Romans 1:1
+'    Jude      -> Jude 1:1
+'    This normalization occurs in Stage 6
+'    (canonical formatting / rewrite)
+'-----------------------------------------------------
 ' Prefix
 '    ::= ArabicPrefix | RomanPrefix
 ' ArabicPrefix
@@ -532,6 +690,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '    ::= Digit+ VerseSuffix?
 ' VerseSuffix
 '    ::= Letter
+' VERSE_SUFFIX | Alphabetic suffix after verse digit
 ' NOTE:
 '   VerseSuffix (e.g., "a", "b") is lexically captured.
 '   Canonical validity is enforced post-parse.
@@ -575,8 +734,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Lists and ranges preserve structural form
 ' after semantic validation.
 '=====================================================
-' NOTE: This DFA validates structural syntax only.
-'       Semantic constraints are enforced post-parse.
+'NOTE: This DFS validates structural syntax only.
+'      Semantic correctness is enforced in Stage 5.
 '=====================================================
 
 '=====================================================
@@ -680,11 +839,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=====================================================
 ' Extension Layer Classification
 '=====================================================
-' The core parser (Stages 1-7) is modeled as a deterministic
-' structural DFA that produces a single atomic ScriptureRef.
+' The core parser (Stages 1-7) is modeled as a Deterministic
+' Structural Parser (DSP) that produces a single atomic ScriptureRef.
 '
-' *** Extension stages operate OUTSIDE the DFA and must never ***
-' ***      influence the DFA state machine.                   ***
+' *** Extension stages operate OUTSIDE the DSP and must never ***
+' ***      influence the DSP state machine.                   ***
 '
 ' Invariant
 '   Stages 1-7 must only parse atomic references.
@@ -713,7 +872,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '       ScriptureList
 '       ScriptureRange
 '
-' The DFA always processes a single atomic reference.
+' The DSP always processes a single atomic reference.
 '=====================================================
 
 '=====================================================
@@ -827,7 +986,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' This prevents false detection in book prefixes such as:
 '   1-2 Samuel
 ' Stage-9 must remain lexical only and must not interpret structure.
-' Deterministic Structural DFA intact because Stage-9 remains outside the core parser.
+' Deterministic Structural Parser (DSP) intact because Stage-9
+' remains outside the core parser.
 ' Stage 9 Evaluation:
 '    RangeDetection("John 3:16-18") -> Range
 '    RangeDetection("20") -> Not a range
@@ -928,7 +1088,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=====================================================
 
 '=====================================================
-' Stage 11 / 13 - ComposeList / Contextual Shorthand
+' Stage 13 - Contextual Shorthand Expansion
+'            (Post-Parser Context Layer)
 '=====================================================
 ' Public API: ComposeList(raw As String) As Collection
 ' Purpose:
@@ -967,16 +1128,16 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '=====================================================
 
 '=====================================================
-' Deterministic Structural DFA
+' Deterministic Structural Parser (DSP)
 ' Aligned to 7-Stage Parser Architecture
 '=====================================================
 ' PURPOSE:
 '   Defines lexical token stream and structural syntax only.
 ' SCOPE:
-'   This DFA:
+'   This DSP:
 '       - Validates structural ordering of tokens
 '       - Detects lists and ranges syntactically
-'   This DFA does NOT:
+'   This DSP does NOT:
 '       - Validate canonical book identity
 '       - Enforce chapter/verse bounds
 '       - Perform single-chapter inference
@@ -1014,7 +1175,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 2. Deterministic State Machine (Structural Only)
 '=====================================================
 ' NOTE:
-'   This is a single-pass left-to-right DFA.
+'   This is a single-pass left-to-right DSP.
 '   State numbering is symbolic.
 '=====================================================
 ' 2.1 State Definitions
@@ -1023,7 +1184,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' | ----- | ------------------------- | --------- |
 ' | S0    | Start                     | No        |
 ' | S1    | Reading numeric prefix    | No        |
-' | S2    | Reading book name         | No        |
+' | S2    | Reading book name         | Yes*      |
 ' | S3    | Expecting chapter digits  | No        |
 ' | S4    | Reading chapter digits    | Yes*      |
 ' | S6    | Reading verse digits      | Yes*      |
@@ -1032,6 +1193,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' | SX    | Error                     | No        |
 ' -------------------------------------------------
 ' *Accepting states require EOF or SEMICOLON next.
+'  Book-only references (state S2) are normalized to
+'  Chapter 1, Verse 1 during canonical formatting.
 '==================================================
 ' 2.2 Transition Table
 ' -------------------------------------------------
@@ -1044,9 +1207,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '   WS              -> S2
 '   BOOK_WORD       -> S2
 '   otherwise       -> SX
-' S2 - Book Name
+'S2 - Book Name
 '   BOOK_WORD       -> S2
 '   WS              -> S3
+'   SEMICOLON       -> S0
+'   EOF             -> ACCEPT
 '   otherwise       -> SX
 ' S3 - Expect Chapter
 '   DIGITS          -> S4
@@ -1081,7 +1246,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '   - AND next token is EOF or SEMICOLON
 ' All other terminal states are structural errors.
 '=====================================================
-' 4. Post-DFA Processing (Outside DFA Scope)
+' 4. Post-DSP Processing (Outside DSP Scope)
 '=====================================================
 ' After structural acceptance:
 ' Stage 3:
@@ -1110,51 +1275,62 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 ' NOTES:
 ' What makes the compressed verse-map approach strong in your architecture is:
-' 1. Data Is Data
-'   The validator now does only this:
-'     - Is chapter valid?
-'     - Is verse valid?
-'   It does not know Bible structure.
-'   All structural knowledge lives in metadata.
-'   Proper separation of concerns
-' 2. Deterministic O(1) Lookup
+'1. Data Is Data
+'   The validator performs only two checks:
+'       - Is chapter within the book's chapter count?
+'       - Is verse within the chapter's verse count?
+'       It does not contain any hard-coded knowledge of
+'       Bible structure.
+'   Architectural Principle: Metadata Authority
+'       Canonical Bible structure (chapter counts and
+'       verse counts) is stored entirely in metadata tables.
+'       Parser logic never encodes Bible structure.
+'   Benefits:
+'       - deterministic validation
+'       - zero structural branching
+'       - translation-specific metadata substitution
+'       - Proper separation of concerns
+'2. Deterministic O(1) Lookup
 '   With fixed-width packed strings:
-'     maxV = CLng(mid$(map, (Chapter - 1) * 2 + 1, 2))
+'       maxV = CLng(mid$(map, (Chapter - 1) * 3 + 1, 3))
+'   The lookup is constant time:
 '       - No loops
 '       - No Select Case
 '       - No Split
-'       - No dictionary building
-'       - Just direct addressing
+'       - No dynamic lookup structures
+'       - Direct index addressing only
 ' 3. It Scales Without Growing Code
 '   Adding all 66 books:
-'     - Adds Data
+'     - Adds data only
 '     - Adds zero logic
-'     - Validator Not does
-'   Good boundary design
+'     - Validator does not encode Bible structure.
+'       It only verifies numeric bounds using metadata lookups
 ' 4. It Matches the Design Philosophy
-'   Parser stub isolated
-'   Resolver isolated
-'   Semantic validator isolated
-'   Canonical table authoritative
-' 5. The Key Benefit
-'   Can now do things like:
-'     - SBL mode: strict bounds enforced
-'     - Generic mode: bounds skipped
-'     - Future: translation-specific verse maps (LXX, Vulgate, etc.)
-'               Without touching validator logic
-'               Just swap metadata source
-'   Next more advanced refinement would be:
-'     - Precompute the verse maps once
-'     - Cache them in a module-level structure
-'     - Make lookup entirely allocation-free
+'    Parser stages remain isolated:
+'       - Tokenizer
+'       - Alias Resolver
+'       - Structural Interpreter
+'       - Semantic Validator
+'       - Canonical Formatter
+'5. The Key Benefit
+'   Because structural rules are stored in metadata,
+'   different validation policies can be implemented
+'   without modifying parser logic.
+'   Examples:
+'       - Strict SBL validation
+'       - Relaxed validation (bounds skipped)
+'       - Alternate verse maps for
+'         LXX, Vulgate, or other traditions
+'   The validator remains unchanged.
+'   Only the metadata source is replaced.
 '
 ' The design has moved from string parsing to formal citation semantics - a big architectural leap.
 
 ' Special case:
-'   Psalm 119 has 176 verses => must use 3 digits for verses
-' Each chapter's verse count is stored as:
-'    - Right$("000" & verseCount, 3)
-'    - Fixed-width 3-digit packing is used for ALL books.
+' Psalm 119 contains 176 verses, which exceeds two-digit storage limits.
+' Therefore all verse counts are stored using fixed-width three-digit encoding:
+'    Right$("000" & verseCount, 3)
+' This ensures constant-width indexing for direct addressing.
 
 Public Type ParsedReference
     ' Only structure needed for test harness
@@ -2688,5 +2864,4 @@ AliasFail:
     failures = failures + 1
     Resume NextAlias
 End Sub
-
 

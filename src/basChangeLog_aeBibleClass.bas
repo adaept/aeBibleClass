@@ -1,4 +1,4 @@
-Attribute VB_Name = "basChangeLogaeBibleClass"
+Attribute VB_Name = "basChangeLog_aeBibleClass"
 Option Explicit
 Option Compare Text
 Option Private Module
@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #485 -
-' #484 -
-' #483 -
+' #490 -
+' #489 -
+' #488 -
+' #487 -
+' #485 - Add test and code for Stage 13 - Contextual Shorthand Expansion
+' #484 - Store the Verse Map as a Byte Array [impr]
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
@@ -67,6 +70,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #486 - Rename basChangeLog files to include underscore
+    ' FIXED - #483 - Add license LGPL3 and tighten up documentation to include Book-only expansion parsing
     ' FIXED - #482 - Move all Types into Citation_EBNF module
     ' FIXED - #422 - Add per-book chapter and verse bounds (e.g., Jude has max verse 25) [impr]
     ' FIXED - #439 - Implement range validation (e.g., Gen 1:1-2:3) cleanly = all of Genesis 1 plus the first three verses of Genesis 2 [impr]
