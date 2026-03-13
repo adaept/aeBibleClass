@@ -196,16 +196,41 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '    The reference engine follows a strict multi-stage pipeline.
 '    Each stage has a single responsibility.
 '    No stage may perform work assigned to another stage.
+'   -------------------------------------
+'   DETERMINISTIC STRUCTURAL PARSER (DSP)
+'   -------------------------------------
+'   Stage 1   Normalize
+'   Stage 2   LexicalScan
+'   Stage 3   ResolveAlias
+'   Stage 4   InterpretStructure
+'   Stage 5   ValidateCanonical
+'   Stage 6   FormatCanonical
+'   Stage 7   EmitResult
 '
-'    Stage 1: Input Normalization
-'    Stage 2: Lexical Tokenization
-'    Stage 3: Alias Resolution
-'    Stage 4: Structural Interpretation
-'    Stage 5: Semantic Validation
-'    Stage 6: Canonical Normalization
-'    Stage 7: Structured Result Object
+'   EXTENSION PARSING LAYER
+'   -----------------------
+'   Stage 8   ListDetection
+'   Stage 9   RangeDetection
+'   Stage 10  RangeComposition
+'   Stage 11  ListComposition
+'   Stage 12  ExtendedParse
 '
-'    Design Principle:
+'   CONTEXT RESOLUTION LAYER
+'   ------------------------
+'   Stage 13  ContextualShorthand
+'
+'   CANONICAL OUTPUT LAYER
+'   ----------------------
+'   Stage 14  CanonicalCompression
+'
+' The atomic parser is a mathematically deterministic function:
+'   ParseReference : String -> ScriptureRef
+' The extended parser becomes:
+'   ParseReferenceExtended : String -> ScriptureRef | ScriptureRange | ScriptureList
+'
+'================================================================
+' Design Principle
+'================================================================
 '       Later stages may depend on earlier stages.
 '       Earlier stages must never depend on later stages.
 '    Invariant:
@@ -728,7 +753,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 ' Lists and ranges preserve structural form
 ' after semantic validation.
 '=====================================================
-'NOTE: This DFS validates structural syntax only.
+'NOTE: This DSP validates structural syntax only.
 '      Semantic correctness is enforced in Stage 5.
 '=====================================================
 
@@ -994,7 +1019,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 ' Purpose
 '   Construct a ScriptureRange from the tokens produced
 '   by Stage 9 (RangeDetection).
-' Stage-10 does not perform lexical parsing.
+' Stage-10 performs no lexical parsing.
 '   It only composes structured results using the atomic parser.
 ' Composition Type
 '   ScriptureRange
@@ -1022,7 +1047,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 ' Stage 11 - ListComposition (Extension Layer)
 '=====================================================
 ' Purpose
-'   Combine segmented references into a ScriptureList.
+'   Compose segmented references into a ScriptureList.
 ' Stage-11 operates on the segments produced by
 '   Stage 8 (ListDetection).
 ' Composition Type
@@ -1051,6 +1076,31 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '   ScriptureList
 '       Item 1 -> ScriptureRange
 '       Item 2 -> ScriptureRef
+'=====================================================
+
+'=====================================================
+' Post-Parse Canonical Processing (Stages 12-14)
+'=====================================================
+' After atomic parsing (Stages 1-7) and structural
+' composition (Stages 8-11), the extension pipeline
+' performs higher-level reference interpretation.
+' Stage Responsibilities:
+'   Stage 12  ExtendedParse
+'       Orchestrates list and range parsing
+'   Stage 13  ContextualShorthand
+'       Resolves omitted book/chapter context
+'   Stage 14  CanonicalCompression
+'       Produces minimal canonical reference form
+' Only after Stage 13 are references guaranteed to
+' represent fully-resolved canonical references.
+' Some implementations may internally expand
+' references to verse-level triples:
+'       (BookID, Chapter, Verse)
+' Such expansion is an internal optimization and is
+' not required by the specification.
+' Stage 14 operates on the resolved canonical
+' reference set and performs deterministic
+' structural compression.
 '=====================================================
 
 '=====================================================
@@ -1087,7 +1137,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '            (Post-Parser Context Layer)
 '=====================================================
 ' Public API:
-'     ComposeList(raw As String) As Collection
+'     ComposeList(ByVal raw As String) As Collection
 ' Purpose:
 '     Parses a list of scripture references from a string and returns
 '     a collection of canonical reference strings.
@@ -1168,6 +1218,62 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '   Stage 13  -> Contextual shorthand resolution
 ' Output:
 '   Collection of canonical reference strings
+'=====================================================
+
+'=====================================================
+' Stage 14 - Canonical Compression
+'=====================================================
+' Input:
+'   A resolved set of canonical references produced
+'   after contextual shorthand expansion (Stage 13).
+' Output:
+'   Minimal canonical citation form.
+' Stage 14 performs deterministic compression of the
+' expanded canonical verse stream.
+' Adjacent verses are collapsed into ranges while
+' preserving canonical ordering and semantic meaning.
+' This stage is purely structural and does not alter
+' interpretation of references.
+'-----------------------------------------------------
+' Canonical Output Grammar
+'-----------------------------------------------------
+' CanonicalCitation
+'    ::= CanonicalBookRef
+'     | CanonicalBookRef (";" WS? CanonicalBookRef)*
+' CanonicalBookRef
+'    ::= BookName WS CanonicalChapterSpec
+' CanonicalChapterSpec
+'    ::= CanonicalChapterUnit
+'     | CanonicalChapterUnit (";" WS? CanonicalChapterUnit)*
+' CanonicalChapterUnit
+'    ::= Chapter ":" CanonicalVerseSpec
+' CanonicalVerseSpec
+'    ::= CanonicalVerseItem
+'     | CanonicalVerseItem ("," CanonicalVerseItem)*
+' CanonicalVerseItem
+'    ::= Verse
+'     | Verse "-" Verse
+'-----------------------------------------------------
+' Canonical Compression Rules
+'-----------------------------------------------------
+' 1. Sequential verses collapse into ranges.
+'      John 3:16
+'      John 3:17
+'      John 3:18
+'  ->  John 3:16-18
+' 2. Non-sequential verses remain comma separated.
+'      John 3:16
+'      John 3:18
+'  ->  John 3:16,18
+' 3. Chapter boundaries are never merged.
+'      Genesis 1:31
+'      Genesis 2:1
+'  ->  Genesis 1:31; 2:1
+' 4. Compression must preserve canonical ordering:
+'      BookID
+'      Chapter
+'      Verse
+' 5. Compression is deterministic and lossless.
 '=====================================================
 
 '=====================================================
