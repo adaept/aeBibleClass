@@ -1500,6 +1500,7 @@ Public Type LexTokens
     Num1     As Long
     Num2     As Long
     HasColon As Boolean
+    VerseSpec As String
 End Type
 
 Public Type ListTokens
@@ -2159,9 +2160,8 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
             Exit Function
         Case 1
             ' Example: "Romans 8"
-            ' Example: "1 Jn" (numeric-leading alias)
+            ' Example: "1 Jn"
             If IsNumeric(parts(0)) Then
-                ' Entire input is a book alias
                 t.RawAlias = parts(0) & " " & parts(1)
                 LexicalScan = t
                 Exit Function
@@ -2172,6 +2172,7 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
         Case Else
             ' Example: "3 John 4"
             ' Example: "1 Corinthians 13:4"
+
             t.RawAlias = parts(0) & " " & parts(1)
             refPart = parts(2)
     End Select
@@ -2181,14 +2182,23 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
     If InStr(refPart, ":") > 0 Then
         Dim subParts() As String
         subParts = Split(refPart, ":")
-        If Not IsNumeric(subParts(0)) Or Not IsNumeric(subParts(1)) Then
+        ' Chapter must be numeric
+        If Not IsNumeric(subParts(0)) Then
             Err.Raise vbObjectError + 1000, , _
-                "Invalid numeric reference: " & refPart
+                "Invalid chapter reference: " & refPart
         End If
         t.Num1 = CLng(subParts(0))
-        t.Num2 = CLng(subParts(1))
+        ' Preserve verse specification exactly
+        t.VerseSpec = subParts(1)
+        ' Populate Num2 only for simple verse
+        If IsNumeric(subParts(1)) Then
+            t.Num2 = CLng(subParts(1))
+        Else
+            t.Num2 = 0
+        End If
         t.HasColon = True
     Else
+        ' Single numeric reference
         If Not IsNumeric(refPart) Then
             Err.Raise vbObjectError + 1001, , _
                 "Invalid numeric reference: " & refPart
@@ -2620,39 +2630,35 @@ Public Function GetSingleChapterBookSet() As Object
     Set GetSingleChapterBookSet = sc
 End Function
 
-Public Function InterpretStructure(t As LexTokens) As ParsedReference
-
+Public Function InterpretStructure(ByRef tokens As LexTokens) As ParsedReference
     Dim ref As ParsedReference
-    Dim BookID As Long
-
-    BookID = GetBookAliasMap(t.RawAlias)
-
-    ref.Chapter = t.Num1
-    ref.VerseSpec = t.Num2
-
-    '-----------------------------------------
-    ' Single-chapter books
-    ' Example: Jude 5 ? 1:5
-    '-----------------------------------------
-    If ref.Chapter = 0 And GetSingleChapterBookSet.Exists(BookID) Then
-        ref.VerseSpec = t.Num1
-        ref.Chapter = 1
-    End If
-
-    '-----------------------------------------
-    ' BOOK-ONLY NORMALIZATION
-    ' Example: John ? 1:1
-    '-----------------------------------------
-    If ref.Chapter = 0 Then
-        ref.Chapter = 1
-    End If
-
-    If ref.VerseSpec = 0 Then
-        ref.VerseSpec = 1
+    '------------------------------------------
+    ' Chapter : Verse structure
+    '------------------------------------------
+    If tokens.HasColon Then
+        ref.Chapter = tokens.Num1
+        ' Preserve verse specification
+        If Len(tokens.VerseSpec) > 0 Then
+            ref.VerseSpec = tokens.VerseSpec
+        ElseIf tokens.Num2 > 0 Then
+            ref.VerseSpec = CStr(tokens.Num2)
+        Else
+            ref.VerseSpec = ""
+        End If
+    Else
+        '------------------------------------------
+        ' Single numeric reference (ambiguous)
+        '------------------------------------------
+        If tokens.Num1 > 0 Then
+            ref.Chapter = 0
+            ref.VerseSpec = CStr(tokens.Num1)
+        Else
+            ref.Chapter = 0
+            ref.VerseSpec = ""
+        End If
     End If
 
     InterpretStructure = ref
-
 End Function
 
 Public Function RewriteSingleChapterRef( _

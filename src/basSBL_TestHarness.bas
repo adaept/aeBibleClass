@@ -494,35 +494,6 @@ Public Sub Test_Stage3_ResolveAlias()
     AssertEqual "Genesis", canonical, "Genesis canonical"
 End Sub
 
-Public Function InterpretStructure(ByRef t As LexTokens) As ParsedReference
-    Dim p As ParsedReference
-
-    '----------------------------------------
-    ' Propagate alias
-    '----------------------------------------
-    p.BookAlias = UCase$(t.RawAlias)
-    Debug.Assert t.RawAlias <> vbNullString
-    '----------------------------------------
-    ' Structural interpretation
-    '----------------------------------------
-    If t.HasColon Then
-        ' Book Chapter:Verse
-        p.Chapter = t.Num1
-        p.VerseSpec = CStr(t.Num2)
-    Else
-        If t.Num1 > 0 Then
-            ' Ambiguous case (chapter or verse)
-            p.Chapter = 0
-            p.VerseSpec = CStr(t.Num1)
-        Else
-            ' Book-only reference
-            p.Chapter = 0
-            p.VerseSpec = ""
-        End If
-    End If
-    InterpretStructure = p
-End Function
-
 Public Sub Test_Stage4_InterpretStructure()
     Debug.Print ""
     Debug.Print "------------------------------------------"
@@ -531,15 +502,48 @@ Public Sub Test_Stage4_InterpretStructure()
 
     Dim tokens As LexTokens
     Dim ref As ParsedReference
-
+    '------------------------------------------
+    ' Single-chapter book (implicit verse)
+    '------------------------------------------
     tokens = LexicalScan("Jude 5")
     ref = InterpretStructure(tokens)
     AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
     AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
+    '------------------------------------------
+    ' Standard chapter:verse
+    '------------------------------------------
     tokens = LexicalScan("Romans 8:1")
     ref = InterpretStructure(tokens)
     AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
     AssertEqual "1", ref.VerseSpec, "Romans verse interpreted"
+    '------------------------------------------
+    ' Ambiguous single number (no colon)
+    '------------------------------------------
+    tokens = LexicalScan("Genesis 1")
+    ref = InterpretStructure(tokens)
+    AssertEqual 0, ref.Chapter, "Genesis 1 chapter interpreted"
+    AssertEqual "1", ref.VerseSpec, "Genesis 1 verse interpreted"
+    '------------------------------------------
+    ' Verse range
+    '------------------------------------------
+    tokens = LexicalScan("John 3:16-18")
+    ref = InterpretStructure(tokens)
+    AssertEqual 3, ref.Chapter, "John chapter interpreted"
+    AssertEqual "16-18", ref.VerseSpec, "John verse range interpreted"
+    '------------------------------------------
+    ' Verse list
+    '------------------------------------------
+    tokens = LexicalScan("Psalm 23:1,4,6")
+    ref = InterpretStructure(tokens)
+    AssertEqual 23, ref.Chapter, "Psalm chapter interpreted"
+    AssertEqual "1,4,6", ref.VerseSpec, "Psalm verse list interpreted"
+    '------------------------------------------
+    ' Mixed list and range
+    '------------------------------------------
+    tokens = LexicalScan("Matthew 5:3-5,9")
+    ref = InterpretStructure(tokens)
+    AssertEqual 5, ref.Chapter, "Matthew chapter interpreted"
+    AssertEqual "3-5,9", ref.VerseSpec, "Matthew mixed verse spec interpreted"
 End Sub
 
 Public Sub Test_Stage5_ValidateCanonical()

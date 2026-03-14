@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #495 -
-' #494 -
+' #500 -
+' #499 -
+' #498 -
+' #497 -
+' #496 -
+' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -72,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #495 - Fix Stage 4 tests (wrong dupcilation of InterpretStructure code) [bug]
     ' FIXED - #493 - Add documentation for Stage 14 Canonical Compression
     ' FIXED - #487 - Add test and code for Stage 13 - Contextual Shorthand Expansion
     ' FIXED - #485 - Update documentation for Stage 13 - Contextual Shorthand Expansion
