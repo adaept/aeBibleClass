@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #499 -
 ' #498 -
 ' #497 -
-' #496 -
 ' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #496 - AssertFalse not counting towards result [bug]
     ' FIXED - #495 - Fix Stage 4 tests (wrong dupcilation of InterpretStructure code) [bug]
     ' FIXED - #493 - Add documentation for Stage 14 Canonical Compression
     ' FIXED - #487 - Add test and code for Stage 13 - Contextual Shorthand Expansion

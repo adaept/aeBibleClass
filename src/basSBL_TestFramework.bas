@@ -47,11 +47,7 @@ End Sub
 ' AssertFalse
 '===========================================================
 Public Sub AssertFalse(ByVal condition As Boolean, ByVal message As String)
-    If condition Then
-        Debug.Print "FAIL: " & message
-    Else
-        Debug.Print "PASS: " & message
-    End If
+    AssertTrue Not condition, message
 End Sub
 
 Public Sub TestStart()
