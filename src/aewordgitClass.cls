@@ -27,7 +27,7 @@ Option Compare Text
 ' Author:   Peter F. Ennis
 ' Date:     September 3, 2018
 ' Comment:  Create class for revision control of Word VBA
-' History:  See comment details, basChangeLog_aewordgit, commit messages on GitHub
+' History:  See comment details, basChangeLog_aeWordGit, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/aewordgit
 '================================================================================
 
@@ -112,7 +112,7 @@ PROC_EXIT:
     Exit Property
 
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DocumentTheWordCode of Class aewordgitClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DocumentTheWordCode of Class aeWordGitClass"
     Resume PROC_EXIT
 
 End Property
@@ -164,7 +164,7 @@ PROC_EXIT:
     Exit Function
 
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeDocumentTheWordCode of Class aewordgitClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeDocumentTheWordCode of Class aeWordGitClass"
     Resume PROC_EXIT
 
 End Function
@@ -225,7 +225,7 @@ PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunExportCode of Class aewordgitClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunExportCode of Class aeWordGitClass"
     Resume PROC_EXIT
 
 End Sub
@@ -291,10 +291,10 @@ PROC_EXIT:
 
 PROC_ERR:
     If Err = -2147467259 Then     ' Method 'Value' of object ... failed
-        'MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aewordgitClass"
+        'MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aeWordGitClass"
         Resume Next
     Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aewordgitClass"
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aeWordGitClass"
         Resume PROC_EXIT
     End If
 

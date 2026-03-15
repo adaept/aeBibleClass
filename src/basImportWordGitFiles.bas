@@ -12,10 +12,10 @@ Public Sub ImportWordBibleFiles()
 End Sub
 
 Public Sub ImportWordGitFiles()
-'    Call ImportVBAFile("C:\adaept\aewordgit\src\aewordgitClass.cls")
+'    Call ImportVBAFile("C:\adaept\aewordgit\src\aeWordGitClass.cls")
     'Call ImportVBAFile("C:\adaept\aewordgit\src\basChangeLogaewordgit.bas")
     'Call ImportVBAFile("C:\adaept\aewordgit\src\basImportWordGitFiles.bas")
-'    Call ImportVBAFile("C:\adaept\aewordgit\src\basTESTaewordgitClass.bas")
+'    Call ImportVBAFile("C:\adaept\aewordgit\src\basTESTaeWordGitClass.bas")
 End Sub
 
 Private Function ModuleOrClassExists(name As String) As Boolean

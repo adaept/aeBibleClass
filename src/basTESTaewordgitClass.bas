@@ -7,7 +7,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 ' Default Usage:
 ' The following folders are used if no custom configuration is provided:
-'   aewordgitType.SourceFolder = "C:\adaept\aewordgit\src\"
+'   aewordgitType.SourceFolder = "C:\adaept\aeWordGit\src\"
 ' OR
 '   aewordgitType.UserSourceFolder = ActiveDocument.Path & "\src\"
 ' Run in immediate window:
@@ -15,24 +15,24 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Show debug output in immediate window:
 '   EXPORT_THE_CODE("varDebug")
 ' Version is set in aewordgitVERSION As String
-'   aewordgitVERSION is found in Class Module aewordgitClass
+'   aewordgitVERSION is found in Class Module aeWordGitClass
 '
 ' Custom Usage:
 ' Public Const FOLDER_FOR_VBA_PROJECT_FILES = "Z:\The\Source\Folder\srx.MYPROJECT\"
-' For custom configuration of the output source folder in aewordgitClassTest use:
+' For custom configuration of the output source folder in aeWordGitClassTest use:
 ' oDbObjects.SourceFolder = FOLDER_FOR_VBA_PROJECT_FILES
 '
 
 Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
     On Error GoTo 0
     If IsMissing(varDebug) Then
-        aewordgitClassTest
+        aeWordGitClassTest
     Else
-        aewordgitClassTest varDebug:="varDebug"
+        aeWordGitClassTest varDebug:="varDebug"
     End If
 End Function
 
-Public Function aewordgitClassTest(Optional ByVal varDebug As Variant, _
+Public Function aeWordGitClassTest(Optional ByVal varDebug As Variant, _
     Optional ByVal varSrcFldr As Variant, _
     Optional ByVal varXmlFldr As Variant, _
     Optional ByVal varXmlData As Variant) As Boolean
@@ -57,8 +57,8 @@ Test1:
     '=============
     Debug.Print
     Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
-    Debug.Print "1. aewordgitClassTest => DocumentTheWordCode"
-    Debug.Print "aewordgitClassTest"
+    Debug.Print "1. aeWordGitClassTest => DocumentTheWordCode"
+    Debug.Print "aeWordGitClassTest"
     If IsMissing(varDebug) Then
         Debug.Print , "varDebug IS missing so no parameter is passed to DocumentTheWordCode"
         Debug.Print , "DEBUGGING IS OFF"
@@ -75,11 +75,11 @@ PROC_EXIT:
 
 PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
-        MsgBox "VBA Project Not Trusted", vbCritical, "aewordgitClassTest"
+        MsgBox "VBA Project Not Trusted", vbCritical, "aeWordGitClassTest"
         Stop
         'Resume PROC_EXIT
     Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aewordgitClassTest of Module basTESTaewordgitClass"
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeWordGitClassTest of Module basTESTaeWordGitClass"
         Resume PROC_EXIT
     End If
 

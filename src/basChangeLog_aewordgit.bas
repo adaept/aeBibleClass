@@ -18,7 +18,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '
 ' 20250217 - v007
     ' FIXED - #015 - Delete unused code: ThisIsAnAddIn, OutputListOfWordProperties, DeleteVBAModulesAndUserForms
-    ' FIXED - #014 - Update usage instruction in basTESTaewordgitClass
+    ' FIXED - #014 - Update usage instruction in basTESTaeWordGitClass
     ' FIXED - #013 - Configure aewordgit owner as adaept
 ' 20250210 - v006
     ' FIXED - #012 - If current folder is not aewordgit then export to src as user default
@@ -35,6 +35,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #005 - Zoom full screen and page for dotm and new doc
 ' 20180909 - v001 - FIXED - #001 - Implement simple test for dropdown code
     ' FIXED - #002 - Change project name to ambigram and export to .\src
-' 20180903 - v000 - Use aexlgitClass as starting model for aewordgitClass
+' 20180903 - v000 - Use aexlgitClass as starting model for aeWordGitClass
 
 
