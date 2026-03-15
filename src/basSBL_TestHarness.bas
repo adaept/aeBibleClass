@@ -628,51 +628,34 @@ Public Sub Test_Stage8_ListDetection()
     ' Test 1 - comma list
     '------------------------------------------
     t = ListDetection("John 3:16,18,20")
-    If t.IsList And UBound(t.Segments) = 2 Then
-        Debug.Print "PASS: comma list detected"
-    Else
-        Debug.Print "FAIL: comma list detection"
-    End If
+    AssertTrue t.IsList, "comma list detected"
+    AssertEqual 2, UBound(t.Segments), "comma list segment count"
     '------------------------------------------
     ' Test 2 - semicolon list
     '------------------------------------------
     t = ListDetection("John 3:16; 4:1")
-    If t.IsList And UBound(t.Segments) = 1 Then
-        Debug.Print "PASS: semicolon list detected"
-    Else
-        Debug.Print "FAIL: semicolon list detection"
-    End If
+    AssertTrue t.IsList, "semicolon list detected"
+    AssertEqual 1, UBound(t.Segments), "semicolon list segment count"
     '------------------------------------------
     ' Test 3 - single reference
     '------------------------------------------
     t = ListDetection("John 3:16")
-    If Not t.IsList Then
-        Debug.Print "PASS: single reference not list"
-    Else
-        Debug.Print "FAIL: false list detection"
-    End If
+    AssertFalse t.IsList, "single reference not list"
     '------------------------------------------
     ' Test 4 - list containing range
     '------------------------------------------
     t = ListDetection("John 3:16-18,20")
-    If t.IsList _
-       And UBound(t.Segments) = 1 _
-       And t.Segments(0) = "John 3:16-18" _
-       And t.Segments(1) = "20" Then
-        Debug.Print "PASS: range preserved inside list"
-    Else
-        Debug.Print "FAIL: range incorrectly split"
-    End If
+    AssertTrue t.IsList, "range preserved inside list"
+    AssertEqual 1, UBound(t.Segments), "range list segment count"
+    AssertEqual "John 3:16-18", t.Segments(0), "range first segment"
+    AssertEqual "20", t.Segments(1), "range second segment"
     '------------------------------------------
     ' Test 5 - mixed whitespace
     '------------------------------------------
     ' Optional as whitespace normalization should already be handled in Stage 1
     t = ListDetection("John 3:16 , 18 , 20")
-    If t.IsList And UBound(t.Segments) = 2 Then
-        Debug.Print "PASS: whitespace tolerated"
-    Else
-        Debug.Print "FAIL: whitespace handling"
-    End If
+    AssertTrue t.IsList, "whitespace tolerated"
+    AssertEqual 2, UBound(t.Segments), "whitespace segment count"
 End Sub
 
 Public Sub Test_Stage9_RangeDetection()
