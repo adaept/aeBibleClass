@@ -53,7 +53,7 @@ End Sub
 ' Callback to dynamically enable or disable buttons
 Public Function GetNextEnabled(control As IRibbonControl) As Boolean
     ' Make sure var is set to account for ribbon load timing mismatch
-    If isEmpty(btnNextEnabled) Then btnNextEnabled = True
+'xxx    If isEmpty(btnNextEnabled) Then btnNextEnabled = True
     GetNextEnabled = btnNextEnabled
 End Function
 

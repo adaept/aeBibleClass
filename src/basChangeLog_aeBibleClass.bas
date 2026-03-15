@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #500 -
 ' #499 -
-' #498 -
 ' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -74,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #498 - Reset error handler immediately after call [bug]
     ' FIXED - #497 - Use assert tests with Stage 8 [impr]
     ' FIXED - #496 - AssertFalse not counting towards result [bug]
     ' FIXED - #495 - Fix Stage 4 tests (wrong dupcilation of InterpretStructure code) [bug]
@@ -102,7 +102,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #472 - Update Stage 9 doc to show clear distinction of hyphen and en dash (immediate window output is not clear enough)
     ' FIXED - #471 - Implement Stage 9 Range Detection
     ' FIXED - #470 - Extend Test 4 slightly to guarantee future code changes cannot alter the segmentation silently
-    ' FIXED - #468 - Update DFA documentation for Extension Hooks Stage 8 initial skeleton, test, and code - lexical only
+    ' FIXED - #468 - Update DSP documentation for Extension Hooks Stage 8 initial skeleton, test, and code - lexical only
     ' FIXED - #469 - Clean up task list, mark tasks [obso] that have been dealt with through 7-Stage design
     ' FIXED - #425 - Code development steps: parser stub, semantic tightening, SBL enforcement rules, document-scale validation [impr] [wip]
     ' [obso] - #438 - Add an audit routine that validates MaxChapter against the data structure [impr]

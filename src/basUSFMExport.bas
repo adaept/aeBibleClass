@@ -280,7 +280,7 @@ Private Function MakeVerseLine(ByVal verseNum As Long, ByVal verseText As String
     MakeVerseLine = "\v " & verseNum & " " & verseText
 End Function
 
-Function IsEffectivelyEmpty(txt As String) As Boolean
+Private Function IsEffectivelyEmpty(txt As String) As Boolean
     Dim t As String
     t = Trim$(txt)
 

@@ -21,13 +21,12 @@ Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
 
     Dim parts() As String
     parts = Split(Trim$(inputText), " ")
-
     '----------------------------------
     ' Book alias (first token)
     '----------------------------------
     p.BookAlias = UCase$(parts(0))
     Debug.Print "  [Stub] Parsed alias = >" & p.BookAlias & "<"
-    ' Semantic guardd to check for null failures
+    ' Semantic guard to check for null failures
     Debug.Assert p.BookAlias <> vbNullString
     '----------------------------------
     ' No chapter/verse provided
@@ -104,7 +103,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
     ' RawInput, ExpectedBookID, ExpectValid, ExpectRewrite
     ' NOTE:
     '  - Alias / chapter / verse are now derived via ParseReferenceStub
-    '  - This simulates a real parser without implementing DFA/tokenizer
+    '  - This simulates a real parser without implementing DSP/tokenizer
     Dim tests
     tests = Array( _
         Array("Jude 5", 65, True, True), _
@@ -116,13 +115,11 @@ Public Sub Test_SemanticFlow_WithParserStub()
 
     Dim i As Long
     For i = LBound(tests) To UBound(tests)
-
         Debug.Print ""
         Debug.Print "INPUT: "; tests(i)(0)
 
         Dim testFailed As Boolean
         testFailed = False
-
         '---------------------------------------
         ' Parser Stub Phase
         '---------------------------------------
@@ -130,12 +127,10 @@ Public Sub Test_SemanticFlow_WithParserStub()
         ' Later, this call will be replaced by a real parser.
         Dim parsed As ParsedReference
         parsed = ParseReferenceStub(tests(i)(0))
-
         Debug.Print "  ParseReferenceStub:"
         Debug.Print "    -> Alias:   "; parsed.BookAlias
         Debug.Print "    -> Chapter: "; parsed.Chapter
         Debug.Print "    -> Verse:   "; parsed.VerseSpec
-
         '---------------------------------------
         ' Resolver Phase
         '---------------------------------------
@@ -144,23 +139,21 @@ Public Sub Test_SemanticFlow_WithParserStub()
 
         On Error Resume Next
         bookName = ResolveAlias(parsed.BookAlias, BookID)
+        On Error GoTo 0
+        
         If Err.Number <> 0 Then
             Debug.Print "  ERROR: ResolveBook failed"
             failures = failures + 1
             Err.Clear
             GoTo NextTest
         End If
-        On Error GoTo 0
-
         Debug.Print "  Resolver:"
         Debug.Print "    -> BookID:    "; BookID
         Debug.Print "    -> Canonical: "; bookName
-
         If BookID <> tests(i)(1) Then
             Debug.Print "  FAIL: BookID mismatch"
             testFailed = True
         End If
-
         '---------------------------------------
         ' Semantic Validation Phase (SBL)
         '---------------------------------------
@@ -173,15 +166,12 @@ Public Sub Test_SemanticFlow_WithParserStub()
                     parsed.Chapter, _
                     parsed.VerseSpec, _
                     ModeSBL)
-
         Debug.Print "  ValidateSBLReference:"
         Debug.Print "    -> Valid: "; IsValid
-
         If IsValid <> tests(i)(2) Then
             Debug.Print "  FAIL: semantic validity mismatch"
             testFailed = True
         End If
-
         '---------------------------------------
         ' Rewrite Phase (single-chapter books)
         '---------------------------------------
@@ -191,9 +181,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
                             BookID, _
                             parsed.Chapter, _
                             CLng(parsed.VerseSpec))
-
             Debug.Print "  Output: "; rewritten
-
             If tests(i)(3) Then
                 If Left$(rewritten, 2) <> "1:" Then
                     Debug.Print "  FAIL: expected single-chapter rewrite"
@@ -206,7 +194,6 @@ Public Sub Test_SemanticFlow_WithParserStub()
                 End If
             End If
         End If
-
         If testFailed Then
             failures = failures + 1
         Else
@@ -220,13 +207,12 @@ NextTest:
     Debug.Print "======================================"
     Debug.Print "FAILURES: "; failures
     Debug.Print "======================================"
-
     Report_TODOs
 End Sub
 
 Public Sub Report_TODOs()
     Debug.Print "=== NOT IMPLEMENTED / TODO ============================"
-    Debug.Print "- Replace ParseReferenceStub with real tokenizer + DFA"
+    Debug.Print "- Replace ParseReferenceStub with real tokenizer + DSP"
     Debug.Print "- Multi-token book names (1 John, Song of Songs)"
     Debug.Print "- Roman numeral prefixes"
     Debug.Print "- Verse list/range parsing"
@@ -441,7 +427,7 @@ Public Sub Run_All_SBL_Tests()
     ' Embedded Extension Hooks
     '-----------------------------
     'The order is:
-    '   - Update DFA documentation
+    '   - Update DSP documentation
     '   - Define Stage-8 contract
     '   - Write Test_Stage8_ListDetection
     '   - Implement Stage-8 code
