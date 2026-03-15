@@ -37,7 +37,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 ' Stage 5  RewriteSingleChapterRef
 ' Stage 6  ComposeCanonicalReference
 ' Stage 7  FinalParser
-' Stages 8–12 implement list and range extensions.
+' Stages 8-12 implement list and range extensions.
 '
 ' ================================================================
 '  SCRIPTURE REFERENCE PARSER - FORMAL CONTRACT
@@ -2670,7 +2670,7 @@ Public Function RewriteSingleChapterRef( _
     Set sc = GetSingleChapterBookSet
     '-----------------------------------------
     ' BOOK ONLY
-    ' Example: John ? 1:1
+    ' Example: John -> 1:1
     '-----------------------------------------
     If Chapter = 0 And Verse = 0 Then
         RewriteSingleChapterRef = "1:1"
@@ -2678,7 +2678,7 @@ Public Function RewriteSingleChapterRef( _
     End If
     '-----------------------------------------
     ' Single-chapter books
-    ' Example: Jude 5 ? 1:5
+    ' Example: Jude 5 -> 1:5
     '-----------------------------------------
     If sc.Exists(BookID) And Chapter = 0 Then
         RewriteSingleChapterRef = "1:" & Verse

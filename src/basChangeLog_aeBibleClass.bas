@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #505 -
+' #504 -
+' #503 -
+' #502 -
+' #501 -
 ' #500 -
-' #499 -
 ' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -73,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #499 - Correct Defensive Pattern - Capture the error immediately after the risky operation [impr]
     ' FIXED - #498 - Reset error handler immediately after call [bug]
     ' FIXED - #497 - Use assert tests with Stage 8 [impr]
     ' FIXED - #496 - AssertFalse not counting towards result [bug]

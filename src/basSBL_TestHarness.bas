@@ -139,12 +139,14 @@ Public Sub Test_SemanticFlow_WithParserStub()
 
         On Error Resume Next
         bookName = ResolveAlias(parsed.BookAlias, BookID)
+        Dim errNum As Long
+        errNum = Err.Number
+        Err.Clear
         On Error GoTo 0
         
-        If Err.Number <> 0 Then
+        If errNum <> 0 Then
             Debug.Print "  ERROR: ResolveBook failed"
             failures = failures + 1
-            Err.Clear
             GoTo NextTest
         End If
         Debug.Print "  Resolver:"
