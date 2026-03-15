@@ -7,15 +7,15 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 ' Default Usage:
 ' The following folders are used if no custom configuration is provided:
-'   aewordgitType.SourceFolder = "C:\adaept\aeWordGit\src\"
+'   aeWordGitType.SourceFolder = "C:\adaept\aeWordGit\src\"
 ' OR
-'   aewordgitType.UserSourceFolder = ActiveDocument.Path & "\src\"
+'   aeWordGitType.UserSourceFolder = ActiveDocument.Path & "\src\"
 ' Run in immediate window:
 '   EXPORT_THE_CODE
 ' Show debug output in immediate window:
 '   EXPORT_THE_CODE("varDebug")
-' Version is set in aewordgitVERSION As String
-'   aewordgitVERSION is found in Class Module aeWordGitClass
+' Version is set in aeWordGitVERSION As String
+'   aeWordGitVERSION is found in Class Module aeWordGitClass
 '
 ' Custom Usage:
 ' Public Const FOLDER_FOR_VBA_PROJECT_FILES = "Z:\The\Source\Folder\srx.MYPROJECT\"

@@ -1525,7 +1525,7 @@ Sub ValidateTaskInChangelogModule()
     lineNum = val(Split(permalink, "#L")(1))
 
     Dim changelogModulePath As String
-    changelogModulePath = "C:\adaept\aeBibleClass\src\basChangeLogaeBibleClass.bas" ' Change as needed
+    changelogModulePath = "C:\adaept\aeBibleClass\src\basChangeLog_aeBibleClass.bas" ' Change as needed
 
     Dim fs As Object: Set fs = CreateObject("Scripting.FileSystemObject")
     Dim ts As Object: Set ts = fs.OpenTextFile(changelogModulePath, 1)

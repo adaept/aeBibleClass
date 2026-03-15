@@ -28,13 +28,13 @@ Option Compare Text
 ' Date:     September 3, 2018
 ' Comment:  Create class for revision control of Word VBA
 ' History:  See comment details, basChangeLog_aeWordGit, commit messages on GitHub
-' GitHub:   https://github.com/adaept/aewordgit
+' GitHub:   https://github.com/adaept/aeWordGit
 '================================================================================
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const aewordgitVERSION As String = "0.0.7"
-Private Const aewordgitVERSION_DATE As String = "February 17, 2025"
+Private Const aeWordGitVERSION As String = "0.0.8"
+Private Const aeWordGitVERSION_DATE As String = "March 15, 2026"
 
 Private Type mySetupType
     SourceFolder As String
@@ -48,9 +48,9 @@ Private Const vbext_ct_ClassModule As Long = 2
 Private Const vbext_ct_MSForm As Long = 3
 Private Const vbext_ct_Document As Long = 100
 
-Private aewordgitType As mySetupType
-Private aewordgitSourceFolder As String
-Private aewordgitUserSourceFolder As String
+Private aeWordGitType As mySetupType
+Private aeWordGitSourceFolder As String
+Private aeWordGitUserSourceFolder As String
 
 Private Sub Class_Initialize()
     ' Ref: http://www.cadalyst.com/cad/autocad/programming-with-class-part-1-5050
@@ -59,38 +59,38 @@ Private Sub Class_Initialize()
     On Error GoTo 0
     'MsgBox Application.VBE.ActiveVBProject.Name
     'MsgBox Application.Caption
-    If Application.VBE.ActiveVBProject.name = "aewordgit" Then
-        Application.Caption = Application.VBE.ActiveVBProject.name & " " & aewordgitVERSION
+    If Application.VBE.ActiveVBProject.name = "aeWordGit" Then
+        Application.Caption = Application.VBE.ActiveVBProject.name & " " & aeWordGitVERSION
     End If
     ' Provide a default value for the SourceFolder and ImportFolder properties
-    aewordgitSourceFolder = "default"
-    aewordgitType.SourceFolder = "C:\adaept\aewordgit\src\"
-    aewordgitType.UserSourceFolder = ActiveDocument.Path & "\src\"
+    aeWordGitSourceFolder = "default"
+    aeWordGitType.SourceFolder = "C:\adaept\aeWordGit\src\"
+    aeWordGitType.UserSourceFolder = ActiveDocument.Path & "\src\"
 
     Debug.Print "Class_Initialize"
-    Debug.Print , "Default for aewordgitSourceFolder = " & aewordgitSourceFolder
-    Debug.Print , "Default for aewordgitType.SourceFolder = " & aewordgitType.SourceFolder
-    Debug.Print , "Default for aewordgitType.UserSourceFolder = " & aewordgitType.UserSourceFolder
+    Debug.Print , "Default for aeWordGitSourceFolder = " & aeWordGitSourceFolder
+    Debug.Print , "Default for aeWordGitType.SourceFolder = " & aeWordGitType.SourceFolder
+    Debug.Print , "Default for aeWordGitType.UserSourceFolder = " & aeWordGitType.UserSourceFolder
 End Sub
 
 Private Sub Class_Terminate()
     On Error GoTo 0
     Debug.Print
     Debug.Print "Class_Terminate"
-    Debug.Print , "aewordgit VERSION: " & aewordgitVERSION
-    Debug.Print , "aewordgit VERSION_DATE: " & aewordgitVERSION_DATE
+    Debug.Print , "aeWordGit VERSION: " & aeWordGitVERSION
+    Debug.Print , "aeWordGit VERSION_DATE: " & aeWordGitVERSION_DATE
 End Sub
 
 Public Property Get SourceFolder() As String
     On Error GoTo 0
-    SourceFolder = aewordgitSourceFolder
+    SourceFolder = aeWordGitSourceFolder
 End Property
 
 Public Property Let SourceFolder(ByVal strSourceFolder As String)
     On Error GoTo 0
     ' Ref: http://www.techrepublic.com/article/build-your-skills-using-class-modules-in-an-access-database-solution/5031814
     ' Ref: http://www.utteraccess.com/wiki/index.php/Classes
-    aewordgitSourceFolder = strSourceFolder
+    aeWordGitSourceFolder = strSourceFolder
 End Property
 
 Public Property Get DocumentTheWordCode(Optional ByVal varDebug As Variant) As Boolean
@@ -243,20 +243,20 @@ Private Function FolderWithVBAProjectFiles() As String
 
     SpecialPath = WshShell.SpecialFolders("MyDocuments")
 
-    'Debug.Print "A. FolderWithVBAProjectFiles", "aewordgitSourceFolder = " & aewordgitSourceFolder
+    'Debug.Print "A. FolderWithVBAProjectFiles", "aeWordGitSourceFolder = " & aeWordGitSourceFolder
 
     ' Get the full path of the active document
     fullPath = ActiveDocument.Path
     ' Extract the directory name from the full path
     directoryName = mid(fullPath, InStrRev(fullPath, "\") + 1)
 
-    If aewordgitSourceFolder = "default" And directoryName = "aewordgit" Then
-        FolderWithVBAProjectFiles = aewordgitType.SourceFolder
-        'Debug.Print "B. FolderWithVBAProjectFiles", "FolderWithVBAProjectFiles = " & aewordgitType.SourceFolder
-    ElseIf aewordgitSourceFolder = "default" And directoryName <> "aewordgit" Then
-        FolderWithVBAProjectFiles = aewordgitType.UserSourceFolder
+    If aeWordGitSourceFolder = "default" And directoryName = "aeWordGit" Then
+        FolderWithVBAProjectFiles = aeWordGitType.SourceFolder
+        'Debug.Print "B. FolderWithVBAProjectFiles", "FolderWithVBAProjectFiles = " & aeWordGitType.SourceFolder
+    ElseIf aeWordGitSourceFolder = "default" And directoryName <> "aeWordGit" Then
+        FolderWithVBAProjectFiles = aeWordGitType.UserSourceFolder
         'Debug.Print "C. FolderWithVBAProjectFiles", "FolderWithVBAProjectFiles = " & FolderWithVBAProjectFiles
-    ElseIf IsNull(aewordgitSourceFolder) Then
+    ElseIf IsNull(aeWordGitSourceFolder) Then
         If Right$(SpecialPath, 1) <> "\" Then SpecialPath = SpecialPath & "\"
 
         If fso.FolderExists(SpecialPath & "VBAProjectFiles") = False Then
@@ -272,7 +272,7 @@ Private Function FolderWithVBAProjectFiles() As String
         End If
 
     Else
-        FolderWithVBAProjectFiles = aewordgitSourceFolder
+        FolderWithVBAProjectFiles = aeWordGitSourceFolder
     End If
     
     'MsgBox "FolderWithVBAProjectFiles=" & FolderWithVBAProjectFiles
