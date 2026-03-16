@@ -189,7 +189,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 If Len(combinedNumber) = 1 And AscW(combinedNumber) = 12 Then
                     ascii12Count = ascii12Count + 1
                     i = verseEnd
-                    GoTo SkipLogging
+                    Exit Do
                 End If
                 
                 ' Prefix check
@@ -256,7 +256,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
         Else
             i = i + 1
         End If
-SkipLogging:
     Loop
 
     logBuffer = logBuffer & "=== " & fixCount & " markers repaired on page " & pageNum & " ==="

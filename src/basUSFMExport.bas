@@ -198,7 +198,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     '===========================================================
     Select Case styleName
 
-        Case "Book Title", "Heading 1"
+        Case "Book Title"
             ConvertParagraphToUSFM = MakeTitleLine(1, txt)
             bookTitleLevel = 1
 

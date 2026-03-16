@@ -11,8 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #504 -
 ' #503 -
 ' #502 -
-' #501 -
-' #500 -
 ' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -77,6 +75,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #501 - Book Title fix for Export USFM, extraneous use of Heading 1
+    ' FIXED - #500 - Replace GoTo SkipLogging with Exit Do [impr]
     ' FIXED - #499 - Correct Defensive Pattern - Capture the error immediately after the risky operation [impr]
     ' FIXED - #498 - Reset error handler immediately after call [bug]
     ' FIXED - #497 - Use assert tests with Stage 8 [impr]
@@ -119,7 +119,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' [obso] - #413 - Enforce SBL punctuation (: vs .) [impr]
     ' [obso] - #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
     ' [obso] - #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
-    ' [obso] - #042 - Add readme to aewordgit [doc]
+    ' [obso] - #042 - Add readme to aeWordGit [doc]
     ' [obso] - #035 - Add test for page numbers of h1 on odd or even pages [test]
     ' FIXED - #431 - Freeze parser stub scope, Strengthen semantic validator with tests, Add negative tests, Swap parser stub for real parser
     ' FIXED - #467 - Update LexicalScan (with multi-word book support)
