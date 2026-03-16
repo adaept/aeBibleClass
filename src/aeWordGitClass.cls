@@ -47,6 +47,7 @@ Private Const vbext_ct_StdModule As Long = 1
 Private Const vbext_ct_ClassModule As Long = 2
 Private Const vbext_ct_MSForm As Long = 3
 Private Const vbext_ct_Document As Long = 100
+Private Const E_FAIL As Long = -2147467259    ' Unspecified Error(E_FAIL)
 
 Private aeWordGitType As mySetupType
 Private aeWordGitSourceFolder As String
@@ -290,7 +291,7 @@ PROC_EXIT:
     Exit Function
 
 PROC_ERR:
-    If Err = -2147467259 Then     ' Method 'Value' of object ... failed
+    If Err = E_FAIL Then     ' Method 'Value' of object ... failed
         'MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aeWordGitClass"
         Resume Next
     Else

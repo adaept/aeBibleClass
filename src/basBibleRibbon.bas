@@ -699,7 +699,7 @@ Private Function GetFullBookName(abbr As String) As String
             .Add "ZEPH", "Zephaniah"
             .Add "ZEP", "Zephaniah"
             .Add "HAG", "Haggai"
-            .Add "ZECHh", "Zechariah"
+            .Add "ZECH", "Zechariah"
             .Add "ZEC", "Zechariah"
             .Add "MAL", "Malachi"
             .Add "MATT", "Matthew"
