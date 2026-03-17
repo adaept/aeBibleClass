@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #505 -
 ' #504 -
-' #503 -
 ' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -74,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #503 - See #502 - Fix importer for all files as a generic solution not depending of a list of names
     ' FIXED - #502 - Add Python normalizer + batch file to run after export script completes, no more commit spam from casing drift [feat][bug]
     ' FIXED - #501 - Book Title fix for Export USFM, extraneous use of Heading 1
     ' FIXED - #500 - Replace GoTo SkipLogging with Exit Do [impr]

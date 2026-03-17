@@ -5,36 +5,72 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Public Sub ImportWordBibleFiles()
-    'Call ImportVBAFile("C:\adaept\Bible\src\aeBibleClass.cls")
-    'Call ImportVBAFile("C:\adaept\Bible\src\basChangeLogaeBibleClass.bas")
-    'Call ImportVBAFile("C:\adaept\Bible\src\basTESTaeBibleClass.bas")
-End Sub
-
-Public Sub ImportWordGitFiles()
-'    Call ImportVBAFile("C:\adaept\aewordgit\src\aeWordGitClass.cls")
-    'Call ImportVBAFile("C:\adaept\aewordgit\src\basChangeLogaewordgit.bas")
-    'Call ImportVBAFile("C:\adaept\aewordgit\src\basImportWordGitFiles.bas")
-'    Call ImportVBAFile("C:\adaept\aewordgit\src\basTESTaeWordGitClass.bas")
-End Sub
-
-Private Function ModuleOrClassExists(name As String) As Boolean
+Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
     On Error GoTo 0
-    Dim vbComp As Object
-    Dim found As Boolean
-    
-    found = False
-    'Debug.Print "name = " & name, "in Function ModuleOrClassExists"
-    For Each vbComp In ThisDocument.VBProject.VBComponents
-        If vbComp.name = name Then
-            found = True
-            Exit For
+    Dim strSrcPath As String
+    Dim strFile As String
+    Dim intImported As Integer
+    Dim intSkipped As Integer
+    Dim strExt As Variant
+    Dim vbCompName As String
+
+    strSrcPath = ThisDocument.Path & "\src\"
+
+    ' Verify src folder exists
+    If Dir(strSrcPath, vbDirectory) = "" Then
+        MsgBox "Source folder not found:" & vbCrLf & strSrcPath, vbCritical, "Import Aborted"
+        Exit Sub
+    End If
+
+    ' Delete all modules except this one - prompts for confirmation
+    If Not DeleteAllModulesExceptImporter() Then
+        Debug.Print "Import aborted - deletion cancelled.", "in Sub ImportAllVBAFiles"
+        Exit Sub
+    End If
+
+    ' Collect all file paths BEFORE importing - Dir() is not reentrant
+    Dim colFiles As Collection
+    Set colFiles = New Collection
+    For Each strExt In Array("*.bas", "*.cls", "*.frm")
+        strFile = Dir(strSrcPath & strExt)
+        Do While strFile <> ""
+            colFiles.Add strSrcPath & strFile
+            strFile = Dir()
+        Loop
+    Next strExt
+
+    ' Now import from the collected list
+    intImported = 0
+    intSkipped = 0
+
+    Dim strFullPath As Variant
+    For Each strFullPath In colFiles
+        strFile = mid(strFullPath, InStrRev(strFullPath, "\") + 1)
+        If strFile <> "ThisDocument.cls" Then
+            vbCompName = Left(strFile, InStrRev(strFile, ".") - 1)
+            If Not ModuleOrClassExists(vbCompName) Then
+                ImportVBAFile CStr(strFullPath)
+                intImported = intImported + 1
+            Else
+                Debug.Print vbCompName, "skipped (already exists)", "in Sub ImportAllVBAFiles"
+                intSkipped = intSkipped + 1
+            End If
+        Else
+            Debug.Print strFile, "skipped (ThisDocument)", "in Sub ImportAllVBAFiles"
+            intSkipped = intSkipped + 1
         End If
-    Next vbComp
-    
-    ModuleOrClassExists = found
-    Debug.Print name, "ModuleOrClassExists = " & found, "in Function ModuleOrClassExists"
-End Function
+    Next strFullPath
+
+    Debug.Print "Import complete.", _
+                "Imported: " & intImported, _
+                "Skipped: " & intSkipped, _
+                "in Sub ImportAllVBAFiles"
+
+    MsgBox "Import complete." & vbCrLf & vbCrLf & _
+           "Imported: " & intImported & vbCrLf & _
+           "Skipped:  " & intSkipped, _
+           vbInformation, "Import Complete"
+End Sub
 
 Private Sub ImportVBAFile(myCodeFile As String)
     On Error GoTo 0
@@ -61,4 +97,86 @@ Private Sub ImportVBAFile(myCodeFile As String)
         End If
     End If
 End Sub
+
+Private Function DeleteAllModulesExceptImporter() As Boolean
+    On Error GoTo 0
+    Dim vbComp As Object
+    Dim strProtected As String
+    Dim strToDelete As String
+    Dim strMsg As String
+    Dim intResponse As Integer
+
+    strProtected = "basImportWordGitFiles"
+
+    ' Build list of modules to be deleted for confirmation prompt
+    strToDelete = ""
+    For Each vbComp In ThisDocument.VBProject.VBComponents
+        Select Case vbComp.Type
+            Case 1, 2, 3
+                If vbComp.name <> strProtected Then
+                    strToDelete = strToDelete & "  " & vbComp.name & vbCrLf
+                End If
+        End Select
+    Next vbComp
+
+    If strToDelete = "" Then
+        MsgBox "No modules found to delete.", vbInformation, "Delete Modules"
+        DeleteAllModulesExceptImporter = True
+        Exit Function
+    End If
+
+    ' Prompt for confirmation
+    strMsg = "The following modules and classes will be deleted:" & vbCrLf & vbCrLf & _
+             strToDelete & vbCrLf & _
+             "'" & strProtected & "' will be preserved." & vbCrLf & vbCrLf & _
+             "Proceed with deletion?"
+    intResponse = MsgBox(strMsg, vbYesNo + vbExclamation, "Confirm Delete")
+
+    If intResponse <> vbYes Then
+        Debug.Print "Deletion cancelled by user.", "in Function DeleteAllModulesExceptImporter"
+        DeleteAllModulesExceptImporter = False
+        Exit Function
+    End If
+
+    ' Collect names to delete first - never modify a collection while iterating it
+    Dim colToDelete As Collection
+    Set colToDelete = New Collection
+    For Each vbComp In ThisDocument.VBProject.VBComponents
+        Select Case vbComp.Type
+            Case 1, 2, 3
+                If vbComp.name <> strProtected Then
+                    colToDelete.Add vbComp.name
+                End If
+        End Select
+    Next vbComp
+
+    ' Now delete using the collected names
+    Dim strName As Variant
+    For Each strName In colToDelete
+        Set vbComp = ThisDocument.VBProject.VBComponents(strName)
+        ThisDocument.VBProject.VBComponents.Remove vbComp
+        Debug.Print strName, "deleted", "in Function DeleteAllModulesExceptImporter"
+    Next strName
+
+    DeleteAllModulesExceptImporter = True
+End Function
+
+Private Function ModuleOrClassExists(name As String) As Boolean
+    On Error GoTo 0
+    Dim vbComp As Object
+    Dim found As Boolean
+    
+    found = False
+    'Debug.Print "name = " & name, "in Function ModuleOrClassExists"
+    For Each vbComp In ThisDocument.VBProject.VBComponents
+        If vbComp.name = name Then
+            found = True
+            Exit For
+        End If
+    Next vbComp
+    
+    ModuleOrClassExists = found
+    Debug.Print name, "ModuleOrClassExists = " & found, "in Function ModuleOrClassExists"
+End Function
+
 
