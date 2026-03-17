@@ -30,6 +30,12 @@ Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
     Else
         aeWordGitClassTest varDebug:="varDebug"
     End If
+
+    ' Run VBA casing normalizer after export
+    Dim strBat As String
+    strBat = ThisDocument.Path & "\normalize_vba.bat"
+    shell "cmd.exe /c """ & strBat & """", vbNormalFocus
+
 End Function
 
 Public Function aeWordGitClassTest(Optional ByVal varDebug As Variant, _

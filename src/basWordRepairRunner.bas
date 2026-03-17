@@ -18,7 +18,7 @@ Private Function FileNameStartsWithV59() As Boolean
 End Function
 
 Public Sub SaveAsPDF_NoOpen()
-    ' Overwrite the existing PDF file silently — without prompting or warning
+    ' Overwrite the existing PDF file silently - without prompting or warning
     Dim startTime As Single
     Dim endTime As Single
     Dim duration As Single
@@ -86,13 +86,13 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
-    Dim pgRange As range, ch As range, scanRange As range, prefixCh As range
+    Dim pgRange As Range, ch As Range, scanRange As Range, prefixCh As Range
     Dim pageStart As Long, pageEnd As Long
     Dim chapterMarker As String, verseDigits As String, combinedNumber As String
     Dim markerStart As Long, markerEnd As Long, verseEnd As Long
     Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
     Dim prefixY As Single, digitY As Single, digitX As Single
-    Dim nextWords As String, lookAhead As range, token As range, wCount As Integer
+    Dim nextWords As String, lookAhead As Range, token As Range, wCount As Integer
     Dim logBuffer As String
     Dim ascii12Count As Long
     Dim ascii160MissingCount As Long
@@ -119,14 +119,14 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     logBuffer = logBuffer & "Header for page " & pageNum & ": " & headerText & vbCrLf
     
     Do While i < pageEnd
-        Set ch = ActiveDocument.range(i, i + 1)
+        Set ch = ActiveDocument.Range(i, i + 1)
         If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
             ' Assemble chapter marker block
             chapterMarker = ch.text
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
-                Set scanRange = ActiveDocument.range(markerEnd, markerEnd + 1)
+                Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
                 If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
                     If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
                         chapterMarker = chapterMarker & scanRange.text
@@ -146,7 +146,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
             verseDigits = ""
             verseEnd = markerEnd
             Do While verseEnd < pageEnd
-                Set scanRange = ActiveDocument.range(verseEnd, verseEnd + 1)
+                Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
                     If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
                         verseDigits = verseDigits & scanRange.text
@@ -166,12 +166,12 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 Dim verseText As String
                 verseText = GetVerseText(pageEnd, verseEnd)
     
-                Dim chInfo As range
-                Set chInfo = ActiveDocument.range(verseEnd, verseEnd + 1)
+                Dim chInfo As Range
+                Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.text)
                 
-                Dim suffixCh As range
-                Set suffixCh = ActiveDocument.range(verseEnd, verseEnd + 1)
+                Dim suffixCh As Range
+                Set suffixCh = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 Dim suffixAsc As Long
                 suffixAsc = AscW(suffixCh.text)
 
@@ -194,7 +194,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 
                 ' Prefix check
                 If markerStart > pageStart Then
-                    Set prefixCh = ActiveDocument.range(markerStart - 1, markerStart)
+                    Set prefixCh = ActiveDocument.Range(markerStart - 1, markerStart)
                     prefixTxt = prefixCh.text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
@@ -205,7 +205,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                     If (prefixAsc = 32 Or prefixAsc = 160) And prefixStyle = "Normal" Then
                         If Abs(prefixY - digitY) < 25 Then
                             nextWords = ""
-                            Set lookAhead = ActiveDocument.range(verseEnd, verseEnd + 80)
+                            Set lookAhead = ActiveDocument.Range(verseEnd, verseEnd + 80)
                             wCount = 0
                             For Each token In lookAhead.words
                                 If token.text Like "*^13*" Then Exit For
@@ -231,8 +231,8 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 
                     ' --- NEW: Ensure each verse starts on its own line (after repair logic) ---
                     'If markerStart > pageStart Then
-                    Dim versePrefix As range
-                    Set versePrefix = ActiveDocument.range(markerStart - 1, markerStart)
+                    Dim versePrefix As Range
+                    Set versePrefix = ActiveDocument.Range(markerStart - 1, markerStart)
     
                     If OneVersePerParaRepair Then
                         ' If the char before the marker is not already a CR, insert one
@@ -269,7 +269,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 End Sub
 
 Private Function GetPageHeaderText(pgNum As Long) As String
-    Dim rng As range
+    Dim rng As Range
     Dim sec As section
     Dim hdr As HeaderFooter
     
@@ -282,7 +282,7 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     
     ' NOTE: Does not apply in this Bible doc
     ' If primary is empty, check for first-page or even-page headers
-    'If Len(hdr.range.text) = 0 Then
+    'If Len(hdr.Range.text) = 0 Then
     '    If sec.Headers(wdHeaderFooterFirstPage).Exists Then
     '        Set hdr = sec.Headers(wdHeaderFooterFirstPage)
     '    ElseIf sec.Headers(wdHeaderFooterEvenPages).Exists Then
@@ -291,7 +291,7 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     'End If
     
     ' Clean up the header text (Word stores an end-of-cell marker)
-    GetPageHeaderText = TitleCase(Trim(Replace(hdr.range.text, Chr(13), " ")))
+    GetPageHeaderText = TitleCase(Trim(Replace(hdr.Range.text, Chr(13), " ")))
 End Function
 
 Private Function TitleCase(ByVal txt As String) As String
@@ -315,14 +315,14 @@ End Function
 Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
     Dim verseContentEnd As Long
     Dim nextPos As Long
-    Dim scanCh As range
+    Dim scanCh As Range
     Dim txt As String
     
     verseContentEnd = pageEnd
     nextPos = verseContentStart
     
     Do While nextPos < pageEnd
-        Set scanCh = ActiveDocument.range(nextPos, nextPos + 1)
+        Set scanCh = ActiveDocument.Range(nextPos, nextPos + 1)
         
         If Len(Trim(scanCh.text)) = 1 And IsNumeric(scanCh.text) Then
             If (scanCh.style.NameLocal = "Chapter Verse marker" And scanCh.font.color = RGB(255, 165, 0)) _
@@ -335,7 +335,7 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
         nextPos = nextPos + 1
     Loop
     
-    txt = Trim(ActiveDocument.range(verseContentStart, verseContentEnd).text)
+    txt = Trim(ActiveDocument.Range(verseContentStart, verseContentEnd).text)
     
     If InStrRev(txt, "CHAPTER ") > 0 Then
         Dim pos As Long

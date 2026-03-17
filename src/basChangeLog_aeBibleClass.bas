@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #505 -
 ' #504 -
 ' #503 -
-' #502 -
 ' #494 - Move InterpretStructure from Test harness module to EBNF code module
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #502 - Add Python normalizer + batch file to run after export script completes, no more commit spam from casing drift [feat][bug]
     ' FIXED - #501 - Book Title fix for Export USFM, extraneous use of Heading 1
     ' FIXED - #500 - Replace GoTo SkipLogging with Exit Do [impr]
     ' FIXED - #499 - Correct Defensive Pattern - Capture the error immediately after the risky operation [impr]

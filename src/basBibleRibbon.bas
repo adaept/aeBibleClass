@@ -87,11 +87,11 @@ Private Function adaeptMsg() As String
     adaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
 
-Private Function GetParaIndexSafe(rng As range) As Long
+Private Function GetParaIndexSafe(rng As Range) As Long
 ' Search Isa 23:42 (intentional false verse number) scanned nearly 9,000 paragraphs in under a quarter second,
 ' with full interruptibility and no layout lock
-    Dim r As range
-    Set r = ActiveDocument.range(0, 0)
+    Dim r As Range
+    Set r = ActiveDocument.Range(0, 0)
 
     Dim idx As Long: idx = 1
     Dim tickStart As Single: tickStart = Timer
@@ -206,7 +206,7 @@ Public Sub GoToVerseSBL()
         End Select
         Debug.Print "GoToVerseSBL: paraIndex = " & paraIndex
 
-Selection.range.Select  ' re-activate the cursor
+Selection.Range.Select  ' re-activate the cursor
 GoTo Cleanup    ' for Exit Sub temp stop
 
         verseNum = 1
@@ -246,13 +246,13 @@ Chapter:
 
 
 Dim para As paragraph
-            If Trim(para.range.text) Like "*Chapter " & chapNum & "*" _
-                    Or Trim(para.range.text) Like "*Psalm " & chapNum & "*" Then
+            If Trim(para.Range.text) Like "*Chapter " & chapNum & "*" _
+                    Or Trim(para.Range.text) Like "*Psalm " & chapNum & "*" Then
 
-                para.range.Select
+                para.Range.Select
 
                 Dim idx As Long
-                idx = GetParaIndexSafe(para.range)
+                idx = GetParaIndexSafe(para.Range)
                 'Debug.Print "idx = " & idx
 
                 Select Case idx
@@ -261,7 +261,7 @@ Dim para As paragraph
                 Case -1
                     'Debug.Print "Paragraph not found."
                 Case -2
-                    'Debug.Print "Scan timed out—possible layout stall."
+                    'Debug.Print "Scan timed outï¿½possible layout stall."
                 End Select
                 
                 Dim styleName As String
@@ -274,11 +274,11 @@ Dim para As paragraph
                 'Debug.Print "Style: " & s.NameLocal & _
                     " | Type=" & StyleTypeLabel(s.Type) & _
                     " | OutlineLevel=" & s.ParagraphFormat.OutlineLevel & _
-                    " | Content=" & Trim(Replace(para.range.text, vbCr, ""))
+                    " | Content=" & Trim(Replace(para.Range.text, vbCr, ""))
 
                 Dim suffixChar As String
                 Dim suffixCode As Integer
-                suffixChar = Right(Trim(para.range.text), 1)
+                suffixChar = Right(Trim(para.Range.text), 1)
 
                 If Len(suffixChar) = 1 Then
                     suffixCode = Asc(suffixChar)
@@ -296,7 +296,7 @@ Dim para As paragraph
                 'chapFound = True
                 'chapIdx = idx
                 'Debug.Print "chapIdx = " & idx
-                Application.Selection.range.GoTo
+                Application.Selection.Range.GoTo
                 Stop
                 'Exit For
             End If
@@ -340,14 +340,15 @@ Dim chapIdx As Long
         If InStr(styleNameH2, "Heading 2") > 0 Then
             Dim pageNum As Long
             paraIndex = v ' your known paragraph index
-            pageNum = ActiveDocument.paragraphs(paraIndex).range.Information(wdActiveEndPageNumber) - 2 ' to get actual page number of doc using ^H
+            pageNum = ActiveDocument.paragraphs(paraIndex).Range.Information(wdActiveEndPageNumber) - 2 ' to get actual page number of doc using ^H
             'MsgBox "Paragraph " & paraIndex & " is on page " & pageNum
-            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')", Left(para.range.text, 40), "Page " & pageNum
+            Debug.Print "Error: Reached next chapter at paragraph #" & v & " (style: '" & styleNameH2 & "')", Left(para.Range.text, 40), "Page " & pageNum
             MsgBox "No verse " & verseNum & " found in Chapter " & chapNum, vbCritical
             Exit For
         End If
 
-        Dim rng As range: Set rng = p.range.Duplicate
+        Dim rng As Range
+        Set rng = p.Range.Duplicate
         With rng.Find
             .ClearFormatting
             .style = charStyleName
@@ -364,7 +365,7 @@ Dim chapIdx As Long
                     Exit For
                 End If
                 rng.Start = rng.End ' Move to next match
-                rng.End = p.range.End
+                rng.End = p.Range.End
             Loop
         End With
 
@@ -433,7 +434,7 @@ Sub LogHeadingData()
     If changed Then
         Debug.Print "LogHeadingData: File updated at " & sessionStamp
     Else
-        Debug.Print "LogHeadingData: No changes detected — file preserved"
+        Debug.Print "LogHeadingData: No changes detected - file preserved"
     End If
 End Sub
 
@@ -459,9 +460,9 @@ Public Sub CaptureHeading1s()
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
             If i > 66 Then Exit For
-            paraText = Trim(Replace(para.range.text, vbCr, ""))
+            paraText = Trim(Replace(para.Range.text, vbCr, ""))
             headingData(i, 0) = paraText
-            headingData(i, 1) = para.range.Start
+            headingData(i, 1) = para.Range.Start
             i = i + 1
         End If
     Next para
@@ -524,8 +525,8 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
     Debug.Print "FindBookH1: >> chapNum = " & chapNum, "verseNum = " & verseNum
     savedPos = SaveCursor()
  
-    Dim r As range
-    Set r = ActiveDocument.paragraphs(1).range
+    Dim r As Range
+    Set r = ActiveDocument.paragraphs(1).Range
 
     Dim paraText As String, bookFound As Boolean
     Dim paraCount As Long: paraCount = 1
@@ -540,7 +541,7 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
                 Debug.Print "FindBookH1: >> Book found", "'" & paraText & "'", "#" & paraIndex, "bookFound = " & bookFound
 
                 ' Move cursor safely
-                With ActiveDocument.paragraphs(paraIndex).range
+                With ActiveDocument.paragraphs(paraIndex).Range
                     .Select
                     Selection.Collapse Direction:=wdCollapseStart
                 End With
@@ -562,23 +563,23 @@ End Sub
 Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
     Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
     Dim chapTag1 As String, chapTag2 As String
-    Dim r As range
+    Dim rng As Range
     Dim paraText As String
     Dim count As Long
 
     chapTag1 = "Chapter " & chapNum
     chapTag2 = "PSALM " & chapNum
 
-    Set r = ActiveDocument.paragraphs(paraIndex).range
+    Set rng = ActiveDocument.paragraphs(paraIndex).Range
     count = 0
 
-    Do While Not r Is Nothing
-        If r.style = "Heading 2" Then
-            paraText = Trim$(r.text)
+    Do While Not rng Is Nothing
+        If rng.style = "Heading 2" Then
+            paraText = Trim$(rng.text)
             If InStr(1, paraText, chapTag1, vbTextCompare) > 0 Or _
                 InStr(1, paraText, chapTag2, vbTextCompare) > 0 Then
                 paraIndex = paraIndex + count
-                With ActiveDocument.paragraphs(paraIndex).range
+                With ActiveDocument.paragraphs(paraIndex).Range
                     .Select
                     Selection.Collapse Direction:=wdCollapseStart
                 End With
@@ -587,7 +588,7 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
             End If
         End If
         count = count + 1
-        Set r = r.Next(Unit:=wdParagraph, count:=1)
+        Set rng = rng.Next(Unit:=wdParagraph, count:=1)
     Loop
 
     MsgBox "Chapter not found: '" & fullBookName & "' Chapter = " & chapNum, vbExclamation, "Bible"
@@ -797,7 +798,7 @@ Sub GoToSection()
     bookmarkIndex = bookmarkIndex + 1
     If bookmarkIndex > bmList.count Then bookmarkIndex = 1
 
-    bmList.item(bookmarkIndex).range.Select
+    bmList.item(bookmarkIndex).Range.Select
 End Sub
 
 Private Function GetBookmarkList() As Collection
@@ -826,11 +827,11 @@ Private Sub GoToH1()
 
     For Each para In ActiveDocument.paragraphs
         If para.style = "Heading 1" Then
-            paraText = Trim$(para.range.text)
+            paraText = Trim$(para.Range.text)
             If paraText Like "*" & UCase(pattern) & "*" Then
-                para.range.Select
+                para.Range.Select
                 ' Move insertion point (cursor) without selecting text
-                ActiveDocument.range(para.range.Start, para.range.Start).Select
+                ActiveDocument.Range(para.Range.Start, para.Range.Start).Select
                 matchFound = True
                 Exit For
             End If
@@ -838,7 +839,7 @@ Private Sub GoToH1()
     Next para
 
     Application.ScreenUpdating = True
-    Selection.range.Select  ' Re-select current range to restore cursor
+    Selection.Range.Select  ' Re-select current range to restore cursor
     DoEvents  ' Allows UI refresh
     
     If Not matchFound Then
@@ -848,7 +849,7 @@ End Sub
 
 Private Sub NextButton()
     Dim doc As Document
-    Dim searchRange As range
+    Dim searchRange As Range
     Dim paraEnd As Long
     Dim found As Boolean
 
@@ -856,8 +857,8 @@ Private Sub NextButton()
     found = False
 
     ' Move start past current paragraph to avoid re-matching
-    paraEnd = Selection.paragraphs(1).range.End
-    Set searchRange = doc.range(paraEnd, doc.content.End)
+    paraEnd = Selection.paragraphs(1).Range.End
+    Set searchRange = doc.Range(paraEnd, doc.content.End)
 
     With searchRange.Find
         .ClearFormatting
@@ -871,7 +872,7 @@ Private Sub NextButton()
 
     ' If not found, wrap: from beginning to current paragraph start
     If Not found Then
-        Set searchRange = doc.range(0, paraEnd)
+        Set searchRange = doc.Range(0, paraEnd)
         With searchRange.Find
             .ClearFormatting
             .style = doc.Styles("Heading 1")
@@ -886,7 +887,7 @@ Private Sub NextButton()
     ' If found, move cursor to start of heading
     If found Then
         Selection.SetRange searchRange.Start, searchRange.Start
-        ActiveWindow.ScrollIntoView Selection.range, True
+        ActiveWindow.ScrollIntoView Selection.Range, True
     Else
         MsgBox "No Heading 1 found in the document.", vbInformation
     End If

@@ -5,7 +5,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Public lastFoundLocation As range
+Public lastFoundLocation As Range
 Private Const wdHeaderStory As Integer = 6
 Private Const wdFooterStory As Integer = 7
 Private Const wdFootnoteStory As Integer = 4
@@ -16,7 +16,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     Dim para As paragraph
     Dim paraPageNum As Integer
     Dim textFound As Boolean
-    Dim startRange As range
+    Dim startRange As Range
     Dim headingText As String
     Dim counter As Long
 
@@ -26,7 +26,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     If Not IsMissing(restartVal) Then
         ' Set the range to start from the specified location
         Debug.Print "Restarting from location " & restartVal
-        Set startRange = doc.range(Start:=restartVal, End:=doc.content.End)
+        Set startRange = doc.Range(Start:=restartVal, End:=doc.content.End)
     ElseIf lastFoundLocation Is Nothing Then
         ' Check if we have a previously found location to continue from
         ' Start at the beginning of the specified page
@@ -48,16 +48,16 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     ' Iterate through paragraphs starting from the specified range
     For Each para In doc.paragraphs
         ' Get the visible page number of the current paragraph
-        paraPageNum = para.range.Information(wdActiveEndAdjustedPageNumber)
+        paraPageNum = para.Range.Information(wdActiveEndAdjustedPageNumber)
 
         ' Check if the paragraph is on the specified or subsequent pages
-        If para.range.Start >= startRange.Start Then
+        If para.Range.Start >= startRange.Start Then
             'Debug.Print "paraPageNum = " & paraPageNum
             If paraPageNum >= bookPage Then
                 ' Verify if the paragraph is styled as Heading 1
                 If para.style = "Heading 1" Then
                     textFound = True
-                    headingText = Trim(para.range.text) ' Get the text of the Heading 1
+                    headingText = Trim(para.Range.text) ' Get the text of the Heading 1
                     ' Clean up the text by removing all newline, carriage return, and control characters
                     headingText = Replace(headingText, vbCrLf, "")
                     headingText = Replace(headingText, vbLf, "")
@@ -67,10 +67,10 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
                     headingText = Trim(headingText) ' Finally, trim spaces
                     
                     ' Remember the location for the next search
-                    Set lastFoundLocation = para.range
-                    'MsgBox "Found Heading 1 on visible page " & paraPageNum & " at location: " & para.range.Start, _
+                    Set lastFoundLocation = para.Range
+                    'MsgBox "Found Heading 1 on visible page " & paraPageNum & " at location: " & para.Range.Start, _
                         vbInformation, "Heading 1 Found"
-                    Debug.Print "Found Heading 1 " & headingText & " on visible page " & paraPageNum & " at location: " & para.range.Start
+                    Debug.Print "Found Heading 1 " & headingText & " on visible page " & paraPageNum & " at location: " & para.Range.Start
                     
                     FindNextHeading1OnVisiblePage = textFound
                     Exit Function ' Exit after finding the first Heading 1
@@ -232,7 +232,7 @@ Sub FindDocVariableEverywhere()
     ' Third: Search for DOCVARIABLE in headers and footers
     For Each section In doc.Sections
         ' Check headers
-        For Each field In section.Headers(wdHeaderFooterPrimary).range.Fields
+        For Each field In section.Headers(wdHeaderFooterPrimary).Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
@@ -244,7 +244,7 @@ Sub FindDocVariableEverywhere()
         Next field
 
         ' Check footers
-        For Each field In section.Footers(wdHeaderFooterPrimary).range.Fields
+        For Each field In section.Footers(wdHeaderFooterPrimary).Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
@@ -258,7 +258,7 @@ Sub FindDocVariableEverywhere()
 
     ' Fourth: Search for DOCVARIABLE in footnotes
     For Each note In doc.Footnotes
-        For Each field In note.range.Fields
+        For Each field In note.Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
@@ -272,7 +272,7 @@ Sub FindDocVariableEverywhere()
 
     ' Fifth: Search for DOCVARIABLE in endnotes
     For Each endNote In doc.Endnotes
-        For Each field In endNote.range.Fields
+        For Each field In endNote.Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.code.text, variableName, vbTextCompare) > 0 Then
                     field.Select
@@ -293,7 +293,7 @@ End Sub
 Function SearchShapeForVariable(shape As shape, variableName As String) As Boolean
     Dim childShape As shape
     Dim field As field
-    Dim textFrameRange As range
+    Dim textFrameRange As Range
 
     ' Initialize return value
     SearchShapeForVariable = False
@@ -502,7 +502,7 @@ Sub TestPageNumbers()
     Debug.Print "Done Old Testament !!!"
 
 NewTestament:
-    Dim rng As range
+    Dim rng As Range
     Set rng = ActiveDocument.GoTo(What:=1, Which:=1, name:="630")
     rng.Select
 

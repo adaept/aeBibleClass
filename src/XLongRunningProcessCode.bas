@@ -75,7 +75,7 @@ End Sub
 Sub UpdateCharacterStyle(pageNumber As Integer)
     Dim doc As Document
     Dim para As paragraph
-    Dim rng As range
+    Dim rng As Range
     Dim styleName As String
     Dim updateCount As Integer
     Dim startTime As Double
@@ -107,10 +107,10 @@ Sub UpdateCharacterStyle(pageNumber As Integer)
     ' Loop through each paragraph in the document
     For Each para In doc.paragraphs
         ' Check if the paragraph is on or after the specified page
-        If para.range.Information(wdActiveEndPageNumber) >= pageNumber Then
+        If para.Range.Information(wdActiveEndPageNumber) >= pageNumber Then
             ' Process the paragraph (example: update character style)
             ' Loop through each range in the paragraph
-            For Each rng In para.range.Characters
+            For Each rng In para.Range.Characters
                 ' Check if the range has the specified character style
                 If rng.style = styleName Then
                     ' Apply the style from the style gallery

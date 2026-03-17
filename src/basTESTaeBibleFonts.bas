@@ -55,7 +55,7 @@ End Sub
 
 Function IsFontInstalled(fontName As String) As Boolean
     Dim TestDoc As Document
-    Dim testRange As range
+    Dim testRange As Range
     On Error Resume Next
     Set TestDoc = Documents.Add(Visible:=False)
     Set testRange = TestDoc.content
@@ -95,7 +95,7 @@ Sub CreateEmphasisBlackStyle()
 End Sub
 
 Sub AuditStyleUsage_Footnote()
-    Dim r As range, hitCount As Long
+    Dim r As Range, hitCount As Long
     Dim logBuffer As String
 
     logBuffer = "=== Audit: Style Usage for ->Footnote<- ===" & vbCrLf
@@ -147,8 +147,8 @@ Sub AuditStyleUsage_FootnoteNormal()
     For Each para In ActiveDocument.paragraphs
         If para.style = ActiveDocument.Styles("Footnote normal") Then
             hitCount = hitCount + 1
-            logBuffer = logBuffer & "* Paragraph at Char " & para.range.Start & " -> """ & _
-            Replace(Left(para.range.text, 40), vbCr, "") & "...""" & vbCrLf
+            logBuffer = logBuffer & "* Paragraph at Char " & para.Range.Start & " -> """ & _
+            Replace(Left(para.Range.text, 40), vbCr, "") & "...""" & vbCrLf
         End If
     Next para
 
@@ -192,8 +192,8 @@ Sub AuditStyleUsage_PictureCaption()
     For Each para In ActiveDocument.paragraphs
         If para.style = s Then
             hitCount = hitCount + 1
-            logBuffer = logBuffer & "* Paragraph at Char " & para.range.Start & " -> """ & _
-                Replace(Left(para.range.text, 40), vbCr, "") & "...""" & vbCrLf
+            logBuffer = logBuffer & "* Paragraph at Char " & para.Range.Start & " -> """ & _
+                Replace(Left(para.Range.text, 40), vbCr, "") & "...""" & vbCrLf
         End If
     Next para
 
@@ -243,10 +243,10 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
     paraIndex = 0
     For Each para In ActiveDocument.paragraphs
         paraIndex = paraIndex + 1
-        fontName = para.range.Characters(1).font.name
+        fontName = para.Range.Characters(1).font.name
         If fontName = "Arial Unicode MS" Then
             logBuffer = logBuffer & "[Body] Para #" & paraIndex & " - Style: " & para.style & vbCrLf
-            logBuffer = logBuffer & "Text: " & Left(para.range.text, 120) & vbCrLf & vbCrLf
+            logBuffer = logBuffer & "Text: " & Left(para.Range.text, 120) & vbCrLf & vbCrLf
         End If
     Next para
 
@@ -261,26 +261,26 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
             Set hf = sec.Headers(hfKind)
             If hf.Exists Then
                 paraIndex = 0
-                For Each para In hf.range.paragraphs
+                For Each para In hf.Range.paragraphs
                     paraIndex = paraIndex + 1
-                    fontName = para.range.Characters(1).font.name
+                    fontName = para.Range.Characters(1).font.name
                     If fontName = "Arial Unicode MS" Then
                         logBuffer = logBuffer & "[Header] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
                         logBuffer = logBuffer & "Style: " & para.style & vbCrLf
-                        logBuffer = logBuffer & "Text: " & Left(para.range.text, 120) & vbCrLf & vbCrLf
+                        logBuffer = logBuffer & "Text: " & Left(para.Range.text, 120) & vbCrLf & vbCrLf
                     End If
                 Next
             End If
             Set hf = sec.Footers(hfKind)
             If hf.Exists Then
                 paraIndex = 0
-                For Each para In hf.range.paragraphs
+                For Each para In hf.Range.paragraphs
                     paraIndex = paraIndex + 1
-                    fontName = para.range.Characters(1).font.name
+                    fontName = para.Range.Characters(1).font.name
                     If fontName = "Arial Unicode MS" Then
                         logBuffer = logBuffer & "[Footer] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
                         logBuffer = logBuffer & "Style: " & para.style & vbCrLf
-                        logBuffer = logBuffer & "Text: " & Left(para.range.text, 120) & vbCrLf & vbCrLf
+                        logBuffer = logBuffer & "Text: " & Left(para.Range.text, 120) & vbCrLf & vbCrLf
                     End If
                 Next
             End If

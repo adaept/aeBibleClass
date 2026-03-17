@@ -150,7 +150,7 @@ Function FormatDiagnostics(current As Object, target As Object, issues As Object
     Result = Result & vbCrLf & "== Manual UI Verifications ==" & vbCrLf
     For Each key In current.Keys
         If InStr(current(key), "File > Options") > 0 Or InStr(current(key), "Editor") > 0 Then
-            Result = Result & manualFlag & key & " — " & current(key) & vbCrLf
+            Result = Result & manualFlag & key & " ï¿½ " & current(key) & vbCrLf
         End If
     Next key
 
@@ -235,7 +235,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
     For Each sec In ActiveDocument.Sections
         Dim hdrFtr As HeaderFooter
         For Each hdrFtr In sec.Headers
-            For Each p In hdrFtr.range.paragraphs
+            For Each p In hdrFtr.Range.paragraphs
                 If p.style = sName Then
                     StyleIsAppliedAnywhere = True
                     Exit Function
@@ -243,7 +243,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
             Next p
         Next hdrFtr
         For Each hdrFtr In sec.Footers
-            For Each p In hdrFtr.range.paragraphs
+            For Each p In hdrFtr.Range.paragraphs
                 If p.style = sName Then
                     StyleIsAppliedAnywhere = True
                     Exit Function

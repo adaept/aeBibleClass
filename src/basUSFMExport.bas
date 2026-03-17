@@ -60,7 +60,7 @@ Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
     LogEvent "=== USFM EXPORT START ==="
     LogEvent "Page range: " & startPage & " to " & endPage
 
-    Dim rng As range
+    Dim rng As Range
     Set rng = GetRangeForPages(startPage, endPage)
 
     If rng Is Nothing Then
@@ -83,7 +83,7 @@ End Sub
 ' ============================================================================================
 ' CORE CONVERSION
 ' ============================================================================================
-Private Function ConvertRangeToUSFM(ByVal rng As range) As String
+Private Function ConvertRangeToUSFM(ByVal rng As Range) As String
     Dim p As paragraph
     Dim sb As String
     Dim line As String
@@ -127,14 +127,14 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     Dim verseText As String
 
     styleName = Trim$(p.style.NameLocal)
-    txt = CleanTextForUTF8(Trim$(p.range.text))
+    txt = CleanTextForUTF8(Trim$(p.Range.text))
 
     ' Normalize out any embedded CR/LF coming from Word
     txt = Replace$(txt, vbCr, "")
     txt = Replace$(txt, vbLf, "")
 
     'LogEvent "STYLE=[" & styleName & "] RAW=[" & txt & "]"
-    'LogEvent "CHARSTYLE=[" & p.range.Characters(1).style & "]"
+    'LogEvent "CHARSTYLE=[" & p.Range.Characters(1).style & "]"
 
     '===========================================================
     ' 0. FORM FEED / WHITESPACE HANDLING
@@ -296,8 +296,8 @@ Private Function IsEffectivelyEmpty(txt As String) As Boolean
 End Function
 
 Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As Boolean
-    Dim r As range
-    For Each r In p.range.words
+    Dim r As Range
+    For Each r In p.Range.words
         If r.style = styleName Then
             ParagraphHasCharStyle = True
             Exit Function
@@ -306,9 +306,9 @@ Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As B
 End Function
 
 Private Function ExtractCharStyleText(p As paragraph, styleName As String) As String
-    Dim r As range
+    Dim r As Range
     Dim buf As String
-    For Each r In p.range.words
+    For Each r In p.Range.words
         If r.style = styleName Then
             buf = buf & r.text
         End If
@@ -322,9 +322,9 @@ Private Function TryParseChapterVerseFromStyles( _
     ByRef verseNum As Long, _
     ByRef verseText As String) As Boolean
 
-    Dim rChap As range
-    Dim rVerse As range
-    Dim rText As range
+    Dim rChap As Range
+    Dim rVerse As Range
+    Dim rText As Range
 
     chapNum = 0
     verseNum = 0
@@ -333,7 +333,7 @@ Private Function TryParseChapterVerseFromStyles( _
     '------------------------------------------------------------
     ' 1. Chapter number run (character style: "Chapter Verse marker")
     '------------------------------------------------------------
-    Set rChap = p.range.Duplicate
+    Set rChap = p.Range.Duplicate
     rChap.Collapse wdCollapseStart
     rChap.MoveEnd wdCharacter, 1
 
@@ -345,7 +345,7 @@ Private Function TryParseChapterVerseFromStyles( _
     End If
 
     ' Extend rChap to include all contiguous chars with that style
-    Do While rChap.End < p.range.End And rChap.style = "Chapter Verse marker"
+    Do While rChap.End < p.Range.End And rChap.style = "Chapter Verse marker"
         rChap.MoveEnd wdCharacter, 1
     Loop
     rChap.MoveEnd wdCharacter, -1 ' step back one char after overshoot
@@ -355,7 +355,7 @@ Private Function TryParseChapterVerseFromStyles( _
     '------------------------------------------------------------
     ' 2. Verse number run (character style: "Verse marker")
     '------------------------------------------------------------
-    Set rVerse = p.range.Duplicate
+    Set rVerse = p.Range.Duplicate
     rVerse.Start = rChap.End
     rVerse.Collapse wdCollapseStart
     rVerse.MoveEnd wdCharacter, 1
@@ -366,7 +366,7 @@ Private Function TryParseChapterVerseFromStyles( _
     End If
 
     ' Extend rVerse to include all contiguous chars with that style
-    Do While rVerse.End < p.range.End And rVerse.style = "Verse marker"
+    Do While rVerse.End < p.Range.End And rVerse.style = "Verse marker"
         rVerse.MoveEnd wdCharacter, 1
     Loop
     rVerse.MoveEnd wdCharacter, -1
@@ -376,7 +376,7 @@ Private Function TryParseChapterVerseFromStyles( _
     '------------------------------------------------------------
     ' 3. Remaining text = verse content
     '------------------------------------------------------------
-    Set rText = p.range.Duplicate
+    Set rText = p.Range.Duplicate
     rText.Start = rVerse.End
     verseText = CleanTextForUTF8(Trim$(rText.text))
 
@@ -599,11 +599,11 @@ End Function
 ' ============================================================================================
 ' PAGE RANGE EXTRACTION (same pattern as basWordRepairRunner)
 ' ============================================================================================
-Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long) As range
+Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long) As Range
     Dim doc As Document
-    Dim rStartPage As range
-    Dim rEndPage As range
-    Dim fullRange As range
+    Dim rStartPage As Range
+    Dim rEndPage As Range
+    Dim fullRange As Range
 
     On Error GoTo ErrHandler
 
@@ -614,18 +614,18 @@ Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long
     ' (same pattern as RunRepairWrappedVerseMarkers_Across_Pages_From)
     ' -------------------------------------------------------------
     Application.Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
-    Set rStartPage = Application.Selection.Bookmarks("\Page").range
+    Set rStartPage = Application.Selection.Bookmarks("\Page").Range
 
     ' -------------------------------------------------------------
     ' Go to the END PAGE using the printed page number
     ' -------------------------------------------------------------
     Application.Selection.GoTo What:=wdGoToPage, name:=CStr(endPage)
-    Set rEndPage = Application.Selection.Bookmarks("\Page").range
+    Set rEndPage = Application.Selection.Bookmarks("\Page").Range
 
     ' -------------------------------------------------------------
     ' Build a range from the start of startPage to the end of endPage
     ' -------------------------------------------------------------
-    Set fullRange = doc.range(Start:=rStartPage.Start, End:=rEndPage.End)
+    Set fullRange = doc.Range(Start:=rStartPage.Start, End:=rEndPage.End)
 
     Set GetRangeForPages = fullRange
     Exit Function

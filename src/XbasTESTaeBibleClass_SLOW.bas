@@ -89,9 +89,9 @@ Public Sub PrintBibleHeading1Info()
         ' Check if the paragraph style is Heading 1
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             count = count + 1
-            headingText = para.range.text
-            pageNumber = para.range.Information(wdActiveEndPageNumber)
-            docPosition = para.range.Start
+            headingText = para.Range.text
+            pageNumber = para.Range.Information(wdActiveEndPageNumber)
+            docPosition = para.Range.Start
             
             ' Print the heading text, page number, and document position to the console
             Debug.Print count & ": " & "Heading: " & Replace(headingText, vbCr, "") & " | Page: " & pageNumber & " | Position: " & docPosition
@@ -116,9 +116,9 @@ Public Sub PrintBibleBookHeadings()
     For Each para In ActiveDocument.paragraphs
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
-            If para.range.text = headingLabel & vbCr Then
+            If para.Range.text = headingLabel & vbCr Then
                 ' Get the text of the Heading 1 without the extra carriage return
-                Debug.Print Replace(para.range.text, vbCr, "")
+                Debug.Print Replace(para.Range.text, vbCr, "")
                 foundHeading1 = True
             ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
@@ -130,7 +130,7 @@ Public Sub PrintBibleBookHeadings()
         If foundHeading1 Then
             If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
                 ' Get the text of the Heading 2 without the extra carriage return
-                Debug.Print Replace(para.range.text, vbCr, "")
+                Debug.Print Replace(para.Range.text, vbCr, "")
             End If
         End If
     Next para
@@ -143,7 +143,7 @@ End Sub
 
 Sub ListAndReviewAscii12Characters()
 ' Ascii 12 is Form Feed, FF, Page Break
-    Dim rng As range
+    Dim rng As Range
     Dim count As Long
     Dim startPos As Long
     Dim response As VbMsgBoxResult
@@ -173,7 +173,7 @@ Sub ListAndReviewAscii12Characters()
             rng.Collapse wdCollapseEnd
             
             ' Navigate to the position in the document
-            ActiveDocument.range(startPos, startPos).Select
+            ActiveDocument.Range(startPos, startPos).Select
             
             ' Ask if the user wants to continue
             response = MsgBox("ASCII 12 character found at position " & startPos & ". Do you want to continue?", vbYesNo + vbQuestion, "Review ASCII 12 Characters")
@@ -256,12 +256,12 @@ Sub CountParagraphsTypes()
         totalParagraphs = totalParagraphs + 1
         
         ' Check if the paragraph is empty
-        If Len(para.range.text) = 1 And para.range.text = vbCr Then
+        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
             emptyParagraphs = emptyParagraphs + 1
         End If
         
         ' Check for different types of breaks using Find method
-        With para.range.Find
+        With para.Range.Find
             .ClearFormatting
             .text = "^m"
             If .Execute Then
@@ -276,8 +276,8 @@ Sub CountParagraphsTypes()
         End With
         
         ' Check for different types of section breaks
-        If para.range.Sections.count > 0 Then
-            Select Case para.range.Sections(1).pageSetup.sectionStart
+        If para.Range.Sections.count > 0 Then
+            Select Case para.Range.Sections(1).pageSetup.sectionStart
                 Case wdSectionNewPage
                     nextPageSectionBreakParagraphs = nextPageSectionBreakParagraphs + 1
                     nextPageSectionBreakIndices = nextPageSectionBreakIndices & paraIndex & ", "
@@ -348,8 +348,8 @@ Sub FindNextVerseMarkerSequence()
 ' with space of "Normal" style before and after.
 ' ~200 secs and there should be no matches.
     Dim doc As Document
-    Dim searchRange As range
-    Dim chapterRng As range, nextRng As range
+    Dim searchRange As Range
+    Dim chapterRng As Range, nextRng As Range
     Dim found As Boolean
     Dim progressCount As Long
     Dim tStart As Single
@@ -361,7 +361,7 @@ Sub FindNextVerseMarkerSequence()
     found = False
     tStart = Timer
 
-    Set searchRange = doc.range(0, doc.content.End)
+    Set searchRange = doc.Range(0, doc.content.End)
 
     ' Begin search for Chapter Verse marker
     With searchRange.Find
@@ -379,7 +379,7 @@ Sub FindNextVerseMarkerSequence()
 
         ' Attempt to get the next character styled as Verse marker
         If chapterRng.End + 1 <= doc.content.End Then
-            Set nextRng = doc.range(Start:=chapterRng.End, End:=chapterRng.End + 1)
+            Set nextRng = doc.Range(Start:=chapterRng.End, End:=chapterRng.End + 1)
         Else
             searchRange.Start = chapterRng.End
             searchRange.End = doc.content.End
@@ -389,18 +389,18 @@ Sub FindNextVerseMarkerSequence()
 
         If nextRng.Characters.count = 1 Then
             If nextRng.style = "Verse marker" Then
-                Dim beforeChar As range, afterChar As range
+                Dim beforeChar As Range, afterChar As Range
 
                 ' Before chapter
                 If chapterRng.Start > 0 Then
-                    Set beforeChar = doc.range(Start:=chapterRng.Start - 1, End:=chapterRng.Start)
+                    Set beforeChar = doc.Range(Start:=chapterRng.Start - 1, End:=chapterRng.Start)
                 Else
                     GoTo ContinueLoop
                 End If
 
                 ' After verse
                 If nextRng.End + 1 <= doc.content.End Then
-                    Set afterChar = doc.range(Start:=nextRng.End, End:=nextRng.End + 1)
+                    Set afterChar = doc.Range(Start:=nextRng.End, End:=nextRng.End + 1)
                 Else
                     GoTo ContinueLoop
                 End If
@@ -419,7 +419,7 @@ Sub FindNextVerseMarkerSequence()
                         ' Found match
                         chapterRng.Start = beforeChar.Start
                         nextRng.End = afterChar.End
-                        doc.range(chapterRng.Start, nextRng.End).Select
+                        doc.Range(chapterRng.Start, nextRng.End).Select
                         MsgBox "Match found at position " & chapterRng.Start, vbInformation
                         found = True
                         Stop
