@@ -26,7 +26,7 @@ Option Compare Text
 '================================================================================
 ' Author:   Peter F. Ennis
 ' Date:     September 3, 2018
-' Comment:  Create class for revision control of Word VBA
+' Comment:  Create class for Revision Control of Word VBA
 ' History:  See comment details, basChangeLog_aeWordGit, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/aeWordGit
 '================================================================================

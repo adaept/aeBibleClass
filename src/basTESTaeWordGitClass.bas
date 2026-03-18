@@ -45,8 +45,8 @@ Public Function aeWordGitClassTest(Optional ByVal varDebug As Variant, _
 
     On Error GoTo PROC_ERR
 
-    Dim oWordObjects As aewordgitClass
-    Set oWordObjects = New aewordgitClass
+    Dim oWordObjects As aeWordGitClass
+    Set oWordObjects = New aeWordGitClass
 
     Dim bln1 As Boolean
 
