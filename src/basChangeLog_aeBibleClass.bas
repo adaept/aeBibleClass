@@ -7,8 +7,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #505 -
-' #494 - Move InterpretStructure from Test harness module to EBNF code module
+' #510 -
+' #509 -
+' #508 -
+' #507 -
+' #506 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -72,6 +75,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #505 - Make ribbon code into a class singleton and cleanup [refac]
+    ' FIXED - #494 - (done in some earlier commit) Move InterpretStructure from Test harness module to EBNF code module
     ' FIXED - #504 - Comment out ribbon code that is to be replaced by parser code [clean]
     ' FIXED - #503 - See #502 - Fix importer for all files as a generic solution not depending of a list of names
     ' FIXED - #502 - Add Python normalizer + batch file to run after export script completes, no more commit spam from casing drift [feat][bug]

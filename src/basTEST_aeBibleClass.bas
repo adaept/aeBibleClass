@@ -14,7 +14,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '   RUN_THE_TESTS("varDebug")
 ' Version is set in BibleClassVERSION As String
 '   BibleClassVERSION is found in Class Modules BibleClass
-'
 
 Public Function RUN_THE_TESTS(Optional ByVal varDebug As Variant) As Boolean
     On Error GoTo 0
