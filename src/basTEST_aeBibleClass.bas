@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTestaeBibleClass"
+Attribute VB_Name = "basTest_aeBibleClass"
 Option Explicit
 Option Compare Text
 Option Private Module

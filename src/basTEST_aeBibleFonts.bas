@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTESTaeBibleFonts"
+Attribute VB_Name = "basTEST_aeBibleFonts"
 Option Explicit
 Option Compare Text
 Option Private Module

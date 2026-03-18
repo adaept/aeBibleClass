@@ -1,4 +1,4 @@
-Attribute VB_Name = "basUSFMExport"
+Attribute VB_Name = "basUSFM_Export"
 ' Prompt:
 ' The current code for Word Bible audit is here: https://github.com/adaept/aeBibleClass/blob/main/src/basWordRepairRunner.bas#L31
 ' Use the code as the base for style information etc. as needed to create an initial USFM export routine for VBA.

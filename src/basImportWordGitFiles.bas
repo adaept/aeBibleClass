@@ -98,7 +98,7 @@ Private Sub ImportVBAFile(myCodeFile As String)
     End If
 End Sub
 
-Private Function DeleteAllModulesExceptImporter() As Boolean
+Public Function DeleteAllModulesExceptImporter() As Boolean
     On Error GoTo 0
     Dim vbComp As Object
     Dim strProtected As String
