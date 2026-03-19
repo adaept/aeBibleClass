@@ -144,7 +144,7 @@ Sub AuditStyleUsage_FootnoteNormal()
 
     logBuffer = "=== Audit: Paragraph Style Usage for 'Footnote normal' ===" & vbCrLf
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles("Footnote normal") Then
             hitCount = hitCount + 1
             logBuffer = logBuffer & "* Paragraph at Char " & para.Range.Start & " -> """ & _
@@ -189,7 +189,7 @@ Sub AuditStyleUsage_PictureCaption()
     End If
     On Error GoTo 0
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = s Then
             hitCount = hitCount + 1
             logBuffer = logBuffer & "* Paragraph at Char " & para.Range.Start & " -> """ & _
@@ -241,7 +241,7 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
 
     ' Scan body
     paraIndex = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         paraIndex = paraIndex + 1
         fontName = para.Range.Characters(1).font.name
         If fontName = "Arial Unicode MS" Then
@@ -261,7 +261,7 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
             Set hf = sec.Headers(hfKind)
             If hf.Exists Then
                 paraIndex = 0
-                For Each para In hf.Range.paragraphs
+                For Each para In hf.Range.Paragraphs
                     paraIndex = paraIndex + 1
                     fontName = para.Range.Characters(1).font.name
                     If fontName = "Arial Unicode MS" Then
@@ -274,7 +274,7 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
             Set hf = sec.Footers(hfKind)
             If hf.Exists Then
                 paraIndex = 0
-                For Each para In hf.Range.paragraphs
+                For Each para In hf.Range.Paragraphs
                     paraIndex = paraIndex + 1
                     fontName = para.Range.Characters(1).font.name
                     If fontName = "Arial Unicode MS" Then

@@ -1331,7 +1331,7 @@ Private Function CountAndCreateDefinitionForH2()
     ' Enforce Heading 2 Paragraph Widow Orphan
     ' Disable KeepLines Together For Heading 2
     Dim para As paragraph
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles("Heading 2") Then
             count = count + 1
             With para
@@ -1419,7 +1419,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
     For Each sec In ActiveDocument.Sections
         For Each hf In sec.Headers
             If hf.Exists Then
-                For Each p In hf.Range.paragraphs
+                For Each p In hf.Range.Paragraphs
                     paraText = p.Range.text
                     asciiVal = AscW(Left(paraText, 1))
                     paraStyle = p.style.NameLocal
@@ -1450,7 +1450,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
 
         For Each hf In sec.Footers
             If hf.Exists Then
-                For Each p In hf.Range.paragraphs
+                For Each p In hf.Range.Paragraphs
                     paraText = p.Range.text
                     asciiVal = AscW(Left(paraText, 1))
                     paraStyle = p.style.NameLocal
@@ -1570,7 +1570,7 @@ Private Function CountAuditStyles_ToFile() As Long
     ' Build the distribution
     For Each rng In ActiveDocument.StoryRanges
         Do
-            For Each para In rng.paragraphs
+            For Each para In rng.Paragraphs
                 paraStyle = para.style.NameLocal
                 paraCount = paraCount + 1
                 If Not styleDict.Exists(paraStyle) Then
@@ -1664,7 +1664,7 @@ Private Function CountTabOnlyParagraphs(areaType As String) As Long
         End If
 
         If hdrFtr.Exists Then
-            For Each para In hdrFtr.Range.paragraphs
+            For Each para In hdrFtr.Range.Paragraphs
 
                 ' Move the cursor to this paragraph in the footer
                 para.Range.Select
@@ -1760,7 +1760,7 @@ Private Function CountParagraphMarks_CalibriDarkRed() As Integer
     totalCount = 0
     foundFirst = False
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set paraRange = para.Range
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
@@ -1909,7 +1909,7 @@ Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
     totalCount = 0
     foundFirst = False
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set paraRange = para.Range
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
@@ -1944,7 +1944,7 @@ Private Function CountParagraphMarks_ArialBlack() As Integer
     totalCount = 0
     foundFirst = False
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set paraRange = para.Range
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
@@ -1973,7 +1973,7 @@ Private Function CountEmptyParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
             count = count + 1
         End If
@@ -1991,7 +1991,7 @@ Private Function CountDocTabOnlyParagraphs() As Integer
 
     countTabOnly = 0
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         paraText = para.Range.text
 
         ' Skip final paragraph if it's the only one and contains just tab+CR
@@ -2024,7 +2024,7 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
         ' Only check footers
         For Each hdrFtr In sec.Footers
             If hdrFtr.Exists Then
-                For Each para In hdrFtr.Range.paragraphs
+                For Each para In hdrFtr.Range.Paragraphs
                     If para.style = "Footer" Then
                         count = count + 1
                         para.Range.Select
@@ -2149,7 +2149,7 @@ Private Function CountParagraphMarksPerHeaderSection() As Integer
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Count the number of paragraphs in the header
-        paraCount = headerRange.paragraphs.count
+        paraCount = headerRange.Paragraphs.count
         
         ' Print the result to the console
         'Debug.Print "Section " & sectionIndex & " header has " & paraCount & " paragraph(s)."
@@ -2229,7 +2229,7 @@ Private Function CountParagraphsWithoutTabInHeaders() As Integer
         count = 0
         
         ' Loop through each paragraph in the header range
-        For Each para In headerRange.paragraphs
+        For Each para In headerRange.Paragraphs
             ' Check if the paragraph does not contain a tab
             If InStr(para.Range.text, vbTab) = 0 Then
                 count = count + 1
@@ -2273,7 +2273,7 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
         count = 0
         
         ' Loop through each paragraph in the header range
-        For Each para In headerRange.paragraphs
+        For Each para In headerRange.Paragraphs
             ' Check if the paragraph contains a tab followed by a paragraph mark
             If InStr(para.Range.text, vbTab & vbCr) > 0 Then
                 count = count + 1
@@ -2327,7 +2327,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
         
         ' Check if the header is empty
         isEmpty = True
-        For Each para In headerRange.paragraphs
+        For Each para In headerRange.Paragraphs
             If Len(Trim(para.Range.text)) > 1 Then ' Check if paragraph contains more than just a paragraph mark
                 isEmpty = False
                 Exit For
@@ -2425,7 +2425,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
 
     Application.ScreenUpdating = False
     ' Loop through paragraphs only once
-    For Each para In ActiveDocument.Range.paragraphs
+    For Each para In ActiveDocument.Range.Paragraphs
         paraCount = paraCount + 1
         If para.style = "Heading 2" Then
             If prevIsEmpty Then
@@ -2460,7 +2460,7 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
 
     Application.ScreenUpdating = False
     ' Loop over all paragraphs using the built-in collection
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         paraCount = paraCount + 1
         ' Work directly with Range.Text but trim just once
         If LenB(Trim$(Replace(para.Range.text, vbCr, ""))) = 0 Then
@@ -2581,11 +2581,11 @@ Private Function CountEmptyParasAfterH2() As Integer
     emptyParaCount = 0
     
     ' Loop through each paragraph in the document
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 2
         If para.style = ActiveDocument.Styles("Heading 2") Then
             ' Check the next paragraph
-            Set NextPara = para.Range.Next(Unit:=wdParagraph, count:=1).paragraphs(1)
+            Set NextPara = para.Range.Next(Unit:=wdParagraph, count:=1).Paragraphs(1)
             If Not NextPara Is Nothing Then
                 ' Check if the next paragraph is empty
                 If Len(Trim(NextPara.Range.text)) = 1 Then ' Adjusted to check for a single paragraph mark
@@ -2608,7 +2608,7 @@ Private Function CountHeading1() As Integer
     heading1Count = 0
     
     ' Loop through each paragraph in the document
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 1
         If para.style Like "*Heading 1*" Then   'para.style = ActiveDocument.Styles("Heading 1") Then
             heading1Count = heading1Count + 1
@@ -2646,7 +2646,7 @@ Private Function CountRedFootnoteReferences() As Integer
 End Function
 
 Private Function CountTotalParagraphs() As Long
-    CountTotalParagraphs = ActiveDocument.paragraphs.count
+    CountTotalParagraphs = ActiveDocument.Paragraphs.count
 End Function
 
 Private Function CountSectionsWithDifferentFirstPage() As Integer
@@ -2662,7 +2662,7 @@ Private Function CountSectionsWithDifferentFirstPage() As Integer
     ' Loop through each section in the document
     For Each sec In doc.Sections
         ' Check if the section does not have "Different First Page" selected
-        If sec.pageSetup.DifferentFirstPageHeaderFooter Then
+        If sec.PageSetup.DifferentFirstPageHeaderFooter Then
             count = count + 1
         End If
     Next sec
@@ -2725,9 +2725,9 @@ Private Function CountEmptyParasWithNoThemeColor()
     
     Set colorCounts = CreateObject("Scripting.Dictionary")
     emptyParaCount = 0
-    totalParaCount = ActiveDocument.paragraphs.count
+    totalParaCount = ActiveDocument.Paragraphs.count
     
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set rng = para.Range
         themeColorUsed = False
         

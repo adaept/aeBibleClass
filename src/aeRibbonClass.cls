@@ -130,7 +130,7 @@ Private Sub GoToH1()
     matchFound = False
     Application.ScreenUpdating = False
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
             paraText = Trim$(para.Range.text)
             If paraText Like "*" & UCase(pattern) & "*" Then
@@ -162,7 +162,7 @@ Private Sub NextButton()
     Set doc = ActiveDocument
     found = False
 
-    paraEnd = Selection.paragraphs(1).Range.End
+    paraEnd = Selection.Paragraphs(1).Range.End
     Set searchRange = doc.Range(paraEnd, doc.content.End)
 
     With searchRange.Find
@@ -217,7 +217,7 @@ Public Sub CaptureHeading1s()
     End If
 
     i = 1
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
             If i > 66 Then Exit For
             paraText = Trim(Replace(para.Range.text, vbCr, ""))

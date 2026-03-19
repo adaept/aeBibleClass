@@ -78,7 +78,7 @@ Sub PrintBibleBook()
     heading2Found = False
     
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
             If InStr(para.Range.text, heading1Name) > 0 Then
                 Debug.Print "Heading 1: " & para.Range.text
@@ -129,9 +129,9 @@ Sub GoToParagraphIndex()
     targetIndex = InputBox("Enter the index of the paragraph you want to go to:")
     
     ' Validate the entered index
-    If targetIndex > 0 And targetIndex <= ActiveDocument.paragraphs.count Then
+    If targetIndex > 0 And targetIndex <= ActiveDocument.Paragraphs.count Then
         paraIndex = 1
-        For Each para In ActiveDocument.paragraphs
+        For Each para In ActiveDocument.Paragraphs
             If paraIndex = targetIndex Then
                 para.Range.Select
                 Exit Sub
@@ -139,7 +139,7 @@ Sub GoToParagraphIndex()
             paraIndex = paraIndex + 1
         Next para
     Else
-        MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.paragraphs.count & "."
+        MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.Paragraphs.count & "."
     End If
 End Sub
 
@@ -147,7 +147,7 @@ Function CountTextWrappingBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         With para.Range.Find
             .ClearFormatting
             .text = "^m"
@@ -163,9 +163,9 @@ Function CountNextPageSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).pageSetup.sectionStart = wdSectionNewPage Then
+            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionNewPage Then
                 count = count + 1
             End If
         End If
@@ -177,9 +177,9 @@ Function CountContinuousSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).pageSetup.sectionStart = wdSectionContinuous Then
+            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionContinuous Then
                 count = count + 1
             End If
         End If
@@ -191,9 +191,9 @@ Function CountEvenPageSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).pageSetup.sectionStart = wdSectionEvenPage Then
+            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionEvenPage Then
                 count = count + 1
             End If
         End If
@@ -205,9 +205,9 @@ Function CountOddPageSectionBreakParagraphs() As Long
     Dim para As paragraph
     Dim count As Long
     count = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.count > 0 Then
-            If para.Range.Sections(1).pageSetup.sectionStart = wdSectionOddPage Then
+            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionOddPage Then
                 count = count + 1
             End If
         End If
@@ -236,7 +236,7 @@ Sub SearchParagraphs()
     foundFirst = False
     
     ' Loop through all paragraphs in the document
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         ' Check if the paragraph contains only a page break or continuous page break
         If para.Range.text = Chr(12) Or para.Range.text = Chr(14) Then
             count = count + 1
@@ -266,7 +266,7 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     count = 0
     
     ' Loop through all paragraphs in the document
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
         If Len(para.Range.text) = 1 And para.Range.font.color = wdColorAutomatic Then
             count = count + 1
@@ -286,7 +286,7 @@ Sub GoToParagraphByCount(paragraphNumber As Integer)
     count = 0
     
     ' Loop through all paragraphs in the document
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         count = count + 1
         ' Check if the current paragraph is the one we want to go to
         If count = paragraphNumber Then
@@ -309,7 +309,7 @@ Sub DetectFontColors()
     
     paraCount = 0
     
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         paraCount = paraCount + 1
         Set rng = para.Range
         colorUsed = False
@@ -418,7 +418,7 @@ Sub EnsureFootnoteReferenceStyleColor()
     
     count = 0
     ' Loop through each paragraph in the document
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         ' Check if the paragraph style is Footnote Reference
         If para.style = "Footnote Reference" Then
             count = count + 1
@@ -496,7 +496,7 @@ Sub CountTotallyEmptyParagraphs()
         
     ' Count empty paragraphs in the main document
     emptyParaCount = 0
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         If IsEmptyParagraph(para) Then
             emptyParaCount = emptyParaCount + 1
         End If
@@ -506,7 +506,7 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountHeaders = 0
     For Each sec In doc.Sections
         For Each hdr In sec.Headers
-            For Each para In hdr.Range.paragraphs
+            For Each para In hdr.Range.Paragraphs
                 If IsEmptyParagraph(para) Then
                     emptyParaCountHeaders = emptyParaCountHeaders + 1
                     para.Range.Select
@@ -521,7 +521,7 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountFooters = 0
     For Each sec In doc.Sections
         For Each ftr In sec.Footers
-            For Each para In ftr.Range.paragraphs
+            For Each para In ftr.Range.Paragraphs
                 ' Work around as IsEmptyParagraph does not work on first page with space as footer
                 If Not FirstPageFooterNotEmpty Then
                     emptyParaCountFooters = emptyParaCountFooters + 1
@@ -541,7 +541,7 @@ Sub CountTotallyEmptyParagraphs()
     ' Count empty paragraphs in footnotes
     emptyParaCountFootnotes = 0
     For Each footnote In doc.Footnotes
-        For Each para In footnote.Range.paragraphs
+        For Each para In footnote.Range.Paragraphs
             If IsEmptyParagraph(para) Then
                 emptyParaCountFootnotes = emptyParaCountFootnotes + 1
             End If
@@ -552,7 +552,7 @@ Sub CountTotallyEmptyParagraphs()
     emptyParaCountTextBoxes = 0
     For Each shp In doc.Shapes
         If shp.Type = msoTextBox Then
-            For Each para In shp.TextFrame.textRange.paragraphs
+            For Each para In shp.TextFrame.textRange.Paragraphs
                 If IsEmptyParagraph(para) Then
                     emptyParaCountTextBoxes = emptyParaCountTextBoxes + 1
                     ' Stop at the location of the first empty paragraph found in a text box
@@ -598,7 +598,7 @@ Sub CountTypesTrulyEmptyParagraph()
     sectionFormattedEmptyCount = 0
     firstFound = False
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set paraRange = para.Range
         paraText = Trim(paraRange.text)
 
@@ -672,7 +672,7 @@ Sub FindSpecificFontOutsideMainBody()
     For Each storyRange In ActiveDocument.StoryRanges
         If storyRange.StoryType <> wdMainTextStory Then
             Do
-                For Each para In storyRange.paragraphs
+                For Each para In storyRange.Paragraphs
                     fontName = para.Range.font.name
                     If StrComp(fontName, targetFont, vbTextCompare) = 0 Then
                         para.Range.Select
@@ -776,7 +776,7 @@ Sub CountTabParagraphsFull()
     footerCount = 0
 
     ' Count in main document body
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         Set rng = para.Range
         rng.End = rng.End - 1 ' Exclude the final paragraph mark
         If rng.text = vbTab Then
@@ -787,7 +787,7 @@ Sub CountTabParagraphsFull()
     ' Count in headers and footers across all sections
     For Each sec In doc.Sections
         For Each hdr In sec.Headers
-            For Each para In hdr.Range.paragraphs
+            For Each para In hdr.Range.Paragraphs
                 Set rng = para.Range
                 rng.End = rng.End - 1
                 If rng.text = vbTab Then
@@ -797,7 +797,7 @@ Sub CountTabParagraphsFull()
         Next hdr
         
         For Each ftr In sec.Footers
-            For Each para In ftr.Range.paragraphs
+            For Each para In ftr.Range.Paragraphs
                 Set rng = para.Range
                 rng.End = rng.End - 1
                 If rng.text = vbTab Then
@@ -847,7 +847,7 @@ Sub CompareHeading1sWithShowHideToggle()
         Set pageRange = pageRange.GoTo(What:=wdGoToBookmark, name:="\page")
 
         headingText = ""
-        For Each para In pageRange.paragraphs
+        For Each para In pageRange.Paragraphs
             If para.style = "Heading 1" Then
                 headingText = Replace(para.Range.text, vbCr, "")
                 showList.Add headingText
@@ -870,7 +870,7 @@ Sub CompareHeading1sWithShowHideToggle()
         Set pageRange = pageRange.GoTo(What:=wdGoToBookmark, name:="\page")
 
         headingText = ""
-        For Each para In pageRange.paragraphs
+        For Each para In pageRange.Paragraphs
             If para.style = "Heading 1" Then
                 headingText = Replace(para.Range.text, vbCr, "")
                 hideList.Add headingText
@@ -930,7 +930,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
 
     ' Check footnote numbers inside footnote text
     For Each fn In doc.Footnotes
-        Set ref = fn.Range.paragraphs(1).Range.words(1)
+        Set ref = fn.Range.Paragraphs(1).Range.words(1)
         totalChecked = totalChecked + 1
 
         If Not IsFootnoteRefFormattedCorrectly(ref) Then
@@ -987,7 +987,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
     Set fontMap = CreateObject("Scripting.Dictionary")
 
     ' Scan body paragraphs
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         fName = para.Range.Characters(1).font.name
         If Not fontMap.Exists(fName) Then
             fontMap.Add fName, 1
@@ -1004,7 +1004,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
         For Each hfKind In hfTypes
             Set hf = sec.Headers(hfKind)
             If hf.Exists Then
-                For Each para In hf.Range.paragraphs
+                For Each para In hf.Range.Paragraphs
                     fName = para.Range.Characters(1).font.name
                     If Not fontMap.Exists(fName) Then
                         fontMap.Add fName, 1
@@ -1016,7 +1016,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
 
             Set hf = sec.Footers(hfKind)
             If hf.Exists Then
-                For Each para In hf.Range.paragraphs
+                For Each para In hf.Range.Paragraphs
                     fName = para.Range.Characters(1).font.name
                     If Not fontMap.Exists(fName) Then
                         fontMap.Add fName, 1

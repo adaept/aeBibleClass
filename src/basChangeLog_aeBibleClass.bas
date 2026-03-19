@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #509 -
 ' #508 -
 ' #507 -
-' #506 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #506 - Add AuditDocument module to verify settings when inserted to new docm
     ' FIXED - #505 - Make ribbon code into a class singleton and cleanup [refac]
     ' FIXED - #494 - (done in some earlier commit) Move InterpretStructure from Test harness module to EBNF code module
     ' FIXED - #504 - Comment out ribbon code that is to be replaced by parser code [clean]

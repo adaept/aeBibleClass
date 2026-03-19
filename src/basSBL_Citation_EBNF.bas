@@ -1591,7 +1591,7 @@ Public Function CanonicalFromRef(r As ScriptureRef) As String
     Dim name As String
 
     Set books = GetCanonicalBookTable
-    b = books.item(r.BookID)
+    b = books.Item(r.BookID)
     name = b(1)   ' canonical book name
 
     If r.Verse = 0 Then
@@ -3076,7 +3076,7 @@ Public Function ResolveAlias(abbr As String, _
     BookID = aliasMap(key)
     Set books = GetCanonicalBookTable
 
-    b = books.item(BookID)     ' SAFE
+    b = books.Item(BookID)     ' SAFE
     ResolveAlias = b(1)         ' Canonical name
 End Function
 

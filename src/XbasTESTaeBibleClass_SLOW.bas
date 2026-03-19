@@ -85,7 +85,7 @@ Public Sub PrintBibleHeading1Info()
     
     count = 0
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 1
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             count = count + 1
@@ -113,7 +113,7 @@ Public Sub PrintBibleBookHeadings()
     foundHeading1 = False
     
     ' Loop through all paragraphs in the document
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
             If para.Range.text = headingLabel & vbCr Then
@@ -251,7 +251,7 @@ Sub CountParagraphsTypes()
     Close fileNum
     
     ' Loop through each paragraph in the document
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         paraIndex = paraIndex + 1
         totalParagraphs = totalParagraphs + 1
         
@@ -277,7 +277,7 @@ Sub CountParagraphsTypes()
         
         ' Check for different types of section breaks
         If para.Range.Sections.count > 0 Then
-            Select Case para.Range.Sections(1).pageSetup.sectionStart
+            Select Case para.Range.Sections(1).PageSetup.sectionStart
                 Case wdSectionNewPage
                     nextPageSectionBreakParagraphs = nextPageSectionBreakParagraphs + 1
                     nextPageSectionBreakIndices = nextPageSectionBreakIndices & paraIndex & ", "

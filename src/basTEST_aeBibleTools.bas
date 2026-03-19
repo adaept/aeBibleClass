@@ -226,7 +226,7 @@ Sub GetVerticalPositionOfCursorParagraph()
     Dim paraPos As Single
     
     Set doc = ActiveDocument
-    Set rng = Selection.paragraphs(1).Range
+    Set rng = Selection.Paragraphs(1).Range
     
     ' Get the vertical position of the paragraph relative to the page
     paraPos = rng.Information(wdVerticalPositionRelativeToPage)
@@ -243,7 +243,7 @@ Sub FindFirstSectionWithDifferentFirstPage()
         Set sec = ActiveDocument.Sections(i)
 
         ' Check if Different First Page is enabled
-        If sec.pageSetup.DifferentFirstPageHeaderFooter = True Then
+        If sec.PageSetup.DifferentFirstPageHeaderFooter = True Then
             ' Select the header of the first page in this section
             sec.Headers(wdHeaderFooterFirstPage).Range.Select
 
@@ -307,7 +307,7 @@ Sub OptimizedListFontsInDocument()
     Set doc = ActiveDocument
 
     ' Loop through each paragraph in the document
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         Set rng = para.Range
         fontName = rng.font.name
         On Error Resume Next
@@ -338,14 +338,14 @@ Sub FindGentiumFromParagraph()
     startParaNum = val(InputBox("Enter paragraph number to start from:", "Start From Paragraph", 1))
     If startParaNum < 1 Then Exit Sub
 
-    totalParas = ActiveDocument.paragraphs.count
+    totalParas = ActiveDocument.Paragraphs.count
     If startParaNum > totalParas Then
         MsgBox "There are only " & totalParas & " paragraphs in the document.", vbExclamation
         Exit Sub
     End If
 
     p = 0
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         p = p + 1
         If p < startParaNum Then GoTo NextPara
 
@@ -377,7 +377,7 @@ End Sub
 Sub GoToParagraph()
     Dim paraNum As Integer
     paraNum = (InputBox("Enter paragraph number:", "Goto Paragraph Number", 1))
-    ActiveDocument.paragraphs(paraNum).Range.Select
+    ActiveDocument.Paragraphs(paraNum).Range.Select
 End Sub
 
 Sub ListNonMainFonts_ByParagraph()
@@ -396,7 +396,7 @@ Sub ListNonMainFonts_ByParagraph()
     For Each storyRange In ActiveDocument.StoryRanges
         If storyRange.StoryType <> wdMainTextStory Then
             Do
-                For Each para In storyRange.paragraphs
+                For Each para In storyRange.Paragraphs
                     scannedParas = scannedParas + 1
                     fontName = para.Range.font.name
                     If Len(fontName) > 0 Then
@@ -524,7 +524,7 @@ Sub PrintHeading1sByLogicalPage()
 
         foundHeading = False
 
-        For Each para In pageRange.paragraphs
+        For Each para In pageRange.Paragraphs
             If para.style = "Heading 1" Then
                 headingText = Replace(para.Range.text, vbCr, "")
                 Debug.Print "Logical Page " & i & ": " & headingText
@@ -638,7 +638,7 @@ Sub FixFootnoteNumberStyleInText()
     Dim firstRun As Range
 
     For Each fn In ActiveDocument.Footnotes
-        Set paraRange = fn.Range.paragraphs(1).Range
+        Set paraRange = fn.Range.Paragraphs(1).Range
         Set firstRun = paraRange.words(1) ' Usually the footnote number
 
         ' Apply Footnote Reference style
@@ -650,7 +650,7 @@ End Sub
 
 Sub ReportPageLayoutMetrics(pageNum As Long)
     Dim pgRange As Range
-    Dim sectionSetup As pageSetup
+    Dim sectionSetup As PageSetup
     Dim numCols As Integer, isEven As Boolean
     Dim gutter As Single, pageWidth As Single
     Dim leftMargin As Single, rightMargin As Single
@@ -659,7 +659,7 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
     Dim logBuffer As String, i As Integer
 
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
-    Set sectionSetup = pgRange.Sections(1).pageSetup
+    Set sectionSetup = pgRange.Sections(1).PageSetup
 
     numCols = sectionSetup.TextColumns.count
     gutter = sectionSetup.gutter
@@ -821,7 +821,7 @@ Sub FindInvisibleFormFeeds_InPages(startPage As Long)
     pgTarget = startPage + 9
     Debug.Print "=== Scanning for Chr(12) from Page " & startPage & " to " & pgTarget & " ==="
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set rng = para.Range
         pgNum = rng.Information(wdActiveEndPageNumber)
 
@@ -1156,7 +1156,7 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
 
     Debug.Print "=== Smart Prefix Repair on Page " & pgNum & " ==="
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         Set rng = para.Range
         paraStyle = rng.style
 
@@ -1318,7 +1318,7 @@ End Sub
 Sub UnlinkHeadingNumbering()
     Dim para As paragraph
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles("Heading 1") _
         Or para.style = ActiveDocument.Styles("Heading 2") Then
             para.Range.ListFormat.RemoveNumbers
@@ -1397,7 +1397,7 @@ Sub ReapplyTheFootersToAllFooters()
 
         For Each hf In sec.Footers
             If hf.Exists Then
-                For Each p In hf.Range.paragraphs
+                For Each p In hf.Range.Paragraphs
                     paraText = p.Range.text
                     asciiVal = AscW(Left(paraText, 1))
                     prevStyle = p.style.NameLocal
@@ -1620,28 +1620,28 @@ Sub PrintCompactSectionLayoutInfo()
         Set sec = ActiveDocument.Sections(i)
         
         outputText = "Section " & i & ": " & vbCrLf
-        outputText = outputText & "Page: " & IIf(sec.pageSetup.orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
-                    "Size: " & GetPaperSizeName(sec.pageSetup.paperSize) & ", " & _
-                    "Columns: " & sec.pageSetup.TextColumns.count & vbCrLf
-        If sec.pageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
+        outputText = outputText & "Page: " & IIf(sec.PageSetup.Orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
+                    "Size: " & GetPaperSizeName(sec.PageSetup.paperSize) & ", " & _
+                    "Columns: " & sec.PageSetup.TextColumns.count & vbCrLf
+        If sec.PageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
         
         ' Margins
         outputText = outputText & "Margins (inches): " & _
-                    "Top: " & PointsToInches(sec.pageSetup.topMargin) & ", " & _
-                    "Bottom: " & PointsToInches(sec.pageSetup.bottomMargin) & ", " & _
-                    "Left: " & PointsToInches(sec.pageSetup.leftMargin) & ", " & _
-                    "Right: " & PointsToInches(sec.pageSetup.rightMargin) & ", " & _
-                    "Gutter: " & PointsToInches(sec.pageSetup.gutter) & vbCrLf
+                    "Top: " & PointsToInches(sec.PageSetup.TopMargin) & ", " & _
+                    "Bottom: " & PointsToInches(sec.PageSetup.BottomMargin) & ", " & _
+                    "Left: " & PointsToInches(sec.PageSetup.leftMargin) & ", " & _
+                    "Right: " & PointsToInches(sec.PageSetup.rightMargin) & ", " & _
+                    "Gutter: " & PointsToInches(sec.PageSetup.gutter) & vbCrLf
         
         ' Line Numbering
-        If sec.pageSetup.LineNumbering.Active Then
-            outputText = outputText & "Line Numbers: " & sec.pageSetup.LineNumbering.StartingNumber & ", " & _
-                        "Increment: " & sec.pageSetup.LineNumbering.CountBy & vbCrLf
+        If sec.PageSetup.LineNumbering.Active Then
+            outputText = outputText & "Line Numbers: " & sec.PageSetup.LineNumbering.StartingNumber & ", " & _
+                        "Increment: " & sec.PageSetup.LineNumbering.CountBy & vbCrLf
         End If
         
         ' Header/Footer settings
-        outputText = outputText & "Header Distance: " & PointsToInches(sec.pageSetup.HeaderDistance) & ", " & _
-                    "Footer Distance: " & PointsToInches(sec.pageSetup.FooterDistance) & vbCrLf
+        outputText = outputText & "Header Distance: " & PointsToInches(sec.PageSetup.HeaderDistance) & ", " & _
+                    "Footer Distance: " & PointsToInches(sec.PageSetup.FooterDistance) & vbCrLf
         
         ' Borders (if any)
         outputText = outputText & "Borders: " & _
@@ -1651,7 +1651,7 @@ Sub PrintCompactSectionLayoutInfo()
                     "Right: " & GetBorderStyle(sec.Borders(wdBorderRight)) & vbCrLf
         
         ' Section Break Type
-        Select Case sec.pageSetup.sectionStart
+        Select Case sec.PageSetup.sectionStart
             Case wdSectionNewPage
                 outputText = outputText & "Section Break: New Page" & vbCrLf
                 nNewPageBreak = nNewPageBreak + 1
@@ -1873,7 +1873,7 @@ Sub BuildHeadingIndexToCSV()
 
     Dim cleanText As String
     paraIndex = 1
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         
         headingLevel = para.style
         
@@ -1946,10 +1946,10 @@ Sub GoToHeadingByIndex()
     targetIndex = InputBox("Enter the paragraph index to jump to:")
     If IsNumeric(targetIndex) Then
         paraIndex = CLng(targetIndex)
-        If paraIndex > 0 And paraIndex <= ActiveDocument.paragraphs.count Then
-            ActiveDocument.paragraphs(paraIndex).Range.Select
+        If paraIndex > 0 And paraIndex <= ActiveDocument.Paragraphs.count Then
+            ActiveDocument.Paragraphs(paraIndex).Range.Select
         Else
-            MsgBox "Invalid index. Must be between 1 and " & ActiveDocument.paragraphs.count
+            MsgBox "Invalid index. Must be between 1 and " & ActiveDocument.Paragraphs.count
         End If
     Else
         MsgBox "Please enter a numeric value."

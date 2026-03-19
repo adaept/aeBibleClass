@@ -25,6 +25,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
     On Error GoTo 0
+    
     If IsMissing(varDebug) Then
         aeWordGitClassTest
     Else

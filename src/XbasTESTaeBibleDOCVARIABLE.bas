@@ -46,7 +46,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     counter = 0
 
     ' Iterate through paragraphs starting from the specified range
-    For Each para In doc.paragraphs
+    For Each para In doc.Paragraphs
         ' Get the visible page number of the current paragraph
         paraPageNum = para.Range.Information(wdActiveEndAdjustedPageNumber)
 

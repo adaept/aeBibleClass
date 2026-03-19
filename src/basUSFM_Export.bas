@@ -92,7 +92,7 @@ Private Function ConvertRangeToUSFM(ByVal rng As Range) As String
 
     LogEvent "Beginning paragraph scan..."
 
-    For Each p In rng.paragraphs
+    For Each p In rng.Paragraphs
         line = ConvertParagraphToUSFM(p)
 
         If Len(line) > 0 Then

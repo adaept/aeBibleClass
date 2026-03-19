@@ -224,7 +224,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
     On Error Resume Next
 
     ' Body paragraphs
-    For Each p In ActiveDocument.paragraphs
+    For Each p In ActiveDocument.Paragraphs
         If p.style = sName Then
             StyleIsAppliedAnywhere = True
             Exit Function
@@ -235,7 +235,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
     For Each sec In ActiveDocument.Sections
         Dim hdrFtr As HeaderFooter
         For Each hdrFtr In sec.Headers
-            For Each p In hdrFtr.Range.paragraphs
+            For Each p In hdrFtr.Range.Paragraphs
                 If p.style = sName Then
                     StyleIsAppliedAnywhere = True
                     Exit Function
@@ -243,7 +243,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
             Next p
         Next hdrFtr
         For Each hdrFtr In sec.Footers
-            For Each p In hdrFtr.Range.paragraphs
+            For Each p In hdrFtr.Range.Paragraphs
                 If p.style = sName Then
                     StyleIsAppliedAnywhere = True
                     Exit Function
@@ -258,7 +258,7 @@ End Function
 Function StyleIsApplied(sName As String) As Boolean
     Dim p As paragraph
     On Error Resume Next
-    For Each p In ActiveDocument.paragraphs
+    For Each p In ActiveDocument.Paragraphs
         If p.style = sName Then
             StyleIsApplied = True
             Exit Function
