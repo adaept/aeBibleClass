@@ -1382,7 +1382,7 @@ Sub DummyRepairPageTimerOnly(pgNum As Long)
 End Sub
 
 Sub ReapplyTheFootersToAllFooters()
-    Dim sec As word.section
+    Dim sec As Word.section
     
     Dim hf As HeaderFooter
     Dim p As paragraph

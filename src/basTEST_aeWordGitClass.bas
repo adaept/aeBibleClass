@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTESTaewordgitClass"
+Attribute VB_Name = "basTEST_aeWordGitClass"
 Option Explicit
 Option Compare Text
 Option Private Module

@@ -1,14 +1,12 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="RibbonOnLoad">
-  <ribbon>
+  <ribbon startFromScratch="false">
     <tabs>
       <tab id="RWB" label="Refined Word Bible">
         <group id="TestGroup" label="Bible Class Group">
-          <button id="GoToMyVerse" label="GoTo Verse " onAction="OnGoToVerseSblClick"/>
-          <button id="HelloWorldButton2" label="Hello World" onAction="OnHelloWorldButtonClick"/>
-          <button id="HelloWorldButton3" label="Hello World" onAction="OnHelloWorldButtonClick"/>
+          <button id="GoToMyVerse" label="GoTo Verse " imageMso="FormatNumberDefault" size="large" onAction="OnGoToVerseSblClick"/>
           <separator id="sep1" />
           <button id="GoToH1Button" label="GoTo Book" imageMso="GoToHeader" size="large" onAction="OnGoToH1ButtonClick"/>
-          <button id="GoToNextButton" label="Next" imageMso="HeaderFooterNextSection" size="large" onAction="OnNextButtonClick"/>
+          <button id="GoToNextButton" label="Next Book" imageMso="HeaderFooterNextSection" size="large" onAction="OnNextButtonClick"/>
           <separator id="sep2" />
           <button id="adaeptButton" label="About" image="adaept" size="large" onAction="OnAdaeptAboutClick"/>
         </group>
