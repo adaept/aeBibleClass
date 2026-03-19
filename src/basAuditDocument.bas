@@ -83,6 +83,7 @@ End Sub
 
 Private Sub WriteSectionAudit(ByVal f As Integer)
     Dim sec As section
+    
     Dim i As Long
     i = 1
     
@@ -91,30 +92,26 @@ Private Sub WriteSectionAudit(ByVal f As Integer)
         Print #f, "Section " & i
         
         With sec.PageSetup
+            ' Basic section properties
             Print #f, "  Page Size: " & .pageWidth & " x " & .PageHeight
-            
             Print #f, "  Margins (T/B/L/R): " & _
                 .TopMargin & "/" & .BottomMargin & "/" & _
                 .leftMargin & "/" & .rightMargin
-            
             Print #f, "  Orientation: " & _
                 IIf(.Orientation = wdOrientPortrait, "Portrait", "Landscape")
             
-            Print #f, "  Columns: " & .TextColumns.count
-            
-            If .TextColumns.count > 1 Then
-                Dim c As Long
-                For c = 1 To .TextColumns.count
-                    Print #f, "    Column " & c & _
-                        " Width: " & .TextColumns(c).Width & _
-                        " Space: " & .TextColumns(c).SpaceAfter
-                Next c
-            End If
+            ' Columns (use only properties exposed on the collection)
+            With .TextColumns
+                Print #f, "  Columns: " & .count
+                Print #f, "  EvenlySpaced: " & .EvenlySpaced
+                Print #f, "  LineBetween: " & .LineBetween
+                Print #f, "  Width: " & .Width
+            End With
         End With
         
+        ' Header/Footer linkage
         Print #f, "  Header LinkToPrevious: " & _
             sec.Headers(wdHeaderFooterPrimary).LinkToPrevious
-        
         Print #f, "  Footer LinkToPrevious: " & _
             sec.Footers(wdHeaderFooterPrimary).LinkToPrevious
         
