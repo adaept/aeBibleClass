@@ -109,23 +109,39 @@ Private Sub AddConsecutiveFootersFromCursor()
 End Sub
 
 Private Sub LinkFootersToPrevious()
-    Dim oDoc      As Document
-    Dim oSections As Sections
-    Dim lIdx      As Long
+    Dim oDoc        As Document
+    Dim oSections   As Sections
+    Dim lStartSect  As Long
+    Dim lIdx        As Long
 
     Set oDoc = ActiveDocument
     Set oSections = oDoc.Sections
 
-    For lIdx = 2 To oSections.count
+    ' Find the section containing the cursor - same logic as AddConsecutiveFootersFromCursor
+    lStartSect = 0
+    For lIdx = 1 To oSections.count
+        If oSections(lIdx).Range.End >= Selection.Range.Start Then
+            lStartSect = lIdx
+            Exit For
+        End If
+    Next lIdx
+
+    If lStartSect = 0 Then
+        MsgBox "Could not determine the current section.", _
+               vbExclamation, "LinkFootersToPrevious"
+        Exit Sub
+    End If
+
+    ' Link from the section AFTER the cursor section to the end
+    For lIdx = lStartSect + 1 To oSections.count
         oSections(lIdx).Footers(WdHeaderFooterIndex.wdHeaderFooterPrimary).LinkToPrevious = True
     Next lIdx
 
-    MsgBox "Done. Sections 2 through " & oSections.count & _
+    MsgBox "Done. Sections " & lStartSect + 1 & " through " & oSections.count & _
            " footers are now linked to previous.", _
            vbInformation, "LinkFootersToPrevious"
 
     Set oSections = Nothing
     Set oDoc = Nothing
 End Sub
-
 
