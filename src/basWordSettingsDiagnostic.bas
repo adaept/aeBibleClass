@@ -218,7 +218,7 @@ Sub ShowMyStyles()
 End Sub
 
 Function StyleIsAppliedAnywhere(sName As String) As Boolean
-    Dim p As paragraph
+    Dim p As Word.Paragraph
     Dim sec As section
 
     On Error Resume Next
@@ -256,7 +256,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
 End Function
 
 Function StyleIsApplied(sName As String) As Boolean
-    Dim p As paragraph
+    Dim p As Word.Paragraph
     On Error Resume Next
     For Each p In ActiveDocument.Paragraphs
         If p.style = sName Then

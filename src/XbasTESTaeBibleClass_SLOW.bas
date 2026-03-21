@@ -25,7 +25,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 
     ' Set the search parameters
     With Selection.Find
-        .text = searchText
+        .Text = searchText
         .style = styleName
         .Forward = True
         .Wrap = wdFindStop
@@ -39,12 +39,12 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 
     ' Execute the search
     Do While Selection.Find.Execute
-        'Debug.Print "Found number: " & Selection.text
+        'Debug.Print "Found number: " & Selection.Text
 
         ' Move to the next character and print its ASCII value
         Selection.Collapse Direction:=wdCollapseEnd
         Selection.MoveRight Unit:=wdCharacter, count:=1
-        nextChar = Selection.text
+        nextChar = Selection.Text
 
         If Len(nextChar) > 0 Then
             If Asc(nextChar) = 32 Then
@@ -77,7 +77,7 @@ Public Sub PrintBibleHeading1Info()
 ' This will print the count, heading text, page number, and document position of each Heading 1 in your document to the Immediate Window
 ' (press `Ctrl + G` to view the Immediate Window if it's not already visible).
 
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim headingText As String
     Dim pageNumber As Long
     Dim docPosition As Long
@@ -89,7 +89,7 @@ Public Sub PrintBibleHeading1Info()
         ' Check if the paragraph style is Heading 1
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             count = count + 1
-            headingText = para.Range.text
+            headingText = para.Range.Text
             pageNumber = para.Range.Information(wdActiveEndPageNumber)
             docPosition = para.Range.Start
             
@@ -103,7 +103,7 @@ Public Sub PrintBibleBookHeadings()
 ' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
     
     Dim headingLabel As String
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim foundHeading1 As Boolean
     
     ' Prompt the user to enter the Heading 1 label
@@ -116,9 +116,9 @@ Public Sub PrintBibleBookHeadings()
     For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
-            If para.Range.text = headingLabel & vbCr Then
+            If para.Range.Text = headingLabel & vbCr Then
                 ' Get the text of the Heading 1 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
+                Debug.Print Replace(para.Range.Text, vbCr, "")
                 foundHeading1 = True
             ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
@@ -130,7 +130,7 @@ Public Sub PrintBibleBookHeadings()
         If foundHeading1 Then
             If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
                 ' Get the text of the Heading 2 without the extra carriage return
-                Debug.Print Replace(para.Range.text, vbCr, "")
+                Debug.Print Replace(para.Range.Text, vbCr, "")
             End If
         End If
     Next para
@@ -156,8 +156,8 @@ Sub ListAndReviewAscii12Characters()
     
     ' Find all ASCII 12 characters and record their positions
     With rng.Find
-        .text = Chr(12) ' Chr(12) represents the ASCII 12 character
-        .Replacement.text = ""
+        .Text = Chr(12) ' Chr(12) represents the ASCII 12 character
+        .Replacement.Text = ""
         .Forward = True
         .Wrap = wdFindStop
         .Format = False
@@ -193,7 +193,7 @@ Sub CountParagraphsTypes()
 ' Slow running routine ~10+ minutes
 
     Dim doc As Document
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim totalParagraphs As Long
     Dim emptyParagraphs As Long
     Dim pageBreakParagraphs As Long
@@ -256,19 +256,19 @@ Sub CountParagraphsTypes()
         totalParagraphs = totalParagraphs + 1
         
         ' Check if the paragraph is empty
-        If Len(para.Range.text) = 1 And para.Range.text = vbCr Then
+        If Len(para.Range.Text) = 1 And para.Range.Text = vbCr Then
             emptyParagraphs = emptyParagraphs + 1
         End If
         
         ' Check for different types of breaks using Find method
         With para.Range.Find
             .ClearFormatting
-            .text = "^m"
+            .Text = "^m"
             If .Execute Then
                 textWrappingBreakParagraphs = textWrappingBreakParagraphs + 1
                 textWrappingBreakIndices = textWrappingBreakIndices & paraIndex & ", "
             End If
-            .text = "^b"
+            .Text = "^b"
             If .Execute Then
                 columnBreakParagraphs = columnBreakParagraphs + 1
                 columnBreakIndices = columnBreakIndices & paraIndex & ", "
@@ -366,7 +366,7 @@ Sub FindNextVerseMarkerSequence()
     ' Begin search for Chapter Verse marker
     With searchRange.Find
         .ClearFormatting
-        .text = ""
+        .Text = ""
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
@@ -414,8 +414,8 @@ Sub FindNextVerseMarkerSequence()
                 End If
 
                 ' Check styles and spaces
-                If Trim(beforeChar.text) = "" And beforeChar.style = "Normal" Then
-                    If Trim(afterChar.text) = "" And afterChar.style = "Normal" Then
+                If Trim(beforeChar.Text) = "" And beforeChar.style = "Normal" Then
+                    If Trim(afterChar.Text) = "" And afterChar.style = "Normal" Then
                         ' Found match
                         chapterRng.Start = beforeChar.Start
                         nextRng.End = afterChar.End

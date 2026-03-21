@@ -84,7 +84,7 @@ End Sub
 ' CORE CONVERSION
 ' ============================================================================================
 Private Function ConvertRangeToUSFM(ByVal rng As Range) As String
-    Dim p As paragraph
+    Dim p As Word.Paragraph
     Dim sb As String
     Dim line As String
     Dim parts() As String
@@ -127,7 +127,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
     Dim verseText As String
 
     styleName = Trim$(p.style.NameLocal)
-    txt = CleanTextForUTF8(Trim$(p.Range.text))
+    txt = CleanTextForUTF8(Trim$(p.Range.Text))
 
     ' Normalize out any embedded CR/LF coming from Word
     txt = Replace$(txt, vbCr, "")
@@ -310,7 +310,7 @@ Private Function ExtractCharStyleText(p As paragraph, styleName As String) As St
     Dim buf As String
     For Each r In p.Range.words
         If r.style = styleName Then
-            buf = buf & r.text
+            buf = buf & r.Text
         End If
     Next
     ExtractCharStyleText = Trim$(buf)
@@ -350,7 +350,7 @@ Private Function TryParseChapterVerseFromStyles( _
     Loop
     rChap.MoveEnd wdCharacter, -1 ' step back one char after overshoot
 
-    chapNum = CLng(Trim$(CleanTextForUTF8(rChap.text)))
+    chapNum = CLng(Trim$(CleanTextForUTF8(rChap.Text)))
 
     '------------------------------------------------------------
     ' 2. Verse number run (character style: "Verse marker")
@@ -371,14 +371,14 @@ Private Function TryParseChapterVerseFromStyles( _
     Loop
     rVerse.MoveEnd wdCharacter, -1
 
-    verseNum = CLng(Trim$(CleanTextForUTF8(rVerse.text)))
+    verseNum = CLng(Trim$(CleanTextForUTF8(rVerse.Text)))
 
     '------------------------------------------------------------
     ' 3. Remaining text = verse content
     '------------------------------------------------------------
     Set rText = p.Range.Duplicate
     rText.Start = rVerse.End
-    verseText = CleanTextForUTF8(Trim$(rText.text))
+    verseText = CleanTextForUTF8(Trim$(rText.Text))
 
     If verseText = "" Then
         TryParseChapterVerseFromStyles = False

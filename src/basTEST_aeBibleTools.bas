@@ -269,7 +269,7 @@ Sub FindFirstPageWithEmptyHeader()
             Set hdr = sec.Headers(hdrType)
 
             If hdr.Exists And Not hdr.LinkToPrevious Then
-                hdrText = Trim(hdr.Range.text)
+                hdrText = Trim(hdr.Range.Text)
 
                 If Right(hdrText, 1) = Chr(13) Then
                     hdrText = Left(hdrText, Len(hdrText) - 1)
@@ -299,7 +299,7 @@ End Function
 Sub OptimizedListFontsInDocument()
     Dim fontList As New Collection
     Dim doc As Document
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim rng As Range
     Dim fontName As String
     Dim i As Integer
@@ -328,7 +328,7 @@ End Sub
 
 Sub FindGentiumFromParagraph()
     Dim startParaNum As Long
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim rng As Range
     Dim charRange As Range
     Dim i As Long, p As Long
@@ -385,7 +385,7 @@ Sub ListNonMainFonts_ByParagraph()
     Set fontDict = CreateObject("Scripting.Dictionary")
 
     Dim storyRange As Range
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim fontName As String
     Dim fontCount As Long
     Dim scannedParas As Long
@@ -489,7 +489,7 @@ Sub CountSearchHits()
     count = 0
     Set rng = ActiveDocument.content
     With rng.Find
-        .text = searchTerm
+        .Text = searchTerm
         .Forward = True
         .Wrap = wdFindStop
         .Format = False
@@ -510,7 +510,7 @@ Sub PrintHeading1sByLogicalPage()
     Dim i As Long
     Dim maxPage As Long
     Dim pageRange As Range
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim headingText As String
     Dim foundHeading As Boolean
 
@@ -526,7 +526,7 @@ Sub PrintHeading1sByLogicalPage()
 
         For Each para In pageRange.Paragraphs
             If para.style = "Heading 1" Then
-                headingText = Replace(para.Range.text, vbCr, "")
+                headingText = Replace(para.Range.Text, vbCr, "")
                 Debug.Print "Logical Page " & i & ": " & headingText
                 foundHeading = True
                 Exit For ' Only report first Heading 1 per page
@@ -650,7 +650,7 @@ End Sub
 
 Sub ReportPageLayoutMetrics(pageNum As Long)
     Dim pgRange As Range
-    Dim sectionSetup As PageSetup
+    Dim sectionSetup As pageSetup
     Dim numCols As Integer, isEven As Boolean
     Dim gutter As Single, pageWidth As Single
     Dim leftMargin As Single, rightMargin As Single
@@ -701,7 +701,7 @@ Sub ReportDigitAtCursor_Diagnostics()
 
     Set selRange = Selection.Range
     Set ch = ActiveDocument.Range(selRange.Start, selRange.Start + 1)
-    txt = ch.text
+    txt = ch.Text
     style = ch.style.NameLocal
     posX = ch.Information(wdHorizontalPositionRelativeToPage)
     posY = ch.Information(wdVerticalPositionRelativeToPage)
@@ -715,7 +715,7 @@ Sub ReportDigitAtCursor_Diagnostics()
 
     If ch.Start > 0 Then
         Set prefix = ActiveDocument.Range(ch.Start - 1, ch.Start)
-        prefixTxt = prefix.text
+        prefixTxt = prefix.Text
         prefixStyle = prefix.style.NameLocal
         prefixAsc = AscW(prefixTxt)
         prefixX = prefix.Information(wdHorizontalPositionRelativeToPage)
@@ -744,7 +744,7 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
 
     Dim ch As Range
     Set ch = rng.Characters(1)
-    Dim txt As String: txt = ch.text
+    Dim txt As String: txt = ch.Text
     Dim ascCode As Long: ascCode = AscW(txt)
     Dim fontNameAscii As String: fontNameAscii = ch.font.NameAscii
     Dim fontNameFarEast As String: fontNameFarEast = ch.font.NameFarEast
@@ -775,7 +775,7 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
     If ch.Start > 1 Then
         Dim prefix As Range
         Set prefix = ActiveDocument.Range(ch.Start - 1, ch.Start)
-        Debug.Print "Value: '" & prefix.text & "' | ASCII: " & AscW(prefix.text)
+        Debug.Print "Value: '" & prefix.Text & "' | ASCII: " & AscW(prefix.Text)
         Debug.Print "Style: " & prefix.style.NameLocal
         Debug.Print "Font Name: " & prefix.font.name
         Debug.Print "Font Color: " & prefix.font.color & " (RGB: " & _
@@ -795,10 +795,10 @@ Sub LogExpandedMarkerContext()
     chCount = sel.Characters.count
     Debug.Print "=== Marker Diagnostic ==="
     Debug.Print "Selection Start=" & sel.Start & " | End=" & sel.End
-    Debug.Print "Selection Text='" & Replace(sel.text, vbCr, "[CR]") & "'"
+    Debug.Print "Selection Text='" & Replace(sel.Text, vbCr, "[CR]") & "'"
 
     For i = 1 To chCount
-        Dim ch As String: ch = sel.Characters(i).text
+        Dim ch As String: ch = sel.Characters(i).Text
         Dim ascVal As Integer: ascVal = Asc(ch)
         Dim hexVal As String: hexVal = Hex(ascVal)
 
@@ -814,7 +814,7 @@ Sub LogExpandedMarkerContext()
 End Sub
 
 Sub FindInvisibleFormFeeds_InPages(startPage As Long)
-    Dim para As paragraph, rng As Range
+    Dim para As Word.Paragraph, rng As Range
     Dim pgNum As Long
     Dim i As Long, pgTarget As Long
 
@@ -826,9 +826,9 @@ Sub FindInvisibleFormFeeds_InPages(startPage As Long)
         pgNum = rng.Information(wdActiveEndPageNumber)
 
         If pgNum >= startPage And pgNum <= pgTarget Then
-            If InStr(rng.text, Chr(12)) > 0 Then
+            If InStr(rng.Text, Chr(12)) > 0 Then
                 Debug.Print "[Page " & pgNum & "] Chr(12) found at Start=" & rng.Start
-                Debug.Print "Text='" & Replace(rng.text, Chr(12), "[FF]") & "'"
+                Debug.Print "Text='" & Replace(rng.Text, Chr(12), "[FF]") & "'"
                 Debug.Print "Style=" & rng.style & " | Font=" & rng.font.name
             End If
         End If
@@ -846,7 +846,7 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     Dim digitPosX As Single, digitPosY As Single
     Dim wordRange As Range, token As Range, nextWords As String, wCount As Integer
 
-    logBuffer = "=== Chapter�Verse Visual Number Check on Page " & pageNum & " ===" & vbCrLf
+    logBuffer = "=== Chapter Verse Visual Number Check on Page " & pageNum & " ===" & vbCrLf
 
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
     pageStart = pgRange.Start
@@ -858,15 +858,15 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
-            chapterMarker = ch.text
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+            chapterMarker = ch.Text
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
-                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                     If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
-                        chapterMarker = chapterMarker & scanRange.text
+                        chapterMarker = chapterMarker & scanRange.Text
                         markerEnd = markerEnd + 1
                     Else
                         Exit Do
@@ -883,9 +883,9 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
             verseEnd = markerEnd
             Do While verseEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                     If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
-                        verseDigits = verseDigits & scanRange.text
+                        verseDigits = verseDigits & scanRange.Text
                         verseEnd = verseEnd + 1
                     Else
                         Exit Do
@@ -899,9 +899,9 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
             Set wordRange = ActiveDocument.Range(verseEnd, verseEnd + 80)
             wCount = 0
             For Each token In wordRange.words
-                If token.text Like "*^13*" Then Exit For
-                If Trim(token.text) <> "" Then
-                    nextWords = nextWords & Trim(token.text) & " "
+                If token.Text Like "*^13*" Then Exit For
+                If Trim(token.Text) <> "" Then
+                    nextWords = nextWords & Trim(token.Text) & " "
                     wCount = wCount + 1
                     If wCount = 2 Then Exit For
                 End If
@@ -953,7 +953,7 @@ Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        txt = Trim(ch.text)
+        txt = Trim(ch.Text)
         styleName = ch.style.NameLocal
 
         If Len(txt) = 1 And IsNumeric(txt) Then
@@ -966,9 +966,9 @@ Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
 
                 Do While blockEnd < pageEnd
                     Set scanRange = ActiveDocument.Range(blockEnd, blockEnd + 1)
-                    If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                    If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                         If scanRange.style.NameLocal = blockStyle And scanRange.font.color = blockColor Then
-                            digitBlock = digitBlock & scanRange.text
+                            digitBlock = digitBlock & scanRange.Text
                             blockEnd = blockEnd + 1
                         Else
                             Exit Do
@@ -1028,16 +1028,16 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
             ' Assemble chapter marker block
-            chapterMarker = ch.text
+            chapterMarker = ch.Text
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
-                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                     If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
-                        chapterMarker = chapterMarker & scanRange.text
+                        chapterMarker = chapterMarker & scanRange.Text
                         markerEnd = markerEnd + 1
                     Else
                         Exit Do
@@ -1055,9 +1055,9 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
             verseEnd = markerEnd
             Do While verseEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                     If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
-                        verseDigits = verseDigits & scanRange.text
+                        verseDigits = verseDigits & scanRange.Text
                         verseEnd = verseEnd + 1
                     Else
                         Exit Do
@@ -1073,7 +1073,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                 ' Prefix check
                 If markerStart > pageStart Then
                     Set prefixCh = ActiveDocument.Range(markerStart - 1, markerStart)
-                    prefixTxt = prefixCh.text
+                    prefixTxt = prefixCh.Text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
                     prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
@@ -1084,9 +1084,9 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
                             Set lookAhead = ActiveDocument.Range(verseEnd, verseEnd + 80)
                             wCount = 0
                             For Each token In lookAhead.words
-                                If token.text Like "*^13*" Then Exit For
-                                If Trim(token.text) <> "" Then
-                                    nextWords = nextWords & Trim(token.text) & " "
+                                If token.Text Like "*^13*" Then Exit For
+                                If Trim(token.Text) <> "" Then
+                                    nextWords = nextWords & Trim(token.Text) & " "
                                     wCount = wCount + 1
                                     If wCount = 2 Then Exit For
                                 End If
@@ -1094,11 +1094,11 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
 
                             ' Column edge logic
                             If digitX < 50 Then
-                                prefixCh.text = vbCr
-                                logBuffer = logBuffer & "? Repaired prefix before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | Break inserted | Next words: �" & Trim(nextWords) & "�" & vbCrLf
+                                prefixCh.Text = vbCr
+                                logBuffer = logBuffer & "- Repaired prefix before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | Break inserted | Next words: >" & Trim(nextWords) & "<" & vbCrLf
                             Else
-                                prefixCh.text = ""
-                                logBuffer = logBuffer & "? Removed space before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | No break | Next words: �" & Trim(nextWords) & "�" & vbCrLf
+                                prefixCh.Text = ""
+                                logBuffer = logBuffer & "- Removed space before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | No break | Next words: >" & Trim(nextWords) & "<" & vbCrLf
                             End If
 
                             fixCount = fixCount + 1
@@ -1146,7 +1146,7 @@ Sub SmartyOne()
 End Sub
 
 Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim rng As Range
     Dim markerText As String
     Dim didRepair As Boolean
@@ -1162,7 +1162,7 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
 
         ' Only process green "Verse marker" paragraphs
         If InStr(paraStyle, "Verse marker") > 0 Then
-            markerText = rng.text
+            markerText = rng.Text
 
             ' Skip and count layout wrappers: lone Chr(12)
             If Len(markerText) = 1 And Asc(markerText) = 12 Then
@@ -1316,7 +1316,7 @@ Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
 End Sub
 
 Sub UnlinkHeadingNumbering()
-    Dim para As paragraph
+    Dim para As Word.Paragraph
 
     For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles("Heading 1") _
@@ -1382,10 +1382,10 @@ Sub DummyRepairPageTimerOnly(pgNum As Long)
 End Sub
 
 Sub ReapplyTheFootersToAllFooters()
-    Dim sec As Word.section
+    Dim sec As word.section
     
     Dim hf As HeaderFooter
-    Dim p As paragraph
+    Dim p As Word.Paragraph
     Dim prevStyle As String
     Dim asciiVal As Long
     Dim paraText As String
@@ -1398,7 +1398,7 @@ Sub ReapplyTheFootersToAllFooters()
         For Each hf In sec.Footers
             If hf.Exists Then
                 For Each p In hf.Range.Paragraphs
-                    paraText = p.Range.text
+                    paraText = p.Range.Text
                     asciiVal = AscW(Left(paraText, 1))
                     prevStyle = p.style.NameLocal
                     p.style = "TheFooters"
@@ -1566,6 +1566,16 @@ Sub ValidateTaskInChangelogModule()
         Debug.Print "[FAIL] " & tag & " not found in any block"
     End If
 End Sub
+
+Private Function GetPaperSizeName(paperSizeValue As WdPaperSize) As String
+    Select Case paperSizeValue
+        Case wdPaperA4: GetPaperSizeName = "A4"
+        Case wdPaperLetter: GetPaperSizeName = "Letter"
+        Case wdPaperLegal: GetPaperSizeName = "Legal"
+        Case 11: GetPaperSizeName = "B5 (JIS)" 'wdPaperB5Jis
+        Case Else: GetPaperSizeName = "Other (" & paperSizeValue & ")"
+    End Select
+End Function
 
 '==============================================================
 ' PrintCompactSectionLayoutInfo
@@ -1792,7 +1802,7 @@ Function FlagLabel(codeLine As String) As String
         FlagLabel = "[CUSTOM]"
     ElseIf lowered Like "*as wd*" Or lowered Like "*as vbmsgbox*" Or lowered Like "*as mso*" Then
         FlagLabel = "[ENUM]"
-    ElseIf lowered Like "*As Range*" Or lowered Like "*as paragraph*" Then
+    ElseIf lowered Like "*As Range*" Or lowered Like "*As Paragraph*" Then
         FlagLabel = "[WORD]"
     Else
         FlagLabel = "[UNCLASSIFIED]"
@@ -1858,7 +1868,7 @@ End Function
 ' Author: Peter | Date: 20250807
 '====================================================================
 Sub BuildHeadingIndexToCSV()
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim paraIndex As Long
     Dim headingLevel As String
     Dim csvPath As String
@@ -1878,7 +1888,7 @@ Sub BuildHeadingIndexToCSV()
         headingLevel = para.style
         
         If headingLevel = "Heading 1" Or headingLevel = "Heading 2" Then
-            cleanText = Trim(Replace(para.Range.text, vbCr, ""))
+            cleanText = Trim(Replace(para.Range.Text, vbCr, ""))
             cleanText = Trim(Replace(cleanText, vbLf, ""))
             cleanText = Replace(cleanText, """", "'") ' Escape quotes for CSV
             Print #fileNum, paraIndex & "," & headingLevel & ",""" & cleanText & """"
@@ -2006,7 +2016,7 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
         Exit Sub
     End If
 
-    s = r.text
+    s = r.Text
     codeUnit1 = AscW(mid$(s, 1, 1))
 
     ' --- BMP CHARACTER ---
@@ -2178,7 +2188,7 @@ Public Sub FindTabsInAllFooters()
 
                 With rng.Find
                     .ClearFormatting
-                    .text = "^t"
+                    .Text = "^t"
                     .Forward = True
                     .Wrap = wdFindStop
                     .Execute

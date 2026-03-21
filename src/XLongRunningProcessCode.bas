@@ -74,7 +74,7 @@ End Sub
 
 Sub UpdateCharacterStyle(pageNumber As Integer)
     Dim doc As Document
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim rng As Range
     Dim styleName As String
     Dim updateCount As Integer

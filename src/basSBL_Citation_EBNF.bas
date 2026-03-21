@@ -949,7 +949,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '   Detect reference ranges using hyphen or en dash.
 ' Supported separators
 '   -  = ASCII hyphen-minus  (ChrW(45))
-'   –  = Unicode en dash     (ChrW(&H2013))
+'   ï¿½  = Unicode en dash     (ChrW(&H2013))
 '-----------------------------------------------------
 ' A Note on Range Delimiter Characters
 '-----------------------------------------------------
@@ -959,7 +959,7 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '   Unicode:   U+002D
 '   VBA:       ChrW(45)
 ' Unicode en dash
-'   Character: "–"
+'   Character: "ï¿½"
 '   Unicode:   U+2013
 '   VBA:       ChrW(&H2013)
 ' NOTE
@@ -1873,7 +1873,7 @@ End Function
 '   Determines if a segment contains a range separator.
 ' Supported separators:
 '   Hyphen  (-) ASCII 45
-'   En dash (–) Unicode U+2013
+'   En dash (ï¿½) Unicode U+2013
 ' NOTE
 ' Use ChrW(8211) so the source code does not depend
 ' on editors correctly displaying the en dash.

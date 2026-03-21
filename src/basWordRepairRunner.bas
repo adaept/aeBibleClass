@@ -120,16 +120,16 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.text)) = 1 And IsNumeric(ch.text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
             ' Assemble chapter marker block
-            chapterMarker = ch.text
+            chapterMarker = ch.Text
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
-                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                     If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
-                        chapterMarker = chapterMarker & scanRange.text
+                        chapterMarker = chapterMarker & scanRange.Text
                         markerEnd = markerEnd + 1
                     Else
                         Exit Do
@@ -147,9 +147,9 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
             verseEnd = markerEnd
             Do While verseEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                If Len(Trim(scanRange.text)) = 1 And IsNumeric(scanRange.text) Then
+                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
                     If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
-                        verseDigits = verseDigits & scanRange.text
+                        verseDigits = verseDigits & scanRange.Text
                         verseEnd = verseEnd + 1
                     Else
                         Exit Do
@@ -168,12 +168,12 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     
                 Dim chInfo As Range
                 Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.text)
+                'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
                 
                 Dim suffixCh As Range
                 Set suffixCh = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 Dim suffixAsc As Long
-                suffixAsc = AscW(suffixCh.text)
+                suffixAsc = AscW(suffixCh.Text)
 
                 Select Case suffixAsc
                     Case 160: suffix160Count = suffix160Count + 1
@@ -195,7 +195,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 ' Prefix check
                 If markerStart > pageStart Then
                     Set prefixCh = ActiveDocument.Range(markerStart - 1, markerStart)
-                    prefixTxt = prefixCh.text
+                    prefixTxt = prefixCh.Text
                     prefixStyle = prefixCh.style.NameLocal
                     prefixAsc = AscW(prefixTxt)
                     Debug.Print headerText & " " & chapterMarker & ":" & verseDigits & vbTab & Replace(verseText, Chr(13), " ")   ',prefixAsc, combinedNumber
@@ -208,9 +208,9 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                             Set lookAhead = ActiveDocument.Range(verseEnd, verseEnd + 80)
                             wCount = 0
                             For Each token In lookAhead.words
-                                If token.text Like "*^13*" Then Exit For
-                                If Trim(token.text) <> "" Then
-                                    nextWords = nextWords & Trim(token.text) & " "
+                                If token.Text Like "*^13*" Then Exit For
+                                If Trim(token.Text) <> "" Then
+                                    nextWords = nextWords & Trim(token.Text) & " "
                                     wCount = wCount + 1
                                     If wCount = 2 Then Exit For
                                 End If
@@ -218,10 +218,10 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 
                             ' Column edge logic
                             If digitX < 50 Then
-                                prefixCh.text = vbCr
+                                prefixCh.Text = vbCr
                                 logBuffer = logBuffer & "> Repaired prefix before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | Break inserted | Next words:  " & Trim(nextWords) & " " & vbCrLf
                             Else
-                                prefixCh.text = ""
+                                prefixCh.Text = ""
                                 logBuffer = logBuffer & "> Removed space before '" & combinedNumber & "' @ X=" & Format(digitX, "0.0") & " | No break | Next words:  " & Trim(nextWords) & " " & vbCrLf
                             End If
 
@@ -236,8 +236,8 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     
                     If OneVersePerParaRepair Then
                         ' If the char before the marker is not already a CR, insert one
-                        If AscW(versePrefix.text) <> 13 Then
-                            versePrefix.text = versePrefix.text & Chr(13)
+                        If AscW(versePrefix.Text) <> 13 Then
+                            versePrefix.Text = versePrefix.Text & Chr(13)
                             ascii13InsertCount = ascii13InsertCount + 1
                             fixCount = fixCount + 1
                             'Debug.Print "> Inserted CR before " & combinedNumber & " on page " & pageNum
@@ -282,7 +282,7 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     
     ' NOTE: Does not apply in this Bible doc
     ' If primary is empty, check for first-page or even-page headers
-    'If Len(hdr.Range.text) = 0 Then
+    'If Len(hdr.Range.Text) = 0 Then
     '    If sec.Headers(wdHeaderFooterFirstPage).Exists Then
     '        Set hdr = sec.Headers(wdHeaderFooterFirstPage)
     '    ElseIf sec.Headers(wdHeaderFooterEvenPages).Exists Then
@@ -291,7 +291,7 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     'End If
     
     ' Clean up the header text (Word stores an end-of-cell marker)
-    GetPageHeaderText = TitleCase(Trim(Replace(hdr.Range.text, Chr(13), " ")))
+    GetPageHeaderText = TitleCase(Trim(Replace(hdr.Range.Text, Chr(13), " ")))
 End Function
 
 Private Function TitleCase(ByVal txt As String) As String
@@ -324,7 +324,7 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
     Do While nextPos < pageEnd
         Set scanCh = ActiveDocument.Range(nextPos, nextPos + 1)
         
-        If Len(Trim(scanCh.text)) = 1 And IsNumeric(scanCh.text) Then
+        If Len(Trim(scanCh.Text)) = 1 And IsNumeric(scanCh.Text) Then
             If (scanCh.style.NameLocal = "Chapter Verse marker" And scanCh.font.color = RGB(255, 165, 0)) _
                Or (scanCh.style.NameLocal = "Verse marker" And scanCh.font.color = RGB(80, 200, 120)) Then
                 verseContentEnd = nextPos
@@ -335,7 +335,7 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
         nextPos = nextPos + 1
     Loop
     
-    txt = Trim(ActiveDocument.Range(verseContentStart, verseContentEnd).text)
+    txt = Trim(ActiveDocument.Range(verseContentStart, verseContentEnd).Text)
     
     If InStrRev(txt, "CHAPTER ") > 0 Then
         Dim pos As Long

@@ -18,39 +18,39 @@ Public ribbonIsReady As Boolean
 Public BtnNextEnabled As Boolean
 Dim bookmarkIndex As Long
 
-Private Function GetParaIndexSafe(rng As Range) As Long
-' Search Isa 23:42 (intentional false verse number) scanned nearly 9,000 paragraphs in under a quarter second,
-' with full interruptibility and no layout lock
-    Dim r As Range
-    Set r = ActiveDocument.Range(0, 0)
-
-    Dim idx As Long: idx = 1
-    Dim tickStart As Single: tickStart = Timer
-    Dim tickNow As Single
-
-    Do While r.Start < rng.Start
-        Set r = r.Next(Unit:=wdParagraph)
-        idx = idx + 1
-
-        If idx Mod 500 = 0 Then
-            tickNow = Timer
-            'Debug.Print "Step " & idx & " ? Range.Start=" & r.Start & " | Elapsed=" & Format(tickNow - tickStart, "0.00") & "s"
-            If tickNow - tickStart > 5 Then
-                Debug.Print "> Timeout: Paragraph scan exceeded 5 seconds. Breaking out."
-                GetParaIndexSafe = -2
-                Exit Function
-            End If
-        End If
-    Loop
-
-    If r.Start = rng.Start Then
-        'Debug.Print ">> Found match at paragraph #" & idx
-        GetParaIndexSafe = idx
-    Else
-        'Debug.Print ">>> No exact match. Closest index: " & idx
-        GetParaIndexSafe = -1
-    End If
-End Function
+'Private Function GetParaIndexSafe(rng As Range) As Long
+'' Search Isa 23:42 (intentional false verse number) scanned nearly 9,000 paragraphs in under a quarter second,
+'' with full interruptibility and no layout lock
+'    Dim r As Range
+'    Set r = ActiveDocument.Range(0, 0)
+'
+'    Dim idx As Long: idx = 1
+'    Dim tickStart As Single: tickStart = Timer
+'    Dim tickNow As Single
+'
+'    Do While r.Start < rng.Start
+'        Set r = r.Next(Unit:=wdParagraph)
+'        idx = idx + 1
+'
+'        If idx Mod 500 = 0 Then
+'            tickNow = Timer
+'            'Debug.Print "Step " & idx & " ? Range.Start=" & r.Start & " | Elapsed=" & Format(tickNow - tickStart, "0.00") & "s"
+'            If tickNow - tickStart > 5 Then
+'                Debug.Print "> Timeout: Paragraph scan exceeded 5 seconds. Breaking out."
+'                GetParaIndexSafe = -2
+'                Exit Function
+'            End If
+'        End If
+'    Loop
+'
+'    If r.Start = rng.Start Then
+'        'Debug.Print ">> Found match at paragraph #" & idx
+'        GetParaIndexSafe = idx
+'    Else
+'        'Debug.Print ">>> No exact match. Closest index: " & idx
+'        GetParaIndexSafe = -1
+'    End If
+'End Function
 
 Private Function StyleTypeLabel(st As WdStyleType) As String
     Select Case st
@@ -117,22 +117,22 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
     savedPos = SaveCursor()
  
     Dim r As Range
-    Set r = ActiveDocument.paragraphs(1).Range
+    Set r = ActiveDocument.Paragraphs(1).Range
 
     Dim paraText As String, bookFound As Boolean
     Dim paraCount As Long: paraCount = 1
     bookFound = False
 
     Do While Not r Is Nothing
-        If r.paragraphs(1).style = "Heading 1" Then
-            paraText = UCase(Replace(Trim$(r.text), vbCr, ""))
+        If r.Paragraphs(1).style = "Heading 1" Then
+            paraText = UCase(Replace(Trim$(r.Text), vbCr, ""))
             If paraText = UCase(fullBookName) Then
                 bookFound = True
                 paraIndex = paraCount
                 Debug.Print "FindBookH1: >> Book found", "'" & paraText & "'", "#" & paraIndex, "bookFound = " & bookFound
 
                 ' Move cursor safely
-                With ActiveDocument.paragraphs(paraIndex).Range
+                With ActiveDocument.Paragraphs(paraIndex).Range
                     .Select
                     Selection.Collapse Direction:=wdCollapseStart
                 End With
@@ -161,16 +161,16 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
     chapTag1 = "Chapter " & chapNum
     chapTag2 = "PSALM " & chapNum
 
-    Set rng = ActiveDocument.paragraphs(paraIndex).Range
+    Set rng = ActiveDocument.Paragraphs(paraIndex).Range
     count = 0
 
     Do While Not rng Is Nothing
         If rng.style = "Heading 2" Then
-            paraText = Trim$(rng.text)
+            paraText = Trim$(rng.Text)
             If InStr(1, paraText, chapTag1, vbTextCompare) > 0 Or _
                 InStr(1, paraText, chapTag2, vbTextCompare) > 0 Then
                 paraIndex = paraIndex + count
-                With ActiveDocument.paragraphs(paraIndex).Range
+                With ActiveDocument.Paragraphs(paraIndex).Range
                     .Select
                     Selection.Collapse Direction:=wdCollapseStart
                 End With
@@ -215,7 +215,7 @@ Sub GoToSection()
     bookmarkIndex = bookmarkIndex + 1
     If bookmarkIndex > bmList.count Then bookmarkIndex = 1
 
-    bmList.item(bookmarkIndex).Range.Select
+    bmList.Item(bookmarkIndex).Range.Select
 End Sub
 
 Private Function GetBookmarkList() As Collection
@@ -231,7 +231,7 @@ End Function
 
 Private Sub GoToH1()
     Dim pattern As String
-    Dim para As paragraph
+    Dim para As Word.Paragraph
     Dim paraText As String
     Dim matchFound As Boolean
 
@@ -242,9 +242,9 @@ Private Sub GoToH1()
     ' Disable UI updates for speed
     Application.ScreenUpdating = False
 
-    For Each para In ActiveDocument.paragraphs
+    For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
-            paraText = Trim$(para.Range.text)
+            paraText = Trim$(para.Range.Text)
             If paraText Like "*" & UCase(pattern) & "*" Then
                 para.Range.Select
                 ' Move insertion point (cursor) without selecting text
@@ -274,7 +274,7 @@ Private Sub NextButton()
     found = False
 
     ' Move start past current paragraph to avoid re-matching
-    paraEnd = Selection.paragraphs(1).Range.End
+    paraEnd = Selection.Paragraphs(1).Range.End
     Set searchRange = doc.Range(paraEnd, doc.content.End)
 
     With searchRange.Find
@@ -283,7 +283,7 @@ Private Sub NextButton()
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
-        .text = ""
+        .Text = ""
         found = .Execute
     End With
 
@@ -296,7 +296,7 @@ Private Sub NextButton()
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
-            .text = ""
+            .Text = ""
             found = .Execute
         End With
     End If

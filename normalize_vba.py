@@ -12,14 +12,20 @@ from pathlib import Path
 # Patterns use word boundaries and are case-insensitive.
 # Order matters — more specific patterns should come first.
 NORMALIZATIONS = [
-    # Word.Range — fully qualified
-    (r'\bWord\.Range\b',        'Word.Range',   'Word.Range qualified'),
-
-    # As Range — type declarations
-    (r'\bAs\s+Range\b',         'As Range',     'As Range declaration'),
-
-    # .Range — property/method access (e.g. ActiveDocument.Range, para.Range)
-    (r'\.Range\b',              '.Range',       '.Range property access'),
+    (r'\.Range\b',          '.Range',       '.Range property access'),
+    (r'\.Paragraphs\b',     '.Paragraphs',  '.Paragraphs property access'),
+    (r'\.PageSetup\b',      '.PageSetup',   '.PageSetup property access'),
+    (r'\.TopMargin\b',      '.TopMargin',   '.TopMargin on PageSetup'),
+    (r'\.BottomMargin\b',   '.BottomMargin','.BottomMargin on PageSetup'),
+    (r'\.PageHeight\b',     '.PageHeight',  '.PageHeight on PageSetup'),
+    (r'\.Orientation\b',    '.Orientation', '.Orientation on PageSetup'),
+    (r'\.Item\b',           '.Item',        '.Item method on Collection'),
+    (r'\.Text\b',           '.Text',        '.Text property on Range'),
+    # Type declarations
+    (r'\bAs\s+Range\b', 'As Range', 'As Range declaration'),
+    ###(r'\bDim\s+(\w+)\s+As\s+Range\b',      r'Dim \1 As Word.Range',      'As Word.Range declaration'),
+    (r'\bDim\s+(\w+)\s+As\s+Paragraph\b',  r'Dim \1 As Word.Paragraph',  'As Word.Paragraph declaration'),
+    (r'\bDim\s+(\w+)\s+As\s+Paragraphs\b', r'Dim \1 As Word.Paragraphs', 'As Word.Paragraphs declaration'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

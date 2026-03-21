@@ -120,7 +120,7 @@ End Sub
 
 Private Sub GoToH1()
     Dim pattern  As String
-    Dim para     As paragraph
+    Dim para As Word.Paragraph
     Dim paraText As String
     Dim matchFound As Boolean
 
@@ -132,7 +132,7 @@ Private Sub GoToH1()
 
     For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
-            paraText = Trim$(para.Range.text)
+            paraText = Trim$(para.Range.Text)
             If paraText Like "*" & UCase(pattern) & "*" Then
                 para.Range.Select
                 ActiveDocument.Range(para.Range.Start, para.Range.Start).Select
@@ -171,7 +171,7 @@ Private Sub NextButton()
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
-        .text = ""
+        .Text = ""
         found = .Execute
     End With
 
@@ -183,7 +183,7 @@ Private Sub NextButton()
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
-            .text = ""
+            .Text = ""
             found = .Execute
         End With
     End If
@@ -207,7 +207,7 @@ End Sub
 '===========================================================================================
 Public Sub CaptureHeading1s()
     Static hasRun As Boolean
-    Dim para     As paragraph
+    Dim para As Word.Paragraph
     Dim i        As Long
     Dim paraText As String
 
@@ -220,7 +220,7 @@ Public Sub CaptureHeading1s()
     For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
             If i > 66 Then Exit For
-            paraText = Trim(Replace(para.Range.text, vbCr, ""))
+            paraText = Trim(Replace(para.Range.Text, vbCr, ""))
             headingData(i, 0) = paraText
             headingData(i, 1) = para.Range.Start
             i = i + 1
