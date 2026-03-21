@@ -6,8 +6,16 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Sub FixTheFooters()
-    Call AddConsecutiveFootersFromCursor
-    Call LinkFootersToPrevious
+    Dim lResponse As Long
+
+    lResponse = MsgBox("Put the cursor in the section to commence renumbering of the footers.", _
+                       vbYesNo + vbDefaultButton2 + vbQuestion, _
+                       "FixTheFooters")
+
+    If lResponse = vbYes Then
+        Call AddConsecutiveFootersFromCursor
+        Call LinkFootersToPrevious
+    End If
 End Sub
 
 Private Sub AddConsecutiveFootersFromCursor()
