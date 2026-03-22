@@ -7,8 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #515 -
+' #514 -
+' #513 -
+' #512 -
+' #511 -
 ' #510 -
-' #509 -
+' #509 - AddBookNameHeaders routine
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -72,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #509 - AddBookNameHeaders routine
     ' FIXED - #508 - Add count routines for orphan headers and footers
     ' FIXED - #507 - Fix bug for adde code fixing the footers [bug][feat]
     ' FIXED - #506 - Add AuditDocument module to verify settings when inserted to new docm
