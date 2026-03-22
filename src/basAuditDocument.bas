@@ -3,6 +3,94 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Public Sub CountOrphanFooters()
+    Dim oDoc        As Document
+    Dim oSection    As section
+    Dim oFooter     As HeaderFooter
+    Dim lOrphan     As Long
+    Dim lTotal      As Long
+    Dim lIndependent As Long
+    Dim sOrphanNames As String
+
+    Set oDoc = ActiveDocument
+    lOrphan = 0
+    lTotal = 0
+    lIndependent = 0
+    sOrphanNames = ""
+
+    For Each oSection In oDoc.Sections
+        Set oFooter = oSection.Footers(WdHeaderFooterIndex.wdHeaderFooterPrimary)
+        lTotal = lTotal + 1
+        If oFooter.LinkToPrevious = False Then
+            lIndependent = lIndependent + 1
+            If Len(Trim(oFooter.Range.Text)) = 0 And _
+               oFooter.Range.Fields.count = 0 Then
+                lOrphan = lOrphan + 1
+                sOrphanNames = sOrphanNames & "  footer" & lIndependent & ".xml" & vbCrLf
+            End If
+        End If
+    Next oSection
+
+    Debug.Print "Total footer slots: " & lTotal & vbCrLf & _
+           "Independent footers: " & lIndependent & vbCrLf & _
+           "Orphaned footers (unlinked and empty): " & lOrphan & vbCrLf & vbCrLf & _
+           IIf(lOrphan > 0, "Orphaned XML files:" & vbCrLf & sOrphanNames, "")
+
+    MsgBox "Total footer slots: " & lTotal & vbCrLf & _
+           "Independent footers: " & lIndependent & vbCrLf & _
+           "Orphaned footers (unlinked and empty): " & lOrphan & vbCrLf & vbCrLf & _
+           IIf(lOrphan > 0, "Orphaned XML files:" & vbCrLf & sOrphanNames, ""), _
+           vbInformation, "CountOrphanFooters"
+
+    Set oFooter = Nothing
+    Set oSection = Nothing
+    Set oDoc = Nothing
+End Sub
+
+Public Sub CountOrphanHeaders()
+    Dim oDoc         As Document
+    Dim oSection     As section
+    Dim oHeader      As HeaderFooter
+    Dim lOrphan      As Long
+    Dim lTotal       As Long
+    Dim lIndependent As Long
+    Dim sOrphanNames As String
+
+    Set oDoc = ActiveDocument
+    lOrphan = 0
+    lTotal = 0
+    lIndependent = 0
+    sOrphanNames = ""
+
+    For Each oSection In oDoc.Sections
+        Set oHeader = oSection.Headers(WdHeaderFooterIndex.wdHeaderFooterPrimary)
+        lTotal = lTotal + 1
+        If oHeader.LinkToPrevious = False Then
+            lIndependent = lIndependent + 1
+            If Len(Trim(oHeader.Range.Text)) = 0 And _
+               oHeader.Range.Fields.count = 0 Then
+                lOrphan = lOrphan + 1
+                sOrphanNames = sOrphanNames & "  header" & lIndependent & ".xml" & vbCrLf
+            End If
+        End If
+    Next oSection
+
+    Debug.Print "Total header slots: " & lTotal & vbCrLf & _
+           "Independent headers: " & lIndependent & vbCrLf & _
+           "Orphaned headers (unlinked and empty): " & lOrphan & vbCrLf & vbCrLf & _
+           IIf(lOrphan > 0, "Orphaned XML files:" & vbCrLf & sOrphanNames, "")
+
+    MsgBox "Total header slots: " & lTotal & vbCrLf & _
+           "Independent headers: " & lIndependent & vbCrLf & _
+           "Orphaned headers (unlinked and empty): " & lOrphan & vbCrLf & vbCrLf & _
+           IIf(lOrphan > 0, "Orphaned XML files:" & vbCrLf & sOrphanNames, ""), _
+           vbInformation, "CountOrphanHeaders"
+
+    Set oHeader = Nothing
+    Set oSection = Nothing
+    Set oDoc = Nothing
+End Sub
+
 '==========================================
 ' Entry Points
 '==========================================
