@@ -32,7 +32,7 @@ End Sub
 Sub PrintFontProperties()
     Dim sel As Selection
     Set sel = Selection
-    With sel.font
+    With sel.Font
         Debug.Print "Name: " & .name
         Debug.Print "Size: " & .Size
         Debug.Print "Bold: " & .Bold
@@ -268,7 +268,7 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
-        If Len(para.Range.Text) = 1 And para.Range.font.color = wdColorAutomatic Then
+        If Len(para.Range.Text) = 1 And para.Range.Font.color = wdColorAutomatic Then
             count = count + 1
         End If
     Next para
@@ -315,11 +315,11 @@ Sub DetectFontColors()
         colorUsed = False
         themeColorUsed = False
         
-        If rng.font.color <> wdColorAutomatic Then
+        If rng.Font.color <> wdColorAutomatic Then
             colorUsed = True
         End If
         
-        If rng.font.TextColor.ObjectThemeColor <> wdThemeColorNone Then
+        If rng.Font.TextColor.ObjectThemeColor <> wdThemeColorNone Then
             themeColorUsed = True
         End If
         
@@ -347,9 +347,9 @@ Sub UpdateBlackToAutomatic()
             ' Loop through each character in the range
             With rng.Find
                 .ClearFormatting
-                .font.color = wdColorBlack
+                .Font.color = wdColorBlack
                 .Replacement.ClearFormatting
-                .Replacement.font.color = wdColorAutomatic
+                .Replacement.Font.color = wdColorAutomatic
                 .Text = ""
                 .Replacement.Text = ""
                 .Forward = True
@@ -383,13 +383,13 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
     ' Loop through each word in the document
     For Each rng In ActiveDocument.words
         ' Extract the RGB values of the current font color
-        r = (rng.font.color And &HFF)
-        g = (rng.font.color \ &H100 And &HFF)
-        b = (rng.font.color \ &H10000 And &HFF)
+        r = (rng.Font.color And &HFF)
+        g = (rng.Font.color \ &H100 And &HFF)
+        b = (rng.Font.color \ &H10000 And &HFF)
         
         ' Compare the RGB values directly
         If r = oldR And g = oldG And b = oldB Then
-            rng.font.color = newColor
+            rng.Font.color = newColor
         End If
     Next rng
 End Sub
@@ -424,9 +424,9 @@ Sub EnsureFootnoteReferenceStyleColor()
             count = count + 1
             Set rng = para.Range
             ' Check if the style color is correctly set to the desired color
-            If rng.font.color <> rgbColor Then
+            If rng.Font.color <> rgbColor Then
                 ' Set the style color to the desired color
-                rng.font.color = rgbColor
+                rng.Font.color = rgbColor
             End If
         End If
     Next para
@@ -673,7 +673,7 @@ Sub FindSpecificFontOutsideMainBody()
         If storyRange.StoryType <> wdMainTextStory Then
             Do
                 For Each para In storyRange.Paragraphs
-                    fontName = para.Range.font.name
+                    fontName = para.Range.Font.name
                     If StrComp(fontName, targetFont, vbTextCompare) = 0 Then
                         para.Range.Select
                         Application.StatusBar = False
@@ -907,10 +907,10 @@ Sub CountAndDiagnoseFootnoteFormatting()
             If Not posReported Then
                 Debug.Print "First incorrect formatting at character position: " & ref.Start
                 Debug.Print "Mismatch details:"
-                Debug.Print " - Font Name: " & ref.font.name
-                Debug.Print " - Font Size: " & ref.font.Size
-                Debug.Print " - Font Color: " & ref.font.color
-                Debug.Print " - Superscript: " & ref.font.Superscript
+                Debug.Print " - Font Name: " & ref.Font.name
+                Debug.Print " - Font Size: " & ref.Font.Size
+                Debug.Print " - Font Color: " & ref.Font.color
+                Debug.Print " - Superscript: " & ref.Font.Superscript
                 posReported = True
             End If
         End If
@@ -928,10 +928,10 @@ Sub CountAndDiagnoseFootnoteFormatting()
             If Not posReported Then
                 Debug.Print "First incorrect footnote text number formatting at: " & ref.Start
                 Debug.Print "Mismatch details:"
-                Debug.Print " - Font Name: " & ref.font.name
-                Debug.Print " - Font Size: " & ref.font.Size
-                Debug.Print " - Font Color: " & ref.font.color
-                Debug.Print " - Superscript: " & ref.font.Superscript
+                Debug.Print " - Font Name: " & ref.Font.name
+                Debug.Print " - Font Size: " & ref.Font.Size
+                Debug.Print " - Font Color: " & ref.Font.color
+                Debug.Print " - Superscript: " & ref.Font.Superscript
                 posReported = True
             End If
         End If
@@ -942,7 +942,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
 End Sub
 
 Function IsFootnoteRefFormattedCorrectly(rng As Word.Range) As Boolean
-    With rng.font
+    With rng.Font
         IsFootnoteRefFormattedCorrectly = (.name = "Segoe UI" Or .name = "Segoe UI Bold") _
             And .Size = 8 _
             And .color = wdColorBlue _
@@ -978,7 +978,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
 
     ' Scan body paragraphs
     For Each para In ActiveDocument.Paragraphs
-        fName = para.Range.Characters(1).font.name
+        fName = para.Range.Characters(1).Font.name
         If Not fontMap.Exists(fName) Then
             fontMap.Add fName, 1
         Else
@@ -995,7 +995,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
             Set hf = sec.Headers(hfKind)
             If hf.Exists Then
                 For Each para In hf.Range.Paragraphs
-                    fName = para.Range.Characters(1).font.name
+                    fName = para.Range.Characters(1).Font.name
                     If Not fontMap.Exists(fName) Then
                         fontMap.Add fName, 1
                     Else
@@ -1007,7 +1007,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
             Set hf = sec.Footers(hfKind)
             If hf.Exists Then
                 For Each para In hf.Range.Paragraphs
-                    fName = para.Range.Characters(1).font.name
+                    fName = para.Range.Characters(1).Font.name
                     If Not fontMap.Exists(fName) Then
                         fontMap.Add fName, 1
                     Else
@@ -1176,7 +1176,7 @@ Sub CountNumericOrdinals()
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
-            .font.Superscript = True   ' REQUIRED
+            .Font.Superscript = True   ' REQUIRED
         End With
 
         Do While rng.Find.Execute

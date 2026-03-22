@@ -1616,8 +1616,8 @@ Private Function AuditLiberationSansNarrowStyleDetails() As Integer
 
     For Each s In ActiveDocument.Styles
         On Error Resume Next
-        fName = s.font.name
-        fSize = s.font.Size
+        fName = s.Font.name
+        fSize = s.Font.Size
         If fName = "Liberation Sans Narrow" Then
             styleCount = styleCount + 1
             Select Case s.Type
@@ -1725,9 +1725,9 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
     With rng.Find
         .ClearFormatting
         .style = ActiveDocument.Styles(wordStyle)
-        .font.name = "Arial Black"
-        .font.Size = 8
-        .font.color = wordColor
+        .Font.name = "Arial Black"
+        .Font.Size = 8
+        .Font.color = wordColor
         .Text = ""
         .Forward = True
         .Wrap = wdFindStop
@@ -1764,7 +1764,7 @@ Private Function CountParagraphMarks_CalibriDarkRed() As Integer
         Set paraRange = para.Range
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
-        With paraRange.font
+        With paraRange.Font
             fontColor = .color
             If .name = "Calibri" And _
                .Size = 9 And _
@@ -1797,9 +1797,9 @@ Private Function CountDarkRedStyledParagraphMarks()
     With rng.Find
         .ClearFormatting
         .Text = "^13"
-        .font.name = "Calibri"
-        .font.Size = 9
-        .font.color = wdColorDarkRed
+        .Font.name = "Calibri"
+        .Font.Size = 9
+        .Font.color = wdColorDarkRed
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
@@ -1835,7 +1835,7 @@ Private Function CountBoldFootnotesWordLevel()
 
         If ft.Range.style = "Footnote Text" Then
             For Each aword In ft.Range.words
-                If aword.font.Bold = True Then
+                If aword.Font.Bold = True Then
                     boldCount = boldCount + 1
                     hasBold = True
                     Exit For
@@ -1868,9 +1868,9 @@ Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
     With rng.Find
         .ClearFormatting
         .style = ActiveDocument.Styles("Words of Jesus")
-        .font.name = "Arial Black"
-        .font.Size = 8
-        .font.color = wdColorDarkRed
+        .Font.name = "Arial Black"
+        .Font.Size = 8
+        .Font.color = wdColorDarkRed
         .Text = ""
         .Forward = True
         .Wrap = wdFindStop
@@ -1913,7 +1913,7 @@ Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
         Set paraRange = para.Range
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
-        With paraRange.font
+        With paraRange.Font
             fontColor = .color
             If .name = "Arial Black" And _
                .Size = 8 And _
@@ -1948,7 +1948,7 @@ Private Function CountParagraphMarks_ArialBlack() As Integer
         Set paraRange = para.Range
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
-        With paraRange.font
+        With paraRange.Font
             fontColor = .color
             If .name = "Arial Black" And _
                .Size = 8 And _
@@ -2370,7 +2370,7 @@ Private Function CountFootnoteReferenceColors() As Integer
     Dim colorHex As String
     
     For Each footnote In doc.Footnotes
-        colorHex = ColorToHex(footnote.Reference.font.color)
+        colorHex = ColorToHex(footnote.Reference.Font.color)
         On Error Resume Next
         footnoteColors.Add colorHex, colorHex
         On Error GoTo 0
@@ -2635,7 +2635,7 @@ Private Function CountRedFootnoteReferences() As Integer
     
     ' Loop through each footnote in the document
     For Each footnote In ActiveDocument.Footnotes
-        If footnote.Reference.font.color = redColor Then
+        If footnote.Reference.Font.color = redColor Then
             redCount = redCount + 1
         End If
     Next footnote
@@ -2689,7 +2689,7 @@ Private Function CountWhiteParagraphMarks() As Integer
     ' Use the Find method to locate white paragraph marks
     With rng.Find
         .ClearFormatting
-        .font.color = RGB(255, 255, 255) ' RGB value for white
+        .Font.color = RGB(255, 255, 255) ' RGB value for white
         .Text = "^p"
         .Forward = True
         .Wrap = wdFindStop
@@ -2697,7 +2697,7 @@ Private Function CountWhiteParagraphMarks() As Integer
         ' Loop through all occurrences
         Do While .Execute
             ' Check if the found paragraph mark has the white color
-            If rng.font.color = RGB(255, 255, 255) Then
+            If rng.Font.color = RGB(255, 255, 255) Then
                 count = count + 1
                 ' Go to the first white paragraph mark found
                 If Not firstFound Then
@@ -2734,9 +2734,9 @@ Private Function CountEmptyParasWithNoThemeColor()
         ' Check if the paragraph is empty
         If Len(rng.Text) = 1 Then ' Only the paragraph mark
             ' Check if the theme color is used
-            If rng.font.TextColor.ObjectThemeColor <> wdNotThemeColor Then
+            If rng.Font.TextColor.ObjectThemeColor <> wdNotThemeColor Then
                 themeColorUsed = True
-                colorKey = CStr(rng.font.TextColor.ObjectThemeColor)
+                colorKey = CStr(rng.Font.TextColor.ObjectThemeColor)
                 
                 If Not colorCounts.Exists(colorKey) Then
                     colorCounts.Add colorKey, 0
@@ -2998,7 +2998,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
 
     Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
-    rng.Find.font.color = wdColorWhite
+    rng.Find.Font.color = wdColorWhite
 
     ' Set the Find properties
     With rng.Find

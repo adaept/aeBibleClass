@@ -60,8 +60,8 @@ Function IsFontInstalled(fontName As String) As Boolean
     Set TestDoc = Documents.Add(Visible:=False)
     Set testRange = TestDoc.content
     testRange.Text = "Test"
-    testRange.font.name = fontName
-    IsFontInstalled = (testRange.font.name = fontName)
+    testRange.Font.name = fontName
+    IsFontInstalled = (testRange.Font.name = fontName)
     TestDoc.Close SaveChanges:=False
     On Error GoTo 0
 End Function
@@ -80,7 +80,7 @@ Sub CreateEmphasisBlackStyle()
     End If
 
     ' Apply formatting
-    With charStyle.font
+    With charStyle.Font
         .name = "Arial Black"
         .Size = 8
         .Bold = True
@@ -125,7 +125,7 @@ Sub RedefineFootnoteStyle_NotoSans()
     Dim s As style
     Set s = ActiveDocument.Styles("Footnote")
 
-    With s.font
+    With s.Font
         .name = "Noto Sans"
         .Size = 7
         .Bold = False
@@ -161,7 +161,7 @@ Sub RedefineFootnoteNormalStyle_NotoSans()
     Dim s As style
     Set s = ActiveDocument.Styles("Footnote normal")
 
-    With s.font
+    With s.Font
         .name = "Noto Sans"
         .Size = 7
         .Bold = False
@@ -212,7 +212,7 @@ Sub RedefinePictureCaptionStyle_NotoSans()
     End If
     On Error GoTo 0
 
-    With s.font
+    With s.Font
         .name = "Noto Sans"
         .Size = 9
         .Bold = False
@@ -243,7 +243,7 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
     paraIndex = 0
     For Each para In ActiveDocument.Paragraphs
         paraIndex = paraIndex + 1
-        fontName = para.Range.Characters(1).font.name
+        fontName = para.Range.Characters(1).Font.name
         If fontName = "Arial Unicode MS" Then
             logBuffer = logBuffer & "[Body] Para #" & paraIndex & " - Style: " & para.style & vbCrLf
             logBuffer = logBuffer & "Text: " & Left(para.Range.Text, 120) & vbCrLf & vbCrLf
@@ -263,7 +263,7 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
                 paraIndex = 0
                 For Each para In hf.Range.Paragraphs
                     paraIndex = paraIndex + 1
-                    fontName = para.Range.Characters(1).font.name
+                    fontName = para.Range.Characters(1).Font.name
                     If fontName = "Arial Unicode MS" Then
                         logBuffer = logBuffer & "[Header] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
                         logBuffer = logBuffer & "Style: " & para.style & vbCrLf
@@ -276,7 +276,7 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
                 paraIndex = 0
                 For Each para In hf.Range.Paragraphs
                     paraIndex = paraIndex + 1
-                    fontName = para.Range.Characters(1).font.name
+                    fontName = para.Range.Characters(1).Font.name
                     If fontName = "Arial Unicode MS" Then
                         logBuffer = logBuffer & "[Footer] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
                         logBuffer = logBuffer & "Style: " & para.style & vbCrLf

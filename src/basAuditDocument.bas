@@ -3,103 +3,311 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
-Public Sub AddBookNameHeaders()
-    Dim oDoc        As Document
-    Dim oSections   As Sections
-    Dim oSection    As section
-    Dim oHeader     As HeaderFooter
-    Dim oPara As Word.Paragraph
-    Dim oRange      As Word.Range
-    Dim lStartSect  As Long
-    Dim lIdx        As Long
-    Dim sBookName   As String
-    Dim lResponse   As Long
-
-    lResponse = MsgBox("Place cursor in the section to start header labelling. Do you want to start?", _
-                       vbYesNo + vbDefaultButton2 + vbQuestion, _
-                       "AddBookNameHeaders")
-
-    If lResponse = vbNo Then Exit Sub
+Public Sub ReplaceTimesInStyles()
+    Dim oDoc   As Document
+    Dim oStyle As style
+    Dim lCount As Long
 
     Set oDoc = ActiveDocument
-    Set oSections = oDoc.Sections
+    lCount = 0
 
-    ' -- Find the section containing the cursor --------------------------------
-    lStartSect = 0
-    For lIdx = 1 To oSections.count
-        If oSections(lIdx).Range.End >= Selection.Range.Start Then
-            lStartSect = lIdx
-            Exit For
+    For Each oStyle In oDoc.Styles
+        On Error Resume Next
+        If Trim(oStyle.Font.name) = "Times" Then
+            oStyle.Font.name = "Times New Roman"
+            lCount = lCount + 1
         End If
-    Next lIdx
+        On Error GoTo 0
+    Next oStyle
 
-    If lStartSect = 0 Then
-        MsgBox "Could not determine the current section. " & _
-               "Please place the cursor in the document body and try again.", _
-               vbExclamation, "AddBookNameHeaders"
-        Exit Sub
-    End If
+    Debug.Print "Done. Replaced Times with Times New Roman in " & _
+           lCount & " style definitions."
 
-    sBookName = ""
+    MsgBox "Done. Replaced Times with Times New Roman in " & _
+           lCount & " style definitions.", _
+           vbInformation, "ReplaceTimesInStyles"
 
-    ' -- Walk sections from cursor to end -------------------------------------
-    For lIdx = lStartSect To oSections.count
-
-        Set oSection = oSections(lIdx)
-        Set oHeader = oSection.Headers(WdHeaderFooterIndex.wdHeaderFooterPrimary)
-        Set oPara = oSection.Range.Paragraphs(1)
-
-        If oPara.style = oDoc.Styles("Heading 1") Then
-
-            ' Book title page - clear the header and leave it empty
-            oHeader.LinkToPrevious = False
-            oHeader.Range.Delete
-
-        ElseIf oPara.style = oDoc.Styles("Heading 2") Then
-
-            ' First chapter section - capture book name from Heading 1 text
-            ' Search backwards from this section for the nearest Heading 1
-            Dim oSearch As Word.Range
-            Set oSearch = oDoc.Range(0, oSection.Range.Start)
-            Dim oFound  As Word.Range
-            Set oFound = Nothing
-
-            Dim pIdx    As Long
-            For pIdx = oSearch.Paragraphs.count To 1 Step -1
-                If oSearch.Paragraphs(pIdx).style = oDoc.Styles("Heading 1") Then
-                    sBookName = Trim(oSearch.Paragraphs(pIdx).Range.Text)
-                    Exit For
-                End If
-            Next pIdx
-
-            ' Write the book name into the header
-            oHeader.LinkToPrevious = False
-            oHeader.Range.Delete
-
-            Set oRange = oHeader.Range
-            oRange.Text = sBookName
-            oRange.ParagraphFormat.style = oDoc.Styles("TheHeaders")
-
-        Else
-
-            ' All other sections inherit the header from the section above
-            oHeader.LinkToPrevious = True
-
-        End If
-
-    Next lIdx
-
-    MsgBox "Done. Book name headers have been added from section " & _
-           lStartSect & " through section " & oSections.count & ".", _
-           vbInformation, "AddBookNameHeaders"
-
-    Set oRange = Nothing
-    Set oPara = Nothing
-    Set oHeader = Nothing
-    Set oSection = Nothing
-    Set oSections = Nothing
     Set oDoc = Nothing
 End Sub
+
+Public Sub FindFontUsage()
+    Dim oDoc     As Document
+    Dim oPara    As Word.Paragraph
+    Dim oSection As section
+    Dim oHF      As HeaderFooter
+    Dim oStyle   As style
+    Dim sTarget  As String
+    Dim lBody    As Long
+    Dim lHF      As Long
+    Dim oStyles  As New Collection
+    Dim bFound   As Boolean
+    Dim i        As Long
+
+    Set oDoc = ActiveDocument
+    sTarget = "Times"           'Arial Unicode MS"
+    lBody = 0
+    lHF = 0
+
+    ' -- Body paragraphs ------------------------------------------------------
+    For Each oPara In oDoc.Paragraphs
+        If InStr(1, ResolveFont(oPara), sTarget, vbTextCompare) > 0 Then
+            lBody = lBody + 1
+            bFound = False
+            For i = 1 To oStyles.count
+                If oStyles(i) = "(body) " & oPara.style.NameLocal Then
+                    bFound = True
+                    Exit For
+                End If
+            Next i
+            If Not bFound Then oStyles.Add "(body) " & oPara.style.NameLocal
+        End If
+    Next oPara
+
+    ' -- Header and footer paragraphs -----------------------------------------
+    For Each oSection In oDoc.Sections
+        For Each oHF In oSection.Headers
+            If oHF.Exists Then
+                For Each oPara In oHF.Range.Paragraphs
+                    If InStr(1, ResolveFont(oPara), sTarget, vbTextCompare) > 0 Then
+                        lHF = lHF + 1
+                        bFound = False
+                        For i = 1 To oStyles.count
+                            If oStyles(i) = "(header) " & oPara.style.NameLocal Then
+                                bFound = True
+                                Exit For
+                            End If
+                        Next i
+                        If Not bFound Then oStyles.Add "(header) " & oPara.style.NameLocal
+                    End If
+                Next oPara
+            End If
+        Next oHF
+        For Each oHF In oSection.Footers
+            If oHF.Exists Then
+                For Each oPara In oHF.Range.Paragraphs
+                    If InStr(1, ResolveFont(oPara), sTarget, vbTextCompare) > 0 Then
+                        lHF = lHF + 1
+                        bFound = False
+                        For i = 1 To oStyles.count
+                            If oStyles(i) = "(footer) " & oPara.style.NameLocal Then
+                                bFound = True
+                                Exit For
+                            End If
+                        Next i
+                        If Not bFound Then oStyles.Add "(footer) " & oPara.style.NameLocal
+                    End If
+                Next oPara
+            End If
+        Next oHF
+    Next oSection
+
+    ' -- Style definitions -----------------------------------------------------
+    Dim lStyleDef As Long
+    lStyleDef = 0
+    For Each oStyle In oDoc.Styles
+        On Error Resume Next
+        Dim sStyleFont As String
+        sStyleFont = Trim(oStyle.Font.name)
+        On Error GoTo 0
+        If InStr(1, sStyleFont, sTarget, vbTextCompare) > 0 Then
+            lStyleDef = lStyleDef + 1
+            bFound = False
+            For i = 1 To oStyles.count
+                If oStyles(i) = "(style def) " & oStyle.NameLocal Then
+                    bFound = True
+                    Exit For
+                End If
+            Next i
+            If Not bFound Then oStyles.Add "(style def) " & oStyle.NameLocal
+        End If
+    Next oStyle
+
+    Dim sList As String
+    sList = ""
+    For i = 1 To oStyles.count
+        sList = sList & "  " & oStyles(i) & vbCrLf
+    Next i
+
+    Debug.Print "Font searched: " & sTarget & vbCrLf & vbCrLf & _
+           "Body paragraphs: " & lBody & vbCrLf & _
+           "Header/footer paragraphs: " & lHF & vbCrLf & _
+           "Style definitions: " & lStyleDef & vbCrLf & vbCrLf & _
+           IIf(oStyles.count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere.")
+
+    MsgBox "Font searched: " & sTarget & vbCrLf & vbCrLf & _
+           "Body paragraphs: " & lBody & vbCrLf & _
+           "Header/footer paragraphs: " & lHF & vbCrLf & _
+           "Style definitions: " & lStyleDef & vbCrLf & vbCrLf & _
+           IIf(oStyles.count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere."), _
+           vbInformation, "FindFontUsage"
+End Sub
+
+Public Sub CountParagraphsAndFonts()
+    Dim oDoc       As Document
+    Dim oPara      As Word.Paragraph
+    Dim oSection   As section
+    Dim oHF        As HeaderFooter
+    Dim oFonts     As New Collection
+    Dim lBody      As Long
+    Dim lHF        As Long
+    Dim sFont      As String
+    Dim bFound     As Boolean
+    Dim i          As Long
+
+    Set oDoc = ActiveDocument
+    lBody = 0
+    lHF = 0
+
+    ' -- Body paragraphs ------------------------------------------------------
+    For Each oPara In oDoc.Paragraphs
+        lBody = lBody + 1
+        sFont = ResolveFont(oPara)
+        AddToCollection oFonts, sFont
+    Next oPara
+
+    ' -- Header and footer paragraphs -----------------------------------------
+    For Each oSection In oDoc.Sections
+        For Each oHF In oSection.Headers
+            If oHF.Exists Then
+                For Each oPara In oHF.Range.Paragraphs
+                    lHF = lHF + 1
+                    sFont = ResolveFont(oPara)
+                    AddToCollection oFonts, sFont
+                Next oPara
+            End If
+        Next oHF
+        For Each oHF In oSection.Footers
+            If oHF.Exists Then
+                For Each oPara In oHF.Range.Paragraphs
+                    lHF = lHF + 1
+                    sFont = ResolveFont(oPara)
+                    AddToCollection oFonts, sFont
+                Next oPara
+            End If
+        Next oHF
+    Next oSection
+
+    Dim sFontList As String
+    sFontList = ""
+    For i = 1 To oFonts.count
+        sFontList = sFontList & "  " & oFonts(i) & vbCrLf
+    Next i
+
+    Debug.Print "Body paragraphs: " & lBody & vbCrLf & _
+           "Header/footer paragraphs: " & lHF & vbCrLf & vbCrLf & _
+           "Fonts used (" & oFonts.count & "):" & vbCrLf & sFontList
+
+    MsgBox "Body paragraphs: " & lBody & vbCrLf & _
+           "Header/footer paragraphs: " & lHF & vbCrLf & vbCrLf & _
+           "Fonts used (" & oFonts.count & "):" & vbCrLf & sFontList, _
+           vbInformation, "CountParagraphsAndFonts"
+End Sub
+
+Private Function ResolveFont(ByVal oPara As Word.Paragraph) As String
+    Dim sFont As String
+    sFont = Trim(oPara.Range.Font.name)
+    If Len(sFont) = 0 Or Left(sFont, 1) = "+" Then
+        On Error Resume Next
+        sFont = Trim(oPara.style.Font.name)
+        On Error GoTo 0
+    End If
+    If Len(sFont) = 0 Or Left(sFont, 1) = "+" Then
+        sFont = "(inherited/theme)"
+    End If
+    ResolveFont = sFont
+End Function
+
+Private Sub AddToCollection(ByRef oCol As Collection, ByVal sValue As String)
+    Dim i As Long
+    For i = 1 To oCol.count
+        If oCol(i) = sValue Then Exit Sub
+    Next i
+    oCol.Add sValue
+End Sub
+
+Public Sub CountFields()
+    Dim lCount As Long
+    lCount = ActiveDocument.Fields.count
+    Debug.Print "Total fields in document: " & lCount
+    MsgBox "Total fields in document: " & lCount, vbInformation, "CountFields"
+End Sub
+
+Public Sub CountCodeLines()
+    Dim oComp       As Object
+    Dim oModule     As Object
+    Dim lTotalCode  As Long
+    Dim lTotalComment As Long
+    Dim lTotalEmpty As Long
+    Dim lCode       As Long
+    Dim lComment    As Long
+    Dim lEmpty      As Long
+    Dim lIdx        As Long
+    Dim sLine       As String
+    Dim sTrimmed    As String
+
+    lTotalCode = 0
+    lTotalComment = 0
+    lTotalEmpty = 0
+
+    Debug.Print String(70, "-")
+    Debug.Print PadRight("Module", 35) & _
+                PadRight("Code", 10) & _
+                PadRight("Comments", 10) & _
+                PadRight("Empty", 10) & _
+                "Total"
+    Debug.Print String(70, "-")
+
+    For Each oComp In ThisDocument.VBProject.VBComponents
+
+        Set oModule = oComp.CodeModule
+        lCode = 0
+        lComment = 0
+        lEmpty = 0
+
+        For lIdx = 1 To oModule.CountOfLines
+            sLine = oModule.lines(lIdx, 1)
+            sTrimmed = Trim(sLine)
+
+            If Len(sTrimmed) = 0 Then
+                lEmpty = lEmpty + 1
+            ElseIf Left(sTrimmed, 1) = "'" Then
+                lComment = lComment + 1
+            Else
+                lCode = lCode + 1
+            End If
+
+        Next lIdx
+
+        lTotalCode = lTotalCode + lCode
+        lTotalComment = lTotalComment + lComment
+        lTotalEmpty = lTotalEmpty + lEmpty
+
+        Debug.Print PadRight(oComp.name, 35) & _
+                    PadRight(lCode, 10) & _
+                    PadRight(lComment, 10) & _
+                    PadRight(lEmpty, 10) & _
+                    (lCode + lComment + lEmpty)
+
+    Next oComp
+
+    Debug.Print String(70, "-")
+    Debug.Print PadRight("TOTAL", 35) & _
+                PadRight(lTotalCode, 10) & _
+                PadRight(lTotalComment, 10) & _
+                PadRight(lTotalEmpty, 10) & _
+                (lTotalCode + lTotalComment + lTotalEmpty)
+    Debug.Print String(70, "-")
+End Sub
+
+Private Function PadRight(ByVal sValue As Variant, ByVal lWidth As Long) As String
+    Dim sStr As String
+    sStr = CStr(sValue)
+    If Len(sStr) < lWidth Then
+        PadRight = sStr & space(lWidth - Len(sStr))
+    Else
+        PadRight = Left(sStr, lWidth)
+        End If
+End Function
 
 Public Sub CountOrphanFooters()
     Dim oDoc        As Document

@@ -193,9 +193,9 @@ Sub ListAndCountFontColors()
     ' Loop through each word in the document
     For Each rng In ActiveDocument.words
         ' Get the RGB values of the font color
-        r = (rng.font.color And &HFF)
-        g = (rng.font.color \ &H100 And &HFF)
-        b = (rng.font.color \ &H10000 And &HFF)
+        r = (rng.Font.color And &HFF)
+        g = (rng.Font.color \ &H100 And &HFF)
+        b = (rng.Font.color \ &H10000 And &HFF)
         
         ' Create a key for the color in hex format
         colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)
@@ -309,7 +309,7 @@ Sub OptimizedListFontsInDocument()
     ' Loop through each paragraph in the document
     For Each para In doc.Paragraphs
         Set rng = para.Range
-        fontName = rng.font.name
+        fontName = rng.Font.name
         On Error Resume Next
         ' Add unique fonts to the collection
         fontList.Add fontName, fontName
@@ -354,7 +354,7 @@ Sub FindGentiumFromParagraph()
 
         For i = 1 To rng.Characters.count Step 10 ' Check every 10 chars
             Set charRange = rng.Characters(i)
-            If charRange.font.name = "Gentium" Then
+            If charRange.Font.name = "Gentium" Then
                 charRange.Select
                 MsgBox "Found Gentium font at paragraph " & p, vbInformation
                 Application.StatusBar = False
@@ -398,7 +398,7 @@ Sub ListNonMainFonts_ByParagraph()
             Do
                 For Each para In storyRange.Paragraphs
                     scannedParas = scannedParas + 1
-                    fontName = para.Range.font.name
+                    fontName = para.Range.Font.name
                     If Len(fontName) > 0 Then
                         If Not fontDict.Exists(fontName) Then
                             fontDict.Add fontName, 1
@@ -569,9 +569,9 @@ Sub FixAndDiagnoseFootnoteReferences()
             totalIncorrect = totalIncorrect + 1
 
             ' Attempt fix
-            fnRef.font.Reset
+            fnRef.Font.Reset
             fnRef.style = doc.Styles("Footnote Reference")
-            With fnRef.font
+            With fnRef.Font
                 .name = "Segoe UI"
                 .Size = 8
                 .Bold = True
@@ -604,7 +604,7 @@ End Sub
 Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As Boolean
     mismatch = ""
     IsCorrectFootnoteFormat = True
-    With rng.font
+    With rng.Font
         If rng.style <> "Footnote Reference" Then
             mismatch = mismatch & " - Style: " & rng.style & vbCrLf
             IsCorrectFootnoteFormat = False
@@ -709,8 +709,8 @@ Sub ReportDigitAtCursor_Diagnostics()
     Debug.Print "=== Character at Cursor ==="
     Debug.Print "Value: '" & txt & "' | ASCII: " & AscW(txt)
     Debug.Print "Style: " & style
-    Debug.Print "Font Color: " & ch.font.color & " (RGB: " & _
-                RGBToString(ch.font.color) & ")"
+    Debug.Print "Font Color: " & ch.Font.color & " (RGB: " & _
+                RGBToString(ch.Font.color) & ")"
     Debug.Print "Position: X=" & Format(posX, "0.0") & " pts, Y=" & Format(posY, "0.0") & " pts"
 
     If ch.Start > 0 Then
@@ -746,11 +746,11 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
     Set ch = rng.Characters(1)
     Dim txt As String: txt = ch.Text
     Dim ascCode As Long: ascCode = AscW(txt)
-    Dim fontNameAscii As String: fontNameAscii = ch.font.NameAscii
-    Dim fontNameFarEast As String: fontNameFarEast = ch.font.NameFarEast
-    Dim fontNameOther As String: fontNameOther = ch.font.NameOther
-    Dim fontSize As Single: fontSize = ch.font.Size
-    Dim fontColor As Long: fontColor = ch.font.color
+    Dim fontNameAscii As String: fontNameAscii = ch.Font.NameAscii
+    Dim fontNameFarEast As String: fontNameFarEast = ch.Font.NameFarEast
+    Dim fontNameOther As String: fontNameOther = ch.Font.NameOther
+    Dim fontSize As Single: fontSize = ch.Font.Size
+    Dim fontColor As Long: fontColor = ch.Font.color
     Dim styleName As String: styleName = ch.style.NameLocal
     Dim baseStyle As String
     On Error Resume Next
@@ -769,7 +769,7 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
     Debug.Print "Font Size: " & fontSize & " pt"
     Debug.Print "Font Color: " & fontColor & " (RGB: " & _
         (fontColor Mod 256) & "," & ((fontColor \ 256) Mod 256) & "," & (fontColor \ 65536) & ")"
-    Debug.Print "Bold: " & ch.font.Bold & " | Italic: " & ch.font.Italic & " | Underline: " & ch.font.Underline
+    Debug.Print "Bold: " & ch.Font.Bold & " | Italic: " & ch.Font.Italic & " | Underline: " & ch.Font.Underline
 
     Debug.Print "--- Prefix (1 char before) ---"
     If ch.Start > 1 Then
@@ -777,9 +777,9 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
         Set prefix = ActiveDocument.Range(ch.Start - 1, ch.Start)
         Debug.Print "Value: '" & prefix.Text & "' | ASCII: " & AscW(prefix.Text)
         Debug.Print "Style: " & prefix.style.NameLocal
-        Debug.Print "Font Name: " & prefix.font.name
-        Debug.Print "Font Color: " & prefix.font.color & " (RGB: " & _
-            (prefix.font.color Mod 256) & "," & ((prefix.font.color \ 256) Mod 256) & "," & (prefix.font.color \ 65536) & ")"
+        Debug.Print "Font Name: " & prefix.Font.name
+        Debug.Print "Font Color: " & prefix.Font.color & " (RGB: " & _
+            (prefix.Font.color Mod 256) & "," & ((prefix.Font.color \ 256) Mod 256) & "," & (prefix.Font.color \ 65536) & ")"
     Else
         Debug.Print "(No character before this one.)"
     End If
@@ -809,7 +809,7 @@ Sub LogExpandedMarkerContext()
         Debug.Print contextText & contextAscii & contextHex
     Next i
 
-    Debug.Print "Style: " & sel.style & " | Font: " & sel.font.name
+    Debug.Print "Style: " & sel.style & " | Font: " & sel.Font.name
     Debug.Print "=== End of Diagnostic ===" & vbCrLf
 End Sub
 
@@ -829,7 +829,7 @@ Sub FindInvisibleFormFeeds_InPages(startPage As Long)
             If InStr(rng.Text, Chr(12)) > 0 Then
                 Debug.Print "[Page " & pgNum & "] Chr(12) found at Start=" & rng.Start
                 Debug.Print "Text='" & Replace(rng.Text, Chr(12), "[FF]") & "'"
-                Debug.Print "Style=" & rng.style & " | Font=" & rng.font.name
+                Debug.Print "Style=" & rng.style & " | Font=" & rng.Font.name
             End If
         End If
     Next para
@@ -858,14 +858,14 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.color = RGB(255, 165, 0) Then
             chapterMarker = ch.Text
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
                 If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
+                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.Font.color = RGB(255, 165, 0) Then
                         chapterMarker = chapterMarker & scanRange.Text
                         markerEnd = markerEnd + 1
                     Else
@@ -884,7 +884,7 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
             Do While verseEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
+                    If scanRange.style.NameLocal = "Verse marker" And scanRange.Font.color = RGB(80, 200, 120) Then
                         verseDigits = verseDigits & scanRange.Text
                         verseEnd = verseEnd + 1
                     Else
@@ -960,14 +960,14 @@ Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
             If styleName = "Chapter Verse marker" Or styleName = "Verse marker" Then
                 digitBlock = txt
                 blockStyle = styleName
-                blockColor = ch.font.color
+                blockColor = ch.Font.color
                 blockStart = i
                 blockEnd = i + 1
 
                 Do While blockEnd < pageEnd
                     Set scanRange = ActiveDocument.Range(blockEnd, blockEnd + 1)
                     If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                        If scanRange.style.NameLocal = blockStyle And scanRange.font.color = blockColor Then
+                        If scanRange.style.NameLocal = blockStyle And scanRange.Font.color = blockColor Then
                             digitBlock = digitBlock & scanRange.Text
                             blockEnd = blockEnd + 1
                         Else
@@ -979,8 +979,8 @@ Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
                 Loop
 
                 Set ch = ActiveDocument.Range(blockStart, blockStart + 1)
-                fontName = ch.font.name
-                fontSize = ch.font.Size
+                fontName = ch.Font.name
+                fontSize = ch.Font.Size
                 charPosX = ch.Information(wdHorizontalPositionRelativeToPage)
                 charPosY = ch.Information(wdVerticalPositionRelativeToPage)
 
@@ -1028,7 +1028,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.color = RGB(255, 165, 0) Then
             ' Assemble chapter marker block
             chapterMarker = ch.Text
             markerStart = i
@@ -1036,7 +1036,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
             Do While markerEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
                 If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
+                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.Font.color = RGB(255, 165, 0) Then
                         chapterMarker = chapterMarker & scanRange.Text
                         markerEnd = markerEnd + 1
                     Else
@@ -1056,7 +1056,7 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
             Do While verseEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
+                    If scanRange.style.NameLocal = "Verse marker" And scanRange.Font.color = RGB(80, 200, 120) Then
                         verseDigits = verseDigits & scanRange.Text
                         verseEnd = verseEnd + 1
                     Else
@@ -1211,7 +1211,7 @@ Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef break
                     missing160Count = missing160Count + 1
                 End If
 
-                Debug.Print "  Style=" & rng.style & " | Font=" & rng.font.name & " | Start=" & rng.Start & " | Page=" & pgNum
+                Debug.Print "  Style=" & rng.style & " | Font=" & rng.Font.name & " | Start=" & rng.Start & " | Page=" & pgNum
             End If
         End If
 NextPara:
@@ -1464,17 +1464,17 @@ Sub GetHeadingDefinitionsWithDescriptions()
             Case Else: alignText = "Unknown"
         End Select
         
-        clr = s.font.color
+        clr = s.Font.color
         r = clr Mod 256
         g = (clr \ 256) Mod 256
         b = (clr \ 65536) Mod 256
         hexColor = "#" & Right$("0" & Hex(r), 2) & Right$("0" & Hex(g), 2) & Right$("0" & Hex(b), 2)
 
         info = "Style: " & styleName & vbCrLf
-        info = info & "  Font Name: " & s.font.name & vbCrLf
-        info = info & "  Font Size: " & s.font.Size & vbCrLf
-        info = info & "  Bold: " & s.font.Bold & vbCrLf
-        info = info & "  Italic: " & s.font.Italic & vbCrLf
+        info = info & "  Font Name: " & s.Font.name & vbCrLf
+        info = info & "  Font Size: " & s.Font.Size & vbCrLf
+        info = info & "  Bold: " & s.Font.Bold & vbCrLf
+        info = info & "  Italic: " & s.Font.Italic & vbCrLf
         info = info & "  Color: " & clr & ", RGB(" & r & "," & g & "," & b & "), " & hexColor & vbCrLf
         info = info & "  Alignment: " & alignValue & " (" & alignText & ")" & vbCrLf
         info = info & "  Space Before: " & s.ParagraphFormat.SpaceBefore & vbCrLf

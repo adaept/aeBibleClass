@@ -179,5 +179,3 @@ Private Function ModuleOrClassExists(name As String) As Boolean
     Debug.Print name, "ModuleOrClassExists = " & found, "in Function ModuleOrClassExists"
 End Function
 
-
-

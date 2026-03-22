@@ -120,7 +120,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.color = RGB(255, 165, 0) Then
             ' Assemble chapter marker block
             chapterMarker = ch.Text
             markerStart = i
@@ -128,7 +128,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
             Do While markerEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
                 If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.font.color = RGB(255, 165, 0) Then
+                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.Font.color = RGB(255, 165, 0) Then
                         chapterMarker = chapterMarker & scanRange.Text
                         markerEnd = markerEnd + 1
                     Else
@@ -148,7 +148,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
             Do While verseEnd < pageEnd
                 Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Verse marker" And scanRange.font.color = RGB(80, 200, 120) Then
+                    If scanRange.style.NameLocal = "Verse marker" And scanRange.Font.color = RGB(80, 200, 120) Then
                         verseDigits = verseDigits & scanRange.Text
                         verseEnd = verseEnd + 1
                     Else
@@ -325,8 +325,8 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
         Set scanCh = ActiveDocument.Range(nextPos, nextPos + 1)
         
         If Len(Trim(scanCh.Text)) = 1 And IsNumeric(scanCh.Text) Then
-            If (scanCh.style.NameLocal = "Chapter Verse marker" And scanCh.font.color = RGB(255, 165, 0)) _
-               Or (scanCh.style.NameLocal = "Verse marker" And scanCh.font.color = RGB(80, 200, 120)) Then
+            If (scanCh.style.NameLocal = "Chapter Verse marker" And scanCh.Font.color = RGB(255, 165, 0)) _
+               Or (scanCh.style.NameLocal = "Verse marker" And scanCh.Font.color = RGB(80, 200, 120)) Then
                 verseContentEnd = nextPos
                 Exit Do
             End If

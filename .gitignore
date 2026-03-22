@@ -4,6 +4,9 @@ ko.*
 /Bibles
 /Bible
 Peter-USE REFINED English Bible CONTENTS.pdf
+MyOutfile_unpacked/
+MyInfile_unpacked/
+fonts/
 
 #################
 ## Microsoft Word
