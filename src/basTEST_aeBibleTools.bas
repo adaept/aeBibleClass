@@ -181,7 +181,7 @@ End Function
 '               - Expansion possible to handle suffix-aware grouping or paragraph-level aggregation
 ' =================================================================================================
 Sub ListAndCountFontColors()
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim colorDict As Object
     Dim colorKey As Variant
     Dim colorCount As Long
@@ -222,7 +222,7 @@ End Sub
 Sub GetVerticalPositionOfCursorParagraph()
 ' Get the position of the para where the cursor is
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim paraPos As Single
     
     Set doc = ActiveDocument
@@ -300,7 +300,7 @@ Sub OptimizedListFontsInDocument()
     Dim fontList As New Collection
     Dim doc As Document
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim fontName As String
     Dim i As Integer
     
@@ -329,8 +329,8 @@ End Sub
 Sub FindGentiumFromParagraph()
     Dim startParaNum As Long
     Dim para As Word.Paragraph
-    Dim rng As Range
-    Dim charRange As Range
+    Dim rng As Word.Range
+    Dim charRange As Word.Range
     Dim i As Long, p As Long
     Dim totalParas As Long
 
@@ -384,7 +384,7 @@ Sub ListNonMainFonts_ByParagraph()
     Dim fontDict As Object
     Set fontDict = CreateObject("Scripting.Dictionary")
 
-    Dim storyRange As Range
+    Dim storyRange As Word.Range
     Dim para As Word.Paragraph
     Dim fontName As String
     Dim fontCount As Long
@@ -481,7 +481,7 @@ End Sub
 Sub CountSearchHits()
     Dim searchTerm As String
     Dim count As Long
-    Dim rng As Range
+    Dim rng As Word.Range
 
     searchTerm = InputBox("Enter the text to search for:")
     If Len(searchTerm) = 0 Then Exit Sub
@@ -509,7 +509,7 @@ End Sub
 Sub PrintHeading1sByLogicalPage()
     Dim i As Long
     Dim maxPage As Long
-    Dim pageRange As Range
+    Dim pageRange As Word.Range
     Dim para As Word.Paragraph
     Dim headingText As String
     Dim foundHeading As Boolean
@@ -542,7 +542,7 @@ End Sub
 Sub FixAndDiagnoseFootnoteReferences()
     Dim doc As Document
     Dim fn As footnote
-    Dim fnRef As Range
+    Dim fnRef As Word.Range
     Dim totalChecked As Long
     Dim totalIncorrect As Long
     Dim firstIncorrectPos As Long
@@ -601,7 +601,7 @@ Sub FixAndDiagnoseFootnoteReferences()
     End If
 End Sub
 
-Function IsCorrectFootnoteFormat(rng As Range, ByRef mismatch As String) As Boolean
+Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As Boolean
     mismatch = ""
     IsCorrectFootnoteFormat = True
     With rng.font
@@ -634,8 +634,8 @@ End Function
 
 Sub FixFootnoteNumberStyleInText()
     Dim fn As footnote
-    Dim paraRange As Range
-    Dim firstRun As Range
+    Dim paraRange As Word.Range
+    Dim firstRun As Word.Range
 
     For Each fn In ActiveDocument.Footnotes
         Set paraRange = fn.Range.Paragraphs(1).Range
@@ -649,8 +649,8 @@ Sub FixFootnoteNumberStyleInText()
 End Sub
 
 Sub ReportPageLayoutMetrics(pageNum As Long)
-    Dim pgRange As Range
-    Dim sectionSetup As pageSetup
+    Dim pgRange As Word.Range
+    Dim sectionSetup As PageSetup
     Dim numCols As Integer, isEven As Boolean
     Dim gutter As Single, pageWidth As Single
     Dim leftMargin As Single, rightMargin As Single
@@ -693,7 +693,7 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
 End Sub
 
 Sub ReportDigitAtCursor_Diagnostics()
-    Dim selRange As Range, ch As Range, prefix As Range
+    Dim selRange As Word.Range, ch As Word.Range, prefix As Word.Range
     Dim txt As String, style As String
     Dim posX As Single, posY As Single
     Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
@@ -735,14 +735,14 @@ Function RGBToString(rgbVal As Long) As String
 End Function
 
 Sub ReportDigitAtCursor_Diagnostics_Expanded()
-    Dim rng As Range
+    Dim rng As Word.Range
     Set rng = Selection.Range
     If rng.Characters.count = 0 Then
         MsgBox "No character selected.", vbExclamation
         Exit Sub
     End If
 
-    Dim ch As Range
+    Dim ch As Word.Range
     Set ch = rng.Characters(1)
     Dim txt As String: txt = ch.Text
     Dim ascCode As Long: ascCode = AscW(txt)
@@ -773,7 +773,7 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
 
     Debug.Print "--- Prefix (1 char before) ---"
     If ch.Start > 1 Then
-        Dim prefix As Range
+        Dim prefix As Word.Range
         Set prefix = ActiveDocument.Range(ch.Start - 1, ch.Start)
         Debug.Print "Value: '" & prefix.Text & "' | ASCII: " & AscW(prefix.Text)
         Debug.Print "Style: " & prefix.style.NameLocal
@@ -788,7 +788,7 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
 End Sub
 
 Sub LogExpandedMarkerContext()
-    Dim sel As Range: Set sel = Selection.Range
+    Dim sel As Word.Range: Set sel = Selection.Range
     Dim i As Long, chCount As Long
     Dim contextText As String, contextAscii As String, contextHex As String
 
@@ -814,7 +814,7 @@ Sub LogExpandedMarkerContext()
 End Sub
 
 Sub FindInvisibleFormFeeds_InPages(startPage As Long)
-    Dim para As Word.Paragraph, rng As Range
+    Dim para As Word.Paragraph, rng As Word.Range
     Dim pgNum As Long
     Dim i As Long, pgTarget As Long
 
@@ -838,13 +838,13 @@ Sub FindInvisibleFormFeeds_InPages(startPage As Long)
 End Sub
 
 Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
-    Dim pgRange As Range, ch As Range, scanRange As Range
+    Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim logBuffer As String
     Dim chapterMarker As String, verseDigits As String, combinedNumber As String
     Dim markerStart As Long, markerEnd As Long, verseEnd As Long
     Dim digitPosX As Single, digitPosY As Single
-    Dim wordRange As Range, token As Range, nextWords As String, wCount As Integer
+    Dim wordRange As Word.Range, token As Word.Range, nextWords As String, wCount As Integer
 
     logBuffer = "=== Chapter Verse Visual Number Check on Page " & pageNum & " ===" & vbCrLf
 
@@ -933,7 +933,7 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
 End Sub
 
 Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
-    Dim pgRange As Range, ch As Range, scanRange As Range
+    Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim txt As String, styleName As String
     Dim fontName As String, fontSize As Single, fontColor As Long
@@ -1007,13 +1007,13 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
-    Dim pgRange As Range, ch As Range, scanRange As Range, prefixCh As Range
+    Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range, prefixCh As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim chapterMarker As String, verseDigits As String, combinedNumber As String
     Dim markerStart As Long, markerEnd As Long, verseEnd As Long
     Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
     Dim prefixY As Single, digitY As Single, digitX As Single
-    Dim nextWords As String, lookAhead As Range, token As Range, wCount As Integer
+    Dim nextWords As String, lookAhead As Word.Range, token As Word.Range, wCount As Integer
     Dim logBuffer As String
 
     fixCount = 0
@@ -1147,7 +1147,7 @@ End Sub
 
 Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim markerText As String
     Dim didRepair As Boolean
     Dim paraStyle As String
@@ -1382,7 +1382,7 @@ Sub DummyRepairPageTimerOnly(pgNum As Long)
 End Sub
 
 Sub ReapplyTheFootersToAllFooters()
-    Dim sec As word.section
+    Dim sec As Word.section
     
     Dim hf As HeaderFooter
     Dim p As Word.Paragraph
@@ -1736,7 +1736,7 @@ Sub FlagEarlyBindingRoutines_LateBound()
     baseTypes = Array("As String", "As Integer", "As Long", "As Double", "As Boolean", "As Variant", _
                       "As Byte", "As Currency", "As Date", "As Object", "As Single")
 
-    wordTypes = Array("As Range", "As Paragraph", "As Section", "As Style", "As Shape", "As Field", _
+    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Section", "As Style", "As Shape", "As Field", _
                       "As HeaderFooter", "As Footnote", "As EndNote", "As Table", "As Bookmark", _
                       "As Document", "As Collection", "As New Collection", "As Selection", _
                       "As customXMLPart", "As CustomXMLParts")
@@ -1802,7 +1802,7 @@ Function FlagLabel(codeLine As String) As String
         FlagLabel = "[CUSTOM]"
     ElseIf lowered Like "*as wd*" Or lowered Like "*as vbmsgbox*" Or lowered Like "*as mso*" Then
         FlagLabel = "[ENUM]"
-    ElseIf lowered Like "*As Range*" Or lowered Like "*As Paragraph*" Then
+    ElseIf lowered Like "*As Word.Range*" Or lowered Like "*As Word.Paragraph*" Then
         FlagLabel = "[WORD]"
     Else
         FlagLabel = "[UNCLASSIFIED]"
@@ -1996,7 +1996,7 @@ End Sub
 ' Last Updated: 20260130
 ' ==================================================================================================
 Public Sub ShowUnicodeOfSingleCharacterSelection()
-    Dim r As Range
+    Dim r As Word.Range
     Dim count As Long
     Dim s As String
     Dim codeUnit1 As Long, codeUnit2 As Long
@@ -2166,10 +2166,10 @@ End Function
 Public Sub FindTabsInAllFooters()
     Dim sec As section
     Dim hdrFtr As HeaderFooter
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim secStartPage As Long
     Dim secEndPage As Long
-    Dim secRange As Range
+    Dim secRange As Word.Range
 
     For Each sec In ActiveDocument.Sections
 

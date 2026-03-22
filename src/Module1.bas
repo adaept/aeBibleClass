@@ -111,7 +111,7 @@ EmptyPara:
     Next para
 End Sub
 
-Function IsParagraphEmpty(paragraph As Range) As Boolean
+Function IsParagraphEmpty(paragraph As Word.Range) As Boolean
     ' Check if the paragraph is empty
     If Len(paragraph.Text) = 1 And paragraph.Text = vbCr Then
         IsParagraphEmpty = True
@@ -302,7 +302,7 @@ End Sub
  
 Sub DetectFontColors()
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim colorUsed As Boolean
     Dim themeColorUsed As Boolean
     Dim paraCount As Integer
@@ -332,8 +332,8 @@ End Sub
 
 Sub UpdateBlackToAutomatic()
     Dim doc As Document
-    Dim rng As Range
-    Dim storyRange As Range
+    Dim rng As Word.Range
+    Dim storyRange As Word.Range
     
     Set doc = ActiveDocument
     
@@ -371,7 +371,7 @@ Sub UpdateBlackToAutomatic()
 End Sub
 
 Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, newG As Long, newB As Long)
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim oldColor As Long
     Dim newColor As Long
     Dim r As Long, g As Long, b As Long
@@ -402,7 +402,7 @@ End Sub
 Sub EnsureFootnoteReferenceStyleColor()
     Dim doc As Document
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim hexColor As String
     Dim rgbColor As Long
     Dim count As Integer
@@ -453,7 +453,7 @@ End Function
 
 Function FirstPageFooterNotEmpty() As Boolean
     Dim doc As Document
-    Dim footerRange As Range
+    Dim footerRange As Word.Range
     
     ' Set the document
     Set doc = ActiveDocument
@@ -471,7 +471,7 @@ Function FirstPageFooterNotEmpty() As Boolean
     End If
 End Function
 
-Function IsEmptyParagraph(p As paragraph) As Boolean
+Function IsEmptyParagraph(p As Word.Paragraph) As Boolean
 ' Function to check if a paragraph is truly empty
     IsEmptyParagraph = (Len(p.Range.Text) = 1 And p.Range.Text = vbCr)
 End Function
@@ -586,7 +586,7 @@ End Sub
 Sub CountTypesTrulyEmptyParagraph()
     Dim para As Word.Paragraph
     Dim paraText As String
-    Dim paraRange As Range
+    Dim paraRange As Word.Range
     Dim sectionBreakFound As Boolean
     Dim nextChar As String
     
@@ -662,7 +662,7 @@ Sub FindSpecificFontOutsideMainBody()
     Dim targetFont As String
     targetFont = "Gentium" ' <-- change this to the font you want to find
 
-    Dim storyRange As Range
+    Dim storyRange As Word.Range
     Dim para As Word.Paragraph
     Dim fontName As String
 
@@ -754,7 +754,7 @@ Sub CountTabParagraphsFull()
     Dim hdr As HeaderFooter
     Dim ftr As HeaderFooter
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim bodyCount As Long
     Dim headerCount As Long
     Dim footerCount As Long
@@ -816,7 +816,7 @@ Sub CompareHeading1sWithShowHideToggle()
     Dim showTrue As String, showFalse As String
     Dim maxPage As Long
     Dim headingText As String
-    Dim pageRange As Range
+    Dim pageRange As Word.Range
     Dim para As Word.Paragraph
     Dim originalShowAll As Boolean
 
@@ -884,7 +884,7 @@ End Sub
 Sub CountAndDiagnoseFootnoteFormatting()
     Dim doc As Document
     Dim i As Long
-    Dim ref As Range
+    Dim ref As Word.Range
     Dim fn As footnote
     Dim errCount As Long
     Dim totalChecked As Long
@@ -941,7 +941,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
     Debug.Print "Total incorrect: " & errCount
 End Sub
 
-Function IsFootnoteRefFormattedCorrectly(rng As Range) As Boolean
+Function IsFootnoteRefFormattedCorrectly(rng As Word.Range) As Boolean
     With rng.font
         IsFootnoteRefFormattedCorrectly = (.name = "Segoe UI" Or .name = "Segoe UI Bold") _
             And .Size = 8 _
@@ -1068,7 +1068,7 @@ End Function
 
 Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef someCount As Long)
     ' Passes someCount by reference, initiaize to -1 when calling and assign actual result at end of routine
-    Dim pgRange As Range
+    Dim pgRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
     
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNumStart))
@@ -1166,7 +1166,7 @@ Sub CountNumericOrdinals()
         Application.StatusBar = "Scanning superscript '" & suffixes(i) & "'..."
         DoEvents
 
-        Dim rng As Range
+        Dim rng As Word.Range
         Set rng = doc.content
 
         With rng.Find

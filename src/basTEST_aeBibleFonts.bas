@@ -55,7 +55,7 @@ End Sub
 
 Function IsFontInstalled(fontName As String) As Boolean
     Dim TestDoc As Document
-    Dim testRange As Range
+    Dim testRange As Word.Range
     On Error Resume Next
     Set TestDoc = Documents.Add(Visible:=False)
     Set testRange = TestDoc.content
@@ -95,7 +95,7 @@ Sub CreateEmphasisBlackStyle()
 End Sub
 
 Sub AuditStyleUsage_Footnote()
-    Dim r As Range, hitCount As Long
+    Dim r As Word.Range, hitCount As Long
     Dim logBuffer As String
 
     logBuffer = "=== Audit: Style Usage for ->Footnote<- ===" & vbCrLf

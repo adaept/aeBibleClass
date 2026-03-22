@@ -27,7 +27,7 @@ Private Sub AddConsecutiveFootersFromCursor()
     Dim oSections   As Sections
     Dim oSection    As section
     Dim oFooter     As HeaderFooter
-    Dim oRange      As Range
+    Dim oRange      As Word.Range
     Dim oPara As Word.Paragraph
     Dim lStartSect  As Long
     Dim lIdx        As Long
@@ -74,7 +74,7 @@ Private Sub AddConsecutiveFootersFromCursor()
         ' Insert the PAGE field so Word tracks the absolute page number.
         ' Using wdFieldPage gives the true physical page number, which is
         ' already consecutive across sections when NumPages restarts are off.
-        oRange.Fields.Add range:=oRange, _
+        oRange.Fields.Add Range:=oRange, _
                           Type:=WdFieldType.wdFieldPage, _
                           PreserveFormatting:=True
 

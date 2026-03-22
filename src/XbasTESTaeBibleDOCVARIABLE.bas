@@ -5,7 +5,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Public lastFoundLocation As Range
+Public lastFoundLocation As Word.Range
 Private Const wdHeaderStory As Integer = 6
 Private Const wdFooterStory As Integer = 7
 Private Const wdFootnoteStory As Integer = 4
@@ -16,7 +16,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     Dim para As Word.Paragraph
     Dim paraPageNum As Integer
     Dim textFound As Boolean
-    Dim startRange As Range
+    Dim startRange As Word.Range
     Dim headingText As String
     Dim counter As Long
 
@@ -293,7 +293,7 @@ End Sub
 Function SearchShapeForVariable(shape As shape, variableName As String) As Boolean
     Dim childShape As shape
     Dim field As field
-    Dim textFrameRange As Range
+    Dim textFrameRange As Word.Range
 
     ' Initialize return value
     SearchShapeForVariable = False
@@ -502,7 +502,7 @@ Sub TestPageNumbers()
     Debug.Print "Done Old Testament !!!"
 
 NewTestament:
-    Dim rng As Range
+    Dim rng As Word.Range
     Set rng = ActiveDocument.GoTo(What:=1, Which:=1, name:="630")
     rng.Select
 

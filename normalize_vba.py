@@ -12,20 +12,18 @@ from pathlib import Path
 # Patterns use word boundaries and are case-insensitive.
 # Order matters — more specific patterns should come first.
 NORMALIZATIONS = [
-    (r'\.Range\b',          '.Range',       '.Range property access'),
-    (r'\.Paragraphs\b',     '.Paragraphs',  '.Paragraphs property access'),
-    (r'\.PageSetup\b',      '.PageSetup',   '.PageSetup property access'),
-    (r'\.TopMargin\b',      '.TopMargin',   '.TopMargin on PageSetup'),
-    (r'\.BottomMargin\b',   '.BottomMargin','.BottomMargin on PageSetup'),
-    (r'\.PageHeight\b',     '.PageHeight',  '.PageHeight on PageSetup'),
-    (r'\.Orientation\b',    '.Orientation', '.Orientation on PageSetup'),
-    (r'\.Item\b',           '.Item',        '.Item method on Collection'),
-    (r'\.Text\b',           '.Text',        '.Text property on Range'),
-    # Type declarations
-    (r'\bAs\s+Range\b', 'As Range', 'As Range declaration'),
-    ###(r'\bDim\s+(\w+)\s+As\s+Range\b',      r'Dim \1 As Word.Range',      'As Word.Range declaration'),
-    (r'\bDim\s+(\w+)\s+As\s+Paragraph\b',  r'Dim \1 As Word.Paragraph',  'As Word.Paragraph declaration'),
-    (r'\bDim\s+(\w+)\s+As\s+Paragraphs\b', r'Dim \1 As Word.Paragraphs', 'As Word.Paragraphs declaration'),
+    (r'(?i)\.Range\b',          '.Range',           '.Range property access'),
+    (r'(?i)\.Paragraphs\b',     '.Paragraphs',      '.Paragraphs property access'),
+    (r'(?i)\.PageSetup\b',      '.PageSetup',       '.PageSetup property access'),
+    (r'(?i)\.TopMargin\b',      '.TopMargin',       '.TopMargin on PageSetup'),
+    (r'(?i)\.BottomMargin\b',   '.BottomMargin',    '.BottomMargin on PageSetup'),
+    (r'(?i)\.PageHeight\b',     '.PageHeight',      '.PageHeight on PageSetup'),
+    (r'(?i)\.Orientation\b',    '.Orientation',     '.Orientation on PageSetup'),
+    (r'(?i)\.Item\b',           '.Item',            '.Item method on Collection'),
+    (r'(?i)\.Text\b',           '.Text',            '.Text property on Range'),
+    (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range declaration'),
+    (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph declaration'),
+    (r'(?i)\bAs\s+(?:Word\.)?Paragraphs\b', 'As Word.Paragraphs', 'As Word.Paragraphs declaration'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

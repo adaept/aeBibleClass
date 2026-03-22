@@ -86,13 +86,13 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
-    Dim pgRange As Range, ch As Range, scanRange As Range, prefixCh As Range
+    Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range, prefixCh As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim chapterMarker As String, verseDigits As String, combinedNumber As String
     Dim markerStart As Long, markerEnd As Long, verseEnd As Long
     Dim prefixTxt As String, prefixStyle As String, prefixAsc As Variant
     Dim prefixY As Single, digitY As Single, digitX As Single
-    Dim nextWords As String, lookAhead As Range, token As Range, wCount As Integer
+    Dim nextWords As String, lookAhead As Word.Range, token As Word.Range, wCount As Integer
     Dim logBuffer As String
     Dim ascii12Count As Long
     Dim ascii160MissingCount As Long
@@ -166,11 +166,11 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 Dim verseText As String
                 verseText = GetVerseText(pageEnd, verseEnd)
     
-                Dim chInfo As Range
+                Dim chInfo As Word.Range
                 Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
                 
-                Dim suffixCh As Range
+                Dim suffixCh As Word.Range
                 Set suffixCh = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 Dim suffixAsc As Long
                 suffixAsc = AscW(suffixCh.Text)
@@ -231,7 +231,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 
                     ' --- NEW: Ensure each verse starts on its own line (after repair logic) ---
                     'If markerStart > pageStart Then
-                    Dim versePrefix As Range
+                    Dim versePrefix As Word.Range
                     Set versePrefix = ActiveDocument.Range(markerStart - 1, markerStart)
     
                     If OneVersePerParaRepair Then
@@ -269,7 +269,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 End Sub
 
 Private Function GetPageHeaderText(pgNum As Long) As String
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim sec As section
     Dim hdr As HeaderFooter
     
@@ -315,7 +315,7 @@ End Function
 Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
     Dim verseContentEnd As Long
     Dim nextPos As Long
-    Dim scanCh As Range
+    Dim scanCh As Word.Range
     Dim txt As String
     
     verseContentEnd = pageEnd

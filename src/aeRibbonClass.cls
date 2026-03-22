@@ -155,7 +155,7 @@ End Sub
 
 Private Sub NextButton()
     Dim doc         As Document
-    Dim searchRange As Range
+    Dim searchRange As Word.Range
     Dim paraEnd     As Long
     Dim found       As Boolean
 

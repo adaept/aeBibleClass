@@ -60,7 +60,7 @@ Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
     LogEvent "=== USFM EXPORT START ==="
     LogEvent "Page range: " & startPage & " to " & endPage
 
-    Dim rng As Range
+    Dim rng As Word.Range
     Set rng = GetRangeForPages(startPage, endPage)
 
     If rng Is Nothing Then
@@ -83,7 +83,7 @@ End Sub
 ' ============================================================================================
 ' CORE CONVERSION
 ' ============================================================================================
-Private Function ConvertRangeToUSFM(ByVal rng As Range) As String
+Private Function ConvertRangeToUSFM(ByVal rng As Word.Range) As String
     Dim p As Word.Paragraph
     Dim sb As String
     Dim line As String
@@ -119,7 +119,7 @@ End Function
 ' ============================================================================================
 ' PARAGRAPH -> USFM
 ' ============================================================================================
-Private Function ConvertParagraphToUSFM(ByVal p As paragraph) As String
+Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
     Dim styleName As String
     Dim txt As String
     Dim chapNum As Long
@@ -295,8 +295,8 @@ Private Function IsEffectivelyEmpty(txt As String) As Boolean
     IsEffectivelyEmpty = (Len(t) = 0)
 End Function
 
-Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As Boolean
-    Dim r As Range
+Private Function ParagraphHasCharStyle(p As Word.Paragraph, styleName As String) As Boolean
+    Dim r As Word.Range
     For Each r In p.Range.words
         If r.style = styleName Then
             ParagraphHasCharStyle = True
@@ -305,8 +305,8 @@ Private Function ParagraphHasCharStyle(p As paragraph, styleName As String) As B
     Next
 End Function
 
-Private Function ExtractCharStyleText(p As paragraph, styleName As String) As String
-    Dim r As Range
+Private Function ExtractCharStyleText(p As Word.Paragraph, styleName As String) As String
+    Dim r As Word.Range
     Dim buf As String
     For Each r In p.Range.words
         If r.style = styleName Then
@@ -317,14 +317,14 @@ Private Function ExtractCharStyleText(p As paragraph, styleName As String) As St
 End Function
 
 Private Function TryParseChapterVerseFromStyles( _
-    ByVal p As paragraph, _
+    ByVal p As Word.Paragraph, _
     ByRef chapNum As Long, _
     ByRef verseNum As Long, _
     ByRef verseText As String) As Boolean
 
-    Dim rChap As Range
-    Dim rVerse As Range
-    Dim rText As Range
+    Dim rChap As Word.Range
+    Dim rVerse As Word.Range
+    Dim rText As Word.Range
 
     chapNum = 0
     verseNum = 0
@@ -599,11 +599,11 @@ End Function
 ' ============================================================================================
 ' PAGE RANGE EXTRACTION (same pattern as basWordRepairRunner)
 ' ============================================================================================
-Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long) As Range
+Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long) As Word.Range
     Dim doc As Document
-    Dim rStartPage As Range
-    Dim rEndPage As Range
-    Dim fullRange As Range
+    Dim rStartPage As Word.Range
+    Dim rEndPage As Word.Range
+    Dim fullRange As Word.Range
 
     On Error GoTo ErrHandler
 

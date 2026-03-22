@@ -143,7 +143,7 @@ End Sub
 
 Sub ListAndReviewAscii12Characters()
 ' Ascii 12 is Form Feed, FF, Page Break
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
     Dim startPos As Long
     Dim response As VbMsgBoxResult
@@ -348,8 +348,8 @@ Sub FindNextVerseMarkerSequence()
 ' with space of "Normal" style before and after.
 ' ~200 secs and there should be no matches.
     Dim doc As Document
-    Dim searchRange As Range
-    Dim chapterRng As Range, nextRng As Range
+    Dim searchRange As Word.Range
+    Dim chapterRng As Word.Range, nextRng As Word.Range
     Dim found As Boolean
     Dim progressCount As Long
     Dim tStart As Single
@@ -389,7 +389,7 @@ Sub FindNextVerseMarkerSequence()
 
         If nextRng.Characters.count = 1 Then
             If nextRng.style = "Verse marker" Then
-                Dim beforeChar As Range, afterChar As Range
+                Dim beforeChar As Word.Range, afterChar As Word.Range
 
                 ' Before chapter
                 If chapterRng.Start > 0 Then

@@ -9,7 +9,7 @@ Public Sub AddBookNameHeaders()
     Dim oSection    As section
     Dim oHeader     As HeaderFooter
     Dim oPara As Word.Paragraph
-    Dim oRange      As Range
+    Dim oRange      As Word.Range
     Dim lStartSect  As Long
     Dim lIdx        As Long
     Dim sBookName   As String
@@ -51,17 +51,17 @@ Public Sub AddBookNameHeaders()
 
         If oPara.style = oDoc.Styles("Heading 1") Then
 
-            ' Book title page � clear the header and leave it empty
+            ' Book title page - clear the header and leave it empty
             oHeader.LinkToPrevious = False
             oHeader.Range.Delete
 
         ElseIf oPara.style = oDoc.Styles("Heading 2") Then
 
-            ' First chapter section � capture book name from Heading 1 text
+            ' First chapter section - capture book name from Heading 1 text
             ' Search backwards from this section for the nearest Heading 1
-            Dim oSearch As Range
+            Dim oSearch As Word.Range
             Set oSearch = oDoc.Range(0, oSection.Range.Start)
-            Dim oFound  As Range
+            Dim oFound  As Word.Range
             Set oFound = Nothing
 
             Dim pIdx    As Long

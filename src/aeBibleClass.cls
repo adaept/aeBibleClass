@@ -1267,7 +1267,7 @@ End Sub
 '   The number of matches found.
 '==============================================================================
 Private Function CountContraction(ByVal contraction As String) As Long
-    Dim s As Range
+    Dim s As Word.Range
     Dim count As Long
 
     count = 0
@@ -1279,7 +1279,7 @@ Private Function CountContraction(ByVal contraction As String) As Long
     CountContraction = count
 End Function
 
-Private Function CountInStory(rng As word.Range, contraction As String) As Long
+Private Function CountInStory(rng As Word.Range, contraction As String) As Long
     Dim count As Long
     count = 0
 
@@ -1385,7 +1385,7 @@ End Function
 '   Exported in diagnostics mode; safe for GitHub.io surfacing
 '=========================================================================
 Private Function SummarizeHeaderFooterAuditToFile()
-    Dim sec As section, hf As HeaderFooter, p As paragraph
+    Dim sec As section, hf As HeaderFooter, p As Word.Paragraph
     Dim paraText As String, paraStyle As String
     Dim asciiVal As Long
     Dim headerOk As Boolean, footerOk As Boolean
@@ -1559,7 +1559,7 @@ End Function
 ' Last Modified : 20250731
 '==============================================================
 Private Function CountAuditStyles_ToFile() As Long
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim para As Word.Paragraph
     Dim paraStyle As String
     Dim paraCount As Long
@@ -1699,7 +1699,7 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
 ' This is fast and will skip over text that is of the style EmphasisBlack or EmphasisRed
 ' When count is 0 there is no more text that needs setting for style EmphasisBlack or EmphasisRed
 
-    Dim rng As Range
+    Dim rng As Word.Range
     Set rng = ActiveDocument.content
     Dim totalCount As Integer
     Dim wordColor As Long
@@ -1752,7 +1752,7 @@ End Function
 
 Private Function CountParagraphMarks_CalibriDarkRed() As Integer
     Dim para As Word.Paragraph
-    Dim paraRange As Range
+    Dim paraRange As Word.Range
     Dim totalCount As Long
     Dim foundFirst As Boolean
     Dim fontColor As WdColor
@@ -1786,7 +1786,7 @@ Private Function CountParagraphMarks_CalibriDarkRed() As Integer
 End Function
 
 Private Function CountDarkRedStyledParagraphMarks()
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim totalMatches As Long
     Dim found As Boolean
 
@@ -1826,7 +1826,7 @@ End Function
 
 Private Function CountBoldFootnotesWordLevel()
     Dim ft As footnote
-    Dim aword As Range
+    Dim aword As Word.Range
     Dim boldCount As Long
     Dim hasBold As Boolean
 
@@ -1854,10 +1854,10 @@ Private Function CountBoldFootnotesWordLevel()
 End Function
 
 Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim totalCount As Long
     Dim foundFirst As Boolean
-    Dim docRange As Range
+    Dim docRange As Word.Range
 
     Set docRange = ActiveDocument.content
     totalCount = 0
@@ -1901,7 +1901,7 @@ End Function
 
 Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
     Dim para As Word.Paragraph
-    Dim paraRange As Range
+    Dim paraRange As Word.Range
     Dim totalCount As Long
     Dim foundFirst As Boolean
     Dim fontColor As WdColor
@@ -1936,7 +1936,7 @@ End Function
 
 Private Function CountParagraphMarks_ArialBlack() As Integer
     Dim para As Word.Paragraph
-    Dim paraRange As Range
+    Dim paraRange As Word.Range
     Dim totalCount As Long
     Dim foundFirst As Boolean
     Dim fontColor As WdColor
@@ -2092,7 +2092,7 @@ End Function
 Private Function CountLinefeed(Optional space As Variant) As Integer
 ' Search in doc
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim findText As String
     Dim count As Integer
     
@@ -2136,7 +2136,7 @@ End Function
 Private Function CountParagraphMarksPerHeaderSection() As Integer
     Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As Word.Range
     Dim paraCount As Integer
     
     ' Set the document
@@ -2169,7 +2169,7 @@ End Function
 
 Private Function CountHeaderStyleUsage() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim styleName As String
     Dim count As Integer
     
@@ -2209,7 +2209,7 @@ End Function
 Private Function CountParagraphsWithoutTabInHeaders() As Integer
     Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As Word.Range
     Dim para As Word.Paragraph
     Dim count As Integer
     Dim totalCount As Integer
@@ -2253,7 +2253,7 @@ End Function
 Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
     Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As Word.Range
     Dim para As Word.Paragraph
     Dim count As Integer
     Dim totalCount As Integer
@@ -2304,7 +2304,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
 '6. Updates the counters based on whether the header is empty or not.
 '7. Displays a message box with the total number of headers, the number of empty headers, and the number of not empty headers.    Dim doc As Document
     Dim sectionIndex As Integer
-    Dim headerRange As Range
+    Dim headerRange As Word.Range
     Dim para As Word.Paragraph
     Dim isEmpty As Boolean
     Dim emptyCount As Integer
@@ -2450,7 +2450,7 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
 ' To maximize speed and accuracy, stay in the Paragraphs collection (for true Word structure),
 ' but avoid anything expensive - no .Range.Text, .Style, etc. unless needed.
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
     Dim paraCount As Long
 
@@ -2481,7 +2481,7 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Integer
 ' Also shows Footnote References and Following Characters (ASCII Values)
     Dim doc As Document
     Dim footnote As footnote
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim spaceCount As Long
     Dim notSpaceCount As Long
     Dim debugInfo As String
@@ -2532,7 +2532,7 @@ End Function
 Private Function CountFootnotesFollowedByDigit() As Integer
     Dim doc As Document
     Dim footnote As footnote
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim digitCount As Long
     Dim debugInfo As String
     Dim asciiValue As Integer
@@ -2675,7 +2675,7 @@ End Function
 
 Private Function CountWhiteParagraphMarks() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Integer
     Dim firstFound As Boolean
     
@@ -2716,7 +2716,7 @@ End Function
 Private Function CountEmptyParasWithNoThemeColor()
 ' The value of wdNotThemeColor is -1. This constant indicates that no theme color is applied.
     Dim para As Word.Paragraph
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim emptyParaCount As Integer
     Dim themeColorUsed As Boolean
     Dim totalParaCount As Integer
@@ -2787,7 +2787,7 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
 End Function
 
 Private Function CountFindNumberDashNumber() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim searchPattern As String
     Dim userInterrupt As VbMsgBoxResult
     Dim count As Integer
@@ -2828,7 +2828,7 @@ Private Function CountFindNumberDashNumber() As Integer
 End Function
 
 Private Function CountNonBreakingSpaces() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
 
     Set rng = ActiveDocument.content
@@ -2857,7 +2857,7 @@ Private Function CountNonBreakingSpaces() As Integer
 End Function
 
 Private Function CountPeriodSpaceLeftParenthesis() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
     
     Set rng = ActiveDocument.content
@@ -2886,7 +2886,7 @@ Private Function CountPeriodSpaceLeftParenthesis() As Integer
 End Function
 
 Private Function CountStyleWithNumberAndSpace() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
     Dim styleName As String
 
@@ -2919,7 +2919,7 @@ Private Function CountStyleWithNumberAndSpace() As Integer
 End Function
 
 Private Function CountStyleWithSpaceAndNumber() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
     Dim styleName As String
     Dim firstFound As Boolean
@@ -2960,7 +2960,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
 End Function
 
 Private Function CountQuadrupleParagraphMarks() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
     
     Set rng = ActiveDocument.content
@@ -2993,7 +2993,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
 End Function
 
 Private Function CountWhiteSpaceAndCarriageReturn() As Integer
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
 
     Set rng = ActiveDocument.content
@@ -3021,7 +3021,7 @@ End Function
 
 Private Function CountDoubleTabs() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
 
     count = 0
@@ -3038,7 +3038,7 @@ End Function
 
 Private Function CountSpaceFollowedByCarriageReturn() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim count As Long
 
     count = 0
@@ -3055,7 +3055,7 @@ End Function
 
 Private Function CountDoubleSpaces() As Integer
     Dim doc As Document
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim doubleSpaceCount As Long
     
     doubleSpaceCount = 0
@@ -3116,7 +3116,7 @@ Private Function CountDoubleSpacesInShapes() As Integer
 End Function
 
 Sub ProcessShape(ByVal shp As shape, ByRef doubleSpaceCount As Long)
-    Dim textRange As Range
+    Dim textRange As Word.Range
     Dim shapeText As String
     
     ' Check if the shape has a text frame

@@ -18,10 +18,10 @@ Public ribbonIsReady As Boolean
 Public BtnNextEnabled As Boolean
 Dim bookmarkIndex As Long
 
-'Private Function GetParaIndexSafe(rng As Range) As Long
+'Private Function GetParaIndexSafe(rng As Word.Range) As Long
 '' Search Isa 23:42 (intentional false verse number) scanned nearly 9,000 paragraphs in under a quarter second,
 '' with full interruptibility and no layout lock
-'    Dim r As Range
+'    Dim r As Word.Range
 '    Set r = ActiveDocument.Range(0, 0)
 '
 '    Dim idx As Long: idx = 1
@@ -116,7 +116,7 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
     Debug.Print "FindBookH1: >> chapNum = " & chapNum, "verseNum = " & verseNum
     savedPos = SaveCursor()
  
-    Dim r As Range
+    Dim r As Word.Range
     Set r = ActiveDocument.Paragraphs(1).Range
 
     Dim paraText As String, bookFound As Boolean
@@ -154,7 +154,7 @@ End Sub
 Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
     Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
     Dim chapTag1 As String, chapTag2 As String
-    Dim rng As Range
+    Dim rng As Word.Range
     Dim paraText As String
     Dim count As Long
 
@@ -266,7 +266,7 @@ End Sub
 
 Private Sub NextButton()
     Dim doc As Document
-    Dim searchRange As Range
+    Dim searchRange As Word.Range
     Dim paraEnd As Long
     Dim found As Boolean
 
