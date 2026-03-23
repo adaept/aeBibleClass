@@ -55,6 +55,8 @@ Sub SetWordHighPriority()
     Dim strComputer As String
     Dim processName As String
 
+    On Error GoTo PROC_ERR
+
     ' Set the computer and process name
     strComputer = "."
     processName = "WINWORD.EXE"
@@ -70,13 +72,19 @@ Sub SetWordHighPriority()
         objProcess.SetPriority 128 ' 128 is the value for high priority
     Next objProcess
 
+PROC_EXIT:
     ' Clean up
     Set objWMIService = Nothing
     Set colProcesses = Nothing
     Set objProcess = Nothing
+    Exit Sub
+
+PROC_ERR:
+    Debug.Print "SetWordHighPriority ERROR " & Err.Number & ": " & Err.Description
+    Resume PROC_EXIT
 End Sub
 
-Sub UpdateCharacterStyle(pageNumber As Integer)
+Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range

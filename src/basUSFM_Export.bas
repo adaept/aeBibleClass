@@ -537,6 +537,7 @@ NextLine:
     Exit Sub
 
 ErrHandler:
+    Set stm = Nothing
     LogValidator "ERROR validating USFM: " & Err.Number & " - " & Err.Description
 End Sub
 

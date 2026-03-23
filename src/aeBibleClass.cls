@@ -1531,6 +1531,14 @@ Private Function SummarizeHeaderFooterAuditToFile()
 
     ts.WriteLine "=== Summary Complete ==="
     ts.Close
+    Set ts = Nothing
+    Set fs = Nothing
+    Set tempDict = Nothing
+    Set dictAsciiCount = Nothing
+    Set dictAsciiDesc = Nothing
+    Set dictAllStyles = Nothing
+    Set dictBadHeaderStyles = Nothing
+    Set dictBadFooterStyles = Nothing
 End Function
 
 '==============================================================
@@ -1599,6 +1607,8 @@ Private Function CountAuditStyles_ToFile() As Long
     Next key
     outFile.WriteLine "Total paragraphs (all styles): " & paraCount
     outFile.Close
+    Set outFile = Nothing
+    Set fso = Nothing
 
     'Debug.Print "Style usage written to:" & vbCrLf & outputPath
     'MsgBox "Style usage written to:" & vbCrLf & outputPath, vbInformation, "Audit Complete"

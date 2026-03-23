@@ -292,7 +292,7 @@ PROC_EXIT:
 
 PROC_ERR:
     If Err = E_FAIL Then     ' Method 'Value' of object ... failed
-        'MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aeWordGitClass"
+        Debug.Print "FolderWithVBAProjectFiles E_FAIL at Erl=" & Erl & " - " & Err.Description
         Resume Next
     Else
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aeWordGitClass"

@@ -126,8 +126,15 @@ Sub GoToParagraphIndex()
     Dim targetIndex As Integer
     
     ' Prompt user to enter the index of the paragraph
-    targetIndex = InputBox("Enter the index of the paragraph you want to go to:")
-    
+    Dim sInput As String
+    sInput = InputBox("Enter the index of the paragraph you want to go to:")
+    If sInput = "" Then Exit Sub
+    If Not IsNumeric(sInput) Then
+        MsgBox "Please enter a number.", vbExclamation, "GoToParagraphIndex"
+        Exit Sub
+    End If
+    targetIndex = CLng(sInput)
+
     ' Validate the entered index
     If targetIndex > 0 And targetIndex <= ActiveDocument.Paragraphs.count Then
         paraIndex = 1

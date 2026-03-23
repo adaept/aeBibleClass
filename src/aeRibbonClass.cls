@@ -251,7 +251,7 @@ Public Sub LogHeadingData()
     Static lastTimestamps(1 To ROWS) As String
     Dim changed As Boolean
 
-    fPath = "C:\adaept\aeBibleClass\rpt\HeadingLog.txt"
+    fPath = ActiveDocument.Path & "\rpt\HeadingLog.txt"
     sessionStamp = Format(Now, "yyyy-mm-dd hh:nn:ss")
 
     For i = 1 To ROWS
