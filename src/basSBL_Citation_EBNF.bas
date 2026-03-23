@@ -1,4 +1,8 @@
 Attribute VB_Name = "basSBL_Citation_EBNF"
+Option Explicit
+Option Compare Text
+Option Private Module
+
 'Copyright (c) 2018-2026 Peter F. Ennis
 'This library is free software; you can redistribute it and/or
 'modify it under the terms of the GNU Lesser General Public
@@ -1481,10 +1485,6 @@ Attribute VB_Name = "basSBL_Citation_EBNF"
 '    Right$("000" & verseCount, 3)
 ' This ensures constant-width indexing for direct addressing.
 
-Option Explicit
-Option Compare Text
-Option Private Module
-
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Type ParsedReference
@@ -2484,7 +2484,7 @@ Public Function GetChapterVerseMap() As Variant
 
     Static cached As Variant
     
-    If isEmpty(cached) Then
+    If IsEmpty(cached) Then
         
         Dim d As Object
         Set d = GetVerseCounts()

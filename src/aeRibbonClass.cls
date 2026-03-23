@@ -255,7 +255,7 @@ Public Sub LogHeadingData()
     sessionStamp = Format(Now, "yyyy-mm-dd hh:nn:ss")
 
     For i = 1 To ROWS
-        If Not isEmpty(headingData(i, 0)) Then
+        If Not IsEmpty(headingData(i, 0)) Then
             If headingData(i, 1) <> lastParaStarts(i) Then
                 lastParaStarts(i) = headingData(i, 1)
                 lastBookNames(i) = headingData(i, 0)
