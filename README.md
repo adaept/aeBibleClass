@@ -35,20 +35,29 @@ Deliverables are `.DOCX` files produced via Word's "Save As" — this separates 
 ### Module Structure
 
 | Module | Role |
-| -------- ------|
+| -------- | ------ |
 | `aeBibleClass.cls` | Main test class — 40+ diagnostic tests (layout, style, fonts, markers) |
 | `aeWordGitClass.cls` | Exports VBA to `\src`, Git integration, changelog management |
+| `aeRibbonClass.cls` | Ribbon event handler class |
 | `basSBL_Citation_EBNF.bas` | 14-stage deterministic Scripture reference parser |
 | `basSBL_TestHarness.bas` | Parser test suite (alias coverage, tokenization, semantic flow) |
 | `basSBL_TestFramework.bas` | Assertion library: `AssertTrue`, `AssertFalse`, `AssertEqual` |
+| `basSBL_VerseCountsGenerator.bas` | Generates canonical verse-count tables |
 | `basWordRepairRunner.bas` | Automated layout repairs (verse markers, styles, wrapping) |
 | `basUSFM_Export.bas` | Exports Bible content to USFM format with audit logging |
 | `basTEST_aeBibleTools.bas` | Document audits: color, font, style, empty paragraphs, sections |
-| `basTEST_aeBibleClass.bas` | Entry point — `RUN_THE_TESTS()` orchestrator |
-| `basBibleRibbon.bas` | Custom Word Ribbon implementation |
+| `basTEST_aeBibleFonts.bas` | Font diagnostic tests |
+| `basTest_aeBibleClass.bas` | Entry point — `RUN_THE_TESTS()` orchestrator |
+| `basAuditDocument.bas` | Document-level audit routines |
+| `basAddHeaderFooter.bas` | Header/footer insertion and repair |
+| `basBibleRibbonSetup.bas` | Custom Word Ribbon implementation |
+| `basImportWordGitFiles.bas` | Imports VBA source files back into the `.DOCM` |
 | `basChangeLog_aeBibleClass.bas` | Issue tracker and changelog (numbered #NNN) |
+| `basChangeLog_aeWordGitClass.bas` | Changelog for Git integration module |
+| `basWordSettingsDiagnostic.bas` | Word application settings diagnostics |
 | `bas_TODO.bas` | Future stages and open feature ideas |
 | `Module1.bas` | Utility functions: font printing, book navigation, character analysis |
+| `ThisDocument.cls` | Document-level event handlers |
 
 Files prefixed with `X` (e.g., `XbasTESTaeBibleClass_SLOW.bas`) are long-running or deferred — not part of the normal test run.
 
@@ -77,15 +86,21 @@ Commit messages follow: `FIXED - #NNN - Description [category]`
 ### Audit Outputs (`\rpt` directory)
 
 - `HeadingLog.txt` — Heading 1 paragraph index map
-- `ExportedBible.usfm` — USFM export
-- `HeaderFooterAudit.txt` — Header/footer analysis
 - `HeadingIndex.txt` — Heading structure
+- `HeaderFooterAudit.txt` — Header/footer analysis
+- `ExportedBible.usfm` — USFM export
+- `RepairLog.txt` — Log of automated repairs
+- `TestReport.txt` — Test run results
+- `Style Usage Distribution.txt` — Style frequency report
+- `USFM_Export_Log.txt` / `USFM_Validator_Log.txt` — USFM pipeline logs
 
 ### Documentation (`\md` directory)
 
 - `Editorial Design and Style Guide.md` — EDSG rules, audit architecture, module manifest
 - `Bias Guard.md` — Copilot suggestion filtering
 - `Compact Strategy for Squashed Audit Commits.md` — Git workflow
+- `Efficient Book-Chapter Navigation.md` — Navigation patterns
+- `FIXED_AuditLog.md` — Resolved issue log
 
 ## Code Standards
 
