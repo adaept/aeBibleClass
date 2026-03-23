@@ -128,6 +128,7 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As In
         TheBibleClassTests = RunBibleClassTests(OneTest)
     Else
         Debug.Print "Unexpected Type Parameter for varDebug !!!"
+        TheBibleClassTests = -1
     End If
     
 PROC_EXIT:

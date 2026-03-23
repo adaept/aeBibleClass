@@ -88,3 +88,27 @@ The overall architecture is sound: the 14-stage parser pipeline is well-structur
 | Medium   | 7     |
 | Low      | 5     |
 | **Total**| **15**|
+
+---
+
+## Resolution Summary
+
+**Completed:** 2026-03-23
+
+| # | File | Status | Notes |
+|---|------|--------|-------|
+| 1 | `aeWordGitClass.cls` | Already fixed | `E_FAIL` constant + logging in place |
+| 2 | `basUSFM_Export.bas` | Already fixed | Cases separated |
+| 3 | `basWordRepairRunner.bas` | Already fixed | `GoTo` replaced with `Exit Do` |
+| 4 | `aeBibleClass.cls` | Fixed | `TheBibleClassTests` returns `-1` on unexpected param |
+| 5 | `basWordRepairRunner.bas` | Fixed | Last-page edge case + `FIXME_LATER` comment |
+| 6 | `basImportWordGitFiles.bas` | Fixed | Error 6068 handler added to both entry points |
+| 7 | `XLongRunningProcessCode.bas` | Fixed | `SaveProgress` guards property existence |
+| 8 | `aeRibbonClass.cls` | Already fixed | Ribbon refactored to class with `Is Nothing` guards |
+| 9 | `basWordSettingsDiagnostic.bas` | Skipped | Valid `Resume Next` for Word API quirks |
+| 10 | `basSBL_TestHarness.bas` | Already fixed | `errNum` correctly saved before `On Error GoTo 0` |
+| 11 | `basWordRepairRunner.bas` | Fixed | Dead `chInfo` lines commented out |
+| 12 | `basUSFM_Export.bas` | Fixed | `FIXME_LATER` comment added |
+| 13 | `basWordRepairRunner.bas` | Skipped | O(n²) concern theoretical at actual append counts |
+| 14 | `Module1.bas` | Fixed | Module header added |
+| 15 | `X*.bas` (×3) | Fixed | X-prefix convention headers added |

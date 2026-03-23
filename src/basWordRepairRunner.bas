@@ -108,8 +108,15 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
     pageStart = pgRange.Start
-    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
-    pageEnd = pgRange.Start - 1
+    ' FIXME_LATER: ActiveDocument.Pages.Count forces full pagination on large documents
+    ' (800+ pages) and may cause noticeable delay if this routine runs per-page.
+    ' Consider caching the page count outside this function if performance is an issue.
+    If pageNum >= ActiveDocument.Pages.Count Then
+        pageEnd = ActiveDocument.Content.End
+    Else
+        Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, Name:=CStr(pageNum + 1))
+        pageEnd = pgRange.Start - 1
+    End If
 
     Dim i As Long
     i = pageStart
@@ -166,8 +173,8 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 Dim verseText As String
                 verseText = GetVerseText(pageEnd, verseEnd)
     
-                Dim chInfo As Word.Range
-                Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
+                'Dim chInfo As Word.Range
+                'Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
                 
                 Dim suffixCh As Word.Range

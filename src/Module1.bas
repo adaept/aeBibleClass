@@ -1,4 +1,26 @@
 Attribute VB_Name = "Module1"
+'==============================================================================
+' Module1 — General Utility Functions
+' ----------------------------------------------------------------------------
+' Miscellaneous diagnostic and utility routines that support document auditing,
+' navigation, and analysis. Not part of the core test pipeline.
+'
+' Contents:
+'   - Character/text analysis    : ViewCodeDetails, PrintFontProperties
+'   - Document navigation        : PrintBibleBook, GoToParagraphIndex,
+'                                  GoToParagraphByCount
+'   - Paragraph counting         : CountTextWrappingBreakParagraphs,
+'                                  CountNextPageSectionBreakParagraphs, etc.
+'   - Empty paragraph analysis   : CountTotallyEmptyParagraphs,
+'                                  CountTypesTrulyEmptyParagraph
+'   - Font and color utilities   : DetectFontColors, ChangeFontColorRGB,
+'                                  AuditFontUsage_ParagraphsAndHeadersFooters
+'   - Footnote diagnostics       : CountAndDiagnoseFootnoteFormatting
+'   - Document structure         : CreateTemplateWithoutText,
+'                                  GetVerticalAlignmentName
+'   - String/parsing utilities   : CenturyRangeToYears, ParseAndValidateString
+'   - File utilities             : AppendToFile
+'==============================================================================
 Option Explicit
 Option Compare Text
 Option Private Module

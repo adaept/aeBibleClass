@@ -1,4 +1,12 @@
 Attribute VB_Name = "XLongRunningProcessCode"
+'==============================================================================
+' XLongRunningProcessCode — Long-Running Process Utilities (DEFERRED)
+' ----------------------------------------------------------------------------
+' X-prefix convention: excluded from the normal test run. Contains routines
+' that take significant time to complete (WMI priority setting, per-character
+' style updates, progress tracking via CustomDocumentProperties).
+' Run manually from the Immediate Window only.
+'==============================================================================
 Option Explicit
 Option Compare Text
 Option Private Module
@@ -37,9 +45,35 @@ Sub ResetProgress()
 End Sub
 
 Sub SaveProgress()
-    ActiveDocument.CustomDocumentProperties("LastProcessedParagraph").value = lastProcessedParagraph
-    ActiveDocument.CustomDocumentProperties("ProgressPercentage").value = progressPercentage
+    On Error GoTo PROC_ERR
+    Dim props As Object
+    Set props = ActiveDocument.CustomDocumentProperties
+    If Not CustomPropertyExists(props, "LastProcessedParagraph") Then
+        props.Add "LastProcessedParagraph", False, 3, lastProcessedParagraph
+    Else
+        props("LastProcessedParagraph").value = lastProcessedParagraph
+    End If
+    If Not CustomPropertyExists(props, "ProgressPercentage") Then
+        props.Add "ProgressPercentage", False, 3, progressPercentage
+    Else
+        props("ProgressPercentage").value = progressPercentage
+    End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    Debug.Print "SaveProgress ERROR " & Err.Number & ": " & Err.Description
+    Resume PROC_EXIT
 End Sub
+
+Private Function CustomPropertyExists(props As Object, ByVal propName As String) As Boolean
+    Dim p As Object
+    On Error Resume Next
+    Set p = props(propName)
+    CustomPropertyExists = (Err.Number = 0)
+    On Error GoTo 0
+End Function
 
 Sub LoadProgress()
     On Error Resume Next

@@ -216,6 +216,8 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
 
         Case "DatAuthRef"
             If Right$(txt, 1) = ":" Then ConvertParagraphToUSFM = "\is2 " & txt
+            ' FIXME_LATER - verify if this is part of USFM spec:
+            ' If DatAuthRef does not end with ":" it is intentionally excluded from USFM output
                 
         Case "Brief"
             ConvertParagraphToUSFM = "\ip " & txt

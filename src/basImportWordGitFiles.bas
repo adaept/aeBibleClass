@@ -73,10 +73,10 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
 End Sub
 
 Private Sub ImportVBAFile(myCodeFile As String)
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     Dim vbaModule As Object
     Dim filePath, fileName, fullPath, vbCompName As String
-    
+
     ' Set the file path of the exported VBA source file
     ' fullPath = "C:\path\to\your\exported\file.bas" ' Change this to the actual path of your .bas or .cls file
     fullPath = myCodeFile
@@ -84,7 +84,7 @@ Private Sub ImportVBAFile(myCodeFile As String)
     fileName = mid(fullPath, InStrRev(fullPath, "\") + 1)
     ' Remove the extension
     vbCompName = Left(fileName, InStrRev(fileName, ".") - 1)
-    
+
     ' Check if the source file exists
     If Dir(fullPath) <> "" Then
         ' Import the VBA source file into the current document
@@ -96,10 +96,22 @@ Private Sub ImportVBAFile(myCodeFile As String)
             Debug.Print vbCompName, "import ABORTED!", "in Sub ImportVBAFile"
         End If
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If Err = 6068 Then
+        MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "ImportVBAFile"
+        Stop
+    Else
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Sub ImportVBAFile", vbCritical, "ImportVBAFile"
+        Resume PROC_EXIT
+    End If
 End Sub
 
 Public Function DeleteAllModulesExceptImporter() As Boolean
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     Dim vbComp As Object
     Dim strProtected As String
     Dim strToDelete As String
@@ -159,6 +171,18 @@ Public Function DeleteAllModulesExceptImporter() As Boolean
     Next strName
 
     DeleteAllModulesExceptImporter = True
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    If Err = 6068 Then
+        MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "DeleteAllModulesExceptImporter"
+        Stop
+    Else
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Function DeleteAllModulesExceptImporter", vbCritical, "DeleteAllModulesExceptImporter"
+        Resume PROC_EXIT
+    End If
 End Function
 
 Private Function ModuleOrClassExists(name As String) As Boolean

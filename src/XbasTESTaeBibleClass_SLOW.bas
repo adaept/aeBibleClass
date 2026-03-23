@@ -1,4 +1,11 @@
 Attribute VB_Name = "XbasTESTaeBibleClass_SLOW"
+'==============================================================================
+' XbasTESTaeBibleClass_SLOW — Slow Diagnostic Tests (DEFERRED)
+' ----------------------------------------------------------------------------
+' X-prefix convention: excluded from the normal test run. Contains tests that
+' iterate all 31,102 Bible verses and are too slow for routine execution.
+' Run manually from the Immediate Window when deep diagnosis is needed.
+'==============================================================================
 Option Explicit
 Option Compare Text
 Option Private Module
