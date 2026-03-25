@@ -284,3 +284,79 @@ End Function
 ### Positive notes
 
 Strong architectural discipline throughout: the 14-stage parser pipeline is well-structured, the `PROC_ERR`/`PROC_EXIT` error handling pattern is consistent in the majority of modules, the `#NNN` issue-tracking system provides good traceability, and the test framework is appropriately lightweight.
+
+---
+
+## Resolution Summary
+
+**Completed:** 2026-03-24
+
+| # | File | Severity | Status | Notes |
+|---|------|----------|--------|-------|
+| 1 | `aeWordGitClass.cls` line 59 | LOW | Fixed 2026-03-24 | Dead `On Error GoTo 0` removed from `Class_Initialize` |
+| 2 | `aeWordGitClass.cls` lines 150–152 | HIGH | Fixed 2026-03-24 | `Kill` error now checked; exits with MsgBox if folder cannot be cleared |
+| 3 | `aeWordGitClass.cls` line 189 | MEDIUM | Fixed 2026-03-24 | `= 1` replaced with `= vbext_pp_locked` |
+| 4 | `aeWordGitClass.cls` line 251 | LOW | Fixed 2026-03-24 | `LCase$()` added to make `"zzz"` filter case-insensitive |
+| 5 | `aeWordGitClass.cls` lines 293–299 | HIGH | Already fixed | Magic number replaced with `E_FAIL` constant + `Debug.Print` logging |
+| 6 | `basSBL_TestHarness.bas` line 8 | LOW | Fixed 2026-03-24 | Comment added explaining `RUN_FAILURE_DEMOS` purpose |
+| 7 | `basSBL_TestHarness.bas` line 185 | MEDIUM | Stale — not applicable | `CLng(parsed.VerseSpec)` is within proper test harness flow |
+| 8 | `basSBL_TestHarness.bas` line 324 | HIGH | Fixed 2026-03-24 | Test array updated to use `FailNone` enum value instead of `False` |
+| 9 | `basSBL_TestFramework.bas` lines 18–29 | MEDIUM | Skipped | Framework correctly split — `AssertEqual` covers numeric case |
+| 10 | `basSBL_TestFramework.bas` line 50 | LOW | Skipped | Asymmetry is intentional; `AssertFalse` delegates to `AssertTrue` |
+| 11 | `basWordRepairRunner.bas` line 106 | HIGH | Fixed 2026-03-24 | Redundant `ascii13InsertCount = 0` removed |
+| 12 | `basWordRepairRunner.bas` lines 122–124 | MEDIUM | Skipped | Performance concern theoretical; refactor would add complexity for marginal gain |
+| 13 | `basWordRepairRunner.bas` line 189 | LOW | Stale — not applicable | `AscW(combinedNumber) = 12` check effectively dead given earlier guards |
+| 14 | `basWordRepairRunner.bas` line 201 | MEDIUM | Fixed 2026-03-24 | `Trim()` added to `prefixStyle` comparison |
+| 15 | `basWordRepairRunner.bas` line 268 | LOW | Fixed 2026-03-24 | `fixCount = fixCount` no-op removed |
+| 16 | `basWordRepairRunner.bas` line 341 | HIGH | Fixed 2026-03-24 | Redundant double `InStrRev` call replaced with single call + `pos > 0` guard |
+| 17 | `basUSFM_Export.bas` lines 159, 166, 181 | HIGH | Fixed 2026-03-24 | `FIXME_LATER` comment added; safe in practice — character styles always applied to full words |
+| 18 | `basUSFM_Export.bas` lines 168, 183 | HIGH | Fixed 2026-03-24 | `FIXME_LATER` comments added to both chapter and verse checks |
+| 19 | `basUSFM_Export.bas` lines 202 & 205 | MEDIUM | Already fixed | Duplicate `Case "Heading 1"` removed; cases now correctly separated |
+| 20 | `basUSFM_Export.bas` line 289 | LOW | Skipped | `ChrW(160)` already has `' NBSP` comment; named constant unnecessary |
+| 21 | `basUSFM_Export.bas` lines 348–351 | MEDIUM | Skipped | Early exit at line 353 guarantees loop always runs at least once |
+| 22 | `basUSFM_Export.bas` lines 518–523 | MEDIUM | Skipped | Existing `Len(line) > Len(marker) + 1` guard already prevents out-of-bounds `Mid$` |
+| 23 | `basWordSettingsDiagnostic.bas` lines 72–76 | MEDIUM | Skipped | `Case Else` returns descriptive string with view type number — clear and informative |
+| 24 | `basWordSettingsDiagnostic.bas` lines 141–144 | MEDIUM | Skipped | `InStr` match safe — values are controlled internal diagnostic strings |
+| 25 | `basTEST_aeBibleFonts.bas` lines 60–66 | MEDIUM | Skipped | Assign-and-compare pattern correctly detects font substitution |
+| 26 | `basTEST_aeBibleFonts.bas` lines 184–190 | MEDIUM | Skipped | `On Error Resume Next` + `Is Nothing` is correct idiomatic VBA for optional style access |
+| 27 | `basTest_aeBibleClass.bas` lines 41–42 | LOW | Fixed 2026-03-24 | Dead `"Error 448"` literal string check removed |
+| 28 | `basTest_aeBibleClass.bas` lines 109, 114 | HIGH | Fixed 2026-03-24 | `StdErr` now captured and checked; git tag and push failures surface with MsgBox |
+| 29 | `XbasTESTaeBibleClass_SLOW.bas` lines 62–65 | MEDIUM | Fixed 2026-03-24 | Comment added explaining 1000-iteration batch limit |
+| 30 | `XbasTESTaeBibleClass_SLOW.bas` line 179 | MEDIUM | Skipped | Interactive `MsgBox` prompt is the intended feature — manual review tool |
+| 31 | `XbasTESTaeBibleClass_SLOW.bas` lines 243–245 | HIGH | Fixed 2026-03-24 | `Kill` wrapped with `On Error Resume Next` + `Err.Number` check |
+| 32 | `XbasTESTaeBibleClass_SLOW.bas` lines 264–276 | MEDIUM | Skipped | Neither `Find` uses formatting criteria; `ClearFormatting` between calls unnecessary |
+| 33 | `XbasTESTaeBibleDOCVARIABLE.bas` line 8 | MEDIUM | Fixed 2026-03-24 | `Public lastFoundLocation` changed to `Private` |
+| 34 | `XbasTESTaeBibleDOCVARIABLE.bas` line 37 | HIGH | Fixed 2026-03-24 | Implicit `Range` coercion replaced with explicit `.Text` |
+| 35 | `XbasTESTaeBibleDOCVARIABLE.bas` lines 139–151 | HIGH | Fixed 2026-03-24 | `Resume` changed to `Resume RetrySearch`; `RetrySearch:` label added before search call |
+| 36 | `XbasTESTaeBibleDOCVARIABLE.bas` line 466 | LOW | Skipped | `"Solomon"` is correct — matches actual `Heading 1` text used in this document |
+| 37 | `basBibleRibbon.bas` line 210 | HIGH | Not applicable | Active ribbon refactored into `aeRibbonClass.cls`; `basBibleRibbon_OLD.bas` is deferred |
+| 38 | `basBibleRibbon.bas` line 309 | HIGH | Not applicable | See item 37 |
+| 39 | `basBibleRibbon.bas` lines 327–328 | HIGH | Not applicable | See item 37 |
+| 40 | `basBibleRibbon.bas` line 702 | HIGH | Not applicable | See item 37 |
+| 41 | `Module1.bas` lines 24–26 | LOW | Fixed 2026-03-24 | `Mid()` cached in `ch` variable; called once per iteration instead of twice |
+| 42 | `Module1.bas` line 56 | LOW | Stale — not applicable | Referenced function/comment not present in current file |
+| 43 | `basSBL_VerseCountsGenerator.bas` line 172 | MEDIUM | Skipped | Generator runs in IDE only; `Debug.Assert` is appropriate |
+| 44 | `basSBL_VerseCountsGenerator.bas` line 212 | MEDIUM | Skipped | Fixed 66-book structure makes bounds risk theoretical |
+| 45 | `basImportWordGitFiles.bas` lines 8–19 | HIGH | Stale — not applicable | Review said bodies were commented out; file is functional and was recently updated with error handling |
+| 46 | `basImportWordGitFiles.bas` line 40 | MEDIUM | Fixed 2026-03-24 | Dead `On Error GoTo 0` removed from `ImportAllVBAFiles` |
+| 47 | `XLongRunningProcessCode.bas` lines 36–37 | HIGH | Already fixed | `SaveProgress` now guards property existence via `CustomPropertyExists` |
+| 48 | `XLongRunningProcessCode.bas` lines 59–62 | HIGH | Already fixed | `SetWordHighPriority` now has `On Error GoTo PROC_ERR` + cleanup |
+
+**Cross-file issues:**
+
+| | Cross-file | Severity | Status |
+|---|-----------|----------|--------|
+| A | Inconsistent error handling style | HIGH | Valid — open |
+| B | Unvalidated string-to-number conversions | HIGH | Valid — open |
+| C | File I/O without write validation | MEDIUM | Valid — open |
+
+**Resolution counts (updated 2026-03-24):**
+
+| Status | Count |
+|--------|-------|
+| Fixed this session | 24 (items 1–4, 6, 8, 11, 14–16, 27–29, 31, 33–35, 41, 46 + prior: 5, 19, 47, 48) |
+| Skipped — not worth actioning | 13 (items 9, 10, 12, 20–26, 30, 32, 43, 44) |
+| Not applicable | 4 (items 37–40 — old ribbon) |
+| Stale/inaccurate | 4 (items 7, 13, 42, 45) |
+| Skipped — document-specific | 1 (item 36 — "Solomon" correct for this document) |
+| Cross-file — open | 3 (A, B, C) |

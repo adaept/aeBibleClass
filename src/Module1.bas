@@ -44,7 +44,9 @@ Sub ViewCodeDetails()
 
     ' Loop through each character in the selected text
     For i = 1 To Len(selectedText)
-        msg = msg & "Character " & i & ": " & mid(selectedText, i, 1) & " (ASCII: " & Asc(mid(selectedText, i, 1)) & ")" & vbCrLf
+        Dim ch As String
+        ch = mid(selectedText, i, 1)
+        msg = msg & "Character " & i & ": " & ch & " (ASCII: " & Asc(ch) & ")" & vbCrLf
     Next i
 
     ' Display the code details in a message box

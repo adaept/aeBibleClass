@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private Sub Document_Open()
-    ActiveWindow.View.Type = wdNormalView
-    ActiveDocument.ActiveWindow.Caption = "Loaded at: " & Now()
+    'ActiveWindow.View.Type = wdNormalView
+    'ActiveDocument.ActiveWindow.Caption = "Loaded at: " & Now()
 End Sub
 

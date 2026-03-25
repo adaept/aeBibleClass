@@ -5,7 +5,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Private Const RUN_FAILURE_DEMOS As Boolean = False
+Private Const RUN_FAILURE_DEMOS As Boolean = False  ' Set True to run intentional-failure test cases that demonstrate error detection
 
 Public Enum ExpectedFailureStage
     FailNone = 0
@@ -251,12 +251,12 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
     
     Dim tests As Variant
     tests = Array( _
-        Array("Jude 0", False), _
-        Array("Jude 999", False), _
-        Array("Jude 1:0", False), _
-        Array("Romans 0:1", False), _
-        Array("Romans 999:1", False), _
-        Array("Genesis 1:999", False) _
+        Array("Jude 0", FailNone), _
+        Array("Jude 999", FailNone), _
+        Array("Jude 1:0", FailNone), _
+        Array("Romans 0:1", FailNone), _
+        Array("Romans 999:1", FailNone), _
+        Array("Genesis 1:999", FailNone) _
     )
     
     Dim i As Long
@@ -679,7 +679,7 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 4 - en dash
     '------------------------------------------
-    r = RangeDetection("John 3:16–18")
+    r = RangeDetection("John 3:16ï¿½18")
     AssertTrue r.IsRange, "en dash range detected"
     AssertEqual r.LeftRaw, "John 3:16", "en dash left"
     AssertEqual r.RightRaw, "18", "en dash right"

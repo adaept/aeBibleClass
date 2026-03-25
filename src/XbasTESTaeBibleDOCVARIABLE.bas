@@ -13,7 +13,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Public lastFoundLocation As Word.Range
+Private lastFoundLocation As Word.Range
 Private Const wdHeaderStory As Integer = 6
 Private Const wdFooterStory As Integer = 7
 Private Const wdFootnoteStory As Integer = 4
@@ -42,7 +42,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
         Set startRange = doc.GoTo(What:=wdGoToPage, Which:=wdGoToAbsolute, count:=bookPage)
     Else
         ' Continue searching from the last found location
-        Debug.Print ">lastFoundLocation = " & Replace(lastFoundLocation, vbCr, "")
+        Debug.Print ">lastFoundLocation = " & Replace(lastFoundLocation.Text, vbCr, "")
         Set startRange = lastFoundLocation
     End If
 
@@ -132,11 +132,12 @@ Sub VerifyBookNameFromDocVariable(docVar As String, theTextOfH1 As String)
     End If
 
     textFoundHere = False
-    
+
+RetrySearch:
     ' Define the text to search for in theTextOfH1
     ' Using "GENESIS" as theTextOfH1 for the Heading 1 test
     textFoundHere = FindNextHeading1OnVisiblePage(bookNum, UCase(theTextOfH1))
-    
+
     ' Evaluate the search result
     If textFoundHere Then
         'MsgBox "Success: The text Heading 1 '" & UCase(theTextOfH1) & "' was found on page " & bookNum & ".", vbInformation, "Verification Complete"
@@ -156,7 +157,7 @@ ErrorHandler:
     If bookNum > 0 Then
         doc.Variables(docVar).value = bookNum
         doc.Fields.Update
-        Resume
+        Resume RetrySearch  ' retry the search with the new page number
     Else
         MsgBox "No valid page number entered. Exiting process.", vbCritical, "Process Canceled"
     End If

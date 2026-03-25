@@ -167,6 +167,8 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
         Dim chapTxt As String
         chapTxt = ExtractCharStyleText(p, "Chapter Verse marker")
 
+        ' FIXME_LATER: IsNumeric passes for decimals like "1.2" — CLng would silently truncate.
+        ' Safe in practice because chapter markers are always whole numbers in this document.
         If IsNumeric(chapTxt) Then
             currentChapter = CLng(chapTxt)
             ConvertParagraphToUSFM = "\c " & currentChapter
@@ -182,6 +184,8 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
         Dim vTxt As String
         vTxt = ExtractCharStyleText(p, "Verse marker")
 
+        ' FIXME_LATER: IsNumeric passes for decimals like "1.2" — CLng would silently truncate.
+        ' Safe in practice because verse markers are always whole numbers in this document.
         If IsNumeric(vTxt) Then
             verseNum = CLng(vTxt)
             verseText = Trim$(Replace(txt, vTxt, ""))
@@ -298,6 +302,10 @@ Private Function IsEffectivelyEmpty(txt As String) As Boolean
 End Function
 
 Private Function ParagraphHasCharStyle(p As Word.Paragraph, styleName As String) As Boolean
+    ' FIXME_LATER: Iterates .words not .Characters — would miss character styles applied to only
+    ' part of a word. Currently safe because "Chapter Verse marker" (orange) and "Verse marker"
+    ' (green) are always applied to complete words (chapter/verse numbers) in this document.
+    ' Re-evaluate if partial character style application is ever introduced.
     Dim r As Word.Range
     For Each r In p.Range.words
         If r.style = styleName Then

@@ -12,6 +12,7 @@ from pathlib import Path
 # Patterns use word boundaries and are case-insensitive.
 # Order matters — more specific patterns should come first.
 NORMALIZATIONS = [
+    (r'(?i)\bisEmpty\b',        'IsEmpty',          'IsEmpty built-in function casing'),
     (r'(?i)\.Range\b',          '.Range',           '.Range property access'),
     (r'(?i)\.Paragraphs\b',     '.Paragraphs',      '.Paragraphs property access'),
     (r'(?i)\.PageSetup\b',      '.PageSetup',       '.PageSetup property access'),

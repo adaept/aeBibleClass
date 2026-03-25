@@ -102,7 +102,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     Dim suffixOtherCount As Long
     Dim ascii13InsertCount As Long
     
-    ascii13InsertCount = 0
     fixCount = 0
     logBuffer = "=== Smart Prefix Repair on Page " & pageNum & " ===" & vbCrLf
 
@@ -111,10 +110,10 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     ' FIXME_LATER: ActiveDocument.Pages.Count forces full pagination on large documents
     ' (800+ pages) and may cause noticeable delay if this routine runs per-page.
     ' Consider caching the page count outside this function if performance is an issue.
-    If pageNum >= ActiveDocument.Pages.Count Then
-        pageEnd = ActiveDocument.Content.End
+    If pageNum >= ActiveDocument.Pages.count Then
+        pageEnd = ActiveDocument.content.End
     Else
-        Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, Name:=CStr(pageNum + 1))
+        Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
         pageEnd = pgRange.Start - 1
     End If
 
@@ -209,7 +208,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 
                     prefixY = prefixCh.Information(wdVerticalPositionRelativeToPage)
 
-                    If (prefixAsc = 32 Or prefixAsc = 160) And prefixStyle = "Normal" Then
+                    If (prefixAsc = 32 Or prefixAsc = 160) And Trim(prefixStyle) = "Normal" Then
                         If Abs(prefixY - digitY) < 25 Then
                             nextWords = ""
                             Set lookAhead = ActiveDocument.Range(verseEnd, verseEnd + 80)
@@ -271,7 +270,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     logBuffer = logBuffer & vbCrLf & "ASCII 13 audit: " & ascii13InsertCount & " marker(s) on page " & pageNum & " inserted Chr(13)" & vbCrLf
     Debug.Print logBuffer
     'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
-    fixCount = fixCount
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
 End Sub
 
@@ -344,12 +342,10 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
     
     txt = Trim(ActiveDocument.Range(verseContentStart, verseContentEnd).Text)
     
-    If InStrRev(txt, "CHAPTER ") > 0 Then
-        Dim pos As Long
-        pos = InStrRev(txt, "CHAPTER ")
-        If pos > 0 Then
-            txt = Trim$(Left$(txt, pos - 1))
-        End If
+    Dim pos As Long
+    pos = InStrRev(txt, "CHAPTER ")
+    If pos > 0 Then
+        txt = Trim$(Left$(txt, pos - 1))
     End If
     
     GetVerseText = txt

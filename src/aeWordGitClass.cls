@@ -57,7 +57,6 @@ Private Sub Class_Initialize()
     ' Ref: http://www.cadalyst.com/cad/autocad/programming-with-class-part-1-5050
     ' Ref: http://www.bigresource.com/Tracker/Track-vb-cyJ1aJEyKj/
     ' Ref: http://stackoverflow.com/questions/1731052/is-there-a-way-to-overload-the-constructor-initialize-procedure-for-a-class-in
-    On Error GoTo 0
     'MsgBox Application.VBE.ActiveVBProject.Name
     'MsgBox Application.Caption
     If Application.VBE.ActiveVBProject.name = "aeWordGit" Then
@@ -150,6 +149,11 @@ Private Function aeDocumentTheWordCode(Optional ByVal varDebug As Variant) As Bo
             ' Add your code here for when the user selects Yes
             On Error Resume Next
             Kill FolderWithVBAProjectFiles & "*.*"
+            If Err.Number <> 0 Then
+                MsgBox "Could not clear folder: " & Err.Description & vbCrLf & _
+                       FolderWithVBAProjectFiles, vbCritical, "aeDocumentTheWordCode"
+                Exit Function
+            End If
             On Error GoTo PROC_ERR
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
@@ -171,7 +175,8 @@ PROC_ERR:
 End Function
 
 Private Sub RunExportCode(ByVal strExportPath As String)
-
+    Const vbext_pp_locked = 1
+    
     Dim strFileName As String
     Dim strDocName As String
     Dim docSource As Object
@@ -187,7 +192,7 @@ Private Sub RunExportCode(ByVal strExportPath As String)
     Dim objComponent As Object
     Set objComponent = ThisDocument.VBProject.VBComponents
 
-    If docSource.VBProject.Protection = 1 Then
+    If docSource.VBProject.Protection = vbext_pp_locked Then
         MsgBox "The VBA in this workbook is protected!" & vbCrLf & _
             "It is not possible to export the code."
         Exit Sub
@@ -213,7 +218,7 @@ Private Sub RunExportCode(ByVal strExportPath As String)
         End Select
 
         ' Export the component to a text file.
-        If Left$(strFileName, 3) <> "zzz" Then
+        If LCase$(Left$(strFileName, 3)) <> "zzz" Then
             objComponent.Export strExportPath & strFileName
         End If
 

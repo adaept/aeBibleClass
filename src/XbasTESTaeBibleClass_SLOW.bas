@@ -67,7 +67,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 
         firstFound = True
         count = count + 1
-        If count >= 1000 Then
+        If count >= 1000 Then  ' Safety limit: process in batches of 1000 to keep runtime manageable
             Exit Do
         End If
     Loop
@@ -249,7 +249,13 @@ Sub CountParagraphsTypes()
     
     ' Delete the old debug file if it exists
     If Dir(debugFile) <> "" Then
+        On Error Resume Next
         Kill debugFile
+        If Err.Number <> 0 Then
+            Debug.Print "Could not delete debug file: " & Err.Description & " - " & debugFile
+            Err.Clear
+        End If
+        On Error GoTo 0
     End If
     
     ' Open the debug file for writing

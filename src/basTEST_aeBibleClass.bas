@@ -37,10 +37,6 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
 
     Dim bln1 As Boolean
 
-    If CStr(varDebug) = "Error 448" Then
-        Debug.Print , "varDebug is Not Used"
-    End If
-
     Debug.Print
     Debug.Print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
     Debug.Print "1. aeBibleClassTest => TheBibleClassTests"
@@ -95,8 +91,9 @@ Sub GitAutoTagRelease()
     Const sMessage As String = "Release version 0.1.1"
     Const sBranch As String = "main" ' adjust if needed
     Const sRepoPath As String = "C:\adaept\aeBibleClass" ' local repo folder
-    Dim shellCmd As String, cmdOutput As String
+    Dim shellCmd As String, cmdOutput As String, errOutput As String
     Dim wsh As Object: Set wsh = CreateObject("WScript.Shell")
+    Dim oExec As Object
 
     If GitTagExists(sRepoPath, sTag) Then
         MsgBox "Tag " & sTag & " already exists. Aborting push.", vbExclamation
@@ -105,12 +102,26 @@ Sub GitAutoTagRelease()
 
     ' Navigate to repo and tag release
     shellCmd = "cmd.exe /c cd /d """ & sRepoPath & """ && git tag -a " & sTag & " -m """ & sMessage & """"
-    cmdOutput = wsh.exec(shellCmd).StdOut.ReadAll
+    Set oExec = wsh.exec(shellCmd)
+    cmdOutput = oExec.StdOut.ReadAll
+    errOutput = oExec.StdErr.ReadAll
+    If Len(errOutput) > 0 Then
+        Debug.Print "[TAG ERROR] " & errOutput
+        MsgBox "Git tag failed:" & vbCrLf & errOutput, vbCritical, "Git Tag"
+        Exit Sub
+    End If
     Debug.Print "[TAG] " & cmdOutput
 
     ' Push the tag to GitHub
     shellCmd = "cmd.exe /c cd /d """ & sRepoPath & """ && git push origin " & sTag
-    cmdOutput = wsh.exec(shellCmd).StdOut.ReadAll
+    Set oExec = wsh.exec(shellCmd)
+    cmdOutput = oExec.StdOut.ReadAll
+    errOutput = oExec.StdErr.ReadAll
+    If Len(errOutput) > 0 Then
+        Debug.Print "[PUSH ERROR] " & errOutput
+        MsgBox "Git push failed:" & vbCrLf & errOutput, vbCritical, "Git Push"
+        Exit Sub
+    End If
     Debug.Print "[PUSH] " & cmdOutput
 
     MsgBox "Git tag " & sTag & " created and pushed successfully.", vbInformation

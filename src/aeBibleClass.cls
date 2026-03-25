@@ -2317,7 +2317,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
     Dim sectionIndex As Integer
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
-    Dim isEmpty As Boolean
+    Dim IsEmpty As Boolean
     Dim emptyCount As Integer
     Dim notEmptyCount As Integer
     Dim totalHeaders As Integer
@@ -2337,17 +2337,17 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Check if the header is empty
-        isEmpty = True
+        IsEmpty = True
         For Each para In headerRange.Paragraphs
             If Len(Trim(para.Range.Text)) > 1 Then ' Check if paragraph contains more than just a paragraph mark
-                isEmpty = False
+                IsEmpty = False
                 Exit For
             End If
         Next para
         
         ' Update counters
         totalHeaders = totalHeaders + 1
-        If isEmpty Then
+        If IsEmpty Then
             emptyCount = emptyCount + 1
         Else
             notEmptyCount = notEmptyCount + 1
