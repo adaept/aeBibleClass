@@ -136,7 +136,7 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
     ' Record the start timer for each test
     startTime = Timer
 
-    If IsMissing(pageNumber) Then
+    If pageNumber = 0 Then
         Debug.Print "Page number required"
         Exit Sub
     End If

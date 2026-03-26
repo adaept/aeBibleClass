@@ -240,14 +240,11 @@ Private Function FolderWithVBAProjectFiles() As String
 
     On Error GoTo PROC_ERR
     
-    Dim WshShell As Object
     Dim fso As Object
-    Dim SpecialPath, fullPath, directoryName As String
+    Dim fullPath As String
+    Dim directoryName As String
 
-    Set WshShell = CreateObject("WScript.Shell")
     Set fso = CreateObject("Scripting.FileSystemObject")
-
-    SpecialPath = WshShell.SpecialFolders("MyDocuments")
 
     'Debug.Print "A. FolderWithVBAProjectFiles", "aeWordGitSourceFolder = " & aeWordGitSourceFolder
 

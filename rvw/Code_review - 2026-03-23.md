@@ -72,3 +72,29 @@
 - `PROC_ERR` / `PROC_EXIT` error-handler pattern consistently applied
 - Early Binding used for `Word.Document`, `Word.Range`, `Word.Paragraph` throughout
 - Code is well-commented with clear intent
+
+---
+
+## Resolution Summary — 2026-03-26
+
+All 16 items reviewed one at a time. 2 fixed, 12 skipped as already fixed or review incorrect, 2 skipped by design decision.
+
+### Fixed (2)
+
+| # | Item | File |
+|---|------|------|
+| 5 | Replaced dead `IsMissing(pageNumber)` with `pageNumber = 0` — typed `Optional` parameters can never be missing; guard now actually fires | `XLongRunningProcessCode.bas` |
+| 9 | Removed dead `WshShell` and `SpecialPath` variables left over from the Critical 3 `IsNull` branch removal; fixed `fullPath` declaration from implicit `Variant` to explicit `String` | `aeWordGitClass.cls` |
+
+### Skipped — Already Fixed in Prior Sessions (10)
+
+Items 1, 2, 3, 4, 6, 7, 10, 12, 13, 16 — all verified present and correct in current source.
+
+### Skipped — Review Incorrect (4)
+
+| # | Reason |
+|---|--------|
+| 8 | `Resume Next` for `E_FAIL` is intentional — known soft COM error; `Debug.Print` logging was already added in prior session |
+| 11 | `On Error Resume Next` blocks in `basAuditDocument.bas` are the standard VBA style/font access pattern — silently swallowing COM errors on incompatible style types is correct, not a logging gap |
+| 14 | `Space()` is not deprecated in VBA — fully supported in Word 365; `String(n, " ")` is an alternative with no functional benefit |
+| 15 | `GoTo EmptyPara` is the standard VBA `continue` idiom; refactor to `If/End If` is cosmetic only |
