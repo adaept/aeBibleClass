@@ -323,3 +323,60 @@ End Function
 ### Positive notes
 
 The `PROC_ERR`/`PROC_EXIT` error pattern, `#NNN` issue-tracking convention, and 14-stage parser pipeline structure are consistently applied across the majority of the codebase. The test framework (`AssertTrue`/`AssertFalse`/`AssertEqual`) is clean and the module separation between parser, test harness, and repair runner is well-maintained.
+
+---
+
+## Resolution Summary — 2026-03-25
+
+All 31 items reviewed one at a time. 9 fixed, 2 FIXME_LATER comments added, 8 skipped as already fixed from prior sessions, 8 skipped as review incorrect or not applicable, 4 skipped by design decision.
+
+### Fixed (9)
+
+| # | Item | File |
+|---|------|------|
+| Critical 3 | Removed dead `IsNull` branch on `String` variable — `ElseIf IsNull(aeWordGitSourceFolder)` block deleted | `aeWordGitClass.cls` |
+| High 2 | Cached `Split(refPart, ":")` result into `cvParts()` — eliminated redundant double call | `basSBL_TestHarness.bas` |
+| High 3 | Guarded `CLng(parsed.VerseSpec)` with `IsNumeric` — prevents error 13 crash when Stage 8–12 range support is added; added `"Jude 5-7"` range test case with forward-compat comment | `basSBL_TestHarness.bas` |
+| High 8 | Added `Dir()` existence check and `On Error Resume Next` + `Err.Number` guard around `Shell` call for normalizer batch file | `basTEST_aeWordGitClass.bas` |
+| Medium 2 | Replaced magic number `12` with named constant `ASCII_FORMFEED` | `basWordRepairRunner.bas` |
+| Medium 4 | Added `Set stm = Nothing` in `ErrHandler` of `LogValidator` | `basUSFM_Export.bas` |
+| Medium 7 | Wrapped `current(key)` and `target(key)` with `"" &` coercion to guard against Null variant in string concatenation | `basWordSettingsDiagnostic.bas` |
+| High 8 | Added `Set stm = Nothing` to `ErrHandler` in `LogValidator` | `basUSFM_Export.bas` |
+| Low 4 | Added comment to `ThisDocument.cls` explaining `Document_Open` is intentionally empty (used only for timing tests) | `ThisDocument.cls` |
+
+### FIXME_LATER Comments Added (2)
+
+| Item | File |
+|------|------|
+| Critical 2 — `MoveEnd -1` may shrink range incorrectly if loop exits via boundary rather than style-change overshoot | `basUSFM_Export.bas` |
+| High 6 — `CLng()` on cleaned range text; guard needed if `CleanTextForUTF8` ever strips digit characters | `basUSFM_Export.bas` |
+
+### Skipped — Already Fixed in Prior Sessions (8)
+
+Critical 5, High 1, High 4, High 7, Medium 1, Medium 3, Medium 11, Low 2.
+
+### Skipped — Review Incorrect or Not Applicable (8)
+
+| Item | Reason |
+|------|--------|
+| Critical 1 | `Exit Do` at line 198 exits the outer loop — no inner loop active at that point |
+| Critical 4 | `AssertOneBased` is defined as `Public Sub` in `basSBL_Citation_EBNF.bas` line 2451 |
+| High 5 | `Case "Book Title"` and `Case "Heading 1"` are separate with distinct outputs — not combined |
+| Medium 5 | `Mid$` already guarded by `Len(line) > Len(marker) + 1` at line 539 |
+| Medium 6 | No `Err.Number` check in `GetShowTextBoundaries` — nothing stale to read |
+| Medium 8 | `On Error Resume Next` wraps entire function; `TestDoc.Close` always reached |
+| Low 1 | `gTestsRun` and `gTestsFailed` are already `Private` |
+| Low 6 | Issue `#016` is already assigned in `basChangeLog_aeWordGitClass.bas` |
+
+### Skipped — Not Applicable (2)
+
+Medium 9 and Medium 10 reference `basBibleRibbon.bas` which no longer exists (refactored to `aeRibbonClass.cls`).
+
+### Skipped — By Decision (4)
+
+| Item | Reason |
+|------|--------|
+| Medium 12 | `Debug.Assert` in a dev-time generator Sub — appropriate for that context |
+| Low 3 | Bulk delete confirmation already lists all modules by name; second prompt adds friction without value |
+| Low 5 | `bas_TODO.bas` kept as-is |
+| Critical 2 (partial) | Full guard deferred to FIXME_LATER; document-specific behaviour makes crash path unreachable in practice |

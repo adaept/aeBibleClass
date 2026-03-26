@@ -35,7 +35,16 @@ Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
     ' Run VBA casing normalizer after export
     Dim strBat As String
     strBat = ThisDocument.Path & "\normalize_vba.bat"
-    shell "cmd.exe /c """ & strBat & """", vbNormalFocus
+    If Dir(strBat) = "" Then
+        MsgBox "Normalizer batch file not found:" & vbCrLf & strBat, vbExclamation, "EXPORT_THE_CODE"
+    Else
+        On Error Resume Next
+        Shell "cmd.exe /c """ & strBat & """", vbNormalFocus
+        If Err.Number <> 0 Then
+            MsgBox "Shell failed: " & Err.Description & vbCrLf & strBat, vbCritical, "EXPORT_THE_CODE"
+        End If
+        On Error GoTo 0
+    End If
 
 End Function
 

@@ -44,8 +44,10 @@ Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
     refPart = parts(1)
 
     If InStr(refPart, ":") > 0 Then
-        p.Chapter = CLng(Split(refPart, ":")(0))
-        p.VerseSpec = Split(refPart, ":")(1)
+        Dim cvParts() As String
+        cvParts = Split(refPart, ":")
+        p.Chapter = CLng(cvParts(0))
+        p.VerseSpec = cvParts(1)
     Else
         ' Single-chapter book case (e.g. Jude 5)
         p.Chapter = 0
@@ -110,7 +112,10 @@ Public Sub Test_SemanticFlow_WithParserStub()
         Array("Jude 1:5", 65, True, True), _
         Array("Obadiah 3", 31, True, True), _
         Array("Romans 8:1", 45, True, False), _
-        Array("Genesis 1:1", 1, True, False) _
+        Array("Genesis 1:1", 1, True, False), _
+        Array("Jude 5-7", 65, False, False) _  ' Range spec: ValidateSBLReference currently rejects non-numeric VerseSpec (ExpectValid=False).
+                                                ' When Stage 8-12 range support is added, ExpectValid becomes True.
+                                                ' Without the IsNumeric guard in the rewrite phase, that transition crashes with error 13.
     )
 
     Dim i As Long
@@ -178,22 +183,32 @@ Public Sub Test_SemanticFlow_WithParserStub()
         ' Rewrite Phase (single-chapter books)
         '---------------------------------------
         If IsValid Then
-            Dim rewritten As String
-            rewritten = RewriteSingleChapterRef( _
-                            BookID, _
-                            parsed.Chapter, _
-                            CLng(parsed.VerseSpec))
-            Debug.Print "  Output: "; rewritten
-            If tests(i)(3) Then
-                If Left$(rewritten, 2) <> "1:" Then
-                    Debug.Print "  FAIL: expected single-chapter rewrite"
-                    testFailed = True
+            ' FIXME_LATER: When Stage 8-12 range extensions update ValidateSBLReference to
+            ' accept range VerseSpec values (e.g. "5-7"), IsValid will be True for range inputs.
+            ' CLng(parsed.VerseSpec) raises error 13 (Type Mismatch) on a range string.
+            ' The IsNumeric guard below prevents the crash; the Else branch handles the range path.
+            ' See test case "Jude 5-7" below — currently ExpectValid=False (range not yet supported),
+            ' but that expectation will change when Stage 8-12 is complete.
+            If IsNumeric(parsed.VerseSpec) Then
+                Dim rewritten As String
+                rewritten = RewriteSingleChapterRef( _
+                                BookID, _
+                                parsed.Chapter, _
+                                CLng(parsed.VerseSpec))
+                Debug.Print "  Output: "; rewritten
+                If tests(i)(3) Then
+                    If Left$(rewritten, 2) <> "1:" Then
+                        Debug.Print "  FAIL: expected single-chapter rewrite"
+                        testFailed = True
+                    End If
+                Else
+                    If rewritten <> parsed.Chapter & ":" & parsed.VerseSpec Then
+                        Debug.Print "  FAIL: unexpected rewrite"
+                        testFailed = True
+                    End If
                 End If
             Else
-                If rewritten <> parsed.Chapter & ":" & parsed.VerseSpec Then
-                    Debug.Print "  FAIL: unexpected rewrite"
-                    testFailed = True
-                End If
+                Debug.Print "  Skipped: RewriteSingleChapterRef (VerseSpec is non-numeric: >" & parsed.VerseSpec & "<)"
             End If
         End If
         If testFailed Then

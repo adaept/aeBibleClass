@@ -262,21 +262,6 @@ Private Function FolderWithVBAProjectFiles() As String
     ElseIf aeWordGitSourceFolder = "default" And directoryName <> "aeWordGit" Then
         FolderWithVBAProjectFiles = aeWordGitType.UserSourceFolder
         'Debug.Print "C. FolderWithVBAProjectFiles", "FolderWithVBAProjectFiles = " & FolderWithVBAProjectFiles
-    ElseIf IsNull(aeWordGitSourceFolder) Then
-        If Right$(SpecialPath, 1) <> "\" Then SpecialPath = SpecialPath & "\"
-
-        If fso.FolderExists(SpecialPath & "VBAProjectFiles") = False Then
-            On Error Resume Next
-            MkDir SpecialPath & "VBAProjectFiles"
-            On Error GoTo 0
-        End If
-
-        If fso.FolderExists(SpecialPath & "VBAProjectFiles") = True Then
-            FolderWithVBAProjectFiles = SpecialPath & "VBAProjectFiles"
-        Else
-            FolderWithVBAProjectFiles = "Error"
-        End If
-
     Else
         FolderWithVBAProjectFiles = aeWordGitSourceFolder
     End If

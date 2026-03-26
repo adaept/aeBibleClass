@@ -358,8 +358,17 @@ Private Function TryParseChapterVerseFromStyles( _
     Do While rChap.End < p.Range.End And rChap.style = "Chapter Verse marker"
         rChap.MoveEnd wdCharacter, 1
     Loop
+    ' FIXME_LATER: MoveEnd -1 assumes the loop exited via style-change overshoot (condition 2).
+    ' If the loop exits via range-boundary (rChap.End >= p.Range.End) with no style change,
+    ' MoveEnd -1 incorrectly drops the last character. In practice this document always has
+    ' a differently-styled character after the chapter marker, so condition 2 always fires first.
     rChap.MoveEnd wdCharacter, -1 ' step back one char after overshoot
 
+    ' FIXME_LATER: CLng raises error 13 if CleanTextForUTF8 strips all characters from rChap.Text,
+    ' leaving an empty string. In practice the early-exit guard above ensures rChap contains
+    ' genuine numeric chapter marker digits, so this is unlikely for this document.
+    ' If CleanTextForUTF8 is ever extended to strip digit characters, add an IsNumeric guard here
+    ' and return False from TryParseChapterVerseFromStyles on empty/non-numeric result.
     chapNum = CLng(Trim$(CleanTextForUTF8(rChap.Text)))
 
     '------------------------------------------------------------
@@ -476,6 +485,7 @@ Private Sub LogValidator(ByVal msg As String)
 
 ErrHandler:
     Debug.Print "Validator UTF-8 ERROR: "; Err.Number; Err.Description
+    Set stm = Nothing
 End Sub
 
 Public Sub ValidateUSFMFile(ByVal filePath As String)

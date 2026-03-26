@@ -107,7 +107,7 @@ Function CompareSettings(current As Object, target As Object) As Object
         If current.Exists(key) Then
             'Debug.Print ">" & key
             If current(key) <> target(key) Then
-                discrepancies.Add key, "Current: " & current(key) & " | Expected: " & target(key)
+                discrepancies.Add key, "Current: " & ("" & current(key)) & " | Expected: " & ("" & target(key))
             End If
         Else
             discrepancies.Add key, "Missing in current settings"
