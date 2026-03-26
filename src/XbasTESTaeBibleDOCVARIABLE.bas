@@ -104,6 +104,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
 End Function
 
 Sub VerifyBookNameFromDocVariable(docVar As String, theTextOfH1 As String)
+    On Error GoTo ErrorHandler
     Dim doc As Document
     Dim bookNum As Integer
     Dim textFoundHere As Boolean
@@ -427,87 +428,87 @@ Sub DeleteDocVariable()
 End Sub
 
 Sub TestPageNumbers()
-    GoTo NewTestament
-    
+    GoTo NewTestament   ' Added manually — checking New Testament only; Old Testament block retained for future use
+
     ' Old Testament
     VerifyBookNameFromDocVariable "Gen", "Genesis"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Exod", "Exodus"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Lev", "Leviticus"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Num", "Numbers"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Deut", "Deuteronomy"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Josh", "Joshua"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Judg", "Judges"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Ruth", "Ruth"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Sam", "1 Samuel"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Sam", "2 Samuel"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Kgs", "1 Kings"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Kgs", "2 Kings"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Chr", "1 Chronicles"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Chr", "2 Chronicles"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Ezra", "Ezra"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Neh", "Nehemiah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Esth", "Esther"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Job", "Job"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Ps", "Psalms"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Prov", "Proverbs"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Eccl", "Ecclesiastes"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Song", "Solomon"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Isa", "Isaiah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Jer", "Jeremiah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Lam", "Lamentations"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Ezek", "Ezekiel"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Dan", "Daniel"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Hos", "Hoseah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Joel", "Joel"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Amos", "Amos"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Obad", "Obadiah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Jonah", "Jonah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Mic", "Micah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Nah", "Nahum"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Hab", "Habakkuk"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Zeph", "Zephaniah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Hag", "Haggai"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Zech", "Zechariah"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Mal", "Malachi"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     Debug.Print "Done Old Testament !!!"
 
 NewTestament:
@@ -516,60 +517,60 @@ NewTestament:
     rng.Select
 
     VerifyBookNameFromDocVariable "Matt", "Matthew"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Mark", "Mark"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Luke", "Luke"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "John", "John"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Acts", "Acts"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Rom", "Romans"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Cor", "1 Corinthians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Cor", "2 Corinthians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Gal", "Galations"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Eph", "Ephesians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Phil", "Philippians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Col", "Colossians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Thess", "1 Thessalonians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Thess", "2 Thessalonians"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Tim", "1 Timothy"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Tim", "2 Timothy"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Tit", "Titus"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Phlm", "Philemon"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Heb", "Hebrews"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Jas", "James"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1Pet", "1 Peter"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2Pet", "2 Peter"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "1John", "1 John"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "2John", "2 John"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "3John", "3 John"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Jude", "Jude"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Rev", "Revelation"
-    Debug.Print ">>" & Replace(lastFoundLocation, vbCr, "")
+    Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     Debug.Print "Done New Testament !!!"
     Debug.Print "Done!!!"
 End Sub

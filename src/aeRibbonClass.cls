@@ -119,6 +119,7 @@ End Sub
 ' -- GoTo Book (H1) ------------------------------------------------------------
 
 Private Sub GoToH1()
+    On Error GoTo Cleanup
     Dim pattern  As String
     Dim para As Word.Paragraph
     Dim paraText As String
@@ -149,6 +150,11 @@ Private Sub GoToH1()
     If Not matchFound Then
         MsgBox "Book not found! No Heading 1 matches: '" & pattern & "'", vbExclamation, "Bible"
     End If
+    Exit Sub
+
+Cleanup:
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Class aeRibbonClass", vbExclamation, "Error"
 End Sub
 
 ' -- Next Book (H1) ------------------------------------------------------------

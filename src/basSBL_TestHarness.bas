@@ -107,15 +107,16 @@ Public Sub Test_SemanticFlow_WithParserStub()
     '  - Alias / chapter / verse are now derived via ParseReferenceStub
     '  - This simulates a real parser without implementing DSP/tokenizer
     Dim tests
+    ' "Jude 5-7": Range spec — ValidateSBLReference currently rejects non-numeric VerseSpec (ExpectValid=False).
+    ' When Stage 8-12 range support is added, ExpectValid becomes True.
+    ' Without the IsNumeric guard in the rewrite phase, that transition crashes with error 13.
     tests = Array( _
         Array("Jude 5", 65, True, True), _
         Array("Jude 1:5", 65, True, True), _
         Array("Obadiah 3", 31, True, True), _
         Array("Romans 8:1", 45, True, False), _
         Array("Genesis 1:1", 1, True, False), _
-        Array("Jude 5-7", 65, False, False) _  ' Range spec: ValidateSBLReference currently rejects non-numeric VerseSpec (ExpectValid=False).
-                                                ' When Stage 8-12 range support is added, ExpectValid becomes True.
-                                                ' Without the IsNumeric guard in the rewrite phase, that transition crashes with error 13.
+        Array("Jude 5-7", 65, False, False) _
     )
 
     Dim i As Long

@@ -1020,8 +1020,7 @@ PROC_ERR:
         Debug.Print "oneBasedExpectedArray(1) = " & oneBasedExpectedArray
         Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, ResultArray(1), oneBasedExpectedArray(1), "CountDoubleSpaces"
     End If
-    Stop
-    End
+    Resume PROC_EXIT
 End Function
 
 Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) As Boolean

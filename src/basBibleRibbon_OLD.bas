@@ -1,4 +1,7 @@
 Attribute VB_Name = "basBibleRibbon_OLD"
+' DEPRECATED: This module is superseded by aeRibbonClass.cls.
+' Do not add new code here. Public declarations below shadow aeRibbonClass names
+' and are retained only to avoid breaking any legacy callers. Use aeRibbonClass instead.
 Option Explicit
 Option Compare Text
 Option Private Module

@@ -101,6 +101,8 @@ Public Sub AddBookNameHeaders()
     Set oSection = Nothing
     Set oSections = Nothing
     Set oDoc = Nothing
+    Set oSearch = Nothing
+    Set oFound = Nothing
 End Sub
 
 Public Sub FixTheFooters()
@@ -154,7 +156,6 @@ Private Sub AddConsecutiveFootersFromCursor()
 
         Set oSection = oSections(lIdx)
 
-        Set oFooter = oSection.Headers(WdHeaderFooterIndex.wdHeaderFooterPrimary) ' placeholder
         Set oFooter = oSection.Footers(WdHeaderFooterIndex.wdHeaderFooterPrimary)
 
         ' Break the link to the previous section's footer so we can set our own

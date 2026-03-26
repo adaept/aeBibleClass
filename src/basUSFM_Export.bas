@@ -40,23 +40,34 @@ Attribute VB_Name = "basUSFM_Export"
 
 Option Explicit
 
+Private currentChapter As Long
+Private bookTitleLevel As Long   ' 0 = none, 1 = next is mt2, 2 = next is mt3
+
 ' -----------------------------
 ' CONFIGURATION
 ' -----------------------------
-Private Const LOG_FILE As String = "C:\adaept\aeBibleClass\rpt\USFM_Export_Log.txt"
-Private Const OUTPUT_FILE As String = "C:\adaept\aeBibleClass\rpt\ExportedBible.usfm"
-Private Const VALIDATOR_LOG As String = "C:\adaept\aeBibleClass\rpt\USFM_Validator_Log.txt"
-Private currentChapter As Long
-Private bookTitleLevel As Long   ' 0 = none, 1 = next is mt2, 2 = next is mt3
+Private LOG_FILE As String
+Private OUTPUT_FILE As String
+Private VALIDATOR_LOG As String
+
+Private Sub InitPaths()
+    Dim rptPath As String
+    rptPath = ActiveDocument.Path & "\rpt\"
+    LOG_FILE = rptPath & "USFM_Export_Log.txt"
+    OUTPUT_FILE = rptPath & "ExportedBible.usfm"
+    VALIDATOR_LOG = rptPath & "USFM_Validator_Log.txt"
+End Sub
 
 ' ============================================================================================
 ' PUBLIC ENTRY POINT
 ' ============================================================================================
 Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
+    On Error GoTo PROC_ERR
+    InitPaths
     Dim t0 As Double: t0 = Timer
     currentChapter = 0
     bookTitleLevel = 0
-    
+
     LogEvent "=== USFM EXPORT START ==="
     LogEvent "Page range: " & startPage & " to " & endPage
 
@@ -65,7 +76,7 @@ Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
 
     If rng Is Nothing Then
         LogEvent "ERROR: Page range returned no content."
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     Dim usfm As String
@@ -73,11 +84,19 @@ Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
 
     WriteTextFile OUTPUT_FILE, usfm
     ValidateUSFMFile OUTPUT_FILE
-    
+
     LogEvent "USFM written to: " & OUTPUT_FILE
 
     LogEvent "Execution time: " & Format(Timer - t0, "0.00") & " seconds"
     LogEvent "=== USFM EXPORT END ==="
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    LogEvent "ERROR: Erl=" & Erl & " Err=" & Err.Number & " (" & Err.Description & ") in ExportUSFM_PageRange"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ExportUSFM_PageRange of module basUSFM_Export", vbExclamation, "Export Error"
+    Resume PROC_EXIT
 End Sub
 
 ' ============================================================================================

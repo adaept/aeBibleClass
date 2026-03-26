@@ -286,6 +286,11 @@ Sub CountParagraphsTypes()
                 columnBreakParagraphs = columnBreakParagraphs + 1
                 columnBreakIndices = columnBreakIndices & paraIndex & ", "
             End If
+            .Text = "^p"
+            If .Execute Then
+                pageBreakParagraphs = pageBreakParagraphs + 1
+                pageBreakIndices = pageBreakIndices & paraIndex & ", "
+            End If
         End With
         
         ' Check for different types of section breaks
