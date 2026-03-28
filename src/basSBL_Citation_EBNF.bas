@@ -1281,6 +1281,84 @@ Option Private Module
 '=====================================================
 
 '=====================================================
+' Stage 15 - Canonical Validation
+'=====================================================
+' Purpose:
+'     Ensure the final canonical reference set contains only valid,
+'     in-range scripture references after all expansion, ordering,
+'     and compression operations have completed.
+' Position in Pipeline:
+'     Stage 15 executes AFTER Stage 14 Canonical Compression.
+'     At this point, the reference set is:
+'         - Fully expanded
+'         - Deduplicated
+'         - Ordered
+'         - Canonically compressed
+'     Stage 15 performs the final integrity check before output.
+' Responsibilities:
+'     1. Remove Invalid Chapters
+'         Eliminate references to chapters that do not exist
+'         in the specified book.
+'         Example:
+'             Gen 51      -> removed
+'             Matt 29     -> removed
+'     2. Remove Invalid Verses
+'         Eliminate verse numbers exceeding chapter limits.
+'         Example:
+'             Gen 1:999   -> removed
+'             Jude 1:50   -> removed
+'     3. Clamp Range Boundaries
+'         If a range extends past valid scripture bounds,
+'         trim the range to the last valid verse.
+'         Example:
+'             Gen 1:1-999
+'         becomes:
+'             Gen 1:1-31
+'     4. Remove Empty Ranges
+'         If validation removes all verses in a range,
+'         discard the range entirely.
+'         Example:
+'             Matt 29:1-10 -> removed
+'     5. Preserve Canonical Order
+'         Validation must NOT reorder references.
+'         The Stage 12 ordering must remain intact.
+'     6. Preserve Compression
+'         Stage 15 must not expand ranges.
+'         It may only:
+'             - Trim
+'             - Remove
+'             - Keep
+' Input:
+'     Packed canonical verse map (compressed, ordered)
+' Output:
+'     Fully validated packed canonical verse map
+' Guarantees After Stage 15:
+'     - All books valid
+'     - All chapters valid
+'     - All verses valid
+'     - No empty ranges
+'     - Canonically ordered
+'     - Canonically compressed
+'     - Engine-safe output
+' Design Rules:
+'     - No allocation of new structures
+'     - Operate directly on packed verse map
+'     - O(n) scan across canonical set
+'     - Validation tables must be constant lookup
+' Required Data:
+'     ChaptersPerBook(book)
+'     VersesPerChapter(book, chapter)
+' Example Input:
+'     Gen 1:1-999, 51:1-10, Exod 1:1-5
+' After Stage 15:
+'     Gen 1:1-31, Exod 1:1-5
+' Summary:
+'     Stage 15 is the final correctness gate.
+'     After this stage, the parser output is guaranteed
+'     to represent only valid scripture references.
+'=====================================================
+
+'=====================================================
 ' Deterministic Structural Parser (DSP)
 ' Aligned to 7-Stage Parser Architecture
 '=====================================================
