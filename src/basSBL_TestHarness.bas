@@ -717,7 +717,7 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 4 - en dash
     '------------------------------------------
-    r = RangeDetection("John 3:16�18")
+    r = RangeDetection("John 3:16" & ChrW(8211) & "18")   ' en dash character (U+2013)
     AssertTrue r.IsRange, "en dash range detected"
     AssertEqual r.LeftRaw, "John 3:16", "en dash left"
     AssertEqual r.RightRaw, "18", "en dash right"
