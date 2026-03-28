@@ -33,8 +33,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const aeWordGitVERSION As String = "0.0.8"
-Private Const aeWordGitVERSION_DATE As String = "March 15, 2026"
+Private Const aeWordGitVERSION As String = "0.0.9"
+Private Const aeWordGitVERSION_DATE As String = "March 28, 2026"
 
 Private Type mySetupType
     SourceFolder As String
