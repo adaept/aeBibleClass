@@ -63,23 +63,41 @@ PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
-    Debug.Print "SaveProgress ERROR " & Err.Number & ": " & Err.Description
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveProgress of Module XLongRunningProcessCode"
     Resume PROC_EXIT
 End Sub
 
 Private Function CustomPropertyExists(props As Object, ByVal propName As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim p As Object
     On Error Resume Next
     Set p = props(propName)
     CustomPropertyExists = (Err.Number = 0)
     On Error GoTo 0
+    On Error GoTo PROC_ERR
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CustomPropertyExists of Module XLongRunningProcessCode"
+    Resume PROC_EXIT
 End Function
 
 Sub LoadProgress()
+    On Error GoTo PROC_ERR
     On Error Resume Next
     lastProcessedParagraph = ActiveDocument.CustomDocumentProperties("LastProcessedParagraph").value
     progressPercentage = ActiveDocument.CustomDocumentProperties("ProgressPercentage").value
     On Error GoTo 0
+    On Error GoTo PROC_ERR
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadProgress of Module XLongRunningProcessCode"
+    Resume PROC_EXIT
 End Sub
 
 Sub SetWordHighPriority()
@@ -114,11 +132,12 @@ PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
-    Debug.Print "SetWordHighPriority ERROR " & Err.Number & ": " & Err.Description
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SetWordHighPriority of Module XLongRunningProcessCode"
     Resume PROC_EXIT
 End Sub
 
 Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range
@@ -138,7 +157,7 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
 
     If pageNumber = 0 Then
         Debug.Print "Page number required"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
     
     ' Set the document and style name
@@ -171,7 +190,7 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
                         minutes = Int(runTime / 60)
                         seconds = Int(runTime Mod 60)
                         Debug.Print "Routine Runtime: " & Format(minutes, "00") & ":" & Format(seconds, "00") & " minutes and seconds"
-                        Exit Sub
+                        GoTo PROC_EXIT
                     End If
                     DoEvents ' Keep the application responsive
                 End If
@@ -179,9 +198,17 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
         End If
     Next para
     Debug.Print "Done!"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateCharacterStyle of Module XLongRunningProcessCode"
+    Resume PROC_EXIT
 End Sub
 
 Sub LongProcessSkeletonWithConsoleProgress()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Set doc = ActiveDocument
         
@@ -211,7 +238,7 @@ Sub LongProcessSkeletonWithConsoleProgress()
                 lastProcessedParagraph = i
                 progressPercentage = (lastProcessedParagraph / totalParagraphs) * 100
                 SaveProgress
-                Exit Sub
+                GoTo PROC_EXIT
             End If
             
             
@@ -237,6 +264,13 @@ Sub LongProcessSkeletonWithConsoleProgress()
     Next startIndex
             
     Debug.Print "Style update complete!"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LongProcessSkeletonWithConsoleProgress of Module XLongRunningProcessCode"
+    Resume PROC_EXIT
 End Sub
 ' This updated script saves the progress to custom document properties, ensuring that progress is remembered even after a computer restart
 ' When you start or resume the update, it loads the progress from these properties.

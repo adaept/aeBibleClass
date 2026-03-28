@@ -32,6 +32,7 @@ Private Function ExpectedChapterCounts() As Variant
 End Function
 
 Private Function ToOneBasedLongArray(src As Variant, context As String) As Long()
+    On Error GoTo PROC_ERR
     Dim count As Long
     count = UBound(src) - LBound(src) + 1
     
@@ -48,11 +49,17 @@ Private Function ToOneBasedLongArray(src As Variant, context As String) As Long(
     Next i
     
     AssertOneBased temp, context
-    
+
     ToOneBasedLongArray = temp
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ToOneBasedLongArray of Module basSBL_VerseCountsGenerator"
+    Resume PROC_EXIT
 End Function
 
 Public Function GetVerseCounts() As Object
+    On Error GoTo PROC_ERR
 ' This table matches standard Protestant versification only.
 ' It Not does not match:
 '    - LXX Psalms numbering
@@ -133,9 +140,15 @@ Public Function GetVerseCounts() As Object
     d.Add 66, ToOneBasedLongArray(Array(20, 29, 22, 11, 14, 17, 17, 13, 21, 11, 19, 17, 18, 20, 8, 21, 18, 24, 21, 15, 27, 21), "Revelation")
 
     Set GetVerseCounts = d
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetVerseCounts of Module basSBL_VerseCountsGenerator"
+    Resume PROC_EXIT
 End Function
 
 Public Sub GeneratePackedVerseStrings_FromDictionary()
+    On Error GoTo PROC_ERR
 ' For each book:
 '    - Each chapter's verse count is encoded as a 3-digit fixed-width number
 '    - Output length = Chapters x 3
@@ -175,10 +188,15 @@ Public Sub GeneratePackedVerseStrings_FromDictionary()
             Debug.Print "Book " & BookID & " NOT FOUND"
         End If
     Next BookID
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GeneratePackedVerseStrings_FromDictionary of Module basSBL_VerseCountsGenerator"
+    Resume PROC_EXIT
 End Sub
 
 Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) As Boolean
-
+    On Error GoTo PROC_ERR
     Dim packedArr As Variant
     Dim expectedCounts As Variant
     
@@ -248,7 +266,11 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
     End If
     
     VerifyPackedVerseMap = IsValid
-
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VerifyPackedVerseMap of Module basSBL_VerseCountsGenerator"
+    Resume PROC_EXIT
 End Function
 
 

@@ -15,6 +15,7 @@ Private SectionsNewPageBreaks As Integer
 Dim HeadingBuffer As Object ' Late-bound Dictionary
 
 Sub ListCustomXMLParts()
+    On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim i As Integer
     i = 1
@@ -22,16 +23,32 @@ Sub ListCustomXMLParts()
         Debug.Print "Custom XML Part " & i & ": " & xmlPart.XML
         i = i + 1
     Next xmlPart
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListCustomXMLParts of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub ListCustomXMLSchemas()
+    On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     For Each xmlPart In ActiveDocument.CustomXMLParts
         Debug.Print xmlPart.NamespaceURI
     Next xmlPart
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListCustomXMLSchemas of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub AddCustomUIXML()
+    On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim xmlContent As String
     ' Define XML structure
@@ -43,20 +60,28 @@ Sub AddCustomUIXML()
     Set xmlPart = ActiveDocument.CustomXMLParts.Add(xmlContent)
 
     MsgBox "CustomUI XML added successfully!"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddCustomUIXML of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub RemoveDuplicateCustomXMLParts()
+    On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim xmlParts As CustomXMLParts
     Dim essentialParts As Collection
     Dim duplicateParts As Collection
     Dim partName As String
     Dim i As Integer, j As Integer
-    
+
     Set xmlParts = ActiveDocument.CustomXMLParts
     Set essentialParts = New Collection
     Set duplicateParts = New Collection
-    
+
     ' Identify essential and duplicate parts
     For i = 1 To xmlParts.count
         partName = xmlParts(i).NamespaceURI
@@ -66,42 +91,58 @@ Sub RemoveDuplicateCustomXMLParts()
             duplicateParts.Add xmlParts(i), partName
         End If
     Next i
-    
+
     ' Remove duplicate parts
     For j = 1 To duplicateParts.count
         duplicateParts(j).Delete
     Next j
-    
+
     ' Print names of essential and duplicate parts
     Debug.Print "Essential CustomXML Parts:"
     For i = 1 To essentialParts.count
         Debug.Print essentialParts(i).NamespaceURI
     Next i
-    
+
     Debug.Print "Duplicate CustomXML Parts:"
     For j = 1 To duplicateParts.count
         Debug.Print duplicateParts(j).NamespaceURI
     Next j
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RemoveDuplicateCustomXMLParts of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Function IsPartInCollection(col As Collection, partName As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim i As Integer
     IsPartInCollection = False
     For i = 1 To col.count
         If col(i).NamespaceURI = partName Then
             IsPartInCollection = True
-            Exit Function
+            GoTo PROC_EXIT
         End If
     Next i
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure IsPartInCollection of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Function
 
 Sub DeleteCustomUIXML()
+    On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim xmlParts As CustomXMLParts
     Dim i As Integer
-    
+
     Set xmlParts = ActiveDocument.CustomXMLParts
-    
+
     ' Loop through all CustomXMLParts to find and delete the customUI parts
     For i = xmlParts.count To 1 Step -1
         Set xmlPart = xmlParts(i)
@@ -110,8 +151,15 @@ Sub DeleteCustomUIXML()
             xmlPart.Delete
         End If
     Next i
-    
+
     MsgBox "CustomUI XML parts deleted successfully!"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DeleteCustomUIXML of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 ' ========================================================================================
@@ -181,25 +229,26 @@ End Function
 '               - Expansion possible to handle suffix-aware grouping or paragraph-level aggregation
 ' =================================================================================================
 Sub ListAndCountFontColors()
+    On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Dim colorDict As Object
     Dim colorKey As Variant
     Dim colorCount As Long
     Dim r As Long, g As Long, b As Long
-    
+
     ' Create a dictionary to store color counts
     Set colorDict = CreateObject("Scripting.Dictionary")
-    
+
     ' Loop through each word in the document
     For Each rng In ActiveDocument.words
         ' Get the RGB values of the font color
         r = (rng.Font.color And &HFF)
         g = (rng.Font.color \ &H100 And &HFF)
         b = (rng.Font.color \ &H10000 And &HFF)
-        
+
         ' Create a key for the color in hex format
         colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)
-        
+
         ' Count the color occurrences
         If colorDict.Exists(colorKey) Then
             colorDict(colorKey) = colorDict(colorKey) + 1
@@ -207,35 +256,51 @@ Sub ListAndCountFontColors()
             colorDict.Add colorKey, 1
         End If
     Next rng
-    
+
     ' Print the results to the console
     For Each colorKey In colorDict.Keys
         colorCount = colorDict(colorKey)
         r = CLng("&H" & Left(colorKey, 2))
         g = CLng("&H" & mid(colorKey, 3, 2))
         b = CLng("&H" & Right(colorKey, 2))
-        
+
         Debug.Print "Color: RGB(" & r & ", " & g & ", " & b & ") - Hex: #" & colorKey & " - Count: " & colorCount & " - " & GetColorNameFromHex("#" & colorKey)
     Next colorKey
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListAndCountFontColors of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub GetVerticalPositionOfCursorParagraph()
 ' Get the position of the para where the cursor is
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim rng As Word.Range
     Dim paraPos As Single
-    
+
     Set doc = ActiveDocument
     Set rng = Selection.Paragraphs(1).Range
-    
+
     ' Get the vertical position of the paragraph relative to the page
     paraPos = rng.Information(wdVerticalPositionRelativeToPage)
-    
+
     ' Display the vertical position
     MsgBox "Vertical Position of the paragraph with the cursor: " & paraPos & " points"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetVerticalPositionOfCursorParagraph of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindFirstSectionWithDifferentFirstPage()
+    On Error GoTo PROC_ERR
     Dim sec As section
     Dim i As Long
 
@@ -248,14 +313,22 @@ Sub FindFirstSectionWithDifferentFirstPage()
             sec.Headers(wdHeaderFooterFirstPage).Range.Select
 
             MsgBox "Found in Section " & i & ": 'Different First Page' is enabled.", vbInformation
-            Exit Sub
+            GoTo PROC_EXIT
         End If
     Next i
 
     MsgBox "No sections with 'Different First Page' found.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindFirstSectionWithDifferentFirstPage of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindFirstPageWithEmptyHeader()
+    On Error GoTo PROC_ERR
     Dim sec As section
     Dim hdr As HeaderFooter
     Dim hdrText As String
@@ -278,13 +351,20 @@ Sub FindFirstPageWithEmptyHeader()
                 If hdrText = "" Then
                     hdr.Range.Select
                     MsgBox "Found empty header in Section " & i & " (" & HeaderTypeName(hdrType) & ").", vbInformation
-                    Exit Sub
+                    GoTo PROC_EXIT
                 End If
             End If
         Next hdrType
     Next i
 
     MsgBox "No empty headers found.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindFirstPageWithEmptyHeader of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Function HeaderTypeName(hdrType As Variant) As String
@@ -297,13 +377,14 @@ Function HeaderTypeName(hdrType As Variant) As String
 End Function
 
 Sub OptimizedListFontsInDocument()
+    On Error GoTo PROC_ERR
     Dim fontList As New Collection
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range
     Dim fontName As String
     Dim i As Integer
-    
+
     Set doc = ActiveDocument
 
     ' Loop through each paragraph in the document
@@ -314,8 +395,9 @@ Sub OptimizedListFontsInDocument()
         ' Add unique fonts to the collection
         fontList.Add fontName, fontName
         On Error GoTo 0
+        On Error GoTo PROC_ERR
     Next para
-    
+
     ' Display the fonts in a message box
     Dim fontOutput As String
     fontOutput = "Fonts used in the document:" & vbCrLf
@@ -324,9 +406,17 @@ Sub OptimizedListFontsInDocument()
     Next i
     'MsgBox fontOutput, vbInformation, "Fonts in Document"
     Debug.Print fontOutput
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OptimizedListFontsInDocument of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindGentiumFromParagraph()
+    On Error GoTo PROC_ERR
     Dim startParaNum As Long
     Dim para As Word.Paragraph
     Dim rng As Word.Range
@@ -336,12 +426,12 @@ Sub FindGentiumFromParagraph()
 
     ' Ask user where to start
     startParaNum = val(InputBox("Enter paragraph number to start from:", "Start From Paragraph", 1))
-    If startParaNum < 1 Then Exit Sub
+    If startParaNum < 1 Then GoTo PROC_EXIT
 
     totalParas = ActiveDocument.Paragraphs.count
     If startParaNum > totalParas Then
         MsgBox "There are only " & totalParas & " paragraphs in the document.", vbExclamation
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     p = 0
@@ -358,7 +448,7 @@ Sub FindGentiumFromParagraph()
                 charRange.Select
                 MsgBox "Found Gentium font at paragraph " & p, vbInformation
                 Application.StatusBar = False
-                Exit Sub
+                GoTo PROC_EXIT
             End If
         Next i
 
@@ -370,17 +460,34 @@ Sub FindGentiumFromParagraph()
 NextPara:
     Next para
 
-    Application.StatusBar = False
     MsgBox "Gentium font not found starting from paragraph " & startParaNum & ".", vbExclamation
+
+PROC_EXIT:
+    Application.StatusBar = False
+    Exit Sub
+
+PROC_ERR:
+    Application.StatusBar = False
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindGentiumFromParagraph of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub GoToParagraph()
+    On Error GoTo PROC_ERR
     Dim paraNum As Integer
     paraNum = (InputBox("Enter paragraph number:", "Goto Paragraph Number", 1))
     ActiveDocument.Paragraphs(paraNum).Range.Select
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToParagraph of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub ListNonMainFonts_ByParagraph()
+    On Error GoTo PROC_ERR
     Dim fontDict As Object
     Set fontDict = CreateObject("Scripting.Dictionary")
 
@@ -416,9 +523,6 @@ Sub ListNonMainFonts_ByParagraph()
         End If
     Next storyRange
 
-    Application.StatusBar = False
-    Application.ScreenUpdating = True
-
     If fontDict.count = 0 Then
         MsgBox "No fonts found outside main text.", vbInformation
     Else
@@ -430,10 +534,29 @@ Sub ListNonMainFonts_ByParagraph()
         'MsgBox output, vbInformation, "Non-Main Fonts"
         Debug.Print Output
     End If
+
+PROC_EXIT:
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    Exit Sub
+
+PROC_ERR:
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListNonMainFonts_ByParagraph of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub TestComp()
+    On Error GoTo PROC_ERR
     CompareDocuments "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.docx", "C:\Users\peter\OneDrive\Documents\Peter-USE REFINED English Bible CONTENTS - Copy (49).docx"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TestComp of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub CompareDocuments(original As String, modified As String)
@@ -450,41 +573,49 @@ Sub CompareDocuments(original As String, modified As String)
 ' - CompareWhitespace (True) - Tracks differences in spaces, paragraph breaks, and other whitespace variations.
 ' - CompareTables (True) - Compares changes within tables, including cell modifications.
 ' These options allow for a detailed comparison of documents, ensuring that even subtle changes are detected.
-'
+    On Error GoTo PROC_ERR
     Dim docOriginal As Document
     Dim docModified As Document
     Dim docComparison As Document
     Dim lastSlashPos As Integer
     Dim filePath As String
-    
+
     lastSlashPos = InStrRev(original, "\") ' Find last occurrence of "\"
     If lastSlashPos > 0 Then
         filePath = Left(original, lastSlashPos) ' Get everything before the last "\"
     Else
         filePath = "" ' No path found, return empty string
     End If
-    
+
     ' Open the original and modified documents
     Set docOriginal = Documents.Open(original)
     Set docModified = Documents.Open(modified)
-    
+
     ' Create a comparison document
     Set docComparison = Application.CompareDocuments(docOriginal, docModified, wdCompareDestinationNew, _
         wdGranularityWordLevel, False, True, False, False)
-    
+
     ' Save comparison result
     docComparison.SaveAs filePath & "\Comparison.docx"
-    
+
     MsgBox "Comparison complete! See the document for tracked changes."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompareDocuments of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub CountSearchHits()
+    On Error GoTo PROC_ERR
     Dim searchTerm As String
     Dim count As Long
     Dim rng As Word.Range
 
     searchTerm = InputBox("Enter the text to search for:")
-    If Len(searchTerm) = 0 Then Exit Sub
+    If Len(searchTerm) = 0 Then GoTo PROC_EXIT
 
     count = 0
     Set rng = ActiveDocument.content
@@ -504,9 +635,17 @@ Sub CountSearchHits()
     End With
 
     MsgBox "Found " & count & " instance(s) of '" & searchTerm & "'.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountSearchHits of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub PrintHeading1sByLogicalPage()
+    On Error GoTo PROC_ERR
     Dim i As Long
     Dim maxPage As Long
     Dim pageRange As Word.Range
@@ -537,9 +676,17 @@ Sub PrintHeading1sByLogicalPage()
             ' Optional: Debug.Print "Logical Page " & i & ": No Heading 1"
         End If
     Next i
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintHeading1sByLogicalPage of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub FixAndDiagnoseFootnoteReferences()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim fn As footnote
     Dim fnRef As Word.Range
@@ -599,9 +746,17 @@ Sub FixAndDiagnoseFootnoteReferences()
     Else
         MsgBox "All footnote reference formatting is correct."
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixAndDiagnoseFootnoteReferences of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As Boolean
+    On Error GoTo PROC_ERR
     mismatch = ""
     IsCorrectFootnoteFormat = True
     With rng.Font
@@ -630,9 +785,17 @@ Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As
             IsCorrectFootnoteFormat = False
         End If
     End With
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure IsCorrectFootnoteFormat of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Function
 
 Sub FixFootnoteNumberStyleInText()
+    On Error GoTo PROC_ERR
     Dim fn As footnote
     Dim paraRange As Word.Range
     Dim firstRun As Word.Range
@@ -646,9 +809,17 @@ Sub FixFootnoteNumberStyleInText()
     Next fn
 
     MsgBox "Footnote Reference style reapplied to footnote numbers in footnote text.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixFootnoteNumberStyleInText of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub ReportPageLayoutMetrics(pageNum As Long)
+    On Error GoTo PROC_ERR
     Dim pgRange As Word.Range
     Dim sectionSetup As PageSetup
     Dim numCols As Integer, isEven As Boolean
@@ -684,15 +855,23 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
 
     For i = 0 To numCols - 1
         colStart = sectionLeft + i * (columnWidth + Spacing)
-        logBuffer = logBuffer & "? Column " & (i + 1) & " starts at: " & Format(colStart, "0.0") & vbCrLf
+        logBuffer = logBuffer & "> Column " & (i + 1) & " starts at: " & Format(colStart, "0.0") & vbCrLf
     Next i
 
     logBuffer = logBuffer & "=== End of Layout Report ==="
     Debug.Print logBuffer
     MsgBox "Layout metrics for page " & pageNum & " printed to Immediate window.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportPageLayoutMetrics of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub ReportDigitAtCursor_Diagnostics()
+    On Error GoTo PROC_ERR
     Dim selRange As Word.Range, ch As Word.Range, prefix As Word.Range
     Dim txt As String, style As String
     Dim posX As Single, posY As Single
@@ -728,6 +907,13 @@ Sub ReportDigitAtCursor_Diagnostics()
     Else
         Debug.Print "--- No prefix (at start of document) ---"
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportDigitAtCursor_Diagnostics of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Function RGBToString(rgbVal As Long) As String
@@ -735,11 +921,12 @@ Function RGBToString(rgbVal As Long) As String
 End Function
 
 Sub ReportDigitAtCursor_Diagnostics_Expanded()
+    On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Set rng = Selection.Range
     If rng.Characters.count = 0 Then
         MsgBox "No character selected.", vbExclamation
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     Dim ch As Word.Range
@@ -756,6 +943,7 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
     On Error Resume Next
     baseStyle = ch.style.baseStyle
     On Error GoTo 0
+    On Error GoTo PROC_ERR
 
     Debug.Print "=== Character at Cursor ==="
     Debug.Print "Value: '" & txt & "' | ASCII: " & ascCode
@@ -785,9 +973,17 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
     End If
 
     MsgBox "Expanded character diagnostics logged.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportDigitAtCursor_Diagnostics_Expanded of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub LogExpandedMarkerContext()
+    On Error GoTo PROC_ERR
     Dim sel As Word.Range: Set sel = Selection.Range
     Dim i As Long, chCount As Long
     Dim contextText As String, contextAscii As String, contextHex As String
@@ -811,9 +1007,17 @@ Sub LogExpandedMarkerContext()
 
     Debug.Print "Style: " & sel.style & " | Font: " & sel.Font.name
     Debug.Print "=== End of Diagnostic ===" & vbCrLf
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LogExpandedMarkerContext of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindInvisibleFormFeeds_InPages(startPage As Long)
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph, rng As Word.Range
     Dim pgNum As Long
     Dim i As Long, pgTarget As Long
@@ -835,9 +1039,17 @@ Sub FindInvisibleFormFeeds_InPages(startPage As Long)
     Next para
 
     Debug.Print "=== End of Scan ===" & vbCrLf
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindInvisibleFormFeeds_InPages of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
+    On Error GoTo PROC_ERR
     Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim logBuffer As String
@@ -930,9 +1142,17 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     logBuffer = logBuffer & "=== Audit complete ==="
     Debug.Print logBuffer
     MsgBox "Visual prefix check with context logged for page " & pageNum & ".", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
+    On Error GoTo PROC_ERR
     Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim txt As String, styleName As String
@@ -1001,9 +1221,17 @@ ContinueLoop:
     Debug.Print logBuffer
     MsgBox "Condensed diagnostics logged.", vbInformation
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportAllMarkers_CondensedDiagnostics of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
+    On Error GoTo PROC_ERR
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
@@ -1120,6 +1348,13 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
     'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
     fixCount = fixCount
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub SmartPrefixRepairOnPage_WithDiagnostics(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
@@ -1146,6 +1381,7 @@ Sub SmartyOne()
 End Sub
 
 Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim rng As Word.Range
     Dim markerText As String
@@ -1220,9 +1456,17 @@ NextPara:
     Debug.Print "Chr(12) marker count on Page " & pgNum & ": " & ascii12Count
     Debug.Print "Missing Chr(160) count on Page " & pgNum & ": " & missing160Count
     Debug.Print "=== End of Repairs for Page " & pgNum & " ==="
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SmartPrefixRepairOnPage of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
+    On Error GoTo PROC_ERR
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
     Dim filePath As String: filePath = ThisDocument.Path & "\" & ForecastFile
@@ -1240,7 +1484,7 @@ Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     Else
         Set ts = fs.OpenTextFile(filePath, 8, True)
     End If
-    
+
     Dim i As Long, t0 As Single, t1 As Single
     Dim timeStamps(1 To 10) As Single
     Dim spaceRepairs(1 To 10) As Long, breakRepairs(1 To 10) As Long
@@ -1283,9 +1527,18 @@ Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     Debug.Print resultRow
     ts.WriteLine resultRow
     ts.Close
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunRepairWrappedVerseMarkers_Across10Pages_From of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
+    On Error GoTo PROC_ERR
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
     Dim filePath As String: filePath = ThisDocument.Path & "\" & ForecastFile
@@ -1313,9 +1566,18 @@ Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
     Debug.Print resultRow
     ts.WriteLine resultRow
     ts.Close
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunRepairWrappedVerseMarkers_ForOnePage of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub UnlinkHeadingNumbering()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
 
     For Each para In ActiveDocument.Paragraphs
@@ -1326,9 +1588,17 @@ Sub UnlinkHeadingNumbering()
     Next
 
     MsgBox "Numbering removed from Heading 1 and Heading 2 paragraphs.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UnlinkHeadingNumbering of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub StartRepairTimingSession(StartPageNum As Long)
+    On Error GoTo PROC_ERR
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
 
@@ -1372,6 +1642,14 @@ Sub StartRepairTimingSession(StartPageNum As Long)
     Debug.Print resultRow
     ts.WriteLine resultRow
     ts.Close
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StartRepairTimingSession of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Sub DummyRepairPageTimerOnly(pgNum As Long)
@@ -1382,8 +1660,9 @@ Sub DummyRepairPageTimerOnly(pgNum As Long)
 End Sub
 
 Sub ReapplyTheFootersToAllFooters()
+    On Error GoTo PROC_ERR
     Dim sec As Word.section
-    
+
     Dim hf As HeaderFooter
     Dim p As Word.Paragraph
     Dim prevStyle As String
@@ -1413,6 +1692,13 @@ Sub ReapplyTheFootersToAllFooters()
     Next sec
 
     Debug.Print "=== Style Reapplication Complete ==="
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReapplyTheFootersToAllFooters of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 ' =============================================================================
@@ -1437,15 +1723,16 @@ End Sub
 '   - Integrate session-aware tracking or timing metrics
 ' =============================================================================
 Sub GetHeadingDefinitionsWithDescriptions()
+    On Error GoTo PROC_ERR
     Dim headingStyles As Variant
     headingStyles = Array("Heading 1", "Heading 2")
-    
+
     Dim s As style
     Dim info As String
     Dim styleName As Variant
     Dim alignValue As Integer
     Dim alignText As String
-    
+
     Dim clr As Long
     Dim r As Long, g As Long, b As Long
     Dim hexColor As String
@@ -1453,7 +1740,7 @@ Sub GetHeadingDefinitionsWithDescriptions()
     For Each styleName In headingStyles
         Set s = ActiveDocument.Styles(styleName)
         alignValue = s.ParagraphFormat.Alignment
-        
+
         Select Case alignValue
             Case wdAlignParagraphLeft: alignText = "Left"
             Case wdAlignParagraphCenter: alignText = "Center"
@@ -1463,7 +1750,7 @@ Sub GetHeadingDefinitionsWithDescriptions()
             Case wdAlignParagraphThaiJustify: alignText = "Thai Distributed"
             Case Else: alignText = "Unknown"
         End Select
-        
+
         clr = s.Font.color
         r = clr Mod 256
         g = (clr \ 256) Mod 256
@@ -1483,9 +1770,16 @@ Sub GetHeadingDefinitionsWithDescriptions()
         info = info & "  Outline Level: " & s.ParagraphFormat.OutlineLevel & vbCrLf
         info = info & "  Keep With Next: " & s.ParagraphFormat.KeepWithNext & vbCrLf
         info = info & String(40, "-") & vbCrLf
-        
+
         Debug.Print info
     Next styleName
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetHeadingDefinitionsWithDescriptions of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 '==============================================
@@ -1518,6 +1812,7 @@ End Sub
 '   - Suitable for changelog integrity checks in version-controlled macros
 '==============================================
 Sub ValidateTaskInChangelogModule()
+    On Error GoTo PROC_ERR
     Dim permalink As String
     permalink = InputBox("Paste permalink (with #Lnn):")
 
@@ -1532,10 +1827,15 @@ Sub ValidateTaskInChangelogModule()
 
     Dim i As Long, lineText As String
     For i = 1 To lineNum
-        If ts.AtEndOfStream Then Debug.Print "[FAIL] Line number too large": ts.Close: Exit Sub
+        If ts.AtEndOfStream Then
+            Debug.Print "[FAIL] Line number too large"
+            ts.Close
+            GoTo PROC_EXIT
+        End If
         lineText = ts.ReadLine
     Next
     ts.Close
+    Set ts = Nothing
 
     ' Extract #NNN tag from line
     Dim tag As String, w
@@ -1543,7 +1843,10 @@ Sub ValidateTaskInChangelogModule()
         If Left(w, 1) = "#" And IsNumeric(mid(w, 2)) Then tag = w: Exit For
     Next
 
-    If tag = "" Then Debug.Print "[FAIL] No #NNN task tag found at line " & lineNum: Exit Sub
+    If tag = "" Then
+        Debug.Print "[FAIL] No #NNN task tag found at line " & lineNum
+        GoTo PROC_EXIT
+    End If
 
     ' Re-open and scan for matching task inside ========= block
     Set ts = fs.OpenTextFile(changelogModulePath, 1)
@@ -1559,12 +1862,21 @@ Sub ValidateTaskInChangelogModule()
         End If
     Loop
     ts.Close
+    Set ts = Nothing
 
     If found Then
         Debug.Print "[OK] " & tag & " found within module block"
     Else
         Debug.Print "[FAIL] " & tag & " not found in any block"
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ValidateTaskInChangelogModule of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 Private Function GetPaperSizeName(paperSizeValue As WdPaperSize) As String
@@ -1608,6 +1920,7 @@ End Function
 ' Last Modified : 20250731
 '==============================================================
 Sub PrintCompactSectionLayoutInfo()
+    On Error GoTo PROC_ERR
     Dim sec As section
     Dim i As Long
     Dim nOneCol As Long, nTwoCol As Long
@@ -1615,26 +1928,28 @@ Sub PrintCompactSectionLayoutInfo()
     Dim nContinuousBreak As Long, nNewPageBreak As Long
     Dim outputFile As String
     Dim outputText As String
+    Dim fileNum As Integer
     outputFile = "C:\adaept\aeBibleClass\rpt\DocumentLayoutReport.txt"  ' Change to desired path
 
     ' Open the text file to write
-    Open outputFile For Output As #1
+    fileNum = FreeFile
+    Open outputFile For Output As #fileNum
     
     ' Write Header to the file
     outputText = "=== Layout Report ===" & vbCrLf
     outputText = outputText & "Doc: " & ActiveDocument.name & vbCrLf
     outputText = outputText & "Total Sections: " & ActiveDocument.Sections.count & vbCrLf & vbCrLf
-    Print #1, outputText
-    
+    Print #fileNum, outputText
+
     For i = 1 To ActiveDocument.Sections.count
         Set sec = ActiveDocument.Sections(i)
-        
+
         outputText = "Section " & i & ": " & vbCrLf
         outputText = outputText & "Page: " & IIf(sec.PageSetup.Orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
                     "Size: " & GetPaperSizeName(sec.PageSetup.paperSize) & ", " & _
                     "Columns: " & sec.PageSetup.TextColumns.count & vbCrLf
         If sec.PageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
-        
+
         ' Margins
         outputText = outputText & "Margins (inches): " & _
                     "Top: " & PointsToInches(sec.PageSetup.TopMargin) & ", " & _
@@ -1642,24 +1957,24 @@ Sub PrintCompactSectionLayoutInfo()
                     "Left: " & PointsToInches(sec.PageSetup.leftMargin) & ", " & _
                     "Right: " & PointsToInches(sec.PageSetup.rightMargin) & ", " & _
                     "Gutter: " & PointsToInches(sec.PageSetup.gutter) & vbCrLf
-        
+
         ' Line Numbering
         If sec.PageSetup.LineNumbering.Active Then
             outputText = outputText & "Line Numbers: " & sec.PageSetup.LineNumbering.StartingNumber & ", " & _
                         "Increment: " & sec.PageSetup.LineNumbering.CountBy & vbCrLf
         End If
-        
+
         ' Header/Footer settings
         outputText = outputText & "Header Distance: " & PointsToInches(sec.PageSetup.HeaderDistance) & ", " & _
                     "Footer Distance: " & PointsToInches(sec.PageSetup.FooterDistance) & vbCrLf
-        
+
         ' Borders (if any)
         outputText = outputText & "Borders: " & _
                     "Top: " & GetBorderStyle(sec.Borders(wdBorderTop)) & ", " & _
                     "Bottom: " & GetBorderStyle(sec.Borders(wdBorderBottom)) & ", " & _
                     "Left: " & GetBorderStyle(sec.Borders(wdBorderLeft)) & ", " & _
                     "Right: " & GetBorderStyle(sec.Borders(wdBorderRight)) & vbCrLf
-        
+
         ' Section Break Type
         Select Case sec.PageSetup.sectionStart
             Case wdSectionNewPage
@@ -1677,12 +1992,12 @@ Sub PrintCompactSectionLayoutInfo()
             Case Else
                 outputText = outputText & "Section Break: None" & vbCrLf
         End Select
-        
+
         ' Write section data to file
-        Print #1, outputText
+        Print #fileNum, outputText
         outputText = "" ' Reset outputText for the next section
     Next i
-    
+
     ' Summary of Sections
     outputText = "Summary: " & vbCrLf
     outputText = outputText & "Sections with 1 Column: " & nOneCol & vbCrLf
@@ -1703,13 +2018,21 @@ Sub PrintCompactSectionLayoutInfo()
     outputText = outputText & "Sections with New Page Breaks: " & nNewPageBreak & vbCrLf
     SectionsNewPageBreaks = nNewPageBreak
     Debug.Print "SectionsNewPageBreaks = " & nNewPageBreak
-    Print #1, outputText
-    
+    Print #fileNum, outputText
+
     ' Close the file
-    Close #1
+    Close #fileNum
 
     'MsgBox "Layout report saved to: " & outputFile, vbInformation
     Debug.Print "Layout report saved to: " & outputFile
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If fileNum > 0 Then Close #fileNum
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintCompactSectionLayoutInfo of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 ' =========================
@@ -1724,6 +2047,7 @@ End Sub
 ' Last Updated: 2025-08-02
 ' =========================
 Sub FlagEarlyBindingRoutines_LateBound()
+    On Error GoTo PROC_ERR
     Const IncludeWordTypes As Boolean = False
     Const IncludeEnums As Boolean = False
 
@@ -1767,6 +2091,13 @@ Sub FlagEarlyBindingRoutines_LateBound()
             End If
         Loop
     Next comp
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FlagEarlyBindingRoutines_LateBound of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 ' =========================
@@ -1868,37 +2199,46 @@ End Function
 ' Author: Peter | Date: 20250807
 '====================================================================
 Sub BuildHeadingIndexToCSV()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim paraIndex As Long
     Dim headingLevel As String
     Dim csvPath As String
     Dim fileNum As Integer
-    
+
     'csvPath = Environ("USERPROFILE") & "\Desktop\HeadingIndex.csv"
     csvPath = "C:\adaept\aeBibleClass\rpt\HeadingIndex.txt"
     fileNum = FreeFile
-    
+
     Open csvPath For Output As #fileNum
     Print #fileNum, "Index,Style,Text"
 
     Dim cleanText As String
     paraIndex = 1
     For Each para In ActiveDocument.Paragraphs
-        
+
         headingLevel = para.style
-        
+
         If headingLevel = "Heading 1" Or headingLevel = "Heading 2" Then
             cleanText = Trim(Replace(para.Range.Text, vbCr, ""))
             cleanText = Trim(Replace(cleanText, vbLf, ""))
             cleanText = Replace(cleanText, """", "'") ' Escape quotes for CSV
             Print #fileNum, paraIndex & "," & headingLevel & ",""" & cleanText & """"
         End If
-        
+
         paraIndex = paraIndex + 1
     Next para
-    
+
     Close #fileNum
     MsgBox "Heading index written to CSV: " & csvPath
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If fileNum > 0 Then Close #fileNum
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure BuildHeadingIndexToCSV of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 '====================================================================
@@ -1908,24 +2248,25 @@ End Sub
 ' Author: Peter | Date: 20250807
 '====================================================================
 Sub LoadHeadingIndexFromCSV()
+    On Error GoTo PROC_ERR
     Dim csvPath As String
     Dim fileNum As Integer
     Dim line As String
     Dim parts() As String
-    
+
     Set HeadingBuffer = CreateObject("Scripting.Dictionary")
     'csvPath = Environ("USERPROFILE") & "\Desktop\HeadingIndex.csv"
     csvPath = "C:\adaept\aeBibleClass\rpt\HeadingIndex.txt"
-    
+
     If Dir(csvPath) = "" Then
         MsgBox "CSV file not found: " & csvPath
-        Exit Sub
+        GoTo PROC_EXIT
     End If
-    
+
     fileNum = FreeFile
     Open csvPath For Input As #fileNum
     Line Input #fileNum, line ' Skip header
-    
+
     Do While Not EOF(fileNum)
         Line Input #fileNum, line
         parts = Split(line, ",")
@@ -1933,9 +2274,17 @@ Sub LoadHeadingIndexFromCSV()
             HeadingBuffer(parts(0)) = parts(2)
         End If
     Loop
-    
+
     Close #fileNum
     MsgBox "Heading index loaded into memory. " & HeadingBuffer.count & " entries."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If fileNum > 0 Then Close #fileNum
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadHeadingIndexFromCSV of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 '====================================================================
@@ -1945,14 +2294,15 @@ End Sub
 ' Author: Peter | Date: 20250807
 '====================================================================
 Sub GoToHeadingByIndex()
+    On Error GoTo PROC_ERR
     Dim targetIndex As String
     Dim paraIndex As Long
-    
+
     If HeadingBuffer Is Nothing Then
         MsgBox "Heading buffer not loaded. Run LoadHeadingIndexFromCSV first."
-        Exit Sub
+        GoTo PROC_EXIT
     End If
-    
+
     targetIndex = InputBox("Enter the paragraph index to jump to:")
     If IsNumeric(targetIndex) Then
         paraIndex = CLng(targetIndex)
@@ -1964,6 +2314,13 @@ Sub GoToHeadingByIndex()
     Else
         MsgBox "Please enter a numeric value."
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToHeadingByIndex of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 ' ==================================================================================================
@@ -1996,6 +2353,7 @@ End Sub
 ' Last Updated: 20260130
 ' ==================================================================================================
 Public Sub ShowUnicodeOfSingleCharacterSelection()
+    On Error GoTo PROC_ERR
     Dim r As Word.Range
     Dim count As Long
     Dim s As String
@@ -2010,10 +2368,10 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
     ' Enforce exactly one logical character
     If count = 0 Then
         Debug.Print "Error: No character selected."
-        Exit Sub
+        GoTo PROC_EXIT
     ElseIf count > 2 Then
         Debug.Print "Error: Selection contains more than one character (" & count & ")."
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     s = r.Text
@@ -2032,7 +2390,7 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
         Debug.Print "UTF-16 unit: " & Hex$(codeUnit1)
         Debug.Print "Escape sequence: " & escapeSeq
         If desc <> "" Then Debug.Print "Description: " & desc
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     ' --- POSSIBLE SURROGATE PAIR ---
@@ -2053,6 +2411,13 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
     Else
         Debug.Print "Error: Two-character selection is not a valid surrogate pair."
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ShowUnicodeOfSingleCharacterSelection of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 ' ==================================================================================================
@@ -2164,6 +2529,7 @@ Public Function WordSpecialCharacterName(codepoint As Long) As String
 End Function
 
 Public Sub FindTabsInAllFooters()
+    On Error GoTo PROC_ERR
     Dim sec As section
     Dim hdrFtr As HeaderFooter
     Dim rng As Word.Range
@@ -2209,6 +2575,13 @@ Public Sub FindTabsInAllFooters()
             End If
         Next hdrFtr
     Next sec
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindTabsInAllFooters of Module basTEST_aeBibleTools"
+    Resume PROC_EXIT
 End Sub
 
 

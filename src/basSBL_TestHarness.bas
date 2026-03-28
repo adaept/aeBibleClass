@@ -14,6 +14,7 @@ Public Enum ExpectedFailureStage
 End Enum
 
 Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
+    On Error GoTo PROC_ERR
     Dim p As ParsedReference
     p.RawInput = inputText
 
@@ -55,6 +56,11 @@ Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
     End If
 
     ParseReferenceStub = p
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseReferenceStub of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Function
 
 Public Sub Test_AliasCoverage()
@@ -91,6 +97,7 @@ Public Sub Test_TokenizeReference()
 End Sub
 
 Public Sub Test_SemanticFlow_WithParserStub()
+    On Error GoTo PROC_ERR
     ResetBookAliasMap
 
     Debug.Print "======================================"
@@ -226,6 +233,11 @@ NextTest:
     Debug.Print "FAILURES: "; failures
     Debug.Print "======================================"
     Report_TODOs
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SemanticFlow_WithParserStub of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub Report_TODOs()
@@ -245,6 +257,7 @@ Public Sub Report_TODOs()
 End Sub
 
 Public Sub Test_SemanticFlow_WithParserStub_Negative()
+    On Error GoTo PROC_ERR
     ResetBookAliasMap
 
     Debug.Print "=========================================="
@@ -351,18 +364,23 @@ NextTest:
     Debug.Print "======================================"
     Debug.Print "FAILURES: "; failures
     Debug.Print "======================================"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SemanticFlow_WithParserStub_Negative of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub Test_GetMaxVerse()
+    On Error GoTo PROC_ERR
     Dim failCount As Long
     Dim Result As Long
-    
+
     Debug.Print ""
     Debug.Print "---- Test_GetMaxVerse ----"
     ' ========================
     ' POSITIVE TESTS
     ' ========================
-    On Error GoTo FailHandler
     Result = GetMaxVerse(1, 1)          ' Genesis 1
     If Result <> 31 Then FailTest failCount, "Genesis 1", 31, Result
     Result = GetMaxVerse(19, 119)       ' Psalms 119
@@ -403,13 +421,11 @@ Public Sub Test_GetMaxVerse()
     Else
         Debug.Print "Test_GetMaxVerse: FAIL (" & failCount & " errors)"
     End If
+PROC_EXIT:
     Exit Sub
-    
-FailHandler:
-    Debug.Print "Unexpected runtime error in Test_GetMaxVerse"
-    Debug.Print "Error: "; Err.Number; Err.Description
-    failCount = failCount + 1
-    Resume Next
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_GetMaxVerse of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub FailTest(ByRef failCount As Long, _
@@ -424,11 +440,12 @@ Private Sub FailTest(ByRef failCount As Long, _
 End Sub
 
 Public Sub Run_All_SBL_Tests()
+    On Error GoTo PROC_ERR
     TestStart
 
     If Not VerifyPackedVerseMap() Then
         Debug.Print "ABORT: Packed verse map invalid"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     ResetBookAliasMap
@@ -458,6 +475,11 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage12_FinalParser
     Test_Stage13_ContextShorthand
     TestSummary
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run_All_SBL_Tests of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub Test_Stage2_LexicalScan()
@@ -739,6 +761,7 @@ Public Sub Test_Stage10_RangeComposition()
 End Sub
 
 Public Sub PrintScriptureList(list As ScriptureList)
+    On Error GoTo PROC_ERR
     Dim i As Long
     Dim refIndex As Long
     Dim rangeIndex As Long
@@ -759,6 +782,11 @@ Public Sub PrintScriptureList(list As ScriptureList)
                 Debug.Print "Unknown item type at index "; i
         End Select
     Next i
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintScriptureList of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub Test_Stage11_ListComposition()

@@ -19,6 +19,7 @@ End Function
 
 Public Sub SaveAsPDF_NoOpen()
     ' Overwrite the existing PDF file silently - without prompting or warning
+    On Error GoTo PROC_ERR
     Dim startTime As Single
     Dim endTime As Single
     Dim duration As Single
@@ -27,7 +28,7 @@ Public Sub SaveAsPDF_NoOpen()
     ' Start timer
     startTime = Timer
     Debug.Print "Expected time ~130 seconds"
-    
+
     pdfPath = "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.pdf"
     ActiveDocument.ExportAsFixedFormat OutputFileName:=pdfPath, _
         ExportFormat:=wdExportFormatPDF, _
@@ -38,9 +39,17 @@ Public Sub SaveAsPDF_NoOpen()
     duration = endTime - startTime
     ' Print duration to Immediate Window
     Debug.Print "PDF export completed in " & Format(duration, "0.00") & " seconds."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveAsPDF_NoOpen of Module basWordRepairRunner"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
+    On Error GoTo PROC_ERR
     Dim totalFixes As Long, pgFixCount As Long
     Dim numPages As Long: numPages = 0 ' Adjust if scanning more than one page
 
@@ -80,12 +89,21 @@ Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
 
     'MsgBox "Repair complete. CSV log updated at:" & vbCrLf & logPath, vbInformation
     Selection.GoTo What:=wdGoToPage, name:=CStr(startPage)
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    If logFile > 0 Then Close #logFile
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunRepairWrappedVerseMarkers_Across_Pages_From of Module basWordRepairRunner"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
+    On Error GoTo PROC_ERR
     Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range, prefixCh As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim chapterMarker As String, verseDigits As String, combinedNumber As String
@@ -272,20 +290,28 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     Debug.Print logBuffer
     'MsgBox fixCount & " marker(s) repaired on page " & pageNum & ".", vbInformation
     Selection.GoTo What:=wdGoToPage, name:=CStr(pageNum)
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage of Module basWordRepairRunner"
+    Resume PROC_EXIT
 End Sub
 
 Private Function GetPageHeaderText(pgNum As Long) As String
+    On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Dim sec As section
     Dim hdr As HeaderFooter
-    
+
     ' Get range for the page
     Set rng = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pgNum))
     Set sec = rng.Sections(1)   ' Page belongs to exactly one Section
-    
+
     ' Default to primary header
     Set hdr = sec.Headers(wdHeaderFooterPrimary)
-    
+
     ' NOTE: Does not apply in this Bible doc
     ' If primary is empty, check for first-page or even-page headers
     'If Len(hdr.Range.Text) = 0 Then
@@ -295,9 +321,16 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     '        Set hdr = sec.Headers(wdHeaderFooterEvenPages)
     '    End If
     'End If
-    
+
     ' Clean up the header text (Word stores an end-of-cell marker)
     GetPageHeaderText = TitleCase(Trim(Replace(hdr.Range.Text, Chr(13), " ")))
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetPageHeaderText of Module basWordRepairRunner"
+    Resume PROC_EXIT
 End Function
 
 Private Function TitleCase(ByVal txt As String) As String
@@ -319,17 +352,18 @@ Private Function TitleCase(ByVal txt As String) As String
 End Function
 
 Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As String
+    On Error GoTo PROC_ERR
     Dim verseContentEnd As Long
     Dim nextPos As Long
     Dim scanCh As Word.Range
     Dim txt As String
-    
+
     verseContentEnd = pageEnd
     nextPos = verseContentStart
-    
+
     Do While nextPos < pageEnd
         Set scanCh = ActiveDocument.Range(nextPos, nextPos + 1)
-        
+
         If Len(Trim(scanCh.Text)) = 1 And IsNumeric(scanCh.Text) Then
             If (scanCh.style.NameLocal = "Chapter Verse marker" And scanCh.Font.color = RGB(255, 165, 0)) _
                Or (scanCh.style.NameLocal = "Verse marker" And scanCh.Font.color = RGB(80, 200, 120)) Then
@@ -337,19 +371,26 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
                 Exit Do
             End If
         End If
-        
+
         nextPos = nextPos + 1
     Loop
-    
+
     txt = Trim(ActiveDocument.Range(verseContentStart, verseContentEnd).Text)
-    
+
     Dim pos As Long
     pos = InStrRev(txt, "CHAPTER ")
     If pos > 0 Then
         txt = Trim$(Left$(txt, pos - 1))
     End If
-    
+
     GetVerseText = txt
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetVerseText of Module basWordRepairRunner"
+    Resume PROC_EXIT
 End Function
 
 

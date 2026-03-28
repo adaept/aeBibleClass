@@ -54,6 +54,7 @@ Private aeWordGitSourceFolder As String
 Private aeWordGitUserSourceFolder As String
 
 Private Sub Class_Initialize()
+    On Error GoTo PROC_ERR
     ' Ref: http://www.cadalyst.com/cad/autocad/programming-with-class-part-1-5050
     ' Ref: http://www.bigresource.com/Tracker/Track-vb-cyJ1aJEyKj/
     ' Ref: http://stackoverflow.com/questions/1731052/is-there-a-way-to-overload-the-constructor-initialize-procedure-for-a-class-in
@@ -71,26 +72,46 @@ Private Sub Class_Initialize()
     Debug.Print , "Default for aeWordGitSourceFolder = " & aeWordGitSourceFolder
     Debug.Print , "Default for aeWordGitType.SourceFolder = " & aeWordGitType.SourceFolder
     Debug.Print , "Default for aeWordGitType.UserSourceFolder = " & aeWordGitType.UserSourceFolder
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Class_Initialize of Class aeWordGitClass"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub Class_Terminate()
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     Debug.Print
     Debug.Print "Class_Terminate"
     Debug.Print , "aeWordGit VERSION: " & aeWordGitVERSION
     Debug.Print , "aeWordGit VERSION_DATE: " & aeWordGitVERSION_DATE
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Class_Terminate of Class aeWordGitClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Property Get SourceFolder() As String
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     SourceFolder = aeWordGitSourceFolder
+PROC_EXIT:
+    Exit Property
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SourceFolder of Class aeWordGitClass"
+    Resume PROC_EXIT
 End Property
 
 Public Property Let SourceFolder(ByVal strSourceFolder As String)
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     ' Ref: http://www.techrepublic.com/article/build-your-skills-using-class-modules-in-an-access-database-solution/5031814
     ' Ref: http://www.utteraccess.com/wiki/index.php/Classes
     aeWordGitSourceFolder = strSourceFolder
+PROC_EXIT:
+    Exit Property
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SourceFolder of Class aeWordGitClass"
+    Resume PROC_EXIT
 End Property
 
 Public Property Get DocumentTheWordCode(Optional ByVal varDebug As Variant) As Boolean

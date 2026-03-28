@@ -58,21 +58,39 @@ End Property
 ' -- Ribbon Load ---------------------------------------------------------------
 
 Public Sub OnRibbonLoad(ribbon As IRibbonUI)
+    On Error GoTo PROC_ERR
     Set m_ribbon = ribbon
     m_ribbonReady = True
     Debug.Print "RibbonController: Ribbon ready at " & Format(Now, "hh:nn:ss")
     m_ribbon.InvalidateControl "GoToNextButton"
     Call EnableButtonsRoutine
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnRibbonLoad of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Invalidation --------------------------------------------------------------
 
 Public Sub InvalidateAll()
+    On Error GoTo PROC_ERR
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure InvalidateAll of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub InvalidateControl(controlId As String)
+    On Error GoTo PROC_ERR
     If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl controlId
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure InvalidateControl of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Ribbon Callbacks ----------------------------------------------------------
@@ -103,11 +121,17 @@ End Function
 ' -- Initialization ------------------------------------------------------------
 
 Private Sub EnableButtonsRoutine()
+    On Error GoTo PROC_ERR
     Debug.Print "RibbonController: EnableButtonsRoutine"
     m_btnNextEnabled = True
     If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
     CaptureHeading1s
     LogHeadingData
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure EnableButtonsRoutine of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- GoTo Verse (stub - parser to be implemented) ------------------------------
@@ -119,14 +143,14 @@ End Sub
 ' -- GoTo Book (H1) ------------------------------------------------------------
 
 Private Sub GoToH1()
-    On Error GoTo Cleanup
+    On Error GoTo PROC_ERR
     Dim pattern  As String
     Dim para As Word.Paragraph
     Dim paraText As String
     Dim matchFound As Boolean
 
     pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
-    If pattern = "" Then Exit Sub
+    If pattern = "" Then GoTo PROC_EXIT
 
     matchFound = False
     Application.ScreenUpdating = False
@@ -150,16 +174,20 @@ Private Sub GoToH1()
     If Not matchFound Then
         MsgBox "Book not found! No Heading 1 matches: '" & pattern & "'", vbExclamation, "Bible"
     End If
+
+PROC_EXIT:
     Exit Sub
 
-Cleanup:
+PROC_ERR:
     Application.ScreenUpdating = True
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Class aeRibbonClass", vbExclamation, "Error"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Next Book (H1) ------------------------------------------------------------
 
 Private Sub NextButton()
+    On Error GoTo PROC_ERR
     Dim doc         As Document
     Dim searchRange As Word.Range
     Dim paraEnd     As Long
@@ -200,6 +228,13 @@ Private Sub NextButton()
     Else
         MsgBox "No Heading 1 found in the document.", vbInformation
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NextButton of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Heading Data --------------------------------------------------------------
@@ -212,6 +247,7 @@ End Sub
 '   - Audit-traceable: logs execution status to Immediate Window
 '===========================================================================================
 Public Sub CaptureHeading1s()
+    On Error GoTo PROC_ERR
     Static hasRun As Boolean
     Dim para As Word.Paragraph
     Dim i        As Long
@@ -219,7 +255,7 @@ Public Sub CaptureHeading1s()
 
     If hasRun Then
         Debug.Print "CaptureHeading1s: Already executed this session."
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     i = 1
@@ -235,6 +271,13 @@ Public Sub CaptureHeading1s()
 
     hasRun = True
     Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CaptureHeading1s of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 '=============================================================================================
@@ -246,6 +289,7 @@ End Sub
 '   - Git-friendly: diffs show timestamped changes only
 '=============================================================================================
 Public Sub LogHeadingData()
+    On Error GoTo PROC_ERR
     Const ROWS        As Long = 66
     Dim fPath         As String
     Dim sessionStamp  As String
@@ -285,6 +329,13 @@ Public Sub LogHeadingData()
     Else
         Debug.Print "LogHeadingData: No changes - file preserved"
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LogHeadingData of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Cursor Helpers ------------------------------------------------------------

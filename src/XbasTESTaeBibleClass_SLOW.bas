@@ -18,6 +18,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 ' It takes 2 minutes per run of one thousand.
 ' Found 33 in Copy (32).docx
 '
+    On Error GoTo PROC_ERR
     Dim searchText As String
     Dim styleName As String
     Dim found As Boolean
@@ -78,18 +79,26 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     Else
         Debug.Print "Total numbers found: " & count
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindAnyNumberWithStyleAndPrintNextCharASCII of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub PrintBibleHeading1Info()
 ' This will print the count, heading text, page number, and document position of each Heading 1 in your document to the Immediate Window
 ' (press `Ctrl + G` to view the Immediate Window if it's not already visible).
 
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim headingText As String
     Dim pageNumber As Long
     Dim docPosition As Long
     Dim count As Integer
-    
+
     count = 0
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
@@ -104,21 +113,28 @@ Public Sub PrintBibleHeading1Info()
             Debug.Print count & ": " & "Heading: " & Replace(headingText, vbCr, "") & " | Page: " & pageNumber & " | Position: " & docPosition
         End If
     Next para
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintBibleHeading1Info of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub PrintBibleBookHeadings()
 ' Find Heading 1, then all Heading 2 until the next Heading 1, and print the heading names to the console.
-    
+    On Error GoTo PROC_ERR
     Dim headingLabel As String
     Dim para As Word.Paragraph
     Dim foundHeading1 As Boolean
-    
+
     ' Prompt the user to enter the Heading 1 label
     headingLabel = InputBox("Enter the Heading 1 label:")
     headingLabel = UCase(headingLabel)
-    
+
     foundHeading1 = False
-    
+
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
@@ -129,10 +145,10 @@ Public Sub PrintBibleBookHeadings()
                 foundHeading1 = True
             ElseIf foundHeading1 Then
                 ' Stop when the next Heading 1 is found
-                Exit For
+                GoTo PROC_EXIT
             End If
         End If
-        
+
         ' If Heading 1 is found, start processing
         If foundHeading1 Then
             If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
@@ -141,26 +157,34 @@ Public Sub PrintBibleBookHeadings()
             End If
         End If
     Next para
-    
+
     ' Display a message if no headings are found
     If Not foundHeading1 Then
         MsgBox "No headings found with the specified label.", vbExclamation
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintBibleBookHeadings of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 
 Sub ListAndReviewAscii12Characters()
 ' Ascii 12 is Form Feed, FF, Page Break
+    On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Dim count As Long
     Dim startPos As Long
     Dim response As VbMsgBoxResult
-    
+
     ' Set the range to the entire document
     Set rng = ActiveDocument.content
-    
+
     ' Initialize the count
     count = 0
-    
+
     ' Find all ASCII 12 characters and record their positions
     With rng.Find
         .Text = Chr(12) ' Chr(12) represents the ASCII 12 character
@@ -178,27 +202,34 @@ Sub ListAndReviewAscii12Characters()
             startPos = rng.Start
             Debug.Print "Position " & count & ": " & startPos
             rng.Collapse wdCollapseEnd
-            
+
             ' Navigate to the position in the document
             ActiveDocument.Range(startPos, startPos).Select
-            
+
             ' Ask if the user wants to continue
             response = MsgBox("ASCII 12 character found at position " & startPos & ". Do you want to continue?", vbYesNo + vbQuestion, "Review ASCII 12 Characters")
             If response = vbNo Then
-                Exit Sub
+                GoTo PROC_EXIT
             End If
         Loop
     End With
-    
+
     ' Display a message if no ASCII 12 characters are found
     If count = 0 Then
         MsgBox "No ASCII 12 characters found in the document.", vbInformation, "ASCII 12 Characters"
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListAndReviewAscii12Characters of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 
 Sub CountParagraphsTypes()
 ' Slow running routine ~10+ minutes
-
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim totalParagraphs As Long
@@ -256,8 +287,9 @@ Sub CountParagraphsTypes()
             Err.Clear
         End If
         On Error GoTo 0
+        On Error GoTo PROC_ERR
     End If
-    
+
     ' Open the debug file for writing
     fileNum = FreeFile
     Open debugFile For Output As fileNum
@@ -351,20 +383,36 @@ Sub CountParagraphsTypes()
     Debug.Print "Paragraphs with Section Break (Continuous): " & continuousSectionBreakParagraphs
     Debug.Print "Paragraphs with Section Break (Even Page): " & evenPageSectionBreakParagraphs
     Debug.Print "Paragraphs with Section Break (Odd Page): " & oddPageSectionBreakParagraphs
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountParagraphsTypes of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 
 Sub AppendToFile(filePath As String, text As String)
+    On Error GoTo PROC_ERR
     Dim fileNum As Integer
     fileNum = FreeFile
     Open filePath For Append As fileNum
     Print #fileNum, text
     Close fileNum
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AppendToFile of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindNextVerseMarkerSequence()
 ' Search for char style "Chapter Verse marker" followed by char style "Verse marker"
 ' with space of "Normal" style before and after.
 ' ~200 secs and there should be no matches.
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim searchRange As Word.Range
     Dim chapterRng As Word.Range, nextRng As Word.Range
@@ -428,7 +476,7 @@ Sub FindNextVerseMarkerSequence()
                     Debug.Print "Invalid character count at " & chapterRng.Start
                     chapterRng.Select
                     MsgBox "Cannot access one of the surrounding characters. Stopping for inspection.", vbExclamation
-                    Exit Sub
+                    GoTo PROC_EXIT
                 End If
 
                 ' Check styles and spaces
@@ -460,13 +508,21 @@ ContinueLoop:
         End If
     Loop
 
-    Application.ScreenUpdating = True
-    Application.StatusBar = False
-
     If Not found Then
         MsgBox "No more matches found.", vbInformation
     End If
 
     Debug.Print "Elapsed: " & Format(Timer - tStart, "0.00") & " sec"
+
+PROC_EXIT:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+    Exit Sub
+
+PROC_ERR:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindNextVerseMarkerSequence of Module XbasTESTaeBibleClass_SLOW"
+    Resume PROC_EXIT
 End Sub
 

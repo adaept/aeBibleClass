@@ -16,7 +16,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '   BibleClassVERSION is found in Class Modules BibleClass
 
 Public Function RUN_THE_TESTS(Optional ByVal varDebug As Variant) As Boolean
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     If IsMissing(varDebug) Then
         aeBibleClassTest
     ElseIf varDebug = "varDebug" Then
@@ -26,6 +26,11 @@ Public Function RUN_THE_TESTS(Optional ByVal varDebug As Variant) As Boolean
         'Debug.Print "@@@ varDebug = " & varDebug
         aeBibleClassTest varDebug:=varDebug
     End If
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RUN_THE_TESTS of Module basTest_aeBibleClass"
+    Resume PROC_EXIT
 End Function
 
 Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
@@ -63,12 +68,10 @@ PROC_EXIT:
 PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
         MsgBox "VBA Project Not Trusted", vbCritical, "aeBibleClassTest"
-        Stop
-        'Resume PROC_EXIT
     Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeBibleClassTest of Module basTestaeBibleClass"
-        Resume PROC_EXIT
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeBibleClassTest of Module basTest_aeBibleClass"
     End If
+    Resume PROC_EXIT
 
 End Function
 
@@ -87,6 +90,7 @@ End Function
 '   - Safe to wrap inside session-aware macro runners or audit triggers.
 '=======================================================================================
 Sub GitAutoTagRelease()
+    On Error GoTo PROC_ERR
     Const sTag As String = "v0.1.1"
     Const sMessage As String = "Release version 0.1.1"
     Const sBranch As String = "main" ' adjust if needed
@@ -97,7 +101,7 @@ Sub GitAutoTagRelease()
 
     If GitTagExists(sRepoPath, sTag) Then
         MsgBox "Tag " & sTag & " already exists. Aborting push.", vbExclamation
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     ' Navigate to repo and tag release
@@ -108,7 +112,7 @@ Sub GitAutoTagRelease()
     If Len(errOutput) > 0 Then
         Debug.Print "[TAG ERROR] " & errOutput
         MsgBox "Git tag failed:" & vbCrLf & errOutput, vbCritical, "Git Tag"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
     Debug.Print "[TAG] " & cmdOutput
 
@@ -120,11 +124,16 @@ Sub GitAutoTagRelease()
     If Len(errOutput) > 0 Then
         Debug.Print "[PUSH ERROR] " & errOutput
         MsgBox "Git push failed:" & vbCrLf & errOutput, vbCritical, "Git Push"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
     Debug.Print "[PUSH] " & cmdOutput
 
     MsgBox "Git tag " & sTag & " created and pushed successfully.", vbInformation
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GitAutoTagRelease of Module basTest_aeBibleClass"
+    Resume PROC_EXIT
 End Sub
 
 '=======================================================================================
@@ -140,6 +149,7 @@ End Sub
 '   - Extendable to check remote tags via `git ls-remote --tags`.
 '=======================================================================================
 Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim wsh As Object: Set wsh = CreateObject("WScript.Shell")
     Dim cmd As String, execObj As Object, Result As String
 
@@ -154,6 +164,11 @@ Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
         Debug.Print "[TAG CHECK] Tag '" & sTag & "' does not exist."
         GitTagExists = False
     End If
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GitTagExists of Module basTest_aeBibleClass"
+    Resume PROC_EXIT
 End Function
 
 

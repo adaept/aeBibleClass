@@ -24,8 +24,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '
 
 Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
-    On Error GoTo 0
-    
+    On Error GoTo PROC_ERR
+
     If IsMissing(varDebug) Then
         aeWordGitClassTest
     Else
@@ -43,9 +43,14 @@ Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
         If Err.Number <> 0 Then
             MsgBox "Shell failed: " & Err.Description & vbCrLf & strBat, vbCritical, "EXPORT_THE_CODE"
         End If
-        On Error GoTo 0
+        On Error GoTo PROC_ERR
     End If
 
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure EXPORT_THE_CODE of Module basTEST_aeWordGitClass"
+    Resume PROC_EXIT
 End Function
 
 Public Function aeWordGitClassTest(Optional ByVal varDebug As Variant, _
@@ -92,12 +97,10 @@ PROC_EXIT:
 PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
         MsgBox "VBA Project Not Trusted", vbCritical, "aeWordGitClassTest"
-        Stop
-        'Resume PROC_EXIT
     Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeWordGitClassTest of Module basTESTaeWordGitClass"
-        Resume PROC_EXIT
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeWordGitClassTest of Module basTEST_aeWordGitClass"
     End If
+    Resume PROC_EXIT
 
 End Function
 

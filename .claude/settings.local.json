@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"\n\\\\$bytes = [System.IO.File]::ReadAllBytes\\('C:\\\\adaept\\\\aeBibleClass\\\\src\\\\basTEST_aeBibleTools.bas'\\)\n\\\\$content = [System.Text.Encoding]::UTF8.GetString\\(\\\\$bytes\\)\n\\\\$idx = \\\\$content.IndexOf\\('Public Sub FindTabsInAllFooters\\(\\)'\\)\n\\\\$segment = \\\\$content.Substring\\(\\\\$idx, 600\\)\n\\\\$segment | ForEach-Object { [int[]][char[]]\\\\$_ } | Select-Object -Last 200\n\")",
+      "Bash(powershell -Command \"\n\\\\$bytes = [System.IO.File]::ReadAllBytes\\('C:\\\\adaept\\\\aeBibleClass\\\\src\\\\basTEST_aeBibleTools.bas'\\)\n\\\\$content = [System.Text.Encoding]::UTF8.GetString\\(\\\\$bytes\\)\n\\\\$idx = \\\\$content.IndexOf\\('applies to pages'\\)\n\\\\$segment = \\\\$content.Substring\\(\\\\$idx, 50\\)\n[int[]][char[]]\\\\$segment\n\")",
+      "Bash(powershell -Command \"\n\\\\$bytes = [System.IO.File]::ReadAllBytes\\('C:\\\\adaept\\\\aeBibleClass\\\\src\\\\basTEST_aeBibleTools.bas'\\)\n\\\\$content = [System.Text.Encoding]::UTF8.GetString\\(\\\\$bytes\\)\n\\\\$idx = \\\\$content.IndexOf\\('secStartPage &'\\)\n\\\\$segment = \\\\$content.Substring\\(\\\\$idx, 50\\)\n[int[]][char[]]\\\\$segment\n\")",
+      "Bash(powershell -Command \"\n\\\\$bytes = [System.IO.File]::ReadAllBytes\\('C:\\\\adaept\\\\aeBibleClass\\\\src\\\\basTEST_aeBibleTools.bas'\\)\n\\\\$content = [System.Text.Encoding]::UTF8.GetString\\(\\\\$bytes\\)\n\\\\$idx = \\\\$content.IndexOf\\('secEndPage'\\)\n\\\\$segment = \\\\$content.Substring\\(\\\\$idx - 30, 80\\)\n[int[]][char[]]\\\\$segment\n\")",
+      "Bash(powershell -Command \"\n\\\\$bytes = [System.IO.File]::ReadAllBytes\\('C:\\\\adaept\\\\aeBibleClass\\\\src\\\\basTEST_aeBibleTools.bas'\\)\n\\\\$content = [System.Text.Encoding]::UTF8.GetString\\(\\\\$bytes\\)\n\\\\$idx = 41202\n\\\\$segment = \\\\$content.Substring\\(\\\\$idx - 50, 100\\)\n[int[]][char[]]\\\\$segment\n\")",
+      "Bash(powershell -Command \"\n\\\\$bytes = [System.IO.File]::ReadAllBytes\\('C:\\\\adaept\\\\aeBibleClass\\\\src\\\\basTEST_aeBibleTools.bas'\\)\n\\\\$content = [System.Text.Encoding]::UTF8.GetString\\(\\\\$bytes\\)\n\\\\$pos = 0\nwhile \\(\\(\\\\$idx = \\\\$content.IndexOf\\([char]65533, \\\\$pos\\)\\) -ge 0\\) {\n    \\\\$seg = \\\\$content.Substring\\(\\\\$idx - 30, 60\\)\n    \\\\$cps = [int[]][char[]]\\\\$seg -join ','\n    Write-Output \\('Position: ' + \\\\$idx + ' cps: ' + \\\\$cps\\)\n    \\\\$pos = \\\\$idx + 1\n}\n\")"
+    ]
+  }
+}

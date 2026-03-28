@@ -13,7 +13,7 @@ Public Sub AssertTrue( _
         ByVal message As String, _
         Optional ByVal expected As Variant, _
         Optional ByVal actual As Variant)
-
+    On Error GoTo PROC_ERR
     gTestsRun = gTestsRun + 1
     If condition Then
         Debug.Print "PASS: " & message
@@ -27,12 +27,17 @@ Public Sub AssertTrue( _
                         " Actual=" & actual
         End If
     End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AssertTrue of Module basSBL_TestFramework"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub AssertEqual(expected As Variant, actual As Variant, label As String)
 ' Useful for numeric/string comparisons.
+    On Error GoTo PROC_ERR
     gTestsRun = gTestsRun + 1
-    
     If expected = actual Then
         Debug.Print "PASS: "; label
     Else
@@ -41,6 +46,11 @@ Public Sub AssertEqual(expected As Variant, actual As Variant, label As String)
                     ", actual="; actual; ")"
         gTestsFailed = gTestsFailed + 1
     End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AssertEqual of Module basSBL_TestFramework"
+    Resume PROC_EXIT
 End Sub
 
 '===========================================================

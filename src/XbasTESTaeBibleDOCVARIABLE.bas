@@ -20,6 +20,7 @@ Private Const wdFootnoteStory As Integer = 4
 Private Const wdEndnoteStory As Integer = 5
 
 Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Optional ByVal restartVal As Variant) As Boolean
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim paraPageNum As Integer
@@ -73,15 +74,15 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
                     headingText = Replace(headingText, Chr(11), "") ' Remove vertical tab if present
                     headingText = Replace(headingText, Chr(12), "") ' Remove form feed if present
                     headingText = Trim(headingText) ' Finally, trim spaces
-                    
+
                     ' Remember the location for the next search
                     Set lastFoundLocation = para.Range
                     'MsgBox "Found Heading 1 on visible page " & paraPageNum & " at location: " & para.Range.Start, _
                         vbInformation, "Heading 1 Found"
                     Debug.Print "Found Heading 1 " & headingText & " on visible page " & paraPageNum & " at location: " & para.Range.Start
-                    
+
                     FindNextHeading1OnVisiblePage = textFound
-                    Exit Function ' Exit after finding the first Heading 1
+                    GoTo PROC_EXIT ' Exit after finding the first Heading 1
                 End If
             End If
         End If
@@ -100,7 +101,13 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
         Set lastFoundLocation = Nothing ' Reset the tracking if nothing is found
         FindNextHeading1OnVisiblePage = textFound
     End If
-    
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindNextHeading1OnVisiblePage of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Function
 
 Sub VerifyBookNameFromDocVariable(docVar As String, theTextOfH1 As String)
@@ -165,6 +172,7 @@ ErrorHandler:
 End Sub
 
 Sub FindDocVariableByName(docVar As String)
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim variableExists As Boolean
     Dim variableValue As String
@@ -183,6 +191,7 @@ Sub FindDocVariableByName(docVar As String)
         variableExists = True
     End If
     On Error GoTo 0
+    On Error GoTo PROC_ERR
 
     ' Display the result
     If variableExists Then
@@ -193,9 +202,17 @@ Sub FindDocVariableByName(docVar As String)
         'MsgBox "DOCVARIABLE '" & docVar & "' does not exist in this document.", vbExclamation, "Variable Not Found"
         Debug.Print "DOCVARIABLE '" & docVar & "' does not exist in this document."
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindDocVariableByName of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindDocVariableEverywhere()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim variableName As String
     Dim variableFound As Boolean
@@ -214,7 +231,7 @@ Sub FindDocVariableEverywhere()
     ' Check if the variable name is valid
     If Trim(variableName) = "" Then
         MsgBox "Invalid variable name. Please enter a valid name.", vbExclamation, "Error"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     ' Initialize the flag for existence
@@ -223,7 +240,7 @@ Sub FindDocVariableEverywhere()
     ' First: Search for DOCVARIABLE in shapes (including nested shapes)
     For Each shape In doc.Shapes
         variableFound = SearchShapeForVariable(shape, variableName)
-        If variableFound Then Exit Sub ' Exit once found
+        If variableFound Then GoTo PROC_EXIT ' Exit once found
     Next shape
 
     ' Second: Search for DOCVARIABLE in the main document body
@@ -234,7 +251,7 @@ Sub FindDocVariableEverywhere()
                 field.Select
                 variableFound = True
                 MsgBox "DOCVARIABLE '" & variableName & "' found in the document body.", vbInformation, "Variable Found"
-                Exit Sub
+                GoTo PROC_EXIT
             End If
         End If
     Next field
@@ -248,7 +265,7 @@ Sub FindDocVariableEverywhere()
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a header.", vbInformation, "Variable Found"
-                    Exit Sub
+                    GoTo PROC_EXIT
                 End If
             End If
         Next field
@@ -260,7 +277,7 @@ Sub FindDocVariableEverywhere()
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a footer.", vbInformation, "Variable Found"
-                    Exit Sub
+                    GoTo PROC_EXIT
                 End If
             End If
         Next field
@@ -274,7 +291,7 @@ Sub FindDocVariableEverywhere()
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a footnote.", vbInformation, "Variable Found"
-                    Exit Sub
+                    GoTo PROC_EXIT
                 End If
             End If
         Next field
@@ -288,7 +305,7 @@ Sub FindDocVariableEverywhere()
                     field.Select
                     variableFound = True
                     MsgBox "DOCVARIABLE '" & variableName & "' found in an endnote.", vbInformation, "Variable Found"
-                    Exit Sub
+                    GoTo PROC_EXIT
                 End If
             End If
         Next field
@@ -298,9 +315,17 @@ Sub FindDocVariableEverywhere()
     If Not variableFound Then
         MsgBox "DOCVARIABLE '" & variableName & "' does not exist in this document.", vbExclamation, "Variable Not Found"
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindDocVariableEverywhere of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Sub
 
 Function SearchShapeForVariable(shape As shape, variableName As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim childShape As shape
     Dim field As field
     Dim textFrameRange As Word.Range
@@ -318,7 +343,7 @@ Function SearchShapeForVariable(shape As shape, variableName As String) As Boole
                     shape.Select
                     MsgBox "DOCVARIABLE '" & variableName & "' found in a nested shape.", vbInformation, "Variable Found"
                     SearchShapeForVariable = True
-                    Exit Function
+                    GoTo PROC_EXIT
                 End If
             End If
         Next field
@@ -328,14 +353,22 @@ Function SearchShapeForVariable(shape As shape, variableName As String) As Boole
     If shape.Type = msoGroup Then
         For Each childShape In shape.GroupItems
             SearchShapeForVariable = SearchShapeForVariable(childShape, variableName)
-            If SearchShapeForVariable Then Exit Function ' Exit once found
+            If SearchShapeForVariable Then GoTo PROC_EXIT ' Exit once found
         Next childShape
     End If
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SearchShapeForVariable of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Function
 
 Sub SetDocVariables()
+    On Error GoTo PROC_ERR
     'GoTo NewTestament
-    
+
     ' Old Testament
     ActiveDocument.Variables("Gen").value = 20
     ActiveDocument.Variables("Exod").value = 57
@@ -407,27 +440,52 @@ NewTestament:
     ActiveDocument.Variables("Rev").value = 848
     'MsgBox "DOCVARIABLE values set successfully!"
     Debug.Print "DOCVARIABLE values set successfully!"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SetDocVariables of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Sub
 
 Sub ListMyDocVariables()
+    On Error GoTo PROC_ERR
     Dim v As Variant
     For Each v In ActiveDocument.Variables
         Debug.Print v.name & ": " & v.value
     Next
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListMyDocVariables of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Sub
 
 Sub DeleteDocVariable()
+    On Error GoTo PROC_ERR
     Dim varName As String
     varName = "xxxJos" ' Change this to the name of your variable
 
     On Error Resume Next
     ActiveDocument.Variables(varName).Delete
     On Error GoTo 0
+    On Error GoTo PROC_ERR
 
     ActiveDocument.Fields.Update ' Refresh any DOCVARIABLE fields
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DeleteDocVariable of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Sub
 
 Sub TestPageNumbers()
+    On Error GoTo PROC_ERR
     GoTo NewTestament   ' Added manually — checking New Testament only; Old Testament block retained for future use
 
     ' Old Testament
@@ -573,4 +631,11 @@ NewTestament:
     Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     Debug.Print "Done New Testament !!!"
     Debug.Print "Done!!!"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TestPageNumbers of Module XbasTESTaeBibleDOCVARIABLE"
+    Resume PROC_EXIT
 End Sub

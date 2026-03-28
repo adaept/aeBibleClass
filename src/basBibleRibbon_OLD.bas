@@ -116,9 +116,10 @@ End Sub
 
 Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
                                Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
+    On Error GoTo PROC_ERR
     Debug.Print "FindBookH1: >> chapNum = " & chapNum, "verseNum = " & verseNum
     savedPos = SaveCursor()
- 
+
     Dim r As Word.Range
     Set r = ActiveDocument.Paragraphs(1).Range
 
@@ -142,7 +143,7 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
 
                 ' Call next routine
                 FindChapterH2 fullBookName, paraIndex, chapNum, verseNum
-                Exit Sub
+                GoTo PROC_EXIT
             End If
         End If
         paraCount = paraCount + 1
@@ -152,10 +153,18 @@ Private Sub FindBookH1(fullBookName As String, ByRef paraIndex As Long, _
     If Not bookFound Then RestoreCursor savedPos
     Debug.Print "FindBookH1: >> Book not found: '" & fullBookName & "'", "bookFound = " & bookFound
     MsgBox "Book not found: '" & fullBookName & "'", vbExclamation, "Bible"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindBookH1 of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
     Optional ByVal chapNum As String = "1", Optional ByVal verseNum As String = "1")
+    On Error GoTo PROC_ERR
     Dim chapTag1 As String, chapTag2 As String
     Dim rng As Word.Range
     Dim paraText As String
@@ -178,7 +187,7 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
                     Selection.Collapse Direction:=wdCollapseStart
                 End With
                 Debug.Print "FindChapterH2: >>>", "Cursor moved to paraIndex = #" & paraIndex; ""
-                Exit Sub
+                GoTo PROC_EXIT
             End If
         End If
         count = count + 1
@@ -186,9 +195,17 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
     Loop
 
     MsgBox "Chapter not found: '" & fullBookName & "' Chapter = " & chapNum, vbExclamation, "Bible"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindChapterH2 of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Sub
 
 Private Function ParseParts(ByVal userInput As String, Optional ByVal delimiter As String = ":") As String()
+    On Error GoTo PROC_ERR
     Dim parts() As String
     Dim i As Long
 
@@ -203,25 +220,41 @@ Private Function ParseParts(ByVal userInput As String, Optional ByVal delimiter 
     Next i
 
     ParseParts = parts
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseParts of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Function
 
 Sub GoToSection()
+    On Error GoTo PROC_ERR
     'NavigateToNextBookmark()
     Dim bmList As Collection
     Set bmList = GetBookmarkList()
-    
+
     If bmList.count = 0 Then
         MsgBox "No bookmarks found.", vbExclamation
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     bookmarkIndex = bookmarkIndex + 1
     If bookmarkIndex > bmList.count Then bookmarkIndex = 1
 
     bmList.Item(bookmarkIndex).Range.Select
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToSection of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Sub
 
 Private Function GetBookmarkList() As Collection
+    On Error GoTo PROC_ERR
     Dim bmColl As New Collection
     Dim bm As Bookmark
 
@@ -230,16 +263,24 @@ Private Function GetBookmarkList() As Collection
     Next bm
 
     Set GetBookmarkList = bmColl
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetBookmarkList of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Function
 
 Private Sub GoToH1()
+    On Error GoTo PROC_ERR
     Dim pattern As String
     Dim para As Word.Paragraph
     Dim paraText As String
     Dim matchFound As Boolean
 
     pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
-    If pattern = "" Then Exit Sub ' User canceled
+    If pattern = "" Then GoTo PROC_EXIT ' User canceled
     matchFound = False
 
     ' Disable UI updates for speed
@@ -261,13 +302,22 @@ Private Sub GoToH1()
     Application.ScreenUpdating = True
     Selection.Range.Select  ' Re-select current range to restore cursor
     DoEvents  ' Allows UI refresh
-    
+
     If Not matchFound Then
         MsgBox "Book not found! No Heading 1 matches pattern: '" & pattern & "'", vbExclamation, "Bible"
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub NextButton()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim searchRange As Word.Range
     Dim paraEnd As Long
@@ -311,10 +361,18 @@ Private Sub NextButton()
     Else
         MsgBox "No Heading 1 found in the document.", vbInformation
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NextButton of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Sub
 
 Private Function GetExactVerticalScroll() As Double
 ' Return the scroll percentage rounded to three decimal places
+    On Error GoTo PROC_ERR
     Dim visibleStart As Long
     Dim totalLength As Long
     Dim scrollPercentage As Double
@@ -334,5 +392,12 @@ Private Function GetExactVerticalScroll() As Double
 
     ' Round to 3 decimal places
     GetExactVerticalScroll = Round(scrollPercentage, 3)
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetExactVerticalScroll of Module basBibleRibbon_OLD"
+    Resume PROC_EXIT
 End Function
 

@@ -6,6 +6,7 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Sub AddBookNameHeaders()
+    On Error GoTo PROC_ERR
     Dim oDoc        As Document
     Dim oSections   As Sections
     Dim oSection    As section
@@ -21,7 +22,7 @@ Public Sub AddBookNameHeaders()
                        vbYesNo + vbDefaultButton2 + vbQuestion, _
                        "AddBookNameHeaders")
 
-    If lResponse = vbNo Then Exit Sub
+    If lResponse = vbNo Then GoTo PROC_EXIT
 
     Set oDoc = ActiveDocument
     Set oSections = oDoc.Sections
@@ -39,7 +40,7 @@ Public Sub AddBookNameHeaders()
         MsgBox "Could not determine the current section. " & _
                "Please place the cursor in the document body and try again.", _
                vbExclamation, "AddBookNameHeaders"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     sBookName = ""
@@ -95,6 +96,7 @@ Public Sub AddBookNameHeaders()
            lStartSect & " through section " & oSections.count & ".", _
            vbInformation, "AddBookNameHeaders"
 
+PROC_EXIT:
     Set oRange = Nothing
     Set oPara = Nothing
     Set oHeader = Nothing
@@ -103,9 +105,15 @@ Public Sub AddBookNameHeaders()
     Set oDoc = Nothing
     Set oSearch = Nothing
     Set oFound = Nothing
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddBookNameHeaders of Module basAddHeaderFooter"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub FixTheFooters()
+    On Error GoTo PROC_ERR
     Dim lResponse As Long
 
     lResponse = MsgBox("Put the cursor in the section to commence renumbering of the footers.", _
@@ -116,13 +124,20 @@ Public Sub FixTheFooters()
         Call AddConsecutiveFootersFromCursor
         Call LinkFootersToPrevious
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixTheFooters of Module basAddHeaderFooter"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub AddConsecutiveFootersFromCursor()
     ' Adds a footer with consecutive page numbering starting at 1
     ' from the section containing the cursor through to the end of the document.
     ' Footer text is styled with the paragraph style "TheFooters".
-
+    On Error GoTo PROC_ERR
     Dim oDoc        As Document
     Dim oSections   As Sections
     Dim oSection    As section
@@ -148,7 +163,7 @@ Private Sub AddConsecutiveFootersFromCursor()
         MsgBox "Could not determine the current section. " & _
                "Please place the cursor in the document body and try again.", _
                vbExclamation, "AddConsecutiveFootersFromCursor"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     ' Process every section from the cursor section to the end
@@ -198,6 +213,7 @@ Private Sub AddConsecutiveFootersFromCursor()
            " through section " & oSections.count & ".", _
            vbInformation, "AddConsecutiveFootersFromCursor"
 
+PROC_EXIT:
     ' Clean up
     Set oPara = Nothing
     Set oRange = Nothing
@@ -205,9 +221,15 @@ Private Sub AddConsecutiveFootersFromCursor()
     Set oSection = Nothing
     Set oSections = Nothing
     Set oDoc = Nothing
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddConsecutiveFootersFromCursor of Module basAddHeaderFooter"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub LinkFootersToPrevious()
+    On Error GoTo PROC_ERR
     Dim oDoc        As Document
     Dim oSections   As Sections
     Dim lStartSect  As Long
@@ -228,7 +250,7 @@ Private Sub LinkFootersToPrevious()
     If lStartSect = 0 Then
         MsgBox "Could not determine the current section.", _
                vbExclamation, "LinkFootersToPrevious"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
 
     ' Link from the section AFTER the cursor section to the end
@@ -240,7 +262,13 @@ Private Sub LinkFootersToPrevious()
            " footers are now linked to previous.", _
            vbInformation, "LinkFootersToPrevious"
 
+PROC_EXIT:
     Set oSections = Nothing
     Set oDoc = Nothing
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LinkFootersToPrevious of Module basAddHeaderFooter"
+    Resume PROC_EXIT
 End Sub
 

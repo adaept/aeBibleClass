@@ -51,11 +51,19 @@ Private OUTPUT_FILE As String
 Private VALIDATOR_LOG As String
 
 Private Sub InitPaths()
+    On Error GoTo PROC_ERR
     Dim rptPath As String
     rptPath = ActiveDocument.Path & "\rpt\"
     LOG_FILE = rptPath & "USFM_Export_Log.txt"
     OUTPUT_FILE = rptPath & "ExportedBible.usfm"
     VALIDATOR_LOG = rptPath & "USFM_Validator_Log.txt"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure InitPaths of Module basUSFM_Export"
+    Resume PROC_EXIT
 End Sub
 
 ' ============================================================================================
@@ -103,6 +111,7 @@ End Sub
 ' CORE CONVERSION
 ' ============================================================================================
 Private Function ConvertRangeToUSFM(ByVal rng As Word.Range) As String
+    On Error GoTo PROC_ERR
     Dim p As Word.Paragraph
     Dim sb As String
     Dim line As String
@@ -133,12 +142,20 @@ Private Function ConvertRangeToUSFM(ByVal rng As Word.Range) As String
     Next p
 
     ConvertRangeToUSFM = sb
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertRangeToUSFM of Module basUSFM_Export"
+    Resume PROC_EXIT
 End Function
 
 ' ============================================================================================
 ' PARAGRAPH -> USFM
 ' ============================================================================================
 Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
+    On Error GoTo PROC_ERR
     Dim styleName As String
     Dim txt As String
     Dim chapNum As Long
@@ -271,8 +288,14 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
 
     End Select
 
+PROC_EXIT:
 LogAndExit:
     LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertParagraphToUSFM of Module basUSFM_Export"
+    Resume PROC_EXIT
 End Function
 
 Private Function MakeTitleLine(ByVal level As Long, ByVal txt As String) As String
@@ -325,16 +348,25 @@ Private Function ParagraphHasCharStyle(p As Word.Paragraph, styleName As String)
     ' part of a word. Currently safe because "Chapter Verse marker" (orange) and "Verse marker"
     ' (green) are always applied to complete words (chapter/verse numbers) in this document.
     ' Re-evaluate if partial character style application is ever introduced.
+    On Error GoTo PROC_ERR
     Dim r As Word.Range
     For Each r In p.Range.words
         If r.style = styleName Then
             ParagraphHasCharStyle = True
-            Exit Function
+            GoTo PROC_EXIT
         End If
     Next
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParagraphHasCharStyle of Module basUSFM_Export"
+    Resume PROC_EXIT
 End Function
 
 Private Function ExtractCharStyleText(p As Word.Paragraph, styleName As String) As String
+    On Error GoTo PROC_ERR
     Dim r As Word.Range
     Dim buf As String
     For Each r In p.Range.words
@@ -343,6 +375,13 @@ Private Function ExtractCharStyleText(p As Word.Paragraph, styleName As String) 
         End If
     Next
     ExtractCharStyleText = Trim$(buf)
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ExtractCharStyleText of Module basUSFM_Export"
+    Resume PROC_EXIT
 End Function
 
 Private Function TryParseChapterVerseFromStyles( _
@@ -351,6 +390,7 @@ Private Function TryParseChapterVerseFromStyles( _
     ByRef verseNum As Long, _
     ByRef verseText As String) As Boolean
 
+    On Error GoTo PROC_ERR
     Dim rChap As Word.Range
     Dim rVerse As Word.Range
     Dim rText As Word.Range
@@ -370,7 +410,7 @@ Private Function TryParseChapterVerseFromStyles( _
         ' If the paragraph doesn't start with the chapter marker style,
         ' we can't parse it as a verse line.
         TryParseChapterVerseFromStyles = False
-        Exit Function
+        GoTo PROC_EXIT
     End If
 
     ' Extend rChap to include all contiguous chars with that style
@@ -400,7 +440,7 @@ Private Function TryParseChapterVerseFromStyles( _
 
     If rVerse.style <> "Verse marker" Then
         TryParseChapterVerseFromStyles = False
-        Exit Function
+        GoTo PROC_EXIT
     End If
 
     ' Extend rVerse to include all contiguous chars with that style
@@ -423,6 +463,13 @@ Private Function TryParseChapterVerseFromStyles( _
     Else
         TryParseChapterVerseFromStyles = True
     End If
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TryParseChapterVerseFromStyles of Module basUSFM_Export"
+    Resume PROC_EXIT
 End Function
 
 Private Function ExtractTrailingNumber(ByVal s As String) As Long
@@ -476,7 +523,7 @@ Private Sub LogValidator(ByVal msg As String)
 
     Set stm = CreateObject("ADODB.Stream")
 
-    On Error GoTo ErrHandler
+    On Error GoTo PROC_ERR
 
     ' Read existing UTF-8 content if present
     If Dir(logPath) <> "" Then
@@ -500,14 +547,18 @@ Private Sub LogValidator(ByVal msg As String)
     stm.Close
 
     Set stm = Nothing
+
+PROC_EXIT:
     Exit Sub
 
-ErrHandler:
+PROC_ERR:
     Debug.Print "Validator UTF-8 ERROR: "; Err.Number; Err.Description
     Set stm = Nothing
+    Resume PROC_EXIT
 End Sub
 
 Public Sub ValidateUSFMFile(ByVal filePath As String)
+    On Error GoTo PROC_ERR
     Dim stm As Object
     Dim content As String
     Dim lines() As String
@@ -517,8 +568,6 @@ Public Sub ValidateUSFMFile(ByVal filePath As String)
 
     'LogValidator "=== USFM VALIDATION START ==="
     LogValidator "Validating file: " & filePath
-
-    On Error GoTo ErrHandler
 
     ' Load UTF-8 file
     Set stm = CreateObject("ADODB.Stream")
@@ -571,13 +620,16 @@ Public Sub ValidateUSFMFile(ByVal filePath As String)
 
 NextLine:
     Next i
-    
+
     LogValidator "=== USFM VALIDATION END ==="
+
+PROC_EXIT:
     Exit Sub
 
-ErrHandler:
+PROC_ERR:
     Set stm = Nothing
     LogValidator "ERROR validating USFM: " & Err.Number & " - " & Err.Description
+    Resume PROC_EXIT
 End Sub
 
 Private Function ExtractUSFMMarker(ByVal line As String) As String
@@ -640,12 +692,11 @@ End Function
 ' PAGE RANGE EXTRACTION (same pattern as basWordRepairRunner)
 ' ============================================================================================
 Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long) As Word.Range
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim rStartPage As Word.Range
     Dim rEndPage As Word.Range
     Dim fullRange As Word.Range
-
-    On Error GoTo ErrHandler
 
     Set doc = ActiveDocument
 
@@ -668,11 +719,14 @@ Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long
     Set fullRange = doc.Range(Start:=rStartPage.Start, End:=rEndPage.End)
 
     Set GetRangeForPages = fullRange
+
+PROC_EXIT:
     Exit Function
 
-ErrHandler:
+PROC_ERR:
     LogEvent "ERROR in GetRangeForPages: " & Err.Number & " - " & Err.Description
     Set GetRangeForPages = Nothing
+    Resume PROC_EXIT
 End Function
 
 ' ============================================================================================
@@ -686,10 +740,10 @@ Private Sub LogEvent(ByVal msg As String)
 
     logPath = LOG_FILE
     logLine = CleanTextForUTF8(Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & msg & vbCrLf)
-    
+
     Set stm = CreateObject("ADODB.Stream")
 
-    On Error GoTo ErrHandler
+    On Error GoTo PROC_ERR
 
     ' ------------------------------------------------------------
     ' If the log file exists, read it first (UTF-8), then append.
@@ -717,11 +771,14 @@ Private Sub LogEvent(ByVal msg As String)
     stm.Close
 
     Set stm = Nothing
+
+PROC_EXIT:
     Exit Sub
 
-ErrHandler:
+PROC_ERR:
     ' Fallback: at least try to write something
     Debug.Print "LogEvent UTF-8 ERROR: "; Err.Number; Err.Description
+    Resume PROC_EXIT
 End Sub
 
 ' ============================================================================================
@@ -729,10 +786,9 @@ End Sub
 ' ============================================================================================
 Private Sub WriteTextFile(ByVal filePath As String, ByVal content As String)
     ' Writes UTF-8 with BOM (still Paratext-safe)
+    On Error GoTo PROC_ERR
     Dim stm As Object
     Set stm = CreateObject("ADODB.Stream")
-
-    On Error GoTo ErrHandler
 
     ' Configure stream for UTF-8 text
     stm.Type = 2                 ' adTypeText
@@ -747,10 +803,13 @@ Private Sub WriteTextFile(ByVal filePath As String, ByVal content As String)
 
     stm.Close
     Set stm = Nothing
+
+PROC_EXIT:
     Exit Sub
 
-ErrHandler:
+PROC_ERR:
     LogEvent "ERROR writing UTF-8 file: " & Err.Number & " - " & Err.Description
+    Resume PROC_EXIT
 End Sub
 
 ' ============================================================================================

@@ -70,7 +70,7 @@ Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 o
 '==================================================================
 
 Private Sub Class_Initialize()
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     'MsgBox Application.VBE.ActiveVBProject.Name
     'MsgBox Application.Caption
     If Application.VBE.ActiveVBProject.name = "BibleClass" Then
@@ -89,15 +89,25 @@ Private Sub Class_Initialize()
         OneVersePerPara = True
     End If
     Debug.Print "OneVersePerPara = " & OneVersePerPara
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Class_Initialize of Class aeBibleClass"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub Class_Terminate()
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     Debug.Print
     Debug.Print "Class_Terminate"
     Debug.Print , Application.VBE.ActiveVBProject.name
     Debug.Print , "BibleClass VERSION: " & BibleClassVERSION
     Debug.Print , "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Class_Terminate of Class aeBibleClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Integer

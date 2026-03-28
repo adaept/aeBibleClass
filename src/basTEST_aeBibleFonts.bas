@@ -6,6 +6,7 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Sub CheckOpenFontsWithDownloads()
+    On Error GoTo PROC_ERR
     Dim fontList As Variant
     Dim fontName As Variant
     Dim fontStatus As String
@@ -51,9 +52,17 @@ Sub CheckOpenFontsWithDownloads()
            "Installed Fonts:" & vbCrLf & InstalledFonts & vbCrLf & _
            "Missing Fonts:" & vbCrLf & MissingFonts & _
            IIf(DownloadLinks <> "", vbCrLf & "Download Missing Fonts:" & vbCrLf & DownloadLinks, "")
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CheckOpenFontsWithDownloads of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Function IsFontInstalled(fontName As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim TestDoc As Document
     Dim testRange As Word.Range
     On Error Resume Next
@@ -64,15 +73,25 @@ Function IsFontInstalled(fontName As String) As Boolean
     IsFontInstalled = (testRange.Font.name = fontName)
     TestDoc.Close SaveChanges:=False
     On Error GoTo 0
+    On Error GoTo PROC_ERR
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure IsFontInstalled of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Function
 
 Sub CreateEmphasisBlackStyle()
+    On Error GoTo PROC_ERR
     Dim charStyle As style
-    
+
     ' Check if the style already exists
     On Error Resume Next
     Set charStyle = ActiveDocument.Styles("EmphasisBlack")
     On Error GoTo 0
+    On Error GoTo PROC_ERR
 
     ' If the style doesn't exist, create it
     If charStyle Is Nothing Then
@@ -88,13 +107,21 @@ Sub CreateEmphasisBlackStyle()
 
     ' Add to style gallery
     charStyle.Priority = 1
-    
+
     charStyle.QuickStyle = True
 
     MsgBox "Character style 'EmphasisBlack' created and added to the Style Gallery.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CreateEmphasisBlackStyle of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub AuditStyleUsage_Footnote()
+    On Error GoTo PROC_ERR
     Dim r As Word.Range, hitCount As Long
     Dim logBuffer As String
 
@@ -110,7 +137,7 @@ Sub AuditStyleUsage_Footnote()
         .Wrap = wdFindStop
         Do While .Execute
             hitCount = hitCount + 1
-            logBuffer = logBuffer & "* Style hit at Char " & r.Start & " ? ->" & Left(r.Text, 40) & "...<-" & vbCrLf
+            logBuffer = logBuffer & "* Style hit at Char " & r.Start & " - ->" & Left(r.Text, 40) & "...<-" & vbCrLf
             r.Start = r.Start + 1
             r.End = ActiveDocument.content.End
         Loop
@@ -119,9 +146,17 @@ Sub AuditStyleUsage_Footnote()
     logBuffer = logBuffer & vbCrLf & "Total ->Footnote<- style instances: " & hitCount
     Debug.Print logBuffer
     MsgBox "Audit complete. See Immediate Window for details.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditStyleUsage_Footnote of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub RedefineFootnoteStyle_NotoSans()
+    On Error GoTo PROC_ERR
     Dim s As style
     Set s = ActiveDocument.Styles("Footnote")
 
@@ -135,9 +170,17 @@ Sub RedefineFootnoteStyle_NotoSans()
     End With
 
     MsgBox "->Footnote<- style updated to Noto Sans, 7pt.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RedefineFootnoteStyle_NotoSans of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub AuditStyleUsage_FootnoteNormal()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim hitCount As Long
     Dim logBuffer As String
@@ -155,9 +198,17 @@ Sub AuditStyleUsage_FootnoteNormal()
     logBuffer = logBuffer & vbCrLf & "Total 'Footnote normal' style instances: " & hitCount
     Debug.Print logBuffer
     MsgBox "Audit complete. See Immediate Window for details.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditStyleUsage_FootnoteNormal of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub RedefineFootnoteNormalStyle_NotoSans()
+    On Error GoTo PROC_ERR
     Dim s As style
     Set s = ActiveDocument.Styles("Footnote normal")
 
@@ -171,9 +222,17 @@ Sub RedefineFootnoteNormalStyle_NotoSans()
     End With
 
     MsgBox "'Footnote normal' style updated to Noto Sans, 7pt.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RedefineFootnoteNormalStyle_NotoSans of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub AuditStyleUsage_PictureCaption()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim hitCount As Long
     Dim logBuffer As String
@@ -183,11 +242,13 @@ Sub AuditStyleUsage_PictureCaption()
 
     On Error Resume Next
     Set s = ActiveDocument.Styles("Picture Caption")
+    On Error GoTo 0
+    On Error GoTo PROC_ERR
+
     If s Is Nothing Then
         MsgBox "Style 'Picture Caption' not found in this document.", vbExclamation
-        Exit Sub
+        GoTo PROC_EXIT
     End If
-    On Error GoTo 0
 
     For Each para In ActiveDocument.Paragraphs
         If para.style = s Then
@@ -200,17 +261,27 @@ Sub AuditStyleUsage_PictureCaption()
     logBuffer = logBuffer & vbCrLf & "Total 'Picture Caption' style instances: " & hitCount
     Debug.Print logBuffer
     MsgBox "Audit complete. See Immediate Window for details.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditStyleUsage_PictureCaption of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub RedefinePictureCaptionStyle_NotoSans()
+    On Error GoTo PROC_ERR
     Dim s As style
     On Error Resume Next
     Set s = ActiveDocument.Styles("Picture Caption")
+    On Error GoTo 0
+    On Error GoTo PROC_ERR
+
     If s Is Nothing Then
         MsgBox "'Picture Caption' style not found in this document.", vbExclamation
-        Exit Sub
+        GoTo PROC_EXIT
     End If
-    On Error GoTo 0
 
     With s.Font
         .name = "Noto Sans"
@@ -221,11 +292,19 @@ Sub RedefinePictureCaptionStyle_NotoSans()
         .color = wdColorAutomatic
     End With
 
-    Debug.Print "? 'Picture Caption' style updated to Noto Sans, 9pt."
+    Debug.Print "'Picture Caption' style updated to Noto Sans, 9pt."
     MsgBox "'Picture Caption' style redefined to Noto Sans, 9pt.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RedefinePictureCaptionStyle_NotoSans of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 
 Sub Identify_ArialUnicodeMS_Paragraphs()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim paraIndex As Long
     Dim secIndex As Long
@@ -289,5 +368,12 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
 
     Debug.Print logBuffer
     MsgBox "Arial Unicode MS detection complete. See Immediate Window.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Identify_ArialUnicodeMS_Paragraphs of Module basTEST_aeBibleFonts"
+    Resume PROC_EXIT
 End Sub
 

@@ -32,6 +32,7 @@ Public Const wdPaperB5Jis As Integer = 11
 '---------------------------------------------
 
 Sub ViewCodeDetails()
+    On Error GoTo PROC_ERR
     Dim selectedText As String
     Dim msg As String
     Dim i As Integer
@@ -51,9 +52,17 @@ Sub ViewCodeDetails()
 
     ' Display the code details in a message box
     MsgBox msg
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ViewCodeDetails of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub PrintFontProperties()
+    On Error GoTo PROC_ERR
     Dim sel As Selection
     Set sel = Selection
     With sel.Font
@@ -84,15 +93,23 @@ Sub PrintFontProperties()
         Debug.Print "StylisticSet: " & .StylisticSet
         Debug.Print "ContextualAlternates: " & .ContextualAlternates
     End With
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintFontProperties of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub PrintBibleBook()
+    On Error GoTo PROC_ERR
     Dim heading1Name As String
     Dim para As Word.Paragraph
     Dim startProcessing As Boolean
     Dim heading1Found As Boolean
     Dim heading2Found As Boolean
-    
+
     ' Prompt user to enter the name of Heading 1
     heading1Name = InputBox("Enter the name of Heading 1:")
     heading1Name = UCase(heading1Name)
@@ -133,6 +150,13 @@ Sub PrintBibleBook()
         End If
 EmptyPara:
     Next para
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintBibleBook of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Function IsParagraphEmpty(paragraph As Word.Range) As Boolean
@@ -145,17 +169,18 @@ Function IsParagraphEmpty(paragraph As Word.Range) As Boolean
 End Function
 
 Sub GoToParagraphIndex()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim paraIndex As Integer
     Dim targetIndex As Integer
-    
+
     ' Prompt user to enter the index of the paragraph
     Dim sInput As String
     sInput = InputBox("Enter the index of the paragraph you want to go to:")
-    If sInput = "" Then Exit Sub
+    If sInput = "" Then GoTo PROC_EXIT
     If Not IsNumeric(sInput) Then
         MsgBox "Please enter a number.", vbExclamation, "GoToParagraphIndex"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
     targetIndex = CLng(sInput)
 
@@ -165,16 +190,24 @@ Sub GoToParagraphIndex()
         For Each para In ActiveDocument.Paragraphs
             If paraIndex = targetIndex Then
                 para.Range.Select
-                Exit Sub
+                GoTo PROC_EXIT
             End If
             paraIndex = paraIndex + 1
         Next para
     Else
         MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.Paragraphs.count & "."
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToParagraphIndex of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Function CountTextWrappingBreakParagraphs() As Long
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim count As Long
     count = 0
@@ -188,9 +221,17 @@ Function CountTextWrappingBreakParagraphs() As Long
         End With
     Next para
     CountTextWrappingBreakParagraphs = count
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTextWrappingBreakParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Function
 
 Function CountNextPageSectionBreakParagraphs() As Long
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim count As Long
     count = 0
@@ -202,9 +243,17 @@ Function CountNextPageSectionBreakParagraphs() As Long
         End If
     Next para
     CountNextPageSectionBreakParagraphs = count
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountNextPageSectionBreakParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Function
 
 Function CountContinuousSectionBreakParagraphs() As Long
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim count As Long
     count = 0
@@ -216,9 +265,17 @@ Function CountContinuousSectionBreakParagraphs() As Long
         End If
     Next para
     CountContinuousSectionBreakParagraphs = count
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountContinuousSectionBreakParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Function
 
 Function CountEvenPageSectionBreakParagraphs() As Long
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim count As Long
     count = 0
@@ -230,9 +287,17 @@ Function CountEvenPageSectionBreakParagraphs() As Long
         End If
     Next para
     CountEvenPageSectionBreakParagraphs = count
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountEvenPageSectionBreakParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Function
 
 Function CountOddPageSectionBreakParagraphs() As Long
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim count As Long
     count = 0
@@ -244,28 +309,42 @@ Function CountOddPageSectionBreakParagraphs() As Long
         End If
     Next para
     CountOddPageSectionBreakParagraphs = count
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountOddPageSectionBreakParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Function
 
 Sub AppendToFile(filePath As String, text As String)
+    On Error GoTo PROC_ERR
     Dim fileNum As Integer
     fileNum = FreeFile
     Open filePath For Append As fileNum
     Print #fileNum, text
     Close fileNum
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AppendToFile of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub SearchParagraphs()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim count As Integer
     Dim firstOccurrenceIndex As Integer
     Dim foundFirst As Boolean
-    
+
     Set doc = ActiveDocument
     count = 0
     firstOccurrenceIndex = -1
     foundFirst = False
-    
+
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph contains only a page break or continuous page break
@@ -286,16 +365,24 @@ Sub SearchParagraphs()
     If firstOccurrenceIndex <> -1 Then
         doc.Range(firstOccurrenceIndex, firstOccurrenceIndex).Select
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SearchParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub CountEmptyParagraphsWithAutomaticFont()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim count As Integer
-    
+
     Set doc = ActiveDocument
     count = 0
-    
+
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
@@ -303,19 +390,27 @@ Sub CountEmptyParagraphsWithAutomaticFont()
             count = count + 1
         End If
     Next para
-    
+
     ' Print the count to the console
     Debug.Print "Count of empty paragraphs with font set to automatic: " & count
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountEmptyParagraphsWithAutomaticFont of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub GoToParagraphByCount(paragraphNumber As Integer)
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim count As Integer
-    
+
     Set doc = ActiveDocument
     count = 0
-    
+
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         count = count + 1
@@ -323,23 +418,31 @@ Sub GoToParagraphByCount(paragraphNumber As Integer)
         If count = paragraphNumber Then
             ' Select the paragraph
             para.Range.Select
-            Exit Sub
+            GoTo PROC_EXIT
         End If
     Next para
-    
+
     ' If the paragraph number is out of range, print a message to the console
     Debug.Print "Paragraph number " & paragraphNumber & " is out of range."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToParagraphByCount of Module Module1"
+    Resume PROC_EXIT
 End Sub
  
 Sub DetectFontColors()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim rng As Word.Range
     Dim colorUsed As Boolean
     Dim themeColorUsed As Boolean
     Dim paraCount As Integer
-    
+
     paraCount = 0
-    
+
     For Each para In ActiveDocument.Paragraphs
         paraCount = paraCount + 1
         Set rng = para.Range
@@ -356,18 +459,26 @@ Sub DetectFontColors()
         
         If colorUsed Or themeColorUsed Then
             Debug.Print "Paragraph number with font or theme color: " & paraCount
-            Exit Sub
+            GoTo PROC_EXIT
         End If
     Next para
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DetectFontColors of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub UpdateBlackToAutomatic()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim rng As Word.Range
     Dim storyRange As Word.Range
-    
+
     Set doc = ActiveDocument
-    
+
     ' Turn off screen updating for better performance
     Application.ScreenUpdating = False
     
@@ -399,18 +510,27 @@ Sub UpdateBlackToAutomatic()
     
     ' Display a message indicating completion
     MsgBox "All black font colors have been updated to automatic."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateBlackToAutomatic of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, newG As Long, newB As Long)
+    On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Dim oldColor As Long
     Dim newColor As Long
     Dim r As Long, g As Long, b As Long
-    
+
     ' Define the old and new colors using RGB values
     oldColor = RGB(oldR, oldG, oldB)
     newColor = RGB(newR, newG, newB)
-    
+
     ' Loop through each word in the document
     For Each rng In ActiveDocument.words
         ' Extract the RGB values of the current font color
@@ -423,30 +543,44 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
             rng.Font.color = newColor
         End If
     Next rng
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ChangeFontColorRGB of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub ChangeSpecificColor()
+    On Error GoTo PROC_ERR
     'Call ChangeFontColorRGB(255, 0, 1, 255, 0, 0)
     Call ChangeFontColorRGB(37, 37, 37, 0, 0, 0)
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ChangeSpecificColor of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub EnsureFootnoteReferenceStyleColor()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range
     Dim hexColor As String
     Dim rgbColor As Long
     Dim count As Integer
-    
+
     ' Set the desired hex color (e.g., purple: #663399)
     hexColor = "#663399"
-    
+
     ' Convert hex color to RGB
     rgbColor = HexToRGB(hexColor)
-    
+
     ' Initialize variables
     Set doc = ActiveDocument
-    
+
     count = 0
     ' Loop through each paragraph in the document
     For Each para In doc.Paragraphs
@@ -465,6 +599,13 @@ Sub EnsureFootnoteReferenceStyleColor()
     ' Display a message indicating the process is complete
     'MsgBox "Footnote Reference styles checked and updated to the desired color where necessary."
     Debug.Print "Count of Footnote Reference = " & count
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure EnsureFootnoteReferenceStyleColor of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Function HexToRGB(hexColor As String) As Long
@@ -483,15 +624,16 @@ Function HexToRGB(hexColor As String) As Long
 End Function
 
 Function FirstPageFooterNotEmpty() As Boolean
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim footerRange As Word.Range
-    
+
     ' Set the document
     Set doc = ActiveDocument
-    
+
     ' Get the range of the footer on the first page
     Set footerRange = doc.Sections(1).Footers(wdHeaderFooterPrimary).Range
-    
+
     ' Check if the footer is not empty
     If Len(Trim(footerRange.Text)) > 0 Then
         'MsgBox "The footer on the first page is not empty."
@@ -500,6 +642,13 @@ Function FirstPageFooterNotEmpty() As Boolean
         'MsgBox "The footer on the first page is empty."
         FirstPageFooterNotEmpty = False
     End If
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FirstPageFooterNotEmpty of Module Module1"
+    Resume PROC_EXIT
 End Function
 
 Function IsEmptyParagraph(p As Word.Paragraph) As Boolean
@@ -508,6 +657,7 @@ Function IsEmptyParagraph(p As Word.Paragraph) As Boolean
 End Function
 
 Sub CountTotallyEmptyParagraphs()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim sec As section
@@ -522,7 +672,7 @@ Sub CountTotallyEmptyParagraphs()
     Dim emptyParaCountTextBoxes As Long
     Dim grandTotal As Long
     Dim pageNum As Long
-    
+
     Set doc = ActiveDocument
         
     ' Count empty paragraphs in the main document
@@ -612,15 +762,23 @@ Sub CountTotallyEmptyParagraphs()
            "Empty Paragraphs in Footnotes: " & emptyParaCountFootnotes & vbCrLf & _
            "Empty Paragraphs in Text Boxes: " & emptyParaCountTextBoxes & vbCrLf & _
            "Grand Total: " & grandTotal
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTotallyEmptyParagraphs of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub CountTypesTrulyEmptyParagraph()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim paraText As String
     Dim paraRange As Word.Range
     Dim sectionBreakFound As Boolean
     Dim nextChar As String
-    
+
     Dim trulyEmptyCount As Long
     Dim sectionFormattedEmptyCount As Long
     Dim firstFound As Boolean
@@ -687,9 +845,17 @@ Sub CountTypesTrulyEmptyParagraph()
     If Not firstFound Then
         MsgBox "No truly empty paragraph found to select.", vbExclamation
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTypesTrulyEmptyParagraph of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub FindSpecificFontOutsideMainBody()
+    On Error GoTo PROC_ERR
     Dim targetFont As String
     targetFont = "Gentium" ' <-- change this to the font you want to find
 
@@ -721,13 +887,23 @@ Sub FindSpecificFontOutsideMainBody()
     Application.StatusBar = False
     Application.ScreenUpdating = True
     MsgBox "Font '" & targetFont & "' not found outside the main text.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindSpecificFontOutsideMainBody of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub CreateTemplateWithoutText()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim templateDoc As Document
     Dim templatePath As String
-    
+
     ' Get the current active document
     Set doc = ActiveDocument
     
@@ -755,6 +931,13 @@ Sub CreateTemplateWithoutText()
     
     ' Notify the user
     MsgBox "Template without text has been saved successfully as: " & templatePath
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CreateTemplateWithoutText of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Function GetVerticalAlignmentName(valign As WdVerticalAlignment) As String
@@ -780,6 +963,7 @@ Function GetBorderStyle(border As border) As String
 End Function
 
 Sub CountTabParagraphsFull()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim sec As section
     Dim hdr As HeaderFooter
@@ -790,7 +974,7 @@ Sub CountTabParagraphsFull()
     Dim headerCount As Long
     Dim footerCount As Long
     Dim grandTotal As Long
-    
+
     Set doc = ActiveDocument
     bodyCount = 0
     headerCount = 0
@@ -838,9 +1022,17 @@ Sub CountTabParagraphsFull()
            "Footers: " & footerCount & vbCrLf & _
            "Grand Total: " & grandTotal, _
            vbInformation, "Tab Paragraph Count"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTabParagraphsFull of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub CompareHeading1sWithShowHideToggle()
+    On Error GoTo PROC_ERR
     Dim showList As Collection, hideList As Collection
     Dim i As Long, j As Long, k As Long
     Dim jShow(1 To 66) As Integer, kHide(1 To 66) As Integer
@@ -910,9 +1102,18 @@ Sub CompareHeading1sWithShowHideToggle()
     ActiveWindow.View.ShowAll = originalShowAll
 
     Debug.Print "! Comparison complete."
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    ActiveWindow.View.ShowAll = originalShowAll
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompareHeading1sWithShowHideToggle of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub CountAndDiagnoseFootnoteFormatting()
+    On Error GoTo PROC_ERR
     Dim doc As Document
     Dim i As Long
     Dim ref As Word.Range
@@ -970,6 +1171,13 @@ Sub CountAndDiagnoseFootnoteFormatting()
 
     Debug.Print "Total checked: " & totalChecked
     Debug.Print "Total incorrect: " & errCount
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountAndDiagnoseFootnoteFormatting of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Function IsFootnoteRefFormattedCorrectly(rng As Word.Range) As Boolean
@@ -982,6 +1190,7 @@ Function IsFootnoteRefFormattedCorrectly(rng As Word.Range) As Boolean
 End Function
 
 Sub TestPageRangeEnd()
+    On Error GoTo PROC_ERR
     Selection.GoTo What:=wdGoToPage, name:="70"
     Selection.MoveRight Unit:=wdCharacter, count:=1
     Dim pageEnd As Long
@@ -992,9 +1201,15 @@ Sub TestPageRangeEnd()
     page71Start = Selection.Start
     Debug.Print "Page 70 ends at: " & pageEnd
     Debug.Print "Page 71 starts at: " & page71Start
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TestPageRangeEnd of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub AuditFontUsage_ParagraphsAndHeadersFooters()
+    On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim fontMap As Object
     Dim fName As String
@@ -1057,6 +1272,13 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
 
     Debug.Print logBuffer
     MsgBox "Full font audit complete. See Immediate Window.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditFontUsage_ParagraphsAndHeadersFooters of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Function CenturyRangeToYears(StartCentury As Long, EndCentury As Long) As String
@@ -1098,10 +1320,11 @@ Function CenturyRangeToYears(StartCentury As Long, EndCentury As Long) As String
 End Function
 
 Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef someCount As Long)
+    On Error GoTo PROC_ERR
     ' Passes someCount by reference, initiaize to -1 when calling and assign actual result at end of routine
     Dim pgRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
-    
+
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNumStart))
     pageStart = pgRange.Start
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNumEnd))
@@ -1115,9 +1338,13 @@ Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef some
 
     Dim i As Long
     i = pageStart
-    
-    
 
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountLeftAligned of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 '===============================================================================
@@ -1173,6 +1400,7 @@ End Sub
 '
 '===============================================================================
 Sub CountNumericOrdinals()
+    On Error GoTo PROC_ERR
 
     Dim cntST As Long, cntND As Long, cntRD As Long, cntTH As Long
     Dim TOTAL As Long
@@ -1254,24 +1482,33 @@ Done:
         "TOTAL: " & TOTAL & vbCrLf & _
         "Ordinal Count Results"
 
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountNumericOrdinals of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 Sub ParseAndValidateString()
+    On Error GoTo PROC_ERR
     Dim s As String
     Dim i As Long
     Dim spaceCount As Long
     Dim colonCount As Long
     Dim colonPos As Long
     Dim IsValid As Boolean
-    
+
     ' Get input from user
     s = InputBox("Enter a string to validate:", "String Parser")
-    
+
     ' User cancelled
     If Len(s) = 0 Then
         Debug.Print "INPUT : [<empty or cancelled>]"
         Debug.Print "RESULT: INVALID"
-        Exit Sub
+        GoTo PROC_EXIT
     End If
     
     IsValid = True
@@ -1319,6 +1556,13 @@ Sub ParseAndValidateString()
     ' Print result
     Debug.Print "RESULT: " & IIf(IsValid, "VALID", "INVALID")
     Debug.Print String(40, "-")
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseAndValidateString of Module Module1"
+    Resume PROC_EXIT
 End Sub
 
 

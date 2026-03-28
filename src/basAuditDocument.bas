@@ -4,6 +4,7 @@ Option Compare Text
 Option Private Module
 
 Public Sub ReplaceTimesInStyles()
+    On Error GoTo PROC_ERR
     Dim oDoc   As Document
     Dim oStyle As style
     Dim lCount As Long
@@ -18,6 +19,7 @@ Public Sub ReplaceTimesInStyles()
             lCount = lCount + 1
         End If
         On Error GoTo 0
+        On Error GoTo PROC_ERR
     Next oStyle
 
     Debug.Print "Done. Replaced Times with Times New Roman in " & _
@@ -28,9 +30,17 @@ Public Sub ReplaceTimesInStyles()
            vbInformation, "ReplaceTimesInStyles"
 
     Set oDoc = Nothing
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReplaceTimesInStyles of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub FindFontUsage()
+    On Error GoTo PROC_ERR
     Dim oDoc     As Document
     Dim oPara    As Word.Paragraph
     Dim oSection As section
@@ -109,6 +119,7 @@ Public Sub FindFontUsage()
         Dim sStyleFont As String
         sStyleFont = Trim(oStyle.Font.name)
         On Error GoTo 0
+        On Error GoTo PROC_ERR
         If InStr(1, sStyleFont, sTarget, vbTextCompare) > 0 Then
             lStyleDef = lStyleDef + 1
             bFound = False
@@ -140,9 +151,17 @@ Public Sub FindFontUsage()
            "Style definitions: " & lStyleDef & vbCrLf & vbCrLf & _
            IIf(oStyles.count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere."), _
            vbInformation, "FindFontUsage"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindFontUsage of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub CountParagraphsAndFonts()
+    On Error GoTo PROC_ERR
     Dim oDoc       As Document
     Dim oPara      As Word.Paragraph
     Dim oSection   As section
@@ -201,20 +220,36 @@ Public Sub CountParagraphsAndFonts()
            "Header/footer paragraphs: " & lHF & vbCrLf & vbCrLf & _
            "Fonts used (" & oFonts.count & "):" & vbCrLf & sFontList, _
            vbInformation, "CountParagraphsAndFonts"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountParagraphsAndFonts of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Private Function ResolveFont(ByVal oPara As Word.Paragraph) As String
+    On Error GoTo PROC_ERR
     Dim sFont As String
     sFont = Trim(oPara.Range.Font.name)
     If Len(sFont) = 0 Or Left(sFont, 1) = "+" Then
         On Error Resume Next
         sFont = Trim(oPara.style.Font.name)
         On Error GoTo 0
+        On Error GoTo PROC_ERR
     End If
     If Len(sFont) = 0 Or Left(sFont, 1) = "+" Then
         sFont = "(inherited/theme)"
     End If
     ResolveFont = sFont
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ResolveFont of Module basAuditDocument"
+    Resume PROC_EXIT
 End Function
 
 Private Sub AddToCollection(ByRef oCol As Collection, ByVal sValue As String)
@@ -226,13 +261,20 @@ Private Sub AddToCollection(ByRef oCol As Collection, ByVal sValue As String)
 End Sub
 
 Public Sub CountFields()
+    On Error GoTo PROC_ERR
     Dim lCount As Long
     lCount = ActiveDocument.Fields.count
     Debug.Print "Total fields in document: " & lCount
     MsgBox "Total fields in document: " & lCount, vbInformation, "CountFields"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountFields of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub CountCodeLines()
+    On Error GoTo PROC_ERR
     Dim oComp       As Object
     Dim oModule     As Object
     Dim lTotalCode  As Long
@@ -297,6 +339,13 @@ Public Sub CountCodeLines()
                 PadRight(lTotalEmpty, 10) & _
                 (lTotalCode + lTotalComment + lTotalEmpty)
     Debug.Print String(70, "-")
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountCodeLines of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Private Function PadRight(ByVal sValue As Variant, ByVal lWidth As Long) As String
@@ -310,6 +359,7 @@ Private Function PadRight(ByVal sValue As Variant, ByVal lWidth As Long) As Stri
 End Function
 
 Public Sub CountOrphanFooters()
+    On Error GoTo PROC_ERR
     Dim oDoc        As Document
     Dim oSection    As section
     Dim oFooter     As HeaderFooter
@@ -351,9 +401,17 @@ Public Sub CountOrphanFooters()
     Set oFooter = Nothing
     Set oSection = Nothing
     Set oDoc = Nothing
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountOrphanFooters of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub CountOrphanHeaders()
+    On Error GoTo PROC_ERR
     Dim oDoc         As Document
     Dim oSection     As section
     Dim oHeader      As HeaderFooter
@@ -395,74 +453,116 @@ Public Sub CountOrphanHeaders()
     Set oHeader = Nothing
     Set oSection = Nothing
     Set oDoc = Nothing
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountOrphanHeaders of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 '==========================================
 ' Entry Points
 '==========================================
 Public Sub AuditDoc_Original()
+    On Error GoTo PROC_ERR
     WriteAuditToFile "AuditDoc_Original.txt", "ORIGINAL"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditDoc_Original of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub AuditDoc_New()
+    On Error GoTo PROC_ERR
     WriteAuditToFile "AuditDoc_New.txt", "NEW"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditDoc_New of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 '==========================================
 ' Core Writer
 '==========================================
 Private Sub WriteAuditToFile(ByVal fileName As String, ByVal label As String)
+    On Error GoTo PROC_ERR
     Dim filePath As String
     filePath = GetRptPath() & fileName
-    
+
     Dim f As Integer
     f = FreeFile
-    
+
     Open filePath For Output As #f
-    
+
     WriteHeader f, label
     WriteDocumentStats f
     WriteSectionAudit f
     WriteSignature f, label
-    
+
     Close #f
-    
+
     MsgBox "Audit written to:" & vbCrLf & filePath, vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteAuditToFile of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 '==========================================
 ' Path Helper
 '==========================================
 Private Function GetRptPath() As String
+    On Error GoTo PROC_ERR
     Dim basePath As String
     basePath = ActiveDocument.Path
-    
+
     If basePath = "" Then
         Err.Raise vbObjectError + 1, , "Document must be saved before auditing."
     End If
-    
+
     Dim rptPath As String
     rptPath = basePath & "\rpt\"
-    
+
     ' Create folder if it does not exist
     If Dir(rptPath, vbDirectory) = "" Then MkDir rptPath
-    
+
     GetRptPath = rptPath
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetRptPath of Module basAuditDocument"
+    Resume PROC_EXIT
 End Function
 
 '==========================================
 ' Writers
 '==========================================
 Private Sub WriteHeader(ByVal f As Integer, ByVal label As String)
+    On Error GoTo PROC_ERR
     Print #f, String(60, "=")
     Print #f, "DOCUMENT AUDIT: " & label
     Print #f, "File: " & ActiveDocument.name
     Print #f, "Path: " & ActiveDocument.FullName
     Print #f, "Timestamp: " & Now
     Print #f, String(60, "=")
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteHeader of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub WriteDocumentStats(ByVal f As Integer)
+    On Error GoTo PROC_ERR
     With ActiveDocument
         Print #f, "Total Sections: " & .Sections.count
         Print #f, "Total Paragraphs: " & .Paragraphs.count
@@ -471,16 +571,22 @@ Private Sub WriteDocumentStats(ByVal f As Integer)
         Print #f, "Total Footnotes: " & .Footnotes.count
         Print #f, "Total Endnotes: " & .Endnotes.count
     End With
-    
+
     Print #f, String(40, "-")
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteDocumentStats of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub WriteSectionAudit(ByVal f As Integer)
+    On Error GoTo PROC_ERR
     Dim sec As section
-    
+
     Dim i As Long
     i = 1
-    
+
     For Each sec In ActiveDocument.Sections
         
         Print #f, "Section " & i
@@ -510,16 +616,24 @@ Private Sub WriteSectionAudit(ByVal f As Integer)
             sec.Footers(wdHeaderFooterPrimary).LinkToPrevious
         
         Print #f, String(30, "-")
-        
+
         i = i + 1
     Next sec
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteSectionAudit of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 
 Private Sub WriteSignature(ByVal f As Integer, ByVal label As String)
+    On Error GoTo PROC_ERR
     Dim sec As section
     Dim i As Long
     Dim sig As String
-    
+
     Print #f, ""
     Print #f, "SIGNATURE: " & label
     
@@ -539,5 +653,12 @@ Private Sub WriteSignature(ByVal f As Integer, ByVal label As String)
     
     Print #f, "END SIGNATURE"
     Print #f, String(60, "=")
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteSignature of Module basAuditDocument"
+    Resume PROC_EXIT
 End Sub
 

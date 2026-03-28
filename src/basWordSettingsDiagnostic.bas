@@ -8,6 +8,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' === WordSettingsDiagnostic.bas ===
 ' === Main entry point ===
 Sub RunWordSettingsAudit(Optional saveToFile As Boolean = False)
+    On Error GoTo PROC_ERR
     Dim currentSettings As Object
     Dim targetSettings As Object
     Dim discrepancies As Object
@@ -28,10 +29,18 @@ Sub RunWordSettingsAudit(Optional saveToFile As Boolean = False)
         SaveReportToFile outputText, "WordSettingsAudit.txt"
         MsgBox "Audit saved to WordSettingsAudit.txt", vbInformation
     End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunWordSettingsAudit of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Sub
 
 ' === Gather current settings into a Dictionary ===
 Function GetCurrentWordSettings() As Object
+    On Error GoTo PROC_ERR
     Dim settings As Object
     Set settings = CreateObject("Scripting.Dictionary")
 
@@ -62,25 +71,43 @@ Function GetCurrentWordSettings() As Object
     settings.Add "FormatConsistencyChecker", "Manual check: File > Options > Advanced > Keep track of formatting"
 
     Set GetCurrentWordSettings = settings
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetCurrentWordSettings of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 Function GetShowTextBoundaries() As Variant
-    On Error Resume Next
+    On Error GoTo PROC_ERR
     Dim Result As Variant
 
     ' Only check if view is Print Layout or Web Layout
+    On Error Resume Next
     Select Case ActiveWindow.View.Type
         Case wdPrintView, wdWebView
             Result = ActiveWindow.View.ShowTextBoundaries
         Case Else
             Result = "Unsupported view mode: " & ActiveWindow.View.Type
     End Select
+    On Error GoTo 0
+    On Error GoTo PROC_ERR
 
     GetShowTextBoundaries = Result
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetShowTextBoundaries of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 ' === Define or Load a baseline (can be replaced with a loader from external file) ===
 Function LoadTargetBaseline() As Object
+    On Error GoTo PROC_ERR
     Dim baseline As Object
     Set baseline = CreateObject("Scripting.Dictionary")
     baseline.Add "EnableLivePreview", True
@@ -94,10 +121,18 @@ Function LoadTargetBaseline() As Object
     baseline.Add "SaveInterval", 10
     baseline.Add "BackgroundSave", True
     Set LoadTargetBaseline = baseline
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadTargetBaseline of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 ' === Compare two sets of settings ===
 Function CompareSettings(current As Object, target As Object) As Object
+    On Error GoTo PROC_ERR
     Dim key As Variant
     Dim discrepancies As Object
     Set discrepancies = CreateObject("Scripting.Dictionary")
@@ -115,10 +150,18 @@ Function CompareSettings(current As Object, target As Object) As Object
     Next key
 
     Set CompareSettings = discrepancies
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompareSettings of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 ' === Format diagnostics for output ===
 Function FormatDiagnostics(current As Object, target As Object, issues As Object) As String
+    On Error GoTo PROC_ERR
     Dim Result As String
     Dim key As Variant
     Const manualFlag As String = "[ ]" & " Manual check: "
@@ -150,11 +193,18 @@ Function FormatDiagnostics(current As Object, target As Object, issues As Object
     Result = Result & vbCrLf & "== Manual UI Verifications ==" & vbCrLf
     For Each key In current.Keys
         If InStr(current(key), "File > Options") > 0 Or InStr(current(key), "Editor") > 0 Then
-            Result = Result & manualFlag & key & " � " & current(key) & vbCrLf
+            Result = Result & manualFlag & key & " - " & current(key) & vbCrLf
         End If
     Next key
 
     FormatDiagnostics = Result
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FormatDiagnostics of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 Function FormatBoolean(value As Variant) As String
@@ -167,17 +217,26 @@ End Function
 
 ' === Save report to file ===
 Sub SaveReportToFile(reportText As String, fileName As String)
+    On Error GoTo PROC_ERR
     Dim filePath As String
     filePath = ThisDocument.Path & "\" & fileName
-    
+
     Dim fileNum As Integer
     fileNum = FreeFile
     Open filePath For Output As #fileNum
     Print #fileNum, reportText
     Close #fileNum
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveReportToFile of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Sub
 
 Sub ShowAllStyles()
+    On Error GoTo PROC_ERR
     Dim s As style
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
@@ -186,9 +245,17 @@ Sub ShowAllStyles()
                         " | QuickStyle: " & s.QuickStyle
         End If
     Next s
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ShowAllStyles of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Sub
 
 Sub ShowMyStyles()
+    On Error GoTo PROC_ERR
     Dim s As style
     Dim msg As String
     Dim styleCount As Integer
@@ -215,19 +282,26 @@ Sub ShowMyStyles()
     End If
 
     MsgBox msg, vbInformation, "Extended Style Audit"
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ShowMyStyles of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Sub
 
 Function StyleIsAppliedAnywhere(sName As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim p As Word.Paragraph
     Dim sec As section
 
-    On Error Resume Next
-
     ' Body paragraphs
+    On Error Resume Next
     For Each p In ActiveDocument.Paragraphs
         If p.style = sName Then
             StyleIsAppliedAnywhere = True
-            Exit Function
+            GoTo PROC_EXIT
         End If
     Next p
 
@@ -238,7 +312,7 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
             For Each p In hdrFtr.Range.Paragraphs
                 If p.style = sName Then
                     StyleIsAppliedAnywhere = True
-                    Exit Function
+                    GoTo PROC_EXIT
                 End If
             Next p
         Next hdrFtr
@@ -246,28 +320,45 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
             For Each p In hdrFtr.Range.Paragraphs
                 If p.style = sName Then
                     StyleIsAppliedAnywhere = True
-                    Exit Function
+                    GoTo PROC_EXIT
                 End If
             Next p
         Next hdrFtr
     Next sec
-
     On Error GoTo 0
+    On Error GoTo PROC_ERR
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StyleIsAppliedAnywhere of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 Function StyleIsApplied(sName As String) As Boolean
+    On Error GoTo PROC_ERR
     Dim p As Word.Paragraph
     On Error Resume Next
     For Each p In ActiveDocument.Paragraphs
         If p.style = sName Then
             StyleIsApplied = True
-            Exit Function
+            GoTo PROC_EXIT
         End If
     Next p
     On Error GoTo 0
+    On Error GoTo PROC_ERR
+
+PROC_EXIT:
+    Exit Function
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StyleIsApplied of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Function
 
 Sub HideUnusedStyles()
+    On Error GoTo PROC_ERR
     Dim s As style
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
@@ -275,10 +366,18 @@ Sub HideUnusedStyles()
                 On Error Resume Next
                 s.QuickStyle = False ' Hide from Ribbon gallery only
                 On Error GoTo 0
+                On Error GoTo PROC_ERR
             End If
         End If
     Next s
     MsgBox "Quick Style Gallery cleaned. Pane visibility cannot be modified via VBA.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure HideUnusedStyles of Module basWordSettingsDiagnostic"
+    Resume PROC_EXIT
 End Sub
 
 
