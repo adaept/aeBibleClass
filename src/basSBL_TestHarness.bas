@@ -474,6 +474,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage11_ListComposition
     Test_Stage12_FinalParser
     Test_Stage13_ContextShorthand
+    Test_Stage14_CanonicalCompression
     TestSummary
 PROC_EXIT:
     Exit Sub
@@ -890,4 +891,103 @@ Public Sub Test_Stage13_ContextShorthand()
     'Romans 9
     Debug.Print
     Debug.Print "Stage 13 tests complete."
+End Sub
+
+Public Sub Test_Stage14_CanonicalCompression()
+    On Error GoTo PROC_ERR
+    Dim Refs As Collection
+    Dim Result As Collection
+
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage14_CanonicalCompression"
+    Debug.Print "------------------------------------------"
+    '------------------------------------------
+    ' Test 1 - two adjacent verses collapse to range
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
+    AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
+    '------------------------------------------
+    ' Test 2 - three adjacent verses collapse to range
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Refs.Add "John 3:18"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
+    AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
+    '------------------------------------------
+    ' Test 3 - non-adjacent verses not collapsed
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:18"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
+    AssertEqual "John 3:16", Result(1), "Test 3: first ref"
+    AssertEqual "John 3:18", Result(2), "Test 3: second ref"
+    '------------------------------------------
+    ' Test 4 - adjacent run then gap
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Refs.Add "John 3:19"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
+    AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
+    AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
+    '------------------------------------------
+    ' Test 5 - cross-book not collapsed
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "Romans 8:1"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 2, Result.count, "Test 5: cross-book -> two refs"
+    AssertEqual "John 3:16", Result(1), "Test 5: John ref"
+    AssertEqual "Romans 8:1", Result(2), "Test 5: Romans ref"
+    '------------------------------------------
+    ' Test 6 - cross-chapter not collapsed
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:36"
+    Refs.Add "John 4:1"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 2, Result.count, "Test 6: cross-chapter -> two refs"
+    AssertEqual "John 3:36", Result(1), "Test 6: end of chapter 3"
+    AssertEqual "John 4:1", Result(2), "Test 6: start of chapter 4"
+    '------------------------------------------
+    ' Test 7 - single ref passthrough
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Romans 8:1"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 7: single ref passthrough count"
+    AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
+    '------------------------------------------
+    ' Test 8 - multi-book mixed compression
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Refs.Add "Romans 8:1"
+    Refs.Add "Romans 8:2"
+    Set Result = CompressCanonical(Refs)
+    AssertEqual 2, Result.count, "Test 8: multi-book mixed -> two ranges"
+    AssertEqual "John 3:16-3:17", Result(1), "Test 8: John range"
+    AssertEqual "Romans 8:1-8:2", Result(2), "Test 8: Romans range"
+
+    Debug.Print "------------------------------------------"
+    Debug.Print " Stage 14 tests complete."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage14_CanonicalCompression of Module basSBL_TestHarness"
+    Resume PROC_EXIT
 End Sub

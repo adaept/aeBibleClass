@@ -3058,6 +3058,199 @@ Private Function IsNumericRange(ByVal seg As String) As Boolean
         IsNumeric(mid$(seg, p + 1))
 End Function
 
+'=====================================================
+' Stage 14 - Canonical Compression
+'=====================================================
+' Purpose:
+'   Collapse adjacent consecutive same-chapter verses
+'   into ranges in a resolved canonical reference list.
+' Input:
+'   A Collection of canonical reference strings,
+'   such as the output of ComposeList / CanonicalFromRef.
+'   Example: "John 3:16", "John 3:17", "John 3:18", "Romans 8:1"
+' Output:
+'   A Collection of compressed canonical strings.
+'   Example: "John 3:16-3:18", "Romans 8:1"
+' Compression rules:
+'   1. Two refs are adjacent when same book, same chapter,
+'      and second verse = first verse + 1.
+'   2. A run of 2+ adjacent verses becomes a range:
+'         BookName startChapter:startVerse-endChapter:endVerse
+'   3. Cross-chapter adjacency is never collapsed.
+'   4. Cross-book adjacency is never collapsed.
+'   5. Order is preserved.
+'   6. Non-canonical strings (chapter-only refs) are passed
+'      through unchanged.
+'=====================================================
+Public Function CompressCanonical(ByVal Refs As Collection) As Collection
+    On Error GoTo PROC_ERR
+    Dim Result As New Collection
+    Dim i As Long
+    Dim n As Long
+
+    n = Refs.count
+    If n = 0 Then
+        Set CompressCanonical = Result
+        GoTo PROC_EXIT
+    End If
+    '------------------------------------------
+    ' Parse all refs into parallel arrays
+    '------------------------------------------
+    Dim bookNames()  As String
+    Dim chapters()   As Long
+    Dim verses()     As Long
+    Dim parsedOk()   As Boolean
+
+    ReDim bookNames(1 To n)
+    ReDim chapters(1 To n)
+    ReDim verses(1 To n)
+    ReDim parsedOk(1 To n)
+
+    Dim refStr As String
+    For i = 1 To n
+        refStr = Refs(i)
+        parsedOk(i) = ParseCanonicalRef( _
+                          refStr, _
+                          bookNames(i), _
+                          chapters(i), _
+                          verses(i))
+    Next i
+    '------------------------------------------
+    ' Walk through refs, accumulating runs
+    '------------------------------------------
+    i = 1
+    Do While i <= n
+        '------------------------------------------
+        ' If this ref could not be parsed as a
+        ' chapter:verse ref, emit it unchanged
+        '------------------------------------------
+        If Not parsedOk(i) Then
+            Result.Add Refs(i)
+            i = i + 1
+        Else
+            '------------------------------------------
+            ' Start a potential run
+            '------------------------------------------
+            Dim runStart As Long
+            runStart = i
+            '------------------------------------------
+            ' Extend the run while adjacent.
+            ' NOTE: VBA And is not short-circuit - guard
+            ' the array accesses with a Do While i < n
+            ' outer check and inner If/Exit Do tests.
+            '------------------------------------------
+            Do While i < n
+                If Not parsedOk(i + 1) Then Exit Do
+                If bookNames(i + 1) <> bookNames(i) Then Exit Do
+                If chapters(i + 1) <> chapters(i) Then Exit Do
+                If verses(i + 1) <> verses(i) + 1 Then Exit Do
+                i = i + 1
+            Loop
+            '------------------------------------------
+            ' Emit the run as a range or single ref
+            '------------------------------------------
+            If i > runStart Then
+                ' Collapsed range: BookName startCh:startV-endCh:endV
+                Result.Add bookNames(runStart) & " " & _
+                           chapters(runStart) & ":" & verses(runStart) & _
+                           "-" & _
+                           chapters(i) & ":" & verses(i)
+            Else
+                ' Single ref: emit as-is (canonical form preserved)
+                Result.Add Refs(i)
+            End If
+
+            i = i + 1
+        End If
+    Loop
+
+    Set CompressCanonical = Result
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompressCanonical of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' ParseCanonicalRef
+'   Parses a canonical reference string into its
+'   component parts: book name, chapter, verse.
+' Accepts strings of the form:
+'   "BookName chapter:verse"   e.g. "John 3:16"
+'   "BookName chapter"         e.g. "Romans 8"
+'                              (verse returns 0; parsedOk=False)
+' Multi-word book names ("1 John", "Song of Solomon")
+'   are handled by treating everything up to the last
+'   space-delimited token that contains ":" (or is purely
+'   numeric) as the book name.
+' Returns True when a chapter:verse pair was successfully
+'   extracted. Returns False for chapter-only refs or
+'   strings that cannot be parsed.
+'=====================================================
+Private Function ParseCanonicalRef( _
+        ByVal canonical As String, _
+        ByRef bookName As String, _
+        ByRef Chapter As Long, _
+        ByRef Verse As Long _
+    ) As Boolean
+    On Error GoTo PROC_ERR
+
+    bookName = ""
+    Chapter = 0
+    Verse = 0
+
+    canonical = Trim$(canonical)
+    If Len(canonical) = 0 Then GoTo PROC_EXIT
+
+    '------------------------------------------
+    ' Find the last space — everything after it
+    ' is the chapter[:verse] token.
+    '------------------------------------------
+    Dim lastSpace As Long
+    lastSpace = 0
+    Dim k As Long
+    For k = Len(canonical) To 1 Step -1
+        If mid$(canonical, k, 1) = " " Then
+            lastSpace = k
+            Exit For
+        End If
+    Next k
+
+    If lastSpace = 0 Then GoTo PROC_EXIT   ' no space found — unparseable
+
+    Dim refToken As String
+    refToken = mid$(canonical, lastSpace + 1)
+    bookName = Left$(canonical, lastSpace - 1)
+
+    '------------------------------------------
+    ' Parse chapter[:verse] token
+    '------------------------------------------
+    Dim colonPos As Long
+    colonPos = InStr(refToken, ":")
+
+    If colonPos > 0 Then
+        Dim chStr As String
+        Dim vStr As String
+        chStr = Left$(refToken, colonPos - 1)
+        vStr = mid$(refToken, colonPos + 1)
+        If IsNumeric(chStr) And IsNumeric(vStr) Then
+            Chapter = CLng(chStr)
+            Verse = CLng(vStr)
+            ParseCanonicalRef = True   ' chapter:verse successfully parsed
+        End If
+    End If
+    ' If no colon (chapter-only ref), we return False
+    ' (chapter-only refs are emitted unchanged by CompressCanonical)
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCanonicalRef of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
 Public Function ResolveAlias(abbr As String, _
                             Optional BookID As Long) As String
     Dim key As String

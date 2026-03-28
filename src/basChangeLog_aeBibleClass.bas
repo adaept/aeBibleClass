@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #514 -
 ' #513 -
 ' #512 -
-' #511 -
 ' #509 - AddBookNameHeaders routine
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #511 - Add test and code for Stage 14 Canonical Compression [feat]
     ' FIXED - #510 - Fix 3 failures in Test_Harness - corrupted en dash [bug]
     ' FIXED - #509 - AddBookNameHeaders routine
     ' FIXED - #508 - Add count routines for orphan headers and footers
