@@ -475,6 +475,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage12_FinalParser
     Test_Stage13_ContextShorthand
     Test_Stage14_CanonicalCompression
+    Test_Stage15_CanonicalValidation
     TestSummary
 PROC_EXIT:
     Exit Sub
@@ -989,5 +990,111 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage14_CanonicalCompression of Module basSBL_TestHarness"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_Stage15_CanonicalValidation()
+    On Error GoTo PROC_ERR
+    Dim Refs As Collection
+    Dim Result As Collection
+
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage15_CanonicalValidation"
+    Debug.Print "------------------------------------------"
+    '------------------------------------------
+    ' Test 1 - valid single ref passes through unchanged
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 1: valid single ref count"
+    AssertEqual "John 3:16", Result(1), "Test 1: valid single ref value"
+    '------------------------------------------
+    ' Test 2 - invalid chapter removed
+    ' Matthew has 28 chapters; ch 29 is invalid
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Matt 29:1"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 0, Result.count, "Test 2: invalid chapter removed"
+    '------------------------------------------
+    ' Test 3 - invalid verse removed
+    ' Jude 1 has 25 verses; v 50 is invalid
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Jude 1:50"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 0, Result.count, "Test 3: invalid verse removed"
+    '------------------------------------------
+    ' Test 4 - valid verse at boundary kept
+    ' Jude 1:25 is the last verse of Jude
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Jude 1:25"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 4: boundary verse kept count"
+    AssertEqual "Jude 1:25", Result(1), "Test 4: boundary verse kept value"
+    '------------------------------------------
+    ' Test 5 - range with valid bounds passes unchanged
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1-1:5"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 5: valid range count"
+    AssertEqual "Gen 1:1-1:5", Result(1), "Test 5: valid range value"
+    '------------------------------------------
+    ' Test 6 - range end verse clamped
+    ' Gen 1 has 31 verses; end verse 999 clamped to 31
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1-1:999"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 6: clamped end verse count"
+    AssertEqual "Gen 1:1-1:31", Result(1), "Test 6: clamped end verse value"
+    '------------------------------------------
+    ' Test 7 - range end chapter clamped
+    ' Gen has 50 chapters; end ch 999 clamped to 50.
+    ' Gen 50 has 26 verses; end v 1 is within bounds.
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1-999:1"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 7: clamped end chapter count"
+    AssertEqual "Gen 1:1-50:1", Result(1), "Test 7: clamped end chapter value"
+    '------------------------------------------
+    ' Test 8 - range start chapter invalid -> removed
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Matt 29:1-29:5"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 0, Result.count, "Test 8: invalid start chapter removed"
+    '------------------------------------------
+    ' Test 9 - range collapses to single ref after clamping
+    ' Gen 1:31-1:999 -> end clamped to 1:31 = start -> single ref
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:31-1:999"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 1, Result.count, "Test 9: collapsed range count"
+    AssertEqual "Gen 1:31", Result(1), "Test 9: collapsed range value"
+    '------------------------------------------
+    ' Test 10 - mixed valid and invalid
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1"
+    Refs.Add "Matt 29:1"
+    Refs.Add "John 3:16"
+    Set Result = ValidateCanonical(Refs)
+    AssertEqual 2, Result.count, "Test 10: mixed count"
+    AssertEqual "Gen 1:1", Result(1), "Test 10: first valid ref"
+    AssertEqual "John 3:16", Result(2), "Test 10: second valid ref"
+
+    Debug.Print "------------------------------------------"
+    Debug.Print " Stage 15 tests complete."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage15_CanonicalValidation of Module basSBL_TestHarness"
     Resume PROC_EXIT
 End Sub

@@ -3351,6 +3351,328 @@ Public Function ResolveAlias(abbr As String, _
     ResolveAlias = b(1)         ' Canonical name
 End Function
 
+'=====================================================
+' Stage 15 - Canonical Validation
+'=====================================================
+' Purpose:
+'     Remove or trim canonical reference strings that fall
+'     outside the valid scripture bounds of their book.
+' Input:
+'     A Collection of canonical strings — output of Stage 14.
+'     Strings may be:
+'         Single ref:   "John 3:16"
+'         Range:        "John 3:16-3:18"
+'         Chapter-only: "Romans 8"   (passed through unchanged)
+' Output:
+'     A new Collection with invalid refs removed or trimmed.
+' Processing rules per item:
+'     Single ref "Book ch:v"
+'         - ch > ChaptersInBook  -> remove
+'         - v  > VersesInChapter -> remove
+'         - otherwise            -> keep
+'     Range "Book startCh:startV-endCh:endV"
+'         - startCh > ChaptersInBook        -> remove
+'         - startV  > VersesInChapter(start) -> remove
+'         - endCh: clamp to ChaptersInBook
+'         - endV:  clamp to VersesInChapter(endCh)
+'         - after clamping, end < start      -> remove
+'         - after clamping, end = start      -> emit single ref
+'         - otherwise                        -> emit clamped range
+'     Chapter-only: pass through unchanged
+'=====================================================
+
+'-----------------------------------------------------
+' ChaptersInBook
+'   Returns the number of chapters in the named book.
+'   Returns 0 if the book name cannot be resolved.
+'-----------------------------------------------------
+Private Function ChaptersInBook(ByVal bookName As String) As Long
+    On Error GoTo PROC_ERR
+    Dim amap As Object
+    Dim key As String
+    Dim BookID As Long
+
+    key = UCase$(Trim$(bookName))
+    Set amap = GetBookAliasMap
+
+    If Not amap.Exists(key) Then
+        ChaptersInBook = 0
+        GoTo PROC_EXIT
+    End If
+    BookID = amap(key)
+    ChaptersInBook = GetMaxChapter(BookID)
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ChaptersInBook of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
+'-----------------------------------------------------
+' VersesInChapter
+'   Returns the number of verses in the specified
+'   chapter of the named book.
+'   Returns 0 if the book name or chapter is invalid.
+'-----------------------------------------------------
+Private Function VersesInChapter(ByVal bookName As String, ByVal Chapter As Long) As Long
+    On Error GoTo PROC_ERR
+
+    Dim amap As Object
+    Dim key As String
+    Dim BookID As Long
+    Dim maxCh As Long
+
+    key = UCase$(Trim$(bookName))
+    Set amap = GetBookAliasMap
+
+    If Not amap.Exists(key) Then
+        VersesInChapter = 0
+        GoTo PROC_EXIT
+    End If
+    BookID = amap(key)
+    maxCh = GetMaxChapter(BookID)
+
+    If Chapter < 1 Or Chapter > maxCh Then
+        VersesInChapter = 0
+        GoTo PROC_EXIT
+    End If
+    VersesInChapter = GetMaxVerse(BookID, Chapter)
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VersesInChapter of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
+'-----------------------------------------------------
+' ParseCanonicalRange
+'   Parses a range string of the form:
+'       "BookName startCh:startV-endCh:endV"
+'   into its component parts.
+'   Returns True if successfully parsed as a range.
+'   Returns False for single refs, chapter-only refs,
+'   or strings that cannot be parsed.
+'-----------------------------------------------------
+Private Function ParseCanonicalRange( _
+        ByVal s As String, _
+        ByRef bookName As String, _
+        ByRef startCh As Long, ByRef startV As Long, _
+        ByRef endCh As Long, ByRef endV As Long _
+    ) As Boolean
+    On Error GoTo PROC_ERR
+
+    bookName = ""
+    startCh = 0
+    startV = 0
+    endCh = 0
+    endV = 0
+
+    s = Trim$(s)
+    If Len(s) = 0 Then GoTo PROC_EXIT
+
+    '------------------------------------------
+    ' Find the last space to isolate the
+    ' reference token "startCh:startV-endCh:endV"
+    '------------------------------------------
+    Dim lastSpace As Long
+    Dim k As Long
+    lastSpace = 0
+    For k = Len(s) To 1 Step -1
+        If mid$(s, k, 1) = " " Then
+            lastSpace = k
+            Exit For
+        End If
+    Next k
+
+    If lastSpace = 0 Then GoTo PROC_EXIT
+
+    Dim refToken As String
+    refToken = mid$(s, lastSpace + 1)
+    bookName = Left$(s, lastSpace - 1)
+    '------------------------------------------
+    ' The reference token must contain a dash
+    ' separating start ch:v from end ch:v.
+    ' Find the dash that follows a digit.
+    '------------------------------------------
+    Dim dashPos As Long
+    dashPos = 0
+    Dim c As String
+    For k = 2 To Len(refToken)
+        c = mid$(refToken, k, 1)
+        If c = "-" Then
+            ' Verify the preceding character is a digit
+            If mid$(refToken, k - 1, 1) >= "0" And mid$(refToken, k - 1, 1) <= "9" Then
+                dashPos = k
+                Exit For
+            End If
+        End If
+    Next k
+
+    If dashPos = 0 Then GoTo PROC_EXIT
+
+    Dim leftPart As String
+    Dim rightPart As String
+    leftPart = Left$(refToken, dashPos - 1)
+    rightPart = mid$(refToken, dashPos + 1)
+    '------------------------------------------
+    ' Parse left side: startCh:startV
+    '------------------------------------------
+    Dim colonLeft As Long
+    colonLeft = InStr(leftPart, ":")
+    If colonLeft = 0 Then GoTo PROC_EXIT
+
+    Dim chStrL As String
+    Dim vStrL As String
+    chStrL = Left$(leftPart, colonLeft - 1)
+    vStrL = mid$(leftPart, colonLeft + 1)
+    If Not IsNumeric(chStrL) Or Not IsNumeric(vStrL) Then GoTo PROC_EXIT
+    startCh = CLng(chStrL)
+    startV = CLng(vStrL)
+    '------------------------------------------
+    ' Parse right side: endCh:endV
+    '------------------------------------------
+    Dim colonRight As Long
+    colonRight = InStr(rightPart, ":")
+    If colonRight = 0 Then GoTo PROC_EXIT
+
+    Dim chStrR As String
+    Dim vStrR As String
+    chStrR = Left$(rightPart, colonRight - 1)
+    vStrR = mid$(rightPart, colonRight + 1)
+    If Not IsNumeric(chStrR) Or Not IsNumeric(vStrR) Then GoTo PROC_EXIT
+    endCh = CLng(chStrR)
+    endV = CLng(vStrR)
+
+    ParseCanonicalRange = True
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCanonicalRange of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' ValidateCanonical
+' Stage 15
+'   Validates a Collection of canonical reference
+'   strings against scripture metadata.
+'   Invalid references are removed.
+'   Range boundaries are clamped to valid limits.
+' Input:
+'   Refs -  Collection of canonical strings from Stage 14
+' Output:
+'   New Collection with only valid references.
+'=====================================================
+Public Function ValidateCanonical(ByVal Refs As Collection) As Collection
+    On Error GoTo PROC_ERR
+
+    Dim Result As New Collection
+    Dim item As Variant
+    Dim s As String
+
+    For Each item In Refs
+        s = CStr(item)
+
+        '------------------------------------------
+        ' Attempt to parse as a range first
+        '------------------------------------------
+        Dim bkName As String
+        Dim sCh As Long, sV As Long
+        Dim eCh As Long, eV As Long
+
+        If ParseCanonicalRange(s, bkName, sCh, sV, eCh, eV) Then
+            '------------------------------------------
+            ' It is a range: validate and clamp
+            '------------------------------------------
+            Dim maxChBook As Long
+            maxChBook = ChaptersInBook(bkName)
+
+            ' Start chapter invalid -> remove
+            If sCh < 1 Or sCh > maxChBook Then GoTo NextItem
+
+            ' Start verse invalid -> remove
+            Dim maxVStart As Long
+            maxVStart = VersesInChapter(bkName, sCh)
+            If sV < 1 Or sV > maxVStart Then GoTo NextItem
+
+            ' Clamp end chapter
+            If eCh > maxChBook Then
+                eCh = maxChBook
+            End If
+
+            ' Clamp end verse
+            Dim maxVEnd As Long
+            maxVEnd = VersesInChapter(bkName, eCh)
+            If eV > maxVEnd Then
+                eV = maxVEnd
+            End If
+
+            ' After clamping, check end >= start canonically
+            ' (same chapter: verse comparison; cross-chapter: chapter wins)
+            Dim endBeforeStart As Boolean
+            If eCh < sCh Then
+                endBeforeStart = True
+            ElseIf eCh = sCh And eV < sV Then
+                endBeforeStart = True
+            Else
+                endBeforeStart = False
+            End If
+
+            If endBeforeStart Then GoTo NextItem
+
+            ' Check if clamped range collapses to single ref
+            If eCh = sCh And eV = sV Then
+                ' Emit as single ref
+                Result.Add bkName & " " & sCh & ":" & sV
+            Else
+                ' Emit clamped range
+                Result.Add bkName & " " & sCh & ":" & sV & "-" & eCh & ":" & eV
+            End If
+
+        Else
+            '------------------------------------------
+            ' Not a range - try to parse as single ref
+            '------------------------------------------
+            Dim singleBook As String
+            Dim singleCh As Long
+            Dim singleV As Long
+            Dim isParsed As Boolean
+
+            isParsed = ParseCanonicalRef(s, singleBook, singleCh, singleV)
+
+            If Not isParsed Then
+                ' Chapter-only ref or unparseable - pass through unchanged
+                Result.Add s
+            Else
+                ' Single ch:v ref — validate
+                Dim maxChSingle As Long
+                maxChSingle = ChaptersInBook(singleBook)
+
+                If maxChSingle = 0 Then GoTo NextItem
+                If singleCh < 1 Or singleCh > maxChSingle Then GoTo NextItem
+
+                Dim maxVSingle As Long
+                maxVSingle = VersesInChapter(singleBook, singleCh)
+                If singleV < 1 Or singleV > maxVSingle Then GoTo NextItem
+
+                ' Valid - keep as-is
+                Result.Add s
+            End If
+        End If
+
+NextItem:
+    Next item
+
+    Set ValidateCanonical = Result
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ValidateCanonical of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
 Public Sub xxxTest_AllBookAliases_STRICT()
     Dim aliasMap As Object
     Dim books As Object

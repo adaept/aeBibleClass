@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #515 -
 ' #514 -
-' #513 -
 ' #509 - AddBookNameHeaders routine
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -74,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #513 - Add test and code for Stage 15 [feat]
     ' FIXED - #512 - Add documentation for Stage 15 [doc]
     ' FIXED - #511 - Add test and code for Stage 14 Canonical Compression [feat]
     ' FIXED - #510 - Fix 3 failures in Test_Harness - corrupted en dash [bug]
