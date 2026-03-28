@@ -11,18 +11,23 @@ Option Explicit
 '     - Cache them in a module-level structure
 '     - Make lookup entirely allocation-free
 
+'Stage 16 - Verse Expansion
+
+'multi-book lists
+'verse lists inside chapters
+'chapter shorthand (John 3,4,5)
+'OSIS Export
+'packed verse ID expansion
+
 '5. Optional Defensive Test Stage 9 (Future)
 '
 'Not necessary now, but eventually it is useful to protect against a classic bug:
 '
-'1 –2 Samuel
+'1 -2 Samuel
 '
 'A naive range detector may interpret this as a range.
-'
 'Later you may add:
-'
-'PASS: book prefix dash not treated as range
-'
+'PASS: book prefix dash not treated As Word.Range
 'But this can also be handled naturally once Stage 2 tokenization is used during composition, so it's not urgent.
 '================================================================================================================
 
@@ -60,20 +65,16 @@ Option Explicit
 '
 'This enables:
 '
-'1?? Fast search hit marking
-'
+'1 - Fast search hit marking
 'Highlight verses directly.
 '
-'2?? Cross-reference linking
-'
+'2 - Cross-reference linking
 'Jump to exact verse.
 '
-'3?? Verse range math
-'
+'3 - Verse range math
 'Union / intersection of references.
 '
-'4?? Consistent indexing
-'
+'4 - Consistent indexing
 'Every verse has a unique numeric ID.
 '
 'Internal Representation Used by Many Systems
@@ -94,7 +95,7 @@ Option Explicit
 'fast lookup
 'Stage-8 Architecture
 'User Input
-'     ¦
+'     -
 'Stage 1  Normalize
 'Stage 2  Lexical Scan
 'Stage 3  Resolve Alias
@@ -102,7 +103,7 @@ Option Explicit
 'Stage 5  Validate
 'Stage 6  Canonical Format
 'Stage 7  End-to-End Parse
-'     ¦
+'
 '     Print
 'Stage 8  Expand to Verse Set
 '
@@ -194,66 +195,24 @@ Option Explicit
 '
 'This makes range comparisons extremely fast.
 '
-'Stage-8 Test Example
+
+'Phase 2 - Performance Layer
 '
-'Add:
+'Now you optimize.
 '
-'Sub Test_Stage8_Expansion()
+'Stage 16 - Zero-Allocation Packed Engine
 '
-'    Dim verses As Collection
+'Convert packed verse map into:
 '
-'    Set verses = ExpandReference(45, 8, "28-30")
+'bitset array (66 books)
+'1189 Chapter offsets
+'constant-time lookup
 '
-'    Debug.Assert verses.count = 3
-'    Debug.Assert verses(1) = 28
-'    Debug.Assert verses(3) = 30
+'This gives:
 '
-'End Sub
-'Extremely Powerful Feature After Stage-8
+'O(1) verse lookup
+'O(1) intersection
+'O(1) union
+'instant highlighting
 '
-'Stage-9 (used by major Bible software):
-'
-'Reference Compression
-'
-'Convert:
-'
-'Romans 8:1
-'Romans 8:2
-'Romans 8:3
-'Romans 8:4
-'
-'back into
-'
-'Romans 8:1-4
-'
-'This allows:
-'
-'clean Output
-'
-'compact cross - references
-'
-'deduplicated verse sets
-'
-'Recommendation for Your Engine
-'
-'Your current system is already perfect for Stage-8 because you have:
-'
-'Print bookID
-'Print chapter
-'Print verseSpec
-'Print GetMaxVerse()
-'Print canonical; formatting
-'
-'So Stage-8 drops in cleanly.
-'
-'If you want, I can also show the very sophisticated Stage-8 engine used by Logos-level Bible parsers that supports:
-'
-'Romans 8
-'Romans 8:28ff
-'Romans 8:28f
-'Romans 8:28a
-'Romans 8:28-9:5
-'Romans 8;9;10
-'Romans 8:1-4,6-8
-'
-'That parser architecture is dramatically more powerful and still works perfectly in VBA.
+'This is how Logos / Accordance class engines work.
