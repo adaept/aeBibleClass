@@ -6,7 +6,7 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
-    On Error GoTo PROC_ERR
+    On Error GoTo 0
     Dim strSrcPath As String
     Dim strFile As String
     Dim intImported As Integer
@@ -19,13 +19,13 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
     ' Verify src folder exists
     If Dir(strSrcPath, vbDirectory) = "" Then
         MsgBox "Source folder not found:" & vbCrLf & strSrcPath, vbCritical, "Import Aborted"
-        GoTo PROC_EXIT
+        Exit Sub
     End If
 
     ' Delete all modules except this one - prompts for confirmation
     If Not DeleteAllModulesExceptImporter() Then
         Debug.Print "Import aborted - deletion cancelled.", "in Sub ImportAllVBAFiles"
-        GoTo PROC_EXIT
+        Exit Sub
     End If
 
     ' Collect all file paths BEFORE importing - Dir() is not reentrant
@@ -70,11 +70,6 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
            "Imported: " & intImported & vbCrLf & _
            "Skipped:  " & intSkipped, _
            vbInformation, "Import Complete"
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ImportAllVBAFiles of Module basImportWordGitFiles"
-    Resume PROC_EXIT
 End Sub
 
 Private Sub ImportVBAFile(myCodeFile As String)
@@ -104,14 +99,14 @@ Private Sub ImportVBAFile(myCodeFile As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If Err = 6068 Then
         MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "ImportVBAFile"
+        Stop
     Else
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Sub ImportVBAFile", vbCritical, "ImportVBAFile"
+        Resume PROC_EXIT
     End If
-    Resume PROC_EXIT
 End Sub
 
 Public Function DeleteAllModulesExceptImporter() As Boolean
@@ -138,7 +133,7 @@ Public Function DeleteAllModulesExceptImporter() As Boolean
     If strToDelete = "" Then
         MsgBox "No modules found to delete.", vbInformation, "Delete Modules"
         DeleteAllModulesExceptImporter = True
-        GoTo PROC_EXIT
+        Exit Function
     End If
 
     ' Prompt for confirmation
@@ -151,7 +146,7 @@ Public Function DeleteAllModulesExceptImporter() As Boolean
     If intResponse <> vbYes Then
         Debug.Print "Deletion cancelled by user.", "in Function DeleteAllModulesExceptImporter"
         DeleteAllModulesExceptImporter = False
-        GoTo PROC_EXIT
+        Exit Function
     End If
 
     ' Collect names to delete first - never modify a collection while iterating it
@@ -178,21 +173,21 @@ Public Function DeleteAllModulesExceptImporter() As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     If Err = 6068 Then
         MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "DeleteAllModulesExceptImporter"
+        Stop
     Else
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Function DeleteAllModulesExceptImporter", vbCritical, "DeleteAllModulesExceptImporter"
+        Resume PROC_EXIT
     End If
-    Resume PROC_EXIT
 End Function
 
 Private Function ModuleOrClassExists(name As String) As Boolean
-    On Error GoTo PROC_ERR
+    On Error GoTo 0
     Dim vbComp As Object
     Dim found As Boolean
-
+    
     found = False
     'Debug.Print "name = " & name, "in Function ModuleOrClassExists"
     For Each vbComp In ThisDocument.VBProject.VBComponents
@@ -201,12 +196,7 @@ Private Function ModuleOrClassExists(name As String) As Boolean
             Exit For
         End If
     Next vbComp
-
+    
     ModuleOrClassExists = found
     Debug.Print name, "ModuleOrClassExists = " & found, "in Function ModuleOrClassExists"
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ModuleOrClassExists of Module basImportWordGitFiles"
-    Resume PROC_EXIT
 End Function

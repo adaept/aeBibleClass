@@ -60,7 +60,6 @@ Private Sub InitPaths()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure InitPaths of Module basUSFM_Export"
     Resume PROC_EXIT
@@ -100,7 +99,6 @@ Public Sub ExportUSFM_PageRange(ByVal startPage As Long, ByVal endPage As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     LogEvent "ERROR: Erl=" & Erl & " Err=" & Err.Number & " (" & Err.Description & ") in ExportUSFM_PageRange"
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ExportUSFM_PageRange of module basUSFM_Export", vbExclamation, "Export Error"
@@ -145,7 +143,6 @@ Private Function ConvertRangeToUSFM(ByVal rng As Word.Range) As String
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertRangeToUSFM of Module basUSFM_Export"
     Resume PROC_EXIT
@@ -292,7 +289,6 @@ PROC_EXIT:
 LogAndExit:
     LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertParagraphToUSFM of Module basUSFM_Export"
     Resume PROC_EXIT
@@ -359,7 +355,6 @@ Private Function ParagraphHasCharStyle(p As Word.Paragraph, styleName As String)
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParagraphHasCharStyle of Module basUSFM_Export"
     Resume PROC_EXIT
@@ -378,7 +373,6 @@ Private Function ExtractCharStyleText(p As Word.Paragraph, styleName As String) 
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ExtractCharStyleText of Module basUSFM_Export"
     Resume PROC_EXIT
@@ -466,7 +460,6 @@ Private Function TryParseChapterVerseFromStyles( _
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TryParseChapterVerseFromStyles of Module basUSFM_Export"
     Resume PROC_EXIT
@@ -550,7 +543,6 @@ Private Sub LogValidator(ByVal msg As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     Debug.Print "Validator UTF-8 ERROR: "; Err.Number; Err.Description
     Set stm = Nothing
@@ -625,7 +617,6 @@ NextLine:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     Set stm = Nothing
     LogValidator "ERROR validating USFM: " & Err.Number & " - " & Err.Description
@@ -722,7 +713,6 @@ Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     LogEvent "ERROR in GetRangeForPages: " & Err.Number & " - " & Err.Description
     Set GetRangeForPages = Nothing
@@ -774,7 +764,6 @@ Private Sub LogEvent(ByVal msg As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     ' Fallback: at least try to write something
     Debug.Print "LogEvent UTF-8 ERROR: "; Err.Number; Err.Description
@@ -806,7 +795,6 @@ Private Sub WriteTextFile(ByVal filePath As String, ByVal content As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     LogEvent "ERROR writing UTF-8 file: " & Err.Number & " - " & Err.Description
     Resume PROC_EXIT

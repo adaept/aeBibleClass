@@ -32,7 +32,6 @@ Sub RunWordSettingsAudit(Optional saveToFile As Boolean = False)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunWordSettingsAudit of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -74,7 +73,6 @@ Function GetCurrentWordSettings() As Object
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetCurrentWordSettings of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -99,7 +97,6 @@ Function GetShowTextBoundaries() As Variant
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetShowTextBoundaries of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -124,7 +121,6 @@ Function LoadTargetBaseline() As Object
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadTargetBaseline of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -153,7 +149,6 @@ Function CompareSettings(current As Object, target As Object) As Object
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompareSettings of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -201,7 +196,6 @@ Function FormatDiagnostics(current As Object, target As Object, issues As Object
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FormatDiagnostics of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -229,7 +223,6 @@ Sub SaveReportToFile(reportText As String, fileName As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveReportToFile of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -248,7 +241,6 @@ Sub ShowAllStyles()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ShowAllStyles of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -285,7 +277,6 @@ Sub ShowMyStyles()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ShowMyStyles of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -330,7 +321,6 @@ Function StyleIsAppliedAnywhere(sName As String) As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StyleIsAppliedAnywhere of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -351,7 +341,6 @@ Function StyleIsApplied(sName As String) As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StyleIsApplied of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
@@ -374,12 +363,8 @@ Sub HideUnusedStyles()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure HideUnusedStyles of Module basWordSettingsDiagnostic"
     Resume PROC_EXIT
 End Sub
-
-
-
 

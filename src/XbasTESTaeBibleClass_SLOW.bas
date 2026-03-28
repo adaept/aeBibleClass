@@ -82,7 +82,6 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindAnyNumberWithStyleAndPrintNextCharASCII of Module XbasTESTaeBibleClass_SLOW"
     Resume PROC_EXIT
@@ -116,7 +115,6 @@ Public Sub PrintBibleHeading1Info()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintBibleHeading1Info of Module XbasTESTaeBibleClass_SLOW"
     Resume PROC_EXIT
@@ -165,7 +163,6 @@ Public Sub PrintBibleBookHeadings()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintBibleBookHeadings of Module XbasTESTaeBibleClass_SLOW"
     Resume PROC_EXIT
@@ -221,7 +218,6 @@ Sub ListAndReviewAscii12Characters()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListAndReviewAscii12Characters of Module XbasTESTaeBibleClass_SLOW"
     Resume PROC_EXIT
@@ -386,7 +382,6 @@ Sub CountParagraphsTypes()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountParagraphsTypes of Module XbasTESTaeBibleClass_SLOW"
     Resume PROC_EXIT
@@ -402,7 +397,6 @@ Sub AppendToFile(filePath As String, text As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AppendToFile of Module XbasTESTaeBibleClass_SLOW"
     Resume PROC_EXIT
@@ -518,7 +512,6 @@ PROC_EXIT:
     Application.ScreenUpdating = True
     Application.StatusBar = False
     Exit Sub
-
 PROC_ERR:
     Application.ScreenUpdating = True
     Application.StatusBar = False

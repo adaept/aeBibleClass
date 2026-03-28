@@ -131,11 +131,9 @@ Public Property Get DocumentTheWordCode(Optional ByVal varDebug As Variant) As B
 
 PROC_EXIT:
     Exit Property
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DocumentTheWordCode of Class aeWordGitClass"
     Resume PROC_EXIT
-
 End Property
 
 Private Function aeDocumentTheWordCode(Optional ByVal varDebug As Variant) As Boolean
@@ -188,11 +186,9 @@ Private Function aeDocumentTheWordCode(Optional ByVal varDebug As Variant) As Bo
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeDocumentTheWordCode of Class aeWordGitClass"
     Resume PROC_EXIT
-
 End Function
 
 Private Sub RunExportCode(ByVal strExportPath As String)
@@ -250,15 +246,12 @@ Private Sub RunExportCode(ByVal strExportPath As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunExportCode of Class aeWordGitClass"
     Resume PROC_EXIT
-
 End Sub
 
 Private Function FolderWithVBAProjectFiles() As String
-
     On Error GoTo PROC_ERR
     
     Dim fso As Object
@@ -297,7 +290,6 @@ Private Function FolderWithVBAProjectFiles() As String
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     If Err = E_FAIL Then     ' Method 'Value' of object ... failed
         Debug.Print "FolderWithVBAProjectFiles E_FAIL at Erl=" & Erl & " - " & Err.Description
@@ -306,6 +298,5 @@ PROC_ERR:
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in function FolderWithVBAProjectFiles of Class aeWordGitClass"
         Resume PROC_EXIT
     End If
-
 End Function
 

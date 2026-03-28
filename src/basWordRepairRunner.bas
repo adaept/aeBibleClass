@@ -42,7 +42,6 @@ Public Sub SaveAsPDF_NoOpen()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveAsPDF_NoOpen of Module basWordRepairRunner"
     Resume PROC_EXIT
@@ -92,7 +91,6 @@ Public Sub RunRepairWrappedVerseMarkers_Across_Pages_From(startPage As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If logFile > 0 Then Close #logFile
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunRepairWrappedVerseMarkers_Across_Pages_From of Module basWordRepairRunner"
@@ -293,7 +291,6 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage of Module basWordRepairRunner"
     Resume PROC_EXIT
@@ -327,7 +324,6 @@ Private Function GetPageHeaderText(pgNum As Long) As String
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetPageHeaderText of Module basWordRepairRunner"
     Resume PROC_EXIT
@@ -387,10 +383,8 @@ Private Function GetVerseText(pageEnd As Long, verseContentStart As Long) As Str
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetVerseText of Module basWordRepairRunner"
     Resume PROC_EXIT
 End Function
-
 

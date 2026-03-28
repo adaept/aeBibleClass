@@ -78,7 +78,6 @@ Private Function CustomPropertyExists(props As Object, ByVal propName As String)
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CustomPropertyExists of Module XLongRunningProcessCode"
     Resume PROC_EXIT
@@ -94,7 +93,6 @@ Sub LoadProgress()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadProgress of Module XLongRunningProcessCode"
     Resume PROC_EXIT
@@ -130,7 +128,6 @@ PROC_EXIT:
     Set colProcesses = Nothing
     Set objProcess = Nothing
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SetWordHighPriority of Module XLongRunningProcessCode"
     Resume PROC_EXIT
@@ -201,7 +198,6 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateCharacterStyle of Module XLongRunningProcessCode"
     Resume PROC_EXIT
@@ -267,7 +263,6 @@ Sub LongProcessSkeletonWithConsoleProgress()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LongProcessSkeletonWithConsoleProgress of Module XLongRunningProcessCode"
     Resume PROC_EXIT

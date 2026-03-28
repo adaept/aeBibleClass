@@ -104,7 +104,6 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindNextHeading1OnVisiblePage of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -205,7 +204,6 @@ Sub FindDocVariableByName(docVar As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindDocVariableByName of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -318,7 +316,6 @@ Sub FindDocVariableEverywhere()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindDocVariableEverywhere of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -359,7 +356,6 @@ Function SearchShapeForVariable(shape As shape, variableName As String) As Boole
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SearchShapeForVariable of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -443,7 +439,6 @@ NewTestament:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SetDocVariables of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -458,7 +453,6 @@ Sub ListMyDocVariables()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListMyDocVariables of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -478,7 +472,6 @@ Sub DeleteDocVariable()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DeleteDocVariable of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT
@@ -634,7 +627,6 @@ NewTestament:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TestPageNumbers of Module XbasTESTaeBibleDOCVARIABLE"
     Resume PROC_EXIT

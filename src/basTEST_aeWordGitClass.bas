@@ -93,7 +93,6 @@ Test1:
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
         MsgBox "VBA Project Not Trusted", vbCritical, "aeWordGitClassTest"
@@ -101,6 +100,5 @@ PROC_ERR:
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeWordGitClassTest of Module basTEST_aeWordGitClass"
     End If
     Resume PROC_EXIT
-
 End Function
 

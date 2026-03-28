@@ -106,7 +106,6 @@ PROC_EXIT:
     Set oSearch = Nothing
     Set oFound = Nothing
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddBookNameHeaders of Module basAddHeaderFooter"
     Resume PROC_EXIT
@@ -127,7 +126,6 @@ Public Sub FixTheFooters()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixTheFooters of Module basAddHeaderFooter"
     Resume PROC_EXIT
@@ -222,7 +220,6 @@ PROC_EXIT:
     Set oSections = Nothing
     Set oDoc = Nothing
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddConsecutiveFootersFromCursor of Module basAddHeaderFooter"
     Resume PROC_EXIT
@@ -266,7 +263,6 @@ PROC_EXIT:
     Set oSections = Nothing
     Set oDoc = Nothing
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LinkFootersToPrevious of Module basAddHeaderFooter"
     Resume PROC_EXIT

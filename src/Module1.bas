@@ -1,6 +1,6 @@
 Attribute VB_Name = "Module1"
 '==============================================================================
-' Module1 — General Utility Functions
+' Module1 - General Utility Functions
 ' ----------------------------------------------------------------------------
 ' Miscellaneous diagnostic and utility routines that support document auditing,
 ' navigation, and analysis. Not part of the core test pipeline.
@@ -55,7 +55,6 @@ Sub ViewCodeDetails()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ViewCodeDetails of Module Module1"
     Resume PROC_EXIT
@@ -96,7 +95,6 @@ Sub PrintFontProperties()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintFontProperties of Module Module1"
     Resume PROC_EXIT
@@ -132,7 +130,6 @@ Sub PrintBibleBook()
         End If
         
         If startProcessing Then
-            
             If Len(Trim(para.Range.Text)) = 1 Then   ' Skip empty paragraph
                 GoTo EmptyPara
             End If
@@ -153,7 +150,6 @@ EmptyPara:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintBibleBook of Module Module1"
     Resume PROC_EXIT
@@ -200,7 +196,6 @@ Sub GoToParagraphIndex()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToParagraphIndex of Module Module1"
     Resume PROC_EXIT
@@ -224,7 +219,6 @@ Function CountTextWrappingBreakParagraphs() As Long
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTextWrappingBreakParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -246,7 +240,6 @@ Function CountNextPageSectionBreakParagraphs() As Long
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountNextPageSectionBreakParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -268,7 +261,6 @@ Function CountContinuousSectionBreakParagraphs() As Long
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountContinuousSectionBreakParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -290,7 +282,6 @@ Function CountEvenPageSectionBreakParagraphs() As Long
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountEvenPageSectionBreakParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -312,7 +303,6 @@ Function CountOddPageSectionBreakParagraphs() As Long
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountOddPageSectionBreakParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -368,7 +358,6 @@ Sub SearchParagraphs()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SearchParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -396,7 +385,6 @@ Sub CountEmptyParagraphsWithAutomaticFont()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountEmptyParagraphsWithAutomaticFont of Module Module1"
     Resume PROC_EXIT
@@ -427,7 +415,6 @@ Sub GoToParagraphByCount(paragraphNumber As Integer)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToParagraphByCount of Module Module1"
     Resume PROC_EXIT
@@ -465,7 +452,6 @@ Sub DetectFontColors()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DetectFontColors of Module Module1"
     Resume PROC_EXIT
@@ -513,7 +499,6 @@ Sub UpdateBlackToAutomatic()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateBlackToAutomatic of Module Module1"
@@ -546,7 +531,6 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ChangeFontColorRGB of Module Module1"
     Resume PROC_EXIT
@@ -602,7 +586,6 @@ Sub EnsureFootnoteReferenceStyleColor()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure EnsureFootnoteReferenceStyleColor of Module Module1"
     Resume PROC_EXIT
@@ -645,7 +628,6 @@ Function FirstPageFooterNotEmpty() As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FirstPageFooterNotEmpty of Module Module1"
     Resume PROC_EXIT
@@ -765,7 +747,6 @@ Sub CountTotallyEmptyParagraphs()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTotallyEmptyParagraphs of Module Module1"
     Resume PROC_EXIT
@@ -848,7 +829,6 @@ Sub CountTypesTrulyEmptyParagraph()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTypesTrulyEmptyParagraph of Module Module1"
     Resume PROC_EXIT
@@ -890,7 +870,6 @@ Sub FindSpecificFontOutsideMainBody()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     Application.StatusBar = False
     Application.ScreenUpdating = True
@@ -934,7 +913,6 @@ Sub CreateTemplateWithoutText()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CreateTemplateWithoutText of Module Module1"
     Resume PROC_EXIT
@@ -1025,7 +1003,6 @@ Sub CountTabParagraphsFull()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountTabParagraphsFull of Module Module1"
     Resume PROC_EXIT
@@ -1105,7 +1082,6 @@ Sub CompareHeading1sWithShowHideToggle()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     ActiveWindow.View.ShowAll = originalShowAll
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompareHeading1sWithShowHideToggle of Module Module1"
@@ -1174,7 +1150,6 @@ Sub CountAndDiagnoseFootnoteFormatting()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountAndDiagnoseFootnoteFormatting of Module Module1"
     Resume PROC_EXIT
@@ -1275,7 +1250,6 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditFontUsage_ParagraphsAndHeadersFooters of Module Module1"
     Resume PROC_EXIT
@@ -1341,7 +1315,6 @@ Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef some
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountLeftAligned of Module Module1"
     Resume PROC_EXIT
@@ -1484,7 +1457,6 @@ Done:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     Application.ScreenUpdating = True
     Application.StatusBar = False
@@ -1559,7 +1531,6 @@ Sub ParseAndValidateString()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseAndValidateString of Module Module1"
     Resume PROC_EXIT

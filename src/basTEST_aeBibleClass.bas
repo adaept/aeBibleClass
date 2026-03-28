@@ -64,7 +64,6 @@ Public Function aeBibleClassTest(Optional ByVal varDebug As Variant) As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
         MsgBox "VBA Project Not Trusted", vbCritical, "aeBibleClassTest"
@@ -72,7 +71,6 @@ PROC_ERR:
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeBibleClassTest of Module basTest_aeBibleClass"
     End If
     Resume PROC_EXIT
-
 End Function
 
 '=======================================================================================

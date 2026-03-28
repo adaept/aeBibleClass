@@ -33,7 +33,6 @@ Public Sub ReplaceTimesInStyles()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReplaceTimesInStyles of Module basAuditDocument"
     Resume PROC_EXIT
@@ -154,7 +153,6 @@ Public Sub FindFontUsage()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindFontUsage of Module basAuditDocument"
     Resume PROC_EXIT
@@ -223,7 +221,6 @@ Public Sub CountParagraphsAndFonts()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountParagraphsAndFonts of Module basAuditDocument"
     Resume PROC_EXIT
@@ -246,7 +243,6 @@ Private Function ResolveFont(ByVal oPara As Word.Paragraph) As String
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ResolveFont of Module basAuditDocument"
     Resume PROC_EXIT
@@ -342,7 +338,6 @@ Public Sub CountCodeLines()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountCodeLines of Module basAuditDocument"
     Resume PROC_EXIT
@@ -404,7 +399,6 @@ Public Sub CountOrphanFooters()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountOrphanFooters of Module basAuditDocument"
     Resume PROC_EXIT
@@ -456,7 +450,6 @@ Public Sub CountOrphanHeaders()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountOrphanHeaders of Module basAuditDocument"
     Resume PROC_EXIT
@@ -509,7 +502,6 @@ Private Sub WriteAuditToFile(ByVal fileName As String, ByVal label As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteAuditToFile of Module basAuditDocument"
     Resume PROC_EXIT
@@ -537,7 +529,6 @@ Private Function GetRptPath() As String
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetRptPath of Module basAuditDocument"
     Resume PROC_EXIT
@@ -622,7 +613,6 @@ Private Sub WriteSectionAudit(ByVal f As Integer)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteSectionAudit of Module basAuditDocument"
     Resume PROC_EXIT
@@ -656,7 +646,6 @@ Private Sub WriteSignature(ByVal f As Integer, ByVal label As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure WriteSignature of Module basAuditDocument"
     Resume PROC_EXIT

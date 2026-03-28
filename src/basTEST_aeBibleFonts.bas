@@ -55,7 +55,6 @@ Sub CheckOpenFontsWithDownloads()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CheckOpenFontsWithDownloads of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -77,7 +76,6 @@ Function IsFontInstalled(fontName As String) As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure IsFontInstalled of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -114,7 +112,6 @@ Sub CreateEmphasisBlackStyle()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CreateEmphasisBlackStyle of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -149,7 +146,6 @@ Sub AuditStyleUsage_Footnote()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditStyleUsage_Footnote of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -173,7 +169,6 @@ Sub RedefineFootnoteStyle_NotoSans()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RedefineFootnoteStyle_NotoSans of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -201,7 +196,6 @@ Sub AuditStyleUsage_FootnoteNormal()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditStyleUsage_FootnoteNormal of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -225,7 +219,6 @@ Sub RedefineFootnoteNormalStyle_NotoSans()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RedefineFootnoteNormalStyle_NotoSans of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -264,7 +257,6 @@ Sub AuditStyleUsage_PictureCaption()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditStyleUsage_PictureCaption of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -297,7 +289,6 @@ Sub RedefinePictureCaptionStyle_NotoSans()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RedefinePictureCaptionStyle_NotoSans of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
@@ -371,7 +362,6 @@ Sub Identify_ArialUnicodeMS_Paragraphs()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Identify_ArialUnicodeMS_Paragraphs of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT

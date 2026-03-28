@@ -111,7 +111,6 @@ PROC_ERR:
 End Sub
 
 Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Integer
-
     On Error GoTo PROC_ERR
     
     If Not CheckShowHideStatus Then
@@ -143,11 +142,9 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As In
     
 PROC_EXIT:
     Exit Property
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TheBibleClassTests of Class BibleClass"
     Resume PROC_EXIT
-
 End Property
 
 Function CheckShowHideStatus() As Boolean
@@ -166,7 +163,6 @@ Private Function FileNameStartsWithV59() As Boolean
 End Function
 
 Private Sub InitializeGlobalResultArrayToMinusOne()
-
     On Error GoTo PROC_ERR
 
     Dim i As Integer, j As Integer, k As Integer
@@ -188,7 +184,6 @@ Private Sub InitializeGlobalResultArrayToMinusOne()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure InitializeGlobalResultArrayToMinusOne of Class BibleClass"
     Resume PROC_EXIT
@@ -213,7 +208,6 @@ Private Function ConvertToOneBasedArray(values As Variant) As Variant
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertToOneBasedArray of Class BibleClass"
     Resume PROC_EXIT
@@ -307,7 +301,6 @@ Private Sub Expected1BasedArray()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Expected1BasedArray of Class BibleClass"
     Resume PROC_EXIT
@@ -668,7 +661,6 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunBibleClassTests of Class BibleClass"
     Resume PROC_EXIT
@@ -841,11 +833,9 @@ Private Function GetPassFail(TestNum As Integer) As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetPassFail of Class BibleClass"
     Resume PROC_EXIT
-    
 End Function
 
 '=========================================================================
@@ -1009,7 +999,6 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
 
 PROC_EXIT:
     Exit Function
-    
 PROC_ERR:
     Dim answer As Integer
     answer = MsgBox("Err = " & Err.Number & " " & Err.Description & vbCrLf & "Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
@@ -1153,11 +1142,9 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OutPutTestReport of Class BibleClass"
     Resume PROC_EXIT
-
 End Function
 
 '====================================================================

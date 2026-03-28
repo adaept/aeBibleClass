@@ -26,7 +26,6 @@ Sub ListCustomXMLParts()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListCustomXMLParts of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -41,7 +40,6 @@ Sub ListCustomXMLSchemas()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListCustomXMLSchemas of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -63,7 +61,6 @@ Sub AddCustomUIXML()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddCustomUIXML of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -110,7 +107,6 @@ Sub RemoveDuplicateCustomXMLParts()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RemoveDuplicateCustomXMLParts of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -129,7 +125,6 @@ Function IsPartInCollection(col As Collection, partName As String) As Boolean
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure IsPartInCollection of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -156,7 +151,6 @@ Sub DeleteCustomUIXML()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DeleteCustomUIXML of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -269,7 +263,6 @@ Sub ListAndCountFontColors()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListAndCountFontColors of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -293,7 +286,6 @@ Sub GetVerticalPositionOfCursorParagraph()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetVerticalPositionOfCursorParagraph of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -321,7 +313,6 @@ Sub FindFirstSectionWithDifferentFirstPage()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindFirstSectionWithDifferentFirstPage of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -361,7 +352,6 @@ Sub FindFirstPageWithEmptyHeader()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindFirstPageWithEmptyHeader of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -409,7 +399,6 @@ Sub OptimizedListFontsInDocument()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OptimizedListFontsInDocument of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -465,7 +454,6 @@ NextPara:
 PROC_EXIT:
     Application.StatusBar = False
     Exit Sub
-
 PROC_ERR:
     Application.StatusBar = False
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindGentiumFromParagraph of Module basTEST_aeBibleTools"
@@ -480,7 +468,6 @@ Sub GoToParagraph()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToParagraph of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -539,7 +526,6 @@ PROC_EXIT:
     Application.StatusBar = False
     Application.ScreenUpdating = True
     Exit Sub
-
 PROC_ERR:
     Application.StatusBar = False
     Application.ScreenUpdating = True
@@ -553,7 +539,6 @@ Sub TestComp()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TestComp of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -602,7 +587,6 @@ Sub CompareDocuments(original As String, modified As String)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompareDocuments of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -638,7 +622,6 @@ Sub CountSearchHits()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountSearchHits of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -679,7 +662,6 @@ Sub PrintHeading1sByLogicalPage()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintHeading1sByLogicalPage of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -749,7 +731,6 @@ Sub FixAndDiagnoseFootnoteReferences()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixAndDiagnoseFootnoteReferences of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -788,7 +769,6 @@ Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As
 
 PROC_EXIT:
     Exit Function
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure IsCorrectFootnoteFormat of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -812,7 +792,6 @@ Sub FixFootnoteNumberStyleInText()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixFootnoteNumberStyleInText of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -864,7 +843,6 @@ Sub ReportPageLayoutMetrics(pageNum As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportPageLayoutMetrics of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -910,7 +888,6 @@ Sub ReportDigitAtCursor_Diagnostics()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportDigitAtCursor_Diagnostics of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -976,7 +953,6 @@ Sub ReportDigitAtCursor_Diagnostics_Expanded()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportDigitAtCursor_Diagnostics_Expanded of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1010,7 +986,6 @@ Sub LogExpandedMarkerContext()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LogExpandedMarkerContext of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1042,7 +1017,6 @@ Sub FindInvisibleFormFeeds_InPages(startPage As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindInvisibleFormFeeds_InPages of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1145,7 +1119,6 @@ Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1224,7 +1197,6 @@ ContinueLoop:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportAllMarkers_CondensedDiagnostics of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1351,7 +1323,6 @@ Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1459,7 +1430,6 @@ NextPara:
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SmartPrefixRepairOnPage of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1530,7 +1500,6 @@ Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunRepairWrappedVerseMarkers_Across10Pages_From of Module basTEST_aeBibleTools"
@@ -1569,7 +1538,6 @@ Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RunRepairWrappedVerseMarkers_ForOnePage of Module basTEST_aeBibleTools"
@@ -1645,7 +1613,6 @@ Sub StartRepairTimingSession(StartPageNum As Long)
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StartRepairTimingSession of Module basTEST_aeBibleTools"
@@ -1695,7 +1662,6 @@ Sub ReapplyTheFootersToAllFooters()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReapplyTheFootersToAllFooters of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1776,7 +1742,6 @@ Sub GetHeadingDefinitionsWithDescriptions()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetHeadingDefinitionsWithDescriptions of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -1872,7 +1837,6 @@ Sub ValidateTaskInChangelogModule()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If Not ts Is Nothing Then On Error Resume Next: ts.Close: On Error GoTo 0
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ValidateTaskInChangelogModule of Module basTEST_aeBibleTools"
@@ -2028,7 +1992,6 @@ Sub PrintCompactSectionLayoutInfo()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If fileNum > 0 Then Close #fileNum
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintCompactSectionLayoutInfo of Module basTEST_aeBibleTools"
@@ -2094,7 +2057,6 @@ Sub FlagEarlyBindingRoutines_LateBound()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FlagEarlyBindingRoutines_LateBound of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -2234,7 +2196,6 @@ Sub BuildHeadingIndexToCSV()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If fileNum > 0 Then Close #fileNum
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure BuildHeadingIndexToCSV of Module basTEST_aeBibleTools"
@@ -2280,7 +2241,6 @@ Sub LoadHeadingIndexFromCSV()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     If fileNum > 0 Then Close #fileNum
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadHeadingIndexFromCSV of Module basTEST_aeBibleTools"
@@ -2317,7 +2277,6 @@ Sub GoToHeadingByIndex()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToHeadingByIndex of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -2414,7 +2373,6 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ShowUnicodeOfSingleCharacterSelection of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
@@ -2578,7 +2536,6 @@ Public Sub FindTabsInAllFooters()
 
 PROC_EXIT:
     Exit Sub
-
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FindTabsInAllFooters of Module basTEST_aeBibleTools"
     Resume PROC_EXIT
