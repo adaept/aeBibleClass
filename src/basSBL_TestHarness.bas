@@ -476,6 +476,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage13_ContextShorthand
     Test_Stage14_CanonicalCompression
     Test_Stage15_CanonicalValidation
+    Test_Stage16_CanonicalRangeBuilder
     TestSummary
 PROC_EXIT:
     Exit Sub
@@ -1096,5 +1097,121 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage15_CanonicalValidation of Module basSBL_TestHarness"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_Stage16_CanonicalRangeBuilder()
+    On Error GoTo PROC_ERR
+    Dim Refs As Collection
+    Dim Result As Collection
+
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage16_CanonicalRangeBuilder"
+    Debug.Print "------------------------------------------"
+    '------------------------------------------
+    ' Test 1 - two adjacent verses grouped into range
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
+    AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
+    '------------------------------------------
+    ' Test 2 - three adjacent verses grouped into range
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Refs.Add "John 3:18"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
+    AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
+    '------------------------------------------
+    ' Test 3 - non-adjacent verses not grouped
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:18"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
+    AssertEqual "John 3:16", Result(1), "Test 3: first ref"
+    AssertEqual "John 3:18", Result(2), "Test 3: second ref"
+    '------------------------------------------
+    ' Test 4 - adjacent run then gap
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Refs.Add "John 3:19"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
+    AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
+    AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
+    '------------------------------------------
+    ' Test 5 - cross-chapter boundary not grouped
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:36"
+    Refs.Add "John 4:1"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 2, Result.count, "Test 5: cross-chapter -> two refs"
+    AssertEqual "John 3:36", Result(1), "Test 5: end of chapter 3"
+    AssertEqual "John 4:1", Result(2), "Test 5: start of chapter 4"
+    '------------------------------------------
+    ' Test 6 - cross-book boundary not grouped
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "Romans 8:1"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 2, Result.count, "Test 6: cross-book -> two refs"
+    AssertEqual "John 3:16", Result(1), "Test 6: John ref"
+    AssertEqual "Romans 8:1", Result(2), "Test 6: Romans ref"
+    '------------------------------------------
+    ' Test 7 - single ref passthrough
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Romans 8:1"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 1, Result.count, "Test 7: single ref count"
+    AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
+    '------------------------------------------
+    ' Test 8 - empty collection
+    '------------------------------------------
+    Set Refs = New Collection
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 0, Result.count, "Test 8: empty collection"
+    '------------------------------------------
+    ' Test 9 - multi-book mixed grouping
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Refs.Add "John 3:17"
+    Refs.Add "Romans 8:1"
+    Refs.Add "Romans 8:2"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 2, Result.count, "Test 9: multi-book mixed -> two ranges"
+    AssertEqual "John 3:16-3:17", Result(1), "Test 9: John range"
+    AssertEqual "Romans 8:1-8:2", Result(2), "Test 9: Romans range"
+    '------------------------------------------
+    ' Test 10 - four consecutive verses -> single range
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1"
+    Refs.Add "Gen 1:2"
+    Refs.Add "Gen 1:3"
+    Refs.Add "Gen 1:4"
+    Set Result = BuildCanonicalRanges(Refs)
+    AssertEqual 1, Result.count, "Test 10: four adjacent -> one range"
+    AssertEqual "Gen 1:1-1:4", Result(1), "Test 10: range value"
+
+    Debug.Print "------------------------------------------"
+    Debug.Print " Stage 16 tests complete."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage16_CanonicalRangeBuilder of Module basSBL_TestHarness"
     Resume PROC_EXIT
 End Sub

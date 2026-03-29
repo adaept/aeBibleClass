@@ -3742,6 +3742,112 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
+'=====================================================
+' BuildCanonicalRanges
+' Stage 16
+'   Groups adjacent consecutive same-chapter verses
+'   from a validated verse-level canonical reference
+'   list into contiguous canonical ranges.
+' Input:
+'   Refs - Ordered Collection of validated verse-level
+'          canonical strings from Stage 15.
+'          Each item is of the form "BookName ch:v".
+' Output:
+'   New Collection of canonical range strings.
+'   Adjacent verses within same book and chapter are
+'   grouped; non-adjacent, cross-chapter, and
+'   cross-book verses remain as separate items.
+'=====================================================
+Public Function BuildCanonicalRanges(ByVal Refs As Collection) As Collection
+    On Error GoTo PROC_ERR
+
+    Dim Result As New Collection
+    Dim i As Long
+    Dim n As Long
+
+    n = Refs.count
+    If n = 0 Then
+        Set BuildCanonicalRanges = Result
+        GoTo PROC_EXIT
+    End If
+    '------------------------------------------
+    ' Parse all refs into parallel arrays
+    '------------------------------------------
+    Dim bookNames()  As String
+    Dim chapters()   As Long
+    Dim verses()     As Long
+    Dim parsedOk()   As Boolean
+
+    ReDim bookNames(1 To n)
+    ReDim chapters(1 To n)
+    ReDim verses(1 To n)
+    ReDim parsedOk(1 To n)
+
+    Dim refStr As String
+    For i = 1 To n
+        refStr = Refs(i)
+        parsedOk(i) = ParseCanonicalRef( _
+                          refStr, _
+                          bookNames(i), _
+                          chapters(i), _
+                          verses(i))
+    Next i
+    '------------------------------------------
+    ' Walk through refs, accumulating runs
+    '------------------------------------------
+    i = 1
+    Do While i <= n
+        '------------------------------------------
+        ' If this ref could not be parsed as a
+        ' chapter:verse ref, emit it unchanged
+        '------------------------------------------
+        If Not parsedOk(i) Then
+            Result.Add Refs(i)
+            i = i + 1
+        Else
+            '------------------------------------------
+            ' Start a potential run
+            '------------------------------------------
+            Dim runStart As Long
+            runStart = i
+            '------------------------------------------
+            ' Extend the run while adjacent.
+            ' NOTE: VBA And is not short-circuit - guard
+            ' the array accesses with a Do While i < n
+            ' outer check and inner If/Exit Do tests.
+            '------------------------------------------
+            Do While i < n
+                If Not parsedOk(i + 1) Then Exit Do
+                If bookNames(i + 1) <> bookNames(i) Then Exit Do
+                If chapters(i + 1) <> chapters(i) Then Exit Do
+                If verses(i + 1) <> verses(i) + 1 Then Exit Do
+                i = i + 1
+            Loop
+            '------------------------------------------
+            ' Emit the run as a range or single ref
+            '------------------------------------------
+            If i > runStart Then
+                Result.Add bookNames(runStart) & " " & _
+                           chapters(runStart) & ":" & verses(runStart) & _
+                           "-" & _
+                           chapters(i) & ":" & verses(i)
+            Else
+                Result.Add Refs(i)
+            End If
+
+            i = i + 1
+        End If
+    Loop
+
+    Set BuildCanonicalRanges = Result
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure BuildCanonicalRanges of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
 Public Sub xxxTest_AllBookAliases_STRICT()
     Dim aliasMap As Object
     Dim books As Object
