@@ -477,6 +477,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage14_CanonicalCompression
     Test_Stage15_CanonicalValidation
     Test_Stage16_CanonicalRangeBuilder
+    Test_Stage17_CanonicalStringFormatter
     TestSummary
 PROC_EXIT:
     Exit Sub
@@ -1213,5 +1214,103 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage16_CanonicalRangeBuilder of Module basSBL_TestHarness"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_Stage17_CanonicalStringFormatter()
+    On Error GoTo PROC_ERR
+    Dim Refs As Collection
+    Dim Result As String
+
+    Debug.Print ""
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage17_CanonicalStringFormatter"
+    Debug.Print "------------------------------------------"
+    '------------------------------------------
+    ' Test 1 - single ref
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "John 3:16", Result, "Test 1: single ref"
+    '------------------------------------------
+    ' Test 2 - same-chapter range: suppress repeated chapter
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1-1:3"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "Gen 1:1-3", Result, "Test 2: same-chapter range"
+    '------------------------------------------
+    ' Test 3 - two same-book same-chapter refs: comma + verse only
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1"
+    Refs.Add "Gen 1:3"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "Gen 1:1, 3", Result, "Test 3: same-chapter comma"
+    '------------------------------------------
+    ' Test 4 - same-book different-chapter: semicolon + ch:v, no book
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1"
+    Refs.Add "Gen 2:1"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "Gen 1:1; 2:1", Result, "Test 4: same-book chapter break"
+    '------------------------------------------
+    ' Test 5 - different books: semicolon + full new book ref
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1"
+    Refs.Add "Exod 1:1"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "Gen 1:1; Exod 1:1", Result, "Test 5: book break"
+    '------------------------------------------
+    ' Test 6 - full pipeline example from doc
+    '   John 3:16-3:18, John 4:1-4:2, Romans 8:1-8:2
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16-3:18"
+    Refs.Add "John 4:1-4:2"
+    Refs.Add "Romans 8:1-8:2"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "John 3:16-18; 4:1-2; Romans 8:1-2", Result, "Test 6: full pipeline example"
+    '------------------------------------------
+    ' Test 7 - empty collection returns empty string
+    '------------------------------------------
+    Set Refs = New Collection
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "", Result, "Test 7: empty collection"
+    '------------------------------------------
+    ' Test 8 - two same-chapter ranges: comma + verse range only
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16-3:17"
+    Refs.Add "John 3:19-3:20"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "John 3:16-17, 19-20", Result, "Test 8: two same-chapter ranges"
+    '------------------------------------------
+    ' Test 9 - same-chapter range followed by single verse
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "John 3:16-3:17"
+    Refs.Add "John 3:19"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "John 3:16-17, 19", Result, "Test 9: range then single same chapter"
+    '------------------------------------------
+    ' Test 10 - three books
+    '------------------------------------------
+    Set Refs = New Collection
+    Refs.Add "Gen 1:1"
+    Refs.Add "John 3:16"
+    Refs.Add "Romans 8:1"
+    Result = FormatCanonicalString(Refs)
+    AssertEqual "Gen 1:1; John 3:16; Romans 8:1", Result, "Test 10: three books"
+
+    Debug.Print "------------------------------------------"
+    Debug.Print " Stage 17 tests complete."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage17_CanonicalStringFormatter of Module basSBL_TestHarness"
     Resume PROC_EXIT
 End Sub

@@ -3966,6 +3966,129 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
+'=====================================================
+' FormatCanonicalString
+' Stage 17
+'   Converts a validated canonical range collection
+'   into a single formatted SBL-style reference string.
+' Input:
+'   Refs - Collection of canonical range strings
+'          from Stage 16 (or Stage 15).
+'          Items are "BookName ch:v" or
+'          "BookName ch:v-ch:v".
+' Output:
+'   Single formatted SBL reference string.
+'   Book names suppressed after first occurrence per
+'   contiguous group.  Chapter numbers suppressed when
+'   same as previous item.  Commas separate same-chapter
+'   items; semicolons separate chapter and book changes.
+'=====================================================
+Public Function FormatCanonicalString(ByVal Refs As Collection) As String
+    On Error GoTo PROC_ERR
+
+    If Refs.count = 0 Then
+        FormatCanonicalString = ""
+        GoTo PROC_EXIT
+    End If
+
+    Dim Result    As String
+    Dim prevBook  As String
+    Dim prevEndCh As Long
+    Dim item      As Variant
+    Dim s         As String
+    Dim bk        As String
+    Dim sCh       As Long
+    Dim sV        As Long
+    Dim eCh       As Long
+    Dim eV        As Long
+    Dim ch        As Long
+    Dim v         As Long
+    Dim IsRange   As Boolean
+    Dim sep       As String
+    Dim showBook  As Boolean
+    Dim showCh    As Boolean
+    Dim fragment  As String
+
+    Result = ""
+    prevBook = ""
+    prevEndCh = 0
+
+    For Each item In Refs
+        s = CStr(item)
+        bk = ""
+        sCh = 0: sV = 0: eCh = 0: eV = 0
+
+        IsRange = ParseCanonicalRange(s, bk, sCh, sV, eCh, eV)
+
+        If Not IsRange Then
+            ch = 0: v = 0
+            If ParseCanonicalRef(s, bk, ch, v) Then
+                sCh = ch: sV = v
+                eCh = ch: eV = v
+            Else
+                ' Unparseable (chapter-only ref) - pass through
+                If Len(Result) > 0 Then Result = Result & "; "
+                Result = Result & s
+                GoTo NextItem
+            End If
+        End If
+
+        ' Determine separator and what context to suppress
+        If Len(prevBook) = 0 Then
+            sep = ""
+            showBook = True
+            showCh = True
+        ElseIf bk <> prevBook Then
+            sep = "; "
+            showBook = True
+            showCh = True
+        ElseIf sCh <> prevEndCh Then
+            sep = "; "
+            showBook = False
+            showCh = True
+        Else
+            sep = ", "
+            showBook = False
+            showCh = False
+        End If
+
+        ' Build the reference fragment
+        fragment = ""
+        If showBook Then fragment = bk & " "
+        If showCh Then
+            fragment = fragment & sCh & ":" & sV
+        Else
+            fragment = fragment & sV
+        End If
+
+        ' Append range end when this item spans more than one verse
+        If eCh <> sCh Or eV <> sV Then
+            If eCh = sCh Then
+                ' Same-chapter range: suppress repeated chapter
+                fragment = fragment & "-" & eV
+            Else
+                ' Cross-chapter range: show full end ch:v
+                fragment = fragment & "-" & eCh & ":" & eV
+            End If
+        End If
+
+        Result = Result & sep & fragment
+
+        prevBook = bk
+        prevEndCh = eCh
+
+NextItem:
+    Next item
+
+    FormatCanonicalString = Result
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FormatCanonicalString of Module basSBL_Citation_EBNF"
+    Resume PROC_EXIT
+End Function
+
 Public Sub xxxTest_AllBookAliases_STRICT()
     Dim aliasMap As Object
     Dim books As Object
