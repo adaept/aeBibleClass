@@ -1359,6 +1359,75 @@ Option Private Module
 '=====================================================
 
 '=====================================================
+' Stage 16 - Canonical Range Builder
+'=====================================================
+' Purpose:
+'     Convert the validated verse-level canonical reference set into
+'     contiguous canonical ranges prior to string formatting.
+' Position in Pipeline:
+'     Stage 16 executes AFTER Stage 15 Canonical Validation
+'     and BEFORE Stage 17 Canonical String Formatter.
+'     At this point the reference set is:
+'         - Fully expanded
+'         - Deduplicated
+'         - Ordered
+'         - Canonically valid
+'     Stage 16 groups adjacent verses into canonical ranges.
+' Responsibilities:
+'     1. Detect Contiguous Verses
+'         Identify adjacent verses within same book and chapter.
+'         Example:
+'             John 3:16
+'             John 3:17
+'             John 3:18
+'         becomes:
+'             John 3:16-3:18
+'     2. Preserve Non-Adjacent Verses
+'         Example:
+'             John 3:16
+'             John 3:18
+'         remains:
+'             John 3:16
+'             John 3:18
+'     3. Stop Range at Chapter Boundary
+'         Example:
+'             John 3:36
+'             John 4:1
+'         remains:
+'             John 3:36
+'             John 4:1
+'     4. Stop Range at Book Boundary
+'         Example:
+'             John 3:16
+'             Romans 8:1
+'         remains separate
+'     5. Produce Minimal Canonical Ranges
+'         Example:
+'             16,17,18,19
+'         becomes:
+'             16-19
+' Input:
+'     Ordered validated verse list
+' Output:
+'     Canonical range collection
+' Design Rules:
+'     - Single forward pass
+'     - O(n)
+'     - No reordering
+'     - No expansion
+'     - Only grouping
+' Guarantees After Stage 16:
+'     - Contiguous verses grouped
+'     - Minimal ranges created
+'     - Canonical order preserved
+'     - No cross-chapter merging
+'     - No cross-book merging
+' Summary:
+'     Stage 16 builds canonical ranges from validated verse-level
+'     references so Stage 17 can perform final string formatting.
+'=====================================================
+
+'=====================================================
 ' Deterministic Structural Parser (DSP)
 ' Aligned to 7-Stage Parser Architecture
 '=====================================================
