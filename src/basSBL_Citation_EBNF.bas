@@ -1428,6 +1428,124 @@ Option Private Module
 '=====================================================
 
 '=====================================================
+' Stage 17 - Canonical String Formatter
+'=====================================================
+' Purpose:
+'     Convert the validated canonical reference ranges into a single
+'     properly formatted SBL-style reference string for display,
+'     logging, export, and round-trip parsing.
+' Position in Pipeline:
+'     Stage 17 executes AFTER:
+'         Stage 15 - Canonical Validation
+'     At this point the reference set is:
+'         - Fully expanded
+'         - Deduplicated
+'         - Canonically ordered
+'         - Canonically compressed into ranges
+'         - Fully validated
+'     Stage 17 performs formatting only.
+'     It MUST NOT change the reference structure.
+' Responsibilities:
+'     1. Render Canonical Ranges
+'         Convert each canonical range into text.
+'         Examples:
+'             John 3:16
+'             John 3:16-3:18
+'             Romans 8:1-8:2
+'     2. Suppress Repeated Book Names
+'         The book name is printed once per contiguous group.
+'         Example:
+'             John 3:16
+'             John 3:18
+'         becomes:
+'             John 3:16, 18
+'     3. Suppress Repeated Chapter Numbers
+'         Chapter number appears once when ranges remain
+'         within the same chapter.
+'         Example:
+'             John 3:16
+'             John 3:18
+'         becomes:
+'             John 3:16, 18
+'     4. Use Comma for Same-Chapter Separation
+'         Example:
+'             John 3:16
+'             John 3:18
+'         Output:
+'             John 3:16, 18
+'     5. Use Semicolon for Chapter Breaks
+'         Example:
+'             John 3:16-18
+'             John 4:1-3
+'         Output:
+'             John 3:16-18; 4:1-3
+'     6. Use Semicolon for Book Breaks
+'         Example:
+'             John 3:16
+'             Romans 8:1
+'         Output:
+'             John 3:16; Rom 8:1
+'     7. Preserve Canonical Order
+'         Formatter must not reorder references.
+'     8. Preserve Canonical Compression
+'         Formatter must not recompute ranges.
+'         It only renders existing canonical ranges.
+' Input:
+'     Validated canonical range collection
+' Output:
+'     Single formatted SBL reference string
+' Formatting Rules:
+'     Same chapter        -> comma
+'     Chapter change      -> semicolon
+'     Book change         -> semicolon
+'     Range separator     -> hyphen or en dash
+' Example:
+' Input:
+'     John 3:16-3:18
+'     John 4:1-4:2
+'     Romans 8:1-8:2
+' Output:
+'     John 3:16-18; 4:1-2; Rom 8:1-2
+' Additional Examples:
+'     Input:
+'         Gen 1:1-1:3
+'     Output:
+'         Gen 1:1-3
+'     Input:
+'         Gen 1:1
+'         Gen 1:3
+'     Output:
+'         Gen 1:1, 3
+'     Input:
+'         Gen 1:1
+'         Gen 2:1
+'     Output:
+'         Gen 1:1; 2:1
+'     Input:
+'         Gen 1:1
+'         Exod 1:1
+'     Output:
+'         Gen 1:1; Exod 1:1
+' Design Rules:
+'     - Pure formatting stage
+'     - No mutation of canonical references
+'     - Single pass O(n)
+'     - Minimal string allocations
+'     - Deterministic output
+' Guarantees After Stage 17:
+'     - Proper SBL formatting
+'     - Minimal repetition
+'     - Canonical ordering preserved
+'     - Canonical compression preserved
+'     - Human-readable output
+'     - Round-trip parser safe
+' Summary:
+'     Stage 17 converts the validated canonical range set into a
+'     compact, human-readable SBL formatted reference string suitable
+'     for display, storage, and round-trip parsing.
+'=====================================================
+
+'=====================================================
 ' Deterministic Structural Parser (DSP)
 ' Aligned to 7-Stage Parser Architecture
 '=====================================================

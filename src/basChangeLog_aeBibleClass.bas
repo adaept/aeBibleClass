@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #519 -
 ' #518 -
 ' #517 -
-' #516 -
 ' #509 - AddBookNameHeaders routine
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #516 - Add doc for Stage 17 [doc]
     ' FIXED - #515 - Add test and code for Stage 16 [feat]
     ' FIXED - #514 - Add doc for Stage 16 [doc]
     ' FIXED - #513 - Add test and code for Stage 15 [feat]
