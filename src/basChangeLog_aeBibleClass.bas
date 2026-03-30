@@ -12,8 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #523 -
 ' #522 -
 ' #521 -
-' #520 -
-' #509 - AddBookNameHeaders routine
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -77,6 +75,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #520 - AddBookNameHeaders adds a second blank line in the header [bug]
+    ' FIXED - #509 - AddBookNameHeaders routine
     ' FIXED - #519 - Implement error handler standard in aeBibleClass.cls [impr]
     ' FIXED - #518 - Update definition for standard error handler to be applied in aeBibleClass.cls [doc]
     ' FIXED - #517 - Add test and code for Stage 17 [feat]

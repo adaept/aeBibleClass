@@ -5,6 +5,36 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+'====================================================================
+' AddBookNameHeaders
+' PURPOSE:
+'   Walk document sections and apply running book-name headers based
+'   on Heading 1 (book title) and Heading 2 (first chapter) markers.
+' BEHAVIOR:
+'   Heading 1 section:
+'       Header cleared (book title page)
+'   Heading 2 section:
+'       Header populated with most recent Heading 1 text (book name)
+'   All other sections:
+'       Header linked to previous section
+' IMPORTANT IMPLEMENTATION DETAIL (RERUN SAFE):
+'   Word headers always contain a terminating paragraph mark. Writing
+'   directly to Header.Range.Text inserts an additional paragraph,
+'   producing a second blank line each time the macro is executed.
+'   BAD (creates extra blank lines on every run):
+'       oHeader.Range.Text = sBookName
+'   FIX:
+'       Write only into the first paragraph range while excluding the
+'       terminating paragraph mark. This overwrites existing content
+'       without adding new paragraphs and makes the macro idempotent.
+'   Additionally, any extra paragraphs are removed so the macro can
+'   safely repair documents created by earlier buggy runs.
+' RESULT:
+'   - Only one header line is present
+'   - No blank lines added
+'   - Macro is safe to rerun
+'   - Existing documents are auto-corrected
+'====================================================================
 Public Sub AddBookNameHeaders()
     On Error GoTo PROC_ERR
     Dim oDoc        As Document
@@ -63,18 +93,21 @@ Public Sub AddBookNameHeaders()
             Dim pIdx    As Long
             For pIdx = oSearch.Paragraphs.count To 1 Step -1
                 If oSearch.Paragraphs(pIdx).style = oDoc.Styles("Heading 1") Then
-                    sBookName = Trim(oSearch.Paragraphs(pIdx).Range.Text)
+                    sBookName = Trim$(Replace(oSearch.Paragraphs(pIdx).Range.Text, vbCr, ""))
                     Exit For
                 End If
             Next pIdx
 
             ' Write the book name into the header
             oHeader.LinkToPrevious = False
-            oHeader.Range.Delete
-
-            Set oRange = oHeader.Range
-            oRange.Text = sBookName
-            oRange.ParagraphFormat.style = oDoc.Styles("TheHeaders")
+            Do While oHeader.Range.Paragraphs.count > 1
+                oHeader.Range.Paragraphs.Last.Range.Delete
+            Loop
+            With oHeader.Range.Paragraphs(1).Range
+                .End = .End - 1
+                .Text = sBookName
+                .style = oDoc.Styles("TheHeaders")
+            End With
             Debug.Print "Header added: " & sBookName
         Else
             ' All other sections inherit the header from the section above
