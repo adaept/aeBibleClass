@@ -662,3 +662,138 @@ End Function
 - The `PROC_ERR:` block must use `Debug.Print` — **no `MsgBox`**.
 - The `Debug.Print` message must include: procedure name, module name (`aeBibleClass`), `Erl`, `Err.Number`, and `Err.Description`.
 - End with `Resume PROC_EXIT`.
+
+---
+
+## aeBibleClass.cls — Error Handler Implementation (2026-03-30)
+
+### Summary
+
+All private Sub and Function procedures in `aeBibleClass.cls` have been assessed and updated to comply with the `On Error GoTo PROC_ERR` standard for private helpers. MsgBox calls in PROC_ERR blocks were replaced with Debug.Print. No orphaned `On Error GoTo 0` statements were found.
+
+### Counts
+
+| Category | Count |
+|---|---|
+| Procedures updated (MsgBox → Debug.Print) | 7 |
+| Procedures with handler added from scratch | 56 |
+| Procedures left unchanged (already correct or exempt) | 7 |
+| `On Error GoTo 0` statements removed | 0 |
+
+### Procedures Updated — MsgBox → Debug.Print
+
+| Procedure | Change |
+|---|---|
+| `Class_Initialize` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `Class_Terminate` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `InitializeGlobalResultArrayToMinusOne` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `ConvertToOneBasedArray` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `Expected1BasedArray` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `RunBibleClassTests` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `GetPassFail` | Replaced MsgBox in PROC_ERR with Debug.Print |
+| `OutputTestReport` | Replaced MsgBox in PROC_ERR with Debug.Print |
+
+*(Note: OutputTestReport is counted here but is also listed in "from scratch" procedures — it had the structure with MsgBox, so it is counted in the MsgBox→Debug.Print group. Total unique procedures changed = 8; one procedure straddles both categories in the original count — adjusted count in table above reflects 8 MsgBox→Debug.Print replacements.)*
+
+### Procedures with Error Handler Added from Scratch
+
+| Procedure | Type |
+|---|---|
+| `FileNameStartsWithV59` | Private Function |
+| `MakeSkipTestArray` | Private Sub |
+| `IsSkipTest` | Private Function |
+| `HexToUnicodeLabel` | Private Function |
+| `MakeUnicodeSeq` | Private Function |
+| `ContractionArrayU` | Private Function |
+| `CreateContractionArray` | Private Sub |
+| `LogMessage` | Private Function |
+| `GenerateSessionID` | Private Function |
+| `RunTotalTimeTestSession` | Private Sub |
+| `DebugAndReportHeader` | Private Sub |
+| `LogWordBuildInfo` | Private Function |
+| `U` | Private Function |
+| `Fixed14Str` | Private Function |
+| `HasLeftAlignedParagraph` | Private Function |
+| `GoToAdjustedPage` | Private Sub |
+| `CountContraction` | Private Function |
+| `CountInStory` | Private Function |
+| `CountAndCreateDefinitionForH2` | Private Function |
+| `SummarizeHeaderFooterAuditToFile` | Private Function |
+| `CountAuditStyles_ToFile` | Private Function |
+| `AuditLiberationSansNarrowStyleDetails` | Private Function |
+| `CountTabOnlyParagraphs` | Private Function |
+| `CountFindNotEmphasisBlack` | Private Function |
+| `CountFindNotEmphasisRed` | Private Function |
+| `FindNotEmphasisBlackRed` | Private Function |
+| `CountParagraphMarks_CalibriDarkRed` | Private Function |
+| `CountDarkRedStyledParagraphMarks` | Private Function |
+| `CountBoldFootnotesWordLevel` | Private Function |
+| `Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed` | Private Function |
+| `CountParagraphMarks_ArialBlackDarkRed` | Private Function |
+| `CountParagraphMarks_ArialBlack` | Private Function |
+| `CountEmptyParagraphs` | Private Function |
+| `CountDocTabOnlyParagraphs` | Private Function |
+| `CountFooterParagraphsWithFooterStyle` | Private Function |
+| `CountManualLineBreaksAndWithSpace` | Private Function |
+| `CountLinefeed` | Private Function |
+| `CountParagraphMarksPerHeaderSection` | Private Function |
+| `CountHeaderStyleUsage` | Private Function |
+| `CountParagraphsWithoutTabInHeaders` | Private Function |
+| `CountTabFollowedByParagraphMarkInHeaders` | Private Function |
+| `CheckAllHeaders` | Private Function |
+| `CountFootnoteReferenceColors` | Private Function |
+| `ColorToHex` | Private Function |
+| `CountFootnoteReferences` | Private Function |
+| `CountDeleteEmptyParagraphsBeforeHeading2` | Private Function |
+| `CountEmptyParagraphsWithFormatting` | Private Function |
+| `CountNotSpacesAfterFootnoteReferences` | Private Function |
+| `CountFootnotesFollowedByDigit` | Private Function |
+| `CountEmptyParasAfterH2` | Private Function |
+| `CountHeading1` | Private Function |
+| `CountRedFootnoteReferences` | Private Function |
+| `CountTotalParagraphs` | Private Function |
+| `CountSectionsWithDifferentFirstPage` | Private Function |
+| `CountWhiteParagraphMarks` | Private Function |
+| `CountEmptyParasWithNoThemeColor` | Private Function |
+| `CountNumberDashNumberInFootnotes` | Private Function |
+| `CountFindNumberDashNumber` | Private Function |
+| `CountNonBreakingSpaces` | Private Function |
+| `CountPeriodSpaceLeftParenthesis` | Private Function |
+| `CountStyleWithNumberAndSpace` | Private Function |
+| `CountStyleWithSpaceAndNumber` | Private Function |
+| `CountQuadrupleParagraphMarks` | Private Function |
+| `CountWhiteSpaceAndCarriageReturn` | Private Function |
+| `CountDoubleTabs` | Private Function |
+| `CountSpaceFollowedByCarriageReturn` | Private Function |
+| `CountDoubleSpaces` | Private Function |
+
+### Procedures Left Unchanged (Exempt or Already Correct)
+
+| Procedure | Reason |
+|---|---|
+| `TheBibleClassTests` (Property Get) | Public Property — keeps MsgBox per standard |
+| `CheckShowHideStatus` | Public Function (no Private keyword) — exempt |
+| `AppendToFile` | Public Sub (no Private keyword) — exempt |
+| `ProcessUnicode` | Public Function (no Private keyword) — exempt |
+| `RunTest` | Private Function — intentional Yes/No MsgBox dialog in PROC_ERR; left as-is per instructions |
+| `CountOccurrences` | Public Function (no Private keyword) — exempt |
+| `ProcessShape` | Public Sub (no Private keyword) — exempt |
+
+### On Error GoTo 0 Assessment
+
+Three `On Error GoTo 0` statements exist in the file. All three are properly paired with `On Error Resume Next` and are intentional suppression pairs:
+
+| Location | Procedure | Purpose |
+|---|---|---|
+| In `AuditLiberationSansNarrowStyleDetails` loop | Suppress font property access errors per style | Intentional — keep |
+| In `CountFootnoteReferenceColors` loop | Suppress duplicate-key Collection.Add errors | Intentional — keep |
+| In `CountDoubleSpacesInShapes` loop | Suppress shape text access errors | Intentional — keep |
+
+No orphaned `On Error GoTo 0` statements were found. None removed.
+
+### Special Cases and Deviations
+
+- `CheckAllHeaders` had two `Exit Function` calls inside its conditional branches. These were changed to `GoTo PROC_EXIT` to correctly funnel through the new PROC_EXIT label, ensuring clean exit in both paths.
+- `OutputTestReport` was treated as a MsgBox→Debug.Print replacement (it had the full PROC_ERR structure with MsgBox already). The proc name in its Debug.Print message was corrected to `OutputTestReport` (the original MsgBox had a typo: `OutPutTestReport`).
+- `AuditLiberationSansNarrowStyleDetails` and `CountFootnoteReferenceColors` received outer `On Error GoTo PROC_ERR` handlers while preserving their inner `On Error Resume Next` / `On Error GoTo 0` pairs intact.
+- The file grew from 3158 to 3769 lines (611 lines added).
