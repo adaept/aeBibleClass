@@ -632,5 +632,33 @@ All fixes applied in session with Claude Code (claude-sonnet-4-6).
 
 | File | Remaining violations | Reason deferred |
 |------|---------------------|-----------------|
-| `aeBibleClass.cls` | ~65 private helper procedures | Under review — to be assessed in next session |
+| `aeBibleClass.cls` | ~65 private helper procedures | Standard established (see below) — implementation deferred |
 | `basSBL_Citation_EBNF.bas` | ~20 parser functions | Deliberate architectural choice — parser contract explicitly avoids user-facing errors |
+
+#### aeBibleClass.cls — Standard for Private Helper Procedures
+
+Private helper procedures in `aeBibleClass.cls` use a modified `On Error GoTo PROC_ERR` pattern. Because these are internal helpers not directly invoked by the user, errors must **not** surface via `MsgBox`. Instead, the `PROC_ERR:` block reports to the Immediate window using `Debug.Print`.
+
+**Required structure:**
+
+```vba
+Private Function HelperName(...) As ...
+    On Error GoTo PROC_ERR
+
+    ' ... procedure body ...
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.HelperName | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
+End Function
+```
+
+**Rules:**
+- `On Error GoTo PROC_ERR` is required at the top of every private helper Sub/Function.
+- `PROC_EXIT:` label and `Exit Sub/Function` are required before `PROC_ERR:`.
+- The `PROC_ERR:` block must use `Debug.Print` — **no `MsgBox`**.
+- The `Debug.Print` message must include: procedure name, module name (`aeBibleClass`), `Erl`, `Err.Number`, and `Err.Description`.
+- End with `Resume PROC_EXIT`.
