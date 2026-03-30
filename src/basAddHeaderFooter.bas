@@ -21,12 +21,10 @@ Public Sub AddBookNameHeaders()
     lResponse = MsgBox("Place cursor in the section to start header labelling. Do you want to start?", _
                        vbYesNo + vbDefaultButton2 + vbQuestion, _
                        "AddBookNameHeaders")
-
     If lResponse = vbNo Then GoTo PROC_EXIT
 
     Set oDoc = ActiveDocument
     Set oSections = oDoc.Sections
-
     ' -- Find the section containing the cursor --------------------------------
     lStartSect = 0
     For lIdx = 1 To oSections.count
@@ -42,9 +40,7 @@ Public Sub AddBookNameHeaders()
                vbExclamation, "AddBookNameHeaders"
         GoTo PROC_EXIT
     End If
-
     sBookName = ""
-
     ' -- Walk sections from cursor to end -------------------------------------
     For lIdx = lStartSect To oSections.count
 
@@ -53,13 +49,10 @@ Public Sub AddBookNameHeaders()
         Set oPara = oSection.Range.Paragraphs(1)
 
         If oPara.style = oDoc.Styles("Heading 1") Then
-
             ' Book title page - clear the header and leave it empty
             oHeader.LinkToPrevious = False
             oHeader.Range.Delete
-
         ElseIf oPara.style = oDoc.Styles("Heading 2") Then
-
             ' First chapter section - capture book name from Heading 1 text
             ' Search backwards from this section for the nearest Heading 1
             Dim oSearch As Word.Range
@@ -82,16 +75,16 @@ Public Sub AddBookNameHeaders()
             Set oRange = oHeader.Range
             oRange.Text = sBookName
             oRange.ParagraphFormat.style = oDoc.Styles("TheHeaders")
-
+            Debug.Print "Header added: " & sBookName
         Else
-
             ' All other sections inherit the header from the section above
             oHeader.LinkToPrevious = True
-
         End If
 
     Next lIdx
 
+    Debug.Print "Done. Book name headers have been added from section " & _
+           lStartSect & " through section " & oSections.count & "."
     MsgBox "Done. Book name headers have been added from section " & _
            lStartSect & " through section " & oSections.count & ".", _
            vbInformation, "AddBookNameHeaders"
