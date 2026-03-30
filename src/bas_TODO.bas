@@ -216,3 +216,13 @@ Option Explicit
 'instant highlighting
 '
 'This is how Logos / Accordance class engines work.
+
+'Stage 18  Reference set operations
+'After Stage 18 (Future)
+'
+'Stage 19 - Verse Enumerator
+'Stage 20 - Named Sets (Gospels, Torah, etc.)
+'Stage 21 - Highlight Engine (Word)
+'Stage 22 - Reference Cache
+'Stage 23 - Ultra-fast packed bitset
+
