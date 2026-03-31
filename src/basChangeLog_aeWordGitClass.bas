@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #020 -
 ' #019 -
 ' #018 -
-' #016 - Use aeWordGit, NOTE: uppercase WordGit throughout for readability
 ' #009 - Add setup info to the docm source file
 ' #006 - Can't execute code in break mode - error after doc saved from template and opened. Use error trapping in ThisDocument
 '=============================================================================================================================
