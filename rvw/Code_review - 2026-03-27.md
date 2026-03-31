@@ -856,3 +856,87 @@ The class-level instance variable `Private aliasMap As Object` would be shadowed
 | `xxxTest_AllBookAliases_STRICT` non-standard `AliasFail:` handler | Intentional pattern — kept verbatim |
 | `IsNumericRange` | No error handler in source — kept as-is |
 | `ResolveAlias` | No PROC_ERR structure in source — kept as-is |
+
+---
+
+## normalize_vba.py — Normalizer Updates (2026-03-31)
+
+Two new normalization rules added to `normalize_vba.py`:
+
+| Rule | Pattern | Replacement | Notes |
+|---|---|---|---|
+| `.Path` property | `(?i)\.Path\b` | `.Path` | Normalizes `doc.path` → `doc.Path` |
+| `Mid$(` function | `(?i)\bmid\$?\(` | `Mid$(` | Covers both `mid(` → `Mid$(` and `mid$(` → `Mid$(` |
+
+`Mid(` is always used on strings in this codebase; the strongly-typed `Mid$(` is the correct form throughout.
+
+---
+
+## aeBibleCitationClass.cls — Stage 13 Contextual Shorthand Fixes (2026-03-31)
+
+Two bugs found and fixed in `ComposeList` / `CanonicalFromRange`.
+
+### Fix 1 — `CanonicalFromRange`: same-chapter range end suppresses repeated chapter
+
+**File:** `src/aeBibleCitationClass.cls` — `CanonicalFromRange`
+
+**Symptom:** `John 3:20-22` was output as `John 3:20-3:22`.
+
+**Root cause:** The function checked same-book but not same-chapter. When start and end shared the same chapter, `endText` was still built as `chapter:verse` (e.g. `3:22`) instead of just the verse number.
+
+**Fix:** Added inner check for `rg.StartRef.Chapter = rg.EndRef.Chapter`. When true, `endText` is set to `CStr(rg.EndRef.Verse)` only, suppressing the repeated chapter.
+
+### Fix 2 — `ComposeList_Internal`: bare number after chapter-only ref is a chapter, not a verse
+
+**File:** `src/aeBibleCitationClass.cls` — `ComposeList_Internal`
+
+**Symptom:** `Romans 8; 9` produced `Romans 8` and `Romans 8:9` instead of `Romans 8` and `Romans 9`.
+
+**Root cause:** The shorthand logic treated any bare number as a verse in the previous chapter, regardless of whether the previous reference was chapter-only (`Verse = 0`) or had a verse.
+
+**Fix:** Check `prevRef.Verse = 0` before applying shorthand. When the previous ref was chapter-only, a bare number is interpreted as the next chapter (same book). When the previous ref had a verse, behaviour is unchanged — the bare number remains a verse in the same chapter.
+
+| `prevRef.Verse` | Bare number means |
+|---|---|
+| `= 0` (chapter-only, e.g. `Romans 8`) | next chapter (`Romans 9`) |
+| `> 0` (verse ref, e.g. `John 3:16`) | next verse (`John 3:18`) |
+
+---
+
+## basSBL_TestHarness.bas — Retire Old Module (2026-03-31)
+
+**Goal:** Remove dependency on `basSBL_Citation_EBNF.bas` so the old module can be deleted. All tests now run via `Run_All_SBL_Tests` in `basSBL_TestHarness.bas`.
+
+### What moved to `aeBibleCitationClass.cls`
+
+Ten functions that reference Private types (UDTs) and therefore cannot compile in the harness once the old standard module is removed:
+
+| Function | Type | Private type used |
+|---|---|---|
+| `ParseReferenceStub` | `Private Function` | `ParsedReference` |
+| `Test_SemanticFlow_WithParserStub` | `Public Sub` | `ParsedReference` |
+| `Test_SemanticFlow_WithParserStub_Negative` | `Public Sub` | `ParsedReference` |
+| `Test_Stage2_LexicalScan` | `Public Sub` | `LexTokens` |
+| `Test_Stage3_ResolveAlias` | `Public Sub` | `LexTokens` |
+| `Test_Stage4_InterpretStructure` | `Public Sub` | `LexTokens`, `ParsedReference` |
+| `PrintScriptureList` | `Private Sub` | `ScriptureList` |
+| `Test_Stage8_ListDetection` | `Public Sub` | `ListTokens` |
+| `Test_Stage9_RangeDetection` | `Public Sub` | `RangeTokens` |
+| `Test_Stage10_RangeComposition` | `Public Sub` | `ScriptureRange` |
+
+`ParseReferenceStub` was changed from `Public` to `Private` (returns `ParsedReference`, a Private type).
+
+`ModeSBL_OLD` replaced with `ModeSBL` in `Test_SemanticFlow_WithParserStub` and `Test_SemanticFlow_WithParserStub_Negative`.
+
+MsgBox error strings updated from `Module basSBL_TestHarness` to `Class aeBibleCitationClass` in all moved functions.
+
+### What changed in `basSBL_TestHarness.bas`
+
+- `RunSomeTests` removed (obsolete).
+- All class method calls in remaining functions prefixed with `aeBibleCitationClass.` (previously resolved via the old standard module).
+- `Test_Stage5_ValidateCanonical`: `ModeSBL_OLD` → `ModeSBL`.
+- `Run_All_SBL_Tests`: stages 2/3/4/8/9/10 now call `aeBibleCitationClass.Test_StageN_*`; `ResetBookAliasMap` and `VerifyPackedVerseMap` also prefixed.
+
+### Run_All_SBL_Tests — confirmed entry point
+
+`Run_All_SBL_Tests` in `basSBL_TestHarness.bas` is the single entry point for the full test suite. It runs all 17 stages in order and terminates the assert session cleanly.
