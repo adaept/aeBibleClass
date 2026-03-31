@@ -982,3 +982,14 @@ Else
     endText = CanonicalFromRef(r.EndRef)
 End If
 ```
+
+---
+
+## basSBL_VerseCountsGenerator.bas — Qualify Class Calls (2026-03-31)
+
+Two unqualified calls in `basSBL_VerseCountsGenerator.bas` previously resolved via `basSBL_Citation_EBNF.bas`. With the old module removed they raised "sub or function not defined".
+
+| Line | Function | Fix |
+|---|---|---|
+| `VerifyPackedVerseMap` | `GetChapterVerseMap()` | `aeBibleCitationClass.GetChapterVerseMap()` |
+| `ToOneBasedLongArray` | `AssertOneBased temp, context` | `aeBibleCitationClass.AssertOneBased temp, context` |

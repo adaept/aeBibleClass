@@ -48,7 +48,7 @@ Private Function ToOneBasedLongArray(src As Variant, context As String) As Long(
         dest = dest + 1
     Next i
     
-    AssertOneBased temp, context
+    aeBibleCitationClass.AssertOneBased temp, context
 
     ToOneBasedLongArray = temp
 PROC_EXIT:
@@ -211,7 +211,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
     IsValid = True
     
     ' Load packed map
-    packedArr = GetChapterVerseMap()
+    packedArr = aeBibleCitationClass.GetChapterVerseMap()
     
     ' Load canonical expected chapter counts (should total 1189)
     expectedCounts = ExpectedChapterCounts()

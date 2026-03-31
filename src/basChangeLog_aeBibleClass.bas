@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #535 -
+' #534 -
+' #533 -
+' #532 -
+' #531 -
 ' #530 -
-' #529 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -72,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #529 - Error with 2 unqualified references
     ' FIXED - #528 - Stage 12 error - FAIL: range parsed (expected=John 3:16-18, actual=John 3:16-3:18)
     ' FIXED - #527 - Error in Stage 11 and 12 FAIL [bug]
     ' FIXED - #526 - Update test harness to call aeBibleCitationClass [impr]
