@@ -797,3 +797,62 @@ No orphaned `On Error GoTo 0` statements were found. None removed.
 - `OutputTestReport` was treated as a MsgBox→Debug.Print replacement (it had the full PROC_ERR structure with MsgBox already). The proc name in its Debug.Print message was corrected to `OutputTestReport` (the original MsgBox had a typo: `OutPutTestReport`).
 - `AuditLiberationSansNarrowStyleDetails` and `CountFootnoteReferenceColors` received outer `On Error GoTo PROC_ERR` handlers while preserving their inner `On Error Resume Next` / `On Error GoTo 0` pairs intact.
 - The file grew from 3158 to 3769 lines (611 lines added).
+
+---
+
+## aeSBL_Citation_Class.cls — Conversion from basSBL_Citation_EBNF.bas (2026-03-31)
+
+`src/basSBL_Citation_EBNF.bas` (4149 lines) was converted into the singleton class `src/aeBibleCitationClass.cls` (4185 lines).
+
+### Structural Changes
+
+| Change | Detail |
+|---|---|
+| File type | `.bas` Standard Module → `.cls` Class Module |
+| Singleton pattern | `Attribute VB_PredeclaredId = True` added |
+| `Option Private Module` | Removed — not valid in class modules |
+| `MODULE_NOT_EMPTY_DUMMY` constant | Removed — `.bas` artifact |
+| License block | Added — matches `aeBibleClass.cls` (LGPL v3.0) |
+| `Class_Initialize` | Added — initializes `aliasMap` instance variable; Debug.Print PROC_ERR |
+| `Class_Terminate` | Added — `Set aliasMap = Nothing`; Debug.Print PROC_ERR |
+
+### Type Visibility Changes
+
+All `Public Type` declarations were changed to `Private Type` (required in class modules). Any function with one of these types in its signature is therefore also `Private`.
+
+| Type | Source visibility | Class visibility |
+|---|---|---|
+| `ParsedReference` | Public | Private |
+| `LexTokens` | Public | Private |
+| `ListTokens` | Public | Private |
+| `RangeTokens` | Public | Private |
+| `ScriptureRef` | Public | Private |
+| `ScriptureRange` | Public | Private |
+| `ScriptureList` | Public | Private |
+| `ContextState` | Private | Private (unchanged) |
+| `CitationMode` (Enum) | Public | Public (unchanged) |
+
+### Module Name Updates in Error Messages
+
+All existing `MsgBox` PROC_ERR handlers that referenced `"Module basSBL_Citation_EBNF"` were updated to `"Class aeSBL_Citation_Class"`. Affected procedures:
+
+`CompressCanonical`, `ParseCanonicalRef`, `ChaptersInBook`, `VersesInChapter`, `ParseCanonicalRange`, `ValidateCanonical`, `BuildCanonicalRanges`, `FormatCanonicalString`
+
+### Variable Shadowing Fixes
+
+The class-level instance variable `Private aliasMap As Object` would be shadowed by local `Dim aliasMap As Object` declarations in two procedures. Both were renamed to `aMap`:
+
+| Procedure | Original local name | Renamed to |
+|---|---|---|
+| `ResolveAlias` | `aliasMap` | `aMap` |
+| `xxxTest_AllBookAliases_STRICT` | `aliasMap` | `aMap` |
+| `AliasCoverage` | `aliasMap` | `aMap` |
+
+### Procedures Kept As-Is
+
+| Procedure | Reason |
+|---|---|
+| All existing MsgBox PROC_ERR handlers | Not asked to change error handler style |
+| `xxxTest_AllBookAliases_STRICT` non-standard `AliasFail:` handler | Intentional pattern — kept verbatim |
+| `IsNumericRange` | No error handler in source — kept as-is |
+| `ResolveAlias` | No PROC_ERR structure in source — kept as-is |

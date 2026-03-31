@@ -180,7 +180,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
                     bookName, _
                     parsed.Chapter, _
                     parsed.VerseSpec, _
-                    ModeSBL)
+                    ModeSBL_OLD)
         Debug.Print "  ValidateSBLReference:"
         Debug.Print "    -> Valid: "; IsValid
         If IsValid <> tests(i)(2) Then
@@ -345,7 +345,7 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
                     bookName, _
                     parsed.Chapter, _
                     parsed.VerseSpec, _
-                    ModeSBL)
+                    ModeSBL_OLD)
 
         Debug.Print "  ValidateSBLReference:"
         Debug.Print "    -> Valid: "; IsValid
@@ -583,11 +583,11 @@ Public Sub Test_Stage5_ValidateCanonical()
     Debug.Print "------------------------------------------"
 
     Dim valid As Boolean
-    valid = ValidateSBLReference(65, "Jude", 0, "5", ModeSBL)
+    valid = ValidateSBLReference(65, "Jude", 0, "5", ModeSBL_OLD)
     AssertTrue valid, "Jude 5 valid"
-    valid = ValidateSBLReference(65, "Jude", 1, "0", ModeSBL, True)
+    valid = ValidateSBLReference(65, "Jude", 1, "0", ModeSBL_OLD, True)
     AssertTrue Not valid, "Jude 1:0 rejected"
-    valid = ValidateSBLReference(45, "Romans", 999, "1", ModeSBL, True)
+    valid = ValidateSBLReference(45, "Romans", 999, "1", ModeSBL_OLD, True)
     AssertTrue Not valid, "Romans 999:1 rejected"
 End Sub
 

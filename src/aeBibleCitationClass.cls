@@ -1,13 +1,20 @@
-Attribute VB_Name = "basSBL_Citation_EBNF"
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "aeBibleCitationClass"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 Option Explicit
 Option Compare Text
-Option Private Module
 
-'Copyright (c) 2018-2026 Peter F. Ennis
+'Copyright (c) 2025-2026 Peter F. Ennis
 'This library is free software; you can redistribute it and/or
 'modify it under the terms of the GNU Lesser General Public
 'License as published by the Free Software Foundation;
-'version 3.0 or (at your option) any later version.
+'version 3.0, or (at your option) any later version.
 'This library is distributed in the hope that it will be useful,
 'but WITHOUT ANY WARRANTY; without even the implied warranty of
 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
@@ -953,7 +960,7 @@ Option Private Module
 '   Detect reference ranges using hyphen or en dash.
 ' Supported separators
 '   -  = ASCII hyphen-minus  (ChrW(45))
-'   �  = Unicode en dash     (ChrW(&H2013))
+'   ?  = Unicode en dash     (ChrW(&H2013))
 '-----------------------------------------------------
 ' A Note on Range Delimiter Characters
 '-----------------------------------------------------
@@ -963,7 +970,7 @@ Option Private Module
 '   Unicode:   U+002D
 '   VBA:       ChrW(45)
 ' Unicode en dash
-'   Character: "�"
+'   Character: "?"
 '   Unicode:   U+2013
 '   VBA:       ChrW(&H2013)
 ' NOTE
@@ -1750,9 +1757,14 @@ Option Private Module
 '    Right$("000" & verseCount, 3)
 ' This ensures constant-width indexing for direct addressing.
 
-Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
+'===========================================================
+' Type Declarations
+' NOTE: VBA class modules require all UDTs to be Private.
+' Functions using these types in their signatures are
+' therefore also Private (internal to this class).
+'===========================================================
 
-Public Type ParsedReference
+Private Type ParsedReference
     ' Only structure needed for test harness
     RawInput   As String
     BookAlias  As String   ' e.g. "JUDE", "ROM"
@@ -1760,7 +1772,7 @@ Public Type ParsedReference
     VerseSpec  As String   ' always string ("5", "1-3", "3,5")
 End Type
 
-Public Type LexTokens
+Private Type LexTokens
     RawAlias As String
     Num1     As Long
     Num2     As Long
@@ -1768,7 +1780,7 @@ Public Type LexTokens
     VerseSpec As String
 End Type
 
-Public Type ListTokens
+Private Type ListTokens
     IsList As Boolean
     Segments() As String
 End Type
@@ -1777,7 +1789,7 @@ End Type
 ' RangeTokens
 ' Stage 9 output structure
 '===========================================================
-Public Type RangeTokens
+Private Type RangeTokens
     IsRange As Boolean
     LeftRaw As String
     RightRaw As String
@@ -1790,7 +1802,7 @@ End Type
 '   John 3:16
 '   Jude 1:5
 '===========================================================
-Public Type ScriptureRef
+Private Type ScriptureRef
     BookID As Integer
     Chapter As Integer
     Verse As Integer
@@ -1804,7 +1816,7 @@ End Type
 '   John 3-5
 '   John 3:16-4:2
 '===========================================================
-Public Type ScriptureRange
+Private Type ScriptureRange
     StartRef  As ScriptureRef
     EndRef    As ScriptureRef
     ErrorCode As Long
@@ -1817,7 +1829,7 @@ End Type
 ' Example
 '   John 3:16-18,20; 4:1
 '===========================================================
-Public Type ScriptureList
+Private Type ScriptureList
     IsValid As Boolean
     ItemType() As Integer
         ' 1 = ScriptureRef
@@ -1828,9 +1840,9 @@ Public Type ScriptureList
     ErrorText As String
 End Type
 
-Public Enum CitationMode_OLD
+Public Enum CitationMode
     ModeGeneric = 0   ' Accept common abbreviations
-    ModeSBL_OLD = 1       ' Enforce SBL Study Bible rules
+    ModeSBL = 1       ' Enforce SBL Study Bible rules
 End Enum
 
 '===========================================================
@@ -1846,11 +1858,36 @@ End Type
 
 Private aliasMap As Object
 
+Private Sub Class_Initialize()
+    On Error GoTo PROC_ERR
+    Debug.Print "aeSBL_Citation_Class.Class_Initialize"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Debug.Print "ERROR in aeSBL_Citation_Class.Class_Initialize | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
+End Sub
+
+Private Sub Class_Terminate()
+    On Error GoTo PROC_ERR
+    Debug.Print
+    Debug.Print "aeSBL_Citation_Class.Class_Terminate"
+    Set aliasMap = Nothing
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Debug.Print "ERROR in aeSBL_Citation_Class.Class_Terminate | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
+End Sub
+
+
 Public Sub ResetBookAliasMap()
     Set aliasMap = Nothing
 End Sub
 
-Public Function CanonicalFromRef(r As ScriptureRef) As String
+Private Function CanonicalFromRef(r As ScriptureRef) As String
     Dim books As Object
     Dim b As Variant
     Dim name As String
@@ -1880,7 +1917,7 @@ Private Function PackRange(r As ScriptureRange) As Variant
                       e.BookID, e.Chapter, e.Verse)
 End Function
 
-Public Function CanonicalFromRange(rg As ScriptureRange) As String
+Private Function CanonicalFromRange(rg As ScriptureRange) As String
     Dim startText As String, endText As String
     startText = CanonicalFromRef(rg.StartRef)
     If rg.StartRef.BookID = rg.EndRef.BookID Then
@@ -1940,7 +1977,7 @@ End Function
 '   Stage 10 - ParseReferenceRef
 '   Stage 11 - ComposeRange
 '=====================================================
-Public Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
+Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
     Dim t As ListTokens
     Dim i As Long
     Dim count As Long
@@ -2076,7 +2113,7 @@ Private Sub ApplyContextShorthand(ByRef list As ScriptureList)
     Next i
 End Sub
 
-Public Function ListDetection(ByVal RawInput As String) As ListTokens
+Private Function ListDetection(ByVal RawInput As String) As ListTokens
     Dim Result As ListTokens
     Dim parts() As String
 
@@ -2108,7 +2145,7 @@ End Function
 '       LeftRaw  = "John 3:16"
 '       RightRaw = "18"
 '===========================================================
-Public Function RangeDetection(ByVal segment As String) As RangeTokens
+Private Function RangeDetection(ByVal segment As String) As RangeTokens
     Dim r As RangeTokens
 
     If Not IsRangeSegment(segment) Then
@@ -2138,7 +2175,7 @@ End Function
 '   Determines if a segment contains a range separator.
 ' Supported separators:
 '   Hyphen  (-) ASCII 45
-'   En dash (�) Unicode U+2013
+'   En dash (?) Unicode U+2013
 ' NOTE
 ' Use ChrW(8211) so the source code does not depend
 ' on editors correctly displaying the en dash.
@@ -2156,7 +2193,7 @@ Public Function IsRangeSegment(ByVal segment As String) As Boolean
     End If
 End Function
 
-Public Function ComposeRange(ByVal raw As String) As ScriptureRange
+Private Function ComposeRange(ByVal raw As String) As ScriptureRange
     Dim tokens As RangeTokens
     Dim r As ScriptureRange
     Dim StartRef As ScriptureRef
@@ -2299,7 +2336,7 @@ End Function
 '   ParseReferenceRef("John 3:16")
 '       -> ScriptureRef(BookID=43, Chapter=3, Verse=16)
 '=====================================================
-Public Function ParseReferenceRef( _
+Private Function ParseReferenceRef( _
         ByVal inputRef As String, _
         Optional ByVal mode As CitationMode = ModeGeneric _
     ) As ScriptureRef
@@ -2411,7 +2448,7 @@ End Function
 '   "1 Jn"               -> RawAlias="1 Jn"
 '   "1 Corinthians 13:4" -> RawAlias="1 Corinthians"
 '=====================================================
-Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
+Private Function LexicalScan(ByVal normalizedInput As String) As LexTokens
     Dim t As LexTokens
     Dim parts() As String
     Dim refPart As String
@@ -2475,6 +2512,7 @@ Public Function LexicalScan(ByVal normalizedInput As String) As LexTokens
 
     LexicalScan = t
 End Function
+
 
 Public Function IsValidSBLAlias(BookID As Long, aliasText As String) As Boolean
     Dim canonical As String
@@ -2724,10 +2762,6 @@ Public Function GetMaxVerse(BookID As Long, Chapter As Long) As Long
     Dim maps As Variant
     maps = GetChapterVerseMap()   ' actually raw map now
 
-    'Debug.Print "Book:", bookID
-    'Debug.Print "LBound:", LBound(maps(bookID))
-    'Debug.Print "UBound:", UBound(maps(bookID))
-    'Debug.Print "Chapter:", Chapter
     AssertOneBased maps(BookID), "GetMaxVerse chapters"
 
     If BookID < 1 Or BookID > 66 Then
@@ -2741,34 +2775,34 @@ Public Function GetMaxVerse(BookID As Long, Chapter As Long) As Long
     If Chapter < 1 Or Chapter > UBound(maps(BookID)) + 1 Then
         Err.Raise vbObjectError + 40, , "Invalid chapter for book"
     End If
-    
+
     GetMaxVerse = maps(BookID)(Chapter)
 End Function
 
 Public Function GetChapterVerseMap() As Variant
 
     Static cached As Variant
-    
+
     If IsEmpty(cached) Then
-        
+
         Dim d As Object
         Set d = GetVerseCounts()
-        
+
         Dim maps(1 To 66) As Variant
         Dim BookID As Long
-        
+
         For BookID = 1 To 66
             maps(BookID) = d(BookID)
             AssertOneBased maps(BookID), "GetChapterVerseMap chapters"
         Next BookID
-        
+
         AssertOneBased maps, "GetChapterVerseMap books"
-        
+
         cached = maps
     End If
-    
+
     GetChapterVerseMap = cached
-    
+
 End Function
 
 Public Function ValidateSBLReference( _
@@ -2800,7 +2834,7 @@ Public Function ValidateSBLReference( _
             VerseSpec = ""
         End If
     End If
-    
+
     ' ---------- SBL MODE BELOW ----------
     ' 1. Book must exist in canonical table
     If Not GetCanonicalBookTable.Exists(BookID) Then
@@ -2846,16 +2880,16 @@ Public Function ValidateSBLReference( _
         Debug.Print "SBL FAIL: Missing verse specification"
         Exit Function
     End If
-    
+
     Dim v As Long
-    
+
     If Not IsNumeric(VerseSpec) Then
         Debug.Print "SBL FAIL: Non-numeric verse"
         Exit Function
     End If
-    
+
     v = CLng(VerseSpec)
-    
+
     If v < 1 Then
         If Not silent Then Debug.Print "SBL FAIL: Verse must be >= 1"
         ValidateSBLReference = False
@@ -2864,7 +2898,7 @@ Public Function ValidateSBLReference( _
 
     Dim maxV As Long
     maxV = GetMaxVerse(BookID, Chapter)
-    
+
     If v > maxV Then
         Debug.Print "SBL FAIL: Verse exceeds max (" & maxV & ")"
         Exit Function
@@ -2895,7 +2929,7 @@ Public Function GetSingleChapterBookSet() As Object
     Set GetSingleChapterBookSet = sc
 End Function
 
-Public Function InterpretStructure(ByRef tokens As LexTokens) As ParsedReference
+Private Function InterpretStructure(ByRef tokens As LexTokens) As ParsedReference
     Dim ref As ParsedReference
     '------------------------------------------
     ' Chapter : Verse structure
@@ -2970,19 +3004,19 @@ Public Function AliasCoverage( _
 ' Validate the Alias Coverage
 
     Dim books As Object
-    Dim aliasMap As Object
+    Dim aMap As Object
     Dim missing As Collection
     Dim k As Variant
     Dim canon As String
 
     Set books = GetCanonicalBookTable
-    Set aliasMap = GetBookAliasMap
+    Set aMap = GetBookAliasMap
     Set missing = New Collection
 
     For Each k In books.Keys
         canon = UCase$(books(k)(1))   ' Canonical name
 
-        If Not aliasMap.Exists(canon) Then
+        If Not aMap.Exists(canon) Then
             missing.Add canon
         End If
     Next k
@@ -3434,7 +3468,7 @@ Public Function CompressCanonical(ByVal Refs As Collection) As Collection
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompressCanonical of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CompressCanonical of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
@@ -3470,7 +3504,7 @@ Private Function ParseCanonicalRef( _
     If Len(canonical) = 0 Then GoTo PROC_EXIT
 
     '------------------------------------------
-    ' Find the last space — everything after it
+    ' Find the last space ? everything after it
     ' is the chapter[:verse] token.
     '------------------------------------------
     Dim lastSpace As Long
@@ -3483,7 +3517,7 @@ Private Function ParseCanonicalRef( _
         End If
     Next k
 
-    If lastSpace = 0 Then GoTo PROC_EXIT   ' no space found — unparseable
+    If lastSpace = 0 Then GoTo PROC_EXIT   ' no space found ? unparseable
 
     Dim refToken As String
     refToken = mid$(canonical, lastSpace + 1)
@@ -3512,26 +3546,26 @@ Private Function ParseCanonicalRef( _
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCanonicalRef of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCanonicalRef of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
 Public Function ResolveAlias(abbr As String, _
                             Optional BookID As Long) As String
     Dim key As String
-    Dim aliasMap As Object
+    Dim aMap As Object
     Dim books As Object
     Dim b As Variant
 
     key = UCase$(Trim$(abbr))
-    Set aliasMap = GetBookAliasMap
+    Set aMap = GetBookAliasMap
 
-    If Not aliasMap.Exists(key) Then
+    If Not aMap.Exists(key) Then
         Debug.Print "BAD  > ResolveBook(" & key & ")"
         Err.Raise vbObjectError + 10, , "Unknown book alias: " & abbr
     End If
 
-    BookID = aliasMap(key)
+    BookID = aMap(key)
     Set books = GetCanonicalBookTable
 
     b = books.Item(BookID)     ' SAFE
@@ -3545,7 +3579,7 @@ End Function
 '     Remove or trim canonical reference strings that fall
 '     outside the valid scripture bounds of their book.
 ' Input:
-'     A Collection of canonical strings — output of Stage 14.
+'     A Collection of canonical strings ? output of Stage 14.
 '     Strings may be:
 '         Single ref:   "John 3:16"
 '         Range:        "John 3:16-3:18"
@@ -3592,7 +3626,7 @@ Private Function ChaptersInBook(ByVal bookName As String) As Long
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ChaptersInBook of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ChaptersInBook of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
@@ -3629,7 +3663,7 @@ Private Function VersesInChapter(ByVal bookName As String, ByVal Chapter As Long
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VersesInChapter of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VersesInChapter of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
@@ -3736,7 +3770,7 @@ Private Function ParseCanonicalRange( _
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCanonicalRange of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCanonicalRange of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
@@ -3833,7 +3867,7 @@ Public Function ValidateCanonical(ByVal Refs As Collection) As Collection
                 ' Chapter-only ref or unparseable - pass through unchanged
                 Result.Add s
             Else
-                ' Single ch:v ref — validate
+                ' Single ch:v ref ? validate
                 Dim maxChSingle As Long
                 maxChSingle = ChaptersInBook(singleBook)
 
@@ -3856,7 +3890,7 @@ NextItem:
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ValidateCanonical of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ValidateCanonical of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
@@ -3962,7 +3996,7 @@ Public Function BuildCanonicalRanges(ByVal Refs As Collection) As Collection
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure BuildCanonicalRanges of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure BuildCanonicalRanges of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
@@ -4085,24 +4119,24 @@ NextItem:
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FormatCanonicalString of Module basSBL_Citation_EBNF"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FormatCanonicalString of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
 Public Sub xxxTest_AllBookAliases_STRICT()
-    Dim aliasMap As Object
+    Dim aMap As Object
     Dim books As Object
     Dim k As Variant
     Dim BookID As Long
     Dim canonicalActual As String
     Dim failures As Long
 
-    Set aliasMap = GetBookAliasMap
+    Set aMap = GetBookAliasMap
     Set books = GetCanonicalBookTable
 
     Debug.Print "=== STRICT Alias Validation ==="
 
-    For Each k In aliasMap.Keys
+    For Each k In aMap.Keys
         On Error GoTo AliasFail
 
         canonicalActual = ResolveAlias(CStr(k), BookID)
@@ -4146,4 +4180,6 @@ AliasFail:
     failures = failures + 1
     Resume NextAlias
 End Sub
+
+
 
