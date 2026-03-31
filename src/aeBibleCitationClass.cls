@@ -2421,9 +2421,13 @@ Public Function ParseScripture(ByVal raw As String) As Variant
         startText = CanonicalFromRef(r.StartRef)
 
         If r.StartRef.BookID = r.EndRef.BookID Then
-            endText = CStr(r.EndRef.Chapter)
-            If r.EndRef.Verse <> 0 Then
-                endText = endText & ":" & r.EndRef.Verse
+            If r.StartRef.Chapter = r.EndRef.Chapter Then
+                endText = CStr(r.EndRef.Verse)
+            Else
+                endText = CStr(r.EndRef.Chapter)
+                If r.EndRef.Verse <> 0 Then
+                    endText = endText & ":" & r.EndRef.Verse
+                End If
             End If
         Else
             endText = CanonicalFromRef(r.EndRef)

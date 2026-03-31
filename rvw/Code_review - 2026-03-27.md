@@ -957,3 +957,28 @@ MsgBox error strings updated from `Module basSBL_TestHarness` to `Class aeBibleC
 | `Test_Stage12_FinalParser` | `range parsed` | `"John 3:16-3:18"` | `"John 3:16-18"` |
 
 Stage 14 and Stage 16 expected values (`"John 3:16-3:17"` etc.) were not affected — those functions (`CompressCanonical`, `BuildCanonicalRanges`) format ranges independently of `CanonicalFromRange`.
+
+---
+
+## aeBibleCitationClass.cls — Stage 12 Same-Chapter Suppression Fix (2026-03-31)
+
+**Issue:** `#528` — Stage 12 FAIL: `range parsed` (expected=`John 3:16-18`, actual=`John 3:16-3:18`).
+
+**Root cause:** `ParseScripture` contains its own inline range formatter (separate from `CanonicalFromRange`). When the Stage 13 fix added same-chapter suppression to `CanonicalFromRange`, the duplicate logic in `ParseScripture` was not updated. For a same-book range it always emitted `chapter:verse` for the end ref, producing `"John 3:16-3:18"` instead of `"John 3:16-18"`.
+
+**Fix:** Applied the same same-chapter check to `ParseScripture`'s inline formatter:
+
+```vba
+If r.StartRef.BookID = r.EndRef.BookID Then
+    If r.StartRef.Chapter = r.EndRef.Chapter Then
+        endText = CStr(r.EndRef.Verse)
+    Else
+        endText = CStr(r.EndRef.Chapter)
+        If r.EndRef.Verse <> 0 Then
+            endText = endText & ":" & r.EndRef.Verse
+        End If
+    End If
+Else
+    endText = CanonicalFromRef(r.EndRef)
+End If
+```
