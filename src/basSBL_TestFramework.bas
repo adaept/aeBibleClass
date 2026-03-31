@@ -8,7 +8,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Private gTestsRun As Long
 Private gTestsFailed As Long
 
-Public Sub AssertTrue( _
+Private Sub AssertTrue( _
         ByVal condition As Boolean, _
         ByVal message As String, _
         Optional ByVal expected As Variant, _
@@ -34,7 +34,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Public Sub AssertEqual(expected As Variant, actual As Variant, label As String)
+Private Sub AssertEqual(expected As Variant, actual As Variant, label As String)
 ' Useful for numeric/string comparisons.
     On Error GoTo PROC_ERR
     gTestsRun = gTestsRun + 1
@@ -56,11 +56,11 @@ End Sub
 '===========================================================
 ' AssertFalse
 '===========================================================
-Public Sub AssertFalse(ByVal condition As Boolean, ByVal message As String)
+Private Sub AssertFalse(ByVal condition As Boolean, ByVal message As String)
     AssertTrue Not condition, message
 End Sub
 
-Public Sub TestStart()
+Private Sub TestStart()
     gTestsRun = 0
     gTestsFailed = 0
     
@@ -70,7 +70,7 @@ Public Sub TestStart()
     Debug.Print "=========================================="
 End Sub
 
-Public Sub TestSummary()
+Private Sub TestSummary()
     Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " TEST SUMMARY"

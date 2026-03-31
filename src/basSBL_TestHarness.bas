@@ -5,6 +5,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+Public aeAssert As aeAssertClass
 Private Const RUN_FAILURE_DEMOS As Boolean = False  ' Set True to run intentional-failure test cases that demonstrate error detection
 
 Public Enum ExpectedFailureStage
@@ -63,37 +64,25 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Public Sub Test_AliasCoverage()
+Public Sub Test_Stage1_AliasCoverage()
 ' Assert that every canonical book name (upper-cased) exists as a key in the alias map
 '   Uses GetCanonicalBookTable
 '   Uses GetBookAliasMap
 '   Canonical name is normalized as UCase(Canonical)
 '   Does not mutate state
 '   Emits diagnostics
+
     Debug.Print "------------------------------------------"
     Debug.Print "   Alias Coverage Validation"
     Debug.Print "------------------------------------------"
 
     Dim msg As String
     Dim ok As Boolean
+
     ok = AliasCoverage(msg)
     Debug.Print msg
 
-    If Not ok Then
-        Debug.Print "RESULT: FAIL"
-    Else
-        Debug.Print "RESULT: PASS"
-    End If
-End Sub
-
-Public Sub Test_TokenizeReference()
-    Dim t As LexTokens
-    
-    t = LexicalScan("Jude 1:5")
-    Debug.Assert t.RawAlias = "Jude"
-    Debug.Assert t.Num1 = 1
-    Debug.Assert t.Num2 = 5
-    Debug.Assert t.HasColon = True
+    aeAssert.AssertTrue ok, "Alias coverage validation", True, ok
 End Sub
 
 Public Sub Test_SemanticFlow_WithParserStub()
@@ -439,17 +428,36 @@ Private Sub FailTest(ByRef failCount As Long, _
     failCount = failCount + 1
 End Sub
 
+Public Sub RunSomeTests()
+    Set aeAssert = New aeAssertClass
+    aeAssert.Initialize
+
+    Test_Stage1_AliasCoverage
+    Test_Stage2_LexicalScan
+    Test_Stage3_ResolveAlias
+    Test_Stage4_InterpretStructure
+    Test_Stage5_ValidateCanonical
+    Test_Stage6_FormatCanonical
+    Test_Stage6_FormatCanonical_FailureDemo
+    Test_Stage7_EndToEnd
+
+    aeAssert.Terminate
+    Set aeAssert = Nothing
+End Sub
+
 Public Sub Run_All_SBL_Tests()
     On Error GoTo PROC_ERR
-    TestStart
 
     If Not VerifyPackedVerseMap() Then
         Debug.Print "ABORT: Packed verse map invalid"
         GoTo PROC_EXIT
     End If
 
+    Set aeAssert = New aeAssertClass
+    aeAssert.Initialize
+
     ResetBookAliasMap
-    Test_AliasCoverage
+    Test_Stage1_AliasCoverage
     Test_Stage2_LexicalScan
     Test_Stage3_ResolveAlias
     Test_Stage4_InterpretStructure
@@ -478,7 +486,10 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage15_CanonicalValidation
     Test_Stage16_CanonicalRangeBuilder
     Test_Stage17_CanonicalStringFormatter
-    TestSummary
+
+    aeAssert.Terminate
+    Set aeAssert = Nothing
+
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -487,25 +498,23 @@ PROC_ERR:
 End Sub
 
 Public Sub Test_Stage2_LexicalScan()
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage2_LexicalScan"
     Debug.Print "------------------------------------------"
 
     Dim t As LexTokens
     t = LexicalScan("Jude 1:5")
-    AssertEqual "Jude", t.RawAlias, "Alias parsed"
-    AssertEqual 1, t.Num1, "Chapter parsed"
-    AssertEqual 5, t.Num2, "Verse parsed"
-    AssertTrue t.HasColon, "Colon detected"
+    aeAssert.AssertEqual "Jude", t.RawAlias, "Alias parsed"
+    aeAssert.AssertEqual 1, t.Num1, "Chapter parsed"
+    aeAssert.AssertEqual 5, t.Num2, "Verse parsed"
+    aeAssert.AssertTrue t.HasColon, "Colon detected"
     t = LexicalScan("Romans 8")
-    AssertEqual "Romans", t.RawAlias, "Alias parsed"
-    AssertEqual 8, t.Num1, "Number parsed"
-    AssertTrue Not t.HasColon, "No colon detected"
+    aeAssert.AssertEqual "Romans", t.RawAlias, "Alias parsed"
+    aeAssert.AssertEqual 8, t.Num1, "Number parsed"
+    aeAssert.AssertTrue Not t.HasColon, "No colon detected"
 End Sub
 
 Public Sub Test_Stage3_ResolveAlias()
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage3_ResolveAlias"
     Debug.Print "------------------------------------------"
@@ -516,16 +525,15 @@ Public Sub Test_Stage3_ResolveAlias()
 
     tokens = LexicalScan("Jude 1:5")
     canonical = ResolveAlias(tokens.RawAlias, BookID)
-    AssertEqual 65, BookID, "Jude BookID"
-    AssertEqual "Jude", canonical, "Jude canonical"
+    aeAssert.AssertEqual 65, BookID, "Jude BookID"
+    aeAssert.AssertEqual "Jude", canonical, "Jude canonical"
     tokens = LexicalScan("Genesis 1:1")
     canonical = ResolveAlias(tokens.RawAlias, BookID)
-    AssertEqual 1, BookID, "Genesis BookID"
-    AssertEqual "Genesis", canonical, "Genesis canonical"
+    aeAssert.AssertEqual 1, BookID, "Genesis BookID"
+    aeAssert.AssertEqual "Genesis", canonical, "Genesis canonical"
 End Sub
 
 Public Sub Test_Stage4_InterpretStructure()
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage4_InterpretStructure"
     Debug.Print "------------------------------------------"
@@ -537,58 +545,57 @@ Public Sub Test_Stage4_InterpretStructure()
     '------------------------------------------
     tokens = LexicalScan("Jude 5")
     ref = InterpretStructure(tokens)
-    AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
-    AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
+    aeAssert.AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
+    aeAssert.AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
     '------------------------------------------
     ' Standard chapter:verse
     '------------------------------------------
     tokens = LexicalScan("Romans 8:1")
     ref = InterpretStructure(tokens)
-    AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
-    AssertEqual "1", ref.VerseSpec, "Romans verse interpreted"
+    aeAssert.AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
+    aeAssert.AssertEqual "1", ref.VerseSpec, "Romans verse interpreted"
     '------------------------------------------
     ' Ambiguous single number (no colon)
     '------------------------------------------
     tokens = LexicalScan("Genesis 1")
     ref = InterpretStructure(tokens)
-    AssertEqual 0, ref.Chapter, "Genesis 1 chapter interpreted"
-    AssertEqual "1", ref.VerseSpec, "Genesis 1 verse interpreted"
+    aeAssert.AssertEqual 0, ref.Chapter, "Genesis 1 chapter interpreted"
+    aeAssert.AssertEqual "1", ref.VerseSpec, "Genesis 1 verse interpreted"
     '------------------------------------------
     ' Verse range
     '------------------------------------------
     tokens = LexicalScan("John 3:16-18")
     ref = InterpretStructure(tokens)
-    AssertEqual 3, ref.Chapter, "John chapter interpreted"
-    AssertEqual "16-18", ref.VerseSpec, "John verse range interpreted"
+    aeAssert.AssertEqual 3, ref.Chapter, "John chapter interpreted"
+    aeAssert.AssertEqual "16-18", ref.VerseSpec, "John verse range interpreted"
     '------------------------------------------
     ' Verse list
     '------------------------------------------
     tokens = LexicalScan("Psalm 23:1,4,6")
     ref = InterpretStructure(tokens)
-    AssertEqual 23, ref.Chapter, "Psalm chapter interpreted"
-    AssertEqual "1,4,6", ref.VerseSpec, "Psalm verse list interpreted"
+    aeAssert.AssertEqual 23, ref.Chapter, "Psalm chapter interpreted"
+    aeAssert.AssertEqual "1,4,6", ref.VerseSpec, "Psalm verse list interpreted"
     '------------------------------------------
     ' Mixed list and range
     '------------------------------------------
     tokens = LexicalScan("Matthew 5:3-5,9")
     ref = InterpretStructure(tokens)
-    AssertEqual 5, ref.Chapter, "Matthew chapter interpreted"
-    AssertEqual "3-5,9", ref.VerseSpec, "Matthew mixed verse spec interpreted"
+    aeAssert.AssertEqual 5, ref.Chapter, "Matthew chapter interpreted"
+    aeAssert.AssertEqual "3-5,9", ref.VerseSpec, "Matthew mixed verse spec interpreted"
 End Sub
 
 Public Sub Test_Stage5_ValidateCanonical()
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage5_ValidateCanonical"
     Debug.Print "------------------------------------------"
 
     Dim valid As Boolean
     valid = ValidateSBLReference(65, "Jude", 0, "5", ModeSBL_OLD)
-    AssertTrue valid, "Jude 5 valid"
+    aeAssert.AssertTrue valid, "Jude 5 valid"
     valid = ValidateSBLReference(65, "Jude", 1, "0", ModeSBL_OLD, True)
-    AssertTrue Not valid, "Jude 1:0 rejected"
+    aeAssert.AssertTrue Not valid, "Jude 1:0 rejected"
     valid = ValidateSBLReference(45, "Romans", 999, "1", ModeSBL_OLD, True)
-    AssertTrue Not valid, "Romans 999:1 rejected"
+    aeAssert.AssertTrue Not valid, "Romans 999:1 rejected"
 End Sub
 
 Public Sub Test_Stage6_FormatCanonical()
@@ -599,14 +606,13 @@ Public Sub Test_Stage6_FormatCanonical()
 
     Dim Result As String
     Result = RewriteSingleChapterRef(65, 0, 5)
-    AssertEqual "1:5", Result, "Jude single-chapter rewrite"
+    aeAssert.AssertEqual "1:5", Result, "Jude single-chapter rewrite"
     Result = RewriteSingleChapterRef(45, 8, 1)
-    AssertEqual "8:1", Result, "Romans unchanged"
+    aeAssert.AssertEqual "8:1", Result, "Romans unchanged"
 End Sub
 
 Public Sub Test_Stage6_FormatCanonical_FailureDemo()
     If RUN_FAILURE_DEMOS Then
-        Debug.Print ""
         Debug.Print "------------------------------------------"
         Debug.Print " Test_Stage6_FormatCanonical (Failure Demo)"
         Debug.Print "------------------------------------------"
@@ -615,40 +621,38 @@ Public Sub Test_Stage6_FormatCanonical_FailureDemo()
         ' Call the real formatter
         Result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
         ' Deliberate wrong expected value
-        AssertEqual "5", Result, "Canonical rewrite for Jude"
+        aeAssert.AssertEqual "5", Result, "Canonical rewrite for Jude"
     End If
 End Sub
 
 Public Sub Test_Stage7_EndToEnd()
     Dim Result As String
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage7_EndToEnd"
     Debug.Print "------------------------------------------"
 
     Result = ParseReference("Jude 5")
-    AssertEqual "Jude 1:5", Result, "Jude single-chapter expansion"
+    aeAssert.AssertEqual "Jude 1:5", Result, "Jude single-chapter expansion"
     Result = ParseReference("Romans 8")
-    AssertEqual "Romans 8", Result, "Romans chapter reference"
+    aeAssert.AssertEqual "Romans 8", Result, "Romans chapter reference"
     Result = ParseReference("3 John 4")
-    AssertEqual "3 John 1:4", Result, "3 John expansion"
+    aeAssert.AssertEqual "3 John 1:4", Result, "3 John expansion"
     Result = ParseReference("Genesis 1:1")
-    AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
+    aeAssert.AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
     '------------------------------------------
     ' Book-only expansion
     '------------------------------------------
     Result = ParseReference("John")
-    AssertEqual "John 1:1", Result, "John book expansion"
+    aeAssert.AssertEqual "John 1:1", Result, "John book expansion"
     Result = ParseReference("1 Jn")
-    AssertEqual "1 John 1:1", Result, "1 Jn expansion"
+    aeAssert.AssertEqual "1 John 1:1", Result, "1 Jn expansion"
     Result = ParseReference("Jude")
-    AssertEqual "Jude 1:1", Result, "Jude book expansion"
+    aeAssert.AssertEqual "Jude 1:1", Result, "Jude book expansion"
     Result = ParseReference("Romans")
-    AssertEqual "Romans 1:1", Result, "Romans book expansion"
+    aeAssert.AssertEqual "Romans 1:1", Result, "Romans book expansion"
 End Sub
 
 Public Sub Test_Stage8_ListDetection()
-    Debug.Print
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage8_ListDetection"
     Debug.Print "------------------------------------------"
@@ -658,38 +662,37 @@ Public Sub Test_Stage8_ListDetection()
     ' Test 1 - comma list
     '------------------------------------------
     t = ListDetection("John 3:16,18,20")
-    AssertTrue t.IsList, "comma list detected"
-    AssertEqual 2, UBound(t.Segments), "comma list segment count"
+    aeAssert.AssertTrue t.IsList, "comma list detected"
+    aeAssert.AssertEqual 2, UBound(t.Segments), "comma list segment count"
     '------------------------------------------
     ' Test 2 - semicolon list
     '------------------------------------------
     t = ListDetection("John 3:16; 4:1")
-    AssertTrue t.IsList, "semicolon list detected"
-    AssertEqual 1, UBound(t.Segments), "semicolon list segment count"
+    aeAssert.AssertTrue t.IsList, "semicolon list detected"
+    aeAssert.AssertEqual 1, UBound(t.Segments), "semicolon list segment count"
     '------------------------------------------
     ' Test 3 - single reference
     '------------------------------------------
     t = ListDetection("John 3:16")
-    AssertFalse t.IsList, "single reference not list"
+    aeAssert.AssertFalse t.IsList, "single reference not list"
     '------------------------------------------
     ' Test 4 - list containing range
     '------------------------------------------
     t = ListDetection("John 3:16-18,20")
-    AssertTrue t.IsList, "range preserved inside list"
-    AssertEqual 1, UBound(t.Segments), "range list segment count"
-    AssertEqual "John 3:16-18", t.Segments(0), "range first segment"
-    AssertEqual "20", t.Segments(1), "range second segment"
+    aeAssert.AssertTrue t.IsList, "range preserved inside list"
+    aeAssert.AssertEqual 1, UBound(t.Segments), "range list segment count"
+    aeAssert.AssertEqual "John 3:16-18", t.Segments(0), "range first segment"
+    aeAssert.AssertEqual "20", t.Segments(1), "range second segment"
     '------------------------------------------
     ' Test 5 - mixed whitespace
     '------------------------------------------
     ' Optional as whitespace normalization should already be handled in Stage 1
     t = ListDetection("John 3:16 , 18 , 20")
-    AssertTrue t.IsList, "whitespace tolerated"
-    AssertEqual 2, UBound(t.Segments), "whitespace segment count"
+    aeAssert.AssertTrue t.IsList, "whitespace tolerated"
+    aeAssert.AssertEqual 2, UBound(t.Segments), "whitespace segment count"
 End Sub
 
 Public Sub Test_Stage9_RangeDetection()
-    Debug.Print
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage9_RangeDetection"
     Debug.Print "------------------------------------------"
@@ -698,40 +701,40 @@ Public Sub Test_Stage9_RangeDetection()
     '------------------------------------------
     ' Test 1 - verse range
     '------------------------------------------
-    AssertTrue IsRangeSegment("John 3:16-18"), _
+    aeAssert.AssertTrue IsRangeSegment("John 3:16-18"), _
         "IsRangeSegment verse range"
     r = RangeDetection("John 3:16-18")
-    AssertTrue r.IsRange, "verse range detected"
-    AssertEqual r.LeftRaw, "John 3:16", "range left token"
-    AssertEqual r.RightRaw, "18", "range right token"
+    aeAssert.AssertTrue r.IsRange, "verse range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "range left token"
+    aeAssert.AssertEqual r.RightRaw, "18", "range right token"
     '------------------------------------------
     ' Test 2 - chapter range
     '------------------------------------------
     r = RangeDetection("John 3-5")
-    AssertTrue r.IsRange, "chapter range detected"
-    AssertEqual r.LeftRaw, "John 3", "chapter range left"
-    AssertEqual r.RightRaw, "5", "chapter range right"
+    aeAssert.AssertTrue r.IsRange, "chapter range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3", "chapter range left"
+    aeAssert.AssertEqual r.RightRaw, "5", "chapter range right"
     '------------------------------------------
     ' Test 3 - cross chapter range
     '------------------------------------------
     r = RangeDetection("John 3:16-4:2")
-    AssertTrue r.IsRange, "cross chapter range detected"
-    AssertEqual r.LeftRaw, "John 3:16", "cross chapter left"
-    AssertEqual r.RightRaw, "4:2", "cross chapter right"
+    aeAssert.AssertTrue r.IsRange, "cross chapter range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "cross chapter left"
+    aeAssert.AssertEqual r.RightRaw, "4:2", "cross chapter right"
     '------------------------------------------
     ' Test 4 - en dash
     '------------------------------------------
     r = RangeDetection("John 3:16" & ChrW(8211) & "18")   ' en dash character (U+2013)
-    AssertTrue r.IsRange, "en dash range detected"
-    AssertEqual r.LeftRaw, "John 3:16", "en dash left"
-    AssertEqual r.RightRaw, "18", "en dash right"
+    aeAssert.AssertTrue r.IsRange, "en dash range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "en dash left"
+    aeAssert.AssertEqual r.RightRaw, "18", "en dash right"
     '------------------------------------------
     ' Test 5 - not a range
     '------------------------------------------
-    AssertFalse IsRangeSegment("John 3:16"), _
+    aeAssert.AssertFalse IsRangeSegment("John 3:16"), _
         "IsRangeSegment single reference"
     r = RangeDetection("John 3:16")
-    AssertFalse r.IsRange, "single reference not range"
+    aeAssert.AssertFalse r.IsRange, "single reference not range"
 End Sub
 
 Public Sub Test_Stage10_RangeComposition()
@@ -744,24 +747,24 @@ Public Sub Test_Stage10_RangeComposition()
     ' Verse shorthand
     '------------------------------------------
     r = ComposeRange("John 3:16-18")
-    AssertEqual 3, r.StartRef.Chapter, "start chapter"
-    AssertEqual 16, r.StartRef.Verse, "start verse"
-    AssertEqual 3, r.EndRef.Chapter, "end chapter"
-    AssertEqual 18, r.EndRef.Verse, "end verse"
+    aeAssert.AssertEqual 3, r.StartRef.Chapter, "start chapter"
+    aeAssert.AssertEqual 16, r.StartRef.Verse, "start verse"
+    aeAssert.AssertEqual 3, r.EndRef.Chapter, "end chapter"
+    aeAssert.AssertEqual 18, r.EndRef.Verse, "end verse"
     '------------------------------------------
     ' Chapter shorthand
     '------------------------------------------
     r = ComposeRange("John 3-5")
-    AssertEqual 3, r.StartRef.Chapter, "chapter start"
-    AssertEqual 5, r.EndRef.Chapter, "chapter end"
+    aeAssert.AssertEqual 3, r.StartRef.Chapter, "chapter start"
+    aeAssert.AssertEqual 5, r.EndRef.Chapter, "chapter end"
     '------------------------------------------
     ' Cross-chapter range
     '------------------------------------------
     r = ComposeRange("Genesis 1:31-2:3")
-    AssertEqual 1, r.StartRef.Chapter, "cross start chapter"
-    AssertEqual 31, r.StartRef.Verse, "cross start verse"
-    AssertEqual 2, r.EndRef.Chapter, "cross end chapter"
-    AssertEqual 3, r.EndRef.Verse, "cross end verse"
+    aeAssert.AssertEqual 1, r.StartRef.Chapter, "cross start chapter"
+    aeAssert.AssertEqual 31, r.StartRef.Verse, "cross start verse"
+    aeAssert.AssertEqual 2, r.EndRef.Chapter, "cross end chapter"
+    aeAssert.AssertEqual 3, r.EndRef.Verse, "cross end verse"
 End Sub
 
 Public Sub PrintScriptureList(list As ScriptureList)
@@ -803,21 +806,21 @@ Public Sub Test_Stage11_ListComposition()
     ' Simple reference list
     '------------------------------------------
     Set Items = ComposeList("John 3:16, John 3:18")
-    AssertEqual 2, Items.count, "two references parsed"
-    AssertEqual "John 3:16", Items(1), "first reference"
-    AssertEqual "John 3:18", Items(2), "second reference"
+    aeAssert.AssertEqual 2, Items.count, "two references parsed"
+    aeAssert.AssertEqual "John 3:16", Items(1), "first reference"
+    aeAssert.AssertEqual "John 3:18", Items(2), "second reference"
     '------------------------------------------
     ' Range inside list
     '------------------------------------------
     Set Items = ComposeList("John 3:16-18, John 3:20")
-    AssertEqual 2, Items.count, "range + reference"
-    AssertEqual "John 3:16-3:18", Items(1), "range canonical"
-    AssertEqual "John 3:20", Items(2), "second reference"
+    aeAssert.AssertEqual 2, Items.count, "range + reference"
+    aeAssert.AssertEqual "John 3:16-3:18", Items(1), "range canonical"
+    aeAssert.AssertEqual "John 3:20", Items(2), "second reference"
     '------------------------------------------
     ' Semicolon separation
     '------------------------------------------
     Set Items = ComposeList("Romans 8; Romans 9")
-    AssertEqual 2, Items.count, "semicolon list"
+    aeAssert.AssertEqual 2, Items.count, "semicolon list"
 End Sub
 
 Public Sub Test_Stage12_FinalParser()
@@ -831,39 +834,42 @@ Public Sub Test_Stage12_FinalParser()
     ' Single reference
     '------------------------------------------
     Result = ParseScripture("John 3:16")
-    AssertEqual "John 3:16", Result, "single reference"
+    aeAssert.AssertEqual "John 3:16", Result, "single reference"
     '------------------------------------------
     ' Range
     '------------------------------------------
     Result = ParseScripture("John 3:16-18")
-    AssertEqual "John 3:16-3:18", Result, "range parsed"
+    aeAssert.AssertEqual "John 3:16-3:18", Result, "range parsed"
     '------------------------------------------
     ' List
     '------------------------------------------
     Set Items = ParseScripture("John 3:16, John 3:18")
-    AssertEqual 2, Items.count, "list parsed"
+    aeAssert.AssertEqual 2, Items.count, "list parsed"
     '------------------------------------------
     ' Mixed list + range
     '------------------------------------------
     Set Items = ParseScripture("John 3:16-18, John 3:20")
-    AssertEqual 2, Items.count, "mixed parsed"
+    aeAssert.AssertEqual 2, Items.count, "mixed parsed"
 End Sub
 
 Public Sub Test_Stage13_ContextShorthand()
-    Dim c As Collection
-    Dim v
 
-    Debug.Print "====================================="
+    Dim c As Collection
+    Dim v As Variant
+    Dim i As Long
+
+    Debug.Print "------------------------------------------"
     Debug.Print "Stage 13 Contextual Shorthand Tests"
-    Debug.Print "====================================="
+    Debug.Print "------------------------------------------"
+
     '------------------------------------------
     ' Test 1
     '------------------------------------------
     Set c = ComposeList("John 3:16, 18, 20-22")
-    Debug.Print "Test 1"
-    For Each v In c
-        Debug.Print v
-    Next
+    aeAssert.AssertEqual 3, c.count, "Stage13 Test1 count"
+    aeAssert.AssertEqual "John 3:16", c(1), "Stage13 Test1 item 1"
+    aeAssert.AssertEqual "John 3:18", c(2), "Stage13 Test1 item 2"
+    aeAssert.AssertEqual "John 3:20-22", c(3), "Stage13 Test1 item 3"
     'Expected
     'John 3:16
     'John 3:18
@@ -872,11 +878,9 @@ Public Sub Test_Stage13_ContextShorthand()
     ' Test 2
     '------------------------------------------
     Set c = ComposeList("John 3:16-4:2, 5")
-    Debug.Print
-    Debug.Print "Test 2"
-    For Each v In c
-        Debug.Print v
-    Next
+    aeAssert.AssertEqual 2, c.count, "Stage13 Test2 count"
+    aeAssert.AssertEqual "John 3:16-4:2", c(1), "Stage13 Test2 item 1"
+    aeAssert.AssertEqual "John 4:5", c(2), "Stage13 Test2 item 2"
     'Expected
     'John 3:16-4:2
     'John 4:5
@@ -884,16 +888,12 @@ Public Sub Test_Stage13_ContextShorthand()
     ' Test 3
     '------------------------------------------
     Set c = ComposeList("Romans 8; 9")
-    Debug.Print
-    Debug.Print "Test 3"
-    For Each v In c
-        Debug.Print v
-    Next
+    aeAssert.AssertEqual 2, c.count, "Stage13 Test3 count"
+    aeAssert.AssertEqual "Romans 8", c(1), "Stage13 Test3 item 1"
+    aeAssert.AssertEqual "Romans 9", c(2), "Stage13 Test3 item 2"
     'Expected
     'Romans 8
     'Romans 9
-    Debug.Print
-    Debug.Print "Stage 13 tests complete."
 End Sub
 
 Public Sub Test_Stage14_CanonicalCompression()
@@ -901,7 +901,6 @@ Public Sub Test_Stage14_CanonicalCompression()
     Dim Refs As Collection
     Dim Result As Collection
 
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage14_CanonicalCompression"
     Debug.Print "------------------------------------------"
@@ -912,8 +911,8 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
-    AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
+    aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
     '------------------------------------------
     ' Test 2 - three adjacent verses collapse to range
     '------------------------------------------
@@ -922,8 +921,8 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:17"
     Refs.Add "John 3:18"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
-    AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
+    aeAssert.AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
     '------------------------------------------
     ' Test 3 - non-adjacent verses not collapsed
     '------------------------------------------
@@ -931,9 +930,9 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:16"
     Refs.Add "John 3:18"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
-    AssertEqual "John 3:16", Result(1), "Test 3: first ref"
-    AssertEqual "John 3:18", Result(2), "Test 3: second ref"
+    aeAssert.AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
+    aeAssert.AssertEqual "John 3:16", Result(1), "Test 3: first ref"
+    aeAssert.AssertEqual "John 3:18", Result(2), "Test 3: second ref"
     '------------------------------------------
     ' Test 4 - adjacent run then gap
     '------------------------------------------
@@ -942,9 +941,9 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:17"
     Refs.Add "John 3:19"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
-    AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
-    AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
+    aeAssert.AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
+    aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
+    aeAssert.AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
     '------------------------------------------
     ' Test 5 - cross-book not collapsed
     '------------------------------------------
@@ -952,9 +951,9 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:16"
     Refs.Add "Romans 8:1"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 2, Result.count, "Test 5: cross-book -> two refs"
-    AssertEqual "John 3:16", Result(1), "Test 5: John ref"
-    AssertEqual "Romans 8:1", Result(2), "Test 5: Romans ref"
+    aeAssert.AssertEqual 2, Result.count, "Test 5: cross-book -> two refs"
+    aeAssert.AssertEqual "John 3:16", Result(1), "Test 5: John ref"
+    aeAssert.AssertEqual "Romans 8:1", Result(2), "Test 5: Romans ref"
     '------------------------------------------
     ' Test 6 - cross-chapter not collapsed
     '------------------------------------------
@@ -962,17 +961,17 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:36"
     Refs.Add "John 4:1"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 2, Result.count, "Test 6: cross-chapter -> two refs"
-    AssertEqual "John 3:36", Result(1), "Test 6: end of chapter 3"
-    AssertEqual "John 4:1", Result(2), "Test 6: start of chapter 4"
+    aeAssert.AssertEqual 2, Result.count, "Test 6: cross-chapter -> two refs"
+    aeAssert.AssertEqual "John 3:36", Result(1), "Test 6: end of chapter 3"
+    aeAssert.AssertEqual "John 4:1", Result(2), "Test 6: start of chapter 4"
     '------------------------------------------
     ' Test 7 - single ref passthrough
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Romans 8:1"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 7: single ref passthrough count"
-    AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
+    aeAssert.AssertEqual 1, Result.count, "Test 7: single ref passthrough count"
+    aeAssert.AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
     '------------------------------------------
     ' Test 8 - multi-book mixed compression
     '------------------------------------------
@@ -982,9 +981,9 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "Romans 8:1"
     Refs.Add "Romans 8:2"
     Set Result = CompressCanonical(Refs)
-    AssertEqual 2, Result.count, "Test 8: multi-book mixed -> two ranges"
-    AssertEqual "John 3:16-3:17", Result(1), "Test 8: John range"
-    AssertEqual "Romans 8:1-8:2", Result(2), "Test 8: Romans range"
+    aeAssert.AssertEqual 2, Result.count, "Test 8: multi-book mixed -> two ranges"
+    aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 8: John range"
+    aeAssert.AssertEqual "Romans 8:1-8:2", Result(2), "Test 8: Romans range"
 
     Debug.Print "------------------------------------------"
     Debug.Print " Stage 14 tests complete."
@@ -1000,7 +999,6 @@ Public Sub Test_Stage15_CanonicalValidation()
     Dim Refs As Collection
     Dim Result As Collection
 
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage15_CanonicalValidation"
     Debug.Print "------------------------------------------"
@@ -1010,8 +1008,8 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 1: valid single ref count"
-    AssertEqual "John 3:16", Result(1), "Test 1: valid single ref value"
+    aeAssert.AssertEqual 1, Result.count, "Test 1: valid single ref count"
+    aeAssert.AssertEqual "John 3:16", Result(1), "Test 1: valid single ref value"
     '------------------------------------------
     ' Test 2 - invalid chapter removed
     ' Matthew has 28 chapters; ch 29 is invalid
@@ -1019,7 +1017,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Matt 29:1"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 0, Result.count, "Test 2: invalid chapter removed"
+    aeAssert.AssertEqual 0, Result.count, "Test 2: invalid chapter removed"
     '------------------------------------------
     ' Test 3 - invalid verse removed
     ' Jude 1 has 25 verses; v 50 is invalid
@@ -1027,7 +1025,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Jude 1:50"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 0, Result.count, "Test 3: invalid verse removed"
+    aeAssert.AssertEqual 0, Result.count, "Test 3: invalid verse removed"
     '------------------------------------------
     ' Test 4 - valid verse at boundary kept
     ' Jude 1:25 is the last verse of Jude
@@ -1035,16 +1033,16 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Jude 1:25"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 4: boundary verse kept count"
-    AssertEqual "Jude 1:25", Result(1), "Test 4: boundary verse kept value"
+    aeAssert.AssertEqual 1, Result.count, "Test 4: boundary verse kept count"
+    aeAssert.AssertEqual "Jude 1:25", Result(1), "Test 4: boundary verse kept value"
     '------------------------------------------
     ' Test 5 - range with valid bounds passes unchanged
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:5"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 5: valid range count"
-    AssertEqual "Gen 1:1-1:5", Result(1), "Test 5: valid range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 5: valid range count"
+    aeAssert.AssertEqual "Gen 1:1-1:5", Result(1), "Test 5: valid range value"
     '------------------------------------------
     ' Test 6 - range end verse clamped
     ' Gen 1 has 31 verses; end verse 999 clamped to 31
@@ -1052,8 +1050,8 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:999"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 6: clamped end verse count"
-    AssertEqual "Gen 1:1-1:31", Result(1), "Test 6: clamped end verse value"
+    aeAssert.AssertEqual 1, Result.count, "Test 6: clamped end verse count"
+    aeAssert.AssertEqual "Gen 1:1-1:31", Result(1), "Test 6: clamped end verse value"
     '------------------------------------------
     ' Test 7 - range end chapter clamped
     ' Gen has 50 chapters; end ch 999 clamped to 50.
@@ -1062,15 +1060,15 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:1-999:1"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 7: clamped end chapter count"
-    AssertEqual "Gen 1:1-50:1", Result(1), "Test 7: clamped end chapter value"
+    aeAssert.AssertEqual 1, Result.count, "Test 7: clamped end chapter count"
+    aeAssert.AssertEqual "Gen 1:1-50:1", Result(1), "Test 7: clamped end chapter value"
     '------------------------------------------
     ' Test 8 - range start chapter invalid -> removed
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Matt 29:1-29:5"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 0, Result.count, "Test 8: invalid start chapter removed"
+    aeAssert.AssertEqual 0, Result.count, "Test 8: invalid start chapter removed"
     '------------------------------------------
     ' Test 9 - range collapses to single ref after clamping
     ' Gen 1:31-1:999 -> end clamped to 1:31 = start -> single ref
@@ -1078,8 +1076,8 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:31-1:999"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 1, Result.count, "Test 9: collapsed range count"
-    AssertEqual "Gen 1:31", Result(1), "Test 9: collapsed range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 9: collapsed range count"
+    aeAssert.AssertEqual "Gen 1:31", Result(1), "Test 9: collapsed range value"
     '------------------------------------------
     ' Test 10 - mixed valid and invalid
     '------------------------------------------
@@ -1088,9 +1086,9 @@ Public Sub Test_Stage15_CanonicalValidation()
     Refs.Add "Matt 29:1"
     Refs.Add "John 3:16"
     Set Result = ValidateCanonical(Refs)
-    AssertEqual 2, Result.count, "Test 10: mixed count"
-    AssertEqual "Gen 1:1", Result(1), "Test 10: first valid ref"
-    AssertEqual "John 3:16", Result(2), "Test 10: second valid ref"
+    aeAssert.AssertEqual 2, Result.count, "Test 10: mixed count"
+    aeAssert.AssertEqual "Gen 1:1", Result(1), "Test 10: first valid ref"
+    aeAssert.AssertEqual "John 3:16", Result(2), "Test 10: second valid ref"
 
     Debug.Print "------------------------------------------"
     Debug.Print " Stage 15 tests complete."
@@ -1106,7 +1104,6 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Dim Refs As Collection
     Dim Result As Collection
 
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage16_CanonicalRangeBuilder"
     Debug.Print "------------------------------------------"
@@ -1117,8 +1114,8 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
-    AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
+    aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
     '------------------------------------------
     ' Test 2 - three adjacent verses grouped into range
     '------------------------------------------
@@ -1127,8 +1124,8 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:17"
     Refs.Add "John 3:18"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
-    AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
+    aeAssert.AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
     '------------------------------------------
     ' Test 3 - non-adjacent verses not grouped
     '------------------------------------------
@@ -1136,9 +1133,9 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:16"
     Refs.Add "John 3:18"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
-    AssertEqual "John 3:16", Result(1), "Test 3: first ref"
-    AssertEqual "John 3:18", Result(2), "Test 3: second ref"
+    aeAssert.AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
+    aeAssert.AssertEqual "John 3:16", Result(1), "Test 3: first ref"
+    aeAssert.AssertEqual "John 3:18", Result(2), "Test 3: second ref"
     '------------------------------------------
     ' Test 4 - adjacent run then gap
     '------------------------------------------
@@ -1147,9 +1144,9 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:17"
     Refs.Add "John 3:19"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
-    AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
-    AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
+    aeAssert.AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
+    aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
+    aeAssert.AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
     '------------------------------------------
     ' Test 5 - cross-chapter boundary not grouped
     '------------------------------------------
@@ -1157,9 +1154,9 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:36"
     Refs.Add "John 4:1"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 2, Result.count, "Test 5: cross-chapter -> two refs"
-    AssertEqual "John 3:36", Result(1), "Test 5: end of chapter 3"
-    AssertEqual "John 4:1", Result(2), "Test 5: start of chapter 4"
+    aeAssert.AssertEqual 2, Result.count, "Test 5: cross-chapter -> two refs"
+    aeAssert.AssertEqual "John 3:36", Result(1), "Test 5: end of chapter 3"
+    aeAssert.AssertEqual "John 4:1", Result(2), "Test 5: start of chapter 4"
     '------------------------------------------
     ' Test 6 - cross-book boundary not grouped
     '------------------------------------------
@@ -1167,23 +1164,23 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:16"
     Refs.Add "Romans 8:1"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 2, Result.count, "Test 6: cross-book -> two refs"
-    AssertEqual "John 3:16", Result(1), "Test 6: John ref"
-    AssertEqual "Romans 8:1", Result(2), "Test 6: Romans ref"
+    aeAssert.AssertEqual 2, Result.count, "Test 6: cross-book -> two refs"
+    aeAssert.AssertEqual "John 3:16", Result(1), "Test 6: John ref"
+    aeAssert.AssertEqual "Romans 8:1", Result(2), "Test 6: Romans ref"
     '------------------------------------------
     ' Test 7 - single ref passthrough
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Romans 8:1"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 1, Result.count, "Test 7: single ref count"
-    AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
+    aeAssert.AssertEqual 1, Result.count, "Test 7: single ref count"
+    aeAssert.AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
     '------------------------------------------
     ' Test 8 - empty collection
     '------------------------------------------
     Set Refs = New Collection
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 0, Result.count, "Test 8: empty collection"
+    aeAssert.AssertEqual 0, Result.count, "Test 8: empty collection"
     '------------------------------------------
     ' Test 9 - multi-book mixed grouping
     '------------------------------------------
@@ -1193,9 +1190,9 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "Romans 8:1"
     Refs.Add "Romans 8:2"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 2, Result.count, "Test 9: multi-book mixed -> two ranges"
-    AssertEqual "John 3:16-3:17", Result(1), "Test 9: John range"
-    AssertEqual "Romans 8:1-8:2", Result(2), "Test 9: Romans range"
+    aeAssert.AssertEqual 2, Result.count, "Test 9: multi-book mixed -> two ranges"
+    aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 9: John range"
+    aeAssert.AssertEqual "Romans 8:1-8:2", Result(2), "Test 9: Romans range"
     '------------------------------------------
     ' Test 10 - four consecutive verses -> single range
     '------------------------------------------
@@ -1205,8 +1202,8 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "Gen 1:3"
     Refs.Add "Gen 1:4"
     Set Result = BuildCanonicalRanges(Refs)
-    AssertEqual 1, Result.count, "Test 10: four adjacent -> one range"
-    AssertEqual "Gen 1:1-1:4", Result(1), "Test 10: range value"
+    aeAssert.AssertEqual 1, Result.count, "Test 10: four adjacent -> one range"
+    aeAssert.AssertEqual "Gen 1:1-1:4", Result(1), "Test 10: range value"
 
     Debug.Print "------------------------------------------"
     Debug.Print " Stage 16 tests complete."
@@ -1222,7 +1219,6 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Dim Refs As Collection
     Dim Result As String
 
-    Debug.Print ""
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage17_CanonicalStringFormatter"
     Debug.Print "------------------------------------------"
@@ -1232,14 +1228,14 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "John 3:16", Result, "Test 1: single ref"
+    aeAssert.AssertEqual "John 3:16", Result, "Test 1: single ref"
     '------------------------------------------
     ' Test 2 - same-chapter range: suppress repeated chapter
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:3"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "Gen 1:1-3", Result, "Test 2: same-chapter range"
+    aeAssert.AssertEqual "Gen 1:1-3", Result, "Test 2: same-chapter range"
     '------------------------------------------
     ' Test 3 - two same-book same-chapter refs: comma + verse only
     '------------------------------------------
@@ -1247,7 +1243,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "Gen 1:1"
     Refs.Add "Gen 1:3"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "Gen 1:1, 3", Result, "Test 3: same-chapter comma"
+    aeAssert.AssertEqual "Gen 1:1, 3", Result, "Test 3: same-chapter comma"
     '------------------------------------------
     ' Test 4 - same-book different-chapter: semicolon + ch:v, no book
     '------------------------------------------
@@ -1255,7 +1251,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "Gen 1:1"
     Refs.Add "Gen 2:1"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "Gen 1:1; 2:1", Result, "Test 4: same-book chapter break"
+    aeAssert.AssertEqual "Gen 1:1; 2:1", Result, "Test 4: same-book chapter break"
     '------------------------------------------
     ' Test 5 - different books: semicolon + full new book ref
     '------------------------------------------
@@ -1263,7 +1259,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "Gen 1:1"
     Refs.Add "Exod 1:1"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "Gen 1:1; Exod 1:1", Result, "Test 5: book break"
+    aeAssert.AssertEqual "Gen 1:1; Exod 1:1", Result, "Test 5: book break"
     '------------------------------------------
     ' Test 6 - full pipeline example from doc
     '   John 3:16-3:18, John 4:1-4:2, Romans 8:1-8:2
@@ -1273,13 +1269,13 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "John 4:1-4:2"
     Refs.Add "Romans 8:1-8:2"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "John 3:16-18; 4:1-2; Romans 8:1-2", Result, "Test 6: full pipeline example"
+    aeAssert.AssertEqual "John 3:16-18; 4:1-2; Romans 8:1-2", Result, "Test 6: full pipeline example"
     '------------------------------------------
     ' Test 7 - empty collection returns empty string
     '------------------------------------------
     Set Refs = New Collection
     Result = FormatCanonicalString(Refs)
-    AssertEqual "", Result, "Test 7: empty collection"
+    aeAssert.AssertEqual "", Result, "Test 7: empty collection"
     '------------------------------------------
     ' Test 8 - two same-chapter ranges: comma + verse range only
     '------------------------------------------
@@ -1287,7 +1283,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "John 3:16-3:17"
     Refs.Add "John 3:19-3:20"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "John 3:16-17, 19-20", Result, "Test 8: two same-chapter ranges"
+    aeAssert.AssertEqual "John 3:16-17, 19-20", Result, "Test 8: two same-chapter ranges"
     '------------------------------------------
     ' Test 9 - same-chapter range followed by single verse
     '------------------------------------------
@@ -1295,7 +1291,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "John 3:16-3:17"
     Refs.Add "John 3:19"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "John 3:16-17, 19", Result, "Test 9: range then single same chapter"
+    aeAssert.AssertEqual "John 3:16-17, 19", Result, "Test 9: range then single same chapter"
     '------------------------------------------
     ' Test 10 - three books
     '------------------------------------------
@@ -1304,7 +1300,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "John 3:16"
     Refs.Add "Romans 8:1"
     Result = FormatCanonicalString(Refs)
-    AssertEqual "Gen 1:1; John 3:16; Romans 8:1", Result, "Test 10: three books"
+    aeAssert.AssertEqual "Gen 1:1; John 3:16; Romans 8:1", Result, "Test 10: three books"
 
     Debug.Print "------------------------------------------"
     Debug.Print " Stage 17 tests complete."

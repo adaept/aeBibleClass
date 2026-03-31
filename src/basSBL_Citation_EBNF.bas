@@ -2965,9 +2965,8 @@ Public Function RewriteSingleChapterRef( _
 End Function
 
 Public Function AliasCoverage( _
-        Optional ByRef report As String = "" _
-    ) As Boolean
-' Validate the Alias Coverage
+        Optional ByRef report As String = "") As Boolean
+    ' Validate the Alias Coverage
 
     Dim books As Object
     Dim aliasMap As Object
@@ -2981,7 +2980,6 @@ Public Function AliasCoverage( _
 
     For Each k In books.Keys
         canon = UCase$(books(k)(1))   ' Canonical name
-
         If Not aliasMap.Exists(canon) Then
             missing.Add canon
         End If
@@ -2993,7 +2991,6 @@ Public Function AliasCoverage( _
         For i = 1 To missing.count
             report = report & "  - " & missing(i) & vbCrLf
         Next i
-
         AliasCoverage = False
     Else
         report = "Alias coverage complete (canonical names present)."
