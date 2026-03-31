@@ -339,7 +339,7 @@ Private Function TitleCase(ByVal txt As String) As String
     ' Capitalize each word
     For i = 0 To UBound(words)
         If Len(words(i)) > 0 Then
-            words(i) = UCase(Left(words(i), 1)) & mid(words(i), 2)
+            words(i) = UCase(Left(words(i), 1)) & Mid$(words(i), 2)
         End If
     Next i
 

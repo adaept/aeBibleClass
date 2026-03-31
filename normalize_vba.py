@@ -20,6 +20,8 @@ NORMALIZATIONS = [
     (r'(?i)\.BottomMargin\b',   '.BottomMargin',    '.BottomMargin on PageSetup'),
     (r'(?i)\.PageHeight\b',     '.PageHeight',      '.PageHeight on PageSetup'),
     (r'(?i)\.Orientation\b',    '.Orientation',     '.Orientation on PageSetup'),
+    (r'(?i)\bmid\$?\(',           'Mid$(',            'Mid$( built-in function casing (includes Mid( -> Mid$()'),
+    (r'(?i)\.Path\b',           '.Path',            '.Path property on Document/ActiveDocument'),
     (r'(?i)\.Item\b',           '.Item',            '.Item method on Collection'),
     (r'(?i)\.Text\b',           '.Text',            '.Text property on Range'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range declaration'),

@@ -45,7 +45,7 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
 
     Dim strFullPath As Variant
     For Each strFullPath In colFiles
-        strFile = mid(strFullPath, InStrRev(strFullPath, "\") + 1)
+        strFile = Mid$(strFullPath, InStrRev(strFullPath, "\") + 1)
         If strFile <> "ThisDocument.cls" Then
             vbCompName = Left(strFile, InStrRev(strFile, ".") - 1)
             If Not ModuleOrClassExists(vbCompName) Then
@@ -81,7 +81,7 @@ Private Sub ImportVBAFile(myCodeFile As String)
     ' fullPath = "C:\path\to\your\exported\file.bas" ' Change this to the actual path of your .bas or .cls file
     fullPath = myCodeFile
     ' Get the file name using VBA built-in functions
-    fileName = mid(fullPath, InStrRev(fullPath, "\") + 1)
+    fileName = Mid$(fullPath, InStrRev(fullPath, "\") + 1)
     ' Remove the extension
     vbCompName = Left(fileName, InStrRev(fileName, ".") - 1)
 

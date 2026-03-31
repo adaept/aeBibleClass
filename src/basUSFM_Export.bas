@@ -471,8 +471,8 @@ Private Function ExtractTrailingNumber(ByVal s As String) As Long
     s = Trim$(s)
 
     For i = Len(s) To 1 Step -1
-        If mid$(s, i, 1) >= "0" And mid$(s, i, 1) <= "9" Then
-            digits = mid$(s, i, 1) & digits
+        If Mid$(s, i, 1) >= "0" And Mid$(s, i, 1) <= "9" Then
+            digits = Mid$(s, i, 1) & digits
         ElseIf digits <> "" Then
             Exit For
         End If
@@ -496,7 +496,7 @@ Private Function CleanTextForUTF8(ByVal s As String) As String
     ' Remove any leftover control characters except CR/LF/TAB
     Dim i As Long, out As String, ch As String
     For i = 1 To Len(s)
-        ch = mid$(s, i, 1)
+        ch = Mid$(s, i, 1)
         If AscW(ch) >= 32 Or AscW(ch) = 9 Or AscW(ch) = 10 Or AscW(ch) = 13 Then
             out = out & ch
         End If
@@ -597,7 +597,7 @@ Public Sub ValidateUSFMFile(ByVal filePath As String)
         ' 3. Marker must be followed by space unless it's a standalone marker
         If Not MarkerAllowsNoSpace(marker) Then
             If Len(line) > Len(marker) + 1 Then
-                If mid$(line, Len(marker) + 1, 1) <> " " Then
+                If Mid$(line, Len(marker) + 1, 1) <> " " Then
                     LogValidator "Line " & (i + 1) & ": Missing space after marker '" & marker & "' ? " & line
                 End If
             End If
@@ -605,7 +605,7 @@ Public Sub ValidateUSFMFile(ByVal filePath As String)
 
         ' 4. Check for empty content after markers that require content
         If MarkerRequiresContent(marker) Then
-            If Len(Trim(mid$(line, Len(marker) + 2))) = 0 Then
+            If Len(Trim(Mid$(line, Len(marker) + 2))) = 0 Then
                 LogValidator "Line " & (i + 1) & ": Marker '" & marker & "' missing content ? " & line
             End If
         End If
@@ -631,7 +631,7 @@ Private Function ExtractUSFMMarker(ByVal line As String) As String
     End If
 
     For i = 2 To Len(line)
-        If mid$(line, i, 1) = " " Or mid$(line, i, 1) = "*" Then
+        If Mid$(line, i, 1) = " " Or Mid$(line, i, 1) = "*" Then
             ExtractUSFMMarker = Left$(line, i - 1)
             Exit Function
         End If

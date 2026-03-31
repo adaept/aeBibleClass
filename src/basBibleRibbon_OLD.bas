@@ -84,7 +84,7 @@ Private Function ExtractTrailingDigits(ByVal txt As String) As String
 
     ' Scan backwards, collecting up to 3 digits
     For i = Len(txt) To 1 Step -1
-        ch = mid(txt, i, 1)
+        ch = Mid$(txt, i, 1)
         If ch Like "#" Then
             Result = ch & Result
             If Len(Result) = 3 Then Exit For

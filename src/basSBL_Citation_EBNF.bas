@@ -1710,7 +1710,7 @@ Option Private Module
 '       - Proper separation of concerns
 '2. Deterministic O(1) Lookup
 '   With fixed-width packed strings:
-'       maxV = CLng(mid$(map, (Chapter - 1) * 3 + 1, 3))
+'       maxV = CLng(Mid$(map, (Chapter - 1) * 3 + 1, 3))
 '   The lookup is constant time:
 '       - No loops
 '       - No Select Case
@@ -1984,7 +1984,7 @@ Public Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
                 Result.Ranges(count).StartRef.Verse = CLng(Left$(seg, p - 1))
                 Result.Ranges(count).EndRef.BookID = prevRef.BookID
                 Result.Ranges(count).EndRef.Chapter = prevRef.Chapter
-                Result.Ranges(count).EndRef.Verse = CLng(mid$(seg, p + 1))
+                Result.Ranges(count).EndRef.Verse = CLng(Mid$(seg, p + 1))
             Else
                 Result.ItemType(count) = 2
                 Result.Ranges(count) = ComposeRange(seg)
@@ -2128,7 +2128,7 @@ Public Function RangeDetection(ByVal segment As String) As RangeTokens
 
     r.IsRange = True
     r.LeftRaw = Trim(Left(segment, dashPos - 1))
-    r.RightRaw = Trim(mid(segment, dashPos + 1))
+    r.RightRaw = Trim(Mid$(segment, dashPos + 1))
 
     RangeDetection = r
 End Function
@@ -3317,7 +3317,7 @@ Private Function IsNumericRange(ByVal seg As String) As Boolean
     If p = 0 Then Exit Function
     IsNumericRange = _
         IsNumeric(Left$(seg, p - 1)) And _
-        IsNumeric(mid$(seg, p + 1))
+        IsNumeric(Mid$(seg, p + 1))
 End Function
 
 '=====================================================
@@ -3474,7 +3474,7 @@ Private Function ParseCanonicalRef( _
     lastSpace = 0
     Dim k As Long
     For k = Len(canonical) To 1 Step -1
-        If mid$(canonical, k, 1) = " " Then
+        If Mid$(canonical, k, 1) = " " Then
             lastSpace = k
             Exit For
         End If
@@ -3483,7 +3483,7 @@ Private Function ParseCanonicalRef( _
     If lastSpace = 0 Then GoTo PROC_EXIT   ' no space found — unparseable
 
     Dim refToken As String
-    refToken = mid$(canonical, lastSpace + 1)
+    refToken = Mid$(canonical, lastSpace + 1)
     bookName = Left$(canonical, lastSpace - 1)
 
     '------------------------------------------
@@ -3496,7 +3496,7 @@ Private Function ParseCanonicalRef( _
         Dim chStr As String
         Dim vStr As String
         chStr = Left$(refToken, colonPos - 1)
-        vStr = mid$(refToken, colonPos + 1)
+        vStr = Mid$(refToken, colonPos + 1)
         If IsNumeric(chStr) And IsNumeric(vStr) Then
             Chapter = CLng(chStr)
             Verse = CLng(vStr)
@@ -3664,7 +3664,7 @@ Private Function ParseCanonicalRange( _
     Dim k As Long
     lastSpace = 0
     For k = Len(s) To 1 Step -1
-        If mid$(s, k, 1) = " " Then
+        If Mid$(s, k, 1) = " " Then
             lastSpace = k
             Exit For
         End If
@@ -3673,7 +3673,7 @@ Private Function ParseCanonicalRange( _
     If lastSpace = 0 Then GoTo PROC_EXIT
 
     Dim refToken As String
-    refToken = mid$(s, lastSpace + 1)
+    refToken = Mid$(s, lastSpace + 1)
     bookName = Left$(s, lastSpace - 1)
     '------------------------------------------
     ' The reference token must contain a dash
@@ -3684,10 +3684,10 @@ Private Function ParseCanonicalRange( _
     dashPos = 0
     Dim c As String
     For k = 2 To Len(refToken)
-        c = mid$(refToken, k, 1)
+        c = Mid$(refToken, k, 1)
         If c = "-" Then
             ' Verify the preceding character is a digit
-            If mid$(refToken, k - 1, 1) >= "0" And mid$(refToken, k - 1, 1) <= "9" Then
+            If Mid$(refToken, k - 1, 1) >= "0" And Mid$(refToken, k - 1, 1) <= "9" Then
                 dashPos = k
                 Exit For
             End If
@@ -3699,7 +3699,7 @@ Private Function ParseCanonicalRange( _
     Dim leftPart As String
     Dim rightPart As String
     leftPart = Left$(refToken, dashPos - 1)
-    rightPart = mid$(refToken, dashPos + 1)
+    rightPart = Mid$(refToken, dashPos + 1)
     '------------------------------------------
     ' Parse left side: startCh:startV
     '------------------------------------------
@@ -3710,7 +3710,7 @@ Private Function ParseCanonicalRange( _
     Dim chStrL As String
     Dim vStrL As String
     chStrL = Left$(leftPart, colonLeft - 1)
-    vStrL = mid$(leftPart, colonLeft + 1)
+    vStrL = Mid$(leftPart, colonLeft + 1)
     If Not IsNumeric(chStrL) Or Not IsNumeric(vStrL) Then GoTo PROC_EXIT
     startCh = CLng(chStrL)
     startV = CLng(vStrL)
@@ -3724,7 +3724,7 @@ Private Function ParseCanonicalRange( _
     Dim chStrR As String
     Dim vStrR As String
     chStrR = Left$(rightPart, colonRight - 1)
-    vStrR = mid$(rightPart, colonRight + 1)
+    vStrR = Mid$(rightPart, colonRight + 1)
     If Not IsNumeric(chStrR) Or Not IsNumeric(vStrR) Then GoTo PROC_EXIT
     endCh = CLng(chStrR)
     endV = CLng(vStrR)

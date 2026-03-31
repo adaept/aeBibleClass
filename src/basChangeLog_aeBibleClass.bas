@@ -8,8 +8,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #525 -
-' #524 -
-' #523 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -73,6 +71,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #524 - Normalize to Mid$ [impr]
+    ' FIXED - #523 - Create ADODB logger for UTF8 with test data [feat]
     ' FIXED - #522 - Update all tests to use aeAssertClass [refac][impr]
     ' FIXED - #521 - Convert module basSBL_Citation_EBNF to class aeBibleCitationClass. Adjust tests to prevent name clashes [impr]
     ' FIXED - #520 - AddBookNameHeaders adds a second blank line in the header [bug]

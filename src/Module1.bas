@@ -46,7 +46,7 @@ Sub ViewCodeDetails()
     ' Loop through each character in the selected text
     For i = 1 To Len(selectedText)
         Dim ch As String
-        ch = mid(selectedText, i, 1)
+        ch = Mid$(selectedText, i, 1)
         msg = msg & "Character " & i & ": " & ch & " (ASCII: " & Asc(ch) & ")" & vbCrLf
     Next i
 
@@ -598,9 +598,9 @@ Function HexToRGB(hexColor As String) As Long
     hexColor = Replace(hexColor, "#", "")
     
     ' Convert hex to RGB components
-    r = CLng("&H" & mid(hexColor, 1, 2))
-    g = CLng("&H" & mid(hexColor, 3, 2))
-    b = CLng("&H" & mid(hexColor, 5, 2))
+    r = CLng("&H" & Mid$(hexColor, 1, 2))
+    g = CLng("&H" & Mid$(hexColor, 3, 2))
+    b = CLng("&H" & Mid$(hexColor, 5, 2))
     
     ' Combine RGB components into a single Long value
     HexToRGB = RGB(r, g, b)
@@ -1493,7 +1493,7 @@ Sub ParseAndValidateString()
     ' -------------------------
     spaceCount = 0
     For i = 1 To Len(s)
-        If mid$(s, i, 1) = " " Then
+        If Mid$(s, i, 1) = " " Then
             spaceCount = spaceCount + 1
             If spaceCount > 2 Then
                 IsValid = False
@@ -1518,8 +1518,8 @@ Sub ParseAndValidateString()
             ' Must have digit before and after colon
             If colonPos = 1 Or colonPos = Len(s) Then
                 IsValid = False
-            ElseIf Not IsNumeric(mid$(s, colonPos - 1, 1)) _
-                Or Not IsNumeric(mid$(s, colonPos + 1, 1)) Then
+            ElseIf Not IsNumeric(Mid$(s, colonPos - 1, 1)) _
+                Or Not IsNumeric(Mid$(s, colonPos + 1, 1)) Then
                 IsValid = False
             End If
         End If
