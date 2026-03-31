@@ -940,3 +940,20 @@ MsgBox error strings updated from `Module basSBL_TestHarness` to `Class aeBibleC
 ### Run_All_SBL_Tests — confirmed entry point
 
 `Run_All_SBL_Tests` in `basSBL_TestHarness.bas` is the single entry point for the full test suite. It runs all 17 stages in order and terminates the assert session cleanly.
+
+---
+
+## basSBL_TestHarness.bas — Stage 11 / Stage 12 Expected Value Correction (2026-03-31)
+
+**Symptom:** Stage 11 `range canonical` FAIL — expected `"John 3:16-3:18"`, actual `"John 3:16-18"`.
+
+**Root cause:** The Stage 13 fix changed `CanonicalFromRange` to suppress the repeated chapter when both endpoints are in the same chapter (e.g. `"John 3:16-3:18"` → `"John 3:16-18"`). Two test assertions in the harness still carried the pre-fix expected values.
+
+**Fix:** Updated expected strings in two assertions:
+
+| Sub | Assertion label | Old expected | New expected |
+|---|---|---|---|
+| `Test_Stage11_ListComposition` | `range canonical` | `"John 3:16-3:18"` | `"John 3:16-18"` |
+| `Test_Stage12_FinalParser` | `range parsed` | `"John 3:16-3:18"` | `"John 3:16-18"` |
+
+Stage 14 and Stage 16 expected values (`"John 3:16-3:17"` etc.) were not affected — those functions (`CompressCanonical`, `BuildCanonicalRanges`) format ranges independently of `CanonicalFromRange`.

@@ -14,56 +14,6 @@ Public Enum ExpectedFailureStage
     FailSemantic = 2
 End Enum
 
-Public Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
-    On Error GoTo PROC_ERR
-    Dim p As ParsedReference
-    p.RawInput = inputText
-
-    Debug.Print "  [Stub] Raw input = >" & inputText & "<"
-
-    Dim parts() As String
-    parts = Split(Trim$(inputText), " ")
-    '----------------------------------
-    ' Book alias (first token)
-    '----------------------------------
-    p.BookAlias = UCase$(parts(0))
-    Debug.Print "  [Stub] Parsed alias = >" & p.BookAlias & "<"
-    ' Semantic guard to check for null failures
-    Debug.Assert p.BookAlias <> vbNullString
-    '----------------------------------
-    ' No chapter/verse provided
-    '----------------------------------
-    If UBound(parts) = 0 Then
-        p.Chapter = 0
-        p.VerseSpec = ""
-        ParseReferenceStub = p
-        Exit Function
-    End If
-    '----------------------------------
-    ' Chapter or Chapter:Verse
-    '----------------------------------
-    Dim refPart As String
-    refPart = parts(1)
-
-    If InStr(refPart, ":") > 0 Then
-        Dim cvParts() As String
-        cvParts = Split(refPart, ":")
-        p.Chapter = CLng(cvParts(0))
-        p.VerseSpec = cvParts(1)
-    Else
-        ' Single-chapter book case (e.g. Jude 5)
-        p.Chapter = 0
-        p.VerseSpec = refPart
-    End If
-
-    ParseReferenceStub = p
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseReferenceStub of Module basSBL_TestHarness"
-    Resume PROC_EXIT
-End Function
-
 Public Sub Test_Stage1_AliasCoverage()
 ' Assert that every canonical book name (upper-cased) exists as a key in the alias map
 '   Uses GetCanonicalBookTable
@@ -79,154 +29,10 @@ Public Sub Test_Stage1_AliasCoverage()
     Dim msg As String
     Dim ok As Boolean
 
-    ok = AliasCoverage(msg)
+    ok = aeBibleCitationClass.AliasCoverage(msg)
     Debug.Print msg
 
     aeAssert.AssertTrue ok, "Alias coverage validation", True, ok
-End Sub
-
-Public Sub Test_SemanticFlow_WithParserStub()
-    On Error GoTo PROC_ERR
-    ResetBookAliasMap
-
-    Debug.Print "======================================"
-    Debug.Print " Test_SemanticFlow_WithParserStub"
-    Debug.Print " (Uses lightweight parser stub)"
-    Debug.Print "======================================"
-
-    Dim failures As Long
-    failures = 0
-
-    ' Test cases:
-    ' RawInput, ExpectedBookID, ExpectValid, ExpectRewrite
-    ' NOTE:
-    '  - Alias / chapter / verse are now derived via ParseReferenceStub
-    '  - This simulates a real parser without implementing DSP/tokenizer
-    Dim tests
-    ' "Jude 5-7": Range spec — ValidateSBLReference currently rejects non-numeric VerseSpec (ExpectValid=False).
-    ' When Stage 8-12 range support is added, ExpectValid becomes True.
-    ' Without the IsNumeric guard in the rewrite phase, that transition crashes with error 13.
-    tests = Array( _
-        Array("Jude 5", 65, True, True), _
-        Array("Jude 1:5", 65, True, True), _
-        Array("Obadiah 3", 31, True, True), _
-        Array("Romans 8:1", 45, True, False), _
-        Array("Genesis 1:1", 1, True, False), _
-        Array("Jude 5-7", 65, False, False) _
-    )
-
-    Dim i As Long
-    For i = LBound(tests) To UBound(tests)
-        Debug.Print ""
-        Debug.Print "INPUT: "; tests(i)(0)
-
-        Dim testFailed As Boolean
-        testFailed = False
-        '---------------------------------------
-        ' Parser Stub Phase
-        '---------------------------------------
-        ' This replaces manual extraction.
-        ' Later, this call will be replaced by a real parser.
-        Dim parsed As ParsedReference
-        parsed = ParseReferenceStub(tests(i)(0))
-        Debug.Print "  ParseReferenceStub:"
-        Debug.Print "    -> Alias:   "; parsed.BookAlias
-        Debug.Print "    -> Chapter: "; parsed.Chapter
-        Debug.Print "    -> Verse:   "; parsed.VerseSpec
-        '---------------------------------------
-        ' Resolver Phase
-        '---------------------------------------
-        Dim bookName As String
-        Dim BookID As Long
-
-        On Error Resume Next
-        bookName = ResolveAlias(parsed.BookAlias, BookID)
-        Dim errNum As Long
-        errNum = Err.Number
-        Err.Clear
-        On Error GoTo 0
-        
-        If errNum <> 0 Then
-            Debug.Print "  ERROR: ResolveBook failed"
-            failures = failures + 1
-            GoTo NextTest
-        End If
-        Debug.Print "  Resolver:"
-        Debug.Print "    -> BookID:    "; BookID
-        Debug.Print "    -> Canonical: "; bookName
-        If BookID <> tests(i)(1) Then
-            Debug.Print "  FAIL: BookID mismatch"
-            testFailed = True
-        End If
-        '---------------------------------------
-        ' Semantic Validation Phase (SBL)
-        '---------------------------------------
-        Dim semanticMsg As String
-        Dim IsValid As Boolean
-
-        IsValid = ValidateSBLReference( _
-                    BookID, _
-                    bookName, _
-                    parsed.Chapter, _
-                    parsed.VerseSpec, _
-                    ModeSBL_OLD)
-        Debug.Print "  ValidateSBLReference:"
-        Debug.Print "    -> Valid: "; IsValid
-        If IsValid <> tests(i)(2) Then
-            Debug.Print "  FAIL: semantic validity mismatch"
-            testFailed = True
-        End If
-        '---------------------------------------
-        ' Rewrite Phase (single-chapter books)
-        '---------------------------------------
-        If IsValid Then
-            ' FIXME_LATER: When Stage 8-12 range extensions update ValidateSBLReference to
-            ' accept range VerseSpec values (e.g. "5-7"), IsValid will be True for range inputs.
-            ' CLng(parsed.VerseSpec) raises error 13 (Type Mismatch) on a range string.
-            ' The IsNumeric guard below prevents the crash; the Else branch handles the range path.
-            ' See test case "Jude 5-7" below — currently ExpectValid=False (range not yet supported),
-            ' but that expectation will change when Stage 8-12 is complete.
-            If IsNumeric(parsed.VerseSpec) Then
-                Dim rewritten As String
-                rewritten = RewriteSingleChapterRef( _
-                                BookID, _
-                                parsed.Chapter, _
-                                CLng(parsed.VerseSpec))
-                Debug.Print "  Output: "; rewritten
-                If tests(i)(3) Then
-                    If Left$(rewritten, 2) <> "1:" Then
-                        Debug.Print "  FAIL: expected single-chapter rewrite"
-                        testFailed = True
-                    End If
-                Else
-                    If rewritten <> parsed.Chapter & ":" & parsed.VerseSpec Then
-                        Debug.Print "  FAIL: unexpected rewrite"
-                        testFailed = True
-                    End If
-                End If
-            Else
-                Debug.Print "  Skipped: RewriteSingleChapterRef (VerseSpec is non-numeric: >" & parsed.VerseSpec & "<)"
-            End If
-        End If
-        If testFailed Then
-            failures = failures + 1
-        Else
-            Debug.Print "  RESULT: PASS"
-        End If
-
-NextTest:
-    Next i
-
-    Debug.Print ""
-    Debug.Print "======================================"
-    Debug.Print "FAILURES: "; failures
-    Debug.Print "======================================"
-    Report_TODOs
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SemanticFlow_WithParserStub of Module basSBL_TestHarness"
-    Resume PROC_EXIT
 End Sub
 
 Public Sub Report_TODOs()
@@ -245,121 +51,6 @@ Public Sub Report_TODOs()
     Debug.Print "======================================================="
 End Sub
 
-Public Sub Test_SemanticFlow_WithParserStub_Negative()
-    On Error GoTo PROC_ERR
-    ResetBookAliasMap
-
-    Debug.Print "=========================================="
-    Debug.Print " Test_SemanticFlow_WithParserStub_Negative"
-    Debug.Print "=========================================="
-
-    Dim failReason As String
-    failReason = ""
-    
-    Dim failures As Long
-    failures = 0
-
-    ' RawInput, ExpectValid
-    ' Jude 0        => Verse 0 invalid
-    ' Jude 999      => Verse out of range
-    ' Jude 1:0      => Explicit verse 0
-    ' Romans 0:1    => Chapter 0 invalid for multi-chapter book
-    ' Romans 999:1  => Chapter out of range
-    ' Genesis 1:999 => Verse out of range
-    
-    Dim tests As Variant
-    tests = Array( _
-        Array("Jude 0", FailNone), _
-        Array("Jude 999", FailNone), _
-        Array("Jude 1:0", FailNone), _
-        Array("Romans 0:1", FailNone), _
-        Array("Romans 999:1", FailNone), _
-        Array("Genesis 1:999", FailNone) _
-    )
-    
-    Dim i As Long
-    For i = LBound(tests) To UBound(tests)
-
-        Debug.Print ""
-        Debug.Print "INPUT: "; tests(i)(0)
-
-        ' -----------------------------
-        ' Parser stub phase
-        ' -----------------------------
-        Dim parsed As ParsedReference
-        parsed = ParseReferenceStub(tests(i)(0))
-
-        Debug.Print "  ParseReferenceStub:"
-        Debug.Print "    -> Alias:   "; parsed.BookAlias
-        Debug.Print "    -> Chapter: "; parsed.Chapter
-        Debug.Print "    -> Verse:   "; parsed.VerseSpec
-
-        ' -----------------------------
-        ' Resolver phase
-        ' -----------------------------
-        Dim bookName As String
-        Dim BookID As Long
-        
-        On Error Resume Next
-        bookName = ResolveAlias(parsed.BookAlias, BookID)
-        
-        If Err.Number <> 0 Then
-            Debug.Print "  ResolveBook ERROR: "; Err.Description
-        
-            If tests(i)(1) = FailResolveBook Then
-                Debug.Print "  RESULT: PASS (ResolveBook failed as expected)"
-            Else
-                Debug.Print "  RESULT: FAIL (ResolveBook failed unexpectedly)"
-                failures = failures + 1
-            End If
-        
-            Err.Clear
-            On Error GoTo 0
-            GoTo NextTest
-        End If
-        
-        On Error GoTo 0
-        
-        Debug.Print "  Resolver:"
-        Debug.Print "    -> BookID:     "; BookID
-        Debug.Print "    -> Canonical:  "; bookName
-
-        ' -----------------------------
-        ' Semantic validation phase
-        ' -----------------------------
-        Dim IsValid As Boolean
-
-        IsValid = ValidateSBLReference( _
-                    BookID, _
-                    bookName, _
-                    parsed.Chapter, _
-                    parsed.VerseSpec, _
-                    ModeSBL_OLD)
-
-        Debug.Print "  ValidateSBLReference:"
-        Debug.Print "    -> Valid: "; IsValid
-
-        If IsValid <> tests(i)(1) Then
-            Debug.Print "  FAIL: expected validity = "; tests(i)(1)
-            failures = failures + 1
-        Else
-            Debug.Print "  RESULT: PASS"
-        End If
-
-NextTest:
-    Next i
-
-    Debug.Print ""
-    Debug.Print "======================================"
-    Debug.Print "FAILURES: "; failures
-    Debug.Print "======================================"
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SemanticFlow_WithParserStub_Negative of Module basSBL_TestHarness"
-    Resume PROC_EXIT
-End Sub
-
 Public Sub Test_GetMaxVerse()
     On Error GoTo PROC_ERR
     Dim failCount As Long
@@ -370,32 +61,32 @@ Public Sub Test_GetMaxVerse()
     ' ========================
     ' POSITIVE TESTS
     ' ========================
-    Result = GetMaxVerse(1, 1)          ' Genesis 1
+    Result = aeBibleCitationClass.GetMaxVerse(1, 1)          ' Genesis 1
     If Result <> 31 Then FailTest failCount, "Genesis 1", 31, Result
-    Result = GetMaxVerse(19, 119)       ' Psalms 119
+    Result = aeBibleCitationClass.GetMaxVerse(19, 119)       ' Psalms 119
     If Result <> 176 Then FailTest failCount, "Psalms 119", 176, Result
-    Result = GetMaxVerse(65, 1)         ' Jude 1
+    Result = aeBibleCitationClass.GetMaxVerse(65, 1)         ' Jude 1
     If Result <> 25 Then FailTest failCount, "Jude 1", 25, Result
-    Result = GetMaxVerse(66, 22)        ' Revelation 22
+    Result = aeBibleCitationClass.GetMaxVerse(66, 22)        ' Revelation 22
     If Result <> 21 Then FailTest failCount, "Revelation 22", 21, Result
     ' ========================
     ' NEGATIVE TESTS
     ' ========================
     On Error Resume Next
     Err.Clear
-    Result = GetMaxVerse(1, 999)
+    Result = aeBibleCitationClass.GetMaxVerse(1, 999)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Invalid chapter not rejected"
         failCount = failCount + 1
     End If
     Err.Clear
-    Result = GetMaxVerse(999, 1)
+    Result = aeBibleCitationClass.GetMaxVerse(999, 1)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Invalid book not rejected"
         failCount = failCount + 1
     End If
     Err.Clear
-    Result = GetMaxVerse(19, 0)
+    Result = aeBibleCitationClass.GetMaxVerse(19, 0)
     If Err.Number = 0 Then
         Debug.Print "FAIL: Chapter zero not rejected"
         failCount = failCount + 1
@@ -424,25 +115,8 @@ Private Sub FailTest(ByRef failCount As Long, _
     Debug.Print "FAIL: "; label; _
                 " Expected="; expected; _
                 " Actual="; actual
-    
+
     failCount = failCount + 1
-End Sub
-
-Public Sub RunSomeTests()
-    Set aeAssert = New aeAssertClass
-    aeAssert.Initialize
-
-    Test_Stage1_AliasCoverage
-    Test_Stage2_LexicalScan
-    Test_Stage3_ResolveAlias
-    Test_Stage4_InterpretStructure
-    Test_Stage5_ValidateCanonical
-    Test_Stage6_FormatCanonical
-    Test_Stage6_FormatCanonical_FailureDemo
-    Test_Stage7_EndToEnd
-
-    aeAssert.Terminate
-    Set aeAssert = Nothing
 End Sub
 
 Public Sub Run_All_SBL_Tests()
@@ -456,11 +130,11 @@ Public Sub Run_All_SBL_Tests()
     Set aeAssert = New aeAssertClass
     aeAssert.Initialize
 
-    ResetBookAliasMap
+    aeBibleCitationClass.ResetBookAliasMap
     Test_Stage1_AliasCoverage
-    Test_Stage2_LexicalScan
-    Test_Stage3_ResolveAlias
-    Test_Stage4_InterpretStructure
+    aeBibleCitationClass.Test_Stage2_LexicalScan
+    aeBibleCitationClass.Test_Stage3_ResolveAlias
+    aeBibleCitationClass.Test_Stage4_InterpretStructure
     Test_Stage5_ValidateCanonical
     Test_Stage6_FormatCanonical
     Test_Stage6_FormatCanonical_FailureDemo
@@ -476,9 +150,9 @@ Public Sub Run_All_SBL_Tests()
     '   - Implement Stage-8 code
     '   - Enable test in runner
     '   Stages 9 and 10 will follow the same sequence.
-    Test_Stage8_ListDetection
-    Test_Stage9_RangeDetection
-    Test_Stage10_RangeComposition
+    aeBibleCitationClass.Test_Stage8_ListDetection
+    aeBibleCitationClass.Test_Stage9_RangeDetection
+    aeBibleCitationClass.Test_Stage10_RangeComposition
     Test_Stage11_ListComposition
     Test_Stage12_FinalParser
     Test_Stage13_ContextShorthand
@@ -497,104 +171,17 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Public Sub Test_Stage2_LexicalScan()
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage2_LexicalScan"
-    Debug.Print "------------------------------------------"
-
-    Dim t As LexTokens
-    t = LexicalScan("Jude 1:5")
-    aeAssert.AssertEqual "Jude", t.RawAlias, "Alias parsed"
-    aeAssert.AssertEqual 1, t.Num1, "Chapter parsed"
-    aeAssert.AssertEqual 5, t.Num2, "Verse parsed"
-    aeAssert.AssertTrue t.HasColon, "Colon detected"
-    t = LexicalScan("Romans 8")
-    aeAssert.AssertEqual "Romans", t.RawAlias, "Alias parsed"
-    aeAssert.AssertEqual 8, t.Num1, "Number parsed"
-    aeAssert.AssertTrue Not t.HasColon, "No colon detected"
-End Sub
-
-Public Sub Test_Stage3_ResolveAlias()
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage3_ResolveAlias"
-    Debug.Print "------------------------------------------"
-
-    Dim tokens As LexTokens
-    Dim BookID As Long
-    Dim canonical As String
-
-    tokens = LexicalScan("Jude 1:5")
-    canonical = ResolveAlias(tokens.RawAlias, BookID)
-    aeAssert.AssertEqual 65, BookID, "Jude BookID"
-    aeAssert.AssertEqual "Jude", canonical, "Jude canonical"
-    tokens = LexicalScan("Genesis 1:1")
-    canonical = ResolveAlias(tokens.RawAlias, BookID)
-    aeAssert.AssertEqual 1, BookID, "Genesis BookID"
-    aeAssert.AssertEqual "Genesis", canonical, "Genesis canonical"
-End Sub
-
-Public Sub Test_Stage4_InterpretStructure()
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage4_InterpretStructure"
-    Debug.Print "------------------------------------------"
-
-    Dim tokens As LexTokens
-    Dim ref As ParsedReference
-    '------------------------------------------
-    ' Single-chapter book (implicit verse)
-    '------------------------------------------
-    tokens = LexicalScan("Jude 5")
-    ref = InterpretStructure(tokens)
-    aeAssert.AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
-    aeAssert.AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
-    '------------------------------------------
-    ' Standard chapter:verse
-    '------------------------------------------
-    tokens = LexicalScan("Romans 8:1")
-    ref = InterpretStructure(tokens)
-    aeAssert.AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
-    aeAssert.AssertEqual "1", ref.VerseSpec, "Romans verse interpreted"
-    '------------------------------------------
-    ' Ambiguous single number (no colon)
-    '------------------------------------------
-    tokens = LexicalScan("Genesis 1")
-    ref = InterpretStructure(tokens)
-    aeAssert.AssertEqual 0, ref.Chapter, "Genesis 1 chapter interpreted"
-    aeAssert.AssertEqual "1", ref.VerseSpec, "Genesis 1 verse interpreted"
-    '------------------------------------------
-    ' Verse range
-    '------------------------------------------
-    tokens = LexicalScan("John 3:16-18")
-    ref = InterpretStructure(tokens)
-    aeAssert.AssertEqual 3, ref.Chapter, "John chapter interpreted"
-    aeAssert.AssertEqual "16-18", ref.VerseSpec, "John verse range interpreted"
-    '------------------------------------------
-    ' Verse list
-    '------------------------------------------
-    tokens = LexicalScan("Psalm 23:1,4,6")
-    ref = InterpretStructure(tokens)
-    aeAssert.AssertEqual 23, ref.Chapter, "Psalm chapter interpreted"
-    aeAssert.AssertEqual "1,4,6", ref.VerseSpec, "Psalm verse list interpreted"
-    '------------------------------------------
-    ' Mixed list and range
-    '------------------------------------------
-    tokens = LexicalScan("Matthew 5:3-5,9")
-    ref = InterpretStructure(tokens)
-    aeAssert.AssertEqual 5, ref.Chapter, "Matthew chapter interpreted"
-    aeAssert.AssertEqual "3-5,9", ref.VerseSpec, "Matthew mixed verse spec interpreted"
-End Sub
-
 Public Sub Test_Stage5_ValidateCanonical()
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage5_ValidateCanonical"
     Debug.Print "------------------------------------------"
 
     Dim valid As Boolean
-    valid = ValidateSBLReference(65, "Jude", 0, "5", ModeSBL_OLD)
+    valid = aeBibleCitationClass.ValidateSBLReference(65, "Jude", 0, "5", ModeSBL)
     aeAssert.AssertTrue valid, "Jude 5 valid"
-    valid = ValidateSBLReference(65, "Jude", 1, "0", ModeSBL_OLD, True)
+    valid = aeBibleCitationClass.ValidateSBLReference(65, "Jude", 1, "0", ModeSBL, True)
     aeAssert.AssertTrue Not valid, "Jude 1:0 rejected"
-    valid = ValidateSBLReference(45, "Romans", 999, "1", ModeSBL_OLD, True)
+    valid = aeBibleCitationClass.ValidateSBLReference(45, "Romans", 999, "1", ModeSBL, True)
     aeAssert.AssertTrue Not valid, "Romans 999:1 rejected"
 End Sub
 
@@ -605,9 +192,9 @@ Public Sub Test_Stage6_FormatCanonical()
     Debug.Print "------------------------------------------"
 
     Dim Result As String
-    Result = RewriteSingleChapterRef(65, 0, 5)
+    Result = aeBibleCitationClass.RewriteSingleChapterRef(65, 0, 5)
     aeAssert.AssertEqual "1:5", Result, "Jude single-chapter rewrite"
-    Result = RewriteSingleChapterRef(45, 8, 1)
+    Result = aeBibleCitationClass.RewriteSingleChapterRef(45, 8, 1)
     aeAssert.AssertEqual "8:1", Result, "Romans unchanged"
 End Sub
 
@@ -616,10 +203,10 @@ Public Sub Test_Stage6_FormatCanonical_FailureDemo()
         Debug.Print "------------------------------------------"
         Debug.Print " Test_Stage6_FormatCanonical (Failure Demo)"
         Debug.Print "------------------------------------------"
-    
+
         Dim Result As String
         ' Call the real formatter
-        Result = RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
+        Result = aeBibleCitationClass.RewriteSingleChapterRef(65, 0, 5)   ' Actual: "1:5"
         ' Deliberate wrong expected value
         aeAssert.AssertEqual "5", Result, "Canonical rewrite for Jude"
     End If
@@ -631,169 +218,25 @@ Public Sub Test_Stage7_EndToEnd()
     Debug.Print " Test_Stage7_EndToEnd"
     Debug.Print "------------------------------------------"
 
-    Result = ParseReference("Jude 5")
+    Result = aeBibleCitationClass.ParseReference("Jude 5")
     aeAssert.AssertEqual "Jude 1:5", Result, "Jude single-chapter expansion"
-    Result = ParseReference("Romans 8")
+    Result = aeBibleCitationClass.ParseReference("Romans 8")
     aeAssert.AssertEqual "Romans 8", Result, "Romans chapter reference"
-    Result = ParseReference("3 John 4")
+    Result = aeBibleCitationClass.ParseReference("3 John 4")
     aeAssert.AssertEqual "3 John 1:4", Result, "3 John expansion"
-    Result = ParseReference("Genesis 1:1")
+    Result = aeBibleCitationClass.ParseReference("Genesis 1:1")
     aeAssert.AssertEqual "Genesis 1:1", Result, "Genesis unchanged"
     '------------------------------------------
     ' Book-only expansion
     '------------------------------------------
-    Result = ParseReference("John")
+    Result = aeBibleCitationClass.ParseReference("John")
     aeAssert.AssertEqual "John 1:1", Result, "John book expansion"
-    Result = ParseReference("1 Jn")
+    Result = aeBibleCitationClass.ParseReference("1 Jn")
     aeAssert.AssertEqual "1 John 1:1", Result, "1 Jn expansion"
-    Result = ParseReference("Jude")
+    Result = aeBibleCitationClass.ParseReference("Jude")
     aeAssert.AssertEqual "Jude 1:1", Result, "Jude book expansion"
-    Result = ParseReference("Romans")
+    Result = aeBibleCitationClass.ParseReference("Romans")
     aeAssert.AssertEqual "Romans 1:1", Result, "Romans book expansion"
-End Sub
-
-Public Sub Test_Stage8_ListDetection()
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage8_ListDetection"
-    Debug.Print "------------------------------------------"
-
-    Dim t As ListTokens
-    '------------------------------------------
-    ' Test 1 - comma list
-    '------------------------------------------
-    t = ListDetection("John 3:16,18,20")
-    aeAssert.AssertTrue t.IsList, "comma list detected"
-    aeAssert.AssertEqual 2, UBound(t.Segments), "comma list segment count"
-    '------------------------------------------
-    ' Test 2 - semicolon list
-    '------------------------------------------
-    t = ListDetection("John 3:16; 4:1")
-    aeAssert.AssertTrue t.IsList, "semicolon list detected"
-    aeAssert.AssertEqual 1, UBound(t.Segments), "semicolon list segment count"
-    '------------------------------------------
-    ' Test 3 - single reference
-    '------------------------------------------
-    t = ListDetection("John 3:16")
-    aeAssert.AssertFalse t.IsList, "single reference not list"
-    '------------------------------------------
-    ' Test 4 - list containing range
-    '------------------------------------------
-    t = ListDetection("John 3:16-18,20")
-    aeAssert.AssertTrue t.IsList, "range preserved inside list"
-    aeAssert.AssertEqual 1, UBound(t.Segments), "range list segment count"
-    aeAssert.AssertEqual "John 3:16-18", t.Segments(0), "range first segment"
-    aeAssert.AssertEqual "20", t.Segments(1), "range second segment"
-    '------------------------------------------
-    ' Test 5 - mixed whitespace
-    '------------------------------------------
-    ' Optional as whitespace normalization should already be handled in Stage 1
-    t = ListDetection("John 3:16 , 18 , 20")
-    aeAssert.AssertTrue t.IsList, "whitespace tolerated"
-    aeAssert.AssertEqual 2, UBound(t.Segments), "whitespace segment count"
-End Sub
-
-Public Sub Test_Stage9_RangeDetection()
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage9_RangeDetection"
-    Debug.Print "------------------------------------------"
-
-    Dim r As RangeTokens
-    '------------------------------------------
-    ' Test 1 - verse range
-    '------------------------------------------
-    aeAssert.AssertTrue IsRangeSegment("John 3:16-18"), _
-        "IsRangeSegment verse range"
-    r = RangeDetection("John 3:16-18")
-    aeAssert.AssertTrue r.IsRange, "verse range detected"
-    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "range left token"
-    aeAssert.AssertEqual r.RightRaw, "18", "range right token"
-    '------------------------------------------
-    ' Test 2 - chapter range
-    '------------------------------------------
-    r = RangeDetection("John 3-5")
-    aeAssert.AssertTrue r.IsRange, "chapter range detected"
-    aeAssert.AssertEqual r.LeftRaw, "John 3", "chapter range left"
-    aeAssert.AssertEqual r.RightRaw, "5", "chapter range right"
-    '------------------------------------------
-    ' Test 3 - cross chapter range
-    '------------------------------------------
-    r = RangeDetection("John 3:16-4:2")
-    aeAssert.AssertTrue r.IsRange, "cross chapter range detected"
-    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "cross chapter left"
-    aeAssert.AssertEqual r.RightRaw, "4:2", "cross chapter right"
-    '------------------------------------------
-    ' Test 4 - en dash
-    '------------------------------------------
-    r = RangeDetection("John 3:16" & ChrW(8211) & "18")   ' en dash character (U+2013)
-    aeAssert.AssertTrue r.IsRange, "en dash range detected"
-    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "en dash left"
-    aeAssert.AssertEqual r.RightRaw, "18", "en dash right"
-    '------------------------------------------
-    ' Test 5 - not a range
-    '------------------------------------------
-    aeAssert.AssertFalse IsRangeSegment("John 3:16"), _
-        "IsRangeSegment single reference"
-    r = RangeDetection("John 3:16")
-    aeAssert.AssertFalse r.IsRange, "single reference not range"
-End Sub
-
-Public Sub Test_Stage10_RangeComposition()
-    Debug.Print "------------------------------------------"
-    Debug.Print " Test_Stage10_RangeComposition"
-    Debug.Print "------------------------------------------"
-
-    Dim r As ScriptureRange
-    '------------------------------------------
-    ' Verse shorthand
-    '------------------------------------------
-    r = ComposeRange("John 3:16-18")
-    aeAssert.AssertEqual 3, r.StartRef.Chapter, "start chapter"
-    aeAssert.AssertEqual 16, r.StartRef.Verse, "start verse"
-    aeAssert.AssertEqual 3, r.EndRef.Chapter, "end chapter"
-    aeAssert.AssertEqual 18, r.EndRef.Verse, "end verse"
-    '------------------------------------------
-    ' Chapter shorthand
-    '------------------------------------------
-    r = ComposeRange("John 3-5")
-    aeAssert.AssertEqual 3, r.StartRef.Chapter, "chapter start"
-    aeAssert.AssertEqual 5, r.EndRef.Chapter, "chapter end"
-    '------------------------------------------
-    ' Cross-chapter range
-    '------------------------------------------
-    r = ComposeRange("Genesis 1:31-2:3")
-    aeAssert.AssertEqual 1, r.StartRef.Chapter, "cross start chapter"
-    aeAssert.AssertEqual 31, r.StartRef.Verse, "cross start verse"
-    aeAssert.AssertEqual 2, r.EndRef.Chapter, "cross end chapter"
-    aeAssert.AssertEqual 3, r.EndRef.Verse, "cross end verse"
-End Sub
-
-Public Sub PrintScriptureList(list As ScriptureList)
-    On Error GoTo PROC_ERR
-    Dim i As Long
-    Dim refIndex As Long
-    Dim rangeIndex As Long
-
-    refIndex = 0
-    rangeIndex = 0
-    For i = LBound(list.ItemType) To UBound(list.ItemType)
-        Select Case list.ItemType(i)
-            Case 1  ' ScriptureRef
-                Debug.Print CanonicalFromRef(list.Refs(refIndex))
-                refIndex = refIndex + 1
-            Case 2  ' ScriptureRange
-                Debug.Print CanonicalFromRef(list.Ranges(rangeIndex).StartRef) & _
-                            "-" & _
-                            CanonicalFromRef(list.Ranges(rangeIndex).EndRef)
-                rangeIndex = rangeIndex + 1
-            Case Else
-                Debug.Print "Unknown item type at index "; i
-        End Select
-    Next i
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintScriptureList of Module basSBL_TestHarness"
-    Resume PROC_EXIT
 End Sub
 
 Public Sub Test_Stage11_ListComposition()
@@ -805,21 +248,21 @@ Public Sub Test_Stage11_ListComposition()
     '------------------------------------------
     ' Simple reference list
     '------------------------------------------
-    Set Items = ComposeList("John 3:16, John 3:18")
+    Set Items = aeBibleCitationClass.ComposeList("John 3:16, John 3:18")
     aeAssert.AssertEqual 2, Items.count, "two references parsed"
     aeAssert.AssertEqual "John 3:16", Items(1), "first reference"
     aeAssert.AssertEqual "John 3:18", Items(2), "second reference"
     '------------------------------------------
     ' Range inside list
     '------------------------------------------
-    Set Items = ComposeList("John 3:16-18, John 3:20")
+    Set Items = aeBibleCitationClass.ComposeList("John 3:16-18, John 3:20")
     aeAssert.AssertEqual 2, Items.count, "range + reference"
-    aeAssert.AssertEqual "John 3:16-3:18", Items(1), "range canonical"
+    aeAssert.AssertEqual "John 3:16-18", Items(1), "range canonical"
     aeAssert.AssertEqual "John 3:20", Items(2), "second reference"
     '------------------------------------------
     ' Semicolon separation
     '------------------------------------------
-    Set Items = ComposeList("Romans 8; Romans 9")
+    Set Items = aeBibleCitationClass.ComposeList("Romans 8; Romans 9")
     aeAssert.AssertEqual 2, Items.count, "semicolon list"
 End Sub
 
@@ -833,22 +276,22 @@ Public Sub Test_Stage12_FinalParser()
     '------------------------------------------
     ' Single reference
     '------------------------------------------
-    Result = ParseScripture("John 3:16")
+    Result = aeBibleCitationClass.ParseScripture("John 3:16")
     aeAssert.AssertEqual "John 3:16", Result, "single reference"
     '------------------------------------------
     ' Range
     '------------------------------------------
-    Result = ParseScripture("John 3:16-18")
-    aeAssert.AssertEqual "John 3:16-3:18", Result, "range parsed"
+    Result = aeBibleCitationClass.ParseScripture("John 3:16-18")
+    aeAssert.AssertEqual "John 3:16-18", Result, "range parsed"
     '------------------------------------------
     ' List
     '------------------------------------------
-    Set Items = ParseScripture("John 3:16, John 3:18")
+    Set Items = aeBibleCitationClass.ParseScripture("John 3:16, John 3:18")
     aeAssert.AssertEqual 2, Items.count, "list parsed"
     '------------------------------------------
     ' Mixed list + range
     '------------------------------------------
-    Set Items = ParseScripture("John 3:16-18, John 3:20")
+    Set Items = aeBibleCitationClass.ParseScripture("John 3:16-18, John 3:20")
     aeAssert.AssertEqual 2, Items.count, "mixed parsed"
 End Sub
 
@@ -865,7 +308,7 @@ Public Sub Test_Stage13_ContextShorthand()
     '------------------------------------------
     ' Test 1
     '------------------------------------------
-    Set c = ComposeList("John 3:16, 18, 20-22")
+    Set c = aeBibleCitationClass.ComposeList("John 3:16, 18, 20-22")
     aeAssert.AssertEqual 3, c.count, "Stage13 Test1 count"
     aeAssert.AssertEqual "John 3:16", c(1), "Stage13 Test1 item 1"
     aeAssert.AssertEqual "John 3:18", c(2), "Stage13 Test1 item 2"
@@ -877,7 +320,7 @@ Public Sub Test_Stage13_ContextShorthand()
     '------------------------------------------
     ' Test 2
     '------------------------------------------
-    Set c = ComposeList("John 3:16-4:2, 5")
+    Set c = aeBibleCitationClass.ComposeList("John 3:16-4:2, 5")
     aeAssert.AssertEqual 2, c.count, "Stage13 Test2 count"
     aeAssert.AssertEqual "John 3:16-4:2", c(1), "Stage13 Test2 item 1"
     aeAssert.AssertEqual "John 4:5", c(2), "Stage13 Test2 item 2"
@@ -887,7 +330,7 @@ Public Sub Test_Stage13_ContextShorthand()
     '------------------------------------------
     ' Test 3
     '------------------------------------------
-    Set c = ComposeList("Romans 8; 9")
+    Set c = aeBibleCitationClass.ComposeList("Romans 8; 9")
     aeAssert.AssertEqual 2, c.count, "Stage13 Test3 count"
     aeAssert.AssertEqual "Romans 8", c(1), "Stage13 Test3 item 1"
     aeAssert.AssertEqual "Romans 9", c(2), "Stage13 Test3 item 2"
@@ -910,7 +353,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
     aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
     '------------------------------------------
@@ -920,7 +363,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
     Refs.Add "John 3:18"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
     aeAssert.AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
     '------------------------------------------
@@ -929,7 +372,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Refs.Add "John 3:18"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
     aeAssert.AssertEqual "John 3:16", Result(1), "Test 3: first ref"
     aeAssert.AssertEqual "John 3:18", Result(2), "Test 3: second ref"
@@ -940,7 +383,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
     Refs.Add "John 3:19"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
     aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
     aeAssert.AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
@@ -950,7 +393,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Refs.Add "Romans 8:1"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 5: cross-book -> two refs"
     aeAssert.AssertEqual "John 3:16", Result(1), "Test 5: John ref"
     aeAssert.AssertEqual "Romans 8:1", Result(2), "Test 5: Romans ref"
@@ -960,7 +403,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Set Refs = New Collection
     Refs.Add "John 3:36"
     Refs.Add "John 4:1"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 6: cross-chapter -> two refs"
     aeAssert.AssertEqual "John 3:36", Result(1), "Test 6: end of chapter 3"
     aeAssert.AssertEqual "John 4:1", Result(2), "Test 6: start of chapter 4"
@@ -969,7 +412,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Romans 8:1"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 7: single ref passthrough count"
     aeAssert.AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
     '------------------------------------------
@@ -980,7 +423,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Refs.Add "John 3:17"
     Refs.Add "Romans 8:1"
     Refs.Add "Romans 8:2"
-    Set Result = CompressCanonical(Refs)
+    Set Result = aeBibleCitationClass.CompressCanonical(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 8: multi-book mixed -> two ranges"
     aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 8: John range"
     aeAssert.AssertEqual "Romans 8:1-8:2", Result(2), "Test 8: Romans range"
@@ -1007,7 +450,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "John 3:16"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 1: valid single ref count"
     aeAssert.AssertEqual "John 3:16", Result(1), "Test 1: valid single ref value"
     '------------------------------------------
@@ -1016,7 +459,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Matt 29:1"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 0, Result.count, "Test 2: invalid chapter removed"
     '------------------------------------------
     ' Test 3 - invalid verse removed
@@ -1024,7 +467,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Jude 1:50"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 0, Result.count, "Test 3: invalid verse removed"
     '------------------------------------------
     ' Test 4 - valid verse at boundary kept
@@ -1032,7 +475,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Jude 1:25"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 4: boundary verse kept count"
     aeAssert.AssertEqual "Jude 1:25", Result(1), "Test 4: boundary verse kept value"
     '------------------------------------------
@@ -1040,7 +483,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:5"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 5: valid range count"
     aeAssert.AssertEqual "Gen 1:1-1:5", Result(1), "Test 5: valid range value"
     '------------------------------------------
@@ -1049,7 +492,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:999"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 6: clamped end verse count"
     aeAssert.AssertEqual "Gen 1:1-1:31", Result(1), "Test 6: clamped end verse value"
     '------------------------------------------
@@ -1059,7 +502,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:1-999:1"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 7: clamped end chapter count"
     aeAssert.AssertEqual "Gen 1:1-50:1", Result(1), "Test 7: clamped end chapter value"
     '------------------------------------------
@@ -1067,7 +510,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Matt 29:1-29:5"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 0, Result.count, "Test 8: invalid start chapter removed"
     '------------------------------------------
     ' Test 9 - range collapses to single ref after clamping
@@ -1075,7 +518,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:31-1:999"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 9: collapsed range count"
     aeAssert.AssertEqual "Gen 1:31", Result(1), "Test 9: collapsed range value"
     '------------------------------------------
@@ -1085,7 +528,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Refs.Add "Gen 1:1"
     Refs.Add "Matt 29:1"
     Refs.Add "John 3:16"
-    Set Result = ValidateCanonical(Refs)
+    Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 10: mixed count"
     aeAssert.AssertEqual "Gen 1:1", Result(1), "Test 10: first valid ref"
     aeAssert.AssertEqual "John 3:16", Result(2), "Test 10: second valid ref"
@@ -1113,7 +556,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 1: two adjacent -> one range"
     aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 1: range value"
     '------------------------------------------
@@ -1123,7 +566,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
     Refs.Add "John 3:18"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 2: three adjacent -> one range"
     aeAssert.AssertEqual "John 3:16-3:18", Result(1), "Test 2: range value"
     '------------------------------------------
@@ -1132,7 +575,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Refs.Add "John 3:18"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 3: non-adjacent -> two refs"
     aeAssert.AssertEqual "John 3:16", Result(1), "Test 3: first ref"
     aeAssert.AssertEqual "John 3:18", Result(2), "Test 3: second ref"
@@ -1143,7 +586,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:16"
     Refs.Add "John 3:17"
     Refs.Add "John 3:19"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 4: run then gap -> range + single"
     aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 4: range"
     aeAssert.AssertEqual "John 3:19", Result(2), "Test 4: single after gap"
@@ -1153,7 +596,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Set Refs = New Collection
     Refs.Add "John 3:36"
     Refs.Add "John 4:1"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 5: cross-chapter -> two refs"
     aeAssert.AssertEqual "John 3:36", Result(1), "Test 5: end of chapter 3"
     aeAssert.AssertEqual "John 4:1", Result(2), "Test 5: start of chapter 4"
@@ -1163,7 +606,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Refs.Add "Romans 8:1"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 6: cross-book -> two refs"
     aeAssert.AssertEqual "John 3:16", Result(1), "Test 6: John ref"
     aeAssert.AssertEqual "Romans 8:1", Result(2), "Test 6: Romans ref"
@@ -1172,14 +615,14 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Romans 8:1"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 7: single ref count"
     aeAssert.AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
     '------------------------------------------
     ' Test 8 - empty collection
     '------------------------------------------
     Set Refs = New Collection
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 0, Result.count, "Test 8: empty collection"
     '------------------------------------------
     ' Test 9 - multi-book mixed grouping
@@ -1189,7 +632,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "John 3:17"
     Refs.Add "Romans 8:1"
     Refs.Add "Romans 8:2"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 2, Result.count, "Test 9: multi-book mixed -> two ranges"
     aeAssert.AssertEqual "John 3:16-3:17", Result(1), "Test 9: John range"
     aeAssert.AssertEqual "Romans 8:1-8:2", Result(2), "Test 9: Romans range"
@@ -1201,7 +644,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Refs.Add "Gen 1:2"
     Refs.Add "Gen 1:3"
     Refs.Add "Gen 1:4"
-    Set Result = BuildCanonicalRanges(Refs)
+    Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
     aeAssert.AssertEqual 1, Result.count, "Test 10: four adjacent -> one range"
     aeAssert.AssertEqual "Gen 1:1-1:4", Result(1), "Test 10: range value"
 
@@ -1227,14 +670,14 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "John 3:16"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "John 3:16", Result, "Test 1: single ref"
     '------------------------------------------
     ' Test 2 - same-chapter range: suppress repeated chapter
     '------------------------------------------
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:3"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "Gen 1:1-3", Result, "Test 2: same-chapter range"
     '------------------------------------------
     ' Test 3 - two same-book same-chapter refs: comma + verse only
@@ -1242,7 +685,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Set Refs = New Collection
     Refs.Add "Gen 1:1"
     Refs.Add "Gen 1:3"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "Gen 1:1, 3", Result, "Test 3: same-chapter comma"
     '------------------------------------------
     ' Test 4 - same-book different-chapter: semicolon + ch:v, no book
@@ -1250,7 +693,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Set Refs = New Collection
     Refs.Add "Gen 1:1"
     Refs.Add "Gen 2:1"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "Gen 1:1; 2:1", Result, "Test 4: same-book chapter break"
     '------------------------------------------
     ' Test 5 - different books: semicolon + full new book ref
@@ -1258,7 +701,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Set Refs = New Collection
     Refs.Add "Gen 1:1"
     Refs.Add "Exod 1:1"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "Gen 1:1; Exod 1:1", Result, "Test 5: book break"
     '------------------------------------------
     ' Test 6 - full pipeline example from doc
@@ -1268,13 +711,13 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "John 3:16-3:18"
     Refs.Add "John 4:1-4:2"
     Refs.Add "Romans 8:1-8:2"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "John 3:16-18; 4:1-2; Romans 8:1-2", Result, "Test 6: full pipeline example"
     '------------------------------------------
     ' Test 7 - empty collection returns empty string
     '------------------------------------------
     Set Refs = New Collection
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "", Result, "Test 7: empty collection"
     '------------------------------------------
     ' Test 8 - two same-chapter ranges: comma + verse range only
@@ -1282,7 +725,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Set Refs = New Collection
     Refs.Add "John 3:16-3:17"
     Refs.Add "John 3:19-3:20"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "John 3:16-17, 19-20", Result, "Test 8: two same-chapter ranges"
     '------------------------------------------
     ' Test 9 - same-chapter range followed by single verse
@@ -1290,7 +733,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Set Refs = New Collection
     Refs.Add "John 3:16-3:17"
     Refs.Add "John 3:19"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "John 3:16-17, 19", Result, "Test 9: range then single same chapter"
     '------------------------------------------
     ' Test 10 - three books
@@ -1299,7 +742,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Refs.Add "Gen 1:1"
     Refs.Add "John 3:16"
     Refs.Add "Romans 8:1"
-    Result = FormatCanonicalString(Refs)
+    Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "Gen 1:1; John 3:16; Romans 8:1", Result, "Test 10: three books"
 
     Debug.Print "------------------------------------------"

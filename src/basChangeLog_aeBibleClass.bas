@@ -7,7 +7,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #525 -
+' #530 -
+' #529 -
+' #528 - Stage 12 error - FAIL: range parsed (expected=John 3:16-18, actual=John 3:16-3:18)
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -71,6 +73,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #527 - Error in Stage 11 and 12 FAIL [bug]
+    ' FIXED - #526 - Update test harness to call aeBibleCitationClass [impr]
+    ' FIXED - #525 - There are 2 FAIL errors in Stage 13 [bug]
     ' FIXED - #524 - Normalize to Mid$ [impr]
     ' FIXED - #523 - Create ADODB logger for UTF8 with test data [feat]
     ' FIXED - #522 - Update all tests to use aeAssertClass [refac][impr]

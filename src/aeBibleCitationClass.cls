@@ -1921,9 +1921,14 @@ Private Function CanonicalFromRange(rg As ScriptureRange) As String
     Dim startText As String, endText As String
     startText = CanonicalFromRef(rg.StartRef)
     If rg.StartRef.BookID = rg.EndRef.BookID Then
-        endText = CStr(rg.EndRef.Chapter)
-        If rg.EndRef.Verse <> 0 Then
-            endText = endText & ":" & rg.EndRef.Verse
+        If rg.StartRef.Chapter = rg.EndRef.Chapter Then
+            ' Same chapter: suppress repeated chapter number
+            endText = CStr(rg.EndRef.Verse)
+        Else
+            endText = CStr(rg.EndRef.Chapter)
+            If rg.EndRef.Verse <> 0 Then
+                endText = endText & ":" & rg.EndRef.Verse
+            End If
         End If
     Else
         endText = CanonicalFromRef(rg.EndRef)
@@ -2035,8 +2040,15 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
             If havePrev And IsNumeric(seg) And InStr(seg, ":") = 0 Then
                 Result.ItemType(count) = 1
                 Result.Refs(count).BookID = prevRef.BookID
-                Result.Refs(count).Chapter = prevRef.Chapter
-                Result.Refs(count).Verse = CLng(seg)
+                If prevRef.Verse = 0 Then
+                    ' prev was chapter-only (e.g. "Romans 8") -> bare number is next chapter
+                    Result.Refs(count).Chapter = CLng(seg)
+                    Result.Refs(count).Verse = 0
+                Else
+                    ' prev had a verse -> bare number is next verse in same chapter
+                    Result.Refs(count).Chapter = prevRef.Chapter
+                    Result.Refs(count).Verse = CLng(seg)
+                End If
             Else
                 Result.ItemType(count) = 1
                 Result.Refs(count) = ParseReferenceRef(seg)
@@ -4182,4 +4194,510 @@ AliasFail:
 End Sub
 
 
+Private Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
+    On Error GoTo PROC_ERR
+    Dim p As ParsedReference
+    p.RawInput = inputText
+
+    Debug.Print "  [Stub] Raw input = >" & inputText & "<"
+
+    Dim parts() As String
+    parts = Split(Trim$(inputText), " ")
+    '----------------------------------
+    ' Book alias (first token)
+    '----------------------------------
+    p.BookAlias = UCase$(parts(0))
+    Debug.Print "  [Stub] Parsed alias = >" & p.BookAlias & "<"
+    ' Semantic guard to check for null failures
+    Debug.Assert p.BookAlias <> vbNullString
+    '----------------------------------
+    ' No chapter/verse provided
+    '----------------------------------
+    If UBound(parts) = 0 Then
+        p.Chapter = 0
+        p.VerseSpec = ""
+        ParseReferenceStub = p
+        Exit Function
+    End If
+    '----------------------------------
+    ' Chapter or Chapter:Verse
+    '----------------------------------
+    Dim refPart As String
+    refPart = parts(1)
+
+    If InStr(refPart, ":") > 0 Then
+        Dim cvParts() As String
+        cvParts = Split(refPart, ":")
+        p.Chapter = CLng(cvParts(0))
+        p.VerseSpec = cvParts(1)
+    Else
+        ' Single-chapter book case (e.g. Jude 5)
+        p.Chapter = 0
+        p.VerseSpec = refPart
+    End If
+
+    ParseReferenceStub = p
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseReferenceStub of Class aeBibleCitationClass"
+    Resume PROC_EXIT
+End Function
+
+
+Public Sub Test_SemanticFlow_WithParserStub()
+    On Error GoTo PROC_ERR
+    ResetBookAliasMap
+
+    Debug.Print "======================================"
+    Debug.Print " Test_SemanticFlow_WithParserStub"
+    Debug.Print " (Uses lightweight parser stub)"
+    Debug.Print "======================================"
+
+    Dim failures As Long
+    failures = 0
+
+    Dim tests
+    tests = Array( _
+        Array("Jude 5", 65, True, True), _
+        Array("Jude 1:5", 65, True, True), _
+        Array("Obadiah 3", 31, True, True), _
+        Array("Romans 8:1", 45, True, False), _
+        Array("Genesis 1:1", 1, True, False), _
+        Array("Jude 5-7", 65, False, False) _
+    )
+
+    Dim i As Long
+    For i = LBound(tests) To UBound(tests)
+        Debug.Print ""
+        Debug.Print "INPUT: "; tests(i)(0)
+
+        Dim testFailed As Boolean
+        testFailed = False
+
+        Dim parsed As ParsedReference
+        parsed = ParseReferenceStub(tests(i)(0))
+        Debug.Print "  ParseReferenceStub:"
+        Debug.Print "    -> Alias:   "; parsed.BookAlias
+        Debug.Print "    -> Chapter: "; parsed.Chapter
+        Debug.Print "    -> Verse:   "; parsed.VerseSpec
+
+        Dim bookName As String
+        Dim BookID As Long
+
+        On Error Resume Next
+        bookName = ResolveAlias(parsed.BookAlias, BookID)
+        Dim errNum As Long
+        errNum = Err.Number
+        Err.Clear
+        On Error GoTo 0
+
+        If errNum <> 0 Then
+            Debug.Print "  ERROR: ResolveBook failed"
+            failures = failures + 1
+            GoTo NextTest
+        End If
+        Debug.Print "  Resolver:"
+        Debug.Print "    -> BookID:    "; BookID
+        Debug.Print "    -> Canonical: "; bookName
+        If BookID <> tests(i)(1) Then
+            Debug.Print "  FAIL: BookID mismatch"
+            testFailed = True
+        End If
+
+        Dim semanticMsg As String
+        Dim IsValid As Boolean
+
+        IsValid = ValidateSBLReference( _
+                    BookID, _
+                    bookName, _
+                    parsed.Chapter, _
+                    parsed.VerseSpec, _
+                    ModeSBL)
+        Debug.Print "  ValidateSBLReference:"
+        Debug.Print "    -> Valid: "; IsValid
+        If IsValid <> tests(i)(2) Then
+            Debug.Print "  FAIL: semantic validity mismatch"
+            testFailed = True
+        End If
+
+        If IsValid Then
+            If IsNumeric(parsed.VerseSpec) Then
+                Dim rewritten As String
+                rewritten = RewriteSingleChapterRef( _
+                                BookID, _
+                                parsed.Chapter, _
+                                CLng(parsed.VerseSpec))
+                Debug.Print "  Output: "; rewritten
+                If tests(i)(3) Then
+                    If Left$(rewritten, 2) <> "1:" Then
+                        Debug.Print "  FAIL: expected single-chapter rewrite"
+                        testFailed = True
+                    End If
+                Else
+                    If rewritten <> parsed.Chapter & ":" & parsed.VerseSpec Then
+                        Debug.Print "  FAIL: unexpected rewrite"
+                        testFailed = True
+                    End If
+                End If
+            Else
+                Debug.Print "  Skipped: RewriteSingleChapterRef (VerseSpec is non-numeric: >" & parsed.VerseSpec & "<)"
+            End If
+        End If
+        If testFailed Then
+            failures = failures + 1
+        Else
+            Debug.Print "  RESULT: PASS"
+        End If
+
+NextTest:
+    Next i
+
+    Debug.Print ""
+    Debug.Print "======================================"
+    Debug.Print "FAILURES: "; failures
+    Debug.Print "======================================"
+    Report_TODOs
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SemanticFlow_WithParserStub of Class aeBibleCitationClass"
+    Resume PROC_EXIT
+End Sub
+
+
+Public Sub Test_SemanticFlow_WithParserStub_Negative()
+    On Error GoTo PROC_ERR
+    ResetBookAliasMap
+
+    Debug.Print "=========================================="
+    Debug.Print " Test_SemanticFlow_WithParserStub_Negative"
+    Debug.Print "=========================================="
+
+    Dim failReason As String
+    failReason = ""
+
+    Dim failures As Long
+    failures = 0
+
+    Dim tests As Variant
+    tests = Array( _
+        Array("Jude 0", FailNone), _
+        Array("Jude 999", FailNone), _
+        Array("Jude 1:0", FailNone), _
+        Array("Romans 0:1", FailNone), _
+        Array("Romans 999:1", FailNone), _
+        Array("Genesis 1:999", FailNone) _
+    )
+
+    Dim i As Long
+    For i = LBound(tests) To UBound(tests)
+
+        Debug.Print ""
+        Debug.Print "INPUT: "; tests(i)(0)
+
+        Dim parsed As ParsedReference
+        parsed = ParseReferenceStub(tests(i)(0))
+
+        Debug.Print "  ParseReferenceStub:"
+        Debug.Print "    -> Alias:   "; parsed.BookAlias
+        Debug.Print "    -> Chapter: "; parsed.Chapter
+        Debug.Print "    -> Verse:   "; parsed.VerseSpec
+
+        Dim bookName As String
+        Dim BookID As Long
+
+        On Error Resume Next
+        bookName = ResolveAlias(parsed.BookAlias, BookID)
+
+        If Err.Number <> 0 Then
+            Debug.Print "  ResolveBook ERROR: "; Err.Description
+
+            If tests(i)(1) = FailResolveBook Then
+                Debug.Print "  RESULT: PASS (ResolveBook failed as expected)"
+            Else
+                Debug.Print "  RESULT: FAIL (ResolveBook failed unexpectedly)"
+                failures = failures + 1
+            End If
+
+            Err.Clear
+            On Error GoTo 0
+            GoTo NextTest
+        End If
+
+        On Error GoTo 0
+
+        Debug.Print "  Resolver:"
+        Debug.Print "    -> BookID:     "; BookID
+        Debug.Print "    -> Canonical:  "; bookName
+
+        Dim IsValid As Boolean
+
+        IsValid = ValidateSBLReference( _
+                    BookID, _
+                    bookName, _
+                    parsed.Chapter, _
+                    parsed.VerseSpec, _
+                    ModeSBL)
+
+        Debug.Print "  ValidateSBLReference:"
+        Debug.Print "    -> Valid: "; IsValid
+
+        If IsValid <> tests(i)(1) Then
+            Debug.Print "  FAIL: expected validity = "; tests(i)(1)
+            failures = failures + 1
+        Else
+            Debug.Print "  RESULT: PASS"
+        End If
+
+NextTest:
+    Next i
+
+    Debug.Print ""
+    Debug.Print "======================================"
+    Debug.Print "FAILURES: "; failures
+    Debug.Print "======================================"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SemanticFlow_WithParserStub_Negative of Class aeBibleCitationClass"
+    Resume PROC_EXIT
+End Sub
+
+
+Public Sub Test_Stage2_LexicalScan()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage2_LexicalScan"
+    Debug.Print "------------------------------------------"
+
+    Dim t As LexTokens
+    t = LexicalScan("Jude 1:5")
+    aeAssert.AssertEqual "Jude", t.RawAlias, "Alias parsed"
+    aeAssert.AssertEqual 1, t.Num1, "Chapter parsed"
+    aeAssert.AssertEqual 5, t.Num2, "Verse parsed"
+    aeAssert.AssertTrue t.HasColon, "Colon detected"
+    t = LexicalScan("Romans 8")
+    aeAssert.AssertEqual "Romans", t.RawAlias, "Alias parsed"
+    aeAssert.AssertEqual 8, t.Num1, "Number parsed"
+    aeAssert.AssertTrue Not t.HasColon, "No colon detected"
+End Sub
+
+
+Public Sub Test_Stage3_ResolveAlias()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage3_ResolveAlias"
+    Debug.Print "------------------------------------------"
+
+    Dim tokens As LexTokens
+    Dim BookID As Long
+    Dim canonical As String
+
+    tokens = LexicalScan("Jude 1:5")
+    canonical = ResolveAlias(tokens.RawAlias, BookID)
+    aeAssert.AssertEqual 65, BookID, "Jude BookID"
+    aeAssert.AssertEqual "Jude", canonical, "Jude canonical"
+    tokens = LexicalScan("Genesis 1:1")
+    canonical = ResolveAlias(tokens.RawAlias, BookID)
+    aeAssert.AssertEqual 1, BookID, "Genesis BookID"
+    aeAssert.AssertEqual "Genesis", canonical, "Genesis canonical"
+End Sub
+
+
+Public Sub Test_Stage4_InterpretStructure()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage4_InterpretStructure"
+    Debug.Print "------------------------------------------"
+
+    Dim tokens As LexTokens
+    Dim ref As ParsedReference
+    '------------------------------------------
+    ' Single-chapter book (implicit verse)
+    '------------------------------------------
+    tokens = LexicalScan("Jude 5")
+    ref = InterpretStructure(tokens)
+    aeAssert.AssertEqual 0, ref.Chapter, "Jude 5 chapter interpreted"
+    aeAssert.AssertEqual "5", ref.VerseSpec, "Jude 5 verse interpreted"
+    '------------------------------------------
+    ' Standard chapter:verse
+    '------------------------------------------
+    tokens = LexicalScan("Romans 8:1")
+    ref = InterpretStructure(tokens)
+    aeAssert.AssertEqual 8, ref.Chapter, "Romans chapter interpreted"
+    aeAssert.AssertEqual "1", ref.VerseSpec, "Romans verse interpreted"
+    '------------------------------------------
+    ' Ambiguous single number (no colon)
+    '------------------------------------------
+    tokens = LexicalScan("Genesis 1")
+    ref = InterpretStructure(tokens)
+    aeAssert.AssertEqual 0, ref.Chapter, "Genesis 1 chapter interpreted"
+    aeAssert.AssertEqual "1", ref.VerseSpec, "Genesis 1 verse interpreted"
+    '------------------------------------------
+    ' Verse range
+    '------------------------------------------
+    tokens = LexicalScan("John 3:16-18")
+    ref = InterpretStructure(tokens)
+    aeAssert.AssertEqual 3, ref.Chapter, "John chapter interpreted"
+    aeAssert.AssertEqual "16-18", ref.VerseSpec, "John verse range interpreted"
+    '------------------------------------------
+    ' Verse list
+    '------------------------------------------
+    tokens = LexicalScan("Psalm 23:1,4,6")
+    ref = InterpretStructure(tokens)
+    aeAssert.AssertEqual 23, ref.Chapter, "Psalm chapter interpreted"
+    aeAssert.AssertEqual "1,4,6", ref.VerseSpec, "Psalm verse list interpreted"
+    '------------------------------------------
+    ' Mixed list and range
+    '------------------------------------------
+    tokens = LexicalScan("Matthew 5:3-5,9")
+    ref = InterpretStructure(tokens)
+    aeAssert.AssertEqual 5, ref.Chapter, "Matthew chapter interpreted"
+    aeAssert.AssertEqual "3-5,9", ref.VerseSpec, "Matthew mixed verse spec interpreted"
+End Sub
+
+
+Private Sub PrintScriptureList(list As ScriptureList)
+    On Error GoTo PROC_ERR
+    Dim i As Long
+    Dim refIndex As Long
+    Dim rangeIndex As Long
+
+    refIndex = 0
+    rangeIndex = 0
+    For i = LBound(list.ItemType) To UBound(list.ItemType)
+        Select Case list.ItemType(i)
+            Case 1  ' ScriptureRef
+                Debug.Print CanonicalFromRef(list.Refs(refIndex))
+                refIndex = refIndex + 1
+            Case 2  ' ScriptureRange
+                Debug.Print CanonicalFromRef(list.Ranges(rangeIndex).StartRef) & _
+                            "-" & _
+                            CanonicalFromRef(list.Ranges(rangeIndex).EndRef)
+                rangeIndex = rangeIndex + 1
+            Case Else
+                Debug.Print "Unknown item type at index "; i
+        End Select
+    Next i
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintScriptureList of Class aeBibleCitationClass"
+    Resume PROC_EXIT
+End Sub
+
+
+Public Sub Test_Stage8_ListDetection()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage8_ListDetection"
+    Debug.Print "------------------------------------------"
+
+    Dim t As ListTokens
+    '------------------------------------------
+    ' Test 1 - comma list
+    '------------------------------------------
+    t = ListDetection("John 3:16,18,20")
+    aeAssert.AssertTrue t.IsList, "comma list detected"
+    aeAssert.AssertEqual 2, UBound(t.Segments), "comma list segment count"
+    '------------------------------------------
+    ' Test 2 - semicolon list
+    '------------------------------------------
+    t = ListDetection("John 3:16; 4:1")
+    aeAssert.AssertTrue t.IsList, "semicolon list detected"
+    aeAssert.AssertEqual 1, UBound(t.Segments), "semicolon list segment count"
+    '------------------------------------------
+    ' Test 3 - single reference
+    '------------------------------------------
+    t = ListDetection("John 3:16")
+    aeAssert.AssertFalse t.IsList, "single reference not list"
+    '------------------------------------------
+    ' Test 4 - list containing range
+    '------------------------------------------
+    t = ListDetection("John 3:16-18,20")
+    aeAssert.AssertTrue t.IsList, "range preserved inside list"
+    aeAssert.AssertEqual 1, UBound(t.Segments), "range list segment count"
+    aeAssert.AssertEqual "John 3:16-18", t.Segments(0), "range first segment"
+    aeAssert.AssertEqual "20", t.Segments(1), "range second segment"
+    '------------------------------------------
+    ' Test 5 - mixed whitespace
+    '------------------------------------------
+    t = ListDetection("John 3:16 , 18 , 20")
+    aeAssert.AssertTrue t.IsList, "whitespace tolerated"
+    aeAssert.AssertEqual 2, UBound(t.Segments), "whitespace segment count"
+End Sub
+
+
+Public Sub Test_Stage9_RangeDetection()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage9_RangeDetection"
+    Debug.Print "------------------------------------------"
+
+    Dim r As RangeTokens
+    '------------------------------------------
+    ' Test 1 - verse range
+    '------------------------------------------
+    aeAssert.AssertTrue IsRangeSegment("John 3:16-18"), _
+        "IsRangeSegment verse range"
+    r = RangeDetection("John 3:16-18")
+    aeAssert.AssertTrue r.IsRange, "verse range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "range left token"
+    aeAssert.AssertEqual r.RightRaw, "18", "range right token"
+    '------------------------------------------
+    ' Test 2 - chapter range
+    '------------------------------------------
+    r = RangeDetection("John 3-5")
+    aeAssert.AssertTrue r.IsRange, "chapter range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3", "chapter range left"
+    aeAssert.AssertEqual r.RightRaw, "5", "chapter range right"
+    '------------------------------------------
+    ' Test 3 - cross chapter range
+    '------------------------------------------
+    r = RangeDetection("John 3:16-4:2")
+    aeAssert.AssertTrue r.IsRange, "cross chapter range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "cross chapter left"
+    aeAssert.AssertEqual r.RightRaw, "4:2", "cross chapter right"
+    '------------------------------------------
+    ' Test 4 - en dash
+    '------------------------------------------
+    r = RangeDetection("John 3:16" & ChrW(8211) & "18")   ' en dash character (U+2013)
+    aeAssert.AssertTrue r.IsRange, "en dash range detected"
+    aeAssert.AssertEqual r.LeftRaw, "John 3:16", "en dash left"
+    aeAssert.AssertEqual r.RightRaw, "18", "en dash right"
+    '------------------------------------------
+    ' Test 5 - not a range
+    '------------------------------------------
+    aeAssert.AssertFalse IsRangeSegment("John 3:16"), _
+        "IsRangeSegment single reference"
+    r = RangeDetection("John 3:16")
+    aeAssert.AssertFalse r.IsRange, "single reference not range"
+End Sub
+
+
+Public Sub Test_Stage10_RangeComposition()
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage10_RangeComposition"
+    Debug.Print "------------------------------------------"
+
+    Dim r As ScriptureRange
+    '------------------------------------------
+    ' Verse shorthand
+    '------------------------------------------
+    r = ComposeRange("John 3:16-18")
+    aeAssert.AssertEqual 3, r.StartRef.Chapter, "start chapter"
+    aeAssert.AssertEqual 16, r.StartRef.Verse, "start verse"
+    aeAssert.AssertEqual 3, r.EndRef.Chapter, "end chapter"
+    aeAssert.AssertEqual 18, r.EndRef.Verse, "end verse"
+    '------------------------------------------
+    ' Chapter shorthand
+    '------------------------------------------
+    r = ComposeRange("John 3-5")
+    aeAssert.AssertEqual 3, r.StartRef.Chapter, "chapter start"
+    aeAssert.AssertEqual 5, r.EndRef.Chapter, "chapter end"
+    '------------------------------------------
+    ' Cross-chapter range
+    '------------------------------------------
+    r = ComposeRange("Genesis 1:31-2:3")
+    aeAssert.AssertEqual 1, r.StartRef.Chapter, "cross start chapter"
+    aeAssert.AssertEqual 31, r.StartRef.Verse, "cross start verse"
+    aeAssert.AssertEqual 2, r.EndRef.Chapter, "cross end chapter"
+    aeAssert.AssertEqual 3, r.EndRef.Verse, "cross end verse"
+End Sub
 
