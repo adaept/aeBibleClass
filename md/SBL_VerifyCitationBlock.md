@@ -150,9 +150,11 @@ VerifyCitationBlock rawBlock
 
 ### `Test_VerifyCitationBlock_Negative` — 3 deliberate failures
 
+**Note on alias test design:** The alias used must be provably absent from the alias map — not just a non-SBL form of a real book. `Jeremiah` is the canonical name and IS in the alias map, so `TryResolveAlias("Jeremiah", ...)` succeeds and the test passes, defeating its purpose. The correct approach is a string that cannot resolve: a misspelling, a punctuated form, or a fabricated abbreviation. `Jerimiah` (common misspelling of Jeremiah) is confirmed absent from the alias map and produces a clean, readable failure.
+
 | Case | Change | Expected error |
 |---|---|---|
-| Bad alias | Replace `Jer 33:11` with `Jeremiah 33:11` | `E_ALIAS_UNRESOLVED` (if not in alias map) or PASS with wrong SBL form |
+| Bad alias | Replace `Jer 33:11` with `Jerimiah 33:11` | `E_ALIAS_UNRESOLVED` — misspelling absent from alias map |
 | Verse out of range | Replace `103:8–11` with `103:8–200` | `E_SBL_FAIL` — verse 200 > max for Ps 103 |
 | Chapter out of range | Replace `Jer 33:11` with `Jer 99:1` | `E_SBL_FAIL` — Jeremiah has 52 chapters |
 
