@@ -229,7 +229,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Sub GoToSection()
+Public Sub GoToSection()
     On Error GoTo PROC_ERR
     'NavigateToNextBookmark()
     Dim bmList As Collection

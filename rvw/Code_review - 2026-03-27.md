@@ -1003,3 +1003,54 @@ Two unqualified calls in `basSBL_VerseCountsGenerator.bas` previously resolved v
 Internal changes:
 - `Attribute VB_Name` updated to `"basTEST_aeBibleCitationClass"`
 - All MsgBox error strings updated from `Module basSBL_TestHarness` to `Module basTEST_aeBibleCitationClass`
+
+---
+
+## Access Modifier Audit — Apply Explicit Public/Private (2026-04-01)
+
+Full audit performed across all `src/` files. Rule: every `Sub`, `Function`, and `Property` must carry an explicit `Public` or `Private` modifier. Bare declarations default silently to `Public`, exposing internal helpers unintentionally.
+
+Findings and changes applied across 6 active files (scratch/archived `X`-prefix files and `Module1.bas` deferred):
+
+### `aeBibleClass.cls` — 5 procedures → `Private`
+
+| Procedure | Reason |
+|---|---|
+| `CheckShowHideStatus()` | Internal state check |
+| `ProcessUnicode(s)` | Internal string transform |
+| `AppendToFile(filePath, text)` | Internal file helper |
+| `CountOccurrences(text, substring)` | Internal string utility |
+| `ProcessShape(shp, doubleSpaceCount)` | Internal shape walker |
+
+### `basTest_aeBibleClass.bas` — 2 procedures
+
+| Procedure | Modifier | Reason |
+|---|---|---|
+| `GitAutoTagRelease()` | `Public` | Standalone macro entry point |
+| `GitTagExists(sRepoPath, sTag)` | `Private` | Called only by `GitAutoTagRelease` |
+
+### `basBibleRibbon_OLD.bas` — 1 procedure
+
+| Procedure | Modifier |
+|---|---|
+| `GoToSection()` | `Public` |
+
+### `basTEST_aeBibleFonts.bas` — 10 procedures
+
+`IsFontInstalled` → `Private` (helper). All 9 standalone `Sub`s → `Public`.
+
+### `basWordSettingsDiagnostic.bas` — 13 procedures
+
+`Public` entry points: `RunWordSettingsAudit`, `ShowAllStyles`, `ShowMyStyles`, `HideUnusedStyles`.
+
+`Private` helpers: `GetCurrentWordSettings`, `GetShowTextBoundaries`, `LoadTargetBaseline`, `CompareSettings`, `FormatDiagnostics`, `FormatBoolean`, `SaveReportToFile`, `StyleIsAppliedAnywhere`, `StyleIsApplied`.
+
+### `basTEST_aeBibleTools.bas` — 53 procedures
+
+`Private` helpers (16): `IsPartInCollection`, `GetColorNameFromHex`, `HeaderTypeName`, `IsCorrectFootnoteFormat`, `RGBToString`, `ShouldFlag`, `FlagLabel`, `IsPrimitiveType`, `IsWordNative`, `IsEnumType`, `CompareDocuments`, `ReportPageLayoutMetrics`, `RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage`, `SmartPrefixRepairOnPage_WithDiagnostics`, `SmartPrefixRepairOnPage`, `DummyRepairPageTimerOnly`.
+
+All remaining standalone `Sub`s (37) → `Public`.
+
+### Deferred
+
+`Module1.bas` (38 procedures), `XLongRunningProcessCode.bas` (9), `XbasTESTaeBibleClass_SLOW.bas` (4), `XbasTESTaeBibleDOCVARIABLE.bas` (9) — archived/scratch, no changes made.

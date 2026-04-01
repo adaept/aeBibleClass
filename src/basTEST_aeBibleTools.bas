@@ -14,7 +14,7 @@ Private SectionsNewPageBreaks As Integer
 ' Module-level buffer
 Dim HeadingBuffer As Object ' Late-bound Dictionary
 
-Sub ListCustomXMLParts()
+Public Sub ListCustomXMLParts()
     On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim i As Integer
@@ -31,7 +31,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ListCustomXMLSchemas()
+Public Sub ListCustomXMLSchemas()
     On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     For Each xmlPart In ActiveDocument.CustomXMLParts
@@ -45,7 +45,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub AddCustomUIXML()
+Public Sub AddCustomUIXML()
     On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim xmlContent As String
@@ -66,7 +66,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RemoveDuplicateCustomXMLParts()
+Public Sub RemoveDuplicateCustomXMLParts()
     On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim xmlParts As CustomXMLParts
@@ -112,7 +112,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Function IsPartInCollection(col As Collection, partName As String) As Boolean
+Private Function IsPartInCollection(col As Collection, partName As String) As Boolean
     On Error GoTo PROC_ERR
     Dim i As Integer
     IsPartInCollection = False
@@ -130,7 +130,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Sub DeleteCustomUIXML()
+Public Sub DeleteCustomUIXML()
     On Error GoTo PROC_ERR
     Dim xmlPart As customXMLPart
     Dim xmlParts As CustomXMLParts
@@ -167,7 +167,7 @@ End Sub
 ' Notes:        - Hex code is normalized to uppercase for consistent comparison.
 '               - Expand CASE block as needed for additional named colors.
 ' ========================================================================================
-Function GetColorNameFromHex(hexColor As String) As String
+Private Function GetColorNameFromHex(hexColor As String) As String
     Dim colorName As String
     
     ' Convert hex to uppercase for consistency
@@ -222,7 +222,7 @@ End Function
 '               - Does not account for style inheritance or partial selections
 '               - Expansion possible to handle suffix-aware grouping or paragraph-level aggregation
 ' =================================================================================================
-Sub ListAndCountFontColors()
+Public Sub ListAndCountFontColors()
     On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Dim colorDict As Object
@@ -268,7 +268,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub GetVerticalPositionOfCursorParagraph()
+Public Sub GetVerticalPositionOfCursorParagraph()
 ' Get the position of the para where the cursor is
     On Error GoTo PROC_ERR
     Dim doc As Document
@@ -291,7 +291,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub FindFirstSectionWithDifferentFirstPage()
+Public Sub FindFirstSectionWithDifferentFirstPage()
     On Error GoTo PROC_ERR
     Dim sec As section
     Dim i As Long
@@ -318,7 +318,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub FindFirstPageWithEmptyHeader()
+Public Sub FindFirstPageWithEmptyHeader()
     On Error GoTo PROC_ERR
     Dim sec As section
     Dim hdr As HeaderFooter
@@ -357,7 +357,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Function HeaderTypeName(hdrType As Variant) As String
+Private Function HeaderTypeName(hdrType As Variant) As String
     Select Case hdrType
         Case wdHeaderFooterPrimary: HeaderTypeName = "Primary"
         Case wdHeaderFooterFirstPage: HeaderTypeName = "First Page"
@@ -366,7 +366,7 @@ Function HeaderTypeName(hdrType As Variant) As String
     End Select
 End Function
 
-Sub OptimizedListFontsInDocument()
+Public Sub OptimizedListFontsInDocument()
     On Error GoTo PROC_ERR
     Dim fontList As New Collection
     Dim doc As Document
@@ -404,7 +404,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub FindGentiumFromParagraph()
+Public Sub FindGentiumFromParagraph()
     On Error GoTo PROC_ERR
     Dim startParaNum As Long
     Dim para As Word.Paragraph
@@ -460,7 +460,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub GoToParagraph()
+Public Sub GoToParagraph()
     On Error GoTo PROC_ERR
     Dim paraNum As Integer
     paraNum = (InputBox("Enter paragraph number:", "Goto Paragraph Number", 1))
@@ -473,7 +473,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ListNonMainFonts_ByParagraph()
+Public Sub ListNonMainFonts_ByParagraph()
     On Error GoTo PROC_ERR
     Dim fontDict As Object
     Set fontDict = CreateObject("Scripting.Dictionary")
@@ -533,7 +533,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub TestComp()
+Public Sub TestComp()
     On Error GoTo PROC_ERR
     CompareDocuments "C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.docx", "C:\Users\peter\OneDrive\Documents\Peter-USE REFINED English Bible CONTENTS - Copy (49).docx"
 
@@ -544,7 +544,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub CompareDocuments(original As String, modified As String)
+Private Sub CompareDocuments(original As String, modified As String)
 ' e.g. original = "C:\Path\To\Original.docx"
 ' e.g. "C:\Path\To\Modified.docx"
 ' - Original Document - The initial version of the document before changes were made.
@@ -592,7 +592,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub CountSearchHits()
+Public Sub CountSearchHits()
     On Error GoTo PROC_ERR
     Dim searchTerm As String
     Dim count As Long
@@ -627,7 +627,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub PrintHeading1sByLogicalPage()
+Public Sub PrintHeading1sByLogicalPage()
     On Error GoTo PROC_ERR
     Dim i As Long
     Dim maxPage As Long
@@ -667,7 +667,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub FixAndDiagnoseFootnoteReferences()
+Public Sub FixAndDiagnoseFootnoteReferences()
     On Error GoTo PROC_ERR
     Dim doc As Document
     Dim fn As footnote
@@ -736,7 +736,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As Boolean
+Private Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As String) As Boolean
     On Error GoTo PROC_ERR
     mismatch = ""
     IsCorrectFootnoteFormat = True
@@ -774,7 +774,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Sub FixFootnoteNumberStyleInText()
+Public Sub FixFootnoteNumberStyleInText()
     On Error GoTo PROC_ERR
     Dim fn As footnote
     Dim paraRange As Word.Range
@@ -797,7 +797,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ReportPageLayoutMetrics(pageNum As Long)
+Private Sub ReportPageLayoutMetrics(pageNum As Long)
     On Error GoTo PROC_ERR
     Dim pgRange As Word.Range
     Dim sectionSetup As PageSetup
@@ -848,7 +848,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ReportDigitAtCursor_Diagnostics()
+Public Sub ReportDigitAtCursor_Diagnostics()
     On Error GoTo PROC_ERR
     Dim selRange As Word.Range, ch As Word.Range, prefix As Word.Range
     Dim txt As String, style As String
@@ -893,11 +893,11 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Function RGBToString(rgbVal As Long) As String
+Private Function RGBToString(rgbVal As Long) As String
     RGBToString = "(" & (rgbVal And &HFF) & "," & ((rgbVal \ 256) And &HFF) & "," & ((rgbVal \ 65536) And &HFF) & ")"
 End Function
 
-Sub ReportDigitAtCursor_Diagnostics_Expanded()
+Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
     On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Set rng = Selection.Range
@@ -958,7 +958,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub LogExpandedMarkerContext()
+Public Sub LogExpandedMarkerContext()
     On Error GoTo PROC_ERR
     Dim sel As Word.Range: Set sel = Selection.Range
     Dim i As Long, chCount As Long
@@ -991,7 +991,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub FindInvisibleFormFeeds_InPages(startPage As Long)
+Public Sub FindInvisibleFormFeeds_InPages(startPage As Long)
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph, rng As Word.Range
     Dim pgNum As Long
@@ -1022,7 +1022,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
+Public Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Long)
     On Error GoTo PROC_ERR
     Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
@@ -1124,7 +1124,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
+Public Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
     On Error GoTo PROC_ERR
     Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
@@ -1202,7 +1202,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
+Private Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pageNum As Long, ByRef fixCount As Long)
     On Error GoTo PROC_ERR
     ' Same logic as full macro, but suppresses MsgBox and passes fixCount by reference.
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
@@ -1328,7 +1328,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub SmartPrefixRepairOnPage_WithDiagnostics(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
+Private Sub SmartPrefixRepairOnPage_WithDiagnostics(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
     ' Simulates repair logic for testing
     ' This assumes every page has 3 space repairs and 2 break repairs
     Dim j As Long
@@ -1346,12 +1346,12 @@ Sub SmartPrefixRepairOnPage_WithDiagnostics(pgNum As Long, ByRef spaceCount As L
     Next j
 End Sub
 
-Sub SmartyOne()
+Public Sub SmartyOne()
     Dim sCount As Long, bCount As Long
     Call SmartPrefixRepairOnPage(235, sCount, bCount)
 End Sub
 
-Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
+Private Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByRef breakCount As Long)
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim rng As Word.Range
@@ -1435,7 +1435,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
+Public Sub RunRepairWrappedVerseMarkers_Across10Pages_From(StartPageNum As Long)
     On Error GoTo PROC_ERR
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
@@ -1506,7 +1506,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
+Public Sub RunRepairWrappedVerseMarkers_ForOnePage(pgNum As Long)
     On Error GoTo PROC_ERR
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
@@ -1544,7 +1544,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub UnlinkHeadingNumbering()
+Public Sub UnlinkHeadingNumbering()
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
 
@@ -1565,7 +1565,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub StartRepairTimingSession(StartPageNum As Long)
+Public Sub StartRepairTimingSession(StartPageNum As Long)
     On Error GoTo PROC_ERR
     Const ForecastFile As String = "RepairRunnerForecast.txt"
     Dim sessionID As String: sessionID = "Session_" & Format(Now, "yyyymmdd_HHMMSS")
@@ -1619,14 +1619,14 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub DummyRepairPageTimerOnly(pgNum As Long)
+Private Sub DummyRepairPageTimerOnly(pgNum As Long)
     ' Placeholder page-level logic for timing only
     Dim dummyWait As Single
     dummyWait = Timer
     Do While Timer < dummyWait + 0.05: DoEvents: Loop
 End Sub
 
-Sub ReapplyTheFootersToAllFooters()
+Public Sub ReapplyTheFootersToAllFooters()
     On Error GoTo PROC_ERR
     Dim sec As Word.section
 
@@ -1688,7 +1688,7 @@ End Sub
 '   - Include suffix tracking, style inheritance, or font audit flags
 '   - Integrate session-aware tracking or timing metrics
 ' =============================================================================
-Sub GetHeadingDefinitionsWithDescriptions()
+Public Sub GetHeadingDefinitionsWithDescriptions()
     On Error GoTo PROC_ERR
     Dim headingStyles As Variant
     headingStyles = Array("Heading 1", "Heading 2")
@@ -1776,7 +1776,7 @@ End Sub
 '   - Does not modify any content � purely read-only audit
 '   - Suitable for changelog integrity checks in version-controlled macros
 '==============================================
-Sub ValidateTaskInChangelogModule()
+Public Sub ValidateTaskInChangelogModule()
     On Error GoTo PROC_ERR
     Dim permalink As String
     permalink = InputBox("Paste permalink (with #Lnn):")
@@ -1883,7 +1883,7 @@ End Function
 ' Author  : Peter
 ' Last Modified : 20250731
 '==============================================================
-Sub PrintCompactSectionLayoutInfo()
+Public Sub PrintCompactSectionLayoutInfo()
     On Error GoTo PROC_ERR
     Dim sec As section
     Dim i As Long
@@ -2009,7 +2009,7 @@ End Sub
 ' Author:       Peter (collab w/ Copilot)
 ' Last Updated: 2025-08-02
 ' =========================
-Sub FlagEarlyBindingRoutines_LateBound()
+Public Sub FlagEarlyBindingRoutines_LateBound()
     On Error GoTo PROC_ERR
     Const IncludeWordTypes As Boolean = False
     Const IncludeEnums As Boolean = False
@@ -2073,7 +2073,7 @@ End Sub
 '               IncludeEnums [Boolean] - flag enums
 ' Returns:      [Boolean] - True to flag, False to suppress
 ' =========================
-Function ShouldFlag(codeLine As String, baseTypes As Variant, wordTypes As Variant, knownEnums As Variant, _
+Private Function ShouldFlag(codeLine As String, baseTypes As Variant, wordTypes As Variant, knownEnums As Variant, _
                     IncludeWord As Boolean, IncludeEnums As Boolean) As Boolean
     If IsPrimitiveType(codeLine, baseTypes) Then Exit Function
     If IsWordNative(codeLine, wordTypes) And Not IncludeWord Then Exit Function
@@ -2087,7 +2087,7 @@ End Function
 ' Inputs:       codeLine [String] - line to evaluate
 ' Returns:      [String] - e.g. "[EXTERNAL]", "[CUSTOM]", "[ENUM]", "[WORD]"
 ' =========================
-Function FlagLabel(codeLine As String) As String
+Private Function FlagLabel(codeLine As String) As String
     Dim lowered As String: lowered = LCase(codeLine)
     If lowered Like "*as excel.*" Or lowered Like "*as filesystem*" Or lowered Like "*as scripting.*" Then
         FlagLabel = "[EXTERNAL]"
@@ -2109,7 +2109,7 @@ End Function
 '               baseTypes [Array] - primitive suffixes
 ' Returns:      [Boolean]
 ' =========================
-Function IsPrimitiveType(lineText As String, baseTypes As Variant) As Boolean
+Private Function IsPrimitiveType(lineText As String, baseTypes As Variant) As Boolean
     Dim suffix As Variant
     For Each suffix In baseTypes
         If InStr(lineText, suffix) > 0 Then
@@ -2126,7 +2126,7 @@ End Function
 ' Inputs:       lineText [String], wordTypes [Array]
 ' Returns:      [Boolean]
 ' =========================
-Function IsWordNative(lineText As String, wordTypes As Variant) As Boolean
+Private Function IsWordNative(lineText As String, wordTypes As Variant) As Boolean
     Dim suffix As Variant
     For Each suffix In wordTypes
         If InStr(lineText, suffix) > 0 Then
@@ -2143,7 +2143,7 @@ End Function
 ' Inputs:       lineText [String], knownEnums [Array]
 ' Returns:      [Boolean]
 ' =========================
-Function IsEnumType(lineText As String, knownEnums As Variant) As Boolean
+Private Function IsEnumType(lineText As String, knownEnums As Variant) As Boolean
     Dim suffix As Variant
     For Each suffix In knownEnums
         If InStr(lineText, suffix) > 0 Then
@@ -2160,7 +2160,7 @@ End Function
 ' to a CSV-compatible text file with cleaned paragraph text.
 ' Author: Peter | Date: 20250807
 '====================================================================
-Sub BuildHeadingIndexToCSV()
+Public Sub BuildHeadingIndexToCSV()
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim paraIndex As Long
@@ -2208,7 +2208,7 @@ End Sub
 ' for fast lookup and navigation.
 ' Author: Peter | Date: 20250807
 '====================================================================
-Sub LoadHeadingIndexFromCSV()
+Public Sub LoadHeadingIndexFromCSV()
     On Error GoTo PROC_ERR
     Dim csvPath As String
     Dim fileNum As Integer
@@ -2253,7 +2253,7 @@ End Sub
 ' Requires HeadingBuffer to be loaded.
 ' Author: Peter | Date: 20250807
 '====================================================================
-Sub GoToHeadingByIndex()
+Public Sub GoToHeadingByIndex()
     On Error GoTo PROC_ERR
     Dim targetIndex As String
     Dim paraIndex As Long

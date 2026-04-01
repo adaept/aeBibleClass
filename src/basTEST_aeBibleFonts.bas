@@ -5,7 +5,7 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
-Sub CheckOpenFontsWithDownloads()
+Public Sub CheckOpenFontsWithDownloads()
     On Error GoTo PROC_ERR
     Dim fontList As Variant
     Dim fontName As Variant
@@ -60,7 +60,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Function IsFontInstalled(fontName As String) As Boolean
+Private Function IsFontInstalled(fontName As String) As Boolean
     On Error GoTo PROC_ERR
     Dim TestDoc As Document
     Dim testRange As Word.Range
@@ -81,7 +81,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Sub CreateEmphasisBlackStyle()
+Public Sub CreateEmphasisBlackStyle()
     On Error GoTo PROC_ERR
     Dim charStyle As style
 
@@ -117,7 +117,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub AuditStyleUsage_Footnote()
+Public Sub AuditStyleUsage_Footnote()
     On Error GoTo PROC_ERR
     Dim r As Word.Range, hitCount As Long
     Dim logBuffer As String
@@ -151,7 +151,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RedefineFootnoteStyle_NotoSans()
+Public Sub RedefineFootnoteStyle_NotoSans()
     On Error GoTo PROC_ERR
     Dim s As style
     Set s = ActiveDocument.Styles("Footnote")
@@ -174,7 +174,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub AuditStyleUsage_FootnoteNormal()
+Public Sub AuditStyleUsage_FootnoteNormal()
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim hitCount As Long
@@ -201,7 +201,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RedefineFootnoteNormalStyle_NotoSans()
+Public Sub RedefineFootnoteNormalStyle_NotoSans()
     On Error GoTo PROC_ERR
     Dim s As style
     Set s = ActiveDocument.Styles("Footnote normal")
@@ -224,7 +224,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub AuditStyleUsage_PictureCaption()
+Public Sub AuditStyleUsage_PictureCaption()
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim hitCount As Long
@@ -262,7 +262,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub RedefinePictureCaptionStyle_NotoSans()
+Public Sub RedefinePictureCaptionStyle_NotoSans()
     On Error GoTo PROC_ERR
     Dim s As style
     On Error Resume Next
@@ -294,7 +294,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub Identify_ArialUnicodeMS_Paragraphs()
+Public Sub Identify_ArialUnicodeMS_Paragraphs()
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
     Dim paraIndex As Long

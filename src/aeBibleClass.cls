@@ -149,7 +149,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Property
 
-Function CheckShowHideStatus() As Boolean
+Private Function CheckShowHideStatus() As Boolean
     CheckShowHideStatus = ActiveWindow.View.ShowAll
 End Function
 
@@ -395,7 +395,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Function ProcessUnicode(s As String) As String
+Private Function ProcessUnicode(s As String) As String
     ProcessUnicode = s   ' return the string exactly as received
 End Function
 
@@ -460,7 +460,7 @@ End Sub
 ' Author: Peter
 ' Version: 1.0
 '=====================================================================================
-Sub AppendToFile(filePath As String, text As String)
+Private Sub AppendToFile(filePath As String, text As String)
     Dim fileNum As Integer
     Dim folderPath As String
     Dim finalPath As String
@@ -3701,7 +3701,7 @@ PROC_ERR:
 End Function
 
 ' Function to count occurrences of a substring in a string
-Function CountOccurrences(ByVal text As String, ByVal substring As String) As Long
+Private Function CountOccurrences(ByVal text As String, ByVal substring As String) As Long
     Dim pos, count As Long
     pos = 1
     count = 0
@@ -3733,7 +3733,7 @@ Private Function CountDoubleSpacesInShapes() As Integer
     CountDoubleSpacesInShapes = doubleSpaceCount
 End Function
 
-Sub ProcessShape(ByVal shp As shape, ByRef doubleSpaceCount As Long)
+Private Sub ProcessShape(ByVal shp As shape, ByRef doubleSpaceCount As Long)
     Dim textRange As Word.Range
     Dim shapeText As String
     

@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #534 -
 ' #533 -
 ' #532 -
-' #531 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #531 - Make code routines explicitly Public or Private in codebase [impr]
     ' FIXED - #530 - Update license headers
     ' FIXED - #529 - Error with 2 unqualified references
     ' FIXED - #528 - Stage 12 error - FAIL: range parsed (expected=John 3:16-18, actual=John 3:16-3:18)

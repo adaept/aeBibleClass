@@ -87,7 +87,7 @@ End Function
 '   - Logs both [TAG] and [PUSH] output to aid changelog verification.
 '   - Safe to wrap inside session-aware macro runners or audit triggers.
 '=======================================================================================
-Sub GitAutoTagRelease()
+Public Sub GitAutoTagRelease()
     On Error GoTo PROC_ERR
     Const sTag As String = "v0.1.1"
     Const sMessage As String = "Release version 0.1.1"
@@ -146,7 +146,7 @@ End Sub
 '   - Ensures tagging is idempotent and reversible.
 '   - Extendable to check remote tags via `git ls-remote --tags`.
 '=======================================================================================
-Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
+Private Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
     On Error GoTo PROC_ERR
     Dim wsh As Object: Set wsh = CreateObject("WScript.Shell")
     Dim cmd As String, execObj As Object, Result As String

@@ -7,7 +7,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 ' === WordSettingsDiagnostic.bas ===
 ' === Main entry point ===
-Sub RunWordSettingsAudit(Optional saveToFile As Boolean = False)
+Public Sub RunWordSettingsAudit(Optional saveToFile As Boolean = False)
     On Error GoTo PROC_ERR
     Dim currentSettings As Object
     Dim targetSettings As Object
@@ -38,7 +38,7 @@ PROC_ERR:
 End Sub
 
 ' === Gather current settings into a Dictionary ===
-Function GetCurrentWordSettings() As Object
+Private Function GetCurrentWordSettings() As Object
     On Error GoTo PROC_ERR
     Dim settings As Object
     Set settings = CreateObject("Scripting.Dictionary")
@@ -78,7 +78,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Function GetShowTextBoundaries() As Variant
+Private Function GetShowTextBoundaries() As Variant
     On Error GoTo PROC_ERR
     Dim Result As Variant
 
@@ -103,7 +103,7 @@ PROC_ERR:
 End Function
 
 ' === Define or Load a baseline (can be replaced with a loader from external file) ===
-Function LoadTargetBaseline() As Object
+Private Function LoadTargetBaseline() As Object
     On Error GoTo PROC_ERR
     Dim baseline As Object
     Set baseline = CreateObject("Scripting.Dictionary")
@@ -127,7 +127,7 @@ PROC_ERR:
 End Function
 
 ' === Compare two sets of settings ===
-Function CompareSettings(current As Object, target As Object) As Object
+Private Function CompareSettings(current As Object, target As Object) As Object
     On Error GoTo PROC_ERR
     Dim key As Variant
     Dim discrepancies As Object
@@ -155,7 +155,7 @@ PROC_ERR:
 End Function
 
 ' === Format diagnostics for output ===
-Function FormatDiagnostics(current As Object, target As Object, issues As Object) As String
+Private Function FormatDiagnostics(current As Object, target As Object, issues As Object) As String
     On Error GoTo PROC_ERR
     Dim Result As String
     Dim key As Variant
@@ -201,7 +201,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Function FormatBoolean(value As Variant) As String
+Private Function FormatBoolean(value As Variant) As String
     If VarType(value) = vbBoolean Then
         FormatBoolean = IIf(value, "On", "Off")
     Else
@@ -210,7 +210,7 @@ Function FormatBoolean(value As Variant) As String
 End Function
 
 ' === Save report to file ===
-Sub SaveReportToFile(reportText As String, fileName As String)
+Private Sub SaveReportToFile(reportText As String, fileName As String)
     On Error GoTo PROC_ERR
     Dim filePath As String
     filePath = ThisDocument.Path & "\" & fileName
@@ -228,7 +228,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ShowAllStyles()
+Public Sub ShowAllStyles()
     On Error GoTo PROC_ERR
     Dim s As style
     For Each s In ActiveDocument.Styles
@@ -246,7 +246,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub ShowMyStyles()
+Public Sub ShowMyStyles()
     On Error GoTo PROC_ERR
     Dim s As style
     Dim msg As String
@@ -282,7 +282,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Function StyleIsAppliedAnywhere(sName As String) As Boolean
+Private Function StyleIsAppliedAnywhere(sName As String) As Boolean
     On Error GoTo PROC_ERR
     Dim p As Word.Paragraph
     Dim sec As section
@@ -326,7 +326,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Function StyleIsApplied(sName As String) As Boolean
+Private Function StyleIsApplied(sName As String) As Boolean
     On Error GoTo PROC_ERR
     Dim p As Word.Paragraph
     On Error Resume Next
@@ -346,7 +346,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Sub HideUnusedStyles()
+Public Sub HideUnusedStyles()
     On Error GoTo PROC_ERR
     Dim s As style
     For Each s In ActiveDocument.Styles
