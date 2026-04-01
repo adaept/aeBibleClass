@@ -993,3 +993,13 @@ Two unqualified calls in `basSBL_VerseCountsGenerator.bas` previously resolved v
 |---|---|---|
 | `VerifyPackedVerseMap` | `GetChapterVerseMap()` | `aeBibleCitationClass.GetChapterVerseMap()` |
 | `ToOneBasedLongArray` | `AssertOneBased temp, context` | `aeBibleCitationClass.AssertOneBased temp, context` |
+
+---
+
+## basSBL_TestHarness.bas — Renamed to basTEST_aeBibleCitationClass.bas (2026-03-31)
+
+`src/basSBL_TestHarness.bas` renamed to `src/basTEST_aeBibleCitationClass.bas` via `git mv` to align the module name with the class it tests.
+
+Internal changes:
+- `Attribute VB_Name` updated to `"basTEST_aeBibleCitationClass"`
+- All MsgBox error strings updated from `Module basSBL_TestHarness` to `Module basTEST_aeBibleCitationClass`

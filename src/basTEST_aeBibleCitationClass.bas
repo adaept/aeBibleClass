@@ -1,4 +1,4 @@
-Attribute VB_Name = "basSBL_TestHarness"
+Attribute VB_Name = "basTEST_aeBibleCitationClass"
 Option Explicit
 Option Compare Text
 Option Private Module
@@ -104,7 +104,7 @@ Public Sub Test_GetMaxVerse()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_GetMaxVerse of Module basSBL_TestHarness"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_GetMaxVerse of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
 
@@ -167,7 +167,7 @@ Public Sub Run_All_SBL_Tests()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run_All_SBL_Tests of Module basSBL_TestHarness"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run_All_SBL_Tests of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
 
@@ -433,7 +433,7 @@ Public Sub Test_Stage14_CanonicalCompression()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage14_CanonicalCompression of Module basSBL_TestHarness"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage14_CanonicalCompression of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
 
@@ -538,7 +538,7 @@ Public Sub Test_Stage15_CanonicalValidation()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage15_CanonicalValidation of Module basSBL_TestHarness"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage15_CanonicalValidation of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
 
@@ -653,7 +653,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage16_CanonicalRangeBuilder of Module basSBL_TestHarness"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage16_CanonicalRangeBuilder of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
 
@@ -750,6 +750,6 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage17_CanonicalStringFormatter of Module basSBL_TestHarness"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage17_CanonicalStringFormatter of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
