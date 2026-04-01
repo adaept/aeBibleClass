@@ -26,7 +26,7 @@ Option Compare Text
 '=================================================================================
 ' Author:   Peter F. Ennis
 ' Date:     March 16, 2025
-' Comment:  Create class for QA of Refined Word Bible (RWB)
+' Comment:  Create class for QA of Radiant Word Bible (RWB)
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/BibleClass
 '=================================================================================

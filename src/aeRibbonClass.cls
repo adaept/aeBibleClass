@@ -10,6 +10,27 @@ Attribute VB_Exposed = False
 Option Explicit
 Option Compare Text
 
+'Copyright (c) 2025-2026 Peter F. Ennis
+'This library is free software; you can redistribute it and/or
+'modify it under the terms of the GNU Lesser General Public
+'License as published by the Free Software Foundation;
+'version 3.0, or (at your option) any later version.
+'This library is distributed in the hope that it will be useful,
+'but WITHOUT ANY WARRANTY; without even the implied warranty of
+'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+'Lesser General Public License for more details.
+'You should have received a copy of the GNU Lesser General Public
+'License along with this library; if not, visit
+'https://www.gnu.org/licenses/lgpl-3.0.txt
+
+' ================================================================
+' Author:   Peter F. Ennis
+' Date:     March 10, 2025
+' Comment:  Bible Ribbon Class for Word 365 VBA
+' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
+' GitHub:   https://github.com/adaept/aeBibleClass
+' ================================================================
+
 ' -- Private State -------------------------------------------------------------
 Private m_ribbon         As IRibbonUI
 Private m_ribbonReady    As Boolean
