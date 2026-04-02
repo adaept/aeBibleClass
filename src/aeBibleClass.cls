@@ -583,7 +583,7 @@ Private Sub DebugAndReportHeader()
     On Error GoTo PROC_ERR
 
     Debug.Print "1234567890123412345678901234123456789012341234567890123412345678901234"
-    '            123456789    1234567    12345678    123456    12345678    12345678     NOTE: Comma separation of debug is 14 characters
+    '            123456789    1234567    12345678    123456    12345678    12345678     Note: Comma separation of debug is 14 characters
     Debug.Print "Pass/Fail", "Copy ()", "Test Num", "Result", "Expected", "Function"
 
 PROC_EXIT:

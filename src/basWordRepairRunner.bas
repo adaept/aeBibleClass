@@ -309,7 +309,7 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     ' Default to primary header
     Set hdr = sec.Headers(wdHeaderFooterPrimary)
 
-    ' NOTE: Does not apply in this Bible doc
+    ' Note: Does not apply in this Bible doc
     ' If primary is empty, check for first-page or even-page headers
     'If Len(hdr.Range.Text) = 0 Then
     '    If sec.Headers(wdHeaderFooterFirstPage).Exists Then

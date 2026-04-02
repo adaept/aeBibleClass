@@ -27,6 +27,7 @@ NORMALIZATIONS = [
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraphs\b', 'As Word.Paragraphs', 'As Word.Paragraphs declaration'),
+    (r'(?i)\bnote\b',                        'Note',               'Note loop variable (Footnote iteration)'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

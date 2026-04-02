@@ -16,7 +16,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '
     ' FIXED - #017 - Add Const E_FAIL As Long = -2147467259    ' Unspecified Error(E_FAIL)
 ' 20260315 - v008
-    ' FIXED - #016 - Use aeWordGit, NOTE: uppercase WordGit throughout for readability
+    ' FIXED - #016 - Use aeWordGit, Note: uppercase WordGit throughout for readability
 ' 20250217 - v007
     ' FIXED - #015 - Delete unused code: ThisIsAnAddIn, OutputListOfWordProperties, DeleteVBAModulesAndUserForms
     ' FIXED - #014 - Update usage instruction in basTESTaeWordGitClass

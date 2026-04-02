@@ -201,7 +201,7 @@ Private Sub RunExportCode(ByVal strExportPath As String)
 
     On Error GoTo PROC_ERR
 
-    ' NOTE: The document must be open in Word
+    ' Note: The document must be open in Word
     strDocName = ActiveDocument.name
     Debug.Print , "strDocName = " & strDocName
     'Stop

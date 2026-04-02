@@ -34,7 +34,7 @@ Option Compare Text
 
 '===========================================================
 ' Type Declarations
-' NOTE: VBA class modules require all UDTs to be Private.
+' Note: VBA class modules require all UDTs to be Private.
 ' Functions using these types in their signatures are
 ' therefore also Private (internal to this class).
 '===========================================================
@@ -463,7 +463,7 @@ End Function
 ' Supported separators:
 '   Hyphen  (-) ASCII 45
 '   En dash (?) Unicode U+2013
-' NOTE
+' Note
 ' Use ChrW(8211) so the source code does not depend
 ' on editors correctly displaying the en dash.
 '===========================================================
@@ -1195,7 +1195,7 @@ Public Function ValidateSBLReference( _
         Exit Function
     End If
 
-    ' NOTE:
+    ' Note:
     ' Verse range bounds (max verse per chapter)
     ' are intentionally NOT enforced here yet.
     ' That is a later enhancement.
@@ -1725,7 +1725,7 @@ Public Function CompressCanonical(ByVal Refs As Collection) As Collection
             runStart = i
             '------------------------------------------
             ' Extend the run while adjacent.
-            ' NOTE: VBA And is not short-circuit - guard
+            ' Note: VBA And is not short-circuit - guard
             ' the array accesses with a Do While i < n
             ' outer check and inner If/Exit Do tests.
             '------------------------------------------
@@ -2255,7 +2255,7 @@ Public Function BuildCanonicalRanges(ByVal Refs As Collection) As Collection
             runStart = i
             '------------------------------------------
             ' Extend the run while adjacent.
-            ' NOTE: VBA And is not short-circuit - guard
+            ' Note: VBA And is not short-circuit - guard
             ' the array accesses with a Do While i < n
             ' outer check and inner If/Exit Do tests.
             '------------------------------------------
