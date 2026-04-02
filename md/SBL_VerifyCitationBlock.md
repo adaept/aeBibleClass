@@ -133,15 +133,15 @@ Scans `spec` character by character. Detects either ASCII hyphen (`-`, Chr(45)) 
 
 ### `Test_VerifyCitationBlock` — positive test
 
-Constructs the raw string using `Chr(8211)` for en dashes (keeps the source file ASCII-safe while exercising the Unicode path in `DecomposeVerseSpec`):
+Constructs the raw string using `ChrW(8211)` for en dashes (exercises the Unicode path in `DecomposeVerseSpec`):
 
 ```vb
 rawBlock = "Gen 1:27; Num 14:18; Deut 32:6; Josh 1:9; 1 Sam 2:2; " & _
-           "1 Chr 29:10" & Chr(8211) & "13; " & _
-           "Ps 19:1" & Chr(8211) & "2; 23:1; 28:7; 68:5; " & _
-           "103:8" & Chr(8211) & "11; 111:3" & Chr(8211) & "5; " & _
-           "145:8" & Chr(8211) & "9,17; Isa 40:28; 63:16; 64:8; " & _
-           "Jer 33:11; Nah 1:3; Mal 2:10" & Chr(8211) & "15; " & _
+           "1 Chr 29:10" & ChrW(8211) & "13; " & _
+           "Ps 19:1" & ChrW(8211) & "2; 23:1; 28:7; 68:5; " & _
+           "103:8" & ChrW(8211) & "11; 111:3" & ChrW(8211) & "5; " & _
+           "145:8" & ChrW(8211) & "9,17; Isa 40:28; 63:16; 64:8; " & _
+           "Jer 33:11; Nah 1:3; Mal 2:10" & ChrW(8211) & "15; " & _
            "Matt 6:9; 7:11; 23:9; John 3:16; 4:24; " & _
            "Rom 1:20; 8:15; 1 Cor 8:6; 14:33; Gal 3:20; Eph 4:6; " & _
            "Heb 13:6; 1 Pet 1:17; 2 Pet 3:9; 1 John 4:16"
@@ -290,3 +290,21 @@ SliceArray = empty
 ' After (correct):
 SliceArray = Split(vbNullString)  ' returns Array(""); Join gives ""
 ```
+
+### 2026-04-01 — Fix `Chr(8211)` → `ChrW(8211)` in test data
+
+**Error:** Runtime Error 5 "Invalid procedure call or argument" on the first line of `Test_VerifyCitationBlock` that calls `Chr(8211)`.
+
+**Root cause:** VBA's `Chr()` function only accepts values 0–255. En dash (U+2013 = 8211) is outside that range. Any call to `Chr(8211)` raises Runtime Error 5 at runtime.
+
+**Fix:** Replace every `Chr(8211)` with `ChrW(8211)`. `ChrW` accepts the full Unicode range (0–65535).
+
+```vb
+' Before (runtime error):
+"1 Chr 29:10" & Chr(8211) & "13"
+
+' After (correct):
+"1 Chr 29:10" & ChrW(8211) & "13"
+```
+
+Same replacement applied to all six en-dash occurrences in `Test_VerifyCitationBlock` and the one occurrence in `Test_VerifyCitationBlock_Negative`. The `DecomposeVerseSpec` detection (`AscW(ch) = 8211`) was already correct — `AscW` handles Unicode input without issue.

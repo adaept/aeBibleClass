@@ -404,11 +404,11 @@ End Sub
 Public Sub Test_VerifyCitationBlock()
     Dim rawBlock As String
     rawBlock = "Gen 1:27; Num 14:18; Deut 32:6; Josh 1:9; 1 Sam 2:2; " & _
-               "1 Chr 29:10" & Chr(8211) & "13; " & _
-               "Ps 19:1" & Chr(8211) & "2; 23:1; 28:7; 68:5; " & _
-               "103:8" & Chr(8211) & "11; 111:3" & Chr(8211) & "5; " & _
-               "145:8" & Chr(8211) & "9,17; Isa 40:28; 63:16; 64:8; " & _
-               "Jer 33:11; Nah 1:3; Mal 2:10" & Chr(8211) & "15; " & _
+               "1 Chr 29:10" & ChrW(8211) & "13; " & _
+               "Ps 19:1" & ChrW(8211) & "2; 23:1; 28:7; 68:5; " & _
+               "103:8" & ChrW(8211) & "11; 111:3" & ChrW(8211) & "5; " & _
+               "145:8" & ChrW(8211) & "9,17; Isa 40:28; 63:16; 64:8; " & _
+               "Jer 33:11; Nah 1:3; Mal 2:10" & ChrW(8211) & "15; " & _
                "Matt 6:9; 7:11; 23:9; John 3:16; 4:24; " & _
                "Rom 1:20; 8:15; 1 Cor 8:6; 14:33; Gal 3:20; Eph 4:6; " & _
                "Heb 13:6; 1 Pet 1:17; 2 Pet 3:9; 1 John 4:16"
@@ -432,7 +432,7 @@ Public Sub Test_VerifyCitationBlock_Negative()
 
     ' Case 2: Verse out of range — Ps 103 has 22 verses; verse 200 is invalid
     Dim rawBadVerse As String
-    rawBadVerse = "Ps 103:8" & Chr(8211) & "200"
+    rawBadVerse = "Ps 103:8" & ChrW(8211) & "200"
     Debug.Print "--- Case 2: Verse out of range (Ps 103:8-200) ---"
     VerifyCitationBlock rawBadVerse
 
