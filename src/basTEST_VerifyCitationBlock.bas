@@ -21,7 +21,7 @@ Public Const E_SBL_FAIL         As Long = 1006  ' ValidateSBLReference returned 
 Private Type BlockToken
     InputAlias  As String   ' e.g. "Ps", "1 Cor" -- empty string if inherited from context
     BookID      As Long     ' 0 if unresolved
-    canonName   As String   ' canonical name from ResolveAlias
+    CanonName   As String   ' Canonical name from ResolveAlias
     Chapter     As Long
     StartVerse  As Long     ' after DecomposeVerseSpec
     EndVerse    As Long     ' = StartVerse if not a range
@@ -55,15 +55,15 @@ End Function
 ' Error-safe wrapper around aeBibleCitationClass.ResolveAlias.
 ' Returns False on any error (unresolved alias).
 ' =============================================================================
-Private Function TryResolveAlias(alias As String, ByRef BookID As Long, ByRef canonName As String) As Boolean
+Private Function TryResolveAlias(alias As String, ByRef BookID As Long, ByRef CanonName As String) As Boolean
     On Error GoTo RESOLVE_FAIL
-    canonName = aeBibleCitationClass.ResolveAlias(alias, BookID)
-    If canonName = "" Then GoTo RESOLVE_FAIL
+    CanonName = aeBibleCitationClass.ResolveAlias(alias, BookID)
+    If CanonName = "" Then GoTo RESOLVE_FAIL
     TryResolveAlias = True
     Exit Function
 RESOLVE_FAIL:
     BookID = 0
-    canonName = ""
+    CanonName = ""
     TryResolveAlias = False
 End Function
 
@@ -261,7 +261,7 @@ Private Function TokenizeCitationBlock(raw As String) As BlockToken()
             Dim chErrTok As BlockToken
             chErrTok.InputAlias = detectedAlias
             chErrTok.BookID = contextBookID
-            chErrTok.canonName = contextCanon
+            chErrTok.CanonName = contextCanon
             chErrTok.SegText = seg
             chErrTok.ErrorCode = E_CHAPTER_MISSING
             chErrTok.ErrorText = "No chapter could be inferred for segment: """ & seg & """"
@@ -282,7 +282,7 @@ Private Function TokenizeCitationBlock(raw As String) As BlockToken()
             Dim tok As BlockToken
             tok.InputAlias = detectedAlias
             tok.BookID = contextBookID
-            tok.canonName = contextCanon
+            tok.CanonName = contextCanon
             tok.Chapter = contextChapter
             tok.SegText = seg
 
@@ -335,7 +335,7 @@ End Sub
 ' =============================================================================
 Private Function FormatTokenRef(t As BlockToken) As String
     Dim s As String
-    s = t.canonName & " " & t.Chapter & ":" & t.StartVerse
+    s = t.CanonName & " " & t.Chapter & ":" & t.StartVerse
     If t.IsRange Then s = s & "-" & t.EndVerse
     FormatTokenRef = s
 End Function
@@ -368,7 +368,7 @@ Public Sub VerifyCitationBlock(rawBlock As String)
         ' Validate start verse
         Dim okStart As Boolean
         okStart = aeBibleCitationClass.ValidateSBLReference( _
-            t.BookID, t.canonName, t.Chapter, CStr(t.StartVerse), ModeSBL, True)
+            t.BookID, t.CanonName, t.Chapter, CStr(t.StartVerse), ModeSBL, True)
         If Not okStart Then
             Debug.Print "FAIL [" & E_SBL_FAIL & "]: " & FormatTokenRef(t) & " (start verse failed ValidateSBLReference)"
             failCount = failCount + 1
@@ -379,7 +379,7 @@ Public Sub VerifyCitationBlock(rawBlock As String)
         If t.IsRange Then
             Dim okEnd As Boolean
             okEnd = aeBibleCitationClass.ValidateSBLReference( _
-                t.BookID, t.canonName, t.Chapter, CStr(t.EndVerse), ModeSBL, True)
+                t.BookID, t.CanonName, t.Chapter, CStr(t.EndVerse), ModeSBL, True)
             If Not okEnd Then
                 Debug.Print "FAIL [" & E_SBL_FAIL & "]: " & FormatTokenRef(t) & " (end verse " & t.EndVerse & " failed ValidateSBLReference)"
                 failCount = failCount + 1

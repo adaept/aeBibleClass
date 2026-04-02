@@ -34,7 +34,7 @@ Public Function EXPORT_THE_CODE(Optional ByVal varDebug As Variant) As Boolean
 
     ' Run VBA casing normalizer after export
     Dim strBat As String
-    strBat = ThisDocument.Path & "\normalize_vba.bat"
+    strBat = ThisDocument.Path & "\py\normalize_vba.bat"
     If Dir(strBat) = "" Then
         MsgBox "Normalizer batch file not found:" & vbCrLf & strBat, vbExclamation, "EXPORT_THE_CODE"
     Else

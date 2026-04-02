@@ -4,7 +4,7 @@ echo ========================================
 echo  VBA Casing Normalizer
 echo ========================================
 
-wsl python3 /mnt/c/adaept/aeBibleClass/normalize_vba.py /mnt/c/adaept/aeBibleClass/src
+wsl python3 /mnt/c/adaept/aeBibleClass/py/normalize_vba.py /mnt/c/adaept/aeBibleClass/src
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Normalization failed.

@@ -9,8 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #535 -
 ' #534 -
-' #533 -
-' #532 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -74,6 +72,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #533 - Move python and associated files to py folder and adjust calling scripts [impr]
+    ' FIXED - #532 - Move documentation of DSP for SBL Citation to its own md file [doc][impr]
     ' FIXED - #531 - Make code routines explicitly Public or Private in codebase [impr]
     ' FIXED - #530 - Update license headers
     ' FIXED - #529 - Error with 2 unqualified references
