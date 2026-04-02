@@ -1,4 +1,4 @@
-Attribute VB_Name = "basTest_aeBibleClass"
+Attribute VB_Name = "basTEST_aeBibleClass"
 Option Explicit
 Option Compare Text
 Option Private Module
@@ -29,7 +29,7 @@ Public Function RUN_THE_TESTS(Optional ByVal varDebug As Variant) As Boolean
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RUN_THE_TESTS of Module basTest_aeBibleClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RUN_THE_TESTS of Module basTEST_aeBibleClass"
     Resume PROC_EXIT
 End Function
 
@@ -68,7 +68,7 @@ PROC_ERR:
     If Err = 6068 Then ' VBA Project Not Trusted - "Programmatic access to the Visual Basic Project is not trusted..."
         MsgBox "VBA Project Not Trusted", vbCritical, "aeBibleClassTest"
     Else
-        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeBibleClassTest of Module basTest_aeBibleClass"
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure aeBibleClassTest of Module basTEST_aeBibleClass"
     End If
     Resume PROC_EXIT
 End Function
@@ -130,7 +130,7 @@ Public Sub GitAutoTagRelease()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GitAutoTagRelease of Module basTest_aeBibleClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GitAutoTagRelease of Module basTEST_aeBibleClass"
     Resume PROC_EXIT
 End Sub
 
@@ -165,7 +165,7 @@ Private Function GitTagExists(sRepoPath As String, sTag As String) As Boolean
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GitTagExists of Module basTest_aeBibleClass"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GitTagExists of Module basTEST_aeBibleClass"
     Resume PROC_EXIT
 End Function
 
