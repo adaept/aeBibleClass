@@ -217,7 +217,7 @@ Sub FindDocVariableEverywhere()
     Dim field As field
     Dim shape As shape
     Dim section As section
-    Dim note As footnote
+    Dim Note As footnote
     Dim endNote As endNote
 
     ' Set the active document
@@ -282,8 +282,8 @@ Sub FindDocVariableEverywhere()
     Next section
 
     ' Fourth: Search for DOCVARIABLE in footnotes
-    For Each note In doc.Footnotes
-        For Each field In note.Range.Fields
+    For Each Note In doc.Footnotes
+        For Each field In Note.Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.Code.Text, variableName, vbTextCompare) > 0 Then
                     field.Select
@@ -293,7 +293,7 @@ Sub FindDocVariableEverywhere()
                 End If
             End If
         Next field
-    Next note
+    Next Note
 
     ' Fifth: Search for DOCVARIABLE in endnotes
     For Each endNote In doc.Endnotes
