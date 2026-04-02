@@ -398,7 +398,7 @@ End Sub
 
 ' =============================================================================
 ' Test_VerifyCitationBlock  (Public)
-' Positive test — full 36-token citation block; expected: all tokens pass.
+' Positive test — full 35-token citation block; expected: all tokens pass.
 ' En dashes constructed via Chr(8211) to keep source file ASCII-safe.
 ' =============================================================================
 Public Sub Test_VerifyCitationBlock()
@@ -412,7 +412,7 @@ Public Sub Test_VerifyCitationBlock()
                "Matt 6:9; 7:11; 23:9; John 3:16; 4:24; " & _
                "Rom 1:20; 8:15; 1 Cor 8:6; 14:33; Gal 3:20; Eph 4:6; " & _
                "Heb 13:6; 1 Pet 1:17; 2 Pet 3:9; 1 John 4:16"
-    Debug.Print "=== Test_VerifyCitationBlock (positive, 36 tokens expected) ==="
+    Debug.Print "=== Test_VerifyCitationBlock (positive, 35 tokens expected) ==="
     VerifyCitationBlock rawBlock
 End Sub
 

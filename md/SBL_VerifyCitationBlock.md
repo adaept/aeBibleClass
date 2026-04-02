@@ -75,7 +75,7 @@ All functions are `Private` unless noted. Implementation order matches dependenc
 | 5 | Private | `TokenizeCitationBlock` | `(raw As String) As BlockToken()` | Stage 0 — produces flat array of `BlockToken`; propagates book and chapter context |
 | 6 | Private | `FormatTokenRef` | `(t As BlockToken) As String` | Formats a `BlockToken` as a canonical reference string for display |
 | 7 | Public  | `VerifyCitationBlock` | `(rawBlock As String)` | Iterates tokens; validates each atomic endpoint via `ValidateSBLReference(ModeSBL)`; prints PASS/FAIL |
-| 8 | Public  | `Test_VerifyCitationBlock` | `()` | Positive test — full citation block; expected: all 36 tokens pass |
+| 8 | Public  | `Test_VerifyCitationBlock` | `()` | Positive test — full citation block; expected: all 35 tokens pass |
 | 9 | Public  | `Test_VerifyCitationBlock_Negative` | `()` | 3-case negative test: bad alias, verse out of range, chapter out of range |
 
 ---
@@ -199,7 +199,7 @@ VerifyCitationBlock rawBlock
 | `2 Pet 3:9` | Yes — 2 Pet | 61 | 3 | 9 | 1 |
 | `1 John 4:16` | Yes — 1 John | 62 | 4 | 16 | 1 |
 
-**36 atomic tokens total. All expected to PASS.**
+**35 atomic tokens total. All expected to PASS.**
 
 ---
 
