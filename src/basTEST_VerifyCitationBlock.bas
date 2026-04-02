@@ -57,7 +57,8 @@ End Function
 ' =============================================================================
 Private Function TryResolveAlias(alias As String, ByRef BookID As Long, ByRef canonName As String) As Boolean
     On Error GoTo RESOLVE_FAIL
-    aeBibleCitationClass.ResolveAlias alias, BookID, canonName
+    canonName = aeBibleCitationClass.ResolveAlias(alias, BookID)
+    If canonName = "" Then GoTo RESOLVE_FAIL
     TryResolveAlias = True
     Exit Function
 RESOLVE_FAIL:
@@ -144,9 +145,7 @@ Private Function SliceArray(arr() As String, startIdx As Long) As String()
     Dim count As Long
     count = UBound(arr) - startIdx + 1
     If count <= 0 Then
-        Dim empty() As String
-        ReDim empty(0 To -1)
-        SliceArray = empty
+        SliceArray = Split(vbNullString)  ' returns Array(""); Join gives ""
         Exit Function
     End If
     Dim result() As String

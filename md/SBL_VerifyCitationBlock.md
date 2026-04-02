@@ -234,10 +234,59 @@ VerifyCitationBlock rawBlock
 
 ## Implementation Sequence
 
-1. Create `src/basTEST_VerifyCitationBlock.bas` — `BlockToken` type, error constants, module header
-2. Implement `NormalizeBlockInput` and `TryResolveAlias`
-3. Implement `DetectBookAliasInSegment` and `DecomposeVerseSpec`
-4. Implement `TokenizeCitationBlock`
-5. Implement `FormatTokenRef` and `VerifyCitationBlock`
-6. Implement `Test_VerifyCitationBlock` (positive — 36 tokens, all pass)
-7. Implement `Test_VerifyCitationBlock_Negative` (3 deliberate failures)
+1. Create `src/basTEST_VerifyCitationBlock.bas` — `BlockToken` type, error constants, module header ✓
+2. Implement `NormalizeBlockInput` and `TryResolveAlias` ✓
+3. Implement `DetectBookAliasInSegment` and `DecomposeVerseSpec` ✓
+4. Implement `TokenizeCitationBlock` ✓
+5. Implement `FormatTokenRef` and `VerifyCitationBlock` ✓
+6. Implement `Test_VerifyCitationBlock` (positive — 36 tokens, all pass) ✓
+7. Implement `Test_VerifyCitationBlock_Negative` (3 deliberate failures) ✓
+
+---
+
+## Implementation Log
+
+### 2026-04-01 — Initial implementation
+
+`src/basTEST_VerifyCitationBlock.bas` created with all 9 functions from the plan. CRLF normalized via WSL Python.
+
+**Helper added beyond plan:** `SliceArray` — a private helper required by `DetectBookAliasInSegment` to slice a `String()` array from a given index to `UBound`. VBA has no built-in array slice; `Join(Array(...))` cannot take a sub-range directly. One private sub added: `AppendToken` — grows the `BlockToken()` array by one and stores the new token. Kept private; called only from `TokenizeCitationBlock`.
+
+**Bug fix — `TryResolveAlias` signature mismatch:**
+
+The plan described `ResolveAlias` as taking three parameters `(alias, ByRef BookID, ByRef canonName)`. The actual class signature is:
+
+```vb
+Public Function ResolveAlias(abbr As String, Optional BookID As Long) As String
+```
+
+The canonical name is the **return value**, not a third `ByRef` parameter. Fix applied:
+
+```vb
+' Before (wrong — wrong number of arguments):
+aeBibleCitationClass.ResolveAlias alias, BookID, canonName
+
+' After (correct):
+canonName = aeBibleCitationClass.ResolveAlias(alias, BookID)
+If canonName = "" Then GoTo RESOLVE_FAIL
+```
+
+The empty-string guard handles the case where `ResolveAlias` returns `""` for an unknown alias without raising an error, ensuring `TryResolveAlias` still returns `False`.
+
+### 2026-04-01 — Fix `SliceArray` syntax error
+
+**Error:** `ReDim empty(0 To -1)` — VBA does not permit a negative upper bound; this is a syntax error at compile time.
+
+**Root cause:** The plan assumed an empty dynamic array could be returned by declaring a zero-length array with a negative upper bound. VBA forbids this.
+
+**Fix:** Replace the invalid `ReDim` with `Split(vbNullString)`, which returns `Array("")` — a one-element array containing an empty string. `Join` on this result yields `""`, which is the correct value for `refPart` when no tokens follow the book alias.
+
+```vb
+' Before (syntax error):
+Dim empty() As String
+ReDim empty(0 To -1)
+SliceArray = empty
+
+' After (correct):
+SliceArray = Split(vbNullString)  ' returns Array(""); Join gives ""
+```
