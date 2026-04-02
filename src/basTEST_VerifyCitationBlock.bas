@@ -21,7 +21,7 @@ Public Const E_SBL_FAIL         As Long = 1006  ' ValidateSBLReference returned 
 Private Type BlockToken
     InputAlias  As String   ' e.g. "Ps", "1 Cor" -- empty string if inherited from context
     BookID      As Long     ' 0 if unresolved
-    CanonName   As String   ' canonical name from ResolveAlias
+    canonName   As String   ' canonical name from ResolveAlias
     Chapter     As Long
     StartVerse  As Long     ' after DecomposeVerseSpec
     EndVerse    As Long     ' = StartVerse if not a range
@@ -148,13 +148,13 @@ Private Function SliceArray(arr() As String, startIdx As Long) As String()
         SliceArray = Split(vbNullString)  ' returns Array(""); Join gives ""
         Exit Function
     End If
-    Dim result() As String
-    ReDim result(0 To count - 1)
+    Dim Result() As String
+    ReDim Result(0 To count - 1)
     Dim i As Long
     For i = 0 To count - 1
-        result(i) = arr(startIdx + i)
+        Result(i) = arr(startIdx + i)
     Next i
-    SliceArray = result
+    SliceArray = Result
 End Function
 
 ' =============================================================================
@@ -202,8 +202,8 @@ Private Function TokenizeCitationBlock(raw As String) As BlockToken()
     Dim normalized As String
     normalized = NormalizeBlockInput(raw)
 
-    Dim segments() As String
-    segments = Split(normalized, ";")
+    Dim Segments() As String
+    Segments = Split(normalized, ";")
 
     Dim tokens() As BlockToken
     Dim tokenCount As Long
@@ -215,9 +215,9 @@ Private Function TokenizeCitationBlock(raw As String) As BlockToken()
     Dim contextChapter As Long:   contextChapter = 0
 
     Dim segIdx As Long
-    For segIdx = LBound(segments) To UBound(segments)
+    For segIdx = LBound(Segments) To UBound(Segments)
         Dim seg As String
-        seg = Trim$(segments(segIdx))
+        seg = Trim$(Segments(segIdx))
         If seg = "" Then GoTo NEXT_SEG
 
         ' --- Detect book alias ---
@@ -261,7 +261,7 @@ Private Function TokenizeCitationBlock(raw As String) As BlockToken()
             Dim chErrTok As BlockToken
             chErrTok.InputAlias = detectedAlias
             chErrTok.BookID = contextBookID
-            chErrTok.CanonName = contextCanon
+            chErrTok.canonName = contextCanon
             chErrTok.SegText = seg
             chErrTok.ErrorCode = E_CHAPTER_MISSING
             chErrTok.ErrorText = "No chapter could be inferred for segment: """ & seg & """"
@@ -282,20 +282,20 @@ Private Function TokenizeCitationBlock(raw As String) As BlockToken()
             Dim tok As BlockToken
             tok.InputAlias = detectedAlias
             tok.BookID = contextBookID
-            tok.CanonName = contextCanon
+            tok.canonName = contextCanon
             tok.Chapter = contextChapter
             tok.SegText = seg
 
-            Dim sv As Long, ev As Long
+            Dim sV As Long, eV As Long
             Dim isRng As Boolean
-            isRng = DecomposeVerseSpec(vsRaw, sv, ev)
+            isRng = DecomposeVerseSpec(vsRaw, sV, eV)
 
-            If sv = 0 And Not IsNumeric(vsRaw) Then
+            If sV = 0 And Not IsNumeric(vsRaw) Then
                 tok.ErrorCode = E_VERSE_MALFORMED
                 tok.ErrorText = "VerseSpec not numeric and not a valid range: """ & vsRaw & """"
             Else
-                tok.StartVerse = sv
-                tok.EndVerse = ev
+                tok.StartVerse = sV
+                tok.EndVerse = eV
                 tok.IsRange = isRng
             End If
 
@@ -335,7 +335,7 @@ End Sub
 ' =============================================================================
 Private Function FormatTokenRef(t As BlockToken) As String
     Dim s As String
-    s = t.CanonName & " " & t.Chapter & ":" & t.StartVerse
+    s = t.canonName & " " & t.Chapter & ":" & t.StartVerse
     If t.IsRange Then s = s & "-" & t.EndVerse
     FormatTokenRef = s
 End Function
@@ -368,7 +368,7 @@ Public Sub VerifyCitationBlock(rawBlock As String)
         ' Validate start verse
         Dim okStart As Boolean
         okStart = aeBibleCitationClass.ValidateSBLReference( _
-            t.BookID, t.CanonName, t.Chapter, CStr(t.StartVerse), ModeSBL, True)
+            t.BookID, t.canonName, t.Chapter, CStr(t.StartVerse), ModeSBL, True)
         If Not okStart Then
             Debug.Print "FAIL [" & E_SBL_FAIL & "]: " & FormatTokenRef(t) & " (start verse failed ValidateSBLReference)"
             failCount = failCount + 1
@@ -379,7 +379,7 @@ Public Sub VerifyCitationBlock(rawBlock As String)
         If t.IsRange Then
             Dim okEnd As Boolean
             okEnd = aeBibleCitationClass.ValidateSBLReference( _
-                t.BookID, t.CanonName, t.Chapter, CStr(t.EndVerse), ModeSBL, True)
+                t.BookID, t.canonName, t.Chapter, CStr(t.EndVerse), ModeSBL, True)
             If Not okEnd Then
                 Debug.Print "FAIL [" & E_SBL_FAIL & "]: " & FormatTokenRef(t) & " (end verse " & t.EndVerse & " failed ValidateSBLReference)"
                 failCount = failCount + 1
