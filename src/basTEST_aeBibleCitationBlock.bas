@@ -345,7 +345,7 @@ End Function
 ' Tokenizes rawBlock; validates each atomic verse endpoint via
 ' aeBibleCitationClass.ValidateSBLReference(ModeSBL); prints PASS/FAIL.
 ' =============================================================================
-Public Sub VerifyCitationBlock(rawBlock As String)
+Public Function VerifyCitationBlock(rawBlock As String) As Long
     Dim tokens() As BlockToken
     tokens = TokenizeCitationBlock(rawBlock)
 
@@ -394,7 +394,8 @@ NEXT_TOK:
     Next i
 
     Debug.Print "--- " & passCount & " passed, " & failCount & " failed. ---"
-End Sub
+    VerifyCitationBlock = failCount
+End Function
 
 ' =============================================================================
 ' Test_VerifyCitationBlock  (Public)
@@ -419,26 +420,35 @@ End Sub
 ' =============================================================================
 ' Test_VerifyCitationBlock_Negative  (Public)
 ' 3-case negative test: bad alias, verse out of range, chapter out of range.
-' Expected: 3 failures.
+' Each case passes when VerifyCitationBlock correctly rejects the invalid input
+' (failCount >= 1). Uses a local aeAssertClass instance so the test can run
+' standalone or as part of Run_All_SBL_Tests.
 ' =============================================================================
 Public Sub Test_VerifyCitationBlock_Negative()
-    Debug.Print "=== Test_VerifyCitationBlock_Negative (3 failures expected) ==="
+    Debug.Print "=== Test_VerifyCitationBlock_Negative ==="
 
-    ' Case 1: Bad alias — "Jerimiah" is a misspelling; confirmed absent from alias map
-    Dim rawBadAlias As String
-    rawBadAlias = "Gen 1:1; Jerimiah 33:11; Mal 1:1"
+    Dim localAssert As aeAssertClass
+    Set localAssert = New aeAssertClass
+    localAssert.Initialize
+
+    ' Case 1: Bad alias - "Jerimiah" is a misspelling; confirmed absent from alias map
     Debug.Print "--- Case 1: Bad alias (Jerimiah) ---"
-    VerifyCitationBlock rawBadAlias
+    Dim fc1 As Long
+    fc1 = VerifyCitationBlock("Gen 1:1; Jerimiah 33:11; Mal 1:1")
+    localAssert.AssertTrue fc1 >= 1, "Case 1: Bad alias (Jerimiah) correctly rejected"
 
-    ' Case 2: Verse out of range — Ps 103 has 22 verses; verse 200 is invalid
-    Dim rawBadVerse As String
-    rawBadVerse = "Ps 103:8" & ChrW(8211) & "200"
+    ' Case 2: Verse out of range - Ps 103 has 22 verses; verse 200 is invalid
     Debug.Print "--- Case 2: Verse out of range (Ps 103:8-200) ---"
-    VerifyCitationBlock rawBadVerse
+    Dim fc2 As Long
+    fc2 = VerifyCitationBlock("Ps 103:8" & ChrW(8211) & "200")
+    localAssert.AssertTrue fc2 >= 1, "Case 2: Verse out of range (Ps 103:8-200) correctly rejected"
 
-    ' Case 3: Chapter out of range — Jeremiah has 52 chapters; chapter 99 is invalid
-    Dim rawBadChapter As String
-    rawBadChapter = "Jer 99:1"
+    ' Case 3: Chapter out of range - Jeremiah has 52 chapters; chapter 99 is invalid
     Debug.Print "--- Case 3: Chapter out of range (Jer 99:1) ---"
-    VerifyCitationBlock rawBadChapter
+    Dim fc3 As Long
+    fc3 = VerifyCitationBlock("Jer 99:1")
+    localAssert.AssertTrue fc3 >= 1, "Case 3: Chapter out of range (Jer 99:1) correctly rejected"
+
+    localAssert.Terminate
+    Set localAssert = Nothing
 End Sub
