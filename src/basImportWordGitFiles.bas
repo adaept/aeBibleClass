@@ -43,6 +43,9 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
     intImported = 0
     intSkipped = 0
 
+    Dim colSkipped As Collection
+    Set colSkipped = New Collection
+
     Dim strFullPath As Variant
     For Each strFullPath In colFiles
         strFile = Mid$(strFullPath, InStrRev(strFullPath, "\") + 1)
@@ -52,11 +55,11 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
                 ImportVBAFile CStr(strFullPath)
                 intImported = intImported + 1
             Else
-                Debug.Print vbCompName, "skipped (already exists)", "in Sub ImportAllVBAFiles"
+                colSkipped.Add vbCompName & " (already exists)"
                 intSkipped = intSkipped + 1
             End If
         Else
-            Debug.Print strFile, "skipped (ThisDocument)", "in Sub ImportAllVBAFiles"
+            colSkipped.Add strFile & " (ThisDocument)"
             intSkipped = intSkipped + 1
         End If
     Next strFullPath
@@ -66,9 +69,23 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
                 "Skipped: " & intSkipped, _
                 "in Sub ImportAllVBAFiles"
 
+    Dim strSkippedItem As Variant
+    Dim strSkippedList As String
+    strSkippedList = ""
+    For Each strSkippedItem In colSkipped
+        Debug.Print "  skipped:", CStr(strSkippedItem), "in Sub ImportAllVBAFiles"
+        strSkippedList = strSkippedList & vbCrLf & "  " & strSkippedItem
+    Next strSkippedItem
+
+    Dim strMsgSkipped As String
+    strMsgSkipped = ""
+    If intSkipped > 0 Then
+        strMsgSkipped = vbCrLf & vbCrLf & "Skipped files:" & strSkippedList
+    End If
+
     MsgBox "Import complete." & vbCrLf & vbCrLf & _
            "Imported: " & intImported & vbCrLf & _
-           "Skipped:  " & intSkipped, _
+           "Skipped:  " & intSkipped & strMsgSkipped, _
            vbInformation, "Import Complete"
 End Sub
 
