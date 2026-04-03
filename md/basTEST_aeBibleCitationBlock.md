@@ -1,6 +1,6 @@
 # Plan: SBL Citation Block Verifier
 **Date:** 2026-04-01
-**Target module:** `src/basTEST_VerifyCitationBlock.bas` (new standard module)
+**Target module:** `src/basTEST_aeBibleCitationBlock.bas` (new standard module)
 
 ---
 
@@ -30,7 +30,7 @@ Rom 1:20; 8:15; 1 Cor 8:6; 14:33; Gal 3:20; Eph 4:6; Heb 13:6; 1 Pet 1:17;
 
 ## Architecture
 
-All new code goes in a new standard module `basTEST_VerifyCitationBlock.bas`. The class `aeBibleCitationClass.cls` is **not modified**. Existing class methods are called via the predeclared `aeBibleCitationClass` singleton instance.
+All new code goes in a new standard module `basTEST_aeBibleCitationBlock.bas`. The class `aeBibleCitationClass.cls` is **not modified**. Existing class methods are called via the predeclared `aeBibleCitationClass` singleton instance.
 
 ---
 
@@ -234,7 +234,7 @@ VerifyCitationBlock rawBlock
 
 ## Implementation Sequence
 
-1. Create `src/basTEST_VerifyCitationBlock.bas` — `BlockToken` type, error constants, module header ✓
+1. Create `src/basTEST_aeBibleCitationBlock.bas` — `BlockToken` type, error constants, module header ✓
 2. Implement `NormalizeBlockInput` and `TryResolveAlias` ✓
 3. Implement `DetectBookAliasInSegment` and `DecomposeVerseSpec` ✓
 4. Implement `TokenizeCitationBlock` ✓
@@ -248,7 +248,7 @@ VerifyCitationBlock rawBlock
 
 ### 2026-04-01 — Initial implementation
 
-`src/basTEST_VerifyCitationBlock.bas` created with all 9 functions from the plan. CRLF normalized via WSL Python.
+`src/basTEST_aeBibleCitationBlock.bas` created with all 9 functions from the plan. CRLF normalized via WSL Python.
 
 **Helper added beyond plan:** `SliceArray` — a private helper required by `DetectBookAliasInSegment` to slice a `String()` array from a given index to `UBound`. VBA has no built-in array slice; `Join(Array(...))` cannot take a sub-range directly. One private sub added: `AppendToken` — grows the `BlockToken()` array by one and stores the new token. Kept private; called only from `TokenizeCitationBlock`.
 

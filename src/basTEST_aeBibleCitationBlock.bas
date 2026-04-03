@@ -1,14 +1,14 @@
-Attribute VB_Name = "basTEST_VerifyCitationBlock"
+Attribute VB_Name = "basTEST_aeBibleCitationBlock"
 Option Explicit
 Option Compare Text
 Option Private Module
 
 ' =============================================================================
-' basTEST_VerifyCitationBlock
+' basTEST_aeBibleCitationBlock
 ' Verifies SBL correctness of a study Bible citation block.
 ' Implements book-context propagation: after "Ps", references like "23:1; 28:7"
 ' inherit Ps from the preceding segment (standard SBL citation format).
-' See md/SBL_VerifyCitationBlock.md for full design.
+' See md/basTEST_aeBibleCitationBlock.md for full design.
 ' =============================================================================
 
 ' --- Error constants ---------------------------------------------------------
