@@ -2618,14 +2618,18 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
                     eV = CLng(Mid$(vsRaw, dp + 1))
                     isRng = True
                 Else
-                    GoTo NEXT_VS   ' malformed range — skip
+                    ' malformed range (e.g. ":-11") — sentinel verse 0 produces FAIL
+                    Result.Add ctxCanon & " " & ctxChapter & ":0"
+                    GoTo NEXT_VS
                 End If
             ElseIf IsNumeric(vsRaw) Then
                 sV = CLng(vsRaw)
                 eV = sV
                 isRng = False
             Else
-                GoTo NEXT_VS   ' malformed verse spec — skip
+                ' malformed verse spec — sentinel verse 0 produces FAIL
+                Result.Add ctxCanon & " " & ctxChapter & ":0"
+                GoTo NEXT_VS
             End If
 
             Dim canon As String

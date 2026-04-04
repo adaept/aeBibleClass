@@ -23,7 +23,8 @@ Public Function VerifyCitationBlock(rawBlock As String) As Long
     Dim passCount As Long
     Dim failCount As Long
 
-    Set Items = aeBibleCitationClass.ParseCitationBlock(rawBlock)
+    Set Items = aeBibleCitationClass.SortCitationBlock( _
+        aeBibleCitationClass.ParseCitationBlock(rawBlock))
 
     Dim item As Variant
     For Each item In Items
@@ -105,22 +106,33 @@ End Function
 
 ' =============================================================================
 ' Test_VerifyCitationBlock  (Public)
-' Positive integration test - full 35-token study Bible citation block.
-' All tokens expected to pass. En dashes use ChrW(8211); NormalizeRawInput
-' in ParseCitationBlock converts them to ASCII hyphen before parsing.
+' Integration test — 35-token study Bible citation block.
+' Input is deliberately out of canonical order and contains one malformed
+' verse spec (103:-11). Expected: 34 PASS, 1 FAIL; output in canonical order.
+' En dashes use ChrW(8211); NormalizeRawInput converts them to ASCII hyphen.
+' Expected result after sort and fix:
+'   "Gen 1:27; Num 14:18; Deut 32:6; Josh 1:9; 1 Sam 2:2; " & _
+'   "1 Chr 29:10-13; " & _
+'   "Ps 19:1-2; 23:1; 28:7; 68:5; " & _
+'   "103:8-11; 111:3-5; " & _
+'   "145:8-9,17; Isa 40:28; 63:16; 64:8; " & _
+'   "Jer 33:11; Nah 1:3; Mal 2:10-15; " & _
+'   "Matt 6:9; 7:11; 23:9; John 3:16; 4:24; " & _
+'   "Rom 1:20; 8:15; 1 Cor 8:6; 14:33; Gal 3:20; Eph 4:6; " & _
+'   "Heb 13:6; 1 Pet 1:17; 2 Pet 3:9; 1 John 4:16"
 ' =============================================================================
 Public Sub Test_VerifyCitationBlock()
     Dim rawBlock As String
     rawBlock = "Gen 1:27; Num 14:18; Deut 32:6; Josh 1:9; 1 Sam 2:2; " & _
                "1 Chr 29:10" & ChrW(8211) & "13; " & _
-               "Ps 19:1" & ChrW(8211) & "2; 23:1; 28:7; 68:5; " & _
-               "103:8" & ChrW(8211) & "11; 111:3" & ChrW(8211) & "5; " & _
-               "145:8" & ChrW(8211) & "9,17; Isa 40:28; 63:16; 64:8; " & _
-               "Jer 33:11; Nah 1:3; Mal 2:10" & ChrW(8211) & "15; " & _
                "Matt 6:9; 7:11; 23:9; John 3:16; 4:24; " & _
+               "Ps 19:1" & ChrW(8211) & "2; 23:1; 28:7; 68:5; " & _
+               "103:-11; 111:3" & ChrW(8211) & "5; " & _
+               "145:8" & ChrW(8211) & "9,17; Isa 40:28; 63:16; 64:8; " & _
+               "1 John 4:16; Jer 33:11; Nah 1:3; Mal 2:10" & ChrW(8211) & "15; " & _
                "Rom 1:20; 8:15; 1 Cor 8:6; 14:33; Gal 3:20; Eph 4:6; " & _
-               "Heb 13:6; 1 Pet 1:17; 2 Pet 3:9; 1 John 4:16"
-    Debug.Print "=== Test_VerifyCitationBlock (positive, 35 tokens expected) ==="
+               "Heb 13:6; 1 Pet 1:17; 2 Pet 3:9"
+    Debug.Print "=== Test_VerifyCitationBlock (35 tokens: 34 pass, 1 fail expected) ==="
     VerifyCitationBlock rawBlock
 End Sub
 

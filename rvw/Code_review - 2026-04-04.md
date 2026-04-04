@@ -314,3 +314,47 @@ to 6,600,000,000+, which overflows `Long` (max ~2,147,483,647).
 key = 66 × 1,000,000 + 150 × 10,000 + 176 = 67,500,176 — well within `Long` range.
 Biblical chapter and verse maxima (150 chapters in Psalms; 176 verses in Ps 119) stay
 within the 10,000 and 10,000 slots respectively.
+
+---
+
+## Test_VerifyCitationBlock — Extended Test and Fixes — 2026-04-04
+
+### Changes to `Test_VerifyCitationBlock`
+
+`Test_VerifyCitationBlock` was updated to exercise two additional scenarios:
+
+1. **Out-of-canonical-order input** — Matt/John appear before Psalms; 1 John appears
+   before Jeremiah. Verifies that output is sorted into canonical book order.
+2. **Malformed verse spec** — `103:-11` (leading dash, empty left side). Verifies that
+   the bad entry is flagged as FAIL rather than silently dropped.
+
+Expected result: 35 tokens, 34 PASS, 1 FAIL. Output in canonical book order.
+
+### Fix — Malformed verse spec silently dropped (`ParseCitationBlock`)
+
+**Symptom:** `103:-11` was not flagged as FAIL; token count showed 34 instead of 35.
+
+**Cause:** In `ParseCitationBlock`, when a verse spec is malformed (e.g. `-11` has an
+empty left side: `Left$("-11", 0)` is not numeric), the code reached `GoTo NEXT_VS` and
+silently skipped the token without adding anything to the result Collection.
+
+**Fix:** Both malformed-range and malformed-non-range branches now add a sentinel entry
+`ctxCanon & " " & ctxChapter & ":0"` before `GoTo NEXT_VS`. Verse 0 is always rejected
+by `ValidateSBLReference`, so the sentinel produces a FAIL in `VerifyCitationBlock` and
+is counted in the total. The empty-string guard (`If vsRaw = ""`) is unchanged — a
+trailing comma producing an empty segment is a benign skip, not a FAIL.
+
+### Fix — Output not sorted (`VerifyCitationBlock`)
+
+**Cause:** `VerifyCitationBlock` called `ParseCitationBlock` directly; result was in
+input order.
+
+**Fix:** Wrapped with `SortCitationBlock`:
+
+```vb
+Set Items = aeBibleCitationClass.SortCitationBlock( _
+    aeBibleCitationClass.ParseCitationBlock(rawBlock))
+```
+
+Output is now always in canonical book order (Gen=1 through Rev=66), then chapter,
+then start verse.
