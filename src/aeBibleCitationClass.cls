@@ -216,6 +216,7 @@ Public Function ComposeList(raw As String) As Collection
     Dim Result As New Collection
     Dim i As Long
 
+    raw = NormalizeRawInput(raw)
     ComposeList_Internal raw, list
     '------------------------------------------
     ' Stage 13 - Contextual Shorthand Expansion
@@ -266,6 +267,10 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
     Dim havePrev As Boolean
     Dim seg As String
     Dim p As Long
+    Dim cp13 As Long    ' Stage 13a: colon position
+    Dim ch13 As String  ' Stage 13a: chapter string
+    Dim vr13 As String  ' Stage 13a: verse or verse-range string
+    Dim dp13 As Long    ' Stage 13a: dash position within verse range
 
     capacity = 8
     ReDim Result.ItemType(0 To capacity - 1)
@@ -302,6 +307,22 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
                 Result.Ranges(count).EndRef.BookID = prevRef.BookID
                 Result.Ranges(count).EndRef.Chapter = prevRef.Chapter
                 Result.Ranges(count).EndRef.Verse = CLng(Mid$(seg, p + 1))
+            '------------------------------------------
+            ' Stage 13a: chapter:verse-range with inherited book
+            ' e.g. "103:8-11" after "Ps 19:1"
+            '------------------------------------------
+            ElseIf havePrev And IsBooklessChapRef(seg) Then
+                cp13 = InStr(seg, ":")
+                ch13 = Left$(seg, cp13 - 1)
+                vr13 = Mid$(seg, cp13 + 1)
+                dp13 = InStr(vr13, "-")
+                Result.ItemType(count) = 2
+                Result.Ranges(count).StartRef.BookID = prevRef.BookID
+                Result.Ranges(count).StartRef.Chapter = CLng(ch13)
+                Result.Ranges(count).StartRef.Verse = CLng(Left$(vr13, dp13 - 1))
+                Result.Ranges(count).EndRef.BookID = prevRef.BookID
+                Result.Ranges(count).EndRef.Chapter = CLng(ch13)
+                Result.Ranges(count).EndRef.Verse = CLng(Mid$(vr13, dp13 + 1))
             Else
                 Result.ItemType(count) = 2
                 Result.Ranges(count) = ComposeRange(seg)
@@ -324,6 +345,16 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
                     Result.Refs(count).Chapter = prevRef.Chapter
                     Result.Refs(count).Verse = CLng(seg)
                 End If
+            '------------------------------------------
+            ' Stage 13a: chapter:verse with inherited book
+            ' e.g. "23:1" after "Ps 19:1"
+            '------------------------------------------
+            ElseIf havePrev And IsBooklessChapRef(seg) Then
+                cp13 = InStr(seg, ":")
+                Result.ItemType(count) = 1
+                Result.Refs(count).BookID = prevRef.BookID
+                Result.Refs(count).Chapter = CLng(Left$(seg, cp13 - 1))
+                Result.Refs(count).Verse = CLng(Mid$(seg, cp13 + 1))
             Else
                 Result.ItemType(count) = 1
                 Result.Refs(count) = ParseReferenceRef(seg)
@@ -675,7 +706,7 @@ Public Function IsListSegment(ByVal raw As String) As Boolean
 End Function
 
 Public Function ParseScripture(ByVal raw As String) As Variant
-    raw = Trim$(raw)
+    raw = NormalizeRawInput(raw)
 
     '------------------------------------------
     ' List
@@ -1649,6 +1680,20 @@ Private Function IsNumericRange(ByVal seg As String) As Boolean
 End Function
 
 '=====================================================
+' IsBooklessChapRef  (Stage 13a)
+' Returns True when seg begins with a numeric chapter
+' and a colon — meaning it is a chapter:verse or
+' chapter:verse-range segment with no book alias.
+' Examples: "23:1", "103:8-11"
+'=====================================================
+Private Function IsBooklessChapRef(ByVal seg As String) As Boolean
+    Dim p As Long
+    p = InStr(seg, ":")
+    If p = 0 Then Exit Function
+    IsBooklessChapRef = IsNumeric(Left$(seg, p - 1))
+End Function
+
+'=====================================================
 ' Stage 14 - Canonical Compression
 '=====================================================
 ' Purpose:
@@ -2411,6 +2456,189 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FormatCanonicalString of Class aeSBL_Citation_Class"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' NormalizeRawInput  (Public)
+' Strips CR/LF, collapses multiple spaces, and
+' replaces en-dash (U+2013) with ASCII hyphen.
+' Called at the entry of ComposeList, ParseScripture,
+' and ParseCitationBlock before any parsing begins.
+'=====================================================
+Public Function NormalizeRawInput(ByVal raw As String) As String
+    On Error GoTo PROC_ERR
+    Dim s As String
+    s = raw
+    s = Replace(s, vbCrLf, " ")
+    s = Replace(s, vbCr, " ")
+    s = Replace(s, vbLf, " ")
+    s = Replace(s, ChrW(8211), "-")   ' en-dash -> ASCII hyphen
+    Dim prev As String
+    Do
+        prev = s
+        s = Replace(s, "  ", " ")
+    Loop While s <> prev
+    NormalizeRawInput = Trim$(s)
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NormalizeRawInput of Class aeSBL_Citation_Class"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' ParseCitationBlock  (Public)
+' Two-level parser for study Bible citation blocks.
+'   Outer split: ";" — major segments; book context
+'                      propagates across segments.
+'   Inner split: "," — verse sub-items within segment.
+' Calls NormalizeRawInput first (strips line breaks,
+' normalizes en-dash to ASCII hyphen).
+' Raises on unresolved book alias.
+' Returns a Collection of canonical reference strings.
+' Example input:
+'   "Ps 19:1-2; 23:1; 103:8-11; 145:8-9,17; Isa 40:28"
+' Example output Collection:
+'   "Psalms 19:1-2", "Psalms 23:1", "Psalms 103:8-11",
+'   "Psalms 145:8-9", "Psalms 145:17", "Isaiah 40:28"
+'=====================================================
+Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
+    On Error GoTo PROC_ERR
+    Dim normalized As String
+    normalized = NormalizeRawInput(rawBlock)
+
+    Dim Result As New Collection
+    Dim segs() As String
+    segs = Split(normalized, ";")
+
+    Dim ctxBookID  As Long:   ctxBookID = 0
+    Dim ctxCanon   As String: ctxCanon = ""
+    Dim ctxChapter As Long:   ctxChapter = 0
+
+    Dim si As Long
+    For si = LBound(segs) To UBound(segs)
+        Dim seg As String
+        seg = Trim$(segs(si))
+        If seg = "" Then GoTo NEXT_SEG
+
+        Dim parts() As String
+        parts = Split(seg, " ")
+        Dim p0 As String
+        p0 = parts(0)
+        Dim refPart As String
+        refPart = ""
+        Dim newBook As Boolean
+        newBook = False
+
+        '------------------------------------------
+        ' Detect book alias
+        ' Case 1: single digit -> two-token alias
+        '------------------------------------------
+        If Len(p0) = 1 And p0 >= "1" And p0 <= "9" Then
+            If UBound(parts) >= 1 Then
+                Dim tt As String
+                tt = p0 & " " & parts(1)
+                Dim ttID As Long
+                Dim ttCan As String
+                On Error Resume Next
+                ttCan = ResolveAlias(tt, ttID)
+                On Error GoTo PROC_ERR
+                If ttCan <> "" Then
+                    ctxBookID = ttID
+                    ctxCanon = ttCan
+                    newBook = True
+                    If Len(seg) > Len(tt) + 1 Then
+                        refPart = Trim$(Mid$(seg, Len(tt) + 2))
+                    End If
+                End If
+            End If
+        End If
+
+        '------------------------------------------
+        ' Case 2: letter prefix -> single-token alias
+        '------------------------------------------
+        If Not newBook And p0 Like "[A-Za-z]*" Then
+            Dim stID As Long
+            Dim stCan As String
+            On Error Resume Next
+            stCan = ResolveAlias(p0, stID)
+            On Error GoTo PROC_ERR
+            If stCan <> "" Then
+                ctxBookID = stID
+                ctxCanon = stCan
+                newBook = True
+                If Len(seg) > Len(p0) + 1 Then
+                    refPart = Trim$(Mid$(seg, Len(p0) + 2))
+                End If
+            Else
+                Err.Raise vbObjectError + 1001, , _
+                    "Cannot resolve alias: """ & p0 & """"
+            End If
+        End If
+
+        '------------------------------------------
+        ' Case 3: no new book — bare chapter:verse
+        '------------------------------------------
+        If Not newBook Then refPart = seg
+
+        '------------------------------------------
+        ' Parse chapter from refPart
+        '------------------------------------------
+        Dim colonPos As Long
+        colonPos = InStr(refPart, ":")
+        Dim vsStr As String
+        If colonPos > 0 Then
+            Dim chStr As String
+            chStr = Trim$(Left$(refPart, colonPos - 1))
+            vsStr = Trim$(Mid$(refPart, colonPos + 1))
+            If IsNumeric(chStr) Then ctxChapter = CLng(chStr)
+        Else
+            vsStr = Trim$(refPart)
+        End If
+
+        '------------------------------------------
+        ' Split verse spec on "," for "8-9,17"
+        '------------------------------------------
+        Dim vss() As String
+        vss = Split(vsStr, ",")
+
+        Dim vi As Long
+        For vi = LBound(vss) To UBound(vss)
+            Dim vsRaw As String
+            vsRaw = Trim$(vss(vi))
+            If vsRaw = "" Then GoTo NEXT_VS
+
+            Dim sV As Long, eV As Long, isRng As Boolean
+            Dim dp As Long
+            dp = InStr(vsRaw, "-")
+            If dp > 0 And IsNumeric(Left$(vsRaw, dp - 1)) And IsNumeric(Mid$(vsRaw, dp + 1)) Then
+                sV = CLng(Left$(vsRaw, dp - 1))
+                eV = CLng(Mid$(vsRaw, dp + 1))
+                isRng = True
+            ElseIf IsNumeric(vsRaw) Then
+                sV = CLng(vsRaw)
+                eV = sV
+                isRng = False
+            Else
+                GoTo NEXT_VS   ' malformed verse spec — skip
+            End If
+
+            Dim canon As String
+            canon = ctxCanon & " " & ctxChapter & ":" & sV
+            If isRng Then canon = canon & "-" & eV
+            Result.Add canon
+NEXT_VS:
+        Next vi
+
+NEXT_SEG:
+    Next si
+
+    Set ParseCitationBlock = Result
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCitationBlock of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 

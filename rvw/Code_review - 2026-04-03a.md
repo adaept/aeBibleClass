@@ -269,3 +269,30 @@ No structural change to the canonical grammar — every canonical output item is
 Added note confirming that Stage 13a resolves all inherited-book inputs to fully-qualified
 `CanonicalBookRef` form before output. The bare `ChapterSpec` form is input-only and
 never appears in canonical output.
+
+---
+
+## Implementation Complete — 2026-04-04
+
+### Files changed
+
+**`src/aeBibleCitationClass.cls`**
+- `NormalizeRawInput` (new Public) — strips CR/LF, collapses spaces, replaces en-dash with ASCII hyphen
+- `IsBooklessChapRef` (new Private) — returns True when left of `:` is numeric; used by Stage 13a
+- `ComposeList_Internal` — two new `ElseIf` branches for Stage 13a: `chapter:verse` and `chapter:verse-range` with inherited book; four new variables declared (`cp13`, `ch13`, `vr13`, `dp13`)
+- `ComposeList` — added `raw = NormalizeRawInput(raw)` before `ComposeList_Internal`
+- `ParseScripture` — replaced `raw = Trim$(raw)` with `raw = NormalizeRawInput(raw)`
+- `ParseCitationBlock` (new Public) — two-level split (`";"` then `","`) with book-context propagation; replaces `TokenizeCitationBlock` from the block module
+
+**`src/basTEST_aeBibleCitationClass.bas`**
+- `Test_Stage13a_BookContextPropagation` (new) — 3 positive assertions + 4 negative assertions
+- `Run_All_SBL_Tests` — added `Test_Stage13a_BookContextPropagation` after `Test_Stage13_ContextShorthand`
+
+**`src/basTEST_aeBibleCitationBlock.bas`**
+- Removed: `BlockToken` type, error constants, `NormalizeBlockInput`, `TryResolveAlias`, `DetectBookAliasInSegment`, `SliceArray`, `DecomposeVerseSpec`, `TokenizeCitationBlock`, `AppendToken`, `FormatTokenRef`, `Test_VerifyCitationBlock_Negative`
+- `VerifyCitationBlock` rewritten — calls `aeBibleCitationClass.ParseCitationBlock`; parses each returned canonical string; validates via `ValidateSBLReference(ModeSBL)`; returns failCount
+- `Test_VerifyCitationBlock` retained unchanged (positive 35-token integration test)
+
+### Pre-existing — no change required
+- `IsRangeSegment` — already handled en-dash (ChrW(8211)) ✓
+- `RangeDetection` — already handled en-dash ✓

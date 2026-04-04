@@ -156,6 +156,7 @@ Public Sub Run_All_SBL_Tests()
     Test_Stage11_ListComposition
     Test_Stage12_FinalParser
     Test_Stage13_ContextShorthand
+    Test_Stage13a_BookContextPropagation
     Test_Stage14_CanonicalCompression
     Test_Stage15_CanonicalValidation
     Test_Stage16_CanonicalRangeBuilder
@@ -337,6 +338,78 @@ Public Sub Test_Stage13_ContextShorthand()
     'Expected
     'Romans 8
     'Romans 9
+End Sub
+
+Public Sub Test_Stage13a_BookContextPropagation()
+    On Error GoTo PROC_ERR
+    Dim c As Collection
+    Dim valid As Boolean
+    Dim ok As Boolean
+
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_Stage13a_BookContextPropagation"
+    Debug.Print "------------------------------------------"
+
+    '------------------------------------------
+    ' Positive: single-book propagation
+    '------------------------------------------
+    Set c = aeBibleCitationClass.ComposeList("Ps 19:1; 23:1; 28:7")
+    aeAssert.AssertEqual 3, c.count, "Stage13a: 3 Psalm refs"
+    aeAssert.AssertEqual "Psalms 19:1", c(1), "Stage13a: Ps 19:1"
+    aeAssert.AssertEqual "Psalms 23:1", c(2), "Stage13a: Ps 23:1 inherited"
+    aeAssert.AssertEqual "Psalms 28:7", c(3), "Stage13a: Ps 28:7 inherited"
+
+    '------------------------------------------
+    ' Positive: cross-book transition
+    '------------------------------------------
+    Set c = aeBibleCitationClass.ComposeList("Ps 103:8; Isa 40:28; 63:16")
+    aeAssert.AssertEqual 3, c.count, "Stage13a: cross-book count"
+    aeAssert.AssertEqual "Psalms 103:8", c(1), "Stage13a: Ps 103:8"
+    aeAssert.AssertEqual "Isaiah 40:28", c(2), "Stage13a: Isa 40:28"
+    aeAssert.AssertEqual "Isaiah 63:16", c(3), "Stage13a: Isa 63:16 inherited"
+
+    '------------------------------------------
+    ' Positive: range with inherited book
+    '------------------------------------------
+    Set c = aeBibleCitationClass.ComposeList("Ps 19:1-2; 103:8-11")
+    aeAssert.AssertEqual 2, c.count, "Stage13a: Psalm range count"
+    aeAssert.AssertEqual "Psalms 19:1-2", c(1), "Stage13a: Ps 19:1-2"
+    aeAssert.AssertEqual "Psalms 103:8-11", c(2), "Stage13a: Ps 103:8-11 inherited"
+
+    '------------------------------------------
+    ' Negative: bad alias ("Jerimiah" misspelling)
+    '------------------------------------------
+    ok = False
+    On Error Resume Next
+    aeBibleCitationClass.ComposeList "Gen 1:1; Jerimiah 33:11; Mal 1:1"
+    ok = (Err.Number <> 0)
+    Err.Clear
+    On Error GoTo PROC_ERR
+    aeAssert.AssertTrue ok, "Stage13a neg: bad alias (Jerimiah) rejected"
+
+    '------------------------------------------
+    ' Negative: verse out of range (Ps 103:200)
+    '------------------------------------------
+    valid = aeBibleCitationClass.ValidateSBLReference(19, "Psalms", 103, "200", ModeSBL, True)
+    aeAssert.AssertTrue Not valid, "Stage13a neg: Ps 103:200 rejected"
+
+    '------------------------------------------
+    ' Negative: chapter out of range (Jer 99:1)
+    '------------------------------------------
+    valid = aeBibleCitationClass.ValidateSBLReference(24, "Jeremiah", 99, "1", ModeSBL, True)
+    aeAssert.AssertTrue Not valid, "Stage13a neg: Jer 99:1 rejected"
+
+    '------------------------------------------
+    ' Negative: Jude 99 — single-chapter book;
+    ' Chapter=0 normalized to 1; verse 99 > max (25)
+    '------------------------------------------
+    valid = aeBibleCitationClass.ValidateSBLReference(65, "Jude", 0, "99", ModeSBL, True)
+    aeAssert.AssertTrue Not valid, "Stage13a neg: Jude 99 rejected (max verse 25)"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage13a_BookContextPropagation of Module basTEST_aeBibleCitationClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub Test_Stage14_CanonicalCompression()
