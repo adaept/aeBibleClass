@@ -105,7 +105,7 @@ End Function
 
 ' =============================================================================
 ' Test_VerifyCitationBlock  (Public)
-' Positive integration test — full 35-token study Bible citation block.
+' Positive integration test - full 35-token study Bible citation block.
 ' All tokens expected to pass. En dashes use ChrW(8211); NormalizeRawInput
 ' in ParseCitationBlock converts them to ASCII hyphen before parsing.
 ' =============================================================================

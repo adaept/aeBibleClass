@@ -296,3 +296,50 @@ never appears in canonical output.
 ### Pre-existing — no change required
 - `IsRangeSegment` — already handled en-dash (ChrW(8211)) ✓
 - `RangeDetection` — already handled en-dash ✓
+
+---
+
+## Post-Implementation Fixes — 2026-04-04
+
+### Standard Error Handlers Added
+
+Added `On Error GoTo PROC_ERR` / `PROC_EXIT:` / `PROC_ERR:` / `MsgBox` / `Resume PROC_EXIT`
+to all Stage 13a procedures that were missing them.
+
+**`src/aeBibleCitationClass.cls`**
+- `NormalizeRawInput` — added standard handler
+- `ParseCitationBlock` — added standard handler; internal `On Error Resume Next` blocks
+  for alias resolution now restore to `GoTo PROC_ERR` instead of `GoTo 0`
+
+**`src/basTEST_aeBibleCitationClass.bas`**
+- `Test_Stage13a_BookContextPropagation` — added standard handler; `On Error Resume Next`
+  block for bad-alias negative test restores to `GoTo PROC_ERR`
+
+**`src/basTEST_aeBibleCitationBlock.bas`**
+- `VerifyCitationBlock` — replaced non-standard `On Error GoTo PARSE_ERR` / `PARSE_ERR:`
+  handler with standard `PROC_ERR` / `PROC_EXIT` pattern
+
+`IsBooklessChapRef` (Private, trivial) — no handler, consistent with other private helpers
+such as `IsNumericRange`.
+
+### Bug Fix — `ParseCitationBlock` Error 5
+
+**Symptom:** `Test_VerifyCitationBlock` raised Error 5 (Invalid procedure call or argument)
+at the verse-range detection line in `ParseCitationBlock`.
+
+**Cause:** VBA does not short-circuit `And`. The compound condition
+`If dp > 0 And IsNumeric(Left$(vsRaw, dp - 1)) ...` evaluated `Left$(vsRaw, -1)` when
+`dp = 0`, producing Error 5.
+
+**Fix:** Split the condition — `Left$` and `Mid$` calls are now nested inside
+`If dp > 0 Then`, so they execute only when `dp` is valid.
+
+### Documentation — En Dash in Verse Ranges
+
+Updated `md/aeBibleCitationClass.md` to use en dash (`–`, U+2013) for all verse range
+examples throughout the document (e.g. `John 3:16–18`, `Ps 103:8–11`). Changes apply to
+prose, inline code, and `text` blocks in Stages 8–17 and the EBNF parse examples.
+
+Not changed: EBNF grammar terminal strings (`"-"` in `VerseRange ::= Verse "-" Verse`),
+VBA code blocks, and the en-dash normalization NOTE which explicitly contrasts the two
+separator characters.

@@ -1,6 +1,7 @@
 # Deterministic Structural Parser (DSP) for SBL Bible Citation
 
 The parser correctly handles three expansion classes:
+
 - Book-only expansion
 - Single-chapter book normalization
 - Verse shorthand expansion
@@ -109,7 +110,8 @@ Stages 8-12 implement list and range extensions.
     are not implemented in code. They are enforced by metadata lookups.
 
     Example validation flow:
-    ```
+
+    ```text
     Input:  Romans 16:30
     Parser checks metadata:
         GetMaxVerse(BookID=45, Chapter=16) ? 27
@@ -123,8 +125,8 @@ Stages 8-12 implement list and range extensions.
 
 ### Extension Layer Invariant
 
- *** Later stages are are described in the ***
- ***     Extension Layer Classification    ***
+ ***Later stages are are described in the***
+ ***Extension Layer Classification***
 
 - Stages 1-7 parse atomic references only.
 - Stages 8-12 must not modify the behavior of the atomic parser.
@@ -136,22 +138,24 @@ Stages 8-12 implement list and range extensions.
 1. VBA coding often causes Type Mismatch and Bounds errors due to 0 vs. 1 based arrays. Bible books in the Protestant Canon are numbered 1-66. This design will enforce 1-Based arrays throughout the system and use Assert statements to raise errors immediately for any 0-Based array usage. It makes sure that the code and documentation are in synch, so strict task separation is used. The test harness should follow the same principle, and documentation be updated to include code routine names as part of the development strategy.
 
 1a. We are building:
-   - A disciplined, testable VBA module(s)
-   - With documentation synchronized to code
-   - With stage-specific harness testing
-   - With architectural clarity as a primary goal
-   - For a validation-heavy parser, stage isolation is gold.
+
+- A disciplined, testable VBA module(s)
+- With documentation synchronized to code
+- With stage-specific harness testing
+- With architectural clarity as a primary goal
+- For a validation-heavy parser, stage isolation is gold.
 
    That creates:
-   - A formal trace from documentation => procedure
-   - A test harness entry point per stage
-   - A maintenance roadmap.
+
+- A formal trace from documentation => procedure
+- A test harness entry point per stage
+- A maintenance roadmap.
 
 ### Parser Workflow (Pipeline Overview)
 
 The reference engine follows a strict multi-stage pipeline. Each stage has a single responsibility. No stage may perform work assigned to another stage.
 
-```
+```text
 DETERMINISTIC STRUCTURAL PARSER (DSP)
 --------------------------------------
 Stage 1   Normalize
@@ -181,11 +185,14 @@ Stage 14  CanonicalCompression
 ```
 
 The atomic parser is a mathematically deterministic function:
-```
+
+```text
 ParseReference : String -> ScriptureRef
 ```
+
 The extended parser becomes:
-```
+
+```text
 ParseReferenceExtended : String -> ScriptureRef | ScriptureRange | ScriptureList
 ```
 
@@ -196,6 +203,7 @@ ParseReferenceExtended : String -> ScriptureRef | ScriptureRange | ScriptureList
 Later stages may depend on earlier stages. Earlier stages must never depend on later stages.
 
 **Invariant:**
+
 - No user-facing errors are raised during parsing.
 - Only internal invariant violations may Err.Raise.
 
@@ -205,21 +213,25 @@ Later stages may depend on earlier stages. Earlier stages must never depend on l
 Normalize raw input string into a canonical internal working form suitable for tokenization.
 
 **INPUT:**
-```
+
+```text
 rawInput As String
 ```
 
 **Output:**
-```
+
+```text
 normalizedInput As String
 ```
 
 **Responsibilities:**
+
 - Trim leading/trailing whitespace
 - Collapse multiple internal spaces to single space
 - Normalize Unicode punctuation (e.g., smart quotes, en-dash)
 
 **NON-Responsibilities:**
+
 - No alias resolution
 - No numeric parsing
 - No structural interpretation
@@ -230,10 +242,12 @@ normalizedInput As String
 Raw input is NOT preserved. The parser is intentionally stateless and does not retain original user input.
 
 **FAILURE MODEL:**
+
 - Never raises user-facing errors.
 - Returns normalized string (possibly empty).
 
 **CURRENT IMPLEMENTATION STATUS:**
+
 - Trim whitespace Y
 - Preserve original input N (intentionally omitted)
 - Collapse multiple spaces N (pending)
@@ -241,6 +255,7 @@ Raw input is NOT preserved. The parser is intentionally stateless and does not r
 
 **NOTE:**
 Currently partially implemented inline in ParseReferenceStub. Will be refactored to:
+
 ```vb
 NormalizeInput(rawInput As String) As String
 ```
@@ -251,17 +266,20 @@ NormalizeInput(rawInput As String) As String
 Convert normalized input string into primitive lexical tokens. This stage performs ZERO semantic interpretation.
 
 **INPUT:**
-```
+
+```text
 normalizedInput As String
     (Output of Stage 1: NormalizeInput)
 ```
 
 **current Implementation:**
+
 ```vb
 Public Function TokenizeReference(ByVal normalizedInput As String) As LexTokens
 ```
 
 **current behavior:**
+
 - Splits on single space
 - First token => RawAlias
 - Second token (if present) => numeric reference block
@@ -269,6 +287,7 @@ Public Function TokenizeReference(ByVal normalizedInput As String) As LexTokens
 - Extracts up to two numeric substrings
 
 **Output structure:**
+
 ```vb
 Type LexTokens
     RawAlias    As String
@@ -281,6 +300,7 @@ End Type
 ```
 
 **NUMERIC HANDLING RULE:**
+
 - Numeric conversion must NEVER raise runtime errors.
 - Use safe parsing (e.g., IsNumeric check or guarded CLng).
 - If conversion fails:
@@ -290,6 +310,7 @@ End Type
 Stage 2 does NOT determine whether values are canonically valid — only whether they are numeric.
 
 **LIMITATIONS (INTENTIONAL - STAGE 3 WILL HANDLE):**
+
 - Multi-word book names (e.g., "1 John", "Song of Solomon")
 - Range detection (1-3)
 - List detection (1,3,5)
@@ -303,16 +324,19 @@ Stage 2 extracts lexical structure only. Stage 2 NEVER raises runtime errors for
 Stage 1 guarantees single-space separation.
 
 **FAILURE MODEL:**
+
 - Invalid numeric text does NOT raise error.
 - Invalid numeric text is structurally flagged.
 - Structural errors are interpreted in Stage 3.
 
 **Test harness:**
+
 ```vb
 Public Sub Test_TokenizeReference()
 ```
 
 **STATUS:**
+
 - Y Book token extraction
 - Y Numeric extraction (single or colon pair)
 - Y Colon detection
@@ -326,7 +350,8 @@ Public Sub Test_TokenizeReference()
 Resolve RawAlias into canonical BookID. Preserve lexical numeric tokens without interpreting them.
 
 **INPUT:**
-```
+
+```vb
 LexTokens
     RawAlias    As String
     Num1        As Long
@@ -337,6 +362,7 @@ LexTokens
 ```
 
 **Output:**
+
 ```vb
 Type ParsedRef
     BookID      As Long   ' 0 if alias unresolved
@@ -354,6 +380,7 @@ End Type
 ```
 
 **Responsibilities:**
+
 1. Normalize RawAlias (case-insensitive lookup).
 2. Lookup alias in canonical alias dictionary.
 3. If found:
@@ -366,6 +393,7 @@ End Type
 4. Forward Num1/Num2/HasColon and validity flags unchanged.
 
 **NON-Responsibilities:**
+
 - Does NOT assign Chapter or Verse.
 - No structural interpretation.
 - No chapter/verse validation.
@@ -376,6 +404,7 @@ End Type
 Stage 3 NEVER raises runtime errors. Alias resolution failure does NOT terminate parsing.
 
 Instead:
+
 - AliasFound = False
 - BookID = 0
 
@@ -393,7 +422,8 @@ Stage 3 establishes canonical identity ONLY. Structural meaning begins in Stage 
 Convert lexical numeric tokens into structural Chapter/Verse values using canonical metadata (BookID).
 
 **INPUT:**
-```
+
+```vb
 ParsedRef from Stage 3:
     BookID
     AliasFound
@@ -405,7 +435,8 @@ ParsedRef from Stage 3:
 ```
 
 **OUTPUT** (updates ParsedRef):
-```
+
+```vb
 Chapter As Long
 Verse   As Long
 ```
@@ -415,10 +446,12 @@ Stage 4 is the SOLE owner of structural interpretation. It assigns Chapter and V
 
 **PRECONDITION:**
 None. Must tolerate:
+
 - BookID = 0
 - Invalid numeric tokens
 
 **LOGIC:**
+
 ```vb
 ' Default structural assignment (no metadata reliance)
     Chapter = Num1
@@ -444,17 +477,20 @@ End If
 ```
 
 **STRUCTURAL rules:**
+
 - Stage 4 NEVER changes Num1 or Num2.
 - Stage 4 NEVER converts invalid numeric tokens into valid ones.
 - Stage 4 NEVER performs range checking.
 - Stage 4 assigns Chapter/Verse exactly once.
 
 **STRUCTURAL ASSERTIONS** (not semantic validation):
+
 - Chapter >= 0
 - Verse >= 0
 
 **IMPORTANT:**
 Stage 4 determines structure only. Stage 5 validates:
+
 - AliasFound = True
 - Num1IsValid / Num2IsValid
 - Chapter >= 1
@@ -467,11 +503,13 @@ Structural interpretation must not depend on chapter/verse bounds. Metadata (Get
 #### Book-Only Reference Handling
 
 If a reference contains only a book alias and no numeric component, the parser defaults to:
+
 - Chapter = 1
 - Verse = 1
 
 **Example:**
-```
+
+```text
 Input:  "John"
 Output: "John 1:1"
 Input:  "1 Jn"
@@ -490,7 +528,8 @@ When refPart Is Empty, It Is internally replaced with "1:1" before numeric valid
 Determine whether the structurally interpreted reference is canonically valid.
 
 **INPUT:**
-```
+
+```vb
 ParsedRef from Stage 4:
     BookID      As Long
     AliasFound  As Boolean
@@ -502,19 +541,22 @@ ParsedRef from Stage 4:
 ```
 
 **Output:**
-```
+
+```vb
 IsValid   As Boolean
 ErrorCode As Long
 ErrorText As String
 ```
 
 **Responsibility:**
+
 - Validate canonical correctness only.
 - Do NOT modify Chapter or Verse.
 - Do NOT format output.
 - Do NOT raise runtime errors.
 
 **VALIDATION ORDER (STRICT PRECEDENCE):**
+
 1. Alias resolution
 2. Lexical numeric validity
 3. Structural minimums (>=1)
@@ -529,7 +571,8 @@ FIRST FAILURE WINS.
 Produce canonical SBL-style reference string including canonical Book Name.
 
 **INPUT:**
-```
+
+```vb
 BookID  As Long
 Chapter As Long
 Verse   As Long
@@ -537,6 +580,7 @@ Verse   As Long
 
 **PRECONDITION:**
 Stage 5 validation has succeeded. Therefore the following invariants hold:
+
 - `BookID  => [1..66]`
 - `Chapter >= 1`
 - `Chapter <= MaxChapter(BookID)`
@@ -544,11 +588,13 @@ Stage 5 validation has succeeded. Therefore the following invariants hold:
 - If Verse > 0: `Verse = MaxVerse(BookID, Chapter)`
 
 **Output:**
-```
+
+```vb
 NormalizedRef As String
 ```
 
 **LOGIC:**
+
 ```vb
 CanonicalBookName = GetCanonicalBookName(BookID)
 If Verse = 0 Then
@@ -563,6 +609,7 @@ End If
 ```
 
 **Format rules:**
+
 - Exactly one space between BookName and Chapter.
 - No trailing spaces.
 - No zero-padding.
@@ -570,6 +617,7 @@ End If
 - No alias text allowed.
 
 **RESTRICTIONS:**
+
 - Do NOT perform validation here.
 - Do NOT modify structural values.
 - Do NOT consult alias dictionary.
@@ -587,6 +635,7 @@ Construct and return the final immutable ScriptureRef result object. `ParseRefer
 Final state from Stage 5 and (if valid) Stage 6.
 
 **Output:**
+
 ```vb
 Public Type ScriptureRef
     BookID        As Long
@@ -603,7 +652,8 @@ End Type
 ScriptureRef is constructed exactly once inside `ParseReference()`. No other procedure may partially construct it.
 
 **state INVARIANTS:**
-```
+
+```vb
 If IsValid = True Then
     BookID        => [1..66]
     Chapter       >= 1
@@ -620,11 +670,13 @@ If IsValid = False Then
 ```
 
 **ILLEGAL STATES (MUST NEVER OCCUR):**
+
 - `IsValid = True And ErrorCode <> 0`
 - `IsValid = True And NormalizedRef = ""`
 - `IsValid = False And ErrorCode = 0`
 
 **FAILURE MODEL:**
+
 - Parser NEVER raises user-facing runtime errors.
 - All user input errors are reported via:
   - `IsValid = False`
@@ -635,6 +687,7 @@ If IsValid = False Then
 
 **design RULE:**
 Stage 7 performs:
+
 - No parsing
 - No validation
 - No metadata lookup
@@ -650,6 +703,7 @@ Defines structural syntax only. No semantic validation is expressed here. Canoni
 
 **NOTE:**
 This grammar describes lexical and structural form. It does NOT:
+
 - Validate book identity
 - Validate chapter/verse bounds
 - Normalize aliases
@@ -689,11 +743,13 @@ This constraint cannot be expressed in context-free EBNF; it is enforced by
 Book-only references are permitted. When no ChapterSpec is present, the reference is normalized to the first verse of the book.
 
 **Examples:**
-```
+
+```text
 John      -> John 1:1
 Romans    -> Romans 1:1
 Jude      -> Jude 1:1
 ```
+
 This normalization occurs in Stage 6 (canonical formatting / rewrite)
 
 ```ebnf
@@ -716,6 +772,7 @@ BookWord
 ```
 
 **CONSTRAINT** (Structural Only):
+
 - No internal punctuation.
 - Trailing period permitted.
 
@@ -782,12 +839,14 @@ Resolves BookRef → BookID via alias dictionary.
 
 **stage 4:**
 Interprets structural meaning:
+
 - Chapter-only
 - Chapter:Verse
 - Single-chapter inference (semantic layer)
 
 **stage 5:**
 Enforces semantic constraints:
+
 - AliasFound = True
 - Chapter >= 1
 - Chapter <= MaxChapter(BookID)
@@ -810,7 +869,7 @@ reaches Stages 2–7.
 The following inputs contain `Reference ::= ChapterSpec` productions (Stage 13a form).
 Book alias is carried forward from the nearest preceding `BookRef`.
 
-```
+```text
 Input:   "Ps 19:1; 23:1; 28:7"
 
 Parse:
@@ -824,34 +883,35 @@ Output:
   Psalms 28:7
 ```
 
-```
-Input:   "Ps 103:8-11; 111:3-5"
+```text
+Input:   "Ps 103:8–11; 111:3–5"
 
 Parse:
-  "Ps 103:8-11"  -> Reference ::= BookRef WS ChapterSpec   (ChapterSpec = Chapter:VerseRangeSpec)
-  "111:3-5"      -> Reference ::= ChapterSpec              (ChapterSpec = Chapter:VerseRangeSpec, inherits Ps)
+  "Ps 103:8–11"  -> Reference ::= BookRef WS ChapterSpec   (ChapterSpec = Chapter:VerseRangeSpec)
+  "111:3–5"      -> Reference ::= ChapterSpec              (ChapterSpec = Chapter:VerseRangeSpec, inherits Ps)
 
 Output:
-  Psalms 103:8-11
-  Psalms 111:3-5
+  Psalms 103:8–11
+  Psalms 111:3–5
 ```
 
-```
-Input:   "1 Chr 29:10-13; Ps 19:1-2; 23:1"
+```text
+Input:   "1 Chr 29:10–13; Ps 19:1–2; 23:1"
 
 Parse:
-  "1 Chr 29:10-13"  -> Reference ::= BookRef WS ChapterSpec   (BookRef = "1 Chr")
-  "Ps 19:1-2"       -> Reference ::= BookRef WS ChapterSpec   (new BookRef = "Ps")
+  "1 Chr 29:10–13"  -> Reference ::= BookRef WS ChapterSpec   (BookRef = "1 Chr")
+  "Ps 19:1–2"       -> Reference ::= BookRef WS ChapterSpec   (new BookRef = "Ps")
   "23:1"            -> Reference ::= ChapterSpec              (inherits Ps)
 
 Output:
-  1 Chronicles 29:10-13
-  Psalms 19:1-2
+  1 Chronicles 29:10–13
+  Psalms 19:1–2
   Psalms 23:1
 ```
 
 **Ill-formed (Stage 13a constraint violated):**
-```
+
+```text
 Input:   "23:1; Ps 19:1"
 
 "23:1" is the first Reference and has no preceding BookRef — ill-formed.
@@ -860,7 +920,7 @@ ComposeList_Internal rejects this: havePrev = False when "23:1" is processed.
 
 ### Canonical Normal Form (Post-Validation Output)
 
-```
+```text
 Single reference:
     <CanonicalBookName> <Chapter>
     <CanonicalBookName> <Chapter>:<Verse>
@@ -877,11 +937,14 @@ Lists and ranges preserve structural form after semantic validation.
 ### Stage 1 - Preprocessing / Normalization
 
 **Routine:**
+
 ```vb
 Private Function Stage1_NormalizeInput( _
     ByVal rawInput As String) As String
 ```
+
 **Responsibility:**
+
 - Trim leading/trailing whitespace
 - Normalize internal whitespace
 - Standardize dash characters if required
@@ -890,11 +953,14 @@ Private Function Stage1_NormalizeInput( _
 ### Stage 2 - Lexical Tokenization
 
 **Routine:**
+
 ```vb
 Private Function Stage2_LexicalScan( _
     ByVal normalizedInput As String) As LexTokens
 ```
+
 **Responsibility:**
+
 - Extract RawAlias
 - Extract Num1, Num2
 - Detect HasColon
@@ -904,11 +970,14 @@ Private Function Stage2_LexicalScan( _
 ### Stage 3 - Alias Resolution (Canonical Identity)
 
 **Routine:**
+
 ```vb
 Private Function Stage3_ResolveAlias( _
     ByVal tokens As LexTokens) As ParsedRef
 ```
+
 **Responsibility:**
+
 - Resolve RawAlias → BookID
 - Set AliasFound flag
 - Forward lexical numeric tokens unchanged
@@ -917,11 +986,14 @@ Private Function Stage3_ResolveAlias( _
 ### Stage 4 - Structural Interpretation
 
 **Routine:**
+
 ```vb
 Private Sub Stage4_InterpretStructure( _
     ByRef state As ParsedRef)
 ```
+
 **Responsibility:**
+
 - Assign Chapter and Verse exactly once
 - Apply colon structure logic
 - Apply single-chapter inference
@@ -930,11 +1002,14 @@ Private Sub Stage4_InterpretStructure( _
 ### Stage 5 - Canonical Semantic Validation
 
 **Routine:**
+
 ```vb
 Private Sub Stage5_ValidateCanonical( _
     ByRef state As ParsedRef)
 ```
+
 **Responsibility:**
+
 - Enforce validation matrix
 - First-failure-wins ordering
 - Assign ErrorCode / ErrorText
@@ -944,11 +1019,14 @@ Private Sub Stage5_ValidateCanonical( _
 ### Stage 6 - Canonical Normalization (Formatting)
 
 **Routine:**
+
 ```vb
 Private Sub Stage6_FormatCanonical( _
     ByRef state As ParsedRef)
 ```
+
 **Responsibility:**
+
 - Produce canonical SBL-style string
 - Use canonical BookName from metadata
 - Execute only if IsValid = True
@@ -957,11 +1035,14 @@ Private Sub Stage6_FormatCanonical( _
 ### Stage 7 - Immutable Result Emission
 
 **Routine:**
+
 ```vb
 Private Function Stage7_EmitResult( _
     ByVal state As ParsedRef) As ScriptureRef
 ```
+
 **Responsibility:**
+
 - Enforce object state invariants
 - Construct final ScriptureRef
 - Guarantee total-function return
@@ -970,13 +1051,15 @@ Private Function Stage7_EmitResult( _
 ### Public Entry Point
 
 **Routine:**
+
 ```vb
 Public Function ParseReference( _
     ByVal rawInput As String) As ScriptureRef
 ```
 
 **Execution Order:**
-```
+
+```text
 1. normalized  = Stage1_NormalizeInput(rawInput)
 2. tokens      = Stage2_LexicalScan(normalized)
 3. state       = Stage3_ResolveAlias(tokens)
@@ -992,14 +1075,16 @@ Public Function ParseReference( _
 
 The core parser (Stages 1-7) is modeled as a Deterministic Structural Parser (DSP) that produces a single atomic ScriptureRef.
 
- *** Extension stages operate OUTSIDE the DSP and must never ***
- ***      influence the DSP state machine.                   ***
+ ***Extension stages operate OUTSIDE the DSP and must never***
+ ***influence the DSP state machine.***
 
 **Invariant:**
+
 - Stages 1-7 must only parse atomic references.
 - Extension stages must not modify or bypass core validation logic.
 
 These stages are strictly lexical segmentation layers.
+
 - Stage 8  List Detection
 - Stage 9  Range Detection
 - Stage 10 RangeComposition     -> builds ranges
@@ -1014,15 +1099,18 @@ Stage-12 may call `ParseReferenceExtended()` recursively when processing list se
 **Responsibility boundaries:**
 
 **stage 8:**
+
 - Detect top-level list separators
 - Output ListTokens
 
 **stage 9:**
+
 - Detect reference ranges
 - Output RangeTokens
 
 **stage 10:**
 Compose atomic ScriptureRef results into:
+
 - ScriptureList
 - ScriptureRange
 
@@ -1036,17 +1124,20 @@ The DSP always processes a single atomic reference.
 Detect multiple references separated by list delimiters.
 
 **Supported separators:**
+
 - `,`  comma
 - `;`  semicolon
 
 **Examples:**
-```
+
+```text
 John 3:16,18,20
 John 3, 4, 5
 John 3:16; 4:1
 ```
 
 **Output:**
+
 ```vb
 Type ListTokens
     IsList As Boolean
@@ -1055,6 +1146,7 @@ End Type
 ```
 
 **rules:**
+
 1. Detection is lexical only.
 2. No interpretation of structure occurs.
 3. Segments are returned exactly as written.
@@ -1062,6 +1154,7 @@ End Type
 
 **Determinism:**
 Stage 8 MUST NOT perform:
+
 - alias resolution
 - verse validation
 - canonical formatting
@@ -1072,15 +1165,20 @@ These remain Stage 3-6 responsibilities.
 Separators are recognized only at the top lexical level. Stage 8 must not split inside a detected range.
 
 **Example Input:**
+
+```text
+John 3:16–18,20
 ```
-John 3:16-18,20
-```
+
 **Output Segments:**
-```
-John 3:16-18
+
+```text
+John 3:16–18
 20
 ```
+
 **NOT:**
+
 ```
 John 3:16
 18
@@ -1098,6 +1196,7 @@ Stage 8 executes before Stage 9. Lists are segmented before range interpretation
 Detect reference ranges using hyphen or en dash.
 
 **Supported separators:**
+
 - `-`  = ASCII hyphen-minus  (ChrW(45))
 - `–`  = Unicode en dash     (ChrW(&H2013))
 
@@ -1106,11 +1205,13 @@ Detect reference ranges using hyphen or en dash.
 The parser supports two range delimiters:
 
 **ASCII hyphen-minus:**
+
 - Character: `-`
 - Unicode:   U+002D
 - VBA:       `ChrW(45)`
 
 **Unicode en dash:**
+
 - Character: `–`
 - Unicode:   U+2013
 - VBA:       `ChrW(&H2013)`
@@ -1119,6 +1220,7 @@ The parser supports two range delimiters:
 The VBA Immediate Window may not display the en dash correctly. In Git it may appear as a placeholder. Therefore code comparisons should use ChrW values.
 
 **Example:**
+
 ```vb
 If ch = "-" Or ch = ChrW(&H2013) Then
     ' range delimiter comparison code
@@ -1126,13 +1228,15 @@ End If
 ```
 
 **Example Input:**
+
 ```
-John 3:16-18
+John 3:16–18
 John 3 - 5
-John 3:16-4:2
+John 3:16–4:2
 ```
 
 **Output:**
+
 ```vb
 Type RangeTokens
     IsRange As Boolean
@@ -1142,6 +1246,7 @@ End Type
 ```
 
 **rules:**
+
 1. Detection is lexical only.
 2. No interpretation of structure occurs.
 3. Left and Right expressions are returned exactly as written.
@@ -1149,6 +1254,7 @@ End Type
 
 **Determinism:**
 Stage 9 MUST NOT perform:
+
 - alias resolution
 - verse validation
 - canonical formatting
@@ -1159,11 +1265,12 @@ These remain Stage 3-6 responsibilities.
 Stage 8 executes before Stage 9.
 
 **Example:**
-```
+
+```text
 Input:
-    John 3:16-18,20
+    John 3:16–18,20
 Stage 8 output:
-    John 3:16-18
+    John 3:16–18
     20
 Stage 9 then evaluates each segment independently.
 ```
@@ -1174,8 +1281,9 @@ A range delimiter must appear after the first numeric token. This prevents false
 Stage-9 must remain lexical only and must not interpret structure. Deterministic Structural Parser (DSP) intact because Stage-9 remains outside the core parser.
 
 **Stage 9 Evaluation:**
-```
-RangeDetection("John 3:16-18") -> Range
+
+```text
+RangeDetection("John 3:16–18") -> Range
 RangeDetection("20") -> Not a range
 ```
 
@@ -1192,6 +1300,7 @@ Stage-10 performs no lexical parsing. It only composes structured results using 
 ScriptureRange
 
 **rules:**
+
 1. Stage-10 must call `ParseReference()` for both sides of the detected range.
 2. LeftRaw and RightRaw must be parsed independently.
 3. Stage-10 must not modify ScriptureRef.
@@ -1200,19 +1309,22 @@ ScriptureRange
 `ParseReference()` remains the only function that produces ScriptureRef.
 
 **Example Input:**
-```
-John 3:16-18
+
+```text
+John 3:16–18
 ```
 
 **stage 9:**
-```
+
+```vb
 RangeTokens
     LeftRaw = "John 3:16"
     RightRaw = "18"
 ```
 
 **stage 10:**
-```
+
+```vb
 ScriptureRange
     StartRef -> ScriptureRef(John 3:16)
     EndRef   -> ScriptureRef(John 3:18)
@@ -1231,6 +1343,7 @@ Stage-11 operates on the segments produced by Stage 8 (ListDetection).
 ScriptureList
 
 **rules:**
+
 1. Each segment must be processed independently.
 2. Stage-11 must determine whether a segment is a range using Stage 9.
 3. Range segments must be composed using Stage 10.
@@ -1238,29 +1351,34 @@ ScriptureList
 
 **Result:**
 ScriptureList.Items() may contain:
+
 - ScriptureRef
 - ScriptureRange
 
 **Example Input:**
-```
-John 3:16-18,20
+
+```text
+John 3:16–18,20
 ```
 
 **stage 8:**
-```
+
+```text
 Segments
-    John 3:16-18
+    John 3:16–18
     20
 ```
 
 **stage 9:**
-```
+
+```text
 Segment 1 -> Range
 Segment 2 -> Single
 ```
 
 **stage 11:**
-```
+
+```text
 ScriptureList
     Item 1 -> ScriptureRange
     Item 2 -> ScriptureRef
@@ -1273,6 +1391,7 @@ ScriptureList
 After atomic parsing (Stages 1-7) and structural composition (Stages 8-11), the extension pipeline performs higher-level reference interpretation.
 
 **stage Responsibilities:**
+
 - Stage 12  ExtendedParse — Orchestrates list and range parsing
 - Stage 13  ContextualShorthand — Resolves omitted book/chapter context
 - Stage 13a BookContextPropagation — Resolves chapter:verse segments with inherited book across semicolon boundaries
@@ -1281,9 +1400,11 @@ After atomic parsing (Stages 1-7) and structural composition (Stages 8-11), the 
 Only after Stage 13a are references guaranteed to represent fully-resolved canonical references.
 
 Some implementations may internally expand references to verse-level triples:
-```
+
+```text
 (BookID, Chapter, Verse)
 ```
+
 Such expansion is an internal optimization and is not required by the specification.
 
 Stage 14 operates on the resolved canonical reference set and performs deterministic structural compression.
@@ -1296,7 +1417,8 @@ Stage 14 operates on the resolved canonical reference set and performs determini
 Provide a high-level parser capable of handling lists and ranges. Stage-12 orchestrates the extension pipeline while preserving the atomic parser contract.
 
 **PIPELINE:**
-```
+
+```text
 Stage 8  ListDetection
 Stage 9  RangeDetection
 Stage 10 RangeComposition
@@ -1304,6 +1426,7 @@ Stage 11 ListComposition
 ```
 
 **Return Types:**
+
 - ScriptureRef
 - ScriptureRange
 - ScriptureList
@@ -1312,16 +1435,18 @@ Stage 11 ListComposition
 Stages 1-7 remain responsible for parsing atomic references only.
 
 **Example Input:**
-```
-John 3:16-18,20; 4:1-3
+
+```text
+John 3:16–18,20; 4:1–3
 ```
 
 **Result:**
-```
+
+```text
 ScriptureList
-    Item 1 -> ScriptureRange (3:16-3:18)
+    Item 1 -> ScriptureRange (3:16–3:18)
     Item 2 -> ScriptureRef   (3:20)
-    Item 3 -> ScriptureRange (4:1-4:3)
+    Item 3 -> ScriptureRange (4:1–4:3)
 ```
 
 ---
@@ -1329,6 +1454,7 @@ ScriptureList
 ## Stage 13 - Contextual Shorthand Expansion (Post-Parser Context Layer)
 
 **Public API:**
+
 ```vb
 ComposeList(ByVal raw As String) As Collection
 ```
@@ -1337,25 +1463,28 @@ ComposeList(ByVal raw As String) As Collection
 Parses a list of scripture references from a string and returns a collection of canonical reference strings.
 
 **Supported Forms:**
+
 - Single references: `"John 3:16"`
 - Ranges:
-  - Same chapter: `"John 3:16-18"`
-  - Cross chapter: `"John 3:16-4:2"`
+  - Same chapter: `"John 3:16–18"`
+  - Cross chapter: `"John 3:16–4:2"`
 - Lists: `"John 3:16, 18; 4:1"`
 - Contextual shorthand:
   - Missing book    -> inherited from previous segment
   - Missing chapter -> inherited from current context
 
 **Example:**
-```
-"3:16-4:2, 5"
-    -> "John 3:16-4:2"
+
+```text
+"3:16–4:2, 5"
+    -> "John 3:16–4:2"
     -> "John 4:5"
 ```
 
-### context state
+### Context State
 
 During processing the engine maintains:
+
 - currentBook
 - currentChapter
 
@@ -1370,10 +1499,11 @@ Segments are processed left-to-right. Context updates occur after each resolved 
 After a range resolves, the context chapter becomes the ending chapter of the range.
 
 **Example:**
-```
-"John 3:16-4:2, 5"
+
+```text
+"John 3:16–4:2, 5"
 Range resolved:
-    John 3:16-4:2
+    John 3:16–4:2
 context becomes:
     book = John
     Chapter = 4
@@ -1383,40 +1513,43 @@ Next segment:
 
 ### Canonical Output Rules
 
-- Same-chapter ranges collapse chapter repetition: `John 3:16-18`
-- Cross-chapter ranges preserve both chapters: `John 3:16-4:2`
+- Same-chapter ranges collapse chapter repetition: `John 3:16–18`
+- Cross-chapter ranges preserve both chapters: `John 3:16–4:2`
 - Single verses always include book and chapter: `John 3:16`
 
 ### Examples
 
-**Input:** `"John 3:16, 18, 20-22"`
+**Input:** `"John 3:16, 18, 20–22"`
 
 **Output:**
-```
+
+```text
 "John 3:16"
 "John 3:18"
-"John 3:20-22"
+"John 3:20–22"
 ```
 
-**Input:** `"3:16-4:2, 5"`
+**Input:** `"3:16–4:2, 5"`
 
 **Output:**
-```
-"John 3:16-4:2"
+
+```text
+"John 3:16–4:2"
 "John 4:5"
 ```
 
 **Input:** `"Romans 8; 9"`
 
 **Output:**
-```
+
+```text
 "Romans 8"
 "Romans 9"
 ```
 
 ### Implementation
 
-```
+```text
 Stage 11  -> ListTokens (segment structure)
 Stage 12  -> ScriptureRef / ScriptureRange objects
 Stage 13  -> Contextual shorthand resolution
@@ -1430,6 +1563,7 @@ Collection of canonical reference strings
 ## Stage 13a - Book Context Propagation (Post-Parser Context Layer)
 
 **Public API:**
+
 ```vb
 ComposeList(ByVal raw As String) As Collection       ' semicolon-only inputs
 ParseCitationBlock(ByVal raw As String) As Collection ' mixed ; and , inputs
@@ -1446,12 +1580,12 @@ inherit it until a new book name appears.
 | Input segment | Condition | Resolution |
 |---|---|---|
 | `"23:1"` | left of `:` is numeric; `havePrev=True` | inherit book from previous token |
-| `"103:8-11"` | range with numeric chapter; `havePrev=True` | inherit book; parse as chapter:verse-range |
+| `"103:8–11"` | range with numeric chapter; `havePrev=True` | inherit book; parse as chapter:verse-range |
 | `"28:7"` | same as first case | inherit book and resolve verse |
 
 **Delimiter constraint:** Stage 13a operates on segments already produced by Stage 8
 (`ListDetection`). For pure semicolon-delimited input Stage 8 correctly splits on `;`
-before Stage 13a is reached. For inputs that mix `;` and `,` (e.g. `"Ps 145:8-9,17;
+before Stage 13a is reached. For inputs that mix `;` and `,` (e.g. `"Ps 145:8–9,17;
 Isa 40:28"`), `ListDetection` splits on comma first (comma-priority rule), leaving
 semicolons stranded inside segments. Such inputs require `ParseCitationBlock` (see below).
 
@@ -1479,9 +1613,10 @@ This is the responsibility of `NormalizeRawInput` (a new Public method on the cl
 called at the top of `ComposeList` and `ParseCitationBlock` before any splitting occurs.
 Without en-dash normalization, `IsRangeSegment` fails to detect ranges like `"103:8–11"`.
 
-### context state
+### Context State
 
 Stage 13a participates in the same left-to-right context maintained by Stage 13:
+
 - `currentBook` (BookID)
 - `currentChapter`
 
@@ -1490,7 +1625,7 @@ chapter context resets when a new chapter is specified.
 
 ### Range Context Rules
 
-For a range segment qualified by Stage 13a (e.g. `"103:8-11"` inheriting Psalms):
+For a range segment qualified by Stage 13a (e.g. `"103:8–11"` inheriting Psalms):
 
 - `StartRef.BookID = prevRef.BookID`
 - `StartRef.Chapter = chapter parsed from left of colon`
@@ -1506,27 +1641,30 @@ After resolution, `prevRef` is set to `EndRef`.
 **Input:** `"Ps 19:1; 23:1; 28:7; 68:5"`
 
 **Output:**
-```
+
+```text
 "Psalms 19:1"
 "Psalms 23:1"
 "Psalms 28:7"
 "Psalms 68:5"
 ```
 
-**Input:** `"Ps 103:8-11; 111:3-5"`
+**Input:** `"Ps 103:8–11; 111:3–5"`
 
 **Output:**
-```
-"Psalms 103:8-11"
-"Psalms 111:3-5"
+
+```text
+"Psalms 103:8–11"
+"Psalms 111:3–5"
 ```
 
-**Input:** `"1 Chr 29:10-13; Ps 19:1-2; 23:1"`
+**Input:** `"1 Chr 29:10–13; Ps 19:1–2; 23:1"`
 
 **Output:**
-```
-"1 Chronicles 29:10-13"
-"Psalms 19:1-2"
+
+```text
+"1 Chronicles 29:10–13"
+"Psalms 19:1–2"
 "Psalms 23:1"
 ```
 
@@ -1537,12 +1675,12 @@ Study Bible citation blocks use a two-level delimiter structure:
 | Level | Delimiter | Separates |
 |---|---|---|
 | Outer | `;` | Major segments (each carries its own book/chapter context) |
-| Inner | `,` | Verse sub-items within a single chapter (`145:8-9,17`) |
+| Inner | `,` | Verse sub-items within a single chapter (`145:8–9,17`) |
 
 `ListDetection` cannot handle this structure because it splits on comma before semicolon.
 `ParseCitationBlock` performs the two-level split directly:
 
-```
+```text
 1. NormalizeRawInput (line breaks, en-dash)
 2. Split on ";" -> major segments
 3. For each major segment (trimmed):
@@ -1577,7 +1715,7 @@ Stage 13a.
 Stage 13a is implemented inline in `ComposeList_Internal` as a new shorthand case,
 inserted before the `Else` branch that calls `ParseReferenceRef`:
 
-```
+```text
 existing case: bare verse number    (IsNumeric and no colon)
 existing case: numeric range        (IsNumericRange)
 NEW case:      chapter:verse        (has colon, left of colon is numeric)  <- Stage 13a
@@ -1593,8 +1731,9 @@ fallthrough:   ParseReferenceRef    (all other cases)
 Positive cases: single-book propagation, cross-book transition, range with inherited book.
 
 Negative cases (each asserted to be correctly rejected):
+
 - Bad alias (`"Jerimiah"` — misspelling)
-- Verse out of range (`"Ps 103:8-200"`)
+- Verse out of range (`"Ps 103:8–200"`)
 - Chapter out of range (`"Jer 99:1"`)
 - Single-chapter book verse out of range (`"Jude 99"` → expands to `Jude 1:99`; max verse 25)
 
@@ -1650,24 +1789,30 @@ an input-only construct; it never appears in canonical output.
 ### Canonical Compression Rules
 
 1. Sequential verses collapse into ranges.
-   ```
+
+   ```text
    John 3:16
    John 3:17
    John 3:18
-   ->  John 3:16-18
+   ->  John 3:16–18
    ```
+
 2. Non-sequential verses remain comma separated.
-   ```
+
+   ```text
    John 3:16
    John 3:18
    ->  John 3:16,18
    ```
+
 3. Chapter boundaries are never merged.
-   ```
+
+   ```text
    Genesis 1:31
    Genesis 2:1
    ->  Genesis 1:31; 2:1
    ```
+
 4. Compression must preserve canonical ordering: BookID, Chapter, Verse.
 5. Compression is deterministic and lossless.
 
@@ -1680,6 +1825,7 @@ Ensure the final canonical reference set contains only valid, in-range scripture
 
 **Position in Pipeline:**
 Stage 15 executes AFTER Stage 14 Canonical Compression. At this point, the reference set is:
+
 - Fully expanded
 - Deduplicated
 - Ordered
@@ -1690,27 +1836,31 @@ Stage 15 performs the final integrity check before output.
 **Responsibilities:**
 
 1. **Remove Invalid Chapters** — Eliminate references to chapters that do not exist in the specified book.
-   ```
+
+   ```text
    Gen 51      -> removed
    Matt 29     -> removed
    ```
 
 2. **Remove Invalid Verses** — Eliminate verse numbers exceeding chapter limits.
-   ```
+
+   ```text
    Gen 1:999   -> removed
    Jude 1:50   -> removed
    ```
 
 3. **Clamp Range Boundaries** — If a range extends past valid scripture bounds, trim the range to the last valid verse.
-   ```
-   Gen 1:1-999
+
+   ```text
+   Gen 1:1–999
    becomes:
-   Gen 1:1-31
+   Gen 1:1–31
    ```
 
 4. **Remove Empty Ranges** — If validation removes all verses in a range, discard the range entirely.
-   ```
-   Matt 29:1-10 -> removed
+
+   ```text
+   Matt 29:1–10 -> removed
    ```
 
 5. **Preserve Canonical Order** — Validation must NOT reorder references. The Stage 12 ordering must remain intact.
@@ -1724,6 +1874,7 @@ Packed canonical verse map (compressed, ordered)
 Fully validated packed canonical verse map
 
 **Guarantees After Stage 15:**
+
 - All books valid
 - All chapters valid
 - All verses valid
@@ -1733,23 +1884,27 @@ Fully validated packed canonical verse map
 - Engine-safe output
 
 **design rules:**
+
 - No allocation of new structures
 - Operate directly on packed verse map
 - O(n) scan across canonical set
 - Validation tables must be constant lookup
 
 **required Data:**
+
 - ChaptersPerBook (book)
 - VersesPerChapter(book, chapter)
 
 **Example Input:**
-```
-Gen 1:1-999, 51:1-10, Exod 1:1-5
+
+```text
+Gen 1:1–999, 51:1–10, Exod 1:1–5
 ```
 
 **After Stage 15:**
-```
-Gen 1:1-31, Exod 1:1-5
+
+```text
+Gen 1:1–31, Exod 1:1–5
 ```
 
 **Summary:**
@@ -1764,6 +1919,7 @@ Convert the validated verse-level canonical reference set into contiguous canoni
 
 **Position in Pipeline:**
 Stage 16 executes AFTER Stage 15 Canonical Validation and BEFORE Stage 17 Canonical String Formatter. At this point the reference set is:
+
 - Fully expanded
 - Deduplicated
 - Ordered
@@ -1774,16 +1930,18 @@ Stage 16 groups adjacent verses into canonical ranges.
 **Responsibilities:**
 
 1. **Detect Contiguous Verses** — Identify adjacent verses within same book and chapter.
-   ```
+
+   ```text
    John 3:16
    John 3:17
    John 3:18
    becomes:
-   John 3:16-3:18
+   John 3:16–3:18
    ```
 
 2. **Preserve Non-Adjacent Verses**
-   ```
+
+   ```text
    John 3:16
    John 3:18
    remains:
@@ -1792,7 +1950,8 @@ Stage 16 groups adjacent verses into canonical ranges.
    ```
 
 3. **Stop Range at Chapter Boundary**
-   ```
+
+   ```text
    John 3:36
    John 4:1
    remains:
@@ -1801,17 +1960,19 @@ Stage 16 groups adjacent verses into canonical ranges.
    ```
 
 4. **Stop Range at Book Boundary**
-   ```
+
+   ```text
    John 3:16
    Romans 8:1
    remains separate
    ```
 
 5. **Produce Minimal Canonical Ranges**
-   ```
+
+   ```text
    16,17,18,19
    becomes:
-   16-19
+   16–19
    ```
 
 **Input:**
@@ -1821,6 +1982,7 @@ Ordered validated verse list
 Canonical range collection
 
 **design rules:**
+
 - Single forward pass
 - O(n)
 - No reordering
@@ -1828,6 +1990,7 @@ Canonical range collection
 - Only grouping
 
 **Guarantees After Stage 16:**
+
 - Contiguous verses grouped
 - Minimal ranges created
 - Canonical order preserved
@@ -1846,9 +2009,11 @@ Convert the validated canonical reference ranges into a single properly formatte
 
 **Position in Pipeline:**
 Stage 17 executes AFTER:
+
 - Stage 15 - Canonical Validation
 
 At this point the reference set is:
+
 - Fully expanded
 - Deduplicated
 - Canonically ordered
@@ -1860,14 +2025,16 @@ Stage 17 performs formatting only. It MUST NOT change the reference structure.
 **Responsibilities:**
 
 1. **Render Canonical Ranges** — Convert each canonical range into text.
-   ```
+
+   ```text
    John 3:16
-   John 3:16-3:18
-   Romans 8:1-8:2
+   John 3:16–3:18
+   Romans 8:1–8:2
    ```
 
 2. **Suppress Repeated Book Names** — The book name is printed once per contiguous group.
-   ```
+
+   ```text
    John 3:16
    John 3:18
    becomes:
@@ -1875,7 +2042,8 @@ Stage 17 performs formatting only. It MUST NOT change the reference structure.
    ```
 
 3. **Suppress Repeated Chapter Numbers** — Chapter number appears once when ranges remain within the same chapter.
-   ```
+
+   ```text
    John 3:16
    John 3:18
    becomes:
@@ -1883,7 +2051,8 @@ Stage 17 performs formatting only. It MUST NOT change the reference structure.
    ```
 
 4. **Use Comma for Same-Chapter Separation**
-   ```
+
+   ```text
    John 3:16
    John 3:18
    Output:
@@ -1891,15 +2060,17 @@ Stage 17 performs formatting only. It MUST NOT change the reference structure.
    ```
 
 5. **Use Semicolon for Chapter Breaks**
-   ```
-   John 3:16-18
-   John 4:1-3
+
+   ```text
+   John 3:16–18
+   John 4:1–3
    Output:
-   John 3:16-18; 4:1-3
+   John 3:16–18; 4:1–3
    ```
 
 6. **Use Semicolon for Book Breaks**
-   ```
+
+   ```text
    John 3:16
    Romans 8:1
    Output:
@@ -1917,6 +2088,7 @@ Validated canonical range collection
 Single formatted SBL reference string
 
 **Formatting rules:**
+
 - Same chapter        -> comma
 - Chapter change      -> semicolon
 - Book change         -> semicolon
@@ -1925,21 +2097,24 @@ Single formatted SBL reference string
 **Example:**
 
 Input:
+
+```text
+John 3:16–3:18
+John 4:1–4:2
+Romans 8:1–8:2
 ```
-John 3:16-3:18
-John 4:1-4:2
-Romans 8:1-8:2
-```
+
 Output:
-```
-John 3:16-18; 4:1-2; Rom 8:1-2
+
+```text
+John 3:16–18; 4:1–2; Rom 8:1–2
 ```
 
 **Additional Examples:**
 
-```
-Input:   Gen 1:1-1:3
-Output:  Gen 1:1-3
+```text
+Input:   Gen 1:1–1:3
+Output:  Gen 1:1–3
 
 Input:   Gen 1:1  /  Gen 1:3
 Output:  Gen 1:1, 3
@@ -1952,6 +2127,7 @@ Output:  Gen 1:1; Exod 1:1
 ```
 
 **design rules:**
+
 - Pure formatting stage
 - No mutation of canonical references
 - Single pass O(n)
@@ -1959,6 +2135,7 @@ Output:  Gen 1:1; Exod 1:1
 - Deterministic output
 
 **Guarantees After Stage 17:**
+
 - Proper SBL formatting
 - Minimal repetition
 - Canonical ordering preserved
@@ -1978,10 +2155,12 @@ Defines lexical token stream and structural syntax only.
 
 **SCOPE:**
 This DSP:
+
 - Validates structural ordering of tokens
 - Detects lists and ranges syntactically
 
 This DSP does NOT:
+
 - Validate canonical book identity
 - Enforce chapter/verse bounds
 - Perform single-chapter inference
@@ -1989,6 +2168,7 @@ This DSP does NOT:
 - Normalize aliases
 
 Semantic processing occurs in:
+
 - Stage 3 - Alias Resolution
 - Stage 4 - Structural Interpretation
 - Stage 5 - Canonical Validation
@@ -2011,6 +2191,7 @@ Semantic processing occurs in:
 | EOF | End-of-input |
 
 **Tokenization rules:**
+
 - Whitespace collapsed to single WS
 - DIGITS is greedy
 - Case-insensitive BOOK_WORD and PREFIX_ROMAN
@@ -2039,7 +2220,7 @@ This is a single-pass left-to-right DSP. State numbering is symbolic.
 
 #### 2.2 Transition Table
 
-```
+```text
 S0 - Start
   WS              -> S0
   PREFIX_*        -> S1
@@ -2093,6 +2274,7 @@ SX - Error
 ### 3. Structural Acceptance Conditions
 
 A reference is structurally valid if:
+
 - Final state is S4 or S6
 - AND next token is EOF or SEMICOLON
 
@@ -2106,11 +2288,13 @@ After structural acceptance:
 Resolve BookRef -> BookID
 
 **stage 4:**
+
 - Assign Chapter and Verse exactly once
 - Apply single-chapter inference if applicable
 
 **stage 5:**
 Enforce canonical validation matrix:
+
 - AliasFound = True
 - Chapter >= 1
 - Chapter <= MaxChapter(BookID)
@@ -2124,7 +2308,7 @@ Emit immutable ScriptureRef result
 
 ### 5. Canonical Output Form (After Stage 6)
 
-```
+```text
 <CanonicalBookName> <Chapter>
 <CanonicalBookName> <Chapter>:<Verse>
 ```
@@ -2140,16 +2324,18 @@ What makes the compressed verse-map approach strong in your architecture is:
 ### 1. Data Is Data
 
 The validator performs only two checks:
+
 - Is chapter within the book's chapter count?
 - Is verse within the chapter's verse count?
 
 It does not contain any hard-coded knowledge of Bible structure.
 
-**Architectural Principle: metadata Authority**
+** Architectural Principle: Metadata Authority
 
 Canonical Bible structure (chapter counts and verse counts) is stored entirely in metadata tables. Parser logic never encodes Bible structure.
 
 **Benefits:**
+
 - deterministic validation
 - zero structural branching
 - translation-specific metadata substitution
@@ -2158,10 +2344,13 @@ Canonical Bible structure (chapter counts and verse counts) is stored entirely i
 ### 2. Deterministic O(1) Lookup
 
 With fixed-width packed strings:
+
 ```vb
 maxV = CLng(Mid$(map, (Chapter - 1) * 3 + 1, 3))
 ```
+
 The lookup is constant time:
+
 - No loops
 - No Select Case
 - No Split
@@ -2171,6 +2360,7 @@ The lookup is constant time:
 ### 3. It Scales Without Growing Code
 
 Adding all 66 books:
+
 - Adds data only
 - Adds zero logic
 - Validator does not encode Bible structure. It only verifies numeric bounds using metadata lookups
@@ -2178,6 +2368,7 @@ Adding all 66 books:
 ### 4. It Matches the Design Philosophy
 
 Parser stages remain isolated:
+
 - Tokenizer
 - Alias Resolver
 - Structural Interpreter
@@ -2189,6 +2380,7 @@ Parser stages remain isolated:
 Because structural rules are stored in metadata, different validation policies can be implemented without modifying parser logic.
 
 **Examples:**
+
 - Strict SBL validation
 - Relaxed validation (bounds skipped)
 - Alternate verse maps for LXX, Vulgate, or other traditions
@@ -2201,7 +2393,9 @@ The design has moved from string parsing to formal citation semantics - a big ar
 
 **Special case:**
 Psalm 119 contains 176 verses, which exceeds two-digit storage limits. Therefore all verse counts are stored using fixed-width three-digit encoding:
+
 ```vb
 Right$("000" & verseCount, 3)
 ```
+
 This ensures constant-width indexing for direct addressing.
