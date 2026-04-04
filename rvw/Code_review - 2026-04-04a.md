@@ -241,9 +241,20 @@ the procedure does not add them.
 
 ---
 
-## Goal State After Implementation
+## Implementation Complete — 2026-04-04
 
-### `src/basRepairCitationBlock.bas` (new)
+### Files changed
+
+**`src/basTEST_aeBibleCitationBlock.bas`**
+
+- `VerifyCitationBlockReport` (new Public, end of file) — same validation logic as
+  `VerifyCitationBlock` but builds and returns a String report; `passCount` and
+  `failCount` returned ByRef; suitable for MsgBox display in `RepairCitationBlockInParagraph`
+- `RepairCitationBlockInParagraph` — (new) full interactive repair procedure; see tasks below
+
+---
+
+## Goal State After Implementation
 
 | Item | Purpose |
 |---|---|

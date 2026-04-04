@@ -224,3 +224,187 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SortCitationBlock of Module basTEST_aeBibleCitationBlock"
     Resume PROC_EXIT
 End Sub
+
+' =============================================================================
+' VerifyCitationBlockReport  (Public)
+' Same validation logic as VerifyCitationBlock but returns a formatted String
+' report suitable for display in a MsgBox. passCount and failCount are returned
+' ByRef so the caller can branch on failCount without parsing the string.
+' =============================================================================
+Public Function VerifyCitationBlockReport(rawBlock As String, _
+                                          ByRef passCount As Long, _
+                                          ByRef failCount As Long) As String
+    On Error GoTo PROC_ERR
+    Dim Items As Collection
+    Dim report As String
+
+    Set Items = aeBibleCitationClass.SortCitationBlock( _
+        aeBibleCitationClass.ParseCitationBlock(rawBlock))
+
+    Dim item As Variant
+    For Each item In Items
+        Dim canon As String
+        canon = CStr(item)
+
+        Dim lastSp As Long
+        Dim k As Long
+        For k = Len(canon) To 1 Step -1
+            If Mid$(canon, k, 1) = " " Then lastSp = k: Exit For
+        Next k
+
+        Dim bookName As String
+        bookName = Left$(canon, lastSp - 1)
+        Dim numPart As String
+        numPart = Mid$(canon, lastSp + 1)
+
+        Dim bID As Long
+        Dim bCanon As String
+        bCanon = aeBibleCitationClass.ResolveAlias(bookName, bID)
+
+        Dim cpPos As Long
+        cpPos = InStr(numPart, ":")
+        Dim ch As Long
+        ch = CLng(Left$(numPart, cpPos - 1))
+        Dim vPart As String
+        vPart = Mid$(numPart, cpPos + 1)
+
+        Dim dpPos As Long
+        dpPos = InStr(vPart, "-")
+        Dim startV As Long
+        Dim endV As Long
+        Dim isRng As Boolean
+        If dpPos > 0 Then
+            startV = CLng(Left$(vPart, dpPos - 1))
+            endV = CLng(Mid$(vPart, dpPos + 1))
+            isRng = True
+        Else
+            startV = CLng(vPart)
+            endV = startV
+            isRng = False
+        End If
+
+        Dim okStart As Boolean
+        okStart = aeBibleCitationClass.ValidateSBLReference( _
+            bID, bCanon, ch, CStr(startV), ModeSBL, True)
+        If Not okStart Then
+            report = report & "FAIL: " & canon & " (start verse failed)" & vbCrLf
+            failCount = failCount + 1
+        ElseIf isRng Then
+            Dim okEnd As Boolean
+            okEnd = aeBibleCitationClass.ValidateSBLReference( _
+                bID, bCanon, ch, CStr(endV), ModeSBL, True)
+            If Not okEnd Then
+                report = report & "FAIL: " & canon & " (end verse " & endV & " failed)" & vbCrLf
+                failCount = failCount + 1
+            Else
+                report = report & "PASS: " & canon & vbCrLf
+                passCount = passCount + 1
+            End If
+        Else
+            report = report & "PASS: " & canon & vbCrLf
+            passCount = passCount + 1
+        End If
+    Next item
+
+    report = report & "--- " & passCount & " passed, " & failCount & " failed. ---"
+    VerifyCitationBlockReport = report
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VerifyCitationBlockReport of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Function
+
+' =============================================================================
+' basRepairCitationBlock
+' Interactive citation block repair procedure for Study Bible documents.
+' Place cursor anywhere in a paragraph containing a citation block, then run
+' RepairCitationBlockInParagraph.
+' See rvw/Code_review - 2026-04-04a.md for design background.
+' =============================================================================
+
+Public Sub RepairCitationBlockInParagraph()
+    On Error GoTo PROC_ERR
+
+    ' --- Task 1: Confirm intent (default No) ---
+    Dim answer As VbMsgBoxResult
+    answer = MsgBox("Repair citation block in the current paragraph?", _
+                    vbYesNo + vbDefaultButton2 + vbQuestion, _
+                    "Repair Citation Block")
+    If answer <> vbYes Then Exit Sub
+
+    ' --- Task 2: Capture paragraph reference ---
+    Dim para As Word.Paragraph
+    Set para = Selection.Paragraphs(1)
+    Dim rawBlock As String
+
+    ' --- Task 3: Interactive validation loop ---
+    Dim verified As Boolean
+    verified = False
+    Do
+        rawBlock = para.Range.Text
+        If Right$(rawBlock, 1) = Chr(13) Then
+            rawBlock = Left$(rawBlock, Len(rawBlock) - 1)
+        End If
+
+        Dim report As String
+        Dim passCount As Long
+        Dim failCount As Long
+        passCount = 0
+        failCount = 0
+        report = VerifyCitationBlockReport(rawBlock, passCount, failCount)
+
+        If failCount = 0 Then
+            verified = True
+            Exit Do
+        End If
+
+        Dim retry As VbMsgBoxResult
+        retry = MsgBox(report & vbCrLf & vbCrLf & _
+                       "Fix the errors above in the paragraph, then click Retry." & vbCrLf & _
+                       "Click Cancel to abort.", _
+                       vbRetryCancel + vbExclamation, _
+                       "Citation Block Errors (" & failCount & " failed)")
+        If retry <> vbRetry Then Exit Sub
+    Loop
+
+    ' --- Task 4: Sort into canonical order ---
+    Dim Items As Collection
+    Set Items = aeBibleCitationClass.SortCitationBlock( _
+        aeBibleCitationClass.ParseCitationBlock(rawBlock))
+
+    ' --- Task 5: Render en-dash and copy to clipboard ---
+    Dim Result As String
+    Dim item As Variant
+    For Each item In Items
+        If Len(Result) > 0 Then Result = Result & "; "
+        Result = Result & aeBibleCitationClass.RenderEnDash(CStr(item))
+    Next item
+
+    Dim dataObj As Object
+    Set dataObj = CreateObject("new:{1C3B4210-F441-11CE-B9EA-00AA006B1A69}")
+    dataObj.SetText Result
+    dataObj.PutInClipboard
+    Set dataObj = Nothing
+
+    ' --- Task 6: Prompt to replace selection ---
+    Dim replaceIt As VbMsgBoxResult
+    replaceIt = MsgBox("Corrected block copied to clipboard:" & vbCrLf & vbCrLf & _
+                       Result & vbCrLf & vbCrLf & _
+                       "Replace the original paragraph text with the corrected version?", _
+                       vbYesNo + vbDefaultButton1 + vbQuestion, _
+                       "Replace Citation Block")
+    If replaceIt = vbYes Then
+        para.Range.Text = Result
+        para.Range.Select
+        Selection.Collapse wdCollapseEnd
+    End If
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RepairCitationBlockInParagraph of Module basRepairCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+

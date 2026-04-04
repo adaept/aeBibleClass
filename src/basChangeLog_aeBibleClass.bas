@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #548 -
 ' #547 -
 ' #546 -
-' #545 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #545 - Implement the plan for an interactive citation block test and update procedure [feat]
     ' FIXED - #544 - Create a plan for an interactive citation block test and update procedure [feat]
     ' FIXED - #543 - Malformed citation in block is silently skipped [bug]
     ' FIXED - #542 - Implement plan for en-dash in sorted citation block [feat]
