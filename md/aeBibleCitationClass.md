@@ -643,7 +643,7 @@ It only packages the final canonical state. ScriptureRef is immutable after retu
 
 ---
 
-## SBL Scripture Citation - Structural EBNF — Aligned to 7-Stage Deterministic Parser
+## SBL Scripture Citation - Structural EBNF — Aligned to DSP Pipeline (Stages 1–13a)
 
 **PURPOSE:**
 Defines structural syntax only. No semantic validation is expressed here. Canonical bounds enforcement occurs in Stage 5.
@@ -670,9 +670,21 @@ RefSep
 Reference
    ::= BookRef
     |  BookRef WS ChapterSpec
+    |  ChapterSpec
 BookRef
    ::= Prefix? WS? BookName
 ```
+
+The third production (`ChapterSpec` with no `BookRef`) is the **Stage 13a** form. It is
+valid only when a preceding `Reference` in the same `Citation` has supplied a `BookRef`;
+the book is inherited from that context. The distinguishing lexical signal is that the
+segment begins with a `Digit` rather than a `Letter` or `Prefix`.
+
+**Semantic constraint (Stage 13a):**
+A bare `ChapterSpec` reference MUST be preceded by at least one `BookRef` reference in
+the same `Citation`. A `Citation` that begins with a bare `ChapterSpec` is ill-formed.
+This constraint cannot be expressed in context-free EBNF; it is enforced by
+`ComposeList_Internal` via the `havePrev` guard.
 
 Book-only references are permitted. When no ChapterSpec is present, the reference is normalized to the first verse of the book.
 
@@ -727,6 +739,12 @@ VerseRange
    ::= Verse "-" Verse
 ```
 
+**NOTE (en-dash normalization):**
+Study Bible citation blocks commonly use en-dash (`–`, U+2013) rather than ASCII hyphen
+(`-`, U+002D) as the range separator (e.g. `103:8–11`). `NormalizeRawInput` replaces
+en-dash with ASCII hyphen before any parsing stage is reached. The grammar above therefore
+uses only `-`; the en-dash form is pre-normalized and never reaches the parser.
+
 ### Atomic Numeric Units
 
 ```ebnf
@@ -780,6 +798,65 @@ Produces canonical SBL formatting.
 
 **stage 7:**
 Emits immutable ScriptureRef result object.
+
+**Stage 13a:**
+Resolves `Reference ::= ChapterSpec` (bare chapter:verse with no BookRef) by inheriting
+`BookID` from the preceding resolved `Reference`. Operates inline in
+`ComposeList_Internal` before `ParseReferenceRef` is called, so the bare form never
+reaches Stages 2–7.
+
+### Stage 13a Parse Examples
+
+The following inputs contain `Reference ::= ChapterSpec` productions (Stage 13a form).
+Book alias is carried forward from the nearest preceding `BookRef`.
+
+```
+Input:   "Ps 19:1; 23:1; 28:7"
+
+Parse:
+  "Ps 19:1"  -> Reference ::= BookRef WS ChapterSpec   (BookRef = "Ps")
+  "23:1"     -> Reference ::= ChapterSpec              (inherits Ps)
+  "28:7"     -> Reference ::= ChapterSpec              (inherits Ps)
+
+Output:
+  Psalms 19:1
+  Psalms 23:1
+  Psalms 28:7
+```
+
+```
+Input:   "Ps 103:8-11; 111:3-5"
+
+Parse:
+  "Ps 103:8-11"  -> Reference ::= BookRef WS ChapterSpec   (ChapterSpec = Chapter:VerseRangeSpec)
+  "111:3-5"      -> Reference ::= ChapterSpec              (ChapterSpec = Chapter:VerseRangeSpec, inherits Ps)
+
+Output:
+  Psalms 103:8-11
+  Psalms 111:3-5
+```
+
+```
+Input:   "1 Chr 29:10-13; Ps 19:1-2; 23:1"
+
+Parse:
+  "1 Chr 29:10-13"  -> Reference ::= BookRef WS ChapterSpec   (BookRef = "1 Chr")
+  "Ps 19:1-2"       -> Reference ::= BookRef WS ChapterSpec   (new BookRef = "Ps")
+  "23:1"            -> Reference ::= ChapterSpec              (inherits Ps)
+
+Output:
+  1 Chronicles 29:10-13
+  Psalms 19:1-2
+  Psalms 23:1
+```
+
+**Ill-formed (Stage 13a constraint violated):**
+```
+Input:   "23:1; Ps 19:1"
+
+"23:1" is the first Reference and has no preceding BookRef — ill-formed.
+ComposeList_Internal rejects this: havePrev = False when "23:1" is processed.
+```
 
 ### Canonical Normal Form (Post-Validation Output)
 
@@ -1562,6 +1639,13 @@ CanonicalVerseItem
    ::= Verse
     | Verse "-" Verse
 ```
+
+**NOTE (Stage 13a):**
+The canonical grammar has no bare `ChapterSpec` production. Stage 13a resolves all
+inherited-book references to fully-qualified `CanonicalBookRef` form before output.
+A `Reference ::= ChapterSpec` input (e.g. `"23:1"` after `"Ps 19:1"`) always appears
+in canonical output as `CanonicalBookRef` (e.g. `"Psalms 23:1"`). The bare form is
+an input-only construct; it never appears in canonical output.
 
 ### Canonical Compression Rules
 

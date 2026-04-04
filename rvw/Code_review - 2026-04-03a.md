@@ -227,3 +227,45 @@ list-level logic lives in the class.
    `FormatTokenRef`, `Test_VerifyCitationBlock_Negative` from
    `basTEST_aeBibleCitationBlock.bas`
 8. Run `Run_All_SBL_Tests` and `Test_VerifyCitationBlock`; verify all pass
+
+---
+
+## EBNF Updates — `md/aeBibleCitationClass.md`
+
+Four changes made to the documentation on 2026-04-04.
+
+**1. Section heading**
+Updated from "Aligned to 7-Stage Deterministic Parser" to "Aligned to DSP Pipeline
+(Stages 1–13a)" to reflect that the grammar now covers the full pipeline including the
+context resolution layer.
+
+**2. `Reference` rule — third production added**
+
+```ebnf
+Reference
+   ::= BookRef
+    |  BookRef WS ChapterSpec
+    |  ChapterSpec            (* Stage 13a: book inherited from context *)
+```
+
+Added semantic constraint note: a bare `ChapterSpec` reference is valid only when a
+preceding `BookRef` exists in the same `Citation`. This constraint is context-sensitive
+and cannot be expressed in context-free EBNF; it is enforced by `ComposeList_Internal`
+via the `havePrev` guard. Added parse examples for single-book propagation, range
+propagation, cross-book transition, and the ill-formed case (bare `ChapterSpec` with no
+preceding `BookRef`).
+
+**3. `VerseRange` rule — en-dash normalization note**
+
+Added note below the `VerseRange ::= Verse "-" Verse` production: study Bible citation
+blocks use en-dash (`–`, U+2013) as the range separator. `NormalizeRawInput` replaces
+en-dash with ASCII hyphen before any parsing stage is reached. The grammar uses only `-`;
+the en-dash form never reaches the parser.
+
+**4. Canonical EBNF — Stage 13a resolution note**
+
+No structural change to the canonical grammar — every canonical output item is already
+`CanonicalBookRef ::= BookName WS CanonicalChapterSpec`, which requires a book name.
+Added note confirming that Stage 13a resolves all inherited-book inputs to fully-qualified
+`CanonicalBookRef` form before output. The bare `ChapterSpec` form is input-only and
+never appears in canonical output.
