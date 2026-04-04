@@ -2479,7 +2479,7 @@ Public Function WordSpecialCharacterName(codepoint As Long) As String
         ' 24. Page Break
         Case 12
             WordSpecialCharacterName = "Page Break"
-        ' (If your build of Word shows any additional items, we can append them here.)
+        ' (If your build of Word shows any additional Items, we can append them here.)
 
         Case Else
             WordSpecialCharacterName = ""

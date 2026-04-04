@@ -23,11 +23,13 @@ NORMALIZATIONS = [
     (r'(?i)\bmid\$?\(',           'Mid$(',            'Mid$( built-in function casing (includes Mid( -> Mid$()'),
     (r'(?i)\.Path\b',           '.Path',            '.Path property on Document/ActiveDocument'),
     (r'(?i)\.Item\b',           '.Item',            '.Item method on Collection'),
+    (r'(?i)\.Keys\b',           '.Keys',            '.Keys property on Dictionary/Object'),
     (r'(?i)\.Text\b',           '.Text',            '.Text property on Range'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraphs\b', 'As Word.Paragraphs', 'As Word.Paragraphs declaration'),
     (r'(?i)\bnote\b',                        'Note',               'Note loop variable (Footnote iteration)'),
+    (r'(?i)\bitems\b',                       'Items',              'Items variable casing (Collection)'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

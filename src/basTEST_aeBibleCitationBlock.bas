@@ -123,3 +123,92 @@ Public Sub Test_VerifyCitationBlock()
     Debug.Print "=== Test_VerifyCitationBlock (positive, 35 tokens expected) ==="
     VerifyCitationBlock rawBlock
 End Sub
+
+' =============================================================================
+' Test_RenderEnDash  (Public)
+' Stage 17 option: verifies that RenderEnDash replaces ASCII hyphen with
+' en-dash in range strings and leaves non-range strings unchanged.
+' =============================================================================
+Public Sub Test_RenderEnDash()
+    On Error GoTo PROC_ERR
+    Dim ownAssert As Boolean
+    ownAssert = (aeAssert Is Nothing)
+    If ownAssert Then
+        Set aeAssert = New aeAssertClass
+        aeAssert.Initialize
+    End If
+
+    Debug.Print "=== Test_RenderEnDash ==="
+
+    Dim rendered As String
+
+    ' Range entry: hyphen becomes en-dash
+    rendered = aeBibleCitationClass.RenderEnDash("Psalms 103:8-11")
+    aeAssert.AssertEqual "Psalms 103:8" & ChrW(8211) & "11", rendered, _
+        "RenderEnDash: range gets en-dash"
+
+    ' Multi-word book name with range
+    rendered = aeBibleCitationClass.RenderEnDash("1 Chronicles 29:10-13")
+    aeAssert.AssertEqual "1 Chronicles 29:10" & ChrW(8211) & "13", rendered, _
+        "RenderEnDash: multi-word book range"
+
+    ' Non-range entry: unchanged
+    rendered = aeBibleCitationClass.RenderEnDash("Psalms 23:1")
+    aeAssert.AssertEqual "Psalms 23:1", rendered, _
+        "RenderEnDash: non-range unchanged"
+
+    If ownAssert Then
+        aeAssert.Terminate
+        Set aeAssert = Nothing
+    End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_RenderEnDash of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+' =============================================================================
+' Test_SortCitationBlock  (Public)
+' Stage 13b: verifies that SortCitationBlock returns a Collection in canonical
+' book order (BookID 1-66), then chapter, then start verse.
+' =============================================================================
+Public Sub Test_SortCitationBlock()
+    On Error GoTo PROC_ERR
+    Dim ownAssert As Boolean
+    ownAssert = (aeAssert Is Nothing)
+    If ownAssert Then
+        Set aeAssert = New aeAssertClass
+        aeAssert.Initialize
+    End If
+
+    Debug.Print "=== Test_SortCitationBlock ==="
+
+    Dim sorted As Collection
+
+    ' Cross-book: out-of-order input (John, Genesis, Psalms)
+    Set sorted = aeBibleCitationClass.SortCitationBlock( _
+        aeBibleCitationClass.ParseCitationBlock("John 3:16; Gen 1:1; Ps 23:1"))
+    aeAssert.AssertEqual 3, sorted.count, "Sort: count preserved"
+    aeAssert.AssertEqual "Genesis 1:1", sorted(1), "Sort: Gen first"
+    aeAssert.AssertEqual "Psalms 23:1", sorted(2), "Sort: Ps second"
+    aeAssert.AssertEqual "John 3:16", sorted(3), "Sort: John third"
+
+    ' Same-book: chapter order within Psalms
+    Set sorted = aeBibleCitationClass.SortCitationBlock( _
+        aeBibleCitationClass.ParseCitationBlock("Ps 103:8; Ps 19:1; Ps 68:5"))
+    aeAssert.AssertEqual 3, sorted.count, "Sort: same-book count"
+    aeAssert.AssertEqual "Psalms 19:1", sorted(1), "Sort: Ps 19 before 68"
+    aeAssert.AssertEqual "Psalms 68:5", sorted(2), "Sort: Ps 68 before 103"
+    aeAssert.AssertEqual "Psalms 103:8", sorted(3), "Sort: Ps 103 last"
+
+    If ownAssert Then
+        aeAssert.Terminate
+        Set aeAssert = Nothing
+    End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SortCitationBlock of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub

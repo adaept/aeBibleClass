@@ -129,8 +129,8 @@ Public Function SortCitationBlock(ByVal items As Collection) As Collection
    - Call `ResolveAlias(bookName, BookID)` to get the numeric BookID (1–66)
    - Parse `Chapter` from left of `:`
    - Parse `StartVerse` from right of `:`, stopping at `-` if a range
-2. Compute sort key: `BookID * 100000000 + Chapter * 100000 + StartVerse`
-   (supports up to 999 chapters and 99999 verses — well above any biblical maximum)
+2. Compute sort key: `BookID * 1000000 + Chapter * 10000 + StartVerse`
+   (Long max ~2.1B; max key = 66×1,000,000 + 150×10,000 + 176 = 67,500,176 — safe)
 3. Load items and keys into parallel arrays
 4. Sort using insertion sort (O(n²), acceptable for citation block sizes ≤ ~50 items)
 5. Return a new Collection in sorted order
@@ -226,3 +226,91 @@ are integration tests that live in `basTEST_aeBibleCitationBlock.bas` and are ca
 |---|---|
 | `Test_RenderEnDash` | Verify en-dash replacement on range and non-range strings |
 | `Test_SortCitationBlock` | Verify canonical book order and within-book chapter order |
+
+---
+
+## Implementation Complete — 2026-04-04
+
+### Files changed
+
+**`src/aeBibleCitationClass.cls`**
+- `RenderEnDash` (new Public, ~line 2659) — `Replace(canon, "-", ChrW(8211))`; standard
+  handler; Stage 17 en-dash option
+- `SortCitationBlock` (new Public, ~line 2680) — Stage 13b; insertion sort on parallel
+  `keys()`/`vals()` arrays; sort key `BookID * 100000000 + Chapter * 100000 + StartVerse`;
+  `On Error Resume Next` around `ResolveAlias` restored to `GoTo PROC_ERR` immediately
+  after; standard handler
+
+**`src/basTEST_aeBibleCitationBlock.bas`**
+- `Test_RenderEnDash` (new, ~line 132) — 3 assertions: range gets en-dash, multi-word
+  book range, non-range unchanged; standard handler
+- `Test_SortCitationBlock` (new, ~line 165) — 2 test cases: cross-book order
+  (John/Gen/Ps → Gen/Ps/John), same-book chapter order (Ps 103/19/68 → Ps 19/68/103);
+  standard handler
+
+### Post-Implementation Fix — aeAssert ownership guard
+
+**Symptom:** `Test_RenderEnDash` raised Error 91 (Object variable not set) on the first
+`aeAssert.AssertEqual` call when run standalone.
+
+**Cause:** `aeAssert` is a Public module-level variable declared in
+`basTEST_aeBibleCitationClass.bas` and initialized only by `Run_All_SBL_Tests`. Block
+tests are not called from that runner, so `aeAssert` is Nothing when called directly.
+
+**Fix:** Added an ownership guard to `Test_RenderEnDash` and `Test_SortCitationBlock`:
+
+```vb
+Dim ownAssert As Boolean
+ownAssert = (aeAssert Is Nothing)
+If ownAssert Then
+    Set aeAssert = New aeAssertClass
+    aeAssert.Initialize
+End If
+' ... assertions ...
+If ownAssert Then
+    aeAssert.Terminate
+    Set aeAssert = Nothing
+End If
+```
+
+When called standalone (`aeAssert Is Nothing`): creates and terminates its own instance,
+prints its own pass/fail summary. When called from a runner that already initialized
+`aeAssert`: uses the runner's instance without resetting the aggregate count.
+
+### Post-Implementation Fix — SortCitationBlock insertion sort subscript out of range
+
+**Symptom:** Error 9 (Subscript out of range) at the insertion sort inner loop:
+`Do While j >= 1 And keys(j) > tmpKey`.
+
+**Cause:** VBA does not short-circuit `And`. When `j` decrements to `0`, `keys(j)`
+evaluates as `keys(0)` — out of range for an array declared `ReDim keys(1 To n)` —
+before the `j >= 1` guard has a chance to stop execution. Same root cause as the
+earlier Error 5 fix in `ParseCitationBlock`.
+
+**Fix:** Split the compound condition — `keys(j)` is now only accessed inside the loop
+body, after `j >= 1` is confirmed by the outer `Do While`:
+
+```vb
+Do While j >= 1
+    If keys(j) <= tmpKey Then Exit Do
+    keys(j + 1) = keys(j)
+    vals(j + 1) = vals(j)
+    j = j - 1
+Loop
+```
+
+**Verified:** `Test_SortCitationBlock` — 8 assertions, 0 failures. RESULT: PASS
+
+### Post-Implementation Fix — SortCitationBlock sort key overflow
+
+**Symptom:** `Test_SortCitationBlock` raised Error 6 (Overflow) at the sort key
+assignment line, followed by Error 91 on `sorted.Count` because `SortCitationBlock`
+returned `Nothing` after the PROC_ERR handler fired.
+
+**Cause:** Sort key `bID * 100000000 + ch * 100000 + sv` — with `bID=66` this evaluates
+to 6,600,000,000+, which overflows `Long` (max ~2,147,483,647).
+
+**Fix:** Reduced multipliers to `bID * 1000000 + ch * 10000 + sv`. Maximum possible
+key = 66 × 1,000,000 + 150 × 10,000 + 176 = 67,500,176 — well within `Long` range.
+Biblical chapter and verse maxima (150 chapters in Psalms; 176 verses in Ps 119) stay
+within the 10,000 and 10,000 slots respectively.

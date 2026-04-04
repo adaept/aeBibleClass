@@ -2244,7 +2244,7 @@ End Function
 '   New Collection of canonical range strings.
 '   Adjacent verses within same book and chapter are
 '   grouped; non-adjacent, cross-chapter, and
-'   cross-book verses remain as separate items.
+'   cross-book verses remain as separate Items.
 '=====================================================
 Public Function BuildCanonicalRanges(ByVal Refs As Collection) As Collection
     On Error GoTo PROC_ERR
@@ -2351,7 +2351,7 @@ End Function
 '   Book names suppressed after first occurrence per
 '   contiguous group.  Chapter numbers suppressed when
 '   same as previous item.  Commas separate same-chapter
-'   items; semicolons separate chapter and book changes.
+'   Items; semicolons separate chapter and book changes.
 '=====================================================
 Public Function FormatCanonicalString(ByVal Refs As Collection) As String
     On Error GoTo PROC_ERR
@@ -2492,7 +2492,7 @@ End Function
 ' Two-level parser for study Bible citation blocks.
 '   Outer split: ";" — major segments; book context
 '                      propagates across segments.
-'   Inner split: "," — verse sub-items within segment.
+'   Inner split: "," — verse sub-Items within segment.
 ' Calls NormalizeRawInput first (strips line breaks,
 ' normalizes en-dash to ASCII hyphen).
 ' Raises on unresolved book alias.
@@ -2643,6 +2643,133 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCitationBlock of Class aeSBL_Citation_Class"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' RenderEnDash  (Public)
+' Stage 17 option: replaces ASCII hyphen with en-dash
+' in a canonical reference string for Study Bible
+' document output. Safe as a simple Replace because
+' SBL canonical book names never contain hyphens;
+' the only hyphens in a canonical string are verse
+' range separators.
+' Example: "Psalms 103:8-11" -> "Psalms 103:8" & ChrW(8211) & "11"
+'=====================================================
+Public Function RenderEnDash(ByVal canon As String) As String
+    On Error GoTo PROC_ERR
+    RenderEnDash = Replace(canon, "-", ChrW(8211))
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure RenderEnDash of Class aeSBL_Citation_Class"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' SortCitationBlock  (Public)
+' Stage 13b: sorts a Collection of canonical reference
+' strings by (BookID, Chapter, StartVerse) — canonical
+' book order Gen=1 through Rev=66. Required before
+' Stage 14 Canonical Compression, which assumes
+' adjacency ordering.
+' Input: Collection of strings from ParseCitationBlock.
+' Returns a new Collection in canonical order.
+' Sort key: BookID * 1000000 + Chapter * 10000 + StartVerse
+' Long max ~2.1B; max key = 66*1000000 + 150*10000 + 176 = 67,500,176 (safe)
+'=====================================================
+Public Function SortCitationBlock(ByVal Items As Collection) As Collection
+    On Error GoTo PROC_ERR
+
+    Dim n As Long
+    n = Items.count
+    If n = 0 Then Set SortCitationBlock = New Collection: GoTo PROC_EXIT
+
+    Dim keys() As Long
+    Dim vals() As String
+    ReDim keys(1 To n)
+    ReDim vals(1 To n)
+
+    Dim i As Long
+    i = 1
+    Dim item As Variant
+    For Each item In Items
+        Dim canon As String
+        canon = CStr(item)
+
+        ' Find last space: left = book name, right = Chapter:Verse[-End]
+        Dim lastSp As Long
+        lastSp = 0
+        Dim k As Long
+        For k = Len(canon) To 1 Step -1
+            If Mid$(canon, k, 1) = " " Then lastSp = k: Exit For
+        Next k
+
+        Dim bookName As String
+        Dim numPart As String
+        bookName = Left$(canon, lastSp - 1)
+        numPart = Mid$(canon, lastSp + 1)
+
+        ' Resolve BookID
+        Dim bID As Long
+        bID = 0
+        On Error Resume Next
+        ResolveAlias bookName, bID
+        On Error GoTo PROC_ERR
+
+        ' Parse Chapter from left of ":"
+        Dim cpPos As Long
+        cpPos = InStr(numPart, ":")
+        Dim ch As Long
+        ch = 0
+        If cpPos > 0 Then ch = CLng(Left$(numPart, cpPos - 1))
+
+        ' Parse StartVerse from right of ":", stop at "-"
+        Dim vPart As String
+        vPart = Mid$(numPart, cpPos + 1)
+        Dim dpPos As Long
+        dpPos = InStr(vPart, "-")
+        Dim sV As Long
+        If dpPos > 0 Then
+            sV = CLng(Left$(vPart, dpPos - 1))
+        Else
+            sV = CLng(vPart)
+        End If
+
+        keys(i) = bID * 1000000 + ch * 10000 + sV
+        vals(i) = canon
+        i = i + 1
+    Next item
+
+    ' Insertion sort on keys/vals arrays
+    Dim j As Long
+    Dim tmpKey As Long
+    Dim tmpVal As String
+    For i = 2 To n
+        tmpKey = keys(i)
+        tmpVal = vals(i)
+        j = i - 1
+        Do While j >= 1
+            If keys(j) <= tmpKey Then Exit Do
+            keys(j + 1) = keys(j)
+            vals(j + 1) = vals(j)
+            j = j - 1
+        Loop
+        keys(j + 1) = tmpKey
+        vals(j + 1) = tmpVal
+    Next i
+
+    ' Build result Collection
+    Dim Result As New Collection
+    For i = 1 To n
+        Result.Add vals(i)
+    Next i
+    Set SortCitationBlock = Result
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SortCitationBlock of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 
