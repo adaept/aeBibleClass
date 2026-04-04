@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #538 -
 ' #537 -
 ' #536 -
-' #535 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #535 - 1 unexpected FAIL in negative test - [bug]
     ' FIXED - #534 - Fix negative tests of basTEST_aeBibleCitationBlock to use aeAssert framework [impr]
     ' FIXED - #533 - Move python and associated files to py folder and adjust calling scripts [impr]
     ' FIXED - #532 - Move documentation of DSP for SBL Citation to its own md file [doc][impr]

@@ -123,10 +123,16 @@ Private Function DetectBookAliasInSegment(seg As String, contextBookID As Long, 
             DetectBookAliasInSegment = True
             Exit Function
         End If
-        ' Alias detection failed for a letter-prefix — fall through to bare reference
-        alias = ""
-        refPart = seg
-        DetectBookAliasInSegment = False
+        ' Alias detection failed for a letter-prefix — signal as unresolved alias
+        ' so TokenizeCitationBlock emits an error token rather than silently
+        ' treating the segment as a bare reference inheriting context.
+        alias = p0
+        If UBound(parts) >= 1 Then
+            refPart = Join(SliceArray(parts, 1), " ")
+        Else
+            refPart = ""
+        End If
+        DetectBookAliasInSegment = True
         Exit Function
     End If
 

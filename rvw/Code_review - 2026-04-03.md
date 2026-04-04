@@ -137,3 +137,67 @@ RESULT: PASS
 
 The validator's `FAIL` lines (detecting bad input) are **evidence** that each test case
 passed. The harness `RESULT: PASS` at the end confirms all three negative tests succeeded.
+
+---
+
+## Second run result — fix overwritten; new bug found
+
+The fix to `Test_VerifyCitationBlock_Negative` (Issue 1 above) was applied but then
+overwritten, restoring the original buggy fallthrough in `DetectBookAliasInSegment`.
+The second test run produced the same failure:
+
+```
+--- Case 1: Bad alias (Jerimiah) ---
+BAD  > ResolveBook(JERIMIAH)
+PASS: Genesis 1:1
+PASS: Genesis 1:11          <- spurious token
+PASS: Malachi 1:1
+--- 3 passed, 0 failed. ---
+FAIL: Case 1: Bad alias (Jerimiah) correctly rejected
+Tests Run: 3  Failures: 1  RESULT: FAIL
+```
+
+### Root cause — `DetectBookAliasInSegment` Case 2 silent fallthrough
+
+When `TryResolveAlias("Jerimiah")` failed, Case 2 executed:
+
+```vb
+alias = ""
+refPart = seg        ' "Jerimiah 33:11"
+DetectBookAliasInSegment = False
+```
+
+`TokenizeCitationBlock` received `newBook = False` and skipped the error-handling block
+entirely. It then parsed `refPart = "Jerimiah 33:11"` as a bare chapter:verse:
+
+- colon found → `chStr = "Jerimiah 33"` → `IsNumeric` = False → chapter stays at 1 (Gen 1:1 context)
+- `verseSpecStr = "11"` → token emitted as **Genesis 1:11**, no error
+
+Three tokens passed, `fc1 = 0`, assertion failed.
+
+### Fix re-applied — `DetectBookAliasInSegment` Case 2
+
+Return `True` with `alias = p0` when alias resolution fails for a letter-prefix. This
+routes the bad alias into `TokenizeCitationBlock`'s existing error-token path
+(`TryResolveAlias` → False → `E_ALIAS_UNRESOLVED` → `GoTo NEXT_SEG`).
+
+```vb
+' Before (buggy — silent fallthrough)
+alias = ""
+refPart = seg
+DetectBookAliasInSegment = False
+Exit Function
+
+' After (correct — signal as unresolved alias)
+alias = p0
+If UBound(parts) >= 1 Then
+    refPart = Join(SliceArray(parts, 1), " ")
+Else
+    refPart = ""
+End If
+DetectBookAliasInSegment = True
+Exit Function
+```
+
+Cases 2 and 3 were correct in both runs. After this fix all three cases should produce
+`fc >= 1` and the summary should show `Tests Run: 3 / Failures: 0 / RESULT: PASS`.
