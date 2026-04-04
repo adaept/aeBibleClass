@@ -173,6 +173,7 @@ Stage 12  ExtendedParse
 CONTEXT RESOLUTION LAYER
 ------------------------
 Stage 13  ContextualShorthand
+Stage 13a BookContextPropagation
 
 CANONICAL OUTPUT LAYER
 ----------------------
@@ -927,7 +928,8 @@ These stages are strictly lexical segmentation layers.
 - Stage 10 RangeComposition     -> builds ranges
 - Stage 11 ListComposition      -> builds lists
 - Stage 12 ExtendedParse        -> orchestrate pipeline
-- Stage 13 ContextualShorthand
+- Stage 13  ContextualShorthand
+- Stage 13a BookContextPropagation
 
 **Recursion:**
 Stage-12 may call `ParseReferenceExtended()` recursively when processing list segments. This allows nested list and range structures to be parsed without additional grammar rules.
@@ -1196,9 +1198,10 @@ After atomic parsing (Stages 1-7) and structural composition (Stages 8-11), the 
 **stage Responsibilities:**
 - Stage 12  ExtendedParse — Orchestrates list and range parsing
 - Stage 13  ContextualShorthand — Resolves omitted book/chapter context
+- Stage 13a BookContextPropagation — Resolves chapter:verse segments with inherited book across semicolon boundaries
 - Stage 14  CanonicalCompression — Produces minimal canonical reference form
 
-Only after Stage 13 are references guaranteed to represent fully-resolved canonical references.
+Only after Stage 13a are references guaranteed to represent fully-resolved canonical references.
 
 Some implementations may internally expand references to verse-level triples:
 ```
@@ -1347,10 +1350,192 @@ Collection of canonical reference strings
 
 ---
 
+## Stage 13a - Book Context Propagation (Post-Parser Context Layer)
+
+**Public API:**
+```vb
+ComposeList(ByVal raw As String) As Collection       ' semicolon-only inputs
+ParseCitationBlock(ByVal raw As String) As Collection ' mixed ; and , inputs
+```
+
+**PURPOSE:**
+Extends Stage 13 to handle `chapter:verse` segments that carry no book alias and must
+inherit the book from the preceding segment. This is the standard SBL study Bible citation
+format, where a book name appears once and all following semicolon-separated segments
+inherit it until a new book name appears.
+
+**Supported Forms:**
+
+| Input segment | Condition | Resolution |
+|---|---|---|
+| `"23:1"` | left of `:` is numeric; `havePrev=True` | inherit book from previous token |
+| `"103:8-11"` | range with numeric chapter; `havePrev=True` | inherit book; parse as chapter:verse-range |
+| `"28:7"` | same as first case | inherit book and resolve verse |
+
+**Delimiter constraint:** Stage 13a operates on segments already produced by Stage 8
+(`ListDetection`). For pure semicolon-delimited input Stage 8 correctly splits on `;`
+before Stage 13a is reached. For inputs that mix `;` and `,` (e.g. `"Ps 145:8-9,17;
+Isa 40:28"`), `ListDetection` splits on comma first (comma-priority rule), leaving
+semicolons stranded inside segments. Such inputs require `ParseCitationBlock` (see below).
+
+### Qualifying Condition
+
+A segment qualifies for book-context propagation when ALL of:
+
+1. `havePrev` is `True` (at least one prior segment has been resolved)
+2. The segment contains `:`
+3. The substring left of `:` is numeric (it is a chapter number, not a book alias)
+
+When all three hold, the segment is resolved by inheriting `BookID` from the previous
+token and parsing the `:` as `chapter:verse`. `ParseReferenceRef` is bypassed — calling
+it would fail because it requires a book alias.
+
+### Input Normalization Prerequisite
+
+Before any stage processes study Bible citation blocks, raw input must be normalized:
+
+- Replace `vbCr`, `vbLf`, `vbCrLf` with a single space (multi-line blocks)
+- Collapse multiple spaces to one
+- Replace en-dash (`–`, ChrW(8211)) with ASCII hyphen (`-`, Chr(45))
+
+This is the responsibility of `NormalizeRawInput` (a new Public method on the class),
+called at the top of `ComposeList` and `ParseCitationBlock` before any splitting occurs.
+Without en-dash normalization, `IsRangeSegment` fails to detect ranges like `"103:8–11"`.
+
+### context state
+
+Stage 13a participates in the same left-to-right context maintained by Stage 13:
+- `currentBook` (BookID)
+- `currentChapter`
+
+Context is updated after each resolved segment. Book context crosses semicolon boundaries;
+chapter context resets when a new chapter is specified.
+
+### Range Context Rules
+
+For a range segment qualified by Stage 13a (e.g. `"103:8-11"` inheriting Psalms):
+
+- `StartRef.BookID = prevRef.BookID`
+- `StartRef.Chapter = chapter parsed from left of colon`
+- `StartRef.Verse = verse parsed from left of hyphen`
+- `EndRef.BookID = StartRef.BookID`
+- `EndRef.Chapter = StartRef.Chapter`
+- `EndRef.Verse = verse parsed from right of hyphen`
+
+After resolution, `prevRef` is set to `EndRef`.
+
+### Examples
+
+**Input:** `"Ps 19:1; 23:1; 28:7; 68:5"`
+
+**Output:**
+```
+"Psalms 19:1"
+"Psalms 23:1"
+"Psalms 28:7"
+"Psalms 68:5"
+```
+
+**Input:** `"Ps 103:8-11; 111:3-5"`
+
+**Output:**
+```
+"Psalms 103:8-11"
+"Psalms 111:3-5"
+```
+
+**Input:** `"1 Chr 29:10-13; Ps 19:1-2; 23:1"`
+
+**Output:**
+```
+"1 Chronicles 29:10-13"
+"Psalms 19:1-2"
+"Psalms 23:1"
+```
+
+### `ParseCitationBlock` — Two-Level Entry Point
+
+Study Bible citation blocks use a two-level delimiter structure:
+
+| Level | Delimiter | Separates |
+|---|---|---|
+| Outer | `;` | Major segments (each carries its own book/chapter context) |
+| Inner | `,` | Verse sub-items within a single chapter (`145:8-9,17`) |
+
+`ListDetection` cannot handle this structure because it splits on comma before semicolon.
+`ParseCitationBlock` performs the two-level split directly:
+
+```
+1. NormalizeRawInput (line breaks, en-dash)
+2. Split on ";" -> major segments
+3. For each major segment (trimmed):
+   a. Detect book alias (Stage 13a qualifying condition)
+   b. Split on "," -> verse sub-items
+   c. For each sub-item: DecomposeVerseSpec -> StartVerse, EndVerse
+   d. Validate each atomic endpoint via ValidateSBLReference(ModeSBL)
+4. Return Collection of canonical reference strings
+```
+
+`ParseCitationBlock` is the class-level replacement for `TokenizeCitationBlock` in
+`basTEST_aeBibleCitationBlock.bas`. After implementation, `VerifyCitationBlock` in that
+module becomes a thin wrapper calling `ParseCitationBlock`.
+
+### Validation
+
+Stage 13a does not validate. Validation of each resolved endpoint is performed by
+`ValidateSBLReference(ModeSBL)` after resolution:
+
+- Chapter out of range → `E_SBL_FAIL`
+- Verse out of range → `E_SBL_FAIL`
+- Unresolved book alias (e.g. misspelling) → `E_ALIAS_UNRESOLVED` (detected before Stage 13a)
+
+Single-chapter books (Jude, Philemon, Obadiah, 2 John, 3 John) require special attention.
+`"Jude 99"` expands via the single-chapter rule to `Jude 1:99`; `ValidateSBLReference`
+then rejects it because `GetMaxVerse(65, 1) = 25`. The implicit chapter insertion happens
+in `ValidateSBLReference` at the `Chapter=0` normalization step (lines 1116–1121), not in
+Stage 13a.
+
+### Implementation Location
+
+Stage 13a is implemented inline in `ComposeList_Internal` as a new shorthand case,
+inserted before the `Else` branch that calls `ParseReferenceRef`:
+
+```
+existing case: bare verse number    (IsNumeric and no colon)
+existing case: numeric range        (IsNumericRange)
+NEW case:      chapter:verse        (has colon, left of colon is numeric)  <- Stage 13a
+NEW case:      chapter:verse-range  (has colon and hyphen, left is numeric) <- Stage 13a
+fallthrough:   ParseReferenceRef    (all other cases)
+```
+
+### Test Coverage
+
+`Test_Stage13a_BookContextPropagation` in `basTEST_aeBibleCitationClass.bas`, called from
+`Run_All_SBL_Tests` immediately after `Test_Stage13_ContextShorthand`.
+
+Positive cases: single-book propagation, cross-book transition, range with inherited book.
+
+Negative cases (each asserted to be correctly rejected):
+- Bad alias (`"Jerimiah"` — misspelling)
+- Verse out of range (`"Ps 103:8-200"`)
+- Chapter out of range (`"Jer 99:1"`)
+- Single-chapter book verse out of range (`"Jude 99"` → expands to `Jude 1:99`; max verse 25)
+
+### Stage 13 vs Stage 13a
+
+| | Stage 13 | Stage 13a |
+|---|---|---|
+| Input | Segments already parsed into `ScriptureRef`; `BookID=0` or `Chapter=0` | Raw segment string with no book alias; colon present; left of colon is numeric |
+| Mechanism | `ApplyContextShorthand` post-pass fills in zero fields | Inline pre-pass in `ComposeList_Internal` before `ParseReferenceRef` is called |
+| Trigger | `BookID = 0` after `ParseReferenceRef` | Left of `:` is numeric — `ParseReferenceRef` would fail if called |
+| Delimiter | Handles both `,` and `;` inputs via `ListDetection` | Same; additionally requires `ParseCitationBlock` for mixed inputs |
+
+---
+
 ## Stage 14 - Canonical Compression
 
 **Input:**
-A resolved set of canonical references produced after contextual shorthand expansion (Stage 13).
+A resolved set of canonical references produced after contextual shorthand expansion (Stage 13a).
 
 **Output:**
 Minimal canonical citation form.

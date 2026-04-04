@@ -1,111 +1,141 @@
-# Code Review: Book-Context Propagation — Architecture Plan
+# Code Review: Stage 13a — Book Context Propagation
 
 **Date:** 2026-04-03
-**Target module (changes):** `src/aeBibleCitationClass.cls`
-**Target module (tests):** `src/basTEST_aeBibleCitationClass.bas`
-**Target module (simplified):** `src/basTEST_aeBibleCitationBlock.bas`
+**Parser doc updated:** `md/aeBibleCitationClass.md`
 
 ---
 
-## Problem Statement
+## Problem
 
-The existing parser pipeline (`ComposeList` / `ParseScripture`) requires a book alias on
-**every** semicolon-separated segment. Study Bible citation blocks use **book-context
-propagation** — after `Ps`, references like `23:1; 28:7; 68:5` carry no book name and
-inherit `Ps` from the preceding segment. This is standard SBL citation format and is the
-central gap.
+`ComposeList` / `ParseScripture` require a book alias on every segment. Study Bible
+citation blocks use book-context propagation — after `Ps`, segments like `23:1; 28:7`
+carry no book name and must inherit `Ps` from the preceding segment.
 
 ---
 
-## Where Does the Fix Go?
+## Where the Fix Goes
 
-**Not between Stage 7 and Stage 8. The fix belongs in Stage 13.**
+**Stage 13a — not between Stage 7 and Stage 8.**
 
-Here is why, tracing the failure path for `"Ps 19:1; 23:1"`:
+`ListDetection` (Stage 8) already splits on `;`, producing clean segments. The failure
+happens in `ComposeList_Internal` when it calls `ParseReferenceRef("23:1")`:
+`LexicalScan` takes `"23:1"` as a whole-string alias → `ResolveBookStrict` fails.
+
+Stage 13 already has two inline shorthand cases in `ComposeList_Internal`:
+- bare verse number (`"18"` after `"John 3:16"`)
+- numeric range (`"16-18"` after `"John 3:16"`)
+
+Stage 13a adds a third: **if a segment has a colon and the left side is numeric, it is a
+`chapter:verse` with no book alias — inherit `BookID` from the previous token** and bypass
+`ParseReferenceRef` entirely.
+
+**Failure trace for `"Ps 19:1; 23:1"`:**
 
 | Stage | Function | What happens with `"23:1"` |
 |---|---|---|
 | 8 | `ListDetection` | Splits on `;` → produces segment `"23:1"` |
-| 11 | `ComposeList_Internal` | Iterates segments; calls `ParseReferenceRef("23:1")` |
-| 2 | `LexicalScan("23:1")` | `Split("23:1", " ")` → `parts(0)="23:1"`, UBound=0, Case 0 → `RawAlias = "23:1"` |
-| 3 | `ResolveBookStrict("23:1", ...)` | No alias matches → **raises error** |
+| 11 | `ComposeList_Internal` | Calls `ParseReferenceRef("23:1")` |
+| 2 | `LexicalScan("23:1")` | `Split("23:1"," ")` → one element; whole string taken as alias |
+| 3 | `ResolveBookStrict("23:1",...)` | No alias matches → **raises error** |
 
-Stage 7 (`ParseReference`) is the **atomic** single-reference parser — it operates on one
-complete reference and has no memory of prior references. Stage 8 (`ListDetection`) is a
-dumb splitter by design. The semantic context already lives in Stage 13.
-
-Stage 13 already handles **two** shorthand cases inline in `ComposeList_Internal`:
-
-```vb
-' Bare verse number: "18" after "John 3:16" → John 3:18
-If havePrev And IsNumeric(seg) And InStr(seg, ":") = 0 Then ...
-
-' Numeric range: "16-18" after "John 3:16" → John 3:16-18
-If havePrev And IsNumericRange(seg) Then ...
-```
-
-The missing case is the **book-context** shorthand: `"23:1"` after `"Ps 19:1"` — a
-`chapter:verse` segment where the left side of the colon is numeric and there is no book
-alias. This is Stage 13 extended, labelled **Stage 13a**.
-
----
-
-## Stage 13a Contract
-
-A segment qualifies for book-context propagation when ALL of:
-
-1. `havePrev` is True (a prior reference exists to inherit from)
-2. The segment contains `:`
-3. Left of `:` is numeric (i.e., it is a chapter number, not a book alias)
-
-When these conditions hold, the segment is parsed as `chapter:verse` inheriting
-`BookID` from the previous token — bypassing `ParseReferenceRef` entirely.
+**Qualifying condition (all three must hold):**
+1. `havePrev = True`
+2. Segment contains `:`
+3. Left of `:` is numeric
 
 For range segments (`"103:8-11"` after `"Ps"`), the same rule applies: if the segment
 matches `\d+:\d+-\d+` it is a chapter:verse-range with inherited book.
 
 ---
 
-## Additional Prerequisite: En-Dash Normalization
+## Semicolon Handling
 
-`IsRangeSegment` and `RangeDetection` in the class currently detect only ASCII hyphen
-(`-`, Chr(45)). Study Bible citation blocks use en-dash (`–`, ChrW(8211)):
+Semicolons are already consumed by `ListDetection` before Stage 13a sees any segment.
+No change to semicolon handling is needed for the common case.
 
+**However — `ListDetection` is an either/or splitter:**
+
+```vb
+If InStr(rawInput, ",") > 0 Then
+    Split(rawInput, ",")   ' exits; semicolons ignored
+    Exit Function
+End If
+If InStr(rawInput, ";") > 0 Then
+    Split(rawInput, ";")
+End If
 ```
-103:8–11   Ps 19:1–2   1 Chr 29:10–13
-```
 
-`NormalizeBlockInput` in `basTEST_aeBibleCitationBlock.bas` strips line breaks but does
-**not** normalize en-dashes. A `NormalizeRawInput` method must be added to the class that
-replaces en-dashes with ASCII hyphens, and called at the top of `ComposeList` and
-`ParseScripture` before any parsing begins.
+For inputs with **both** delimiters (e.g. `"Ps 145:8-9,17; Isa 40:28"`), it splits on
+comma first — semicolons survive inside segments and `ParseReferenceRef` then fails on
+`"17; Isa 40:28"`.
+
+**Conclusion:** Stage 13a in `ComposeList_Internal` is correct and sufficient for
+**pure-semicolon** inputs. Mixed `;` and `,` inputs (the full citation block) require a
+new entry point.
 
 ---
 
-## Procedures to Move from `basTEST_aeBibleCitationBlock.bas`
+## New Entry Point: `ParseCitationBlock`
+
+Two-level split is not possible in `ListDetection` without breaking existing callers.
+A new public method on the class handles the citation block structure:
+
+```
+1. NormalizeRawInput  — strip line breaks; replace en-dash with ASCII hyphen
+2. Split on ";"       — major segments (book/chapter context propagates across these)
+3. For each segment:
+   a. Detect book alias (Stage 13a qualifying condition)
+   b. Split on ","    — verse sub-items within the segment
+   c. DecomposeVerseSpec -> StartVerse, EndVerse
+   d. ValidateSBLReference(ModeSBL) per atomic endpoint
+4. Return Collection of canonical reference strings
+```
+
+This is the class-level replacement for `TokenizeCitationBlock` in
+`basTEST_aeBibleCitationBlock.bas`.
+
+---
+
+## En-Dash Normalization
+
+`IsRangeSegment` and `RangeDetection` only recognize ASCII hyphen. Citation blocks use
+en-dash (`–`, ChrW(8211)). `NormalizeRawInput` must replace en-dash with ASCII hyphen
+before any parsing. Called at the top of `ComposeList` and `ParseCitationBlock`.
+
+---
+
+## Procedures Moving from `basTEST_aeBibleCitationBlock.bas`
 
 | Procedure | Disposition |
 |---|---|
-| `NormalizeBlockInput` | Move to `aeBibleCitationClass.cls` as `Public Function NormalizeRawInput`; add en-dash → hyphen normalization; call from `ComposeList` and `ParseScripture` |
-| `DecomposeVerseSpec` | Logic absorbed into extended `IsRangeSegment` / `RangeDetection` (en-dash detection already needed there) |
-| `DetectBookAliasInSegment` | Logic absorbed into Stage 13a inline check in `ComposeList_Internal` |
-| `TokenizeCitationBlock` | Replaced by enhanced `ComposeList` + `ValidateSBLReference` loop |
-| `TryResolveAlias` | Removed — `ResolveAlias` with error handling exists in the class |
-| `AppendToken`, `SliceArray` | Removed — no longer needed |
-| `BlockToken` type | Removed — no longer needed |
-| `FormatTokenRef` | Removed — `CanonicalFromRef` in the class covers this |
-| `VerifyCitationBlock` | **Remains** but simplified: calls `ComposeList`, then `ValidateSBLReference` per item |
-| `Test_VerifyCitationBlock` | **Remains** — positive full-block integration test |
-| `Test_VerifyCitationBlock_Negative` | **Removed** — all three cases covered by `Test_Stage13a_BookContextPropagation` |
+| `NormalizeBlockInput` | → class as `Public Function NormalizeRawInput`; add en-dash normalization |
+| `DecomposeVerseSpec` | → absorbed into extended `IsRangeSegment` / `RangeDetection` |
+| `DetectBookAliasInSegment` | → absorbed into Stage 13a inline case in `ComposeList_Internal` |
+| `TokenizeCitationBlock` | → replaced by `ParseCitationBlock` in the class |
+| `TryResolveAlias` | → removed; `ResolveAlias` with error handling exists in the class |
+| `AppendToken`, `SliceArray`, `FormatTokenRef`, `BlockToken` | → removed |
+| `VerifyCitationBlock` | **stays** — simplified to call `ParseCitationBlock` |
+| `Test_VerifyCitationBlock` | **stays** — positive full-block integration test |
+| `Test_VerifyCitationBlock_Negative` | → removed; all cases covered by `Test_Stage13a_BookContextPropagation` |
+
+---
+
+## Updated `Run_All_SBL_Tests` Sequence
+
+```vb
+Test_Stage13_ContextShorthand           ' existing
+Test_Stage13a_BookContextPropagation    ' NEW — insert here
+Test_Stage14_CanonicalCompression
+```
 
 ---
 
 ## New Test: `Test_Stage13a_BookContextPropagation`
 
-Added to `basTEST_aeBibleCitationClass.bas`. Inserted into `Run_All_SBL_Tests`
-immediately after `Test_Stage13_ContextShorthand`.
+Added to `basTEST_aeBibleCitationClass.bas`. Called from `Run_All_SBL_Tests` immediately
+after `Test_Stage13_ContextShorthand`.
 
-### Positive cases
+**Positive cases:**
 
 ```vb
 ' Single-book propagation — Psalms context
@@ -118,18 +148,18 @@ aeAssert.AssertEqual "Psalms 28:7", c(3), "Stage13a: Ps 28:7 inherited"
 ' Cross-book transition — Psalms then Isaiah
 Set c = aeBibleCitationClass.ComposeList("Ps 103:8; Isa 40:28; 63:16")
 aeAssert.AssertEqual 3, c.Count, "Stage13a: cross-book count"
-aeAssert.AssertEqual "Psalms 103:8",  c(1), "Stage13a: Ps 103:8"
-aeAssert.AssertEqual "Isaiah 40:28",  c(2), "Stage13a: Isa 40:28"
-aeAssert.AssertEqual "Isaiah 63:16",  c(3), "Stage13a: Isa 63:16 inherited"
+aeAssert.AssertEqual "Psalms 103:8", c(1), "Stage13a: Ps 103:8"
+aeAssert.AssertEqual "Isaiah 40:28", c(2), "Stage13a: Isa 40:28"
+aeAssert.AssertEqual "Isaiah 63:16", c(3), "Stage13a: Isa 63:16 inherited"
 
-' Range with inherited book — "103:8-11" after "Ps"
+' Range with inherited book
 Set c = aeBibleCitationClass.ComposeList("Ps 19:1-2; 103:8-11")
 aeAssert.AssertEqual 2, c.Count, "Stage13a: Psalm range count"
 aeAssert.AssertEqual "Psalms 19:1-2",   c(1), "Stage13a: Ps 19:1-2"
 aeAssert.AssertEqual "Psalms 103:8-11", c(2), "Stage13a: Ps 103:8-11 inherited"
 ```
 
-### Negative cases (expected rejection → assertion passes when failCount >= 1)
+**Negative cases (correctly rejected = test passes):**
 
 ```vb
 ' Bad alias — "Jerimiah" is a misspelling; absent from alias map
@@ -151,27 +181,13 @@ valid = aeBibleCitationClass.ValidateSBLReference(24, "Jeremiah", 99, "1", ModeS
 aeAssert.AssertTrue Not valid, "Stage13a neg: Jer 99:1 rejected"
 
 ' Jude 99 — single-chapter book; implicit Chapter 1; verse 99 > max (25)
-' ParseReference("Jude 99") expands to Jude 1:99 via single-chapter rule,
-' then ValidateSBLReference rejects verse 99.
 valid = aeBibleCitationClass.ValidateSBLReference(65, "Jude", 0, "99", ModeSBL, True)
 aeAssert.AssertTrue Not valid, "Stage13a neg: Jude 99 rejected (max verse 25)"
 ```
 
-**Note on `Jude 99`:** Jude is a single-chapter book. `ValidateSBLReference` normalizes
-`Chapter=0, VerseSpec="99"` to `Chapter=1, VerseSpec="99"` (lines 1116–1121 of the
-class). `GetMaxVerse(65, 1) = 25`, so `99 > 25` → False. This tests both the
-single-chapter implicit-chapter rule and the verse bounds check in one case.
-
----
-
-## Updated `Run_All_SBL_Tests` Sequence
-
-```vb
-Test_Stage13_ContextShorthand       ' existing
-Test_Stage13a_BookContextPropagation' NEW — book-context propagation + Jude 99
-Test_Stage14_CanonicalCompression
-...
-```
+**Note on `Jude 99`:** `ValidateSBLReference` normalizes `Chapter=0, VerseSpec="99"` to
+`Chapter=1, VerseSpec="99"` for single-chapter books. `GetMaxVerse(65,1)=25`, so
+`99 > 25` → False. Tests both the implicit-chapter rule and verse bounds in one case.
 
 ---
 
@@ -181,145 +197,33 @@ Test_Stage14_CanonicalCompression
 
 | New item | Purpose |
 |---|---|
-| `Public Function NormalizeRawInput(raw As String) As String` | Strip CR/LF, collapse spaces, replace en-dash with hyphen |
+| `Public Function NormalizeRawInput` | Strip CR/LF, collapse spaces, replace en-dash with hyphen |
 | Extended `IsRangeSegment` / `RangeDetection` | Accept en-dash as range separator |
 | Stage 13a inline case in `ComposeList_Internal` | Handle `chapter:verse` segments with inherited book |
-| `Public Sub Test_Stage13a_BookContextPropagation` (in basTEST) | 4 positive + 4 negative assertions |
+| `Public Function ParseCitationBlock` | Two-level split for mixed `;` and `,` citation blocks |
 
 ### `src/basTEST_aeBibleCitationBlock.bas` after cleanup
 
 | Remains | Purpose |
 |---|---|
-| `VerifyCitationBlock` (simplified) | Calls `ComposeList` + `ValidateSBLReference` per item; no `BlockToken` type |
+| `VerifyCitationBlock` (simplified) | Calls `ParseCitationBlock` + `ValidateSBLReference` per item; no `BlockToken` type |
 | `Test_VerifyCitationBlock` | Full 35-token positive integration test |
 
-Everything else in the module is removed. The module deals only with citation blocks
-(multi-book, multi-segment, full-paragraph input). All atomic and list-level logic lives
-in the class.
+Everything else removed. The module deals only with citation blocks. All atomic and
+list-level logic lives in the class.
 
 ---
 
 ## Implementation Order
 
-1. Add `NormalizeRawInput` to class; call from `ComposeList` and `ParseScripture`; extend `IsRangeSegment` / `RangeDetection` for en-dash
-2. Add Stage 13a inline case to `ComposeList_Internal` (book-context propagation)
-3. Add `Test_Stage13a_BookContextPropagation` to `basTEST_aeBibleCitationClass.bas`; add call to `Run_All_SBL_Tests`
-4. Simplify `VerifyCitationBlock` in `basTEST_aeBibleCitationBlock.bas` to use `ComposeList` directly
-5. Remove `BlockToken`, `TokenizeCitationBlock`, `DetectBookAliasInSegment`, `DecomposeVerseSpec`, `TryResolveAlias`, `AppendToken`, `SliceArray`, `FormatTokenRef` from `basTEST_aeBibleCitationBlock.bas`
-6. Remove `Test_VerifyCitationBlock_Negative` from `basTEST_aeBibleCitationBlock.bas` (covered by Stage 13a)
-7. Run `Run_All_SBL_Tests` and `Test_VerifyCitationBlock`; verify all pass
-
----
-
-## Q: How Does Stage 13a Deal with the Semicolon?
-
-### Part 1 — Semicolons are already consumed before Stage 13a sees anything
-
-`ListDetection` (Stage 8) runs before any shorthand logic. It splits the raw input into
-segments and stores them in `t.Segments`. `ComposeList_Internal` then iterates over those
-segments. By the time Stage 13a checks a segment like `"23:1"`, the semicolons are gone —
-they were the split delimiters. Stage 13a requires no change to handle semicolons; it
-operates on already-split segments.
-
-Trace for `"Ps 19:1; 23:1; 28:7"`:
-
-```
-ListDetection input:  "Ps 19:1; 23:1; 28:7"
-  no comma found
-  semicolon found -> Split(";") -> ["Ps 19:1", " 23:1", " 28:7"]
-
-ComposeList_Internal loop:
-  seg = "Ps 19:1"  -> ParseReferenceRef -> Psalms 19:1   (prevRef set)
-  seg = "23:1"     -> Stage 13a: colon present, left of colon is "23" (numeric)
-                      -> inherit BookID from prevRef (Psalms)
-                      -> Chapter=23, Verse=1  -> Psalms 23:1
-  seg = "28:7"     -> Stage 13a: same rule -> Psalms 28:7
-```
-
-### Part 2 — `ListDetection` is an either/or splitter: this breaks mixed input
-
-`ListDetection` checks for comma **first**. If ANY comma is present in the entire input
-string, it splits on comma and exits — semicolons are never checked.
-
-```vb
-If InStr(rawInput, ",") > 0 Then
-    parts = Split(rawInput, ",")   ' exits here; semicolons ignored
-    ...
-    Exit Function
-End If
-If InStr(rawInput, ";") > 0 Then
-    parts = Split(rawInput, ";")
-    ...
-End If
-```
-
-The full citation block contains BOTH delimiters: semicolons between references and commas
-within verse sub-lists (`145:8-9,17`). For that input `ListDetection` splits on commas
-first:
-
-```
-ListDetection input:  "Ps 145:8-9,17; Isa 40:28"
-  comma found -> Split(",") -> ["Ps 145:8-9", "17; Isa 40:28"]
-
-ComposeList_Internal loop:
-  seg = "Ps 145:8-9"   -> range -> OK
-  seg = "17; Isa 40:28" -> ParseReferenceRef("17; Isa 40:28") -> ERROR (semicolon inside)
-```
-
-**Conclusion:** Stage 13a (book-context propagation) is correct and sufficient for
-pure-semicolon inputs — the common case for cross-book reference lists with no
-comma-separated verse sub-lists. But the full citation block (which has `145:8-9,17`)
-requires a two-level split that `ListDetection` does not currently perform.
-
-### The two-level split required for citation blocks
-
-Study Bible citation blocks use a two-level delimiter structure:
-
-| Level | Delimiter | Separates |
-|---|---|---|
-| Outer | `;` | Major segments (each has its own book/chapter context) |
-| Inner | `,` | Verse sub-items within a single chapter (`145:8-9,17`) |
-
-The correct algorithm:
-1. Split on `;` → major segments
-2. For each major segment, split on `,` → verse sub-items
-3. Apply book-context and chapter-context propagation across both levels
-
-This is exactly what `TokenizeCitationBlock` in `basTEST_aeBibleCitationBlock.bas`
-implements. The migration plan must therefore treat `TokenizeCitationBlock` not as logic
-to discard but as the specification for a new entry point in the class.
-
-### Revised plan for `ListDetection`
-
-`ListDetection` cannot be changed to "split on semicolon, then comma within segments"
-without breaking existing callers that pass purely comma-delimited input
-(`"John 3:16, 18, 20-22"`). The existing behaviour must be preserved for `ComposeList`.
-
-The correct approach is a new public method on the class:
-
-```vb
-Public Function ParseCitationBlock(rawBlock As String) As Collection
-```
-
-This method:
-1. Calls `NormalizeRawInput` (strip line breaks, normalize en-dash)
-2. Splits on `;` → major segments
-3. For each major segment, detects book alias (Stage 13a rule) and splits on `,` for
-   verse sub-items
-4. Validates each atomic endpoint via `ValidateSBLReference(ModeSBL)`
-5. Returns a `Collection` of canonical reference strings
-
-`VerifyCitationBlock` in `basTEST_aeBibleCitationBlock.bas` is then a thin wrapper that
-calls `ParseCitationBlock` and reports PASS/FAIL per item — no `BlockToken` type, no
-custom tokenizer. `Test_VerifyCitationBlock` calls `VerifyCitationBlock` unchanged.
-
-### Updated implementation order
-
-The step "Add Stage 13a inline case to `ComposeList_Internal`" from the earlier plan
-still stands — it fixes the common case for pure-semicolon inputs and is the right place
-for that logic. But `ComposeList_Internal` / `ListDetection` are NOT sufficient for the
-full citation block with mixed delimiters. That requires the additional step:
-
-**Step 2b:** Add `Public Function ParseCitationBlock` to `aeBibleCitationClass.cls`,
-implementing the two-level split. This is the class-level home for the logic currently
-in `TokenizeCitationBlock`.
+1. Add `NormalizeRawInput` to class; call from `ComposeList` and `ParseScripture`
+2. Extend `IsRangeSegment` / `RangeDetection` to accept en-dash
+3. Add Stage 13a inline case to `ComposeList_Internal`
+4. Add `ParseCitationBlock` to class (two-level split)
+5. Add `Test_Stage13a_BookContextPropagation`; wire into `Run_All_SBL_Tests`
+6. Simplify `VerifyCitationBlock` to call `ParseCitationBlock`
+7. Remove `BlockToken`, `TokenizeCitationBlock`, `DetectBookAliasInSegment`,
+   `DecomposeVerseSpec`, `TryResolveAlias`, `AppendToken`, `SliceArray`,
+   `FormatTokenRef`, `Test_VerifyCitationBlock_Negative` from
+   `basTEST_aeBibleCitationBlock.bas`
+8. Run `Run_All_SBL_Tests` and `Test_VerifyCitationBlock`; verify all pass
