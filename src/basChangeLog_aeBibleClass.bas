@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #544 -
 ' #543 -
 ' #542 -
-' #541 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #541 - Create a plan to ouput en-dash in citation blocks and sorted in canonical order [feat]
     ' FIXED - #540 - Change dash to en dash for verse ranges in doc aeBibleCitationClass.md [impr]
     ' FIXED - #539 - Error 5 in ParseCitationBlock [bug]
     ' FIXED - #538 - Implement code plan for Stage 13a [impr]
