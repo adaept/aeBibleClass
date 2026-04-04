@@ -7,11 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #555 -
+' #554 -
+' #553 -
+' #552 -
+' #551 -
 ' #550 -
-' #549 -
-' #548 -
-' #547 -
-' #546 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -75,6 +76,10 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #549 - The paragraph mark is deleted on paste of corrected citation block [bug]
+    ' FIXED - #548 - Book names should not be repeated for the citation block output [bug]
+    ' FIXED - #547 - Add ToSBLShortForm for corrected output of citation block [feat]
+    ' FIXED - #546 - Normalize does not deal with Chr(11), manual line feed, so breaks parsing [bug]
     ' FIXED - #545 - Implement the plan for an interactive citation block test and update procedure [feat]
     ' FIXED - #544 - Create a plan for an interactive citation block test and update procedure [feat]
     ' FIXED - #543 - Malformed citation in block is silently skipped [bug]

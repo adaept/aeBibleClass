@@ -373,12 +373,39 @@ Public Sub RepairCitationBlockInParagraph()
     Set Items = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock(rawBlock))
 
-    ' --- Task 5: Render en-dash and copy to clipboard ---
+    ' --- Task 5: Render SBL short form with en-dash; suppress repeated book names ---
     Dim Result As String
     Dim item As Variant
+    Dim prevBook As String
+    prevBook = ""
     For Each item In Items
+        Dim canonStr As String
+        canonStr = CStr(item)
+
+        ' Split canonical string at last space: left = book name, right = ch:verse
+        Dim lastSp As Long
+        Dim jj As Long
+        lastSp = 0
+        For jj = Len(canonStr) To 1 Step -1
+            If Mid$(canonStr, jj, 1) = " " Then lastSp = jj: Exit For
+        Next jj
+
+        Dim canonBook As String
+        Dim numPart As String
+        canonBook = Left$(canonStr, lastSp - 1)
+        numPart = Mid$(canonStr, lastSp + 1)
+
+        Dim seg As String
+        If canonBook = prevBook Then
+            seg = aeBibleCitationClass.RenderEnDash(numPart)
+        Else
+            seg = aeBibleCitationClass.RenderEnDash( _
+                aeBibleCitationClass.ToSBLShortForm(canonStr))
+            prevBook = canonBook
+        End If
+
         If Len(Result) > 0 Then Result = Result & "; "
-        Result = Result & aeBibleCitationClass.RenderEnDash(CStr(item))
+        Result = Result & seg
     Next item
 
     Dim dataObj As Object
@@ -395,7 +422,11 @@ Public Sub RepairCitationBlockInParagraph()
                        vbYesNo + vbDefaultButton1 + vbQuestion, _
                        "Replace Citation Block")
     If replaceIt = vbYes Then
-        para.Range.Text = Result
+        Dim rng As Object
+        Set rng = para.Range
+        rng.End = rng.End - 1   ' exclude paragraph mark so it is not deleted
+        rng.Text = Result
+        Set rng = Nothing
         para.Range.Select
         Selection.Collapse wdCollapseEnd
     End If

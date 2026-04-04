@@ -2474,6 +2474,7 @@ Public Function NormalizeRawInput(ByVal raw As String) As String
     s = Replace(s, vbCr, " ")
     s = Replace(s, vbLf, " ")
     s = Replace(s, ChrW(8211), "-")   ' en-dash -> ASCII hyphen
+    s = Replace(s, Chr(11), " ")   ' Word forced line break (Shift+Enter)
     Dim prev As String
     Do
         prev = s
@@ -2774,6 +2775,115 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SortCitationBlock of Class aeSBL_Citation_Class"
+    Resume PROC_EXIT
+End Function
+
+'=====================================================
+' ToSBLShortForm  (Public)
+' Converts a canonical reference string (full book name)
+' to SBL abbreviated form.
+' Example: "Psalms 19:1-2" -> "Ps 19:1-2"
+'          "1 Chronicles 29:10-13" -> "1 Chr 29:10-13"
+' If the BookID cannot be resolved the canonical string
+' is returned unchanged.
+'=====================================================
+Public Function ToSBLShortForm(ByVal canon As String) As String
+    On Error GoTo PROC_ERR
+
+    ' Find last space: left = book name, right = Chapter:Verse[-End]
+    Dim lastSp As Long
+    Dim k As Long
+    For k = Len(canon) To 1 Step -1
+        If Mid$(canon, k, 1) = " " Then lastSp = k: Exit For
+    Next k
+    If lastSp = 0 Then ToSBLShortForm = canon: GoTo PROC_EXIT
+
+    Dim bookName As String
+    Dim numPart As String
+    bookName = Left$(canon, lastSp - 1)
+    numPart = Mid$(canon, lastSp + 1)
+
+    Dim bID As Long
+    On Error Resume Next
+    ResolveAlias bookName, bID
+    On Error GoTo PROC_ERR
+
+    Dim abbr As String
+    Select Case bID
+        Case 1:  abbr = "Gen"
+        Case 2:  abbr = "Exod"
+        Case 3:  abbr = "Lev"
+        Case 4:  abbr = "Num"
+        Case 5:  abbr = "Deut"
+        Case 6:  abbr = "Josh"
+        Case 7:  abbr = "Judg"
+        Case 8:  abbr = "Ruth"
+        Case 9:  abbr = "1 Sam"
+        Case 10: abbr = "2 Sam"
+        Case 11: abbr = "1 Kgs"
+        Case 12: abbr = "2 Kgs"
+        Case 13: abbr = "1 Chr"
+        Case 14: abbr = "2 Chr"
+        Case 15: abbr = "Ezra"
+        Case 16: abbr = "Neh"
+        Case 17: abbr = "Esth"
+        Case 18: abbr = "Job"
+        Case 19: abbr = "Ps"
+        Case 20: abbr = "Prov"
+        Case 21: abbr = "Eccl"
+        Case 22: abbr = "Song"
+        Case 23: abbr = "Isa"
+        Case 24: abbr = "Jer"
+        Case 25: abbr = "Lam"
+        Case 26: abbr = "Ezek"
+        Case 27: abbr = "Dan"
+        Case 28: abbr = "Hos"
+        Case 29: abbr = "Joel"
+        Case 30: abbr = "Amos"
+        Case 31: abbr = "Obad"
+        Case 32: abbr = "Jonah"
+        Case 33: abbr = "Mic"
+        Case 34: abbr = "Nah"
+        Case 35: abbr = "Hab"
+        Case 36: abbr = "Zeph"
+        Case 37: abbr = "Hag"
+        Case 38: abbr = "Zech"
+        Case 39: abbr = "Mal"
+        Case 40: abbr = "Matt"
+        Case 41: abbr = "Mark"
+        Case 42: abbr = "Luke"
+        Case 43: abbr = "John"
+        Case 44: abbr = "Acts"
+        Case 45: abbr = "Rom"
+        Case 46: abbr = "1 Cor"
+        Case 47: abbr = "2 Cor"
+        Case 48: abbr = "Gal"
+        Case 49: abbr = "Eph"
+        Case 50: abbr = "Phil"
+        Case 51: abbr = "Col"
+        Case 52: abbr = "1 Thess"
+        Case 53: abbr = "2 Thess"
+        Case 54: abbr = "1 Tim"
+        Case 55: abbr = "2 Tim"
+        Case 56: abbr = "Titus"
+        Case 57: abbr = "Phlm"
+        Case 58: abbr = "Heb"
+        Case 59: abbr = "Jas"
+        Case 60: abbr = "1 Pet"
+        Case 61: abbr = "2 Pet"
+        Case 62: abbr = "1 John"
+        Case 63: abbr = "2 John"
+        Case 64: abbr = "3 John"
+        Case 65: abbr = "Jude"
+        Case 66: abbr = "Rev"
+        Case Else: abbr = bookName
+    End Select
+
+    ToSBLShortForm = abbr & " " & numPart
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ToSBLShortForm of Class aeBibleCitationClass"
     Resume PROC_EXIT
 End Function
 
