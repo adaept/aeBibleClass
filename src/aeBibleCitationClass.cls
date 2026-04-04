@@ -2612,10 +2612,14 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
             Dim sV As Long, eV As Long, isRng As Boolean
             Dim dp As Long
             dp = InStr(vsRaw, "-")
-            If dp > 0 And IsNumeric(Left$(vsRaw, dp - 1)) And IsNumeric(Mid$(vsRaw, dp + 1)) Then
-                sV = CLng(Left$(vsRaw, dp - 1))
-                eV = CLng(Mid$(vsRaw, dp + 1))
-                isRng = True
+            If dp > 0 Then
+                If IsNumeric(Left$(vsRaw, dp - 1)) And IsNumeric(Mid$(vsRaw, dp + 1)) Then
+                    sV = CLng(Left$(vsRaw, dp - 1))
+                    eV = CLng(Mid$(vsRaw, dp + 1))
+                    isRng = True
+                Else
+                    GoTo NEXT_VS   ' malformed range — skip
+                End If
             ElseIf IsNumeric(vsRaw) Then
                 sV = CLng(vsRaw)
                 eV = sV

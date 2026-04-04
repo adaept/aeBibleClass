@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #545 -
+' #544 -
+' #543 -
+' #542 -
+' #541 -
 ' #540 -
-' #539 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -72,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #539 - Error 5 in ParseCitationBlock [bug]
     ' FIXED - #538 - Implement code plan for Stage 13a [impr]
     ' FIXED - #537 - Update doc as the en-dash form is pre-normalized and never reaches the parser [doc]
     ' FIXED - #536 - Add a plan for dealing with semicolon use for inherited book name in aeBibleCitationClass [impr]
