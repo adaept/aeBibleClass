@@ -585,3 +585,26 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+
+Public Sub Run_Extra_Tests()
+    On Error GoTo PROC_ERR
+
+    Set aeAssert = New aeAssertClass
+    aeAssert.Initialize
+
+    Test_ParseCitationBlock_EdgeCases
+    Test_SingleChapterBooks
+    Test_NormalizeRawInput_Chr11
+    Test_ctxChapter_Reset
+    Test_VerifyCitationBlockReport
+    Test_ToSBLShortForm
+
+    aeAssert.Terminate
+    Set aeAssert = Nothing
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run_Extra_Tests of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub

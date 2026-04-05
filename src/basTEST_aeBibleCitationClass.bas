@@ -165,6 +165,8 @@ Public Sub Run_All_SBL_Tests()
     aeAssert.Terminate
     Set aeAssert = Nothing
 
+    Run_Extra_Tests
+
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
