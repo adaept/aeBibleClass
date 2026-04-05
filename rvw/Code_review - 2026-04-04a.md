@@ -336,3 +336,75 @@ branching on `Selection.Type`:
 Task 6 replacement is now simply `workRng.Text = Result`. This also fixes Error 424
 that occurred when the user ran the procedure with text selected rather than just a
 cursor position.
+
+---
+
+### Fix — Comma-separated new book silently lost; single-chapter book wrong chapter (`ParseCitationBlock`)
+
+**Test input:** `Gen 3:1–5; Job 1:6; Isa 14:12–15, Ezek 28:12–19; 2 Pet 2:4; Jude 6; Rev 12:9`
+
+**Symptom 1 — `FAIL: Isaiah 14:0` / Ezekiel missing**
+
+The input had a **comma** between `Isa 14:12–15` and `Ezek 28:12–19` instead of a
+semicolon. The parser treats `,` as a verse sub-list separator (same as `Ps 145:8–9,17`),
+so `Ezek 28:12–19` was parsed as a verse spec inside Isaiah 14. `Ezek 28:12` is not
+numeric → malformed range → sentinel `Isaiah 14:0` emitted; the Ezekiel reference was
+lost entirely.
+
+**Resolution:** User data error — the comma must be a semicolon:
+`Isa 14:12–15; Ezek 28:12–19`. No code change required.
+
+---
+
+**Symptom 2 — `FAIL: Jude 2:6` → `PASS: Jude 0:6` → `PASS: Jude 1:6`**
+
+After parsing `2 Pet 2:4`, `ctxChapter = 2`. When `Jude 6` was recognised as a new
+book, `refPart = "6"` (no colon), so no chapter was parsed and `ctxChapter` remained 2
+from the previous book. The parser emitted `Jude 2:6`. Jude has only one chapter, so
+chapter 2 fails validation.
+
+**Cause:** `ctxChapter` was never reset when the book context switched.
+
+**Fix 1:** Added `If newBook Then ctxChapter = 0` to `ParseCitationBlock` between
+Case 3 and the chapter-parse block. This reset `ctxChapter` on every book switch.
+
+**Result of Fix 1:** `Jude 6` now passed validation (because `ValidateSBLReference`
+internally promotes chapter 0 → 1 for single-chapter books), but the canonical string
+stored in the Collection was `Jude 0:6` — the chapter 0 was never written back to
+`ctxChapter` before building the `canon` string.
+
+**Fix 2:** Added a single-chapter promotion directly in `ParseCitationBlock`, after
+the `colonPos` block:
+
+```vb
+If ctxChapter = 0 And GetMaxChapter(ctxBookID) = 1 Then ctxChapter = 1
+```
+
+`ctxChapter` is promoted to 1 before `canon` is assembled. The Collection now contains
+`Jude 1:6`. The guard `ctxChapter = 0` ensures explicitly-chaptered references
+(e.g. `Jude 1:6` written in full) are unaffected.
+
+---
+
+### Fix — Single-chapter books output chapter number in SBL shorthand (`ToSBLShortForm`)
+
+**Symptom:** Output showed `Jude 1:6` instead of the SBL shorthand `Jude 6`. SBL style
+omits the chapter number for single-chapter books (Obad, Phlm, 2 John, 3 John, Jude,
+etc.) — only the verse number is shown.
+
+**Cause:** `ToSBLShortForm` assembled `abbr & " " & numPart` directly. For a canonical
+string `Jude 1:6`, `numPart = "1:6"` — the chapter was included unchanged.
+
+**Fix:** After the `Select Case` in `ToSBLShortForm`, strip the chapter prefix for
+single-chapter books:
+
+```vb
+If GetMaxChapter(bID) = 1 Then
+    Dim cpPos As Long
+    cpPos = InStr(numPart, ":")
+    If cpPos > 0 Then numPart = Mid$(numPart, cpPos + 1)
+End If
+```
+
+`Jude 1:6` → `numPart = "6"` → output `"Jude 6"`.
+Ranges also handled: `Jude 1:3-7` → `numPart = "3-7"` → `RenderEnDash` → `"Jude 3–7"`.

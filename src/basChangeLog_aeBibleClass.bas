@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #554 -
 ' #553 -
 ' #552 -
-' #551 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #551 - Fix single chapter book issue with citation block verification [bug]
     ' FIXED - #550 - Allow text selection also for citation block verification [impr]
     ' FIXED - #549 - The paragraph mark is deleted on paste of corrected citation block [bug]
     ' FIXED - #548 - Book names should not be repeated for the citation block output [bug]

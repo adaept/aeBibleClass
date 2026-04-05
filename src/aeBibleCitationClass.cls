@@ -2583,6 +2583,11 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
         '------------------------------------------
         If Not newBook Then refPart = seg
 
+        ' Reset chapter context on every book switch so that single-chapter
+        ' book shorthand (e.g. "Jude 6") is not contaminated by the previous
+        ' book's chapter number.
+        If newBook Then ctxChapter = 0
+
         '------------------------------------------
         ' Parse chapter from refPart
         '------------------------------------------
@@ -2597,6 +2602,10 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
         Else
             vsStr = Trim$(refPart)
         End If
+
+        ' Single-chapter book with no colon (e.g. "Jude 6"): promote chapter to 1
+        ' so the canonical string is "Jude 1:6" not "Jude 0:6".
+        If ctxChapter = 0 And GetMaxChapter(ctxBookID) = 1 Then ctxChapter = 1
 
         '------------------------------------------
         ' Split verse spec on "," for "8-9,17"
@@ -2878,6 +2887,14 @@ Public Function ToSBLShortForm(ByVal canon As String) As String
         Case 66: abbr = "Rev"
         Case Else: abbr = bookName
     End Select
+
+    ' SBL shorthand for single-chapter books omits the chapter number.
+    ' Canonical form is "Jude 1:6"; SBL output is "Jude 6".
+    If GetMaxChapter(bID) = 1 Then
+        Dim cpPos As Long
+        cpPos = InStr(numPart, ":")
+        If cpPos > 0 Then numPart = Mid$(numPart, cpPos + 1)
+    End If
 
     ToSBLShortForm = abbr & " " & numPart
 PROC_EXIT:
