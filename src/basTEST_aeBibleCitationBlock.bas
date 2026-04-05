@@ -264,9 +264,30 @@ Public Function VerifyCitationBlockReport(rawBlock As String, _
         Dim cpPos As Long
         cpPos = InStr(numPart, ":")
         Dim ch As Long
-        ch = CLng(Left$(numPart, cpPos - 1))
         Dim vPart As String
-        vPart = Mid$(numPart, cpPos + 1)
+
+        If cpPos > 0 Then
+            ch = CLng(Left$(numPart, cpPos - 1))
+            vPart = Mid$(numPart, cpPos + 1)
+        Else
+            ' Whole-chapter reference (no colon): numPart is the chapter
+            ch = CLng(numPart)
+            vPart = ""
+        End If
+
+        If vPart = "" Then
+            ' Whole-chapter: validate chapter only
+            Dim okChap As Boolean
+            okChap = aeBibleCitationClass.ValidateSBLReference( _
+                bID, bCanon, ch, "", ModeSBL, True)
+            If Not okChap Then
+                report = report & "FAIL: " & canon & " (chapter failed)" & vbCrLf
+                failCount = failCount + 1
+            Else
+                report = report & "PASS: " & canon & vbCrLf
+                passCount = passCount + 1
+            End If
+        Else
 
         Dim dpPos As Long
         dpPos = InStr(vPart, "-")
@@ -304,6 +325,7 @@ Public Function VerifyCitationBlockReport(rawBlock As String, _
             report = report & "PASS: " & canon & vbCrLf
             passCount = passCount + 1
         End If
+        End If  ' vPart = ""
     Next Item
 
     report = report & "--- " & passCount & " passed, " & failCount & " failed. ---"
@@ -343,37 +365,28 @@ Public Sub RepairCitationBlockInParagraph()
                     "Repair Citation Block")
     If answer <> vbYes Then Exit Sub
 
-    ' --- Task 3: Interactive validation loop ---
+    ' --- Task 3: Validate ---
     Dim rawBlock As String
-    Dim verified As Boolean
-    verified = False
-    Do
-        rawBlock = workRng.Text
-        If Right$(rawBlock, 1) = Chr(13) Then
-            rawBlock = Left$(rawBlock, Len(rawBlock) - 1)
-        End If
+    rawBlock = workRng.Text
+    If Right$(rawBlock, 1) = Chr(13) Then
+        rawBlock = Left$(rawBlock, Len(rawBlock) - 1)
+    End If
 
-        Dim report As String
-        Dim passCount As Long
-        Dim failCount As Long
-        passCount = 0
-        failCount = 0
-        report = VerifyCitationBlockReport(rawBlock, passCount, failCount)
-        'Debug.Print "report = " & report
+    Dim report As String
+    Dim passCount As Long
+    Dim failCount As Long
+    passCount = 0
+    failCount = 0
+    report = VerifyCitationBlockReport(rawBlock, passCount, failCount)
+    'Debug.Print "report = " & report
 
-        If failCount = 0 Then
-            verified = True
-            Exit Do
-        End If
-
-        Dim retry As VbMsgBoxResult
-        retry = MsgBox(report & vbCrLf & vbCrLf & _
-                       "Fix the errors above in the paragraph, then click Retry." & vbCrLf & _
-                       "Click Cancel to abort.", _
-                       vbRetryCancel + vbExclamation, _
-                       "Citation Block Errors (" & failCount & " failed)")
-        If retry <> vbRetry Then Exit Sub
-    Loop
+    If failCount > 0 Then
+        MsgBox report & vbCrLf & vbCrLf & _
+               "Fix the errors above in the paragraph, then run the command again.", _
+               vbOKOnly + vbExclamation, _
+               "Citation Block Errors (" & failCount & " failed)"
+        Exit Sub
+    End If
 
     ' --- Task 4: Sort into canonical order ---
     Dim Items As Collection
@@ -413,8 +426,9 @@ Public Sub RepairCitationBlockInParagraph()
             thisChap = Left$(numPart, colonPos - 1)
             versePart = Mid$(numPart, colonPos + 1)
         Else
-            thisChap = ""
-            versePart = numPart
+            ' Whole-chapter reference: numPart is the chapter number, no verse
+            thisChap = numPart
+            versePart = ""
         End If
 
         Dim seg As String
@@ -611,6 +625,49 @@ PROC_ERR:
 End Sub
 
 
+Public Sub Test_WholeChapterReference()
+    On Error GoTo PROC_ERR
+    Dim Items As Collection
+
+    ' Single whole-chapter reference
+    Set Items = aeBibleCitationClass.ParseCitationBlock("Ezek 16")
+    aeAssert.AssertEqual 1, Items.Count, "WholeChapter: Ezek 16 item count"
+    aeAssert.AssertEqual "Ezekiel 16", CStr(Items(1)), "WholeChapter: Ezek 16 canonical"
+
+    ' Whole chapter mixed with verse references
+    Set Items = aeBibleCitationClass.ParseCitationBlock("Gen 6:6; Ezek 16; Luke 15:4-32")
+    aeAssert.AssertEqual 3, Items.Count, "WholeChapter: mixed block item count"
+    aeAssert.AssertEqual "Genesis 6:6", CStr(Items(1)), "WholeChapter: Gen 6:6"
+    aeAssert.AssertEqual "Ezekiel 16", CStr(Items(2)), "WholeChapter: Ezek 16 in mixed block"
+    aeAssert.AssertEqual "Luke 15:4-32", CStr(Items(3)), "WholeChapter: Luke 15:4-32"
+
+    ' Verify report passes for whole-chapter block
+    Dim report As String
+    Dim passCount As Long, failCount As Long
+    passCount = 0: failCount = 0
+    report = VerifyCitationBlockReport("Gen 6:6; Ezek 16; Luke 15:4-32", passCount, failCount)
+    aeAssert.AssertEqual 3, passCount, "WholeChapter: verify passCount"
+    aeAssert.AssertEqual 0, failCount, "WholeChapter: verify failCount"
+
+    ' Sort key: whole-chapter sorts before verse refs in same chapter
+    Set Items = aeBibleCitationClass.SortCitationBlock( _
+        aeBibleCitationClass.ParseCitationBlock("Ezek 16:5; Ezek 16"))
+    aeAssert.AssertEqual "Ezekiel 16", CStr(Items(1)), "WholeChapter: sorts before verse in same chapter"
+    aeAssert.AssertEqual "Ezekiel 16:5", CStr(Items(2)), "WholeChapter: verse after whole-chapter"
+
+    ' ToSBLShortForm for whole-chapter
+    aeAssert.AssertEqual "Ezek 16", _
+        aeBibleCitationClass.ToSBLShortForm("Ezekiel 16"), _
+        "WholeChapter: ToSBLShortForm Ezek 16"
+
+    Debug.Print "Test_WholeChapterReference: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_WholeChapterReference of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
 Public Sub Run_Extra_Tests()
     On Error GoTo PROC_ERR
 
@@ -623,6 +680,7 @@ Public Sub Run_Extra_Tests()
     Test_ctxChapter_Reset
     Test_VerifyCitationBlockReport
     Test_ToSBLShortForm
+    Test_WholeChapterReference
 
     aeAssert.Terminate
     Set aeAssert = Nothing

@@ -1199,9 +1199,9 @@ Public Function ValidateSBLReference( _
         End If
     End If
 
-    ' 5. Verse spec must exist
+    ' 5. Whole-chapter reference (VerseSpec empty after normalization) is valid
     If Len(VerseSpec) = 0 Then
-        Debug.Print "SBL FAIL: Missing verse specification"
+        ValidateSBLReference = True
         Exit Function
     End If
 
@@ -2622,6 +2622,15 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
         ' so the canonical string is "Jude 1:6" not "Jude 0:6".
         If ctxChapter = 0 And GetMaxChapter(ctxBookID) = 1 Then ctxChapter = 1
 
+        ' Whole-chapter reference on multi-chapter book (e.g. "Ezek 16"):
+        ' no colon, ctxChapter still 0 after book switch.
+        ' Emit "Ezekiel 16" (no verse) and move to next segment.
+        If ctxChapter = 0 And colonPos = 0 And IsNumeric(vsStr) Then
+            ctxChapter = CLng(vsStr)
+            Result.Add ctxCanon & " " & ctxChapter
+            GoTo NEXT_SEG
+        End If
+
         '------------------------------------------
         ' Split verse spec on "," for "8-9,17"
         '------------------------------------------
@@ -2746,23 +2755,26 @@ Public Function SortCitationBlock(ByVal Items As Collection) As Collection
         ResolveAlias bookName, bID
         On Error GoTo PROC_ERR
 
-        ' Parse Chapter from left of ":"
+        ' Parse Chapter and StartVerse from numPart
         Dim cpPos As Long
         cpPos = InStr(numPart, ":")
         Dim ch As Long
-        ch = 0
-        If cpPos > 0 Then ch = CLng(Left$(numPart, cpPos - 1))
-
-        ' Parse StartVerse from right of ":", stop at "-"
         Dim vPart As String
-        vPart = Mid$(numPart, cpPos + 1)
-        Dim dpPos As Long
-        dpPos = InStr(vPart, "-")
         Dim sV As Long
-        If dpPos > 0 Then
-            sV = CLng(Left$(vPart, dpPos - 1))
+        If cpPos > 0 Then
+            ch = CLng(Left$(numPart, cpPos - 1))
+            vPart = Mid$(numPart, cpPos + 1)
+            Dim dpPos As Long
+            dpPos = InStr(vPart, "-")
+            If dpPos > 0 Then
+                sV = CLng(Left$(vPart, dpPos - 1))
+            Else
+                sV = CLng(vPart)
+            End If
         Else
-            sV = CLng(vPart)
+            ' Whole-chapter reference (no colon): numPart is the chapter
+            ch = CLng(numPart)
+            sV = 0
         End If
 
         keys(i) = bID * 1000000 + ch * 10000 + sV

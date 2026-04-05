@@ -428,3 +428,79 @@ Ranges also handled: `Jude 1:3-7` → `numPart = "3-7"` → `RenderEnDash` → `
 
 `Gen 2:17, 25; 3:6–11` is now produced correctly from canonical input
 `["Genesis 2:17", "Genesis 2:25", "Genesis 3:6-11"]`.
+
+
+---
+
+### Fix — Validation retry loop does not work (`RepairCitationBlockInParagraph`)
+
+**Symptom:** The `Do...Loop` with `vbRetryCancel` MsgBox cannot work as designed. A
+MsgBox blocks the Word UI, so the user cannot edit the paragraph while the box is open.
+Clicking Retry re-reads the same unchanged text and loops forever.
+
+**Cause:** Design error — `vbRetryCancel` implies the user can act between clicks, but
+Word's document is inaccessible while a modal MsgBox is displayed.
+
+**Fix:** Replaced the loop with a single validation pass:
+
+- If `failCount > 0`: show the error report with `vbOKOnly` and the message
+  “Fix the errors above in the paragraph, then run the command again.”, then `Exit Sub`.
+- If `failCount = 0`: proceed directly to sort and render.
+
+The user corrects the paragraph in the normal editing environment, then re-invokes
+the command. The confirm prompt (Task 2) acts as the natural re-entry point.
+
+
+---
+
+### Fix — Whole-chapter references not supported (`ParseCitationBlock`, `ValidateSBLReference`, `SortCitationBlock`, `VerifyCitationBlockReport`, `RepairCitationBlockInParagraph`)
+
+**Symptom:** Input `Gen 6:6; Ezek 16; Luke 15:4–32` produced
+`FAIL: Ezekiel 0:16 (start verse failed)`. A reference to an entire chapter
+(e.g. `Ezek 16`) was misread as verse 16 of chapter 0.
+
+**Cause:** In `ParseCitationBlock`, when a new-book segment had no colon and
+`ctxChapter = 0` (just reset on book switch), the token was treated as a verse number
+rather than a chapter number. For multi-chapter books this produced `Ezekiel 0:16`
+instead of `Ezekiel 16`. Five functions were affected:
+
+1. `ParseCitationBlock` — emitted `ch:verse` sentinel instead of whole-chapter form
+2. `ValidateSBLReference` — Rule 5 rejected empty `VerseSpec` after chapter promotion
+3. `SortCitationBlock` — no-colon `numPart` was parsed as verse not chapter (wrong sort key)
+4. `VerifyCitationBlockReport` — `CLng(Left$(numPart, cpPos - 1))` crashed when `cpPos = 0`
+5. Task 5 of `RepairCitationBlockInParagraph` — `thisChap = ""` caused wrong separator logic
+
+**Fix:**
+
+1. **`ParseCitationBlock`**: After single-chapter promotion, added:
+   ```vb
+   If ctxChapter = 0 And colonPos = 0 And IsNumeric(vsStr) Then
+       ctxChapter = CLng(vsStr)
+       Result.Add ctxCanon & " " & ctxChapter
+       GoTo NEXT_SEG
+   End If
+   ```
+   Emits `"Ezekiel 16"` (no colon) and skips the verse loop.
+
+2. **`ValidateSBLReference`**: Rule 5 changed from reject to accept on empty `VerseSpec`:
+   ```vb
+   If Len(VerseSpec) = 0 Then
+       ValidateSBLReference = True
+       Exit Function
+   End If
+   ```
+
+3. **`SortCitationBlock`**: Added `cpPos = 0` branch — `ch = CLng(numPart)`, `sV = 0`.
+   Whole-chapter sorts before any verse reference in the same chapter.
+
+4. **`VerifyCitationBlockReport`**: Added `cpPos = 0` branch — `ch = CLng(numPart)`,
+   `vPart = ""`. Whole-chapter items call `ValidateSBLReference` with empty `VerseSpec`
+   and bypass the verse parse block entirely.
+
+5. **Task 5 `RepairCitationBlockInParagraph`**: `colonPos = 0` now sets
+   `thisChap = numPart` (chapter number) instead of `thisChap = ""`, so the
+   same-book/same-chapter separator logic works correctly.
+
+**Tests added:** `Test_WholeChapterReference` in `basTEST_aeBibleCitationBlock.bas`,
+covering parse, mixed-block, verify report, sort order, and `ToSBLShortForm`.
+Added to `Run_Extra_Tests`.
