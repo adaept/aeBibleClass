@@ -333,6 +333,12 @@ Public Function VerifyCitationBlockReport(rawBlock As String, _
 PROC_EXIT:
     Exit Function
 PROC_ERR:
+    ' Parse errors (non-ASCII token, block too long) signal bad input — let the
+    ' caller display a user-friendly message rather than a raw error box.
+    If Err.Number = vbObjectError + 1002 Or Err.Number = vbObjectError + 1003 Then
+        failCount = -1
+        Resume PROC_EXIT
+    End If
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VerifyCitationBlockReport of Module basTEST_aeBibleCitationBlock"
     Resume PROC_EXIT
 End Function
@@ -379,6 +385,14 @@ Public Sub RepairCitationBlockInParagraph()
     failCount = 0
     report = VerifyCitationBlockReport(rawBlock, passCount, failCount)
     'Debug.Print "report = " & report
+
+    If failCount = -1 Then
+        MsgBox "The selected text contains non-citation content." & vbCrLf & vbCrLf & _
+               "Select only the citations to validate, or insert the cursor in a " & _
+               "paragraph that contains only citations.", _
+               vbOKOnly + vbExclamation, "Invalid Selection"
+        Exit Sub
+    End If
 
     If failCount > 0 Then
         MsgBox report & vbCrLf & vbCrLf & _

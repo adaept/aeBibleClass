@@ -504,3 +504,46 @@ instead of `Ezekiel 16`. Five functions were affected:
 **Tests added:** `Test_WholeChapterReference` in `basTEST_aeBibleCitationBlock.bas`,
 covering parse, mixed-block, verify report, sort order, and `ToSBLShortForm`.
 Added to `Run_Extra_Tests`.
+
+
+---
+
+### Fix — Raw error MsgBox shown for non-citation content in selection (`RepairCitationBlockInParagraph`, `VerifyCitationBlockReport`)
+
+**Symptom:** Cursor placed in a paragraph containing non-citation text (e.g.
+“—resolution explained in EDP pp. 153–162]”) produced a raw technical MsgBox:
+“Error -2147220501 (Unrecognised token (non-ASCII character): “—resolution”)”.
+A second MsgBox followed because `failCount` remained 0 after the error, so
+`RepairCitationBlockInParagraph` proceeded to Task 4 and raised the same error again.
+
+**Cause:** `ParseCitationBlock` correctly raised `vbObjectError + 1003` for the
+em-dash token. This propagated to `VerifyCitationBlockReport`’s PROC_ERR handler,
+which showed the raw error MsgBox and resumed to PROC_EXIT with `failCount = 0`.
+The caller then interpreted 0 failures as a clean block and continued processing.
+
+**Fix:**
+
+1. **`VerifyCitationBlockReport` PROC_ERR**: parse errors 1002 (block too long) and
+   1003 (non-ASCII token) are now caught silently — `failCount` is set to `-1` as a
+   sentinel and the function returns without showing a MsgBox:
+   ```vb
+   If Err.Number = vbObjectError + 1002 Or Err.Number = vbObjectError + 1003 Then
+       failCount = -1
+       Resume PROC_EXIT
+   End If
+   ```
+
+2. **`RepairCitationBlockInParagraph`**: added `failCount = -1` check immediately
+   after the `VerifyCitationBlockReport` call:
+   ```vb
+   If failCount = -1 Then
+       MsgBox "The selected text contains non-citation content." & vbCrLf & vbCrLf & _
+              "Select only the citations to validate, or insert the cursor in a " & _
+              "paragraph that contains only citations.", _
+              vbOKOnly + vbExclamation, "Invalid Selection"
+       Exit Sub
+   End If
+   ```
+
+The user now sees a single user-friendly message and the procedure exits cleanly.
+Both error 1002 and 1003 use the same friendly message path.
