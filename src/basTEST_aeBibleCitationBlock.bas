@@ -326,23 +326,29 @@ End Function
 Public Sub RepairCitationBlockInParagraph()
     On Error GoTo PROC_ERR
 
-    ' --- Task 1: Confirm intent (default No) ---
+    ' --- Task 1: Capture working range BEFORE confirm dialog (preserves selection) ---
+    Dim workRng As Object
+    If Selection.Type = wdSelectionNormal Then
+        Set workRng = Selection.Range
+    Else
+        Set workRng = Selection.Paragraphs(1).Range
+        workRng.End = workRng.End - 1   ' exclude paragraph mark
+    End If
+    Debug.Print "workRng = " & workRng.Text
+
+    ' --- Task 2: Confirm intent (default No) ---
     Dim answer As VbMsgBoxResult
     answer = MsgBox("Repair citation block in the current paragraph?", _
                     vbYesNo + vbDefaultButton2 + vbQuestion, _
                     "Repair Citation Block")
     If answer <> vbYes Then Exit Sub
 
-    ' --- Task 2: Capture paragraph reference ---
-    Dim para As Word.Paragraph
-    Set para = Selection.Paragraphs(1)
-    Dim rawBlock As String
-
     ' --- Task 3: Interactive validation loop ---
+    Dim rawBlock As String
     Dim verified As Boolean
     verified = False
     Do
-        rawBlock = para.Range.Text
+        rawBlock = workRng.Text
         If Right$(rawBlock, 1) = Chr(13) Then
             rawBlock = Left$(rawBlock, Len(rawBlock) - 1)
         End If
@@ -353,6 +359,7 @@ Public Sub RepairCitationBlockInParagraph()
         passCount = 0
         failCount = 0
         report = VerifyCitationBlockReport(rawBlock, passCount, failCount)
+        Debug.Print "report = " & report
 
         If failCount = 0 Then
             verified = True
@@ -418,16 +425,12 @@ Public Sub RepairCitationBlockInParagraph()
     Dim replaceIt As VbMsgBoxResult
     replaceIt = MsgBox("Corrected block copied to clipboard:" & vbCrLf & vbCrLf & _
                        Result & vbCrLf & vbCrLf & _
-                       "Replace the original paragraph text with the corrected version?", _
+                       "Replace the original paragraph or selection with the corrected version?", _
                        vbYesNo + vbDefaultButton1 + vbQuestion, _
                        "Replace Citation Block")
     If replaceIt = vbYes Then
-        Dim rng As Object
-        Set rng = para.Range
-        rng.End = rng.End - 1   ' exclude paragraph mark so it is not deleted
-        rng.Text = Result
-        Set rng = Nothing
-        para.Range.Select
+        workRng.Text = Result
+        workRng.Select
         Selection.Collapse wdCollapseEnd
     End If
 

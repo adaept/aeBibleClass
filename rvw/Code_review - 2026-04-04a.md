@@ -268,3 +268,71 @@ the procedure does not add them.
 | `aeBibleCitationClass.ParseCitationBlock` | Parse validated raw block |
 | `aeBibleCitationClass.SortCitationBlock` | Sort into canonical order |
 | `aeBibleCitationClass.RenderEnDash` | En-dash rendering |
+| `aeBibleCitationClass.ToSBLShortForm` | Canonical name → SBL abbreviation |
+
+---
+
+## Post-Implementation Fixes — 2026-04-04
+
+### Fix — `Chr(11)` forced line break not normalized (`NormalizeRawInput`)
+
+**Symptom:** Psalms, Jeremiah, Romans, and 2 Peter references were attributed to the
+wrong book (1 Chronicles, Isaiah, John, 1 Peter respectively). References like
+`Ps 19:1-2` were parsed as `1 Chronicles 29:1-2`.
+
+**Cause:** The paragraph contained Word forced line breaks (`Chr(11)`, Shift+Enter).
+`NormalizeRawInput` handles `vbCr`/`vbLf`/`vbCrLf` but not `Chr(11)`. After
+`Split(normalized, ";")`, segments beginning after a line break position started with
+`Chr(11)` as a prefix on the book abbreviation. `Trim$` does not strip `Chr(11)`, so
+`parts(0)` became e.g. `Chr(11) & "Ps"`. The `Like "[A-Za-z]*"` test in Case 2 of
+`ParseCitationBlock` failed, falling through to Case 3 (no new book), leaving the book
+context unchanged from the previous segment.
+
+**Fix:** Added `s = Replace(s, Chr(11), " ")` to `NormalizeRawInput` alongside the
+existing line-break replacements.
+
+---
+
+### Fix — Output used full canonical book names instead of SBL abbreviations
+
+**Symptom:** Clipboard/replacement output showed `Psalms 19:1–2` instead of `Ps 19:1–2`.
+
+**Cause:** `RenderEnDash` operates on the canonical string as-is; no abbreviation step
+existed.
+
+**Fix:** Added `ToSBLShortForm` to `aeBibleCitationClass.cls` (after `SortCitationBlock`).
+Maps BookID → SBL abbreviation via `Select Case` (all 66 books); falls back to canonical
+name if BookID is unrecognised. Task 5 now calls
+`RenderEnDash(ToSBLShortForm(CStr(item)))`.
+
+---
+
+### Fix — Repeated book names in output
+
+**Symptom:** Output listed `Ps 19:1–2; Ps 23:1; Ps 28:7; ...` — book name repeated for
+every entry of the same book.
+
+**Fix:** Task 5 loop now tracks `prevBook` (canonical book name). When the book is the
+same as the previous item, only the numeric part (`ch:verse[-end]`) is emitted; the SBL
+abbreviation is emitted only on book change.
+
+---
+
+### Fix — Paragraph mark deleted on replacement (`para.Range.Text = Result`)
+
+**Symptom:** Pasting the corrected block deleted the paragraph mark, merging the
+paragraph with the next and losing the next paragraph's formatting.
+
+**Cause:** `para.Range` includes the trailing `Chr(13)` paragraph mark. Assigning
+`para.Range.Text = Result` replaced the mark with the new text (which has no mark).
+
+**Fix:** Changed Task 2 to capture a `workRng As Object` before the confirm dialog,
+branching on `Selection.Type`:
+- `wdSelectionNormal` (text selected) → `workRng = Selection.Range` (selection never
+  includes the paragraph mark)
+- Cursor only → `workRng = Selection.Paragraphs(1).Range` with
+  `workRng.End = workRng.End - 1` to exclude the mark
+
+Task 6 replacement is now simply `workRng.Text = Result`. This also fixes Error 424
+that occurred when the user ran the procedure with text selected rather than just a
+cursor position.
