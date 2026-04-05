@@ -380,6 +380,116 @@ future confusion.
 
 ---
 
+---
+
+## Implementation Log
+
+### Item 1 — Input length guard ✓ DONE (2026-04-04)
+
+Added to `ParseCitationBlock` in `aeBibleCitationClass.cls` after `NormalizeRawInput` call:
+
+```vb
+If Len(normalized) > 10000 Then
+    Err.Raise vbObjectError + 1002, , "Citation block too long (max 10000 chars)"
+End If
+```
+
+### Item 2 — Non-ASCII token detection ✓ DONE (2026-04-04)
+
+Added to `ParseCitationBlock` between Case 3 and the `ctxChapter` reset:
+
+```vb
+If Not newBook And Len(p0) > 0 Then
+    If AscW(Left$(p0, 1)) > 127 Then
+        Err.Raise vbObjectError + 1003, , _
+            "Unrecognised token (non-ASCII character): """ & p0 & """"
+    End If
+End If
+```
+
+### Item 3 — Multi-language scope ✓ DONE (2026-04-04)
+
+**Decision: Out-of-scope. English SBL abbreviations only.**
+
+The `Like "[A-Za-z]*"` gate in `ParseCitationBlock` Case 2 is intentional. The alias
+map (`GetBookAliasMap`) contains English SBL abbreviations only. Non-ASCII tokens now
+raise `vbObjectError + 1003` (Item 2) rather than silently misattributing the reference.
+
+Extension path if non-English support is needed in future:
+1. Extend `GetBookAliasMap` with locale-specific entries or load a secondary map.
+2. Widen the token gate: `Like "[A-Za-z\u00C0-\u024F]*"` or use `AscW(p0) > 0`.
+3. Use `StrConv(key, vbUpperCase)` instead of `UCase$` for better locale handling.
+
+No code change required for current scope.
+
+### Item 4 — `Test_ToSBLShortForm` ✓ DONE (2026-04-04)
+
+Added `Test_ToSBLShortForm` to `basTEST_aeBibleCitationBlock.bas`. Covers:
+- Multi-word book: `"1 Chronicles 29:10-13"` → `"1 Chr 29:10-13"`
+- Single-chapter verse: `"Jude 1:6"` → `"Jude 6"`
+- Single-chapter range: `"Obadiah 1:3-5"` → `"Obad 3-5"`
+- Standard multi-chapter: `"Psalms 23:1"` → `"Ps 23:1"`
+
+### Item 5 — `Test_VerifyCitationBlockReport` ✓ DONE (2026-04-04)
+
+Added `Test_VerifyCitationBlockReport` to `basTEST_aeBibleCitationBlock.bas`. Asserts
+correct `passCount`, `failCount`, and non-empty report for a known-good block
+(`"John 3:16; Rev 22:1"`) and a known-bad block (`"John 3:16; Rev 99:1"`).
+
+### Item 6 — `ctxChapter` reset test ✓ DONE (2026-04-04)
+
+Added `Test_ctxChapter_Reset` to `basTEST_aeBibleCitationBlock.bas`.
+Input: `"2 Pet 2:4; Jude 6"`. Asserts `items(2) = "Jude 1:6"` (chapter 2 must not
+propagate from 2 Peter into Jude).
+
+### Item 7 — `Chr(11)` normalization test ✓ DONE (2026-04-04)
+
+Added `Test_NormalizeRawInput_Chr11` to `basTEST_aeBibleCitationBlock.bas`.
+Input: `"1 Chr 29:10-13;" & Chr(11) & "Ps 19:1-2"`. Asserts second item is
+`"Psalms 19:1-2"` (not misattributed to 1 Chronicles).
+
+### Item 8 — Single-chapter book integration tests ✓ DONE (2026-04-04)
+
+Added `Test_SingleChapterBooks` to `basTEST_aeBibleCitationBlock.bas`. Covers:
+- `"Obad 3"` → `"Obadiah 1:3"` (BookID 31)
+- `"Phlm 10"` → `"Philemon 1:10"` (BookID 57)
+- `"2 John 5"` → `"2 John 1:5"` (BookID 63)
+
+### Item 9 — Edge case tests ✓ DONE (2026-04-04)
+
+Added `Test_ParseCitationBlock_EdgeCases` to `basTEST_aeBibleCitationBlock.bas`. Covers:
+- Empty string → 0 items
+- All-whitespace → 0 items
+- Single reference `"John 3:16"` → 1 item
+- Trailing semicolon `"John 3:16;"` → 1 item (no spurious extra item)
+
+### Item 10 — `InStrRev` refactor ✓ SKIPPED (2026-04-04)
+
+Low priority, no correctness or safety impact. Skipped by user decision.
+
+### Item 11 — Remove debug prints ✓ DONE (2026-04-04)
+
+Commented out in `RepairCitationBlockInParagraph` in `basTEST_aeBibleCitationBlock.bas`:
+- `'Debug.Print "workRng = " & workRng.Text`
+- `'Debug.Print "report = " & report`
+
+### Item 12 — Rename `xxxTest_AllBookAliases_STRICT` ✓ DONE (2026-04-04)
+
+Renamed to `Test_AllBookAliases_STRICT` in `aeBibleCitationClass.cls`. Added standard
+outer `On Error GoTo PROC_ERR` / `PROC_EXIT` / `PROC_ERR` / `MsgBox` / `Resume PROC_EXIT`
+handler. Inner per-alias `AliasFail` / `Resume NextAlias` loop trap preserved intact.
+`On Error GoTo 0` in loop replaced with `On Error GoTo PROC_ERR` to restore outer handler.
+
+### Item 13 — Fix `GetSBLCanonicalBookTable` data errors ✓ DONE (2026-04-04)
+
+Fixed in `aeBibleCitationClass.cls`:
+- Added `sbl.Add 3, "LEVITICUS"` (was absent)
+- Fixed `sbl.Add 4, "Numbers"` → `"NUMBERS"` (inconsistent capitalisation)
+- Added `sbl.Add 61, "2 PETER"` (was absent)
+- Fixed `sbl.Add 64, "JUDE"` → `sbl.Add 65, "JUDE"` (duplicate key 64; Jude is BookID 65)
+
+---
+
 ## Questions for Clarification
 
 1. **`GetSBLCanonicalBookTable`** — Is this function used anywhere outside the

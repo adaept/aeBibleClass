@@ -969,7 +969,8 @@ Public Function GetSBLCanonicalBookTable() As Object
 
         sbl.Add 1, "GENESIS"
         sbl.Add 2, "EXODUS"
-        sbl.Add 4, "Numbers"
+        sbl.Add 3, "LEVITICUS"
+        sbl.Add 4, "NUMBERS"
         sbl.Add 5, "DEUTERONOMY"
         sbl.Add 6, "JOSHUA"
         sbl.Add 7, "JUDGES"
@@ -1026,10 +1027,11 @@ Public Function GetSBLCanonicalBookTable() As Object
         sbl.Add 58, "HEBREWS"
         sbl.Add 59, "JAMES"
         sbl.Add 60, "1 PETER"
+        sbl.Add 61, "2 PETER"
         sbl.Add 62, "1 JOHN"
         sbl.Add 63, "2 JOHN"
         sbl.Add 64, "3 JOHN"
-        sbl.Add 64, "JUDE"
+        sbl.Add 65, "JUDE"
         sbl.Add 66, "REVELATION"
     End If
 
@@ -2509,6 +2511,10 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
     Dim normalized As String
     normalized = NormalizeRawInput(rawBlock)
 
+    If Len(normalized) > 10000 Then
+        Err.Raise vbObjectError + 1002, , "Citation block too long (max 10000 chars)"
+    End If
+
     Dim Result As New Collection
     Dim segs() As String
     segs = Split(normalized, ";")
@@ -2582,6 +2588,15 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
         ' Case 3: no new book — bare chapter:verse
         '------------------------------------------
         If Not newBook Then refPart = seg
+
+        ' Non-ASCII token: not a digit, not ASCII alpha — raise descriptive error
+        ' rather than silently misattributing the reference (Case 3 fall-through).
+        If Not newBook And Len(p0) > 0 Then
+            If AscW(Left$(p0, 1)) > 127 Then
+                Err.Raise vbObjectError + 1003, , _
+                    "Unrecognised token (non-ASCII character): """ & p0 & """"
+            End If
+        End If
 
         ' Reset chapter context on every book switch so that single-chapter
         ' book shorthand (e.g. "Jude 6") is not contaminated by the previous
@@ -2904,7 +2919,8 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Public Sub xxxTest_AllBookAliases_STRICT()
+Public Sub Test_AllBookAliases_STRICT()
+    On Error GoTo PROC_ERR
     Dim aMap As Object
     Dim books As Object
     Dim k As Variant
@@ -2945,7 +2961,7 @@ Public Sub xxxTest_AllBookAliases_STRICT()
         End If
 
 NextAlias:
-        On Error GoTo 0
+        On Error GoTo PROC_ERR
     Next k
 
     If failures = 0 Then
@@ -2953,7 +2969,11 @@ NextAlias:
     Else
         Debug.Print "FAILURES: "; failures
     End If
+PROC_EXIT:
     Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_AllBookAliases_STRICT of Module aeBibleCitationClass"
+    Resume PROC_EXIT
 
 AliasFail:
     Debug.Print "FAIL (ERROR): "; k; " > "; Err.Description

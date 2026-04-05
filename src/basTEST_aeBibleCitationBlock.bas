@@ -334,7 +334,7 @@ Public Sub RepairCitationBlockInParagraph()
         Set workRng = Selection.Paragraphs(1).Range
         workRng.End = workRng.End - 1   ' exclude paragraph mark
     End If
-    Debug.Print "workRng = " & workRng.Text
+    'Debug.Print "workRng = " & workRng.Text
 
     ' --- Task 2: Confirm intent (default No) ---
     Dim answer As VbMsgBoxResult
@@ -359,7 +359,7 @@ Public Sub RepairCitationBlockInParagraph()
         passCount = 0
         failCount = 0
         report = VerifyCitationBlockReport(rawBlock, passCount, failCount)
-        Debug.Print "report = " & report
+        'Debug.Print "report = " & report
 
         If failCount = 0 Then
             verified = True
@@ -441,4 +441,147 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Public Sub Test_ParseCitationBlock_EdgeCases()
+    On Error GoTo PROC_ERR
+    Dim items As Collection
+
+    ' Empty string — should return empty Collection
+    Set items = aeBibleCitationClass.ParseCitationBlock("")
+    aeAssert.AssertEqual 0, items.Count, "EdgeCase: empty string yields 0 items"
+
+    ' All-whitespace — should return empty Collection
+    Set items = aeBibleCitationClass.ParseCitationBlock("   ")
+    aeAssert.AssertEqual 0, items.Count, "EdgeCase: whitespace-only yields 0 items"
+
+    ' Single reference
+    Set items = aeBibleCitationClass.ParseCitationBlock("John 3:16")
+    aeAssert.AssertEqual 1, items.Count, "EdgeCase: single ref item count"
+    aeAssert.AssertEqual "John 3:16", CStr(items(1)), "EdgeCase: single ref value"
+
+    ' Trailing semicolon — should not produce a spurious extra item
+    Set items = aeBibleCitationClass.ParseCitationBlock("John 3:16;")
+    aeAssert.AssertEqual 1, items.Count, "EdgeCase: trailing semicolon item count"
+    aeAssert.AssertEqual "John 3:16", CStr(items(1)), "EdgeCase: trailing semicolon value"
+
+    Debug.Print "Test_ParseCitationBlock_EdgeCases: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_ParseCitationBlock_EdgeCases of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_SingleChapterBooks()
+    On Error GoTo PROC_ERR
+    Dim items As Collection
+
+    ' Obadiah — BookID 31
+    Set items = aeBibleCitationClass.ParseCitationBlock("Obad 3")
+    aeAssert.AssertEqual 1, items.Count, "SingleChapter: Obad item count"
+    aeAssert.AssertEqual "Obadiah 1:3", CStr(items(1)), "SingleChapter: Obad 3 -> Obadiah 1:3"
+
+    ' Philemon — BookID 57
+    Set items = aeBibleCitationClass.ParseCitationBlock("Phlm 10")
+    aeAssert.AssertEqual 1, items.Count, "SingleChapter: Phlm item count"
+    aeAssert.AssertEqual "Philemon 1:10", CStr(items(1)), "SingleChapter: Phlm 10 -> Philemon 1:10"
+
+    ' 2 John — BookID 63
+    Set items = aeBibleCitationClass.ParseCitationBlock("2 John 5")
+    aeAssert.AssertEqual 1, items.Count, "SingleChapter: 2 John item count"
+    aeAssert.AssertEqual "2 John 1:5", CStr(items(1)), "SingleChapter: 2 John 5 -> 2 John 1:5"
+
+    Debug.Print "Test_SingleChapterBooks: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_SingleChapterBooks of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_NormalizeRawInput_Chr11()
+    On Error GoTo PROC_ERR
+    ' Chr(11) is Word forced line break (Shift+Enter); must be treated as whitespace
+    Dim raw As String
+    raw = "1 Chr 29:10-13;" & Chr(11) & "Ps 19:1-2"
+    Dim items As Collection
+    Set items = aeBibleCitationClass.ParseCitationBlock(raw)
+    aeAssert.AssertEqual 2, items.Count, "Chr(11) normalization: item count"
+    aeAssert.AssertEqual "1 Chronicles 29:10-13", CStr(items(1)), "Chr(11) normalization: first item"
+    aeAssert.AssertEqual "Psalms 19:1-2", CStr(items(2)), "Chr(11) normalization: Ps must not inherit 1 Chr book"
+    Debug.Print "Test_NormalizeRawInput_Chr11: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_NormalizeRawInput_Chr11 of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_ctxChapter_Reset()
+    On Error GoTo PROC_ERR
+    ' "2 Pet 2:4; Jude 6" — Jude must not inherit chapter 2 from 2 Peter
+    Dim items As Collection
+    Set items = aeBibleCitationClass.ParseCitationBlock("2 Pet 2:4; Jude 6")
+    aeAssert.AssertEqual 2, items.Count, "ctxChapter reset: item count"
+    aeAssert.AssertEqual "2 Peter 2:4", CStr(items(1)), "ctxChapter reset: 2 Peter item"
+    aeAssert.AssertEqual "Jude 1:6", CStr(items(2)), "ctxChapter reset: Jude must not inherit chapter 2"
+    Debug.Print "Test_ctxChapter_Reset: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_ctxChapter_Reset of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_VerifyCitationBlockReport()
+    On Error GoTo PROC_ERR
+    Dim report As String
+    Dim passCount As Long, failCount As Long
+
+    ' Known-good block: 2 valid references
+    passCount = 0: failCount = 0
+    report = VerifyCitationBlockReport("John 3:16; Rev 22:1", passCount, failCount)
+    aeAssert.AssertEqual 2, passCount, "VerifyCitationBlockReport: passCount good block"
+    aeAssert.AssertEqual 0, failCount, "VerifyCitationBlockReport: failCount good block"
+    aeAssert.AssertTrue Len(report) > 0, "VerifyCitationBlockReport: report non-empty good block"
+
+    ' Block with one invalid reference (chapter out of range)
+    passCount = 0: failCount = 0
+    report = VerifyCitationBlockReport("John 3:16; Rev 99:1", passCount, failCount)
+    aeAssert.AssertEqual 1, passCount, "VerifyCitationBlockReport: passCount bad block"
+    aeAssert.AssertEqual 1, failCount, "VerifyCitationBlockReport: failCount bad block"
+    aeAssert.AssertTrue Len(report) > 0, "VerifyCitationBlockReport: report non-empty bad block"
+
+    Debug.Print "Test_VerifyCitationBlockReport: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_VerifyCitationBlockReport of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
+
+Public Sub Test_ToSBLShortForm()
+    On Error GoTo PROC_ERR
+    ' Multi-word book
+    aeAssert.AssertEqual "1 Chr 29:10-13", _
+        aeBibleCitationClass.ToSBLShortForm("1 Chronicles 29:10-13"), _
+        "ToSBLShortForm: 1 Chronicles"
+    ' Single-chapter book — chapter number omitted
+    aeAssert.AssertEqual "Jude 6", _
+        aeBibleCitationClass.ToSBLShortForm("Jude 1:6"), _
+        "ToSBLShortForm: Jude single-chapter"
+    ' Single-chapter range
+    aeAssert.AssertEqual "Obad 3-5", _
+        aeBibleCitationClass.ToSBLShortForm("Obadiah 1:3-5"), _
+        "ToSBLShortForm: Obadiah range"
+    ' Standard multi-chapter
+    aeAssert.AssertEqual "Ps 23:1", _
+        aeBibleCitationClass.ToSBLShortForm("Psalms 23:1"), _
+        "ToSBLShortForm: Psalms"
+    Debug.Print "Test_ToSBLShortForm: all assertions passed"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_ToSBLShortForm of Module basTEST_aeBibleCitationBlock"
+    Resume PROC_EXIT
+End Sub
 
