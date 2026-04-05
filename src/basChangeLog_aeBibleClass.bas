@@ -7,9 +7,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #560 -
+' #559 -
+' #558 -
+' #557 -
+' #556 -
 ' #555 -
 ' #554 -
-' #553 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -73,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #553 - Gen 2:17; 2:25; 3:6-11; Job 31:33; Matt 5:27; 15:11-17; Jas 1:14-15 - Gen output is wrong [bug]
     ' FIXED - #552 - Add Run_Extra_Tests to the citation block tests [impr]
     ' FIXED - #551 - Fix single chapter book issue with citation block verification [bug]
     ' FIXED - #550 - Allow text selection also for citation block verification [impr]

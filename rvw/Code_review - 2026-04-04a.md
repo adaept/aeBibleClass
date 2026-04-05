@@ -408,3 +408,23 @@ End If
 
 `Jude 1:6` → `numPart = "6"` → output `"Jude 6"`.
 Ranges also handled: `Jude 1:3-7` → `numPart = "3-7"` → `RenderEnDash` → `"Jude 3–7"`.
+
+
+---
+
+### Fix — Same-chapter verses used semicolon instead of comma (`RepairCitationBlockInParagraph`)
+
+**Symptom:** Input `Gen 2:17, 25; 3:6–11` produced output `Gen 2:17; 2:25; 3:6–11`. Verses within the same chapter should be comma-separated with the verse number only; a chapter change within the same book should be semicolon-separated.
+
+**Cause:** Task 5 of `RepairCitationBlockInParagraph` tracked only `prevBook`. When the book was the same but the chapter was also the same, it emitted `ch:verse` with a `"; "` separator instead of `verse` with `", "`.
+
+**Fix:** Added `prevChap` tracking alongside `prevBook`. Task 5 now uses three cases:
+
+| Condition | Separator | Output |
+|---|---|---|
+| Same book, same chapter | `, ` | verse only |
+| Same book, different chapter | `; ` | `ch:verse` |
+| New book | `; ` | full SBL short form |
+
+`Gen 2:17, 25; 3:6–11` is now produced correctly from canonical input
+`["Genesis 2:17", "Genesis 2:25", "Genesis 3:6-11"]`.

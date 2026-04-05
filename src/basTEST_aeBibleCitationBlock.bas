@@ -380,16 +380,18 @@ Public Sub RepairCitationBlockInParagraph()
     Set Items = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock(rawBlock))
 
-    ' --- Task 5: Render SBL short form with en-dash; suppress repeated book names ---
+    ' --- Task 5: Render SBL short form with en-dash; suppress repeated book/chapter ---
     Dim Result As String
     Dim Item As Variant
     Dim prevBook As String
+    Dim prevChap As String
     prevBook = ""
+    prevChap = ""
     For Each Item In Items
         Dim canonStr As String
         canonStr = CStr(Item)
 
-        ' Split canonical string at last space: left = book name, right = ch:verse
+        ' Split canonical string at last space: left = book name, right = ch:verse[-end]
         Dim lastSp As Long
         Dim jj As Long
         lastSp = 0
@@ -402,16 +404,39 @@ Public Sub RepairCitationBlockInParagraph()
         canonBook = Left$(canonStr, lastSp - 1)
         numPart = Mid$(canonStr, lastSp + 1)
 
-        Dim seg As String
-        If canonBook = prevBook Then
-            seg = aeBibleCitationClass.RenderEnDash(numPart)
+        ' Extract chapter from numPart (before ":" if present)
+        Dim colonPos As Long
+        Dim thisChap As String
+        Dim versePart As String
+        colonPos = InStr(numPart, ":")
+        If colonPos > 0 Then
+            thisChap = Left$(numPart, colonPos - 1)
+            versePart = Mid$(numPart, colonPos + 1)
         Else
-            seg = aeBibleCitationClass.RenderEnDash( _
-                aeBibleCitationClass.ToSBLShortForm(canonStr))
-            prevBook = canonBook
+            thisChap = ""
+            versePart = numPart
         End If
 
-        If Len(Result) > 0 Then Result = Result & "; "
+        Dim seg As String
+        Dim sep As String
+        If canonBook = prevBook And thisChap = prevChap And thisChap <> "" Then
+            ' Same book, same chapter — comma-separated verse only
+            seg = aeBibleCitationClass.RenderEnDash(versePart)
+            sep = ", "
+        ElseIf canonBook = prevBook Then
+            ' Same book, different chapter — semicolon, ch:verse
+            seg = aeBibleCitationClass.RenderEnDash(numPart)
+            sep = "; "
+        Else
+            ' New book — full SBL short form
+            seg = aeBibleCitationClass.RenderEnDash( _
+                aeBibleCitationClass.ToSBLShortForm(canonStr))
+            sep = "; "
+            prevBook = canonBook
+        End If
+        prevChap = thisChap
+
+        If Len(Result) > 0 Then Result = Result & sep
         Result = Result & seg
     Next Item
 
