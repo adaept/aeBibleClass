@@ -1582,7 +1582,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
     Set dictBadFooterStyles = CreateObject("Scripting.Dictionary")
 
     headerOk = True: footerOk = True
-    totalSections = ActiveDocument.Sections.count
+    totalSections = ActiveDocument.Sections.Count
 
     ' Prepare folder and file
     rptPath = ActiveDocument.Path & "\rpt"
@@ -1678,7 +1678,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
             tempDict(styleKey) = 1
         Next styleKey
 
-        allGoodStyles = (tempDict.count = 2) _
+        allGoodStyles = (tempDict.Count = 2) _
                         And tempDict.Exists("TheHeaders") _
                         And tempDict.Exists("TheFooters")
 
@@ -2494,12 +2494,12 @@ Private Function CountParagraphMarksPerHeaderSection() As Integer
     paraCount = 1
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.count
+    For sectionIndex = 1 To doc.Sections.Count
         ' Get the range of the header in the current section
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Count the number of paragraphs in the header
-        paraCount = headerRange.Paragraphs.count
+        paraCount = headerRange.Paragraphs.Count
         
         ' Print the result to the console
         'Debug.Print "Section " & sectionIndex & " header has " & paraCount & " paragraph(s)."
@@ -2589,7 +2589,7 @@ Private Function CountParagraphsWithoutTabInHeaders() As Integer
     totalCount = 0
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.count
+    For sectionIndex = 1 To doc.Sections.Count
         ' Get the range of the header in the current section
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
@@ -2642,7 +2642,7 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
     totalCount = 0
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.count
+    For sectionIndex = 1 To doc.Sections.Count
         ' Get the range of the header in the current section
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
@@ -2707,7 +2707,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
     totalHeaders = 0
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.count
+    For sectionIndex = 1 To doc.Sections.Count
         ' Get the range of the header in the current section
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
@@ -2814,7 +2814,7 @@ Private Function CountFootnoteReferences() As Integer
     Set doc = ActiveDocument
 
     Dim footnoteCount As Integer
-    footnoteCount = doc.Footnotes.count
+    footnoteCount = doc.Footnotes.Count
 
     ' Display the results
     'MsgBox "Number of Footnote References: " & footnoteCount
@@ -3131,7 +3131,7 @@ End Function
 Private Function CountTotalParagraphs() As Long
     On Error GoTo PROC_ERR
 
-    CountTotalParagraphs = ActiveDocument.Paragraphs.count
+    CountTotalParagraphs = ActiveDocument.Paragraphs.Count
 
 PROC_EXIT:
     Exit Function
@@ -3237,7 +3237,7 @@ Private Function CountEmptyParasWithNoThemeColor()
 
     Set colorCounts = CreateObject("Scripting.Dictionary")
     emptyParaCount = 0
-    totalParaCount = ActiveDocument.Paragraphs.count
+    totalParaCount = ActiveDocument.Paragraphs.Count
     
     For Each para In ActiveDocument.Paragraphs
         Set rng = para.Range
@@ -3299,7 +3299,7 @@ Private Function CountNumberDashNumberInFootnotes() As Integer
     ' Loop through all footnotes
     For Each fn In ActiveDocument.Footnotes
         Set matches = regex.Execute(fn.Range.Text)
-        matchCount = matchCount + matches.count
+        matchCount = matchCount + matches.Count
     Next fn
 
     'MsgBox "Number of number-dash-number patterns in footnotes: " & matchCount, vbInformation

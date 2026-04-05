@@ -322,7 +322,7 @@ Sub CountParagraphsTypes()
         End With
         
         ' Check for different types of section breaks
-        If para.Range.Sections.count > 0 Then
+        If para.Range.Sections.Count > 0 Then
             Select Case para.Range.Sections(1).PageSetup.sectionStart
                 Case wdSectionNewPage
                     nextPageSectionBreakParagraphs = nextPageSectionBreakParagraphs + 1
@@ -447,7 +447,7 @@ Sub FindNextVerseMarkerSequence()
             GoTo ContinueLoop
         End If
 
-        If nextRng.Characters.count = 1 Then
+        If nextRng.Characters.Count = 1 Then
             If nextRng.style = "Verse marker" Then
                 Dim beforeChar As Word.Range, afterChar As Word.Range
 
@@ -466,7 +466,7 @@ Sub FindNextVerseMarkerSequence()
                 End If
 
                 ' Safety checks
-                If beforeChar.Characters.count < 1 Or afterChar.Characters.count < 1 Then
+                If beforeChar.Characters.Count < 1 Or afterChar.Characters.Count < 1 Then
                     Debug.Print "Invalid character count at " & chapterRng.Start
                     chapterRng.Select
                     MsgBox "Cannot access one of the surrounding characters. Stopping for inspection.", vbExclamation

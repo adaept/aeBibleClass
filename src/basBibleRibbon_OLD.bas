@@ -235,13 +235,13 @@ Public Sub GoToSection()
     Dim bmList As Collection
     Set bmList = GetBookmarkList()
 
-    If bmList.count = 0 Then
+    If bmList.Count = 0 Then
         MsgBox "No bookmarks found.", vbExclamation
         GoTo PROC_EXIT
     End If
 
     bookmarkIndex = bookmarkIndex + 1
-    If bookmarkIndex > bmList.count Then bookmarkIndex = 1
+    If bookmarkIndex > bmList.Count Then bookmarkIndex = 1
 
     bmList.Item(bookmarkIndex).Range.Select
 

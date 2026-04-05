@@ -57,7 +57,7 @@ Public Sub AddBookNameHeaders()
     Set oSections = oDoc.Sections
     ' -- Find the section containing the cursor --------------------------------
     lStartSect = 0
-    For lIdx = 1 To oSections.count
+    For lIdx = 1 To oSections.Count
         If oSections(lIdx).Range.End >= Selection.Range.Start Then
             lStartSect = lIdx
             Exit For
@@ -72,7 +72,7 @@ Public Sub AddBookNameHeaders()
     End If
     sBookName = ""
     ' -- Walk sections from cursor to end -------------------------------------
-    For lIdx = lStartSect To oSections.count
+    For lIdx = lStartSect To oSections.Count
 
         Set oSection = oSections(lIdx)
         Set oHeader = oSection.Headers(WdHeaderFooterIndex.wdHeaderFooterPrimary)
@@ -91,7 +91,7 @@ Public Sub AddBookNameHeaders()
             Set oFound = Nothing
 
             Dim pIdx    As Long
-            For pIdx = oSearch.Paragraphs.count To 1 Step -1
+            For pIdx = oSearch.Paragraphs.Count To 1 Step -1
                 If oSearch.Paragraphs(pIdx).style = oDoc.Styles("Heading 1") Then
                     sBookName = Trim$(Replace(oSearch.Paragraphs(pIdx).Range.Text, vbCr, ""))
                     Exit For
@@ -100,7 +100,7 @@ Public Sub AddBookNameHeaders()
 
             ' Write the book name into the header
             oHeader.LinkToPrevious = False
-            Do While oHeader.Range.Paragraphs.count > 1
+            Do While oHeader.Range.Paragraphs.Count > 1
                 oHeader.Range.Paragraphs.Last.Range.Delete
             Loop
             With oHeader.Range.Paragraphs(1).Range
@@ -117,9 +117,9 @@ Public Sub AddBookNameHeaders()
     Next lIdx
 
     Debug.Print "Done. Book name headers have been added from section " & _
-           lStartSect & " through section " & oSections.count & "."
+           lStartSect & " through section " & oSections.Count & "."
     MsgBox "Done. Book name headers have been added from section " & _
-           lStartSect & " through section " & oSections.count & ".", _
+           lStartSect & " through section " & oSections.Count & ".", _
            vbInformation, "AddBookNameHeaders"
 
 PROC_EXIT:
@@ -176,7 +176,7 @@ Private Sub AddConsecutiveFootersFromCursor()
 
     ' Use Selection.Range to locate the cursor section index
     lStartSect = 0
-    For lIdx = 1 To oSections.count
+    For lIdx = 1 To oSections.Count
         If oSections(lIdx).Range.End >= Selection.Range.Start Then
             lStartSect = lIdx
             Exit For
@@ -191,7 +191,7 @@ Private Sub AddConsecutiveFootersFromCursor()
     End If
 
     ' Process every section from the cursor section to the end
-    For lIdx = lStartSect To oSections.count
+    For lIdx = lStartSect To oSections.Count
 
         Set oSection = oSections(lIdx)
 
@@ -234,7 +234,7 @@ Private Sub AddConsecutiveFootersFromCursor()
 
     MsgBox "Done. Footers with consecutive page numbers (starting at 1) " & _
            "have been added from section " & lStartSect & _
-           " through section " & oSections.count & ".", _
+           " through section " & oSections.Count & ".", _
            vbInformation, "AddConsecutiveFootersFromCursor"
 
 PROC_EXIT:
@@ -263,7 +263,7 @@ Private Sub LinkFootersToPrevious()
 
     ' Find the section containing the cursor - same logic as AddConsecutiveFootersFromCursor
     lStartSect = 0
-    For lIdx = 1 To oSections.count
+    For lIdx = 1 To oSections.Count
         If oSections(lIdx).Range.End >= Selection.Range.Start Then
             lStartSect = lIdx
             Exit For
@@ -277,11 +277,11 @@ Private Sub LinkFootersToPrevious()
     End If
 
     ' Link from the section AFTER the cursor section to the end
-    For lIdx = lStartSect + 1 To oSections.count
+    For lIdx = lStartSect + 1 To oSections.Count
         oSections(lIdx).Footers(WdHeaderFooterIndex.wdHeaderFooterPrimary).LinkToPrevious = True
     Next lIdx
 
-    MsgBox "Done. Sections " & lStartSect + 1 & " through " & oSections.count & _
+    MsgBox "Done. Sections " & lStartSect + 1 & " through " & oSections.Count & _
            " footers are now linked to previous.", _
            vbInformation, "LinkFootersToPrevious"
 

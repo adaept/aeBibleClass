@@ -62,7 +62,7 @@ Public Sub FindFontUsage()
         If InStr(1, ResolveFont(oPara), sTarget, vbTextCompare) > 0 Then
             lBody = lBody + 1
             bFound = False
-            For i = 1 To oStyles.count
+            For i = 1 To oStyles.Count
                 If oStyles(i) = "(body) " & oPara.style.NameLocal Then
                     bFound = True
                     Exit For
@@ -80,7 +80,7 @@ Public Sub FindFontUsage()
                     If InStr(1, ResolveFont(oPara), sTarget, vbTextCompare) > 0 Then
                         lHF = lHF + 1
                         bFound = False
-                        For i = 1 To oStyles.count
+                        For i = 1 To oStyles.Count
                             If oStyles(i) = "(header) " & oPara.style.NameLocal Then
                                 bFound = True
                                 Exit For
@@ -97,7 +97,7 @@ Public Sub FindFontUsage()
                     If InStr(1, ResolveFont(oPara), sTarget, vbTextCompare) > 0 Then
                         lHF = lHF + 1
                         bFound = False
-                        For i = 1 To oStyles.count
+                        For i = 1 To oStyles.Count
                             If oStyles(i) = "(footer) " & oPara.style.NameLocal Then
                                 bFound = True
                                 Exit For
@@ -122,7 +122,7 @@ Public Sub FindFontUsage()
         If InStr(1, sStyleFont, sTarget, vbTextCompare) > 0 Then
             lStyleDef = lStyleDef + 1
             bFound = False
-            For i = 1 To oStyles.count
+            For i = 1 To oStyles.Count
                 If oStyles(i) = "(style def) " & oStyle.NameLocal Then
                     bFound = True
                     Exit For
@@ -134,7 +134,7 @@ Public Sub FindFontUsage()
 
     Dim sList As String
     sList = ""
-    For i = 1 To oStyles.count
+    For i = 1 To oStyles.Count
         sList = sList & "  " & oStyles(i) & vbCrLf
     Next i
 
@@ -142,13 +142,13 @@ Public Sub FindFontUsage()
            "Body paragraphs: " & lBody & vbCrLf & _
            "Header/footer paragraphs: " & lHF & vbCrLf & _
            "Style definitions: " & lStyleDef & vbCrLf & vbCrLf & _
-           IIf(oStyles.count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere.")
+           IIf(oStyles.Count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere.")
 
     MsgBox "Font searched: " & sTarget & vbCrLf & vbCrLf & _
            "Body paragraphs: " & lBody & vbCrLf & _
            "Header/footer paragraphs: " & lHF & vbCrLf & _
            "Style definitions: " & lStyleDef & vbCrLf & vbCrLf & _
-           IIf(oStyles.count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere."), _
+           IIf(oStyles.Count > 0, "Found in:" & vbCrLf & sList, "Not found anywhere."), _
            vbInformation, "FindFontUsage"
 
 PROC_EXIT:
@@ -206,17 +206,17 @@ Public Sub CountParagraphsAndFonts()
 
     Dim sFontList As String
     sFontList = ""
-    For i = 1 To oFonts.count
+    For i = 1 To oFonts.Count
         sFontList = sFontList & "  " & oFonts(i) & vbCrLf
     Next i
 
     Debug.Print "Body paragraphs: " & lBody & vbCrLf & _
            "Header/footer paragraphs: " & lHF & vbCrLf & vbCrLf & _
-           "Fonts used (" & oFonts.count & "):" & vbCrLf & sFontList
+           "Fonts used (" & oFonts.Count & "):" & vbCrLf & sFontList
 
     MsgBox "Body paragraphs: " & lBody & vbCrLf & _
            "Header/footer paragraphs: " & lHF & vbCrLf & vbCrLf & _
-           "Fonts used (" & oFonts.count & "):" & vbCrLf & sFontList, _
+           "Fonts used (" & oFonts.Count & "):" & vbCrLf & sFontList, _
            vbInformation, "CountParagraphsAndFonts"
 
 PROC_EXIT:
@@ -250,7 +250,7 @@ End Function
 
 Private Sub AddToCollection(ByRef oCol As Collection, ByVal sValue As String)
     Dim i As Long
-    For i = 1 To oCol.count
+    For i = 1 To oCol.Count
         If oCol(i) = sValue Then Exit Sub
     Next i
     oCol.Add sValue
@@ -259,7 +259,7 @@ End Sub
 Public Sub CountFields()
     On Error GoTo PROC_ERR
     Dim lCount As Long
-    lCount = ActiveDocument.Fields.count
+    lCount = ActiveDocument.Fields.Count
     Debug.Print "Total fields in document: " & lCount
     MsgBox "Total fields in document: " & lCount, vbInformation, "CountFields"
 PROC_EXIT:
@@ -375,7 +375,7 @@ Public Sub CountOrphanFooters()
         If oFooter.LinkToPrevious = False Then
             lIndependent = lIndependent + 1
             If Len(Trim(oFooter.Range.Text)) = 0 And _
-               oFooter.Range.Fields.count = 0 Then
+               oFooter.Range.Fields.Count = 0 Then
                 lOrphan = lOrphan + 1
                 sOrphanNames = sOrphanNames & "  footer" & lIndependent & ".xml" & vbCrLf
             End If
@@ -426,7 +426,7 @@ Public Sub CountOrphanHeaders()
         If oHeader.LinkToPrevious = False Then
             lIndependent = lIndependent + 1
             If Len(Trim(oHeader.Range.Text)) = 0 And _
-               oHeader.Range.Fields.count = 0 Then
+               oHeader.Range.Fields.Count = 0 Then
                 lOrphan = lOrphan + 1
                 sOrphanNames = sOrphanNames & "  header" & lIndependent & ".xml" & vbCrLf
             End If
@@ -555,12 +555,12 @@ End Sub
 Private Sub WriteDocumentStats(ByVal f As Integer)
     On Error GoTo PROC_ERR
     With ActiveDocument
-        Print #f, "Total Sections: " & .Sections.count
-        Print #f, "Total Paragraphs: " & .Paragraphs.count
-        Print #f, "Total Words: " & .words.count
-        Print #f, "Total Characters: " & .Characters.count
-        Print #f, "Total Footnotes: " & .Footnotes.count
-        Print #f, "Total Endnotes: " & .Endnotes.count
+        Print #f, "Total Sections: " & .Sections.Count
+        Print #f, "Total Paragraphs: " & .Paragraphs.Count
+        Print #f, "Total Words: " & .words.Count
+        Print #f, "Total Characters: " & .Characters.Count
+        Print #f, "Total Footnotes: " & .Footnotes.Count
+        Print #f, "Total Endnotes: " & .Endnotes.Count
     End With
 
     Print #f, String(40, "-")
@@ -593,7 +593,7 @@ Private Sub WriteSectionAudit(ByVal f As Integer)
             
             ' Columns (use only properties exposed on the collection)
             With .TextColumns
-                Print #f, "  Columns: " & .count
+                Print #f, "  Columns: " & .Count
                 Print #f, "  EvenlySpaced: " & .EvenlySpaced
                 Print #f, "  LineBetween: " & .LineBetween
                 Print #f, "  Width: " & .Width
@@ -634,7 +634,7 @@ Private Sub WriteSignature(ByVal f As Integer, ByVal label As String)
                   .pageWidth & "x" & .PageHeight & "|" & _
                   .TopMargin & "," & .BottomMargin & "," & _
                   .leftMargin & "," & .rightMargin & "|" & _
-                  "Cols=" & .TextColumns.count
+                  "Cols=" & .TextColumns.Count
         End With
         
         Print #f, sig

@@ -26,10 +26,10 @@ Public Function VerifyCitationBlock(rawBlock As String) As Long
     Set Items = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock(rawBlock))
 
-    Dim item As Variant
-    For Each item In Items
+    Dim Item As Variant
+    For Each Item In Items
         Dim canon As String
-        canon = CStr(item)
+        canon = CStr(Item)
 
         ' Find last space to split "Book Name Chapter:Verse[-EndVerse]"
         Dim lastSp As Long
@@ -93,7 +93,7 @@ Public Function VerifyCitationBlock(rawBlock As String) As Long
             Debug.Print "PASS: " & canon
             passCount = passCount + 1
         End If
-    Next item
+    Next Item
 
     Debug.Print "--- " & passCount & " passed, " & failCount & " failed. ---"
     VerifyCitationBlock = failCount
@@ -201,7 +201,7 @@ Public Sub Test_SortCitationBlock()
     ' Cross-book: out-of-order input (John, Genesis, Psalms)
     Set sorted = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock("John 3:16; Gen 1:1; Ps 23:1"))
-    aeAssert.AssertEqual 3, sorted.count, "Sort: count preserved"
+    aeAssert.AssertEqual 3, sorted.Count, "Sort: count preserved"
     aeAssert.AssertEqual "Genesis 1:1", sorted(1), "Sort: Gen first"
     aeAssert.AssertEqual "Psalms 23:1", sorted(2), "Sort: Ps second"
     aeAssert.AssertEqual "John 3:16", sorted(3), "Sort: John third"
@@ -209,7 +209,7 @@ Public Sub Test_SortCitationBlock()
     ' Same-book: chapter order within Psalms
     Set sorted = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock("Ps 103:8; Ps 19:1; Ps 68:5"))
-    aeAssert.AssertEqual 3, sorted.count, "Sort: same-book count"
+    aeAssert.AssertEqual 3, sorted.Count, "Sort: same-book count"
     aeAssert.AssertEqual "Psalms 19:1", sorted(1), "Sort: Ps 19 before 68"
     aeAssert.AssertEqual "Psalms 68:5", sorted(2), "Sort: Ps 68 before 103"
     aeAssert.AssertEqual "Psalms 103:8", sorted(3), "Sort: Ps 103 last"
@@ -241,10 +241,10 @@ Public Function VerifyCitationBlockReport(rawBlock As String, _
     Set Items = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock(rawBlock))
 
-    Dim item As Variant
-    For Each item In Items
+    Dim Item As Variant
+    For Each Item In Items
         Dim canon As String
-        canon = CStr(item)
+        canon = CStr(Item)
 
         Dim lastSp As Long
         Dim k As Long
@@ -304,7 +304,7 @@ Public Function VerifyCitationBlockReport(rawBlock As String, _
             report = report & "PASS: " & canon & vbCrLf
             passCount = passCount + 1
         End If
-    Next item
+    Next Item
 
     report = report & "--- " & passCount & " passed, " & failCount & " failed. ---"
     VerifyCitationBlockReport = report
@@ -382,12 +382,12 @@ Public Sub RepairCitationBlockInParagraph()
 
     ' --- Task 5: Render SBL short form with en-dash; suppress repeated book names ---
     Dim Result As String
-    Dim item As Variant
+    Dim Item As Variant
     Dim prevBook As String
     prevBook = ""
-    For Each item In Items
+    For Each Item In Items
         Dim canonStr As String
-        canonStr = CStr(item)
+        canonStr = CStr(Item)
 
         ' Split canonical string at last space: left = book name, right = ch:verse
         Dim lastSp As Long
@@ -413,7 +413,7 @@ Public Sub RepairCitationBlockInParagraph()
 
         If Len(Result) > 0 Then Result = Result & "; "
         Result = Result & seg
-    Next item
+    Next Item
 
     Dim dataObj As Object
     Set dataObj = CreateObject("new:{1C3B4210-F441-11CE-B9EA-00AA006B1A69}")
@@ -443,25 +443,25 @@ End Sub
 
 Public Sub Test_ParseCitationBlock_EdgeCases()
     On Error GoTo PROC_ERR
-    Dim items As Collection
+    Dim Items As Collection
 
-    ' Empty string — should return empty Collection
-    Set items = aeBibleCitationClass.ParseCitationBlock("")
-    aeAssert.AssertEqual 0, items.Count, "EdgeCase: empty string yields 0 items"
+    ' Empty string - should return empty Collection
+    Set Items = aeBibleCitationClass.ParseCitationBlock("")
+    aeAssert.AssertEqual 0, Items.Count, "EdgeCase: empty string yields 0 Items"
 
-    ' All-whitespace — should return empty Collection
-    Set items = aeBibleCitationClass.ParseCitationBlock("   ")
-    aeAssert.AssertEqual 0, items.Count, "EdgeCase: whitespace-only yields 0 items"
+    ' All-whitespace - should return empty Collection
+    Set Items = aeBibleCitationClass.ParseCitationBlock("   ")
+    aeAssert.AssertEqual 0, Items.Count, "EdgeCase: whitespace-only yields 0 Items"
 
     ' Single reference
-    Set items = aeBibleCitationClass.ParseCitationBlock("John 3:16")
-    aeAssert.AssertEqual 1, items.Count, "EdgeCase: single ref item count"
-    aeAssert.AssertEqual "John 3:16", CStr(items(1)), "EdgeCase: single ref value"
+    Set Items = aeBibleCitationClass.ParseCitationBlock("John 3:16")
+    aeAssert.AssertEqual 1, Items.Count, "EdgeCase: single ref item count"
+    aeAssert.AssertEqual "John 3:16", CStr(Items(1)), "EdgeCase: single ref value"
 
-    ' Trailing semicolon — should not produce a spurious extra item
-    Set items = aeBibleCitationClass.ParseCitationBlock("John 3:16;")
-    aeAssert.AssertEqual 1, items.Count, "EdgeCase: trailing semicolon item count"
-    aeAssert.AssertEqual "John 3:16", CStr(items(1)), "EdgeCase: trailing semicolon value"
+    ' Trailing semicolon - should not produce a spurious extra item
+    Set Items = aeBibleCitationClass.ParseCitationBlock("John 3:16;")
+    aeAssert.AssertEqual 1, Items.Count, "EdgeCase: trailing semicolon item count"
+    aeAssert.AssertEqual "John 3:16", CStr(Items(1)), "EdgeCase: trailing semicolon value"
 
     Debug.Print "Test_ParseCitationBlock_EdgeCases: all assertions passed"
 PROC_EXIT:
@@ -473,22 +473,22 @@ End Sub
 
 Public Sub Test_SingleChapterBooks()
     On Error GoTo PROC_ERR
-    Dim items As Collection
+    Dim Items As Collection
 
     ' Obadiah — BookID 31
-    Set items = aeBibleCitationClass.ParseCitationBlock("Obad 3")
-    aeAssert.AssertEqual 1, items.Count, "SingleChapter: Obad item count"
-    aeAssert.AssertEqual "Obadiah 1:3", CStr(items(1)), "SingleChapter: Obad 3 -> Obadiah 1:3"
+    Set Items = aeBibleCitationClass.ParseCitationBlock("Obad 3")
+    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Obad item count"
+    aeAssert.AssertEqual "Obadiah 1:3", CStr(Items(1)), "SingleChapter: Obad 3 -> Obadiah 1:3"
 
     ' Philemon — BookID 57
-    Set items = aeBibleCitationClass.ParseCitationBlock("Phlm 10")
-    aeAssert.AssertEqual 1, items.Count, "SingleChapter: Phlm item count"
-    aeAssert.AssertEqual "Philemon 1:10", CStr(items(1)), "SingleChapter: Phlm 10 -> Philemon 1:10"
+    Set Items = aeBibleCitationClass.ParseCitationBlock("Phlm 10")
+    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Phlm item count"
+    aeAssert.AssertEqual "Philemon 1:10", CStr(Items(1)), "SingleChapter: Phlm 10 -> Philemon 1:10"
 
     ' 2 John — BookID 63
-    Set items = aeBibleCitationClass.ParseCitationBlock("2 John 5")
-    aeAssert.AssertEqual 1, items.Count, "SingleChapter: 2 John item count"
-    aeAssert.AssertEqual "2 John 1:5", CStr(items(1)), "SingleChapter: 2 John 5 -> 2 John 1:5"
+    Set Items = aeBibleCitationClass.ParseCitationBlock("2 John 5")
+    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: 2 John item count"
+    aeAssert.AssertEqual "2 John 1:5", CStr(Items(1)), "SingleChapter: 2 John 5 -> 2 John 1:5"
 
     Debug.Print "Test_SingleChapterBooks: all assertions passed"
 PROC_EXIT:
@@ -503,11 +503,11 @@ Public Sub Test_NormalizeRawInput_Chr11()
     ' Chr(11) is Word forced line break (Shift+Enter); must be treated as whitespace
     Dim raw As String
     raw = "1 Chr 29:10-13;" & Chr(11) & "Ps 19:1-2"
-    Dim items As Collection
-    Set items = aeBibleCitationClass.ParseCitationBlock(raw)
-    aeAssert.AssertEqual 2, items.Count, "Chr(11) normalization: item count"
-    aeAssert.AssertEqual "1 Chronicles 29:10-13", CStr(items(1)), "Chr(11) normalization: first item"
-    aeAssert.AssertEqual "Psalms 19:1-2", CStr(items(2)), "Chr(11) normalization: Ps must not inherit 1 Chr book"
+    Dim Items As Collection
+    Set Items = aeBibleCitationClass.ParseCitationBlock(raw)
+    aeAssert.AssertEqual 2, Items.Count, "Chr(11) normalization: item count"
+    aeAssert.AssertEqual "1 Chronicles 29:10-13", CStr(Items(1)), "Chr(11) normalization: first item"
+    aeAssert.AssertEqual "Psalms 19:1-2", CStr(Items(2)), "Chr(11) normalization: Ps must not inherit 1 Chr book"
     Debug.Print "Test_NormalizeRawInput_Chr11: all assertions passed"
 PROC_EXIT:
     Exit Sub
@@ -519,11 +519,11 @@ End Sub
 Public Sub Test_ctxChapter_Reset()
     On Error GoTo PROC_ERR
     ' "2 Pet 2:4; Jude 6" — Jude must not inherit chapter 2 from 2 Peter
-    Dim items As Collection
-    Set items = aeBibleCitationClass.ParseCitationBlock("2 Pet 2:4; Jude 6")
-    aeAssert.AssertEqual 2, items.Count, "ctxChapter reset: item count"
-    aeAssert.AssertEqual "2 Peter 2:4", CStr(items(1)), "ctxChapter reset: 2 Peter item"
-    aeAssert.AssertEqual "Jude 1:6", CStr(items(2)), "ctxChapter reset: Jude must not inherit chapter 2"
+    Dim Items As Collection
+    Set Items = aeBibleCitationClass.ParseCitationBlock("2 Pet 2:4; Jude 6")
+    aeAssert.AssertEqual 2, Items.Count, "ctxChapter reset: item count"
+    aeAssert.AssertEqual "2 Peter 2:4", CStr(Items(1)), "ctxChapter reset: 2 Peter item"
+    aeAssert.AssertEqual "Jude 1:6", CStr(Items(2)), "ctxChapter reset: Jude must not inherit chapter 2"
     Debug.Print "Test_ctxChapter_Reset: all assertions passed"
 PROC_EXIT:
     Exit Sub

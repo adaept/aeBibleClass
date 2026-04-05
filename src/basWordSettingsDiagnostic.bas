@@ -165,7 +165,7 @@ Private Function FormatDiagnostics(current As Object, target As Object, issues A
     Result = Result & "Date: " & Format(Now, "yyyy-mm-dd hh:nn") & vbCrLf & vbCrLf
 
     Result = Result & "== Discrepancies ==" & vbCrLf
-    If issues.count = 0 Then
+    If issues.Count = 0 Then
         Result = Result & "None. All settings match baseline." & vbCrLf
     Else
         For Each key In issues.Keys

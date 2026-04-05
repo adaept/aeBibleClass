@@ -80,7 +80,7 @@ Public Sub RemoveDuplicateCustomXMLParts()
     Set duplicateParts = New Collection
 
     ' Identify essential and duplicate parts
-    For i = 1 To xmlParts.count
+    For i = 1 To xmlParts.Count
         partName = xmlParts(i).NamespaceURI
         If Not IsPartInCollection(essentialParts, partName) Then
             essentialParts.Add xmlParts(i), partName
@@ -90,18 +90,18 @@ Public Sub RemoveDuplicateCustomXMLParts()
     Next i
 
     ' Remove duplicate parts
-    For j = 1 To duplicateParts.count
+    For j = 1 To duplicateParts.Count
         duplicateParts(j).Delete
     Next j
 
     ' Print names of essential and duplicate parts
     Debug.Print "Essential CustomXML Parts:"
-    For i = 1 To essentialParts.count
+    For i = 1 To essentialParts.Count
         Debug.Print essentialParts(i).NamespaceURI
     Next i
 
     Debug.Print "Duplicate CustomXML Parts:"
-    For j = 1 To duplicateParts.count
+    For j = 1 To duplicateParts.Count
         Debug.Print duplicateParts(j).NamespaceURI
     Next j
 
@@ -116,7 +116,7 @@ Private Function IsPartInCollection(col As Collection, partName As String) As Bo
     On Error GoTo PROC_ERR
     Dim i As Integer
     IsPartInCollection = False
-    For i = 1 To col.count
+    For i = 1 To col.Count
         If col(i).NamespaceURI = partName Then
             IsPartInCollection = True
             GoTo PROC_EXIT
@@ -139,7 +139,7 @@ Public Sub DeleteCustomUIXML()
     Set xmlParts = ActiveDocument.CustomXMLParts
 
     ' Loop through all CustomXMLParts to find and delete the customUI parts
-    For i = xmlParts.count To 1 Step -1
+    For i = xmlParts.Count To 1 Step -1
         Set xmlPart = xmlParts(i)
         If xmlPart.NamespaceURI = "http://schemas.microsoft.com/office/2006/01/customui" Or _
                 xmlPart.NamespaceURI = "http://schemas.microsoft.com/office/2009/07/customui" Then
@@ -296,7 +296,7 @@ Public Sub FindFirstSectionWithDifferentFirstPage()
     Dim sec As section
     Dim i As Long
 
-    For i = 1 To ActiveDocument.Sections.count
+    For i = 1 To ActiveDocument.Sections.Count
         Set sec = ActiveDocument.Sections(i)
 
         ' Check if Different First Page is enabled
@@ -326,7 +326,7 @@ Public Sub FindFirstPageWithEmptyHeader()
     Dim i As Long
     Dim hdrType As Variant  ' Must be Variant for Array() to work
 
-    For i = 1 To ActiveDocument.Sections.count
+    For i = 1 To ActiveDocument.Sections.Count
         Set sec = ActiveDocument.Sections(i)
 
         For Each hdrType In Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
@@ -391,7 +391,7 @@ Public Sub OptimizedListFontsInDocument()
     ' Display the fonts in a message box
     Dim fontOutput As String
     fontOutput = "Fonts used in the document:" & vbCrLf
-    For i = 1 To fontList.count
+    For i = 1 To fontList.Count
         fontOutput = fontOutput & "- " & fontList(i) & vbCrLf
     Next i
     'MsgBox fontOutput, vbInformation, "Fonts in Document"
@@ -417,7 +417,7 @@ Public Sub FindGentiumFromParagraph()
     startParaNum = val(InputBox("Enter paragraph number to start from:", "Start From Paragraph", 1))
     If startParaNum < 1 Then GoTo PROC_EXIT
 
-    totalParas = ActiveDocument.Paragraphs.count
+    totalParas = ActiveDocument.Paragraphs.Count
     If startParaNum > totalParas Then
         MsgBox "There are only " & totalParas & " paragraphs in the document.", vbExclamation
         GoTo PROC_EXIT
@@ -431,7 +431,7 @@ Public Sub FindGentiumFromParagraph()
         Set rng = para.Range
         rng.End = rng.End - 1 ' Exclude paragraph mark
 
-        For i = 1 To rng.Characters.count Step 10 ' Check every 10 chars
+        For i = 1 To rng.Characters.Count Step 10 ' Check every 10 chars
             Set charRange = rng.Characters(i)
             If charRange.Font.name = "Gentium" Then
                 charRange.Select
@@ -510,7 +510,7 @@ Public Sub ListNonMainFonts_ByParagraph()
         End If
     Next storyRange
 
-    If fontDict.count = 0 Then
+    If fontDict.Count = 0 Then
         MsgBox "No fonts found outside main text.", vbInformation
     Else
         Dim Output As String, key As Variant
@@ -811,7 +811,7 @@ Private Sub ReportPageLayoutMetrics(pageNum As Long)
     Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
     Set sectionSetup = pgRange.Sections(1).PageSetup
 
-    numCols = sectionSetup.TextColumns.count
+    numCols = sectionSetup.TextColumns.Count
     gutter = sectionSetup.gutter
     pageWidth = sectionSetup.pageWidth
     leftMargin = sectionSetup.leftMargin
@@ -901,7 +901,7 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
     On Error GoTo PROC_ERR
     Dim rng As Word.Range
     Set rng = Selection.Range
-    If rng.Characters.count = 0 Then
+    If rng.Characters.Count = 0 Then
         MsgBox "No character selected.", vbExclamation
         GoTo PROC_EXIT
     End If
@@ -964,7 +964,7 @@ Public Sub LogExpandedMarkerContext()
     Dim i As Long, chCount As Long
     Dim contextText As String, contextAscii As String, contextHex As String
 
-    chCount = sel.Characters.count
+    chCount = sel.Characters.Count
     Debug.Print "=== Marker Diagnostic ==="
     Debug.Print "Selection Start=" & sel.Start & " | End=" & sel.End
     Debug.Print "Selection Text='" & Replace(sel.Text, vbCr, "[CR]") & "'"
@@ -1902,17 +1902,17 @@ Public Sub PrintCompactSectionLayoutInfo()
     ' Write Header to the file
     outputText = "=== Layout Report ===" & vbCrLf
     outputText = outputText & "Doc: " & ActiveDocument.name & vbCrLf
-    outputText = outputText & "Total Sections: " & ActiveDocument.Sections.count & vbCrLf & vbCrLf
+    outputText = outputText & "Total Sections: " & ActiveDocument.Sections.Count & vbCrLf & vbCrLf
     Print #fileNum, outputText
 
-    For i = 1 To ActiveDocument.Sections.count
+    For i = 1 To ActiveDocument.Sections.Count
         Set sec = ActiveDocument.Sections(i)
 
         outputText = "Section " & i & ": " & vbCrLf
         outputText = outputText & "Page: " & IIf(sec.PageSetup.Orientation = wdOrientPortrait, "Portrait", "Landscape") & ", " & _
                     "Size: " & GetPaperSizeName(sec.PageSetup.paperSize) & ", " & _
-                    "Columns: " & sec.PageSetup.TextColumns.count & vbCrLf
-        If sec.PageSetup.TextColumns.count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
+                    "Columns: " & sec.PageSetup.TextColumns.Count & vbCrLf
+        If sec.PageSetup.TextColumns.Count > 1 Then nTwoCol = nTwoCol + 1 Else nOneCol = nOneCol + 1
 
         ' Margins
         outputText = outputText & "Margins (inches): " & _
@@ -2237,7 +2237,7 @@ Public Sub LoadHeadingIndexFromCSV()
     Loop
 
     Close #fileNum
-    MsgBox "Heading index loaded into memory. " & HeadingBuffer.count & " entries."
+    MsgBox "Heading index loaded into memory. " & HeadingBuffer.Count & " entries."
 
 PROC_EXIT:
     Exit Sub
@@ -2266,10 +2266,10 @@ Public Sub GoToHeadingByIndex()
     targetIndex = InputBox("Enter the paragraph index to jump to:")
     If IsNumeric(targetIndex) Then
         paraIndex = CLng(targetIndex)
-        If paraIndex > 0 And paraIndex <= ActiveDocument.Paragraphs.count Then
+        If paraIndex > 0 And paraIndex <= ActiveDocument.Paragraphs.Count Then
             ActiveDocument.Paragraphs(paraIndex).Range.Select
         Else
-            MsgBox "Invalid index. Must be between 1 and " & ActiveDocument.Paragraphs.count
+            MsgBox "Invalid index. Must be between 1 and " & ActiveDocument.Paragraphs.Count
         End If
     Else
         MsgBox "Please enter a numeric value."
@@ -2322,7 +2322,7 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
     Dim desc As String
 
     Set r = Selection.Range
-    count = r.Characters.count
+    count = r.Characters.Count
 
     ' Enforce exactly one logical character
     If count = 0 Then

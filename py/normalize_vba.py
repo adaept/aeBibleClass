@@ -23,6 +23,7 @@ NORMALIZATIONS = [
     (r'(?i)\bmid\$?\(',           'Mid$(',            'Mid$( built-in function casing (includes Mid( -> Mid$()'),
     (r'(?i)\.Path\b',           '.Path',            '.Path property on Document/ActiveDocument'),
     (r'(?i)\.Item\b',           '.Item',            '.Item method on Collection'),
+    (r'(?i)\.Count\b',          '.Count',           '.Count method on Collection'),
     (r'(?i)\.Keys\b',           '.Keys',            '.Keys property on Dictionary/Object'),
     (r'(?i)\.Text\b',           '.Text',            '.Text property on Range'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range declaration'),

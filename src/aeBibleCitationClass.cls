@@ -1345,10 +1345,10 @@ Public Function AliasCoverage( _
         End If
     Next k
 
-    If missing.count > 0 Then
+    If missing.Count > 0 Then
         Dim i As Long
         report = "Missing canonical aliases:" & vbCrLf
-        For i = 1 To missing.count
+        For i = 1 To missing.Count
             report = report & "  - " & missing(i) & vbCrLf
         Next i
 
@@ -1725,7 +1725,7 @@ Public Function CompressCanonical(ByVal Refs As Collection) As Collection
     Dim i As Long
     Dim n As Long
 
-    n = Refs.count
+    n = Refs.Count
     If n = 0 Then
         Set CompressCanonical = Result
         GoTo PROC_EXIT
@@ -2128,11 +2128,11 @@ Public Function ValidateCanonical(ByVal Refs As Collection) As Collection
     On Error GoTo PROC_ERR
 
     Dim Result As New Collection
-    Dim item As Variant
+    Dim Item As Variant
     Dim s As String
 
-    For Each item In Refs
-        s = CStr(item)
+    For Each Item In Refs
+        s = CStr(Item)
 
         '------------------------------------------
         ' Attempt to parse as a range first
@@ -2222,7 +2222,7 @@ Public Function ValidateCanonical(ByVal Refs As Collection) As Collection
         End If
 
 NextItem:
-    Next item
+    Next Item
 
     Set ValidateCanonical = Result
 PROC_EXIT:
@@ -2255,7 +2255,7 @@ Public Function BuildCanonicalRanges(ByVal Refs As Collection) As Collection
     Dim i As Long
     Dim n As Long
 
-    n = Refs.count
+    n = Refs.Count
     If n = 0 Then
         Set BuildCanonicalRanges = Result
         GoTo PROC_EXIT
@@ -2358,7 +2358,7 @@ End Function
 Public Function FormatCanonicalString(ByVal Refs As Collection) As String
     On Error GoTo PROC_ERR
 
-    If Refs.count = 0 Then
+    If Refs.Count = 0 Then
         FormatCanonicalString = ""
         GoTo PROC_EXIT
     End If
@@ -2366,7 +2366,7 @@ Public Function FormatCanonicalString(ByVal Refs As Collection) As String
     Dim Result    As String
     Dim prevBook  As String
     Dim prevEndCh As Long
-    Dim item      As Variant
+    Dim Item      As Variant
     Dim s         As String
     Dim bk        As String
     Dim sCh       As Long
@@ -2385,8 +2385,8 @@ Public Function FormatCanonicalString(ByVal Refs As Collection) As String
     prevBook = ""
     prevEndCh = 0
 
-    For Each item In Refs
-        s = CStr(item)
+    For Each Item In Refs
+        s = CStr(Item)
         bk = ""
         sCh = 0: sV = 0: eCh = 0: eV = 0
 
@@ -2450,7 +2450,7 @@ Public Function FormatCanonicalString(ByVal Refs As Collection) As String
         prevEndCh = eCh
 
 NextItem:
-    Next item
+    Next Item
 
     FormatCanonicalString = Result
 
@@ -2711,7 +2711,7 @@ Public Function SortCitationBlock(ByVal Items As Collection) As Collection
     On Error GoTo PROC_ERR
 
     Dim n As Long
-    n = Items.count
+    n = Items.Count
     If n = 0 Then Set SortCitationBlock = New Collection: GoTo PROC_EXIT
 
     Dim keys() As Long
@@ -2721,10 +2721,10 @@ Public Function SortCitationBlock(ByVal Items As Collection) As Collection
 
     Dim i As Long
     i = 1
-    Dim item As Variant
-    For Each item In Items
+    Dim Item As Variant
+    For Each Item In Items
         Dim canon As String
-        canon = CStr(item)
+        canon = CStr(Item)
 
         ' Find last space: left = book name, right = Chapter:Verse[-End]
         Dim lastSp As Long
@@ -2768,7 +2768,7 @@ Public Function SortCitationBlock(ByVal Items As Collection) As Collection
         keys(i) = bID * 1000000 + ch * 10000 + sV
         vals(i) = canon
         i = i + 1
-    Next item
+    Next Item
 
     ' Insertion sort on keys/vals arrays
     Dim j As Long

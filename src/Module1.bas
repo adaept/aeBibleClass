@@ -181,7 +181,7 @@ Sub GoToParagraphIndex()
     targetIndex = CLng(sInput)
 
     ' Validate the entered index
-    If targetIndex > 0 And targetIndex <= ActiveDocument.Paragraphs.count Then
+    If targetIndex > 0 And targetIndex <= ActiveDocument.Paragraphs.Count Then
         paraIndex = 1
         For Each para In ActiveDocument.Paragraphs
             If paraIndex = targetIndex Then
@@ -191,7 +191,7 @@ Sub GoToParagraphIndex()
             paraIndex = paraIndex + 1
         Next para
     Else
-        MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.Paragraphs.count & "."
+        MsgBox "Invalid index entered. Please enter a valid index between 1 and " & ActiveDocument.Paragraphs.Count & "."
     End If
 
 PROC_EXIT:
@@ -230,7 +230,7 @@ Function CountNextPageSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.Paragraphs
-        If para.Range.Sections.count > 0 Then
+        If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionNewPage Then
                 count = count + 1
             End If
@@ -251,7 +251,7 @@ Function CountContinuousSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.Paragraphs
-        If para.Range.Sections.count > 0 Then
+        If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionContinuous Then
                 count = count + 1
             End If
@@ -272,7 +272,7 @@ Function CountEvenPageSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.Paragraphs
-        If para.Range.Sections.count > 0 Then
+        If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionEvenPage Then
                 count = count + 1
             End If
@@ -293,7 +293,7 @@ Function CountOddPageSectionBreakParagraphs() As Long
     Dim count As Long
     count = 0
     For Each para In ActiveDocument.Paragraphs
-        If para.Range.Sections.count > 0 Then
+        If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionOddPage Then
                 count = count + 1
             End If
@@ -789,7 +789,7 @@ Sub CountTypesTrulyEmptyParagraph()
             End If
 
             ' Check if the paragraph spans multiple sections
-            If paraRange.Sections.count > 1 Then
+            If paraRange.Sections.Count > 1 Then
                 sectionBreakFound = True
             End If
 
@@ -1106,7 +1106,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
     Debug.Print "Checking Footnote References..."
 
     ' Check main doc footnote references
-    For i = 1 To doc.Footnotes.count
+    For i = 1 To doc.Footnotes.Count
         Set ref = doc.Footnotes(i).Reference
         totalChecked = totalChecked + 1
 

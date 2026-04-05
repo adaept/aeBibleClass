@@ -209,7 +209,7 @@ Sub LongProcessSkeletonWithConsoleProgress()
     Set doc = ActiveDocument
         
     Dim totalParagraphs As Long
-    totalParagraphs = doc.Paragraphs.count
+    totalParagraphs = doc.Paragraphs.Count
         
     Dim batchSize As Long
     batchSize = 50 ' Number of paragraphs to update in each phase
