@@ -35,6 +35,7 @@ Option Compare Text
 Private m_ribbon         As IRibbonUI
 Private m_ribbonReady    As Boolean
 Private m_btnNextEnabled As Boolean
+Private m_btnPrevEnabled As Boolean
 Private m_bookmarkIndex  As Long
 Private m_savedPos       As Long
 Private m_bookAbbr       As String
@@ -50,6 +51,7 @@ Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) 
 Private Sub Class_Initialize()
     Debug.Print "RibbonController: Class_Initialize at " & Format(Now, "hh:nn:ss")
     m_btnNextEnabled = True
+    m_btnPrevEnabled = True
     m_ribbonReady = False
     m_bookmarkIndex = 0
     m_savedPos = 0
@@ -76,6 +78,14 @@ Public Property Let BtnNextEnabled(val As Boolean)
     m_btnNextEnabled = val
 End Property
 
+Public Property Get BtnPrevEnabled() As Boolean
+    BtnPrevEnabled = m_btnPrevEnabled
+End Property
+
+Public Property Let BtnPrevEnabled(val As Boolean)
+    m_btnPrevEnabled = val
+End Property
+
 ' -- Ribbon Load ---------------------------------------------------------------
 
 Public Sub OnRibbonLoad(ribbon As IRibbonUI)
@@ -84,6 +94,7 @@ Public Sub OnRibbonLoad(ribbon As IRibbonUI)
     m_ribbonReady = True
     Debug.Print "RibbonController: Ribbon ready at " & Format(Now, "hh:nn:ss")
     m_ribbon.InvalidateControl "GoToNextButton"
+    m_ribbon.InvalidateControl "GoToPrevButton"
     Call EnableButtonsRoutine
 PROC_EXIT:
     Exit Sub
@@ -128,6 +139,10 @@ Public Sub OnNextButtonClick(control As IRibbonControl)
     Call NextButton
 End Sub
 
+Public Sub OnPrevButtonClick(control As IRibbonControl)
+    Call PrevButton
+End Sub
+
 Public Sub OnAdaeptAboutClick(control As IRibbonControl)
     MsgBox "Hello, adaept World!" & vbCrLf & _
            "adaeptMsg  = " & AdaeptMsg, vbInformation, "About adaept"
@@ -139,13 +154,19 @@ Public Function GetNextEnabled(control As IRibbonControl) As Boolean
     GetNextEnabled = m_btnNextEnabled
 End Function
 
+Public Function GetPrevEnabled(control As IRibbonControl) As Boolean
+    GetPrevEnabled = m_btnPrevEnabled
+End Function
+
 ' -- Initialization ------------------------------------------------------------
 
 Private Sub EnableButtonsRoutine()
     On Error GoTo PROC_ERR
     Debug.Print "RibbonController: EnableButtonsRoutine"
     m_btnNextEnabled = True
+    m_btnPrevEnabled = True
     If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
     CaptureHeading1s
     LogHeadingData
 PROC_EXIT:
@@ -255,6 +276,60 @@ PROC_EXIT:
 
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NextButton of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+
+' -- Prev Book (H1) ------------------------------------------------------------
+
+Private Sub PrevButton()
+    On Error GoTo PROC_ERR
+    Dim doc         As Document
+    Dim searchRange As Word.Range
+    Dim paraStart   As Long
+    Dim found       As Boolean
+
+    Set doc = ActiveDocument
+    found = False
+
+    paraStart = Selection.Paragraphs(1).Range.Start
+    Set searchRange = doc.Range(0, paraStart)
+
+    With searchRange.Find
+        .ClearFormatting
+        .style = doc.Styles("Heading 1")
+        .Forward = False
+        .Wrap = wdFindStop
+        .Format = True
+        .Text = ""
+        found = .Execute
+    End With
+
+    If Not found Then
+        ' Wrap: at Genesis (or before first H1), go to Revelation (last H1 in document)
+        Set searchRange = doc.Range(paraStart, doc.content.End)
+        With searchRange.Find
+            .ClearFormatting
+            .style = doc.Styles("Heading 1")
+            .Forward = False
+            .Wrap = wdFindStop
+            .Format = True
+            .Text = ""
+            found = .Execute
+        End With
+    End If
+
+    If found Then
+        Selection.SetRange searchRange.Start, searchRange.Start
+        ActiveWindow.ScrollIntoView Selection.Range, True
+    Else
+        MsgBox "No Heading 1 found in the document.", vbInformation
+    End If
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrevButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
 
