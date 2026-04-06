@@ -2680,7 +2680,13 @@ NEXT_SEG:
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCitationBlock of Class aeSBL_Citation_Class"
+    ' User-input errors (non-ASCII token, block too long): re-raise so the caller
+    ' (VerifyCitationBlockReport) can set failCount = -1 and show a friendly message.
+    If Err.Number = vbObjectError + 1002 Or Err.Number = vbObjectError + 1003 Then
+        Err.Raise Err.Number, Err.Source, Err.Description
+    End If
+    Debug.Print "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCitationBlock of Class aeSBL_Citation_Class"
+    'MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseCitationBlock of Class aeSBL_Citation_Class"
     Resume PROC_EXIT
 End Function
 

@@ -547,3 +547,38 @@ The caller then interpreted 0 failures as a clean block and continued processing
 
 The user now sees a single user-friendly message and the procedure exits cleanly.
 Both error 1002 and 1003 use the same friendly message path.
+
+
+---
+
+### Fix — `failCount = -1` sentinel not reached; errors consumed in `ParseCitationBlock` PROC_ERR
+
+**Symptom:** After the previous fix, the user-friendly message still did not appear.
+Trace showed six error lines before exit — errors 1002/1003 were consumed by
+`ParseCitationBlock`’s own PROC_ERR (Debug.Print + Resume PROC_EXIT), returning
+`Nothing`. `SortCitationBlock` then raised Error 91, `VerifyCitationBlockReport`
+raised Error 424. By the time `VerifyCitationBlockReport`’s PROC_ERR ran, the error
+number was 424, not 1002/1003 — so the `failCount = -1` branch never fired.
+
+**Cause:** In VBA, each procedure’s `On Error GoTo PROC_ERR` handler is a terminal
+catch — it consumes the error unless it explicitly re-raises. `ParseCitationBlock`
+consumed errors 1002/1003 and returned `Nothing`, cascading into two further errors.
+
+**Fix:** In `ParseCitationBlock` PROC_ERR, re-raise errors 1002 and 1003 instead of
+consuming them, so they propagate to `VerifyCitationBlockReport`’s handler:
+
+```vb
+PROC_ERR:
+    If Err.Number = vbObjectError + 1002 Or Err.Number = vbObjectError + 1003 Then
+        Err.Raise Err.Number, Err.Source, Err.Description
+    End If
+    MsgBox "Erl=" & Erl & ...
+    Resume PROC_EXIT
+```
+
+Flow after fix:
+1. `ParseCitationBlock` PROC_ERR — re-raises 1003; no MsgBox, no Resume
+2. `VerifyCitationBlockReport` PROC_ERR — catches 1003, sets `failCount = -1`, Resume PROC_EXIT
+3. `RepairCitationBlockInParagraph` — sees `failCount = -1`, shows user-friendly message, exits
+
+The Debug.Print trace statements in all PROC_ERR handlers are preserved unchanged.

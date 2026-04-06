@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #560 -
 ' #559 -
 ' #558 -
-' #557 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -74,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #557 - Sentinel fail = -1 not respected [bug]
     ' FIXED - #556 - A  paragraph that contains non-citation text raises an unfriendly error message [bug]
     ' FIXED - #555 - Whole chapter reference is not supported correctly [bug]
     ' FIXED - #554 - The message box window will not allow a fix then retry in citation block repair [bug]
