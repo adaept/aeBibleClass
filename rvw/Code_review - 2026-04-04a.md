@@ -620,3 +620,36 @@ Cases now handled correctly:
 
 **Tests added:** Two assertions appended to `Test_WholeChapterReference`:
 parse of `"Isa 45:17; 60"` and verify report for `"Isa 45:17; 60; 62:4"`.
+
+
+---
+
+### Fix — Paragraph mark included in selection causes next paragraph to merge on paste (`RepairCitationBlockInParagraph`)
+
+**Symptom:** When the user selects paragraph text by dragging or using keyboard
+selection, Word extends the selection to include the trailing paragraph mark (Chr(13)).
+Replacing `workRng.Text` with the corrected citation block overwrites the paragraph
+mark, merging the paragraph with the next one and destroying its formatting.
+
+**Cause:** The cursor path already applied `workRng.End = workRng.End - 1` to exclude
+the paragraph mark. The `wdSelectionNormal` (text selection) path used `Selection.Range`
+directly without the same guard, so a selection that included the trailing Chr(13)
+would pass the mark into `workRng` and overwrite it on replacement.
+
+**Fix:** Added a Chr(13) trailing-mark check to the `wdSelectionNormal` branch, matching
+the existing cursor-path guard:
+
+```vb
+If Selection.Type = wdSelectionNormal Then
+    Set workRng = Selection.Range
+    If Right$(workRng.Text, 1) = Chr(13) Then
+        workRng.End = workRng.End - 1
+    End If
+Else
+    Set workRng = Selection.Paragraphs(1).Range
+    workRng.End = workRng.End - 1   ' exclude paragraph mark
+End If
+```
+
+Both entry paths now guarantee `workRng` excludes the trailing paragraph mark before
+any replacement occurs.

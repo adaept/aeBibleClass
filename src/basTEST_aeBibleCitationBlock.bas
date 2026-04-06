@@ -358,6 +358,12 @@ Public Sub RepairCitationBlockInParagraph()
     Dim workRng As Object
     If Selection.Type = wdSelectionNormal Then
         Set workRng = Selection.Range
+        ' Word often extends a drag selection to include the trailing paragraph mark.
+        ' Exclude it so that replacing workRng.Text does not delete the mark and
+        ' merge this paragraph with the next.
+        If Right$(workRng.Text, 1) = Chr(13) Then
+            workRng.End = workRng.End - 1
+        End If
     Else
         Set workRng = Selection.Paragraphs(1).Range
         workRng.End = workRng.End - 1   ' exclude paragraph mark
