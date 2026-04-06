@@ -582,3 +582,41 @@ Flow after fix:
 3. `RepairCitationBlockInParagraph` — sees `failCount = -1`, shows user-friendly message, exits
 
 The Debug.Print trace statements in all PROC_ERR handlers are preserved unchanged.
+
+
+---
+
+### Fix — Bare chapter number after semicolon within same book misread as verse (`ParseCitationBlock`)
+
+**Symptom:** Input `Isa 45:17; 60; 62:4, 11` produced `FAIL: Isaiah 45:60 (start verse failed)`.
+The `60` after the semicolon was parsed as verse 60 of chapter 45 (which does not exist
+— Isaiah 45 has only 25 verses). The intended meaning is chapter 60 of Isaiah (a whole-chapter reference).
+
+**Cause:** The whole-chapter detection guard in `ParseCitationBlock` required `ctxChapter = 0`
+(only fires on a new-book switch). For `Isa 45:17; 60`, `ctxChapter = 45` after the first
+segment, so the guard did not fire and `60` fell through to the verse loop, producing
+`Isaiah 45:60`.
+
+**Rule:** After a semicolon, a bare number (no colon) is always a chapter reference on a
+multi-chapter book. Verse sub-lists within the same chapter are comma-separated (e.g.
+`Isa 62:4, 11`), not semicolon-separated.
+
+**Fix:** Removed the `ctxChapter = 0` requirement from the whole-chapter guard and added
+`GetMaxChapter(ctxBookID) > 1` to exclude single-chapter books (whose bare numbers remain
+verse specs):
+
+```vb
+If colonPos = 0 And IsNumeric(vsStr) And GetMaxChapter(ctxBookID) > 1 Then
+    ctxChapter = CLng(vsStr)
+    Result.Add ctxCanon & " " & ctxChapter
+    GoTo NEXT_SEG
+End If
+```
+
+Cases now handled correctly:
+- `Ezek 16` (new book, ctxChapter=0) → `"Ezekiel 16"` ✓
+- `Isa 45:17; 60` (same book, ctxChapter=45) → `"Isaiah 60"` ✓
+- `Jude 6` (single-chapter book) → `"Jude 1:6"` ✓ (guard excluded by `GetMaxChapter = 1`)
+
+**Tests added:** Two assertions appended to `Test_WholeChapterReference`:
+parse of `"Isa 45:17; 60"` and verify report for `"Isa 45:17; 60; 62:4"`.

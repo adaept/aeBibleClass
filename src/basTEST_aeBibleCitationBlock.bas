@@ -674,6 +674,20 @@ Public Sub Test_WholeChapterReference()
         aeBibleCitationClass.ToSBLShortForm("Ezekiel 16"), _
         "WholeChapter: ToSBLShortForm Ezek 16"
 
+    ' Chapter-switch within same book: bare number after semicolon is a chapter, not a verse
+    ' "Isa 45:17; 60" — 60 is chapter 60 of Isaiah, not verse 60 of chapter 45
+    Set Items = aeBibleCitationClass.ParseCitationBlock("Isa 45:17; 60")
+    aeAssert.AssertEqual 2, Items.Count, "WholeChapter: Isa 45:17; 60 item count"
+    aeAssert.AssertEqual "Isaiah 45:17", CStr(Items(1)), "WholeChapter: Isa 45:17"
+    aeAssert.AssertEqual "Isaiah 60", CStr(Items(2)), "WholeChapter: Isa 60 via same-book chapter switch"
+
+    ' Verify report passes for same-book chapter switch
+    Dim passCount2 As Long, failCount2 As Long, report2 As String
+    passCount2 = 0: failCount2 = 0
+    report2 = VerifyCitationBlockReport("Isa 45:17; 60; 62:4", passCount2, failCount2)
+    aeAssert.AssertEqual 3, passCount2, "WholeChapter: Isa mixed passCount"
+    aeAssert.AssertEqual 0, failCount2, "WholeChapter: Isa mixed failCount"
+
     Debug.Print "Test_WholeChapterReference: all assertions passed"
 PROC_EXIT:
     Exit Sub

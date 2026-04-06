@@ -2622,10 +2622,12 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
         ' so the canonical string is "Jude 1:6" not "Jude 0:6".
         If ctxChapter = 0 And GetMaxChapter(ctxBookID) = 1 Then ctxChapter = 1
 
-        ' Whole-chapter reference on multi-chapter book (e.g. "Ezek 16"):
-        ' no colon, ctxChapter still 0 after book switch.
-        ' Emit "Ezekiel 16" (no verse) and move to next segment.
-        If ctxChapter = 0 And colonPos = 0 And IsNumeric(vsStr) Then
+        ' Whole-chapter or chapter-switch reference on a multi-chapter book.
+        ' A bare number (no colon) after a semicolon is always a chapter reference:
+        '   "Ezek 16"       -> new book, ctxChapter=0  -> "Ezekiel 16"
+        '   "Isa 45:17; 60" -> same book, ctxChapter=45 -> "Isaiah 60"
+        ' Single-chapter books are excluded (their bare numbers are verse specs).
+        If colonPos = 0 And IsNumeric(vsStr) And GetMaxChapter(ctxBookID) > 1 Then
             ctxChapter = CLng(vsStr)
             Result.Add ctxCanon & " " & ctxChapter
             GoTo NEXT_SEG
