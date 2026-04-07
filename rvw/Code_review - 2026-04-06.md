@@ -337,3 +337,53 @@ Exit For
 
 XML edit (`getEnabled` attributes on both buttons) was performed by the user
 using the Custom UI Editor tool (delegated — see Section 7).
+
+
+---
+
+## 9 — Bug Fix: "Wrong number of arguments" on Ribbon Load (`GetPrevEnabled`, `GetNextEnabled`)
+
+**Symptom:** Two "Wrong number of arguments or invalid property assignment" errors on
+ribbon load. Both Prev Book and Next Book buttons remained disabled.
+
+**Cause:** The `getEnabled` stub functions in `basBibleRibbonSetup.bas` used chained
+calls on the return value of `Instance()`:
+
+```vb
+GetPrevEnabled = Instance().GetPrevEnabled(control)
+```
+
+VBA cannot reliably resolve method arguments through a temporary object reference
+returned inline by a function. It misinterprets `(control)` — either as an attempt
+to index the return value or as an invalid property assignment — and raises Error 450.
+The ribbon then defaults the button to disabled because the callback failed.
+
+The error occurred twice because both `GetPrevEnabled` and `GetNextEnabled` used the
+same pattern.
+
+**Why Sub stubs are unaffected:** The existing Sub stubs (e.g. `OnPrevButtonClick`)
+use VBA Sub call syntax without parentheses around the argument:
+```vb
+Instance().OnPrevButtonClick control
+```
+This form does not trigger the same ambiguity. Function calls that return a value
+and pass arguments require the local variable pattern.
+
+**Fix:** Store the instance in a local variable before calling the method:
+
+```vb
+Public Function GetPrevEnabled(control As IRibbonControl) As Boolean
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    GetPrevEnabled = rc.GetPrevEnabled(control)
+End Function
+
+Public Function GetNextEnabled(control As IRibbonControl) As Boolean
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    GetNextEnabled = rc.GetNextEnabled(control)
+End Function
+```
+
+`rc.GetPrevEnabled(control)` is an unambiguous method call on a named variable —
+VBA resolves it correctly.

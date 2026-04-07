@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #565 -
 ' #564 -
 ' #563 -
-' #562 -
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -74,6 +73,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #562 - Wrong number of arguments on ribbon load [bug]
     ' FIXED - #561 - Prev and Next Book buttons should be disabled until GoTo Book is used once
     ' FIXED - #560 - Add ribbon button and code for GoTo Previous Book [impr]
     ' FIXED - #559 - Text selection for citation block captures the end paragraph mark and messes up format on paste [bug]
