@@ -50,6 +50,11 @@ Public Sub OnGoToVerseSblClick(control As IRibbonControl)
     Instance().OnGoToVerseSblClick control
 End Sub
 
+Public Sub OnPrevButtonClick(control As IRibbonControl)
+    'Debug.Print ">> OnPrevButtonClick at " & Format(Now, "hh:nn:ss")
+    Instance().OnPrevButtonClick control
+End Sub
+
 Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
     'Debug.Print ">> OnGoToH1ButtonClick at " & Format(Now, "hh:nn:ss")
     Instance().OnGoToH1ButtonClick control

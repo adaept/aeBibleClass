@@ -131,16 +131,16 @@ Public Sub OnGoToVerseSblClick(control As IRibbonControl)
     Call GoToVerseSBL
 End Sub
 
+Public Sub OnPrevButtonClick(control As IRibbonControl)
+    Call PrevButton
+End Sub
+
 Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
     Call GoToH1
 End Sub
 
 Public Sub OnNextButtonClick(control As IRibbonControl)
     Call NextButton
-End Sub
-
-Public Sub OnPrevButtonClick(control As IRibbonControl)
-    Call PrevButton
 End Sub
 
 Public Sub OnAdaeptAboutClick(control As IRibbonControl)
