@@ -50,8 +50,8 @@ Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) 
 
 Private Sub Class_Initialize()
     Debug.Print "RibbonController: Class_Initialize at " & Format(Now, "hh:nn:ss")
-    m_btnNextEnabled = True
-    m_btnPrevEnabled = True
+    m_btnNextEnabled = False
+    m_btnPrevEnabled = False
     m_ribbonReady = False
     m_bookmarkIndex = 0
     m_savedPos = 0
@@ -204,6 +204,10 @@ Private Sub GoToH1()
                 para.Range.Select
                 ActiveDocument.Range(para.Range.Start, para.Range.Start).Select
                 matchFound = True
+                m_btnNextEnabled = True
+                m_btnPrevEnabled = True
+                If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+                If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
                 Exit For
             End If
         End If

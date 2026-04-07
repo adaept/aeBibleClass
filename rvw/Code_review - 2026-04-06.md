@@ -32,6 +32,7 @@ by searching forward from the document start — landing on Genesis.
 4. Navigate to the found heading.
 
 Wrap behaviour matches `NextButton`:
+
 - Next Book at Revelation → Genesis
 - Prev Book at Genesis → Revelation
 
@@ -145,6 +146,7 @@ Add `getEnabled` callbacks to both navigation buttons:
 ### VBA Changes Required
 
 **`Class_Initialize`** — start both buttons disabled:
+
 ```vb
 m_btnNextEnabled = False
 m_btnPrevEnabled = False
@@ -154,6 +156,7 @@ m_btnPrevEnabled = False
 disabled; this routine could be repurposed as `EnableNavButtons` called from `GoToH1`).
 
 **`GoToH1`** — after a successful navigation, enable both buttons and invalidate:
+
 ```vb
 If matchFound Then
     ' ... existing navigation code ...
@@ -186,3 +189,151 @@ a clear entry point to enable the navigation buttons.
    with the existing naming convention in `basBibleRibbonSetup.bas`?
 3. `EnableButtonsRoutine` currently also calls `CaptureHeading1s` and `LogHeadingData`.
    If buttons start disabled, should these still run on load, or only after GoToBook?
+
+
+---
+
+## 6 — How to Wire `getEnabled` Callbacks: Architecture and Steps
+
+### Three-Layer Architecture
+
+The ribbon callback system in `Blank Bible Copy.docm` has three layers:
+
+| Layer | File | Role |
+|---|---|---|
+| 1 | `customUI14.xml` (inside `.docm`) | Declares callback names as plain strings |
+| 2 | `basBibleRibbonSetup.bas` | Public stub functions/subs that Word resolves by name |
+| 3 | `aeRibbonClass.cls` | Singleton class holding state and logic |
+
+Word’s ribbon host resolves callback names against **public procedures in standard
+modules only** — not against class methods. `basBibleRibbonSetup.bas` is the required
+adapter between the XML and the class.
+
+### What `getEnabled` Requires
+
+A `getEnabled` callback must be a `Public Function` returning `Boolean` with one
+`IRibbonControl` parameter, declared in a standard module. The function name in the
+XML must exactly match the function name in the module.
+
+### Step 1 — XML: add `getEnabled` attributes
+
+```xml
+<button id="GoToPrevButton" ... getEnabled="GetPrevEnabled"/>
+<button id="GoToNextButton" ... getEnabled="GetNextEnabled"/>
+```
+
+### Step 2 — `basBibleRibbonSetup.bas`: add stub functions
+
+```vb
+Public Function GetPrevEnabled(control As IRibbonControl) As Boolean
+    GetPrevEnabled = Instance().GetPrevEnabled(control)
+End Function
+
+Public Function GetNextEnabled(control As IRibbonControl) As Boolean
+    GetNextEnabled = Instance().GetNextEnabled(control)
+End Function
+```
+
+These delegate to the class methods already implemented in `aeRibbonClass.cls`.
+The class `GetPrevEnabled` and `GetNextEnabled` methods exist and are correct.
+
+### Step 3 — Edit the XML in `Blank Bible Copy.docm`
+
+The XML is stored inside the `.docm` ZIP archive at `customUI/customUI14.xml`.
+Two methods:
+
+**Recommended — Custom UI Editor tool**
+Open `Blank Bible Copy.docm` in the free *Custom UI Editor for Microsoft Office*
+tool. It exposes the XML directly and saves it back into the file cleanly without
+risk of corruption.
+
+**Manual ZIP method** - more challenging
+
+1. Close Word.
+2. Rename `Blank Bible Copy.docm` → `Blank Bible Copy.zip`.
+3. Open the ZIP, navigate to `customUI/`, edit `customUI14.xml` in a text editor.
+4. Save, close the ZIP, rename back to `.docm`.
+Risk: any step performed with the file open in Word will corrupt the file.
+
+### Why Class Methods Alone Are Not Sufficient
+
+Word’s ribbon host has no knowledge of class instances. The stub in
+`basBibleRibbonSetup.bas` is the mandatory adapter. The missing pieces when
+implementing the disabled-on-open behaviour are:
+
+- Two stub functions in `basBibleRibbonSetup.bas`
+- Two `getEnabled` attributes in the XML
+
+All VBA logic in `aeRibbonClass.cls` is already in place.
+
+
+---
+
+## 7 — XML Edit: Delegated to User
+
+Editing the `customUI14.xml` inside `Blank Bible Copy.docm` requires the Custom UI
+Editor GUI tool. This cannot be performed by Claude. Task delegated to user.
+
+**Steps (Custom UI Editor):**
+
+1. Open `Blank Bible Copy.docm` in Custom UI Editor.
+2. Add `getEnabled` to the two navigation buttons:
+
+```xml
+<button id="GoToPrevButton" label="Prev Book" imageMso="HeaderFooterPreviousSection" size="large" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
+<button id="GoToNextButton" label="Next Book" imageMso="HeaderFooterNextSection" size="large" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"/>
+```
+
+3. Save and close.
+
+All VBA changes in `aeRibbonClass.cls` and `basBibleRibbonSetup.bas` are already
+implemented and ready.
+
+
+---
+
+## 8 — Implementation: Disabled-on-Open with Enable After GoToBook
+
+### Changes Implemented
+
+**`src/basBibleRibbonSetup.bas`** — added two `getEnabled` stub functions:
+
+```vb
+Public Function GetPrevEnabled(control As IRibbonControl) As Boolean
+    GetPrevEnabled = Instance().GetPrevEnabled(control)
+End Function
+
+Public Function GetNextEnabled(control As IRibbonControl) As Boolean
+    GetNextEnabled = Instance().GetNextEnabled(control)
+End Function
+```
+
+**`src/aeRibbonClass.cls` — `Class_Initialize`** — both buttons start disabled:
+
+```vb
+m_btnNextEnabled = False
+m_btnPrevEnabled = False
+```
+
+**`src/aeRibbonClass.cls` — `GoToH1`** — after successful navigation, enable both
+buttons and invalidate their controls so the ribbon updates immediately:
+
+```vb
+matchFound = True
+m_btnNextEnabled = True
+m_btnPrevEnabled = True
+If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+Exit For
+```
+
+### Behaviour
+
+| State | Prev Book | Next Book |
+|---|---|---|
+| Document opens | Disabled (grey) | Disabled (grey) |
+| GoTo Book used successfully | Enabled | Enabled |
+| Subsequent navigations | Remains enabled | Remains enabled |
+
+XML edit (`getEnabled` attributes on both buttons) was performed by the user
+using the Custom UI Editor tool (delegated — see Section 7).
