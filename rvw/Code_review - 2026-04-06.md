@@ -387,3 +387,95 @@ End Function
 
 `rc.GetPrevEnabled(control)` is an unambiguous method call on a named variable —
 VBA resolves it correctly.
+
+
+---
+
+## 10 — Bug Fix: Wrong `getEnabled` Callback Signature (Second Fix)
+
+**Symptom:** Same "Wrong number of arguments or invalid property assignment" error
+still occurred twice after the local-variable fix in Section 9.
+
+**Cause:** The callback signature was wrong. Office ribbon `getEnabled` callbacks in
+VBA must be a **Sub** with **two parameters** — `control As IRibbonControl` and
+`ByRef enabled As Boolean`. Word passes the enabled state back through the `ByRef`
+parameter. A `Function ... As Boolean` declares only one parameter; Word tries to
+call it with two and raises Error 450.
+
+Correct contract required by the ribbon host:
+```vb
+Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled As Boolean)
+```
+
+Compare with `onAction` which correctly uses a one-parameter Sub:
+```vb
+Sub OnPrevButtonClick(control As IRibbonControl)
+```
+
+Each ribbon callback attribute type has its own fixed VBA signature.
+
+**Fix:** Changed both stubs in `basBibleRibbonSetup.bas` from `Function` to `Sub`
+with the correct `ByRef enabled As Boolean` parameter, reading state via the class
+`BtnPrevEnabled` / `BtnNextEnabled` properties:
+
+```vb
+Public Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled As Boolean)
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    enabled = rc.BtnPrevEnabled
+End Sub
+
+Public Sub GetNextEnabled(control As IRibbonControl, ByRef enabled As Boolean)
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    enabled = rc.BtnNextEnabled
+End Sub
+```
+
+The `GetPrevEnabled` / `GetNextEnabled` Function methods on `aeRibbonClass` are
+no longer called by the ribbon stubs but are retained on the class.
+
+
+---
+
+## 11 — Bug Fix: Type Mismatch on `ByRef enabled` Parameter (Third Fix)
+
+**Symptom:** "Type mismatch" error still occurred twice on ribbon load after the
+two-parameter Sub fix in Section 10.
+
+**Cause:** `ByRef enabled As Boolean` is still wrong. The Office ribbon host passes
+the `enabled` argument as a **Variant**, not a Boolean. Declaring the parameter
+`As Boolean` causes a type mismatch when Word tries to bind its Variant to the
+typed parameter.
+
+**Fix:** Remove the `As Boolean` type declaration, leaving `enabled` untyped
+(implicitly Variant) — the standard pattern for all Office ribbon `get*` callbacks:
+
+```vb
+Public Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled)
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    enabled = rc.BtnPrevEnabled
+End Sub
+
+Public Sub GetNextEnabled(control As IRibbonControl, ByRef enabled)
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    enabled = rc.BtnNextEnabled
+End Sub
+```
+
+Assigning a Boolean (`rc.BtnPrevEnabled`) to an untyped Variant `enabled` is
+valid — VBA widens automatically. The ribbon host then reads the Variant as a
+Boolean to set the button state.
+
+**Correct Office ribbon `get*` callback pattern (VBA):**
+
+| Attribute | Signature |
+|---|---|
+| `onAction` | `Sub Name(control As IRibbonControl)` |
+| `getEnabled` | `Sub Name(control As IRibbonControl, ByRef enabled)` |
+| `getLabel` | `Sub Name(control As IRibbonControl, ByRef label)` |
+| `getVisible` | `Sub Name(control As IRibbonControl, ByRef visible)` |
+
+All `get*` return parameters are untyped Variants passed ByRef.

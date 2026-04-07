@@ -70,15 +70,15 @@ Public Sub OnAdaeptAboutClick(control As IRibbonControl)
     Instance().OnAdaeptAboutClick control
 End Sub
 
-Public Function GetPrevEnabled(control As IRibbonControl) As Boolean
+Public Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled)
     Dim rc As aeRibbonClass
     Set rc = Instance()
-    GetPrevEnabled = rc.GetPrevEnabled(control)
-End Function
+    enabled = rc.BtnPrevEnabled
+End Sub
 
-Public Function GetNextEnabled(control As IRibbonControl) As Boolean
+Public Sub GetNextEnabled(control As IRibbonControl, ByRef enabled)
     Dim rc As aeRibbonClass
     Set rc = Instance()
-    GetNextEnabled = rc.GetNextEnabled(control)
-End Function
+    enabled = rc.BtnNextEnabled
+End Sub
 
