@@ -163,10 +163,6 @@ End Function
 Private Sub EnableButtonsRoutine()
     On Error GoTo PROC_ERR
     Debug.Print "RibbonController: EnableButtonsRoutine"
-    m_btnNextEnabled = True
-    m_btnPrevEnabled = True
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
     CaptureHeading1s
     LogHeadingData
 PROC_EXIT:

@@ -479,3 +479,46 @@ Boolean to set the button state.
 | `getVisible` | `Sub Name(control As IRibbonControl, ByRef visible)` |
 
 All `get*` return parameters are untyped Variants passed ByRef.
+
+
+---
+
+## 12 — Bug Fix: Buttons Enabled on Open Despite `Class_Initialize` Setting `False`
+
+**Symptom:** No error, but Prev Book and Next Book buttons were enabled immediately
+on ribbon load, before GoTo Book had been used.
+
+**Cause:** `EnableButtonsRoutine` is called from `OnRibbonLoad` and unconditionally
+set both button states to `True`:
+
+```vb
+m_btnNextEnabled = True
+m_btnPrevEnabled = True
+If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+```
+
+This ran after `Class_Initialize` set both to `False`, overriding the disabled-on-open
+intent before the ribbon had even finished loading. The `getEnabled` callbacks then
+correctly returned `True` — enabling the buttons.
+
+`EnableButtonsRoutine` predates the disabled-on-open requirement. When it was written,
+always-enabled was the correct behaviour. Now that `GoToH1` handles enabling both
+buttons after a successful navigation, `EnableButtonsRoutine` must not touch button
+state at all.
+
+**Fix:** Removed the four button-state lines from `EnableButtonsRoutine`. Its sole
+remaining purpose is data capture:
+
+```vb
+Private Sub EnableButtonsRoutine()
+    On Error GoTo PROC_ERR
+    Debug.Print "RibbonController: EnableButtonsRoutine"
+    CaptureHeading1s
+    LogHeadingData
+    ...
+```
+
+Button enable/disable is now exclusively controlled by:
+- `Class_Initialize` — both `False` on creation
+- `GoToH1` — both `True` after successful navigation, with immediate invalidation
