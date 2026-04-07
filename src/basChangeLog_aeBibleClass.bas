@@ -10,8 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #570 -
 ' #569 -
 ' #568 -
-' #567 -
-' #566 - GoTo Prev is very slow on first use once Genesis is entered as the GoTo Book [perf]
+' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
 ' #490 - Add a step for Chapter/Book Expansion Awareness
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #566 - GoTo Prev is very slow on first use once Genesis is entered as the GoTo Book [perf]
     ' FIXED - #565 - #561 finally resolved by #562, #563, #564 bug fixes
     ' FIXED - #564 - No error message but the Prev Next ribbon buttons are enabled instead of disabled [bug]
     ' FIXED - #563 - Type mismatch error twice on ribbon opening [bug]

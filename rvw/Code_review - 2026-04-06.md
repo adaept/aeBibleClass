@@ -522,3 +522,70 @@ Private Sub EnableButtonsRoutine()
 Button enable/disable is now exclusively controlled by:
 - `Class_Initialize` — both `False` on creation
 - `GoToH1` — both `True` after successful navigation, with immediate invalidation
+
+
+---
+
+## 13 — Performance Fix: `PrevButton`/`NextButton` Replaced `Find` with `headingData` Array
+
+**Symptom:** `PrevButton` was very slow on first use when the cursor was at Genesis.
+Subsequent uses were fast. `NextButton` had the same latent problem at Revelation.
+
+**Cause:** Both buttons used Word’s `Find` API with `Format = True` and a style filter.
+When a wrap was required (Genesis → Revelation, or Revelation → Genesis), the search
+range spanned the entire document. Word scanned every paragraph checking its style —
+O(n) in document length. First use was slow because the find engine had not yet warmed
+up its style index.
+
+**Solution:** `CaptureHeading1s` already builds `headingData(1 To 66, 0 To 1)` on
+ribbon load — an array of all 66 Heading 1 positions (character offsets). Navigation
+via this array is O(66) regardless of document size and requires no document scan.
+
+**Implementation:** `Find`-based code removed from both `NextButton` and `PrevButton`.
+Three private helpers added to `aeRibbonClass.cls`:
+
+| Procedure | Purpose |
+|---|---|
+| `CurrentBookIndex()` | Returns index 1–66 of the book containing the cursor (largest `headingData(i,1)` ≤ cursor position) |
+| `LastBookIndex()` | Returns the highest populated index in `headingData` (typically 66) |
+| `NavigateToBookIndex(idx)` | Moves cursor to `headingData(idx, 1)` and scrolls into view |
+
+`NextButton` and `PrevButton` are now three lines each: get current index, compute
+target index (with wrap), call `NavigateToBookIndex`.
+
+---
+
+## 14 — Future: Use `headingData` for Book/Chapter/Verse Lookups
+
+**Context:** `GoToVerseSBL` is currently a stub (`MsgBox "Parser not yet implemented"`).
+When implemented, it will need to locate a specific book, then scan within that book
+for a chapter and verse.
+
+**How `headingData` helps:**
+
+`headingData(i, 1)` gives the document character offset of each book’s Heading 1.
+`headingData(i+1, 1)` (or `doc.content.End` for the last book) gives the end of
+that book’s content. This immediately bounds the search range for any verse lookup:
+
+```vb
+' Resolve book abbreviation -> bookIndex (1-66) via aeBibleCitationClass
+Dim bookStart As Long, bookEnd As Long
+bookStart = CLng(headingData(bookIndex, 1))
+If bookIndex < 66 Then
+    bookEnd = CLng(headingData(bookIndex + 1, 1))
+Else
+    bookEnd = ActiveDocument.content.End
+End If
+Set searchRange = ActiveDocument.Range(bookStart, bookEnd)
+' Then Find chapter/verse heading or paragraph within searchRange only
+```
+
+**Benefits:**
+- Search is bounded to one book’s text — typically 1/66 of the document
+- No full-document scan for any lookup
+- `headingData` is already populated before the buttons are enabled
+- Same `CurrentBookIndex()` helper can be reused to detect which book the cursor
+  is currently in — useful for context-sensitive verse lookups
+
+**Next step:** Implement `GoToVerseSBL` using `aeBibleCitationClass.ParseCitationBlock`
+to resolve the input, then use `headingData` to bound the document search.
