@@ -139,6 +139,11 @@ Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
     Call GoToH1
 End Sub
 
+' Test wrapper — calls GoToH1 outside the ribbon callback mechanism (Alt+F8)
+Public Sub GoToH1Direct()
+    Call GoToH1
+End Sub
+
 Public Sub OnNextButtonClick(control As IRibbonControl)
     Call NextButton
 End Sub

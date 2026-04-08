@@ -7,10 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #585 -
+' #584 -
+' #583 -
+' #582 -
+' #581 -
 ' #580 -
-' #579 -
-' #578 -
-' #577 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -75,6 +77,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #579 - Add GoToH1Deferred as the solution from test of #578
+    ' FIXED - #578 - Create TestGoToH1Direct test outside of ribbon to find root cause of double layout spinning block with Revelation [test]
+    ' FIXED - #577 - Run specific test to find cause of second 12 sec delay [test]
     ' FIXED - #576 - GoToH1: InvalidateControl After ScreenUpdating=True Causes Second 12-Second Block [bug]
     ' FIXED - #575 - GoToH1: Range.Select Causes Double Layout Pass; Switch to Find [bug]
     ' FIXED - #574 - NextButton Leaves Next Enabled at Revelation; PrevButton Same at Genesis [bug]

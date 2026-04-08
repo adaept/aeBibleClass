@@ -56,8 +56,13 @@ Public Sub OnPrevButtonClick(control As IRibbonControl)
 End Sub
 
 Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
-    'Debug.Print ">> OnGoToH1ButtonClick at " & Format(Now, "hh:nn:ss")
-    Instance().OnGoToH1ButtonClick control
+    Application.OnTime Now, "GoToH1Deferred"
+End Sub
+
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
 End Sub
 
 Public Sub OnNextButtonClick(control As IRibbonControl)
@@ -74,6 +79,14 @@ Public Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled)
     Dim rc As aeRibbonClass
     Set rc = Instance()
     enabled = rc.BtnPrevEnabled
+End Sub
+
+' Test stub — runs GoToH1 outside the ribbon callback (Alt+F8 -> TestGoToH1Direct)
+' If the second block disappears vs ribbon button, ribbon callback return is the cause.
+Public Sub TestGoToH1Direct()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
 End Sub
 
 Public Sub GetNextEnabled(control As IRibbonControl, ByRef enabled)
