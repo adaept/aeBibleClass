@@ -1608,3 +1608,76 @@ case-insensitive regardless of the Find object's prior state.
 GoTo Revelation completes in a single layout pass with no second spinning phase.
 `InvalidateControl` is called on a fully settled message queue, consistent with the
 behaviour of `NextButton` and `PrevButton`.
+
+---
+
+## 28 — GoToH1: InvalidateControl After ScreenUpdating=True Causes Second 12-Second Block
+
+### Bug Reported
+
+GoTo Revelation still takes 12 seconds, then spins for another 12 seconds after
+Revelation is displayed. Word not responding during the second pass. Explorer comes
+to the front. Same symptom as Sections 25 and 27, not fixed by either prior change.
+
+---
+
+### Why Previous Fixes Did Not Work
+
+- **Section 25** wrapped `Range.Select` in `ScreenUpdating = False/True`. Did not
+  help because `ScreenUpdating = True` does not synchronously flush the deferred
+  event queue — it only queues a repaint. `InvalidateControl` still ran against a
+  full deferred queue.
+- **Section 27** replaced `Range.Select` with `Selection.Find`. Did not help for
+  the same reason: the navigation method was not the cause. The order of operations
+  after navigation was still wrong.
+
+---
+
+### Root Cause
+
+The second 12-second block is caused by `m_ribbon.InvalidateControl` being called
+**after** `Application.ScreenUpdating = True`. The exact sequence:
+
+1. `Application.ScreenUpdating = True` — Word computes layout for Revelation and
+   paints. During this pass Word also queues background document-state tasks (page
+   count recalculation, word count, background repagination completion) as
+   message-loop events. For a full-document jump (Genesis → Revelation) this queue
+   is heavy.
+2. `m_ribbon.InvalidateControl "GoToNextButton"` — must pump the Windows message
+   loop internally to deliver the ribbon-invalidation event to the ribbon host.
+   Pumping the loop flushes the background tasks queued in step 1 → **second 12
+   seconds**. Word is unresponsive during this flush because VBA is blocking on the
+   `InvalidateControl` call.
+
+`NextButton` and `PrevButton` call `InvalidateControl` after `ScreenUpdating = True`
+using the same pattern, but do not exhibit this problem because they navigate short
+distances. The background work queued by a one-book jump is trivial. A
+Genesis-to-Revelation jump queues a full document-statistics recalculation that
+takes 12 seconds to flush.
+
+---
+
+### Fix
+
+Move all button-state assignments and both `InvalidateControl` calls to **before**
+`Application.ScreenUpdating = True`. With `ScreenUpdating = False` active, no
+layout work is pending in the message queue. `InvalidateControl` only refreshes the
+ribbon button states (fast, no document work). `Application.ScreenUpdating = True`
+is then the last statement — Word triggers one layout pass, shows Revelation, and
+the procedure returns. Background tasks complete naturally in Word's own message
+loop without blocking VBA.
+
+`Application.ScreenUpdating = True` is also added to `PROC_ERR` so an error
+never leaves the screen frozen.
+
+---
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `GoToH1`
+
+### Expected Result
+
+GoTo Revelation: single 12-second layout pass, procedure returns, Revelation
+displayed. No second spinning phase. Word remains responsive immediately after
+Revelation is shown.

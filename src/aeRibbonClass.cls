@@ -218,8 +218,6 @@ Private Sub GoToH1()
     Selection.Find.MatchWildcards = False
     Selection.Find.Execute
     If Selection.Find.found Then Selection.Collapse Direction:=wdCollapseStart
-    Application.ScreenUpdating = True
-
     m_btnPrevEnabled = True
     m_btnNextEnabled = True
     If Not IsEmpty(headingData(1, 1)) Then
@@ -233,11 +231,13 @@ Private Sub GoToH1()
     Next k
     If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
     If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+    Application.ScreenUpdating = True
 
 PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
+    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
