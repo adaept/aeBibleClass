@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #578 -
 ' #577 -
 ' #576 -
-' #575 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #575 - GoToH1: Range.Select Causes Double Layout Pass; Switch to Find
     ' FIXED - #574 - NextButton Leaves Next Enabled at Revelation; PrevButton Same at Genesis [bug]
     ' FIXED - #573 - GoToH1: Double Layout Pass Caused by InvalidateControl
     ' FIXED - #572 - Screen flash and 3 second blank screen at Rev -> Jude boundary [bug]

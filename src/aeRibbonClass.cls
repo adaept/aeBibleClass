@@ -208,7 +208,16 @@ Private Sub GoToH1()
 
     foundPos = CLng(headingData(i, 1))
     Application.ScreenUpdating = False
-    ActiveDocument.Range(foundPos, foundPos).Select
+    Selection.HomeKey Unit:=wdStory
+    Selection.Find.ClearFormatting
+    Selection.Find.Text = CStr(headingData(i, 0))
+    Selection.Find.style = ActiveDocument.Styles("Heading 1")
+    Selection.Find.Forward = True
+    Selection.Find.Wrap = wdFindStop
+    Selection.Find.MatchCase = False
+    Selection.Find.MatchWildcards = False
+    Selection.Find.Execute
+    If Selection.Find.found Then Selection.Collapse Direction:=wdCollapseStart
     Application.ScreenUpdating = True
 
     m_btnPrevEnabled = True

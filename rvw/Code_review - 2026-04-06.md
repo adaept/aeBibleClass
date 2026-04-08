@@ -1528,3 +1528,83 @@ not), because boundary detection can change either button's state.
 ### File Changed
 
 `src/aeRibbonClass.cls` — `NextButton`, `PrevButton`
+
+---
+
+## 27 — GoToH1: Range.Select Causes Double Layout Pass; Switch to Find
+
+### Bug Reported
+
+GoTo Genesis then GoTo Revelation: 12 seconds, then still spinning for another
+12 seconds before finishing. Word not responding if clicked. Explorer comes to
+the front. Previously reported and supposedly fixed in Section 25.
+
+---
+
+### Why Section 25 Did Not Fix It
+
+Section 25 wrapped `ActiveDocument.Range(foundPos, foundPos).Select` in
+`Application.ScreenUpdating = False/True`, reasoning that restoring ScreenUpdating
+before `InvalidateControl` would flush deferred layout events in one controlled pass.
+
+This was wrong. `Application.ScreenUpdating = True` does **not** synchronously
+complete the layout computation. It removes the paint-suppression flag and queues
+a repaint event in the Windows message loop. The actual layout and paint happen
+when the message loop processes that event — which is later. By the time
+`InvalidateControl` is called, the repaint event is still in the queue.
+`InvalidateControl` must pump the message loop to deliver the ribbon-invalidation
+message to the ribbon host. Pumping the loop flushes the pending repaint, which
+triggers the full layout computation → second 12-second delay. The ScreenUpdating
+wrapper changed nothing about this sequence.
+
+---
+
+### Root Cause
+
+`ActiveDocument.Range(foundPos, foundPos).Select` interacts with the Word layout
+engine differently from `Selection.Find.Execute`. The Select causes Word to queue
+additional deferred document-state work (status bar, word count, background
+repagination completion) as message-loop events. Find-based navigation — used by
+`NextButton` and `PrevButton` — does not produce these additional queued events and
+has never exhibited the double-12-second pattern.
+
+---
+
+### Fix
+
+Replace `ActiveDocument.Range(foundPos, foundPos).Select` with `Selection.Find`
+navigation using the heading text stored in `headingData(i, 0)`, following the same
+pattern as `NextButton` and `PrevButton`:
+
+```vb
+Application.ScreenUpdating = False
+Selection.HomeKey Unit:=wdStory
+Selection.Find.ClearFormatting
+Selection.Find.Text = CStr(headingData(i, 0))
+Selection.Find.style = ActiveDocument.Styles("Heading 1")
+Selection.Find.Forward = True
+Selection.Find.Wrap = wdFindStop
+Selection.Find.MatchCase = False
+Selection.Find.MatchWildcards = False
+Selection.Find.Execute
+If Selection.Find.Found Then Selection.Collapse Direction:=wdCollapseStart
+Application.ScreenUpdating = True
+```
+
+`Selection.HomeKey Unit:=wdStory` moves the cursor to position 0 (always cached,
+instant). Find then searches forward at the text layer for the heading matching the
+stored name. `MatchWildcards = False` prevents heading names containing special
+characters from being misinterpreted. `MatchCase = False` ensures the search is
+case-insensitive regardless of the Find object's prior state.
+
+---
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `GoToH1`
+
+### Expected Result
+
+GoTo Revelation completes in a single layout pass with no second spinning phase.
+`InvalidateControl` is called on a fully settled message queue, consistent with the
+behaviour of `NextButton` and `PrevButton`.
