@@ -1410,3 +1410,121 @@ Changes:
 
 If Bug 2 persists after this fix, the remaining cause is Word's pixel render
 cache behaviour, which is not addressable from VBA.
+
+---
+
+## 25 — GoToH1: Double Layout Pass Caused by InvalidateControl
+
+### Bug Reported
+
+GoTo Genesis then GoTo Revelation: 12 seconds, then 3-second blank, then a second
+12-second spinning pass before Revelation is finally shown. Total ~27 seconds.
+"Once Revelation is found the process should stop. No 12 second spinning again."
+
+---
+
+### Root Cause
+
+`ActiveDocument.Range(foundPos, foundPos).Select` with `Application.ScreenUpdating`
+at its default True state triggers two separate computation cycles:
+
+1. **First 12 seconds** — Word places the selection at `foundPos` and computes
+   layout from page 1 to the Revelation page in order to scroll the view to show
+   the selection. This runs synchronously and returns.
+
+2. **3-second blank** — Word has located the target page but has not finished all
+   associated document-state updates (status bar page count, word count, background
+   repagination finish). These are queued as deferred events in the Windows message
+   loop.
+
+3. **Second 12 seconds** — `m_ribbon.InvalidateControl "GoToNextButton"` pumps the
+   Windows message queue in order to deliver the ribbon-refresh message to the
+   ribbon host. Pumping the queue also flushes the deferred layout events queued in
+   step 2, triggering a second full layout pass through the document.
+
+`NextButton` and `PrevButton` do not have this problem because
+`Application.ScreenUpdating = True` is restored **before** `InvalidateControl`.
+The repaint at `ScreenUpdating = True` flushes all deferred events in one controlled
+pass; by the time `InvalidateControl` is called, the queue is empty. `GoToH1` had
+no `ScreenUpdating` guard at all, so `InvalidateControl` ran against a full deferred
+queue.
+
+---
+
+### Fix
+
+Wrap `ActiveDocument.Range(foundPos, foundPos).Select` in
+`Application.ScreenUpdating = False/True`, matching the pattern already used in
+`NextButton` and `PrevButton`:
+
+```vb
+Application.ScreenUpdating = False
+ActiveDocument.Range(foundPos, foundPos).Select
+Application.ScreenUpdating = True
+```
+
+`ScreenUpdating = False` defers all rendering during the Select. When
+`ScreenUpdating = True` is restored, Word performs a single controlled repaint that
+computes layout and flushes all deferred events. `InvalidateControl` is then called
+on a fully settled state and does not trigger any additional document passes.
+
+---
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `GoToH1`
+
+### Expected Result
+
+GoTo Revelation completes in a single layout pass (~12 seconds first time, instant
+on repeat). The second 12-second spinning pass is eliminated. `PROC_ERR` in `GoToH1`
+does not need a `ScreenUpdating = True` guard because the False/True pair is
+self-contained around the Select and always executes as a matched pair before the
+error handler could be reached.
+
+---
+
+## 26 — NextButton Leaves Next Enabled at Revelation; PrevButton Same at Genesis
+
+### Bug Reported
+
+At Revelation: press Prev (goes to Jude), press Next (returns to Revelation) —
+Next button remains enabled. It should be disabled at Revelation.
+
+### Root Cause
+
+`NextButton`'s `found = True` branch only set `m_btnPrevEnabled = True` and
+invalidated Prev. It never checked whether the heading just found was the last
+book. The boundary detection ran in `GoToH1` but not in `NextButton` or
+`PrevButton` after a successful Find.
+
+The same bug existed symmetrically in `PrevButton`: navigating backward to Genesis
+via consecutive Prev presses left Prev enabled after the press that landed on
+Genesis. One additional press was required before `found = False` disabled it.
+
+### Fix
+
+After `Selection.Collapse` in the `found = True` branch of each button, read
+`Selection.Range.Start` and run the same `headingData` boundary check used in
+`GoToH1`:
+
+- **`NextButton`:** compare `foundPos` against the last populated `headingData`
+  entry; if matched, set `m_btnNextEnabled = False`.
+- **`PrevButton`:** compare `foundPos` against `headingData(1, 1)` (Genesis);
+  if matched, set `m_btnPrevEnabled = False`.
+
+Both buttons now invalidate **both** controls after every navigation (found or
+not), because boundary detection can change either button's state.
+
+### Button State Logic After Fix
+
+| Condition | NextButton | PrevButton |
+|-----------|-----------|-----------|
+| `found = False` | Next disabled | Prev disabled |
+| `found = True`, middle book | Both enabled | Both enabled |
+| `found = True`, last book (Next) | Next disabled, Prev enabled | — |
+| `found = True`, first book (Prev) | — | Prev disabled, Next enabled |
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `NextButton`, `PrevButton`

@@ -7,9 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #580 -
+' #579 -
+' #578 -
+' #577 -
+' #576 -
 ' #575 -
-' #574 -
-' #573 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -74,6 +77,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #574 - NextButton Leaves Next Enabled at Revelation; PrevButton Same at Genesis [bug]
+    ' FIXED - #573 - GoToH1: Double Layout Pass Caused by InvalidateControl
     ' FIXED - #572 - Screen flash and 3 second blank screen at Rev -> Jude boundary [bug]
     ' FIXED - #571 - Error in Gen and Rev behavior of Prev/Next buttons [bug]
     ' FIXED - #570 - Implement plan that does not allow wrap-around for Prev/Next book selection [feat]

@@ -207,7 +207,9 @@ Private Sub GoToH1()
     End If
 
     foundPos = CLng(headingData(i, 1))
+    Application.ScreenUpdating = False
     ActiveDocument.Range(foundPos, foundPos).Select
+    Application.ScreenUpdating = True
 
     m_btnPrevEnabled = True
     m_btnNextEnabled = True
@@ -235,7 +237,9 @@ End Sub
 
 Private Sub NextButton()
     On Error GoTo PROC_ERR
-    Dim found As Boolean
+    Dim found    As Boolean
+    Dim foundPos As Long
+    Dim k        As Long
     Dim curParaEnd As Long
     curParaEnd = Selection.Paragraphs(1).Range.End
     Application.ScreenUpdating = False
@@ -246,15 +250,23 @@ Private Sub NextButton()
     Selection.Find.Forward = True
     Selection.Find.Wrap = wdFindStop
     found = Selection.Find.Execute
-    If found Then Selection.Collapse Direction:=wdCollapseStart
-    Application.ScreenUpdating = True
     If found Then
+        Selection.Collapse Direction:=wdCollapseStart
+        foundPos = Selection.Range.Start
         m_btnPrevEnabled = True
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+        m_btnNextEnabled = True
+        For k = 66 To 1 Step -1
+            If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
+                If foundPos = CLng(headingData(k, 1)) Then m_btnNextEnabled = False
+                Exit For
+            End If
+        Next k
     Else
         m_btnNextEnabled = False
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
     End If
+    Application.ScreenUpdating = True
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -267,7 +279,8 @@ End Sub
 
 Private Sub PrevButton()
     On Error GoTo PROC_ERR
-    Dim found As Boolean
+    Dim found    As Boolean
+    Dim foundPos As Long
     Application.ScreenUpdating = False
     Selection.Find.ClearFormatting
     Selection.Find.Text = ""
@@ -275,15 +288,20 @@ Private Sub PrevButton()
     Selection.Find.Forward = False
     Selection.Find.Wrap = wdFindStop
     found = Selection.Find.Execute
-    If found Then Selection.Collapse Direction:=wdCollapseStart
-    Application.ScreenUpdating = True
     If found Then
+        Selection.Collapse Direction:=wdCollapseStart
+        foundPos = Selection.Range.Start
         m_btnNextEnabled = True
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+        m_btnPrevEnabled = True
+        If Not IsEmpty(headingData(1, 1)) Then
+            If foundPos = CLng(headingData(1, 1)) Then m_btnPrevEnabled = False
+        End If
     Else
         m_btnPrevEnabled = False
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
     End If
+    Application.ScreenUpdating = True
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
