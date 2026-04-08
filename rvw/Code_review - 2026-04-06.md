@@ -589,3 +589,383 @@ Set searchRange = ActiveDocument.Range(bookStart, bookEnd)
 
 **Next step:** Implement `GoToVerseSBL` using `aeBibleCitationClass.ParseCitationBlock`
 to resolve the input, then use `headingData` to bound the document search.
+
+---
+
+## 14 — ScreenUpdating Fix in NavigateToBookIndex
+
+### Problem
+
+After replacing the Find-based navigation with `headingData` array lookups, `PrevButton`
+(and `NextButton`) remained slow on first use when jumping across the entire document
+(e.g., Genesis → Revelation). The symptom: Word "not responding", spinner, long pause
+before the heading was visible.
+
+**Root cause:** `Selection.SetRange` followed by `ActiveWindow.ScrollIntoView` forces
+Word to synchronously repaginate the portion of the document between the old and new
+cursor positions before it can render the target location. For a full-Bible document
+this computation runs on the main UI thread and cannot be parallelised or cancelled.
+This is a Word layout engine limitation — not a code defect.
+
+### Fix
+
+Suppress screen updates during the navigation call so Word defers repaint until both
+`SetRange` and `ScrollIntoView` have completed:
+
+```vb
+Application.ScreenUpdating = False
+Selection.SetRange targetPos, targetPos
+ActiveWindow.ScrollIntoView Selection.Range, True
+Application.ScreenUpdating = True
+```
+
+`Application.ScreenUpdating = True` is also restored unconditionally in `PROC_ERR`
+so that an unexpected error never leaves the screen frozen.
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `NavigateToBookIndex`
+
+### Expected Result
+
+The spinner and "not responding" pause are eliminated on first navigation. Word updates
+the display in a single repaint after both operations complete rather than incrementally
+scrolling through the intervening pages.
+
+### Limitation
+
+`ScreenUpdating = False` suppresses the intermediate repaints but does not eliminate
+the layout computation itself. On very large documents (full Bible, ~1 MB+) there may
+still be a brief pause on the first jump if Word has not yet fully paginated the target
+region. Subsequent jumps are faster because the layout cache is warm.
+
+---
+
+## 15 — NavigateToBookIndex: Replace ScrollIntoView with Range.Select
+
+### Problem
+
+After adding `Application.ScreenUpdating = False`, navigation was still slower than
+the original Find-based scan, and Word went behind the Explorer window twice during
+each jump.
+
+**Root cause — two issues:**
+
+1. **`ActiveWindow.ScrollIntoView` forces full layout computation.**
+   To scroll a character position into view, Word must paginate every paragraph from
+   page 1 up to the target position — synchronously on the UI thread. For a full-Bible
+   document this is heavier than the VBA paragraph scan it replaced. The `True`
+   (center-in-window) argument makes it worse: centering also requires the exact
+   rendered height of the target paragraph.
+
+2. **`ScreenUpdating = False` killed the message pump.**
+   While the UI thread was blocked by layout computation, Windows detected that Word's
+   message pump had stalled and demoted the window in the z-order. This happened twice
+   (once for `Selection.SetRange`, once for `ScrollIntoView`), which is why Word went
+   behind the Explorer window twice. `ScreenUpdating = False` removed the intermediate
+   repaints that normally keep the pump alive, making the stall more visible, not less.
+
+### Fix
+
+Replace `Selection.SetRange` + `ScrollIntoView` with `Range.Select`. Word's `Select`
+method moves the cursor and brings the location into view incrementally — the same
+mechanism used internally by Find — without requiring the full layout pass.
+`ScreenUpdating` suppression is no longer needed.
+
+```vb
+Private Sub NavigateToBookIndex(ByVal idx As Long)
+    On Error GoTo PROC_ERR
+    If idx < 1 Or idx > 66 Then GoTo PROC_EXIT
+    If IsEmpty(headingData(idx, 1)) Then GoTo PROC_EXIT
+    Dim targetPos As Long
+    targetPos = CLng(headingData(idx, 1))
+    ActiveDocument.Range(targetPos, targetPos).Select
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NavigateToBookIndex of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+```
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `NavigateToBookIndex`
+
+### Expected Result
+
+Navigation speed matches or exceeds the original Find-based approach. Word stays in
+the foreground throughout. No `ScreenUpdating` suppression required.
+
+---
+
+## 16 — NavigateToBookIndex: Revert to Selection.Find
+
+### Problem
+
+After two iterations (`Selection.SetRange` + `ScrollIntoView` → `Range.Select`),
+navigation to Revelation from Genesis still took >1 minute, Word showed "not
+responding", the window was demoted behind Explorer twice, and the heading appeared
+with text selected rather than a collapsed cursor.
+
+### Why the previous fixes were wrong
+
+**Section 14 (`ScreenUpdating = False`):**
+The slowness is layout computation, not painting. `ScreenUpdating = False` suppresses
+repaints but does not suppress layout. Word still computed full pagination
+synchronously. Worse, suppressing repaints also suppresses message-pump activity,
+which caused Windows to demote the Word window twice (once per blocking layout call).
+
+**Section 15 (`Range.Select`):**
+The claim that `ActiveDocument.Range(pos, pos).Select` navigates "the same way Find
+does, at the text layer" was incorrect. `Range(pos, pos).Select` resolves the
+character position through the layout engine and then forces a scroll-to-view, both
+of which require Word to paginate all content between the current view and the target.
+This is more expensive than `Selection.Find`, not equivalent to it.
+
+The "text selected" symptom confirms the character positions stored in `headingData`
+were not being resolved cleanly — a collapsed `Range(x, x)` should never produce a
+visible selection.
+
+### Why Selection.Find is faster
+
+`Selection.Find` operates on Word's backing store (piece table), navigating through
+paragraph style descriptors without computing page coordinates. The display updates
+in a single deferred repaint after the selection is placed. No layout pass is
+triggered during the search itself.
+
+### Fix
+
+`NextButton` and `PrevButton` now call `Selection.Find` directly with `wdFindContinue`
+wrapping. `NavigateToBookIndex`, `CurrentBookIndex`, and `LastBookIndex` are removed —
+they were only used by these two procedures and are no longer needed.
+
+```vb
+' NextButton
+Selection.Find.ClearFormatting
+Selection.Find.Style = ActiveDocument.Styles("Heading 1")
+Selection.Find.Forward = True
+Selection.Find.Wrap = wdFindContinue
+Selection.Find.Execute
+
+' PrevButton
+Selection.Find.ClearFormatting
+Selection.Find.Style = ActiveDocument.Styles("Heading 1")
+Selection.Find.Forward = False
+Selection.Find.Wrap = wdFindContinue
+Selection.Find.Execute
+```
+
+`wdFindContinue` handles wrap-around automatically: Next from Revelation finds
+Genesis; Prev from Genesis finds Revelation.
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `NextButton`, `PrevButton`; removed `NavigateToBookIndex`,
+`CurrentBookIndex`, `LastBookIndex`
+
+### Note on headingData
+
+`headingData` and `CaptureHeading1s`/`LogHeadingData` are retained. The array remains
+available for future use by `GoToVerseSBL` to bound book-scoped searches (see
+section 13).
+
+---
+
+## 17 — Pre-paginate at Startup: ActiveDocument.Repaginate
+
+### Problem
+
+Navigation with `Selection.Find` (Section 16) was still >1 minute to Revelation,
+Word showed "not responding", and the window was demoted behind Explorer during the
+operation.
+
+### Why Find is also slow
+
+The Section 16 claim that Find operates entirely at the backing-store level was
+partially wrong. Find does search the backing store without layout — but after
+locating the heading, Word must scroll to display the result. That display step
+requires computing layout for all content between the current view and the target.
+For a full-Bible document this means repaginating potentially hundreds of pages
+synchronously on the UI thread. This bottleneck applies to every navigation method:
+`Range.Select`, `Find`, `GoTo`, `ScrollIntoView` — all trigger the same layout
+computation when jumping to an unrendered location.
+
+The Explorer window switches are the OS demoting a window whose message pump has
+stalled during that synchronous layout computation.
+
+### Root cause
+
+Word repaginates on demand. On first open, the document is not fully laid out. The
+first navigation to a far location forces Word to compute all intervening layout
+synchronously, blocking the UI thread. This is a Word layout engine constraint, not
+a VBA code defect.
+
+### Fix
+
+Call `ActiveDocument.Repaginate` in `EnableButtonsRoutine` before `CaptureHeading1s`.
+This forces full layout computation once at ribbon-load time. A status bar message
+informs the user during the wait. After repagination completes, all subsequent
+navigation (Next, Prev, GoTo) is instant because the layout cache is warm.
+
+`Application.StatusBar = False` is also restored in `PROC_ERR` so the status bar
+is never left in a stale state after an error.
+
+```vb
+Private Sub EnableButtonsRoutine()
+    On Error GoTo PROC_ERR
+    Debug.Print "RibbonController: EnableButtonsRoutine"
+    Application.StatusBar = "Bible: Computing document layout..."
+    ActiveDocument.Repaginate
+    Application.StatusBar = False
+    CaptureHeading1s
+    LogHeadingData
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Application.StatusBar = False
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure EnableButtonsRoutine of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+```
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `EnableButtonsRoutine`
+
+### Expected Result
+
+Navigation with Next/Prev/GoToH1 is instant after the initial repagination at
+document open. The repagination delay (~15–45 seconds for a full-Bible document)
+is visible only once, at load time, where a wait is expected.
+
+---
+
+## 18 — Draft View Navigation + Collapse Selection
+
+### Problems
+
+1. `ActiveDocument.Repaginate` (Section 17) added 17 seconds to startup with no
+   improvement to navigation speed. The status bar message was never visible because
+   the splash screen was open during `EnableButtonsRoutine`.
+2. Navigation with `Selection.Find` still took 30 seconds to Revelation with a
+   2-second blank screen before the page appeared and the Word window demoting behind
+   Explorer.
+3. The full Heading 1 text was selected after navigation instead of a collapsed cursor.
+
+### Why Repaginate did not help
+
+`ActiveDocument.Repaginate` computes page-break positions but does not pre-render
+pages. Word uses a lazy visual rendering model: pages are only rendered when they
+become visible. Navigation still triggered a full visual layout pass from the current
+viewport to the target regardless of prior repagination. `Repaginate` is removed from
+`EnableButtonsRoutine`.
+
+### Why navigation was still slow in Print Layout view
+
+Any navigation method — `Range.Select`, `Find`, `GoTo` — that requires Word to display
+a far location in Print Layout view triggers a synchronous layout pass from the current
+viewport to the target. For a full-Bible document this can be hundreds of pages of
+layout computation on the UI thread, which is why Find was still slow and the window
+was demoted behind Explorer.
+
+### Fix: Navigate in Draft view
+
+In Draft (Normal) view, Word renders text as a continuous stream with no pagination.
+`Selection.Find` in Draft view is near-instant regardless of document size. Switching
+back to Print Layout after navigation only requires rendering the single page where
+the cursor lands, which takes a fraction of a second.
+
+The current view is saved before the switch and restored after. `Application.
+ScreenUpdating = False` hides the view transition so the user sees a direct jump to
+the target heading. Both `ScreenUpdating` and the saved view are restored in `PROC_ERR`
+so an error never leaves the document stranded in Draft view.
+
+### Fix: Collapse selection after Find
+
+`Selection.Find.Execute` selects the matched paragraph text. `Selection.Collapse
+Direction:=wdCollapseStart` places a collapsed cursor at the start of the heading
+instead.
+
+### Files Changed
+
+`src/aeRibbonClass.cls`
+- `EnableButtonsRoutine`: removed `ActiveDocument.Repaginate` and `StatusBar` calls
+- `NextButton`: added Draft view switch, `ScreenUpdating`, view restore, `Collapse`
+- `PrevButton`: same as `NextButton`
+
+### Expected Result
+
+Navigation from Genesis to Revelation (and vice versa) completes in under 1 second
+with no blank screen, no Explorer window switch, and a collapsed cursor at the
+Heading 1 of the target book. Startup delay returns to the time required by
+`CaptureHeading1s` and `LogHeadingData` only.
+
+---
+
+## 19 — Revert Draft View Navigation; Add Selection.Collapse
+
+### Problem
+
+Section 18 introduced Draft view (`wdNormalView`) switches around `Selection.Find`.
+Navigation time increased from ~30 seconds to 127 seconds. Word showed "not
+responding" for 67 seconds, then spun for 60 more seconds with a 10-second blank
+screen before displaying Revelation.
+
+### Why Draft view made it worse
+
+The sequence of operations was:
+
+1. `ActiveWindow.View.Type = wdNormalView` — switches to Draft, **clears the Print
+   Layout cache**
+2. `Selection.Find.Execute` — fast; finds Revelation immediately in Draft view
+3. `ActiveWindow.View.Type = savedView` (= `wdPrintView`) — switches back to Print
+   Layout **with the cursor at Revelation (end of document)**; Word must repaginate
+   the entire Bible from page 1 to the last page from a cold cache
+
+The 60-second spinning after Find completed was `ActiveWindow.View.Type = savedView`
+rebuilding the full layout from scratch. Switching to Draft view first made the
+round-trip more expensive than navigating in Print Layout directly, because it
+cleared the cache that Print Layout navigation would have partially reused.
+
+The user observation "after finding Revelation the first time there is no need to
+continue to the end of the document" confirmed this: Find finished quickly but the
+view switch continued processing the entire document.
+
+### Why the Print Layout delay cannot be eliminated
+
+In Print Layout view, displaying any location requires Word to compute line and page
+layout for all content from page 1 to the target page. For a full-Bible document
+this is unavoidable in VBA — there is no API that renders a location without first
+computing its page position. The ~30-second first navigation to Revelation is a
+Word layout engine constraint, not a code defect.
+
+After the first navigation the layout cache is warm and all subsequent navigations
+are instant within the same session.
+
+### Fix
+
+Remove the Draft view switches and `Application.ScreenUpdating` calls entirely.
+Use `Selection.Find` directly in Print Layout. Add `Selection.Collapse
+Direction:=wdCollapseStart` to place a collapsed cursor at the heading start
+instead of selecting the full heading text.
+
+### File Changed
+
+`src/aeRibbonClass.cls` — `NextButton`, `PrevButton`
+
+### State of Navigation Performance
+
+| Attempt | Approach | First nav to Revelation |
+|---------|----------|------------------------|
+| Original | Find in Print Layout | ~30 s |
+| Section 14 | ScreenUpdating=False + ScrollIntoView | ~30 s + window demotion |
+| Section 15 | Range.Select | ~30 s + window demotion |
+| Section 16 | headingData + Range.Select | ~60 s |
+| Section 17 | Repaginate at startup | 17 s startup + ~30 s nav |
+| Section 18 | Draft view switch + Find | 127 s |
+| Section 19 | Find in Print Layout + Collapse | ~30 s (layout cache warm after first use) |
+
+The first navigation to a far location in a large single-document Bible will always
+incur the layout delay. Structural solutions (splitting into 66 documents) would
+eliminate it but are out of scope for this review.

@@ -230,15 +230,12 @@ End Sub
 
 Private Sub NextButton()
     On Error GoTo PROC_ERR
-    Dim curIdx  As Long
-    Dim nextIdx As Long
-    curIdx = CurrentBookIndex()
-    If curIdx = 0 Or curIdx >= LastBookIndex() Then
-        nextIdx = 1
-    Else
-        nextIdx = curIdx + 1
-    End If
-    Call NavigateToBookIndex(nextIdx)
+    Selection.Find.ClearFormatting
+    Selection.Find.style = ActiveDocument.Styles("Heading 1")
+    Selection.Find.Forward = True
+    Selection.Find.Wrap = wdFindContinue
+    Selection.Find.Execute
+    Selection.Collapse Direction:=wdCollapseStart
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -250,78 +247,16 @@ End Sub
 
 Private Sub PrevButton()
     On Error GoTo PROC_ERR
-    Dim curIdx  As Long
-    Dim prevIdx As Long
-    curIdx = CurrentBookIndex()
-    If curIdx <= 1 Then
-        prevIdx = LastBookIndex()
-    Else
-        prevIdx = curIdx - 1
-    End If
-    Call NavigateToBookIndex(prevIdx)
+    Selection.Find.ClearFormatting
+    Selection.Find.style = ActiveDocument.Styles("Heading 1")
+    Selection.Find.Forward = False
+    Selection.Find.Wrap = wdFindContinue
+    Selection.Find.Execute
+    Selection.Collapse Direction:=wdCollapseStart
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrevButton of Class aeRibbonClass"
-    Resume PROC_EXIT
-End Sub
-
-' -- headingData Navigation Helpers --------------------------------------------
-
-' Returns the index (1-66) of the book containing the cursor.
-' Finds the largest headingData position <= current cursor position.
-' Returns 0 if the cursor is before the first Heading 1.
-Private Function CurrentBookIndex() As Long
-    On Error GoTo PROC_ERR
-    Dim curPos As Long
-    curPos = Selection.Paragraphs(1).Range.Start
-    Dim idx As Long
-    idx = 0
-    Dim i As Long
-    For i = 1 To 66
-        If Not IsEmpty(headingData(i, 1)) Then
-            If CLng(headingData(i, 1)) <= curPos Then idx = i
-        End If
-    Next i
-    CurrentBookIndex = idx
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CurrentBookIndex of Class aeRibbonClass"
-    Resume PROC_EXIT
-End Function
-
-' Returns the highest populated index in headingData (typically 66).
-Private Function LastBookIndex() As Long
-    On Error GoTo PROC_ERR
-    Dim i As Long
-    For i = 66 To 1 Step -1
-        If Not IsEmpty(headingData(i, 1)) And CLng(headingData(i, 1)) > 0 Then
-            LastBookIndex = i
-            GoTo PROC_EXIT
-        End If
-    Next i
-    LastBookIndex = 0
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LastBookIndex of Class aeRibbonClass"
-    Resume PROC_EXIT
-End Function
-
-' Navigates to the Heading 1 at the given headingData index.
-Private Sub NavigateToBookIndex(ByVal idx As Long)
-    On Error GoTo PROC_ERR
-    If idx < 1 Or idx > 66 Then GoTo PROC_EXIT
-    If IsEmpty(headingData(idx, 1)) Then GoTo PROC_EXIT
-    Dim targetPos As Long
-    targetPos = CLng(headingData(idx, 1))
-    Selection.SetRange targetPos, targetPos
-    ActiveWindow.ScrollIntoView Selection.Range, True
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NavigateToBookIndex of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
 
