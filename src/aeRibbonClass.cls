@@ -201,7 +201,7 @@ Private Sub GoToH1()
                 ActiveDocument.Range(para.Range.Start, para.Range.Start).Select
                 matchFound = True
                 m_btnNextEnabled = True
-                m_btnPrevEnabled = True
+                m_btnPrevEnabled = False
                 If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
                 If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
                 Exit For
@@ -230,12 +230,20 @@ End Sub
 
 Private Sub NextButton()
     On Error GoTo PROC_ERR
+    Dim found As Boolean
     Selection.Find.ClearFormatting
     Selection.Find.style = ActiveDocument.Styles("Heading 1")
     Selection.Find.Forward = True
-    Selection.Find.Wrap = wdFindContinue
-    Selection.Find.Execute
-    Selection.Collapse Direction:=wdCollapseStart
+    Selection.Find.Wrap = wdFindStop
+    found = Selection.Find.Execute
+    If found Then
+        Selection.Collapse Direction:=wdCollapseStart
+        m_btnPrevEnabled = True
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+    Else
+        m_btnNextEnabled = False
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+    End If
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -247,12 +255,20 @@ End Sub
 
 Private Sub PrevButton()
     On Error GoTo PROC_ERR
+    Dim found As Boolean
     Selection.Find.ClearFormatting
     Selection.Find.style = ActiveDocument.Styles("Heading 1")
     Selection.Find.Forward = False
-    Selection.Find.Wrap = wdFindContinue
-    Selection.Find.Execute
-    Selection.Collapse Direction:=wdCollapseStart
+    Selection.Find.Wrap = wdFindStop
+    found = Selection.Find.Execute
+    If found Then
+        Selection.Collapse Direction:=wdCollapseStart
+        m_btnNextEnabled = True
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+    Else
+        m_btnPrevEnabled = False
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+    End If
 PROC_EXIT:
     Exit Sub
 PROC_ERR:

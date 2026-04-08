@@ -969,3 +969,189 @@ instead of selecting the full heading text.
 The first navigation to a far location in a large single-document Bible will always
 incur the layout delay. Structural solutions (splitting into 66 documents) would
 eliminate it but are out of scope for this review.
+
+---
+
+## 20 — Navigation Redesign Plan: Bounded Find, No Wrap-Around
+
+### Context
+
+All previous performance fixes (Sections 14–19) failed to reduce first-navigation
+time to Revelation. The root cause is Word's layout engine: displaying any location
+in Print Layout view requires computing layout for all preceding pages. For a
+full-Bible document with the cursor at Genesis and the target at Revelation, this
+means laying out the entire document cold — unavoidable in VBA. The approaches tried
+made things worse by adding view-switch overhead and cache invalidation on top of the
+base cost.
+
+The user's proposed redesign avoids the problem entirely by eliminating the navigation
+scenarios that require cold-cache long-distance jumps.
+
+---
+
+### The Plan
+
+**Point 1 — No GoTo Revelation via PrevButton.**
+PrevButton must never wrap around from Genesis to Revelation. This is the only
+cold-cache long-distance case that triggers the Word layout delay. If PrevButton
+cannot land on Revelation, the worst-case navigation distance is bounded to one step
+back in the already-visible region of the document.
+
+**Point 2 — Prev unavailable when at Genesis after first GoToBook.**
+When the document opens and GoToH1 is used for the first time to land on Genesis,
+PrevButton is disabled. Genesis is the first book; there is no prior Heading 1. This
+prevents the user from pressing Prev and triggering a wrap or a no-op with an
+unexpected result.
+
+**Point 3 — PrevButton only enabled after NextButton is used once.**
+After any GoToH1, only NextButton is initially enabled. PrevButton becomes enabled
+after NextButton is pressed at least once. This guarantees that by the time Prev is
+available, the user has already navigated forward and Word has computed layout for
+some content beyond the starting point. The user cannot trigger a backward jump from
+a cold-cache position.
+
+**Point 4 — Stop at document boundary; do not wrap.**
+Change `Wrap = wdFindContinue` to `Wrap = wdFindStop` in both NextButton and
+PrevButton. Find stops at the document boundaries without wrapping. This directly
+prevents the case where backward Find from Genesis wraps to Revelation and triggers
+a full-document layout pass.
+
+**Point 5 — Collapsed cursor, not selected text.**
+`Selection.Collapse Direction:=wdCollapseStart` after `Find.Execute` places a
+collapsed cursor at the heading start. The Heading 1 text is not selected.
+Already present in the code but not observed working — suspected cause is that
+`Execute` wrapped (wdFindContinue) and left the selection in an unexpected state.
+With `wdFindStop` this should resolve cleanly.
+
+---
+
+### Discussion
+
+**Point 3 scope — all GoToH1 targets or Genesis only?**
+Points 2 and 3 together raise a question: does "Prev disabled until Next used once"
+apply only when GoToH1 lands on Genesis, or for any GoToH1 target?
+
+- If Genesis only: GoToH1 to Exodus enables both Next and Prev immediately (user
+  can go Exodus→Genesis). This is natural but allows a short backward jump from any
+  cold-cache position.
+- If any GoToH1 target: GoToH1 to any book always enables Next first; Prev follows
+  after one Next press. This is the safer rule and matches the literal text of
+  Point 3.
+
+Recommendation: apply Point 3 to all GoToH1 targets. After GoToH1, always enable
+Next only. After NextButton fires successfully, enable Prev. This is the simplest
+rule to implement and the most consistent from the user's perspective.
+
+**Point 4 and button state at boundaries.**
+With `wdFindStop`, NextButton from Revelation finds nothing (no forward H1, no wrap)
+and `Execute` returns False. PrevButton from Genesis finds nothing and returns False.
+In both cases the button fires but nothing visible happens. The buttons should be
+disabled when the boundary is reached to prevent silent no-ops.
+
+Implementation: check the return value of `Find.Execute`. If False, disable the
+corresponding button and invalidate the control. This gives the user clear feedback
+that the boundary has been reached.
+
+**Point 1 and point 4 relationship.**
+Point 1 (no GoTo Revelation via Prev) is fully satisfied by Point 4 (`wdFindStop`).
+No separate guard is needed. With `wdFindStop`, PrevButton from Genesis simply stops
+— it cannot wrap to Revelation.
+
+**Point 5 — why Collapse was not working.**
+With `wdFindContinue` and a wrapping Find, `Execute` may return True but leave the
+Selection spanning from the wrap point to the matched paragraph, or spanning the full
+matched paragraph style run. `Collapse Direction:=wdCollapseStart` on a wrapped
+selection behaves differently than on a clean in-document match. With `wdFindStop`
+there is no wrap, `Execute` either succeeds cleanly (selection = matched paragraph)
+or returns False (selection unchanged). `Collapse` will then work as expected.
+
+---
+
+### Proposed Button State Machine
+
+| Event | NextButton | PrevButton |
+|-------|-----------|-----------|
+| Document open (no GoToH1 yet) | Disabled | Disabled |
+| GoToH1 succeeds (any book) | Enabled | Disabled |
+| NextButton fires, Find succeeds | Enabled | Enabled |
+| NextButton fires, Find fails (at Revelation) | Disabled | Enabled |
+| PrevButton fires, Find succeeds | Enabled | Enabled |
+| PrevButton fires, Find fails (at Genesis) | Enabled | Disabled |
+
+---
+
+### Files to Change (pending approval)
+
+- `src/aeRibbonClass.cls` — `NextButton`, `PrevButton`: change to `wdFindStop`,
+  add boundary detection, update button state after each navigation
+- `src/aeRibbonClass.cls` — `GoToH1`: after match, enable Next, disable Prev,
+  invalidate both controls
+
+---
+
+## 21 — Navigation Redesign: Decisions and Implementation
+
+### Approved Decisions (from Section 20 discussion)
+
+**Point 3 — Scope of Prev-disabled rule:** Apply to all GoToH1 targets, not Genesis
+only. After GoToH1, always enable Next only; Prev becomes enabled after the first
+successful NextButton press. Approved.
+
+**Point 4 — Boundary detection:** Check the return value of `Find.Execute`. If
+False, disable the corresponding button and invalidate the control. Approved.
+
+**Point 5 — Collapse fix:** `wdFindStop` eliminates the wrapping Selection state
+that caused Collapse to behave unexpectedly. Approved.
+
+---
+
+### Implementation
+
+**`GoToH1`** — after a successful match, enable Next, disable Prev:
+```vb
+m_btnNextEnabled = True
+m_btnPrevEnabled = False
+```
+
+**`NextButton`** — `wdFindStop`, return-value check, enable Prev on success,
+disable Next on boundary:
+```vb
+found = Selection.Find.Execute
+If found Then
+    Selection.Collapse Direction:=wdCollapseStart
+    m_btnPrevEnabled = True
+    m_ribbon.InvalidateControl "GoToPrevButton"
+Else
+    m_btnNextEnabled = False
+    m_ribbon.InvalidateControl "GoToNextButton"
+End If
+```
+
+**`PrevButton`** — mirror of NextButton with Forward = False, enable Next on
+success, disable Prev on boundary:
+```vb
+found = Selection.Find.Execute
+If found Then
+    Selection.Collapse Direction:=wdCollapseStart
+    m_btnNextEnabled = True
+    m_ribbon.InvalidateControl "GoToNextButton"
+Else
+    m_btnPrevEnabled = False
+    m_ribbon.InvalidateControl "GoToPrevButton"
+End If
+```
+
+### Files Changed
+
+`src/aeRibbonClass.cls` — `GoToH1`, `NextButton`, `PrevButton`
+
+### Expected Behaviour
+
+| Scenario | Result |
+|----------|--------|
+| GoToH1 → any book | Next enabled, Prev disabled |
+| NextButton → found | Both enabled, cursor at H1 start |
+| NextButton → Revelation (boundary) | Next disabled, Prev stays enabled |
+| PrevButton → found | Both enabled, cursor at H1 start |
+| PrevButton → Genesis (boundary) | Prev disabled, Next stays enabled |
+| PrevButton from Genesis (cold cache) | Not reachable — Prev is disabled after GoToH1 |
