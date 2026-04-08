@@ -285,7 +285,7 @@ End Sub
 Private Function StyleIsAppliedAnywhere(sName As String) As Boolean
     On Error GoTo PROC_ERR
     Dim p As Word.Paragraph
-    Dim sec As section
+    Dim sec As Word.Section
 
     ' Body paragraphs
     On Error Resume Next

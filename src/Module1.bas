@@ -642,7 +642,7 @@ Sub CountTotallyEmptyParagraphs()
     On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdr As HeaderFooter
     Dim ftr As HeaderFooter
     Dim footnote As footnote
@@ -943,7 +943,7 @@ End Function
 Sub CountTabParagraphsFull()
     On Error GoTo PROC_ERR
     Dim doc As Document
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdr As HeaderFooter
     Dim ftr As HeaderFooter
     Dim para As Word.Paragraph
@@ -1190,7 +1190,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
     Dim fName As String
     Dim keyVar As Variant
     Dim logBuffer As String
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hf As HeaderFooter
     Dim hfTypes As Variant
     Dim hfKind As Variant

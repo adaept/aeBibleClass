@@ -39,7 +39,7 @@ Public Sub AddBookNameHeaders()
     On Error GoTo PROC_ERR
     Dim oDoc        As Document
     Dim oSections   As Sections
-    Dim oSection    As section
+    Dim oSection    As Word.Section
     Dim oHeader     As HeaderFooter
     Dim oPara As Word.Paragraph
     Dim oRange      As Word.Range
@@ -164,7 +164,7 @@ Private Sub AddConsecutiveFootersFromCursor()
     On Error GoTo PROC_ERR
     Dim oDoc        As Document
     Dim oSections   As Sections
-    Dim oSection    As section
+    Dim oSection    As Word.Section
     Dim oFooter     As HeaderFooter
     Dim oRange      As Word.Range
     Dim oPara As Word.Paragraph

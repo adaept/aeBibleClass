@@ -303,7 +303,7 @@ Public Sub Identify_ArialUnicodeMS_Paragraphs()
     Dim hfTypes As Variant
     Dim hfKind As Variant
     Dim logBuffer As String
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hf As HeaderFooter
     Dim fontName As String
 

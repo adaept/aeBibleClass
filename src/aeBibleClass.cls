@@ -1563,7 +1563,7 @@ End Function
 Private Function SummarizeHeaderFooterAuditToFile()
     On Error GoTo PROC_ERR
 
-    Dim sec As section, hf As HeaderFooter, p As Word.Paragraph
+    Dim sec As Word.Section, hf As HeaderFooter, p As Word.Paragraph
     Dim paraText As String, paraStyle As String
     Dim asciiVal As Long
     Dim headerOk As Boolean, footerOk As Boolean
@@ -1856,7 +1856,7 @@ End Function
 Private Function CountTabOnlyParagraphs(areaType As String) As Long
     On Error GoTo PROC_ERR
 
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdrFtr As HeaderFooter
     Dim para As Word.Paragraph
     Dim count As Long
@@ -2335,7 +2335,7 @@ End Function
 Private Function CountFooterParagraphsWithFooterStyle() As Integer
     On Error GoTo PROC_ERR
 
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdrFtr As HeaderFooter
     Dim para As Word.Paragraph
     Dim count As Long
@@ -3145,7 +3145,7 @@ Private Function CountSectionsWithDifferentFirstPage() As Integer
     On Error GoTo PROC_ERR
 
     Dim doc As Document
-    Dim sec As section
+    Dim sec As Word.Section
     Dim count As Integer
 
     Application.ScreenUpdating = False

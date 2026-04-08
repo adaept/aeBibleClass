@@ -42,7 +42,7 @@ Public Sub FindFontUsage()
     On Error GoTo PROC_ERR
     Dim oDoc     As Document
     Dim oPara    As Word.Paragraph
-    Dim oSection As section
+    Dim oSection As Word.Section
     Dim oHF      As HeaderFooter
     Dim oStyle   As style
     Dim sTarget  As String
@@ -162,7 +162,7 @@ Public Sub CountParagraphsAndFonts()
     On Error GoTo PROC_ERR
     Dim oDoc       As Document
     Dim oPara      As Word.Paragraph
-    Dim oSection   As section
+    Dim oSection   As Word.Section
     Dim oHF        As HeaderFooter
     Dim oFonts     As New Collection
     Dim lBody      As Long
@@ -356,7 +356,7 @@ End Function
 Public Sub CountOrphanFooters()
     On Error GoTo PROC_ERR
     Dim oDoc        As Document
-    Dim oSection    As section
+    Dim oSection    As Word.Section
     Dim oFooter     As HeaderFooter
     Dim lOrphan     As Long
     Dim lTotal      As Long
@@ -407,7 +407,7 @@ End Sub
 Public Sub CountOrphanHeaders()
     On Error GoTo PROC_ERR
     Dim oDoc         As Document
-    Dim oSection     As section
+    Dim oSection     As Word.Section
     Dim oHeader      As HeaderFooter
     Dim lOrphan      As Long
     Dim lTotal       As Long
@@ -573,7 +573,7 @@ End Sub
 
 Private Sub WriteSectionAudit(ByVal f As Integer)
     On Error GoTo PROC_ERR
-    Dim sec As section
+    Dim sec As Word.Section
 
     Dim i As Long
     i = 1
@@ -620,7 +620,7 @@ End Sub
 
 Private Sub WriteSignature(ByVal f As Integer, ByVal label As String)
     On Error GoTo PROC_ERR
-    Dim sec As section
+    Dim sec As Word.Section
     Dim i As Long
     Dim sig As String
 

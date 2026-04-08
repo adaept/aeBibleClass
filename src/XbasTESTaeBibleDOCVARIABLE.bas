@@ -216,7 +216,7 @@ Sub FindDocVariableEverywhere()
     Dim variableFound As Boolean
     Dim field As field
     Dim shape As shape
-    Dim section As section
+    Dim section As Word.Section
     Dim Note As footnote
     Dim endNote As endNote
 

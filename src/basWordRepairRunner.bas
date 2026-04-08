@@ -191,7 +191,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     
                 'Dim chInfo As Word.Range
                 'Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                'Debug.Print "Hair space font: " & chInfo.font.name & " | Size=" & chInfo.font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
+                'Debug.Print "Hair space font: " & chInfo.Font.name & " | Size=" & chInfo.Font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
                 
                 Dim suffixCh As Word.Range
                 Set suffixCh = ActiveDocument.Range(verseEnd, verseEnd + 1)
@@ -206,7 +206,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 End Select
 
                 ' Optional diagnostic
-                'Debug.Print "Suffix [" & combinedNumber & "] ASCII=" & suffixAsc & " Style=" & suffixCh.style.NameLocal & " Font=" & suffixCh.font.name & " Size=" & suffixCh.font.Size
+                'Debug.Print "Suffix [" & combinedNumber & "] ASCII=" & suffixAsc & " Style=" & suffixCh.style.NameLocal & " Font=" & suffixCh.Font.name & " Size=" & suffixCh.Font.Size
                 
                 ' Chr(12) audit
                 If Len(combinedNumber) = 1 And AscW(combinedNumber) = ASCII_FORMFEED Then
@@ -299,7 +299,7 @@ End Sub
 Private Function GetPageHeaderText(pgNum As Long) As String
     On Error GoTo PROC_ERR
     Dim rng As Word.Range
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdr As HeaderFooter
 
     ' Get range for the page

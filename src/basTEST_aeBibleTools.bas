@@ -293,7 +293,7 @@ End Sub
 
 Public Sub FindFirstSectionWithDifferentFirstPage()
     On Error GoTo PROC_ERR
-    Dim sec As section
+    Dim sec As Word.Section
     Dim i As Long
 
     For i = 1 To ActiveDocument.Sections.Count
@@ -320,7 +320,7 @@ End Sub
 
 Public Sub FindFirstPageWithEmptyHeader()
     On Error GoTo PROC_ERR
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdr As HeaderFooter
     Dim hdrText As String
     Dim i As Long
@@ -1628,7 +1628,7 @@ End Sub
 
 Public Sub ReapplyTheFootersToAllFooters()
     On Error GoTo PROC_ERR
-    Dim sec As Word.section
+    Dim sec As Word.Section
 
     Dim hf As HeaderFooter
     Dim p As Word.Paragraph
@@ -1885,7 +1885,7 @@ End Function
 '==============================================================
 Public Sub PrintCompactSectionLayoutInfo()
     On Error GoTo PROC_ERR
-    Dim sec As section
+    Dim sec As Word.Section
     Dim i As Long
     Dim nOneCol As Long, nTwoCol As Long
     Dim nEvenPageBreak As Long, nOddPageBreak As Long
@@ -2023,7 +2023,7 @@ Public Sub FlagEarlyBindingRoutines_LateBound()
     baseTypes = Array("As String", "As Integer", "As Long", "As Double", "As Boolean", "As Variant", _
                       "As Byte", "As Currency", "As Date", "As Object", "As Single")
 
-    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Section", "As Style", "As Shape", "As Field", _
+    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Word.Section", "As Style", "As Shape", "As Field", _
                       "As HeaderFooter", "As Footnote", "As EndNote", "As Table", "As Bookmark", _
                       "As Document", "As Collection", "As New Collection", "As Selection", _
                       "As customXMLPart", "As CustomXMLParts")
@@ -2488,7 +2488,7 @@ End Function
 
 Public Sub FindTabsInAllFooters()
     On Error GoTo PROC_ERR
-    Dim sec As section
+    Dim sec As Word.Section
     Dim hdrFtr As HeaderFooter
     Dim rng As Word.Range
     Dim secStartPage As Long
