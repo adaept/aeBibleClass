@@ -1155,3 +1155,258 @@ End If
 | PrevButton → found | Both enabled, cursor at H1 start |
 | PrevButton → Genesis (boundary) | Prev disabled, Next stays enabled |
 | PrevButton from Genesis (cold cache) | Not reachable — Prev is disabled after GoToH1 |
+
+---
+
+## 22 — Button State and NextButton Find Bugs
+
+### Bugs Reported
+
+1. **NextButton not working after GoTo Genesis** — clicking Next left the cursor at Genesis.
+2. **PrevButton enabled after GoTo Genesis** — should be disabled; clicking it disabled it reactively instead of proactively.
+3. **NextButton enabled after GoTo Revelation** — should be disabled; no next book exists.
+4. **PrevButton disabled after GoTo Revelation** — should be enabled; Jude is a valid Prev target.
+
+---
+
+### Root Cause 1 — NextButton re-finds the current heading
+
+`Selection.Find` with `Forward = True` starts searching from the beginning of the
+current selection. After `GoToH1`, the cursor is collapsed at `para.Range.Start` —
+the first character of the Genesis Heading 1 paragraph. Find immediately matches
+Genesis itself, returns True, collapses back to the same position, enables Prev.
+Visually nothing moves.
+
+**Fix:** Before calling Find forward, advance the cursor to the end of the current
+paragraph so the search starts after the heading:
+
+```vb
+Dim curParaEnd As Long
+curParaEnd = Selection.Paragraphs(1).Range.End
+Selection.SetRange curParaEnd, curParaEnd
+```
+
+`Selection.Paragraphs(1).Range.End` is the position immediately after the paragraph
+mark of the current paragraph. Find forward from that position skips the current
+heading and finds the next one (Exodus).
+
+---
+
+### Root Cause 2 — GoToH1 set button states without boundary detection
+
+The Section 21 implementation set `m_btnPrevEnabled = False` unconditionally in
+`GoToH1` (correct for Genesis, wrong for all other books) and `m_btnNextEnabled =
+True` unconditionally (correct for all books except Revelation).
+
+**Fix:** After finding the matched paragraph, compare its start position against
+`headingData` to detect first and last book boundaries:
+
+- First book (Genesis): `m_btnPrevEnabled = False`, `m_btnNextEnabled = True`
+- Last book (Revelation): `m_btnPrevEnabled = True`, `m_btnNextEnabled = False`
+- Any other book: both `True`
+
+```vb
+foundPos = para.Range.Start
+m_btnPrevEnabled = True
+m_btnNextEnabled = True
+If Not IsEmpty(headingData(1, 1)) Then
+    If foundPos = CLng(headingData(1, 1)) Then m_btnPrevEnabled = False
+End If
+For k = 66 To 1 Step -1
+    If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
+        If foundPos = CLng(headingData(k, 1)) Then m_btnNextEnabled = False
+        Exit For
+    End If
+Next k
+```
+
+This replaces the approved-but-too-restrictive "always disable Prev after GoToH1"
+rule from Section 21. The `wdFindStop` rule (no wrap-around) already prevents the
+cold-cache Genesis→Revelation problem, so Prev can safely be enabled at non-first
+books immediately after GoToH1.
+
+---
+
+### Files Changed
+
+`src/aeRibbonClass.cls`
+- `GoToH1`: replaced fixed `m_btnPrevEnabled = False` with headingData boundary
+  detection; sets both buttons correctly for Genesis, Revelation, and middle books
+- `NextButton`: added `curParaEnd` advancement before `Selection.Find.Execute`
+
+### Expected Behaviour After Fix
+
+| GoToH1 target | NextButton | PrevButton |
+|---------------|-----------|-----------|
+| Genesis (first) | Enabled | Disabled |
+| Any middle book | Enabled | Enabled |
+| Revelation (last) | Disabled | Enabled |
+
+NextButton from Genesis now advances past the Genesis heading before searching,
+finding Exodus on the first press.
+
+---
+
+## 23 — GoToH1 Rewrite: Eliminate Paragraph Loop and Redundant Selections
+
+### Bugs Reported
+
+1. **GoTo Revelation takes 20 seconds** — paragraph loop iterates the entire document.
+2. **After finding Revelation, Word spins for another 25 seconds** — two selection
+   operations each trigger a full layout pass; `Selection.Range.Select` and `DoEvents`
+   add a third layout/repaint cycle and Explorer window switches.
+3. **NextButton from Jude to Revelation shows blank screen for 5 seconds** —
+   unavoidable first-time layout computation; acceptable.
+
+---
+
+### Bug 1 — `For Each para In ActiveDocument.Paragraphs` (20 seconds)
+
+The paragraph loop iterated every paragraph in the document (~31,000 for a full
+Bible). To find Revelation it had to process all preceding paragraphs before reaching
+the last Heading 1. `CaptureHeading1s` already stored all 66 heading names and
+positions in `headingData` at ribbon load time. The document did not need to be
+accessed at all during GoToH1.
+
+**Fix:** Replace the paragraph loop with a 66-iteration search over `headingData(i, 0)`.
+
+---
+
+### Bug 2 — Double selection and redundant operations (25 seconds)
+
+The original code executed three operations after finding the match:
+
+```vb
+para.Range.Select                                              ' (1) select full heading
+ActiveDocument.Range(para.Range.Start, para.Range.Start).Select ' (2) collapse to start
+...
+Application.ScreenUpdating = True
+Selection.Range.Select                                         ' (3) re-select same position
+DoEvents                                                       ' (4) pump message queue
+```
+
+- **(1)** `para.Range.Select` selected the full heading paragraph. Even with
+  `ScreenUpdating = False`, this resolved the character position against the layout
+  engine internally.
+- **(2)** `ActiveDocument.Range(...).Select` immediately after (1) triggered a second
+  layout pass to collapse to the start position.
+- **(3)** `Selection.Range.Select` on an already-set selection was redundant and
+  triggered a third paint cycle after `ScreenUpdating` was restored.
+- **(4)** `DoEvents` pumped the Windows message queue, which is what brought the
+  Explorer window to the front — Windows activated another window because the message
+  pump had been starved during the two layout passes.
+
+**Fix:** Remove all four operations. Navigate with a single
+`ActiveDocument.Range(foundPos, foundPos).Select`. Remove `Application.ScreenUpdating`,
+`Selection.Range.Select`, and `DoEvents` entirely.
+
+---
+
+### Rewritten GoToH1
+
+```
+1. InputBox for pattern
+2. Loop headingData(1..66, 0) — 66 string comparisons, no document access
+3. If not found: MsgBox, exit
+4. ActiveDocument.Range(foundPos, foundPos).Select — single navigation
+5. headingData boundary detection — set Next/Prev enabled
+6. InvalidateControl for both buttons
+```
+
+The paragraph loop (`For Each`), `Application.ScreenUpdating`, `para.Range.Select`,
+`Selection.Range.Select`, and `DoEvents` are all removed.
+
+---
+
+### Bug 3 — NextButton 5-second delay at Revelation (accepted)
+
+When NextButton advances from Jude to Revelation, Word must render the Revelation
+page. Even though GoToH1 to Revelation was performed earlier in the session, some
+layout may have been evicted from the cache during the intervening navigation to Jude.
+The 5-second delay is the minimum cost of displaying a far location in a large Print
+Layout document. No further optimisation is possible in VBA.
+
+---
+
+### Files Changed
+
+`src/aeRibbonClass.cls` — `GoToH1` fully rewritten
+
+### Expected Result
+
+GoTo Revelation completes in a single layout pass (~5 seconds, same as NextButton)
+instead of three passes (~45 seconds). No Explorer window switches. `DoEvents` is
+no longer called.
+
+---
+
+## 24 — Flash and 3-Second Blank: ScreenUpdating and Find.Text
+
+### Bugs Reported
+
+1. **Flash (selection gray box) on first PrevButton from Revelation to Jude.**
+2. **3-second blank screen on second PrevButton from Revelation to Jude** (after
+   cycling 20 Prev presses then Next presses back to Revelation).
+
+---
+
+### Bug 1 — Selection flash
+
+`Selection.Find.Execute` selects the matched heading text. Word issues a repaint
+between `Execute` completing and `Selection.Collapse` running. The gray selection
+box is briefly visible for that one repaint cycle. It was only noticeable at
+Revelation → Jude because those pages had just been rendered and the paint occurred
+before the Collapse could execute.
+
+**Fix:** `Application.ScreenUpdating = False` before `Execute`; restored after
+`Collapse`. Word suppresses the intermediate repaint; the user sees only the final
+collapsed cursor, not the selected heading text.
+
+---
+
+### Bug 2 — 3-second blank on second navigation
+
+`NextButton` has two viewport changes per press:
+
+1. `Selection.SetRange curParaEnd, curParaEnd` — moves cursor to the END of the
+   current heading paragraph (body area), triggering a scroll if the body is not
+   already visible.
+2. `Selection.Find.Execute` — finds the next H1 and scrolls to it.
+
+`PrevButton` has one viewport change per press (Find result only).
+
+After 20 consecutive NextButton presses cycling back to Revelation, the double
+scroll per press evicts the pixel render cache for pages near each jump point.
+When PrevButton subsequently scrolls from Revelation back to Jude, Word must
+re-render Jude's page from layout data rather than from the pixel cache: hence
+the 3-second blank.
+
+**Fix:** `Application.ScreenUpdating = False` before `Selection.SetRange` (in
+addition to before `Execute`). The intermediate cursor advance to the body area
+never triggers a repaint request, so Word does not need to render that intermediate
+state and the pixel cache for surrounding pages is preserved.
+
+**Additional fix:** `Selection.Find.Text = ""` added before `Execute` in both
+buttons. `ClearFormatting` clears format constraints but does not reset the text
+search pattern. If Word's Find object retained text from a previous search (e.g.,
+via the Find & Replace dialog), the style-only search would silently include a
+text filter and could skip valid headings.
+
+---
+
+### Files Changed
+
+`src/aeRibbonClass.cls` — `NextButton`, `PrevButton`
+
+Changes:
+- `Application.ScreenUpdating = False` moved before `Selection.SetRange` in
+  `NextButton` and before `Selection.Find.Execute` in `PrevButton`
+- `Application.ScreenUpdating = True` after `Selection.Collapse` in both
+- `Application.ScreenUpdating = True` added to `PROC_ERR` in both so the
+  screen is never left frozen after an error
+- `Selection.Find.Text = ""` added before `Execute` in both
+
+### Note
+
+If Bug 2 persists after this fix, the remaining cause is Word's pixel render
+cache behaviour, which is not addressable from VBA.

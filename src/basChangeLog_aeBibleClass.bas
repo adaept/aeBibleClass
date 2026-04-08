@@ -10,8 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #575 -
 ' #574 -
 ' #573 -
-' #572 -
-' #571 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -76,6 +74,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #572 - Screen flash and 3 second blank screen at Rev -> Jude boundary [bug]
+    ' FIXED - #571 - Error in Gen and Rev behavior of Prev/Next buttons [bug]
     ' FIXED - #570 - Implement plan that does not allow wrap-around for Prev/Next book selection [feat]
     ' FIXED - #569 - See #566, #568 -  Pagination still slow for first GoTo Prev when Genesis is the selected book [bug][refac]
     ' FIXED - #568 - Prevent screen updating to reduce pagination cost [perf]

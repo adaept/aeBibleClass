@@ -183,45 +183,50 @@ End Sub
 Private Sub GoToH1()
     On Error GoTo PROC_ERR
     Dim pattern  As String
-    Dim para As Word.Paragraph
-    Dim paraText As String
+    Dim i        As Long
+    Dim k        As Long
+    Dim foundPos As Long
     Dim matchFound As Boolean
 
     pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
     If pattern = "" Then GoTo PROC_EXIT
 
     matchFound = False
-    Application.ScreenUpdating = False
-
-    For Each para In ActiveDocument.Paragraphs
-        If para.style = "Heading 1" Then
-            paraText = Trim$(para.Range.Text)
-            If paraText Like "*" & UCase(pattern) & "*" Then
-                para.Range.Select
-                ActiveDocument.Range(para.Range.Start, para.Range.Start).Select
+    For i = 1 To 66
+        If Not IsEmpty(headingData(i, 0)) Then
+            If CStr(headingData(i, 0)) Like "*" & UCase(pattern) & "*" Then
                 matchFound = True
-                m_btnNextEnabled = True
-                m_btnPrevEnabled = False
-                If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
-                If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
                 Exit For
             End If
         End If
-    Next para
-
-    Application.ScreenUpdating = True
-    Selection.Range.Select
-    DoEvents
+    Next i
 
     If Not matchFound Then
         MsgBox "Book not found! No Heading 1 matches: '" & pattern & "'", vbExclamation, "Bible"
+        GoTo PROC_EXIT
     End If
+
+    foundPos = CLng(headingData(i, 1))
+    ActiveDocument.Range(foundPos, foundPos).Select
+
+    m_btnPrevEnabled = True
+    m_btnNextEnabled = True
+    If Not IsEmpty(headingData(1, 1)) Then
+        If foundPos = CLng(headingData(1, 1)) Then m_btnPrevEnabled = False
+    End If
+    For k = 66 To 1 Step -1
+        If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
+            If foundPos = CLng(headingData(k, 1)) Then m_btnNextEnabled = False
+            Exit For
+        End If
+    Next k
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
 
 PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
-    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
@@ -231,13 +236,19 @@ End Sub
 Private Sub NextButton()
     On Error GoTo PROC_ERR
     Dim found As Boolean
+    Dim curParaEnd As Long
+    curParaEnd = Selection.Paragraphs(1).Range.End
+    Application.ScreenUpdating = False
+    Selection.SetRange curParaEnd, curParaEnd
     Selection.Find.ClearFormatting
+    Selection.Find.Text = ""
     Selection.Find.style = ActiveDocument.Styles("Heading 1")
     Selection.Find.Forward = True
     Selection.Find.Wrap = wdFindStop
     found = Selection.Find.Execute
+    If found Then Selection.Collapse Direction:=wdCollapseStart
+    Application.ScreenUpdating = True
     If found Then
-        Selection.Collapse Direction:=wdCollapseStart
         m_btnPrevEnabled = True
         If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
     Else
@@ -247,6 +258,7 @@ Private Sub NextButton()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
+    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NextButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
@@ -256,13 +268,16 @@ End Sub
 Private Sub PrevButton()
     On Error GoTo PROC_ERR
     Dim found As Boolean
+    Application.ScreenUpdating = False
     Selection.Find.ClearFormatting
+    Selection.Find.Text = ""
     Selection.Find.style = ActiveDocument.Styles("Heading 1")
     Selection.Find.Forward = False
     Selection.Find.Wrap = wdFindStop
     found = Selection.Find.Execute
+    If found Then Selection.Collapse Direction:=wdCollapseStart
+    Application.ScreenUpdating = True
     If found Then
-        Selection.Collapse Direction:=wdCollapseStart
         m_btnNextEnabled = True
         If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
     Else
@@ -272,6 +287,7 @@ Private Sub PrevButton()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
+    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrevButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
