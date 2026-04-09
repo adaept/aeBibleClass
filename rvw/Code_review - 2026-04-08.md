@@ -1747,3 +1747,86 @@ Public Sub GoToH1Deferred()            ' deferred navigation + InvalidateControl
 - All GoToH1 navigations thereafter: instant
 - Prev/Next button states: correct after every navigation
 - Original 37-second double block: eliminated
+
+---
+
+## Session Summary — 2026-04-08 / 2026-04-09
+
+**Primary work:** Resolved the persistent GoToH1 double-block in a full-Bible `.docm`.
+
+**Secondary work:** VBA casing normalizer (`py/normalize_vba.py`) — added rules for
+`Shell`, `Range:=`, `As PageSetup`, `As Word.Section`, and `.Code`; audited all
+rule descriptions.
+
+### GoToH1 Fix — Key Findings
+
+1. **Ribbon callback post-processing** — after any ribbon `onAction` callback
+   returns, Word re-queries all ribbon control states, triggering a full layout pass
+   on a cold document. Fixed by deferring navigation via `Application.OnTime`.
+
+2. **`Option Private Module` blocks `Application.OnTime`** — all standard modules
+   in this project use `Option Private Module`, which prevents `Application.OnTime`
+   from resolving macro names. Created `basRibbonDeferred.bas` without this
+   declaration as the sole dispatch module for OnTime targets.
+
+3. **`InvalidateControl` on cold cache** — calling `InvalidateControl` immediately
+   after cold navigation to Revelation triggers a 12-18 second layout pass regardless
+   of timing (same macro, deferred OnTime, 1-second delay — all caused the block).
+   Root cause: Word's ribbon refresh forces a full layout rebuild on a cold document.
+
+4. **Post-`Application.OnTime`-macro layout pass** — Word also triggers a post-macro
+   layout pass after any OnTime macro completes (same mechanism as ribbon callbacks).
+   On a compiled project with a cold full-Bible document, this pass takes 13-18
+   seconds. Not preventable in VBA; only avoidable by pre-warming the cache.
+
+5. **Pre-warm layout cache at open (Option B)** — `WarmLayoutCacheDeferred` fires
+   5 seconds after ribbon load, navigates to the last heading and back. This forces
+   the ~20-second layout pass at document-open time. All subsequent GoToH1 calls
+   (including `InvalidateControl`) are instant on the warm cache.
+
+6. **VBA debugger bypasses post-macro processing** — Test B (Immediate window)
+   showed no Block 2 because the VBA debugger does not trigger Word's ribbon
+   host post-processing. Immediate window results are not representative of
+   real ribbon or OnTime invocations.
+
+### Files Changed This Session
+
+| File | Changes |
+|---|---|
+| `src/basRibbonDeferred.bas` | New module — `WarmLayoutCacheDeferred`, `GoToH1Deferred` |
+| `src/basBibleRibbonSetup.bas` | `OnGoToH1ButtonClick` defers via OnTime; `TestGoToH1Direct` added |
+| `src/aeRibbonClass.cls` | `GoToH1`: removed HomeKey+Find, uses `Range.Select`; removed `ScreenUpdating`; `WarmLayoutCache` added; `EnableButtonsRoutine` schedules warm-up |
+| `py/normalize_vba.py` | Added 5 casing rules; audited all descriptions |
+| `rvw/Code_review - 2026-04-08.md` | New — 31 sections documenting full investigation |
+
+### Context for Next Session
+
+- The fix is complete and tested. Ready to commit.
+- `InvalidateControl` is intentionally absent from `NextButton`/`PrevButton` error
+  paths — those navigate one heading at a time (warm cache) so no block occurs there.
+- The 5-second warm-up delay in `EnableButtonsRoutine` is load-bearing — less than
+  1 second causes Block 2 to reappear on first GoToH1.
+- `WarmLayoutCacheDeferred` will appear in Alt+F8 (no parameters, no
+  `Option Private Module`). Safe to run manually; it just re-warms the cache.
+
+---
+
+## Note: Using /clear Between Sessions
+
+`/clear` resets the Claude Code conversation context — everything in the current
+chat window is discarded and a fresh session begins.
+
+**Benefits for this project:**
+
+- **Context window freed** — long sessions (like this investigation) accumulate
+  dead-end hypotheses, superseded code states, and intermediate test results.
+  Clearing removes that noise so the model works from a clean state.
+- **No stale working state** — the model cannot accidentally reference a code
+  version or test result that has since been superseded.
+- **Memory persists** — `MEMORY.md` and memory files in
+  `C:\Users\peter\.claude\projects\C--adaept-aeBibleClass\memory\` survive `/clear`.
+  Key decisions, feedback preferences, and project context carry forward.
+- **Review files persist** — all `rvw\` documents are on disk and unaffected.
+
+**Before clearing:** save anything important to memory files or on-disk documents
+(such as this review file). Anything discussed only in the chat window is lost.
