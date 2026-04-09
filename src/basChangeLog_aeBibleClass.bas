@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #584 -
 ' #583 -
 ' #582 -
-' #581 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #581 - Create plan for improvement of long running task process code [impr]
     ' FIXED - #580 - Error - GoTo Book no longer activates after the last fix [regr]
     ' FIXED - #579 - Add GoToH1Deferred as the solution from test of #578
     ' FIXED - #578 - Create TestGoToH1Direct test outside of ribbon to find root cause of double layout spinning block with Revelation [test]
