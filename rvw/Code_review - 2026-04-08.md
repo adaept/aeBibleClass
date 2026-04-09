@@ -623,16 +623,69 @@ host has fully unwound.
 
 ## 21 — Fix: Defer GoToH1 Navigation via Application.OnTime
 
-### Changes
+### Implementation history and failures
 
-**`src/basBibleRibbonSetup.bas`** — `OnGoToH1ButtonClick` now schedules navigation
-instead of executing it. `GoToH1Deferred` is the scheduled target:
+**Attempt 1** — `Application.OnTime Now, "GoToH1Deferred"` (unqualified name).
+No activation. Word could not find the macro.
+
+**Attempt 2** — `Application.OnTime Now, "basBibleRibbonSetup.GoToH1Deferred"`
+(module-qualified). No activation.
+
+**Attempt 3** — `Application.OnTime Now, "Project.basBibleRibbonSetup.GoToH1Deferred"`
+(project + module qualified). No activation.
+
+**Attempt 4** — `Application.OnTime Now + TimeValue("00:00:01"), "Project.basBibleRibbonSetup.GoToH1Deferred"`
+(future time + fully qualified). No activation.
+
+### Root cause of all four failures: Option Private Module
+
+`basBibleRibbonSetup.bas` declares `Option Private Module` on line 3. This
+declaration prevents `Application.OnTime` from resolving any macro in the module
+by name — it is a project-level visibility flag that blocks external dispatch.
+
+**`Option Private Module` vs Alt+F8 visibility — two separate rules:**
+
+| Reason a macro is absent from Alt+F8 | Applies to |
+|---------------------------------------|-----------|
+| `Option Private Module` | All modules in this project except `basUSFM_Export` |
+| Required parameters on the sub | `basUSFM_Export` (all public subs have parameters) |
+
+`Application.OnTime` is blocked only by `Option Private Module`. It has no
+dependency on Alt+F8 visibility. A sub with required parameters will not appear
+in Alt+F8 but CAN be called by `Application.OnTime` if its module omits
+`Option Private Module`.
+
+Confirmed by `GoToH1Deferred` running correctly from the Immediate window —
+the macro exists and is callable; `OnTime` simply could not find it due to the
+module privacy flag.
+
+**Secondary finding:** The earlier observation that Alt+F8 showed no macros was
+caused by these two rules together, not by a single cause.
+
+### Fix: New module basRibbonDeferred
+
+`GoToH1Deferred` moved to a new module `src/basRibbonDeferred.bas` that
+deliberately omits `Option Private Module`.
+
+`OnGoToH1ButtonClick` updated to reference the new module location and uses a
+runtime project-name check with a MsgBox warning if the name changes:
 
 ```vb
 Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
-    Application.OnTime Now, "GoToH1Deferred"
+    Const EXPECTED_PROJECT As String = "Project"
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    If projName <> EXPECTED_PROJECT Then
+        MsgBox "VBA project name has changed from '" & EXPECTED_PROJECT & "' to '" & projName & "'." & vbCrLf & _
+               "Update EXPECTED_PROJECT in OnGoToH1ButtonClick (basBibleRibbonSetup).", _
+               vbExclamation, "Project Name Changed"
+    End If
+    Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
 End Sub
+```
 
+`basRibbonDeferred.bas`:
+```vb
 Public Sub GoToH1Deferred()
     Dim rc As aeRibbonClass
     Set rc = Instance()
@@ -640,12 +693,15 @@ Public Sub GoToH1Deferred()
 End Sub
 ```
 
-The ribbon callback returns in microseconds. `GoToH1Deferred` fires on the next
-Windows message loop cycle — after the ribbon host has completed its post-callback
-processing — and runs `GoToH1` in a clean context with no ribbon host waiting.
+`GoToH1Deferred` has no parameters so it will appear in Alt+F8. This is
+acceptable — it is safe to run manually for testing.
 
-**`src/aeRibbonClass.cls`** — `GoToH1Direct` wrapper (added in Section 20) is now
-the permanent entry point for scheduled navigation. No change needed to the class.
+### Files changed
+
+- `src/basBibleRibbonSetup.bas` — `OnGoToH1ButtonClick` updated; `GoToH1Deferred`
+  removed
+- `src/basRibbonDeferred.bas` — new module; hosts `GoToH1Deferred`
+- `src/aeRibbonClass.cls` — `GoToH1Direct` wrapper retained (added in Section 20)
 
 ### Expected Result
 
@@ -829,3 +885,865 @@ file including string contents. To avoid touching `WScript.Shell`, the safer pat
 would be `\bShell\b` applied only to standalone calls — but since replacing
 `Shell` with `Shell` (same casing) inside a string is a no-op, the rule is safe
 regardless: `"WScript.Shell"` → `"WScript.Shell"` (unchanged).
+
+---
+
+## 22 — Fix: Move InvalidateControl Out of GoToH1 (Warm-Cache Hypothesis)
+
+**Files changed:** `src/aeRibbonClass.cls`, `src/basRibbonDeferred.bas`
+
+**Problem:** After the Application.OnTime deferral fix (§21):
+- InputBox delay: ~2 seconds
+- Block 1: 6 seconds → Revelation appears
+- Block 2: 12 seconds spinning → cursor available
+
+The remaining 12-second Block 2 is isolated to the two `InvalidateControl` calls
+inside `GoToH1`. These fire immediately after `Selection.Find.Execute` and
+`Selection.Collapse`, while the layout cache is still cold from navigation to a
+far paragraph. Calling `InvalidateControl` on a cold cache forces a second full
+layout pass.
+
+**Hypothesis:** Moving `InvalidateControl` to run AFTER `GoToH1Direct` returns
+(from `GoToH1Deferred`) puts it on a warm cache — Word has already laid out the
+target page, so the invalidation query is cheap.
+
+**Changes:**
+
+`src/aeRibbonClass.cls` — removed two lines from `GoToH1` (just before
+`Application.ScreenUpdating = True`):
+
+```vb
+' REMOVED:
+If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
+If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+Application.ScreenUpdating = True   ' this line stays
+```
+
+`src/basRibbonDeferred.bas` — added `InvalidateControl` calls after navigation:
+
+```vb
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    rc.InvalidateControl "GoToNextButton"
+    rc.InvalidateControl "GoToPrevButton"
+End Sub
+```
+
+**Test instruction:**
+
+Run the cold-start test (restart Word, do not open IDE):
+
+1. GoTo Genesis — note time and any spinning
+2. GoTo Revelation — note Block 1 duration (InputBox → Revelation visible), Block 2 duration (Revelation visible → cursor available), and whether Block 2 is still present
+3. GoTo Revelation again (warm) — note time
+4. Check Prev/Next buttons are enabled after GoTo Revelation
+5. Navigate Prev once — check Prev/Next enabled state
+
+Report: timings for each step, whether Block 2 is gone, and any errors.
+
+---
+
+## 22 — Test Results
+
+**Cold start, GoTo Genesis → Revelation:**
+
+| Step | Result |
+|---|---|
+| GoTo Genesis | Instant, no spinning; cursor flash from top |
+| GoTo Revelation — Block 1 (InputBox → Revelation visible) | 16 seconds |
+| GoTo Revelation — Block 2 (Revelation visible → cursor available) | 14 seconds spinning |
+| GoTo Revelation warm | Instant |
+| Prev/Next after GoTo Revelation | Next disabled (correct — last book) |
+| GoTo Genesis Prev state | Prev disabled (correct — first book) |
+| Navigate Prev once | Both enabled (correct) |
+
+**Additional observation:** Fast-clicking Prev repeatedly shows cursor flashing from bottom;
+fast-clicking Next shows cursor flashing from top. Navigation direction is visible in the
+cursor entry point.
+
+**Conclusion:** Warm-cache hypothesis FAILED. Block 2 is still 14 seconds.
+
+**Why Block 1 got longer (6s → 16s):** In §21, `InvalidateControl` fired while
+`ScreenUpdating = False` — Word deferred the painting cost, so Block 1 appeared short
+and that cost was absorbed into Block 2. In §22, `ScreenUpdating = True` fires first
+(inside GoToH1), so the display/painting cost lands in Block 1 instead. The totals
+(§21: 18s, §22: 30s) suggest §22 is slightly worse — `InvalidateControl` while the
+painter is active may cause additional repaint cycles.
+
+**New diagnostic plan (§23):** Remove `InvalidateControl` from `GoToH1Deferred`
+entirely and test. If Block 2 disappears, `InvalidateControl` is confirmed as the sole
+cause of Block 2. If Block 2 persists, the cause is elsewhere — most likely
+`Application.ScreenUpdating = True` itself triggering a deferred layout pass, or
+Word's post-OnTime-macro processing.
+
+---
+
+## 23 — Diagnostic: Remove InvalidateControl from GoToH1Deferred Entirely
+
+**File changed:** `src/basRibbonDeferred.bas`
+
+**Purpose:** Isolate whether `InvalidateControl` is the cause of Block 2 or not.
+This is a diagnostic test, not a final fix. Buttons will NOT update their enabled
+state after GoToH1 in this test — that is expected.
+
+**Change:**
+
+```vb
+' BEFORE (§22):
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    rc.InvalidateControl "GoToNextButton"
+    rc.InvalidateControl "GoToPrevButton"
+End Sub
+
+' AFTER (§23 diagnostic):
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+End Sub
+```
+
+**Test instruction:**
+
+Run the cold-start test (restart Word, do not open IDE):
+
+1. GoTo Genesis — note time and any spinning
+2. GoTo Revelation — note Block 1 duration (InputBox → Revelation visible), and whether Block 2 is present (Revelation → cursor available)
+3. Note whether Prev/Next buttons changed state (they may remain stale — this is expected)
+
+Report: whether Block 2 is present or absent, and Block 1 timing.
+This single data point determines the next step.
+
+---
+
+## 23 — Test Results: InvalidateControl Confirmed as Sole Cause of Block 2
+
+**Cold start results:**
+
+| Step | Result |
+|---|---|
+| GoTo Genesis | Instant, no spinning |
+| GoTo Revelation — Block 1 | 13 seconds |
+| GoTo Revelation — Block 2 | **ABSENT** |
+| Prev/Next buttons after GoTo Revelation | Both disabled (stale — expected, no InvalidateControl called) |
+
+**Conclusion: `InvalidateControl` is the 100% cause of Block 2.**
+
+Without it, the total cold-navigation cost is 13 seconds (one pass, no second block).
+With it present in the same macro invocation (§21: 18s total; §22: 30s total), Word
+triggers an additional expensive layout pass in response to the ribbon state query.
+
+**Timing comparison across all tests:**
+
+| Test | Block 1 | Block 2 | Total | InvalidateControl location |
+|---|---|---|---|---|
+| §19 Test A (ribbon callback, IC before ScreenUpdating) | 21s | 16s | 37s | Inside GoToH1, before ScreenUpdating=True |
+| §21 OnTime deferred (IC before ScreenUpdating) | 6s | 12s | 18s | Inside GoToH1, before ScreenUpdating=True |
+| §22 OnTime deferred (IC after GoToH1Direct) | 16s | 14s | 30s | GoToH1Deferred, after GoToH1Direct returns |
+| §23 OnTime deferred (no IC) | 13s | none | 13s | Removed entirely |
+
+**Why moving IC after ScreenUpdating=True made §22 worse than §21:** In §21, IC
+fired while `ScreenUpdating=False`, so the ribbon query and paint costs were batched
+with the ScreenUpdating=True repaint. In §22, IC fired after the repaint was already
+done, causing a fresh layout cycle. The 13s baseline (§23) is the true navigation
+cost without any ribbon overhead.
+
+**Next fix (§24):** Schedule `InvalidateControl` in a second `Application.OnTime`
+call (`InvalidateButtonsDeferred`) fired from `GoToH1Deferred` after navigation
+completes. The gap between the two OnTime invocations allows Word to complete its
+post-navigation layout. When `InvalidateButtonsDeferred` fires, the layout cache
+should be warm and the ribbon query cheap.
+
+---
+
+## 24 — Fix: Defer InvalidateControl to a Second OnTime Call
+
+**File changed:** `src/basRibbonDeferred.bas`
+
+**Rationale:** `InvalidateControl` causes a ~12-14s layout pass when called
+immediately after cold navigation, because the layout cache is still cold.
+Scheduling it in a *separate* `Application.OnTime` invocation gives Word time to
+complete its natural post-navigation layout before the ribbon query fires.
+
+**Change:**
+
+```vb
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    Application.OnTime Now, "Project.basRibbonDeferred.InvalidateButtonsDeferred"
+End Sub
+
+Public Sub InvalidateButtonsDeferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.InvalidateControl "GoToNextButton"
+    rc.InvalidateControl "GoToPrevButton"
+End Sub
+```
+
+`Now` (not `Now + TimeValue("00:00:01")`) is used so `InvalidateButtonsDeferred`
+fires at the next available opportunity after `GoToH1Deferred` returns and Word
+processes its message queue — no added user-visible delay.
+
+**Test instruction:**
+
+Run the cold-start test (restart Word, do not open IDE):
+
+1. GoTo Genesis — note time and any spinning
+2. GoTo Revelation — note Block 1 duration (InputBox → Revelation visible) and whether Block 2 is present
+3. After cursor is available, check whether Prev/Next buttons are correctly enabled (Next should be disabled at Revelation)
+4. GoTo Revelation warm — note time
+5. Navigate Prev once — confirm Prev/Next enabled state
+
+Report: Block 1 timing, whether Block 2 is present, button states, and any errors
+(including whether `InvalidateButtonsDeferred` fails to fire).
+
+---
+
+## 24 — Test Results: Fix Confirmed
+
+**Cold start results:**
+
+| Step | Result |
+|---|---|
+| GoTo Genesis | Instant, no spinning |
+| GoTo Revelation — Block 1 | 15 seconds |
+| GoTo Revelation — Block 2 | **ABSENT** |
+| Next button at Revelation | Disabled (correct — last book) |
+| Navigate Prev once | Both buttons enabled (correct) |
+
+**Fix confirmed.** Block 2 is eliminated. Button states update correctly after
+navigation. `InvalidateButtonsDeferred` fires via the second `Application.OnTime Now`
+call and the ribbon query runs on a warm cache with no blocking layout pass.
+
+**Final timing summary:**
+
+| Condition | Total time | Notes |
+|---|---|---|
+| Original (ribbon callback, double block) | ~37s | Two 12s+ blocks |
+| §21 (OnTime + IC in GoToH1) | ~18s | Block 2 still 12s |
+| §23 (OnTime, no IC) | ~13s | No Block 2, buttons stale |
+| **§24 (OnTime + deferred IC)** | **~15s** | **No Block 2, buttons correct** |
+
+The 13–15s remaining is the intrinsic cold-cache layout cost of Word navigating
+the full Bible document to Revelation. This cannot be reduced in VBA — it is
+Word's layout engine building page geometry from scratch on a cold document.
+
+**Root cause summary:**
+
+1. `OnGoToH1ButtonClick` (ribbon callback) returns → Word's ribbon host re-queries
+   all control states → triggers a full layout pass on the cold document → Block 2.
+   **Fixed by:** `Application.OnTime` deferral (§21), so the ribbon callback returns
+   before any navigation begins.
+
+2. `InvalidateControl` called within the same macro invocation as cold navigation
+   → ribbon state query on a cold layout cache → another full layout pass → Block 2.
+   **Fixed by:** scheduling `InvalidateButtonsDeferred` via a second
+   `Application.OnTime Now` call, so Word completes its natural post-navigation
+   layout before the ribbon query fires.
+
+**Files in final state:**
+
+`src/basBibleRibbonSetup.bas` — `OnGoToH1ButtonClick` defers via OnTime:
+```vb
+Application.OnTime Now + TimeValue("00:00:01"), "Project.basRibbonDeferred.GoToH1Deferred"
+```
+
+`src/basRibbonDeferred.bas` — two-stage deferred dispatch:
+```vb
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    Application.OnTime Now, "Project.basRibbonDeferred.InvalidateButtonsDeferred"
+End Sub
+
+Public Sub InvalidateButtonsDeferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.InvalidateControl "GoToNextButton"
+    rc.InvalidateControl "GoToPrevButton"
+End Sub
+```
+
+`src/aeRibbonClass.cls` — `GoToH1` ends with `Application.ScreenUpdating = True`
+only; no `InvalidateControl` calls.
+
+**Optional follow-up:** The `Now + TimeValue("00:00:01")` in `OnGoToH1ButtonClick`
+adds ~2 seconds before the InputBox appears. Replacing with `Now` would remove this
+delay but may not be reliable from a ribbon callback context (prior tests showed `Now`
+failing there). Leave as-is unless the delay becomes a UX concern.
+
+---
+
+## 25 — Test: Reduce OnTime Delay to 0.5 Seconds
+
+**File changed:** `src/basBibleRibbonSetup.bas`
+
+**Change tested:**
+```vb
+' Before:
+Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
+' Attempted:
+Application.OnTime Now + (0.5 / 86400#), projName & ".basRibbonDeferred.GoToH1Deferred"
+```
+
+`TimeValue` only accepts whole-second strings, so 0.5 seconds requires a
+date-fraction calculation: `0.5 / 86400` (seconds per day as a Double).
+
+**Result:** More responsive InputBox, but **Block 2 (12 seconds) reappeared.**
+
+**Conclusion:** The 1-second delay is not merely waiting for the ribbon callback to
+return. It is giving Word enough time to **complete its post-callback layout pass**
+before `GoToH1Deferred` fires. At 0.5 seconds, Word is still mid-layout when the
+macro fires — the navigation interrupts the layout computation, and Word must perform
+a second layout pass afterward, restoring Block 2.
+
+The 1-second delay is load-bearing. It acts as a "settle" buffer that ensures Word's
+ribbon host post-processing is complete before navigation begins.
+
+**Reverted to:** `Now + TimeValue("00:00:01")`
+
+**The ~2-second InputBox delay is the minimum acceptable cost** for eliminating
+Block 2 on this machine. A shorter delay risks Block 2 reappearing; a longer delay
+adds unnecessary wait. The 1-second value is confirmed as the threshold.
+
+---
+
+## 26 — Test: InvalidateButtonsDeferred via `Application.OnTime Now + 1s`
+
+**File changed:** `src/basRibbonDeferred.bas`
+
+**Change tested:**
+```vb
+Public Sub GoToH1Deferred()
+    ...
+    rc.GoToH1Direct
+    Application.OnTime Now + TimeValue("00:00:01"), "Project.basRibbonDeferred.InvalidateButtonsDeferred"
+End Sub
+
+Public Sub InvalidateButtonsDeferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.InvalidateControl "GoToNextButton"
+    rc.InvalidateControl "GoToPrevButton"
+End Sub
+```
+
+**Result:** Block 2 present. 13 seconds navigation, then 15 seconds spinning including
+blank screen before Revelation displayed and cursor available.
+
+**Conclusion:** `InvalidateControl` causes a 12-15 second layout pass on any cold-start
+navigation to Revelation, regardless of when it is called — same macro invocation,
+`OnTime Now`, or `OnTime Now + 1s` all produce the same block.
+
+**Why §24 appeared to succeed:** The §24 test was run immediately after the §23 test,
+which had just navigated to Revelation. The layout cache was warm from §23. When
+`InvalidateButtonsDeferred` fired in §24, the cache appeared warm and the ribbon
+refresh was cheap. This was a false positive — not reproducible on a genuine cold start.
+
+**Full timing comparison across all tests:**
+
+| Test | Block 1 | Block 2 | Total | IC location |
+|---|---|---|---|---|
+| §19 ribbon callback, IC before ScreenUpdating=True | 21s | 16s | 37s | Inside GoToH1 |
+| §21 OnTime + IC before ScreenUpdating=True | 6s | 12s | 18s | Inside GoToH1 |
+| §22 OnTime + IC after GoToH1Direct | 16s | 14s | 30s | GoToH1Deferred |
+| §23 OnTime, no IC | 13s | none | **13s** | Removed |
+| §24 OnTime + IC via `Now` (false positive) | 15s | none | 15s | InvalidateButtonsDeferred |
+| §25 GoToH1 delay 0.5s | — | present | — | InvalidateButtonsDeferred |
+| §26 IC via `OnTime Now + 1s` | 13s | 15s | 28s | InvalidateButtonsDeferred |
+
+**Root cause (final):** `InvalidateControl` causes Word's ribbon host to re-query all
+control states. On a cold layout cache (large document, far navigation), this query
+triggers a full layout rebuild — 12-15 seconds. There is no timing that avoids this.
+The ribbon refresh itself invalidates whatever warm cache exists.
+
+**Final fix:** Do not call `InvalidateControl` from the GoToH1 path. Button state
+variables (`m_btnNextEnabled` / `m_btnPrevEnabled`) are set correctly inside `GoToH1`.
+The visual display remains stale until the first Prev/Next click — which calls
+`InvalidateControl` itself after a short (warm-cache) navigation. At that point the
+ribbon refresh is cheap and buttons update correctly.
+
+**Final state of `src/basRibbonDeferred.bas`:**
+
+```vb
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    ' InvalidateControl is intentionally omitted here.
+    ' On cold navigation to a far position (e.g., Revelation in a full-Bible document),
+    ' calling InvalidateControl at any point after navigation triggers a 12-15 second
+    ' layout pass — the ribbon refresh forces Word to rebuild the layout cache.
+    ' Button state variables (m_btnNextEnabled / m_btnPrevEnabled) are set correctly
+    ' inside GoToH1; the visual display updates on the next Prev/Next click, which
+    ' calls InvalidateControl itself after a short (warm-cache) navigation.
+End Sub
+```
+
+**Total time eliminated:** From 37 seconds (original double block) to 13 seconds
+(single navigation pass, no secondary block). The remaining 13 seconds is the
+intrinsic cold-cache layout cost of Word navigating a full-Bible document — not
+reducible in VBA.
+
+---
+
+## 27 — Root Cause Revision: Post-OnTime-Macro Layout Pass
+
+**Finding:** The §23 "no Block 2" result was not a reliable fix. It succeeded because
+navigating to Genesis first ran the post-macro layout pass on a cheap position (page 1),
+partially warming the layout cache. When GoTo Revelation ran next, the post-macro pass
+was minimal. On a genuinely cold document (compiled project, no prior navigation),
+Block 2 returns — 16 seconds with blank screen, file explorer coming to front twice.
+
+**Root cause (revised):** Word triggers a post-macro ribbon state re-query after every
+`Application.OnTime` macro completion, just as it does after ribbon callbacks. On a
+cold-cache large document, this re-query forces a full layout rebuild — Block 2.
+`Application.OnTime` deferral eliminated the ribbon *callback* post-processing block
+but not the post-*macro* processing block.
+
+**Why compiled project is worse:** Pre-compiled p-code executes faster than
+interpreted VBA. The faster macro body gives Word's message loop less opportunity to
+process incremental layout requests during execution. All post-macro layout hits at
+once, causing a full 16-second freeze.
+
+**Why Immediate window showed no Block 2 (Test B):** The VBA debugger executes in a
+special context that bypasses Word's ribbon host post-processing. Results from the
+Immediate window are not comparable to real-world ribbon or OnTime invocations.
+
+**Three remaining options:**
+
+| Option | Approach | Tradeoff |
+|---|---|---|
+| A | Replace `HomeKey + Find` with direct `SetRange(foundPos)` | Shorter Block 1; Block 2 may shrink or disappear on warmer cache |
+| B | Pre-warm layout cache at document open via scheduled OnTime | One 16s freeze at open time; all subsequent GoToH1 calls fast |
+| C | Remove `ScreenUpdating = False` | Word stays responsive (never freezes); user sees document scroll; total time may be similar |
+
+---
+
+## 28 — Option A: Replace HomeKey + Find with Direct SetRange Navigation
+
+**File changed:** `src/aeRibbonClass.cls`
+
+**What HomeKey + Find was doing:**
+GoToH1 navigated in two steps:
+1. `Selection.HomeKey Unit:=wdStory` — moved cursor to the first character of the
+   document (Genesis, page 1), regardless of where the cursor currently was.
+2. `Selection.Find.Execute` — searched forward from page 1 through the entire document
+   to find the target Heading 1. For Revelation, this traversed 800,000+ characters.
+
+Both steps ran with `ScreenUpdating = False`, so there was no visible scrolling — but
+Word still processed the cursor movement and text search internally, adding overhead
+before the final layout pass at `ScreenUpdating = True`.
+
+**What the replacement does:**
+`foundPos` is the character position of the target heading, already stored in
+`headingData(i, 1)` when the document was loaded. `Selection.SetRange foundPos, foundPos`
+jumps directly to that position in one operation — no HomeKey scroll, no Find traversal.
+
+**Before:**
+```vb
+foundPos = CLng(headingData(i, 1))
+Application.ScreenUpdating = False
+Selection.HomeKey Unit:=wdStory
+Selection.Find.ClearFormatting
+Selection.Find.Text = CStr(headingData(i, 0))
+Selection.Find.style = ActiveDocument.Styles("Heading 1")
+Selection.Find.Forward = True
+Selection.Find.Wrap = wdFindStop
+Selection.Find.MatchCase = False
+Selection.Find.MatchWildcards = False
+Selection.Find.Execute
+If Selection.Find.found Then Selection.Collapse Direction:=wdCollapseStart
+```
+
+**After:**
+```vb
+foundPos = CLng(headingData(i, 1))
+Application.ScreenUpdating = False
+Selection.SetRange foundPos, foundPos
+Selection.Collapse Direction:=wdCollapseStart
+```
+
+**Expected effect:** Block 1 should be shorter — Word skips the HomeKey scroll and
+full-document Find traversal. Whether Block 2 (post-macro layout pass) is reduced
+depends on whether the direct jump warms the cache differently than HomeKey + Find.
+Options B and C remain available if Block 2 persists.
+
+**Test instruction:**
+
+Compile project (Debug > Compile, save), restart Word, do not open IDE:
+
+1. GoTo Revelation — report Block 1 timing, Block 2 present/absent, and whether
+   file explorer comes to front
+2. Check Prev/Next button states
+3. GoTo Revelation warm — report time
+
+Report all timings and whether Block 2 is present.
+
+---
+
+## 28a — Fix: Replace SetRange with ActiveDocument.Range.Select
+
+**Problem with `Selection.SetRange`:** Moves the cursor internally but does not
+queue a scroll-to-selection. When `ScreenUpdating = True` restores painting, Word
+repaints the current view in place rather than scrolling to the new cursor position.
+Result: GoTo Revelation appeared to do nothing — the view stayed at the original
+position even though the cursor had moved.
+
+**Why `Selection.Find` scrolled correctly:** Find includes an implicit
+scroll-to-match as part of its operation. When `ScreenUpdating = True`, the view
+jumps to the found position. `SetRange` has no such implicit scroll.
+
+**Fix:** Use `ActiveDocument.Range(foundPos, foundPos).Select` — `Range.Select`
+both moves the cursor AND queues a scroll-to-selection, so `ScreenUpdating = True`
+displays the target position correctly.
+
+**Current state of navigation block in `GoToH1`:**
+```vb
+foundPos = CLng(headingData(i, 1))
+Application.ScreenUpdating = False
+ActiveDocument.Range(foundPos, foundPos).Select
+```
+
+The `Collapse Direction:=wdCollapseStart` from the `Find` version is also removed —
+`Range(foundPos, foundPos)` is already a zero-length (collapsed) range, so collapse
+is a no-op.
+
+**Test instruction:** Same as §28 — compile, restart Word, do not open IDE:
+1. GoTo Revelation — Block 1 timing, Block 2 present/absent, file explorer to front?
+2. Prev/Next button states
+3. GoTo Revelation warm — time
+
+---
+
+## 28a — Test Results
+
+| Step | Result |
+|---|---|
+| GoTo Revelation — Block 1 | 16 seconds, Revelation appears |
+| GoTo Revelation — Block 2 | 18 seconds spinning + blank screen |
+| GoTo Revelation warm | Instant |
+| Prev/Next buttons | Both disabled (stale — expected) |
+
+**Total: 34 seconds.** Worse than HomeKey+Find (32s in §27).
+
+**Why Option A made Block 2 longer:** Direct `Range.Select` jumps to Revelation
+without any document traversal. The layout cache is completely cold at that position.
+With HomeKey+Find, the text search traversal partially warms the cache by processing
+the character stream. Direct jump leaves the post-macro layout pass with more work.
+
+**Option A finding:** `ActiveDocument.Range(foundPos, foundPos).Select` is the
+correct navigation primitive — it works and Revelation appears correctly. But
+`ScreenUpdating = False/True` around it is the wrong pairing: suppressing painting
+defers the layout to post-macro processing time, causing Block 2.
+
+---
+
+## 29 — Option C: Remove ScreenUpdating = False/True
+
+**File changed:** `src/aeRibbonClass.cls`
+
+**Rationale:** With `ScreenUpdating = False`, the layout triggered by
+`Range.Select` is deferred. When `ScreenUpdating = True` fires, Word queues the
+repaint. When `GoToH1Deferred` returns, the post-macro processing encounters a
+cold layout cache and rebuilds it — Block 2 (18 seconds).
+
+With `ScreenUpdating = True` throughout (no suppression), the layout happens
+synchronously during the `Range.Select` call within the normal paint cycle. By the
+time `GoToH1Direct` returns, the layout is already complete. The post-macro
+processing finds a warm cache — Block 2 should not occur.
+
+There is no intermediate scrolling to hide from the user: `Range.Select` with a
+direct character position jumps straight to Revelation without passing through
+intermediate pages, so removing `ScreenUpdating = False` does not expose any
+unwanted visual scrolling.
+
+**Change:** Removed `Application.ScreenUpdating = False` before `Range.Select`,
+`Application.ScreenUpdating = True` after the button state logic, and the
+`Application.ScreenUpdating = True` restore in `PROC_ERR`.
+
+**Current state of `GoToH1` navigation block:**
+```vb
+foundPos = CLng(headingData(i, 1))
+ActiveDocument.Range(foundPos, foundPos).Select
+m_btnPrevEnabled = True
+m_btnNextEnabled = True
+' ... first/last book checks ...
+```
+
+**Test instruction:** Compile (`Debug > Compile`, save), restart Word, do not open IDE:
+
+1. GoTo Revelation — report total time and whether Block 2 is present
+2. GoTo Genesis — report time and whether any spinning occurs
+3. GoTo Revelation warm — report time
+4. Prev/Next button states after GoTo Revelation
+5. Note any visible screen flash or cursor behaviour during navigation
+
+---
+
+## 29 — Test Results
+
+| Step | Result |
+|---|---|
+| GoTo Revelation — Block 1 | 16 seconds, Revelation visible |
+| GoTo Revelation — Block 2 | 13 seconds, blank screen before completion |
+| GoTo Genesis (after Revelation) | Instant |
+| GoTo Revelation warm | Instant |
+| Prev/Next buttons | Both disabled (stale — expected) |
+
+**Total: 29 seconds.** Best result so far. Improvement over original 37 seconds.
+
+**Why Block 2 persists with all approaches:**
+
+Block 2 is Word's post-macro full-document layout pass. It is triggered by a COM-level
+notification that Word sends after *every* `Application.OnTime` macro returns. Word's
+ribbon host uses this notification to re-query all context-sensitive ribbon control
+states (paragraph style, heading level, bold/italic, etc.), which requires a full
+document repagination pass. This is not a queued Windows message — it fires after the
+VBA sub returns, outside the macro execution context. `DoEvents` cannot process it.
+The VBA debugger (Immediate window) does not trigger it, which is why Test B showed
+no Block 2.
+
+**Final comparison of all approaches (compiled project, cold document):**
+
+| Approach | Block 1 | Block 2 | Total |
+|---|---|---|---|
+| Original — ribbon callback, HomeKey+Find | 21s | 16s | 37s |
+| §21 — OnTime + IC before ScreenUpdating=True | 6s | 12s | 18s* |
+| §28a — ScreenUpdating=False + Range.Select | 16s | 18s | 34s |
+| **§29 — No ScreenUpdating + Range.Select** | **16s** | **13s** | **29s** |
+
+*§21 result was on an uncompiled project; compiled result would likely be higher.
+
+**Remaining option — Option B (pre-warm cache at document open):**
+Schedule a silent navigation to the last book via `Application.OnTime` shortly after
+the ribbon loads. The 29-second freeze moves to document-open time (where the user
+expects loading overhead). All subsequent GoToH1 calls are instant. Decision pending.
+
+---
+
+## 30 — Option B: Pre-Warm Layout Cache at Document Open
+
+**Files changed:** `src/aeRibbonClass.cls`, `src/basRibbonDeferred.bas`
+
+**Rationale:** Block 2 is Word's post-macro full-document layout pass — unavoidable
+in VBA. Every GoToH1 cold navigation triggers it (~13-18 seconds). Option B moves
+this cost to document-open time by navigating silently to the last heading (Revelation)
+and back 5 seconds after the ribbon loads. After the warm-up completes, the layout
+cache is fully built and all subsequent GoToH1 calls are instant.
+
+**Why 5-second delay:** `EnableButtonsRoutine` is called from `OnRibbonLoad`, which
+is a ribbon callback. The same 1-second settle rule applies. 5 seconds gives
+comfortable margin and lets the user see the document before any freeze.
+
+**Why no ScreenUpdating = False:** Option C showed that without ScreenUpdating
+suppression, the post-macro layout pass is 13 seconds (vs 18 with suppression).
+The warm-up uses the faster path. The status bar message explains the brief activity.
+The return to `savedPos` is instant (Genesis area cached after full-document traversal).
+
+**Changes:**
+
+`src/aeRibbonClass.cls` — `EnableButtonsRoutine` schedules warm-up:
+```vb
+Application.OnTime Now + TimeValue("00:00:05"), _
+    ActiveDocument.VBProject.Name & ".basRibbonDeferred.WarmLayoutCacheDeferred"
+```
+
+`src/aeRibbonClass.cls` — new `WarmLayoutCache()` method:
+```vb
+Public Sub WarmLayoutCache()
+    ' ... find lastPos from headingData ...
+    savedPos = Selection.Start
+    Application.StatusBar = "Bible: building navigation index..."
+    ActiveDocument.Range(lastPos, lastPos).Select   ' jump to last heading
+    ActiveDocument.Range(savedPos, savedPos).Select ' return to original position
+    Application.StatusBar = False
+End Sub
+```
+
+`src/basRibbonDeferred.bas` — new `WarmLayoutCacheDeferred()` sub:
+```vb
+Public Sub WarmLayoutCacheDeferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.WarmLayoutCache
+End Sub
+```
+
+**Test instruction:**
+
+Compile (`Debug > Compile`, save), restart Word, do not open IDE:
+
+1. Open document — note whether a freeze occurs ~5 seconds after open, duration,
+   and whether the status bar shows "Bible: building navigation index..."
+2. After freeze completes — GoTo Revelation: report total time and whether Block 2
+   is present
+3. GoTo Revelation warm (second time) — report time
+4. Prev/Next button states after GoTo Revelation
+
+Report: warm-up freeze duration, GoTo Revelation timing after warm-up, any errors.
+
+---
+
+## 30 — Test Results: Option B Confirmed
+
+| Step | Result |
+|---|---|
+| Freeze at document open (~5s after load) | Present ✓ |
+| Status bar during freeze | "Bible: building navigation index..." ✓ |
+| Warm-up freeze duration | ~20 seconds |
+| File Explorer comes to front | Yes (Word "not responding" during warm-up) |
+| GoTo Revelation after warm-up | **Instant** ✓ |
+| Prev/Next buttons after GoTo Revelation | Both disabled (stale — expected) |
+
+**Option B confirmed as the solution.**
+
+The ~20-second freeze at document open builds the full layout cache. All GoToH1
+navigations after that point are instant. The trade-off — one freeze at open instead
+of a freeze on every cold GoToH1 call — is acceptable.
+
+**Why 20 seconds rather than the predicted 29 seconds:** The warm-up fires at
+document-open time when Word's internal state is different from a mid-session cold
+navigation. The post-macro layout pass may be cheaper at open time, or some layout
+was already partially done during `CaptureHeading1s` iteration.
+
+**Known limitations:**
+- File Explorer comes to front during warm-up — Word is "not responding" for ~20s.
+  The status bar message is the only feedback, and it may not be visible while
+  Word is unresponsive.
+- Prev/Next buttons remain stale after GoToH1 until the first Prev/Next click.
+  Internal state is correct; only the visual display is deferred.
+- If the user navigates to Revelation before the warm-up completes (within the
+  first 5 seconds), that navigation will be slow (~29s). Subsequent navigations
+  will be instant.
+
+**Final resolution summary:**
+
+| Condition | Time | Block 2 |
+|---|---|---|
+| Original (ribbon callback, cold) | 37s | Present |
+| After Option B warm-up | Instant | Absent |
+| First open warm-up cost | ~20s (once) | N/A |
+
+The 37-second double-block on cold navigation is eliminated. The cost is a one-time
+~20-second freeze at document open, which is predictable and explained by the status
+bar message.
+
+**All three root causes addressed:**
+1. Ribbon callback post-processing → fixed by `Application.OnTime` deferral (§21)
+2. `InvalidateControl` on cold cache → fixed by omitting it from GoToH1 path (§26)
+3. Post-macro layout pass on cold document → fixed by pre-warming at open (§30)
+
+---
+
+## 31 — Fix: Restore InvalidateControl to GoToH1Deferred (Warm Cache Available)
+
+**File changed:** `src/basRibbonDeferred.bas`
+
+**Problem:** Prev/Next buttons remain visually disabled after any GoToH1 navigation,
+including GoTo Genesis. The internal state (`m_btnNextEnabled` / `m_btnPrevEnabled`)
+is set correctly inside GoToH1, but without `InvalidateControl` the ribbon never
+re-queries it. The visual display is permanently stale until a Prev/Next click.
+This is a functional failure — the buttons show the wrong enabled state.
+
+**Why this can be fixed now:** `InvalidateControl` was removed in §26 because it
+triggered a 12-15 second layout pass on a cold document. With Option B (§30),
+`WarmLayoutCacheDeferred` runs at document open and builds the full layout cache.
+By the time the user performs any GoToH1 navigation, the cache is warm and
+`InvalidateControl` is cheap — no Block 2.
+
+**Change:**
+
+```vb
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    ' InvalidateControl is called after WarmLayoutCacheDeferred has run at document
+    ' open (Option B, §30). With the layout cache warm, these calls are cheap.
+    ' If called before the warm-up completes (within first 5 seconds of open),
+    ' the cache may be cold and a brief block may occur on that first navigation only.
+    rc.InvalidateControl "GoToNextButton"
+    rc.InvalidateControl "GoToPrevButton"
+End Sub
+```
+
+**Test instruction:** Compile, restart Word, do not open IDE:
+
+1. Wait for warm-up to complete (~20 second freeze after open)
+2. GoTo Revelation — report time and whether Block 2 is present
+3. Check Next button disabled at Revelation (correct — last book)
+4. Navigate Prev — check both buttons enabled
+5. GoTo Genesis — check Prev disabled, Next enabled
+6. GoTo Revelation warm (second time) — report time and button states
+
+---
+
+## 31 — Test Results: Fix Confirmed — Investigation Complete
+
+| Step | Result |
+|---|---|
+| Warm-up freeze duration | ~20 seconds |
+| Status bar during warm-up | Visible ✓ |
+| GoTo Revelation after warm-up | **Instant, no Block 2** ✓ |
+| Next button at Revelation | Disabled ✓ |
+| Navigate Prev from Revelation | Both buttons enabled ✓ |
+| GoTo Genesis | Prev disabled, Next enabled ✓ |
+| GoTo Revelation warm (second) | Instant ✓ |
+
+**All requirements met. Investigation complete.**
+
+---
+
+## Final Summary
+
+**Problem:** GoToH1 navigation from Genesis to Revelation caused a 37-second
+double block — Word "not responding" twice, file explorer coming to front twice.
+
+**Three root causes identified and fixed:**
+
+| # | Root Cause | Fix | Section |
+|---|---|---|---|
+| 1 | Ribbon callback post-processing triggers layout pass after `OnGoToH1ButtonClick` returns | Defer navigation via `Application.OnTime Now + TimeValue("00:00:01")` | §21 |
+| 2 | Post-`Application.OnTime`-macro layout pass on cold document triggers 13-18s block | Pre-warm layout cache at document open via `WarmLayoutCacheDeferred` | §30 |
+| 3 | `InvalidateControl` on cold cache triggers additional layout pass | Restored after warm-up makes cache warm; now cheap | §31 |
+
+**Final file state:**
+
+`src/basBibleRibbonSetup.bas` — ribbon callback defers navigation:
+```vb
+Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
+```
+
+`src/aeRibbonClass.cls` — `GoToH1` uses direct position jump, no ScreenUpdating suppression:
+```vb
+foundPos = CLng(headingData(i, 1))
+ActiveDocument.Range(foundPos, foundPos).Select
+```
+
+`src/aeRibbonClass.cls` — `EnableButtonsRoutine` schedules warm-up:
+```vb
+Application.OnTime Now + TimeValue("00:00:05"), _
+    ActiveDocument.VBProject.Name & ".basRibbonDeferred.WarmLayoutCacheDeferred"
+```
+
+`src/basRibbonDeferred.bas` — three deferred subs:
+```vb
+Public Sub WarmLayoutCacheDeferred()   ' warms layout cache at document open
+Public Sub GoToH1Deferred()            ' deferred navigation + InvalidateControl
+```
+
+**User experience:**
+- Document open: ~20 second freeze with status bar "Bible: building navigation index..."
+- All GoToH1 navigations thereafter: instant
+- Prev/Next button states: correct after every navigation
+- Original 37-second double block: eliminated

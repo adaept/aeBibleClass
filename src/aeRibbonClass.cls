@@ -170,6 +170,8 @@ Private Sub EnableButtonsRoutine()
     Debug.Print "RibbonController: EnableButtonsRoutine"
     CaptureHeading1s
     LogHeadingData
+    Application.OnTime Now + TimeValue("00:00:05"), _
+        ActiveDocument.VBProject.Name & ".basRibbonDeferred.WarmLayoutCacheDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -212,17 +214,7 @@ Private Sub GoToH1()
     End If
 
     foundPos = CLng(headingData(i, 1))
-    Application.ScreenUpdating = False
-    Selection.HomeKey Unit:=wdStory
-    Selection.Find.ClearFormatting
-    Selection.Find.Text = CStr(headingData(i, 0))
-    Selection.Find.style = ActiveDocument.Styles("Heading 1")
-    Selection.Find.Forward = True
-    Selection.Find.Wrap = wdFindStop
-    Selection.Find.MatchCase = False
-    Selection.Find.MatchWildcards = False
-    Selection.Find.Execute
-    If Selection.Find.found Then Selection.Collapse Direction:=wdCollapseStart
+    ActiveDocument.Range(foundPos, foundPos).Select
     m_btnPrevEnabled = True
     m_btnNextEnabled = True
     If Not IsEmpty(headingData(1, 1)) Then
@@ -234,15 +226,11 @@ Private Sub GoToH1()
             Exit For
         End If
     Next k
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
-    Application.ScreenUpdating = True
 
 PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
-    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToH1 of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
@@ -434,6 +422,38 @@ End Function
 Private Sub RestoreCursor(ByVal pos As Long)
     Selection.SetRange pos, pos
     Selection.Collapse Direction:=wdCollapseStart
+End Sub
+
+' -- About Message -------------------------------------------------------------
+
+Public Sub WarmLayoutCache()
+    On Error GoTo PROC_ERR
+    Dim k        As Long
+    Dim lastPos  As Long
+    Dim savedPos As Long
+    For k = 66 To 1 Step -1
+        If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
+            lastPos = CLng(headingData(k, 1))
+            Exit For
+        End If
+    Next k
+    If lastPos = 0 Then
+        Debug.Print "WarmLayoutCache: no heading data, skipping"
+        GoTo PROC_EXIT
+    End If
+    savedPos = Selection.Start
+    Debug.Print "WarmLayoutCache: warming to pos=" & lastPos & " at " & Format(Now, "hh:nn:ss")
+    Application.StatusBar = "Bible: building navigation index..."
+    ActiveDocument.Range(lastPos, lastPos).Select
+    ActiveDocument.Range(savedPos, savedPos).Select
+    Application.StatusBar = False
+    Debug.Print "WarmLayoutCache: complete at " & Format(Now, "hh:nn:ss")
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Application.StatusBar = False
+    Debug.Print "WarmLayoutCache: error " & Err.Number & " " & Err.Description
+    Resume PROC_EXIT
 End Sub
 
 ' -- About Message -------------------------------------------------------------

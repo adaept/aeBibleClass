@@ -56,13 +56,15 @@ Public Sub OnPrevButtonClick(control As IRibbonControl)
 End Sub
 
 Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
-    Application.OnTime Now, "GoToH1Deferred"
-End Sub
-
-Public Sub GoToH1Deferred()
-    Dim rc As aeRibbonClass
-    Set rc = Instance()
-    rc.GoToH1Direct
+    Const EXPECTED_PROJECT As String = "Project"
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.name
+    If projName <> EXPECTED_PROJECT Then
+        MsgBox "VBA project name has changed from '" & EXPECTED_PROJECT & "' to '" & projName & "'." & vbCrLf & _
+               "Update EXPECTED_PROJECT in OnGoToH1ButtonClick (basBibleRibbonSetup).", _
+               vbExclamation, "Project Name Changed"
+    End If
+    Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
 End Sub
 
 Public Sub OnNextButtonClick(control As IRibbonControl)
