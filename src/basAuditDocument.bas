@@ -14,8 +14,8 @@ Public Sub ReplaceTimesInStyles()
 
     For Each oStyle In oDoc.Styles
         On Error Resume Next
-        If Trim(oStyle.Font.name) = "Times" Then
-            oStyle.Font.name = "Times New Roman"
+        If Trim(oStyle.Font.Name) = "Times" Then
+            oStyle.Font.Name = "Times New Roman"
             lCount = lCount + 1
         End If
         On Error GoTo 0
@@ -116,7 +116,7 @@ Public Sub FindFontUsage()
     For Each oStyle In oDoc.Styles
         On Error Resume Next
         Dim sStyleFont As String
-        sStyleFont = Trim(oStyle.Font.name)
+        sStyleFont = Trim(oStyle.Font.Name)
         On Error GoTo 0
         On Error GoTo PROC_ERR
         If InStr(1, sStyleFont, sTarget, vbTextCompare) > 0 Then
@@ -229,10 +229,10 @@ End Sub
 Private Function ResolveFont(ByVal oPara As Word.Paragraph) As String
     On Error GoTo PROC_ERR
     Dim sFont As String
-    sFont = Trim(oPara.Range.Font.name)
+    sFont = Trim(oPara.Range.Font.Name)
     If Len(sFont) = 0 Or Left(sFont, 1) = "+" Then
         On Error Resume Next
-        sFont = Trim(oPara.style.Font.name)
+        sFont = Trim(oPara.style.Font.Name)
         On Error GoTo 0
         On Error GoTo PROC_ERR
     End If
@@ -320,7 +320,7 @@ Public Sub CountCodeLines()
         lTotalComment = lTotalComment + lComment
         lTotalEmpty = lTotalEmpty + lEmpty
 
-        Debug.Print PadRight(oComp.name, 35) & _
+        Debug.Print PadRight(oComp.Name, 35) & _
                     PadRight(lCode, 10) & _
                     PadRight(lComment, 10) & _
                     PadRight(lEmpty, 10) & _
@@ -541,7 +541,7 @@ Private Sub WriteHeader(ByVal f As Integer, ByVal label As String)
     On Error GoTo PROC_ERR
     Print #f, String(60, "=")
     Print #f, "DOCUMENT AUDIT: " & label
-    Print #f, "File: " & ActiveDocument.name
+    Print #f, "File: " & ActiveDocument.Name
     Print #f, "Path: " & ActiveDocument.FullName
     Print #f, "Timestamp: " & Now
     Print #f, String(60, "=")

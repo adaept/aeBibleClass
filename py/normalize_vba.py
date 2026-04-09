@@ -30,6 +30,7 @@ NORMALIZATIONS = [
     (r'(?i)\.Keys\b',           '.Keys',            '.Keys property on Dictionary/object'),
     (r'(?i)\.Text\b',           '.Text',            '.Text property on Range/Field/object'),
     (r'(?i)\.Code\b',           '.Code',            '.Code property on Field object'),
+    (r'(?i)\.Name\b',           '.Name',            '.Name property on VBProject/Style/Document/object'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraphs\b', 'As Word.Paragraphs', 'As Word.Paragraphs type declaration'),

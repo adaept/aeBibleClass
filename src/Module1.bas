@@ -65,7 +65,7 @@ Sub PrintFontProperties()
     Dim sel As Selection
     Set sel = Selection
     With sel.Font
-        Debug.Print "Name: " & .name
+        Debug.Print "Name: " & .Name
         Debug.Print "Size: " & .Size
         Debug.Print "Bold: " & .Bold
         Debug.Print "Italic: " & .Italic
@@ -850,7 +850,7 @@ Sub FindSpecificFontOutsideMainBody()
         If storyRange.StoryType <> wdMainTextStory Then
             Do
                 For Each para In storyRange.Paragraphs
-                    fontName = para.Range.Font.name
+                    fontName = para.Range.Font.Name
                     If StrComp(fontName, targetFont, vbTextCompare) = 0 Then
                         para.Range.Select
                         Application.StatusBar = False
@@ -1115,7 +1115,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
             If Not posReported Then
                 Debug.Print "First incorrect formatting at character position: " & ref.Start
                 Debug.Print "Mismatch details:"
-                Debug.Print " - Font Name: " & ref.Font.name
+                Debug.Print " - Font Name: " & ref.Font.Name
                 Debug.Print " - Font Size: " & ref.Font.Size
                 Debug.Print " - Font Color: " & ref.Font.color
                 Debug.Print " - Superscript: " & ref.Font.Superscript
@@ -1136,7 +1136,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
             If Not posReported Then
                 Debug.Print "First incorrect footnote text number formatting at: " & ref.Start
                 Debug.Print "Mismatch details:"
-                Debug.Print " - Font Name: " & ref.Font.name
+                Debug.Print " - Font Name: " & ref.Font.Name
                 Debug.Print " - Font Size: " & ref.Font.Size
                 Debug.Print " - Font Color: " & ref.Font.color
                 Debug.Print " - Superscript: " & ref.Font.Superscript
@@ -1157,7 +1157,7 @@ End Sub
 
 Function IsFootnoteRefFormattedCorrectly(rng As Word.Range) As Boolean
     With rng.Font
-        IsFootnoteRefFormattedCorrectly = (.name = "Segoe UI" Or .name = "Segoe UI Bold") _
+        IsFootnoteRefFormattedCorrectly = (.Name = "Segoe UI" Or .Name = "Segoe UI Bold") _
             And .Size = 8 _
             And .color = wdColorBlue _
             And .Superscript = True
@@ -1199,7 +1199,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
 
     ' Scan body paragraphs
     For Each para In ActiveDocument.Paragraphs
-        fName = para.Range.Characters(1).Font.name
+        fName = para.Range.Characters(1).Font.Name
         If Not fontMap.Exists(fName) Then
             fontMap.Add fName, 1
         Else
@@ -1216,7 +1216,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
             Set hf = sec.Headers(hfKind)
             If hf.Exists Then
                 For Each para In hf.Range.Paragraphs
-                    fName = para.Range.Characters(1).Font.name
+                    fName = para.Range.Characters(1).Font.Name
                     If Not fontMap.Exists(fName) Then
                         fontMap.Add fName, 1
                     Else
@@ -1228,7 +1228,7 @@ Sub AuditFontUsage_ParagraphsAndHeadersFooters()
             Set hf = sec.Footers(hfKind)
             If hf.Exists Then
                 For Each para In hf.Range.Paragraphs
-                    fName = para.Range.Characters(1).Font.name
+                    fName = para.Range.Characters(1).Font.Name
                     If Not fontMap.Exists(fName) Then
                         fontMap.Add fName, 1
                     Else

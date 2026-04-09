@@ -60,8 +60,8 @@ Private Sub Class_Initialize()
     ' Ref: http://stackoverflow.com/questions/1731052/is-there-a-way-to-overload-the-constructor-initialize-procedure-for-a-class-in
     'MsgBox Application.VBE.ActiveVBProject.Name
     'MsgBox Application.Caption
-    If Application.VBE.ActiveVBProject.name = "aeWordGit" Then
-        Application.Caption = Application.VBE.ActiveVBProject.name & " " & aeWordGitVERSION
+    If Application.VBE.ActiveVBProject.Name = "aeWordGit" Then
+        Application.Caption = Application.VBE.ActiveVBProject.Name & " " & aeWordGitVERSION
     End If
     ' Provide a default value for the SourceFolder and ImportFolder properties
     aeWordGitSourceFolder = "default"
@@ -202,7 +202,7 @@ Private Sub RunExportCode(ByVal strExportPath As String)
     On Error GoTo PROC_ERR
 
     ' Note: The document must be open in Word
-    strDocName = ActiveDocument.name
+    strDocName = ActiveDocument.Name
     Debug.Print , "strDocName = " & strDocName
     'Stop
 
@@ -217,7 +217,7 @@ Private Sub RunExportCode(ByVal strExportPath As String)
 
     For Each objComponent In docSource.VBProject.VBComponents
 
-        strFileName = objComponent.name
+        strFileName = objComponent.Name
         Debug.Print , "strFileName = " & strFileName
 
         ' Concatenate the correct filename for export.

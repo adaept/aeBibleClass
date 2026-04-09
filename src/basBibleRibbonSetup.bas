@@ -58,7 +58,7 @@ End Sub
 Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
     Const EXPECTED_PROJECT As String = "Project"
     Dim projName As String
-    projName = Application.ActiveDocument.VBProject.name
+    projName = Application.ActiveDocument.VBProject.Name
     If projName <> EXPECTED_PROJECT Then
         MsgBox "VBA project name has changed from '" & EXPECTED_PROJECT & "' to '" & projName & "'." & vbCrLf & _
                "Update EXPECTED_PROJECT in OnGoToH1ButtonClick (basBibleRibbonSetup).", _

@@ -141,8 +141,8 @@ Public Function DeleteAllModulesExceptImporter() As Boolean
     For Each vbComp In ThisDocument.VBProject.VBComponents
         Select Case vbComp.Type
             Case 1, 2, 3
-                If vbComp.name <> strProtected Then
-                    strToDelete = strToDelete & "  " & vbComp.name & vbCrLf
+                If vbComp.Name <> strProtected Then
+                    strToDelete = strToDelete & "  " & vbComp.Name & vbCrLf
                 End If
         End Select
     Next vbComp
@@ -172,8 +172,8 @@ Public Function DeleteAllModulesExceptImporter() As Boolean
     For Each vbComp In ThisDocument.VBProject.VBComponents
         Select Case vbComp.Type
             Case 1, 2, 3
-                If vbComp.name <> strProtected Then
-                    colToDelete.Add vbComp.name
+                If vbComp.Name <> strProtected Then
+                    colToDelete.Add vbComp.Name
                 End If
         End Select
     Next vbComp
@@ -208,7 +208,7 @@ Private Function ModuleOrClassExists(name As String) As Boolean
     found = False
     'Debug.Print "name = " & name, "in Function ModuleOrClassExists"
     For Each vbComp In ThisDocument.VBProject.VBComponents
-        If vbComp.name = name Then
+        If vbComp.Name = name Then
             found = True
             Exit For
         End If

@@ -380,7 +380,7 @@ Public Sub OptimizedListFontsInDocument()
     ' Loop through each paragraph in the document
     For Each para In doc.Paragraphs
         Set rng = para.Range
-        fontName = rng.Font.name
+        fontName = rng.Font.Name
         On Error Resume Next
         ' Add unique fonts to the collection
         fontList.Add fontName, fontName
@@ -433,7 +433,7 @@ Public Sub FindGentiumFromParagraph()
 
         For i = 1 To rng.Characters.Count Step 10 ' Check every 10 chars
             Set charRange = rng.Characters(i)
-            If charRange.Font.name = "Gentium" Then
+            If charRange.Font.Name = "Gentium" Then
                 charRange.Select
                 MsgBox "Found Gentium font at paragraph " & p, vbInformation
                 Application.StatusBar = False
@@ -492,7 +492,7 @@ Public Sub ListNonMainFonts_ByParagraph()
             Do
                 For Each para In storyRange.Paragraphs
                     scannedParas = scannedParas + 1
-                    fontName = para.Range.Font.name
+                    fontName = para.Range.Font.Name
                     If Len(fontName) > 0 Then
                         If Not fontDict.Exists(fontName) Then
                             fontDict.Add fontName, 1
@@ -701,7 +701,7 @@ Public Sub FixAndDiagnoseFootnoteReferences()
             fnRef.Font.Reset
             fnRef.style = doc.Styles("Footnote Reference")
             With fnRef.Font
-                .name = "Segoe UI"
+                .Name = "Segoe UI"
                 .Size = 8
                 .Bold = True
                 .color = wdColorBlue
@@ -745,8 +745,8 @@ Private Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As St
             mismatch = mismatch & " - Style: " & rng.style & vbCrLf
             IsCorrectFootnoteFormat = False
         End If
-        If .name <> "Segoe UI" Then
-            mismatch = mismatch & " - Font Name: " & .name & vbCrLf
+        If .Name <> "Segoe UI" Then
+            mismatch = mismatch & " - Font Name: " & .Name & vbCrLf
             IsCorrectFootnoteFormat = False
         End If
         If .Size <> 8 Then
@@ -942,7 +942,7 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
         Set prefix = ActiveDocument.Range(ch.Start - 1, ch.Start)
         Debug.Print "Value: '" & prefix.Text & "' | ASCII: " & AscW(prefix.Text)
         Debug.Print "Style: " & prefix.style.NameLocal
-        Debug.Print "Font Name: " & prefix.Font.name
+        Debug.Print "Font Name: " & prefix.Font.Name
         Debug.Print "Font Color: " & prefix.Font.color & " (RGB: " & _
             (prefix.Font.color Mod 256) & "," & ((prefix.Font.color \ 256) Mod 256) & "," & (prefix.Font.color \ 65536) & ")"
     Else
@@ -981,7 +981,7 @@ Public Sub LogExpandedMarkerContext()
         Debug.Print contextText & contextAscii & contextHex
     Next i
 
-    Debug.Print "Style: " & sel.style & " | Font: " & sel.Font.name
+    Debug.Print "Style: " & sel.style & " | Font: " & sel.Font.Name
     Debug.Print "=== End of Diagnostic ===" & vbCrLf
 
 PROC_EXIT:
@@ -1008,7 +1008,7 @@ Public Sub FindInvisibleFormFeeds_InPages(startPage As Long)
             If InStr(rng.Text, Chr(12)) > 0 Then
                 Debug.Print "[Page " & pgNum & "] Chr(12) found at Start=" & rng.Start
                 Debug.Print "Text='" & Replace(rng.Text, Chr(12), "[FF]") & "'"
-                Debug.Print "Style=" & rng.style & " | Font=" & rng.Font.name
+                Debug.Print "Style=" & rng.style & " | Font=" & rng.Font.Name
             End If
         End If
     Next para
@@ -1172,7 +1172,7 @@ Public Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
                 Loop
 
                 Set ch = ActiveDocument.Range(blockStart, blockStart + 1)
-                fontName = ch.Font.name
+                fontName = ch.Font.Name
                 fontSize = ch.Font.Size
                 charPosX = ch.Information(wdHorizontalPositionRelativeToPage)
                 charPosY = ch.Information(wdVerticalPositionRelativeToPage)
@@ -1418,7 +1418,7 @@ Private Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByR
                     missing160Count = missing160Count + 1
                 End If
 
-                Debug.Print "  Style=" & rng.style & " | Font=" & rng.Font.name & " | Start=" & rng.Start & " | Page=" & pgNum
+                Debug.Print "  Style=" & rng.style & " | Font=" & rng.Font.Name & " | Start=" & rng.Start & " | Page=" & pgNum
             End If
         End If
 NextPara:
@@ -1724,7 +1724,7 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
         hexColor = "#" & Right$("0" & Hex(r), 2) & Right$("0" & Hex(g), 2) & Right$("0" & Hex(b), 2)
 
         info = "Style: " & styleName & vbCrLf
-        info = info & "  Font Name: " & s.Font.name & vbCrLf
+        info = info & "  Font Name: " & s.Font.Name & vbCrLf
         info = info & "  Font Size: " & s.Font.Size & vbCrLf
         info = info & "  Bold: " & s.Font.Bold & vbCrLf
         info = info & "  Italic: " & s.Font.Italic & vbCrLf
@@ -1901,7 +1901,7 @@ Public Sub PrintCompactSectionLayoutInfo()
     
     ' Write Header to the file
     outputText = "=== Layout Report ===" & vbCrLf
-    outputText = outputText & "Doc: " & ActiveDocument.name & vbCrLf
+    outputText = outputText & "Doc: " & ActiveDocument.Name & vbCrLf
     outputText = outputText & "Total Sections: " & ActiveDocument.Sections.Count & vbCrLf & vbCrLf
     Print #fileNum, outputText
 
@@ -2044,7 +2044,7 @@ Public Sub FlagEarlyBindingRoutines_LateBound()
                     codeLine = Trim(codeMod.lines(i, 1))
                     If InStr(codeLine, "Dim ") > 0 Or InStr(codeLine, "ReDim ") > 0 Then
                         If ShouldFlag(codeLine, baseTypes, wordTypes, knownEnums, IncludeWordTypes, IncludeEnums) Then
-                            Debug.Print FlagLabel(codeLine) & " " & comp.name & "::" & procName & " | Line " & i & ": " & codeLine
+                            Debug.Print FlagLabel(codeLine) & " " & comp.Name & "::" & procName & " | Line " & i & ": " & codeLine
                         End If
                     End If
                 Next i

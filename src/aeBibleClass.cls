@@ -73,8 +73,8 @@ Private Sub Class_Initialize()
     On Error GoTo PROC_ERR
     'MsgBox Application.VBE.ActiveVBProject.Name
     'MsgBox Application.Caption
-    If Application.VBE.ActiveVBProject.name = "BibleClass" Then
-        Application.Caption = Application.VBE.ActiveVBProject.name & " " & BibleClassVERSION
+    If Application.VBE.ActiveVBProject.Name = "BibleClass" Then
+        Application.Caption = Application.VBE.ActiveVBProject.Name & " " & BibleClassVERSION
     End If
     Debug.Print "Class_Initialize"
     BibleClassVERSION = "0.1.2"
@@ -101,7 +101,7 @@ Private Sub Class_Terminate()
     On Error GoTo PROC_ERR
     Debug.Print
     Debug.Print "Class_Terminate"
-    Debug.Print , Application.VBE.ActiveVBProject.name
+    Debug.Print , Application.VBE.ActiveVBProject.Name
     Debug.Print , "BibleClass VERSION: " & BibleClassVERSION
     Debug.Print , "BibleClass VERSION_DATE: " & BibleClassVERSION_DATE
 PROC_EXIT:
@@ -162,7 +162,7 @@ Private Function FileNameStartsWithV59() As Boolean
     Dim fileName As String
 
     ' Get filename only (no path)
-    fileName = ActiveDocument.name
+    fileName = ActiveDocument.Name
     FileNameStartsWithV59 = (LCase$(Left$(fileName, 3)) = "v59")
 
 PROC_EXIT:
@@ -776,10 +776,10 @@ Private Function LogWordBuildInfo() As String
 
     Dim info As String
     info = "== Word Build Info ==" & vbCrLf
-    info = info & "Application Name: " & Application.name & vbCrLf
+    info = info & "Application Name: " & Application.Name & vbCrLf
     info = info & "Platform Version: " & Application.Version & vbCrLf
     info = info & "Platform Build: " & Application.Build & vbCrLf
-    info = info & "Full Version String: " & Application.name & " " & Application.Version & " (" & Application.Build & ")" & vbCrLf
+    info = info & "Full Version String: " & Application.Name & " " & Application.Version & " (" & Application.Build & ")" & vbCrLf
     info = info & "Marketing Version: 2506 (Build 18925.20158)" & vbCrLf
     info = info & "Source: Microsoft 365 Current Channel, July 2025 update"
     'Debug.Print info
@@ -1822,7 +1822,7 @@ Private Function AuditLiberationSansNarrowStyleDetails() As Integer
 
     For Each s In ActiveDocument.Styles
         On Error Resume Next
-        fName = s.Font.name
+        fName = s.Font.Name
         fSize = s.Font.Size
         If fName = "Liberation Sans Narrow" Then
             styleCount = styleCount + 1
@@ -1967,7 +1967,7 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
     With rng.Find
         .ClearFormatting
         .style = ActiveDocument.Styles(wordStyle)
-        .Font.name = "Arial Black"
+        .Font.Name = "Arial Black"
         .Font.Size = 8
         .Font.color = wordColor
         .Text = ""
@@ -2017,7 +2017,7 @@ Private Function CountParagraphMarks_CalibriDarkRed() As Integer
 
         With paraRange.Font
             fontColor = .color
-            If .name = "Calibri" And _
+            If .Name = "Calibri" And _
                .Size = 9 And _
                (fontColor = wdColorDarkRed) Then
 
@@ -2057,7 +2057,7 @@ Private Function CountDarkRedStyledParagraphMarks()
     With rng.Find
         .ClearFormatting
         .Text = "^13"
-        .Font.name = "Calibri"
+        .Font.Name = "Calibri"
         .Font.Size = 9
         .Font.color = wdColorDarkRed
         .Forward = True
@@ -2146,7 +2146,7 @@ Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
     With rng.Find
         .ClearFormatting
         .style = ActiveDocument.Styles("Words of Jesus")
-        .Font.name = "Arial Black"
+        .Font.Name = "Arial Black"
         .Font.Size = 8
         .Font.color = wdColorDarkRed
         .Text = ""
@@ -2202,7 +2202,7 @@ Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
 
         With paraRange.Font
             fontColor = .color
-            If .name = "Arial Black" And _
+            If .Name = "Arial Black" And _
                .Size = 8 And _
                (fontColor = wdColorDarkRed) Then
 
@@ -2246,7 +2246,7 @@ Private Function CountParagraphMarks_ArialBlack() As Integer
 
         With paraRange.Font
             fontColor = .color
-            If .name = "Arial Black" And _
+            If .Name = "Arial Black" And _
                .Size = 8 And _
                (fontColor = wdColorAutomatic Or fontColor = wdColorBlack) Then
 

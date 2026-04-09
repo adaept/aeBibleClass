@@ -13,7 +13,7 @@ Private Function FileNameStartsWithV59() As Boolean
     Dim fileName As String
 
     ' Get filename only (no path)
-    fileName = ActiveDocument.name
+    fileName = ActiveDocument.Name
     FileNameStartsWithV59 = (LCase$(Left$(fileName, 3)) = "v59")
 End Function
 
@@ -191,7 +191,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     
                 'Dim chInfo As Word.Range
                 'Set chInfo = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                'Debug.Print "Hair space font: " & chInfo.Font.name & " | Size=" & chInfo.Font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
+                'Debug.Print "Hair space font: " & chInfo.Font.Name & " | Size=" & chInfo.Font.Size & " | Style=" & chInfo.style.NameLocal & " | ASCII=" & AscW(chInfo.Text)
                 
                 Dim suffixCh As Word.Range
                 Set suffixCh = ActiveDocument.Range(verseEnd, verseEnd + 1)
@@ -206,7 +206,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
                 End Select
 
                 ' Optional diagnostic
-                'Debug.Print "Suffix [" & combinedNumber & "] ASCII=" & suffixAsc & " Style=" & suffixCh.style.NameLocal & " Font=" & suffixCh.Font.name & " Size=" & suffixCh.Font.Size
+                'Debug.Print "Suffix [" & combinedNumber & "] ASCII=" & suffixAsc & " Style=" & suffixCh.style.NameLocal & " Font=" & suffixCh.Font.Name & " Size=" & suffixCh.Font.Size
                 
                 ' Chr(12) audit
                 If Len(combinedNumber) = 1 And AscW(combinedNumber) = ASCII_FORMFEED Then

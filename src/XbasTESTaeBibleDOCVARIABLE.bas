@@ -448,7 +448,7 @@ Sub ListMyDocVariables()
     On Error GoTo PROC_ERR
     Dim v As Variant
     For Each v In ActiveDocument.Variables
-        Debug.Print v.name & ": " & v.value
+        Debug.Print v.Name & ": " & v.value
     Next
 
 PROC_EXIT:
