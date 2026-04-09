@@ -14,27 +14,6 @@ Public Enum ExpectedFailureStage
     FailSemantic = 2
 End Enum
 
-Public Sub Test_Stage1_AliasCoverage()
-' Assert that every canonical book name (upper-cased) exists as a key in the alias map
-'   Uses GetCanonicalBookTable
-'   Uses GetBookAliasMap
-'   Canonical name is normalized as UCase(Canonical)
-'   Does not mutate state
-'   Emits diagnostics
-
-    Debug.Print "------------------------------------------"
-    Debug.Print "   Alias Coverage Validation"
-    Debug.Print "------------------------------------------"
-
-    Dim msg As String
-    Dim ok As Boolean
-
-    ok = aeBibleCitationClass.AliasCoverage(msg)
-    Debug.Print msg
-
-    aeAssert.AssertTrue ok, "Alias coverage validation", True, ok
-End Sub
-
 Public Sub Report_TODOs()
     Debug.Print "=== NOT IMPLEMENTED / TODO ============================"
     Debug.Print "- Replace ParseReferenceStub with real tokenizer + DSP"
@@ -49,74 +28,6 @@ Public Sub Report_TODOs()
     Debug.Print "      - SBL-strict aliases form a closed subset"
     Debug.Print "      - alias casing normalization consistency"
     Debug.Print "======================================================="
-End Sub
-
-Public Sub Test_GetMaxVerse()
-    On Error GoTo PROC_ERR
-    Dim failCount As Long
-    Dim Result As Long
-
-    Debug.Print ""
-    Debug.Print "---- Test_GetMaxVerse ----"
-    ' ========================
-    ' POSITIVE TESTS
-    ' ========================
-    Result = aeBibleCitationClass.GetMaxVerse(1, 1)          ' Genesis 1
-    If Result <> 31 Then FailTest failCount, "Genesis 1", 31, Result
-    Result = aeBibleCitationClass.GetMaxVerse(19, 119)       ' Psalms 119
-    If Result <> 176 Then FailTest failCount, "Psalms 119", 176, Result
-    Result = aeBibleCitationClass.GetMaxVerse(65, 1)         ' Jude 1
-    If Result <> 25 Then FailTest failCount, "Jude 1", 25, Result
-    Result = aeBibleCitationClass.GetMaxVerse(66, 22)        ' Revelation 22
-    If Result <> 21 Then FailTest failCount, "Revelation 22", 21, Result
-    ' ========================
-    ' NEGATIVE TESTS
-    ' ========================
-    On Error Resume Next
-    Err.Clear
-    Result = aeBibleCitationClass.GetMaxVerse(1, 999)
-    If Err.Number = 0 Then
-        Debug.Print "FAIL: Invalid chapter not rejected"
-        failCount = failCount + 1
-    End If
-    Err.Clear
-    Result = aeBibleCitationClass.GetMaxVerse(999, 1)
-    If Err.Number = 0 Then
-        Debug.Print "FAIL: Invalid book not rejected"
-        failCount = failCount + 1
-    End If
-    Err.Clear
-    Result = aeBibleCitationClass.GetMaxVerse(19, 0)
-    If Err.Number = 0 Then
-        Debug.Print "FAIL: Chapter zero not rejected"
-        failCount = failCount + 1
-    End If
-    Err.Clear
-    On Error GoTo 0
-    ' ========================
-    ' SUMMARY
-    ' ========================
-    If failCount = 0 Then
-        Debug.Print "Test_GetMaxVerse: PASS"
-    Else
-        Debug.Print "Test_GetMaxVerse: FAIL (" & failCount & " errors)"
-    End If
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_GetMaxVerse of Module basTEST_aeBibleCitationClass"
-    Resume PROC_EXIT
-End Sub
-
-Private Sub FailTest(ByRef failCount As Long, _
-                     ByVal label As String, _
-                     ByVal expected As Long, _
-                     ByVal actual As Long)
-    Debug.Print "FAIL: "; label; _
-                " Expected="; expected; _
-                " Actual="; actual
-
-    failCount = failCount + 1
 End Sub
 
 Public Sub Run_All_SBL_Tests()
@@ -172,6 +83,38 @@ PROC_EXIT:
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run_All_SBL_Tests of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
+End Sub
+
+Private Sub FailTest(ByRef failCount As Long, _
+                     ByVal label As String, _
+                     ByVal expected As Long, _
+                     ByVal actual As Long)
+    Debug.Print "FAIL: "; label; _
+                " Expected="; expected; _
+                " Actual="; actual
+
+    failCount = failCount + 1
+End Sub
+
+Public Sub Test_Stage1_AliasCoverage()
+' Assert that every canonical book name (upper-cased) exists as a key in the alias map
+'   Uses GetCanonicalBookTable
+'   Uses GetBookAliasMap
+'   Canonical name is normalized as UCase(Canonical)
+'   Does not mutate state
+'   Emits diagnostics
+
+    Debug.Print "------------------------------------------"
+    Debug.Print "   Alias Coverage Validation"
+    Debug.Print "------------------------------------------"
+
+    Dim msg As String
+    Dim ok As Boolean
+
+    ok = aeBibleCitationClass.AliasCoverage(msg)
+    Debug.Print msg
+
+    aeAssert.AssertTrue ok, "Alias coverage validation", True, ok
 End Sub
 
 Public Sub Test_Stage5_ValidateCanonical()
@@ -240,6 +183,63 @@ Public Sub Test_Stage7_EndToEnd()
     aeAssert.AssertEqual "Jude 1:1", Result, "Jude book expansion"
     Result = aeBibleCitationClass.ParseReference("Romans")
     aeAssert.AssertEqual "Romans 1:1", Result, "Romans book expansion"
+End Sub
+
+Public Sub Test_GetMaxVerse()
+    On Error GoTo PROC_ERR
+    Dim failCount As Long
+    Dim Result As Long
+
+    Debug.Print ""
+    Debug.Print "---- Test_GetMaxVerse ----"
+    ' ========================
+    ' POSITIVE TESTS
+    ' ========================
+    Result = aeBibleCitationClass.GetMaxVerse(1, 1)          ' Genesis 1
+    If Result <> 31 Then FailTest failCount, "Genesis 1", 31, Result
+    Result = aeBibleCitationClass.GetMaxVerse(19, 119)       ' Psalms 119
+    If Result <> 176 Then FailTest failCount, "Psalms 119", 176, Result
+    Result = aeBibleCitationClass.GetMaxVerse(65, 1)         ' Jude 1
+    If Result <> 25 Then FailTest failCount, "Jude 1", 25, Result
+    Result = aeBibleCitationClass.GetMaxVerse(66, 22)        ' Revelation 22
+    If Result <> 21 Then FailTest failCount, "Revelation 22", 21, Result
+    ' ========================
+    ' NEGATIVE TESTS
+    ' ========================
+    On Error Resume Next
+    Err.Clear
+    Result = aeBibleCitationClass.GetMaxVerse(1, 999)
+    If Err.Number = 0 Then
+        Debug.Print "FAIL: Invalid chapter not rejected"
+        failCount = failCount + 1
+    End If
+    Err.Clear
+    Result = aeBibleCitationClass.GetMaxVerse(999, 1)
+    If Err.Number = 0 Then
+        Debug.Print "FAIL: Invalid book not rejected"
+        failCount = failCount + 1
+    End If
+    Err.Clear
+    Result = aeBibleCitationClass.GetMaxVerse(19, 0)
+    If Err.Number = 0 Then
+        Debug.Print "FAIL: Chapter zero not rejected"
+        failCount = failCount + 1
+    End If
+    Err.Clear
+    On Error GoTo 0
+    ' ========================
+    ' SUMMARY
+    ' ========================
+    If failCount = 0 Then
+        Debug.Print "Test_GetMaxVerse: PASS"
+    Else
+        Debug.Print "Test_GetMaxVerse: FAIL (" & failCount & " errors)"
+    End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_GetMaxVerse of Module basTEST_aeBibleCitationClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub Test_Stage11_ListComposition()
