@@ -808,6 +808,244 @@ progress sidecar file, stop/resume, and log output.
 
 ---
 
+## § 18 — Immediate Window Limitation: Dim Not Supported (2026-04-09)
+
+### Problem
+
+The VBA Immediate Window does not support `Dim` declarations. The intended usage:
+
+```vba
+Dim t As New aeUpdateCharStyleClass
+StartOrResume t
+```
+
+produces an "Invalid" error because variable declarations are not valid Immediate
+Window statements.
+
+### Fix
+
+Added two single-word test stub subs to `basLongProcess.bas`:
+
+```vba
+Public Sub TestUpdateCharStyle()
+    Dim t As New aeUpdateCharStyleClass
+    StartOrResume t
+End Sub
+
+Public Sub TestResetUpdateCharStyle()
+    Dim t As New aeUpdateCharStyleClass
+    ResetTask t
+End Sub
+```
+
+**Immediate Window usage is now:**
+```
+TestUpdateCharStyle        ' start or resume the task
+StopTask                   ' stop the active task
+TestResetUpdateCharStyle   ' reset progress to start from item 1
+```
+
+The module header comment was also updated to reflect these entry points.
+
+### Note
+
+`StopTask` remains parameter-free and works directly in the Immediate Window
+because it delegates to the module-level `s_runner` instance created by
+`TestUpdateCharStyle`.
+
+---
+
+## § 19 — StopTask Blocked: VBA Single-Thread Limitation + Escape Key Fix (2026-04-09)
+
+### Finding
+
+`StopTask` cannot be called from the Immediate Window while a task is running.
+VBA is single-threaded — while `TestUpdateCharStyle` executes, the VBA runtime
+owns the thread and the Immediate Window is read-only. `DoEvents` yields to the
+Windows message loop for UI repaints but does not allow new Immediate Window
+statements to execute.
+
+**The only available interrupt is the Escape key**, which raises runtime error 18
+("User interrupt occurred").
+
+### Behaviour before fix
+
+The existing `PROC_ERR` handler in `aeLongProcessClass.Run` treated Err 18 like
+any other error: restored `Pagination` and `ScreenUpdating`, closed the log, showed
+a MsgBox, then exited via `PROC_EXIT`. Progress was **not saved** on Escape — only
+the last completed batch boundary was preserved in the sidecar file.
+
+### Fix applied to aeLongProcessClass.Run PROC_ERR
+
+Added a specific check for `Err.Number = 18` before the generic MsgBox handler:
+
+```vba
+If Err.Number = 18 Then
+    SaveProgress task.TaskName
+    If logStarted Then
+        log.Log_Write "Interrupted by Escape at item " & m_lastProcessedItem
+        log.Log_Close
+    End If
+    Debug.Print task.TaskName & ": interrupted at item " & m_lastProcessedItem & " - progress saved"
+    Resume PROC_EXIT
+End If
+```
+
+After the fix, pressing Escape:
+1. Saves progress at the exact item where interrupted (not just the last batch boundary)
+2. Logs the interruption with item index and percentage
+3. Exits cleanly with no MsgBox
+
+### How to stop a running task
+
+| Action | Result |
+|--------|--------|
+| Press **Escape** | Stops at next Err 18; after fix: saves exact progress, no MsgBox |
+| **StopTask** in Immediate Window | Blocked — Immediate Window is read-only during execution |
+| VBA IDE **Stop button** (Alt+F11, then ■) | Halts immediately, no cleanup; sidecar has last batch boundary |
+| Force-close Word | Risk of document corruption — do not use |
+
+### Resume after stop
+
+Progress is always resumable. Run `TestUpdateCharStyle` again — it reads the
+sidecar file and continues from the saved item. `TestResetUpdateCharStyle` is only
+needed to restart from item 1.
+
+---
+
+## § 20 — Escape Key Blocked by ScreenUpdating = False (2026-04-09)
+
+### Finding
+
+After § 19's Err 18 fix was described, the user confirmed that Escape still did not
+work during a live run. Root cause: `Application.ScreenUpdating = False` suppresses
+keyboard event processing in Word — Escape keypresses are swallowed before they
+reach VBA's interrupt handler. This is a Word-specific behaviour that differs from
+Excel VBA.
+
+**How to stop a task in the current (pre-fix) run:**
+1. Press **Alt+F11** to switch to the VBA IDE
+2. Click the **■ Stop button** in the toolbar, or use **Run → Reset**
+
+This terminates the macro immediately. The document is safe. The sidecar file
+holds the last completed batch boundary. You do **not** need to wait for 100%
+completion.
+
+### Fixes applied to aeLongProcessClass.Run
+
+**1. Removed `Application.ScreenUpdating = False/True` from the batch loop.**
+The calls were inside each batch iteration. Removing them keeps keyboard events
+flowing to VBA. A comment was added explaining why `ScreenUpdating` is
+intentionally left alone.
+
+**2. Added `Application.EnableCancelKey = wdCancelInterrupt` before the outer loop.**
+This explicitly arms the Escape key interrupt before processing begins, ensuring it
+cannot be disabled by prior code elsewhere in the session.
+
+**3. Removed stale `Application.ScreenUpdating = True` from PROC_ERR.**
+With `ScreenUpdating` no longer being set to False, the restore call in the error
+handler was redundant and removed.
+
+### Trade-off
+
+Without `ScreenUpdating = False`, Word may repaint the screen during batch
+processing. For the `UpdateCharacterStyle` task (character style re-application),
+repaints are infrequent and the performance impact is negligible. `Options.Pagination
+= False` remains in place to suppress background repagination during each batch,
+which is the more significant performance concern for a large document.
+
+---
+
+## § 21 — Bug: Options.Pagination = False Fails When Dialog Is Open (2026-04-09)
+
+### Symptom
+
+During a live run of `TestUpdateCharStyle`, the user pressed Ctrl+H to navigate via
+the Find & Replace dialog. The following error appeared:
+
+```
+Erl=0 Error=4605 (The Pagination method or property is not available because
+the Find or Replace dialog box is open.) in procedure StartOrResume of Module
+basLongProcess
+```
+
+The task stopped. The sidecar file retained the last completed batch boundary.
+
+### Root Cause
+
+`DoEvents` makes Word responsive during the batch loop — this is intentional.
+However it also allows the user to open dialogs (Find & Replace, Go To, etc.).
+When the next batch started, `Options.Pagination = False` was called while the
+Find & Replace dialog was still open. Word does not allow that property to be set
+while a dialog is active and raises error 4605.
+
+The error was not caught by `aeLongProcessClass.Run`'s PROC_ERR because it
+propagated before the error handler could distinguish it from Err 18. It surfaced
+in `basLongProcess.StartOrResume`'s generic MsgBox handler.
+
+### Fix
+
+Removed `Options.Pagination = False/True` from `aeLongProcessClass.Run` entirely.
+
+**Reasoning:** with `ScreenUpdating = False` already removed (§ 20), there is no
+remaining justification for the runner modifying Word application state. The runner
+is now state-neutral — it calls `task.ExecuteItem(i)` and `DoEvents` only. Any
+Word application state changes (Pagination, ScreenUpdating, etc.) are the
+responsibility of the individual task class's `ExecuteItem` implementation, which
+can apply them within a single item's scope where dialog interference is not possible.
+
+A comment was added to the runner explaining why both `ScreenUpdating` and
+`Options.Pagination` are intentionally absent.
+
+### General rule established
+
+**The runner (`aeLongProcessClass`) must not modify Word application state.**
+`DoEvents` makes the application interactive, so any global state change in the
+runner is vulnerable to user actions between items. Task classes own their own
+state changes and must restore them before returning from `ExecuteItem`.
+
+---
+
+## § 22 — Escape Key Unreliable in Word VBA; Removed (2026-04-09)
+
+### Finding
+
+After `Application.EnableCancelKey = wdCancelInterrupt` was added (§ 20) and
+`ScreenUpdating = False` was removed, the user confirmed that pressing Escape in
+both the Immediate Window and the Word document pane still did not stop the task
+and produced no message. `EnableCancelKey` is documented for Word VBA but is not
+reliably honoured — Word consumes the Escape key at the UI layer before it reaches
+the VBA interrupt mechanism. This behaviour differs from Excel VBA where Escape
+is reliable.
+
+### Resolution
+
+All Escape-related code removed from `aeLongProcessClass`:
+- `Application.EnableCancelKey = wdCancelInterrupt` removed from `Run`
+- `If Err.Number = 18` branch removed from `PROC_ERR`
+- Comment updated to remove the Escape reference
+
+### How to stop a running task (current approach)
+
+**Alt+F11 → ■ Stop button in the VBA IDE toolbar.**
+
+Progress saved at the last completed batch boundary in the sidecar file.
+Resume with `TestUpdateCharStyle`.
+
+### Future: Ribbon Stop Button (requires explicit approval before implementation)
+
+The correct long-term solution is a ribbon button that calls `basLongProcess.StopTask`.
+Ribbon callbacks are dispatched through COM during `DoEvents` — the flag is checked
+at the next item boundary and exact progress is saved.
+
+**This is a potential future plan item. It requires explicit approval before any
+implementation begins.** Changes needed:
+- Add a "Stop Task" button to the ribbon XML in the `.docm`
+- Add a callback stub in `basBibleRibbonSetup.bas` delegating to `StopTask`
+- No changes to `aeLongProcessClass` or `basLongProcess` are required
+
+---
+
 ## § 11 — Line Ending Fix for VBA Class Import (2026-04-09)
 
 ### Problem

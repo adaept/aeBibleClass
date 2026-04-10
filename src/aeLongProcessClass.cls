@@ -78,8 +78,10 @@ Public Sub Run(task As IaeLongProcessClass)
         endIndex = startIndex + BatchSize - 1
         If endIndex > totalItems Then endIndex = totalItems
 
-        Application.ScreenUpdating = False
-        Options.Pagination = False
+        ' Note: ScreenUpdating and Options.Pagination are intentionally NOT modified
+        ' here. Setting Options.Pagination = False raises error 4605 if a Find/Replace
+        ' or other dialog is open when DoEvents yields to the user. Individual task
+        ' classes may manage their own Word application state if required.
 
         For i = startIndex To endIndex
             If Not m_continueProcessing Then
@@ -87,8 +89,6 @@ Public Sub Run(task As IaeLongProcessClass)
                 m_progressPct = (m_lastProcessedItem / totalItems) * 100
                 SaveProgress task.TaskName
                 If logStarted Then log.Log_Write "Stopped at item " & i & " (" & Format(m_progressPct, "0.00") & "%)"
-                Options.Pagination = True
-                Application.ScreenUpdating = True
                 GoTo PROC_EXIT
             End If
 
@@ -97,16 +97,11 @@ Public Sub Run(task As IaeLongProcessClass)
                 m_progressPct = (m_lastProcessedItem / totalItems) * 100
                 SaveProgress task.TaskName
                 If logStarted Then log.Log_Write "Task requested stop at item " & i
-                Options.Pagination = True
-                Application.ScreenUpdating = True
                 GoTo PROC_EXIT
             End If
 
             DoEvents
         Next i
-
-        Options.Pagination = True
-        Application.ScreenUpdating = True
 
         m_progressPct = (endIndex / totalItems) * 100
         m_lastProcessedItem = endIndex + 1
@@ -128,8 +123,6 @@ PROC_EXIT:
     If logStarted Then log.Log_Close
     Exit Sub
 PROC_ERR:
-    Options.Pagination = True
-    Application.ScreenUpdating = True
     If logStarted Then log.Log_Close
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run of Class aeLongProcessClass"
     Resume PROC_EXIT

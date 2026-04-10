@@ -30,10 +30,12 @@ Implements IaeLongProcessClass
 '   t.StyleName = "My Character Style"
 ' =============================================================================
 
-Public StyleName As String   ' character style to refresh (default: "Chapter Verse marker")
+Public StyleName       As String  ' character style to refresh (default: "Chapter Verse marker")
+Public DoEventsEvery   As Long    ' call DoEvents every N characters within a paragraph (default: 50; 0 = disable)
 
 Private Sub Class_Initialize()
     StyleName = "Chapter Verse marker"
+    DoEventsEvery = 50
 End Sub
 
 ' -----------------------------------------------------------------------------

@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #590 -
+' #589 -
+' #588 -
+' #587 -
+' #586 -
 ' #585 -
-' #584 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -73,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #584 - Run TestUpdateCharStyle to check long running process is working
     ' FIXED - #583 - Long process plan implementation [feat]
     ' FIXED - #582 - Verify aeLoggerClass works with Run_All_SBL_Tests to create rpt/SBL_Tests.UTF8.txt [test][feat]
     ' FIXED - #581 - Create plan for improvement of long running task process code [impr]

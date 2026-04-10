@@ -1,0 +1,2 @@
+LastProcessedItem=8451
+ProgressPercentage=24.9579112148153

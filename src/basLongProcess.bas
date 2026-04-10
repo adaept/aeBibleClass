@@ -7,10 +7,9 @@ Attribute VB_Name = "basLongProcess"
 ' IaeLongProcessClass (e.g. aeUpdateCharStyleClass).
 '
 ' Entry points - call from Immediate Window:
-'   Dim t As New aeUpdateCharStyleClass
-'   StartOrResume t
-'   StopTask
-'   ResetTask t
+'   TestUpdateCharStyle       start/resume UpdateCharacterStyle task
+'   StopTask                  stop the active task
+'   TestResetUpdateCharStyle  reset progress for UpdateCharacterStyle task
 '
 ' SetWordHighPriority is an opt-in utility - call manually before a long task.
 '==============================================================================
@@ -19,6 +18,19 @@ Option Compare Text
 Option Private Module
 
 Private s_runner As aeLongProcessClass
+
+' -----------------------------------------------------------------------------
+' Test stubs - single-word Immediate Window entry points
+' -----------------------------------------------------------------------------
+Public Sub TestUpdateCharStyle()
+    Dim t As New aeUpdateCharStyleClass
+    StartOrResume t
+End Sub
+
+Public Sub TestResetUpdateCharStyle()
+    Dim t As New aeUpdateCharStyleClass
+    ResetTask t
+End Sub
 
 ' -----------------------------------------------------------------------------
 ' StartOrResume - create runner if needed and run the task
