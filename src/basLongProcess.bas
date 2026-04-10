@@ -1,11 +1,18 @@
-Attribute VB_Name = "XLongRunningProcessCode"
+Attribute VB_Name = "basLongProcess"
 '==============================================================================
-' XLongRunningProcessCode — Long-Running Process Utilities (DEFERRED)
+' basLongProcess  -  Long-Running Process Utilities
 ' ----------------------------------------------------------------------------
-' X-prefix convention: excluded from the normal test run. Contains routines
-' that take significant time to complete (WMI priority setting, per-character
-' style updates, progress tracking via CustomDocumentProperties).
-' Run manually from the Immediate Window only.
+' Public entry points for long-running tasks that must remain interruptible
+' and keep Word responsive via DoEvents + batch processing.
+'
+' This module is a thin public skeleton only. All task logic, batch loop
+' behaviour, and progress persistence live in the class layer
+' (IaeLongProcessClass and its concrete implementations).
+'
+' Run entry points from the Immediate Window only, e.g.:
+'   StartOrResume
+'   StopTask
+'   ResetTask
 '==============================================================================
 Option Explicit
 Option Compare Text
@@ -16,7 +23,7 @@ Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 Dim lastProcessedParagraph As Long
 Dim continueProcessing As Boolean
 Dim progressPercentage As Double
-       
+
 Sub PauseWithDoEvents(milliseconds As Long)
 ' Combining `Sleep` with `DoEvents` can help keep the application responsive
     Dim startTime As Single
@@ -26,19 +33,19 @@ Sub PauseWithDoEvents(milliseconds As Long)
         Sleep 10 ' Short sleep to keep the application responsive
     Loop
 End Sub
-    
-Sub StartOrResumeUpdate()
+
+Sub StartOrResume()
     continueProcessing = True
     LoadProgress
     LongProcessSkeletonWithConsoleProgress
 End Sub
 
-Sub StopUpdate()
+Sub StopTask()
     continueProcessing = False
     SaveProgress
 End Sub
 
-Sub ResetProgress()
+Sub ResetTask()
     lastProcessedParagraph = 0
     progressPercentage = 0
     SaveProgress
@@ -63,7 +70,7 @@ PROC_EXIT:
     Exit Sub
 
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveProgress of Module XLongRunningProcessCode"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveProgress of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
 
@@ -79,7 +86,7 @@ Private Function CustomPropertyExists(props As Object, ByVal propName As String)
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CustomPropertyExists of Module XLongRunningProcessCode"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CustomPropertyExists of Module basLongProcess"
     Resume PROC_EXIT
 End Function
 
@@ -94,7 +101,7 @@ Sub LoadProgress()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadProgress of Module XLongRunningProcessCode"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadProgress of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
 
@@ -129,7 +136,7 @@ PROC_EXIT:
     Set objProcess = Nothing
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SetWordHighPriority of Module XLongRunningProcessCode"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SetWordHighPriority of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
 
@@ -156,7 +163,7 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
         Debug.Print "Page number required"
         GoTo PROC_EXIT
     End If
-    
+
     ' Set the document and style name
     Set doc = ActiveDocument
     styleName = "Chapter Verse marker" ' Replace with your character style name
@@ -199,7 +206,7 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateCharacterStyle of Module XLongRunningProcessCode"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateCharacterStyle of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
 
@@ -207,28 +214,27 @@ Sub LongProcessSkeletonWithConsoleProgress()
     On Error GoTo PROC_ERR
     Dim doc As Document
     Set doc = ActiveDocument
-        
+
     Dim totalParagraphs As Long
     totalParagraphs = doc.Paragraphs.Count
-        
+
     Dim batchSize As Long
     batchSize = 50 ' Number of paragraphs to update in each phase
-        
+
     Dim startIndex As Long
     Dim endIndex As Long
     Dim i As Long
-        
-            
+
     ' Update the rest of the document in phases
     If lastProcessedParagraph = 0 Then lastProcessedParagraph = 1 ' Start from the beginning if not previously set
-            
+
     For startIndex = lastProcessedParagraph To totalParagraphs Step batchSize
         endIndex = startIndex + batchSize - 1
         If endIndex > totalParagraphs Then endIndex = totalParagraphs
-                
+
         Application.ScreenUpdating = False
         Options.Pagination = False
-                
+
         For i = startIndex To endIndex
             If Not continueProcessing Then
                 lastProcessedParagraph = i
@@ -236,37 +242,32 @@ Sub LongProcessSkeletonWithConsoleProgress()
                 SaveProgress
                 GoTo PROC_EXIT
             End If
-            
-            
+
             ' CODE GOES HERE
-            
-                    
+
             DoEvents ' Allow Word to process other events
         Next i
-                
+
         Options.Pagination = True
         Application.ScreenUpdating = True
-                
+
         ' Calculate and output progress to console
         progressPercentage = (endIndex / totalParagraphs) * 100
         Debug.Print "Progress: " & Format(progressPercentage, "0.00") & "%"
-                
+
         ' Save progress
         lastProcessedParagraph = endIndex + 1
         SaveProgress
-                
+
         ' Pause between phases to allow Word to catch up
-        PauseWithDoEvents (60000) ' 1000 milliseconds = 1 second
+        PauseWithDoEvents (60000) ' 60000 milliseconds = 60 seconds
     Next startIndex
-            
+
     Debug.Print "Style update complete!"
 
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LongProcessSkeletonWithConsoleProgress of Module XLongRunningProcessCode"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LongProcessSkeletonWithConsoleProgress of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
-' This updated script saves the progress to custom document properties, ensuring that progress is remembered even after a computer restart
-' When you start or resume the update, it loads the progress from these properties.
-
