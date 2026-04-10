@@ -1,2 +1,2 @@
-LastProcessedItem=24251
-ProgressPercentage=71.6247747880793
+LastProcessedItem=0
+ProgressPercentage=100
