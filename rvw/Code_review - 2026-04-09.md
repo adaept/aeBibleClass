@@ -1046,6 +1046,53 @@ implementation begins.** Changes needed:
 
 ---
 
+## § 23 — Bug: GoToH1 Fails After VBA IDE Stop Resets Module State (2026-04-09)
+
+### Symptom
+
+After using the VBA IDE Stop button to halt the long-running task, the GoTo Book
+ribbon button showed "no heading found matching 'Rev'". This search had worked
+correctly before the task was started.
+
+### Root Cause
+
+The VBA IDE Stop button resets **all** VBA state: module-level variables, Static
+variables, and all object instances. This destroyed `s_instance` in
+`basBibleRibbonSetup`. The next call to `Instance()` created a fresh `aeRibbonClass`
+with an empty `headingData` array.
+
+`CaptureHeading1s` is only called from `EnableButtonsRoutine`, which is only called
+from `OnRibbonLoad` at document open. After a VBA reset, `OnRibbonLoad` does not
+re-fire — the ribbon UI continues to display but the VBA singleton behind it is
+a new, uninitialised instance. Every `headingData(i, 0)` entry is `Empty`, so
+`GoToH1`'s search loop finds no matches.
+
+### Fix
+
+Added a guard at the top of `GoToH1` in `aeRibbonClass.cls`:
+
+```vba
+' Re-capture headings if array is empty (e.g. after a VBA IDE reset clears
+' module state and the singleton is recreated without OnRibbonLoad firing)
+If IsEmpty(headingData(1, 0)) Then CaptureHeading1s
+```
+
+This lazily repopulates `headingData` on the first `GoToH1` call after any reset.
+The `Static hasRun` flag in `CaptureHeading1s` was reset by the IDE stop, so the
+re-capture runs correctly.
+
+### Broader implication
+
+Any feature that depends on state initialised at `OnRibbonLoad` is vulnerable to
+VBA IDE resets. The lazy re-initialisation pattern (check before use, populate if
+empty) is the appropriate defence. Other methods that read `headingData`
+(`NextButton`, `PrevButton`) do not call `CaptureHeading1s` directly — they rely
+on `headingData` being populated. These are lower risk since they are less likely
+to be called immediately after a reset, but the same guard could be applied if
+needed in future.
+
+---
+
 ## § 11 — Line Ending Fix for VBA Class Import (2026-04-09)
 
 ### Problem

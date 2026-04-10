@@ -195,6 +195,10 @@ Private Sub GoToH1()
     Dim foundPos As Long
     Dim matchFound As Boolean
 
+    ' Re-capture headings if array is empty (e.g. after a VBA IDE reset clears
+    ' module state and the singleton is recreated without OnRibbonLoad firing)
+    If IsEmpty(headingData(1, 0)) Then CaptureHeading1s
+
     pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
     If pattern = "" Then GoTo PROC_EXIT
 
