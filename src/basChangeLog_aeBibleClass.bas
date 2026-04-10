@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #585 -
 ' #584 -
 ' #583 -
-' #582 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #582 - Verify aeLoggerClass works with Run_All_SBL_Tests to create rpt/SBL_Tests.UTF8.txt [test][feat]
     ' FIXED - #581 - Create plan for improvement of long running task process code [impr]
     ' FIXED - #580 - Error - GoTo Book no longer activates after the last fix [regr]
     ' FIXED - #579 - Add GoToH1Deferred as the solution from test of #578

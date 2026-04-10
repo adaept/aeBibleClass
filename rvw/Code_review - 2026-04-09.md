@@ -518,14 +518,137 @@ other classes in this project (`aeRibbonClass`, `aeBibleClass`, `aeLoggerClass`,
 
 ### Next steps (plan order)
 
-1. Commit the unstaged content changes to `basLongProcess.bas` and `aeLoggerClass.cls`
-2. Step 1 of plan: create `src/IaeLongProcessClass.cls` (interface definition)
+1. Commit the unstaged content changes to `basLongProcess.bas` and `aeLoggerClass.cls` — DONE
+2. Step 1 of plan: create `src/IaeLongProcessClass.cls` (interface definition) — DONE
 3. Step 2 of plan: redesign `aeLoggerClass` for sequential writes; wire
    `Run_All_SBL_Tests` to write output to `rpt/SBL_Tests.UTF8.txt`
 4. Step 3 of plan: refactor `basLongProcess.bas` skeleton entry points to accept
    `IaeLongProcessClass`; move batch loop logic to class layer
 5. Step 4 of plan: replace `CustomDocumentProperties` progress storage with
    `rpt/` sidecar file
+
+---
+
+## § 12 — Step 1 Complete: IaeLongProcessClass.cls Created (2026-04-09)
+
+`src/IaeLongProcessClass.cls` created and imported successfully as a class module.
+
+**Contract defined:**
+- `ExecuteItem(itemIndex As Long) As Boolean` — process one item; return True to
+  continue, False to stop
+- `ItemCount() As Long` — total items (used for progress percentage)
+- `TaskName() As String` — identifier for log output and sidecar filename
+
+**Reminder:** the `Write` tool produces LF line endings. All new `.cls` and `.bas`
+files must be converted to CRLF with the Python one-liner from § 11 before importing
+into the VBA IDE.
+
+---
+
+## § 13 — Step 2 Implementation: aeLoggerClass Sequential Writes + SBL Test Wiring (2026-04-09)
+
+### Changes made
+
+**`src/aeLoggerClass.cls` — sequential write redesign:**
+- Added `Private m_stm As Object` to hold the ADODB.Stream open between `Log_Init`
+  and `Log_Close`
+- `Log_Init`: opens the stream once, loads existing file if present and seeks to end
+  (append mode), otherwise writes BOM; marks `logIsOpen = True` before writing header
+- `Log_WriteRaw`: writes to the held-open stream and calls `SaveToFile` after each
+  write (crash-safe: file is always current)
+- `Log_Close`: writes session-end line, closes stream, sets `m_stm = Nothing`
+- Added `Class_Terminate`: calls `Log_Close` if still open (guards against object
+  going out of scope without explicit close)
+- `TestLogging` moved to bottom of file as a self-test utility
+
+**`src/aeAssertClass.cls` — logger mirroring:**
+- Added `Private m_log As aeLoggerClass`
+- Added `Public Sub SetLogger(log As aeLoggerClass)` — caller passes the logger
+  instance before `Initialize`; optional, backward compatible
+- `Initialize`: mirrors the test harness header to the log
+- `Terminate`: mirrors the summary block (Tests Run, Failures, RESULT) to the log;
+  sets `m_log = Nothing` after writing
+- `AssertTrue`: refactored to build `assertLine` string first, then
+  `Debug.Print assertLine` + `m_log.Log_Write assertLine`
+- `AssertEqual`: same refactor as `AssertTrue`
+
+**`src/basTEST_aeBibleCitationClass.bas` — wiring:**
+- `Run_All_SBL_Tests`: instantiates `Dim log As New aeLoggerClass`, calls
+  `log.Log_Init ActiveDocument.Path & "\rpt\SBL_Tests.UTF8.txt"`
+- Calls `aeAssert.SetLogger log` before `aeAssert.Initialize`
+- Calls `log.Log_Close` / `Set log = Nothing` after `Run_Extra_Tests`
+- PROC_ERR: calls `log.Log_Close` before MsgBox to ensure log is flushed on error
+
+### What the log captures
+
+All `PASS`/`FAIL` lines from every assertion, the test harness header, and the
+final summary (Tests Run, Failures, RESULT). Stage header lines (e.g.
+`------ Test_Stage5 ------`) remain `Debug.Print` only — the individual test
+methods are unchanged.
+
+### Next step
+
+Run `Run_All_SBL_Tests` and verify `rpt/SBL_Tests.UTF8.txt` is created containing
+all assertion results and the PASS/FAIL summary.
+
+---
+
+## § 14 — Logger Bug: ADODB.Stream Text-Mode Position Seeking Unreliable (2026-04-09)
+
+### Symptom
+
+First test of `aeLoggerClass` produced a corrupted log file:
+
+```
+﻿18:26:40 | LOG SESSION END
+-------------------------
+e 25)
+==========
+=
+```
+
+Only `LOG SESSION END` appeared intact. The session header (LOG SESSION START, User,
+Machine) was absent. Earlier content was truncated to partial line fragments.
+
+### Root Cause
+
+ADODB.Stream in text mode does not support reliable position-based append. The
+`SaveToFile` method saves from the current stream `Position` (in bytes), not from
+position 0. After each `WriteText` call, `Position` advances to the end of the newly
+written content. Each subsequent `SaveToFile` therefore writes only a small slice —
+the content written in that single call — overwriting the file rather than saving
+the full accumulated content.
+
+The session header lines were each overwritten by the next `SaveToFile` call.
+Only `LOG SESSION END` survived because it was the last write before `Log_Close`
+called `m_stm.Close` without another `SaveToFile`.
+
+The `LoadFromFile` + `Position = .Size` append strategy is also unreliable in
+UTF-8 text mode because `Position` is byte-based while the stream internally tracks
+a text offset; the BOM (3 bytes) and multi-byte characters create misalignment.
+
+### Fix
+
+Replaced the held-open stream approach with a **string buffer**:
+
+- `m_buffer As String` accumulates all content including the BOM
+- `Log_Init` initialises `m_buffer = ChrW(&HFEFF)` (BOM) then writes the header
+- `Log_WriteRaw` appends to `m_buffer`, then opens a fresh ADODB.Stream, writes
+  the full buffer, saves, and closes
+- `Log_Close` writes the session-end line and clears the buffer
+
+This avoids all stream-position issues. The file is always rewritten from the full
+buffer, so it is complete and correct after every write (crash-safe). The ADODB.Stream
+is opened and closed per write, which was the original pattern — the difference is
+that no `LoadFromFile` is needed and the write is always the complete content.
+
+### Note on "held-open stream" goal
+
+The original plan called for holding the stream open for performance. In practice,
+ADODB.Stream text mode does not support reliable incremental append via position
+seeking. The buffer approach achieves the same performance benefit (no `LoadFromFile`
+on each write) without the positioning hazard. The stream object is lightweight to
+open/close; the cost is negligible compared to `LoadFromFile` on a large file.
 
 ---
 

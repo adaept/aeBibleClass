@@ -1,0 +1,197 @@
+﻿﻿18:41:12 | ===============================================================
+18:41:12 | LOG SESSION START: 2026-04-09 18:41:12
+18:41:12 | User: peter
+18:41:12 | Machine: ADAEPT
+18:41:12 | ===============================================================
+18:41:12 | ==========================================
+18:41:12 |  SBL PARSER TEST HARNESS
+18:41:12 | ==========================================
+18:41:12 | PASS: Alias coverage validation
+18:41:12 | PASS: Alias parsed
+18:41:12 | PASS: Chapter parsed
+18:41:12 | PASS: Verse parsed
+18:41:12 | PASS: Colon detected
+18:41:12 | PASS: Alias parsed
+18:41:12 | PASS: Number parsed
+18:41:12 | PASS: No colon detected
+18:41:12 | PASS: Jude BookID
+18:41:12 | PASS: Jude canonical
+18:41:12 | PASS: Genesis BookID
+18:41:12 | PASS: Genesis canonical
+18:41:12 | PASS: Jude 5 chapter interpreted
+18:41:12 | PASS: Jude 5 verse interpreted
+18:41:12 | PASS: Romans chapter interpreted
+18:41:12 | PASS: Romans verse interpreted
+18:41:12 | PASS: Genesis 1 chapter interpreted
+18:41:12 | PASS: Genesis 1 verse interpreted
+18:41:12 | PASS: John chapter interpreted
+18:41:12 | PASS: John verse range interpreted
+18:41:12 | PASS: Psalm chapter interpreted
+18:41:12 | PASS: Psalm verse list interpreted
+18:41:12 | PASS: Matthew chapter interpreted
+18:41:12 | PASS: Matthew mixed verse spec interpreted
+18:41:12 | PASS: Jude 5 valid
+18:41:12 | PASS: Jude 1:0 rejected
+18:41:12 | PASS: Romans 999:1 rejected
+18:41:12 | PASS: Jude single-chapter rewrite
+18:41:12 | PASS: Romans unchanged
+18:41:12 | PASS: Jude single-chapter expansion
+18:41:12 | PASS: Romans chapter reference
+18:41:12 | PASS: 3 John expansion
+18:41:12 | PASS: Genesis unchanged
+18:41:12 | PASS: John book expansion
+18:41:12 | PASS: 1 Jn expansion
+18:41:12 | PASS: Jude book expansion
+18:41:12 | PASS: Romans book expansion
+18:41:12 | PASS: comma list detected
+18:41:12 | PASS: comma list segment count
+18:41:12 | PASS: semicolon list detected
+18:41:12 | PASS: semicolon list segment count
+18:41:12 | PASS: single reference not list
+18:41:12 | PASS: range preserved inside list
+18:41:12 | PASS: range list segment count
+18:41:12 | PASS: range first segment
+18:41:12 | PASS: range second segment
+18:41:12 | PASS: whitespace tolerated
+18:41:12 | PASS: whitespace segment count
+18:41:12 | PASS: IsRangeSegment verse range
+18:41:12 | PASS: verse range detected
+18:41:12 | PASS: range left token
+18:41:12 | PASS: range right token
+18:41:12 | PASS: chapter range detected
+18:41:12 | PASS: chapter range left
+18:41:12 | PASS: chapter range right
+18:41:12 | PASS: cross chapter range detected
+18:41:12 | PASS: cross chapter left
+18:41:12 | PASS: cross chapter right
+18:41:12 | PASS: en dash range detected
+18:41:12 | PASS: en dash left
+18:41:12 | PASS: en dash right
+18:41:12 | PASS: IsRangeSegment single reference
+18:41:12 | PASS: single reference not range
+18:41:12 | PASS: start chapter
+18:41:12 | PASS: start verse
+18:41:12 | PASS: end chapter
+18:41:12 | PASS: end verse
+18:41:12 | PASS: chapter start
+18:41:12 | PASS: chapter end
+18:41:12 | PASS: cross start chapter
+18:41:12 | PASS: cross start verse
+18:41:12 | PASS: cross end chapter
+18:41:12 | PASS: cross end verse
+18:41:12 | PASS: two references parsed
+18:41:12 | PASS: first reference
+18:41:12 | PASS: second reference
+18:41:12 | PASS: range + reference
+18:41:13 | PASS: range canonical
+18:41:13 | PASS: second reference
+18:41:13 | PASS: semicolon list
+18:41:13 | PASS: single reference
+18:41:13 | PASS: range parsed
+18:41:13 | PASS: list parsed
+18:41:13 | PASS: mixed parsed
+18:41:13 | PASS: Stage13 Test1 count
+18:41:13 | PASS: Stage13 Test1 item 1
+18:41:13 | PASS: Stage13 Test1 item 2
+18:41:13 | PASS: Stage13 Test1 item 3
+18:41:13 | PASS: Stage13 Test2 count
+18:41:13 | PASS: Stage13 Test2 item 1
+18:41:13 | PASS: Stage13 Test2 item 2
+18:41:13 | PASS: Stage13 Test3 count
+18:41:13 | PASS: Stage13 Test3 item 1
+18:41:13 | PASS: Stage13 Test3 item 2
+18:41:13 | PASS: Stage13a: 3 Psalm refs
+18:41:13 | PASS: Stage13a: Ps 19:1
+18:41:13 | PASS: Stage13a: Ps 23:1 inherited
+18:41:13 | PASS: Stage13a: Ps 28:7 inherited
+18:41:13 | PASS: Stage13a: cross-book count
+18:41:13 | PASS: Stage13a: Ps 103:8
+18:41:13 | PASS: Stage13a: Isa 40:28
+18:41:13 | PASS: Stage13a: Isa 63:16 inherited
+18:41:13 | PASS: Stage13a: Psalm range count
+18:41:13 | PASS: Stage13a: Ps 19:1-2
+18:41:13 | PASS: Stage13a: Ps 103:8-11 inherited
+18:41:13 | PASS: Stage13a neg: bad alias (Jerimiah) rejected
+18:41:13 | PASS: Stage13a neg: Ps 103:200 rejected
+18:41:13 | PASS: Stage13a neg: Jer 99:1 rejected
+18:41:13 | PASS: Stage13a neg: Jude 99 rejected (max verse 25)
+18:41:13 | PASS: Test 1: two adjacent -> one range
+18:41:13 | PASS: Test 1: range value
+18:41:13 | PASS: Test 2: three adjacent -> one range
+18:41:13 | PASS: Test 2: range value
+18:41:13 | PASS: Test 3: non-adjacent -> two refs
+18:41:13 | PASS: Test 3: first ref
+18:41:13 | PASS: Test 3: second ref
+18:41:13 | PASS: Test 4: run then gap -> range + single
+18:41:13 | PASS: Test 4: range
+18:41:13 | PASS: Test 4: single after gap
+18:41:13 | PASS: Test 5: cross-book -> two refs
+18:41:13 | PASS: Test 5: John ref
+18:41:13 | PASS: Test 5: Romans ref
+18:41:13 | PASS: Test 6: cross-chapter -> two refs
+18:41:13 | PASS: Test 6: end of chapter 3
+18:41:13 | PASS: Test 6: start of chapter 4
+18:41:13 | PASS: Test 7: single ref passthrough count
+18:41:13 | PASS: Test 7: single ref value
+18:41:13 | PASS: Test 8: multi-book mixed -> two ranges
+18:41:13 | PASS: Test 8: John range
+18:41:13 | PASS: Test 8: Romans range
+18:41:13 | PASS: Test 1: valid single ref count
+18:41:13 | PASS: Test 1: valid single ref value
+18:41:13 | PASS: Test 2: invalid chapter removed
+18:41:13 | PASS: Test 3: invalid verse removed
+18:41:13 | PASS: Test 4: boundary verse kept count
+18:41:13 | PASS: Test 4: boundary verse kept value
+18:41:13 | PASS: Test 5: valid range count
+18:41:13 | PASS: Test 5: valid range value
+18:41:13 | PASS: Test 6: clamped end verse count
+18:41:13 | PASS: Test 6: clamped end verse value
+18:41:13 | PASS: Test 7: clamped end chapter count
+18:41:13 | PASS: Test 7: clamped end chapter value
+18:41:13 | PASS: Test 8: invalid start chapter removed
+18:41:13 | PASS: Test 9: collapsed range count
+18:41:13 | PASS: Test 9: collapsed range value
+18:41:13 | PASS: Test 10: mixed count
+18:41:13 | PASS: Test 10: first valid ref
+18:41:13 | PASS: Test 10: second valid ref
+18:41:13 | PASS: Test 1: two adjacent -> one range
+18:41:13 | PASS: Test 1: range value
+18:41:13 | PASS: Test 2: three adjacent -> one range
+18:41:13 | PASS: Test 2: range value
+18:41:13 | PASS: Test 3: non-adjacent -> two refs
+18:41:13 | PASS: Test 3: first ref
+18:41:13 | PASS: Test 3: second ref
+18:41:13 | PASS: Test 4: run then gap -> range + single
+18:41:13 | PASS: Test 4: range
+18:41:13 | PASS: Test 4: single after gap
+18:41:13 | PASS: Test 5: cross-chapter -> two refs
+18:41:13 | PASS: Test 5: end of chapter 3
+18:41:13 | PASS: Test 5: start of chapter 4
+18:41:13 | PASS: Test 6: cross-book -> two refs
+18:41:13 | PASS: Test 6: John ref
+18:41:13 | PASS: Test 6: Romans ref
+18:41:13 | PASS: Test 7: single ref count
+18:41:13 | PASS: Test 7: single ref value
+18:41:13 | PASS: Test 8: empty collection
+18:41:13 | PASS: Test 9: multi-book mixed -> two ranges
+18:41:13 | PASS: Test 9: John range
+18:41:13 | PASS: Test 9: Romans range
+18:41:13 | PASS: Test 10: four adjacent -> one range
+18:41:13 | PASS: Test 10: range value
+18:41:13 | PASS: Test 1: single ref
+18:41:13 | PASS: Test 2: same-chapter range
+18:41:13 | PASS: Test 3: same-chapter comma
+18:41:13 | PASS: Test 4: same-book chapter break
+18:41:13 | PASS: Test 5: book break
+18:41:13 | PASS: Test 6: full pipeline example
+18:41:13 | PASS: Test 7: empty collection
+18:41:13 | PASS: Test 8: two same-chapter ranges
+18:41:13 | PASS: Test 9: range then single same chapter
+18:41:13 | PASS: Test 10: three books
+18:41:13 | ------------------------------------------
+18:41:13 |  TEST SUMMARY
+18:41:13 | ------------------------------------------
+18:41:13 | Tests Run: 182
+18:41:13 | Failures:  0
+18:41:13 | RESULT: PASS
+18:41:13 | LOG SESSION END

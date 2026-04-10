@@ -33,12 +33,18 @@ End Sub
 Public Sub Run_All_SBL_Tests()
     On Error GoTo PROC_ERR
 
+    Dim log As New aeLoggerClass
+    log.Log_Init ActiveDocument.Path & "\rpt\SBL_Tests.UTF8.txt"
+
     If Not VerifyPackedVerseMap() Then
         Debug.Print "ABORT: Packed verse map invalid"
+        log.Log_Write "ABORT: Packed verse map invalid"
+        log.Log_Close
         GoTo PROC_EXIT
     End If
 
     Set aeAssert = New aeAssertClass
+    aeAssert.SetLogger log
     aeAssert.Initialize
 
     aeBibleCitationClass.ResetBookAliasMap
@@ -78,9 +84,13 @@ Public Sub Run_All_SBL_Tests()
 
     Run_Extra_Tests
 
+    log.Log_Close
+    Set log = Nothing
+
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
+    If Not log Is Nothing Then log.Log_Close
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Run_All_SBL_Tests of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub

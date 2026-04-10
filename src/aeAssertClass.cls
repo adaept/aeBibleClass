@@ -30,9 +30,17 @@ Option Compare Text
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/aeBibleClass
 ' ================================================================
-Private mTestsRun As Long
+Private mTestsRun    As Long
 Private mTestsFailed As Long
 Private mInitialized As Boolean
+Private m_log        As aeLoggerClass
+
+'===========================================================
+' SetLogger - optional; mirrors all assert output to log file
+'===========================================================
+Public Sub SetLogger(log As aeLoggerClass)
+    Set m_log = log
+End Sub
 
 '===========================================================
 ' Initialize
@@ -47,6 +55,11 @@ Public Sub Initialize()
     Debug.Print "=========================================="
     Debug.Print " SBL PARSER TEST HARNESS"
     Debug.Print "=========================================="
+    If Not m_log Is Nothing Then
+        m_log.Log_Write "=========================================="
+        m_log.Log_Write " SBL PARSER TEST HARNESS"
+        m_log.Log_Write "=========================================="
+    End If
 End Sub
 
 '===========================================================
@@ -68,6 +81,20 @@ Public Sub Terminate()
         Debug.Print "RESULT: FAIL"
     End If
 
+    If Not m_log Is Nothing Then
+        m_log.Log_Write "------------------------------------------"
+        m_log.Log_Write " TEST SUMMARY"
+        m_log.Log_Write "------------------------------------------"
+        m_log.Log_Write "Tests Run: " & mTestsRun
+        m_log.Log_Write "Failures:  " & mTestsFailed
+        If mTestsFailed = 0 Then
+            m_log.Log_Write "RESULT: PASS"
+        Else
+            m_log.Log_Write "RESULT: FAIL"
+        End If
+        Set m_log = Nothing
+    End If
+
     mInitialized = False
 End Sub
 
@@ -84,19 +111,21 @@ Public Sub AssertTrue( _
 
     mTestsRun = mTestsRun + 1
 
+    Dim assertLine As String
     If condition Then
-        Debug.Print "PASS: " & message
+        assertLine = "PASS: " & message
     Else
         mTestsFailed = mTestsFailed + 1
-
         If IsMissing(expected) Then
-            Debug.Print "FAIL: " & message
+            assertLine = "FAIL: " & message
         Else
-            Debug.Print "FAIL: " & message & _
-                        " | Expected=" & expected & _
-                        " Actual=" & actual
+            assertLine = "FAIL: " & message & _
+                         " | Expected=" & expected & _
+                         " Actual=" & actual
         End If
     End If
+    Debug.Print assertLine
+    If Not m_log Is Nothing Then m_log.Log_Write assertLine
 
 PROC_EXIT:
     Exit Sub
@@ -120,14 +149,17 @@ Public Sub AssertEqual( _
 
     mTestsRun = mTestsRun + 1
 
+    Dim assertLine As String
     If expected = actual Then
-        Debug.Print "PASS: "; label
+        assertLine = "PASS: " & label
     Else
-        Debug.Print "FAIL: "; label; _
-                    " (expected="; expected; _
-                    ", actual="; actual; ")"
+        assertLine = "FAIL: " & label & _
+                     " (expected=" & expected & _
+                     ", actual=" & actual & ")"
         mTestsFailed = mTestsFailed + 1
     End If
+    Debug.Print assertLine
+    If Not m_log Is Nothing Then m_log.Log_Write assertLine
 
 PROC_EXIT:
     Exit Sub
