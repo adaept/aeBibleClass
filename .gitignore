@@ -13,6 +13,8 @@ fonts/
 #################
 
 *.docx
+# allow this one
+!rpt/JUDE - Sample.docx
 *.docm
 ~TMP*
 
