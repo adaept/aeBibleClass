@@ -153,20 +153,20 @@ End Function
 ' ============================================================================================
 Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
     On Error GoTo PROC_ERR
-    Dim styleName As String
+    Dim StyleName As String
     Dim txt As String
     Dim chapNum As Long
     Dim verseNum As Long
     Dim verseText As String
 
-    styleName = Trim$(p.style.NameLocal)
+    StyleName = Trim$(p.style.NameLocal)
     txt = CleanTextForUTF8(Trim$(p.Range.Text))
 
     ' Normalize out any embedded CR/LF coming from Word
     txt = Replace$(txt, vbCr, "")
     txt = Replace$(txt, vbLf, "")
 
-    'LogEvent "STYLE=[" & styleName & "] RAW=[" & txt & "]"
+    'LogEvent "STYLE=[" & StyleName & "] RAW=[" & txt & "]"
     'LogEvent "CHARSTYLE=[" & p.Range.Characters(1).style & "]"
 
     '===========================================================
@@ -233,7 +233,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
     '===========================================================
     ' 2. PARAGRAPH-STYLE SEMANTICS (your existing logic)
     '===========================================================
-    Select Case styleName
+    Select Case StyleName
 
         Case "Book Title"
             ConvertParagraphToUSFM = MakeTitleLine(1, txt)
@@ -287,7 +287,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
 
 PROC_EXIT:
 LogAndExit:
-    LogEvent "Converted (" & styleName & "): " & Left$(ConvertParagraphToUSFM, 80)
+    LogEvent "Converted (" & StyleName & "): " & Left$(ConvertParagraphToUSFM, 80)
     Exit Function
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ConvertParagraphToUSFM of Module basUSFM_Export"
@@ -339,7 +339,7 @@ Private Function IsEffectivelyEmpty(txt As String) As Boolean
     IsEffectivelyEmpty = (Len(t) = 0)
 End Function
 
-Private Function ParagraphHasCharStyle(p As Word.Paragraph, styleName As String) As Boolean
+Private Function ParagraphHasCharStyle(p As Word.Paragraph, StyleName As String) As Boolean
     ' FIXME_LATER: Iterates .words not .Characters — would miss character styles applied to only
     ' part of a word. Currently safe because "Chapter Verse marker" (orange) and "Verse marker"
     ' (green) are always applied to complete words (chapter/verse numbers) in this document.
@@ -347,7 +347,7 @@ Private Function ParagraphHasCharStyle(p As Word.Paragraph, styleName As String)
     On Error GoTo PROC_ERR
     Dim r As Word.Range
     For Each r In p.Range.words
-        If r.style = styleName Then
+        If r.style = StyleName Then
             ParagraphHasCharStyle = True
             GoTo PROC_EXIT
         End If
@@ -360,12 +360,12 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function ExtractCharStyleText(p As Word.Paragraph, styleName As String) As String
+Private Function ExtractCharStyleText(p As Word.Paragraph, StyleName As String) As String
     On Error GoTo PROC_ERR
     Dim r As Word.Range
     Dim buf As String
     For Each r In p.Range.words
-        If r.style = styleName Then
+        If r.style = StyleName Then
             buf = buf & r.Text
         End If
     Next

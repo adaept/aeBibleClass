@@ -38,6 +38,21 @@ NORMALIZATIONS = [
     (r'(?i)\bAs\s+PageSetup\b',             'As PageSetup',       'As PageSetup type declaration'),
     (r'(?i)\bnote\b',                        'Note',               'Note loop variable (Footnote collection iteration)'),
     (r'(?i)\bitems\b',                       'Items',              'Items variable casing (Collection iteration)'),
+    # --- Long-process framework identifiers (added 2026-04-09) ---
+    (r'(?i)\bStyleName\b',                   'StyleName',          'StyleName property on aeUpdateCharStyleClass'),
+    (r'(?i)\bBatchSize\b',                   'BatchSize',          'BatchSize property on aeLongProcessClass'),
+    (r'(?i)\bPauseMs\b',                     'PauseMs',            'PauseMs property on aeLongProcessClass'),
+    (r'(?i)\bTaskName\b',                    'TaskName',           'TaskName property on IaeLongProcessClass'),
+    (r'(?i)\bItemCount\b',                   'ItemCount',          'ItemCount property on IaeLongProcessClass'),
+    (r'(?i)\bExecuteItem\b',                 'ExecuteItem',        'ExecuteItem method on IaeLongProcessClass'),
+    (r'(?i)\bStartOrResume\b',               'StartOrResume',      'StartOrResume entry point in basLongProcess'),
+    (r'(?i)\bStopTask\b',                    'StopTask',           'StopTask entry point in basLongProcess / aeLongProcessClass'),
+    (r'(?i)\bResetTask\b',                   'ResetTask',          'ResetTask entry point in basLongProcess / aeLongProcessClass'),
+    (r'(?i)\bLog_Init\b',                    'Log_Init',           'Log_Init method on aeLoggerClass'),
+    (r'(?i)\bLog_Write\b',                   'Log_Write',          'Log_Write method on aeLoggerClass'),
+    (r'(?i)\bLog_Close\b',                   'Log_Close',          'Log_Close method on aeLoggerClass'),
+    (r'(?i)\bLog_UnicodeDetail\b',           'Log_UnicodeDetail',  'Log_UnicodeDetail method on aeLoggerClass'),
+    (r'(?i)\bSetLogger\b',                   'SetLogger',          'SetLogger method on aeAssertClass'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

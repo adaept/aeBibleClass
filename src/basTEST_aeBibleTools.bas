@@ -915,7 +915,7 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
     Dim fontNameOther As String: fontNameOther = ch.Font.NameOther
     Dim fontSize As Single: fontSize = ch.Font.Size
     Dim fontColor As Long: fontColor = ch.Font.color
-    Dim styleName As String: styleName = ch.style.NameLocal
+    Dim StyleName As String: StyleName = ch.style.NameLocal
     Dim baseStyle As String
     On Error Resume Next
     baseStyle = ch.style.baseStyle
@@ -924,7 +924,7 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
 
     Debug.Print "=== Character at Cursor ==="
     Debug.Print "Value: '" & txt & "' | ASCII: " & ascCode
-    Debug.Print "Style: " & styleName
+    Debug.Print "Style: " & StyleName
     Debug.Print "Base Style: " & IIf(baseStyle = "", "(none)", baseStyle)
 
     Debug.Print "Font Names:"
@@ -1128,7 +1128,7 @@ Public Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
     On Error GoTo PROC_ERR
     Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
-    Dim txt As String, styleName As String
+    Dim txt As String, StyleName As String
     Dim fontName As String, fontSize As Single, fontColor As Long
     Dim charPosX As Single, charPosY As Single
     Dim digitBlock As String, blockStyle As String, blockColor As Long
@@ -1147,12 +1147,12 @@ Public Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
         txt = Trim(ch.Text)
-        styleName = ch.style.NameLocal
+        StyleName = ch.style.NameLocal
 
         If Len(txt) = 1 And IsNumeric(txt) Then
-            If styleName = "Chapter Verse marker" Or styleName = "Verse marker" Then
+            If StyleName = "Chapter Verse marker" Or StyleName = "Verse marker" Then
                 digitBlock = txt
-                blockStyle = styleName
+                blockStyle = StyleName
                 blockColor = ch.Font.color
                 blockStart = i
                 blockEnd = i + 1
@@ -1695,7 +1695,7 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
 
     Dim s As style
     Dim info As String
-    Dim styleName As Variant
+    Dim StyleName As Variant
     Dim alignValue As Integer
     Dim alignText As String
 
@@ -1703,8 +1703,8 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
     Dim r As Long, g As Long, b As Long
     Dim hexColor As String
 
-    For Each styleName In headingStyles
-        Set s = ActiveDocument.Styles(styleName)
+    For Each StyleName In headingStyles
+        Set s = ActiveDocument.Styles(StyleName)
         alignValue = s.ParagraphFormat.Alignment
 
         Select Case alignValue
@@ -1723,7 +1723,7 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
         b = (clr \ 65536) Mod 256
         hexColor = "#" & Right$("0" & Hex(r), 2) & Right$("0" & Hex(g), 2) & Right$("0" & Hex(b), 2)
 
-        info = "Style: " & styleName & vbCrLf
+        info = "Style: " & StyleName & vbCrLf
         info = info & "  Font Name: " & s.Font.Name & vbCrLf
         info = info & "  Font Size: " & s.Font.Size & vbCrLf
         info = info & "  Bold: " & s.Font.Bold & vbCrLf
@@ -1738,7 +1738,7 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
         info = info & String(40, "-") & vbCrLf
 
         Debug.Print info
-    Next styleName
+    Next StyleName
 
 PROC_EXIT:
     Exit Sub

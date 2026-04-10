@@ -2529,14 +2529,14 @@ Private Function CountHeaderStyleUsage() As Integer
 
     Dim doc As Document
     Dim rng As Word.Range
-    Dim styleName As String
+    Dim StyleName As String
     Dim count As Integer
 
     ' Set the document
     Set doc = ActiveDocument
     
     ' Define the style name to search for
-    styleName = "Header"
+    StyleName = "Header"
     
     ' Initialize the range to search
     Set rng = doc.content
@@ -2547,7 +2547,7 @@ Private Function CountHeaderStyleUsage() As Integer
     ' Search for the style "Header"
     With rng.Find
         .ClearFormatting
-        .style = styleName
+        .style = StyleName
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
@@ -3445,13 +3445,13 @@ Private Function CountStyleWithNumberAndSpace() As Integer
 
     Dim rng As Word.Range
     Dim count As Long
-    Dim styleName As String
+    Dim StyleName As String
 
-    styleName = "Verse marker"
+    StyleName = "Verse marker"
 
     Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
-    rng.Find.style = styleName
+    rng.Find.style = StyleName
 
     With rng.Find
         .Text = "[0-9] "
@@ -3487,14 +3487,14 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
 
     Dim rng As Word.Range
     Dim count As Long
-    Dim styleName As String
+    Dim StyleName As String
     Dim firstFound As Boolean
 
-    styleName = "Chapter Verse marker"
+    StyleName = "Chapter Verse marker"
 
     Set rng = ActiveDocument.content
     rng.Find.ClearFormatting
-    rng.Find.style = styleName
+    rng.Find.style = StyleName
     firstFound = False
 
     With rng.Find

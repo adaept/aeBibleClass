@@ -20,21 +20,21 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 '
     On Error GoTo PROC_ERR
     Dim searchText As String
-    Dim styleName As String
+    Dim StyleName As String
     Dim found As Boolean
     Dim firstFound As Boolean
     Dim count As Integer
     Dim nextChar As String
 
     searchText = "[0-9]{1,}" ' Pattern to find any number (one or more digits)
-    styleName = "Verse marker" ' Replace with your specific character style name
+    StyleName = "Verse marker" ' Replace with your specific character style name
     firstFound = False
     count = 0
 
     ' Set the search parameters
     With Selection.Find
         .Text = searchText
-        .style = styleName
+        .style = StyleName
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
