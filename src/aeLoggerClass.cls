@@ -1,7 +1,20 @@
-Attribute VB_Name = "basLogger"
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "aeLoggerClass"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
 Option Explicit
 Option Compare Text
-Option Private Module
+
+' Note: Option Private Module is intentionally absent.
+' Class modules never use Option Private Module — it is a standard-module-only
+' declaration. Classes are always accessible to any module that can instantiate
+' them with New. This means aeLoggerClass is callable from basRibbonDeferred and
+' other modules that also omit Option Private Module.
 
 Private logFilePath As String
 Private logIsOpen As Boolean
@@ -19,7 +32,7 @@ Public Sub TestLogging()
 End Sub
 
 ' ================================================================
-'  LOGGING MODULE - AUDIT-READY, UNICODE-SAFE, SESSION-AWARE
+'  LOGGING CLASS - AUDIT-READY, UNICODE-SAFE, SESSION-AWARE
 '  Author: Peter
 '  Purpose:
 '     - Produce deterministic, timestamped logs
@@ -29,9 +42,10 @@ End Sub
 '     - Suitable for publishing pipelines and reproducible debugging
 '
 '  Usage:
-'     Call Log_Init("C:\path\to\log.txt")
-'     Call Log_Write("Message")
-'     Call Log_Close()
+'     Dim log As New aeLoggerClass
+'     log.Log_Init "C:\path\to\log.txt"
+'     log.Log_Write "Message"
+'     log.Log_Close
 '
 '  Notes:
 '     - File is opened once and kept open for performance
@@ -93,4 +107,3 @@ Public Sub Log_UnicodeDetail(ByVal s As String)
         Log_Write "  pos " & i & ": U+" & Right$("0000" & Hex$(cp), 4) & " (" & cp & ")"
     Next i
 End Sub
-
