@@ -652,6 +652,162 @@ open/close; the cost is negligible compared to `LoadFromFile` on a large file.
 
 ---
 
+## § 15 — Steps 3 and 4 Complete: aeLongProcessClass + basLongProcess Refactor (2026-04-09)
+
+### New file: `src/aeLongProcessClass.cls`
+
+The runner class that executes any `IaeLongProcessClass` task. Contains all logic
+previously in the `basLongProcess.bas` skeleton:
+
+| Member | Description |
+|--------|-------------|
+| `BatchSize As Long` | Items per batch (default 50) |
+| `PauseMs As Long` | Pause between batches in ms (default 1000) |
+| `Run(task As IaeLongProcessClass)` | Main batch loop with DoEvents, stop/resume, logging |
+| `StopTask()` | Sets `m_continueProcessing = False`; loop exits at next item |
+| `ResetTask(task)` | Clears progress; next `Run` starts from item 1 |
+| `SaveProgress(taskName)` | Writes `LastProcessedItem` + `ProgressPercentage` to `rpt/LongRunningProgress_{TaskName}.txt` |
+| `LoadProgress(taskName)` | Reads sidecar file on `Run` start; sets `m_lastProcessedItem` |
+| `PauseWithDoEvents(ms)` | Sleep loop with DoEvents between batches |
+
+**Progress storage (Step 4):** `CustomDocumentProperties` replaced by a plain-text
+sidecar file at `rpt/LongRunningProgress_{TaskName}.txt` (key=value format). The
+document is never marked as modified by progress saves.
+
+**Logging:** `aeLongProcessClass` instantiates `aeLoggerClass` at `Run` start and
+writes to `rpt/LongProcess_{TaskName}.txt`. If `ActiveDocument.Path` is empty the
+logger is skipped gracefully.
+
+**Task stop signals:** two paths:
+- `StopTask()` — external stop (user or ribbon); sets flag, loop exits at next item
+- `task.ExecuteItem(i)` returns `False` — task requests its own stop
+
+Both paths save progress and close the log before exiting.
+
+### Rewritten: `src/basLongProcess.bas`
+
+Reduced to a thin public skeleton. Removed: `LongProcessSkeletonWithConsoleProgress`,
+`SaveProgress`, `LoadProgress`, `CustomPropertyExists`, `PauseWithDoEvents`, the
+`Sleep` declare, and all module-level state variables. These all live in
+`aeLongProcessClass` now.
+
+**Kept:**
+- `Private s_runner As aeLongProcessClass` — module-level runner instance
+- `StartOrResume(task As IaeLongProcessClass)` — creates runner if needed, calls `Run`
+- `StopTask()` — delegates to `s_runner.StopTask`
+- `ResetTask(task As IaeLongProcessClass)` — delegates to `s_runner.ResetTask`
+- `SetWordHighPriority()` — opt-in WMI utility, unchanged
+- `UpdateCharacterStyle()` — legacy stub, marked for extraction to `aeUpdateCharStyleClass` in Step 5
+
+### Next step
+
+Step 5: create `src/aeUpdateCharStyleClass.cls` implementing `IaeLongProcessClass`.
+Move task logic from `UpdateCharacterStyle` in `basLongProcess.bas` into it.
+
+---
+
+## § 16 — Step 5 Complete: aeUpdateCharStyleClass (2026-04-09)
+
+### What aeUpdateCharStyleClass does
+
+`UpdateCharacterStyle` in `basLongProcess.bas` iterates over every character in the
+document looking for characters that carry the `"Chapter Verse marker"` style, then
+re-applies that same style to each one. This forces Word to rebuild its internal style
+data for those characters — it is a **style refresh/repair operation**, not a content
+change.
+
+As `aeUpdateCharStyleClass` implementing `IaeLongProcessClass`:
+
+| Member | Value |
+|--------|-------|
+| `TaskName` | `"UpdateCharacterStyle"` |
+| `ItemCount` | `ActiveDocument.Paragraphs.Count` |
+| `ExecuteItem(i)` | Process paragraph `i`: re-apply `StyleName` to matching characters; return `True` to continue, `False` to stop |
+| `StyleName` | Public property, default `"Chapter Verse marker"`; can be set before `Run` |
+
+### Design decisions
+
+**One paragraph per ExecuteItem call.** The runner's batch loop handles grouping,
+DoEvents, pausing, and progress persistence. The task class has no awareness of
+batching.
+
+**pageNumber skip logic removed.** The original `UpdateCharacterStyle` accepted a
+`pageNumber` parameter to skip earlier pages. This is replaced by the sidecar-file
+resume mechanism: on restart, `aeLongProcessClass` resumes from `LastProcessedItem`
+(the paragraph index), so no manual page offset is needed.
+
+**5,000-update hard stop removed.** The original stopped after 5,000 updates as a
+safety limit. `StopTask()` on the runner replaces this with a user-controlled stop
+at any item boundary.
+
+**Error handling in ExecuteItem:** returns `False` on error (signals runner to stop)
+and shows a MsgBox identifying the failing paragraph index.
+
+### `basLongProcess.bas` UpdateCharacterStyle stub
+
+The legacy `UpdateCharacterStyle` sub remains in `basLongProcess.bas` marked with a
+comment noting it is superseded by `aeUpdateCharStyleClass`. It can be removed once
+the new implementation is validated.
+
+### Usage
+
+```vba
+' Immediate Window
+Dim t As New aeUpdateCharStyleClass
+Dim r As New aeLongProcessClass
+StartOrResume t          ' via basLongProcess entry point
+
+' Or directly:
+r.Run t
+
+' Custom style:
+t.StyleName = "My Character Style"
+r.Run t
+```
+
+---
+
+## § 17 — Step 9 Complete: normalize_vba.py Updated for Framework Identifiers (2026-04-09)
+
+### Problem fixed
+
+The VBA IDE normalizes identifier casing based on the first `Dim` declaration it
+encounters in any loaded module. The local variable `Dim styleName As String` in
+`UpdateCharacterStyle` caused the IDE to lowercase the public property `StyleName`
+on `aeUpdateCharStyleClass` to `styleName` on export.
+
+### Fix
+
+Added `StyleName` to the normalizer and extended it with all new public identifiers
+introduced by the long-process framework this session:
+
+| Rule | Canonical casing | Source |
+|------|-----------------|--------|
+| `StyleName` | `StyleName` | `aeUpdateCharStyleClass` public property |
+| `BatchSize` | `BatchSize` | `aeLongProcessClass` public property |
+| `PauseMs` | `PauseMs` | `aeLongProcessClass` public property |
+| `TaskName` | `TaskName` | `IaeLongProcessClass` interface property |
+| `ItemCount` | `ItemCount` | `IaeLongProcessClass` interface property |
+| `ExecuteItem` | `ExecuteItem` | `IaeLongProcessClass` interface method |
+| `StartOrResume` | `StartOrResume` | `basLongProcess` entry point |
+| `StopTask` | `StopTask` | `basLongProcess` / `aeLongProcessClass` |
+| `ResetTask` | `ResetTask` | `basLongProcess` / `aeLongProcessClass` |
+| `Log_Init` | `Log_Init` | `aeLoggerClass` method |
+| `Log_Write` | `Log_Write` | `aeLoggerClass` method |
+| `Log_Close` | `Log_Close` | `aeLoggerClass` method |
+| `Log_UnicodeDetail` | `Log_UnicodeDetail` | `aeLoggerClass` method |
+| `SetLogger` | `SetLogger` | `aeAssertClass` method |
+
+Rules are grouped with a date comment in `NORMALIZATIONS` for traceability.
+
+### Next step
+
+Step 8: integration testing — import `aeLongProcessClass.cls` and
+`aeUpdateCharStyleClass.cls`, run `StartOrResume` with a test task, confirm
+progress sidecar file, stop/resume, and log output.
+
+---
+
 ## § 11 — Line Ending Fix for VBA Class Import (2026-04-09)
 
 ### Problem

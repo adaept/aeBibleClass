@@ -1,136 +1,75 @@
 Attribute VB_Name = "basLongProcess"
 '==============================================================================
-' basLongProcess  -  Long-Running Process Utilities
+' basLongProcess  -  Long-Running Process Entry Points
 ' ----------------------------------------------------------------------------
-' Public entry points for long-running tasks that must remain interruptible
-' and keep Word responsive via DoEvents + batch processing.
+' Thin public skeleton. All batch loop logic, progress persistence, and logging
+' live in aeLongProcessClass. Concrete task logic lives in implementations of
+' IaeLongProcessClass (e.g. aeUpdateCharStyleClass).
 '
-' This module is a thin public skeleton only. All task logic, batch loop
-' behaviour, and progress persistence live in the class layer
-' (IaeLongProcessClass and its concrete implementations).
-'
-' Run entry points from the Immediate Window only, e.g.:
-'   StartOrResume
+' Entry points - call from Immediate Window:
+'   Dim t As New aeUpdateCharStyleClass
+'   StartOrResume t
 '   StopTask
-'   ResetTask
+'   ResetTask t
+'
+' SetWordHighPriority is an opt-in utility - call manually before a long task.
 '==============================================================================
 Option Explicit
 Option Compare Text
 Option Private Module
 
-Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+Private s_runner As aeLongProcessClass
 
-Dim lastProcessedParagraph As Long
-Dim continueProcessing As Boolean
-Dim progressPercentage As Double
-
-Sub PauseWithDoEvents(milliseconds As Long)
-' Combining `Sleep` with `DoEvents` can help keep the application responsive
-    Dim startTime As Single
-    startTime = Timer
-    Do While Timer < startTime + (milliseconds / 1000)
-        DoEvents
-        Sleep 10 ' Short sleep to keep the application responsive
-    Loop
-End Sub
-
-Sub StartOrResume()
-    continueProcessing = True
-    LoadProgress
-    LongProcessSkeletonWithConsoleProgress
-End Sub
-
-Sub StopTask()
-    continueProcessing = False
-    SaveProgress
-End Sub
-
-Sub ResetTask()
-    lastProcessedParagraph = 0
-    progressPercentage = 0
-    SaveProgress
-End Sub
-
-Sub SaveProgress()
+' -----------------------------------------------------------------------------
+' StartOrResume - create runner if needed and run the task
+' -----------------------------------------------------------------------------
+Public Sub StartOrResume(task As IaeLongProcessClass)
     On Error GoTo PROC_ERR
-    Dim props As Object
-    Set props = ActiveDocument.CustomDocumentProperties
-    If Not CustomPropertyExists(props, "LastProcessedParagraph") Then
-        props.Add "LastProcessedParagraph", False, 3, lastProcessedParagraph
-    Else
-        props("LastProcessedParagraph").value = lastProcessedParagraph
-    End If
-    If Not CustomPropertyExists(props, "ProgressPercentage") Then
-        props.Add "ProgressPercentage", False, 3, progressPercentage
-    Else
-        props("ProgressPercentage").value = progressPercentage
-    End If
-
-PROC_EXIT:
-    Exit Sub
-
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure SaveProgress of Module basLongProcess"
-    Resume PROC_EXIT
-End Sub
-
-Private Function CustomPropertyExists(props As Object, ByVal propName As String) As Boolean
-    On Error GoTo PROC_ERR
-    Dim p As Object
-    On Error Resume Next
-    Set p = props(propName)
-    CustomPropertyExists = (Err.Number = 0)
-    On Error GoTo 0
-    On Error GoTo PROC_ERR
-
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CustomPropertyExists of Module basLongProcess"
-    Resume PROC_EXIT
-End Function
-
-Sub LoadProgress()
-    On Error GoTo PROC_ERR
-    On Error Resume Next
-    lastProcessedParagraph = ActiveDocument.CustomDocumentProperties("LastProcessedParagraph").value
-    progressPercentage = ActiveDocument.CustomDocumentProperties("ProgressPercentage").value
-    On Error GoTo 0
-    On Error GoTo PROC_ERR
-
+    If s_runner Is Nothing Then Set s_runner = New aeLongProcessClass
+    s_runner.Run task
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LoadProgress of Module basLongProcess"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure StartOrResume of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
 
-Sub SetWordHighPriority()
+' -----------------------------------------------------------------------------
+' StopTask - signal the active runner to stop at next item boundary
+' -----------------------------------------------------------------------------
+Public Sub StopTask()
+    If Not s_runner Is Nothing Then s_runner.StopTask
+End Sub
+
+' -----------------------------------------------------------------------------
+' ResetTask - clear saved progress so next StartOrResume begins from item 1
+' -----------------------------------------------------------------------------
+Public Sub ResetTask(task As IaeLongProcessClass)
+    On Error GoTo PROC_ERR
+    If s_runner Is Nothing Then Set s_runner = New aeLongProcessClass
+    s_runner.ResetTask task
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ResetTask of Module basLongProcess"
+    Resume PROC_EXIT
+End Sub
+
+' -----------------------------------------------------------------------------
+' SetWordHighPriority - opt-in WMI call to raise WINWORD.EXE priority
+' Call manually before starting a long task if needed.
+' -----------------------------------------------------------------------------
+Public Sub SetWordHighPriority()
+    On Error GoTo PROC_ERR
     Dim objWMIService As Object
-    Dim colProcesses As Object
-    Dim objProcess As Object
-    Dim strComputer As String
-    Dim processName As String
-
-    On Error GoTo PROC_ERR
-
-    ' Set the computer and process name
-    strComputer = "."
-    processName = "WINWORD.EXE"
-
-    ' Get the WMI service
-    Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
-
-    ' Get the processes with the specified name
-    Set colProcesses = objWMIService.ExecQuery("Select * from Win32_Process Where Name = '" & processName & "'")
-
-    ' Loop through the processes and set the priority to high
+    Dim colProcesses  As Object
+    Dim objProcess    As Object
+    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+    Set colProcesses = objWMIService.ExecQuery("Select * from Win32_Process Where Name = 'WINWORD.EXE'")
     For Each objProcess In colProcesses
-        objProcess.SetPriority 128 ' 128 is the value for high priority
+        objProcess.SetPriority 128
     Next objProcess
-
 PROC_EXIT:
-    ' Clean up
     Set objWMIService = Nothing
     Set colProcesses = Nothing
     Set objProcess = Nothing
@@ -140,23 +79,24 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
+' -----------------------------------------------------------------------------
+' UpdateCharacterStyle - legacy task stub (to be moved to aeUpdateCharStyleClass
+' in Step 5 of the long-process framework implementation plan)
+' -----------------------------------------------------------------------------
+Public Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
     On Error GoTo PROC_ERR
-    Dim doc As Document
-    Dim para As Word.Paragraph
-    Dim rng As Word.Range
-    Dim styleName As String
+    Dim doc       As Document
+    Dim para      As Word.Paragraph
+    Dim rng       As Word.Range
+    Dim StyleName As String
     Dim updateCount As Integer
     Dim startTime As Double
-    Dim endTime As Double
-    Dim runTime As Double
-    Dim minutes As Integer
-    Dim seconds As Integer
+    Dim endTime   As Double
+    Dim runTime   As Double
+    Dim minutes   As Integer
+    Dim seconds   As Integer
 
-    ' Set Word to high priority
     SetWordHighPriority
-
-    ' Record the start timer for each test
     startTime = Timer
 
     If pageNumber = 0 Then
@@ -164,39 +104,29 @@ Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
         GoTo PROC_EXIT
     End If
 
-    ' Set the document and style name
     Set doc = ActiveDocument
-    styleName = "Chapter Verse marker" ' Replace with your character style name
+    StyleName = "Chapter Verse marker"
     updateCount = 0
 
-    ' Move the selection to the specified page number
     Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, count:=pageNumber
     Debug.Print "Starting at Page " & pageNumber
 
-    ' Loop through each paragraph in the document
     For Each para In doc.Paragraphs
-        ' Check if the paragraph is on or after the specified page
         If para.Range.Information(wdActiveEndPageNumber) >= pageNumber Then
-            ' Process the paragraph (example: update character style)
-            ' Loop through each range in the paragraph
             For Each rng In para.Range.Characters
-                ' Check if the range has the specified character style
-                If rng.style = styleName Then
-                    ' Apply the style from the style gallery
-                    rng.style = styleName
+                If rng.style = StyleName Then
+                    rng.style = StyleName
                     updateCount = updateCount + 1
-                    ' Stop after the some number of updates
                     If updateCount >= 5000 Then
                         Debug.Print "Done 5000"
                         endTime = Timer
                         runTime = endTime - startTime
-                        ' Convert elapsed time to minutes and seconds
                         minutes = Int(runTime / 60)
                         seconds = Int(runTime Mod 60)
                         Debug.Print "Routine Runtime: " & Format(minutes, "00") & ":" & Format(seconds, "00") & " minutes and seconds"
                         GoTo PROC_EXIT
                     End If
-                    DoEvents ' Keep the application responsive
+                    DoEvents
                 End If
             Next rng
         End If
@@ -207,67 +137,5 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure UpdateCharacterStyle of Module basLongProcess"
-    Resume PROC_EXIT
-End Sub
-
-Sub LongProcessSkeletonWithConsoleProgress()
-    On Error GoTo PROC_ERR
-    Dim doc As Document
-    Set doc = ActiveDocument
-
-    Dim totalParagraphs As Long
-    totalParagraphs = doc.Paragraphs.Count
-
-    Dim batchSize As Long
-    batchSize = 50 ' Number of paragraphs to update in each phase
-
-    Dim startIndex As Long
-    Dim endIndex As Long
-    Dim i As Long
-
-    ' Update the rest of the document in phases
-    If lastProcessedParagraph = 0 Then lastProcessedParagraph = 1 ' Start from the beginning if not previously set
-
-    For startIndex = lastProcessedParagraph To totalParagraphs Step batchSize
-        endIndex = startIndex + batchSize - 1
-        If endIndex > totalParagraphs Then endIndex = totalParagraphs
-
-        Application.ScreenUpdating = False
-        Options.Pagination = False
-
-        For i = startIndex To endIndex
-            If Not continueProcessing Then
-                lastProcessedParagraph = i
-                progressPercentage = (lastProcessedParagraph / totalParagraphs) * 100
-                SaveProgress
-                GoTo PROC_EXIT
-            End If
-
-            ' CODE GOES HERE
-
-            DoEvents ' Allow Word to process other events
-        Next i
-
-        Options.Pagination = True
-        Application.ScreenUpdating = True
-
-        ' Calculate and output progress to console
-        progressPercentage = (endIndex / totalParagraphs) * 100
-        Debug.Print "Progress: " & Format(progressPercentage, "0.00") & "%"
-
-        ' Save progress
-        lastProcessedParagraph = endIndex + 1
-        SaveProgress
-
-        ' Pause between phases to allow Word to catch up
-        PauseWithDoEvents (60000) ' 60000 milliseconds = 60 seconds
-    Next startIndex
-
-    Debug.Print "Style update complete!"
-
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LongProcessSkeletonWithConsoleProgress of Module basLongProcess"
     Resume PROC_EXIT
 End Sub
