@@ -481,3 +481,101 @@ early or as explicit as a true interface language.
 The interface class is named **`IaeLongProcessClass`** — the `I` prefix marks it as
 an interface contract; the `ae` prefix and `Class` suffix are consistent with all
 other classes in this project (`aeRibbonClass`, `aeBibleClass`, `aeLoggerClass`, etc.).
+
+---
+
+## § 10 — Implementation Session Summary (2026-04-09)
+
+### Completed
+
+**File renames (git mv, committed as d4e9278):**
+- `src/basLogger.bas` → `src/aeLoggerClass.cls`
+- `src/XLongRunningProcessCode.bas` → `src/basLongProcess.bas`
+
+**Content updates to `basLongProcess.bas` (unstaged):**
+- `Attribute VB_Name` updated to `"basLongProcess"`
+- Module header rewritten: X-prefix convention description replaced with skeleton
+  architecture note (bas file is thin public skeleton; logic lives in class layer)
+- `StartOrResumeUpdate` → `StartOrResume`
+- `StopUpdate` → `StopTask`
+- `ResetProgress` → `ResetTask`
+- All MsgBox error strings updated to reference `Module basLongProcess`
+- Corrected misleading comment on `PauseWithDoEvents` call (was labelled
+  `1000 milliseconds = 1 second`; corrected to `60000 milliseconds = 60 seconds`)
+
+**Content updates to `aeLoggerClass.cls` (unstaged):**
+- Full VBA class module header added (`VERSION 1.0 CLASS` ... `Attribute VB_Exposed`)
+- `Attribute VB_Name` updated to `"aeLoggerClass"`
+- `Option Private Module` removed
+- Explanatory comment added: class modules never use `Option Private Module`; the
+  class is accessible from any module including those that also omit it
+- Header comment updated: `LOGGING MODULE` → `LOGGING CLASS`; usage example updated
+  to `Dim log As New aeLoggerClass`
+
+**Normalizer update (`py/normalize_vba.py`):**
+- Rule added: `.Name` property (fixes `.name` → `.Name` for `VBProject.Name`,
+  `Style.Name`, `Document.Name`, and other `.Name` properties)
+
+### Next steps (plan order)
+
+1. Commit the unstaged content changes to `basLongProcess.bas` and `aeLoggerClass.cls`
+2. Step 1 of plan: create `src/IaeLongProcessClass.cls` (interface definition)
+3. Step 2 of plan: redesign `aeLoggerClass` for sequential writes; wire
+   `Run_All_SBL_Tests` to write output to `rpt/SBL_Tests.UTF8.txt`
+4. Step 3 of plan: refactor `basLongProcess.bas` skeleton entry points to accept
+   `IaeLongProcessClass`; move batch loop logic to class layer
+5. Step 4 of plan: replace `CustomDocumentProperties` progress storage with
+   `rpt/` sidecar file
+
+---
+
+## § 11 — Line Ending Fix for VBA Class Import (2026-04-09)
+
+### Problem
+
+After `aeLoggerClass.cls` was written and imported into the VBA IDE, it appeared as
+a standard module rather than a class module. The `VERSION 1.0 CLASS ... END` header
+was present and correctly cased, but the IDE did not recognise it.
+
+### Root Cause
+
+The `Write` tool produces LF-only line endings (`\n`). All existing VBA source files
+in this project use CRLF (`\r\n`), as required by the Windows VBA IDE. When the
+class file header has LF-only line endings, the IDE's header parser fails silently
+and treats the file as a plain module.
+
+Confirmed by comparing with `aeRibbonClass.cls`:
+- `aeRibbonClass.cls`: `VERSION 1.0 CLASS^M$` (CRLF — correct)
+- `aeLoggerClass.cls` as written: `VERSION 1.0 CLASS$` (LF only — broken)
+
+### Fix
+
+Both affected files were converted to CRLF using Python:
+
+```python
+content = content.replace('\r\n', '\n').replace('\n', '\r\n')
+with open(path, 'wb') as f:
+    f.write(content.encode('utf-8'))
+```
+
+`basLongProcess.bas` was also converted at the same time, and an em dash (`—`) in
+the module header comment was replaced with ` - ` to keep the file plain ASCII.
+
+### Rule for Future Work
+
+**Any `.cls` or `.bas` file created with the `Write` tool must be converted to CRLF
+before importing into the VBA IDE.** This applies to all new files:
+`IaeLongProcessClass.cls`, concrete task classes, and any other new modules.
+
+The conversion command to run after every `Write` to a VBA source file:
+
+```python
+python3 -c "
+p = 'C:/adaept/aeBibleClass/src/FILENAME.cls'
+with open(p, 'r', encoding='utf-8', newline='') as f:
+    content = f.read()
+content = content.replace('\r\n', '\n').replace('\n', '\r\n')
+with open(p, 'wb') as f:
+    f.write(content.encode('utf-8'))
+"
+```
