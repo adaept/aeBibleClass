@@ -563,11 +563,132 @@ Decisions needed before any code is written:
 
 1. **Q1:** Resolved — `CaptureHeading2s` eliminated; runtime Find + `ChaptersInBook`.
 2. **Q2:** Resolved — paragraph count (study) / Verse marker scan (print); see § 6.
-3. **Q6:** Ribbon XML edit process — confirm Custom UI Editor or direct XML.
+3. **Q6:** Resolved — Office RibbonX Editor; see § 10.
 4. **WarmLayoutCache:** Remove entirely? Confirmed recommendation — decision needed.
 5. **Ribbon layout:** 3-stack progressive lock confirmed (§ 8). imageMso for Chapter button to confirm.
 
 Steps 1 and 2 can begin without Q6 (ribbon XML is Step 6). Steps 1-5 only touch
 `aeRibbonClass.cls` and `aeBibleCitationClass.cls`.
+
+---
+
+## § 10 — Q6 Resolved: Ribbon XML Edit Process (2026-04-11)
+
+### Tool decision: Office RibbonX Editor
+
+**Use the Office RibbonX Editor** (`fernandreu/office-ribbonx-editor` on GitHub).
+
+The original Microsoft "Custom UI Editor for Office" has been abandoned since ~2010
+and lacks support for the Office 2010 schema (`customUI14`). The GitHub fork is a
+complete WPF rewrite, not a patch. It is the de-facto modern replacement.
+
+| Feature | Old Microsoft tool | Office RibbonX Editor |
+|---------|-------------------|----------------------|
+| Office 2010 schema (`customUI14`) | No | Yes |
+| XML validation | No | Yes |
+| Schema-aware IntelliSense | No | Yes |
+| Image import/export | No | Yes |
+| Active maintenance | No (dead since ~2010) | Yes |
+| Latest release | n/a | v2.0.0 (Nov 16, 2025) |
+| Dark mode | No | Yes |
+
+**Primary workflow:** open `.docm` directly in RibbonX Editor, edit
+`customUI14.xml` with IntelliSense, validate, save. Icon names (`imageMso`) are
+resolvable directly in the editor without guessing.
+
+---
+
+### Can a .docx file include a ribbon?
+
+**Yes — technically. No — not usefully, for this project.**
+
+The Office Open XML format allows `customUI` markup in any document type, including
+`.docx`. The RibbonX Editor will open a `.docx` and add ribbon XML to it without
+complaint. The ribbon buttons will appear in Word.
+
+However, ribbon callbacks (`onAction`, `getEnabled`, etc.) must resolve to a
+procedure at runtime. In a `.docx` there is no VBA project — the file format
+explicitly prohibits it. Clicking a button produces:
+`"Cannot run the macro 'OnGoToH1ButtonClick'. The macro may not be available..."`
+
+**The document must remain `.docm`** because the callbacks live in the VBA project
+embedded in the same file. Word will warn and strip macros if you attempt to save
+`.docm` as `.docx`.
+
+Exception (not applicable here): a COM add-in can host callbacks for a `.docx`
+ribbon. That is the enterprise add-in pattern and is out of scope.
+
+---
+
+### Extract XML process (fallback / audit)
+
+When you need to inspect or recover the ribbon XML outside RibbonX Editor — for
+example to diff against the backup in `customUI14backupRWB.xml` or to diagnose a
+corruption — a `.docm` is a ZIP archive and can be unpacked directly.
+
+**Manual steps:**
+
+```
+1. Close the document in Word.
+2. Copy MyDoc.docm → MyDoc_work.docm
+3. Rename MyDoc_work.docm → MyDoc_work.zip
+4. Open the ZIP; navigate to customUI/
+5. Extract customUI14.xml
+6. Edit in any text editor
+7. Replace customUI14.xml in the ZIP
+8. Rename back to .docm
+```
+
+**PowerShell automation:**
+
+Extract ribbon XML to a file for inspection or diffing:
+
+```powershell
+param(
+    [string]$DocmPath = "C:\adaept\aeBibleClass\rpt\MyDoc.docm",
+    [string]$OutPath  = "C:\adaept\aeBibleClass\rpt\customUI14_extract.xml"
+)
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zip   = [System.IO.Compression.ZipFile]::OpenRead($DocmPath)
+$entry = $zip.Entries | Where-Object { $_.FullName -eq "customUI/customUI14.xml" }
+if ($entry) {
+    $stream = $entry.Open()
+    $reader = New-Object System.IO.StreamReader($stream)
+    $reader.ReadToEnd() | Set-Content -Path $OutPath -Encoding UTF8
+    $reader.Dispose()
+    Write-Host "Extracted to $OutPath"
+} else {
+    Write-Host "customUI14.xml not found in archive"
+}
+$zip.Dispose()
+```
+
+Replace ribbon XML from a file (document must be closed in Word):
+
+```powershell
+param(
+    [string]$DocmPath = "C:\adaept\aeBibleClass\rpt\MyDoc.docm",
+    [string]$XmlPath  = "C:\adaept\aeBibleClass\rpt\customUI14_extract.xml"
+)
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zip   = [System.IO.Compression.ZipFile]::Open($DocmPath, 'Update')
+$entry = $zip.Entries | Where-Object { $_.FullName -eq "customUI/customUI14.xml" }
+if ($entry) { $entry.Delete() }
+[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+    $zip, $XmlPath, "customUI/customUI14.xml",
+    [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+$zip.Dispose()
+Write-Host "Replaced customUI14.xml in $DocmPath"
+```
+
+**When to use the extract process vs RibbonX Editor:**
+
+| Situation | Use |
+|-----------|-----|
+| Normal editing / icon selection | RibbonX Editor |
+| Diff ribbon XML against backup in git | Extract → diff |
+| Diagnose a file that RibbonX Editor won't open | Extract manually |
+| CI/automated ribbon injection | PowerShell replace script |
+| Recover from a corrupt customUI save | Extract → repair → replace |
 
 ---
