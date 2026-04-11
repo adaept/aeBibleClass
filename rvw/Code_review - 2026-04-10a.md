@@ -564,7 +564,7 @@ Decisions needed before any code is written:
 1. **Q1:** Resolved — `CaptureHeading2s` eliminated; runtime Find + `ChaptersInBook`.
 2. **Q2:** Resolved — paragraph count (study) / Verse marker scan (print); see § 6.
 3. **Q6:** Resolved — Office RibbonX Editor; see § 10.
-4. **WarmLayoutCache:** Remove entirely? Confirmed recommendation — decision needed.
+4. **WarmLayoutCache:** Resolved — entry points commented out in `EnableButtonsRoutine` and `WarmLayoutCacheDeferred`; `WarmLayoutCache` itself preserved for future use.
 5. **Ribbon layout:** 3-stack progressive lock confirmed (§ 8). imageMso for Chapter button to confirm.
 
 Steps 1 and 2 can begin without Q6 (ribbon XML is Step 6). Steps 1-5 only touch
@@ -615,8 +615,10 @@ explicitly prohibits it. Clicking a button produces:
 embedded in the same file. Word will warn and strip macros if you attempt to save
 `.docm` as `.docx`.
 
-Exception (not applicable here): a COM add-in can host callbacks for a `.docx`
-ribbon. That is the enterprise add-in pattern and is out of scope.
+Exception — **in scope as a future deliverable:** a COM add-in can host callbacks
+for a `.docx` ribbon, delivering the full navigation and citation interface without
+requiring the user to open a macro-enabled document. See § 11 for distribution
+requirements and development path considerations.
 
 ---
 
@@ -696,5 +698,95 @@ $zip.Dispose()
 | Diagnose a file that RibbonX Editor won't open | Manual extraction |
 | Automated ribbon injection / CI | WSL bash replace script |
 | Recover from a corrupt customUI save | Extract → repair → replace |
+
+---
+
+## § 11 — Future Distribution: COM Add-in Requirements (2026-04-11)
+
+### Context
+
+The current `.docm` + VBA approach is the **development vehicle**. The target
+delivery mechanism for end-user distribution is a COM add-in, enabling the full
+navigation and citation interface to be delivered to users who open the Study Bible
+as a plain `.docx` — no macro prompts, no Trust Center configuration required.
+
+No implementation timeline has been set.
+
+---
+
+### Requirements
+
+| # | Requirement |
+|---|-------------|
+| 1 | Distribute the Study Bible to end users, including i18n audiences |
+| 2 | Word 365 support only (this version) |
+| 3 | Ribbon interface includes navigation (Book / Chapter / Verse) and citation block lookup, using the existing citation block verification code with minor adjustments |
+| 4 | Add-in available via Microsoft Store |
+| 5 | Development process must accommodate the Store publication path from the outset |
+| 6 | Code signed; secure distribution |
+| 7 | No current implementation timeline |
+
+---
+
+### Technology path
+
+**VSTO (Visual Studio Tools for Office) packaged as MSIX** is the recommended path
+for a COM add-in targeting Word 365 on Windows, distributed via the Microsoft Store.
+
+| Layer | Technology |
+|-------|------------|
+| Add-in host | VSTO — **VB.NET preferred** (see note below), compiled to a COM-visible DLL |
+| Ribbon XML | Reuse `customUI14.xml` from the `.docm` directly — no redesign |
+| Callbacks | Port VBA subs to .NET methods; signatures are identical in structure |
+| Packaging | MSIX (Windows App Installer) wrapping the VSTO installer |
+| Store submission | Microsoft Partner Center → Microsoft Store for Business / consumer |
+| Code signing | EV (Extended Validation) code-signing certificate required for Store submission |
+
+**VB.NET vs C#:** Both are fully supported for VSTO. VB.NET is the natural choice
+here for two reasons: (1) the existing codebase is VBA — VB.NET shares the same
+language lineage, so identifier names, control flow, and Office object model calls
+port with minimal syntactic friction; (2) VB.NET retains optional parameters,
+`With` blocks, and late binding via `Object` in a way that mirrors VBA idioms.
+C# is equally capable but requires more mechanical translation. Either language
+produces an identical MSIX/Store deliverable — the choice affects only the porting
+effort, not the output.
+
+**Alternative — Office JS Add-in (web-based):** Microsoft's strategic direction for
+Office extensibility is the JavaScript/TypeScript API hosted in a browser frame.
+It is cross-platform (Windows, Mac, web). However, the Office JS API does not yet
+expose the full paragraph-level navigation and character-style inspection that the
+current VBA code relies on. VSTO is the appropriate choice for this feature set.
+
+---
+
+### Development process considerations
+
+To avoid a costly rewrite when moving from VBA to VSTO, the VBA code should be
+structured so that logic is easy to port:
+
+1. **Separation of concerns** — keep ribbon callback stubs thin; all logic in class
+   methods (`aeRibbonClass`, `aeBibleCitationClass`). This maps directly to .NET
+   classes in a VSTO project.
+2. **No Word object model shortcuts** — use explicit `ActiveDocument` /
+   `Application` references rather than implicit globals. VSTO requires explicit
+   references; VBA that already uses them ports without change.
+3. **Ribbon XML is reusable as-is** — VSTO loads the same `customUI14.xml`; callback
+   attribute names map directly to .NET method names.
+4. **i18n** — string literals used in ribbon `screentip`, `label`, and `MsgBox`
+   calls should be centralised in a single resource location (a `bas` module now,
+   a `.resx` file in .NET). Avoid embedding UI strings inline in logic procedures.
+5. **Code-signing discipline starts now** — the VBA project should be digitally
+   signed with the same certificate intended for the VSTO add-in. This establishes
+   the signing workflow and trust chain before the Store submission process begins.
+
+---
+
+### Open questions (no timeline)
+
+- Certificate provider for EV code signing (DigiCert, Sectigo, or equivalent)
+- Microsoft Partner Center account setup
+- Whether the `.docx` Study Bible will be distributed via the Store alongside the
+  add-in, or separately
+- i18n scope for the first Store release (languages to support)
 
 ---
