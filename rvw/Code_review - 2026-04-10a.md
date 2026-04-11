@@ -465,17 +465,21 @@ pre-defined states replace scattered `InvalidateControl` calls throughout GoTo/P
 procedures.
 
 ```text
-              GoTo    Prev    Next
-Book:         [0,0]   [0,1]   [0,2]
-Chapter:      [1,0]   [1,1]   [1,2]
-Verse:        [2,0]   [2,1]   [2,2]
+              Prev    GoTo    Next
+Book:         [1,1]   [1,2]   [1,3]
+Chapter:      [2,1]   [2,2]   [2,3]
+Verse:        [3,1]   [3,2]   [3,3]
 ```
 
-| State | GoTo Bk | Prev Bk | Next Bk | GoTo Ch | Prev Ch | Next Ch | GoTo Vs | Prev Vs | Next Vs |
+**Column order — Prev / GoTo / Next** mirrors the universal UI convention (previous ←
+anchor → next), matching browser history buttons, media controls, and Word's own
+section navigation. GoTo occupies the centre column (2), which is the natural anchor.
+
+| State | Prev Bk | GoTo Bk | Next Bk | Prev Ch | GoTo Ch | Next Ch | Prev Vs | GoTo Vs | Next Vs |
 |-------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
-| Default | ON | OFF | OFF | OFF | OFF | OFF | OFF | OFF | OFF |
-| Book selected | ON | ON | ON | ON | OFF | OFF | OFF | OFF | OFF |
-| Chapter selected | OFF | OFF | OFF | ON | ON | ON | ON | OFF | OFF |
+| Default | OFF | ON | OFF | OFF | OFF | OFF | OFF | OFF | OFF |
+| Book selected | ON | ON | ON | OFF | ON | OFF | OFF | OFF | OFF |
+| Chapter selected | OFF | OFF | OFF | ON | ON | ON | OFF | ON | OFF |
 | Verse selected | OFF | OFF | OFF | OFF | OFF | OFF | ON | ON | ON |
 
 `SetNavState` compares the desired matrix to `m_navState`, calls `InvalidateControl`
@@ -483,15 +487,21 @@ only for cells that changed, then updates `m_navState`. `GetEnabled` callbacks r
 directly from the matrix. `New Search` calls `SetNavState STATE_DEFAULT` and clears
 `m_currentBookIndex` / `m_currentChapter` in one operation.
 
-Index constants (mitigate VBA 2D array verbosity):
+**`Option Base 1` required.** Any module that declares the `m_navState` array must
+include `Option Base 1` at the top, otherwise VBA allocates indices 0-3 while the
+design uses 1-3, wasting row/column 0 and risking silent off-by-one errors if a
+developer forgets the convention.
+
+Index constants (mitigate VBA 2D array verbosity). The numeric values are the
+canonical representation; the names are readable aliases — both are needed:
 
 ```vba
-Private Const NAV_BOOK    As Long = 0
-Private Const NAV_CHAPTER As Long = 1
-Private Const NAV_VERSE   As Long = 2
-Private Const BTN_GOTO    As Long = 0
+Private Const NAV_BOOK    As Long = 1
+Private Const NAV_CHAPTER As Long = 2
+Private Const NAV_VERSE   As Long = 3
 Private Const BTN_PREV    As Long = 1
-Private Const BTN_NEXT    As Long = 2
+Private Const BTN_GOTO    As Long = 2
+Private Const BTN_NEXT    As Long = 3
 ```
 
 ### Boundary condition overlay
