@@ -170,8 +170,12 @@ Private Sub EnableButtonsRoutine()
     Debug.Print "RibbonController: EnableButtonsRoutine"
     CaptureHeading1s
     LogHeadingData
-    Application.OnTime Now + TimeValue("00:00:05"), _
-        ActiveDocument.VBProject.Name & ".basRibbonDeferred.WarmLayoutCacheDeferred"
+    ' WarmLayoutCache disabled: causes ~50s freeze at document open and brings
+    ' File Explorer to the foreground. The first GoTo Book will warm the layout
+    ' on demand (~12s, once per session). Re-enable here if the pre-warm strategy
+    ' is revisited.
+    ' Application.OnTime Now + TimeValue("00:00:05"), _
+    '     ActiveDocument.VBProject.Name & ".basRibbonDeferred.WarmLayoutCacheDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:

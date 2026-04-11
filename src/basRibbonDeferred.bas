@@ -19,9 +19,12 @@ Option Explicit
 ' =============================================================================
 
 Public Sub WarmLayoutCacheDeferred()
-    Dim rc As aeRibbonClass
-    Set rc = Instance()
-    rc.WarmLayoutCache
+    ' WarmLayoutCache disabled: entry point in EnableButtonsRoutine (aeRibbonClass.cls)
+    ' is commented out so this sub will not be called at document open.
+    ' WarmLayoutCache itself is preserved in aeRibbonClass.cls for future use.
+    ' Dim rc As aeRibbonClass
+    ' Set rc = Instance()
+    ' rc.WarmLayoutCache
 End Sub
 
 Public Sub GoToH1Deferred()

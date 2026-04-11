@@ -639,46 +639,52 @@ corruption — a `.docm` is a ZIP archive and can be unpacked directly.
 8. Rename back to .docm
 ```
 
-**PowerShell automation:**
+**Automation — preferred: WSL bash**
 
-Extract ribbon XML to a file for inspection or diffing:
+The development system has WSL installed. Bash is already the shell used for the
+Python normalizer (`normalize_vba.py`) and is the preferred automation tool for this
+project. The standard `unzip` / `zip` utilities handle `.docm` files directly since
+they are ZIP archives. Windows paths are accessed via `/mnt/c/...`.
+
+Extract ribbon XML:
+
+```bash
+#!/usr/bin/env bash
+DOCM="/mnt/c/adaept/aeBibleClass/rpt/MyDoc.docm"
+OUT="/mnt/c/adaept/aeBibleClass/rpt/customUI14_extract.xml"
+
+unzip -p "$DOCM" "customUI/customUI14.xml" > "$OUT"
+echo "Extracted to $OUT"
+```
+
+Replace ribbon XML (document must be closed in Word):
+
+```bash
+#!/usr/bin/env bash
+DOCM="/mnt/c/adaept/aeBibleClass/rpt/MyDoc.docm"
+XML="/mnt/c/adaept/aeBibleClass/rpt/customUI14_extract.xml"
+
+# zip -j replaces the file in-place without extracting the whole archive
+zip "$DOCM" -j "$XML" --archive-name "customUI/customUI14.xml"
+echo "Replaced customUI14.xml in $DOCM"
+```
+
+Diff against the committed backup:
+
+```bash
+diff <(unzip -p "$DOCM" "customUI/customUI14.xml") \
+     /mnt/c/adaept/aeBibleClass/customUI14backupRWB.xml
+```
+
+**PowerShell alternative** (if WSL is unavailable):
 
 ```powershell
-param(
-    [string]$DocmPath = "C:\adaept\aeBibleClass\rpt\MyDoc.docm",
-    [string]$OutPath  = "C:\adaept\aeBibleClass\rpt\customUI14_extract.xml"
-)
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $zip   = [System.IO.Compression.ZipFile]::OpenRead($DocmPath)
 $entry = $zip.Entries | Where-Object { $_.FullName -eq "customUI/customUI14.xml" }
-if ($entry) {
-    $stream = $entry.Open()
-    $reader = New-Object System.IO.StreamReader($stream)
-    $reader.ReadToEnd() | Set-Content -Path $OutPath -Encoding UTF8
-    $reader.Dispose()
-    Write-Host "Extracted to $OutPath"
-} else {
-    Write-Host "customUI14.xml not found in archive"
-}
+$entry.Open() | % { (New-Object System.IO.StreamReader($_)).ReadToEnd() } |
+    Set-Content -Path $OutPath -Encoding UTF8
 $zip.Dispose()
-```
-
-Replace ribbon XML from a file (document must be closed in Word):
-
-```powershell
-param(
-    [string]$DocmPath = "C:\adaept\aeBibleClass\rpt\MyDoc.docm",
-    [string]$XmlPath  = "C:\adaept\aeBibleClass\rpt\customUI14_extract.xml"
-)
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-$zip   = [System.IO.Compression.ZipFile]::Open($DocmPath, 'Update')
-$entry = $zip.Entries | Where-Object { $_.FullName -eq "customUI/customUI14.xml" }
-if ($entry) { $entry.Delete() }
-[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-    $zip, $XmlPath, "customUI/customUI14.xml",
-    [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
-$zip.Dispose()
-Write-Host "Replaced customUI14.xml in $DocmPath"
 ```
 
 **When to use the extract process vs RibbonX Editor:**
@@ -686,9 +692,9 @@ Write-Host "Replaced customUI14.xml in $DocmPath"
 | Situation | Use |
 |-----------|-----|
 | Normal editing / icon selection | RibbonX Editor |
-| Diff ribbon XML against backup in git | Extract → diff |
-| Diagnose a file that RibbonX Editor won't open | Extract manually |
-| CI/automated ribbon injection | PowerShell replace script |
+| Diff ribbon XML against backup in git | WSL bash extract → diff |
+| Diagnose a file that RibbonX Editor won't open | Manual extraction |
+| Automated ribbon injection / CI | WSL bash replace script |
 | Recover from a corrupt customUI save | Extract → repair → replace |
 
 ---
