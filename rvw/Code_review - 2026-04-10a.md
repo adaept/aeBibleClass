@@ -930,6 +930,82 @@ the Public functions from Step 4. No secondary flags; no stale state possible.
 
 ---
 
+### Items 5, 6, 7 — Resolution (2026-04-11)
+
+**Decision: Option A — ribbon reflects last navigation action only.**
+
+The ribbon behaves like a search box: it is a navigation tool, not a position
+tracker. When the user manually scrolls or clicks outside a navigation sequence,
+the ribbon resets to default (all comboBoxes blank, Book row active, Chapter and
+Verse rows disabled). This is consistent with standard search bar behaviour — the
+bar goes empty once the search is complete.
+
+---
+
+**Item 5 — State drift after VBA reset: resolved by Option A.**
+
+On VBA runtime reset all instance variables are destroyed. Under Option A the ribbon
+simply reverts to its default state — blank comboBoxes, Book row active. This is
+identical to a fresh document open. No rehydration strategy is needed. The user
+re-enters a reference and continues.
+
+---
+
+**Item 6 — Matrix reflects code state, not cursor position: accepted by design.**
+
+Manual navigation outside the ribbon does not update the ribbon state. The ribbon
+resets to default. This is the correct behaviour for a navigation tool. The browser
+address bar analogy applies: it reflects the last navigation, not the current scroll
+position.
+
+**Option B considered and rejected — permanently, including for the Store release.**
+
+`Document_SelectionChange` fires on every cursor movement. Each event requires a
+backward scan through `headingData`, a forward Heading 2 scan, and ribbon
+invalidation. On a 33,857-paragraph document this runs continuously during reading.
+The cost is structural — not fixable by optimisation. A guard against repeated
+events helps for stationary cursors but does not reduce cost during genuine reading
+navigation (e.g. holding the down arrow through Psalm 119 fires 176 events in
+seconds).
+
+More fundamentally, Option B solves a problem Study Bible readers do not have. The
+reading pattern is: navigate to a passage via ribbon, read, navigate again. The user
+controls position through the ribbon; the ribbon does not need to track them. A
+browser address bar does not update as you scroll — no one considers this a defect.
+
+The actual user need Option B addresses ("how do I get back to John 3?") is answered
+better by the history list (see below).
+
+---
+
+**Item 7 — Four clean states / same-level re-entry: resolved by Q1 rule.**
+
+Navigating from one book to another (STATE_BOOK_SELECTED → STATE_BOOK_SELECTED)
+always resets downstream variables (`m_currentChapter = 0`, `m_currentVerse = 0`)
+and re-enters STATE_BOOK_SELECTED cleanly. Chapter and Verse comboBoxes go blank.
+No fifth state is needed.
+
+---
+
+### History list — last N searches
+
+The comboBox dropdown is the natural home for a navigation history. After each
+confirmed navigation the full reference (e.g. `"John 3"`, `"Psalm 23:1"`) is
+prepended to a fixed-length MRU list (suggested N = 10). The Book comboBox dropdown
+shows the history list when no text has been typed; typing filters to book names as
+normal.
+
+Benefits:
+- Answers the "where was I?" need without any position tracking
+- Reaches any recent location, not just the current one
+- Fully compatible with Option A — no event overhead
+- Persists naturally to a document custom property or sidecar file across sessions
+- i18n-neutral: stored references use canonical SBL form, displayed as entered
+
+Implementation is deferred — not required for the current development phase.
+
+---
+
 ## § 12 — ComboBox Navigation Design (2026-04-11)
 
 ### Decision
