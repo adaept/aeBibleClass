@@ -5,11 +5,11 @@
         <group id="TestGroup" label="Bible Class Group">
           <button id="GoToMyVerse" label="GoTo Verse " imageMso="FormatNumberDefault" size="large" onAction="OnGoToVerseSblClick"/>
           <separator id="sep1" />
-          <button id="GoToPrevButton" label="Prev Book" imageMso="HeaderFooterPreviousSection" size="large" onAction="OnPrevButtonClick"/>
+          <button id="GoToPrevButton" label="Prev Book" imageMso="HeaderFooterPreviousSection" size="large" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled/>
           <button id="GoToH1Button" label="GoTo Book" imageMso="NotebookNew" size="large" onAction="OnGoToH1ButtonClick"/>
           <button id="GoToNextButton" label="Next Book" imageMso="HeaderFooterNextSection" size="large" onAction="OnNextButtonClick"/>
           <separator id="sep2" />
-          <button id="adaeptButton" label="About" image="adaept" size="large" onAction="OnAdaeptAboutClick"/>
+          <button id="adaeptButton" label="About" image="adaept" size="large" onAction="OnAdaeptAboutClick" getEnabled="GetNextEnabled"/>
         </group>
       </tab>
     </tabs>
