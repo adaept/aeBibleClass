@@ -467,3 +467,335 @@ Add new identifiers: `NormalizeBookInput`, `CaptureHeading2s`, `GoToChapter`,
    ribbon XML (Custom UI Editor tool, direct XML, or other).
 
 ---
+
+## § 13 — Sample Document: JUDE.docx (2026-04-10)
+
+A minimal single-book sample file (`JUDE.docx`) will be created as a reference for
+items that need clarification before implementation begins. Additional content can
+be added to the sample as needed to support further design decisions.
+
+**Why Jude:** single chapter, 25 verses — small enough to keep the file minimal but
+complete enough to exercise all three navigation levels (book, chapter, verse).
+
+**Open questions the sample will answer (§ 11):**
+
+- Q5: Exact text format of Heading 2 chapter headings
+  (e.g. `"Chapter 1"`, `"1"`, `"1 JUDE 1"`, etc.)
+- Verse paragraph structure and how `"Chapter Verse marker"` character style
+  appears in context
+- Section break pattern: Heading 1 → Heading 2 → body paragraphs
+- Any other structural details needed to finalize the GoTo Chapter / GoTo Verse design
+
+**Status:** Reviewed 2026-04-10. Findings in § 14 and § 15.
+
+---
+
+## § 14 — JUDE.docx Document Structure Findings (2026-04-10)
+
+### Heading styles
+
+| Style | Example text | Purpose |
+|-------|-------------|---------|
+| `Heading1` | `JUDE`, `REVELATION` | Book title |
+| `CustomParaAfterH1` | `THE GENERAL EPISTLE OF JUDE` | Book subtitle |
+| `Heading2` | `CHAPTER 1`, `CHAPTER 2` | Chapter heading |
+| `Brief`, `DatAuthRef` | background text | Introductory matter between H1 and H2 |
+
+**Answer to § 11, Question 5:** Heading 2 text is `"CHAPTER N"` (e.g. `"CHAPTER 1"`).
+`CaptureHeading2s` can verify a Heading 2 is a chapter by checking
+`UCase(Left(text, 7)) = "CHAPTER"`.
+
+### Verse paragraph run structure
+
+Every verse paragraph has style `(Normal)` and its runs always open with exactly
+two marker runs, in this fixed order:
+
+```
+Run 1:  ChapterVersemarker  — chapter number digit(s), e.g. "1"
+Run 2:  Versemarker         — verse number digit(s) + narrow no-break space U+202F, e.g. "1 "
+Run 3+: body text           — default / EmphasisBlack / WordsofJesus / etc.
+```
+
+Examples from the file (paragraph → runs):
+
+```
+P178  Run1 ChapterVersemarker "1"   Run2 Versemarker "1 "   Run3 default "Jude, a servant..."
+P179  Run1 ChapterVersemarker "1"   Run2 Versemarker "2 "   Run3 default "May mercy, peace..."
+P181  Run1 ChapterVersemarker "1"   Run2 Versemarker "4 "   Run3 EmphasisBlack "For there are..."
+```
+
+**VBA style name mapping** (XML attribute → VBA `rng.style`):
+- `ChapterVersemarker` → `"Chapter Verse marker"`
+- `Versemarker` → `"Verse marker"`
+
+### Non-verse paragraphs
+
+Introductory paragraphs (`Brief`, `DatAuthRef`, `PlainText`, `ListParagraph`, etc.)
+carry no marker runs at all. A character scan of these paragraphs exits immediately
+on the first character — confirming the short-circuit optimization is safe for the
+entire document.
+
+---
+
+## § 15 — Optimization Task: aeUpdateCharStyleClass (2026-04-10)
+
+### Current behaviour (inefficient)
+
+`IaeLongProcessClass_ExecuteItem` scans **every character** in every paragraph
+looking for `"Chapter Verse marker"`. For a verse paragraph of 100+ characters, this
+means 100+ style comparisons to find and re-apply 2–4 marker characters. Across
+33,857 paragraphs the total character checks are in the millions.
+
+Only one style (`StyleName = "Chapter Verse marker"`) is currently processed.
+`"Verse marker"` is not refreshed.
+
+### Optimization: short-circuit loop + dual-style pass
+
+The marker runs are **always the first two runs** of every verse paragraph. Once the
+loop encounters any character that carries neither marker style, all remaining
+characters in that paragraph are body text — no further scanning is needed.
+
+**Proposed change to `IaeLongProcessClass_ExecuteItem`:**
+
+```vba
+Private Function IaeLongProcessClass_ExecuteItem(itemIndex As Long) As Boolean
+    On Error GoTo PROC_ERR
+    Dim para As Word.Paragraph
+    Dim rng  As Word.Range
+    Set para = ActiveDocument.Paragraphs(itemIndex)
+    For Each rng In para.Range.Characters
+        If rng.style = "Chapter Verse marker" Then
+            rng.style = "Chapter Verse marker"
+        ElseIf rng.style = "Verse marker" Then
+            rng.style = "Verse marker"
+        Else
+            Exit For   ' no more marker characters in this paragraph
+        End If
+    Next rng
+    IaeLongProcessClass_ExecuteItem = True
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    IaeLongProcessClass_ExecuteItem = False
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ExecuteItem (item " & itemIndex & ") of Class aeUpdateCharStyleClass"
+    Resume PROC_EXIT
+End Function
+```
+
+### Changes from current code
+
+1. **Short-circuit:** `Exit For` as soon as a non-marker character is found.
+   Verse paragraphs: 2–4 character checks instead of 100+.
+   Non-verse paragraphs: exit on first character check.
+
+2. **Dual style:** both `"Chapter Verse marker"` and `"Verse marker"` refreshed in
+   the same single pass. The `StyleName` public property becomes redundant for this
+   specific task — remove or keep as a legacy parameter.
+
+3. **No `StyleName` property needed:** both style names are now hardcoded in
+   `ExecuteItem`. If generalization is wanted later, a second `StyleName2` property
+   can be added, but for the current use case this is unnecessary complexity.
+
+### Expected performance improvement
+
+| Scenario | Characters checked per paragraph | Total for 33,857 paragraphs |
+|----------|----------------------------------|------------------------------|
+| Current | ~100 (full scan) | ~3,400,000 |
+| Optimized | ~3 (2 markers + 1 exit check) | ~102,000 |
+
+Approximately **33x fewer character comparisons**. The batch pause time (678 × 1
+second = ~11 minutes) dominates the total run time; reducing character work
+compresses the active processing time within each batch significantly. Overall
+elapsed time will be shorter but the pause structure is unchanged unless `PauseMs`
+is also reduced.
+
+### Additional note: `StyleName` property
+
+The `StyleName` public property on `aeUpdateCharStyleClass` was designed for
+generalization. With the dual-style short-circuit approach it is no longer used
+in `ExecuteItem`. Options:
+
+- **Keep it** as a public property for potential future single-style tasks that
+  use the same class.
+- **Remove it** since the class is now specific to the two Bible marker styles.
+
+Recommendation: keep it for now, add a comment that `ExecuteItem` ignores it
+in favour of the hardcoded dual-style logic. Revisit if a second task class is
+needed.
+
+**ACCEPTED 2026-04-10.** Implementation follows.
+
+---
+
+## § 12 — Long-Running Process: Step-Through of Main Code Events (2026-04-10)
+
+### Completion result
+
+```
+UpdateCharacterStyle progress: 99.39%
+...
+UpdateCharacterStyle progress: 100.00%
+UpdateCharacterStyle: complete - 33857 Items processed
+```
+
+### The Three Layers
+
+```
+basLongProcess.bas           -- public entry points (Immediate Window)
+aeLongProcessClass.cls       -- runner: batching, DoEvents, progress, logging
+aeUpdateCharStyleClass.cls   -- task: what to do with each item
+```
+
+---
+
+### Step-Through
+
+**1. `TestUpdateCharStyle` typed in Immediate Window**
+
+`basLongProcess.bas:25`
+```vba
+Public Sub TestUpdateCharStyle()
+    Dim t As New aeUpdateCharStyleClass
+    StartOrResume t
+End Sub
+```
+Creates a task object `t`. Calls `StartOrResume`.
+
+**2. StartOrResume ensures a runner exists**
+
+`basLongProcess.bas:38`
+```vba
+Public Sub StartOrResume(task As IaeLongProcessClass)
+    If s_runner Is Nothing Then Set s_runner = New aeLongProcessClass
+    s_runner.Run task
+End Sub
+```
+`s_runner` is a module-level variable — it persists across calls in the same session.
+If this is a resume, the same runner instance is reused. Then `Run` is called.
+
+**3. Run loads previous progress**
+
+`aeLongProcessClass.cls:46`
+```vba
+m_continueProcessing = True
+LoadProgress task.TaskName
+```
+`LoadProgress` looks for `rpt/LongRunningProgress_UpdateCharacterStyle.txt`. If found
+(a previous partial run), it reads `LastProcessedItem` and sets `m_lastProcessedItem`.
+If the file does not exist, `m_lastProcessedItem` stays 0.
+
+**4. Run opens the log and asks the task for the item count**
+
+```vba
+log.Log_Init ActiveDocument.Path & "\rpt\LongProcess_UpdateCharacterStyle.txt"
+totalItems = task.ItemCount   ' -> IaeLongProcessClass_ItemCount
+```
+`ItemCount` returns `ActiveDocument.Paragraphs.Count` — the 33,857 shown in the
+completion message.
+
+**5. Run determines the starting paragraph**
+
+```vba
+If m_lastProcessedItem = 0 Then m_lastProcessedItem = 1
+```
+Fresh run: start at paragraph 1. Resume (e.g. from 14.6% after an IDE Stop): start
+at the saved paragraph index (4901).
+
+**6. The batch loop**
+
+`aeLongProcessClass.cls:77`
+```vba
+For startIndex = m_lastProcessedItem To totalItems Step BatchSize  ' BatchSize = 50
+    endIndex = startIndex + BatchSize - 1
+    If endIndex > totalItems Then endIndex = totalItems
+
+    For i = startIndex To endIndex
+        If Not m_continueProcessing Then  '...save and exit...
+        If Not task.ExecuteItem(i) Then   '...save and exit...
+        DoEvents
+    Next i
+
+    ' after each batch of 50:
+    SaveProgress task.TaskName
+    PauseWithDoEvents PauseMs    ' 1000 ms = 1 second
+Next startIndex
+```
+Each outer iteration processes 50 paragraphs. At 33,857 paragraphs that is 678 batches
+with a 1-second pause between each — approximately 11 minutes of clock time at minimum
+plus processing time per batch.
+
+**7. ExecuteItem: what happens to each paragraph**
+
+`aeUpdateCharStyleClass.cls:53`
+```vba
+Private Function IaeLongProcessClass_ExecuteItem(itemIndex As Long) As Boolean
+    Dim para As Word.Paragraph
+    Set para = ActiveDocument.Paragraphs(itemIndex)
+    For Each rng In para.Range.Characters
+        If rng.style = StyleName Then   ' "Chapter Verse marker"
+            rng.style = StyleName       ' re-apply same style
+        End If
+    Next rng
+    IaeLongProcessClass_ExecuteItem = True  ' continue
+End Function
+```
+For each of the 33,857 paragraphs: walk every character, find ones carrying
+`"Chapter Verse marker"`, re-apply the same style. This forces Word to rebuild its
+internal style data for those characters — a repair operation with no visible content
+change.
+
+**8. DoEvents between items**
+
+After each `ExecuteItem` call, `DoEvents` runs. This yields control to the Windows
+message loop, allowing Word to repaint, process ribbon callbacks, and keep the UI
+responsive. Without it, Word would be "not responding" for the entire duration.
+
+**9. SaveProgress after each batch**
+
+`aeLongProcessClass.cls:157` writes to `rpt/LongRunningProgress_UpdateCharacterStyle.txt`:
+```
+LastProcessedItem=4951
+ProgressPercentage=14.62
+```
+This is what enabled resume from 14.6% after the earlier IDE Stop.
+
+**10. PauseWithDoEvents between batches**
+
+```vba
+Private Sub PauseWithDoEvents(ByVal milliseconds As Long)
+    Dim startTime As Single
+    startTime = Timer
+    Do While Timer < startTime + (milliseconds / 1000)
+        DoEvents
+        Sleep 10
+    Loop
+End Sub
+```
+Sleeps 1 second between batches in 10 ms slices, calling `DoEvents` each time. This
+is the source of reduced responsiveness during the run — Word is processing but
+yielding briefly every 10 ms.
+
+**11. Completion**
+
+After the last batch, `m_lastProcessedItem` is reset to 0 and the sidecar is updated:
+```
+LastProcessedItem=0
+ProgressPercentage=100
+```
+The log writes `"Complete: 33857 Items processed"`, the Immediate Window prints the
+completion line, and `log.Log_Close` flushes `rpt/LongProcess_UpdateCharacterStyle.txt`.
+
+---
+
+### Key Design Properties
+
+| Property | How it works |
+|----------|-------------|
+| **Resume** | `LoadProgress` reads the sidecar; outer loop starts at saved item |
+| **Stop** | IDE Stop button only (VBA single-threaded; Escape unreliable in Word) |
+| **State-neutral runner** | No `ScreenUpdating` or `Options.Pagination` — safe if user opens dialogs during `DoEvents` |
+| **Task is pluggable** | Any class implementing `IaeLongProcessClass` drops into the runner unchanged |
+| **Log** | `rpt/LongProcess_UpdateCharacterStyle.txt` — UTF-8, one line per batch |
+| **Progress** | `rpt/LongRunningProgress_UpdateCharacterStyle.txt` — key=value, updated after every 50 items |
+
+---

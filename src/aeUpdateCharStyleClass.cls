@@ -30,7 +30,7 @@ Implements IaeLongProcessClass
 '   t.StyleName = "My Character Style"
 ' =============================================================================
 
-Public StyleName       As String  ' character style to refresh (default: "Chapter Verse marker")
+Public StyleName       As String  ' legacy parameter - not used by ExecuteItem; kept for future single-style tasks
 Public DoEventsEvery   As Long    ' call DoEvents every N characters within a paragraph (default: 50; 0 = disable)
 
 Private Sub Class_Initialize()
@@ -55,9 +55,18 @@ Private Function IaeLongProcessClass_ExecuteItem(itemIndex As Long) As Boolean
     Dim para As Word.Paragraph
     Dim rng  As Word.Range
     Set para = ActiveDocument.Paragraphs(itemIndex)
+    ' Marker runs are always the first two runs of every verse paragraph:
+    '   Run 1 - "Chapter Verse marker" (chapter number digit(s))
+    '   Run 2 - "Verse marker"         (verse number + narrow no-break space)
+    ' Exit as soon as a non-marker character is found - no need to scan the
+    ' entire paragraph. Both styles are refreshed in a single pass.
     For Each rng In para.Range.Characters
-        If rng.style = StyleName Then
-            rng.style = StyleName
+        If rng.style = "Chapter Verse marker" Then
+            rng.style = "Chapter Verse marker"
+        ElseIf rng.style = "Verse marker" Then
+            rng.style = "Verse marker"
+        Else
+            Exit For
         End If
     Next rng
     IaeLongProcessClass_ExecuteItem = True   ' continue
