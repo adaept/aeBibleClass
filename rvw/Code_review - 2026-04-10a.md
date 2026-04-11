@@ -790,3 +790,106 @@ structured so that logic is easy to port:
 - i18n scope for the first Store release (languages to support)
 
 ---
+
+## § 12 — ComboBox Navigation Design (2026-04-11)
+
+### Decision
+
+Replace the three GoTo buttons (column 2 of the state matrix) with `<comboBox>`
+controls. The state matrix, row/column 1-based indices, and progressive lock model
+are all unchanged. The comboBox occupies `[row, 2]` in each row.
+
+### Layout
+
+```text
+              Prev    GoTo (comboBox)         Next
+Book:    [1,1] ◀    [1,2] Genesis          ▼  [1,3] ▶
+Chapter: [2,1] ◀    [2,2] 1               ▼  [2,3] ▶
+Verse:   [3,1] ◀    [3,2] 1               ▼  [3,3] ▶
+```
+
+Each row is a horizontal box: `<button> | <comboBox> | <button>`. The state matrix
+controls enable/disable the entire row as before. No imageMso needed anywhere in the
+navigation group. No screentips needed on comboBox controls — the current value is
+self-describing, and removing screentips eliminates one i18n translation surface.
+
+---
+
+### OT / NT separator
+
+A blank item (`""`) returned from `getItemLabel` renders as an empty line in the
+dropdown, cleanly dividing Old Testament from New Testament. The empty string is
+language-neutral — no translation required in any locale, ever.
+
+Detection uses `getItemID`, not the label text, so it is robust against any future
+label change:
+
+```vba
+Public Function GetBookItemID(control As IRibbonControl, index As Long) As String
+    If index = OT_NT_SEPARATOR_INDEX Then
+        GetBookItemID = "SEP"
+    Else
+        GetBookItemID = CStr(index)
+    End If
+End Function
+
+Public Sub OnBookChanged(control As IRibbonControl, _
+                         selectedId As String, selectedIndex As Long)
+    If selectedId = "SEP" Then Exit Sub   ' blank separator row — ignore
+    ' ... navigation logic
+End Sub
+```
+
+`OT_NT_SEPARATOR_INDEX` is a named constant (index 39, after Malachi, before
+Matthew). Total item count = 66 books + 1 separator = 67.
+
+---
+
+### Parser integration (Book comboBox)
+
+The Book comboBox feeds directly into the existing Stage-based SBL parser:
+
+- Typing `"Jn"`, `"1 Cor"`, or `"Genesis"` expands via Stage 13 (shorthand) and
+  Stage 14 (canonical compression)
+- Dropdown selection sets the canonical book name and updates `m_currentBookIndex`
+- Navigating with Prev/Next updates the comboBox display via ribbon invalidation
+
+`onChange` fires on every keystroke. Navigate only on `Enter` or confirmed dropdown
+selection; discard partial input that does not resolve to a valid book.
+
+---
+
+### Data source
+
+`GetBookLabel` delegates to `aeBibleCitationClass` — the authoritative book list.
+No parallel `BookList` array is needed in `aeRibbonClass`. Chapter and Verse item
+counts delegate to `ChaptersInBook` and `VersesInChapter` (Step 4, already planned).
+
+---
+
+### Invalidation sequence
+
+Changing the Book comboBox invalidates Chapter, then Verse — in that order — to
+avoid circular callbacks. Never invalidate Book from within a Chapter or Verse
+callback.
+
+```
+Book changed → invalidate Chapter → invalidate Verse
+Chapter changed → invalidate Verse
+Verse changed → (nothing downstream)
+```
+
+---
+
+### Corrections to the design input
+
+| Item | Original | Correction |
+|------|----------|-----------|
+| Control type | `<dropDown>` shown in sample XML | Use `<comboBox>` — supports free-text input |
+| Book data source | `BookList` module-level `Variant` array | Delegate to `aeBibleCitationClass` |
+| `CurrentBookIndex` | Separate module variable | Consolidate into `m_currentBookIndex` in `aeRibbonClass` |
+| Separator label | `"── New Testament ──"` | Empty string `""` — language-neutral, i18n-free |
+| Separator detection | String comparison on label | `getItemID` returning `"SEP"` — robust, never needs changing |
+| ComboBox width | Not specified | Add `sizeString="2 Thessalonians"` to reserve width for longest book name |
+
+---
