@@ -791,6 +791,145 @@ structured so that logic is easy to port:
 
 ---
 
+## § 13 — Boundary Condition Design (2026-04-11)
+
+### The two-layer problem
+
+The state matrix answers one question: **is this navigation level active?**
+
+It does not know where you are *within* an active level. That is a second, separate
+question: **is there a previous / next item from the current position?**
+
+Both must be true for a Prev or Next button to be enabled. The `GetEnabled` callback
+ANDs them:
+
+```vba
+Public Function GetPrevChEnabled(control As IRibbonControl) As Boolean
+    GetPrevChEnabled = m_navState(NAV_CHAPTER, BTN_PREV) And (m_currentChapter > 1)
+End Function
+```
+
+The matrix supplies the left side. The position check supplies the right side. When
+either is False the button is disabled.
+
+---
+
+### Where it breaks down
+
+**Scenario 1 — stale boundary flag on level change**
+
+User navigates to Genesis (first book). Prev Book correctly disabled —
+`m_currentBookIndex = 1`. User types "Exodus" in the Book comboBox and confirms.
+Matrix still says Book level active. If `m_currentBookIndex` is not updated before
+the next `GetEnabled` callback fires, Prev Book stays disabled even though Exodus
+has a predecessor. Matrix transitioned correctly; position variable did not keep up.
+
+**Scenario 2 — New Search resets matrix but not position**
+
+User navigates to Revelation (last book). Next Book correctly disabled. User clicks
+New Search. Matrix resets to `STATE_DEFAULT`. User types "Revelation" again. Matrix
+sets Book row active, Prev and Next both ON (per the pre-defined state). But
+`m_currentBookIndex` still holds 66. Next Book should be OFF at the boundary — the
+matrix says ON. The `And` gives the correct answer only if the position variable was
+current when the callback fired.
+
+**Scenario 3 — inconsistent boundary patterns**
+
+The current design uses `m_btnPrevEnabled` (a separate Boolean flag) for Book
+Prev/Next, but inline expressions (`m_currentChapter > 1`) for Chapter and Verse.
+These are two different patterns for the same problem. The flag can go stale
+independently; the inline expression derives from authoritative position state. They
+must be unified.
+
+---
+
+### Three questions to resolve
+
+1. Who updates each position variable, and when?
+2. Are position variables reset when `SetNavState STATE_DEFAULT` is called?
+3. Is `m_btnPrevEnabled` kept, or replaced by an inline expression consistent with
+   Chapter and Verse?
+
+---
+
+### Proposed solutions
+
+**Q1 — Who updates position variables, and when?**
+
+Each navigation procedure owns its own position variable. Update occurs as the last
+step before ribbon invalidation — never before, so the variable is current when the
+next `GetEnabled` callback fires:
+
+```
+GoToBook    → sets m_currentBookIndex, m_currentChapter = 0, m_currentVerse = 0
+GoToChapter → sets m_currentChapter, m_currentVerse = 0
+GoToVerse   → sets m_currentVerse
+PrevBook    → sets m_currentBookIndex (decremented), m_currentChapter = 0, m_currentVerse = 0
+NextBook    → sets m_currentBookIndex (incremented), m_currentChapter = 0, m_currentVerse = 0
+PrevChapter → sets m_currentChapter (decremented), m_currentVerse = 0
+NextChapter → sets m_currentChapter (incremented), m_currentVerse = 0
+PrevVerse   → sets m_currentVerse (decremented)
+NextVerse   → sets m_currentVerse (incremented)
+```
+
+Downstream variables are zeroed on every upward level change. A zero value means
+"not yet set at this level" and renders the comboBox blank.
+
+**Q2 — Are position variables reset on New Search?**
+
+Yes — all three zeroed explicitly in `OnNewSearchButtonClick`, before
+`SetNavState STATE_DEFAULT`. This ensures that when the user re-enters Book
+navigation, all boundary expressions evaluate from a clean baseline:
+
+```vba
+Public Sub OnNewSearchButtonClick(control As IRibbonControl)
+    m_currentBookIndex = 0
+    m_currentChapter   = 0
+    m_currentVerse     = 0
+    SetNavState STATE_DEFAULT
+End Sub
+```
+
+**Q3 — Retire `m_btnPrevEnabled`; use inline expressions throughout**
+
+Replace the separate Boolean flag with the same pattern used for Chapter and Verse.
+All six boundary expressions then derive directly from position variables — one
+pattern, no secondary state to maintain:
+
+```vba
+' Book row
+Public Function GetPrevBkEnabled(control As IRibbonControl) As Boolean
+    GetPrevBkEnabled = m_navState(NAV_BOOK, BTN_PREV) And (m_currentBookIndex > 1)
+End Function
+Public Function GetNextBkEnabled(control As IRibbonControl) As Boolean
+    GetNextBkEnabled = m_navState(NAV_BOOK, BTN_NEXT) And (m_currentBookIndex < BOOK_COUNT)
+End Function
+
+' Chapter row
+Public Function GetPrevChEnabled(control As IRibbonControl) As Boolean
+    GetPrevChEnabled = m_navState(NAV_CHAPTER, BTN_PREV) And (m_currentChapter > 1)
+End Function
+Public Function GetNextChEnabled(control As IRibbonControl) As Boolean
+    GetNextChEnabled = m_navState(NAV_CHAPTER, BTN_NEXT) And _
+        (m_currentChapter < aeBibleCitationClass.ChaptersInBook(m_currentBookIndex))
+End Function
+
+' Verse row
+Public Function GetPrevVsEnabled(control As IRibbonControl) As Boolean
+    GetPrevVsEnabled = m_navState(NAV_VERSE, BTN_PREV) And (m_currentVerse > 1)
+End Function
+Public Function GetNextVsEnabled(control As IRibbonControl) As Boolean
+    GetNextVsEnabled = m_navState(NAV_VERSE, BTN_NEXT) And _
+        (m_currentVerse < aeBibleCitationClass.VersesInChapter( _
+            m_currentBookIndex, m_currentChapter))
+End Function
+```
+
+`BOOK_COUNT = 66` is a named constant. `ChaptersInBook` and `VersesInChapter` are
+the Public functions from Step 4. No secondary flags; no stale state possible.
+
+---
+
 ## § 12 — ComboBox Navigation Design (2026-04-11)
 
 ### Decision
