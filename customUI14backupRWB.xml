@@ -5,9 +5,9 @@
         <group id="TestGroup" label="Bible Class Group">
           <button id="GoToMyVerse" label="GoTo Verse" imageMso="FormatNumberDefault" size="large" onAction="OnGoToVerseSblClick"/>
           <separator id="sep1"/>
-          <button id="GoToPrevButton" imageMso="HeaderFooterPreviousSection" size="normal" showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
-          <button id="GoToH1Button" imageMso="NotebookNew" size="normal" showLabel="false" onAction="OnGoToH1ButtonClick"/>
-          <button id="GoToNextButton" imageMso="HeaderFooterNextSection" size="normal" showLabel="false" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"/>
+          <button id="GoToPrevButton" imageMso="HeaderFooterPreviousSection" size="normal" showLabel="false" onAction="OnPrevButtonClick" screentip="Previous Book" getEnabled="GetPrevEnabled"/>
+          <button id="GoToH1Button" imageMso="NotebookNew" size="normal" showLabel="false" onAction="OnGoToH1ButtonClick" screentip="Go To Book"/>
+          <button id="GoToNextButton" imageMso="HeaderFooterNextSection" size="normal" showLabel="false" onAction="OnNextButtonClick" screentip="Next Book" getEnabled="GetNextEnabled"/>
           <separator id="sep2"/>
           <button id="adaeptButton" label="About" image="adaept" size="large" onAction="OnAdaeptAboutClick"/>
         </group>
