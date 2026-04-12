@@ -1762,3 +1762,273 @@ it first also means the ribbon's own style application calls use the font manage
 from the start — no retrofit needed there.
 
 ---
+
+## § 17 — Hyphenation Strategy (2026-04-11)
+
+### Background
+
+Significant manual hyphenation work has been done in the current `.docm`. Manual
+hyphenation in Word uses **soft hyphens** (Unicode U+00AD, `Chr(173)`). A soft
+hyphen marks a permissible syllable break point — it only activates (displays and
+breaks the word) when Word needs to wrap at that position. It is latent otherwise.
+
+---
+
+### Q1 — Best way forward after font substitution
+
+Soft hyphens mark correct syllable positions. Font substitution does not invalidate
+them — they remain at the correct break points. What changes is *which* soft hyphens
+activate, because line breaks shift when metrics change.
+
+After font substitution:
+
+| Condition | Effect | Action |
+|-----------|--------|--------|
+| Previously active soft hyphen no longer at a line break | Becomes latent — invisible, harmless | No action required |
+| Previously latent soft hyphen now at a line break | Activates correctly | No action required |
+| New line break position has no soft hyphen | Word cannot break — river or overflow | Add soft hyphen |
+| Long word now fits on one line due to new metrics | Soft hyphen remains latent | No action required |
+
+**Best way forward:**
+
+1. Extract the existing soft hyphen database before font substitution (see Q2) — this preserves all editorial decisions.
+2. Apply font substitution.
+3. Run the insufficient-hyphenation audit (see Q3) to identify paragraphs that now need additional soft hyphens.
+4. Add soft hyphens only where the audit flags new problems.
+
+The existing soft hyphen work is not wasted — it is the foundation. The font change creates a delta of new positions to address, not a full redo.
+
+---
+
+### Q2 — Generating a hyphenation database from the current document
+
+The soft hyphens in the document are the accumulated result of editorial decisions.
+They can be extracted to produce a reusable word-level hyphenation dictionary.
+
+**Extraction approach:**
+
+For each soft hyphen found, expand the range to word boundaries and record the word
+with its hyphenation points in `hy-phen-at-ed` form.
+
+```vba
+Public Sub ExportSoftHyphenDatabase()
+    On Error GoTo PROC_ERR
+    Dim log As New aeLoggerClass
+    log.Log_Init ActiveDocument.Path & "\rpt\HyphenDatabase.txt"
+
+    Dim r As Word.Range
+    Set r = ActiveDocument.Content
+    Dim dict As Object
+    Set dict = CreateObject("Scripting.Dictionary")
+
+    With r.Find
+        .ClearFormatting
+        .Text = Chr(173)        ' soft hyphen
+        .Forward = True
+        .Wrap = wdFindStop
+        Do While .Execute
+            Dim wordRange As Word.Range
+            Set wordRange = r.Duplicate
+            wordRange.Expand wdWord
+            Dim raw As String
+            raw = wordRange.Text
+            ' strip trailing space Word appends to word ranges
+            raw = RTrim(raw)
+            If Len(raw) > 0 And Not dict.Exists(LCase(raw)) Then
+                ' replace soft hyphens with visible hyphens for logging
+                dict.Add LCase(raw), Replace(raw, Chr(173), "-")
+            End If
+            r.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    Dim key As Variant
+    For Each key In dict.Keys
+        log.Log_Write dict(key)
+    Next key
+
+    log.Log_Close
+    Debug.Print "Hyphen database exported: " & dict.Count & " entries"
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    If Not log Is Nothing Then log.Log_Close
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & _
+           " (" & Err.Description & ") in ExportSoftHyphenDatabase"
+    Resume PROC_EXIT
+End Sub
+```
+
+Output: `rpt\HyphenDatabase.txt` — one entry per line in `hy-phen-at-ed` form.
+This file:
+- Preserves all editorial hyphenation decisions independent of font or layout
+- Can be used to re-apply soft hyphens after a font change or document rebuild
+- Serves as the English-language hyphenation supplement for i18n (see Q4)
+- Is committed to git as a project asset
+
+A companion `ImportSoftHyphenDatabase` sub reads the file and re-inserts soft
+hyphens into any occurrence of each word in the document. This makes the database
+bidirectional: export before font change, import after.
+
+---
+
+### Q3 — Detecting insufficient hyphenation in justified paragraphs
+
+Word's object model does not expose inter-word spacing for justified text directly.
+The practical approach is a proxy scan: long words without soft hyphens in justified
+paragraphs are the primary cause of rivers and overflow.
+
+**Method 1 — Long-word scan (primary, fast)**
+
+Scan all body paragraphs with justified alignment. For each word exceeding a length
+threshold, check whether it contains a soft hyphen. Flag those that do not.
+
+```vba
+Public Sub AuditInsufficientHyphenation()
+    Const MIN_WORD_LEN As Long = 10    ' tune to taste
+    On Error GoTo PROC_ERR
+    Dim log As New aeLoggerClass
+    log.Log_Init ActiveDocument.Path & "\rpt\HyphenAudit.txt"
+
+    Dim para As Word.Paragraph
+    Dim flagCount As Long
+    For Each para In ActiveDocument.Paragraphs
+        If para.Format.Alignment = wdAlignParagraphJustify Then
+            Dim w As Word.Range
+            For Each w In para.Range.Words
+                Dim clean As String
+                clean = Replace(w.Text, Chr(173), "")
+                clean = Trim(clean)
+                If Len(clean) >= MIN_WORD_LEN Then
+                    If InStr(w.Text, Chr(173)) = 0 Then
+                        log.Log_Write "UNHYPHENATED [" & clean & "] at char " & w.Start & _
+                                      " para style: " & para.Style
+                        flagCount = flagCount + 1
+                    End If
+                End If
+            Next w
+        End If
+    Next para
+
+    log.Log_Write "Total flagged: " & flagCount
+    log.Log_Close
+    Debug.Print "Hyphen audit complete. Flagged: " & flagCount
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    If Not log Is Nothing Then log.Log_Close
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & _
+           " (" & Err.Description & ") in AuditInsufficientHyphenation"
+    Resume PROC_EXIT
+End Sub
+```
+
+Output: `rpt\HyphenAudit.txt` — flagged words with character position and
+paragraph style. Used after font substitution to drive the soft hyphen addition
+pass.
+
+**Method 2 — Consecutive unhyphenated long-word lines (secondary)**
+
+Two or more consecutive lines in the same paragraph each containing a long
+unhyphenated word is a strong signal of a river. This requires line-by-line
+inspection via `Range.Information(wdFirstCharacterLineNumber)` — more expensive
+but more precise for identifying visually problematic paragraphs. Implement as a
+follow-up refinement if Method 1 produces too many false positives.
+
+**Method 3 — Word's own hyphenation suggestion**
+
+`Word.Range.CheckSpelling` and `Application.ShowSpellingErrors` are not useful here,
+but `Application.AutoCorrect` and the built-in hyphenation engine can suggest break
+points via `Range.Find` with `^-` (optional hyphen wildcard). This is useful for
+generating candidate soft hyphen positions for words flagged by Method 1, reducing
+the manual work of deciding where to break each word.
+
+---
+
+### Q4 — i18n preparation for hyphenation
+
+**The fundamental constraint:** soft hyphens are language-specific. English
+syllable breaks (`im-por-tant`) are incorrect in German (`im-por-tant` may differ),
+French, Spanish, and other languages. The English soft hyphen database must not
+carry forward to translated versions of the document.
+
+**The i18n-safe foundation:**
+
+1. **Language-tag all paragraphs explicitly.** Word's automatic hyphenation engine
+   selects its dictionary based on the paragraph's `LanguageID`. Every paragraph in
+   the current document should be tagged `wdEnglishUS` (or `wdEnglishUK` if
+   applicable). Translated versions set the language tag for their target language;
+   the automatic hyphenation algorithm then handles the base cases correctly without
+   any soft hyphen database.
+
+2. **Automatic hyphenation as the primary mechanism.** Enable
+   `ActiveDocument.AutoHyphenation = True` for all distributed versions.
+   Automatic hyphenation eliminates most rivers without manual intervention and
+   is language-aware out of the box.
+
+3. **Soft hyphens as exceptions only.** In any language version, soft hyphens
+   should only be added where the automatic algorithm produces a wrong or
+   unacceptable break. The English database is not translated — it is discarded
+   for non-English versions. Each language version builds its own exception
+   database if needed.
+
+4. **Non-breaking hyphens for proper nouns.** Names, place names, and technical
+   terms that must not break at all (e.g. place names in the biblical text) use
+   non-breaking spaces or explicit `wdNoBreak` formatting, not soft hyphens.
+   These are language-neutral and carry forward correctly to all versions.
+
+5. **Hyphenation zone consistency.** `ActiveDocument.HyphenationZone` (in twips)
+   controls how much white space is permitted before automatic hyphenation
+   engages. Set this consistently across all language versions to maintain
+   similar visual density.
+
+**Language tagging sub:**
+
+```vba
+Public Sub TagAllParagraphsEnglishUS()
+    Dim para As Word.Paragraph
+    For Each para In ActiveDocument.Paragraphs
+        para.Range.LanguageID = wdEnglishUS
+    Next para
+    Debug.Print "Language tagged: " & ActiveDocument.Paragraphs.Count & " paragraphs"
+End Sub
+```
+
+Run once; commit the result. This is the prerequisite for both automatic
+hyphenation and correct spell-check behaviour across all paragraphs.
+
+---
+
+### Recommended sequence
+
+| Step | Action | When |
+|------|--------|------|
+| 1 | Export soft hyphen database → `rpt\HyphenDatabase.txt` | Before font substitution |
+| 2 | Tag all paragraphs `wdEnglishUS` | Before font substitution |
+| 3 | Apply font substitution via `aeFontManagerClass.ApplyToStyles` | Font work phase |
+| 4 | Run `AuditInsufficientHyphenation` → `rpt\HyphenAudit.txt` | After font substitution |
+| 5 | Add soft hyphens for flagged words | After audit |
+| 6 | Re-export database → updated `rpt\HyphenDatabase.txt` | After soft hyphen additions |
+| 7 | Enable `AutoHyphenation = True` for distributed versions | Before distribution |
+
+---
+
+### Cost-benefit: now versus later
+
+| Work item | Cost now | Cost later | Risk if deferred |
+|-----------|----------|-----------|-----------------|
+| Export hyphen database | Low (1–2 hrs to write + run) | Low (still possible later) | Lose existing editorial decisions if document is rebuilt or corrupted |
+| Language tagging | Low (30 min) | Low | Automatic hyphenation selects wrong dictionary; spell-check unreliable |
+| Audit sub | Low (2–3 hrs) | Medium (more paragraphs, harder to isolate delta) | Rivers in distributed document; poor print candidate quality |
+| Import sub | Low (1 hr alongside export) | Low | Manual re-entry of soft hyphens after rebuild |
+| i18n soft-hyphen discipline | Zero (a policy decision) | High (retrofitting language tagging + removing English soft hyphens from translated content) | Wrong hyphenation in every non-English version |
+
+**Combined cost now: ~5–6 hours.**
+Deferring the database export carries the specific risk of losing the existing
+editorial work permanently if the document is rebuilt. This makes the export the
+highest-priority item in this section — it should be run before any font or
+structural changes are made to the document.
+
+---
