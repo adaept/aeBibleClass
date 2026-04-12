@@ -1945,7 +1945,7 @@ End Function
 '   Returns the number of chapters in the named book.
 '   Returns 0 if the book name cannot be resolved.
 '-----------------------------------------------------
-Private Function ChaptersInBook(ByVal bookName As String) As Long
+Public Function ChaptersInBook(ByVal bookName As String) As Long
     On Error GoTo PROC_ERR
     Dim aMap As Object
     Dim key As String
@@ -1974,7 +1974,7 @@ End Function
 '   chapter of the named book.
 '   Returns 0 if the book name or chapter is invalid.
 '-----------------------------------------------------
-Private Function VersesInChapter(ByVal bookName As String, ByVal Chapter As Long) As Long
+Public Function VersesInChapter(ByVal bookName As String, ByVal Chapter As Long) As Long
     On Error GoTo PROC_ERR
 
     Dim aMap As Object
