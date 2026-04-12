@@ -1200,3 +1200,175 @@ These become internal — called from `OnBookChanged` rather than directly from 
 ribbon button. Their signatures do not change; only the call site changes.
 
 ---
+
+## § 15 — Test Plan: basTEST_aeRibbonClass (2026-04-11)
+
+### Module
+
+`src\basTEST_aeRibbonClass.bas`
+
+Follows the same pattern as `basTEST_aeBibleCitationClass.bas`:
+- `Option Private Module` — only the runner appears in Alt+F8
+- Shared `aeAssert` public variable
+- Log written to `rpt\Ribbon_Tests.UTF8.txt`
+- Tests added to runner as each step is implemented
+
+### Entry point
+
+```vba
+Public Sub Run_All_Ribbon_Tests()
+```
+
+### Test groups
+
+Tests are divided into two tiers. **Headless** tests require no open document and
+run against logic only. **Document** tests require the Bible `.docm` to be open and
+navigate the live document.
+
+---
+
+#### Group 1 — NormalizeBookInput (headless, Step 1)
+
+Added to runner after Step 1.
+
+| Test | Input | Expected |
+|------|-------|----------|
+| Already normalised | `"GENESIS"` | `"GENESIS"` |
+| Lowercase | `"genesis"` | `"GENESIS"` |
+| Prefix no space | `"1John"` | `"1 JOHN"` |
+| Prefix already spaced | `"1 John"` | `"1 JOHN"` |
+| Leading/trailing spaces | `"  Mark  "` | `"MARK"` |
+| Single character | `"J"` | `"J"` |
+| Two-digit prefix guard | `"2Tim"` | `"2 TIM"` |
+
+---
+
+#### Group 2 — Book item list (headless, Step 1)
+
+Added to runner after Step 1.
+
+| Test | Expected |
+|------|----------|
+| `GetBookCount` | 67 (66 books + 1 separator) |
+| Item at index 1 | `"Genesis"` |
+| Item at `OT_NT_SEPARATOR_INDEX` label | `""` |
+| Item at `OT_NT_SEPARATOR_INDEX` ID | `"SEP"` |
+| Item at index 67 (last) | `"Revelation"` |
+| No item label is `"SEP"` (separator ID only) | True |
+
+---
+
+#### Group 3 — State matrix transitions (headless, Step 1)
+
+Added to runner after Step 1.
+
+| Test | Action | Expected |
+|------|--------|----------|
+| Default state | Initial | Book GoTo ON; all others OFF |
+| STATE_BOOK_SELECTED | `SetNavState` | Book all ON; Chapter GoTo ON; Verse all OFF |
+| STATE_CHAPTER_SELECTED | `SetNavState` | Book all OFF; Chapter all ON; Verse GoTo ON |
+| STATE_VERSE_SELECTED | `SetNavState` | Chapter/Book all OFF; Verse all ON |
+| New Search reset | `OnNewSearchButtonClick` | All position vars = 0; STATE_DEFAULT |
+
+---
+
+#### Group 4 — Boundary expressions (headless, Steps 1–5)
+
+Tests added incrementally as each step introduces its position variable.
+
+| Test | Condition | Expected |
+|------|-----------|----------|
+| Prev Book at Genesis | `m_currentBookIndex = 1` | `GetPrevBkEnabled` = False |
+| Next Book at Revelation | `m_currentBookIndex = 66` | `GetNextBkEnabled` = False |
+| Prev/Next Book mid-range | `m_currentBookIndex = 33` | Both True |
+| Prev Chapter at 1 | `m_currentChapter = 1` | `GetPrevChEnabled` = False |
+| Next Chapter at max | `m_currentChapter = ChaptersInBook` | `GetNextChEnabled` = False |
+| Prev Verse at 1 | `m_currentVerse = 1` | `GetPrevVsEnabled` = False |
+| Next Verse at max | `m_currentVerse = VersesInChapter` | `GetNextVsEnabled` = False |
+
+---
+
+#### Group 5 — Book navigation (document, Step 1)
+
+Added to runner after Step 1. Requires Bible `.docm` open.
+
+| Test | Input | Expected |
+|------|-------|----------|
+| Full name | `"Genesis"` | `m_currentBookIndex = 1`; cursor at Genesis H1 |
+| Abbreviation | `"Jn"` | `m_currentBookIndex` = John's index |
+| Shorthand prefix | `"1cor"` | `m_currentBookIndex` = 1 Corinthians index |
+| Invalid input | `"Zzz"` | No navigation; position unchanged |
+| Separator selected | ID = `"SEP"` | No navigation; position unchanged |
+| Book re-entry resets chapter | GoTo Genesis, then GoTo Exodus | `m_currentChapter = 0` |
+
+---
+
+#### Group 6 — Chapter navigation (document, Step 3)
+
+Added to runner after Step 3.
+
+| Test | Input | Expected |
+|------|-------|----------|
+| Valid chapter | Book = Genesis, Chapter = 3 | `m_currentChapter = 3`; cursor at H2 |
+| Chapter 1 | Book = Genesis, Chapter = 1 | `m_currentChapter = 1` |
+| Max chapter | Book = Psalms, Chapter = 150 | `m_currentChapter = 150` |
+| Over max | Book = Genesis, Chapter = 51 | No navigation; position unchanged |
+| Chapter re-entry resets verse | GoTo Ch 3 then GoTo Ch 5 | `m_currentVerse = 0` |
+
+---
+
+#### Group 7 — Verse navigation (document, Step 5)
+
+Added to runner after Step 5.
+
+| Test | Input | Expected |
+|------|-------|----------|
+| Study version — paragraph count | Book = Jude, Ch = 1, Verse = 3 | Cursor at verse 3 paragraph |
+| Worst case | Book = Psalms, Ch = 119, Verse = 176 | Cursor at verse 176; elapsed logged |
+| Over max | Book = Jude, Ch = 1, Verse = 26 | No navigation; position unchanged |
+
+---
+
+### Runner skeleton
+
+```vba
+Public Sub Run_All_Ribbon_Tests()
+    On Error GoTo PROC_ERR
+
+    Dim log As New aeLoggerClass
+    log.Log_Init ActiveDocument.Path & "\rpt\Ribbon_Tests.UTF8.txt"
+
+    Set aeAssert = New aeAssertClass
+    aeAssert.SetLogger log
+    aeAssert.Initialize
+
+    ' --- Headless (no document required) ---
+    Test_NormalizeBookInput        ' Step 1
+    Test_BookItemList              ' Step 1
+    Test_StateMatrixTransitions    ' Step 1
+    Test_BoundaryExpressions       ' Steps 1-5
+
+    ' --- Document required ---
+    Test_BookNavigation            ' Step 1
+    Test_ChapterNavigation         ' Step 3
+    Test_VerseNavigation           ' Step 5
+
+    aeAssert.Terminate
+    Set aeAssert = Nothing
+    log.Log_Close
+    Set log = Nothing
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    If Not log Is Nothing Then log.Log_Close
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & _
+           " (" & Err.Description & ") in Run_All_Ribbon_Tests"
+    Resume PROC_EXIT
+End Sub
+```
+
+Document tests are stubbed with `Debug.Print "SKIP: ..."` until the implementation
+step that enables them is complete. This keeps the runner green at every step.
+
+---
