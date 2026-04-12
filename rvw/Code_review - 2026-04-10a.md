@@ -2032,3 +2032,113 @@ highest-priority item in this section — it should be run before any font or
 structural changes are made to the document.
 
 ---
+
+## § 18 — Ribbon Skeleton: New Design Activation (2026-04-11)
+
+### Purpose
+
+Replace the old ribbon layout with the new comboBox design in a minimal, safe step.
+The ribbon must load without error. No navigation logic is implemented at this stage.
+Existing `GoToH1`, `PrevButton`, `NextButton`, and `GoToVerseSBL` implementations
+in `aeRibbonClass.cls` are untouched — they are simply no longer called from the
+ribbon until wired up in later steps.
+
+---
+
+### Current state
+
+**XML (`customUI14backupRWB.xml`):**
+One large GoTo Verse button, Prev/GoTo/Next Book buttons, About.
+
+**Live callbacks (`basBibleRibbonSetup.bas`):**
+`OnGoToVerseSblClick`, `OnPrevButtonClick`, `OnGoToH1ButtonClick`,
+`OnNextButtonClick`, `OnAdaeptAboutClick`, `GetPrevEnabled`, `GetNextEnabled`.
+
+---
+
+### New XML layout
+
+```
+[◀ PrevBook] [Book comboBox       ▼] [▶ NextBook]
+[◀ PrevCh  ] [Chapter comboBox   ▼] [▶ NextCh  ]
+[◀ PrevVs  ] [Verse comboBox     ▼] [▶ NextVs  ]
+separator
+[New Search]
+separator
+[About] (large)
+```
+
+Three `<box boxStyle="horizontal">` rows. No screentips. No imageMso on comboBoxes.
+`sizeString="2 Thessalonians"` on Book comboBox to reserve width for longest name.
+
+Callback names for the Book row reuse `OnPrevButtonClick`, `OnNextButtonClick`,
+`GetPrevEnabled`, `GetNextEnabled` — no change to those existing stubs.
+
+---
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `customUI14backupRWB.xml` | Full replacement with new design |
+| `basBibleRibbonSetup.bas` | ~18 new stubs added; `OnGoToVerseSblClick` and `OnGoToH1ButtonClick` commented out |
+| `aeRibbonClass.cls` | 4 new instance variables declared; ~18 new skeleton methods added |
+
+---
+
+### Skeleton behaviour after activation
+
+| Feature | Status |
+|---------|--------|
+| Ribbon loads without error | Yes |
+| About button | Yes — unchanged |
+| Prev Book / Next Book | Yes — old stubs still wired |
+| Book comboBox | Visible; empty dropdown; text input accepted; onChange does nothing |
+| Chapter / Verse rows | Visible; fully disabled |
+| New Search | Visible; enabled; clears position variables; invalidates ribbon |
+| GoTo Verse (old large button) | Removed from ribbon |
+| GoTo Book InputBox | Removed from ribbon |
+
+---
+
+### New instance variables (declared, not yet used)
+
+```vba
+Private m_currentBookIndex As Long   ' 1-based; 0 = not set
+Private m_currentBookPos   As Long   ' character position of book H1
+Private m_currentChapter   As Long   ' 0 = not set
+Private m_currentVerse     As Long   ' 0 = not set
+```
+
+---
+
+### Skeleton getEnabled returns
+
+| Control | Skeleton return |
+|---------|----------------|
+| Book comboBox | `True` |
+| Prev Book / Next Book | `True` |
+| Chapter comboBox | `False` |
+| Prev Ch / Next Ch | `False` |
+| Verse comboBox | `False` |
+| Prev Vs / Next Vs | `False` |
+| New Search | `False` (enabled after first book navigation — Step 1 wires this) |
+
+All `getItemCount` stubs return `0` — empty dropdowns, no crash.
+All `getText` stubs return `""`.
+All `onChange` stubs do nothing.
+
+---
+
+### Activation sequence
+
+1. Make the three file changes above.
+2. Open `.docm` in **Office RibbonX Editor**.
+3. Replace `customUI/customUI14.xml` with the new XML.
+4. Save and close RibbonX Editor.
+5. Open document in Word — ribbon reloads with new layout.
+6. Verify: ribbon visible, no errors on load, About works, Prev/Next Book respond.
+
+After verification, implementation proceeds with Step 1 (§ 14 revised scope).
+
+---
