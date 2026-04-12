@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #594 -
 ' #593 -
 ' #592 -
-' #591 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -76,6 +75,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #591 - Implement Step 3 [feat]
     ' FIXED - #590 - Step 4 is next - two visibility changes [impr]
     ' FIXED - #589 - Step 1 Implementation
     ' FIXED - #588 - Combo box in ribbon for Chapter and Verse are shorter [bug]

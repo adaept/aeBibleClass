@@ -559,6 +559,9 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
         m_ribbon.InvalidateControl "NextBookButton"
         m_ribbon.InvalidateControl "cmbBook"
         m_ribbon.InvalidateControl "NewSearchButton"
+        m_ribbon.InvalidateControl "cmbChapter"
+        m_ribbon.InvalidateControl "PrevChapterButton"
+        m_ribbon.InvalidateControl "NextChapterButton"
     End If
 
 PROC_EXIT:
@@ -568,26 +571,95 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-' -- Chapter row (skeleton — Step 3 wires navigation logic) --------------------
+' -- Chapter row (Step 3) ------------------------------------------------------
+
+Private Function FindChapterPos(ByVal chNum As Long) As Long
+    ' Returns character position of the Nth Heading 2 after the current book H1.
+    ' Returns 0 if not found.
+    On Error GoTo PROC_ERR
+    Dim r As Word.Range
+    Set r = ActiveDocument.Range(m_currentBookPos, ActiveDocument.content.End)
+    Dim j As Long
+    For j = 1 To chNum
+        r.Find.ClearFormatting
+        r.Find.style = ActiveDocument.Styles("Heading 2")
+        r.Find.Text = ""
+        r.Find.Forward = True
+        r.Find.Wrap = wdFindStop
+        If Not r.Find.Execute Then
+            FindChapterPos = 0
+            Exit Function
+        End If
+        If j < chNum Then
+            r.Start = r.End
+            r.End = ActiveDocument.content.End
+        End If
+    Next j
+    FindChapterPos = r.Start
+    Exit Function
+PROC_ERR:
+    FindChapterPos = 0
+End Function
+
+Private Sub GoToChapter(ByVal chNum As Long)
+    On Error GoTo PROC_ERR
+    If m_currentBookIndex = 0 Then GoTo PROC_EXIT   ' assert: select book first
+
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+
+    Dim maxCh As Long
+    maxCh = aeBibleCitationClass.ChaptersInBook(bookName)
+    If chNum < 1 Or chNum > maxCh Then GoTo PROC_EXIT
+
+    Dim chPos As Long
+    chPos = FindChapterPos(chNum)
+    If chPos = 0 Then GoTo PROC_EXIT
+
+    ActiveDocument.Range(chPos, chPos).Select
+    m_currentChapter = chNum
+    m_currentVerse = 0
+
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl "cmbChapter"
+        m_ribbon.InvalidateControl "PrevChapterButton"
+        m_ribbon.InvalidateControl "NextChapterButton"
+        m_ribbon.InvalidateControl "cmbVerse"
+        m_ribbon.InvalidateControl "PrevVerseButton"
+        m_ribbon.InvalidateControl "NextVerseButton"
+    End If
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToChapter of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+
+Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
+    GetChapterEnabled = (m_currentBookIndex > 0)
+End Function
 
 Public Function GetPrevChapterEnabled(control As IRibbonControl) As Boolean
-    GetPrevChapterEnabled = False
+    GetPrevChapterEnabled = (m_currentChapter > 1)
 End Function
 
 Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
-    GetNextChapterEnabled = False
-End Function
-
-Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
-    GetChapterEnabled = False
+    If m_currentChapter = 0 Or m_currentBookIndex = 0 Then
+        GetNextChapterEnabled = False
+        Exit Function
+    End If
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    GetNextChapterEnabled = (m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName))
 End Function
 
 Public Function GetChapterCount(control As IRibbonControl) As Long
-    GetChapterCount = 0   ' Step 3: ChaptersInBook(m_currentBookIndex)
+    GetChapterCount = 0
 End Function
 
 Public Function GetChapterItemLabel(control As IRibbonControl, index As Long) As String
-    GetChapterItemLabel = ""   ' Step 3
+    GetChapterItemLabel = ""
 End Function
 
 Public Function GetChapterItemID(control As IRibbonControl, index As Long) As String
@@ -595,19 +667,41 @@ Public Function GetChapterItemID(control As IRibbonControl, index As Long) As St
 End Function
 
 Public Function GetChapterText(control As IRibbonControl) As String
-    GetChapterText = ""   ' Step 3: return CStr(m_currentChapter) when set
+    If m_currentChapter > 0 Then
+        GetChapterText = CStr(m_currentChapter)
+    Else
+        GetChapterText = ""
+    End If
 End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
-    ' Step 3 — validate range, Find Heading 2, SetNavState
+    On Error GoTo PROC_ERR
+    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
+    GoToChapter CLng(Trim(text))
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnChapterChanged of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub OnPrevChapterClick(control As IRibbonControl)
-    ' Step 3
+    If m_currentChapter > 1 Then GoToChapter m_currentChapter - 1
 End Sub
 
 Public Sub OnNextChapterClick(control As IRibbonControl)
-    ' Step 3
+    On Error GoTo PROC_ERR
+    If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    If m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName) Then
+        GoToChapter m_currentChapter + 1
+    End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnNextChapterClick of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------

@@ -1117,8 +1117,8 @@ Verse changed → (nothing downstream)
 |------|-------------|--------|
 | 1 | `NormalizeBookInput` + `m_currentBookIndex` / `m_currentBookPos` in `aeRibbonClass.cls` | **COMPLETE** |
 | 2 | `CaptureHeading2s` | Eliminated |
-| 3 | `GoToChapter` implementation | Pending |
-| 4 | Expose `ChaptersInBook` / `VersesInChapter` as Public | **NEXT** |
+| 3 | `GoToChapter` implementation | **NEXT** |
+| 4 | Expose `ChaptersInBook` / `VersesInChapter` as Public | **COMPLETE** |
 | 5 | `GoToVerse` implementation | Pending |
 | 6 | Ribbon XML update | Pending — requires full rewrite for `<comboBox>` row layout, removal of screentips and imageMso |
 | 7 | Move OLD_CODE | Pending |
