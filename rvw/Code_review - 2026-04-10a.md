@@ -1372,3 +1372,155 @@ Document tests are stubbed with `Debug.Print "SKIP: ..."` until the implementati
 step that enables them is complete. This keeps the runner green at every step.
 
 ---
+
+### VSTO / i18n / Code-signing Alignment
+
+#### Preparation steps
+
+These are disciplines and structural decisions applied during VBA development now.
+None require new technology. Each is listed with its cost to apply now versus the
+cost to retrofit later.
+
+---
+
+**P1 — String resource module**
+
+Create `basRibbonStrings.bas`. All user-facing strings used by the ribbon — status
+bar messages, MsgBox text, error messages, `screentip` values if any remain — are
+declared as named constants or returned from a single function here. Logic
+procedures never contain inline string literals for UI text.
+
+In VBA: a `bas` module with `Public Const` declarations.
+In VB.NET VSTO: a `.resx` resource file. The port is a file replacement, not a
+code audit.
+
+i18n benefit: a translator works on one file. No code changes required.
+
+| | Cost |
+|-|------|
+| Now | 1–2 hours to create the module and establish the discipline during Step 1 |
+| Later | Full audit of all modules for inline strings, regression test of every message path |
+| Risk if deferred | Strings missed in audit, UI text untranslated in one or more locales |
+
+Test addition to Group 1 (headless): `Test_StringResourceCoverage` — asserts that
+no `MsgBox`, `Application.StatusBar`, or `Debug.Print` call in `aeRibbonClass.cls`
+contains a string literal directly. Implemented as a grep-style scan of the module
+text at runtime via `VBComponent.CodeModule.Lines`.
+
+---
+
+**P2 — Callback signature discipline**
+
+All ribbon callback subs and functions must use `Long` not `Integer` for index
+parameters. VBA `Integer` is 16-bit; VB.NET `Integer` is 32-bit (= VBA `Long`).
+Using `Long` throughout means the port is type-name-compatible without change.
+
+```vba
+' Correct — ports directly to VB.NET Integer
+Public Function GetBookItemLabel(control As IRibbonControl, index As Long) As String
+
+' Wrong — requires type change on port
+Public Function GetBookItemLabel(control As IRibbonControl, index As Integer) As String
+```
+
+VSTO ribbon callback signatures are identical in structure to VBA. A correctly
+typed VBA callback is a copy-paste with namespace changes only.
+
+| | Cost |
+|-|------|
+| Now | Zero — a naming rule applied during writing |
+| Later | Audit of all 20+ callbacks; risk of runtime errors on large indices at port |
+| Risk if deferred | Silent overflow on book/chapter/verse indices > 32767 (not a real risk for 66 books, but a correctness issue in principle) |
+
+Test addition to runner: `Test_CallbackSignatures` — a checklist sub that prints
+each callback name and its parameter types. Not an automated assertion; a
+confirmation print reviewed before each Step is marked complete.
+
+---
+
+**P3 — Separation of concerns verification**
+
+Each ribbon callback sub must contain no navigation logic directly — it calls a
+private method on `aeRibbonClass` and returns. The private method contains the
+logic. This maps directly to the VSTO pattern where the ribbon callback class
+delegates to a service class.
+
+Test addition (headless): `Test_CallbackDelegation` — for each public callback,
+assert that its line count is ≤ 5 lines (stub + one call + error handler).
+Implemented via `VBComponent.CodeModule` line count inspection.
+
+| | Cost |
+|-|------|
+| Now | Zero — a structural rule applied during writing |
+| Later | Full refactor of callback bodies into private methods; high regression risk |
+| Risk if deferred | VSTO port requires rewriting every callback, not just retyping |
+
+---
+
+**P4 — i18n: book name source discipline**
+
+Book names displayed in the comboBox must always come from `aeBibleCitationClass`
+via `GetBookItemLabel`. No book name string literal anywhere in `aeRibbonClass.cls`
+or `basTEST_aeRibbonClass.bas`. Test cases that reference a specific book use the
+index constant (`NAV_BOOK_GENESIS = 1`) not the string `"Genesis"`.
+
+i18n benefit: localising book names requires updating `aeBibleCitationClass` only.
+The ribbon, the tests, and the navigation logic are all index-based and require no
+change.
+
+| | Cost |
+|-|------|
+| Now | Near zero — a naming discipline during test writing |
+| Later | Test suite audit; risk of tests passing in English but failing in localised builds |
+
+---
+
+**P5 — Numeric canonical form for navigation state**
+
+Navigation state is always stored and passed as indices (`m_currentBookIndex`,
+`m_currentChapter`, `m_currentVerse`). String forms are only produced at the
+display layer (`GetBookText`, `GetChapterText`, `GetVerseText`). This is already
+the design; this preparation step makes it an explicit tested constraint.
+
+Test addition (headless): assert that after every navigation action, all three
+position variables hold numeric values > 0 (or exactly 0 for unset). No string
+state exists anywhere in the navigation model.
+
+---
+
+#### Impact summary
+
+| Preparation | Implementation cost now | Retrofit cost later | Deferred risk |
+|-------------|------------------------|--------------------|-|
+| P1 String resources | Low (1–2 hrs) | High (audit + regression) | Untranslated UI strings |
+| P2 Callback signatures | Zero (naming rule) | Low–medium (type audit) | Port friction |
+| P3 Separation of concerns | Zero (structural rule) | High (full refactor) | VSTO callbacks need rewrite |
+| P4 Book name discipline | Near zero | Low (test audit) | Tests fail in localised builds |
+| P5 Numeric canonical form | Zero (already designed) | Medium (state refactor) | i18n breakage in display layer |
+
+The combined cost of all five preparations applied now is **2–3 hours** above the
+baseline implementation time. The combined retrofit cost later is estimated at
+**3–5 days** of refactoring, audit, and regression testing, with non-trivial risk
+of introducing defects into working code.
+
+---
+
+#### Code signing — when it becomes useful
+
+| Stage | What to sign | When | Why |
+|-------|-------------|------|-----|
+| **Now — development** | VBA project in `.docm` | Immediately | Prevents "Macros disabled" prompts on the development machine; `Application.OnTime` callbacks resolve without Trust Center intervention |
+| **First external distribution** | VBA project in `.docm` | Before sharing with any tester outside the development machine | Word shows a security warning for unsigned macros; testers will be blocked or alarmed without a signature |
+| **VSTO development begins** | VSTO assembly (`.dll`) | When the first VSTO build is produced | Windows SmartScreen and Office add-in registration both check for a valid Authenticode signature; unsigned VSTO add-ins require manual Trust Center override on each machine |
+| **Store submission** | MSIX package | Mandatory before submission | Microsoft Store requires a valid code-signing certificate; EV (Extended Validation) certificate required for kernel-mode drivers but standard OV (Organisation Validation) is sufficient for MSIX Office add-ins |
+
+**Certificate recommendation:** obtain a standard OV Authenticode certificate now
+(DigiCert, Sectigo, or equivalent, ~USD 200–400/year). Use it to sign the VBA
+project immediately. The same certificate signs the VSTO assembly and the MSIX
+package when those stages are reached. Establishing the signing workflow early
+means no disruption to the distribution pipeline later.
+
+An EV certificate (~USD 400–700/year, requires hardware token) is not required
+unless kernel-mode code is involved. It is not needed for this project.
+
+---
