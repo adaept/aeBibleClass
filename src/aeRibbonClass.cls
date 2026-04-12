@@ -101,8 +101,8 @@ Public Sub OnRibbonLoad(ribbon As IRibbonUI)
     Set m_ribbon = ribbon
     m_ribbonReady = True
     Debug.Print "RibbonController: Ribbon ready at " & Format(Now, "hh:nn:ss")
-    m_ribbon.InvalidateControl "GoToNextButton"
-    m_ribbon.InvalidateControl "GoToPrevButton"
+    m_ribbon.InvalidateControl "NextBookButton"
+    m_ribbon.InvalidateControl "PrevBookButton"
     Call EnableButtonsRoutine
 PROC_EXIT:
     Exit Sub
@@ -283,8 +283,8 @@ Private Sub NextButton()
         m_btnNextEnabled = False
     End If
     Application.ScreenUpdating = True
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "NextBookButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "PrevBookButton"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -318,8 +318,8 @@ Private Sub PrevButton()
         m_btnPrevEnabled = False
     End If
     Application.ScreenUpdating = True
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToNextButton"
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "GoToPrevButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "NextBookButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "PrevBookButton"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -478,7 +478,16 @@ Private Function AdaeptMsg() As String
     AdaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
 
-' -- Book comboBox (skeleton — Step 1 wires navigation logic) ------------------
+' -- Book comboBox (Step 1) ----------------------------------------------------
+
+Private Function NormalizeBookInput(ByVal raw As String) As String
+    Dim s As String
+    s = Trim(UCase(raw))
+    If Len(s) >= 2 Then
+        If s Like "[0-9][A-Z]*" Then s = Left$(s, 1) & " " & Mid$(s, 2)
+    End If
+    NormalizeBookInput = s
+End Function
 
 Public Function GetBookEnabled(control As IRibbonControl) As Boolean
     GetBookEnabled = True
@@ -497,11 +506,66 @@ Public Function GetBookItemID(control As IRibbonControl, index As Long) As Strin
 End Function
 
 Public Function GetBookText(control As IRibbonControl) As String
-    GetBookText = ""   ' Step 1: return canonical book name from m_currentBookIndex
+    If m_currentBookIndex > 0 Then
+        If Not IsEmpty(headingData(m_currentBookIndex, 0)) Then
+            GetBookText = CStr(headingData(m_currentBookIndex, 0))
+            Exit Function
+        End If
+    End If
+    GetBookText = ""
 End Function
 
 Public Sub OnBookChanged(control As IRibbonControl, text As String)
-    ' Step 1 — NormalizeBookInput, match headingData, navigate, SetNavState
+    On Error GoTo PROC_ERR
+
+    Dim pattern As String
+    pattern = NormalizeBookInput(text)
+    If Len(pattern) < 2 Then GoTo PROC_EXIT   ' ignore single-character input
+
+    If IsEmpty(headingData(1, 0)) Then CaptureHeading1s
+
+    Dim i As Long
+    Dim matchFound As Boolean
+    For i = 1 To 66
+        If Not IsEmpty(headingData(i, 0)) Then
+            If CStr(headingData(i, 0)) Like "*" & pattern & "*" Then
+                matchFound = True
+                Exit For
+            End If
+        End If
+    Next i
+
+    If Not matchFound Then GoTo PROC_EXIT
+
+    m_currentBookIndex = i
+    m_currentBookPos = CLng(headingData(i, 1))
+    m_currentChapter = 0
+    m_currentVerse = 0
+
+    ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
+
+    m_btnPrevEnabled = (m_currentBookIndex > 1)
+    Dim k As Long
+    m_btnNextEnabled = False
+    For k = 66 To 1 Step -1
+        If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
+            m_btnNextEnabled = (m_currentBookIndex < k)
+            Exit For
+        End If
+    Next k
+
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl "PrevBookButton"
+        m_ribbon.InvalidateControl "NextBookButton"
+        m_ribbon.InvalidateControl "cmbBook"
+        m_ribbon.InvalidateControl "NewSearchButton"
+    End If
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnBookChanged of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- Chapter row (skeleton — Step 3 wires navigation logic) --------------------
@@ -591,7 +655,7 @@ End Sub
 ' -- New Search ----------------------------------------------------------------
 
 Public Function GetNewSearchEnabled(control As IRibbonControl) As Boolean
-    GetNewSearchEnabled = False   ' Step 1: True after first book navigation
+    GetNewSearchEnabled = (m_currentBookIndex > 0)
 End Function
 
 Public Sub OnNewSearchClick(control As IRibbonControl)
