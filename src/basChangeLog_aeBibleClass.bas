@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #590 -
 ' #589 -
 ' #588 -
-' #587 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #587 - New Ribbon - skeleton implementation of design [feat]
     ' FIXED - #586 - Implement short circuit of TestUpdateCharStyle and also deal with chapter and verse markers at the same time [perf]
     ' FIXED - #585 - Re-capture headings if array is empty - e.g. if IDE is reset for long running process [bug]
     ' FIXED - #584 - Run TestUpdateCharStyle to check long running process is working

@@ -2,14 +2,43 @@
   <ribbon startFromScratch="false">
     <tabs>
       <tab id="RWB" label="Radiant Word Bible">
-        <group id="TestGroup" label="Bible Class Group">
-          <button id="GoToMyVerse" label="GoTo Verse" imageMso="FormatNumberDefault" size="large" onAction="OnGoToVerseSblClick"/>
+        <group id="NavGroup" label="Bible Navigation">
+          <box id="boxBook" boxStyle="horizontal">
+            <button id="PrevBookButton" imageMso="HeaderFooterPreviousSection" size="normal"
+                    showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
+            <comboBox id="cmbBook" showLabel="false" sizeString="2 Thessalonians"
+                      getItemCount="GetBookCount" getItemLabel="GetBookItemLabel"
+                      getItemID="GetBookItemID" getText="GetBookText"
+                      onChange="OnBookChanged" getEnabled="GetBookEnabled"/>
+            <button id="NextBookButton" imageMso="HeaderFooterNextSection" size="normal"
+                    showLabel="false" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"/>
+          </box>
+          <box id="boxChapter" boxStyle="horizontal">
+            <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
+                    showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"/>
+            <comboBox id="cmbChapter" showLabel="false" sizeString="000"
+                      getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
+                      getItemID="GetChapterItemID" getText="GetChapterText"
+                      onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
+            <button id="NextChapterButton" imageMso="HeaderFooterNextSection" size="normal"
+                    showLabel="false" onAction="OnNextChapterClick" getEnabled="GetNextChapterEnabled"/>
+          </box>
+          <box id="boxVerse" boxStyle="horizontal">
+            <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
+                    showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"/>
+            <comboBox id="cmbVerse" showLabel="false" sizeString="000"
+                      getItemCount="GetVerseCount" getItemLabel="GetVerseItemLabel"
+                      getItemID="GetVerseItemID" getText="GetVerseText"
+                      onChange="OnVerseChanged" getEnabled="GetVerseEnabled"/>
+            <button id="NextVerseButton" imageMso="HeaderFooterNextSection" size="normal"
+                    showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"/>
+          </box>
           <separator id="sep1"/>
-          <button id="GoToPrevButton" imageMso="HeaderFooterPreviousSection" size="normal" showLabel="false" onAction="OnPrevButtonClick" screentip="Previous Book" getEnabled="GetPrevEnabled"/>
-          <button id="GoToH1Button" imageMso="NotebookNew" size="normal" showLabel="false" onAction="OnGoToH1ButtonClick" screentip="Go To Book"/>
-          <button id="GoToNextButton" imageMso="HeaderFooterNextSection" size="normal" showLabel="false" onAction="OnNextButtonClick" screentip="Next Book" getEnabled="GetNextEnabled"/>
+          <button id="NewSearchButton" imageMso="Undo" size="normal" showLabel="false"
+                  onAction="OnNewSearchClick" getEnabled="GetNewSearchEnabled"/>
           <separator id="sep2"/>
-          <button id="adaeptButton" label="About" image="adaept" size="large" onAction="OnAdaeptAboutClick"/>
+          <button id="adaeptButton" label="About" image="adaept" size="large"
+                  onAction="OnAdaeptAboutClick"/>
         </group>
       </tab>
     </tabs>

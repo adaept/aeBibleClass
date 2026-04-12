@@ -40,6 +40,10 @@ Private m_bookmarkIndex  As Long
 Private m_savedPos       As Long
 Private m_bookAbbr       As String
 Private headingData(1 To 66, 0 To 1) As Variant
+Private m_currentBookIndex As Long   ' 1-based index into headingData; 0 = not set
+Private m_currentBookPos   As Long   ' character position of book H1 in document
+Private m_currentChapter   As Long   ' current chapter number; 0 = not set
+Private m_currentVerse     As Long   ' current verse number; 0 = not set
 
 ' Windows API - cursor control
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -56,6 +60,10 @@ Private Sub Class_Initialize()
     m_bookmarkIndex = 0
     m_savedPos = 0
     m_bookAbbr = vbNullString
+    m_currentBookIndex = 0
+    m_currentBookPos = 0
+    m_currentChapter = 0
+    m_currentVerse = 0
 End Sub
 
 Private Sub Class_Terminate()
@@ -469,4 +477,128 @@ End Sub
 Private Function AdaeptMsg() As String
     AdaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
+
+' -- Book comboBox (skeleton — Step 1 wires navigation logic) ------------------
+
+Public Function GetBookEnabled(control As IRibbonControl) As Boolean
+    GetBookEnabled = True
+End Function
+
+Public Function GetBookCount(control As IRibbonControl) As Long
+    GetBookCount = 0   ' Step 1: delegate to aeBibleCitationClass
+End Function
+
+Public Function GetBookItemLabel(control As IRibbonControl, index As Long) As String
+    GetBookItemLabel = ""   ' Step 1
+End Function
+
+Public Function GetBookItemID(control As IRibbonControl, index As Long) As String
+    GetBookItemID = CStr(index)   ' Step 1: return "SEP" for OT_NT_SEPARATOR_INDEX
+End Function
+
+Public Function GetBookText(control As IRibbonControl) As String
+    GetBookText = ""   ' Step 1: return canonical book name from m_currentBookIndex
+End Function
+
+Public Sub OnBookChanged(control As IRibbonControl, text As String)
+    ' Step 1 — NormalizeBookInput, match headingData, navigate, SetNavState
+End Sub
+
+' -- Chapter row (skeleton — Step 3 wires navigation logic) --------------------
+
+Public Function GetPrevChapterEnabled(control As IRibbonControl) As Boolean
+    GetPrevChapterEnabled = False
+End Function
+
+Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
+    GetNextChapterEnabled = False
+End Function
+
+Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
+    GetChapterEnabled = False
+End Function
+
+Public Function GetChapterCount(control As IRibbonControl) As Long
+    GetChapterCount = 0   ' Step 3: ChaptersInBook(m_currentBookIndex)
+End Function
+
+Public Function GetChapterItemLabel(control As IRibbonControl, index As Long) As String
+    GetChapterItemLabel = ""   ' Step 3
+End Function
+
+Public Function GetChapterItemID(control As IRibbonControl, index As Long) As String
+    GetChapterItemID = CStr(index)
+End Function
+
+Public Function GetChapterText(control As IRibbonControl) As String
+    GetChapterText = ""   ' Step 3: return CStr(m_currentChapter) when set
+End Function
+
+Public Sub OnChapterChanged(control As IRibbonControl, text As String)
+    ' Step 3 — validate range, Find Heading 2, SetNavState
+End Sub
+
+Public Sub OnPrevChapterClick(control As IRibbonControl)
+    ' Step 3
+End Sub
+
+Public Sub OnNextChapterClick(control As IRibbonControl)
+    ' Step 3
+End Sub
+
+' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
+
+Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
+    GetPrevVerseEnabled = False
+End Function
+
+Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
+    GetNextVerseEnabled = False
+End Function
+
+Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
+    GetVerseEnabled = False
+End Function
+
+Public Function GetVerseCount(control As IRibbonControl) As Long
+    GetVerseCount = 0   ' Step 5: VersesInChapter(m_currentBookIndex, m_currentChapter)
+End Function
+
+Public Function GetVerseItemLabel(control As IRibbonControl, index As Long) As String
+    GetVerseItemLabel = ""   ' Step 5
+End Function
+
+Public Function GetVerseItemID(control As IRibbonControl, index As Long) As String
+    GetVerseItemID = CStr(index)
+End Function
+
+Public Function GetVerseText(control As IRibbonControl) As String
+    GetVerseText = ""   ' Step 5: return CStr(m_currentVerse) when set
+End Function
+
+Public Sub OnVerseChanged(control As IRibbonControl, text As String)
+    ' Step 5 — validate range, navigate by paragraph count or verse marker scan
+End Sub
+
+Public Sub OnPrevVerseClick(control As IRibbonControl)
+    ' Step 5
+End Sub
+
+Public Sub OnNextVerseClick(control As IRibbonControl)
+    ' Step 5
+End Sub
+
+' -- New Search ----------------------------------------------------------------
+
+Public Function GetNewSearchEnabled(control As IRibbonControl) As Boolean
+    GetNewSearchEnabled = False   ' Step 1: True after first book navigation
+End Function
+
+Public Sub OnNewSearchClick(control As IRibbonControl)
+    m_currentBookIndex = 0
+    m_currentBookPos = 0
+    m_currentChapter = 0
+    m_currentVerse = 0
+    If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+End Sub
 
