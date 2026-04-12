@@ -1108,3 +1108,29 @@ Verse changed → (nothing downstream)
 | ComboBox width | Not specified | Add `sizeString="2 Thessalonians"` to reserve width for longest book name |
 
 ---
+
+## § 14 — Implementation Steps: Status and Revised Scope (2026-04-11)
+
+### Step status
+
+| Step | Description | Status |
+|------|-------------|--------|
+| 1 | `NormalizeBookInput` + `m_currentBookIndex` / `m_currentBookPos` in `aeRibbonClass.cls` | **NEXT — scope revised, see below** |
+| 2 | `CaptureHeading2s` | Eliminated |
+| 3 | `GoToChapter` implementation | Pending |
+| 4 | Expose `ChaptersInBook` / `VersesInChapter` as Public | Pending |
+| 5 | `GoToVerse` implementation | Pending |
+| 6 | Ribbon XML update | Pending — requires full rewrite for `<comboBox>` row layout, removal of screentips and imageMso |
+| 7 | Move OLD_CODE | Pending |
+| 8 | `normalize_vba.py` update | Pending |
+
+### Note on scope change
+
+Steps 1–5 were designed around the original GoTo-button-plus-InputBox model.
+The comboBox design (§ 12) changes the callback signatures and removes the need
+for InputBox dialogs entirely. Step 1 in particular needs revisiting:
+`NormalizeBookInput` is still valid but it now feeds `OnBookChanged` rather than
+a standalone `GoToH1` sub. Revised Step 1 scope to be confirmed before any code
+is written.
+
+---
