@@ -2557,3 +2557,211 @@ is required, use `<button>` adjacent to the field (explicit commit button) or
 validate in `onChange` and use the guard to filter out mid-typing keystrokes.
 
 ---
+
+## § 22 — Bugs 4–6: Alignment, Tab Order, and Progressive Navigation Redesign (2026-04-12)
+
+These three issues were observed together after the editBox implementation landed.
+Bug 6 is a design-level finding that subsumes the fix strategy for Bugs 4 and 5.
+
+---
+
+### Bug 4 — Visual misalignment between Book comboBox and Chapter/Verse editBoxes
+
+**Symptom:** The Book row (comboBox) has a dropdown arrow button on its right edge.
+The Chapter and Verse rows (editBox) do not. The three rows do not align visually —
+the text entry area of the Book comboBox is narrower than the Chapter/Verse editBoxes
+by the width of the dropdown arrow.
+
+**Root cause:** `<comboBox>` and `<editBox>` are different control types with
+different visual footprints. `sizeString` sets the minimum text area width, but the
+dropdown arrow adds additional width to the comboBox that the editBox does not have.
+
+**Proposed fix:** Switch Chapter and Verse back to `<comboBox>`. All three rows
+are then the same control type and align correctly. The deferred `onChange`
+navigation (§ 20, § 21) applies to comboBox without change — `onChange` on comboBox
+fires on keystroke and on Enter. The comboBox also restores the dropdown list of
+chapter/verse numbers, which was lost in the editBox conversion.
+
+---
+
+### Bug 5 — Tab from input field moves focus to the adjacent Next button
+
+**Symptom:** Tab from the Book comboBox moves keyboard focus to the Next Book
+button. The button shows a focused/highlighted visual state. The user expects Tab
+to advance to the Chapter input field, not the Next button.
+
+**Root cause:** The Tab order within each `<box>` follows XML document order:
+`[Prev] [input] [Next]`. Tab from the input field goes to Next, not to the input
+field in the next row. The Next button with keyboard focus will activate (navigate)
+if the user presses Enter or Space.
+
+**Proposed layout change:** Separate input fields from Prev/Next buttons into
+distinct `<box>` rows so that Tab advances through input fields only.
+
+```
+Row 1 (inputs):   [Book comboBox]    [Chapter comboBox]    [Verse comboBox]
+Row 2 (buttons):  [Prev/Next Book]   [Prev/Next Chapter]   [Prev/Next Verse]
+```
+
+Each column pair (input + button pair) remains visually grouped. Tab order becomes:
+Book input → Chapter input → Verse input → (returns to ribbon or document).
+
+This requires restructuring the XML from three horizontal `<box>` rows (each
+`[Prev][input][Next]`) to two horizontal `<box>` rows (all inputs / all button pairs).
+
+```xml
+<!-- New layout sketch -->
+<box id="boxInputs" boxStyle="horizontal">
+  <comboBox id="cmbBook"    .../>
+  <comboBox id="cmbChapter" .../>
+  <comboBox id="cmbVerse"   .../>
+</box>
+<box id="boxButtons" boxStyle="horizontal">
+  <box id="boxBookNav"    boxStyle="horizontal">
+    <button id="PrevBookButton"    .../> <button id="NextBookButton"    .../>
+  </box>
+  <box id="boxChapterNav" boxStyle="horizontal">
+    <button id="PrevChapterButton" .../> <button id="NextChapterButton" .../>
+  </box>
+  <box id="boxVerseNav"   boxStyle="horizontal">
+    <button id="PrevVerseButton"   .../> <button id="NextVerseButton"   .../>
+  </box>
+</box>
+```
+
+The visual grouping of each column is preserved by the column alignment that the
+group layout provides. The sizeString on all three comboBoxes ensures consistent
+column width.
+
+---
+
+### Bug 6 — Progressive navigation model: Enter at any level should set the navigation context
+
+**Observation (design-level):** The current state matrix (§ 9) locks down higher
+levels after a lower level is selected. After GoToChapter, the Book Prev/Next
+buttons are disabled. The user must press New Search to re-enter Book navigation.
+This is not consistent with how users think about the task.
+
+**User mental model:** The navigation fields form a compound address. The user
+fills in fields progressively, pressing Enter at any level to commit that level as
+the active navigation context:
+
+| User action | Result |
+|-------------|--------|
+| Type book name, press Enter | Book navigation: Book Prev/Next active |
+| (Then) type chapter, press Enter | Chapter navigation: Chapter Prev/Next active; Book row still editable |
+| (Then) type verse, press Enter | Verse navigation: Verse Prev/Next active; Book/Chapter rows still editable |
+| Change book field, press Enter | Resets to Book navigation; Chapter/Verse cleared |
+| Change chapter field, press Enter | Resets to Chapter navigation; Verse cleared |
+
+**What this implies for the state matrix:**
+
+The current four states (Default / Book selected / Chapter selected / Verse selected)
+with hard row disabling are replaced by a model where:
+
+1. **All rows are always editable** (never fully disabled). The enable/disable
+   state of Chapter and Verse input fields follows: Chapter enabled when
+   `m_currentBookIndex > 0`; Verse enabled when `m_currentChapter > 0`.
+
+2. **Prev/Next activation follows the last confirmed level**, not which rows
+   are enabled. Only one set of Prev/Next buttons is active at a time:
+
+| Last confirmed level | Prev/Next active |
+|---------------------|-----------------|
+| None (default) | All OFF |
+| Book | Book Prev/Next ON |
+| Chapter | Chapter Prev/Next ON; Book Prev/Next OFF |
+| Verse | Verse Prev/Next ON; Chapter/Book Prev/Next OFF |
+
+3. **Confirming at a higher level resets the lower levels** and reassigns the
+   active Prev/Next set. This replaces the current STATE_DEFAULT / New Search
+   reset — New Search becomes equivalent to re-confirming Book from scratch.
+
+4. **New Search** retains its role as an explicit "start over" action: clears all
+   three fields, disables Chapter and Verse rows, resets Prev/Next to all OFF.
+   It is still faster than re-typing the Book field.
+
+**Revised state matrix:**
+
+```text
+              Prev    GoTo (input)    Next
+Book:    [1,1]        [1,2]           [1,3]
+Chapter: [2,1]        [2,2]           [2,3]
+Verse:   [3,1]        [3,2]           [3,3]
+```
+
+| State | [1,1] | [1,3] | [2,1] | [2,3] | [3,1] | [3,3] | Chapter input | Verse input |
+|-------|-------|-------|-------|-------|-------|-------|---------------|-------------|
+| Default | OFF | OFF | OFF | OFF | OFF | OFF | disabled | disabled |
+| Book confirmed | ON | ON | OFF | OFF | OFF | OFF | enabled | disabled |
+| Chapter confirmed | OFF | OFF | ON | ON | OFF | OFF | enabled | enabled |
+| Verse confirmed | OFF | OFF | OFF | OFF | ON | ON | enabled | enabled |
+
+The `[1,2]` GoTo column (input field) is always accessible when that row is enabled.
+Rows 2 and 3 enable/disable based on upstream position variables, not navigation
+state. This is the only place the progressive lock remains.
+
+**Relationship to § 9 cons:**
+
+This redesign resolves Con 4 (§ 9): "four clean states may not cover all
+transitions." Re-confirming Book while in Chapter mode is now a defined transition
+— it resets to Book state cleanly. No fifth state is needed.
+
+Con 2 (VBA reset resilience) and Con 3 (matrix reflects code state, not cursor
+position) are unaffected — those are resolved by Option A (§ 13).
+
+---
+
+### Resolution path for Bugs 4–6
+
+All three bugs point toward the same set of changes:
+
+| # | Change | Type | Resolves |
+|---|--------|------|---------|
+| A | Switch Chapter and Verse back to `<comboBox>` | XML | Bug 4 (alignment) |
+| B | Restructure XML: two-row layout (inputs / buttons) | XML | Bug 5 (Tab order) |
+| C | Revise state matrix: Prev/Next tracks confirmed level; rows enabled by position | VBA | Bug 6 (nav model) |
+| D | Update `OnBookChanged`, `OnChapterChanged`, `OnVerseChanged` for new state transitions | VBA | Bug 6 |
+
+### Dependency between changes
+
+**Change B is a prerequisite for Bug 6's interaction model, not an independent
+fix.**
+
+The Bug 6 model requires the user to Tab from Book → Chapter → Verse to compose a
+full reference before pressing Enter. That Tab flow is only possible if the three
+input fields are adjacent in the ribbon's Tab order. With the current layout
+(`[Prev][input][Next]` per row), Tab from the Book field goes to the Next Book
+button — the Chapter field is three Tab presses away. The two-row layout in
+Change B (`[Book input][Chapter input][Verse input]` on one row) is the structural
+prerequisite that makes the user's mental model physically reachable.
+
+Concretely:
+
+| Layout | Tab sequence from Book field |
+|--------|------------------------------|
+| Current (three horizontal boxes) | Book → Next Book → Prev Chapter → Chapter |
+| Change B (two rows: inputs / buttons) | Book → Chapter → Verse |
+
+Change A (comboBox) is genuinely independent — it fixes visual alignment regardless
+of layout and can be applied in the same XML edit as Change B.
+
+Changes C and D are VBA-only and do not touch the XML. They can be implemented
+after the XML is confirmed without another XML replacement cycle.
+
+### Sequencing
+
+The correct implementation order is:
+
+1. Approve the Bug 6 navigation model (this section).
+2. Apply Changes A + B together in one XML replacement (single RibbonX Editor
+   session). This fixes alignment, restores the comboBox dropdown, and establishes
+   the Tab order that Bug 6 requires.
+3. Apply Changes C + D in VBA. Update the state matrix and the three onChange
+   handlers to implement the confirmed level model.
+
+Splitting A from B to avoid XML work is not useful — they are both XML changes and
+can be applied in the same edit. Holding A+B pending Bug 6 approval avoids a third
+XML replacement cycle.
+
+---
