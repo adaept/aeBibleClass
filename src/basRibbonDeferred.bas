@@ -31,10 +31,14 @@ Public Sub GoToH1Deferred()
     Dim rc As aeRibbonClass
     Set rc = Instance()
     rc.GoToH1Direct
-    ' InvalidateControl is called after WarmLayoutCacheDeferred has run at document
-    ' open (Option B, §30). With the layout cache warm, these calls are cheap.
-    ' If called before the warm-up completes (within first 5 seconds of open),
-    ' the cache may be cold and a brief block may occur on that first navigation only.
-    rc.InvalidateControl "GoToNextButton"
-    rc.InvalidateControl "GoToPrevButton"
+    rc.InvalidateControl "NextBookButton"
+    rc.InvalidateControl "PrevBookButton"
+End Sub
+
+Public Sub GoToBookDeferred()
+    Instance().NavigateToCurrentBook
+End Sub
+
+Public Sub GoToChapterDeferred()
+    Instance().ExecutePendingChapter
 End Sub

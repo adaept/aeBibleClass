@@ -44,6 +44,7 @@ Private m_currentBookIndex As Long   ' 1-based index into headingData; 0 = not s
 Private m_currentBookPos   As Long   ' character position of book H1 in document
 Private m_currentChapter   As Long   ' current chapter number; 0 = not set
 Private m_currentVerse     As Long   ' current verse number; 0 = not set
+Private m_pendingChapter   As Long   ' chapter number staged for deferred GoToChapter call
 
 ' Windows API - cursor control
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -64,6 +65,7 @@ Private Sub Class_Initialize()
     m_currentBookPos = 0
     m_currentChapter = 0
     m_currentVerse = 0
+    m_pendingChapter = 0
 End Sub
 
 Private Sub Class_Terminate()
@@ -542,8 +544,6 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     m_currentChapter = 0
     m_currentVerse = 0
 
-    ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
-
     m_btnPrevEnabled = (m_currentBookIndex > 1)
     Dim k As Long
     m_btnNextEnabled = False
@@ -554,21 +554,26 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
         End If
     Next k
 
-    If Not m_ribbon Is Nothing Then
-        m_ribbon.InvalidateControl "PrevBookButton"
-        m_ribbon.InvalidateControl "NextBookButton"
-        m_ribbon.InvalidateControl "cmbBook"
-        m_ribbon.InvalidateControl "NewSearchButton"
-        m_ribbon.InvalidateControl "cmbChapter"
-        m_ribbon.InvalidateControl "PrevChapterButton"
-        m_ribbon.InvalidateControl "NextChapterButton"
-    End If
+    ' Bug 1 fix: full invalidate clears user-typed comboBox text in Chapter/Verse rows
+    If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+
+    ' Bug 2b fix: defer document selection so the key event is not in flight
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.GoToBookDeferred"
 
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnBookChanged of Class aeRibbonClass"
     Resume PROC_EXIT
+End Sub
+
+' Called from basRibbonDeferred.GoToBookDeferred — executes after key event clears
+Public Sub NavigateToCurrentBook()
+    If m_currentBookPos > 0 Then
+        ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
+    End If
 End Sub
 
 ' -- Chapter row (Step 3) ------------------------------------------------------
@@ -654,18 +659,6 @@ Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
     GetNextChapterEnabled = (m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName))
 End Function
 
-Public Function GetChapterCount(control As IRibbonControl) As Long
-    GetChapterCount = 0
-End Function
-
-Public Function GetChapterItemLabel(control As IRibbonControl, index As Long) As String
-    GetChapterItemLabel = ""
-End Function
-
-Public Function GetChapterItemID(control As IRibbonControl, index As Long) As String
-    GetChapterItemID = CStr(index)
-End Function
-
 Public Function GetChapterText(control As IRibbonControl) As String
     If m_currentChapter > 0 Then
         GetChapterText = CStr(m_currentChapter)
@@ -675,14 +668,39 @@ Public Function GetChapterText(control As IRibbonControl) As String
 End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
+    ' editBox has no onAction — onChange fires on Enter and on each keystroke.
+    ' Navigation is guarded by numeric + range validation; only a valid chapter
+    ' number triggers the deferred GoToChapter call.
     On Error GoTo PROC_ERR
     If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
-    GoToChapter CLng(Trim(text))
+    If m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim chNum As Long
+    chNum = CLng(Trim(text))
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
+    m_pendingChapter = chNum
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnChapterChanged of Class aeRibbonClass"
     Resume PROC_EXIT
+End Sub
+
+Public Sub OnChapterAction(control As IRibbonControl, text As String)
+    ' editBox does not support onAction in the customUI14 schema — this stub
+    ' is retained in case the control type is changed back to comboBox.
+End Sub
+
+' Called from basRibbonDeferred.GoToChapterDeferred — executes after key event clears
+Public Sub ExecutePendingChapter()
+    If m_pendingChapter > 0 Then
+        GoToChapter m_pendingChapter
+        m_pendingChapter = 0
+    End If
 End Sub
 
 Public Sub OnPrevChapterClick(control As IRibbonControl)
@@ -718,23 +736,16 @@ Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
     GetVerseEnabled = False
 End Function
 
-Public Function GetVerseCount(control As IRibbonControl) As Long
-    GetVerseCount = 0   ' Step 5: VersesInChapter(m_currentBookIndex, m_currentChapter)
-End Function
-
-Public Function GetVerseItemLabel(control As IRibbonControl, index As Long) As String
-    GetVerseItemLabel = ""   ' Step 5
-End Function
-
-Public Function GetVerseItemID(control As IRibbonControl, index As Long) As String
-    GetVerseItemID = CStr(index)
-End Function
-
 Public Function GetVerseText(control As IRibbonControl) As String
     GetVerseText = ""   ' Step 5: return CStr(m_currentVerse) when set
 End Function
 
 Public Sub OnVerseChanged(control As IRibbonControl, text As String)
+    ' onChange fires on every keystroke — no navigation here.
+    ' Navigation is triggered by Enter (OnVerseAction).
+End Sub
+
+Public Sub OnVerseAction(control As IRibbonControl, text As String)
     ' Step 5 — validate range, navigate by paragraph count or verse marker scan
 End Sub
 

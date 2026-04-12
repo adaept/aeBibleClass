@@ -16,20 +16,20 @@
           <box id="boxChapter" boxStyle="horizontal">
             <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"/>
-            <comboBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
-                      getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
-                      getItemID="GetChapterItemID" getText="GetChapterText"
-                      onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
+            <editBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
+                     getText="GetChapterText"
+                     onChange="OnChapterChanged"
+                     getEnabled="GetChapterEnabled"/>
             <button id="NextChapterButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextChapterClick" getEnabled="GetNextChapterEnabled"/>
           </box>
           <box id="boxVerse" boxStyle="horizontal">
             <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"/>
-            <comboBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
-                      getItemCount="GetVerseCount" getItemLabel="GetVerseItemLabel"
-                      getItemID="GetVerseItemID" getText="GetVerseText"
-                      onChange="OnVerseChanged" getEnabled="GetVerseEnabled"/>
+            <editBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
+                     getText="GetVerseText"
+                     onChange="OnVerseChanged"
+                     getEnabled="GetVerseEnabled"/>
             <button id="NextVerseButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"/>
           </box>

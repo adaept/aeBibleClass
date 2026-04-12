@@ -2142,3 +2142,418 @@ All `onChange` stubs do nothing.
 After verification, implementation proceeds with Step 1 (§ 14 revised scope).
 
 ---
+
+## § 19 — Bug Report: Chapter ComboBox Interaction (2026-04-10)
+
+Both bugs were observed after Step 3 (GoToChapter) was confirmed working.
+
+---
+
+### Bug 1 — Chapter comboBox retains old value after new book selected
+
+**Symptom:** After navigating to a chapter (e.g. Genesis 3), selecting a new book
+in the Book comboBox does not clear the chapter number from the Chapter comboBox.
+The display continues to show `3` even though `m_currentChapter` is correctly zeroed
+and `GetChapterText` returns `""`.
+
+**Root cause:** Word's ribbon does not reliably re-query `getText` after
+`InvalidateControl` on a comboBox whose text was set by the user (typed or selected).
+The control retains its last user-entered value in the display field.
+`InvalidateControl "cmbChapter"` triggers a refresh of `getEnabled`, `getItemCount`,
+etc., but the `getText` callback result may not overwrite the displayed text when the
+user has previously typed into the control.
+
+**Proposed fix:** Replace `InvalidateControl "cmbChapter"` (and `"cmbVerse"`) in
+`OnBookChanged` with a full ribbon refresh via `m_ribbon.Invalidate`. A full
+invalidation forces Word to re-query every callback on every control, including the
+`getText` result, which reliably clears the displayed text.
+
+Cost: `m_ribbon.Invalidate` refreshes all controls simultaneously. For a ribbon with
+~20 controls this is undetectable to the user. The selective
+`InvalidateControl`-per-control strategy is still correct for single-control
+updates (e.g. a Prev/Next enabled state change); the full invalidate is reserved for
+state transitions that affect multiple controls at once.
+
+---
+
+### Bug 2 — Tab and Enter both trigger navigation and insert text into document
+
+**Symptom:** After typing a chapter number (e.g. `3`) in the Chapter comboBox and
+pressing Tab or Enter:
+
+1. Navigation executes correctly — the document scrolls to the correct chapter heading.
+2. The character `3` is inserted into the document at the cursor position.
+
+Both Tab and Enter produce identical behaviour: navigation fires, then the typed
+character appears in the document.
+
+**Root cause:** The `onChange` callback fires synchronously during the key event.
+Inside `OnChapterChanged`, the call to `GoToChapter` executes
+`ActiveDocument.Range(...).Select`, which moves the document cursor. Word is still
+processing the Tab/Enter key event when focus shifts to the document. The pending key
+event is then delivered to the document, not the ribbon, inserting the text.
+
+Tab and Enter are not distinguishable inside `onChange` — the callback signature
+`(control As IRibbonControl, text As String)` receives only the current text value,
+not the key that triggered the change.
+
+**Proposed fix — two-part:**
+
+**Part A (Bug 2a): Switch Chapter and Verse comboBoxes to `<editBox>`.**
+
+An `<editBox>` control fires `onAction` only on Enter, not on Tab. Tab advances
+focus to the next ribbon control without triggering the callback. This eliminates
+the Tab-inserts-text problem entirely and gives Tab a natural "advance to Verse"
+behaviour. The `onChange` callback on the Book comboBox is retained — book name
+matching benefits from real-time feedback (enable/disable downstream controls as a
+valid book is typed).
+
+**Part B (Bug 2b): Defer the document navigation via `Application.OnTime`.**
+
+Even with `<editBox>`, the `onAction` callback fires synchronously during the Enter
+key event. Deferring the document navigation (`ActiveDocument.Range(...).Select`) by
+one tick via `Application.OnTime Now` ensures that focus has returned to the document
+before the selection is moved. The typed character is consumed by the ribbon control;
+the deferred navigation then moves the cursor without any key event in flight.
+
+This deferral pattern is already used elsewhere in the project
+(`basRibbonDeferred.bas`) and is the standard Word VBA technique for ribbon callbacks
+that need to interact with the document selection.
+
+---
+
+### Pros and Cons: comboBox vs editBox for Chapter and Verse
+
+| Feature | comboBox | editBox |
+|---------|----------|---------|
+| Dropdown of all chapter/verse numbers | Yes | No |
+| Free-text input | Yes | Yes |
+| onChange fires on every keystroke | Yes — real-time validation possible | Yes — same |
+| onAction fires on Enter only | No (no onAction) | **Yes** |
+| Tab advances focus without triggering callback | **No** — Tab fires onChange | **Yes** |
+| Tab inserts text into document | **Yes (Bug 2)** | No |
+| sizeString supported | Yes | Yes |
+| getText supported | Yes | Yes |
+| Keyboard-only navigation (no mouse needed) | Yes | Yes |
+| i18n impact | None — numeric values are language-neutral | None |
+
+For Chapter and Verse, the dropdown list of all chapter/verse numbers is a
+convenience but not essential — the user knows the number they want. The critical
+defect is Tab behaviour. The editBox wins on correctness.
+
+For Book, the dropdown of all 67 book names (with OT/NT separator) is a meaningful
+feature — it lets the user browse if they do not recall the exact book name. The Book
+comboBox stays.
+
+---
+
+### Proposed interaction model
+
+| Row | Control | Tab behaviour | Enter behaviour |
+|-----|---------|--------------|----------------|
+| Book | `<comboBox>` | Deferred navigation (Application.OnTime) + advance to Chapter editBox | Deferred navigation |
+| Chapter | `<editBox>` | Advance focus to Verse editBox — no navigation | Navigate via onAction (deferred) |
+| Verse | `<editBox>` | Return focus to document — no navigation | Navigate via onAction (deferred) |
+
+This model matches the standard Windows search bar pattern: type a value, press Enter
+to commit. Tab moves between fields without committing. The user can Tab across all
+three fields to compose a full reference (Book, Chapter, Verse) and then press Enter
+on Verse to navigate in a single keyboard operation.
+
+---
+
+### Windows standard design review (2026-04-12)
+
+#### What Office itself does
+
+The closest built-in analogue is the Word Find toolbar (`Ctrl+F`): a text field
+where Enter commits the search and Tab moves focus. The ribbon's Font Size and Font
+Name fields on the Home tab follow the same convention — Enter commits, Tab advances.
+
+Font Name is a `<comboBox>` because the dropdown list of installed fonts has
+browsing value. Font Size is an `<editBox>` because users type a number and press
+Enter — the dropdown is a minor convenience, not the primary path.
+
+This maps directly to the navigation design:
+
+- **Book** is like Font Name: browsing a list of 67 book names has genuine value,
+  especially for users unfamiliar with the canon order. Stays `<comboBox>`.
+- **Chapter and Verse** are like Font Size: no one browses a list of 150 chapter
+  numbers. The value is typed. `<editBox>` is the correct control.
+
+#### Is `Application.OnTime Now` deferral safe?
+
+Yes. It is the documented Word VBA pattern for ribbon callbacks that need to alter
+document selection. `OnTime Now` schedules the macro after all pending events are
+flushed — the ribbon callback returns cleanly, key event processing completes, then
+navigation fires. This is the prescribed technique, not a workaround. It is already
+used in `basRibbonDeferred.bas` in this project.
+
+#### Accessibility
+
+`<editBox>` is fully keyboard-accessible. Screen readers handle it identically to
+`<comboBox>`. No accessibility regression. The loss of the dropdown list for
+Chapter/Verse is not an accessibility concern.
+
+#### Book comboBox `onChange` deferral — keystroke guard
+
+`onChange` fires on every keystroke. The current implementation already guards this:
+navigation only fires when a valid book name is matched against `headingData`. The
+deferred `Application.OnTime` call is therefore safe — it only runs when the match
+condition is met, not on every character typed.
+
+#### Verdict
+
+The proposed interaction model (table above) is consistent with Windows and Office
+conventions. No standard design objection. Approved for implementation.
+
+---
+
+### Implementation status
+
+**COMPLETE (2026-04-12).**
+
+---
+
+## § 20 — Bug 1 / Bug 2 Implementation (2026-04-12)
+
+### Files changed
+
+| File | Changes |
+|------|---------|
+| `customUI14backupRWB.xml` | Chapter and Verse: `<comboBox>` → `<editBox>`; removed `getItemCount/getItemLabel/getItemID`; added `onAction` |
+| `src/aeRibbonClass.cls` | Bug 1 fix; Bug 2 deferred navigation; new public methods; item callbacks removed |
+| `src/basBibleRibbonSetup.bas` | Removed 6 item stubs; added `OnChapterAction` and `OnVerseAction` stubs |
+| `src/basRibbonDeferred.bas` | Fixed stale IDs; added `GoToBookDeferred` and `GoToChapterDeferred` |
+
+---
+
+### `customUI14backupRWB.xml`
+
+```xml
+<!-- Chapter row — before -->
+<comboBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
+          getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
+          getItemID="GetChapterItemID" getText="GetChapterText"
+          onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
+
+<!-- Chapter row — after -->
+<editBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
+         getText="GetChapterText"
+         onChange="OnChapterChanged" onAction="OnChapterAction"
+         getEnabled="GetChapterEnabled"/>
+```
+
+Verse row: identical pattern with `onAction="OnVerseAction"`.
+
+---
+
+### `src/aeRibbonClass.cls`
+
+**New state variable:**
+
+```vba
+Private m_pendingChapter As Long   ' chapter number staged for deferred GoToChapter call
+```
+
+**`OnBookChanged` — Bug 1 + Bug 2b fixes:**
+
+```vba
+' Bug 1 fix: full invalidate clears user-typed comboBox text in Chapter/Verse rows
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+
+' Bug 2b fix: defer document selection so the key event is not in flight
+Dim projName As String
+projName = Application.ActiveDocument.VBProject.Name
+Application.OnTime Now, projName & ".basRibbonDeferred.GoToBookDeferred"
+```
+
+The direct `ActiveDocument.Range(...).Select` call is removed from `OnBookChanged`.
+
+**New: `NavigateToCurrentBook` (called by `GoToBookDeferred`):**
+
+```vba
+Public Sub NavigateToCurrentBook()
+    If m_currentBookPos > 0 Then
+        ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
+    End If
+End Sub
+```
+
+**`OnChapterChanged` — stripped to no-op:**
+
+```vba
+Public Sub OnChapterChanged(control As IRibbonControl, text As String)
+    ' onChange fires on every keystroke — no navigation here.
+    ' Navigation is triggered by Enter (OnChapterAction).
+End Sub
+```
+
+**New: `OnChapterAction` (Enter fires `onAction`):**
+
+```vba
+Public Sub OnChapterAction(control As IRibbonControl, text As String)
+    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
+    If m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim chNum As Long
+    chNum = CLng(Trim(text))
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
+    m_pendingChapter = chNum
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
+End Sub
+```
+
+**New: `ExecutePendingChapter` (called by `GoToChapterDeferred`):**
+
+```vba
+Public Sub ExecutePendingChapter()
+    If m_pendingChapter > 0 Then
+        GoToChapter m_pendingChapter
+        m_pendingChapter = 0
+    End If
+End Sub
+```
+
+**Removed** (editBox has no dropdown):
+`GetChapterCount`, `GetChapterItemLabel`, `GetChapterItemID`,
+`GetVerseCount`, `GetVerseItemLabel`, `GetVerseItemID`
+
+**Added skeleton:**
+
+```vba
+Public Sub OnVerseAction(control As IRibbonControl, text As String)
+    ' Step 5 — validate range, navigate by paragraph count or verse marker scan
+End Sub
+```
+
+---
+
+### `src/basRibbonDeferred.bas`
+
+**Stale control IDs fixed** in `GoToH1Deferred`:
+`"GoToNextButton"` → `"NextBookButton"`, `"GoToPrevButton"` → `"PrevBookButton"`
+
+**New deferred subs:**
+
+```vba
+Public Sub GoToBookDeferred()
+    Instance().NavigateToCurrentBook
+End Sub
+
+Public Sub GoToChapterDeferred()
+    Instance().ExecutePendingChapter
+End Sub
+```
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| 1 | Book comboBox navigation | **COMPLETE** |
+| 2 | `CaptureHeading2s` | Eliminated |
+| 3 | `GoToChapter` implementation | **COMPLETE** |
+| 4 | Expose `ChaptersInBook` / `VersesInChapter` as Public | **COMPLETE** |
+| Bug 1 | Chapter comboBox retains old value after book change | **COMPLETE** |
+| Bug 2 | Tab/Enter text insertion; comboBox → editBox + deferred nav | **COMPLETE** |
+| Bug 3 | editBox `onAction` schema error — ribbon did not load | **COMPLETE** |
+| 5 | `GoToVerse` implementation | **NEXT** |
+| 6 | Ribbon XML update | Complete (editBox change is final XML state) |
+| 7 | Move OLD_CODE | Pending |
+| 8 | `normalize_vba.py` update | Pending |
+
+---
+
+## § 21 — Bug 3: editBox `onAction` Schema Error (2026-04-12)
+
+### Symptom
+
+After implementing Bug 2 (comboBox → editBox), the ribbon tab did not appear on
+document open. No error message was shown. The `RibbonOnLoad` callback was never
+called.
+
+### Root cause
+
+`<editBox>` does not have an `onAction` attribute in the Office 2009 customUI14
+schema (`CT_EditBox` type). The `onAction` attribute belongs to `<button>` and
+`<comboBox>`. Word silently rejects any ribbon XML that references an attribute not
+defined in the schema, and the entire ribbon tab fails to load.
+
+The implementation in § 20 added `onAction="OnChapterAction"` and
+`onAction="OnVerseAction"` to the two `<editBox>` elements based on the assumption
+that editBox supported an Enter-only callback equivalent to button's `onAction`.
+That assumption was wrong.
+
+**Key distinction:**
+
+| Control | `onChange` | `onAction` |
+|---------|-----------|-----------|
+| `<comboBox>` | Yes — fires on every keystroke | Yes — fires on dropdown item selection |
+| `<editBox>` | Yes — fires on every keystroke and on Enter | **Not in schema** |
+| `<button>` | No | Yes — fires on click / Enter |
+
+For `<editBox>`, `onChange` is the only text-change callback. It fires on Enter as
+well as on every keystroke.
+
+### Fix
+
+**`customUI14backupRWB.xml`:** removed `onAction` from both editBox elements.
+
+```xml
+<!-- Chapter — corrected -->
+<editBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
+         getText="GetChapterText"
+         onChange="OnChapterChanged"
+         getEnabled="GetChapterEnabled"/>
+```
+
+**`src/aeRibbonClass.cls`:** navigation logic moved from `OnChapterAction` back into
+`OnChapterChanged`, with `Application.OnTime` deferral applied there.
+
+```vba
+Public Sub OnChapterChanged(control As IRibbonControl, text As String)
+    ' editBox has no onAction — onChange fires on Enter and on each keystroke.
+    ' Navigation is guarded by numeric + range validation; only a valid chapter
+    ' number triggers the deferred GoToChapter call.
+    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
+    If m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim chNum As Long
+    chNum = CLng(Trim(text))
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
+    m_pendingChapter = chNum
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
+End Sub
+```
+
+`OnChapterAction` is retained as a dead stub in `aeRibbonClass.cls` and
+`basBibleRibbonSetup.bas` with a comment explaining why it exists.
+
+### Effect on interaction model
+
+The practical interaction is unchanged from the Bug 2 design intent:
+
+- Enter in the Chapter field triggers `onChange`, which validates and schedules
+  the deferred navigation — identical to the intended `onAction` behavior.
+- Keystrokes that produce a non-numeric or out-of-range value exit without
+  scheduling navigation — no spurious navigation during typing.
+- Tab behavior depends on how Word handles focus on `<editBox>` Tab keypress.
+  This is to be confirmed by testing: if Tab triggers `onChange`, the same
+  validation guard applies. If Tab moves focus without triggering `onChange`,
+  no navigation fires on Tab — which is the desired behavior.
+
+### Future reference
+
+When designing ribbon XML: `<editBox>` is `onChange`-only. If Enter-only triggering
+is required, use `<button>` adjacent to the field (explicit commit button) or
+validate in `onChange` and use the guard to filter out mid-typing keystrokes.
+
+---

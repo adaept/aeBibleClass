@@ -135,24 +135,16 @@ Public Sub GetChapterEnabled(control As IRibbonControl, ByRef enabled)
     enabled = Instance().GetChapterEnabled(control)
 End Sub
 
-Public Sub GetChapterCount(control As IRibbonControl, ByRef count)
-    count = Instance().GetChapterCount(control)
-End Sub
-
-Public Sub GetChapterItemLabel(control As IRibbonControl, index As Long, ByRef label)
-    label = Instance().GetChapterItemLabel(control, index)
-End Sub
-
-Public Sub GetChapterItemID(control As IRibbonControl, index As Long, ByRef id)
-    id = Instance().GetChapterItemID(control, index)
-End Sub
-
 Public Sub GetChapterText(control As IRibbonControl, ByRef text)
     text = Instance().GetChapterText(control)
 End Sub
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     Instance().OnChapterChanged control, text
+End Sub
+
+Public Sub OnChapterAction(control As IRibbonControl, text As String)
+    Instance().OnChapterAction control, text
 End Sub
 
 Public Sub OnPrevChapterClick(control As IRibbonControl)
@@ -177,24 +169,16 @@ Public Sub GetVerseEnabled(control As IRibbonControl, ByRef enabled)
     enabled = Instance().GetVerseEnabled(control)
 End Sub
 
-Public Sub GetVerseCount(control As IRibbonControl, ByRef count)
-    count = Instance().GetVerseCount(control)
-End Sub
-
-Public Sub GetVerseItemLabel(control As IRibbonControl, index As Long, ByRef label)
-    label = Instance().GetVerseItemLabel(control, index)
-End Sub
-
-Public Sub GetVerseItemID(control As IRibbonControl, index As Long, ByRef id)
-    id = Instance().GetVerseItemID(control, index)
-End Sub
-
 Public Sub GetVerseText(control As IRibbonControl, ByRef text)
     text = Instance().GetVerseText(control)
 End Sub
 
 Public Sub OnVerseChanged(control As IRibbonControl, text As String)
     Instance().OnVerseChanged control, text
+End Sub
+
+Public Sub OnVerseAction(control As IRibbonControl, text As String)
+    Instance().OnVerseAction control, text
 End Sub
 
 Public Sub OnPrevVerseClick(control As IRibbonControl)
