@@ -1524,3 +1524,241 @@ An EV certificate (~USD 400–700/year, requires hardware token) is not required
 unless kernel-mode code is involved. It is not needed for this project.
 
 ---
+
+## § 16 — Font Licensing and Management (2026-04-11)
+
+### Current state — what the audit found
+
+Font code exists but is inconsistent and scattered across four modules:
+
+| Module | What it does | Problem |
+|--------|-------------|---------|
+| `basTEST_aeBibleFonts.bas` | Checks availability of 5 Google fonts; per-style audit + redefine subs; Arial Unicode MS scan | `IsFontInstalled` creates a full document to test each font — extremely expensive. No fallback chain. Per-style subs are one-offs with no shared logic. |
+| `basAuditDocument.bas` | `FindFontUsage` searches paragraphs + styles for a target font | Standalone utility; no connection to font management strategy |
+| `aeBibleClass.cls` | Hardcoded `"Arial Black"`, `"Calibri"`, `"Liberation Sans Narrow"` inline in style application logic | Font names embedded in logic — no single source of truth |
+| `basWordRepairRunner.bas` | `RGB(255, 165, 0)` / `RGB(80, 200, 120)` inline for marker colour detection | Colour values coupled to font presentation, not font identity |
+
+---
+
+### Licensing audit — fonts currently in use
+
+| Font | Owner | License | Distributable? |
+|------|-------|---------|---------------|
+| Arial Black | Monotype / Microsoft | Proprietary | No — bundled with Windows; not for redistribution |
+| Calibri | Microsoft | Proprietary | No — Office/Windows license only; embedding restricted |
+| Times New Roman | Monotype / Microsoft | Proprietary | No — same restrictions |
+| Arial Unicode MS | Microsoft | Proprietary | No — Office license only |
+| Liberation Sans Narrow | Red Hat | SIL OFL | Yes — free for all use including distribution |
+| Noto Sans | Google | SIL OFL | Yes — already targeted as replacement in existing code |
+
+**Distribution risk:** any `.docm` or `.docx` distributed to users with embedded
+proprietary fonts is in violation of the font vendor's EULA under an Office 365
+Individual/Family licence. Print use is separately licensed under corporate
+agreements that do not extend to digital distribution.
+
+---
+
+### Recommended free font replacements
+
+| Role | Current font | Primary replacement | Fallback |
+|------|-------------|--------------------|-|
+| Body text | Times New Roman | **Gentium Plus** (SIL OFL) | Linux Libertine G |
+| Headings | Arial Black | **Source Serif 4** (SIL OFL) | EB Garamond |
+| UI / captions / footnotes | Calibri | **Lato** (SIL OFL — see Calibri note) | Nunito Sans |
+| Verse / Chapter markers | Arial Black | **Noto Sans** (SIL OFL — already targeted) | Liberation Sans Narrow |
+| Biblical Greek / Hebrew | (none currently) | **SBL Greek / SBL Hebrew** (SBL free licence) | Gentium Plus (Greek); Noto Serif Hebrew |
+
+**Gentium Plus** is the primary body font recommendation. It was designed
+specifically for scholarly and biblical text, has broad diacritic coverage for
+i18n, and is a direct visual replacement for Times New Roman at matching point
+sizes. SIL OFL permits embedding in distributed documents without restriction.
+
+**Noto Sans** is already the target in existing code for footnote and caption
+styles. Extending it to verse and chapter marker roles achieves consistency.
+
+**SBL fonts** are free for non-commercial use under the SBL licence. If commercial
+distribution is planned, confirm licence terms at the point of Store submission.
+For the current development phase they are unrestricted.
+
+#### Calibri — no metrically identical free replacement exists
+
+This is a hard constraint that affects layout planning.
+
+Calibri was designed for Microsoft's ClearType rendering system and is protected by
+licensing that prevents metric-compatible clones. No open-licensed font replicates
+its exact glyph widths, kerning pairs, or line metrics. Any substitution will cause
+document reflow — pagination, line breaks, table widths, and UI alignment will all
+shift.
+
+The closest free alternatives are visually similar but not metrically identical:
+
+| Font | Character | License |
+|------|-----------|---------|
+| **Lato** | Clean, modern, humanist sans-serif | SIL OFL |
+| **Nunito Sans** | Rounded, friendly, highly readable | SIL OFL |
+| **Work Sans** | Modern, simple, good for UI | SIL OFL |
+| Open Sans, Source Sans Pro, PT Sans | Common Calibri-adjacent choices | SIL OFL |
+
+**Practical guidance for this project:**
+
+- **UI roles** (ribbon labels, captions, footnotes): reflow is not a concern —
+  use **Lato** as primary. Visual similarity is sufficient; pixel-perfect layout
+  is not required for these elements.
+- **Body text**: Calibri is not used for body text in this document (Times New
+  Roman / Gentium Plus are the body fonts). No reflow risk here.
+- **Print candidate version**: if any styles use Calibri for body or table content,
+  the print layout *will* reflow on substitution. A layout review pass is required
+  after font substitution before the print candidate is finalised. This is a known,
+  accepted cost — it is better to discover and fix layout shifts during development
+  than after distribution.
+- **Study version** (33,857 paragraphs, one verse per paragraph): reflow is
+  functionally irrelevant — the document is read on screen and navigation is
+  position-based, not page-based.
+
+The font manager's `frUI` stack reflects this:
+
+```vba
+Case frUI
+    stack = Array("Lato", "Nunito Sans", "Work Sans", "Calibri")
+```
+
+Calibri remains as the last-resort fallback so the document degrades gracefully on
+machines where none of the free alternatives are installed. It is never the
+preferred choice.
+
+---
+
+### aeFontManagerClass — design
+
+A new class `aeFontManagerClass.cls` centralises all font decisions.
+
+**Responsibilities:**
+- Check font availability using `Application.FontNames` (not document creation —
+  the current `IsFontInstalled` approach of opening a temp document is discarded)
+- Define named font stacks (primary + fallback chain per role)
+- Return the best available font for a given role at runtime
+- Apply font stacks to document styles in a single batch operation
+- Report which fonts are in use and their licence status
+
+**Font stack pattern:**
+
+```vba
+' aeFontManagerClass
+Public Enum FontRole
+    frBody = 1
+    frHeading = 2
+    frUI = 3
+    frVerseMarker = 4
+    frBiblicalGreek = 5
+    frBiblicalHebrew = 6
+End Enum
+
+Public Function BestAvailable(ByVal role As FontRole) As String
+    Dim stack As Variant
+    Select Case role
+        Case frBody
+            stack = Array("Gentium Plus", "Linux Libertine G", "Times New Roman")
+        Case frHeading
+            stack = Array("Source Serif 4", "EB Garamond", "Arial Black")
+        Case frUI
+            stack = Array("Noto Sans", "Liberation Sans", "Calibri")
+        Case frVerseMarker
+            stack = Array("Noto Sans", "Liberation Sans Narrow", "Arial Black")
+        Case frBiblicalGreek
+            stack = Array("SBL Greek", "Gentium Plus", "Times New Roman")
+        Case frBiblicalHebrew
+            stack = Array("SBL Hebrew", "Noto Serif Hebrew", "Arial Unicode MS")
+    End Select
+    Dim i As Long
+    For i = LBound(stack) To UBound(stack)
+        If IsFontAvailable(CStr(stack(i))) Then
+            BestAvailable = CStr(stack(i))
+            Exit Function
+        End If
+    Next i
+    BestAvailable = ""   ' no font in stack is installed — caller must handle
+End Function
+
+Private Function IsFontAvailable(ByVal fontName As String) As Boolean
+    Dim f As Variant
+    For Each f In Application.FontNames
+        If StrComp(CStr(f), fontName, vbTextCompare) = 0 Then
+            IsFontAvailable = True
+            Exit Function
+        End If
+    Next f
+End Function
+```
+
+**ApplyToStyles** iterates all document styles and replaces any font name not in
+the free-font list with `BestAvailable` for the appropriate role. This replaces the
+scattered per-style `Redefine*` subs in `basTEST_aeBibleFonts.bas`.
+
+---
+
+### Consolidation of existing font code
+
+| Existing sub | Action |
+|-------------|--------|
+| `IsFontInstalled` | Replace with `aeFontManagerClass.IsFontAvailable` using `Application.FontNames` |
+| `CheckOpenFontsWithDownloads` | Replace with `aeFontManagerClass.ReportAvailability` — logs all stacks and best available for each role |
+| Per-style `Redefine*` subs (×3) | Replace with `aeFontManagerClass.ApplyToStyles` — one call covers all styles |
+| Per-style `AuditStyleUsage_*` subs (×3) | Consolidate into one `AuditFontUsage` sub using `FindFontUsage` pattern from `basAuditDocument` |
+| `Identify_ArialUnicodeMS_Paragraphs` | Generalise to `AuditInlineFontOverrides` — reports all paragraphs where inline font differs from style definition, for any target font |
+| `CreateEmphasisBlackStyle` | Update to call `BestAvailable(frHeading)` instead of hardcoding `"Arial Black"` |
+| Inline `"Arial Black"` / `"Calibri"` in `aeBibleClass.cls` | Replace with `aeFontManagerClass.BestAvailable(role)` calls |
+
+---
+
+### Test additions to basTEST_aeRibbonClass
+
+**Group 8 — Font manager (headless)**
+
+| Test | Expected |
+|------|----------|
+| `IsFontAvailable` on installed font | True |
+| `IsFontAvailable` on non-existent font | False |
+| `BestAvailable(frUI)` | Returns `"Noto Sans"` if installed; `"Liberation Sans"` if not; never `""` unless all fail |
+| `BestAvailable` with empty stack | Returns `""` — caller handles gracefully |
+| No style in document uses a proprietary font after `ApplyToStyles` | True |
+| `ApplyToStyles` is idempotent — running twice produces same result | True |
+
+---
+
+### i18n implications
+
+`BestAvailable` is locale-unaware by design — it returns the best installed font
+for a role regardless of language. For i18n builds:
+
+- Latin-script languages: Gentium Plus and Noto Sans both have broad diacritic
+  coverage — no change to the font stack required
+- Right-to-left scripts (Hebrew, Arabic): `frBiblicalHebrew` stack already includes
+  Noto Serif Hebrew; extend with Noto Naskh Arabic if Arabic support is needed
+- East Asian scripts: add Noto Serif CJK / Noto Sans CJK to a new `frCJK` role
+
+The font manager is the single point of change for any new script. No other code
+requires modification.
+
+---
+
+### Cost-benefit: now versus later
+
+| Work item | Cost now | Cost later | Risk if deferred |
+|-----------|----------|-----------|-----------------|
+| Create `aeFontManagerClass` | Medium (4–6 hrs) | High (refactor all scattered font code under time pressure before distribution) | Proprietary fonts shipped to users; licence violation |
+| Replace `IsFontInstalled` | Low (30 min) | Low | Performance issue only — each call opens a Word document |
+| Consolidate per-style audit/redefine subs | Low (1–2 hrs) | Low–medium | Duplicate maintenance burden grows with each new style |
+| Replace inline font literals in `aeBibleClass.cls` | Low (1 hr) | Medium (more inline literals added during ribbon development) | Hardcoded proprietary fonts persist into distributed build |
+| Add font tests to runner | Low (1 hr alongside class creation) | Medium (tests must be written from scratch after the fact) | No automated verification before distribution |
+
+**Combined cost now: ~7–9 hours.**
+**Combined cost later: estimated 2–3 days plus legal exposure if distribution
+proceeds before the work is done.**
+
+**Recommended timing:** implement `aeFontManagerClass` and consolidate existing
+font code as a discrete task before ribbon Step 1 begins. It is a clean,
+self-contained unit of work with no dependency on the ribbon implementation. Doing
+it first also means the ribbon's own style application calls use the font manager
+from the start — no retrofit needed there.
+
+---
