@@ -1134,3 +1134,69 @@ a standalone `GoToH1` sub. Revised Step 1 scope to be confirmed before any code
 is written.
 
 ---
+
+### Revised Step 1 — confirmed scope (2026-04-11)
+
+**What survives from the original plan:**
+
+`NormalizeBookInput` is unchanged in purpose and logic — it cleans raw text input
+before matching against book names. It remains a private helper in `aeRibbonClass.cls`.
+
+```vba
+Private Function NormalizeBookInput(ByVal raw As String) As String
+    Dim s As String
+    s = Trim(UCase(raw))
+    If Len(s) >= 2 Then
+        If s Like "[0-9][A-Z]*" Then s = Left$(s, 1) & " " & Mid$(s, 2)
+    End If
+    NormalizeBookInput = s
+End Function
+```
+
+**What changes:**
+
+The original plan called for a `GoToH1` sub that called an InputBox, normalised the
+input, scanned `headingData`, and navigated. That sub is replaced by the comboBox
+callback chain:
+
+```
+User types / selects in Book comboBox
+    → OnBookChanged fires
+        → NormalizeBookInput cleans the text
+        → matched against headingData
+        → m_currentBookIndex set
+        → m_currentChapter = 0, m_currentVerse = 0
+        → document navigates to book H1
+        → SetNavState STATE_BOOK_SELECTED
+        → invalidate Chapter and Verse comboBoxes
+```
+
+**New instance variables:**
+
+| Variable | Type | Purpose |
+|----------|------|---------|
+| `m_currentBookIndex` | `Long` | 1-based index into headingData; 0 = not set |
+| `m_currentBookPos` | `Long` | Character position of book H1 in document |
+| `m_currentChapter` | `Long` | Current chapter number; 0 = not set |
+| `m_currentVerse` | `Long` | Current verse number; 0 = not set |
+
+`m_currentChapter` and `m_currentVerse` are declared here even though not used until
+Steps 3 and 5 — they are part of the same reset block and must exist before
+`OnBookChanged` can zero them.
+
+**New public callbacks (ribbon-facing):**
+
+| Callback | Purpose |
+|----------|---------|
+| `OnBookChanged` | Fires on comboBox text change or selection |
+| `GetBookText` | Returns current book name for comboBox display |
+| `GetBookCount` | Returns 67 (66 books + 1 separator) |
+| `GetBookItemLabel` | Returns book name or `""` for separator |
+| `GetBookItemID` | Returns index string or `"SEP"` for separator |
+
+**`GoToH1` / `GoToH1Direct` / `GoToH1Deferred`:**
+
+These become internal — called from `OnBookChanged` rather than directly from a
+ribbon button. Their signatures do not change; only the call site changes.
+
+---
