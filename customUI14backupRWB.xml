@@ -16,7 +16,7 @@
           <box id="boxChapter" boxStyle="horizontal">
             <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"/>
-            <comboBox id="cmbChapter" showLabel="false" sizeString="000"
+            <comboBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
                       getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
                       getItemID="GetChapterItemID" getText="GetChapterText"
                       onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
@@ -26,7 +26,7 @@
           <box id="boxVerse" boxStyle="horizontal">
             <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"/>
-            <comboBox id="cmbVerse" showLabel="false" sizeString="000"
+            <comboBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
                       getItemCount="GetVerseCount" getItemLabel="GetVerseItemLabel"
                       getItemID="GetVerseItemID" getText="GetVerseText"
                       onChange="OnVerseChanged" getEnabled="GetVerseEnabled"/>
