@@ -574,27 +574,87 @@ Steps 1 and 2 can begin without Q6 (ribbon XML is Step 6). Steps 1-5 only touch
 
 ## § 10 — Q6 Resolved: Ribbon XML Edit Process (2026-04-11)
 
-### Tool decision: Office RibbonX Editor
+### Tool decision: Python injection (preferred) / Office RibbonX Editor (icon lookup)
 
-**Use the Office RibbonX Editor** (`fernandreu/office-ribbonx-editor` on GitHub).
+**Primary workflow (confirmed 2026-04-13):** edit `customUI14backupRWB.xml` in
+any text editor, then inject it into the `.docm` using the Python script below.
+The backup file in git is the single source of truth. The `.docm` is a
+downstream artifact — it receives the XML, it does not own it.
 
-The original Microsoft "Custom UI Editor for Office" has been abandoned since ~2010
-and lacks support for the Office 2010 schema (`customUI14`). The GitHub fork is a
-complete WPF rewrite, not a patch. It is the de-facto modern replacement.
+**Office RibbonX Editor** (`fernandreu/office-ribbonx-editor`) remains useful for
+one task: browsing `imageMso` icon names. Use it read-only for that purpose.
+Do not use it to save ribbon XML into the `.docm` — a bug in the editor has been
+observed causing corruption or unexpected results.
 
-| Feature | Old Microsoft tool | Office RibbonX Editor |
-|---------|-------------------|----------------------|
-| Office 2010 schema (`customUI14`) | No | Yes |
-| XML validation | No | Yes |
-| Schema-aware IntelliSense | No | Yes |
-| Image import/export | No | Yes |
-| Active maintenance | No (dead since ~2010) | Yes |
-| Latest release | n/a | v2.0.0 (Nov 16, 2025) |
-| Dark mode | No | Yes |
+| Feature | Old Microsoft tool | Office RibbonX Editor | Python injection |
+|---------|-------------------|----------------------|-----------------|
+| Office 2010 schema (`customUI14`) | No | Yes | Yes |
+| XML validation | No | Yes | No (validate in editor before inject) |
+| Schema-aware IntelliSense | No | Yes | No |
+| Image import/export | No | Yes | N/A |
+| `imageMso` browsing | No | Yes | No |
+| Safe to save into `.docm` | N/A | **Bug observed** | Yes |
+| Scriptable / repeatable | No | No | Yes |
+| Source of truth stays in git | No | No | Yes |
 
-**Primary workflow:** open `.docm` directly in RibbonX Editor, edit
-`customUI14.xml` with IntelliSense, validate, save. Icon names (`imageMso`) are
-resolvable directly in the editor without guessing.
+---
+
+### Python injection script
+
+Replaces `customUI/customUI14.xml` inside the `.docm` with the contents of
+`customUI14backupRWB.xml`. All other parts of the file are untouched.
+
+**Precondition:** the `.docm` must be closed in Word. If a `~$filename.docm`
+lock file exists but the file is actually closed (stale lock from a crash),
+verify writability before proceeding — do not rely on the lock file alone.
+
+```python
+import zipfile, os
+
+DOCM = 'C:/adaept/aeBibleClass/Blank Bible Copy.docm'
+XML  = 'C:/adaept/aeBibleClass/customUI14backupRWB.xml'
+TMP  = DOCM + '.tmp'
+
+with open(XML, 'r', encoding='utf-8') as f:
+    new_xml = f.read().encode('utf-8')
+
+with zipfile.ZipFile(DOCM, 'r') as zin:
+    with zipfile.ZipFile(TMP, 'w', compression=zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            if item.filename == 'customUI/customUI14.xml':
+                zout.writestr(item, new_xml)
+                print('REPLACED customUI/customUI14.xml')
+            else:
+                zout.writestr(item, zin.read(item.filename))
+
+os.replace(TMP, DOCM)
+print('Done.')
+```
+
+Run from the project root:
+
+```
+python py/inject_ribbon.py
+```
+
+This script should be saved as `py/inject_ribbon.py` so it can be run directly
+without copy-pasting. The `DOCM` and `XML` paths are relative to the project.
+
+---
+
+### Workflow summary
+
+```
+1. Edit customUI14backupRWB.xml  (text editor or RibbonX Editor read-only)
+2. Validate XML  (RibbonX Editor → Validate, or xmllint)
+3. Close the .docm in Word
+4. python py/inject_ribbon.py
+5. Open the .docm in Word and test
+6. git add customUI14backupRWB.xml && git commit
+```
+
+The `.docm` is not committed to git (too large, binary). The XML backup is.
+Injection is the step that synchronises the two.
 
 ---
 
@@ -689,15 +749,16 @@ $entry.Open() | % { (New-Object System.IO.StreamReader($_)).ReadToEnd() } |
 $zip.Dispose()
 ```
 
-**When to use the extract process vs RibbonX Editor:**
+**When to use each approach:**
 
 | Situation | Use |
 |-----------|-----|
-| Normal editing / icon selection | RibbonX Editor |
-| Diff ribbon XML against backup in git | WSL bash extract → diff |
-| Diagnose a file that RibbonX Editor won't open | Manual extraction |
-| Automated ribbon injection / CI | WSL bash replace script |
-| Recover from a corrupt customUI save | Extract → repair → replace |
+| Normal XML editing | Edit `customUI14backupRWB.xml` in any text editor |
+| Inject edited XML into `.docm` | `python py/inject_ribbon.py` |
+| Browse / confirm `imageMso` icon names | RibbonX Editor (read-only) |
+| Diff `.docm` ribbon against git backup | WSL bash extract → diff |
+| Diagnose a file that Python cannot open | Manual extraction |
+| Recover from a corrupt customUI save | Extract → repair → inject |
 
 ---
 
