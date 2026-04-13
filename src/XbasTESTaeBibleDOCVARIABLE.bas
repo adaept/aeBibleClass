@@ -35,12 +35,12 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     If Not IsMissing(restartVal) Then
         ' Set the range to start from the specified location
         Debug.Print "Restarting from location " & restartVal
-        Set startRange = doc.Range(Start:=restartVal, End:=doc.content.End)
+        Set startRange = doc.Range(Start:=restartVal, End:=doc.Content.End)
     ElseIf lastFoundLocation Is Nothing Then
         ' Check if we have a previously found location to continue from
         ' Start at the beginning of the specified page
         Debug.Print ">bookPage = " & bookPage, "textH1 = " & textH1
-        Set startRange = doc.GoTo(What:=wdGoToPage, Which:=wdGoToAbsolute, count:=bookPage)
+        Set startRange = doc.GoTo(What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=bookPage)
     Else
         ' Continue searching from the last found location
         Debug.Print ">lastFoundLocation = " & Replace(lastFoundLocation.Text, vbCr, "")
