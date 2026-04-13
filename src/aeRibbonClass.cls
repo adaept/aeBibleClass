@@ -45,6 +45,7 @@ Private m_currentBookPos   As Long   ' character position of book H1 in document
 Private m_currentChapter   As Long   ' current chapter number; 0 = not set
 Private m_currentVerse     As Long   ' current verse number; 0 = not set
 Private m_pendingChapter   As Long   ' chapter number staged for deferred GoToChapter call
+Private m_pendingVerse     As Long   ' verse number staged for deferred GoToVerse call
 
 ' Windows API - cursor control
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -66,6 +67,7 @@ Private Sub Class_Initialize()
     m_currentChapter = 0
     m_currentVerse = 0
     m_pendingChapter = 0
+    m_pendingVerse = 0
 End Sub
 
 Private Sub Class_Terminate()
@@ -281,12 +283,24 @@ Private Sub NextButton()
                 Exit For
             End If
         Next k
+        ' Update book state and reset downstream (Bug 6 Change C)
+        Dim j As Long
+        For j = 1 To 66
+            If Not IsEmpty(headingData(j, 1)) Then
+                If CLng(headingData(j, 1)) = foundPos Then
+                    m_currentBookIndex = j
+                    m_currentBookPos = foundPos
+                    Exit For
+                End If
+            End If
+        Next j
+        m_currentChapter = 0
+        m_currentVerse = 0
     Else
         m_btnNextEnabled = False
     End If
     Application.ScreenUpdating = True
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "NextBookButton"
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "PrevBookButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -316,12 +330,24 @@ Private Sub PrevButton()
         If Not IsEmpty(headingData(1, 1)) Then
             If foundPos = CLng(headingData(1, 1)) Then m_btnPrevEnabled = False
         End If
+        ' Update book state and reset downstream (Bug 6 Change C)
+        Dim j As Long
+        For j = 1 To 66
+            If Not IsEmpty(headingData(j, 1)) Then
+                If CLng(headingData(j, 1)) = foundPos Then
+                    m_currentBookIndex = j
+                    m_currentBookPos = foundPos
+                    Exit For
+                End If
+            End If
+        Next j
+        m_currentChapter = 0
+        m_currentVerse = 0
     Else
         m_btnPrevEnabled = False
     End If
     Application.ScreenUpdating = True
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "NextBookButton"
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "PrevBookButton"
+    If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -554,13 +580,11 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
         End If
     Next k
 
-    ' Bug 1 fix: full invalidate clears user-typed comboBox text in Chapter/Verse rows
+    ' Full invalidate clears user-typed comboBox text in Chapter/Verse rows.
+    ' No document navigation here — ActiveDocument...Select moves focus to the
+    ' document unconditionally, causing Tab to land in the document (Bug 9).
+    ' Navigation occurs in GoToChapter, which starts from m_currentBookPos.
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
-
-    ' Bug 2b fix: defer document selection so the key event is not in flight
-    Dim projName As String
-    projName = Application.ActiveDocument.VBProject.Name
-    Application.OnTime Now, projName & ".basRibbonDeferred.GoToBookDeferred"
 
 PROC_EXIT:
     Exit Sub
@@ -569,11 +593,10 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-' Called from basRibbonDeferred.GoToBookDeferred — executes after key event clears
+' Dead stub — retained for reference. Navigation removed from OnBookChanged (Bug 9).
+' Book-level document navigation occurs in GoToChapter via m_currentBookPos.
 Public Sub NavigateToCurrentBook()
-    If m_currentBookPos > 0 Then
-        ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
-    End If
+    ' ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
 End Sub
 
 ' -- Chapter row (Step 3) ------------------------------------------------------
@@ -692,6 +715,7 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     bookName = CStr(headingData(m_currentBookIndex, 0))
     If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
     m_pendingChapter = chNum
+    m_pendingVerse = 0   ' cancel any staged verse when chapter changes
     Dim projName As String
     projName = Application.ActiveDocument.VBProject.Name
     Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
@@ -737,15 +761,21 @@ End Sub
 ' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
 
 Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
-    GetPrevVerseEnabled = False
+    GetPrevVerseEnabled = (m_currentVerse > 1)
 End Function
 
 Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
-    GetNextVerseEnabled = False
+    If m_currentVerse = 0 Or m_currentChapter = 0 Or m_currentBookIndex = 0 Then
+        GetNextVerseEnabled = False
+        Exit Function
+    End If
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    GetNextVerseEnabled = (m_currentVerse < aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter))
 End Function
 
 Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
-    GetVerseEnabled = False
+    GetVerseEnabled = (m_currentChapter > 0)
 End Function
 
 Public Function GetVerseCount(control As IRibbonControl) As Long
@@ -761,24 +791,153 @@ Public Function GetVerseItemID(control As IRibbonControl, index As Long) As Stri
 End Function
 
 Public Function GetVerseText(control As IRibbonControl) As String
-    GetVerseText = ""   ' Step 5: return CStr(m_currentVerse) when set
+    If m_currentVerse > 0 Then
+        GetVerseText = CStr(m_currentVerse)
+    Else
+        GetVerseText = ""
+    End If
 End Function
 
 Public Sub OnVerseChanged(control As IRibbonControl, text As String)
-    ' onChange fires on every keystroke — no navigation here.
-    ' Navigation is triggered by Enter (OnVerseAction).
+    ' comboBox onChange fires on Enter and on each keystroke.
+    ' Navigation is guarded by numeric + range validation; only a valid verse
+    ' number triggers the deferred GoToVerse call.
+    On Error GoTo PROC_ERR
+    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
+    If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim vsNum As Long
+    vsNum = CLng(Trim(text))
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    If vsNum < 1 Or vsNum > aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then GoTo PROC_EXIT
+    m_pendingVerse = vsNum
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.GoToVerseDeferred"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnVerseChanged of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 Public Sub OnVerseAction(control As IRibbonControl, text As String)
-    ' Step 5 — validate range, navigate by paragraph count or verse marker scan
+    ' comboBox does not support onAction — dead stub retained for reference.
+End Sub
+
+' Called from basRibbonDeferred.GoToVerseDeferred — executes after key event clears
+Public Sub ExecutePendingVerse()
+    If m_pendingVerse > 0 Then
+        GoToVerse m_pendingVerse
+        m_pendingVerse = 0
+    End If
 End Sub
 
 Public Sub OnPrevVerseClick(control As IRibbonControl)
-    ' Step 5
+    If m_currentVerse > 1 Then GoToVerse m_currentVerse - 1
 End Sub
 
 Public Sub OnNextVerseClick(control As IRibbonControl)
-    ' Step 5
+    On Error GoTo PROC_ERR
+    If m_currentVerse = 0 Or m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+    If m_currentVerse < aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then
+        GoToVerse m_currentVerse + 1
+    End If
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnNextVerseClick of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+
+' -- Verse row navigation (Step 5) --------------------------------------------
+
+Private Function IsStudyVersion() As Boolean
+    ' Study version has one verse per paragraph; paragraph count > 30,000.
+    ' Print candidate has multiple verses per paragraph; count <= 30,000.
+    IsStudyVersion = (ActiveDocument.Paragraphs.Count > 30000)
+End Function
+
+Private Sub GoToVerse(ByVal vsNum As Long)
+    On Error GoTo PROC_ERR
+    If m_currentBookIndex = 0 Then GoTo PROC_EXIT   ' assert: select book first
+    If m_currentChapter = 0 Then GoTo PROC_EXIT     ' assert: confirm chapter first
+
+    Dim bookName As String
+    bookName = CStr(headingData(m_currentBookIndex, 0))
+
+    Dim maxVs As Long
+    maxVs = aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter)
+    If vsNum < 1 Or vsNum > maxVs Then GoTo PROC_EXIT
+
+    Dim chPos As Long
+    chPos = FindChapterPos(m_currentChapter)
+    If chPos = 0 Then GoTo PROC_EXIT
+
+    If IsStudyVersion Then
+        GoToVerseByCount chPos, vsNum
+    Else
+        GoToVerseByScan chPos, vsNum
+    End If
+
+    m_currentVerse = vsNum
+
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl "cmbVerse"
+        m_ribbon.InvalidateControl "PrevVerseButton"
+        m_ribbon.InvalidateControl "NextVerseButton"
+    End If
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToVerse of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+
+Private Sub GoToVerseByCount(ByVal chPos As Long, ByVal vsNum As Long)
+    ' Study version: each verse is exactly one paragraph.
+    ' Navigate to the chapter H2, then move down vsNum paragraphs.
+    On Error GoTo PROC_ERR
+    Selection.SetRange chPos, chPos
+    Selection.MoveDown Unit:=wdParagraph, Count:=vsNum
+    Selection.Collapse Direction:=wdCollapseStart
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToVerseByCount of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+
+Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
+    ' Print candidate: find the Nth "Verse marker" run from the chapter H2 position.
+    On Error GoTo PROC_ERR
+    Dim r As Word.Range
+    Set r = ActiveDocument.Range(chPos, ActiveDocument.Content.End)
+    Dim count As Long
+    count = 0
+    Do
+        r.Find.ClearFormatting
+        r.Find.style = ActiveDocument.Styles("Verse marker")
+        r.Find.Text = ""
+        r.Find.Forward = True
+        r.Find.Wrap = wdFindStop
+        If Not r.Find.Execute Then Exit Do
+        count = count + 1
+        If count = vsNum Then
+            ActiveDocument.Range(r.Start, r.Start).Select
+            Exit Do
+        End If
+        r.Start = r.End
+        r.End = ActiveDocument.Content.End
+    Loop
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToVerseByScan of Class aeRibbonClass"
+    Resume PROC_EXIT
 End Sub
 
 ' -- New Search ----------------------------------------------------------------

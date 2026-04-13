@@ -36,9 +36,14 @@ Public Sub GoToH1Deferred()
 End Sub
 
 Public Sub GoToBookDeferred()
-    Instance().NavigateToCurrentBook
+    ' Dead stub — NavigateToCurrentBook removed (Bug 9).
+    ' Instance().NavigateToCurrentBook
 End Sub
 
 Public Sub GoToChapterDeferred()
     Instance().ExecutePendingChapter
+End Sub
+
+Public Sub GoToVerseDeferred()
+    Instance().ExecutePendingVerse
 End Sub

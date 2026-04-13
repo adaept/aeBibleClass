@@ -3013,3 +3013,342 @@ load. Mid spacer = 2 × short spacer by geometry.
 | Bug 10 | Prev/Next visual misalignment — em spacer design | **Approved**; pending implementation |
 
 ---
+
+## § 26 — Bug 11: `<labelControl>` invalid inside `<box>`; 2-row layout abandoned (2026-04-12)
+
+### Symptom
+
+Ribbon did not load after adding `<labelControl>` spacers to `boxButtons`.
+
+### Root cause
+
+`<labelControl>` (`CT_LabelControl`) is not in the `CT_Box` content model. The same
+constraint that excludes `<separator>` (Bug 8) excludes `<labelControl>`. The
+`CT_Box` content model accepts interactive input and action controls only. Passive
+layout and display controls are excluded.
+
+### Complete empirical content model for `<box>` (confirmed by testing)
+
+| Element | Valid in `<box>`? | Confirmed by |
+|---------|------------------|-------------|
+| `<button>` | Yes | Original 3-row layout — working |
+| `<comboBox>` | Yes | Original 3-row layout — working |
+| `<separator>` | **No** | Bug 8 — ribbon silent failure |
+| `<labelControl>` | **No** | Bug 11 — ribbon silent failure |
+| `<box>` inside `<box>` | **No** | Bug 7 — ribbon silent failure |
+
+All three passive/layout elements tested have failed. The pattern is definitive:
+`<box>` accepts interactive controls only.
+
+### Consequence: 2-row layout is not achievable
+
+The 2-row layout (boxInputs / boxButtons) requires visual spacing between button
+pairs in `boxButtons`. No valid XML construct provides that spacing inside a `<box>`.
+The em spacer approach in § 25 was correct in design but incorrect in its assumption
+that `<labelControl>` is valid in `<box>`. Pro 2 in the § 25 table ("No schema
+violations — `<labelControl>` is valid inside `<box>`") was wrong; the entry should
+have been a con.
+
+### Resolution: revert to 3-row layout
+
+The 3-row layout (`[Prev][comboBox][Next]` per row) is the only layout that achieves
+visual alignment within the constraints of the `CT_Box` content model:
+
+```xml
+<box id="boxBook"    boxStyle="horizontal">
+  <button id="PrevBookButton"    .../> <comboBox id="cmbBook"    .../> <button id="NextBookButton"    .../>
+</box>
+<box id="boxChapter" boxStyle="horizontal">
+  <button id="PrevChapterButton" .../> <comboBox id="cmbChapter" .../> <button id="NextChapterButton" .../>
+</box>
+<box id="boxVerse"   boxStyle="horizontal">
+  <button id="PrevVerseButton"   .../> <comboBox id="cmbVerse"   .../> <button id="NextVerseButton"   .../>
+</box>
+```
+
+Each Prev/Next pair flanks its comboBox in the same row — alignment is structurally
+guaranteed without any spacer.
+
+**Tab order trade-off:** Tab from a comboBox goes to the Next button in the same
+row, not to the next row's comboBox. With Bug 9 fixed (no document navigation on
+Tab), Tab landing on a ribbon button is harmless — it requires Enter or Space to
+activate and matches standard Windows ribbon Tab behaviour.
+
+Bug 5 (Tab order: Book → Chapter → Verse) is formally closed as unachievable within
+the Office ribbon XML schema constraints. The 3-row layout is the correct and final
+design.
+
+---
+
+### Updated schema lessons learned
+
+| Construct | Valid in customUI14? | Context | Failure mode |
+|-----------|---------------------|---------|-------------|
+| `<editBox onAction="...">` | No | `CT_EditBox` has no `onAction` | Ribbon tab absent |
+| `<box>` inside `<box>` | No | `CT_Box` not in `CT_Box` child list | Ribbon tab absent |
+| `<separator>` inside `<box>` | No | `CT_Separator` not in `CT_Box` child list | Ribbon tab absent |
+| `<labelControl>` inside `<box>` | No | `CT_LabelControl` not in `CT_Box` child list | Ribbon tab absent |
+| `<button>` inside `<box>` | Yes | `CT_Box` accepts interactive controls | — |
+| `<comboBox>` inside `<box>` | Yes | `CT_Box` accepts interactive controls | — |
+| `<separator>` inside `<group>` | Yes | `CT_Group` accepts layout elements | — |
+| `<labelControl>` inside `<group>` | Yes | `CT_Group` accepts layout elements | — |
+
+**Rule:** `<box>` accepts interactive controls only. Layout and display elements
+that are valid in `<group>` are not valid in `<box>`. All four silent ribbon
+failures in this project share this root cause.
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Bug 9 | Tab navigates to document | **COMPLETE** |
+| Bug 10 | Prev/Next visual misalignment | **COMPLETE** — 3-row layout reinstated |
+| Bug 11 | `<labelControl>` inside `<box>` schema failure | **COMPLETE** |
+| Bug 5 | Tab order Book → Chapter → Verse | **Closed** — not achievable in `CT_Box` schema |
+
+---
+| Bug 6 | Progressive navigation model | Approved; Changes C + D **NEXT** |
+
+---
+
+## § 27 — Bug 6: Changes C + D — State Matrix Revision
+
+**Date:** 2026-04-12
+
+### Background
+
+Bug 6 progressive navigation model was approved in the previous session:
+- Prev/Next activation tracks the **last confirmed level** (Book, Chapter, or Verse)
+- All rows remain editable
+- Downstream state resets on higher-level confirmation
+
+Changes C+D are the VBA state matrix implementation of this model.
+
+---
+
+### Change C — PrevButton / NextButton update book state
+
+**Problem:** `NextButton` and `PrevButton` navigate the document to the next/prev
+Heading 1 but do not update `m_currentBookIndex`, `m_currentBookPos`, or reset
+`m_currentChapter` / `m_currentVerse`. After a button click:
+- The comboBox chapter/verse rows reflect the previous book's confirmed state
+- Chapter Prev/Next may be incorrectly enabled (e.g. still showing chapter 3 of
+  the prior book)
+- Chapter and Verse comboBox text is stale
+
+**Fix — `NextButton`:**
+
+After finding `foundPos`, added a loop matching `foundPos` against `headingData`
+to set `m_currentBookIndex` and `m_currentBookPos`. Then reset:
+```vba
+m_currentChapter = 0
+m_currentVerse = 0
+```
+Changed the final invalidation from two targeted `InvalidateControl` calls to a
+full `m_ribbon.Invalidate` so all three rows (including chapter/verse comboBoxes
+and their Prev/Next buttons) are refreshed.
+
+**Fix — `PrevButton`:** Identical change applied.
+
+---
+
+### Change D — GetVerseEnabled
+
+**Problem:** `GetVerseEnabled` returned `False` unconditionally, preventing the
+user from ever typing in the verse comboBox even after a chapter was confirmed.
+
+**Fix:**
+```vba
+Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
+    GetVerseEnabled = (m_currentChapter > 0)
+End Function
+```
+
+The verse row becomes editable when a chapter is confirmed. It is disabled again
+when the book changes (`m_currentChapter` is reset to 0 in `OnBookChanged` and
+in both `NextButton`/`PrevButton`; `m_ribbon.Invalidate` re-queries all callbacks).
+
+---
+
+### State transition matrix (as implemented)
+
+| Event | m_currentBookIndex | m_currentChapter | m_currentVerse | Prev/Next Book | Prev/Next Chapter | Prev/Next Verse |
+|-------|--------------------|------------------|----------------|----------------|-------------------|-----------------|
+| Ribbon load | 0 | 0 | 0 | Disabled | Disabled | Disabled |
+| Book confirmed (OnBookChanged) | set | 0 | 0 | Boundary-based | Disabled | Disabled |
+| Prev/Next Book clicked | updated | 0 | 0 | Boundary-based | Disabled | Disabled |
+| Chapter confirmed (GoToChapter) | unchanged | set | 0 | unchanged | Boundary-based | Disabled |
+| Prev/Next Chapter clicked | unchanged | updated | 0 | unchanged | Boundary-based | Disabled |
+| New Search clicked | 0 | 0 | 0 | Disabled | Disabled | Disabled |
+| Verse confirmed (Step 5) | unchanged | unchanged | set | unchanged | unchanged | Boundary-based |
+
+---
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `src/aeRibbonClass.cls` | `NextButton`: add state update + full Invalidate |
+| `src/aeRibbonClass.cls` | `PrevButton`: add state update + full Invalidate |
+| `src/aeRibbonClass.cls` | `GetVerseEnabled`: `False` → `(m_currentChapter > 0)` |
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Bug 6 Change C | PrevButton/NextButton update book state | **COMPLETE** |
+| Bug 6 Change D | GetVerseEnabled enabled when chapter confirmed | **COMPLETE** |
+| Step 5 | GoToVerse implementation | **PENDING** |
+| Step 7 | Move OLD_CODE to basOLD_CODE.bas | **PENDING** |
+| Step 8 | normalize_vba.py update | **PENDING** |
+
+---
+
+## § 28 — Step 5: GoToVerse Implementation (2026-04-12)
+
+### Design (from § 6)
+
+Two navigation methods based on document type:
+
+| Method | Condition | Mechanism |
+|--------|-----------|-----------|
+| `GoToVerseByCount` | `Paragraphs.Count > 30,000` (study version) | Move down `vsNum` paragraphs from chapter H2 |
+| `GoToVerseByScan` | `Paragraphs.Count <= 30,000` (print candidate) | Find Nth `"Verse marker"` run from chapter H2 |
+
+`IsStudyVersion` is called once per `GoToVerse` call — not cached, since the
+document type could change during a session (though this is not a normal workflow).
+
+---
+
+### State and deferred pattern
+
+Added `m_pendingVerse As Long` to private state, initialized to `0` in
+`Class_Initialize`.
+
+`OnVerseChanged` follows the same pattern as `OnChapterChanged`:
+- Guard: numeric, `m_currentChapter > 0`, `m_currentBookIndex > 0`, range `1..VersesInChapter`
+- On valid input: set `m_pendingVerse`, schedule `GoToVerseDeferred` via `Application.OnTime Now`
+
+`m_pendingVerse` is reset to `0` in `OnChapterChanged` (chapter change cancels any
+staged verse), and consumed/cleared in `ExecutePendingVerse`.
+
+---
+
+### Updated verse row callbacks
+
+| Function | Before | After |
+|----------|--------|-------|
+| `GetVerseEnabled` | `False` (Bug 6 Change D) | `(m_currentChapter > 0)` |
+| `GetPrevVerseEnabled` | `False` | `(m_currentVerse > 1)` |
+| `GetNextVerseEnabled` | `False` | `(m_currentVerse < VersesInChapter(...))` |
+| `GetVerseText` | `""` | `CStr(m_currentVerse)` when set, else `""` |
+| `OnVerseChanged` | dead comment | deferred nav pattern |
+| `OnPrevVerseClick` | stub | `GoToVerse(m_currentVerse - 1)` |
+| `OnNextVerseClick` | stub | `GoToVerse(m_currentVerse + 1)` |
+| `ExecutePendingVerse` | — | new public sub (called from deferred) |
+
+---
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `src/aeRibbonClass.cls` | `m_pendingVerse` state variable; `IsStudyVersion`, `GoToVerse`, `GoToVerseByCount`, `GoToVerseByScan`; updated verse row callbacks |
+| `src/basRibbonDeferred.bas` | `GoToVerseDeferred` public sub |
+
+---
+
+### Timing test (required before commit)
+
+Per § 6 timing table, worst case is Psalm 119:176. Instrument once in test:
+
+```vba
+Dim t As Single
+t = Timer
+GoToVerse 176   ' with book=Psalms, chapter=119 confirmed
+Debug.Print "GoToVerse elapsed: " & Format(Timer - t, "0.000") & "s"
+```
+
+Record both method results. Expected: count method < 1s, scan method < 2s.
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Step 5 | GoToVerse implementation | **COMPLETE** — timing test pending |
+| Step 7 | Move OLD_CODE to basOLD_CODE.bas | **PENDING** |
+| Step 8 | normalize_vba.py update | **PENDING** |
+| basTEST_aeRibbonClass | Test module | **PENDING** |
+
+---
+
+## § 29 — Bug 12: Invalid PNG Content Type causes silent ribbon failure (2026-04-12)
+
+### Symptom
+
+Ribbon tab absent after loading the 3-row XML into `Blank Bible Copy.docm`.
+`Debug > Compile` clean, all modules present, singleton created correctly from
+Immediate Window — VBA was not the cause.
+
+### Diagnosis path
+
+| Test | Result | Conclusion |
+|------|--------|-----------|
+| `? TypeName(Instance())` → `aeRibbonClass` | Pass | VBA stack intact; `RibbonOnLoad` never called |
+| `_rels/.rels` Target had leading `/` | Fixed to relative path | Not the cause; patched anyway |
+| Minimal XML (no callbacks, `imageMso="HappyFace"`) | Tab appears | `.docm` structure OK |
+| Full XML with `imageMso="HappyFace"` | Tab appears | All 30+ VBA callbacks OK |
+| Full XML with `image="adaept"` only | Tab absent | Custom image reference is the cause |
+| Full XML + `ContentType="image/png"` fix | Tab appears | **Root cause confirmed** |
+
+### Root cause
+
+RibbonX Editor wrote `ContentType="image/.PNG"` in `[Content_Types].xml` when
+it first embedded `adaept.png`. The correct MIME type is `image/png`. When the
+ribbon XML references `image="adaept"`, Word resolves the relationship to
+`customUI/images/adaept.png`, looks up its content type, finds the invalid
+`image/.PNG` registration, and silently suppresses the entire ribbon tab —
+same symptom as all prior schema violations.
+
+### Fix
+
+Python script patched `[Content_Types].xml` inside `Blank Bible Copy.docm`:
+
+```
+ContentType="image/.PNG"  →  ContentType="image/png"
+```
+
+Also fixed in the same pass: `_rels/.rels` target path changed from absolute
+`/customUI/customUI14.xml` to relative `customUI/customUI14.xml` (pre-existing
+difference from RibbonX Editor; not the cause of this failure but corrected for
+OPC compliance).
+
+### Note on source files
+
+`customUI14backupRWB.xml` requires no change — the XML was correct throughout.
+The fault was in `.docm` packaging metadata written by RibbonX Editor, not in
+the ribbon XML source. The fix is applied directly to `Blank Bible Copy.docm`
+and does not need to be repeated unless RibbonX Editor is used to reload the
+XML into this file (which would regenerate the invalid entry).
+
+### Prevention
+
+If RibbonX Editor is used again to reload XML into `Blank Bible Copy.docm`,
+re-run the Python fix or manually correct `[Content_Types].xml` entry for
+`adaept.png` from `image/.PNG` to `image/png`.
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Bug 12 | Invalid PNG content type — silent ribbon failure | **COMPLETE** |
+| Ribbon load | `Blank Bible Copy.docm` ribbon confirmed loading | **CONFIRMED** |
+| Step 5 | GoToVerse — timing test pending | **PENDING** |
