@@ -2848,14 +2848,44 @@ below its corresponding comboBox column.
 |-----------|---------------------|--------------|
 | `<editBox onAction="...">` | No — `CT_EditBox` has no `onAction` | Ribbon tab absent, no error |
 | `<box>` inside `<box>` | No — `CT_Box` not in `CT_Box` child list | Ribbon tab absent, no error |
+| `<separator>` inside `<box>` | No — `CT_Separator` not in `CT_Box` child list | Ribbon tab absent, no error |
 | `<comboBox>` inside `<box>` | Yes | — |
-| `<separator>` inside `<box>` | Yes | — |
+| `<separator>` inside `<group>` | Yes | — |
 | `sizeString` on `<comboBox>` | Yes | — |
 | `sizeString` on `<editBox>` | Yes (but editBox avoided going forward) | — |
 
-Both failures share the same symptom: the ribbon tab silently disappears. Word
+All three failures share the same symptom: the ribbon tab silently disappears. Word
 provides no error message or log entry. The only diagnostic is to reduce the XML
 to a known-good state and add elements back one at a time.
+
+---
+
+### Bug 8 — `<separator>` inside `<box>` is not valid (2026-04-12)
+
+**Symptom:** Ribbon did not load after removing nested boxes (Bug 7 fix). The flat
+`boxButtons` row with `<separator id="sepBtn1"/>` and `<separator id="sepBtn2"/>`
+between the Prev/Next pairs was the new invalid construct.
+
+**Root cause:** `CT_Separator` is not listed in the `CT_Box` content model.
+`<separator>` is valid as a direct child of `<group>` only. Adding separators inside
+a `<box>` produces the same silent load failure as the previous two schema errors.
+
+**Fix:** Remove both separators from `boxButtons`. The six buttons run flat in the
+row with no visual dividers:
+
+```xml
+<box id="boxButtons" boxStyle="horizontal">
+  <button id="PrevBookButton"    .../> <button id="NextBookButton"    .../>
+  <button id="PrevChapterButton" .../> <button id="NextChapterButton" .../>
+  <button id="PrevVerseButton"   .../> <button id="NextVerseButton"   .../>
+</box>
+```
+
+Visual grouping between the three Prev/Next pairs is lost. This is an accepted
+trade-off: the Tab order fix (Book → Chapter → Verse in `boxInputs`) is the
+functional requirement; visual separation of button pairs is cosmetic. The enabled
+state of each pair (only one set active at a time per Bug 6) provides implicit visual
+grouping at runtime.
 
 ---
 
@@ -2867,5 +2897,119 @@ to a known-good state and add elements back one at a time.
 | Bug 5 | Tab order (inputs row now Tab-adjacent) | **COMPLETE** |
 | Bug 6 | Progressive navigation model | Approved; Changes C + D **NEXT** |
 | Bug 7 | Nested box schema failure | **COMPLETE** |
+| Bug 8 | Separator inside box schema failure | **COMPLETE** |
+
+---
+
+## § 25 — Bugs 9–10 Analysis and Spacer Design (2026-04-12)
+
+### Bug 9 — Tab from Book comboBox moves focus to document
+
+**Root cause:** `OnBookChanged` schedules `GoToBookDeferred` via
+`Application.OnTime Now`. The deferred call executes `NavigateToCurrentBook` →
+`ActiveDocument.Range(...).Select`, which unconditionally moves focus to the
+document. The deferral fires after the Tab key is consumed by the ribbon but before
+the user's next keystroke — so focus lands in the document and any character typed
+after Tab (e.g., a chapter number) is inserted into the document body.
+
+**Fix:** Remove document navigation from `OnBookChanged` entirely. State variables
+(`m_currentBookIndex`, `m_currentBookPos`, `m_currentChapter = 0`,
+`m_currentVerse = 0`) are set and the ribbon is invalidated; no `.Select` call is
+made. Document navigation for book level occurs as part of `GoToChapter`:
+`FindChapterPos` starts from `m_currentBookPos`, so navigating to any chapter
+implicitly positions the document at the correct book. Book-only document navigation
+(no chapter) uses the Prev/Next Book buttons, which operate via `Selection.Find`
+independently of the comboBox state.
+
+**Implication:** Typing a book name and pressing Enter without entering a chapter
+does not scroll the document to the book H1. Accepted: the dominant workflow is
+Book + Chapter; Prev/Next Book buttons cover book-only navigation.
+
+**Files:** `aeRibbonClass.cls` — remove `Application.OnTime` call from
+`OnBookChanged`; `NavigateToCurrentBook` and `basRibbonDeferred.GoToBookDeferred`
+become dead stubs, retained with comments.
+
+---
+
+### Bug 10 — Prev/Next pairs visually consecutive; no alignment with comboBoxes
+
+**Root cause:** The 2-row layout (boxInputs / boxButtons) places all six buttons
+in one flat `<box>`. No valid XML construct separates them: `<separator>` is invalid
+in `<box>` (Bug 8); nested `<box>` is invalid in `<box>` (Bug 7).
+
+**Fix: `<labelControl>` spacers with em spaces (U+2003).**
+
+The em space is exactly 1 em wide — equal to the font's point size. It is
+font-relative and DPI-relative: at any display scale the UI font scales
+proportionally, and 1 em scales with it. Alignment is preserved at 100%, 125%, and
+150% DPI without adjustment.
+
+**Layout:**
+
+```
+[short][◀Bk][Bk▶][mid][◀Ch][Ch▶][mid][◀Vs][Vs▶]
+
+short = (comboBox_width − 2 × button_width) / 2   ← half of mid
+mid   =  comboBox_width − 2 × button_width
+```
+
+Three `<labelControl>` elements carry the spacers. `<labelControl>` is not
+focusable — Tab order Book → Chapter → Verse is unaffected.
+
+**Ribbon minimum width:** the minimum usable group width is already constrained by
+three `sizeString="2 Thessalonians"` comboBoxes. If the ribbon is narrower than
+that, the comboBoxes are unusable regardless of button alignment. This is not a
+practical concern; a window that narrow renders a 2-column book layout unreadable.
+
+**Screen reader note:** em space characters in the label are reported as whitespace
+by screen readers. Zero-width characters (U+200B, U+FEFF) are not viable
+alternatives — they have zero rendered width and cannot function as spacers. The
+em space approach is correct; screen reader impact is accepted at this stage.
+
+**XML sketch:**
+
+```xml
+<box id="boxButtons" boxStyle="horizontal">
+  <labelControl id="spacerL"  label="&#x2003;&#x2003;&#x2003;"/>  <!-- short: tuned -->
+  <button id="PrevBookButton"    .../>
+  <button id="NextBookButton"    .../>
+  <labelControl id="spacerM1" label="&#x2003;&#x2003;&#x2003;&#x2003;&#x2003;&#x2003;"/>  <!-- mid: tuned -->
+  <button id="PrevChapterButton" .../>
+  <button id="NextChapterButton" .../>
+  <labelControl id="spacerM2" label="&#x2003;&#x2003;&#x2003;&#x2003;&#x2003;&#x2003;"/>  <!-- mid: same -->
+  <button id="PrevVerseButton"   .../>
+  <button id="NextVerseButton"   .../>
+</box>
+```
+
+Em counts are illustrative; final values require one test-adjust cycle after first
+load. Mid spacer = 2 × short spacer by geometry.
+
+**Pros / Cons:**
+
+| # | Pro |
+|---|-----|
+| 1 | Em space scales with DPI — no alignment drift across display scales |
+| 2 | No schema violations — `<labelControl>` is valid inside `<box>` |
+| 3 | Not focusable — Tab order unaffected |
+| 4 | 2-row layout preserved — Tab order Book → Chapter → Verse retained |
+| 5 | Visually clear — approximate centering sufficient; exact alignment not required |
+| 6 | Simple XML — three additions; no new VBA callbacks |
+
+| # | Con |
+|---|-----|
+| 1 | Em count requires empirical tuning — one test-adjust cycle after first load |
+| 2 | Fragile to button size changes — tuned counts need recalculating if `size="large"` is ever used for Prev/Next buttons |
+
+**Status: Approved. Pending implementation.**
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Bug 9 | Tab navigates to document; inserts text | Pending implementation |
+| Bug 10 | Prev/Next visual misalignment — em spacer design | **Approved**; pending implementation |
 
 ---

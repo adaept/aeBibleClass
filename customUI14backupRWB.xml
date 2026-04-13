@@ -22,12 +22,10 @@
                     showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
             <button id="NextBookButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"/>
-            <separator id="sepBtn1"/>
             <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"/>
             <button id="NextChapterButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextChapterClick" getEnabled="GetNextChapterEnabled"/>
-            <separator id="sepBtn2"/>
             <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"/>
             <button id="NextVerseButton" imageMso="HeaderFooterNextSection" size="normal"
