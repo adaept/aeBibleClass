@@ -606,7 +606,7 @@ Private Function FindChapterPos(ByVal chNum As Long) As Long
     ' Returns 0 if not found.
     On Error GoTo PROC_ERR
     Dim r As Word.Range
-    Set r = ActiveDocument.Range(m_currentBookPos, ActiveDocument.content.End)
+    Set r = ActiveDocument.Range(m_currentBookPos, ActiveDocument.Content.End)
     Dim j As Long
     For j = 1 To chNum
         r.Find.ClearFormatting
@@ -620,7 +620,7 @@ Private Function FindChapterPos(ByVal chNum As Long) As Long
         End If
         If j < chNum Then
             r.Start = r.End
-            r.End = ActiveDocument.content.End
+            r.End = ActiveDocument.Content.End
         End If
     Next j
     FindChapterPos = r.Start
@@ -703,9 +703,12 @@ Public Function GetChapterText(control As IRibbonControl) As String
 End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
-    ' comboBox onChange fires on Enter and on each keystroke.
-    ' Navigation is guarded by numeric + range validation; only a valid chapter
-    ' number triggers the deferred GoToChapter call.
+    ' comboBox onChange fires on Enter, Tab, and each keystroke.
+    ' onChange cannot distinguish Tab from Enter — scheduling deferred document
+    ' navigation here causes Tab to steal focus to the document before the user
+    ' reaches the Verse row (same root cause as Bug 9 on the Book row).
+    ' Fix: state only. Navigation occurs in GoToVerse (FindChapterPos uses
+    ' m_currentChapter) or via the Prev/Next Chapter buttons.
     On Error GoTo PROC_ERR
     If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
@@ -714,11 +717,17 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     Dim bookName As String
     bookName = CStr(headingData(m_currentBookIndex, 0))
     If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
-    m_pendingChapter = chNum
-    m_pendingVerse = 0   ' cancel any staged verse when chapter changes
-    Dim projName As String
-    projName = Application.ActiveDocument.VBProject.Name
-    Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
+    m_currentChapter = chNum
+    m_currentVerse = 0
+    m_pendingVerse = 0
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl "cmbChapter"
+        m_ribbon.InvalidateControl "PrevChapterButton"
+        m_ribbon.InvalidateControl "NextChapterButton"
+        m_ribbon.InvalidateControl "cmbVerse"
+        m_ribbon.InvalidateControl "PrevVerseButton"
+        m_ribbon.InvalidateControl "NextVerseButton"
+    End If
 PROC_EXIT:
     Exit Sub
 PROC_ERR:

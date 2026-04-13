@@ -3352,3 +3352,79 @@ re-run the Python fix or manually correct `[Content_Types].xml` entry for
 | Bug 12 | Invalid PNG content type — silent ribbon failure | **COMPLETE** |
 | Ribbon load | `Blank Bible Copy.docm` ribbon confirmed loading | **CONFIRMED** |
 | Step 5 | GoToVerse — timing test pending | **PENDING** |
+
+---
+
+## § 30 — Bug 13: Tab after Chapter entry navigates to document (2026-04-12)
+
+### Symptom
+
+Workflow: type `gen` → Tab → Tab → type `9` → Tab
+
+After typing the chapter number and pressing Tab, focus moves to the document
+instead of continuing to the Verse comboBox. Any subsequent keystroke inserts
+text into the document body.
+
+### Root cause
+
+Same as Bug 9 (Book row). `OnChapterChanged` scheduled `GoToChapterDeferred`
+via `Application.OnTime Now`. The deferred call fires after Tab is processed
+by the ribbon — `GoToChapter` calls `ActiveDocument.Range(chPos, chPos).Select`,
+which unconditionally moves focus to the document. The ribbon Tab sequence
+(Book → Chapter → Verse) is broken at the Chapter step.
+
+`OnChapterChanged` fires on Enter, Tab, and every keystroke. There is no way
+to distinguish Tab from Enter in the callback. Any deferred document navigation
+scheduled from `OnChapterChanged` will steal focus on Tab as well as Enter.
+
+### Fix
+
+Same pattern as Bug 9: state-only in `OnChapterChanged`, no document navigation.
+
+`OnChapterChanged` now:
+- Sets `m_currentChapter = chNum` directly (no `m_pendingChapter` staging)
+- Resets `m_currentVerse = 0` and `m_pendingVerse = 0`
+- Invalidates chapter and verse row controls
+- Makes **no** `Application.OnTime` call
+
+Chapter document navigation occurs:
+- **Via GoToVerse**: `FindChapterPos(m_currentChapter)` navigates to the chapter
+  H2 before counting down to the verse. Book + Chapter + Verse typed via Tab
+  flow all resolve in a single `GoToVerse` call.
+- **Via Prev/Next Chapter buttons**: `OnPrevChapterClick` / `OnNextChapterClick`
+  call `GoToChapter` directly.
+
+### Tab flow (corrected)
+
+```
+[Book]  type gen  Tab →  NextBookButton
+        Tab →  PrevChapterButton
+        Tab →  [Chapter]  type 9  Tab →  NextChapterButton
+        Tab →  PrevVerseButton
+        Tab →  [Verse]  type 5  Tab/Enter →  GoToVerseDeferred → Genesis 9:5
+```
+
+No document navigation until Verse is confirmed. Document navigation on Verse
+Tab/Enter is intentional — the user has completed the reference entry.
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `src/aeRibbonClass.cls` | `OnChapterChanged`: removed `Application.OnTime` / `m_pendingChapter`; sets `m_currentChapter` directly; invalidates chapter+verse controls |
+
+### `ExecutePendingChapter` / `m_pendingChapter` status
+
+`ExecutePendingChapter` and `m_pendingChapter` are now dead — `GoToChapterDeferred`
+in `basRibbonDeferred.bas` will never be scheduled. Both stubs are retained for
+reference; removal deferred to Step 7 (OLD_CODE cleanup).
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Bug 13 | Tab after Chapter steals focus to document | **COMPLETE** |
+| Step 5 | GoToVerse — timing test pending | **PENDING** |
+| Step 7 | OLD_CODE cleanup (incl. dead stubs) | **PENDING** |
