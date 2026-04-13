@@ -3,33 +3,33 @@
     <tabs>
       <tab id="RWB" label="Radiant Word Bible">
         <group id="NavGroup" label="Bible Navigation">
-          <box id="boxBook" boxStyle="horizontal">
-            <button id="PrevBookButton" imageMso="HeaderFooterPreviousSection" size="normal"
-                    showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
+          <box id="boxInputs" boxStyle="horizontal">
             <comboBox id="cmbBook" showLabel="false" sizeString="2 Thessalonians"
                       getItemCount="GetBookCount" getItemLabel="GetBookItemLabel"
                       getItemID="GetBookItemID" getText="GetBookText"
                       onChange="OnBookChanged" getEnabled="GetBookEnabled"/>
+            <comboBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
+                      getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
+                      getItemID="GetChapterItemID" getText="GetChapterText"
+                      onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
+            <comboBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
+                      getItemCount="GetVerseCount" getItemLabel="GetVerseItemLabel"
+                      getItemID="GetVerseItemID" getText="GetVerseText"
+                      onChange="OnVerseChanged" getEnabled="GetVerseEnabled"/>
+          </box>
+          <box id="boxButtons" boxStyle="horizontal">
+            <button id="PrevBookButton" imageMso="HeaderFooterPreviousSection" size="normal"
+                    showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
             <button id="NextBookButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"/>
-          </box>
-          <box id="boxChapter" boxStyle="horizontal">
+            <separator id="sepBtn1"/>
             <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"/>
-            <editBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
-                     getText="GetChapterText"
-                     onChange="OnChapterChanged"
-                     getEnabled="GetChapterEnabled"/>
             <button id="NextChapterButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextChapterClick" getEnabled="GetNextChapterEnabled"/>
-          </box>
-          <box id="boxVerse" boxStyle="horizontal">
+            <separator id="sepBtn2"/>
             <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"/>
-            <editBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
-                     getText="GetVerseText"
-                     onChange="OnVerseChanged"
-                     getEnabled="GetVerseEnabled"/>
             <button id="NextVerseButton" imageMso="HeaderFooterNextSection" size="normal"
                     showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"/>
           </box>

@@ -2765,3 +2765,107 @@ can be applied in the same edit. Holding A+B pending Bug 6 approval avoids a thi
 XML replacement cycle.
 
 ---
+
+## § 23 — Bug 6 Approved; Changes A + B Implementation (2026-04-12)
+
+### Bug 6 model: Approved
+
+The revised progressive navigation model from § 22 is approved. Changes C + D
+(VBA state matrix and onChange handler updates) follow after the XML is confirmed
+loading.
+
+---
+
+### Changes A + B: first attempt — nested box failure
+
+**Symptom:** Ribbon did not load after applying Changes A + B.
+
+**Root cause:** The XML used nested `<box>` inside `<box>` for the button row:
+
+```xml
+<box id="boxButtons" boxStyle="horizontal">
+  <box id="boxBookNav" boxStyle="horizontal">   <!-- INVALID: box inside box -->
+    <button id="PrevBookButton" .../>
+    <button id="NextBookButton" .../>
+  </box>
+  ...
+</box>
+```
+
+The `CT_Box` content model in the Office 2009 customUI14 schema does not list
+`CT_Box` as a valid child element. A `<box>` cannot be nested inside another
+`<box>`. Word silently rejects the ribbon XML and the tab does not appear —
+same symptom as the `onAction` on `<editBox>` failure in § 21.
+
+**Fix:** Replace the nested structure with a flat `boxButtons` row using
+`<separator>` elements to visually group the three Prev/Next pairs:
+
+```xml
+<box id="boxButtons" boxStyle="horizontal">
+  <button id="PrevBookButton"    .../> <button id="NextBookButton"    .../>
+  <separator id="sepBtn1"/>
+  <button id="PrevChapterButton" .../> <button id="NextChapterButton" .../>
+  <separator id="sepBtn2"/>
+  <button id="PrevVerseButton"   .../> <button id="NextVerseButton"   .../>
+</box>
+```
+
+---
+
+### Final XML layout (Changes A + B complete)
+
+```xml
+<group id="NavGroup" label="Bible Navigation">
+  <box id="boxInputs" boxStyle="horizontal">
+    <comboBox id="cmbBook"    ... onChange="OnBookChanged"    getEnabled="GetBookEnabled"/>
+    <comboBox id="cmbChapter" ... onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
+    <comboBox id="cmbVerse"   ... onChange="OnVerseChanged"   getEnabled="GetVerseEnabled"/>
+  </box>
+  <box id="boxButtons" boxStyle="horizontal">
+    <button id="PrevBookButton"    .../> <button id="NextBookButton"    .../>
+    <separator id="sepBtn1"/>
+    <button id="PrevChapterButton" .../> <button id="NextChapterButton" .../>
+    <separator id="sepBtn2"/>
+    <button id="PrevVerseButton"   .../> <button id="NextVerseButton"   .../>
+  </box>
+  <separator id="sep1"/>
+  <button id="NewSearchButton" .../>
+  <separator id="sep2"/>
+  <button id="adaeptButton" label="About" .../>
+</group>
+```
+
+All three `sizeString="2 Thessalonians"` comboBoxes are in a single flat box —
+Tab order is Book → Chapter → Verse with no Prev/Next buttons in between.
+The button row separators (`sepBtn1`, `sepBtn2`) visually group each Prev/Next pair
+below its corresponding comboBox column.
+
+---
+
+### Schema lessons learned
+
+| Construct | Valid in customUI14? | Failure mode |
+|-----------|---------------------|--------------|
+| `<editBox onAction="...">` | No — `CT_EditBox` has no `onAction` | Ribbon tab absent, no error |
+| `<box>` inside `<box>` | No — `CT_Box` not in `CT_Box` child list | Ribbon tab absent, no error |
+| `<comboBox>` inside `<box>` | Yes | — |
+| `<separator>` inside `<box>` | Yes | — |
+| `sizeString` on `<comboBox>` | Yes | — |
+| `sizeString` on `<editBox>` | Yes (but editBox avoided going forward) | — |
+
+Both failures share the same symptom: the ribbon tab silently disappears. Word
+provides no error message or log entry. The only diagnostic is to reduce the XML
+to a known-good state and add elements back one at a time.
+
+---
+
+### Step status update
+
+| Step | Description | Status |
+|------|-------------|--------|
+| Bug 4 | Visual misalignment (editBox vs comboBox) | **COMPLETE** |
+| Bug 5 | Tab order (inputs row now Tab-adjacent) | **COMPLETE** |
+| Bug 6 | Progressive navigation model | Approved; Changes C + D **NEXT** |
+| Bug 7 | Nested box schema failure | **COMPLETE** |
+
+---

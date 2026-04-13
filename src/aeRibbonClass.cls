@@ -659,6 +659,18 @@ Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
     GetNextChapterEnabled = (m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName))
 End Function
 
+Public Function GetChapterCount(control As IRibbonControl) As Long
+    GetChapterCount = 0   ' Step 5: aeBibleCitationClass.ChaptersInBook(bookName)
+End Function
+
+Public Function GetChapterItemLabel(control As IRibbonControl, index As Long) As String
+    GetChapterItemLabel = ""   ' Step 5
+End Function
+
+Public Function GetChapterItemID(control As IRibbonControl, index As Long) As String
+    GetChapterItemID = CStr(index)
+End Function
+
 Public Function GetChapterText(control As IRibbonControl) As String
     If m_currentChapter > 0 Then
         GetChapterText = CStr(m_currentChapter)
@@ -668,7 +680,7 @@ Public Function GetChapterText(control As IRibbonControl) As String
 End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
-    ' editBox has no onAction — onChange fires on Enter and on each keystroke.
+    ' comboBox onChange fires on Enter and on each keystroke.
     ' Navigation is guarded by numeric + range validation; only a valid chapter
     ' number triggers the deferred GoToChapter call.
     On Error GoTo PROC_ERR
@@ -734,6 +746,18 @@ End Function
 
 Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
     GetVerseEnabled = False
+End Function
+
+Public Function GetVerseCount(control As IRibbonControl) As Long
+    GetVerseCount = 0   ' Step 5: aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter)
+End Function
+
+Public Function GetVerseItemLabel(control As IRibbonControl, index As Long) As String
+    GetVerseItemLabel = ""   ' Step 5
+End Function
+
+Public Function GetVerseItemID(control As IRibbonControl, index As Long) As String
+    GetVerseItemID = CStr(index)
 End Function
 
 Public Function GetVerseText(control As IRibbonControl) As String
