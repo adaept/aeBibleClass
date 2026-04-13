@@ -191,7 +191,7 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
             End If
         End If
         count = count + 1
-        Set rng = rng.Next(Unit:=wdParagraph, count:=1)
+        Set rng = rng.Next(Unit:=wdParagraph, Count:=1)
     Loop
 
     MsgBox "Chapter not found: '" & fullBookName & "' Chapter = " & chapNum, vbExclamation, "Bible"
@@ -328,7 +328,7 @@ Private Sub NextButton()
 
     ' Move start past current paragraph to avoid re-matching
     paraEnd = Selection.Paragraphs(1).Range.End
-    Set searchRange = doc.Range(paraEnd, doc.content.End)
+    Set searchRange = doc.Range(paraEnd, doc.Content.End)
 
     With searchRange.Find
         .ClearFormatting
@@ -381,7 +381,7 @@ Private Function GetExactVerticalScroll() As Double
     visibleStart = ActiveWindow.Selection.Start
 
     ' Get the total document length
-    totalLength = ActiveDocument.content.End
+    totalLength = ActiveDocument.Content.End
 
     ' Calculate the exact scroll percentage
     If totalLength > 0 Then

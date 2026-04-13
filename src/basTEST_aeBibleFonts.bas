@@ -66,7 +66,7 @@ Private Function IsFontInstalled(fontName As String) As Boolean
     Dim testRange As Word.Range
     On Error Resume Next
     Set TestDoc = Documents.Add(Visible:=False)
-    Set testRange = TestDoc.content
+    Set testRange = TestDoc.Content
     testRange.Text = "Test"
     testRange.Font.Name = fontName
     IsFontInstalled = (testRange.Font.Name = fontName)
@@ -124,7 +124,7 @@ Public Sub AuditStyleUsage_Footnote()
 
     logBuffer = "=== Audit: Style Usage for ->Footnote<- ===" & vbCrLf
 
-    Set r = ActiveDocument.content
+    Set r = ActiveDocument.Content
     With r.Find
         .ClearFormatting
         .style = ActiveDocument.Styles("Footnote")
@@ -136,7 +136,7 @@ Public Sub AuditStyleUsage_Footnote()
             hitCount = hitCount + 1
             logBuffer = logBuffer & "* Style hit at Char " & r.Start & " - ->" & Left(r.Text, 40) & "...<-" & vbCrLf
             r.Start = r.Start + 1
-            r.End = ActiveDocument.content.End
+            r.End = ActiveDocument.Content.End
         Loop
     End With
 

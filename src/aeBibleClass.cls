@@ -1942,7 +1942,7 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
 ' When count is 0 there is no more text that needs setting for style EmphasisBlack or EmphasisRed
 
     Dim rng As Word.Range
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     Dim totalCount As Integer
     Dim wordColor As Long
     Dim wordStyle As style
@@ -2050,7 +2050,7 @@ Private Function CountDarkRedStyledParagraphMarks()
     Dim totalMatches As Long
     Dim found As Boolean
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     totalMatches = 0
     found = False
 
@@ -2137,7 +2137,7 @@ Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
     Dim foundFirst As Boolean
     Dim docRange As Word.Range
 
-    Set docRange = ActiveDocument.content
+    Set docRange = ActiveDocument.Content
     totalCount = 0
     foundFirst = False
 
@@ -2309,7 +2309,7 @@ Private Function CountDocTabOnlyParagraphs() As Integer
         paraText = para.Range.Text
 
         ' Skip final paragraph if it's the only one and contains just tab+CR
-        If para.Range.End = ActiveDocument.content.End And paraText = vbTab & vbCr Then
+        If para.Range.End = ActiveDocument.Content.End And paraText = vbTab & vbCr Then
             ' Comment out to skip this one if desired
             countTabOnly = countTabOnly + 1
         Else
@@ -2449,7 +2449,7 @@ Private Function CountLinefeed(Optional space As Variant) As Integer
     Set doc = ActiveDocument
        
     ' Search in the main document content
-    Set rng = doc.content
+    Set rng = doc.Content
     
     Application.ScreenUpdating = False
     With rng.Find
@@ -2539,7 +2539,7 @@ Private Function CountHeaderStyleUsage() As Integer
     StyleName = "Header"
     
     ' Initialize the range to search
-    Set rng = doc.content
+    Set rng = doc.Content
     
     ' Initialize the count
     count = 0
@@ -2886,7 +2886,7 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
     Dim paraCount As Long
 
     count = 0
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Collapse Direction:=wdCollapseStart
 
     Application.ScreenUpdating = False
@@ -3043,7 +3043,7 @@ Private Function CountEmptyParasAfterH2() As Integer
         ' Check if the paragraph style is Heading 2
         If para.style = ActiveDocument.Styles("Heading 2") Then
             ' Check the next paragraph
-            Set NextPara = para.Range.Next(Unit:=wdParagraph, count:=1).Paragraphs(1)
+            Set NextPara = para.Range.Next(Unit:=wdParagraph, Count:=1).Paragraphs(1)
             If Not NextPara Is Nothing Then
                 ' Check if the next paragraph is empty
                 If Len(Trim(NextPara.Range.Text)) = 1 Then ' Adjusted to check for a single paragraph mark
@@ -3187,7 +3187,7 @@ Private Function CountWhiteParagraphMarks() As Integer
     firstFound = False
     
     ' Initialize the range to search the entire document
-    Set rng = doc.content
+    Set rng = doc.Content
     
     ' Use the Find method to locate white paragraph marks
     With rng.Find
@@ -3325,7 +3325,7 @@ Private Function CountFindNumberDashNumber() As Integer
     searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
     count = 0
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     With rng.Find
         .Text = searchPattern
         .MatchWildcards = True
@@ -3346,7 +3346,7 @@ Private Function CountFindNumberDashNumber() As Integer
 
             ' Collapse the range to the end of the found text
             rng.Collapse Direction:=wdCollapseEnd
-            rng.End = ActiveDocument.content.End
+            rng.End = ActiveDocument.Content.End
         
             If count Mod 50 = 0 Then
                 DoEvents  ' Keep UI responsive every 50 updates
@@ -3370,7 +3370,7 @@ Private Function CountNonBreakingSpaces() As Integer
     Dim rng As Word.Range
     Dim count As Long
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
 
     With rng.Find
@@ -3408,7 +3408,7 @@ Private Function CountPeriodSpaceLeftParenthesis() As Integer
     Dim rng As Word.Range
     Dim count As Long
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
     
     With rng.Find
@@ -3449,7 +3449,7 @@ Private Function CountStyleWithNumberAndSpace() As Integer
 
     StyleName = "Verse marker"
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
     rng.Find.style = StyleName
 
@@ -3492,7 +3492,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
 
     StyleName = "Chapter Verse marker"
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
     rng.Find.style = StyleName
     firstFound = False
@@ -3538,7 +3538,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
     Dim rng As Word.Range
     Dim count As Long
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
     
     With rng.Find
@@ -3580,7 +3580,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
     Dim rng As Word.Range
     Dim count As Long
 
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
     rng.Find.Font.color = wdColorWhite
 
@@ -3619,7 +3619,7 @@ Private Function CountDoubleTabs() As Integer
 
     count = 0
     Set doc = ActiveDocument
-    Set rng = doc.content
+    Set rng = doc.Content
 
     Do While rng.Find.Execute(findText:="^t^t", Forward:=True, Wrap:=wdFindStop)
         count = count + 1
@@ -3645,7 +3645,7 @@ Private Function CountSpaceFollowedByCarriageReturn() As Integer
 
     count = 0
     Set doc = ActiveDocument
-    Set rng = doc.content
+    Set rng = doc.Content
 
     Do While rng.Find.Execute(findText:=" ^13", Forward:=True, Wrap:=wdFindStop)
         count = count + 1
@@ -3671,7 +3671,7 @@ Private Function CountDoubleSpaces() As Integer
 
     doubleSpaceCount = 0
     Set doc = ActiveDocument
-    Set rng = doc.content
+    Set rng = doc.Content
     
     With rng.Find
         .Text = "  " ' Double space

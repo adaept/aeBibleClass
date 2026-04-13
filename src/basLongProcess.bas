@@ -120,7 +120,7 @@ Public Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
     StyleName = "Chapter Verse marker"
     updateCount = 0
 
-    Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, count:=pageNumber
+    Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=pageNumber
     Debug.Print "Starting at Page " & pageNumber
 
     For Each para In doc.Paragraphs

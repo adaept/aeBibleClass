@@ -51,7 +51,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
 
         ' Move to the next character and print its ASCII value
         Selection.Collapse Direction:=wdCollapseEnd
-        Selection.MoveRight Unit:=wdCharacter, count:=1
+        Selection.MoveRight Unit:=wdCharacter, Count:=1
         nextChar = Selection.Text
 
         If Len(nextChar) > 0 Then
@@ -64,7 +64,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
         End If
 
         ' Move back to the end of the found number to continue search
-        Selection.MoveLeft Unit:=wdCharacter, count:=1
+        Selection.MoveLeft Unit:=wdCharacter, Count:=1
 
         firstFound = True
         count = count + 1
@@ -177,7 +177,7 @@ Sub ListAndReviewAscii12Characters()
     Dim response As VbMsgBoxResult
 
     ' Set the range to the entire document
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
 
     ' Initialize the count
     count = 0
@@ -421,7 +421,7 @@ Sub FindNextVerseMarkerSequence()
     found = False
     tStart = Timer
 
-    Set searchRange = doc.Range(0, doc.content.End)
+    Set searchRange = doc.Range(0, doc.Content.End)
 
     ' Begin search for Chapter Verse marker
     With searchRange.Find
@@ -438,11 +438,11 @@ Sub FindNextVerseMarkerSequence()
         Set chapterRng = searchRange.Duplicate
 
         ' Attempt to get the next character styled as Verse marker
-        If chapterRng.End + 1 <= doc.content.End Then
+        If chapterRng.End + 1 <= doc.Content.End Then
             Set nextRng = doc.Range(Start:=chapterRng.End, End:=chapterRng.End + 1)
         Else
             searchRange.Start = chapterRng.End
-            searchRange.End = doc.content.End
+            searchRange.End = doc.Content.End
             searchRange.Find.Execute
             GoTo ContinueLoop
         End If
@@ -459,7 +459,7 @@ Sub FindNextVerseMarkerSequence()
                 End If
 
                 ' After verse
-                If nextRng.End + 1 <= doc.content.End Then
+                If nextRng.End + 1 <= doc.Content.End Then
                     Set afterChar = doc.Range(Start:=nextRng.End, End:=nextRng.End + 1)
                 Else
                     GoTo ContinueLoop
@@ -492,7 +492,7 @@ Sub FindNextVerseMarkerSequence()
 ContinueLoop:
         ' Continue search
         searchRange.Start = chapterRng.End
-        searchRange.End = doc.content.End
+        searchRange.End = doc.Content.End
         searchRange.Find.Execute
 
         progressCount = progressCount + 1

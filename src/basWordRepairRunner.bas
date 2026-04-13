@@ -128,7 +128,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     ' (800+ pages) and may cause noticeable delay if this routine runs per-page.
     ' Consider caching the page count outside this function if performance is an issue.
     If pageNum >= ActiveDocument.Pages.Count Then
-        pageEnd = ActiveDocument.content.End
+        pageEnd = ActiveDocument.Content.End
     Else
         Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
         pageEnd = pgRange.Start - 1

@@ -602,7 +602,7 @@ Public Sub CountSearchHits()
     If Len(searchTerm) = 0 Then GoTo PROC_EXIT
 
     count = 0
-    Set rng = ActiveDocument.content
+    Set rng = ActiveDocument.Content
     With rng.Find
         .Text = searchTerm
         .Forward = True
@@ -723,7 +723,7 @@ Public Sub FixAndDiagnoseFootnoteReferences()
     If firstFound Then
         ' Move to the first incorrect reference (in main text)
         Selection.HomeKey Unit:=wdStory
-        Selection.MoveRight Unit:=wdCharacter, count:=firstIncorrectPos
+        Selection.MoveRight Unit:=wdCharacter, Count:=firstIncorrectPos
         Selection.Select
     Else
         MsgBox "All footnote reference formatting is correct."

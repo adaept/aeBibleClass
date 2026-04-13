@@ -794,8 +794,8 @@ Sub CountTypesTrulyEmptyParagraph()
             End If
 
             ' Check the next character only if not at end of doc
-            If paraRange.End < ActiveDocument.content.End Then
-                nextChar = paraRange.Next(Unit:=wdCharacter, count:=1).Text
+            If paraRange.End < ActiveDocument.Content.End Then
+                nextChar = paraRange.Next(Unit:=wdCharacter, Count:=1).Text
                 If nextChar = Chr(12) Then
                     sectionBreakFound = True
                 End If
@@ -896,7 +896,7 @@ Sub CreateTemplateWithoutText()
     templateDoc.Range.PasteAndFormat wdFormatOriginalFormatting
     
     ' Remove all the text from the new document (leave the styles and formatting)
-    templateDoc.content.Delete
+    templateDoc.Content.Delete
     
     ' Specify the path to save the template as a macro-enabled template
     templatePath = "C:\adaept\aeBibleClass\BibleTemplate.dotm" ' Modify this path as needed
@@ -1167,11 +1167,11 @@ End Function
 Sub TestPageRangeEnd()
     On Error GoTo PROC_ERR
     Selection.GoTo What:=wdGoToPage, name:="70"
-    Selection.MoveRight Unit:=wdCharacter, count:=1
+    Selection.MoveRight Unit:=wdCharacter, Count:=1
     Dim pageEnd As Long
     pageEnd = Selection.Bookmarks("\Page").Range.End
     Selection.GoTo What:=wdGoToPage, name:="71"
-    Selection.MoveRight Unit:=wdCharacter, count:=1
+    Selection.MoveRight Unit:=wdCharacter, Count:=1
     Dim page71Start As Long
     page71Start = Selection.Start
     Debug.Print "Page 70 ends at: " & pageEnd
@@ -1399,7 +1399,7 @@ Sub CountNumericOrdinals()
         DoEvents
 
         Dim rng As Word.Range
-        Set rng = doc.content
+        Set rng = doc.Content
 
         With rng.Find
             .ClearFormatting
@@ -1414,7 +1414,7 @@ Sub CountNumericOrdinals()
         Do While rng.Find.Execute
 
             ' Check preceding character ONLY
-            If rng.Start > doc.content.Start Then
+            If rng.Start > doc.Content.Start Then
                 If doc.Range(rng.Start - 1, rng.Start).Text Like "[0-9]" Then
 
                     Select Case suffixes(i)
