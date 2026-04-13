@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #600 -
+' #599 -
+' #598 -
+' #597 -
+' #596 -
 ' #595 -
-' #594 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -73,6 +77,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #594 - Add summary notice related to RWB as trademark [feat]
     ' FIXED - #593 - Tab into Verse not working [bug]
     ' FIXED - #592 - Navigation interface bugs - use editBox for Chapter and Verse [bug]
     ' FIXED - #591 - Implement Step 3 [feat]
