@@ -34,8 +34,6 @@ Option Compare Text
 ' -- Private State -------------------------------------------------------------
 Private m_ribbon         As IRibbonUI
 Private m_ribbonReady    As Boolean
-Private m_btnNextEnabled As Boolean
-Private m_btnPrevEnabled As Boolean
 Private m_bookmarkIndex  As Long
 Private m_savedPos       As Long
 Private m_bookAbbr       As String
@@ -56,8 +54,6 @@ Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) 
 
 Private Sub Class_Initialize()
     Debug.Print "RibbonController: Class_Initialize at " & Format(Now, "hh:nn:ss")
-    m_btnNextEnabled = False
-    m_btnPrevEnabled = False
     m_ribbonReady = False
     m_bookmarkIndex = 0
     m_savedPos = 0
@@ -80,22 +76,6 @@ End Sub
 
 Public Property Get RibbonReady() As Boolean
     RibbonReady = m_ribbonReady
-End Property
-
-Public Property Get BtnNextEnabled() As Boolean
-    BtnNextEnabled = m_btnNextEnabled
-End Property
-
-Public Property Let BtnNextEnabled(val As Boolean)
-    m_btnNextEnabled = val
-End Property
-
-Public Property Get BtnPrevEnabled() As Boolean
-    BtnPrevEnabled = m_btnPrevEnabled
-End Property
-
-Public Property Let BtnPrevEnabled(val As Boolean)
-    m_btnPrevEnabled = val
 End Property
 
 ' -- Ribbon Load ---------------------------------------------------------------
@@ -167,12 +147,12 @@ End Sub
 
 ' -- Enabled State Callback ----------------------------------------------------
 
-Public Function GetNextEnabled(control As IRibbonControl) As Boolean
-    GetNextEnabled = m_btnNextEnabled
+Public Function GetNextBkEnabled(control As IRibbonControl) As Boolean
+    GetNextBkEnabled = (m_currentBookIndex > 0)
 End Function
 
-Public Function GetPrevEnabled(control As IRibbonControl) As Boolean
-    GetPrevEnabled = m_btnPrevEnabled
+Public Function GetPrevBkEnabled(control As IRibbonControl) As Boolean
+    GetPrevBkEnabled = (m_currentBookIndex > 0)
 End Function
 
 ' -- Initialization ------------------------------------------------------------
@@ -207,7 +187,6 @@ Private Sub GoToH1()
     On Error GoTo PROC_ERR
     Dim pattern  As String
     Dim i        As Long
-    Dim k        As Long
     Dim foundPos As Long
     Dim matchFound As Boolean
 
@@ -235,17 +214,6 @@ Private Sub GoToH1()
 
     foundPos = CLng(headingData(i, 1))
     ActiveDocument.Range(foundPos, foundPos).Select
-    m_btnPrevEnabled = True
-    m_btnNextEnabled = True
-    If Not IsEmpty(headingData(1, 1)) Then
-        If foundPos = CLng(headingData(1, 1)) Then m_btnPrevEnabled = False
-    End If
-    For k = 66 To 1 Step -1
-        If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
-            If foundPos = CLng(headingData(k, 1)) Then m_btnNextEnabled = False
-            Exit For
-        End If
-    Next k
 
 PROC_EXIT:
     Exit Sub
@@ -259,9 +227,8 @@ End Sub
 
 Private Sub NextButton()
     On Error GoTo PROC_ERR
-    Dim found    As Boolean
-    Dim foundPos As Long
-    Dim k        As Long
+    Dim found      As Boolean
+    Dim foundPos   As Long
     Dim curParaEnd As Long
     curParaEnd = Selection.Paragraphs(1).Range.End
     Application.ScreenUpdating = False
@@ -275,14 +242,6 @@ Private Sub NextButton()
     If found Then
         Selection.Collapse Direction:=wdCollapseStart
         foundPos = Selection.Range.Start
-        m_btnPrevEnabled = True
-        m_btnNextEnabled = True
-        For k = 66 To 1 Step -1
-            If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
-                If foundPos = CLng(headingData(k, 1)) Then m_btnNextEnabled = False
-                Exit For
-            End If
-        Next k
         ' Update book state and reset downstream (Bug 6 Change C)
         Dim j As Long
         For j = 1 To 66
@@ -296,8 +255,6 @@ Private Sub NextButton()
         Next j
         m_currentChapter = 0
         m_currentVerse = 0
-    Else
-        m_btnNextEnabled = False
     End If
     Application.ScreenUpdating = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
@@ -325,11 +282,6 @@ Private Sub PrevButton()
     If found Then
         Selection.Collapse Direction:=wdCollapseStart
         foundPos = Selection.Range.Start
-        m_btnNextEnabled = True
-        m_btnPrevEnabled = True
-        If Not IsEmpty(headingData(1, 1)) Then
-            If foundPos = CLng(headingData(1, 1)) Then m_btnPrevEnabled = False
-        End If
         ' Update book state and reset downstream (Bug 6 Change C)
         Dim j As Long
         For j = 1 To 66
@@ -343,8 +295,6 @@ Private Sub PrevButton()
         Next j
         m_currentChapter = 0
         m_currentVerse = 0
-    Else
-        m_btnPrevEnabled = False
     End If
     Application.ScreenUpdating = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
@@ -570,16 +520,6 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     m_currentChapter = 0
     m_currentVerse = 0
 
-    m_btnPrevEnabled = (m_currentBookIndex > 1)
-    Dim k As Long
-    m_btnNextEnabled = False
-    For k = 66 To 1 Step -1
-        If Not IsEmpty(headingData(k, 1)) And CLng(headingData(k, 1)) > 0 Then
-            m_btnNextEnabled = (m_currentBookIndex < k)
-            Exit For
-        End If
-    Next k
-
     ' Full invalidate clears user-typed comboBox text in Chapter/Verse rows.
     ' No document navigation here — ActiveDocument...Select moves focus to the
     ' document unconditionally, causing Tab to land in the document (Bug 9).
@@ -669,17 +609,11 @@ Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
 End Function
 
 Public Function GetPrevChapterEnabled(control As IRibbonControl) As Boolean
-    GetPrevChapterEnabled = (m_currentChapter > 1)
+    GetPrevChapterEnabled = (m_currentChapter > 0)
 End Function
 
 Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
-    If m_currentChapter = 0 Or m_currentBookIndex = 0 Then
-        GetNextChapterEnabled = False
-        Exit Function
-    End If
-    Dim bookName As String
-    bookName = CStr(headingData(m_currentBookIndex, 0))
-    GetNextChapterEnabled = (m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName))
+    GetNextChapterEnabled = (m_currentChapter > 0 And m_currentBookIndex > 0)
 End Function
 
 Public Function GetChapterCount(control As IRibbonControl) As Long
@@ -770,17 +704,11 @@ End Sub
 ' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
 
 Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
-    GetPrevVerseEnabled = (m_currentVerse > 1)
+    GetPrevVerseEnabled = (m_currentVerse > 0)
 End Function
 
 Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
-    If m_currentVerse = 0 Or m_currentChapter = 0 Or m_currentBookIndex = 0 Then
-        GetNextVerseEnabled = False
-        Exit Function
-    End If
-    Dim bookName As String
-    bookName = CStr(headingData(m_currentBookIndex, 0))
-    GetNextVerseEnabled = (m_currentVerse < aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter))
+    GetNextVerseEnabled = (m_currentVerse > 0 And m_currentChapter > 0 And m_currentBookIndex > 0)
 End Function
 
 Public Function GetVerseEnabled(control As IRibbonControl) As Boolean

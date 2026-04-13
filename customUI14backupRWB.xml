@@ -1,44 +1,54 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="RibbonOnLoad">
   <ribbon startFromScratch="false">
     <tabs>
-      <tab id="RWB" label="Radiant Word Bible">
+      <tab id="RWB" label="Radiant Word Bible" keytip="RW">
         <group id="NavGroup" label="Bible Navigation">
           <box id="boxBook" boxStyle="horizontal">
             <button id="PrevBookButton" imageMso="HeaderFooterPreviousSection" size="normal"
-                    showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"/>
+                    showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"
+                    getKeytip="GetPrevBookKeytip"/>
             <comboBox id="cmbBook" showLabel="false" sizeString="2 Thessalonians"
                       getItemCount="GetBookCount" getItemLabel="GetBookItemLabel"
                       getItemID="GetBookItemID" getText="GetBookText"
-                      onChange="OnBookChanged" getEnabled="GetBookEnabled"/>
+                      onChange="OnBookChanged" getEnabled="GetBookEnabled"
+                      getKeytip="GetBookKeytip"/>
             <button id="NextBookButton" imageMso="HeaderFooterNextSection" size="normal"
-                    showLabel="false" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"/>
+                    showLabel="false" onAction="OnNextButtonClick" getEnabled="GetNextEnabled"
+                    getKeytip="GetNextBookKeytip"/>
           </box>
           <box id="boxChapter" boxStyle="horizontal">
             <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
-                    showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"/>
+                    showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"
+                    getKeytip="GetPrevChapterKeytip"/>
             <comboBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
                       getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
                       getItemID="GetChapterItemID" getText="GetChapterText"
-                      onChange="OnChapterChanged" getEnabled="GetChapterEnabled"/>
+                      onChange="OnChapterChanged" getEnabled="GetChapterEnabled"
+                      getKeytip="GetChapterKeytip"/>
             <button id="NextChapterButton" imageMso="HeaderFooterNextSection" size="normal"
-                    showLabel="false" onAction="OnNextChapterClick" getEnabled="GetNextChapterEnabled"/>
+                    showLabel="false" onAction="OnNextChapterClick" getEnabled="GetNextChapterEnabled"
+                    getKeytip="GetNextChapterKeytip"/>
           </box>
           <box id="boxVerse" boxStyle="horizontal">
             <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
-                    showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"/>
+                    showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"
+                    getKeytip="GetPrevVerseKeytip"/>
             <comboBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
                       getItemCount="GetVerseCount" getItemLabel="GetVerseItemLabel"
                       getItemID="GetVerseItemID" getText="GetVerseText"
-                      onChange="OnVerseChanged" getEnabled="GetVerseEnabled"/>
+                      onChange="OnVerseChanged" getEnabled="GetVerseEnabled"
+                      getKeytip="GetVerseKeytip"/>
             <button id="NextVerseButton" imageMso="HeaderFooterNextSection" size="normal"
-                    showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"/>
+                    showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"
+                    getKeytip="GetNextVerseKeytip"/>
           </box>
           <separator id="sep1"/>
           <button id="NewSearchButton" imageMso="Undo" size="normal" showLabel="false"
-                  onAction="OnNewSearchClick" getEnabled="GetNewSearchEnabled"/>
+                  onAction="OnNewSearchClick" getEnabled="GetNewSearchEnabled"
+                  getKeytip="GetNewSearchKeytip"/>
           <separator id="sep2"/>
           <button id="adaeptButton" label="About" image="adaept" size="large"
-                  onAction="OnAdaeptAboutClick"/>
+                  onAction="OnAdaeptAboutClick" getKeytip="GetAboutKeytip"/>
         </group>
       </tab>
     </tabs>

@@ -3428,3 +3428,220 @@ reference; removal deferred to Step 7 (OLD_CODE cleanup).
 | Bug 13 | Tab after Chapter steals focus to document | **COMPLETE** |
 | Step 5 | GoToVerse — timing test pending | **PENDING** |
 | Step 7 | OLD_CODE cleanup (incl. dead stubs) | **PENDING** |
+
+---
+
+## § 18 — Fluent Keyboard Navigation: Tab Trap Fix and KeyTips (2026-04-13)
+
+### Bug
+
+**Symptom:** Type `rev` in the Book comboBox, press Tab — focus lands on
+`NextBookButton` and is stuck. Tab does not advance to the Chapter comboBox.
+The same book typed as `gen` works because `NextBookButton` is enabled there.
+
+**Root cause:** In the Office Fluent ribbon, Tab exits a comboBox's edit mode and
+moves to the *next focusable control* in XML declaration order. Within a `<box>`,
+that is the next sibling control. `NextBookButton` is the next sibling after
+`cmbBook`. When that button is disabled, the Fluent runtime deposits focus on it
+and stops — disabled controls in a ribbon box still accept Tab focus but cannot
+pass it forward.
+
+The same trap exists at the last chapter of any book (`NextChapterButton` disabled)
+and the last verse of any chapter (`NextVerseButton` disabled).
+
+---
+
+### Fluent keyboard model — what it requires
+
+The Office Fluent ribbon has two navigaton modes:
+
+| Key | Mode | Behaviour |
+|-----|------|-----------|
+| **Alt / F10** | KeyTip mode | Overlays short letter badges on every control; pressing a letter activates that control directly |
+| **F6 / Shift+F6** | Focus cycling | Cycles between document body, status bar, ribbon, task pane |
+| **Arrow keys** | Ribbon focus mode | Navigate between controls within a group/box |
+| **Tab** | Edit-exit | Exits a comboBox text field and moves to the next focusable control in XML order |
+
+For the Book → Chapter → Verse sequential entry workflow, the Fluent-correct Tab
+flow is:
+
+```
+[Book combo] → Tab → [Chapter combo] → Tab → [Verse combo] → Tab → [New Search]
+```
+
+Prev/Next buttons are mouse affordances sitting in the XML order between combos.
+They become Tab traps when disabled. The fix is to keep them always enabled when
+the navigation level is active.
+
+---
+
+### Decision: always-enable Prev/Next for all three rows
+
+**Rule:** Prev and Next buttons for Book, Chapter, and Verse are enabled whenever
+their navigation level is active (i.e. whenever the relevant position variable
+is > 0). They are never disabled at boundaries.
+
+**Boundary behaviour:** The click handlers (`OnPrevButtonClick`, `OnNextButtonClick`,
+`OnPrevChapterClick`, `OnNextChapterClick`, `OnPrevVerseClick`, `OnNextVerseClick`)
+already guard against out-of-range navigation. Clicking Prev at Genesis or Next at
+Revelation silently does nothing — this behaviour is unchanged.
+
+| Row | Old enabled condition | New enabled condition |
+|-----|----------------------|-----------------------|
+| Book Prev | `m_currentBookIndex > 1` | `m_currentBookIndex > 0` |
+| Book Next | `m_currentBookIndex < lastBookIndex` | `m_currentBookIndex > 0` |
+| Chapter Prev | `m_currentChapter > 1` | `m_currentChapter > 0` |
+| Chapter Next | `m_currentChapter < ChaptersInBook` | `m_currentChapter > 0 And m_currentBookIndex > 0` |
+| Verse Prev | `m_currentVerse > 1` | `m_currentVerse > 0` |
+| Verse Next | `m_currentVerse < VersesInChapter` | `m_currentVerse > 0 And m_currentChapter > 0 And m_currentBookIndex > 0` |
+
+**Pros:**
+- Tab flow works for all books, chapters, and verses without exception
+- Simpler: removes boundary condition from six `GetEnabled` functions
+- Click-at-boundary already handled silently in the click methods — no behavioural change
+
+**Cons:**
+- Visual boundary feedback lost — no disabled button when at first/last item
+- Screen reader users lose the enabled/disabled cue as a positional indicator
+
+**Cost decision:** The boundary-feedback loss is acceptable. If a visual cue is
+ever needed it can be added as a tooltip or status-bar message without reverting
+Tab behaviour. The inverse fix (restore disabled buttons + fix Tab) is not directly
+supported in Fluent ribbon XML.
+
+---
+
+### Decision: adopt function-method pattern for Book row
+
+Chapter and Verse rows use the function-method pattern in `basBibleRibbonSetup.bas`:
+```vba
+enabled = Instance().GetPrevChapterEnabled(control)
+```
+
+Book row used the property getter pattern:
+```vba
+Dim rc As aeRibbonClass
+Set rc = Instance()
+enabled = rc.BtnPrevEnabled   ' reads m_btnPrevEnabled flag
+```
+
+The flag pattern is retired. `m_btnPrevEnabled`, `m_btnNextEnabled`, and their
+property getters/setters are removed. `GetPrevBkEnabled` and `GetNextBkEnabled`
+replace them as public functions with inline expressions — consistent with the
+chapter and verse rows.
+
+---
+
+### KeyTips (Alt key navigation)
+
+Pressing **Alt** activates the ribbon and overlays **KeyTip** badges on every
+control. The user presses the shown letter to activate that control directly,
+bypassing Tab entirely.
+
+| Control | Keytip | Mnemonic |
+|---------|--------|----------|
+| Tab: Radiant Word Bible | `RW` | **R**adiant **W**ord |
+| `cmbBook` | `B` | **B**ook |
+| `cmbChapter` | `C` | **C**hapter |
+| `cmbVerse` | `V` | **V**erse |
+| `PrevBookButton` | `[` | left bracket |
+| `NextBookButton` | `]` | right bracket |
+| `PrevChapterButton` | `,` | comma |
+| `NextChapterButton` | `.` | period |
+| `PrevVerseButton` | `<` | |
+| `NextVerseButton` | `>` | |
+| `NewSearchButton` | `S` | **S**earch |
+| `adaeptButton` | `A` | **A**bout |
+
+KeyTips are independent of Tab — they work even when buttons are disabled (disabled
+controls simply don't display a KeyTip badge).
+
+---
+
+### i18n and KeyTips: cost/benefit and minimum infrastructure
+
+#### The problem with static keytip attributes
+
+Static `keytip="B"` in the XML is the obvious first approach — it works
+immediately and requires no VBA. But it creates an i18n maintenance surface: for
+each locale, a translator must edit the XML file, re-validate it, re-import it
+via RibbonX Editor, and re-test it. The XML becomes a per-locale artifact.
+
+#### Minimum infrastructure: `getKeytip` callbacks
+
+Office Fluent ribbon supports a `getKeytip` callback attribute on every control,
+parallel to `getEnabled` and `getText`:
+
+```xml
+<comboBox id="cmbBook" getKeytip="GetBookKeytip" .../>
+```
+
+```vba
+' basBibleRibbonSetup.bas
+Public Sub GetBookKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_BOOK
+End Sub
+```
+
+```vba
+' basRibbonStrings.bas
+Public Const KT_BOOK    As String = "B"
+Public Const KT_CHAPTER As String = "C"
+Public Const KT_VERSE   As String = "V"
+' ... one constant per keytip
+```
+
+The visual result is **identical** to static `keytip="B"` — the badge appears
+the same way and responds to the same key. The only difference is where the
+string lives: in a VBA constants module instead of the XML file.
+
+For i18n, a translator edits `basRibbonStrings.bas` only. The XML never changes
+for a localisation. This maps directly to the `.resx` resource file pattern used
+in VB.NET VSTO (§ 15 P1).
+
+#### Pros / Cons
+
+| | Static `keytip=` in XML | `getKeytip` callbacks + `basRibbonStrings.bas` |
+|-|------------------------|-----------------------------------------------|
+| Visual result | Identical | Identical |
+| Works now without i18n | Yes | Yes |
+| i18n: translator touches | XML + RibbonX Editor + re-import + re-test | One `.bas` file only |
+| i18n: XML changes per locale | Yes — one XML per locale | No — XML never changes |
+| VBA port to VSTO | Replace XML strings manually | Replace `basRibbonStrings.bas` with `.resx` |
+| Infrastructure to set up now | Zero | `basRibbonStrings.bas` + ~12 callback stubs |
+| Risk if deferred | Keytips hardcoded in XML; retrofit requires XML audit | None — baseline is already i18n-ready |
+
+#### Cost comparison
+
+| | Cost now | Cost later (retrofit) |
+|-|----------|----------------------|
+| Create `basRibbonStrings.bas` with keytip constants | 15 min | 30 min + XML audit risk |
+| Add `getKeytip` callback stubs to `basBibleRibbonSetup.bas` | 30 min | 30 min + regression test of each keytip |
+| Change `keytip=` to `getKeytip=` in XML | 5 min (12 attributes) | 5 min + re-import via RibbonX Editor |
+| **Total** | **~50 min** | **~1–2 hrs + risk of missed keytip** |
+
+The 50-minute now cost is also the correct baseline for the P1 string resource
+discipline (§ 15). `basRibbonStrings.bas` created here IS P1 — not a separate
+task.
+
+#### Decision
+
+Use `getKeytip` callbacks with `basRibbonStrings.bas` constants. Static `keytip=`
+attributes are not used. The keytip constants defined here are the starting point
+for the full string resource module that will cover screentip text, status bar
+messages, and MsgBox strings as ribbon development continues.
+
+No keytips have been added to `screentip` attributes; those have already been
+removed from all comboBox controls (§ 12). `keytip` values are a separate XML
+attribute and do not affect screentip text.
+
+---
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `src/aeRibbonClass.cls` | Remove `m_btnPrevEnabled`, `m_btnNextEnabled` fields, properties, and all assignments. Replace `GetNextEnabled`/`GetPrevEnabled` with `GetNextBkEnabled`/`GetPrevBkEnabled` (inline `m_currentBookIndex > 0`). Fix Chapter and Verse `GetEnabled` functions to always-enable at boundary. |
+| `src/basBibleRibbonSetup.bas` | Update `GetPrevEnabled` and `GetNextEnabled` stubs to function-method pattern calling `GetPrevBkEnabled` / `GetNextBkEnabled`. Add `getKeytip` callback stubs for all interactive controls. |
+| `src/basRibbonStrings.bas` | **New.** Keytip string constants (`KT_BOOK`, `KT_CHAPTER`, etc.). First module in the P1 string resource infrastructure. |
+| `customUI14backupRWB.xml` | Replace static `keytip=` with `getKeytip=` callback attributes on all interactive controls. Add `keytip="RW"` to the tab element (static — tab keytip is locale-managed separately). |

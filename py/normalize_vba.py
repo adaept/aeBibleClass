@@ -55,6 +55,20 @@ NORMALIZATIONS = [
     (r'(?i)\bLog_Close\b',                   'Log_Close',          'Log_Close method on aeLoggerClass'),
     (r'(?i)\bLog_UnicodeDetail\b',           'Log_UnicodeDetail',  'Log_UnicodeDetail method on aeLoggerClass'),
     (r'(?i)\bSetLogger\b',                   'SetLogger',          'SetLogger method on aeAssertClass'),
+    # --- Ribbon keyboard navigation identifiers (added 2026-04-13) ---
+    (r'(?i)\bGetPrevBkEnabled\b',            'GetPrevBkEnabled',   'GetPrevBkEnabled method on aeRibbonClass'),
+    (r'(?i)\bGetNextBkEnabled\b',            'GetNextBkEnabled',   'GetNextBkEnabled method on aeRibbonClass'),
+    (r'(?i)\bKT_BOOK\b',                     'KT_BOOK',            'KT_BOOK keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_CHAPTER\b',                  'KT_CHAPTER',         'KT_CHAPTER keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_VERSE\b',                    'KT_VERSE',           'KT_VERSE keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_PREV_BOOK\b',               'KT_PREV_BOOK',        'KT_PREV_BOOK keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_NEXT_BOOK\b',               'KT_NEXT_BOOK',        'KT_NEXT_BOOK keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_PREV_CHAPTER\b',            'KT_PREV_CHAPTER',     'KT_PREV_CHAPTER keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_NEXT_CHAPTER\b',            'KT_NEXT_CHAPTER',     'KT_NEXT_CHAPTER keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_PREV_VERSE\b',              'KT_PREV_VERSE',       'KT_PREV_VERSE keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_NEXT_VERSE\b',              'KT_NEXT_VERSE',       'KT_NEXT_VERSE keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_NEW_SEARCH\b',              'KT_NEW_SEARCH',       'KT_NEW_SEARCH keytip constant in basRibbonStrings'),
+    (r'(?i)\bKT_ABOUT\b',                   'KT_ABOUT',            'KT_ABOUT keytip constant in basRibbonStrings'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

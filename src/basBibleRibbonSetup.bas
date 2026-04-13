@@ -76,9 +76,7 @@ Public Sub OnAdaeptAboutClick(control As IRibbonControl)
 End Sub
 
 Public Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled)
-    Dim rc As aeRibbonClass
-    Set rc = Instance()
-    enabled = rc.BtnPrevEnabled
+    enabled = Instance().GetPrevBkEnabled(control)
 End Sub
 
 ' Test stub — runs GoToH1 outside the ribbon callback (Alt+F8 -> TestGoToH1Direct)
@@ -90,9 +88,7 @@ Public Sub TestGoToH1Direct()
 End Sub
 
 Public Sub GetNextEnabled(control As IRibbonControl, ByRef enabled)
-    Dim rc As aeRibbonClass
-    Set rc = Instance()
-    enabled = rc.BtnNextEnabled
+    enabled = Instance().GetNextBkEnabled(control)
 End Sub
 
 ' -- Book comboBox callbacks ---------------------------------------------------
@@ -221,5 +217,51 @@ End Sub
 
 Public Sub OnNewSearchClick(control As IRibbonControl)
     Instance().OnNewSearchClick control
+End Sub
+
+' -- KeyTip callbacks (i18n: all keytip strings live in basRibbonStrings.bas) --
+
+Public Sub GetPrevBookKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_PREV_BOOK
+End Sub
+
+Public Sub GetNextBookKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_NEXT_BOOK
+End Sub
+
+Public Sub GetBookKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_BOOK
+End Sub
+
+Public Sub GetPrevChapterKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_PREV_CHAPTER
+End Sub
+
+Public Sub GetNextChapterKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_NEXT_CHAPTER
+End Sub
+
+Public Sub GetChapterKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_CHAPTER
+End Sub
+
+Public Sub GetPrevVerseKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_PREV_VERSE
+End Sub
+
+Public Sub GetNextVerseKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_NEXT_VERSE
+End Sub
+
+Public Sub GetVerseKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_VERSE
+End Sub
+
+Public Sub GetNewSearchKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_NEW_SEARCH
+End Sub
+
+Public Sub GetAboutKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_ABOUT
 End Sub
 
