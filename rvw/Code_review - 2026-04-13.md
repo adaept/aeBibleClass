@@ -373,7 +373,137 @@ with `OnBookChanged` behaviour (search-as-you-type scroll).
 
 ---
 
-## § 9 — Step and Bug Status (as of 2026-04-13)
+## § 9 — Bug 19: Next/Prev Book navigates from stale cursor, not current book
+
+### Symptom
+
+Workflow: `rev Tab → gen Tab → Next (→ Exodus) → rev Tab → Next → EXODUS`
+
+After re-navigating to Revelation via `rev Tab`, pressing Next does not stay at
+Revelation (last book). Instead it navigates relative to wherever the document
+cursor was left by the previous Next/Prev call.
+
+### Root cause
+
+`NextButton()` and `PrevButton()` used `Selection` (document cursor) to find their
+current position:
+
+```vba
+curParaEnd = Selection.Paragraphs(1).Range.End
+Selection.SetRange curParaEnd, curParaEnd
+Selection.Find.style = "Heading 1"
+Selection.Find.Forward = True
+Selection.Find.Execute
+```
+
+`ScrollIntoView` (used in `OnBookChanged` since Bug 17 fix) scrolls the viewport
+but does **not** move the document cursor. The cursor lagged behind at whatever
+book the previous `Next`/`Prev` call left it. Subsequent Next/Prev navigated from
+the stale cursor, not from `m_currentBookIndex`.
+
+### Fix
+
+Rewrote `NextButton` and `PrevButton` to use `m_currentBookIndex` and `headingData`
+directly — no `Selection.Find`, no `Application.ScreenUpdating`. Navigate to
+`headingData(m_currentBookIndex ± 1, 1)`, update state, call `ScrollIntoView`.
+
+Boundary guards: `<= 1` (Genesis, no prev), `>= 66` (Revelation, no next). Both are
+silent no-ops, consistent with the always-enable Prev/Next design.
+
+---
+
+## § 10 — Bug 20: Tab from Chapter comboBox lands in document (inline ScrollIntoView)
+
+### Symptom
+
+After the Bug 18 fix (which added inline `ScrollIntoView` to `OnChapterChanged`):
+`rev Tab Tab Tab 3 Tab` — the Tab after typing `3` inserts a Tab character into the
+document instead of moving focus to the next ribbon control.
+
+### Root cause
+
+The Bug 18 fix called `ActiveWindow.ScrollIntoView` synchronously inside
+`OnChapterChanged`. The `onChange` callback fires while the Tab key event is still
+processing. The synchronous scroll caused Word to move focus to the document window
+before Tab's ribbon focus movement could complete.
+
+### Fix (first attempt — later superseded by Bug 21 fix)
+
+Removed the inline `ScrollIntoView` from `OnChapterChanged`. Wired up the existing
+deferred infrastructure:
+
+```vba
+m_pendingChapter = chNum
+Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
+```
+
+`GoToChapterDeferred` → `ExecutePendingChapter` → `GoToChapter` → `ScrollIntoView`
+fires after the key event clears. This matched the `OnVerseChanged` pattern.
+
+**Result:** Tab no longer stole focus mid-event. However a new symptom appeared
+(Bug 21): the deferred `ScrollIntoView` fired after Tab had completed and moved
+focus to the next ribbon control, then stole focus from the ribbon to the document.
+See § 11.
+
+---
+
+## § 11 — Bug 21: Deferred GoToChapter steals ribbon focus via ScrollIntoView
+
+### Symptom
+
+After the Bug 20 fix (deferred chapter scroll):
+`rev Tab Tab Tab 3` → document scrolls to Revelation 3 ("lands at Rev 3") → next
+Tab inserts a Tab character in the document instead of moving to the Verse comboBox.
+
+### Root cause
+
+`ScrollIntoView` behaves differently depending on its call context:
+
+| Context | Behaviour |
+|---------|-----------|
+| Called inside `onChange` (ribbon event) | Safe — ribbon retains focus |
+| Called from `Application.OnTime` (Word event loop) | Steals focus to document |
+
+In the deferred path, `Application.OnTime Now` fires after the key event clears.
+At that point the ribbon has focus (user is at NextChapterButton after Tab). When
+`GoToChapter` calls `ScrollIntoView`, Word moves focus to the document window to
+complete the scroll. The user's next Tab then fires in the document, inserting a
+Tab character.
+
+`OnVerseChanged` uses the same deferred pattern with no focus issue because
+`GoToVerseByCount`/`GoToVerseByScan` use `Selection.SetRange`/`.Select` — they
+**intentionally** move focus to the document. That is the expected end of
+navigation. Chapter navigation is not the end; the user needs to continue to Verse.
+
+### Fix
+
+`ExecutePendingChapter` is now a **no-op** (clears `m_pendingChapter`, does not call
+`GoToChapter`):
+
+```vba
+Public Sub ExecutePendingChapter()
+    m_pendingChapter = 0
+End Sub
+```
+
+Chapter-level document scrolling occurs only through paths where focus going to the
+document is appropriate:
+
+| Path | Scrolls? | Focus after |
+|------|----------|-------------|
+| `OnChapterChanged` (Tab/Enter from Chapter comboBox) | No — state only | Ribbon (Tab) or document (Enter) |
+| `OnPrevChapterClick` / `OnNextChapterClick` | Yes — `GoToChapter` → `ScrollIntoView` | Document (button click) |
+| `GoToVerse` deferred (verse entry) | Yes — navigates to chapter + verse | Document |
+
+### Known limitation
+
+`chapter Enter` (chapter-only navigation without selecting a verse) does not scroll
+the document. The book heading remains visible from `OnBookChanged`. To navigate to
+a specific chapter without selecting a verse, use the Prev/Next Chapter buttons.
+
+---
+
+## § 12 — Step and Bug Status (as of 2026-04-14)
 
 | Item | Description | Status |
 |------|-------------|--------|
@@ -382,9 +512,13 @@ with `OnBookChanged` behaviour (search-as-you-type scroll).
 | Bug 14 | Alt+R triggers Review / Word Count | **COMPLETE — keytip="RW" removed** |
 | Bug 15 | RWB tab unreachable from keyboard | **COMPLETE — Y2 confirmed** |
 | Bug 16 | No keytip badges in RWB tab | **PENDING — test after re-import** |
-| Bug 17 | Book selection does not scroll document | **COMPLETE — ScrollIntoView in OnBookChanged** |
-| Bug 18 | Chapter Enter does not navigate | **COMPLETE — ScrollIntoView in OnChapterChanged + GoToChapter** |
+| Bug 17 | Book selection scrolls document | **COMPLETE — ScrollIntoView in OnBookChanged** |
+| Bug 18 | GoToChapter uses ScrollIntoView (not .Select) | **COMPLETE — Prev/Next Chapter buttons fixed** |
+| Bug 19 | Next/Prev Book navigates from stale cursor | **COMPLETE — use m_currentBookIndex** |
+| Bug 20 | Tab from Chapter (inline ScrollIntoView) | **COMPLETE — switched to deferred** |
+| Bug 21 | Deferred GoToChapter steals ribbon focus | **COMPLETE — ExecutePendingChapter is no-op** |
 | Alt re-entry | Alt requires Y2 when RWB tab already active | **BY DESIGN** |
 | Enter vs Tab | Enter drops focus to document | **BY DESIGN — documented** |
+| chapter Enter | Chapter-only Enter does not scroll document | **KNOWN LIMITATION** |
 | Step 5 | GoToVerse — timing test pending | **PENDING** |
 | Step 7 | OLD_CODE cleanup | **PENDING** |

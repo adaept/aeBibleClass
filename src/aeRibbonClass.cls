@@ -226,42 +226,27 @@ End Sub
 ' -- Next Book (H1) ------------------------------------------------------------
 
 Private Sub NextButton()
+    ' Navigate to the next book using ribbon state (m_currentBookIndex), not Selection.
+    ' Using Selection caused Bug 19: ScrollIntoView does not move the document cursor,
+    ' so after OnBookChanged the cursor lagged behind the ribbon state. Next/Prev were
+    ' navigating from the stale cursor position instead of from the current book.
     On Error GoTo PROC_ERR
-    Dim found      As Boolean
-    Dim foundPos   As Long
-    Dim curParaEnd As Long
-    curParaEnd = Selection.Paragraphs(1).Range.End
-    Application.ScreenUpdating = False
-    Selection.SetRange curParaEnd, curParaEnd
-    Selection.Find.ClearFormatting
-    Selection.Find.Text = ""
-    Selection.Find.style = ActiveDocument.Styles("Heading 1")
-    Selection.Find.Forward = True
-    Selection.Find.Wrap = wdFindStop
-    found = Selection.Find.Execute
-    If found Then
-        Selection.Collapse Direction:=wdCollapseStart
-        foundPos = Selection.Range.Start
-        ' Update book state and reset downstream (Bug 6 Change C)
-        Dim j As Long
-        For j = 1 To 66
-            If Not IsEmpty(headingData(j, 1)) Then
-                If CLng(headingData(j, 1)) = foundPos Then
-                    m_currentBookIndex = j
-                    m_currentBookPos = foundPos
-                    Exit For
-                End If
-            End If
-        Next j
-        m_currentChapter = 0
-        m_currentVerse = 0
-    End If
-    Application.ScreenUpdating = True
+    If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
+    If m_currentBookIndex >= 66 Then GoTo PROC_EXIT   ' Revelation — no next book
+    Dim nextIdx As Long
+    nextIdx = m_currentBookIndex + 1
+    If IsEmpty(headingData(nextIdx, 1)) Then GoTo PROC_EXIT
+    Dim nextPos As Long
+    nextPos = CLng(headingData(nextIdx, 1))
+    m_currentBookIndex = nextIdx
+    m_currentBookPos = nextPos
+    m_currentChapter = 0
+    m_currentVerse = 0
+    ActiveWindow.ScrollIntoView ActiveDocument.Range(nextPos, nextPos), True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NextButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
@@ -269,39 +254,24 @@ End Sub
 ' -- Prev Book (H1) ------------------------------------------------------------
 
 Private Sub PrevButton()
+    ' Navigate to the previous book using ribbon state (m_currentBookIndex), not Selection.
+    ' See NextButton comment — same root cause (Bug 19).
     On Error GoTo PROC_ERR
-    Dim found    As Boolean
-    Dim foundPos As Long
-    Application.ScreenUpdating = False
-    Selection.Find.ClearFormatting
-    Selection.Find.Text = ""
-    Selection.Find.style = ActiveDocument.Styles("Heading 1")
-    Selection.Find.Forward = False
-    Selection.Find.Wrap = wdFindStop
-    found = Selection.Find.Execute
-    If found Then
-        Selection.Collapse Direction:=wdCollapseStart
-        foundPos = Selection.Range.Start
-        ' Update book state and reset downstream (Bug 6 Change C)
-        Dim j As Long
-        For j = 1 To 66
-            If Not IsEmpty(headingData(j, 1)) Then
-                If CLng(headingData(j, 1)) = foundPos Then
-                    m_currentBookIndex = j
-                    m_currentBookPos = foundPos
-                    Exit For
-                End If
-            End If
-        Next j
-        m_currentChapter = 0
-        m_currentVerse = 0
-    End If
-    Application.ScreenUpdating = True
+    If m_currentBookIndex <= 1 Then GoTo PROC_EXIT   ' Genesis — no previous book
+    Dim prevIdx As Long
+    prevIdx = m_currentBookIndex - 1
+    If IsEmpty(headingData(prevIdx, 1)) Then GoTo PROC_EXIT
+    Dim prevPos As Long
+    prevPos = CLng(headingData(prevIdx, 1))
+    m_currentBookIndex = prevIdx
+    m_currentBookPos = prevPos
+    m_currentChapter = 0
+    m_currentVerse = 0
+    ActiveWindow.ScrollIntoView ActiveDocument.Range(prevPos, prevPos), True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrevButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
@@ -645,8 +615,9 @@ End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     ' comboBox onChange fires on Enter, Tab, and each keystroke.
-    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
-    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
+    ' Navigation is deferred via Application.OnTime (same pattern as OnVerseChanged).
+    ' Calling ScrollIntoView synchronously here steals Tab focus to the document
+    ' (Bug 20) — the GoToChapterDeferred path fires after the key event clears.
     On Error GoTo PROC_ERR
     If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
@@ -666,14 +637,10 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
         m_ribbon.InvalidateControl "PrevVerseButton"
         m_ribbon.InvalidateControl "NextVerseButton"
     End If
-    ' Scroll the viewport to the chapter heading without changing selection or focus.
-    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
-    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
-    Dim chPos As Long
-    chPos = FindChapterPos(chNum)
-    If chPos > 0 Then
-        ActiveWindow.ScrollIntoView ActiveDocument.Range(chPos, chPos), True
-    End If
+    m_pendingChapter = chNum
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -686,12 +653,13 @@ Public Sub OnChapterAction(control As IRibbonControl, text As String)
     ' is retained in case the control type is changed back to comboBox.
 End Sub
 
-' Called from basRibbonDeferred.GoToChapterDeferred — executes after key event clears
+' Called from basRibbonDeferred.GoToChapterDeferred — executes after key event clears.
+' Only clears the pending flag — does NOT call GoToChapter or ScrollIntoView.
+' ScrollIntoView called from Application.OnTime context steals focus from the ribbon
+' (confirmed Bug 21). Chapter-level document scroll occurs via GoToVerse (which starts
+' from FindChapterPos) or via the Prev/Next Chapter button clicks (GoToChapter direct).
 Public Sub ExecutePendingChapter()
-    If m_pendingChapter > 0 Then
-        GoToChapter m_pendingChapter
-        m_pendingChapter = 0
-    End If
+    m_pendingChapter = 0
 End Sub
 
 Public Sub OnPrevChapterClick(control As IRibbonControl)
