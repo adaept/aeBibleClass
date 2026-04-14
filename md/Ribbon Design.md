@@ -3,6 +3,8 @@
 A custom toolbar for the Radiant Word Bible&#8482; Study document, built into Microsoft Word.
 Navigate to any book, chapter, or verse in a few keystrokes or clicks.
 
+Matt 5:14–16
+
 ---
 
 ## What it does
@@ -23,7 +25,7 @@ Each step focuses the document at exactly that location.
 
 ## The navigation toolbar
 
-```
+```text
 ◀  Genesis          ▼  ▶       ← Book row
 ◀  1                ▼  ▶       ← Chapter row
 ◀  1                ▼  ▶       ← Verse row
@@ -108,7 +110,7 @@ The ribbon is fully keyboard-navigable — no mouse required.
 
 After typing in a selector, press **Tab** to confirm and move to the next selector:
 
-```
+```text
 Book field  →  Tab  →  Chapter field  →  Tab  →  Verse field  →  Tab  →  New Search
 ```
 
