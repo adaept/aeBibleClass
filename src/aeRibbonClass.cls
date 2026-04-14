@@ -242,7 +242,11 @@ Private Sub NextButton()
     m_currentBookPos = nextPos
     m_currentChapter = 0
     m_currentVerse = 0
-    ActiveWindow.ScrollIntoView ActiveDocument.Range(nextPos, nextPos), True
+    ' Range.Select moves the document cursor to the new book heading (not ScrollIntoView).
+    ' Called from onAction — focus returns to document after button activation regardless.
+    ' Cursor must follow viewport so Enter-on-button does not snap back to the previous
+    ' verse position (Bug 22b).
+    ActiveDocument.Range(nextPos, nextPos).Select
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
@@ -267,7 +271,8 @@ Private Sub PrevButton()
     m_currentBookPos = prevPos
     m_currentChapter = 0
     m_currentVerse = 0
-    ActiveWindow.ScrollIntoView ActiveDocument.Range(prevPos, prevPos), True
+    ' Range.Select moves the document cursor (see NextButton comment — same rationale).
+    ActiveDocument.Range(prevPos, prevPos).Select
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
@@ -493,8 +498,15 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     ' Scroll the viewport to the book heading without changing selection or focus.
     ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
     ' it does not move focus to the document (Bug 9 was caused by Range.Select).
+    ' StatusBar message + DoEvents renders before ScrollIntoView blocks the UI thread
+    ' during first-time page layout calculation (Bug 22: ~10s delay for Revelation).
     If m_currentBookPos > 0 Then
+        Dim bookDisplayName As String
+        bookDisplayName = CStr(headingData(m_currentBookIndex, 0))
+        Application.StatusBar = "Navigating to " & bookDisplayName & "..."
+        DoEvents
         ActiveWindow.ScrollIntoView ActiveDocument.Range(m_currentBookPos, m_currentBookPos), True
+        Application.StatusBar = False
     End If
 
     ' Full invalidate clears user-typed comboBox text in Chapter/Verse rows.
@@ -558,10 +570,13 @@ Private Sub GoToChapter(ByVal chNum As Long)
     chPos = FindChapterPos(chNum)
     If chPos = 0 Then GoTo PROC_EXIT
 
-    ' Scroll the viewport to the chapter heading without changing selection or focus.
-    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
-    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
-    ActiveWindow.ScrollIntoView ActiveDocument.Range(chPos, chPos), True
+    ' Range.Select moves the document cursor to the chapter heading.
+    ' GoToChapter is called only from onAction button callbacks (Prev/Next Chapter)
+    ' and from ExecutePendingChapter (currently a no-op). In button click context,
+    ' focus returns to the document after activation regardless — Range.Select is
+    ' correct here. ScrollIntoView (no cursor update) caused snap-back to the
+    ' previous verse when Enter returned focus to the document (Bug 22b).
+    ActiveDocument.Range(chPos, chPos).Select
     m_currentChapter = chNum
     m_currentVerse = 0
 

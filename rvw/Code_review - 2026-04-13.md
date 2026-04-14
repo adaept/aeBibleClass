@@ -503,7 +503,206 @@ a specific chapter without selecting a verse, use the Prev/Next Chapter buttons.
 
 ---
 
-## § 12 — Step and Bug Status (as of 2026-04-14)
+## § 12 — Bug 22: First navigation to a distant book is slow (~10s for Revelation)
+
+### Symptom
+
+`rev Tab Tab` — the comboBox shows REVELATION and then the UI freezes at the Next
+button for approximately 10 seconds before responding.
+
+### Root cause — Word page layout calculation
+
+Word calculates page layout **lazily**: it computes only the pages that have already
+been rendered on screen. The first time a scroll request reaches a page that has
+not yet been laid out, Word calculates all page breaks from the last known page to
+the target. For a 33,857-paragraph document, reaching Revelation from the start
+requires computing all preceding pages — approximately 10 seconds on typical
+hardware.
+
+This is a Word architecture cost, not a project code defect. The delay is
+proportional to distance from the last rendered page to the target:
+
+| First navigation to | Approximate delay |
+|---------------------|-------------------|
+| Genesis | < 1 s (document always opens here) |
+| Psalms (~midpoint) | ~5 s |
+| Revelation (end) | ~10 s |
+
+**After the first navigation the layout is cached for the session.** Subsequent
+navigations to the same region or any earlier region are instant. The cost is paid
+once per region per session.
+
+### Is it avoidable? Can it be pre-warmed?
+
+`WarmLayoutCache` (line 393 of `aeRibbonClass.cls`) already implements the warm:
+it selects the last heading position (Revelation), forcing layout calculation, then
+restores the saved position. It was disabled because it caused a **~50s freeze at
+document open** and brought other windows to the foreground.
+
+Why is warm-on-demand ~10s but warm-at-open ~50s?
+
+- `ScrollIntoView` (used in `OnBookChanged`) triggers a partial layout — enough to
+  scroll the viewport to the target. Word stops calculating once the target is on
+  screen.
+- `Range.Select` (used in `WarmLayoutCache`) triggers a full layout pass because
+  Word must know the precise cursor position for caret placement, selection handles,
+  and screen reader APIs. This is a deeper, slower calculation.
+
+A targeted `ScrollIntoView`-based warm (not `Range.Select`) would be faster and
+would avoid the 50s freeze.
+
+### Can a background process start it?
+
+VBA has no true background threading. `Application.OnTime` fires on the main UI
+thread — it **blocks the UI** while running. The warm cannot proceed in background.
+
+Options:
+
+| Option | Cost | Benefit | Risk |
+|--------|------|---------|------|
+| StatusBar message during scroll | Trivial | User knows to wait | None |
+| On-demand warm after first GoToVerse | One-time ~10s | Warms for session | Adds ~10s to first verse nav |
+| Deferred ScrollIntoView warm at open | ~10s at open (vs 50s for Range.Select) | First nav instant | Delays document readiness |
+| Accept and document | None | No disruption | User surprised by first freeze |
+
+### Implemented mitigation
+
+Add `Application.StatusBar` message before `ScrollIntoView` in `OnBookChanged`.
+`DoEvents` is called after the status bar update to force it to render before the
+freeze begins.
+
+```vba
+Application.StatusBar = "Navigating to " & CStr(headingData(m_currentBookIndex, 0)) & "..."
+DoEvents   ' render status bar before ScrollIntoView blocks the UI thread
+ActiveWindow.ScrollIntoView ...
+Application.StatusBar = False
+```
+
+**Risk with `DoEvents`**: in an `onChange` callback, `DoEvents` processes any
+pending Windows messages. The key event that triggered `onChange` has already been
+consumed, so no duplicate processing. New keystrokes queued during a fast typing
+burst could be dispatched. Acceptable in this context; the user is in a ~10s freeze
+regardless.
+
+### Deferred pre-warm (future option)
+
+Replace `WarmLayoutCache`'s `Range.Select` with `ScrollIntoView`. Schedule the
+warm via `Application.OnTime Now + TimeValue("00:00:10")` after document open.
+Expected cost: ~10s (vs current 50s), with no foreground steal. Re-enable the
+commented call in `EnableButtonsRoutine`.
+
+---
+
+## § 13 — Bug 22b: Document snaps back to previous verse when focus returns to document
+
+### Symptom
+
+Workflow: navigate to Rev 3:16 (full Tab chain) → click Book comboBox → type `gen`
+(viewport scrolls to Genesis) → Shift-Tab → Enter → document snaps back to Rev 3:16.
+
+### Root cause — Selection cursor not updated by ScrollIntoView
+
+`GoToVerse` uses `Selection.SetRange` + `Selection.MoveDown` which **moves the
+document cursor** to the verse. All subsequent navigation uses `ScrollIntoView`
+which scrolls the viewport without moving the cursor. When any ribbon action
+returns focus to the document, Word scrolls to show the **cursor**, not the
+viewport — hence the snap-back.
+
+The cursor diverges from the viewport whenever the user navigates by typing in the
+Book comboBox (`OnBookChanged` → `ScrollIntoView`).
+
+### Can Shift-Tab be disabled?
+
+**No.** The Office ribbon handles `Tab` / `Shift-Tab` natively at the Win32 message
+level. There is no VBA or `customUI14` API to intercept or disable them. A Win32
+keyboard hook (`SetWindowsHookEx`) could intercept all keystrokes but requires a
+compiled COM extension — not appropriate in this context.
+
+The `Shift-Tab → Enter` path is an edge case: the user navigated backward to the
+Prev Book button and activated it. With Genesis already selected, Prev is a no-op —
+no cursor update occurs, snap-back follows.
+
+### Forward-only navigation design
+
+The ribbon's progressive unlock (Book → Chapter → Verse, left-to-right) is designed
+for forward navigation. The Shift-Tab path bypasses this intent. Documenting the
+ribbon as **forward-only** in `md/Ribbon Design.md` is an appropriate design
+boundary. The Tab trap fix (always-enabled Prev/Next buttons) leaves the controls
+in the Tab sequence for accessibility, but the documented workflow is Tab-forward.
+
+### Search tracking reset — concept
+
+After `GoToVerse` fires (navigation complete), the cursor is at the correct
+location. When the user begins a **new search** (types in the Book comboBox again),
+`OnBookChanged` fires. At that transition point, we know:
+
+1. Previous search: cursor at Rev 3:16 (correct)
+2. New search starting: user intends to go somewhere new
+
+A "search complete" flag set by `GoToVerse` and cleared by `OnBookChanged` could
+trigger a deferred cursor update to the new book position. But:
+
+- The deferred cursor update would require `Selection.SetRange` or `Range.Select`
+- Both steal focus when called from `Application.OnTime` context (Bug 21 pattern)
+- `Selection.SetRange` from `OnTime` steals focus — not confirmed independently but
+  expected (same root cause)
+
+This approach is viable **only if** `Selection.SetRange` called from `OnTime` does
+**not** steal focus. This needs a dedicated test. If confirmed safe, the search
+tracking reset can be implemented cleanly.
+
+### Pros/Cons: ScrollIntoView vs Range.Select for navigation
+
+| Aspect | ScrollIntoView | Range.Select |
+|--------|---------------|--------------|
+| Moves cursor | No | Yes |
+| Steals ribbon focus | No (in onChange context) | Yes |
+| Steals ribbon focus (from OnTime) | Yes (Bug 21) | Yes |
+| Safe in onChange | Yes | No (Bug 9) |
+| Safe in onAction (button click) | Yes — but snap-back | Yes — cursor moves |
+| After button click, Enter returns focus to | Document at old cursor | Document at new position |
+
+**Conclusion**: `Range.Select` is correct for button `onAction` callbacks because
+focus goes to the document regardless. `ScrollIntoView` is correct for `onChange`
+callbacks because it preserves ribbon focus.
+
+### Fix — revert button handlers to Range.Select
+
+`NextButton`, `PrevButton`, `GoToChapter` are called only from `onAction` button
+callbacks (never from `onChange`). Reverting them to `Range.Select` ensures the
+cursor moves with the viewport when a button is activated. Snap-back is eliminated
+for all button-driven navigation.
+
+Snap-back from comboBox-driven book entry (`OnBookChanged`) remains a known
+limitation — addressed by the forward-only navigation design boundary and future
+search tracking reset work.
+
+---
+
+## § 14 — Step and Bug Status (as of 2026-04-14)
+
+| Item | Description | Status |
+|------|-------------|--------|
+| Bug 12 | Tab trap at last Book/Chapter/Verse | **COMPLETE** |
+| Bug 13 | Tab after Chapter steals focus to document | **COMPLETE** |
+| Bug 14 | Alt+R triggers Review / Word Count | **COMPLETE — keytip="RW" removed** |
+| Bug 15 | RWB tab unreachable from keyboard | **COMPLETE — Y2 confirmed** |
+| Bug 16 | No keytip badges in RWB tab | **PENDING — test after re-import** |
+| Bug 17 | Book selection scrolls document | **COMPLETE — ScrollIntoView in OnBookChanged** |
+| Bug 18 | GoToChapter uses ScrollIntoView (not .Select) | **COMPLETE — Prev/Next Chapter buttons fixed** |
+| Bug 19 | Next/Prev Book navigates from stale cursor | **COMPLETE — use m_currentBookIndex** |
+| Bug 20 | Tab from Chapter (inline ScrollIntoView) | **COMPLETE — switched to deferred** |
+| Bug 21 | Deferred GoToChapter steals ribbon focus | **COMPLETE — ExecutePendingChapter is no-op** |
+| Bug 22 | First nav to distant book is slow | **MITIGATED — StatusBar message + DoEvents** |
+| Bug 22b | Snap-back to previous verse | **PARTIAL — Range.Select in button handlers; comboBox nav is known limitation** |
+| Shift-Tab disable | Cannot intercept ribbon keyboard events | **BY DESIGN — forward-only nav documented** |
+| Search tracking reset | Cursor update on new search start | **FUTURE — pending Selection.SetRange focus test** |
+| Alt re-entry | Alt requires Y2 when RWB tab already active | **BY DESIGN** |
+| Enter vs Tab | Enter drops focus to document | **BY DESIGN — documented** |
+| chapter Enter | Chapter-only Enter does not scroll document | **KNOWN LIMITATION** |
+| Layout pre-warm | Deferred ScrollIntoView warm at open | **FUTURE — re-enable after replacing Range.Select with ScrollIntoView in WarmLayoutCache** |
+| Step 5 | GoToVerse — timing test pending | **PENDING** |
+| Step 7 | OLD_CODE cleanup | **PENDING** |
 
 | Item | Description | Status |
 |------|-------------|--------|
