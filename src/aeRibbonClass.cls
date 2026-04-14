@@ -502,7 +502,7 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     ' Scroll the viewport to the book heading without changing selection or focus.
     ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
     ' it does not move focus to the document (Bug 9 was caused by Range.Select).
-    ' NOTE: First navigation to a distant book (e.g. Revelation) incurs a one-time
+    ' Note: First navigation to a distant book (e.g. Revelation) incurs a one-time
     ' ~10s Word page layout delay. DoEvents before ScrollIntoView made this WORSE
     ' (22s) because it triggered extra message processing before the blocking call.
     ' Accepted as known limitation. Future mitigation: WarmLayoutCache via ScrollIntoView.
@@ -646,7 +646,10 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     m_currentVerse = 0
     m_pendingVerse = 0
     If Not m_ribbon Is Nothing Then
-        m_ribbon.InvalidateControl "cmbChapter"
+        ' Do NOT InvalidateControl "cmbChapter" here — self-invalidating the focused
+        ' control during its own onChange (Tab commit) disrupts Tab focus transition
+        ' and sends Tab to the document instead of the next ribbon control (Bug 23b).
+        ' GetChapterText returns the typed value already; self-invalidation is redundant.
         m_ribbon.InvalidateControl "PrevChapterButton"
         m_ribbon.InvalidateControl "NextChapterButton"
         m_ribbon.InvalidateControl "cmbVerse"

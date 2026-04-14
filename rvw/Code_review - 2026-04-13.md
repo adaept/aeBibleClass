@@ -701,7 +701,9 @@ search tracking reset work.
 | Enter vs Tab | Enter drops focus to document | **BY DESIGN — documented** |
 | chapter Enter | Chapter-only Enter does not scroll document | **KNOWN LIMITATION** |
 | Layout pre-warm | Deferred ScrollIntoView warm at open | **FUTURE — re-enable after replacing Range.Select with ScrollIntoView in WarmLayoutCache** |
-| Step 5 | GoToVerse — timing test | **IN PROGRESS** |
+| Bug 23a | Layout delay for Psalms (~6s first nav) | **KNOWN LIMITATION — same class as Bug 22** |
+| Bug 23b | Tab after multi-digit chapter → document | **FIXED — removed self-invalidation of cmbChapter in OnChapterChanged** |
+| Step 5 | GoToVerse — timing test | **BLOCKED — re-test after Bug 23b fix imported** |
 | Step 7 | OLD_CODE cleanup | **PENDING** |
 
 ---
@@ -821,3 +823,111 @@ is accepted as a known limitation. Future mitigation: `WarmLayoutCache` using
 | 3 | **Step 7 — OLD_CODE cleanup** | Dead stubs (`ExecutePendingChapter`, `m_pendingChapter`, `GoToVerseSBL`); do after Step 5 confirms no regressions |
 | 4 | **WarmLayoutCache rewrite** | Replace `Range.Select` with `ScrollIntoView`; re-enable deferred warm-on-open |
 | 5 | **Search tracking reset** | Test `Selection.SetRange` from `OnTime` context; implement if focus-safe |
+
+---
+
+## § 16 — Step 5 Test Run: Bugs Found (2026-04-14)
+
+### Test sequence attempted
+
+```
+Y2 B  →  ps  Tab  →  Tab Tab  119  →  Tab
+```
+
+Expected: Psalms selected → chapter 119 confirmed → verse field active.
+
+---
+
+### Bug 23a — Layout delay on first navigation to Psalms (~6s)
+
+**Symptom**: `ps Tab` paused ~6 seconds before Psalms appeared in the Book comboBox
+and the document viewport scrolled to the Psalms heading.
+
+**Root cause**: Same as Bug 22 (Revelation ~10s). Word's page layout engine is lazy;
+it calculates page positions only as far as the current viewport has rendered. On a
+fresh session the document opens at page 1. Any navigation beyond the last rendered
+page triggers layout computation proportional to the distance from the last rendered
+point.
+
+| Book | Distance from start | Observed delay |
+|------|---------------------|----------------|
+| Genesis | ~0 | <1s |
+| Psalms (book 19) | ~⅓ of document | ~6s |
+| Revelation (book 66) | end of document | ~10s |
+
+**Decision**: Accepted as known limitation. Same class as Bug 22. No fix in this
+session. Future mitigation remains `WarmLayoutCache` via `ScrollIntoView`.
+
+---
+
+### Bug 23b — Tab after multi-digit chapter → document, Tab character inserted (re-emergence of Bug 20 class)
+
+**Symptom**: After typing `119` in the Chapter comboBox, pressing Tab caused:
+
+- Focus to jump from the ribbon to the Word document body
+- A literal Tab character to be inserted at the document cursor position (beginning
+  of document — cursor had not been moved, as ScrollIntoView does not move the cursor)
+- No verse field activation; verse navigation never reached
+
+**Root cause — self-invalidation of focused control during Tab commit**:
+
+`OnChapterChanged` calls `m_ribbon.InvalidateControl "cmbChapter"` (line 649 before
+the fix). This invalidates the **currently focused control** inside its own `onChange`
+callback, at the exact moment the ribbon framework is processing the Tab commit event.
+
+The ribbon framework fires `onChange`, then expects to move Tab focus to the next
+control. When `InvalidateControl "cmbChapter"` is called mid-callback, the framework
+re-renders the comboBox. This disrupts the Tab event's focus-transition state. The
+Tab falls through the ribbon to the document.
+
+**Why more pronounced for "119" than for "3"**:
+
+Each keystroke fires `onChange`, which calls `InvalidateControl "cmbChapter"`.
+
+| Input | onChange events | Self-invalidations |
+|-------|----------------|-------------------|
+| "3" (1 digit) | 2 (keystroke + Tab commit) | 2 |
+| "119" (3 digits) | 4 ("1" + "11" + "119" + Tab commit) | 4 |
+
+The accumulated re-renders from 4 self-invalidations create a larger window for
+the Tab commit disruption to occur. With 2 events ("3") it happens to clear; with
+4 ("119") it reliably misfires.
+
+**Why the Tab character appears at document start**:
+
+`OnBookChanged` calls `ScrollIntoView` (scrolls viewport, does NOT move document
+cursor). The cursor remains at its prior position — position 0 at the start of a
+fresh session. When Tab falls through to the document, the Word editing cursor is at
+position 0, and the Tab key inserts a Tab character there.
+
+**Fix applied — remove self-invalidation**:
+
+Removed `m_ribbon.InvalidateControl "cmbChapter"` from `OnChapterChanged`.
+
+```vba
+' REMOVED:
+'   m_ribbon.InvalidateControl "cmbChapter"
+' REASON: self-invalidating the focused control during its own onChange (Tab commit)
+' disrupts Tab focus transition → Tab sent to document instead of next ribbon control.
+' GetChapterText already returns the user-typed value; this call was redundant.
+```
+
+The remaining five `InvalidateControl` calls are retained:
+- `PrevChapterButton` / `NextChapterButton` — update enabled state after chapter set
+- `cmbVerse` — enables the verse row so Tab can reach it
+- `PrevVerseButton` / `NextVerseButton` — update enabled state
+
+**Expected behaviour after fix**:
+
+`119 Tab` → Tab commits chapter 119 → focus moves to `NextChapterButton` →
+second Tab → `cmbVerse` (now enabled) → type verse → Tab → `GoToVerseDeferred` fires.
+
+---
+
+### Status update
+
+| Item | Status |
+|------|--------|
+| Bug 23a — Layout delay for Psalms (~6s) | **KNOWN LIMITATION — same class as Bug 22; no fix** |
+| Bug 23b — Tab after multi-digit chapter → document | **FIXED — removed self-invalidation of cmbChapter in OnChapterChanged** |
+| Step 5 timing test | **BLOCKED — pending re-test after Bug 23b fix** |
