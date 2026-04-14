@@ -114,6 +114,10 @@ After typing in a selector, press **Tab** to confirm and move to the next select
 Book field  →  Tab  →  Chapter field  →  Tab  →  Verse field  →  Tab  →  New Search
 ```
 
+> **Tab, not Enter.** Pressing Enter confirms the current field and returns focus to
+> the document. Pressing Tab confirms and moves to the next selector, keeping you in
+> the toolbar.
+
 ### Alt shortcuts (KeyTips)
 
 Press **Alt** to activate the ribbon. Short letter badges appear on every control.
@@ -122,18 +126,18 @@ document.
 
 | Key sequence | Action |
 |--------------|--------|
-| Alt, R W | Focus the Radiant Word Bible tab |
-| Alt, R W, B | Focus the Book selector |
-| Alt, R W, C | Focus the Chapter selector |
-| Alt, R W, V | Focus the Verse selector |
-| Alt, R W, S | New Search |
-| Alt, R W, A | About |
-| Alt, R W, [ | Previous Book |
-| Alt, R W, ] | Next Book |
-| Alt, R W, , | Previous Chapter |
-| Alt, R W, . | Next Chapter |
-| Alt, R W, < | Previous Verse |
-| Alt, R W, > | Next Verse |
+| Alt, Y2 | Focus the Radiant Word Bible tab |
+| Alt, Y2, B | Focus the Book selector |
+| Alt, Y2, C | Focus the Chapter selector |
+| Alt, Y2, V | Focus the Verse selector |
+| Alt, Y2, S | New Search |
+| Alt, Y2, A | About |
+| Alt, Y2, [ | Previous Book |
+| Alt, Y2, ] | Next Book |
+| Alt, Y2, , | Previous Chapter |
+| Alt, Y2, . | Next Chapter |
+| Alt, Y2, < | Previous Verse |
+| Alt, Y2, > | Next Verse |
 
 ---
 
@@ -150,7 +154,7 @@ need to erase the selectors manually; New Search resets everything at once.
 
 ## Example: going to John 3:16
 
-1. Press **Alt, R W, B** — Book selector is focused
+1. Press **Alt, Y2, B** — Book selector is focused
 2. Type `Jn` — the book resolves to John
 3. Press **Tab** — Chapter selector is focused
 4. Type `3`
@@ -166,9 +170,9 @@ type `3`, click the Verse selector, type `16`.
 ## Example: reading through the Psalms
 
 1. Navigate to Psalm 1:1 (as above)
-2. Press **Alt, R W, .** (Next Chapter) to step to Psalm 2
+2. Press **Alt, Y2, .** (Next Chapter) to step to Psalm 2
 3. Continue pressing **.** to read chapter by chapter
-4. Press **Alt, R W, ,** (Previous Chapter) to go back
+4. Press **Alt, Y2, ,** (Previous Chapter) to go back
 
 ---
 

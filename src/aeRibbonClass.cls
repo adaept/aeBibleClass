@@ -520,10 +520,14 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     m_currentChapter = 0
     m_currentVerse = 0
 
+    ' Scroll the viewport to the book heading without changing selection or focus.
+    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
+    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
+    If m_currentBookPos > 0 Then
+        ActiveWindow.ScrollIntoView ActiveDocument.Range(m_currentBookPos, m_currentBookPos), True
+    End If
+
     ' Full invalidate clears user-typed comboBox text in Chapter/Verse rows.
-    ' No document navigation here — ActiveDocument...Select moves focus to the
-    ' document unconditionally, causing Tab to land in the document (Bug 9).
-    ' Navigation occurs in GoToChapter, which starts from m_currentBookPos.
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 
 PROC_EXIT:
