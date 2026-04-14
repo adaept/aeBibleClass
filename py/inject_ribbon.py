@@ -30,14 +30,6 @@ def inject(docm_path: Path, xml_path: Path) -> None:
         print(f'ERROR: Target .docm not found: {docm_path}')
         sys.exit(1)
 
-    # Stale lock files are common after a Word crash — test writability directly.
-    try:
-        with open(docm_path, 'r+b'):
-            pass
-    except PermissionError:
-        print(f'ERROR: {docm_path.name} is locked — close it in Word first.')
-        sys.exit(1)
-
     with open(xml_path, 'r', encoding='utf-8') as f:
         new_xml = f.read().encode('utf-8')
 
@@ -60,7 +52,12 @@ def inject(docm_path: Path, xml_path: Path) -> None:
         print('The file may not have a customUI part yet — use RibbonX Editor to add one first.')
         sys.exit(1)
 
-    os.replace(tmp_path, docm_path)
+    try:
+        os.replace(tmp_path, docm_path)
+    except PermissionError:
+        tmp_path.unlink(missing_ok=True)
+        print(f'ERROR: {docm_path.name} is locked - close it in Word first.')
+        sys.exit(1)
     print(f'Done.  {docm_path.name} updated.')
 
 
