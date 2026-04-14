@@ -44,6 +44,8 @@ Private m_currentChapter   As Long   ' current chapter number; 0 = not set
 Private m_currentVerse     As Long   ' current verse number; 0 = not set
 Private m_pendingChapter   As Long   ' chapter number staged for deferred GoToChapter call
 Private m_pendingVerse     As Long   ' verse number staged for deferred GoToVerse call
+Private m_studyVersionSet  As Boolean ' True after IsStudyVersion has been evaluated
+Private m_studyVersionVal  As Boolean ' cached result of IsStudyVersion
 
 ' Windows API - cursor control
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -64,6 +66,8 @@ Private Sub Class_Initialize()
     m_currentVerse = 0
     m_pendingChapter = 0
     m_pendingVerse = 0
+    m_studyVersionSet = False
+    m_studyVersionVal = False
 End Sub
 
 Private Sub Class_Terminate()
@@ -498,15 +502,12 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     ' Scroll the viewport to the book heading without changing selection or focus.
     ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
     ' it does not move focus to the document (Bug 9 was caused by Range.Select).
-    ' StatusBar message + DoEvents renders before ScrollIntoView blocks the UI thread
-    ' during first-time page layout calculation (Bug 22: ~10s delay for Revelation).
+    ' NOTE: First navigation to a distant book (e.g. Revelation) incurs a one-time
+    ' ~10s Word page layout delay. DoEvents before ScrollIntoView made this WORSE
+    ' (22s) because it triggered extra message processing before the blocking call.
+    ' Accepted as known limitation. Future mitigation: WarmLayoutCache via ScrollIntoView.
     If m_currentBookPos > 0 Then
-        Dim bookDisplayName As String
-        bookDisplayName = CStr(headingData(m_currentBookIndex, 0))
-        Application.StatusBar = "Navigating to " & bookDisplayName & "..."
-        DoEvents
         ActiveWindow.ScrollIntoView ActiveDocument.Range(m_currentBookPos, m_currentBookPos), True
-        Application.StatusBar = False
     End If
 
     ' Full invalidate clears user-typed comboBox text in Chapter/Verse rows.
@@ -699,7 +700,9 @@ End Sub
 ' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
 
 Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
-    GetPrevVerseEnabled = (m_currentVerse > 0)
+    ' Guard: m_currentVerse > 1 (not > 0) — consistent with OnPrevVerseClick guard.
+    ' Button was enabled at verse 1 but clicking was a silent no-op (off-by-one).
+    GetPrevVerseEnabled = (m_currentVerse > 1)
 End Function
 
 Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
@@ -789,7 +792,13 @@ End Sub
 Private Function IsStudyVersion() As Boolean
     ' Study version has one verse per paragraph; paragraph count > 30,000.
     ' Print candidate has multiple verses per paragraph; count <= 30,000.
-    IsStudyVersion = (ActiveDocument.Paragraphs.Count > 30000)
+    ' Result is cached after first call — Paragraphs.Count on a 33,857-para document
+    ' is non-trivial overhead to repeat on every GoToVerse invocation.
+    If Not m_studyVersionSet Then
+        m_studyVersionVal = (ActiveDocument.Paragraphs.Count > 30000)
+        m_studyVersionSet = True
+    End If
+    IsStudyVersion = m_studyVersionVal
 End Function
 
 Private Sub GoToVerse(ByVal vsNum As Long)

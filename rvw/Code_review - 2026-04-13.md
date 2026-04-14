@@ -693,7 +693,7 @@ search tracking reset work.
 | Bug 19 | Next/Prev Book navigates from stale cursor | **COMPLETE — use m_currentBookIndex** |
 | Bug 20 | Tab from Chapter (inline ScrollIntoView) | **COMPLETE — switched to deferred** |
 | Bug 21 | Deferred GoToChapter steals ribbon focus | **COMPLETE — ExecutePendingChapter is no-op** |
-| Bug 22 | First nav to distant book is slow | **MITIGATED — StatusBar message + DoEvents** |
+| Bug 22 | First nav to distant book is slow (~10s) | **KNOWN LIMITATION — DoEvents reverted (made worse: 22s); accepted as one-time session cost** |
 | Bug 22b | Snap-back to previous verse | **PARTIAL — Range.Select in button handlers; comboBox nav is known limitation** |
 | Shift-Tab disable | Cannot intercept ribbon keyboard events | **BY DESIGN — forward-only nav documented** |
 | Search tracking reset | Cursor update on new search start | **FUTURE — pending Selection.SetRange focus test** |
@@ -701,23 +701,123 @@ search tracking reset work.
 | Enter vs Tab | Enter drops focus to document | **BY DESIGN — documented** |
 | chapter Enter | Chapter-only Enter does not scroll document | **KNOWN LIMITATION** |
 | Layout pre-warm | Deferred ScrollIntoView warm at open | **FUTURE — re-enable after replacing Range.Select with ScrollIntoView in WarmLayoutCache** |
-| Step 5 | GoToVerse — timing test pending | **PENDING** |
+| Step 5 | GoToVerse — timing test | **IN PROGRESS** |
 | Step 7 | OLD_CODE cleanup | **PENDING** |
 
-| Item | Description | Status |
-|------|-------------|--------|
-| Bug 12 | Tab trap at last Book/Chapter/Verse | **COMPLETE** |
-| Bug 13 | Tab after Chapter steals focus to document | **COMPLETE** |
-| Bug 14 | Alt+R triggers Review / Word Count | **COMPLETE — keytip="RW" removed** |
-| Bug 15 | RWB tab unreachable from keyboard | **COMPLETE — Y2 confirmed** |
-| Bug 16 | No keytip badges in RWB tab | **PENDING — test after re-import** |
-| Bug 17 | Book selection scrolls document | **COMPLETE — ScrollIntoView in OnBookChanged** |
-| Bug 18 | GoToChapter uses ScrollIntoView (not .Select) | **COMPLETE — Prev/Next Chapter buttons fixed** |
-| Bug 19 | Next/Prev Book navigates from stale cursor | **COMPLETE — use m_currentBookIndex** |
-| Bug 20 | Tab from Chapter (inline ScrollIntoView) | **COMPLETE — switched to deferred** |
-| Bug 21 | Deferred GoToChapter steals ribbon focus | **COMPLETE — ExecutePendingChapter is no-op** |
-| Alt re-entry | Alt requires Y2 when RWB tab already active | **BY DESIGN** |
-| Enter vs Tab | Enter drops focus to document | **BY DESIGN — documented** |
-| chapter Enter | Chapter-only Enter does not scroll document | **KNOWN LIMITATION** |
-| Step 5 | GoToVerse — timing test pending | **PENDING** |
-| Step 7 | OLD_CODE cleanup | **PENDING** |
+---
+
+## § 15 — Pre-test Review: GoToVerse Path (Step 5 — Psalm 119:176)
+
+### Purpose
+
+Before running the Step 5 timing test (Psalm 119:176), a full expert review of the
+`GoToVerse` code path was conducted to eliminate known defects that could confound
+results or produce misleading failures.
+
+---
+
+### Path under test
+
+```
+OnVerseChanged → m_pendingVerse → Application.OnTime → GoToVerseDeferred
+  → ExecutePendingVerse → GoToVerse(vsNum)
+    → FindChapterPos(m_currentChapter)   [O(N) H2 Find loop]
+    → IsStudyVersion()                   [Paragraphs.Count branch selector]
+    → GoToVerseByCount(chPos, vsNum)     [Selection.SetRange + MoveDown]
+       OR GoToVerseByScan(chPos, vsNum)  [Range.Find loop on "Verse marker" style]
+```
+
+Also exercised via Prev/Next Verse buttons:
+```
+OnPrevVerseClick / OnNextVerseClick → GoToVerse(m_currentVerse ± 1)
+```
+
+---
+
+### Issues found and fixed
+
+#### Issue A — `GetPrevVerseEnabled` off-by-one (fixed)
+
+**Before:** `GetPrevVerseEnabled = (m_currentVerse > 0)`
+**After:**  `GetPrevVerseEnabled = (m_currentVerse > 1)`
+
+`OnPrevVerseClick` guards on `m_currentVerse > 1`. The enabled callback used `> 0`,
+so the Prev Verse button appeared active at verse 1 but clicking it was a silent
+no-op. Fixed to `> 1` for consistency.
+
+#### Issue B — `IsStudyVersion()` uncached (fixed)
+
+**Before:** Calls `ActiveDocument.Paragraphs.Count` on every `GoToVerse` invocation.
+**After:**  Result cached in `m_studyVersionSet` / `m_studyVersionVal` after first call.
+
+On a 33,857-paragraph document, `Paragraphs.Count` forces Word to enumerate the
+paragraph collection. This is non-trivial overhead on every verse navigation.
+The document type does not change mid-session; one evaluation is sufficient.
+
+Two new private fields added to class state:
+```vba
+Private m_studyVersionSet  As Boolean
+Private m_studyVersionVal  As Boolean
+```
+Both initialised to `False` in `Class_Initialize`.
+
+---
+
+### Issues noted — not fixed
+
+#### Issue C — `GetNextVerseEnabled` does not bound-check
+
+`GetNextVerseEnabled = (m_currentVerse > 0 And m_currentChapter > 0 And m_currentBookIndex > 0)`
+
+The Next Verse button stays enabled at the last verse of a chapter. `OnNextVerseClick`
+correctly calls `VersesInChapter` and guards against overflow, so the click is safe.
+Fixing the enabled callback would require a `VersesInChapter` call in a frequently-
+fired GetEnabled callback. Deferred — acceptable UX trade-off.
+
+#### Issue D — `FindChapterPos` is O(N) per call
+
+`FindChapterPos(119)` iterates 119 sequential `Range.Find` passes over H2 headings
+from the Psalms book position. This is the primary performance question for the
+Step 5 test and is left as-is; the test result will determine whether caching is needed.
+
+#### Issue E — `OnVerseChanged` fires on every keystroke
+
+Typing "1", "1", "9" queues three `Application.OnTime` calls. Each fires `GoToVerse`,
+producing visible intermediate scrolls to verses 1, 11, 119 before settling. This is
+consistent with the `OnChapterChanged` pattern and accepted as existing behaviour.
+
+#### Issue F — `OnPrevVerseClick` lacks error handler
+
+Unlike all other `onAction` subs, `OnPrevVerseClick` has no `On Error GoTo PROC_ERR`.
+Low risk (single guarded call to `GoToVerse` which has its own handler). Deferred.
+
+---
+
+### Bug 22 — DoEvents revert confirmed
+
+`DoEvents` added before `ScrollIntoView` in `OnBookChanged` made the first navigation
+to Revelation worse (22s vs 10s) and triggered a "Word not responding" spinner.
+
+**Root cause**: DoEvents processes pending Windows messages before `ScrollIntoView`
+starts. This causes Word to perform additional layout pre-calculation work before the
+blocking call, adding overhead. DoEvents works in VBA-controlled loops because the
+code yields between its own iterations; it cannot insert yield points inside a single
+atomic Word API call.
+
+**Decision**: Reverted. StatusBar message also removed — it cannot render before the
+UI thread blocks on `ScrollIntoView`, so it would only appear after the freeze ends
+(no user benefit). The one-time ~10s layout delay for first navigation to Revelation
+is accepted as a known limitation. Future mitigation: `WarmLayoutCache` using
+`ScrollIntoView` (not `Range.Select`).
+
+---
+
+### Revised task order (approved 2026-04-14)
+
+| Priority | Task | Rationale |
+|----------|------|-----------|
+| 1 | **Step 5 — GoToVerse timing test** | Core functionality; determines whether FindChapterPos caching is needed |
+| 2 | **Bug 16 — Keytip badges end-to-end test** | Deferred several sessions; low risk, quick to verify |
+| 3 | **Step 7 — OLD_CODE cleanup** | Dead stubs (`ExecutePendingChapter`, `m_pendingChapter`, `GoToVerseSBL`); do after Step 5 confirms no regressions |
+| 4 | **WarmLayoutCache rewrite** | Replace `Range.Select` with `ScrollIntoView`; re-enable deferred warm-on-open |
+| 5 | **Search tracking reset** | Test `Selection.SetRange` from `OnTime` context; implement if focus-safe |
