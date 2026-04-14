@@ -316,7 +316,64 @@ Book → Tab → Chapter → Tab → Verse → Tab → New Search
 
 ---
 
-## § 8 — Step and Bug Status (as of 2026-04-13)
+## § 8 — Bug 18: Chapter Enter does not navigate; Enter in Chapter gives 2 Tabs to Verse
+
+### Symptom
+
+Workflow A: `gen Tab Tab 3 Enter` — Chapter comboBox enables, `m_currentChapter` is set,
+but the document does not navigate to chapter 3.
+
+Workflow B: `gen Tab Tab 3 Tab Tab 2 Tab` — navigates correctly to Genesis 3:2.
+
+### Root cause — `OnChapterChanged` skips navigation
+
+`GoToChapter` (line 576) calls `ActiveDocument.Range(chPos, chPos).Select`. This steals
+focus from the ribbon to the document — the same defect as Bug 9 and Bug 17. The
+original `OnChapterChanged` comment records the decision to skip navigation entirely:
+
+> "scheduling deferred document navigation here causes Tab to steal focus to the
+> document before the user reaches the Verse row (same root cause as Bug 9)"
+
+So `OnChapterChanged` only updates state (`m_currentChapter`) and invalidates controls.
+No scroll, no navigation.
+
+### Why Workflow B works
+
+`OnVerseChanged` uses `Application.OnTime Now` to defer `GoToVerse` until after the
+key event clears. `GoToVerse` calls `FindChapterPos(m_currentChapter)` and navigates
+to the chapter *as part of finding the verse*. Chapter navigation is embedded inside
+verse navigation — `OnChapterChanged` itself never navigates.
+
+### Why `ScrollIntoView` solves this
+
+`Window.ScrollIntoView` scrolls the viewport without changing the selection or
+moving keyboard focus — confirmed safe for ribbon callbacks (applied in Bug 17 for
+`OnBookChanged`). The `.Select` concern that blocked `GoToChapter` from being called
+in `OnChapterChanged` does not apply to `ScrollIntoView`.
+
+### Fix
+
+**Change 1 — `GoToChapter`**: replace `ActiveDocument.Range(chPos, chPos).Select`
+with `ActiveWindow.ScrollIntoView ActiveDocument.Range(chPos, chPos), True`.
+This also fixes the Prev/Next Chapter buttons, which call `GoToChapter` directly
+and currently steal focus on click.
+
+**Change 2 — `OnChapterChanged`**: update comment to reflect the new safe-call
+reasoning; add `ScrollIntoView` call after the `InvalidateControl` block using
+`FindChapterPos(chNum)`. Fires on every keystroke as the user types — consistent
+with `OnBookChanged` behaviour (search-as-you-type scroll).
+
+### Behaviour after fix
+
+| Workflow | Before | After |
+|----------|--------|-------|
+| `gen Tab Tab 3 Enter` | no scroll, no nav | scrolls to Genesis 3 heading |
+| `gen Tab Tab 3 Tab Tab 2 Tab` | navigates to Gen 3:2 | unchanged — GoToVerse handles final position |
+| Prev/Next Chapter click | steals focus to document | scrolls to chapter, focus stays in ribbon |
+
+---
+
+## § 9 — Step and Bug Status (as of 2026-04-13)
 
 | Item | Description | Status |
 |------|-------------|--------|
@@ -325,7 +382,8 @@ Book → Tab → Chapter → Tab → Verse → Tab → New Search
 | Bug 14 | Alt+R triggers Review / Word Count | **COMPLETE — keytip="RW" removed** |
 | Bug 15 | RWB tab unreachable from keyboard | **COMPLETE — Y2 confirmed** |
 | Bug 16 | No keytip badges in RWB tab | **PENDING — test after re-import** |
-| Bug 17 | Book selection does not scroll document | **PENDING — fix in aeRibbonClass.cls, needs re-import** |
+| Bug 17 | Book selection does not scroll document | **COMPLETE — ScrollIntoView in OnBookChanged** |
+| Bug 18 | Chapter Enter does not navigate | **COMPLETE — ScrollIntoView in OnChapterChanged + GoToChapter** |
 | Alt re-entry | Alt requires Y2 when RWB tab already active | **BY DESIGN** |
 | Enter vs Tab | Enter drops focus to document | **BY DESIGN — documented** |
 | Step 5 | GoToVerse — timing test pending | **PENDING** |

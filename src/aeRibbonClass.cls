@@ -588,7 +588,10 @@ Private Sub GoToChapter(ByVal chNum As Long)
     chPos = FindChapterPos(chNum)
     If chPos = 0 Then GoTo PROC_EXIT
 
-    ActiveDocument.Range(chPos, chPos).Select
+    ' Scroll the viewport to the chapter heading without changing selection or focus.
+    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
+    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
+    ActiveWindow.ScrollIntoView ActiveDocument.Range(chPos, chPos), True
     m_currentChapter = chNum
     m_currentVerse = 0
 
@@ -642,11 +645,8 @@ End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     ' comboBox onChange fires on Enter, Tab, and each keystroke.
-    ' onChange cannot distinguish Tab from Enter — scheduling deferred document
-    ' navigation here causes Tab to steal focus to the document before the user
-    ' reaches the Verse row (same root cause as Bug 9 on the Book row).
-    ' Fix: state only. Navigation occurs in GoToVerse (FindChapterPos uses
-    ' m_currentChapter) or via the Prev/Next Chapter buttons.
+    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
+    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
     On Error GoTo PROC_ERR
     If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
@@ -665,6 +665,14 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
         m_ribbon.InvalidateControl "cmbVerse"
         m_ribbon.InvalidateControl "PrevVerseButton"
         m_ribbon.InvalidateControl "NextVerseButton"
+    End If
+    ' Scroll the viewport to the chapter heading without changing selection or focus.
+    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
+    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
+    Dim chPos As Long
+    chPos = FindChapterPos(chNum)
+    If chPos > 0 Then
+        ActiveWindow.ScrollIntoView ActiveDocument.Range(chPos, chPos), True
     End If
 PROC_EXIT:
     Exit Sub
