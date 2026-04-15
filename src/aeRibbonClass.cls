@@ -40,8 +40,9 @@ Private m_bookAbbr       As String
 Private headingData(1 To 66, 0 To 1) As Variant
 Private m_currentBookIndex As Long   ' 1-based index into headingData; 0 = not set
 Private m_currentBookPos   As Long   ' character position of book H1 in document
-Private m_currentChapter   As Long   ' current chapter number; 0 = not set
-Private m_currentVerse     As Long   ' current verse number; 0 = not set
+Private m_currentChapter    As Long   ' current chapter number; 0 = not set
+Private m_currentVerse      As Long   ' current verse number; 0 = not set
+Private m_currentChapterPos As Long   ' cached char position of current chapter H2; 0 = not cached
 Private m_pendingChapter   As Long   ' chapter number staged for deferred GoToChapter call
 Private m_pendingVerse     As Long   ' verse number staged for deferred GoToVerse call
 Private m_studyVersionSet  As Boolean ' True after IsStudyVersion has been evaluated
@@ -64,6 +65,7 @@ Private Sub Class_Initialize()
     m_currentBookPos = 0
     m_currentChapter = 0
     m_currentVerse = 0
+    m_currentChapterPos = 0
     m_pendingChapter = 0
     m_pendingVerse = 0
     m_studyVersionSet = False
@@ -89,9 +91,12 @@ Public Sub OnRibbonLoad(ribbon As IRibbonUI)
     Set m_ribbon = ribbon
     m_ribbonReady = True
     Debug.Print "RibbonController: Ribbon ready at " & Format(Now, "hh:nn:ss")
-    m_ribbon.InvalidateControl "NextBookButton"
-    m_ribbon.InvalidateControl "PrevBookButton"
     Call EnableButtonsRoutine
+    ' Full Invalidate after EnableButtonsRoutine so the initial cache reflects the
+    ' post-load field values. Without this, the cache is from the very first ribbon
+    ' render (before OnRibbonLoad fired), and deferred Invalidate calls from onChange
+    ' callbacks may not update it in time for Tab routing on first load.
+    m_ribbon.Invalidate
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -246,6 +251,7 @@ Private Sub NextButton()
     m_currentBookPos = nextPos
     m_currentChapter = 0
     m_currentVerse = 0
+    m_currentChapterPos = 0
     ' Range.Select moves the document cursor to the new book heading (not ScrollIntoView).
     ' Called from onAction — focus returns to document after button activation regardless.
     ' Cursor must follow viewport so Enter-on-button does not snap back to the previous
@@ -275,6 +281,7 @@ Private Sub PrevButton()
     m_currentBookPos = prevPos
     m_currentChapter = 0
     m_currentVerse = 0
+    m_currentChapterPos = 0
     ' Range.Select moves the document cursor (see NextButton comment — same rationale).
     ActiveDocument.Range(prevPos, prevPos).Select
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
@@ -498,19 +505,17 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     m_currentBookPos = CLng(headingData(i, 1))
     m_currentChapter = 0
     m_currentVerse = 0
+    m_currentChapterPos = 0
 
-    ' Scroll the viewport to the book heading without changing selection or focus.
-    ' ScrollIntoView is safe to call from a ribbon callback — unlike Range.Select
-    ' it does not move focus to the document (Bug 9 was caused by Range.Select).
-    ' Note: First navigation to a distant book (e.g. Revelation) incurs a one-time
-    ' ~10s Word page layout delay. DoEvents before ScrollIntoView made this WORSE
-    ' (22s) because it triggered extra message processing before the blocking call.
-    ' Accepted as known limitation. Future mitigation: WarmLayoutCache via ScrollIntoView.
-    If m_currentBookPos > 0 Then
-        ActiveWindow.ScrollIntoView ActiveDocument.Range(m_currentBookPos, m_currentBookPos), True
-    End If
-
-    ' Full invalidate clears user-typed comboBox text in Chapter/Verse rows.
+    ' Invalidate so ribbon re-queries enabled state from current field values.
+    ' GetChapterEnabled = (m_currentBookIndex > 0) now returns True.
+    ' No ScrollIntoView here — the view scrolls when GoToVerseByScan executes
+    ' (ScrollIntoView is called there after cursor placement). Removing the call here
+    ' eliminates the 4-10s first-load page-layout block from this callback. When
+    ' ScrollIntoView was here, Tab key presses during the block were routed through
+    ' stale ribbon state, sending Tab to the document instead of cmbVerse (Bug 25a).
+    ' The double-Invalidate workaround (Fix 5a) is therefore also removed — a single
+    ' Invalidate is sufficient now that there is no blocking call to bracket.
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 
 PROC_EXIT:
@@ -580,6 +585,7 @@ Private Sub GoToChapter(ByVal chNum As Long)
     ActiveDocument.Range(chPos, chPos).Select
     m_currentChapter = chNum
     m_currentVerse = 0
+    m_currentChapterPos = chPos   ' cache for GoToVerse — avoids repeat FindChapterPos calls
 
     If Not m_ribbon Is Nothing Then
         m_ribbon.InvalidateControl "cmbChapter"
@@ -598,7 +604,12 @@ PROC_ERR:
 End Sub
 
 Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
-    GetChapterEnabled = (m_currentBookIndex > 0)
+    ' Always True — cmbChapter must be an enabled tab stop from initial render.
+    ' m_ribbon.Invalidate called from within onChange is deferred (fires after Tab
+    ' routing). If GetChapterEnabled depended on m_currentBookIndex, the initial
+    ' render cache would show DISABLED and Tab from cmbBook would fall to the document
+    ' on first load (Bug 25a root cause). OnChapterChanged guards against no-book input.
+    GetChapterEnabled = True
 End Function
 
 Public Function GetPrevChapterEnabled(control As IRibbonControl) As Boolean
@@ -644,12 +655,12 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
     m_currentChapter = chNum
     m_currentVerse = 0
+    m_currentChapterPos = 0   ' cleared; will be populated on first GoToVerse call
     m_pendingVerse = 0
+    ' InvalidateControl fires synchronously here — before Tab routing reads the cache.
+    ' Do NOT invalidate "cmbChapter" (self-invalidation during Tab commit disrupts Tab
+    ' focus transition and sends Tab to the document — Bug 23b).
     If Not m_ribbon Is Nothing Then
-        ' Do NOT InvalidateControl "cmbChapter" here — self-invalidating the focused
-        ' control during its own onChange (Tab commit) disrupts Tab focus transition
-        ' and sends Tab to the document instead of the next ribbon control (Bug 23b).
-        ' GetChapterText returns the typed value already; self-invalidation is redundant.
         m_ribbon.InvalidateControl "PrevChapterButton"
         m_ribbon.InvalidateControl "NextChapterButton"
         m_ribbon.InvalidateControl "cmbVerse"
@@ -672,11 +683,10 @@ Public Sub OnChapterAction(control As IRibbonControl, text As String)
     ' is retained in case the control type is changed back to comboBox.
 End Sub
 
-' Called from basRibbonDeferred.GoToChapterDeferred — executes after key event clears.
-' Only clears the pending flag — does NOT call GoToChapter or ScrollIntoView.
-' ScrollIntoView called from Application.OnTime context steals focus from the ribbon
-' (confirmed Bug 21). Chapter-level document scroll occurs via GoToVerse (which starts
-' from FindChapterPos) or via the Prev/Next Chapter button clicks (GoToChapter direct).
+' Called from basRibbonDeferred.GoToChapterDeferred after the key event clears.
+' Does NOT call GoToChapter or ScrollIntoView — those steal ribbon focus from OnTime
+' context (Bug 21). Navigation occurs via GoToVerse (uses FindChapterPos) or via the
+' Prev/Next Chapter buttons (GoToChapter direct).
 Public Sub ExecutePendingChapter()
     m_pendingChapter = 0
 End Sub
@@ -703,17 +713,25 @@ End Sub
 ' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
 
 Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
-    ' Guard: m_currentVerse > 1 (not > 0) — consistent with OnPrevVerseClick guard.
-    ' Button was enabled at verse 1 but clicking was a silent no-op (off-by-one).
-    GetPrevVerseEnabled = (m_currentVerse > 1)
+    ' Always enabled when chapter is selected — same "always-enable at boundary"
+    ' invariant as GetPrevChapterEnabled = (m_currentChapter > 0).
+    ' Ensures Tab flows through PrevVerseButton rather than stopping at a disabled
+    ' button that blocks the path to cmbVerse. OnPrevVerseClick guards the click.
+    GetPrevVerseEnabled = (m_currentChapter > 0)
 End Function
 
 Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
-    GetNextVerseEnabled = (m_currentVerse > 0 And m_currentChapter > 0 And m_currentBookIndex > 0)
+    ' Always enabled when chapter is selected (same invariant as GetPrevVerseEnabled).
+    ' OnNextVerseClick guards the click boundary.
+    GetNextVerseEnabled = (m_currentChapter > 0)
 End Function
 
 Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
-    GetVerseEnabled = (m_currentChapter > 0)
+    ' Always True — same reasoning as GetChapterEnabled. cmbVerse must be an enabled
+    ' tab stop from initial render so that Tab from cmbChapter reaches it regardless
+    ' of when the deferred Invalidate from OnChapterChanged fires. OnVerseChanged
+    ' guards against no-chapter input.
+    GetVerseEnabled = True
 End Function
 
 Public Function GetVerseCount(control As IRibbonControl) As Long
@@ -817,14 +835,22 @@ Private Sub GoToVerse(ByVal vsNum As Long)
     If vsNum < 1 Or vsNum > maxVs Then GoTo PROC_EXIT
 
     Dim chPos As Long
-    chPos = FindChapterPos(m_currentChapter)
-    If chPos = 0 Then GoTo PROC_EXIT
-
-    If IsStudyVersion Then
-        GoToVerseByCount chPos, vsNum
+    If m_currentChapterPos > 0 Then
+        chPos = m_currentChapterPos
     Else
-        GoToVerseByScan chPos, vsNum
+        chPos = FindChapterPos(m_currentChapter)
+        If chPos = 0 Then GoTo PROC_EXIT
+        m_currentChapterPos = chPos
     End If
+
+    ' Both study and print versions mark each verse with inline "Chapter Verse marker"
+    ' (chapter number) + "Verse marker" (verse number) character style runs.
+    ' GoToVerseByScan finds the Nth "Verse marker" run — correct for both versions.
+    ' GoToVerseByCount (MoveDown paragraph-counting) was study-only and broke on
+    ' chapters with section-heading paragraphs (e.g. Psalm 119 has 22 Aleph-Taw
+    ' headings → MoveDown(176) landed at verse 155, Bug 25b). IsStudyVersion branch
+    ' for verse navigation is therefore obsolete.
+    GoToVerseByScan chPos, vsNum
 
     m_currentVerse = vsNum
 
@@ -842,21 +868,18 @@ PROC_ERR:
 End Sub
 
 Private Sub GoToVerseByCount(ByVal chPos As Long, ByVal vsNum As Long)
-    ' Study version: each verse is exactly one paragraph.
-    ' Navigate to the chapter H2, then move down vsNum paragraphs.
-    On Error GoTo PROC_ERR
-    Selection.SetRange chPos, chPos
-    Selection.MoveDown Unit:=wdParagraph, Count:=vsNum
-    Selection.Collapse Direction:=wdCollapseStart
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToVerseByCount of Class aeRibbonClass"
-    Resume PROC_EXIT
+    ' Dead stub — GoToVerse now always calls GoToVerseByScan (Bug 25b).
+    ' Paragraph-move counting broke on chapters with section-heading paragraphs
+    ' (Psalm 119: 22 Hebrew-letter headings caused MoveDown(176) → verse 155).
+    ' Retained for reference; not called.
 End Sub
 
 Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
-    ' Print candidate: find the Nth "Verse marker" run from the chapter H2 position.
+    ' Find the Nth "Verse marker" inline style run from chPos forward.
+    ' Every verse in both study and print versions begins with a "Chapter Verse marker"
+    ' run (chapter number) immediately followed by a "Verse marker" run (verse number).
+    ' Searching for "Verse marker" skips all non-verse paragraphs (H1, H2, section
+    ' headings like Psalm 119's Aleph-Taw headings) without any paragraph counting.
     On Error GoTo PROC_ERR
     Dim r As Word.Range
     Set r = ActiveDocument.Range(chPos, ActiveDocument.Content.End)
@@ -872,6 +895,9 @@ Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
         count = count + 1
         If count = vsNum Then
             ActiveDocument.Range(r.Start, r.Start).Select
+            ' ScrollIntoView ensures the viewport updates — on first load the page
+            ' layout delay means the view may not scroll without an explicit call.
+            ActiveWindow.ScrollIntoView ActiveDocument.Range(r.Start, r.Start), True
             Exit Do
         End If
         r.Start = r.End
@@ -895,6 +921,7 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_currentBookPos = 0
     m_currentChapter = 0
     m_currentVerse = 0
+    m_currentChapterPos = 0
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 End Sub
 

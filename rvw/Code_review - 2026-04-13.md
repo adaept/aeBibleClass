@@ -702,8 +702,9 @@ search tracking reset work.
 | chapter Enter | Chapter-only Enter does not scroll document | **KNOWN LIMITATION** |
 | Layout pre-warm | Deferred ScrollIntoView warm at open | **FUTURE — re-enable after replacing Range.Select with ScrollIntoView in WarmLayoutCache** |
 | Bug 23a | Layout delay for Psalms (~6s first nav) | **KNOWN LIMITATION — same class as Bug 22** |
-| Bug 23b | Tab after multi-digit chapter → document | **FIXED — removed self-invalidation of cmbChapter in OnChapterChanged** |
-| Step 5 | GoToVerse — timing test | **BLOCKED — re-test after Bug 23b fix imported** |
+| Bug 23b | Tab after multi-digit chapter → document | **FIXED — all InvalidateControl calls moved to ExecutePendingChapter (OnTime)** |
+| Bug 23c | cmbVerse disabled after chapter confirm | **FIXED — same root cause as 23b; deferred InvalidateControl ensures cache updated before Tab routing** |
+| Step 5 | GoToVerse — timing test | **BLOCKED — re-test after Bug 23b/23c fix imported** |
 | Step 7 | OLD_CODE cleanup | **PENDING** |
 
 ---
@@ -931,3 +932,789 @@ second Tab → `cmbVerse` (now enabled) → type verse → Tab → `GoToVerseDef
 | Bug 23a — Layout delay for Psalms (~6s) | **KNOWN LIMITATION — same class as Bug 22; no fix** |
 | Bug 23b — Tab after multi-digit chapter → document | **FIXED — removed self-invalidation of cmbChapter in OnChapterChanged** |
 | Step 5 timing test | **BLOCKED — pending re-test after Bug 23b fix** |
+
+---
+
+## § 17 — Step 5 Test Run: Verse Combo Disabled After Chapter Confirm
+
+### Symptom
+
+After importing the Bug 23b fix (`ps Tab Tab Tab 119 Tab Tab 176 Tab`):
+- Bug 23b resolved: Tab from cmbChapter no longer falls through to the document
+- New symptom: cmbVerse appeared **disabled** after `119 Tab Tab` — two Tabs after
+  chapter confirmation reached the verse row but cmbVerse was grayed out / inactive
+
+---
+
+### Root cause — ribbon Tab-routing cache not updated in time
+
+The ribbon framework maintains an internal **enabled-state cache** for each control,
+used when routing Tab focus. This cache is populated when:
+
+1. A **full `m_ribbon.Invalidate`** is called — re-queries all controls
+2. **`m_ribbon.InvalidateControl`** is called — re-queries the named control
+
+`OnBookChanged` calls `m_ribbon.Invalidate` (full) while `m_currentChapter = 0`.
+This caches `GetVerseEnabled = False` → `cmbVerse = DISABLED`.
+
+The five `InvalidateControl` calls in `OnChapterChanged` (after the Bug 23b partial fix)
+fired **synchronously during `onChange`**, at the same moment the Tab-commit event was
+being processed. The ribbon had not propagated these updates to its Tab-routing cache
+before Tab routing began. Tab saw `cmbVerse = DISABLED` (stale cache) and either
+skipped it or left it grayed when focus arrived.
+
+### Why this was not visible for Rev chapter "3" in a previous session
+
+For single-digit "3", only **two** `onChange` events fire (one keystroke + Tab commit).
+The timing window is narrower and, depending on Word's internal event scheduling,
+the cache update may have coincided with Tab routing. For "119" (four `onChange`
+events), the accumulated processing made the timing failure consistent.
+
+---
+
+### Fix — defer all `InvalidateControl` calls to `ExecutePendingChapter`
+
+`OnChapterChanged` now sets state and schedules `GoToChapterDeferred` only — no
+`InvalidateControl` calls.
+
+`ExecutePendingChapter` (called via `Application.OnTime`) performs all five
+`InvalidateControl` calls after the current event returns.
+
+**Timing guarantee**: `Application.OnTime Now` fires as soon as the current VBA
+procedure returns and the event queue clears. For each keystroke ("1", "11", "119"),
+`ExecutePendingChapter` fires **between keystrokes**, before the next key event.
+By the time the Tab-commit `onChange` fires (and Tab routing begins), `cmbVerse`
+has already been reliably enabled by the previous keystroke's deferred call.
+
+```
+Keystroke "1"  → onChange → schedules OnTime → returns
+                                 ↓ OnTime fires
+                          ExecutePendingChapter:
+                            InvalidateControl "cmbVerse"  ← cmbVerse NOW ENABLED
+Keystroke "11" → onChange → schedules OnTime → returns
+                                 ↓ OnTime fires (same pattern)
+Keystroke "119"→ onChange → schedules OnTime → returns
+                                 ↓ OnTime fires → cmbVerse confirmed ENABLED
+Tab commit     → onChange → schedules OnTime → returns
+               Tab routing: cmbVerse = ENABLED (from "119" OnTime) ✓
+                                 ↓ OnTime fires → redundant re-enable
+```
+
+**Edge case**: user types a single digit and presses Tab immediately with no pause,
+before the first `OnTime` fires. In this case the cache may still be stale. This is
+an unlikely interaction pattern and is accepted as a known edge case.
+
+---
+
+### Summary of `OnChapterChanged` evolution
+
+| Version | InvalidateControl location | Tab result |
+|---------|---------------------------|------------|
+| Original (Bug 20) | onChange — inline ScrollIntoView | Tab → document |
+| After Bug 20 fix | onChange — 6 calls including self-invalidation | Tab → document for multi-digit (Bug 23b) |
+| After Bug 23b fix | onChange — 5 calls, no self-invalidation | Tab → NextChapterButton; cmbVerse disabled |
+| **Current** | **ExecutePendingChapter (OnTime)** | **Tab → NextChapterButton; cmbVerse enabled** |
+
+---
+
+### Status update
+
+| Item | Status |
+|------|--------|
+| cmbVerse disabled after chapter confirm | **SUPERSEDED — see § 18** |
+| Step 5 timing test | **BLOCKED — re-test after Fix 3 imported** |
+
+---
+
+## § 18 — Step 5 Test Run: Fix 2 Failure and Fix 3 (Final)
+
+### Symptom after Fix 2 import
+
+After importing the Fix 2 change (defer `InvalidateControl` calls to `ExecutePendingChapter`
+via `Application.OnTime`):
+
+- `119 Tab` still sent Tab to the document (Bug 23b re-appeared)
+- cmbVerse still appeared disabled
+
+---
+
+### Why Fix 2 failed — Application.OnTime fires AFTER Tab routing
+
+The § 17 analysis contained a flawed timing assumption:
+
+> "By the time the Tab-commit `onChange` fires, `cmbVerse` has already been reliably
+> enabled by the previous keystroke's deferred call."
+
+This is incorrect. `Application.OnTime Now` does **not** fire between keystrokes while
+the user is actively typing. It fires when Word is next **idle** — after the current
+event queue drains, including Tab routing. The actual sequence is:
+
+```
+Keystroke "1"  → onChange → schedules OnTime → returns
+Keystroke "11" → onChange → schedules OnTime → returns
+Keystroke "119"→ onChange → schedules OnTime → returns
+Tab commit     → onChange → schedules OnTime → returns
+Tab routing    → reads enabled-state cache ← cmbVerse = DISABLED (stale)
+               ↓
+               Tab falls to document (focus lost from ribbon)
+                    ↓ Word is now idle
+               OnTime fires (too late — Tab already routed)
+```
+
+The enabled-state cache for `cmbVerse` was never updated synchronously. The stale
+`DISABLED` state from `OnBookChanged`'s full `m_ribbon.Invalidate` (fired when
+`m_currentChapter = 0`) was never overwritten before Tab routing read it.
+
+Additionally, removing all synchronous `InvalidateControl` calls from `OnChapterChanged`
+meant `NextChapterButton` also stayed in its stale state. Since `m_currentChapter = 0`
+when `OnBookChanged` called `m_ribbon.Invalidate`, `NextChapterButton` was cached as
+`DISABLED`. Tab skipped it (disabled Tab stop) and fell directly to the document.
+
+**Key principle confirmed**: `InvalidateControl` must remain **synchronous** inside
+`onChange` for any control whose enabled state is needed by the **current** Tab event's
+routing. `Application.OnTime` is only safe for deferred navigation (scrolling, cursor
+movement) — not for enabled-state updates consumed by the same keystroke.
+
+---
+
+### Fix 3 — restore synchronous InvalidateControl; extend "always-enable" to verse buttons
+
+Three changes applied to `aeRibbonClass.cls`:
+
+#### Change 1 — Restore 5 synchronous `InvalidateControl` calls in `OnChapterChanged`
+
+Reverts the Fix 2 deferral. Self-invalidation of `cmbChapter` remains absent (Fix 1
+from Bug 23b still applies).
+
+```vba
+    If Not m_ribbon Is Nothing Then
+        ' Do NOT invalidate "cmbChapter" — self-invalidation during Tab commit → Tab
+        ' to document (Bug 23b). All other controls are safe to invalidate here.
+        m_ribbon.InvalidateControl "PrevChapterButton"
+        m_ribbon.InvalidateControl "NextChapterButton"
+        m_ribbon.InvalidateControl "cmbVerse"
+        m_ribbon.InvalidateControl "PrevVerseButton"
+        m_ribbon.InvalidateControl "NextVerseButton"
+    End If
+```
+
+These calls fire synchronously **before** `onChange` returns, so Tab routing reads
+fresh enabled states.
+
+#### Change 2 — Revert `ExecutePendingChapter` to no-op
+
+`ExecutePendingChapter` no longer needs to perform `InvalidateControl`. It only
+clears `m_pendingChapter` (clean-up).
+
+```vba
+Public Sub ExecutePendingChapter()
+    m_pendingChapter = 0
+End Sub
+```
+
+#### Change 3 — Extend "always-enable at boundary" invariant to verse row buttons
+
+The fix for Bug 23c (Tab stopping at disabled `PrevVerseButton`) applies the same
+invariant already used for `PrevChapterButton` / `NextChapterButton`:
+
+> A Prev/Next button at the boundary of an active row is **always enabled**.
+> The click handler guards the actual boundary — the button's enabled state does not.
+
+**Before Fix 3:**
+```vba
+Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
+    GetPrevVerseEnabled = (m_currentVerse > 1)   ' disabled at verse 1
+End Function
+Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
+    GetNextVerseEnabled = (m_currentVerse > 0 And m_currentVerse < ...)
+End Function
+```
+
+`PrevVerseButton` was disabled when `m_currentVerse = 0` (no verse selected yet) or
+`m_currentVerse = 1`. Tab stopped at this disabled button between `NextChapterButton`
+and `cmbVerse`, blocking the Tab path to the verse combo.
+
+**After Fix 3:**
+```vba
+Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
+    ' Always enabled when chapter is selected — same invariant as GetPrevChapterEnabled.
+    ' PrevVerseButton is a Tab stop on the path to cmbVerse; disabling it blocks Tab flow.
+    ' OnPrevVerseClick guards the actual boundary (m_currentVerse > 1).
+    GetPrevVerseEnabled = (m_currentChapter > 0)
+End Function
+
+Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
+    ' Always enabled when chapter is selected (same invariant as GetPrevVerseEnabled).
+    ' OnNextVerseClick guards the click boundary.
+    GetNextVerseEnabled = (m_currentChapter > 0)
+End Function
+```
+
+---
+
+### Updated `OnChapterChanged` evolution table
+
+| Version | `InvalidateControl` location | Tab result |
+|---------|------------------------------|------------|
+| Original (Bug 20) | onChange — inline `ScrollIntoView` | Tab → document |
+| After Bug 20 fix | onChange — 6 calls including self-invalidation | Tab → document for multi-digit (Bug 23b) |
+| After Bug 23b fix (Fix 1) | onChange — 5 calls, no self-invalidation | Tab → `NextChapterButton`; `cmbVerse` disabled |
+| Fix 2 (failed) | `ExecutePendingChapter` (OnTime) — 5 calls deferred | Tab → document (OnTime fires too late) |
+| **Fix 3 (current)** | **onChange — 5 calls, no self-invalidation** + **verse buttons always-enabled** | **Tab → `NextChapterButton` → `PrevVerseButton` → `cmbVerse`** |
+
+---
+
+### Status update
+
+| Item | Status |
+|------|--------|
+| Bug 23a — Layout delay for Psalms (~6s) | **KNOWN LIMITATION** |
+| Bug 23b — Tab after multi-digit chapter → document | **FIXED (Fix 1 — no self-invalidation retained in Fix 3)** |
+| Bug 23c — PrevVerseButton blocks Tab path to cmbVerse | **FIXED (Fix 3 — always-enable at boundary)** |
+| Step 5 timing test | **BLOCKED — pending import of Fix 3 + Fix 4 and re-test** |
+
+---
+
+## § 19 — Bug 24: First-Load Tab Falls to Document After Book Selection
+
+### Symptom
+
+After a fresh Word open: `ps Tab` → 4-second layout delay for Psalms → continue the
+chapter/verse sequence → Tab falls to the document instead of reaching the chapter combo.
+After **New Search** and repeating the same sequence, it works correctly.
+
+### Root cause — Tab routing fires during the blocking `ScrollIntoView` call
+
+The ribbon framework maintains a cached enabled-state for each control. This cache is
+only updated when `InvalidateControl` or `Invalidate` is called.
+
+**Initial state on fresh load**: `OnRibbonLoad` only calls `InvalidateControl` for
+`NextBookButton` and `PrevBookButton`. All other controls retain their initial-render
+state: `m_currentBookIndex = 0` → `GetChapterEnabled = False` → **`cmbChapter` cached
+as DISABLED**.
+
+When the user selects a book (`ps Tab`), `OnBookChanged` fires:
+
+```
+m_currentBookIndex = Psalms     ← set
+m_currentChapter = 0            ← set
+ScrollIntoView(..., True)       ← BLOCKS for ~4s (first-load page layout)
+    │
+    └── Word message pump runs during blocking call
+        Tab routing fires: reads cached state
+        cmbChapter = DISABLED (stale — never been re-queried)
+        → Tab skips entire chapter/verse row
+        → Tab falls to document at position 0
+        → Tab character inserted at cursor
+
+m_ribbon.Invalidate             ← fires after ScrollIntoView returns (TOO LATE)
+```
+
+On the second attempt (after New Search), `ScrollIntoView` is fast (layout already done
+from the first attempt). `OnBookChanged` returns in milliseconds, `m_ribbon.Invalidate`
+fires, and Tab routing sees the fresh cache where `cmbChapter = ENABLED`.
+
+**Key principle**: `m_ribbon.Invalidate` must be called **before** any blocking
+operation that could allow Tab routing (or any message-pump processing) to fire with
+stale enabled states.
+
+### Fix — move `m_ribbon.Invalidate` before `ScrollIntoView`
+
+```vba
+    m_currentBookIndex = i
+    m_currentBookPos = CLng(headingData(i, 1))
+    m_currentChapter = 0
+    m_currentVerse = 0
+
+    ' Invalidate BEFORE ScrollIntoView — Tab routing fires during the blocking layout
+    ' calculation on first load (~4-10s). cmbChapter must be ENABLED in the ribbon
+    ' cache before ScrollIntoView blocks, otherwise Tab skips the chapter/verse row
+    ' and falls to the document (Bug 24). GetChapterEnabled = (m_currentBookIndex > 0)
+    ' now returns True because m_currentBookIndex was just set above.
+    If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+
+    If m_currentBookPos > 0 Then
+        ActiveWindow.ScrollIntoView ActiveDocument.Range(m_currentBookPos, m_currentBookPos), True
+    End If
+```
+
+**Why no regression**: `GetBookText` returns the full book name from `headingData` at
+this point, so cmbBook updates to show the resolved name — the same result as before,
+just occurring before the scroll rather than after. Chapter/verse text fields clear via
+`GetChapterText = ""` and `GetVerseText = ""` (m_currentChapter/Verse = 0).
+Programmatic Get* updates do not re-trigger `onChange`, so no double-fire of
+`OnBookChanged`.
+
+### Status update
+
+| Item | Status |
+|------|--------|
+| Bug 24 — First-load Tab to document after book selection | **SUPERSEDED — see § 24. Fix 4 (Invalidate before scroll) was correct in principle but the blocking scroll is now removed from OnBookChanged entirely.** |
+| Step 5 timing test | **BLOCKED — pending import of fixes and re-test** |
+
+---
+
+## § 20 — Improvement: Pre-built Chapter Position Index
+
+### Background
+
+`FindChapterPos` locates the Nth chapter heading by calling `Range.Find.Execute` in a
+loop — one Find call per chapter between the book heading and the target. To navigate to
+Psalm 119, this requires **119 consecutive Find calls**. For late chapters of long books,
+this is O(n) in chapter number.
+
+`basTEST_aeBibleTools.bas` contains `LoadHeadingIndexFromCSV`, which builds an index
+of H1 and H2 heading positions to `rpt\HeadingIndex.txt`. This is larger than just H1
+data — it includes all chapter headings.
+
+### Speed benefit for navigation
+
+Replace `FindChapterPos`'s loop with a direct array lookup:
+
+| Approach | Psalm 119 | Rev 22 | Cost |
+|----------|-----------|--------|------|
+| Current `FindChapterPos` | 119 `Find` calls | 22 `Find` calls | Per navigation |
+| Pre-built index (H2 array) | 1 array read | 1 array read | Once at load time |
+
+The index structure would extend the existing `headingData` array (currently H1 positions
+only) to include H2 positions, keyed by book index and chapter number:
+
+```vba
+' Current: headingData(bookIdx, 0) = bookName, headingData(bookIdx, 1) = H1 charPos
+' Extended: chapterData(bookIdx, chapterIdx) = H2 charPos
+```
+
+`CaptureHeading1s` already performs a full H1 scan at load time (66 entries).
+Extending to H2 would capture all 1,189 chapter positions once per session.
+The `LoadHeadingIndexFromCSV` / `HeadingIndex.txt` approach persists the scan result
+to disk so the scan does not repeat on every document open.
+
+### Effect on pagination delay
+
+**None** — the pagination delay is caused by `ScrollIntoView` triggering Word's lazy
+page layout engine to calculate page breaks for every paragraph between the current
+scroll position and the target. This occurs regardless of how quickly the character
+position is resolved. Even an instant O(1) lookup still requires the same layout work.
+
+The pre-built index does not interact with page layout. It eliminates the `Find` loop;
+it does not change what `ScrollIntoView` must do.
+
+### Path to pagination improvement (future)
+
+A persistent position index could enable an alternative navigation strategy that avoids
+`ScrollIntoView` altogether — for example, using `Application.GoTo` with a bookmark
+pre-placed at each chapter heading. Bookmarks navigate without triggering a full layout
+recalculation. This approach has not been evaluated.
+
+### Proposed task
+
+| Task | Detail |
+|------|--------|
+| Extend `CaptureHeading1s` to capture H2 positions | Populate `chapterData(bookIdx, chNum)` at load time |
+| Rewrite `FindChapterPos` | Direct array lookup instead of Find loop |
+| Optional: persist index via `LoadHeadingIndexFromCSV` | Avoid re-scan on every document open |
+| Evaluate bookmark-based navigation | Determine whether it avoids layout delay |
+
+---
+
+## § 21 — Bug 25a: First-load verse Tab still goes to document (Fix 5a — RETRACTED)
+
+> **Note**: Fix 5a (double-Invalidate) was applied then retracted. The double-Invalidate
+> helped the slow-tab case but failed when the user tabbed quickly (before ScrollIntoView
+> returned). The root cause turned out to be the presence of `ScrollIntoView` in
+> `OnBookChanged` at all, not the placement of `Invalidate` around it. **See § 24** for
+> the final resolution (ScrollIntoView removed from OnBookChanged entirely).
+
+### Symptom (original observation)
+
+After Fix 4 (single `m_ribbon.Invalidate` before `ScrollIntoView`), the chapter Tab
+path worked on first load but the verse row still failed: Tab after chapter confirm went
+to the document instead of `cmbVerse`. On rapid tab entry the chapter Tab also failed.
+
+### Root cause
+
+`OnBookChanged` places one `m_ribbon.Invalidate` call **before** `ScrollIntoView`. This
+ensures `cmbChapter` is ENABLED in the ribbon cache when Tab routing fires **during** the
+blocking scroll. However, during the 4–10 second layout delay, Word's internal message
+pump continues to fire ribbon `Get*` callbacks. These re-query enabled state using current
+class fields. At that point `m_currentChapter = 0`, so `GetPrevVerseEnabled`,
+`GetNextVerseEnabled`, and `GetVerseEnabled` all return `False`. The ribbon cache for the
+verse row is **overwritten with DISABLED** during the scroll, before the user has a chance
+to interact with the chapter row.
+
+When the user later confirms a chapter and presses Tab, the verse row buttons in the cache
+are still DISABLED (from the stale re-query during scroll). Tab skips them and falls to the
+document.
+
+### Fix 5a (applied 2026-04-14)
+
+Add a second `m_ribbon.Invalidate` immediately **after** `ScrollIntoView` in
+`OnBookChanged`. This wipes the stale enabled state written during the blocking call and
+re-queries all controls from the current field values (still `m_currentChapter = 0` at
+this point — verse row correctly DISABLED until chapter is confirmed).
+
+```vba
+' Before:
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate    ' Fix 4 — before scroll
+If m_currentBookPos > 0 Then
+    ActiveWindow.ScrollIntoView ...
+End If
+' PROC_EXIT
+
+' After (Fix 5a):
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate    ' before scroll
+If m_currentBookPos > 0 Then
+    ActiveWindow.ScrollIntoView ...
+End If
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate    ' after scroll — clears stale state
+```
+
+**Double-Invalidate pattern**: `Invalidate` before a blocking call ensures Tab routing
+during the call sees the correct state. `Invalidate` after the call erases any state
+re-queried during the call (which used potentially stale field values). Both calls are
+needed together.
+
+### No-regression notes
+
+The second `Invalidate` fires after `ScrollIntoView` returns (layout complete). No further
+blocking operation follows, so no new stale state can accumulate before the next user
+interaction. `m_currentChapter = 0` at this point is correct — verse row DISABLED until
+chapter is confirmed.
+
+| Scenario | Before Fix 5a | After Fix 5a |
+|----------|--------------|-------------|
+| First load, Psalm | verse row Tab fails after chapter confirm | verse row Tab works |
+| Second+ load | already worked (layout instant) | unchanged |
+| Prev/Next book | unaffected | unchanged |
+
+---
+
+## § 22 — Bug 25b: GoToVerse navigates to wrong verse in Psalm 119 (Fix 5b)
+
+### Symptom
+
+On second load (where verse navigation works), navigating to Psalm 119:176 scrolled to
+verse 155 instead of 176. Off by exactly 21 verses.
+
+### Root cause
+
+`GoToVerseByCount` implemented study-version verse navigation as:
+
+```vba
+Selection.SetRange chPos, chPos
+Selection.MoveDown Unit:=wdParagraph, Count:=vsNum
+Selection.Collapse Direction:=wdCollapseStart
+```
+
+This moves down `vsNum` paragraph marks from the chapter heading. The assumption was
+"one paragraph per verse" — true for most chapters. However, Psalm 119 has **22
+Hebrew-letter section headings** (Aleph, Beth, Gimel … Taw) as separate paragraph-level
+elements interspersed among the 176 verse paragraphs. Moving 176 paragraphs from H2 passes
+approximately 21 of these headings before reaching verse 176, landing instead at verse 155
+(176 − 21 = 155).
+
+The error is cumulative: a chapter with N section headings before verse V will be off by
+the count of headings that appear before V. Psalm 119 with 22 evenly distributed headings
+produces ~21 extra paragraphs before verse 176.
+
+### Document structure (confirmed by user)
+
+Every verse in **both** study and print versions begins with:
+
+1. An inline run styled **"Chapter Verse marker"** — contains the chapter number.
+2. Immediately followed by an inline run styled **"Verse marker"** — contains the verse number.
+
+Section headings, H1, H2, and all other non-verse elements do NOT begin with a
+"Verse marker" run. Searching for the Nth "Verse marker" occurrence from the chapter
+position therefore counts only verse starts, regardless of section headings or paragraph
+structure.
+
+### Fix 5b (applied 2026-04-14)
+
+**Unified verse navigation path**: Remove the `IsStudyVersion` branch in `GoToVerse`.
+Always call `GoToVerseByScan`. `GoToVerseByCount` is retained as a dead stub.
+
+`GoToVerseByScan` already used `Range.Find` on the "Verse marker" character style —
+correct for the print version. This approach is equally correct for the study version.
+
+`ScrollIntoView` added after cursor placement in `GoToVerseByScan` to ensure the viewport
+updates on first load (where the layout engine may not auto-scroll to a programmatic
+selection).
+
+```vba
+' GoToVerse — before:
+If IsStudyVersion Then
+    GoToVerseByCount chPos, vsNum
+Else
+    GoToVerseByScan chPos, vsNum
+End If
+
+' GoToVerse — after:
+GoToVerseByScan chPos, vsNum   ' correct for both versions; IsStudyVersion obsolete here
+```
+
+```vba
+' GoToVerseByScan — added after Select:
+ActiveDocument.Range(r.Start, r.Start).Select
+ActiveWindow.ScrollIntoView ActiveDocument.Range(r.Start, r.Start), True
+```
+
+### Effect on `IsStudyVersion`
+
+The `IsStudyVersion` function is retained — other code may rely on it. Only the verse
+navigation branch in `GoToVerse` has been unified. `m_studyVersionSet` / `m_studyVersionVal`
+caching remains in place. `GoToVerseByCount` is marked as a dead stub with an explanatory
+comment.
+
+| Path | Before Fix 5b | After Fix 5b |
+|------|--------------|-------------|
+| Study version, Psalm 119:176 | landed at verse 155 | lands at verse 176 |
+| Study version, chapters without section headings | correct | unchanged |
+| Print version | correct | unchanged |
+
+---
+
+## § 23 — Bug 25c: Spinner icon on Prev/Next verse navigation (discussion)
+
+### Symptom
+
+A blinking/spinning cursor icon appears when clicking Prev or Next verse. The delay is
+perceptible and occurs on every verse navigation, not just the first.
+
+### Probable root cause
+
+`GoToVerse` calls `FindChapterPos(m_currentChapter)` on **every invocation**:
+
+```vba
+Dim chPos As Long
+chPos = FindChapterPos(m_currentChapter)   ' called on every Prev/Next verse click
+```
+
+`FindChapterPos` performs a sequential `Range.Find` loop — one call per chapter from the
+book heading to the target chapter. For Psalm 119, this is **119 Find calls on a
+33,857-paragraph document** every time a verse navigation button is clicked. This loop is
+the likely source of the visible delay.
+
+`GoToChapter` (called by Prev/Next Chapter buttons) also calls `FindChapterPos`, but
+chapter navigation is expected to be slower and is less frequent than verse navigation.
+
+### Relationship to § 20 (chapter position index)
+
+§ 20 proposes a full pre-built chapter position array as a longer-term improvement
+(extend `CaptureHeading1s` to capture all 1,189 chapter H2 positions at load time). That
+fully eliminates `FindChapterPos` for all callers. Bug 25c is the immediate, user-visible
+symptom of the same underlying O(n) cost.
+
+### Proposed fix (for discussion)
+
+Add a private field `m_currentChapterPos As Long` that caches the chapter position
+after it is first resolved for the current chapter. `GoToVerse` checks the cache before
+calling `FindChapterPos`:
+
+```vba
+' In GoToVerse — replace:
+chPos = FindChapterPos(m_currentChapter)
+
+' With:
+If m_currentChapterPos > 0 Then
+    chPos = m_currentChapterPos
+Else
+    chPos = FindChapterPos(m_currentChapter)
+    m_currentChapterPos = chPos
+End If
+```
+
+Clear `m_currentChapterPos = 0` in:
+- `OnBookChanged` (book changes → chapter resets)
+- `OnChapterChanged` (new chapter entered via cmbChapter)
+
+Set `m_currentChapterPos = chPos` also in `GoToChapter` after its `FindChapterPos` call,
+so Prev/Next Chapter navigation pre-populates the cache for the immediately following verse
+navigation.
+
+**Cost model after fix**:
+
+| Action | FindChapterPos calls |
+|--------|----------------------|
+| First verse in a chapter (cmbChapter path) | 1 (result cached) |
+| Subsequent Prev/Next verse in same chapter | 0 (cache hit) |
+| Prev/Next Chapter button | 1 (result cached in GoToChapter) |
+| Book change | 0 (cache cleared; new chapter entry triggers the 1 call) |
+
+### Open question for discussion
+
+The cmbChapter entry path still pays one `FindChapterPos` call on the first verse
+navigation. The `ExecutePendingChapter` no-op fires via OnTime after chapter confirmation
+but before any verse click — this is the earliest safe point to pre-populate the cache
+(paying the cost eagerly when the chapter fires, not when the first verse fires). Is eager
+pre-population preferred, or is lazy (first verse click) acceptable?
+
+Eager pre-population requires adding `FindChapterPos` work to `ExecutePendingChapter`
+(currently intentionally a no-op per Fix 3). Lazy caching is simpler and still eliminates
+the cost on Prev/Next verse 2 through N in the same chapter.
+
+**Decision**: Lazy caching selected. Applied 2026-04-14. See updated cost model above.
+
+**Status**: **APPLIED (Fix 6b)**
+
+---
+
+## § 24 — Bug 25a / Bug 24 Final Resolution: Remove ScrollIntoView from OnBookChanged (Fix 6a)
+
+### Problem with previous approach (Fixes 4 and 5a)
+
+Fix 4 (Invalidate before scroll) and Fix 5a (double-Invalidate bracketing the scroll) were
+both working around the same root cause: `ScrollIntoView` in `OnBookChanged` blocked VBA
+for 4-10s on first load, and Tab key presses during that block were routed using stale
+ribbon state.
+
+Fix 5a fixed the case where the user waited after selecting the book before pressing Tab
+(slow-tab scenario). But on rapid tab entry — `ps Tab Tab Tab 119 Tab Tab` — multiple Tab
+presses occurred during the blocking call. Some fired before the first Invalidate took
+effect; others fired and re-queried stale state anyway. The double-Invalidate pattern only
+cleaned up state at the endpoints of the block, not during it.
+
+The correct diagnosis: **the blocking call itself is the problem**. No amount of
+Invalidate placement eliminates stale Tab routing caused by a 4-10s block inside a ribbon
+callback.
+
+### Fix 6a (applied 2026-04-14)
+
+Remove `ScrollIntoView` entirely from `OnBookChanged`. Replace the double-Invalidate with
+a single `m_ribbon.Invalidate`. `OnBookChanged` now returns in microseconds.
+
+```vba
+' Before (Fixes 4 + 5a):
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate      ' before scroll
+If m_currentBookPos > 0 Then
+    ActiveWindow.ScrollIntoView ...                       ' BLOCKS 4-10s on first load
+End If
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate      ' after scroll
+
+' After (Fix 6a):
+If Not m_ribbon Is Nothing Then m_ribbon.Invalidate      ' single call; no blocking follows
+' No scroll here — view scrolls when GoToVerseByScan executes (ScrollIntoView is called
+' there after cursor placement, at which point all Tab routing is complete).
+```
+
+### Why no regression
+
+`GoToVerseByScan` (Fix 5b) already calls `ScrollIntoView` after placing the cursor at the
+verse. This fires only after the user has committed their verse number — all Tab routing is
+complete at that point. The 4-10s first-load pagination block moves from "during book
+selection" to "during verse confirmation", where it causes no Tab routing issues.
+
+For Prev/Next Chapter buttons: `GoToChapter` calls `Range.Select` which triggers a scroll
+anyway. No regression.
+
+For Prev/Next Book buttons: these already called `Range.Select` (no ScrollIntoView). No
+change.
+
+**UX tradeoff**: After selecting a book from `cmbBook`, the viewport no longer jumps to
+the book heading immediately. The view stays at its current position until the verse is
+confirmed. This is acceptable for the rapid-entry workflow (`Book Tab Chapter Tab Verse`).
+
+### Relationship to Bug 24 / § 19 / § 21
+
+| Fix | What it changed | Result |
+|-----|-----------------|--------|
+| Fix 4 (§ 19) | Invalidate moved before ScrollIntoView | Fixed slow-tab scenario |
+| Fix 5a (§ 21) | Double-Invalidate bracketing ScrollIntoView | Partial improvement; fast-tab still failed |
+| **Fix 6a (§ 24)** | **ScrollIntoView removed from OnBookChanged** | **Fixed for all tab speeds** |
+
+### Status
+
+| Item | Status |
+|------|--------|
+| Bug 24 / Bug 25a — First-load Tab to document after book selection | **SUPERSEDED — see § 25** |
+| Chapter spinner (Prev/Next Chapter) | **PENDING § 20** — `FindChapterPos` O(n) per click; requires pre-built chapter index |
+| Bug 25c — Verse navigation spinner | **PARTIALLY FIXED (Fix 6b / lazy cache)** — 2nd+ verse click in same chapter is instant; 1st click still calls `FindChapterPos` once |
+
+---
+
+## § 25 — Bug 25a Root Cause Identified: Initial Render Cache + Deferred onChange Invalidate (Fix 7)
+
+### Root cause
+
+The Fluent ribbon builds an internal enabled-state cache for every control by calling all
+`Get*` callbacks at **initial render** — this fires **before** `OnRibbonLoad`. At that
+moment `m_currentBookIndex = 0` and `m_currentChapter = 0`, so the cache is set to:
+
+| Control | Initial cache state |
+|---------|---------------------|
+| `cmbBook` | ENABLED (`GetBookEnabled = True`) |
+| `cmbChapter` | **DISABLED** (`GetChapterEnabled = m_currentBookIndex > 0 = False`) |
+| `cmbVerse` | **DISABLED** (`GetVerseEnabled = m_currentChapter > 0 = False`) |
+| All Prev/Next buttons | DISABLED |
+
+`OnRibbonLoad` (Fixes 4/5a/6a) only called `InvalidateControl` for the two book buttons,
+then called `m_ribbon.Invalidate`. Neither established a synchronous update of `cmbChapter`
+or `cmbVerse` before the user's first Tab interaction.
+
+When the user types "gen" and presses Tab:
+1. `OnBookChanged` fires → sets `m_currentBookIndex = 1` → calls `m_ribbon.Invalidate`
+2. `m_ribbon.Invalidate` called from within an **`onChange`** callback is **deferred** —
+   it is queued to fire after the current event cycle completes.
+3. **Tab routing fires before the deferred Invalidate executes**, using the stale initial
+   render cache where `cmbChapter = DISABLED`.
+4. Tab skips all disabled controls and falls to the document.
+5. The deferred Invalidate fires later — too late for this Tab event.
+
+**Why it worked on second load (after New Search)**: `OnNewSearchClick` is an **`onAction`**
+callback (button click). `m_ribbon.Invalidate` called from `onAction` fires synchronously,
+fully updating the cache. When the user then selects a book and OnBookChanged's deferred
+Invalidate queues, the ribbon framework processes it differently — likely because a prior
+synchronous Invalidate cycle has already been completed. The cached state at Tab routing
+time is correct on the second load.
+
+**Why Fixes 4, 5a, 6a all failed**: They addressed `ScrollIntoView` timing (the blocking
+call) without recognising that the deferred `Invalidate` from `onChange` was the fundamental
+mechanism. Even with no blocking call, Tab routing on first load always fires before the
+deferred Invalidate updates `cmbChapter`.
+
+### Fix 7 (applied 2026-04-14)
+
+**Change 1 — Make `GetChapterEnabled` and `GetVerseEnabled` unconditionally `True`.**
+
+The controls are always tab stops from initial render onward. They are never disabled in
+the cache, so Tab routing always reaches them regardless of `Invalidate` timing. The
+`onChange` handlers already guard against invalid input:
+
+```vba
+' OnChapterChanged:
+If m_currentBookIndex = 0 Then GoTo PROC_EXIT   ' silently ignores if no book
+
+' OnVerseChanged:
+If m_currentChapter = 0 Then GoTo PROC_EXIT     ' silently ignores if no chapter
+```
+
+**Change 2 — Add `m_ribbon.Invalidate` to `OnRibbonLoad` after `EnableButtonsRoutine`.**
+
+This fires synchronously from the `onLoad` callback (the same mechanism as `onAction`),
+establishing a correct initial cache state after class setup is complete. Removes the two
+targeted `InvalidateControl` calls that only updated the book buttons.
+
+```vba
+' Before:
+m_ribbon.InvalidateControl "NextBookButton"
+m_ribbon.InvalidateControl "PrevBookButton"
+Call EnableButtonsRoutine
+
+' After:
+Call EnableButtonsRoutine
+m_ribbon.Invalidate   ' synchronous from onLoad; sets correct initial cache for all controls
+```
+
+### Impact on remaining Invalidate calls
+
+The `m_ribbon.Invalidate` calls in `OnBookChanged` and `OnNewSearchClick`, and the
+`InvalidateControl` calls in `OnChapterChanged`, remain. They update the visual state
+of buttons and combo text displays (GetText, GetEnabled for visual cues). They are no
+longer load-bearing for Tab routing, since the combo controls are always-enabled.
+
+### Status
+
+| Item | Status |
+|------|--------|
+| Bug 25a — First-load Tab to document after book selection | **FIXED (Fix 7)** |
+| First-load Tab to document — root cause | **IDENTIFIED: onChange Invalidate is deferred; initial render cache was stale** |
