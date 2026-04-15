@@ -11,13 +11,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #599 -
 ' #598 -
 ' #597 -
-' #596 -
+' #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
-' #492 - Add a step for Verse Boundary Validation
-' #491 - Add a step for Cross-Book Range Validation
-' #490 - Add a step for Chapter/Book Expansion Awareness
-' #489 - Add a step for Canonical Verse Ordering
-' #488 - Add a step called span normalization or range consolidation
 ' #484 - Store the Verse Map as a Byte Array [impr]
 ' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
 ' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
@@ -76,6 +71,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - #492 - Add a step for Verse Boundary Validation - Done in latest DSP code
+    ' [obso] - #491 - Add a step for Cross-Book Range Validation - Done in latest DSP code
+    ' [obso] - #490 - Add a step for Chapter/Book Expansion Awareness - Done in latest DSP code
+    ' [obso] - #489 - Add a step for Canonical Verse Ordering - Done in latest DSP code
+    ' [obso] - #488 - Add a step called span normalization or range consolidation - Done in latest DSP code
     ' FIXED - #595 - Implement New Navigation Architecture: Default-Fill + Action-Gate [refac][feat]
     ' FIXED - #594 - Add summary notice related to RWB as trademark [feat]
     ' FIXED - #593 - Tab into Verse not working [bug]
