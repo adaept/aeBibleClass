@@ -127,6 +127,17 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+' Called deferred (Application.OnTime) after invalid chapter input — resets display
+' to current valid value without disrupting Tab routing (safe from OnTime context).
+Public Sub ResetChapterDisplay()
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "cmbChapter"
+End Sub
+
+' Called deferred (Application.OnTime) after invalid verse input — same pattern.
+Public Sub ResetVerseDisplay()
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "cmbVerse"
+End Sub
+
 ' -- Ribbon Callbacks ----------------------------------------------------------
 
 Public Sub OnGoToVerseSblClick(control As IRibbonControl)
@@ -518,8 +529,8 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
 
     m_currentBookIndex = i
     m_currentBookPos = CLng(headingData(i, 1))
-    m_currentChapter = 1   ' Rule 2a: default to 1 so cmbChapter displays "1" after Tab
-    m_currentVerse = 1     ' Rule 2a: default to 1 so cmbVerse displays "1" after Tab
+    m_currentChapter = 0   ' display "1" via GetChapterText; keep 0 so chapter buttons stay disabled
+    m_currentVerse = 0     ' display "1" via GetVerseText; keep 0 so verse buttons stay disabled
     m_currentChapterPos = 0
 
     ' Invalidate so ribbon re-queries enabled state from current field values.
@@ -638,25 +649,36 @@ End Function
 Public Function GetChapterText(control As IRibbonControl) As String
     If m_currentChapter > 0 Then
         GetChapterText = CStr(m_currentChapter)
+    ElseIf m_currentBookIndex > 0 Then
+        GetChapterText = "1"
     Else
         GetChapterText = ""
     End If
 End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
-    ' § 28 Step 2: validate only — no InvalidateControl, no deferred scheduling.
     ' onChange fires on each keystroke and on Tab/Enter commit.
     ' If text is empty or out of range, retain the current value (1 by default from
     ' Rule 2a; never leaves the field in an unknown state).
-    ' Navigation is not triggered here — verse confirmation is the sole trigger.
+    ' Navigation fires on each valid chapter value — same deferred pattern as OnVerseChanged.
+    ' Multiple deferreds from rapid typing all read m_pendingVerse at execution time;
+    ' only the first fires a navigation, subsequent ones are no-ops (m_pendingVerse = 0).
     On Error GoTo PROC_ERR
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
-    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
+    Dim projNameCh As String
+    projNameCh = Application.ActiveDocument.VBProject.Name
+    If Not IsNumeric(Trim(text)) Then
+        Application.OnTime Now, projNameCh & ".basRibbonDeferred.ResetChapterDisplayDeferred"
+        GoTo PROC_EXIT
+    End If
     Dim chNum As Long
     chNum = CLng(Trim(text))
     Dim bookName As String
     bookName = CStr(headingData(m_currentBookIndex, 0))
-    If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
+    If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then
+        Application.OnTime Now, projNameCh & ".basRibbonDeferred.ResetChapterDisplayDeferred"
+        GoTo PROC_EXIT
+    End If
     m_currentChapter = chNum
     m_currentChapterPos = 0
 PROC_EXIT:
@@ -745,6 +767,8 @@ End Function
 Public Function GetVerseText(control As IRibbonControl) As String
     If m_currentVerse > 0 Then
         GetVerseText = CStr(m_currentVerse)
+    ElseIf m_currentBookIndex > 0 Then
+        GetVerseText = "1"
     Else
         GetVerseText = ""
     End If
@@ -755,13 +779,21 @@ Public Sub OnVerseChanged(control As IRibbonControl, text As String)
     ' Navigation is guarded by numeric + range validation; only a valid verse
     ' number triggers the deferred GoToVerse call.
     On Error GoTo PROC_ERR
-    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
+    Dim projNameVs As String
+    projNameVs = Application.ActiveDocument.VBProject.Name
+    If Not IsNumeric(Trim(text)) Then
+        Application.OnTime Now, projNameVs & ".basRibbonDeferred.ResetVerseDisplayDeferred"
+        GoTo PROC_EXIT
+    End If
     If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim vsNum As Long
     vsNum = CLng(Trim(text))
     Dim bookName As String
     bookName = CStr(headingData(m_currentBookIndex, 0))
-    If vsNum < 1 Or vsNum > aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then GoTo PROC_EXIT
+    If vsNum < 1 Or vsNum > aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then
+        Application.OnTime Now, projNameVs & ".basRibbonDeferred.ResetVerseDisplayDeferred"
+        GoTo PROC_EXIT
+    End If
     m_pendingVerse = vsNum
     Dim projName As String
     projName = Application.ActiveDocument.VBProject.Name
@@ -854,6 +886,8 @@ Private Sub GoToVerse(ByVal vsNum As Long)
         m_ribbon.InvalidateControl "cmbVerse"
         m_ribbon.InvalidateControl "PrevVerseButton"
         m_ribbon.InvalidateControl "NextVerseButton"
+        m_ribbon.InvalidateControl "PrevChapterButton"
+        m_ribbon.InvalidateControl "NextChapterButton"
     End If
 
 PROC_EXIT:

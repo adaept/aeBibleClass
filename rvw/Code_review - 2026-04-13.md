@@ -2018,8 +2018,40 @@ Implement in a new `Ribbon test15.docm` iteration:
 
 | Item | Status |
 |------|--------|
-| Bug 26 — Tab after chapter entry goes to document | **OPEN — proposed fix in § 28** |
+| Bug 26 — Tab after chapter entry goes to document | **FIXED (§ 28 architecture)** |
 | Architecture — default-fill + action-gate model | **IN PROGRESS** |
+| Bug 27 — Enter in Chapter does not navigate (inconsistency with Verse) | **KNOWN LIMITATION** |
+
+**Bug 27 note:** Adding `GoToVerseDeferred` to `OnChapterChanged` caused a regression
+(Tab after chapter went to document again). Root cause: `onChange` fires on every
+keystroke, so deferreds for intermediate values (`1`, `19`) fire and execute
+`Range.Select` + `ScrollIntoView` before Tab routing completes — the same
+mechanism as Bug 20. `onChange` provides no way to distinguish Enter from a
+keystroke, making per-commit-only navigation impossible without per-keystroke
+side effects. Verse confirmation remains the sole navigation trigger by design.
 | Step 1 — Rule 2a: `OnBookChanged` sets chapter/verse = 1 | **CONFIRMED 2026-04-15** |
 | Step 2 — Simplify `OnChapterChanged`: validate only, no invalidation or deferred | **CONFIRMED 2026-04-15** |
+| Bug 27 — Enter in Chapter does not navigate (inconsistency with Verse) | **KNOWN LIMITATION — see note below** |
+| Bug 28 — Invalid entry in Chapter/Verse leaves stale display | **FIXED 2026-04-15 — deferred `InvalidateControl` on rejection** |
+| Bug 28 — Invalid entry in Book leaves stale display | **KNOWN LIMITATION — mid-typing reset would break abbreviation entry** |
+| Bug 29 — First load: Tab after Book goes to document (regression from Rule 2a Step 1) | **FIXED 2026-04-15 — display/state separation** |
+
+### Bug 29 — First-load Tab regression (display/state separation fix)
+
+**Root cause:** Setting `m_currentChapter = 1` in `OnBookChanged` (Rule 2a Step 1) caused
+the deferred `m_ribbon.Invalidate` to enable `NextChapterButton` (because `m_currentChapter > 0`).
+Tab navigates through ALL enabled controls in XML order, so Tab from `cmbChapter` hit
+`NextChapterButton` instead of `cmbVerse`. On first load, `CaptureHeading1s` takes several
+seconds, ensuring the deferred Invalidate fires before the user presses Tab — making the
+regression consistent on first load but not on subsequent searches.
+
+**Fix — display/state separation:**
+- `OnBookChanged`: `m_currentChapter = 0`, `m_currentVerse = 0` (buttons stay disabled for Tab routing)
+- `GetChapterText`: returns `"1"` when `m_currentBookIndex > 0` AND `m_currentChapter = 0` (visual default only)
+- `GetVerseText`: returns `"1"` when `m_currentBookIndex > 0` AND `m_currentVerse = 0` (visual default only)
+- `GoToVerse` invalidation block: adds `InvalidateControl "PrevChapterButton"` and `"NextChapterButton"` — chapter buttons only enable after first navigation fires
+
+**Result:** The comboBoxes display "1" immediately (via `GetChapterText`/`GetVerseText`), but
+`NextChapterButton`/`PrevChapterButton` remain disabled until `GoToVerse` executes. Tab from
+`cmbChapter` reaches `cmbVerse` correctly on both first load and subsequent searches.
 | Step 5 (partial) — Rule 2a in `NextButton`, `PrevButton`, `GoToChapter` | **APPROVED — applied 2026-04-15** |
