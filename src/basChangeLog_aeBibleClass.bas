@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #598 -
 ' #597 -
 ' #596 -
-' #595 -
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #492 - Add a step for Verse Boundary Validation
 ' #491 - Add a step for Cross-Book Range Validation
@@ -77,6 +76,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #595 - Implement New Navigation Architecture: Default-Fill + Action-Gate [refac][feat]
     ' FIXED - #594 - Add summary notice related to RWB as trademark [feat]
     ' FIXED - #593 - Tab into Verse not working [bug]
     ' FIXED - #592 - Navigation interface bugs - use editBox for Chapter and Verse [bug]

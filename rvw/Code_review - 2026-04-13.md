@@ -1627,8 +1627,8 @@ confirmed. This is acceptable for the rapid-entry workflow (`Book Tab Chapter Ta
 | Item | Status |
 |------|--------|
 | Bug 24 / Bug 25a — First-load Tab to document after book selection | **SUPERSEDED — see § 25** |
-| Chapter spinner (Prev/Next Chapter) | **PENDING § 20** — `FindChapterPos` O(n) per click; requires pre-built chapter index |
-| Bug 25c — Verse navigation spinner | **PARTIALLY FIXED (Fix 6b / lazy cache)** — 2nd+ verse click in same chapter is instant; 1st click still calls `FindChapterPos` once |
+| Chapter spinner (Prev/Next Chapter) | **FIXED (Fix 8 / § 26) — confirmed 2026-04-15** — pre-built `chapterData` array; O(1) lookup |
+| Bug 25c — Verse navigation spinner | **FIXED (Fix 8 / § 26)** — `chapterData` eliminates the `FindChapterPos` call on first verse |
 
 ---
 
@@ -1718,3 +1718,308 @@ longer load-bearing for Tab routing, since the combo controls are always-enabled
 |------|--------|
 | Bug 25a — First-load Tab to document after book selection | **FIXED (Fix 7)** |
 | First-load Tab to document — root cause | **IDENTIFIED: onChange Invalidate is deferred; initial render cache was stale** |
+| Bug 26 — Tab after chapter entry goes to document | **OPEN — Fix 9 failed; see § 28 for new approach** |
+
+---
+
+## § 26 — Improvement: Pre-built Chapter Position Index (Fix 8, applied 2026-04-15)
+
+### Background
+
+`FindChapterPos` located the Nth chapter heading by calling `Range.Find.Execute` in a
+loop — one Find call per chapter between the book heading and the target. To navigate to
+Psalm 119 this required **119 consecutive Find calls**. The cost was proportional to the
+chapter number, making late chapters of long books noticeably slow.
+
+### Fix 8
+
+Extended `CaptureHeading1s` to capture H2 (chapter) positions in the same single-pass
+paragraph scan that already captures H1 (book) positions. A new private array
+`chapterData(1 To 66, 1 To 150) As Long` stores the character position of every chapter
+heading, keyed by book index and chapter number.
+
+**Changes to `aeRibbonClass.cls`:**
+
+1. Added `Private chapterData(1 To 66, 1 To 150) As Long` to private state.
+
+2. Extended `CaptureHeading1s` — same paragraph loop, now branches on `Heading 2` as
+   well as `Heading 1`. When H1 is seen, `j` resets to 0. When H2 is seen (and at least
+   one H1 has been captured), `j` increments and `chapterData(i - 1, j)` is set.
+
+3. Rewrote `FindChapterPos` — replaced the Find loop with a single array read:
+   `FindChapterPos = chapterData(m_currentBookIndex, chNum)`. Returns 0 for out-of-range
+   inputs (same contract as the old Find path).
+
+### Performance
+
+| Scenario | Old path | New path |
+|----------|----------|----------|
+| Psalm 119 | 119 `Range.Find.Execute` calls | 1 array read |
+| Revelation 22 | 22 `Range.Find.Execute` calls | 1 array read |
+| Any chapter | O(n) in chapter number | O(1) |
+
+The pagination delay from `ScrollIntoView` is unchanged — that delay is Word's layout
+engine calculating page breaks, not the position lookup.
+
+### Load-time cost
+
+None measurable. The H2 assignments (`chapterData(i-1, j) = para.Range.Start`) add
+~1,189 array writes to the existing paragraph scan. The scan already iterates every
+paragraph for H1 detection; the H2 branch adds no additional passes.
+
+### Status
+
+| Item | Status |
+|------|--------|
+| Chapter spinner (Prev/Next Chapter) O(n) lag | **FIXED (Fix 8) — confirmed 2026-04-15** |
+| Bug 25c — first verse click calls `FindChapterPos` once (lazy cache) | **FIXED (Fix 8)** — `chapterData` populated at load; `m_currentChapterPos` cache set on first use eliminates repeat lookups |
+
+---
+
+## § 27 — Bug 26: Tab After Chapter Entry Goes to Document (Fix 9, applied 2026-04-15)
+
+### Symptom
+
+Typing a chapter number in `cmbChapter` and pressing Tab (e.g., Psalms `119 Tab`) sent
+focus to the document instead of `cmbVerse`. The bug was present for any chapter entry
+and had been active for a long time without a specific tracking number.
+
+### Root cause — Bug 23b analog
+
+`onChange` fires for every keystroke **and** on Tab-commit. When Tab was pressed from
+`cmbChapter`, `OnChapterChanged` fired one final time with the committed text. Inside
+that handler, `m_ribbon.InvalidateControl "cmbVerse"` was called synchronously — while
+Word's Tab routing was still in progress. Invalidating the Tab destination during Tab
+routing disrupted the focus transition and sent Tab to the document.
+
+This is the exact same mechanism as Bug 23b, but targeting the next control rather than
+the current one:
+
+| Bug | Synchronous invalidation during Tab commit | Effect |
+|-----|--------------------------------------------|--------|
+| Bug 23b | `InvalidateControl "cmbChapter"` (self) | Tab → document |
+| **Bug 26** | `InvalidateControl "cmbVerse"` (Tab destination) | Tab → document |
+
+Bug 23b identified self-invalidation as problematic; the destination-invalidation analog
+was not recognised at the time.
+
+### Why reported for Psalms 119 specifically
+
+Psalms 119 (3 digits) fires `OnChapterChanged` four times: once per keystroke (`1`,
+`19`, `119`) plus once for the Tab commit. Each firing called `InvalidateControl "cmbVerse"`.
+The bug is present for all chapter entries but may have been more consistently observed
+at 3-digit chapters because those produce more accumulated invalidation calls before Tab.
+
+### Fix 9
+
+**`OnChapterChanged`** — removed `InvalidateControl "cmbVerse"`, `"PrevVerseButton"`,
+`"NextVerseButton"`. Added comment citing Bug 26. Only chapter-row controls
+(`PrevChapterButton`, `NextChapterButton`) are invalidated synchronously.
+
+**`ExecutePendingChapter`** — moved the three verse control invalidations here. This
+fires from `GoToChapterDeferred` via `Application.OnTime Now`, which executes after the
+keyboard event (and Tab routing) has fully cleared. Verse controls are therefore updated
+after focus has already reached `cmbVerse`, not during the routing itself.
+
+```vba
+' Before (OnChapterChanged):
+m_ribbon.InvalidateControl "PrevChapterButton"
+m_ribbon.InvalidateControl "NextChapterButton"
+m_ribbon.InvalidateControl "cmbVerse"        ' ← caused Bug 26
+m_ribbon.InvalidateControl "PrevVerseButton" ' ← moved to ExecutePendingChapter
+m_ribbon.InvalidateControl "NextVerseButton" ' ← moved to ExecutePendingChapter
+
+' After (OnChapterChanged):
+m_ribbon.InvalidateControl "PrevChapterButton"
+m_ribbon.InvalidateControl "NextChapterButton"
+
+' After (ExecutePendingChapter — fires after Tab routing completes):
+m_ribbon.InvalidateControl "cmbVerse"
+m_ribbon.InvalidateControl "PrevVerseButton"
+m_ribbon.InvalidateControl "NextVerseButton"
+```
+
+### Status
+
+| Item | Status |
+|------|--------|
+| Bug 26 — Tab after chapter entry goes to document | **FAILED (Fix 9 did not resolve) — see § 28** |
+
+---
+
+## § 28 — New Navigation Architecture: Default-Fill + Action-Gate (Proposed 2026-04-15)
+
+### Background
+
+Fixes 7, 8, and 9 all attempted to resolve Tab-routing failures by adjusting
+when and which controls are invalidated during `onChange` callbacks. Fix 9
+(deferring `InvalidateControl "cmbVerse"` to `ExecutePendingChapter`) failed —
+focus still goes to the document after chapter entry. The recurring pattern
+across Bugs 20, 23b, 25a, and 26 is the same: the ribbon framework Tab routing
+interacts unpredictably with `InvalidateControl` calls made from within `onChange`.
+Each fix has treated a symptom; none has removed the root dependency.
+
+### Proposed rules
+
+| Rule | Description |
+|------|-------------|
+| 1 | Navigation requires all three fields (Book, Chapter, Verse) to be filled |
+| 2 | Book is always required — no default |
+| 2a | When Book is confirmed, Chapter and Verse are immediately set to 1 — no wait for nav |
+| 3 | Tab past Chapter accepts the displayed value (1 if set by Book, or user-entered) |
+| 4 | Tab past Verse accepts the displayed value (1 if set by Book, or user-entered) |
+| 5 | Navigation fires only after B/C/V are all filled (action-gated) |
+| 6 | Prev/Next buttons are already guarded against out-of-range values |
+| 7 | Prev/Next button presses update all three B/C/V fields appropriately |
+
+**Rule 2a detail:** `OnBookChanged` currently sets `m_currentChapter = 0` and
+`m_currentVerse = 0`. Changing both to `1` is the entire implementation. The
+existing deferred `m_ribbon.Invalidate` already in `OnBookChanged` then fires
+and displays "1" in both `cmbChapter` and `cmbVerse`. No new `InvalidateControl`
+calls are needed. When focus arrives at `cmbChapter` after Tab, the field already
+shows "1" — the user can Tab past to accept it or type a different number.
+
+### Why this eliminates the Tab-routing bug class
+
+The root cause of Bugs 20, 23b, 25a, and 26 is that `onChange` callbacks call
+`InvalidateControl` synchronously while Tab routing is in progress. Every fix has
+tried to find the safe window to call `InvalidateControl`; none has succeeded
+reliably. The proposed approach removes those calls from `onChange` entirely:
+
+- `GetChapterEnabled` and `GetVerseEnabled` remain unconditionally `True` (Fix 7).
+  Tab always reaches both controls — no cache change needed.
+- Navigation fires only from verse confirmation. Chapter-row invalidation is no
+  longer load-bearing for navigation timing.
+- The deferred patterns (`GoToChapterDeferred`, `ExecutePendingChapter`) for
+  chapter navigation become unnecessary.
+
+### Pros
+
+**1. Eliminates the Tab-routing bug class permanently**
+Removing `InvalidateControl` from `onChange` handlers removes the race condition
+that caused Bugs 20, 23b, 25a, and 26. No future variant of this bug can recur.
+
+**2. Single navigation trigger**
+Navigation fires in exactly one place: verse confirmation. The current system has
+navigation paths from book scroll, chapter deferred, and verse deferred. A single
+trigger is easier to reason about, test, and debug.
+
+**3. Simpler onChange handlers**
+`OnChapterChanged` reduces to: validate or default to 1, set `m_currentChapter`.
+No deferred scheduling, no `InvalidateControl` for downstream controls.
+
+**4. Predictable keyboard workflow**
+`Book Tab Chapter Tab Verse Enter` always works. No silent failures or
+Tab-to-document edge cases. The user knows exactly what triggers navigation.
+
+**5. Default-to-1 is natural**
+"Go to Psalms" followed by Tab → Psalm 1:1. "Go to Psalms 119" followed by Tab
+→ Psalm 119:1. These match the most common navigation intentions when a
+sub-field is left blank.
+
+**6. Prev/Next button consistency**
+Pressing Next Chapter sets Chapter and defaults Verse to 1, keeps all three fields
+in sync. B/C/V display becomes a live position indicator, not just an input form.
+
+**7. Fewer Application.OnTime calls**
+Under the current model, one deferred call is scheduled per onChange per keystroke.
+With navigation gated to verse confirmation only, deferred calls drop to one per
+navigation event.
+
+### Cons
+
+**1. Defaulting behaviour change**
+After Book is confirmed, Chapter and Verse immediately show "1". The user who tabs
+through without changing the defaults will navigate to Book 1:1. This is intentional
+and visible — the "1" is displayed before the user reaches `cmbChapter`, so there
+is no silent default. Users who want a different chapter simply type over "1".
+
+**2. ~~Display lag for defaulted fields~~ — RESOLVED**
+Previously a concern: setting `m_currentChapter = 1` inside `OnChapterChanged`
+could not safely call `InvalidateControl "cmbChapter"` (Bug 23b). Under Rule 2a,
+the default is set in `OnBookChanged` instead. The existing deferred
+`m_ribbon.Invalidate` already in that handler picks up the new values and
+displays "1" in both fields. No display lag, no new invalidation calls.
+
+**3. Chapter-level navigation removed from Chapter entry**
+Currently, entering a chapter and pressing Tab is intended to scroll the document to
+that chapter (via deferred path, when working). Under the new model the document
+does not move until verse is confirmed. Users expecting intermediate chapter
+navigation would need to use Prev/Next Chapter buttons or accept the default path.
+
+**4. Prev/Next Book and Chapter must update all fields**
+NextBook must set Chapter = 1 and Verse = 1, update all three displays, and navigate.
+This is a behaviour change: Prev/Next Book currently moves to the book heading only.
+The fields must stay in sync, requiring `m_ribbon.Invalidate` from `onAction`
+(synchronous and safe — no Tab routing in progress).
+
+**5. Empty Chapter and Verse after New Search**
+New Search resets `m_currentBookIndex`, `m_currentChapter`, and `m_currentVerse`
+to 0 and calls `m_ribbon.Invalidate`. Chapter and Verse fields return to "" until
+the user selects a new book. This is correct behaviour — Book is required, and Rule
+2a populates Chapter and Verse to "1" the moment a book is confirmed. No special
+handling needed for the New Search → re-entry path.
+
+### Code complexity comparison
+
+| Area | Current model | Proposed model |
+|------|---------------|----------------|
+| `OnBookChanged` | Set chapter/verse = 0, deferred Invalidate | Set chapter/verse = 1, deferred Invalidate (Rule 2a) |
+| `OnChapterChanged` | Validate, 5x `InvalidateControl`, schedule deferred | Validate, accept current value if empty, no invalidation |
+| `ExecutePendingChapter` | Clear flag, 3x `InvalidateControl` | Remove |
+| `GoToChapterDeferred` | Dispatch to `ExecutePendingChapter` | Remove |
+| `OnVerseChanged` | Validate, schedule deferred | Validate or default to 1, schedule deferred if B/C/V set |
+| `GoToChapter` | Find pos, navigate, invalidate | Remove (navigation only via GoToVerse) |
+| Prev/Next Chapter | Navigate to chapter | Navigate to chapter:1, update all 3 fields |
+| Navigation trigger points | Book + Chapter deferred + Verse deferred | Verse confirmation only |
+| Deferred OnTime calls | 1 per keystroke in chapter or verse | 1 per navigation event |
+
+Overall complexity **decreases**. The chapter deferred path disappears. The
+`InvalidateControl` calls in `onChange` disappear. Fewer moving parts, fewer
+interactions between the ribbon framework and navigation logic.
+
+### Reliability assessment
+
+**More reliable by construction:**
+- Tab routing no longer depends on `InvalidateControl` timing
+- Navigation has one trigger with a well-defined precondition (B/C/V all set)
+- Defaults are deterministic (always 1) rather than silent-ignore
+- Prev/Next buttons keep B/C/V display in sync with document position
+
+**Display lag risk: eliminated.** Rule 2a sets defaults in `OnBookChanged`, where
+the existing deferred `m_ribbon.Invalidate` already handles display updates. When
+focus arrives at `cmbChapter` after Tab, the field shows "1" — internal state and
+display are always in sync.
+
+### Recommended next steps
+
+Implement in a new `Ribbon test15.docm` iteration:
+
+1. **`OnBookChanged` (Rule 2a — minimal change, high impact):** change
+   `m_currentChapter = 0` → `m_currentChapter = 1` and `m_currentVerse = 0` →
+   `m_currentVerse = 1`. The existing deferred `m_ribbon.Invalidate` displays "1"
+   in both fields. No other changes to this handler.
+2. **Simplify `OnChapterChanged`:** validate input; if text is empty or invalid,
+   accept the current value (already 1 from Rule 2a). No `InvalidateControl`, no
+   deferred scheduling.
+3. **Simplify `OnVerseChanged`:** validate or default to 1; schedule
+   `GoToVerseDeferred` only when `m_currentBookIndex > 0` and `m_currentChapter > 0`.
+4. **Remove `ExecutePendingChapter` and `GoToChapterDeferred`** — chapter entry no
+   longer drives navigation or display updates.
+5. **Update Prev/Next Book and Chapter buttons** to set all three fields and call
+   `m_ribbon.Invalidate` (synchronous from `onAction`, safe).
+   *Partially applied 2026-04-15: `NextButton`, `PrevButton`, `GoToChapter` all set
+   `m_currentChapter = 1` / `m_currentVerse = 1` (Rule 2a). Display update relies
+   on the existing `m_ribbon.Invalidate` already present in each handler.*
+6. **Confirm:** `Book Tab Chapter Tab Verse Enter` navigates correctly; Chapter and
+   Verse fields show "1" immediately after Book is confirmed.
+
+### Status
+
+| Item | Status |
+|------|--------|
+| Bug 26 — Tab after chapter entry goes to document | **OPEN — proposed fix in § 28** |
+| Architecture — default-fill + action-gate model | **IN PROGRESS** |
+| Step 1 — Rule 2a: `OnBookChanged` sets chapter/verse = 1 | **CONFIRMED 2026-04-15** |
+| Step 2 — Simplify `OnChapterChanged`: validate only, no invalidation or deferred | **CONFIRMED 2026-04-15** |
+| Step 5 (partial) — Rule 2a in `NextButton`, `PrevButton`, `GoToChapter` | **APPROVED — applied 2026-04-15** |

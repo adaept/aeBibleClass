@@ -7,6 +7,9 @@ Peter-USE REFINED English Bible CONTENTS.pdf
 MyOutfile_unpacked/
 MyInfile_unpacked/
 fonts/
+Ribbon test*.docm
+/Ribbon test
+*.zip
 
 #################
 ## Microsoft Word

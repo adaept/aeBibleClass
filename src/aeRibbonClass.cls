@@ -38,6 +38,7 @@ Private m_bookmarkIndex  As Long
 Private m_savedPos       As Long
 Private m_bookAbbr       As String
 Private headingData(1 To 66, 0 To 1) As Variant
+Private chapterData(1 To 66, 1 To 150) As Long   ' H2 char positions; populated by CaptureHeading1s
 Private m_currentBookIndex As Long   ' 1-based index into headingData; 0 = not set
 Private m_currentBookPos   As Long   ' character position of book H1 in document
 Private m_currentChapter    As Long   ' current chapter number; 0 = not set
@@ -249,8 +250,8 @@ Private Sub NextButton()
     nextPos = CLng(headingData(nextIdx, 1))
     m_currentBookIndex = nextIdx
     m_currentBookPos = nextPos
-    m_currentChapter = 0
-    m_currentVerse = 0
+    m_currentChapter = 1   ' Rule 2a
+    m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
     ' Range.Select moves the document cursor to the new book heading (not ScrollIntoView).
     ' Called from onAction — focus returns to document after button activation regardless.
@@ -279,8 +280,8 @@ Private Sub PrevButton()
     prevPos = CLng(headingData(prevIdx, 1))
     m_currentBookIndex = prevIdx
     m_currentBookPos = prevPos
-    m_currentChapter = 0
-    m_currentVerse = 0
+    m_currentChapter = 1   ' Rule 2a
+    m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
     ' Range.Select moves the document cursor (see NextButton comment — same rationale).
     ActiveDocument.Range(prevPos, prevPos).Select
@@ -302,10 +303,14 @@ End Sub
 '   - Audit-traceable: logs execution status to Immediate Window
 '===========================================================================================
 Public Sub CaptureHeading1s()
+    ' Single-pass scan: captures all H1 (book) and H2 (chapter) heading positions.
+    ' H1 positions go to headingData(1..66, 0..1).
+    ' H2 positions go to chapterData(bookIdx, chNum) — O(1) lookup replaces FindChapterPos loop.
     On Error GoTo PROC_ERR
     Static hasRun As Boolean
     Dim para As Word.Paragraph
-    Dim i        As Long
+    Dim i        As Long   ' H1 slot index (1-based); incremented after each H1 is stored
+    Dim j        As Long   ' chapter count within current book; reset on each H1
     Dim paraText As String
 
     If hasRun Then
@@ -314,13 +319,23 @@ Public Sub CaptureHeading1s()
     End If
 
     i = 1
+    j = 0
     For Each para In ActiveDocument.Paragraphs
         If para.style = "Heading 1" Then
             If i > 66 Then Exit For
+            j = 0
             paraText = Trim(Replace(para.Range.Text, vbCr, ""))
             headingData(i, 0) = paraText
             headingData(i, 1) = para.Range.Start
             i = i + 1
+        ElseIf para.style = "Heading 2" Then
+            ' i > 1 means at least one H1 has been stored; current book index is i-1
+            If i > 1 Then
+                j = j + 1
+                If j <= 150 Then
+                    chapterData(i - 1, j) = para.Range.Start
+                End If
+            End If
         End If
     Next para
 
@@ -503,8 +518,8 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
 
     m_currentBookIndex = i
     m_currentBookPos = CLng(headingData(i, 1))
-    m_currentChapter = 0
-    m_currentVerse = 0
+    m_currentChapter = 1   ' Rule 2a: default to 1 so cmbChapter displays "1" after Tab
+    m_currentVerse = 1     ' Rule 2a: default to 1 so cmbVerse displays "1" after Tab
     m_currentChapterPos = 0
 
     ' Invalidate so ribbon re-queries enabled state from current field values.
@@ -534,31 +549,19 @@ End Sub
 ' -- Chapter row (Step 3) ------------------------------------------------------
 
 Private Function FindChapterPos(ByVal chNum As Long) As Long
-    ' Returns character position of the Nth Heading 2 after the current book H1.
-    ' Returns 0 if not found.
-    On Error GoTo PROC_ERR
-    Dim r As Word.Range
-    Set r = ActiveDocument.Range(m_currentBookPos, ActiveDocument.Content.End)
-    Dim j As Long
-    For j = 1 To chNum
-        r.Find.ClearFormatting
-        r.Find.style = ActiveDocument.Styles("Heading 2")
-        r.Find.Text = ""
-        r.Find.Forward = True
-        r.Find.Wrap = wdFindStop
-        If Not r.Find.Execute Then
-            FindChapterPos = 0
-            Exit Function
-        End If
-        If j < chNum Then
-            r.Start = r.End
-            r.End = ActiveDocument.Content.End
-        End If
-    Next j
-    FindChapterPos = r.Start
-    Exit Function
-PROC_ERR:
-    FindChapterPos = 0
+    ' Direct lookup from pre-built chapterData index (O(1)).
+    ' chapterData is populated by CaptureHeading1s at load time — same pass as H1 scan.
+    ' Old path: chNum consecutive Range.Find.Execute calls (O(n), up to 119 for Psalm 119).
+    ' New path: one array read regardless of chapter number or book.
+    If m_currentBookIndex < 1 Or m_currentBookIndex > 66 Then
+        FindChapterPos = 0
+        Exit Function
+    End If
+    If chNum < 1 Or chNum > 150 Then
+        FindChapterPos = 0
+        Exit Function
+    End If
+    FindChapterPos = chapterData(m_currentBookIndex, chNum)
 End Function
 
 Private Sub GoToChapter(ByVal chNum As Long)
@@ -584,7 +587,7 @@ Private Sub GoToChapter(ByVal chNum As Long)
     ' previous verse when Enter returned focus to the document (Bug 22b).
     ActiveDocument.Range(chPos, chPos).Select
     m_currentChapter = chNum
-    m_currentVerse = 0
+    m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = chPos   ' cache for GoToVerse — avoids repeat FindChapterPos calls
 
     If Not m_ribbon Is Nothing Then
@@ -641,36 +644,21 @@ Public Function GetChapterText(control As IRibbonControl) As String
 End Function
 
 Public Sub OnChapterChanged(control As IRibbonControl, text As String)
-    ' comboBox onChange fires on Enter, Tab, and each keystroke.
-    ' Navigation is deferred via Application.OnTime (same pattern as OnVerseChanged).
-    ' Calling ScrollIntoView synchronously here steals Tab focus to the document
-    ' (Bug 20) — the GoToChapterDeferred path fires after the key event clears.
+    ' § 28 Step 2: validate only — no InvalidateControl, no deferred scheduling.
+    ' onChange fires on each keystroke and on Tab/Enter commit.
+    ' If text is empty or out of range, retain the current value (1 by default from
+    ' Rule 2a; never leaves the field in an unknown state).
+    ' Navigation is not triggered here — verse confirmation is the sole trigger.
     On Error GoTo PROC_ERR
-    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    If Not IsNumeric(Trim(text)) Then GoTo PROC_EXIT
     Dim chNum As Long
     chNum = CLng(Trim(text))
     Dim bookName As String
     bookName = CStr(headingData(m_currentBookIndex, 0))
     If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then GoTo PROC_EXIT
     m_currentChapter = chNum
-    m_currentVerse = 0
-    m_currentChapterPos = 0   ' cleared; will be populated on first GoToVerse call
-    m_pendingVerse = 0
-    ' InvalidateControl fires synchronously here — before Tab routing reads the cache.
-    ' Do NOT invalidate "cmbChapter" (self-invalidation during Tab commit disrupts Tab
-    ' focus transition and sends Tab to the document — Bug 23b).
-    If Not m_ribbon Is Nothing Then
-        m_ribbon.InvalidateControl "PrevChapterButton"
-        m_ribbon.InvalidateControl "NextChapterButton"
-        m_ribbon.InvalidateControl "cmbVerse"
-        m_ribbon.InvalidateControl "PrevVerseButton"
-        m_ribbon.InvalidateControl "NextVerseButton"
-    End If
-    m_pendingChapter = chNum
-    Dim projName As String
-    projName = Application.ActiveDocument.VBProject.Name
-    Application.OnTime Now, projName & ".basRibbonDeferred.GoToChapterDeferred"
+    m_currentChapterPos = 0
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -688,7 +676,15 @@ End Sub
 ' context (Bug 21). Navigation occurs via GoToVerse (uses FindChapterPos) or via the
 ' Prev/Next Chapter buttons (GoToChapter direct).
 Public Sub ExecutePendingChapter()
+    ' Fires from basRibbonDeferred.GoToChapterDeferred after the key event clears.
+    ' Verse controls are invalidated here rather than in OnChapterChanged so that
+    ' they update AFTER Tab routing has already moved focus to cmbVerse (Bug 26).
     m_pendingChapter = 0
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl "cmbVerse"
+        m_ribbon.InvalidateControl "PrevVerseButton"
+        m_ribbon.InvalidateControl "NextVerseButton"
+    End If
 End Sub
 
 Public Sub OnPrevChapterClick(control As IRibbonControl)
