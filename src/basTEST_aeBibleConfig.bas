@@ -13,6 +13,8 @@ Option Private Module
 Public Sub WordEditingConfig()
     ' Add other procedure call as required
     PromoteApprovedStyles
+    ' Uncomment this to check priority settings
+    'DumpPriorities
 End Sub
 
 Public Sub PromoteApprovedStyles()
@@ -22,9 +24,11 @@ Public Sub PromoteApprovedStyles()
     Dim i As Long
 
     'List your approved styles in the order you want them to appear
-    approved = Array("Normal", "Body Text", "Heading 1", "Heading 2", "CustomParaAfterH1", "CustomParaAfterH1-2nd", "DatAuthRef", _
+    approved = Array("Normal", "Body Text", "Heading 1", "Heading 2", _
+                        "CustomParaAfterH1", "CustomParaAfterH1-2nd", "DatAuthRef", _
                         "Chapter Verse marker", "Verse marker", _
                         "EmphasisBlack", "EmphasisRed", "Lamentation", "Psalms BOOK", _
+                        "Words of Jesus", "TheHeaders", "TheFooters", _
                         "Footnote Reference", "Footnote Text" _
                )
 
@@ -44,5 +48,15 @@ Public Sub PromoteApprovedStyles()
         End If
         On Error GoTo 0
     Next i
+    Debug.Print "PromoteApprovedStyles: Done!"
+End Sub
+
+Sub DumpPriorities()
+    Dim s As style
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
+            Debug.Print s.NameLocal & "  ->  " & s.Priority
+        End If
+    Next s
 End Sub
 
