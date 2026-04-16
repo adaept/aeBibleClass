@@ -7,10 +7,15 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #600 -
-' #599 -
-' #598 -
-' #597 -
+' #605 -
+' #604 -
+' #603 -
+' #602 -
+' #601 - Build Word configuration module for consistent editing setup [feat][wip]
+' #600 - Consider Enter button in ribbon to activate search Pros/Cons [idea]
+' #599 - First load Gen tab tab tab 119 tab sets focus in docm, second use tab will go through all controls [bug]
+' #598 - Gen tab fills C/V with 1/1 but does not enable C/V Prev/Next buttons [bug]
+' #597 - New Search should set the focus in cmbBook and not the docm [bug]
 ' #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #484 - Store the Verse Map as a Byte Array [impr]

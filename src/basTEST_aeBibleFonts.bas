@@ -158,8 +158,8 @@ Public Sub RedefineFootnoteStyle_NotoSans()
 
     With s.Font
         .Name = "Noto Sans"
-        .Size = 7
-        .Bold = False
+        .Size = 8
+        .Bold = True
         .Italic = False
         .Underline = wdUnderlineNone
         .color = wdColorAutomatic
@@ -366,4 +366,3 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Identify_ArialUnicodeMS_Paragraphs of Module basTEST_aeBibleFonts"
     Resume PROC_EXIT
 End Sub
-
