@@ -1183,78 +1183,6 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Sub AuditFontUsage_ParagraphsAndHeadersFooters()
-    On Error GoTo PROC_ERR
-    Dim para As Word.Paragraph
-    Dim fontMap As Object
-    Dim fName As String
-    Dim keyVar As Variant
-    Dim logBuffer As String
-    Dim sec As Word.Section
-    Dim hf As HeaderFooter
-    Dim hfTypes As Variant
-    Dim hfKind As Variant
-
-    Set fontMap = CreateObject("Scripting.Dictionary")
-
-    ' Scan body paragraphs
-    For Each para In ActiveDocument.Paragraphs
-        fName = para.Range.Characters(1).Font.Name
-        If Not fontMap.Exists(fName) Then
-            fontMap.Add fName, 1
-        Else
-            fontMap(fName) = fontMap(fName) + 1
-        End If
-    Next para
-
-    ' Define header/footer types
-    hfTypes = Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
-
-    ' Scan header/footer paragraphs
-    For Each sec In ActiveDocument.Sections
-        For Each hfKind In hfTypes
-            Set hf = sec.Headers(hfKind)
-            If hf.Exists Then
-                For Each para In hf.Range.Paragraphs
-                    fName = para.Range.Characters(1).Font.Name
-                    If Not fontMap.Exists(fName) Then
-                        fontMap.Add fName, 1
-                    Else
-                        fontMap(fName) = fontMap(fName) + 1
-                    End If
-                Next para
-            End If
-
-            Set hf = sec.Footers(hfKind)
-            If hf.Exists Then
-                For Each para In hf.Range.Paragraphs
-                    fName = para.Range.Characters(1).Font.Name
-                    If Not fontMap.Exists(fName) Then
-                        fontMap.Add fName, 1
-                    Else
-                        fontMap(fName) = fontMap(fName) + 1
-                    End If
-                Next para
-            End If
-        Next hfKind
-    Next sec
-
-    ' Output results
-    logBuffer = "=== Font Usage Across Body, Headers, and Footers ===" & vbCrLf
-    For Each keyVar In fontMap.Keys
-        logBuffer = logBuffer & "- " & keyVar & ": " & fontMap(keyVar) & " paragraph(s)" & vbCrLf
-    Next
-
-    Debug.Print logBuffer
-    MsgBox "Full font audit complete. See Immediate Window.", vbInformation
-
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AuditFontUsage_ParagraphsAndHeadersFooters of Module Module1"
-    Resume PROC_EXIT
-End Sub
-
 Function CenturyRangeToYears(StartCentury As Long, EndCentury As Long) As String
     Dim sStart As Long, sEnd As Long
     Dim eStart As Long, eEnd As Long
@@ -1535,5 +1463,6 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseAndValidateString of Module Module1"
     Resume PROC_EXIT
 End Sub
+
 
 

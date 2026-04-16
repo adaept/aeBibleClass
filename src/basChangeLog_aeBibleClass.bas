@@ -9,7 +9,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #605 -
 ' #604 -
-' #603 -
 ' #601 - Build Word configuration module for consistent editing setup [feat][wip]
 ' #600 - Consider Enter button in ribbon to activate search Pros/Cons [idea]
 ' #599 - First load Gen tab tab tab 119 tab sets focus in docm, second use tab will go through all controls [bug]
@@ -75,6 +74,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #603 - Add find font routine and fix use of Palatino - verify by using AuditFontUsage_ParagraphsAndHeadersFooters [impr]
     ' FIXED - #602 - Only print styles with priority <> 99 [impr]
     ' [obso] - #492 - Add a step for Verse Boundary Validation - Done in latest DSP code
     ' [obso] - #491 - Add a step for Cross-Book Range Validation - Done in latest DSP code
