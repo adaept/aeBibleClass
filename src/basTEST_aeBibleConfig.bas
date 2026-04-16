@@ -14,7 +14,7 @@ Public Sub WordEditingConfig()
     ' Add other procedure call as required
     PromoteApprovedStyles
     ' Uncomment this to check priority settings
-    'DumpPriorities
+    DumpPrioritiesSorted
 End Sub
 
 Public Sub PromoteApprovedStyles()
@@ -77,5 +77,60 @@ Public Sub DumpPriorities()
             Debug.Print s.NameLocal & "  ->  " & s.Priority
         End If
     Next s
+End Sub
+
+Public Sub DumpPrioritiesSorted()
+
+    Dim s As style
+    Dim arr() As Variant
+    Dim count As Long
+    Dim i As Long, j As Long
+    Dim tmpName As String, tmpPri As Long
+
+    'First pass: count eligible styles
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
+            count = count + 1
+        End If
+    Next s
+
+    'Allocate array: 1-based, 2 columns (Name, Priority)
+    ReDim arr(1 To count, 1 To 2)
+
+    'Second pass: fill array
+    count = 1
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
+            arr(count, 1) = s.NameLocal
+            arr(count, 2) = s.Priority
+            count = count + 1
+        End If
+    Next s
+
+    'Sort array by Priority ascending (simple bubble sort, fast enough for <500 styles)
+    For i = LBound(arr, 1) To UBound(arr, 1) - 1
+        For j = i + 1 To UBound(arr, 1)
+            If arr(j, 2) < arr(i, 2) Then
+                'swap
+                tmpName = arr(i, 1)
+                tmpPri = arr(i, 2)
+
+                arr(i, 1) = arr(j, 1)
+                arr(i, 2) = arr(j, 2)
+
+                arr(j, 1) = tmpName
+                arr(j, 2) = tmpPri
+            End If
+        Next j
+    Next i
+
+    'Print sorted results
+    Debug.Print "---- Sorted by Priority ----"
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        If arr(i, 2) <> 99 Then
+            Debug.Print arr(i, 1) & "  ->  " & arr(i, 2)
+        End If
+    Next i
+
 End Sub
 
