@@ -580,7 +580,7 @@ Private Sub CompareDocuments(original As String, modified As String)
     Set docComparison = Application.CompareDocuments(docOriginal, docModified, wdCompareDestinationNew, _
         wdGranularityWordLevel, False, True, False, False)
 
-    ' Save comparison result
+    ' Save comparison Result
     docComparison.SaveAs filePath & "\Comparison.docx"
 
     MsgBox "Comparison complete! See the document for tracked changes."

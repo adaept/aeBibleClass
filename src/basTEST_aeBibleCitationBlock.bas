@@ -110,7 +110,7 @@ End Function
 ' Input is deliberately out of canonical order and contains one malformed
 ' verse spec (103:-11). Expected: 34 PASS, 1 FAIL; output in canonical order.
 ' En dashes use ChrW(8211); NormalizeRawInput converts them to ASCII hyphen.
-' Expected result after sort and fix:
+' Expected Result after sort and fix:
 '   "Gen 1:27; Num 14:18; Deut 32:6; Josh 1:9; 1 Sam 2:2; " & _
 '   "1 Chr 29:10-13; " & _
 '   "Ps 19:1-2; 23:1; 28:7; 68:5; " & _

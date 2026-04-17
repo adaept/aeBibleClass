@@ -351,7 +351,7 @@ Sub SearchParagraphs()
     Debug.Print "Count of paragraphs with only a page break and continuous page break: " & count
     Debug.Print "Index of the first occurrence: " & firstOccurrenceIndex
     
-    ' Go to the first result in the document
+    ' Go to the first Result in the document
     If firstOccurrenceIndex <> -1 Then
         doc.Range(firstOccurrenceIndex, firstOccurrenceIndex).Select
     End If
@@ -1223,7 +1223,7 @@ End Function
 
 Public Sub CountLeftAligned(pageNumStart As Long, pageNumEnd As Long, ByRef someCount As Long)
     On Error GoTo PROC_ERR
-    ' Passes someCount by reference, initiaize to -1 when calling and assign actual result at end of routine
+    ' Passes someCount by reference, initiaize to -1 when calling and assign actual Result at end of routine
     Dim pgRange As Word.Range
     Dim pageStart As Long, pageEnd As Long
 
@@ -1407,7 +1407,7 @@ Sub ParseAndValidateString()
     ' User cancelled
     If Len(s) = 0 Then
         Debug.Print "INPUT : [<empty or cancelled>]"
-        Debug.Print "RESULT: INVALID"
+        Debug.Print "Result: INVALID"
         GoTo PROC_EXIT
     End If
     
@@ -1453,8 +1453,8 @@ Sub ParseAndValidateString()
         End If
     End If
     
-    ' Print result
-    Debug.Print "RESULT: " & IIf(IsValid, "VALID", "INVALID")
+    ' Print Result
+    Debug.Print "Result: " & IIf(IsValid, "VALID", "INVALID")
     Debug.Print String(40, "-")
 
 PROC_EXIT:

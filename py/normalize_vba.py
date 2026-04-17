@@ -16,7 +16,7 @@ NORMALIZATIONS = [
     (r'(?i)\bShell\b',          'Shell',            'Shell built-in function casing'),
     (r'(?i)\.Range\b',          '.Range',           '.Range property on Word Paragraph/Selection/Section'),
     (r'(?i)\bRange(?=:=)',      'Range',            'Range named argument in VBA method calls (Fields.Add, Bookmarks.Add, etc.)'),
-    (r'(?i)\.content\b',         '.Content',         '.Content property on Word.Document (canonical uppercase C)'),
+    (r'(?i)\.content\b',        '.Content',         '.Content property on Word.Document (canonical uppercase C)'),
     (r'(?i)\.Paragraphs\b',     '.Paragraphs',      '.Paragraphs collection property on Document/Range'),
     (r'(?i)\.PageSetup\b',      '.PageSetup',       '.PageSetup property on Section/Document'),
     (r'(?i)\.TopMargin\b',      '.TopMargin',       '.TopMargin property on PageSetup'),
@@ -39,6 +39,7 @@ NORMALIZATIONS = [
     (r'(?i)\bAs\s+(?:Word\.)?Section\b',    'As Word.Section',    'As Word.Section type declaration'),
     (r'(?i)\bAs\s+PageSetup\b',             'As PageSetup',       'As PageSetup type declaration'),
     (r'(?i)\bnote\b',                        'Note',               'Note loop variable (Footnote collection iteration)'),
+    (r'(?i)\bresult\b',                      'Result',             'Result loop variable (Result collection iteration)'),
     (r'(?i)\bitems\b',                       'Items',              'Items variable casing (Collection iteration)'),
     # --- Long-process framework identifiers (added 2026-04-09) ---
     (r'(?i)\bStyleName\b',                   'StyleName',          'StyleName property on aeUpdateCharStyleClass'),

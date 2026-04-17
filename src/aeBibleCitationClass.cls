@@ -2808,7 +2808,7 @@ Public Function SortCitationBlock(ByVal Items As Collection) As Collection
         vals(j + 1) = tmpVal
     Next i
 
-    ' Build result Collection
+    ' Build Result Collection
     Dim Result As New Collection
     For i = 1 To n
         Result.Add vals(i)
@@ -3156,7 +3156,7 @@ Public Sub Test_SemanticFlow_WithParserStub()
         If testFailed Then
             failures = failures + 1
         Else
-            Debug.Print "  RESULT: PASS"
+            Debug.Print "  Result: PASS"
         End If
 
 NextTest:
@@ -3223,9 +3223,9 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
             Debug.Print "  ResolveBook ERROR: "; Err.Description
 
             If tests(i)(1) = FailResolveBook Then
-                Debug.Print "  RESULT: PASS (ResolveBook failed as expected)"
+                Debug.Print "  Result: PASS (ResolveBook failed as expected)"
             Else
-                Debug.Print "  RESULT: FAIL (ResolveBook failed unexpectedly)"
+                Debug.Print "  Result: FAIL (ResolveBook failed unexpectedly)"
                 failures = failures + 1
             End If
 
@@ -3256,7 +3256,7 @@ Public Sub Test_SemanticFlow_WithParserStub_Negative()
             Debug.Print "  FAIL: expected validity = "; tests(i)(1)
             failures = failures + 1
         Else
-            Debug.Print "  RESULT: PASS"
+            Debug.Print "  Result: PASS"
         End If
 
 NextTest:

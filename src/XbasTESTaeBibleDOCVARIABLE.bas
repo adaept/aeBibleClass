@@ -145,7 +145,7 @@ RetrySearch:
     ' Using "GENESIS" as theTextOfH1 for the Heading 1 test
     textFoundHere = FindNextHeading1OnVisiblePage(bookNum, UCase(theTextOfH1))
 
-    ' Evaluate the search result
+    ' Evaluate the search Result
     If textFoundHere Then
         'MsgBox "Success: The text Heading 1 '" & UCase(theTextOfH1) & "' was found on page " & bookNum & ".", vbInformation, "Verification Complete"
         Debug.Print "Success: The text Heading 1 '" & UCase(theTextOfH1) & "' was found on page " & bookNum & "."
@@ -192,7 +192,7 @@ Sub FindDocVariableByName(docVar As String)
     On Error GoTo 0
     On Error GoTo PROC_ERR
 
-    ' Display the result
+    ' Display the Result
     If variableExists Then
         'MsgBox "DOCVARIABLE '" & docVar & "' exists with the value: " & vbCrLf & "'" & variableValue & "'", _
                vbInformation, "Variable Found"

@@ -76,9 +76,9 @@ Public Sub Terminate()
     Debug.Print "Failures:  "; mTestsFailed
 
     If mTestsFailed = 0 Then
-        Debug.Print "RESULT: PASS"
+        Debug.Print "Result: PASS"
     Else
-        Debug.Print "RESULT: FAIL"
+        Debug.Print "Result: FAIL"
     End If
 
     If Not m_log Is Nothing Then
@@ -88,9 +88,9 @@ Public Sub Terminate()
         m_log.Log_Write "Tests Run: " & mTestsRun
         m_log.Log_Write "Failures:  " & mTestsFailed
         If mTestsFailed = 0 Then
-            m_log.Log_Write "RESULT: PASS"
+            m_log.Log_Write "Result: PASS"
         Else
-            m_log.Log_Write "RESULT: FAIL"
+            m_log.Log_Write "Result: FAIL"
         End If
         Set m_log = Nothing
     End If

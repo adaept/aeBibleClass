@@ -29,7 +29,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '       without adding new paragraphs and makes the macro idempotent.
 '   Additionally, any extra paragraphs are removed so the macro can
 '   safely repair documents created by earlier buggy runs.
-' RESULT:
+' Result:
 '   - Only one header line is present
 '   - No blank lines added
 '   - Macro is safe to rerun

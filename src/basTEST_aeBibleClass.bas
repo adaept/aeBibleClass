@@ -141,7 +141,7 @@ End Sub
 '   - Uses WScript.Shell to run `git tag` and check for a match.
 '   - Returns True if the tag exists; False otherwise.
 '   - Call before creating or pushing a new release tag to avoid conflicts.
-'   - Logs result to Immediate Window for audit traceability.
+'   - Logs Result to Immediate Window for audit traceability.
 ' Audit     :
 '   - Ensures tagging is idempotent and reversible.
 '   - Extendable to check remote tags via `git ls-remote --tags`.

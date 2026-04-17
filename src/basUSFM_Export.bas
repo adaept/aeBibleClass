@@ -421,7 +421,7 @@ Private Function TryParseChapterVerseFromStyles( _
     ' leaving an empty string. In practice the early-exit guard above ensures rChap contains
     ' genuine numeric chapter marker digits, so this is unlikely for this document.
     ' If CleanTextForUTF8 is ever extended to strip digit characters, add an IsNumeric guard here
-    ' and return False from TryParseChapterVerseFromStyles on empty/non-numeric result.
+    ' and return False from TryParseChapterVerseFromStyles on empty/non-numeric Result.
     chapNum = CLng(Trim$(CleanTextForUTF8(rChap.Text)))
 
     '------------------------------------------------------------
