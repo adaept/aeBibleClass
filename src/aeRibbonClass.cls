@@ -39,15 +39,15 @@ Private m_savedPos       As Long
 Private m_bookAbbr       As String
 Private headingData(1 To 66, 0 To 1) As Variant
 Private chapterData(1 To 66, 1 To 150) As Long   ' H2 char positions; populated by CaptureHeading1s
-Private m_currentBookIndex As Long   ' 1-based index into headingData; 0 = not set
-Private m_currentBookPos   As Long   ' character position of book H1 in document
+Private m_currentBookIndex As Long    ' 1-based index into headingData; 0 = not set
+Private m_currentBookPos   As Long    ' character position of book H1 in document
 Private m_currentChapter    As Long   ' current chapter number; 0 = not set
 Private m_currentVerse      As Long   ' current verse number; 0 = not set
 Private m_currentChapterPos As Long   ' cached char position of current chapter H2; 0 = not cached
-Private m_pendingChapter   As Long   ' chapter number staged for deferred GoToChapter call
-Private m_pendingVerse     As Long   ' verse number staged for deferred GoToVerse call
+Private m_pendingChapter   As Long    ' chapter number staged for deferred GoToChapter call
+Private m_pendingVerse     As Long    ' verse number staged for deferred GoToVerse call
 Private m_studyVersionSet  As Boolean ' True after IsStudyVersion has been evaluated
-Private m_studyVersionVal  As Boolean ' cached result of IsStudyVersion
+Private m_studyVersionVal  As Boolean ' cached Result of IsStudyVersion
 
 ' Windows API - cursor control
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -943,7 +943,7 @@ End Sub
 ' -- New Search ----------------------------------------------------------------
 
 Public Function GetNewSearchEnabled(control As IRibbonControl) As Boolean
-    GetNewSearchEnabled = (m_currentBookIndex > 0)
+    GetNewSearchEnabled = m_currentBookIndex <> 0
 End Function
 
 Public Sub OnNewSearchClick(control As IRibbonControl)
