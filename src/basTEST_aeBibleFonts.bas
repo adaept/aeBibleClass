@@ -367,29 +367,23 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Public Sub FindParagraphsUsingFont(targetFont As String)
-    Dim p As Word.Paragraph
-    Dim rng As Word.Range
-    Dim paraFont As String
-    Dim count As Long
-
-    Debug.Print "=== Paragraphs Using Font: " & targetFont & " ==="
-
-    For Each p In ActiveDocument.Paragraphs
-        Set rng = p.Range
-        paraFont = rng.Font.Name
-
-        'Check effective font
-        If StrComp(paraFont, targetFont, vbTextCompare) = 0 Then
-            count = count + 1
-            Debug.Print count & ". Sec " & rng.Sections(1).index & _
-                        ", Para " & p.Range.ListFormat.ListString & _
-                        "  |  """ & Left$(Trim$(rng.Text), 80) & """"
-        End If
-    Next p
-
-    Debug.Print "=== Total paragraphs found: " & count & " ==="
-End Sub
+Private Function StoryTypeName(StoryType As WdStoryType) As String
+    Select Case StoryType
+        Case wdMainTextStory: StoryTypeName = "Body"
+        Case wdPrimaryHeaderStory: StoryTypeName = "Primary Header"
+        Case wdFirstPageHeaderStory: StoryTypeName = "First Page Header"
+        Case wdEvenPagesHeaderStory: StoryTypeName = "Even Pages Header"
+        Case wdPrimaryFooterStory: StoryTypeName = "Primary Footer"
+        Case wdFirstPageFooterStory: StoryTypeName = "First Page Footer"
+        Case wdEvenPagesFooterStory: StoryTypeName = "Even Pages Footer"
+        Case wdFootnotesStory: StoryTypeName = "Footnotes"
+        Case wdEndnotesStory: StoryTypeName = "Endnotes"
+        Case wdTextFrameStory: StoryTypeName = "Textboxes"
+        Case wdCommentsStory: StoryTypeName = "Comments"
+        Case 8: StoryTypeName = "TOC"   ' 8 is wdTOCStory in newer versions
+        Case Else: StoryTypeName = "Other Story (" & StoryType & ")"
+    End Select
+End Function
 
 Public Sub AuditFontUsage_ParagraphsAndHeadersFooters()
     On Error GoTo PROC_ERR
@@ -463,4 +457,71 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String)
+    Dim para As Word.Paragraph
+    Dim sec As Word.Section
+    Dim hf As HeaderFooter
+    Dim hfTypes As Variant
+    Dim hfKind As Variant
+    Dim count As Long
+    Dim fName As String
+
+    Debug.Print "=== Paragraphs whose FIRST CHARACTER is font: " & targetFont & " ==="
+
+    ' Body paragraphs
+    For Each para In ActiveDocument.Paragraphs
+        fName = para.Range.Characters(1).Font.Name
+        If StrComp(fName, targetFont, vbTextCompare) = 0 Then
+            count = count + 1
+            Debug.Print count & ". [Body] Sec " & para.Range.Sections(1).index & _
+                        " | """ & Left$(Trim$(para.Range.Text), 80) & """"
+        End If
+    Next para
+
+    ' Header/footer types
+    hfTypes = Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
+
+    ' Header/footer paragraphs
+    For Each sec In ActiveDocument.Sections
+        For Each hfKind In hfTypes
+
+            Set hf = sec.Headers(hfKind)
+            If hf.Exists Then
+                For Each para In hf.Range.Paragraphs
+                    fName = para.Range.Characters(1).Font.Name
+                    If StrComp(fName, targetFont, vbTextCompare) = 0 Then
+                        count = count + 1
+                        Debug.Print count & ". [Header " & HeaderFooterLabel(hfKind) & _
+                                    "] Sec " & sec.index & _
+                                    " | """ & Left$(Trim$(para.Range.Text), 80) & """"
+                    End If
+                Next para
+            End If
+
+            Set hf = sec.Footers(hfKind)
+            If hf.Exists Then
+                For Each para In hf.Range.Paragraphs
+                    fName = para.Range.Characters(1).Font.Name
+                    If StrComp(fName, targetFont, vbTextCompare) = 0 Then
+                        count = count + 1
+                        Debug.Print count & ". [Footer " & HeaderFooterLabel(hfKind) & _
+                                    "] Sec " & sec.index & _
+                                    " | """ & Left$(Trim$(para.Range.Text), 80) & """"
+                    End If
+                Next para
+            End If
+        Next hfKind
+    Next sec
+
+    Debug.Print "=== Total paragraphs found: " & count & " ==="
+End Sub
+
+Private Function HeaderFooterLabel(ByVal kind As WdHeaderFooterIndex) As String
+    Select Case kind
+        Case wdHeaderFooterPrimary:   HeaderFooterLabel = "Primary"
+        Case wdHeaderFooterFirstPage: HeaderFooterLabel = "FirstPage"
+        Case wdHeaderFooterEvenPages: HeaderFooterLabel = "EvenPages"
+        Case Else:                    HeaderFooterLabel = "Other"
+    End Select
+End Function
 

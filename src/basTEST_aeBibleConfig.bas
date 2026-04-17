@@ -17,8 +17,7 @@ Public Sub WordEditingConfig()
     DumpPrioritiesSorted
 End Sub
 
-Public Sub PromoteApprovedStyles()
-
+Private Sub PromoteApprovedStyles()
     Dim s As style
     Dim approved As Variant
     Dim i As Long
@@ -58,29 +57,20 @@ Public Sub PromoteApprovedStyles()
     'Report missing styles
     If missing.Count > 0 Then
         Dim msg As String
-        msg = "WARNING: The following styles were NOT found:" & vbCrLf & vbCrLf
+        msg = "WARNING: The following styles were NOT found:" & vbCrLf
 
         For i = 1 To missing.Count
-            msg = msg & "  � " & missing(i) & vbCrLf
+            msg = msg & " -> " & missing(i) & vbCrLf
         Next i
 
-        MsgBox msg, vbExclamation, "PromoteApprovedStyles Diagnostics"
+        'MsgBox msg, vbExclamation, "PromoteApprovedStyles Diagnostics"
+        Debug.Print msg & " style is missing!"
     End If
 
     Debug.Print "PromoteApprovedStyles: Done!"
 End Sub
 
-Public Sub DumpPriorities()
-    Dim s As style
-    For Each s In ActiveDocument.Styles
-        If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
-            Debug.Print s.NameLocal & "  ->  " & s.Priority
-        End If
-    Next s
-End Sub
-
-Public Sub DumpPrioritiesSorted()
-
+Private Sub DumpPrioritiesSorted()
     Dim s As style
     Dim arr() As Variant
     Dim count As Long
@@ -131,6 +121,5 @@ Public Sub DumpPrioritiesSorted()
             Debug.Print arr(i, 1) & "  ->  " & arr(i, 2)
         End If
     Next i
-
 End Sub
 
