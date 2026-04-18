@@ -1304,7 +1304,7 @@ Sub CountNumericOrdinals()
     On Error GoTo PROC_ERR
 
     Dim cntST As Long, cntND As Long, cntRD As Long, cntTH As Long
-    Dim TOTAL As Long
+    Dim Total As Long
     Dim showReview As Boolean
 
     ' ===== TOGGLE REVIEW MODE =====
@@ -1352,7 +1352,7 @@ Sub CountNumericOrdinals()
                         Case "th": cntTH = cntTH + 1
                     End Select
 
-                    TOTAL = TOTAL + 1
+                    Total = Total + 1
 
                     If showReview Then
                         rng.Select
@@ -1380,7 +1380,7 @@ Done:
         "nd: " & cntND & vbCrLf & _
         "rd: " & cntRD & vbCrLf & _
         "th: " & cntTH & vbCrLf & _
-        "TOTAL: " & TOTAL & vbCrLf & _
+        "TOTAL: " & Total & vbCrLf & _
         "Ordinal Count Results"
 
 PROC_EXIT:
