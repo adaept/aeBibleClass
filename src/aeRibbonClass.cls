@@ -169,11 +169,11 @@ End Sub
 ' -- Enabled State Callback ----------------------------------------------------
 
 Public Function GetNextBkEnabled(control As IRibbonControl) As Boolean
-    GetNextBkEnabled = (m_currentBookIndex > 0)
+    GetNextBkEnabled = True   ' always-enable (#599); OnNextBkClick guards m_currentBookIndex = 0 or >= 66
 End Function
 
 Public Function GetPrevBkEnabled(control As IRibbonControl) As Boolean
-    GetPrevBkEnabled = (m_currentBookIndex > 0)
+    GetPrevBkEnabled = True   ' always-enable (#599); OnPrevBkClick guards m_currentBookIndex <= 1
 End Function
 
 ' -- Initialization ------------------------------------------------------------
@@ -529,8 +529,8 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
 
     m_currentBookIndex = i
     m_currentBookPos = CLng(headingData(i, 1))
-    m_currentChapter = 0   ' display "1" via GetChapterText; keep 0 so chapter buttons stay disabled
-    m_currentVerse = 0     ' display "1" via GetVerseText; keep 0 so verse buttons stay disabled
+    m_currentChapter = 1   ' default chapter 1 — enables Prev/Next Chapter buttons (#598)
+    m_currentVerse = 1     ' default verse 1 — enables Prev/Next Verse buttons (#598)
     m_currentChapterPos = 0
 
     ' Invalidate so ribbon re-queries enabled state from current field values.
@@ -627,11 +627,11 @@ Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
 End Function
 
 Public Function GetPrevChapterEnabled(control As IRibbonControl) As Boolean
-    GetPrevChapterEnabled = (m_currentChapter > 0)
+    GetPrevChapterEnabled = True   ' always-enable (#599); OnPrevChapterClick guards m_currentChapter > 1
 End Function
 
 Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
-    GetNextChapterEnabled = (m_currentChapter > 0 And m_currentBookIndex > 0)
+    GetNextChapterEnabled = True   ' always-enable (#599); OnNextChapterClick guards m_currentChapter = 0 or m_currentBookIndex = 0
 End Function
 
 Public Function GetChapterCount(control As IRibbonControl) As Long
@@ -731,17 +731,11 @@ End Sub
 ' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
 
 Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
-    ' Always enabled when chapter is selected — same "always-enable at boundary"
-    ' invariant as GetPrevChapterEnabled = (m_currentChapter > 0).
-    ' Ensures Tab flows through PrevVerseButton rather than stopping at a disabled
-    ' button that blocks the path to cmbVerse. OnPrevVerseClick guards the click.
-    GetPrevVerseEnabled = (m_currentChapter > 0)
+    GetPrevVerseEnabled = True   ' always-enable (#599); OnPrevVerseClick guards m_currentVerse > 1
 End Function
 
 Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
-    ' Always enabled when chapter is selected (same invariant as GetPrevVerseEnabled).
-    ' OnNextVerseClick guards the click boundary.
-    GetNextVerseEnabled = (m_currentChapter > 0)
+    GetNextVerseEnabled = True   ' always-enable (#599); OnNextVerseClick guards m_currentVerse = 0 or m_currentChapter = 0 or m_currentBookIndex = 0
 End Function
 
 Public Function GetVerseEnabled(control As IRibbonControl) As Boolean

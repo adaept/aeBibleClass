@@ -15,7 +15,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #601 - Build Word configuration module for consistent editing setup [feat][wip]
 ' #600 - Consider Enter button in ribbon to activate search Pros/Cons [idea]
 ' #599 - First load Gen tab tab tab 119 tab sets focus in docm, second use tab will go through all controls [bug]
-' #598 - Gen tab fills C/V with 1/1 but does not enable C/V Prev/Next buttons [bug]
 ' #597 - New Search should set the focus in cmbBook and not the docm [bug]
 ' #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
 ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
@@ -77,8 +76,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #598 - Gen tab fills C/V with 1/1 but does not enable C/V Prev/Next buttons [bug]
     ' FIXED - #605 - Add ReportFootnoteComplexity - it should return 0 complex in 1000 footnotes [test]
-    ' FIXED - #604 - Add FindParagraphsByFirstCharFont_BodyHeadersFooters, should matcch result of AuditFontUsage_ParagraphsAndHeadersFooters [test]
+    ' FIXED - #604 - Add FindParagraphsByFirstCharFont_BodyHeadersFooters, should matcch Result of AuditFontUsage_ParagraphsAndHeadersFooters [test]
     ' FIXED - #603 - Add find font routine and fix use of Palatino - verify by using AuditFontUsage_ParagraphsAndHeadersFooters [impr]
     ' FIXED - #602 - Only print styles with priority <> 99 [impr]
     ' [obso] - #492 - Add a step for Verse Boundary Validation - Done in latest DSP code
@@ -186,7 +186,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #499 - Correct Defensive Pattern - Capture the error immediately after the risky operation [impr]
     ' FIXED - #498 - Reset error handler immediately after call [bug]
     ' FIXED - #497 - Use assert tests with Stage 8 [impr]
-    ' FIXED - #496 - AssertFalse not counting towards result [bug]
+    ' FIXED - #496 - AssertFalse not counting towards Result [bug]
     ' FIXED - #495 - Fix Stage 4 tests (wrong dupcilation of InterpretStructure code) [bug]
     ' FIXED - #493 - Add documentation for Stage 14 Canonical Compression
     ' FIXED - #487 - Add test and code for Stage 13 - Contextual Shorthand Expansion
@@ -223,7 +223,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' [obso] - #415 - Normalize case for output [impr]
     ' [obso] - #414 - Enforce no verse ranges across chapters [impr]
     ' [obso] - #413 - Enforce SBL punctuation (: vs .) [impr]
-    ' [obso] - #221 - Add test that will compare DOCVARIABLEs with result of PrintHeading1sByLogicalPage for page verification [test]
+    ' [obso] - #221 - Add test that will compare DOCVARIABLEs with Result of PrintHeading1sByLogicalPage for page verification [test]
     ' [obso] - #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
     ' [obso] - #042 - Add readme to aeWordGit [doc]
     ' [obso] - #035 - Add test for page numbers of h1 on odd or even pages [test]
@@ -267,11 +267,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #412 - Add resolver checks for EBNF module
     ' FIXED - #410 - Define canonical Bible book list for Excel/Access-style normalization [refac]
     ' FIXED - #409 - Create initial SBL Unified EBNF design for Bible citation parser
-    ' FIXED - #392 - All Bible text paragraphs should be justified. Make test to count (from P18-931) left justified. Expect 0 result [test]
+    ' FIXED - #392 - All Bible text paragraphs should be justified. Make test to count (from P18-931) left justified. Expect 0 Result [test]
     ' FIXED - #398 - Fix RunRepairWrappedVerseMarkers_Across_Pages_From so it DOES NOT put one verse per para for v59 [bug]
     ' FIXED - #397 - Add global OneVersePerPara to separate v59 branch from Main [impr]
     ' FIXED - #408 - Add code from Module1 for #407 wip commit to aeBibleClass and then clean up
-    ' FIXED - #407 - When searching for U+0020,U+201D the result is 0. Using Ctrl+H returns 1 in the footer [bug]
+    ' FIXED - #407 - When searching for U+0020,U+201D the Result is 0. Using Ctrl+H returns 1 in the footer [bug]
     ' FIXED - #406 - CountUnicodeSeq is not used. CountContraction is the correct function, typo [bug]
     ' FIXED - #405 - Add test for space followed by right double closing quote: U+0020, U+201D [test]
     ' FIXED - #404 - Move test 66 " '" outside of CreateContractionArray so that it is with the UniCode character tests [refac]
@@ -311,7 +311,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #378 - Simplify use of contraction code [refac]
     ' FIXED - #382 - Add function to replace `'` with  Apostrophe, =ChrW$(AposCP), when calling GetPassFail routine for ResultArray 52+
     ' FIXED - #380 - Create Contraction Array and verify in RunTest 52 and 55
-    ' FIXED - #379 - Separate initialization of actual and expected result arrays from conversion to 1-base array
+    ' FIXED - #379 - Separate initialization of actual and expected Result arrays from conversion to 1-base array
     ' FIXED - #377 - Add contractions code to test suite [impr]
     ' FIXED - #376 - Add routine to count use of English contractions e.g. can't, for inclusion in test suite [feat]
     ' FIXED - #375 - Add routine to Show Unicode Of Single Character Selection and account for surrogate pairs as needed [feat]
@@ -460,7 +460,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic [test]
     ' FIXED - #216 - Error with H1 count of 66 vs 59 for show/hide true false
     '    Problem list = "Joshua", "2 Kings", "Nehemiah", "Habakkuk", "Haggai", "Philemon", "1 Peter"
-    '        The issue wasn’t with the styles or outline levels themselves, but with invisible or corrupted inline content
+    '        The issue wasnï¿½t with the styles or outline levels themselves, but with invisible or corrupted inline content
     '        (probably non-printing characters or hidden formatting) hiding in those paragraphs. When one cleaned one (Joshua),
     '        it likely triggered a reflow/re-rendering in Word that corrected the others.
     '    Solution - Click at the end of the word "Joshua" and press Delete Then press Enter once.
@@ -534,7 +534,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #146 - TestReport FAIL!!!! message is not correctly aligned - pad PASS to be "PASS    "
     ' FIXED - #149 - Replace Expected with oneBasedExpectedArray(x) as appropriate
     ' FIXED - #144 - Add code for checking fonts used
-    ' FIXED - #123 - Add file TestReport.txt output additional to console result for GitHub tracking
+    ' FIXED - #123 - Add file TestReport.txt output additional to console Result for GitHub tracking
     ' FIXED - #046 - Update style of cv marker to be smaller than Verse marker
     ' FIXED - #082 - Fix Word paragraph style so minimal empty paragraphs are needed
     ' [obso] #039 - Replace manual TOC with auto-generated version (this is too slow)
@@ -542,7 +542,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 20250420 - v008
     ' FIXED - #140 - Set version info as global variables and assign in Class_Initialize
     ' FIXED - #139 - Add UTF8bom-Template.txt with BunnyEgg emoji for Easter using :emojisense in VS Code
-    ' FIXED - #133 - Store actual result is 1 based results array for comparison without recalc
+    ' FIXED - #133 - Store actual Result is 1 based results array for comparison without recalc
     ' FIXED - #138 - Create 1 based array for storing results
     ' FIXED - #137 - Update test to notSpaceCount CountNotSpacesAfterFootnoteReferences [test]
     ' FIXED - #108 - Add test for all line feed to have a space before (Test 32 and 33) [test]
@@ -593,7 +593,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - See #073 - #067 - Add test to Count Red Footnote References
     ' FIXED - See #091 - #053 - Add test for Footnote Reference followed by a space
     ' FIXED - #089 - Continue find of footnote followed by space ("^f ") from 500 on, and fix as appropriate
-    ' FIXED - #093 - Add initial PassFail test for result and expected
+    ' FIXED - #093 - Add initial PassFail test for Result and expected
     ' FIXED - #080 - Review all footnote references so that, as much as possible, they are at the end of a paragraph
 ' 20250402 - v006
     ' FIXED - #091 - Add test for CountSpacesAfterFootnotes - also shows Footnote References and Following Chars (ASCII Val) [test]
