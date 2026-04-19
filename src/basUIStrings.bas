@@ -20,6 +20,8 @@ Option Private Module
 '   - ComboBox controls: first letter of the navigation level (B/C/V)
 '   - Prev/Next buttons: punctuation with natural directional meaning
 '   - Action buttons: first letter of the action (S=Search, A=About)
+'   Documentation in Ribbon Design.md must match these constants exactly.
+'   Ribbon tab keytip (Alt, Y2) is defined in customUI XML, not in this module.
 ' =============================================================================
 
 ' -- KeyTips -------------------------------------------------------------------
