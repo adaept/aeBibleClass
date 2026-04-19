@@ -49,6 +49,10 @@ Public Sub GoToVerseDeferred()
     ' Instance().ExecutePendingVerse
 End Sub
 
+Public Sub UpdateStatusBarDeferred()
+    Instance().UpdateStatusBar
+End Sub
+
 Public Sub ResetChapterDisplayDeferred()
     Instance().ResetChapterDisplay
 End Sub

@@ -56,7 +56,10 @@ NORMALIZATIONS = [
     (r'(?i)\bLog_Close\b',                   'Log_Close',          'Log_Close method on aeLoggerClass'),
     (r'(?i)\bLog_UnicodeDetail\b',           'Log_UnicodeDetail',  'Log_UnicodeDetail method on aeLoggerClass'),
     (r'(?i)\bSetLogger\b',                   'SetLogger',          'SetLogger method on aeAssertClass'),
-    # --- GoButton identifiers (added 2026-04-18) ---
+    # --- GoButton and SBL status identifiers (added 2026-04-18) ---
+    (r'(?i)\bToSBLShortForm\b',         'ToSBLShortForm',       'ToSBLShortForm method on aeBibleCitationClass'),
+    (r'(?i)\bUpdateStatusBar\b',        'UpdateStatusBar',      'UpdateStatusBar method on aeRibbonClass'),
+    (r'(?i)\bUpdateStatusBarDeferred\b','UpdateStatusBarDeferred', 'UpdateStatusBarDeferred in basRibbonDeferred'),
     (r'(?i)\bGetGoEnabled\b',           'GetGoEnabled',       'GetGoEnabled callback in basBibleRibbonSetup / method on aeRibbonClass'),
     (r'(?i)\bOnGoClick\b',              'OnGoClick',          'OnGoClick callback in basBibleRibbonSetup / method on aeRibbonClass'),
     # --- Ribbon keyboard navigation identifiers (added 2026-04-13) ---

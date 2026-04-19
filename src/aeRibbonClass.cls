@@ -270,6 +270,7 @@ Private Sub NextButton()
     ' verse position (Bug 22b).
     ActiveDocument.Range(nextPos, nextPos).Select
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+    Application.OnTime Now, Application.ActiveDocument.VBProject.Name & ".basRibbonDeferred.UpdateStatusBarDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -297,6 +298,7 @@ Private Sub PrevButton()
     ' Range.Select moves the document cursor (see NextButton comment — same rationale).
     ActiveDocument.Range(prevPos, prevPos).Select
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+    Application.OnTime Now, Application.ActiveDocument.VBProject.Name & ".basRibbonDeferred.UpdateStatusBarDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -601,7 +603,9 @@ Private Sub GoToChapter(ByVal chNum As Long)
     m_currentChapter = chNum
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = chPos   ' cache for GoToVerse — avoids repeat FindChapterPos calls
-    Application.StatusBar = False   ' restore Word default; SBL citation update — see review § 11
+    Dim projNameCt As String
+    projNameCt = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projNameCt & ".basRibbonDeferred.UpdateStatusBarDeferred"
 
     If Not m_ribbon Is Nothing Then
         m_ribbon.InvalidateControl "cmbChapter"
@@ -809,6 +813,15 @@ Public Sub ExecutePendingVerse()
     End If
 End Sub
 
+Public Sub UpdateStatusBar()
+    ' Called from basRibbonDeferred.UpdateStatusBarDeferred via Application.OnTime.
+    ' Fires after Word's own post-onAction status bar refresh, overwriting "Page X of Y"
+    ' with the SBL citation for the current position.
+    If m_currentBookIndex = 0 Or m_currentChapter = 0 Then Exit Sub
+    Application.StatusBar = aeBibleCitationClass.ToSBLShortForm( _
+        CStr(headingData(m_currentBookIndex, 0)) & " " & m_currentChapter & ":" & m_currentVerse)
+End Sub
+
 Public Sub OnPrevVerseClick(control As IRibbonControl)
     If m_currentVerse > 1 Then GoToVerse m_currentVerse - 1
 End Sub
@@ -872,12 +885,11 @@ Private Sub GoToVerse(ByVal vsNum As Long)
     ' for verse navigation is therefore obsolete.
     Application.StatusBar = "Navigating ..."   ' visible during GoToVerseByScan layout cost
     GoToVerseByScan chPos, vsNum
-    ' Do NOT clear status bar here. Range.Select inside GoToVerseByScan returns to VBA
-    ' before Word's layout engine finishes — clearing here leaves the user with no feedback
-    ' during the remaining ~10s of background pagination. The next navigation overwrites
-    ' this message. SBL citation update (§ 11) will replace it on completion.
 
     m_currentVerse = vsNum
+    Dim projNameSt As String
+    projNameSt = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projNameSt & ".basRibbonDeferred.UpdateStatusBarDeferred"
 
     If Not m_ribbon Is Nothing Then
         m_ribbon.InvalidateControl "cmbVerse"

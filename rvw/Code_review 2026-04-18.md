@@ -853,7 +853,76 @@ no second table of any kind.
 - Add `ToSBLShortForm` wrapper to `basBibleRibbonSetup.bas` — not needed (called directly, not via ribbon XML)
 - Add `ToSBLShortForm` to `normalize_vba.py` normaliser
 
-**Status: AWAITING APPROVAL — no code changes made pending review.**
+**Status: DONE — 2026-04-18. Import `aeRibbonClass.cls` to activate.**
+
+### Bug: Prev/Next clicks show Word's "Page X of Y" status — overwriting SBL citation
+
+#### Cause
+
+`onAction` callbacks always trigger Word to refresh its own status bar (page, section,
+word count) **after** the callback returns. The `ToSBLShortForm` call inside `GoToVerse`
+and `GoToChapter` fires before that refresh, so Word overwrites the citation.
+
+#### Fix — deferred status bar write via Application.OnTime
+
+Same pattern as `GoToVerseDeferred` / `ExecutePendingChapter`. Schedule the status bar
+write via `Application.OnTime Now` so it fires after Word's own refresh:
+
+1. `onAction` fires → nav runs → **schedules `UpdateStatusBarDeferred`**
+2. `onAction` returns → Word writes `"Page X of Y, Words: XXXX"`
+3. `OnTime` fires → `UpdateStatusBarDeferred` → SBL citation overwrites
+
+#### Known limitation — flash still occurs
+
+The Word status bar refresh (step 2) and the deferred write (step 3) happen in rapid
+succession — typically tens of milliseconds — but the flash is **not eliminated**, only
+shortened. There is no Word VBA API to suppress the post-`onAction` status bar refresh
+for individual controls. Hiding the status bar entirely (`Application.DisplayStatusBar`)
+would be more disruptive than the flash itself.
+
+Accepted as expected behaviour. For the slow first-load path the flash is negligible;
+for fast repeated Prev/Next clicks it may be briefly visible.
+
+#### Implementation
+
+| File | Change |
+|------|--------|
+| `aeRibbonClass.cls` — `GoToVerse` | Replace direct `StatusBar` write with `OnTime` schedule |
+| `aeRibbonClass.cls` — `GoToChapter` | Same |
+| `aeRibbonClass.cls` | Add `Public Sub UpdateStatusBar` |
+| `basRibbonDeferred.bas` | Add `Public Sub UpdateStatusBarDeferred` |
+| `normalize_vba.py` | Add `UpdateStatusBar` / `UpdateStatusBarDeferred` entries |
+
+**Status: DONE — 2026-04-18.**
+
+### Bug: Prev/Next Book does not update the status bar
+
+#### Root cause
+
+`PrevButton` and `NextButton` in `aeRibbonClass.cls` correctly update `m_currentBookIndex`,
+`m_currentChapter = 1`, `m_currentVerse = 1` and call `m_ribbon.Invalidate`, but did not
+schedule `UpdateStatusBarDeferred`. The deferred write was only wired into `GoToVerse` and
+`GoToChapter` — not the book navigation path.
+
+Note: `GoToH1Deferred` is the old InputBox-based book lookup (not used by Prev/Next Book).
+Prev/Next Book call `PrevButton` / `NextButton` directly via `OnPrevButtonClick` /
+`OnNextButtonClick`.
+
+#### Fix applied — 2026-04-18
+
+Added `Application.OnTime Now, ... & ".basRibbonDeferred.UpdateStatusBarDeferred"` at the
+end of both `PrevButton` and `NextButton`, after `m_ribbon.Invalidate`. State is already
+correct at that point — `m_currentChapter = 1` and `m_currentVerse = 1` (Rule 2a), so
+`UpdateStatusBar` will display e.g., `"Exod 1:1"` after pressing Next from Genesis.
+
+Import `aeRibbonClass.cls` to activate.
+
+| Item | Status |
+|------|--------|
+| Prev/Next Book status bar update | **DONE — 2026-04-18** |
+| Prev/Next Chapter status bar update | **DONE — 2026-04-18** |
+| Prev/Next Verse status bar update | **DONE — 2026-04-18** |
+| GoButton (OnGoClick) status bar update | **DONE — 2026-04-18** |
 
 ---
 
