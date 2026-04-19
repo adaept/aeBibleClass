@@ -2,6 +2,9 @@ Attribute VB_Name = "basBibleRibbonSetup"
 Option Explicit
 Option Private Module
 
+' This module contains only active ribbon callback shims plus explicitly retained
+' test/reference helpers. Removed callbacks and test stubs are grouped at the bottom.
+
 ' -- Singleton Instance --------------------------------------------------------
 Private s_instance As aeRibbonClass
 
@@ -45,25 +48,10 @@ End Sub
 
 ' -- Callback Stubs ------------------------------------------------------------
 
-' OnGoToVerseSblClick removed from ribbon XML (comboBox design replaces large GoTo Verse button)
-' Implementation preserved in aeRibbonClass.cls.GoToVerseSBL for reference.
-' Public Sub OnGoToVerseSblClick(control As IRibbonControl)
-'     Instance().OnGoToVerseSblClick control
-' End Sub
-
 Public Sub OnPrevButtonClick(control As IRibbonControl)
     'Debug.Print ">> OnPrevButtonClick at " & Format(Now, "hh:nn:ss")
     Instance().OnPrevButtonClick control
 End Sub
-
-' OnGoToH1ButtonClick removed from ribbon XML (GoTo Book is now the Book comboBox).
-' GoToH1 implementation preserved in aeRibbonClass.cls for reference.
-' Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
-'     Const EXPECTED_PROJECT As String = "Project"
-'     Dim projName As String
-'     projName = Application.ActiveDocument.VBProject.Name
-'     Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
-' End Sub
 
 Public Sub OnNextButtonClick(control As IRibbonControl)
     'Debug.Print ">> OnNextButtonClick at " & Format(Now, "hh:nn:ss")
@@ -77,14 +65,6 @@ End Sub
 
 Public Sub GetPrevEnabled(control As IRibbonControl, ByRef enabled)
     enabled = Instance().GetPrevBkEnabled(control)
-End Sub
-
-' Test stub — runs GoToH1 outside the ribbon callback (Alt+F8 -> TestGoToH1Direct)
-' If the second block disappears vs ribbon button, ribbon callback return is the cause.
-Public Sub TestGoToH1Direct()
-    Dim rc As aeRibbonClass
-    Set rc = Instance()
-    rc.GoToH1Direct
 End Sub
 
 Public Sub GetNextEnabled(control As IRibbonControl, ByRef enabled)
@@ -274,4 +254,32 @@ End Sub
 Public Sub GetAboutKeytip(control As IRibbonControl, ByRef keytip)
     keytip = KT_ABOUT
 End Sub
+
+' -- Manual test helpers -------------------------------------------------------
+' Not part of production ribbon flow. Run via Alt+F8.
+
+' Runs GoToH1Direct outside the ribbon callback to isolate whether the second
+' H1 block disappears because of the ribbon callback return vs the navigation itself.
+Public Sub TestGoToH1Direct()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+End Sub
+
+' -- Archived callback history (removed from current ribbon XML) ----------------
+
+' OnGoToVerseSblClick removed from ribbon XML — comboBox design replaces large GoTo Verse button.
+' Implementation preserved in aeRibbonClass.cls.GoToVerseSBL for reference.
+' Public Sub OnGoToVerseSblClick(control As IRibbonControl)
+'     Instance().OnGoToVerseSblClick control
+' End Sub
+
+' OnGoToH1ButtonClick removed from ribbon XML — GoTo Book is now the Book comboBox.
+' GoToH1 implementation preserved in aeRibbonClass.cls for reference.
+' Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
+'     Const EXPECTED_PROJECT As String = "Project"
+'     Dim projName As String
+'     projName = Application.ActiveDocument.VBProject.Name
+'     Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
+' End Sub
 
