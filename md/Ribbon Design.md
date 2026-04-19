@@ -15,11 +15,13 @@ custom toolbar that appears as its own tab, **Radiant Word Bible**, in the Word 
 
 It gives you three ways to move through the text:
 
-- Type or select the **book** you want
-- Type or select the **chapter**
-- Type or select the **verse**
+- Type the **book** you want
+- Type the **chapter**
+- Type the **verse**, then press **Go**
 
-Each step focuses the document at exactly that location.
+The **Go** button is the primary navigation trigger — it moves the document to the
+selected Book, Chapter, and Verse. The **◀** and **▶** Prev/Next buttons beside
+each selector also navigate immediately, one step at a time.
 
 ---
 
@@ -28,7 +30,7 @@ Each step focuses the document at exactly that location.
 ```text
 ◀  Genesis          ▼  ▶       ← Book row
 ◀  1                ▼  ▶       ← Chapter row
-◀  1                ▼  ▶       ← Verse row
+◀  1                ▼  ▶  Go   ← Verse row + Go button
 
 [New Search]    [About]
 ```
@@ -52,23 +54,23 @@ which book and chapter you are in.
 
 ## Selecting a book
 
-Click the Book selector, or press **Alt, R W** to focus it directly from the keyboard.
+Click the Book selector, or press **Alt, Y2, B** to focus it directly from the keyboard.
 
 You can:
 
 - **Type a name** — full or abbreviated: `Genesis`, `Gen`, `Gn`, `1 Cor`, `1cor`,
   `Jn`, `Rev` all work. Capitalisation does not matter.
-- **Open the dropdown** — all 66 books are listed, divided into Old Testament and
-  New Testament.
+- **Open the dropdown** — all 66 books are listed.
 
-Once the book is confirmed, the Chapter row becomes available and the document
-moves to the first page of that book.
+Once the book is confirmed, the Chapter row becomes available and the ribbon state
+is set to that book. Document navigation occurs when a chapter/verse navigation
+action is executed.
 
 ### Previous / Next Book
 
 The **◀** and **▶** buttons beside the Book selector step one book backward or
-forward. At Genesis, pressing ◀ does nothing. At Revelation, pressing ▶ does
-nothing.
+forward and navigate immediately. At the first or last book, pressing the
+boundary button shows a message in the status bar.
 
 ---
 
@@ -76,16 +78,14 @@ nothing.
 
 After a book is selected, the Chapter selector becomes active.
 
-Type the chapter number, or open the dropdown to see all chapters in the current
-book. The list reflects the actual chapter count for that book — Genesis offers
-1–50, Jude offers only 1.
-
-The document moves to the heading for that chapter and the Verse row becomes
-available.
+Type the chapter number. The Verse row becomes available once a valid chapter is
+entered. Press **Go** to navigate the document to that chapter.
 
 ### Previous / Next Chapter
 
-**◀** and **▶** step through chapters within the current book.
+**◀** and **▶** step through chapters within the current book and navigate
+immediately. At the first or last chapter of the book, pressing the boundary
+button shows a message in the status bar.
 
 ---
 
@@ -93,12 +93,13 @@ available.
 
 After a chapter is selected, the Verse selector becomes active.
 
-Type the verse number, or choose from the dropdown. The document moves directly to
-that verse.
+Type the verse number, then press **Go** to navigate the document to that verse.
 
 ### Previous / Next Verse
 
-**◀** and **▶** step through verses within the current chapter.
+**◀** and **▶** step through verses within the current chapter and navigate
+immediately. At the first or last verse of the chapter, pressing the boundary
+button shows a message in the status bar.
 
 ---
 
@@ -111,12 +112,16 @@ The ribbon is fully keyboard-navigable — no mouse required.
 After typing in a selector, press **Tab** to confirm and move to the next selector:
 
 ```text
-Book field  →  Tab  →  Chapter field  →  Tab  →  Verse field  →  Tab  →  New Search
+Book field  →  Tab  →  Chapter field  →  Tab  →  Verse field  →  Tab  →  Go  →  Tab  →  New Search
 ```
 
 > **Tab, not Enter.** Pressing Enter confirms the current field and returns focus to
 > the document. Pressing Tab confirms and moves to the next selector, keeping you in
 > the toolbar.
+
+Once Book, Chapter, and Verse are set, press **Go** (or **Alt, Y2, G**) to navigate
+the document to that location. The **◀** and **▶** Prev/Next buttons navigate
+immediately without requiring Go.
 
 ### Alt shortcuts (KeyTips)
 
@@ -130,6 +135,7 @@ document.
 | Alt, Y2, B | Focus the Book selector |
 | Alt, Y2, C | Focus the Chapter selector |
 | Alt, Y2, V | Focus the Verse selector |
+| Alt, Y2, G | Go (navigate to selected Book/Chapter/Verse) |
 | Alt, Y2, S | New Search |
 | Alt, Y2, A | About |
 | Alt, Y2, [ | Previous Book |
@@ -143,7 +149,7 @@ document.
 
 ## New Search
 
-The **New Search** button (or **Alt, R W, S**) clears all three selectors and
+The **New Search** button (or **Alt, Y2, S**) clears all three selectors and
 returns the toolbar to its starting state — Book row active, Chapter and Verse
 rows inactive.
 
@@ -160,10 +166,11 @@ need to erase the selectors manually; New Search resets everything at once.
 4. Type `3`
 5. Press **Tab** — Verse selector is focused
 6. Type `16`
-7. Press **Tab** — the document is at John 3:16
+7. Press **Tab** — Go button is focused
+8. Press **Enter** (or **Space**) — the document navigates to John 3:16
 
 Or with the mouse: click the Book selector, type `Jn`, click the Chapter selector,
-type `3`, click the Verse selector, type `16`.
+type `3`, click the Verse selector, type `16`, then click **Go**.
 
 ---
 
