@@ -13,40 +13,12 @@ Option Explicit
 '   it is NOT the same as Alt+F8 visibility (which is separately controlled
 '   by whether a sub has required parameters). This module intentionally omits
 '   Option Private Module so that Application.OnTime can find its public subs.
-'
-'   Note: GoToH1Deferred has no parameters so it will appear in Alt+F8.
-'   This is acceptable - it is safe to run manually for testing.
 ' =============================================================================
 
-Public Sub WarmLayoutCacheDeferred()
-    ' WarmLayoutCache disabled: entry point in EnableButtonsRoutine (aeRibbonClass.cls)
-    ' is commented out so this sub will not be called at document open.
-    ' WarmLayoutCache itself is preserved in aeRibbonClass.cls for future use.
-    ' Dim rc As aeRibbonClass
-    ' Set rc = Instance()
-    ' rc.WarmLayoutCache
-End Sub
-
-Public Sub GoToH1Deferred()
-    Dim rc As aeRibbonClass
-    Set rc = Instance()
-    rc.GoToH1Direct
-    rc.InvalidateControl "NextBookButton"
-    rc.InvalidateControl "PrevBookButton"
-End Sub
-
-Public Sub GoToBookDeferred()
-    ' Dead stub — NavigateToCurrentBook removed (Bug 9).
-    ' Instance().NavigateToCurrentBook
-End Sub
+' -- Active deferred entry points ----------------------------------------------
 
 Public Sub GoToChapterDeferred()
     Instance().ExecutePendingChapter
-End Sub
-
-Public Sub GoToVerseDeferred()
-    ' Dead stub — navigation trigger moved to OnGoClick (GoButton, #600).
-    ' Instance().ExecutePendingVerse
 End Sub
 
 Public Sub UpdateStatusBarDeferred()
@@ -59,4 +31,36 @@ End Sub
 
 Public Sub ResetVerseDisplayDeferred()
     Instance().ResetVerseDisplay
+End Sub
+
+' -- Archived deferred entry points retained for rollback/testing --------------
+
+' WarmLayoutCacheDeferred: WarmLayoutCache is disabled — the OnTime call that
+' would schedule this sub is commented out in aeRibbonClass.cls. The cache
+' method itself is preserved there for future use.
+Public Sub WarmLayoutCacheDeferred()
+    ' Dim rc As aeRibbonClass
+    ' Set rc = Instance()
+    ' rc.WarmLayoutCache
+End Sub
+
+' GoToH1Deferred: legacy entry point from the old GoTo Book button flow.
+' That button was removed from ribbon XML; Book selection now uses the Book comboBox.
+' Note: this sub has no parameters and will appear in Alt+F8 — safe to run manually.
+Public Sub GoToH1Deferred()
+    Dim rc As aeRibbonClass
+    Set rc = Instance()
+    rc.GoToH1Direct
+    rc.InvalidateControl "NextBookButton"
+    rc.InvalidateControl "PrevBookButton"
+End Sub
+
+' GoToBookDeferred: dead stub — NavigateToCurrentBook removed (Bug 9).
+Public Sub GoToBookDeferred()
+    ' Instance().NavigateToCurrentBook
+End Sub
+
+' GoToVerseDeferred: dead stub — navigation trigger moved to OnGoClick (GoButton, #600).
+Public Sub GoToVerseDeferred()
+    ' Instance().ExecutePendingVerse
 End Sub
