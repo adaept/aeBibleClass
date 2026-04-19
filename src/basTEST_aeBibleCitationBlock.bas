@@ -201,7 +201,7 @@ Public Sub Test_SortCitationBlock()
     ' Cross-book: out-of-order input (John, Genesis, Psalms)
     Set sorted = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock("John 3:16; Gen 1:1; Ps 23:1"))
-    aeAssert.AssertEqual 3, sorted.Count, "Sort: count preserved"
+    aeAssert.AssertEqual 3, sorted.Count, "Sort: Count preserved"
     aeAssert.AssertEqual "Genesis 1:1", sorted(1), "Sort: Gen first"
     aeAssert.AssertEqual "Psalms 23:1", sorted(2), "Sort: Ps second"
     aeAssert.AssertEqual "John 3:16", sorted(3), "Sort: John third"
@@ -209,7 +209,7 @@ Public Sub Test_SortCitationBlock()
     ' Same-book: chapter order within Psalms
     Set sorted = aeBibleCitationClass.SortCitationBlock( _
         aeBibleCitationClass.ParseCitationBlock("Ps 103:8; Ps 19:1; Ps 68:5"))
-    aeAssert.AssertEqual 3, sorted.Count, "Sort: same-book count"
+    aeAssert.AssertEqual 3, sorted.Count, "Sort: same-book Count"
     aeAssert.AssertEqual "Psalms 19:1", sorted(1), "Sort: Ps 19 before 68"
     aeAssert.AssertEqual "Psalms 68:5", sorted(2), "Sort: Ps 68 before 103"
     aeAssert.AssertEqual "Psalms 103:8", sorted(3), "Sort: Ps 103 last"
@@ -514,12 +514,12 @@ Public Sub Test_ParseCitationBlock_EdgeCases()
 
     ' Single reference
     Set Items = aeBibleCitationClass.ParseCitationBlock("John 3:16")
-    aeAssert.AssertEqual 1, Items.Count, "EdgeCase: single ref item count"
+    aeAssert.AssertEqual 1, Items.Count, "EdgeCase: single ref item Count"
     aeAssert.AssertEqual "John 3:16", CStr(Items(1)), "EdgeCase: single ref value"
 
     ' Trailing semicolon - should not produce a spurious extra item
     Set Items = aeBibleCitationClass.ParseCitationBlock("John 3:16;")
-    aeAssert.AssertEqual 1, Items.Count, "EdgeCase: trailing semicolon item count"
+    aeAssert.AssertEqual 1, Items.Count, "EdgeCase: trailing semicolon item Count"
     aeAssert.AssertEqual "John 3:16", CStr(Items(1)), "EdgeCase: trailing semicolon value"
 
     Debug.Print "Test_ParseCitationBlock_EdgeCases: all assertions passed"
@@ -536,17 +536,17 @@ Public Sub Test_SingleChapterBooks()
 
     ' Obadiah — BookID 31
     Set Items = aeBibleCitationClass.ParseCitationBlock("Obad 3")
-    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Obad item count"
+    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Obad item Count"
     aeAssert.AssertEqual "Obadiah 1:3", CStr(Items(1)), "SingleChapter: Obad 3 -> Obadiah 1:3"
 
     ' Philemon — BookID 57
     Set Items = aeBibleCitationClass.ParseCitationBlock("Phlm 10")
-    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Phlm item count"
+    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Phlm item Count"
     aeAssert.AssertEqual "Philemon 1:10", CStr(Items(1)), "SingleChapter: Phlm 10 -> Philemon 1:10"
 
     ' 2 John — BookID 63
     Set Items = aeBibleCitationClass.ParseCitationBlock("2 John 5")
-    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: 2 John item count"
+    aeAssert.AssertEqual 1, Items.Count, "SingleChapter: 2 John item Count"
     aeAssert.AssertEqual "2 John 1:5", CStr(Items(1)), "SingleChapter: 2 John 5 -> 2 John 1:5"
 
     Debug.Print "Test_SingleChapterBooks: all assertions passed"
@@ -564,7 +564,7 @@ Public Sub Test_NormalizeRawInput_Chr11()
     raw = "1 Chr 29:10-13;" & Chr(11) & "Ps 19:1-2"
     Dim Items As Collection
     Set Items = aeBibleCitationClass.ParseCitationBlock(raw)
-    aeAssert.AssertEqual 2, Items.Count, "Chr(11) normalization: item count"
+    aeAssert.AssertEqual 2, Items.Count, "Chr(11) normalization: item Count"
     aeAssert.AssertEqual "1 Chronicles 29:10-13", CStr(Items(1)), "Chr(11) normalization: first item"
     aeAssert.AssertEqual "Psalms 19:1-2", CStr(Items(2)), "Chr(11) normalization: Ps must not inherit 1 Chr book"
     Debug.Print "Test_NormalizeRawInput_Chr11: all assertions passed"
@@ -580,7 +580,7 @@ Public Sub Test_ctxChapter_Reset()
     ' "2 Pet 2:4; Jude 6" — Jude must not inherit chapter 2 from 2 Peter
     Dim Items As Collection
     Set Items = aeBibleCitationClass.ParseCitationBlock("2 Pet 2:4; Jude 6")
-    aeAssert.AssertEqual 2, Items.Count, "ctxChapter reset: item count"
+    aeAssert.AssertEqual 2, Items.Count, "ctxChapter reset: item Count"
     aeAssert.AssertEqual "2 Peter 2:4", CStr(Items(1)), "ctxChapter reset: 2 Peter item"
     aeAssert.AssertEqual "Jude 1:6", CStr(Items(2)), "ctxChapter reset: Jude must not inherit chapter 2"
     Debug.Print "Test_ctxChapter_Reset: all assertions passed"
@@ -651,12 +651,12 @@ Public Sub Test_WholeChapterReference()
 
     ' Single whole-chapter reference
     Set Items = aeBibleCitationClass.ParseCitationBlock("Ezek 16")
-    aeAssert.AssertEqual 1, Items.Count, "WholeChapter: Ezek 16 item count"
+    aeAssert.AssertEqual 1, Items.Count, "WholeChapter: Ezek 16 item Count"
     aeAssert.AssertEqual "Ezekiel 16", CStr(Items(1)), "WholeChapter: Ezek 16 canonical"
 
     ' Whole chapter mixed with verse references
     Set Items = aeBibleCitationClass.ParseCitationBlock("Gen 6:6; Ezek 16; Luke 15:4-32")
-    aeAssert.AssertEqual 3, Items.Count, "WholeChapter: mixed block item count"
+    aeAssert.AssertEqual 3, Items.Count, "WholeChapter: mixed block item Count"
     aeAssert.AssertEqual "Genesis 6:6", CStr(Items(1)), "WholeChapter: Gen 6:6"
     aeAssert.AssertEqual "Ezekiel 16", CStr(Items(2)), "WholeChapter: Ezek 16 in mixed block"
     aeAssert.AssertEqual "Luke 15:4-32", CStr(Items(3)), "WholeChapter: Luke 15:4-32"
@@ -683,7 +683,7 @@ Public Sub Test_WholeChapterReference()
     ' Chapter-switch within same book: bare number after semicolon is a chapter, not a verse
     ' "Isa 45:17; 60" — 60 is chapter 60 of Isaiah, not verse 60 of chapter 45
     Set Items = aeBibleCitationClass.ParseCitationBlock("Isa 45:17; 60")
-    aeAssert.AssertEqual 2, Items.Count, "WholeChapter: Isa 45:17; 60 item count"
+    aeAssert.AssertEqual 2, Items.Count, "WholeChapter: Isa 45:17; 60 item Count"
     aeAssert.AssertEqual "Isaiah 45:17", CStr(Items(1)), "WholeChapter: Isa 45:17"
     aeAssert.AssertEqual "Isaiah 60", CStr(Items(2)), "WholeChapter: Isa 60 via same-book chapter switch"
 

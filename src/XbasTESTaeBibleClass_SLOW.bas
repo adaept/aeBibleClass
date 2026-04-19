@@ -23,13 +23,13 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     Dim StyleName As String
     Dim found As Boolean
     Dim firstFound As Boolean
-    Dim count As Integer
+    Dim Count As Integer
     Dim nextChar As String
 
     searchText = "[0-9]{1,}" ' Pattern to find any number (one or more digits)
     StyleName = "Verse marker" ' Replace with your specific character style name
     firstFound = False
-    count = 0
+    Count = 0
 
     ' Set the search parameters
     With Selection.Find
@@ -67,8 +67,8 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
         Selection.MoveLeft Unit:=wdCharacter, Count:=1
 
         firstFound = True
-        count = count + 1
-        If count >= 1000 Then  ' Safety limit: process in batches of 1000 to keep runtime manageable
+        Count = Count + 1
+        If Count >= 1000 Then  ' Safety limit: process in batches of 1000 to keep runtime manageable
             Exit Do
         End If
     Loop
@@ -77,7 +77,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     If Not firstFound Then
         Debug.Print "No numbers with the specified style found."
     Else
-        Debug.Print "Total numbers found: " & count
+        Debug.Print "Total numbers found: " & Count
     End If
 
 PROC_EXIT:
@@ -88,7 +88,7 @@ PROC_ERR:
 End Sub
 
 Public Sub PrintBibleHeading1Info()
-' This will print the count, heading text, page number, and document position of each Heading 1 in your document to the Immediate Window
+' This will print the Count, heading text, page number, and document position of each Heading 1 in your document to the Immediate Window
 ' (press `Ctrl + G` to view the Immediate Window if it's not already visible).
 
     On Error GoTo PROC_ERR
@@ -96,20 +96,20 @@ Public Sub PrintBibleHeading1Info()
     Dim headingText As String
     Dim pageNumber As Long
     Dim docPosition As Long
-    Dim count As Integer
+    Dim Count As Integer
 
-    count = 0
+    Count = 0
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 1
         If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
-            count = count + 1
+            Count = Count + 1
             headingText = para.Range.Text
             pageNumber = para.Range.Information(wdActiveEndPageNumber)
             docPosition = para.Range.Start
             
             ' Print the heading text, page number, and document position to the console
-            Debug.Print count & ": " & "Heading: " & Replace(headingText, vbCr, "") & " | Page: " & pageNumber & " | Position: " & docPosition
+            Debug.Print Count & ": " & "Heading: " & Replace(headingText, vbCr, "") & " | Page: " & pageNumber & " | Position: " & docPosition
         End If
     Next para
 
@@ -172,15 +172,15 @@ Sub ListAndReviewAscii12Characters()
 ' Ascii 12 is Form Feed, FF, Page Break
     On Error GoTo PROC_ERR
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
     Dim startPos As Long
     Dim response As VbMsgBoxResult
 
     ' Set the range to the entire document
     Set rng = ActiveDocument.Content
 
-    ' Initialize the count
-    count = 0
+    ' Initialize the Count
+    Count = 0
 
     ' Find all ASCII 12 characters and record their positions
     With rng.Find
@@ -195,9 +195,9 @@ Sub ListAndReviewAscii12Characters()
         .MatchSoundsLike = False
         .MatchAllWordForms = False
         Do While .Execute
-            count = count + 1
+            Count = Count + 1
             startPos = rng.Start
-            Debug.Print "Position " & count & ": " & startPos
+            Debug.Print "Position " & Count & ": " & startPos
             rng.Collapse wdCollapseEnd
 
             ' Navigate to the position in the document
@@ -212,7 +212,7 @@ Sub ListAndReviewAscii12Characters()
     End With
 
     ' Display a message if no ASCII 12 characters are found
-    If count = 0 Then
+    If Count = 0 Then
         MsgBox "No ASCII 12 characters found in the document.", vbInformation, "ASCII 12 Characters"
     End If
 
@@ -467,7 +467,7 @@ Sub FindNextVerseMarkerSequence()
 
                 ' Safety checks
                 If beforeChar.Characters.Count < 1 Or afterChar.Characters.Count < 1 Then
-                    Debug.Print "Invalid character count at " & chapterRng.Start
+                    Debug.Print "Invalid character Count at " & chapterRng.Start
                     chapterRng.Select
                     MsgBox "Cannot access one of the surrounding characters. Stopping for inspection.", vbExclamation
                     GoTo PROC_EXIT

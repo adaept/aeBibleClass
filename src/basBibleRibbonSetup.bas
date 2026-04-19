@@ -97,8 +97,8 @@ Public Sub GetBookEnabled(control As IRibbonControl, ByRef enabled)
     enabled = Instance().GetBookEnabled(control)
 End Sub
 
-Public Sub GetBookCount(control As IRibbonControl, ByRef count)
-    count = Instance().GetBookCount(control)
+Public Sub GetBookCount(control As IRibbonControl, ByRef Count)
+    Count = Instance().GetBookCount(control)
 End Sub
 
 Public Sub GetBookItemLabel(control As IRibbonControl, index As Long, ByRef label)
@@ -131,8 +131,8 @@ Public Sub GetChapterEnabled(control As IRibbonControl, ByRef enabled)
     enabled = Instance().GetChapterEnabled(control)
 End Sub
 
-Public Sub GetChapterCount(control As IRibbonControl, ByRef count)
-    count = Instance().GetChapterCount(control)
+Public Sub GetChapterCount(control As IRibbonControl, ByRef Count)
+    Count = Instance().GetChapterCount(control)
 End Sub
 
 Public Sub GetChapterItemLabel(control As IRibbonControl, index As Long, ByRef label)
@@ -177,8 +177,8 @@ Public Sub GetVerseEnabled(control As IRibbonControl, ByRef enabled)
     enabled = Instance().GetVerseEnabled(control)
 End Sub
 
-Public Sub GetVerseCount(control As IRibbonControl, ByRef count)
-    count = Instance().GetVerseCount(control)
+Public Sub GetVerseCount(control As IRibbonControl, ByRef Count)
+    Count = Instance().GetVerseCount(control)
 End Sub
 
 Public Sub GetVerseItemLabel(control As IRibbonControl, index As Long, ByRef label)

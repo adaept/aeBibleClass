@@ -74,27 +74,27 @@ End Sub
 Private Sub DumpPrioritiesSorted()
     Dim s As style
     Dim arr() As Variant
-    Dim count As Long
+    Dim Count As Long
     Dim i As Long, j As Long
     Dim tmpName As String, tmpPri As Long
 
-    'First pass: count eligible styles
+    'First pass: Count eligible styles
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
-            count = count + 1
+            Count = Count + 1
         End If
     Next s
 
     'Allocate array: 1-based, 2 columns (Name, Priority)
-    ReDim arr(1 To count, 1 To 2)
+    ReDim arr(1 To Count, 1 To 2)
 
     'Second pass: fill array
-    count = 1
+    Count = 1
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
-            arr(count, 1) = s.NameLocal
-            arr(count, 2) = s.Priority
-            count = count + 1
+            arr(Count, 1) = s.NameLocal
+            arr(Count, 2) = s.Priority
+            Count = Count + 1
         End If
     Next s
 
@@ -124,31 +124,78 @@ Private Sub DumpPrioritiesSorted()
     Next i
 End Sub
 
-Private Function CountZeroWidthCharacters(doc As Document) As Long
+Public Sub TestInvisible()
+    Dim s As String
+    s = CountInvisibleCharacters()
+    Debug.Print "[" & s & "]"
+    MsgBox "[" & s & "]"
+End Sub
+
+Private Function CountInvisibleCharacters(Optional doc As Document) As String
     Dim r As Word.Range
-    Dim count As Long
+    Dim targets As Variant
+    Dim labels As Variant
+    Dim counts() As Long
+    Dim i As Long
+    Dim total As Long
+    Dim report As String
+
+    If doc Is Nothing Then Set doc = ActiveDocument
+
+    ' Default return value
+    CountInvisibleCharacters = "0"
+
+    targets = Array(ChrW(&H200B), ChrW(&H200C), ChrW(&H200D), ChrW(&HFEFF), ChrW(&H2060))
+    labels = Array( _
+        "U+200B ZERO WIDTH SPACE", _
+        "U+200C ZERO WIDTH NON-JOINER", _
+        "U+200D ZERO WIDTH JOINER", _
+        "U+FEFF ZERO WIDTH NO-BREAK SPACE", _
+        "U+2060 WORD JOINER")
+
+    ReDim counts(UBound(targets))
+
+    ' Count per story, per character
     For Each r In doc.StoryRanges
-        count = count + UBound(Split(r.Text, ChrW(8203)))
+        For i = 0 To UBound(targets)
+            counts(i) = counts(i) + UBound(Split(r.Text, targets(i)))
+        Next i
     Next r
-    CountZeroWidthCharacters = count
+
+    ' Sum total
+    For i = 0 To UBound(counts)
+        total = total + counts(i)
+    Next i
+
+    ' If nothing found, keep "0"
+    If total = 0 Then Exit Function
+
+    ' Build per-character report
+    For i = 0 To UBound(counts)
+        If counts(i) > 0 Then
+            report = report & labels(i) & ": " & counts(i) & vbCrLf
+        End If
+    Next i
+
+    CountInvisibleCharacters = Trim$(report)
 End Function
 
 Private Function CountOrphanedShapes(doc As Document) As Long
     Dim shp As shape
-    Dim count As Long
+    Dim Count As Long
     For Each shp In doc.Shapes
-        If shp.Anchor Is Nothing Then count = count + 1
+        If shp.Anchor Is Nothing Then Count = Count + 1
     Next shp
-    CountOrphanedShapes = count
+    CountOrphanedShapes = Count
 End Function
 
 Private Function CountOrphanedBookmarks(doc As Document) As Long
     Dim bm As Bookmark
-    Dim count As Long
+    Dim Count As Long
     For Each bm In doc.Bookmarks
-        If bm.Range.Text = "" Then count = count + 1
+        If bm.Range.Text = "" Then Count = Count + 1
     Next bm
-    CountOrphanedBookmarks = count
+    CountOrphanedBookmarks = Count
 End Function
 
 

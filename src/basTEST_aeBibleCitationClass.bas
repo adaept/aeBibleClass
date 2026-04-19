@@ -322,7 +322,7 @@ Public Sub Test_Stage13_ContextShorthand()
     ' Test 1
     '------------------------------------------
     Set c = aeBibleCitationClass.ComposeList("John 3:16, 18, 20-22")
-    aeAssert.AssertEqual 3, c.Count, "Stage13 Test1 count"
+    aeAssert.AssertEqual 3, c.Count, "Stage13 Test1 Count"
     aeAssert.AssertEqual "John 3:16", c(1), "Stage13 Test1 item 1"
     aeAssert.AssertEqual "John 3:18", c(2), "Stage13 Test1 item 2"
     aeAssert.AssertEqual "John 3:20-22", c(3), "Stage13 Test1 item 3"
@@ -334,7 +334,7 @@ Public Sub Test_Stage13_ContextShorthand()
     ' Test 2
     '------------------------------------------
     Set c = aeBibleCitationClass.ComposeList("John 3:16-4:2, 5")
-    aeAssert.AssertEqual 2, c.Count, "Stage13 Test2 count"
+    aeAssert.AssertEqual 2, c.Count, "Stage13 Test2 Count"
     aeAssert.AssertEqual "John 3:16-4:2", c(1), "Stage13 Test2 item 1"
     aeAssert.AssertEqual "John 4:5", c(2), "Stage13 Test2 item 2"
     'Expected
@@ -344,7 +344,7 @@ Public Sub Test_Stage13_ContextShorthand()
     ' Test 3
     '------------------------------------------
     Set c = aeBibleCitationClass.ComposeList("Romans 8; 9")
-    aeAssert.AssertEqual 2, c.Count, "Stage13 Test3 count"
+    aeAssert.AssertEqual 2, c.Count, "Stage13 Test3 Count"
     aeAssert.AssertEqual "Romans 8", c(1), "Stage13 Test3 item 1"
     aeAssert.AssertEqual "Romans 9", c(2), "Stage13 Test3 item 2"
     'Expected
@@ -375,7 +375,7 @@ Public Sub Test_Stage13a_BookContextPropagation()
     ' Positive: cross-book transition
     '------------------------------------------
     Set c = aeBibleCitationClass.ComposeList("Ps 103:8; Isa 40:28; 63:16")
-    aeAssert.AssertEqual 3, c.Count, "Stage13a: cross-book count"
+    aeAssert.AssertEqual 3, c.Count, "Stage13a: cross-book Count"
     aeAssert.AssertEqual "Psalms 103:8", c(1), "Stage13a: Ps 103:8"
     aeAssert.AssertEqual "Isaiah 40:28", c(2), "Stage13a: Isa 40:28"
     aeAssert.AssertEqual "Isaiah 63:16", c(3), "Stage13a: Isa 63:16 inherited"
@@ -384,7 +384,7 @@ Public Sub Test_Stage13a_BookContextPropagation()
     ' Positive: range with inherited book
     '------------------------------------------
     Set c = aeBibleCitationClass.ComposeList("Ps 19:1-2; 103:8-11")
-    aeAssert.AssertEqual 2, c.Count, "Stage13a: Psalm range count"
+    aeAssert.AssertEqual 2, c.Count, "Stage13a: Psalm range Count"
     aeAssert.AssertEqual "Psalms 19:1-2", c(1), "Stage13a: Ps 19:1-2"
     aeAssert.AssertEqual "Psalms 103:8-11", c(2), "Stage13a: Ps 103:8-11 inherited"
 
@@ -498,7 +498,7 @@ Public Sub Test_Stage14_CanonicalCompression()
     Set Refs = New Collection
     Refs.Add "Romans 8:1"
     Set Result = aeBibleCitationClass.CompressCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 7: single ref passthrough count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 7: single ref passthrough Count"
     aeAssert.AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
     '------------------------------------------
     ' Test 8 - multi-book mixed compression
@@ -536,7 +536,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "John 3:16"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 1: valid single ref count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 1: valid single ref Count"
     aeAssert.AssertEqual "John 3:16", Result(1), "Test 1: valid single ref value"
     '------------------------------------------
     ' Test 2 - invalid chapter removed
@@ -561,7 +561,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Jude 1:25"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 4: boundary verse kept count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 4: boundary verse kept Count"
     aeAssert.AssertEqual "Jude 1:25", Result(1), "Test 4: boundary verse kept value"
     '------------------------------------------
     ' Test 5 - range with valid bounds passes unchanged
@@ -569,7 +569,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:5"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 5: valid range count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 5: valid range Count"
     aeAssert.AssertEqual "Gen 1:1-1:5", Result(1), "Test 5: valid range value"
     '------------------------------------------
     ' Test 6 - range end verse clamped
@@ -578,7 +578,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:1-1:999"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 6: clamped end verse count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 6: clamped end verse Count"
     aeAssert.AssertEqual "Gen 1:1-1:31", Result(1), "Test 6: clamped end verse value"
     '------------------------------------------
     ' Test 7 - range end chapter clamped
@@ -588,7 +588,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:1-999:1"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 7: clamped end chapter count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 7: clamped end chapter Count"
     aeAssert.AssertEqual "Gen 1:1-50:1", Result(1), "Test 7: clamped end chapter value"
     '------------------------------------------
     ' Test 8 - range start chapter invalid -> removed
@@ -604,7 +604,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Set Refs = New Collection
     Refs.Add "Gen 1:31-1:999"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 9: collapsed range count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 9: collapsed range Count"
     aeAssert.AssertEqual "Gen 1:31", Result(1), "Test 9: collapsed range value"
     '------------------------------------------
     ' Test 10 - mixed valid and invalid
@@ -614,7 +614,7 @@ Public Sub Test_Stage15_CanonicalValidation()
     Refs.Add "Matt 29:1"
     Refs.Add "John 3:16"
     Set Result = aeBibleCitationClass.ValidateCanonical(Refs)
-    aeAssert.AssertEqual 2, Result.Count, "Test 10: mixed count"
+    aeAssert.AssertEqual 2, Result.Count, "Test 10: mixed Count"
     aeAssert.AssertEqual "Gen 1:1", Result(1), "Test 10: first valid ref"
     aeAssert.AssertEqual "John 3:16", Result(2), "Test 10: second valid ref"
 
@@ -701,7 +701,7 @@ Public Sub Test_Stage16_CanonicalRangeBuilder()
     Set Refs = New Collection
     Refs.Add "Romans 8:1"
     Set Result = aeBibleCitationClass.BuildCanonicalRanges(Refs)
-    aeAssert.AssertEqual 1, Result.Count, "Test 7: single ref count"
+    aeAssert.AssertEqual 1, Result.Count, "Test 7: single ref Count"
     aeAssert.AssertEqual "Romans 8:1", Result(1), "Test 7: single ref value"
     '------------------------------------------
     ' Test 8 - empty collection

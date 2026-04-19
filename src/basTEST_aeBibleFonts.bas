@@ -371,7 +371,7 @@ Public Sub FindParagraphsUsingFont(targetFont As String)
     Dim p As Word.Paragraph
     Dim rng As Word.Range
     Dim paraFont As String
-    Dim count As Long
+    Dim Count As Long
 
     Debug.Print "=== Paragraphs Using Font: " & targetFont & " ==="
 
@@ -381,14 +381,14 @@ Public Sub FindParagraphsUsingFont(targetFont As String)
 
         'Check effective font
         If StrComp(paraFont, targetFont, vbTextCompare) = 0 Then
-            count = count + 1
-            Debug.Print count & ". Sec " & rng.Sections(1).index & _
+            Count = Count + 1
+            Debug.Print Count & ". Sec " & rng.Sections(1).index & _
                         ", Para " & p.Range.ListFormat.ListString & _
                         "  |  """ & Left$(Trim$(rng.Text), 80) & """"
         End If
     Next p
 
-    Debug.Print "=== Total paragraphs found: " & count & " ==="
+    Debug.Print "=== Total paragraphs found: " & Count & " ==="
 End Sub
 
 Public Sub AuditFontUsage_ParagraphsAndHeadersFooters()
@@ -469,7 +469,7 @@ Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String
     Dim hf As HeaderFooter
     Dim hfTypes As Variant
     Dim hfKind As Variant
-    Dim count As Long
+    Dim Count As Long
     Dim fName As String
     Dim snippet As String
     Dim token As String
@@ -487,10 +487,10 @@ Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String
         fName = para.Range.Characters(1).Font.Name
 
         If StrComp(fName, targetFont, vbTextCompare) = 0 Then
-            count = count + 1
+            Count = Count + 1
 
             ' Unique search token
-            token = "@@FONT_HIT_" & Format(count, "000") & "@@"
+            token = "@@FONT_HIT_" & Format(Count, "000") & "@@"
 
             ' Clean snippet
             snippet = CleanSnippet(para.Range.Text)
@@ -522,8 +522,8 @@ Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String
                 For Each para In hf.Range.Paragraphs
                     fName = para.Range.Characters(1).Font.Name
                     If StrComp(fName, targetFont, vbTextCompare) = 0 Then
-                        count = count + 1
-                        token = "@@FONT_HIT_" & Format(count, "000") & "@@"
+                        Count = Count + 1
+                        token = "@@FONT_HIT_" & Format(Count, "000") & "@@"
                         snippet = CleanSnippet(para.Range.Text)
                         pg = para.Range.Information(wdActiveEndPageNumber)
                         startPos = para.Range.Start
@@ -544,8 +544,8 @@ Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String
                 For Each para In hf.Range.Paragraphs
                     fName = para.Range.Characters(1).Font.Name
                     If StrComp(fName, targetFont, vbTextCompare) = 0 Then
-                        count = count + 1
-                        token = "@@FONT_HIT_" & Format(count, "000") & "@@"
+                        Count = Count + 1
+                        token = "@@FONT_HIT_" & Format(Count, "000") & "@@"
                         snippet = CleanSnippet(para.Range.Text)
                         pg = para.Range.Information(wdActiveEndPageNumber)
                         startPos = para.Range.Start
@@ -563,7 +563,7 @@ Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String
         Next hfKind
     Next sec
 
-    Debug.Print "=== Total paragraphs found: " & count & " ==="
+    Debug.Print "=== Total paragraphs found: " & Count & " ==="
 End Sub
 
 Private Function HeaderFooterLabel(ByVal kind As WdHeaderFooterIndex) As String

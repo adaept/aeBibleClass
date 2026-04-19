@@ -261,7 +261,7 @@ End Function
 Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
     Dim t As ListTokens
     Dim i As Long
-    Dim count As Long
+    Dim Count As Long
     Dim capacity As Long
     Dim prevRef As ScriptureRef
     Dim havePrev As Boolean
@@ -284,7 +284,7 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
         '------------------------------------------
         ' grow arrays if needed
         '------------------------------------------
-        If count >= capacity Then
+        If Count >= capacity Then
             capacity = capacity * 2
             ReDim Preserve Result.ItemType(0 To capacity - 1)
             ReDim Preserve Result.Refs(0 To capacity - 1)
@@ -300,13 +300,13 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
             '------------------------------------------
             If havePrev And IsNumericRange(seg) Then
                 p = InStr(seg, "-")
-                Result.ItemType(count) = 2
-                Result.Ranges(count).StartRef.BookID = prevRef.BookID
-                Result.Ranges(count).StartRef.Chapter = prevRef.Chapter
-                Result.Ranges(count).StartRef.Verse = CLng(Left$(seg, p - 1))
-                Result.Ranges(count).EndRef.BookID = prevRef.BookID
-                Result.Ranges(count).EndRef.Chapter = prevRef.Chapter
-                Result.Ranges(count).EndRef.Verse = CLng(Mid$(seg, p + 1))
+                Result.ItemType(Count) = 2
+                Result.Ranges(Count).StartRef.BookID = prevRef.BookID
+                Result.Ranges(Count).StartRef.Chapter = prevRef.Chapter
+                Result.Ranges(Count).StartRef.Verse = CLng(Left$(seg, p - 1))
+                Result.Ranges(Count).EndRef.BookID = prevRef.BookID
+                Result.Ranges(Count).EndRef.Chapter = prevRef.Chapter
+                Result.Ranges(Count).EndRef.Verse = CLng(Mid$(seg, p + 1))
             '------------------------------------------
             ' Stage 13a: chapter:verse-range with inherited book
             ' e.g. "103:8-11" after "Ps 19:1"
@@ -316,34 +316,34 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
                 ch13 = Left$(seg, cp13 - 1)
                 vr13 = Mid$(seg, cp13 + 1)
                 dp13 = InStr(vr13, "-")
-                Result.ItemType(count) = 2
-                Result.Ranges(count).StartRef.BookID = prevRef.BookID
-                Result.Ranges(count).StartRef.Chapter = CLng(ch13)
-                Result.Ranges(count).StartRef.Verse = CLng(Left$(vr13, dp13 - 1))
-                Result.Ranges(count).EndRef.BookID = prevRef.BookID
-                Result.Ranges(count).EndRef.Chapter = CLng(ch13)
-                Result.Ranges(count).EndRef.Verse = CLng(Mid$(vr13, dp13 + 1))
+                Result.ItemType(Count) = 2
+                Result.Ranges(Count).StartRef.BookID = prevRef.BookID
+                Result.Ranges(Count).StartRef.Chapter = CLng(ch13)
+                Result.Ranges(Count).StartRef.Verse = CLng(Left$(vr13, dp13 - 1))
+                Result.Ranges(Count).EndRef.BookID = prevRef.BookID
+                Result.Ranges(Count).EndRef.Chapter = CLng(ch13)
+                Result.Ranges(Count).EndRef.Verse = CLng(Mid$(vr13, dp13 + 1))
             Else
-                Result.ItemType(count) = 2
-                Result.Ranges(count) = ComposeRange(seg)
+                Result.ItemType(Count) = 2
+                Result.Ranges(Count) = ComposeRange(seg)
             End If
-            prevRef = Result.Ranges(count).EndRef
+            prevRef = Result.Ranges(Count).EndRef
             havePrev = True
         Else
             '------------------------------------------
             ' Stage 13 shorthand single verse
             '------------------------------------------
             If havePrev And IsNumeric(seg) And InStr(seg, ":") = 0 Then
-                Result.ItemType(count) = 1
-                Result.Refs(count).BookID = prevRef.BookID
+                Result.ItemType(Count) = 1
+                Result.Refs(Count).BookID = prevRef.BookID
                 If prevRef.Verse = 0 Then
                     ' prev was chapter-only (e.g. "Romans 8") -> bare number is next chapter
-                    Result.Refs(count).Chapter = CLng(seg)
-                    Result.Refs(count).Verse = 0
+                    Result.Refs(Count).Chapter = CLng(seg)
+                    Result.Refs(Count).Verse = 0
                 Else
                     ' prev had a verse -> bare number is next verse in same chapter
-                    Result.Refs(count).Chapter = prevRef.Chapter
-                    Result.Refs(count).Verse = CLng(seg)
+                    Result.Refs(Count).Chapter = prevRef.Chapter
+                    Result.Refs(Count).Verse = CLng(seg)
                 End If
             '------------------------------------------
             ' Stage 13a: chapter:verse with inherited book
@@ -351,26 +351,26 @@ Private Sub ComposeList_Internal(raw As String, ByRef Result As ScriptureList)
             '------------------------------------------
             ElseIf havePrev And IsBooklessChapRef(seg) Then
                 cp13 = InStr(seg, ":")
-                Result.ItemType(count) = 1
-                Result.Refs(count).BookID = prevRef.BookID
-                Result.Refs(count).Chapter = CLng(Left$(seg, cp13 - 1))
-                Result.Refs(count).Verse = CLng(Mid$(seg, cp13 + 1))
+                Result.ItemType(Count) = 1
+                Result.Refs(Count).BookID = prevRef.BookID
+                Result.Refs(Count).Chapter = CLng(Left$(seg, cp13 - 1))
+                Result.Refs(Count).Verse = CLng(Mid$(seg, cp13 + 1))
             Else
-                Result.ItemType(count) = 1
-                Result.Refs(count) = ParseReferenceRef(seg)
+                Result.ItemType(Count) = 1
+                Result.Refs(Count) = ParseReferenceRef(seg)
             End If
-            prevRef = Result.Refs(count)
+            prevRef = Result.Refs(Count)
             havePrev = True
         End If
-        count = count + 1
+        Count = Count + 1
     Next i
     '------------------------------------------
     ' trim arrays to actual size
     '------------------------------------------
-    If count > 0 Then
-        ReDim Preserve Result.ItemType(0 To count - 1)
-        ReDim Preserve Result.Refs(0 To count - 1)
-        ReDim Preserve Result.Ranges(0 To count - 1)
+    If Count > 0 Then
+        ReDim Preserve Result.ItemType(0 To Count - 1)
+        ReDim Preserve Result.Refs(0 To Count - 1)
+        ReDim Preserve Result.Ranges(0 To Count - 1)
     End If
     Result.IsValid = True
 End Sub
@@ -3405,13 +3405,13 @@ Public Sub Test_Stage8_ListDetection()
     '------------------------------------------
     t = ListDetection("John 3:16,18,20")
     aeAssert.AssertTrue t.IsList, "comma list detected"
-    aeAssert.AssertEqual 2, UBound(t.Segments), "comma list segment count"
+    aeAssert.AssertEqual 2, UBound(t.Segments), "comma list segment Count"
     '------------------------------------------
     ' Test 2 - semicolon list
     '------------------------------------------
     t = ListDetection("John 3:16; 4:1")
     aeAssert.AssertTrue t.IsList, "semicolon list detected"
-    aeAssert.AssertEqual 1, UBound(t.Segments), "semicolon list segment count"
+    aeAssert.AssertEqual 1, UBound(t.Segments), "semicolon list segment Count"
     '------------------------------------------
     ' Test 3 - single reference
     '------------------------------------------
@@ -3422,7 +3422,7 @@ Public Sub Test_Stage8_ListDetection()
     '------------------------------------------
     t = ListDetection("John 3:16-18,20")
     aeAssert.AssertTrue t.IsList, "range preserved inside list"
-    aeAssert.AssertEqual 1, UBound(t.Segments), "range list segment count"
+    aeAssert.AssertEqual 1, UBound(t.Segments), "range list segment Count"
     aeAssert.AssertEqual "John 3:16-18", t.Segments(0), "range first segment"
     aeAssert.AssertEqual "20", t.Segments(1), "range second segment"
     '------------------------------------------
@@ -3430,7 +3430,7 @@ Public Sub Test_Stage8_ListDetection()
     '------------------------------------------
     t = ListDetection("John 3:16 , 18 , 20")
     aeAssert.AssertTrue t.IsList, "whitespace tolerated"
-    aeAssert.AssertEqual 2, UBound(t.Segments), "whitespace segment count"
+    aeAssert.AssertEqual 2, UBound(t.Segments), "whitespace segment Count"
 End Sub
 
 

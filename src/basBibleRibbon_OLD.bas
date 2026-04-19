@@ -168,20 +168,20 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
     Dim chapTag1 As String, chapTag2 As String
     Dim rng As Word.Range
     Dim paraText As String
-    Dim count As Long
+    Dim Count As Long
 
     chapTag1 = "Chapter " & chapNum
     chapTag2 = "PSALM " & chapNum
 
     Set rng = ActiveDocument.Paragraphs(paraIndex).Range
-    count = 0
+    Count = 0
 
     Do While Not rng Is Nothing
         If rng.style = "Heading 2" Then
             paraText = Trim$(rng.Text)
             If InStr(1, paraText, chapTag1, vbTextCompare) > 0 Or _
                 InStr(1, paraText, chapTag2, vbTextCompare) > 0 Then
-                paraIndex = paraIndex + count
+                paraIndex = paraIndex + Count
                 With ActiveDocument.Paragraphs(paraIndex).Range
                     .Select
                     Selection.Collapse Direction:=wdCollapseStart
@@ -190,7 +190,7 @@ Private Sub FindChapterH2(fullBookName As String, ByRef paraIndex As Long, _
                 GoTo PROC_EXIT
             End If
         End If
-        count = count + 1
+        Count = Count + 1
         Set rng = rng.Next(Unit:=wdParagraph, Count:=1)
     Loop
 

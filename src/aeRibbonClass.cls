@@ -323,7 +323,7 @@ Public Sub CaptureHeading1s()
     Static hasRun As Boolean
     Dim para As Word.Paragraph
     Dim i        As Long   ' H1 slot index (1-based); incremented after each H1 is stored
-    Dim j        As Long   ' chapter count within current book; reset on each H1
+    Dim j        As Long   ' chapter Count within current book; reset on each H1
     Dim paraText As String
 
     If hasRun Then
@@ -844,8 +844,8 @@ End Sub
 ' -- Verse row navigation (Step 5) --------------------------------------------
 
 Private Function IsStudyVersion() As Boolean
-    ' Study version has one verse per paragraph; paragraph count > 30,000.
-    ' Print candidate has multiple verses per paragraph; count <= 30,000.
+    ' Study version has one verse per paragraph; paragraph Count > 30,000.
+    ' Print candidate has multiple verses per paragraph; Count <= 30,000.
     ' Result is cached after first call — Paragraphs.Count on a 33,857-para document
     ' is non-trivial overhead to repeat on every GoToVerse invocation.
     If Not m_studyVersionSet Then
@@ -922,8 +922,8 @@ Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
     On Error GoTo PROC_ERR
     Dim r As Word.Range
     Set r = ActiveDocument.Range(chPos, ActiveDocument.Content.End)
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     Do
         r.Find.ClearFormatting
         r.Find.style = ActiveDocument.Styles("Verse marker")
@@ -931,8 +931,8 @@ Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
         r.Find.Forward = True
         r.Find.Wrap = wdFindStop
         If Not r.Find.Execute Then Exit Do
-        count = count + 1
-        If count = vsNum Then
+        Count = Count + 1
+        If Count = vsNum Then
             ActiveDocument.Range(r.Start, r.Start).Select
             ' ScrollIntoView ensures the viewport updates — on first load the page
             ' layout delay means the view may not scroll without an explicit call.

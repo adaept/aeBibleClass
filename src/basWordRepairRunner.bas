@@ -126,7 +126,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     pageStart = pgRange.Start
     ' FIXME_LATER: ActiveDocument.Pages.Count forces full pagination on large documents
     ' (800+ pages) and may cause noticeable delay if this routine runs per-page.
-    ' Consider caching the page count outside this function if performance is an issue.
+    ' Consider caching the page Count outside this function if performance is an issue.
     If pageNum >= ActiveDocument.Pages.Count Then
         pageEnd = ActiveDocument.Content.End
     Else

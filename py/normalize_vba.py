@@ -28,6 +28,7 @@ NORMALIZATIONS = [
     (r'(?i)\.Item\b',           '.Item',            '.Item method on Collection'),
     (r'(?i)\bCount(?=:=)',       'Count',            'Count named argument in VBA method calls (e.g. MoveDown Count:=)'),
     (r'(?i)\.Count\b',          '.Count',           '.Count property on Collection/object'),
+    (r'(?i)\bCount\b',          'Count',            'Count standalone variable/identifier casing'),
     (r'(?i)\.Font\b',           '.Font',            '.Font property on Range/Style/object'),
     (r'(?i)\.Keys\b',           '.Keys',            '.Keys property on Dictionary/object'),
     (r'(?i)\.Text\b',           '.Text',            '.Text property on Range/Field/object'),

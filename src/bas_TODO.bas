@@ -227,7 +227,7 @@ Option Explicit
 'Stage 23 - Ultra-fast packed bitset
 
 
-'A VSTO COM Add-in built with **VB.NET** gives you a far broader and deeper integration surface than a **VBA-based COM Add-in** for Word 365. The difference is not incremental — it is architectural. VBA add-ins run *inside* Word’s VBA host with limited extensibility, while VSTO add-ins run as full .NET assemblies with access to the entire .NET ecosystem, Windows APIs, deployment tooling, and richer UI frameworks.
+'A VSTO COM Add-in built with **VB.NET** gives you a far broader and deeper integration surface than a **VBA-based COM Add-in** for Word 365. The difference is not incremental ï¿½ it is architectural. VBA add-ins run *inside* Wordï¿½s VBA host with limited extensibility, while VSTO add-ins run as full .NET assemblies with access to the entire .NET ecosystem, Windows APIs, deployment tooling, and richer UI frameworks.
 '
 '---
 '
@@ -254,7 +254,7 @@ Option Explicit
 'VSTO supports:
 '- **Custom Task Panes** with WinForms or WPF controls.
 '- Rich UI elements (tree views, grids, custom editors).
-'- Modeless windows integrated into Word’s UI.
+'- Modeless windows integrated into Wordï¿½s UI.
 '- More flexible Ribbon customization.
 '
 'VBA COM add-ins:
@@ -301,7 +301,7 @@ Option Explicit
 '- Provide better error handling and logging.
 '
 'VBA Add - ins:
-'- Run inside Word’s process with no isolation.
+'- Run inside Wordï¿½s process with no isolation.
 '- Crashes or memory leaks affect the entire Word session.
 '
 '---
@@ -370,8 +370,8 @@ Option Explicit
 
 '**Adjusting security and deployment**
 '
-'Okay, the user pointed out that VBA code can be signed and add-ins can be distributed via the Microsoft Store. I need to adjust the security and deployment sections to reflect that. Maybe I should include a small table to clarify the process, but I’ll keep it concise. I’ll focus on the key points without overcomplicating things. Let’s make sure the information is clear and easy to follow.
-'You’re right to push on that—good catch. Let’s tighten the comparison instead of hand-waving “VBA = no signing/deployment.”
+'Okay, the user pointed out that VBA code can be signed and add-ins can be distributed via the Microsoft Store. I need to adjust the security and deployment sections to reflect that. Maybe I should include a small table to clarify the process, but Iï¿½ll keep it concise. Iï¿½ll focus on the key points without overcomplicating things. Letï¿½s make sure the information is clear and easy to follow.
+'Youï¿½re right to push on thatï¿½good catch. Letï¿½s tighten the comparison instead of hand-waving ï¿½VBA = no signing/deployment.ï¿½
 '
 '### Security and signing
 '
@@ -381,21 +381,21 @@ Option Explicit
 '  - **Granularity:** Trust can be managed at the assembly/publisher level, independent of any particular document/template.
 '
 '- **VBA COM Add-in:**
-'  - **Macro signing:** The VBA project can be digitally signed with a code-signing certificate. Word’s macro security can be configured to trust signed projects from specific publishers.
-'  - **Store distribution:** Office/Word add-ins (including those that surface VBA-driven functionality behind the scenes) can be distributed via centralized catalogs or the Microsoft Store/Office Store, subject to Microsoft’s packaging rules.
-'  - **Reality check:** So yes—VBA is *not* “unsigned only”; it participates in a real certificate-based trust model.
+'  - **Macro signing:** The VBA project can be digitally signed with a code-signing certificate. Wordï¿½s macro security can be configured to trust signed projects from specific publishers.
+'  - **Store distribution:** Office/Word add-ins (including those that surface VBA-driven functionality behind the scenes) can be distributed via centralized catalogs or the Microsoft Store/Office Store, subject to Microsoftï¿½s packaging rules.
+'  - **Reality check:** So yesï¿½VBA is *not* ï¿½unsigned onlyï¿½; it participates in a real certificate-based trust model.
 '
 '### Deployment and distribution
 '
 '- **VSTO COM Add-in (VB.NET):**
 '  - **Deployment tech:** ClickOnce, MSI, enterprise software distribution (Intune, SCCM, Group Policy), with versioning and automatic updates.
-'  - **Machine/user scope:** Can be installed per-user or per-machine, with clear registration in Office’s COM Add-ins list.
+'  - **Machine/user scope:** Can be installed per-user or per-machine, with clear registration in Officeï¿½s COM Add-ins list.
 '  - **Update story:** Automatic or centrally managed updates are first-class.
 '
 '- **VBA COM Add-in:**
 '  - **Packaging:** Typically distributed as DOTM/DOT/COM add-in files, or as part of a template/add-in package that can indeed be signed and centrally deployed.
-'  - **Store/central catalog:** Can be surfaced via the Microsoft Store/Office Store or an internal catalog, which improves discoverability and update flow compared with “copy this file to Startup.”
-'  - **Update story:** Still more file-centric—updates usually mean replacing the template/add-in file, even if distribution is centralized.
+'  - **Store/central catalog:** Can be surfaced via the Microsoft Store/Office Store or an internal catalog, which improves discoverability and update flow compared with ï¿½copy this file to Startup.ï¿½
+'  - **Update story:** Still more file-centricï¿½updates usually mean replacing the template/add-in file, even if distribution is centralized.
 '
 '### What still clearly differentiates VSTO
 '
@@ -406,28 +406,28 @@ Option Explicit
 '- **Architecture:** Compiled, strongly typed, testable, easier CI/CD and modularization.
 '- **Integration patterns:** Cleaner patterns for talking to external services, databases, and OS-level features.
 '
-'So the fix is: VBA **does** support certificate-based signing and can be distributed via the Microsoft Store/Office Store or internal catalogs. The real differentiator isn’t “VBA is insecure/undeployable,” it’s that VSTO gives you a more modern, assembly-centric deployment and security model plus the entire .NET platform.
+'So the fix is: VBA **does** support certificate-based signing and can be distributed via the Microsoft Store/Office Store or internal catalogs. The real differentiator isnï¿½t ï¿½VBA is insecure/undeployable,ï¿½ itï¿½s that VSTO gives you a more modern, assembly-centric deployment and security model plus the entire .NET platform.
 '
 
 '- Standardize a diagnostics module
 '- Idea: One reusable logging/trace module (VBA or .NET) with: session header, call-site info, Unicode-safe output, and a simple API (LogInfo, LogError, LogPerf).
-'- Benefit: Every new feature gets observability “for free,” and debugging time drops sharply.
-'- Separate “Word automation” from “business logic”
+'- Benefit: Every new feature gets observability ï¿½for free,ï¿½ and debugging time drops sharply.
+'- Separate ï¿½Word automationï¿½ from ï¿½business logicï¿½
 '- Idea: Keep Word object model calls in thin adapter classes; keep your publishing rules, validation, and transformations in pure logic modules.
 '- Benefit: Easier testing, fewer COM side-effects, clearer reasoning about failures.
 '- Design a consistent Ribbon command routing layer
 '- Idea: Instead of each callback doing work, have callbacks route to a central command dispatcher that logs, validates state, and then calls the right service.
 '- Benefit: Uniform behavior, easier to add commands, simpler error handling.
 '- Adopt small, repeatable benchmarks
-'- Idea: For hot paths (e.g., paragraph scanning, style application), create micro-benchmarks you can run manually (e.g., “process 10k paragraphs and log elapsed time”).
-'- Benefit: You can compare “before/after” refactors and avoid regressions.
-'- Use me as a “diff reviewer”
-'- Workflow: When you make a change, paste “old vs new” and ask: “Is the new version strictly better? Any hidden risks?”
+'- Idea: For hot paths (e.g., paragraph scanning, style application), create micro-benchmarks you can run manually (e.g., ï¿½process 10k paragraphs and log elapsed timeï¿½).
+'- Benefit: You can compare ï¿½before/afterï¿½ refactors and avoid regressions.
+'- Use me as a ï¿½diff reviewerï¿½
+'- Workflow: When you make a change, paste ï¿½old vs newï¿½ and ask: ï¿½Is the new version strictly better? Any hidden risks?ï¿½
 '- Benefit: Faster feedback, more confidence in refactors
 
-'Good—this changes the evaluation quite a bit. You’re right: **you *do* have structured error handling**, and it’s consistently applied. That removes one of the earlier concerns.
+'Goodï¿½this changes the evaluation quite a bit. Youï¿½re right: **you *do* have structured error handling**, and itï¿½s consistently applied. That removes one of the earlier concerns.
 '
-'Let’s update the review properly and focus on what actually matters in this module.
+'Letï¿½s update the review properly and focus on what actually matters in this module.
 '
 '---
 '
@@ -438,7 +438,7 @@ Option Explicit
 '
 '# ?? Key Findings (actual issues that matter)
 '
-'## 1. Singleton pattern — good, but not reset-safe
+'## 1. Singleton pattern ï¿½ good, but not reset-safe
 '
 '```vb
 'Private s_instance As aeRibbonClass
@@ -503,7 +503,7 @@ Option Explicit
 '
 '---
 '
-'## 3. Callback signature correctness — mostly excellent
+'## 3. Callback signature correctness ï¿½ mostly excellent
 '
 'You got these right (important):
 '
@@ -556,7 +556,7 @@ Option Explicit
 '
 '## 4. Performance: heavy callback surface
 '
-'You’ve implemented full dynamic callbacks for:
+'Youï¿½ve implemented full dynamic callbacks for:
 '
 '* Book
 '* Chapter
@@ -564,13 +564,13 @@ Option Explicit
 '
 'Each includes:
 '
-'* count
+'* Count
 '* label
 '* id
 '* text
 '* enabled
 '
-'That’s **a lot of Ribbon calls**.
+'Thatï¿½s **a lot of Ribbon calls**.
 '
 '### Risk
 '
@@ -621,11 +621,11 @@ Option Explicit
 '* you are tracing lifecycle
 '* you understand async ribbon behavior
 '
-'?? Keep this — it’s essential for Ribbon debugging
+'?? Keep this ï¿½ itï¿½s essential for Ribbon debugging
 '
 '---
 '
-'# ?? What you’re doing *very* well
+'# ?? What youï¿½re doing *very* well
 '
 '### 1. Proper COM boundary design
 '
@@ -659,7 +659,7 @@ Option Explicit
 'Book ? Chapter ? Verse
 '```
 '
-'This is not trivial—you’ve essentially built:
+'This is not trivialï¿½youï¿½ve essentially built:
 '
 '* a hierarchical navigation system
 '* fully dynamic ribbon UI
@@ -680,7 +680,7 @@ Option Explicit
 '* maintains state
 '* feeds ribbon
 '
-'?? This is correct—but fragile unless carefully synchronized.
+'?? This is correctï¿½but fragile unless carefully synchronized.
 '
 '---
 '
@@ -746,7 +746,7 @@ Option Explicit
 '---
 '
 '
-'I’m going to focus only on **non-obvious, high-value findings**.
+'Iï¿½m going to focus only on **non-obvious, high-value findings**.
 '
 '---
 '
@@ -861,7 +861,7 @@ Option Explicit
 'Right Now:
 '
 '* typing in comboBox gets wiped
-'* UI feels “fighty”
+'* UI feels ï¿½fightyï¿½
 '* state flickers
 '
 '?? This is one of the biggest UX killers in RibbonX apps
@@ -914,7 +914,7 @@ Option Explicit
 '
 '---
 '
-'Right now you're mixing both ? that’s why bugs appeared.
+'Right now you're mixing both ? thatï¿½s why bugs appeared.
 '
 '---
 '
@@ -998,7 +998,7 @@ Option Explicit
 '
 '# ?? Subtle Issues (these will matter soon)
 '
-'## 6. `NormalizeBookInput` is smarter than it looks—but incomplete
+'## 6. `NormalizeBookInput` is smarter than it looksï¿½but incomplete
 '
 '```vb
 'If s Like "[0-9][A-Z]*" Then s = Left$(s, 1) & " " & Mid$(s, 2)
@@ -1022,7 +1022,7 @@ Option Explicit
 '
 '---
 '
-'## 7. `FindChapterPos` is O(n²) in worst case
+'## 7. `FindChapterPos` is O(nï¿½) in worst case
 '
 'you repeatedly:
 '
@@ -1044,7 +1044,7 @@ Option Explicit
 '
 'Cache chapter positions once per book.
 '
-'You already did this for H1—do same for H2.
+'You already did this for H1ï¿½do same for H2.
 '
 '---
 '
@@ -1061,7 +1061,7 @@ Option Explicit
 '* paginate
 '* build layout cache
 '
-'?? This is a legit workaround for Word’s lazy layout engine
+'?? This is a legit workaround for Wordï¿½s lazy layout engine
 '
 'Your comment about:
 '
@@ -1122,7 +1122,7 @@ Option Explicit
 '
 '# ?? High-impact improvements (next step)
 '
-'## 1. Introduce “state authority”
+'## 1. Introduce ï¿½state authorityï¿½
 '
 'Add:
 '
@@ -1177,13 +1177,13 @@ Option Explicit
 'Book ? Chapters ? Verses
 '```
 '
-'You’re already halfway there.
+'Youï¿½re already halfway there.
 '
 '---
 '
 '# ?? Bottom line
 '
-'You’ve built something that is:
+'Youï¿½ve built something that is:
 '
 'Print architecturally; sound
 'Print thoughtfully; debugged

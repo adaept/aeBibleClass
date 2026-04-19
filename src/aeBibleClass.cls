@@ -1419,15 +1419,15 @@ Private Function CountContraction(ByVal contraction As String) As Long
     On Error GoTo PROC_ERR
 
     Dim s As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
-    count = 0
+    Count = 0
 
     For Each s In ActiveDocument.StoryRanges
-        count = count + CountInStory(s, contraction)
+        Count = Count + CountInStory(s, contraction)
     Next
 
-    CountContraction = count
+    CountContraction = Count
 
 PROC_EXIT:
     Exit Function
@@ -1440,8 +1440,8 @@ End Function
 Private Function CountInStory(rng As Word.Range, contraction As String) As Long
     On Error GoTo PROC_ERR
 
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
 
     With rng.Find
         .ClearFormatting
@@ -1453,11 +1453,11 @@ Private Function CountInStory(rng As Word.Range, contraction As String) As Long
     End With
 
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
         rng.Collapse wdCollapseEnd
     Loop
 
-    CountInStory = count
+    CountInStory = Count
 
 PROC_EXIT:
     Exit Function
@@ -1473,7 +1473,7 @@ End Function
 '                - Enables KeepWithNext on Heading 2 paragraph style.
 '                - Applies WidowControl to each Heading 2 paragraph.
 '                - Explicitly disables KeepTogether to prevent override.
-'                - Provides a total count of H2
+'                - Provides a total Count of H2
 ' Audit Notes  : Logs all repair actions to Immediate Window.
 '                Does NOT alter any content, punctuation, or quotes.
 '                Applies paragraph-level enforcement only where style = "Heading 2"
@@ -1485,8 +1485,8 @@ Private Function CountAndCreateDefinitionForH2()
     On Error GoTo PROC_ERR
 
     ' Update Heading 2 Keep With Next
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
 
     Application.ScreenUpdating = False
 
@@ -1502,14 +1502,14 @@ Private Function CountAndCreateDefinitionForH2()
     Dim para As Word.Paragraph
     For Each para In ActiveDocument.Paragraphs
         If para.style = ActiveDocument.Styles("Heading 2") Then
-            count = count + 1
+            Count = Count + 1
             With para
                 .WidowControl = True    ' enforces both widow and orphan control for that paragraph
                 '.OrphanControl = True - Not needed,
                 para.KeepTogether = False
             End With
             
-            If count Mod 50 = 0 Then
+            If Count Mod 50 = 0 Then
                 DoEvents  ' Keep UI responsive every 50 updates
             End If
         End If
@@ -1518,8 +1518,8 @@ Private Function CountAndCreateDefinitionForH2()
     Application.ScreenUpdating = True
     'Debug.Print "[repair] Widow/Orphan enforced at paragraph level for Heading 2"
     'Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
-    'Debug.Print "count = " & count
-    CountAndCreateDefinitionForH2 = count
+    'Debug.Print "Count = " & Count
+    CountAndCreateDefinitionForH2 = Count
 
 PROC_EXIT:
     Exit Function
@@ -1738,7 +1738,7 @@ End Function
 ' Behavior:
 ' - Iterates all story ranges (main text, headers, footers, etc.).
 ' - Counts paragraph occurrences per style using a Scripting.Dictionary.
-' - Outputs results as "Style: Count" pairs, plus total paragraph count.
+' - Outputs results as "Style: Count" pairs, plus total paragraph Count.
 ' - Writes to "\rpt\Style Usage Distribution.txt".
 ' - Skips UI prompts; uses silent logging for audit pipelines.
 '
@@ -1859,7 +1859,7 @@ Private Function CountTabOnlyParagraphs(areaType As String) As Long
     Dim sec As Word.Section
     Dim hdrFtr As HeaderFooter
     Dim para As Word.Paragraph
-    Dim count As Long
+    Dim Count As Long
     Dim paraText As String
 
     Dim targetType As WdHeaderFooterIndex
@@ -1889,15 +1889,15 @@ Private Function CountTabOnlyParagraphs(areaType As String) As Long
                 paraText = Trim(paraText)
 
                 If paraText = vbTab Then
-                    count = count + 1
-                    'Debug.Print "count = " & count
+                    Count = Count + 1
+                    'Debug.Print "Count = " & Count
                     'Stop   ' Execution halts with the cursor at the footer location
                 End If
             Next para
         End If
     Next sec
 
-    CountTabOnlyParagraphs = count
+    CountTabOnlyParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -1939,7 +1939,7 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
 ' fontColor = Automatic - Arial Black, 8pt, "Normal" Style
 ' fontColor = Dark Red - Arial Black, 8pt, "Words of Jesus" Style
 ' This is fast and will skip over text that is of the style EmphasisBlack or EmphasisRed
-' When count is 0 there is no more text that needs setting for style EmphasisBlack or EmphasisRed
+' When Count is 0 there is no more text that needs setting for style EmphasisBlack or EmphasisRed
 
     Dim rng As Word.Range
     Set rng = ActiveDocument.Content
@@ -2276,14 +2276,14 @@ Private Function CountEmptyParagraphs() As Long
     On Error GoTo PROC_ERR
 
     Dim para As Word.Paragraph
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     For Each para In ActiveDocument.Paragraphs
         If Len(para.Range.Text) = 1 And para.Range.Text = vbCr Then
-            count = count + 1
+            Count = Count + 1
         End If
     Next para
-    CountEmptyParagraphs = count
+    CountEmptyParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -2297,7 +2297,7 @@ Private Function CountDocTabOnlyParagraphs() As Integer
     On Error GoTo PROC_ERR
 
 ' The final paragraph in a Word document always includes an extra paragraph mark that you can't delete.
-' The extra count is usually the final paragraph, which Word always includes and may contain leftover tab formatting.
+' The extra Count is usually the final paragraph, which Word always includes and may contain leftover tab formatting.
 ' This code can filter that out.
     Dim para As Word.Paragraph
     Dim countTabOnly As Long
@@ -2338,9 +2338,9 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
     Dim sec As Word.Section
     Dim hdrFtr As HeaderFooter
     Dim para As Word.Paragraph
-    Dim count As Long
+    Dim Count As Long
 
-    count = 0
+    Count = 0
 
     ' Loop through all sections in the document
     For Each sec In ActiveDocument.Sections
@@ -2349,7 +2349,7 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
             If hdrFtr.Exists Then
                 For Each para In hdrFtr.Range.Paragraphs
                     If para.style = "Footer" Then
-                        count = count + 1
+                        Count = Count + 1
                         para.Range.Select
                         Debug.Print "Found paragraph with Footer style. Stopping at this location."
                         Stop
@@ -2359,9 +2359,9 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
         Next hdrFtr
     Next sec
 
-    'MsgBox "Number of paragraphs in footers with the style 'Footer': " & count, vbInformation
-    'Debug.Print "Number of paragraphs in footers with the style 'Footer': " & count
-    CountFooterParagraphsWithFooterStyle = count
+    'MsgBox "Number of paragraphs in footers with the style 'Footer': " & Count, vbInformation
+    'Debug.Print "Number of paragraphs in footers with the style 'Footer': " & Count
+    CountFooterParagraphsWithFooterStyle = Count
 
 PROC_EXIT:
     Exit Function
@@ -2435,7 +2435,7 @@ Private Function CountLinefeed(Optional space As Variant) As Integer
     Dim doc As Document
     Dim rng As Word.Range
     Dim findText As String
-    Dim count As Integer
+    Dim Count As Integer
 
     If IsMissing(space) Then
         'Debug.Print "IsMissing space"
@@ -2459,19 +2459,19 @@ Private Function CountLinefeed(Optional space As Variant) As Integer
         .Format = False
         .MatchWildcards = True
         
-        ' Loop through all instances and count them
+        ' Loop through all instances and Count them
         Do While .Execute
-            count = count + 1
+            Count = Count + 1
             ' Keep Word responsive every 50
-            If count Mod 500 = 0 Then DoEvents
+            If Count Mod 500 = 0 Then DoEvents
         Loop
     End With
     Application.ScreenUpdating = True
     
-    ' Display the count
-    'MsgBox "Number of matches found: " & count
-    'Debug.Print "Number of matches found: " & count
-    CountLinefeed = count
+    ' Display the Count
+    'MsgBox "Number of matches found: " & Count
+    'Debug.Print "Number of matches found: " & Count
+    CountLinefeed = Count
 
 PROC_EXIT:
     Exit Function
@@ -2504,14 +2504,14 @@ Private Function CountParagraphMarksPerHeaderSection() As Integer
         ' Print the Result to the console
         'Debug.Print "Section " & sectionIndex & " header has " & paraCount & " paragraph(s)."
         
-        ' Check if the paragraph count is more than one
+        ' Check if the paragraph Count is more than one
         If paraCount > 1 Then
             MsgBox "Section " & sectionIndex & " header has more than one paragraph mark. Stopping at this section."
             Exit Function
         End If
     Next sectionIndex
     
-    ' Display a message indicating the count is complete
+    ' Display a message indicating the Count is complete
     'MsgBox "Count of paragraph marks per header section is " & paraCount
     'Debug.Print "Count of paragraph marks per header section is " & paraCount
     CountParagraphMarksPerHeaderSection = paraCount
@@ -2530,7 +2530,7 @@ Private Function CountHeaderStyleUsage() As Integer
     Dim doc As Document
     Dim rng As Word.Range
     Dim StyleName As String
-    Dim count As Integer
+    Dim Count As Integer
 
     ' Set the document
     Set doc = ActiveDocument
@@ -2541,8 +2541,8 @@ Private Function CountHeaderStyleUsage() As Integer
     ' Initialize the range to search
     Set rng = doc.Content
     
-    ' Initialize the count
-    count = 0
+    ' Initialize the Count
+    Count = 0
     
     ' Search for the style "Header"
     With rng.Find
@@ -2555,14 +2555,14 @@ Private Function CountHeaderStyleUsage() As Integer
         
         ' Loop through all instances of the style "Header"
         Do While .Execute
-            count = count + 1
+            Count = Count + 1
         Loop
     End With
     
-    ' Display the count
-    'MsgBox "The style 'Header' is used " & count & " times in the document."
-    'Debug.Print "The style 'Header' is used " & count & " times in the document."
-    CountHeaderStyleUsage = count
+    ' Display the Count
+    'MsgBox "The style 'Header' is used " & Count & " times in the document."
+    'Debug.Print "The style 'Header' is used " & Count & " times in the document."
+    CountHeaderStyleUsage = Count
 
 PROC_EXIT:
     Exit Function
@@ -2579,13 +2579,13 @@ Private Function CountParagraphsWithoutTabInHeaders() As Integer
     Dim sectionIndex As Integer
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
-    Dim count As Integer
+    Dim Count As Integer
     Dim totalCount As Integer
 
     ' Set the document
     Set doc = ActiveDocument
     
-    ' Initialize the total count
+    ' Initialize the total Count
     totalCount = 0
     
     ' Loop through all sections
@@ -2593,26 +2593,26 @@ Private Function CountParagraphsWithoutTabInHeaders() As Integer
         ' Get the range of the header in the current section
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
-        ' Initialize the count for the current header
-        count = 0
+        ' Initialize the Count for the current header
+        Count = 0
         
         ' Loop through each paragraph in the header range
         For Each para In headerRange.Paragraphs
             ' Check if the paragraph does not contain a tab
             If InStr(para.Range.Text, vbTab) = 0 Then
-                count = count + 1
+                Count = Count + 1
             End If
         Next para
         
-        ' Update the total count
-        totalCount = totalCount + count
+        ' Update the total Count
+        totalCount = totalCount + Count
         
-        ' Display the count for the current header
-        'MsgBox "Section " & sectionIndex & " header has " & count & " paragraphs without a tab."
-        'Debug.Print "Section " & sectionIndex & " header has " & count & " paragraphs without a tab."
+        ' Display the Count for the current header
+        'MsgBox "Section " & sectionIndex & " header has " & Count & " paragraphs without a tab."
+        'Debug.Print "Section " & sectionIndex & " header has " & Count & " paragraphs without a tab."
     Next sectionIndex
     
-    ' Display the total count
+    ' Display the total Count
     'MsgBox "Total paragraphs without a tab in all headers: " & totalCount
     'Debug.Print "Total paragraphs without a tab in all headers: " & totalCount
     CountParagraphsWithoutTabInHeaders = totalCount
@@ -2632,13 +2632,13 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
     Dim sectionIndex As Integer
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
-    Dim count As Integer
+    Dim Count As Integer
     Dim totalCount As Integer
 
     ' Set the document
     Set doc = ActiveDocument
     
-    ' Initialize the total count
+    ' Initialize the total Count
     totalCount = 0
     
     ' Loop through all sections
@@ -2646,26 +2646,26 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
         ' Get the range of the header in the current section
         Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
-        ' Initialize the count for the current header
-        count = 0
+        ' Initialize the Count for the current header
+        Count = 0
         
         ' Loop through each paragraph in the header range
         For Each para In headerRange.Paragraphs
             ' Check if the paragraph contains a tab followed by a paragraph mark
             If InStr(para.Range.Text, vbTab & vbCr) > 0 Then
-                count = count + 1
+                Count = Count + 1
             End If
         Next para
         
-        ' Update the total count
-        totalCount = totalCount + count
+        ' Update the total Count
+        totalCount = totalCount + Count
         
-        ' Display the count for the current header
-        'MsgBox "Section " & sectionIndex & " header has " & count & " paragraphs with a tab followed by a paragraph mark."
-        'Debug.Print "Section " & sectionIndex & " header has " & count & " paragraphs with a tab followed by a paragraph mark."
+        ' Display the Count for the current header
+        'MsgBox "Section " & sectionIndex & " header has " & Count & " paragraphs with a tab followed by a paragraph mark."
+        'Debug.Print "Section " & sectionIndex & " header has " & Count & " paragraphs with a tab followed by a paragraph mark."
     Next sectionIndex
     
-    ' Display the total count
+    ' Display the total Count
     'MsgBox "Total paragraphs with a tab followed by a paragraph mark in all headers: " & totalCount
     'Debug.Print "Total paragraphs with a tab followed by a paragraph mark in all headers: " & totalCount
     CountTabFollowedByParagraphMarkInHeaders = totalCount
@@ -2838,10 +2838,10 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
     Dim para As Word.Paragraph
     Dim prevText As String
     Dim prevIsEmpty As Boolean
-    Dim count As Long
+    Dim Count As Long
     Dim paraCount As Long
 
-    count = 0
+    Count = 0
     paraCount = 0
     prevIsEmpty = False
 
@@ -2851,7 +2851,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
         paraCount = paraCount + 1
         If para.style = "Heading 2" Then
             If prevIsEmpty Then
-                count = count + 1
+                Count = Count + 1
             End If
         End If
 
@@ -2863,9 +2863,9 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
     Next para
     Application.ScreenUpdating = True
 
-    'MsgBox "Fast count of 'Heading 2' paragraphs preceded by an empty paragraph: " & count, vbInformation
-    'Debug.Print "Fast count of 'Heading 2' paragraphs preceded by an empty paragraph: " & count
-    CountDeleteEmptyParagraphsBeforeHeading2 = count
+    'MsgBox "Fast Count of 'Heading 2' paragraphs preceded by an empty paragraph: " & Count, vbInformation
+    'Debug.Print "Fast Count of 'Heading 2' paragraphs preceded by an empty paragraph: " & Count
+    CountDeleteEmptyParagraphsBeforeHeading2 = Count
 
 PROC_EXIT:
     Exit Function
@@ -2882,10 +2882,10 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
 ' but avoid anything expensive - no .Range.Text, .Style, etc. unless needed.
     Dim para As Word.Paragraph
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
     Dim paraCount As Long
 
-    count = 0
+    Count = 0
     Set rng = ActiveDocument.Content
     rng.Collapse Direction:=wdCollapseStart
 
@@ -2895,17 +2895,17 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
         paraCount = paraCount + 1
         ' Work directly with Range.Text but trim just once
         If LenB(Trim$(Replace(para.Range.Text, vbCr, ""))) = 0 Then
-            count = count + 1
+            Count = Count + 1
         End If
         ' Keep Word responsive every 500 paragraphs
         If paraCount Mod 500 = 0 Then DoEvents
     Next para
     Application.ScreenUpdating = True
 
-    'MsgBox "Accurate empty paragraph count: " & count, vbInformation
-    'Debug.Print "Accurate empty paragraph count: " & count
+    'MsgBox "Accurate empty paragraph Count: " & Count, vbInformation
+    'Debug.Print "Accurate empty paragraph Count: " & Count
 
-    CountEmptyParagraphsWithFormatting = count
+    CountEmptyParagraphsWithFormatting = Count
 
 PROC_EXIT:
     Exit Function
@@ -2958,7 +2958,7 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Integer
         End If
     Next footnote
     
-    ' Display the count of spaces after footnote references
+    ' Display the Count of spaces after footnote references
     'MsgBox "Number of spaces after footnote references: " & spaceCount
     ' Display debug information
     'MsgBox debugInfo
@@ -3009,7 +3009,7 @@ Private Function CountFootnotesFollowedByDigit() As Integer
         debugInfo = debugInfo & "Footnote " & footnote.index & ": '" & rng.Text & "' (ASCII: " & asciiValue & ")" & vbCrLf
     Next footnote
     
-    ' Display the count of footnote references followed by a digit
+    ' Display the Count of footnote references followed by a digit
     'MsgBox "Number of footnote references followed by a digit: " & digitCount
     
     ' Display debug information
@@ -3035,7 +3035,7 @@ Private Function CountEmptyParasAfterH2() As Integer
     Dim emptyParaCount As Long
     Dim NextPara As Word.Paragraph
 
-    ' Initialize the count
+    ' Initialize the Count
     emptyParaCount = 0
     
     ' Loop through each paragraph in the document
@@ -3053,7 +3053,7 @@ Private Function CountEmptyParasAfterH2() As Integer
         End If
     Next para
     
-    ' Print the count to the console
+    ' Print the Count to the console
     'Debug.Print "Number of empty paragraphs immediately after Heading 2: " & emptyParaCount
     CountEmptyParasAfterH2 = emptyParaCount
 
@@ -3071,7 +3071,7 @@ Private Function CountHeading1() As Integer
     Dim para As Word.Paragraph
     Dim heading1Count As Long
 
-    ' Initialize the count
+    ' Initialize the Count
     heading1Count = 0
     
     ' Loop through each paragraph in the document
@@ -3083,7 +3083,7 @@ Private Function CountHeading1() As Integer
         End If
     Next para
 
-    ' Print the count to the console
+    ' Print the Count to the console
     'Debug.Print "Number of Heading 1 paragraphs: " & heading1Count
     CountHeading1 = heading1Count
     'Stop
@@ -3106,7 +3106,7 @@ Private Function CountRedFootnoteReferences() As Integer
     ' Define the red color using RGB values
     redColor = RGB(255, 0, 0)
 
-    ' Initialize the count
+    ' Initialize the Count
     redCount = 0
     
     ' Loop through each footnote in the document
@@ -3116,7 +3116,7 @@ Private Function CountRedFootnoteReferences() As Integer
         End If
     Next footnote
     
-    ' Print the count to the console
+    ' Print the Count to the console
     'Debug.Print "Number of footnote references with red font: " & redCount
     CountRedFootnoteReferences = redCount
 
@@ -3146,25 +3146,25 @@ Private Function CountSectionsWithDifferentFirstPage() As Integer
 
     Dim doc As Document
     Dim sec As Word.Section
-    Dim count As Integer
+    Dim Count As Integer
 
     Application.ScreenUpdating = False
 
     Set doc = ActiveDocument
-    count = 0
+    Count = 0
     
     ' Loop through each section in the document
     For Each sec In doc.Sections
         ' Check if the section does not have "Different First Page" selected
         If sec.PageSetup.DifferentFirstPageHeaderFooter Then
-            count = count + 1
+            Count = Count + 1
         End If
     Next sec
     
     Application.ScreenUpdating = True
     
-    'MsgBox "Number of sections with 'Different First Page' selected: " & count
-    CountSectionsWithDifferentFirstPage = count
+    'MsgBox "Number of sections with 'Different First Page' selected: " & Count
+    CountSectionsWithDifferentFirstPage = Count
 
 PROC_EXIT:
     Exit Function
@@ -3179,11 +3179,11 @@ Private Function CountWhiteParagraphMarks() As Integer
 
     Dim doc As Document
     Dim rng As Word.Range
-    Dim count As Integer
+    Dim Count As Integer
     Dim firstFound As Boolean
 
     Set doc = ActiveDocument
-    count = 0
+    Count = 0
     firstFound = False
     
     ' Initialize the range to search the entire document
@@ -3201,7 +3201,7 @@ Private Function CountWhiteParagraphMarks() As Integer
         Do While .Execute
             ' Check if the found paragraph mark has the white color
             If rng.Font.color = RGB(255, 255, 255) Then
-                count = count + 1
+                Count = Count + 1
                 ' Go to the first white paragraph mark found
                 If Not firstFound Then
                     rng.Select
@@ -3211,9 +3211,9 @@ Private Function CountWhiteParagraphMarks() As Integer
         Loop
     End With
     
-    ' Display the count of white paragraph marks
-    'MsgBox "Number of white paragraph marks: " & count
-    CountWhiteParagraphMarks = count
+    ' Display the Count of white paragraph marks
+    'MsgBox "Number of white paragraph marks: " & Count
+    CountWhiteParagraphMarks = Count
 
 PROC_EXIT:
     Exit Function
@@ -3263,7 +3263,7 @@ Private Function CountEmptyParasWithNoThemeColor()
     'Debug.Print "Total number of paragraphs: " & totalParaCount
     'Debug.Print "Number of empty paragraphs using theme color: " & emptyParaCount
 
-    ' Print out the color count for each empty paragraph
+    ' Print out the color Count for each empty paragraph
     'Dim key As Variant
     'For Each key In colorCounts.Keys
     '    Debug.Print "Theme color " & key & " used in " & colorCounts(key) & " empty paragraphs."
@@ -3320,10 +3320,10 @@ Private Function CountFindNumberDashNumber() As Integer
     Dim rng As Word.Range
     Dim searchPattern As String
     Dim userInterrupt As VbMsgBoxResult
-    Dim count As Integer
+    Dim Count As Integer
 
     searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
-    count = 0
+    Count = 0
 
     Set rng = ActiveDocument.Content
     With rng.Find
@@ -3335,12 +3335,12 @@ Private Function CountFindNumberDashNumber() As Integer
         Do While .Execute
             ' Move the selection to the found text
             rng.Select
-            count = count + 1
+            Count = Count + 1
             'userInterrupt = MsgBox("Found: " & rng.Text, vbOKCancel)
 
             ' Check for user interruption
             'If userInterrupt = vbCancel Then
-            '    MsgBox "Search interrupted. Total found: " & count
+            '    MsgBox "Search interrupted. Total found: " & Count
             '    Exit Function
             'End If
 
@@ -3348,13 +3348,13 @@ Private Function CountFindNumberDashNumber() As Integer
             rng.Collapse Direction:=wdCollapseEnd
             rng.End = ActiveDocument.Content.End
         
-            If count Mod 50 = 0 Then
+            If Count Mod 50 = 0 Then
                 DoEvents  ' Keep UI responsive every 50 updates
             End If
         Loop
     End With
 
-    CountFindNumberDashNumber = count
+    CountFindNumberDashNumber = Count
 
 PROC_EXIT:
     Exit Function
@@ -3368,7 +3368,7 @@ Private Function CountNonBreakingSpaces() As Integer
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
@@ -3382,17 +3382,17 @@ Private Function CountNonBreakingSpaces() As Integer
         .MatchWildcards = False
     End With
 
-    count = 0
+    Count = 0
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
         rng.Collapse wdCollapseEnd
     
-        If count Mod 50 = 0 Then
+        If Count Mod 50 = 0 Then
             DoEvents  ' Keep UI responsive every 50 updates
         End If
     Loop
 
-    CountNonBreakingSpaces = count
+    CountNonBreakingSpaces = Count
 
 PROC_EXIT:
     Exit Function
@@ -3406,7 +3406,7 @@ Private Function CountPeriodSpaceLeftParenthesis() As Integer
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
@@ -3420,17 +3420,17 @@ Private Function CountPeriodSpaceLeftParenthesis() As Integer
         .MatchWildcards = False
     End With
     
-    count = 0
+    Count = 0
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
         rng.Collapse wdCollapseEnd
     
-        If count Mod 50 = 0 Then
+        If Count Mod 50 = 0 Then
             DoEvents  ' Keep UI responsive every 50 updates
         End If
     Loop
     
-    CountPeriodSpaceLeftParenthesis = count
+    CountPeriodSpaceLeftParenthesis = Count
 
 PROC_EXIT:
     Exit Function
@@ -3444,7 +3444,7 @@ Private Function CountStyleWithNumberAndSpace() As Integer
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
     Dim StyleName As String
 
     StyleName = "Verse marker"
@@ -3462,17 +3462,17 @@ Private Function CountStyleWithNumberAndSpace() As Integer
         .MatchWildcards = True
     End With
 
-    count = 0
+    Count = 0
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
         rng.Collapse wdCollapseEnd
         
-        If count Mod 50 = 0 Then
+        If Count Mod 50 = 0 Then
             DoEvents  ' Keep UI responsive every 50 updates
         End If
     Loop
 
-    CountStyleWithNumberAndSpace = count
+    CountStyleWithNumberAndSpace = Count
 
 PROC_EXIT:
     Exit Function
@@ -3486,7 +3486,7 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
     Dim StyleName As String
     Dim firstFound As Boolean
 
@@ -3506,9 +3506,9 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
         .MatchWildcards = True
     End With
 
-    count = 0
+    Count = 0
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
             If Not firstFound Then
                 rng.Select
                 firstFound = True
@@ -3517,12 +3517,12 @@ Private Function CountStyleWithSpaceAndNumber() As Integer
             End If
         rng.Collapse wdCollapseEnd
     
-        If count Mod 50 = 0 Then
+        If Count Mod 50 = 0 Then
             DoEvents  ' Keep UI responsive every 50 updates
         End If
     Loop
 
-    CountStyleWithSpaceAndNumber = count
+    CountStyleWithSpaceAndNumber = Count
 
 PROC_EXIT:
     Exit Function
@@ -3536,7 +3536,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
@@ -3550,13 +3550,13 @@ Private Function CountQuadrupleParagraphMarks() As Integer
         .MatchWildcards = False
     End With
     
-    count = 0
+    Count = 0
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
         rng.Collapse wdCollapseEnd
     Loop
     
-    'MsgBox "CountQuadrupleParagraphMarks = " & count
+    'MsgBox "CountQuadrupleParagraphMarks = " & Count
     'Dim answer As Integer
     'answer = MsgBox("CountQuadrupleParagraphMarks Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
     'If answer = vbYes Then
@@ -3564,7 +3564,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
     'Else
     '    Stop
     'End If
-    CountQuadrupleParagraphMarks = count
+    CountQuadrupleParagraphMarks = Count
 
 PROC_EXIT:
     Exit Function
@@ -3578,7 +3578,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
@@ -3594,13 +3594,13 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Integer
         .MatchWildcards = False
     End With
 
-    count = 0
+    Count = 0
     Do While rng.Find.Execute
-        count = count + 1
+        Count = Count + 1
         rng.Collapse wdCollapseEnd
     Loop
 
-    CountWhiteSpaceAndCarriageReturn = count
+    CountWhiteSpaceAndCarriageReturn = Count
 
 PROC_EXIT:
     Exit Function
@@ -3615,18 +3615,18 @@ Private Function CountDoubleTabs() As Integer
 
     Dim doc As Document
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
-    count = 0
+    Count = 0
     Set doc = ActiveDocument
     Set rng = doc.Content
 
     Do While rng.Find.Execute(findText:="^t^t", Forward:=True, Wrap:=wdFindStop)
-        count = count + 1
+        Count = Count + 1
         rng.Collapse Direction:=wdCollapseEnd ' Move the range to the end of the found text
     Loop
 
-    CountDoubleTabs = count
+    CountDoubleTabs = Count
 
 PROC_EXIT:
     Exit Function
@@ -3641,18 +3641,18 @@ Private Function CountSpaceFollowedByCarriageReturn() As Integer
 
     Dim doc As Document
     Dim rng As Word.Range
-    Dim count As Long
+    Dim Count As Long
 
-    count = 0
+    Count = 0
     Set doc = ActiveDocument
     Set rng = doc.Content
 
     Do While rng.Find.Execute(findText:=" ^13", Forward:=True, Wrap:=wdFindStop)
-        count = count + 1
+        Count = Count + 1
         rng.Collapse Direction:=wdCollapseEnd ' Move the range to the end of the found text
     Loop
 
-    CountSpaceFollowedByCarriageReturn = count
+    CountSpaceFollowedByCarriageReturn = Count
 
 PROC_EXIT:
     Exit Function
@@ -3700,20 +3700,20 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-' Function to count occurrences of a substring in a string
+' Function to Count occurrences of a substring in a string
 Private Function CountOccurrences(ByVal text As String, ByVal substring As String) As Long
-    Dim pos, count As Long
+    Dim pos, Count As Long
     pos = 1
-    count = 0
+    Count = 0
     Do While InStr(pos, text, substring) > 0
         pos = InStr(pos, text, substring) + Len(substring)
-        count = count + 1
+        Count = Count + 1
     Loop
     
-    CountOccurrences = count
+    CountOccurrences = Count
 End Function
 
-' count double spaces inside shapes, including those within groups, with error handling
+' Count double spaces inside shapes, including those within groups, with error handling
 Private Function CountDoubleSpacesInShapes() As Integer
     Dim doc As Document
     Dim shp As shape
@@ -3729,7 +3729,7 @@ Private Function CountDoubleSpacesInShapes() As Integer
     Next shp
     On Error GoTo 0  ' Turn off error handling
     
-    ' Display the count of double spaces in shapes
+    ' Display the Count of double spaces in shapes
     CountDoubleSpacesInShapes = doubleSpaceCount
 End Function
 

@@ -213,7 +213,7 @@ End Function
 '               and tallies occurrences per unique color. Outputs formatted results to the console
 '               including color name via GetColorNameFromHex.
 ' Inputs:       None (operates on ActiveDocument)
-' Outputs:      Debug.Print output of RGB, Hex, count, and resolved color name
+' Outputs:      Debug.Print output of RGB, Hex, Count, and resolved color name
 ' Dependencies: Requires GetColorNameFromHex(hexColor As String) function to be present
 ' Author:       Peter
 ' Last Updated: 2025-08-02
@@ -595,13 +595,13 @@ End Sub
 Public Sub CountSearchHits()
     On Error GoTo PROC_ERR
     Dim searchTerm As String
-    Dim count As Long
+    Dim Count As Long
     Dim rng As Word.Range
 
     searchTerm = InputBox("Enter the text to search for:")
     If Len(searchTerm) = 0 Then GoTo PROC_EXIT
 
-    count = 0
+    Count = 0
     Set rng = ActiveDocument.Content
     With rng.Find
         .Text = searchTerm
@@ -613,12 +613,12 @@ Public Sub CountSearchHits()
         .MatchWildcards = False
 
         Do While .Execute
-            count = count + 1
+            Count = Count + 1
             rng.Collapse wdCollapseEnd
         Loop
     End With
 
-    MsgBox "Found " & count & " instance(s) of '" & searchTerm & "'.", vbInformation
+    MsgBox "Found " & Count & " instance(s) of '" & searchTerm & "'.", vbInformation
 
 PROC_EXIT:
     Exit Sub
@@ -1371,7 +1371,7 @@ Private Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByR
         If InStr(paraStyle, "Verse marker") > 0 Then
             markerText = rng.Text
 
-            ' Skip and count layout wrappers: lone Chr(12)
+            ' Skip and Count layout wrappers: lone Chr(12)
             If Len(markerText) = 1 And Asc(markerText) = 12 Then
                 ascii12Count = ascii12Count + 1
                 GoTo NextPara
@@ -1424,8 +1424,8 @@ Private Sub SmartPrefixRepairOnPage(pgNum As Long, ByRef spaceCount As Long, ByR
 NextPara:
     Next para
 
-    Debug.Print "Chr(12) marker count on Page " & pgNum & ": " & ascii12Count
-    Debug.Print "Missing Chr(160) count on Page " & pgNum & ": " & missing160Count
+    Debug.Print "Chr(12) marker Count on Page " & pgNum & ": " & ascii12Count
+    Debug.Print "Missing Chr(160) Count on Page " & pgNum & ": " & missing160Count
     Debug.Print "=== End of Repairs for Page " & pgNum & " ==="
 
 PROC_EXIT:
@@ -1858,7 +1858,7 @@ End Function
 ' --------------------------------------------------------------
 ' Purpose : Generates a detailed layout report of all sections in
 '           the active Word document, including orientation,
-'           page size, column count, margin settings, borders,
+'           page size, column Count, margin settings, borders,
 '           and section break types.
 '
 ' Outputs : ASCII text file summarizing layout characteristics,
@@ -2314,7 +2314,7 @@ End Sub
 Public Sub ShowUnicodeOfSingleCharacterSelection()
     On Error GoTo PROC_ERR
     Dim r As Word.Range
-    Dim count As Long
+    Dim Count As Long
     Dim s As String
     Dim codeUnit1 As Long, codeUnit2 As Long
     Dim scalar As Long
@@ -2322,14 +2322,14 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
     Dim desc As String
 
     Set r = Selection.Range
-    count = r.Characters.Count
+    Count = r.Characters.Count
 
     ' Enforce exactly one logical character
-    If count = 0 Then
+    If Count = 0 Then
         Debug.Print "Error: No character selected."
         GoTo PROC_EXIT
-    ElseIf count > 2 Then
-        Debug.Print "Error: Selection contains more than one character (" & count & ")."
+    ElseIf Count > 2 Then
+        Debug.Print "Error: Selection contains more than one character (" & Count & ")."
         GoTo PROC_EXIT
     End If
 
@@ -2337,7 +2337,7 @@ Public Sub ShowUnicodeOfSingleCharacterSelection()
     codeUnit1 = AscW(Mid$(s, 1, 1))
 
     ' --- BMP CHARACTER ---
-    If count = 1 Then
+    If Count = 1 Then
         scalar = codeUnit1
         escapeSeq = "\u" & Right$("0000" & Hex$(scalar), 4)
 

@@ -204,18 +204,18 @@ End Sub
 Function CountTextWrappingBreakParagraphs() As Long
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     For Each para In ActiveDocument.Paragraphs
         With para.Range.Find
             .ClearFormatting
             .Text = "^m"
             If .Execute Then
-                count = count + 1
+                Count = Count + 1
             End If
         End With
     Next para
-    CountTextWrappingBreakParagraphs = count
+    CountTextWrappingBreakParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -227,16 +227,16 @@ End Function
 Function CountNextPageSectionBreakParagraphs() As Long
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionNewPage Then
-                count = count + 1
+                Count = Count + 1
             End If
         End If
     Next para
-    CountNextPageSectionBreakParagraphs = count
+    CountNextPageSectionBreakParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -248,16 +248,16 @@ End Function
 Function CountContinuousSectionBreakParagraphs() As Long
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionContinuous Then
-                count = count + 1
+                Count = Count + 1
             End If
         End If
     Next para
-    CountContinuousSectionBreakParagraphs = count
+    CountContinuousSectionBreakParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -269,16 +269,16 @@ End Function
 Function CountEvenPageSectionBreakParagraphs() As Long
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionEvenPage Then
-                count = count + 1
+                Count = Count + 1
             End If
         End If
     Next para
-    CountEvenPageSectionBreakParagraphs = count
+    CountEvenPageSectionBreakParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -290,16 +290,16 @@ End Function
 Function CountOddPageSectionBreakParagraphs() As Long
     On Error GoTo PROC_ERR
     Dim para As Word.Paragraph
-    Dim count As Long
-    count = 0
+    Dim Count As Long
+    Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
             If para.Range.Sections(1).PageSetup.sectionStart = wdSectionOddPage Then
-                count = count + 1
+                Count = Count + 1
             End If
         End If
     Next para
-    CountOddPageSectionBreakParagraphs = count
+    CountOddPageSectionBreakParagraphs = Count
 
 PROC_EXIT:
     Exit Function
@@ -326,12 +326,12 @@ Sub SearchParagraphs()
     On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
-    Dim count As Integer
+    Dim Count As Integer
     Dim firstOccurrenceIndex As Integer
     Dim foundFirst As Boolean
 
     Set doc = ActiveDocument
-    count = 0
+    Count = 0
     firstOccurrenceIndex = -1
     foundFirst = False
 
@@ -339,7 +339,7 @@ Sub SearchParagraphs()
     For Each para In doc.Paragraphs
         ' Check if the paragraph contains only a page break or continuous page break
         If para.Range.Text = Chr(12) Or para.Range.Text = Chr(14) Then
-            count = count + 1
+            Count = Count + 1
             If Not foundFirst Then
                 firstOccurrenceIndex = para.Range.Start
                 foundFirst = True
@@ -347,8 +347,8 @@ Sub SearchParagraphs()
         End If
     Next para
     
-    ' Print the count and first occurrence index to the console
-    Debug.Print "Count of paragraphs with only a page break and continuous page break: " & count
+    ' Print the Count and first occurrence index to the console
+    Debug.Print "Count of paragraphs with only a page break and continuous page break: " & Count
     Debug.Print "Index of the first occurrence: " & firstOccurrenceIndex
     
     ' Go to the first Result in the document
@@ -367,21 +367,21 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
-    Dim count As Integer
+    Dim Count As Integer
 
     Set doc = ActiveDocument
-    count = 0
+    Count = 0
 
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
         If Len(para.Range.Text) = 1 And para.Range.Font.color = wdColorAutomatic Then
-            count = count + 1
+            Count = Count + 1
         End If
     Next para
 
-    ' Print the count to the console
-    Debug.Print "Count of empty paragraphs with font set to automatic: " & count
+    ' Print the Count to the console
+    Debug.Print "Count of empty paragraphs with font set to automatic: " & Count
 
 PROC_EXIT:
     Exit Sub
@@ -394,16 +394,16 @@ Sub GoToParagraphByCount(paragraphNumber As Integer)
     On Error GoTo PROC_ERR
     Dim doc As Document
     Dim para As Word.Paragraph
-    Dim count As Integer
+    Dim Count As Integer
 
     Set doc = ActiveDocument
-    count = 0
+    Count = 0
 
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
-        count = count + 1
+        Count = Count + 1
         ' Check if the current paragraph is the one we want to go to
-        If count = paragraphNumber Then
+        If Count = paragraphNumber Then
             ' Select the paragraph
             para.Range.Select
             GoTo PROC_EXIT
@@ -554,7 +554,7 @@ Sub EnsureFootnoteReferenceStyleColor()
     Dim rng As Word.Range
     Dim hexColor As String
     Dim rgbColor As Long
-    Dim count As Integer
+    Dim Count As Integer
 
     ' Set the desired hex color (e.g., purple: #663399)
     hexColor = "#663399"
@@ -565,12 +565,12 @@ Sub EnsureFootnoteReferenceStyleColor()
     ' Initialize variables
     Set doc = ActiveDocument
 
-    count = 0
+    Count = 0
     ' Loop through each paragraph in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph style is Footnote Reference
         If para.style = "Footnote Reference" Then
-            count = count + 1
+            Count = Count + 1
             Set rng = para.Range
             ' Check if the style color is correctly set to the desired color
             If rng.Font.color <> rgbColor Then
@@ -582,7 +582,7 @@ Sub EnsureFootnoteReferenceStyleColor()
     
     ' Display a message indicating the process is complete
     'MsgBox "Footnote Reference styles checked and updated to the desired color where necessary."
-    Debug.Print "Count of Footnote Reference = " & count
+    Debug.Print "Count of Footnote Reference = " & Count
 
 PROC_EXIT:
     Exit Sub
@@ -1304,7 +1304,7 @@ Sub CountNumericOrdinals()
     On Error GoTo PROC_ERR
 
     Dim cntST As Long, cntND As Long, cntRD As Long, cntTH As Long
-    Dim Total As Long
+    Dim total As Long
     Dim showReview As Boolean
 
     ' ===== TOGGLE REVIEW MODE =====
@@ -1352,7 +1352,7 @@ Sub CountNumericOrdinals()
                         Case "th": cntTH = cntTH + 1
                     End Select
 
-                    Total = Total + 1
+                    total = total + 1
 
                     If showReview Then
                         rng.Select
@@ -1380,7 +1380,7 @@ Done:
         "nd: " & cntND & vbCrLf & _
         "rd: " & cntRD & vbCrLf & _
         "th: " & cntTH & vbCrLf & _
-        "TOTAL: " & Total & vbCrLf & _
+        "TOTAL: " & total & vbCrLf & _
         "Ordinal Count Results"
 
 PROC_EXIT:

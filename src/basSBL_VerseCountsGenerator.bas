@@ -33,11 +33,11 @@ End Function
 
 Private Function ToOneBasedLongArray(src As Variant, context As String) As Long()
     On Error GoTo PROC_ERR
-    Dim count As Long
-    count = UBound(src) - LBound(src) + 1
+    Dim Count As Long
+    Count = UBound(src) - LBound(src) + 1
     
     Dim temp() As Long
-    ReDim temp(1 To count)
+    ReDim temp(1 To Count)
     
     Dim i As Long
     Dim dest As Long
@@ -150,13 +150,13 @@ End Function
 Public Sub GeneratePackedVerseStrings_FromDictionary()
     On Error GoTo PROC_ERR
 ' For each book:
-'    - Each chapter's verse count is encoded as a 3-digit fixed-width number
+'    - Each chapter's verse Count is encoded as a 3-digit fixed-width number
 '    - Output length = Chapters x 3
 '    - Impossible to mistype
 '    - Impossible to miscount
 '    - Deterministic every run
 ' Why 3 Is Optimal
-'    - Max verse count = 176 (Psalms 119)
+'    - Max verse Count = 176 (Psalms 119)
 '    - 3 digits covers up to 999
 '    - Fixed width enables direct offset math
 '    - Keeps implementation trivial
@@ -226,7 +226,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
     
     For BookID = 1 To 66
         
-        ' ----- Packed chapter count -----
+        ' ----- Packed chapter Count -----
         If IsArray(packedArr(BookID)) Then
             chapterCount = UBound(packedArr(BookID)) - LBound(packedArr(BookID)) + 1
         Else
@@ -235,7 +235,7 @@ Public Function VerifyPackedVerseMap(Optional ByVal verbose As Boolean = False) 
         
         totalChapters = totalChapters + chapterCount
         
-        ' ----- Canonical expected count (Array() is 0-based) -----
+        ' ----- Canonical expected Count (Array() is 0-based) -----
         expectedChapters = expectedCounts(BookID - 1)
         totalExpected = totalExpected + expectedChapters
         
