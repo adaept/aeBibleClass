@@ -487,7 +487,7 @@ Private Function AdaeptMsg() As String
     AdaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
 End Function
 
-' -- Book comboBox (Step 1) ----------------------------------------------------
+' -- Book row -----------------------------------------------------------------
 
 Private Function NormalizeBookInput(ByVal raw As String) As String
     Dim s As String
@@ -503,15 +503,15 @@ Public Function GetBookEnabled(control As IRibbonControl) As Boolean
 End Function
 
 Public Function GetBookCount(control As IRibbonControl) As Long
-    GetBookCount = 0   ' Step 1: delegate to aeBibleCitationClass
+    GetBookCount = 0   ' Dropdown population intentionally deferred — not used in current navigation flow
 End Function
 
 Public Function GetBookItemLabel(control As IRibbonControl, index As Long) As String
-    GetBookItemLabel = ""   ' Step 1
+    GetBookItemLabel = ""   ' Dropdown population intentionally deferred — not used in current navigation flow
 End Function
 
 Public Function GetBookItemID(control As IRibbonControl, index As Long) As String
-    GetBookItemID = CStr(index)   ' Step 1: return "SEP" for OT_NT_SEPARATOR_INDEX
+    GetBookItemID = CStr(index)   ' Reserved for future dropdown item IDs
 End Function
 
 Public Function GetBookText(control As IRibbonControl) As String
@@ -577,13 +577,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-' Dead stub — retained for reference. Navigation removed from OnBookChanged (Bug 9).
-' Book-level document navigation occurs in GoToChapter via m_currentBookPos.
-Public Sub NavigateToCurrentBook()
-    ' ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
-End Sub
-
-' -- Chapter row (Step 3) ------------------------------------------------------
+' -- Chapter row --------------------------------------------------------------
 
 Private Function FindChapterPos(ByVal chNum As Long) As Long
     ' Direct lookup from pre-built chapterData index (O(1)).
@@ -665,11 +659,11 @@ Public Function GetNextChapterEnabled(control As IRibbonControl) As Boolean
 End Function
 
 Public Function GetChapterCount(control As IRibbonControl) As Long
-    GetChapterCount = 0   ' Step 5: aeBibleCitationClass.ChaptersInBook(bookName)
+    GetChapterCount = 0   ' Dropdown population not currently used; chapter validation uses aeBibleCitationClass.ChaptersInBook
 End Function
 
 Public Function GetChapterItemLabel(control As IRibbonControl, index As Long) As String
-    GetChapterItemLabel = ""   ' Step 5
+    GetChapterItemLabel = ""   ' Dropdown population not currently used
 End Function
 
 Public Function GetChapterItemID(control As IRibbonControl, index As Long) As String
@@ -725,11 +719,6 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Public Sub OnChapterAction(control As IRibbonControl, text As String)
-    ' editBox does not support onAction in the customUI14 schema — this stub
-    ' is retained in case the control type is changed back to comboBox.
-End Sub
-
 ' Called from basRibbonDeferred.GoToChapterDeferred after the key event clears.
 ' Does NOT call GoToChapter or ScrollIntoView — those steal ribbon focus from OnTime
 ' context (Bug 21). Navigation occurs via GoToVerse (uses FindChapterPos) or via the
@@ -775,7 +764,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-' -- Verse row (skeleton — Step 5 wires navigation logic) ----------------------
+' -- Verse row ----------------------------------------------------------------
 
 Public Function GetPrevVerseEnabled(control As IRibbonControl) As Boolean
     GetPrevVerseEnabled = True   ' always-enable (#599); OnPrevVerseClick guards m_currentVerse > 1
@@ -794,11 +783,11 @@ Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
 End Function
 
 Public Function GetVerseCount(control As IRibbonControl) As Long
-    GetVerseCount = 0   ' Step 5: aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter)
+    GetVerseCount = 0   ' Dropdown population not currently used; verse validation uses aeBibleCitationClass.VersesInChapter
 End Function
 
 Public Function GetVerseItemLabel(control As IRibbonControl, index As Long) As String
-    GetVerseItemLabel = ""   ' Step 5
+    GetVerseItemLabel = ""   ' Dropdown population not currently used
 End Function
 
 Public Function GetVerseItemID(control As IRibbonControl, index As Long) As String
@@ -849,18 +838,6 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Public Sub OnVerseAction(control As IRibbonControl, text As String)
-    ' comboBox does not support onAction — dead stub retained for reference.
-End Sub
-
-' Called from basRibbonDeferred.GoToVerseDeferred — executes after key event clears
-Public Sub ExecutePendingVerse()
-    If m_pendingVerse > 0 Then
-        GoToVerse m_pendingVerse
-        m_pendingVerse = 0
-    End If
-End Sub
-
 Public Sub UpdateStatusBar()
     ' Called from basRibbonDeferred.UpdateStatusBarDeferred via Application.OnTime.
     ' Fires after Word's own post-onAction status bar refresh, overwriting "Page X of Y"
@@ -901,7 +878,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-' -- Verse row navigation (Step 5) --------------------------------------------
+' -- Verse row navigation -----------------------------------------------------
 
 Private Function IsStudyVersion() As Boolean
     ' Study version has one verse per paragraph; paragraph Count > 30,000.
@@ -1015,6 +992,7 @@ Public Function GetGoEnabled(control As IRibbonControl) As Boolean
     GetGoEnabled = (m_currentBookIndex <> 0)   ' disabled until book selected; consistent with GetNewSearchEnabled
 End Function
 
+' Current navigation rule: Book/Chapter/Verse onChange validates and stages state; Go performs verse navigation.
 Public Sub OnGoClick(control As IRibbonControl)
     ' Explicit navigation trigger (GoButton, #600).
     ' Reads m_currentBookIndex, m_currentChapter, m_currentVerse — all set by
@@ -1064,5 +1042,31 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_chapterTextValid = True
     m_verseTextValid = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+End Sub
+
+' -- Archived reference paths (not used by current ribbon flow) ----------------
+' These methods are retained for XML/control-type fallback reference only.
+' NavigateToCurrentBook: navigation removed from OnBookChanged (Bug 9);
+'   book-level navigation now occurs in GoToChapter via m_currentBookPos.
+' OnChapterAction / OnVerseAction: onAction is not fired by comboBox controls
+'   in the customUI14 schema; retained in case control type reverts to editBox.
+' ExecutePendingVerse: navigation trigger moved to OnGoClick (#600);
+'   m_pendingVerse is never set so this is a permanent no-op.
+
+Public Sub NavigateToCurrentBook()
+    ' ActiveDocument.Range(m_currentBookPos, m_currentBookPos).Select
+End Sub
+
+Public Sub OnChapterAction(control As IRibbonControl, text As String)
+End Sub
+
+Public Sub OnVerseAction(control As IRibbonControl, text As String)
+End Sub
+
+Public Sub ExecutePendingVerse()
+    If m_pendingVerse > 0 Then
+        GoToVerse m_pendingVerse
+        m_pendingVerse = 0
+    End If
 End Sub
 
