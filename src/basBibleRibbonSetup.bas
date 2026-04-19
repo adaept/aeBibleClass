@@ -229,7 +229,7 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     Instance().OnNewSearchClick control
 End Sub
 
-' -- KeyTip callbacks (i18n: all keytip strings live in basRibbonStrings.bas) --
+' -- KeyTip callbacks (i18n: all keytip strings live in basUIStrings.bas) --
 
 Public Sub GetPrevBookKeytip(control As IRibbonControl, ByRef keytip)
     keytip = KT_PREV_BOOK

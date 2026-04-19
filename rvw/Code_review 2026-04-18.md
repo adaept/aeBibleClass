@@ -970,3 +970,400 @@ that the layout pass is done, because the citation is only written after
 |------|--------|
 | "Navigating ..." clears prematurely | **FIXED — 2026-04-18 — message persists through background layout** |
 | GoToChapter — same fix applied | **FIXED — 2026-04-18** |
+
+---
+
+### Bug: Book comboBox displays "rev" after returning from Focus mode
+
+#### Observed behaviour
+
+1. User types `rev` in the Book comboBox and presses Go — document navigates to REVELATION.
+2. `OnGoClick` calls `Instance().InvalidateControl "BookComboBox"` (via `m_ribbon.Invalidate`); `GetBookText` callback returns `"REVELATION"`.
+3. The comboBox display updates to `"REVELATION"` — correct.
+4. User clicks **Focus** in the status bar (or View → Focus); Focus mode activates.
+5. User presses **Escape** (or closes Focus mode) — ribbon re-renders.
+6. The Book comboBox now shows **`"rev"`** — the user's original typed text, not `"REVELATION"`.
+
+#### Explanation — Win32 edit buffer vs getText callback
+
+An Office ribbon `<comboBox>` control has two separate text values:
+
+| Layer | What it holds | Who controls it |
+|-------|--------------|-----------------|
+| **Win32 edit buffer** | The raw string last typed or programmatically set by the host | Win32 control state; persists until the control is destroyed and recreated |
+| **getText-derived display** | The string returned by the `getText` callback during `Invalidate` | VBA callback; applied only during an Invalidate pass |
+
+When the user types `"rev"` and presses Tab or Go, the Win32 edit buffer stores `"rev"`.
+`Invalidate` fires the `getText` callback which returns `"REVELATION"`, and the **display**
+updates — but the Win32 buffer still contains `"rev"`.
+
+**Focus mode destroys and recreates the ribbon** (it is a full application-level layout
+switch, not a simple redraw). When the ribbon is rebuilt, the comboBox Win32 control is
+created fresh. Word/Office initialises it from the **native control state**, which is the
+Win32 edit buffer value — `"rev"` — not the `getText` callback. The `getText` callback is
+not fired at control creation; it fires only during a subsequent `Invalidate` pass.
+
+#### Why there is no VBA fix
+
+- **No event for Focus mode entry/exit.** There is no `Application.OnFocusModeEnter`,
+  `DocumentBeforeFocusMode`, or equivalent callback. VBA cannot detect the transition.
+- **Invalidate cannot be scheduled.** Without an event trigger, `Application.OnTime`
+  cannot be scheduled at the right moment. An `OnTime`-based polling workaround would
+  fire during normal operation and cause unnecessary ribbon flicker.
+- **`getText` callback is not called at control creation.** The callback fires during
+  `Invalidate` only. The fresh comboBox is initialised from internal Office/Win32 state,
+  bypassing the callback entirely.
+
+#### Status: Known limitation — no fix available within current architecture
+
+The behaviour is a consequence of how Office ribbon controls interact with the Win32
+subsystem during host-level layout switches. It affects all Office applications that use
+comboBox ribbon controls with user-typed input.
+
+**Mitigation (documented, not implemented):** Users who notice the stale display can
+press Tab or click the comboBox and type a new value; the next `Invalidate` pass
+(triggered by any ribbon interaction) will restore the callback-derived display.
+
+| Item | Status |
+|------|--------|
+| Book comboBox shows stale user text after Focus mode | **KNOWN LIMITATION — no VBA fix available** |
+
+---
+
+### Bug: Invalid comboBox input — status bar and display remain stale
+
+#### Observed behaviour
+
+1. A successful navigation has been made; status bar shows e.g., `"Gen 3:5"`.
+2. User types `"sfdgs55jsfdr"` (or any unrecognised string) in the Book comboBox and clicks Go.
+3. Nothing navigates — the guard inside `OnGoClick` / `OnBookChanged` rejects the input.
+4. Status bar still shows `"Gen 3:5"` — the previous successful citation.
+5. ComboBox still displays the nonsense string.
+6. Prev/Next Book/Chapter/Verse navigate based on the last **valid** internal state
+   (`m_currentBookIndex`, `m_currentChapter`, `m_currentVerse`) while the comboBox
+   display continues to show the invalid string.
+
+The same class of error applies to out-of-bounds numeric input:
+
+| Input location | Example invalid value | Expected message |
+|----------------|-----------------------|-----------------|
+| Book comboBox | `"sfdgs55jsfdr"` (unrecognised alias) | `"Invalid input for Book — enter a book name or abbreviation"` |
+| Chapter comboBox | `"99"` when book has 28 chapters | `"Invalid input for Chapter — out of range (1–28)"` |
+| Verse comboBox | `"0"` or `"999"` | `"Invalid input for Verse — out of range (1–N)"` |
+
+#### Root cause
+
+`OnBookChanged`, `OnChapterChanged`, and `OnVerseChanged` validate input and silently
+return on failure. No feedback is written to the status bar and the comboBox display is
+not corrected. The status bar retains whatever was last written by a successful
+navigation.
+
+#### Proposed fix — status bar error feedback
+
+Write a descriptive error string to `Application.StatusBar` on any validation failure
+inside `OnGoClick` and the `OnXxxChanged` handlers.
+
+Three error categories:
+
+| Category | Trigger | Proposed status bar text |
+|----------|---------|--------------------------|
+| **Book unrecognised** | `ResolveAlias` returns 0 or fails | `"Invalid input for Book — enter a book name or abbreviation"` |
+| **Chapter out of range** | Parsed integer < 1 or > `GetMaxChapter(bookID)` | `"Invalid input for Chapter — out of range (1–N)"` |
+| **Verse out of range** | Parsed integer < 1 or > `GetMaxVerse(bookID, chapter)` | `"Invalid input for Verse — out of range (1–N)"` |
+
+Non-numeric chapter/verse input (e.g., letters in the chapter field) is treated as
+out-of-range after `Val()` or `CInt()` parsing returns 0.
+
+The comboBox display issue (nonsense text persisting) is a separate concern: calling
+`m_ribbon.InvalidateControl "BookComboBox"` after a failed parse will trigger `GetBookText`
+which returns the last valid book name, correcting the display. Same applies to
+`ChapterComboBox` and `VerseComboBox`.
+
+#### Pros
+
+| # | Pro |
+|---|-----|
+| 1 | **Immediate user feedback** — user knows why nothing happened without having to guess |
+| 2 | **Status bar is already the feedback channel** — consistent with `"Navigating ..."` and SBL citation patterns established this session |
+| 3 | **ComboBox display corrected** — `InvalidateControl` after rejection resets the display to the last valid value; user sees the active state, not stale nonsense |
+| 4 | **Prev/Next remain correct** — navigation continues from the last valid state; the error message clarifies why the comboBox shows something different |
+| 5 | **Low coupling** — error writes happen at the guard site (`OnGoClick`, `OnBookChanged`, `OnChapterChanged`, `OnVerseChanged`); no new methods or modules required |
+| 6 | **Range limit in message** — `"out of range (1–28)"` teaches the user the valid range without a dialog box |
+| 7 | **Deferred pattern not needed** — error messages do not compete with Word's post-`onAction` status bar refresh; they persist until the next navigation or `OnTime` write |
+
+#### Cons
+
+| # | Con |
+|---|-----|
+| 1 | **Status bar is ephemeral** — Word will overwrite the error message on hover, selection change, or next Prev/Next click; user may miss it |
+| 2 | **Range data needed at call site** — displaying `"out of range (1–28)"` requires `GetMaxChapter` / `GetMaxVerse` to be called even when navigation is not proceeding; minor overhead |
+| 3 | **`InvalidateControl` adds a ribbon round-trip per rejection** — visible as a brief flicker if the user types rapidly; acceptable given the use case (deliberate Go click) |
+| 4 | **Error message is overwritten by next Prev/Next** — if the user immediately clicks Prev/Next after an invalid Book entry, the error disappears and is replaced by the SBL citation of the nav result; sequence may confuse |
+| 5 | **Chapter/Verse validation in `OnXxxChanged` fires on every keystroke** — attaching error feedback there would produce per-keystroke error messages; error feedback should be deferred to `OnGoClick` only |
+
+#### Benefits
+
+- Eliminates the silent-failure UX: the application appears unresponsive when invalid input is entered. A status bar message makes the rejection explicit.
+- `InvalidateControl` after rejection restores comboBox display consistency with internal state, removing the misleading Prev/Next behaviour (navigates correctly but display shows nonsense).
+- Establishes a consistent error feedback pattern for all three comboBox controls, reducing future ambiguity if new validation rules are added.
+
+#### Prev/Next boundary — gap identified
+
+The six Prev/Next buttons were changed to always return `True` from `GetXxxEnabled`
+(§ 5 — always-enable at boundary pattern). The click handlers (`PrevButton`,
+`NextButton`, `OnPrevChapterClick`, `OnNextChapterClick`, `OnPrevVerseClick`,
+`OnNextVerseClick`) guard boundaries silently: they detect the limit and return without
+navigating, but write **nothing** to the status bar.
+
+This means:
+
+- Clicking PrevBook at Genesis produces no feedback — the button appears to do nothing.
+- Clicking NextVerse at the last verse of the chapter produces no feedback — same.
+- The same silence applies to all six Prev/Next boundary cases.
+
+Boundary status bar messages follow the same pattern as invalid input messages:
+
+| Button | Boundary condition | Proposed status bar text |
+|--------|--------------------|--------------------------|
+| PrevBook | Already at first book (index 1) | `"Already at first book"` |
+| NextBook | Already at last book (index 66) | `"Already at last book"` |
+| PrevChapter | Already at chapter 1 | `"Already at first chapter of [Book]"` |
+| NextChapter | Already at last chapter of current book | `"Already at last chapter of [Book]"` |
+| PrevVerse | Already at verse 1 | `"Already at first verse of [Book] [C]"` |
+| NextVerse | Already at last verse of current chapter | `"Already at last verse of [Book] [C]"` |
+
+These are written directly (not deferred) — boundary guards return early before
+any navigation, so there is no post-`onAction` Word status bar refresh to race against.
+
+#### Scope
+
+| File | Change |
+|------|--------|
+| `aeRibbonClass.cls` — `OnGoClick` | After book alias fails: write error to status bar; call `InvalidateControl "BookComboBox"` |
+| `aeRibbonClass.cls` — `OnGoClick` | After chapter out-of-range: write error; call `InvalidateControl "ChapterComboBox"` |
+| `aeRibbonClass.cls` — `OnGoClick` | After verse out-of-range: write error; call `InvalidateControl "VerseComboBox"` |
+| `aeRibbonClass.cls` — `OnBookChanged` | On alias failure: write error to status bar; call `InvalidateControl "BookComboBox"` |
+| `aeRibbonClass.cls` — `OnChapterChanged` | Validation only — no error message here (see Con 5); error reported at Go time |
+| `aeRibbonClass.cls` — `OnVerseChanged` | Same — validation only; no per-keystroke error message |
+| `aeRibbonClass.cls` — `PrevButton` | At boundary: write `"Already at first book"` to status bar |
+| `aeRibbonClass.cls` — `NextButton` | At boundary: write `"Already at last book"` to status bar |
+| `aeRibbonClass.cls` — `OnPrevChapterClick` | At boundary: write `"Already at first chapter of [Book]"` |
+| `aeRibbonClass.cls` — `OnNextChapterClick` | At boundary: write `"Already at last chapter of [Book]"` |
+| `aeRibbonClass.cls` — `OnPrevVerseClick` | At boundary: write `"Already at first verse of [Book] [C]"` |
+| `aeRibbonClass.cls` — `OnNextVerseClick` | At boundary: write `"Already at last verse of [Book] [C]"` |
+
+**Status: DONE — 2026-04-19.**
+
+#### Implementation notes
+
+- `m_bookTextValid As Boolean` added to private state (initialized `True` in `Class_Initialize`).
+- `OnBookChanged`: sets `m_bookTextValid = False` and writes status bar error on no-match;
+  sets `m_bookTextValid = True` on successful alias resolution. No `InvalidateControl`
+  here — calling it mid-typing would discard characters the user is still entering.
+- `OnGoClick`: checks `Not m_bookTextValid` after the `m_currentBookIndex = 0` guard;
+  writes the same error message and calls `InvalidateControl "BookComboBox"` to restore
+  display to the last resolved book name before returning.
+- `PrevButton` / `NextButton`: boundary split into `<= 0` (silent, no book set) and
+  `= 1` / `>= 66` (error message written).
+- Chapter/Verse boundary messages include the full book name from `headingData` and,
+  for verse boundaries, the current chapter number — e.g., `"Already at last verse of Genesis 3"`.
+
+---
+
+### Status bar strings — i18n extraction
+
+#### Context
+
+The status bar messages added in the invalid-input and boundary fix are inline string
+literals in `aeRibbonClass.cls`. `basUIStrings.bas` already exists as the declared
+home for all user-facing ribbon strings. Its header states:
+
+> *i18n: to localise the ribbon, edit only this module.*
+> *VSTO port: replace this module with a .resx resource file. Constant names map directly to resource keys.*
+
+The status bar messages are user-facing text that should live there — but they raise
+a structural question: some messages include runtime data (book name, chapter number)
+that cannot be expressed as a compile-time `Const`.
+
+#### Is a separate module needed?
+
+No. The case for a new module (e.g., `basStatusStrings`) rests on scope separation — 
+"ribbon XML keytips" vs "status bar messages" — but `basUIStrings` already declares
+itself as the home for **all** ribbon UI strings. Adding a second module for status bar
+messages would split the i18n surface across two files, requiring translators and VSTO
+porters to edit two locations. One module is sufficient.
+
+If the module name feels too narrow after the additions, a rename to `basRibbonResources`
+or `basUIStrings` is the appropriate response — not a new module.
+
+#### Static vs dynamic messages
+
+Messages fall into two groups:
+
+| Group | Example | VBA representation |
+|-------|---------|-------------------|
+| **Static** | `"Invalid input for Book — enter a book name or abbreviation"` | `Public Const` — no runtime data |
+| **Dynamic** | `"Already at last verse of Genesis 3"` | Contains book name + chapter; cannot be a `Const` |
+
+Three implementation options for dynamic messages:
+
+**Option A — Const prefix, caller concatenates**
+
+```vba
+' basUIStrings:
+Public Const SB_ALREADY_FIRST_CHAPTER As String = "Already at first chapter of "
+
+' aeRibbonClass:
+Application.StatusBar = SB_ALREADY_FIRST_CHAPTER & bookName
+```
+
+- Translator sees only the prefix; the full sentence structure is split across two files.
+- Simple — no helper function needed.
+
+**Option B — Format-string Const, shared FormatMsg helper**
+
+```vba
+' basUIStrings:
+Public Const SB_ALREADY_FIRST_CHAPTER As String = "Already at first chapter of {0}"
+
+' basUIStrings (or basUtility):
+Public Function FormatMsg(ByVal template As String, ParamArray args() As Variant) As String
+    Dim result As String
+    result = template
+    Dim i As Long
+    For i = 0 To UBound(args)
+        result = Replace(result, "{" & i & "}", CStr(args(i)))
+    Next i
+    FormatMsg = result
+End Function
+
+' aeRibbonClass:
+Application.StatusBar = FormatMsg(SB_ALREADY_FIRST_CHAPTER, bookName)
+```
+
+- Translator sees the complete sentence template including the placeholder position.
+- Most i18n-correct: placeholder position can move between languages (e.g., German reverses noun order).
+- Adds one utility function.
+
+**Option C — Public Function per message**
+
+```vba
+' basUIStrings:
+Public Function SB_AlreadyFirstChapter(ByVal bookName As String) As String
+    SB_AlreadyFirstChapter = "Already at first chapter of " & bookName
+End Function
+```
+
+- Translator must read function bodies rather than constant values — harder to extract.
+- Mixing functions and constants in a "strings" module is unconventional and complicates VSTO port (no direct .resx mapping for functions).
+
+#### Pros and Cons by option
+
+| | Option A (prefix Const) | Option B (format Const + FormatMsg) | Option C (function) |
+|-|------------------------|-------------------------------------|---------------------|
+| Translator experience | Sees only the prefix | Sees full template | Must read function body |
+| Localisation correctness | Word order fixed | Word order flexible | Word order flexible |
+| VSTO port (.resx) | Direct key mapping | Direct key mapping | No direct mapping |
+| Code at call site | `Const & runtime` | `FormatMsg(Const, arg)` | `Function(arg)` |
+| New infrastructure | None | One helper function | None |
+| VBA convention | Standard | Non-standard but clear | Unusual in a "strings" module |
+
+#### Recommendation
+
+**Option B** for all messages that embed runtime data. Rationale:
+
+- The existing `basUIStrings` header explicitly targets VSTO port and localisation; Option B is the only option that keeps all translatable text in constant strings while remaining word-order-safe.
+- `FormatMsg` is a four-line utility that lives in `basUIStrings` itself (it is cohesive with string resources).
+- Call sites in `aeRibbonClass.cls` remain readable: `FormatMsg(SB_ALREADY_FIRST_CHAPTER, bookName)`.
+
+Static messages (no runtime data) use `Public Const` directly — same as keytips today.
+
+#### Proposed constant names
+
+| Constant / Function | Value / Template |
+|--------------------|-----------------|
+| `SB_INVALID_BOOK` | `"Invalid input for Book — enter a book name or abbreviation"` |
+| `SB_ALREADY_FIRST_BOOK` | `"Already at first book"` |
+| `SB_ALREADY_LAST_BOOK` | `"Already at last book"` |
+| `SB_ALREADY_FIRST_CHAPTER` | `"Already at first chapter of {0}"` |
+| `SB_ALREADY_LAST_CHAPTER` | `"Already at last chapter of {0}"` |
+| `SB_ALREADY_FIRST_VERSE` | `"Already at first verse of {0} {1}"` |
+| `SB_ALREADY_LAST_VERSE` | `"Already at last verse of {0} {1}"` |
+
+`{0}` = book name, `{1}` = chapter number where applicable.
+
+**Status: DONE — 2026-04-19.**
+
+| File | Change |
+|------|--------|
+| `basUIStrings.bas` | Added 7 `SB_*` constants and `FormatMsg` helper |
+| `aeRibbonClass.cls` | All 8 inline status bar strings replaced with `SB_*` constants and `FormatMsg` calls |
+
+---
+
+### Gap: Pro #6 — range limit not included in messages
+
+#### Problem
+
+Pro #6 of the approved design stated:
+> *"Range limit in message — `'out of range (1–28)'` teaches the user the valid range without a dialog box"*
+
+Two categories of range information were never implemented:
+
+**1. Out-of-range typed chapter/verse at Go time**
+
+`OnGoClick` does not detect that the chapter or verse field contained an out-of-range
+number. Reason: `m_currentChapter` and `m_currentVerse` are always valid at Go time —
+`OnChapterChanged` and `OnVerseChanged` reset them to the previous valid value via
+`ResetChapterDisplayDeferred` / `ResetVerseDisplayDeferred` when out-of-range input is
+detected. `OnGoClick` never saw invalid state and navigated silently.
+
+To close this, the same `m_bookTextValid` pattern is needed for Chapter and Verse:
+- `m_chapterTextValid As Boolean` + `m_chapterMax As Long`
+- `m_verseTextValid As Boolean` + `m_verseMax As Long`
+
+Set `False` (and store max) in `OnChapterChanged` / `OnVerseChanged` on rejection;
+set `True` on acceptance. `OnGoClick` reads the flags and shows:
+
+| Constant | Template |
+|----------|---------|
+| `SB_INVALID_CHAPTER` | `"Invalid input for Chapter - out of range (1-{0})"` |
+| `SB_INVALID_VERSE` | `"Invalid input for Verse - out of range (1-{0})"` |
+
+Reset both flags to `True` in `OnBookChanged` (new book resets chapter/verse to valid
+defaults 1/1) and in `OnNewSearchClick`.
+
+**2. Range missing from boundary messages**
+
+All four chapter/verse boundary constants omit the valid range:
+
+| Current | Required |
+|---------|---------|
+| `"Already at first chapter of {0}"` | `"Already at first chapter of {0} (1-{1})"` |
+| `"Already at last chapter of {0}"` | `"Already at last chapter of {0} (1-{1})"` |
+| `"Already at first verse of {0} {1}"` | `"Already at first verse of {0} {1} (1-{2})"` |
+| `"Already at last verse of {0} {1}"` | `"Already at last verse of {0} {1} (1-{2})"` |
+
+`{1}` = max chapters (chapter messages); `{2}` = max verses (verse messages).
+`OnNextChapterClick` and `OnNextVerseClick` already have the max value in scope
+(used in the boundary condition); `OnPrevChapterClick` and `OnPrevVerseClick` need
+one additional lookup.
+
+#### Full scope — 2026-04-19 fix
+
+| File | Change |
+|------|--------|
+| `basUIStrings.bas` | Add `SB_INVALID_CHAPTER`, `SB_INVALID_VERSE`; update 4 boundary constants with range placeholder |
+| `aeRibbonClass.cls` — private state | Add `m_chapterTextValid`, `m_chapterMax`, `m_verseTextValid`, `m_verseMax` |
+| `aeRibbonClass.cls` — `Class_Initialize` | Initialise new fields |
+| `aeRibbonClass.cls` — `OnChapterChanged` | Set flag + max on rejection; set `True` on acceptance |
+| `aeRibbonClass.cls` — `OnVerseChanged` | Same |
+| `aeRibbonClass.cls` — `OnBookChanged` | Reset chapter/verse flags to `True` on successful match |
+| `aeRibbonClass.cls` — `OnNewSearchClick` | Reset all four new fields |
+| `aeRibbonClass.cls` — `OnGoClick` | Add chapter and verse flag checks with range messages |
+| `aeRibbonClass.cls` — `OnPrevChapterClick` | Add max lookup; update `FormatMsg` call |
+| `aeRibbonClass.cls` — `OnNextChapterClick` | Store max in variable; update `FormatMsg` call |
+| `aeRibbonClass.cls` — `OnPrevVerseClick` | Add max lookup; update `FormatMsg` call |
+| `aeRibbonClass.cls` — `OnNextVerseClick` | Store max in variable; update `FormatMsg` call |
+
+**Status: DONE — 2026-04-19.**

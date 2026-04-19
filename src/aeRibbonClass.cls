@@ -47,6 +47,10 @@ Private m_currentChapterPos As Long   ' cached char position of current chapter 
 Private m_pendingChapter   As Long    ' chapter number staged for deferred GoToChapter call
 Private m_pendingVerse     As Long    ' verse number staged for deferred GoToVerse call
 Private m_bookTextValid    As Boolean ' True when last OnBookChanged resolved an alias; False on no-match
+Private m_chapterTextValid As Boolean ' True when last OnChapterChanged accepted the value; False on rejection
+Private m_chapterMax       As Long    ' max chapter Count for current book at last rejection; used in OnGoClick error message
+Private m_verseTextValid   As Boolean ' True when last OnVerseChanged accepted the value; False on rejection
+Private m_verseMax         As Long    ' max verse Count for current chapter at last rejection; used in OnGoClick error message
 Private m_studyVersionSet  As Boolean ' True after IsStudyVersion has been evaluated
 Private m_studyVersionVal  As Boolean ' cached Result of IsStudyVersion
 
@@ -71,6 +75,10 @@ Private Sub Class_Initialize()
     m_pendingChapter = 0
     m_pendingVerse = 0
     m_bookTextValid = True
+    m_chapterTextValid = True
+    m_chapterMax = 0
+    m_verseTextValid = True
+    m_verseMax = 0
     m_studyVersionSet = False
     m_studyVersionVal = False
 End Sub
@@ -256,7 +264,7 @@ Private Sub NextButton()
     On Error GoTo PROC_ERR
     If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
     If m_currentBookIndex >= 66 Then
-        Application.StatusBar = "Already at last book"
+        Application.StatusBar = SB_ALREADY_LAST_BOOK
         GoTo PROC_EXIT
     End If
     Dim nextIdx As Long
@@ -291,7 +299,7 @@ Private Sub PrevButton()
     On Error GoTo PROC_ERR
     If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
     If m_currentBookIndex = 1 Then
-        Application.StatusBar = "Already at first book"
+        Application.StatusBar = SB_ALREADY_FIRST_BOOK
         GoTo PROC_EXIT
     End If
     Dim prevIdx As Long
@@ -460,7 +468,7 @@ Public Sub WarmLayoutCache()
     End If
     savedPos = Selection.Start
     Debug.Print "WarmLayoutCache: warming to pos=" & lastPos & " at " & Format(Now, "hh:nn:ss")
-    Application.StatusBar = "Bible: building navigation index..."
+    Application.StatusBar = SB_WARM_CACHE
     ActiveDocument.Range(lastPos, lastPos).Select
     ActiveDocument.Range(savedPos, savedPos).Select
     Application.StatusBar = False
@@ -537,11 +545,13 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     Next i
 
     If Not matchFound Then
-        Application.StatusBar = "Invalid input for Book - enter a book name or abbreviation"
+        Application.StatusBar = SB_INVALID_BOOK
         m_bookTextValid = False
         GoTo PROC_EXIT
     End If
     m_bookTextValid = True
+    m_chapterTextValid = True   ' new book resets chapter to 1 — always valid
+    m_verseTextValid = True     ' new book resets verse to 1 — always valid
 
     m_currentBookIndex = i
     m_currentBookPos = CLng(headingData(i, 1))
@@ -612,7 +622,7 @@ Private Sub GoToChapter(ByVal chNum As Long)
     ' focus returns to the document after activation regardless — Range.Select is
     ' correct here. ScrollIntoView (no cursor update) caused snap-back to the
     ' previous verse when Enter returned focus to the document (Bug 22b).
-    Application.StatusBar = "Navigating ..."   ' visible during Range.Select layout cost
+    Application.StatusBar = SB_NAVIGATING   ' visible during Range.Select layout cost
     ActiveDocument.Range(chPos, chPos).Select
     m_currentChapter = chNum
     m_currentVerse = 1     ' Rule 2a
@@ -687,18 +697,25 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim projNameCh As String
     projNameCh = Application.ActiveDocument.VBProject.Name
+    Dim bookNameCh As String
+    bookNameCh = CStr(headingData(m_currentBookIndex, 0))
+    Dim maxChNum As Long
+    maxChNum = aeBibleCitationClass.ChaptersInBook(bookNameCh)
     If Not IsNumeric(Trim(text)) Then
+        m_chapterTextValid = False
+        m_chapterMax = maxChNum
         Application.OnTime Now, projNameCh & ".basRibbonDeferred.ResetChapterDisplayDeferred"
         GoTo PROC_EXIT
     End If
     Dim chNum As Long
     chNum = CLng(Trim(text))
-    Dim bookName As String
-    bookName = CStr(headingData(m_currentBookIndex, 0))
-    If chNum < 1 Or chNum > aeBibleCitationClass.ChaptersInBook(bookName) Then
+    If chNum < 1 Or chNum > maxChNum Then
+        m_chapterTextValid = False
+        m_chapterMax = maxChNum
         Application.OnTime Now, projNameCh & ".basRibbonDeferred.ResetChapterDisplayDeferred"
         GoTo PROC_EXIT
     End If
+    m_chapterTextValid = True
     m_currentChapter = chNum
     m_currentChapterPos = 0
 PROC_EXIT:
@@ -733,7 +750,9 @@ Public Sub OnPrevChapterClick(control As IRibbonControl)
     If m_currentChapter > 1 Then
         GoToChapter m_currentChapter - 1
     ElseIf m_currentBookIndex > 0 Then
-        Application.StatusBar = "Already at first chapter of " & CStr(headingData(m_currentBookIndex, 0))
+        Dim bookNamePC As String
+        bookNamePC = CStr(headingData(m_currentBookIndex, 0))
+        Application.StatusBar = FormatMsg(SB_ALREADY_FIRST_CHAPTER, bookNamePC, aeBibleCitationClass.ChaptersInBook(bookNamePC))
     End If
 End Sub
 
@@ -742,10 +761,12 @@ Public Sub OnNextChapterClick(control As IRibbonControl)
     If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim bookName As String
     bookName = CStr(headingData(m_currentBookIndex, 0))
-    If m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName) Then
+    Dim maxCh As Long
+    maxCh = aeBibleCitationClass.ChaptersInBook(bookName)
+    If m_currentChapter < maxCh Then
         GoToChapter m_currentChapter + 1
     Else
-        Application.StatusBar = "Already at last chapter of " & bookName
+        Application.StatusBar = FormatMsg(SB_ALREADY_LAST_CHAPTER, bookName, maxCh)
     End If
 PROC_EXIT:
     Exit Sub
@@ -800,19 +821,26 @@ Public Sub OnVerseChanged(control As IRibbonControl, text As String)
     On Error GoTo PROC_ERR
     Dim projNameVs As String
     projNameVs = Application.ActiveDocument.VBProject.Name
+    If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    Dim bookNameVs As String
+    bookNameVs = CStr(headingData(m_currentBookIndex, 0))
+    Dim maxVsNum As Long
+    maxVsNum = aeBibleCitationClass.VersesInChapter(bookNameVs, m_currentChapter)
     If Not IsNumeric(Trim(text)) Then
+        m_verseTextValid = False
+        m_verseMax = maxVsNum
         Application.OnTime Now, projNameVs & ".basRibbonDeferred.ResetVerseDisplayDeferred"
         GoTo PROC_EXIT
     End If
-    If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim vsNum As Long
     vsNum = CLng(Trim(text))
-    Dim bookName As String
-    bookName = CStr(headingData(m_currentBookIndex, 0))
-    If vsNum < 1 Or vsNum > aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then
+    If vsNum < 1 Or vsNum > maxVsNum Then
+        m_verseTextValid = False
+        m_verseMax = maxVsNum
         Application.OnTime Now, projNameVs & ".basRibbonDeferred.ResetVerseDisplayDeferred"
         GoTo PROC_EXIT
     End If
+    m_verseTextValid = True
     m_currentVerse = vsNum   ' store confirmed value; GoButton fires navigation
 PROC_EXIT:
     Exit Sub
@@ -846,7 +874,11 @@ Public Sub OnPrevVerseClick(control As IRibbonControl)
     If m_currentVerse > 1 Then
         GoToVerse m_currentVerse - 1
     ElseIf m_currentBookIndex > 0 And m_currentChapter > 0 Then
-        Application.StatusBar = "Already at first verse of " & CStr(headingData(m_currentBookIndex, 0)) & " " & m_currentChapter
+        Dim bookNamePV As String
+        bookNamePV = CStr(headingData(m_currentBookIndex, 0))
+        Dim maxVsPV As Long
+        maxVsPV = aeBibleCitationClass.VersesInChapter(bookNamePV, m_currentChapter)
+        Application.StatusBar = FormatMsg(SB_ALREADY_FIRST_VERSE, bookNamePV, m_currentChapter, maxVsPV)
     End If
 End Sub
 
@@ -855,10 +887,12 @@ Public Sub OnNextVerseClick(control As IRibbonControl)
     If m_currentVerse = 0 Or m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim bookName As String
     bookName = CStr(headingData(m_currentBookIndex, 0))
-    If m_currentVerse < aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then
+    Dim maxVs As Long
+    maxVs = aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter)
+    If m_currentVerse < maxVs Then
         GoToVerse m_currentVerse + 1
     Else
-        Application.StatusBar = "Already at last verse of " & bookName & " " & m_currentChapter
+        Application.StatusBar = FormatMsg(SB_ALREADY_LAST_VERSE, bookName, m_currentChapter, maxVs)
     End If
 PROC_EXIT:
     Exit Sub
@@ -909,7 +943,7 @@ Private Sub GoToVerse(ByVal vsNum As Long)
     ' chapters with section-heading paragraphs (e.g. Psalm 119 has 22 Aleph-Taw
     ' headings → MoveDown(176) landed at verse 155, Bug 25b). IsStudyVersion branch
     ' for verse navigation is therefore obsolete.
-    Application.StatusBar = "Navigating ..."   ' visible during GoToVerseByScan layout cost
+    Application.StatusBar = SB_NAVIGATING   ' visible during GoToVerseByScan layout cost
     GoToVerseByScan chPos, vsNum
 
     m_currentVerse = vsNum
@@ -988,11 +1022,21 @@ Public Sub OnGoClick(control As IRibbonControl)
     On Error GoTo PROC_ERR
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
     If Not m_bookTextValid Then
-        Application.StatusBar = "Invalid input for Book - enter a book name or abbreviation"
+        Application.StatusBar = SB_INVALID_BOOK
         If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "BookComboBox"
         GoTo PROC_EXIT
     End If
     If m_currentChapter = 0 Then GoTo PROC_EXIT
+    If Not m_chapterTextValid Then
+        Application.StatusBar = FormatMsg(SB_INVALID_CHAPTER, m_chapterMax)
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "ChapterComboBox"
+        GoTo PROC_EXIT
+    End If
+    If Not m_verseTextValid Then
+        Application.StatusBar = FormatMsg(SB_INVALID_VERSE, m_verseMax)
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "VerseComboBox"
+        GoTo PROC_EXIT
+    End If
     Dim vsNum As Long
     vsNum = m_currentVerse
     If vsNum < 1 Then vsNum = 1
@@ -1016,6 +1060,9 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_currentChapter = 0
     m_currentVerse = 0
     m_currentChapterPos = 0
+    m_bookTextValid = True
+    m_chapterTextValid = True
+    m_verseTextValid = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 End Sub
 
