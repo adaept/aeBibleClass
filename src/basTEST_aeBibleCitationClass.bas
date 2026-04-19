@@ -838,3 +838,153 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_Stage17_CanonicalStringFormatter of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
+
+'=====================================================
+' Test_CanonicalNamesAndSBLTable
+'   Validates all 66 canonical book names via
+'   ChaptersInBook and all 66 SBL abbreviations via
+'   ToSBLShortForm against known expected values.
+'   Run via Alt+F8 or from Run_All_SBL_Tests.
+'=====================================================
+Public Sub Test_CanonicalNamesAndSBLTable()
+    On Error GoTo PROC_ERR
+
+    Dim assert As New aeAssertClass
+    Dim log As New aeLoggerClass
+    log.Log_Init ActiveDocument.Path & "\rpt\TestReport.txt"
+    assert.SetLogger log
+
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_CanonicalNamesAndSBLTable"
+
+    ' Expected: canonical name -> chapter count (66 books)
+    Dim canonNames(1 To 66) As String
+    Dim canonChapters(1 To 66) As Long
+
+    canonNames(1) = "Genesis":        canonChapters(1) = 50
+    canonNames(2) = "Exodus":         canonChapters(2) = 40
+    canonNames(3) = "Leviticus":      canonChapters(3) = 27
+    canonNames(4) = "Numbers":        canonChapters(4) = 36
+    canonNames(5) = "Deuteronomy":    canonChapters(5) = 34
+    canonNames(6) = "Joshua":         canonChapters(6) = 24
+    canonNames(7) = "Judges":         canonChapters(7) = 21
+    canonNames(8) = "Ruth":           canonChapters(8) = 4
+    canonNames(9) = "1 Samuel":       canonChapters(9) = 31
+    canonNames(10) = "2 Samuel":      canonChapters(10) = 24
+    canonNames(11) = "1 Kings":       canonChapters(11) = 22
+    canonNames(12) = "2 Kings":       canonChapters(12) = 25
+    canonNames(13) = "1 Chronicles":  canonChapters(13) = 29
+    canonNames(14) = "2 Chronicles":  canonChapters(14) = 36
+    canonNames(15) = "Ezra":          canonChapters(15) = 10
+    canonNames(16) = "Nehemiah":      canonChapters(16) = 13
+    canonNames(17) = "Esther":        canonChapters(17) = 10
+    canonNames(18) = "Job":           canonChapters(18) = 42
+    canonNames(19) = "Psalms":        canonChapters(19) = 150
+    canonNames(20) = "Proverbs":      canonChapters(20) = 31
+    canonNames(21) = "Ecclesiastes":  canonChapters(21) = 12
+    canonNames(22) = "Solomon":       canonChapters(22) = 8   ' Project canonical; SBL output is "Song"
+    canonNames(23) = "Isaiah":        canonChapters(23) = 66
+    canonNames(24) = "Jeremiah":      canonChapters(24) = 52
+    canonNames(25) = "Lamentations":  canonChapters(25) = 5
+    canonNames(26) = "Ezekiel":       canonChapters(26) = 48
+    canonNames(27) = "Daniel":        canonChapters(27) = 12
+    canonNames(28) = "Hosea":         canonChapters(28) = 14
+    canonNames(29) = "Joel":          canonChapters(29) = 3
+    canonNames(30) = "Amos":          canonChapters(30) = 9
+    canonNames(31) = "Obadiah":       canonChapters(31) = 1
+    canonNames(32) = "Jonah":         canonChapters(32) = 4
+    canonNames(33) = "Micah":         canonChapters(33) = 7
+    canonNames(34) = "Nahum":         canonChapters(34) = 3
+    canonNames(35) = "Habakkuk":      canonChapters(35) = 3
+    canonNames(36) = "Zephaniah":     canonChapters(36) = 3
+    canonNames(37) = "Haggai":        canonChapters(37) = 2
+    canonNames(38) = "Zechariah":     canonChapters(38) = 14
+    canonNames(39) = "Malachi":       canonChapters(39) = 4
+    canonNames(40) = "Matthew":       canonChapters(40) = 28
+    canonNames(41) = "Mark":          canonChapters(41) = 16
+    canonNames(42) = "Luke":          canonChapters(42) = 24
+    canonNames(43) = "John":          canonChapters(43) = 21
+    canonNames(44) = "Acts":          canonChapters(44) = 28
+    canonNames(45) = "Romans":        canonChapters(45) = 16
+    canonNames(46) = "1 Corinthians": canonChapters(46) = 16
+    canonNames(47) = "2 Corinthians": canonChapters(47) = 13
+    canonNames(48) = "Galatians":     canonChapters(48) = 6
+    canonNames(49) = "Ephesians":     canonChapters(49) = 6
+    canonNames(50) = "Philippians":   canonChapters(50) = 4
+    canonNames(51) = "Colossians":    canonChapters(51) = 4
+    canonNames(52) = "1 Thessalonians": canonChapters(52) = 5
+    canonNames(53) = "2 Thessalonians": canonChapters(53) = 3
+    canonNames(54) = "1 Timothy":     canonChapters(54) = 6
+    canonNames(55) = "2 Timothy":     canonChapters(55) = 4
+    canonNames(56) = "Titus":         canonChapters(56) = 3
+    canonNames(57) = "Philemon":      canonChapters(57) = 1
+    canonNames(58) = "Hebrews":       canonChapters(58) = 13
+    canonNames(59) = "James":         canonChapters(59) = 5
+    canonNames(60) = "1 Peter":       canonChapters(60) = 5
+    canonNames(61) = "2 Peter":       canonChapters(61) = 3
+    canonNames(62) = "1 John":        canonChapters(62) = 5
+    canonNames(63) = "2 John":        canonChapters(63) = 1
+    canonNames(64) = "3 John":        canonChapters(64) = 1
+    canonNames(65) = "Jude":          canonChapters(65) = 1
+    canonNames(66) = "Revelation":    canonChapters(66) = 22
+
+    ' Expected SBL abbreviation for each book (index 1-66)
+    Dim sblExpected(1 To 66) As String
+    sblExpected(1) = "Gen":   sblExpected(2) = "Exod":  sblExpected(3) = "Lev"
+    sblExpected(4) = "Num":   sblExpected(5) = "Deut":  sblExpected(6) = "Josh"
+    sblExpected(7) = "Judg":  sblExpected(8) = "Ruth":  sblExpected(9) = "1 Sam"
+    sblExpected(10) = "2 Sam": sblExpected(11) = "1 Kgs": sblExpected(12) = "2 Kgs"
+    sblExpected(13) = "1 Chr": sblExpected(14) = "2 Chr": sblExpected(15) = "Ezra"
+    sblExpected(16) = "Neh":  sblExpected(17) = "Esth": sblExpected(18) = "Job"
+    sblExpected(19) = "Ps":   sblExpected(20) = "Prov": sblExpected(21) = "Eccl"
+    sblExpected(22) = "Song": sblExpected(23) = "Isa":  sblExpected(24) = "Jer"
+    sblExpected(25) = "Lam":  sblExpected(26) = "Ezek": sblExpected(27) = "Dan"
+    sblExpected(28) = "Hos":  sblExpected(29) = "Joel": sblExpected(30) = "Amos"
+    sblExpected(31) = "Obad": sblExpected(32) = "Jonah": sblExpected(33) = "Mic"
+    sblExpected(34) = "Nah":  sblExpected(35) = "Hab":  sblExpected(36) = "Zeph"
+    sblExpected(37) = "Hag":  sblExpected(38) = "Zech": sblExpected(39) = "Mal"
+    sblExpected(40) = "Matt": sblExpected(41) = "Mark": sblExpected(42) = "Luke"
+    sblExpected(43) = "John": sblExpected(44) = "Acts": sblExpected(45) = "Rom"
+    sblExpected(46) = "1 Cor": sblExpected(47) = "2 Cor": sblExpected(48) = "Gal"
+    sblExpected(49) = "Eph":  sblExpected(50) = "Phil": sblExpected(51) = "Col"
+    sblExpected(52) = "1 Thess": sblExpected(53) = "2 Thess": sblExpected(54) = "1 Tim"
+    sblExpected(55) = "2 Tim": sblExpected(56) = "Titus": sblExpected(57) = "Phlm"
+    sblExpected(58) = "Heb":  sblExpected(59) = "Jas":  sblExpected(60) = "1 Pet"
+    sblExpected(61) = "2 Pet": sblExpected(62) = "1 John": sblExpected(63) = "2 John"
+    sblExpected(64) = "3 John": sblExpected(65) = "Jude": sblExpected(66) = "Rev"
+
+    Dim i As Long
+    For i = 1 To 66
+        ' Validate ChaptersInBook resolves each canonical name to the correct chapter count
+        Dim gotCh As Long
+        gotCh = aeBibleCitationClass.ChaptersInBook(canonNames(i))
+        assert.AssertEqual canonChapters(i), gotCh, _
+            "ChaptersInBook(" & canonNames(i) & ") expected " & canonChapters(i)
+
+        ' Validate ToSBLShortForm produces the correct abbreviation for book i chapter 1 verse 1
+        ' Single-chapter books omit the chapter; use chapter 1 verse 1 for all others.
+        Dim sblInput As String
+        Dim sblResult As String
+        Dim sblResultBook As String
+        sblInput = canonNames(i) & " 1:1"
+        sblResult = aeBibleCitationClass.ToSBLShortForm(sblInput)
+        ' Extract book abbreviation: everything before the first digit in result
+        Dim spacePos As Long
+        spacePos = InStr(sblResult, " ")
+        If spacePos > 0 Then
+            sblResultBook = Left$(sblResult, spacePos - 1)
+        Else
+            sblResultBook = sblResult   ' single-chapter book with verse only (should not occur for 1:1)
+        End If
+        assert.AssertEqual sblExpected(i), sblResultBook, _
+            "ToSBLShortForm book abbr for " & canonNames(i) & " expected " & sblExpected(i)
+    Next i
+
+    Debug.Print " Test_CanonicalNamesAndSBLTable complete."
+    Debug.Print "------------------------------------------"
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_CanonicalNamesAndSBLTable of Module basTEST_aeBibleCitationClass"
+    Resume PROC_EXIT
+End Sub

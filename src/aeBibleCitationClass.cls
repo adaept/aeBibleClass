@@ -911,7 +911,7 @@ Public Function GetCanonicalBookTable() As Object
         books.Add 19, Array(19, "Psalms", 150)
         books.Add 20, Array(20, "Proverbs", 31)
         books.Add 21, Array(21, "Ecclesiastes", 12)
-        books.Add 22, Array(22, "Solomon", 8)
+        books.Add 22, Array(22, "Solomon", 8)   ' Canonical display name for this project. SBL output abbreviation is "Song" (see ToSBLShortForm Case 22).
         books.Add 23, Array(23, "Isaiah", 66)
         books.Add 24, Array(24, "Jeremiah", 52)
         books.Add 25, Array(25, "Lamentations", 5)
@@ -988,7 +988,7 @@ Public Function GetSBLCanonicalBookTable() As Object
         sbl.Add 19, "PSALMS"
         sbl.Add 20, "PROVERBS"
         sbl.Add 21, "ECCLESIASTES"
-        sbl.Add 22, "SOLOMON"
+        sbl.Add 22, "SOLOMON"   ' Project canonical; SBL standard abbreviation is "Song" (output via ToSBLShortForm)
         sbl.Add 23, "ISAIAH"
         sbl.Add 24, "JEREMIAH"
         sbl.Add 25, "LAMENTATIONS"
@@ -1014,7 +1014,7 @@ Public Function GetSBLCanonicalBookTable() As Object
         sbl.Add 45, "ROMANS"
         sbl.Add 46, "1 CORINTHIANS"
         sbl.Add 47, "2 CORINTHIANS"
-        sbl.Add 48, "GALATIONS"
+        sbl.Add 48, "GALATIANS"
         sbl.Add 49, "EPHESIANS"
         sbl.Add 50, "PHILIPPIANS"
         sbl.Add 51, "COLOSSIANS"
@@ -1470,7 +1470,8 @@ Public Function GetBookAliasMap() As Object
         aliasMap.Add "ECCL", 21
         aliasMap.Add "ECC", 21
         aliasMap.Add "EC", 21
-        ' Solomon
+        ' Solomon (canonical display name for this project; SBL output abbreviation is "Song")
+        ' Accepts "Song" and variants as input aliases so SBL-typed citations resolve correctly.
         aliasMap.Add "SOLOMON", 22
         aliasMap.Add "SOLO", 22
         aliasMap.Add "SOL", 22
@@ -1944,6 +1945,9 @@ End Function
 ' ChaptersInBook
 '   Returns the number of chapters in the named book.
 '   Returns 0 if the book name cannot be resolved.
+'   Metadata service consumed by aeRibbonClass for
+'   chapter range validation in OnChapterChanged and
+'   OnGoClick boundary/error checks.
 '-----------------------------------------------------
 Public Function ChaptersInBook(ByVal bookName As String) As Long
     On Error GoTo PROC_ERR
@@ -1973,6 +1977,9 @@ End Function
 '   Returns the number of verses in the specified
 '   chapter of the named book.
 '   Returns 0 if the book name or chapter is invalid.
+'   Metadata service consumed by aeRibbonClass for
+'   verse range validation in OnVerseChanged and
+'   OnGoClick boundary/error checks.
 '-----------------------------------------------------
 Public Function VersesInChapter(ByVal bookName As String, ByVal Chapter As Long) As Long
     On Error GoTo PROC_ERR
