@@ -10,7 +10,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #610 -
 ' #609 -
 ' #608 -
-' #607 -
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #601 - Build Word configuration module for consistent editing setup [feat][wip]
 ' #600 - Consider Enter button in ribbon to activate search Pros/Cons [idea]
@@ -76,6 +75,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    
+    ' FIXED - #607 - Include status message for invalid input of Book/Chapter/Verse and status for Prev/Next out of bounds [impr]
     ' FIXED - #598 - Gen tab fills C/V with 1/1 but does not enable C/V Prev/Next buttons [bug]
     ' FIXED - #605 - Add ReportFootnoteComplexity - it should return 0 complex in 1000 footnotes [test]
     ' FIXED - #604 - Add FindParagraphsByFirstCharFont_BodyHeadersFooters, should matcch Result of AuditFontUsage_ParagraphsAndHeadersFooters [test]

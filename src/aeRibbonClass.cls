@@ -46,6 +46,7 @@ Private m_currentVerse      As Long   ' current verse number; 0 = not set
 Private m_currentChapterPos As Long   ' cached char position of current chapter H2; 0 = not cached
 Private m_pendingChapter   As Long    ' chapter number staged for deferred GoToChapter call
 Private m_pendingVerse     As Long    ' verse number staged for deferred GoToVerse call
+Private m_bookTextValid    As Boolean ' True when last OnBookChanged resolved an alias; False on no-match
 Private m_studyVersionSet  As Boolean ' True after IsStudyVersion has been evaluated
 Private m_studyVersionVal  As Boolean ' cached Result of IsStudyVersion
 
@@ -69,6 +70,7 @@ Private Sub Class_Initialize()
     m_currentChapterPos = 0
     m_pendingChapter = 0
     m_pendingVerse = 0
+    m_bookTextValid = True
     m_studyVersionSet = False
     m_studyVersionVal = False
 End Sub
@@ -253,7 +255,10 @@ Private Sub NextButton()
     ' navigating from the stale cursor position instead of from the current book.
     On Error GoTo PROC_ERR
     If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
-    If m_currentBookIndex >= 66 Then GoTo PROC_EXIT   ' Revelation — no next book
+    If m_currentBookIndex >= 66 Then
+        Application.StatusBar = "Already at last book"
+        GoTo PROC_EXIT
+    End If
     Dim nextIdx As Long
     nextIdx = m_currentBookIndex + 1
     If IsEmpty(headingData(nextIdx, 1)) Then GoTo PROC_EXIT
@@ -284,7 +289,11 @@ Private Sub PrevButton()
     ' Navigate to the previous book using ribbon state (m_currentBookIndex), not Selection.
     ' See NextButton comment — same root cause (Bug 19).
     On Error GoTo PROC_ERR
-    If m_currentBookIndex <= 1 Then GoTo PROC_EXIT   ' Genesis — no previous book
+    If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
+    If m_currentBookIndex = 1 Then
+        Application.StatusBar = "Already at first book"
+        GoTo PROC_EXIT
+    End If
     Dim prevIdx As Long
     prevIdx = m_currentBookIndex - 1
     If IsEmpty(headingData(prevIdx, 1)) Then GoTo PROC_EXIT
@@ -527,7 +536,12 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
         End If
     Next i
 
-    If Not matchFound Then GoTo PROC_EXIT
+    If Not matchFound Then
+        Application.StatusBar = "Invalid input for Book - enter a book name or abbreviation"
+        m_bookTextValid = False
+        GoTo PROC_EXIT
+    End If
+    m_bookTextValid = True
 
     m_currentBookIndex = i
     m_currentBookPos = CLng(headingData(i, 1))
@@ -716,7 +730,11 @@ Public Sub ExecutePendingChapter()
 End Sub
 
 Public Sub OnPrevChapterClick(control As IRibbonControl)
-    If m_currentChapter > 1 Then GoToChapter m_currentChapter - 1
+    If m_currentChapter > 1 Then
+        GoToChapter m_currentChapter - 1
+    ElseIf m_currentBookIndex > 0 Then
+        Application.StatusBar = "Already at first chapter of " & CStr(headingData(m_currentBookIndex, 0))
+    End If
 End Sub
 
 Public Sub OnNextChapterClick(control As IRibbonControl)
@@ -726,6 +744,8 @@ Public Sub OnNextChapterClick(control As IRibbonControl)
     bookName = CStr(headingData(m_currentBookIndex, 0))
     If m_currentChapter < aeBibleCitationClass.ChaptersInBook(bookName) Then
         GoToChapter m_currentChapter + 1
+    Else
+        Application.StatusBar = "Already at last chapter of " & bookName
     End If
 PROC_EXIT:
     Exit Sub
@@ -823,7 +843,11 @@ Public Sub UpdateStatusBar()
 End Sub
 
 Public Sub OnPrevVerseClick(control As IRibbonControl)
-    If m_currentVerse > 1 Then GoToVerse m_currentVerse - 1
+    If m_currentVerse > 1 Then
+        GoToVerse m_currentVerse - 1
+    ElseIf m_currentBookIndex > 0 And m_currentChapter > 0 Then
+        Application.StatusBar = "Already at first verse of " & CStr(headingData(m_currentBookIndex, 0)) & " " & m_currentChapter
+    End If
 End Sub
 
 Public Sub OnNextVerseClick(control As IRibbonControl)
@@ -833,6 +857,8 @@ Public Sub OnNextVerseClick(control As IRibbonControl)
     bookName = CStr(headingData(m_currentBookIndex, 0))
     If m_currentVerse < aeBibleCitationClass.VersesInChapter(bookName, m_currentChapter) Then
         GoToVerse m_currentVerse + 1
+    Else
+        Application.StatusBar = "Already at last verse of " & bookName & " " & m_currentChapter
     End If
 PROC_EXIT:
     Exit Sub
@@ -961,6 +987,11 @@ Public Sub OnGoClick(control As IRibbonControl)
     ' OnBookChanged / OnChapterChanged / OnVerseChanged before this fires.
     On Error GoTo PROC_ERR
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    If Not m_bookTextValid Then
+        Application.StatusBar = "Invalid input for Book - enter a book name or abbreviation"
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "BookComboBox"
+        GoTo PROC_EXIT
+    End If
     If m_currentChapter = 0 Then GoTo PROC_EXIT
     Dim vsNum As Long
     vsNum = m_currentVerse
