@@ -42,6 +42,10 @@
                     showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"
                     getKeytip="GetNextVerseKeytip"/>
           </box>
+          <button id="GoButton" label="Go" size="large" keytip="G"
+                  imageMso="EndOfDocument"
+                  getEnabled="GetGoEnabled"
+                  onAction="OnGoClick"/>
           <separator id="sep1"/>
           <button id="NewSearchButton" imageMso="Undo" size="normal" showLabel="false"
                   onAction="OnNewSearchClick" getEnabled="GetNewSearchEnabled"

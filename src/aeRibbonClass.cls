@@ -596,10 +596,12 @@ Private Sub GoToChapter(ByVal chNum As Long)
     ' focus returns to the document after activation regardless — Range.Select is
     ' correct here. ScrollIntoView (no cursor update) caused snap-back to the
     ' previous verse when Enter returned focus to the document (Bug 22b).
+    Application.StatusBar = "Navigating ..."   ' visible during Range.Select layout cost
     ActiveDocument.Range(chPos, chPos).Select
     m_currentChapter = chNum
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = chPos   ' cache for GoToVerse — avoids repeat FindChapterPos calls
+    Application.StatusBar = False   ' restore Word default; SBL citation update — see review § 11
 
     If Not m_ribbon Is Nothing Then
         m_ribbon.InvalidateControl "cmbChapter"
@@ -769,9 +771,8 @@ Public Function GetVerseText(control As IRibbonControl) As String
 End Function
 
 Public Sub OnVerseChanged(control As IRibbonControl, text As String)
-    ' comboBox onChange fires on Enter and on each keystroke.
-    ' Navigation is guarded by numeric + range validation; only a valid verse
-    ' number triggers the deferred GoToVerse call.
+    ' onChange fires on Enter and on each keystroke.
+    ' Validates and stores m_currentVerse. Navigation fires from OnGoClick only (#600).
     On Error GoTo PROC_ERR
     Dim projNameVs As String
     projNameVs = Application.ActiveDocument.VBProject.Name
@@ -788,10 +789,7 @@ Public Sub OnVerseChanged(control As IRibbonControl, text As String)
         Application.OnTime Now, projNameVs & ".basRibbonDeferred.ResetVerseDisplayDeferred"
         GoTo PROC_EXIT
     End If
-    m_pendingVerse = vsNum
-    Dim projName As String
-    projName = Application.ActiveDocument.VBProject.Name
-    Application.OnTime Now, projName & ".basRibbonDeferred.GoToVerseDeferred"
+    m_currentVerse = vsNum   ' store confirmed value; GoButton fires navigation
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -872,7 +870,12 @@ Private Sub GoToVerse(ByVal vsNum As Long)
     ' chapters with section-heading paragraphs (e.g. Psalm 119 has 22 Aleph-Taw
     ' headings → MoveDown(176) landed at verse 155, Bug 25b). IsStudyVersion branch
     ' for verse navigation is therefore obsolete.
+    Application.StatusBar = "Navigating ..."   ' visible during GoToVerseByScan layout cost
     GoToVerseByScan chPos, vsNum
+    ' Do NOT clear status bar here. Range.Select inside GoToVerseByScan returns to VBA
+    ' before Word's layout engine finishes — clearing here leaves the user with no feedback
+    ' during the remaining ~10s of background pagination. The next navigation overwrites
+    ' this message. SBL citation update (§ 11) will replace it on completion.
 
     m_currentVerse = vsNum
 
@@ -931,6 +934,30 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GoToVerseByScan of Class aeRibbonClass"
+    Resume PROC_EXIT
+End Sub
+
+' -- Go (navigate) ------------------------------------------------------------
+
+Public Function GetGoEnabled(control As IRibbonControl) As Boolean
+    GetGoEnabled = (m_currentBookIndex <> 0)   ' disabled until book selected; consistent with GetNewSearchEnabled
+End Function
+
+Public Sub OnGoClick(control As IRibbonControl)
+    ' Explicit navigation trigger (GoButton, #600).
+    ' Reads m_currentBookIndex, m_currentChapter, m_currentVerse — all set by
+    ' OnBookChanged / OnChapterChanged / OnVerseChanged before this fires.
+    On Error GoTo PROC_ERR
+    If m_currentBookIndex = 0 Then GoTo PROC_EXIT
+    If m_currentChapter = 0 Then GoTo PROC_EXIT
+    Dim vsNum As Long
+    vsNum = m_currentVerse
+    If vsNum < 1 Then vsNum = 1
+    GoToVerse vsNum
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure OnGoClick of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
 

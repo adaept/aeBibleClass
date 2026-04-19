@@ -209,6 +209,16 @@ Public Sub OnNextVerseClick(control As IRibbonControl)
     Instance().OnNextVerseClick control
 End Sub
 
+' -- Go (navigate) ------------------------------------------------------------
+
+Public Sub GetGoEnabled(control As IRibbonControl, ByRef enabled)
+    enabled = Instance().GetGoEnabled(control)
+End Sub
+
+Public Sub OnGoClick(control As IRibbonControl)
+    Instance().OnGoClick control
+End Sub
+
 ' -- New Search ----------------------------------------------------------------
 
 Public Sub GetNewSearchEnabled(control As IRibbonControl, ByRef enabled)

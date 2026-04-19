@@ -45,7 +45,8 @@ Public Sub GoToChapterDeferred()
 End Sub
 
 Public Sub GoToVerseDeferred()
-    Instance().ExecutePendingVerse
+    ' Dead stub — navigation trigger moved to OnGoClick (GoButton, #600).
+    ' Instance().ExecutePendingVerse
 End Sub
 
 Public Sub ResetChapterDisplayDeferred()
