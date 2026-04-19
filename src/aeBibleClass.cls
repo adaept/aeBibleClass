@@ -29,6 +29,9 @@ Option Compare Text
 ' Comment:  Create class for QA of Radiant Word Bible (RWB)
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/BibleClass
+'
+' Classification: QA / audit / editorial support module.
+'   Not part of runtime ribbon navigation flow.
 '=================================================================================
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
