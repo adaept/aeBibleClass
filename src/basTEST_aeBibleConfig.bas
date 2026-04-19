@@ -26,10 +26,11 @@ Private Sub PromoteApprovedStyles()
 
     'List your approved styles in the order you want them to appear
     approved = Array("Normal", "Body Text", "Heading 1", "Heading 2", _
-                     "CustomParaAfterH1", "CustomParaAfterH1-2nd", "DatAuthRef", _
+                     "CustomParaAfterH1", "CustomParaAfterH1-2nd", "Brief", "DatAuthRef", _
                      "Chapter Verse marker", "Verse marker", _
                      "EmphasisBlack", "EmphasisRed", "Lamentation", "Psalms BOOK", _
                      "Words of Jesus", "TheHeaders", "TheFooters", _
+                     "Title", "Book Title", _
                      "Footnote Reference", "Footnote Text", "FargleBlargle")
 
     'Push everything else down
@@ -122,4 +123,32 @@ Private Sub DumpPrioritiesSorted()
         End If
     Next i
 End Sub
+
+Private Function CountZeroWidthCharacters(doc As Document) As Long
+    Dim r As Word.Range
+    Dim count As Long
+    For Each r In doc.StoryRanges
+        count = count + UBound(Split(r.Text, ChrW(8203)))
+    Next r
+    CountZeroWidthCharacters = count
+End Function
+
+Private Function CountOrphanedShapes(doc As Document) As Long
+    Dim shp As shape
+    Dim count As Long
+    For Each shp In doc.Shapes
+        If shp.Anchor Is Nothing Then count = count + 1
+    Next shp
+    CountOrphanedShapes = count
+End Function
+
+Private Function CountOrphanedBookmarks(doc As Document) As Long
+    Dim bm As Bookmark
+    Dim count As Long
+    For Each bm In doc.Bookmarks
+        If bm.Range.Text = "" Then count = count + 1
+    Next bm
+    CountOrphanedBookmarks = count
+End Function
+
 
