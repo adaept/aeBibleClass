@@ -3,6 +3,9 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+' Classification: font/style audit and maintenance utilities.
+'   Not used by runtime ribbon navigation.
+
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 Public Sub CheckOpenFontsWithDownloads()
