@@ -35,6 +35,7 @@ Public Const KT_PREV_CHAPTER As String = ","   ' Previous Chapter button
 Public Const KT_NEXT_CHAPTER As String = "."   ' Next Chapter button
 Public Const KT_PREV_VERSE   As String = "<"   ' Previous Verse button
 Public Const KT_NEXT_VERSE   As String = ">"   ' Next Verse button
+Public Const KT_GO           As String = "G"   ' Go (navigate) button
 Public Const KT_NEW_SEARCH   As String = "S"   ' New Search button
 Public Const KT_ABOUT        As String = "A"   ' About (adaept) button
 

@@ -75,6 +75,7 @@ NORMALIZATIONS = [
     (r'(?i)\bKT_NEXT_CHAPTER\b',            'KT_NEXT_CHAPTER',     'KT_NEXT_CHAPTER keytip constant in basUIStrings'),
     (r'(?i)\bKT_PREV_VERSE\b',              'KT_PREV_VERSE',       'KT_PREV_VERSE keytip constant in basUIStrings'),
     (r'(?i)\bKT_NEXT_VERSE\b',              'KT_NEXT_VERSE',       'KT_NEXT_VERSE keytip constant in basUIStrings'),
+    (r'(?i)\bKT_GO\b',                       'KT_GO',               'KT_GO keytip constant in basUIStrings'),
     (r'(?i)\bKT_NEW_SEARCH\b',              'KT_NEW_SEARCH',       'KT_NEW_SEARCH keytip constant in basUIStrings'),
     (r'(?i)\bKT_ABOUT\b',                   'KT_ABOUT',            'KT_ABOUT keytip constant in basUIStrings'),
     # --- basUIStrings status bar constants and FormatMsg (added 2026-04-19) ---

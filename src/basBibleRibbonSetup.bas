@@ -251,6 +251,10 @@ Public Sub GetNewSearchKeytip(control As IRibbonControl, ByRef keytip)
     keytip = KT_NEW_SEARCH
 End Sub
 
+Public Sub GetGoKeytip(control As IRibbonControl, ByRef keytip)
+    keytip = KT_GO
+End Sub
+
 Public Sub GetAboutKeytip(control As IRibbonControl, ByRef keytip)
     keytip = KT_ABOUT
 End Sub
