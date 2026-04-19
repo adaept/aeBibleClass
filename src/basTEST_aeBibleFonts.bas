@@ -367,23 +367,29 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Private Function StoryTypeName(StoryType As WdStoryType) As String
-    Select Case StoryType
-        Case wdMainTextStory: StoryTypeName = "Body"
-        Case wdPrimaryHeaderStory: StoryTypeName = "Primary Header"
-        Case wdFirstPageHeaderStory: StoryTypeName = "First Page Header"
-        Case wdEvenPagesHeaderStory: StoryTypeName = "Even Pages Header"
-        Case wdPrimaryFooterStory: StoryTypeName = "Primary Footer"
-        Case wdFirstPageFooterStory: StoryTypeName = "First Page Footer"
-        Case wdEvenPagesFooterStory: StoryTypeName = "Even Pages Footer"
-        Case wdFootnotesStory: StoryTypeName = "Footnotes"
-        Case wdEndnotesStory: StoryTypeName = "Endnotes"
-        Case wdTextFrameStory: StoryTypeName = "Textboxes"
-        Case wdCommentsStory: StoryTypeName = "Comments"
-        Case 8: StoryTypeName = "TOC"   ' 8 is wdTOCStory in newer versions
-        Case Else: StoryTypeName = "Other Story (" & StoryType & ")"
-    End Select
-End Function
+Public Sub FindParagraphsUsingFont(targetFont As String)
+    Dim p As Word.Paragraph
+    Dim rng As Word.Range
+    Dim paraFont As String
+    Dim count As Long
+
+    Debug.Print "=== Paragraphs Using Font: " & targetFont & " ==="
+
+    For Each p In ActiveDocument.Paragraphs
+        Set rng = p.Range
+        paraFont = rng.Font.Name
+
+        'Check effective font
+        If StrComp(paraFont, targetFont, vbTextCompare) = 0 Then
+            count = count + 1
+            Debug.Print count & ". Sec " & rng.Sections(1).index & _
+                        ", Para " & p.Range.ListFormat.ListString & _
+                        "  |  """ & Left$(Trim$(rng.Text), 80) & """"
+        End If
+    Next p
+
+    Debug.Print "=== Total paragraphs found: " & count & " ==="
+End Sub
 
 Public Sub AuditFontUsage_ParagraphsAndHeadersFooters()
     On Error GoTo PROC_ERR
@@ -465,51 +471,95 @@ Public Sub FindParagraphsByFirstCharFont_BodyHeadersFooters(targetFont As String
     Dim hfKind As Variant
     Dim count As Long
     Dim fName As String
+    Dim snippet As String
+    Dim token As String
+    Dim pg As Long
+    Dim startPos As Long
 
     Debug.Print "=== Paragraphs whose FIRST CHARACTER is font: " & targetFont & " ==="
 
-    ' Body paragraphs
+    hfTypes = Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
+
+    '-----------------------------
+    ' BODY PARAGRAPHS
+    '-----------------------------
     For Each para In ActiveDocument.Paragraphs
         fName = para.Range.Characters(1).Font.Name
+
         If StrComp(fName, targetFont, vbTextCompare) = 0 Then
             count = count + 1
-            Debug.Print count & ". [Body] Sec " & para.Range.Sections(1).index & _
-                        " | """ & Left$(Trim$(para.Range.Text), 80) & """"
+
+            ' Unique search token
+            token = "@@FONT_HIT_" & Format(count, "000") & "@@"
+
+            ' Clean snippet
+            snippet = CleanSnippet(para.Range.Text)
+
+            ' Page number
+            pg = para.Range.Information(wdActiveEndPageNumber)
+
+            ' Absolute position
+            startPos = para.Range.Start
+
+            Debug.Print token & _
+                        " | Body" & _
+                        " | Sec " & para.Range.Sections(1).index & _
+                        " | Pg " & pg & _
+                        " | Pos " & startPos & _
+                        " | """ & snippet & """"
         End If
     Next para
 
-    ' Header/footer types
-    hfTypes = Array(wdHeaderFooterPrimary, wdHeaderFooterFirstPage, wdHeaderFooterEvenPages)
-
-    ' Header/footer paragraphs
+    '-----------------------------
+    ' HEADERS / FOOTERS
+    '-----------------------------
     For Each sec In ActiveDocument.Sections
         For Each hfKind In hfTypes
 
+            ' Headers
             Set hf = sec.Headers(hfKind)
             If hf.Exists Then
                 For Each para In hf.Range.Paragraphs
                     fName = para.Range.Characters(1).Font.Name
                     If StrComp(fName, targetFont, vbTextCompare) = 0 Then
                         count = count + 1
-                        Debug.Print count & ". [Header " & HeaderFooterLabel(hfKind) & _
-                                    "] Sec " & sec.index & _
-                                    " | """ & Left$(Trim$(para.Range.Text), 80) & """"
+                        token = "@@FONT_HIT_" & Format(count, "000") & "@@"
+                        snippet = CleanSnippet(para.Range.Text)
+                        pg = para.Range.Information(wdActiveEndPageNumber)
+                        startPos = para.Range.Start
+
+                        Debug.Print token & _
+                                    " | Header-" & HeaderFooterLabel(hfKind) & _
+                                    " | Sec " & sec.index & _
+                                    " | Pg " & pg & _
+                                    " | Pos " & startPos & _
+                                    " | """ & snippet & """"
                     End If
                 Next para
             End If
 
+            ' Footers
             Set hf = sec.Footers(hfKind)
             If hf.Exists Then
                 For Each para In hf.Range.Paragraphs
                     fName = para.Range.Characters(1).Font.Name
                     If StrComp(fName, targetFont, vbTextCompare) = 0 Then
                         count = count + 1
-                        Debug.Print count & ". [Footer " & HeaderFooterLabel(hfKind) & _
-                                    "] Sec " & sec.index & _
-                                    " | """ & Left$(Trim$(para.Range.Text), 80) & """"
+                        token = "@@FONT_HIT_" & Format(count, "000") & "@@"
+                        snippet = CleanSnippet(para.Range.Text)
+                        pg = para.Range.Information(wdActiveEndPageNumber)
+                        startPos = para.Range.Start
+
+                        Debug.Print token & _
+                                    " | Footer-" & HeaderFooterLabel(hfKind) & _
+                                    " | Sec " & sec.index & _
+                                    " | Pg " & pg & _
+                                    " | Pos " & startPos & _
+                                    " | """ & snippet & """"
                     End If
                 Next para
             End If
+
         Next hfKind
     Next sec
 
@@ -524,4 +574,143 @@ Private Function HeaderFooterLabel(ByVal kind As WdHeaderFooterIndex) As String
         Case Else:                    HeaderFooterLabel = "Other"
     End Select
 End Function
+
+Private Function CleanSnippet(t As String) As String
+    Dim s As String
+    s = Trim$(t)
+
+    ' Remove page breaks, CR/LF, control chars
+    s = Replace(s, vbCr, " ")
+    s = Replace(s, vbLf, " ")
+    s = Replace(s, Chr(12), " ") ' page break
+    s = Replace(s, ChrW(&HB), " ")  ' vertical tab
+    s = Replace(s, ChrW(&H2028), " ") ' line sep
+    s = Replace(s, ChrW(&H2029), " ") ' paragraph sep
+
+    ' Collapse multiple spaces
+    Do While InStr(s, "  ") > 0
+        s = Replace(s, "  ", " ")
+    Loop
+
+    CleanSnippet = s
+End Function
+
+Public Sub GoToCharPos(ByVal pos As Long)
+    ActiveDocument.Range(pos, pos).Select
+End Sub
+
+Public Sub Find_Aptos_Body_Effectively()
+    Dim p As Word.Paragraph
+    Dim r As Word.Range
+
+    For Each p In ActiveDocument.Paragraphs
+        Set r = p.Range
+
+        ' Theme-based detection
+        If Left(r.Font.Name, 1) = "+" Then
+            Debug.Print "THEME FONT FOUND: " & r.Font.Name & _
+                        " | " & Trim(Left(r.Text, 80))
+
+        ' Visual detection fallback
+        ElseIf InStr(1, r.Font.Name, "Aptos", vbTextCompare) > 0 Then
+            Debug.Print "APTOS RESOLVED FONT: " & r.Font.Name & _
+                        " | " & Trim(Left(r.Text, 80))
+        End If
+    Next p
+End Sub
+
+Public Sub Inspect_Aptos_Sources()
+    Dim p As Word.Paragraph
+    Dim r As Word.Range
+    Dim StyleName As String
+    Dim fontName As String
+    Dim i As Long
+
+    Debug.Print "=========================================="
+    Debug.Print " APTOS SOURCE INSPECTOR"
+    Debug.Print "=========================================="
+
+    i = 0
+
+    For Each p In ActiveDocument.Paragraphs
+
+        Set r = p.Range
+
+        fontName = r.Font.Name
+        StyleName = p.style
+
+        If InStr(1, fontName, "Aptos", vbTextCompare) > 0 _
+           Or Left(fontName, 1) = "+" Then
+
+            i = i + 1
+
+            Debug.Print "----------------------------------"
+            Debug.Print "HIT #" & i
+            Debug.Print "Text: " & CleanText(r.Text)
+            Debug.Print "Font.Name: " & fontName
+            Debug.Print "Style: " & StyleName
+            Debug.Print "Style Font: " & p.style.Font.Name
+
+            On Error Resume Next
+            Debug.Print "Style Font Size: " & p.style.Font.Size
+            On Error GoTo 0
+
+        End If
+
+    Next p
+
+    Debug.Print "=========================================="
+    Debug.Print "Total Aptos-related hits: " & i
+    Debug.Print "=========================================="
+End Sub
+
+Private Function CleanText(s As String) As String
+    s = Replace(s, vbCr, " ")
+    s = Replace(s, vbLf, " ")
+    s = Replace(s, Chr(11), " ")
+    CleanText = Trim(Left(s, 120))
+End Function
+
+Public Sub Check_Aptos_Is_Real_Or_Display()
+    Dim p As Word.Paragraph
+    Dim realHits As Long
+
+    For Each p In ActiveDocument.Paragraphs
+
+        If p.Range.Font.Name = "Aptos" Then
+            realHits = realHits + 1
+            Debug.Print "REAL APTOS: " & Left(p.Range.Text, 80)
+        End If
+
+    Next p
+
+    Debug.Print "REAL stored Aptos hits: " & realHits
+End Sub
+
+Public Sub Remove_Real_Aptos_Only()
+    Dim p As Word.Paragraph
+    Dim r As Word.Range
+    Dim changed As Long
+
+    Application.ScreenUpdating = False
+
+    For Each p In ActiveDocument.Paragraphs
+
+        Set r = p.Range
+
+        If r.Font.Name = "Aptos" Then
+
+            r.Font.Name = "Calibri"
+            r.Font.Size = 9
+
+            changed = changed + 1
+
+        End If
+
+    Next p
+
+    Application.ScreenUpdating = True
+
+    MsgBox "Fixed REAL Aptos runs: " & changed, vbInformation
+End Sub
 
