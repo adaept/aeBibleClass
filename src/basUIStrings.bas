@@ -21,7 +21,9 @@ Option Private Module
 '   - Prev/Next buttons: punctuation with natural directional meaning
 '   - Action buttons: first letter of the action (S=Search, A=About)
 '   Documentation in Ribbon Design.md must match these constants exactly.
-'   Ribbon tab keytip (Alt, Y2) is defined in customUI XML, not in this module.
+'   Ribbon tab keytip (Alt, Y2) is a static keytip="Y2" attribute on the <tab> element
+'   in customUI14.xml. The <tab> element does not support a getKeytip callback, so
+'   this value cannot be expressed as a constant in this module.
 ' =============================================================================
 
 ' -- KeyTips -------------------------------------------------------------------
