@@ -1,0 +1,63 @@
+# Claude Session Manifest — 2026-04-20
+# ------------------------------------------------------------
+# Lists all src/ files modified by Claude this session.
+# Use as import checklist after each Claude session.
+#
+# Import status key:
+#   [IMPORT]   — must be imported into VBA editor (Remove old, Import new)
+#   [XML]      — ribbon XML only; run py/inject_ribbon.py (no VBA import)
+#   [SCRIPT]   — Python/tooling; no VBA import
+#   [DOC]      — documentation only; no import
+#   [DONE]     — already imported this session (noted below)
+# ------------------------------------------------------------
+
+## Changes made BEFORE Step 2 (ImportAllVBAFiles — 2026-04-20)
+
+[DONE]  src/basUIStrings.bas
+        - KT_GO constant added
+        - KT_NEW_SEARCH renamed to KT_SEARCH
+        - Module restored from git HEAD (file was deleted from working tree)
+
+[DONE]  src/basBibleRibbonSetup.bas
+        - GetGoKeytip callback added
+        - GetNewSearchKeytip updated to reference KT_SEARCH
+
+[XML]   customUI14backupRWB.xml
+        - keytip="G" replaced with getKeytip="GetGoKeytip" on GoButton
+        - keytip="Y2" added to <tab id="RWB"> (Step 1 — 2026-04-20)
+        - inject_ribbon.py run twice: after GoButton fix, after Y2 fix
+        => Blank Bible Copy.docm updated both times
+
+[SCRIPT] py/normalize_vba.py
+        - KT_GO entry added
+        - KT_NEW_SEARCH entry renamed to KT_SEARCH
+
+[DOC]   md/Ribbon Design.md
+        - Navigation state machine section added (Mermaid stateDiagram-v2)
+        - Verse section phrasing made parallel with Chapter section
+        - Dropdown behavior softened (type-first is primary; dropdown not yet populated)
+        - Clarifying sentence added: typing sets target; Go/Prev/Next navigate
+
+## Changes made AFTER Step 2 (still need import)
+
+[IMPORT] src/basUIStrings.bas
+        - Tab keytip comment corrected: was "defined in customUI XML" (incorrect);
+          now accurately describes keytip="Y2" as a static <tab> attribute with
+          no getKeytip callback available
+
+## Documentation (no import needed)
+
+[DOC]   rvw/Code_review 2026-04-20.md
+        - New file created this session (carry-forward + session analysis)
+
+# ------------------------------------------------------------
+# IMPORT CHECKLIST FOR THIS SESSION
+# ------------------------------------------------------------
+# [ ] src/basUIStrings.bas   (comment correction — post-import change)
+# [x] src/basBibleRibbonSetup.bas   (done via ImportAllVBAFiles)
+# [x] src/basUIStrings.bas   (done via ImportAllVBAFiles — pre-import version)
+# ------------------------------------------------------------
+# Next session: check git status before editing any src/ file.
+# If a file shows as modified (M) and Claude did not change it
+# in the current session, review the diff before proceeding.
+# ------------------------------------------------------------

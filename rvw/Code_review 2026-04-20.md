@@ -193,7 +193,9 @@ Must be imported (Remove old → Import new) before testing:
 | i18n — basUIStrings.bas complete | **DONE** |
 | Ribbon Design.md — state machine diagram | **DONE** |
 | Ribbon Design.md — doc/UX accuracy | **DONE** |
-| Module imports into VBA project | **PENDING** |
+| Module imports into VBA project | **DONE — 2026-04-20 — ImportAllVBAFiles run manually** |
+| Tab keytip `Y2` locked in XML; `basUIStrings` comment corrected; re-injected | **DONE — 2026-04-20** |
+| Session manifest (`sync/session_manifest.txt`) — developer sync process | **DONE — 2026-04-20** |
 | WarmLayoutCache rewrite | **FUTURE** |
 | Search tracking reset | **FUTURE** |
 
@@ -645,4 +647,160 @@ major European locales (German: H/S/E/S/S/Ü/A/N; French: A/I/M/R/P/A/D/A).
 Documentation (`Ribbon Design.md`, review files) already uses `Y2` throughout —
 no documentation changes needed.
 
-**Status: PROPOSED — pending approval to add `keytip="Y2"` to the XML.**
+**Status: DONE — 2026-04-20. `keytip="Y2"` added to XML; `basUIStrings.bas` comment corrected; re-injected.**
+
+---
+
+## § 11 — Developer Sync: File State Verification Between Claude and VBA Editor
+
+### Problem
+
+Two actors modify the same `src/` files:
+
+1. **Claude** — edits files directly on disk (`src/*.bas`, `src/*.cls`)
+2. **Developer** — imports modified files into the Word VBA editor; may make further
+   changes there and export back to `src/` via `ImportAllVBAFiles` / export routines
+
+The risk: Claude holds a stale mental model of a file's content. If the developer
+exports a VBA-edited version back to `src/` and Claude then edits the same file
+without reading it fresh, Claude's edit is based on the version it last wrote, not
+the current disk state. The `Edit` tool requires a prior `Read`, which mitigates
+this within a single session — but across sessions the risk is real.
+
+The developer notes: *"This is most likely a benign event but serves as a reminder."*
+A lightweight warning mechanism is sufficient; correctness guarantees are not required.
+
+### Why simple MD5 is imperfect
+
+A VBA editor round-trip (import → edit → export) reformats code:
+
+- Line endings may normalise
+- Whitespace around operators may change
+- `normalize_vba.py` then runs and changes casing
+
+This means the MD5 of a file Claude wrote will almost always differ from the MD5
+after a VBA export of equivalent content. A naive MD5 comparison would produce
+**false positives on every round-trip** — warning on every import/export cycle
+even when no intentional change was made.
+
+False positives are acceptable per the developer's framing ("most likely benign"),
+but a high false-positive rate degrades the signal into noise.
+
+### Proposed approach: git-object hash on committed state
+
+Rather than comparing disk MD5s, compare against the **last committed git object
+hash** for each file. The workflow becomes:
+
+1. Claude edits `src/X.bas` and the session ends.
+2. Developer runs `normalize_vba.py`, imports the file, and **commits** — this is
+   the sync point. The committed hash is now the authoritative "known good" state.
+3. Developer makes VBA changes, exports, normalizes, and commits again.
+4. Claude starts the next session: `git status` immediately shows any files that
+   have been modified since the last commit. If `src/X.bas` is listed as modified
+   (`M`), it has changed since the last known commit — prompt before editing.
+
+**`git status` is already the sync signal.** The committed hash is the shared
+reference point both actors implicitly agree on.
+
+### Complementary: session manifest file
+
+After any session where Claude edits `src/` files, write a manifest listing the
+files changed:
+
+```
+sync/session_manifest.txt   (committed alongside the src/ edits)
+```
+
+Format:
+```
+# Claude session 2026-04-20
+# Files modified — import these into VBA before testing
+src/customUI14backupRWB.xml  (XML only — no VBA import needed)
+src/basUIStrings.bas
+src/basBibleRibbonSetup.bas
+```
+
+This gives the developer a checklist of what to import without requiring them to
+remember which files changed across a long session. It supplements `git diff --stat`
+with intent (why each file changed is in the commit message; the manifest is the
+import checklist).
+
+### Lightweight checksum script (optional — if git is insufficient)
+
+If a between-commit warning is needed (Claude edits a file, developer has not yet
+committed, and the developer subsequently exports from VBA before committing):
+
+```python
+# py/sync_check.py
+# Usage:
+#   python3 py/sync_check.py record src/basUIStrings.bas src/aeRibbonClass.cls
+#   python3 py/sync_check.py verify src/basUIStrings.bas src/aeRibbonClass.cls
+
+import hashlib, json, sys
+from pathlib import Path
+
+MANIFEST = Path('sync/checksums.json')
+
+def md5(path):
+    return hashlib.md5(Path(path).read_bytes()).hexdigest()
+
+if sys.argv[1] == 'record':
+    data = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
+    for f in sys.argv[2:]:
+        data[f] = md5(f)
+    MANIFEST.parent.mkdir(exist_ok=True)
+    MANIFEST.write_text(json.dumps(data, indent=2))
+    print(f'Recorded {len(sys.argv)-2} file(s).')
+
+elif sys.argv[1] == 'verify':
+    data = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
+    for f in sys.argv[2:]:
+        stored = data.get(f)
+        current = md5(f)
+        if stored is None:
+            print(f'NEW (no prior record): {f}')
+        elif stored != current:
+            print(f'CHANGED since last record: {f}')
+        else:
+            print(f'OK: {f}')
+```
+
+`sync/checksums.json` is committed so Claude can read it at the start of a session
+and warn if any file it previously modified has since changed on disk.
+
+**Acknowledged limitation:** a VBA export of unchanged content will report
+`CHANGED` due to reformatting. The developer treats this as expected and
+non-blocking — it is a prompt to review, not an error.
+
+### Recommendation
+
+| Mechanism | Cost | Signal quality | Verdict |
+|-----------|------|----------------|---------|
+| `git status` before each edit session | Zero — already available | High for committed changes | **Use always** |
+| Session manifest (`sync/session_manifest.txt`) | 5 min per session | High — explicit import checklist | **Implement now** |
+| `py/sync_check.py` checksum script | 1 hr one-time | Moderate — false positives on VBA export | **Implement if manifest proves insufficient** |
+
+**Immediate action:** Claude writes `sync/session_manifest.txt` at the end of each
+session listing files it modified. Developer uses it as the import checklist.
+The checksum script is held in reserve.
+
+**Status: APPROVED — 2026-04-20.**
+
+### Implementation — first manifest written
+
+`sync/session_manifest.txt` created for the 2026-04-20 session. It records:
+
+- All `src/` files modified by Claude, with import status (`[IMPORT]`, `[XML]`,
+  `[SCRIPT]`, `[DOC]`, `[DONE]`)
+- Which changes were made before vs. after the `ImportAllVBAFiles` run
+- A final import checklist for the developer
+
+**Ongoing convention:**
+
+- Claude writes or updates `sync/session_manifest.txt` at the end of every session
+  that modifies `src/` files
+- The developer uses it as the import checklist after each session
+- At the start of the next session Claude runs `git status` and notes any files
+  that have changed since the last commit before editing them
+- The checksum script (`py/sync_check.py`) remains deferred — implement if the
+  manifest alone proves insufficient to catch between-commit drift
