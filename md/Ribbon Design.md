@@ -52,6 +52,54 @@ which book and chapter you are in.
 
 ---
 
+## Navigation state machine
+
+The ribbon controller is a four-state machine. Understanding the states makes the
+progressive-unlock behaviour predictable.
+
+```mermaid
+stateDiagram-v2
+    [*]             --> NoSelection
+
+    NoSelection     --> BookSelected    : valid book typed (OnBookChanged)
+    BookSelected    --> ChapterSelected : valid chapter typed (OnChapterChanged)
+    ChapterSelected --> VerseSelected   : valid verse typed (OnVerseChanged)
+
+    BookSelected    --> NoSelection     : New Search
+    ChapterSelected --> NoSelection     : New Search
+    VerseSelected   --> NoSelection     : New Search
+
+    BookSelected    --> BookSelected    : Prev / Next Book  [navigates]
+    ChapterSelected --> ChapterSelected : Prev / Next Book  [navigates]
+    ChapterSelected --> ChapterSelected : Prev / Next Chapter  [navigates]
+    VerseSelected   --> VerseSelected   : Prev / Next Book  [navigates]
+    VerseSelected   --> VerseSelected   : Prev / Next Chapter  [navigates]
+    VerseSelected   --> VerseSelected   : Prev / Next Verse  [navigates]
+
+    ChapterSelected --> ChapterSelected : Go  [navigates to chapter 1]
+    VerseSelected   --> VerseSelected   : Go  [navigates to selected verse]
+```
+
+**States and what they unlock:**
+
+| State | Book row | Chapter row | Verse row | Go |
+|---|---|---|---|---|
+| `NoSelection` | active | — | — | — |
+| `BookSelected` | active | active | — | — |
+| `ChapterSelected` | active | active | active | active |
+| `VerseSelected` | active | active | active | active |
+
+**Transition rules:**
+
+- State advances on **valid input** in each field; invalid input sets the validity
+  flag and stays in the current state (error shown in status bar).
+- **Prev/Next** buttons navigate immediately and stay in the same state.
+- **Go** navigates and stays in the same state.
+- **New Search** resets to `NoSelection` from any state.
+- State never advances past `VerseSelected`; there is no terminal state.
+
+---
+
 ## Selecting a book
 
 Click the Book selector, or press **Alt, Y2, B** to focus it directly from the keyboard.
