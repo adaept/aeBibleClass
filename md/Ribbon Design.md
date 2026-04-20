@@ -104,11 +104,12 @@ stateDiagram-v2
 
 Click the Book selector, or press **Alt, Y2, B** to focus it directly from the keyboard.
 
-You can:
+**Type a name** — full or abbreviated: `Genesis`, `Gen`, `Gn`, `1 Cor`, `1cor`,
+`Jn`, `Rev` all work. Capitalisation does not matter. This is the primary
+supported input method.
 
-- **Type a name** — full or abbreviated: `Genesis`, `Gen`, `Gn`, `1 Cor`, `1cor`,
-  `Jn`, `Rev` all work. Capitalisation does not matter.
-- **Open the dropdown** — all 66 books are listed.
+The dropdown list is present but not yet populated — book selection by typing
+is the current navigation path.
 
 Once the book is confirmed, the Chapter row becomes available and the ribbon state
 is set to that book. Document navigation occurs when a chapter/verse navigation
