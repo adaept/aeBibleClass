@@ -47,13 +47,11 @@
           no getKeytip callback available
 
 [IMPORT] src/aeRibbonClass.cls
-        - Bug #597: Option A attempted then reverted.
-          OnNewSearchClick retains a comment explaining the decision.
-          No functional change from pre-session version.
+        - Bug #597: OnNewSearchClick has a one-line comment referencing § 12
+          of the review. No functional change.
 
 [IMPORT] src/basRibbonDeferred.bas
-        - Bug #597: FocusBookDeferred retained as commented dead-end with
-          failure explanation. No active code added.
+        - Bug #597: dead stub removed. No change to active subs.
 
 ## Documentation (no import needed)
 

@@ -33,14 +33,6 @@ Public Sub ResetVerseDisplayDeferred()
     Instance().ResetVerseDisplay
 End Sub
 
-' FocusBookDeferred — rejected (Bug #597, Option A).
-' SendKeys "%Y2B" sends Alt+Y as a chord then plain "2B"; ribbon keytip mode
-' requires Alt tapped alone then plain keypresses — not expressible in VBA
-' SendKeys syntax. "2B" leaked into the document at the cursor position.
-' Sub retained as a documented dead-end. Bug #597 accepted as known limitation.
-' Public Sub FocusBookDeferred()
-'     SendKeys "%Y2B"
-' End Sub
 
 ' -- Archived deferred entry points retained for rollback/testing --------------
 

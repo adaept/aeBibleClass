@@ -1042,12 +1042,8 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_chapterTextValid = True
     m_verseTextValid = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
-    ' Bug #597 — focus cmbBook after reset.
-    ' SendKeys approach attempted (Option A) but rejected: VBA SendKeys %X sends
-    ' Alt+X as a chord; ribbon keytip mode requires Alt tapped alone then plain
-    ' key presses — not expressible in SendKeys syntax. Characters leaked into
-    ' the document. Accepted as known limitation (Option C): after New Search,
-    ' user re-focuses cmbBook manually (click or Alt,Y2,B).
+    ' Bug #597 — focusing cmbBook after reset is a known VBA limitation.
+    ' See rvw/Code_review 2026-04-20.md § 12 for analysis and VSTO resolution.
 End Sub
 
 ' -- Archived reference paths (not used by current ribbon flow) ----------------
