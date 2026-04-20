@@ -57,6 +57,8 @@
 
 [DOC]   rvw/Code_review 2026-04-20.md
         - New file created this session (carry-forward + session analysis)
+        - § 12: VSTO/VB.NET migration analysis (carry forward)
+        - § 13: .dotm template architecture proposal (carry forward)
 
 [DOC]   sync/session_manifest.txt
         - This file

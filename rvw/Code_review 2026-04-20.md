@@ -199,6 +199,7 @@ Must be imported (Remove old → Import new) before testing:
 | WarmLayoutCache rewrite | **FUTURE** |
 | Search tracking reset | **FUTURE** |
 | VSTO / VB.NET migration analysis | **CARRY FORWARD — see § 12** |
+| `.dotm` template architecture — Bible content as `.docx` | **CARRY FORWARD — see § 13** |
 
 ---
 
@@ -537,7 +538,8 @@ constants in isolation.
 | 4 | Bible version comparison — public domain APIs | `WinHTTP` late binding; JSON parsing |
 | 5 | Bible version comparison — paid API auth | Credential management |
 | 6 | Subscription `.docm` build — separate from free | Import shared modules; add subscription modules |
-| 7 | VSTO / VB.NET migration — subscription version | Start with VSTO setup; `basUIStrings` → `.resx`; UI Automation for Bug #597; see § 12 |
+| 7 | `.dotm` template architecture — Bible content as `.docx` | `ThisDocument.VBProject.Name`; `IsBibleDocument()` guard; see § 13 |
+| 8 | VSTO / VB.NET migration — subscription version | Start with VSTO setup; `basUIStrings` → `.resx`; UI Automation for Bug #597; see § 12 |
 
 ---
 
@@ -995,3 +997,132 @@ designed for this from the start.
 subscription version planning begins. The Bug #597 analysis is the concrete trigger:
 the first subscription-version development session should open with VSTO setup rather
 than continuing to work around VBA limitations.
+
+---
+
+## § 13 — `.dotm` Template Architecture: Bible Content as `.docx`
+
+**Carry-forward proposal.** Arose from the Bug #597 / `SendKeys` limitation and the
+goal of supporting Bible document editors who should not need VBA knowledge.
+
+### Overview
+
+Word loads ribbon customizations and VBA macros from any `.dotm` file placed in the
+Word STARTUP folder (`%AppData%\Microsoft\Word\STARTUP\`). That template is loaded
+globally for every Word session — its ribbon and VBA are available to all open
+documents, including plain `.docx` files.
+
+This separates the add-in from the content entirely:
+
+```
+BibleAddIn.dotm   ← ribbon XML + all VBA  (developer-maintained)
+Genesis.docx      ← Bible content only, no VBA  (editor-maintained)
+Exodus.docx       ← same
+...
+```
+
+### How callback resolution works
+
+When Word sees `onAction="OnGoClick"` in ribbon XML it searches:
+1. The active document's VBA project
+2. All loaded template VBA projects (STARTUP folder)
+
+`OnGoClick` lives in `BibleAddIn.dotm` — Word finds it there. The active `.docx`
+needs no VBA at all. `Application.ActiveDocument` in the template code operates on
+whichever document the user is working in — already how the current code is written.
+
+### Required code change — `ThisDocument.VBProject.Name`
+
+Every `Application.OnTime` call currently builds the project name from the active
+document:
+
+```vba
+' Current — resolves to the content document's project (wrong in template context):
+projName = Application.ActiveDocument.VBProject.Name
+
+' Required — resolves to the template's own project:
+projName = ThisDocument.VBProject.Name
+```
+
+`ThisDocument` in a `.dotm` module refers to the template itself. `Application.OnTime`
+uses that name to find `basRibbonDeferred` subs — it must match the template project
+name, not the content document's project name.
+
+This is the **only structural VBA change** required. `Instance()`, `m_ribbon.Invalidate`,
+`aeRibbonClass`, and all other code work unchanged.
+
+### Context guard — ribbon inert on non-Bible documents
+
+The ribbon appears for all open documents. A document variable identifies Bible
+documents; every `GetEnabled` callback checks it:
+
+```vba
+Private Function IsBibleDocument() As Boolean
+    On Error Resume Next
+    IsBibleDocument = (Application.ActiveDocument.Variables("RWB_Document").Value = "1")
+    On Error GoTo 0
+End Function
+
+Public Function GetGoEnabled(control As IRibbonControl) As Boolean
+    GetGoEnabled = IsBibleDocument() And (m_currentBookIndex <> 0)
+End Function
+```
+
+Each Bible `.docx` carries `RWB_Document = "1"` as its identity marker. All ribbon
+controls are disabled (invisible in practice) when any non-Bible document is active.
+
+### Architecture comparison
+
+| Factor | Current `.docm` | Template `.dotm` + `.docx` |
+|--------|----------------|---------------------------|
+| Bible content format | `.docm` — macro-enabled required | `.docx` — plain Word document |
+| Editor VBA knowledge | Must not break macros | None — content only |
+| Merge / diff of content | Binary `.docm`; fragile | `.docx`; diffable via pandoc / docx2txt |
+| Ribbon scope | Only when `.docm` is open | All Word sessions; context-guarded |
+| Context guard needed | No | Yes — `IsBibleDocument()` |
+| Code change required | None | `ActiveDocument.VBProject.Name` → `ThisDocument.VBProject.Name` in all `OnTime` calls |
+| Distribution | Single `.docm` | Template installed once; `.docx` files freely shared |
+| `basRibbonDeferred` `Option Private Module` omission | Still required | Same — unchanged |
+| VSTO migration path | `.docm` → VSTO add-in | `.dotm` → VSTO add-in (same step, cleaner handoff) |
+
+### Known limitations — unchanged from current
+
+| Limitation | Status |
+|---|---|
+| `<tab>` keytip `Y2` — no `getKeytip` callback | Same constraint |
+| Focus mode stale display | Same Win32 issue |
+| Bug #597 — `SendKeys` / ribbon focus | Same VBA limitation; resolved in VSTO (§ 12) |
+| Layout delay (Bug 22/23a) | Word-internal; unchanged |
+
+### Implementation cost
+
+| Task | Effort |
+|------|--------|
+| Create `BibleAddIn.dotm` from current `.docm` (copy VBA project, ribbon XML) | 30 min |
+| Replace `ActiveDocument.VBProject.Name` with `ThisDocument.VBProject.Name` | 30 min — grep all `OnTime` calls in `aeRibbonClass.cls` and `basRibbonDeferred.bas` |
+| Add `IsBibleDocument()` guard to all `GetEnabled` callbacks | 1 hr |
+| Add `RWB_Document = "1"` document variable to each Bible `.docx` | Per-document; one-time setup sub |
+| Test: open a non-Bible `.docx` — ribbon should be fully disabled | 15 min manual |
+| Test: open a Bible `.docx` — full ribbon function | Existing manual test suite |
+
+Total estimated effort: **~2–3 hours.**
+
+### Relationship to VSTO migration (§ 12)
+
+The `.dotm` approach is the cleanest stepping stone to VSTO:
+
+```
+Phase 1 (now):      .docm  →  BibleAddIn.dotm + Bible.docx
+Phase 2 (subscription):  BibleAddIn.dotm  →  BibleAddIn VSTO add-in
+                          Bible.docx unchanged
+```
+
+Phase 2 requires no change to Bible content files — editors are completely
+insulated from the infrastructure migration.
+
+### Status
+
+**CARRY FORWARD** — recommended as the next architectural step before the subscription
+version begins. Implement when the free version is stable and the first Bible
+document editors are onboarded. The `ThisDocument.VBProject.Name` change is the
+gate item; everything else follows from it.
