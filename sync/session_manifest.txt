@@ -52,7 +52,9 @@
 
 [IMPORT] src/basRibbonDeferred.bas
         - Bug #597: FocusBookDeferred added to active section;
-          sends Application.SendKeys "%Y2B" to focus cmbBook
+          sends SendKeys "%Y2B" to focus cmbBook
+          (compile error fix: Application.SendKeys is Excel-only; Word VBA uses
+          standalone SendKeys statement)
 
 ## Documentation (no import needed)
 

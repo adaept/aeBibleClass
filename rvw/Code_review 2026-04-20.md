@@ -183,7 +183,7 @@ Must be imported (Remove old → Import new) before testing:
 
 | Item | Status |
 |------|--------|
-| Bug #597 — New Search focus to cmbBook | **DONE — 2026-04-20 — Option A: FocusBookDeferred via SendKeys "%Y2B"** |
+| Bug #597 — New Search focus to cmbBook | **DONE — 2026-04-20 — Option A: FocusBookDeferred via `SendKeys "%Y2B"`** |
 | Bug 16 — Keytip badges end-to-end test | **PENDING — re-test after GetGoKeytip injection** |
 | Bug 22 / 23a — First-nav layout delay | **KNOWN LIMITATION** |
 | Bug 27 — Enter in Chapter | **SUPERSEDED by GoButton** |
@@ -785,6 +785,23 @@ session listing files it modified. Developer uses it as the import checklist.
 The checksum script is held in reserve.
 
 **Status: APPROVED — 2026-04-20.**
+
+### Bug #597 implementation note — compile error
+
+`Application.SendKeys` does not exist on Word's `Application` object — it is an
+Excel-only method. In Word VBA `SendKeys` is a standalone VBA built-in statement.
+
+```vba
+' Wrong (Excel only):
+Application.SendKeys "%Y2B"
+
+' Correct (Word VBA):
+SendKeys "%Y2B"
+```
+
+`basRibbonDeferred.bas` corrected accordingly.
+
+---
 
 ### Implementation — first manifest written
 

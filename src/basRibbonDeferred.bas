@@ -37,7 +37,7 @@ Public Sub FocusBookDeferred()
     ' Bug #597 — focus cmbBook after New Search resets state.
     ' Fires via Application.OnTime after onAction returns focus to the document.
     ' Sends the ribbon keytip sequence: Alt+Y2 (RWB tab) then B (Book comboBox).
-    Application.SendKeys "%Y2B"
+    SendKeys "%Y2B"
 End Sub
 
 ' -- Archived deferred entry points retained for rollback/testing --------------
