@@ -62,7 +62,8 @@ NORMALIZATIONS = [
     (r'(?i)\bUpdateStatusBar\b',        'UpdateStatusBar',      'UpdateStatusBar method on aeRibbonClass'),
     (r'(?i)\bUpdateStatusBarDeferred\b','UpdateStatusBarDeferred', 'UpdateStatusBarDeferred in basRibbonDeferred'),
     (r'(?i)\bGetGoEnabled\b',           'GetGoEnabled',       'GetGoEnabled callback in basBibleRibbonSetup / method on aeRibbonClass'),
-    (r'(?i)\bOnGoClick\b',              'OnGoClick',          'OnGoClick callback in basBibleRibbonSetup / method on aeRibbonClass'),
+    (r'(?i)\bOnGoClick\b',             'OnGoClick',          'OnGoClick callback in basBibleRibbonSetup / method on aeRibbonClass'),
+    (r'(?i)\bFocusBookDeferred\b',     'FocusBookDeferred',  'FocusBookDeferred in basRibbonDeferred (Bug #597)'),
     # --- Ribbon keyboard navigation identifiers (added 2026-04-13) ---
     (r'(?i)\bGetPrevBkEnabled\b',            'GetPrevBkEnabled',   'GetPrevBkEnabled method on aeRibbonClass'),
     (r'(?i)\bGetNextBkEnabled\b',            'GetNextBkEnabled',   'GetNextBkEnabled method on aeRibbonClass'),

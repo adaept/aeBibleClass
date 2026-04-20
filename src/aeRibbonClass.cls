@@ -1042,6 +1042,12 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_chapterTextValid = True
     m_verseTextValid = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
+    ' Bug #597 — focus cmbBook after reset so user can type immediately.
+    ' onAction always returns focus to the document; deferred SendKeys re-enters
+    ' the ribbon via the keytip sequence (Alt+Y2 = RWB tab, B = Book comboBox).
+    Dim projName As String
+    projName = Application.ActiveDocument.VBProject.Name
+    Application.OnTime Now, projName & ".basRibbonDeferred.FocusBookDeferred"
 End Sub
 
 ' -- Archived reference paths (not used by current ribbon flow) ----------------

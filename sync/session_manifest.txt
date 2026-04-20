@@ -31,6 +31,7 @@
 [SCRIPT] py/normalize_vba.py
         - KT_GO entry added
         - KT_NEW_SEARCH entry renamed to KT_SEARCH
+        - FocusBookDeferred entry added (Bug #597)
 
 [DOC]   md/Ribbon Design.md
         - Navigation state machine section added (Mermaid stateDiagram-v2)
@@ -38,26 +39,39 @@
         - Dropdown behavior softened (type-first is primary; dropdown not yet populated)
         - Clarifying sentence added: typing sets target; Go/Prev/Next navigate
 
-## Changes made AFTER Step 2 (still need import)
+## Changes made AFTER Step 2 (need import)
 
 [IMPORT] src/basUIStrings.bas
         - Tab keytip comment corrected: was "defined in customUI XML" (incorrect);
           now accurately describes keytip="Y2" as a static <tab> attribute with
           no getKeytip callback available
 
+[IMPORT] src/aeRibbonClass.cls
+        - Bug #597: OnNewSearchClick now schedules FocusBookDeferred via
+          Application.OnTime to focus cmbBook after ribbon reset
+
+[IMPORT] src/basRibbonDeferred.bas
+        - Bug #597: FocusBookDeferred added to active section;
+          sends Application.SendKeys "%Y2B" to focus cmbBook
+
 ## Documentation (no import needed)
 
 [DOC]   rvw/Code_review 2026-04-20.md
         - New file created this session (carry-forward + session analysis)
 
+[DOC]   sync/session_manifest.txt
+        - This file
+
 # ------------------------------------------------------------
 # IMPORT CHECKLIST FOR THIS SESSION
 # ------------------------------------------------------------
-# [ ] src/basUIStrings.bas   (comment correction — post-import change)
 # [x] src/basBibleRibbonSetup.bas   (done via ImportAllVBAFiles)
-# [x] src/basUIStrings.bas   (done via ImportAllVBAFiles — pre-import version)
+# [x] src/basUIStrings.bas          (done via ImportAllVBAFiles — pre-import version)
+# [ ] src/basUIStrings.bas          (post-import comment correction — reimport needed)
+# [ ] src/aeRibbonClass.cls         (Bug #597 OnNewSearchClick change)
+# [ ] src/basRibbonDeferred.bas     (Bug #597 FocusBookDeferred added)
 # ------------------------------------------------------------
-# Next session: check git status before editing any src/ file.
+# Next session: run git status before editing any src/ file.
 # If a file shows as modified (M) and Claude did not change it
-# in the current session, review the diff before proceeding.
+# in the current session, read the diff before proceeding.
 # ------------------------------------------------------------

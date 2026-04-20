@@ -183,7 +183,7 @@ Must be imported (Remove old → Import new) before testing:
 
 | Item | Status |
 |------|--------|
-| Bug #597 — New Search focus to cmbBook | **OPEN** |
+| Bug #597 — New Search focus to cmbBook | **DONE — 2026-04-20 — Option A: FocusBookDeferred via SendKeys "%Y2B"** |
 | Bug 16 — Keytip badges end-to-end test | **PENDING — re-test after GetGoKeytip injection** |
 | Bug 22 / 23a — First-nav layout delay | **KNOWN LIMITATION** |
 | Bug 27 — Enter in Chapter | **SUPERSEDED by GoButton** |
@@ -804,3 +804,43 @@ The checksum script is held in reserve.
   that have changed since the last commit before editing them
 - The checksum script (`py/sync_check.py`) remains deferred — implement if the
   manifest alone proves insufficient to catch between-commit drift
+
+### Session manifest: expected process (reference)
+
+**Developer workflow per session:**
+
+```
+1. Claude edits src/ files during the session
+2. Session ends → Claude writes/updates sync/session_manifest.txt
+3. Developer opens sync/session_manifest.txt
+4. For each [IMPORT] line: Remove old module in VBA editor → Import updated file
+5. For each [XML] line: run py/inject_ribbon.py (already done by Claude if possible)
+6. For each [SCRIPT] / [DOC] line: no action needed
+7. Run normalize_vba.py on any exported files
+8. git add + git commit (this is the sync point both actors share)
+```
+
+**Claude workflow at session start:**
+
+```
+1. Run git status — review any modified files
+2. If a file Claude last modified shows as changed: read it fresh before editing;
+   note the change in the session log
+3. Check sync/session_manifest.txt for any outstanding [IMPORT] items from prior
+   sessions that may not have been completed
+```
+
+**Import status key used in manifest:**
+
+| Tag | Meaning |
+|-----|---------|
+| `[IMPORT]` | Must be imported into VBA editor (Remove old → Import new) |
+| `[XML]` | Ribbon XML — run `py/inject_ribbon.py`; no VBA import |
+| `[SCRIPT]` | Python/tooling file; no VBA import needed |
+| `[DOC]` | Documentation only; no import needed |
+| `[DONE]` | Already imported this session; noted for record-keeping |
+
+**When the manifest is NOT needed:**
+If Claude only edits documentation (`md/`, `rvw/`), Python scripts (`py/`), or the
+ribbon XML (and `inject_ribbon.py` is run immediately), no VBA import is required
+and the manifest can note `[DOC]`/`[XML]` entries only.
