@@ -248,7 +248,7 @@ Public Sub GetVerseKeytip(control As IRibbonControl, ByRef keytip)
 End Sub
 
 Public Sub GetNewSearchKeytip(control As IRibbonControl, ByRef keytip)
-    keytip = KT_NEW_SEARCH
+    keytip = KT_SEARCH
 End Sub
 
 Public Sub GetGoKeytip(control As IRibbonControl, ByRef keytip)
