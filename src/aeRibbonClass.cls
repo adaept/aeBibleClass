@@ -1042,12 +1042,12 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_chapterTextValid = True
     m_verseTextValid = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
-    ' Bug #597 — focus cmbBook after reset so user can type immediately.
-    ' onAction always returns focus to the document; deferred SendKeys re-enters
-    ' the ribbon via the keytip sequence (Alt+Y2 = RWB tab, B = Book comboBox).
-    Dim projName As String
-    projName = Application.ActiveDocument.VBProject.Name
-    Application.OnTime Now, projName & ".basRibbonDeferred.FocusBookDeferred"
+    ' Bug #597 — focus cmbBook after reset.
+    ' SendKeys approach attempted (Option A) but rejected: VBA SendKeys %X sends
+    ' Alt+X as a chord; ribbon keytip mode requires Alt tapped alone then plain
+    ' key presses — not expressible in SendKeys syntax. Characters leaked into
+    ' the document. Accepted as known limitation (Option C): after New Search,
+    ' user re-focuses cmbBook manually (click or Alt,Y2,B).
 End Sub
 
 ' -- Archived reference paths (not used by current ribbon flow) ----------------

@@ -183,7 +183,7 @@ Must be imported (Remove old → Import new) before testing:
 
 | Item | Status |
 |------|--------|
-| Bug #597 — New Search focus to cmbBook | **DONE — 2026-04-20 — Option A: FocusBookDeferred via `SendKeys "%Y2B"`** |
+| Bug #597 — New Search focus to cmbBook | **CLOSED AS KNOWN LIMITATION — Option A attempted and reverted; see § 11 note** |
 | Bug 16 — Keytip badges end-to-end test | **PENDING — re-test after GetGoKeytip injection** |
 | Bug 22 / 23a — First-nav layout delay | **KNOWN LIMITATION** |
 | Bug 27 — Enter in Chapter | **SUPERSEDED by GoButton** |
@@ -786,20 +786,40 @@ The checksum script is held in reserve.
 
 **Status: APPROVED — 2026-04-20.**
 
-### Bug #597 implementation note — compile error
+### Bug #597 — Option A attempted and reverted
 
-`Application.SendKeys` does not exist on Word's `Application` object — it is an
-Excel-only method. In Word VBA `SendKeys` is a standalone VBA built-in statement.
+**Compile error (first):** `Application.SendKeys` does not exist on Word's
+`Application` object — it is an Excel-only method. Fixed to standalone `SendKeys`.
 
-```vba
-' Wrong (Excel only):
-Application.SendKeys "%Y2B"
+**Runtime bug (second — fatal):** After clicking New Search with the cursor in the
+document (e.g., at a chapter marker after navigating to Revelation), `SendKeys "%Y2B"`
+inserted `2B` into the document at the cursor position.
 
-' Correct (Word VBA):
-SendKeys "%Y2B"
-```
+**Root cause:** VBA `SendKeys` `%` prefix sends the following character as an
+**Alt+X chord** (Alt held while pressing X). Ribbon keytip navigation requires
+a different sequence:
 
-`basRibbonDeferred.bas` corrected accordingly.
+| Actual UI sequence | What `SendKeys "%Y2B"` sends |
+|-------------------|------------------------------|
+| Tap Alt alone → keytip mode activates | Alt+Y (chord) — not the same |
+| Press Y (plain) | — |
+| Press 2 (plain) → tab selected | 2 (plain, but focus is now ambiguous) |
+| Press B (plain) → cmbBook focused | B (plain, inserted into document) |
+
+The `%X` syntax in `SendKeys` cannot express "tap Alt alone" — it always produces
+a chord. There is no VBA `SendKeys` syntax that replicates the keytip tap sequence.
+Any characters after a failed Alt+X chord that does not activate the ribbon are
+typed into whichever document area has focus.
+
+**Decision: Option C — accepted as known limitation.**
+
+After clicking New Search the user re-focuses `cmbBook` manually:
+- Click the Book comboBox, or
+- Press `Alt, Y2, B`
+
+`FocusBookDeferred` is retained in `basRibbonDeferred.bas` as a commented
+dead-end with the failure documented inline. `OnNewSearchClick` in
+`aeRibbonClass.cls` retains a comment explaining the decision.
 
 ---
 
