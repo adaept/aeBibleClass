@@ -141,7 +141,7 @@ button shows a message in the status bar.
 
 After a chapter is selected, the Verse selector becomes active.
 
-Type the verse number, then press **Go** to navigate the document to that verse.
+Type the verse number. Press **Go** to navigate, or use **◀ ▶** to step through verses immediately.
 
 ### Previous / Next Verse
 
