@@ -7,21 +7,18 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
-' #610 -
-' #609 -
+' #615 -
+' #614 -
+' #613 -
+' #612 -
+' #611 -
+' #610 - Add Inspect_Aptos_Sources to aeBibleClass toolsm expected Result 0 [test]
+' #609 - Soft Hyphens checked to end of Genesis [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #601 - Build Word configuration module for consistent editing setup [feat][wip]
-' #600 - Consider Enter button in ribbon to activate search Pros/Cons [idea]
-' #599 - First load Gen tab tab tab 119 tab sets focus in docm, second use tab will go through all controls [bug]
-' #597 - New Search should set the focus in cmbBook and not the docm [bug]
 ' #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
-' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf]
 ' #484 - Store the Verse Map as a Byte Array [impr]
-' #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat]
-' #419 - Add typing look ahead, similar to Access combo box (see #417) [feat]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
-' #417 - Add an SBL auto-corrector [feat]
-' #411 - Fix reloading of all code routine to include SBL EBNF module [bug]
 ' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
@@ -32,17 +29,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to - 0, 1st Century ->
 '           CountNumericOrdinals Numeric Ordinal Suffix Counts: st: 7 nd: 12 rd: 4 th: 44 TOTAL: 67
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
-' #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug]
 ' #365 - Map styles to USFM markers [wip]
-' #363 - Search Judges 15:11 Book Not Found [bug] [regr]
-' #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug]
-' #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before & after ":" [impr]
-' #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac]
-' #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug]
-' #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug]
 ' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
-' #324 - Add index generation code to ribbon [impr] [feat]
-' #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
 ' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
@@ -74,6 +62,23 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat] - Done in Ribbon code
+    ' [obso] - #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug] - Done in Ribbon code
+    ' [obso] - #324 - Add index generation code to ribbon [impr] [feat] - Done in Ribbon code
+    ' [obso] - #322 - Timeout on #195 (5.19 seconds), need more speed improvement [bug] [impr] [perf] - Done in Ribbon code
+    ' [obso] - #357 - Search Gen 120 finds Psalms 120, error in FindChapterH2 [bug] - Done in Ribbon code
+    ' [obso] - #351 - Check GoToVerseSBL input after Trim - no multi spaces; max spaces = 2; if exists ":" only 1; digit before & after ":" [impr] - Done in Ribbon code
+    ' [obso] - #345 - Add routine to find chapter heading H2 based on a given H1 paragraph index [impr] [refac] - Done in Ribbon code
+    ' [obso] - #340 - GoToVerseSBL 3 John 5, 3 John 1:5 - error 'No verse 5 found in Chapter 1' [bug] - Done in Ribbon code
+    ' [obso] - #339 - On page 243 error Joshua not found search Josh 24:19, also check conv to UCase in verse find [bug] - Done in Ribbon code
+    ' [obso] - #363 - Search Judges 15:11 Book Not Found [bug] [regr] - Done in Ribbon code
+    ' [obso] - #411 - Fix reloading of all code routine to include SBL EBNF module [bug] - See basImportWordGitFiles
+    ' FIXED - #417 - Add an SBL auto-corrector [feat] - See basTEST_aeBibleCitationBlock
+    ' [obso] - #419 - Add typing look ahead, similar to Access combo box (see #417) [feat] - Done in Ribbon code
+    ' #567 - Implement GoTo Verse using headingData in aeRibbonClass - speedup [feat][perf] - Done in Ribbon code
+    ' FIXED - #597 - New Search should set the focus in cmbBook and not the docm [bug]
+    ' FIXED - #599 - First load Gen tab tab tab 119 tab sets focus in docm, second use tab will go through all controls [bug]
+    ' FIXED - #600 - Consider Enter button in ribbon to activate search Pros/Cons [idea] Done using Go button
     ' FIXED - #608 - Add i18n strings for status messages
     ' FIXED - #607 - Include status message for invalid input of Book/Chapter/Verse and status for Prev/Next out of bounds [impr]
     ' FIXED - #598 - Gen tab fills C/V with 1/1 but does not enable C/V Prev/Next buttons [bug]

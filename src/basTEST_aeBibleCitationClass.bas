@@ -857,7 +857,7 @@ Public Sub Test_CanonicalNamesAndSBLTable()
     Debug.Print "------------------------------------------"
     Debug.Print " Test_CanonicalNamesAndSBLTable"
 
-    ' Expected: canonical name -> chapter count (66 books)
+    ' Expected: canonical name -> chapter Count (66 books)
     Dim canonNames(1 To 66) As String
     Dim canonChapters(1 To 66) As Long
 
@@ -955,7 +955,7 @@ Public Sub Test_CanonicalNamesAndSBLTable()
 
     Dim i As Long
     For i = 1 To 66
-        ' Validate ChaptersInBook resolves each canonical name to the correct chapter count
+        ' Validate ChaptersInBook resolves each canonical name to the correct chapter Count
         Dim gotCh As Long
         gotCh = aeBibleCitationClass.ChaptersInBook(canonNames(i))
         assert.AssertEqual canonChapters(i), gotCh, _
@@ -968,7 +968,7 @@ Public Sub Test_CanonicalNamesAndSBLTable()
         Dim sblResultBook As String
         sblInput = canonNames(i) & " 1:1"
         sblResult = aeBibleCitationClass.ToSBLShortForm(sblInput)
-        ' Extract book abbreviation: everything before the first digit in result
+        ' Extract book abbreviation: everything before the first digit in Result
         Dim spacePos As Long
         spacePos = InStr(sblResult, " ")
         If spacePos > 0 Then

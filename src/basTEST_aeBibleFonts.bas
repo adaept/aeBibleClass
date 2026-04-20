@@ -634,17 +634,14 @@ Public Sub Inspect_Aptos_Sources()
     Debug.Print "=========================================="
 
     i = 0
-
     For Each p In ActiveDocument.Paragraphs
 
         Set r = p.Range
-
         fontName = r.Font.Name
         StyleName = p.style
 
         If InStr(1, fontName, "Aptos", vbTextCompare) > 0 _
            Or Left(fontName, 1) = "+" Then
-
             i = i + 1
 
             Debug.Print "----------------------------------"
@@ -657,9 +654,7 @@ Public Sub Inspect_Aptos_Sources()
             On Error Resume Next
             Debug.Print "Style Font Size: " & p.style.Font.Size
             On Error GoTo 0
-
         End If
-
     Next p
 
     Debug.Print "=========================================="
@@ -679,12 +674,10 @@ Public Sub Check_Aptos_Is_Real_Or_Display()
     Dim realHits As Long
 
     For Each p In ActiveDocument.Paragraphs
-
         If p.Range.Font.Name = "Aptos" Then
             realHits = realHits + 1
             Debug.Print "REAL APTOS: " & Left(p.Range.Text, 80)
         End If
-
     Next p
 
     Debug.Print "REAL stored Aptos hits: " & realHits
@@ -698,22 +691,16 @@ Public Sub Remove_Real_Aptos_Only()
     Application.ScreenUpdating = False
 
     For Each p In ActiveDocument.Paragraphs
-
         Set r = p.Range
-
         If r.Font.Name = "Aptos" Then
-
             r.Font.Name = "Calibri"
             r.Font.Size = 9
-
             changed = changed + 1
-
         End If
-
     Next p
-
     Application.ScreenUpdating = True
 
     MsgBox "Fixed REAL Aptos runs: " & changed, vbInformation
 End Sub
+
 
