@@ -23,6 +23,9 @@ The **Go** button is the primary navigation trigger — it moves the document to
 selected Book, Chapter, and Verse. The **◀** and **▶** Prev/Next buttons beside
 each selector also navigate immediately, one step at a time.
 
+Typing values sets the navigation target; navigation only occurs when **Go** or a
+**Prev/Next** button is used.
+
 ---
 
 ## The navigation toolbar
