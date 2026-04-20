@@ -198,6 +198,7 @@ Must be imported (Remove old → Import new) before testing:
 | Session manifest (`sync/session_manifest.txt`) — developer sync process | **DONE — 2026-04-20** |
 | WarmLayoutCache rewrite | **FUTURE** |
 | Search tracking reset | **FUTURE** |
+| VSTO / VB.NET migration analysis | **CARRY FORWARD — see § 12** |
 
 ---
 
@@ -536,6 +537,7 @@ constants in isolation.
 | 4 | Bible version comparison — public domain APIs | `WinHTTP` late binding; JSON parsing |
 | 5 | Bible version comparison — paid API auth | Credential management |
 | 6 | Subscription `.docm` build — separate from free | Import shared modules; add subscription modules |
+| 7 | VSTO / VB.NET migration — subscription version | Start with VSTO setup; `basUIStrings` → `.resx`; UI Automation for Bug #597; see § 12 |
 
 ---
 
@@ -881,3 +883,115 @@ dead-end with the failure documented inline. `OnNewSearchClick` in
 If Claude only edits documentation (`md/`, `rvw/`), Python scripts (`py/`), or the
 ribbon XML (and `inject_ribbon.py` is run immediately), no VBA import is required
 and the manifest can note `[DOC]`/`[XML]` entries only.
+
+---
+
+## § 12 — VSTO / VB.NET Migration: Solutions to Known VBA Limitations
+
+**Carry-forward item.** Arose from Bug #597 (SendKeys failure). The analysis covers
+which current VBA limitations are solved by a VSTO port, which are not, and the
+architectural implications for the free vs. subscription version split.
+
+### Bug #597 — SendKeys / ribbon focus
+
+The VBA `SendKeys` `%X` syntax always produces an Alt+X chord. Ribbon keytip mode
+requires Alt tapped alone then plain keypresses — not expressible in VBA. VSTO
+provides two clean solutions:
+
+**Option 1 — P/Invoke `SendInput`**
+
+`SendInput` (Win32 API) sends individual key-down and key-up events separately,
+exactly replicating what a user does at the keyboard:
+
+```vbnet
+' 1. VK_MENU keydown  → enters keytip mode
+' 2. VK_MENU keyup
+' 3. 'Y' keydown/up   → narrows to Y prefix
+' 4. '2' keydown/up   → selects RWB tab
+' 5. 'B' keydown/up   → focuses cmbBook
+```
+
+Characters are sent after Alt is fully released — correct sequence, not a chord.
+No leakage into the document.
+
+**Option 2 — UI Automation**
+
+Locates and focuses a ribbon control by automation ID, bypassing keytip sequences
+entirely:
+
+```vbnet
+Imports System.Windows.Automation
+
+Dim wordElement = AutomationElement.FromHandle(New IntPtr(Globals.ThisAddIn.Application.Hwnd))
+Dim bookCombo = wordElement.FindFirst(
+    TreeScope.Descendants,
+    New PropertyCondition(AutomationElement.AutomationIdProperty, "cmbBook"))
+bookCombo?.SetFocus()
+```
+
+No dependence on keytip sequences, locale, or keyboard state.
+
+---
+
+### Full limitation comparison
+
+| Limitation | VBA status | VSTO / VB.NET |
+|---|---|---|
+| **Bug #597** — focus ribbon control | No solution | ✅ P/Invoke `SendInput` or UI Automation |
+| **`Application.OnTime`** pattern | Fragile; fires after event cycle | ✅ `Async/Await` + `Task.Delay` — explicit, testable, cancellable |
+| **Late binding** (`CreateObject`) | No IntelliSense; runtime errors only | ✅ Early binding via Office interop assemblies; compile-time checking |
+| **API integration** (Bible Gateway etc.) | `WinHTTP` COM; no async; manual JSON | ✅ `HttpClient` + `Async/Await`; `System.Text.Json` or Newtonsoft |
+| **Testing** | `aeAssertClass` + `Debug.Print`; no mocking | ✅ NUnit / MSTest; mocking with Moq; CI integration |
+| **i18n strings** | `basUIStrings.bas` constants | ✅ `.resx` resource files; `ResourceManager`; design-time locale switching |
+| **Casing normalization** | `normalize_vba.py` required after every export | ✅ Not needed — VB.NET compiler enforces casing; no export/import cycle |
+| **`Option Private Module` / `OnTime` name resolution** | Requires `basRibbonDeferred` to omit `Option Private Module` | ✅ Not applicable — .NET namespaces and delegates |
+| **Status bar flash** after `onAction` | Deferred write via `OnTime`; flash unavoidable | ⚠️ Async post-action write still possible; flash is Office behaviour, not VBA |
+| **Focus mode stale display** | No fix — Win32 buffer vs. `getText` callback | ❌ Same Win32/COM ribbon architecture underneath |
+| **`<tab>` keytip — no `getKeytip`** | Static `keytip="Y2"` in XML; no callback | ❌ Same Office XML schema constraint |
+| **Layout delay** (Bug 22/23a) | Word's layout engine; no VBA event | ❌ Word internal — unchanged |
+
+### What VSTO does NOT solve
+
+Three limitations are Office-architectural, not VBA-architectural:
+
+1. **`<tab>` has no `getKeytip` callback** — customUI XML schema; same in VSTO
+2. **Focus mode stale display** — Win32 comboBox buffer vs. `getText`; same in VSTO
+3. **Layout delay** — Word's internal pagination engine; independent of add-in layer
+
+### Migration cost by module
+
+| Current VBA | VSTO equivalent | Migration cost |
+|---|---|---|
+| `basUIStrings.bas` `Public Const` | `.resx` file; `My.Resources.xxx` | Low — direct name mapping |
+| `FormatMsg(template, args)` | `String.Format` built-in | Trivial — delete `FormatMsg` |
+| `aeRibbonClass.cls` singleton | `ThisAddIn`-scoped ribbon class | Low |
+| `basBibleRibbonSetup.bas` shim wrappers | Eliminated — ribbon XML callbacks wire directly to class methods | Removed entirely |
+| `basRibbonDeferred.bas` `OnTime` pattern | `Async/Await` in ribbon event handlers | Medium — rewire all deferred subs |
+| `aeAssertClass` tests | NUnit test project | Medium — port test logic; gain CI |
+| Late-binding COM (`CreateObject`) | Project references + `Imports` | Low — mechanical |
+| `normalize_vba.py` | Not needed | Deleted |
+| `py/inject_ribbon.py` | Still needed — `.docm` XML injection unchanged | Retained |
+
+### Implications for free vs. subscription split
+
+The free version (current VBA ribbon) can remain VBA if the known limitations are
+accepted. The subscription version has strong reasons to be VSTO from the start:
+
+- Bible API integration requires `HttpClient` + async — VBA `WinHTTP` is viable
+  but significantly more complex
+- UI Automation (Bug #597 fix) is needed for the New Search focus UX
+- NUnit test infrastructure is needed to verify i18n and regression coverage at scale
+- The subscription version ribbon (additional controls, Bible version combo) is
+  easier to manage with VSTO Ribbon Designer and early binding
+
+**Recommended path:** free version ships as VBA (current architecture); subscription
+version is built as a VSTO add-in that ships alongside or replaces the `.docm`.
+The `basUIStrings` → `.resx` migration is the cleanest handoff point — it was
+designed for this from the start.
+
+### Status
+
+**CARRY FORWARD** — no implementation decision required now. Relevant when
+subscription version planning begins. The Bug #597 analysis is the concrete trigger:
+the first subscription-version development session should open with VSTO setup rather
+than continuing to work around VBA limitations.
