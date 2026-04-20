@@ -39,19 +39,22 @@
         - Dropdown behavior softened (type-first is primary; dropdown not yet populated)
         - Clarifying sentence added: typing sets target; Go/Prev/Next navigate
 
-## Changes made AFTER Step 2 (need import)
+## Changes made AFTER Step 2 (committed — import done)
 
-[IMPORT] src/basUIStrings.bas
+[DONE]  src/basUIStrings.bas
         - Tab keytip comment corrected: was "defined in customUI XML" (incorrect);
           now accurately describes keytip="Y2" as a static <tab> attribute with
           no getKeytip callback available
+        - Committed: 357313e (or nearby)
 
-[IMPORT] src/aeRibbonClass.cls
+[DONE]  src/aeRibbonClass.cls
         - Bug #597: OnNewSearchClick has a one-line comment referencing § 12
           of the review. No functional change.
+        - Committed: 357313e
 
-[IMPORT] src/basRibbonDeferred.bas
-        - Bug #597: dead stub removed. No change to active subs.
+[DONE]  src/basRibbonDeferred.bas
+        - Bug #597: dead stub (FocusBookDeferred) removed entirely. No change to active subs.
+        - Committed: 357313e Bug #597: dead stub removed.
 
 ## Documentation (no import needed)
 
@@ -59,6 +62,8 @@
         - New file created this session (carry-forward + session analysis)
         - § 12: VSTO/VB.NET migration analysis (carry forward)
         - § 13: .dotm template architecture proposal (carry forward)
+        - § 14: Split document architecture (carry forward — 5 decision points pending)
+        - UNCOMMITTED — needs git commit
 
 [DOC]   sync/session_manifest.txt
         - This file
@@ -68,11 +73,32 @@
 # ------------------------------------------------------------
 # [x] src/basBibleRibbonSetup.bas   (done via ImportAllVBAFiles)
 # [x] src/basUIStrings.bas          (done via ImportAllVBAFiles — pre-import version)
-# [ ] src/basUIStrings.bas          (post-import comment correction — reimport needed)
-# [ ] src/aeRibbonClass.cls         (Bug #597 OnNewSearchClick change)
-# [ ] src/basRibbonDeferred.bas     (Bug #597 FocusBookDeferred added)
+# [x] src/basUIStrings.bas          (post-import comment correction — committed 357313e)
+# [x] src/aeRibbonClass.cls         (Bug #597 OnNewSearchClick comment — committed)
+# [x] src/basRibbonDeferred.bas     (Bug #597 FocusBookDeferred removed — committed)
+# ------------------------------------------------------------
+# Uncommitted at session end:
+#   rvw/Code_review 2026-04-20.md   (§ 14 added — needs commit)
+#   sync/session_manifest.txt       (this file — needs commit)
 # ------------------------------------------------------------
 # Next session: run git status before editing any src/ file.
 # If a file shows as modified (M) and Claude did not change it
 # in the current session, read the diff before proceeding.
 # ------------------------------------------------------------
+
+## Decision points outstanding before next implementation session
+
+### § 14 — Split document architecture
+1. Split boundary: OT/NT first, or go directly to per-book?
+2. Footnote convention confirmed: restart per book?
+3. Page number strategy confirmed: strip during editing, regenerate at print?
+4. File-naming convention agreed (proposed: 01_Genesis.docx)
+5. DocumentOpen event handler design reviewed against current OnRibbonLoad flow
+
+### Near-term (free version — next session candidates)
+- Bug 16: Keytip badges end-to-end manual test (all badges incl. GetGoKeytip)
+- getLabel callbacks for all ribbon labels (LBL_* constants) — closes i18n label gap
+- basTEST_basUIStrings — aeAssert tests for all constants and FormatMsg
+- Python i18n-completeness script — scan src/ for inline literals
+- Control ID constants + replace InvalidateControl literals
+- Step 7: OLD_CODE cleanup in aeRibbonClass.cls

@@ -200,6 +200,7 @@ Must be imported (Remove old → Import new) before testing:
 | Search tracking reset | **FUTURE** |
 | VSTO / VB.NET migration analysis | **CARRY FORWARD — see § 12** |
 | `.dotm` template architecture — Bible content as `.docx` | **CARRY FORWARD — see § 13** |
+| Split document architecture — page numbers, footnotes, cross-file navigation | **CARRY FORWARD — see § 14** |
 
 ---
 
@@ -539,7 +540,8 @@ constants in isolation.
 | 5 | Bible version comparison — paid API auth | Credential management |
 | 6 | Subscription `.docm` build — separate from free | Import shared modules; add subscription modules |
 | 7 | `.dotm` template architecture — Bible content as `.docx` | `ThisDocument.VBProject.Name`; `IsBibleDocument()` guard; see § 13 |
-| 8 | VSTO / VB.NET migration — subscription version | Start with VSTO setup; `basUIStrings` → `.resx`; UI Automation for Bug #597; see § 12 |
+| 8 | Split document architecture — per-book or OT/NT | Page numbers, footnotes, cross-file navigation, merge script; see § 14 |
+| 9 | VSTO / VB.NET migration — subscription version | Start with VSTO setup; `basUIStrings` → `.resx`; UI Automation for Bug #597; see § 12 |
 
 ---
 
@@ -1126,3 +1128,206 @@ insulated from the infrastructure migration.
 version begins. Implement when the free version is stable and the first Bible
 document editors are onboarded. The `ThisDocument.VBProject.Name` change is the
 gate item; everything else follows from it.
+
+---
+
+## § 14 — Split Document Architecture: Code, Workflow, Page Numbers, Footnotes
+
+**Carry-forward item.** Continues from § 13 (`.dotm` architecture). Covers three
+developer questions: what goes in the `.dotm`, how the development workflow changes,
+and the implications of splitting the Bible content into multiple `.docx` files.
+
+---
+
+### 1. Does all code go in the `.dotm`?
+
+**Yes — the `.dotm` is the single development environment.** Everything currently in
+the `.docm` VBA project moves to `BibleAddIn.dotm`:
+
+- Ribbon classes: `aeRibbonClass`, `basBibleRibbonSetup`, `basRibbonDeferred`
+- Data classes: `aeBibleCitationClass`, `aeBibleClass`, `aeSBL_Citation_Class`
+- Utility modules: `basUSFM_Export`, `basAuditDocument`, `basAddHeaderFooter`
+- Test modules: `basTEST_*`, `aeAssertClass`, `aeLoggerClass`
+- All helper modules: `basUIStrings`, `normalize_vba.py` targets
+
+Content `.docx` files contain **zero VBA**. The `.dotm` is where you code from,
+always. Utility subs that operate on document structure already use
+`Application.ActiveDocument` — they work from the template unchanged. The
+`IsBibleDocument()` guard applies only to ribbon `GetEnabled` callbacks; Alt+F8
+utility subs are trusted by the developer to run on the right document.
+
+---
+
+### 2. Development workflow change
+
+**Current:**
+```
+Open BibleClass.docm
+  → Bible text is there
+  → Alt+F11 → VBA editor → all code is in one project
+```
+
+**With `.dotm` + `.docx`:**
+```
+Word starts → BibleAddIn.dotm loads automatically from STARTUP folder
+  → VBA editor always shows BibleAddIn project in Project Explorer
+  → To code: Alt+F11 → select BibleAddIn in Project Explorer → edit
+  → To edit Bible text: File → Open → Genesis.docx (or whichever book)
+  → Both visible simultaneously; switch between them normally
+```
+
+The `.dotm` is always present in the VBA editor's Project Explorer —
+you never open it specifically to reach the code. To edit the template itself:
+
+```
+File → Open → BibleAddIn.dotm
+  → Opens as a document window (content is empty — template only)
+  → Alt+F11 → its project is active in the editor
+```
+
+The git workflow (`normalize_vba.py`, export/import, session manifest) targets
+the `.dotm`'s modules — otherwise identical to the current process.
+
+**Net change for the developer:** minor. Code is always accessible via Alt+F11
+regardless of which document is open. The `.docm` single-file convenience is
+replaced by the `.dotm` always-present convenience.
+
+---
+
+### 3. Split document: page numbers, footnotes, layout delay
+
+#### Layout delay
+
+Splitting by book or section largely eliminates Bug 22/23a. Each per-book `.docx`
+is small enough that Word paginates it immediately — the 6–17 second first-load
+cost disappears within a file. Cross-book navigation incurs a file-open delay
+instead, which is brief and predictable.
+
+#### Page numbers
+
+Each `.docx` starts page numbering at 1 by default.
+
+| Approach | Mechanism | Trade-off |
+|----------|-----------|-----------|
+| Restart per file | Default Word behaviour | Fine for screen; page refs don't match print |
+| Manual start-at per file | Insert → Page Number → Format → Start at N | Fragile — recalculate all if any earlier file changes length |
+| Remove during editing | Strip page number fields while editing | Cleanest for editing; regenerate at print/PDF stage |
+| Master document | Word built-in master/sub-document | Notorious for corruption — not recommended |
+
+**Recommendation:** Remove page number fields from editing copies. Page numbers are
+only meaningful in final printed/PDF form. Generate the final document by merging
+files at print time (Python `python-docx` or a Word macro), at which point page
+numbering is set once and correctly.
+
+#### Footnote numbers
+
+| Convention | Mechanism | Notes |
+|------------|-----------|-------|
+| Restart per book | Each `.docx` footnotes start at 1 | Natural for Bible — independent per book |
+| Restart per chapter | Word section break → footnote numbering option | Finer-grained; requires section breaks at chapter boundaries |
+| Continuous across books | Manual start-at per file | Fragile; not appropriate for Bible use |
+
+**Recommendation:** Restart per book (default when split by book file). Matches
+how Study Bibles present footnotes. No coordination required between files.
+
+#### Cross-file navigation — ribbon impact
+
+`GoToVerseByScan` currently scans the entire open document. With split files:
+
+- **Within-book navigation** (Prev/Next Chapter, Prev/Next Verse, Go to verse):
+  unchanged — scans the active file
+- **Cross-book navigation** (Prev/Next Book, or Go to a different book):
+  requires opening a different file
+
+The ribbon needs a book-to-file mapping in the `.dotm`:
+
+```vba
+Private Function BookFilePath(bookIndex As Long) As String
+    ' Maps book index (1-66) to file path
+    ' e.g., index 1 → "C:\Bible\01_Genesis.docx"
+    ' Stored as a Const array, config file, or .dotm document variable
+End Function
+
+' In PrevButton / NextButton:
+Dim targetPath As String
+targetPath = BookFilePath(m_currentBookIndex - 1)
+Application.Documents.Open targetPath
+' then navigate to last chapter/verse of that book
+```
+
+Opening a new document replaces the layout-delay wait with a file-open pause.
+For most navigation (within a book) the experience is faster. Cross-book jumps
+are infrequent enough that the file-open pause is acceptable.
+
+#### `headingData` scan
+
+Currently built by scanning all H1 headings in the open document. With split
+files each document contains only one book's H1 headings — the scan becomes
+faster and `headingData` is rebuilt per file. The `DocumentOpen` event in the
+`.dotm` triggers a rescan and ribbon invalidate when a new Bible `.docx` is opened.
+
+---
+
+### Upfront work required before splitting
+
+| Task | Notes |
+|------|-------|
+| Define split boundaries | Per book (66 files) or per section (OT/NT = 2 files) |
+| Decide footnote numbering convention | Restart per book recommended |
+| Decide page number strategy | Remove during editing; regenerate at print time |
+| Create file-naming convention | `01_Genesis.docx` — sortable, predictable |
+| Build book-to-file path mapping | Array or config in `.dotm` |
+| Add `RWB_Document` variable to each file | One-time setup macro |
+| Handle `DocumentOpen` event in `.dotm` | Triggers `headingData` rescan + ribbon invalidate |
+| Implement cross-book navigation | `PrevButton`/`NextButton` open adjacent file |
+| Write merge script for final print/PDF | Python `python-docx` or Word macro |
+
+---
+
+### Recommended phasing
+
+A pragmatic intermediate step before committing to 66 files:
+
+**Phase A — Split into two files (OT + NT):**
+- Cuts layout delay roughly in half immediately
+- Cross-file navigation is one boundary only (Malachi → Matthew)
+- Book-to-file mapping has two entries
+- Merge script is trivial
+- Minimal architectural change to the ribbon
+
+**Phase B — Split per book (66 files):**
+- Eliminates layout delay completely
+- Full book-to-file mapping (66 entries)
+- Full cross-file navigation architecture
+- Enables parallel editing by multiple contributors per book
+
+**Phase C — Merge script for print/PDF:**
+- Concatenates all files with correct page and footnote numbering
+- Runs independently of the editing workflow
+
+---
+
+### Three-phase migration picture
+
+```
+Current:   BibleClass.docm (all-in-one)
+Phase 1:   BibleAddIn.dotm + Bible.docx (one content file)        ← § 13
+Phase A:   BibleAddIn.dotm + OT.docx + NT.docx                    ← § 14, Phase A
+Phase B:   BibleAddIn.dotm + 01_Genesis.docx ... 66_Revelation.docx ← § 14, Phase B
+Phase 2:   BibleAddIn VSTO + 01_Genesis.docx ... (unchanged)      ← § 12
+```
+
+Each phase is independently deployable. Editors are insulated from every
+infrastructure transition after Phase 1.
+
+---
+
+### Status
+
+**CARRY FORWARD — for further review.** Decision points before implementation:
+
+1. Split boundary: OT/NT first, or go directly to per-book?
+2. Footnote convention confirmed: restart per book?
+3. Page number strategy confirmed: strip during editing, regenerate at print?
+4. File-naming convention agreed
+5. `DocumentOpen` event handler design reviewed against current `OnRibbonLoad` flow
