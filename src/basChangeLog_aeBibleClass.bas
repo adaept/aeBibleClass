@@ -11,7 +11,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #614 -
 ' #613 -
 ' #612 -
-' #611 -
 ' #610 - Add Inspect_Aptos_Sources to aeBibleClass toolsm expected Result 0 [test]
 ' #609 - Soft Hyphens checked to end of Genesis [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
@@ -62,6 +61,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #611 - Replace Calibri with Carlito (SIL OFL) 1. ReplaceCalibriInStyles; 2. ReplaceCalibriWithCarlito [feat]
     ' [obso] - #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat] - Done in Ribbon code
     ' [obso] - #374 - Error search book Jeremiah, and verse Jeremiah 18:6 [bug] - Done in Ribbon code
     ' [obso] - #324 - Add index generation code to ribbon [impr] [feat] - Done in Ribbon code

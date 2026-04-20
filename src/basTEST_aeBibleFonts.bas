@@ -703,4 +703,37 @@ Public Sub Remove_Real_Aptos_Only()
     MsgBox "Fixed REAL Aptos runs: " & changed, vbInformation
 End Sub
 
+Public Sub ReplaceCalibriInStyles()
+    Dim sty As style
+    For Each sty In ActiveDocument.Styles
+        If sty.Type = wdStyleTypeParagraph Or sty.Type = wdStyleTypeCharacter Then
+            If LCase$(sty.Font.NameAscii) = "calibri" Then
+                sty.Font.NameAscii = "Carlito"
+                sty.Font.Name = "Carlito"
+            End If
+        End If
+    Next sty
+End Sub
+
+Public Sub ReplaceCalibriWithCarlito()
+    With ActiveDocument.Content.Find
+        .ClearFormatting
+        .Replacement.ClearFormatting
+        
+        ' Find only Latin Calibri
+        .Font.Name = "Calibri"
+        
+        ' Replace with Carlito (Latin only)
+        .Replacement.Font.Name = "Carlito"
+        
+        .Text = ""
+        .Replacement.Text = ""
+        
+        .Forward = True
+        .Wrap = wdFindContinue
+        .Format = True
+        
+        .Execute Replace:=wdReplaceAll
+    End With
+End Sub
 

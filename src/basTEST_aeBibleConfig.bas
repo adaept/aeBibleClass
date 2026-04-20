@@ -198,4 +198,37 @@ Private Function CountOrphanedBookmarks(doc As Document) As Long
     CountOrphanedBookmarks = Count
 End Function
 
+'STAGE 0 - FINAL GOAL (redefined)
+'
+'Stage 0 is complete when:
+'1. All BODY text uses a print-safe (free) font
+'2. All TITLE/SERIF text uses a print-safe (free) serif font
+'3. Layout shift is minimized (hyphenation preserved as much as possible)
+'4. No direct overrides interfere with future layout tuning
+'5. Screen-only fonts (Word defaults) are eliminated from print paths
+
+'-> Replacement for Calibri (Body)
+'similar metrics
+'similar line length
+'Minimal reflow
+'Best candidate:
+'
+'-> Carlito
+'Property    Value
+'License Open (Google / SIL OFL)
+'Metric compatibility    - Designed to match Calibri
+'Hyphenation impact  Minimal
+
+'-> Replacement for Times New Roman (Serif)
+'classic book serif
+'Close metrics
+'stable print behavior
+'Best candidates:
+'Option A (closest match):
+'
+'-> Liberation Serif
+'Property    Value
+'Metric compatibility    - Times-compatible
+'License Open (SIL)
+'Layout shift    Minimal
 
