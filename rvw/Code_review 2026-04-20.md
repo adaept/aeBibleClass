@@ -1930,5 +1930,38 @@ two lines resolve the "is it stuck?" problem immediately.
 
 ### Status
 
-**ANALYSED — 2026-04-20.** No code changes made. Implementation pending user
-decision on scope.
+**ANALYSED — 2026-04-20.** Implementation plan approved — see § 21.
+
+---
+
+## § 21 — Bible Class Test Infrastructure: Implementation Plan
+
+**2026-04-21 — step-by-step, one approval per step.**
+
+| Step | Description | Status |
+|------|-------------|--------|
+| 1 | Pre-test announcement — `Debug.Print ">> Starting Test " & num` | **DONE — 2026-04-21** |
+| 2 | DoEvents between tests | Pending |
+| 3 | Batch AppendToFile writes | Pending |
+| 4 | First-hit hint infrastructure (arrays + print hook) | Pending |
+| 5 | First-hit capture in Count functions (failing tests first) | Pending |
+| 6 | UTF-8 output via aeLoggerClass | Pending |
+| 7 | Markdown report | Pending |
+
+### Step 1 — Pre-test announcement
+
+**File:** `src/aeBibleClass.cls`
+
+One line added in `RunTest` (line 1004), immediately before `GetPassFail(num)`:
+
+```vba
+Debug.Print ">> Starting Test " & num
+GetPassFail (num)
+```
+
+**Test:** `RUN_THE_TESTS(42)` — Immediate Window must show `>> Starting Test 42`
+before the result line.  
+**Pass criteria:** Two lines in order: announce, then result.
+
+**Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
+`RUN_THE_TESTS(42)` to verify.**

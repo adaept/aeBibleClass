@@ -998,9 +998,10 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     
     ' Record the start timer for each test
     startTime = Timer
-    
+
     On Error GoTo PROC_ERR
 
+    Debug.Print ">> Starting Test " & num
     GetPassFail (num)
 
     Select Case num
