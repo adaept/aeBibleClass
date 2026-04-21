@@ -2217,3 +2217,224 @@ first-hit hint (page, text excerpt) for Step 5 of the infrastructure plan
 Import and run full `RUN_THE_TESTS` — Test 72 must print `SKIP!!!!` and the
 suite must complete without force close.
 Full rewrite deferred pending game plan review of complete test results.
+
+**Verified — 2026-04-21. Test 72 SKIP!!!!. Full suite completed (483 s).**
+
+---
+
+## § 24 — Bug: FlushReportBuf — Error 52 Bad File Name or Number
+
+**2026-04-21**
+
+### Symptom
+
+After the full suite completes and all results are printed to the Immediate
+Window, the final `rpt/TestReport.txt` is not written. The error handler in
+`RunBibleClassTests` fires:
+
+```
+ERROR in aeBibleClass.RunBibleClassTests | Erl: 0 | Err: 52 | Bad file name or number
+```
+
+The Immediate Window output is complete and correct — only the file write
+fails.
+
+### Root cause
+
+`TestReportFileName` is set in `Expected1BasedArray` as a **full path**:
+
+```vba
+TestReportFileName = doc.Path & "\rpt\TestReport.txt"
+' e.g. C:\adaept\...\rpt\TestReport.txt
+```
+
+`FlushReportBuf` (introduced in Step 3) then prepended `folderPath & "\"` on
+top of it unconditionally:
+
+```vba
+folderPath = ActiveDocument.Path & "\rpt"
+finalPath = folderPath & "\" & TestReportFileName
+' result: C:\adaept\...\rpt\C:\adaept\...\rpt\TestReport.txt  ← invalid
+```
+
+The original `AppendToFile` handled both a bare filename and a full path
+correctly via an `InStr` check. That guard was not carried forward into
+`FlushReportBuf`.
+
+### Fix — `src/aeBibleClass.cls` — `FlushReportBuf`
+
+Same `InStr` path check as `AppendToFile`:
+
+```vba
+If InStr(TestReportFileName, "\") = 0 Then
+    finalPath = folderPath & "\" & TestReportFileName  ' bare filename
+Else
+    finalPath = TestReportFileName                     ' already a full path
+End If
+```
+
+### Status
+
+**IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run full
+`RUN_THE_TESTS` — `rpt/TestReport.txt` must be written on completion.**
+
+**Verified — 2026-04-21. Report written successfully (230 s run).**
+
+---
+
+## § 25 — Test Report: Completeness and Limitations
+
+**2026-04-21 — first complete report after Steps 1–3 and bug fixes §§ 22–24.**
+
+### Report as written
+
+73 tests total: 3 SKIP (42, 51, 72), 70 executed.
+
+| Status | Count | Tests |
+|--------|-------|-------|
+| PASS | 50 | — |
+| FAIL | 17 | 3, 16, 26, 27, 28, 29, 32, 33, 34, 35, 47, 49, 50, 55, 64, 70, 71 |
+| SKIP | 3 | 42, 51, 72 |
+
+### Limitations and gaps
+
+**1. No error status.** Test 13 shows `PASS` in the report but threw an
+Overflow error during execution (see § 26). The report has no column or marker
+for "function errored" — a failed function that returns 0 is indistinguishable
+from a clean zero-violation result. Any test with expected = 0 can silently
+false-pass on error.
+
+**2. Timing absent from report.** Per-test runtime appears in the Immediate
+Window (`Routine Runtime: X.XX seconds`) but is not written to `TestReport.txt`.
+The report records only the total runtime. Slow outliers (Test 73: 50 s) are
+not visible in the file.
+
+**3. Unicode labels corrupted.** Tests 52–71 (contraction and Unicode sequence
+tests) show `?` in place of Unicode characters in the function label column.
+`AppendToFile` writes ASCII; multi-byte code points are replaced with `?`.
+Example: `CountContraction("wouldn?t")` instead of `CountContraction("wouldn't")`.
+Step 6 (UTF-8 via aeLoggerClass) will address this.
+
+**4. SKIP rows show result = -1.** Skipped tests display `result = -1` (the
+unrun sentinel) alongside `expected = 0`. The -1 is correct internally but is
+confusing in the report — it implies the test ran and returned -1 rather than
+was intentionally skipped.
+
+**5. Expected-value block is the entire first 5 lines.** The expected-value
+dump at the top of the report (Tests 1–73) duplicates the per-test rows and
+serves no readability purpose in the report file. It was useful during
+development but adds noise now.
+
+**6. No document identification.** The report does not record which document
+was tested (filename, full path, or word count). Two runs on different documents
+produce identical headers.
+
+---
+
+## § 26 — Bug: Test 13 — Overflow, False PASS, Silent Error Masking
+
+**2026-04-21**
+
+### Symptom
+
+Test 13 (`CountEmptyParasWithNoThemeColor`) prints an Overflow error to the
+Immediate Window during the run but shows `PASS` in both the Immediate Window
+and `TestReport.txt`. The error is not captured in the report. The result of 0
+matches the expected value of 0, but the function never executed.
+
+### Root cause — dead variable triggers overflow
+
+`CountEmptyParasWithNoThemeColor` declares:
+
+```vba
+Dim emptyParaCount As Integer
+Dim totalParaCount As Integer    ' ← dead variable; never used in logic
+...
+totalParaCount = ActiveDocument.Paragraphs.Count   ' 33,854 → Overflow
+```
+
+`Integer` in VBA is 16-bit: maximum value 32,767. The document has 33,854
+paragraphs. Assigning `Paragraphs.Count` to an `Integer` raises Error 6
+(Overflow) immediately — before any paragraph is iterated.
+
+`totalParaCount` is never used in logic. All `Debug.Print` lines that
+referenced it are commented out. It is a dead variable left over from
+diagnostic development. Removing it eliminates the overflow entirely.
+
+### Root cause — PROC_ERR masks errors as false PASSes
+
+Every Count function in the class uses the same error handler pattern:
+
+```vba
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountXxx | ..."
+    Resume PROC_EXIT
+```
+
+`Resume PROC_EXIT` exits the function with its return value in whatever state
+it was at the point of error. For an `Integer` or `Long` return type, the
+uninitialised value is 0. If the expected result for that test is also 0, the
+comparison passes and `GetPassFailArray(n) = "PASS    "` is written to the
+report. The error message goes only to the Immediate Window.
+
+**This means: any test where expected = 0 cannot be trusted if the function
+could error for any reason.**
+
+Tests with expected = 0 in the current suite: 1, 2, 4, 5, 6, 7, 8, 11, 12,
+13, 14, 17, 19, 20, 21, 23, 26 (partial), 30, 36, 39, 40, 41, 43, 44, 45,
+46, 48, 52–54, 56–63, 66–70, 73 — the majority of the suite.
+
+### Systematic risk — Integer overflow in 32 Count functions
+
+Every Count function except `CountTotalParagraphs` is declared `As Integer`.
+Internal count variables are also `As Integer` in many functions. VBA Integer
+is 16-bit (max 32,767). Three risk categories:
+
+| Risk | Description | Functions affected |
+|------|-------------|-------------------|
+| **High** | Variable assigned `Paragraphs.Count` (33,854) directly | Test 13 — `totalParaCount` |
+| **Medium** | Return value could exceed 32,767 if violations are numerous | All 32 `As Integer` functions |
+| **Low** | Internal counters over header/footer ranges only | Tests 28, 29, 30, 31 — counts sections × paragraphs per header, bounded by 147 × ~3 |
+
+Header/footer functions (Tests 28–31) iterate section headers, not body
+paragraphs — their `totalCount` variables accumulate at most a few hundred and
+are safe. Body-paragraph functions are safe as long as violations stay below
+32,767, which is true for a clean document. But the type is wrong regardless.
+
+### Recommended fixes
+
+**Fix A — Test 13 immediate:** remove dead `totalParaCount` variable and its
+assignment. Change `emptyParaCount As Integer` → `As Long`. Change function
+return type `As Integer` → `As Long`.
+
+**Fix B — Systematic return types:** change all 32 Count function declarations
+from `As Integer` to `As Long` and all internal `Dim Count As Integer`,
+`Dim totalCount As Integer` to `As Long`. This is a class-wide find-and-replace
+with verification.
+
+**Fix C — Error sentinel:** in the PROC_ERR handler of every Count function,
+set the return value to `-1` before `Resume PROC_EXIT`:
+
+```vba
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountXxx | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    CountXxx = -1    ' ← sentinel: ensures any error shows FAIL, not PASS
+    Resume PROC_EXIT
+```
+
+Since expected values are never -1, this guarantees every errored test shows
+`FAIL!!!!` in the report rather than silently matching an expected value of 0.
+The error message in the Immediate Window identifies the cause; the FAIL in
+the report makes it visible without scrolling.
+
+### Priority
+
+Fix A (Test 13) is trivial and should be done first. Fixes B and C are
+class-wide and should be done together as one import. They constitute part of
+the game plan for the infrastructure improvement pass.
+
+### Status
+
+**ANALYSED — 2026-04-21. No code changes yet. Fixes A, B, C deferred to
+game plan.**

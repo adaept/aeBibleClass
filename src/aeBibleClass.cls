@@ -1342,7 +1342,7 @@ End Function
 '   U+2060  WORD JOINER
 '
 ' Returns:
-'   Long — total count across all story ranges.
+'   Long — total Count across all story ranges.
 '   0 = clean (expected pass); > 0 = violations found (fail).
 '
 ' Test: RUN_THE_TESTS(73)
