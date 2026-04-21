@@ -1941,7 +1941,7 @@ two lines resolve the "is it stuck?" problem immediately.
 | Step | Description | Status |
 |------|-------------|--------|
 | 1 | Pre-test announcement — `Debug.Print ">> Starting Test " & num` | **DONE — 2026-04-21** |
-| 2 | DoEvents between tests | Pending |
+| 2 | DoEvents between tests | **DONE — 2026-04-21** |
 | 3 | Batch AppendToFile writes | Pending |
 | 4 | First-hit hint infrastructure (arrays + print hook) | Pending |
 | 5 | First-hit capture in Count functions (failing tests first) | Pending |
@@ -1962,6 +1962,30 @@ GetPassFail (num)
 **Test:** `RUN_THE_TESTS(42)` — Immediate Window must show `>> Starting Test 42`
 before the result line.  
 **Pass criteria:** Two lines in order: announce, then result.
+
+**Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
+`RUN_THE_TESTS(42)` to verify.**
+
+### Step 2 — DoEvents between tests
+
+**File:** `src/aeBibleClass.cls`
+
+One line added in `RunTest`, between the announce print and `GetPassFail(num)`:
+
+```vba
+Debug.Print ">> Starting Test " & num
+DoEvents
+GetPassFail (num)
+```
+
+`DoEvents` is called once per test at a safe point — no active Find is running.
+Yields to Word's message loop so the Immediate Window repaints and the ribbon
+remains clickable during the blocking Find execution.
+
+**Test:** `RUN_THE_TESTS(42)` — Word must not enter "not responding" state during
+the ~80-second run. Announce line must appear in Immediate Window before the
+block begins.  
+**Pass criteria:** UI responsive throughout; announce visible immediately.
 
 **Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
 `RUN_THE_TESTS(42)` to verify.**

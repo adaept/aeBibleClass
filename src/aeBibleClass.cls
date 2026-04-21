@@ -1002,6 +1002,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     On Error GoTo PROC_ERR
 
     Debug.Print ">> Starting Test " & num
+    DoEvents
     GetPassFail (num)
 
     Select Case num
