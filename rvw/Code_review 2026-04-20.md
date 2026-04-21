@@ -1656,5 +1656,279 @@ breakdown with Unicode labels and occurrence counts.
 
 ### Status
 
-**IMPLEMENTED — 2026-04-20.** Awaiting import of `src/aeBibleClass.cls` and
-`src/basTEST_aeBibleConfig.bas`, then `RUN_THE_TESTS(73)` to verify pass.
+**IMPLEMENTED — 2026-04-20.** Import confirmed and test passing.
+
+---
+
+## § 20 — Bible Class Test Infrastructure: In-Depth Analysis
+
+**2026-04-20 — requested after Test 73 import and verification.**
+
+Three improvement areas analysed: (1) progress visibility, (2) iterative failure
+location, (3) output formats (UTF-8 + Markdown).
+
+---
+
+### Area 1 — Progress Visibility and Stuck Detection
+
+#### Current behaviour
+
+The test loop in `RunBibleClassTests` calls `RunTest(n)` for each test with no
+feedback before execution begins. The Immediate Window is silent during test
+execution; the result line appears only after `GetPassFail` returns. For slow
+tests (Test 42 — `CountBoldFootnotesWordLevel` — expected ~80 seconds), the
+window is blank for over a minute with no way to distinguish "running" from
+"crashed".
+
+`bTimeAllTests = True` captures elapsed time per test but prints it after the
+result line — "Routine Runtime: X.XX seconds" — so it confirms how long
+something took, not that it is still running.
+
+There is no `DoEvents` anywhere in the class. Word's message loop is starved
+during long `Find.Execute` loops, making the application unresponsive to user
+input and preventing the Immediate Window from refreshing.
+
+`AppendToFile` opens and closes the report file on every single call. For a
+full 73-test run with header/footer lines, this is approximately 80 separate
+file I/O operations, each paying the open-seek-close cost on a path inside the
+document's own folder.
+
+#### Recommendations
+
+**1a. Pre-test announcement in `RunTest`**
+
+Add a `Debug.Print` line immediately before the `GetPassFail(num)` call in
+`RunTest`. The function name is already in the `Select Case` below — duplicate
+it into the pre-announce line:
+
+```vba
+Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolean
+    ...
+    startTime = Timer
+
+    Debug.Print ">> Starting Test " & num    ' <-- ADD THIS
+
+    GetPassFail (num)
+    ...
+```
+
+This is a one-line change. It does not require the Select Case label because
+even the bare number is enough to know which test is running. The "Routine
+Runtime" line that follows provides the elapsed duration. Together they bracket
+each test without restructuring anything.
+
+**1b. Yield to the message loop between tests**
+
+`DoEvents` cannot be injected inside `Find.Execute` loops without risk (Word's
+object model is not re-entrant during an active Find). However, calling
+`DoEvents` once at the top of `RunTest`, after the pre-announce print but
+before `GetPassFail`, yields control briefly so Word can repaint the Immediate
+Window:
+
+```vba
+    Debug.Print ">> Starting Test " & num
+    DoEvents                                 ' let Word repaint before blocking
+    GetPassFail (num)
+```
+
+One `DoEvents` per test is safe — there is no active Find at that point.
+
+**1c. Batch the report file writes**
+
+Replace the 80-call `AppendToFile` pattern with a single write at the end of
+the run. Accumulate all test report lines in a module-level or local
+`Collection` or dynamic String buffer during the run, then write the complete
+file once when all tests are done. The data is already available in
+`ResultArray`, `GetPassFailArray`, and `oneBasedExpectedArray` at that point.
+
+A minimal approach: collect lines into a `String` variable using `& vbCrLf`,
+then write it in one `Open/Print/Close` block:
+
+```vba
+' At top of RunBibleClassTests: Dim reportBuf As String
+' In each test: reportBuf = reportBuf & FormatReportLine(num) & vbCrLf
+' At the end:   WriteBuf reportBuf, TestReportFileName
+```
+
+This reduces file I/O from ~80 operations to 1. The tradeoff is that a crash
+mid-run produces no partial report. If incremental crash-safety is required,
+write every 10 tests instead of every test.
+
+---
+
+### Area 2 — Iterative Failure Location
+
+#### Current behaviour
+
+Every Count* function returns a `Long` (total violation count). When a test
+fails, the report shows the count and the expected value. The editor then must
+manually search the entire document to find the first violation.
+
+Example:
+```
+FAIL!!!!    Copy ()     Test = 3        8               0     CountSpaceFollowedByCarriageReturn
+```
+
+"8 occurrences" tells you how many are wrong but not where the first one is.
+For a 900-page Bible, the first occurrence could be anywhere.
+
+The Find-based count functions (`CountDoubleSpaces`, `CountSpaceFollowedByCarriageReturn`,
+etc.) already traverse each match one at a time inside a `Do While .Execute`
+loop. The first match is visited on the first loop iteration — capturing its
+location at that point costs nothing beyond storing two integers.
+
+#### Recommendation — first-hit hint array
+
+Add a parallel class-level array `m_HintArray(1 To MaxTests) As String`.
+Populate each slot during `GetPassFail` only when the count exceeds zero.
+Print the hint immediately after a FAIL result in `RunTest`.
+
+**Step 1 — Declare the hint array** (near `ResultArray` and `GetPassFailArray`):
+
+```vba
+Private m_HintArray(1 To MaxTests) As String
+```
+
+Reset it in `InitializeGlobalResultArrayToMinusOne`:
+
+```vba
+Dim i As Integer
+For i = 1 To MaxTests : m_HintArray(i) = "" : Next i
+```
+
+**Step 2 — Capture first-hit location in Find-loop functions**
+
+Pattern (shown for `CountDoubleSpaces`):
+
+```vba
+Private Function CountDoubleSpaces() As Integer
+    ...
+    Dim firstHit As String
+    firstHit = ""
+    Do While .Execute
+        doubleSpaceCount = doubleSpaceCount + 1
+        If doubleSpaceCount = 1 Then          ' first match only
+            firstHit = "Para " & rng.Paragraphs(1).Range.Information(wdActiveEndAdjustedPageNumber) _
+                      & " pg ~" & rng.Information(wdActiveEndAdjustedPageNumber)
+        End If
+        rng.Collapse wdCollapseEnd
+    Loop
+    CountDoubleSpaces = doubleSpaceCount
+    ' Caller sets m_HintArray — see GetPassFail pattern below
+End Function
+```
+
+Because the function is private and returns only a Long, the simplest
+integration is to have each Count function set a shared module-level variable
+(`m_lastHint As String`) and have the `GetPassFail` Case block copy it into
+`m_HintArray(TestNum)` after the call:
+
+```vba
+Case 1
+    ResultArray(TestNum) = CountDoubleSpaces()
+    m_HintArray(TestNum) = m_lastHint      ' set by CountDoubleSpaces on first hit
+```
+
+**Step 3 — Print hint after FAIL in `RunTest`**
+
+```vba
+' After the existing Debug.Print result line:
+If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then
+    Debug.Print , , , "  >> First hit: " & m_HintArray(num)
+End If
+```
+
+**Scope of change**
+
+Paragraph-iterating functions (Tests 26–31, 36–38, 43–44, etc.) use `For Each
+para In doc.Paragraphs` loops — same pattern: capture on first iteration.
+Unicode search functions (Tests 66–71) and the `Split`-based
+`CountInvisibleCharacters` (Test 73) can provide a story-type label as the
+hint ("Main body" / "Header story" / "Footnote story") without page info.
+
+Tests that call `CheckAllHeaders` or audit-style functions already return
+structured data to files — their hint could be "see rpt/HeadingLog.txt".
+
+This change does not alter the test count, the expected-value comparison, or
+the pass/fail decision. It is additive hint metadata.
+
+---
+
+### Area 3 — Output Formats: UTF-8 and Markdown
+
+#### 3a — UTF-8 output via aeLoggerClass
+
+`aeLoggerClass` is already in the project. Its interface:
+
+| Method | Effect |
+|--------|--------|
+| `Log_Init(path)` | Creates/overwrites file with UTF-8 BOM; writes session header (timestamp, user, machine) |
+| `Log_Write(msg)` | Prepends `HH:nn:ss \|` timestamp; rewrites full buffer to file (crash-safe) |
+| `Log_Close()` | Writes END marker |
+
+A UTF-8 report alongside the existing ASCII `TestReport.txt` requires:
+- A second report path constant, e.g. `TestReportUTF8FileName = "TestReportUTF8.txt"`
+- A module-level `Private m_log As Object` instance
+- `m_log.Log_Init` at the start of the test run (after `vbYes`)
+- `m_log.Log_Write` once per test (same data as `AppendToFile`)
+- `m_log.Log_Close` at the end
+
+Because `aeLoggerClass` uses late binding (`As Object` / `CreateObject`), no
+reference changes are needed. The existing `AppendToFile` calls remain
+untouched — the logger is additive.
+
+The UTF-8 output is particularly valuable for tests 52–71 (contraction and
+Unicode sequence tests) where the function label contains non-ASCII characters
+that `AppendToFile` writes as `?` in the ASCII stream.
+
+#### 3b — Markdown report
+
+A Markdown report makes test results readable in any viewer (VS Code, GitHub,
+browser) without the columnar fixed-width formatting that the current text file
+requires.
+
+Proposed format (`rpt/TestReport.md`):
+
+```markdown
+# Bible QA Test Report
+Generated: 2026-04-20 14:30:00
+BibleClass VERSION: x.x  Word: 16.0.xxxxx
+
+| Status | Test | Result | Expected | Function |
+|--------|------|--------|----------|----------|
+| PASS | 1 | 0 | 0 | CountDoubleSpaces |
+| FAIL | 3 | 8 | 0 | CountSpaceFollowedByCarriageReturn |
+...
+
+**Total Runtime:** 4.23 seconds
+```
+
+Implementation approach: add a `Private Function FormatMdReportLine(num As
+Integer) As String` that returns the `| ... |` row, and a `WriteMarkdownReport`
+private sub that opens a single file, writes the header table, all test rows,
+and the footer. Call it once at the end of `RunBibleClassTests` alongside
+`RunTotalTimeTestSession`.
+
+The Markdown report does not replace the existing `TestReport.txt` — it is an
+additional output. Both can coexist.
+
+---
+
+### Summary Table
+
+| Area | Change | Scope | Risk |
+|------|--------|-------|------|
+| Progress: pre-announce | `Debug.Print ">> Starting Test " & num` before `GetPassFail` in `RunTest` | 1 line | None |
+| Progress: DoEvents | `DoEvents` after pre-announce, before `GetPassFail` | 1 line | None |
+| Progress: batch file I/O | Accumulate report buffer, write once | Medium refactor | Partial report lost on crash |
+| First-hit location | `m_HintArray`, `m_lastHint`, hint print in `RunTest` | Medium addition | None (purely additive) |
+| UTF-8 output | `aeLoggerClass` instance alongside `AppendToFile` | Low — additive | None |
+| Markdown output | `FormatMdReportLine` + `WriteMarkdownReport` | Low — additive | None |
+
+Highest value, lowest risk changes: pre-announce (1a) and DoEvents (1b). These
+two lines resolve the "is it stuck?" problem immediately.
+
+### Status
+
+**ANALYSED — 2026-04-20.** No code changes made. Implementation pending user
+decision on scope.
