@@ -140,12 +140,12 @@ End Sub
 ' Called deferred (Application.OnTime) after invalid chapter input — resets display
 ' to current valid value without disrupting Tab routing (safe from OnTime context).
 Public Sub ResetChapterDisplay()
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "cmbChapter"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_CHAPTER
 End Sub
 
 ' Called deferred (Application.OnTime) after invalid verse input — same pattern.
 Public Sub ResetVerseDisplay()
-    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "cmbVerse"
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_VERSE
 End Sub
 
 ' -- Ribbon Callbacks ----------------------------------------------------------
@@ -626,12 +626,12 @@ Private Sub GoToChapter(ByVal chNum As Long)
     Application.OnTime Now, projNameCt & ".basRibbonDeferred.UpdateStatusBarDeferred"
 
     If Not m_ribbon Is Nothing Then
-        m_ribbon.InvalidateControl "cmbChapter"
-        m_ribbon.InvalidateControl "PrevChapterButton"
-        m_ribbon.InvalidateControl "NextChapterButton"
-        m_ribbon.InvalidateControl "cmbVerse"
-        m_ribbon.InvalidateControl "PrevVerseButton"
-        m_ribbon.InvalidateControl "NextVerseButton"
+        m_ribbon.InvalidateControl CTRL_CHAPTER
+        m_ribbon.InvalidateControl CTRL_PREV_CHAPTER
+        m_ribbon.InvalidateControl CTRL_NEXT_CHAPTER
+        m_ribbon.InvalidateControl CTRL_VERSE
+        m_ribbon.InvalidateControl CTRL_PREV_VERSE
+        m_ribbon.InvalidateControl CTRL_NEXT_VERSE
     End If
 
 PROC_EXIT:
@@ -729,9 +729,9 @@ Public Sub ExecutePendingChapter()
     ' they update AFTER Tab routing has already moved focus to cmbVerse (Bug 26).
     m_pendingChapter = 0
     If Not m_ribbon Is Nothing Then
-        m_ribbon.InvalidateControl "cmbVerse"
-        m_ribbon.InvalidateControl "PrevVerseButton"
-        m_ribbon.InvalidateControl "NextVerseButton"
+        m_ribbon.InvalidateControl CTRL_VERSE
+        m_ribbon.InvalidateControl CTRL_PREV_VERSE
+        m_ribbon.InvalidateControl CTRL_NEXT_VERSE
     End If
 End Sub
 
@@ -929,11 +929,11 @@ Private Sub GoToVerse(ByVal vsNum As Long)
     Application.OnTime Now, projNameSt & ".basRibbonDeferred.UpdateStatusBarDeferred"
 
     If Not m_ribbon Is Nothing Then
-        m_ribbon.InvalidateControl "cmbVerse"
-        m_ribbon.InvalidateControl "PrevVerseButton"
-        m_ribbon.InvalidateControl "NextVerseButton"
-        m_ribbon.InvalidateControl "PrevChapterButton"
-        m_ribbon.InvalidateControl "NextChapterButton"
+        m_ribbon.InvalidateControl CTRL_VERSE
+        m_ribbon.InvalidateControl CTRL_PREV_VERSE
+        m_ribbon.InvalidateControl CTRL_NEXT_VERSE
+        m_ribbon.InvalidateControl CTRL_PREV_CHAPTER
+        m_ribbon.InvalidateControl CTRL_NEXT_CHAPTER
     End If
 
 PROC_EXIT:
@@ -1001,18 +1001,18 @@ Public Sub OnGoClick(control As IRibbonControl)
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
     If Not m_bookTextValid Then
         Application.StatusBar = SB_INVALID_BOOK
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "BookComboBox"
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_BOOK
         GoTo PROC_EXIT
     End If
     If m_currentChapter = 0 Then GoTo PROC_EXIT
     If Not m_chapterTextValid Then
         Application.StatusBar = FormatMsg(SB_INVALID_CHAPTER, m_chapterMax)
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "ChapterComboBox"
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_CHAPTER
         GoTo PROC_EXIT
     End If
     If Not m_verseTextValid Then
         Application.StatusBar = FormatMsg(SB_INVALID_VERSE, m_verseMax)
-        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl "VerseComboBox"
+        If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_VERSE
         GoTo PROC_EXIT
     End If
     Dim vsNum As Long

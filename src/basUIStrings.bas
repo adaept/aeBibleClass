@@ -41,6 +41,26 @@ Public Const KT_GO           As String = "G"   ' Go (navigate) button
 Public Const KT_SEARCH       As String = "S"   ' New Search button
 Public Const KT_ABOUT        As String = "A"   ' About (adaept) button
 
+' -- Labels (i18n: ribbon labels returned by getLabel callbacks) ----------------
+
+Public Const LBL_TAB      As String = "Radiant Word Bible"  ' <tab id="RWB"> label
+Public Const LBL_GROUP    As String = "Bible Navigation"    ' <group id="NavGroup"> label
+Public Const LBL_GO       As String = "Go"                  ' GoButton label
+Public Const LBL_ABOUT    As String = "About"               ' adaeptButton label
+
+' -- Control IDs (ribbon XML id= attributes) -----------------------------------
+' Use these constants in all InvalidateControl calls to prevent silent mismatches.
+
+Public Const CTRL_BOOK         As String = "cmbBook"
+Public Const CTRL_CHAPTER      As String = "cmbChapter"
+Public Const CTRL_VERSE        As String = "cmbVerse"
+Public Const CTRL_PREV_BOOK    As String = "PrevBookButton"
+Public Const CTRL_NEXT_BOOK    As String = "NextBookButton"
+Public Const CTRL_PREV_CHAPTER As String = "PrevChapterButton"
+Public Const CTRL_NEXT_CHAPTER As String = "NextChapterButton"
+Public Const CTRL_PREV_VERSE   As String = "PrevVerseButton"
+Public Const CTRL_NEXT_VERSE   As String = "NextVerseButton"
+
 ' -- Status bar messages -------------------------------------------------------
 ' Static messages: no runtime data — use directly as Application.StatusBar = SB_xxx
 ' Dynamic messages: contain {0}, {1} placeholders — use FormatMsg(SB_xxx, arg0, arg1)

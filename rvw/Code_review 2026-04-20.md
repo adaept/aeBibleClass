@@ -1425,6 +1425,26 @@ Single manual pass covering:
 - Invalid Go attempt → verify comboBox now refreshes (bug fix confirmation)
 - i18n scan script runs clean (no violations in current src/)
 
+### py/check_i18n.py baseline results
+
+Ribbon-active code is clean. 9 violations remain in `aeRibbonClass.cls`, all in archived
+or legacy methods (About dialog, `GoToVerseSBL` stub, `GoToH1Direct` InputBox). These are
+Step 7 targets — no action this session.
+
+| Location | String | Category |
+|----------|--------|----------|
+| line 175 | `"Hello, adaept World!"` | About dialog — Step 7 |
+| line 176 | `"adaeptMsg  = "`, `"About adaept"` | About dialog — Step 7 |
+| line 212 | `"GoToVerseSBL - Parser not yet implemented."` | archived stub — Step 7 |
+| line 228 | `"Enter a Book Name..."`, `"Go To Bible Book"` | `GoToH1Direct` InputBox — Step 7 |
+| line 242 | `"Book not found! No Heading 1 matches: '"` | `GoToH1Direct` error — Step 7 |
+| line 487 | `"...the truth shall make you free."` | About dialog quote — Step 7 |
+
 ### Status
 
-**PLANNED — next implementation session.**
+**DONE — implemented 2026-04-20.**
+
+Files changed: `src/basUIStrings.bas`, `src/basBibleRibbonSetup.bas`, `src/aeRibbonClass.cls`,
+`src/basRibbonDeferred.bas`, `customUI14backupRWB.xml`, `py/check_i18n.py` (new).
+
+Awaiting manual imports + testing batch (see session manifest).

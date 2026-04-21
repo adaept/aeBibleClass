@@ -22,11 +22,10 @@
         - GetGoKeytip callback added
         - GetNewSearchKeytip updated to reference KT_SEARCH
 
-[XML]   customUI14backupRWB.xml
+[XML]   customUI14backupRWB.xml  (run 1 of 3 — keytip fixes)
         - keytip="G" replaced with getKeytip="GetGoKeytip" on GoButton
         - keytip="Y2" added to <tab id="RWB"> (Step 1 — 2026-04-20)
-        - inject_ribbon.py run twice: after GoButton fix, after Y2 fix
-        => Blank Bible Copy.docm updated both times
+        => Blank Bible Copy.docm updated
 
 [SCRIPT] py/normalize_vba.py
         - KT_GO entry added
@@ -36,86 +35,94 @@
 [DOC]   md/Ribbon Design.md
         - Navigation state machine section added (Mermaid stateDiagram-v2)
         - Verse section phrasing made parallel with Chapter section
-        - Dropdown behavior softened (type-first is primary; dropdown not yet populated)
-        - Clarifying sentence added: typing sets target; Go/Prev/Next navigate
+        - Dropdown behavior softened
+        - Clarifying sentence added
 
 ## Changes made AFTER Step 2 (committed — import done)
 
 [DONE]  src/basUIStrings.bas
-        - Tab keytip comment corrected: was "defined in customUI XML" (incorrect);
-          now accurately describes keytip="Y2" as a static <tab> attribute with
-          no getKeytip callback available
-        - Committed: 357313e (or nearby)
+        - Tab keytip comment corrected
+        - Committed: 357313e
 
 [DONE]  src/aeRibbonClass.cls
-        - Bug #597: OnNewSearchClick has a one-line comment referencing § 12
-          of the review. No functional change.
+        - Bug #597: OnNewSearchClick comment added
         - Committed: 357313e
 
 [DONE]  src/basRibbonDeferred.bas
-        - Bug #597: dead stub (FocusBookDeferred) removed entirely. No change to active subs.
-        - Committed: 357313e Bug #597: dead stub removed.
+        - Bug #597: dead stub (FocusBookDeferred) removed entirely
+        - Committed: 357313e
+
+## § 16 batch — i18n label gap (this session)
+
+[IMPORT] src/basUIStrings.bas
+        - LBL_TAB, LBL_GROUP, LBL_GO, LBL_ABOUT constants added (Task A)
+        - CTRL_BOOK, CTRL_CHAPTER, CTRL_VERSE, CTRL_PREV_BOOK, CTRL_NEXT_BOOK,
+          CTRL_PREV_CHAPTER, CTRL_NEXT_CHAPTER, CTRL_PREV_VERSE, CTRL_NEXT_VERSE
+          constants added (Task B)
+
+[IMPORT] src/basBibleRibbonSetup.bas
+        - GetTabLabel, GetNavGroupLabel, GetGoLabel, GetAboutLabel callbacks added (Task A)
+
+[IMPORT] src/aeRibbonClass.cls
+        - All m_ribbon.InvalidateControl "literal" replaced with CTRL_* constants (Task B)
+        - BUG FIX: OnGoClick lines 1004/1010/1015 wrong IDs corrected:
+            "BookComboBox"   -> CTRL_BOOK   (was silent no-op on invalid Go)
+            "ChapterComboBox"-> CTRL_CHAPTER (was silent no-op on invalid Go)
+            "VerseComboBox"  -> CTRL_VERSE   (was silent no-op on invalid Go)
+
+[IMPORT] src/basRibbonDeferred.bas
+        - GoToH1Deferred InvalidateControl literals replaced with CTRL_* constants (Task B)
+
+[XML]   customUI14backupRWB.xml  (run 2 of 3 — getLabel additions; run 3 abandoned — § 15)
+        - <tab> label="Radiant Word Bible" -> getLabel="GetTabLabel"
+        - <group> label="Bible Navigation" -> getLabel="GetNavGroupLabel"
+        - GoButton label="Go" -> getLabel="GetGoLabel"
+        - adaeptButton label="About" -> getLabel="GetAboutLabel"
+        => inject_ribbon.py run; Blank Bible Copy.docm updated
+
+[SCRIPT] py/check_i18n.py
+        - New file: scans src/*.bas and src/*.cls for inline UI string literals
+        - Baseline run: 9 violations in aeRibbonClass.cls, all in archived/Step 7 code
+        - Ribbon-active code is clean (no inline UI literals in navigation flow)
 
 ## Documentation (no import needed)
 
 [DOC]   rvw/Code_review 2026-04-20.md
-        - New file created this session (carry-forward + session analysis)
-        - § 12: VSTO/VB.NET migration analysis (carry forward)
-        - § 13: .dotm template architecture proposal (carry forward)
-        - § 14: Split document architecture (carry forward — 5 decision points pending)
+        - § 15: Split document architecture abandoned (decision + rationale)
+        - § 16: i18n label gap batch plan (PLANNED -> DONE this session)
         - UNCOMMITTED — needs git commit
 
 [DOC]   sync/session_manifest.txt
         - This file
 
 # ------------------------------------------------------------
-# IMPORT CHECKLIST FOR THIS SESSION
+# IMPORT CHECKLIST FOR THIS SESSION (§ 16 batch)
 # ------------------------------------------------------------
-# [x] src/basBibleRibbonSetup.bas   (done via ImportAllVBAFiles)
-# [x] src/basUIStrings.bas          (done via ImportAllVBAFiles — pre-import version)
-# [x] src/basUIStrings.bas          (post-import comment correction — committed 357313e)
-# [x] src/aeRibbonClass.cls         (Bug #597 OnNewSearchClick comment — committed)
-# [x] src/basRibbonDeferred.bas     (Bug #597 FocusBookDeferred removed — committed)
+# [ ] src/basUIStrings.bas          (LBL_* + CTRL_* constants)
+# [ ] src/basBibleRibbonSetup.bas   (GetXxxLabel callbacks)
+# [ ] src/aeRibbonClass.cls         (CTRL_* replacements + 3 bug fixes)
+# [ ] src/basRibbonDeferred.bas     (CTRL_* replacements)
 # ------------------------------------------------------------
-# Uncommitted at session end:
-#   rvw/Code_review 2026-04-20.md   (§ 14 added — needs commit)
-#   sync/session_manifest.txt       (this file — needs commit)
-# ------------------------------------------------------------
-# Next session: run git status before editing any src/ file.
-# If a file shows as modified (M) and Claude did not change it
-# in the current session, read the diff before proceeding.
+# Testing batch (after imports):
+#   - All keytip badges: Alt+Y2 -> B, C, V, [, ], comma, period, <, >, G, S, A
+#   - All four getLabel labels visible in ribbon (tab, group, Go, About)
+#   - Invalid Go -> verify comboBox now refreshes (bug fix confirmation)
+#   - py/check_i18n.py baseline: 9 violations, all in archived Step 7 code
 # ------------------------------------------------------------
 
-## Next implementation session — § 16 batch
+## Step 7 targets identified by check_i18n.py (deferred)
 
-### Task A — LBL_* constants + getLabel callbacks
-- basUIStrings.bas: add LBL_TAB, LBL_GROUP, LBL_GO, LBL_ABOUT
-- basBibleRibbonSetup.bas: add GetTabLabel, GetNavGroupLabel, GetGoLabel, GetAboutLabel
-- XML: replace static label= with getLabel= on <tab>, <group>, GoButton, adaeptButton
-- Run inject_ribbon.py
+Inline strings remaining in aeRibbonClass.cls (archived/legacy code):
+  Line 175: "Hello, adaept World!" — About dialog (OnAdaeptAboutClick)
+  Line 176: "adaeptMsg  = ", "About adaept" — About dialog
+  Line 212: "GoToVerseSBL - Parser not yet implemented." — archived GoToVerseSBL stub
+  Line 228: "Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book" — GoToH1Direct InputBox
+  Line 242: "Book not found! No Heading 1 matches: '" — GoToH1Direct error
+  Line 487: "...the truth shall make you free." — About dialog quote (John 8:32)
+All are in archived methods (GoToVerseSBL, GoToH1Direct) or the About dialog.
+Step 7 cleanup will address these when OLD_CODE sections are reviewed.
 
-### Task B — Control ID constants + fix InvalidateControl literals
-- basUIStrings.bas: add CTRL_* constants for all control IDs
-- aeRibbonClass.cls: replace all InvalidateControl("literal") with CTRL_* constant
-- Fix 3 wrong IDs in OnGoClick: BookComboBox→cmbBook, ChapterComboBox→cmbChapter, VerseComboBox→cmbVerse
-
-### Task C — Python i18n-completeness scan
-- New file: py/check_i18n.py
-- Scans src/*.bas and src/*.cls for inline UI string literals not from basUIStrings
-
-### Imports needed at session end
-- src/basUIStrings.bas      (Tasks A + B)
-- src/basBibleRibbonSetup.bas (Task A)
-- src/aeRibbonClass.cls     (Task B)
-- XML inject_ribbon.py      (Task A)
-
-### Testing batch (after imports — includes § 16 + keytip end-to-end)
-- All keytip badges: Alt+Y2 → B, C, V, [, ], comma, period, <, >, G, S, A
-- All four localised labels visible in ribbon
-- Invalid Go → comboBox now refreshes (bug fix confirmation)
-- py/check_i18n.py runs clean
-
-### Deferred (not this session)
+## Deferred
 - basTEST_basUIStrings — aeAssert tests for all constants and FormatMsg
 - Step 7: OLD_CODE cleanup in aeRibbonClass.cls
 - § 13: dotm template architecture (Phase 1 migration)

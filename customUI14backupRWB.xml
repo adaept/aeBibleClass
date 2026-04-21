@@ -1,8 +1,8 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="RibbonOnLoad">
   <ribbon startFromScratch="false">
     <tabs>
-      <tab id="RWB" label="Radiant Word Bible" keytip="Y2">
-        <group id="NavGroup" label="Bible Navigation">
+      <tab id="RWB" getLabel="GetTabLabel" keytip="Y2">
+        <group id="NavGroup" getLabel="GetNavGroupLabel">
           <box id="boxBook" boxStyle="horizontal">
             <button id="PrevBookButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"
@@ -42,7 +42,7 @@
                     showLabel="false" onAction="OnNextVerseClick" getEnabled="GetNextVerseEnabled"
                     getKeytip="GetNextVerseKeytip"/>
           </box>
-          <button id="GoButton" label="Go" size="large" getKeytip="GetGoKeytip"
+          <button id="GoButton" getLabel="GetGoLabel" size="large" getKeytip="GetGoKeytip"
                   imageMso="EndOfDocument"
                   getEnabled="GetGoEnabled"
                   onAction="OnGoClick"/>
@@ -51,7 +51,7 @@
                   onAction="OnNewSearchClick" getEnabled="GetNewSearchEnabled"
                   getKeytip="GetNewSearchKeytip"/>
           <separator id="sep2"/>
-          <button id="adaeptButton" label="About" image="adaept" size="large"
+          <button id="adaeptButton" getLabel="GetAboutLabel" image="adaept" size="large"
                   onAction="OnAdaeptAboutClick" getKeytip="GetAboutKeytip"/>
         </group>
       </tab>

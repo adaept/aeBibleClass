@@ -52,8 +52,8 @@ Public Sub GoToH1Deferred()
     Dim rc As aeRibbonClass
     Set rc = Instance()
     rc.GoToH1Direct
-    rc.InvalidateControl "NextBookButton"
-    rc.InvalidateControl "PrevBookButton"
+    rc.InvalidateControl CTRL_NEXT_BOOK
+    rc.InvalidateControl CTRL_PREV_BOOK
 End Sub
 
 ' GoToBookDeferred: dead stub — NavigateToCurrentBook removed (Bug 9).

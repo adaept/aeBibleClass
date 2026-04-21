@@ -259,6 +259,24 @@ Public Sub GetAboutKeytip(control As IRibbonControl, ByRef keytip)
     keytip = KT_ABOUT
 End Sub
 
+' -- Label callbacks (i18n: all label strings live in basUIStrings.bas) ---------
+
+Public Sub GetTabLabel(control As IRibbonControl, ByRef label)
+    label = LBL_TAB
+End Sub
+
+Public Sub GetNavGroupLabel(control As IRibbonControl, ByRef label)
+    label = LBL_GROUP
+End Sub
+
+Public Sub GetGoLabel(control As IRibbonControl, ByRef label)
+    label = LBL_GO
+End Sub
+
+Public Sub GetAboutLabel(control As IRibbonControl, ByRef label)
+    label = LBL_ABOUT
+End Sub
+
 ' -- Manual test helpers -------------------------------------------------------
 ' Not part of production ribbon flow. Run via Alt+F8.
 
