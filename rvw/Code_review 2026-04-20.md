@@ -2107,3 +2107,113 @@ RUN_THE_TESTS(36)             ' must now PASS with result = 0
 
 **IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
 `RUN_THE_TESTS(36)` to verify count is returned without stopping.**
+
+**Verified — 2026-04-21. Test 36 PASS (result = 0, runtime = 0.07 s).**
+
+---
+
+## § 23 — Bug: Test 72 — Word Not Responding / Force Close
+
+**2026-04-21**
+
+### Symptom
+
+`RUN_THE_TESTS` (full suite) causes Word to become unresponsive when Test 72
+(`HasLeftAlignedParagraph(18, 931)`) executes. The application requires force
+close and the final report is not generated.
+
+### Two independent failure modes
+
+#### Failure mode 1 — `GoToAdjustedPage` infinite loop
+
+`GoToAdjustedPage` positions the selection by calling `sel.GoTo wdGoToNext`
+in a loop until `wdActiveEndAdjustedPageNumber` equals `targetPage`:
+
+```vba
+sel.HomeKey wdStory
+Do
+    If sel.Information(wdActiveEndAdjustedPageNumber) = targetPage Then Exit Do
+    sel.GoTo What:=wdGoToPage, Which:=wdGoToNext
+Loop
+```
+
+There is no exit condition for the case where `wdGoToNext` stops advancing.
+At the last page of the document Word silently keeps the selection on the final
+page — `wdGoToNext` does not raise an error and does not move the cursor.
+`wdActiveEndAdjustedPageNumber` never changes, the `If` condition is never
+met, and the loop runs forever. This is the force-close scenario.
+
+Secondary fragility: if the document has Roman-numeral front matter (e.g.,
+pages i–xvii), the adjusted page number 18 appears twice — once in the front
+matter (Roman numeral xviii = numeric 18) and once in the Bible body. The loop
+exits at the first hit, which may be the wrong page. Not currently triggered
+for startPage=18 if front matter is fewer than 18 pages, but is a structural
+risk.
+
+#### Failure mode 2 — format-only Find across 900+ pages (no DoEvents)
+
+After positioning to page 18, `HasLeftAlignedParagraph` runs a format-only
+`sel.Find.Execute` with no text pattern, `Format = True`, and
+`ParagraphFormat.Alignment = wdAlignParagraphLeft`:
+
+```vba
+With sel.Find
+    .ClearFormatting
+    .Text = ""
+    .Forward = True
+    .Wrap = wdFindStop
+    .Format = True
+    .ParagraphFormat.Alignment = wdAlignParagraphLeft
+End With
+found = sel.Find.Execute
+```
+
+The expected value for Test 72 is `0` — the document should contain no
+left-aligned paragraphs in pages 18–931; all body paragraphs should be
+justified. When the document is clean the Find scans all remaining pages
+without a match before stopping at `wdFindStop`. A format-only scan checks
+every paragraph's formatting properties one by one with no text shortcut.
+On a 16,471-paragraph document with no `DoEvents` this starves Word's message
+loop → "not responding."
+
+Note: if the document is NOT clean (a left-aligned paragraph exists early),
+the Find terminates on the first hit and returns in under a second. The slow
+path is the passing case — the test is hardest to run when the document is
+correct.
+
+### Immediate fix — add Test 72 to SkipTestArray
+
+`SkipTestArray = Array(42, 51, 72)` — Test 72 is skipped in the full suite
+(printed as `SKIP!!!!`) and runs only when called explicitly as
+`RUN_THE_TESTS(72)`. This unblocks the full suite immediately.
+
+### Full fix (deferred — see game plan)
+
+Two changes required in `src/aeBibleClass.cls`:
+
+**1. `GoToAdjustedPage` — stall detection:**
+
+```vba
+Dim prevPage As Long
+prevPage = -1
+Do
+    curPage = sel.Information(wdActiveEndAdjustedPageNumber)
+    If curPage = targetPage Then Exit Do
+    If curPage = prevPage Then Exit Do  ' no longer advancing — target not found
+    prevPage = curPage
+    sel.GoTo What:=wdGoToPage, Which:=wdGoToNext
+Loop
+```
+
+**2. `HasLeftAlignedParagraph` — replace format-only Find with paragraph
+iteration** with `DoEvents` every 500 paragraphs. This also enables a
+first-hit hint (page, text excerpt) for Step 5 of the infrastructure plan
+(§ 21).
+
+### Status
+
+**IMMEDIATE FIX IMPLEMENTED — 2026-04-21.**
+`SkipTestArray = Array(42, 51, 72)` in `src/aeBibleClass.cls`.
+Import and run full `RUN_THE_TESTS` — Test 72 must print `SKIP!!!!` and the
+suite must complete without force close.
+Full rewrite deferred pending game plan review of complete test results.

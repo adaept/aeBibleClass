@@ -15,6 +15,6 @@ Lamentation: 152
 Footnote Text: 1000
 Header: 69
 TheHeaders: 66
-Footer: 3
-TheFooters: 1
+Footer: 2
+TheFooters: 2
 Total paragraphs (all styles): 35106

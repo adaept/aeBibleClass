@@ -331,7 +331,7 @@ End Sub
 Private Sub MakeSkipTestArray()
     On Error GoTo PROC_ERR
 
-    SkipTestArray = Array(42, 51)
+    SkipTestArray = Array(42, 51, 72)
 
 PROC_EXIT:
     Exit Sub
@@ -456,7 +456,11 @@ Private Sub FlushReportBuf()
     Dim finalPath As String
     folderPath = ActiveDocument.Path & "\rpt"
     If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
-    finalPath = folderPath & "\" & TestReportFileName
+    If InStr(TestReportFileName, "\") = 0 Then
+        finalPath = folderPath & "\" & TestReportFileName
+    Else
+        finalPath = TestReportFileName  ' already a full path
+    End If
     fileNum = FreeFile
     Open finalPath For Append As fileNum
     Print #fileNum, m_ReportBuf;

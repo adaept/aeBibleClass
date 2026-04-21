@@ -3,7 +3,6 @@ Total Sections: 148
 Style Check: FAIL
 --- Encountered Styles ---
 STYLE=Header | LOCATION=Header
-STYLE=Footer | LOCATION=Footer
 STYLE=TheFooters | LOCATION=Footer
 STYLE=TheHeaders | LOCATION=Header
 --- Style Mismatches by Section ---
@@ -81,7 +80,4 @@ STYLE=TheHeaders | LOCATION=Header
 [HEADER] SECTION 136 = Header
 [HEADER] SECTION 138 = Header
 [HEADER] SECTION 140 = Header
-[FOOTER] SECTION 1 = Footer
-[FOOTER] SECTION 2 = Footer
-[FOOTER] SECTION 3 = Footer
 === Summary Complete ===
