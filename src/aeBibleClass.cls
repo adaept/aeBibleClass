@@ -51,7 +51,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Integer
-Private Const MaxTests = 72
+Private Const MaxTests = 73
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -255,8 +255,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 16471, 0, 66, 0, 0, 0, 153, 0, 1000, 1, 0, 147, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 16, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -731,6 +731,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (70)
             RunTest (71)
             RunTest (72)
+            RunTest (73)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -947,6 +948,8 @@ Private Function GetPassFail(TestNum As Integer) As Boolean
         If OneVersePerPara Then
             ResultArray(TestNum) = HasLeftAlignedParagraph(18, 931)
         End If
+    Case 73
+        ResultArray(TestNum) = CountInvisibleCharacters()
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1112,6 +1115,8 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
         If OneVersePerPara Then
             Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(18, 931)"
         End If
+    Case 73
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1272,6 +1277,8 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
         If OneVersePerPara Then
             AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(18, 931)"
         End If
+    Case 73
+        AppendToFile TestReportFileName, GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -1280,6 +1287,59 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.OutputTestReport | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
+End Function
+
+'====================================================================
+' Function: CountInvisibleCharacters
+'
+' Purpose:
+'   Counts invisible Unicode characters across all document stories.
+'   These characters are visually silent but can corrupt search results,
+'   style normalization, and USFM export if present.
+'
+' Characters checked:
+'   U+200B  ZERO WIDTH SPACE
+'   U+200C  ZERO WIDTH NON-JOINER
+'   U+200D  ZERO WIDTH JOINER
+'   U+FEFF  ZERO WIDTH NO-BREAK SPACE (byte-order mark)
+'   U+2060  WORD JOINER
+'
+' Returns:
+'   Long — total count across all story ranges.
+'   0 = clean (expected pass); > 0 = violations found (fail).
+'
+' Test: RUN_THE_TESTS(73)
+'====================================================================
+Private Function CountInvisibleCharacters() As Long
+    On Error GoTo PROC_ERR
+
+    Dim r As Word.Range
+    Dim targets As Variant
+    Dim counts() As Long
+    Dim i As Long
+    Dim total As Long
+
+    targets = Array(ChrW(&H200B), ChrW(&H200C), ChrW(&H200D), ChrW(&HFEFF), ChrW(&H2060))
+    ReDim counts(UBound(targets))
+
+    For Each r In ActiveDocument.StoryRanges
+        For i = 0 To UBound(targets)
+            counts(i) = counts(i) + UBound(Split(r.Text, targets(i)))
+        Next i
+    Next r
+
+    For i = 0 To UBound(counts)
+        total = total + counts(i)
+    Next i
+
+    CountInvisibleCharacters = total
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountInvisibleCharacters | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     Resume PROC_EXIT
 End Function

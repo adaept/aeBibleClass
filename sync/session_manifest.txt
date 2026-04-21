@@ -124,6 +124,23 @@ Inline strings remaining in aeRibbonClass.cls (archived/legacy code):
 All are in archived methods (GoToVerseSBL, GoToH1Direct) or the About dialog.
 Step 7 cleanup will address these when OLD_CODE sections are reviewed.
 
+## Test 73 — CountInvisibleCharacters
+
+[IMPORT] src/aeBibleClass.cls
+        - MaxTests 72 -> 73
+        - Expected values array extended (+0 for test 73)
+        - Case 73 added to GetPassFail, RunTest, OutputTestReport
+        - RunTest(73) added to RunBibleClassTests sequence
+        - CountInvisibleCharacters() As Long added as Private Function
+
+[IMPORT] src/basTEST_aeBibleConfig.bas
+        - CountInvisibleCharacters changed from Private to Public
+
+[DOC]   md/Adding_To_Bible_Test_Class.md (new file)
+        - Process for adding new tests; Test 73 walkthrough
+
+Run test after import:  RUN_THE_TESTS(73)   => expect PASS    0    0    CountInvisibleCharacters
+
 ## Deferred
 - basTEST_basUIStrings — aeAssert tests for all constants and FormatMsg
 - Step 7: OLD_CODE cleanup in aeRibbonClass.cls

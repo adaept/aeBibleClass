@@ -131,7 +131,7 @@ Public Sub TestInvisible()
     MsgBox "[" & s & "]"
 End Sub
 
-Private Function CountInvisibleCharacters(Optional doc As Document) As String
+Public Function CountInvisibleCharacters(Optional doc As Document) As String
     Dim r As Word.Range
     Dim targets As Variant
     Dim labels As Variant

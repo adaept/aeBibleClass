@@ -1575,3 +1575,86 @@ tab-activation callback that the customUI schema does not provide.
 If a future VSTO port is undertaken (§ 12), this limitation disappears: WinForms/WPF
 controls can be updated programmatically at any time, and the `Ribbon.RibbonTab`
 activated event is exposed via the managed Office object model.
+
+---
+
+## § 19 — Test 73: CountInvisibleCharacters added to Bible QA suite
+
+### Motivation
+
+Invisible Unicode characters (zero-width spaces, non-joiners, byte-order marks, word
+joiners) are visually silent but can corrupt Word's Find/Replace results, style
+normalization passes, and USFM export output. A systematic test ensures none are
+introduced during editing.
+
+The detection function already existed in `basTEST_aeBibleConfig.bas` as a standalone
+diagnostic (`TestInvisible` / `CountInvisibleCharacters`). This session promoted it to
+a numbered QA test so it runs automatically with every full test pass.
+
+### Characters tested
+
+| Code point | Name |
+|------------|------|
+| U+200B | ZERO WIDTH SPACE |
+| U+200C | ZERO WIDTH NON-JOINER |
+| U+200D | ZERO WIDTH JOINER |
+| U+FEFF | ZERO WIDTH NO-BREAK SPACE (BOM) |
+| U+2060 | WORD JOINER |
+
+### Changes made
+
+**`src/aeBibleClass.cls`** — six coordinated changes required by the test framework:
+
+| Change point | Detail |
+|-------------|--------|
+| `MaxTests` constant | 72 → 73 (sizes `ResultArray` and `GetPassFailArray` arrays) |
+| `Expected1BasedArray` values | `, 0` appended — expected = no invisible chars |
+| `GetPassFail` Case 73 | `ResultArray(TestNum) = CountInvisibleCharacters()` |
+| `RunBibleClassTests` sequence | `RunTest(73)` added after `RunTest(72)` |
+| `RunTest` Case 73 | `Debug.Print` line with `"CountInvisibleCharacters"` label |
+| `OutputTestReport` Case 73 | Same label written to `rpt/TestReport.txt` |
+| New private function | `Private Function CountInvisibleCharacters() As Long` |
+
+The class function returns `Long` (total count across all story ranges) rather than the
+`String` report returned by the source function in `basTEST_aeBibleConfig`. This matches
+the numeric comparison pattern used by every other test in the framework.
+
+**Algorithm:** `UBound(Split(r.Text, targetChar))` equals the occurrence count because
+splitting a string on a character that appears N times produces N+1 parts. Applied
+across all story ranges (body, headers, footers, footnotes, text boxes).
+
+**`src/basTEST_aeBibleConfig.bas`** — one change:
+
+`CountInvisibleCharacters` visibility `Private` → `Public`. The class function is a
+separate `Long`-returning variant; no naming conflict because the class resolves its
+own method first. The public version in `basTEST_aeBibleConfig` remains available for
+standalone use via `TestInvisible` or directly from the Immediate Window.
+
+### Process documentation
+
+`md/Adding_To_Bible_Test_Class.md` created. Contains:
+- Architecture diagram of the full test dispatch chain
+- 8-step checklist for adding any new test
+- Decision guide: copy logic into class vs. call across modules
+- Test 73 walkthrough as worked example
+- Run instructions and expected pass/fail output formats
+
+### Running
+
+```
+RUN_THE_TESTS(73)          ' standalone
+RUN_THE_TESTS              ' full suite — test 73 included at position 73
+```
+
+Expected pass output:
+```
+PASS        Copy ()     Test = 73       0               0               CountInvisibleCharacters
+```
+
+If the test fails, `TestInvisible` in `basTEST_aeBibleConfig` provides a per-character
+breakdown with Unicode labels and occurrence counts.
+
+### Status
+
+**IMPLEMENTED — 2026-04-20.** Awaiting import of `src/aeBibleClass.cls` and
+`src/basTEST_aeBibleConfig.bas`, then `RUN_THE_TESTS(73)` to verify pass.
