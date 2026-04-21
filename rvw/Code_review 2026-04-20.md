@@ -1448,3 +1448,63 @@ Files changed: `src/basUIStrings.bas`, `src/basBibleRibbonSetup.bas`, `src/aeRib
 `src/basRibbonDeferred.bas`, `customUI14backupRWB.xml`, `py/check_i18n.py` (new).
 
 Awaiting manual imports + testing batch (see session manifest).
+
+---
+
+## § 17 — Book comboBox text not refreshed after Go navigation
+
+### Observed behaviour
+
+User types "rev", presses Go. Navigation to Revelation is correct. Book comboBox
+continues to display "rev". Switching to another ribbon tab and returning, or any
+tab-away/return, does not fix the display.
+
+Developer initially suspected a fundamental comboBox limitation.
+
+### Root cause
+
+Not a limitation — a missing `InvalidateControl` call.
+
+`GetBookText` (line 517, `aeRibbonClass.cls`) is correctly implemented:
+
+```vba
+Public Function GetBookText(control As IRibbonControl) As String
+    ' returns headingData(m_currentBookIndex, 0) — canonical book name
+```
+
+The `getText` callback is only called when the control is explicitly invalidated. After
+a successful `GoToVerse` in `OnGoClick`, `CTRL_BOOK` was never invalidated. The
+comboBox retained whatever the user had typed, indefinitely.
+
+`InvalidateControl CTRL_BOOK` was also missing from `GoToH1Deferred`
+(`basRibbonDeferred.bas`) — the Prev/Next Book path. That path correctly invalidated
+`CTRL_NEXT_BOOK` and `CTRL_PREV_BOOK` (the nav buttons) but not the comboBox text.
+
+### Fix
+
+**`src/aeRibbonClass.cls` — `OnGoClick`:** one line added after `GoToVerse vsNum`:
+
+```vba
+    GoToVerse vsNum
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_BOOK
+```
+
+**`src/basRibbonDeferred.bas` — `GoToH1Deferred`:** one line added:
+
+```vba
+    rc.GoToH1Direct
+    rc.InvalidateControl CTRL_BOOK     ' ← added
+    rc.InvalidateControl CTRL_NEXT_BOOK
+    rc.InvalidateControl CTRL_PREV_BOOK
+```
+
+### Testing
+
+After importing both files:
+- Type a book abbreviation (e.g. "rev"), press Go → comboBox must show "Revelation"
+- Use Prev Book / Next Book buttons → comboBox must update to new book name
+
+### Status
+
+**FIXED — 2026-04-20.** Requires import of `src/aeRibbonClass.cls` and
+`src/basRibbonDeferred.bas`.

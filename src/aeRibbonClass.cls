@@ -1019,6 +1019,7 @@ Public Sub OnGoClick(control As IRibbonControl)
     vsNum = m_currentVerse
     If vsNum < 1 Then vsNum = 1
     GoToVerse vsNum
+    If Not m_ribbon Is Nothing Then m_ribbon.InvalidateControl CTRL_BOOK
 PROC_EXIT:
     Exit Sub
 PROC_ERR:

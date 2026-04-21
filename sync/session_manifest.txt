@@ -96,17 +96,19 @@
         - This file
 
 # ------------------------------------------------------------
-# IMPORT CHECKLIST FOR THIS SESSION (§ 16 batch)
+# IMPORT CHECKLIST FOR THIS SESSION (§ 16 batch + § 17 fix)
 # ------------------------------------------------------------
 # [ ] src/basUIStrings.bas          (LBL_* + CTRL_* constants)
 # [ ] src/basBibleRibbonSetup.bas   (GetXxxLabel callbacks)
-# [ ] src/aeRibbonClass.cls         (CTRL_* replacements + 3 bug fixes)
-# [ ] src/basRibbonDeferred.bas     (CTRL_* replacements)
+# [ ] src/aeRibbonClass.cls         (CTRL_* replacements + 3 bug fixes + § 17 CTRL_BOOK after Go)
+# [ ] src/basRibbonDeferred.bas     (CTRL_* replacements + § 17 CTRL_BOOK in GoToH1Deferred)
 # ------------------------------------------------------------
 # Testing batch (after imports):
 #   - All keytip badges: Alt+Y2 -> B, C, V, [, ], comma, period, <, >, G, S, A
 #   - All four getLabel labels visible in ribbon (tab, group, Go, About)
-#   - Invalid Go -> verify comboBox now refreshes (bug fix confirmation)
+#   - Invalid Go -> verify comboBox now refreshes (bug fix confirmation for OnGoClick wrong IDs)
+#   - § 17: type "rev", press Go -> book comboBox must show "Revelation" not "rev"
+#   - § 17: Prev Book / Next Book -> book comboBox must update to new book name
 #   - py/check_i18n.py baseline: 9 violations, all in archived Step 7 code
 # ------------------------------------------------------------
 

@@ -52,6 +52,7 @@ Public Sub GoToH1Deferred()
     Dim rc As aeRibbonClass
     Set rc = Instance()
     rc.GoToH1Direct
+    rc.InvalidateControl CTRL_BOOK
     rc.InvalidateControl CTRL_NEXT_BOOK
     rc.InvalidateControl CTRL_PREV_BOOK
 End Sub
