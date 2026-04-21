@@ -1,4 +1,4 @@
-Attribute VB_Name = "basAddHeaderFooter"
+Attribute VB_Name = "basFixDocxRoutines"
 Option Explicit
 Option Compare Text
 Option Private Module
@@ -133,7 +133,7 @@ PROC_EXIT:
     Set oFound = Nothing
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddBookNameHeaders of Module basAddHeaderFooter"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddBookNameHeaders of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub
 
@@ -153,7 +153,7 @@ Public Sub FixTheFooters()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixTheFooters of Module basAddHeaderFooter"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixTheFooters of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub
 
@@ -247,7 +247,7 @@ PROC_EXIT:
     Set oDoc = Nothing
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddConsecutiveFootersFromCursor of Module basAddHeaderFooter"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddConsecutiveFootersFromCursor of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub
 
@@ -290,7 +290,7 @@ PROC_EXIT:
     Set oDoc = Nothing
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LinkFootersToPrevious of Module basAddHeaderFooter"
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LinkFootersToPrevious of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub
 

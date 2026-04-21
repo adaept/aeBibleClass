@@ -853,7 +853,7 @@ dead-end with the failure documented inline. `OnNewSearchClick` in
 
 **Developer workflow per session:**
 
-```
+```txt
 1. Claude edits src/ files during the session
 2. Session ends → Claude writes/updates sync/session_manifest.txt
 3. Developer opens sync/session_manifest.txt
@@ -866,7 +866,7 @@ dead-end with the failure documented inline. `OnNewSearchClick` in
 
 **Claude workflow at session start:**
 
-```
+```txt
 1. Run git status — review any modified files
 2. If a file Claude last modified shows as changed: read it fresh before editing;
    note the change in the session log
@@ -1148,7 +1148,7 @@ the `.docm` VBA project moves to `BibleAddIn.dotm`:
 
 - Ribbon classes: `aeRibbonClass`, `basBibleRibbonSetup`, `basRibbonDeferred`
 - Data classes: `aeBibleCitationClass`, `aeBibleClass`, `aeSBL_Citation_Class`
-- Utility modules: `basUSFM_Export`, `basAuditDocument`, `basAddHeaderFooter`
+- Utility modules: `basUSFM_Export`, `basAuditDocument`, `basFixDocxRoutines`
 - Test modules: `basTEST_*`, `aeAssertClass`, `aeLoggerClass`
 - All helper modules: `basUIStrings`, `normalize_vba.py` targets
 
@@ -2132,7 +2132,7 @@ still carrying `"Footer"` is a gap in style normalization.
   Immediate Window for audit
 - Does not touch footer content or page numbering
 
-Note: `FixTheFooters` in `basAddHeaderFooter.bas` is a different tool — it
+Note: `FixTheFooters` in `basFixDocxRoutines.bas` is a different tool — it
 rebuilds footer content and consecutive page numbering from the cursor position.
 It is not the correct fix for a style-only normalization issue.
 
@@ -3019,3 +3019,62 @@ immediately after its test's result line, indented to distinguish it visually.
 
 **Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
 `RUN_THE_TESTS`. FAILing tests must show `>> First hit:` lines in `rpt/TestReport.txt`.**
+
+---
+
+## § 34 — Rename basAddHeaderFooter → basFixDocxRoutines; FIX Routine Consolidation Plan
+
+**2026-04-21**
+
+### Rename
+
+`src/basAddHeaderFooter.bas` renamed to `src/basFixDocxRoutines.bas`.
+
+Changes applied:
+- `git mv` preserves history
+- `Attribute VB_Name` updated to `"basFixDocxRoutines"`
+- All 4 PROC_ERR `MsgBox` strings updated (`... of Module basFixDocxRoutines`)
+- `README.md` description updated
+- Active review file references updated (historical review files left as-is)
+
+**Import action:** Remove `basAddHeaderFooter` from VBA editor; import
+`src/basFixDocxRoutines.bas` as a new module.
+
+### Rationale
+
+The original name `basAddHeaderFooter` described only two of the module's routines.
+The module is the right home for all document-repair FIX routines referenced by
+the test suite. Renaming to `basFixDocxRoutines` makes the purpose explicit and
+signals that FIX routines belong here, not scattered across other modules.
+
+### Current contents
+
+| Routine | Visibility | Purpose |
+|---------|-----------|---------|
+| `AddBookNameHeaders` | Public | Walk sections; apply running book-name headers from H1 markers |
+| `FixTheFooters` | Public | Rebuild footer content + consecutive page numbering from cursor |
+| `AddConsecutiveFootersFromCursor` | Private | Footer rebuild worker (called by FixTheFooters) |
+| `LinkFootersToPrevious` | Private | Link remaining sections' footers to previous (called by FixTheFooters) |
+
+### Known bug in AddBookNameHeaders
+
+`AddBookNameHeaders` has a known bug — to be investigated and fixed as a
+follow-on task. It is the candidate FIX routine for **Test 30**
+(`CountHeaderStyleUsage` — currently PASS at 0, enforcing that no incorrect
+header styles exist).
+
+### FIX routine consolidation plan
+
+Goal: every `FIX: <RoutineName>` label in the test report resolves to a routine
+in `basFixDocxRoutines`. Currently FIX routines are scattered:
+
+| FIX routine | Current module | Action |
+|-------------|----------------|--------|
+| `ReapplyTheFootersToAllFooters` | `basTEST_aeBibleTools` | Move to `basFixDocxRoutines` |
+| `AddBookNameHeaders` | `basFixDocxRoutines` | Already here; fix bug first |
+| `FixTheFooters` | `basFixDocxRoutines` | Already here |
+
+FIX routines in `basTEST_aeBibleTools` should be moved once the bug in
+`AddBookNameHeaders` is resolved and the consolidation pattern is established.
+
+**Next step (pending approval):** Investigate and fix the bug in `AddBookNameHeaders`.

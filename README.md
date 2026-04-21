@@ -49,7 +49,7 @@ Deliverables are `.DOCX` files produced via Word's "Save As" — this separates 
 | `basTEST_aeBibleFonts.bas` | Font diagnostic tests |
 | `basTest_aeBibleClass.bas` | Entry point — `RUN_THE_TESTS()` orchestrator |
 | `basAuditDocument.bas` | Document-level audit routines |
-| `basAddHeaderFooter.bas` | Header/footer insertion and repair |
+| `basFixDocxRoutines.bas` | FIX routines: headers, footers, and other document repairs |
 | `basBibleRibbonSetup.bas` | Custom Word Ribbon implementation |
 | `basImportWordGitFiles.bas` | Imports VBA source files back into the `.DOCM` |
 | `basChangeLog_aeBibleClass.bas` | Issue tracker and changelog (numbered #NNN) |
