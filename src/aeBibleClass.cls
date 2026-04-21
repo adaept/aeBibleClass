@@ -1106,7 +1106,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
     Case 35
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
     Case 36
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFooterParagraphsWithFooterStyle"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters"
     Case 37
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDocTabOnlyParagraphs"
     Case 38
@@ -1269,7 +1269,7 @@ Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) 
     Case 35
         BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
     Case 36
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFooterParagraphsWithFooterStyle"
+        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters"
     Case 37
         BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDocTabOnlyParagraphs"
     Case 38
@@ -2444,9 +2444,6 @@ Private Function CountFooterParagraphsWithFooterStyle() As Integer
                 For Each para In hdrFtr.Range.Paragraphs
                     If para.style = "Footer" Then
                         Count = Count + 1
-                        para.Range.Select
-                        Debug.Print "Found paragraph with Footer style. Stopping at this location."
-                        Stop
                     End If
                 Next para
             End If

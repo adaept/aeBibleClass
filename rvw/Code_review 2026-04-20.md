@@ -2020,3 +2020,90 @@ block begins.
 
 **Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
 `RUN_THE_TESTS(42)` to verify.**
+
+---
+
+## § 22 — Bug: Test 36 — Stop in CountFooterParagraphsWithFooterStyle
+
+**2026-04-21**
+
+### Symptom
+
+`RUN_THE_TESTS` halts mid-run with a VBA `Stop` statement inside
+`CountFooterParagraphsWithFooterStyle`. Execution breaks at the first footer
+paragraph found that uses the built-in Word "Footer" style instead of the
+project style "TheFooters".
+
+### Root cause
+
+The function was written as a diagnostic probe, not a counting function. On the
+first match it selects the paragraph, prints a message, and executes `Stop` to
+drop the developer into the editor at that location. This was useful during
+initial investigation but makes the test non-runnable in a full suite.
+
+```vba
+' Original — halts on first match, never returns a count
+If para.style = "Footer" Then
+    Count = Count + 1
+    para.Range.Select
+    Debug.Print "Found paragraph with Footer style. Stopping at this location."
+    Stop       ' breaks full-suite run
+End If
+```
+
+### Rule being enforced
+
+All footer paragraphs must use the project paragraph style `"TheFooters"`.
+The built-in Word style `"Footer"` is not used in this document. Any paragraph
+still carrying `"Footer"` is a gap in style normalization.
+
+### Fix routine
+
+`ReapplyTheFootersToAllFooters` in `basTEST_aeBibleTools.bas`:
+
+- Iterates every section, every footer, every paragraph
+- Applies `p.style = "TheFooters"` unconditionally
+- Logs each updated paragraph (previous style, ASCII value, hex) to the
+  Immediate Window for audit
+- Does not touch footer content or page numbering
+
+Note: `FixTheFooters` in `basAddHeaderFooter.bas` is a different tool — it
+rebuilds footer content and consecutive page numbering from the cursor position.
+It is not the correct fix for a style-only normalization issue.
+
+### Changes made — `src/aeBibleClass.cls`
+
+**`CountFooterParagraphsWithFooterStyle`** — `Stop`, `Select`, and diagnostic
+`Debug.Print` removed; function now counts all violations and returns cleanly:
+
+```vba
+If para.style = "Footer" Then
+    Count = Count + 1
+End If
+```
+
+**`RunTest` Case 36 and `OutputTestReport` Case 36** — fix routine appended to
+the function label so it appears in both the Immediate Window and `TestReport.txt`:
+
+```
+CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
+```
+
+### Expected value
+
+Expected = `0`. The test will FAIL until `ReapplyTheFootersToAllFooters` is
+run and all footer paragraphs carry `"TheFooters"`. This is the correct
+enforcement posture — the test is red until the document is clean.
+
+### Workflow when test fails
+
+```
+RUN_THE_TESTS(36)             ' confirms failure, shows count
+ReapplyTheFootersToAllFooters ' fixes all sections; logs each change to Immediate Window
+RUN_THE_TESTS(36)             ' must now PASS with result = 0
+```
+
+### Status
+
+**IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
+`RUN_THE_TESTS(36)` to verify count is returned without stopping.**
