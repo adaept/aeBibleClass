@@ -202,7 +202,7 @@ Private Sub InitializeGlobalResultArrayToMinusOne()
     m_ReportBuf = ""
     m_lastHint = ""
     Dim h As Long
-    For h = 1 To MaxTests : m_HintArray(h) = "" : Next h
+    For h = 1 To MaxTests: m_HintArray(h) = "": Next h
     ' Optional: Print to Immediate window to confirm
     'For i = 1 To MaxTests
     '    Debug.Print "ResultArray(" & i & ") = " & ResultArray(i),
@@ -1076,11 +1076,11 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
 
-    ' If any Count function errored, override result with sentinel so test shows FAIL
+    ' If any Count function errored, override Result with sentinel so test shows FAIL
     If m_lastFuncError Then
         ResultArray(TestNum) = -1
         m_HintArray(TestNum) = m_lastHint
-        Debug.Print "!! Test " & TestNum & " result overridden to -1 (function error)"
+        Debug.Print "!! Test " & TestNum & " Result overridden to -1 (function error)"
     End If
 
     If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then
@@ -2158,7 +2158,7 @@ Private Function CountTabOnlyParagraphs(areaType As String) As Long
                 If paraText = vbTab Then
                     Count = Count + 1
                     If m_lastHint = "" Then _
-                        m_lastHint = areaType & " Section " & sec.Index
+                        m_lastHint = areaType & " Section " & sec.index
                 End If
             Next para
         End If
