@@ -1508,3 +1508,70 @@ After importing both files:
 
 **FIXED — 2026-04-20.** Requires import of `src/aeRibbonClass.cls` and
 `src/basRibbonDeferred.bas`.
+
+---
+
+## § 18 — Book comboBox reverts to user-typed text after tab switch (known limitation)
+
+### Observed behaviour
+
+1. User types "gen" in Book comboBox.
+2. Clicks Chapter (or Verse) — `OnBookChanged` fires, `m_ribbon.Invalidate` runs,
+   `GetBookText` is called, comboBox updates to display "GENESIS". **Correct.**
+3. User clicks another ribbon tab (e.g. Home), then returns to RWB.
+4. Book comboBox shows "gen" — the original user-typed text.
+
+### Investigation
+
+`OnBookChanged` (line 571, `aeRibbonClass.cls`) calls `m_ribbon.Invalidate` (full
+invalidation of all controls). This fires while the RWB tab is visible: `GetBookText`
+is called and returns `headingData(m_currentBookIndex, 0)` — "GENESIS" is displayed.
+The invalidation is consumed immediately.
+
+When the user switches to another tab, no pending invalidation remains. On returning to
+RWB, the ribbon re-renders the comboBox from its cached user-input state ("gen") rather
+than issuing a fresh `getText` call — because no dirty flag is set.
+
+### Root cause
+
+Office Fluent ribbon `comboBox` controls maintain two distinct internal values:
+
+| Value | Source | Lifetime |
+|-------|--------|----------|
+| User-input text | `onChange` / keyboard | Persists across tab switches |
+| Callback text | `getText` on invalidation | Valid only while invalidation is pending |
+
+On tab-switch, the control reverts to the user-input text. There is no `onShow` or
+tab-activation callback in the customUI schema — no API hook to trigger a
+re-invalidation when the tab becomes visible again.
+
+### Distinction from § 17
+
+§ 17 was a missing `InvalidateControl CTRL_BOOK` after `GoToVerse` — fixable because
+the fix point (after Go) is reachable from code. **Fixed.**
+
+This bug occurs between `OnBookChanged` and the next navigation commit. The `Invalidate`
+in `OnBookChanged` already fires correctly; the limitation is the tab-switch re-render
+behaviour, which has no addressable fix point in the standard ribbon API.
+
+### Scope
+
+Applies equally to Chapter and Verse comboBoxes. Less visible there because typed
+numerals and canonical numerals are identical (typing "5" vs canonical "5"). Most
+noticeable for Book because abbreviations differ from canonical names.
+
+### Impact
+
+**Cosmetic only.** Navigation state (`m_currentBookIndex`, `m_currentChapter`,
+`m_currentVerse`) is always correct — `OnBookChanged` sets it before the display
+updates. After the user presses Go, the canonical name is displayed (§ 17 fix).
+
+### Status
+
+**Known limitation — no VBA fix available.** The Office Fluent ribbon comboBox
+preserves user-typed text across tab switches; re-invalidation requires a
+tab-activation callback that the customUI schema does not provide.
+
+If a future VSTO port is undertaken (§ 12), this limitation disappears: WinForms/WPF
+controls can be updated programmatically at any time, and the `Ribbon.RibbonTab`
+activated event is exposed via the managed Office object model.
