@@ -1942,7 +1942,7 @@ two lines resolve the "is it stuck?" problem immediately.
 |------|-------------|--------|
 | 1 | Pre-test announcement — `Debug.Print ">> Starting Test " & num` | **DONE — 2026-04-21** |
 | 2 | DoEvents between tests | **DONE — 2026-04-21** |
-| 3 | Batch AppendToFile writes | Pending |
+| 3 | Batch AppendToFile writes | **DONE — 2026-04-21** |
 | 4 | First-hit hint infrastructure (arrays + print hook) | Pending |
 | 5 | First-hit capture in Count functions (failing tests first) | Pending |
 | 6 | UTF-8 output via aeLoggerClass | Pending |
@@ -1967,6 +1967,37 @@ before the result line.
 `RUN_THE_TESTS(42)` to verify.**
 
 ### Step 2 — DoEvents between tests
+
+**File:** `src/aeBibleClass.cls`
+
+One line added in `RunTest`, between the announce print and `GetPassFail(num)`:
+
+```vba
+Debug.Print ">> Starting Test " & num
+DoEvents
+GetPassFail (num)
+```
+
+**Status: IMPLEMENTED — 2026-04-21.**
+
+### Step 3 — Batch AppendToFile writes
+
+**File:** `src/aeBibleClass.cls`
+
+Changes:
+- `Private m_ReportBuf As String` declared at class level (reset to `""` in `InitializeGlobalResultArrayToMinusOne`)
+- `Private Sub BufAppend(text As String)` — appends `text & vbCrLf` to `m_ReportBuf`
+- `Private Sub FlushReportBuf()` — opens `TestReportFileName` for Append once, writes full buffer, closes, clears buffer
+- All 78 `AppendToFile TestReportFileName, expr` calls replaced with `BufAppend expr`
+- `FlushReportBuf` called once at end of `RunBibleClassTests` (after last `BufAppend`, before `RunBibleClassTests = True`)
+- `AppendToFile("TotalTimeReport.txt", ...)` unchanged — separate file, not batched
+
+**Test:** Full `RUN_THE_TESTS` — `rpt/TestReport.txt` content must be identical to
+the pre-change baseline. Run time equal or faster.  
+**Pass criteria:** File content unchanged; no regression in pass/fail counts.
+
+**Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run full
+`RUN_THE_TESTS` to verify.**
 
 **File:** `src/aeBibleClass.cls`
 
