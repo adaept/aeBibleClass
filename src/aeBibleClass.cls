@@ -50,27 +50,28 @@ Private Const wdNotThemeColor As Long = -1
 Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
-Private SkippedTestNum As Integer
+Private SkippedTestNum As Long
 Private Const MaxTests = 73
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
 Private TestSessionID As String
-Private Result As Integer
+Private Result As Long
 Private TestReportFileName As String
-Private testFileNum As Integer
+Private testFileNum As Long
 Private Const TestReportFlag As Boolean = True
-Private OneTest As Integer  ' Stores the value to run a single test
+Private OneTest As Long  ' Stores the value to run a single test
 Private SkipTestArray As Variant       ' Used for heavy tests to skip
 Private Const AposCP As Long = &H2019  ' Apostrophe Code Point
 Private Apostrophe As String
 Private ContractionArrayValues As Variant
 Private contra As String               ' Contraction
-Private Const CARTS As Integer = 52    ' Contraction Array RunTest Start
+Private Const CARTS As Long = 52    ' Contraction Array RunTest Start
 Private UnicodeString As String        ' A string of up to 3 code points
 Private UnicodeLabelU As String        ' The UnicodeString label in U+ form
 Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 or other branch set False
 Private m_ReportBuf As String          ' Accumulates TestReport lines; flushed once at end of run
+Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -98,6 +99,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.Class_Initialize | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -113,10 +115,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.Class_Terminate | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
-Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Integer
+Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Long
     On Error GoTo PROC_ERR
     
     If Not CheckShowHideStatus Then
@@ -150,6 +153,7 @@ PROC_EXIT:
     Exit Property
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TheBibleClassTests of Class BibleClass"
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Property
 
@@ -174,13 +178,14 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.FileNameStartsWithV59 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
 Private Sub InitializeGlobalResultArrayToMinusOne()
     On Error GoTo PROC_ERR
 
-    Dim i As Integer, j As Integer, k As Integer
+    Dim i As Long, j As Long, k As Long
     For i = 1 To MaxTests
         ResultArray(i) = -1
     Next i
@@ -203,12 +208,13 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.InitializeGlobalResultArrayToMinusOne | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
 Private Function ConvertToOneBasedArray(values As Variant) As Variant
     Dim strArray() As String
-    Dim i As Integer
+    Dim i As Long
 
     On Error GoTo PROC_ERR
 
@@ -228,13 +234,14 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.ConvertToOneBasedArray | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
 Private Sub Expected1BasedArray()
     Dim doc As Document
     Dim values As Variant
-    Dim i As Integer
+    Dim i As Long
     Dim outputString As String
 
     On Error GoTo PROC_ERR
@@ -322,6 +329,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.Expected1BasedArray | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -338,6 +346,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.MakeSkipTestArray | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -357,6 +366,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.IsSkipTest | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -370,6 +380,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.HexToUnicodeLabel | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -397,6 +408,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.MakeUnicodeSeq | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -404,7 +416,7 @@ Private Function ProcessUnicode(s As String) As String
     ProcessUnicode = s   ' return the string exactly as received
 End Function
 
-Private Function ContractionArrayU(idx As Integer) As String
+Private Function ContractionArrayU(idx As Long) As String
     On Error GoTo PROC_ERR
 
     ' Replace `'` with unicode value in the string, Apostrophe, =ChrW$(AposCP), &H2019, RIGHT SINGLE QUOTATION MARK
@@ -418,6 +430,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.ContractionArrayU | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -435,6 +448,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CreateContractionArray | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -451,7 +465,7 @@ End Sub
 
 Private Sub FlushReportBuf()
     If m_ReportBuf = "" Then Exit Sub
-    Dim fileNum As Integer
+    Dim fileNum As Long
     Dim folderPath As String
     Dim finalPath As String
     folderPath = ActiveDocument.Path & "\rpt"
@@ -496,7 +510,7 @@ End Sub
 ' Version: 1.0
 '=====================================================================================
 Private Sub AppendToFile(filePath As String, text As String)
-    Dim fileNum As Integer
+    Dim fileNum As Long
     Dim folderPath As String
     Dim finalPath As String
 
@@ -535,6 +549,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.LogMessage | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -557,6 +572,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.GenerateSessionID | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -592,7 +608,7 @@ Private Sub RunTotalTimeTestSession(testOutcome As String)
     FileExists = (Dir(folderPath & "\" & reportName) <> "")
     'Debug.Print "FileExists = " & FileExists, "reportName = " & reportName
     
-    Dim fileNum As Integer
+    Dim fileNum As Long
     fileNum = FreeFile
     
     Open folderPath & "\" & reportName For Append As #fileNum
@@ -611,6 +627,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.RunTotalTimeTestSession | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -626,6 +643,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.DebugAndReportHeader | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -805,6 +823,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.RunBibleClassTests | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -828,6 +847,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.LogWordBuildInfo | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -841,10 +861,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.U | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function GetPassFail(TestNum As Integer) As Boolean
+Private Function GetPassFail(TestNum As Long) As Boolean
     On Error GoTo PROC_ERR
     
     ' Set explicit skip if the test is skipped
@@ -852,7 +873,9 @@ Private Function GetPassFail(TestNum As Integer) As Boolean
         GetPassFailArray(TestNum) = "SKIP!!!!"
         Exit Function
     End If
-    
+
+    m_lastFuncError = False     ' reset before calling any Count function
+
     Select Case TestNum
     Case 1
         ResultArray(TestNum) = CountDoubleSpaces
@@ -986,7 +1009,13 @@ Private Function GetPassFail(TestNum As Integer) As Boolean
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
-    
+
+    ' If any Count function errored, override result with sentinel so test shows FAIL
+    If m_lastFuncError Then
+        ResultArray(TestNum) = -1
+        Debug.Print "!! Test " & TestNum & " result overridden to -1 (function error)"
+    End If
+
     If ResultArray(TestNum) = oneBasedExpectedArray(TestNum) Then
         GetPassFailArray(TestNum) = "PASS    "
     Else
@@ -998,6 +1027,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.GetPassFail | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1021,10 +1051,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.Fixed14Str | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolean
+Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     Dim startTime As Double
     Dim endTime As Double
     Dim runTime As Double
@@ -1176,7 +1207,7 @@ Private Function RunTest(num As Integer, Optional SkipTest As Variant) As Boolea
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Dim answer As Integer
+    Dim answer As Long
     answer = MsgBox("Err = " & Err.Number & " " & Err.Description & vbCrLf & "Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
     If answer = vbYes Then
         'MsgBox "You chose to continue.", vbInformation, "Continue"
@@ -1195,10 +1226,11 @@ PROC_ERR:
         Debug.Print "oneBasedExpectedArray(1) = " & oneBasedExpectedArray
         Debug.Print GetPassFail(1), "Copy ()", "Test = " & num, ResultArray(1), oneBasedExpectedArray(1), "CountDoubleSpaces"
     End If
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function OutputTestReport(num As Integer, Optional SkipTest As Variant) As Boolean
+Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As Boolean
     On Error GoTo PROC_ERR
     
     Select Case num
@@ -1323,6 +1355,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.OutputTestReport | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1376,6 +1409,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountInvisibleCharacters | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1461,6 +1495,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.HasLeftAlignedParagraph | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1481,6 +1516,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.GoToAdjustedPage | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Sub
 
@@ -1532,6 +1568,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountContraction | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1562,6 +1599,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountInStory | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1624,6 +1662,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountAndCreateDefinitionForH2 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1821,6 +1860,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.SummarizeHeaderFooterAuditToFile | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -1905,10 +1945,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountAuditStyles_ToFile | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function AuditLiberationSansNarrowStyleDetails() As Integer
+Private Function AuditLiberationSansNarrowStyleDetails() As Long
     On Error GoTo PROC_ERR
 
     Dim s As style
@@ -1948,6 +1989,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.AuditLiberationSansNarrowStyleDetails | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2002,6 +2044,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountTabOnlyParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2015,6 +2058,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFindNotEmphasisBlack | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2028,10 +2072,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFindNotEmphasisRed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
+Private Function FindNotEmphasisBlackRed(fontColor As String) As Long
     On Error GoTo PROC_ERR
 
 ' fontColor = Automatic - Arial Black, 8pt, "Normal" Style
@@ -2041,7 +2086,7 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Integer
 
     Dim rng As Word.Range
     Set rng = ActiveDocument.Content
-    Dim totalCount As Integer
+    Dim totalCount As Long
     Dim wordColor As Long
     Dim wordStyle As style
     Dim myStyle As style
@@ -2094,10 +2139,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.FindNotEmphasisBlackRed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountParagraphMarks_CalibriDarkRed() As Integer
+Private Function CountParagraphMarks_CalibriDarkRed() As Long
     On Error GoTo PROC_ERR
 
     Dim para As Word.Paragraph
@@ -2138,6 +2184,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountParagraphMarks_CalibriDarkRed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2186,6 +2233,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountDarkRedStyledParagraphMarks | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2224,6 +2272,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountBoldFootnotesWordLevel | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2279,10 +2328,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountParagraphMarks_ArialBlackDarkRed() As Integer
+Private Function CountParagraphMarks_ArialBlackDarkRed() As Long
     On Error GoTo PROC_ERR
 
     Dim para As Word.Paragraph
@@ -2323,10 +2373,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountParagraphMarks_ArialBlackDarkRed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountParagraphMarks_ArialBlack() As Integer
+Private Function CountParagraphMarks_ArialBlack() As Long
     On Error GoTo PROC_ERR
 
     Dim para As Word.Paragraph
@@ -2367,6 +2418,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountParagraphMarks_ArialBlack | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2388,10 +2440,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountEmptyParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountDocTabOnlyParagraphs() As Integer
+Private Function CountDocTabOnlyParagraphs() As Long
     On Error GoTo PROC_ERR
 
 ' The final paragraph in a Word document always includes an extra paragraph mark that you can't delete.
@@ -2427,10 +2480,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountDocTabOnlyParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountFooterParagraphsWithFooterStyle() As Integer
+Private Function CountFooterParagraphsWithFooterStyle() As Long
     On Error GoTo PROC_ERR
 
     Dim sec As Word.Section
@@ -2463,10 +2517,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFooterParagraphsWithFooterStyle | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountManualLineBreaksAndWithSpace(Optional space As Variant) As Integer
+Private Function CountManualLineBreaksAndWithSpace(Optional space As Variant) As Long
     On Error GoTo PROC_ERR
 
     Dim fn As footnote
@@ -2520,17 +2575,18 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountManualLineBreaksAndWithSpace | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountLinefeed(Optional space As Variant) As Integer
+Private Function CountLinefeed(Optional space As Variant) As Long
     On Error GoTo PROC_ERR
 
 ' Search in doc
     Dim doc As Document
     Dim rng As Word.Range
     Dim findText As String
-    Dim Count As Integer
+    Dim Count As Long
 
     If IsMissing(space) Then
         'Debug.Print "IsMissing space"
@@ -2573,16 +2629,17 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountLinefeed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountParagraphMarksPerHeaderSection() As Integer
+Private Function CountParagraphMarksPerHeaderSection() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
-    Dim sectionIndex As Integer
+    Dim sectionIndex As Long
     Dim headerRange As Word.Range
-    Dim paraCount As Integer
+    Dim paraCount As Long
 
     ' Set the document
     Set doc = ActiveDocument
@@ -2616,16 +2673,17 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountParagraphMarksPerHeaderSection | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountHeaderStyleUsage() As Integer
+Private Function CountHeaderStyleUsage() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
     Dim rng As Word.Range
     Dim StyleName As String
-    Dim Count As Integer
+    Dim Count As Long
 
     ' Set the document
     Set doc = ActiveDocument
@@ -2664,18 +2722,19 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountHeaderStyleUsage | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountParagraphsWithoutTabInHeaders() As Integer
+Private Function CountParagraphsWithoutTabInHeaders() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
-    Dim sectionIndex As Integer
+    Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
-    Dim Count As Integer
-    Dim totalCount As Integer
+    Dim Count As Long
+    Dim totalCount As Long
 
     ' Set the document
     Set doc = ActiveDocument
@@ -2717,18 +2776,19 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountParagraphsWithoutTabInHeaders | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountTabFollowedByParagraphMarkInHeaders() As Integer
+Private Function CountTabFollowedByParagraphMarkInHeaders() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
-    Dim sectionIndex As Integer
+    Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
-    Dim Count As Integer
-    Dim totalCount As Integer
+    Dim Count As Long
+    Dim totalCount As Long
 
     ' Set the document
     Set doc = ActiveDocument
@@ -2770,10 +2830,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountTabFollowedByParagraphMarkInHeaders | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
+Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Long
     On Error GoTo PROC_ERR
 
 ' Identifies headers with only paragraph marks as empty. Checks if the header contains any visible text or characters beyond just paragraph marks.
@@ -2784,13 +2845,13 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Integer
 '5. Checks if the header is empty by iterating through each paragraph in the header range and ensuring it contains more than just a paragraph mark.
 '6. Updates the counters based on whether the header is empty or not.
 '7. Displays a message box with the total number of headers, the number of empty headers, and the number of not empty headers.    Dim doc As Document
-    Dim sectionIndex As Integer
+    Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
     Dim IsEmpty As Boolean
-    Dim emptyCount As Integer
-    Dim notEmptyCount As Integer
-    Dim totalHeaders As Integer
+    Dim emptyCount As Long
+    Dim notEmptyCount As Long
+    Dim totalHeaders As Long
 
     ' Set the document
     Dim doc As Document
@@ -2844,10 +2905,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CheckAllHeaders | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountFootnoteReferenceColors() As Integer
+Private Function CountFootnoteReferenceColors() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
@@ -2870,7 +2932,7 @@ Private Function CountFootnoteReferenceColors() As Integer
     colorList = "Colors of Footnote References in Hex: "
     
     Dim color As Variant
-    Dim colorCount As Integer
+    Dim colorCount As Long
     colorCount = 0
     For Each color In footnoteColors
         colorCount = colorCount + 1
@@ -2886,6 +2948,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFootnoteReferenceColors | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -2899,16 +2962,17 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.ColorToHex | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountFootnoteReferences() As Integer
+Private Function CountFootnoteReferences() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
     Set doc = ActiveDocument
 
-    Dim footnoteCount As Integer
+    Dim footnoteCount As Long
     footnoteCount = doc.Footnotes.Count
 
     ' Display the results
@@ -2920,10 +2984,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFootnoteReferences | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Integer
+Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Long
     On Error GoTo PROC_ERR
 
 ' Avoids indexing (.Item(i))� slow in Word.
@@ -2967,6 +3032,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountDeleteEmptyParagraphsBeforeHeading2 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -3007,10 +3073,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountEmptyParagraphsWithFormatting | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountNotSpacesAfterFootnoteReferences() As Integer
+Private Function CountNotSpacesAfterFootnoteReferences() As Long
     On Error GoTo PROC_ERR
 
 ' Also shows Footnote References and Following Characters (ASCII Values)
@@ -3020,7 +3087,7 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Integer
     Dim spaceCount As Long
     Dim notSpaceCount As Long
     Dim debugInfo As String
-    Dim asciiValue As Integer
+    Dim asciiValue As Long
 
     ' Initialize variables
     Set doc = ActiveDocument
@@ -3068,10 +3135,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountNotSpacesAfterFootnoteReferences | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountFootnotesFollowedByDigit() As Integer
+Private Function CountFootnotesFollowedByDigit() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
@@ -3079,7 +3147,7 @@ Private Function CountFootnotesFollowedByDigit() As Integer
     Dim rng As Word.Range
     Dim digitCount As Long
     Dim debugInfo As String
-    Dim asciiValue As Integer
+    Dim asciiValue As Long
 
     ' Initialize variables
     Set doc = ActiveDocument
@@ -3120,10 +3188,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFootnotesFollowedByDigit | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountEmptyParasAfterH2() As Integer
+Private Function CountEmptyParasAfterH2() As Long
     On Error GoTo PROC_ERR
 
     Dim para As Word.Paragraph
@@ -3157,10 +3226,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountEmptyParasAfterH2 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountHeading1() As Integer
+Private Function CountHeading1() As Long
     On Error GoTo PROC_ERR
 
     Dim para As Word.Paragraph
@@ -3188,10 +3258,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountHeading1 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountRedFootnoteReferences() As Integer
+Private Function CountRedFootnoteReferences() As Long
     On Error GoTo PROC_ERR
 
     Dim footnote As footnote
@@ -3220,6 +3291,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountRedFootnoteReferences | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -3233,15 +3305,16 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountTotalParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountSectionsWithDifferentFirstPage() As Integer
+Private Function CountSectionsWithDifferentFirstPage() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
     Dim sec As Word.Section
-    Dim Count As Integer
+    Dim Count As Long
 
     Application.ScreenUpdating = False
 
@@ -3266,15 +3339,16 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountSectionsWithDifferentFirstPage | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountWhiteParagraphMarks() As Integer
+Private Function CountWhiteParagraphMarks() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
     Dim rng As Word.Range
-    Dim Count As Integer
+    Dim Count As Long
     Dim firstFound As Boolean
 
     Set doc = ActiveDocument
@@ -3315,6 +3389,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountWhiteParagraphMarks | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -3324,16 +3399,14 @@ Private Function CountEmptyParasWithNoThemeColor()
 ' The value of wdNotThemeColor is -1. This constant indicates that no theme color is applied.
     Dim para As Word.Paragraph
     Dim rng As Word.Range
-    Dim emptyParaCount As Integer
+    Dim emptyParaCount As Long
     Dim themeColorUsed As Boolean
-    Dim totalParaCount As Integer
     Dim colorCounts As Object
     Dim colorKey As String
 
     Set colorCounts = CreateObject("Scripting.Dictionary")
     emptyParaCount = 0
-    totalParaCount = ActiveDocument.Paragraphs.Count
-    
+
     For Each para In ActiveDocument.Paragraphs
         Set rng = para.Range
         themeColorUsed = False
@@ -3370,10 +3443,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountEmptyParasWithNoThemeColor | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountNumberDashNumberInFootnotes() As Integer
+Private Function CountNumberDashNumberInFootnotes() As Long
     On Error GoTo PROC_ERR
 
     Dim fn As footnote
@@ -3406,16 +3480,17 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountNumberDashNumberInFootnotes | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountFindNumberDashNumber() As Integer
+Private Function CountFindNumberDashNumber() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
     Dim searchPattern As String
     Dim userInterrupt As VbMsgBoxResult
-    Dim Count As Integer
+    Dim Count As Long
 
     searchPattern = "[0-9]{1,}-[0-9]{1,}" ' Pattern to find number-dash-number
     Count = 0
@@ -3456,10 +3531,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFindNumberDashNumber | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountNonBreakingSpaces() As Integer
+Private Function CountNonBreakingSpaces() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
@@ -3494,10 +3570,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountNonBreakingSpaces | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountPeriodSpaceLeftParenthesis() As Integer
+Private Function CountPeriodSpaceLeftParenthesis() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
@@ -3532,10 +3609,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountPeriodSpaceLeftParenthesis | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountStyleWithNumberAndSpace() As Integer
+Private Function CountStyleWithNumberAndSpace() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
@@ -3574,10 +3652,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountStyleWithNumberAndSpace | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountStyleWithSpaceAndNumber() As Integer
+Private Function CountStyleWithSpaceAndNumber() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
@@ -3624,10 +3703,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountStyleWithSpaceAndNumber | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountQuadrupleParagraphMarks() As Integer
+Private Function CountQuadrupleParagraphMarks() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
@@ -3652,7 +3732,7 @@ Private Function CountQuadrupleParagraphMarks() As Integer
     Loop
     
     'MsgBox "CountQuadrupleParagraphMarks = " & Count
-    'Dim answer As Integer
+    'Dim answer As Long
     'answer = MsgBox("CountQuadrupleParagraphMarks Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
     'If answer = vbYes Then
     '    Resume
@@ -3666,10 +3746,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountQuadrupleParagraphMarks | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountWhiteSpaceAndCarriageReturn() As Integer
+Private Function CountWhiteSpaceAndCarriageReturn() As Long
     On Error GoTo PROC_ERR
 
     Dim rng As Word.Range
@@ -3702,10 +3783,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountWhiteSpaceAndCarriageReturn | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountDoubleTabs() As Integer
+Private Function CountDoubleTabs() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
@@ -3728,10 +3810,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountDoubleTabs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountSpaceFollowedByCarriageReturn() As Integer
+Private Function CountSpaceFollowedByCarriageReturn() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
@@ -3754,10 +3837,11 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountSpaceFollowedByCarriageReturn | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
-Private Function CountDoubleSpaces() As Integer
+Private Function CountDoubleSpaces() As Long
     On Error GoTo PROC_ERR
 
     Dim doc As Document
@@ -3792,6 +3876,7 @@ PROC_EXIT:
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountDoubleSpaces | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
     Resume PROC_EXIT
 End Function
 
@@ -3809,7 +3894,7 @@ Private Function CountOccurrences(ByVal text As String, ByVal substring As Strin
 End Function
 
 ' Count double spaces inside shapes, including those within groups, with error handling
-Private Function CountDoubleSpacesInShapes() As Integer
+Private Function CountDoubleSpacesInShapes() As Long
     Dim doc As Document
     Dim shp As shape
     Dim groupShp As shape

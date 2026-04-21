@@ -1948,6 +1948,15 @@ two lines resolve the "is it stuck?" problem immediately.
 | 6 | UTF-8 output via aeLoggerClass | Pending |
 | 7 | Markdown report | Pending |
 
+**Out-of-sequence fixes (bugs found during full run):**
+
+| Fix | Description | Status |
+|-----|-------------|--------|
+| § 22 | Test 36 Stop removed; FIX label added | **DONE — 2026-04-21** |
+| § 23 | Test 72 added to SkipTestArray | **DONE — 2026-04-21** |
+| § 24 | FlushReportBuf path construction fixed | **DONE — 2026-04-21** |
+| § 26 | Fix A/B/C — Integer→Long, dead var, error sentinel | **DONE — 2026-04-21** |
+
 ### Step 1 — Pre-test announcement
 
 **File:** `src/aeBibleClass.cls`
@@ -2434,7 +2443,55 @@ Fix A (Test 13) is trivial and should be done first. Fixes B and C are
 class-wide and should be done together as one import. They constitute part of
 the game plan for the infrastructure improvement pass.
 
+### Implementation — `src/aeBibleClass.cls`
+
+All three fixes applied in one pass via `py/fix_abc.py` + two targeted edits.
+
+**Fix A — dead variable removed from `CountEmptyParasWithNoThemeColor`:**
+- `Dim totalParaCount As Long` declaration deleted
+- `totalParaCount = ActiveDocument.Paragraphs.Count` assignment deleted
+- `emptyParaCount` already changed to `As Long` by Fix B
+
+**Fix B — 78 `As Integer` → `As Long` (return types, Dim variables, parameters):**
+- All 33 Count/Check/Audit function return types now `As Long`
+- All internal count variables (`Count`, `totalCount`, `paraCount`, etc.) now `As Long`
+- `Private Const CARTS As Long = 52` — harmless widening
+- Test dispatch parameters (`TestNum`, `num`) also widened — harmless at 73 max
+
+**Fix C — error sentinel:**
+
+*Declaration (class level):*
+```vba
+Private m_lastFuncError As Boolean  ' Set True in any PROC_ERR; checked in GetPassFail
+```
+
+*In every PROC_ERR block (78 locations):*
+```vba
+    m_lastFuncError = True
+    Resume PROC_EXIT
+```
+
+*In `GetPassFail` — reset before each test call:*
+```vba
+    m_lastFuncError = False     ' reset before calling any Count function
+```
+
+*In `GetPassFail` — sentinel applied before pass/fail comparison:*
+```vba
+    If m_lastFuncError Then
+        ResultArray(TestNum) = -1
+        Debug.Print "!! Test " & TestNum & " result overridden to -1 (function error)"
+    End If
+```
+
+Expected behaviour after fix:
+- Test 13 now runs correctly (overflow removed)
+- Any Count function that errors returns -1 via sentinel
+- Expected values are never -1, so any error → FAIL in report
+- Error override printed to Immediate Window with test number
+
 ### Status
 
-**ANALYSED — 2026-04-21. No code changes yet. Fixes A, B, C deferred to
-game plan.**
+**IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run full
+`RUN_THE_TESTS`. Test 13 must PASS cleanly (no Overflow in Immediate
+Window). Any previously silent errors must now show FAIL with -1 result.**
