@@ -71,7 +71,9 @@ Private UnicodeString As String        ' A string of up to 3 code points
 Private UnicodeLabelU As String        ' The UnicodeString label in U+ form
 Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 or other branch set False
 Private m_ReportBuf As String          ' Accumulates TestReport lines; flushed once at end of run
-Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail
+Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail
+Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail
+Private m_HintArray(1 To MaxTests) As String  ' Per-test first-hit hint; printed in RunTest on FAIL
 '==================================================================
 
 Private Sub Class_Initialize()
@@ -197,7 +199,10 @@ Private Sub InitializeGlobalResultArrayToMinusOne()
     For k = 1 To MaxTests
         GetPassFailArray(k) = "x1x1x1x1"  ' Possible values are "PASS    ", "FAIL!!!!", "SKIP!!!!"
     Next k
-    m_ReportBuf = ""
+    m_ReportBuf = ""
+    m_lastHint = ""
+    Dim h As Long
+    For h = 1 To MaxTests : m_HintArray(h) = "" : Next h
     ' Optional: Print to Immediate window to confirm
     'For i = 1 To MaxTests
     '    Debug.Print "ResultArray(" & i & ") = " & ResultArray(i),
@@ -878,141 +883,202 @@ Private Function GetPassFail(TestNum As Long) As Boolean
 
     Select Case TestNum
     Case 1
-        ResultArray(TestNum) = CountDoubleSpaces
+        ResultArray(TestNum) = CountDoubleSpaces
+        m_HintArray(TestNum) = m_lastHint
     Case 2
-        ResultArray(TestNum) = CountDoubleSpacesInShapes
+        ResultArray(TestNum) = CountDoubleSpacesInShapes
+        m_HintArray(TestNum) = m_lastHint
     Case 3
-        ResultArray(TestNum) = CountSpaceFollowedByCarriageReturn
+        ResultArray(TestNum) = CountSpaceFollowedByCarriageReturn
+        m_HintArray(TestNum) = m_lastHint
     Case 4
-        ResultArray(TestNum) = CountDoubleTabs
+        ResultArray(TestNum) = CountDoubleTabs
+        m_HintArray(TestNum) = m_lastHint
     Case 5
-        ResultArray(TestNum) = CountWhiteSpaceAndCarriageReturn
+        ResultArray(TestNum) = CountWhiteSpaceAndCarriageReturn
+        m_HintArray(TestNum) = m_lastHint
     Case 6
-        ResultArray(TestNum) = CountQuadrupleParagraphMarks
+        ResultArray(TestNum) = CountQuadrupleParagraphMarks
+        m_HintArray(TestNum) = m_lastHint
     Case 7
-        ResultArray(TestNum) = CountStyleWithSpaceAndNumber
+        ResultArray(TestNum) = CountStyleWithSpaceAndNumber
+        m_HintArray(TestNum) = m_lastHint
     Case 8
-        ResultArray(TestNum) = CountStyleWithNumberAndSpace
+        ResultArray(TestNum) = CountStyleWithNumberAndSpace
+        m_HintArray(TestNum) = m_lastHint
     Case 9
-        ResultArray(TestNum) = CountPeriodSpaceLeftParenthesis
+        ResultArray(TestNum) = CountPeriodSpaceLeftParenthesis
+        m_HintArray(TestNum) = m_lastHint
     Case 10
-        ResultArray(TestNum) = CountNonBreakingSpaces
+        ResultArray(TestNum) = CountNonBreakingSpaces
+        m_HintArray(TestNum) = m_lastHint
     Case 11
-        ResultArray(TestNum) = CountFindNumberDashNumber
+        ResultArray(TestNum) = CountFindNumberDashNumber
+        m_HintArray(TestNum) = m_lastHint
     Case 12
-        ResultArray(TestNum) = CountNumberDashNumberInFootnotes
+        ResultArray(TestNum) = CountNumberDashNumberInFootnotes
+        m_HintArray(TestNum) = m_lastHint
     Case 13
-        ResultArray(TestNum) = CountEmptyParasWithNoThemeColor
+        ResultArray(TestNum) = CountEmptyParasWithNoThemeColor
+        m_HintArray(TestNum) = m_lastHint
     Case 14
-        ResultArray(TestNum) = CountWhiteParagraphMarks
+        ResultArray(TestNum) = CountWhiteParagraphMarks
+        m_HintArray(TestNum) = m_lastHint
     Case 15
-        ResultArray(TestNum) = CountSectionsWithDifferentFirstPage
+        ResultArray(TestNum) = CountSectionsWithDifferentFirstPage
+        m_HintArray(TestNum) = m_lastHint
     Case 16
-        ResultArray(TestNum) = CountTotalParagraphs
+        ResultArray(TestNum) = CountTotalParagraphs
+        m_HintArray(TestNum) = m_lastHint
     Case 17
-        ResultArray(TestNum) = CountRedFootnoteReferences
+        ResultArray(TestNum) = CountRedFootnoteReferences
+        m_HintArray(TestNum) = m_lastHint
     Case 18
-        ResultArray(TestNum) = CountHeading1
+        ResultArray(TestNum) = CountHeading1
+        m_HintArray(TestNum) = m_lastHint
     Case 19
-        ResultArray(TestNum) = CountEmptyParasAfterH2
+        ResultArray(TestNum) = CountEmptyParasAfterH2
+        m_HintArray(TestNum) = m_lastHint
     Case 20
-        ResultArray(TestNum) = CountFootnotesFollowedByDigit
+        ResultArray(TestNum) = CountFootnotesFollowedByDigit
+        m_HintArray(TestNum) = m_lastHint
     Case 21
-        ResultArray(TestNum) = CountNotSpacesAfterFootnoteReferences
+        ResultArray(TestNum) = CountNotSpacesAfterFootnoteReferences
+        m_HintArray(TestNum) = m_lastHint
     Case 22
-        ResultArray(TestNum) = CountEmptyParagraphsWithFormatting
+        ResultArray(TestNum) = CountEmptyParagraphsWithFormatting
+        m_HintArray(TestNum) = m_lastHint
     Case 23
-        ResultArray(TestNum) = CountDeleteEmptyParagraphsBeforeHeading2
+        ResultArray(TestNum) = CountDeleteEmptyParagraphsBeforeHeading2
+        m_HintArray(TestNum) = m_lastHint
     Case 24
-        ResultArray(TestNum) = CountFootnoteReferences
+        ResultArray(TestNum) = CountFootnoteReferences
+        m_HintArray(TestNum) = m_lastHint
     Case 25
-        ResultArray(TestNum) = CountFootnoteReferenceColors
+        ResultArray(TestNum) = CountFootnoteReferenceColors
+        m_HintArray(TestNum) = m_lastHint
     Case 26
-        ResultArray(TestNum) = CheckAllHeaders("Empty")
+        ResultArray(TestNum) = CheckAllHeaders("Empty")
+        m_HintArray(TestNum) = m_lastHint
     Case 27
-        ResultArray(TestNum) = CheckAllHeaders("NotEmpty")
+        ResultArray(TestNum) = CheckAllHeaders("NotEmpty")
+        m_HintArray(TestNum) = m_lastHint
     Case 28
-        ResultArray(TestNum) = CountTabFollowedByParagraphMarkInHeaders
+        ResultArray(TestNum) = CountTabFollowedByParagraphMarkInHeaders
+        m_HintArray(TestNum) = m_lastHint
     Case 29
-        ResultArray(TestNum) = CountParagraphsWithoutTabInHeaders
+        ResultArray(TestNum) = CountParagraphsWithoutTabInHeaders
+        m_HintArray(TestNum) = m_lastHint
     Case 30
-        ResultArray(TestNum) = CountHeaderStyleUsage
+        ResultArray(TestNum) = CountHeaderStyleUsage
+        m_HintArray(TestNum) = m_lastHint
     Case 31
-        ResultArray(TestNum) = CountParagraphMarksPerHeaderSection
+        ResultArray(TestNum) = CountParagraphMarksPerHeaderSection
+        m_HintArray(TestNum) = m_lastHint
     Case 32
-        ResultArray(TestNum) = CountLinefeed
+        ResultArray(TestNum) = CountLinefeed
+        m_HintArray(TestNum) = m_lastHint
     Case 33
-        ResultArray(TestNum) = CountLinefeed(" ")
+        ResultArray(TestNum) = CountLinefeed(" ")
+        m_HintArray(TestNum) = m_lastHint
     Case 34
-        ResultArray(TestNum) = CountManualLineBreaksAndWithSpace
+        ResultArray(TestNum) = CountManualLineBreaksAndWithSpace
+        m_HintArray(TestNum) = m_lastHint
     Case 35
-        ResultArray(TestNum) = CountManualLineBreaksAndWithSpace(" ")
+        ResultArray(TestNum) = CountManualLineBreaksAndWithSpace(" ")
+        m_HintArray(TestNum) = m_lastHint
     Case 36
-        ResultArray(TestNum) = CountFooterParagraphsWithFooterStyle
+        ResultArray(TestNum) = CountFooterParagraphsWithFooterStyle
+        m_HintArray(TestNum) = m_lastHint
     Case 37
-        ResultArray(TestNum) = CountDocTabOnlyParagraphs
+        ResultArray(TestNum) = CountDocTabOnlyParagraphs
+        m_HintArray(TestNum) = m_lastHint
     Case 38
-        ResultArray(TestNum) = CountEmptyParagraphs
+        ResultArray(TestNum) = CountEmptyParagraphs
+        m_HintArray(TestNum) = m_lastHint
     Case 39
-        ResultArray(TestNum) = CountParagraphMarks_ArialBlack
+        ResultArray(TestNum) = CountParagraphMarks_ArialBlack
+        m_HintArray(TestNum) = m_lastHint
     Case 40
-        ResultArray(TestNum) = CountParagraphMarks_ArialBlackDarkRed
+        ResultArray(TestNum) = CountParagraphMarks_ArialBlackDarkRed
+        m_HintArray(TestNum) = m_lastHint
     Case 41
-        ResultArray(TestNum) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+        ResultArray(TestNum) = Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+        m_HintArray(TestNum) = m_lastHint
     Case 42
-        ResultArray(TestNum) = CountBoldFootnotesWordLevel
+        ResultArray(TestNum) = CountBoldFootnotesWordLevel
+        m_HintArray(TestNum) = m_lastHint
     Case 43
-        ResultArray(TestNum) = CountDarkRedStyledParagraphMarks
+        ResultArray(TestNum) = CountDarkRedStyledParagraphMarks
+        m_HintArray(TestNum) = m_lastHint
     Case 44
-        ResultArray(TestNum) = CountParagraphMarks_CalibriDarkRed
+        ResultArray(TestNum) = CountParagraphMarks_CalibriDarkRed
+        m_HintArray(TestNum) = m_lastHint
     Case 45
-        ResultArray(TestNum) = CountFindNotEmphasisBlack
+        ResultArray(TestNum) = CountFindNotEmphasisBlack
+        m_HintArray(TestNum) = m_lastHint
     Case 46
-        ResultArray(TestNum) = CountFindNotEmphasisRed
+        ResultArray(TestNum) = CountFindNotEmphasisRed
+        m_HintArray(TestNum) = m_lastHint
     Case 47
-        ResultArray(TestNum) = CountTabOnlyParagraphs("Footer")
+        ResultArray(TestNum) = CountTabOnlyParagraphs("Footer")
+        m_HintArray(TestNum) = m_lastHint
     Case 48
-        ResultArray(TestNum) = AuditLiberationSansNarrowStyleDetails
+        ResultArray(TestNum) = AuditLiberationSansNarrowStyleDetails
+        m_HintArray(TestNum) = m_lastHint
     Case 49
-        ResultArray(TestNum) = CountAuditStyles_ToFile
+        ResultArray(TestNum) = CountAuditStyles_ToFile
+        m_HintArray(TestNum) = m_lastHint
     Case 50
-        ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
+        ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
+        m_HintArray(TestNum) = m_lastHint
     Case 51
-        ResultArray(TestNum) = CountAndCreateDefinitionForH2
+        ResultArray(TestNum) = CountAndCreateDefinitionForH2
+        m_HintArray(TestNum) = m_lastHint
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         contra = ContractionArrayU(TestNum - CARTS + 1)
-        ResultArray(TestNum) = CountContraction(contra)
+        ResultArray(TestNum) = CountContraction(contra)
+        m_HintArray(TestNum) = m_lastHint
     Case 66
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H20, &H2019))            ' Space U+0020 followed by RSQM U+2019
-        ResultArray(TestNum) = CountContraction(UnicodeString)
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+        m_HintArray(TestNum) = m_lastHint
     Case 67
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H20, &H201D))            ' Space U+0020 followed by RDQM U+201D
-        ResultArray(TestNum) = CountContraction(UnicodeString)
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+        m_HintArray(TestNum) = m_lastHint
     Case 68
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H202F, &H2019))          ' NNBSP U+202F followed by RSQM U+2019
-        ResultArray(TestNum) = CountContraction(UnicodeString)
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+        m_HintArray(TestNum) = m_lastHint
     Case 69
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H202F, &H201D))          ' NNBSP U+202F followed by RDQM U+201D
-        ResultArray(TestNum) = CountContraction(UnicodeString)
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+        m_HintArray(TestNum) = m_lastHint
     Case 70
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H201C, &H2018, &H201C))  ' Double Opening Quote, Single Opening Quote, Double Opening Quote
-        ResultArray(TestNum) = CountContraction(UnicodeString)
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+        m_HintArray(TestNum) = m_lastHint
     Case 71
         UnicodeString = ProcessUnicode(MakeUnicodeSeq(&H201D, &H2019, &H201D))  ' Double Closing Quote, Single Closing Quote, Double Closing Quote
-        ResultArray(TestNum) = CountContraction(UnicodeString)
+        ResultArray(TestNum) = CountContraction(UnicodeString)
+        m_HintArray(TestNum) = m_lastHint
     Case 72
         If OneVersePerPara Then
-            ResultArray(TestNum) = HasLeftAlignedParagraph(18, 931)
+            ResultArray(TestNum) = HasLeftAlignedParagraph(18, 931)
+        m_HintArray(TestNum) = m_lastHint
         End If
     Case 73
-        ResultArray(TestNum) = CountInvisibleCharacters()
+        ResultArray(TestNum) = CountInvisibleCharacters()
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
 
     ' If any Count function errored, override result with sentinel so test shows FAIL
     If m_lastFuncError Then
-        ResultArray(TestNum) = -1
+        ResultArray(TestNum) = -1
+        m_HintArray(TestNum) = m_lastHint
         Debug.Print "!! Test " & TestNum & " result overridden to -1 (function error)"
     End If
 
@@ -1071,118 +1137,173 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
 
     Select Case num
     Case 1
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpaces"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpaces"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 2
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpacesInShapes"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleSpacesInShapes"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 3
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSpaceFollowedByCarriageReturn"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSpaceFollowedByCarriageReturn"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 4
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleTabs"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleTabs"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 5
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteSpaceAndCarriageReturn"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 6
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountQuadrupleParagraphMarks"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountQuadrupleParagraphMarks"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 7
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithSpaceAndNumber"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithSpaceAndNumber"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 8
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithNumberAndSpace"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithNumberAndSpace"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 9
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPeriodSpaceLeftParenthesis"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPeriodSpaceLeftParenthesis"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 10
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNonBreakingSpaces"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNonBreakingSpaces"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 11
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNumberDashNumber"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNumberDashNumber"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 12
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumberDashNumberInFootnotes"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumberDashNumberInFootnotes"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 13
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasWithNoThemeColor"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasWithNoThemeColor"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 14
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteParagraphMarks"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteParagraphMarks"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 15
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSectionsWithDifferentFirstPage"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSectionsWithDifferentFirstPage"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 16
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTotalParagraphs"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTotalParagraphs"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 17
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountRedFootnoteReferences"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountRedFootnoteReferences"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 18
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading1"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading1"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 19
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasAfterH2"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParasAfterH2"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 20
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnotesFollowedByDigit"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnotesFollowedByDigit"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 21
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNotSpacesAfterFootnoteReferences"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNotSpacesAfterFootnoteReferences"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 22
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithFormatting"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithFormatting"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 23
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDeleteEmptyParagraphsBeforeHeading2"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDeleteEmptyParagraphsBeforeHeading2"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 24
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferences"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferences"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 25
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferenceColors"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteReferenceColors"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 26
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "Empty" & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "Empty" & ")"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 27
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "NotEmpty" & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CheckAllHeaders(" & "NotEmpty" & ")"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 28
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabFollowedByParagraphMarkInHeaders"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabFollowedByParagraphMarkInHeaders"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 29
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphsWithoutTabInHeaders"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphsWithoutTabInHeaders"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 30
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeaderStyleUsage"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeaderStyleUsage"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 31
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksPerHeaderSection"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksPerHeaderSection"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 32
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 33
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed(" & """ """ & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountLinefeed(" & """ """ & ")"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 34
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 35
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 36
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 37
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDocTabOnlyParagraphs"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDocTabOnlyParagraphs"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 38
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphs"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphs"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 39
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlack"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlack"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 40
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlackDarkRed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_ArialBlackDarkRed"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 41
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 42
         'Debug.Print ">> Expected Routine Runtime ~ 80 seconds"
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 43
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDarkRedStyledParagraphMarks"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDarkRedStyledParagraphMarks"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 44
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_CalibriDarkRed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_CalibriDarkRed"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 45
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 46
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 47
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabOnlyParagraphs(" & """Footer""" & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabOnlyParagraphs(" & """Footer""" & ")"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 48
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditLiberationSansNarrowStyleDetails"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditLiberationSansNarrowStyleDetails"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 49
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAuditStyles_ToFile"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAuditStyles_ToFile"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 50
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 51
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 66, 67, 68, 69, 70, 71
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountContraction(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountContraction(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 72
         If OneVersePerPara Then
-            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(18, 931)"
+            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(18, 931)"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
         End If
     Case 73
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
+        If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select

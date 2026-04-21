@@ -551,6 +551,7 @@ The project goals shift the analysis from "is this architecturally tidy?" to "do
 support a verified, shippable free version and a scalable path to subscription?"
 
 The highest-leverage near-term investment is the combination of:
+
 1. **Tab keytip fix** — lock `Y2` explicitly in the XML (see § 10)
 2. `getLabel` callbacks (closes the i18n label gap — the only remaining i18n hole)
 3. `basTEST_basUIStrings` + Python completeness script (provides automated i18n
@@ -1016,7 +1017,7 @@ documents, including plain `.docx` files.
 
 This separates the add-in from the content entirely:
 
-```
+```txt
 BibleAddIn.dotm   ← ribbon XML + all VBA  (developer-maintained)
 Genesis.docx      ← Bible content only, no VBA  (editor-maintained)
 Exodus.docx       ← same
@@ -1025,7 +1026,8 @@ Exodus.docx       ← same
 
 ### How callback resolution works
 
-When Word sees `onAction="OnGoClick"` in ribbon XML it searches:
+When Word sees `onAction="OnGoClick"` in ribbon XML it searches
+
 1. The active document's VBA project
 2. All loaded template VBA projects (STARTUP folder)
 
@@ -1113,7 +1115,7 @@ Total estimated effort: **~2–3 hours.**
 
 The `.dotm` approach is the cleanest stepping stone to VSTO:
 
-```
+```txt
 Phase 1 (now):      .docm  →  BibleAddIn.dotm + Bible.docx
 Phase 2 (subscription):  BibleAddIn.dotm  →  BibleAddIn VSTO add-in
                           Bible.docx unchanged
@@ -1161,14 +1163,16 @@ utility subs are trusted by the developer to run on the right document.
 ### 2. Development workflow change
 
 **Current:**
-```
+
+```txt
 Open BibleClass.docm
   → Bible text is there
   → Alt+F11 → VBA editor → all code is in one project
 ```
 
 **With `.dotm` + `.docx`:**
-```
+
+```txt
 Word starts → BibleAddIn.dotm loads automatically from STARTUP folder
   → VBA editor always shows BibleAddIn project in Project Explorer
   → To code: Alt+F11 → select BibleAddIn in Project Explorer → edit
@@ -1179,7 +1183,7 @@ Word starts → BibleAddIn.dotm loads automatically from STARTUP folder
 The `.dotm` is always present in the VBA editor's Project Explorer —
 you never open it specifically to reach the code. To edit the template itself:
 
-```
+```txt
 File → Open → BibleAddIn.dotm
   → Opens as a document window (content is empty — template only)
   → Alt+F11 → its project is active in the editor
@@ -1289,6 +1293,7 @@ faster and `headingData` is rebuilt per file. The `DocumentOpen` event in the
 A pragmatic intermediate step before committing to 66 files:
 
 **Phase A — Split into two files (OT + NT):**
+
 - Cuts layout delay roughly in half immediately
 - Cross-file navigation is one boundary only (Malachi → Matthew)
 - Book-to-file mapping has two entries
@@ -1296,12 +1301,14 @@ A pragmatic intermediate step before committing to 66 files:
 - Minimal architectural change to the ribbon
 
 **Phase B — Split per book (66 files):**
+
 - Eliminates layout delay completely
 - Full book-to-file mapping (66 entries)
 - Full cross-file navigation architecture
 - Enables parallel editing by multiple contributors per book
 
 **Phase C — Merge script for print/PDF:**
+
 - Concatenates all files with correct page and footnote numbering
 - Runs independently of the editing workflow
 
@@ -1309,7 +1316,7 @@ A pragmatic intermediate step before committing to 66 files:
 
 ### Three-phase migration picture
 
-```
+```txt
 Current:   BibleClass.docm (all-in-one)
 Phase 1:   BibleAddIn.dotm + Bible.docx (one content file)        ← § 13
 Phase A:   BibleAddIn.dotm + OT.docx + NT.docx                    ← § 14, Phase A
@@ -1374,6 +1381,7 @@ Four visible ribbon labels are currently static strings in XML with no i18n path
 | `<button id="adaeptButton">` | `label="About"` | `LBL_ABOUT` |
 
 Work:
+
 - Add `LBL_*` constants to `basUIStrings.bas`
 - Replace static `label=` with `getLabel=` in XML for all four elements
 - Add four `GetXxxLabel` callbacks to `basBibleRibbonSetup.bas`
@@ -1420,6 +1428,7 @@ Python script `py/check_i18n.py` — no VBA import.
 ### Testing batch (after imports)
 
 Single manual pass covering:
+
 - All keytip badges (Alt+Y2 → B, C, V, [, ], ,, ., <, >, G, S, A)
 - All four localised labels visible in ribbon UI
 - Invalid Go attempt → verify comboBox now refreshes (bug fix confirmation)
@@ -1501,6 +1510,7 @@ comboBox retained whatever the user had typed, indefinitely.
 ### Testing
 
 After importing both files:
+
 - Type a book abbreviation (e.g. "rev"), press Go → comboBox must show "Revelation"
 - Use Prev Book / Next Book buttons → comboBox must update to new book name
 
@@ -1633,6 +1643,7 @@ standalone use via `TestInvisible` or directly from the Immediate Window.
 ### Process documentation
 
 `md/Adding_To_Bible_Test_Class.md` created. Contains:
+
 - Architecture diagram of the full test dispatch chain
 - 8-step checklist for adding any new test
 - Decision guide: copy logic into class vs. call across modules
@@ -1641,13 +1652,14 @@ standalone use via `TestInvisible` or directly from the Immediate Window.
 
 ### Running
 
-```
+```txt
 RUN_THE_TESTS(73)          ' standalone
 RUN_THE_TESTS              ' full suite — test 73 included at position 73
 ```
 
 Expected pass output:
-```
+
+```txt
 PASS        Copy ()     Test = 73       0               0               CountInvisibleCharacters
 ```
 
@@ -1765,7 +1777,8 @@ fails, the report shows the count and the expected value. The editor then must
 manually search the entire document to find the first violation.
 
 Example:
-```
+
+```txt
 FAIL!!!!    Copy ()     Test = 3        8               0     CountSpaceFollowedByCarriageReturn
 ```
 
@@ -1867,6 +1880,7 @@ the pass/fail decision. It is additive hint metadata.
 | `Log_Close()` | Writes END marker |
 
 A UTF-8 report alongside the existing ASCII `TestReport.txt` requires:
+
 - A second report path constant, e.g. `TestReportUTF8FileName = "TestReportUTF8.txt"`
 - A module-level `Private m_log As Object` instance
 - `m_log.Log_Init` at the start of the test run (after `vbYes`)
@@ -1943,7 +1957,7 @@ two lines resolve the "is it stuck?" problem immediately.
 | 1 | Pre-test announcement — `Debug.Print ">> Starting Test " & num` | **DONE — 2026-04-21** |
 | 2 | DoEvents between tests | **DONE — 2026-04-21** |
 | 3 | Batch AppendToFile writes | **DONE — 2026-04-21** |
-| 4 | First-hit hint infrastructure (arrays + print hook) | Pending |
+| 4 | First-hit hint infrastructure (arrays + print hook) | **DONE — 2026-04-21** |
 | 5 | First-hit capture in Count functions (failing tests first) | Pending |
 | 6 | UTF-8 output via aeLoggerClass | Pending |
 | 7 | Markdown report | Pending |
@@ -1994,6 +2008,7 @@ GetPassFail (num)
 **File:** `src/aeBibleClass.cls`
 
 Changes:
+
 - `Private m_ReportBuf As String` declared at class level (reset to `""` in `InitializeGlobalResultArrayToMinusOne`)
 - `Private Sub BufAppend(text As String)` — appends `text & vbCrLf` to `m_ReportBuf`
 - `Private Sub FlushReportBuf()` — opens `TestReportFileName` for Append once, writes full buffer, closes, clears buffer
@@ -2029,6 +2044,47 @@ block begins.
 
 **Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
 `RUN_THE_TESTS(42)` to verify.**
+
+### Step 4 — First-hit hint infrastructure
+
+**File:** `src/aeBibleClass.cls`  
+**Applied via:** `py/step4_hints.py` — 2026-04-21
+
+Four transformations, all silent on this run (no Count function sets `m_lastHint` yet):
+
+1. **Declarations** (class-level, after `m_lastFuncError`):
+   ```vba
+   Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail
+   Private m_HintArray(1 To MaxTests) As String  ' Per-test first-hit hint; printed in RunTest on FAIL
+   ```
+
+2. **Reset** in `InitializeGlobalResultArrayToMinusOne` (after `m_ReportBuf = ""`):
+   ```vba
+   m_lastHint = ""
+   Dim h As Long
+   For h = 1 To MaxTests : m_HintArray(h) = "" : Next h
+   ```
+
+3. **Capture** — after every `ResultArray(TestNum) = <expr>` in `GetPassFail` (61 insertions):
+   ```vba
+           m_HintArray(TestNum) = m_lastHint
+   ```
+
+4. **Print hook** — after every `Debug.Print GetPassFailArray(num)` in `RunTest` (55 insertions):
+   ```vba
+           If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
+   ```
+
+**Verification:** 61 `m_HintArray(TestNum) = m_lastHint` lines confirmed by Grep.
+55 hint print lines = exact match to `Debug.Print GetPassFailArray(num)` count.
+The unmatched ResultArray line (Test 72, 12-space indent inside `If OneVersePerPara`)
+is in `SkipTestArray` — consequence is nil.
+
+**Test:** Full `RUN_THE_TESTS` — results must be identical to previous run.
+All hint lines silent (m_lastHint = "" throughout) — no output change expected.
+
+**Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
+`RUN_THE_TESTS` to verify no regression.**
 
 ---
 
@@ -2094,7 +2150,7 @@ End If
 **`RunTest` Case 36 and `OutputTestReport` Case 36** — fix routine appended to
 the function label so it appears in both the Immediate Window and `TestReport.txt`:
 
-```
+```vba
 CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
 ```
 
@@ -2106,7 +2162,7 @@ enforcement posture — the test is red until the document is clean.
 
 ### Workflow when test fails
 
-```
+```vba
 RUN_THE_TESTS(36)             ' confirms failure, shows count
 ReapplyTheFootersToAllFooters ' fixes all sections; logs each change to Immediate Window
 RUN_THE_TESTS(36)             ' must now PASS with result = 0
@@ -2241,7 +2297,7 @@ After the full suite completes and all results are printed to the Immediate
 Window, the final `rpt/TestReport.txt` is not written. The error handler in
 `RunBibleClassTests` fires:
 
-```
+```vba
 ERROR in aeBibleClass.RunBibleClassTests | Erl: 0 | Err: 52 | Bad file name or number
 ```
 
@@ -2448,11 +2504,13 @@ the game plan for the infrastructure improvement pass.
 All three fixes applied in one pass via `py/fix_abc.py` + two targeted edits.
 
 **Fix A — dead variable removed from `CountEmptyParasWithNoThemeColor`:**
+
 - `Dim totalParaCount As Long` declaration deleted
 - `totalParaCount = ActiveDocument.Paragraphs.Count` assignment deleted
 - `emptyParaCount` already changed to `As Long` by Fix B
 
 **Fix B — 78 `As Integer` → `As Long` (return types, Dim variables, parameters):**
+
 - All 33 Count/Check/Audit function return types now `As Long`
 - All internal count variables (`Count`, `totalCount`, `paraCount`, etc.) now `As Long`
 - `Private Const CARTS As Long = 52` — harmless widening
@@ -2461,22 +2519,26 @@ All three fixes applied in one pass via `py/fix_abc.py` + two targeted edits.
 **Fix C — error sentinel:**
 
 *Declaration (class level):*
+
 ```vba
 Private m_lastFuncError As Boolean  ' Set True in any PROC_ERR; checked in GetPassFail
 ```
 
 *In every PROC_ERR block (78 locations):*
+
 ```vba
     m_lastFuncError = True
     Resume PROC_EXIT
 ```
 
 *In `GetPassFail` — reset before each test call:*
+
 ```vba
     m_lastFuncError = False     ' reset before calling any Count function
 ```
 
 *In `GetPassFail` — sentinel applied before pass/fail comparison:*
+
 ```vba
     If m_lastFuncError Then
         ResultArray(TestNum) = -1
@@ -2485,6 +2547,7 @@ Private m_lastFuncError As Boolean  ' Set True in any PROC_ERR; checked in GetPa
 ```
 
 Expected behaviour after fix:
+
 - Test 13 now runs correctly (overflow removed)
 - Any Count function that errors returns -1 via sentinel
 - Expected values are never -1, so any error → FAIL in report
@@ -2550,3 +2613,89 @@ all other tests.
 | Run 1 | 483 s | Cold document cache; FlushReportBuf path bug (no file written) |
 | Run 2 | 230 s | Warm cache; same code; FlushReportBuf path fixed |
 | Run 3 | 112 s | Fix B: `As Integer` → `As Long` eliminates per-operation overflow checks |
+
+---
+
+## § 28 — Session Status and Game Plan Input
+
+**2026-04-21**
+
+### Infrastructure plan (§ 21) — current state
+
+| Step | Description | Status |
+|------|-------------|--------|
+| 1 | Pre-test announcement | **DONE** |
+| 2 | DoEvents between tests | **DONE** |
+| 3 | Batch AppendToFile → FlushReportBuf | **DONE** |
+| 4 | First-hit hint infrastructure (arrays + print hook) | **DONE — 2026-04-21** |
+| 5 | First-hit capture in Count functions (failing tests first) | Pending |
+| 6 | UTF-8 output via aeLoggerClass | Pending |
+| 7 | Markdown report | Pending |
+
+### Out-of-sequence bug fixes — all complete
+
+| Fix | Description |
+|-----|-------------|
+| § 22 | Test 36 — `Stop` removed; FIX label added |
+| § 23 | Test 72 — added to `SkipTestArray` |
+| § 24 | `FlushReportBuf` — path construction fixed |
+| § 26 A/B/C | Integer→Long, dead variable, error sentinel |
+
+### First complete test run — 17 FAILs
+
+Categorised by likely cause:
+
+**Document issues** (expected value is correct; document needs fixing):
+
+| Test | Function | Result | Expected | Note |
+|------|----------|--------|----------|------|
+| 3 | `CountSpaceFollowedByCarriageReturn` | 8 | 0 | 8 space+CR pairs to remove |
+| 26 | `CheckAllHeaders(Empty)` | 67 | 0 | 67 empty header sections |
+| 27 | `CheckAllHeaders(NotEmpty)` | 81 | 147 | 66 headers lost content |
+| 28 | `CountTabFollowedByParagraphMarkInHeaders` | 7 | 77 | Header tab structure degraded |
+| 29 | `CountParagraphsWithoutTabInHeaders` | 141 | 70 | 71 extra tab-less header paras |
+| 47 | `CountTabOnlyParagraphs("Footer")` | 0 | 3 | 3 footer tab paras missing |
+| 55 | `CountContraction("i'm")` | 16 | 0 | 16 straight-apostrophe contractions |
+| 64 | `CountContraction("it's")` | 1 | 0 | 1 straight-apostrophe contraction |
+| 70 | `CountContraction(""'"")` | 73 | 0 | 73 consecutive quote-pair patterns |
+| 71 | `CountContraction(""'"")` | 15 | 0 | 15 consecutive quote-pair patterns |
+
+**Baseline issues** (document has changed since expected values were set):
+
+| Test | Function | Result | Expected | Note |
+|------|----------|--------|----------|------|
+| 16 | `CountTotalParagraphs` | 33,854 | 16,471 | Nearly 2× — document has grown significantly |
+| 32 | `CountLinefeed` | 261 | 982 | Large drop — document cleaned since baseline |
+| 33 | `CountLinefeed(" ")` | 253 | 982 | Same |
+| 34 | `CountManualLineBreaksAndWithSpace` | 0 | 117 | All manual line breaks removed since baseline |
+| 35 | `CountManualLineBreaksAndWithSpace(" ")` | 0 | 117 | Same |
+| 49 | `CountAuditStyles_ToFile` | 18 | 16 | 2 unexpected styles present |
+
+**Error surfaced by Fix C** (function errored; now visible as FAIL):
+
+| Test | Function | Result | Expected | Note |
+|------|----------|--------|----------|------|
+| 50 | `SummarizeHeaderFooterAuditToFile` | -1 | 147 | -1 = error sentinel; function crashed silently before Fix C |
+
+### Skipped tests
+
+| Test | Function | Reason |
+|------|----------|--------|
+| 42 | `CountBoldFootnotesWordLevel` | ~80 s runtime; manual run only |
+| 51 | `CountAndCreateDefinitionForH2` | Heavy — manual run only |
+| 72 | `HasLeftAlignedParagraph` | Infinite loop + format-only Find hang; full rewrite needed |
+
+### Deferred (carry-forward)
+
+- Test 72 full rewrite — `GoToAdjustedPage` stall detection + replace format-only Find with paragraph iteration
+- Test 50 investigation — `SummarizeHeaderFooterAuditToFile` error cause unknown
+- `basTEST_basUIStrings` — aeAssert tests for constants and `FormatMsg`
+- Step 7 OLD_CODE cleanup in `aeRibbonClass.cls`
+- § 13 `.dotm` template architecture Phase 1
+
+### Suggested planning sequence
+
+1. **Resolve 17 FAILs** — fix document issues or update baselines to make suite green
+2. **Investigate Test 50** — determine why `SummarizeHeaderFooterAuditToFile` errors
+3. **Complete Steps 4–7** — first-hit hints, UTF-8 output, Markdown report
+4. **Rewrite Test 72** — `GoToAdjustedPage` + paragraph iteration with DoEvents

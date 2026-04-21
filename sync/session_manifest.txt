@@ -146,3 +146,28 @@ Run test after import:  RUN_THE_TESTS(73)   => expect PASS    0    0    CountInv
 - Step 7: OLD_CODE cleanup in aeRibbonClass.cls
 - § 13: dotm template architecture (Phase 1 migration)
 - § 14: ABANDONED — split document not cost-effective for completed 900+ page Bible
+
+## Step 4 — First-hit hint infrastructure (session 2026-04-21)
+
+[IMPORT] src/aeBibleClass.cls
+        - m_lastHint As String declaration added (class level)
+        - m_HintArray(1 To MaxTests) As String declaration added (class level)
+        - Both reset in InitializeGlobalResultArrayToMinusOne
+        - m_HintArray(TestNum) = m_lastHint inserted after every ResultArray assignment
+          in GetPassFail (61 insertions)
+        - Hint print hook inserted after every Debug.Print GetPassFailArray(num) in RunTest
+          (55 insertions) — silent until Step 5 sets m_lastHint
+
+[SCRIPT] py/step4_hints.py
+        - One-time transformation script; apply via python3.exe py/step4_hints.py
+
+[DOC]   rvw/Code_review 2026-04-20.md
+        - § 21 Step 4 marked DONE
+        - Step 4 implementation note added (after Step 3 section)
+        - § 28 Step 4 table updated
+
+Run test after import:  RUN_THE_TESTS   => results must be identical to prior run
+                        Hint lines all silent (m_lastHint = "" — no Count function sets it yet)
+
+Next step pending approval:
+  Step 5 — First-hit capture in Count functions (m_lastHint = "..." on first violation)
