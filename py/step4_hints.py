@@ -9,6 +9,10 @@ Changes:
 
 No Count functions are modified — m_lastHint is always "" until Step 5.
 All hint lines will be silent on this run; RunTest output unchanged.
+
+NOTE: File is opened/written in text mode. Use \n (not \r\n) in all replacement
+strings — Python text mode on Windows converts \n -> \r\n on write. Using \r\n
+produces corrupt \r\r\n endings that GitHub Desktop shows as "all lines deleted".
 """
 
 import re
@@ -21,8 +25,8 @@ with open(path, 'r', encoding='utf-8-sig') as f:
 # ── 1. Declarations ────────────────────────────────────────────────────────
 OLD_DECL = "Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail"
 NEW_DECL = (
-    "Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail\r\n"
-    "Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail\r\n"
+    "Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail\n"
+    "Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail\n"
     "Private m_HintArray(1 To MaxTests) As String  ' Per-test first-hit hint; printed in RunTest on FAIL"
 )
 assert OLD_DECL in src, "Declaration anchor not found"
@@ -31,9 +35,9 @@ src = src.replace(OLD_DECL, NEW_DECL, 1)
 # ── 2. Reset in InitializeGlobalResultArrayToMinusOne ─────────────────────
 OLD_RESET = "    m_ReportBuf = \"\""
 NEW_RESET = (
-    "    m_ReportBuf = \"\"\r\n"
-    "    m_lastHint = \"\"\r\n"
-    "    Dim h As Long\r\n"
+    "    m_ReportBuf = \"\"\n"
+    "    m_lastHint = \"\"\n"
+    "    Dim h As Long\n"
     "    For h = 1 To MaxTests : m_HintArray(h) = \"\" : Next h"
 )
 assert OLD_RESET in src, "Reset anchor not found"
@@ -44,7 +48,7 @@ src = src.replace(OLD_RESET, NEW_RESET, 1)
 # Add m_HintArray(TestNum) = m_lastHint on the next line
 src = re.sub(
     r'(        ResultArray\(TestNum\) = [^\r\n]+)',
-    lambda m: m.group(0) + '\r\n        m_HintArray(TestNum) = m_lastHint',
+    lambda m: m.group(0) + '\n        m_HintArray(TestNum) = m_lastHint',
     src
 )
 
@@ -55,7 +59,7 @@ HINT_PRINT = ('        If GetPassFailArray(num) = "FAIL!!!!" '
               'Debug.Print , , , "  >> First hit: " & m_HintArray(num)')
 src = re.sub(
     r'(        Debug\.Print GetPassFailArray\(num\)[^\r\n]+)',
-    lambda m: m.group(0) + '\r\n' + HINT_PRINT,
+    lambda m: m.group(0) + '\n' + HINT_PRINT,
     src
 )
 

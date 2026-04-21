@@ -2754,3 +2754,185 @@ After this session, import into the VBA editor:
 - [ ] `src/aeBibleClass.cls`
 
 Run `RUN_THE_TESTS` — all results must match the prior run; no hint lines should appear.
+
+### Confirmation — 2026-04-21
+
+Step 4 verified: full suite run showed only a 0.2-second runtime difference (noise).
+All hint lines silent. No regression. **Step 4 confirmed.**
+
+**Step 5 approved.**
+
+---
+
+## § 30 — Step 5: First-Hit Capture in Count Functions
+
+**2026-04-21 — approved.**
+
+### Design
+
+Each Count function that produces FAILs will set `m_lastHint` on the first violation
+found, using the pattern:
+
+```vba
+If m_lastHint = "" Then m_lastHint = "<context>"
+```
+
+The hint is captured once (first hit only). `GetPassFail` copies it to
+`m_HintArray(TestNum)` after the function returns. `RunTest` prints it when the
+test is FAIL and the hint is non-empty.
+
+### Scope — failing tests only
+
+Priority order: document-issue FAILs first (active violations), then baseline FAILs
+(counts diverged from expected), then the error-sentinel FAIL (Test 50).
+
+| Test | Function | Hint content |
+|------|----------|-------------|
+| 3 | `CountSpaceFollowedByCarriageReturn` | Para index + text excerpt |
+| 16 | `CountTotalParagraphs` | n/a — count-only, no iteration hint |
+| 26 | `CheckAllHeaders("Empty")` | Section + header index |
+| 27 | `CheckAllHeaders("NotEmpty")` | Section + header index |
+| 28 | `CountTabFollowedByParagraphMarkInHeaders` | Section + para text excerpt |
+| 29 | `CountParagraphsWithoutTabInHeaders` | Section + para text excerpt |
+| 32 | `CountLinefeed` | Para index |
+| 33 | `CountLinefeed(" ")` | Para index |
+| 34 | `CountManualLineBreaksAndWithSpace` | Para index + text excerpt |
+| 35 | `CountManualLineBreaksAndWithSpace(" ")` | Para index + text excerpt |
+| 47 | `CountTabOnlyParagraphs("Footer")` | Section index |
+| 49 | `CountAuditStyles_ToFile` | Style name |
+| 55 | `CountContraction("i'm")` | Para index + text excerpt |
+| 64 | `CountContraction("it's")` | Para index + text excerpt |
+| 70 | `CountContraction(""'"")` | Para index + text excerpt |
+| 71 | `CountContraction(""'"")` | Para index + text excerpt |
+
+Test 16 (`CountTotalParagraphs`) counts all paragraphs in one call —
+no per-violation loop to hook; hint not applicable.
+Test 50 (`SummarizeHeaderFooterAuditToFile`) errors before reaching any violation —
+hint will surface once the underlying error is fixed (deferred).
+
+### Implementation — 2026-04-21
+
+**`GetPassFail`** — `m_lastHint = ""` added alongside `m_lastFuncError = False` reset
+(line 883). Without this, hints from a previous test bleed into the next.
+
+**`CountSpaceFollowedByCarriageReturn`** (Test 3):
+```vba
+If m_lastHint = "" Then m_lastHint = Left(rng.Paragraphs(1).Range.Text, 60)
+```
+Inside Find loop; captures paragraph text of first match.
+
+**`CheckAllHeaders`** (Tests 26, 27):
+```vba
+If m_lastHint = "" And EmptyOrNotEmpty = "Empty" Then
+    m_lastHint = "First empty header: Section " & sectionIndex
+If m_lastHint = "" And EmptyOrNotEmpty = "NotEmpty" Then
+    m_lastHint = "First non-empty header: Section " & sectionIndex
+```
+Guard on `EmptyOrNotEmpty` ensures each call captures only its own violation type.
+
+**`CountTabFollowedByParagraphMarkInHeaders`** (Test 28):
+```vba
+If m_lastHint = "" Then m_lastHint = "Section " & sectionIndex & ": " & Left(para.Range.Text, 50)
+```
+
+**`CountParagraphsWithoutTabInHeaders`** (Test 29):
+```vba
+If m_lastHint = "" Then m_lastHint = "Section " & sectionIndex & ": " & Left(para.Range.Text, 50)
+```
+
+**`CountLinefeed`** (Tests 32, 33):
+```vba
+If m_lastHint = "" Then m_lastHint = "First match: " & Left(rng.Text, 60)
+```
+`rng` is the found range (linefeed character); captures surrounding text.
+
+**`CountManualLineBreaksAndWithSpace`** (Tests 34, 35):
+```vba
+If m_lastHint = "" Then m_lastHint = "Footnote " & fnIdx & ": " & Left(content, 50)
+```
+Also removed diagnostic `Stop` (`ElseIf prevChar <> " " Then Stop`) that would have
+broken the full suite run. Added `fnIdx` counter to track footnote position.
+
+**`CountTabOnlyParagraphs`** (Test 47):
+```vba
+If m_lastHint = "" Then m_lastHint = areaType & " Section " & sec.Index
+```
+
+**`CountAuditStyles_ToFile`** (Test 49):
+```vba
+If m_lastHint = "" Then m_lastHint = keyCount & " styles — see rpt\Style Usage Distribution.txt"
+```
+Points to the output file that lists all styles by name.
+
+**`CountInStory`** (Tests 55, 64, 70, 71 — all `CountContraction` calls):
+```vba
+If m_lastHint = "" Then m_lastHint = Left(rng.Paragraphs(1).Range.Text, 60)
+```
+`CountInStory` is the inner Find loop called by `CountContraction` for every story
+range. Setting `m_lastHint` here covers all four contraction tests with one change.
+
+### Also fixed: diagnostic Stop in CountManualLineBreaksAndWithSpace
+
+The `ElseIf prevChar <> " " Then Stop` branch was a development diagnostic —
+`ElseIf prevChar <> " "` is always true when `prevChar = " "` is false, meaning
+Stop fired on every line break not preceded by a space. Removed; count logic unchanged.
+
+### Summary
+
+| Change | Location |
+|--------|----------|
+| `m_lastHint = ""` reset | `GetPassFail` line 883 |
+| 10 `m_lastHint = "..."` captures | 7 Count functions |
+| 1 diagnostic `Stop` removed | `CountManualLineBreaksAndWithSpace` |
+
+**Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
+`RUN_THE_TESTS`. FAILing tests should now show `>> First hit: ...` lines in the
+Immediate Window.**
+
+---
+
+## § 31 — Bug: BOM Stripped by Python Script → GitHub Desktop Shows All Lines Deleted
+
+**2026-04-21**
+
+### Symptom
+
+After Step 4 and Step 5 changes, `src/aeBibleClass.cls` showed all lines deleted
+in GitHub Desktop's diff view.
+
+### Root cause
+
+Two mistakes compounded:
+
+**1. `\r\n` in replacement strings with text-mode file I/O.**
+`step4_hints.py` opened the file in Python text mode (`open(..., 'r')`), which on
+Windows normalizes `\r\n` → `\n` on read. But the replacement strings contained
+literal `\r\n` (e.g. `m.group(0) + '\r\n        m_HintArray...'`). When written
+back in text mode, Python converts `\n` → `\r\n` — but the `\r` already in the
+replacement string passes through unchanged, producing `\r\r\n` for every inserted
+line. Git sees the inserted lines as having corrupt bytes; GitHub Desktop displayed
+the entire file as deleted.
+
+The `.cls` file has no BOM (confirmed with `xxd`): starts with `VERSION 1.0 CLASS`.
+
+**2. Step 5 Edit-tool changes were applied on top of the already-corrupted file.**
+This compounded the diff further.
+
+### Fix
+
+1. `git checkout a4dc340 -- src/aeBibleClass.cls` — restore file from the commit
+   immediately before Step 4 was applied (clean CRLF, verified 0 LF-only lines).
+2. Fix `step4_hints.py`: change all `'\r\n'` in replacement strings to `'\n'`.
+   Text-mode write on Windows converts `\n` → `\r\n` correctly; no manual `\r` needed.
+3. Re-run `step4_hints.py` — Step 4 insertions applied with clean CRLF.
+4. Re-apply Step 5 edits via Edit tool (Edit tool preserves existing line endings).
+5. Verify: 0 LF-only lines, 0 CR-only lines; commit cleanly.
+
+### Rule going forward
+
+Any Python script editing `.cls` or `.bas` files must use **`\n` (not `\r\n`)** in
+all replacement strings when using text-mode I/O. Python text mode handles the
+CRLF conversion on write. Using `\r\n` in replacement strings produces `\r\r\n`
+(corrupt) in the output file.
+
+**Status: FIXED — 2026-04-21.**
