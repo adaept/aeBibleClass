@@ -1472,6 +1472,9 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
 
+    If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then _
+        BufAppend "  >> First hit: " & m_HintArray(num)
+
 PROC_EXIT:
     Exit Function
 PROC_ERR:

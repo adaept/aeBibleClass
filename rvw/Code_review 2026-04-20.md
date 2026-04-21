@@ -2936,3 +2936,86 @@ CRLF conversion on write. Using `\r\n` in replacement strings produces `\r\r\n`
 (corrupt) in the output file.
 
 **Status: FIXED — 2026-04-21.**
+
+---
+
+## § 32 — Session Status: Steps 1–5 Complete
+
+**2026-04-21**
+
+### Infrastructure plan (§ 21) — current state
+
+| Step | Status |
+|------|--------|
+| 1 — Pre-test announcement | DONE |
+| 2 — DoEvents between tests | DONE |
+| 3 — Batch file I/O (BufAppend / FlushReportBuf) | DONE |
+| 4 — First-hit hint infrastructure (arrays + print hooks) | DONE |
+| 5 — First-hit capture in Count functions | DONE |
+| 6 — UTF-8 output via aeLoggerClass | Pending |
+| 7 — Markdown report | Pending |
+
+### Confirmed working
+
+Step 5 verified: FAILing tests show `>> First hit: ...` in the Immediate Window.
+Runtime unchanged.
+
+### Bug identified: hint not written to TestReport.txt
+
+The `>> First hit:` line is printed to the Immediate Window via `Debug.Print` in
+`RunTest`, but is **not written to `TestReport.txt`** via `BufAppend` in
+`OutputTestReport`. The Immediate Window has a limited buffer (~200 lines); on a
+73-test run the early results scroll off and are lost. The file is the authoritative
+record and must include the hints. — See § 33.
+
+### Open items
+
+| Item | Priority |
+|------|----------|
+| Hint written to TestReport.txt (§ 33) | Immediate |
+| 17 FAILs — 10 document issues, 6 baseline drift, 1 error sentinel | High |
+| Test 50 — `SummarizeHeaderFooterAuditToFile` crashes (-1) | Medium |
+| Test 72 — full rewrite (GoToAdjustedPage + format-only Find) | Medium |
+| Step 6 — UTF-8 output via aeLoggerClass | Pending |
+| Step 7 — Markdown report | Pending |
+
+---
+
+## § 33 — Bug: Hint Not Written to TestReport.txt
+
+**2026-04-21**
+
+### Symptom
+
+`>> First hit:` context lines appear in the Immediate Window for FAILing tests
+but are absent from `rpt/TestReport.txt`. The Immediate Window buffer holds
+approximately 200 lines; a 73-test full run produces enough output to scroll
+early results off the top, making the Immediate Window unreliable as the
+sole record of hint output.
+
+### Root cause
+
+The hint print in `RunTest` uses `Debug.Print` only:
+```vba
+If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then _
+    Debug.Print , , , "  >> First hit: " & m_HintArray(num)
+```
+
+`OutputTestReport` writes each test's result line to the buffer via `BufAppend`
+but has no corresponding hint write. `m_HintArray(num)` is populated and correct
+at the time `OutputTestReport` is called — it just isn't used there.
+
+### Fix
+
+One addition to `OutputTestReport`, after `End Select` and before `PROC_EXIT`:
+
+```vba
+    If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then _
+        BufAppend "  >> First hit: " & m_HintArray(num)
+```
+
+This covers all 73 cases with a single change. The hint line appears in the file
+immediately after its test's result line, indented to distinguish it visually.
+
+**Status: IMPLEMENTED — 2026-04-21. Import `src/aeBibleClass.cls` and run
+`RUN_THE_TESTS`. FAILing tests must show `>> First hit:` lines in `rpt/TestReport.txt`.**
