@@ -1331,3 +1331,100 @@ infrastructure transition after Phase 1.
 3. Page number strategy confirmed: strip during editing, regenerate at print?
 4. File-naming convention agreed
 5. `DocumentOpen` event handler design reviewed against current `OnRibbonLoad` flow
+
+---
+
+## § 15 — Split document architecture abandoned
+
+**Decision (2026-04-20):** The split document approach (§ 14) is abandoned.
+
+**Rationale:** The Study Bible is a completed work — all 66 books, footnotes numbered
+1–1000, 146 sections, ~10 picture maps. The upfront cost to split the document plus the
+back-end merge cost (merge script, page number regeneration, footnote renumbering) plus
+the ongoing testing burden does not balance against a one-time user instruction:
+
+> "GoTo Revelation takes ~20 seconds to load this 900+ page document for editing.
+>  Your patience is appreciated."
+
+The layout delay is a known, disclosed limitation of the single-document approach.
+It is not a defect — it is a predictable consequence of document size. Splitting the
+document trades that constraint for a different set of constraints (merge tooling,
+cross-file navigation, multi-file editing workflow) that are harder to explain and harder
+to maintain.
+
+**Architecture remains:** single `.docm` (current) → `BibleAddIn.dotm + Bible.docx` (§ 13 — Phase 1, when ready).
+
+---
+
+## § 16 — i18n label gap: batch plan
+
+### Scope
+
+Three tasks confirmed for a single implementation session:
+
+#### Task A — LBL_* constants + `getLabel` callbacks
+
+Four visible ribbon labels are currently static strings in XML with no i18n path:
+
+| Control | XML attribute | Proposed constant |
+|---------|--------------|-------------------|
+| `<tab id="RWB">` | `label="Radiant Word Bible"` | `LBL_TAB` |
+| `<group id="NavGroup">` | `label="Bible Navigation"` | `LBL_GROUP` |
+| `<button id="GoButton">` | `label="Go"` | `LBL_GO` |
+| `<button id="adaeptButton">` | `label="About"` | `LBL_ABOUT` |
+
+Work:
+- Add `LBL_*` constants to `basUIStrings.bas`
+- Replace static `label=` with `getLabel=` in XML for all four elements
+- Add four `GetXxxLabel` callbacks to `basBibleRibbonSetup.bas`
+
+`showLabel="false"` controls (Prev/Next buttons, comboBoxes, NewSearchButton) have no
+visible label — no `getLabel` needed for i18n.
+
+#### Task B — Control ID constants + fix `InvalidateControl` literals
+
+All control ID strings in `InvalidateControl` calls are currently inline literals.
+Define `CTRL_*` constants in `basUIStrings.bas` and replace every literal.
+
+**Preexisting bug discovered:** Three `InvalidateControl` calls in `OnGoClick`
+(lines 1004, 1010, 1015 of `aeRibbonClass.cls`) use wrong IDs:
+
+| Wrong ID (current) | Correct XML id |
+|--------------------|----------------|
+| `"BookComboBox"` | `"cmbBook"` |
+| `"ChapterComboBox"` | `"cmbChapter"` |
+| `"VerseComboBox"` | `"cmbVerse"` |
+
+`InvalidateControl` silently no-ops on an unknown ID. Effect: after an invalid Go
+attempt the comboBox display does not refresh. Fix is natural when constants are
+introduced — the constant carries the correct ID.
+
+#### Task C — Python i18n-completeness scan
+
+New script `py/check_i18n.py`: scans all `src/*.bas` and `src/*.cls` for string
+literals that look like UI text and are not references to `basUIStrings` constants.
+Produces a baseline report. Run after Tasks A and B to confirm no new inline
+literals were introduced.
+
+### Import plan (end of session)
+
+| File | Reason |
+|------|--------|
+| `src/basUIStrings.bas` | LBL_* + CTRL_* constants (Tasks A + B combined) |
+| `src/basBibleRibbonSetup.bas` | GetXxxLabel callbacks (Task A) |
+| `src/aeRibbonClass.cls` | CTRL_* replacements + bug fix (Task B) |
+| XML inject | getLabel= attributes (Task A) |
+
+Python script `py/check_i18n.py` — no VBA import.
+
+### Testing batch (after imports)
+
+Single manual pass covering:
+- All keytip badges (Alt+Y2 → B, C, V, [, ], ,, ., <, >, G, S, A)
+- All four localised labels visible in ribbon UI
+- Invalid Go attempt → verify comboBox now refreshes (bug fix confirmation)
+- i18n scan script runs clean (no violations in current src/)
+
+### Status
+
+**PLANNED — next implementation session.**

@@ -86,19 +86,37 @@
 # in the current session, read the diff before proceeding.
 # ------------------------------------------------------------
 
-## Decision points outstanding before next implementation session
+## Next implementation session — § 16 batch
 
-### § 14 — Split document architecture
-1. Split boundary: OT/NT first, or go directly to per-book?
-2. Footnote convention confirmed: restart per book?
-3. Page number strategy confirmed: strip during editing, regenerate at print?
-4. File-naming convention agreed (proposed: 01_Genesis.docx)
-5. DocumentOpen event handler design reviewed against current OnRibbonLoad flow
+### Task A — LBL_* constants + getLabel callbacks
+- basUIStrings.bas: add LBL_TAB, LBL_GROUP, LBL_GO, LBL_ABOUT
+- basBibleRibbonSetup.bas: add GetTabLabel, GetNavGroupLabel, GetGoLabel, GetAboutLabel
+- XML: replace static label= with getLabel= on <tab>, <group>, GoButton, adaeptButton
+- Run inject_ribbon.py
 
-### Near-term (free version — next session candidates)
-- Bug 16: Keytip badges end-to-end manual test (all badges incl. GetGoKeytip)
-- getLabel callbacks for all ribbon labels (LBL_* constants) — closes i18n label gap
+### Task B — Control ID constants + fix InvalidateControl literals
+- basUIStrings.bas: add CTRL_* constants for all control IDs
+- aeRibbonClass.cls: replace all InvalidateControl("literal") with CTRL_* constant
+- Fix 3 wrong IDs in OnGoClick: BookComboBox→cmbBook, ChapterComboBox→cmbChapter, VerseComboBox→cmbVerse
+
+### Task C — Python i18n-completeness scan
+- New file: py/check_i18n.py
+- Scans src/*.bas and src/*.cls for inline UI string literals not from basUIStrings
+
+### Imports needed at session end
+- src/basUIStrings.bas      (Tasks A + B)
+- src/basBibleRibbonSetup.bas (Task A)
+- src/aeRibbonClass.cls     (Task B)
+- XML inject_ribbon.py      (Task A)
+
+### Testing batch (after imports — includes § 16 + keytip end-to-end)
+- All keytip badges: Alt+Y2 → B, C, V, [, ], comma, period, <, >, G, S, A
+- All four localised labels visible in ribbon
+- Invalid Go → comboBox now refreshes (bug fix confirmation)
+- py/check_i18n.py runs clean
+
+### Deferred (not this session)
 - basTEST_basUIStrings — aeAssert tests for all constants and FormatMsg
-- Python i18n-completeness script — scan src/ for inline literals
-- Control ID constants + replace InvalidateControl literals
 - Step 7: OLD_CODE cleanup in aeRibbonClass.cls
+- § 13: dotm template architecture (Phase 1 migration)
+- § 14: ABANDONED — split document not cost-effective for completed 900+ page Bible
