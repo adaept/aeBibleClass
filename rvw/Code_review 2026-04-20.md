@@ -2699,3 +2699,58 @@ Categorised by likely cause:
 2. **Investigate Test 50** — determine why `SummarizeHeaderFooterAuditToFile` errors
 3. **Complete Steps 4–7** — first-hit hints, UTF-8 output, Markdown report
 4. **Rewrite Test 72** — `GoToAdjustedPage` + paragraph iteration with DoEvents
+
+---
+
+## § 29 — Session Summary: Step 4 Complete
+
+**2026-04-21**
+
+### What was done
+
+Step 4 of the infrastructure plan (§ 21) was implemented via `py/step4_hints.py`.
+
+**Four transformations applied to `src/aeBibleClass.cls`:**
+
+| # | Location | Change | Count |
+|---|----------|--------|-------|
+| 1 | Class declarations | `m_lastHint As String` + `m_HintArray(1 To MaxTests) As String` added | — |
+| 2 | `InitializeGlobalResultArrayToMinusOne` | Both variables reset to `""` / empty | — |
+| 3 | `GetPassFail` — after each `ResultArray(TestNum) = <expr>` | `m_HintArray(TestNum) = m_lastHint` inserted | 61 |
+| 4 | `RunTest` — after each `Debug.Print GetPassFailArray(num)` | Conditional hint print inserted | 55 |
+
+The hint print line:
+```vba
+If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then _
+    Debug.Print , , , "  >> First hit: " & m_HintArray(num)
+```
+
+**All hint lines are silent on this run.** No Count function sets `m_lastHint` yet —
+that is Step 5. Infrastructure-only pass: arrays declared, captures wired, print
+hooks in place. Full suite results must be identical to the previous run.
+
+### One anomaly noted
+
+Test 72's `ResultArray` assignment is at 12-space indent (inside `If OneVersePerPara`)
+rather than the standard 8-space indent. The regex did not match it, so no capture
+was inserted inside the `If` block. Consequence is nil — Test 72 is in `SkipTestArray`.
+
+### State after this session
+
+| Step | Status |
+|------|--------|
+| 1 — Pre-test announcement | DONE |
+| 2 — DoEvents between tests | DONE |
+| 3 — Batch file I/O (BufAppend / FlushReportBuf) | DONE |
+| 4 — First-hit hint infrastructure | **DONE** |
+| 5 — First-hit capture in Count functions | Pending |
+| 6 — UTF-8 output via aeLoggerClass | Pending |
+| 7 — Markdown report | Pending |
+
+### Import checklist
+
+After this session, import into the VBA editor:
+
+- [ ] `src/aeBibleClass.cls`
+
+Run `RUN_THE_TESTS` — all results must match the prior run; no hint lines should appear.
