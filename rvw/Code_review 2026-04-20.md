@@ -3521,3 +3521,41 @@ Once identified:
 5. **Investigate Plain Text, List Paragraph, Paragraph Continuation** — print contexts
 6. **Write fix routines + tests** for each of the three
 7. **Update Test 49 expected to 12** once all fixes confirmed
+
+---
+
+### Result after first fixes — 2026-04-21
+
+```
+Normal: 31957          Heading 1: 66          Heading 2: 1188
+CustomParaAfterH1: 66  Brief: 66              DatAuthRef: 198
+Psalms BOOK: 5         Lamentation: 152       Footnote Text: 1000
+Plain Text: 26         List Paragraph: 82     Paragraph Continuation: 158
+Title: 1               Header: 1              TheHeaders: 132
+Total paragraphs (all stories): 35098   Distinct styles: 15
+```
+
+**Completed:**
+
+| Item | Before | After | Notes |
+|------|--------|-------|-------|
+| `CustomParaAfterH1-2nd` | 4 | 0 | Consolidated into `CustomParaAfterH1`; 66 books now one style; 10 pt vertical shift accepted |
+| `Footer` | 3 | 0 | Eliminated — footer story now linked-to-previous; no longer appears in distribution |
+| `TheFooters` | 1 | — | No longer appears separately; consistent with footer linking behaviour |
+| `Header` | 3 | 1 | Partially fixed — 1 violation remains |
+| `TheHeaders` | 133 | 132 | Net reduction of 1 (consistent with header restructuring) |
+| Distinct styles | 18 | 15 | Reduction of 3 |
+
+**Remaining (target 12):**
+
+| Style | Count | Action |
+|-------|-------|--------|
+| `Header` | 1 | Run `AddBookNameHeaders` again or fix manually; verify Test 30 = 0 |
+| `Plain Text` | 26 | Investigate → fix routine → test |
+| `List Paragraph` | 82 | Investigate → fix routine → test |
+| `Paragraph Continuation` | 158 | Investigate → fix routine → test |
+| `Title` | 1 | Tolerated (artifact Section 1) |
+
+**Test 49 baseline update needed:** result is now 15; expected is 16 (stale). Update expected to 15 immediately, then to 12 once Group B fixes are complete.
+
+**Next step:** investigate `Plain Text`, `List Paragraph`, and `Paragraph Continuation` to determine correct replacement styles before writing fix routines.
