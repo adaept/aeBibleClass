@@ -65,3 +65,142 @@ Test 30 now passes. Test 49 = 15 (expected 15). Tests 50 and 51 now running corr
 Test 49 expected will move from 15 → 12 once Group B styles are resolved.
 
 ---
+
+## § 4 — Style taxonomy — approved 2026-04-21
+
+### Approved taxonomy
+
+| Word Style | USFM marker | Semantic role | Replaces |
+|-----------|-------------|---------------|----------|
+| `Heading 1` | `\mt1` | Book title | *(reserved — keep)* |
+| `Heading 2` | `\c` | Chapter heading | *(reserved — keep)* |
+| `BodyText` | `\p` | Standard body paragraph | `Normal`, `Plain Text` |
+| `BodyTextContinuation` | `\m` | Continuation paragraph (no indent) | `Paragraph Continuation` |
+| `ListItem` | `\li1` | List / bullet item | `List Paragraph` |
+| `AppendixTitle` | `\imt` | Appendix section title | `Normal` (Concordance heading) |
+| `AppendixBody` | `\ip` | Appendix body text | `Plain Text` (Concordance body) |
+| `CustomParaAfterH1` | `\p` (first) | First para after book title | *(keep — already semantic)* |
+| `DatAuthRef` | `\d` | Descriptive / date-author reference | *(keep — already semantic)* |
+| `TheHeaders` | — | Running header | *(keep)* |
+| `TheFooters` | — | Running footer / page number | *(keep)* |
+| `FootnoteText` | `\f` | Footnote | *(keep)* |
+
+### Font context
+
+| Font | Status |
+|------|--------|
+| Calibri | Replaced globally by Carlito (metrically identical, free) — **DONE** |
+| Times New Roman | Awaiting substitution — **PENDING** |
+| Allowed fonts, fallback fonts, CJK prep | In queue as part of i18n work — **FUTURE** |
+
+### Key finding: Normal = Bible body text
+
+`Normal` (Carlito 9pt) is the style the author used for all Bible text paragraphs.
+Renaming `Normal` → `BodyText` (or replacing all `Normal` paragraphs with `BodyText`)
+is the single highest-impact style fix — it addresses the bulk of unintentional `Normal`
+usage in one operation and establishes the semantic foundation for the USFM `\p` export.
+
+### Plain Text items 1–8 — root cause confirmed
+
+These are accidental. Word has a known spacing bug: when a paragraph with space-before
+is the first paragraph on a page, Word ignores the space-before setting. The workaround
+is to insert an empty paragraph (with a tab as marker) ahead of the heading. Those empty
+paragraphs ended up styled as `Plain Text` rather than `BodyText`. Once `BodyText` is
+defined, they are all straightforward replacements.
+
+### Implementation plan (step-by-step)
+
+**Step 1 — Define `BodyText` style**
+Create the `BodyText` style in the document: Carlito 9pt (matching current `Normal`
+body text formatting), `\p` semantic. This must be done in Word before any VBA fix
+routine runs.
+
+**Step 2 — Replace `Normal` → `BodyText` (Bible text, ~16 000+ paragraphs)**
+Largest operation. All `Normal` paragraphs become `BodyText`. This is the Bible text
+fix. A fix routine in `basFixDocxRoutines` will iterate all paragraphs and replace.
+Test: add test for `Normal` count = 0.
+
+**Step 3 — Replace `Plain Text` → `BodyText` / `AppendixBody` (26 paragraphs)**
+Items 1–8 (front matter spacers) → `BodyText`.
+Items 9–26 (concordance) → `AppendixBody` (requires `AppendixBody` style defined first).
+Test: update Test 49 expected once complete.
+
+**Step 4 — Replace `Paragraph Continuation` → `BodyTextContinuation` (158 paragraphs)**
+Requires `BodyTextContinuation` style defined in Word first. Investigate 158 instances
+before fix to confirm all are continuation paragraphs (no misuse).
+
+**Step 5 — Replace `List Paragraph` → `ListItem` (82 paragraphs)**
+Requires `ListItem` style defined in Word. Check for nested lists → may need `ListItem2`.
+
+**Step 6 — Define and apply `AppendixTitle` / `AppendixBody`**
+Concordance section title ("Bible Concordance") → `AppendixTitle`.
+Concordance body paragraphs → `AppendixBody`.
+
+**Step 7 — Times New Roman substitution**
+Separate from style fixes; tracked under i18n / font work.
+
+### Target state after Steps 1–6
+
+Test 49 expected = 12 (only intentional styles remain):
+`Heading 1`, `Heading 2`, `BodyText`, `BodyTextContinuation`, `ListItem`,
+`AppendixTitle`, `AppendixBody`, `CustomParaAfterH1`, `DatAuthRef`,
+`TheHeaders`, `TheFooters`, `FootnoteText`
+
+---
+
+## § 3 — Plain Text style investigation — 2026-04-21
+
+### Diagnostic results
+
+26 paragraphs use `Plain Text`. Two distinct locations:
+
+**Items 1–8** (positions 1856–26595) — front matter, all blank/whitespace:
+
+| Group | Items | Context pattern | Interpretation |
+|-------|-------|----------------|----------------|
+| A | 1–4 | `Normal → Plain Text → Normal` | Isolated blank spacer in front matter |
+| B | 5–6 | `Normal → Plain Text → Plain Text → Heading 1` | Pre-book blank spacers |
+| C | 7–8 | `DatAuthRef → Plain Text → Plain Text → Heading 2` | Pre-chapter blank spacers |
+
+**Items 9–26** (positions 4180954+) — Concordance appendix at end of document:
+
+```
+Normal       |              ← blank
+Normal       |              ← blank
+Normal       | Bible Concordance    ← section title
+Normal       |              ← blank
+Normal       |              ← blank
+Plain Text   |              ← blank
+Plain Text   | A
+Plain Text   | written concordance has been omitted...
+Plain Text   | (body text paragraphs, software links, etc.)
+```
+
+### Two style problems in the concordance section
+
+| Element | Current style | Should be |
+|---------|--------------|-----------|
+| "Bible Concordance" title | `Normal` | ? — `Heading 1` or section title style |
+| Body text paragraphs | `Plain Text` | ? — document standard body text style |
+| Blank spacers | `Normal` / `Plain Text` | depends on surrounding styles |
+
+Note: `Normal` paragraphs surrounding `Plain Text` in both locations are also
+unintentional — the front-matter and concordance sections have a broader style
+problem, not just `Plain Text` in isolation.
+
+### Open questions (required before fix routine)
+
+1. What is the standard body text style in this document? (Check what style
+   Genesis chapter text uses — likely `CustomBody` or similar.)
+2. Should "Bible Concordance" be treated as `Heading 1` so it appears in the
+   heading structure and gets a running header, or is it a standalone appendix
+   with a different style?
+
+### Recommended fix approach (pending answers above)
+
+- Replace `Plain Text` body paragraphs in concordance → standard body text style
+- Replace `Normal` "Bible Concordance" title → `Heading 1` (or appendix heading style)
+- Blank `Plain Text` / `Normal` spacers before headings → review whether spacing
+  should be handled by paragraph space-before on the heading style instead
+
+---
