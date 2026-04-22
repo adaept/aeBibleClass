@@ -306,3 +306,47 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Public Sub FixHeader7()
+    Dim sec As Word.Section
+    Dim hdr As HeaderFooter
+    Dim para As Word.Paragraph
+    For Each sec In ActiveDocument.Sections
+        Set hdr = sec.Headers(wdHeaderFooterPrimary)
+        If hdr.Exists Then
+            For Each para In hdr.Range.Paragraphs
+                If para.style.NameLocal <> "TheHeaders" Then
+                    Debug.Print "Section " & sec.index & ": style='" & para.style.NameLocal & "' linked=" & hdr.LinkToPrevious & _
+                                    " | " & Left(para.Range.Text, 40)
+                End If
+            Next para
+        End If
+    Next sec
+End Sub
+
+Public Sub FixFrontMatterHeaders()
+    ' Section 1 has LinkToPrevious=True which defers to Word's Normal template
+    ' default "Header" style.  Break the link and apply the empty-header spec
+    ' (TheHeaders + vbTab).  Sections 2-N that chain to Section 1 via
+    ' LinkToPrevious will automatically inherit the corrected style.
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oHdr    As HeaderFooter
+
+    Set oDoc = ActiveDocument
+    Set oHdr = oDoc.Sections(1).Headers(wdHeaderFooterPrimary)
+
+    oHdr.LinkToPrevious = False
+    oHdr.Range.Delete
+    With oHdr.Range.Paragraphs(1)
+        .style = oDoc.Styles("TheHeaders")
+        .Range.InsertBefore vbTab
+    End With
+    Debug.Print "FixFrontMatterHeaders: Section 1 header reset to TheHeaders."
+PROC_EXIT:
+    Set oHdr = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixFrontMatterHeaders of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub

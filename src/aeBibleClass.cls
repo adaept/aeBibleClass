@@ -2831,7 +2831,7 @@ Private Function CountHeaderStyleUsage() As Long
                 If para.style.NameLocal <> "TheHeaders" Then
                     Count = Count + 1
                     If m_lastHint = "" Then _
-                        m_lastHint = "Section " & sec.Index & ": style='" & para.style.NameLocal & "'"
+                        m_lastHint = "Section " & sec.index & ": style='" & para.style.NameLocal & "'"
                 End If
             Next para
         End If

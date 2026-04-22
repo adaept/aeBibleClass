@@ -3559,3 +3559,87 @@ Total paragraphs (all stories): 35098   Distinct styles: 15
 **Test 49 baseline update needed:** result is now 15; expected is 16 (stale). Update expected to 15 immediately, then to 12 once Group B fixes are complete.
 
 **Next step:** investigate `Plain Text`, `List Paragraph`, and `Paragraph Continuation` to determine correct replacement styles before writing fix routines.
+
+---
+
+### Test run results — 2026-04-21
+
+**Test 30 — CountHeaderStyleUsage (rewritten):**
+```
+FAIL!!!!   Test = 30   7   0   CountHeaderStyleUsage
+           >> First hit: Section 1: style='Header'
+```
+The rewritten function is working correctly — it now searches header stories.
+7 violations found. First hit is Section 1 (the artifact section at document start).
+`AddBookNameHeaders` skips Section 1 by design (cursor-start prompt). Its header
+was never processed and retains the built-in `Header` style.
+
+**Psalms confirmed correct** — `AddBookNameHeaders` bug fix (full paragraph scan,
+sBookName captured at H1) resolved the Psalms missing-header issue.
+
+**Test 49:** Result = 15, Expected = 15 → **PASS** (expected updated in code).
+
+**Tests 50 and 51 — significant improvement:**
+
+| Test | Function | Previous | Now | Notes |
+|------|----------|----------|-----|-------|
+| 50 | `SummarizeHeaderFooterAuditToFile` | -1 (error sentinel) | 147 | Silent crash now resolved — function running correctly |
+| 51 | `CountAndCreateDefinitionForH2` | SKIP | 1189 | Removed from SkipTestArray; running and matching expected |
+
+**Investigating the 7 Header violations:**
+
+Section 1 (artifact) accounts for 1. The remaining 6 are header sections that
+`AddBookNameHeaders` either did not reach or that reverted. Possible causes:
+- Sections processed before the cursor-start point
+- Sections where the paragraph scan found neither H1 nor H2 and fell through to
+  `LinkToPrevious = True`, inheriting an older header with `Header` style
+
+**Action:** Run `AddBookNameHeaders` with cursor placed at the very first Bible
+content section (Genesis title page). Review the Immediate Window output
+(`Title page cleared: ...` and `Header added: ...`) to identify which sections
+were not processed. Any remaining `Header`-style violations after a full run
+should be fixed manually and investigated as document-structure anomalies.
+
+---
+
+### § 38 — Test 30 resolution — 2026-04-21
+
+**Diagnostic run:**
+
+```
+Section 1: style='Header'  linked=True |
+Section 2: style='Header'  linked=True |
+Section 3: style='Header'  linked=True |
+Section 4: style='Header'  linked=True |
+Section 5: style='Header'  linked=True |
+Section 6: style='Header'  linked=True |
+Section 7: style='Header'  linked=True |
+```
+
+All 7 violations have `linked=True`, including Section 1. Root cause: Section 1
+with `LinkToPrevious = True` defers to Word's Normal template default, which uses
+the built-in `Header` style. Sections 2–7 are front-matter sections that chain
+`LinkToPrevious` from Section 1 — they carry no independent content.
+
+**Fix:** Section 1 header was manually corrected — `LinkToPrevious` broken,
+`TheHeaders` style + `vbTab` applied. Sections 2–7 remain `linked=True` and
+automatically inherit the corrected style from Section 1.
+
+**Result after fix:**
+
+```
+PASS   Test = 30   0   0   CountHeaderStyleUsage
+```
+
+Test 30 is **PASS** (0 violations). Style count at 14 distinct styles in document.
+
+**Remaining Group B work (target: Test 49 = 12):**
+
+| Style | Count | Action |
+|-------|-------|--------|
+| `Plain Text` | 26 | Investigate contexts → fix routine → test |
+| `List Paragraph` | 82 | Investigate contexts → fix routine → test |
+| `Paragraph Continuation` | 158 | Investigate contexts → fix routine → test |
+| `Title` | 1 | Tolerated (artifact Section 1) |
+
+Test 49 expected is 15; final target is 12 once Group B styles are resolved.
