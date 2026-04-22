@@ -3078,3 +3078,216 @@ FIX routines in `basTEST_aeBibleTools` should be moved once the bug in
 `AddBookNameHeaders` is resolved and the consolidation pattern is established.
 
 **Next step (pending approval):** Investigate and fix the bug in `AddBookNameHeaders`.
+
+---
+
+## § 35 — Analysis: AddBookNameHeaders Bug + Test 30 CountHeaderStyleUsage
+
+**2026-04-21**
+
+### Test 30 — CountHeaderStyleUsage: two defects (trivial PASS)
+
+`CountHeaderStyleUsage` currently searches `doc.Content` (the main body story)
+for paragraphs styled `"Header"` (the built-in Word style). It always returns 0
+because:
+
+1. **Wrong style name**: the style to detect as a violation is `"Header"` (built-in).
+   The correct style that all header paragraphs must use is `"TheHeaders"`. The test
+   should count paragraphs using any style OTHER than `"TheHeaders"`.
+
+2. **Wrong story range**: `doc.Content` is the body story. Header content lives in
+   `wdHeadersFootersStory` — a separate story not included in `doc.Content`. No
+   matter what is in the headers, this search will always return 0.
+
+The test passes trivially and enforces nothing. It needs a complete rewrite to
+iterate header stories across all sections and count paragraphs whose style is not
+`"TheHeaders"`.
+
+`AddBookNameHeaders` is the FIX routine for Test 30 (once corrected).
+
+---
+
+### AddBookNameHeaders — requirements (from user)
+
+| Case | First paragraph of section | Action |
+|------|---------------------------|--------|
+| Book title page | `Heading 1` | Clear header — leave empty with centered tab marker |
+| First chapter | `Heading 2` | Write book name (from nearest H1) into header using `"TheHeaders"` style |
+| All other sections | anything else | Link to previous section's header |
+
+**Empty header spec**: center-aligned, one tab character, default Word tab stop
+(0.1″), no other tab settings. This is an intentional visual marker in the VBE.
+
+**Cursor-start requirement**: routine prompts to place cursor at the desired start
+section. This allows the user to skip Section 1, the artifact section at the very
+start of the document (created during the copy from old .docm to new file —
+reduces file size from 13 MB to 7 MB). Section 1 is not Bible content and must
+not have book-name header logic applied to it.
+
+---
+
+### AddBookNameHeaders — code analysis
+
+#### Bug 1 (confirmed): first-paragraph-only section classification
+
+```vba
+Set oPara = oSection.Range.Paragraphs(1)
+If oPara.style = oDoc.Styles("Heading 1") Then ...
+```
+
+Only the **first** paragraph of the section is examined. If any section's first
+paragraph is not the Heading 1 or Heading 2 paragraph (e.g. a blank paragraph
+precedes it due to a section break artifact, or the Psalms title page has an
+extra leading paragraph from document history), the section falls through to
+`Else` and links to the previous section's header.
+
+**Psalms scenario**: if the Psalms title page section has a blank first paragraph,
+the H1 branch is skipped → header links to Job's header (wrong). Then the first
+Psalm section starts with H2 correctly and sets "Psalms" in the header. The title
+page shows the previous book's header instead of being cleared.
+
+Alternatively, if the FIRST Psalm section (the one that should trigger H2) has a
+different first-paragraph style, it falls into `Else`, links to the cleared
+Psalms title page (empty), and ALL subsequent Psalms sections also inherit empty.
+This matches the reported symptom: all of Psalms missing the header.
+
+#### Bug 2 (design): sBookName captured too late — backward search is fragile and slow
+
+`sBookName` is updated only when `Paragraphs(1).style = Heading 2` is found,
+using a backward paragraph scan from document start to the current section:
+
+```vba
+Set oSearch = oDoc.Range(0, oSection.Range.Start)
+For pIdx = oSearch.Paragraphs.Count To 1 Step -1
+    If oSearch.Paragraphs(pIdx).style = oDoc.Styles("Heading 1") Then
+        sBookName = Trim$(Replace(oSearch.Paragraphs(pIdx).Range.Text, vbCr, ""))
+        Exit For
+    End If
+Next pIdx
+```
+
+Problems:
+- For Psalms (book 19), the search scans thousands of paragraphs backwards on
+  each H2 hit. 150 Psalms × O(n) scan = significant performance cost.
+- If the H2 branch is never triggered for a book (because of Bug 1 above), the
+  backward search never runs and `sBookName` carries the previous book's name.
+
+#### Bug 3 (structural): Else branch is unsafe between H1 and H2
+
+`LinkToPrevious = True` in the `Else` branch inherits from whatever the previous
+section's header is. For sections immediately following an H1 (cleared header),
+this means an empty header. The code assumes H1 is always immediately followed
+by H2 with no intervening sections — this assumption can be violated.
+
+#### Bug 4 (dead code): oFound declared but never used
+
+```vba
+Dim oFound As Word.Range
+Set oFound = Nothing
+```
+
+`oFound` is declared inside the loop (hoisted to procedure scope in VBA), set to
+`Nothing`, and never assigned a found range. It is cleaned up in `PROC_EXIT`.
+Dead code — no functional impact but adds noise.
+
+#### Empty header style not explicitly enforced
+
+The H1 branch deletes the header content (`oHeader.Range.Delete`) but does not
+explicitly apply the `"TheHeaders"` style with centered alignment and the tab
+marker to the remaining terminating paragraph mark. If `"TheHeaders"` is not
+already the default style for that story's paragraph, the empty header may not
+meet spec (centered, one tab at 0.1″).
+
+---
+
+### Proposed fix for AddBookNameHeaders
+
+Capture `sBookName` from the H1 paragraph text immediately when the H1 section
+is encountered, eliminating the backward search entirely. Use `sBookName` in the
+Else branch when it is already set (between H1 and H2 gap sections, if any).
+Scan all section paragraphs — not just `Paragraphs(1)` — to classify the section.
+
+```vba
+' Classify section by scanning all paragraphs for H1 or H2
+Dim bFoundH1 As Boolean, bFoundH2 As Boolean
+Dim oClassPara As Word.Paragraph
+bFoundH1 = False : bFoundH2 = False
+For Each oClassPara In oSection.Range.Paragraphs
+    If oClassPara.style = oDoc.Styles("Heading 1") Then
+        bFoundH1 = True : Exit For
+    ElseIf oClassPara.style = oDoc.Styles("Heading 2") Then
+        bFoundH2 = True : Exit For
+    End If
+Next oClassPara
+
+If bFoundH1 Then
+    sBookName = Trim$(Replace(oClassPara.Range.Text, vbCr, ""))
+    oHeader.LinkToPrevious = False
+    ' Clear + apply TheHeaders style with center alignment and tab
+    oHeader.Range.Delete
+    With oHeader.Range.Paragraphs(1)
+        .style = oDoc.Styles("TheHeaders")
+        .Range.InsertBefore vbTab
+    End With
+ElseIf bFoundH2 Then
+    ' sBookName already set from the H1 branch — no backward search needed
+    oHeader.LinkToPrevious = False
+    ' ... write sBookName (existing code)
+Else
+    oHeader.LinkToPrevious = True
+End If
+```
+
+This eliminates Bugs 1, 2, and 4. Bug 3 (gap sections) is addressed because
+`sBookName` is now set at H1 time — if a gap section appears between H1 and H2,
+`LinkToPrevious = True` is still applied (linking to the cleared/marked header),
+but since sBookName is already known, the H2 branch when it arrives will set the
+correct name.
+
+---
+
+### Verdict on Psalms
+
+**Cannot determine fat-finger vs. code bug from code analysis alone.** Both are
+plausible:
+
+- **Fat-finger**: an accidental edit to the first paragraph of the Psalms title
+  page section changed its style away from `Heading 1`, causing Bug 1 to trigger.
+- **Code bug**: Bug 1 is real and reproducible — any section whose `Paragraphs(1)`
+  is not H1/H2 will misbehave. Psalms may have a structural characteristic (extra
+  leading paragraph, different section boundary) that exposed it while other books
+  were unaffected.
+
+Recommended: run `AddBookNameHeaders` on a clean copy with the proposed fix and
+compare Psalms output. If it fails again, the structure is the root cause; if it
+passes, the fat-finger theory is more likely.
+
+**Status: IMPLEMENTED — 2026-04-21.**
+
+### Changes made
+
+**`src/basFixDocxRoutines.bas` — AddBookNameHeaders rewrite:**
+- Section classification changed from `Paragraphs(1)` check to full paragraph scan
+  (fixes Bug 1 — Psalms-type misclassification)
+- `sBookName` now captured in the H1 branch from the H1 paragraph directly;
+  backward search eliminated entirely (fixes Bug 2 — fragile slow search)
+- H1 branch now applies `"TheHeaders"` style + inserts `vbTab` to the empty header
+  (enforces empty-header spec: centered, one tab marker)
+- Dead variables `oSearch`, `oFound`, `oPara`, `oRange` removed
+- New declarations: `bFoundH1 As Boolean`, `bFoundH2 As Boolean`,
+  `oClassPara As Word.Paragraph`
+
+**`src/aeBibleClass.cls` — CountHeaderStyleUsage rewrite:**
+- Replaced `doc.Content` Find with iteration over `sec.Headers(wdHeaderFooterPrimary)`
+  across all sections (fixes wrong story range — headers are not in doc.Content)
+- Counts paragraphs whose `style.NameLocal <> "TheHeaders"` (violations)
+- Hint captures first violation: section index + style name found
+- Expected = 0 enforced: no paragraph in any primary header may use a style
+  other than `"TheHeaders"`
+
+**Import checklist:**
+- [ ] `src/basFixDocxRoutines.bas` (remove old, import new)
+- [ ] `src/aeBibleClass.cls`
+
+**Test:** Run `RUN_THE_TESTS(30)` — result depends on document state.
+Run `AddBookNameHeaders` to fix headers, then re-run Test 30 to confirm 0.

@@ -39,7 +39,8 @@ FAIL!!!!          Copy ()       Test = 28     7             77            CountT
   >> First hit: Section 1: 	
 FAIL!!!!          Copy ()       Test = 29     141           70            CountParagraphsWithoutTabInHeaders
   >> First hit: Section 8: 
-PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
+FAIL!!!!          Copy ()       Test = 30     74            0             CountHeaderStyleUsage
+  >> First hit: Section 1: style='Header'
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
 FAIL!!!!          Copy ()       Test = 32     261           982           CountLinefeed
   >> First hit: First match: 
@@ -47,7 +48,7 @@ FAIL!!!!          Copy ()       Test = 33     253           982           CountL
   >> First hit: First match:  
 FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
 FAIL!!!!          Copy ()       Test = 35     0             117           CountManualLineBreaksAndWithSpace(" ")
-PASS              Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
+FAIL!!!!          Copy ()       Test = 36     3             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
 PASS              Copy ()       Test = 37     19            19            CountDocTabOnlyParagraphs
 PASS              Copy ()       Test = 38     153           153           CountEmptyParagraphs
 PASS              Copy ()       Test = 39     0             0             CountParagraphMarks_ArialBlack
@@ -90,8 +91,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 115.55 seconds
-[2026-04-21 16:00:29] Completed
+The Total Runtime: 134.53 seconds
+[2026-04-21 18:20:56] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==

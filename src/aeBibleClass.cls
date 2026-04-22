@@ -2811,41 +2811,32 @@ End Function
 Private Function CountHeaderStyleUsage() As Long
     On Error GoTo PROC_ERR
 
+    ' Counts header paragraphs whose style is NOT "TheHeaders".
+    ' Expected = 0: every paragraph in every primary header must use "TheHeaders".
+    ' Searches header stories (not doc.Content, which excludes headers/footers).
+
     Dim doc As Document
-    Dim rng As Word.Range
-    Dim StyleName As String
+    Dim sec As Word.Section
+    Dim hdr As HeaderFooter
+    Dim para As Word.Paragraph
     Dim Count As Long
 
-    ' Set the document
     Set doc = ActiveDocument
-    
-    ' Define the style name to search for
-    StyleName = "Header"
-    
-    ' Initialize the range to search
-    Set rng = doc.Content
-    
-    ' Initialize the Count
     Count = 0
-    
-    ' Search for the style "Header"
-    With rng.Find
-        .ClearFormatting
-        .style = StyleName
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = True
-        .MatchWildcards = False
-        
-        ' Loop through all instances of the style "Header"
-        Do While .Execute
-            Count = Count + 1
-        Loop
-    End With
-    
-    ' Display the Count
-    'MsgBox "The style 'Header' is used " & Count & " times in the document."
-    'Debug.Print "The style 'Header' is used " & Count & " times in the document."
+
+    For Each sec In doc.Sections
+        Set hdr = sec.Headers(wdHeaderFooterPrimary)
+        If hdr.Exists Then
+            For Each para In hdr.Range.Paragraphs
+                If para.style.NameLocal <> "TheHeaders" Then
+                    Count = Count + 1
+                    If m_lastHint = "" Then _
+                        m_lastHint = "Section " & sec.Index & ": style='" & para.style.NameLocal & "'"
+                End If
+            Next para
+        End If
+    Next sec
+
     CountHeaderStyleUsage = Count
 
 PROC_EXIT:

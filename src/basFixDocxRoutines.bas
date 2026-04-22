@@ -41,12 +41,13 @@ Public Sub AddBookNameHeaders()
     Dim oSections   As Sections
     Dim oSection    As Word.Section
     Dim oHeader     As HeaderFooter
-    Dim oPara As Word.Paragraph
-    Dim oRange      As Word.Range
+    Dim oClassPara  As Word.Paragraph
     Dim lStartSect  As Long
     Dim lIdx        As Long
     Dim sBookName   As String
     Dim lResponse   As Long
+    Dim bFoundH1    As Boolean
+    Dim bFoundH2    As Boolean
 
     lResponse = MsgBox("Place cursor in the section to start header labelling. Do you want to start?", _
                        vbYesNo + vbDefaultButton2 + vbQuestion, _
@@ -55,6 +56,7 @@ Public Sub AddBookNameHeaders()
 
     Set oDoc = ActiveDocument
     Set oSections = oDoc.Sections
+
     ' -- Find the section containing the cursor --------------------------------
     lStartSect = 0
     For lIdx = 1 To oSections.Count
@@ -70,35 +72,47 @@ Public Sub AddBookNameHeaders()
                vbExclamation, "AddBookNameHeaders"
         GoTo PROC_EXIT
     End If
+
     sBookName = ""
+
     ' -- Walk sections from cursor to end -------------------------------------
     For lIdx = lStartSect To oSections.Count
 
         Set oSection = oSections(lIdx)
         Set oHeader = oSection.Headers(WdHeaderFooterIndex.wdHeaderFooterPrimary)
-        Set oPara = oSection.Range.Paragraphs(1)
 
-        If oPara.style = oDoc.Styles("Heading 1") Then
-            ' Book title page - clear the header and leave it empty
+        ' Classify the section by scanning ALL paragraphs for H1 or H2.
+        ' Checking only Paragraphs(1) fails when a blank paragraph precedes
+        ' the heading (e.g. section-break artifact at a book title page).
+        bFoundH1 = False
+        bFoundH2 = False
+        For Each oClassPara In oSection.Range.Paragraphs
+            If oClassPara.style = oDoc.Styles("Heading 1") Then
+                bFoundH1 = True
+                Exit For
+            ElseIf oClassPara.style = oDoc.Styles("Heading 2") Then
+                bFoundH2 = True
+                Exit For
+            End If
+        Next oClassPara
+
+        If bFoundH1 Then
+            ' Book title page: capture book name here (eliminates need for
+            ' backward search later) then clear the header.
+            ' Empty header spec: TheHeaders style, center-aligned, one tab
+            ' character as intentional marker (default 0.1" tab, no other stops).
+            sBookName = Trim$(Replace(oClassPara.Range.Text, vbCr, ""))
             oHeader.LinkToPrevious = False
             oHeader.Range.Delete
-        ElseIf oPara.style = oDoc.Styles("Heading 2") Then
-            ' First chapter section - capture book name from Heading 1 text
-            ' Search backwards from this section for the nearest Heading 1
-            Dim oSearch As Word.Range
-            Set oSearch = oDoc.Range(0, oSection.Range.Start)
-            Dim oFound  As Word.Range
-            Set oFound = Nothing
+            With oHeader.Range.Paragraphs(1)
+                .style = oDoc.Styles("TheHeaders")
+                .Range.InsertBefore vbTab
+            End With
+            Debug.Print "Title page cleared: " & sBookName
 
-            Dim pIdx    As Long
-            For pIdx = oSearch.Paragraphs.Count To 1 Step -1
-                If oSearch.Paragraphs(pIdx).style = oDoc.Styles("Heading 1") Then
-                    sBookName = Trim$(Replace(oSearch.Paragraphs(pIdx).Range.Text, vbCr, ""))
-                    Exit For
-                End If
-            Next pIdx
-
-            ' Write the book name into the header
+        ElseIf bFoundH2 Then
+            ' First chapter section: sBookName already set from H1 branch above.
+            ' No backward search needed.
             oHeader.LinkToPrevious = False
             Do While oHeader.Range.Paragraphs.Count > 1
                 oHeader.Range.Paragraphs.Last.Range.Delete
@@ -109,6 +123,7 @@ Public Sub AddBookNameHeaders()
                 .style = oDoc.Styles("TheHeaders")
             End With
             Debug.Print "Header added: " & sBookName
+
         Else
             ' All other sections inherit the header from the section above
             oHeader.LinkToPrevious = True
@@ -116,21 +131,18 @@ Public Sub AddBookNameHeaders()
 
     Next lIdx
 
-    Debug.Print "Done. Book name headers have been added from section " & _
+    Debug.Print "Done. Book name headers applied from section " & _
            lStartSect & " through section " & oSections.Count & "."
-    MsgBox "Done. Book name headers have been added from section " & _
+    MsgBox "Done. Book name headers applied from section " & _
            lStartSect & " through section " & oSections.Count & ".", _
            vbInformation, "AddBookNameHeaders"
 
 PROC_EXIT:
-    Set oRange = Nothing
-    Set oPara = Nothing
+    Set oClassPara = Nothing
     Set oHeader = Nothing
     Set oSection = Nothing
     Set oSections = Nothing
     Set oDoc = Nothing
-    Set oSearch = Nothing
-    Set oFound = Nothing
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure AddBookNameHeaders of Module basFixDocxRoutines"
