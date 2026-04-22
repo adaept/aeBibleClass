@@ -3291,3 +3291,233 @@ passes, the fat-finger theory is more likely.
 
 **Test:** Run `RUN_THE_TESTS(30)` — result depends on document state.
 Run `AddBookNameHeaders` to fix headers, then re-run Test 30 to confirm 0.
+
+---
+
+## § 36 — Style Usage Distribution: Review
+
+**2026-04-21**
+
+Source: `rpt/Style Usage Distribution.txt` — output of `CountAuditStyles_ToFile`
+(Test 49, which currently FAILs: result 18 styles, expected 16).
+
+```
+Normal: 31959          Heading 1: 66          Heading 2: 1188
+CustomParaAfterH1: 62  CustomParaAfterH1-2nd: 4
+Brief: 66              DatAuthRef: 198
+Psalms BOOK: 5         Lamentation: 152
+Footnote Text: 1000    Title: 1
+Plain Text: 26         List Paragraph: 82     Paragraph Continuation: 158
+Header: 3              Footer: 3
+TheHeaders: 133        TheFooters: 1
+Total paragraphs (all stories): 35107   Distinct styles: 18
+```
+
+---
+
+### Group A — Intentional custom styles (keep as-is)
+
+| Style | Count | Notes |
+|-------|-------|-------|
+| `Normal` | 31959 | Body text — expected |
+| `Heading 1` | 66 | 66 books — matches expectation |
+| `Heading 2` | 1188 | Chapters — matches Test 24 footnote count order of magnitude |
+| `Brief` | 66 | One per book — matches H1 count exactly |
+| `DatAuthRef` | 198 | Date/author/reference lines — intentional |
+| `Psalms BOOK` | 5 | Psalms-specific structure (acrostic, titles) — intentional |
+| `Lamentation` | 152 | Lamentations-specific structure (5 chapters) — intentional |
+| `TheHeaders` | 133 | Correct header style — intentional |
+| `TheFooters` | 1 | Correct footer style — **see concern below** |
+
+**Concern — TheFooters: 1**: With 66+ book sections each requiring a footer,
+only 1 paragraph using `TheFooters` is abnormally low. Likely most footer
+paragraphs still use the built-in `Footer` style (only 3 shown) OR most sections
+link to previous and their paragraphs are not independently counted. Warrants
+investigation after `FixTheFooters` / `ReapplyTheFootersToAllFooters` is run.
+
+---
+
+### Group B — Unintentional built-in styles (fix required)
+
+User confirmed these five are not intentional:
+
+| Style | Count | Root cause | Fix |
+|-------|-------|-----------|-----|
+| `Header` | 3 | Built-in header style; should be `TheHeaders` | `AddBookNameHeaders` |
+| `Footer` | 3 | Built-in footer style; should be `TheFooters` | `ReapplyTheFootersToAllFooters` |
+| `Plain Text` | 26 | Built-in; applied by paste or import artifact | Find & replace style |
+| `List Paragraph` | 82 | Built-in; applied by accidental list formatting | Find & replace style |
+| `Paragraph Continuation` | 158 | Built-in multi-level list style; likely paste artifact | Find & replace style |
+
+`Header` and `Footer` are already caught by Test 30 (after fix) and Test 36.
+`Plain Text`, `List Paragraph`, and `Paragraph Continuation` are not yet tested —
+candidates for new tests once the fix strategy is confirmed.
+
+---
+
+### Group C — Possibly intentional built-in style
+
+| Style | Count | Notes |
+|-------|-------|-------|
+| `Footnote Text` | 1000 | Matches footnote count (Test 24: 1000). Word applies this style automatically to footnote body text. Intentional unless a custom footnote style is required. |
+| `Title` | 1 | One occurrence — likely the artifact Section 1 at document start. Not Bible content. Low priority. |
+
+**Recommendation for `Footnote Text`**: Accept as intentional. Word's footnote
+engine applies this style automatically; overriding it requires explicit style
+assignment to every footnote paragraph. Add to the "expected/allowed" list once
+the overall style target is defined.
+
+**Recommendation for `Title`**: Note as artifact. No action until Section 1 artifact
+is formally addressed.
+
+---
+
+### Group D — Style consolidation opportunity
+
+| Style | Count | Issue | Recommendation |
+|-------|-------|-------|----------------|
+| `CustomParaAfterH1` | 62 | Paragraph after book title — correct style | Keep |
+| `CustomParaAfterH1-2nd` | 4 | Identical purpose; differs only in vertical spacing | Consolidate |
+
+**Total**: 62 + 4 = 66 = one per book. The two-style split exists because 4 books
+required slightly different vertical page spacing at some point.
+
+**Pros of consolidation (one style):**
+- Simpler style inventory — one style to maintain
+- Consistent behaviour across all 66 books
+- Removes a style whose name implies it is a workaround (`-2nd`)
+- Test 49 expected value moves closer to a clean target
+
+**Cons of consolidation:**
+- Requires adjusting vertical spacing for 4 books to match the other 62, or
+  adjusting all 66 to a new common value
+- If the 4 books genuinely need different spacing (e.g. a longer subtitle),
+  consolidation removes that flexibility without a replacement mechanism
+
+**Recommendation:** Consolidate. Adjust the 4 outlier books to match the standard
+`CustomParaAfterH1` spacing. Use paragraph space-before/after on the style rather
+than a separate style name to handle any remaining variation.
+
+---
+
+### Target style inventory (after all fixes)
+
+If all recommendations are accepted, the expected distinct-style count becomes:
+
+| # | Style | Status |
+|---|-------|--------|
+| 1 | `Normal` | Keep |
+| 2 | `Heading 1` | Keep |
+| 3 | `Heading 2` | Keep |
+| 4 | `Brief` | Keep |
+| 5 | `DatAuthRef` | Keep |
+| 6 | `CustomParaAfterH1` | Keep (absorbs -2nd) |
+| 7 | `Psalms BOOK` | Keep |
+| 8 | `Lamentation` | Keep |
+| 9 | `Footnote Text` | Accept as intentional |
+| 10 | `TheHeaders` | Keep |
+| 11 | `TheFooters` | Keep |
+| 12 | `Title` | Tolerate (artifact) |
+
+Target: **12 distinct styles**. Current: 18. Reduction of 6 (5 unintentional
+built-ins removed + `CustomParaAfterH1-2nd` consolidated).
+
+Test 49 expected value should be updated to 12 once the fixes are applied and
+verified. Current expected (16) is an outdated baseline.
+
+---
+
+## § 37 — Style Review: Decisions and Plan
+
+**2026-04-21**
+
+### Group A — Clarification: TheFooters
+
+`TheFooters` paragraphs are page-number fields in Noto Sans font, covering two
+numbering ranges: Roman numerals (i–xvii, front matter) and Arabic (18–900+, main
+content). The built-in `Footer` style should never appear. The 3 `Footer`
+paragraphs are violations and are already caught by Test 36
+(`CountFooterParagraphsWithFooterStyle`, expected = 0).
+
+The low `TheFooters: 1` count is consistent with the document having one unlinked
+footer section (set up by `FixTheFooters`) with all other sections linked to
+previous — linked sections do not add additional story-range paragraphs to the
+count. This is expected behaviour, not a defect.
+
+### Group C — Accepted
+
+- `Footnote Text: 1000` — intentional; Word applies automatically. No action.
+- `Title: 1` — artifact Section 1. Tolerated.
+
+### Group D — Accepted: CustomParaAfterH1-2nd consolidation
+
+**Step 1 — Identify the 4 books.**
+
+Add a temporary diagnostic to `basFixDocxRoutines` (or run from Immediate Window)
+to find which Heading 1 sections contain a `CustomParaAfterH1-2nd` paragraph:
+
+```vba
+Dim sec As Word.Section
+Dim para As Word.Paragraph
+For Each sec In ActiveDocument.Sections
+    For Each para In sec.Range.Paragraphs
+        If para.style.NameLocal = "CustomParaAfterH1-2nd" Then
+            Debug.Print "Section " & sec.Index & " — " & Left(para.Range.Text, 40)
+        End If
+    Next para
+Next sec
+```
+
+**Step 2 — Manual spacing fix.**
+Adjust space-before/after on the 4 identified paragraphs to match
+`CustomParaAfterH1` (standard spacing). Change each paragraph's style from
+`CustomParaAfterH1-2nd` to `CustomParaAfterH1`.
+
+**Step 3 — Test to confirm.**
+Add Test 74: count paragraphs using `CustomParaAfterH1-2nd`; expected = 0.
+Until the fix is applied, result = 4 (FAIL); after fix, result = 0 (PASS).
+
+**Step 4 — Update Test 49 baseline.**
+After all style fixes are complete, update expected from 16 → 12.
+
+---
+
+### Group B — Plan: Unintentional built-in styles
+
+Five styles to eliminate. Two already have tests; three need investigation first.
+
+#### Already tested
+
+| Style | Test | Fix routine | Status |
+|-------|------|-------------|--------|
+| `Header` | Test 30 (rewritten — § 35) | `AddBookNameHeaders` | Ready to run |
+| `Footer` | Test 36 | `ReapplyTheFootersToAllFooters` | Ready to run |
+
+#### Need investigation before fix
+
+| Style | Count | Plan |
+|-------|-------|------|
+| `Plain Text` | 26 | Identify which paragraphs; determine correct replacement style |
+| `List Paragraph` | 82 | Identify context (are these actual lists, or paste artifacts?) |
+| `Paragraph Continuation` | 158 | Identify context (multi-level list artifact or intentional?) |
+
+Investigation approach for all three: use a Find by style in each story range
+and print the surrounding text to the Immediate Window. From the context, determine
+the correct target style (likely `Normal` or a custom style).
+
+Once identified:
+1. Write a `CountXxx` function in `aeBibleClass.cls` for each (count = violations, expected = 0)
+2. Write a `FixXxx` routine in `basFixDocxRoutines` to replace the style
+3. Add the test to the suite with `FIX: FixXxx` label
+
+---
+
+### Suggested sequence
+
+1. **Run `AddBookNameHeaders`** — fixes `Header: 3`; then verify Test 30 = 0
+2. **Run `ReapplyTheFootersToAllFooters`** — fixes `Footer: 3`; verify Test 36 = 0
+3. **Identify 4 CustomParaAfterH1-2nd books** — diagnostic snippet above
+4. **Fix spacing + restyle** — manual; add Test 74 and verify = 0
+5. **Investigate Plain Text, List Paragraph, Paragraph Continuation** — print contexts
+6. **Write fix routines + tests** for each of the three
+7. **Update Test 49 expected to 12** once all fixes confirmed
