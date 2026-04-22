@@ -6,6 +6,162 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================
+' DefineBodyTextStyle
+' PURPOSE:
+'   Creates the BodyText style in the active document if it does not
+'   already exist.  BodyText is the semantic replacement for Normal
+'   and Plain Text paragraph usage throughout the document.
+'
+' FORMATTING (matches Normal as measured 2026-04-22):
+'   Font:           Carlito 9pt, not bold, not italic
+'   Alignment:      Left (wdAlignParagraphLeft)
+'   Line spacing:   Single (wdLineSpaceSingle)
+'   First indent:   14.4 pt (0.2 inches)
+'   Left indent:    0
+'   Space before:   0pt
+'   Space after:    0pt
+'
+' USFM mapping:  \p  (standard body paragraph)
+'
+' RERUN SAFE:
+'   If BodyText already exists the routine reports and exits without
+'   modifying the existing style definition.
+'====================================================================
+Public Sub DefineBodyTextStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oStyle  As Word.style
+
+    Set oDoc = ActiveDocument
+
+    ' Check if style already exists
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("BodyText")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineBodyTextStyle: BodyText already exists -- no changes made."
+        MsgBox "BodyText style already exists in this document.", _
+               vbInformation, "DefineBodyTextStyle"
+        GoTo PROC_EXIT
+    End If
+
+    ' Create new style -- based on no existing style to avoid Normal cascade
+    Set oStyle = oDoc.Styles.Add(name:="BodyText", Type:=wdStyleTypeParagraph)
+
+    With oStyle
+        .baseStyle = ""                         ' no cascade from Normal
+        .NextParagraphStyle = oStyle            ' BodyText follows BodyText
+
+        With .Font
+            .Name = "Carlito"
+            .Size = 9
+            .Bold = False
+            .Italic = False
+        End With
+
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphJustify
+            .LineSpacingRule = wdLineSpaceSingle
+            .FirstLineIndent = 0                ' no first-line indent on Bible body text
+            .LeftIndent = 0
+            .SpaceBefore = 0
+            .SpaceAfter = 0
+        End With
+    End With
+
+    Debug.Print "DefineBodyTextStyle: BodyText created successfully."
+    MsgBox "BodyText style created successfully." & vbCrLf & _
+           "Font: Carlito 9pt | No indent | Justified | Spacing: Single", _
+           vbInformation, "DefineBodyTextStyle"
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DefineBodyTextStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineBodyTextIndentStyle
+' PURPOSE:
+'   Creates the BodyTextIndent style in the active document if it does
+'   not already exist.  BodyTextIndent is for indented body paragraphs
+'   (quoted or subordinate text) — identical to BodyText except for
+'   the 0.2" first-line indent.
+'
+' FORMATTING:
+'   Font:           Carlito 9pt, not bold, not italic
+'   Alignment:      Justified (wdAlignParagraphJustify)
+'   Line spacing:   Single (wdLineSpaceSingle)
+'   First indent:   14.4 pt (0.2 inches)
+'   Left indent:    0
+'   Space before:   0pt
+'   Space after:    0pt
+'
+' USFM mapping:  \pi  (paragraph indented)
+'
+' RERUN SAFE:
+'   If BodyTextIndent already exists the routine reports and exits.
+'====================================================================
+Public Sub DefineBodyTextIndentStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oStyle  As Word.style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("BodyTextIndent")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineBodyTextIndentStyle: BodyTextIndent already exists -- no changes made."
+        MsgBox "BodyTextIndent style already exists in this document.", _
+               vbInformation, "DefineBodyTextIndentStyle"
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(name:="BodyTextIndent", Type:=wdStyleTypeParagraph)
+
+    With oStyle
+        .baseStyle = ""
+        .NextParagraphStyle = oDoc.Styles("BodyText")   ' returns to BodyText after indent para
+
+        With .Font
+            .Name = "Carlito"
+            .Size = 9
+            .Bold = False
+            .Italic = False
+        End With
+
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphJustify
+            .LineSpacingRule = wdLineSpaceSingle
+            .FirstLineIndent = 14.4                     ' 0.2 inches in points
+            .LeftIndent = 0
+            .SpaceBefore = 0
+            .SpaceAfter = 0
+        End With
+    End With
+
+    Debug.Print "DefineBodyTextIndentStyle: BodyTextIndent created successfully."
+    MsgBox "BodyTextIndent style created successfully." & vbCrLf & _
+           "Font: Carlito 9pt | Indent: 0.2"" | Justified | Spacing: Single", _
+           vbInformation, "DefineBodyTextIndentStyle"
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DefineBodyTextIndentStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
 ' AddBookNameHeaders
 ' PURPOSE:
 '   Walk document sections and apply running book-name headers based
@@ -348,5 +504,109 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure FixFrontMatterHeaders of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' ReplaceNormalWithBodyText
+' PURPOSE:
+'   Replaces every paragraph styled Normal in the document body with
+'   BodyText.  This is the primary fix for Bible text paragraphs -
+'   the author used Normal throughout; BodyText is the semantic
+'   replacement (USFM \p).
+'
+' SCOPE:
+'   doc.Content only (main body story).  Headers, footers, and
+'   footnotes are not affected — they carry their own styles.
+'
+' PERFORMANCE:
+'   Uses Find/Replace with Format:=True rather than iterating
+'   paragraphs - safe and fast on 16 000+ paragraphs.
+'
+' RERUN SAFE:
+'   After the first run Normal Count = 0; subsequent runs report
+'   "0 replaced" and exit cleanly.
+'
+' PREREQUISITE:
+'   DefineBodyTextStyle must have been run first.
+'====================================================================
+Public Sub ReplaceNormalWithBodyText()
+    On Error GoTo PROC_ERR
+    Dim oDoc        As Document
+    Dim oRange      As Word.Range
+    Dim lBefore     As Long
+    Dim lAfter      As Long
+    Dim lReplaced   As Long
+
+    Set oDoc = ActiveDocument
+
+    ' Verify BodyText exists before proceeding
+    Dim oCheck As Word.style
+    On Error Resume Next
+    Set oCheck = oDoc.Styles("BodyText")
+    On Error GoTo PROC_ERR
+    If oCheck Is Nothing Then
+        MsgBox "BodyText style not found. Run DefineBodyTextStyle first.", _
+               vbExclamation, "ReplaceNormalWithBodyText"
+        GoTo PROC_EXIT
+    End If
+
+    ' Count Normal paragraphs before replacement
+    lBefore = 0
+    Dim oPara As Word.Paragraph
+    For Each oPara In oDoc.Content.Paragraphs
+        If oPara.style.NameLocal = "Normal" Then lBefore = lBefore + 1
+    Next oPara
+
+    If lBefore = 0 Then
+        Debug.Print "ReplaceNormalWithBodyText: No Normal paragraphs found -- nothing to do."
+        MsgBox "No Normal paragraphs found in document body. Nothing replaced.", _
+               vbInformation, "ReplaceNormalWithBodyText"
+        GoTo PROC_EXIT
+    End If
+
+    ' Confirm before proceeding
+    Dim lResponse As Long
+    lResponse = MsgBox(lBefore & " Normal paragraphs found. Replace all with BodyText?", _
+                       vbYesNo + vbDefaultButton2 + vbQuestion, _
+                       "ReplaceNormalWithBodyText")
+    If lResponse = vbNo Then GoTo PROC_EXIT
+
+    ' Use Find/Replace for performance
+    Set oRange = oDoc.Content
+    With oRange.Find
+        .ClearFormatting
+        .style = oDoc.Styles("Normal")
+        .Text = ""
+        .Replacement.ClearFormatting
+        .Replacement.style = oDoc.Styles("BodyText")
+        .Replacement.Text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchCase = False
+        .Execute Replace:=wdReplaceAll
+    End With
+
+    ' Count remaining Normal paragraphs to confirm
+    lAfter = 0
+    For Each oPara In oDoc.Content.Paragraphs
+        If oPara.style.NameLocal = "Normal" Then lAfter = lAfter + 1
+    Next oPara
+    lReplaced = lBefore - lAfter
+
+    Debug.Print "ReplaceNormalWithBodyText: " & lReplaced & " replaced, " & lAfter & " remaining."
+    MsgBox "Done. " & lReplaced & " paragraphs changed from Normal to BodyText." & vbCrLf & _
+           lAfter & " Normal paragraphs remaining (check Immediate Window for details).", _
+           vbInformation, "ReplaceNormalWithBodyText"
+
+PROC_EXIT:
+    Set oPara = Nothing
+    Set oCheck = Nothing
+    Set oRange = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReplaceNormalWithBodyText of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub

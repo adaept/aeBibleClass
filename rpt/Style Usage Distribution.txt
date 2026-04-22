@@ -1,5 +1,5 @@
 === Style Usage Distribution ===
-Normal: 31957
+BodyText: 31846
 Title: 1
 Plain Text: 26
 List Paragraph: 82
@@ -12,6 +12,9 @@ Paragraph Continuation: 158
 Psalms BOOK: 5
 Lamentation: 152
 Footnote Text: 1000
-Header: 1
-TheHeaders: 132
-Total paragraphs (all styles): 35098
+Normal: 113
+Header: 2
+TheHeaders: 134
+Footer: 3
+TheFooters: 1
+Total paragraphs (all styles): 35107

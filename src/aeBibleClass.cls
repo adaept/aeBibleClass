@@ -2064,7 +2064,7 @@ Private Function CountAuditStyles_ToFile() As Long
     'Debug.Print "Style usage written to:" & vbCrLf & outputPath
     'MsgBox "Style usage written to:" & vbCrLf & outputPath, vbInformation, "Audit Complete"
     'Debug.Print "keyCount = " & keyCount
-    If m_lastHint = "" Then m_lastHint = keyCount & " styles — see rpt\Style Usage Distribution.txt"
+    If m_lastHint = "" Then m_lastHint = keyCount & " styles - see rpt\Style Usage Distribution.txt"
     CountAuditStyles_ToFile = keyCount
 
 PROC_EXIT:

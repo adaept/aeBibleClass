@@ -1,0 +1,35 @@
+=== Style Taxonomy Audit ===
+Date    : 2026-04-22 14:50:22
+Document: Blank Bible Copy.docm
+========================================================================
+
+-- Fully specified (all properties verified) --
+PASS  BodyText
+PASS  BodyTextIndent
+
+-- Existence verified (full spec pending) --
+PASS  Heading 1
+PASS  Heading 2
+PASS  CustomParaAfterH1
+PASS  DatAuthRef
+PASS  Brief
+PASS  Psalms BOOK
+PASS  Lamentation
+PASS  TheHeaders
+PASS  TheFooters
+PASS  Footnote Text
+PASS  Title
+
+-- Not yet created (expected FAIL) --
+FAIL  BodyTextContinuation
+      NOT FOUND in document
+FAIL  ListItem
+      NOT FOUND in document
+FAIL  AppendixTitle
+      NOT FOUND in document
+FAIL  AppendixBody
+      NOT FOUND in document
+
+========================================================================
+Summary: 13 PASS   4 FAIL
+=== End Style Taxonomy Audit ===

@@ -3,6 +3,10 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
+Private m_TaxFile   As Integer
+Private m_TaxPass   As Long
+Private m_TaxFail   As Long
+
 '==============================================================================
 ' basTEST_aeBibleConfig - Configuration for Editing
 ' ----------------------------------------------------------------------------
@@ -197,6 +201,204 @@ Private Function CountOrphanedBookmarks(doc As Document) As Long
     Next bm
     CountOrphanedBookmarks = Count
 End Function
+
+'==============================================================================
+' RUN_TAXONOMY_STYLES / AuditOneStyle
+' PURPOSE:
+'   Audits all 17 approved taxonomy styles against their expected configuration
+'   and writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'
+' DESIGN:
+'   AuditOneStyle (Private) checks up to 7 properties per style. Sentinel
+'   values suppress individual checks where the spec is not yet defined:
+'     sExpFont        = ""    -> skip font-name check
+'     dExpSize        = 0     -> skip font-size check
+'     lExpAlign       = -1   -> skip alignment check  (wdAlignParagraphJustify=3)
+'     dExpFirstIndent = -999 -> skip first-indent check
+'     lExpLineRule    = -1   -> skip line-spacing-rule check (wdLineSpaceSingle=0)
+'     dExpSpaceBefore = -999 -> skip space-before check
+'     dExpSpaceAfter  = -999 -> skip space-after check
+'
+' RERUN SAFE: overwrites rpt\StyleTaxonomyAudit.txt each run.
+' RUN:        RUN_TAXONOMY_STYLES  (Immediate Window or Ribbon)
+'==============================================================================
+Public Sub RUN_TAXONOMY_STYLES()
+    On Error GoTo PROC_ERR
+    Dim sPath As String
+
+    sPath = ActiveDocument.Path & "\rpt\StyleTaxonomyAudit.txt"
+    m_TaxFile = FreeFile
+    m_TaxPass = 0
+    m_TaxFail = 0
+
+    Open sPath For Output As #m_TaxFile
+
+    Print #m_TaxFile, "=== Style Taxonomy Audit ==="
+    Print #m_TaxFile, "Date    : " & Format(Now, "yyyy-mm-dd hh:mm:ss")
+    Print #m_TaxFile, "Document: " & ActiveDocument.Name
+    Print #m_TaxFile, String(72, "=")
+
+    ' ── Fully specified styles (all 7 properties verified) ───────────────────
+    Print #m_TaxFile, ""
+    Print #m_TaxFile, "-- Fully specified (all properties verified) --"
+    '                               Font        Sz  Align  Indent  LineRule  SpB   SpA
+    '                                           0=skip -1=skip -999=skip
+    AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 0, 0, 0
+    AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 0, 0, 0
+
+    ' ── Existence verified; full spec pending ────────────────────────────────
+    Print #m_TaxFile, ""
+    Print #m_TaxFile, "-- Existence verified (full spec pending) --"
+    AuditOneStyle "Heading 1", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Heading 2", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "CustomParaAfterH1", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "DatAuthRef", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Brief", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Psalms BOOK", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Lamentation", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Footnote Text", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999
+
+    ' ── Not yet created — expected FAIL until each Define* routine is run ─────
+    Print #m_TaxFile, ""
+    Print #m_TaxFile, "-- Not yet created (expected FAIL) --"
+    AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "ListItem", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "AppendixTitle", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "AppendixBody", "", 0, -1, -999, -1, -999, -999
+
+    Print #m_TaxFile, ""
+    Print #m_TaxFile, String(72, "=")
+    Print #m_TaxFile, "Summary: " & m_TaxPass & " PASS   " & m_TaxFail & " FAIL"
+    Print #m_TaxFile, "=== End Style Taxonomy Audit ==="
+
+    Close #m_TaxFile
+    m_TaxFile = 0
+
+    Debug.Print "RUN_TAXONOMY_STYLES: " & m_TaxPass & " PASS  " & m_TaxFail & " FAIL  -> " & sPath
+    MsgBox "Style Taxonomy Audit complete." & vbCrLf & _
+           m_TaxPass & " PASS   " & m_TaxFail & " FAIL" & vbCrLf & _
+           "Report: rpt\StyleTaxonomyAudit.txt", vbInformation, "RUN_TAXONOMY_STYLES"
+
+PROC_EXIT:
+    If m_TaxFile > 0 Then Close #m_TaxFile
+    m_TaxFile = 0
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure RUN_TAXONOMY_STYLES of Module basTEST_aeBibleConfig"
+    Resume PROC_EXIT
+End Sub
+
+'------------------------------------------------------------------------------
+' AuditOneStyle  (Private)
+' Checks one style against expected values; writes Result to open report file.
+' Called only by RUN_TAXONOMY_STYLES.
+'------------------------------------------------------------------------------
+Private Sub AuditOneStyle(ByVal sName As String, _
+                          ByVal sExpFont As String, _
+                          ByVal dExpSize As Double, _
+                          ByVal lExpAlign As Long, _
+                          ByVal dExpFirstIndent As Double, _
+                          ByVal lExpLineRule As Long, _
+                          ByVal dExpSpaceBefore As Double, _
+                          ByVal dExpSpaceAfter As Double)
+    On Error GoTo PROC_ERR
+    Dim oStyle  As Word.style
+    Dim bPass   As Boolean
+    Dim sDetail As String
+
+    On Error Resume Next
+    Set oStyle = ActiveDocument.Styles(sName)
+    On Error GoTo PROC_ERR
+
+    If oStyle Is Nothing Then
+        Print #m_TaxFile, "FAIL  " & sName
+        Print #m_TaxFile, "      NOT FOUND in document"
+        m_TaxFail = m_TaxFail + 1
+        GoTo PROC_EXIT
+    End If
+
+    bPass = True
+    sDetail = ""
+
+    If sExpFont <> "" Then
+        If oStyle.Font.Name <> sExpFont Then
+            bPass = False
+            sDetail = sDetail & "      Font     : expected """ & sExpFont & _
+                      """ got """ & oStyle.Font.Name & """" & vbCrLf
+        End If
+    End If
+
+    If dExpSize <> 0 Then
+        If oStyle.Font.Size <> dExpSize Then
+            bPass = False
+            sDetail = sDetail & "      Size     : expected " & dExpSize & _
+                      " got " & oStyle.Font.Size & vbCrLf
+        End If
+    End If
+
+    If lExpAlign <> -1 Then
+        If oStyle.ParagraphFormat.Alignment <> lExpAlign Then
+            bPass = False
+            sDetail = sDetail & "      Alignment: expected " & lExpAlign & _
+                      " got " & oStyle.ParagraphFormat.Alignment & vbCrLf
+        End If
+    End If
+
+    If dExpFirstIndent <> -999 Then
+        If Abs(oStyle.ParagraphFormat.FirstLineIndent - dExpFirstIndent) > 0.1 Then
+            bPass = False
+            sDetail = sDetail & "      Indent   : expected " & dExpFirstIndent & _
+                      " got " & oStyle.ParagraphFormat.FirstLineIndent & vbCrLf
+        End If
+    End If
+
+    If lExpLineRule <> -1 Then
+        If oStyle.ParagraphFormat.LineSpacingRule <> lExpLineRule Then
+            bPass = False
+            sDetail = sDetail & "      LineRule : expected " & lExpLineRule & _
+                      " got " & oStyle.ParagraphFormat.LineSpacingRule & vbCrLf
+        End If
+    End If
+
+    If dExpSpaceBefore <> -999 Then
+        If Abs(oStyle.ParagraphFormat.SpaceBefore - dExpSpaceBefore) > 0.1 Then
+            bPass = False
+            sDetail = sDetail & "      SpaceBef : expected " & dExpSpaceBefore & _
+                      " got " & oStyle.ParagraphFormat.SpaceBefore & vbCrLf
+        End If
+    End If
+
+    If dExpSpaceAfter <> -999 Then
+        If Abs(oStyle.ParagraphFormat.SpaceAfter - dExpSpaceAfter) > 0.1 Then
+            bPass = False
+            sDetail = sDetail & "      SpaceAft : expected " & dExpSpaceAfter & _
+                      " got " & oStyle.ParagraphFormat.SpaceAfter & vbCrLf
+        End If
+    End If
+
+    If bPass Then
+        Print #m_TaxFile, "PASS  " & sName
+        m_TaxPass = m_TaxPass + 1
+    Else
+        Print #m_TaxFile, "FAIL  " & sName
+        If Len(sDetail) >= 2 Then _
+            Print #m_TaxFile, Left(sDetail, Len(sDetail) - 2)
+        m_TaxFail = m_TaxFail + 1
+    End If
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Exit Sub
+PROC_ERR:
+    Print #m_TaxFile, "ERROR " & sName & " -- Erl=" & Erl & _
+          "  Err=" & Err.Number & "  " & Err.Description
+    m_TaxFail = m_TaxFail + 1
+    Resume PROC_EXIT
+End Sub
 
 'STAGE 0 - FINAL GOAL (redefined)
 '
