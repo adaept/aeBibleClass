@@ -13,8 +13,8 @@ CustomParaAfterH1-2nd: 4
 Psalms BOOK: 5
 Lamentation: 152
 Footnote Text: 1000
-Header: 69
-TheHeaders: 66
+Header: 3
+TheHeaders: 133
 Footer: 3
 TheFooters: 1
-Total paragraphs (all styles): 35106
+Total paragraphs (all styles): 35107

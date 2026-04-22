@@ -31,15 +31,14 @@ PASS              Copy ()       Test = 22     153           153           CountE
 PASS              Copy ()       Test = 23     0             0             CountDeleteEmptyParagraphsBeforeHeading2
 PASS              Copy ()       Test = 24     1000          1000          CountFootnoteReferences
 PASS              Copy ()       Test = 25     1             1             CountFootnoteReferenceColors
-FAIL!!!!          Copy ()       Test = 26     67            0             CheckAllHeaders(Empty)
-  >> First hit: First empty header: Section 8
-FAIL!!!!          Copy ()       Test = 27     81            147           CheckAllHeaders(NotEmpty)
+PASS              Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
+FAIL!!!!          Copy ()       Test = 27     148           147           CheckAllHeaders(NotEmpty)
   >> First hit: First non-empty header: Section 1
-FAIL!!!!          Copy ()       Test = 28     7             77            CountTabFollowedByParagraphMarkInHeaders
+FAIL!!!!          Copy ()       Test = 28     73            77            CountTabFollowedByParagraphMarkInHeaders
   >> First hit: Section 1: 	
-FAIL!!!!          Copy ()       Test = 29     141           70            CountParagraphsWithoutTabInHeaders
-  >> First hit: Section 8: 
-FAIL!!!!          Copy ()       Test = 30     74            0             CountHeaderStyleUsage
+FAIL!!!!          Copy ()       Test = 29     75            70            CountParagraphsWithoutTabInHeaders
+  >> First hit: Section 9: GENESIS
+FAIL!!!!          Copy ()       Test = 30     7             0             CountHeaderStyleUsage
   >> First hit: Section 1: style='Header'
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
 FAIL!!!!          Copy ()       Test = 32     261           982           CountLinefeed
@@ -91,8 +90,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 134.53 seconds
-[2026-04-21 18:20:56] Completed
+The Total Runtime: 115.12 seconds
+[2026-04-21 18:29:57] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
