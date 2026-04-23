@@ -35,7 +35,7 @@ Private Sub PromoteApprovedStyles()
                      "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
                      "Brief", "Psalms BOOK", "Lamentation", _
                      "AppendixTitle", "AppendixBody", _
-                     "ListItem", _
+                     "ListItem", "ListItemBody", _
                      "Chapter Verse marker", "Verse marker", _
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
@@ -267,6 +267,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Brief", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Psalms BOOK", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Lamentation", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "ListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
+    AuditOneStyle "ListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Footnote Text", "", 0, -1, -999, -1, -999, -999, -999
@@ -276,7 +278,6 @@ Public Sub RUN_TAXONOMY_STYLES()
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Not yet created (expected FAIL) --"
     AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "ListItem", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "AppendixTitle", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "AppendixBody", "", 0, -1, -999, -1, -999, -999, -999
 

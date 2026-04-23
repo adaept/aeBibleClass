@@ -621,28 +621,15 @@ Add to approved taxonomy table:
 | `AuthorQuote` | `\wj` | Inline quote of Jesus (Italic, Red) | Character |
 | `AuthorRef` | `\bd` | Inline book section reference (Bold) | Character |
 
-### Style code fixes — 2026-04-22
+### Style code fixes — confirmed 2026-04-23
 
-`WidowControl` and `PageBreakBefore` were wrong in the original code; manually
-applied in the DOCM. Corrected in `src/basFixDocxRoutines.bas`:
+| Style | WidowControl | PageBreakBefore | Status |
+|-------|-------------|-----------------|--------|
+| `AuthorBodyText` | True | False | **CONFIRMED** — matches DOCM |
+| `AuthorSectionHead` | False | True | **FIXED in src** — `PageBreakBefore = True` added |
 
-| Style | WidowControl | PageBreakBefore |
-|-------|-------------|-----------------|
-| `AuthorBodyText` | False | False |
-| `AuthorSectionHead` | False | True |
-
-Apply to the already-existing DOCM styles via Immediate Window:
-```vba
-With ActiveDocument.Styles("AuthorBodyText").ParagraphFormat
-    .WidowControl = False : .PageBreakBefore = False
-End With
-With ActiveDocument.Styles("AuthorSectionHead").ParagraphFormat
-    .WidowControl = False : .PageBreakBefore = True
-End With
-```
-
-`AuthorQuote` / `AuthorRef` — not used; underlying text retains direct formatting
-(italic, underline, bold, red). Flagged for removal after author section is finalized.
+`AuthorQuote` / `AuthorRef` — not used in back matter. Status in front matter
+still undecided. No action until front matter work resumes.
 
 ### Front matter page structure — corrected 2026-04-22
 
@@ -785,51 +772,96 @@ contain spaces. SBL `1 Sam` → variable `1Sam`; SBL `Song` → variable `Song`.
 
 ### Status
 
-`DefineAuthorStyles` **IMPLEMENTED — 2026-04-22** in `basFixDocxRoutines.bas`.
+`DefineAuthorStyles` **IMPLEMENTED** in `basFixDocxRoutines.bas`.
 Author styles applied to back matter: **DONE — 2026-04-22**.
-Author styles applied to front matter: **PENDING** (still needs work).
-Style property fixes (WidowControl/PageBreakBefore) in src: **DONE — 2026-04-22**.
-Apply corrected properties to existing DOCM styles: **PENDING** (Immediate Window snippet above).
+Author styles applied to front matter: **PENDING**.
+`AuthorSectionHead` — `PageBreakBefore = True` added to src — **DONE — 2026-04-23**.
+`AuthorQuote` / `AuthorRef` — deferred; not used in back matter; front matter TBD.
 `TitleEyebrow` style definition: **PENDING**.
 `Title` style formalization: **PENDING**.
 RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
 
 ---
 
-## § 8 — Pending work as of 2026-04-22
+## § 8 — Pending work as of 2026-04-23
 
-### Must do next (in order)
+### Completed
 
-| # | Task | Module | Notes |
-|---|------|--------|-------|
-| 1 | Import `basFixDocxRoutines` into .DOCM | Manual | Pick up all Define* routines from session |
-| 2 | Run `DefineAuthorStyles` | Immediate Window | Creates 4 author styles |
-| 3 | Run `DefineBodyTextIndentStyle` | Immediate Window | **DONE — 2026-04-22** |
-| 4 | Run `DefineAppendixTitleStyle` + `DefineAppendixBodyStyle` | Immediate Window | After import |
-| 5 | Run `DefineBookIntroStyle` | Immediate Window | After import |
-| 6 | Run `ReplacePlainTextStyles` | Immediate Window | Requires AppendixBody to exist first |
-| 7 | Run `ApplyBookIntroAfterDatAuthRef` | Immediate Window | Requires BookIntro to exist first |
-| 7 | Manual: apply author styles to front/back matter (53 pages) | Word UI | AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef |
-| 8 | Run `RUN_TAXONOMY_STYLES` | Immediate Window | Baseline should improve from 13/4 |
-| 9 | Add author styles to `RUN_TAXONOMY_STYLES` | `basTEST_aeBibleConfig` | AuditOneStyle calls for 2 new paragraph styles |
-| 10 | Remove `Normal` from `PromoteApprovedStyles` once 0 paragraphs confirmed | `basTEST_aeBibleConfig` | After step 5 |
+| Task | Status |
+|------|--------|
+| Import `basFixDocxRoutines` into .DOCM | **DONE** |
+| Run `DefineAuthorStyles` | **DONE** |
+| Run `DefineBodyTextIndentStyle` | **DONE — 2026-04-22** |
+| Run `DefineAppendixBodyStyle` + `DefineAppendixTitleStyle` | **DONE — 2026-04-22** |
+| Apply author styles to back matter | **DONE — 2026-04-22** |
+| `AuthorSectionHead` — `PageBreakBefore = True` in src | **DONE — 2026-04-23** |
+
+### Next — List Paragraph → ListItem + ListItemBody — 2026-04-23
+
+**ON HOLD:** `DefineBookIntroStyle`, `ReplacePlainTextStyles`, `ApplyBookIntroAfterDatAuthRef`,
+`DefineAppendixTitleStyle`, `DefineAppendixBodyStyle`
+
+Reason: `List Paragraph` overlap with Concordance — define list styles first,
+then decide whether AppendixBody/AppendixTitle are redundant.
+
+#### List Paragraph — confirmed spec
+
+| Style | Font | Size | Bold | Italic | LeftIndent | SpaceAfter | Align | WidowControl | Next |
+|-------|------|------|------|--------|-----------|------------|-------|-------------|------|
+| `ListItem` | Carlito | 11pt | Yes | Yes | 36pt (0.5") | 0 | Left | True | `ListItemBody` |
+| `ListItemBody` | Carlito | 11pt | No | No | 36pt (0.5") | 11pt | Left | True | `ListItem` |
+
+USFM: `ListItem` → `\li1`, `ListItemBody` → `\lim1`
+
+Base style: none (no cascade from Normal or List Paragraph built-in).
+
+**Run order:** `DefineListItemBodyStyle` first, then `DefineListItemStyle`
+(ListItem references ListItemBody as NextParagraphStyle).
+
+#### Concordance
+
+Currently uses bullet points (`List Paragraph` with bullets). Once `ListItem` /
+`ListItemBody` are applied, the Concordance entries use the same pair —
+no separate `AppendixBody` needed for Concordance body text.
+`AppendixTitle` may still be needed for the "Bible Concordance" section heading
+— decision deferred until styles are applied.
+
+#### PromoteApprovedStyles + RUN_TAXONOMY_STYLES — updated 2026-04-23
+
+`ListItemBody` added to `PromoteApprovedStyles` array (after `ListItem`).
+
+`RUN_TAXONOMY_STYLES` updated:
+- `ListItem` and `ListItemBody` moved from expected FAIL → existence-verified section
+- Full spec checks added: Carlito 11pt, Left align (0), SpaceAfter 0 / 11pt
+
+```
+AuditOneStyle "ListItem",     "Carlito", 11, 0, 0, -1, -999, 0, 0
+AuditOneStyle "ListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
+```
+
+Expected FAIL section now contains: `BodyTextContinuation`, `AppendixTitle`, `AppendixBody` (3).
+
+#### Status
+
+`DefineListItemBodyStyle` + `DefineListItemStyle` — **IMPLEMENTED — 2026-04-23**
+in `basFixDocxRoutines.bas`.
+`PromoteApprovedStyles` + `RUN_TAXONOMY_STYLES` — **UPDATED — 2026-04-23**
+in `basTEST_aeBibleConfig.bas`.
+Pending: import and run in DOCM, apply styles manually, then decide on AppendixTitle/AppendixBody.
 
 ### Deferred
 
 | Task | Reason |
 |------|--------|
-| `List Paragraph` taxonomy (82 paragraphs, 3 sub-types) | Complex — needs separate design pass |
+| `DefineBookIntroStyle` + `ApplyBookIntroAfterDatAuthRef` | ON HOLD — pending List Paragraph investigation |
+| `ReplacePlainTextStyles` | ON HOLD — pending List Paragraph investigation |
 | `Paragraph Continuation` → `BodyTextContinuation` (158 paragraphs) | Investigate first |
+| `AuthorQuote` / `AuthorRef` | Not used in back matter; front matter TBD |
+| `TitleEyebrow` + `Title` formalization | Front matter work — deferred |
+| DOCVARIABLE `UpdatePageNumbers` implementation | Front matter work — deferred |
 | `SUPER_TEST_RUNS` | Deferred until taxonomy stable |
 | Allowed fonts / fallback fonts / CJK prep | i18n queue |
-
-### Commit needed
-
-All `src/` changes from this session are uncommitted:
-- `basFixDocxRoutines.bas` — major additions (all Define* routines); `Word.style` → `Word.Style` casing fixed
-- `basTEST_aeBibleConfig.bas` — RUN_TAXONOMY_STYLES, AuditOneStyle; `PromoteApprovedStyles` updated
-- `py/normalize_vba.py` — `As Word.Style` normalization rule added
-- `rvw/Code_review 2026-04-21.md` — this file
+| Add author styles to `RUN_TAXONOMY_STYLES` | After front matter styles settled |
 
 
 ---

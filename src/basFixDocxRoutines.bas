@@ -1102,7 +1102,8 @@ Public Sub DefineAuthorStyles()
                 .LeftIndent = 0
                 .SpaceBefore = 12
                 .SpaceAfter = 6
-                .WidowControl = True
+                .WidowControl = False
+                .PageBreakBefore = True
             End With
         End With
         Debug.Print "DefineAuthorStyles: AuthorSectionHead created."
@@ -1155,5 +1156,162 @@ PROC_EXIT:
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
            ") in procedure DefineAuthorStyles of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineListItemStyle
+' PURPOSE:
+'   Creates the ListItem paragraph style.
+'   Used for bold-italic headed entries in study lists and
+'   Concordance sections.
+'
+' SPEC:
+'   Font:           Carlito 11pt, Bold, Italic
+'   Alignment:      Left
+'   LeftIndent:     36pt (0.5 inch)
+'   FirstLineIndent:0
+'   LineSpacing:    Single
+'   WidowControl:   True
+'   NextStyle:      ListItemBody
+'
+' USFM mapping:  \li1  (list item level 1)
+'
+' RERUN SAFE: skips if style already exists.
+'====================================================================
+Public Sub DefineListItemStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc   As Document
+    Dim oStyle As Word.Style
+    Dim oNext  As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("ListItem")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineListItemStyle: ListItem already exists -- skipped."
+        GoTo PROC_EXIT
+    End If
+
+    ' ListItemBody must exist first (referenced as NextParagraphStyle)
+    On Error Resume Next
+    Set oNext = oDoc.Styles("ListItemBody")
+    On Error GoTo PROC_ERR
+
+    Set oStyle = oDoc.Styles.Add(name:="ListItem", Type:=wdStyleTypeParagraph)
+    With oStyle
+        .baseStyle = "List Number"    ' inherits autonumbering list template
+        If Not oNext Is Nothing Then
+            .NextParagraphStyle = oNext
+        End If
+        With .Font
+            .Name = "Carlito"
+            .Size = 11
+            .Bold = True
+            .Italic = True
+            .color = wdColorAutomatic
+        End With
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphLeft
+            .LineSpacingRule = wdLineSpaceSingle
+            .FirstLineIndent = -18    ' number at 0.25" (LeftIndent 0.5" minus 0.25")
+            .LeftIndent = 36          ' text wraps at 0.5"
+            .SpaceBefore = 0
+            .SpaceAfter = 0
+            .WidowControl = True
+            .KeepWithNext = True
+        End With
+    End With
+
+    Debug.Print "DefineListItemStyle: ListItem created."
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure DefineListItemStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineListItemBodyStyle
+' PURPOSE:
+'   Creates the ListItemBody paragraph style.
+'   Continuation paragraph following a ListItem — plain body text
+'   at the same indent level.
+'
+' SPEC:
+'   Font:           Carlito 11pt, not Bold, not Italic
+'   Alignment:      Left (not justified)
+'   LeftIndent:     36pt (0.5 inch — aligns under ListItem)
+'   FirstLineIndent:0
+'   LineSpacing:    Single
+'   SpaceAfter:     11pt
+'   WidowControl:   True
+'   NextStyle:      ListItem  (cycles back for next entry)
+'
+' USFM mapping:  \lim1  (list item continuation level 1)
+'
+' NOTE: Run this BEFORE DefineListItemStyle so ListItem can
+'       reference ListItemBody as its NextParagraphStyle.
+'
+' RERUN SAFE: skips if style already exists.
+'====================================================================
+Public Sub DefineListItemBodyStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc   As Document
+    Dim oStyle As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("ListItemBody")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineListItemBodyStyle: ListItemBody already exists -- skipped."
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(name:="ListItemBody", Type:=wdStyleTypeParagraph)
+    With oStyle
+        .baseStyle = ""
+        ' NextParagraphStyle cycles back to ListItem for the next entry.
+        ' Wire after DefineListItemStyle runs; here we set it if ListItem exists.
+        Dim oNext As Word.Style
+        On Error Resume Next
+        Set oNext = oDoc.Styles("ListItem")
+        On Error GoTo PROC_ERR
+        If Not oNext Is Nothing Then
+            .NextParagraphStyle = oNext
+        End If
+        With .Font
+            .Name = "Carlito"
+            .Size = 11
+            .Bold = False
+            .Italic = False
+            .color = wdColorAutomatic
+        End With
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphLeft
+            .LineSpacingRule = wdLineSpaceSingle
+            .FirstLineIndent = 0
+            .LeftIndent = 36          ' 0.5 inch x 72 points
+            .SpaceBefore = 0
+            .SpaceAfter = 11
+            .WidowControl = True
+        End With
+    End With
+
+    Debug.Print "DefineListItemBodyStyle: ListItemBody created."
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure DefineListItemBodyStyle of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub
