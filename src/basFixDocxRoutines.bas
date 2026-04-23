@@ -1129,24 +1129,10 @@ Public Sub DefineAuthorStyles()
         Debug.Print "DefineAuthorStyles: AuthorQuote already exists -- skipped."
     End If
 
-    ' --- AuthorRef ---------------------------------------------------------------------------
-    ' Bold - inline references to book sections.
-    ' USFM: \bd
-    Set oStyle = Nothing
-    On Error Resume Next
-    Set oStyle = oDoc.Styles("AuthorRef")
-    On Error GoTo PROC_ERR
-    If oStyle Is Nothing Then
-        Set oStyle = oDoc.Styles.Add(name:="AuthorRef", Type:=wdStyleTypeCharacter)
-        With oStyle.Font
-            .Bold = True
-        End With
-        Debug.Print "DefineAuthorStyles: AuthorRef created."
-    Else
-        Debug.Print "DefineAuthorStyles: AuthorRef already exists -- skipped."
-    End If
+    ' Note: AuthorRef (character style) removed — replaced by AuthorBookRef (paragraph style).
+    '       See DefineAuthorBookRefStyle.
 
-    MsgBox "AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef - done." & vbCrLf & _
+    MsgBox "AuthorBodyText, AuthorSectionHead, AuthorQuote - done." & vbCrLf & _
            "Check Immediate Window for details.", vbInformation, "DefineAuthorStyles"
 
 PROC_EXIT:
@@ -1255,7 +1241,7 @@ End Sub
 '
 ' USFM mapping:  \lim1  (list item continuation level 1)
 '
-' NOTE: Run this BEFORE DefineListItemStyle so ListItem can
+' Note: Run this BEFORE DefineListItemStyle so ListItem can
 '       reference ListItemBody as its NextParagraphStyle.
 '
 ' RERUN SAFE: skips if style already exists.
@@ -1313,5 +1299,80 @@ PROC_EXIT:
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
            ") in procedure DefineListItemBodyStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineAuthorBookRefStyle
+' PURPOSE:
+'   Creates the AuthorBookRef paragraph style.
+'   Cross-reference lookup entries — book name with tab-leader
+'   dot leader to right-aligned page number.
+'   Replaces the former AuthorRef character style.
+'
+' SPEC:
+'   Font:           Carlito 11pt, Bold, not Italic
+'   Base style:     List Number (inherits autonumbering)
+'   LeftIndent:     36pt (0.5")
+'   FirstLineIndent:-18pt (number at 0.25")
+'   KeepWithNext:   False
+'   WidowControl:   True
+'   Tab stop:       Right-aligned at 5.3" (381.6pt), dot leader
+'
+' USFM mapping:  \xt  (cross-reference target)
+'
+' RERUN SAFE: skips if style already exists.
+'====================================================================
+Public Sub DefineAuthorBookRefStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc   As Document
+    Dim oStyle As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AuthorBookRef")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineAuthorBookRefStyle: AuthorBookRef already exists -- skipped."
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(name:="AuthorBookRef", Type:=wdStyleTypeParagraph)
+    With oStyle
+        .baseStyle = "List Number"
+        .NextParagraphStyle = oStyle
+        With .Font
+            .Name = "Carlito"
+            .Size = 11
+            .Bold = True
+            .Italic = False
+            .color = wdColorAutomatic
+        End With
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphLeft
+            .LineSpacingRule = wdLineSpaceSingle
+            .FirstLineIndent = -18        ' number at 0.25"
+            .LeftIndent = 36              ' text at 0.5"
+            .SpaceBefore = 0
+            .SpaceAfter = 11
+            .WidowControl = True
+            .KeepWithNext = False
+            .TabStops.Add Position:=381.6, _
+                           Alignment:=wdAlignTabRight, _
+                           Leader:=wdTabLeaderDots
+        End With
+    End With
+
+    Debug.Print "DefineAuthorBookRefStyle: AuthorBookRef created."
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure DefineAuthorBookRefStyle of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub

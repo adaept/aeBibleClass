@@ -40,7 +40,7 @@ Private Sub PromoteApprovedStyles()
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
                      "AuthorBodyText", "AuthorSectionHead", _
-                     "AuthorQuote", "AuthorRef", _
+                     "AuthorQuote", "AuthorBookRef", _
                      "TheHeaders", "TheFooters", _
                      "Title", "Book Title", _
                      "Footnote Reference", "Footnote Text", _
