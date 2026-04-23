@@ -86,7 +86,7 @@ End Function
 
 Public Sub CreateEmphasisBlackStyle()
     On Error GoTo PROC_ERR
-    Dim charStyle As style
+    Dim charStyle As Word.Style
 
     ' Check if the style already exists
     On Error Resume Next
@@ -156,7 +156,7 @@ End Sub
 
 Public Sub RedefineFootnoteStyle_NotoSans()
     On Error GoTo PROC_ERR
-    Dim s As style
+    Dim s As Word.Style
     Set s = ActiveDocument.Styles("Footnote")
 
     With s.Font
@@ -206,7 +206,7 @@ End Sub
 
 Public Sub RedefineFootnoteNormalStyle_NotoSans()
     On Error GoTo PROC_ERR
-    Dim s As style
+    Dim s As Word.Style
     Set s = ActiveDocument.Styles("Footnote normal")
 
     With s.Font
@@ -232,7 +232,7 @@ Public Sub AuditStyleUsage_PictureCaption()
     Dim para As Word.Paragraph
     Dim hitCount As Long
     Dim logBuffer As String
-    Dim s As style
+    Dim s As Word.Style
 
     logBuffer = "=== Audit: Paragraph Style Usage for 'Picture Caption' ===" & vbCrLf
 
@@ -267,7 +267,7 @@ End Sub
 
 Public Sub RedefinePictureCaptionStyle_NotoSans()
     On Error GoTo PROC_ERR
-    Dim s As style
+    Dim s As Word.Style
     On Error Resume Next
     Set s = ActiveDocument.Styles("Picture Caption")
     On Error GoTo 0
@@ -704,7 +704,7 @@ Public Sub Remove_Real_Aptos_Only()
 End Sub
 
 Public Sub ReplaceCalibriInStyles()
-    Dim sty As style
+    Dim sty As Word.Style
     For Each sty In ActiveDocument.Styles
         If sty.Type = wdStyleTypeParagraph Or sty.Type = wdStyleTypeCharacter Then
             If LCase$(sty.Font.NameAscii) = "calibri" Then

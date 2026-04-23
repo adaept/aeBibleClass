@@ -460,7 +460,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #219 - Add routine to Count search hits with match case true
     ' FIXED - #218 - Add routine to print logical page numbers with Heading 1, in a list, for Bible book page check
     ' FIXED - #217 - Update "I am The lord" to "I am the Lord" x42
-    ' FIXED - #210 - See #213 - WoJ emphasised is 9pt, use that in search then set to 8pt as style EmphsasisRed
+    ' FIXED - #210 - See #213 - WoJ emphasised is 9pt, use that in search then set to 8pt As Word.Style EmphsasisRed
     ' FIXED - #184 - See #211 - Add test for Footnote Text to Count those that have any bold text [test]
     ' FIXED - #215 - Add test for paragraph mark styled - Calibri 9 Dark Red - should be color Automatic [test]
     ' FIXED - #216 - Error with H1 Count of 66 vs 59 for show/hide true false

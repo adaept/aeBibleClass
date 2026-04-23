@@ -230,7 +230,7 @@ End Sub
 
 Public Sub ShowAllStyles()
     On Error GoTo PROC_ERR
-    Dim s As style
+    Dim s As Word.Style
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
             Debug.Print "STYLE: " & s.NameLocal & _
@@ -248,7 +248,7 @@ End Sub
 
 Public Sub ShowMyStyles()
     On Error GoTo PROC_ERR
-    Dim s As style
+    Dim s As Word.Style
     Dim msg As String
     Dim styleCount As Integer
 
@@ -348,7 +348,7 @@ End Function
 
 Public Sub HideUnusedStyles()
     On Error GoTo PROC_ERR
-    Dim s As style
+    Dim s As Word.Style
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
             If Not s.InUse Then

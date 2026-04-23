@@ -38,6 +38,7 @@ NORMALIZATIONS = [
     (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraphs\b', 'As Word.Paragraphs', 'As Word.Paragraphs type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Section\b',    'As Word.Section',    'As Word.Section type declaration'),
+    (r'(?i)\bAs\s+(?:Word\.)?Style\b',     'As Word.Style',      'As Word.Style type declaration — added 2026-04-22'),
     (r'(?i)\bAs\s+PageSetup\b',             'As PageSetup',       'As PageSetup type declaration'),
     (r'(?i)\bnote\b',                        'Note',               'Note loop variable (Footnote collection iteration)'),
     (r'(?i)\bresult\b',                      'Result',             'Result loop variable (Result collection iteration)'),

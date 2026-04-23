@@ -1752,7 +1752,7 @@ Private Function CountAndCreateDefinitionForH2()
 
     Application.ScreenUpdating = False
 
-    Dim s As style
+    Dim s As Word.Style
     Set s = ActiveDocument.Styles("Heading 2")
     
     ' Apply KeepWithNext to paragraph formatting
@@ -1803,7 +1803,7 @@ End Function
 '   across passing runs to avoid Git churn or session ID noise.
 '
 '   The audit contains linewise status of each header/footer
-'   region, tracking anomalies such as style drift, legacy font
+'   region, tracking anomalies such As Word.Style drift, legacy font
 '   usage, or unexpected layout artifacts.
 '
 ' Behavior:
@@ -2079,7 +2079,7 @@ End Function
 Private Function AuditLiberationSansNarrowStyleDetails() As Long
     On Error GoTo PROC_ERR
 
-    Dim s As style
+    Dim s As Word.Style
     Dim logBuffer As String
     Dim fName As String, fSize As Variant, pStyleType As String
     Dim styleCount As Long
@@ -2215,8 +2215,8 @@ Private Function FindNotEmphasisBlackRed(fontColor As String) As Long
     Set rng = ActiveDocument.Content
     Dim totalCount As Long
     Dim wordColor As Long
-    Dim wordStyle As style
-    Dim myStyle As style
+    Dim wordStyle As Word.Style
+    Dim myStyle As Word.Style
 
     If fontColor = "Automatic" Then
         wordColor = wdColorAutomatic

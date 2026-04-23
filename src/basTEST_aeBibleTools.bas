@@ -1693,7 +1693,7 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
     Dim headingStyles As Variant
     headingStyles = Array("Heading 1", "Heading 2")
 
-    Dim s As style
+    Dim s As Word.Style
     Dim info As String
     Dim StyleName As Variant
     Dim alignValue As Integer
@@ -2023,7 +2023,7 @@ Public Sub FlagEarlyBindingRoutines_LateBound()
     baseTypes = Array("As String", "As Integer", "As Long", "As Double", "As Boolean", "As Variant", _
                       "As Byte", "As Currency", "As Date", "As Object", "As Single")
 
-    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Word.Section", "As Style", "As Shape", "As Field", _
+    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Word.Section", "As Word.Style", "As Shape", "As Field", _
                       "As HeaderFooter", "As Footnote", "As EndNote", "As Table", "As Bookmark", _
                       "As Document", "As Collection", "As New Collection", "As Selection", _
                       "As customXMLPart", "As CustomXMLParts")

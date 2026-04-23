@@ -593,8 +593,51 @@ RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
 ### Commit needed
 
 All `src/` changes from this session are uncommitted:
-- `basFixDocxRoutines.bas` — major additions (all Define* routines)
+- `basFixDocxRoutines.bas` — major additions (all Define* routines); `Word.style` → `Word.Style` casing fixed
 - `basTEST_aeBibleConfig.bas` — RUN_TAXONOMY_STYLES, AuditOneStyle
+- `py/normalize_vba.py` — `As Word.Style` normalization rule added
 - `rvw/Code_review 2026-04-21.md` — this file
+
+**DOCM action required:** Remove duplicate `Dim oCheck As Word.Style` in `DefineAuthorStyles`
+(not yet exported to src — duplicate exists only in the live .DOCM).
+
+---
+
+## § 9 — Normalizer: Word.Style added — 2026-04-22
+
+### Problem
+
+`Word.Style` was not in `NORMALIZATIONS`. The VBA IDE lowercases type qualifiers
+when a reference is missing (`Word.Style` → `Word.style`). Since the rule was absent,
+exports silently retained the wrong casing.
+
+Three instances in `basFixDocxRoutines.bas` were affected:
+- Line 549 — `ReplaceNormalWithBodyText`
+- Line 774 — `ReplacePlainTextStyles`
+- Line 956 — `ApplyBookIntroAfterDatAuthRef`
+
+Additionally, `DefineAuthorStyles` in the live `.DOCM` had a duplicate
+`Dim oCheck As Word.Style` declaration (two `Dim` lines for the same variable
+in one procedure — VBA compile error). Fix: remove the duplicate `Dim` in the DOCM.
+
+### Fix
+
+1. `py/normalize_vba.py` — added rule after `As Word.Section`:
+   ```python
+   (r'(?i)\bAs\s+(?:Word\.)?Style\b', 'As Word.Style', 'As Word.Style type declaration — added 2026-04-22'),
+   ```
+2. `src/basFixDocxRoutines.bas` — all 3 occurrences corrected (`replace_all`).
+3. DOCM — duplicate `Dim` in `DefineAuthorStyles` must be removed manually.
+
+### Coverage gap pattern
+
+The normalizer covers: `Word.Range`, `Word.Paragraph`, `Word.Paragraphs`,
+`Word.Section`, **`Word.Style`** (new).
+Still not covered: `Word.Document`, `Word.Field`, `Word.Table`, `Word.Row`,
+`Word.Cell`, `Word.HeaderFooter` — add if/when the IDE downcases them on export.
+
+### Status
+
+**FIXED — 2026-04-22.**
 
 ---

@@ -30,7 +30,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Public Sub DefineBodyTextStyle()
     On Error GoTo PROC_ERR
     Dim oDoc    As Document
-    Dim oStyle  As Word.style
+    Dim oStyle  As Word.Style
 
     Set oDoc = ActiveDocument
 
@@ -110,7 +110,7 @@ End Sub
 Public Sub DefineBodyTextIndentStyle()
     On Error GoTo PROC_ERR
     Dim oDoc    As Document
-    Dim oStyle  As Word.style
+    Dim oStyle  As Word.Style
 
     Set oDoc = ActiveDocument
 
@@ -529,7 +529,7 @@ End Sub
 '   their semantic assignments.
 '
 ' RERUN SAFE:
-'   After the first run Normal count = 0; subsequent runs report
+'   After the first run Normal Count = 0; subsequent runs report
 '   "0 replaced" and exit cleanly.
 '
 ' PREREQUISITE:
@@ -559,7 +559,7 @@ Public Sub ReplaceNormalWithBodyText()
     ' Count exact Normal paragraphs (NameLocal match — child styles excluded)
     lBefore = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.Style.NameLocal = "Normal" Then lBefore = lBefore + 1
+        If oPara.style.NameLocal = "Normal" Then lBefore = lBefore + 1
     Next oPara
 
     If lBefore = 0 Then
@@ -577,8 +577,8 @@ Public Sub ReplaceNormalWithBodyText()
     ' Iterate and replace — exact NameLocal match only
     lReplaced = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.Style.NameLocal = "Normal" Then
-            oPara.Style = oDoc.Styles("BodyText")
+        If oPara.style.NameLocal = "Normal" Then
+            oPara.style = oDoc.Styles("BodyText")
             lReplaced = lReplaced + 1
         End If
     Next oPara
@@ -632,10 +632,10 @@ Public Sub DefineAppendixTitleStyle()
         GoTo PROC_EXIT
     End If
 
-    Set oStyle = oDoc.Styles.Add(Name:="AppendixTitle", Type:=wdStyleTypeParagraph)
+    Set oStyle = oDoc.Styles.Add(name:="AppendixTitle", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .BaseStyle = ""
+        .baseStyle = ""
         .NextParagraphStyle = oDoc.Styles("AppendixBody")
 
         With .Font
@@ -706,10 +706,10 @@ Public Sub DefineAppendixBodyStyle()
         GoTo PROC_EXIT
     End If
 
-    Set oStyle = oDoc.Styles.Add(Name:="AppendixBody", Type:=wdStyleTypeParagraph)
+    Set oStyle = oDoc.Styles.Add(name:="AppendixBody", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .BaseStyle = ""
+        .baseStyle = ""
         .NextParagraphStyle = oStyle
 
         With .Font
@@ -784,7 +784,7 @@ Public Sub ReplacePlainTextStyles()
     ' Count Plain Text paragraphs first
     lCount = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.Style.NameLocal = "Plain Text" Then lCount = lCount + 1
+        If oPara.style.NameLocal = "Plain Text" Then lCount = lCount + 1
     Next oPara
 
     If lCount = 0 Then
@@ -803,14 +803,14 @@ Public Sub ReplacePlainTextStyles()
     lBody = 0
     lAppendix = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.Style.NameLocal = "Plain Text" Then
+        If oPara.style.NameLocal = "Plain Text" Then
             If oPara.Range.Start < 1000000 Then
-                oPara.Style = oDoc.Styles("BodyText")
+                oPara.style = oDoc.Styles("BodyText")
                 lBody = lBody + 1
                 Debug.Print "BodyText     p" & oPara.Range.Start & " | " & _
                             Left(Trim(oPara.Range.Text), 40)
             Else
-                oPara.Style = oDoc.Styles("AppendixBody")
+                oPara.style = oDoc.Styles("AppendixBody")
                 lAppendix = lAppendix + 1
                 Debug.Print "AppendixBody p" & oPara.Range.Start & " | " & _
                             Left(Trim(oPara.Range.Text), 40)
@@ -877,10 +877,10 @@ Public Sub DefineBookIntroStyle()
         GoTo PROC_EXIT
     End If
 
-    Set oStyle = oDoc.Styles.Add(Name:="BookIntro", Type:=wdStyleTypeParagraph)
+    Set oStyle = oDoc.Styles.Add(name:="BookIntro", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .BaseStyle = ""
+        .baseStyle = ""
         .NextParagraphStyle = oDoc.Styles("BodyText")
 
         With .Font
@@ -966,12 +966,12 @@ Public Sub ApplyBookIntroAfterDatAuthRef()
     ' Count candidates — paragraphs that follow DatAuthRef and are not yet BookIntro
     lBefore = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.Style.NameLocal = "DatAuthRef" Then
+        If oPara.style.NameLocal = "DatAuthRef" Then
             On Error Resume Next
             Set oNext = oPara.Next
             On Error GoTo PROC_ERR
             If Not oNext Is Nothing Then
-                If oNext.Style.NameLocal <> "BookIntro" Then lBefore = lBefore + 1
+                If oNext.style.NameLocal <> "BookIntro" Then lBefore = lBefore + 1
             End If
         End If
     Next oPara
@@ -992,13 +992,13 @@ Public Sub ApplyBookIntroAfterDatAuthRef()
 
     lCount = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.Style.NameLocal = "DatAuthRef" Then
+        If oPara.style.NameLocal = "DatAuthRef" Then
             On Error Resume Next
             Set oNext = oPara.Next
             On Error GoTo PROC_ERR
             If Not oNext Is Nothing Then
-                If oNext.Style.NameLocal <> "BookIntro" Then
-                    oNext.Style = oDoc.Styles("BookIntro")
+                If oNext.style.NameLocal <> "BookIntro" Then
+                    oNext.style = oDoc.Styles("BookIntro")
                     lCount = lCount + 1
                     Debug.Print "BookIntro p" & oNext.Range.Start & " | " & _
                                 Left(Trim(oNext.Range.Text), 50)
@@ -1026,10 +1026,10 @@ End Sub
 ' DefineAuthorStyles
 ' PURPOSE:
 '   Creates all four author-text styles in one call:
-'     AuthorBodyText    — paragraph style for author body text
-'     AuthorSectionHead — paragraph style for author section headings
-'     AuthorQuote       — character style for red italic quotes
-'     AuthorRef         — character style for bold book references
+'     AuthorBodyText    - paragraph style for author body text
+'     AuthorSectionHead - paragraph style for author section headings
+'     AuthorQuote       - character style for red italic quotes
+'     AuthorRef         - character style for bold book references
 '
 '   Font: Liberation Serif (free, metric-compatible with Times New Roman)
 '
@@ -1040,7 +1040,7 @@ Public Sub DefineAuthorStyles()
     Dim oDoc As Document
     Set oDoc = ActiveDocument
 
-    ' ── AuthorBodyText ────────────────────────────────────────────
+    ' --- AuthorBodyText ---------------------------------------------------------------------------
     ' Liberation Serif 12pt, Justified, 0.33" first indent,
     ' 12pt space after, Single spacing, Widow/Orphan control.
     ' USFM: \ip
@@ -1049,16 +1049,16 @@ Public Sub DefineAuthorStyles()
     Set oStyle = oDoc.Styles("AuthorBodyText")
     On Error GoTo PROC_ERR
     If oStyle Is Nothing Then
-        Set oStyle = oDoc.Styles.Add(Name:="AuthorBodyText", Type:=wdStyleTypeParagraph)
+        Set oStyle = oDoc.Styles.Add(name:="AuthorBodyText", Type:=wdStyleTypeParagraph)
         With oStyle
-            .BaseStyle = ""
+            .baseStyle = ""
             .NextParagraphStyle = oStyle
             With .Font
                 .Name = "Liberation Serif"
                 .Size = 12
                 .Bold = False
                 .Italic = False
-                .Color = wdColorAutomatic
+                .color = wdColorAutomatic
             End With
             With .ParagraphFormat
                 .Alignment = wdAlignParagraphJustify
@@ -1075,7 +1075,7 @@ Public Sub DefineAuthorStyles()
         Debug.Print "DefineAuthorStyles: AuthorBodyText already exists -- skipped."
     End If
 
-    ' ── AuthorSectionHead ─────────────────────────────────────────
+    ' --- AuthorSectionHead ---------------------------------------------------------------------------
     ' Liberation Serif 14pt, plain (bold/italic applied word by word
     ' as direct formatting).  Space before 12pt, after 6pt.
     ' USFM: \is
@@ -1084,16 +1084,16 @@ Public Sub DefineAuthorStyles()
     Set oStyle = oDoc.Styles("AuthorSectionHead")
     On Error GoTo PROC_ERR
     If oStyle Is Nothing Then
-        Set oStyle = oDoc.Styles.Add(Name:="AuthorSectionHead", Type:=wdStyleTypeParagraph)
+        Set oStyle = oDoc.Styles.Add(name:="AuthorSectionHead", Type:=wdStyleTypeParagraph)
         With oStyle
-            .BaseStyle = ""
+            .baseStyle = ""
             .NextParagraphStyle = oDoc.Styles("AuthorBodyText")
             With .Font
                 .Name = "Liberation Serif"
                 .Size = 14
                 .Bold = False
                 .Italic = False
-                .Color = wdColorAutomatic
+                .color = wdColorAutomatic
             End With
             With .ParagraphFormat
                 .Alignment = wdAlignParagraphLeft
@@ -1110,33 +1110,33 @@ Public Sub DefineAuthorStyles()
         Debug.Print "DefineAuthorStyles: AuthorSectionHead already exists -- skipped."
     End If
 
-    ' ── AuthorQuote (character style) ─────────────────────────────
-    ' Red italic — quotes of Jesus in author text.
+    ' --- AuthorQuote ---------------------------------------------------------------------------
+    ' Red italic - quotes of Jesus in author text.
     ' USFM: \wj
     Set oStyle = Nothing
     On Error Resume Next
     Set oStyle = oDoc.Styles("AuthorQuote")
     On Error GoTo PROC_ERR
     If oStyle Is Nothing Then
-        Set oStyle = oDoc.Styles.Add(Name:="AuthorQuote", Type:=wdStyleTypeCharacter)
+        Set oStyle = oDoc.Styles.Add(name:="AuthorQuote", Type:=wdStyleTypeCharacter)
         With oStyle.Font
             .Italic = True
-            .Color = wdColorRed
+            .color = wdColorRed
         End With
         Debug.Print "DefineAuthorStyles: AuthorQuote created."
     Else
         Debug.Print "DefineAuthorStyles: AuthorQuote already exists -- skipped."
     End If
 
-    ' ── AuthorRef (character style) ───────────────────────────────
-    ' Bold — inline references to book sections.
+    ' --- AuthorRef ---------------------------------------------------------------------------
+    ' Bold - inline references to book sections.
     ' USFM: \bd
     Set oStyle = Nothing
     On Error Resume Next
     Set oStyle = oDoc.Styles("AuthorRef")
     On Error GoTo PROC_ERR
     If oStyle Is Nothing Then
-        Set oStyle = oDoc.Styles.Add(Name:="AuthorRef", Type:=wdStyleTypeCharacter)
+        Set oStyle = oDoc.Styles.Add(name:="AuthorRef", Type:=wdStyleTypeCharacter)
         With oStyle.Font
             .Bold = True
         End With
@@ -1145,7 +1145,7 @@ Public Sub DefineAuthorStyles()
         Debug.Print "DefineAuthorStyles: AuthorRef already exists -- skipped."
     End If
 
-    MsgBox "AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef — done." & vbCrLf & _
+    MsgBox "AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef - done." & vbCrLf & _
            "Check Immediate Window for details.", vbInformation, "DefineAuthorStyles"
 
 PROC_EXIT:

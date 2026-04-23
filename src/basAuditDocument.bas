@@ -6,7 +6,7 @@ Option Private Module
 Public Sub ReplaceTimesInStyles()
     On Error GoTo PROC_ERR
     Dim oDoc   As Document
-    Dim oStyle As style
+    Dim oStyle As Word.Style
     Dim lCount As Long
 
     Set oDoc = ActiveDocument
@@ -44,7 +44,7 @@ Public Sub FindFontUsage()
     Dim oPara    As Word.Paragraph
     Dim oSection As Word.Section
     Dim oHF      As HeaderFooter
-    Dim oStyle   As style
+    Dim oStyle   As Word.Style
     Dim sTarget  As String
     Dim lBody    As Long
     Dim lHF      As Long

@@ -22,7 +22,7 @@ Public Sub WordEditingConfig()
 End Sub
 
 Private Sub PromoteApprovedStyles()
-    Dim s As style
+    Dim s As Word.Style
     Dim approved As Variant
     Dim i As Long
     Dim missing As Collection
@@ -76,7 +76,7 @@ Private Sub PromoteApprovedStyles()
 End Sub
 
 Private Sub DumpPrioritiesSorted()
-    Dim s As style
+    Dim s As Word.Style
     Dim arr() As Variant
     Dim Count As Long
     Dim i As Long, j As Long
@@ -244,32 +244,32 @@ Public Sub RUN_TAXONOMY_STYLES()
     Print #m_TaxFile, "-- Fully specified (all properties verified) --"
     '                               Font        Sz  Align  Indent  LineRule  LineSp  SpB   SpA
     '                                           0=skip -1=skip -999=skip
-    AuditOneStyle "BodyText",      "Carlito", 9, 3, 0,    4, 10,   0, 0
-    AuditOneStyle "BodyTextIndent","Carlito", 9, 3, 14.4, 4, 10,   0, 0
+    AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0
+    AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0
 
     ' ── Existence verified; full spec pending ────────────────────────────────
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
-    AuditOneStyle "Heading 1",         "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Heading 2",         "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Heading 1", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Heading 2", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "CustomParaAfterH1", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "DatAuthRef",        "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "BookIntro",  "Carlito", 9,  1,  0,   4, 10,   6,    6
-    AuditOneStyle "Brief",             "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Psalms BOOK",       "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Lamentation",       "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "TheHeaders",        "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "TheFooters",        "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Footnote Text",     "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Title",             "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "DatAuthRef", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
+    AuditOneStyle "Brief", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Psalms BOOK", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Lamentation", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Footnote Text", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999
 
     ' ── Not yet created — expected FAIL until each Define* routine is run ─────
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Not yet created (expected FAIL) --"
     AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "ListItem",             "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "AppendixTitle",        "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "AppendixBody",         "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "ListItem", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "AppendixTitle", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "AppendixBody", "", 0, -1, -999, -1, -999, -999, -999
 
     Print #m_TaxFile, ""
     Print #m_TaxFile, String(72, "=")
@@ -309,7 +309,7 @@ Private Sub AuditOneStyle(ByVal sName As String, _
                           ByVal dExpSpaceBefore As Double, _
                           ByVal dExpSpaceAfter As Double)
     On Error GoTo PROC_ERR
-    Dim oStyle  As Word.style
+    Dim oStyle  As Word.Style
     Dim bPass   As Boolean
     Dim sDetail As String
 
