@@ -29,13 +29,22 @@ Private Sub PromoteApprovedStyles()
     Set missing = New Collection
 
     'List your approved styles in the order you want them to appear
-    approved = Array("Normal", "Heading 1", "Heading 2", _
-                     "CustomParaAfterH1", "Brief", "DatAuthRef", _
+    approved = Array( _
+                     "Normal", "Heading 1", "Heading 2", _
+                     "BodyText", "BodyTextIndent", "BodyTextContinuation", _
+                     "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
+                     "Brief", "Psalms BOOK", "Lamentation", _
+                     "AppendixTitle", "AppendixBody", _
+                     "ListItem", _
                      "Chapter Verse marker", "Verse marker", _
-                     "EmphasisBlack", "EmphasisRed", "Lamentation", "Psalms BOOK", _
-                     "Words of Jesus", "TheHeaders", "TheFooters", _
+                     "EmphasisBlack", "EmphasisRed", _
+                     "Words of Jesus", _
+                     "AuthorBodyText", "AuthorSectionHead", _
+                     "AuthorQuote", "AuthorRef", _
+                     "TheHeaders", "TheFooters", _
                      "Title", "Book Title", _
-                     "Footnote Reference", "Footnote Text", "FargleBlargle")
+                     "Footnote Reference", "Footnote Text", _
+                     "FargleBlargle")
 
     'Push everything else down
     For Each s In ActiveDocument.Styles

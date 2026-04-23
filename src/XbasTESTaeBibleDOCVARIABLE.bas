@@ -1,6 +1,6 @@
 Attribute VB_Name = "XbasTESTaeBibleDOCVARIABLE"
 '==============================================================================
-' XbasTESTaeBibleDOCVARIABLE — Document Variable Tests (DEFERRED)
+' XbasTESTaeBibleDOCVARIABLE - Document Variable Tests (DEFERRED)
 ' ----------------------------------------------------------------------------
 ' X-prefix convention: excluded from the normal test run. Contains tests and
 ' utilities for inspecting Word document variables, header/footer story ranges,

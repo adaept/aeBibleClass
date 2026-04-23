@@ -113,8 +113,73 @@ Styles added to taxonomy after reconciliation:
 | `Footnote Reference` | `\fr` | Footnote reference mark | *(keep — intentional)* |
 
 `CustomParaAfterH1-2nd` — confirmed 0 paragraphs; removed from `PromoteApprovedStyles`.
-`Body Text` (built-in Word style with space) — pending clarification on whether used.
+`Body Text` (built-in Word style with space) — confirmed 0 paragraphs; removed.
 `FargleBlargle` — intentional diagnostic dummy; always expected missing.
+
+### PromoteApprovedStyles — updated 2026-04-22
+
+Added all new styles from this session. Current approved list (in priority order):
+
+```
+Normal, Heading 1, Heading 2,
+BodyText, BodyTextIndent, BodyTextContinuation,
+CustomParaAfterH1, DatAuthRef, BookIntro,
+Brief, Psalms BOOK, Lamentation,
+AppendixTitle, AppendixBody,
+ListItem,
+Chapter Verse marker, Verse marker,
+EmphasisBlack, EmphasisRed,
+Words of Jesus,
+AuthorBodyText, AuthorSectionHead,
+AuthorQuote, AuthorRef,
+TheHeaders, TheFooters,
+Title, Book Title,
+Footnote Reference, Footnote Text,
+FargleBlargle
+```
+
+### PromoteApprovedStyles — run result — 2026-04-22
+
+```
+WARNING: 7 styles NOT found:
+  BodyTextIndent, BodyTextContinuation, BookIntro,
+  AppendixTitle, AppendixBody, ListItem, FargleBlargle
+```
+
+All 7 WARNs are expected:
+- `FargleBlargle` — intentional diagnostic dummy; always missing
+- Remaining 6 — not yet created in the DOCM; will be created by their `Define*` routines
+
+**24 styles promoted** with correct priority order. Priority gaps (5, 6, 9, 13, 14, 15)
+are placeholders for the missing styles — they close when `Define*` routines are run
+and `PromoteApprovedStyles` is re-run.
+
+| Priority | Style |
+|----------|-------|
+| 1 | Normal |
+| 2 | Heading 1 |
+| 3 | Heading 2 |
+| 4 | BodyText |
+| 7 | CustomParaAfterH1 |
+| 8 | DatAuthRef |
+| 10 | Brief |
+| 11 | Psalms BOOK |
+| 12 | Lamentation |
+| 16 | Chapter Verse marker |
+| 17 | Verse marker |
+| 18 | EmphasisBlack |
+| 19 | EmphasisRed |
+| 20 | Words of Jesus |
+| 21 | AuthorBodyText |
+| 22 | AuthorSectionHead |
+| 23 | AuthorQuote |
+| 24 | AuthorRef |
+| 25 | TheHeaders |
+| 26 | TheFooters |
+| 27 | Title |
+| 28 | Book Title |
+| 29 | Footnote Reference |
+| 30 | Footnote Text |
 
 ### Critical bug — ReplaceNormalWithBodyText — 2026-04-22
 
@@ -556,10 +621,177 @@ Add to approved taxonomy table:
 | `AuthorQuote` | `\wj` | Inline quote of Jesus (Italic, Red) | Character |
 | `AuthorRef` | `\bd` | Inline book section reference (Bold) | Character |
 
+### Style code fixes — 2026-04-22
+
+`WidowControl` and `PageBreakBefore` were wrong in the original code; manually
+applied in the DOCM. Corrected in `src/basFixDocxRoutines.bas`:
+
+| Style | WidowControl | PageBreakBefore |
+|-------|-------------|-----------------|
+| `AuthorBodyText` | False | False |
+| `AuthorSectionHead` | False | True |
+
+Apply to the already-existing DOCM styles via Immediate Window:
+```vba
+With ActiveDocument.Styles("AuthorBodyText").ParagraphFormat
+    .WidowControl = False : .PageBreakBefore = False
+End With
+With ActiveDocument.Styles("AuthorSectionHead").ParagraphFormat
+    .WidowControl = False : .PageBreakBefore = True
+End With
+```
+
+`AuthorQuote` / `AuthorRef` — not used; underlying text retains direct formatting
+(italic, underline, bold, red). Flagged for removal after author section is finalized.
+
+### Front matter page structure — corrected 2026-04-22
+
+Two distinct pages with different mechanisms:
+
+**"Books of the Bible" page** — the 66-book page-number listing
+- Physical layout: 4 grouped text boxes (OT col 1, OT col 2, NT col 1, NT col 2)
+- Each entry: book name + SBL abbreviation + `{ DOCVARIABLE }` field for page number
+- Example: `{ DOCVARIABLE 1Sam }` already set up and visible via Alt+F9
+- Variables defined in `SetDocVariables` (`XbasTESTaeBibleDOCVARIABLE`) but value not
+  yet populated — trigger code (page number scan) is not yet wired up
+- Standard Word TOC engine is NOT used here — too slow, too rigid for 66 entries
+  in text boxes
+
+**"Contents" page** — front/back matter section listing
+- Lists major sections only: OT, NT, Maps, Concordance, etc. (~10 entries)
+- Standard Word TOC is acceptable at this scale (fast for small entry counts)
+- Or DOCVARIABLE fields for consistency with the Books of the Bible page
+- This page carries the `TitleEyebrow` + `Title` heading
+
+### Navigation pane vs Contents page — 2026-04-22
+
+Word's navigation pane and TOC are driven independently:
+
+- **Navigation pane / Outline view** — shows paragraphs with outline level 1–9.
+  Outline level "Body Text" (0) removes a style from the pane entirely.
+- **TOC** — can map any named style to a TOC level via the `\t` switch,
+  independent of outline level.
+
+A paragraph can appear in the TOC without appearing in the navigation pane.
+
+**For this document:**
+- Ribbon navigation covers only the 66 canonical books (`Heading 1` positions).
+  `Title` / `TitleEyebrow` are outside this scope — no ribbon change needed.
+- The Books of the Bible page uses DOCVARIABLE — no TOC involvement at all.
+- The Contents page (~10 major sections) uses standard Word TOC or DOCVARIABLE.
+- `TitleEyebrow` / `Title` heading on the Contents page: outline level Body Text,
+  not in nav pane, optionally in the Contents TOC via `\t "Title,1"`.
+
+### Two-line display title — TitleEyebrow + Title — 2026-04-22
+
+The heading "The / HOLY BIBLE" (eyebrow + main title) cannot use `Heading 1`
+— reserved for the 66 book titles. Reusable across front matter display pages.
+
+**Recommended: Option B — two styles**
+
+| Style | Role | Outline | TOC |
+|-------|------|---------|-----|
+| `TitleEyebrow` | "The" (preceding line), small centered | Body Text | none |
+| `Title` | "HOLY BIBLE" (main line), large display centered | Body Text | Level 1 via `\t` |
+
+`TitleEyebrow.NextParagraphStyle = Title`. `Title` already exists (1 instance);
+needs formal definition. `TitleEyebrow` is new.
+
+**Status:** Design approved — implementation pending.
+
+### DOCVARIABLE — chosen approach for all page number references — 2026-04-22
+
+**Decision: DOCVARIABLE for both pages.**
+
+| Page | Variables | Notes |
+|------|-----------|-------|
+| Books of the Bible | 66 (one per canonical book) | OT/NT text boxes |
+| Contents | ≤ 10 (major sections) | OT, NT, Maps, Concordance, etc. |
+| **Total** | **≤ 76** | One methodology, one updater, one button |
+
+**Rationale:**
+- One methodology — no `\t` TOC switch manipulation, no TOC field options dialog
+- 66 variables already planned; adding ≤ 10 more is negligible setup overhead
+- One `UpdatePageNumbers` call updates everything in both pages in one pass
+- Wire to `Document_BeforePrint` → set-it-and-forget-it
+
+**Cons:**
+
+| # | Con | Mitigation |
+|---|-----|-----------|
+| 1 | Values go stale silently after any edit that shifts page breaks | Wire to `Document_BeforePrint` in `ThisDocument.cls` — fires automatically before every print/export |
+| 2 | Document must be fully paginated — cold open gives wrong numbers | `BeforePrint` fires after Word has paginated; also runs correctly after warm cache |
+| 3 | Mismatched variable name in field code shows blank silently | Validation loop in updater — warn if any variable written as 0 or unchanged |
+| 4 | Three-way sync: field code in doc + `SetDocVariables` + `SBLVarName` | One-time setup cost; convention: SBL abbreviation with spaces stripped = variable name (`1 Sam` → `1Sam`). `SBLVarName` must apply `Replace(sAbbrev, " ", "")` |
+| 5 | `Fields.Update` may not reach fields inside grouped text boxes | Iterate `ActiveDocument.Shapes` explicitly as a safety net — one-time verification needed |
+
+Cons 1 and 2 are fully resolved by the `BeforePrint` hook.
+Con 3 resolved by a validation pass in the updater.
+Con 4 is one-time setup, not ongoing burden.
+Con 5 needs a single test after implementation.
+
+### DOCVARIABLE trigger code design — 2026-04-22
+
+What `XbasTESTaeBibleDOCVARIABLE` has:
+- `SetDocVariables` — defines the 66 variable names and SBL abbreviation mapping
+- One live `{ DOCVARIABLE 1Sam }` field confirmed via Alt+F9; value not yet populated
+
+What is missing — `UpdatePageNumbers` (covers both pages in one call):
+```vba
+Public Sub UpdatePageNumbers()
+    ' Pass 1: 66 canonical books from Heading 1 paragraphs
+    Dim oPara As Word.Paragraph
+    Dim sVar  As String
+    Dim lPage As Long
+    For Each oPara In ActiveDocument.Content.Paragraphs
+        If oPara.Style.NameLocal = "Heading 1" Then
+            sVar = SBLVarName(oPara.Range.Text)   ' SBL abbrev spaces stripped e.g. "1 Sam" -> "1Sam"
+            lPage = oPara.Range.Information(wdActiveEndPageNumber)
+            ActiveDocument.Variables(sVar).Value = CStr(lPage)
+        End If
+    Next oPara
+
+    ' Pass 2: Contents page sections (loop over ~10 section variables)
+    ' ... similar pattern for major section openers ...
+
+    ' Refresh fields in body story
+    ActiveDocument.Fields.Update
+    ' Refresh fields inside text boxes (grouped shapes)
+    Dim oShp As Shape
+    For Each oShp In ActiveDocument.Shapes
+        If oShp.TextFrame.HasText Then
+            oShp.TextFrame.TextRange.Fields.Update
+        End If
+    Next oShp
+
+    Debug.Print "UpdatePageNumbers: Done."
+End Sub
+```
+
+Wire to `Document_BeforePrint` in `ThisDocument.cls`:
+```vba
+Private Sub Document_BeforePrint(Cancel As Boolean)
+    UpdatePageNumbers
+End Sub
+```
+
+`SBLVarName` — refactor the existing book→variable mapping in `SetDocVariables`
+into a callable `Function`. Must return the space-stripped form of the SBL
+abbreviation (`Replace(sAbbrev, " ", "")`) since DOCVARIABLE names cannot
+contain spaces. SBL `1 Sam` → variable `1Sam`; SBL `Song` → variable `Song`.
+
+**Status:** Design complete. Implementation deferred — promote from
+`XbasTESTaeBibleDOCVARIABLE` when front matter work resumes.
+
 ### Status
 
 `DefineAuthorStyles` **IMPLEMENTED — 2026-04-22** in `basFixDocxRoutines.bas`.
-Manual application to 53 pages: **PENDING** (requires import into .DOCM first).
+Author styles applied to back matter: **DONE — 2026-04-22**.
+Author styles applied to front matter: **PENDING** (still needs work).
+Style property fixes (WidowControl/PageBreakBefore) in src: **DONE — 2026-04-22**.
+Apply corrected properties to existing DOCM styles: **PENDING** (Immediate Window snippet above).
+`TitleEyebrow` style definition: **PENDING**.
+`Title` style formalization: **PENDING**.
 RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
 
 ---
@@ -572,10 +804,11 @@ RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
 |---|------|--------|-------|
 | 1 | Import `basFixDocxRoutines` into .DOCM | Manual | Pick up all Define* routines from session |
 | 2 | Run `DefineAuthorStyles` | Immediate Window | Creates 4 author styles |
-| 3 | Run `DefineAppendixTitleStyle` + `DefineAppendixBodyStyle` | Immediate Window | After import |
-| 4 | Run `DefineBookIntroStyle` | Immediate Window | After import |
-| 5 | Run `ReplacePlainTextStyles` | Immediate Window | Requires AppendixBody to exist first |
-| 6 | Run `ApplyBookIntroAfterDatAuthRef` | Immediate Window | Requires BookIntro to exist first |
+| 3 | Run `DefineBodyTextIndentStyle` | Immediate Window | **DONE — 2026-04-22** |
+| 4 | Run `DefineAppendixTitleStyle` + `DefineAppendixBodyStyle` | Immediate Window | After import |
+| 5 | Run `DefineBookIntroStyle` | Immediate Window | After import |
+| 6 | Run `ReplacePlainTextStyles` | Immediate Window | Requires AppendixBody to exist first |
+| 7 | Run `ApplyBookIntroAfterDatAuthRef` | Immediate Window | Requires BookIntro to exist first |
 | 7 | Manual: apply author styles to front/back matter (53 pages) | Word UI | AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef |
 | 8 | Run `RUN_TAXONOMY_STYLES` | Immediate Window | Baseline should improve from 13/4 |
 | 9 | Add author styles to `RUN_TAXONOMY_STYLES` | `basTEST_aeBibleConfig` | AuditOneStyle calls for 2 new paragraph styles |
@@ -594,12 +827,10 @@ RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
 
 All `src/` changes from this session are uncommitted:
 - `basFixDocxRoutines.bas` — major additions (all Define* routines); `Word.style` → `Word.Style` casing fixed
-- `basTEST_aeBibleConfig.bas` — RUN_TAXONOMY_STYLES, AuditOneStyle
+- `basTEST_aeBibleConfig.bas` — RUN_TAXONOMY_STYLES, AuditOneStyle; `PromoteApprovedStyles` updated
 - `py/normalize_vba.py` — `As Word.Style` normalization rule added
 - `rvw/Code_review 2026-04-21.md` — this file
 
-**DOCM action required:** Remove duplicate `Dim oCheck As Word.Style` in `DefineAuthorStyles`
-(not yet exported to src — duplicate exists only in the live .DOCM).
 
 ---
 
@@ -616,9 +847,10 @@ Three instances in `basFixDocxRoutines.bas` were affected:
 - Line 774 — `ReplacePlainTextStyles`
 - Line 956 — `ApplyBookIntroAfterDatAuthRef`
 
-Additionally, `DefineAuthorStyles` in the live `.DOCM` had a duplicate
-`Dim oCheck As Word.Style` declaration (two `Dim` lines for the same variable
-in one procedure — VBA compile error). Fix: remove the duplicate `Dim` in the DOCM.
+Additionally, `DefineAuthorStyles` had a duplicate `Dim oCheck As Word.Style`
+declaration (two `Dim` lines for the same variable in one procedure — VBA compile
+error). Fix: remove the duplicate `Dim` in `src/basFixDocxRoutines.bas` and
+reimport — the DOCM is always overwritten from `src/`.
 
 ### Fix
 
