@@ -62,7 +62,8 @@ Public Sub DefineBodyTextStyle()
 
         With .ParagraphFormat
             .Alignment = wdAlignParagraphJustify
-            .LineSpacingRule = wdLineSpaceSingle
+            .LineSpacingRule = wdLineSpaceExactly
+            .LineSpacing = 10                   ' Exactly 10pt — matches original docm
             .FirstLineIndent = 0                ' no first-line indent on Bible body text
             .LeftIndent = 0
             .SpaceBefore = 0
@@ -139,7 +140,8 @@ Public Sub DefineBodyTextIndentStyle()
 
         With .ParagraphFormat
             .Alignment = wdAlignParagraphJustify
-            .LineSpacingRule = wdLineSpaceSingle
+            .LineSpacingRule = wdLineSpaceExactly
+            .LineSpacing = 10                           ' Exactly 10pt — matches BodyText
             .FirstLineIndent = 14.4                     ' 0.2 inches in points
             .LeftIndent = 0
             .SpaceBefore = 0
@@ -510,8 +512,8 @@ End Sub
 '====================================================================
 ' ReplaceNormalWithBodyText
 ' PURPOSE:
-'   Replaces every paragraph styled Normal in the document body with
-'   BodyText.  This is the primary fix for Bible text paragraphs -
+'   Replaces every paragraph whose style is EXACTLY "Normal" with
+'   BodyText.  This is the primary fix for Bible text paragraphs —
 '   the author used Normal throughout; BodyText is the semantic
 '   replacement (USFM \p).
 '
@@ -519,12 +521,15 @@ End Sub
 '   doc.Content only (main body story).  Headers, footers, and
 '   footnotes are not affected — they carry their own styles.
 '
-' PERFORMANCE:
-'   Uses Find/Replace with Format:=True rather than iterating
-'   paragraphs - safe and fast on 16 000+ paragraphs.
+' SAFETY — EXACT MATCH ONLY:
+'   Uses paragraph iteration with NameLocal = "Normal" exact match.
+'   Find/Replace must NOT be used here — Word's Find/Replace with a
+'   style also matches child styles (styles based on Normal such as
+'   Words of Jesus, EmphasisRed, EmphasisBlack) and would destroy
+'   their semantic assignments.
 '
 ' RERUN SAFE:
-'   After the first run Normal Count = 0; subsequent runs report
+'   After the first run Normal count = 0; subsequent runs report
 '   "0 replaced" and exit cleanly.
 '
 ' PREREQUISITE:
@@ -533,15 +538,15 @@ End Sub
 Public Sub ReplaceNormalWithBodyText()
     On Error GoTo PROC_ERR
     Dim oDoc        As Document
-    Dim oRange      As Word.Range
+    Dim oPara       As Word.Paragraph
     Dim lBefore     As Long
-    Dim lAfter      As Long
     Dim lReplaced   As Long
+    Dim lResponse   As Long
 
     Set oDoc = ActiveDocument
 
     ' Verify BodyText exists before proceeding
-    Dim oCheck As Word.style
+    Dim oCheck As Word.Style
     On Error Resume Next
     Set oCheck = oDoc.Styles("BodyText")
     On Error GoTo PROC_ERR
@@ -551,11 +556,10 @@ Public Sub ReplaceNormalWithBodyText()
         GoTo PROC_EXIT
     End If
 
-    ' Count Normal paragraphs before replacement
+    ' Count exact Normal paragraphs (NameLocal match — child styles excluded)
     lBefore = 0
-    Dim oPara As Word.Paragraph
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Normal" Then lBefore = lBefore + 1
+        If oPara.Style.NameLocal = "Normal" Then lBefore = lBefore + 1
     Next oPara
 
     If lBefore = 0 Then
@@ -565,48 +569,591 @@ Public Sub ReplaceNormalWithBodyText()
         GoTo PROC_EXIT
     End If
 
-    ' Confirm before proceeding
-    Dim lResponse As Long
     lResponse = MsgBox(lBefore & " Normal paragraphs found. Replace all with BodyText?", _
                        vbYesNo + vbDefaultButton2 + vbQuestion, _
                        "ReplaceNormalWithBodyText")
     If lResponse = vbNo Then GoTo PROC_EXIT
 
-    ' Use Find/Replace for performance
-    Set oRange = oDoc.Content
-    With oRange.Find
-        .ClearFormatting
-        .style = oDoc.Styles("Normal")
-        .Text = ""
-        .Replacement.ClearFormatting
-        .Replacement.style = oDoc.Styles("BodyText")
-        .Replacement.Text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = True
-        .MatchCase = False
-        .Execute Replace:=wdReplaceAll
-    End With
-
-    ' Count remaining Normal paragraphs to confirm
-    lAfter = 0
+    ' Iterate and replace — exact NameLocal match only
+    lReplaced = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Normal" Then lAfter = lAfter + 1
+        If oPara.Style.NameLocal = "Normal" Then
+            oPara.Style = oDoc.Styles("BodyText")
+            lReplaced = lReplaced + 1
+        End If
     Next oPara
-    lReplaced = lBefore - lAfter
 
-    Debug.Print "ReplaceNormalWithBodyText: " & lReplaced & " replaced, " & lAfter & " remaining."
-    MsgBox "Done. " & lReplaced & " paragraphs changed from Normal to BodyText." & vbCrLf & _
-           lAfter & " Normal paragraphs remaining (check Immediate Window for details).", _
+    Debug.Print "ReplaceNormalWithBodyText: " & lReplaced & " replaced."
+    MsgBox "Done. " & lReplaced & " paragraphs changed from Normal to BodyText.", _
            vbInformation, "ReplaceNormalWithBodyText"
 
 PROC_EXIT:
     Set oPara = Nothing
     Set oCheck = Nothing
-    Set oRange = Nothing
     Set oDoc = Nothing
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReplaceNormalWithBodyText of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineAppendixTitleStyle
+' PURPOSE:
+'   Creates the AppendixTitle style if it does not already exist.
+'   Used for section titles within appendix content (e.g. the
+'   Concordance section heading).
+'
+' FORMATTING:
+'   Font:           Carlito 10pt, Bold
+'   Alignment:      Left (wdAlignParagraphLeft)
+'   Line spacing:   Single
+'   First indent:   0
+'   Space before:   6pt
+'   Space after:    0pt
+'
+' USFM mapping:  \imt  (introduction major title)
+'====================================================================
+Public Sub DefineAppendixTitleStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oStyle  As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AppendixTitle")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineAppendixTitleStyle: AppendixTitle already exists -- no changes made."
+        MsgBox "AppendixTitle style already exists in this document.", _
+               vbInformation, "DefineAppendixTitleStyle"
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(Name:="AppendixTitle", Type:=wdStyleTypeParagraph)
+
+    With oStyle
+        .BaseStyle = ""
+        .NextParagraphStyle = oDoc.Styles("AppendixBody")
+
+        With .Font
+            .Name = "Carlito"
+            .Size = 10
+            .Bold = True
+            .Italic = False
+        End With
+
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphLeft
+            .LineSpacingRule = wdLineSpaceSingle
+            .FirstLineIndent = 0
+            .LeftIndent = 0
+            .SpaceBefore = 6
+            .SpaceAfter = 0
+        End With
+    End With
+
+    Debug.Print "DefineAppendixTitleStyle: AppendixTitle created successfully."
+    MsgBox "AppendixTitle style created successfully." & vbCrLf & _
+           "Font: Carlito 10pt Bold | Left | 6pt before", _
+           vbInformation, "DefineAppendixTitleStyle"
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DefineAppendixTitleStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineAppendixBodyStyle
+' PURPOSE:
+'   Creates the AppendixBody style if it does not already exist.
+'   Used for body paragraphs within appendix content (e.g. the
+'   Concordance explanatory text and software links).
+'   Visually identical to BodyText; semantically distinct for USFM
+'   export (\ip vs \p).
+'
+' FORMATTING:
+'   Font:           Carlito 9pt
+'   Alignment:      Justified
+'   Line spacing:   Single
+'   First indent:   0
+'   Space before:   0pt
+'   Space after:    0pt
+'
+' USFM mapping:  \ip  (introduction paragraph / appendix body)
+'====================================================================
+Public Sub DefineAppendixBodyStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oStyle  As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AppendixBody")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineAppendixBodyStyle: AppendixBody already exists -- no changes made."
+        MsgBox "AppendixBody style already exists in this document.", _
+               vbInformation, "DefineAppendixBodyStyle"
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(Name:="AppendixBody", Type:=wdStyleTypeParagraph)
+
+    With oStyle
+        .BaseStyle = ""
+        .NextParagraphStyle = oStyle
+
+        With .Font
+            .Name = "Carlito"
+            .Size = 9
+            .Bold = False
+            .Italic = False
+        End With
+
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphJustify
+            .LineSpacingRule = wdLineSpaceExactly
+            .LineSpacing = 10                   ' Exactly 10pt — matches BodyText
+            .FirstLineIndent = 0
+            .LeftIndent = 0
+            .SpaceBefore = 0
+            .SpaceAfter = 0
+        End With
+    End With
+
+    Debug.Print "DefineAppendixBodyStyle: AppendixBody created successfully."
+    MsgBox "AppendixBody style created successfully." & vbCrLf & _
+           "Font: Carlito 9pt | Justified | No indent", _
+           vbInformation, "DefineAppendixBodyStyle"
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DefineAppendixBodyStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' ReplacePlainTextStyles
+' PURPOSE:
+'   Replaces all 26 Plain Text paragraphs with the correct semantic
+'   style based on position in the document:
+'     - Front matter (position < 1 000 000) -> BodyText
+'     - Concordance appendix (position >= 1 000 000) -> AppendixBody
+'
+' MANUAL FOLLOW-UP:
+'   The concordance contains section-letter headings (e.g. "A") and
+'   sub-section titles that may warrant AppendixTitle style. Review
+'   the Immediate Window output and reclassify manually as needed.
+'
+' PREREQUISITES:
+'   DefineBodyTextStyle, DefineAppendixBodyStyle must have been run.
+'====================================================================
+Public Sub ReplacePlainTextStyles()
+    On Error GoTo PROC_ERR
+    Dim oDoc        As Document
+    Dim oPara       As Word.Paragraph
+    Dim lCount      As Long
+    Dim lBody       As Long
+    Dim lAppendix   As Long
+
+    Set oDoc = ActiveDocument
+
+    ' Verify required styles exist
+    Dim oCheck As Word.Style
+    On Error Resume Next
+    Set oCheck = oDoc.Styles("AppendixBody")
+    On Error GoTo PROC_ERR
+    If oCheck Is Nothing Then
+        MsgBox "AppendixBody style not found. Run DefineAppendixBodyStyle first.", _
+               vbExclamation, "ReplacePlainTextStyles"
+        GoTo PROC_EXIT
+    End If
+
+    ' Count Plain Text paragraphs first
+    lCount = 0
+    For Each oPara In oDoc.Content.Paragraphs
+        If oPara.Style.NameLocal = "Plain Text" Then lCount = lCount + 1
+    Next oPara
+
+    If lCount = 0 Then
+        Debug.Print "ReplacePlainTextStyles: No Plain Text paragraphs found -- nothing to do."
+        MsgBox "No Plain Text paragraphs found. Nothing replaced.", _
+               vbInformation, "ReplacePlainTextStyles"
+        GoTo PROC_EXIT
+    End If
+
+    Dim lResponse As Long
+    lResponse = MsgBox(lCount & " Plain Text paragraphs found. Replace all?", _
+                       vbYesNo + vbDefaultButton2 + vbQuestion, _
+                       "ReplacePlainTextStyles")
+    If lResponse = vbNo Then GoTo PROC_EXIT
+
+    lBody = 0
+    lAppendix = 0
+    For Each oPara In oDoc.Content.Paragraphs
+        If oPara.Style.NameLocal = "Plain Text" Then
+            If oPara.Range.Start < 1000000 Then
+                oPara.Style = oDoc.Styles("BodyText")
+                lBody = lBody + 1
+                Debug.Print "BodyText     p" & oPara.Range.Start & " | " & _
+                            Left(Trim(oPara.Range.Text), 40)
+            Else
+                oPara.Style = oDoc.Styles("AppendixBody")
+                lAppendix = lAppendix + 1
+                Debug.Print "AppendixBody p" & oPara.Range.Start & " | " & _
+                            Left(Trim(oPara.Range.Text), 40)
+            End If
+        End If
+    Next oPara
+
+    Debug.Print "ReplacePlainTextStyles: " & lBody & " -> BodyText, " & _
+                lAppendix & " -> AppendixBody."
+    MsgBox "Done." & vbCrLf & _
+           lBody & " paragraphs -> BodyText" & vbCrLf & _
+           lAppendix & " paragraphs -> AppendixBody" & vbCrLf & _
+           "Review Immediate Window for concordance entries that may need AppendixTitle.", _
+           vbInformation, "ReplacePlainTextStyles"
+
+PROC_EXIT:
+    Set oCheck = Nothing
+    Set oPara = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReplacePlainTextStyles of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineBookIntroStyle
+' PURPOSE:
+'   Creates the BookIntro style if it does not already exist.
+'   Used for the centered background-summary paragraph that follows
+'   each DatAuthRef paragraph — one paragraph per book using manual
+'   line breaks (Shift+Enter) to separate Dating, Authorship, etc.
+'
+' FORMATTING:
+'   Font:           Carlito 9pt
+'   Alignment:      Center (wdAlignParagraphCenter)
+'   Line spacing:   Single
+'   First indent:   0
+'   Space before:   6pt  (visual separation from DatAuthRef)
+'   Space after:    6pt  (visual separation from following content)
+'
+' USFM mapping:  \ip  (introduction paragraph)
+'
+' SIDE EFFECT:
+'   Sets DatAuthRef.NextParagraphStyle = BookIntro so Word
+'   automatically applies BookIntro when Enter is pressed after
+'   a DatAuthRef paragraph.
+'====================================================================
+Public Sub DefineBookIntroStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oStyle  As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("BookIntro")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineBookIntroStyle: BookIntro already exists -- no changes made."
+        MsgBox "BookIntro style already exists in this document.", _
+               vbInformation, "DefineBookIntroStyle"
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(Name:="BookIntro", Type:=wdStyleTypeParagraph)
+
+    With oStyle
+        .BaseStyle = ""
+        .NextParagraphStyle = oDoc.Styles("BodyText")
+
+        With .Font
+            .Name = "Carlito"
+            .Size = 9
+            .Bold = False
+            .Italic = False
+        End With
+
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphCenter
+            .LineSpacingRule = wdLineSpaceExactly
+            .LineSpacing = 10                   ' Exactly 10pt — matches BodyText
+            .FirstLineIndent = 0
+            .LeftIndent = 0
+            .SpaceBefore = 6
+            .SpaceAfter = 6
+        End With
+    End With
+
+    ' Set DatAuthRef to flow into BookIntro on Enter
+    Dim oDatAuth As Word.Style
+    On Error Resume Next
+    Set oDatAuth = oDoc.Styles("DatAuthRef")
+    On Error GoTo PROC_ERR
+    If Not oDatAuth Is Nothing Then
+        oDatAuth.NextParagraphStyle = oDoc.Styles("BookIntro")
+        Debug.Print "DefineBookIntroStyle: DatAuthRef.NextParagraphStyle set to BookIntro."
+    End If
+
+    Debug.Print "DefineBookIntroStyle: BookIntro created successfully."
+    MsgBox "BookIntro style created successfully." & vbCrLf & _
+           "Font: Carlito 9pt | Centered | 6pt before/after" & vbCrLf & _
+           "DatAuthRef next-style set to BookIntro.", _
+           vbInformation, "DefineBookIntroStyle"
+
+PROC_EXIT:
+    Set oDatAuth = Nothing
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DefineBookIntroStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' ApplyBookIntroAfterDatAuthRef
+' PURPOSE:
+'   Finds every paragraph immediately following a DatAuthRef paragraph
+'   and reclassifies it as BookIntro.  The BookIntro style definition
+'   supplies center alignment — this routine does not select by
+'   existing alignment.
+'
+'   Rule: all book introduction summary paragraphs live on the same
+'   page as Heading 1 (book title) and follow DatAuthRef.  Applying
+'   BookIntro makes centering consistent across all 66 books regardless
+'   of what direct formatting the author may have applied.
+'
+' RERUN SAFE: paragraphs already styled BookIntro are skipped.
+'====================================================================
+Public Sub ApplyBookIntroAfterDatAuthRef()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oPara   As Word.Paragraph
+    Dim oNext   As Word.Paragraph
+    Dim lCount  As Long
+    Dim lBefore As Long
+
+    Set oDoc = ActiveDocument
+
+    ' Verify BookIntro exists
+    Dim oCheck As Word.Style
+    On Error Resume Next
+    Set oCheck = oDoc.Styles("BookIntro")
+    On Error GoTo PROC_ERR
+    If oCheck Is Nothing Then
+        MsgBox "BookIntro style not found. Run DefineBookIntroStyle first.", _
+               vbExclamation, "ApplyBookIntroAfterDatAuthRef"
+        GoTo PROC_EXIT
+    End If
+
+    ' Count candidates — paragraphs that follow DatAuthRef and are not yet BookIntro
+    lBefore = 0
+    For Each oPara In oDoc.Content.Paragraphs
+        If oPara.Style.NameLocal = "DatAuthRef" Then
+            On Error Resume Next
+            Set oNext = oPara.Next
+            On Error GoTo PROC_ERR
+            If Not oNext Is Nothing Then
+                If oNext.Style.NameLocal <> "BookIntro" Then lBefore = lBefore + 1
+            End If
+        End If
+    Next oPara
+
+    If lBefore = 0 Then
+        Debug.Print "ApplyBookIntroAfterDatAuthRef: All DatAuthRef paragraphs already followed by BookIntro."
+        MsgBox "Nothing to do — all DatAuthRef paragraphs already followed by BookIntro.", _
+               vbInformation, "ApplyBookIntroAfterDatAuthRef"
+        GoTo PROC_EXIT
+    End If
+
+    Dim lResponse As Long
+    lResponse = MsgBox(lBefore & " paragraph(s) following DatAuthRef will be reclassified as BookIntro." & _
+                       vbCrLf & "Proceed?", _
+                       vbYesNo + vbDefaultButton2 + vbQuestion, _
+                       "ApplyBookIntroAfterDatAuthRef")
+    If lResponse = vbNo Then GoTo PROC_EXIT
+
+    lCount = 0
+    For Each oPara In oDoc.Content.Paragraphs
+        If oPara.Style.NameLocal = "DatAuthRef" Then
+            On Error Resume Next
+            Set oNext = oPara.Next
+            On Error GoTo PROC_ERR
+            If Not oNext Is Nothing Then
+                If oNext.Style.NameLocal <> "BookIntro" Then
+                    oNext.Style = oDoc.Styles("BookIntro")
+                    lCount = lCount + 1
+                    Debug.Print "BookIntro p" & oNext.Range.Start & " | " & _
+                                Left(Trim(oNext.Range.Text), 50)
+                End If
+            End If
+        End If
+    Next oPara
+
+    Debug.Print "ApplyBookIntroAfterDatAuthRef: " & lCount & " paragraphs reclassified as BookIntro."
+    MsgBox "Done. " & lCount & " paragraphs reclassified as BookIntro.", _
+           vbInformation, "ApplyBookIntroAfterDatAuthRef"
+
+PROC_EXIT:
+    Set oCheck = Nothing
+    Set oNext = Nothing
+    Set oPara = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ApplyBookIntroAfterDatAuthRef of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
+' DefineAuthorStyles
+' PURPOSE:
+'   Creates all four author-text styles in one call:
+'     AuthorBodyText    — paragraph style for author body text
+'     AuthorSectionHead — paragraph style for author section headings
+'     AuthorQuote       — character style for red italic quotes
+'     AuthorRef         — character style for bold book references
+'
+'   Font: Liberation Serif (free, metric-compatible with Times New Roman)
+'
+' RERUN SAFE: skips any style that already exists.
+'====================================================================
+Public Sub DefineAuthorStyles()
+    On Error GoTo PROC_ERR
+    Dim oDoc As Document
+    Set oDoc = ActiveDocument
+
+    ' ── AuthorBodyText ────────────────────────────────────────────
+    ' Liberation Serif 12pt, Justified, 0.33" first indent,
+    ' 12pt space after, Single spacing, Widow/Orphan control.
+    ' USFM: \ip
+    Dim oStyle As Word.Style
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AuthorBodyText")
+    On Error GoTo PROC_ERR
+    If oStyle Is Nothing Then
+        Set oStyle = oDoc.Styles.Add(Name:="AuthorBodyText", Type:=wdStyleTypeParagraph)
+        With oStyle
+            .BaseStyle = ""
+            .NextParagraphStyle = oStyle
+            With .Font
+                .Name = "Liberation Serif"
+                .Size = 12
+                .Bold = False
+                .Italic = False
+                .Color = wdColorAutomatic
+            End With
+            With .ParagraphFormat
+                .Alignment = wdAlignParagraphJustify
+                .LineSpacingRule = wdLineSpaceSingle
+                .FirstLineIndent = 23.76      ' 0.33 inches in points
+                .LeftIndent = 0
+                .SpaceBefore = 0
+                .SpaceAfter = 12
+                .WidowControl = True
+            End With
+        End With
+        Debug.Print "DefineAuthorStyles: AuthorBodyText created."
+    Else
+        Debug.Print "DefineAuthorStyles: AuthorBodyText already exists -- skipped."
+    End If
+
+    ' ── AuthorSectionHead ─────────────────────────────────────────
+    ' Liberation Serif 14pt, plain (bold/italic applied word by word
+    ' as direct formatting).  Space before 12pt, after 6pt.
+    ' USFM: \is
+    Set oStyle = Nothing
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AuthorSectionHead")
+    On Error GoTo PROC_ERR
+    If oStyle Is Nothing Then
+        Set oStyle = oDoc.Styles.Add(Name:="AuthorSectionHead", Type:=wdStyleTypeParagraph)
+        With oStyle
+            .BaseStyle = ""
+            .NextParagraphStyle = oDoc.Styles("AuthorBodyText")
+            With .Font
+                .Name = "Liberation Serif"
+                .Size = 14
+                .Bold = False
+                .Italic = False
+                .Color = wdColorAutomatic
+            End With
+            With .ParagraphFormat
+                .Alignment = wdAlignParagraphLeft
+                .LineSpacingRule = wdLineSpaceSingle
+                .FirstLineIndent = 0
+                .LeftIndent = 0
+                .SpaceBefore = 12
+                .SpaceAfter = 6
+                .WidowControl = True
+            End With
+        End With
+        Debug.Print "DefineAuthorStyles: AuthorSectionHead created."
+    Else
+        Debug.Print "DefineAuthorStyles: AuthorSectionHead already exists -- skipped."
+    End If
+
+    ' ── AuthorQuote (character style) ─────────────────────────────
+    ' Red italic — quotes of Jesus in author text.
+    ' USFM: \wj
+    Set oStyle = Nothing
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AuthorQuote")
+    On Error GoTo PROC_ERR
+    If oStyle Is Nothing Then
+        Set oStyle = oDoc.Styles.Add(Name:="AuthorQuote", Type:=wdStyleTypeCharacter)
+        With oStyle.Font
+            .Italic = True
+            .Color = wdColorRed
+        End With
+        Debug.Print "DefineAuthorStyles: AuthorQuote created."
+    Else
+        Debug.Print "DefineAuthorStyles: AuthorQuote already exists -- skipped."
+    End If
+
+    ' ── AuthorRef (character style) ───────────────────────────────
+    ' Bold — inline references to book sections.
+    ' USFM: \bd
+    Set oStyle = Nothing
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("AuthorRef")
+    On Error GoTo PROC_ERR
+    If oStyle Is Nothing Then
+        Set oStyle = oDoc.Styles.Add(Name:="AuthorRef", Type:=wdStyleTypeCharacter)
+        With oStyle.Font
+            .Bold = True
+        End With
+        Debug.Print "DefineAuthorStyles: AuthorRef created."
+    Else
+        Debug.Print "DefineAuthorStyles: AuthorRef already exists -- skipped."
+    End If
+
+    MsgBox "AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef — done." & vbCrLf & _
+           "Check Immediate Window for details.", vbInformation, "DefineAuthorStyles"
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure DefineAuthorStyles of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub

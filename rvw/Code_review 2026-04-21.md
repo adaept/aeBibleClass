@@ -58,7 +58,7 @@ Test 30 now passes. Test 49 = 15 (expected 15). Tests 50 and 51 now running corr
 | Style | Count | Action |
 |-------|-------|--------|
 | `Plain Text` | 26 | Investigate contexts → fix routine in `basFixDocxRoutines` → test |
-| `List Paragraph` | 82 | Investigate contexts → fix routine in `basFixDocxRoutines` → test |
+| `List Paragraph` | 82 | **DEFERRED** — cross-reference lookup table needs separate taxonomy design pass; three sub-types identified: `ListItem`, `ListItemBody`, `BookRef` |
 | `Paragraph Continuation` | 158 | Investigate contexts → fix routine in `basFixDocxRoutines` → test |
 | `Title` | 1 | Tolerated (artifact — Section 1 front-matter) |
 
@@ -72,16 +72,20 @@ Test 49 expected will move from 15 → 12 once Group B styles are resolved.
 
 | Word Style | USFM marker | Semantic role | Replaces |
 |-----------|-------------|---------------|----------|
-| `Heading 1` | `\mt1` | Book title | *(reserved — keep)* |
+| `Book Title` | `\mt1` | "Holy Bible" — document title (appears once) | *(keep — intentional)* |
+| `Heading 1` | `\mt2` | Individual book title (66 — Genesis, Exodus, etc.) | *(reserved — keep)* |
 | `Heading 2` | `\c` | Chapter heading | *(reserved — keep)* |
 | `BodyText` | `\p` | Standard body paragraph | `Normal`, `Plain Text` |
 | `BodyTextIndent` | `\pi` | Indented body paragraph (quoted / subordinate) | direct formatting |
 | `BodyTextContinuation` | `\m` | Continuation paragraph (no indent) | `Paragraph Continuation` |
-| `ListItem` | `\li1` | List / bullet item | `List Paragraph` |
+| `ListItem` | `\li1` | Study list item (Carlito 11pt Bold Italic, hanging indent) | `List Paragraph` Type A |
+| `ListItemBody` | `\li1` | Study list continuation paragraph | `List Paragraph` Type A continuation |
+| `BookRef` | `\xt` | Cross-reference to named book (Carlito 11pt Bold, tab-leader) | `List Paragraph` Type B |
 | `AppendixTitle` | `\imt` | Appendix section title | `Normal` (Concordance heading) |
 | `AppendixBody` | `\ip` | Appendix body text | `Plain Text` (Concordance body) |
 | `CustomParaAfterH1` | `\p` (first) | First para after book title | *(keep — already semantic)* |
 | `DatAuthRef` | `\d` | Descriptive / date-author reference | *(keep — already semantic)* |
+| `BookIntro` | `\ip` | Centered book introduction summary (follows DatAuthRef) | direct formatting on `BodyText` |
 | `Brief` | `\is` | Book-level introduction / brief | *(keep — intentional, 66 instances)* |
 | `Psalms BOOK` | `\ms` | Psalms book division (Books I–V) | *(keep — intentional, 5 instances)* |
 | `Lamentation` | `\q1` | Lamentations acrostic / verse text | *(keep — intentional, 152 instances)* |
@@ -92,6 +96,68 @@ Test 49 expected will move from 15 → 12 once Group B styles are resolved.
 
 Note: USFM markers for `Brief`, `Psalms BOOK`, and `Lamentation` are best-fit
 suggestions — confirm against the USFM export plan when that work begins.
+
+### Taxonomy reconciliation — 2026-04-22
+
+Source of truth: `PromoteApprovedStyles` in `basTEST_aeBibleConfig.bas`.
+Styles added to taxonomy after reconciliation:
+
+| Word Style | USFM marker | Semantic role | Notes |
+|-----------|-------------|---------------|-------|
+| `Words of Jesus` | `\wj` | Words spoken by Jesus (red text) | *(keep — intentional)* |
+| `EmphasisRed` | `\em` | Red emphasis | *(keep — intentional)* |
+| `EmphasisBlack` | `\em` | Black emphasis | *(keep — intentional)* |
+| `Chapter Verse marker` | `\c` / `\v` | Chapter/verse marker | *(keep — intentional)* |
+| `Verse marker` | `\v` | Verse marker | *(keep — intentional)* |
+| `Book Title` | `\mt2` | Book title (clarify vs `Heading 1`) | *(pending clarification)* |
+| `Footnote Reference` | `\fr` | Footnote reference mark | *(keep — intentional)* |
+
+`CustomParaAfterH1-2nd` — confirmed 0 paragraphs; removed from `PromoteApprovedStyles`.
+`Body Text` (built-in Word style with space) — pending clarification on whether used.
+`FargleBlargle` — intentional diagnostic dummy; always expected missing.
+
+### Critical bug — ReplaceNormalWithBodyText — 2026-04-22
+
+**Root cause:** `ReplaceNormalWithBodyText` used Word Find/Replace with
+`.Style = oDoc.Styles("Normal")`. Word's Find/Replace matches ALL paragraphs
+styled with styles based on Normal — including `Words of Jesus`, `EmphasisRed`,
+`EmphasisBlack`, `Chapter Verse marker`, `Verse marker`, etc. This replaced
+31,846 paragraphs including many that were not true `Normal` paragraphs,
+destroying their semantic style assignments.
+
+**Recovery:** Document closed without saving; reverted to 955-page backup.
+
+**Fix:** `ReplaceNormalWithBodyText` must use paragraph iteration with exact
+`NameLocal = "Normal"` matching — never Find/Replace for style replacement.
+This ensures child styles (styles based on Normal) are never affected.
+
+**Status:** Routine rewritten and re-run on clean document. COMPLETE.
+
+### ReplaceNormalWithBodyText — result — 2026-04-22
+
+**Run:** 31,846 Normal paragraphs replaced with BodyText using exact iteration.
+Child styles (Words of Jesus, EmphasisRed, EmphasisBlack, etc.) confirmed unaffected.
+
+**Outcome:**
+
+| Section | Pages | Result |
+|---------|-------|--------|
+| Bible text (Genesis–Revelation) | ~905 | Correct — BodyText Exactly 10pt, justified |
+| Front matter (author text) | first 18 | Formatting affected — Times New Roman |
+| Back matter (author text) | last 35 | Formatting affected — Times New Roman |
+| **Total affected** | **53 / 960** | **~5.5% — tolerated** |
+
+**Root cause of front/back matter issues:** Those sections used `Normal` style
+but with Times New Roman font applied as direct formatting (or via a style based
+on Normal that inherits TNR). Replacing Normal → BodyText (Carlito 9pt Exactly 10pt)
+changed the font and line spacing in those sections.
+
+**Assessment: WIN.** Times New Roman substitution is already planned as a separate
+work item. The front/back matter font fix is absorbed into that task. Bible text —
+the primary content — is correctly converted.
+
+**Next:** Times New Roman substitution (front/back matter font fix) tracked under
+i18n / font work. Current page count: 960.
 
 ### Font context
 
@@ -189,9 +255,9 @@ used for the entire Bible text body — the single largest style fix in the docu
 
 ### Target state after Steps 1–6
 
-Test 49 expected = 17 (only intentional styles remain):
+Test 49 expected = 18 (only intentional styles remain):
 `Heading 1`, `Heading 2`, `BodyText`, `BodyTextIndent`, `BodyTextContinuation`, `ListItem`,
-`AppendixTitle`, `AppendixBody`, `CustomParaAfterH1`, `DatAuthRef`,
+`AppendixTitle`, `AppendixBody`, `BookIntro`, `CustomParaAfterH1`, `DatAuthRef`,
 `Brief`, `Psalms BOOK`, `Lamentation`,
 `TheHeaders`, `TheFooters`, `FootnoteText`, `Title`
 
@@ -395,5 +461,140 @@ links to individual rpt files for drill-down.
 
 **DEFERRED — implement after taxonomy is working correctly and current
 major editing work is complete.** All design decisions recorded above.
+
+---
+
+## § 7 — Author text styles — Times New Roman substitution — 2026-04-22
+
+### Context
+
+Front matter (first 18 pages) and back matter (last 35 pages) are author-written
+text — biographical notes, diagrams, and appendix content — originally formatted
+in Times New Roman 12pt. After `ReplaceNormalWithBodyText`, these sections lost
+their TNR formatting (replaced by Carlito 9pt Exactly 10pt). A dedicated style set
+is needed to restore correct formatting before manual cleanup of these 53 pages.
+
+### Font choice — Liberation Serif
+
+Times New Roman is a proprietary font (Monotype). Liberation Serif is the
+metrically compatible free replacement (same relationship as Carlito/Calibri):
+identical metrics ensure no reflowing when the document is opened on a system
+without TNR.
+
+### Style decisions
+
+| Aspect | Decision |
+|--------|----------|
+| Author body text font | Liberation Serif 12pt (replaces TNR 12pt) |
+| Author section heads font | Liberation Serif 14pt (replaces TNR 14pt) |
+| Section head style | No bold/italic in the style definition — individual words alternate bold/italic (applied as direct formatting word by word) |
+| Inline quotes of Jesus | `AuthorQuote` character style — Italic + Red (wdColorRed) |
+| Inline book references | `AuthorRef` character style — Bold |
+| Character style preference | Character styles over direct formatting — auditable, reversible |
+
+### Styles defined — DefineAuthorStyles
+
+Four styles added in one routine in `basFixDocxRoutines.bas`:
+
+**`AuthorBodyText`** (paragraph style):
+- Liberation Serif 12pt
+- Justified (`wdAlignParagraphJustify`)
+- FirstLineIndent = 23.76pt (0.33" × 72 = 23.76)
+- SpaceAfter = 12pt
+- `wdLineSpaceSingle`
+- WidowControl = True
+- BaseStyle = "" (no cascade from Normal)
+
+**`AuthorSectionHead`** (paragraph style):
+- Liberation Serif 14pt, plain (no Bold/Italic in style)
+- Left aligned
+- SpaceBefore = 12pt, SpaceAfter = 6pt
+- `wdLineSpaceSingle`
+- WidowControl = True
+- Individual words styled bold or italic directly in the document
+
+**`AuthorQuote`** (character style):
+- wdStyleTypeCharacter
+- Italic = True
+- Color = wdColorRed
+- Semantic: inline quotes of Jesus in author commentary
+
+**`AuthorRef`** (character style):
+- wdStyleTypeCharacter
+- Bold = True
+- Semantic: references to named book sections in author text
+
+All four styles are rerun-safe — the routine skips styles that already exist.
+
+### USFM mapping
+
+| Word Style | USFM marker | Notes |
+|-----------|-------------|-------|
+| `AuthorBodyText` | `\ip` | Author introductory paragraph |
+| `AuthorSectionHead` | `\is` | Author introductory section heading |
+| `AuthorQuote` | `\wj` | Words of Jesus (inline character) |
+| `AuthorRef` | `\bd` | Bold inline reference |
+
+### Application plan
+
+After importing `basFixDocxRoutines` into the `.DOCM` and running `DefineAuthorStyles`:
+
+1. Manually select front matter body paragraphs → apply `AuthorBodyText`
+2. Manually select section headers → apply `AuthorSectionHead`
+3. Select red italic quote runs → apply `AuthorQuote` character style
+4. Select bold book reference runs → apply `AuthorRef` character style
+5. Run `RUN_TAXONOMY_STYLES` to verify style definitions match spec
+
+### Taxonomy additions
+
+Add to approved taxonomy table:
+
+| Word Style | USFM marker | Semantic role | Type |
+|-----------|-------------|---------------|------|
+| `AuthorBodyText` | `\ip` | Author body text (Liberation Serif 12pt, 0.33" indent) | Paragraph |
+| `AuthorSectionHead` | `\is` | Author section heading (Liberation Serif 14pt, mixed bold/italic) | Paragraph |
+| `AuthorQuote` | `\wj` | Inline quote of Jesus (Italic, Red) | Character |
+| `AuthorRef` | `\bd` | Inline book section reference (Bold) | Character |
+
+### Status
+
+`DefineAuthorStyles` **IMPLEMENTED — 2026-04-22** in `basFixDocxRoutines.bas`.
+Manual application to 53 pages: **PENDING** (requires import into .DOCM first).
+RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
+
+---
+
+## § 8 — Pending work as of 2026-04-22
+
+### Must do next (in order)
+
+| # | Task | Module | Notes |
+|---|------|--------|-------|
+| 1 | Import `basFixDocxRoutines` into .DOCM | Manual | Pick up all Define* routines from session |
+| 2 | Run `DefineAuthorStyles` | Immediate Window | Creates 4 author styles |
+| 3 | Run `DefineAppendixTitleStyle` + `DefineAppendixBodyStyle` | Immediate Window | After import |
+| 4 | Run `DefineBookIntroStyle` | Immediate Window | After import |
+| 5 | Run `ReplacePlainTextStyles` | Immediate Window | Requires AppendixBody to exist first |
+| 6 | Run `ApplyBookIntroAfterDatAuthRef` | Immediate Window | Requires BookIntro to exist first |
+| 7 | Manual: apply author styles to front/back matter (53 pages) | Word UI | AuthorBodyText, AuthorSectionHead, AuthorQuote, AuthorRef |
+| 8 | Run `RUN_TAXONOMY_STYLES` | Immediate Window | Baseline should improve from 13/4 |
+| 9 | Add author styles to `RUN_TAXONOMY_STYLES` | `basTEST_aeBibleConfig` | AuditOneStyle calls for 2 new paragraph styles |
+| 10 | Remove `Normal` from `PromoteApprovedStyles` once 0 paragraphs confirmed | `basTEST_aeBibleConfig` | After step 5 |
+
+### Deferred
+
+| Task | Reason |
+|------|--------|
+| `List Paragraph` taxonomy (82 paragraphs, 3 sub-types) | Complex — needs separate design pass |
+| `Paragraph Continuation` → `BodyTextContinuation` (158 paragraphs) | Investigate first |
+| `SUPER_TEST_RUNS` | Deferred until taxonomy stable |
+| Allowed fonts / fallback fonts / CJK prep | i18n queue |
+
+### Commit needed
+
+All `src/` changes from this session are uncommitted:
+- `basFixDocxRoutines.bas` — major additions (all Define* routines)
+- `basTEST_aeBibleConfig.bas` — RUN_TAXONOMY_STYLES, AuditOneStyle
+- `rvw/Code_review 2026-04-21.md` — this file
 
 ---

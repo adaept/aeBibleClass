@@ -29,8 +29,8 @@ Private Sub PromoteApprovedStyles()
     Set missing = New Collection
 
     'List your approved styles in the order you want them to appear
-    approved = Array("Normal", "Body Text", "Heading 1", "Heading 2", _
-                     "CustomParaAfterH1", "CustomParaAfterH1-2nd", "Brief", "DatAuthRef", _
+    approved = Array("Normal", "Heading 1", "Heading 2", _
+                     "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Chapter Verse marker", "Verse marker", _
                      "EmphasisBlack", "EmphasisRed", "Lamentation", "Psalms BOOK", _
                      "Words of Jesus", "TheHeaders", "TheFooters", _
@@ -215,7 +215,8 @@ End Function
 '     dExpSize        = 0     -> skip font-size check
 '     lExpAlign       = -1   -> skip alignment check  (wdAlignParagraphJustify=3)
 '     dExpFirstIndent = -999 -> skip first-indent check
-'     lExpLineRule    = -1   -> skip line-spacing-rule check (wdLineSpaceSingle=0)
+'     lExpLineRule    = -1   -> skip line-spacing-rule check (wdLineSpaceExactly=4)
+'     dExpLineSpacing = -999 -> skip line-spacing point value (pair with Exactly rule)
 '     dExpSpaceBefore = -999 -> skip space-before check
 '     dExpSpaceAfter  = -999 -> skip space-after check
 '
@@ -241,33 +242,34 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' ── Fully specified styles (all 7 properties verified) ───────────────────
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Fully specified (all properties verified) --"
-    '                               Font        Sz  Align  Indent  LineRule  SpB   SpA
+    '                               Font        Sz  Align  Indent  LineRule  LineSp  SpB   SpA
     '                                           0=skip -1=skip -999=skip
-    AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 0, 0, 0
-    AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 0, 0, 0
+    AuditOneStyle "BodyText",      "Carlito", 9, 3, 0,    4, 10,   0, 0
+    AuditOneStyle "BodyTextIndent","Carlito", 9, 3, 14.4, 4, 10,   0, 0
 
     ' ── Existence verified; full spec pending ────────────────────────────────
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
-    AuditOneStyle "Heading 1", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "Heading 2", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "CustomParaAfterH1", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "DatAuthRef", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "Brief", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "Psalms BOOK", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "Lamentation", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "Footnote Text", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "Heading 1",         "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Heading 2",         "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "CustomParaAfterH1", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "DatAuthRef",        "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "BookIntro",  "Carlito", 9,  1,  0,   4, 10,   6,    6
+    AuditOneStyle "Brief",             "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Psalms BOOK",       "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Lamentation",       "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "TheHeaders",        "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "TheFooters",        "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Footnote Text",     "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Title",             "", 0, -1, -999, -1, -999, -999, -999
 
     ' ── Not yet created — expected FAIL until each Define* routine is run ─────
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Not yet created (expected FAIL) --"
-    AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "ListItem", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "AppendixTitle", "", 0, -1, -999, -1, -999, -999
-    AuditOneStyle "AppendixBody", "", 0, -1, -999, -1, -999, -999
+    AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "ListItem",             "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "AppendixTitle",        "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "AppendixBody",         "", 0, -1, -999, -1, -999, -999, -999
 
     Print #m_TaxFile, ""
     Print #m_TaxFile, String(72, "=")
@@ -303,6 +305,7 @@ Private Sub AuditOneStyle(ByVal sName As String, _
                           ByVal lExpAlign As Long, _
                           ByVal dExpFirstIndent As Double, _
                           ByVal lExpLineRule As Long, _
+                          ByVal dExpLineSpacing As Double, _
                           ByVal dExpSpaceBefore As Double, _
                           ByVal dExpSpaceAfter As Double)
     On Error GoTo PROC_ERR
@@ -361,6 +364,14 @@ Private Sub AuditOneStyle(ByVal sName As String, _
             bPass = False
             sDetail = sDetail & "      LineRule : expected " & lExpLineRule & _
                       " got " & oStyle.ParagraphFormat.LineSpacingRule & vbCrLf
+        End If
+    End If
+
+    If dExpLineSpacing <> -999 Then
+        If Abs(oStyle.ParagraphFormat.LineSpacing - dExpLineSpacing) > 0.1 Then
+            bPass = False
+            sDetail = sDetail & "      LineSpacing: expected " & dExpLineSpacing & _
+                      "pt got " & oStyle.ParagraphFormat.LineSpacing & "pt" & vbCrLf
         End If
     End If
 
