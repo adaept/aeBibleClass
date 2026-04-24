@@ -962,3 +962,198 @@ Scope is bounded — likely 3–5 styles total for the front page.
 **PENDING** — awaiting front page formatting pass by user.
 
 ---
+
+## § Style inspector — added 2026-04-23
+
+A reusable utility to dump a style's properties in paste-ready VBA form, so
+manually-formatted paragraphs can feed the `Define<Style>` routines. Also
+intended to become the raw input for a future markdown style guide keyed by
+each style's Priority number.
+
+### Style numbering context
+
+Priority numbering now reflects the order styles appear in the book:
+
+| Priority | Style |
+|---------:|-------|
+| 1 | `FrontPageTopLine` |
+| 2 | `TitleEyebrow` |
+| 3 | `Title` |
+| 4 | `TitleVersion` |
+| 5 | `FrontPageBodyText` |
+| 6 | `Normal` |
+| 7 | `Heading 1` |
+| 8 | `Heading 2` |
+| 9 | `BodyText` |
+| 10 | `BodyTextIndent` |
+| 12 | `CustomParaAfterH1` |
+| 13 | `DatAuthRef` |
+| 15 | `Brief` |
+| 16 | `Psalms BOOK` |
+| 17 | `Lamentation` |
+| 20 | `ListItem` |
+| 21 | `ListItemBody` |
+| 22 | `Chapter Verse marker` |
+| 23 | `Verse marker` |
+| 24 | `EmphasisBlack` |
+| 25 | `EmphasisRed` |
+| 26 | `Words of Jesus` |
+| 27 | `AuthorBodyText` |
+| 28 | `AuthorSectionHead` |
+| 29 | `AuthorQuote` |
+| 30 | `AuthorBookRef` |
+| 31 | `TheHeaders` |
+| 32 | `TheFooters` |
+| 33 | `Book Title` |
+| 34 | `Footnote Reference` |
+| 35 | `Footnote Text` |
+
+Priorities 1–5 are front-page styles. Gaps (11, 14, 18–19) reserved for future
+insertions without wholesale renumbering. `AuthorRef` → `AuthorBookRef` rename
+is visible at priority 30.
+
+### New module — `basStyleInspector.bas`
+
+`Public Sub DumpStyleProperties(sStyleName As String, Optional bWriteFile As Boolean = False)`
+
+Prints a named style's properties to the Immediate window in a form that can
+be pasted into a `Define<Style>` routine. With `bWriteFile:=True`, also writes
+`rpt\style_<name>.txt`.
+
+Output includes:
+
+- Style header line — name, type, priority
+- `.BaseStyle`, `.NextParagraphStyle`, `.AutomaticallyUpdate`, `.QuickStyle`
+- `.Font.*` — Name, Size, Bold, Italic, Underline, Color, SmallCaps, AllCaps
+- `.ParagraphFormat.*` — Alignment, LeftIndent, RightIndent, FirstLineIndent,
+  SpaceBefore, SpaceAfter, LineSpacing, LineSpacingRule, WidowControl,
+  KeepTogether, KeepWithNext, PageBreakBefore, OutlineLevel
+  (paragraph-type styles only)
+
+Late binding, no added references, `Option Private Module` — matches project
+conventions.
+
+### Usage
+
+From the Immediate window:
+
+```vba
+DumpStyleProperties "FrontPageBodyText"
+DumpStyleProperties "FrontPageBodyText", True
+```
+
+### Design — pros
+
+- **Paste-ready output** — lines are valid VBA `With`-block content; copy
+  straight into a new `Define*` routine.
+- **Non-mutating** — safe to run on any document.
+- **Two output sinks** — Immediate window for a quick look, `rpt\` file for
+  diffing and style-guide generation.
+- **Handles paragraph + character styles** — skips `ParagraphFormat` when it
+  doesn't apply.
+
+### Design — cons (deliberate YAGNI scope)
+
+- **Dumps everything, not just divergence** — noisy when chasing one property.
+- **Raw enum integers** — `Alignment = 1` not `wdAlignParagraphCenter`.
+- **Not exhaustive** — skips `Tabs`, `Shading`, `Borders`, `Frame`,
+  `NoProofing`, `LanguageID`. Add per-style if a new style actually needs one.
+- **Type detection** uses hard-coded numeric constants (1–4).
+- **No guard** for unsaved documents — `ActiveDocument.Path` is empty and the
+  `rpt\` file write will fail. Add a guard only if encountered.
+
+### Use cases
+
+- **UX → code** — format a paragraph visually, dump, paste into
+  `DefineFrontPageBodyText` (or equivalent).
+- **Style-guide generation** — `rpt\style_*.txt` files become the raw input
+  for a markdown report ordered by Priority.
+- **Regression diffing** — dump before/after a style change, diff the text
+  files.
+- **Audit** — compare runtime style state against the `Define*` routine's
+  intent.
+
+### Possible refinements (flagged, not scheduled)
+
+- **Lean mode** — emit only properties that differ from a baseline style.
+- **Symbolic enum output** — translate `Alignment`, `LineSpacingRule`,
+  `Underline`, etc. to their `wd*` constants as trailing comments.
+- **Batch dump** — accept an array of names, or dump all styles whose Priority
+  falls in a range (e.g., 1–5 for front page).
+- **Full-skeleton mode** — wrap output in a complete
+  `Sub DefineXxx(oDoc As Object)` boilerplate.
+
+### Status
+
+**IMPLEMENTED — 2026-04-23** in `src\basStyleInspector.bas`.
+
+### First run — `FrontPageBodyText` dump, 2026-04-23
+
+Initial dump (`rpt\style_FrontPageBodyText.txt`) revealed two inconsistencies
+with the front-page-style decision, both fixed in the UI and re-dumped:
+
+| Property | Before | After | Reason |
+|----------|--------|-------|--------|
+| `.BaseStyle` | `"AuthorBodyText"` | `""` | Front-page styles must be isolated — no cascading from body styles |
+| `.AutomaticallyUpdate` | `True` | `False` | Prevents direct formatting from silently rewriting the style definition |
+
+Side effect of the UI edits (intentional, captured on re-dump):
+
+- `.QuickStyle` — `True` → `False`
+
+Line spacing was briefly observed as `13.9` / `wdLineSpaceMultiple` in an
+intermediate dump, then reset to Single in the final dump.
+
+### Clean dump — raw inspector output (paste-ready)
+
+```
+'--- FrontPageBodyText  (Type=Paragraph, Priority=5) ---
+.BaseStyle = ""
+.NextParagraphStyle = "FrontPageBodyText"
+.AutomaticallyUpdate = False
+.QuickStyle = False
+.Font.Name = "Liberation Serif"
+.Font.Size = 11
+.Font.Bold = 0
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = -16777216
+.Font.SmallCaps = 0
+.Font.AllCaps = 0
+.ParagraphFormat.Alignment = 1
+.ParagraphFormat.LeftIndent = 0
+.ParagraphFormat.RightIndent = 0
+.ParagraphFormat.FirstLineIndent = 0
+.ParagraphFormat.SpaceBefore = 0
+.ParagraphFormat.SpaceAfter = 11
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
+.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.KeepTogether = 0
+.ParagraphFormat.KeepWithNext = 0
+.ParagraphFormat.PageBreakBefore = 0
+.ParagraphFormat.OutlineLevel = 10
+```
+
+### Symbolic-constant decoding (manual, not emitted by inspector)
+
+The inspector emits raw values only. Symbolic-name decoding remains a
+*Possible refinement* (not yet implemented). Manual decoding for reference
+when writing `DefineFrontPageBodyText`:
+
+| Raw | Symbolic |
+|-----|----------|
+| `Font.Color = -16777216` | `wdColorAutomatic` |
+| `Alignment = 1` | `wdAlignParagraphCenter` |
+| `LineSpacing = 12`, `LineSpacingRule = 0` | Single (12pt) — `wdLineSpaceSingle` |
+| `WidowControl = -1` | `True` |
+| `OutlineLevel = 10` | `wdOutlineLevelBodyText` |
+
+### Validation benefit observed
+
+The inspector immediately exposed the two drift points (`BaseStyle`,
+`AutomaticallyUpdate`) before a `Define*` routine was written — exactly the
+"audit" use case the tool was built for. Worth running a dump on every new
+front-page style before treating it as the source of truth.
+
+---
