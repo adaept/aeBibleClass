@@ -39,8 +39,6 @@ Public Sub DumpStyleProperties(ByVal sStyleName As String, _
     sOut = "'--- " & sStyleName & "  (Type=" & StyleTypeName(oStyle.Type) & _
            ", Priority=" & oStyle.Priority & ") ---" & NL
     sOut = sOut & ".BaseStyle = """ & CStr(oStyle.baseStyle) & """" & NL
-    sOut = sOut & ".NextParagraphStyle = """ & CStr(oStyle.NextParagraphStyle) & """" & NL
-    sOut = sOut & ".AutomaticallyUpdate = " & oStyle.AutomaticallyUpdate & NL
     sOut = sOut & ".QuickStyle = " & oStyle.QuickStyle & NL
 
     Set oFont = oStyle.Font
@@ -54,6 +52,9 @@ Public Sub DumpStyleProperties(ByVal sStyleName As String, _
     sOut = sOut & ".Font.AllCaps = " & oFont.AllCaps & NL
 
     If oStyle.Type = 1 Then        ' wdStyleTypeParagraph
+        ' Paragraph-only properties (error 5900 if accessed on character styles)
+        sOut = sOut & ".NextParagraphStyle = """ & CStr(oStyle.NextParagraphStyle) & """" & NL
+        sOut = sOut & ".AutomaticallyUpdate = " & oStyle.AutomaticallyUpdate & NL
         Set oPF = oStyle.ParagraphFormat
         sOut = sOut & ".ParagraphFormat.Alignment = " & oPF.Alignment & NL
         sOut = sOut & ".ParagraphFormat.LeftIndent = " & oPF.LeftIndent & NL
@@ -98,3 +99,86 @@ End Sub
 Private Function SafeFileName(ByVal s As String) As String
     SafeFileName = Replace(Replace(Replace(s, " ", "_"), "/", "_"), "\", "_")
 End Function
+
+'==============================================================================
+' DumpAllApprovedStyles
+'==============================================================================
+' Dumps every "approved" paragraph or character style to rpt\style_<name>.txt,
+' in Priority order. "Approved" = Priority <> 99, matching the convention set
+' by PromoteApprovedStyles / DumpPrioritiesSorted in basTEST_aeBibleConfig.
+'
+' Source of truth is the live document - whatever PromoteApprovedStyles has
+' promoted is what gets dumped. No duplicate approved-list in this module.
+'
+' Usage:
+'   DumpAllApprovedStyles
+'==============================================================================
+Public Sub DumpAllApprovedStyles()
+    Dim oDoc   As Object
+    Dim oStyle As Object
+    Dim arr()  As Variant
+    Dim nCount As Long
+    Dim i As Long, j As Long
+    Dim tmpName As String
+    Dim tmpPri  As Long
+
+    Set oDoc = ActiveDocument
+
+    ' First pass - Count eligible approved styles
+    For Each oStyle In oDoc.Styles
+        If oStyle.Type = 1 Or oStyle.Type = 2 Then    ' Paragraph or Character
+            If oStyle.Priority <> 99 Then
+                nCount = nCount + 1
+            End If
+        End If
+    Next oStyle
+
+    If nCount = 0 Then
+        Debug.Print "DumpAllApprovedStyles: no approved styles (Priority <> 99) found."
+        Exit Sub
+    End If
+
+    ReDim arr(1 To nCount, 1 To 2)
+
+    ' Second pass - fill array with (Name, Priority)
+    nCount = 1
+    For Each oStyle In oDoc.Styles
+        If oStyle.Type = 1 Or oStyle.Type = 2 Then
+            If oStyle.Priority <> 99 Then
+                arr(nCount, 1) = oStyle.NameLocal
+                arr(nCount, 2) = oStyle.Priority
+                nCount = nCount + 1
+            End If
+        End If
+    Next oStyle
+    nCount = nCount - 1
+
+    ' Bubble sort by Priority ascending (matches DumpPrioritiesSorted convention)
+    For i = 1 To nCount - 1
+        For j = i + 1 To nCount
+            If arr(j, 2) < arr(i, 2) Then
+                tmpName = arr(i, 1)
+                tmpPri = arr(i, 2)
+                arr(i, 1) = arr(j, 1)
+                arr(i, 2) = arr(j, 2)
+                arr(j, 1) = tmpName
+                arr(j, 2) = tmpPri
+            End If
+        Next j
+    Next i
+
+    Dim nFailed As Long
+    Debug.Print "---- DumpAllApprovedStyles: " & nCount & " style(s) ----"
+    For i = 1 To nCount
+        Debug.Print "[" & arr(i, 2) & "] " & arr(i, 1)
+        On Error Resume Next
+        DumpStyleProperties CStr(arr(i, 1)), True
+        If Err.Number <> 0 Then
+            Debug.Print "  !! FAILED: " & arr(i, 1) & " - err " & Err.Number & ": " & Err.Description
+            nFailed = nFailed + 1
+            Err.Clear
+        End If
+        On Error GoTo 0
+    Next i
+    Debug.Print "DumpAllApprovedStyles: Done. " & (nCount - nFailed) & " succeeded, " & nFailed & " failed."
+End Sub

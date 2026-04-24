@@ -1,0 +1,11 @@
+'--- EmphasisRed  (Type=Character, Priority=25) ---
+.BaseStyle = "Words of Jesus"
+.QuickStyle = True
+.Font.Name = "Carlito"
+.Font.Size = 9
+.Font.Bold = -1
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = 128
+.Font.SmallCaps = 0
+.Font.AllCaps = 0

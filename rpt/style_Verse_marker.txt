@@ -1,0 +1,11 @@
+'--- Verse marker  (Type=Character, Priority=23) ---
+.BaseStyle = ""
+.QuickStyle = False
+.Font.Name = "Noto Sans"
+.Font.Size = 8
+.Font.Bold = -1
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = 7915600
+.Font.SmallCaps = 0
+.Font.AllCaps = 0

@@ -1,0 +1,11 @@
+'--- Chapter Verse marker  (Type=Character, Priority=22) ---
+.BaseStyle = "Default Paragraph Font"
+.QuickStyle = False
+.Font.Name = "Noto Sans"
+.Font.Size = 5
+.Font.Bold = -1
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = 42495
+.Font.SmallCaps = 0
+.Font.AllCaps = 0

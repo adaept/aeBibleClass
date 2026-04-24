@@ -1,0 +1,11 @@
+'--- Footnote Reference  (Type=Character, Priority=34) ---
+.BaseStyle = "Normal text"
+.QuickStyle = True
+.Font.Name = "Carlito"
+.Font.Size = 9
+.Font.Bold = -1
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = 16711680
+.Font.SmallCaps = 0
+.Font.AllCaps = 0

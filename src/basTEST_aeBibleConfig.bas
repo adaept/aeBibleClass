@@ -30,6 +30,8 @@ Private Sub PromoteApprovedStyles()
 
     'List your approved styles in the order you want them to appear
     approved = Array( _
+                     "FrontPageTopLine", "TitleEyebrow", "Title", _
+                     "TitleVersion", "FrontPageBodyText", _
                      "Normal", "Heading 1", "Heading 2", _
                      "BodyText", "BodyTextIndent", "BodyTextContinuation", _
                      "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
@@ -42,7 +44,7 @@ Private Sub PromoteApprovedStyles()
                      "AuthorBodyText", "AuthorSectionHead", _
                      "AuthorQuote", "AuthorBookRef", _
                      "TheHeaders", "TheFooters", _
-                     "Title", "Book Title", _
+                     "Book Title", _
                      "Footnote Reference", "Footnote Text", _
                      "FargleBlargle")
 

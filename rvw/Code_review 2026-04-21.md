@@ -1156,4 +1156,114 @@ The inspector immediately exposed the two drift points (`BaseStyle`,
 "audit" use case the tool was built for. Worth running a dump on every new
 front-page style before treating it as the source of truth.
 
+### QA checklist — approved style files
+
+When manually reviewing each dumped `rpt\style_<name>.txt`, every approved
+style should default to the following, with documented exceptions only:
+
+| # | Property | Expected | UI equivalent | Applies to |
+|---|----------|----------|---------------|------------|
+| 1 | `.BaseStyle` | `""` | Style based on: **(no style)** | All styles |
+| 2 | `.AutomaticallyUpdate` | `False` | "Automatically update" checkbox **NOT** selected | Paragraph only |
+| 3 | `.QuickStyle` | `False` | Style does **not** appear in the Quick Styles gallery | All styles |
+| 4 | `.ParagraphFormat.LineSpacingRule` | `0` (`wdLineSpaceSingle`) | Line spacing: **Single** | Paragraph only |
+
+`.AutomaticallyUpdate` and `.ParagraphFormat.*` are not valid on character
+styles (accessing them raises run-time error 5900). Those fields are simply
+absent from character-style dumps, so QA items 2 and 4 apply only where the
+dump emits them.
+
+Expected exceptions (documented as encountered):
+
+- `ListItem` / `ListItemBody` — may require inter-style dependencies; TBD
+  when those are reviewed.
+- Other styles identified during the QA pass will be recorded here.
+
+### Notes on `QuickStyle = False` default
+
+- Quick Styles gallery visibility is largely useless for this project —
+  depends on font size and name length, and with 30+ styles the gallery
+  becomes noise rather than signal.
+- Styles 1–5 are front-page only; no reason to expose them in the gallery.
+- There is no large audience of editors. Onboarded users are expected to
+  know how to use the Styles dropdown / Styles pane.
+- The final per-style decision (show in gallery or not) is deferred to the
+  enum-comment pass, by which time usage patterns will be established.
+
+### Two-phase validation workflow
+
+**Phase 1 — bulk dump**
+
+Dump every approved style to `rpt\style_<name>.txt`. Planned driver:
+`DumpAllApprovedStyles` (batch helper to be added to `basStyleInspector.bas`)
+— iterates the Priority-ordered style list and calls
+`DumpStyleProperties name, True` for each.
+
+**Phase 2 — QA pass**
+
+Read through the `rpt\` files and verify each against the four-point checklist
+above. Record any intentional exceptions in the QA exceptions list.
+
+**Phase 3 — symbolic decoration (`OutputAllApprovedStyles`)**
+
+Once the QA pass is clean, implement `OutputAllApprovedStyles` — a successor
+to `DumpStyleProperties` that emits the same data with trailing
+`' wd*` comments next to each enum value (`Alignment`, `LineSpacingRule`,
+`Underline`, `OutlineLevel`, `Color`, etc.). Run once across all approved
+styles to produce the canonical decorated `rpt\` files that feed the markdown
+style guide.
+
+Order matters: decorate after QA, not before — the decoration pass is noisy
+and easier to diff once the raw values are known-good.
+
+### Status
+
+QA checklist: **DEFINED — 2026-04-23**.
+`DumpAllApprovedStyles` batch driver: **IMPLEMENTED — 2026-04-23** in
+`src\basStyleInspector.bas`. Source of truth is the live document
+(`Priority <> 99`), no duplicate approved-list — consistent with
+`PromoteApprovedStyles` / `DumpPrioritiesSorted` convention.
+
+First-run bug fixed 2026-04-23: accessing `.AutomaticallyUpdate` on the first
+character style in priority order (`Chapter Verse marker`, priority 22)
+raised run-time error 5900 and aborted the batch. Fix:
+
+- `NextParagraphStyle` and `AutomaticallyUpdate` moved inside the
+  `If oStyle.Type = 1 Then` (wdStyleTypeParagraph) guard in
+  `DumpStyleProperties`.
+- Per-iteration `On Error Resume Next` added to `DumpAllApprovedStyles`
+  so a future single-style failure logs `!! FAILED` and the batch continues.
+  Summary line shows `N succeeded, M failed`.
+
+### Reconciliation with `DumpPrioritiesSorted` - 2026-04-24
+
+Initial 31-vs-27 discrepancy between `DumpAllApprovedStyles` (31 styles
+found) and `DumpPrioritiesSorted` (27 listed) was caused by stale priorities
+on four front-page styles left over from an earlier `approved` array. The
+array in `src\basTEST_aeBibleConfig.bas` was missing:
+
+- `FrontPageTopLine`
+- `TitleEyebrow`
+- `TitleVersion`
+- `FrontPageBodyText`
+
+(`Title` was already present.)
+
+Fixed by adding the four missing front-page names to the head of the
+`approved` array. Both reports now return 31 styles in matching priority
+order. Gaps at priorities 6, 11, 14, 18-19 are intentional placeholders for
+styles not yet defined in the document (`BodyTextContinuation`, `BookIntro`,
+`AppendixTitle`, `AppendixBody`) plus the deliberate `FargleBlargle`
+missing-style canary at the end of the array.
+
+`OutputAllApprovedStyles` symbolic-decoration pass: **PENDING** — after QA.
+
+### Rationale for the QA workflow
+
+Scanning `rpt\style_*.txt` files against the 4-point QA checklist is
+dramatically faster than clicking through Modify Style dialogs in Word for
+30+ styles. The checklist pulls out the drift points up front — bad
+`BaseStyle`, `AutomaticallyUpdate = True`, `QuickStyle = True`,
+non-single line spacing — without ever opening the menus.
+
 ---

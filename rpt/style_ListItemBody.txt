@@ -1,7 +1,7 @@
-'--- FrontPageBodyText  (Type=Paragraph, Priority=5) ---
+'--- ListItemBody  (Type=Paragraph, Priority=21) ---
 .BaseStyle = ""
 .QuickStyle = False
-.Font.Name = "Liberation Serif"
+.Font.Name = "Carlito"
 .Font.Size = 11
 .Font.Bold = 0
 .Font.Italic = 0
@@ -9,10 +9,10 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "FrontPageBodyText"
+.NextParagraphStyle = "ListItemBody"
 .AutomaticallyUpdate = False
-.ParagraphFormat.Alignment = 1
-.ParagraphFormat.LeftIndent = 0
+.ParagraphFormat.Alignment = 0
+.ParagraphFormat.LeftIndent = 36
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0

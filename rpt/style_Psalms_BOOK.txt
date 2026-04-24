@@ -1,0 +1,26 @@
+'--- Psalms BOOK  (Type=Paragraph, Priority=16) ---
+.BaseStyle = "Normal"
+.QuickStyle = True
+.Font.Name = "Carlito"
+.Font.Size = 9
+.Font.Bold = 0
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = -16777216
+.Font.SmallCaps = 0
+.Font.AllCaps = 0
+.NextParagraphStyle = "Psalms BOOK"
+.AutomaticallyUpdate = False
+.ParagraphFormat.Alignment = 0
+.ParagraphFormat.LeftIndent = 0
+.ParagraphFormat.RightIndent = 0
+.ParagraphFormat.FirstLineIndent = 14.4
+.ParagraphFormat.SpaceBefore = 10
+.ParagraphFormat.SpaceAfter = 0
+.ParagraphFormat.LineSpacing = 10
+.ParagraphFormat.LineSpacingRule = 4
+.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.KeepTogether = 0
+.ParagraphFormat.KeepWithNext = 0
+.ParagraphFormat.PageBreakBefore = 0
+.ParagraphFormat.OutlineLevel = 10

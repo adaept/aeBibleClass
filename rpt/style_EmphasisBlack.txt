@@ -1,0 +1,11 @@
+'--- EmphasisBlack  (Type=Character, Priority=24) ---
+.BaseStyle = "Default Paragraph Font"
+.QuickStyle = True
+.Font.Name = "Carlito"
+.Font.Size = 9
+.Font.Bold = -1
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = -16777216
+.Font.SmallCaps = 0
+.Font.AllCaps = 0
