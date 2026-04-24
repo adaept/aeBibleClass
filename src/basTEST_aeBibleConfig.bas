@@ -30,8 +30,10 @@ Private Sub PromoteApprovedStyles()
 
     'List your approved styles in the order you want them to appear
     approved = Array( _
-                     "FrontPageTopLine", "TitleEyebrow", "Title", _
-                     "TitleVersion", "FrontPageBodyText", _
+                     "TheHeaders", _
+                     "FrontPageTopLine", "TitleEyebrow", "Title", "TitleVersion", "FrontPageBodyText", _
+                     "BodyTextTopLineCPBB", "Acknowledgments", "AuthorBodyText", _
+                     "ContentsCPBB", "ContentsRef", _
                      "Normal", "Heading 1", "Heading 2", _
                      "BodyText", "BodyTextIndent", "BodyTextContinuation", _
                      "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
@@ -41,9 +43,9 @@ Private Sub PromoteApprovedStyles()
                      "Chapter Verse marker", "Verse marker", _
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
-                     "AuthorBodyText", "AuthorSectionHead", _
+                     "AuthorSectionHead", _
                      "AuthorQuote", "AuthorBookRef", _
-                     "TheHeaders", "TheFooters", _
+                     "TheFooters", _
                      "Book Title", _
                      "Footnote Reference", "Footnote Text", _
                      "FargleBlargle")

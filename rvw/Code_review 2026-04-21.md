@@ -1297,3 +1297,222 @@ references in earlier sections of this review (dated 2026-04-23) still read
 `rpt\style_*.txt` intentionally - those capture the pre-move state.
 
 ---
+
+## § Approved styles in book order - 2026-04-24
+
+### Purpose
+
+Produce a list of approved styles ordered by the page number where each first
+appears in the document. Two use cases:
+
+- **QA metric for the approved array.** The output IS the canonical
+  book-order sequence; diffing it against the current `approved` array in
+  `basTEST_aeBibleConfig.bas` surfaces any ordering drift.
+- **Walkthrough for editors / translators.** Pair the output with a PDF copy:
+  each row says "the first example of style Y is on page X." Maps a visual
+  read-through to the style taxonomy, which is especially useful when
+  onboarding a translator who needs to see each style in context.
+
+### New routine - `ListApprovedStylesByBookOrder`
+
+Added to `src\basStyleInspector.bas`.
+
+`Public Sub ListApprovedStylesByBookOrder(Optional ByVal bWriteFile As Boolean = False)`
+
+For each approved style (`Priority <> 99`, Type = Paragraph or Character),
+runs `Range.Find` against `ActiveDocument.Content` with the style filter to
+locate the first occurrence. Records the page number via
+`Range.Information(wdActiveEndPageNumber)`, then sorts by page ascending.
+Unused styles (Find returns no match) are sorted to the end and flagged
+`[not used]`.
+
+Optional `bWriteFile:=True` writes to
+`rpt\Styles\styles_book_order.txt` for diffing and committing as a QA
+artifact.
+
+### Usage
+
+From the Immediate window:
+
+```vba
+ListApprovedStylesByBookOrder
+ListApprovedStylesByBookOrder True
+```
+
+### Output format
+
+```
+Approved styles in book order (by page of first occurrence)
+ Page | Prio | Style
+------+------+-----------------------------
+    1 |    1 | FrontPageTopLine
+    1 |    2 | TitleEyebrow
+  ... |  ... | ...
+    - |    N | SomeUnusedStyle  [not used]
+```
+
+### Design - pros
+
+- **Uses Word's indexed `Find`** - fast even on a full-Bible document.
+  O(approved_count) searches, each cheap.
+- **Uniform paragraph + character handling** - `Find.Style` filter works for
+  both types.
+- **Non-mutating** - `oDoc.Content` is fetched fresh per style; no document
+  changes.
+- **Unused-style flagging** - any approved style Find can't locate appears
+  at the bottom with `[not used]`.
+- **Paste-ready ordering** - the listed order is the canonical book order
+  for the `approved` array.
+
+### Design - cons (deliberate YAGNI scope)
+
+- **Depends on current pagination** - if the document hasn't repaginated
+  since the last edit, reported pages can be stale. Word normally
+  repaginates on open/save, so usually fine. `oDoc.Repaginate` could be
+  added at the top as a belt-and-suspenders safety net if ever needed.
+- **Character-style first-occurrence is the run's starting page** - if a
+  styled run straddles a page break, the earlier page wins. Almost always
+  desired.
+- **Tie-breaking is arbitrary** - styles that first appear on the same page
+  order by the Styles-collection iteration order, which is stable but
+  arbitrary. Expected for the front matter (several styles on page 1-2).
+- **Missing-from-document styles are invisible** - the "name in approved
+  array but not defined in doc" check remains in `PromoteApprovedStyles`.
+  This routine only sees styles that exist.
+- **`.Wrap = 0`** hardcoded for late binding (`wdFindStop = 0`).
+
+### Use cases
+
+- **QA the approved-array order** - diff routine output against the array
+  in `basTEST_aeBibleConfig.bas`; any rearrangement is a QA finding.
+- **Editor / translator walkthrough** - pair with PDF; each row is a
+  "turn to page X" instruction tied to a named style.
+- **Unused-style cleanup signal** - `[not used]` entries are candidates to
+  either delete or annotate with intended-future-use.
+- **i18n prep** - running against a translated copy produces a per-locale
+  book-order map; first-appearance pages shift as text length changes.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24** in `src\basStyleInspector.bas`.
+
+---
+
+## § First run - `ListApprovedStylesByBookOrder` findings - 2026-04-24
+
+### Raw output (first run, pre-cleanup)
+
+```
+Approved styles in book order (by page of first occurrence)
+ Page | Prio | Style
+------+------+-----------------------------
+    1 |    9 | BodyText
+    1 |    2 | Default Paragraph Font
+    2 |    5 | FrontPageBodyText
+    2 |    1 | FrontPageTopLine
+    2 |    3 | Title
+    2 |    2 | TitleEyebrow
+    2 |    4 | TitleVersion
+    3 |    6 | BodyTextTopLineCPBB
+    4 |    6 | Acknowlegments
+    4 |   27 | AuthorBodyText
+    5 |    6 | ContentsCPBB
+    5 |    6 | ContentsRef
+    6 |   28 | AuthorSectionHead
+   11 |   21 | ListItemBody
+   11 |   20 | ListItem
+   15 |   30 | AuthorBookRef
+   20 |   33 | Book Title
+   21 |   12 | CustomParaAfterH1
+   21 |   13 | DatAuthRef
+   21 |    7 | Heading 1
+   21 |   15 | Brief
+   22 |   24 | EmphasisBlack
+   22 |   34 | Footnote Reference
+   22 |    8 | Heading 2
+   22 |   22 | Chapter Verse marker
+   22 |   23 | Verse marker
+  417 |   16 | Psalms BOOK
+  578 |   17 | Lamentation
+  687 |   26 | Words of Jesus
+  688 |   25 | EmphasisRed
+    - |   31 | TheHeaders  [not used]
+    - |   35 | Footnote Text  [not used]
+    - |   29 | AuthorQuote  [not used]
+    - |    6 | Normal  [not used]
+    - |   10 | BodyTextIndent  [not used]
+    - |   32 | TheFooters  [not used]
+```
+
+### Categorized findings
+
+#### Explained - not a bug
+
+- **Page 1 `BodyText`** - first occurrence is the empty section-break
+  spacer paragraph styled `BodyText`. Expected behavior.
+- **Multiple styles on page 2** - all five front-page styles legitimately
+  first-appear on the same page.
+
+#### Stale priorities (drift) - cleanup via `WordEditingConfig`
+
+Five styles show non-99 priorities but are not in the current `approved`
+array in `src\basTEST_aeBibleConfig.bas`:
+
+| Style | Stale priority |
+|---|---|
+| `Default Paragraph Font` | 2 |
+| `BodyTextTopLineCPBB` | 6 |
+| `Acknowlegments` | 6 |
+| `ContentsCPBB` | 6 |
+| `ContentsRef` | 6 |
+
+These are leftovers from earlier `approved` array iterations.
+`PromoteApprovedStyles` is supposed to reset every paragraph/character
+style to 99 before promoting, so a fresh `WordEditingConfig` run should
+clear them.
+
+Standalone issue: `Acknowlegments` is a typo (missing `d`). Rename to
+`Acknowledgments` if that style remains in use.
+
+#### Real bug in the routine - scope limited to `oDoc.Content`
+
+Several `[not used]` entries are actually used, but in non-body stories:
+
+| Style | Lives in |
+|---|---|
+| `TheHeaders` | `Section.Headers(i).Range` |
+| `TheFooters` | `Section.Footers(i).Range` |
+| `Footnote Text` | `Footnotes(i).Range` (separate story) |
+
+`oDoc.Content` covers only the main body story. To catch
+header / footer / footnote usage, the Find must iterate
+`oDoc.StoryRanges` (or at least the three extra story types).
+
+`Footnote Reference` on page 22 is correctly reported because the
+reference mark itself lives in the main-body text where the footnote is
+anchored; only the footnote body lives in the footnote story.
+
+#### Possibly genuinely unused (post-cleanup, post-StoryRanges-fix)
+
+- **`Normal`** - expected to be unused; replaced by `BodyText` by design.
+  Decision pending: keep as anchor in approved array, or prune?
+- **`BodyTextIndent`** - intent unclear; confirm planned use or prune.
+- **`AuthorQuote`** - matches earlier "deferred, front matter TBD"
+  status. Expected to become used when front matter work resumes.
+
+### Proposed fix order
+
+1. **Run `WordEditingConfig`**, then re-run
+   `ListApprovedStylesByBookOrder`. Confirms drift styles drop out.
+2. **Extend `ListApprovedStylesByBookOrder` to walk `StoryRanges`**
+   (headers, footers, footnotes). This is a real routine bug.
+3. **Decide on `Normal` / `BodyTextIndent`** - keep in approved, or prune?
+
+### Status
+
+Fix #1: **IN PROGRESS** - user running `WordEditingConfig` and
+re-capturing output.
+Fix #2: **PENDING**.
+Fix #3: **PENDING**.
+
+---
