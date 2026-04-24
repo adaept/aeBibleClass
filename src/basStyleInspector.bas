@@ -259,7 +259,7 @@ Public Sub ListApprovedStylesByBookOrder(Optional ByVal bWriteFile As Boolean = 
             If pi = -1 Then pi = 2147483647
             pj = arr(j, 3)
             If pj = -1 Then pj = 2147483647
-            If pj < pi Then
+            If pj < pi Or (pj = pi And arr(j, 2) < arr(i, 2)) Then
                 tmpName = arr(i, 1)
                 tmpPri = arr(i, 2)
                 tmpPage = arr(i, 3)
