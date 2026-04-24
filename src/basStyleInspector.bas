@@ -10,7 +10,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '==============================================================================
 ' Prints a named style's properties in a form that can be pasted into a
 ' Define<Style> routine. Output goes to the Immediate window; optionally also
-' writes to rpt\style_<name>.txt for diffing / style-guide generation.
+' writes to rpt\Styles\style_<name>.txt for diffing / style-guide generation.
 '
 ' Usage:
 '   DumpStyleProperties "FrontPageBodyText"         ' Immediate only
@@ -89,7 +89,7 @@ Private Sub WriteStyleDump(ByVal sStyleName As String, ByVal sContent As String)
     Dim oFSO    As Object
     Dim oStream As Object
     Dim sPath   As String
-    sPath = ActiveDocument.Path & "\rpt\style_" & SafeFileName(sStyleName) & ".txt"
+    sPath = ActiveDocument.Path & "\rpt\Styles\style_" & SafeFileName(sStyleName) & ".txt"
     Set oFSO = CreateObject("Scripting.FileSystemObject")
     Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
     oStream.Write sContent
@@ -103,7 +103,7 @@ End Function
 '==============================================================================
 ' DumpAllApprovedStyles
 '==============================================================================
-' Dumps every "approved" paragraph or character style to rpt\style_<name>.txt,
+' Dumps every "approved" paragraph or character style to rpt\Styles\style_<name>.txt,
 ' in Priority order. "Approved" = Priority <> 99, matching the convention set
 ' by PromoteApprovedStyles / DumpPrioritiesSorted in basTEST_aeBibleConfig.
 '

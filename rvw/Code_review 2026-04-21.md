@@ -1267,3 +1267,33 @@ dramatically faster than clicking through Modify Style dialogs in Word for
 non-single line spacing — without ever opening the menus.
 
 ---
+
+## § Reorganize `rpt/` — style dumps into `rpt/Styles/` - 2026-04-24
+
+### Change
+
+- New folder `rpt/Styles/` created.
+- All 31 `rpt/style_*.txt` files moved in via `git mv` (rename history
+  preserved).
+- `src\basStyleInspector.bas` — `WriteStyleDump` path updated from
+  `\rpt\style_...` to `\rpt\Styles\style_...`. Doc comments in
+  `DumpStyleProperties` and `DumpAllApprovedStyles` updated to match.
+
+### Rationale
+
+- **Cleaner** — 31 dumps in a flat `rpt/` directory crowd out the existing
+  report files (`HeadingLog.txt`, `HeaderFooterAudit.txt`, etc.). Grouping
+  by category makes the folder scannable.
+- **Model for future** — same pattern supports `rpt/Tests/` down the road
+  (deferred; becomes more significant with i18n work, where test artifacts
+  multiply per locale).
+
+### Status
+
+**DONE — 2026-04-24**.
+
+Re-running `DumpAllApprovedStyles` now writes to `rpt/Styles/`. Prior
+references in earlier sections of this review (dated 2026-04-23) still read
+`rpt\style_*.txt` intentionally - those capture the pre-move state.
+
+---
