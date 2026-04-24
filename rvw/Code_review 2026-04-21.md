@@ -120,7 +120,7 @@ Styles added to taxonomy after reconciliation:
 
 Added all new styles from this session. Current approved list (in priority order):
 
-```
+```txt
 Normal, Heading 1, Heading 2,
 BodyText, BodyTextIndent, BodyTextContinuation,
 CustomParaAfterH1, DatAuthRef, BookIntro,
@@ -147,6 +147,7 @@ WARNING: 7 styles NOT found:
 ```
 
 All 7 WARNs are expected:
+
 - `FargleBlargle` — intentional diagnostic dummy; always missing
 - Remaining 6 — not yet created in the DOCM; will be created by their `Define*` routines
 
@@ -310,7 +311,7 @@ No cascade dependency on `Normal`.
 
 `ReplaceNormalWithBodyText` run successfully.
 
-```
+```txt
 ReplaceNormalWithBodyText: 31846 replaced, 0 remaining.
 ```
 
@@ -348,7 +349,7 @@ Styles to eliminate (currently unintentional):
 
 **Items 9–26** (positions 4180954+) — Concordance appendix at end of document:
 
-```
+```txt
 Normal       |              ← blank
 Normal       |              ← blank
 Normal       | Bible Concordance    ← section title
@@ -562,6 +563,7 @@ without TNR.
 Four styles added in one routine in `basFixDocxRoutines.bas`:
 
 **`AuthorBodyText`** (paragraph style):
+
 - Liberation Serif 12pt
 - Justified (`wdAlignParagraphJustify`)
 - FirstLineIndent = 23.76pt (0.33" × 72 = 23.76)
@@ -571,6 +573,7 @@ Four styles added in one routine in `basFixDocxRoutines.bas`:
 - BaseStyle = "" (no cascade from Normal)
 
 **`AuthorSectionHead`** (paragraph style):
+
 - Liberation Serif 14pt, plain (no Bold/Italic in style)
 - Left aligned
 - SpaceBefore = 12pt, SpaceAfter = 6pt
@@ -579,12 +582,14 @@ Four styles added in one routine in `basFixDocxRoutines.bas`:
 - Individual words styled bold or italic directly in the document
 
 **`AuthorQuote`** (character style):
+
 - wdStyleTypeCharacter
 - Italic = True
 - Color = wdColorRed
 - Semantic: inline quotes of Jesus in author commentary
 
 **`AuthorRef`** (character style):
+
 - wdStyleTypeCharacter
 - Bold = True
 - Semantic: references to named book sections in author text
@@ -628,7 +633,8 @@ Add to approved taxonomy table:
 | `AuthorBodyText` | True | False | **CONFIRMED** — matches DOCM |
 | `AuthorSectionHead` | False | True | **FIXED in src** — `PageBreakBefore = True` added |
 
-`AuthorQuote` / `AuthorRef` — not used in back matter. Status in front matter
+`AuthorRef` renamed to `AuthBookRef` and applied — **DONE — 2026-04-23**.
+`AuthorQuote` — not used in back matter. Status in front matter
 still undecided. No action until front matter work resumes.
 
 ### Front matter page structure — corrected 2026-04-22
@@ -636,6 +642,7 @@ still undecided. No action until front matter work resumes.
 Two distinct pages with different mechanisms:
 
 **"Books of the Bible" page** — the 66-book page-number listing
+
 - Physical layout: 4 grouped text boxes (OT col 1, OT col 2, NT col 1, NT col 2)
 - Each entry: book name + SBL abbreviation + `{ DOCVARIABLE }` field for page number
 - Example: `{ DOCVARIABLE 1Sam }` already set up and visible via Alt+F9
@@ -645,6 +652,7 @@ Two distinct pages with different mechanisms:
   in text boxes
 
 **"Contents" page** — front/back matter section listing
+
 - Lists major sections only: OT, NT, Maps, Concordance, etc. (~10 entries)
 - Standard Word TOC is acceptable at this scale (fast for small entry counts)
 - Or DOCVARIABLE fields for consistency with the Books of the Bible page
@@ -662,6 +670,7 @@ Word's navigation pane and TOC are driven independently:
 A paragraph can appear in the TOC without appearing in the navigation pane.
 
 **For this document:**
+
 - Ribbon navigation covers only the 66 canonical books (`Heading 1` positions).
   `Title` / `TitleEyebrow` are outside this scope — no ribbon change needed.
 - The Books of the Bible page uses DOCVARIABLE — no TOC involvement at all.
@@ -697,6 +706,7 @@ needs formal definition. `TitleEyebrow` is new.
 | **Total** | **≤ 76** | One methodology, one updater, one button |
 
 **Rationale:**
+
 - One methodology — no `\t` TOC switch manipulation, no TOC field options dialog
 - 66 variables already planned; adding ≤ 10 more is negligible setup overhead
 - One `UpdatePageNumbers` call updates everything in both pages in one pass
@@ -720,10 +730,12 @@ Con 5 needs a single test after implementation.
 ### DOCVARIABLE trigger code design — 2026-04-22
 
 What `XbasTESTaeBibleDOCVARIABLE` has:
+
 - `SetDocVariables` — defines the 66 variable names and SBL abbreviation mapping
 - One live `{ DOCVARIABLE 1Sam }` field confirmed via Alt+F9; value not yet populated
 
 What is missing — `UpdatePageNumbers` (covers both pages in one call):
+
 ```vba
 Public Sub UpdatePageNumbers()
     ' Pass 1: 66 canonical books from Heading 1 paragraphs
@@ -756,6 +768,7 @@ End Sub
 ```
 
 Wire to `Document_BeforePrint` in `ThisDocument.cls`:
+
 ```vba
 Private Sub Document_BeforePrint(Cancel As Boolean)
     UpdatePageNumbers
@@ -776,7 +789,8 @@ contain spaces. SBL `1 Sam` → variable `1Sam`; SBL `Song` → variable `Song`.
 Author styles applied to back matter: **DONE — 2026-04-22**.
 Author styles applied to front matter: **PENDING**.
 `AuthorSectionHead` — `PageBreakBefore = True` added to src — **DONE — 2026-04-23**.
-`AuthorQuote` / `AuthorRef` — deferred; not used in back matter; front matter TBD.
+`AuthorRef` renamed to `AuthBookRef` and applied — **DONE — 2026-04-23**.
+`AuthorQuote` — deferred; not used in back matter; front matter TBD.
 `TitleEyebrow` style definition: **PENDING**.
 `Title` style formalization: **PENDING**.
 RUN_TAXONOMY_STYLES additions for AuthorBodyText/AuthorSectionHead: **PENDING**.
@@ -831,10 +845,11 @@ no separate `AppendixBody` needed for Concordance body text.
 `ListItemBody` added to `PromoteApprovedStyles` array (after `ListItem`).
 
 `RUN_TAXONOMY_STYLES` updated:
+
 - `ListItem` and `ListItemBody` moved from expected FAIL → existence-verified section
 - Full spec checks added: Carlito 11pt, Left align (0), SpaceAfter 0 / 11pt
 
-```
+```txt
 AuditOneStyle "ListItem",     "Carlito", 11, 0, 0, -1, -999, 0, 0
 AuditOneStyle "ListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
 ```
@@ -856,13 +871,12 @@ Pending: import and run in DOCM, apply styles manually, then decide on AppendixT
 | `DefineBookIntroStyle` + `ApplyBookIntroAfterDatAuthRef` | ON HOLD — pending List Paragraph investigation |
 | `ReplacePlainTextStyles` | ON HOLD — pending List Paragraph investigation |
 | `Paragraph Continuation` → `BodyTextContinuation` (158 paragraphs) | Investigate first |
-| `AuthorQuote` / `AuthorRef` | Not used in back matter; front matter TBD |
+| `AuthorQuote` | Not used in back matter; front matter TBD (`AuthorRef` renamed to `AuthBookRef` and applied 2026-04-23) |
 | `TitleEyebrow` + `Title` formalization | Front matter work — deferred |
 | DOCVARIABLE `UpdatePageNumbers` implementation | Front matter work — deferred |
 | `SUPER_TEST_RUNS` | Deferred until taxonomy stable |
 | Allowed fonts / fallback fonts / CJK prep | i18n queue |
 | Add author styles to `RUN_TAXONOMY_STYLES` | After front matter styles settled |
-
 
 ---
 
@@ -875,6 +889,7 @@ when a reference is missing (`Word.Style` → `Word.style`). Since the rule was 
 exports silently retained the wrong casing.
 
 Three instances in `basFixDocxRoutines.bas` were affected:
+
 - Line 549 — `ReplaceNormalWithBodyText`
 - Line 774 — `ReplacePlainTextStyles`
 - Line 956 — `ApplyBookIntroAfterDatAuthRef`
@@ -887,9 +902,11 @@ reimport — the DOCM is always overwritten from `src/`.
 ### Fix
 
 1. `py/normalize_vba.py` — added rule after `As Word.Section`:
+
    ```python
    (r'(?i)\bAs\s+(?:Word\.)?Style\b', 'As Word.Style', 'As Word.Style type declaration — added 2026-04-22'),
    ```
+
 2. `src/basFixDocxRoutines.bas` — all 3 occurrences corrected (`replace_all`).
 3. DOCM — duplicate `Dim` in `DefineAuthorStyles` must be removed manually.
 
@@ -903,5 +920,45 @@ Still not covered: `Word.Document`, `Word.Field`, `Word.Table`, `Word.Row`,
 ### Status
 
 **FIXED — 2026-04-22.**
+
+---
+
+## § Front page styles — approach decided 2026-04-23
+
+The Bible front page has a distinct layout: different title treatment and some
+text differences from the rest of the document.
+
+### Options considered
+
+1. **Separate semantic styles** per element (e.g. `FrontTitle`, `FrontSubtitle`,
+   `FrontBodyText`) — adds a few entries to the taxonomy, each greppable and
+   reversible, consistent with the Author\* family.
+2. **Override existing styles** with direct formatting on the front page —
+   minimal style count but loses semantic meaning and breaks the auditability
+   principle the rest of the taxonomy relies on.
+3. **One base "front" style overridden per element** — sounds economical but
+   defeats the point: once overridden, the style no longer describes what the
+   text *is*.
+
+### Decision
+
+Go with **option 1 — separate semantic styles**. Consistent with `TitleEyebrow`
+and `Title` formalization already PENDING, and with the direction set by the
+Author\* style family (semantic, USFM-mappable, auditable).
+
+Scope is bounded — likely 3–5 styles total for the front page.
+
+### Next steps
+
+1. User formats the front page manually to establish the visual target.
+2. Then we name the styles in a consistent manner (naming scheme to align with
+   the `TitleEyebrow` / `Title` / `Author*` conventions already in use).
+3. Add `DefineFrontPageStyles` (or equivalent) to `basFixDocxRoutines.bas`
+   following the same pattern as `DefineAuthorStyles`.
+4. Update `RUN_TAXONOMY_STYLES` to include the new styles.
+
+### Status
+
+**PENDING** — awaiting front page formatting pass by user.
 
 ---
