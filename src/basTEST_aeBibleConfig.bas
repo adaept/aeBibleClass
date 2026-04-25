@@ -33,7 +33,8 @@ Private Sub PromoteApprovedStyles()
                      "TheHeaders", "BodyText", "TheFooters", _
                      "FrontPageTopLine", "TitleEyebrow", "Title", "TitleVersion", "FrontPageBodyText", _
                      "BodyTextTopLineCPBB", "Acknowledgments", "AuthorBodyText", _
-                     "ContentsCPBB", "ContentsRef", _
+                     "Contents", "ContentsRef", _
+                     "BibleIndexEyebrow", "BibleIndex", "Introduction", _
                      "Normal", "Heading 1", "Heading 2", _
                      "BodyTextIndent", "BodyTextContinuation", _
                      "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
@@ -251,7 +252,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     Print #m_TaxFile, "Document: " & ActiveDocument.Name
     Print #m_TaxFile, String(72, "=")
 
-    ' ── Fully specified styles (all 7 properties verified) ───────────────────
+    ' -- Fully specified styles (all 7 properties verified) -----------------------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Fully specified (all properties verified) --"
     '                               Font        Sz  Align  Indent  LineRule  LineSp  SpB   SpA
@@ -259,7 +260,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0
     AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0
 
-    ' ── Existence verified; full spec pending ────────────────────────────────
+    ' -- Existence verified; full spec pending -------------------------------------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
     AuditOneStyle "Heading 1", "", 0, -1, -999, -1, -999, -999, -999
@@ -277,7 +278,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Footnote Text", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999
 
-    ' ── Not yet created — expected FAIL until each Define* routine is run ─────
+    ' -- Not yet created - expected FAIL until each Define* routine is run ----------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Not yet created (expected FAIL) --"
     AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999, -999
