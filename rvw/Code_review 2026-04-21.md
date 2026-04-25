@@ -2180,5 +2180,9 @@ After the dump loop, `DumpAllApprovedStyles` calls a new private helper
 ### Status
 
 **IMPLEMENTED - 2026-04-24** in `src\basStyleInspector.bas`.
+**VERIFIED - 2026-04-24** - first run after rename
+(`ContentsCPBB` -> `Contents`) detected the orphan dump file, prompted,
+deleted on confirmation. `rpt\Styles\` now reflects current approved
+list with no stale entries.
 
 ---
