@@ -225,7 +225,70 @@ Public Sub DumpAllApprovedStyles()
         On Error GoTo 0
     Next i
     Debug.Print "DumpAllApprovedStyles: Done. " & (nCount - nFailed) & " succeeded, " & nFailed & " failed."
+    CleanupOrphanStyleDumps arr, nCount
     EndTimer "DumpAllApprovedStyles", t
+End Sub
+
+'==============================================================================
+' CleanupOrphanStyleDumps  (helper)
+'==============================================================================
+' Compares the set of files just written by DumpAllApprovedStyles against the
+' on-disk contents of rpt\Styles\style_*.txt. Any file that exists on disk but
+' was not written this run is an "orphan" - typically left over from a style
+' rename (e.g., ContentsCPBB -> Contents leaves style_ContentsCPBB.txt behind).
+'
+' Lists orphans to the Immediate window and prompts (single MsgBox) to delete
+' them all. No prompt if there are no orphans.
+'==============================================================================
+Private Sub CleanupOrphanStyleDumps(ByRef arr As Variant, ByVal nCount As Long)
+    Dim oFSO       As Object
+    Dim oFolder    As Object
+    Dim oFile      As Object
+    Dim oExpected  As Object
+    Dim arrOrphans() As String
+    Dim nOrphan    As Long
+    Dim k          As Long
+    Dim sBase      As String
+
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oExpected = CreateObject("Scripting.Dictionary")
+    oExpected.CompareMode = 1   ' TextCompare (case-insensitive)
+
+    For k = 1 To nCount
+        oExpected("style_" & SafeFileName(CStr(arr(k, 1))) & ".txt") = True
+    Next k
+
+    Set oFolder = oFSO.GetFolder(ActiveDocument.Path & "\rpt\Styles")
+    If oFolder.Files.Count = 0 Then Exit Sub
+
+    ReDim arrOrphans(1 To oFolder.Files.Count)
+    nOrphan = 0
+    For Each oFile In oFolder.Files
+        sBase = oFile.Name
+        If LCase$(Left$(sBase, 6)) = "style_" And LCase$(Right$(sBase, 4)) = ".txt" Then
+            If Not oExpected.Exists(sBase) Then
+                nOrphan = nOrphan + 1
+                arrOrphans(nOrphan) = oFile.Path
+            End If
+        End If
+    Next oFile
+
+    If nOrphan = 0 Then Exit Sub
+
+    Debug.Print "Orphan style dumps (in rpt\Styles but not in current approved list):"
+    For k = 1 To nOrphan
+        Debug.Print "  " & arrOrphans(k)
+    Next k
+
+    If MsgBox(nOrphan & " orphan style dump(s) found. Delete them?", _
+              vbYesNo + vbQuestion, "DumpAllApprovedStyles cleanup") = vbYes Then
+        For k = 1 To nOrphan
+            oFSO.DeleteFile arrOrphans(k), True
+            Debug.Print "  deleted: " & arrOrphans(k)
+        Next k
+    Else
+        Debug.Print "  skipped deletion of " & nOrphan & " orphan(s)."
+    End If
 End Sub
 
 '==============================================================================

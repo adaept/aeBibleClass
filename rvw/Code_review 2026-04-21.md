@@ -2134,3 +2134,51 @@ properties in `rvw/`:
 | `7b8cef8` | 2026-04-24 18:51 | FIXED - QA workflow goal statement |
 
 ---
+
+## § Orphan style-dump cleanup - 2026-04-24
+
+### Bug
+
+`DumpAllApprovedStyles` writes one file per current approved style
+(e.g., `rpt\Styles\style_Contents.txt`). When a style is renamed in the
+document - for example `ContentsCPBB` -> `Contents` - the dumper writes
+the new file but never removes the old `style_ContentsCPBB.txt`. Old
+files accumulate as the QA walk progresses and styles get renamed.
+
+### Fix
+
+After the dump loop, `DumpAllApprovedStyles` calls a new private helper
+`CleanupOrphanStyleDumps(arr, nCount)`:
+
+1. Builds a `Scripting.Dictionary` of expected basenames
+   (`style_<SafeFileName(name)>.txt`) from the just-dumped array.
+2. Lists `rpt\Styles\style_*.txt` on disk via `Scripting.FileSystemObject`.
+3. Diffs the two sets; anything on disk that wasn't expected is an
+   orphan.
+4. If any orphans, prints them to the Immediate window and shows a
+   single `MsgBox`: "N orphan style dump(s) found. Delete them?"
+   - Yes: deletes each, prints one line per deletion.
+   - No: prints "skipped deletion of N orphan(s)."
+5. No prompt fires if there are zero orphans.
+
+### Pros
+
+- Built into the existing workflow - no separate cleanup sub to remember.
+- Single batch prompt with the orphan list visible first.
+- Symmetric with how dumps are written (uses the same `SafeFileName`).
+- Case-insensitive comparison via `Dictionary.CompareMode = TextCompare`
+  matches Windows filesystem semantics.
+
+### Cons / YAGNI
+
+- Adds an interactive `MsgBox` to a previously silent routine. A future
+  headless / chained caller would block on the dialog. If that ever
+  matters, add an optional `bSkipPrompt As Boolean` argument.
+- `DumpStyleProperties` (single-style dump) is unaware of orphans;
+  renames are noticed only on the next `DumpAllApprovedStyles`.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24** in `src\basStyleInspector.bas`.
+
+---
