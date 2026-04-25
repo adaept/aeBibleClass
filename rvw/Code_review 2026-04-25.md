@@ -323,3 +323,59 @@ Skeleton creation: **PENDING approval**.
 Initial mature-section content: **PENDING approval**.
 
 ---
+
+## § EDSG scaffolding - 2026-04-25
+
+### Done
+
+`/EDSG/` directory created with 10 files:
+
+| File | Status | Notes |
+|---|---|---|
+| `README.md` | Complete | Landing page, source-of-truth map, page index, operative principles |
+| `01-styles.md` | Mature - WIP marker on pages 12+ | Approved style snapshot, categories, QA checklist |
+| `02-editing-process.md` | Mature | 7 workflow stages, anti-patterns, per-routine quick-ref |
+| `03-inspection-tools.md` | Mature | Full reference for `basStyleInspector` public + private API |
+| `04-qa-workflow.md` | Mature | Book-order canonical-priority workflow, 5-step cycle |
+| `05-headers-footers.md` | WIP | What's known after the audit; gotchas (Headers(1) vs Headers(2), Find blindness, Information() misleading) |
+| `06-i18n.md` | Skeleton | Awaits first-locale decision; current font inventory |
+| `07-super-test-runs.md` | Placeholder | Recaps the deferred design from `rvw/Code_review 2026-04-21.md` § 6 |
+| `08-publishing.md` | Skeleton | Three output forms (web/docx/print); markdown-to-style mapping draft; open questions |
+| `09-history.md` | Mature | Pointers into `rvw/`; decision-archaeology table; significant commits |
+
+### Decisions during scaffolding
+
+- ASCII hyphens used throughout EDSG markdown for consistency with
+  recent `rvw/` content (memory permits em-dashes in markdown but
+  uniformity wins).
+- Cross-links use relative paths (`01-styles.md`) — GitHub renders
+  them; same paths work for any docx/PDF importer that follows links.
+- Decision archaeology table in `09-history.md` provides a question →
+  rvw-section index, so future readers don't need to scan the full
+  rvw/ history to find why a thing is the way it is.
+- Inline file-status badges in `README.md` and the in-review table
+  above mark every page as Mature / WIP / Skeleton / Placeholder so
+  readers know what to trust.
+
+### Pending follow-ups
+
+- Answer the four open questions (first locale; print template;
+  visual conventions; tone) before further fleshing out
+  `06-i18n.md`, `08-publishing.md`.
+- Choose markdown -> docx import path (likely Pandoc + style
+  mapping); detail in `08-publishing.md` once chosen.
+- Define a `CodeBlock` paragraph style and an inline-code character
+  style — needed for `08-publishing.md` to map markdown code
+  constructs.
+- Replace `07-super-test-runs.md` placeholder content with
+  operational documentation when SUPER_TEST_RUNS lands.
+- Re-run `ListApprovedStylesByBookOrder` after pages 12+ walk; refresh
+  the snapshot table in `01-styles.md`.
+
+### Status
+
+**SCAFFOLDED - 2026-04-25**. Mature pages (`02`, `03`, `04`, `09` and
+`README.md`) are usable now; `01` is current through page 11; `05`,
+`06`, `07`, `08` carry visible status markers.
+
+---
