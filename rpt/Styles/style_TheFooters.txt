@@ -1,4 +1,4 @@
-'--- TheFooters  (Type=Paragraph, Priority=32) ---
+'--- TheFooters  (Type=Paragraph, Priority=3) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Carlito"

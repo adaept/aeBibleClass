@@ -5,6 +5,48 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+' Session-scoped dictionary of last-known runtimes (seconds), keyed by
+' routine name. Reset on Word restart / VBA project reset.
+Private mLastRuntimes As Object
+
+'==============================================================================
+' StartTimer / EndTimer  (session-scoped routine timing)
+'==============================================================================
+' Bracket a long-running routine to print expected (last-run) and actual
+' duration to the Immediate window. First-run-this-session prints a no-prior
+' notice instead of an expected value.
+'
+' Usage:
+'   Public Sub LongRoutine()
+'       Dim t As Double
+'       StartTimer "LongRoutine", t
+'       ' ... work ...
+'       EndTimer "LongRoutine", t
+'   End Sub
+'==============================================================================
+Public Sub StartTimer(ByVal sName As String, ByRef startTime As Double)
+    Dim d As Object
+    Set d = GetRuntimeDict()
+    If d.Exists(sName) Then
+        Debug.Print sName & " - expected ~" & Format(d(sName), "0.00") & " sec (last run)"
+    Else
+        Debug.Print sName & " - first run this session, no prior timing"
+    End If
+    startTime = Timer
+End Sub
+
+Public Sub EndTimer(ByVal sName As String, ByVal startTime As Double)
+    Dim runTime As Double
+    runTime = Timer - startTime
+    GetRuntimeDict()(sName) = runTime
+    Debug.Print sName & " - actual " & Format(runTime, "0.00") & " sec"
+End Sub
+
+Private Function GetRuntimeDict() As Object
+    If mLastRuntimes Is Nothing Then Set mLastRuntimes = CreateObject("Scripting.Dictionary")
+    Set GetRuntimeDict = mLastRuntimes
+End Function
+
 '==============================================================================
 ' DumpStyleProperties
 '==============================================================================
@@ -121,7 +163,9 @@ Public Sub DumpAllApprovedStyles()
     Dim i As Long, j As Long
     Dim tmpName As String
     Dim tmpPri  As Long
+    Dim t      As Double
 
+    StartTimer "DumpAllApprovedStyles", t
     Set oDoc = ActiveDocument
 
     ' First pass - Count eligible approved styles
@@ -181,14 +225,17 @@ Public Sub DumpAllApprovedStyles()
         On Error GoTo 0
     Next i
     Debug.Print "DumpAllApprovedStyles: Done. " & (nCount - nFailed) & " succeeded, " & nFailed & " failed."
+    EndTimer "DumpAllApprovedStyles", t
 End Sub
 
 '==============================================================================
 ' ListApprovedStylesByBookOrder
 '==============================================================================
 ' For every approved style (Priority <> 99), finds the page number of its
-' FIRST occurrence in the document and lists them in page order. Unused
-' approved styles are flagged [not used].
+' FIRST occurrence across all stories in the document (main body, headers,
+' footers, footnotes, endnotes, text frames, comments) and lists them in
+' page order. Unused approved styles are flagged [not used]. Sort is
+' (Page ascending, Priority ascending).
 '
 ' Output goes to the Immediate window; optionally also to
 ' rpt\Styles\styles_book_order.txt for QA diffing against the approved array.
@@ -207,8 +254,10 @@ Public Sub ListApprovedStylesByBookOrder(Optional ByVal bWriteFile As Boolean = 
     Dim pi As Long, pj As Long
     Dim tmpName As String, tmpPri As Long, tmpPage As Long
     Dim sOut    As String, sLine As String
+    Dim t       As Double
     Const NL    As String = vbCrLf
 
+    StartTimer "ListApprovedStylesByBookOrder", t
     Set oDoc = ActiveDocument
 
     ' Count approved paragraph/character styles
@@ -225,25 +274,12 @@ Public Sub ListApprovedStylesByBookOrder(Optional ByVal bWriteFile As Boolean = 
 
     ReDim arr(1 To nCount, 1 To 3)    ' (Name, Priority, Page)
 
-    ' Find first-occurrence page per approved style
+    ' Find first-occurrence page per approved style across all stories
+    ' (main body, headers, footers, footnotes, etc.)
     nCount = 1
     For Each oStyle In oDoc.Styles
         If (oStyle.Type = 1 Or oStyle.Type = 2) And oStyle.Priority <> 99 Then
-            Set oRng = oDoc.Content
-            With oRng.Find
-                .ClearFormatting
-                .Text = ""
-                .style = oStyle
-                .Forward = True
-                .Wrap = 0           ' wdFindStop
-                .Format = True
-                .MatchWildcards = False
-                If .Execute Then
-                    lPage = oRng.Information(3)   ' wdActiveEndPageNumber
-                Else
-                    lPage = -1
-                End If
-            End With
+            lPage = FirstPageForStyle(oDoc, oStyle)
             arr(nCount, 1) = oStyle.NameLocal
             arr(nCount, 2) = oStyle.Priority
             arr(nCount, 3) = lPage
@@ -287,6 +323,7 @@ Public Sub ListApprovedStylesByBookOrder(Optional ByVal bWriteFile As Boolean = 
 
     Debug.Print sOut
     If bWriteFile Then WriteBookOrderFile sOut
+    EndTimer "ListApprovedStylesByBookOrder", t
 End Sub
 
 Private Sub WriteBookOrderFile(ByVal sContent As String)
@@ -294,6 +331,236 @@ Private Sub WriteBookOrderFile(ByVal sContent As String)
     Dim oStream As Object
     Dim sPath   As String
     sPath = ActiveDocument.Path & "\rpt\Styles\styles_book_order.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)    ' ASCII
+    oStream.Write sContent
+    oStream.Close
+End Sub
+
+'==============================================================================
+' FirstPageForStyle  (helper)
+'==============================================================================
+' Returns the page number of the first occurrence of oStyle across every
+' story in the document (main body, headers, footers, footnotes, endnotes,
+' text frames, comments). Walks each story's NextStoryRange chain to cover
+' section-specific headers/footers.
+'
+' Returns -1 only if the style is not found in any story. If the style
+' IS found but no story returns a positive page number (e.g., header /
+' footer stories where Range.Information(wdActiveEndPageNumber) returns -1
+' because the header tiles across many pages), returns 1 as a best-effort
+' fallback - these styles "first appear" on page 1 of the single-section
+' document.
+'==============================================================================
+Private Function FirstPageForStyle(ByVal oDoc As Object, ByVal oStyle As Object) As Long
+    Dim oStory         As Object
+    Dim oNext          As Object
+    Dim oSection       As Object
+    Dim oFindRng       As Object
+    Dim bestPage       As Long
+    Dim thisPage       As Long
+    Dim bFoundAnywhere As Boolean
+    Dim i              As Long
+
+    bestPage = -1
+    bFoundAnywhere = False
+
+    ' Stories enumerable via For Each StoryRanges (main body, footnotes,
+    ' endnotes, text frames, comments). Header/footer stories (types 6-11)
+    ' are skipped here - the explicit Sections walk below handles them, and
+    ' Find inside a header story returns Information() pages tied to the
+    ' section anchor rather than where the header first applies.
+    For Each oStory In oDoc.StoryRanges
+        Select Case oStory.StoryType
+            Case 6, 7, 8, 9, 10, 11    ' header / footer story types - handled by Sections walk
+                ' skip
+            Case Else
+                Set oFindRng = oStory.Duplicate
+                thisPage = FindStylePage(oFindRng, oStyle, bFoundAnywhere)
+                If thisPage > 0 Then
+                    If bestPage = -1 Or thisPage < bestPage Then bestPage = thisPage
+                End If
+
+                Set oNext = oStory.NextStoryRange
+                Do While Not oNext Is Nothing
+                    Set oFindRng = oNext.Duplicate
+                    thisPage = FindStylePage(oFindRng, oStyle, bFoundAnywhere)
+                    If thisPage > 0 Then
+                        If bestPage = -1 Or thisPage < bestPage Then bestPage = thisPage
+                    End If
+                    Set oNext = oNext.NextStoryRange
+                Loop
+        End Select
+    Next oStory
+
+    ' Headers and Footers - iterate paragraphs directly. Find with empty text
+    ' on a tab-only or paragraph-mark-only header range does not match
+    ' reliably, even with a style filter. Paragraph iteration is deterministic
+    ' and headers/footers are tiny so perf is fine.
+    For Each oSection In oDoc.Sections
+        For i = 1 To 3   ' wdHeaderFooterEvenPages=1, Primary=2, FirstPage=3
+            thisPage = FirstPageInParagraphs(oSection.Headers(i).Range, oStyle, bFoundAnywhere)
+            If thisPage > 0 Then
+                If bestPage = -1 Or thisPage < bestPage Then bestPage = thisPage
+            End If
+            thisPage = FirstPageInParagraphs(oSection.Footers(i).Range, oStyle, bFoundAnywhere)
+            If thisPage > 0 Then
+                If bestPage = -1 Or thisPage < bestPage Then bestPage = thisPage
+            End If
+        Next i
+    Next oSection
+
+    If bestPage = -1 And bFoundAnywhere Then
+        FirstPageForStyle = 1    ' fallback: found only in header/footer-type stories
+    Else
+        FirstPageForStyle = bestPage
+    End If
+End Function
+
+'==============================================================================
+' FindStylePage  (helper)
+'==============================================================================
+' Runs Find on oRng with oStyle as the style filter. Returns the page number
+' of the first match, or -1 if not found. oRng is mutated by Find; pass a
+' Duplicate if the caller needs the original range preserved.
+'
+' Sets bFoundAnywhere := True when Find succeeds, regardless of whether the
+' returned page number is positive. Caller uses this to distinguish "truly
+' not used" from "used in a story that can't report a single page".
+'==============================================================================
+Private Function FindStylePage(ByVal oRng As Object, _
+                                ByVal oStyle As Object, _
+                                ByRef bFoundAnywhere As Boolean) As Long
+    With oRng.Find
+        .ClearFormatting
+        .Text = ""
+        .style = oStyle
+        .Forward = True
+        .Wrap = 0           ' wdFindStop
+        .Format = True
+        .MatchWildcards = False
+        If .Execute Then
+            bFoundAnywhere = True
+            FindStylePage = oRng.Information(3)   ' wdActiveEndPageNumber
+        Else
+            FindStylePage = -1
+        End If
+    End With
+End Function
+
+'==============================================================================
+' FirstPageInParagraphs  (helper)
+'==============================================================================
+' Walks oRng.Paragraphs looking for any paragraph whose Style.NameLocal
+' matches oStyle. Sets bFoundAnywhere := True on the first match and exits.
+' Always returns -1 - the caller's page-1 fallback handles header/footer hits.
+'
+' Used for header / footer ranges where:
+'   - Range.Find with empty text + style filter does not match tab-only or
+'     paragraph-mark-only content; and
+'   - Paragraph.Range.Information(wdActiveEndPageNumber) returns a misleading
+'     section-anchor page (e.g., 417 instead of 1) for header paragraphs.
+'
+' Treating header/footer matches as "page 1" via the fallback is correct
+' for headers that tile from the start of the document (the case here).
+'==============================================================================
+Private Function FirstPageInParagraphs(ByVal oRng As Object, _
+                                        ByVal oStyle As Object, _
+                                        ByRef bFoundAnywhere As Boolean) As Long
+    Dim oPara      As Object
+    Dim sStyleName As String
+
+    sStyleName = oStyle.NameLocal
+
+    For Each oPara In oRng.Paragraphs
+        If oPara.style.NameLocal = sStyleName Then
+            bFoundAnywhere = True
+            Exit For
+        End If
+    Next oPara
+
+    FirstPageInParagraphs = -1
+End Function
+
+'==============================================================================
+' DumpHeaderFooterStyles
+'==============================================================================
+' Diagnostic. Walks every section x every header/footer slot and reports the
+' first paragraph's style and a text excerpt. Read-only. Writes to
+' rpt\Styles\header_footer_audit.txt and prints a summary to the Immediate
+' window.
+'
+' Use to figure out which sections actually carry custom header/footer styles
+' versus the built-in "Header" / "Footer" defaults, especially when a Find
+' for a style appears to fail.
+'
+' Usage:
+'   DumpHeaderFooterStyles
+'==============================================================================
+Public Sub DumpHeaderFooterStyles()
+    Dim oDoc     As Object
+    Dim oSection As Object
+    Dim secNum   As Long
+    Dim i        As Long
+    Dim sOut     As String
+    Dim t        As Double
+    Const NL     As String = vbCrLf
+
+    StartTimer "DumpHeaderFooterStyles", t
+    Set oDoc = ActiveDocument
+    sOut = "---- DumpHeaderFooterStyles: " & oDoc.Sections.Count & " sections ----" & NL
+
+    secNum = 0
+    For Each oSection In oDoc.Sections
+        secNum = secNum + 1
+        For i = 1 To 3   ' wdHeaderFooterEvenPages=1, Primary=2, FirstPage=3
+            sOut = sOut & FormatHFLine(secNum, "Header(" & i & ")", oSection.Headers(i)) & NL
+            sOut = sOut & FormatHFLine(secNum, "Footer(" & i & ")", oSection.Footers(i)) & NL
+        Next i
+    Next oSection
+
+    WriteHeaderFooterAuditFile sOut
+    Debug.Print "DumpHeaderFooterStyles: wrote " _
+              & (oDoc.Sections.Count * 6) & " lines to rpt\Styles\header_footer_audit.txt"
+    EndTimer "DumpHeaderFooterStyles", t
+End Sub
+
+Private Function FormatHFLine(ByVal secNum As Long, _
+                              ByVal sKind As String, _
+                              ByVal oHF As Object) As String
+    Dim oRng       As Object
+    Dim sLink      As String
+    Dim sStyle     As String
+    Dim sText      As String
+    Dim nParaCount As Long
+
+    sLink = ""
+    If oHF.LinkToPrevious Then sLink = " linked"
+
+    Set oRng = oHF.Range
+    nParaCount = oRng.Paragraphs.Count
+
+    If nParaCount = 0 Then
+        sStyle = "(none)"
+        sText = ""
+    Else
+        sStyle = oRng.Paragraphs(1).style.NameLocal
+        sText = Replace(oRng.Paragraphs(1).Range.Text, vbCr, "")
+        sText = Replace(sText, vbTab, "<tab>")
+        If Len(sText) > 50 Then sText = Left(sText, 50) & "..."
+    End If
+
+    FormatHFLine = "Sec " & Right("000" & secNum, 3) & " " & sKind & sLink _
+                 & "  paras=" & nParaCount _
+                 & "  style=" & sStyle _
+                 & "  text=[" & sText & "]"
+End Function
+
+Private Sub WriteHeaderFooterAuditFile(ByVal sContent As String)
+    Dim oFSO    As Object
+    Dim oStream As Object
+    Dim sPath   As String
+    sPath = ActiveDocument.Path & "\rpt\Styles\header_footer_audit.txt"
     Set oFSO = CreateObject("Scripting.FileSystemObject")
     Set oStream = oFSO.CreateTextFile(sPath, True, False)    ' ASCII
     oStream.Write sContent

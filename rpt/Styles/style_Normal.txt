@@ -1,4 +1,4 @@
-'--- Normal  (Type=Paragraph, Priority=6) ---
+'--- Normal  (Type=Paragraph, Priority=14) ---
 .BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"

@@ -1,4 +1,4 @@
-'--- FrontPageBodyText  (Type=Paragraph, Priority=5) ---
+'--- FrontPageBodyText  (Type=Paragraph, Priority=8) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Liberation Serif"

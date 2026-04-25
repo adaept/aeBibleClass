@@ -1,4 +1,4 @@
-'--- TheHeaders  (Type=Paragraph, Priority=31) ---
+'--- TheHeaders  (Type=Paragraph, Priority=1) ---
 .BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"

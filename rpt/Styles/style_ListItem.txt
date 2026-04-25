@@ -1,4 +1,4 @@
-'--- ListItem  (Type=Paragraph, Priority=20) ---
+'--- ListItem  (Type=Paragraph, Priority=27) ---
 .BaseStyle = "List Number"
 .QuickStyle = True
 .Font.Name = "Carlito"

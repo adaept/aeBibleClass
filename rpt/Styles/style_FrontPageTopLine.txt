@@ -1,6 +1,6 @@
-'--- FrontPageTopLine  (Type=Paragraph, Priority=1) ---
+'--- FrontPageTopLine  (Type=Paragraph, Priority=4) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Liberation Serif"
 .Font.Size = 16
 .Font.Bold = 0
@@ -10,7 +10,7 @@
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
 .NextParagraphStyle = "FrontPageTopLine"
-.AutomaticallyUpdate = True
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0

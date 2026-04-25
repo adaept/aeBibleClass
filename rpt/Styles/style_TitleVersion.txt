@@ -1,6 +1,6 @@
-'--- TitleVersion  (Type=Paragraph, Priority=4) ---
+'--- TitleVersion  (Type=Paragraph, Priority=7) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Liberation Serif"
 .Font.Size = 22
 .Font.Bold = 0
@@ -9,7 +9,7 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "Normal (Web)"
+.NextParagraphStyle = "TitleVersion"
 .AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0

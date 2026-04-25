@@ -1,4 +1,4 @@
-'--- TitleEyebrow  (Type=Paragraph, Priority=2) ---
+'--- TitleEyebrow  (Type=Paragraph, Priority=5) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Liberation Serif"
@@ -10,7 +10,7 @@
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
 .NextParagraphStyle = "TitleEyebrow"
-.AutomaticallyUpdate = True
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0

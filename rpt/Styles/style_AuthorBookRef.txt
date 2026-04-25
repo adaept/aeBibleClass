@@ -1,4 +1,4 @@
-'--- AuthorBookRef  (Type=Paragraph, Priority=30) ---
+'--- AuthorBookRef  (Type=Paragraph, Priority=36) ---
 .BaseStyle = "List Number"
 .QuickStyle = True
 .Font.Name = "Carlito"

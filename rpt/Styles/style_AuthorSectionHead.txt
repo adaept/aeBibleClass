@@ -1,4 +1,4 @@
-'--- AuthorSectionHead  (Type=Paragraph, Priority=28) ---
+'--- AuthorSectionHead  (Type=Paragraph, Priority=34) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Liberation Serif"

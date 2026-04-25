@@ -1,0 +1,38 @@
+Approved styles in book order (by page of first occurrence)
+ Page | Prio | Style
+------+------+-----------------------------
+    1 |    1 | TheHeaders
+    1 |   15 | BodyText
+    1 |   36 | TheFooters
+    2 |    2 | FrontPageTopLine
+    2 |    3 | TitleEyebrow
+    2 |    4 | Title
+    2 |    5 | TitleVersion
+    2 |    6 | FrontPageBodyText
+    3 |    7 | BodyTextTopLineCPBB
+    4 |    8 | Acknowledgments
+    4 |    9 | AuthorBodyText
+    5 |   10 | ContentsCPBB
+    5 |   11 | ContentsRef
+    6 |   12 | Normal
+    6 |   33 | AuthorSectionHead
+   11 |   26 | ListItem
+   11 |   27 | ListItemBody
+   15 |   35 | AuthorBookRef
+   20 |   37 | Book Title
+   21 |   13 | Heading 1
+   21 |   18 | CustomParaAfterH1
+   21 |   19 | DatAuthRef
+   21 |   21 | Brief
+   22 |   14 | Heading 2
+   22 |   28 | Chapter Verse marker
+   22 |   29 | Verse marker
+   22 |   30 | EmphasisBlack
+   22 |   38 | Footnote Reference
+   22 |   39 | Footnote Text
+  417 |   22 | Psalms BOOK
+  578 |   23 | Lamentation
+  687 |   32 | Words of Jesus
+  688 |   31 | EmphasisRed
+    - |   16 | BodyTextIndent  [not used]
+    - |   34 | AuthorQuote  [not used]

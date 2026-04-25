@@ -1516,3 +1516,534 @@ Fix #2: **PENDING**.
 Fix #3: **PENDING**.
 
 ---
+
+## § Sort + drift cleanup verified - 2026-04-24
+
+### Secondary sort by priority - DONE
+
+Original output sorted only by page. Tied-page groups were in arbitrary
+`Styles`-collection order, masking the intended structure. Fix: added
+priority as a secondary sort key.
+
+```vba
+If pj < pi Or (pj = pi And arr(j, 2) < arr(i, 2)) Then
+```
+
+Verified against the second-run output: every tied-page group now
+ascends by priority (page 2: 2/3/4/5/6; page 4: 8/9; page 5: 10/11;
+page 11: 26/27; page 21: 13/18/19/21; page 22: 14/28/29/30/38). The
+trailing `[not used]` block is also priority-sorted.
+
+### Drift cleanup - DONE
+
+The five "stale priority" styles from the first-run analysis were
+resolved in the user's follow-up array edit, not by `PromoteApprovedStyles`
+auto-reset:
+
+| Style | Resolution |
+|---|---|
+| `Default Paragraph Font` | Removed/left at 99 - out of output |
+| `BodyTextTopLineCPBB` | Added to approved array (prio 7) |
+| `Acknowlegments` | Typo fixed to `Acknowledgments`, added (prio 8) |
+| `ContentsCPBB` | Added to approved array (prio 10) |
+| `ContentsRef` | Added to approved array (prio 11) |
+
+Net approved style count grew to 35. All now show legitimate first-
+occurrence pages in the book-order output.
+
+### Remaining `[not used]` breakdown
+
+After cleanup:
+
+- **Story-scope bug** (fix #2 next): `TheHeaders` (prio 1),
+  `TheFooters` (prio 36), `Footnote Text` (prio 39) - used in
+  non-main stories, not covered by `oDoc.Content`.
+- **By design / deferred**: `Normal` (12 - anchor, replaced by
+  `BodyText`), `BodyTextIndent` (16 - intent TBD),
+  `AuthorQuote` (34 - deferred, front matter TBD).
+
+### Fix list status
+
+Fix #1 (run `WordEditingConfig`): **DONE - 2026-04-24**.
+Fix #1a (secondary sort by priority): **DONE - 2026-04-24**.
+Fix #2 (StoryRanges extension): **IMPLEMENTED - 2026-04-24**, awaiting
+verification.
+Fix #3 (decide on `Normal` / `BodyTextIndent`): **PENDING**.
+
+---
+
+## § StoryRanges extension - 2026-04-24
+
+### Change
+
+`ListApprovedStylesByBookOrder` previously searched only `oDoc.Content`
+(main body story). Three approved styles - `TheHeaders`, `TheFooters`,
+`Footnote Text` - were falsely flagged `[not used]` because they live in
+non-main stories.
+
+### Implementation
+
+Two new private helpers in `src\basStyleInspector.bas`:
+
+- `FirstPageForStyle(oDoc, oStyle) As Long` - iterates
+  `oDoc.StoryRanges`, walking each story's `NextStoryRange` chain to
+  cover section-linked stories (e.g., per-section headers/footers).
+  Returns the minimum positive page number found across every story, or
+  -1 if not found.
+- `FindStylePage(oRng, oStyle) As Long` - runs `Range.Find` with the
+  style filter; returns `Information(wdActiveEndPageNumber)` on success
+  or -1 on miss.
+
+Main body of `ListApprovedStylesByBookOrder` now calls
+`FirstPageForStyle` instead of doing the Find inline.
+
+### Stories covered
+
+Word `StoryRanges` enumerates every story type that has content:
+main text, footnotes, endnotes, comments, text frames, header (primary,
+first-page, even-pages), footer (primary, first-page, even-pages).
+`NextStoryRange` extends coverage to section-specific variants.
+
+### Known limitation
+
+If a non-main story returns a non-positive page number from
+`Information(wdActiveEndPageNumber)` (possible for some header/footer
+configurations), that occurrence is treated as "not used" for sorting
+purposes. If TheHeaders / TheFooters continue to show `[not used]` after
+this fix, the next iteration will add a fallback: report via the owning
+section's start page.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting re-run of
+`ListApprovedStylesByBookOrder` to verify.
+
+---
+
+## § Header/Footer page-1 fallback - 2026-04-24
+
+### Problem confirmed
+
+After the StoryRanges extension, `TheHeaders` and `TheFooters` still
+showed `[not used]`. Root cause confirmed in VBE:
+
+```
+Find.Execute -> True      (style IS found in the header story)
+oRng.Information(wdActiveEndPageNumber) -> -1  (headers tile across pages)
+```
+
+Word returns -1 (or 0) for `wdActiveEndPageNumber` on a header / footer
+range because the same header template applies to many pages; there is
+no single correct answer. The previous `> 0` filter in `FirstPageForStyle`
+discarded the hit.
+
+Worth noting: other non-main stories do return valid pages. `Footnote
+Text` now reports page 22 correctly because the footnote story IS anchored
+to the page that contains the reference mark. `Normal` reached page 6,
+showing it is in fact used in the main body (contrary to the earlier
+"by design" assumption - revisit under fix #3).
+
+### Fix
+
+Extend `FindStylePage` with a `ByRef bFoundAnywhere As Boolean` parameter
+set to `True` whenever `Find.Execute` succeeds, independent of the page
+number returned. In `FirstPageForStyle`, after walking every story:
+
+```vba
+If bestPage = -1 And bFoundAnywhere Then
+    FirstPageForStyle = 1    ' fallback: found only in header/footer stories
+Else
+    FirstPageForStyle = bestPage
+End If
+```
+
+Result: `TheHeaders` and `TheFooters` will report page 1 (accurate for
+this single-primary-header document - the header tiles from page 1
+onward) and float to the top of the book-order listing alongside the
+page-1 `BodyText`.
+
+### Deliberate YAGNI
+
+A more precise variant - "find the section that owns this header story
+and use that section's start page" - was considered and deferred. This
+document has one TheHeaders / TheFooters definition applied across all
+sections, so the per-section nuance is not needed. If the document is
+ever re-sectioned with varying headers, the fallback can be upgraded to
+enumerate `oDoc.Sections(i).Headers(j).Range` and match the owning
+section.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting verification re-run.
+Fix #3 (decide on `Normal` / `BodyTextIndent`) stays **PENDING** - with
+new context that `Normal` IS in use on page 6.
+
+---
+
+## § Explicit Sections walk for headers/footers - 2026-04-24
+
+### Problem
+
+The page-1 fallback did not fire in the verification re-run.
+`TheHeaders` and `TheFooters` still showed `[not used]`, meaning
+`bFoundAnywhere` was never set, i.e., `Find.Execute` never returned
+`True` inside any header/footer range during the walk.
+
+### Root cause
+
+`For Each oStory In oDoc.StoryRanges` is not reliable for header and
+footer stories. The enumeration may only include stories that have been
+"touched" in the current session; primary header / footer stories are
+frequently skipped. Microsoft's docs on this are vague; behavior varies
+by Word version.
+
+Confirmation: `Footnote Text` (priority 39) reported page 22 correctly
+via the existing walk - footnotes *are* enumerated by `For Each`. Only
+headers and footers are dropped.
+
+### Fix
+
+Keep the `For Each StoryRanges` walk (it handles main body, footnotes,
+endnotes, text frames, comments reliably) and **add** an explicit
+`oDoc.Sections(i).Headers(j)` / `.Footers(j)` enumeration:
+
+```vba
+For Each oSection In oDoc.Sections
+    For i = 1 To 3   ' wdHeaderFooterEvenPages, Primary, FirstPage
+        ' Find in oSection.Headers(i).Range
+        ' Find in oSection.Footers(i).Range
+    Next i
+Next oSection
+```
+
+`Section.Headers(i)` always returns a `HeaderFooter` object (empty
+`.Range` if the slot has no content), so no `On Error` guards are
+needed. Find on an empty range returns no match, not an error.
+
+### Short-circuit vs fallback - clarification
+
+Recorded here for future reference since the question came up mid-fix:
+
+- **No short-circuit is implemented.** The walk visits every story
+  because the output needs the *minimum* page, and a later story can
+  still reveal an earlier page. The only theoretically safe early exit
+  is `bestPage = 1` (nothing lower than 1 exists); not worth coding for
+  ~10 story ranges per style.
+- **The fallback is a post-walk correctness mechanism**, not a
+  performance one. If the walk finishes with `bestPage = -1` but
+  `bFoundAnywhere = True`, we know the style was matched in a story
+  that can't report a single page (headers/footers). Return `1` as
+  best-effort first appearance.
+
+### Known edge case (YAGNI for now)
+
+If a header/footer style is also used in the main body on page N > 1,
+the current code returns `N` (bestPage wins) rather than `1` (true
+first appearance via the header). No approved style exhibits this
+pattern in the current document. If it ever does, the post-walk
+decision can be upgraded to `If bFoundAnywhere And (bestPage = -1 Or
+bestPage > 1) Then FirstPageForStyle = 1`.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting verification re-run.
+
+---
+
+## § DumpHeaderFooterStyles diagnostic - 2026-04-24
+
+### Why
+
+Verification re-run after the explicit Sections walk still showed
+`TheHeaders` / `TheFooters` as `[not used]`. Manual probing surfaced new
+context:
+
+- Document has **148 sections**.
+- `Sections(1).Headers(2)` (primary header) reports the built-in
+  `Header` style and empty text, not `TheHeaders`.
+- UI click into a header showed `TheHeaders` IS applied somewhere -
+  user reports "in section 1" but the immediate-window check disagrees.
+
+To stop guessing, added a read-only audit Sub that walks every
+section x every header/footer slot and dumps actual paragraph styles
+plus a text excerpt. Output goes to
+`rpt\Styles\header_footer_audit.txt` (888 lines for 148 sections,
+truncated in the Immediate window otherwise).
+
+### Routine
+
+`Public Sub DumpHeaderFooterStyles()` in `src\basStyleInspector.bas`.
+
+For each section x slot (Header/Footer 1/2/3):
+
+- Section number
+- Slot kind (`Header(2)`, `Footer(1)`, etc.)
+- `LinkToPrevious` flag (shown as `linked` when True)
+- Paragraph count
+- First paragraph's `Style.NameLocal`
+- First 50 chars of text, with tabs rendered as `<tab>` and CR stripped
+
+Sample line format:
+
+```
+Sec 005 Header(2) linked  paras=1  style=TheHeaders  text=[<tab>]
+```
+
+### Use
+
+```vba
+DumpHeaderFooterStyles
+```
+
+Then open `rpt\Styles\header_footer_audit.txt` and grep / scan for
+`TheHeaders` / `TheFooters` to find the section number(s) where they
+actually live. That tells us whether the StoryRanges-walk Find is
+failing for a code reason or a document-state reason.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting first run for diagnosis.
+
+---
+
+## § Paragraph-iteration fix for header/footer styles - 2026-04-24
+
+### Diagnostic findings
+
+`DumpHeaderFooterStyles` revealed where `TheHeaders` / `TheFooters`
+actually live:
+
+```
+Sec 001 Header(1)            paras=1  style=TheHeaders   text=[<tab>]
+Sec 002 Header(1) linked     paras=1  style=TheHeaders   text=[<tab>]
+Sec 002 Header(3)            paras=1  style=TheHeaders   text=[<tab>]
+Sec 004 Footer(1)            paras=1  style=TheFooters   text=[1]
+... (across 148 sections, mostly via "linked to previous")
+```
+
+Key facts:
+
+- `TheHeaders` is in `Header(1)` (`wdHeaderFooterEvenPages`), not
+  `Header(2)` (`wdHeaderFooterPrimary`). The earlier
+  immediate-window check looked at `Headers(2)` and saw the empty
+  built-in `Header` style, which sent us off-track.
+- `TheFooters` is in `Footer(1)` similarly.
+- The Sections walk in `FirstPageForStyle` already iterates `i = 1 To 3`,
+  so it visits `Header(1)` / `Footer(1)`. The visit happens; the Find
+  inside it just doesn't match.
+
+### Root cause
+
+`Range.Find` with `.Text = ""` and `.Style = oStyle` does not reliably
+match content in a header/footer range when the only content is a tab
+or just a paragraph mark. The data is reachable - the diagnostic itself
+read `Headers(1).Range.Paragraphs(1).Style.NameLocal` and got
+`TheHeaders` - but Find is blind to it.
+
+### Fix
+
+For the Sections-walk pass only, swap Find for direct paragraph
+iteration. New private helper `FirstPageInParagraphs(oRng, oStyle,
+bFoundAnywhere)` walks `oRng.Paragraphs`, compares
+`Para.Style.NameLocal` against `oStyle.NameLocal`, and tracks the
+minimum positive `Information(wdActiveEndPageNumber)`. Sets
+`bFoundAnywhere := True` on any paragraph match, so the page-1 fallback
+still fires when no positive page is reported.
+
+Find stays in place for main body and `For Each StoryRanges`
+(footnotes, endnotes, etc.) where it works fine and benefits from
+indexed search performance. Only the per-section header/footer pass
+switched to paragraph iteration - acceptable cost since each
+header/footer typically has 1 paragraph.
+
+### Limitation
+
+Paragraph iteration only catches paragraph-style usage. A character
+style applied to a run inside a header paragraph would still need Find.
+Headers/footers in this document don't use character styles, so YAGNI.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting verification re-run.
+
+---
+
+## § Header/Footer page-1 - drop misleading Information() - 2026-04-24
+
+### Verification result
+
+After the paragraph-iteration fix, `TheHeaders` and `TheFooters` were
+correctly matched but reported page **417**, not page 1:
+
+```
+  417 |    1 | TheHeaders
+  417 |   22 | Psalms BOOK
+  417 |   36 | TheFooters
+```
+
+The styles ride along with `Psalms BOOK` because Word's
+`Paragraph.Range.Information(wdActiveEndPageNumber)` for a header
+paragraph returns a section-anchor-related page rather than the page
+where the header first applies. In this document that anchor lands on
+417 (the Psalms section transition).
+
+### Fix
+
+`FirstPageInParagraphs` no longer captures the page number. It just sets
+`bFoundAnywhere := True` on the first paragraph match and returns `-1`.
+The page-1 fallback in `FirstPageForStyle`
+(`If bestPage = -1 And bFoundAnywhere Then = 1`) then provides the
+correct user-meaningful answer: the header tiles from page 1.
+
+Bonus: `Exit For` after the first match - no need to keep iterating
+once the style is known to be present.
+
+### Limitation (still YAGNI)
+
+If a future style is used only in a header that legitimately starts on
+a later page (e.g., a "Maps appendix" header beginning at page 500),
+this approach reports it as page 1, which is misleading. For the
+current document - one TheHeaders / TheFooters definition tiling from
+page 1 - it's exact. If that ever changes, switch the helper to return
+the section's actual start page via
+`oSection.Range.Information(wdActiveEndPageNumber)` and pass the section
+context into the helper.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting final verification re-run.
+
+---
+
+## § Skip header/footer types in StoryRanges walk - 2026-04-24
+
+### Verification result
+
+Re-run after the previous fix produced the **same** 417 output for
+`TheHeaders` / `TheFooters`. The Sections walk was correctly returning
+-1 (no page captured), but `bestPage` was still landing at 417 - meaning
+the page-417 source is the OTHER code path: the `For Each StoryRanges`
+walk.
+
+### Root cause
+
+`For Each oStory In oDoc.StoryRanges` IS enumerating header/footer
+stories in this document (contrary to the earlier assumption that they
+were always skipped). Find inside a header story matches `TheHeaders`
+and `Information(wdActiveEndPageNumber)` returns 417 - the
+section-anchor page tied to the Psalms transition, where the
+unlinked-header chain is anchored. The Sections walk was already
+correct; the StoryRanges walk was undoing it.
+
+### Fix
+
+Filter header/footer story types out of the `For Each StoryRanges` walk.
+The explicit Sections walk handles them deterministically and triggers
+the page-1 fallback. Filtered types (Word `WdStoryType` enum):
+
+| Value | Constant |
+|---|---|
+| 6 | `wdEvenPagesHeaderStory` |
+| 7 | `wdPrimaryHeaderStory` |
+| 8 | `wdEvenPagesFooterStory` |
+| 9 | `wdPrimaryFooterStory` |
+| 10 | `wdFirstPageHeaderStory` |
+| 11 | `wdFirstPageFooterStory` |
+
+`Select Case oStory.StoryType / Case 6, 7, 8, 9, 10, 11 / Case Else`
+inside the For Each. Skipped types do nothing; everything else
+(main body, footnotes, endnotes, text frames, comments) goes through
+the same Find + NextStoryRange chain as before.
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**. Awaiting verification re-run.
+
+---
+
+## § Verified - book-order routine working - 2026-04-24
+
+After the StoryRanges-walk header/footer skip, the verification re-run
+shows the expected output:
+
+```
+    1 |    1 | TheHeaders
+    1 |   15 | BodyText
+    1 |   36 | TheFooters
+    2 |    2 | FrontPageTopLine
+    ... (correct page-and-priority order throughout) ...
+  688 |   31 | EmphasisRed
+    - |   16 | BodyTextIndent  [not used]
+    - |   34 | AuthorQuote  [not used]
+```
+
+`TheHeaders` and `TheFooters` correctly land at page 1 alongside
+`BodyText`. The only remaining `[not used]` are by-design / deferred
+(`BodyTextIndent` and `AuthorQuote`).
+
+### Status updates
+
+Fix #2 (StoryRanges extension + paragraph-iteration + skip
+header/footer story types): **DONE - 2026-04-24**.
+Fix #3 (decide on `BodyTextIndent` / `AuthorQuote`): **PENDING** -
+remaining cleanup decision.
+
+---
+
+## § Session-scoped routine timing - 2026-04-24
+
+### Why
+
+`DumpAllApprovedStyles`, `ListApprovedStylesByBookOrder`, and
+`DumpHeaderFooterStyles` can each take a few minutes on a full Bible
+document. Add "expected vs actual" feedback so subsequent runs in a
+session can be predicted.
+
+### Choice - Option A (session-scoped Dictionary)
+
+| Option | Persistence | Why not |
+|---|---|---|
+| **A** Module-level `Scripting.Dictionary` | Until Word restart / VBA reset | Selected. Matches "first run has no value" framing - a fresh session is a natural reset boundary. |
+| B `ActiveDocument.Variables` | Saved in the .docx | Pollutes the document with diagnostic state. |
+| C `rpt/timing.txt` | On disk | More durable but extra I/O. Easy to upgrade later. |
+
+### Implementation
+
+`src\basStyleInspector.bas`:
+
+- Module-level `Private mLastRuntimes As Object` (lazy-init
+  `Scripting.Dictionary`).
+- `Public Sub StartTimer(sName, ByRef startTime)` - prints last-run
+  expected (or "first run this session, no prior timing") and stamps
+  `startTime = Timer`.
+- `Public Sub EndTimer(sName, startTime)` - prints actual runtime,
+  stores it under `sName` for next call.
+- `Private Function GetRuntimeDict()` - lazy-init helper.
+
+Wired into the three long routines with a two-line bracket
+(`StartTimer "Name", t` ... `EndTimer "Name", t`). `DumpStyleProperties`
+left untimed - single-style dump is sub-second.
+
+### Output sample
+
+First run of session:
+
+```
+ListApprovedStylesByBookOrder - first run this session, no prior timing
+... routine output ...
+ListApprovedStylesByBookOrder - actual 78.42 sec
+```
+
+Subsequent runs:
+
+```
+ListApprovedStylesByBookOrder - expected ~78.42 sec (last run)
+... routine output ...
+ListApprovedStylesByBookOrder - actual 79.10 sec
+```
+
+### Status
+
+**IMPLEMENTED - 2026-04-24**.
+
+---

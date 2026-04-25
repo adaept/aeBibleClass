@@ -1,4 +1,4 @@
-'--- BodyText  (Type=Paragraph, Priority=2) ---
+'--- BodyTextTopLineCPBB  (Type=Paragraph, Priority=9) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"
@@ -9,18 +9,18 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "BodyText"
+.NextParagraphStyle = "BodyTextTopLineCPBB"
 .AutomaticallyUpdate = False
-.ParagraphFormat.Alignment = 3
+.ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
 .ParagraphFormat.SpaceAfter = 0
-.ParagraphFormat.LineSpacing = 10
-.ParagraphFormat.LineSpacingRule = 4
-.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
+.ParagraphFormat.WidowControl = 0
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0
-.ParagraphFormat.PageBreakBefore = 0
+.ParagraphFormat.PageBreakBefore = -1
 .ParagraphFormat.OutlineLevel = 10

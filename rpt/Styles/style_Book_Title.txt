@@ -1,4 +1,4 @@
-'--- Book Title  (Type=Character, Priority=33) ---
+'--- Book Title  (Type=Character, Priority=37) ---
 .BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Times New Roman"
