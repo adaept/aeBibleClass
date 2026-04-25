@@ -1,4 +1,4 @@
-'--- DatAuthRef  (Type=Paragraph, Priority=21) ---
+'--- DatAuthRef  (Type=Paragraph, Priority=23) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Noto Sans"
