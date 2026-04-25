@@ -2,37 +2,38 @@ Approved styles in book order (by page of first occurrence)
  Page | Prio | Style
 ------+------+-----------------------------
     1 |    1 | TheHeaders
-    1 |   15 | BodyText
-    1 |   36 | TheFooters
-    2 |    2 | FrontPageTopLine
-    2 |    3 | TitleEyebrow
-    2 |    4 | Title
-    2 |    5 | TitleVersion
-    2 |    6 | FrontPageBodyText
-    3 |    7 | BodyTextTopLineCPBB
-    4 |    8 | Acknowledgments
-    4 |    9 | AuthorBodyText
-    5 |   10 | ContentsCPBB
-    5 |   11 | ContentsRef
-    6 |   12 | Normal
-    6 |   33 | AuthorSectionHead
-   11 |   26 | ListItem
-   11 |   27 | ListItemBody
-   15 |   35 | AuthorBookRef
-   20 |   37 | Book Title
-   21 |   13 | Heading 1
-   21 |   18 | CustomParaAfterH1
-   21 |   19 | DatAuthRef
-   21 |   21 | Brief
-   22 |   14 | Heading 2
-   22 |   28 | Chapter Verse marker
-   22 |   29 | Verse marker
-   22 |   30 | EmphasisBlack
-   22 |   38 | Footnote Reference
-   22 |   39 | Footnote Text
-  417 |   22 | Psalms BOOK
-  578 |   23 | Lamentation
-  687 |   32 | Words of Jesus
-  688 |   31 | EmphasisRed
-    - |   16 | BodyTextIndent  [not used]
-    - |   34 | AuthorQuote  [not used]
+    1 |    2 | BodyText
+    1 |    3 | TheFooters
+    2 |    4 | FrontPageTopLine
+    2 |    5 | TitleEyebrow
+    2 |    6 | Title
+    2 |    7 | TitleVersion
+    2 |    8 | FrontPageBodyText
+    3 |    9 | BodyTextTopLineCPBB
+    4 |   10 | Acknowledgments
+    4 |   11 | AuthorBodyText
+    5 |   12 | Contents
+    5 |   13 | ContentsRef
+    6 |   14 | BibleIndexEyebrow
+    6 |   15 | BibleIndex
+   11 |   28 | ListItem
+   11 |   29 | ListItemBody
+   15 |   37 | AuthorBookRef
+   20 |   38 | Book Title
+   21 |   16 | Heading 1
+   21 |   20 | CustomParaAfterH1
+   21 |   21 | DatAuthRef
+   21 |   23 | Brief
+   22 |   17 | Heading 2
+   22 |   30 | Chapter Verse marker
+   22 |   31 | Verse marker
+   22 |   32 | EmphasisBlack
+   22 |   39 | Footnote Reference
+   22 |   40 | Footnote Text
+  417 |   24 | Psalms BOOK
+  578 |   25 | Lamentation
+  687 |   34 | Words of Jesus
+  688 |   33 | EmphasisRed
+  937 |   35 | AuthorSectionHead
+    - |   18 | BodyTextIndent  [not used]
+    - |   36 | AuthorQuote  [not used]

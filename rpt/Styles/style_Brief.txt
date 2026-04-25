@@ -1,4 +1,4 @@
-'--- Brief  (Type=Paragraph, Priority=22) ---
+'--- Brief  (Type=Paragraph, Priority=23) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Noto Sans"
