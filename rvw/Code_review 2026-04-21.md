@@ -2094,3 +2094,43 @@ the source of truth for the order of the `approved` array in
 through the rest of the document.
 
 ---
+
+## § Historical reference - "ruler as source of truth for indents" - 2026-04-24
+
+User recall: when working on list paragraph numbering, the user noted
+that the numbering's indent values came from the Word UI ruler, and
+the assistant described the ruler as the source of truth for indent
+properties. The exact phrase "the ruler is the source of truth" was
+never written verbatim in any commit or file.
+
+The conceptual record traces to commit **`200ead8`** (2026-04-22
+14:53:04 -0600, "Taxonomy test is working"), which introduced the QA
+spec language:
+
+```
+| FirstLineIndent | point value match |
+...
+Single source of truth for the style specification - expected values
+live in RUN_TAXONOMY_STYLES constants, not scattered across the
+document.
+```
+
+That commit established `RUN_TAXONOMY_STYLES` (in code) as the
+authoritative reference for style properties including `LeftIndent`
+and `FirstLineIndent`. The ruler-centric framing in the user's recall
+is the practical expression of this principle: when measuring or
+verifying indent values for a list/numbering paragraph, read them off
+the ruler in the UI rather than guessing or copying from another
+source.
+
+Other commits that touch both "source of truth" language and indent
+properties in `rvw/`:
+
+| Commit | Date | Subject |
+|---|---|---|
+| `200ead8` | 2026-04-22 14:53 | Taxonomy test is working *(earliest)* |
+| `44ebd07` | 2026-04-22 19:59 | FIXED - Author text styles - TNR substitution |
+| `8cbcabb` | 2026-04-23 23:05 | FIXED - Create DumpStyleProperties |
+| `7b8cef8` | 2026-04-24 18:51 | FIXED - QA workflow goal statement |
+
+---
