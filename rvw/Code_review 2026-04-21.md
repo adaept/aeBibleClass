@@ -2047,3 +2047,50 @@ ListApprovedStylesByBookOrder - actual 79.10 sec
 **IMPLEMENTED - 2026-04-24**.
 
 ---
+
+## § QA workflow goal and current state - 2026-04-24
+
+### Goal
+
+**The book-order output BECOMES the canonical priority sequence.**
+
+`ListApprovedStylesByBookOrder` is not just a diagnostic - its output is
+the source of truth for the order of the `approved` array in
+`src\basTEST_aeBibleConfig.bas`. Each cycle:
+
+1. Walk a chunk of pages in the document.
+2. Run `ListApprovedStylesByBookOrder`.
+3. If the output disagrees with the array, the array is wrong - update
+   it to match the book order. Add new styles encountered along the way.
+4. Re-run `WordEditingConfig` to repromote priorities.
+5. Re-run `ListApprovedStylesByBookOrder`; the two should now align.
+
+### Current state - 2026-04-24
+
+- **Pages 1-11**: array aligned with book order. Top of array now
+  reads `TheHeaders, BodyText, TheFooters, FrontPageTopLine,
+  TitleEyebrow, Title, TitleVersion, FrontPageBodyText,
+  BodyTextTopLineCPBB, Acknowledgments, AuthorBodyText, ContentsCPBB,
+  ContentsRef, Normal, Heading 1, Heading 2, ...`
+- **Pages 12+**: not yet walked. Existing array entries from priority
+  ~17 onward are inherited from earlier alphabetical / ad-hoc ordering
+  and will be re-validated as the page walk proceeds.
+
+### Outstanding work
+
+- Walk through every section and style beyond page 11; update array as
+  new styles are encountered.
+- Identify and add **new styles** that do not yet exist in the document
+  but are needed (per page-walk findings).
+- **Fix or remove `Normal`**: currently appears at priority 14, page 6.
+  Decision pending - keep as anchor (replaced semantically by
+  `BodyText`), or prune from the approved array entirely.
+- Decide on `BodyTextIndent` (priority 17, `[not used]`) and
+  `AuthorQuote` (priority 35, `[not used]`).
+
+### Status
+
+**WIP** - QA workflow is the operational driver of the approved array
+through the rest of the document.
+
+---
