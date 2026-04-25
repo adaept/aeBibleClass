@@ -1,4 +1,4 @@
-'--- Verse marker  (Type=Character, Priority=33) ---
+'--- Verse marker  (Type=Character, Priority=35) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Noto Sans"

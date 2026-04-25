@@ -1,25 +1,25 @@
-'--- BodyTextIndent  (Type=Paragraph, Priority=24) ---
+'--- Contents  (Type=Paragraph, Priority=12) ---
 .BaseStyle = ""
 .QuickStyle = False
-.Font.Name = "Carlito"
-.Font.Size = 9
+.Font.Name = "Liberation Serif"
+.Font.Size = 22
 .Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "BodyText"
+.NextParagraphStyle = "Contents"
 .AutomaticallyUpdate = False
-.ParagraphFormat.Alignment = 3
+.ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
-.ParagraphFormat.FirstLineIndent = 14.4
-.ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 0
-.ParagraphFormat.LineSpacing = 10
-.ParagraphFormat.LineSpacingRule = 4
-.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.FirstLineIndent = 0
+.ParagraphFormat.SpaceBefore = 72
+.ParagraphFormat.SpaceAfter = 72
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
+.ParagraphFormat.WidowControl = 0
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0
 .ParagraphFormat.PageBreakBefore = 0

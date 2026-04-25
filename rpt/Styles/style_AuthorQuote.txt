@@ -1,4 +1,4 @@
-'--- AuthorQuote  (Type=Character, Priority=38) ---
+'--- AuthorQuote  (Type=Character, Priority=40) ---
 .BaseStyle = "Default Paragraph Font"
 .QuickStyle = False
 .Font.Name = "Carlito"

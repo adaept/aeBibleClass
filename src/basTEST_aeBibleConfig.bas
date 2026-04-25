@@ -35,12 +35,13 @@ Private Sub PromoteApprovedStyles()
                      "BodyTextTopLineCPBB", "Acknowledgments", "AuthorBodyText", _
                      "Contents", "ContentsRef", _
                      "BibleIndexEyebrow", "BibleIndex", "Introduction", _
+                     "TitleOnePage", _
+                     "ListItem", "ListItemBody", "ListItemTab", _
                      "Normal", "Heading 1", "Heading 2", _
                      "BodyTextIndent", "BodyTextContinuation", _
                      "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
                      "Brief", "Psalms BOOK", "Lamentation", _
                      "AppendixTitle", "AppendixBody", _
-                     "ListItem", "ListItemBody", _
                      "Chapter Verse marker", "Verse marker", _
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _

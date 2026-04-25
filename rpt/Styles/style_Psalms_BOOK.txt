@@ -1,4 +1,4 @@
-'--- Psalms BOOK  (Type=Paragraph, Priority=26) ---
+'--- Psalms BOOK  (Type=Paragraph, Priority=30) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Carlito"

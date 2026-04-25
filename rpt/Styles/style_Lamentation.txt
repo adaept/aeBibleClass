@@ -1,4 +1,4 @@
-'--- Lamentation  (Type=Paragraph, Priority=27) ---
+'--- Lamentation  (Type=Paragraph, Priority=31) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Carlito"

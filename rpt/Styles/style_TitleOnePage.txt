@@ -1,24 +1,24 @@
-'--- BodyTextIndent  (Type=Paragraph, Priority=24) ---
+'--- TitleOnePage  (Type=Paragraph, Priority=17) ---
 .BaseStyle = ""
 .QuickStyle = False
-.Font.Name = "Carlito"
-.Font.Size = 9
+.Font.Name = "Times New Roman"
+.Font.Size = 36
 .Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "BodyText"
+.NextParagraphStyle = "TitleOnePage"
 .AutomaticallyUpdate = False
-.ParagraphFormat.Alignment = 3
+.ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
-.ParagraphFormat.FirstLineIndent = 14.4
-.ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 0
-.ParagraphFormat.LineSpacing = 10
-.ParagraphFormat.LineSpacingRule = 4
+.ParagraphFormat.FirstLineIndent = 0
+.ParagraphFormat.SpaceBefore = 144
+.ParagraphFormat.SpaceAfter = 8
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0

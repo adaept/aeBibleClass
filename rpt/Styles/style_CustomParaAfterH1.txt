@@ -1,4 +1,4 @@
-'--- CustomParaAfterH1  (Type=Paragraph, Priority=22) ---
+'--- CustomParaAfterH1  (Type=Paragraph, Priority=26) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Noto Sans"
