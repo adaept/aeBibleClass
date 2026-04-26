@@ -1241,3 +1241,130 @@ Heading-cache staleness: **FIXED** across all nav (round 1+2
 saved-flag invalidation + every nav path calls `CaptureHeading1s`).
 
 ---
+
+## § EDSG snapshot refresh - 2026-04-26
+
+### Trigger
+
+User shared current `WordEditingConfig` output showing the
+approved array has advanced significantly since the EDSG was
+scaffolded. Validated walk now reaches priority 33; new styles
+added; one rename; one removal; `Normal` repositioned to anchor.
+
+### Latest priority-sorted approved list
+
+```
+1   TheHeaders
+2   BodyText
+3   TheFooters
+4   FrontPageTopLine
+5   TitleEyebrow
+6   Title
+7   TitleVersion
+8   FrontPageBodyText
+9   BodyTextTopLineCPBB
+10  Acknowledgments
+11  AuthorBodyText
+12  Contents
+13  ContentsRef
+14  BibleIndexEyebrow
+15  BibleIndex
+16  Introduction
+18  ListItem
+19  ListItemBody
+20  ListItemTab
+21  AuthorBookRefHeader
+22  AuthorBookRef
+23  TitleOnePage
+24  CenterSubText
+25  Heading 1
+26  CustomParaAfterH1
+27  Brief
+28  DatAuthRef
+29  Heading 2
+30  Chapter Verse marker
+31  Verse marker
+32  Footnote Reference
+33  Footnote Text
+--- validated above this line ---
+34  Lamentations
+35  Psalms BOOK
+36  BodyTextIndent
+41  EmphasisBlack
+42  EmphasisRed
+43  Words of Jesus
+44  AuthorSectionHead
+45  AuthorQuote
+46  Normal
+```
+
+Missing-from-document (warning): `BodyTextContinuation`,
+`BookIntro`, `AppendixTitle`, `AppendixBody`, `FargleBlargle`.
+Reserved gaps: 17, 37–40.
+
+### Changes from prior snapshot
+
+- **New approved styles**: `Introduction` (16), `ListItemTab` (20),
+  `AuthorBookRefHeader` (21), `TitleOnePage` (23),
+  `CenterSubText` (24).
+- **Renamed**: `Lamentation` → `Lamentations` (English plural).
+- **Removed from approved array**: `Book Title`.
+- **Promoted into approved**: `BodyTextIndent` (now at 36; was
+  `[not used]` placeholder previously).
+- **Repositioned**: `Normal` moved to priority 46 — deliberately
+  the last entry, anchor for "pin everything else above this."
+  Operationally replaced by `BodyText`.
+
+### EDSG file updates
+
+`EDSG/README.md`:
+
+- Status row for `01-styles.md` updated:
+  `WIP — pages 1–11 walked` → `WIP — validated up to priority 33`.
+
+`EDSG/01-styles.md`:
+
+- WIP marker updated to "validated up to priority 33; positions 34
+  and beyond pending re-validation."
+- Snapshot table replaced. Page column dropped (current source for
+  page-keyed view is `ListApprovedStylesByBookOrder`); table now
+  split into Validated (1–33) and Pending re-validation (34+)
+  blocks.
+- New section "Reserved gaps" recording priorities 17, 37–40.
+- New section "Missing from document" listing the array entries
+  reported by `PromoteApprovedStyles`'s diagnostic, including the
+  deliberate `FargleBlargle` canary.
+- "Style categories" updated to reflect the new front-matter
+  members, `Lamentations` rename, removal of `Book Title`, and
+  `Normal` repositioned as anchor.
+- "Front matter" range expanded to priorities 1–24 (was 1–15);
+  "Body text" now starts at 25 (was 16).
+
+`EDSG/04-qa-workflow.md`:
+
+- "Current state — 2026-04-25" replaced with current state dated
+  2026-04-26.
+- Records the validated-through-33 line, the styles added /
+  renamed / removed, the `Normal` repositioning, and the gaps.
+- `BodyTextIndent` decision now resolved (in array at 36);
+  `AuthorQuote` decision still pending.
+
+`EDSG/03-inspection-tools.md`:
+
+- Sample `ListApprovedStylesByBookOrder` output trimmed: the
+  illustrative `[not used]` line previously cited `BodyTextIndent`
+  at priority 18 (now stale on both axes). Replaced with a
+  generic `<unused style>` placeholder so the sample doesn't age.
+
+Other EDSG files (`02-editing-process.md`, `05-headers-footers.md`,
+`06-i18n.md`, `07-super-test-runs.md`, `08-publishing.md`,
+`09-history.md`) reviewed - no style-name references that needed
+updating.
+
+### Status
+
+EDSG content **REFRESHED - 2026-04-26** to reflect the priority-33
+validated state. Next refresh due when the page walk extends past
+priority 33.
+
+---

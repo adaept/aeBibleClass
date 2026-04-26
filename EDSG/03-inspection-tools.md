@@ -108,7 +108,7 @@ Approved styles in book order (by page of first occurrence)
     1 |    3 | TheFooters
     2 |    4 | FrontPageTopLine
     ...
-    - |   18 | BodyTextIndent  [not used]
+    - |   N  | <unused style>  [not used]
 ```
 
 The output IS the canonical priority order for the `approved` array.

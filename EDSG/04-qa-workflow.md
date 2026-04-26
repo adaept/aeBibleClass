@@ -86,18 +86,30 @@ QA checklist for the table. Four checks:
 `DumpAllApprovedStyles` does it in bulk. Documented exceptions are
 recorded inline in [01-styles](01-styles.md).
 
-## Current state — 2026-04-25
+## Current state — 2026-04-26
 
-- Pages 1–11 walked; array aligned through approximately priority 16.
-- Priorities 17+ inherited from earlier ad-hoc ordering; pending
-  re-validation as the page walk proceeds.
-- `Normal` (priority 14, page 6) — appears used in the main body but
-  was previously assumed replaced by `BodyText`. Decision pending:
-  keep as anchor or prune.
-- `BodyTextIndent` (priority 18) — `[not used]`. Decision pending:
-  keep for planned use, or prune.
-- `AuthorQuote` (priority 36) — `[not used]`. Deferred to front
-  matter work.
+- **Validated**: priorities 1–33 walked and array aligned to book
+  order. New styles encountered along the way and added:
+  `Introduction`, `ListItemTab`, `AuthorBookRefHeader`,
+  `TitleOnePage`, `CenterSubText`. Renamed: `Lamentation` →
+  `Lamentations` (English plural). `Book Title` removed from the
+  approved array.
+- **Pending re-validation**: priorities 34+
+  (`Lamentations`, `Psalms BOOK`, `BodyTextIndent`, `EmphasisBlack`,
+  `EmphasisRed`, `Words of Jesus`, `AuthorSectionHead`,
+  `AuthorQuote`, `Normal`). Order inherited from earlier passes;
+  will be re-walked as the QA cycle continues.
+- `Normal` — moved to **priority 46**, deliberately the last
+  approved entry. Operational role replaced by `BodyText`; kept in
+  the array as an anchor for "pin everything else above this."
+- `BodyTextIndent` — now in the approved array at priority 36.
+- `AuthorQuote` (priority 45) — still pending front matter usage
+  decision.
+
+### Reserved gaps
+
+Priorities 17 and 37–40 are intentional gaps for future insertions
+without wholesale renumbering.
 
 ## Headless caveat
 
