@@ -1,5 +1,5 @@
 '--- DatAuthRef  (Type=Paragraph, Priority=28) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Noto Sans"
 .Font.Size = 8
@@ -9,13 +9,13 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "DatAuthRef"
-.AutomaticallyUpdate = True
+.NextParagraphStyle = "BodyText"
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
-.ParagraphFormat.SpaceBefore = 6
+.ParagraphFormat.SpaceBefore = 11
 .ParagraphFormat.SpaceAfter = 0
 .ParagraphFormat.LineSpacing = 12
 .ParagraphFormat.LineSpacingRule = 0

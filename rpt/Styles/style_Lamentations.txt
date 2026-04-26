@@ -1,5 +1,5 @@
-'--- Lamentation  (Type=Paragraph, Priority=34) ---
-.BaseStyle = "Normal"
+'--- Lamentations  (Type=Paragraph, Priority=34) ---
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"
 .Font.Size = 9
@@ -9,14 +9,14 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "Lamentation"
-.AutomaticallyUpdate = True
+.NextParagraphStyle = "Lamentations"
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 3
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 0
+.ParagraphFormat.SpaceAfter = 8
 .ParagraphFormat.LineSpacing = 10
 .ParagraphFormat.LineSpacingRule = 4
 .ParagraphFormat.WidowControl = -1
