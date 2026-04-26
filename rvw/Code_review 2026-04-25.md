@@ -1218,4 +1218,26 @@ verse text input -> `GoToVerse` -> `GoToVerseByScan`).
 (`GoToChapter`, `GoToVerseByScan`). Awaiting verification with
 chapter / verse nav repros.
 
+### Verified - 2026-04-26
+
+User report:
+
+> This works. The page jumps to where the eye is looking rather
+> than chasing the cursor around the page.
+
+All three navigation tiers - book Prev/Next, chapter Prev/Next,
+verse Go - now anchor the target heading at the top of the
+viewport. The cursor follows the eye instead of vice versa.
+
+#### Final status (book + chapter + verse nav)
+
+| Tier | Routines | H1/H2/verse at top | Caret flash |
+|---|---|---|---|
+| Book | `NextButton`, `PrevButton` | **FIXED** | WONTFIX (cosmetic) |
+| Chapter | `GoToChapter` | **FIXED** | WONTFIX (carries over) |
+| Verse | `GoToVerseByScan` (called by `GoToVerse`) | **FIXED** | WONTFIX (carries over) |
+
+Heading-cache staleness: **FIXED** across all nav (round 1+2
+saved-flag invalidation + every nav path calls `CaptureHeading1s`).
+
 ---
