@@ -282,11 +282,20 @@ Private Sub NextButton()
     m_currentChapter = 1   ' Rule 2a
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
-    ' Range.Select moves the document cursor to the new book heading (not ScrollIntoView).
-    ' Called from onAction — focus returns to document after button activation regardless.
-    ' Cursor must follow viewport so Enter-on-button does not snap back to the previous
-    ' verse position (Bug 22b).
+    ' Force H1 to top of viewport with no flicker. Two-step:
+    '   1. ScrollIntoView a non-zero range (H1 .. end-of-doc) with Start:=True so Word
+    '      has a real upper-left corner (the H1) to align to the top. A zero-width
+    '      (pos, pos) range degenerates and falls back to "ensure visible" - same as
+    '      Word's default minimal scroll, leaves Next at bottom and Prev wobbling.
+    '   2. Range.Select after the scroll places the cursor; H1 is already on screen
+    '      so .Select does not trigger a second scroll.
+    ' ScreenUpdating off suppresses any intermediate paint - one render per click.
+    Application.ScreenUpdating = False
+    Dim rNextView As Word.Range
+    Set rNextView = ActiveDocument.Range(nextPos, ActiveDocument.Content.End)
+    ActiveWindow.ScrollIntoView rNextView, True
     ActiveDocument.Range(nextPos, nextPos).Select
+    Application.ScreenUpdating = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
     Application.OnTime Now, Application.ActiveDocument.VBProject.Name & ".basRibbonDeferred.UpdateStatusBarDeferred"
 PROC_EXIT:
@@ -319,8 +328,14 @@ Private Sub PrevButton()
     m_currentChapter = 1   ' Rule 2a
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
-    ' Range.Select moves the document cursor (see NextButton comment — same rationale).
+    ' Force H1 to top of viewport with no flicker - same pattern as NextButton.
+    ' See NextButton comment for the why (zero-width-range degeneracy + double paint).
+    Application.ScreenUpdating = False
+    Dim rPrevView As Word.Range
+    Set rPrevView = ActiveDocument.Range(prevPos, ActiveDocument.Content.End)
+    ActiveWindow.ScrollIntoView rPrevView, True
     ActiveDocument.Range(prevPos, prevPos).Select
+    Application.ScreenUpdating = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
     Application.OnTime Now, Application.ActiveDocument.VBProject.Name & ".basRibbonDeferred.UpdateStatusBarDeferred"
 PROC_EXIT:

@@ -768,3 +768,143 @@ fix is trusted.
 Awaiting re-verification with the original "edit then Next" repro.
 
 ---
+
+## § Book nav scroll-position consistency - 2026-04-25
+
+### Symptom
+
+After Prev/Next book navigation:
+
+- **Prev** lands the new book's `Heading 1` near the **top** of the
+  viewport (visually clear).
+- **Next** lands the new book's `Heading 1` near the **bottom** of
+  the viewport (visually confusing - the rest of the screen shows
+  trailing content from the *previous* book).
+
+User wants consistency: H1 at the top in both cases.
+
+### Cause - Word's "scroll just enough" heuristic
+
+Both `NextButton` and `PrevButton` end with the same call:
+
+```vba
+ActiveDocument.Range(pos, pos).Select
+```
+
+`.Select` moves the cursor and asks Word to make it visible. Word's
+default scroll behavior is to scroll the **minimum** distance
+needed to bring the cursor into view:
+
+- **Prev**: target is *above* the current viewport. Word scrolls
+  up; the cursor (start of new H1) lands near the top. Looks
+  great.
+- **Next**: target is *below* the current viewport. Word scrolls
+  down; the cursor lands near the bottom of the new viewport with
+  the rest filled by previous-book content.
+
+The asymmetry is in Word, not the code. `.Select` doesn't take a
+scroll-alignment argument.
+
+### Fix - explicit `ScrollIntoView` after Select
+
+Two-step pattern in both buttons:
+
+```vba
+Dim rTarget As Word.Range
+Set rTarget = ActiveDocument.Range(pos, pos)
+rTarget.Select                               ' moves cursor (still required)
+ActiveWindow.ScrollIntoView rTarget, True    ' forces H1 to top of viewport
+```
+
+`ScrollIntoView` with `Start:=True` aligns the range to the top of
+the visible region. For Prev, this is usually a no-op (H1 already
+near top); for Next, it forces the desired upward scroll.
+
+### Why this is not "Bug 19"
+
+The existing comment warns that `ScrollIntoView` *alone* leaves the
+cursor stale (Bug 19). The new pattern keeps `.Select` first
+(cursor is moved), then uses `ScrollIntoView` only to override
+Word's scroll heuristic. Cursor is correct AND the scroll position
+is consistent.
+
+### Tradeoff
+
+- One extra `ScrollIntoView` call per Next/Prev click - fast.
+- Prev becomes a no-op scroll when the H1 was already at the top -
+  invisible to the user.
+- Next now scrolls further than Word's default - the desired
+  outcome.
+
+### Status
+
+**APPLIED - 2026-04-25** in `src/aeRibbonClass.cls` (`NextButton`
+and `PrevButton`). Awaiting user re-verification.
+
+### Round 2 - first scroll fix didn't take - 2026-04-25
+
+User report after the first scroll fix:
+
+> Next still appears near the bottom. Prev is lower than before and
+> flashes the screen. It is distracting with fast nav.
+
+Two problems with the first attempt:
+
+1. **Zero-width range is degenerate for `ScrollIntoView`**.
+   Calling `ActiveWindow.ScrollIntoView ActiveDocument.Range(pos,
+   pos), True` passes a zero-length range. There is no meaningful
+   "upper-left corner" for Word to align to the top. Word falls
+   back to the same "ensure visible" heuristic that `.Select`
+   already used - no improvement for Next, and a small
+   not-actually-aligned nudge for Prev.
+2. **Two scroll calls = two paints = visible flash**. `.Select`
+   scrolled once (Word's default), then `ScrollIntoView` scrolled
+   again (the nudge above). Each operation triggers a screen
+   repaint. Bad on fast nav.
+
+### Round 2 fix - non-zero range + ScreenUpdating off
+
+Three changes per button:
+
+1. Use a **non-zero range from H1 to end-of-document** as the
+   `ScrollIntoView` target. That gives Word a real upper-left
+   corner (the H1) to align to the top of the viewport.
+2. Reverse the order: **scroll first, then `.Select`**. Once the
+   H1 is at the top, the cursor position is already on screen so
+   `.Select` does not trigger any further scroll.
+3. Bracket the pair with `Application.ScreenUpdating = False /
+   True` so only the final state paints.
+
+```vba
+Application.ScreenUpdating = False
+Dim rView As Word.Range
+Set rView = ActiveDocument.Range(pos, ActiveDocument.Content.End)
+ActiveWindow.ScrollIntoView rView, True
+ActiveDocument.Range(pos, pos).Select
+Application.ScreenUpdating = True
+```
+
+The Round 1 (zero-width range, .Select-then-ScrollIntoView)
+attempt is removed - replaced wholesale.
+
+### Net behavior
+
+- Next: H1 at top of viewport. One paint per click. No flicker.
+- Prev: H1 at top of viewport (or unchanged when already there).
+  One paint per click. No flicker.
+- Both buttons render identically.
+
+### Risk / fallback (not applied)
+
+If `ScrollIntoView` with the H1-to-EOD range still misbehaves on
+some Word versions, the proven fallback is `ActiveWindow.SmallScroll
+Up:=99` to jump to the top of the current page first, then
+`ScrollIntoView` again. Costs a second paint - skip unless this
+fix proves unreliable.
+
+### Status
+
+**APPLIED - 2026-04-25 (round 2)** in `src/aeRibbonClass.cls`
+(`NextButton`, `PrevButton`). Awaiting re-verification.
+
+---
