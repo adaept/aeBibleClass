@@ -1,6 +1,6 @@
-'--- AuthorBookRef  (Type=Paragraph, Priority=41) ---
+'--- AuthorBookRef  (Type=Paragraph, Priority=22) ---
 .BaseStyle = "List Number"
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 11
 .Font.Bold = -1
@@ -10,7 +10,7 @@
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
 .NextParagraphStyle = "AuthorBookRef"
-.AutomaticallyUpdate = True
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 0
 .ParagraphFormat.LeftIndent = 36
 .ParagraphFormat.RightIndent = 0

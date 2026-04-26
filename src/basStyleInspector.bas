@@ -163,7 +163,7 @@ Public Sub DumpAllApprovedStyles()
     Dim i As Long, j As Long
     Dim tmpName As String
     Dim tmpPri  As Long
-    Dim t      As Double
+    Dim t       As Double
 
     StartTimer "DumpAllApprovedStyles", t
     Set oDoc = ActiveDocument

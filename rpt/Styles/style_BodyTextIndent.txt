@@ -1,4 +1,4 @@
-'--- BodyTextIndent  (Type=Paragraph, Priority=24) ---
+'--- BodyTextIndent  (Type=Paragraph, Priority=36) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

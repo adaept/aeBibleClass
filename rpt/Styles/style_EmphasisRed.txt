@@ -1,4 +1,4 @@
-'--- EmphasisRed  (Type=Character, Priority=37) ---
+'--- EmphasisRed  (Type=Character, Priority=42) ---
 .BaseStyle = "Words of Jesus"
 .QuickStyle = True
 .Font.Name = "Carlito"

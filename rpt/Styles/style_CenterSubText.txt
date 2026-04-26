@@ -1,25 +1,25 @@
-'--- Normal  (Type=Paragraph, Priority=46) ---
+'--- CenterSubText  (Type=Paragraph, Priority=24) ---
 .BaseStyle = ""
-.QuickStyle = True
-.Font.Name = "Carlito"
-.Font.Size = 9
+.QuickStyle = False
+.Font.Name = "Liberation Serif"
+.Font.Size = 12
 .Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "Normal"
+.NextParagraphStyle = "CenterSubText"
 .AutomaticallyUpdate = False
-.ParagraphFormat.Alignment = 0
+.ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
-.ParagraphFormat.FirstLineIndent = 14.4
-.ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 0
+.ParagraphFormat.FirstLineIndent = 0
+.ParagraphFormat.SpaceBefore = 12
+.ParagraphFormat.SpaceAfter = 12
 .ParagraphFormat.LineSpacing = 12
 .ParagraphFormat.LineSpacingRule = 0
-.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.WidowControl = 0
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0
 .ParagraphFormat.PageBreakBefore = 0

@@ -37,18 +37,20 @@ Private Sub PromoteApprovedStyles()
                      "BibleIndexEyebrow", "BibleIndex", "Introduction", _
                      "TitleOnePage", _
                      "ListItem", "ListItemBody", "ListItemTab", _
-                     "Normal", "Heading 1", "Heading 2", _
+                     "AuthorBookRefHeader", "AuthorBookRef", _
+                     "TitleOnePage", "CenterSubText", _
+                     "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
+                     "Heading 2", "Chapter Verse marker", "Verse marker", _
+                     "Footnote Reference", "Footnote Text", _
+                     "Lamentation", "Psalms BOOK", _
                      "BodyTextIndent", "BodyTextContinuation", _
-                     "CustomParaAfterH1", "DatAuthRef", "BookIntro", _
-                     "Brief", "Psalms BOOK", "Lamentation", _
+                     "BookIntro", _
                      "AppendixTitle", "AppendixBody", _
-                     "Chapter Verse marker", "Verse marker", _
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
                      "AuthorSectionHead", _
-                     "AuthorQuote", "AuthorBookRef", _
-                     "Book Title", _
-                     "Footnote Reference", "Footnote Text", _
+                     "AuthorQuote", _
+                     "Normal", _
                      "FargleBlargle")
 
     'Push everything else down

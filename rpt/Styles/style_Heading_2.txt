@@ -1,4 +1,4 @@
-'--- Heading 2  (Type=Paragraph, Priority=23) ---
+'--- Heading 2  (Type=Paragraph, Priority=29) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Noto Sans"
