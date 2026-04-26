@@ -42,7 +42,7 @@ Private Sub PromoteApprovedStyles()
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
                      "Footnote Reference", "Footnote Text", _
-                     "Lamentation", "Psalms BOOK", _
+                     "Lamentations", "Psalms BOOK", _
                      "BodyTextIndent", "BodyTextContinuation", _
                      "BookIntro", _
                      "AppendixTitle", "AppendixBody", _
