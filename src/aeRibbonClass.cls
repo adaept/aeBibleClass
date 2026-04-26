@@ -53,6 +53,7 @@ Private m_verseTextValid   As Boolean ' True when last OnVerseChanged accepted t
 Private m_verseMax         As Long    ' max verse Count for current chapter at last rejection; used in OnGoClick error message
 Private m_studyVersionSet  As Boolean ' True after IsStudyVersion has been evaluated
 Private m_studyVersionVal  As Boolean ' cached Result of IsStudyVersion
+Private m_lastScanWasSaved As Boolean ' ActiveDocument.Saved value at end of last CaptureHeading1s; cache valid only when both this and current Saved are True
 
 ' Windows API - cursor control
 Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
@@ -81,6 +82,7 @@ Private Sub Class_Initialize()
     m_verseMax = 0
     m_studyVersionSet = False
     m_studyVersionVal = False
+    m_lastScanWasSaved = False
 End Sub
 
 Private Sub Class_Terminate()
@@ -332,10 +334,17 @@ End Sub
 '   - Optimized for speed and reproducibility
 '   - Audit-traceable: logs execution status to Immediate Window
 '===========================================================================================
-Public Sub CaptureHeading1s()
+Public Sub CaptureHeading1s(Optional ByVal bForce As Boolean = False)
     ' Single-pass scan: captures all H1 (book) and H2 (chapter) heading positions.
     ' H1 positions go to headingData(1..66, 0..1).
-    ' H2 positions go to chapterData(bookIdx, chNum) — O(1) lookup replaces FindChapterPos loop.
+    ' H2 positions go to chapterData(bookIdx, chNum) - O(1) lookup replaces FindChapterPos loop.
+    '
+    ' Cache validity (Option 2 - saved-flag invalidation):
+    '   Skip rescan only when BOTH the previous scan and the current state report
+    '   ActiveDocument.Saved = True. If either is False, the document may have been
+    '   edited since the last scan (cached char positions go stale on any insertion
+    '   / deletion); rescan to be safe. Pass bForce:=True to override (e.g., for a
+    '   manual Refresh button).
     On Error GoTo PROC_ERR
     Static hasRun As Boolean
     Dim para As Word.Paragraph
@@ -343,10 +352,15 @@ Public Sub CaptureHeading1s()
     Dim j        As Long   ' chapter Count within current book; reset on each H1
     Dim paraText As String
 
-    If hasRun Then
-        Debug.Print "CaptureHeading1s: Already executed this session."
+    If hasRun And Not bForce And m_lastScanWasSaved And ActiveDocument.Saved Then
+        Debug.Print "CaptureHeading1s: cache valid (no edits since last scan)."
         GoTo PROC_EXIT
     End If
+
+    ' Erase before rescan: if the new scan finds fewer H1/H2 entries than the
+    ' previous one, stale tail entries would otherwise remain.
+    Erase headingData
+    Erase chapterData
 
     i = 1
     j = 0
@@ -370,7 +384,8 @@ Public Sub CaptureHeading1s()
     Next para
 
     hasRun = True
-    Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries."
+    m_lastScanWasSaved = ActiveDocument.Saved
+    Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries (saved=" & ActiveDocument.Saved & ")."
 
 PROC_EXIT:
     Exit Sub

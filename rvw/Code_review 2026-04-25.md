@@ -521,3 +521,118 @@ overrides (other languages, all-caps display) flagged for future
 i18n consideration.
 
 ---
+
+## § Stale heading cache in ribbon navigation - 2026-04-25
+
+### Symptom
+
+Reproducible sequence:
+
+1. Search "GEN" in the ribbon - finds Heading 1 Genesis (correct).
+2. Click Next book button - jumps to the section break before Exodus,
+   not Exodus itself.
+3. (Earlier in the session, an empty paragraph in `DatAuthRef` style
+   was added between books - any insertion is enough.)
+4. Search "ROM" then Go - lands on what looks like verse 1 of Romans
+   (the chapter-reset is by design; see "Not a bug" below).
+
+User hypothesis: navigation works on a clean document but breaks
+after edits because heading data is stale. **Confirmed.**
+
+### Root cause
+
+`src/aeRibbonClass.cls` caches heading positions in three class-level
+arrays:
+
+- `headingData(1..66, 0..1)` - book name + char position of each
+  Heading 1.
+- `chapterData(1..66, 1..150)` - char position of each Heading 2.
+- `m_currentBookPos` / `m_currentChapterPos` - derived.
+
+`CaptureHeading1s` populates them. The body was gated by:
+
+```vba
+Static hasRun As Boolean
+...
+If hasRun Then GoTo PROC_EXIT
+```
+
+`Static` persists for the lifetime of the class instance, which lives
+until Word closes. So `CaptureHeading1s` ran exactly once per session
+and never refreshed. After any edit, every cached char position
+downstream of the edit was N characters off, sending navigation into
+section breaks or unrelated content.
+
+The `If IsEmpty(headingData(1, 0)) Then CaptureHeading1s` guards at
+lines 226 and 534 looked like rescan triggers but never fired - the
+arrays were only "empty" if the class instance was destroyed, not
+when the document was edited.
+
+### Not a bug - verse 1 after Go
+
+`GoToChapter` (line 622) sets `m_currentVerse = 1` deliberately
+("Rule 2a"). Go-to-chapter resets verse to 1; the user types a
+different verse explicitly to navigate elsewhere. Symptom #4 in the
+report is intentional behavior, not part of the cache bug.
+
+### Remediation - Option 2 (saved-flag invalidation)
+
+Selected over Option 1 (always rescan, simplest but slowest) and
+Option 3 (manual Refresh button, easily forgotten).
+
+Use `ActiveDocument.Saved` as a freshness signal. The cache is valid
+only when BOTH the previous scan AND the current state report
+`Saved = True` - that combination guarantees no edits could have
+happened in between. Any other combination forces a rescan.
+
+#### Code changes (`src/aeRibbonClass.cls`)
+
+1. New class-level state: `Private m_lastScanWasSaved As Boolean`.
+2. Initialized to `False` in `Class_Initialize`.
+3. `CaptureHeading1s` updated:
+   - Now accepts `Optional ByVal bForce As Boolean = False` for an
+     explicit override (e.g., a future Refresh button).
+   - Static `hasRun` retained.
+   - Cache-valid check replaces the unconditional gate:
+     ```vba
+     If hasRun And Not bForce And m_lastScanWasSaved And ActiveDocument.Saved Then
+         Debug.Print "CaptureHeading1s: cache valid (no edits since last scan)."
+         GoTo PROC_EXIT
+     End If
+     ```
+   - `Erase headingData` / `Erase chapterData` before rescanning so a
+     scan that finds fewer H1/H2 entries does not leave stale tail
+     data.
+   - Records the saved-state at end: `m_lastScanWasSaved =
+     ActiveDocument.Saved`.
+
+No call-site changes - the routine is still safely re-callable via
+the existing `IsEmpty(headingData(1, 0)) Then CaptureHeading1s`
+guards and via direct calls in nav paths.
+
+#### Behavior trace
+
+| State | `Saved` | `m_lastScanWasSaved` | Action |
+|---|---|---|---|
+| Doc opened (clean) | True | n/a (first call) | Scan; record `True`. |
+| Read-only nav | True | True | Skip - cache valid. |
+| User edits | False | True | Next nav rescans; record `False`. |
+| More navs (still unsaved) | False | False | Each nav rescans (cost during editing - acceptable). |
+| User saves | True | False | Next nav rescans; record `True`. |
+| Read-only nav resumes | True | True | Skip again. |
+
+### Limitation
+
+During an editing burst, every navigation triggers a rescan because
+`m_lastScanWasSaved = False` until the user saves. On a Bible-sized
+document this is a couple of seconds per Next/Prev/Go. If that proves
+painful, layer on a paragraph-count signature or hook
+`Document.ContentControlOnEnter` / `Application.WindowSelectionChange`
+for finer invalidation - flagged for later, not done now.
+
+### Status
+
+**APPLIED - 2026-04-25** in `src/aeRibbonClass.cls`. Awaiting
+verification re-run with the original repro sequence.
+
+---
