@@ -654,14 +654,22 @@ Private Sub GoToChapter(ByVal chNum As Long)
     chPos = FindChapterPos(chNum)
     If chPos = 0 Then GoTo PROC_EXIT
 
-    ' Range.Select moves the document cursor to the chapter heading.
-    ' GoToChapter is called only from onAction button callbacks (Prev/Next Chapter)
-    ' and from ExecutePendingChapter (currently a no-op). In button click context,
-    ' focus returns to the document after activation regardless — Range.Select is
-    ' correct here. ScrollIntoView (no cursor update) caused snap-back to the
-    ' previous verse when Enter returned focus to the document (Bug 22b).
-    Application.StatusBar = SB_NAVIGATING   ' visible during Range.Select layout cost
-    ActiveDocument.Range(chPos, chPos).Select
+    ' Force chapter H2 to top of viewport with no double-scroll wobble.
+    ' Same three-step pattern as NextButton / PrevButton (book nav):
+    '   1. ScrollIntoView a non-zero range (chapter .. EOD) with Start:=True so
+    '      Word has a real upper-left corner (the H2) to align to the top. A
+    '      zero-width (chPos, chPos) range degenerates to "ensure visible".
+    '   2. Selection.SetRange places the cursor WITHOUT firing Word's
+    '      "scroll-to-cursor" heuristic that .Select triggers (which was the
+    '      Bug 22b snap-back source).
+    ' ScreenUpdating off suppresses any intermediate paint - one render per click.
+    Application.StatusBar = SB_NAVIGATING   ' visible during scroll layout cost
+    Application.ScreenUpdating = False
+    Dim rChView As Word.Range
+    Set rChView = ActiveDocument.Range(chPos, ActiveDocument.Content.End)
+    ActiveWindow.ScrollIntoView rChView, True
+    Selection.SetRange Start:=chPos, End:=chPos
+    Application.ScreenUpdating = True
     m_currentChapter = chNum
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = chPos   ' cache for GoToVerse — avoids repeat FindChapterPos calls
@@ -1014,10 +1022,16 @@ Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
         If Not r.Find.Execute Then Exit Do
         Count = Count + 1
         If Count = vsNum Then
-            ActiveDocument.Range(r.Start, r.Start).Select
-            ' ScrollIntoView ensures the viewport updates — on first load the page
-            ' layout delay means the view may not scroll without an explicit call.
-            ActiveWindow.ScrollIntoView ActiveDocument.Range(r.Start, r.Start), True
+            ' Force verse marker to top of viewport - same three-step pattern as
+            ' NextButton / GoToChapter. ScrollIntoView with a non-zero range
+            ' (verse .. EOD) gives Word a real upper-left corner; SetRange places
+            ' the cursor without firing .Select's scroll-to-cursor heuristic.
+            Application.ScreenUpdating = False
+            Dim rVsView As Word.Range
+            Set rVsView = ActiveDocument.Range(r.Start, ActiveDocument.Content.End)
+            ActiveWindow.ScrollIntoView rVsView, True
+            Selection.SetRange Start:=r.Start, End:=r.Start
+            Application.ScreenUpdating = True
             Exit Do
         End If
         r.Start = r.End

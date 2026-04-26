@@ -1147,3 +1147,75 @@ heading lands correctly; the caret afterimage is harmless.
   fix exceeds value).
 
 ---
+
+## § Chapter / verse nav scroll-position consistency - 2026-04-26
+
+Apply the book-nav scroll fix to chapter and verse navigation so
+all three navigation tiers land their target heading at the same
+viewport position.
+
+### Symptom
+
+When a chapter or verse is selected and displayed via Go or the
+Prev/Next chapter/verse buttons, the chapter heading or verse
+marker can land anywhere on the screen depending on Word's "ensure
+cursor visible" minimum scroll. Visually inconsistent with the
+top-of-viewport book-nav behavior just established.
+
+### Two routines, same root cause as book nav round 1
+
+| Routine | Pre-fix code | Issue |
+|---|---|---|
+| `GoToChapter` (line 639) | `ActiveDocument.Range(chPos, chPos).Select` | `.Select` only - no explicit `ScrollIntoView`; Word's default scroll heuristic decides the landing position |
+| `GoToVerseByScan` (line 997) | `Range(r.Start, r.Start).Select` + `ScrollIntoView Range(r.Start, r.Start), True` | `.Select` + `ScrollIntoView` of a zero-width range - degenerate "no upper-left corner" case; Word falls back to the same heuristic |
+
+### Fix - same three-step pattern as `NextButton` / `PrevButton`
+
+For both routines, replace cursor placement + scroll with:
+
+```vba
+Application.ScreenUpdating = False
+Dim rView As Word.Range
+Set rView = ActiveDocument.Range(targetPos, ActiveDocument.Content.End)
+ActiveWindow.ScrollIntoView rView, True
+Selection.SetRange Start:=targetPos, End:=targetPos
+Application.ScreenUpdating = True
+```
+
+Where `targetPos` is `chPos` for `GoToChapter` and `r.Start` for
+`GoToVerseByScan`.
+
+### Code changes
+
+`src/aeRibbonClass.cls`:
+
+1. **`GoToChapter`** - the single `.Select` line replaced with
+   the three-step block. The `Application.StatusBar = SB_NAVIGATING`
+   call is preserved (still useful during the scroll layout cost).
+   The "Bug 22b" warning comment is replaced with a comment
+   pointing to the new pattern's reasoning.
+2. **`GoToVerseByScan`** - the `.Select` + `ScrollIntoView` pair
+   inside the verse-found branch replaced with the three-step
+   block. Local `rVsView` declared inside the `If Count = vsNum`
+   branch.
+
+No other call sites needed editing - all chapter / verse
+navigation funnels through these two routines (Prev/Next chapter
+buttons -> `GoToChapter`; Prev/Next verse buttons + Go after
+verse text input -> `GoToVerse` -> `GoToVerseByScan`).
+
+### Net behavior
+
+- Book H1, chapter H2, and verse marker all land at the same
+  level (top of viewport).
+- One render per click; no double-scroll wobble.
+- Caret flash on fast nav still present - same WONTFIX status as
+  book nav (cosmetic OS-caret artifact).
+
+### Status
+
+**APPLIED - 2026-04-26** in `src/aeRibbonClass.cls`
+(`GoToChapter`, `GoToVerseByScan`). Awaiting verification with
+chapter / verse nav repros.
+
+---
