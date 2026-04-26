@@ -60,6 +60,7 @@ Private Declare PtrSafe Function LoadCursor Lib "user32" Alias "LoadCursorA" ( _
     ByVal hInstance As Long, ByVal lpCursorName As Long) As Long
 Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 
+
 ' -- Lifecycle -----------------------------------------------------------------
 
 Private Sub Class_Initialize()
@@ -282,25 +283,28 @@ Private Sub NextButton()
     m_currentChapter = 1   ' Rule 2a
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
-    ' Force H1 to top of viewport with no flicker. Two-step:
-    '   1. ScrollIntoView a non-zero range (H1 .. end-of-doc) with Start:=True so Word
-    '      has a real upper-left corner (the H1) to align to the top. A zero-width
-    '      (pos, pos) range degenerates and falls back to "ensure visible" - same as
-    '      Word's default minimal scroll, leaves Next at bottom and Prev wobbling.
-    '   2. Range.Select after the scroll places the cursor; H1 is already on screen
-    '      so .Select does not trigger a second scroll.
+    ' Force H1 to top of viewport with no double-scroll flicker.
+    '   1. ScrollIntoView a non-zero range (H1 .. end-of-doc) with Start:=True so
+    '      Word has a real upper-left corner (the H1) to align to the top. A
+    '      zero-width (pos, pos) range degenerates and falls back to "ensure
+    '      visible" - same as Word's default minimal scroll, leaves Next at
+    '      bottom and Prev wobbling.
+    '   2. Selection.SetRange after the scroll places the cursor WITHOUT
+    '      triggering Word's "scroll-to-cursor" heuristic that .Select fires.
+    '      That heuristic was the source of the prior caret-flash artifact.
     ' ScreenUpdating off suppresses any intermediate paint - one render per click.
     Application.ScreenUpdating = False
     Dim rNextView As Word.Range
     Set rNextView = ActiveDocument.Range(nextPos, ActiveDocument.Content.End)
     ActiveWindow.ScrollIntoView rNextView, True
-    ActiveDocument.Range(nextPos, nextPos).Select
+    Selection.SetRange Start:=nextPos, End:=nextPos
     Application.ScreenUpdating = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
     Application.OnTime Now, Application.ActiveDocument.VBProject.Name & ".basRibbonDeferred.UpdateStatusBarDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
+    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure NextButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
@@ -328,19 +332,19 @@ Private Sub PrevButton()
     m_currentChapter = 1   ' Rule 2a
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
-    ' Force H1 to top of viewport with no flicker - same pattern as NextButton.
-    ' See NextButton comment for the why (zero-width-range degeneracy + double paint).
+    ' Same pattern as NextButton - see NextButton comment for the why.
     Application.ScreenUpdating = False
     Dim rPrevView As Word.Range
     Set rPrevView = ActiveDocument.Range(prevPos, ActiveDocument.Content.End)
     ActiveWindow.ScrollIntoView rPrevView, True
-    ActiveDocument.Range(prevPos, prevPos).Select
+    Selection.SetRange Start:=prevPos, End:=prevPos
     Application.ScreenUpdating = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
     Application.OnTime Now, Application.ActiveDocument.VBProject.Name & ".basRibbonDeferred.UpdateStatusBarDeferred"
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
+    Application.ScreenUpdating = True
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrevButton of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub

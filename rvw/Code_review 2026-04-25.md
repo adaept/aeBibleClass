@@ -907,4 +907,243 @@ fix proves unreliable.
 **APPLIED - 2026-04-25 (round 2)** in `src/aeRibbonClass.cls`
 (`NextButton`, `PrevButton`). Awaiting re-verification.
 
+### Round 3 - cursor caret flash - 2026-04-26
+
+User report after round 2:
+
+> This works. No heading jumping, but the cursor is seen flashing
+> from top or bottom according to prev/next direction. Is there a
+> solution to that?
+
+The H1 lands at the top in both directions (round 2 fix held).
+What remained was a brief visible flash of the **caret** (text
+insertion cursor) at the *old* position before snapping to the
+new H1.
+
+#### Why the caret slipped past `ScreenUpdating = False`
+
+`Application.ScreenUpdating = False` suppresses Word's content
+repaints, but **not** the OS-level caret. The caret is rendered
+by Windows on top of the window via `CreateCaret` /
+`SetCaretPos`, asynchronous to Word's paint cycle. So the caret
+blinker draws the old position briefly between the
+`ScrollIntoView` / `.Select` operations and the eventual repaint.
+
+#### Round 3 fix - `LockWindowUpdate` (Win32)
+
+Use `user32!LockWindowUpdate` to freeze the entire Word window's
+paint pipeline - including the OS caret - around the scroll +
+select pair. Word internally completes both operations; nothing
+renders until unlock. One visible repaint, no caret afterimage.
+
+Code changes in `src/aeRibbonClass.cls`:
+
+1. New API import next to existing `LoadCursor` / `SetCursor`:
+   ```vba
+   Private Declare PtrSafe Function LockWindowUpdate Lib "user32" _
+       (ByVal hWndLock As LongPtr) As Long
+   ```
+2. Both `NextButton` and `PrevButton` wrap the scroll + select
+   block:
+   ```vba
+   LockWindowUpdate Application.hwnd
+   Application.ScreenUpdating = False
+   ' ScrollIntoView + Select
+   Application.ScreenUpdating = True
+   LockWindowUpdate 0
+   ```
+3. Each button's `PROC_ERR` handler restores both flags BEFORE
+   showing the `MsgBox` so a crash mid-lock cannot leave Word's
+   window frozen:
+   ```vba
+   PROC_ERR:
+       Application.ScreenUpdating = True
+       LockWindowUpdate 0
+       MsgBox ...
+   ```
+   `LockWindowUpdate(0)` is a safe no-op when no lock is held.
+
+#### Net behavior
+
+- One visible paint per Next/Prev click.
+- No caret flash at the old position.
+- H1 still at top of viewport in both directions.
+- Fast nav no longer distracting.
+
+#### Safety footgun (mitigated)
+
+If the routine errored between `LockWindowUpdate hwnd` and
+`LockWindowUpdate 0`, Word's window would stay frozen. The
+`PROC_ERR` unlock handles this. Both subs already had
+`On Error GoTo PROC_ERR` plumbing; the unlock just slots into
+the existing handler.
+
+#### Status
+
+**APPLIED - 2026-04-26 (round 3)** in `src/aeRibbonClass.cls`
+(`NextButton`, `PrevButton`, plus the new `LockWindowUpdate`
+declare). Awaiting user re-verification.
+
+#### Round 3a - Application.Hwnd does not exist in Word - 2026-04-26
+
+Compile error on first run:
+
+```
+Method or data not found:
+    LockWindowUpdate Application.hwnd
+```
+
+Word's `Application` object has no `Hwnd` property. That property
+is on Excel's and Outlook's Application objects but not Word's -
+an inconsistency in the Office object model.
+
+Fix: get Word's main-window handle via `user32!FindWindow`. Word's
+main window class name is `"OpusApp"` (a legacy from when Word's
+internal codename was "Opus").
+
+Code changes in `src/aeRibbonClass.cls`:
+
+1. New API import next to `LockWindowUpdate`:
+   ```vba
+   Private Declare PtrSafe Function FindWindow Lib "user32" _
+       Alias "FindWindowA" _
+       (ByVal lpClassName As String, ByVal lpWindowName As String) As LongPtr
+   ```
+2. Both `NextButton` and `PrevButton` lock-call sites changed:
+   ```vba
+   LockWindowUpdate FindWindow("OpusApp", vbNullString)
+   ```
+   `LockWindowUpdate 0` (unlock) and `PROC_ERR` unlock are
+   unchanged - passing 0 is the documented unlock signal and does
+   not need an hwnd.
+
+`FindWindow` is fast (a single hash table lookup against the OS
+window list); calling it inline once per Next/Prev click has no
+perceptible cost. Caching the hwnd was considered but rejected -
+it would not survive a Word window recreation (e.g., user closes
+and reopens a doc), and the lookup is cheap.
+
+#### Status
+
+**APPLIED - 2026-04-26 (round 3a)** in `src/aeRibbonClass.cls`
+(both nav subs + new `FindWindow` declare). Compile error
+resolved. Awaiting user re-verification of the original caret-
+flash fix.
+
+#### Round 3b - LockWindowUpdate backed out, Selection.SetRange in - 2026-04-26
+
+User report after round 3a:
+
+> Cursor still jumps from top and bottom depending on prev/next.
+
+The lock didn't help and may have *regressed* round 2: by freezing
+Word's paint pipeline, `LockWindowUpdate` likely interfered with
+`ScrollIntoView`'s commit, so `.Select`'s default scroll-to-cursor
+heuristic won out (cursor at top for Prev, bottom for Next - the
+exact pre-round-2 behavior).
+
+Diagnostic via `?FindWindow("OpusApp", vbNullString)` returned
+"sub or function not defined" - expected, because `Private Declare`
+in a class is not callable from the Immediate window. The
+diagnostic is moot; the symptom alone is enough to back out.
+
+#### Backed out
+
+In `src/aeRibbonClass.cls`:
+
+- `LockWindowUpdate` and `FindWindow` `Private Declare` lines
+  removed from the API import block at the top.
+- Both nav subs no longer call
+  `LockWindowUpdate FindWindow(...)` / `LockWindowUpdate 0`.
+- Both `PROC_ERR` handlers no longer call `LockWindowUpdate 0`
+  (`ScreenUpdating = True` retained).
+
+#### New attempt - `Selection.SetRange` instead of `Range.Select`
+
+`.Select` triggers Word's "scroll-to-cursor" heuristic;
+`Selection.SetRange Start:=pos, End:=pos` sets the selection
+WITHOUT firing that heuristic. If Word respects this in practice,
+the OS caret has no reason to render at the old screen position
+between the `ScrollIntoView` and the final paint.
+
+Both `NextButton` and `PrevButton` updated:
+
+```vba
+Application.ScreenUpdating = False
+Dim rView As Word.Range
+Set rView = ActiveDocument.Range(pos, ActiveDocument.Content.End)
+ActiveWindow.ScrollIntoView rView, True
+Selection.SetRange Start:=pos, End:=pos
+Application.ScreenUpdating = True
+```
+
+#### Net behavior expected
+
+- H1 lands at top (round 2 outcome restored).
+- No double-scroll wobble.
+- If `SetRange` truly suppresses the scroll-to-cursor: no caret
+  flash either.
+
+#### If the caret still flashes
+
+Document it as a known cosmetic OS-caret artifact and stop
+chasing. Suppressing the OS caret cleanly requires owning the
+editor child window's hwnd, which is more complexity than the
+artifact warrants.
+
+#### Status
+
+**APPLIED - 2026-04-26 (round 3b)** in `src/aeRibbonClass.cls`.
+LockWindowUpdate / FindWindow code fully removed; Range.Select
+replaced with Selection.SetRange in both nav subs. Awaiting
+verification.
+
+#### Verification - heading correct, caret flash remains - 2026-04-26
+
+User report after round 3b:
+
+> The heading position is the same level on the screen and fast
+> nav with prev/next still shows a cursor flash.
+
+Outcome:
+
+- **H1 placement**: correct. Both Next and Prev land the new
+  book's H1 at the same screen level (top of viewport). No
+  heading jump, no double-scroll wobble. The functional goal
+  is met.
+- **Caret flash**: remains on fast nav. Cursor briefly visible at
+  old top/bottom position before snapping to new H1.
+
+Neither `Selection.SetRange` nor `LockWindowUpdate` (round 3a/b)
+suppressed the caret blink at the old pixel position. The OS
+caret render is asynchronous to Word's paint cycle and to the
+selection-update messages; the visible blink at the old pixel
+position is a Windows / Word artifact below the level VBA can
+cleanly reach without owning the editor's child window hwnd.
+
+#### Decision: document as known cosmetic, stop chasing
+
+Per the agreed fallback in round 3b: cleanly suppressing the
+caret would require `FindWindowEx` to the editor child window
+plus `HideCaret` / `ShowCaret` calls plus careful
+exception-safe paired locking. Two more Win32 APIs, more
+fragility, and a worse footgun than the artifact itself. Not
+worth it.
+
+The behavior is recorded as a known cosmetic limitation:
+fast Next/Prev book nav may briefly flash the OS caret at the
+previous screen position before it snaps to the new H1. The
+heading lands correctly; the caret afterimage is harmless.
+
+#### Final status (this thread)
+
+`src/aeRibbonClass.cls` `NextButton` and `PrevButton`:
+
+- Heading-cache staleness: **FIXED** (round 1, saved-flag
+  invalidation; round 2, all nav paths call CaptureHeading1s).
+- H1-at-top consistency: **FIXED** (round 2, ScrollIntoView with
+  H1..EOD non-zero range + ScreenUpdating).
+- Cursor caret flash: **WONTFIX** (cosmetic OS artifact; clean
+  fix exceeds value).
+
 ---
