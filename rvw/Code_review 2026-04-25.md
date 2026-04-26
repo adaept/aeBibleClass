@@ -1368,3 +1368,391 @@ validated state. Next refresh due when the page walk extends past
 priority 33.
 
 ---
+
+## § Publish EDSG to edsg.adaept.com - plan - 2026-04-26
+
+### Goal
+
+Host `/EDSG/` as a public website at `https://edsg.adaept.com`,
+sourced from the GitHub repo, with i18n scaffolding, a docx export
+that uses the Study Bible style template, and CI that exercises
+the build weekly.
+
+Constraints / preferences:
+
+- US English is the primary content; i18n feedback wanted ASAP
+  even at small scale.
+- EDSG is intentionally smaller than the Study Bible itself - good
+  test bed for the publishing pipeline before applying lessons to
+  the Bible.
+- Editor / translator audience first; developers second.
+- Code signing extends to the EDSG.docx (single project, ongoing
+  maintenance).
+
+### Recommended stack (top of plan)
+
+| Concern | Choice | Why |
+|---|---|---|
+| Hosting | GitHub Pages | Free; native to the repo; custom domain support |
+| Static site generator | **Docusaurus 3** | First-class i18n, search, CJK-clean defaults, React-based theming |
+| Custom domain | edsg.adaept.com via DNS CNAME | adaept.com already owned; no new registration |
+| Docs license | CC BY-SA 4.0 | Preserves attribution; allows derivatives under same terms; widely understood |
+| Docx export | Pandoc + reference template | Pandoc maps markdown to Word styles via reference doc |
+| Code signing | Sectigo or DigiCert OV code-signing cert (multi-year) | Required hardware-token issuance since 2023; multi-year reduces renewal frequency |
+| CI | GitHub Actions (cron weekly + on-push build) | Native, free for public repos |
+
+Alternates worth knowing: MkDocs Material is simpler than
+Docusaurus but i18n is plugin-based and less polished; VitePress
+is fast but i18n is younger; raw GitHub Pages with Jekyll is the
+zero-tooling baseline.
+
+---
+
+### Phase A - Public site live (do now)
+
+Cheap, fast, unblocks everything downstream.
+
+- [ ] **A1.** Create `/website/` (Docusaurus root) at the repo's
+      project root. `EDSG/*.md` becomes the source content; the
+      site builds into `/website/build/`.
+- [ ] **A2.** Initialize Docusaurus 3 with English locale only.
+      Sidebar generated from EDSG file numbering (01-, 02-, ...).
+- [ ] **A3.** Pick and apply a docs theme. Default Docusaurus
+      Classic is fine for v1; theme polish later.
+- [ ] **A4.** Add `LICENSE-DOCS` at repo root (CC BY-SA 4.0) and
+      a footer link from every EDSG page (Docusaurus theme config).
+- [ ] **A5.** Configure GitHub Pages: deploy from GitHub Actions
+      workflow that runs `npm run build` and publishes
+      `/website/build/` to the `gh-pages` branch.
+- [ ] **A6.** Add `CNAME` file containing `edsg.adaept.com` to
+      the published artifact.
+- [ ] **A7.** Configure DNS at adaept.com: CNAME record
+      `edsg → adaept.github.io`.
+- [ ] **A8.** Verify HTTPS via GitHub Pages auto-issue
+      (Let's Encrypt). Wait for SSL provisioning (5-30 min).
+- [ ] **A9.** Smoke-test: site loads, every EDSG page renders,
+      navigation works, license footer visible.
+
+Estimated effort: 3-5 hours for someone familiar with Docusaurus;
+6-10 hours from scratch.
+
+---
+
+### Phase B - i18n scaffolding (do now, even if English-only initially)
+
+The i18n shape is much cheaper to bake in from day 1 than
+retrofit. Empty translation directories signal openness without
+committing to translation work.
+
+- [ ] **B1.** Enable Docusaurus i18n in `docusaurus.config.js`:
+      `i18n: { defaultLocale: 'en', locales: ['en'] }`. Add
+      placeholder for future locales.
+- [ ] **B2.** Move EDSG content under `i18n/en/docusaurus-plugin-
+      content-docs/current/` (Docusaurus convention) OR keep it
+      at `EDSG/` with a docs plugin pointed there - decision
+      pending the i18n process choice.
+- [ ] **B3.** Add `i18n/<locale>/` skeleton directories for
+      candidate first-translation locales (placeholder); see
+      sub-list below.
+- [ ] **B4.** Configure language switcher in the navbar (hidden
+      until at least one non-English locale has content).
+- [ ] **B5.** Translation workflow doc at
+      `EDSG/06-i18n.md` — extend the existing skeleton with a
+      concrete process: fork → translate → PR.
+
+#### i18n process specifics
+
+- [ ] **B-i18n-1.** Decide first-locale target. (Open question
+      from EDSG plan; carry forward.) Likely candidates: French,
+      Spanish (Latin script — lowest tooling friction); Japanese
+      or Chinese (CJK — exercises font and layout assumptions).
+- [ ] **B-i18n-2.** Establish translation source: human
+      translator vs LLM-assisted vs hybrid. Document in
+      `06-i18n.md`.
+- [ ] **B-i18n-3.** Translation memory / glossary file at
+      `i18n/glossary.yml` — Bible-specific terms with canonical
+      translations per locale.
+- [ ] **B-i18n-4.** PR review process: who validates translation
+      accuracy. Likely: native-speaker reviewer per locale;
+      flagged in CONTRIBUTING.md.
+- [ ] **B-i18n-5.** Translation freshness CI check: weekly job
+      reports per-locale staleness (English changes since last
+      translation update).
+
+#### CJK compatibility specifics
+
+- [ ] **B-cjk-1.** Font stack in CSS: `font-family: -apple-system,
+      "Noto Sans CJK SC", "Noto Sans CJK TC", "Noto Sans CJK JP",
+      "Noto Sans CJK KR", system-ui, sans-serif;`. Loaded from
+      Google Fonts or self-hosted (self-host preferred for
+      privacy).
+- [ ] **B-cjk-2.** CSS line-height bumped slightly for CJK locales
+      (Japanese and Chinese benefit from ~1.7 vs 1.5 for Latin).
+- [ ] **B-cjk-3.** Search: Docusaurus default uses Algolia
+      DocSearch. Algolia handles CJK tokenization out of the box
+      for Japanese; Chinese / Korean may need tokenization tuning.
+      Local search plugin alternative: `@easyops-cn/docusaurus-
+      search-local` — has CJK tokenizer support.
+- [ ] **B-cjk-4.** Test page: a sample paragraph in Simplified
+      Chinese, Japanese, and Korean to visually validate font
+      fallback chain on first deploy.
+- [ ] **B-cjk-5.** Right-to-left (RTL) is out of scope until
+      Hebrew / Arabic locale is added; Docusaurus supports
+      `direction: 'rtl'` per locale when the time comes.
+
+#### Skeleton frame for languages
+
+- [ ] **B-skel-1.** Create `i18n/<locale>/` for each candidate
+      locale even before content exists. Each contains:
+      - `code.json` (UI strings)
+      - `docusaurus-plugin-content-docs/current/` (translated
+        markdown)
+      - `docusaurus-theme-classic/` (theme overrides if any)
+- [ ] **B-skel-2.** Initial candidate locales (suggest 3 to
+      cover scripts): `fr` (Latin), `zh-CN` (Simplified Chinese),
+      `ja` (Japanese). Hebrew (`he`) added when RTL work begins.
+- [ ] **B-skel-3.** Auto-generate stub markdown files in each
+      locale that match the English structure but contain only
+      a header and a "translation pending" marker. CI gate
+      ensures every English page has at least a stub in every
+      configured locale.
+
+---
+
+### Phase C - Docx export using EDSG / Bible styles (do soon)
+
+The dogfooding goal: produce EDSG.docx using the same approved
+styles as the Study Bible. Validates the templates against a
+non-Bible document.
+
+- [ ] **C1.** Decide reference template: clone the Study Bible
+      `.docm` and strip Bible content, leaving only the styles?
+      Or generate fresh from `RUN_TAXONOMY_STYLES`? Recommend
+      the clone-and-strip — guarantees style fidelity to the
+      Bible.
+- [ ] **C2.** Save reference template at `EDSG/build/EDSG.docx`
+      (gitignored output) with a source at
+      `EDSG/build/reference.docx` (committed).
+- [ ] **C3.** Pandoc command at `EDSG/build/build.cmd` (and
+      `build.sh` for CI):
+      ```
+      pandoc README.md 01-styles.md ... -o build/EDSG.docx \
+        --reference-doc=build/reference.docx \
+        --toc --toc-depth=2
+      ```
+- [ ] **C4.** Markdown → style mapping table (Pandoc respects
+      style names from the reference doc):
+      - `# H1` → `Heading 1`
+      - `## H2` → `Heading 2`
+      - body → `BodyText`
+      - inline code → custom character style (define if needed)
+      - code block → custom paragraph style (define if needed)
+      - tables → Word table style chosen from approved set
+- [ ] **C5.** Add `CodeBlock` paragraph style + `InlineCode`
+      character style to the approved array (currently absent;
+      previously flagged in `08-publishing.md`).
+- [ ] **C6.** CI step builds the docx and uploads as a workflow
+      artifact (Actions free tier covers this).
+- [ ] **C7.** Optional: PDF export via Pandoc + LaTeX (or via
+      Word's PDF export driven by an Office Automation script on
+      a Windows runner — heavier, defer).
+
+---
+
+### Phase D - Code signing the docx (do soon-ish)
+
+The docx is the concrete dogfooded artifact; signing it means
+editors trust its origin without "this file came from the
+internet" warnings. Same cert can sign the Bible's `.docm`.
+
+- [ ] **D1.** Decide cert vendor and term length. See "Cert
+      vendor" notes below.
+- [ ] **D2.** Acquire hardware token (HSM) from cert vendor -
+      mandatory since June 2023 per CA/B Forum baseline
+      requirements.
+- [ ] **D3.** Configure Office to require macros to be signed
+      (`File → Options → Trust Center → Macro Settings`).
+- [ ] **D4.** Sign the EDSG.docx as part of the build pipeline
+      (Windows runner with `signtool` or PowerShell
+      `Set-AuthenticodeSignature`).
+- [ ] **D5.** Sign the Bible `.docm` and the VBA project on
+      release.
+- [ ] **D6.** Document the signing process in
+      `EDSG/08-publishing.md` and in a new
+      `09-history.md` cross-reference.
+
+#### Cert vendor analysis
+
+User asked about a "no annual renewal" certificate. Honest
+status as of 2026-04:
+
+- **No major Microsoft-trusted CA currently issues code-signing
+  certificates that never need renewal.** All commercial code
+  signing certs (Sectigo, DigiCert, SSL.com, GlobalSign) require
+  renewal at the end of their term.
+- **Multi-year terms reduce renewal frequency**:
+  - 1-year: cheapest per-year, most renewals
+  - 2-year: ~15% per-year discount
+  - 3-year: ~25% per-year discount, **maximum** allowed by CA/B
+    Forum baseline requirements (no longer can be 5- or 10-year
+    as some used to offer)
+- **Current floor price**: ~$200-$400/year for OV (Organization
+  Validation) code signing from a reseller; ~$600-$1000/year for
+  EV (Extended Validation) code signing. EV signs without
+  SmartScreen reputation warmup; OV requires building reputation
+  via downloads.
+- **What the user may have read about**: possibly self-signed
+  certs (free, zero renewal, but **only trusted on the issuing
+  machine** - not useful for distribution); or the (now-defunct)
+  CAcert; or older "lifetime subscription" offers from CAs that
+  no longer exist post-2017 baseline-requirements changes.
+- **Recommendation**: Sectigo OV code signing, 3-year term, via
+  a reseller like KSoftware or SignMyCode. ~$60-90/year
+  effective rate. Hardware token included.
+- **Alternative for VBA-only**: a Document Signing certificate
+  (different EKU, often cheaper) signs the VBA project and
+  validates inside Office, but does not sign external `.exe` /
+  `.msi` artifacts. If signing scope is strictly "the docx and
+  the docm and nothing else," this is a viable lower-cost
+  path - confirm with the chosen CA that their Document Signing
+  cert validates VBA projects.
+
+---
+
+### Phase E - GitHub bug reports + CI (do now for templates;
+weekly cron later)
+
+- [ ] **E1.** Issue templates at
+      `.github/ISSUE_TEMPLATE/`:
+      - `bug-report.yml`
+      - `documentation-issue.yml` (EDSG-specific)
+      - `translation-issue.yml` (i18n)
+      - `feature-request.yml`
+- [ ] **E2.** PR template at `.github/pull_request_template.md`
+      with checklist (description / impacted files / testing
+      done / docs updated).
+- [ ] **E3.** GitHub Discussions enabled - separate space for
+      open-ended questions vs Issues for bugs.
+- [ ] **E4.** CONTRIBUTING.md at repo root - first-time
+      contributor onboarding, links to relevant EDSG pages.
+- [ ] **E5.** GitHub Actions workflows under `.github/workflows/`:
+      - `site-build.yml` — on push to main, build and deploy
+        Docusaurus
+      - `docx-build.yml` — on push to main, build EDSG.docx,
+        attach as artifact
+      - `weekly.yml` — cron `0 0 * * 0` (Sundays 00:00 UTC),
+        runs link-check, markdown lint, and (when ready)
+        SUPER_TEST_RUNS-equivalent for the docs
+- [ ] **E6.** Status badge on README pointing to the weekly
+      job - "build status" surfaces failures immediately.
+
+---
+
+### Pros / Cons / Benefits
+
+#### Pros (do now)
+
+- **Public visibility now** invites the i18n feedback the user
+  explicitly wants ASAP.
+- **Smaller surface area than Bible** - mistakes here are cheap
+  and recoverable; lessons learned apply to the Bible publishing
+  pipeline later.
+- **Forcing function** for license + signing decisions that have
+  been in the queue.
+- **GitHub Pages is free** - no hosting cost.
+- **Docusaurus i18n is mature** - cheap to bake in early.
+
+#### Cons (do now)
+
+- **Bandwidth split** - while EDSG site is being built, fewer
+  cycles for Bible style work and `SUPER_TEST_RUNS`.
+- **Maintenance overhead** - a public site implies a SLA in the
+  reader's mind even if not formally promised.
+- **Cert cost** - even minimal Sectigo OV is ~$200/year up front.
+- **Risk of premature publication** - parts of the EDSG are
+  still WIP (priorities 34+). Status markers per page mitigate
+  but don't eliminate.
+
+#### Benefits
+
+- **Real-world i18n testbed** - find tooling problems on a small
+  doc before they bite the Bible.
+- **Translator recruitment surface** - a public site with
+  contribution paths attracts translators in a way that a
+  GitHub repo alone does not.
+- **Auditable artifact** - signed docx + signed VBA project +
+  CC-licensed source = a defensible position for trademark / name
+  attribution.
+- **CI weekly cadence** establishes a heartbeat - regressions
+  caught within 7 days even if no one's actively pushing.
+
+---
+
+### Cost - now vs later
+
+#### Now
+
+- **Setup time** (Phase A + B + E1-E5): ~15-25 hours of focused
+  work, spread over 1-2 weeks at part-time pace.
+- **Code signing cert** (Phase D): ~$60-$90/year amortized
+  (3-year Sectigo OV via reseller).
+- **DNS work** (Phase A7): minutes, no incremental cost.
+- **Ongoing**: ~1 hour/week to keep CI green and merge
+  translation contributions if/when they arrive.
+
+#### Later
+
+- **Setup time** (deferring 6-12 months): same total time but
+  back-loaded. Risk: i18n shape decisions get made implicitly
+  by ad-hoc retrofits instead of explicitly up front.
+- **Translation cost** of waiting: any translator who could have
+  contributed in the meantime is lost.
+- **Visibility cost**: search engines take weeks to index a new
+  site; later launch means later visibility.
+- **Cert cost**: same; certs renew on the same calendar
+  regardless of when this project starts.
+
+#### Recommendation
+
+**Phase A + B1-B5 + E1-E4 now** (week 1) - get the site live,
+i18n scaffolded, contribution paths defined.
+
+**Phase C + B-skel + B-cjk** within month 1 - dogfood the docx
+export, populate language skeletons, validate CJK rendering.
+
+**Phase D** before public announcement - signing has lead time
+(token ordering, identity validation - 1-3 weeks for Sectigo OV).
+
+**Phase E5-E6** after first week of normal commits - so the
+weekly CI has something real to check.
+
+**Phase B-i18n full process** when the first translator
+volunteers - don't pre-build a process for a non-existent flow.
+
+---
+
+### Open questions to resolve before Phase A
+
+1. Confirm `adaept.io` reference - was it a typo for
+   `adaept.com`? Or a separate domain to also point? (Cheap to
+   add a second CNAME if so.)
+2. Reference template (Phase C1): clone-and-strip the Bible
+   `.docm`, or generate fresh? Recommend clone-and-strip.
+3. First-locale candidate (Phase B-i18n-1): pick one to
+   un-stub.
+4. Code signing cert vendor (Phase D1): Sectigo via reseller is
+   the recommended starting point - confirm or override.
+5. Docusaurus content path (Phase B2): `i18n/en/...` (full
+   Docusaurus i18n layout) or `EDSG/` (current path, with docs
+   plugin pointed there) - decision affects diff against today.
+
+---
+
+### Status
+
+EDSG publication plan: **DRAFT - awaiting user review and
+phase-by-phase approval**. No site, DNS, cert, or CI changes
+applied. All decisions deliberately staged behind explicit
+go-aheads.
+
+---
