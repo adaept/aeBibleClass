@@ -1,4 +1,4 @@
-'--- EmphasisBlack  (Type=Character, Priority=41) ---
+'--- EmphasisBlack  (Type=Character, Priority=40) ---
 .BaseStyle = "Default Paragraph Font"
 .QuickStyle = True
 .Font.Name = "Carlito"

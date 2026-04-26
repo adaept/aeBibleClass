@@ -41,8 +41,7 @@ Private Sub PromoteApprovedStyles()
                      "TitleOnePage", "CenterSubText", _
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
-                     "Footnote Reference", "Footnote Text", _
-                     "Lamentations", "Psalms BOOK", _
+                     "Footnote Reference", "Footnote Text", "Psalms BOOK", _
                      "BodyTextIndent", "BodyTextContinuation", _
                      "BookIntro", _
                      "AppendixTitle", "AppendixBody", _
