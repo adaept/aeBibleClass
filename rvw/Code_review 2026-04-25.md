@@ -520,6 +520,58 @@ will now match the actual widest English book name. Locale-specific
 overrides (other languages, all-caps display) flagged for future
 i18n consideration.
 
+### Round 3 - case mismatch revealed - 2026-04-25
+
+`"Song of Solomon"` still didn't fit. Root cause: the displayed
+text in the combo is taken from `headingData(idx, 0)` via
+`GetBookText`, which is the literal `Heading 1` paragraph text
+captured by `CaptureHeading1s`. The document's H1 paragraphs are
+**uppercase** ("GENESIS", "EXODUS", etc.), so the actual rendered
+text in the combo is uppercase, not title case. Title-case
+`"Song of Solomon"` underestimated the rendered width.
+
+#### Re-analysis - widest in uppercase
+
+In Segoe UI uppercase the relative letter widths shift compared to
+title case. Reasoning:
+
+- `SONG OF SOLOMON` - 15 chars, 5 wide `O`s, an `M`, but title
+  case favored it because of lowercase `o` runs that disappear in
+  uppercase.
+- `2 THESSALONIANS` - 15 chars, leading `2` (wider than `1` and
+  wider than a space), wide opening `T H`, double `S S`, long
+  medium-wide tail `A L O N I A N S`.
+- `1 THESSALONIANS` - 15 chars, narrower opening because `1` is
+  thinner than `2`.
+
+User's on-screen test confirmed `"2 THESSALONIANS"` is the actual
+widest in the ribbon's font - the leading digit `2` plus `T H`
+plus double `S S` outweighs the round-letter advantage of
+`SONG OF SOLOMON` once everything is uppercase.
+
+#### Fix applied
+
+`customUI14backupRWB.xml` updated: all 3 `sizeString` attributes
+now `"2 THESSALONIANS"`. Verified count = 3, no other variants
+remain. `wsl python3 py/inject_ribbon.py` ran successfully and the
+embedded XML inside `Blank Bible Copy.docm` confirmed via re-read.
+
+#### Lesson for the i18n queue
+
+`sizeString` must match the **case actually displayed**, not just
+the longest-by-character-count from a canonical book list. For
+locales where the displayed text is mixed case, retest with the
+mixed-case rendering. For all-caps locales, retest with all-caps
+candidates.
+
+This is now noted in `EDSG/06-i18n.md` queue and `08-publishing.md`
+draft.
+
+#### Status
+
+**APPLIED - 2026-04-25** in both repo file and runtime `.docm`.
+Awaiting user re-verification.
+
 ---
 
 ## § Stale heading cache in ribbon navigation - 2026-04-25
@@ -634,5 +686,85 @@ for finer invalidation - flagged for later, not done now.
 
 **APPLIED - 2026-04-25** in `src/aeRibbonClass.cls`. Awaiting
 verification re-run with the original repro sequence.
+
+### Verification re-run uncovered second bug - 2026-04-25
+
+After the saved-flag fix, user reported:
+
+> After some editing then nav forward with Next it starts to advance
+> the cursor into the title of each next book. Prev will track back,
+> with the cursor in the same offset, until it hits the region where
+> it is good again and is at the start of each Heading 1.
+
+Same symptom (stale positions, off by a constant offset downstream
+of the edit), even with the saved-flag invalidation in place.
+
+#### Second root cause - call sites bypass the staleness check
+
+`CaptureHeading1s` got smarter about *when* to rescan, but it was
+only being **called** in three places, two of which guarded the
+call:
+
+| Line | Context | Calls? |
+|---|---|---|
+| 196 | `EnableButtonsRoutine` (startup) | Unconditional |
+| 228 | `GoToH1` (search book by name) | `If IsEmpty(headingData(1, 0)) Then CaptureHeading1s` - skipped when cache holds (stale) data |
+| 549 | `OnBookChanged` (combo selection) | Same `IsEmpty` guard - same skip |
+| `NextButton` | Next book | **Never called** |
+| `PrevButton` | Prev book | **Never called** |
+| `GoToChapter` / `FindChapterPos` | Chapter nav | **Never called** |
+
+So `Next` / `Prev` / chapter navigation read `headingData` /
+`chapterData` directly without ever consulting the staleness check.
+After an edit, those paths happily used the wrong cached positions.
+
+#### Second fix
+
+Two targeted changes in `src/aeRibbonClass.cls`:
+
+1. **Drop the `IsEmpty` guards** at lines 228 (`GoToH1`) and 549
+   (`OnBookChanged`). Replace each with an unconditional
+   `CaptureHeading1s` call. The routine's own
+   `m_lastScanWasSaved And ActiveDocument.Saved` check decides
+   whether to rescan; the cache-empty case still triggers a scan
+   (`hasRun = False`).
+2. **Add `CaptureHeading1s` at the top of `NextButton`,
+   `PrevButton`, and `GoToChapter`**. One line each, with a comment
+   noting it is a cheap no-op when the cache is valid.
+
+Pattern at every nav entry point now reads:
+
+```vba
+On Error GoTo PROC_ERR
+CaptureHeading1s     ' refresh if doc was edited; cheap no-op otherwise
+' ... existing nav body reads headingData / chapterData ...
+```
+
+#### Why this is the right pattern
+
+The "is the cache empty?" question becomes the routine's concern,
+not the caller's. Every nav path becomes uniform: call
+`CaptureHeading1s`, then read the data. No more "did I remember to
+guard / unguard the call?" footguns.
+
+#### Tradeoff
+
+Adds one `Debug.Print` line per nav click in the cached-valid case
+(`CaptureHeading1s: cache valid (no edits since last scan).`).
+Cosmetic noise in the Immediate window; can be silenced after the
+fix is trusted.
+
+#### Status (combined)
+
+**APPLIED - 2026-04-25** in `src/aeRibbonClass.cls`:
+
+- Saved-flag invalidation in `CaptureHeading1s` (first fix).
+- All nav paths now call `CaptureHeading1s` unconditionally
+  (`NextButton`, `PrevButton`, `GoToH1`, `OnBookChanged`,
+  `GoToChapter`).
+- `Erase headingData` / `Erase chapterData` before each rescan to
+  avoid stale tail entries.
+
+Awaiting re-verification with the original "edit then Next" repro.
 
 ---

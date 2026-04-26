@@ -223,9 +223,10 @@ Private Sub GoToH1()
     Dim foundPos As Long
     Dim matchFound As Boolean
 
-    ' Re-capture headings if array is empty (e.g. after a VBA IDE reset clears
-    ' module state and the singleton is recreated without OnRibbonLoad firing)
-    If IsEmpty(headingData(1, 0)) Then CaptureHeading1s
+    ' Refresh headings if cache is empty OR document was edited since last scan.
+    ' CaptureHeading1s self-decides via its m_lastScanWasSaved / ActiveDocument.Saved
+    ' check; calling unconditionally is cheap when the cache is still valid.
+    CaptureHeading1s
 
     pattern = InputBox("Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book")
     If pattern = "" Then GoTo PROC_EXIT
@@ -264,6 +265,8 @@ Private Sub NextButton()
     ' so after OnBookChanged the cursor lagged behind the ribbon state. Next/Prev were
     ' navigating from the stale cursor position instead of from the current book.
     On Error GoTo PROC_ERR
+    ' Refresh heading cache if document was edited since last scan; cheap no-op otherwise.
+    CaptureHeading1s
     If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
     If m_currentBookIndex >= 66 Then
         Application.StatusBar = SB_ALREADY_LAST_BOOK
@@ -299,6 +302,8 @@ Private Sub PrevButton()
     ' Navigate to the previous book using ribbon state (m_currentBookIndex), not Selection.
     ' See NextButton comment — same root cause (Bug 19).
     On Error GoTo PROC_ERR
+    ' Refresh heading cache if document was edited since last scan; cheap no-op otherwise.
+    CaptureHeading1s
     If m_currentBookIndex <= 0 Then GoTo PROC_EXIT
     If m_currentBookIndex = 1 Then
         Application.StatusBar = SB_ALREADY_FIRST_BOOK
@@ -546,7 +551,9 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     pattern = NormalizeBookInput(text)
     If Len(pattern) < 2 Then GoTo PROC_EXIT   ' ignore single-character input
 
-    If IsEmpty(headingData(1, 0)) Then CaptureHeading1s
+    ' Refresh headings if the document was edited since last scan; cheap no-op
+    ' when cache is still valid.
+    CaptureHeading1s
 
     Dim i As Long
     Dim matchFound As Boolean
@@ -612,6 +619,9 @@ End Function
 
 Private Sub GoToChapter(ByVal chNum As Long)
     On Error GoTo PROC_ERR
+    ' Refresh heading cache if document was edited since last scan; cheap no-op otherwise.
+    ' chapterData is repopulated by CaptureHeading1s in the same pass as headingData.
+    CaptureHeading1s
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT   ' assert: select book first
 
     Dim bookName As String
