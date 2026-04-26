@@ -7,7 +7,7 @@
             <button id="PrevBookButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevButtonClick" getEnabled="GetPrevEnabled"
                     getKeytip="GetPrevBookKeytip"/>
-            <comboBox id="cmbBook" showLabel="false" sizeString="2 Thessalonians"
+            <comboBox id="cmbBook" showLabel="false" sizeString="Song of Solomon"
                       getItemCount="GetBookCount" getItemLabel="GetBookItemLabel"
                       getItemID="GetBookItemID" getText="GetBookText"
                       onChange="OnBookChanged" getEnabled="GetBookEnabled"
@@ -20,7 +20,7 @@
             <button id="PrevChapterButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevChapterClick" getEnabled="GetPrevChapterEnabled"
                     getKeytip="GetPrevChapterKeytip"/>
-            <comboBox id="cmbChapter" showLabel="false" sizeString="2 Thessalonians"
+            <comboBox id="cmbChapter" showLabel="false" sizeString="Song of Solomon"
                       getItemCount="GetChapterCount" getItemLabel="GetChapterItemLabel"
                       getItemID="GetChapterItemID" getText="GetChapterText"
                       onChange="OnChapterChanged" getEnabled="GetChapterEnabled"
@@ -33,7 +33,7 @@
             <button id="PrevVerseButton" imageMso="HeaderFooterPreviousSection" size="normal"
                     showLabel="false" onAction="OnPrevVerseClick" getEnabled="GetPrevVerseEnabled"
                     getKeytip="GetPrevVerseKeytip"/>
-            <comboBox id="cmbVerse" showLabel="false" sizeString="2 Thessalonians"
+            <comboBox id="cmbVerse" showLabel="false" sizeString="Song of Solomon"
                       getItemCount="GetVerseCount" getItemLabel="GetVerseItemLabel"
                       getItemID="GetVerseItemID" getText="GetVerseText"
                       onChange="OnVerseChanged" getEnabled="GetVerseEnabled"

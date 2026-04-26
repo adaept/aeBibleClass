@@ -379,3 +379,145 @@ Initial mature-section content: **PENDING approval**.
 `06`, `07`, `08` carry visible status markers.
 
 ---
+
+## § Book ComboBox sizing - "2 Thessalonians too short" - 2026-04-25
+
+### Symptom
+
+Code picks `"2 Thessalonians"` as the longest book name to size the
+ComboBox, but at runtime the combo clips the last few characters of
+that very value (and others). User noted "the combo shows caps or
+the dropdown is taking space."
+
+### Two effects, both contributing
+
+**1. Character count is a poor proxy for rendered width.**
+
+ComboBoxes draw text in a proportional font. `Len("2 Thessalonians") =
+15` ties with `"Song of Solomon"` and `"1 Thessalonians"`, but the
+glyphs differ widely:
+
+- `"Thessalonians"` is dominated by narrow letters (`i`, `l`, `s`,
+  `t`, `n`).
+- `"Song of Solomon"` has wide round letters (`o`, `g`, `S`, `m`)
+  plus an extra space.
+- All-caps versions add even more variance: `"OBADIAH"` (7 chars)
+  rendered uppercase can rival a 15-char title-case string in pixel
+  width.
+
+The alias map in `aeBibleCitationClass.cls` stores keys uppercase
+(`"1 THESSALONIANS"`, `"2 THESSALONIANS"`, etc.). If display anywhere
+in the pipeline uses the uppercase form, rendered width exceeds the
+length-based estimate.
+
+**2. Dropdown arrow chrome eats text area.**
+
+A Word ComboBox is two regions side by side: editable text area and
+the drop-down arrow button. The arrow is fixed chrome (~17 px on a
+standard form). If `Combo.Width` is set to the exact text width of
+`"2 Thessalonians"`, the arrow overlays the last 1-2 characters.
+
+### Recommended fix (analysis only - not yet implemented)
+
+Both corrections needed; either alone is insufficient.
+
+1. **Measure rendered width**, not `Len()`. Options:
+   - Hidden `Label` control with `AutoSize = True`, looped over all
+     book names in the casing actually displayed, take `MaxOf
+     Label.Width`. Use the same font as the ComboBox so the
+     measurement transfers exactly.
+   - `TextWidth` via the Office drawing canvas.
+2. **Add chrome padding**. After computing widest text width, add
+   ~20 form units (about 24 pixels at standard scale) for the
+   dropdown arrow plus a couple pixels of breathing room.
+
+### Open follow-ups
+
+- Locate the routine currently setting the combo width. Searched for
+  `ComboBox`, `cboBook`, `longest`, `Width`, `MeasureString` in
+  `src/`; no obvious owner found. May live in a UserForm code-behind
+  not surfaced via grep on `.bas` / `.cls` (UserForm `.frm` /
+  `.frx` files).
+- Confirm whether the displayed casing is title-case or upper-case;
+  shapes the candidate-string set used for measurement.
+
+### Status
+
+**ANALYSIS - 2026-04-25**. Awaiting confirmation of the owning
+routine before applying the two-step fix.
+
+### Update - it's RibbonX, not a UserForm - 2026-04-25
+
+User identified the owning XML: a `<comboBox>` in `customUI14.xml`
+with attribute `sizeString="2 Thessalonians"`. This is Ribbon XML,
+not a Word UserForm.
+
+Two changes to the earlier analysis:
+
+- **The dropdown-arrow chrome is NOT an issue.** The Ribbon engine
+  handles chrome itself when sizing from `sizeString`. Only effect
+  remains is the proportional-font glyph variance.
+- **`Width` cannot be set programmatically** for a ribbon comboBox -
+  `sizeString` is the only knob. Replace the value, no code-side
+  measurement loop needed.
+
+Three combos found in `customUI14backupRWB.xml`, all using
+`sizeString="2 Thessalonians"`:
+
+- `cmbBook`
+- `cmbChapter`
+- `cmbVerse`
+
+Earlier review (`Code_review - 2026-04-10a.md`) confirms all three
+were sized identically on purpose for ribbon-row alignment. They
+must change together.
+
+### Fix applied
+
+Replaced `sizeString="2 Thessalonians"` with
+`sizeString="Song of Solomon"` on all three combos. `"Song of
+Solomon"` measures wider in Segoe UI (round letters `o`, `S`, `g`,
+`m` plus extra space) despite the same character count.
+
+### Caveat - embedded XML in the .docm
+
+The repo file is the tracking copy. The runtime ribbon reads the
+customUI XML embedded inside the `.docm` package
+(`/customUI/customUI14.xml` inside the zip). The repo edit alone
+does not change the live ribbon - the same change must be pushed
+into the embedded XML (e.g., via Office RibbonX Editor) before the
+runtime sizing changes.
+
+### Status
+
+**APPLIED in repo - 2026-04-25**. Embedded `.docm` customUI update
+**PENDING user action**.
+
+### Embedded `.docm` updated via `py/inject_ribbon.py` - 2026-04-25
+
+Ran:
+
+```
+wsl python3 py/inject_ribbon.py
+```
+
+Output: `REPLACED  customUI/customUI14.xml / Done. Blank Bible Copy.docm
+updated.` Verified by re-opening the package and counting tokens:
+3x `Song of Solomon`, 0x `2 Thessalonians`.
+
+This is the working path for ribbon-XML updates in this project -
+RibbonX Editor has a known load bug for this file, so the Python
+injector is the sanctioned tool. Default target is
+`Blank Bible Copy.docm`; pass an alternate path as the first argument
+to update other `.docm` files (e.g., the `Peter-USE REFINED English
+Bible CONTENTS.docm` working copy when ready).
+
+### Status (final for this fix)
+
+**APPLIED - 2026-04-25** in both `customUI14backupRWB.xml` (repo
+tracking copy) and `Blank Bible Copy.docm` (runtime). Combo width
+will now match the actual widest English book name. Locale-specific
+overrides (other languages, all-caps display) flagged for future
+i18n consideration.
+
+---
