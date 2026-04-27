@@ -1853,3 +1853,122 @@ Code edits to `basTEST_aeBibleConfig.bas` **PENDING user
 approval** of the two decision items above.
 
 ---
+
+## § Post-cleanup snapshot - 2026-04-26 (later that day)
+
+User confirmed the two decision items and applied the fixes:
+
+- **Lamentations removal**: intentional. Book content
+  standardized on `BodyText` for now. No further action needed.
+- **TitleOnePage duplicate**: fixed in
+  `src/basTEST_aeBibleConfig.bas`. `TitleOnePage` now holds
+  priority **17** (the previously "dead" slot is closed).
+- **New styles added**: `PsalmSuperscription` (34), `Selah` (35),
+  `PsalmAcrostic` (36) — Psalms-specific styles encountered
+  while walking the Psalms book.
+
+### Latest run output
+
+```
+DumpAllApprovedStyles: Done. 43 succeeded, 0 failed.
+DumpAllApprovedStyles - actual 4.08 sec
+```
+
+Runtime down ~50% from the previous 8.04 sec - likely due to the
+array no longer containing the duplicate (no double-promote +
+overwrite).
+
+### Latest priority order (from `WordEditingConfig`)
+
+```
+1   TheHeaders
+2   BodyText
+3   TheFooters
+4   FrontPageTopLine
+5   TitleEyebrow
+6   Title
+7   TitleVersion
+8   FrontPageBodyText
+9   BodyTextTopLineCPBB
+10  Acknowledgments
+11  AuthorBodyText
+12  Contents
+13  ContentsRef
+14  BibleIndexEyebrow
+15  BibleIndex
+16  Introduction
+17  TitleOnePage          <- previously stuck at gap; now holds slot
+18  ListItem
+19  ListItemBody
+20  ListItemTab
+21  AuthorBookRefHeader
+22  AuthorBookRef
+23  CenterSubText
+24  Heading 1
+25  CustomParaAfterH1
+26  Brief
+27  DatAuthRef
+28  Heading 2
+29  Chapter Verse marker
+30  Verse marker
+31  Footnote Reference
+32  Footnote Text
+33  Psalms BOOK
+34  PsalmSuperscription   <- new
+35  Selah                 <- new
+36  PsalmAcrostic         <- new
+--- validated above this line ---
+37  BodyTextIndent
+42  EmphasisBlack
+43  EmphasisRed
+44  Words of Jesus
+45  AuthorSectionHead
+46  AuthorQuote
+47  Normal
+```
+
+Reserved gaps: 38-41 (now genuinely reserved, post-duplicate-fix).
+Missing-from-document: `BodyTextContinuation`, `BookIntro`,
+`AppendixTitle`, `AppendixBody`, `FargleBlargle` (canary).
+
+### EDSG file updates (this refresh)
+
+`EDSG/README.md`:
+
+- Status row for `01-styles.md`: validated to priority **36**
+  (was 33).
+
+`EDSG/01-styles.md`:
+
+- Snapshot rewritten with the 43-style list. Validated block
+  expanded to 1-36; Pending block trimmed to 37+.
+- `TitleOnePage` now correctly listed at priority 17.
+- Three new entries: `PsalmSuperscription`, `Selah`,
+  `PsalmAcrostic`.
+- "Known issues" subsection (TitleOnePage duplicate) **removed**
+  - bug fixed.
+- "Reserved gaps" rewritten: 38-41 are now genuine reservations;
+  noted that the priority-17 "gap" was a duplicate artifact, now
+  resolved.
+- "Special book treatments" expanded with descriptions for the
+  three new Psalms styles (PsalmSuperscription = author /
+  context line; Selah = Hebrew interjection; PsalmAcrostic =
+  Hebrew-letter section markers, notably Psalm 119).
+
+`EDSG/04-qa-workflow.md`:
+
+- "Current state" subsection updated with the 43/0 run, the
+  duplicate fix, the Lamentations removal confirmation, and the
+  three new Psalms styles.
+- "Known issue - duplicate in array" subsection **removed**
+  - bug fixed.
+- "Reserved gaps" reframed to genuine reservation status.
+
+### Status
+
+Snapshot **REFRESHED - 2026-04-26 (post-cleanup)** to reflect 43
+approved styles, validated through priority 36, with the
+TitleOnePage duplicate resolved and three Psalms-specific styles
+added. Walk continues toward priority 37+ in the next QA cycle.
+
+---

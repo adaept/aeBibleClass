@@ -29,7 +29,7 @@ Different artifacts answer different questions. Know which to consult.
 
 | # | File | Purpose | Status |
 |---|------|---------|--------|
-| 1 | [01-styles.md](01-styles.md) | Approved style taxonomy and current array | WIP — validated up to priority 33 |
+| 1 | [01-styles.md](01-styles.md) | Approved style taxonomy and current array | WIP — validated up to priority 36 |
 | 2 | [02-editing-process.md](02-editing-process.md) | Routines mapped to editing steps | Mature |
 | 3 | [03-inspection-tools.md](03-inspection-tools.md) | `basStyleInspector` reference | Mature |
 | 4 | [04-qa-workflow.md](04-qa-workflow.md) | Book-order canonical priority workflow | Mature |

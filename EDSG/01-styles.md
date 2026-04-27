@@ -8,9 +8,9 @@ authority lives in:
   and membership.
 - **`RUN_TAXONOMY_STYLES`** — expected property values for QA.
 
-Status: WIP. The page walk has validated priorities 1–33; positions
-**34 and beyond are still pending re-validation** as the walk
-continues. The array's order through priority 33 reflects book
+Status: WIP. The page walk has validated priorities 1–36; positions
+**37 and beyond are still pending re-validation** as the walk
+continues. The array's order through priority 36 reflects book
 occurrence (the canonical convention; see
 [04-qa-workflow](04-qa-workflow.md)).
 
@@ -21,7 +21,9 @@ Priority order from `WordEditingConfig` (which runs
 page-keyed view, run `ListApprovedStylesByBookOrder` — the live
 document is the authority, this snapshot ages.
 
-### Validated (priorities 1–33)
+Latest run (2026-04-26): **43 approved styles succeeded**, ~4 sec.
+
+### Validated (priorities 1–36)
 
 | Prio | Style |
 |---:|---|
@@ -41,59 +43,47 @@ document is the authority, this snapshot ages.
 | 14 | BibleIndexEyebrow |
 | 15 | BibleIndex |
 | 16 | Introduction |
+| 17 | TitleOnePage |
 | 18 | ListItem |
 | 19 | ListItemBody |
 | 20 | ListItemTab |
 | 21 | AuthorBookRefHeader |
 | 22 | AuthorBookRef |
-| 23 | TitleOnePage |
-| 24 | CenterSubText |
-| 25 | Heading 1 |
-| 26 | CustomParaAfterH1 |
-| 27 | Brief |
-| 28 | DatAuthRef |
-| 29 | Heading 2 |
-| 30 | Chapter Verse marker |
-| 31 | Verse marker |
-| 32 | Footnote Reference |
-| 33 | Footnote Text |
+| 23 | CenterSubText |
+| 24 | Heading 1 |
+| 25 | CustomParaAfterH1 |
+| 26 | Brief |
+| 27 | DatAuthRef |
+| 28 | Heading 2 |
+| 29 | Chapter Verse marker |
+| 30 | Verse marker |
+| 31 | Footnote Reference |
+| 32 | Footnote Text |
+| 33 | Psalms BOOK |
+| 34 | PsalmSuperscription |
+| 35 | Selah |
+| 36 | PsalmAcrostic |
 
-### Pending re-validation (priorities 34+)
+### Pending re-validation (priorities 37+)
 
 Order inherited from earlier passes; will be re-walked.
 
 | Prio | Style |
 |---:|---|
-| 34 | Psalms BOOK |
-| 35 | BodyTextIndent |
-| 40 | EmphasisBlack |
-| 41 | EmphasisRed |
-| 42 | Words of Jesus |
-| 43 | AuthorSectionHead |
-| 44 | AuthorQuote |
-| 45 | Normal |
+| 37 | BodyTextIndent |
+| 42 | EmphasisBlack |
+| 43 | EmphasisRed |
+| 44 | Words of Jesus |
+| 45 | AuthorSectionHead |
+| 46 | AuthorQuote |
+| 47 | Normal |
 
-Priorities above are nominal — re-run `ListApprovedStylesByBookOrder`
-for the live snapshot. As of 2026-04-26 last run, **40 approved
-styles succeeded** (down from 41 after `Lamentations` was removed
-from the array; orphan `style_Lamentations.txt` was auto-detected
-and deleted on the next `DumpAllApprovedStyles`).
+### Reserved gaps
 
-### Gaps
-
-Priorities 17 and 36–39 (approximate) are unassigned. Reserved
-for future insertions; one of these (priority 17) is currently a
-symptom rather than a deliberate reservation — see "Known issues"
-below.
-
-### Known issues
-
-- **`TitleOnePage` appears twice** in the `approved` array in
-  `src/basTEST_aeBibleConfig.bas` (lines 38 and 41).
-  `PromoteApprovedStyles` assigns the LATER position's priority
-  (the first slot is wasted), which is the actual cause of the
-  gap at priority 17. Recommended fix: remove the duplicate. Not
-  yet applied.
+Priorities 38–41 are reserved for future insertions without
+wholesale renumbering. (Earlier "gap at 17" was not a deliberate
+reservation; it was a `TitleOnePage` duplicate in the array,
+fixed 2026-04-26 — `TitleOnePage` now correctly holds 17.)
 
 ### Missing from document
 
@@ -108,31 +98,17 @@ diagnostic. Kept in the array as tracking placeholders:
 - `FargleBlargle` (deliberate canary — confirms the missing-style
   diagnostic is wired correctly)
 
-### Missing from document
-
-The following are in the `approved` array but not present in the
-current document; reported by `PromoteApprovedStyles` as a
-diagnostic. Kept in the array as tracking placeholders:
-
-- `BodyTextContinuation`
-- `BookIntro`
-- `AppendixTitle`
-- `AppendixBody`
-- `FargleBlargle` (deliberate canary — confirms the missing-style
-  diagnostic is wired correctly)
-
-The previously-listed `Lamentations` was removed from the array
-between the 2026-04-26 snapshot and the next
-`DumpAllApprovedStyles` run; the corresponding
-`rpt/Styles/style_Lamentations.txt` was auto-cleaned by the
-orphan detection prompt.
+`Lamentations` was previously listed; **removed from the array**
+on 2026-04-26 (book content standardized on `BodyText` for now).
+The orphan `style_Lamentations.txt` was auto-cleaned by the
+`DumpAllApprovedStyles` orphan prompt.
 
 ## Style categories
 
 Loose grouping for orientation. Authoritative roles live in
 `RUN_TAXONOMY_STYLES`.
 
-### Front matter (priorities 1–24)
+### Front matter (priorities 1–23)
 
 Title block, headers/footers, contents and index pages, author
 introduction, list-item conventions, author-reference header.
@@ -142,11 +118,11 @@ slot — see [05-headers-footers](05-headers-footers.md).
 Notable members: `FrontPageTopLine`, `TitleEyebrow`, `Title`,
 `TitleVersion`, `FrontPageBodyText`, `BodyTextTopLineCPBB`,
 `Acknowledgments`, `AuthorBodyText`, `Contents`, `ContentsRef`,
-`BibleIndexEyebrow`, `BibleIndex`, `Introduction`, `ListItem`,
-`ListItemBody`, `ListItemTab`, `AuthorBookRefHeader`,
-`AuthorBookRef`, `TitleOnePage`, `CenterSubText`.
+`BibleIndexEyebrow`, `BibleIndex`, `Introduction`, `TitleOnePage`,
+`ListItem`, `ListItemBody`, `ListItemTab`,
+`AuthorBookRefHeader`, `AuthorBookRef`, `CenterSubText`.
 
-### Body text (priorities 25+)
+### Body text (priorities 24+)
 
 `Heading 1`, `Heading 2`, `BodyText`, `BodyTextIndent`,
 `CustomParaAfterH1`, `DatAuthRef`, `Brief`. Verse-level styles:
@@ -155,10 +131,15 @@ Notable members: `FrontPageTopLine`, `TitleEyebrow`, `Title`,
 
 ### Special book treatments
 
-`Psalms BOOK` — book-level stylistic differences (e.g.,
-indentation patterns). `Lamentation` (singular) is audited via
-`AuditOneStyle` but not currently in the promoted approved
-array; revisit when its role is decided.
+- `Psalms BOOK` — book-level Psalms heading style.
+- `PsalmSuperscription` — the prefatory line attributed to
+  authorship / context (e.g., "A psalm of David").
+- `Selah` — the Hebrew musical / liturgical interjection.
+- `PsalmAcrostic` — Hebrew-letter section markers in acrostic
+  Psalms (notably Psalm 119).
+- `Lamentation` (singular) is audited via `AuditOneStyle` but
+  not currently in the promoted approved array; revisit when its
+  role is decided.
 
 ### Footnotes
 
@@ -172,7 +153,7 @@ Bible body to signal commentary.
 
 ### Anchor
 
-`Normal` (priority 46) — deliberately the last entry. Replaced
+`Normal` (priority 47) — deliberately the last entry. Replaced
 operationally by `BodyText`; retained in the array as a
 "pin-everything-else-above" anchor.
 
