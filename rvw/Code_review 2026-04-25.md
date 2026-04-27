@@ -1972,3 +1972,228 @@ TitleOnePage duplicate resolved and three Psalms-specific styles
 added. Walk continues toward priority 37+ in the next QA cycle.
 
 ---
+
+## § Plan - introduce `VerseText` style - 2026-04-26
+
+### Goal
+
+Replace `BodyText` with a new `VerseText` paragraph style on every
+paragraph in the Bible body that begins with a "Chapter Verse
+marker" character-style run (i.e., every verse paragraph). The
+existing `BodyText` style remains for non-verse paragraphs (intros,
+spacers, footnote contexts, etc.).
+
+The new style is identical to `BodyText` except for the name.
+
+### Stated benefits
+
+- **First-occurrence semantics**: with the canonical
+  book-order-by-first-occurrence rule, `VerseText` first appears
+  on the first verse of the Bible (Genesis 1:1). Currently
+  `BodyText` first appears on page 1 (front matter spacer),
+  which is semantically misleading.
+- **USFM mapping clarity**: `VerseText` maps cleanly to USFM
+  `\v` (verse body). `BodyText` becomes the residual for non-verse
+  paragraphs that map to `\p`, `\ip`, etc.
+
+### Identification rule
+
+A paragraph qualifies for conversion when both:
+
+1. `paragraph.Style.NameLocal = "BodyText"`, AND
+2. `paragraph.Range.Characters(1).Style.NameLocal = "Chapter Verse marker"`.
+
+Per the existing `GoToVerseByScan` comment in `aeRibbonClass.cls`:
+
+> Every verse in both study and print versions begins with a
+> "Chapter Verse marker" run (chapter number) immediately followed
+> by a "Verse marker" run (verse number).
+
+So the rule catches exactly the verse-bearing paragraphs and
+nothing else.
+
+### Plan - phased
+
+#### Phase 1 - define the new style (low risk)
+
+- [ ] **1.1** Add `DefineVerseTextStyle` to
+  `src/basFixDocxRoutines.bas` - clones every property of
+  `BodyText` (BaseStyle = "", identical Font / ParagraphFormat
+  fields, AutomaticallyUpdate = False, QuickStyle = False).
+- [ ] **1.2** Add `"VerseText"` to the `approved` array in
+  `src/basTEST_aeBibleConfig.bas`. Position: immediately after
+  `"Verse marker"` so VerseText falls into the verse-marker
+  cluster in book-order priority. Will renumber priorities 31+
+  (current `Footnote Reference` etc.) by +1.
+- [ ] **1.3** Add `VerseText` row to `RUN_TAXONOMY_STYLES` with
+  the same expected property values as `BodyText` (separate
+  row; not "based on" since BaseStyle = "").
+- [ ] **1.4** Run `WordEditingConfig`; confirm
+  `VerseText` appears in the priority list. Run
+  `DumpStyleProperties "VerseText"`; confirm property dump
+  matches `BodyText`.
+
+#### Phase 2 - bulk conversion (one-time mutation, BACKUP FIRST)
+
+- [ ] **2.1** Commit the clean repo + back up the working `.docm`
+  to `~/Backups/` (or git-stash equivalent).
+- [ ] **2.2** Add `ConvertBodyTextVersesToVerseText` to
+  `src/basFixDocxRoutines.bas`:
+  ```vba
+  Public Sub ConvertBodyTextVersesToVerseText()
+      Dim oPara As Object
+      Dim nConverted As Long, nKept As Long, nScanned As Long
+      For Each oPara In ActiveDocument.Paragraphs
+          If oPara.Style.NameLocal = "BodyText" Then
+              nScanned = nScanned + 1
+              If oPara.Range.Characters(1).Style.NameLocal _
+                              = "Chapter Verse marker" Then
+                  oPara.Style = ActiveDocument.Styles("VerseText")
+                  nConverted = nConverted + 1
+              Else
+                  nKept = nKept + 1
+              End If
+          End If
+      Next oPara
+      Debug.Print "ConvertBodyTextVersesToVerseText: scanned=" _
+          & nScanned & " converted=" & nConverted _
+          & " kept=" & nKept
+  End Sub
+  ```
+- [ ] **2.3** Run the conversion. Note the reported counts.
+  Expected: tens of thousands converted (one per verse;
+  ~31,000 verses in the Bible). `kept` should be small
+  (front-matter / non-verse paragraphs styled BodyText).
+- [ ] **2.4** Verify by sampling: open random books / chapters
+  in Word, click into verse paragraphs, confirm style shows
+  `VerseText`. Click into non-verse paragraphs, confirm style
+  shows `BodyText`.
+- [ ] **2.5** Re-run `DumpAllApprovedStyles` - new file
+  `style_VerseText.txt` should appear; orphan check passes.
+- [ ] **2.6** Re-run `ListApprovedStylesByBookOrder` - confirm
+  `VerseText` first-occurrence is now Genesis 1:1's page (page 1
+  of Old Testament body, ~page 22 in the current document).
+  `BodyText` first-occurrence shifts to whatever non-verse
+  paragraph appears first (likely a front-matter spacer or
+  intro).
+- [ ] **2.7** Idempotency check: re-run
+  `ConvertBodyTextVersesToVerseText`. Expected:
+  `converted=0` (no remaining BodyText paragraphs match the
+  criterion).
+
+#### Phase 3 - audit and follow-up
+
+- [ ] **3.1** Walk the converted document looking for surprises -
+  any paragraph still styled BodyText that should be VerseText,
+  or vice versa. Most likely edge case: footnote-text paragraphs
+  that incidentally start with a marker run.
+- [ ] **3.2** Update USFM export mapping (when implemented):
+  `VerseText` → `\v <number> <text>` reconstruction;
+  `BodyText` → `\p` or `\ip` per context.
+- [ ] **3.3** Update EDSG:
+  - `01-styles.md`: add `VerseText` to the snapshot,
+    "Body text" category, and a brief rationale note.
+  - `04-qa-workflow.md`: note the conversion as a milestone.
+  - `06-i18n.md`: add `VerseText` as the primary translation
+    target style.
+- [ ] **3.4** Code search for hardcoded `"BodyText"` literals
+  that may have assumed verse content:
+  - `src/aeRibbonClass.cls` - any nav code targeting BodyText?
+  - `src/basSBL_*` - parser code referencing BodyText?
+  - Test routines - assertions about BodyText paragraph counts?
+
+### Pros
+
+- **Semantic clarity**: paragraph style now answers "is this a
+  verse?" with a one-property check.
+- **Book-order alignment**: the first-occurrence sort places
+  `VerseText` near the start of the Bible body where it
+  belongs, instead of `BodyText` showing on page 1 as
+  front-matter spacer.
+- **USFM round-trip readiness**: `\v` ↔ `VerseText` is a
+  one-to-one mapping; `\p`/`\ip` ↔ `BodyText` covers the
+  residual.
+- **Better Find / Replace targeting**: "find all verse text" =
+  Find with `.Style = VerseText`. Currently no clean way to do
+  that without paragraph-walking.
+- **Easier i18n review**: translators know which paragraphs
+  carry scripture vs commentary vs UI text.
+- **Audit aid**: any verse-style paragraph that doesn't start
+  with a Chapter Verse marker run is a structural defect; the
+  conversion routine surfaces them as `nKept > 0` for paragraphs
+  Word labeled BodyText but without a marker. Inverse audit
+  (post-conversion: find any VerseText paragraph that doesn't
+  start with a Chapter Verse marker) catches the other direction.
+
+### Cons
+
+- **One-time mass mutation** of the document. If something is
+  miscategorized, undo is per-paragraph. Hence the explicit
+  backup step before Phase 2.
+- **Priority renumbering** for everything below the new
+  `VerseText` slot - cascades through the snapshot and any
+  doc that cites a specific priority number. Mitigation: only
+  the `01-styles.md` snapshot and the `04-qa-workflow.md`
+  current state cite specific numbers; both are easy to refresh.
+- **Style count +1**, marginal cost.
+- **Existing code that searches for `"BodyText"`** may now miss
+  verses. Phase 3.4 audit catches this; effort proportional to
+  current count of literals (likely small).
+- **No backwards compatibility**: documents from before this
+  conversion that still use `BodyText` for verses will look the
+  same visually but parse differently. Acceptable for this
+  project (single primary document) but worth noting.
+
+### Risk register
+
+| Risk | Likelihood | Mitigation |
+|---|---|---|
+| Conversion misses some verses | Low | Phase 3.1 audit; idempotent re-run |
+| Conversion catches non-verse paragraphs that incidentally start with Chapter Verse marker | Very low | The character style appears only at verse boundaries by design |
+| `Characters(1).Style.NameLocal` returns paragraph style instead of character style on some edge case | Low | Test a sample first; if so, walk Range.StoryRanges or use the Find pattern instead |
+| Some BodyText paragraph inside a footnote story qualifies and gets converted | Low | Conversion iterates `ActiveDocument.Paragraphs` which is the main story by default; add explicit story-scope guard if footnotes turn out to also use BodyText with markers |
+| Hardcoded `"BodyText"` literal in code path breaks after the change | Low-medium | Phase 3.4 grep audit catches them |
+
+### What this does NOT change
+
+- `BodyText` style definition itself (kept; just used less).
+- `Chapter Verse marker` and `Verse marker` character styles
+  (unchanged).
+- Existing approved-array order for priorities 1-30 - those
+  styles keep their current positions; only items at and below
+  the new `VerseText` slot shift down.
+- Any visual rendering in Word - VerseText is a property-for-
+  property clone of BodyText.
+
+### USFM mapping detail (added benefit)
+
+Post-conversion, the implicit Bible structure becomes more
+machine-readable. Sketch of the mapping:
+
+| Word style | USFM marker | Notes |
+|---|---|---|
+| `Heading 1` | `\toc1` / book title | book boundary |
+| `Heading 2` | `\c <n>` | chapter boundary |
+| `Chapter Verse marker` (char) | (consumed by `\v`) | chapter number per verse |
+| `Verse marker` (char) | `\v <n> ` | verse start |
+| `VerseText` | `\v <n> <text>` body | verse content paragraph |
+| `BodyText` | `\p` or `\ip` | non-verse paragraph |
+| `Brief` | `\is` | book intro |
+| `DatAuthRef` | `\d` | descriptive / authorship line |
+| `Footnote Reference` | `\f` open | footnote anchor |
+| `Footnote Text` | (footnote story) | footnote body |
+| `Words of Jesus` | `\wj ... \wj*` | red-letter |
+| `Brief` | `\is` | section intro |
+| `Psalms BOOK` | `\ms` | major section (Psalms book divisions I-V) |
+
+This is sketch quality; full mapping work belongs in the SBL
+parser side and is separate from this conversion plan.
+
+### Status
+
+Plan: **DRAFT - awaiting user approval**. No code or document
+changes applied. Phases are gated: Phase 2 should not start
+until Phase 1 is complete and verified; Phase 3 follow-ups can
+overlap with normal work.
+
+---
