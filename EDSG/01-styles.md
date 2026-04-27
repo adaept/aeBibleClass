@@ -64,20 +64,36 @@ Order inherited from earlier passes; will be re-walked.
 
 | Prio | Style |
 |---:|---|
-| 34 | Lamentations |
-| 35 | Psalms BOOK |
-| 36 | BodyTextIndent |
-| 41 | EmphasisBlack |
-| 42 | EmphasisRed |
-| 43 | Words of Jesus |
-| 44 | AuthorSectionHead |
-| 45 | AuthorQuote |
-| 46 | Normal |
+| 34 | Psalms BOOK |
+| 35 | BodyTextIndent |
+| 40 | EmphasisBlack |
+| 41 | EmphasisRed |
+| 42 | Words of Jesus |
+| 43 | AuthorSectionHead |
+| 44 | AuthorQuote |
+| 45 | Normal |
+
+Priorities above are nominal — re-run `ListApprovedStylesByBookOrder`
+for the live snapshot. As of 2026-04-26 last run, **40 approved
+styles succeeded** (down from 41 after `Lamentations` was removed
+from the array; orphan `style_Lamentations.txt` was auto-detected
+and deleted on the next `DumpAllApprovedStyles`).
 
 ### Gaps
 
-Priorities 17, 37–40 are intentional reserved gaps for future
-insertions without wholesale renumbering.
+Priorities 17 and 36–39 (approximate) are unassigned. Reserved
+for future insertions; one of these (priority 17) is currently a
+symptom rather than a deliberate reservation — see "Known issues"
+below.
+
+### Known issues
+
+- **`TitleOnePage` appears twice** in the `approved` array in
+  `src/basTEST_aeBibleConfig.bas` (lines 38 and 41).
+  `PromoteApprovedStyles` assigns the LATER position's priority
+  (the first slot is wasted), which is the actual cause of the
+  gap at priority 17. Recommended fix: remove the duplicate. Not
+  yet applied.
 
 ### Missing from document
 
@@ -91,6 +107,25 @@ diagnostic. Kept in the array as tracking placeholders:
 - `AppendixBody`
 - `FargleBlargle` (deliberate canary — confirms the missing-style
   diagnostic is wired correctly)
+
+### Missing from document
+
+The following are in the `approved` array but not present in the
+current document; reported by `PromoteApprovedStyles` as a
+diagnostic. Kept in the array as tracking placeholders:
+
+- `BodyTextContinuation`
+- `BookIntro`
+- `AppendixTitle`
+- `AppendixBody`
+- `FargleBlargle` (deliberate canary — confirms the missing-style
+  diagnostic is wired correctly)
+
+The previously-listed `Lamentations` was removed from the array
+between the 2026-04-26 snapshot and the next
+`DumpAllApprovedStyles` run; the corresponding
+`rpt/Styles/style_Lamentations.txt` was auto-cleaned by the
+orphan detection prompt.
 
 ## Style categories
 
@@ -120,8 +155,10 @@ Notable members: `FrontPageTopLine`, `TitleEyebrow`, `Title`,
 
 ### Special book treatments
 
-`Psalms BOOK`, `Lamentations` — book-level stylistic differences
-(e.g., indentation patterns).
+`Psalms BOOK` — book-level stylistic differences (e.g.,
+indentation patterns). `Lamentation` (singular) is audited via
+`AuditOneStyle` but not currently in the promoted approved
+array; revisit when its role is decided.
 
 ### Footnotes
 

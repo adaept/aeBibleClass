@@ -86,30 +86,44 @@ QA checklist for the table. Four checks:
 `DumpAllApprovedStyles` does it in bulk. Documented exceptions are
 recorded inline in [01-styles](01-styles.md).
 
-## Current state — 2026-04-26
+## Current state — 2026-04-26 (latest)
 
+- **Latest run**: `DumpAllApprovedStyles` reports **40
+  succeeded, 0 failed** (~8 sec runtime). Orphan detection
+  caught and deleted `style_Lamentations.txt` after Lamentations
+  was removed from the array.
 - **Validated**: priorities 1–33 walked and array aligned to book
   order. New styles encountered along the way and added:
   `Introduction`, `ListItemTab`, `AuthorBookRefHeader`,
-  `TitleOnePage`, `CenterSubText`. Renamed: `Lamentation` →
-  `Lamentations` (English plural). `Book Title` removed from the
-  approved array.
-- **Pending re-validation**: priorities 34+
-  (`Lamentations`, `Psalms BOOK`, `BodyTextIndent`, `EmphasisBlack`,
-  `EmphasisRed`, `Words of Jesus`, `AuthorSectionHead`,
-  `AuthorQuote`, `Normal`). Order inherited from earlier passes;
-  will be re-walked as the QA cycle continues.
-- `Normal` — moved to **priority 46**, deliberately the last
-  approved entry. Operational role replaced by `BodyText`; kept in
-  the array as an anchor for "pin everything else above this."
-- `BodyTextIndent` — now in the approved array at priority 36.
-- `AuthorQuote` (priority 45) — still pending front matter usage
-  decision.
+  `TitleOnePage`, `CenterSubText`. Renamed earlier:
+  `Lamentation` → `Lamentations`; subsequently
+  `Lamentations` was **removed** from the approved array. `Book
+  Title` was also removed.
+- **Pending re-validation**: priorities 34+ (`Psalms BOOK`,
+  `BodyTextIndent`, `EmphasisBlack`, `EmphasisRed`,
+  `Words of Jesus`, `AuthorSectionHead`, `AuthorQuote`,
+  `Normal`). Order inherited from earlier passes; will be
+  re-walked as the QA cycle continues.
+- `Normal` — last approved entry, deliberately. Operational role
+  replaced by `BodyText`; kept as anchor for "pin everything
+  else above this."
+- `BodyTextIndent` — now in the approved array.
+- `AuthorQuote` — still pending front matter usage decision.
 
-### Reserved gaps
+### Known issue - duplicate in array
 
-Priorities 17 and 37–40 are intentional gaps for future insertions
-without wholesale renumbering.
+`TitleOnePage` appears twice in the `approved` array
+(`src/basTEST_aeBibleConfig.bas` lines 38 and 41).
+`PromoteApprovedStyles` assigns each priority sequentially, so
+the duplicate's first slot becomes a "dead" priority that no
+style holds. This is the actual cause of the gap at priority 17,
+not a deliberate reservation. Recommended fix: remove the second
+occurrence. Not yet applied; flagged for the next array edit.
+
+### Reserved gaps (after the duplicate is fixed)
+
+Priorities 36–39 (approximate, post-Lamentations-removal) remain
+unassigned for future insertions without wholesale renumbering.
 
 ## Headless caveat
 

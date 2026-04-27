@@ -1756,3 +1756,100 @@ applied. All decisions deliberately staged behind explicit
 go-aheads.
 
 ---
+
+## § Latest DumpAllApprovedStyles run + array observations - 2026-04-26
+
+### Run output
+
+```
+DumpAllApprovedStyles: Done. 40 succeeded, 0 failed.
+Orphan style dumps (in rpt\Styles but not in current approved list):
+  C:\adaept\aeBibleClass\rpt\Styles\style_Lamentations.txt
+  deleted: C:\adaept\aeBibleClass\rpt\Styles\style_Lamentations.txt
+DumpAllApprovedStyles - actual 8.04 sec
+```
+
+40 styles dumped successfully (down from 41 - one removal
+since the previous EDSG snapshot). Orphan-cleanup mechanism
+worked end-to-end: `style_Lamentations.txt` was detected,
+listed, prompted, deleted on confirmation. ~8 sec total runtime
+including the orphan pass.
+
+### Array observations (from `src/basTEST_aeBibleConfig.bas`)
+
+While reconciling the count, two findings worth recording:
+
+1. **`Lamentations` is no longer in the `approved` array.**
+   Confirms why the file was orphaned. `Lamentation` (singular)
+   appears only in the `AuditOneStyle` list at line 275, not in
+   the promoted approved array. Whether this is intentional
+   (Lamentations dropped pending decision) or a regression
+   needs user confirmation.
+2. **`TitleOnePage` appears twice** in the approved array (lines
+   38 and 41). `PromoteApprovedStyles` iterates the array
+   sequentially and assigns `s.Priority = i + 1`; on the second
+   pass the priority is overwritten with the later position, so
+   the earlier slot becomes a "dead" priority no style holds.
+
+   This is almost certainly the actual cause of the **gap at
+   priority 17** that the EDSG previously documented as a
+   "reserved gap." It's not a deliberate reservation — it's a
+   copy-paste artifact.
+
+### EDSG file updates
+
+`EDSG/01-styles.md`:
+
+- "Pending re-validation" table updated: `Lamentations` removed;
+  remaining priorities renumbered nominally.
+- New "Known issues" subsection flags the `TitleOnePage`
+  duplicate as the cause of priority 17's gap.
+- "Missing from document" subsection appended with a note about
+  the Lamentations removal and the orphan auto-cleanup that
+  followed.
+- "Special book treatments" updated: removed `Lamentations`
+  from the listed members; added a note that `Lamentation`
+  (singular) is in the audit list only.
+- Validated count statement updated to 40.
+
+`EDSG/04-qa-workflow.md`:
+
+- "Current state" subsection updated with the latest-run
+  results (40/0, ~8s, orphan cleaned).
+- Lamentations removal noted in the change list.
+- New "Known issue - duplicate in array" subsection documenting
+  the `TitleOnePage` duplicate and its priority-17 side effect.
+  Recommended fix flagged for the next array edit.
+- "Reserved gaps" reframed to acknowledge that priority 17 is
+  symptom-driven, not reserved.
+
+### Recommended fix (not applied)
+
+Remove the second `"TitleOnePage"` entry from line 41 of
+`src/basTEST_aeBibleConfig.bas`. After re-running
+`WordEditingConfig`, `TitleOnePage` will hold its earlier
+priority and the gap at 17 will close (every priority below
+its old slot will shift down by 1).
+
+The fix is small but has cascading effects on every priority
+≥ 17 in the document — flagged for explicit user approval before
+applying so the EDSG snapshot can be refreshed in the same
+commit cycle.
+
+### Decision items for user
+
+1. Confirm: was `Lamentations` removed intentionally? If
+   intentional, what's the plan for that book's special
+   formatting (currently no promoted style for it)? If
+   accidental, restore.
+2. Approve removing the `TitleOnePage` duplicate — yes (with
+   priority shift acceptable) or no (live with the dead slot).
+
+### Status
+
+EDSG content **REFRESHED - 2026-04-26 (latest run)** to reflect
+the 40-style state and the `TitleOnePage` duplicate finding.
+Code edits to `basTEST_aeBibleConfig.bas` **PENDING user
+approval** of the two decision items above.
+
+---
