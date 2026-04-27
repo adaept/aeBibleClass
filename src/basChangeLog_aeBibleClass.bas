@@ -10,25 +10,21 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #620 -
 ' #619 -
 ' #618 -
-' #617 -
-' #616 -
-' #615 -
-' #614 - Use a paragrah style for Aleph, Bet etc. [impr]
-' #612 - **Use “Default Paragraph Font” for ALL character styles. Never use “(no style)”.**
-'            It’s the difference between: Stable, predictable, audit-safe formatting vs.
+' #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]
+' #616 - Space function is changed to space, need normalizer fix [bug]
+' #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]
+' #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
+'            It's the difference between: Stable, predictable, audit-safe formatting vs.
 '               Hidden inheritance, inconsistent rendering, and style-tree instability [feat]
-' #610 - Add Inspect_Aptos_Sources to aeBibleClass tools - expected Result 0 [test]
 ' #609 - Soft Hyphens checked to end of Genesis [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #601 - Build Word configuration module for consistent editing setup [feat][wip]
-' #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
 ' #484 - Store the Verse Map as a Byte Array [impr]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
-' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test]
+' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test] [wip]
 ' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
 ' #396 - Export - Psalms 110:7 He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
-' #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
 ' #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
 ' #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to - 0, 1st Century ->
@@ -38,10 +34,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
-' #247 - see #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
-' #214 - Fix contents page to include all bookmarked Heading_01+ numbers
-' #191 - Add test to verify all correct Verse Marker per book [test]
-' #190 - Add test to verify all correct Chapter Verse Marker per book [test]
+' #191 - Add test to verify all correct Verse Marker per book [test] [wip]
+' #190 - Add test to verify all correct Chapter Verse Marker per book [test] [wip]
 ' #150 - Add module for free fonts setup and testing [idea]
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
@@ -67,6 +61,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
+    ' FIXED - #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
+    ' FIXED - #247 (as part of Styles config) - see also #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
+    ' [obso] - #214 - Fix contents page to include all bookmarked Heading_01+ numbers
+    ' [obso] - #610 - Add Inspect_Aptos_Sources to aeBibleClass tools - expected Result 0 [test]
+    ' FIXED - #614 - Use a paragrah style for Aleph, Bet etc., done in earlier commit [impr]
     ' FIXED - #613 - Add character style for Selah, small caps [impr]
     ' FIXED - #611 - Replace Calibri with Carlito (SIL OFL) 1. ReplaceCalibriInStyles; 2. ReplaceCalibriWithCarlito [feat]
     ' [obso] - #453 - Create class aeBibleDataClass to share values of Books, Chapters, Verses etc. with validation tests for arrays [feat] - Done in Ribbon code

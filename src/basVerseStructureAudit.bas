@@ -14,8 +14,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '
 ' Invariants verified (core three; advanced 4-6 deferred):
 '   1. Books present     - every canonical 66-book has a Heading 1.
-'   2. Chapter counts    - per-book Heading 2 count matches ChaptersInBook.
-'   3. Verse counts      - per-chapter Verse marker count matches VersesInChapter.
+'   2. Chapter counts    - per-book Heading 2 Count matches ChaptersInBook.
+'   3. Verse counts      - per-chapter Verse marker Count matches VersesInChapter.
 '
 ' Output: rpt\VerseStructureAudit.txt (when bWriteFile = True) plus
 ' Immediate-window summary.
@@ -79,24 +79,24 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
         Dim h1Text As String
         h1Text = h1Names(i)
 
-        Dim bookID As Long
-        bookID = LookupBookID(h1Text, canonNames)
+        Dim BookID As Long
+        BookID = LookupBookID(h1Text, canonNames)
 
-        If bookID = 0 Then
+        If BookID = 0 Then
             sOut = sOut & "?? UNKNOWN H1 [" & h1Text & "] - skip" & NL
             issues = issues & "  Unknown H1 text: [" & h1Text & "]" & NL
             issuesCount = issuesCount + 1
         Else
-            seenBookID(bookID) = True
+            seenBookID(BookID) = True
             Dim expectedChapters As Long
-            expectedChapters = canonChapters(bookID)
+            expectedChapters = canonChapters(BookID)
 
             Dim foundChapters As Long
             Dim chapterReport As String
             Dim bookIssues As Long
             Dim bookIssueDetail As String
 
-            AuditOneBook oDoc, h1Starts(i), bookEndPos, canonNames(bookID), _
+            AuditOneBook oDoc, h1Starts(i), bookEndPos, canonNames(BookID), _
                           expectedChapters, foundChapters, chapterReport, _
                           bookIssues, bookIssueDetail, totalExpected, totalFound
 
@@ -107,7 +107,7 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
                 bookStatus = "ISSUES"
             End If
 
-            sOut = sOut & PadRight(canonNames(bookID), 22) & _
+            sOut = sOut & PadRight(canonNames(BookID), 22) & _
                    "expected chapters=" & PadLeft(CStr(expectedChapters), 3) & _
                    "  found=" & PadLeft(CStr(foundChapters), 3) & _
                    "  " & bookStatus & NL
@@ -178,7 +178,7 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
 
     If nH2 <> expectedChapters Then
         bookIssues = bookIssues + 1
-        bookIssueDetail = bookIssueDetail & "  " & bookName & ": chapter count mismatch (expected " & _
+        bookIssueDetail = bookIssueDetail & "  " & bookName & ": chapter Count mismatch (expected " & _
                           expectedChapters & ", found " & nH2 & ")" & NL
     End If
 
@@ -217,7 +217,7 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
 End Sub
 
 ' --------------------------------------------------------------------------
-' CountVerseMarkers - count Verse-marker character-style runs in a range
+' CountVerseMarkers - Count Verse-marker character-style runs in a range
 ' --------------------------------------------------------------------------
 Private Function CountVerseMarkers(ByVal oDoc As Object, _
                                     ByVal startPos As Long, _
@@ -352,7 +352,7 @@ Private Function PadRight(ByVal s As String, ByVal n As Long) As String
     If Len(s) >= n Then
         PadRight = Left(s, n)
     Else
-        PadRight = s & Space(n - Len(s))
+        PadRight = s & space(n - Len(s))
     End If
 End Function
 
@@ -360,7 +360,7 @@ Private Function PadLeft(ByVal s As String, ByVal n As Long) As String
     If Len(s) >= n Then
         PadLeft = Right(s, n)
     Else
-        PadLeft = Space(n - Len(s)) & s
+        PadLeft = space(n - Len(s)) & s
     End If
 End Function
 
