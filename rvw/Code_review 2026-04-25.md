@@ -2197,3 +2197,243 @@ until Phase 1 is complete and verified; Phase 3 follow-ups can
 overlap with normal work.
 
 ---
+
+## § Plan - verse-marker structural audit (precondition for VerseText) - 2026-04-26
+
+### Goal
+
+Walk the entire Bible body and verify that every chapter contains
+exactly the expected number of well-formed verse markers - using
+the known canonical book/chapter/verse counts in
+`aeBibleCitationClass.cls` (`ChaptersInBook`,
+`VersesInChapter`) as ground truth. Run this audit BEFORE the
+`VerseText` conversion so any structural defects are surfaced
+and fixed first, eliminating the risk of mass-converting around
+a malformed marker.
+
+User-noted history: occasional past discovery of paragraphs where
+"Chapter Verse marker" or "Verse marker" runs were messed up. No
+systematic check existed; this plan adds one.
+
+### Invariants to verify
+
+For the main story (excluding footnote/header/footer stories):
+
+1. **Books present**: every book in the canonical 66-book list
+   has a `Heading 1` paragraph in document order.
+2. **Chapter counts per book**: count of `Heading 2` paragraphs
+   between consecutive `Heading 1`s matches
+   `ChaptersInBook(book)`.
+3. **Verse counts per chapter**: count of `Verse marker`
+   character-style runs between consecutive `Heading 2`s
+   matches `VersesInChapter(book, chapter)`.
+4. **Marker pairing**: every `Verse marker` run is immediately
+   preceded by a `Chapter Verse marker` run. (Per the existing
+   `GoToVerseByScan` comment: "Every verse ... begins with a
+   Chapter Verse marker run ... immediately followed by a
+   Verse marker run.")
+5. **Marker text**: each `Verse marker` run's text is a numeric
+   string equal to the verse's expected sequence number
+   (1, 2, 3, ..., N). Each `Chapter Verse marker`'s text is the
+   chapter number for its containing chapter.
+6. **No stray markers**: no `Verse marker` or `Chapter Verse
+   marker` runs appear inside `Heading 1`, `Heading 2`,
+   `Brief`, `DatAuthRef`, `Footnote Text`, or other non-verse
+   contexts.
+
+### Test design
+
+Single Public entry point + several private helpers in a new
+module. Read-only; produces a report file plus an Immediate
+summary; flags every discrepancy with book + chapter + verse
+context.
+
+```vba
+Public Sub AuditVerseMarkerStructure(Optional bWriteFile As Boolean = True)
+    ' For each book in canonical order:
+    '   For each chapter in that book:
+    '     Find chapter range (Heading 2 .. next Heading 2 / Heading 1)
+    '     Count Verse marker runs in range
+    '     Compare to VersesInChapter
+    '     For each Verse marker run:
+    '       Check preceding run is Chapter Verse marker
+    '       Check Verse marker text == expected number
+    '       Check Chapter Verse marker text == chapter number
+    ' Report: total expected vs actual verse counts per book and overall
+End Sub
+```
+
+Output to `rpt/VerseStructureAudit.txt` (plus Immediate summary).
+Format:
+
+```
+---- AuditVerseMarkerStructure: 2026-04-26 hh:nn:ss ----
+
+Genesis              expected chapters=50  found=50   OK
+  ch  1: expected verses=31   found=31   OK
+  ch  2: expected verses=25   found=25   OK
+  ...
+Exodus               expected chapters=40  found=40   OK
+  ...
+Psalms               expected chapters=150 found=150  OK
+  ch  119: expected verses=176 found=176 OK
+  ...
+
+ISSUES FOUND:
+  Genesis 3:14   Verse marker text "14" but preceding run style is "BodyText" (expected "Chapter Verse marker")
+  Exodus  20:17  Chapter Verse marker text "21" (expected "20")
+  Psalms 119:177 unexpected extra Verse marker run after verse 176
+
+SUMMARY: 31102 / 31102 verses found, 3 structural issues, 0 missing chapters, 0 missing books
+```
+
+### Implementation steps
+
+#### Phase 1 - module + skeleton
+
+- [ ] **1.1** New module `src/basVerseStructureAudit.bas` with
+  `Option Explicit` / `Option Compare Text` /
+  `Option Private Module` per project convention.
+- [ ] **1.2** `Public Sub AuditVerseMarkerStructure` entry
+  point with optional `bWriteFile` (default True). Uses
+  `StartTimer` / `EndTimer` from `basStyleInspector` for
+  expected/actual feedback (sub may take 30-60 sec on a full
+  Bible; benefits from timing).
+- [ ] **1.3** Private helper `IterateBooks` that walks
+  `ActiveDocument.Paragraphs`, identifies each `Heading 1`,
+  matches its text against the canonical book name list, and
+  yields `(bookIndex, bookName, headingPos)` tuples.
+- [ ] **1.4** Private helper `IterateChapters(bookRange)` that
+  walks the book's range, identifies each `Heading 2`, and
+  yields `(chapterNum, headingPos, endPos)` tuples for the
+  chapter sub-range.
+- [ ] **1.5** Private helper `CountVerseMarkers(chapterRange)`
+  that uses `Range.Find` with `.Style = "Verse marker"` to
+  count occurrences.
+
+#### Phase 2 - invariant checks
+
+- [ ] **2.1** Implement invariant 1 (books present) using book
+  iteration vs canonical 66-name list.
+- [ ] **2.2** Implement invariant 2 (chapter counts per book)
+  using chapter iteration count vs `ChaptersInBook`.
+- [ ] **2.3** Implement invariant 3 (verse counts per chapter)
+  using verse-marker count vs `VersesInChapter`.
+- [ ] **2.4** Implement invariant 4 (marker pairing) by walking
+  each Verse marker run and inspecting the run immediately
+  before it via Range.Characters or Range.MoveStart -1.
+- [ ] **2.5** Implement invariant 5 (marker text correctness)
+  by comparing `Verse marker` run text to the iteration index
+  and `Chapter Verse marker` run text to the current chapter
+  number.
+- [ ] **2.6** Implement invariant 6 (no stray markers) by
+  scanning Heading 1, Heading 2, Brief, DatAuthRef, etc.
+  paragraph ranges for any Verse marker / Chapter Verse marker
+  runs.
+
+#### Phase 3 - report + integration
+
+- [ ] **3.1** Format the per-book / per-chapter / issues sections
+  as shown in the design sample. Color: ASCII only (per VBA
+  feedback memory; report is read in many places, not just the
+  VBE).
+- [ ] **3.2** Write to `rpt/VerseStructureAudit.txt`. Also
+  print summary line and any issues to Immediate window.
+- [ ] **3.3** Integrate into the test suite. Position:
+  **before** any taxonomy / style audit, since marker structure
+  is a precondition. Concretely: when `SUPER_TEST_RUNS` lands,
+  add `AuditVerseMarkerStructure` as Suite 0 (precondition).
+  Until then, add as a manual run referenced by the
+  conversion plan in the prior section.
+- [ ] **3.4** Add to the EDSG `02-editing-process.md` as a
+  pre-conversion verification step.
+
+### Pros
+
+- **Catches structural defects** before downstream work
+  (VerseText conversion, USFM export, parser tests) silently
+  consumes them.
+- **Concrete pass/fail signal** based on canonical counts -
+  no human review fatigue across 31,102 verses.
+- **Reusable**: any future structural change benefits from the
+  same audit as a precondition.
+- **Documents invariants explicitly**: the test code is the
+  authoritative statement of "what a well-formed verse looks
+  like."
+- **i18n robustness**: a translated Bible with shifted text
+  lengths still has the same verse count - this audit confirms
+  marker structure survived the translation work.
+- **CI heartbeat**: weekly automated run flags any regression
+  introduced by ongoing edits without waiting for the next
+  conversion to surface them.
+
+### Cons
+
+- **Runtime** ~30-60 sec on a full Bible (one Find per chapter +
+  per-run preceding-style check). Acceptable as a manual /
+  weekly check; not for every commit.
+- **Maintenance**: if marker conventions change (new style for
+  Psalm acrostic verses, for example), the audit needs an
+  update.
+- **Edge-case complexity**: Psalms 119 (acrostic), Psalms with
+  superscriptions, Selah mid-verse - all need to be modeled
+  correctly so they don't generate false positives.
+- **Discovers issues but doesn't fix them**: each flagged issue
+  still needs manual inspection and correction.
+
+### Benefits
+
+- **Confidence baseline** for the VerseText conversion. If the
+  audit passes, the conversion is safe; if it fails, fix the
+  flagged issues first.
+- **Prevents silent navigation errors**: a malformed Verse
+  marker today causes `GoToVerseByScan` to misnavigate (the
+  Nth Verse marker is the wrong verse). The audit catches
+  these proactively.
+- **Foundation for SUPER_TEST_RUNS**: a clean verse-structure
+  audit is the natural Suite 0 of any global verification
+  command.
+- **Translator-friendly**: a translator working on a localized
+  Bible can run the audit on their work-in-progress to confirm
+  no markers were broken.
+
+### Special cases to handle
+
+| Case | Concern | Approach |
+|---|---|---|
+| Psalm 119 acrostic headings (Aleph, Beth, ...) | Non-verse paragraphs interspersed with verses | `IterateChapters` already handles via Heading 2 boundaries; verse counter only counts Verse marker runs, ignores acrostic paragraphs |
+| `PsalmSuperscription` paragraphs | Non-verse paragraphs in some Psalms (e.g., Psalm 3 "A Psalm of David...") | Verse counter ignores them automatically |
+| `Selah` | Mid-verse interjection | Should not contain Verse marker; if invariant 6 catches Verse markers inside Selah runs, flag |
+| Psalms book division headings (`Psalms BOOK`) | Sit between Psalms book "chapters" | Skip when iterating chapters (not Heading 2) |
+| Very short books (Obadiah, 1-3 John, Jude, Philemon) | One chapter only | Iteration handles same as multi-chapter; expected verse count from `VersesInChapter(book, 1)` |
+| Books not in current document (BodyTextContinuation et al placeholders) | Already missing per `PromoteApprovedStyles` warning | Audit ignores - they're style placeholders, not book content |
+
+### Decision items
+
+1. Module name: `basVerseStructureAudit` proposed - confirm or
+   override.
+2. Output filename: `rpt/VerseStructureAudit.txt` proposed;
+   alternative `rpt/Styles/VerseStructureAudit.txt` to keep all
+   audits under `rpt/Styles/`. (Argument for the latter: the
+   audit IS about style usage. Argument for the former: it's
+   about document structure, not style definitions.)
+3. Test-suite integration timing: add as standalone Public Sub
+   immediately, then wire into `SUPER_TEST_RUNS` when that
+   command lands. Or wait for `SUPER_TEST_RUNS` and add both
+   together. Standalone-first is recommended (does not block on
+   the deferred suite; the audit is independently useful for
+   the VerseText conversion).
+
+### Status
+
+Plan: **DRAFT - awaiting user approval**. No code applied. The
+user noted that "now vs later" is moot - this should run before
+the VerseText conversion. Recommended sequence:
+
+1. Approve this audit plan.
+2. Implement and run the audit.
+3. Resolve any flagged issues.
+4. Then (re-)approve and run the VerseText conversion plan from
+   the previous section.
+
+---
