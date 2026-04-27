@@ -2436,4 +2436,54 @@ the VerseText conversion. Recommended sequence:
 4. Then (re-)approve and run the VerseText conversion plan from
    the previous section.
 
+### Decisions confirmed and module created - 2026-04-26
+
+User approved:
+
+- Module name: `basVerseStructureAudit` ✓
+- Output filename: `rpt/VerseStructureAudit.txt` ✓
+- Standalone-first integration (don't wait on `SUPER_TEST_RUNS`) ✓
+
+`src/basVerseStructureAudit.bas` created. Implements core
+invariants 1-3:
+
+- `Public Sub AuditVerseMarkerStructure(Optional bWriteFile = True)` -
+  entry point.
+- `PopulateCanonical` - hardcodes the 66 canonical book names +
+  chapter counts (mirrors `basTEST_aeBibleCitationClass`; same
+  list, including project's "Solomon" rather than SBL's "Song").
+- Walks Heading 1 paragraphs in the document, matches each to a
+  canonical book ID by case-insensitive name compare, then
+  delegates per-book analysis to `AuditOneBook`.
+- `AuditOneBook` walks Heading 2 paragraphs in the book range,
+  compares count to `ChaptersInBook` (passes/fails per book),
+  then for each chapter calls `CountVerseMarkers` and compares
+  to `aeBibleCitationClass.VersesInChapter(book, ch)`.
+- `CountVerseMarkers` runs `Range.Find` with style filter in a
+  loop, advancing past each match until end-of-chapter.
+- Report format: per-book one-liner with per-chapter detail
+  underneath; final SUMMARY with totals; ISSUES FOUND and
+  MISSING BOOKS sections appended when applicable.
+- Uses `StartTimer` / `EndTimer` from `basStyleInspector` for the
+  expected/actual timing pattern.
+- Output goes to `rpt/VerseStructureAudit.txt` (and Immediate).
+
+Invariants 4-6 (marker pairing, marker text correctness, no
+stray markers in non-verse paragraphs) deferred to a follow-up
+once the core counts are clean. The verse-count mismatch alone
+catches the "messed up markers" regression the audit was
+designed to surface; the deeper invariants are belt-and-suspenders.
+
+### Status
+
+Audit module: **IMPLEMENTED - 2026-04-27** in
+`src/basVerseStructureAudit.bas`. Awaiting first run to verify
+clean results before VerseText conversion is approved.
+
+Recommended invocation:
+
+```vba
+AuditVerseMarkerStructure              ' writes rpt/VerseStructureAudit.txt
+```
+
 ---
