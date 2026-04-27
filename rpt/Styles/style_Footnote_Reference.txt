@@ -1,4 +1,4 @@
-'--- Footnote Reference  (Type=Character, Priority=32) ---
+'--- Footnote Reference  (Type=Character, Priority=31) ---
 .BaseStyle = "Normal text"
 .QuickStyle = True
 .Font.Name = "Carlito"

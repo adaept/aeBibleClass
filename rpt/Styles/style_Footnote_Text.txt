@@ -1,4 +1,4 @@
-'--- Footnote Text  (Type=Paragraph, Priority=33) ---
+'--- Footnote Text  (Type=Paragraph, Priority=32) ---
 .BaseStyle = "Normal"
 .QuickStyle = True
 .Font.Name = "Carlito"

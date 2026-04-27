@@ -37,11 +37,11 @@ Private Sub PromoteApprovedStyles()
                      "BibleIndexEyebrow", "BibleIndex", "Introduction", _
                      "TitleOnePage", _
                      "ListItem", "ListItemBody", "ListItemTab", _
-                     "AuthorBookRefHeader", "AuthorBookRef", _
-                     "TitleOnePage", "CenterSubText", _
+                     "AuthorBookRefHeader", "AuthorBookRef", "CenterSubText", _
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
                      "Footnote Reference", "Footnote Text", "Psalms BOOK", _
+                     "PsalmSuperscription", "Selah", "PsalmAcrostic", _
                      "BodyTextIndent", "BodyTextContinuation", _
                      "BookIntro", _
                      "AppendixTitle", "AppendixBody", _

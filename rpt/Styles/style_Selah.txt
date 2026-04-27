@@ -1,11 +1,11 @@
-'--- EmphasisBlack  (Type=Character, Priority=42) ---
+'--- Selah  (Type=Character, Priority=35) ---
 .BaseStyle = "Default Paragraph Font"
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 9
-.Font.Bold = -1
+.Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
-.Font.SmallCaps = 0
+.Font.SmallCaps = -1
 .Font.AllCaps = 0

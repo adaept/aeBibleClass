@@ -1,4 +1,4 @@
-'--- TitleOnePage  (Type=Paragraph, Priority=23) ---
+'--- TitleOnePage  (Type=Paragraph, Priority=17) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Times New Roman"

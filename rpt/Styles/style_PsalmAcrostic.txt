@@ -1,24 +1,24 @@
-'--- CustomParaAfterH1  (Type=Paragraph, Priority=25) ---
+'--- PsalmAcrostic  (Type=Paragraph, Priority=36) ---
 .BaseStyle = "Normal"
-.QuickStyle = True
-.Font.Name = "Noto Sans"
-.Font.Size = 10
+.QuickStyle = False
+.Font.Name = "Carlito"
+.Font.Size = 9
 .Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
-.Font.SmallCaps = 0
+.Font.SmallCaps = -1
 .Font.AllCaps = 0
-.NextParagraphStyle = "Normal"
-.AutomaticallyUpdate = True
+.NextParagraphStyle = "BodyText"
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
-.ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 62
-.ParagraphFormat.LineSpacing = 10
-.ParagraphFormat.LineSpacingRule = 4
+.ParagraphFormat.SpaceBefore = 3
+.ParagraphFormat.SpaceAfter = 3
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0

@@ -1,4 +1,4 @@
-'--- CenterSubText  (Type=Paragraph, Priority=24) ---
+'--- CenterSubText  (Type=Paragraph, Priority=23) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Liberation Serif"
