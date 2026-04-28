@@ -1,5 +1,5 @@
 '--- Heading 2  (Type=Paragraph, Priority=28) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Noto Sans"
 .Font.Size = 8
@@ -9,18 +9,18 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "Normal"
-.AutomaticallyUpdate = True
+.NextParagraphStyle = "BodyText"
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 12
-.ParagraphFormat.SpaceAfter = 0
+.ParagraphFormat.SpaceAfter = 8
 .ParagraphFormat.LineSpacing = 10
 .ParagraphFormat.LineSpacingRule = 4
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
-.ParagraphFormat.KeepWithNext = -1
+.ParagraphFormat.KeepWithNext = 0
 .ParagraphFormat.PageBreakBefore = 0
 .ParagraphFormat.OutlineLevel = 2

@@ -7,9 +7,14 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #625 -
+' #624 -
+' #623 -
+' #622 -
+' #621 -
 ' #620 -
-' #619 -
-' #618 -
+' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
+' #618 - Add So as search alias - works for Song and Solomon [impr]
 ' #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]
 ' #616 - Space function is changed to space, need normalizer fix [bug]
 ' #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]

@@ -1,4 +1,4 @@
-'--- Words of Jesus  (Type=Character, Priority=44) ---
+'--- Words of Jesus  (Type=Character, Priority=45) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

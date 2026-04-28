@@ -42,6 +42,7 @@ Private Sub PromoteApprovedStyles()
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
                      "Footnote Reference", "Footnote Text", "Psalms BOOK", _
                      "PsalmSuperscription", "Selah", "PsalmAcrostic", _
+                     "SpeakerLabel", _
                      "BodyTextIndent", "BodyTextContinuation", _
                      "BookIntro", _
                      "AppendixTitle", "AppendixBody", _
