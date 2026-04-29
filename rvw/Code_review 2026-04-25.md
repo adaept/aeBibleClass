@@ -2630,6 +2630,38 @@ After this Romans correction the two outstanding items shift:
 
 User-confirmed reading of the source document: the doxology appears in **both** Rom 14 and Rom 16 with "slight differences" between the two copies. Likely an editorial merge from a TR-based source into a WEB-based source. Document-side fix is to delete the doxology from Romans 16 (verses 25-27) — WEB places it only at 14:24-26.
 
+### Final clean state — 2026-04-28
+
+Document-content fixes applied by user between audit runs:
+
+- **Hebrews 7**: missing verse marker repaired in the `.docm`. Chapter now reports 28/28 OK.
+- **Romans 16**: duplicate doxology (16:25-27) deleted from the `.docm`. Chapter now reports 24/24 OK. WEB keeps the doxology only at 14:24-26, which the document already had.
+
+Final audit run:
+
+```
+SUMMARY: 31102 / 31102 verses found, 0 structural issue(s).
+AuditVerseMarkerStructure - actual 66.52 sec
+```
+
+The found total **31,102** matches the KJV / WEB Protestant canon total documented in `basSBL_VerseCountsGenerator.bas:14-21`. All 66 books pass; all 1,189 chapters pass; all per-chapter verse counts match the WEB-aligned source data. The structural-audit baseline is clean.
+
+### Summary of all 2026-04-28 work
+
+| # | Finding | File(s) | Status |
+|---|---|---|---|
+| 1 | Per-book accumulator reset bug | `src/basVerseStructureAudit.bas` | APPLIED + CONFIRMED |
+| 2 | DRY refactor — consume `aeBibleCitationClass.GetCanonicalBookTable` | `src/basVerseStructureAudit.bas` | APPLIED + CONFIRMED |
+| 2.1 | Latent bug exposed: Nahum chapter count `7 → 3` | `src/aeBibleCitationClass.cls:925` | APPLIED + CONFIRMED |
+| 3 | `ToSBLShortForm` "Song of Songs" lookup | `src/aeBibleCitationClass.cls` | DIAGNOSED — no defect reproducible from static analysis; awaiting failing input from user |
+| 4 | Reference rename impact (Solomon → Song of Songs) | various test/md files | INVENTORIED — `basTEST_aeBibleCitationClass.bas:885` and `md/Deterministic Structural Parser.md:83,314` still pending |
+| WEB-1 | OT Hebrew→English versification fixes (2 Sam 18/19, 2 Kgs 11/12, 2 Chr 13/14, 3 John) | `src/basSBL_VerseCountsGenerator.bas` | APPLIED + CONFIRMED |
+| WEB-2 | Romans doxology placement corrected from TR pattern to WEB pattern (14=26, 16=24) | `src/basSBL_VerseCountsGenerator.bas:119` | APPLIED + CONFIRMED |
+| DOC-1 | Hebrews 7 missing verse marker | `.docm` content | RESOLVED by user |
+| DOC-2 | Duplicate doxology at Romans 16:25-27 | `.docm` content | RESOLVED by user |
+
+Audit baseline: **clean — 31,102 / 31,102, 0 issues**.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

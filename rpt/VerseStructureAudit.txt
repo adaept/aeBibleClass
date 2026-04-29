@@ -1,4 +1,4 @@
----- AuditVerseMarkerStructure: 2026-04-28 21:25:31 ----
+---- AuditVerseMarkerStructure: 2026-04-28 21:34:03 ----
 
 66 Heading 1 paragraphs found in 148 sections.
 
@@ -1092,7 +1092,7 @@ Acts                  expected chapters= 28  found= 28  OK
   ch  26: expected verses= 32  found= 32  OK
   ch  27: expected verses= 44  found= 44  OK
   ch  28: expected verses= 31  found= 31  OK
-Romans                expected chapters= 16  found= 16  ISSUES
+Romans                expected chapters= 16  found= 16  OK
   ch   1: expected verses= 32  found= 32  OK
   ch   2: expected verses= 29  found= 29  OK
   ch   3: expected verses= 31  found= 31  OK
@@ -1108,7 +1108,7 @@ Romans                expected chapters= 16  found= 16  ISSUES
   ch  13: expected verses= 14  found= 14  OK
   ch  14: expected verses= 26  found= 26  OK
   ch  15: expected verses= 33  found= 33  OK
-  ch  16: expected verses= 24  found= 27  MISMATCH
+  ch  16: expected verses= 24  found= 24  OK
 1 Corinthians         expected chapters= 16  found= 16  OK
   ch   1: expected verses= 31  found= 31  OK
   ch   2: expected verses= 16  found= 16  OK
@@ -1258,7 +1258,4 @@ Revelation            expected chapters= 22  found= 22  OK
   ch  21: expected verses= 27  found= 27  OK
   ch  22: expected verses= 21  found= 21  OK
 
-ISSUES FOUND:
-  Romans 16: expected verses=24  found=27
-
-SUMMARY: 31105 / 31102 verses found, 1 structural issue(s).
+SUMMARY: 31102 / 31102 verses found, 0 structural issue(s).
