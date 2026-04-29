@@ -2664,6 +2664,134 @@ Audit baseline: **clean — 31,102 / 31,102, 0 issues**.
 
 ---
 
+## 2026-04-29 — Finding 3 closure + new Finding 5 (nav sync)
+
+### Finding 3 — closed
+
+User confirms ribbon navigation works for `"Song"` after the canonical rename: `aeBibleCitationClass.ResolveAlias("Song" | "Song of Songs" | "Solomon")` all return BookID 22, and `ToSBLShortForm` outputs `"Song"` correctly. No defect was reproducible from static analysis on the alleged "lookup error", and live-run confirms the alias path is sound. **CLOSED — 2026-04-29**.
+
+### Finding 5 — first-click navigation sync (NEW)
+
+**Symptom (user reproduction).**
+1. Open the `.docm`. Pick book/chapter/verse in the ribbon. Click **Go**.
+2. The status bar shows that nav happened, but **the cursor (caret) does not land in the document body**.
+3. Pressing **Next Verse** "forces" the cursor into the document — it appears at the expected verse + 1.
+4. Pressing **Next Chapter** *after that workaround* lands at the **wrong position** — somewhere off from the actual chapter H2.
+
+User's own diagnosis: "*Some sync issue similar to the reason the cache was setup.*" That instinct is consistent with what the code shows.
+
+**Code-side context.** Three relevant pieces in `src/aeRibbonClass.cls`:
+
+- `OnGoClick` (`:1054`) → `GoToVerse vsNum` (`:1079`) — fires synchronously from the ribbon button click. Ribbon owns focus when this runs.
+- `GoToVerse` (`:947`) → `GoToVerseByScan chPos, vsNum` (`:976`) — uses the documented three-step pattern (`ScrollIntoView` + `Selection.SetRange`) at `:1032-1033`. Caches `m_currentChapterPos = chPos` (`:965`) for subsequent `GoToVerse` calls in the same chapter.
+- The codebase already has a deferred-navigation pattern: `basRibbonDeferred.UpdateStatusBarDeferred` (`:303`, `:343`, `:678`, `:981`) and `FocusBookDeferred` (Bug #597) — both use `Application.OnTime Now, ...` to let the ribbon click event clear before touching focus or selection. This was introduced specifically because operations done while ribbon focus is still alive get swallowed (Bug 21 — "*ScrollIntoView steals ribbon focus from OnTime context*").
+
+**Hypothesis (honest, not yet verified).**
+
+The first `OnGoClick` runs synchronously from a ribbon-owned event. `Selection.SetRange` writes the document's stored selection but Word does not render the caret until focus actually returns to the document body. The user then doesn't see the cursor, so they press **Next Verse**, which goes through a different code path (`OnNextVerseClick` → `GoToVerse m_currentVerse + 1`) that runs at a later message-pump tick when ribbon focus has cleared — and at that point the caret materialises. The subsequent **Next Chapter** computes a position relative to a `m_currentChapterPos` cache value that was populated in the first (un-rendered) call, before final layout had stabilised — so the H2 search range or the chapterData index may have been against partially-laid-out content, producing an off-by-some position.
+
+This matches three of the existing comments in the source:
+- `:200-201` — "*The first GoTo Book will warm the layout on demand (~12s, once per session)*" — first nav crosses an un-warmed layout boundary.
+- `:284-296` — long block describing the three-step ScrollIntoView+SetRange dance and Bug 19 ("*ScrollIntoView does not move the document cursor*").
+- `:600-608` — "*ScrollIntoView was here, Tab key presses ... were routed through ribbon*" — confirms that when ScrollIntoView fires from a ribbon-focus context, key routing breaks until focus returns to the document.
+
+**Three candidate fixes (no edits applied).**
+
+1. **Force document focus after OnGoClick.** Add `ActiveDocument.ActiveWindow.Activate` (or `Application.ActiveWindow.SetFocus` equivalent) at the end of `GoToVerse` after the ScrollIntoView+SetRange. *Risk:* may re-trigger Bug 21–style focus thrash on the ribbon; could cause keytip handling to lose state.
+2. **Force layout completion before caching positions.** Insert `ActiveDocument.ComputeStatistics(wdStatisticPages)` (or a `DoEvents` loop) before `m_currentChapterPos = chPos` so the cached position reflects post-layout coordinates. *Risk:* adds latency to first nav; doesn't fix the caret-not-visible part.
+3. **Defer the actual navigation via `Application.OnTime`** — mirrors the existing `FocusBookDeferred` / `UpdateStatusBarDeferred` pattern. `OnGoClick` would set `m_pendingVerse = vsNum` and schedule a `GoToVerseDeferred` routine; the deferred routine runs after the ribbon click event clears, when the document has focus and layout has settled. The `m_pendingVerse` plumbing already exists at `:48` and `:1127-1132` — partly stubbed out as a no-op (`'navigation trigger moved to OnGoClick (#600); m_pendingVerse is never set so this is a permanent no-op'`) but the structure is there to revive.
+
+**Recommendation.** Option 3 is the most consistent with this codebase's existing patterns (all the other ribbon → document operations that touched focus or layout were eventually deferred for the same reason). It's also the lowest-risk: `Application.OnTime Now` was already proven safe by `UpdateStatusBarDeferred` and `FocusBookDeferred`. Option 1 alone won't solve the cached-position drift in step 4; option 2 alone won't solve the caret-not-visible in step 2. Option 3 plausibly addresses both, by running `GoToVerseByScan` at a tick when focus and layout are both settled.
+
+**Before editing, I'd like to confirm:**
+
+1. Repro is the **first nav after document open**, every time? Or only on some books/chapters?
+2. Does it also happen if the user clicks somewhere in the document body **first** (giving the doc focus), and then uses ribbon Go?
+3. After step 4 (off-by-some chapter position), is the offset always in the same direction, or does it vary?
+
+The answer to (2) in particular discriminates between the focus hypothesis and the layout-cache hypothesis. If clicking in the document first makes the bug go away, it's pure focus (option 1 alone might be enough). If it persists even with prior document focus, it's layout-sync (option 3 is needed).
+
+**Status:** DIAGNOSIS — awaiting reproduction details and direction on which option to pursue.
+
+### Finding 5 — reproduction confirmed (2026-04-29)
+
+User-confirmed reproduction details:
+
+1. **When the cursor is already in the `.docx` body, ribbon Go places the caret correctly.** → confirms the failure is a **focus issue**, not a layout-cache issue. Selection mutations from ribbon-owned event handlers don't render a caret because Word only paints the I-beam when the document body owns focus.
+
+2. **Entering a chapter number, then pressing Tab Tab quickly, sends the Tabs into the document body** (two tab characters typed). → confirms a **focus race**: the chapter `editBox` releases focus immediately on commit (or on the first Tab) and the second Tab is routed to the document instead of advancing within the ribbon to the verse field.
+
+These two together rule out the layout/cache hypothesis as primary. It is purely a focus-handoff problem. The chapter-position drift on the *next* nav (the original step 4) is then explained as a consequence of the first nav running while focus was still on the ribbon — `Selection.SetRange` updates the stored selection but `ActiveWindow.ScrollIntoView` does not move the rendered viewport in the same way it would with document focus, leaving subsequent position computations against a partially-positioned view.
+
+### Finding 5 — refined recommendation
+
+Two-part fix, both small:
+
+**A. Force document focus at the end of `GoToVerse`.** After the existing `ScrollIntoView` + `SetRange` (`aeRibbonClass.cls:1032-1033`), add a single line that transfers focus from the ribbon to the document body:
+
+```vba
+ActiveDocument.ActiveWindow.Activate
+```
+
+This is the canonical Word-API call for "give focus to this document window" and is what the codebase already uses elsewhere for window activation. It runs at the end of the navigation, so it doesn't disturb the ScrollIntoView/SetRange ordering.
+
+**B. Defer the entire `GoToVerse` call from `OnGoClick` via `Application.OnTime`** — mirrors `FocusBookDeferred` (Bug #597) and `UpdateStatusBarDeferred`. The `m_pendingVerse` plumbing at `aeRibbonClass.cls:48` and `:1127-1132` is already in place but stubbed; reviving it means `OnGoClick` sets `m_pendingVerse = vsNum` and schedules `basRibbonDeferred.GoToVerseDeferred` (a new short routine that calls `ExecutePendingVerse`) via `Application.OnTime Now, ...`. By the time the deferred routine fires, the ribbon click event has cleared and focus naturally returns to the document body before navigation runs.
+
+**Why both, not one or the other:** (A) alone fixes the caret-not-visible symptom but does not fix the Tab Tab → document race, because that race occurs *before* OnGoClick runs at all (it's between editBox commits and the next Tab). (B) alone fixes the caret-not-visible symptom *and* sidesteps the Tab race for Go, but does not protect against any future ribbon → document operation that hasn't been ported to the deferred pattern yet. Together they form belt-and-suspenders: (B) makes nav focus-safe by construction, and (A) is a defensive activation at the end so any path into `GoToVerse` (including direct calls from Prev/Next Verse buttons) ends with the document holding focus.
+
+**The Tab Tab race in step (2)** is a separate ribbon XML / control-type problem and is *not* fixed by either A or B. It needs the chapter `editBox` to either (i) not release focus until explicit commit, or (ii) the next ribbon control (verse `editBox`) needs to be the natural Tab target. That's a customUI14 schema concern, not a VBA fix. I'd suggest treating it as a separate ticket — flagging it now in this review for follow-up rather than mixing it into the same fix.
+
+**Recommendation:** apply A first as a one-line, low-risk defensive fix and re-test. If symptom (1) clears with just A, leave B for later; if any residual focus issues remain, layer B on top. This way each change can be evaluated independently — consistent with the project's one-fix-at-a-time review pattern.
+
+**Status:** AWAITING APPROVAL — propose to apply (A) only as the first step.
+
+### Finding 5 — fix (A) applied 2026-04-29
+
+`src/aeRibbonClass.cls` `GoToVerseByScan` — added `ActiveDocument.ActiveWindow.Activate` immediately after `Selection.SetRange`, before the `ScreenUpdating = True` that ends the navigation block. Three-line addition (one statement + two-line comment).
+
+```vba
+ActiveWindow.ScrollIntoView rVsView, True
+Selection.SetRange Start:=r.Start, End:=r.Start
+' Transfer focus from the ribbon to the document body so Word
+' renders the caret. Without this the Selection is updated but
+' the I-beam stays invisible until another action moves focus.
+ActiveDocument.ActiveWindow.Activate
+Application.ScreenUpdating = True
+```
+
+Why placed inside `GoToVerseByScan` and not in `OnGoClick`: every navigation path through the class — `OnGoClick`, Prev/Next Verse buttons, Prev/Next Chapter buttons, `ExecutePendingVerse` — funnels to `GoToVerse` and from there to `GoToVerseByScan`. Activating at the deepest common point ensures all entry points end with the document holding focus, without duplicating the call.
+
+Test path:
+1. Open the `.docm` (don't click in the document).
+2. Pick book/chapter/verse in the ribbon. Click Go.
+3. Caret should now appear at the target verse without needing a Next-Verse "force" press.
+4. Press Next Chapter — should land at the correct H2 (no off-by-some).
+
+If symptoms persist, layer fix (B) on top. The Tab Tab → document race in step (2) of the original repro remains a separate ribbon-XML ticket.
+
+**Status:** APPLIED — awaiting test result.
+
+### Finding 5 — test result and closure note (2026-04-29)
+
+User-confirmed test outcomes:
+
+1. `ge` Tab `5` Tab Go → caret lands in the document at the correct position. **Fix (A) resolves the primary symptom.**
+2. `ge` Tab `5`, wait 5 s, Tab → Tab character types into the document body. **Tab race persists** — chapter `editBox` releases focus before the next Tab is processed, so the Tab is routed to the document. This is the customUI XML focus-handoff limitation, not a `GoToVerseByScan` issue.
+3. Next-button → Exodus, Tab `5` Tab `3` Tab Go → search works. Confirms the chained nav path is sound once focus stays inside the ribbon long enough for each field commit.
+
+**Constraints documented for the Tab race (separate item, not fixed by (A)):**
+
+Word's customUI14 schema does **not** expose a public API to programmatically set focus on a specific ribbon control. `IRibbonUI` has `Invalidate`, `InvalidateControl`, `ActivateTab`, `ActivateTabMso` — and nothing for `SetFocus(controlId)`. Tab routing within the ribbon is platform-controlled; on `editBox` commit Word returns focus to the document by design. The race is therefore a Word limitation, not a project defect.
+
+Available paths if/when the Tab race is prioritised:
+- **KeyTips (already wired):** `KT_BOOK / KT_CHAPTER / KT_VERSE / KT_GO` constants exist in `basUIStrings`. `Alt + <keytip>` is the canonical Office UX for cross-control jumps and bypasses Tab entirely. Documentation update only — no code change.
+- **Auto-fire Go on valid chapter+verse:** condition the existing `OnChapterChanged` / `OnVerseChanged` handlers to invoke `OnGoClick` once both fields validate. Removes the need for the final Tab → Go step. Tradeoff: nav fires before user expects it.
+- **VSTO / WPF ribbon rewrite:** would allow a true Tab focus chain. Major rewrite; deferred indefinitely.
+
+**Status:** **OPEN** — fix (A) resolved primary symptom (caret-not-visible). Tab race tracked as a separate item; Finding 5 stays open as the umbrella ticket until the residual is addressed or explicitly closed as won't-fix.
+
+---
+
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
 
 ### Decision

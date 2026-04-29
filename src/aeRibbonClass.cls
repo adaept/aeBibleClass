@@ -1031,6 +1031,10 @@ Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
             Set rVsView = ActiveDocument.Range(r.Start, ActiveDocument.Content.End)
             ActiveWindow.ScrollIntoView rVsView, True
             Selection.SetRange Start:=r.Start, End:=r.Start
+            ' Transfer focus from the ribbon to the document body so Word
+            ' renders the caret. Without this the Selection is updated but
+            ' the I-beam stays invisible until another action moves focus.
+            ActiveDocument.ActiveWindow.Activate
             Application.ScreenUpdating = True
             Exit Do
         End If
