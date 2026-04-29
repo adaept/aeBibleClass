@@ -66,9 +66,20 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
     Dim i As Long
     Dim bookEndPos As Long
     Dim docEnd As Long
+    Dim foundChapters As Long
+    Dim chapterReport As String
+    Dim bookIssues As Long
+    Dim bookIssueDetail As String
     docEnd = oDoc.Content.End
 
     For i = 1 To nH1
+        ' Reset per-book accumulators (VBA Dim-in-loop is procedure-scoped,
+        ' so these would otherwise leak across iterations).
+        chapterReport = vbNullString
+        bookIssues = 0
+        bookIssueDetail = vbNullString
+        foundChapters = 0
+
         If i < nH1 Then
             bookEndPos = h1Starts(i + 1) - 1
         Else
@@ -90,11 +101,6 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
             seenBookID(BookID) = True
             Dim expectedChapters As Long
             expectedChapters = canonChapters(BookID)
-
-            Dim foundChapters As Long
-            Dim chapterReport As String
-            Dim bookIssues As Long
-            Dim bookIssueDetail As String
 
             AuditOneBook oDoc, h1Starts(i), bookEndPos, canonNames(BookID), _
                           expectedChapters, foundChapters, chapterReport, _

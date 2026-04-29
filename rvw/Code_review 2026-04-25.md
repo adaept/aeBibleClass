@@ -2575,3 +2575,76 @@ A grep for `Solomon` / `Song of Songs` shows the rename touches more than just `
 Awaiting go/no-go on each fix in order.
 
 ---
+
+## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
+
+### Decision
+
+The project source text is based on the **World English Bible Protestant Edition** (WEB), per [eBible.org](https://ebible.org/web/):
+
+> "This is the World English Bible Protestant Edition... It contains only the 66 books of the Old and New Testaments."
+
+WEB versification matches the standard English Protestant tradition (KJV / ASV / NASB / ESV / NIV). All verse-count source data must therefore reflect English Protestant numbering, not Masoretic / Hebrew numbering. The project intent was already documented in `src/basSBL_VerseCountsGenerator.bas:14-21` ("66-book Protestant canon used by KJV, NIV ... 31,102 verses (KJV)"); some chapter pairs had silently drifted to Hebrew versification.
+
+### Audit-found discrepancies — diagnosis
+
+After applying Finding 1 (per-book accumulator reset), the audit reported nine chapter mismatches. Reclassified by root cause:
+
+**(A) Source-data bugs (verse-count table is wrong; document is correct).** Hebrew/Masoretic numbering inadvertently used:
+
+| Book / chapter | Current data | Should be (WEB) | Note |
+|---|---|---|---|
+| 2 Samuel 18 | 32 | 33 | Hebrew 19:1 ("O my son Absalom...") = English 18:33 |
+| 2 Samuel 19 | 44 | 43 | Compensating split |
+| 2 Kings 11 | 20 | 21 | Hebrew 12:1 = English 11:21 |
+| 2 Kings 12 | 22 | 21 | Compensating split |
+| 2 Chronicles 13 | 23 | 22 | Hebrew 14:1 = English 13:23 |
+| 2 Chronicles 14 | 14 | 15 | Compensating split |
+| 3 John | 15 | 14 | Some Greek editions split v.14 into 14+15; WEB does not |
+
+**(B) Document content bugs (verse-count table is correct; document is wrong).** No data fix needed; flagged for separate document repair:
+
+| Book / chapter | Expected (WEB) | Found in doc | Likely cause |
+|---|---|---|---|
+| Romans 14 | 23 | 26 | Document apparently includes a 14:24-26 doxology that WEB places at 16:25-27. |
+| Hebrews 7 | 28 | 27 | Document is missing one verse marker. |
+
+**(C) Pre-existing document issue, unrelated to versification.** Flagged earlier:
+
+| Book / chapter | Note |
+|---|---|
+| Joshua 23 = 49 found vs 16 expected; book short one chapter | Likely a missing Heading 2 break causing chapter 23/24 to merge. |
+| H1 "SONG OF SONGS" unrecognised | Audit module's local `PopulateCanonical` still has `"Solomon"`; resolved by Finding 2 DRY refactor. |
+
+### Source citations for the data fix
+
+- **WEB (World English Bible)** — eBible.org Protestant Edition: <https://ebible.org/web/>.
+- **KJV reference totals**: 1,189 chapters / 31,102 verses across 66 books — already documented in `basSBL_VerseCountsGenerator.bas:14-21`.
+- **Hebrew vs English split at 2 Sam 18/19, 2 Kgs 11/12, 2 Chr 13/14** — well-known one-verse Masoretic boundary shifts; cross-checked against KJV, NIV, ESV, and the WEB text on eBible.org.
+- **3 John verse total (14)** — WEB and KJV both end at v.14; the v.15 split appears in some Greek critical editions (NA28) but is not used in WEB.
+
+### Status
+
+- Data fix for table (A) entries: **APPLIED — 2026-04-28** to `src/basSBL_VerseCountsGenerator.bas`.
+- Document content fixes for (B) entries: **deferred** — these are .docm content edits, not code edits.
+- Joshua 23 / chapter-break loss: **deferred** — also a document content fix.
+
+### Applied diff summary — `src/basSBL_VerseCountsGenerator.bas`
+
+Four `d.Add` lines edited; seven array values changed; net total verse delta = −1 (3 John).
+
+| Line | Book | Chapter(s) | Before | After | Source |
+|---|---|---|---|---|---|
+| 83 | 2 Samuel | 18 | 32 | **33** | WEB / KJV — Hebrew 19:1 = English 18:33 |
+| 83 | 2 Samuel | 19 | 44 | **43** | WEB / KJV — compensating split |
+| 85 | 2 Kings  | 11 | 20 | **21** | WEB / KJV — Hebrew 12:1 = English 11:21 |
+| 85 | 2 Kings  | 12 | 22 | **21** | WEB / KJV — compensating split |
+| 87 | 2 Chronicles | 13 | 23 | **22** | WEB / KJV — Hebrew 14:1 = English 13:23 |
+| 87 | 2 Chronicles | 14 | 14 | **15** | WEB / KJV — compensating split |
+| 138 | 3 John | (single) | 15 | **14** | WEB ends at v.14; v.15 split is critical-edition-only |
+
+Reference: <https://ebible.org/web/> (World English Bible, Protestant Edition).
+
+Re-run `AuditVerseMarkerStructure` to confirm the (A) mismatches drop and only the (B) document-content items and the Joshua 23 break remain.
+
+---
