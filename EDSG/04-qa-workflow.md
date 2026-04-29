@@ -86,6 +86,13 @@ QA checklist for the table. Four checks:
 `DumpAllApprovedStyles` does it in bulk. Documented exceptions are
 recorded inline in [01-styles](01-styles.md).
 
+> **⚑ Final-state goal:** `RUN_TAXONOMY_STYLES` should ultimately map
+> *every* approved style with a real (non-sentinel) expected spec, so
+> any property drift on any approved style is caught immediately. The
+> current 19-entry curated subset is transitional. See
+> [01-styles § ⚑ Important — taxonomy audit final-state goal](01-styles.md#-important--taxonomy-audit-final-state-goal)
+> for the full callout and progress framing.
+
 ## Current state — 2026-04-26 (latest)
 
 - **Latest run**: `DumpAllApprovedStyles` reports **43

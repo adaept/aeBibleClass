@@ -2868,6 +2868,27 @@ Validated 1–36 table unchanged — `SpeakerLabel` correctly belongs in the pen
 
 **Status:** all three sub-items APPLIED — 2026-04-29.
 
+> **Important — taxonomy audit final-state goal**
+>
+> The current 19-entry curated audit is a *transitional* state, not the
+> destination. The final-state resolution is for `RUN_TAXONOMY_STYLES`
+> to map **every approved style** with a real (non-sentinel) expected
+> spec, so that any property drift on any approved style is caught
+> immediately. Promoted-but-unaudited styles like `SpeakerLabel` today
+> are temporarily off-radar for property drift — `DumpAllApprovedStyles`
+> only confirms existence and priority, not font / size / alignment /
+> indents / line-spacing / spacing-before-after.
+>
+> **This should have a prominent place in the EDSG** so the goal is
+> visible to anyone reading the style taxonomy page, and so progress
+> can be tracked: each move from bucket 2 (existence-verified, full
+> spec pending) into bucket 1 (fully specified) is a measurable step
+> toward full drift coverage.
+>
+> Action: add a top-level callout in `EDSG/01-styles.md` and link it
+> from `EDSG/04-qa-workflow.md` so both QA-first and styles-first
+> readers see the goal.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

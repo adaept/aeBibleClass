@@ -8,6 +8,24 @@ authority lives in:
   and membership.
 - **`RUN_TAXONOMY_STYLES`** — expected property values for QA.
 
+> ## ⚑ Important — taxonomy audit final-state goal
+>
+> The current `RUN_TAXONOMY_STYLES` covers a curated 19-style subset
+> (2 fully specified + 14 existence-verified + 3 not-yet-created).
+> **This is a transitional state, not the destination.** The
+> final-state resolution is for the audit to map **every approved
+> style** with a real (non-sentinel) expected spec, so that any
+> property drift on any approved style is caught immediately.
+>
+> Promoted-but-unaudited styles (e.g. `SpeakerLabel` as of
+> 2026-04-29) are temporarily off-radar for property drift —
+> `DumpAllApprovedStyles` only confirms existence and priority, not
+> font / size / alignment / indents / line-spacing / spacing.
+>
+> Each move from bucket 2 (existence-verified, full spec pending)
+> into bucket 1 (fully specified) is a measurable step toward full
+> drift coverage. Track progress here as the page walk continues.
+
 Status: WIP. The page walk has validated priorities 1–36; positions
 **37 and beyond are still pending re-validation** as the walk
 continues. The array's order through priority 36 reflects book
