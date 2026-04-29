@@ -12,7 +12,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #623 -
 ' #622 -
 ' #621 -
-' #620 -
+' #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
 ' #618 - Add So as search alias - works for Song and Solomon [impr]
 ' #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]

@@ -835,7 +835,6 @@ Private Function LexicalScan(ByVal normalizedInput As String) As LexTokens
     LexicalScan = t
 End Function
 
-
 Public Function IsValidSBLAlias(BookID As Long, aliasText As String) As Boolean
     Dim canonical As String
     Dim books As Object
@@ -911,7 +910,7 @@ Public Function GetCanonicalBookTable() As Object
         books.Add 19, Array(19, "Psalms", 150)
         books.Add 20, Array(20, "Proverbs", 31)
         books.Add 21, Array(21, "Ecclesiastes", 12)
-        books.Add 22, Array(22, "Solomon", 8)   ' Canonical display name for this project. SBL output abbreviation is "Song" (see ToSBLShortForm Case 22).
+        books.Add 22, Array(22, "Song of Songs", 8)   ' SBL output abbreviation is "Song" (see ToSBLShortForm Case 22).
         books.Add 23, Array(23, "Isaiah", 66)
         books.Add 24, Array(24, "Jeremiah", 52)
         books.Add 25, Array(25, "Lamentations", 5)
@@ -988,7 +987,7 @@ Public Function GetSBLCanonicalBookTable() As Object
         sbl.Add 19, "PSALMS"
         sbl.Add 20, "PROVERBS"
         sbl.Add 21, "ECCLESIASTES"
-        sbl.Add 22, "SOLOMON"   ' Project canonical; SBL standard abbreviation is "Song" (output via ToSBLShortForm)
+        sbl.Add 22, "SONG OF SONGS"   ' SBL standard abbreviation is "Song" (output via ToSBLShortForm)
         sbl.Add 23, "ISAIAH"
         sbl.Add 24, "JEREMIAH"
         sbl.Add 25, "LAMENTATIONS"
@@ -1470,14 +1469,19 @@ Public Function GetBookAliasMap() As Object
         aliasMap.Add "ECCL", 21
         aliasMap.Add "ECC", 21
         aliasMap.Add "EC", 21
-        ' Solomon (canonical display name for this project; SBL output abbreviation is "Song")
+        ' Song of Songs, aka Song of Solomon (SBL output abbreviation is "Song")
         ' Accepts "Song" and variants as input aliases so SBL-typed citations resolve correctly.
+        aliasMap.Add "SONG OF SONGS", 22
+        aliasMap.Add "SONG", 22
+        aliasMap.Add "SON", 22
+        aliasMap.Add "SG", 22
         aliasMap.Add "SOLOMON", 22
         aliasMap.Add "SOLO", 22
         aliasMap.Add "SOL", 22
         aliasMap.Add "SO", 22
-        aliasMap.Add "SONG", 22
-        aliasMap.Add "SG", 22
+        aliasMap.Add "CANTICLES", 22
+        aliasMap.Add "CANT", 22
+        aliasMap.Add "CAN", 22
         ' Isaiah
         aliasMap.Add "ISAIAH", 23
         aliasMap.Add "ISA", 23
@@ -2845,6 +2849,7 @@ Public Function ToSBLShortForm(ByVal canon As String) As String
     Dim lastSp As Long
     Dim k As Long
     For k = Len(canon) To 1 Step -1
+        Debug.Print "> " & Mid$(canon, k, 1)
         If Mid$(canon, k, 1) = " " Then lastSp = k: Exit For
     Next k
     If lastSp = 0 Then ToSBLShortForm = canon: GoTo PROC_EXIT
@@ -3009,7 +3014,6 @@ AliasFail:
     Resume NextAlias
 End Sub
 
-
 Private Function ParseReferenceStub(ByVal inputText As String) As ParsedReference
     On Error GoTo PROC_ERR
     Dim p As ParsedReference
@@ -3059,7 +3063,6 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ParseReferenceStub of Class aeBibleCitationClass"
     Resume PROC_EXIT
 End Function
-
 
 Public Sub Test_SemanticFlow_WithParserStub()
     On Error GoTo PROC_ERR
@@ -3181,7 +3184,6 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-
 Public Sub Test_SemanticFlow_WithParserStub_Negative()
     On Error GoTo PROC_ERR
     ResetBookAliasMap
@@ -3280,7 +3282,6 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-
 Public Sub Test_Stage2_LexicalScan()
     Debug.Print "------------------------------------------"
     Debug.Print " Test_Stage2_LexicalScan"
@@ -3297,7 +3298,6 @@ Public Sub Test_Stage2_LexicalScan()
     aeAssert.AssertEqual 8, t.Num1, "Number parsed"
     aeAssert.AssertTrue Not t.HasColon, "No colon detected"
 End Sub
-
 
 Public Sub Test_Stage3_ResolveAlias()
     Debug.Print "------------------------------------------"
@@ -3317,7 +3317,6 @@ Public Sub Test_Stage3_ResolveAlias()
     aeAssert.AssertEqual 1, BookID, "Genesis BookID"
     aeAssert.AssertEqual "Genesis", canonical, "Genesis canonical"
 End Sub
-
 
 Public Sub Test_Stage4_InterpretStructure()
     Debug.Print "------------------------------------------"
@@ -3370,7 +3369,6 @@ Public Sub Test_Stage4_InterpretStructure()
     aeAssert.AssertEqual "3-5,9", ref.VerseSpec, "Matthew mixed verse spec interpreted"
 End Sub
 
-
 Private Sub PrintScriptureList(list As ScriptureList)
     On Error GoTo PROC_ERR
     Dim i As Long
@@ -3399,7 +3397,6 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure PrintScriptureList of Class aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub
-
 
 Public Sub Test_Stage8_ListDetection()
     Debug.Print "------------------------------------------"
@@ -3439,7 +3436,6 @@ Public Sub Test_Stage8_ListDetection()
     aeAssert.AssertTrue t.IsList, "whitespace tolerated"
     aeAssert.AssertEqual 2, UBound(t.Segments), "whitespace segment Count"
 End Sub
-
 
 Public Sub Test_Stage9_RangeDetection()
     Debug.Print "------------------------------------------"
@@ -3485,7 +3481,6 @@ Public Sub Test_Stage9_RangeDetection()
     r = RangeDetection("John 3:16")
     aeAssert.AssertFalse r.IsRange, "single reference not range"
 End Sub
-
 
 Public Sub Test_Stage10_RangeComposition()
     Debug.Print "------------------------------------------"
