@@ -2950,6 +2950,30 @@ Following edits applied as a single batch under the descriptive-spec decision:
 
 **Status:** APPLIED — 2026-04-29.
 
+### Post-application audit run (2026-04-29)
+
+`RUN_TAXONOMY_STYLES`: **14 PASS  5 FAIL → rpt\StyleTaxonomyAudit.txt** (was 13 PASS  6 FAIL prior to this batch — net −1 FAIL, +1 PASS, exactly as predicted).
+
+All seven promoted styles PASS with their new descriptive specs. `Footnote Reference` (newly added to bucket 2) also PASS. `Lamentation` removed (was a pre-existing FAIL).
+
+#### FAIL breakdown
+
+| # | Style | Reason | Note |
+|---|---|---|---|
+| 1 | `BookIntro` | NOT FOUND in document | Pre-existing missing-tracker entry; style listed in approved array but not defined |
+| 2 | `ListItem` | `Indent: expected 0 got -18` | **Pre-existing spec drift** — not introduced by today's changes |
+| 3 | `BodyTextContinuation` | NOT FOUND | Bucket 3 — expected FAIL until Define routine runs |
+| 4 | `AppendixTitle` | NOT FOUND | Bucket 3 — expected FAIL |
+| 5 | `AppendixBody` | NOT FOUND | Bucket 3 — expected FAIL |
+
+#### `ListItem` indent — leave-as-is (decision 2026-04-29)
+
+Live document has `FirstLineIndent = -18` (hanging indent ~0.25 inch); audit's existing partial spec expects `0`. Two-way descriptive/prescriptive call left open: encoding `-18` would make this PASS by capturing current state; encoding `0` (current) keeps the FAIL as a work item if the live value is considered wrong. **Decision: leave as-is.** The FAIL is already serving as a tracked indicator, and a future task (separately defined) impacts this resolution path. Re-evaluate when that task lands.
+
+This kind of partial-spec FAIL is exactly the case the deferred *prescriptive-spec pass* (recorded above) is designed to handle — each item gets a deliberate descriptive-vs-prescriptive call with rationale. `ListItem` is now an explicit member of that follow-up's input set.
+
+**Status:** baseline established at 14/5; deferred items unchanged.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
