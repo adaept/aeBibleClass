@@ -224,9 +224,14 @@ End Function
 '   Audits the 19 approved-array taxonomy styles against their expected
 '   configuration and writes a structured report to rpt\StyleTaxonomyAudit.txt.
 '   Buckets:
-'     2 fully specified (all 7 properties verified) - BodyText, BodyTextIndent
-'     14 existence-verified (full spec pending)
-'     3 not yet created (expected FAIL until each Define* routine runs)
+'      9 fully specified (all properties verified) - BodyText, BodyTextIndent,
+'                            Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
+'                            Brief, Psalms BOOK, Footnote Text
+'      7 existence-verified (full spec pending)
+'      3 not yet created (expected FAIL until each Define* routine runs)
+'   Specs encoded as descriptive (capture current document state); see
+'   rvw/Code_review 2026-04-25.md "Spec promotion: descriptive vs prescriptive"
+'   for the decision and rationale.
 '
 ' DESIGN:
 '   AuditOneStyle (Private) checks up to 7 properties per style. Sentinel
@@ -259,31 +264,33 @@ Public Sub RUN_TAXONOMY_STYLES()
     Print #m_TaxFile, "Document: " & ActiveDocument.Name
     Print #m_TaxFile, String(72, "=")
 
-    ' -- Fully specified styles (all 7 properties verified) -----------------------------------
+    ' -- Fully specified styles (all properties verified) -----------------------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Fully specified (all properties verified) --"
-    '                               Font        Sz  Align  Indent  LineRule  LineSp  SpB   SpA
-    '                                           0=skip -1=skip -999=skip
+    '                                   Font          Sz  Align  Indent  LineRule  LineSp  SpB   SpA
+    '                                                 0=skip -1=skip -999=skip
     AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0
     AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0
+    AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0
+    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 4, 10, 12, 8
+    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62
+    AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0
+    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 4, 9.5, 0, 0
+    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 14.4, 4, 10, 10, 0
+    AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0
 
     ' -- Existence verified; full spec pending -------------------------------------------------
+    ' Footnote Reference (Character style) parked here until AuditOneStyle is
+    ' extended to check character-style Bold / Italic / Color (deferred follow-up).
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
-    AuditOneStyle "Heading 1", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Heading 2", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "CustomParaAfterH1", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "DatAuthRef", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
-    AuditOneStyle "Brief", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Psalms BOOK", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Lamentation", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "ListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
     AuditOneStyle "ListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Footnote Text", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Footnote Reference", "Carlito", 9, -1, -999, -1, -999, -999, -999
 
     ' -- Not yet created - expected FAIL until each Define* routine is run ----------------------
     Print #m_TaxFile, ""

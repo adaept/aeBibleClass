@@ -2891,6 +2891,67 @@ Validated 1–36 table unchanged — `SpeakerLabel` correctly belongs in the pen
 
 ---
 
+## 2026-04-29 — Spec promotion: descriptive vs prescriptive (decision)
+
+User asked to promote eight styles from bucket 2 (existence-verified) to bucket 1 (fully specified) in `RUN_TAXONOMY_STYLES`, plus remove `Lamentation` and add `Footnote Reference`. Before encoding values, the question of *what* to encode arose.
+
+### Two ways to set audit "expected" values
+
+**Descriptive spec — capture what's there.** Read the live values from `rpt/Styles/style_*.txt` and encode them as expected. The audit then acts as a *drift detector*: alerts only when the style changes from its current state. Pro: passes immediately, captures today's state, no false negatives. Con: blesses any current-but-wrong values silently — if today's `Brief` style has `LineSpacingRule = Exactly` while the EDSG QA checklist says it should be Single, a descriptive audit codifies the wrong value as canonical.
+
+**Prescriptive spec — capture what it should be.** Encode values that represent the design intent regardless of current state. The audit then acts as a *correction driver*: fails until the document agrees with the spec. Pro: turns the audit into a tracked to-do list closing one item at a time. Con: starts with FAILs as the normal state, "PASS count" is no longer a meaningful health metric until the corrections land.
+
+### Concrete divergences observed in the eight dumped styles
+
+The QA-checklist properties (`BaseStyle`, `AutomaticallyUpdate`, `QuickStyle`) aren't checked by `AuditOneStyle` — they're tracked separately. But several styles have `LineSpacingRule = 4 (Exactly)` against the QA-checklist preference of `0 (Single)` for paragraph styles, and `LineSpacingRule` *is* an `AuditOneStyle` arg. Notable cases: `Heading 2`, `CustomParaAfterH1`, `Brief`, `Psalms BOOK`, `Footnote Text`. Each of these would be a candidate for a prescriptive override (encode `0` instead of `4` and treat the resulting FAIL as a tracked correction item).
+
+### Decision — path (a), purely descriptive (2026-04-29)
+
+Path (a) chosen as the safer first move. Reasoning:
+
+- The audit gets a known baseline immediately. PASS count is meaningful from day one as drift detection.
+- Path (b)'s prescriptive overrides are a separate, deliberate exercise — one property at a time, each tracked as its own review item with rationale recorded. Folding them into the bucket-1 promotion would conflate two different decisions.
+- Locking in today's values doesn't preclude prescriptive correction later — it just sets the *floor*. When ready to drive a correction (e.g. "all paragraph styles → `LineSpacingRule = Single` per QA checklist"), the audit's expected value is updated and the FAIL becomes the tracking signal.
+
+Path (b) remains a viable next step. Tracked as a deferred work item: any style where the descriptive value is known to violate the EDSG QA checklist is a future prescriptive-override candidate.
+
+### Footnote Reference — deferred to bucket 2 (Q2 decision)
+
+`AuditOneStyle` only inspects font + paragraph-format properties. On a Character style (which Footnote Reference is), only Font.Name and Font.Size apply; Bold, Italic, Color are not audited. Promoting to bucket 1 today would be misleading — the "fully specified" label would mean only "every audit-able property" is set, which is just two properties out of the styled-character surface.
+
+Decision: leave `Footnote Reference` in bucket 2 with sentinels for now, and **track as a follow-up** the work to extend `AuditOneStyle` to check Bold / Italic / Color so character-styles can be truly fully specified. Once that audit extension lands, `Footnote Reference` (and any other character style) can graduate into bucket 1 honestly.
+
+### Source-code application — applied 2026-04-29
+
+Following edits applied as a single batch under the descriptive-spec decision:
+
+**`src/basTEST_aeBibleConfig.bas`:**
+- PURPOSE comment block updated: bucket counts `2 + 14 + 3` → `9 + 7 + 3`; added explicit listing of bucket-1 members; cross-reference to this review's decision section.
+- 7 `AuditOneStyle` calls promoted from bucket 2 to bucket 1 with descriptive specs read from `rpt/Styles/style_*.txt`:
+  - `Heading 1`        — `"Noto Sans", 24, 1, 0,    0, 12, 144,  0`
+  - `Heading 2`        — `"Noto Sans",  8, 1, 0,    4, 10,  12,  8`
+  - `CustomParaAfterH1`— `"Noto Sans", 10, 1, 0,    4, 10,   0, 62`
+  - `DatAuthRef`       — `"Noto Sans",  8, 1, 0,    0, 12,  11,  0`
+  - `Brief`            — `"Noto Sans", 10, 1, 0,    4,  9.5, 0,  0`
+  - `Psalms BOOK`      — `"Carlito",    9, 0, 14.4, 4, 10,  10,  0`
+  - `Footnote Text`    — `"Carlito",    7, 3, 0,    4,  8,   0,  0`
+- `Lamentation` line deleted (style was removed from approved array on 2026-04-26 per `EDSG/01-styles.md`).
+- `Footnote Reference` added as a new bucket-2 entry with font + size descriptive (`"Carlito", 9`) and remaining args sentinel — parked here pending the deferred follow-up.
+
+**`EDSG/01-styles.md`:**
+- "Important — taxonomy audit final-state goal" callout updated: bucket counts `2 + 14 + 3` → `9 + 7 + 3`; "Progress so far" sub-list added with the 2026-04-29 promotions, the Lamentation removal, the Footnote Reference parking, and the descriptive-spec decision cross-reference.
+
+**Total audit count unchanged at 19** (Lamentation out, Footnote Reference in cancels). Bucket distribution: bucket 1 grew from 2 to 9, bucket 2 shrank from 14 to 7, bucket 3 unchanged at 3.
+
+### Deferred follow-up tasks (next refinement level)
+
+1. **Extend `AuditOneStyle` to check character-style properties** (Bold, Italic, Color). Once landed, `Footnote Reference` (and any future character style) can graduate from bucket 2 to bucket 1 honestly. Captured in this review as the unblocker for the rest of the character-style audit coverage.
+2. **Prescriptive-spec pass.** A separate, deliberate exercise: identify each style where the descriptive value violates the EDSG QA checklist (notable candidates today: `Heading 2 / CustomParaAfterH1 / Brief / Psalms BOOK / Footnote Text` all have `LineSpacingRule = 4 (Exactly)` against the checklist preference of `0 (Single)`; `BookIntro` is missing from the document and stays a bucket-2 placeholder). Each prescriptive override is a tracked review item with rationale recorded.
+
+**Status:** APPLIED — 2026-04-29.
+
+---
+
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
 
 ### Decision

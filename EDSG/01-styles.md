@@ -11,11 +11,12 @@ authority lives in:
 > ## ⚑ Important — taxonomy audit final-state goal
 >
 > The current `RUN_TAXONOMY_STYLES` covers a curated 19-style subset
-> (2 fully specified + 14 existence-verified + 3 not-yet-created).
-> **This is a transitional state, not the destination.** The
-> final-state resolution is for the audit to map **every approved
-> style** with a real (non-sentinel) expected spec, so that any
-> property drift on any approved style is caught immediately.
+> (**9 fully specified + 7 existence-verified + 3 not-yet-created**,
+> as of 2026-04-29). **This is a transitional state, not the
+> destination.** The final-state resolution is for the audit to map
+> **every approved style** with a real (non-sentinel) expected spec,
+> so that any property drift on any approved style is caught
+> immediately.
 >
 > Promoted-but-unaudited styles (e.g. `SpeakerLabel` as of
 > 2026-04-29) are temporarily off-radar for property drift —
@@ -24,7 +25,19 @@ authority lives in:
 >
 > Each move from bucket 2 (existence-verified, full spec pending)
 > into bucket 1 (fully specified) is a measurable step toward full
-> drift coverage. Track progress here as the page walk continues.
+> drift coverage. Progress so far:
+>
+> - **2026-04-29** — promoted 7 styles to bucket 1: `Heading 1`,
+>   `Heading 2`, `CustomParaAfterH1`, `DatAuthRef`, `Brief`,
+>   `Psalms BOOK`, `Footnote Text`. Bucket 1 is 2 → 9.
+> - `Lamentation` removed from the audit (style deleted).
+> - `Footnote Reference` added to the audit, parked in bucket 2
+>   pending an extension to `AuditOneStyle` to check
+>   character-style Bold / Italic / Color properties.
+> - Specs encoded as **descriptive** (capture current document
+>   state) rather than prescriptive — see `rvw/Code_review
+>   2026-04-25.md` "Spec promotion: descriptive vs prescriptive"
+>   for decision rationale.
 
 Status: WIP. The page walk has validated priorities 1–36; positions
 **37 and beyond are still pending re-validation** as the walk
