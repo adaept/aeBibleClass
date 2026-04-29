@@ -1,30 +1,29 @@
 === Style Taxonomy Audit ===
-Date    : 2026-04-29 13:01:21
+Date    : 2026-04-29 16:59:36
 Document: Blank Bible Copy.docm
 ========================================================================
 
 -- Fully specified (all properties verified) --
 PASS  BodyText
 PASS  BodyTextIndent
-
--- Existence verified (full spec pending) --
 PASS  Heading 1
 PASS  Heading 2
 PASS  CustomParaAfterH1
 PASS  DatAuthRef
-FAIL  BookIntro
-      NOT FOUND in document
 PASS  Brief
 PASS  Psalms BOOK
-FAIL  Lamentation
+PASS  Footnote Text
+
+-- Existence verified (full spec pending) --
+FAIL  BookIntro
       NOT FOUND in document
 FAIL  ListItem
       Indent   : expected 0 got -18
 PASS  ListItemBody
 PASS  TheHeaders
 PASS  TheFooters
-PASS  Footnote Text
 PASS  Title
+PASS  Footnote Reference
 
 -- Not yet created (expected FAIL) --
 FAIL  BodyTextContinuation
@@ -35,5 +34,5 @@ FAIL  AppendixBody
       NOT FOUND in document
 
 ========================================================================
-Summary: 13 PASS   6 FAIL
+Summary: 14 PASS   5 FAIL
 === End Style Taxonomy Audit ===
