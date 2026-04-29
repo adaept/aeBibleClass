@@ -16,7 +16,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
 ' #618 - Add So as search alias - works for Song and Solomon [impr]
 ' #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]
-' #616 - Space function is changed to space, need normalizer fix [bug]
 ' #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]
 ' #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
 '            It's the difference between: Stable, predictable, audit-safe formatting vs.
@@ -66,6 +65,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #616 - Space function is changed to space, need normalizer fix [bug]
     ' [obso] - #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
     ' FIXED - #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
     ' FIXED - #247 (as part of Styles config) - see also #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]

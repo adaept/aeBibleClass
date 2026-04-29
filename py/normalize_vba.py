@@ -14,6 +14,7 @@ from pathlib import Path
 NORMALIZATIONS = [
     (r'(?i)\bisEmpty\b',        'IsEmpty',          'IsEmpty built-in function casing'),
     (r'(?i)\bShell\b',          'Shell',            'Shell built-in function casing'),
+    (r'(?i)\bspace\(',          'Space(',           'Space( built-in function casing (issue #616)'),
     (r'(?i)\.Range\b',          '.Range',           '.Range property on Word Paragraph/Selection/Section'),
     (r'(?i)\bRange(?=:=)',      'Range',            'Range named argument in VBA method calls (Fields.Add, Bookmarks.Add, etc.)'),
     (r'(?i)\.content\b',        '.Content',         '.Content property on Word.Document (canonical uppercase C)'),

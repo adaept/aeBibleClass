@@ -284,7 +284,7 @@ Private Function PadRight(ByVal s As String, ByVal n As Long) As String
     If Len(s) >= n Then
         PadRight = Left(s, n)
     Else
-        PadRight = s & space(n - Len(s))
+        PadRight = s & Space(n - Len(s))
     End If
 End Function
 
@@ -292,7 +292,7 @@ Private Function PadLeft(ByVal s As String, ByVal n As Long) As String
     If Len(s) >= n Then
         PadLeft = Right(s, n)
     Else
-        PadLeft = space(n - Len(s)) & s
+        PadLeft = Space(n - Len(s)) & s
     End If
 End Function
 

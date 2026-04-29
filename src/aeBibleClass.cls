@@ -704,7 +704,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             
             DebugAndReportHeader
             If TestReportFlag And OneTest = 0 Then BufAppend "1234567890123412345678901234123456789012341234567890123412345678901234"
-            If TestReportFlag And OneTest = 0 Then BufAppend "Pass/Fail" & space(5) & "Copy ()" & space(7) & "Test Num" & space(6) & "Result" & space(8) & "Expected" & space(6) & "Function"
+            If TestReportFlag And OneTest = 0 Then BufAppend "Pass/Fail" & Space(5) & "Copy ()" & Space(7) & "Test Num" & Space(6) & "Result" & Space(8) & "Expected" & Space(6) & "Function"
             
             RunTest (1)
             RunTest (2)
@@ -1357,117 +1357,117 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     
     Select Case num
     Case 1
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleSpaces"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleSpaces"
     Case 2
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleSpacesInShapes"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleSpacesInShapes"
     Case 3
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSpaceFollowedByCarriageReturn"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSpaceFollowedByCarriageReturn"
     Case 4
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleTabs"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleTabs"
     Case 5
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountWhiteSpaceAndCarriageReturn"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountWhiteSpaceAndCarriageReturn"
     Case 6
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountQuadrupleParagraphMarks"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountQuadrupleParagraphMarks"
     Case 7
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleWithSpaceAndNumber"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleWithSpaceAndNumber"
     Case 8
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleWithNumberAndSpace"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleWithNumberAndSpace"
     Case 9
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountPeriodSpaceLeftParenthesis"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountPeriodSpaceLeftParenthesis"
     Case 10
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNonBreakingSpaces"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNonBreakingSpaces"
     Case 11
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNumberDashNumber"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNumberDashNumber"
     Case 12
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNumberDashNumberInFootnotes"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNumberDashNumberInFootnotes"
     Case 13
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParasWithNoThemeColor"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParasWithNoThemeColor"
     Case 14
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountWhiteParagraphMarks"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountWhiteParagraphMarks"
     Case 15
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSectionsWithDifferentFirstPage"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSectionsWithDifferentFirstPage"
     Case 16
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTotalParagraphs"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTotalParagraphs"
     Case 17
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountRedFootnoteReferences"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountRedFootnoteReferences"
     Case 18
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeading1"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeading1"
     Case 19
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParasAfterH2"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParasAfterH2"
     Case 20
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnotesFollowedByDigit"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnotesFollowedByDigit"
     Case 21
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNotSpacesAfterFootnoteReferences"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNotSpacesAfterFootnoteReferences"
     Case 22
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphsWithFormatting"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphsWithFormatting"
     Case 23
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDeleteEmptyParagraphsBeforeHeading2"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDeleteEmptyParagraphsBeforeHeading2"
     Case 24
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnoteReferences"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnoteReferences"
     Case 25
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnoteReferenceColors"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnoteReferenceColors"
     Case 26
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CheckAllHeaders(" & "Empty" & ")"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CheckAllHeaders(" & "Empty" & ")"
     Case 27
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CheckAllHeaders(" & "NotEmpty" & ")"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CheckAllHeaders(" & "NotEmpty" & ")"
     Case 28
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTabFollowedByParagraphMarkInHeaders"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTabFollowedByParagraphMarkInHeaders"
     Case 29
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphsWithoutTabInHeaders"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphsWithoutTabInHeaders"
     Case 30
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeaderStyleUsage"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeaderStyleUsage"
     Case 31
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarksPerHeaderSection"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarksPerHeaderSection"
     Case 32
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountLinefeed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountLinefeed"
     Case 33
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountLinefeed(" & """ """ & ")"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountLinefeed(" & """ """ & ")"
     Case 34
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountManualLineBreaksAndWithSpace"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountManualLineBreaksAndWithSpace"
     Case 35
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountManualLineBreaksAndWithSpace(" & """ """ & ")"
     Case 36
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters"
     Case 37
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDocTabOnlyParagraphs"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDocTabOnlyParagraphs"
     Case 38
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphs"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphs"
     Case 39
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_ArialBlack"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_ArialBlack"
     Case 40
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_ArialBlackDarkRed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_ArialBlackDarkRed"
     Case 41
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed"
     Case 42
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
     Case 43
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDarkRedStyledParagraphMarks"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDarkRedStyledParagraphMarks"
     Case 44
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_CalibriDarkRed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_CalibriDarkRed"
     Case 45
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisBlack"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisBlack"
     Case 46
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisRed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisRed"
     Case 47
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
     Case 48
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditLiberationSansNarrowStyleDetails"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditLiberationSansNarrowStyleDetails"
     Case 49
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAuditStyles_ToFile"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAuditStyles_ToFile"
     Case 50
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
     Case 51
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 66, 67, 68, 69, 70, 71
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountContraction([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountContraction([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 72
         If OneVersePerPara Then
-            BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(18, 931)"
+            BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(18, 931)"
         End If
     Case 73
-        BufAppend GetPassFailArray(num) & space(10) & "Copy ()" & space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select

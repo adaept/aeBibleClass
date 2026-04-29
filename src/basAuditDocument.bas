@@ -347,7 +347,7 @@ Private Function PadRight(ByVal sValue As Variant, ByVal lWidth As Long) As Stri
     Dim sStr As String
     sStr = CStr(sValue)
     If Len(sStr) < lWidth Then
-        PadRight = sStr & space(lWidth - Len(sStr))
+        PadRight = sStr & Space(lWidth - Len(sStr))
     Else
         PadRight = Left(sStr, lWidth)
         End If
