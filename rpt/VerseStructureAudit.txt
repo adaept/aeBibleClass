@@ -1,4 +1,4 @@
----- AuditVerseMarkerStructure: 2026-04-28 20:18:12 ----
+---- AuditVerseMarkerStructure: 2026-04-28 20:30:04 ----
 
 66 Heading 1 paragraphs found in 148 sections.
 
@@ -694,7 +694,15 @@ Ecclesiastes          expected chapters= 12  found= 12  OK
   ch  10: expected verses= 20  found= 20  OK
   ch  11: expected verses= 10  found= 10  OK
   ch  12: expected verses= 14  found= 14  OK
-?? UNKNOWN H1 [SONG OF SONGS] - skip
+Song of Songs         expected chapters=  8  found=  8  OK
+  ch   1: expected verses= 17  found= 17  OK
+  ch   2: expected verses= 17  found= 17  OK
+  ch   3: expected verses= 11  found= 11  OK
+  ch   4: expected verses= 16  found= 16  OK
+  ch   5: expected verses= 16  found= 16  OK
+  ch   6: expected verses= 13  found= 13  OK
+  ch   7: expected verses= 13  found= 13  OK
+  ch   8: expected verses= 14  found= 14  OK
 Isaiah                expected chapters= 66  found= 66  OK
   ch   1: expected verses= 31  found= 31  OK
   ch   2: expected verses= 22  found= 22  OK
@@ -927,7 +935,7 @@ Micah                 expected chapters=  7  found=  7  OK
   ch   5: expected verses= 15  found= 15  OK
   ch   6: expected verses= 16  found= 16  OK
   ch   7: expected verses= 20  found= 20  OK
-Nahum                 expected chapters=  3  found=  3  OK
+Nahum                 expected chapters=  7  found=  3  ISSUES
   ch   1: expected verses= 15  found= 15  OK
   ch   2: expected verses= 13  found= 13  OK
   ch   3: expected verses= 19  found= 19  OK
@@ -1250,12 +1258,9 @@ Revelation            expected chapters= 22  found= 22  OK
   ch  21: expected verses= 27  found= 27  OK
   ch  22: expected verses= 21  found= 21  OK
 
-MISSING BOOKS:
-  Missing book: Solomon (BookID 22)
-
 ISSUES FOUND:
-  Unknown H1 text: [SONG OF SONGS]
+  Nahum: chapter Count mismatch (expected 7, found 3)
   Romans 14: expected verses=23  found=26
   Hebrews 7: expected verses=28  found=27
 
-SUMMARY: 30987 / 30985 verses found, 4 structural issue(s).
+SUMMARY: 31104 / 31102 verses found, 3 structural issue(s).

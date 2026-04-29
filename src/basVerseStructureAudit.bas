@@ -31,10 +31,10 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
     Dim oDoc As Object
     Set oDoc = ActiveDocument
 
-    ' Canonical 66-book reference data
-    Dim canonNames(1 To 66) As String
-    Dim canonChapters(1 To 66) As Long
-    PopulateCanonical canonNames, canonChapters
+    ' Canonical 66-book reference data sourced directly from the citation
+    ' class (single source of truth). books(BookID) = Array(BookID, name, chapters).
+    Dim books As Object
+    Set books = aeBibleCitationClass.GetCanonicalBookTable
 
     ' Walk Heading 1 paragraphs in document order
     Dim h1Names(1 To 200) As String
@@ -91,7 +91,7 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
         h1Text = h1Names(i)
 
         Dim BookID As Long
-        BookID = LookupBookID(h1Text, canonNames)
+        BookID = LookupBookID(h1Text)
 
         If BookID = 0 Then
             sOut = sOut & "?? UNKNOWN H1 [" & h1Text & "] - skip" & NL
@@ -100,9 +100,9 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
         Else
             seenBookID(BookID) = True
             Dim expectedChapters As Long
-            expectedChapters = canonChapters(BookID)
+            expectedChapters = CLng(books(BookID)(2))
 
-            AuditOneBook oDoc, h1Starts(i), bookEndPos, canonNames(BookID), _
+            AuditOneBook oDoc, h1Starts(i), bookEndPos, CStr(books(BookID)(1)), _
                           expectedChapters, foundChapters, chapterReport, _
                           bookIssues, bookIssueDetail, totalExpected, totalFound
 
@@ -113,7 +113,7 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
                 bookStatus = "ISSUES"
             End If
 
-            sOut = sOut & PadRight(canonNames(BookID), 22) & _
+            sOut = sOut & PadRight(CStr(books(BookID)(1)), 22) & _
                    "expected chapters=" & PadLeft(CStr(expectedChapters), 3) & _
                    "  found=" & PadLeft(CStr(foundChapters), 3) & _
                    "  " & bookStatus & NL
@@ -128,7 +128,7 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
     Dim k As Long
     For k = 1 To 66
         If Not seenBookID(k) Then
-            missing = missing & "  Missing book: " & canonNames(k) & " (BookID " & k & ")" & NL
+            missing = missing & "  Missing book: " & CStr(books(k)(1)) & " (BookID " & k & ")" & NL
             issuesCount = issuesCount + 1
         End If
     Next k
@@ -264,92 +264,18 @@ Private Function CountVerseMarkers(ByVal oDoc As Object, _
 End Function
 
 ' --------------------------------------------------------------------------
-' LookupBookID - map H1 text to canonical book index 1-66, or 0 if unknown
+' LookupBookID - map H1 text to canonical BookID 1-66 via the citation
+' class alias map (accepts canonical names and all SBL aliases). Returns
+' 0 if the text is not a recognised book alias.
 ' --------------------------------------------------------------------------
-Private Function LookupBookID(ByVal h1Text As String, ByRef canonNames() As String) As Long
-    Dim cleaned As String
-    cleaned = UCase(Trim(h1Text))
-    Dim k As Long
-    For k = 1 To 66
-        If UCase(canonNames(k)) = cleaned Then
-            LookupBookID = k
-            Exit Function
-        End If
-    Next k
-    LookupBookID = 0
+Private Function LookupBookID(ByVal h1Text As String) As Long
+    Dim bID As Long
+    bID = 0
+    On Error Resume Next
+    aeBibleCitationClass.ResolveAlias h1Text, bID
+    On Error GoTo 0
+    LookupBookID = bID
 End Function
-
-' --------------------------------------------------------------------------
-' PopulateCanonical - fill the 66-book reference (mirrors basTEST_aeBibleCitationClass)
-' --------------------------------------------------------------------------
-Private Sub PopulateCanonical(ByRef names() As String, ByRef chapters() As Long)
-    names(1) = "Genesis":          chapters(1) = 50
-    names(2) = "Exodus":           chapters(2) = 40
-    names(3) = "Leviticus":        chapters(3) = 27
-    names(4) = "Numbers":          chapters(4) = 36
-    names(5) = "Deuteronomy":      chapters(5) = 34
-    names(6) = "Joshua":           chapters(6) = 24
-    names(7) = "Judges":           chapters(7) = 21
-    names(8) = "Ruth":             chapters(8) = 4
-    names(9) = "1 Samuel":         chapters(9) = 31
-    names(10) = "2 Samuel":        chapters(10) = 24
-    names(11) = "1 Kings":         chapters(11) = 22
-    names(12) = "2 Kings":         chapters(12) = 25
-    names(13) = "1 Chronicles":    chapters(13) = 29
-    names(14) = "2 Chronicles":    chapters(14) = 36
-    names(15) = "Ezra":            chapters(15) = 10
-    names(16) = "Nehemiah":        chapters(16) = 13
-    names(17) = "Esther":          chapters(17) = 10
-    names(18) = "Job":             chapters(18) = 42
-    names(19) = "Psalms":          chapters(19) = 150
-    names(20) = "Proverbs":        chapters(20) = 31
-    names(21) = "Ecclesiastes":    chapters(21) = 12
-    names(22) = "Solomon":         chapters(22) = 8     ' project canonical; SBL output is "Song"
-    names(23) = "Isaiah":          chapters(23) = 66
-    names(24) = "Jeremiah":        chapters(24) = 52
-    names(25) = "Lamentations":    chapters(25) = 5
-    names(26) = "Ezekiel":         chapters(26) = 48
-    names(27) = "Daniel":          chapters(27) = 12
-    names(28) = "Hosea":           chapters(28) = 14
-    names(29) = "Joel":            chapters(29) = 3
-    names(30) = "Amos":            chapters(30) = 9
-    names(31) = "Obadiah":         chapters(31) = 1
-    names(32) = "Jonah":           chapters(32) = 4
-    names(33) = "Micah":           chapters(33) = 7
-    names(34) = "Nahum":           chapters(34) = 3
-    names(35) = "Habakkuk":        chapters(35) = 3
-    names(36) = "Zephaniah":       chapters(36) = 3
-    names(37) = "Haggai":          chapters(37) = 2
-    names(38) = "Zechariah":       chapters(38) = 14
-    names(39) = "Malachi":         chapters(39) = 4
-    names(40) = "Matthew":         chapters(40) = 28
-    names(41) = "Mark":            chapters(41) = 16
-    names(42) = "Luke":            chapters(42) = 24
-    names(43) = "John":            chapters(43) = 21
-    names(44) = "Acts":            chapters(44) = 28
-    names(45) = "Romans":          chapters(45) = 16
-    names(46) = "1 Corinthians":   chapters(46) = 16
-    names(47) = "2 Corinthians":   chapters(47) = 13
-    names(48) = "Galatians":       chapters(48) = 6
-    names(49) = "Ephesians":       chapters(49) = 6
-    names(50) = "Philippians":     chapters(50) = 4
-    names(51) = "Colossians":      chapters(51) = 4
-    names(52) = "1 Thessalonians": chapters(52) = 5
-    names(53) = "2 Thessalonians": chapters(53) = 3
-    names(54) = "1 Timothy":       chapters(54) = 6
-    names(55) = "2 Timothy":       chapters(55) = 4
-    names(56) = "Titus":           chapters(56) = 3
-    names(57) = "Philemon":        chapters(57) = 1
-    names(58) = "Hebrews":         chapters(58) = 13
-    names(59) = "James":           chapters(59) = 5
-    names(60) = "1 Peter":         chapters(60) = 5
-    names(61) = "2 Peter":         chapters(61) = 3
-    names(62) = "1 John":          chapters(62) = 5
-    names(63) = "2 John":          chapters(63) = 1
-    names(64) = "3 John":          chapters(64) = 1
-    names(65) = "Jude":            chapters(65) = 1
-    names(66) = "Revelation":      chapters(66) = 22
-End Sub
 
 ' --------------------------------------------------------------------------
 ' Padding helpers

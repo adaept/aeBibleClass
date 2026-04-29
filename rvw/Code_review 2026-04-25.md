@@ -2566,13 +2566,21 @@ A grep for `Solomon` / `Song of Songs` shows the rename touches more than just `
 
 ### Suggested order of operations
 
-1. Apply Finding 1 (accumulator reset) — purely local audit-module fix.
-2. Re-run `AuditVerseMarkerStructure` and confirm the per-book chapter detail lines match expected counts and `Solomon`/Song-of-Songs no longer shows phantom `ISSUES`.
-3. Apply Finding 2 (DRY refactor) — drops `PopulateCanonical` and `LookupBookID`; the audit module shrinks substantially and inherits the class's `"Song of Songs"` canonical name automatically.
+1. Apply Finding 1 (accumulator reset) — purely local audit-module fix. **APPLIED — 2026-04-28**
+2. Re-run `AuditVerseMarkerStructure` and confirm the per-book chapter detail lines match expected counts and `Solomon`/Song-of-Songs no longer shows phantom `ISSUES`. **CONFIRMED — 2026-04-28**
+3. Apply Finding 2 (DRY refactor) — drops `PopulateCanonical` and `LookupBookID`; the audit module shrinks substantially and inherits the class's `"Song of Songs"` canonical name automatically. **APPLIED — 2026-04-28** (see diff summary below)
 4. Capture the actual `ToSBLShortForm` failure (mode 1 / 2 / 3 from Finding 3) before patching the citation class.
 5. Sweep `basTEST_aeBibleCitationClass.bas:885` and `md/Deterministic Structural Parser.md:83,314` to align the rename.
 
-Awaiting go/no-go on each fix in order.
+### Finding 2 — applied diff summary, `src/basVerseStructureAudit.bas`
+
+- **`AuditVerseMarkerStructure`**: replaced local `canonNames(1 To 66)` / `canonChapters(1 To 66)` arrays plus the `PopulateCanonical` call with one line — `Set books = aeBibleCitationClass.GetCanonicalBookTable`. The `books` dictionary returns `Array(BookID, name, chapters)` per BookID; reads use `books(BookID)(1)` for name and `books(BookID)(2)` for chapter count.
+- **`LookupBookID`**: rewritten as a thin wrapper around `aeBibleCitationClass.ResolveAlias` (with `On Error Resume Next` so unknown H1 text returns `0` and produces the existing `?? UNKNOWN H1` line). Drops the case-insensitive scan over local `canonNames`. Now accepts every alias the citation class recognises (`"Song of Songs"`, `"Song"`, `"Solomon"`, `"SG"`, etc.) without modification to the audit module.
+- **`PopulateCanonical`**: deleted entirely (66 lines + helper sub).
+
+Net: ~80 lines removed, single source of truth restored. The audit module now consumes canonical data from `aeBibleCitationClass` exactly as the rest of the codebase does.
+
+Expected effect on next audit run: the `MISSING BOOKS: Solomon` and `Unknown H1 text: [SONG OF SONGS]` entries both clear (alias map already covers both); only the deferred document-content items (Romans 14, Hebrews 7) should remain.
 
 ---
 
