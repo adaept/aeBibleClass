@@ -2487,3 +2487,91 @@ AuditVerseMarkerStructure              ' writes rpt/VerseStructureAudit.txt
 ```
 
 ---
+
+## 2026-04-28 — VerseStructureAudit follow-up + Song-of-Songs canonicalization
+
+Three concerns surfaced from the first run of `AuditVerseMarkerStructure` (output in `rpt/VerseStructureAudit.txt`) and a related decision to standardise on SBL `"Song of Songs"` instead of the project's prior `"Solomon"`. Findings and recommended fixes below — presented one at a time per the standard fix-process.
+
+### Finding 1 — chapter/verse report accumulates across books (audit bug)
+
+**Symptom.** Every book past Genesis prints a chapter-detail block that contains the previous books' chapter lines as well. E.g. the `Exodus` line at `rpt/VerseStructureAudit.txt:56` correctly reports `expected chapters=40 found=40 OK`, but the per-chapter detail underneath runs `ch 1..50` (Genesis's 50) followed by `ch 1..40` (Exodus's actual 40). Same pattern for every subsequent book; e.g. `Solomon` at line 6976 also shows `ISSUES` even though every chapter line is `OK`.
+
+**Root cause.** `basVerseStructureAudit.AuditVerseMarkerStructure` declares `chapterReport`, `bookIssues`, `bookIssueDetail` *inside* the `For i = 1 To nH1` loop. In VBA, `Dim` inside a loop is hoisted to procedure scope and the variables are **not** re-initialised per iteration. `AuditOneBook` is `ByRef` on these variables and appends/increments without first clearing them, so the running totals leak from one book into the next. `bookIssues` accumulating is also why books with zero per-chapter mismatches still print `ISSUES` once any earlier book has a chapter-count mismatch.
+
+**Recommended fix.** Reset the three accumulators at the top of each loop iteration in `src/basVerseStructureAudit.bas`:
+
+```vba
+For i = 1 To nH1
+    chapterReport = vbNullString
+    bookIssues = 0
+    bookIssueDetail = vbNullString
+    ' ... existing body ...
+Next i
+```
+
+Local fix, low risk, no signature changes.
+
+### Finding 2 — DRY violation: audit module owns its own canonical 66-book table
+
+**Symptom.** `basVerseStructureAudit` defines `PopulateCanonical` (66-book name + chapter-count list) and `LookupBookID`, duplicating data already authoritative in `aeBibleCitationClass.GetCanonicalBookTable` (`aeBibleCitationClass.cls:886`) and the alias map (`:1361`). The two copies have already diverged (`names(22) = "Solomon"` in audit vs `"Song of Songs"` in the class).
+
+**Root cause.** Initial implementation mirrored `basTEST_aeBibleCitationClass.bas:864-929`, which also keeps a private copy. `aeBibleCitationClass` already exposes everything the audit needs:
+
+- `ChaptersInBook(bookName) As Long` — `:1956`
+- `VersesInChapter(bookName, chapter) As Long` — `:1988` (already used)
+- `GetCanonicalBookTable() As Object` — full `BookID → (id, name, chapters)` triples — `:886`
+- `ResolveAlias(abbr, ByRef BookID) As String` — alias-tolerant lookup that also returns the canonical name — `:1896`
+
+**Recommended refactor.** Replace `PopulateCanonical` and the local `canonNames` / `canonChapters` arrays with a small adapter that pulls from `GetCanonicalBookTable` once at the top of `AuditVerseMarkerStructure`:
+
+```vba
+Dim books As Object
+Set books = aeBibleCitationClass.GetCanonicalBookTable
+' books(k)(0)=BookID  books(k)(1)=Canonical name  books(k)(2)=ChaptersInBook
+```
+
+`LookupBookID` becomes a single `ResolveAlias` call wrapped in `On Error Resume Next` (so unknown H1 text still produces the existing `?? UNKNOWN H1` line rather than a hard error). This automatically picks up the new `"Song of Songs"` canonical name and any future SBL alias additions, eliminates the hand-maintained list, and aligns with the existing pattern already used at `:199` (`aeBibleCitationClass.VersesInChapter(...)`).
+
+Note: `basTEST_aeBibleCitationClass.bas` keeps a deliberate independent copy as the **expected oracle** for the test; that is correct (test data must not derive from the system under test). The audit, by contrast, is a consumer of canonical truth, not its validator — so it should call into the class.
+
+### Finding 3 — `ToSBLShortForm` lookup with `"Song of Songs"`
+
+**What changed.** Switching project canonical from `"Solomon"` to `"Song of Songs"` means every Heading 1 / canonical reference passing through SBL routines now contains a multi-word book name with **two internal spaces**. The user reports a lookup error in `ToSBLShortForm` after the change.
+
+**Static-analysis result — honest read.** `aeBibleCitationClass.ToSBLShortForm` (`:2845`) splits the input on the **last** space, which correctly yields `bookName = "Song of Songs"`, `numPart = "1:1"` for an input of `"Song of Songs 1:1"`. The alias map already has `"SONG OF SONGS" → 22` (`:1474`), so `ResolveAlias` should return `bID=22`, `abbr="Song"`, output `"Song 1:1"`. **From static analysis I cannot reproduce a lookup failure for `"Song of Songs N:V"` style input** — the last-space split is robust against multi-word book names with internal spaces.
+
+**Three plausible failure modes worth checking before editing.** Honest recommendation: before patching `ToSBLShortForm`, capture the actual failing input and the `Err.Description` from the `MsgBox` it raises. Candidates:
+
+1. **Input lacks a chapter:verse suffix.** If `canon = "Song of Songs"` (book name only, no `" 1:1"` tail), the last-space split produces `bookName = "Song of"`, `numPart = "Songs"` — `ResolveAlias("Song of")` is not in the alias map and raises `vbObjectError + 10 "Unknown book alias: Song of"`. The same bug applies to any multi-word book passed without a chapter suffix (`"1 Samuel"`, `"Song of Songs"`, etc.); it just never tripped before because the project canonical (`"Solomon"`) was a single token.
+2. **Hidden whitespace.** A non-breaking space (`Chr(160)`) or accidental double space inside `"Song of Songs"` would not match `"SONG OF SONGS"` after `UCase$ Trim$` (Trim only strips outer whitespace). If the source data was retyped, this is plausible.
+3. **Sister test in `Test_CanonicalNamesAndSBLTable`** (`basTEST_aeBibleCitationClass.bas:970-980`) extracts the abbreviation by `InStr(sblResult, " ")` — first space, not last. That logic is **already broken** for any book whose SBL abbreviation contains a space (`"1 Sam 1:1"` returns `"1"` rather than `"1 Sam"`). It happens to pass for `"Song"` only by coincidence (`"Song"` is one word). This is a pre-existing test-side bug, not a `ToSBLShortForm` bug, but flips into view as soon as the canonical name changes if the user is reading the failure message and assuming `ToSBLShortForm` itself is at fault.
+
+**Recommended next step.** Hold the `ToSBLShortForm` patch until we see the failing input. If the failure is mode (1), the right fix is a defensive guard: when no space is found *after* a successful book-name lookup, fall back to whole-input alias resolution. If mode (2), the fix is in the data, not the code (or normalise internal whitespace in `ResolveAlias`). If mode (3), fix the test extractor to use `InStrRev`.
+
+### Finding 4 — broader citation-code impact of the rename
+
+A grep for `Solomon` / `Song of Songs` shows the rename touches more than just `ToSBLShortForm`:
+
+| File | Line(s) | Status |
+|---|---|---|
+| `src/aeBibleCitationClass.cls` | 913 | Already `"Song of Songs"` ✓ |
+| `src/aeBibleCitationClass.cls` | 1474, 1826 | Comments still reference `"Song of Solomon"`; alias map already accepts both. Cosmetic. |
+| `src/basVerseStructureAudit.bas` | 301 | Still `"Solomon"` — fixed by Finding 2 refactor. |
+| `src/basTEST_aeBibleCitationClass.bas` | 885 | Test oracle still `"Solomon"`. **Must change to `"Song of Songs"`** if the canonical is now Song of Songs, otherwise `Test_CanonicalNamesAndSBLTable` will read stale. |
+| `src/basSBL_VerseCountsGenerator.bas` | 95 | Generator label `"Solomon"` — review whether this affects the generated `GetVerseCounts` map keys; if it's only a debug label it's fine, but worth confirming. |
+| `src/XbasTESTaeBibleDOCVARIABLE.bas` | 527 | `VerifyBookNameFromDocVariable "Song", "Solomon"` — this expectation is **document-specific** (already flagged on `2026-03-16` review). If the source `.docm` Heading 1 is being changed too, update to `"Song of Songs"`; if not, leave as-is. |
+| `md/Deterministic Structural Parser.md` | 83, 314 | Reference table + multi-word example — both should be updated. |
+| `md/Editorial Design and Style Guide.md` and `EDSG/*.md` | n/a | No current references; no edits required. |
+| `rvw/*` (older review docs) | many | **Do not retro-edit** — review docs are progressive history. |
+
+### Suggested order of operations
+
+1. Apply Finding 1 (accumulator reset) — purely local audit-module fix.
+2. Re-run `AuditVerseMarkerStructure` and confirm the per-book chapter detail lines match expected counts and `Solomon`/Song-of-Songs no longer shows phantom `ISSUES`.
+3. Apply Finding 2 (DRY refactor) — drops `PopulateCanonical` and `LookupBookID`; the audit module shrinks substantially and inherits the class's `"Song of Songs"` canonical name automatically.
+4. Capture the actual `ToSBLShortForm` failure (mode 1 / 2 / 3 from Finding 3) before patching the citation class.
+5. Sweep `basTEST_aeBibleCitationClass.bas:885` and `md/Deterministic Structural Parser.md:83,314` to align the rename.
+
+Awaiting go/no-go on each fix in order.
+
+---
