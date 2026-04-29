@@ -1,4 +1,4 @@
----- AuditVerseMarkerStructure: 2026-04-28 20:30:04 ----
+---- AuditVerseMarkerStructure: 2026-04-28 21:25:31 ----
 
 66 Heading 1 paragraphs found in 148 sections.
 
@@ -935,7 +935,7 @@ Micah                 expected chapters=  7  found=  7  OK
   ch   5: expected verses= 15  found= 15  OK
   ch   6: expected verses= 16  found= 16  OK
   ch   7: expected verses= 20  found= 20  OK
-Nahum                 expected chapters=  7  found=  3  ISSUES
+Nahum                 expected chapters=  3  found=  3  OK
   ch   1: expected verses= 15  found= 15  OK
   ch   2: expected verses= 13  found= 13  OK
   ch   3: expected verses= 19  found= 19  OK
@@ -1106,9 +1106,9 @@ Romans                expected chapters= 16  found= 16  ISSUES
   ch  11: expected verses= 36  found= 36  OK
   ch  12: expected verses= 21  found= 21  OK
   ch  13: expected verses= 14  found= 14  OK
-  ch  14: expected verses= 23  found= 26  MISMATCH
+  ch  14: expected verses= 26  found= 26  OK
   ch  15: expected verses= 33  found= 33  OK
-  ch  16: expected verses= 27  found= 27  OK
+  ch  16: expected verses= 24  found= 27  MISMATCH
 1 Corinthians         expected chapters= 16  found= 16  OK
   ch   1: expected verses= 31  found= 31  OK
   ch   2: expected verses= 16  found= 16  OK
@@ -1192,14 +1192,14 @@ Titus                 expected chapters=  3  found=  3  OK
   ch   3: expected verses= 15  found= 15  OK
 Philemon              expected chapters=  1  found=  1  OK
   ch   1: expected verses= 25  found= 25  OK
-Hebrews               expected chapters= 13  found= 13  ISSUES
+Hebrews               expected chapters= 13  found= 13  OK
   ch   1: expected verses= 14  found= 14  OK
   ch   2: expected verses= 18  found= 18  OK
   ch   3: expected verses= 19  found= 19  OK
   ch   4: expected verses= 16  found= 16  OK
   ch   5: expected verses= 14  found= 14  OK
   ch   6: expected verses= 20  found= 20  OK
-  ch   7: expected verses= 28  found= 27  MISMATCH
+  ch   7: expected verses= 28  found= 28  OK
   ch   8: expected verses= 13  found= 13  OK
   ch   9: expected verses= 28  found= 28  OK
   ch  10: expected verses= 39  found= 39  OK
@@ -1259,8 +1259,6 @@ Revelation            expected chapters= 22  found= 22  OK
   ch  22: expected verses= 21  found= 21  OK
 
 ISSUES FOUND:
-  Nahum: chapter Count mismatch (expected 7, found 3)
-  Romans 14: expected verses=23  found=26
-  Hebrews 7: expected verses=28  found=27
+  Romans 16: expected verses=24  found=27
 
-SUMMARY: 31104 / 31102 verses found, 3 structural issue(s).
+SUMMARY: 31105 / 31102 verses found, 1 structural issue(s).

@@ -922,7 +922,7 @@ Public Function GetCanonicalBookTable() As Object
         books.Add 31, Array(31, "Obadiah", 1)
         books.Add 32, Array(32, "Jonah", 4)
         books.Add 33, Array(33, "Micah", 7)
-        books.Add 34, Array(34, "Nahum", 7)
+        books.Add 34, Array(34, "Nahum", 3)
         books.Add 35, Array(35, "Habakkuk", 3)
         books.Add 36, Array(36, "Zephaniah", 3)
         books.Add 37, Array(37, "Haggai", 2)

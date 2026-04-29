@@ -116,7 +116,7 @@ Public Function GetVerseCounts() As Object
     d.Add 42, ToOneBasedLongArray(Array(80, 52, 38, 44, 39, 49, 50, 56, 62, 42, 54, 59, 35, 35, 32, 31, 37, 43, 48, 47, 38, 71, 56, 53), "Luke")
     d.Add 43, ToOneBasedLongArray(Array(51, 25, 36, 54, 47, 71, 53, 59, 41, 42, 57, 50, 38, 31, 27, 33, 26, 40, 42, 31, 25), "John")
     d.Add 44, ToOneBasedLongArray(Array(26, 47, 26, 37, 42, 15, 60, 40, 43, 48, 30, 25, 52, 28, 41, 40, 34, 28, 41, 38, 40, 30, 35, 27, 27, 32, 44, 31), "Acts")
-    d.Add 45, ToOneBasedLongArray(Array(32, 29, 31, 25, 21, 23, 25, 39, 33, 21, 36, 21, 14, 23, 33, 27), "Romans")
+    d.Add 45, ToOneBasedLongArray(Array(32, 29, 31, 25, 21, 23, 25, 39, 33, 21, 36, 21, 14, 26, 33, 24), "Romans")
     d.Add 46, ToOneBasedLongArray(Array(31, 16, 23, 21, 13, 20, 40, 13, 27, 33, 34, 31, 13, 40, 58, 24), "1 Corinthians")
     d.Add 47, ToOneBasedLongArray(Array(24, 17, 18, 18, 21, 18, 16, 24, 15, 18, 33, 21, 14), "2 Corinthians")
     d.Add 48, ToOneBasedLongArray(Array(24, 21, 29, 31, 26, 18), "Galatians")

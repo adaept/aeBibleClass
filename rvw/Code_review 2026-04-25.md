@@ -2582,6 +2582,54 @@ Net: ~80 lines removed, single source of truth restored. The audit module now co
 
 Expected effect on next audit run: the `MISSING BOOKS: Solomon` and `Unknown H1 text: [SONG OF SONGS]` entries both clear (alias map already covers both); only the deferred document-content items (Romans 14, Hebrews 7) should remain.
 
+### Finding 2 — follow-up bug surfaced by the DRY refactor
+
+After Finding 2 was applied, the next audit run reported a new mismatch: `Nahum: chapter Count mismatch (expected 7, found 3)`. The document has 3 chapters in Nahum, which is correct (Nahum is a 3-chapter book; cross-referenced against `basSBL_VerseCountsGenerator.bas:107` which holds a 3-element array). The "expected 7" came from a stale value in the canonical book table at `aeBibleCitationClass.cls:925`:
+
+```
+books.Add 34, Array(34, "Nahum", 7)   ' WRONG — Nahum has 3 chapters
+```
+
+This bug was previously masked because the audit module kept its own correct copy in `PopulateCanonical` (`chapters(34) = 3`). The DRY refactor (Finding 2) routed the audit through the canonical table and surfaced the latent error. The verse-counts table was always correct — only the chapter-count metadata was wrong.
+
+**Fix applied — 2026-04-28**: `aeBibleCitationClass.cls:925` updated to `books.Add 34, Array(34, "Nahum", 3)`. One-line edit.
+
+Verse-total sanity check after the fix: 31,104 found vs 31,102 expected. The +2 delta corresponds exactly to the two deferred document-content items: Rom 14 (+3, contains 14:24-26 doxology) and Heb 7 (−1, missing one verse). No further structural mismatches expected.
+
+### Correction — Romans doxology placement (WEB vs TR)
+
+The earlier classification of Romans 14 as a "document content bug" was based on a misreading of the WEB translator note. Re-reading the note as published on eBible.org:
+
+> "TR places Romans 14:24-26 at the end of Romans instead of at the end of chapter 14, and numbers these verses 16:25-27."
+
+Subject of the sentence is **TR** (Textus Receptus — the Greek text underlying the KJV). The correct reading:
+
+- **WEB**: doxology at end of **Romans 14**, numbered **14:24-26** → Rom 14 = **26** verses, Rom 16 = **24** verses.
+- **TR / KJV tradition**: doxology at end of **Romans 16**, numbered **16:25-27** → Rom 14 = 23, Rom 16 = 27.
+
+The verse-counts table at `basSBL_VerseCountsGenerator.bas:119` was originally seeded with the TR pattern (`...14, 23, 33, 27`), not the WEB pattern. Since the project source is the WEB Protestant Edition, the data must be corrected to the WEB placement.
+
+**Fix applied — 2026-04-28**: `basSBL_VerseCountsGenerator.bas:119` Romans array updated:
+
+| Chapter | Before (TR) | After (WEB) |
+|---|---|---|
+| Romans 14 | 23 | **26** |
+| Romans 16 | 27 | **24** |
+
+Net book total unchanged (compensating shift).
+
+### Reclassification of the remaining audit issues
+
+After this Romans correction the two outstanding items shift:
+
+| Item | Status before correction | Status after correction |
+|---|---|---|
+| Rom 14 (26 found vs 23 expected) | document content bug | **CLEARS** — doc already matches WEB |
+| Rom 16 (now 27 found vs 24 expected) | not flagged | **NEW ISSUE** — duplicate doxology in document at 16:25-27 |
+| Heb 7 (27 found vs 28 expected) | document content bug | unchanged — still a missing verse marker |
+
+User-confirmed reading of the source document: the doxology appears in **both** Rom 14 and Rom 16 with "slight differences" between the two copies. Likely an editorial merge from a TR-based source into a WEB-based source. Document-side fix is to delete the doxology from Romans 16 (verses 25-27) — WEB places it only at 14:24-26.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
