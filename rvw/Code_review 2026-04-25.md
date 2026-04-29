@@ -2719,7 +2719,7 @@ User-confirmed reproduction details:
 
 1. **When the cursor is already in the `.docx` body, ribbon Go places the caret correctly.** → confirms the failure is a **focus issue**, not a layout-cache issue. Selection mutations from ribbon-owned event handlers don't render a caret because Word only paints the I-beam when the document body owns focus.
 
-2. **Entering a chapter number, then pressing Tab Tab quickly, sends the Tabs into the document body** (two tab characters typed). → confirms a **focus race**: the chapter `editBox` releases focus immediately on commit (or on the first Tab) and the second Tab is routed to the document instead of advancing within the ribbon to the verse field.
+2. **Entering a chapter number, then pressing Tab Tab quickly, sends the Tabs into the document body** (two tab characters typed). → initially mislabelled as a "focus race"; corrected diagnosis below — it is a **deterministic idle-commit focus leak**, not a race. See the 2026-04-29 terminology correction further down.
 
 These two together rule out the layout/cache hypothesis as primary. It is purely a focus-handoff problem. The chapter-position drift on the *next* nav (the original step 4) is then explained as a consequence of the first nav running while focus was still on the ribbon — `Selection.SetRange` updates the stored selection but `ActiveWindow.ScrollIntoView` does not move the rendered viewport in the same way it would with document focus, leaving subsequent position computations against a partially-positioned view.
 
@@ -2739,7 +2739,7 @@ This is the canonical Word-API call for "give focus to this document window" and
 
 **Why both, not one or the other:** (A) alone fixes the caret-not-visible symptom but does not fix the Tab Tab → document race, because that race occurs *before* OnGoClick runs at all (it's between editBox commits and the next Tab). (B) alone fixes the caret-not-visible symptom *and* sidesteps the Tab race for Go, but does not protect against any future ribbon → document operation that hasn't been ported to the deferred pattern yet. Together they form belt-and-suspenders: (B) makes nav focus-safe by construction, and (A) is a defensive activation at the end so any path into `GoToVerse` (including direct calls from Prev/Next Verse buttons) ends with the document holding focus.
 
-**The Tab Tab race in step (2)** is a separate ribbon XML / control-type problem and is *not* fixed by either A or B. It needs the chapter `editBox` to either (i) not release focus until explicit commit, or (ii) the next ribbon control (verse `editBox`) needs to be the natural Tab target. That's a customUI14 schema concern, not a VBA fix. I'd suggest treating it as a separate ticket — flagging it now in this review for follow-up rather than mixing it into the same fix.
+**The Tab behaviour in step (2)** is a separate Word/customUI focus-management item and is *not* fixed by either A or B. The corrected diagnosis (below) shows it is the platform's documented `editBox` idle-commit returning focus to the document, after which any Tab is a document Tab. There is no VBA-side fix; KeyTips are the supported path. Flagging as a separate item rather than mixing it into the same fix.
 
 **Recommendation:** apply A first as a one-line, low-risk defensive fix and re-test. If symptom (1) clears with just A, leave B for later; if any residual focus issues remain, layer B on top. This way each change can be evaluated independently — consistent with the project's one-fix-at-a-time review pattern.
 
@@ -2767,7 +2767,7 @@ Test path:
 3. Caret should now appear at the target verse without needing a Next-Verse "force" press.
 4. Press Next Chapter — should land at the correct H2 (no off-by-some).
 
-If symptoms persist, layer fix (B) on top. The Tab Tab → document race in step (2) of the original repro remains a separate ribbon-XML ticket.
+If symptoms persist, layer fix (B) on top. The Tab Tab → document behaviour in step (2) of the original repro remains a separate item — corrected diagnosis below identifies it as Word's documented idle-commit, not a project defect.
 
 **Status:** APPLIED — awaiting test result.
 
@@ -2776,19 +2776,49 @@ If symptoms persist, layer fix (B) on top. The Tab Tab → document race in step
 User-confirmed test outcomes:
 
 1. `ge` Tab `5` Tab Go → caret lands in the document at the correct position. **Fix (A) resolves the primary symptom.**
-2. `ge` Tab `5`, wait 5 s, Tab → Tab character types into the document body. **Tab race persists** — chapter `editBox` releases focus before the next Tab is processed, so the Tab is routed to the document. This is the customUI XML focus-handoff limitation, not a `GoToVerseByScan` issue.
-3. Next-button → Exodus, Tab `5` Tab `3` Tab Go → search works. Confirms the chained nav path is sound once focus stays inside the ribbon long enough for each field commit.
+2. `ge` Tab `5`, wait 5 s, Tab → Tab character types into the document body. **Idle-commit focus leak** (terminology corrected from earlier "Tab race" — see 2026-04-29 correction below). Word's customUI `editBox` auto-commits the value after a short idle interval (~1 s) and returns focus to the document body; subsequent Tabs are then document Tabs. This is documented Word behaviour, not a project defect.
+3. Next-button → Exodus, Tab `5` Tab `3` Tab Go → search works. Confirms the chained nav path is sound when no idle period elapses between Tabs (commits arrive before the idle-commit threshold expires).
 
-**Constraints documented for the Tab race (separate item, not fixed by (A)):**
+**Constraints documented for the residual (separate item, not fixed by (A)):**
 
-Word's customUI14 schema does **not** expose a public API to programmatically set focus on a specific ribbon control. `IRibbonUI` has `Invalidate`, `InvalidateControl`, `ActivateTab`, `ActivateTabMso` — and nothing for `SetFocus(controlId)`. Tab routing within the ribbon is platform-controlled; on `editBox` commit Word returns focus to the document by design. The race is therefore a Word limitation, not a project defect.
+Word's customUI14 schema does **not** expose a public API to programmatically set focus on a specific ribbon control. `IRibbonUI` has `Invalidate`, `InvalidateControl`, `ActivateTab`, `ActivateTabMso` — and nothing for `SetFocus(controlId)`. Tab routing within the ribbon is platform-controlled; on `editBox` commit (whether explicit via Enter/Tab or implicit via idle) Word returns focus to the document by design. The behaviour is therefore a Word limitation, not a project defect.
 
 Available paths if/when the Tab race is prioritised:
 - **KeyTips (already wired):** `KT_BOOK / KT_CHAPTER / KT_VERSE / KT_GO` constants exist in `basUIStrings`. `Alt + <keytip>` is the canonical Office UX for cross-control jumps and bypasses Tab entirely. Documentation update only — no code change.
 - **Auto-fire Go on valid chapter+verse:** condition the existing `OnChapterChanged` / `OnVerseChanged` handlers to invoke `OnGoClick` once both fields validate. Removes the need for the final Tab → Go step. Tradeoff: nav fires before user expects it.
 - **VSTO / WPF ribbon rewrite:** would allow a true Tab focus chain. Major rewrite; deferred indefinitely.
 
-**Status:** **OPEN** — fix (A) resolved primary symptom (caret-not-visible). Tab race tracked as a separate item; Finding 5 stays open as the umbrella ticket until the residual is addressed or explicitly closed as won't-fix.
+**Status:** **OPEN** — fix (A) resolved primary symptom (caret-not-visible). Idle-commit focus leak (formerly "Tab race") tracked as a separate item; Finding 5 stays open as the umbrella ticket until the residual is addressed or explicitly closed as won't-fix.
+
+### Finding 5 — terminology correction (2026-04-29)
+
+User correctly pushed back on the term "Tab race". A race condition by definition resolves with timing — wait long enough and you get a consistent winner. The user's observation is the opposite: **after waiting 5 seconds, the Tab still goes to the document, deterministically**. That isn't a race; it's a steady-state focus-leak.
+
+**Corrected diagnosis: idle-commit focus leak.**
+
+Word's customUI `editBox` has two focus-loss triggers, both deterministic:
+
+1. **Idle-commit:** after the user stops typing for ~1 s, Word treats the value as committed, fires `onChange`, and returns focus to the document body. Undocumented in the customUI XML reference but observable across Office versions.
+2. **Explicit-commit:** Enter, Tab, or focus-loss commits immediately. Same result.
+
+So when the user types `5` and pauses 5 s, focus has already been handed back to the document during the first ~1 s of idle. The next Tab is no longer "Tab inside the chapter editBox" — it's "Tab inside the document". A Tab in the document body inserts a tab character. Deterministic.
+
+That also explains scenario (3) — rapid Tab chains arrive **before** the idle-commit threshold expires, so they're processed by the ribbon's internal tab routing. The moment the user pauses for ~1 s, that grace period ends and every subsequent Tab is a document Tab.
+
+**Hidden bug or by-design Word behaviour?**
+
+It is **Word behaving as designed**, not a defect in this project's code. Microsoft's official UX position is: ribbon-control navigation is **KeyTips**, not Tab. The Tab traversal in (3) is accidental — Microsoft never promised it. Disambiguation:
+
+| Symptom | Hidden bug? |
+|---|---|
+| Caret doesn't appear after first Go | **Hidden bug — fixed by (A).** Code didn't return focus to the document. |
+| Tab after chapter sometimes goes to next field, sometimes to document | **Not a code bug — Word's documented customUI behaviour.** Idle-commit hands focus to document. |
+| Rapid Tab traversal works (3) | **Not officially supported.** Works by accident; could break across Office updates. |
+| `5` doesn't commit until I press something | **Not a bug — by design.** customUI editBox waits for explicit commit or idle threshold. |
+
+**Apology for the sloppy term.** "Tab race" in earlier notes implied a code-level timing defect we could resolve. The correct framing is platform-level deterministic focus-leak. Forward references to "Tab race" in this Finding should be read as "idle-commit focus leak".
+
+**Recommendation unchanged.** No VBA-side fix is available. The supported path is **KeyTips** (already wired in `basUIStrings`). Auto-fire-on-valid-chapter+verse remains a viable code-side option to *avoid* the residual rather than fix it. VSTO/WPF rewrite remains the only path to true ribbon-owned focus management.
 
 ---
 
