@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-04-22 14:50:22
+Date    : 2026-04-29 13:01:21
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -12,9 +12,15 @@ PASS  Heading 1
 PASS  Heading 2
 PASS  CustomParaAfterH1
 PASS  DatAuthRef
+FAIL  BookIntro
+      NOT FOUND in document
 PASS  Brief
 PASS  Psalms BOOK
-PASS  Lamentation
+FAIL  Lamentation
+      NOT FOUND in document
+FAIL  ListItem
+      Indent   : expected 0 got -18
+PASS  ListItemBody
 PASS  TheHeaders
 PASS  TheFooters
 PASS  Footnote Text
@@ -23,13 +29,11 @@ PASS  Title
 -- Not yet created (expected FAIL) --
 FAIL  BodyTextContinuation
       NOT FOUND in document
-FAIL  ListItem
-      NOT FOUND in document
 FAIL  AppendixTitle
       NOT FOUND in document
 FAIL  AppendixBody
       NOT FOUND in document
 
 ========================================================================
-Summary: 13 PASS   4 FAIL
+Summary: 13 PASS   6 FAIL
 === End Style Taxonomy Audit ===

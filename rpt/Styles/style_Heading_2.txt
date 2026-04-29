@@ -21,6 +21,6 @@
 .ParagraphFormat.LineSpacingRule = 4
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
-.ParagraphFormat.KeepWithNext = 0
+.ParagraphFormat.KeepWithNext = -1
 .ParagraphFormat.PageBreakBefore = 0
 .ParagraphFormat.OutlineLevel = 2

@@ -2849,7 +2849,7 @@ Public Function ToSBLShortForm(ByVal canon As String) As String
     Dim lastSp As Long
     Dim k As Long
     For k = Len(canon) To 1 Step -1
-        Debug.Print "> " & Mid$(canon, k, 1)
+        'Debug.Print "> " & Mid$(canon, k, 1)
         If Mid$(canon, k, 1) = " " Then lastSp = k: Exit For
     Next k
     If lastSp = 0 Then ToSBLShortForm = canon: GoTo PROC_EXIT

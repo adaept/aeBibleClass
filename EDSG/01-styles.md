@@ -21,7 +21,7 @@ Priority order from `WordEditingConfig` (which runs
 page-keyed view, run `ListApprovedStylesByBookOrder` — the live
 document is the authority, this snapshot ages.
 
-Latest run (2026-04-26): **43 approved styles succeeded**, ~4 sec.
+Latest run (2026-04-29): **44 approved styles succeeded**, ~4 sec.
 
 ### Validated (priorities 1–36)
 
@@ -70,18 +70,20 @@ Order inherited from earlier passes; will be re-walked.
 
 | Prio | Style |
 |---:|---|
-| 37 | BodyTextIndent |
-| 42 | EmphasisBlack |
-| 43 | EmphasisRed |
-| 44 | Words of Jesus |
-| 45 | AuthorSectionHead |
-| 46 | AuthorQuote |
-| 47 | Normal |
+| 37 | SpeakerLabel |
+| 38 | BodyTextIndent |
+| 43 | EmphasisBlack |
+| 44 | EmphasisRed |
+| 45 | Words of Jesus |
+| 46 | AuthorSectionHead |
+| 47 | AuthorQuote |
+| 48 | Normal |
 
 ### Reserved gaps
 
-Priorities 38–41 are reserved for future insertions without
-wholesale renumbering. (Earlier "gap at 17" was not a deliberate
+Priorities 39–42 are reserved for future insertions without
+wholesale renumbering. (Gap shifted +1 on 2026-04-29 when
+`SpeakerLabel` was added at priority 37.) (Earlier "gap at 17" was not a deliberate
 reservation; it was a `TitleOnePage` duplicate in the array,
 fixed 2026-04-26 — `TitleOnePage` now correctly holds 17.)
 

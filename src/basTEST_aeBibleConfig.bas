@@ -221,8 +221,12 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits all 17 approved taxonomy styles against their expected configuration
-'   and writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Audits the 19 approved-array taxonomy styles against their expected
+'   configuration and writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Buckets:
+'     2 fully specified (all 7 properties verified) - BodyText, BodyTextIndent
+'     14 existence-verified (full spec pending)
+'     3 not yet created (expected FAIL until each Define* routine runs)
 '
 ' DESIGN:
 '   AuditOneStyle (Private) checks up to 7 properties per style. Sentinel

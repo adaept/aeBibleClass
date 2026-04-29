@@ -2822,6 +2822,54 @@ It is **Word behaving as designed**, not a defect in this project's code. Micros
 
 ---
 
+## 2026-04-29 — Style taxonomy snapshot refresh
+
+### Run output
+
+`WordEditingConfig` + `DumpAllApprovedStyles` + `RUN_TAXONOMY_STYLES`:
+
+- `DumpAllApprovedStyles`: **44 succeeded, 0 failed, ~4.24 sec.**
+- `RUN_TAXONOMY_STYLES`: **13 PASS  6 FAIL → rpt\StyleTaxonomyAudit.txt**.
+- `PromoteApprovedStyles` reported five styles missing from the document — `BodyTextContinuation`, `BookIntro`, `AppendixTitle`, `AppendixBody`, and the deliberate canary `FargleBlargle` — all expected per the EDSG `01-styles.md` "Missing from document" list.
+
+`SpeakerLabel` is now present at priority 37 (added by the recent `Add SpeakerLabel style` commit), pushing `BodyTextIndent` from 37 → 38 and the Emphasis / Author / Normal block from the 42–47 range to 43–48. The reserved-gap of four slots shifted from 38–41 to 39–42.
+
+### Taxonomy routine header — corrected (2026-04-29)
+
+`src/basTEST_aeBibleConfig.bas:222-241` had `Audits all 17 approved taxonomy styles ...`. The actual count of `AuditOneStyle` calls is **19** (2 fully-specified + 14 existence-verified + 3 not-yet-created), confirmed by the run's 13 PASS + 6 FAIL = 19 total.
+
+Fix applied: PURPOSE block updated to state 19 styles and enumerate the three buckets:
+
+```
+PURPOSE:
+  Audits the 19 approved-array taxonomy styles against their expected
+  configuration and writes a structured report to rpt\StyleTaxonomyAudit.txt.
+  Buckets:
+    2 fully specified (all 7 properties verified) - BodyText, BodyTextIndent
+    14 existence-verified (full spec pending)
+    3 not yet created (expected FAIL until each Define* routine runs)
+```
+
+No code change to the audits themselves; header text only.
+
+### EDSG `01-styles.md` — refreshed (2026-04-29)
+
+Three small edits to capture the post-`SpeakerLabel` state:
+
+1. "Latest run" stamp: `2026-04-26 / 43 approved styles` → `2026-04-29 / 44 approved styles`.
+2. "Pending re-validation (priorities 37+)" table updated: `SpeakerLabel` inserted at 37; `BodyTextIndent` 37→38; `EmphasisBlack` 42→43; `EmphasisRed` 43→44; `Words of Jesus` 44→45; `AuthorSectionHead` 45→46; `AuthorQuote` 46→47; `Normal` 47→48.
+3. "Reserved gaps" paragraph updated: `Priorities 38–41 are reserved` → `Priorities 39–42 are reserved`, with a note that the gap shifted +1 on 2026-04-29 when `SpeakerLabel` was added at priority 37.
+
+Validated 1–36 table unchanged — `SpeakerLabel` correctly belongs in the pending-re-validation bucket per the EDSG's own convention until the page walk reaches it.
+
+### Follow-up (not actioned)
+
+`RUN_TAXONOMY_STYLES` does not currently include an `AuditOneStyle "SpeakerLabel", ...` entry, so the new style is **promoted but not actively audited**. By user decision (default), this is left as-is. Adding it would be a one-line addition to the existence-verified bucket: `AuditOneStyle "SpeakerLabel", "", 0, -1, -999, -1, -999, -999, -999`, bumping the total to 20.
+
+**Status:** all three sub-items APPLIED — 2026-04-29.
+
+---
+
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
 
 ### Decision
