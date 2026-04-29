@@ -1,6 +1,6 @@
 '--- TheHeaders  (Type=Paragraph, Priority=1) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Noto Sans"
 .Font.Size = 9
 .Font.Bold = 0

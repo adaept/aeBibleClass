@@ -1,7 +1,7 @@
 '--- TheFooters  (Type=Paragraph, Priority=3) ---
-.BaseStyle = "Normal"
-.QuickStyle = True
-.Font.Name = "Carlito"
+.BaseStyle = ""
+.QuickStyle = False
+.Font.Name = "Noto Sans"
 .Font.Size = 9
 .Font.Bold = 0
 .Font.Italic = 0
@@ -16,7 +16,7 @@
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 8
+.ParagraphFormat.SpaceAfter = 0
 .ParagraphFormat.LineSpacing = 12
 .ParagraphFormat.LineSpacingRule = 0
 .ParagraphFormat.WidowControl = 0
