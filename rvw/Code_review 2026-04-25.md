@@ -3286,6 +3286,104 @@ Once confirmed, Phase 2 (transport into the live `.docm`) is next.
 
 **Status:** Phase 1 code applied; awaiting holding-file creation and `CreateAuthorStyles` run.
 
+### Phase 1 — runtime correction: defer `NextParagraphStyle` to Phase 4 (2026-04-29)
+
+#### Bug observed
+
+User's first run of `CreateAuthorStyles` in the holding `.docm` raised:
+
+```
+Erl=0 Error 5834 (Item with specified name does not exist.)
+in procedure CreateAuthorStyles of Module basAuthorStyles
+```
+
+Root cause: the holding file is a fresh blank document. It contains only Word's built-in styles plus the two we are creating. `DefineAuthorListItem` tried to set `NextParagraphStyle = "ListItemBody"` — `ListItemBody` does not exist in the holding file, so Word's name-resolution check raises 5834. Error bubbles up through `CreateAuthorStyles`'s handler, which is why the message names that procedure rather than `DefineAuthorListItem`.
+
+Same exposure exists in `DefineAuthorBookRefNew` for `NextParagraphStyle = "AuthorBookRefNew"` — but that one happens to succeed because the assignment runs *after* the style is created in the same Sub. The first failure point is `DefineAuthorListItem`.
+
+#### Design correction
+
+**Move all `NextParagraphStyle` assignments out of Phase 1 entirely.** Phase 1 is now purely standalone-style definitions (font, paragraph format, QA-checklist properties). Inter-style references (`NextParagraphStyle`) are a Phase 4 concern, set only when all target names exist in the live document.
+
+Word's default `NextParagraphStyle` for a newly added style is `"Normal"`, which always exists. The transport step (Phase 2) carries this default into the live document; Phase 4 sets the final references after all renames complete.
+
+#### Phase 1 code re-applied — three edits to `src/basAuthorStyles.bas`
+
+1. `DefineAuthorListItem` — removed `s.NextParagraphStyle = "ListItemBody"`; replaced with a comment explaining the deferral and the 5834 reason.
+2. `DefineAuthorBookRefNew` — removed `s.NextParagraphStyle = "AuthorBookRefNew"`; replaced with a comment explaining the deferral.
+3. `CreateAuthorStyles` doc-block updated to describe the deferral policy explicitly (replaces the earlier "transitional `ListItemBody`" description).
+
+The Subs now compile and run in any document context, including a blank holding file.
+
+### Phase plan — clearly defined after the correction
+
+#### Phase 1 — Define replacements in holding `.docm` (CODE COMPLETE 2026-04-29)
+
+Operations performed by `CreateAuthorStyles` in a fresh `tools/style_holding.docm`:
+
+1. Add `AuthorListItem` paragraph style if not already present.
+2. Set `AuthorListItem.BaseStyle = ""` (must be first).
+3. Set `AuthorListItem.AutomaticallyUpdate = False` (QA-checklist fix).
+4. Set `AuthorListItem.QuickStyle = False` (QA-checklist fix).
+5. Set descriptive font + paragraph properties (Carlito 11, Bold+Italic, hanging indent 18/-18, single line spacing).
+6. Add `AuthorBookRefNew` paragraph style if not already present.
+7. Set `AuthorBookRefNew.BaseStyle = ""`.
+8. Set `AuthorBookRefNew.AutomaticallyUpdate = False`, `QuickStyle = False`.
+9. Set descriptive font + paragraph properties (Carlito 11, Bold, hanging indent 36/-18, single line spacing, SpaceAfter=11).
+
+`NextParagraphStyle` is NOT set in Phase 1. `LinkToListTemplate` is NOT called.
+
+#### Phase 2 — Transport styles into live `.docm` (PENDING)
+
+Operations:
+
+1. Open both the live `.docm` and `tools/style_holding.docm` in the same Word session.
+2. From the live doc's project, run a `TransportAuthorStyles` Sub (to be added in Phase 2 design):
+   - Read each property of `AuthorListItem` from the holding doc; create `AuthorListItem` in the live doc with the same properties.
+   - Read each property of `AuthorBookRefNew` from the holding doc; create `AuthorBookRefNew` in the live doc with the same properties.
+3. Verify both styles exist in the live doc with `DumpStyleProperties "AuthorListItem", True` and `DumpStyleProperties "AuthorBookRefNew", True`.
+
+`NextParagraphStyle` on both new styles defaults to `"Normal"` after transport. Acceptable for the duration of Phase 3.
+
+#### Phase 3 — Migrate paragraphs from old → new style (PENDING)
+
+Operations (run in the live `.docm`):
+
+1. Run `MigrateParagraphs "ListItem", "AuthorListItem"` (the recipe Sub from EDSG `10-list-paragraph-bug.md`, to be added).
+2. Run `MigrateParagraphs "AuthorBookRef", "AuthorBookRefNew"`.
+3. Spot-check the migrated paragraphs visually: line spacing, indents, font weight should be unchanged from before.
+
+After Phase 3, no paragraph in the live doc uses the old `ListItem` or old `AuthorBookRef`. Old style definitions still exist (priority unchanged) but are unreferenced.
+
+#### Phase 4 — Decommission, rename, and finalise inter-style references (PENDING)
+
+Operations (run in the live `.docm`), in order:
+
+1. Delete the old `ListItem` style: `ActiveDocument.Styles("ListItem").Delete`.
+2. Delete the old `AuthorBookRef` style: `ActiveDocument.Styles("AuthorBookRef").Delete`.
+3. Rename `ListItemBody → AuthorListItemBody`: `ActiveDocument.Styles("ListItemBody").NameLocal = "AuthorListItemBody"`. (Safe — `ListItemBody` is `BaseStyle = ""` already; rename does not trigger the engine bug.)
+4. Rename `AuthorBookRefNew → AuthorBookRef`: `ActiveDocument.Styles("AuthorBookRefNew").NameLocal = "AuthorBookRef"`.
+5. Set `AuthorListItem.NextParagraphStyle = "AuthorListItemBody"` (now resolves — target exists post-step-3).
+6. Set `AuthorBookRef.NextParagraphStyle = "AuthorBookRef"` (self-reference; target exists post-step-4).
+7. Update the `approved` array in `src/basTEST_aeBibleConfig.bas`: replace `"ListItem"` with `"AuthorListItem"`, `"ListItemBody"` with `"AuthorListItemBody"`. (`AuthorBookRef` already in the array; no change to that entry.)
+8. Update `RUN_TAXONOMY_STYLES`: replace the two `AuditOneStyle "ListItem", ...` and `AuditOneStyle "ListItemBody", ...` entries with `AuditOneStyle "AuthorListItem", ...` and `AuditOneStyle "AuthorListItemBody", ...` (descriptive specs from the new styles' `style_*.txt` dumps).
+9. Run `WordEditingConfig` to repromote priorities — every approved style gets a fresh priority, the renamed/replaced styles take their slots correctly.
+
+#### Phase 5 — Verify (PENDING)
+
+Operations:
+
+1. Run `RUN_TAXONOMY_STYLES`. Expected: PASS for `AuthorListItem`, `AuthorListItemBody`, `AuthorBookRef`. No new FAILs introduced.
+2. Run `AuditListStyleRisk`. Expected: zero flagged styles in section (A) — all list-family inheritance eliminated.
+3. Run `DumpAllApprovedStyles`. Expected count: still 44 styles (same total — `ListItem` removed, `AuthorListItem` added; `ListItemBody` renamed in place, no count change; `AuthorBookRefNew` removed, `AuthorBookRef` already counted).
+4. Visual scan: pages with author book references and list items should look unchanged from pre-migration.
+
+#### Phase boundaries — unchanged
+
+Each phase concludes with explicit user-side action (run a Sub, observe output, paste back). I propose code; user approves; user runs; I read; we proceed. No phase merges into the next without intervening review.
+
+**Status:** Phase 1 code corrected (NextParagraphStyle deferred); awaiting holding-file creation and `CreateAuthorStyles` re-run.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

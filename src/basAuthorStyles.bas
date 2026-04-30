@@ -121,10 +121,13 @@ End Sub
 ' created with QuickStyle = False and AutomaticallyUpdate = False
 ' (current ListItem has both as True). User decision 2026-04-29.
 '
-' NextParagraphStyle on AuthorListItem set to "ListItemBody" initially;
-' updated to "AuthorListItemBody" in Phase 4 after the ListItemBody
-' rename. This avoids a transient name-resolution gap during Phases
-' 2-3 when AuthorListItemBody does not yet exist.
+' NextParagraphStyle is NOT set in Phase 1 - the holding .docm contains
+' only built-in styles plus the two created here, so referencing custom
+' names like ListItemBody / AuthorBookRefNew would raise error 5834
+' (item with specified name does not exist) on Word's name-resolution
+' check. Default "Normal" is used for transport. Phase 4 sets the
+' final NextParagraphStyle values once all target names exist in the
+' live document.
 '
 ' Usage (in a fresh blank .docm):
 '   CreateAuthorStyles
@@ -157,7 +160,9 @@ Private Sub DefineAuthorListItem()
     s.baseStyle = ""                           ' MUST come first
     s.AutomaticallyUpdate = False               ' QA-checklist fix (was True on ListItem)
     s.QuickStyle = False                        ' QA-checklist fix (was True on ListItem)
-    s.NextParagraphStyle = "ListItemBody"       ' Phase 4 will update to "AuthorListItemBody"
+    ' NextParagraphStyle deferred to Phase 4 - the holding .docm doesn't
+    ' contain ListItemBody / AuthorListItemBody, so setting it here would
+    ' raise 5834. Default ("Normal") is fine for transport.
     s.Font.Name = "Carlito"
     s.Font.Size = 11
     s.Font.Bold = True
@@ -193,7 +198,8 @@ Private Sub DefineAuthorBookRefNew()
     s.baseStyle = ""
     s.AutomaticallyUpdate = False
     s.QuickStyle = False
-    s.NextParagraphStyle = "AuthorBookRefNew"   ' self; renamed to AuthorBookRef in Phase 4
+    ' NextParagraphStyle deferred to Phase 4 (set to AuthorBookRef after
+    ' the rename). Default ("Normal") is fine for transport.
     s.Font.Name = "Carlito"
     s.Font.Size = 11
     s.Font.Bold = True
