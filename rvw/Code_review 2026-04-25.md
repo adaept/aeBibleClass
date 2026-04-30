@@ -3676,6 +3676,87 @@ Expected. New / transported styles get `Priority = 1` by default. The `approved`
 
 **Status:** Phase 4a confirmed on test copy; production sequence pending (Transport + Migrate + Decommission); Phase 4b source-code edits pending.
 
+### Production sequence — confirmed clean (2026-04-30)
+
+User ran the full production sequence on the production `.docm`:
+
+1. `TransportAuthorStyles` (Phase 2) — both styles transported.
+2. `MigrateParagraphs "ListItem", "AuthorListItem"` (Phase 3) — paragraphs migrated.
+3. `MigrateParagraphs "AuthorBookRef", "AuthorBookRefNew"` (Phase 3) — paragraphs migrated.
+4. `DecommissionAuthorStyles` (Phase 4a) — six steps clean.
+5. `DumpStyleProperties` verification on all three target styles.
+6. Production `.docm` saved.
+
+User confirmed: "Production is confirmed clean at step 8." Both test copy and production now hold the post-migration style topology (`AuthorListItem`, `AuthorListItemBody`, `AuthorBookRef`, all `BaseStyle = ""`, no list-engine inheritance).
+
+### Phase 4b — source-code edits applied (2026-04-30)
+
+Two mechanical name swaps in `src/basTEST_aeBibleConfig.bas`:
+
+#### Edit 1 — `approved` array
+
+```vba
+                  "ListItem", "ListItemBody", "ListItemTab", _
+```
+
+becomes
+
+```vba
+                  "AuthorListItem", "AuthorListItemBody", "ListItemTab", _
+```
+
+`"ListItemTab"` unchanged (out of migration scope). `"AuthorBookRef"` (next line) unchanged (the array entry didn't move; the underlying style was renamed from `AuthorBookRefNew → AuthorBookRef` in Phase 4a, so the existing array entry now resolves to the post-migration style).
+
+Priority assignment unchanged: positions 18, 19, 20, 21, 22 in the array still produce priorities 18 (`AuthorListItem`), 19 (`AuthorListItemBody`), 20 (`ListItemTab`), 21 (`AuthorBookRefHeader`), 22 (`AuthorBookRef`).
+
+#### Edit 2 — `RUN_TAXONOMY_STYLES`
+
+Two `AuditOneStyle` lines in the existence-verified bucket renamed:
+
+```vba
+    AuditOneStyle "ListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
+    AuditOneStyle "ListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
+```
+
+becomes
+
+```vba
+    AuditOneStyle "AuthorListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
+    AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
+```
+
+Spec values unchanged. `AuditOneStyle` doesn't inspect `QuickStyle`, `AutomaticallyUpdate`, or `NextParagraphStyle`, so the QA-checklist fixes from Phase 1 / Phase 2 don't require any audit-spec changes. Font / paragraph values are descriptively identical to the migration source (we copied them exactly in Phase 2).
+
+#### What does NOT change
+
+- Audit total: still 19 entries.
+- Bucket counts: still 9 fully-specified / 7 existence-verified / 3 not-yet-created.
+- Other bucket-2 entries (`BookIntro`, `TheHeaders`, `TheFooters`, `Title`, `Footnote Reference`) untouched.
+- `AuthorBookRef` audit entry: was not previously in `RUN_TAXONOMY_STYLES` and still isn't — falls under the deferred prescriptive-spec pass / final-state goal of full coverage.
+
+### Phase 5 — verification, user-side action
+
+User must re-import the updated `basTEST_aeBibleConfig.bas` into both `.docm` files (test copy + production) before running verification. Verification per `.docm`:
+
+1. `WordEditingConfig` — repromotes priorities. Expected output: 44 styles successfully promoted, no missing-style diagnostics related to `ListItem` or `ListItemBody` (those names are no longer in the array).
+2. `RUN_TAXONOMY_STYLES` — expected: same `PASS / FAIL` counts as the pre-migration baseline, including the pre-existing `FirstLineIndent` drift on `AuthorListItem` (was on `ListItem`; same spec, same expected -18 vs encoded 0; carried forward per the 2026-04-29 leave-as-is decision).
+3. `AuditListStyleRisk` — expected: section (A) reports **0 flagged** (both at-risk styles now have `BaseStyle = ""`).
+4. Visual spot-check pages with author book references and list items — should be visually identical to the post-Phase-3 state.
+
+Run on test copy first; if clean, re-run on production. Confirm back here with each run's output.
+
+### Documentation follow-ups (post-Phase-5)
+
+After Phase 5 confirms clean, three documentation updates are needed for full alignment:
+
+1. **`EDSG/01-styles.md`** — priority snapshot table currently lists `"ListItem"`, `"ListItemBody"` at priorities 18, 19. Update to `"AuthorListItem"`, `"AuthorListItemBody"`.
+2. **`EDSG/01-styles.md`** — "Missing from document" list mentions `BookIntro` only; verify nothing migration-related needs addition.
+3. **Review file** — final summary entry recording end-state (number of styles changed, audit baseline reasserted, etc.).
+
+These are documentation-only and don't affect code. Proposed after Phase 5 confirmation.
+
+**Status:** Phase 4b code applied; user-side action: re-import `basTEST_aeBibleConfig.bas` into both `.docm` files, then run Phase 5 verification.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

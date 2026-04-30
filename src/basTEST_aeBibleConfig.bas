@@ -36,7 +36,7 @@ Private Sub PromoteApprovedStyles()
                      "Contents", "ContentsRef", _
                      "BibleIndexEyebrow", "BibleIndex", "Introduction", _
                      "TitleOnePage", _
-                     "ListItem", "ListItemBody", "ListItemTab", _
+                     "AuthorListItem", "AuthorListItemBody", "ListItemTab", _
                      "AuthorBookRefHeader", "AuthorBookRef", "CenterSubText", _
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
@@ -285,8 +285,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
     AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
-    AuditOneStyle "ListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
-    AuditOneStyle "ListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
+    AuditOneStyle "AuthorListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
+    AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999

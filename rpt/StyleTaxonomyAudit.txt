@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-04-29 16:59:36
+Date    : 2026-04-30 14:23:31
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -17,9 +17,9 @@ PASS  Footnote Text
 -- Existence verified (full spec pending) --
 FAIL  BookIntro
       NOT FOUND in document
-FAIL  ListItem
+FAIL  AuthorListItem
       Indent   : expected 0 got -18
-PASS  ListItemBody
+PASS  AuthorListItemBody
 PASS  TheHeaders
 PASS  TheFooters
 PASS  Title
