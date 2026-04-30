@@ -29,11 +29,20 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' AuditListStyleRisk
 ' ==========================================================================
 ' Step 0 of the List Paragraph migration (EDSG/10-list-paragraph-bug.md).
-' Inventories paragraph styles that inherit from "List Paragraph" or hold
-' a LinkToListTemplate - both are at risk of triggering the Word
-' numbering-engine hang on Modify Style edits.
+' Inventories paragraph styles that inherit from any of Word's built-in
+' list-family parents (List Paragraph, List, List Number, List Bullet,
+' List Continue) - all are risk vectors for the numbering-engine hang
+' on Modify Style edits in large documents.
+'
+' Note: Style.LinkToListTemplate is a method (not a read-only property)
+' so it cannot be queried here. The list-template-attachment-without-
+' inheritance case is rare in practice; if Phase 0 output looks
+' incomplete, a paragraph-level fallback can be layered on (sample
+' Paragraphs.Range.ListFormat.ListTemplate per style).
 '
 ' Output: Immediate window only. No file written.
+'   (A) Flagged at-risk styles (list-family inheritance).
+'   (B) Full inventory of every paragraph style with non-empty BaseStyle.
 '
 ' Usage:
 '   AuditListStyleRisk
@@ -42,32 +51,52 @@ Public Sub AuditListStyleRisk()
     On Error GoTo PROC_ERR
     Dim s As Word.Style
     Dim base As String
-    Dim hasLT As Boolean
+    Dim baseLC As String
     Dim flagged As Long
+    Dim totalWithBase As Long
 
     Debug.Print "---- AuditListStyleRisk: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----"
-    Debug.Print "Approved paragraph styles flagged as at-risk:"
-    Debug.Print "(BaseStyle inherits List Paragraph, OR LinkToListTemplate set)"
+    Debug.Print ""
+    Debug.Print "(A) Paragraph styles whose BaseStyle is a list-family built-in"
+    Debug.Print "    (List Paragraph, List Number, List Bullet, List Continue, List):"
     Debug.Print ""
 
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Then
             On Error Resume Next
             base = s.baseStyle
-            hasLT = Not (s.LinkToListTemplate Is Nothing)
             On Error GoTo PROC_ERR
+            baseLC = LCase$(Trim$(base))
 
-            If LCase$(Trim$(base)) = "list paragraph" Or hasLT Then
-                Debug.Print s.NameLocal & " | BaseStyle=""" & base & _
-                            """ | HasListTemplate=" & hasLT & _
-                            " | Priority=" & s.Priority
+            If baseLC = "list paragraph" Or baseLC = "list" _
+               Or baseLC Like "list number*" Or baseLC Like "list bullet*" _
+               Or baseLC Like "list continue*" Then
+                Debug.Print "  FLAG  " & s.NameLocal & " | BaseStyle=""" & base & _
+                            """ | Priority=" & s.Priority
                 flagged = flagged + 1
             End If
         End If
     Next s
 
     Debug.Print ""
-    Debug.Print "Flagged: " & flagged & " style(s)."
+    Debug.Print "(B) Full inventory: every paragraph style with non-empty BaseStyle:"
+    Debug.Print ""
+
+    For Each s In ActiveDocument.Styles
+        If s.Type = wdStyleTypeParagraph Then
+            On Error Resume Next
+            base = s.baseStyle
+            On Error GoTo PROC_ERR
+            If Len(Trim$(base)) > 0 Then
+                Debug.Print "  " & s.NameLocal & " <- """ & base & """ | Priority=" & s.Priority
+                totalWithBase = totalWithBase + 1
+            End If
+        End If
+    Next s
+
+    Debug.Print ""
+    Debug.Print "Flagged (list-family inheritance): " & flagged
+    Debug.Print "Total paragraph styles with BaseStyle: " & totalWithBase
 PROC_EXIT:
     Exit Sub
 PROC_ERR:

@@ -3146,6 +3146,47 @@ User directive: **start the process** for creating `AuthorListItem` and the othe
 
 **Status:** Phase 0 applied; awaiting `AuditListStyleRisk` run output before Phase 1.
 
+### Phase 0 — first run output and corrections (2026-04-29)
+
+#### `LinkToListTemplate` is a method, not a property — initial diagnostic failed compile
+
+User's first run of `AuditListStyleRisk` raised "argument not optional" on the line:
+
+```vba
+hasLT = Not (s.LinkToListTemplate Is Nothing)
+```
+
+`Style.LinkToListTemplate` is a method (it takes a `ListTemplate` argument and is used to *establish* the link), not a read-only property. There is no public Word VBA equivalent for "is this style linked to a list template" that can be queried directly. **Fix: drop the `LinkToListTemplate` check** and rely on `BaseStyle` inheritance as the primary signal. The list-template-attachment-without-inheritance case is rare; a paragraph-level fallback (`Paragraphs.Range.ListFormat.ListTemplate Is Nothing` sampling) can be layered on later if Phase 0 output looks incomplete.
+
+#### First successful run flagged zero styles — diagnostic was too narrow
+
+After the fix, `AuditListStyleRisk` ran clean and reported `Flagged: 0 style(s).` Unexpected — predicted `ListItem`, `ListItemBody`, `ListItemTab` should have been flagged. Inspection of the existing dump files showed why:
+
+| Style | `BaseStyle` (live) |
+|---|---|
+| `ListItem` | `"List Number"` |
+| `ListItemBody` | `""` (already detached) |
+| `ListItemTab` | `""` (already detached) |
+
+Two corrections to the original assumptions:
+
+1. **Migration scope is smaller than predicted.** Only `ListItem` actually has list-family inheritance to refactor. `ListItemBody` and `ListItemTab` are already structurally clean (`BaseStyle = ""`). If past hangs were on edits to `ListItem` (or on the list as a whole because `ListItem` is the root), fixing `ListItem` may be sufficient. If hangs occurred while editing `ListItemBody` / `ListItemTab` directly, the cause is something else (likely direct list-format attachment on paragraphs rather than style inheritance).
+2. **Diagnostic was too narrow.** It checked only `"List Paragraph"` literally; `ListItem` inherits from `"List Number"`. Word has a whole family of list-related built-in paragraph styles — `List Paragraph`, `List`, `List Number`, `List Bullet`, `List Continue`, plus their numbered siblings — and any of these as a `BaseStyle` is the same engine-recompute risk vector.
+
+#### Phase 0 v2 — broadened diagnostic (APPLIED 2026-04-29)
+
+Rewrote `AuditListStyleRisk` with three changes:
+
+(a) **Inheritance check broadened** to catch any list-family built-in: `LCase$(BaseStyle)` matches `"list paragraph"`, `"list"`, or wildcard-prefix matches `"list number*"` / `"list bullet*"` / `"list continue*"`. Catches `ListItem` (BaseStyle=`"List Number"`) and any other inheritance from list-family parents we haven't anticipated.
+
+(b) **Two-output design** — section (A) flagged at-risk styles, section (B) full inventory of every paragraph style with non-empty `BaseStyle`. Section (B) gives one-time discovery visibility into anything else of interest (e.g., approved styles violating the `BaseStyle = ""` rule for non-list reasons).
+
+(c) **Honest output naming** — "Inherits from list-family built-in" rather than just "List Paragraph", matching what's actually being checked.
+
+Awaiting v2 run output. Section (A) should now show `ListItem` flagged (per the dump data); section (B) gives the full BaseStyle picture for the next round of decisions.
+
+**Status:** Phase 0 v2 applied; awaiting v2 run.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
