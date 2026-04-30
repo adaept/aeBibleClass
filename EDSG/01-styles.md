@@ -75,9 +75,9 @@ Latest run (2026-04-29): **44 approved styles succeeded**, ~4 sec.
 | 15 | BibleIndex |
 | 16 | Introduction |
 | 17 | TitleOnePage |
-| 18 | ListItem |
-| 19 | ListItemBody |
-| 20 | ListItemTab |
+| 18 | AuthorListItem |
+| 19 | AuthorListItemBody |
+| 20 | AuthorListItemTab |
 | 21 | AuthorBookRefHeader |
 | 22 | AuthorBookRef |
 | 23 | CenterSubText |
