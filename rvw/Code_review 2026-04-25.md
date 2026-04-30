@@ -3925,6 +3925,43 @@ Both improvements landed cleanly: file output works, sort makes approved styles 
 
 **Status:** Phase 4d verified; Phase 6 ready to begin.
 
+### Phase 6a — `DumpStyleProperties` tab-stop extension applied (2026-04-30)
+
+#### Code applied — three changes in `src/basStyleInspector.bas`
+
+1. **Tab-stop block in `DumpStyleProperties`** — appended after `OutlineLevel`. Skips entirely when `oPF.TabStops.Count = 0` (no noise for styles without explicit tabs). When stops are present, output is:
+
+    ```
+    .ParagraphFormat.TabStops.Count = N
+    .ParagraphFormat.TabStops(1) = Position=<points> Align=<name> Leader=<name>
+    .ParagraphFormat.TabStops(2) = ...
+    ```
+
+2. **`TabAlignName` helper** — maps `wdAlignTab*` enum values to the symbolic names `Left`, `Center`, `Right`, `Decimal`, `Bar`, `List`. Unknown values render as `Unknown(N)`.
+
+3. **`TabLeaderName` helper** — maps `wdTabLeader*` enum values to `Spaces`, `Dots`, `Dashes`, `Lines`, `Heavy`, `MiddleDot`. Unknown values render as `Unknown(N)`.
+
+#### Why named symbols rather than integer enums
+
+Three reasons:
+
+1. Human-readable on inspection — a reader scanning the dump file sees `Align=Right Leader=Dots` rather than `Align=2 Leader=1`.
+2. Phase 6c (`AuditStyleTabs`) will spec values using these names — the dump file becomes the ready-to-use source.
+3. Robust against future enum additions — `Unknown(N)` falls through cleanly without breaking existing parsers.
+
+#### Side effect
+
+Next `DumpAllApprovedStyles` run will overwrite every `style_*.txt` file with the new format. Files for styles without explicit tab stops are byte-identical to before (block is skipped). Files for tab-bearing styles (mostly `AuthorListItemTab`, possibly a few others — the dump itself reveals the population) gain the new block. This is the descriptive baseline for Phase 6c specs.
+
+#### Phase 6a — user-side action
+
+1. Re-import the updated `basStyleInspector.bas` into both `.docm` files.
+2. Run `DumpStyleProperties "AuthorListItemTab", True` — output should now include the tab-stops block; file `rpt/Styles/style_AuthorListItemTab.txt` should reflect the same content.
+3. Optional: run `DumpAllApprovedStyles` to refresh every `style_*.txt` file under the new format.
+4. Confirm back here with the `AuthorListItemTab` dump output.
+
+**Status:** Phase 6a applied; awaiting `DumpStyleProperties "AuthorListItemTab", True` to confirm the tab block surfaces and to capture the descriptive baseline for Phase 6c.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

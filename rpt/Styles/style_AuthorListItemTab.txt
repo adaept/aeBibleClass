@@ -1,0 +1,29 @@
+'--- AuthorListItemTab  (Type=Paragraph, Priority=20) ---
+.BaseStyle = ""
+.QuickStyle = False
+.Font.Name = "Carlito"
+.Font.Size = 11
+.Font.Bold = 0
+.Font.Italic = 0
+.Font.Underline = 0
+.Font.Color = -16777216
+.Font.SmallCaps = 0
+.Font.AllCaps = 0
+.NextParagraphStyle = "AuthorListItemTab"
+.AutomaticallyUpdate = False
+.ParagraphFormat.Alignment = 0
+.ParagraphFormat.LeftIndent = 36
+.ParagraphFormat.RightIndent = 0
+.ParagraphFormat.FirstLineIndent = 0
+.ParagraphFormat.SpaceBefore = 0
+.ParagraphFormat.SpaceAfter = 11
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
+.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.KeepTogether = 0
+.ParagraphFormat.KeepWithNext = 0
+.ParagraphFormat.PageBreakBefore = 0
+.ParagraphFormat.OutlineLevel = 10
+.ParagraphFormat.TabStops.Count = 2
+.ParagraphFormat.TabStops(1) = Position=144 Align=Left Leader=Spaces
+.ParagraphFormat.TabStops(2) = Position=252 Align=Left Leader=Spaces

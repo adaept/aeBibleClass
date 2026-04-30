@@ -111,11 +111,54 @@ Public Sub DumpStyleProperties(ByVal sStyleName As String, _
         sOut = sOut & ".ParagraphFormat.KeepWithNext = " & oPF.KeepWithNext & NL
         sOut = sOut & ".ParagraphFormat.PageBreakBefore = " & oPF.PageBreakBefore & NL
         sOut = sOut & ".ParagraphFormat.OutlineLevel = " & oPF.OutlineLevel & NL
+
+        ' Tab stops - explicit stops only; Word's default tab grid (DefaultTabStop)
+        ' is not part of this collection. Skip the block when Count = 0 so styles
+        ' without custom tabs produce no extra output.
+        Dim tabCount As Long
+        tabCount = oPF.TabStops.Count
+        If tabCount > 0 Then
+            sOut = sOut & ".ParagraphFormat.TabStops.Count = " & tabCount & NL
+            Dim ts As Word.TabStop
+            Dim tsIdx As Long
+            tsIdx = 0
+            For Each ts In oPF.TabStops
+                tsIdx = tsIdx + 1
+                sOut = sOut & ".ParagraphFormat.TabStops(" & tsIdx & ") = " & _
+                       "Position=" & ts.Position & _
+                       " Align=" & TabAlignName(ts.Alignment) & _
+                       " Leader=" & TabLeaderName(ts.Leader) & NL
+            Next ts
+        End If
     End If
 
     Debug.Print sOut
     If bWriteFile Then WriteStyleDump sStyleName, sOut
 End Sub
+
+Private Function TabAlignName(ByVal a As Long) As String
+    Select Case a
+        Case wdAlignTabLeft:    TabAlignName = "Left"
+        Case wdAlignTabCenter:  TabAlignName = "Center"
+        Case wdAlignTabRight:   TabAlignName = "Right"
+        Case wdAlignTabDecimal: TabAlignName = "Decimal"
+        Case wdAlignTabBar:     TabAlignName = "Bar"
+        Case wdAlignTabList:    TabAlignName = "List"
+        Case Else:              TabAlignName = "Unknown(" & a & ")"
+    End Select
+End Function
+
+Private Function TabLeaderName(ByVal l As Long) As String
+    Select Case l
+        Case wdTabLeaderSpaces:    TabLeaderName = "Spaces"
+        Case wdTabLeaderDots:      TabLeaderName = "Dots"
+        Case wdTabLeaderDashes:    TabLeaderName = "Dashes"
+        Case wdTabLeaderLines:     TabLeaderName = "Lines"
+        Case wdTabLeaderHeavy:     TabLeaderName = "Heavy"
+        Case wdTabLeaderMiddleDot: TabLeaderName = "MiddleDot"
+        Case Else:                 TabLeaderName = "Unknown(" & l & ")"
+    End Select
+End Function
 
 Private Function StyleTypeName(ByVal lType As Long) As String
     Select Case lType
