@@ -422,3 +422,137 @@ PROC_ERR:
            ") in procedure MigrateParagraphs of Module basAuthorStyles"
     Resume PROC_EXIT
 End Sub
+
+' ==========================================================================
+' DecommissionAuthorStyles
+' ==========================================================================
+' Phase 4a of the List Paragraph migration. Performs six ordered live-doc
+' operations to retire the old list-engine-entangled styles and finalise
+' the new standalone styles' inter-style references.
+'
+' Pre-flight (all must pass before any state change):
+'   * No paragraphs still using "ListItem" (would lose styling on delete).
+'   * No paragraphs still using "AuthorBookRef" (same risk).
+'   * AuthorListItem, AuthorBookRefNew, ListItemBody all present.
+'   * AuthorListItemBody not already present (rename collision).
+'
+' Idempotency: detects "already decommissioned" state and exits cleanly
+' rather than failing partway through a re-run.
+'
+' Operations:
+'   1. Delete old ListItem
+'   2. Delete old AuthorBookRef
+'   3. Rename ListItemBody -> AuthorListItemBody
+'   4. Rename AuthorBookRefNew -> AuthorBookRef
+'   5. AuthorListItem.NextParagraphStyle = "AuthorListItemBody"
+'   6. AuthorBookRef.NextParagraphStyle = "AuthorBookRef" (self)
+'
+' Run on test copy first, verify, then on production. After both,
+' apply Phase 4b source-code edits (approved array, RUN_TAXONOMY_STYLES).
+'
+' Usage:
+'   DecommissionAuthorStyles
+' ==========================================================================
+Public Sub DecommissionAuthorStyles()
+    On Error GoTo PROC_ERR
+
+    ' Idempotency check: already decommissioned?
+    If Not StyleExists(ActiveDocument, "ListItem") _
+       And StyleExists(ActiveDocument, "AuthorListItem") _
+       And Not StyleExists(ActiveDocument, "ListItemBody") _
+       And StyleExists(ActiveDocument, "AuthorListItemBody") _
+       And Not StyleExists(ActiveDocument, "AuthorBookRefNew") _
+       And StyleExists(ActiveDocument, "AuthorBookRef") Then
+        MsgBox "Decommission already complete. No action taken.", _
+               vbInformation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+
+    ' Pre-flight 1: no orphan paragraphs on deletion.
+    Dim n As Long
+    n = CountParagraphsByStyle("ListItem")
+    If n > 0 Then
+        MsgBox n & " paragraph(s) still use ""ListItem"". Run " & _
+               "MigrateParagraphs ""ListItem"", ""AuthorListItem"" first.", _
+               vbExclamation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+    n = CountParagraphsByStyle("AuthorBookRef")
+    If n > 0 Then
+        MsgBox n & " paragraph(s) still use ""AuthorBookRef"". Run " & _
+               "MigrateParagraphs ""AuthorBookRef"", ""AuthorBookRefNew"" first.", _
+               vbExclamation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+
+    ' Pre-flight 2: target styles present.
+    If Not StyleExists(ActiveDocument, "AuthorListItem") Then
+        MsgBox "AuthorListItem missing. Run TransportAuthorStyles first.", _
+               vbExclamation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, "AuthorBookRefNew") Then
+        MsgBox "AuthorBookRefNew missing. Run TransportAuthorStyles first.", _
+               vbExclamation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, "ListItemBody") Then
+        MsgBox "ListItemBody missing. Document state is unexpected; abort.", _
+               vbExclamation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+
+    ' Pre-flight 3: no rename-target collisions.
+    If StyleExists(ActiveDocument, "AuthorListItemBody") Then
+        MsgBox "AuthorListItemBody already exists; rename collision. Abort.", _
+               vbExclamation, "DecommissionAuthorStyles"
+        Exit Sub
+    End If
+
+    Debug.Print "DecommissionAuthorStyles: starting on " & ActiveDocument.Name
+
+    ' Step 1: delete old ListItem
+    ActiveDocument.Styles("ListItem").Delete
+    Debug.Print "  1. Deleted ListItem"
+
+    ' Step 2: delete old AuthorBookRef
+    ActiveDocument.Styles("AuthorBookRef").Delete
+    Debug.Print "  2. Deleted AuthorBookRef"
+
+    ' Step 3: rename ListItemBody -> AuthorListItemBody
+    ActiveDocument.Styles("ListItemBody").NameLocal = "AuthorListItemBody"
+    Debug.Print "  3. Renamed ListItemBody -> AuthorListItemBody"
+
+    ' Step 4: rename AuthorBookRefNew -> AuthorBookRef
+    ActiveDocument.Styles("AuthorBookRefNew").NameLocal = "AuthorBookRef"
+    Debug.Print "  4. Renamed AuthorBookRefNew -> AuthorBookRef"
+
+    ' Step 5: AuthorListItem.NextParagraphStyle = "AuthorListItemBody"
+    ActiveDocument.Styles("AuthorListItem").NextParagraphStyle = _
+        ActiveDocument.Styles("AuthorListItemBody")
+    Debug.Print "  5. AuthorListItem.NextParagraphStyle = AuthorListItemBody"
+
+    ' Step 6: AuthorBookRef.NextParagraphStyle = "AuthorBookRef" (self)
+    ActiveDocument.Styles("AuthorBookRef").NextParagraphStyle = _
+        ActiveDocument.Styles("AuthorBookRef")
+    Debug.Print "  6. AuthorBookRef.NextParagraphStyle = AuthorBookRef (self)"
+
+    Debug.Print "DecommissionAuthorStyles: Done."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure DecommissionAuthorStyles of Module basAuthorStyles"
+    Resume PROC_EXIT
+End Sub
+
+Private Function CountParagraphsByStyle(ByVal styleName As String) As Long
+    Dim para As Word.Paragraph
+    Dim n As Long
+    For Each para In ActiveDocument.Paragraphs
+        If para.style.NameLocal = styleName Then
+            n = n + 1
+        End If
+    Next para
+    CountParagraphsByStyle = n
+End Function

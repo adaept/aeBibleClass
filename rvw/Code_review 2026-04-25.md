@@ -3527,6 +3527,118 @@ Reuses the existing `StyleExists` private helper from Phase 2. No new private he
 
 **Status:** Phase 3 code applied; awaiting `MigrateParagraphs` run on the test copy.
 
+### Phase 3 — test-copy run confirmed (2026-04-30)
+
+User ran both migrations on `Blank Bible Copy.docm`:
+
+```
+MigrateParagraphs: ListItem -> AuthorListItem in Blank Bible Copy.docm
+MigrateParagraphs: 38 paragraph(s) migrated.
+
+MigrateParagraphs: AuthorBookRef -> AuthorBookRefNew in Blank Bible Copy.docm
+MigrateParagraphs: 38 paragraph(s) migrated.
+```
+
+#### Pairing observation: 38 + 38 — intentional
+
+Same-count not coincidence. User confirmed the document has a 1:1 structural pairing — every `ListItem` paragraph has a paired `AuthorBookRef` paragraph (items list + sourcing reference pattern). The matching count is the data confirming the pairs are intact through the migration.
+
+#### Visual rendering — accepted (Path A)
+
+User's visual check: "Both styles are aligned to the left margin without numbers but otherwise look OK."
+
+This is the expected consequence of detaching from `List Number`. The old auto-numbered markers came from Word's list engine, not from the paragraph indent. The new `AuthorListItem` / `AuthorBookRefNew` keep the hanging indent (`LeftIndent = 18 / 36`, `FirstLineIndent = -18`) — the empty hanging space is preserved, just no auto-marker fills it. Single-line items therefore look flush-left; continuation lines on multi-line items will show the hanging indent. Per `EDSG/10-list-paragraph-bug.md` "What we lose by detaching."
+
+**Path A approved (2026-04-30):** accept current rendering, proceed to Phase 4. Manual prefix text or a separate dedicated VBA-applied list pattern can be added later as a content task if numbered markers are wanted; the structural migration is independent.
+
+#### Tab-setting follow-up
+
+User-flagged: "Tab setting is missing from `AuthorBookRefNew` but this can easily be added and past format used on all the paragraphs."
+
+**Root cause.** `DumpStyleProperties` (`basStyleInspector.bas:81-114`) does not enumerate `Style.ParagraphFormat.TabStops`. The Phase 1 `style_*.txt` dumps therefore had no tab-stop information; the Phase 1 `Define*` Subs encoded only what was in those dumps; Phase 2 `CopyOneStyle` copied only the properties that `Define*` had set. End result: tab stops on the original `AuthorBookRef` did not survive the migration chain.
+
+**Resolution path (user-directed).** Manual: add tab stop(s) to the new `AuthorBookRef` style after Phase 4 rename, then use Word's Format Painter / paste-format to propagate to the 38 paragraphs. No code change required for the migration.
+
+**Deferred follow-up tasks** (added to the deferred-items list):
+
+1. Extend `DumpStyleProperties` to enumerate `ParagraphFormat.TabStops` (position, alignment, leader). Closes the data-loss vector for any future migration.
+2. Extend `CopyOneStyle` (in `basAuthorStyles.bas`) to copy `TabStops` from source to destination. Companion to (1).
+
+Both are migration-tooling improvements, not blockers for the current work.
+
+**Status:** Phase 3 confirmed on test copy; production migration pending; Phase 4 design pending.
+
+### Phase 4 — split into 4a (live-doc Sub) + 4b (source-code edits) + Phase 5 (verify) (2026-04-30)
+
+Phase 4 has two distinct work types with different blast radii. Splitting:
+
+- **Phase 4a** — `DecommissionAuthorStyles` Sub (live-doc operations only). Run on test copy first, then production.
+- **Phase 4b** — source-code edits to `src/basTEST_aeBibleConfig.bas` (`approved` array + `RUN_TAXONOMY_STYLES` audit list). Updates the file on disk; user re-imports the module into both test copy and production. Proposed only after Phase 4a confirmed clean.
+- **Phase 5** — verification (`WordEditingConfig` + `RUN_TAXONOMY_STYLES` + `AuditListStyleRisk`).
+
+#### Phase 4a — design and code applied (2026-04-30)
+
+**Six ordered live-doc operations:**
+
+| # | Operation | VBA |
+|---|---|---|
+| 1 | Delete old `ListItem` | `ActiveDocument.Styles("ListItem").Delete` |
+| 2 | Delete old `AuthorBookRef` | `ActiveDocument.Styles("AuthorBookRef").Delete` |
+| 3 | Rename `ListItemBody → AuthorListItemBody` | `Styles("ListItemBody").NameLocal = "AuthorListItemBody"` |
+| 4 | Rename `AuthorBookRefNew → AuthorBookRef` | `Styles("AuthorBookRefNew").NameLocal = "AuthorBookRef"` |
+| 5 | `AuthorListItem.NextParagraphStyle = AuthorListItemBody` | object reference (target exists post-step-3) |
+| 6 | `AuthorBookRef.NextParagraphStyle = AuthorBookRef` (self) | (target exists post-step-4) |
+
+**Three pre-flight check classes (all must pass before any state change):**
+
+1. **No orphan paragraphs on deletion.** `CountParagraphsByStyle("ListItem")` and `CountParagraphsByStyle("AuthorBookRef")` must both return 0. If `> 0`, those paragraphs would lose their style on delete and revert to `Normal`. Abort with the migrate-first remediation message.
+2. **Target styles present.** `AuthorListItem`, `AuthorBookRefNew`, `ListItemBody` must all exist. Abort with run-Transport-first message if either Phase-2 style is missing; abort with "unexpected document state" if `ListItemBody` is missing.
+3. **No rename-target collisions.** `AuthorListItemBody` must not already exist (would collide with the rename in step 3). Guards against partial re-runs.
+
+**Idempotency.** First check is a six-property "already decommissioned" detector — if the document is already in the post-Phase-4a state (no `ListItem`, has `AuthorListItem`; no `ListItemBody`, has `AuthorListItemBody`; no `AuthorBookRefNew`, has `AuthorBookRef`), the Sub exits cleanly with an info `MsgBox` rather than failing partway through a re-run.
+
+**Error handling.** Standard `PROC_EXIT / PROC_ERR` pattern matching project conventions. Any error mid-operation surfaces via `MsgBox` with `Erl` line context.
+
+**Code applied — two functions added to `src/basAuthorStyles.bas`:**
+
+- `DecommissionAuthorStyles` (Public).
+- `CountParagraphsByStyle` (Private helper).
+
+The existing `StyleExists` helper from Phase 2 is reused — no new state-inspection helpers.
+
+**Note on `NextParagraphStyle` assignment style.** Steps 5 and 6 use object-reference form (`= ActiveDocument.Styles("AuthorListItemBody")`) rather than the string-name form (`= "AuthorListItemBody"`). Word's COM model accepts both; object reference is unambiguous and slightly faster (no name re-resolution).
+
+#### Phase 4a — user-side action
+
+**On `Blank Bible Copy.docm` (test copy, paragraphs already migrated):**
+
+1. Activate the test doc.
+2. Run `DecommissionAuthorStyles` from Immediate.
+3. Confirm the six-step output prints cleanly with no errors.
+4. Verify with `DumpStyleProperties "AuthorListItem", True`, `DumpStyleProperties "AuthorListItemBody", True`, `DumpStyleProperties "AuthorBookRef", True`. The dumps should show `BaseStyle = ""`, the new `NextParagraphStyle` values, and no surviving `ListItem`/`ListItemBody`/`AuthorBookRefNew` files in `rpt/Styles/`.
+5. Confirm back here.
+
+**Then on production `.docm`:**
+
+6. Run `MigrateParagraphs "ListItem", "AuthorListItem"` and `MigrateParagraphs "AuthorBookRef", "AuthorBookRefNew"` first (production paragraph migration — has not been done yet).
+7. Run `DecommissionAuthorStyles` on production.
+8. Confirm.
+
+**`DecommissionAuthorStyles` on production will block** at the orphan-paragraph pre-flight until step 6 completes — protective by design.
+
+#### Production gating note
+
+The `MigrateParagraphs` runs on production are still pending. The recommended sequence is:
+
+1. Phase 4a on test copy → verify.
+2. `MigrateParagraphs` on production → verify (38+38 expected).
+3. Phase 4a on production → verify.
+4. Then I propose Phase 4b source-code edits.
+
+This keeps each step's blast radius bounded: any unexpected output stops the cascade before reaching the production document's deeper state.
+
+**Status:** Phase 4a code applied; awaiting test-copy `DecommissionAuthorStyles` run.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
