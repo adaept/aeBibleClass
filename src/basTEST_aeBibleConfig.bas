@@ -36,7 +36,7 @@ Private Sub PromoteApprovedStyles()
                      "Contents", "ContentsRef", _
                      "BibleIndexEyebrow", "BibleIndex", "Introduction", _
                      "TitleOnePage", _
-                     "AuthorListItem", "AuthorListItemBody", "ListItemTab", _
+                     "AuthorListItem", "AuthorListItemBody", "AuthorListItemTab", _
                      "AuthorBookRefHeader", "AuthorBookRef", "CenterSubText", _
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
@@ -221,13 +221,13 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits the 19 approved-array taxonomy styles against their expected
+'   Audits the 20 approved-array taxonomy styles against their expected
 '   configuration and writes a structured report to rpt\StyleTaxonomyAudit.txt.
 '   Buckets:
 '      9 fully specified (all properties verified) - BodyText, BodyTextIndent,
 '                            Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
 '                            Brief, Psalms BOOK, Footnote Text
-'      7 existence-verified (full spec pending)
+'      8 existence-verified (full spec pending)
 '      3 not yet created (expected FAIL until each Define* routine runs)
 '   Specs encoded as descriptive (capture current document state); see
 '   rvw/Code_review 2026-04-25.md "Spec promotion: descriptive vs prescriptive"
@@ -287,6 +287,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
     AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
+    AuditOneStyle "AuthorListItemTab", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999

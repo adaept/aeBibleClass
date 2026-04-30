@@ -40,69 +40,138 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' incomplete, a paragraph-level fallback can be layered on (sample
 ' Paragraphs.Range.ListFormat.ListTemplate per style).
 '
-' Output: Immediate window only. No file written.
+' Output:
 '   (A) Flagged at-risk styles (list-family inheritance).
 '   (B) Full inventory of every paragraph style with non-empty BaseStyle.
+' Both sections sorted by Priority ASC, then NameLocal ASC, so approved
+' styles (priorities 1..N) appear first and Word built-ins (Priority=99)
+' fall to the bottom alphabetically.
+'
+' Default writes to rpt\ListStyleRiskAudit.txt; pass False for Immediate
+' window only.
 '
 ' Usage:
-'   AuditListStyleRisk
+'   AuditListStyleRisk              ' default writes file
+'   AuditListStyleRisk False        ' Immediate only, no file
 ' ==========================================================================
-Public Sub AuditListStyleRisk()
+Public Sub AuditListStyleRisk(Optional ByVal bWriteFile As Boolean = True)
     On Error GoTo PROC_ERR
+
+    ' Collect into 2D Variant arrays: (NameLocal, BaseStyle, Priority).
+    ' 200 row cap matches AuditVerseMarkerStructure's H1 cap; ~106 rows
+    ' observed in the Bible-class doc, so 200 has comfortable headroom.
+    Dim flaggedArr() As Variant
+    Dim allBaseArr() As Variant
+    Dim flaggedCount As Long
+    Dim allBaseCount As Long
+    ReDim flaggedArr(1 To 200, 1 To 3)
+    ReDim allBaseArr(1 To 200, 1 To 3)
+
     Dim s As Word.Style
     Dim base As String
     Dim baseLC As String
-    Dim flagged As Long
-    Dim totalWithBase As Long
-
-    Debug.Print "---- AuditListStyleRisk: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----"
-    Debug.Print ""
-    Debug.Print "(A) Paragraph styles whose BaseStyle is a list-family built-in"
-    Debug.Print "    (List Paragraph, List Number, List Bullet, List Continue, List):"
-    Debug.Print ""
 
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Then
             On Error Resume Next
             base = s.baseStyle
             On Error GoTo PROC_ERR
-            baseLC = LCase$(Trim$(base))
 
-            If baseLC = "list paragraph" Or baseLC = "list" _
-               Or baseLC Like "list number*" Or baseLC Like "list bullet*" _
-               Or baseLC Like "list continue*" Then
-                Debug.Print "  FLAG  " & s.NameLocal & " | BaseStyle=""" & base & _
-                            """ | Priority=" & s.Priority
-                flagged = flagged + 1
-            End If
-        End If
-    Next s
-
-    Debug.Print ""
-    Debug.Print "(B) Full inventory: every paragraph style with non-empty BaseStyle:"
-    Debug.Print ""
-
-    For Each s In ActiveDocument.Styles
-        If s.Type = wdStyleTypeParagraph Then
-            On Error Resume Next
-            base = s.baseStyle
-            On Error GoTo PROC_ERR
             If Len(Trim$(base)) > 0 Then
-                Debug.Print "  " & s.NameLocal & " <- """ & base & """ | Priority=" & s.Priority
-                totalWithBase = totalWithBase + 1
+                allBaseCount = allBaseCount + 1
+                allBaseArr(allBaseCount, 1) = s.NameLocal
+                allBaseArr(allBaseCount, 2) = base
+                allBaseArr(allBaseCount, 3) = s.Priority
+
+                baseLC = LCase$(Trim$(base))
+                If baseLC = "list paragraph" Or baseLC = "list" _
+                   Or baseLC Like "list number*" Or baseLC Like "list bullet*" _
+                   Or baseLC Like "list continue*" Then
+                    flaggedCount = flaggedCount + 1
+                    flaggedArr(flaggedCount, 1) = s.NameLocal
+                    flaggedArr(flaggedCount, 2) = base
+                    flaggedArr(flaggedCount, 3) = s.Priority
+                End If
             End If
         End If
     Next s
 
-    Debug.Print ""
-    Debug.Print "Flagged (list-family inheritance): " & flagged
-    Debug.Print "Total paragraph styles with BaseStyle: " & totalWithBase
+    SortByPriorityName flaggedArr, flaggedCount
+    SortByPriorityName allBaseArr, allBaseCount
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+
+    sOut = "---- AuditListStyleRisk: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+    sOut = sOut & "(A) Paragraph styles whose BaseStyle is a list-family built-in" & NL
+    sOut = sOut & "    (List Paragraph, List Number, List Bullet, List Continue, List):" & NL & NL
+    sOut = sOut & FormatBaseStyleRows(flaggedArr, flaggedCount, "  FLAG  ")
+    sOut = sOut & NL
+    sOut = sOut & "(B) Full inventory: every paragraph style with non-empty BaseStyle" & NL
+    sOut = sOut & "    (sorted by priority ascending, then name):" & NL & NL
+    sOut = sOut & FormatBaseStyleRows(allBaseArr, allBaseCount, "  ")
+    sOut = sOut & NL
+    sOut = sOut & "Flagged (list-family inheritance): " & flaggedCount & NL
+    sOut = sOut & "Total paragraph styles with BaseStyle: " & allBaseCount & NL
+
+    Debug.Print sOut
+    If bWriteFile Then WriteListStyleRiskFile sOut
+
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
            ") in procedure AuditListStyleRisk of Module basAuthorStyles"
     Resume PROC_EXIT
+End Sub
+
+' --------------------------------------------------------------------------
+' SortByPriorityName - bubble sort on 2D array (Name, BaseStyle, Priority)
+' Primary key: Priority ASC. Secondary: NameLocal ASC (case-insensitive).
+' --------------------------------------------------------------------------
+Private Sub SortByPriorityName(ByRef arr As Variant, ByVal count As Long)
+    Dim i As Long, j As Long
+    Dim tmpName As String, tmpBase As String, tmpPri As Long
+    For i = 1 To count - 1
+        For j = i + 1 To count
+            If (CLng(arr(j, 3)) < CLng(arr(i, 3))) Or _
+               (CLng(arr(j, 3)) = CLng(arr(i, 3)) And _
+                StrComp(CStr(arr(j, 1)), CStr(arr(i, 1)), vbTextCompare) < 0) Then
+                tmpName = arr(i, 1):  arr(i, 1) = arr(j, 1):  arr(j, 1) = tmpName
+                tmpBase = arr(i, 2):  arr(i, 2) = arr(j, 2):  arr(j, 2) = tmpBase
+                tmpPri = arr(i, 3):   arr(i, 3) = arr(j, 3):  arr(j, 3) = tmpPri
+            End If
+        Next j
+    Next i
+End Sub
+
+' --------------------------------------------------------------------------
+' FormatBaseStyleRows - render N rows in the form
+'   <prefix>Name <- "BaseStyle" | Priority=N<NL>
+' --------------------------------------------------------------------------
+Private Function FormatBaseStyleRows(ByRef arr As Variant, ByVal count As Long, _
+                                     ByVal prefix As String) As String
+    Const NL As String = vbCrLf
+    Dim i As Long, sBuf As String
+    For i = 1 To count
+        sBuf = sBuf & prefix & arr(i, 1) & " <- """ & arr(i, 2) & _
+               """ | Priority=" & arr(i, 3) & NL
+    Next i
+    FormatBaseStyleRows = sBuf
+End Function
+
+' --------------------------------------------------------------------------
+' WriteListStyleRiskFile - write the report to rpt\ListStyleRiskAudit.txt
+' --------------------------------------------------------------------------
+Private Sub WriteListStyleRiskFile(ByVal sContent As String)
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim sPath As String
+    sPath = ActiveDocument.Path & "\rpt\ListStyleRiskAudit.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
+    oStream.Write sContent
+    oStream.Close
 End Sub
 
 ' ==========================================================================

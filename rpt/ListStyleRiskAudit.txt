@@ -1,0 +1,118 @@
+---- AuditListStyleRisk: 2026-04-30 15:08:31 ----
+
+(A) Paragraph styles whose BaseStyle is a list-family built-in
+    (List Paragraph, List Number, List Bullet, List Continue, List):
+
+
+(B) Full inventory: every paragraph style with non-empty BaseStyle
+    (sorted by priority ascending, then name):
+
+  CustomParaAfterH1 <- "Normal" | Priority=25
+  Brief <- "Normal" | Priority=26
+  Footnote Text <- "Normal" | Priority=32
+  Psalms BOOK <- "Normal" | Priority=33
+  PsalmSuperscription <- "Normal" | Priority=34
+  PsalmAcrostic <- "Normal" | Priority=36
+  AuthorBookSections <- "Normal" | Priority=99
+  Balloon Text <- "Normal" | Priority=99
+  Bibliography <- "Normal" | Priority=99
+  Blank line <- "Paragraph Continuation" | Priority=99
+  Block Text <- "Normal" | Priority=99
+  Body Text <- "Normal" | Priority=99
+  Body Text 2 <- "Normal" | Priority=99
+  Body Text 3 <- "Normal" | Priority=99
+  Body Text First Indent <- "Body Text" | Priority=99
+  Body Text First Indent 2 <- "Body Text Indent" | Priority=99
+  Body Text Indent <- "Normal" | Priority=99
+  Body Text Indent 2 <- "Normal" | Priority=99
+  Body Text Indent 3 <- "Normal" | Priority=99
+  Caption <- "Normal" | Priority=99
+  Closing <- "Normal" | Priority=99
+  Comment Subject <- "Comment Text" | Priority=99
+  Comment Text <- "Normal" | Priority=99
+  Cover <- "Paragraph" | Priority=99
+  CustomParaAfterH1-2nd <- "CustomParaAfterH1" | Priority=99
+  Date <- "Normal" | Priority=99
+  Document Map <- "Normal" | Priority=99
+  E-mail Signature <- "Normal" | Priority=99
+  End note normal <- "Endnote Text" | Priority=99
+  Endnote Text <- "Normal" | Priority=99
+  Envelope Address <- "Normal" | Priority=99
+  Envelope Return <- "Normal" | Priority=99
+  Error <- "Paragraph Continuation" | Priority=99
+  Footer <- "Normal" | Priority=99
+  Footnote crossreference <- "Footnote Text" | Priority=99
+  Footnote normal <- "Footnote Text" | Priority=99
+  Glossary <- "Paragraph" | Priority=99
+  Header <- "Paragraph Continuation" | Priority=99
+  Heading 3 <- "Normal" | Priority=99
+  Heading 4 <- "Normal" | Priority=99
+  Heading 5 <- "Normal" | Priority=99
+  Heading 6 <- "Normal" | Priority=99
+  Heading 7 <- "Normal" | Priority=99
+  Heading 8 <- "Normal" | Priority=99
+  Heading 9 <- "Normal" | Priority=99
+  Horizontal Rule <- "Normal" | Priority=99
+  HTML Address <- "Normal" | Priority=99
+  HTML Preformatted <- "Normal" | Priority=99
+  Index <- "Paragraph" | Priority=99
+  Index 1 <- "Normal" | Priority=99
+  Index 2 <- "Normal" | Priority=99
+  Index 3 <- "Normal" | Priority=99
+  Index 4 <- "Normal" | Priority=99
+  Index 5 <- "Normal" | Priority=99
+  Index 6 <- "Normal" | Priority=99
+  Index 7 <- "Normal" | Priority=99
+  Index 8 <- "Normal" | Priority=99
+  Index 9 <- "Normal" | Priority=99
+  Index Heading <- "Normal" | Priority=99
+  Intense Quote <- "Normal" | Priority=99
+  List <- "Normal" | Priority=99
+  List 2 <- "Normal" | Priority=99
+  List 3 <- "Normal" | Priority=99
+  List 4 <- "Normal" | Priority=99
+  List 5 <- "Normal" | Priority=99
+  List Bullet <- "Normal" | Priority=99
+  List Bullet 2 <- "Normal" | Priority=99
+  List Bullet 3 <- "Normal" | Priority=99
+  List Bullet 4 <- "Normal" | Priority=99
+  List Bullet 5 <- "Normal" | Priority=99
+  List Continue <- "Normal" | Priority=99
+  List Continue 2 <- "Normal" | Priority=99
+  List Continue 3 <- "Normal" | Priority=99
+  List Continue 4 <- "Normal" | Priority=99
+  List Continue 5 <- "Normal" | Priority=99
+  List Number <- "Normal" | Priority=99
+  List Number 2 <- "Normal" | Priority=99
+  List Number 3 <- "Normal" | Priority=99
+  List Number 4 <- "Normal" | Priority=99
+  List Number 5 <- "Normal" | Priority=99
+  List Paragraph <- "Normal" | Priority=99
+  Message Header <- "Normal" | Priority=99
+  Normal (Web) <- "Normal" | Priority=99
+  Normal Indent <- "Normal" | Priority=99
+  Note Heading <- "Normal" | Priority=99
+  Paragraph <- "Normal" | Priority=99
+  Paragraph Continuation <- "Normal" | Priority=99
+  Picture Caption <- "Normal" | Priority=99
+  Plain Text <- "Normal" | Priority=99
+  Quote <- "Normal" | Priority=99
+  Salutation <- "Normal" | Priority=99
+  Signature <- "Normal" | Priority=99
+  Subtitle <- "Normal" | Priority=99
+  Table of Authorities <- "Normal" | Priority=99
+  Table of Figures <- "Normal" | Priority=99
+  TOA Heading <- "Normal" | Priority=99
+  TOC 1 <- "Normal" | Priority=99
+  TOC 2 <- "Normal" | Priority=99
+  TOC 3 <- "Normal" | Priority=99
+  TOC 4 <- "Normal" | Priority=99
+  TOC 5 <- "Normal" | Priority=99
+  TOC 6 <- "Normal" | Priority=99
+  TOC 7 <- "Normal" | Priority=99
+  TOC 8 <- "Normal" | Priority=99
+  TOC 9 <- "Normal" | Priority=99
+  TOC Heading <- "Heading 1" | Priority=99
+
+Flagged (list-family inheritance): 0
+Total paragraph styles with BaseStyle: 106

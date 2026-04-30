@@ -3757,6 +3757,174 @@ These are documentation-only and don't affect code. Proposed after Phase 5 confi
 
 **Status:** Phase 4b code applied; user-side action: re-import `basTEST_aeBibleConfig.bas` into both `.docm` files, then run Phase 5 verification.
 
+### Phase 5 — verification confirmed (2026-04-30)
+
+User ran `RUN_TAXONOMY_STYLES` post-Phase-4b:
+
+```
+RUN_TAXONOMY_STYLES: 14 PASS  5 FAIL  -> rpt\StyleTaxonomyAudit.txt
+```
+
+Identical PASS/FAIL count to the pre-migration baseline. **No regression introduced by the migration.** The 5 FAILs are the same set carried forward:
+
+| # | Style | Reason | Note |
+|---|---|---|---|
+| 1 | `BookIntro` | NOT FOUND | Pre-existing missing-tracker entry |
+| 2 | `AuthorListItem` | `Indent: expected 0 got -18` | Carried over from `ListItem`; 2026-04-29 leave-as-is decision |
+| 3 | `BodyTextContinuation` | NOT FOUND | Bucket 3 (expected FAIL) |
+| 4 | `AppendixTitle` | NOT FOUND | Bucket 3 (expected FAIL) |
+| 5 | `AppendixBody` | NOT FOUND | Bucket 3 (expected FAIL) |
+
+The migration is structurally complete: `ListItem`/`ListItemBody`/`AuthorBookRef` no longer carry `BaseStyle = "List Number"`. `AuditListStyleRisk` should now report `Flagged: 0` in section (A).
+
+### Phase 4c — `ListItemTab` rename and audit placeholder (2026-04-30)
+
+#### User-initiated action
+
+User manually renamed `ListItemTab → AuthorListItemTab` via Word UI for naming consistency across the three Author-prefixed list styles. Style is `BaseStyle = ""` (was already detached pre-migration), so the rename does not trigger the engine bug and is safe to do via UI.
+
+#### Tab-stop gap — verified
+
+Audited the three taxonomy infrastructure routines:
+
+| Routine | Tab-stop handling |
+|---|---|
+| `DumpStyleProperties` (`basStyleInspector.bas:81-114`) | Does NOT enumerate `ParagraphFormat.TabStops`. Output captures individual `ParagraphFormat` properties only. |
+| `CopyOneStyle` (`basAuthorStyles.bas`) | Does NOT read or write `TabStops`. Phase 2 design omitted them. |
+| `AuditOneStyle` (`basTEST_aeBibleConfig.bas:319+`) | Does NOT check tab stops. Eight property checks; no tab spec. |
+
+Tab stops are a complete blind spot in the taxonomy infrastructure — not dumped (invisible), not copied (lost on migration), not audited (drift undetected). For `AuthorListItemTab`'s tab-aligned data: live document state is fine (Word UI rename preserved tabs), but no automated way to verify, capture, or migrate them.
+
+#### Phase 4c — source-code edits APPLIED
+
+**`src/basTEST_aeBibleConfig.bas`:**
+
+1. `approved` array: `"ListItemTab"` → `"AuthorListItemTab"`. Priority position (20) unchanged.
+2. `RUN_TAXONOMY_STYLES`: new line added in bucket 2 with full sentinels (existence-only check) — `AuditOneStyle "AuthorListItemTab", "", 0, -1, -999, -1, -999, -999, -999`. Specs to be replaced with descriptive values once a fresh `DumpStyleProperties "AuthorListItemTab", True` is run.
+3. PURPOSE comment block: bucket counts updated `9 / 7 / 3` → `9 / 8 / 3`; total updated `19 → 20`.
+
+#### What does NOT change in 4c
+
+- Bucket 1 (fully specified): unchanged at 9 entries.
+- Bucket 3 (not yet created): unchanged at 3 entries.
+- Other bucket-2 entries (`BookIntro`, `TheHeaders`, `TheFooters`, `Title`, `Footnote Reference`, `AuthorListItem`, `AuthorListItemBody`): untouched.
+- EDSG `01-styles.md` priority snapshot table: pre-existing entry for `ListItemTab` at priority 20 still references the old name; documentation update deferred to post-Phase-6.
+
+#### Phase 4c — user-side action
+
+1. Re-import `src/basTEST_aeBibleConfig.bas` into both `.docm` files (test copy + production).
+2. Run `WordEditingConfig` on each — expect 44 styles promoted, no missing-style warnings related to `ListItemTab` (the array now references `AuthorListItemTab` which exists).
+3. Run `RUN_TAXONOMY_STYLES` on each — expect 15 PASS / 5 FAIL (existence check on `AuthorListItemTab` adds a PASS to the previous 14/5).
+4. Run `AuditListStyleRisk` — expect `Flagged: 0` in section (A).
+5. Confirm back here.
+
+### Phase 6 — tab-stop infrastructure roadmap (APPROVED 2026-04-30, work pending)
+
+User has approved the three-phase structure for closing the tab-stop gap. Each phase is independently approvable and lands its own code-only change. **No code applied yet** — Phase 4c verification first.
+
+#### Phase 6a — `DumpStyleProperties` extension (~10 lines)
+
+Add tab-stop block at the end of paragraph-style output. Compact one-line-per-stop format for grep-friendliness. Skip block entirely when `Count = 0` to avoid noise.
+
+```
+.ParagraphFormat.TabStops.Count = 3
+.ParagraphFormat.TabStops(1) = Position=36 Align=Left Leader=Spaces
+.ParagraphFormat.TabStops(2) = Position=144 Align=Right Leader=Dots
+.ParagraphFormat.TabStops(3) = Position=288 Align=Left Leader=Spaces
+```
+
+**Risk:** low; additive read-only output. **Downstream effect:** every future `DumpAllApprovedStyles` run captures tab stops; gives us the descriptive baseline for any audit spec.
+
+#### Phase 6b — `CopyOneStyle` extension (~6 lines)
+
+After existing paragraph-format property copies, iterate source tab stops and reproduce on destination via `dst.ParagraphFormat.TabStops.Add Position:=…, Alignment:=…, Leader:=…`.
+
+**Risk:** low; additive; only fires during future migrations (not currently invoked since the migration is complete). **Downstream effect:** any future style migration is loss-less for tabs.
+
+#### Phase 6c — `AuditStyleTabs` Sub + per-style specs (~30 lines + spec lines)
+
+New sibling function called from `RUN_TAXONOMY_STYLES`. Variadic-style: each Array argument is one expected tab-stop triple `(Position, Alignment, Leader)`. Pass on count-match + per-stop position/align/leader match. Empty `Array()` form means "no expected tabs; pass if style has none."
+
+```vba
+AuditStyleTabs "AuthorListItemTab", _
+    Array(36, wdAlignTabLeft, wdTabLeaderSpaces), _
+    Array(144, wdAlignTabRight, wdTabLeaderDots)
+```
+
+Why a sibling function rather than extending `AuditOneStyle`: the existing signature is already 8 property args + 1 name; tab stops are a variable-length list, structurally different. Cleaner separation.
+
+**Risk:** medium; new audit pattern (paramarray-style call signature); existing audit flow needs an extra invocation point. **Downstream effect:** tab drift becomes a tracked indicator, parity with the rest of the bucket-1 fully-specified styles.
+
+### Phase ordering
+
+```
+4c (applied) -> user verifies -> 6a -> user verifies -> 6b -> 6c -> tab specs added per style
+```
+
+Each phase boundary has explicit user-side action. No phase merges into the next without intervening approval.
+
+**Status:** Phase 4c applied; awaiting user re-import and verification before Phase 6 begins.
+
+### Phase 4c — verification confirmed (2026-04-30)
+
+User re-imported `basTEST_aeBibleConfig.bas` and ran:
+
+- `WordEditingConfig` → 44 styles promoted; priorities 18-22 now show `AuthorListItem`, `AuthorListItemBody`, `AuthorListItemTab`, `AuthorBookRefHeader`, `AuthorBookRef`. Missing-style warnings limited to four roadmap placeholders + the `FargleBlargle` canary. No regression.
+- `AuditListStyleRisk` → section (A) reports `Flagged (list-family inheritance): 0`. Migration objective structurally complete. Section (B) total drops from 108 (pre-migration) to 106 — the two former list-family inheritors gone from the inheritance list.
+
+### Phase 4d — `AuditListStyleRisk` improvements (2026-04-30)
+
+User-flagged improvements before Phase 6:
+
+1. **Bug — no file output.** Confirmed via code read: existing implementation uses `Debug.Print` only, inconsistent with `AuditVerseMarkerStructure` (`basVerseStructureAudit.bas:27`) which has `Optional bWriteFile As Boolean = True` + a `WriteAuditFile` helper.
+2. **Improvement — output unsorted.** Confirmed: streams `For Each ActiveDocument.Styles` order, which is approximately style-creation order, hard to scan. Should be sorted by Priority ASC, NameLocal ASC so approved styles (priorities 1-N) lead and Word built-ins (`Priority=99`) drop to the bottom alphabetically.
+
+#### Phase 4d redesign — APPLIED
+
+Three coordinated changes in `src/basAuthorStyles.bas`:
+
+**Change 1 — collect-sort-emit.** The two streaming `For Each` loops replaced with a single pass that classifies each paragraph style into "flagged" (section A) and "all-with-base" (section B), captures `(NameLocal, BaseStyle, Priority)` triples into 2D Variant arrays. Each array sorted via `SortByPriorityName` before emission. 200-row cap matches `AuditVerseMarkerStructure`'s H1 cap; ~106 rows observed in the live doc, so headroom is comfortable.
+
+**Change 2 — `Optional bWriteFile As Boolean = True`.** Matches `AuditVerseMarkerStructure` convention. Default writes to `rpt\ListStyleRiskAudit.txt`; pass `False` for Immediate-only.
+
+**Change 3 — three private helpers added:**
+
+- `SortByPriorityName(arr, count)` — bubble sort on 2D array. Primary key Priority ASC; secondary key NameLocal ASC via `StrComp(..., vbTextCompare)` (case-insensitive). All three columns swap together.
+- `FormatBaseStyleRows(arr, count, prefix)` — renders N rows as `<prefix>Name <- "BaseStyle" | Priority=N` with vbCrLf. Unified format across both sections; `prefix` differentiates ("`  FLAG  `" for section A, "`  `" for section B).
+- `WriteListStyleRiskFile(content)` — FSO write to `rpt\ListStyleRiskAudit.txt`. Mirrors `WriteAuditFile` in `basVerseStructureAudit.bas:376`. ASCII text, overwritten each run.
+
+#### Output format change
+
+The previous section (A) used `BaseStyle="X" | Priority=N`; section (B) used `<- "X" | Priority=N`. Inconsistent. Unified to `<- "X" | Priority=N` for both. Section A retains the `FLAG` prefix as the visual differentiator. Existing parsers (none in the project today) would need to recognise the new format — but since the format is human-oriented and the file is overwritten each run, this is acceptable.
+
+#### Output file path
+
+`rpt\ListStyleRiskAudit.txt` — matches the convention of `rpt\StyleTaxonomyAudit.txt` and `rpt\VerseStructureAudit.txt`. Overwritten each run.
+
+#### Phase 4d — user-side action
+
+1. Re-import the updated `basAuthorStyles.bas` into both `.docm` files.
+2. Run `AuditListStyleRisk` on each — expect:
+   - Section (A) empty (`Flagged: 0`).
+   - Section (B) sorted: priorities 1-48 first (the approved styles, in priority order), then `Priority=99` entries alphabetical at the bottom.
+   - File written to `rpt\ListStyleRiskAudit.txt`.
+3. Open `rpt\ListStyleRiskAudit.txt` and confirm the file content matches the Immediate window output.
+4. Confirm back here.
+
+**Status:** Phase 4d applied; awaiting `AuditListStyleRisk` re-run with sorted output + file write. Phase 6 begins after Phase 4d is verified clean.
+
+### Phase 4d — verification confirmed (2026-04-30)
+
+User re-ran `AuditListStyleRisk` post-redesign:
+
+- **Section (A):** empty. `Flagged (list-family inheritance): 0`.
+- **Section (B):** correctly sorted. Six approved styles lead (`CustomParaAfterH1=25`, `Brief=26`, `Footnote Text=32`, `Psalms BOOK=33`, `PsalmSuperscription=34`, `PsalmAcrostic=36` — exactly the six `BaseStyle = "Normal"` violations identified earlier). Then 100 `Priority=99` entries alphabetical.
+- **File output:** `rpt\ListStyleRiskAudit.txt` written successfully (4,856 bytes, 118 lines, timestamp 15:08 matches run).
+
+Both improvements landed cleanly: file output works, sort makes approved styles immediately visible at the top.
+
+**Status:** Phase 4d verified; Phase 6 ready to begin.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
