@@ -3080,6 +3080,39 @@ User has approved the analysis and the EDSG documentation, but the refactor itse
 
 **Status:** analysis recorded; EDSG documentation applied; refactor deferred.
 
+### Correction — holding file extension `.docx` → `.docm` (2026-04-29)
+
+Caught by user during review of the EDSG page: the migration recipe described the holding file as `.docx`, but a `.docx` cannot retain VBA — Word strips macros on save in macro-free formats. The holding file is meant to carry its own style-creation macro (so future contributors can clone the repo, open the file, run the macro, and reproduce a known state), so it must be `.docm` (macro-enabled document).
+
+**File-extension reference table** (Office 2007+ format split — security boundary at the extension level so tooling can identify executable content without inspecting the zip):
+
+| Extension | Kind | Macros |
+|---|---|---|
+| `.docx` | Document | Stripped on save |
+| `.docm` | Document | Retained |
+| `.dotx` | Template | Stripped on save |
+| `.dotm` | Template | Retained |
+
+**Design choice — option (A) approved:** holding file as `.docm` only, single artifact, accessed via Step 2(b) (`Documents.Open` + property copy). `.dotm` (macro-enabled template) reserved as a future option for shipping styles to documents that aren't macro-enabled.
+
+**Fix applied to `EDSG/10-list-paragraph-bug.md`:**
+
+- Step 1 heading: `.docx` → `.docm`.
+- Step 1 holding-file save line: `tools/style_holding.docx` → `tools/style_holding.docm`.
+- Step 2 (b) `Documents.Open` line: `style_holding.docx` → `style_holding.docm`.
+- Added a `> File extension matters.` callout in Step 1 explaining the macro-free vs macro-enabled distinction so future readers don't repeat the mistake.
+- Step 2 (a) Organizer line untouched — already correctly used `.dotm` (template).
+
+No source-code change — the recipe is the only mention of the holding file in the project today.
+
+### Correction — example style name `ListItem_v2` → `AuthorListItem` (2026-04-29)
+
+User directive: rename the example replacement-style name in the migration recipe from the placeholder `ListItem_v2` to a project-meaningful `AuthorListItem`. The new name signals the actual intended use (author/list-item content) rather than a generic versioned placeholder.
+
+Applied to `EDSG/10-list-paragraph-bug.md` — all occurrences of `ListItem_v2` replaced with `AuthorListItem` (single file, replace-all). Affects Step 1 (style definition), Step 2 (b) (transport), and any inline references in the recipe text.
+
+No source-code change — `AuthorListItem` is not yet in the `approved` array; it becomes a real style only when the deferred refactor work is scheduled.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

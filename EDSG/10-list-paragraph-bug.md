@@ -95,16 +95,25 @@ End Sub
 Currently expected to flag `ListItem`, `ListItemBody`, `ListItemTab`
 in this project. Confirm before proceeding.
 
-### Step 1 — Define replacements in a blank `.docx`
+### Step 1 — Define replacements in a blank `.docm`
 
 Open a fresh empty Word document. Define each replacement style
 there, with `BaseStyle = ""` set **before** any other property —
 this is the critical isolation. The blank document has no
 list-engine state to recompute against, so the cascade doesn't fire.
 
+> **File extension matters.** Save as `.docm` (macro-enabled
+> document), not `.docx` (macro-free). Word strips VBA modules on
+> save in `.docx` — the file looks fine, but the style-creation
+> macro is silently lost. The macro-enabled distinction is a
+> security boundary introduced in Office 2007 so tooling (Outlook,
+> antivirus, group policy) can identify executable content from
+> the file extension alone. Same logic applies to templates:
+> `.dotx` strips macros, `.dotm` keeps them.
+
 ```vba
 Dim s As Word.Style
-Set s = ActiveDocument.Styles.Add("ListItem_v2", wdStyleTypeParagraph)
+Set s = ActiveDocument.Styles.Add("AuthorListItem", wdStyleTypeParagraph)
 s.BaseStyle = ""                       ' must come first
 s.AutomaticallyUpdate = False
 s.QuickStyle = False
@@ -121,7 +130,7 @@ End With
 ' Critically absent: any LinkToListTemplate call.
 ```
 
-Save the blank doc as a holding file (e.g. `tools/style_holding.docx`).
+Save the blank doc as a holding file (e.g. `tools/style_holding.docm`).
 
 ### Step 2 — Transport to the live document
 
@@ -135,8 +144,8 @@ ActiveDocument.CopyStylesFromTemplate "C:\path\style_holding.dotm"
 (b) Direct read-and-write:
 ```vba
 Dim src As Word.Style, dst As Word.Style
-Set src = Documents("style_holding.docx").Styles("ListItem_v2")
-Set dst = ActiveDocument.Styles.Add("ListItem_v2", wdStyleTypeParagraph)
+Set src = Documents("style_holding.docm").Styles("AuthorListItem")
+Set dst = ActiveDocument.Styles.Add("AuthorListItem", wdStyleTypeParagraph)
 dst.BaseStyle = ""
 dst.AutomaticallyUpdate = src.AutomaticallyUpdate
 dst.QuickStyle = src.QuickStyle
