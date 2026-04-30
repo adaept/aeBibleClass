@@ -3187,6 +3187,57 @@ Awaiting v2 run output. Section (A) should now show `ListItem` flagged (per the 
 
 **Status:** Phase 0 v2 applied; awaiting v2 run.
 
+### Phase 0 v2 — run output and scope decisions (2026-04-29)
+
+#### Section (A) — flagged at-risk styles
+
+Two styles flagged with list-family inheritance:
+
+| Style | Priority | BaseStyle |
+|---|---|---|
+| `ListItem` | 18 | `List Number` |
+| `AuthorBookRef` | 22 | `List Number` |
+
+**Migration scope doubled vs original prediction.** `AuthorBookRef` was not anticipated — it inherits from `List Number` and carries the same Modify-Style hang risk as `ListItem`. The project has been operating with two list-engine-entangled approved styles, not one.
+
+`ListItemBody` (19) and `ListItemTab` (20) — predicted candidates — drop out of the migration entirely. Their dump files confirm `BaseStyle = ""`; already structurally clean for the list-engine concern. Earlier hang reports may have surfaced via `ListItem` (the inheritance root) cascading through the list engine, even if the user perceived the edit was on a different style.
+
+#### Section (B) — full inventory findings (108 paragraph styles with non-empty BaseStyle)
+
+Most entries are Word built-ins inheriting from `Normal` (expected, not actionable). Among **approved** styles (priority < 99), six violate the EDSG QA-checklist rule `BaseStyle = ""` for non-list-family reasons (i.e., they inherit from `Normal`, not from a list-family parent):
+
+| Style | Priority | BaseStyle |
+|---|---|---|
+| `CustomParaAfterH1` | 25 | `Normal` |
+| `Brief` | 26 | `Normal` |
+| `Footnote Text` | 32 | `Normal` |
+| `Psalms BOOK` | 33 | `Normal` |
+| `PsalmSuperscription` | 34 | `Normal` |
+| `PsalmAcrostic` | 36 | `Normal` |
+
+These do **not** trigger the list-engine hang (Normal has no list-engine entanglement), but they violate the broader QA-checklist rationale (predictability, version-stability, reproducibility). Lower urgency than the list-family migration.
+
+#### Three decisions recorded — 2026-04-29
+
+**(1) Migration scope — APPROVED.** Phase 1 targets two styles only: `ListItem` and `AuthorBookRef`. `ListItemBody` and `ListItemTab` removed from migration scope (already `BaseStyle = ""`).
+
+**(2) `AuthorBookRef` naming approach — APPROVED, suffix-temp pattern.** Create replacement as `AuthorBookRefNew` in the holding `.docm`, transport, migrate paragraphs, delete the old `AuthorBookRef`, then VBA-rename `AuthorBookRefNew → AuthorBookRef`. Final state identical to today's name. Same-name overwrite (option 3 from the proposal) was rejected as it would trigger the very hang the migration is escaping.
+
+**(3) Section (B) violations — APPROVED, not part of Phase 1.** The six `BaseStyle = "Normal"` approved styles are deferred to a separate pass, folded into the existing deferred prescriptive-spec exercise. Treating list-engine migration and BaseStyle-compliance cleanup as separate work items keeps each pass scoped and reviewable.
+
+#### Updated migration target table
+
+| Old style | Inheritance issue | Replacement (final name) | During-migration name |
+|---|---|---|---|
+| `ListItem` | BaseStyle = `List Number` | `AuthorListItem` | `AuthorListItem` (no temp; new name) |
+| `AuthorBookRef` | BaseStyle = `List Number` | `AuthorBookRef` (unchanged) | `AuthorBookRefNew` (temp; renamed at end) |
+
+#### What's next — Phase 1 design
+
+`CreateAuthorStyles` Sub in `src/basAuthorStyles.bas` will define both replacement styles in a fresh blank `.docm` holding file. Specs will be **descriptive** (read from `rpt/Styles/style_ListItem.txt` and `rpt/Styles/style_AuthorBookRef.txt` if present, or fresh dumps if not). `BaseStyle = ""` set first; no `LinkToListTemplate` call. Phase 1 will be proposed as code-only edit before being applied.
+
+**Status:** Phase 0 v2 run analysed; scope and naming decisions recorded; Phase 1 design pending.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
