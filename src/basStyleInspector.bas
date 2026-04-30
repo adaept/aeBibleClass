@@ -136,7 +136,7 @@ Public Sub DumpStyleProperties(ByVal sStyleName As String, _
     If bWriteFile Then WriteStyleDump sStyleName, sOut
 End Sub
 
-Private Function TabAlignName(ByVal a As Long) As String
+Public Function TabAlignName(ByVal a As Long) As String
     Select Case a
         Case wdAlignTabLeft:    TabAlignName = "Left"
         Case wdAlignTabCenter:  TabAlignName = "Center"
@@ -148,7 +148,7 @@ Private Function TabAlignName(ByVal a As Long) As String
     End Select
 End Function
 
-Private Function TabLeaderName(ByVal l As Long) As String
+Public Function TabLeaderName(ByVal l As Long) As String
     Select Case l
         Case wdTabLeaderSpaces:    TabLeaderName = "Spaces"
         Case wdTabLeaderDots:      TabLeaderName = "Dots"

@@ -221,14 +221,16 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits the 20 approved-array taxonomy styles against their expected
-'   configuration and writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Buckets:
+'   Audits 20 styles via AuditOneStyle + 1 tab-stop spec via AuditStyleTabs;
+'   total 21 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (20):
 '      9 fully specified (all properties verified) - BodyText, BodyTextIndent,
 '                            Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
 '                            Brief, Psalms BOOK, Footnote Text
 '      8 existence-verified (full spec pending)
 '      3 not yet created (expected FAIL until each Define* routine runs)
+'   Tab-stop audits (1):
+'      AuthorListItemTab (2 stops at 144 / 252 pt, Left, Spaces)
 '   Specs encoded as descriptive (capture current document state); see
 '   rvw/Code_review 2026-04-25.md "Spec promotion: descriptive vs prescriptive"
 '   for the decision and rationale.
@@ -299,6 +301,13 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "AppendixTitle", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "AppendixBody", "", 0, -1, -999, -1, -999, -999, -999
+
+    ' -- Tab stops verified (per-style explicit tab-stop validation) -----------------------------
+    Print #m_TaxFile, ""
+    Print #m_TaxFile, "-- Tab stops verified --"
+    AuditStyleTabs "AuthorListItemTab", _
+        Array(144, wdAlignTabLeft, wdTabLeaderSpaces), _
+        Array(252, wdAlignTabLeft, wdTabLeaderSpaces)
 
     Print #m_TaxFile, ""
     Print #m_TaxFile, String(72, "=")
@@ -435,6 +444,109 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     Print #m_TaxFile, "ERROR " & sName & " -- Erl=" & Erl & _
+          "  Err=" & Err.Number & "  " & Err.Description
+    m_TaxFail = m_TaxFail + 1
+    Resume PROC_EXIT
+End Sub
+
+'------------------------------------------------------------------------------
+' AuditStyleTabs  (Public)
+' Validates a paragraph style's explicit tab-stop list against expected specs.
+' Each ParamArray element is a 3-element Array(Position, Alignment, Leader).
+' Pass with no expected entries to assert "no explicit tab stops".
+'
+' Output channel matches AuditOneStyle: writes via Print #m_TaxFile and
+' increments m_TaxPass / m_TaxFail. Result lines tagged "(TabStops)" so
+' they don't collide with AuditOneStyle entries on the same style name.
+'
+' Position tolerance: 0.1 pt (Word stores tab positions as Double).
+'
+' Called only by RUN_TAXONOMY_STYLES.
+'------------------------------------------------------------------------------
+Public Sub AuditStyleTabs(ByVal sName As String, ParamArray expected() As Variant)
+    On Error GoTo PROC_ERR
+    Dim oStyle As Word.Style
+    Dim bPass As Boolean
+    Dim sDetail As String
+
+    On Error Resume Next
+    Set oStyle = ActiveDocument.Styles(sName)
+    On Error GoTo PROC_ERR
+
+    If oStyle Is Nothing Then
+        Print #m_TaxFile, "FAIL  " & sName & " (TabStops)"
+        Print #m_TaxFile, "      NOT FOUND in document"
+        m_TaxFail = m_TaxFail + 1
+        GoTo PROC_EXIT
+    End If
+
+    ' Compute expected count - empty ParamArray has LBound > UBound in VBA.
+    Dim expCount As Long
+    If LBound(expected) > UBound(expected) Then
+        expCount = 0
+    Else
+        expCount = UBound(expected) - LBound(expected) + 1
+    End If
+
+    Dim actCount As Long
+    actCount = oStyle.ParagraphFormat.TabStops.Count
+
+    bPass = True
+    sDetail = ""
+
+    If actCount <> expCount Then
+        bPass = False
+        sDetail = sDetail & "      Count    : expected " & expCount & _
+                  " got " & actCount & vbCrLf
+    Else
+        Dim i As Long
+        Dim ts As Word.TabStop
+        Dim spec As Variant
+        Dim expPos As Double, expAlign As Long, expLeader As Long
+        For i = 0 To expCount - 1
+            spec = expected(LBound(expected) + i)
+            expPos = CDbl(spec(0))
+            expAlign = CLng(spec(1))
+            expLeader = CLng(spec(2))
+
+            Set ts = oStyle.ParagraphFormat.TabStops(i + 1)
+
+            If Abs(ts.Position - expPos) > 0.1 Then
+                bPass = False
+                sDetail = sDetail & "      Tab " & (i + 1) & _
+                          " Position: expected " & expPos & _
+                          " got " & ts.Position & vbCrLf
+            End If
+            If ts.Alignment <> expAlign Then
+                bPass = False
+                sDetail = sDetail & "      Tab " & (i + 1) & _
+                          " Align   : expected " & TabAlignName(expAlign) & _
+                          " got " & TabAlignName(ts.Alignment) & vbCrLf
+            End If
+            If ts.Leader <> expLeader Then
+                bPass = False
+                sDetail = sDetail & "      Tab " & (i + 1) & _
+                          " Leader  : expected " & TabLeaderName(expLeader) & _
+                          " got " & TabLeaderName(ts.Leader) & vbCrLf
+            End If
+        Next i
+    End If
+
+    If bPass Then
+        Print #m_TaxFile, "PASS  " & sName & " (TabStops)"
+        m_TaxPass = m_TaxPass + 1
+    Else
+        Print #m_TaxFile, "FAIL  " & sName & " (TabStops)"
+        If Len(sDetail) >= 2 Then _
+            Print #m_TaxFile, Left(sDetail, Len(sDetail) - 2)
+        m_TaxFail = m_TaxFail + 1
+    End If
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Exit Sub
+PROC_ERR:
+    Print #m_TaxFile, "ERROR " & sName & " (TabStops) -- Erl=" & Erl & _
           "  Err=" & Err.Number & "  " & Err.Description
     m_TaxFail = m_TaxFail + 1
     Resume PROC_EXIT

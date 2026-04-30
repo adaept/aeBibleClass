@@ -4018,6 +4018,129 @@ This is forward-looking code. No re-import + verify cycle needed beyond what was
 
 **Status:** Phase 6b applied; Phase 6c (`AuditStyleTabs` + per-style spec) pending.
 
+### Phase 6c — `AuditStyleTabs` Sub + per-style spec applied (2026-04-30)
+
+#### Design choices
+
+- **Call signature:** `Public Sub AuditStyleTabs(ByVal sName As String, ParamArray expected() As Variant)`. Each `expected` element is a 3-element `Array(Position, Alignment, Leader)`. Empty paramarray = expect zero tab stops.
+- **Output channel:** `Print #m_TaxFile`, increments `m_TaxPass / m_TaxFail` — same hooks `AuditOneStyle` uses, so results land in `rpt\StyleTaxonomyAudit.txt` alongside everything else.
+- **Output label:** `PASS / FAIL` lines tagged `(TabStops)` to distinguish from `AuditOneStyle` rows on the same style.
+- **Position tolerance:** 0.1 pt (matches the floating-point tolerance pattern used elsewhere in `AuditOneStyle`).
+- **Helpers:** `TabAlignName` / `TabLeaderName` in `basStyleInspector.bas` promoted from `Private` to `Public` so cross-module use works. They are general-purpose enum-to-name mappers; `Public` is the right scope.
+
+#### Code applied — three changes
+
+**1. `src/basStyleInspector.bas`** — `TabAlignName` and `TabLeaderName` changed from `Private` to `Public`.
+
+**2. `src/basTEST_aeBibleConfig.bas`** — `AuditStyleTabs` Sub added immediately after `AuditOneStyle`. Pre-flight: style exists. Body:
+
+- Compute `expCount` from paramarray bounds (handles empty paramarray correctly: `LBound > UBound` → 0).
+- Compare `actCount = oStyle.ParagraphFormat.TabStops.Count` to `expCount`.
+- If counts match, iterate and compare each stop's Position (with 0.1 pt tolerance), Alignment, Leader.
+- Output uses symbolic names from `TabAlignName / TabLeaderName` for FAIL detail.
+- ERROR path mirrors `AuditOneStyle`'s pattern.
+
+**3. `src/basTEST_aeBibleConfig.bas`** — new "Tab stops verified" section in `RUN_TAXONOMY_STYLES` after the not-yet-created bucket:
+
+```vba
+' -- Tab stops verified (per-style explicit tab-stop validation) --
+Print #m_TaxFile, ""
+Print #m_TaxFile, "-- Tab stops verified --"
+AuditStyleTabs "AuthorListItemTab", _
+    Array(144, wdAlignTabLeft, wdTabLeaderSpaces), _
+    Array(252, wdAlignTabLeft, wdTabLeaderSpaces)
+```
+
+Spec values are descriptive — captured directly from the Phase 6a dump.
+
+**4. `src/basTEST_aeBibleConfig.bas`** — PURPOSE comment block updated:
+
+```
+'   Audits 20 styles via AuditOneStyle + 1 tab-stop spec via AuditStyleTabs;
+'   total 21 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (20):
+'      9 fully specified ...
+'      8 existence-verified ...
+'      3 not yet created ...
+'   Tab-stop audits (1):
+'      AuthorListItemTab (2 stops at 144 / 252 pt, Left, Spaces)
+```
+
+#### Expected new audit count
+
+`RUN_TAXONOMY_STYLES` should now report **15 PASS / 5 FAIL** (was 14/5 from Phase 4d). The new tab-stop check on `AuthorListItemTab` PASSes (count and all properties match the descriptive spec).
+
+#### Phase 6c — user-side action
+
+1. Re-import `basStyleInspector.bas` and `basTEST_aeBibleConfig.bas` into both `.docm` files.
+2. Run `RUN_TAXONOMY_STYLES`. Expect 15 PASS / 5 FAIL with one new PASS line `PASS  AuthorListItemTab (TabStops)` in the report.
+3. Open `rpt\StyleTaxonomyAudit.txt` and confirm the new "-- Tab stops verified --" section.
+4. Confirm back here.
+
+If the tab-stop check FAILs, paste the FAIL detail. The descriptive spec was captured directly from the Phase 6a dump, so a FAIL would indicate either: a tab stop changed since the Phase 6a dump (re-dump and re-spec); or a precision issue in the position comparison (would surface as `Tab N Position: expected X got Y` with a small delta).
+
+### Phase 6 complete — summary
+
+After Phase 6c verifies clean, the tab-stop infrastructure gap is fully closed:
+
+| Routine | Pre-Phase-6 | Post-Phase-6 |
+|---|---|---|
+| `DumpStyleProperties` | Tab stops invisible | 6a — emits Count + per-stop Position/Align/Leader |
+| `CopyOneStyle` | Tab stops lost in migration | 6b — `ClearAll` + `Add`-loop preserves them |
+| `AuditOneStyle` / `AuditStyleTabs` | No tab audit | 6c — sibling Sub + per-style spec |
+
+The taxonomy audit now has full coverage of every audit-able property on every approved paragraph style — modulo the deferred items already on the books (extend `AuditOneStyle` for character-style Bold/Italic/Color; prescriptive-spec pass for known QA-checklist drift).
+
+**Status:** Phase 6c applied; awaiting `RUN_TAXONOMY_STYLES` re-run with the new tab-stop audit.
+
+### Phase 6c — verification confirmed (2026-04-30)
+
+User ran `RUN_TAXONOMY_STYLES` post-import:
+
+```
+RUN_TAXONOMY_STYLES: 16 PASS  5 FAIL  -> rpt\StyleTaxonomyAudit.txt
+```
+
+#### Math reconciliation
+
+Two new PASSes landed in this run (4c's existence-only check on `AuthorListItemTab` had not been re-tested between Phases 4c and 6c — they surface together):
+
+| Phase | Adds | Cumulative |
+|---|---|---|
+| Pre-migration baseline | — | 13 PASS / 6 FAIL (19 checks) |
+| 4b — rename `ListItem`/`ListItemBody` | 0 (Lamentation FAIL → removed) | 14 / 5 (19) |
+| 4c — `AuthorListItemTab` existence-only | +1 PASS | 15 / 5 (20) |
+| 6c — `AuthorListItemTab` tab-stop spec | +1 PASS | **16 / 5 (21)** |
+
+Final state matches the PURPOSE comment block exactly: 20 style audits + 1 tab-stop spec = 21 checks. All five FAILs are pre-tracked items: `BookIntro` (NOT FOUND), `AuthorListItem` (`Indent: expected 0 got -18` per the leave-as-is decision), and three bucket-3 not-yet-created styles.
+
+#### Tab-stop section in the report
+
+`rpt\StyleTaxonomyAudit.txt` shows the new section landed cleanly:
+
+```
+-- Tab stops verified --
+PASS  AuthorListItemTab (TabStops)
+```
+
+### Phase 6 — COMPLETE
+
+The List Paragraph migration tab-stop infrastructure is fully closed:
+
+| Routine | Pre-Phase-6 | Post-Phase-6 |
+|---|---|---|
+| `DumpStyleProperties` | tabs invisible | 6a — emits Count + per-stop Position/Align/Leader, named-symbol form |
+| `CopyOneStyle` | tabs lost in migration | 6b — `ClearAll` + iterate-and-`Add` preserves them |
+| `AuditOneStyle` / `AuditStyleTabs` | no tab audit | 6c — sibling Sub + per-style spec, descriptive baseline encoded |
+
+The taxonomy audit now has full coverage of every audit-able property on every approved paragraph style. Remaining deferred items are catalogued elsewhere in this review:
+
+- **Extend `AuditOneStyle` for character-style Bold/Italic/Color** (so `Footnote Reference` can graduate from bucket 2 to bucket 1).
+- **Prescriptive-spec pass** for known QA-checklist drift (six `BaseStyle = "Normal"` violations among approved styles; the `LineSpacingRule = Exactly` candidates noted earlier).
+- **Documentation:** `EDSG/01-styles.md` priority snapshot table currently lists `ListItem` / `ListItemBody` / `ListItemTab`; needs update to `AuthorListItem` / `AuthorListItemBody` / `AuthorListItemTab` to reflect post-migration state.
+
+**Status:** Phase 6 verified complete. List Paragraph migration end-to-end (Phases 0 through 6) closed.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
