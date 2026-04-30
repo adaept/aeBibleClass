@@ -3238,6 +3238,54 @@ These do **not** trigger the list-engine hang (Normal has no list-engine entangl
 
 **Status:** Phase 0 v2 run analysed; scope and naming decisions recorded; Phase 1 design pending.
 
+### Phase 1 — design decisions and Sub created (2026-04-29)
+
+#### Three additional decisions before Phase 1 code
+
+**Decision A — `AuthorListItem` QA-checklist fixes during creation: APPROVED.** Current `ListItem` has `QuickStyle = True` and `AutomaticallyUpdate = True`, both QA-checklist violations. The migration creates a brand-new style from scratch, which is the natural moment to fix violations rather than encode them descriptively. New `AuthorListItem` is created with `QuickStyle = False` and `AutomaticallyUpdate = False`. Visual rendering is unchanged (these properties don't affect rendering), but `AutomaticallyUpdate = False` will prevent future hidden formatting drift — a behavioural improvement. Original "purely descriptive" stance for the broader audit work is preserved separately; this is a localised, deliberate exception.
+
+**Decision B — `NextParagraphStyle = "AuthorListItemBody"` on the new `AuthorListItem`: APPROVED.** Implies `ListItemBody` will be renamed to `AuthorListItemBody`. This expands Phase 1 scope beyond the original "two-style migration" — `ListItemBody` is now in scope for a name change in Phase 4. `ListItemBody` is structurally clean already (`BaseStyle = ""`), so the rename is a safe one-line VBA op and does not trigger the engine bug. Decommission step in Phase 4 grows by one operation.
+
+**Decision C — Temporal ordering option (1): APPROVED.** `AuthorListItem.NextParagraphStyle` is set to `"ListItemBody"` in Phase 1 (current name); updated to `"AuthorListItemBody"` in Phase 4 after the rename. Rationale: each phase boundary leaves the document in a valid, fully-resolvable state. Setting `"AuthorListItemBody"` directly in Phase 1 (option 2) would cause a transient name-resolution gap during Phases 2-3; renaming `ListItemBody` first in Phase 0.5 (option 3) reorders the migration awkwardly. Option (1) is the cleanest middle path.
+
+#### Phase 1 code applied — `src/basAuthorStyles.bas`
+
+Three Subs added:
+
+- **`CreateAuthorStyles`** (Public) — entry point; calls the two `Define*` Subs.
+- **`DefineAuthorListItem`** (Private) — creates `AuthorListItem` with descriptive specs + QA-checklist fixes (`QuickStyle = False`, `AutomaticallyUpdate = False`). `BaseStyle = ""` set first; no `LinkToListTemplate`. NextParagraphStyle = `"ListItemBody"` (transitional).
+- **`DefineAuthorBookRefNew`** (Private) — creates `AuthorBookRefNew` (temp name; will rename to `AuthorBookRef` in Phase 4 after the existing `AuthorBookRef` is decommissioned). NextParagraphStyle = self.
+
+Spec values are descriptive (read from `rpt/Styles/style_ListItem.txt` and `rpt/Styles/style_AuthorBookRef.txt`). Indents in points: `AuthorListItem` LeftIndent=18 / FirstLineIndent=-18 (hanging); `AuthorBookRefNew` LeftIndent=36 / FirstLineIndent=-18 (deeper hanging). Both styles: Carlito 11pt, single line spacing, `BaseStyle = ""` with no list-engine entanglement.
+
+#### Updated Phase 4 plan
+
+Phase 4 (decommission) now has these operations, in order:
+
+1. Migrate paragraphs `ListItem → AuthorListItem` (uses the recipe's `MigrateParagraphs` Sub, to be added in Phase 3).
+2. Migrate paragraphs `AuthorBookRef → AuthorBookRefNew`.
+3. Delete old `ListItem`. Delete old `AuthorBookRef`.
+4. Rename `ListItemBody → AuthorListItemBody` (single VBA op: `s.NameLocal = "AuthorListItemBody"`).
+5. Update `AuthorListItem.NextParagraphStyle` from `"ListItemBody"` to `"AuthorListItemBody"`.
+6. Rename `AuthorBookRefNew → AuthorBookRef`.
+7. Update the `approved` array in `src/basTEST_aeBibleConfig.bas`.
+8. Update `RUN_TAXONOMY_STYLES` audit entries.
+
+#### Action required from user
+
+Phase 1 is **code-side complete** in `src/basAuthorStyles.bas`. To exercise Phase 1:
+
+1. Open a fresh blank Word document.
+2. Save as `tools/style_holding.docm` (must be `.docm`, see EDSG `10-list-paragraph-bug.md`).
+3. Open the VBA editor (Alt+F11). Import or paste `basAuthorStyles.bas` into the holding file's project.
+4. Run `CreateAuthorStyles` from the Immediate window.
+5. Save and close.
+6. Confirm back here that the holding file has been created with both new styles.
+
+Once confirmed, Phase 2 (transport into the live `.docm`) is next.
+
+**Status:** Phase 1 code applied; awaiting holding-file creation and `CreateAuthorStyles` run.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

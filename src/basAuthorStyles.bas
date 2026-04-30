@@ -104,3 +104,115 @@ PROC_ERR:
            ") in procedure AuditListStyleRisk of Module basAuthorStyles"
     Resume PROC_EXIT
 End Sub
+
+' ==========================================================================
+' CreateAuthorStyles
+' ==========================================================================
+' Step 1 of the List Paragraph migration. Defines the replacement styles
+' from scratch in the *active* document - intended to be run in a fresh
+' blank .docm holding file (e.g. tools/style_holding.docm), NOT in the
+' live document.
+'
+' Critical isolation: BaseStyle = "" set BEFORE any other property; no
+' LinkToListTemplate call anywhere. Specs are descriptive (capture
+' current visual rendering of the styles being replaced) - read from
+' rpt/Styles/style_ListItem.txt and rpt/Styles/style_AuthorBookRef.txt.
+' Two QA-checklist fixes applied during creation: AuthorListItem is
+' created with QuickStyle = False and AutomaticallyUpdate = False
+' (current ListItem has both as True). User decision 2026-04-29.
+'
+' NextParagraphStyle on AuthorListItem set to "ListItemBody" initially;
+' updated to "AuthorListItemBody" in Phase 4 after the ListItemBody
+' rename. This avoids a transient name-resolution gap during Phases
+' 2-3 when AuthorListItemBody does not yet exist.
+'
+' Usage (in a fresh blank .docm):
+'   CreateAuthorStyles
+'   ' then save the holding file as tools/style_holding.docm
+' ==========================================================================
+Public Sub CreateAuthorStyles()
+    On Error GoTo PROC_ERR
+
+    DefineAuthorListItem
+    DefineAuthorBookRefNew
+
+    Debug.Print "CreateAuthorStyles: Done. AuthorListItem and AuthorBookRefNew defined."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure CreateAuthorStyles of Module basAuthorStyles"
+    Resume PROC_EXIT
+End Sub
+
+Private Sub DefineAuthorListItem()
+    Dim s As Word.Style
+    On Error Resume Next
+    Set s = ActiveDocument.Styles("AuthorListItem")
+    On Error GoTo 0
+    If s Is Nothing Then
+        Set s = ActiveDocument.Styles.Add("AuthorListItem", wdStyleTypeParagraph)
+    End If
+
+    s.baseStyle = ""                           ' MUST come first
+    s.AutomaticallyUpdate = False               ' QA-checklist fix (was True on ListItem)
+    s.QuickStyle = False                        ' QA-checklist fix (was True on ListItem)
+    s.NextParagraphStyle = "ListItemBody"       ' Phase 4 will update to "AuthorListItemBody"
+    s.Font.Name = "Carlito"
+    s.Font.Size = 11
+    s.Font.Bold = True
+    s.Font.Italic = True
+    s.Font.Underline = wdUnderlineNone
+    s.Font.color = wdColorAutomatic
+    With s.ParagraphFormat
+        .Alignment = wdAlignParagraphLeft
+        .LeftIndent = 18
+        .RightIndent = 0
+        .FirstLineIndent = -18
+        .SpaceBefore = 0
+        .SpaceAfter = 0
+        .LineSpacing = 12
+        .LineSpacingRule = wdLineSpaceSingle
+        .WidowControl = True
+        .KeepTogether = False
+        .KeepWithNext = True
+        .PageBreakBefore = False
+        .OutlineLevel = wdOutlineLevelBodyText
+    End With
+End Sub
+
+Private Sub DefineAuthorBookRefNew()
+    Dim s As Word.Style
+    On Error Resume Next
+    Set s = ActiveDocument.Styles("AuthorBookRefNew")
+    On Error GoTo 0
+    If s Is Nothing Then
+        Set s = ActiveDocument.Styles.Add("AuthorBookRefNew", wdStyleTypeParagraph)
+    End If
+
+    s.baseStyle = ""
+    s.AutomaticallyUpdate = False
+    s.QuickStyle = False
+    s.NextParagraphStyle = "AuthorBookRefNew"   ' self; renamed to AuthorBookRef in Phase 4
+    s.Font.Name = "Carlito"
+    s.Font.Size = 11
+    s.Font.Bold = True
+    s.Font.Italic = False
+    s.Font.Underline = wdUnderlineNone
+    s.Font.color = wdColorAutomatic
+    With s.ParagraphFormat
+        .Alignment = wdAlignParagraphLeft
+        .LeftIndent = 36
+        .RightIndent = 0
+        .FirstLineIndent = -18
+        .SpaceBefore = 0
+        .SpaceAfter = 11
+        .LineSpacing = 12
+        .LineSpacingRule = wdLineSpaceSingle
+        .WidowControl = True
+        .KeepTogether = False
+        .KeepWithNext = False
+        .PageBreakBefore = False
+        .OutlineLevel = wdOutlineLevelBodyText
+    End With
+End Sub
