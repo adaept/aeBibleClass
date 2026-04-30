@@ -3113,6 +3113,39 @@ Applied to `EDSG/10-list-paragraph-bug.md` — all occurrences of `ListItem_v2` 
 
 No source-code change — `AuthorListItem` is not yet in the `approved` array; it becomes a real style only when the deferred refactor work is scheduled.
 
+### List Paragraph migration — kickoff (2026-04-29)
+
+User directive: **start the process** for creating `AuthorListItem` and the other replacement styles. The previously-deferred refactor moves from "deferred" to "in progress." Run as a multi-phase sequence under the standard one-fix-at-a-time review.
+
+#### Multi-phase plan
+
+| Phase | What | Who acts | What lands in repo |
+|---|---|---|---|
+| 0 | Diagnostic — run `AuditListStyleRisk`, collect output | User runs, I read | New diagnostic Sub in `src/basAuthorStyles.bas` |
+| 1 | Define replacements in `tools/style_holding.docm` | I write `CreateAuthorStyles` Sub; user creates the `.docm` and runs it | Same `basAuthorStyles.bas` adds `CreateAuthorStyles`; new local `tools/style_holding.docm` (binary, not version-controlled) |
+| 2 | Transport styles into live `.docm` | User runs transport routine | Same module adds `TransportAuthorStyles` |
+| 3 | Migrate paragraphs from old → new style | User runs `MigrateParagraphs` per pair | Reusable Sub in `basAuthorStyles.bas` |
+| 4 | Decommission old styles + update audit | I edit | `src/basTEST_aeBibleConfig.bas` `approved` array; `RUN_TAXONOMY_STYLES` audit list |
+| 5 | Verify | User runs `RUN_TAXONOMY_STYLES` and confirms clean | (no further code edits unless audit reports unexpected) |
+
+#### Decisions recorded — 2026-04-29
+
+- **Naming — Option A (parallel rename), approved.** `ListItem → AuthorListItem`, `ListItemBody → AuthorListItemBody`, `ListItemTab → AuthorListItemTab`. Mechanical 1-for-1 mapping; preserves the existing three-tier structure. Consolidation, if warranted, is a separate later decision.
+- **Module placement — option (i), approved.** New self-contained `src/basAuthorStyles.bas`. Easy to remove once the migration is verified and `RUN_TAXONOMY_STYLES` is clean. Doesn't pollute `basFixDocxRoutines.bas` or `basTEST_aeBibleConfig.bas`.
+- **Phase 0 (diagnostic) — APPLIED 2026-04-29.** `src/basAuthorStyles.bas` created with `AuditListStyleRisk`. Output expected (prediction): three paragraph styles flagged — `ListItem`, `ListItemBody`, `ListItemTab` — confirming the migration scope. Awaiting user-side run.
+
+#### Phase 1 placeholder
+
+`CreateAuthorStyles` will be designed against the descriptive specs already captured in `rpt/Styles/style_*.txt` (specifically: `style_ListItem.txt`, `style_ListItemBody.txt`, `style_ListItemTab.txt`). That guarantees the new styles match the current visual rendering 1-for-1; any design corrections (the prescriptive-spec exercise) remain a separate follow-up. The `BaseStyle = ""` rule from the EDSG QA checklist applies — no inheritance from `List Paragraph` and no `LinkToListTemplate` on any of the three new styles.
+
+#### Phase boundaries
+
+- Each phase concludes with explicit user-side action (run a Sub, observe output, paste back to me).
+- I propose; user approves; user runs; I read; we proceed.
+- No phase merges into the next without intervening review.
+
+**Status:** Phase 0 applied; awaiting `AuditListStyleRisk` run output before Phase 1.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
