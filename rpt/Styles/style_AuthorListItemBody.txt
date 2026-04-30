@@ -1,20 +1,20 @@
-'--- AuthorBookRef  (Type=Paragraph, Priority=1) ---
+'--- AuthorListItemBody  (Type=Paragraph, Priority=1) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 11
-.Font.Bold = -1
+.Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "AuthorBookRef"
+.NextParagraphStyle = "AuthorListItemBody"
 .AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 0
 .ParagraphFormat.LeftIndent = 36
 .ParagraphFormat.RightIndent = 0
-.ParagraphFormat.FirstLineIndent = -18
+.ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
 .ParagraphFormat.SpaceAfter = 11
 .ParagraphFormat.LineSpacing = 12

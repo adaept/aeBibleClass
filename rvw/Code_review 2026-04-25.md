@@ -3639,6 +3639,43 @@ This keeps each step's blast radius bounded: any unexpected output stops the cas
 
 **Status:** Phase 4a code applied; awaiting test-copy `DecommissionAuthorStyles` run.
 
+### Phase 4a — test-copy run confirmed (2026-04-30)
+
+User ran `DecommissionAuthorStyles` on `Blank Bible Copy.docm`. Output (clean, all six steps):
+
+```
+DecommissionAuthorStyles: starting on Blank Bible Copy.docm
+  1. Deleted ListItem
+  2. Deleted AuthorBookRef
+  3. Renamed ListItemBody -> AuthorListItemBody
+  4. Renamed AuthorBookRefNew -> AuthorBookRef
+  5. AuthorListItem.NextParagraphStyle = AuthorListItemBody
+  6. AuthorBookRef.NextParagraphStyle = AuthorBookRef (self)
+DecommissionAuthorStyles: Done.
+```
+
+Verification via `DumpStyleProperties` on all three target styles:
+
+| Style | `BaseStyle` | `QuickStyle` | `AutomaticallyUpdate` | `NextParagraphStyle` | Verdict |
+|---|---|---|---|---|---|
+| `AuthorListItem` | `""` | `False` | `False` | `AuthorListItemBody` | PASS |
+| `AuthorListItemBody` | `""` | `False` | `False` | `AuthorListItemBody` (self) | PASS |
+| `AuthorBookRef` | `""` | `False` | `False` | `AuthorBookRef` (self) | PASS |
+
+All `BaseStyle = ""` (no list-engine inheritance). All `QuickStyle / AutomaticallyUpdate = False` (QA-checklist compliant — `AuthorListItemBody` was already compliant pre-rename; `AuthorListItem` and `AuthorBookRef` got the fixes during Phase 1 / Phase 2).
+
+#### Word self-reference rename behaviour — observed
+
+`ListItemBody` originally had `NextParagraphStyle = "ListItemBody"` (self-reference). After step 3 renamed the style to `AuthorListItemBody`, the dump shows `NextParagraphStyle = "AuthorListItemBody"` — Word automatically updated the self-reference along with the name. This was not explicitly handled in `DecommissionAuthorStyles`; Word's `Style.NameLocal = ...` setter propagates the rename through self-pointing `NextParagraphStyle` references on its own.
+
+Behavioural note worth keeping for future migration work: rename propagation through Word's style graph is partial — self-references update, but external references from other styles' `NextParagraphStyle` to the renamed style would need explicit code (Phase 4a step 5 was an explicit external update, which is why we coded it).
+
+#### Priority = 1 on all three new styles
+
+Expected. New / transported styles get `Priority = 1` by default. The `approved` array's authoritative priorities (18 for `AuthorListItem`, 19 for `AuthorListItemBody`, 22 for `AuthorBookRef` after the Phase 4b rename) are reasserted by `WordEditingConfig` in Phase 5.
+
+**Status:** Phase 4a confirmed on test copy; production sequence pending (Transport + Migrate + Decommission); Phase 4b source-code edits pending.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant

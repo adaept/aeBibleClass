@@ -9,7 +9,7 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "AuthorListItem"
+.NextParagraphStyle = "AuthorListItemBody"
 .AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 0
 .ParagraphFormat.LeftIndent = 18
