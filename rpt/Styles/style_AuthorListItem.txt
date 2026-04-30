@@ -1,0 +1,26 @@
+'--- AuthorListItem  (Type=Paragraph, Priority=1) ---
+.BaseStyle = ""
+.QuickStyle = False
+.Font.Name = "Carlito"
+.Font.Size = 11
+.Font.Bold = -1
+.Font.Italic = -1
+.Font.Underline = 0
+.Font.Color = -16777216
+.Font.SmallCaps = 0
+.Font.AllCaps = 0
+.NextParagraphStyle = "AuthorListItem"
+.AutomaticallyUpdate = False
+.ParagraphFormat.Alignment = 0
+.ParagraphFormat.LeftIndent = 18
+.ParagraphFormat.RightIndent = 0
+.ParagraphFormat.FirstLineIndent = -18
+.ParagraphFormat.SpaceBefore = 0
+.ParagraphFormat.SpaceAfter = 0
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
+.ParagraphFormat.WidowControl = -1
+.ParagraphFormat.KeepTogether = 0
+.ParagraphFormat.KeepWithNext = -1
+.ParagraphFormat.PageBreakBefore = 0
+.ParagraphFormat.OutlineLevel = 10

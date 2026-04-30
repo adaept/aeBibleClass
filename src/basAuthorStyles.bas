@@ -222,3 +222,136 @@ Private Sub DefineAuthorBookRefNew()
         .OutlineLevel = wdOutlineLevelBodyText
     End With
 End Sub
+
+' ==========================================================================
+' TransportAuthorStyles
+' ==========================================================================
+' Step 2 of the List Paragraph migration. Reads the AuthorListItem and
+' AuthorBookRefNew style definitions from a holding .docm and creates
+' equivalent standalone styles in ActiveDocument (the live .docm).
+'
+' Pre-flight:
+'   * Source holding document is open by name (default: style_holding.docm).
+'   * Source contains both AuthorListItem and AuthorBookRefNew.
+'   * ActiveDocument is not the holding doc itself.
+'
+' Idempotency: if a destination style already exists, the Sub warns and
+' skips it. To force a re-import, manually delete the destination style
+' and re-run.
+'
+' NextParagraphStyle is intentionally not copied here - Phase 4 sets it
+' after the live-doc renames complete.
+'
+' Usage (in the live .docm, with holding doc also open):
+'   TransportAuthorStyles                       ' default source name
+'   TransportAuthorStyles "my_holding.docm"     ' custom source name
+' ==========================================================================
+Public Sub TransportAuthorStyles(Optional ByVal sourceName As String = "style_holding.docm")
+    On Error GoTo PROC_ERR
+
+    ' Pre-flight 1: source doc open
+    Dim srcDoc As Document
+    On Error Resume Next
+    Set srcDoc = Documents(sourceName)
+    On Error GoTo PROC_ERR
+    If srcDoc Is Nothing Then
+        MsgBox "Source document """ & sourceName & """ is not open. " & _
+               "Open it first, then re-run TransportAuthorStyles.", _
+               vbExclamation, "TransportAuthorStyles"
+        Exit Sub
+    End If
+
+    ' Pre-flight 2: ActiveDocument is not the source
+    If ActiveDocument.Name = srcDoc.Name Then
+        MsgBox "ActiveDocument is the holding file. Activate the live " & _
+               ".docm before running TransportAuthorStyles.", _
+               vbExclamation, "TransportAuthorStyles"
+        Exit Sub
+    End If
+
+    ' Pre-flight 3: source contains both expected styles
+    If Not StyleExists(srcDoc, "AuthorListItem") Then
+        MsgBox "Source missing AuthorListItem. Run CreateAuthorStyles in " & _
+               "the holding doc first.", vbExclamation, "TransportAuthorStyles"
+        Exit Sub
+    End If
+    If Not StyleExists(srcDoc, "AuthorBookRefNew") Then
+        MsgBox "Source missing AuthorBookRefNew. Run CreateAuthorStyles in " & _
+               "the holding doc first.", vbExclamation, "TransportAuthorStyles"
+        Exit Sub
+    End If
+
+    Debug.Print "TransportAuthorStyles: source=""" & srcDoc.Name & _
+                """, target=""" & ActiveDocument.Name & """"
+
+    CopyOneStyle srcDoc, ActiveDocument, "AuthorListItem"
+    CopyOneStyle srcDoc, ActiveDocument, "AuthorBookRefNew"
+
+    Debug.Print "TransportAuthorStyles: Done."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure TransportAuthorStyles of Module basAuthorStyles"
+    Resume PROC_EXIT
+End Sub
+
+Private Function StyleExists(ByVal doc As Document, ByVal styleName As String) As Boolean
+    Dim s As Word.Style
+    On Error Resume Next
+    Set s = doc.Styles(styleName)
+    On Error GoTo 0
+    StyleExists = Not (s Is Nothing)
+End Function
+
+Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
+                         ByVal styleName As String)
+    ' Idempotent skip
+    If StyleExists(dstDoc, styleName) Then
+        Debug.Print "  SKIP   " & styleName & " already exists in target."
+        Exit Sub
+    End If
+
+    Dim src As Word.Style
+    Dim dst As Word.Style
+    Set src = srcDoc.Styles(styleName)
+    Set dst = dstDoc.Styles.Add(styleName, wdStyleTypeParagraph)
+
+    ' BaseStyle MUST be set first - same isolation rule as Phase 1.
+    dst.baseStyle = ""
+
+    ' QA-checklist properties.
+    dst.AutomaticallyUpdate = src.AutomaticallyUpdate
+    dst.QuickStyle = src.QuickStyle
+
+    ' Font properties.
+    dst.Font.Name = src.Font.Name
+    dst.Font.Size = src.Font.Size
+    dst.Font.Bold = src.Font.Bold
+    dst.Font.Italic = src.Font.Italic
+    dst.Font.Underline = src.Font.Underline
+    dst.Font.color = src.Font.color
+    dst.Font.SmallCaps = src.Font.SmallCaps
+    dst.Font.AllCaps = src.Font.AllCaps
+
+    ' ParagraphFormat properties.
+    With dst.ParagraphFormat
+        .Alignment = src.ParagraphFormat.Alignment
+        .LeftIndent = src.ParagraphFormat.LeftIndent
+        .RightIndent = src.ParagraphFormat.RightIndent
+        .FirstLineIndent = src.ParagraphFormat.FirstLineIndent
+        .SpaceBefore = src.ParagraphFormat.SpaceBefore
+        .SpaceAfter = src.ParagraphFormat.SpaceAfter
+        .LineSpacing = src.ParagraphFormat.LineSpacing
+        .LineSpacingRule = src.ParagraphFormat.LineSpacingRule
+        .WidowControl = src.ParagraphFormat.WidowControl
+        .KeepTogether = src.ParagraphFormat.KeepTogether
+        .KeepWithNext = src.ParagraphFormat.KeepWithNext
+        .PageBreakBefore = src.ParagraphFormat.PageBreakBefore
+        .OutlineLevel = src.ParagraphFormat.OutlineLevel
+    End With
+
+    ' NextParagraphStyle deliberately not copied - Phase 4 sets it.
+
+    Debug.Print "  COPY   " & styleName & " transported."
+End Sub

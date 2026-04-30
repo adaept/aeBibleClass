@@ -3384,6 +3384,56 @@ Each phase concludes with explicit user-side action (run a Sub, observe output, 
 
 **Status:** Phase 1 code corrected (NextParagraphStyle deferred); awaiting holding-file creation and `CreateAuthorStyles` re-run.
 
+### Phase 1 — confirmed complete (2026-04-29)
+
+User ran `CreateAuthorStyles` in `tools/style_holding.docm`:
+
+```
+CreateAuthorStyles: Done. AuthorListItem and AuthorBookRefNew defined.
+```
+
+Both replacement styles created in the holding file with `BaseStyle = ""`, descriptive specs from the existing `style_*.txt` dumps, QA-checklist fixes (`QuickStyle = False`, `AutomaticallyUpdate = False`) on `AuthorListItem`, and `NextParagraphStyle` left at default (`"Normal"`). No 5834.
+
+### Phase 2 — design and code applied (2026-04-29)
+
+#### Design constraints
+
+- Source is `.docm`, so the EDSG recipe Step 2 path (b) applies: `Documents.Open` + direct property copy. No Organizer / `.dotm`.
+- Sub runs from the live doc; reads from the holding doc; writes to `ActiveDocument`.
+- `BaseStyle = ""` set first on each destination style — same isolation rule as Phase 1.
+- `NextParagraphStyle` not copied — deferred to Phase 4 per the prior decision.
+- No `LinkToListTemplate` involvement.
+- Idempotent: if a destination style already exists, the Sub skips with a warning rather than overwriting (overwriting an existing live-doc style mid-state risks the very cascade we are escaping).
+
+#### Pre-flight checks
+
+Three guards before any property is copied:
+
+1. Source document is open by name (`Documents(sourceName)` resolves).
+2. Source contains both `AuthorListItem` and `AuthorBookRefNew`.
+3. `ActiveDocument` is **not** the holding file — guards against accidentally writing back to the source.
+
+If any check fails, the Sub aborts via `MsgBox` with a clear remediation message and produces no partial state.
+
+#### Code applied — three Subs added to `src/basAuthorStyles.bas`
+
+- **`TransportAuthorStyles`** (Public) — entry point; pre-flight + invokes `CopyOneStyle` for each of the two styles. Optional `sourceName` parameter (default `"style_holding.docm"`).
+- **`StyleExists`** (Private helper) — boolean lookup for whether a named style is present in a given document. Uses `On Error Resume Next` to convert "style not found" exceptions into `False`.
+- **`CopyOneStyle`** (Private helper) — copies one style from source to destination. `BaseStyle = ""` set first; then `AutomaticallyUpdate`, `QuickStyle`, font block, paragraph-format block. `NextParagraphStyle` deliberately not copied. Idempotent skip if destination style already exists.
+
+Properties copied (full list, in order): `BaseStyle` (forced empty), `AutomaticallyUpdate`, `QuickStyle`, `Font.Name / .Size / .Bold / .Italic / .Underline / .Color / .SmallCaps / .AllCaps`, `ParagraphFormat.Alignment / .LeftIndent / .RightIndent / .FirstLineIndent / .SpaceBefore / .SpaceAfter / .LineSpacing / .LineSpacingRule / .WidowControl / .KeepTogether / .KeepWithNext / .PageBreakBefore / .OutlineLevel`.
+
+#### User-side action for Phase 2
+
+1. Open the live `.docm` (the project Bible-class file).
+2. Open `tools/style_holding.docm` in the same Word session.
+3. Activate the live `.docm` (click in its window).
+4. From Immediate window in the live doc's VBA project, run `TransportAuthorStyles`.
+5. Verify with `DumpStyleProperties "AuthorListItem", True` and `DumpStyleProperties "AuthorBookRefNew", True`. The new files in `rpt/Styles/` should match the holding doc's definitions exactly.
+6. Confirm back here.
+
+**Status:** Phase 2 code applied; awaiting `TransportAuthorStyles` run and verification.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
