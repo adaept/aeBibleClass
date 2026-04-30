@@ -420,6 +420,18 @@ Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
         .OutlineLevel = src.ParagraphFormat.OutlineLevel
     End With
 
+    ' ParagraphFormat tab stops - reproduce explicit stops from source.
+    ' ClearAll first in case the destination inherited tabs from BaseStyle
+    ' before BaseStyle was set to "". Cheap; safe; idempotent.
+    dst.ParagraphFormat.TabStops.ClearAll
+    Dim ts As Word.TabStop
+    For Each ts In src.ParagraphFormat.TabStops
+        dst.ParagraphFormat.TabStops.Add _
+            Position:=ts.Position, _
+            Alignment:=ts.Alignment, _
+            Leader:=ts.Leader
+    Next ts
+
     ' NextParagraphStyle deliberately not copied - Phase 4 sets it.
 
     Debug.Print "  COPY   " & styleName & " transported."

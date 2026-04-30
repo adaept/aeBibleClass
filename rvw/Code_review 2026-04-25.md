@@ -3962,6 +3962,62 @@ Next `DumpAllApprovedStyles` run will overwrite every `style_*.txt` file with th
 
 **Status:** Phase 6a applied; awaiting `DumpStyleProperties "AuthorListItemTab", True` to confirm the tab block surfaces and to capture the descriptive baseline for Phase 6c.
 
+### Phase 6a — verification confirmed (2026-04-30)
+
+User ran `DumpStyleProperties "AuthorListItemTab", True` post-import. Output includes the new tab-stop block:
+
+```
+.ParagraphFormat.TabStops.Count = 2
+.ParagraphFormat.TabStops(1) = Position=144 Align=Left Leader=Spaces
+.ParagraphFormat.TabStops(2) = Position=252 Align=Left Leader=Spaces
+```
+
+Two left-aligned stops at 2.0" (144 pt) and 3.5" (252 pt), no leader characters. **Descriptive baseline captured for Phase 6c spec.**
+
+`Count = 0` skip path also working: the same dump for any style without explicit tabs (verified earlier on `BodyText`, `Heading 1`, etc. via the unchanged dump output above the new block) produces no extra noise. Backwards-compatible.
+
+### Phase 6b — `CopyOneStyle` tab-stop extension applied (2026-04-30)
+
+#### Code applied — one block added in `src/basAuthorStyles.bas`
+
+After the existing `End With` of the `ParagraphFormat` block in `CopyOneStyle`, before the `NextParagraphStyle` comment:
+
+```vba
+' ParagraphFormat tab stops - reproduce explicit stops from source.
+' ClearAll first in case the destination inherited tabs from BaseStyle
+' before BaseStyle was set to "". Cheap; safe; idempotent.
+dst.ParagraphFormat.TabStops.ClearAll
+Dim ts As Word.TabStop
+For Each ts In src.ParagraphFormat.TabStops
+    dst.ParagraphFormat.TabStops.Add _
+        Position:=ts.Position, _
+        Alignment:=ts.Alignment, _
+        Leader:=ts.Leader
+Next ts
+```
+
+Two design decisions:
+
+1. **`ClearAll` first** — defensive idempotency. Even though `BaseStyle = ""` is set first in `CopyOneStyle`, any in-progress migration running against a non-empty destination shouldn't accumulate tabs. `ClearAll` keeps re-runs clean.
+2. **Direct integer enum values** (`ts.Alignment`, `ts.Leader`) — `TabStops.Add` accepts the API's enum integers directly. The named-symbols decision in Phase 6a applies only to dump output (human-readable file format); VBA-to-VBA copy uses integers, no round-trip through name strings.
+
+#### What this enables
+
+- Future migrations through `CopyOneStyle` preserve tabs without manual paste-format pass.
+- Companion to Phase 6a: dumped tab stops can now round-trip dump → blank `.docm` define → transport → arrive intact at destination.
+- Forward-looking infrastructure only — the current migration is already complete (`AuthorListItemTab` tabs were preserved in-place via Word UI rename, then verified via Phase 6a dump). 6b is for the *next* migration.
+
+#### What does NOT change
+
+- `MigrateParagraphs`, `DecommissionAuthorStyles`, `AuditListStyleRisk`: unchanged.
+- `CreateAuthorStyles`, `DefineAuthorListItem`, `DefineAuthorBookRefNew`: unchanged.
+
+#### Phase 6b — no user-side action required
+
+This is forward-looking code. No re-import + verify cycle needed beyond what was done for 6a. The block executes only when `CopyOneStyle` is next invoked (any future migration kicked off by `TransportAuthorStyles` or its successor).
+
+**Status:** Phase 6b applied; Phase 6c (`AuditStyleTabs` + per-style spec) pending.
+
 ---
 
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
