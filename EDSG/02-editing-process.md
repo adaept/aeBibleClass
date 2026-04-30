@@ -13,7 +13,11 @@ When introducing a new style or changing an existing one.
    priority number.
 2. Add a `Define<Name>Style` routine to `src/basFixDocxRoutines.bas`
    that creates / updates the style with explicit property values
-   (no inheritance — `BaseStyle = ""`).
+   (no inheritance — `BaseStyle = ""`). For any style with list-like
+   structure, **never** inherit from `List Paragraph` and **never**
+   set `LinkToListTemplate` — see
+   [10-list-paragraph-bug](10-list-paragraph-bug.md) for the
+   migration recipe and why this rule exists.
 3. Add the name to the `approved` array in
    `src/basTEST_aeBibleConfig.bas`, in the position the style first
    appears in the document.

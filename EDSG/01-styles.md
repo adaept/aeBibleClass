@@ -198,7 +198,7 @@ approved style. Documented exceptions only. See `rvw/Code_review
 
 | # | Property | Expected | UI equivalent | Applies to |
 |---|----------|----------|---------------|------------|
-| 1 | `.BaseStyle` | `""` | Style based on: **(no style)** | All styles |
+| 1 | `.BaseStyle` | `""` | Style based on: **(no style)** | All styles ([why](10-list-paragraph-bug.md)) |
 | 2 | `.AutomaticallyUpdate` | `False` | "Automatically update" checkbox NOT selected | Paragraph only |
 | 3 | `.QuickStyle` | `False` | Style does not appear in the Quick Styles gallery | All styles |
 | 4 | `.ParagraphFormat.LineSpacingRule` | `0` (`wdLineSpaceSingle`) | Line spacing: Single | Paragraph only |

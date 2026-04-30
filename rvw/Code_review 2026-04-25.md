@@ -2976,6 +2976,112 @@ This kind of partial-spec FAIL is exactly the case the deferred *prescriptive-sp
 
 ---
 
+## 2026-04-29 — `List Paragraph` numbering-engine bug — analysis and migration recipe
+
+### Honest caveats up front
+
+This analysis was prepared without independent reproduction at the C++ source level. Inputs: user's direct experience plus publicly documented evidence (Microsoft Q&A threads, MVP blogs, Office Open XML spec). Assessment is "consistent with known evidence" rather than "verified at the engine level"; gaps are flagged inline.
+
+### 1. Verifying the proposal
+
+User's proposal: **"create your own style and do not use the `List Paragraph` / `List Item` inheritance."**
+
+**Pros**
+
+- **Avoids the cascade trigger.** The hang is consistent with Word's list engine eagerly recomputing all paragraphs that reference a `ListTemplate` when an inherited or linked style changes. Detaching from `List Paragraph` removes the inheritance edge that triggers the recompute on every style edit.
+- **Aligns with the EDSG QA checklist.** `BaseStyle = ""` is already the project standard. `List Paragraph` inheritance violates it — so the refactor enforces an existing rule, not a new one.
+- **Predictable across Word versions.** `List Paragraph` has had quiet behavioural changes across Word 2010 / 2013 / 2016 / 365. Standalone styles are version-stable.
+- **VBA-only maintenance becomes safe.** With no list-template link, `s.Font.Size = 11` doesn't trigger a recompute storm.
+- **Importable and reproducible.** Standalone styles round-trip through `.docx` cleanly; `List Paragraph`-derived styles often don't, because recipient documents inherit a different `List Paragraph` definition.
+
+**Cons**
+
+- **Loses Word's auto-numbering for those styles.** No `1. 2. 3.` or `a) b) c)` from the list engine. If numbering is required, render markers in the body or apply a separate dedicated VBA-driven list pattern.
+- **Weakens Outline / Navigation pane integration.** Word's outline tooling reads from list-template structures; detached list-styled paragraphs don't show numbering in the navigation pane.
+- **Breaks cross-references to numbered items.** Anything that says "see item 4(b)" depends on the list engine resolving the number.
+- **Migration step itself carries hang risk.** The very work to escape the bug must be done carefully — VBA, batched, `ScreenUpdating = False`, never the Modify Style dialog.
+- **A future Word feature may assume the list engine** (Tables of figures, captions, certain accessibility tools).
+
+**Net read for this project.** A Bible-class document — long-form running text, verse markers, list usage limited to specific structural blocks (`ListItem`, `ListItemBody`, `ListItemTab`) — doesn't actually use any of the lost features. List items aren't cross-referenced by number. Outline view is anchored on Heading 1/2. The cons mostly don't apply.
+
+**Recommendation: the proposal is sound for this project.** Approved 2026-04-29.
+
+### 2. Real solution — five-step migration recipe
+
+All-VBA path, never the Modify Style dialog:
+
+- **Step 0 — Diagnostic.** `AuditListStyleRisk` enumerates approved paragraph styles flagging non-empty `BaseStyle` and any `LinkToListTemplate`. Expected to flag `ListItem`, `ListItemBody`, `ListItemTab`.
+- **Step 1 — Define replacements in a blank `.docx`.** Critical isolation: a fresh empty Word document has no list-engine state to recompute against, so the cascade doesn't fire. Set `BaseStyle = ""` *before* any other property.
+- **Step 2 — Transport to live document.** Either `Document.CopyStylesFromTemplate` (Organizer) or VBA direct-property-copy. Never the dialog.
+- **Step 3 — Re-apply to existing paragraphs.** Batched, `ScreenUpdating = False`. With no list-template link on the new style, the list-engine recompute that causes the hang doesn't fire.
+- **Step 4 — Decommission the old styles.** Remove from approved array; delete (or `Priority = 99`) after a clean audit pass.
+- **Step 5 — Update `RUN_TAXONOMY_STYLES`.** Encode descriptive specs for the new style names.
+
+Full code recipe lives in [`EDSG/10-list-paragraph-bug.md`](../EDSG/10-list-paragraph-bug.md). Created 2026-04-29.
+
+### 3. EDSG documentation — applied 2026-04-29
+
+- New page **`EDSG/10-list-paragraph-bug.md`** created. Contains: symptom, project policy, root cause read, Microsoft status, common bad advice (with rebuttals), the five-step migration recipe with code, what we lose / don't lose by detaching, cost-now vs cost-later, i18n implications, history.
+- Cross-link added to **`EDSG/01-styles.md`** QA-checklist row `BaseStyle = ""` → "[why](10-list-paragraph-bug.md)" — the *why* is now one click from the rule.
+- Cross-link added to **`EDSG/02-editing-process.md`** Stage 1 step 2 — explicitly forbids `List Paragraph` inheritance and `LinkToListTemplate` for any list-shaped style, with link to the recipe.
+- Cross-link added to **`EDSG/04-qa-workflow.md`** below the existing taxonomy callout — second `⚑` callout flagging the bug and pointing at the new page.
+
+Three independent reading paths (styles taxonomy, editing process, QA workflow) all surface the rule and the recipe. A reader entering at any of those pages sees the bug documented.
+
+### 4. Cost-now vs cost-later — measurement framework
+
+**Cost-now (one-off refactor):**
+
+| Component | Estimate | Notes |
+|---|---|---|
+| Diagnostic (Step 0) | 15 min | Run, log, confirm 3 candidate styles |
+| Define replacements in blank doc (Step 1) | 30-60 min | 3 styles × ~15-20 min; specs already exist in `style_*.txt` dumps |
+| Transport to live doc (Step 2) | 15 min | One-shot VBA |
+| Migrate paragraphs (Step 3) | 5-30 min runtime + verification | Depends on affected paragraph count |
+| Decommission old (Step 4) | 15 min | Update `approved` array |
+| Update taxonomy audit (Step 5) | 15 min | Three lines edited |
+| Visual / audit verification | 30-60 min | Re-run `RUN_TAXONOMY_STYLES`, full doc visual scan |
+| **Total** | **2-4 hours** | One sitting, one branch, one PR. Bounded. |
+
+**Cost-later (deferred, recurring):**
+
+| Component | Cost type | Probability per modification |
+|---|---|---|
+| Style modification hangs Word | Lost work + restart | Moderate-to-high in this 33,857-paragraph doc |
+| Workarounds around the hang accumulate | Tech debt | Compounds linearly |
+| New contributors hit the hang | Onboarding cost | High; unavoidable without docs |
+| Refactor eventually mandatory anyway | Future task | Probability = 1 |
+| i18n exposure | Multiplier on hang risk | Higher for longer translated docs |
+
+**Single-number indicator.** Time the next Modify Style operation on a `List Paragraph`-derived style via the dialog. If it exceeds 10 seconds or shows "Not Responding", refactor is overdue. The canary has already chirped on this project.
+
+**Math.** Cost-now is bounded at ~4 hours. Cost-later is unbounded and probability-1 of recurring. Net: do it now.
+
+### 5. i18n implications
+
+Two opposite forces, with a clear net direction.
+
+**Forces pushing toward "refactor first, then i18n":**
+
+- Translated documents are typically *longer* (English → German averages +30%, English → French +15-25%). Bigger documents hit the list-engine hang harder.
+- Word's `NameLocal` aliasing for `List Paragraph` differs by Office UI language. A document built around inheritance can break on a Word installation with a different UI language. Standalone styles use literal names and round-trip cleanly.
+- The list-rendering layer is the part most affected by RTL languages (Arabic, Hebrew). Custom RTL handling is cleaner in our own code than in Word's RTL list engine.
+
+**Forces against (or neutral):**
+
+- Word's list engine handles list-marker localisation natively (Roman numerals, alphabetic letters, locale-appropriate digits). Detaching means the project localises markers itself. For this document — verses are marked, lists are structural and finite — the cost is small.
+- Number-format-as-content (where the marker becomes part of the body text) means markers need translation. Mostly neutral here.
+
+**Net.** Refactoring first makes i18n cheaper and safer. Order: list-style refactor → then i18n rollout. If i18n ships first, every translated doc carries the same hang and the eventual refactor becomes a cross-locale change touching every translated artifact.
+
+### Status of the actual refactor work — DEFERRED
+
+User has approved the analysis and the EDSG documentation, but the refactor itself is **deferred** — to be run as a separate batch under the standard one-fix-at-a-time review process when scheduled. Estimated 2-4 hours focused work. Trigger: discretionary (do before the next round of large-doc style edits, before i18n rollout starts, or before the next "Word not responding" incident — whichever comes first).
+
+**Status:** analysis recorded; EDSG documentation applied; refactor deferred.
+
+---
+
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
 
 ### Decision

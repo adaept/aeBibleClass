@@ -93,6 +93,13 @@ recorded inline in [01-styles](01-styles.md).
 > [01-styles § ⚑ Important — taxonomy audit final-state goal](01-styles.md#-important--taxonomy-audit-final-state-goal)
 > for the full callout and progress framing.
 
+> **⚑ Word `List Paragraph` numbering-engine bug:** the QA-checklist
+> rule `BaseStyle = ""` is not stylistic — it dodges a long-known
+> Word bug that hangs the application on Modify Style for any style
+> inheriting from `List Paragraph` in large documents. See
+> [10-list-paragraph-bug](10-list-paragraph-bug.md) for symptom,
+> cause, common bad advice, and the all-VBA migration recipe.
+
 ## Current state — 2026-04-26 (latest)
 
 - **Latest run**: `DumpAllApprovedStyles` reports **43
