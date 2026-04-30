@@ -3436,6 +3436,99 @@ Properties copied (full list, in order): `BaseStyle` (forced empty), `Automatica
 
 ---
 
+## 2026-04-30 — Phase 2 confirmed; Phase 3 designed and applied
+
+### Phase 2 — confirmed complete (2026-04-30)
+
+User ran `TransportAuthorStyles` from the live doc with `tools/style_holding.docm` open in the same Word session. Output:
+
+```
+TransportAuthorStyles: source="style_holding.docm", target="Blank Bible Copy.docm"
+  COPY   AuthorListItem transported.
+  COPY   AuthorBookRefNew transported.
+TransportAuthorStyles: Done.
+```
+
+Verification via `DumpStyleProperties` on both styles in the target document:
+
+| Property | `AuthorListItem` | `AuthorBookRefNew` | Match holding? |
+|---|---|---|---|
+| `BaseStyle` | `""` | `""` | ✓ |
+| `QuickStyle` | `False` | `False` | ✓ |
+| `AutomaticallyUpdate` | `False` | `False` | ✓ |
+| `Font.Name / .Size` | `Carlito 11` | `Carlito 11` | ✓ |
+| `Font.Bold / .Italic` | `True / True` | `True / False` | ✓ |
+| `ParagraphFormat.Alignment` | Left (0) | Left (0) | ✓ |
+| `LeftIndent / FirstLineIndent` | `18 / -18` | `36 / -18` | ✓ |
+| `LineSpacing / Rule` | `12 / Single` | `12 / Single` | ✓ |
+| `SpaceBefore / SpaceAfter` | `0 / 0` | `0 / 11` | ✓ |
+| `KeepWithNext` | `True` | `False` | ✓ |
+| `NextParagraphStyle` | self | self | (Word default; Phase 4 will override) |
+
+All values match the Phase 1 holding-doc definitions exactly. Target document for the dry run is **`Blank Bible Copy.docm`** — a sandbox copy of the production document. Migration on production happens after the test copy is verified clean.
+
+`Priority = 1` on both new styles is expected: any user-defined style added to a Word document gets Priority 1 by default. `WordEditingConfig` will reassign correct priorities when the `approved` array is updated in Phase 4.
+
+### Phase 3 — design and code applied (2026-04-30)
+
+#### Design — main story only, per user direction
+
+**Story coverage decision: main story only.** User confirmed list-shaped paragraphs (`ListItem`, `AuthorBookRef`) do not appear in footnotes, headers, footers, or other StoryRanges in this project. The earlier "full story coverage" option was over-engineered for the actual content distribution. Drop the StoryRanges walk and the `StoryTypeName` helper.
+
+Net code is shorter, faster, and matches the original EDSG recipe almost line-for-line.
+
+#### What `MigrateParagraphs` does
+
+| Step | Action |
+|---|---|
+| 1 | Pre-flight: verify `oldName` style exists in `ActiveDocument`. Abort with MsgBox if not. |
+| 2 | Pre-flight: verify `newName` style exists in `ActiveDocument`. Abort with MsgBox if not (with hint to run `TransportAuthorStyles`). |
+| 3 | Save current `Application.ScreenUpdating` state; set to `False`. |
+| 4 | Iterate `ActiveDocument.Paragraphs` (main story only). For each paragraph whose `Style.NameLocal = oldName`, reassign `Style = ActiveDocument.Styles(newName)`. Increment counter. |
+| 5 | Restore `ScreenUpdating` to its prior value. |
+| 6 | Print `MigrateParagraphs: N paragraph(s) migrated.` |
+
+Reuses the existing `StyleExists` private helper from Phase 2. No new private helpers.
+
+#### Safety properties
+
+- **Idempotent.** Second run finds no `oldName` paragraphs and reports 0.
+- **Error-safe `ScreenUpdating`.** Saves prior state; restored on success and on error (the `PROC_ERR` handler explicitly forces `True` to avoid leaving the UI frozen if anything throws mid-iteration).
+- **Pre-flight aborts cleanly.** Either style missing → `MsgBox` and exit, no partial state.
+- **No `LinkToListTemplate` involvement** — and since the destination styles already have `BaseStyle = ""` from Phase 2, no list-engine cascade can fire on the reassignment.
+
+#### Code applied — one Sub added to `src/basAuthorStyles.bas`
+
+`MigrateParagraphs(oldName, newName)` (Public). Existing `StyleExists` helper from Phase 2 is reused — no new helpers.
+
+### Phase 3 — user-side action
+
+**On `Blank Bible Copy.docm` (test copy):**
+
+1. Activate the test doc.
+2. Run `MigrateParagraphs "ListItem", "AuthorListItem"`. Note the migrated count.
+3. Run `MigrateParagraphs "AuthorBookRef", "AuthorBookRefNew"`. Note the migrated count.
+4. Visual spot-check: page through sections with author book references and list items. Indents, line spacing, font weight, italic should be unchanged.
+5. Confirm back here with the two totals + thumbs-up on the visual check.
+
+**Then on production `.docm` (after test confirmed clean):**
+
+6. Activate production doc.
+7. Same two `MigrateParagraphs` calls.
+8. Same visual spot-check.
+9. Confirm totals.
+
+### What does NOT change in Phase 3
+
+- Old styles (`ListItem`, `AuthorBookRef`) still exist after Phase 3 — they're just unreferenced. Decommission happens in Phase 4.
+- `ListItemBody` is untouched — still named `ListItemBody`. Phase 4 renames it to `AuthorListItemBody`.
+- `NextParagraphStyle` on `AuthorListItem` and `AuthorBookRefNew` still points to self. Phase 4 sets the proper inter-style references.
+- `approved` array in `basTEST_aeBibleConfig.bas` and `RUN_TAXONOMY_STYLES` audit list — not touched until Phase 4.
+
+**Status:** Phase 3 code applied; awaiting `MigrateParagraphs` run on the test copy.
+
+---
+
 ## 2026-04-28 — Versification reconciliation: data follows WEB / English Protestant
 
 ### Decision

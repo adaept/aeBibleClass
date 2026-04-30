@@ -355,3 +355,70 @@ Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
 
     Debug.Print "  COPY   " & styleName & " transported."
 End Sub
+
+' ==========================================================================
+' MigrateParagraphs
+' ==========================================================================
+' Step 3 of the List Paragraph migration. Reassigns every paragraph
+' currently using oldName to use newName. Walks the main story only -
+' list-shaped paragraphs do not appear in footnotes / headers / footers
+' in this project (user-confirmed 2026-04-30).
+'
+' Pre-flight:
+'   * Both oldName and newName must exist in ActiveDocument.
+'   * Caller is responsible for choosing the correct doc context
+'     (run on the test copy first, then on production).
+'
+' Output: count of paragraphs migrated.
+'
+' Idempotent: if run twice, the second run reports 0 (no paragraphs
+' still using oldName).
+'
+' Usage:
+'   MigrateParagraphs "ListItem", "AuthorListItem"
+'   MigrateParagraphs "AuthorBookRef", "AuthorBookRefNew"
+' ==========================================================================
+Public Sub MigrateParagraphs(ByVal oldName As String, ByVal newName As String)
+    On Error GoTo PROC_ERR
+
+    ' Pre-flight: both styles must exist.
+    If Not StyleExists(ActiveDocument, oldName) Then
+        MsgBox "Source style """ & oldName & """ not found in " & _
+               ActiveDocument.Name & ".", vbExclamation, "MigrateParagraphs"
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, newName) Then
+        MsgBox "Target style """ & newName & """ not found in " & _
+               ActiveDocument.Name & ". Run TransportAuthorStyles first.", _
+               vbExclamation, "MigrateParagraphs"
+        Exit Sub
+    End If
+
+    Dim screenWas As Boolean
+    screenWas = Application.ScreenUpdating
+    Application.ScreenUpdating = False
+
+    Dim total As Long
+    Dim para As Word.Paragraph
+
+    Debug.Print "MigrateParagraphs: " & oldName & " -> " & newName & _
+                " in " & ActiveDocument.Name
+
+    For Each para In ActiveDocument.Paragraphs
+        If para.style.NameLocal = oldName Then
+            para.style = ActiveDocument.Styles(newName)
+            total = total + 1
+        End If
+    Next para
+
+    Application.ScreenUpdating = screenWas
+
+    Debug.Print "MigrateParagraphs: " & total & " paragraph(s) migrated."
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure MigrateParagraphs of Module basAuthorStyles"
+    Resume PROC_EXIT
+End Sub
