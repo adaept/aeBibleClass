@@ -18,7 +18,8 @@ needs justification, the rvw/ files are where the rationale lives.
 
 | File | Span | Topics |
 |---|---|---|
-| [`rvw/Code_review 2026-04-25.md`](../rvw/Code_review%202026-04-25.md) | 2026-04-25 → | Carry-forward; EDSG plan |
+| [`rvw/Code_review 2026-04-30.md`](../rvw/Code_review%202026-04-30.md) | 2026-04-30 → | Carry-forward arc; open items only |
+| [`rvw/Code_review 2026-04-25.md`](../rvw/Code_review%202026-04-25.md) | 2026-04-25 → 2026-04-30 | List Paragraph migration (Phases 0-6); WEB versification; spec promotions; Finding 5 ribbon focus; tab-stop infrastructure |
 | [`rvw/Code_review 2026-04-21.md`](../rvw/Code_review%202026-04-21.md) | 2026-04-21 → 2026-04-24 | Style inspector module; QA workflow; orphan cleanup; WRIST principle; SUPER_TEST_RUNS proposal |
 | (earlier dated reviews) | | Older arcs — see `rvw/` directory listing |
 
