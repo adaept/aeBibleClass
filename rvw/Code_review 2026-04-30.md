@@ -30,12 +30,12 @@ to the section in the prior review where the full rationale lives.
   "AuthorBookRef", Array(36, wdAlignTabLeft, wdTabLeaderSpaces),
   Array(378, wdAlignTabRight, wdTabLeaderDots)` line added in tab-stops
   bucket; PURPOSE block updated to 21 styles + 2 tab-stop specs = 23
-  total checks. Expected `RUN_TAXONOMY_STYLES`: **18 PASS / 5 FAIL**
-  on each `.docm`.
-- **Style taxonomy run state.** `RUN_TAXONOMY_STYLES`: 16 PASS / 5 FAIL
-  across 21 checks (pre-`AuthorBookRef` promotion). Post-promotion
-  expected: 18 / 5 across 23 checks once user re-imports and re-runs.
-  Five FAILs are pre-tracked items (see deferred list below).
+  total checks. **Verified 2026-04-30: `RUN_TAXONOMY_STYLES` reports
+  18 PASS / 5 FAIL across 23 checks**, both new entries (`AuthorBookRef`
+  and `AuthorBookRef (TabStops)`) landed clean.
+- **Style taxonomy run state.** `RUN_TAXONOMY_STYLES`: **18 PASS / 5 FAIL
+  across 23 checks** (post-`AuthorBookRef` promotion, 2026-04-30). Five
+  FAILs are pre-tracked items (see deferred list below).
 - **Ribbon focus fix (Finding 5 fix A).** Caret renders correctly on
   first nav from a ribbon-owned event handler.
 - **`ToSBLShortForm` "Song of Songs" lookup error (Finding 3).** No
