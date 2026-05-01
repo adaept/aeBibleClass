@@ -1,4 +1,4 @@
-'--- AuthorListItem  (Type=Paragraph, Priority=1) ---
+'--- AuthorListItem  (Type=Paragraph, Priority=18) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"
@@ -12,7 +12,7 @@
 .NextParagraphStyle = "AuthorListItemBody"
 .AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 0
-.ParagraphFormat.LeftIndent = 18
+.ParagraphFormat.LeftIndent = 36
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = -18
 .ParagraphFormat.SpaceBefore = 0
@@ -24,3 +24,5 @@
 .ParagraphFormat.KeepWithNext = -1
 .ParagraphFormat.PageBreakBefore = 0
 .ParagraphFormat.OutlineLevel = 10
+.ParagraphFormat.TabStops.Count = 1
+.ParagraphFormat.TabStops(1) = Position=36 Align=Left Leader=Spaces

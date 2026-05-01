@@ -221,16 +221,18 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 23 styles via AuditOneStyle + 3 tab-stop specs via AuditStyleTabs;
-'   total 26 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Audits 23 styles via AuditOneStyle + 4 tab-stop specs via AuditStyleTabs;
+'   total 27 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
 '   Style audit buckets (23):
-'     12 fully specified (all properties verified) - BodyText, BodyTextIndent,
+'     15 fully specified (all properties verified) - BodyText, BodyTextIndent,
 '                            Heading 1, Heading 2, ContentsRef, AuthorBookRefHeader,
 '                            AuthorBookRef, CustomParaAfterH1, DatAuthRef,
-'                            Brief, Psalms BOOK, Footnote Text
-'      8 existence-verified (full spec pending)
+'                            Brief, Psalms BOOK, Footnote Text, AuthorListItem,
+'                            AuthorListItemBody, AuthorListItemTab
+'      5 existence-verified (full spec pending)
 '      3 not yet created (expected FAIL until each Define* routine runs)
-'   Tab-stop audits (3):
+'   Tab-stop audits (4):
+'      AuthorListItem      (1 stop at 36 pt, Left, Spaces)
 '      AuthorListItemTab   (2 stops at 144 / 252 pt, Left, Spaces)
 '      AuthorBookRef       (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
 '      AuthorBookRefHeader (1 stop at 381.6 pt, Right, Spaces)
@@ -288,6 +290,9 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 4, 9.5, 0, 0, -1, 0
     AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 14.4, 4, 10, 10, 0, 0, 0
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0
+    AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1
+    AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
+    AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
 
     ' -- Existence verified; full spec pending -------------------------------------------------
     ' Footnote Reference (Character style) parked here until AuditOneStyle is
@@ -295,9 +300,6 @@ Public Sub RUN_TAXONOMY_STYLES()
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
     AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
-    AuditOneStyle "AuthorListItem", "Carlito", 11, 0, 0, -1, -999, 0, 0
-    AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, -1, -999, 0, 11
-    AuditOneStyle "AuthorListItemTab", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999
@@ -313,6 +315,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' -- Tab stops verified (per-style explicit tab-stop validation) -----------------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Tab stops verified --"
+    AuditStyleTabs "AuthorListItem", _
+        Array(36, wdAlignTabLeft, wdTabLeaderSpaces)
     AuditStyleTabs "AuthorListItemTab", _
         Array(144, wdAlignTabLeft, wdTabLeaderSpaces), _
         Array(252, wdAlignTabLeft, wdTabLeaderSpaces)

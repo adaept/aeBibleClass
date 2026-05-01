@@ -53,6 +53,21 @@ to the section in the prior review where the full rationale lives.
 - **Bucket 1 grew 10 → 12.** Added `ContentsRef` and `AuthorBookRefHeader`.
   All twelve now audited against descriptive Bold / Italic in addition
   to the original eight property classes.
+
+- **Author* trio promoted to bucket 1 (2026-05-01).** `AuthorListItem`,
+  `AuthorListItemBody`, `AuthorListItemTab` moved from bucket 2
+  (existence-verified) to bucket 1 (fully specified) with descriptive
+  font + paragraph + Bold/Italic specs lifted from fresh dumps. Closes
+  the long-running `AuthorListItem` FirstLineIndent drift (expected 0
+  vs live -18): descriptive spec encodes -18, FAIL clears. New
+  `AuditStyleTabs` entry added for `AuthorListItem` (1 stop at 36 pt
+  Left Spaces — newly added by user since the migration completed).
+  Audit count: 23 styles + 4 tab-stop specs = **27 total checks**;
+  bucket distribution: 15 / 5 / 3. **Verified 2026-05-01:
+  `RUN_TAXONOMY_STYLES` reports 23 PASS / 4 FAIL across 27 checks**;
+  all five `AuthorListItem*` rows PASS (3 style + 2 tab-stop). The
+  4 remaining FAILs are all NOT-FOUND placeholders (`BookIntro`,
+  `BodyTextContinuation`, `AppendixTitle`, `AppendixBody`).
 - **Ribbon focus fix (Finding 5 fix A).** Caret renders correctly on
   first nav from a ribbon-owned event handler.
 - **`ToSBLShortForm` "Song of Songs" lookup error (Finding 3).** No
@@ -153,7 +168,7 @@ The current taxonomy audit encodes **descriptive** specs (capture today's values
 **`BaseStyle = "Normal"` on approved styles** (QA checklist preference is `""`):
 - `CustomParaAfterH1`, `Brief`, `Footnote Text`, `Psalms BOOK`, `PsalmSuperscription`, `PsalmAcrostic`
 
-**`AuthorListItem` FirstLineIndent drift:** expected `0` (audit), live `-18` (hanging). Currently FAILs on every `RUN_TAXONOMY_STYLES`. 2026-04-29 leave-as-is decision: keep the FAIL as a tracked indicator. Revisit during the prescriptive pass.
+**`AuthorListItem` FirstLineIndent drift:** ~~expected `0` (audit), live `-18` (hanging). Currently FAILs on every `RUN_TAXONOMY_STYLES`. 2026-04-29 leave-as-is decision: keep the FAIL as a tracked indicator. Revisit during the prescriptive pass.~~ **CLOSED 2026-05-01** by promoting `AuthorListItem` to bucket 1 with descriptive spec `FirstLineIndent = -18`. The drift was a documented design intent all along; descriptive promotion encodes the live state and clears the FAIL. See "Author* trio promoted to bucket 1" closure record below.
 
 Original analysis: `rvw/Code_review 2026-04-25.md` § "Spec promotion: descriptive vs prescriptive (decision)" (2026-04-29) and § "Section (B) full inventory findings" (2026-04-29).
 

@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-04-30 21:08:54
+Date    : 2026-05-01 13:44:11
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -16,14 +16,13 @@ PASS  DatAuthRef
 PASS  Brief
 PASS  Psalms BOOK
 PASS  Footnote Text
+PASS  AuthorListItem
+PASS  AuthorListItemBody
+PASS  AuthorListItemTab
 
 -- Existence verified (full spec pending) --
 FAIL  BookIntro
       NOT FOUND in document
-FAIL  AuthorListItem
-      Indent   : expected 0 got -18
-PASS  AuthorListItemBody
-PASS  AuthorListItemTab
 PASS  TheHeaders
 PASS  TheFooters
 PASS  Title
@@ -38,10 +37,11 @@ FAIL  AppendixBody
       NOT FOUND in document
 
 -- Tab stops verified --
+PASS  AuthorListItem (TabStops)
 PASS  AuthorListItemTab (TabStops)
 PASS  AuthorBookRef (TabStops)
 PASS  AuthorBookRefHeader (TabStops)
 
 ========================================================================
-Summary: 21 PASS   5 FAIL
+Summary: 23 PASS   4 FAIL
 === End Style Taxonomy Audit ===
