@@ -86,6 +86,96 @@ PROC_ERR:
 End Sub
 
 '====================================================================
+' DefineVerseTextStyle
+' PURPOSE:
+'   Creates the VerseText style in the active document if it does not
+'   already exist. VerseText is the body-text style for verse-bearing
+'   paragraphs - the paragraphs that begin with a "Chapter Verse marker"
+'   character-style run. Property-for-property identical to BodyText;
+'   the only difference is the name and what it semantically marks.
+'
+' FORMATTING (matches BodyText exactly):
+'   Font:           Carlito 9pt, not bold, not italic
+'   Alignment:      Justified (wdAlignParagraphJustify)
+'   Line spacing:   Exactly 10pt (wdLineSpaceExactly)
+'   First indent:   0
+'   Left indent:    0
+'   Space before:   0pt
+'   Space after:    0pt
+'   BaseStyle:      "" (no cascade)
+'   NextParagraph:  VerseText (verses follow verses)
+'
+' USFM mapping:  \v <number> <text>  (verse body content)
+'
+' Phase 2 of the rollout (ConvertBodyTextVersesToVerseText) reassigns
+' every verse-bearing paragraph from BodyText to VerseText. BodyText
+' is retained for non-verse paragraphs (intros, spacers, etc.).
+'
+' RERUN SAFE:
+'   If VerseText already exists the routine reports and exits without
+'   modifying the existing style definition.
+'====================================================================
+Public Sub DefineVerseTextStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc    As Document
+    Dim oStyle  As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    ' Check if style already exists
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("VerseText")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineVerseTextStyle: VerseText already exists -- no changes made."
+        MsgBox "VerseText style already exists in this document.", _
+               vbInformation, "DefineVerseTextStyle"
+        GoTo PROC_EXIT
+    End If
+
+    ' Create new style -- BaseStyle = "" set first per EDSG isolation rule
+    Set oStyle = oDoc.Styles.Add(name:="VerseText", Type:=wdStyleTypeParagraph)
+
+    With oStyle
+        .baseStyle = ""                         ' no cascade from Normal or list family
+        .NextParagraphStyle = oStyle            ' VerseText follows VerseText
+        .AutomaticallyUpdate = False             ' QA-checklist
+        .QuickStyle = False                      ' QA-checklist
+
+        With .Font
+            .Name = "Carlito"
+            .Size = 9
+            .Bold = False
+            .Italic = False
+        End With
+
+        With .ParagraphFormat
+            .Alignment = wdAlignParagraphJustify
+            .LineSpacingRule = wdLineSpaceExactly
+            .LineSpacing = 10
+            .FirstLineIndent = 0
+            .LeftIndent = 0
+            .SpaceBefore = 0
+            .SpaceAfter = 0
+        End With
+    End With
+
+    Debug.Print "DefineVerseTextStyle: VerseText created successfully."
+    MsgBox "VerseText style created successfully." & vbCrLf & _
+           "Font: Carlito 9pt | No indent | Justified | Exactly 10pt", _
+           vbInformation, "DefineVerseTextStyle"
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DefineVerseTextStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
 ' DefineBodyTextIndentStyle
 ' PURPOSE:
 '   Creates the BodyTextIndent style in the active document if it does

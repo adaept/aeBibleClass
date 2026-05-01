@@ -186,9 +186,85 @@ Original analysis: `rvw/Code_review 2026-04-25.md` § "Finding 4 — broader cit
 - **USFM mapping clarity** — `VerseText` → `\v` (verse body); `BodyText` → `\p` / `\ip` / etc. for non-verse paragraphs.
 - **Find / Replace by style** becomes meaningful — `VerseText` is the precise selector for "all verse paragraphs", which is currently impossible with `BodyText` (mixed with front-matter content).
 
-**Recommended next step:** schedule a session for Phase 1 (low-risk style definition + audit row). Phase 2 is the higher-blast-radius mutation; run after Phase 1 is verified clean and a backup is in place.
+### Step-by-step execution plan (2026-05-01, approved)
 
-**Status:** READY TO EXECUTE. All preconditions met 2026-05-01.
+#### Pre-flight (Step 0) — preconditions confirmed green 2026-05-01
+
+| Check | Required | Verified |
+|---|---|---|
+| `AuditVerseMarkerStructure` | 31,102 / 31,102, 0 issues | ✓ |
+| `RUN_TAXONOMY_STYLES` baseline | 23 PASS / 4 FAIL across 27 checks | ✓ |
+| `BodyText` is fully-spec audited | bucket 1, descriptive | ✓ |
+| Both `.docm` files in sync | same audit baseline | ✓ |
+| Working tree clean | `git status` empty | (user-managed) |
+
+#### Phase 1 — Define `VerseText` style (low risk, reversible)
+
+Order of operations:
+
+| Step | Action | Edit target | Check after |
+|---|---|---|---|
+| 1.1 | Add `DefineVerseTextStyle` Sub | `src/basFixDocxRoutines.bas` | VBA compiles |
+| 1.2 | Run `DefineVerseTextStyle` in test `.docm` | (user action, Immediate) | `DumpStyleProperties "VerseText", True` matches `style_BodyText.txt` byte-for-byte (excluding name + priority) |
+| 1.3 | Add `"VerseText"` to `approved` array | `src/basTEST_aeBibleConfig.bas` | VBA compiles |
+| 1.4 | Add `VerseText` row to `RUN_TAXONOMY_STYLES` bucket 1 | `src/basTEST_aeBibleConfig.bas` | VBA compiles; PURPOSE block updated |
+| 1.5 | Re-import both modules into test `.docm` | (user action) | VBA editor shows updated revisions; no compile errors |
+| 1.6 | Run `WordEditingConfig` | (user action) | 45 styles promoted; `VerseText` at priority 31 |
+| 1.7 | Run `RUN_TAXONOMY_STYLES` | (user action) | **24 PASS / 4 FAIL across 28 checks** |
+| 1.8 | Visual sanity in Word | (user action) | `VerseText` listed in Styles pane; no paragraph yet using it |
+| 1.9 | Replicate Steps 1.5-1.8 on production `.docm` | (user action) | Both docs at the same post-Phase-1 baseline |
+
+**Phase 1 verification gate:** all 1.x checks green. If anything is off, **stop**; diagnose; do **not** proceed to Phase 2.
+
+#### Phase 2 — Bulk conversion (one-time mutation; backup first)
+
+| Step | Action | Edit target | Check after |
+|---|---|---|---|
+| 2.1 | Backup the production `.docm` to versioned filename | (user action) | Backup file exists; opens in Word |
+| 2.2 | Add `ConvertBodyTextVersesToVerseText` Sub | `src/basFixDocxRoutines.bas` | VBA compiles |
+| 2.3 | Run on test `.docm` | (user action) | `converted ≈ 31,102`; `kept` is small |
+| 2.4 | Visual spot-check on test `.docm` | (user action) | Verses now `VerseText`; non-verse `BodyText`; rendering unchanged |
+| 2.5 | Re-run audits on test `.docm` | (user action) | `RUN_TAXONOMY_STYLES` 24/4; `AuditVerseMarkerStructure` 31102/31102 |
+| 2.6 | Idempotency check on test `.docm` | (user action) | Second run reports `converted = 0` |
+| 2.7 | Run on production `.docm` (Steps 2.3-2.6) | (user action) | Same outcomes |
+
+**Identification rule (used by `ConvertBodyTextVersesToVerseText`):** a paragraph qualifies for conversion when both:
+
+1. `paragraph.Style.NameLocal = "BodyText"`, AND
+2. `paragraph.Range.Characters(1).Style.NameLocal = "Chapter Verse marker"`
+
+**Phase 2 verification gate:** all 2.x checks green on test, then on production. If anything is off, **stop**; restore from backup if needed.
+
+#### Phase 3 — Documentation closeout
+
+| Step | Edit target | What |
+|---|---|---|
+| 3.1 | `EDSG/01-styles.md` | Add `VerseText` at priority 31 in the priority snapshot |
+| 3.2 | `EDSG/06-i18n.md` | Add `VerseText` as the primary translation target |
+| 3.3 | `rvw/Code_review 2026-04-30.md` | Mark item 2 as CLOSED with verified counts |
+| 3.4 | `sync/session_manifest.txt` | Record VerseText work as a new session theme |
+
+#### Failure recovery
+
+- **Phase 1:** delete `VerseText` style via VBA; revert array + audit edits; `WordEditingConfig` reasserts prior state. No data loss.
+- **Phase 2 mid-conversion:** the conversion is reversible by inverse Sub (`VerseText` → `BodyText` for paragraphs whose first character is `Chapter Verse marker`). For non-trivial issues, restore from Step 2.1 backup.
+
+### Execution log
+
+#### Phase 1.1 — `DefineVerseTextStyle` Sub APPLIED 2026-05-01
+
+`src/basFixDocxRoutines.bas` — new Sub added between `DefineBodyTextStyle` and `DefineBodyTextIndentStyle`:
+
+- `BaseStyle = ""` set first (per EDSG List Paragraph rule)
+- `NextParagraphStyle = self` (verses follow verses)
+- `AutomaticallyUpdate = False`, `QuickStyle = False` (QA-checklist)
+- Font: Carlito 9, Bold/Italic False
+- Paragraph: Justify, Exactly 10pt, FirstLineIndent 0, LeftIndent 0, SpaceBefore/After 0
+- RERUN SAFE: exits without changes if `VerseText` already exists
+- USFM mapping documented: `\v <number> <text>` (verse body content)
+- Standard `PROC_EXIT` / `PROC_ERR` pattern matching project convention
+
+**Status:** Phase 1.1 applied. Awaiting user-side action for Phase 1.2 (`DefineVerseTextStyle` execution + dump verification).
 
 ### 3. `AuditOneStyle` — extend for character-style properties
 
