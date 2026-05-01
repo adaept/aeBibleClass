@@ -1,173 +1,150 @@
-# Claude Session Manifest — 2026-04-20
+# Claude Session Manifest — 2026-04-28 / 2026-04-29 / 2026-04-30
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
 #
 # Import status key:
-#   [IMPORT]   — must be imported into VBA editor (Remove old, Import new)
-#   [XML]      — ribbon XML only; run py/inject_ribbon.py (no VBA import)
-#   [SCRIPT]   — Python/tooling; no VBA import
-#   [DOC]      — documentation only; no import
-#   [DONE]     — already imported this session (noted below)
+#   [IMPORT]   - must be imported into VBA editor (Remove old, Import new)
+#   [XML]      - ribbon XML only; run py/inject_ribbon.py (no VBA import)
+#   [SCRIPT]   - Python/tooling; no VBA import
+#   [DOC]      - documentation only; no import
+#   [DONE]     - already imported into both .docm files this session
 # ------------------------------------------------------------
 
-## Changes made BEFORE Step 2 (ImportAllVBAFiles — 2026-04-20)
+## Session themes
 
-[DONE]  src/basUIStrings.bas
-        - KT_GO constant added
-        - KT_NEW_SEARCH renamed to KT_SEARCH
-        - Module restored from git HEAD (file was deleted from working tree)
+1. VerseStructureAudit fixes (accumulator reset, DRY refactor against citation class).
+2. WEB versification corrections in verse-counts data (six chapter-pair fixes plus 3 John and Romans doxology placement).
+3. Nahum chapter-count metadata fix in citation class.
+4. Ribbon focus fix (Finding 5 / Bug #600 follow-up): document.Activate after ScrollIntoView in GoToVerseByScan.
+5. normalize_vba.py: Space() casing rule added (issue #616).
+6. Style taxonomy work: Solomon -> Song of Songs, spec promotions, Lamentation removal.
+7. List Paragraph migration end-to-end (Phases 0-6): ListItem -> AuthorListItem, ListItemBody -> AuthorListItemBody, ListItemTab -> AuthorListItemTab, AuthorBookRef refactored to escape Word's list-engine inheritance bug.
+8. Tab-stop infrastructure closure: dump, copy, audit all now handle ParagraphFormat.TabStops.
 
-[DONE]  src/basBibleRibbonSetup.bas
-        - GetGoKeytip callback added
-        - GetNewSearchKeytip updated to reference KT_SEARCH
+## Files modified
 
-[XML]   customUI14backupRWB.xml  (run 1 of 3 — keytip fixes)
-        - keytip="G" replaced with getKeytip="GetGoKeytip" on GoButton
-        - keytip="Y2" added to <tab id="RWB"> (Step 1 — 2026-04-20)
-        => Blank Bible Copy.docm updated
+[DONE]  src/basVerseStructureAudit.bas
+        - Per-book accumulator reset bug fixed (chapterReport / bookIssues /
+          bookIssueDetail / foundChapters reset at top of For loop).
+        - DRY refactor: PopulateCanonical and LookupBookID removed; module
+          now uses aeBibleCitationClass.GetCanonicalBookTable and ResolveAlias.
 
-[SCRIPT] py/normalize_vba.py
-        - KT_GO entry added
-        - KT_NEW_SEARCH entry renamed to KT_SEARCH
-        - FocusBookDeferred entry added (Bug #597)
+[DONE]  src/aeBibleCitationClass.cls
+        - Nahum chapter count corrected from 7 to 3 in GetCanonicalBookTable
+          (line 925). Latent bug exposed by basVerseStructureAudit DRY refactor.
 
-[DOC]   md/Ribbon Design.md
-        - Navigation state machine section added (Mermaid stateDiagram-v2)
-        - Verse section phrasing made parallel with Chapter section
-        - Dropdown behavior softened
-        - Clarifying sentence added
-
-## Changes made AFTER Step 2 (committed — import done)
-
-[DONE]  src/basUIStrings.bas
-        - Tab keytip comment corrected
-        - Committed: 357313e
+[DONE]  src/basSBL_VerseCountsGenerator.bas
+        - Romans 14 / Romans 16 swap (TR -> WEB doxology placement).
+        - 2 Samuel 18 / 19 Hebrew->English split corrected (32/44 -> 33/43).
+        - 2 Kings 11 / 12 Hebrew->English split corrected (20/22 -> 21/21).
+        - 2 Chronicles 13 / 14 Hebrew->English split corrected (23/14 -> 22/15).
+        - 3 John total corrected from 15 to 14 (WEB ends at v.14).
+        - Source: ebible.org WEB Protestant Edition.
+        - Final audit: 31102 / 31102, 0 structural issues.
 
 [DONE]  src/aeRibbonClass.cls
-        - Bug #597: OnNewSearchClick comment added
-        - Committed: 357313e
+        - Finding 5 fix (A): ActiveDocument.ActiveWindow.Activate added at the
+          end of GoToVerseByScan (after Selection.SetRange) so the caret
+          renders in the document body when nav fires from a ribbon-owned
+          event handler. Resolves "first nav doesn't put cursor in docx".
+        - Tab-race / idle-commit focus-leak in editBox documented as Word
+          customUI limitation (no fix); KeyTips remain the supported path.
 
-[DONE]  src/basRibbonDeferred.bas
-        - Bug #597: dead stub (FocusBookDeferred) removed entirely
-        - Committed: 357313e
+[DONE]  src/basTEST_aeBibleConfig.bas
+        - RUN_TAXONOMY_STYLES PURPOSE block updated multiple times: 17 -> 19
+          -> 20 -> 21 checks; bucket counts adjusted; tab-stop section added.
+        - approved array: ListItem/ListItemBody/ListItemTab renamed to
+          AuthorListItem/AuthorListItemBody/AuthorListItemTab.
+        - Spec promotions: Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
+          Brief, Psalms BOOK, Footnote Text moved from existence-verified
+          to fully-specified bucket with descriptive specs.
+        - Lamentation entry removed (style deleted from project).
+        - AuthorListItemTab existence-only audit entry added (Phase 4c).
+        - AuditStyleTabs Sub added (Phase 6c) - ParamArray for variable-length
+          tab specs; tagged "(TabStops)" in output to distinguish from
+          AuditOneStyle results on the same style.
+        - Tab-stop spec entry for AuthorListItemTab added in new
+          "Tab stops verified" bucket (descriptive baseline from Phase 6a
+          dump: 2 stops at 144 / 252 pt, Left, Spaces).
 
-## § 16 batch — i18n label gap (this session)
+[DONE]  src/basAuthorStyles.bas (NEW MODULE)
+        - Self-contained migration kit for the List Paragraph numbering-
+          engine bug. See EDSG/10-list-paragraph-bug.md for full context.
+        - Public Subs: AuditListStyleRisk (sorted output, file-write to
+          rpt\ListStyleRiskAudit.txt), CreateAuthorStyles (Phase 1 entry),
+          TransportAuthorStyles (Phase 2 entry), MigrateParagraphs (Phase 3),
+          DecommissionAuthorStyles (Phase 4a entry).
+        - Private helpers: DefineAuthorListItem, DefineAuthorBookRefNew,
+          StyleExists, CopyOneStyle (with tab-stop preservation in 6b),
+          CountParagraphsByStyle, SortByPriorityName, FormatBaseStyleRows,
+          WriteListStyleRiskFile.
+        - Final state on production .docm: AuthorListItem (priority 18),
+          AuthorListItemBody (19), AuthorListItemTab (20), AuthorBookRef (22)
+          - all BaseStyle = "" with no list-engine inheritance.
+          AuditListStyleRisk reports 0 flagged.
 
-[IMPORT] src/basUIStrings.bas
-        - LBL_TAB, LBL_GROUP, LBL_GO, LBL_ABOUT constants added (Task A)
-        - CTRL_BOOK, CTRL_CHAPTER, CTRL_VERSE, CTRL_PREV_BOOK, CTRL_NEXT_BOOK,
-          CTRL_PREV_CHAPTER, CTRL_NEXT_CHAPTER, CTRL_PREV_VERSE, CTRL_NEXT_VERSE
-          constants added (Task B)
+[DONE]  src/basStyleInspector.bas
+        - DumpStyleProperties extended to enumerate ParagraphFormat.TabStops:
+          Count line plus per-stop "Position=N Align=<name> Leader=<name>"
+          using symbolic names. Skips block when Count = 0.
+        - TabAlignName / TabLeaderName helper functions added (Public for
+          cross-module use by AuditStyleTabs in basTEST_aeBibleConfig.bas).
 
-[IMPORT] src/basBibleRibbonSetup.bas
-        - GetTabLabel, GetNavGroupLabel, GetGoLabel, GetAboutLabel callbacks added (Task A)
+[SCRIPT] py/normalize_vba.py
+        - Space( normalizer rule added (issue #616). Fixes lowercase
+          space() that VBE corrupts on the Space built-in. Run via
+          wsl python3 py/normalize_vba.py to apply across src/.
 
-[IMPORT] src/aeRibbonClass.cls
-        - All m_ribbon.InvalidateControl "literal" replaced with CTRL_* constants (Task B)
-        - BUG FIX: OnGoClick lines 1004/1010/1015 wrong IDs corrected:
-            "BookComboBox"   -> CTRL_BOOK   (was silent no-op on invalid Go)
-            "ChapterComboBox"-> CTRL_CHAPTER (was silent no-op on invalid Go)
-            "VerseComboBox"  -> CTRL_VERSE   (was silent no-op on invalid Go)
+[DOC]   EDSG/01-styles.md
+        - Final-state-goal callout added (full-coverage audit ambition).
+        - Snapshot timestamp / count refreshed; SpeakerLabel inserted at
+          priority 37; reserved-gap shifted from 38-41 to 39-42.
+        - Pending-re-validation table priorities reflect SpeakerLabel push.
+        - QA-checklist BaseStyle row links to 10-list-paragraph-bug.md.
+        - Priority table rows 18/19/20 renamed to AuthorListItem /
+          AuthorListItemBody / AuthorListItemTab post-migration.
 
-[IMPORT] src/basRibbonDeferred.bas
-        - GoToH1Deferred InvalidateControl literals replaced with CTRL_* constants (Task B)
+[DOC]   EDSG/02-editing-process.md
+        - Stage 1 step 2 explicitly forbids List Paragraph inheritance
+          and LinkToListTemplate; cross-link to 10-list-paragraph-bug.md.
 
-[XML]   customUI14backupRWB.xml  (run 2 of 3 — getLabel additions; run 3 abandoned — § 15)
-        - <tab> label="Radiant Word Bible" -> getLabel="GetTabLabel"
-        - <group> label="Bible Navigation" -> getLabel="GetNavGroupLabel"
-        - GoButton label="Go" -> getLabel="GetGoLabel"
-        - adaeptButton label="About" -> getLabel="GetAboutLabel"
-        => inject_ribbon.py run; Blank Bible Copy.docm updated
+[DOC]   EDSG/04-qa-workflow.md
+        - Two callouts added below the QA checklist: taxonomy-audit
+          final-state goal (cross-link to 01-styles.md callout) and
+          List Paragraph numbering-engine bug summary (cross-link to
+          10-list-paragraph-bug.md).
 
-[SCRIPT] py/check_i18n.py
-        - New file: scans src/*.bas and src/*.cls for inline UI string literals
-        - Baseline run: 9 violations in aeRibbonClass.cls, all in archived/Step 7 code
-        - Ribbon-active code is clean (no inline UI literals in navigation flow)
+[DOC]   EDSG/10-list-paragraph-bug.md (NEW)
+        - Symptom, root cause read, Microsoft status (long-known, won't
+          fix), common bad advice (with rebuttals), all-VBA five-step
+          migration recipe with code, lose/don't-lose framing, cost-now
+          vs cost-later table, i18n implications, cross-references.
+        - .docx / .docm / .dotx / .dotm extension table; macro-free vs
+          macro-enabled boundary explained.
 
-## Documentation (no import needed)
-
-[DOC]   rvw/Code_review 2026-04-20.md
-        - § 15: Split document architecture abandoned (decision + rationale)
-        - § 16: i18n label gap batch plan (PLANNED -> DONE this session)
-        - UNCOMMITTED — needs git commit
-
-[DOC]   sync/session_manifest.txt
-        - This file
+[DOC]   rvw/Code_review 2026-04-25.md
+        - Extensive append-only progressive history of 2026-04-28
+          through 2026-04-30 work, including all phase decisions,
+          audits, FAIL breakdowns, design rationale, terminology
+          corrections (Tab race -> idle-commit focus leak), and the
+          full List Paragraph migration record (Phases 0-6).
 
 # ------------------------------------------------------------
-# IMPORT CHECKLIST FOR THIS SESSION (§ 16 batch + § 17 fix)
+# Final-state verification (both .docm files):
+#   RUN_TAXONOMY_STYLES   ->  16 PASS / 5 FAIL across 21 checks
+#   AuditListStyleRisk    ->  0 flagged in section (A)
+#   AuditVerseMarkerStructure -> 31102 / 31102, 0 structural issues
+#
+# Import order (recommended) when re-syncing both .docm files:
+#   1. py/normalize_vba.py first (fixes any drifted casing in src/).
+#   2. src/basStyleInspector.bas
+#   3. src/basAuthorStyles.bas
+#   4. src/basTEST_aeBibleConfig.bas
+#   5. src/basVerseStructureAudit.bas
+#   6. src/aeBibleCitationClass.cls
+#   7. src/aeRibbonClass.cls
+#   8. src/basSBL_VerseCountsGenerator.bas
+# Then run WordEditingConfig + RUN_TAXONOMY_STYLES + AuditListStyleRisk
+# to verify clean state.
 # ------------------------------------------------------------
-# [ ] src/basUIStrings.bas          (LBL_* + CTRL_* constants)
-# [ ] src/basBibleRibbonSetup.bas   (GetXxxLabel callbacks)
-# [ ] src/aeRibbonClass.cls         (CTRL_* replacements + 3 bug fixes + § 17 CTRL_BOOK after Go)
-# [ ] src/basRibbonDeferred.bas     (CTRL_* replacements + § 17 CTRL_BOOK in GoToH1Deferred)
-# ------------------------------------------------------------
-# Testing batch (after imports):
-#   - All keytip badges: Alt+Y2 -> B, C, V, [, ], comma, period, <, >, G, S, A
-#   - All four getLabel labels visible in ribbon (tab, group, Go, About)
-#   - Invalid Go -> verify comboBox now refreshes (bug fix confirmation for OnGoClick wrong IDs)
-#   - § 17: type "rev", press Go -> book comboBox must show "Revelation" not "rev"
-#   - § 17: Prev Book / Next Book -> book comboBox must update to new book name
-#   - py/check_i18n.py baseline: 9 violations, all in archived Step 7 code
-# ------------------------------------------------------------
-
-## Step 7 targets identified by check_i18n.py (deferred)
-
-Inline strings remaining in aeRibbonClass.cls (archived/legacy code):
-  Line 175: "Hello, adaept World!" — About dialog (OnAdaeptAboutClick)
-  Line 176: "adaeptMsg  = ", "About adaept" — About dialog
-  Line 212: "GoToVerseSBL - Parser not yet implemented." — archived GoToVerseSBL stub
-  Line 228: "Enter a Book Name (Heading 1) abbreviation:", "Go To Bible Book" — GoToH1Direct InputBox
-  Line 242: "Book not found! No Heading 1 matches: '" — GoToH1Direct error
-  Line 487: "...the truth shall make you free." — About dialog quote (John 8:32)
-All are in archived methods (GoToVerseSBL, GoToH1Direct) or the About dialog.
-Step 7 cleanup will address these when OLD_CODE sections are reviewed.
-
-## Test 73 — CountInvisibleCharacters
-
-[IMPORT] src/aeBibleClass.cls
-        - MaxTests 72 -> 73
-        - Expected values array extended (+0 for test 73)
-        - Case 73 added to GetPassFail, RunTest, OutputTestReport
-        - RunTest(73) added to RunBibleClassTests sequence
-        - CountInvisibleCharacters() As Long added as Private Function
-
-[IMPORT] src/basTEST_aeBibleConfig.bas
-        - CountInvisibleCharacters changed from Private to Public
-
-[DOC]   md/Adding_To_Bible_Test_Class.md (new file)
-        - Process for adding new tests; Test 73 walkthrough
-
-Run test after import:  RUN_THE_TESTS(73)   => expect PASS    0    0    CountInvisibleCharacters
-
-## Deferred
-- basTEST_basUIStrings — aeAssert tests for all constants and FormatMsg
-- Step 7: OLD_CODE cleanup in aeRibbonClass.cls
-- § 13: dotm template architecture (Phase 1 migration)
-- § 14: ABANDONED — split document not cost-effective for completed 900+ page Bible
-
-## Step 4 — First-hit hint infrastructure (session 2026-04-21)
-
-[IMPORT] src/aeBibleClass.cls
-        - m_lastHint As String declaration added (class level)
-        - m_HintArray(1 To MaxTests) As String declaration added (class level)
-        - Both reset in InitializeGlobalResultArrayToMinusOne
-        - m_HintArray(TestNum) = m_lastHint inserted after every ResultArray assignment
-          in GetPassFail (61 insertions)
-        - Hint print hook inserted after every Debug.Print GetPassFailArray(num) in RunTest
-          (55 insertions) — silent until Step 5 sets m_lastHint
-
-[SCRIPT] py/step4_hints.py
-        - One-time transformation script; apply via python3.exe py/step4_hints.py
-
-[DOC]   rvw/Code_review 2026-04-20.md
-        - § 21 Step 4 marked DONE
-        - Step 4 implementation note added (after Step 3 section)
-        - § 28 Step 4 table updated
-
-Run test after import:  RUN_THE_TESTS   => results must be identical to prior run
-                        Hint lines all silent (m_lastHint = "" — no Count function sets it yet)
-
-Next step pending approval:
-  Step 5 — First-hit capture in Count functions (m_lastHint = "..." on first violation)
