@@ -49,6 +49,7 @@ Public Sub Run_All_SBL_Tests()
 
     aeBibleCitationClass.ResetBookAliasMap
     Test_Stage1_AliasCoverage
+    Test_SongOfSongs_AllAliases
     aeBibleCitationClass.Test_Stage2_LexicalScan
     aeBibleCitationClass.Test_Stage3_ResolveAlias
     aeBibleCitationClass.Test_Stage4_InterpretStructure
@@ -125,6 +126,78 @@ Public Sub Test_Stage1_AliasCoverage()
     Debug.Print msg
 
     aeAssert.AssertTrue ok, "Alias coverage validation", True, ok
+End Sub
+
+Public Sub Test_SongOfSongs_AllAliases()
+' Focused coverage for book 22 after the 2026-04-30 rename of project canonical
+' from "Solomon" to "Song of Songs". Verifies every documented alias resolves to
+' BookID 22 with canonical name "Song of Songs"; verifies the WEB-aligned
+' verse-count data; verifies ToSBLShortForm yields the SBL "Song N:V" output.
+'
+' Uses the suite-level aeAssert (initialized by Run_All_SBL_Tests).
+'
+    Debug.Print "------------------------------------------"
+    Debug.Print " Test_SongOfSongs_AllAliases"
+    Debug.Print "------------------------------------------"
+
+    ' All documented aliases resolve to BookID 22 with canonical name.
+    Dim aliases As Variant
+    aliases = Array( _
+        "Song of Songs", "song of songs", "SONG OF SONGS", _
+        "Song", "Son", "Sg", _
+        "Solomon", "Solo", "Sol", "So", _
+        "Canticles", "Cant", "Can")
+
+    Dim i As Long, bID As Long
+    Dim canonName As String
+    For i = LBound(aliases) To UBound(aliases)
+        bID = 0
+        canonName = aeBibleCitationClass.ResolveAlias(CStr(aliases(i)), bID)
+        aeAssert.AssertEqual 22, bID, _
+            "ResolveAlias(""" & aliases(i) & """) BookID"
+        aeAssert.AssertEqual "Song of Songs", canonName, _
+            "ResolveAlias(""" & aliases(i) & """) canonical name"
+    Next i
+
+    ' Negative: "Song of Solomon" (multi-word) is not in the alias map.
+    On Error Resume Next
+    bID = 0
+    canonName = aeBibleCitationClass.ResolveAlias("Song of Solomon", bID)
+    Dim raised As Boolean
+    raised = (Err.Number <> 0)
+    Err.Clear
+    On Error GoTo 0
+    aeAssert.AssertTrue raised, _
+        "ResolveAlias(""Song of Solomon"") raises (multi-word not in alias map)"
+
+    ' ChaptersInBook via canonical and two aliases.
+    aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Song of Songs"), _
+        "ChaptersInBook(""Song of Songs"")"
+    aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Song"), _
+        "ChaptersInBook(""Song"") via alias"
+    aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Solomon"), _
+        "ChaptersInBook(""Solomon"") via alias"
+
+    ' VersesInChapter - WEB-aligned counts: 17, 17, 11, 16, 16, 13, 13, 14.
+    Dim verseCounts As Variant
+    verseCounts = Array(17, 17, 11, 16, 16, 13, 13, 14)
+    Dim ch As Long
+    For ch = 1 To 8
+        aeAssert.AssertEqual CLng(verseCounts(ch - 1)), _
+            aeBibleCitationClass.VersesInChapter("Song of Songs", ch), _
+            "VersesInChapter(""Song of Songs"", " & ch & ")"
+    Next ch
+
+    ' ToSBLShortForm.
+    aeAssert.AssertEqual "Song 2:4", _
+        aeBibleCitationClass.ToSBLShortForm("Song of Songs 2:4"), _
+        "ToSBLShortForm(""Song of Songs 2:4"")"
+    aeAssert.AssertEqual "Song 1:1", _
+        aeBibleCitationClass.ToSBLShortForm("Song of Songs 1:1"), _
+        "ToSBLShortForm(""Song of Songs 1:1"")"
+
+    Debug.Print " Test_SongOfSongs_AllAliases complete."
+    Debug.Print "------------------------------------------"
 End Sub
 
 Public Sub Test_Stage5_ValidateCanonical()
@@ -882,7 +955,7 @@ Public Sub Test_CanonicalNamesAndSBLTable()
     canonNames(19) = "Psalms":        canonChapters(19) = 150
     canonNames(20) = "Proverbs":      canonChapters(20) = 31
     canonNames(21) = "Ecclesiastes":  canonChapters(21) = 12
-    canonNames(22) = "Solomon":       canonChapters(22) = 8   ' Project canonical; SBL output is "Song"
+    canonNames(22) = "Song of Songs": canonChapters(22) = 8   ' Project canonical; SBL output is "Song"
     canonNames(23) = "Isaiah":        canonChapters(23) = 66
     canonNames(24) = "Jeremiah":      canonChapters(24) = 52
     canonNames(25) = "Lamentations":  canonChapters(25) = 5

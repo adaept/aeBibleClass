@@ -61,22 +61,73 @@ to the section in the prior review where the full rationale lives.
 
 ## Open carry-forward items
 
-### 1. Reference rename sweep — `Solomon` → `Song of Songs`
+### 1. Reference rename sweep — `Solomon` → `Song of Songs` (CLOSED 2026-05-01)
 
-Confirmed open as of 2026-04-30. Four files still contain the older
-`Solomon` form:
+Originally listed as open. **Closed 2026-05-01** — Phase A rename sweep applied across all five identified locations plus one additional comment in `aeBibleCitationClass.cls` discovered during the verification sweep:
 
-| File | Line | Context |
+| File | Change |
+|---|---|
+| `src/basTEST_aeBibleCitationClass.bas:885` | `canonNames(22) = "Solomon"` → `"Song of Songs"` |
+| `src/basSBL_VerseCountsGenerator.bas:95` | Context label `"Solomon"` → `"Song of Songs"` |
+| `src/XbasTESTaeBibleDOCVARIABLE.bas:527` | `VerifyBookNameFromDocVariable "Song", "Solomon"` → `"Song", "Song of Songs"` |
+| `md/Deterministic Structural Parser.md:83` | Table row `Solomon` → `Song of Songs` |
+| `md/Deterministic Structural Parser.md:314` | Multi-word example `"Song of Solomon"` → `"Song of Songs"` |
+| `src/aeBibleCitationClass.cls:1826` | Multi-word example comment `"Song of Solomon"` → `"Song of Songs"` |
+
+**Intentionally kept** (non-canonical references with documented purpose):
+
+- `aeBibleCitationClass.cls:1472` — comment "Song of Songs, aka Song of Solomon" documenting that `"Song of Solomon"` is a recognised alias (it's in the alias map at line 1478 already).
+- `basChangeLog_aeBibleClass.bas:17, 18` — change-log entries (#617, #618). Dated history; no retroactive rewrites per `EDSG/09-history.md` policy.
+
+#### Phase B — existing citation tests (closed 2026-05-01)
+
+User ran `Run_All_SBL_Tests`. Result:
+
+```
+Tests Run:  44
+Failures:   0
+Result: PASS
+```
+
+All 44 citation-class tests pass after the rename. The two highest-impact tests (`Test_Stage1_AliasCoverage` and `Test_CanonicalNamesAndSBLTable`) now exercise the `"Song of Songs"` canonical name through the alias map and SBL short-form path, both clean.
+
+Side note: `Test_Stage1_AliasCoverage` and most other `Test_Stage*` Subs depend on a module-level `aeAssert` that's initialised inside `Run_All_SBL_Tests`. They aren't designed to be invoked standalone — running them individually from the Immediate window raises `Object variable or with block variable not set` because `aeAssert` is `Nothing`. The aggregator is the supported entry point. Documented here for future debugging.
+
+#### Phase C — `Test_SongOfSongs_AllAliases` added (closed 2026-05-01)
+
+Focused alias-coverage Sub appended to `basTEST_aeBibleCitationClass.bas` and wired into `Run_All_SBL_Tests` immediately after `Test_Stage1_AliasCoverage`. Coverage:
+
+- **All 13 alias forms** (canonical, three case variants of canonical, plus 10 documented short aliases including `Solomon` as a still-valid alias) → BookID 22, canonical name `"Song of Songs"`.
+- **Negative case** — `"Song of Solomon"` (multi-word, not in alias map) raises. Documents the boundary explicitly so any future addition of `"SONG OF SOLOMON"` to the alias map flips this assertion deliberately.
+- **`ChaptersInBook`** via canonical and two aliases (`"Song"`, `"Solomon"`) — all 8.
+- **`VersesInChapter`** for all 8 chapters against the WEB-aligned data (17/17/11/16/16/13/13/14).
+- **`ToSBLShortForm`** for the canonical input → SBL `"Song N:V"` output.
+
+Uses the suite-level `aeAssert` (no local instantiation) — matches the `Test_Stage*` pattern in the codebase.
+
+**Status:** rename sweep + tests complete. Confirmed 2026-05-01 via `Run_All_SBL_Tests`:
+
+```
+Tests Run: 222
+Failures:  0
+Result:    PASS
+```
+
+`Test_SongOfSongs_AllAliases` contributed 40 new PASS assertions (26 alias × 2 + 1 negative + 3 ChaptersInBook + 8 VersesInChapter + 2 ToSBLShortForm). The previous "44 / 0" the user saw in the Immediate window was the **`Run_Extra_Tests`** summary (a separate aeAssert instance running after `Run_All_SBL_Tests` completes); the Stage suite's actual summary scrolled off the Immediate buffer but is preserved in `rpt\SBL_Tests.UTF8.txt`.
+
+#### Original open-state record — preserved for traceability
+
+The five-row table below was the original list when this item was open. Each row is now resolved per the closure tables above. Kept verbatim for audit history.
+
+| File | Line | Original context |
 |---|---|---|
-| `src/basTEST_aeBibleCitationClass.bas` | 885 | Test oracle: `canonNames(22) = "Solomon"`. Should be `"Song of Songs"` to match the citation class's canonical form. |
-| `src/basSBL_VerseCountsGenerator.bas` | 95 | Context label string passed to `ToOneBasedLongArray`. Cosmetic — does not affect data. |
-| `src/XbasTESTaeBibleDOCVARIABLE.bas` | 527 | `VerifyBookNameFromDocVariable "Song", "Solomon"` — document-specific assertion. Earlier review (2026-03-16) marked this as "correct for this document"; verify if the assertion is still right after the canonical rename. |
-| `md/Deterministic Structural Parser.md` | 83 | Reference table row: `Solomon`. Update to `Song of Songs`. |
-| `md/Deterministic Structural Parser.md` | 314 | Multi-word example: `"Song of Solomon"`. Decide whether to leave (it's an alias) or rename to `"Song of Songs"`. |
+| `src/basTEST_aeBibleCitationClass.bas` | 885 | Test oracle: `canonNames(22) = "Solomon"`. Needed to be `"Song of Songs"` to match the citation class's canonical form. |
+| `src/basSBL_VerseCountsGenerator.bas` | 95 | Context label string passed to `ToOneBasedLongArray`. Cosmetic — did not affect data. |
+| `src/XbasTESTaeBibleDOCVARIABLE.bas` | 527 | `VerifyBookNameFromDocVariable "Song", "Solomon"` — document-specific assertion. Earlier review (2026-03-16) marked this as "correct for this document"; status changed once project canonical moved to `"Song of Songs"`. |
+| `md/Deterministic Structural Parser.md` | 83 | Reference table row: `Solomon`. |
+| `md/Deterministic Structural Parser.md` | 314 | Multi-word example: `"Song of Solomon"`. |
 
 Original analysis: `rvw/Code_review 2026-04-25.md` § "Finding 4 — broader citation-code impact of the rename" (2026-04-28).
-
-**Recommendation:** small batched edit pass when convenient. Risk: low (none of these affect runtime behaviour except potentially the test oracle, which the audit has not flagged). Each rename should preserve identifier casing per the project's normalization rule.
 
 ### 2. `AuditOneStyle` — extend for character-style properties
 

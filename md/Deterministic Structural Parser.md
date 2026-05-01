@@ -80,7 +80,7 @@ Stages 8-12 implement list and range extensions.
    | 19 | Psalms | | 52 | 1 Thessalonians |
    | 20 | Proverbs | | 53 | 2 Thessalonians |
    | 21 | Ecclesiastes | | 54 | 1 Timothy |
-   | 22 | Solomon | | 55 | 2 Timothy |
+   | 22 | Song of Songs | | 55 | 2 Timothy |
    | 23 | Isaiah | | 56 | Titus |
    | 24 | Jeremiah | | 57 | Philemon |
    | 25 | Lamentations | | 58 | Hebrews |
@@ -311,7 +311,7 @@ Stage 2 does NOT determine whether values are canonically valid — only whether
 
 **LIMITATIONS (INTENTIONAL - STAGE 3 WILL HANDLE):**
 
-- Multi-word book names (e.g., "1 John", "Song of Solomon")
+- Multi-word book names (e.g., "1 John", "Song of Songs")
 - Range detection (1-3)
 - List detection (1,3,5)
 - Canonical validation of chapter/verse

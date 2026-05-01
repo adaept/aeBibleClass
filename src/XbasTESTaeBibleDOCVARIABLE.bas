@@ -524,7 +524,7 @@ Sub TestPageNumbers()
     Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Eccl", "Ecclesiastes"
     Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
-    VerifyBookNameFromDocVariable "Song", "Solomon"
+    VerifyBookNameFromDocVariable "Song", "Song of Songs"
     Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")
     VerifyBookNameFromDocVariable "Isa", "Isaiah"
     Debug.Print ">>" & Replace(lastFoundLocation.Text, vbCr, "")

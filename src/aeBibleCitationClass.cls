@@ -1823,7 +1823,7 @@ End Function
 '   "BookName chapter:verse"   e.g. "John 3:16"
 '   "BookName chapter"         e.g. "Romans 8"
 '                              (verse returns 0; parsedOk=False)
-' Multi-word book names ("1 John", "Song of Solomon")
+' Multi-word book names ("1 John", "Song of Songs")
 '   are handled by treating everything up to the last
 '   space-delimited token that contains ":" (or is purely
 '   numeric) as the book name.
