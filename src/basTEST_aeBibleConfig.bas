@@ -221,17 +221,21 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 21 styles via AuditOneStyle + 2 tab-stop specs via AuditStyleTabs;
-'   total 23 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (21):
-'     10 fully specified (all properties verified) - BodyText, BodyTextIndent,
-'                            Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
-'                            Brief, Psalms BOOK, Footnote Text, AuthorBookRef
+'   Audits 23 styles via AuditOneStyle + 3 tab-stop specs via AuditStyleTabs;
+'   total 26 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (23):
+'     12 fully specified (all properties verified) - BodyText, BodyTextIndent,
+'                            Heading 1, Heading 2, ContentsRef, AuthorBookRefHeader,
+'                            AuthorBookRef, CustomParaAfterH1, DatAuthRef,
+'                            Brief, Psalms BOOK, Footnote Text
 '      8 existence-verified (full spec pending)
 '      3 not yet created (expected FAIL until each Define* routine runs)
-'   Tab-stop audits (2):
-'      AuthorListItemTab (2 stops at 144 / 252 pt, Left, Spaces)
-'      AuthorBookRef     (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
+'   Tab-stop audits (3):
+'      AuthorListItemTab   (2 stops at 144 / 252 pt, Left, Spaces)
+'      AuthorBookRef       (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
+'      AuthorBookRefHeader (1 stop at 381.6 pt, Right, Spaces)
+'   AuditOneStyle now also accepts optional Bold / Italic args (sentinel -2
+'   = skip); descriptive specs for those properties on bucket-1 entries.
 '   Specs encoded as descriptive (capture current document state); see
 '   rvw/Code_review 2026-04-25.md "Spec promotion: descriptive vs prescriptive"
 '   for the decision and rationale.
@@ -270,18 +274,20 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' -- Fully specified styles (all properties verified) -----------------------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Fully specified (all properties verified) --"
-    '                                   Font          Sz  Align  Indent  LineRule  LineSp  SpB   SpA
-    '                                                 0=skip -1=skip -999=skip
-    AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0
-    AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0
-    AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0
-    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 4, 10, 12, 8
-    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62
-    AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0
-    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 4, 9.5, 0, 0
-    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 14.4, 4, 10, 10, 0
-    AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0
-    AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11
+    '                                   Font          Sz  Align  Indent  LineRule  LineSp  SpB   SpA   Bold  Italic
+    '                                                 0=skip -1=skip -999=skip                          -2=skip
+    AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
+    AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
+    AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0
+    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 4, 10, 12, 8, -1, 0
+    AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
+    AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0
+    AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
+    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0
+    AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0, -1, 0
+    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 4, 9.5, 0, 0, -1, 0
+    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 14.4, 4, 10, 10, 0, 0, 0
+    AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0
 
     ' -- Existence verified; full spec pending -------------------------------------------------
     ' Footnote Reference (Character style) parked here until AuditOneStyle is
@@ -313,6 +319,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditStyleTabs "AuthorBookRef", _
         Array(36, wdAlignTabLeft, wdTabLeaderSpaces), _
         Array(378, wdAlignTabRight, wdTabLeaderDots)
+    AuditStyleTabs "AuthorBookRefHeader", _
+        Array(381.6, wdAlignTabRight, wdTabLeaderSpaces)
 
     Print #m_TaxFile, ""
     Print #m_TaxFile, String(72, "=")
@@ -350,7 +358,9 @@ Private Sub AuditOneStyle(ByVal sName As String, _
                           ByVal lExpLineRule As Long, _
                           ByVal dExpLineSpacing As Double, _
                           ByVal dExpSpaceBefore As Double, _
-                          ByVal dExpSpaceAfter As Double)
+                          ByVal dExpSpaceAfter As Double, _
+                          Optional ByVal vExpBold As Variant = -2, _
+                          Optional ByVal vExpItalic As Variant = -2)
     On Error GoTo PROC_ERR
     Dim oStyle  As Word.Style
     Dim bPass   As Boolean
@@ -431,6 +441,22 @@ Private Sub AuditOneStyle(ByVal sName As String, _
             bPass = False
             sDetail = sDetail & "      SpaceAft : expected " & dExpSpaceAfter & _
                       " got " & oStyle.ParagraphFormat.SpaceAfter & vbCrLf
+        End If
+    End If
+
+    If CLng(vExpBold) <> -2 Then
+        If oStyle.Font.Bold <> CLng(vExpBold) Then
+            bPass = False
+            sDetail = sDetail & "      Bold     : expected " & CLng(vExpBold) & _
+                      " got " & oStyle.Font.Bold & vbCrLf
+        End If
+    End If
+
+    If CLng(vExpItalic) <> -2 Then
+        If oStyle.Font.Italic <> CLng(vExpItalic) Then
+            bPass = False
+            sDetail = sDetail & "      Italic   : expected " & CLng(vExpItalic) & _
+                      " got " & oStyle.Font.Italic & vbCrLf
         End If
     End If
 

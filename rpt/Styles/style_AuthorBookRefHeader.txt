@@ -3,7 +3,7 @@
 .QuickStyle = False
 .Font.Name = "Liberation Serif"
 .Font.Size = 11
-.Font.Bold = 0
+.Font.Bold = -1
 .Font.Italic = 0
 .Font.Underline = 0
 .Font.Color = -16777216
@@ -24,3 +24,5 @@
 .ParagraphFormat.KeepWithNext = 0
 .ParagraphFormat.PageBreakBefore = 0
 .ParagraphFormat.OutlineLevel = 10
+.ParagraphFormat.TabStops.Count = 1
+.ParagraphFormat.TabStops(1) = Position=381.6 Align=Right Leader=Spaces

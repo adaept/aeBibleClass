@@ -36,6 +36,23 @@ to the section in the prior review where the full rationale lives.
 - **Style taxonomy run state.** `RUN_TAXONOMY_STYLES`: **18 PASS / 5 FAIL
   across 23 checks** (post-`AuthorBookRef` promotion, 2026-04-30). Five
   FAILs are pre-tracked items (see deferred list below).
+- **Phase 7 — Bold / Italic audit coverage (2026-04-30).** `AuditOneStyle`
+  extended with two optional args (`vExpBold`, `vExpItalic`, sentinel `-2`).
+  All 12 fully-specified entries got descriptive Bold/Italic specs.
+  `ContentsRef` and `AuthorBookRefHeader` added as new bucket-1 entries
+  with full font + paragraph specs and (for `AuthorBookRefHeader`) a
+  tab-stop entry at 381.6 pt Right Spaces. The `AuthorBookRefHeader`
+  Bold drift was caught and corrected: dump showed `Bold = 0` (False)
+  contradicting design intent; user fixed the live style to `Bold = -1`
+  (Path A) before encoding. **Verified 2026-04-30: `RUN_TAXONOMY_STYLES`
+  reports 21 PASS / 5 FAIL across 26 checks**, all three new entries
+  PASS (`ContentsRef`, `AuthorBookRefHeader`, `AuthorBookRefHeader (TabStops)`).
+  Bold drift on `AuthorBookRefHeader` is now caught immediately by the
+  audit — any future flip back to `Bold=False` will FAIL the style row.
+
+- **Bucket 1 grew 10 → 12.** Added `ContentsRef` and `AuthorBookRefHeader`.
+  All twelve now audited against descriptive Bold / Italic in addition
+  to the original eight property classes.
 - **Ribbon focus fix (Finding 5 fix A).** Caret renders correctly on
   first nav from a ribbon-owned event handler.
 - **`ToSBLShortForm` "Song of Songs" lookup error (Finding 3).** No
