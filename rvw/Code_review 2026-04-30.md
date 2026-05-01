@@ -23,9 +23,19 @@ to the section in the prior review where the full rationale lives.
   `AuditStyleTabs` now all handle `ParagraphFormat.TabStops`. The
   taxonomy audit has full coverage of every audit-able property on
   every approved paragraph style.
+- **`AuthorBookRef` promoted to fully-spec + tab-stop audited (2026-04-30).**
+  User added tab stops manually to both docs. Six-step promotion run:
+  fresh `DumpStyleProperties`; one `AuditOneStyle "AuthorBookRef", "Carlito",
+  11, 0, -18, 0, 12, 0, 11` line added in bucket 1; one `AuditStyleTabs
+  "AuthorBookRef", Array(36, wdAlignTabLeft, wdTabLeaderSpaces),
+  Array(378, wdAlignTabRight, wdTabLeaderDots)` line added in tab-stops
+  bucket; PURPOSE block updated to 21 styles + 2 tab-stop specs = 23
+  total checks. Expected `RUN_TAXONOMY_STYLES`: **18 PASS / 5 FAIL**
+  on each `.docm`.
 - **Style taxonomy run state.** `RUN_TAXONOMY_STYLES`: 16 PASS / 5 FAIL
-  across 21 checks. Five FAILs are pre-tracked items (see deferred
-  list below).
+  across 21 checks (pre-`AuthorBookRef` promotion). Post-promotion
+  expected: 18 / 5 across 23 checks once user re-imports and re-runs.
+  Five FAILs are pre-tracked items (see deferred list below).
 - **Ribbon focus fix (Finding 5 fix A).** Caret renders correctly on
   first nav from a ribbon-owned event handler.
 - **`ToSBLShortForm` "Song of Songs" lookup error (Finding 3).** No
@@ -112,7 +122,40 @@ Minor consistency items noticed during the migration work:
 
 **Recommendation:** opportunistic update next time these pages are visited for substantive edits.
 
-### 7. Session manifest
+### 7. Body-content number prefixes — keep manual, no docvariables (decision 2026-04-30)
+
+User considered replacing manual text prefixes (`"1. "`, `"2. "`, …) on `AuthorBookRef` paragraphs with Word doc-variable fields for future i18n flexibility. **Decision: keep manual text prefixes. Revisit only if/when i18n is actively rolled out and a target locale needs non-Arabic numbering.**
+
+#### Reasoning recorded
+
+**Pros considered (theoretical i18n benefit):**
+- Locale-aware numbering substitution (Arabic-Indic, Hebrew letters, RTL ordering).
+- Programmatic renumber without text edits.
+- Separation of presentation (number) from content (citation).
+
+**Cons (practical, drove the decision):**
+- Each prefix becomes a `{ DOCVARIABLE }` field — visual clutter when field codes toggled, fragile across some copy-paste targets.
+- No native auto-renumber. Inserting between #5 and #6 still requires VBA renumber logic; not better than retyping literals.
+- Discovery cost for future contributors and AI assistants seeing fields in the body.
+- Edit overhead vs typing `"5. "`.
+- No native locale routing in Word docvariables — they're document-wide single values; localization layer would have to be built anyway.
+- Project's existing i18n strategy (`basUIStrings`, `check_i18n.py`) targets ribbon UI labels and status-bar messages, **not body content**. Body-content i18n is a different problem class.
+- Number prefixes are mostly language-neutral — Western Arabic digits are the academic-citation standard across most plausible target locales. Tiny punctuation variants (`1.` vs `1)`) are easier handled by a one-pass VBA reformatter than by a docvariable layer.
+
+**Better tool when i18n becomes active:** locale-aware VBA prefix generator that switches on `Document.LanguageID` or a project-level locale setting and writes prefix text on demand. Decouples from Word's field machinery.
+
+**Where docvariables ARE the right tool (different use case):** single-string substitutions appearing once or in known template positions (e.g., a "Bibliography" heading, dates, version strings). Number prefixes don't fit that pattern.
+
+#### Trigger to revisit
+
+Active i18n rollout where a target locale requires:
+- Non-Arabic numerals in body content, OR
+- Substantially different prefix punctuation that can't be handled by a one-pass reformatter, OR
+- Per-paragraph content substitution that today's manual prefixes can't accommodate.
+
+Until then, manual text prefixes stand.
+
+### 8. Session manifest
 
 `sync/session_manifest.txt` written 2026-04-30 covering this arc's src/ edits. Use as the import checklist for any fresh `.docm` re-sync. Final-state verification commands listed at the end of the manifest.
 

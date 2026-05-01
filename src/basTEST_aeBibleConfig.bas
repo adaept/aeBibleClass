@@ -221,16 +221,17 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 20 styles via AuditOneStyle + 1 tab-stop spec via AuditStyleTabs;
-'   total 21 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (20):
-'      9 fully specified (all properties verified) - BodyText, BodyTextIndent,
+'   Audits 21 styles via AuditOneStyle + 2 tab-stop specs via AuditStyleTabs;
+'   total 23 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (21):
+'     10 fully specified (all properties verified) - BodyText, BodyTextIndent,
 '                            Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
-'                            Brief, Psalms BOOK, Footnote Text
+'                            Brief, Psalms BOOK, Footnote Text, AuthorBookRef
 '      8 existence-verified (full spec pending)
 '      3 not yet created (expected FAIL until each Define* routine runs)
-'   Tab-stop audits (1):
+'   Tab-stop audits (2):
 '      AuthorListItemTab (2 stops at 144 / 252 pt, Left, Spaces)
+'      AuthorBookRef     (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
 '   Specs encoded as descriptive (capture current document state); see
 '   rvw/Code_review 2026-04-25.md "Spec promotion: descriptive vs prescriptive"
 '   for the decision and rationale.
@@ -280,6 +281,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 4, 9.5, 0, 0
     AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 14.4, 4, 10, 10, 0
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0
+    AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11
 
     ' -- Existence verified; full spec pending -------------------------------------------------
     ' Footnote Reference (Character style) parked here until AuditOneStyle is
@@ -308,6 +310,9 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditStyleTabs "AuthorListItemTab", _
         Array(144, wdAlignTabLeft, wdTabLeaderSpaces), _
         Array(252, wdAlignTabLeft, wdTabLeaderSpaces)
+    AuditStyleTabs "AuthorBookRef", _
+        Array(36, wdAlignTabLeft, wdTabLeaderSpaces), _
+        Array(378, wdAlignTabRight, wdTabLeaderDots)
 
     Print #m_TaxFile, ""
     Print #m_TaxFile, String(72, "=")

@@ -1,4 +1,4 @@
-'--- AuthorBookRef  (Type=Paragraph, Priority=1) ---
+'--- AuthorBookRef  (Type=Paragraph, Priority=22) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"
@@ -24,3 +24,6 @@
 .ParagraphFormat.KeepWithNext = 0
 .ParagraphFormat.PageBreakBefore = 0
 .ParagraphFormat.OutlineLevel = 10
+.ParagraphFormat.TabStops.Count = 2
+.ParagraphFormat.TabStops(1) = Position=36 Align=Left Leader=Spaces
+.ParagraphFormat.TabStops(2) = Position=378 Align=Right Leader=Dots
