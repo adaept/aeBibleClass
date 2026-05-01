@@ -144,7 +144,53 @@ The five-row table below was the original list when this item was open. Each row
 
 Original analysis: `rvw/Code_review 2026-04-25.md` § "Finding 4 — broader citation-code impact of the rename" (2026-04-28).
 
-### 2. `AuditOneStyle` — extend for character-style properties
+### 2. `VerseText` style introduction + bulk conversion (original goal — preconditions now met)
+
+**Plan location:** `rvw/Code_review 2026-04-25.md` § "Plan - introduce `VerseText` style - 2026-04-26".
+
+**Goal recap:** introduce a `VerseText` paragraph style identical in spec to `BodyText`, then bulk-convert every paragraph in the Bible body that begins with a `Chapter Verse marker` character-style run from `BodyText` to `VerseText`. `BodyText` retains for non-verse paragraphs (intros, spacers, footnote contexts).
+
+**Why this is on the carry-forward.** This is the **original goal** of the entire 2026-04-25 → 2026-05-01 work arc. Every audit infrastructure piece built in that arc — `AuditVerseMarkerStructure`, the descriptive-spec promotion of bucket-1 styles, the migration of List Paragraph–entangled styles, the `Bold` / `Italic` audit extension — was scaffolding to make the VerseText conversion safe to run. The conversion itself was never executed.
+
+**Precondition status (all green as of 2026-05-01):**
+
+| Precondition | Status |
+|---|---|
+| `AuditVerseMarkerStructure` reports clean | ✓ 31,102 / 31,102 verses, 0 structural issues |
+| Style taxonomy baseline established | ✓ 23 PASS / 4 FAIL across 27 checks, all 4 FAILs are NOT-FOUND placeholders |
+| `BodyText` is fully-spec audited (descriptive) | ✓ bucket 1, locked at Carlito 9, Justify, LineSpacing 10 Exactly, Bold/Italic False |
+| List Paragraph migration complete | ✓ no list-engine entanglement on any approved style |
+| Reference rename (Solomon → Song of Songs) | ✓ closed 2026-05-01 |
+
+**Two-phase execution (per the original plan, abbreviated):**
+
+#### Phase 1 — define the style (low risk)
+
+- **1.1** Add `DefineVerseTextStyle` to `src/basFixDocxRoutines.bas` — clones every property of `BodyText`. `BaseStyle = ""`, no list-engine attachment.
+- **1.2** Add `"VerseText"` to the `approved` array in `src/basTEST_aeBibleConfig.bas`. Position: immediately after `"Verse marker"` (puts it in the verse-marker cluster). Renumbers downstream priorities by +1.
+- **1.3** Add `VerseText` row to `RUN_TAXONOMY_STYLES`, fully-spec, same expected values as `BodyText` (separate row; not "based on" since `BaseStyle = ""`).
+- **1.4** Run `WordEditingConfig` + `DumpStyleProperties "VerseText"` to confirm the new style matches `BodyText` property-for-property.
+
+#### Phase 2 — bulk conversion (one-time mutation, BACKUP FIRST)
+
+- **2.1** Commit clean repo + back up the working `.docm`.
+- **2.2** Add `ConvertBodyTextVersesToVerseText` to `src/basFixDocxRoutines.bas` — iterates all paragraphs, converts `BodyText` → `VerseText` when first character's style is `"Chapter Verse marker"`.
+- **2.3** Run conversion. Expected: ~31,000 conversions (one per verse); small `kept` count (front-matter / non-verse paragraphs styled BodyText).
+- **2.4** Visual verification by sampling.
+- **2.5** Re-run `RUN_TAXONOMY_STYLES` and `AuditVerseMarkerStructure` — confirm both still clean.
+- **2.6** Update EDSG (`01-styles.md` snapshot, `06-i18n.md` notes on VerseText as primary translation target).
+
+**Stated benefits (from the original plan):**
+
+- **First-occurrence semantics** — `VerseText` first appears at Genesis 1:1, the natural canonical anchor. `BodyText` currently first appears on page 1 (front-matter spacer), which is semantically misleading.
+- **USFM mapping clarity** — `VerseText` → `\v` (verse body); `BodyText` → `\p` / `\ip` / etc. for non-verse paragraphs.
+- **Find / Replace by style** becomes meaningful — `VerseText` is the precise selector for "all verse paragraphs", which is currently impossible with `BodyText` (mixed with front-matter content).
+
+**Recommended next step:** schedule a session for Phase 1 (low-risk style definition + audit row). Phase 2 is the higher-blast-radius mutation; run after Phase 1 is verified clean and a backup is in place.
+
+**Status:** READY TO EXECUTE. All preconditions met 2026-05-01.
+
+### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.
 
@@ -154,7 +200,7 @@ Currently `AuditOneStyle` only checks paragraph-style properties (font name/size
 
 Original analysis: `rvw/Code_review 2026-04-25.md` § "Footnote Reference — deferred to bucket 2 (Q2 decision)" (2026-04-29).
 
-### 3. Prescriptive-spec pass for known QA-checklist drift
+### 4. Prescriptive-spec pass for known QA-checklist drift
 
 The current taxonomy audit encodes **descriptive** specs (capture today's values). Several known QA-checklist violations are tolerated rather than driven to correction:
 
@@ -174,7 +220,7 @@ Original analysis: `rvw/Code_review 2026-04-25.md` § "Spec promotion: descripti
 
 **Recommendation:** treat as a series of one-property-at-a-time decisions, each tracked as its own review item with rationale. Not a single batch.
 
-### 4. Taxonomy audit — full-coverage final-state goal
+### 5. Taxonomy audit — full-coverage final-state goal
 
 Documented in `EDSG/01-styles.md` callout. Current state: 9 fully-specified + 8 existence-verified + 3 not-yet-created + 1 tab-stop = transitional toward "every approved style mapped with real specs".
 
@@ -182,7 +228,7 @@ Each move from bucket 2 → bucket 1 (when descriptive specs are encoded for an 
 
 Original analysis: `rvw/Code_review 2026-04-25.md` § "Important — taxonomy audit final-state goal" callout (2026-04-29).
 
-### 5. Finding 5 (ribbon nav) — umbrella OPEN
+### 6. Finding 5 (ribbon nav) — umbrella OPEN
 
 Fix (A) resolved the primary caret-not-visible symptom. The residual is the **idle-commit focus leak**: Word's customUI `editBox` auto-commits on idle (~1 s) and returns focus to the document body, so any subsequent Tab is a document Tab.
 
@@ -195,7 +241,7 @@ Fix (A) resolved the primary caret-not-visible symptom. The residual is the **id
 
 Original analysis: `rvw/Code_review 2026-04-25.md` § "Finding 5 — terminology correction" (2026-04-29).
 
-### 6. Optional EDSG documentation refresh
+### 7. Optional EDSG documentation refresh
 
 Minor consistency items noticed during the migration work:
 
@@ -205,7 +251,7 @@ Minor consistency items noticed during the migration work:
 
 **Recommendation:** opportunistic update next time these pages are visited for substantive edits.
 
-### 7. Body-content number prefixes — keep manual, no docvariables (decision 2026-04-30)
+### 8. Body-content number prefixes — keep manual, no docvariables (decision 2026-04-30)
 
 User considered replacing manual text prefixes (`"1. "`, `"2. "`, …) on `AuthorBookRef` paragraphs with Word doc-variable fields for future i18n flexibility. **Decision: keep manual text prefixes. Revisit only if/when i18n is actively rolled out and a target locale needs non-Arabic numbering.**
 
@@ -238,7 +284,7 @@ Active i18n rollout where a target locale requires:
 
 Until then, manual text prefixes stand.
 
-### 8. Session manifest
+### 9. Session manifest
 
 `sync/session_manifest.txt` written 2026-04-30 covering this arc's src/ edits. Use as the import checklist for any fresh `.docm` re-sync. Final-state verification commands listed at the end of the manifest.
 
