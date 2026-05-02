@@ -40,6 +40,7 @@ Private Sub PromoteApprovedStyles()
                      "AuthorBookRefHeader", "AuthorBookRef", "CenterSubText", _
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
+                     "VerseText", _
                      "Footnote Reference", "Footnote Text", "Psalms BOOK", _
                      "PsalmSuperscription", "Selah", "PsalmAcrostic", _
                      "SpeakerLabel", _
@@ -221,14 +222,14 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 23 styles via AuditOneStyle + 4 tab-stop specs via AuditStyleTabs;
-'   total 27 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (23):
-'     15 fully specified (all properties verified) - BodyText, BodyTextIndent,
-'                            Heading 1, Heading 2, ContentsRef, AuthorBookRefHeader,
-'                            AuthorBookRef, CustomParaAfterH1, DatAuthRef,
-'                            Brief, Psalms BOOK, Footnote Text, AuthorListItem,
-'                            AuthorListItemBody, AuthorListItemTab
+'   Audits 24 styles via AuditOneStyle + 4 tab-stop specs via AuditStyleTabs;
+'   total 28 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (24):
+'     16 fully specified (all properties verified) - BodyText, VerseText,
+'                            BodyTextIndent, Heading 1, Heading 2, ContentsRef,
+'                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
+'                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
+'                            AuthorListItem, AuthorListItemBody, AuthorListItemTab
 '      5 existence-verified (full spec pending)
 '      3 not yet created (expected FAIL until each Define* routine runs)
 '   Tab-stop audits (4):
@@ -279,6 +280,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     '                                   Font          Sz  Align  Indent  LineRule  LineSp  SpB   SpA   Bold  Italic
     '                                                 0=skip -1=skip -999=skip                          -2=skip
     AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
+    AuditOneStyle "VerseText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
     AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
     AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0
     AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 4, 10, 12, 8, -1, 0

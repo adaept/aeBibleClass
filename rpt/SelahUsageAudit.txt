@@ -1,0 +1,311 @@
+---- AuditSelahUsage: 2026-05-01 19:07:28 ----
+
+Run #1 | ParaStart=1987755 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 73 of 79)
+  Excerpt: "32 Many there are who say of my soul, “There is no help for him in God.” Selah."
+
+Run #2 | ParaStart=1987920 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 71 of 77)
+  Excerpt: "34 I cry to God with my voice, and he answers me out of his holy hill. Selah."
+
+Run #3 | ParaStart=1988299 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 66 of 72)
+  Excerpt: "38 Salvation belongs to God. May your blessing be on your people. Selah."
+
+Run #4 | ParaStart=1988569 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 116 of 122)
+  Excerpt: "42 You sons of men, how long shall my glory be turned into dishonor? Will you lo"
+
+Run #5 | ParaStart=1988791 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 82 of 88)
+  Excerpt: "44 Stand in awe, and do not sin. Search your own heart on your bed, and be still"
+
+Run #6 | ParaStart=1991996 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 126 of 132)
+  Excerpt: "75 let the enemy pursue my soul, and overtake it; yes, let him tread my life dow"
+
+Run #7 | ParaStart=1995765 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 121 of 127)
+  Excerpt: "916 God has made himself known. He has executed judgment. The wicked is snared b"
+
+Run #8 | ParaStart=1996148 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 72 of 78)
+  Excerpt: "920 Put them in fear, God. Let the nations know that they are only men. Selah."
+
+Run #9 | ParaStart=2010969 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 68 of 74)
+  Excerpt: "203 remember all your offerings, and accept your burned sacrifice. Selah."
+
+Run #10 | ParaStart=2011726 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 90 of 96)
+  Excerpt: "212 You have given him his heart’s desire, and have not withheld the request of "
+
+Run #11 | ParaStart=2016998 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 81 of 87)
+  Excerpt: "246 This is the generation of those who seek Him, who seek your face—even Jacob."
+
+Run #12 | ParaStart=2017382 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 76 of 82)
+  Excerpt: "2410 Who is this King of glory? The Lord God of Hosts is the King of glory! Sela"
+
+Run #13 | ParaStart=2027981 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 95 of 101)
+  Excerpt: "324 For day and night your hand was heavy on me. My strength was sapped in the h"
+
+Run #14 | ParaStart=2028083 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 151 of 157)
+  Excerpt: "325 I acknowledged my sin to you. I did not hide my iniquity. I said, I will con"
+
+Run #15 | ParaStart=2028394 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 113 of 119)
+  Excerpt: "327 You are my hiding place. You will preserve me from trouble. You will surroun"
+
+Run #16 | ParaStart=2042966 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 123 of 129)
+  Excerpt: "395 Behold, you have made my days hand widths. My lifetime is as nothing before "
+
+Run #17 | ParaStart=2043507 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 122 of 128)
+  Excerpt: "3911 When you rebuke and correct man for iniquity, you consume his wealth like a"
+
+Run #18 | ParaStart=2050211 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 90 of 96)
+  Excerpt: "448 In God we have made our boast all day long. We will give thanks to your name"
+
+Run #19 | ParaStart=2054055 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 95 of 101)
+  Excerpt: "463 though its waters roar and are troubled, though the mountains tremble with t"
+
+Run #20 | ParaStart=2054437 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 70 of 76)
+  Excerpt: "467 The Lord God of Hosts is with us. The God of Jacob is our refuge. Selah."
+
+Run #21 | ParaStart=2054821 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 71 of 77)
+  Excerpt: "4611 The Lord God of Hosts is with us. The God of Jacob is our refuge. Selah."
+
+Run #22 | ParaStart=2055177 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 74 of 80)
+  Excerpt: "474 He chooses our inheritance for us, the glory of Jacob whom he loved. Selah."
+
+Run #23 | ParaStart=2056289 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 132 of 138)
+  Excerpt: "488 As we have heard, so we have seen, in the city of the Lord God of Hosts, in "
+
+Run #24 | ParaStart=2058044 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 91 of 97)
+  Excerpt: "4913 This is the destiny of those who are foolish, and of those who approve thei"
+
+Run #25 | ParaStart=2058338 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 82 of 88)
+  Excerpt: "4915 But God will redeem my soul from the power of Sheol, for he will receive me"
+
+Run #26 | ParaStart=2059303 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 75 of 81)
+  Excerpt: "506 The heavens shall declare his righteousness, for God himself is judge. Selah"
+
+Run #27 | ParaStart=2063152 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 72 of 78)
+  Excerpt: "523 You love evil more than good, lying rather than speaking the truth. Selah."
+
+Run #28 | ParaStart=2063287 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 140 of 146)
+  Excerpt: "525 God will likewise destroy you forever. He will take you up, and pluck you ou"
+
+Run #29 | ParaStart=2065096 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 118 of 124)
+  Excerpt: "543 For strangers have risen up against me. Violent men have sought after my sou"
+
+Run #30 | ParaStart=2066185 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 75 of 81)
+  Excerpt: "557 Behold, then I would wander far off. I would lodge in the wilderness.” Selah"
+
+Run #31 | ParaStart=2067325 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at MID of paragraph (offset 63 of 108)
+  Excerpt: "5519 God, who is enthroned forever, will hear and answer them. Selah. They never"
+
+Run #32 | ParaStart=2069516 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at MID of paragraph (offset 81 of 140)
+  Excerpt: "73 He will send from heaven, and save me, he rebukes the one who is pursuing me."
+
+Run #33 | ParaStart=2069892 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 136 of 142)
+  Excerpt: "576 They have prepared a net for my steps. My soul is bowed down. They dig a pit"
+
+Run #34 | ParaStart=2072229 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 127 of 133)
+  Excerpt: "595 You, the Lord God of Hosts, the God of Israel, rouse yourself to punish the "
+
+Run #35 | ParaStart=2073019 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 133 of 139)
+  Excerpt: "5913 Consume them in wrath. Consume them, and they will be no more. Let them kno"
+
+Run #36 | ParaStart=2074116 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 98 of 104)
+  Excerpt: "604 You have given a banner to those who fear you, that it may be displayed beca"
+
+Run #37 | ParaStart=2075232 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 87 of 93)
+  Excerpt: "14 I will dwell in your tent forever. I will take refuge in the shelter of your "
+
+Run #38 | ParaStart=2076025 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 138 of 144)
+  Excerpt: "624 They fully intend to throw him down from his lofty place. They delight in li"
+
+Run #39 | ParaStart=2076417 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 99 of 105)
+  Excerpt: "628 Trust in him at all times, you people. Pour out your heart before him. God i"
+
+Run #40 | ParaStart=2080735 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 88 of 94)
+  Excerpt: "664 All the earth will worship you, and will sing to you; they will sing to your"
+
+Run #41 | ParaStart=2081008 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 110 of 116)
+  Excerpt: "667 He rules by his might forever. His eyes watch the nations. Do not let the re"
+
+Run #42 | ParaStart=2081710 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 115 of 121)
+  Excerpt: "6615 I will offer to you burnt offerings of fat animals, with the offering of ra"
+
+Run #43 | ParaStart=2082303 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 76 of 82)
+  Excerpt: "671 May God be merciful to us, bless us, and cause his face to shine on us. Sela"
+
+Run #44 | ParaStart=2082534 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 126 of 132)
+  Excerpt: "674 Oh let the nations be glad and sing for joy, for you will judge the peoples "
+
+Run #45 | ParaStart=2083598 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 88 of 94)
+  Excerpt: "687 God, when you went out before your people, when you marched through the wild"
+
+Run #46 | ParaStart=2084859 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 90 of 96)
+  Excerpt: "6819 Blessed be the Lord, who daily bears our burdens, even the God who is our s"
+
+Run #47 | ParaStart=2086276 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 70 of 76)
+  Excerpt: "6832 Sing to God, you kingdoms of the earth! Sing praises to the Lord—Selah—"
+
+Run #48 | ParaStart=2099914 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 72 of 78)
+  Excerpt: "753 The earth and all its inhabitants quake. I firmly hold its pillars. Selah."
+
+Run #49 | ParaStart=2100862 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 101 of 107)
+  Excerpt: "763 There he broke the flaming arrows of the bow, the shield, and the sword, and"
+
+Run #50 | ParaStart=2101391 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 77 of 83)
+  Excerpt: "769 when God arose to judgment, to save all the afflicted ones of the earth. Sel"
+
+Run #51 | ParaStart=2102061 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 75 of 81)
+  Excerpt: "773 I remember God, and I groan. I complain, and my spirit is overwhelmed. Selah"
+
+Run #52 | ParaStart=2102527 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 82 of 88)
+  Excerpt: "779 Has God forgotten to be gracious? Has he, in anger, withheld his compassion?"
+
+Run #53 | ParaStart=2103014 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 80 of 86)
+  Excerpt: "7715 You have redeemed your people with your arm, the sons of Jacob and Joseph. "
+
+Run #54 | ParaStart=2114265 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 135 of 141)
+  Excerpt: "817 You called in trouble, and I delivered you. I answered you in the secret pla"
+
+Run #55 | ParaStart=2115327 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 75 of 81)
+  Excerpt: "822 “How long will you judge unjustly, and show partiality to the wicked?” Selah"
+
+Run #56 | ParaStart=2116553 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 76 of 82)
+  Excerpt: "838 Assyria also is joined with them. They have helped the children of Lot. Sela"
+
+Run #57 | ParaStart=2117849 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 77 of 83)
+  Excerpt: "844 Blessed are those who dwell in your house. They are always praising you. Sel"
+
+Run #58 | ParaStart=2118232 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 70 of 76)
+  Excerpt: "848 God, the Lord God of Hosts, hear my prayer. Listen, God of Jacob. Selah."
+
+Run #59 | ParaStart=2118870 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 83 of 89)
+  Excerpt: "852 You have forgiven the iniquity of your people. You have covered all their si"
+
+Run #60 | ParaStart=2121660 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 55 of 61)
+  Excerpt: "873 Glorious things are spoken about you, city of God. Selah."
+
+Run #61 | ParaStart=2121978 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 78 of 84)
+  Excerpt: "876 God will count, when he writes up the peoples, “This one was born there.” Se"
+
+Run #62 | ParaStart=2122786 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 78 of 84)
+  Excerpt: "887 Your wrath lies heavily on me. You have afflicted me with all your waves. Se"
+
+Run #63 | ParaStart=2123087 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 86 of 92)
+  Excerpt: "8810 Do you show wonders to the dead? Do the departed spirits rise up and praise"
+
+Run #64 | ParaStart=2124215 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 93 of 99)
+  Excerpt: "894 ‘I will establish your offspring forever, and build up your throne to all ge"
+
+Run #65 | ParaStart=2127136 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 85 of 91)
+  Excerpt: "8937 It will be established forever like the moon, the faithful witness in the s"
+
+Run #66 | ParaStart=2127827 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 80 of 86)
+  Excerpt: "8945 You have shortened the days of his youth. You have covered him with shame. "
+
+Run #67 | ParaStart=2128092 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 106 of 112)
+  Excerpt: "8948 What man is he who shall live and not see death, who shall deliver his soul"
+
+Run #68 | ParaStart=2205244 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 91 of 97)
+  Excerpt: "1403 They have sharpened their tongues like a serpent. Viper’s poison is under t"
+
+Run #69 | ParaStart=2205460 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 120 of 126)
+  Excerpt: "1405 The proud have hidden a snare for me, they have spread the cords of a net b"
+
+Run #70 | ParaStart=2205762 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 114 of 120)
+  Excerpt: "1408 God, do not grant the desires of the wicked. Do not let their evil plans su"
+
+Run #71 | ParaStart=2208845 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 81 of 87)
+  Excerpt: "1436 I spread out my hands to you. My soul thirsts for you, like a parched land."
+
+Run #72 | ParaStart=2387410 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at MID of paragraph (offset 50 of 115)
+  Excerpt: "161 Send the lambs for the ruler of the land from Selah to the wilderness, to th"
+
+Run #73 | ParaStart=2786962 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at MID of paragraph (offset 166 of 223)
+  Excerpt: "43 Take for yourself an iron pan, and set it for a wall of iron between you and "
+
+Run #74 | ParaStart=3141870 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at MID of paragraph (offset 55 of 125)
+  Excerpt: "33 God came from Teman, the Holy One from Mount Paran. Selah. His glory covered "
+
+Run #75 | ParaStart=3142568 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at MID of paragraph (offset 61 of 100)
+  Excerpt: "39 You uncovered your bow. You called for your sworn arrows. Selah. You split th"
+
+Run #76 | ParaStart=3143000 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 167 of 173)
+  Excerpt: "313 You went out for the salvation of your people, for the salvation of your ano"
+
+---- Summary ----
+Total Selah character runs: 76
+  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): 76
+  KEEP-AS-other (paragraph not caught by Phase 2 rule): 0
+  Policy decision flags (BodyText paragraph not converted): 0

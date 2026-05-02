@@ -309,3 +309,156 @@ Private Sub WriteAuditFile(ByVal sContent As String)
     oStream.Write sContent
     oStream.Close
 End Sub
+
+' ==========================================================================
+' AuditSelahUsage
+' ==========================================================================
+' Read-only diagnostic. Walks the main story for every "Selah" character-
+' style run, reports the enclosing paragraph's properties and whether
+' Phase 2 of the VerseText rollout (ConvertBodyTextVersesToVerseText)
+' would convert it.
+'
+' The Phase 2 conversion rule converts a paragraph when both:
+'   1. paragraph.Style.NameLocal = "BodyText"
+'   2. paragraph.Range.Characters(1).Style.NameLocal = "Chapter Verse marker"
+'
+' This audit surfaces:
+'   - Selah runs inside verse paragraphs (will convert cleanly with Phase 2)
+'   - Selah-only paragraphs or other edge cases (need a policy decision
+'     before Phase 2 locks in the conversion rule)
+'
+' Output: rpt\SelahUsageAudit.txt (when bWriteFile = True) plus Immediate
+' window summary.
+'
+' Usage:
+'   AuditSelahUsage
+'   AuditSelahUsage False        ' Immediate only, no file
+' ==========================================================================
+Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
+    On Error GoTo PROC_ERR
+    Dim t As Double
+    StartTimer "AuditSelahUsage", t
+
+    Dim oDoc As Object
+    Set oDoc = ActiveDocument
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+    sOut = "---- AuditSelahUsage: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+
+    Dim oRng As Object
+    Set oRng = oDoc.Content
+
+    Dim totalCount As Long
+    Dim convertCount As Long
+    Dim keepCount As Long
+    Dim policyFlagCount As Long
+    Dim safety As Long
+
+    With oRng.Find
+        .ClearFormatting
+        .style = oDoc.Styles("Selah")
+        .Text = ""
+        .Forward = True
+        .Wrap = 0     ' wdFindStop
+        .Format = True
+        .MatchWildcards = False
+
+        Do While .Execute
+            Dim oPara As Object
+            Set oPara = oRng.Paragraphs(1)
+
+            Dim paraStyle As String
+            paraStyle = oPara.style.NameLocal
+
+            Dim firstCharStyle As String
+            firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+
+            Dim qualifies As Boolean
+            qualifies = (paraStyle = "BodyText" And firstCharStyle = "Chapter Verse marker")
+
+            ' Position of Selah within paragraph: START / END / MID
+            Dim selahOffset As Long
+            selahOffset = oRng.Start - oPara.Range.Start
+            Dim paraTextLen As Long
+            paraTextLen = oPara.Range.End - oPara.Range.Start - 1   ' exclude paragraph mark
+            Dim posLabel As String
+            If selahOffset = 0 Then
+                posLabel = "START"
+            ElseIf selahOffset >= paraTextLen - 8 Then
+                posLabel = "END"
+            Else
+                posLabel = "MID"
+            End If
+
+            ' Excerpt: first 80 chars of paragraph, vbCr stripped
+            Dim excerpt As String
+            excerpt = Left$(Replace(oPara.Range.Text, vbCr, ""), 80)
+
+            totalCount = totalCount + 1
+            Dim phase2 As String
+            If qualifies Then
+                phase2 = "CONVERT"
+                convertCount = convertCount + 1
+            Else
+                phase2 = "KEEP-AS-" & paraStyle
+                keepCount = keepCount + 1
+            End If
+
+            sOut = sOut & "Run #" & totalCount & " | ParaStart=" & oPara.Range.Start & _
+                   " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & _
+                   " | Phase2: " & phase2 & NL
+            sOut = sOut & "  Selah at " & posLabel & " of paragraph (offset " & _
+                   selahOffset & " of " & paraTextLen & ")" & NL
+            sOut = sOut & "  Excerpt: """ & excerpt & """" & NL
+
+            ' Flag Selah-only or BodyText-with-Selah-as-first-char as policy candidates
+            If Not qualifies And paraStyle = "BodyText" Then
+                sOut = sOut & "  ** POLICY DECISION: BodyText paragraph not caught by Phase 2 rule." & NL
+                policyFlagCount = policyFlagCount + 1
+            End If
+            sOut = sOut & NL
+
+            ' Advance past this Selah run
+            oRng.Start = oRng.End
+            safety = safety + 1
+            If safety > 5000 Then
+                sOut = sOut & "*** Safety limit (5000 runs) reached, abort scan ***" & NL
+                Exit Do
+            End If
+            If oRng.Start >= oDoc.Content.End Then Exit Do
+            oRng.End = oDoc.Content.End
+        Loop
+    End With
+
+    sOut = sOut & "---- Summary ----" & NL
+    sOut = sOut & "Total Selah character runs: " & totalCount & NL
+    sOut = sOut & "  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): " & convertCount & NL
+    sOut = sOut & "  KEEP-AS-other (paragraph not caught by Phase 2 rule): " & keepCount & NL
+    sOut = sOut & "  Policy decision flags (BodyText paragraph not converted): " & policyFlagCount & NL
+
+    Debug.Print sOut
+    If bWriteFile Then WriteSelahUsageFile sOut
+
+    EndTimer "AuditSelahUsage", t
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure AuditSelahUsage of Module basVerseStructureAudit"
+    Resume PROC_EXIT
+End Sub
+
+' --------------------------------------------------------------------------
+' WriteSelahUsageFile - write the report to rpt\SelahUsageAudit.txt
+' --------------------------------------------------------------------------
+Private Sub WriteSelahUsageFile(ByVal sContent As String)
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim sPath As String
+    sPath = ActiveDocument.Path & "\rpt\SelahUsageAudit.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
+    oStream.Write sContent
+    oStream.Close
+End Sub

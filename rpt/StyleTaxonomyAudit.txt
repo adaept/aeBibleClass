@@ -1,10 +1,11 @@
 === Style Taxonomy Audit ===
-Date    : 2026-05-01 14:40:33
+Date    : 2026-05-01 15:07:09
 Document: Blank Bible Copy.docm
 ========================================================================
 
 -- Fully specified (all properties verified) --
 PASS  BodyText
+PASS  VerseText
 PASS  BodyTextIndent
 PASS  Heading 1
 PASS  Heading 2
@@ -43,5 +44,5 @@ PASS  AuthorBookRef (TabStops)
 PASS  AuthorBookRefHeader (TabStops)
 
 ========================================================================
-Summary: 23 PASS   4 FAIL
+Summary: 24 PASS   4 FAIL
 === End Style Taxonomy Audit ===

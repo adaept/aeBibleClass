@@ -266,6 +266,123 @@ Order of operations:
 
 **Status:** Phase 1.1 applied. Awaiting user-side action for Phase 1.2 (`DefineVerseTextStyle` execution + dump verification).
 
+#### Phase 1.2 — `DefineVerseTextStyle` executed on test `.docm` (2026-05-01)
+
+User ran `DefineVerseTextStyle` followed by `DumpStyleProperties "VerseText", True`. Output confirms byte-identical match to `style_BodyText.txt` except for name, priority (1, pending Phase 1.6 promotion to 31), and `NextParagraphStyle` (self — same self-pointing pattern as BodyText). All 13 paragraph properties match exactly.
+
+#### Phase 1.3 — `"VerseText"` added to `approved` array (APPLIED 2026-05-01)
+
+`src/basTEST_aeBibleConfig.bas` `approved` array:
+
+```
+"Heading 2", "Chapter Verse marker", "Verse marker", _
+"VerseText", _
+"Footnote Reference", "Footnote Text", "Psalms BOOK", _
+```
+
+`VerseText` placed immediately after `Verse marker` per the original 2026-04-26 plan. Position 31 in book-occurrence order. Downstream priorities (`Footnote Reference` and below) shift +1 when `WordEditingConfig` runs.
+
+#### Phase 1.4 — `VerseText` row added to `RUN_TAXONOMY_STYLES` (APPLIED 2026-05-01)
+
+`src/basTEST_aeBibleConfig.bas` bucket 1, immediately after `BodyText`:
+
+```vba
+AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
+AuditOneStyle "VerseText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
+AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
+```
+
+Identical descriptive spec to `BodyText`: Carlito 9, Justify, FirstLineIndent=0, Exactly 10pt, SpaceBefore/After=0, Bold=0, Italic=0. PURPOSE block updated: 24 styles + 4 tab-stops = **28 total checks**; bucket 1 grew 15 → 16.
+
+**Status:** Phases 1.1-1.4 applied. Awaiting user-side actions for Phases 1.5-1.7 (re-import + WordEditingConfig + RUN_TAXONOMY_STYLES verification).
+
+#### Phases 1.5-1.7 — verified clean on test `.docm` (2026-05-01)
+
+`WordEditingConfig` post-import: 45 styles promoted (was 44). `VerseText` lands at priority **31** as planned. Cascade verified: `Footnote Reference 31→32`, `Footnote Text 32→33`, `Psalms BOOK 33→34`, `PsalmSuperscription 34→35`, `Selah 35→36`, `PsalmAcrostic 36→37`, `SpeakerLabel 37→38`, `BodyTextIndent 38→39`. Reserved gap shifted from 39-42 to **40-43**. `EmphasisBlack 43→44`, `EmphasisRed 44→45`, `Words of Jesus 45→46`, `AuthorSectionHead 46→47`, `AuthorQuote 47→48`, `Normal 48→49`. No new missing-style warnings.
+
+`RUN_TAXONOMY_STYLES`: **24 PASS / 4 FAIL across 28 checks**. New `VerseText` row PASSes; `BodyText` and `BodyTextIndent` rows still PASS. Audit log shows `PASS BodyText`, `PASS VerseText`, `PASS BodyTextIndent` consecutively in bucket 1.
+
+**Phase 1 verification gate: GREEN on test `.docm`.**
+
+**Status:** Phases 1.5-1.7 verified. Awaiting Phase 1.8 (visual sanity in Word) and Phase 1.9 (replicate on production).
+
+#### Phase 1.8 — visual sanity PASS on test `.docm` (2026-05-01)
+
+User confirmed: `VerseText` listed in Styles pane; no paragraph yet using it (Phase 2 will do the conversion). Phase 1's promise — "define only, no reassignment" — held.
+
+#### Pre-Phase-2 Selah investigation (2026-05-01)
+
+User flagged a potential edge case: `Selah` is a style applied to text in some Psalms, and "it is still part of the verse." Worth understanding before Phase 2 locks in the conversion rule.
+
+**Finding:** `Selah` is a **character style**, not a paragraph style. Dump confirms:
+
+```
+'--- Selah  (Type=Character, Priority=35) ---
+.BaseStyle = "Default Paragraph Font"
+.Font.SmallCaps = -1
+```
+
+That changes the analysis:
+
+- **Typical case:** verse paragraph contains a `Selah` character run inside it. Paragraph style is `BodyText`; first character is `Chapter Verse marker`; paragraph qualifies for Phase 2 conversion. The `Selah` character run inside the paragraph is preserved by paragraph-style reassignment (character styles overlay paragraph styles).
+- **Edge cases (unknown without survey):**
+  - Selah-only paragraphs (line containing just "Selah" with character style on the word). First character would be `Selah`, not `Chapter Verse marker` → fails Phase 2 rule → stays as `BodyText`. Policy question: should this be `VerseText` too?
+  - Paragraph continuations or other non-standard verse-paragraph shapes containing Selah runs.
+
+**Phase 1.9 PAUSED** until Selah usage is surveyed and policy decision made (if needed). Phase 1 source edits remain in place; production import deferred until policy is settled.
+
+#### `AuditSelahUsage` diagnostic — APPLIED 2026-05-01
+
+`src/basVerseStructureAudit.bas` — new public Sub `AuditSelahUsage` plus private helper `WriteSelahUsageFile`. Read-only walk of the main story:
+
+- Locates every `Selah` character-style run via `Range.Find` with `.style = oDoc.Styles("Selah")`.
+- For each run reports: paragraph start offset, paragraph style, first-character style, Phase-2 conversion verdict (`CONVERT` / `KEEP-AS-<style>`), Selah position within the paragraph (`START` / `MID` / `END` based on offset), short text excerpt (80 chars).
+- Flags `POLICY DECISION` candidates: any `BodyText` paragraph containing a Selah run that the Phase 2 rule would NOT convert.
+- Summary: total runs / CONVERT count / KEEP-AS-other count / policy-flag count.
+
+Output: Immediate window + `rpt\SelahUsageAudit.txt`. Default `bWriteFile = True` matches the project's audit-Sub convention.
+
+**Status:** `AuditSelahUsage` Sub applied. Awaiting user-side action: re-import `basVerseStructureAudit.bas` into the test `.docm`, run `AuditSelahUsage`, paste summary section. Result decides whether Phase 2 conversion rule needs extension before Phase 1.9 production import.
+
+#### `AuditSelahUsage` — verified 2026-05-01
+
+User ran on test `.docm`. Summary:
+
+```
+Total Selah character runs: 76
+  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): 76
+  KEEP-AS-other (paragraph not caught by Phase 2 rule): 0
+  Policy decision flags (BodyText paragraph not converted): 0
+```
+
+**All 76 Selah runs live inside verse paragraphs.** Zero edge cases. Phase 2 conversion rule needs no adjustment — when the paragraph reassigns from `BodyText` to `VerseText`, the embedded `Selah` character run survives because character styles overlay paragraph styles.
+
+Sample run trace confirms the structural pattern:
+
+```
+Run #76 | ParaStart=3143000 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  Selah at END of paragraph (offset 167 of 173)
+  Excerpt: "...for the salvation of your people, for the salvation of your ano..."
+```
+
+Selah runs typically sit at the END of the verse paragraph (visible in the offset metric — 167 of 173 chars in the example), matching the textual convention.
+
+**Phase 1.9 UNBLOCKED.** Phase 2 design is settled.
+
+#### Phase 1.9 — replicate Phase 1 on production `.docm` (next user action)
+
+Re-import the same source modules (`basFixDocxRoutines.bas`, `basTEST_aeBibleConfig.bas`, `basVerseStructureAudit.bas`) into the production `.docm`'s VBA project, then:
+
+1. `DefineVerseTextStyle` — create the style.
+2. `DumpStyleProperties "VerseText", True` — verify byte-identical to BodyText.
+3. `WordEditingConfig` — promote (45 styles, VerseText at priority 31).
+4. `RUN_TAXONOMY_STYLES` — expect 24 PASS / 4 FAIL across 28 checks.
+5. `AuditSelahUsage` — expect same 76/76/0/0 result (production should mirror the test copy's structure).
+
+Once production is at the post-Phase-1 baseline, we proceed to **Phase 2.1** (backup the production `.docm` before bulk conversion).
+
+**Status:** Phase 1.9 ready to execute on production.
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.
