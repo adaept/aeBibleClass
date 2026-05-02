@@ -462,3 +462,156 @@ Private Sub WriteSelahUsageFile(ByVal sContent As String)
     oStream.Write sContent
     oStream.Close
 End Sub
+
+' ==========================================================================
+' AuditOrphanBodyTextParagraphs
+' ==========================================================================
+' Read-only diagnostic. Walks the main story for BodyText paragraphs in
+' book regions whose first character is NOT "Chapter Verse marker".
+' These are orphan candidates - typically continuation paragraphs of a
+' previous verse, created by a stray paragraph mark mid-verse.
+'
+' Scope:
+'   - Book region = inside any book, AFTER the first Heading 2 (chapter)
+'     of that book, BEFORE the next Heading 1.
+'   - Front matter (before first H1) is excluded.
+'   - Book introductions (between an H1 and the first H2 of that book)
+'     are excluded - legitimate non-verse BodyText lives there.
+'
+' Phase 2 of the VerseText rollout (ConvertBodyTextVersesToVerseText)
+' will leave orphan paragraphs as BodyText because their first character
+' is not "Chapter Verse marker". This audit surfaces them so the user
+' can repair (merge orphan into preceding paragraph by deleting stray
+' paragraph mark) before Phase 2 runs.
+'
+' Per-orphan report:
+'   - Book name (last H1 seen)
+'   - Paragraph start char position (clickable via Word Ctrl+G)
+'   - First character's style name ("Selah", "Verse marker", etc., or
+'     "(empty)" for empty paragraphs)
+'   - Size category: EMPTY / SHORT (<30 chars) / LONG (>=30 chars)
+'   - 80-char excerpt for visual identification
+'
+' Output: rpt\OrphanBodyTextAudit.txt (when bWriteFile = True) plus
+' Immediate window summary.
+'
+' Usage:
+'   AuditOrphanBodyTextParagraphs
+'   AuditOrphanBodyTextParagraphs False        ' Immediate only, no file
+' ==========================================================================
+Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = True)
+    On Error GoTo PROC_ERR
+    Dim t As Double
+    StartTimer "AuditOrphanBodyTextParagraphs", t
+
+    Dim oDoc As Object
+    Set oDoc = ActiveDocument
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+    sOut = "---- AuditOrphanBodyTextParagraphs: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+    sOut = sOut & "Scope: BodyText paragraphs in verse-bearing book regions" & NL
+    sOut = sOut & "       (after first H2 of book, before next H1) whose first" & NL
+    sOut = sOut & "       character style is not 'Chapter Verse marker'." & NL & NL
+
+    Dim oPara As Object
+    Dim seenFirstH2InCurrentBook As Boolean
+    seenFirstH2InCurrentBook = False
+    Dim currentBook As String
+    currentBook = "(front matter)"
+
+    Dim totalCount As Long
+    Dim emptyCount As Long
+    Dim shortCount As Long
+    Dim longCount As Long
+
+    For Each oPara In oDoc.Paragraphs
+        Dim styleName As String
+        styleName = oPara.style.NameLocal
+
+        Select Case styleName
+            Case "Heading 1"
+                currentBook = Trim$(Replace(oPara.Range.Text, vbCr, ""))
+                seenFirstH2InCurrentBook = False     ' reset for new book
+
+            Case "Heading 2"
+                seenFirstH2InCurrentBook = True
+
+            Case "BodyText"
+                If seenFirstH2InCurrentBook Then
+                    ' Inside verse-bearing region - check first-char style
+                    Dim paraText As String
+                    paraText = Replace(oPara.Range.Text, vbCr, "")
+                    Dim firstCharStyle As String
+                    If Len(paraText) = 0 Then
+                        firstCharStyle = "(empty)"
+                    Else
+                        On Error Resume Next
+                        firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+                        If Err.Number <> 0 Then firstCharStyle = "(error)"
+                        Err.Clear
+                        On Error GoTo PROC_ERR
+                    End If
+
+                    If firstCharStyle <> "Chapter Verse marker" Then
+                        ' Orphan candidate
+                        Dim paraLen As Long
+                        paraLen = Len(paraText)
+
+                        Dim sizeLabel As String
+                        If paraLen = 0 Then
+                            sizeLabel = "EMPTY"
+                            emptyCount = emptyCount + 1
+                        ElseIf paraLen < 30 Then
+                            sizeLabel = "SHORT (" & paraLen & " chars)"
+                            shortCount = shortCount + 1
+                        Else
+                            sizeLabel = "LONG (" & paraLen & " chars)"
+                            longCount = longCount + 1
+                        End If
+
+                        Dim excerpt As String
+                        excerpt = Left$(paraText, 80)
+
+                        totalCount = totalCount + 1
+                        sOut = sOut & "Orphan #" & totalCount & " | Book: " & currentBook & _
+                               " | ParaStart=" & oPara.Range.Start & _
+                               " | first-char-style=" & firstCharStyle & _
+                               " | Size: " & sizeLabel & NL
+                        sOut = sOut & "  Excerpt: """ & excerpt & """" & NL & NL
+                    End If
+                End If
+        End Select
+    Next oPara
+
+    sOut = sOut & "---- Summary ----" & NL
+    sOut = sOut & "Total orphan candidates: " & totalCount & NL
+    sOut = sOut & "  EMPTY (0 chars): " & emptyCount & NL
+    sOut = sOut & "  SHORT (<30 chars): " & shortCount & NL
+    sOut = sOut & "  LONG (>=30 chars): " & longCount & NL
+
+    Debug.Print sOut
+    If bWriteFile Then WriteOrphanFile sOut
+
+    EndTimer "AuditOrphanBodyTextParagraphs", t
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure AuditOrphanBodyTextParagraphs of Module basVerseStructureAudit"
+    Resume PROC_EXIT
+End Sub
+
+' --------------------------------------------------------------------------
+' WriteOrphanFile - write the report to rpt\OrphanBodyTextAudit.txt
+' --------------------------------------------------------------------------
+Private Sub WriteOrphanFile(ByVal sContent As String)
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim sPath As String
+    sPath = ActiveDocument.Path & "\rpt\OrphanBodyTextAudit.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
+    oStream.Write sContent
+    oStream.Close
+End Sub

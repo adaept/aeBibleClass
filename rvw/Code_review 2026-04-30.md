@@ -383,6 +383,51 @@ Once production is at the post-Phase-1 baseline, we proceed to **Phase 2.1** (ba
 
 **Status:** Phase 1.9 ready to execute on production.
 
+#### Phase 2.0 — pre-Phase-2 audits (additional preconditions identified 2026-05-01)
+
+User identified four issues during Phase 1.8 visual inspection that need resolution before Phase 2 conversion locks in:
+
+1. **Orphan `BodyText` paragraphs** — verse continuations created by stray paragraph marks mid-verse. These would NOT be converted by Phase 2 (no `Chapter Verse marker` first-char) but semantically belong to the preceding verse. **Document data defect.**
+2. **`EmphasisBlack` character runs** — applied to text inside verse paragraphs.
+3. **`EmphasisRed` character runs** — same pattern.
+4. **`Words of Jesus` character runs** — same pattern.
+
+For #2-4, the analysis is identical to Selah's: character-style runs inside verse paragraphs are preserved by Phase 2's paragraph-style reassignment, since character styles overlay paragraph styles in Word. Provided all instances live inside convertible verse paragraphs, no rule change is needed. Need to *survey* to confirm.
+
+For #1, the orphan paragraphs are structural defects in the document content. Phase 2's rule cannot help — the orphan doesn't begin with `Chapter Verse marker`, so it stays as `BodyText`. Repair must happen at the data layer (manually merge each orphan back into its preceding paragraph).
+
+#### Plan — re-sequenced 2026-05-01 (Step 3 first per user direction)
+
+| Step | Action | Edit target / actor | What |
+|---|---|---|---|
+| 3 | Add `AuditOrphanBodyTextParagraphs` Sub | `src/basVerseStructureAudit.bas` | Discovery diagnostic for orphan continuations |
+| 4 | Run audit on test `.docm` | (user action) | Capture orphan list |
+| 5 | Manually merge orphans | `.docm` content | Delete stray paragraph marks; repeat per book |
+| 6 | Re-run `AuditOrphanBodyTextParagraphs` | (user action) | Confirm 0 orphans |
+| 7 | Generalize `AuditSelahUsage` → `AuditCharStyleUsage(styleName)` | `src/basVerseStructureAudit.bas` | Parameterize the Selah Sub |
+| 8 | Run for all 4 character styles | (user action) | Verify Selah / EmphasisBlack / EmphasisRed / Words of Jesus |
+| 9 | Resume Phase 1.9 (production replication) | (user action) | Same as before — define style + audit row + WordEditingConfig + RUN_TAXONOMY_STYLES |
+| 10 | Phase 2 (backup + bulk conversion) | (later) | Original Phase 2 plan unchanged |
+
+**Reasoning for Step 3 first:** orphan repair changes paragraph structure (deletes paragraph marks, merging two paragraphs into one). Character-style audits run after orphan repair will reflect the cleaned structure — character runs that currently span an orphan boundary may end up entirely inside a single verse paragraph after repair. Doing the orphan audit first avoids re-running the character audits.
+
+#### Step 3 — `AuditOrphanBodyTextParagraphs` APPLIED 2026-05-01
+
+`src/basVerseStructureAudit.bas` — new public Sub `AuditOrphanBodyTextParagraphs` plus private helper `WriteOrphanFile`. Read-only walk of the main story:
+
+- Tracks current book via last `Heading 1` paragraph; tracks `seenFirstH2InCurrentBook` flag (set on first H2 of each book; reset on next H1).
+- For each `BodyText` paragraph **inside the verse-bearing region** (after first H2 of book, before next H1) whose first character is **not** `Chapter Verse marker`, reports it.
+- Per-orphan fields: book name, ParaStart, first-character style name (or `(empty)` for empty paragraphs), size category (EMPTY / SHORT < 30 chars / LONG >= 30 chars), 80-char excerpt.
+- Empty paragraphs are reported separately because they're typically accidental extra Enter keystrokes rather than real content orphans.
+
+**Excluded from audit (legitimate non-verse BodyText):**
+- Front matter (before first H1).
+- Book introductions (between H1 and first H2 of each book).
+
+Output: Immediate window + `rpt\OrphanBodyTextAudit.txt`.
+
+**Status:** Step 3 code applied. Awaiting user-side action: re-import `basVerseStructureAudit.bas`, run `AuditOrphanBodyTextParagraphs` on test `.docm`, paste summary block.
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.

@@ -1,0 +1,995 @@
+---- AuditOrphanBodyTextParagraphs: 2026-05-01 19:44:39 ----
+
+Scope: BodyText paragraphs in verse-bearing book regions
+       (after first H2 of book, before next H1) whose first
+       character style is not 'Chapter Verse marker'.
+
+Orphan #1 | Book: GENESIS | ParaStart=205629 | first-char-style=BodyText | Size: LONG (78 chars)
+  Excerpt: "They said to Pharaoh, “Your servants are shepherds, both we, and our fathers.”"
+
+Orphan #2 | Book: GENESIS | ParaStart=212646 | first-char-style=BodyText | Size: LONG (93 chars)
+  Excerpt: "and the name of my fathers Abraham and Isaac. Let them grow into a multitude upo"
+
+Orphan #3 | Book: GENESIS | ParaStart=221320 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #4 | Book: EXODUS | ParaStart=232349 | first-char-style=BodyText | Size: LONG (106 chars)
+  Excerpt: "He put his hand inside his cloak, and when he took it out, behold, his hand was "
+
+Orphan #5 | Book: EXODUS | ParaStart=286727 | first-char-style=BodyText | Size: LONG (70 chars)
+  Excerpt: "Moses said to them, “Why do you quarrel with me? Why do you test God?”"
+
+Orphan #6 | Book: EXODUS | ParaStart=387334 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #7 | Book: EXODUS | ParaStart=387335 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #8 | Book: LEVITICUS | ParaStart=512114 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #9 | Book: LEVITICUS | ParaStart=512115 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #10 | Book: NUMBERS | ParaStart=554411 | first-char-style=BodyText | Size: LONG (72 chars)
+  Excerpt: "one silver platter, the weight of which was one hundred thirty shekels,"
+
+Orphan #11 | Book: NUMBERS | ParaStart=554484 | first-char-style=BodyText | Size: LONG (145 chars)
+  Excerpt: "one silver bowl of seventy shekels, according to the shekel of the sanctuary, bo"
+
+Orphan #12 | Book: NUMBERS | ParaStart=630778 | first-char-style=EmphasisBlack | Size: LONG (38 chars)
+  Excerpt: "and God’s anger burned against Israel."
+
+Orphan #13 | Book: NUMBERS | ParaStart=683925 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #14 | Book: DEUTERONOMY | ParaStart=828662 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #15 | Book: DEUTERONOMY | ParaStart=828663 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #16 | Book: JOSHUA | ParaStart=927085 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #17 | Book: JOSHUA | ParaStart=927086 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #18 | Book: JUDGES | ParaStart=1023894 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #19 | Book: JUDGES | ParaStart=1023895 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #20 | Book: RUTH | ParaStart=1029689 | first-char-style=BodyText | Size: LONG (108 chars)
+  Excerpt: "She sat beside the reapers, and they passed her parched grain. She ate, was sat"
+
+Orphan #21 | Book: RUTH | ParaStart=1037137 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #22 | Book: RUTH | ParaStart=1037138 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #23 | Book: 1 SAMUEL | ParaStart=1163779 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #24 | Book: 1 SAMUEL | ParaStart=1163780 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #25 | Book: 2 SAMUEL | ParaStart=1268934 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #26 | Book: 1 KINGS | ParaStart=1393386 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #27 | Book: 1 KINGS | ParaStart=1393387 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #28 | Book: 2 KINGS | ParaStart=1512471 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #29 | Book: 2 KINGS | ParaStart=1512472 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #30 | Book: 1 CHRONICLES | ParaStart=1623407 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #31 | Book: 2 CHRONICLES | ParaStart=1720236 | first-char-style=BodyText | Size: LONG (57 chars)
+  Excerpt: "His mother’s name was Abijah, the daughter of Zechariah."
+
+Orphan #32 | Book: 2 CHRONICLES | ParaStart=1760177 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #33 | Book: 2 CHRONICLES | ParaStart=1760178 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #34 | Book: EZRA | ParaStart=1800782 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #35 | Book: EZRA | ParaStart=1800783 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #36 | Book: NEHEMIAH | ParaStart=1858372 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #37 | Book: NEHEMIAH | ParaStart=1858373 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #38 | Book: ESTHER | ParaStart=1888563 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #39 | Book: JOB | ParaStart=1985398 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #40 | Book: JOB | ParaStart=1985399 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #41 | Book: PSALMS | ParaStart=1988498 | first-char-style=BodyText | Size: LONG (70 chars)
+  Excerpt: "Give me relief from my distress. Have mercy on me, and hear my prayer."
+
+Orphan #42 | Book: PSALMS | ParaStart=2000333 | first-char-style=BodyText | Size: LONG (81 chars)
+  Excerpt: "They are corrupt. They have done abominable deeds. There is no one who does good"
+
+Orphan #43 | Book: PSALMS | ParaStart=2021949 | first-char-style=BodyText | Size: LONG (82 chars)
+  Excerpt: "lest, if you are silent to me, I would become like those who go down into the pi"
+
+Orphan #44 | Book: PSALMS | ParaStart=2023987 | first-char-style=BodyText | Size: LONG (45 chars)
+  Excerpt: "and have not made my foes to rejoice over me."
+
+Orphan #45 | Book: PSALMS | ParaStart=2025257 | first-char-style=BodyText | Size: LONG (54 chars)
+  Excerpt: "Be to me a strong rock, a house of defense to save me."
+
+Orphan #46 | Book: PSALMS | ParaStart=2027781 | first-char-style=BodyText | Size: SHORT (21 chars)
+  Excerpt: "whose sin is covered."
+
+Orphan #47 | Book: PSALMS | ParaStart=2064053 | first-char-style=BodyText | Size: LONG (83 chars)
+  Excerpt: "They are corrupt, and have done abominable iniquity. There is no one who does go"
+
+Orphan #48 | Book: PSALMS | ParaStart=2067904 | first-char-style=BodyText | Size: LONG (128 chars)
+  Excerpt: "For the Chief Musician. To the tune of “Silent Dove in Distant Lands.” A poem by"
+
+Orphan #49 | Book: PSALMS | ParaStart=2069170 | first-char-style=BodyText | Size: LONG (110 chars)
+  Excerpt: "For the Chief Musician. To the tune of “Do Not Destroy.” A poem by David, when h"
+
+Orphan #50 | Book: PSALMS | ParaStart=2070483 | first-char-style=BodyText | Size: LONG (73 chars)
+  Excerpt: "For the Chief Musician. To the tune of “Do Not Destroy.” A poem by David."
+
+Orphan #51 | Book: PSALMS | ParaStart=2071700 | first-char-style=BodyText | Size: LONG (129 chars)
+  Excerpt: "For the Chief Musician. To the tune of “Do Not Destroy.” A poem by David, when S"
+
+Orphan #52 | Book: PSALMS | ParaStart=2073610 | first-char-style=BodyText | Size: LONG (224 chars)
+  Excerpt: "For the Chief Musician. To the tune of “The Lily of the Covenant.” A teaching po"
+
+Orphan #53 | Book: PSALMS | ParaStart=2074938 | first-char-style=BodyText | Size: LONG (60 chars)
+  Excerpt: "For the Chief Musician. For a stringed instrument. By David."
+
+Orphan #54 | Book: PSALMS | ParaStart=2075712 | first-char-style=BodyText | Size: LONG (54 chars)
+  Excerpt: "For the Chief Musician. To Jeduthun. A Psalm by David."
+
+Orphan #55 | Book: PSALMS | ParaStart=2076981 | first-char-style=BodyText | Size: LONG (53 chars)
+  Excerpt: "A Psalm by David, when he was in the desert of Judah."
+
+Orphan #56 | Book: PSALMS | ParaStart=2078056 | first-char-style=BodyText | Size: LONG (41 chars)
+  Excerpt: "For the Chief Musician. A Psalm by David."
+
+Orphan #57 | Book: PSALMS | ParaStart=2079051 | first-char-style=BodyText | Size: LONG (49 chars)
+  Excerpt: "For the Chief Musician. A Psalm by David. A song."
+
+Orphan #58 | Book: PSALMS | ParaStart=2080472 | first-char-style=BodyText | Size: LONG (40 chars)
+  Excerpt: "For the Chief Musician. A song. A Psalm."
+
+Orphan #59 | Book: PSALMS | ParaStart=2082238 | first-char-style=BodyText | Size: LONG (67 chars)
+  Excerpt: "For the Chief Musician. With stringed instruments. A Psalm. A song."
+
+Orphan #60 | Book: PSALMS | ParaStart=2082891 | first-char-style=BodyText | Size: LONG (49 chars)
+  Excerpt: "For the Chief Musician. A Psalm by David. A song."
+
+Orphan #61 | Book: PSALMS | ParaStart=2086691 | first-char-style=BodyText | Size: LONG (58 chars)
+  Excerpt: "For the Chief Musician. To the tune of “Lilies.” By David."
+
+Orphan #62 | Book: PSALMS | ParaStart=2090220 | first-char-style=BodyText | Size: LONG (45 chars)
+  Excerpt: "For the Chief Musician. By David. A reminder."
+
+Orphan #63 | Book: PSALMS | ParaStart=2090793 | first-char-style=BodyText | Size: SHORT (29 chars)
+  Excerpt: "Never let me be disappointed."
+
+Orphan #64 | Book: PSALMS | ParaStart=2093087 | first-char-style=BodyText | Size: SHORT (11 chars)
+  Excerpt: "By Solomon."
+
+Orphan #65 | Book: PSALMS | ParaStart=2095058 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by Asaph."
+
+Orphan #66 | Book: PSALMS | ParaStart=2097367 | first-char-style=BodyText | Size: SHORT (25 chars)
+  Excerpt: "A contemplation by Asaph."
+
+Orphan #67 | Book: PSALMS | ParaStart=2099662 | first-char-style=BodyText | Size: LONG (83 chars)
+  Excerpt: "For the Chief Musician. To the tune of “Do Not Destroy.” A Psalm by Asaph. A so"
+
+Orphan #68 | Book: PSALMS | ParaStart=2100668 | first-char-style=BodyText | Size: LONG (74 chars)
+  Excerpt: "For the Chief Musician. On stringed instruments. A Psalm by Asaph. A song."
+
+Orphan #69 | Book: PSALMS | ParaStart=2101780 | first-char-style=BodyText | Size: LONG (55 chars)
+  Excerpt: "For the Chief Musician. To Jeduthun. A Psalm by Asaph."
+
+Orphan #70 | Book: PSALMS | ParaStart=2103599 | first-char-style=BodyText | Size: SHORT (25 chars)
+  Excerpt: "A contemplation by Asaph."
+
+Orphan #71 | Book: PSALMS | ParaStart=2110392 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by Asaph."
+
+Orphan #72 | Book: PSALMS | ParaStart=2111938 | first-char-style=BodyText | Size: LONG (86 chars)
+  Excerpt: "For the Chief Musician. To the tune of “The Lilies of the Covenant.” A Psalm by "
+
+Orphan #73 | Book: PSALMS | ParaStart=2113694 | first-char-style=BodyText | Size: LONG (59 chars)
+  Excerpt: "For the Chief Musician. On an instrument of Gath. By Asaph."
+
+Orphan #74 | Book: PSALMS | ParaStart=2115246 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by Asaph."
+
+Orphan #75 | Book: PSALMS | ParaStart=2115939 | first-char-style=BodyText | Size: SHORT (25 chars)
+  Excerpt: "A song. A Psalm by Asaph."
+
+Orphan #76 | Book: PSALMS | ParaStart=2117439 | first-char-style=BodyText | Size: LONG (79 chars)
+  Excerpt: "For the Chief Musician. On an instrument of Gath. A Psalm by the sons of Korah."
+
+Orphan #77 | Book: PSALMS | ParaStart=2118731 | first-char-style=BodyText | Size: LONG (53 chars)
+  Excerpt: "For the Chief Musician. A Psalm by the sons of Korah."
+
+Orphan #78 | Book: PSALMS | ParaStart=2119901 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Prayer by David."
+
+Orphan #79 | Book: PSALMS | ParaStart=2121510 | first-char-style=BodyText | Size: LONG (37 chars)
+  Excerpt: "A Psalm by the sons of Korah; a Song."
+
+Orphan #80 | Book: PSALMS | ParaStart=2122155 | first-char-style=BodyText | Size: LONG (147 chars)
+  Excerpt: "A Song. A Psalm by the sons of Korah. For the Chief Musician. To the tune of “Th"
+
+Orphan #81 | Book: PSALMS | ParaStart=2123860 | first-char-style=BodyText | Size: LONG (39 chars)
+  Excerpt: "A contemplation by Ethan, the Ezrahite."
+
+Orphan #82 | Book: PSALMS | ParaStart=2128597 | first-char-style=BodyText | Size: LONG (34 chars)
+  Excerpt: "A Prayer by Moses, the man of God."
+
+Orphan #83 | Book: PSALMS | ParaStart=2128732 | first-char-style=BodyText | Size: LONG (97 chars)
+  Excerpt: "before you had formed the earth and the world, even from everlasting to everlast"
+
+Orphan #84 | Book: PSALMS | ParaStart=2131761 | first-char-style=BodyText | Size: LONG (36 chars)
+  Excerpt: "A Psalm. A song for the Sabbath day."
+
+Orphan #85 | Book: PSALMS | ParaStart=2138658 | first-char-style=BodyText | Size: SHORT (8 chars)
+  Excerpt: "A Psalm."
+
+Orphan #86 | Book: PSALMS | ParaStart=2140460 | first-char-style=BodyText | Size: SHORT (24 chars)
+  Excerpt: "A Psalm of thanksgiving."
+
+Orphan #87 | Book: PSALMS | ParaStart=2140944 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by David."
+
+Orphan #88 | Book: PSALMS | ParaStart=2141865 | first-char-style=BodyText | Size: LONG (89 chars)
+  Excerpt: "A Prayer of the afflicted, when he is overwhelmed and pours out his complaint be"
+
+Orphan #89 | Book: PSALMS | ParaStart=2144373 | first-char-style=BodyText | Size: SHORT (9 chars)
+  Excerpt: "By David."
+
+Orphan #90 | Book: PSALMS | ParaStart=2146454 | first-char-style=BodyText | Size: LONG (44 chars)
+  Excerpt: "He stretches out the heavens like a curtain."
+
+Orphan #91 | Book: PSALMS | ParaStart=2156988 | first-char-style=BodyText | Size: LONG (38 chars)
+  Excerpt: "by all those who carried them captive."
+
+Orphan #92 | Book: PSALMS | ParaStart=2161048 | first-char-style=BodyText | Size: SHORT (25 chars)
+  Excerpt: "A Song. A Psalm by David."
+
+Orphan #93 | Book: PSALMS | ParaStart=2162175 | first-char-style=BodyText | Size: LONG (41 chars)
+  Excerpt: "For the Chief Musician. A Psalm by David."
+
+Orphan #94 | Book: PSALMS | ParaStart=2165034 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by David."
+
+Orphan #95 | Book: PSALMS | ParaStart=2173133 | first-char-style=BodyText | Size: LONG (38 chars)
+  Excerpt: "“The right hand of God does valiantly."
+
+Orphan #96 | Book: PSALMS | ParaStart=2174857 | first-char-style=BodyText | Size: SHORT (26 chars)
+  Excerpt: "Do not utterly forsake me."
+
+Orphan #97 | Book: PSALMS | ParaStart=2176692 | first-char-style=BodyText | Size: SHORT (3 chars)
+  Excerpt: "HEY"
+
+Orphan #98 | Book: PSALMS | ParaStart=2177956 | first-char-style=BodyText | Size: SHORT (5 chars)
+  Excerpt: "ZAYIN"
+
+Orphan #99 | Book: PSALMS | ParaStart=2188189 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #100 | Book: PSALMS | ParaStart=2188691 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #101 | Book: PSALMS | ParaStart=2189277 | first-char-style=BodyText | Size: SHORT (28 chars)
+  Excerpt: "A Song of Ascents. By David."
+
+Orphan #102 | Book: PSALMS | ParaStart=2189998 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #103 | Book: PSALMS | ParaStart=2190462 | first-char-style=BodyText | Size: SHORT (28 chars)
+  Excerpt: "A Song of Ascents. By David."
+
+Orphan #104 | Book: PSALMS | ParaStart=2191121 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #105 | Book: PSALMS | ParaStart=2191718 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #106 | Book: PSALMS | ParaStart=2192264 | first-char-style=BodyText | Size: LONG (30 chars)
+  Excerpt: "A Song of Ascents. By Solomon."
+
+Orphan #107 | Book: PSALMS | ParaStart=2192850 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #108 | Book: PSALMS | ParaStart=2193399 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #109 | Book: PSALMS | ParaStart=2194077 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #110 | Book: PSALMS | ParaStart=2194679 | first-char-style=BodyText | Size: SHORT (28 chars)
+  Excerpt: "A Song of Ascents. By David."
+
+Orphan #111 | Book: PSALMS | ParaStart=2194763 | first-char-style=BodyText | Size: LONG (75 chars)
+  Excerpt: "nor do I concern myself with great matters, or things too wonderful for me."
+
+Orphan #112 | Book: PSALMS | ParaStart=2195043 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #113 | Book: PSALMS | ParaStart=2196571 | first-char-style=BodyText | Size: SHORT (28 chars)
+  Excerpt: "A Song of Ascents. By David."
+
+Orphan #114 | Book: PSALMS | ParaStart=2196953 | first-char-style=BodyText | Size: SHORT (18 chars)
+  Excerpt: "A Song of Ascents."
+
+Orphan #115 | Book: PSALMS | ParaStart=2201937 | first-char-style=BodyText | Size: SHORT (9 chars)
+  Excerpt: "By David."
+
+Orphan #116 | Book: PSALMS | ParaStart=2202880 | first-char-style=BodyText | Size: LONG (41 chars)
+  Excerpt: "For the Chief Musician. A Psalm by David."
+
+Orphan #117 | Book: PSALMS | ParaStart=2203019 | first-char-style=BodyText | Size: LONG (35 chars)
+  Excerpt: "You perceive my thoughts from afar."
+
+Orphan #118 | Book: PSALMS | ParaStart=2205029 | first-char-style=BodyText | Size: LONG (41 chars)
+  Excerpt: "For the Chief Musician. A Psalm by David."
+
+Orphan #119 | Book: PSALMS | ParaStart=2206409 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by David."
+
+Orphan #120 | Book: PSALMS | ParaStart=2207498 | first-char-style=BodyText | Size: LONG (60 chars)
+  Excerpt: "A contemplation by David, when he was in the cave. A Prayer."
+
+Orphan #121 | Book: PSALMS | ParaStart=2208298 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "A Psalm by David."
+
+Orphan #122 | Book: PSALMS | ParaStart=2209631 | first-char-style=BodyText | Size: SHORT (9 chars)
+  Excerpt: "By David."
+
+Orphan #123 | Book: PSALMS | ParaStart=2211171 | first-char-style=BodyText | Size: SHORT (24 chars)
+  Excerpt: "A praise psalm by David."
+
+Orphan #124 | Book: PSALMS | ParaStart=2217928 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #125 | Book: PSALMS | ParaStart=2217929 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #126 | Book: PROVERBS | ParaStart=2226421 | first-char-style=BodyText | Size: LONG (73 chars)
+  Excerpt: "Get wisdom. Yes, though it costs all your possessions, get understanding."
+
+Orphan #127 | Book: PROVERBS | ParaStart=2231323 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "."
+
+Orphan #128 | Book: PROVERBS | ParaStart=2299347 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #129 | Book: PROVERBS | ParaStart=2299348 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #130 | Book: ECCLESIASTES | ParaStart=2326858 | first-char-style=BodyText | Size: LONG (96 chars)
+  Excerpt: "and the grinders cease because they are few, and those who look out of the windo"
+
+Orphan #131 | Book: ECCLESIASTES | ParaStart=2328465 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #132 | Book: SONG OF SONGS | ParaStart=2329173 | first-char-style=BodyText | Size: LONG (76 chars)
+  Excerpt: "We will be glad and rejoice in you. We will praise your love more than wine!"
+
+Orphan #133 | Book: SONG OF SONGS | ParaStart=2329258 | first-char-style=BodyText | Size: SHORT (27 chars)
+  Excerpt: "They are right to love you."
+
+Orphan #134 | Book: SONG OF SONGS | ParaStart=2329340 | first-char-style=BodyText | Size: LONG (44 chars)
+  Excerpt: "like Kedar’s tents, like Solomon’s curtains."
+
+Orphan #135 | Book: SONG OF SONGS | ParaStart=2330300 | first-char-style=BodyText | Size: LONG (30 chars)
+  Excerpt: "from the vineyards of En Gedi."
+
+Orphan #136 | Book: SONG OF SONGS | ParaStart=2331019 | first-char-style=BodyText | Size: SHORT (25 chars)
+  Excerpt: "for I am faint with love."
+
+Orphan #137 | Book: SONG OF SONGS | ParaStart=2335960 | first-char-style=BodyText | Size: LONG (115 chars)
+  Excerpt: "I have gathered my myrrh with my spice; I have eaten my honeycomb with my honey;"
+
+Orphan #138 | Book: SONG OF SONGS | ParaStart=2336084 | first-char-style=BodyText | Size: LONG (52 chars)
+  Excerpt: "Eat, friends! Drink, yes, drink abundantly, beloved."
+
+Orphan #139 | Book: SONG OF SONGS | ParaStart=2339497 | first-char-style=BodyText | Size: LONG (73 chars)
+  Excerpt: "Why do you desire to gaze at the Shulammite, as at the dance of Mahanaim?"
+
+Orphan #140 | Book: SONG OF SONGS | ParaStart=2341659 | first-char-style=BodyText | Size: LONG (107 chars)
+  Excerpt: "Under the apple tree I awakened you. There your mother conceived you. There she"
+
+Orphan #141 | Book: SONG OF SONGS | ParaStart=2342891 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #142 | Book: SONG OF SONGS | ParaStart=2342892 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #143 | Book: ISAIAH | ParaStart=2348339 | first-char-style=BodyText | Size: LONG (85 chars)
+  Excerpt: "Nation shall not lift up sword against nation, neither shall they learn war any "
+
+Orphan #144 | Book: ISAIAH | ParaStart=2435756 | first-char-style=BodyText | Size: LONG (35 chars)
+  Excerpt: "Where is he who counted the towers?"
+
+Orphan #145 | Book: ISAIAH | ParaStart=2472402 | first-char-style=BodyText | Size: LONG (49 chars)
+  Excerpt: "he makes it a carved image, and falls down to it."
+
+Orphan #146 | Book: ISAIAH | ParaStart=2499030 | first-char-style=BodyText | Size: LONG (117 chars)
+  Excerpt: "He was crushed for our iniquities. The punishment that brought our peace was on "
+
+Orphan #147 | Book: ISAIAH | ParaStart=2500764 | first-char-style=BodyText | Size: LONG (62 chars)
+  Excerpt: "do not spare: lengthen your cords, and strengthen your stakes."
+
+Orphan #148 | Book: ISAIAH | ParaStart=2535780 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #149 | Book: ISAIAH | ParaStart=2535781 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #150 | Book: JEREMIAH | ParaStart=2624669 | first-char-style=BodyText | Size: LONG (60 chars)
+  Excerpt: "says God; “and like a hammer that breaks the rock in pieces?"
+
+Orphan #151 | Book: JEREMIAH | ParaStart=2690367 | first-char-style=BodyText | Size: SHORT (16 chars)
+  Excerpt: "Jeremiah did so."
+
+Orphan #152 | Book: JEREMIAH | ParaStart=2720315 | first-char-style=BodyText | Size: LONG (199 chars)
+  Excerpt: "Do not be dismayed, Israel; for, behold, I will save you from afar, and your off"
+
+Orphan #153 | Book: JEREMIAH | ParaStart=2741732 | first-char-style=BodyText | Size: LONG (140 chars)
+  Excerpt: "Whoever is chosen, I will appoint him over it; for who is like me? Who will appo"
+
+Orphan #154 | Book: JEREMIAH | ParaStart=2748771 | first-char-style=BodyText | Size: LONG (144 chars)
+  Excerpt: "and I will bring out of his mouth that which he has swallowed up. The nations wi"
+
+Orphan #155 | Book: JEREMIAH | ParaStart=2757675 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #156 | Book: LAMENTATIONS | ParaStart=2776502 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #157 | Book: LAMENTATIONS | ParaStart=2776503 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #158 | Book: EZEKIEL | ParaStart=2804424 | first-char-style=BodyText | Size: SHORT (24 chars)
+  Excerpt: "He went in as I watched."
+
+Orphan #159 | Book: EZEKIEL | ParaStart=2840338 | first-char-style=BodyText | Size: LONG (101 chars)
+  Excerpt: "The righteousness of the righteous shall be on him, and the wickedness of the wi"
+
+Orphan #160 | Book: EZEKIEL | ParaStart=2856155 | first-char-style=BodyText | Size: LONG (107 chars)
+  Excerpt: "and take off the crown. This will not be as it was. Exalt that which is low, and"
+
+Orphan #161 | Book: EZEKIEL | ParaStart=2878010 | first-char-style=BodyText | Size: LONG (129 chars)
+  Excerpt: "They will clothe themselves with trembling. They will sit on the ground, and wil"
+
+Orphan #162 | Book: EZEKIEL | ParaStart=2886200 | first-char-style=EmphasisBlack | Size: LONG (135 chars)
+  Excerpt: "Therefore I drove you in disgrace out of God’s mountain, and I expelled you, O g"
+
+Orphan #163 | Book: EZEKIEL | ParaStart=2889464 | first-char-style=BodyText | Size: LONG (65 chars)
+  Excerpt: "“‘“Because he has said, ‘The river is mine, and I have made it;’"
+
+Orphan #164 | Book: EZEKIEL | ParaStart=2979352 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #165 | Book: DANIEL | ParaStart=3016136 | first-char-style=BodyText | Size: LONG (78 chars)
+  Excerpt: "and he came even to the Ancient of Days, and they brought him near before him."
+
+Orphan #166 | Book: DANIEL | ParaStart=3041857 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #167 | Book: DANIEL | ParaStart=3041858 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #168 | Book: HOSEA | ParaStart=3065015 | first-char-style=BodyText | Size: LONG (90 chars)
+  Excerpt: "he wept, and made supplication to him. He found him at Bethel, and there he spok"
+
+Orphan #169 | Book: HOSEA | ParaStart=3069692 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #170 | Book: HOSEA | ParaStart=3069693 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #171 | Book: JOEL | ParaStart=3080536 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #172 | Book: JOEL | ParaStart=3080537 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #173 | Book: AMOS | ParaStart=3085357 | first-char-style=Verse marker | Size: LONG (89 chars)
+  Excerpt: "16 and he who is courageous among the mighty will flee away naked on that day,” "
+
+Orphan #174 | Book: AMOS | ParaStart=3102305 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #175 | Book: AMOS | ParaStart=3102306 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #176 | Book: OBADIAH | ParaStart=3106002 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #177 | Book: OBADIAH | ParaStart=3106003 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #178 | Book: JONAH | ParaStart=3108988 | first-char-style=BodyText | Size: SHORT (19 chars)
+  Excerpt: "You heard my voice."
+
+Orphan #179 | Book: JONAH | ParaStart=3112882 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #180 | Book: MICAH | ParaStart=3129282 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #181 | Book: MICAH | ParaStart=3129283 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #182 | Book: NAHUM | ParaStart=3136205 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #183 | Book: NAHUM | ParaStart=3136206 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #184 | Book: HABAKKUK | ParaStart=3144062 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #185 | Book: HABAKKUK | ParaStart=3144063 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #186 | Book: ZEPHANIAH | ParaStart=3152913 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #187 | Book: ZEPHANIAH | ParaStart=3152914 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #188 | Book: HAGGAI | ParaStart=3158862 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #189 | Book: HAGGAI | ParaStart=3158863 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #190 | Book: ZECHARIAH | ParaStart=3191612 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #191 | Book: MALACHI | ParaStart=3201284 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #192 | Book: MALACHI | ParaStart=3201285 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #193 | Book: MALACHI | ParaStart=3201286 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #194 | Book: MALACHI | ParaStart=3201288 | first-char-style=BodyText | Size: SHORT (3 chars)
+  Excerpt: "The"
+
+Orphan #195 | Book: MALACHI | ParaStart=3201292 | first-char-style=BodyText | Size: SHORT (13 chars)
+  Excerpt: "New Testament"
+
+Orphan #196 | Book: MALACHI | ParaStart=3201306 | first-char-style=BodyText | Size: SHORT (26 chars)
+  Excerpt: "The Gospel of Jesus Christ"
+
+Orphan #197 | Book: MALACHI | ParaStart=3201333 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #198 | Book: MALACHI | ParaStart=3201334 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #199 | Book: MATTHEW | ParaStart=3208694 | first-char-style=BodyText | Size: LONG (101 chars)
+  Excerpt: "“The voice of one crying in the wilderness, make the way of the Lord ready! Make"
+
+Orphan #200 | Book: MATTHEW | ParaStart=3209513 | first-char-style=BodyText | Size: LONG (91 chars)
+  Excerpt: "Therefore every tree that does not produce good fruit is cut down, and cast into"
+
+Orphan #201 | Book: MATTHEW | ParaStart=3231020 | first-char-style=BodyText | Size: LONG (86 chars)
+  Excerpt: "(then he said to the paralytic), “Get up, and take up your mat, and go to your h"
+
+Orphan #202 | Book: MATTHEW | ParaStart=3242165 | first-char-style=Words of Jesus | Size: LONG (176 chars)
+  Excerpt: "You, Capernaum, who are exalted to heaven, you will go down to Hades. For if the"
+
+Orphan #203 | Book: MATTHEW | ParaStart=3266521 | first-char-style=BodyText | Size: LONG (95 chars)
+  Excerpt: " and on this rock I will build my assembly, and the gates of Hades will not prev"
+
+Orphan #204 | Book: MATTHEW | ParaStart=3284325 | first-char-style=BodyText | Size: SHORT (7 chars)
+  Excerpt: "saying,"
+
+Orphan #205 | Book: MATTHEW | ParaStart=3287026 | first-char-style=BodyText | Size: LONG (117 chars)
+  Excerpt: "They reasoned with themselves, saying, “If we say, ‘From heaven,’ he will ask us"
+
+Orphan #206 | Book: MATTHEW | ParaStart=3293158 | first-char-style=Words of Jesus | Size: LONG (51 chars)
+  Excerpt: "God is not the God of the dead, but of the living.”"
+
+Orphan #207 | Book: MATTHEW | ParaStart=3308264 | first-char-style=Words of Jesus | Size: LONG (93 chars)
+  Excerpt: "and he will separate them one from another, as a shepherd separates the sheep fr"
+
+Orphan #208 | Book: MATTHEW | ParaStart=3312399 | first-char-style=Words of Jesus | Size: LONG (119 chars)
+  Excerpt: "but woe to that man through whom the Son of Man is betrayed! It would be better "
+
+Orphan #209 | Book: MATTHEW | ParaStart=3317513 | first-char-style=BodyText | Size: LONG (76 chars)
+  Excerpt: "Why do we need any more witnesses? Behold, now you have heard his blasphemy."
+
+Orphan #210 | Book: MATTHEW | ParaStart=3328231 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #211 | Book: MATTHEW | ParaStart=3328232 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #212 | Book: MARK | ParaStart=3334965 | first-char-style=BodyText | Size: SHORT (26 chars)
+  Excerpt: "—he said to the paralytic—"
+
+Orphan #213 | Book: MARK | ParaStart=3343576 | first-char-style=Verse marker | Size: LONG (46 chars)
+  Excerpt: "23 If any man has ears to hear, let him hear.”"
+
+Orphan #214 | Book: MARK | ParaStart=3359421 | first-char-style=Words of Jesus | Size: LONG (121 chars)
+  Excerpt: "“Are you also without understanding? Do you not perceive that whatever goes into"
+
+Orphan #215 | Book: MARK | ParaStart=3378449 | first-char-style=Words of Jesus | Size: LONG (171 chars)
+  Excerpt: "“Go your way into the village that is opposite you. Immediately as you enter int"
+
+Orphan #216 | Book: MARK | ParaStart=3396159 | first-char-style=Words of Jesus | Size: LONG (73 chars)
+  Excerpt: "“My soul is exceedingly sorrowful, even to death. Stay here, and watch.”"
+
+Orphan #217 | Book: MARK | ParaStart=3407935 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #218 | Book: LUKE | ParaStart=3410468 | first-char-style=BodyText | Size: LONG (147 chars)
+  Excerpt: "‘to turn the hearts of the fathers to the children,’ and the disobedient to the "
+
+Orphan #219 | Book: LUKE | ParaStart=3435459 | first-char-style=BodyText | Size: LONG (92 chars)
+  Excerpt: "(he said to the paralyzed man), “I tell you, arise, take up your cot, and go to "
+
+Orphan #220 | Book: LUKE | ParaStart=3458629 | first-char-style=BodyText | Size: LONG (77 chars)
+  Excerpt: "He said to his disciples, “Make them sit down in groups of about fifty each.”"
+
+Orphan #221 | Book: LUKE | ParaStart=3462078 | first-char-style=BodyText | Size: LONG (89 chars)
+  Excerpt: "But while all were marveling at all the things which Jesus did, he said to his d"
+
+Orphan #222 | Book: LUKE | ParaStart=3463669 | first-char-style=BodyText | Size: SHORT (29 chars)
+  Excerpt: "They went to another village."
+
+Orphan #223 | Book: LUKE | ParaStart=3464102 | first-char-style=Words of Jesus | Size: LONG (39 chars)
+  Excerpt: "but you go and announce God’s Kingdom.”"
+
+Orphan #224 | Book: LUKE | ParaStart=3477363 | first-char-style=Words of Jesus | Size: LONG (69 chars)
+  Excerpt: "Therefore do not be afraid. You are of more value than many sparrows."
+
+Orphan #225 | Book: LUKE | ParaStart=3534640 | first-char-style=BodyText | Size: LONG (49 chars)
+  Excerpt: "Dividing his garments among them, they cast lots."
+
+Orphan #226 | Book: LUKE | ParaStart=3542457 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #227 | Book: JOHN | ParaStart=3544919 | first-char-style=BodyText | Size: LONG (41 chars)
+  Excerpt: "“Are you the prophet?” He answered, “No.”"
+
+Orphan #228 | Book: JOHN | ParaStart=3593428 | first-char-style=Words of Jesus | Size: LONG (43 chars)
+  Excerpt: "and no one will snatch them out of my hand."
+
+Orphan #229 | Book: JOHN | ParaStart=3605532 | first-char-style=BodyText | Size: LONG (99 chars)
+  Excerpt: "which he spoke, “Lord, who has believed our report? To whom has the arm of the L"
+
+Orphan #230 | Book: JOHN | ParaStart=3612409 | first-char-style=Words of Jesus | Size: LONG (98 chars)
+  Excerpt: "The words that I tell you, I speak not from myself; but the Father who lives in "
+
+Orphan #231 | Book: JOHN | ParaStart=3613013 | first-char-style=Words of Jesus | Size: LONG (72 chars)
+  Excerpt: "and he will give you another Counselor, that he may be with you forever:"
+
+Orphan #232 | Book: JOHN | ParaStart=3617848 | first-char-style=Words of Jesus | Size: LONG (32 chars)
+  Excerpt: "‘They hated me without a cause.’"
+
+Orphan #233 | Book: JOHN | ParaStart=3629962 | first-char-style=EmphasisRed | Size: LONG (38 chars)
+  Excerpt: "But now my Kingdom is not from here.”"
+
+Orphan #234 | Book: JOHN | ParaStart=3644052 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #235 | Book: ACTS | ParaStart=3656786 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "’"
+
+Orphan #236 | Book: ACTS | ParaStart=3669231 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "’"
+
+Orphan #237 | Book: ACTS | ParaStart=3674174 | first-char-style=BodyText | Size: LONG (100 chars)
+  Excerpt: "‘Did you offer to me slain animals and sacrifices forty years in the wilderness,"
+
+Orphan #238 | Book: ACTS | ParaStart=3677711 | first-char-style=BodyText | Size: LONG (69 chars)
+  Excerpt: "and the name of Jesus Christ, they were baptized, both men and women."
+
+Orphan #239 | Book: ACTS | ParaStart=3712298 | first-char-style=BodyText | Size: SHORT (29 chars)
+  Excerpt: "chief men among the brothers."
+
+Orphan #240 | Book: ACTS | ParaStart=3739492 | first-char-style=BodyText | Size: LONG (98 chars)
+  Excerpt: "We entered into the house of Philip the evangelist, who was one of the seven, an"
+
+Orphan #241 | Book: ACTS | ParaStart=3749643 | first-char-style=BodyText | Size: LONG (110 chars)
+  Excerpt: "and said, “Cheer up, Paul, for as you have testified about me at Jerusalem, so y"
+
+Orphan #242 | Book: ACTS | ParaStart=3774684 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #243 | Book: ACTS | ParaStart=3774685 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #244 | Book: ROMANS | ParaStart=3796579 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "."
+
+Orphan #245 | Book: ROMANS | ParaStart=3827442 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #246 | Book: ROMANS | ParaStart=3827443 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #247 | Book: 1 CORINTHIANS | ParaStart=3875772 | first-char-style=BodyText | Size: SHORT (23 chars)
+  Excerpt: "and we will be changed."
+
+Orphan #248 | Book: 1 CORINTHIANS | ParaStart=3878785 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #249 | Book: 1 CORINTHIANS | ParaStart=3878786 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #250 | Book: 2 CORINTHIANS | ParaStart=3880406 | first-char-style=BodyText | Size: LONG (70 chars)
+  Excerpt: "that we should not trust in ourselves, but in God who raises the dead,"
+
+Orphan #251 | Book: 2 CORINTHIANS | ParaStart=3886968 | first-char-style=BodyText | Size: LONG (147 chars)
+  Excerpt: "has blinded the minds of the unbelieving, that the light of the Good News of the"
+
+Orphan #252 | Book: 2 CORINTHIANS | ParaStart=3912384 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #253 | Book: GALATIANS | ParaStart=3929811 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #254 | Book: GALATIANS | ParaStart=3929812 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #255 | Book: EPHESIANS | ParaStart=3947673 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #256 | Book: EPHESIANS | ParaStart=3947674 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #257 | Book: PHILIPPIANS | ParaStart=3960184 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #258 | Book: PHILIPPIANS | ParaStart=3960185 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #259 | Book: COLOSSIANS | ParaStart=3971903 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #260 | Book: 1 THESSALONIANS | ParaStart=3982506 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #261 | Book: 1 THESSALONIANS | ParaStart=3982507 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #262 | Book: 2 THESSALONIANS | ParaStart=3988732 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #263 | Book: 1 TIMOTHY | ParaStart=4002580 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #264 | Book: 1 TIMOTHY | ParaStart=4002581 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #265 | Book: 2 TIMOTHY | ParaStart=4012322 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #266 | Book: 2 TIMOTHY | ParaStart=4012323 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #267 | Book: TITUS | ParaStart=4018320 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #268 | Book: TITUS | ParaStart=4018321 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #269 | Book: PHILEMON | ParaStart=4021098 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #270 | Book: PHILEMON | ParaStart=4021099 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #271 | Book: HEBREWS | ParaStart=4025963 | first-char-style=BodyText | Size: LONG (35 chars)
+  Excerpt: "as also Moses was in all his house."
+
+Orphan #272 | Book: HEBREWS | ParaStart=4060377 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #273 | Book: HEBREWS | ParaStart=4060378 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #274 | Book: JAMES | ParaStart=4073567 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #275 | Book: JAMES | ParaStart=4073568 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #276 | Book: 1 PETER | ParaStart=4074509 | first-char-style=BodyText | Size: LONG (132 chars)
+  Excerpt: "who according to his great mercy caused us to be born again to a living hope thr"
+
+Orphan #277 | Book: 1 PETER | ParaStart=4087798 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #278 | Book: 1 PETER | ParaStart=4087799 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #279 | Book: 2 PETER | ParaStart=4097190 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #280 | Book: 2 PETER | ParaStart=4097191 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #281 | Book: 1 JOHN | ParaStart=4107085 | first-char-style=EmphasisBlack | Size: LONG (81 chars)
+  Excerpt: "If we love one another, God remains in us, and his love has been perfected in us"
+
+Orphan #282 | Book: 1 JOHN | ParaStart=4110730 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #283 | Book: 2 JOHN | ParaStart=4112910 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #284 | Book: 2 JOHN | ParaStart=4112911 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #285 | Book: 3 JOHN | ParaStart=4115013 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #286 | Book: 3 JOHN | ParaStart=4115014 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #287 | Book: JUDE | ParaStart=4119420 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #288 | Book: JUDE | ParaStart=4119421 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #289 | Book: REVELATION | ParaStart=4172775 | first-char-style=BodyText | Size: LONG (122 chars)
+  Excerpt: "and did not receive the mark on their forehead and on their hand. They lived and"
+
+Orphan #290 | Book: REVELATION | ParaStart=4181187 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #291 | Book: REVELATION | ParaStart=4181188 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #292 | Book: REVELATION | ParaStart=4181189 | first-char-style=BodyText | Size: SHORT (17 chars)
+  Excerpt: "Bible Concordance"
+
+Orphan #293 | Book: REVELATION | ParaStart=4181207 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #294 | Book: REVELATION | ParaStart=4181208 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #295 | Book: REVELATION | ParaStart=4184765 | first-char-style=BodyText | Size: SHORT (10 chars)
+  Excerpt: "Bible Maps"
+
+Orphan #296 | Book: REVELATION | ParaStart=4184776 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #297 | Book: REVELATION | ParaStart=4184777 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #298 | Book: REVELATION | ParaStart=4184778 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #299 | Book: REVELATION | ParaStart=4184780 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #300 | Book: REVELATION | ParaStart=4184782 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #301 | Book: REVELATION | ParaStart=4184784 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #302 | Book: REVELATION | ParaStart=4184786 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #303 | Book: REVELATION | ParaStart=4184788 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #304 | Book: REVELATION | ParaStart=4184790 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #305 | Book: REVELATION | ParaStart=4184792 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #306 | Book: REVELATION | ParaStart=4184794 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #307 | Book: REVELATION | ParaStart=4184796 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #308 | Book: REVELATION | ParaStart=4184798 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #309 | Book: REVELATION | ParaStart=4184800 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #310 | Book: REVELATION | ParaStart=4184802 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #311 | Book: REVELATION | ParaStart=4184804 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #312 | Book: REVELATION | ParaStart=4184806 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #313 | Book: REVELATION | ParaStart=4184807 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #314 | Book: REVELATION | ParaStart=4184808 | first-char-style=BodyText | Size: SHORT (15 chars)
+  Excerpt: "Introducing the"
+
+Orphan #315 | Book: REVELATION | ParaStart=4184824 | first-char-style=BodyText | Size: SHORT (16 chars)
+  Excerpt: "Divine Principle"
+
+Orphan #316 | Book: REVELATION | ParaStart=4184841 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #317 | Book: REVELATION | ParaStart=4184842 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #318 | Book: REVELATION | ParaStart=4184845 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "T"
+
+Orphan #319 | Book: REVELATION | ParaStart=4193682 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #320 | Book: REVELATION | ParaStart=4230120 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+Orphan #321 | Book: REVELATION | ParaStart=4230600 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+Orphan #322 | Book: REVELATION | ParaStart=4231057 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+Orphan #323 | Book: REVELATION | ParaStart=4231615 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+Orphan #324 | Book: REVELATION | ParaStart=4231944 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+Orphan #325 | Book: REVELATION | ParaStart=4232323 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+Orphan #326 | Book: REVELATION | ParaStart=4236257 | first-char-style=(empty) | Size: EMPTY
+  Excerpt: ""
+
+Orphan #327 | Book: REVELATION | ParaStart=4236258 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: ""
+
+Orphan #328 | Book: REVELATION | ParaStart=4236259 | first-char-style=BodyText | Size: SHORT (1 chars)
+  Excerpt: "	"
+
+---- Summary ----
+Total orphan candidates: 328
+  EMPTY (0 chars): 80
+  SHORT (<30 chars): 130
+  LONG (>=30 chars): 118
