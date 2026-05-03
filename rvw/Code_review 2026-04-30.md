@@ -428,6 +428,49 @@ Output: Immediate window + `rpt\OrphanBodyTextAudit.txt`.
 
 **Status:** Step 3 code applied. Awaiting user-side action: re-import `basVerseStructureAudit.bas`, run `AuditOrphanBodyTextParagraphs` on test `.docm`, paste summary block.
 
+#### Step 3 — initial run too greedy (2026-05-01)
+
+User ran on test `.docm`. Result: **328 orphan candidates** (80 EMPTY + 130 SHORT + 118 LONG). Inspection of the trailing entries showed mostly false positives — book-end content (e.g., "Introducing the Divine Principle" appearing in REVELATION region after the last verse) and whitespace-only paragraphs.
+
+**Root cause:** the v1 rule "BodyText after first H2 of book without CVM first-char" was too greedy. It correctly excluded *book intros* (before first H2) but did not exclude:
+
+1. **Chapter intros** — BodyText paragraphs between an H2 (chapter heading) and the first actual verse paragraph of that chapter.
+2. **Chapter-end content** — BodyText paragraphs after the last verse of a chapter but before the next H2 (or H1, or end of document).
+
+User's structural insight: "Each page with Heading 1 has text that is not VerseText and is rightfully BodyText. It is always the next page that starts verse 1." That implied the gap between H1/H2 and the first verse paragraph can contain legitimate non-verse BodyText.
+
+#### Step 3 — refined algorithm (APPLIED 2026-05-02)
+
+Refined detection rule: **a BodyText paragraph is an orphan only if it sits BETWEEN two verse paragraphs in the same chapter.**
+
+Single-pass algorithm with a 1000-element buffer:
+
+| Event | Action |
+|---|---|
+| H1 | Discard pending buffer (post-last-verse of previous book); reset state; `seenFirstVerseInCurrentChapter = False` |
+| H2 | Discard pending buffer (post-last-verse of previous chapter); `seenFirstVerseInCurrentChapter = False` |
+| BodyText with CVM (verse) | If `seenFirstVerseInCurrentChapter`, **flush buffer as confirmed orphans**; set `seenFirstVerseInCurrentChapter = True`; clear buffer |
+| BodyText without CVM, after first verse of chapter | Add to buffer (suspended judgement) |
+| BodyText without CVM, before first verse of chapter | Increment `chapterIntroCount` (excluded) |
+| End of document | Discard remaining buffer (post-last-verse-of-last-book) |
+
+Side counters in the summary report show:
+- `Chapter intros (before first verse of chapter)`: count of paragraphs excluded as legitimate non-verse content between H2 and first verse.
+- `Chapter-end content (after last verse, before next H2/H1)`: count of paragraphs excluded as legitimate non-verse content trailing the last verse of a chapter.
+
+This gives noise-vs-signal visibility: out of all non-CVM BodyText paragraphs in book regions, the report shows how many are excluded vs flagged.
+
+**Implementation notes:**
+
+- Buffer cap is 1000 paragraphs between two verses — a sane upper bound. Overflow is silently dropped (vanishingly unlikely scenario).
+- Buffer columns: `(ParaStart, firstCharStyle, sizeCat, paraLen, excerpt)` — five strings per row.
+- On flush, sizeCat (`EMPTY`/`SHORT`/`LONG`) is mapped to the appropriate counter and rendered as a label like `SHORT (15 chars)`.
+
+**Status:** Step 3 refined Sub applied 2026-05-02. Awaiting user-side action: re-import `basVerseStructureAudit.bas`, re-run `AuditOrphanBodyTextParagraphs` on test `.docm`, paste new summary block. Decision tree:
+- **0 orphans** → proceed to Step 7 (parameterize char-style audit).
+- **Small count (<50)** → manually repair, re-audit, then Step 7.
+- **Still hundreds** → structural investigation needed.
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.

@@ -466,31 +466,43 @@ End Sub
 ' ==========================================================================
 ' AuditOrphanBodyTextParagraphs
 ' ==========================================================================
-' Read-only diagnostic. Walks the main story for BodyText paragraphs in
-' book regions whose first character is NOT "Chapter Verse marker".
-' These are orphan candidates - typically continuation paragraphs of a
-' previous verse, created by a stray paragraph mark mid-verse.
+' Read-only diagnostic. Walks the main story to find true verse-continuation
+' orphans: BodyText paragraphs that sit BETWEEN two verse paragraphs in the
+' same chapter, but do not themselves begin with a "Chapter Verse marker"
+' character-style run. These are typically created by a stray paragraph
+' mark mid-verse.
 '
-' Scope:
-'   - Book region = inside any book, AFTER the first Heading 2 (chapter)
-'     of that book, BEFORE the next Heading 1.
-'   - Front matter (before first H1) is excluded.
-'   - Book introductions (between an H1 and the first H2 of that book)
-'     are excluded - legitimate non-verse BodyText lives there.
+' Detection algorithm (single-pass with a buffer):
+'   - Track current book (last H1) and "seen first verse in current chapter".
+'   - When we see a BodyText paragraph with CVM first-char (verse) AFTER
+'     having already seen one in the same chapter, FLUSH the buffer of
+'     non-CVM BodyText paragraphs accumulated since the previous verse -
+'     these are confirmed orphans.
+'   - On H2 (new chapter) or H1 (new book), DISCARD any pending buffer -
+'     they were post-last-verse content (chapter-end or book-end), not
+'     orphans.
+'   - Non-CVM BodyText paragraphs BEFORE the first verse of a chapter
+'     are chapter intros and are excluded.
+'   - End of document: any remaining buffer is post-last-verse-of-last-book
+'     content, also discarded.
 '
-' Phase 2 of the VerseText rollout (ConvertBodyTextVersesToVerseText)
-' will leave orphan paragraphs as BodyText because their first character
-' is not "Chapter Verse marker". This audit surfaces them so the user
-' can repair (merge orphan into preceding paragraph by deleting stray
-' paragraph mark) before Phase 2 runs.
+' Excluded as legitimate non-verse BodyText:
+'   - Front matter (before first H1)
+'   - Book introductions (between H1 and first H2 of book)
+'   - Chapter intros (between H2 and first verse of chapter)
+'   - Chapter-end content (after last verse, before next H2 or H1)
+'   - Whitespace-only paragraphs in any of the above zones
 '
 ' Per-orphan report:
-'   - Book name (last H1 seen)
+'   - Book name (last H1 seen at the time of flush)
 '   - Paragraph start char position (clickable via Word Ctrl+G)
 '   - First character's style name ("Selah", "Verse marker", etc., or
 '     "(empty)" for empty paragraphs)
 '   - Size category: EMPTY / SHORT (<30 chars) / LONG (>=30 chars)
 '   - 80-char excerpt for visual identification
+'
+' Summary also reports excluded counts (chapter intros / chapter-end
+' content) so the noise-vs-signal ratio is visible.
 '
 ' Output: rpt\OrphanBodyTextAudit.txt (when bWriteFile = True) plus
 ' Immediate window summary.
@@ -504,26 +516,37 @@ Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = 
     Dim t As Double
     StartTimer "AuditOrphanBodyTextParagraphs", t
 
+    Const BUF_CAP As Long = 1000
+
     Dim oDoc As Object
     Set oDoc = ActiveDocument
 
     Dim sOut As String
     Const NL As String = vbCrLf
     sOut = "---- AuditOrphanBodyTextParagraphs: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
-    sOut = sOut & "Scope: BodyText paragraphs in verse-bearing book regions" & NL
-    sOut = sOut & "       (after first H2 of book, before next H1) whose first" & NL
-    sOut = sOut & "       character style is not 'Chapter Verse marker'." & NL & NL
+    sOut = sOut & "Scope: BodyText paragraphs that sit BETWEEN two verse paragraphs in the" & NL
+    sOut = sOut & "       same chapter and do not begin with a 'Chapter Verse marker' run." & NL
+    sOut = sOut & "       Chapter intros (before first verse) and chapter-end content" & NL
+    sOut = sOut & "       (after last verse) are excluded." & NL & NL
 
     Dim oPara As Object
-    Dim seenFirstH2InCurrentBook As Boolean
-    seenFirstH2InCurrentBook = False
     Dim currentBook As String
     currentBook = "(front matter)"
+    Dim seenFirstVerseInCurrentChapter As Boolean
+    seenFirstVerseInCurrentChapter = False
+
+    ' Buffer columns: 1=ParaStart, 2=firstCharStyle, 3=sizeCat, 4=paraLen, 5=excerpt
+    Dim potentialBuffer() As String
+    ReDim potentialBuffer(1 To BUF_CAP, 1 To 5)
+    Dim bufCount As Long
+    bufCount = 0
 
     Dim totalCount As Long
     Dim emptyCount As Long
     Dim shortCount As Long
     Dim longCount As Long
+    Dim chapterIntroCount As Long
+    Dim chapterEndCount As Long
 
     For Each oPara In oDoc.Paragraphs
         Dim styleName As String
@@ -531,64 +554,105 @@ Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = 
 
         Select Case styleName
             Case "Heading 1"
+                ' Discard pending buffer (post-last-verse of previous book)
+                chapterEndCount = chapterEndCount + bufCount
+                bufCount = 0
+
                 currentBook = Trim$(Replace(oPara.Range.Text, vbCr, ""))
-                seenFirstH2InCurrentBook = False     ' reset for new book
+                seenFirstVerseInCurrentChapter = False
 
             Case "Heading 2"
-                seenFirstH2InCurrentBook = True
+                ' Discard pending buffer (post-last-verse of previous chapter)
+                chapterEndCount = chapterEndCount + bufCount
+                bufCount = 0
+
+                seenFirstVerseInCurrentChapter = False
 
             Case "BodyText"
-                If seenFirstH2InCurrentBook Then
-                    ' Inside verse-bearing region - check first-char style
-                    Dim paraText As String
-                    paraText = Replace(oPara.Range.Text, vbCr, "")
-                    Dim firstCharStyle As String
-                    If Len(paraText) = 0 Then
-                        firstCharStyle = "(empty)"
-                    Else
-                        On Error Resume Next
-                        firstCharStyle = oPara.Range.Characters(1).style.NameLocal
-                        If Err.Number <> 0 Then firstCharStyle = "(error)"
-                        Err.Clear
-                        On Error GoTo PROC_ERR
+                Dim paraText As String
+                paraText = Replace(oPara.Range.Text, vbCr, "")
+                Dim firstCharStyle As String
+                If Len(paraText) = 0 Then
+                    firstCharStyle = "(empty)"
+                Else
+                    On Error Resume Next
+                    firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+                    If Err.Number <> 0 Then firstCharStyle = "(error)"
+                    Err.Clear
+                    On Error GoTo PROC_ERR
+                End If
+
+                If firstCharStyle = "Chapter Verse marker" Then
+                    ' Verse paragraph
+                    If seenFirstVerseInCurrentChapter And bufCount > 0 Then
+                        ' Flush buffer - confirmed orphans (between verses)
+                        Dim i As Long
+                        For i = 1 To bufCount
+                            totalCount = totalCount + 1
+                            Select Case potentialBuffer(i, 3)
+                                Case "EMPTY":  emptyCount = emptyCount + 1
+                                Case "SHORT":  shortCount = shortCount + 1
+                                Case "LONG":   longCount = longCount + 1
+                            End Select
+
+                            Dim sizeLabel As String
+                            If potentialBuffer(i, 3) = "EMPTY" Then
+                                sizeLabel = "EMPTY"
+                            Else
+                                sizeLabel = potentialBuffer(i, 3) & " (" & potentialBuffer(i, 4) & " chars)"
+                            End If
+
+                            sOut = sOut & "Orphan #" & totalCount & " | Book: " & currentBook & _
+                                   " | ParaStart=" & potentialBuffer(i, 1) & _
+                                   " | first-char-style=" & potentialBuffer(i, 2) & _
+                                   " | Size: " & sizeLabel & NL
+                            sOut = sOut & "  Excerpt: """ & potentialBuffer(i, 5) & """" & NL & NL
+                        Next i
+                        bufCount = 0
                     End If
+                    seenFirstVerseInCurrentChapter = True
+                Else
+                    ' Non-verse BodyText
+                    If seenFirstVerseInCurrentChapter Then
+                        ' After first verse - add to potential orphan buffer
+                        If bufCount < BUF_CAP Then
+                            bufCount = bufCount + 1
+                            Dim paraLen As Long
+                            paraLen = Len(paraText)
 
-                    If firstCharStyle <> "Chapter Verse marker" Then
-                        ' Orphan candidate
-                        Dim paraLen As Long
-                        paraLen = Len(paraText)
-
-                        Dim sizeLabel As String
-                        If paraLen = 0 Then
-                            sizeLabel = "EMPTY"
-                            emptyCount = emptyCount + 1
-                        ElseIf paraLen < 30 Then
-                            sizeLabel = "SHORT (" & paraLen & " chars)"
-                            shortCount = shortCount + 1
-                        Else
-                            sizeLabel = "LONG (" & paraLen & " chars)"
-                            longCount = longCount + 1
+                            potentialBuffer(bufCount, 1) = CStr(oPara.Range.Start)
+                            potentialBuffer(bufCount, 2) = firstCharStyle
+                            If paraLen = 0 Then
+                                potentialBuffer(bufCount, 3) = "EMPTY"
+                            ElseIf paraLen < 30 Then
+                                potentialBuffer(bufCount, 3) = "SHORT"
+                            Else
+                                potentialBuffer(bufCount, 3) = "LONG"
+                            End If
+                            potentialBuffer(bufCount, 4) = CStr(paraLen)
+                            potentialBuffer(bufCount, 5) = Left$(paraText, 80)
                         End If
-
-                        Dim excerpt As String
-                        excerpt = Left$(paraText, 80)
-
-                        totalCount = totalCount + 1
-                        sOut = sOut & "Orphan #" & totalCount & " | Book: " & currentBook & _
-                               " | ParaStart=" & oPara.Range.Start & _
-                               " | first-char-style=" & firstCharStyle & _
-                               " | Size: " & sizeLabel & NL
-                        sOut = sOut & "  Excerpt: """ & excerpt & """" & NL & NL
+                        ' (silently drop overflow beyond BUF_CAP - extremely unlikely)
+                    Else
+                        ' Before first verse of chapter - chapter intro, exclude
+                        chapterIntroCount = chapterIntroCount + 1
                     End If
                 End If
         End Select
     Next oPara
 
+    ' End of doc: discard remaining buffer (post-last-verse of last book)
+    chapterEndCount = chapterEndCount + bufCount
+
     sOut = sOut & "---- Summary ----" & NL
-    sOut = sOut & "Total orphan candidates: " & totalCount & NL
+    sOut = sOut & "Confirmed orphans (BodyText between two verses in same chapter): " & totalCount & NL
     sOut = sOut & "  EMPTY (0 chars): " & emptyCount & NL
     sOut = sOut & "  SHORT (<30 chars): " & shortCount & NL
     sOut = sOut & "  LONG (>=30 chars): " & longCount & NL
+    sOut = sOut & NL
+    sOut = sOut & "Excluded as legitimate non-verse content:" & NL
+    sOut = sOut & "  Chapter intros (before first verse of chapter): " & chapterIntroCount & NL
+    sOut = sOut & "  Chapter-end content (after last verse, before next H2/H1): " & chapterEndCount & NL
 
     Debug.Print sOut
     If bWriteFile Then WriteOrphanFile sOut
