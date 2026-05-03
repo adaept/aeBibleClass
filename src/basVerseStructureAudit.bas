@@ -549,10 +549,10 @@ Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = 
     Dim chapterEndCount As Long
 
     For Each oPara In oDoc.Paragraphs
-        Dim styleName As String
-        styleName = oPara.style.NameLocal
+        Dim StyleName As String
+        StyleName = oPara.style.NameLocal
 
-        Select Case styleName
+        Select Case StyleName
             Case "Heading 1"
                 ' Discard pending buffer (post-last-verse of previous book)
                 chapterEndCount = chapterEndCount + bufCount

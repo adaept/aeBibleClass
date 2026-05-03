@@ -132,7 +132,7 @@ Public Sub Test_SongOfSongs_AllAliases()
 ' Focused coverage for book 22 after the 2026-04-30 rename of project canonical
 ' from "Solomon" to "Song of Songs". Verifies every documented alias resolves to
 ' BookID 22 with canonical name "Song of Songs"; verifies the WEB-aligned
-' verse-count data; verifies ToSBLShortForm yields the SBL "Song N:V" output.
+' verse-Count data; verifies ToSBLShortForm yields the SBL "Song N:V" output.
 '
 ' Uses the suite-level aeAssert (initialized by Run_All_SBL_Tests).
 '

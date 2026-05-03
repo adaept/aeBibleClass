@@ -517,7 +517,7 @@ Public Sub AuditStyleTabs(ByVal sName As String, ParamArray expected() As Varian
         GoTo PROC_EXIT
     End If
 
-    ' Compute expected count - empty ParamArray has LBound > UBound in VBA.
+    ' Compute expected Count - empty ParamArray has LBound > UBound in VBA.
     Dim expCount As Long
     If LBound(expected) > UBound(expected) Then
         expCount = 0

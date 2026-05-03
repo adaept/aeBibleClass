@@ -129,11 +129,11 @@ End Sub
 ' SortByPriorityName - bubble sort on 2D array (Name, BaseStyle, Priority)
 ' Primary key: Priority ASC. Secondary: NameLocal ASC (case-insensitive).
 ' --------------------------------------------------------------------------
-Private Sub SortByPriorityName(ByRef arr As Variant, ByVal count As Long)
+Private Sub SortByPriorityName(ByRef arr As Variant, ByVal Count As Long)
     Dim i As Long, j As Long
     Dim tmpName As String, tmpBase As String, tmpPri As Long
-    For i = 1 To count - 1
-        For j = i + 1 To count
+    For i = 1 To Count - 1
+        For j = i + 1 To Count
             If (CLng(arr(j, 3)) < CLng(arr(i, 3))) Or _
                (CLng(arr(j, 3)) = CLng(arr(i, 3)) And _
                 StrComp(CStr(arr(j, 1)), CStr(arr(i, 1)), vbTextCompare) < 0) Then
@@ -149,11 +149,11 @@ End Sub
 ' FormatBaseStyleRows - render N rows in the form
 '   <prefix>Name <- "BaseStyle" | Priority=N<NL>
 ' --------------------------------------------------------------------------
-Private Function FormatBaseStyleRows(ByRef arr As Variant, ByVal count As Long, _
+Private Function FormatBaseStyleRows(ByRef arr As Variant, ByVal Count As Long, _
                                      ByVal prefix As String) As String
     Const NL As String = vbCrLf
     Dim i As Long, sBuf As String
-    For i = 1 To count
+    For i = 1 To Count
         sBuf = sBuf & prefix & arr(i, 1) & " <- """ & arr(i, 2) & _
                """ | Priority=" & arr(i, 3) & NL
     Next i
@@ -365,26 +365,26 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Private Function StyleExists(ByVal doc As Document, ByVal styleName As String) As Boolean
+Private Function StyleExists(ByVal doc As Document, ByVal StyleName As String) As Boolean
     Dim s As Word.Style
     On Error Resume Next
-    Set s = doc.Styles(styleName)
+    Set s = doc.Styles(StyleName)
     On Error GoTo 0
     StyleExists = Not (s Is Nothing)
 End Function
 
 Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
-                         ByVal styleName As String)
+                         ByVal StyleName As String)
     ' Idempotent skip
-    If StyleExists(dstDoc, styleName) Then
-        Debug.Print "  SKIP   " & styleName & " already exists in target."
+    If StyleExists(dstDoc, StyleName) Then
+        Debug.Print "  SKIP   " & StyleName & " already exists in target."
         Exit Sub
     End If
 
     Dim src As Word.Style
     Dim dst As Word.Style
-    Set src = srcDoc.Styles(styleName)
-    Set dst = dstDoc.Styles.Add(styleName, wdStyleTypeParagraph)
+    Set src = srcDoc.Styles(StyleName)
+    Set dst = dstDoc.Styles.Add(StyleName, wdStyleTypeParagraph)
 
     ' BaseStyle MUST be set first - same isolation rule as Phase 1.
     dst.baseStyle = ""
@@ -434,7 +434,7 @@ Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
 
     ' NextParagraphStyle deliberately not copied - Phase 4 sets it.
 
-    Debug.Print "  COPY   " & styleName & " transported."
+    Debug.Print "  COPY   " & StyleName & " transported."
 End Sub
 
 ' ==========================================================================
@@ -450,7 +450,7 @@ End Sub
 '   * Caller is responsible for choosing the correct doc context
 '     (run on the test copy first, then on production).
 '
-' Output: count of paragraphs migrated.
+' Output: Count of paragraphs migrated.
 '
 ' Idempotent: if run twice, the second run reports 0 (no paragraphs
 ' still using oldName).
@@ -627,11 +627,11 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Private Function CountParagraphsByStyle(ByVal styleName As String) As Long
+Private Function CountParagraphsByStyle(ByVal StyleName As String) As Long
     Dim para As Word.Paragraph
     Dim n As Long
     For Each para In ActiveDocument.Paragraphs
-        If para.style.NameLocal = styleName Then
+        If para.style.NameLocal = StyleName Then
             n = n + 1
         End If
     Next para
