@@ -1,0 +1,118 @@
+view-source:https://worldenglish.bible/webupdates.php
+<!DOCTYPE HTML>
+<html lang="en"><head>
+  <title>World English Bible Updates</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="World English Bible Updated, Updates">
+  <link rel="stylesheet" href="a.css" type="text/css">
+  <style type="text/css">
+  </style>
+</head><body>
+<div id="container">
+<p align="center"><a href="https://eBible.org/web/"><img src="weblogo.jpg" alt="World English Bible" height="147" width="200"></a></p><h1 align="center"><a href="https://WorldEnglish.Bible/">World English Bible</a></h1>
+<div id="top">
+<p><a href="https://eBible.org/webaudio/">Audio</a> <a href="https://eBible.org/study/">Online study Bible</a> <a href="https://eBible.org/engwebu/">Read online</a>
+<a href="https://eBible.org/web/webfaq.htm">Frequently Asked Questions</a>
+<a href="https://eBible.org/cgi-bin/contact.cgi" target="_blank">Contact</a> <a href="http://MLJohnson.org" target="_blank">Editor</a></p>
+<p>Here is the answer to exactly what is recently updated in the World English Bible, including its derivative editions.</p>
+<table style="text-align: left;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr><td><b>Date of change</b></td><td><b>Description of change</b></td></tr>
+  <tr><td>22 April 2026</td><td>Corrected "it" to "him" in EXO 2:9.</td></tr>
+    <tr><td>11 April 2026</td><td>Corrected grammar in 2CO 1:15.</td></tr>
+    <tr><td>7 April 2026</td><td>Grammar and footnote tweaks in 1CH 2:9; 14:11; 15:4; 20:1; 36:2,4; PSA 68:29.</td></tr>
+    <tr><td>14 March 2026</td><td>Removed spurious "to" 1TH 1:8.</td></tr>
+    <tr><td>12 March 2026</td><td>Corrected "to" to "for" in 1SA 20:17.</td></tr>
+    <tr><td>25 February 2026</td><td>Added textual variant footnote to 2CO 4:14 and corrected "with" to "through". Minor updates for clarity to 1MA 1:53, 56, 57; 2:19, 31, 39; 5:43; 9:43; 10:11, 43; 12:37, 44; 14:20, 24, 33; 15:29; 16:2, 7, 10.  </td></tr>
+    <tr><td>28 January 2026</td><td>Added textual variant footnote to 2CO 1:11.</td></tr>
+    <tr><td>25 January 2026</td><td>Corrected spelling of "siege" in 1 Maccabees 13:43 and 2 Maccabees 10:18.</td></tr>
+    <tr><td>19 January 2026</td><td>Corrected typo in 1 Kings 7:45 (in->for). Improved grammar in 1 Kings 11:28; 13:6; 14:11; 19:18; 21:24.</td></tr>
+    <tr><td>1 January 2026</td><td>Removed spurious comma from 1 John 1:7.</td></tr>
+    <tr><td>29 December 2025</td><td>Corrected typos in 1 Esdras 8:23, 61, and 77.</td></tr>
+    <tr><td>25 December 2025</td><td>Corrected typos in 1 Esdras 4:42, 61, and 63.</td></tr>
+    <tr><td>24 December 2025</td><td>Corrected typos in 1 Esdras 3:3 and 3:5. Corrected awkward grammar in 1 Esdras 4:4.</td></tr>
+    <tr><td>22 December 2025</td><td>Removed spurious "that" from 1 Esdras 2:25.</td></tr>
+    <tr><td>24 October 2025</td><td>Corrected grammar in PRO 19:2 (tense agreement).</td></tr>
+    <tr><td>13 October 2025</td><td>Changed "Other" to "Some" in LUK 8:6-8 to correct grammar.</td></tr>
+	<tr><td>7 October 2025</td><td>Changed "not" to "don't" in JER 18:10</td></tr>
+    <tr><td>4 October 2025</td><td>Made heaven/the sky more consistent with context in ACT 4:24; REV 19:11, 20:11; JDT 7:28; ESG 4:20; WIS 18:16; SIR 16:18, 51:19</td></tr>
+    <tr><td>26 August 2025</td><td>Removed extra comma in Acts 21:29. Changed "not" to "don't" in Exodus 30:20.</td></tr>
+    <tr><td>9 July 2025</td><td>Modernized grammar in GEN 31:28; 2ES 4:9; 8:44 (have you/you have).</td></tr>
+    <tr><td>4 July 2025</td><td>Corrected grammar in 4MA 1:13; 8:12, 28-29; 11:14-15; 13:20-21; 14:16.</td></tr>
+    <tr><td>1 July 2025</td><td>Corrected meaning in Ruth 2:22 (meet/harm); Corrected grammar in 2ES 13:50; 15:10; 15:53; 16:50.</td></tr>
+    <tr><td>27 June 2025</td><td>Corrected grammar in 1ES 6:11-12; 2ES 2:45. Made spacing around note markers more consistent.</td></tr>
+    <tr><td>21 June 2025</td><td>Corrected spelling, grammar, and punctuation in 2MA (1:16 panelled/paneled; 2:3 exhorted he/he exhorted; 4:26 end sentence with period, not comma; 4:27 change semicolon to comma; 7:19 removed spurious "you"; 6:4 and 7:36 note spacing).</td></tr>
+    <tr><td>19 June 2025</td><td>Corrected grammar in 1MA 9:21 (is the mighty/the mighty has).</td></tr>
+    <tr><td>11 June 2025</td><td>Corrected punctuation in REV 21:19 (; to ,).</td></tr>
+    <tr><td>8 June 2025</td><td>Corrected typos in Baruch 6:4 (added missing "and"); 6:71 (removed spurious comma); 1MA 1:51 word order; 1MA 3:8 removed confusing footnote; MAT 5:14 corrected red letter markup on opening quote in some editions.</td></tr>
+    <tr><td>5 June 2025</td><td>Corrected typos in Sirach 46:2 (word order); 47:22 (missing "of"); and 51:27 (spurious "that").</td></tr>
+    <tr><td>3 June 2025</td><td>Corrected typos in Sirach 38:13 (removed extra "in") and 38:22 (me/him).</td></tr>
+    <tr><td>1 June 2025</td><td>Corrected potentially confusing wording in Sirach 25:10 (none above him/none greater than one).</td></tr>
+    <tr><td>30 May 2025</td><td>Corrected word order in Sirach 25:10 (is there/there is).</td></tr>
+    <tr><td>22 May 2025</td><td>Removed extra "and" from SIR Prologue (the law, [and] the prophets, and the). Removed extra word "is" in279300 1MA 10:73.</td></tr>
+    <tr><td>14 May 2025</td><td>Corrected grammar in Genesis 24:22 (had done/had finished).</td></tr>
+    <tr><td>28 April 2025</td><td>Corrected comma placement in EZK 45:9. Corrected word order in DAN 1:19.</td></tr>
+    <tr><td>23 April 2025</td><td>Corrected "Zion" to "Siyon" in DEU 4:48.</td></tr>
+    <tr><td>18 April 2025</td><td>Corrected "an" to "a" in SIR 18:18 and 2MA 5:8.</td></tr>
+    <tr><td>10 April 2025</td><td>For consistency and clarity, changed "render" to "give" in NUM 18:9, DEU 32:43 footnote, ISA 26:23, 2CH 6:30, JOB 34:11, PSA 38:20, PRO 24:12, ISA 66:15, JER 51:6, MAT 16:27, MRK 12:17, 1TH 3:9, WIS 15:8, SIR 1723, 33:13, and 4MA 5:24. Changed "render" to "make" in 4MA 12:6.</td></tr>
+    <tr><td>1 April 2025</td><td>Corrected grammar in 2MA 8:1.</td></tr>
+    <tr><td>30 March 2025</td><td>Corrected quotation mark issue in Ezekiel 32:1-2.</td></tr>
+    <tr><td>8 March 2025</td><td>Updated "would I" to "I would" in Job 13:19 for consistency. Corrected "GOD" to "The LORD" in Psalm 42:8 for consistency. Corrected missing quotation mark in Matthew 5:14.</td></tr>
+    <tr><td>23 January 2025</td><td>Restored missing "of" twice in 1KI 4:24.</td></tr>
+    <tr><td>22 January 2025</td><td>Changed "will you" to "you will" in 2SA 15:34.</td></tr>
+    <tr><td>6 January 2025</td><td>Changed "shall I" to "I will" in JDG 16:11. Corrected drachma's value to "a day's wages" in LUK 15:8 footnote.</td></tr>
+    <tr><td>4 December 2024</td><td>Changed "thongs" to "straps" in ACT 22:25 and 4MA 9:11.</td></tr>
+    <tr><td>13 November 2024</td><td>Corrected typo (other to another) in GEN 13:11.</td></tr>
+    <tr><td>24 October 2024</td><td>Corrected article (a to the) in MAT 7:24. Made wineskins (vs. wine skins) consistent in JOS 9:4,13; MAT 9:17; LUK 5:37,38.</td></tr>
+    <tr><td>17 September 2024</td><td>Corrected typos in GEN 12:14 (Egyptians / some Egyptians) and SIR 22:1 (will at hiss / will hiss).</td></tr>
+    <tr><td>21 August 2024</td><td>Corrected tense: "is being proclaimed" to "was proclaimed" in COL 1:23.</td></tr>
+    <tr><td>12 August 2024</td><td>Improved grammar in GEN 37:25 (removed "was").</td></tr>
+    <tr><td>7 August 2024</td><td>Removed spurious footnote from ESG 4:19. Added missing quotation marks in JER 29:14. Added "and" in WEBBE GEN 8:13.</td></tr>
+    <tr><td>22 June 2024</td><td>Corrected Leviticus 13:41 (he is forehead bald/his forehead is bald) and 48 (a leather/leather).</td></tr>
+    <tr><td>19 June 2024</td><td>Improved Genesis 48:20 (in you / in your name).</td></tr>
+    <tr><td>1 June 2024</td><td>Corrected typo in ESG 4:11 (than to that). Corrected typo in ISA 38:3 WEBu, WEBBE, WMB, and WMBB (extra "the").</td></tr>
+    <tr><td>20 May 2024</td><td>Restored missing "to" in 1KI 14:8.</td></tr>
+    <tr><td>15 May 2024</td><td>Restored missing space between "who" and "ever" in Job 4:7.</td></tr>
+    <tr><td>9 May 2024</td><td>Removed spurious "to" from Deuteronomy 28:68.</td></tr>
+    <tr><td>6 May 2024</td><td>No change to master copy of the text, but corrected a programming error that incorrectly stripped out some Greek and Hebrew characters from footnotes in some formats.</td></tr>
+        <tr><td>29 April 2024</td><td>Removed extra "to" in <a href="https://ebible.org/study/?v3=R220_3&t3=local%3Aengwebu&w3=bible&v2=R220_3&t2=local%3Aeng-webbe&w2=bible&v1=R220_3&t1=local%3Aeng-web&w1=bible">2CH 20:3</a></td></tr>
+    <tr><td>18 April 2024</td><td>Minor grammar correction in <a href="https://ebible.org/study/?w1=bible&t1=local%3Aeng-web&v1=K13_23&w2=bible&t2=local%3Aeng-webbe&v2=K13_23&w3=bible&t3=local%3Aengwebu&v3=K13_23">1KI 3:23</a> ("the dead" to "the dead one").</td></tr>
+    <tr><td>15 April 2024</td><td>Minor update to be more clear and avoid distractions in Church, necessitated by significant changes in English language usage: Updated "thong" to "strap" in Mark 1:7 and updated "thong" to "whip" in SIR 33:27.</td></tr>
+    <tr><td>29 March 2024</td><td>Clarified language in MAN 1:8,14. Capitalization correction on "the" before "LORD" in GEN 16:5; EXO 32:14; LEV 10:8; NUM 5:21; 32:4; DEU 6:4; JDG 11:27; RUT 1:9; 2:4; 1SA 2:20; 1KI 13:2; 2KI 18:25; 22:18; 1CH 21:27; PSA 35:27; ISA 36:10; JER 6:21; 16:1; LAM 3:22. (The capitalization correction was not necessary in the classic WEB.)</td></tr>
+    <tr><td>21 March 2024</td><td>Typo correction in HAG 2:13: touch -> touches</td></tr>
+    <tr><td>14 March 2024</td><td>Changed some footnote formatting for better clarity.</td></tr>
+    <tr><td>7 March 2024</td><td>Merged the "Updated" and regular versions of the World English Bible. Edited the Preface slightly to better represent that the World English Bible New Testament isn't 100% conformed to the Byzantine Majority Text Greek New Testament. (It is, however, conformed in the places where it matters the most.) WEBUK is now exactly the same as WEBBE, and WEBUK is removed as a separate edition. Updated capitalization of "Ancient of Days" in DAN 7:22 and DAG 7:22 for consistency with DAN 7:9; 7:13 and DAG 7:9 and DAG 7:13. Updated breast to chest in DAN 2:23; DAG 2:32; LUK 18:13; JHN 13:23; 21:20; 2ES 14:40; DAG 2:32. In the current online version, WEB and WEBU now only differ in footnotes and in the handling of the Tetragrammaton. WEBU and WEBBE now only differ in U. S. A. vs. British Commonwealth/International spelling.</td></tr>
+    <tr>
+      <td>22 February 2024</td><td>Updated the Middle English "delivered" in PSA 7:4 to "plundered". This update also affecs the WEBBE, WEBC, WMB, and WMBB online due to its meaning being so significantly different in Modern English.</td>
+    </tr>
+    <tr>
+      <td>20 February 2024</td><td>Updated "the Lord the LORD" in PSA 73:28 to "the Lord GOD". Updated "the Lord, the LORD" to "the Lord, GOD" in several places. This update also affecs the WEBBE, WEBC, WMB, and WMBB.</td>
+    </tr>
+    <tr>
+      <td>6 February 2024</td><td><b>Made capitalization consistent for "Ancient of Days" in DAN 7:9, DAN 7:13, DAG 7:9, and DAG 7:13</b></td>
+    </tr>
+    <tr>
+      <td>27 January 2024</td><td>Corrected missing "of" in Ezekiel 10:14. (Also done in WEB classic, since this was a typo correction.)</td>
+    </tr>
+    <tr>
+      <td>15 January 2024</td><td><b>Changed breast->chest for males or crowds including males in JOB 32:19; DAN 2:32; LUK 23:48; JHN 13:23; JHN 13:25; JHN 21:20; 2ES 14:40; DAG 2:32. Added footnotes concerning the translation of "Yahweh" and "Yah".</b></td>
+    </tr>
+    <tr>
+      <td>15 January 2024</td><td>Rolled back change to 1JN 2:23 in favor of eclectic reading in main text, moving MT rendering to footnote. See <a href="https://evangelicaltextualcriticism.blogspot.com/2018/04/two-important-shorter-byzantine.html">https://evangelicaltextualcriticism.blogspot.com/2018/04/two-important-shorter-byzantine.html</a> for reasoning. This rollback makes the current electronic text closer to the printed versions. This rollback also applied to the WEB classic. Removed spurious "The" in PSA 89:8.</td>
+    </tr>
+    <tr>
+      <td>11 January 2024</td><td>Split WEBU (World English Bible Update, USA spelling) and WEBUK (UK spelling) off from the main WEB project, using LORD or GOD instead of Yahweh in the main text for both. Going forward, this will (1) reduce fragmentation between editions of the World English Bible, and (2) be closer to the tradition of most English Bible translations. Those who prefer reading "Yahweh" in the text still have the <a href="https://eBible.org/eng-web/">classic World English Bible.</a></td>
+    </tr>
+    <tr><td>3 January 2024</td><td>Corrected whoever -> whomever in EZK 23:7; conformed 1JN 2:23 and LUK 14:24 to RP MT</td></tr>
+    <tr><td>13 December 2023</td><td>Conformed MAT 26:38 to the RP Greek Majority text. NO CHANGE IN MEANING.</td></tr>
+    <tr><td>&nbsp;</td><td>Older updates are listed in the eBible.org <a href="https://ebible.org/Scriptures/changelog.txt">change log</a>.</td></tr>
+  </tbody>
+</table>
+<p><br/>
+<a href="https://eBible.org/find/show.php?id=eng-web">classic World English Bible - WEB</a><br/>
+<a href="https://eBible.org/find/show.php?id=engwebu"><b>World English Bible Updated USA - WEBu</b></a><br/>
+<a href="https://eBible.org/find/show.php?id=eng-webbe">World English Bible British Edition - WEBBE</a><br/>
+</div>
+</div>
+</body>
+</html>

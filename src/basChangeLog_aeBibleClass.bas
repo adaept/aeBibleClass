@@ -10,8 +10,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #625 -
 ' #624 -
 ' #623 -
-' #622 -
-' #621 -
+' #622 - Add World English Bible Updates_ChangeLog.txt (view-source:https://worldenglish.bible/webupdates.php) and work through the changes [wip]
+' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
 ' #618 - Add So as search alias - works for Song and Solomon [impr]
