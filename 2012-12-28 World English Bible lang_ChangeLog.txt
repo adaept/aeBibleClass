@@ -48,92 +48,26 @@
 2020-02-10: Updated asmfb, ben2017, guj2017, hin2017, kan2017, mal, mar, ory, pan, tam2017, tel2017, tel2017, and urd.
 2020-03-13: Updated eng-web*, engwmb, and engwmbb (typo in Lam 4:9). Added grcbrent and englxxup. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-03-31: Updated gubBl, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, and eng-asv. (The eng-asv update was just an umlaut in Mark 5:22.)
-
-
-2020-04-01: Rebuilt files.
-2020-04-05: Added engemtv.
-2020-04-07: Added nna and engnna.
-2020-04-09: Added engoke. Updated ind, cwe, mal, mgw, mwe, ory, and swe.
-2020-04-10: Updated eng-web*, eng-wmb, eng-wmbb (capitalization issue in Amos 8:5), eng-rv, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-04-11: Updated eng-web*, eng-wmb, eng-wmbb (capitalization issue in Rom. 9:28; missing word in 1SA 17:50).
-2020-04-12: Updated ces1613.
-2020-04-14: Updated engPEV audio. Updated eng-asv (Nicolaus > NicolaÃ¼s in Acts 6:5).
-2020-04-15: Updated spabes.
-2020-04-17: Updated spabes (Luke, John), eng-web* (Tobit 2:1,13; 5:3).
-2020-04-22: Added hin2017 audio. Updated nys.
-2020-04-23: Added 3gp audio to pjt. Corrected a typo in eng-lxx2012 and eng-uk-lxx2012.
-2020-04-24: Updated wrs.
-2020-04-28: Updated eng-web, eng-webbe, eng-web-c, and engwebpb (1 Samuel 3:9 in British editions, plus some minor typo corrections in Wisdom and Sirach). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-04-30: Updated eng-web* (Judges 13:10 "," to "."). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-05-01: Updated eng-web* (several missing spaces next to footnote markers). Updated eng-t4t, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-05-04: Updated eng-web*, engwmb, and engwmbb (Missing single quote added in Jeremiah 16:10. Some footnote locations standardized in WIS.). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-05-06: Updated spabes (Acts, Romans, 1 & 2 Corinthians checked).
-2020-05-12: Updated eng-web, eng-webbe, and eng-web-c (Typos corrected in SIR. Some footnote locations standardized in 1MA.). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-05-22: Updated eng-web, eng-webbe, and eng-web-c (typos in BAR, 1MA). Updated glk metadata.
-2020-05-31: Updated eng-web, eng-webbe, and eng-web-c (typos in 1MA, 2MA). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-06-02: Updated eng-web*, engwmb, and engwmbb (1PE 3:17 and typos in 2MA). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-06-03: Updated eng-web* (Daniel 7:14, typos in 1ES, added some Strong's numbers to OT and NT), engwmb, engwmbb (Daniel 7:14, added some Strong's numbers). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-06-05: Updated spabes (checking in the NT; added some Strong's numbers). Updated eng-web, eng-webbe (markup in 1 Esdras).
-2020-06-09: Added cebulb. Updated eng-web* (2ES, 3MA).
-2020-06-11: Added iloulb, tglulb, npiulb, & swhulb. Updated eng-web, eng-webbe (2ES). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-06-12: Updated spabes (PHP, JAS-REV).
-2020-06-15: Updated engPEV (added Colossians audio).
-2020-06-21: Updated eng-webbe, engwmbb (Psalm 26:1).
 2020-06-26: Added tczchongthu draft.
-2020-06-29: Updated tczchongthu.
-2020-07-03: Updated nuy. Added ita1885, engf35, grcf35, engkjvcpb.
-2020-07-04: Updated engkjvcpb.
 2020-07-06: Added amo.
 2020-07-07: Added dov.
 2020-07-09: Added Strong's numbers to hlt. Corrected scan error in eng-rv Psalm 85:11.
-2020-07-10: Updated spabes (Genesis & Exodus).
-2020-07-14: Updated eng-web*, engwmb, and engwmbb (Genesis 49:23). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-07-15: Updated cmn-ncvt.
-2020-07-17: Updated grcmt, englxxup.
-2020-07-19: Updated eng-webbe, engwebpb, engwmb, and engwmbb (2CH 30:18).
-2020-07-22: Added jid.
-2020-07-23: Added wol2010, wolKYG.
-2020-07-24: Updated hlt.
-2020-07-29: Updated aaz, eng-web*, engwmb, and engwmbb (Num 7:30 spoon->ladle for consistency in WEB+WMB)
-2020-07-31: Updated aly, dhg, nys, amx, eng-lxx2012, eng-uk-lxx2012, kiz, isn, and jni.
-2020-08-04: Updated arb-vd.
-2020-08-05: Updated eng-asv, eng-rv.
-2020-08-06: Updated eng-lxx2012, eng-uk-lxx2012, engPEV.
 2020-08-07: Added some Strong's numbers to spavbl.
-2020-08-10: Updated spabes (LEV, NUM, DEU checked).
-2020-08-11: Updated cmnNCVs, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-08-14: Added gux and guxg.
-2020-08-17: Updated eng-web*, engwmb, and engwmb (John 11:11 and BAR 4:7). Updated spavbl, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-08-18: Added sbs.
-2020-08-23: Updated engfbv and spavbl.
 2020-08-27: Added kjn.
-2020-08-29: Added 1 Timothy audio to engPEV.
-2020-08-30: Updated engasv (Exodus 17:16 capitalization of "and").
-2020-09-01: Updated turev.
-2020-09-03: Updated eng-lxx2012, eng-uk-lxx2012 (ECC 3:18). Added zgam.
-2020-09-05: Updated eng-web*, engwmb, and engwmbb (EZK 24:25 missing t)
-2020-09-08: Updated eng-web ParallelGospels.pdf.
-2020-09-09: Updated eng-web, eng-webbe, eng-web-c (2ES 10:54 typo correction). Updated eng-lxx2012, eng-uk-lxx2012 (Psalm 23, 100, 108, 128 header/verse 1). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-09-14: Updated mgc, eng-Brenton, spavbl, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-09-17: Updated hlt (Strong's numbers & Words of Jesus), engPEV (Mark audio).
-2020-09-19: Updated hltmcsb.
-2020-09-23: Updated spabes (Joshua, Judges, Ruth)
-2020-09-24: Added cekak. Updated hltmcsb.
-2020-10-10: Updated eng-web*, engwmb, and engwmbb (Gen 24:12, Gen 35:2); updated kos, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-10-13: Added englsv, mya. Updated hlt.
 2020-10-14: Added myajvb. Added preface, introduction, and a few more Strong's numbers to englsv. Updated the Parallel Bible documents for the World English Bible.
 2020-10-15: Updated eng-web*, engwmb, and engwmbb (added some Strong's numbers; removed a spurious "The" in Exodus 32:11 in the British editions and WMB).
-2020-10-23: Updated eng-kjv (3 typos in 2MA).
-2020-10-24: Updated eng-rv (typo in Job 11:6).
-2020-10-31: Updated eng-web*, engwmb, and engwmbb (noted textual variant in MAT 1:6).
-2020-11-04: Updated spabes (1SA, 2SA, 1KI).
-2020-11-06: Added sbk.
-2020-11-09: Updated eng-web*, engwmb, and engwmbb (Deu 21:8, 28:49); updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-11-10: Added hlt2013, wbi.
+
+
 2020-11-11: Added agr, due, duo, esg, arq, aeb, luc, prq, auu, apb, ifb, big2013, car, bbr2013, ino2013, ayz, mgh2016, mim, kud2014. Updated akh, apyNT, ind, geb, sus, susa, swe, zaj.
 2020-11-12: Added gri. Updated eng-kjv and eng-lxx2012 (typo in Baruch 1:8).
 2020-11-14: Added aeu, ifa, cko, any, arz, ayh, avu.
-2020-11-16: Updated eng-web, engwmb, and engwmbb (Jdg 5:2; 7:16; Gal 5:13). Added miy, bfd, bdh, bcc, bccl, bmo, bcw, bqj, bjn, bno, bim, bib, bzi, bor, sbl, plw, bwu, bds, kyb, mcu, ram, cam, cmo, cmok, sml, syb, cje, crl.
 2020-11-17: Added crj, cul, daf, dnj, ntr, des, div, mbd, did, dyi.
 2020-11-18: Added bru, xrb, frd, flr, gdg, acd, nyf, gqr, gde, zpg, rub, gvr, gwr, hre, var, dud, ibl, ivb, ifu, iqw, mbi, isd, nhx, ivv, izz, jaa, jib, dyu, bex, ksp, kkj, kqe, kqew, krx, xsm, xtc, ify, kbo, kjl, kqp, krj, kog, kxw, kfc, kma, coe, ses, xuo, key, and kus.
 2020-11-19: Added lbj, lhi, lro, brb, lik, loq, log, knb, lmd, lwo, mai, pmy, mgq, mmn, kby, mge, mta, kxf, mrr, mzr, mfh, mfy, mdm, mxv, tpx, mig.
@@ -144,231 +78,88 @@
 2020-11-30: Added snf, nod, xtn, nxl, nuq, udi, nwb, nyy, bsc, ury, nuj, sig, and pac.
 2020-12-01: Added slm, pdc, pcm, tpp, ktj, pbb, qva, qvo, qxl, mnv, rol, sav, xsb, pps, trq, zpt, mza, cok, lip, slu, snw, set, xsr, nsu, sil, akp, sor, biv, ksc, nnw, wib, stb, syl, syll, syls, tbk, blt, tlj, thv, taq, tsg, ttq, ttqt, kdh, ted, bod, ifk, bov, uri, fad, cou, mfi, guc, and kyuk.
 2020-12-02: Added lcp, fuh, suc, wob, yam, zae, and zpi.
-2020-12-04: Updated eng-web*, engwmb, and engwmbb (2 Corinthians 1:23, 2 Samuel, 1 Kings).
-2020-12-08: Updated eng-web*, engwmb, and engwmbb (capitalization of King as a title). Added 1TI & 2TI to aly. Added cth.
-2020-12-09: Updated eng-web*, engwmb, and engwmbb (typo correction in 1TH 3:6).
-2020-12-11: Updated eng-lxx2012, eng-uk-lxx2012 (corrected typo in EZK 42:13).
-2020-12-14: Updated hla.
-2020-12-15: Updated engPEV.
-2020-12-23: Updated hltthb, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, mkj, thantv.
-2020-12-24: Updated eng-web*, engwmb, and engwmbb ("Christ" in Acts 19:4).
 2021-01-01: Added vie1934 Old Testament.
 2021-01-05: Updated eng-Brenton, eng-LXX2012, eng-uk-LXX2012, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, mkj, thantv.
-2021-01-06: Updated uigara, uigcyr, uiglat, and uigpin.
-2021-01-12: Updated spabes (1KI, 2KI, 1CH, 2CH, EZR).
-2021-01-14: Updated spabes. Added sparvg.
-2021-01-15: Updated spabes (NEH, EST).
-2021-01-20: Updated deuelo (book names). Updated deu1912 (book names). Updated spabes (Job).
-2021-01-22: Updated eng-asv (came->come in Acts 28:6). Updated eng-kjv (and and->and in ESG 13:11).
-2021-01-30: Updated eng-webbe, engwmb, engwmbb (Psalm 73:28). Updated engPEV, mkj, spavbl,rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-02-02: Updated eng-webbe, engwmb, engwmbb (Psalm 104:24). Updated eng-t4t, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2021-02-07: Regenerated all projects to update epub css to work better with Nook e-ink displays.
-2021-02-09: Updated ifb. Added engasvbt.
 2021-02-10: Added tbf.
 2021-02-11: Added bjz, gvs.
-2021-02-15: Updated eng-webbe, engwmb, engwmbb (Isaiah 26).
 2021-02-17: Added OT to msy. Updated englsv, mgc, swe, zaj.
-2021-02-22: Updated eng-web*, engwmb, and engwmbb (Jeremiah typo corrections + added one footnote to Daniel 3:25). Updated mkj, spavbl,rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-03-04: Updated engPEV, mkj, spavbl, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added blx. Restored msy 2004 as msy & renamed msy 2020 edition to msy2020.
-2021-03-05: Updated eng-web*, engwmb, and engwmbb (Typo corrections in Joel 1:19; 2:18). Updated eng-t4t.
-2021-03-09: Corrected typo in eng-webbe license statement. Updated eng-web*, engwmb, and engwmbb (Typo corrections in Hab 3:19; Zep 1:17; Hag 1:12).
-2021-03-17: Updated eng-web, eng-webbe, eng-web-c (typo corrections in Tobit and 2 Esdras).
-2021-03-23: Updated eng-web, eng-webbe, eng-web-c (typo correction in ESG 4:37).
-2021-03-24: Updated spabes (ECC, SNG, ISA, JER, LAM).
 2021-04-02: Added tof.
 2021-04-06: Added blr.
-2021-04-09: Updated eng-web, eng-webbe, eng-web-c (typo corrections in Sirach).
 2021-04-10: Added twi, ckb.
 2021-04-13: Added aka, luo, swhonen, vieovcb, and yor.
-2021-04-16: Updated eng-t4t, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-04-17: Updated eng-t4t.
-2021-04-22: Updated eng-web, eng-webbe, engwebc (Baruch 4), kmu, grcmt, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, and engPEV.
-2021-04-22: Updated eng-web, eng-webbe, engwebc (1MA 1,2).
-2021-04-29: Updated engPEV audio (2TI).
-2021-05-03: Updated eng-web* (PSA 22:24; 1MA 11:68), engwmb, engwmbb, engasvbt, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-05-04: Updated bjr.
 2021-05-05: Added mcr.
 2021-05-06: Updated eng-web*, engwmb, engwmbb (Psalms 25:5; 85:13; 143:12; Joel 1:2; Numbers 24:20). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added mle.
 2021-05-07: Added okvh.
 2021-05-08: Added tmd and apec.
-2021-05-14: Updated tbg, eng-web* (2MA).
-2021-05-16: Updated eng-web*, eng-wmb, eng-wmbb (2SA 1:21; NUM 23:23; MIC 1:13). Updated mkj, engasvbt, engPEV, grctr, eng-t4t.
-2021-05-17: Updated eng-web, eng-webbe, and eng-web-c (1ES 5:18; 8:19; 8:38; 8:78; 9:39; 3MA 1:14; 2:22). Updated grctr and engasvbt.
-2021-05-19: Updated engnet.
-2021-05-20: Updated eng-web*, eng-wmb, eng-wmbb (ROM 8:4 consistency with ROM 8:1 + some corrections in 2ES); added grcsbl; updated uri.
-2021-05-21: Updated eng-web* (2ES 9:39; 10:48; 11:16; 11:25; 13:20; 13:47; 14:17; 4MA 7:19; 15:2). Added beln. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added some Strong's numbers to grctr and grcf35.
-2021-05-25: Removed redundant grc_sblgnt (replaced by grcsbl) and added grcbyz.
-2021-05-27: Updated tbg.
-2021-05-31: Updated grctr (formatting).
 2021-06-01: Updated bhg, sbe, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Took down mzr at translators' request due to errors in translation.
-2021-06-29: Updated eng-web*, engwmb, engwmbb (JON 2:10; DEU 32:27; JOB 12:9; PSA 24:8; 35:5,6; 47:5; 50:1; 93:4; 113:3; 125:5; PRO 20:12; ISA 38:11; 62:12; EZK 31:1; HOS 6:3; ZEC 10:1; ACT 4:26,28; JER 26:2-6).
-2021-07-01: Updated spabes (EZK, DAN, HOS), engbrent (1SA 17), mya (metadata only). Updated eng-t4t, aka, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-07-06: Updated eng-web*, engwmb, and engwmbb (JHN 8:59). Updated eng-t4t, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added ron1924. Updated spabes (JOL, AMO, OBA, JON, MIC, NAM, HAB, SEP, HAG, ZEC, MAL; completed consultant checking).
-2021-07-08: Updated spabes (prepublication checks). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-07-11: Updated eng-web*, engwmb, and engwmbb (DEU 24:3).
-2021-07-12: Updated myajvb (corrected some Strong's number markup).
-2021-07-13: Updated sbe, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2021-07-20: Regenerated all projects to correct a USFM generation error affecting certain character styles that didn't get terminated properly in the output, like the \ior in the sbe Bible translation.
-2021-08-07: Updated eng-lxx2012 and eng-uk-lxx2012 (corrected typo in Genesis 11:20). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-08-08: Updated mkj (added Luke).
-2021-08-13: Updated hlt.
-2021-08-19: Updated eng-web, engwmb, and engwmbb (1CH 14:13). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, deu1912, and hlt.
-2021-08-20: Updated eng-t4t.
-2021-08-28: Updated ton.
 2021-09-11: Added tdt. Updated englsv copyright permission information. Regenerated all WordML files to correct a not caller problem.
-2021-09-12: Updated tczchongthu, uigara, uigcyr, uiglat, uigpin.
-2021-09-21: Corrected a typo in engDRA in Luke 22:66. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari.
-2021-10-15: Updated HTML links to other formats in cmn2006, cmn-cu89s, cmn-cu89t, cmn-ncvs, and cmn-ncvt.
-2021-10-17: Updated metadata for ukr1871, ukr1996. Corrected typo in 2CH 3:15 in eng-web*, engwmb, and engwmbb. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2021-10-19: Started regeneration of all USFX files to correct an error where they have been failing to update on the eBible.org. Re-added yon, yrb. Updated eng-t4t.
-2021-10-28: Updated eng-web* (1MA 5:22, JDT 8:7). Updated eng-lxx2012, eng-uk-lxx2012. Updated eng-rv (GEN 6:7).
-2021-11-01: Updated metadata for bjvNT, daaNT, and kyuk. Added James Toebes audio to eng-web, engwebp, and eng-web-c.
-2021-11-03: Updated eng-lxx2012, eng-uk-lx2012, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-11-04: Updated eng-lxx2012 and eng-uk-lx2012.
-2021-11-06: Updated eng-lxx2012 and eng-uk-lx2012.
-2021-11-11: Updated audio for aly.
-2021-11-13: Updated audio for aoi, amx, bvr, dhgduwadha, dwy, engPEV, wrk, mwp, rop, mph, ntj, nna, nys, pjt, dhg, and nuy.
 2021-11-16: Added lin, nya, ewe, hausa, hun, kik.
 2021-11-18: Added polsz.
 2021-11-24: Added adt Christmas Story, alh song book, kld Gospel tract, kux Christmas Story, wlg Christmas Story, djj Christmas Story. Updated aoi, kky, gue, mph, and dhg. Added engaoi, gupk.
-2021-12-01: Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2021-12-07: Updated bjp.
-2021-12-10: Updated amx and rop audio. Updated eng-web* + engwmb and engwmbb (punctuation in NUM 2 and ACT 15:17).
 2021-12-22: Updated eng-web-c to be based on eng-webbe, which uses "LORD" or "GOD" instead of "Yahweh" to line up better with Roman Catholic church tradition as explained in https://www.usccb.org/prayer-and-worship/the-mass/frequently-asked-questions/the-name-of-god-in-the-liturgy (and which also lines up with Jewish tradition). This update also shifts the "Catholic" edition to use British/International spelling, as the greatest needs for a freely sharable digital English Bible in the Catholic tradition is outside of the United States of America. Americans should have no trouble with the few resulting spelling differences, like "neighbour" instead of "neighbor".
 2021-12-30: Rebuilt all modules to correct a problem with the Sword module build in the last rebuild, which actually deleted modules from the repository rather than rebuilding them. Oops.
-2021-12-31: Updated lug Crosswire Sword module.
-2021-01-07: Updated kux.
-2022-01-14: Updated eng-web*, engwmb, and engwmbb (EXO 13:11). Updated Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2022-02-01: Updated Updated engvbl, spavbl, engf35, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Updated eng-web*, engwmb, and engwmbb (typo corrections in 2KI 6:27; 2KI 22:2; EST 4:6; JER 28:9).
 2022-02-06: Added rough draft of porbrbsl.
 2022-02-08: Added uvh. Corrected typo in eng-kjv, eng-kjv2006 (1JN 2:23).
 2022-02-09: Added bjk. Rebuilt projects with Strong's numbers to correct Strong's number padding error in Haiola.
 2022-02-10: Updated Strong's numbers in eng-kjv, eng-kjv2006.
-2022-02-11: Updated bjk.
 2022-02-12: Added Psalms to gfk. Added gfkh and gfks. Updated porbrbsl.
 2022-02-24: Added frasbl.
-2022-03-01: Updated porbrbsl.
-2022-03-02: Updated gfk & gfkh (made references consistent). Updated spavbl, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2022-03-04: Updated eng-kjv, eng-kjv2006 (Red letters in Matthew 19:18). Updated spavbl, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2022-03-05: Updated gfks (made references consistent). Added kij. Updated kgpNT. Updated indags (added the rest of the New Testament).
-2022-03-07: Updated indags (book names).
 2022-03-09: Added porblt, porbr2018. Updated license on indags, spavbl, engfbv.
-2022-03-10: Updated frasbl.
 2022-03-11: Added lit draft. Shifted primary home for several translations to eBible.org for better reliability and bandwidth.
 2022-03-30: Updated copyright status (expired) for deu1951.
 2022-03-31: Added spablm draft. Updated eng-web*, engwmb, and engwmbb (corrected typo in Rev. 21:16 footnote). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2022-04-01: Updated spavbl.
-2022-04-04: Updated spavbl, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2022-04-06: Updated spablm.
-2022-04-07: Updated frasbl.
-2022-04-11: Updated spablm.
-2022-04-13: Updated lit, engPEV, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added ronlsb.
-2022-04-15: Updated kpg.
-2022-04-19: Updated adz, spablm, lit.
 2022-04-25: Removed hwcNT at copyright owner's request; added hwc.
 2022-05-05: Added urdgvh, urdgvr, urdgvu.
-2022-05-06: Updated spablm, lit.
 2022-05-24: Added hatbsa.
-2022-05-28: Rebuilt all Bible translation output formats with an updated test version of Haiola.
 2022-06-01: Added spapddpt. Updated eng-web*, eng-wmb, and eng-wmbb (corrected typos in MAT 23:7 and MRK 1:24). Updated tbzsim (OT Book Names). Updated lit, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2022-06-02: Added cmnfeb. Updated englsv.
-2022-06-07: Updated eng-web* (typo in 1MA 9:14). Updated spapddpt.
-2022-06-09: Updated spapddpt.
-2022-06-10: Updated eng-t4t, vie1934, tczchongthu.
-2022-06-13: Updated spapddpt. Updated eng-web*, engwmb, and engwmbb (elder->older in Job 32:4).
-2022-06-14: Updated hatbsa, uigara, heb, gux.
-2022-06-15: Updated spablm (inserted some Strong's numbers).
-2022-06-16: Updated gux, eng-t4t.
-2022-06-21: Updated eng-t4t (Job 40:22). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, anh, bsp, geb, spm, cwe, urw, gai, mwe, kdc, tod, kqa, msy, msy2020, kql, shj, zaj, mgc, yal, mgw, vid, msc, ziw, ndj, taw.
 2022-06-28: Updated hatbsa, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, nss, engPEV, tczchongthu. Added engtcent.
 2022-07-01: Added grctcent. Updated engtcent, hatbsa, lit, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, nss, sbe, lex, mpx. Reprocessed Strong's number insertion on engtcent, engasv, spavbl, eng-rv, engasvbt, englsv, grctcgnt, engPEV, grctr, grcsbl, engt4t, grcbyz, grcf35, grcsbl, hlt, spabes, spablm, sparvg, spavbl.
-2022-07-03: Correted problem with ronludari. Corrected typo in 2ES 2:1 in eng-kjv.
-2022-07-06: Updated engPEV audio. Updated hatbsa.
-2022-07-07: Updated engnet, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, acuNT, agr, tuoNT, and hatbsa.
-2022-07-08: Updated lit.
-2022-07-11: Updated eng-t4t, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, grctr, nss, sbe, spavbl, engtcent, tczchongthu, lit, indags, and hatbsa.
-2022-07-13: Updated engtcent, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, spavbl, tczchongthu, lit, ronlsb, and hatbsa.
-2022-07-15: Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, engtcent, grctcgnt, ronlsb, and hatbsa.
-2022-07-16: Updated spablm.
-2022-07-18: Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, engtcent, grctcgnt, ronlsb, and hatbsa.
+
+
+
 2022-07-19: Re-merged Strong's numbers into fraLSG, frasbl, spapddpt, spavbl, sparvg, engasvbt, engasv, engtcent, engPEV, grctcgnt, grcf35, grcsbl, grctr.
-2022-07-20: Updated eng-kjv (typo correction in 2ES 7:12). Updated hatbsa, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, engtcent, grctcgnt. Updated Strong's numbers in eng-asv, engasvbt, engerv, engf35, engfbv, englsv, engPEV, eng-rv, eng-t4t, fraLSG, frasbl, grcbyz, grcf35, grcsbl, grctr, spabes, spablm, sparvg.
-2022-07-22: Updated tczchongthu, sbe, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, engtcent, grctcgnt, spapddpt, nss, mpx, gvs, cmnfeb, hatbsa, tdt, frasbl, spablm, eng-kjv.
 2022-07-25: Added Strong's numbers to fra_fob. Added francl. Updated frasbl (DAG title).
-2022-07-26: Updated engPEV, hatbsa, gvs, mpx, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, nss, spapddpt, sbe, engtcent, tczchongthu
-2022-07-28: Rebuilt all projects. Updated engoebus and engoebcw.
 2022-08-02: Rebuilt with new Strong's merge program and/or updated: frasbl, engPEV engtcent, spablm, hltmcsb, lit, probrbsl, ukr1996, urt, apwNT, arp, far, hatbsa, spabes, engoebcw, fra_fob, fraLSG, nys, tczchongthu, eng-rv, eng-t4t, grcsbl, grctcgnt, grctr, spapddpt, sparvg, spavbl, engasvbt, eng-asv, engerv, engf35, engfbv, eng-kjv, englsv, engoebus, engtcent, grcbyz, grcf35.
 2022-08-04: Updated or rebuilt: frasbl, hatbsa, spablm, englsv, engtcent, grctcgnt, lit, porbrbsl, tczchongthu, gvs.
-2022-08-08: Updated or rebuilt: frasbl, hatbsa, spablm, englsv, engtcent, gvs, lit, rmyArli.
-2022-08-09: Updated hatbsa, mkj.
-2022-08-10: Updated or rebuilt: frasbl, engPEW, engtcent, gvs, hatbsa, lit, porbrbsl, rmChergash, rmGurbet, spablm, tczchongthu.
-2022-08-16: Updated or rebuilt: engtcent, grctcgnt, grctr, rmGurbet, spapddpt, tczchongthu, hatbsa, hltmcsb, lit, met, mkj, gvs. Corrected typo in 2ES 5:1 in eng-kjv.
 2022-08-19: Added tteo, snx, wiv, kiw. Updated klt, hatbsa, engtcent, mkj, spapddpt, tczchongthu.
-2022-08-21: Updated eng-web*: corrected typos in 2ES 1:37; 2ES 9:17 note; SIR 45:13; 2ES 2:47; 4MA 7:4.
-2022-08-22: Updated hatbsa, hlt, tczchongthu. Corrected typo in SIR 31:24 in eng-web*.
-2022-08-25: Updated hatbsa, spablm.
-2022-08-26: Updated engtcent, grctcgnt, tczchongthu, hlt, met.
-2022-09-02: Updated eng-t4t.2022-09-05: Updated hatbsa, tczchongthu, lit, rmyGurbet. Rebuilt all to correct output USFM nesting error and USFM level repetition error.
-2022-09-06: Updated eng-web* glossary formatting only. Updated engoebcw, engtcent, hatbsa, lit, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, and tczchongthu.
-2022-09-13: Updated all PDF and WordML files. Active projects with live connections were updated, too.
-2022-09-28: Updated eng-web* + engwmb + engwmbb (corrected typo in 2 Kings 4:23).
 2022-10-04: Added John to etr. Updated engoebcw, rmyChergash, spapddpt. Updated PDFs for iqw, kpg.
-2022-10-06: Updated spapddpt, hatbsa, engtcent, grctcent.
-2022-10-08: Updated engPEV, grctcgnt, engtcent, gvs, lit, rmyArli, hatbsa, spapddpt.
-2022-10-29: Updated tczchongthu, mjj, rmyArli, rmyChergash, rmyGurbet, dhg, gvs, hatbsa.
-2022-10-30: Updated engPEV.
-2022-11-01: Updated byx, hatbsa, rmyArli, rmyChergash, rmyGurbet, spapddpt, spavbl, eng-kjv2006. (One space correction in eng-kjv2006 from who soever to whosoever.)
 2022-11-02: Added grcsr.
 2022-11-03: Updated hatbsa, spapddpt, engDRA, engPEV, mkj, adz, gvs, rmyArli, rmyChergash, rmyGurbet.
-2022-12-28: Updated eng-web, engwebp, eng-web-c (Yahweh -> Yah in SNG 8:6 for consistency). Updated connected active projects.
-2023-01-11: Updated spablm, mkj, rmyArli, rmyChergash, rmyGurbet, tdt, gvs, hatbsa, kbq.
 2023-01-18: translations.csv now contains a field called sourceDate that indicates what was updated recently. Since that is automatic, and this file is updated manually, you should check that one, now, to see what is new. (Sort the spreadsheet by that date to make it easy.)
 2023-01-21: Copyright of hwc transferred from WBT to HPBM. See translations.csv for other recent updates.
-2023-02-17: Corrected typo in Ezra 5:4 in eng-web*, engwmb, and engwmbb.
-2023-02-20: Corrected typo in Ezra 10:6 in eng-web*, engwmb, and engwmbb.
-2023-02-28: Corrected typo in Nehemiah 11:22 in eng-web*, engwmb, and engwmbb.
-2023-03-02: Corrected typo in Jeremiah 2:18 in eng-web*, engwmb, and engwmbb.
 2023-03-07: Added tdx.
 2023-03-26: Added deu-f35.
-2023-03-28: Corrected typo in Isaiah 40:26 in eng-web*, engwmb, and engwmbb.
 2023-04-03: Added ulk1902.
 2023-04-07: Added ahr, omb, ena, bpx, benirv (replacing ben2017), benobcv, bhd, bht, bdv.
 2023-04-08: Added bwo, bgg, dao, ceslb, dso, engbsb, fin, gmvggm.
 2023-04-09: Added gofwftw, bgc, heblb, hincv, hoy.
-2023-04-11: Corrected typo in eng-web* Baruch 6:11 The->They. Added ekkpkp.
 2023-04-12: Corrected spelling of vigourous to vigorous in eng-webbe (EXO 1:9, PSA 38:19, 2MA 12:27, 4MA 7:10) and engwmb (EXO 1:9, PSA 38:19). Added deuelbbk. Updated guj2017. Added isl, ibo.
 2023-04-13: Added juy, kanokcv, kxv. Updated kan2017. Added quctt, lbm, mni, unx, nag, nlx, nde. Updated mal, mdyeth.
 2023-04-14: Added xnj, norlb, gaz, bfz, peg, pesopcb, rmc. Updated pan.
-2023-04-15: Updated rmc. Added rmyservi, rmyvlakh, rmylovari, sch, sna, sby, tgj.
 2023-04-19: Added tamtcv, tkr, tsn, tvt, twiasante, ukronpu, yao. Updated tam2017, tel2017, urd. Corrected ISO language code norlb -> noblb.
 2023-04-24: Corrected typo in eng-web*, engwmb, and engwmbb: removed extra "s" from John 12:3. Updated gupk. Rebuilt translations with latest Haiola release candidate.
 2023-04-26: Corrected typo in eng-web*, engwmb, and engwmbb in 2CH 3:15 heigh -> high.
 2023-04-28: Added footnote to REV 13:1 in eng-web*, engwmb, and engwmbb. Added some audio files to engPEV and spablm.
 2023-05-05: Added nce.
-2023-05-25: Updated eng-t4t, eng-web*, engwmb, engwmbb, eng-lxx2012, and bco. Updated tgo.
-2023-05-29: Updated adz (added JAS).
 2023-06-07: Corrected minor translation issue in ISA 48:20 in eng-web*, engwmb, and engwmbb
 2023-06-17: Updated eng-web*, engwmb, and engwmbb (Corrected typo in 2ES 4:38 and punctuation issues in 2CH 32:11; JER 26:9; Jer 36:29; Job 6:22; JHN 12:34; MAT 23:18)
 2023-06-26: Corrected typo in GEN 11:13 in eng-lxx2012.
 2023-07-04: Corrected numerous missing capital letters after an opening quotation mark in eng-t4t.
-2023-07-27: Updated dif, gnn, dji.
 2023-07-28: Added dwuliv, gupmay, lrg. Updated djj.
-2023-09-07: Updated etr, nyu.
-2023-09-11: Updated eng-web*, engwmb, and engwmbb (corrected typo in 1CH 11:23 footnote. Updated enq2.
-2023-09-13: Updated eng-Brenton. Removed enq in favor of the better enq2.
-2023-09-25: Updated eng-web*, engwmb, and engwmbb (corrected typos in EZK 47:11 and DAN 4:26).
-2023-10-09: Updated eng-web*, engwmb, and engwmbb (corrected omission of "cattle" in REV 18:13).
-2023-10-11: Updated eng-web*, engwmb, and engwmbb (corrected omission of "far" in PRO 22:5).
 2023-11-29: Added turytc.
 2023-12-13: Restored indags. Updated eng-web*, engwmb, and engwmbb (conformed MAT 26:38 to the RP Greek Majority text. NO CHANGE IN MEANING.)
 2024-01-03: Updated eng-web*, engwmb, and engwmbb (corrected whoever -> whomever in EZK 23:7; conformed 1JN 2:23 and LUK 14:24 to RP MT).
+
 2024-01-11: Split engwebu and engwebuk off from eng-web and eng-webbe. With these two, the Tetragrammaton is not avoided in footnotes, but both consistently use LORD or GOD in the main text. Corrected some typos in eng-lxx2012 and eng-uk-2012 (you has -> you have).
 2024-01-15: Updated eng-web*, engwmb, and engwmbb (rolled back the change in 1Jn 2:23 based on better textual criticism information); Removed spurious "The" in PSA 89:8. Updated engwebu and engwebuk: rolled back 1JN 2:23; changed breast->chest when referring to the male chest; removed spurious "The" in PSA 89:8. Footnoted where "Yah" was rendered "LORD". Added several footnotes on LORD or GOD rendered from "Yahweh".
-2024-01-27: Updated eng-web*, engwmb, engwmbb, and engwebu (corrected missing "of" in EZK 10:14).
 2024-01-31: Added indayt.
 2024-02-20: Updated all of eng-web*, engwmb, engwmbb, and engwebu except for the original eng-web, correcting "the Lord the LORD" to "the Lord GOD" and "the Lord, the LORD" to "the Lord, GOD".
 2024-02-21: Added uro. Started rebuild with (hopefully) improved Strong's number tagging, at least with respect to the Tetragrammaton.
-2024-03-12: Updated eng-lxx2012 and eng-uk-lxx2012.
+
 2024-03-16: Added mkj ACTS.
 2024-04-18: Starting roll-out of Android apps. Updated audio for hatbsa. Minor grammar correction in 1KI 3:23 in eng-web*.
 2024-06-10: Updated arbnav.
