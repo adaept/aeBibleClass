@@ -6,418 +6,50 @@
 	    myy, noaE, noaH, poy, qub, ruf, sri, sus, tav, taw, tnc, tue, tuf, and ycn.
 2014-08-22: Updated Strong's markup for deu1912, fraLSG, and eng-kjv.
 2014-12-03: Updated eng-web*, taw, tpa, ape, avt, byx, cak, cakCNT, cakYNT, cbiNTpo, chk, and bnp. Regenerated ALL output files with improved reference link detection and USFX schema conformance for the USFX versions.
-
-
-2014-12-04: Updated cmn2006, hin2010, and cpuNT.
-2014-12-07: Updated eng-Brenton, eng-rv, and engamp.
-2014-12-08: Updated kde and eng-web*.
-2014-12-09: Updated kpg, kpr, leu, mbb, and eng-web*.
-2014-12-10: Updated meu, mkn, and mox.
-2014-12-11: Updated mvn, hui, kpr, and sgz.
-2014-12-12: Updated swp, pma, tnk, and lbb.
-2014-12-14: Updated eng-web*.
-2014-12-21: Updated eng-web*. Rebuilt HTML & inScript modules.
-2014-12-23: Updated eng-web*, acuNT, and baoNT.
-2014-12-26: Normalized all USFM files to have explicit level 1 markup where appropriate, i.e. \s1 instead of just \s for section header level 1.
-Note: due to bandwidth constraints while traveling, many of the following changes will be delayed past the date indicated
-because it takes a LONG time to upload corrected copies to all affected web sites. Please verify the date of the file when getting updates.
-2014-12-30: Minor markup corrections to most projects with language code starting with "a". Updated bco, bdd, bhl, bjp, and byr-w.
-2014-12-31: Updated bzh, caa, cha, dah, ded, dgz, dob, and dww.
-2015-01-01: Updated eko, eng-t4t, and etr.
-2015-01-02: Updated faa, fai, for, gah, ghs, glk, gubBl, hla, hot, ian, and imo.
-2015-01-03: Updated ino, iws, jae, kbm, and kgf.
-2015-01-06: Updated kkc and klv.
-2015-01-07: Updated kmg and kpf.
-2015-01-20: Added tnp.
-2015-01-28: Updated kpw, kpx, ksd, ksr, kue, kup, kwj, kyc, kyg, kze, lid, and eng-web*.
-2015-02-05: Updated enq and enq2.
-2015-02-19: Updated eng-rv, eng-kjv, and eng-web*. Generated epub 3 files and put them in http://eBible.org/epub/.
-2015-02-11: Updated eng-web*. Regenerated epub files.
-2015-03-01: Updated eng-web*. Regenerated epub files with formatting corrections.
 2015-03-16: Updated eng-web*. Regenerated epub files with minor formatting refinements. Generated some .mobi files at http://eBible.org/epub/.
 2015-03-18: Updated kde, eng-web*. Added bea, dgc, agt, agr, amk, sgb, bps, lbk, cya, ctu, ffm, xed, kmk, kyq, xon, kyf, cuk09, kdc, mcp, knf, mbs, msk, msb, meq, muy, wmw, plu, myk, spp, taj, tew, tiy, and vid.
 2015-03-20: Added russyn. Updated metadata in enq, enq2, kbq.
-2015-03-31: Updated eng-web*.
-2015-04-03: Updated eng-web*.
-2015-04-07: Updated ded, eng-web*.
-2015-04-08: Updated eng-web*.
-2015-04-16: Updated eng-web*.
-2015-04-21: Updated pesTPV, eng-web*.
-2015-04-24: Updated kpg (added OT, updated NT). Updated eng-web*.
-2015-05-03: Added thaKJV. Updated eng-web*.
-2015-05-06: Added arp.
-2015-05-24: Updated eng-web*.
-2015-06-16: Updated eng-asv, eng-rv, eng-Brenton, eng-web*.
 2015-06-17: Added Strong's numbers to spaRV1909.
-2015-07-01: Added yka.
-2015-07-02: Updated eng-t4t.
-2015-07-03: Updated eng-web*.
-2015-07-08: Updated eng-web*. Changed the FCBH/DBS ID of some translations to conform to FCBH usage, especially those that had longer than 6 characters.
 2015-07-17: Updated kpg. Rebuilt all USFM files to normalize to new Paratext check rules and to correct some problems due to a logic error recently corrected in Haiola.
-2015-07-22: Updated eng-web*.
-2015-08-12: Updated eng-kjv, eng-web*.
-2015-08-23: Updated eng-kjv, eng-web*, eng-Brenton, eng-lxx2012, eng-uk-lxx2012.
-2015-08-27: Restored swh.
-2015-08-31: Removed eng-uk (a subset of eng-webbe) and eng-web-c (a subset of eng-web) to reduce confusion.
-2015-09-06: Added kkl. Updated eng-kjv, eng-web*.
-2015-09-15: Updated eng-kjv, fraLSG, eng-web*.
-2015-10-07: Added bxh.
-2015-11-02: Updated eng-kjv, eng-web*, eng-Brenton, eng-lxx2012, eng-uk-lxx2012
 2015-11-06: Updated all _vpl.zip files to include a SQL file to create a table of unformatted verse contents (no footnotes, headers, etc.).
-2015-11-10: Added haw1868.
-2015-12-09: Started adding *_xetex.zip files that contain the XeTeX files used to make PDFs that are at http://eBible.org/pdf/.
-2015-12-27: Updated eng-kjv, eng-web*, eng-lxx2012, and eng-uk-lxx2012.
 2016-01-09: Added jpn1965. Updated eng-asv.
-2016-01-30: Updated kqc.
-2016-02-03: Updated eng-web*.
-2016-02-08: Added combination text/audio epub and Android apps for biblical Greek and Hebrew at http://eBible.org/multimedia/grc/ and http://eBible.org/multimedia/heb/. Updated eng-web*.
-2016-03-07: Updated eng-web*, eng-rv.
-2016-03-12: Updated eng-web*. Started regenerating all usfm and xsfm files.
-2016-03-18: Regenerated all _usfm.zip and _xsfm.zip files.
-2016-03-22: Updated soq.
-2016-03-24: Regenerated all _usfm.zip and _xsfm.zip files again, this time with updated handling of note-specific character styles, conforming with Paratext usage.
-2016-03-27: Updated eng-web*.
-2016-04-01: Updated eng-web*.
-2016-04-13: Added wat.
-2016-04-14: Added more books to mwc.
-2016-04-15: Added more books to aui and kqf.
-2016-04-22: Updated eng-web*.
-2016-04-28: Updated eng-t4t.
-2016-04-29: Added boj2014.
-2016-04-30: Updated kqw and emi.
-2016-05-05: Updated eng-web*.
-2016-05-06: Updated eng-t4t, eng-web*.
-2016-05-12: Updated eng-web*.
-2016-05-29: Updated jae, eng-web*.
-2016-05-31: Updated eng-web*.
-2016-06-07: Updated eng-web*.
-2016-06-08: Added cac, cpy, ctucti, kne.
-2016-06-15: Added apeB. Updated eng-web*.
-2016-06-22: Added tzotzc and tzotze.
 2016-06-25: Updated cmn-cu89s and cmn-cu89t. Regenerated all _usfm.zip and _xsfm.zip files again with corrected handling for \+fv ...\+fv*.
 2016-06-29: Added aaz, mkn, tet, nfa, bkx, beu, hvn, txq, llg, row, rgu, and tdt. Updated hegNTpo.
-2016-06-30: Removed agrNT, which was a duplicate of agr.
-2016-07-01: Updated eko, mgh, nyu, seh, tke, and wmw.
-2016-07-06: Updated eng-web*. Rebuilt PDF, ePub, and mobi files to include some nice covers.
-2016-09-05: Regenerated all. Updated mps, nii. 
-2016-09-06: Added tif and zpmNT.
-2016-09-09: Added bel, bsp, ind, mgc, susa, and tod.
-2016-09-13: Added ktm.
-2016-09-14: Updated ppo, ptp.
-2016-09-22: Updated eng-web*, rro, zia, yuw, aai, russyn, rwo-kara, rwo-rawa.
-2016-09-28: Added nmws.
-2016-10-04: Added engourb. Updated bhl.
-2016-11-07: Updated wsk.
-2016-11-11: Deprecated and removed xsfm format. Regenerated usfm files to remove some unnecessary line breaks.
-2016-11-24: Updaded geb.
-2016-12-02: Added eri. Started regenerating USFM files without extra space after \v markers.
-2016-12-26: Updated kqc.
-2017-03-09: Updated engerv.
-2017-03-16: Updated kqc.
-2017-03-17: Updated sbe.
 2017-05-03: Regenerated all Scripture files, this time with a bug fixed that was causing WordML files to not get posted.
-2017-05-16: Added ksj.
 2017-06-13: Removed khm and khm-h pending takedown request investigation.
-2017-08-19: Updated tpa. Regenerated all files with updated Haiola.
-2017-08-31: Updated wed, tuc-t.
-2017-09-01: Updated som, mna.
-2017-09-03: Updated mpx.
-2017-09-06: Updated pma OSIS & Sword.
-2017-09-16: Added asmfb.
-2017-10-10: Added bla.
-2017-10-12: Updated copyright and permissions information for asmfb.
-2017-10-24: Updated yap.
-2017-10-28: Added kos.
-2017-10-30: Updated eng-web*.
-2017-11-03: Updated metadata for asm. Added ben2017.
-2017-11-04: Added hin2017.
-2017-11-07: Added rug.
-2017-11-08: Added apb.
-2017-11-10: Added aia and bvd.
-2017-11-13: Added bgt.
-2017-11-14: Added far and kwf. Updated eng-web*.
-2017-11-17: Added ntu.
-2017-11-18: Added lgl.
-2017-11-20: Updated eng-web*.
 2017-11-23: Updated deu1912, spaRV1909, and eng-web*.
-2017-11-25: Updated klt.
-2017-11-28: Added urd, pan, and ory. Updated asm.
 2017-12-03: Updated eng-web*, eng-rv. Removed some translations that are not open access licensed and not fully hosted on eBible.org from the distribution list.
-2017-12-05: Added tel2017.
-2017-12-07: Updated asm.
-2017-12-08: Added kan2017. Corrected error (wrong 1 John) in tel2017.
-2017-12-09: Updated ory.
-2017-12-13: Corrected error in 1 John short name in tel2017. Added mar.
-2017-12-14: Added mal and guj.
-2017-12-19: Updated eng-web*, eng-LXX2012, eng-uk-lxx2012, and eng-rv.
-2017-12-22: Added yap NT and urt.
-2017-12-27: Updated hboWLC.
-2018-01-02: Updated eng-web*.
-2018-01-06: Updated eng-web*.
-2018-01-02: Updated metadata on aia, bvd, bgt, far, nlg, kwd, kwf, ntu, rug, apb, and lgl.
-2018-01-07: Added engfbv.
-2018-01-08: Added spm, gai, kql, mdyeth, ndj, nnq, ngp
-2018-01-09: Added fuf, urw.
-2018-01-10: Updated susa, sus. Added ziw.
-2018-02-14: Updated eng-web*.
-2018-02-20: Updated eng-web*.
-2018-02-26: Updated apr audio and added Android apps.
-2018-02-28: Added spavbl.
-2018-03-06: Updated engfbv and spavbl.
-2018-03-07: Updated hin2017.
-2018-03-08: Updated mal, eng-web*.
-2018-03-10: Updated eng-rv, eng-web*.
-2018-03-24: Updated eng-web*.
-2018-03-28: Updated eng-asv, eng-rv, eng-web*.
-2018-04-07: Updated eng-web*.
-2018-04-14: Updated eng-web*.
-2018-04-17: Updated hin2017, asmfb.
-2018-04-24: Updated xnn, mvn.
-2018-04-29: Updated eng-web*.
-2018-05-03: Updated ben2017, pan.
-2018-05-04: Updated ory, eng-web*, guj2017.
-2018-05-09: Updated kan2017.
-2018-05-10: Updated mal.
-2018-05-15: Updated tam2017, tam2008.
-2018-05-18: Updated tel2017.
-2018-05-20: Updated eng-web*.
-2018-06-03: Updated eng-web*.
-2018-06-05: Updated eng-web*.
 2018-06-07: Initiated rebuild of all modules to make all HTML outputs, including Browser Bible 3 modules, more XML compatible.
-2018-06-19: Updated eng-web*. Rebuilt all modules to make Sword modules more compatible with old Sword engines.
-2018-07-06: Updated spavbl (corrected one missing space).
-2018-07-08: Updated engDRA.
-2018-07-09: Updated eng-asv, eng-web*.
-2018-07-13: Updated mpx.
-2018-07-15: Updated emi.
-2018-08-07: Added engnet.
 2018-08-10: Updated eng-kjv, eng-kjv2006 (restored Strong's numbers); updated eng-web*.
-2018-08-15: Added kvg.
-2018-08-21: Updated kvg (changed cover image).
 2018-08-24: Added some Strong's numbers to eng-glw.
-2018-08-25: Updated eng-web*.
 2018-08-26: Added some Strong's numbers to eng-asv, eng-web. Separated engwmb and engwmbb from eng-web dependency and declared engwmb text stable.
 2018-08-28: Corrected some Strong's numbers problems in eng-kjv, eng-kjv2006. Added rmyGurbet. Added some Strong's numbers to eng-rv, engfbv, engwmb, and engwmbb.
 2018-08-30: Added some Strong's numbers to engDBY, engBBE, engDRA, engoebcw, and engoebus. Added rmyArli, rmyChergash, and ronBayash.
 2018-08-31: Added some Strong's numbers to engerv, eng-t4t, and spavbl.
-2018-09-02: Added grcmt.
-2018-09-06: Added spabes.
 2018-09-11: Added over 8,000 more Strong's number tags to eng-web*. Added Strong's number tags to spabes and more Strong's number tags to spavbl. Added portft.
-2018-09-20: Added uli.
 2018-09-22: Updated chk. Removed Strong's number tags from spabes for error correction.
-2018-10-19: Added Psalms to engfbv.
-2018-10-23: Updated ton, rmyArli, rmyChergash, rmyGurbet, and ronBayash.
-2018-10-24: Added polubg.
-2018-10-30: Updated spabes (added Genesis and Exodus).
-2018-11-09: Updated emi, azb.
-2018-11-11: Added srp1865.
-2018-11-12: Added enggnv.
-2018-11-13: Added engjps.
-2018-11-14: Added ces1613.
-2018-11-15: Added deuelo, deu1951.
-2018-11-16: Updated spavbl license text.
-2018-11-17: Updated some metadata, supplying language name in vernacular where missing, and regenerated HTML pages with link to eBible.org/find/show.php for each one.
-2018-11-27: Updated asmfb, ben2017, guj2017, hin2017.
-2018-11-29: Updated kan2017.
-2018-11-30: Updated mal, mar, ory, pan, tam2017, tel2017.
-2018-12-04: Updated spabes (added Leviticus).
-2018-12-11: Updated tnk. Removed ape, as it is a duplicate of aon.
-2018-12-15: Added engnasb for BrowserBible access only (due to copyright permission limitations).
-2018-12-17: Added khm, khm-h, spaLBLA, and spanblh to BrowserBible only (due to copyright permission limitations).
-2018-12-19: Added deutkw, arbtma.
 2018-12-20: Added ukr1871, ukr1996, upv, lww, bki.
 2018-12-21: Added vie1934.
 2018-12-22: Corrected one Strong's number markup error in engnet.
-2018-12-26: Updated eng-web*. Added hlt.
-2019-01-08: Removed vie1934 pending copyright claim investigation.
-2019-01-10: Removed ceskms per copyright owner request. The original source for this was DBS, and the copyright owner denies having given them permission to post it under a creative commons license.
-2019-01-11: Updated spabes (added Numbers, Deuteronomy; minor edits to Proverbs).
-2019-01-12: Updated spabes (added Joshua).
-2019-01-21: Added Judges to spabes.
-2019-02-14: Added Joshua, Ruth, 1 Samuel, and 2 Samuel to spabes. Updated rmyArli, rmyChergash, rmyGurbet, and ronBayash.
-2019-02-15: Updated spabes.
-2019-02-26: Added audio for eng-webbe. Added 1 Kings & updated Proverbs in spabes. Restored vie1934 NT only.
-2019-03-05: Added 2 Kings to spabes. Regenerated redistributable files to add the _readaloud.zip file format.
-2019-03-14: Updated rmyChergash, ronBayash, eng-t4t.
-2019-03-30: Updated lbb.
-2019-04-02: Removed bwd due to a problem with translation accuracy. Added books to kwq.
-2019-04-03: Added wro.
-2019-04-06: Added nld1939. Updated spabes.
-2019-04-12: Added Esther to spabes.
-2019-04-23: Added gup, rop.
-2019-04-26: Added wbp, ulk, nys.
-2019-04-30: Updated spabes, ton.
-2019-05-05: Updated ronBayash.
-2019-05-07: Added NEH to spabes.
-2019-05-11: Updated eng-web*.
-2019-05-12: Updated eng-web*.
 2019-05-14: Udated ronBayash, rmyArli, rmyChergash, rmyGurbet. Added gvn, aly, amx, bvr, aer, gnn, mwp.
 2019-05-15: Added ntj, nuy, are, wim, wmt, tcs.
-2019-05-16: Updated nld1939.
-2019-05-17: Updated wro, wbp, bvr, amx.
-2019-05-21: Updated spabes.
-2019-05-24: Added gia, mph, dhg, dhgduwadha, nay.
-2019-05-25: Updated eng-web*.
-2019-05-28: Added Genesis to uvl.
-2019-05-30: Added dwy.
-2019-05-31: Added Job to spabes. Updated eng-web*.
-2019-06-04: Updated eng-web*.
-2019-06-07: Updated eng-web*.
-2019-06-08: Updated eng-web*.
-2019-06-09: Updated eng-web*.
-2019-06-13: Added engULB.
-2019-06-14: Added pjt, dji, djr. Updated dhg.
-2019-06-19: Updated eng-web*.
-2019-06-21: Updated eng-web* (Acts).
-2019-06-22: Updated eng-web* (Romans).
-2019-06-23: Updated eng-web*.
-2019-06-24: Updated eng-web* (1 Corinthians).
-2019-06-25: Updated eng-web* (2 Corinthians, 1 Timothy, 1 Peter).
-2019-06-26: Updated eng-web* (Galatians, Ephesians, Philippians, Sirach), amx, aly.
-2019-06-27: Updated eng-web* (Colossians, 1 & 2 Thessalonians, 2 Timothy), bvr.
-2019-06-28: Updated eng-web* (Titus, Philemon, Hebrews).
-2019-07-01: Updated eng-web* (James-Revelation, Psalms).
-2019-07-02: Added engPEV. Updated eng-web* (Psalms, Proverbs), mph, ntj, nys, pjt, tcs.
-2019-07-04: Updated eng-web* (1 Kings), rop, spabes.
-2019-07-06: Updated spabes (SNG).
-2019-07-07: Updated eng-web* (1 Kings).
-2019-07-08: Corrected posting of djr.
-2019-07-09: Updated eng-web*.
-2019-07-10: Updated eng-web* (2 Kings, Haggai, Sirach)
-2019-07-11: Updated eng-web*.
-2019-07-12: Updated spabes (ISA), eng-web* (1 Chronicles).
-2019-07-16: Updated eng-web* (1 Chronicles).
-2019-07-17: Updated eng-web* (2 Chronicles).
-2019-07-18: Updated engnet, eng-web* (2 Chronicles).
-2019-07-18: Updated eng-web* (2 Chronicles, Ezra).
-2019-07-22: Updated eng-web* (Nehemiah, Esther, Job), rmyArli, rmyChergash, rmyGurbet, ronBayash.
-2019-07-23: Updated eng-web* (Job, Ecclesiastes, Isaiah).
-2019-07-23: Updated eng-web* (Isaiah, Jeremiah).
-2019-07-25: Updated fraLSG.
-2019-07-26: Updated eng-web* (Jeremiah, Lamentations, Ezekiel).
-2019-07-27: Updated ikkNT, ikwNT, atgNT, ninNT, kdlNT, tswNT; updated eng-web* (Ezekiel).
-2019-08-06: Updated eng-web* (Ezekiel).
-2019-08-08: Updated eng-web* (Ezekiel); updated engPEV (text & audio), amx (audio), spabes (Jeremiah and Lamentations).
-2019-08-09: Updated eng-web* (Ezekiel, Jonah, and Joel).
-2019-08-09: Updated eng-web* (Daniel and Hosea). Updated ikkNT, ikwNT, atgNT, ninNT, kdlNT, and tswNT metadata.
-2019-08-11: Added khs.
-2019-08-12: Updated eng-web* (Amos, Micah, and Nahum).
-2019-08-12: Updated eng-web* (Habakkuk, Zephaniah, Zechariah, Malachi, and Sirach).
-2019-08-16: Updated eng-web* (Judith).
-2019-08-18: Updated eng-web* (Judith).
-2019-08-19: Updated eng-web* (Judith, ESG, Sirach).
-2019-08-21: Updated eng-web* (Wisdom, Sirach). Added yij, dif, wrk, and mpj.
-2019-08-22: Updated eng-web* (Wisdom, Sirach).
-2019-08-23: Updated eng-web* (Sirach).
-2019-08-24: Updated eng-web* (Sirach, DAG).
-2019-08-25: Updated eng-web* (Sirach).
-2019-08-26: Updated eng-web* (Sirach).
-2019-08-27: Updated eng-web* (Sirach).
-2019-08-28: Updated eng-web* (Sirach), rmyArli, rmyChergash, rmyGurbet, and ronBayash. Added gue, jao.
-2019-08-29: Updated eng-web* (Sirach). Added met.
-2019-08-30: Updated eng-web* (Sirach).
-2019-08-31: Updated eng-web* (Sirach).
-2019-09-01: Updated eng-web* (DAG).
-2019-09-02: Updated eng-web* (DAG, Baruch).
-2019-09-03: Updated eng-web* (Baruch).
-2019-09-05: Updated eng-web* (1MA).
-2019-09-07: Updated eng-web* (1MA).
-2019-09-08: Updated eng-web* (1MA). Updated engwmb and engwmbb.
-2019-09-09: Updated eng-web* (1MA). Updated smkNT metadata.
-2019-09-10: Updated eng-web* (1MA).
-2019-09-11: Updated eng-web* (1MA, 2SA). Updated engwmb and engwmbb.
-2019-09-12: Updated eng-web* (1MA).
-2019-09-13: Updated eng-web* (2MA).
-2019-09-14: Updated eng-web* (2MA, 2SA).
-2019-09-17: Updated ulk (metadata), spabes (EZK).
-2019-09-18: Updated eng-web* (2MA).
-2019-09-19: Updated eng-web* (1KI, 2MA). Updated engwmb & engwmbb (1KI).
-2019-09-20: Updated eng-web* (2MA).
-2019-09-21: Updated eng-web* (2MA).
-2019-09-23: Updated eng-web* (2MA).
-2019-09-24: Updated eng-web* (2MA, 1ES).
-2019-09-25: Updated engASV (metadata).
-2019-09-26: Updated eng-web* (1ES).
 2019-09-27: Added engwyc2017, engwyc2018. Updated eng-web* (1ES).
-2019-10-02: Updated spabes (DAN).
-2019-10-03: Updated eng-web*, engwmb, engwmbb (1ES, 1KI, 2KI).
-2019-10-04: Updated eng-web*, engwmb, engwmbb (1ES, ISA).
-2019-10-05: Updated eng-web*, engwmb, engwmbb (1ES, 2KI).
-2019-10-06: Updated eng-web*, engwmb, engwmbb (1ES, 2KI).
-2019-10-07: Updated eng-web*, engwmb, engwmbb (1ES, 3MA, 2KI).
-2019-10-08: Updated eng-web* (3MA), spabes (HOS).
-2019-10-08: Updated eng-web* (3MA, 2ES), spabes (JOL).
-2019-10-13: Updated spabes (AMO, OBA, JON, MIC), eng-web* (2ES).
-2019-10-16: Updated eng-web* (2ES).
-2019-10-21: Updated eng-web* (2ES). Added engylt.
-2019-10-23: Updated eng-web* (2ES). Added engwebster and engtnt. Updated all of spabes, which is now complete!
-2019-10-24: Updated eng-web* (2ES).
-2019-10-25: Updated eng-web* (2ES). Added englee, engnoy, and hat.
-2019-10-26: Updated eng-web* (2ES). Added dan1931.
-2019-10-28: Updated eng-web* (2ES).
-2019-10-30: Updated eng-web* (2ES).
-2019-10-31: Updated eng-web* (2ES).
-2019-11-01: Updated eng-web*, engwmb, engwmbb (NEH, 2ES).
-2019-11-02: Updated eng-web* (2ES).
-2019-11-05: Updated eng-web* (2ES, 4MA). Added uigpin.
-2019-11-07: Updated eng-web* (4MA).
-2019-11-09: Updated eng-web* (4MA).
-2019-11-10: Updated eng-web* (4MA, 1MA).
-2019-11-12: Updated eng-web* (1MA). Regenerated uigpin.
-2019-11-13: Updated eng-web* (1MA).
 2019-11-14: Added uigara, uigcyr, and uiglat. Updated uigpin.
 2019-11-16: Updated eng-web* (1MA). Regenerated uigara, uigcyr, uiglat, and uigpin. Updated hin2010 (Psalm titles). Updated engDBY (one typo).
-2019-11-17: Updated eng-web* (1MA).
-2019-11-19: Updated eng-web* (1MA).
-2019-11-20: Updated eng-web* (1MA). Updated kmg (added OT).
-2019-11-21: Updated kmg (completed Revelation).
-2019-11-22: Updated eng-web* (1MA). Updated kmg (added missing parts of NT).
-2019-11-23: Updated kmg (fixed reference hot links).
-2019-11-26: Updated eng-web* (1MA).
-2019-11-27: Updated eng-web* (1MA).
-2019-11-28: Updated eng-web* (2MA).
-2019-12-03: Updated metadata for uigara, uigcyr, uiglat, and uigpin.
-2019-12-05: Updated spabes (JHN, GAL).
-2019-12-06: Updated eng-web* (2MA).
-2019-12-07: Updated eng-web* (2MA).
-2019-12-10: Added beo.
-2019-12-11: Updated eng-web* (2MA).
-2019-12-13: Updated beo. Updated eng-web* (2MA).
-2019-12-14: Added mkj. Updated eng-web* (2MA), eng-t4t, met, rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari.
-2019-12-15: Added epo.
-2019-12-17: Updated eng-web* (2MA), mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari.
-2019-12-18: Updated eng-web* (2MA, 1ES), rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari. Added ita1927.
-2019-12-19: Added heb. Updated eng-web* (1ES), mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari.
-2019-12-20: Updated eng-web* (1ES).
-2019-12-21: Updated eng-web* (2ES).
-2019-12-24: Updated eng-web* (2ES).
 2019-12-29: Updated eng-web* (2ES), engwmb, engwmbb (DEU Sion->Zion), mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari. Added zaj.
 2019-12-30: Updated msy, bel, gai, ruf, dwrNT, ind, cwe, mgh, kde. Added rmc, mgw, kqa, mwe, swe.
 2019-01-01: Updated poy, taw.
 2019-01-02: Updated eng-web* (2ES, RUT), engwmb, engwmbb (RUT lie/lay/laid), mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari. Added sanben, sanasm, sanbur, sancol, sanguj, santam, santam, sanhk, sanitr, sankhm, sanmal, sanari, sanpun, sansin, santel, santha, santib, sanias, saniso, sanvel, sandev, and sanurd. (The additions are the Sanskrit New Testament in 22 different writing systems.)
 2019-01-03: Updated eng-web* (2ES), rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari.
-2019-01-05: Updated eng-web* (2ES).
-2019-01-06: Updated eng-web* (2ES).
 2019-01-07: Updated eng-web*, engwmb, and engwmbb with the final queued up change suggestions. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added thd, piu2006.
 2019-01-08: Updated eng-web* (one typo correction in 2ES).
-2019-01-09: Updated eng-asv.
-2019-01-10: Updated eng-asv, eng-Brenton.
-2019-01-12: Updated eng-webbe, engwmb, and engwmbb ("the" in Psalm 91:9).
-2020-01-17: Updated rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari.
-2020-01-17: Updated asmfb (numerals).
-2020-01-21: Updated eng-Brenton.
-2020-01-24: Updated asmfb.
 2020-01-25: Updated ben2017, kan2017, mar, pan, tam2017, tel2017, urd.
 2020-02-06: Updated asmfb, ben2017, guj2017, hin2017, kan2017, mal, mar, ory, pan, tam2017, tel2017, thaKJV, tel2017, and urd.
-2020-02-07: Updated heb.
 2020-02-10: Updated asmfb, ben2017, guj2017, hin2017, kan2017, mal, mar, ory, pan, tam2017, tel2017, tel2017, and urd.
-2020-02-11: Updated nss.
-2020-02-13: Updated epo.
-2020-02-21: Updated mpp.
 2020-03-13: Updated eng-web*, engwmb, and engwmbb (typo in Lam 4:9). Added grcbrent and englxxup. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-03-20: Added kky.
-2020-03-27: Added grctr.
 2020-03-31: Updated gubBl, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, and eng-asv. (The eng-asv update was just an umlaut in Mark 5:22.)
+
+
 2020-04-01: Rebuilt files.
 2020-04-05: Added engemtv.
 2020-04-07: Added nna and engnna.
