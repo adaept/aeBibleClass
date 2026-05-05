@@ -2541,4 +2541,72 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Public Function CountParagraphMarksWithDarkRedFormatting()
+    On Error GoTo PROC_ERR
+
+    Dim p As Word.Paragraph
+    Dim Count As Long
+    Count = 0
+    For Each p In ActiveDocument.Paragraphs
+        With p.Range.Characters.Last.Font
+            If .color = wdColorDarkRed Then
+                Count = Count + 1
+            End If
+        End With
+    Next p
+    'Debug.Print "Count = " & Count
+    CountParagraphMarksWithDarkRedFormatting = Count
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in CountParagraphMarksWithDarkRedFormatting | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
+End Function
+
+Sub CleanPollutedParagraphMarks()
+
+    Dim p As Word.Paragraph
+    Dim pm As Word.Range
+
+    For Each p In ActiveDocument.Paragraphs
+
+        ' The paragraph mark is always the last character in the paragraph range
+        Set pm = p.Range.Characters.Last
+
+        ' If the paragraph mark has ANY direct formatting, clear it
+        If pm.Font.color <> wdColorAutomatic _
+        Or pm.Font.Bold <> False _
+        Or pm.Font.Italic <> False _
+        Or pm.Font.Underline <> wdUnderlineNone _
+        Or pm.Font.Name <> "" _
+        Or pm.Font.Size <> 0 Then
+
+            ' Reset the paragraph mark to paragraph style defaults
+            pm.Font.Reset
+        End If
+
+    Next p
+
+    MsgBox "Paragraph mark cleanup complete."
+
+End Sub
+
+Sub CleanDarkRedParagraphMarks()
+    Dim p As Word.Paragraph
+    Dim pm As Word.Range
+
+    For Each p In ActiveDocument.Paragraphs
+        ' Paragraph mark = last character of the paragraph range
+        Set pm = p.Range.Characters.Last
+
+        ' Check ONLY for Dark Red formatting
+        If pm.Font.color = wdColorDarkRed Then
+            pm.Font.Reset   ' Remove character formatting pollution
+        End If
+    Next p
+
+    MsgBox "DarkRed paragraph mark cleanup complete."
+End Sub
 
