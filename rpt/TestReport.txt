@@ -89,8 +89,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 133.77 seconds
-[2026-05-05 14:36:55] Completed
+The Total Runtime: 387.57 seconds
+[2026-05-05 14:51:38] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
