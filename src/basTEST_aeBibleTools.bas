@@ -2610,3 +2610,58 @@ Sub CleanDarkRedParagraphMarks()
     MsgBox "DarkRed paragraph mark cleanup complete."
 End Sub
 
+Public Sub CountPollutedParagraphMarksReport()
+    Dim p As Word.Paragraph
+    Dim pm As Word.Range
+    Dim test As Word.Range
+    Dim pollutedCount As Long
+    Dim totalCount As Long
+
+    pollutedCount = 0
+    totalCount = ActiveDocument.Paragraphs.Count
+
+    For Each p In ActiveDocument.Paragraphs
+        Set pm = p.Range.Characters.Last
+        Set test = pm.Duplicate
+        test.Font.Reset
+
+        ' Compare actual vs. reset formatting
+        If pm.Font.color <> test.Font.color _
+        Or pm.Font.Bold <> test.Font.Bold _
+        Or pm.Font.Italic <> test.Font.Italic _
+        Or pm.Font.Underline <> test.Font.Underline _
+        Or pm.Font.Name <> test.Font.Name _
+        Or pm.Font.Size <> test.Font.Size Then
+
+            pollutedCount = pollutedCount + 1
+        End If
+    Next p
+
+    Dim cleanCount As Long
+    cleanCount = totalCount - pollutedCount
+
+    Dim pct As Double
+    pct = (pollutedCount / totalCount) * 100#
+
+    ' Print detailed report to Immediate Window
+    Debug.Print "----- Paragraph Mark QA Report -----"
+    Debug.Print "Total paragraphs: "; totalCount
+    Debug.Print "Polluted paragraph marks: "; pollutedCount
+    Debug.Print "Clean paragraph marks: "; cleanCount
+    Debug.Print "Percentage polluted: "; Format(pct, "0.000") & "%"
+    Debug.Print "------------------------------------"
+
+    ' User-friendly message box
+    'MsgBox _
+        "Paragraph Mark QA Report:" & vbCrLf & vbCrLf & _
+        "Total paragraphs: " & totalCount & vbCrLf & _
+        "Polluted paragraph marks: " & pollutedCount & vbCrLf & _
+        "Clean paragraph marks: " & cleanCount & vbCrLf & _
+        "Percentage polluted: " & Format(pct, "0.000") & "%" & vbCrLf & vbCrLf & _
+        IIf(pollutedCount = 0, _
+            "Excellent: No polluted paragraph marks detected.", _
+            "Warning: Some paragraph marks contain direct formatting."), _
+        vbInformation
+End Sub
+
+
