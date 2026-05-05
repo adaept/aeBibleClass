@@ -44,6 +44,8 @@ Private Const vbext_ct_ClassModule As Long = 2
 Private Const vbext_ct_MSForm As Long = 3
 Private Const vbext_ct_Document As Long = 100
 '
+Private Const MyVerseTextFont As String = "Carlito"
+'
 ' Define the word constant in this class module
 Private Const wdNotThemeColor As Long = -1
 ' Default use is to not time all tests individually
@@ -1013,7 +1015,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountParagraphMarksWithDarkRedFormatting
         m_HintArray(TestNum) = m_lastHint
     Case 44
-        ResultArray(TestNum) = CountParagraphMarks_CalibriDarkRed
+        ResultArray(TestNum) = TestSlotAvailable
         m_HintArray(TestNum) = m_lastHint
     Case 45
         ResultArray(TestNum) = CountFindNotEmphasisBlack
@@ -1268,13 +1270,13 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksWithDarkRedFormatting"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 44
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_CalibriDarkRed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "TestSlotAvailable"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 45
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack [obso]"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 46
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed [obso]"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 47
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabOnlyParagraphs(" & """Footer""" & ")"
@@ -1443,11 +1445,11 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 43
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarksWithDarkRedFormatting"
     Case 44
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_CalibriDarkRed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "TestSlotAvailable"
     Case 45
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisBlack"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisBlack [obso] TestSlotAvailable"
     Case 46
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisRed"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisRed [obso] TestSlotAvailable"
     Case 47
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
     Case 48
@@ -2178,7 +2180,8 @@ End Function
 Private Function CountFindNotEmphasisBlack()
     On Error GoTo PROC_ERR
 
-    CountFindNotEmphasisBlack = FindNotEmphasisBlackRed("Automatic")
+    ' [obso] CountFindNotEmphasisBlack = FindNotEmphasisBlackRed("Automatic")
+    CountFindNotEmphasisBlack = -1
 
 PROC_EXIT:
     Exit Function
@@ -2192,7 +2195,8 @@ End Function
 Private Function CountFindNotEmphasisRed()
     On Error GoTo PROC_ERR
 
-    CountFindNotEmphasisRed = FindNotEmphasisBlackRed("Dark Red")
+    ' [obso] CountFindNotEmphasisRed = FindNotEmphasisBlackRed("Dark Red")
+    CountFindNotEmphasisRed = -1
 
 PROC_EXIT:
     Exit Function
@@ -2270,46 +2274,15 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountParagraphMarks_CalibriDarkRed() As Long
+Private Function TestSlotAvailable() As Long
     On Error GoTo PROC_ERR
 
-    Dim para As Word.Paragraph
-    Dim paraRange As Word.Range
-    Dim totalCount As Long
-    Dim foundFirst As Boolean
-    Dim fontColor As WdColor
-
-    totalCount = 0
-    foundFirst = False
-
-    For Each para In ActiveDocument.Paragraphs
-        Set paraRange = para.Range
-        paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
-
-        With paraRange.Font
-            fontColor = .color
-            If .Name = "Calibri" And _
-               .Size = 9 And _
-               (fontColor = wdColorDarkRed) Then
-
-                totalCount = totalCount + 1
-                If Not foundFirst Then
-                    paraRange.Select
-                    foundFirst = True
-                    'Stop
-                End If
-            End If
-        End With
-    Next para
-
-    'MsgBox "Total matching paragraph marks: " & totalCount, vbInformation
-    'Debug.Print "totalCount = " & totalCount
-    CountParagraphMarks_CalibriDarkRed = totalCount
+    TestSlotAvailable = -1
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountParagraphMarks_CalibriDarkRed | Erl: " & Erl _
+    Debug.Print "ERROR in aeBibleClass.TestSlotAvailable | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

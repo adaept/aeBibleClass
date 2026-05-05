@@ -54,9 +54,9 @@ PASS              Copy ()       Test = 40     0             0             CountP
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
 SKIP!!!!          Copy ()       Test = 42     -1            0             CountBoldFootnotesWordLevel
 PASS              Copy ()       Test = 43     0             0             CountParagraphMarksWithDarkRedFormatting
-PASS              Copy ()       Test = 44     0             0             CountParagraphMarks_CalibriDarkRed
-PASS              Copy ()       Test = 45     0             0             CountFindNotEmphasisBlack
-PASS              Copy ()       Test = 46     0             0             CountFindNotEmphasisRed
+FAIL!!!!          Copy ()       Test = 44     -1            0             TestSlotAvailable
+FAIL!!!!          Copy ()       Test = 45     -1            0             CountFindNotEmphasisBlack [obso] TestSlotAvailable
+FAIL!!!!          Copy ()       Test = 46     -1            0             CountFindNotEmphasisRed [obso] TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 47     0             3             CountTabOnlyParagraphs("Footer")
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
 FAIL!!!!          Copy ()       Test = 49     40            15            CountAuditStyles_ToFile
@@ -89,8 +89,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 351.86 seconds
-[2026-05-05 13:09:07] Completed
+The Total Runtime: 133.77 seconds
+[2026-05-05 14:36:55] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
