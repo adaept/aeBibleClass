@@ -1010,7 +1010,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountBoldFootnotesWordLevel
         m_HintArray(TestNum) = m_lastHint
     Case 43
-        ResultArray(TestNum) = CountDarkRedStyledParagraphMarks
+        ResultArray(TestNum) = CountParagraphMarksWithDarkRedFormatting
         m_HintArray(TestNum) = m_lastHint
     Case 44
         ResultArray(TestNum) = CountParagraphMarks_CalibriDarkRed
@@ -1265,7 +1265,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBoldFootnotesWordLevel"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 43
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDarkRedStyledParagraphMarks"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksWithDarkRedFormatting"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 44
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarks_CalibriDarkRed"
@@ -1441,7 +1441,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 42
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBoldFootnotesWordLevel"
     Case 43
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDarkRedStyledParagraphMarks"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarksWithDarkRedFormatting"
     Case 44
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarks_CalibriDarkRed"
     Case 45
@@ -2315,50 +2315,26 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountDarkRedStyledParagraphMarks()
+Private Function CountParagraphMarksWithDarkRedFormatting()
     On Error GoTo PROC_ERR
 
-    Dim rng As Word.Range
-    Dim totalMatches As Long
-    Dim found As Boolean
-
-    Set rng = ActiveDocument.Content
-    totalMatches = 0
-    found = False
-
-    With rng.Find
-        .ClearFormatting
-        .Text = "^13"
-        .Font.Name = "Calibri"
-        .Font.Size = 9
-        .Font.color = wdColorDarkRed
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = True
-
-        Do While .Execute
-            totalMatches = totalMatches + 1
-
-            If Not found Then
-                rng.Select ' Move cursor to the first matching styled paragraph mark
-                found = True
+    Dim p As Word.Paragraph
+    Dim Count As Long
+    Count = 0
+    For Each p In ActiveDocument.Paragraphs
+        With p.Range.Characters.Last.Font
+            If .color = wdColorDarkRed Then
+                Count = Count + 1
             End If
-
-            rng.Collapse wdCollapseEnd
-        Loop
-    End With
-
-    'MsgBox "Total styled paragraph marks found: " & totalMatches & vbCrLf & _
-           IIf(found, "Cursor moved to first match.", "No matching paragraph marks found."), _
-           vbInformation, "Search Complete"
-    'Debug.Print "Total styled paragraph marks found: " & totalMatches & vbCrLf & _
-           IIf(found, "Cursor moved to first match.", "No matching paragraph marks found.")
-    CountDarkRedStyledParagraphMarks = totalMatches
+        End With
+    Next p
+    'Debug.Print "Count = " & Count
+    CountParagraphMarksWithDarkRedFormatting = Count
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountDarkRedStyledParagraphMarks | Erl: " & Erl _
+    Debug.Print "ERROR in CountParagraphMarksWithDarkRedFormatting | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

@@ -14,7 +14,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #626 -
 ' #625 -
 ' #624 - Check all aeBibleClass search for Calibri (now using Carlito) [bug]
-' #623 - Update aeBibleClass with CountParagraphMarksWithDarkRedFormatting, expected 0 [impr]
 ' #622 - Add World English Bible Updates_ChangeLog.txt (view-source:https://worldenglish.bible/webupdates.php) and work through the changes [wip]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
@@ -70,6 +69,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #623 - Update aeBibleClass with CountParagraphMarksWithDarkRedFormatting, expected 0 [impr]
     ' FIXED - #616 - Space function is changed to space, need normalizer fix [bug]
     ' [obso] - #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
     ' FIXED - #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
