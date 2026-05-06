@@ -734,6 +734,47 @@ Per the original 2026-04-26 plan: expected `converted ≈ 31,102` (matches the v
 
 **Status:** Phase 2.2 code applied. Awaiting user-side action: re-import `basAuthorStyles.bas` and `basFixDocxRoutines.bas` into the test `.docm`, then run `ConvertBodyTextVersesToVerseText` per Phase 2.3.
 
+#### Phase 2.3 — first conversion run on test `.docm` (2026-05-06)
+
+User ran `ConvertBodyTextVersesToVerseText` on test copy:
+
+```
+ConvertBodyTextVersesToVerseText: scanned=31462 converted=30944 kept=518
+```
+
+Math reconciles:
+
+- `scanned 31,462 = converted 30,944 + kept 518` ✓
+- `kept 518 = chapter intros 343 + chapter-end content 175` ✓ (matches the orphan audit's exclusion totals exactly)
+- BUT: expected ~31,102 verses (per `AuditVerseMarkerStructure` baseline); actual conversions 30,944.
+- **Gap: 158 verses NOT converted.**
+
+##### Diagnosis
+
+The 158 verses are real (CVM as first character) but live in paragraphs whose style is **not** `BodyText`. The conversion rule's paragraph-style filter (`= "BodyText"`) caught only 30,944 of the 31,102 verse-bearing paragraphs. The other 158 must have a different paragraph style — likely `BodyTextIndent` (Psalms / prophetic poetry) or possibly another style.
+
+The orphan audit, character-style audits, and Phase 1 verification all passed because none of those depend on the paragraph-style being `BodyText` for verses. Only the conversion rule, drafted in the original 2026-04-26 plan, made that assumption.
+
+##### `AuditUnconvertedVerseParagraphs` Sub APPLIED 2026-05-06
+
+`src/basVerseStructureAudit.bas` — new public Sub `AuditUnconvertedVerseParagraphs` plus private helper `WriteUnconvertedFile`:
+
+- Walks main story; for each paragraph whose paragraph style is neither `BodyText` nor `VerseText` AND whose first character has `Chapter Verse marker` style, group by paragraph style.
+- Reports total count, paragraph-style breakdown with sample counts, and up to 3 samples per group with `ParaStart` + 80-char excerpt.
+- Output: `rpt\UnconvertedVerseAudit.txt` plus Immediate window summary.
+
+Decision tree per outcome:
+
+| Outcome | Path |
+|---|---|
+| All 158 are `BodyTextIndent` | Extend conversion rule to also convert `BodyTextIndent` + CVM-first-char paragraphs (or convert to a `VerseTextIndent` variant if we want to preserve indent semantics) |
+| Mix of styles | Per-style decision; some convert, some leave alone |
+| Some are intentionally non-verse-text | Document the exception, leave alone |
+
+**Test `.docm` is mid-state** post-Phase-2.3: 30,944 paragraphs already reassigned to `VerseText`; 158 still in their original non-`BodyText` style. **Production conversion paused** until the unconverted analysis tells us how to handle the gap.
+
+**Status:** Phase 2.3 partially complete on test (30,944 of 31,102). Awaiting user-side action: re-import `basVerseStructureAudit.bas`, run `AuditUnconvertedVerseParagraphs` on test `.docm`, paste the output. Decision on the 158 follows.
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.

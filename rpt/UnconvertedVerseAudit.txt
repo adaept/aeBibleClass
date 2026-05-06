@@ -1,0 +1,13 @@
+---- AuditUnconvertedVerseParagraphs: 2026-05-06 00:33:07 ----
+
+Scope: paragraphs whose first character has 'Chapter Verse marker'
+       character style AND whose paragraph style is neither
+       'BodyText' nor 'VerseText'.
+
+Total unconverted verse paragraphs: 157
+
+Paragraph style: Paragraph Continuation  (count=157)
+  Sample 1: ParaStart=576106  Excerpt: "135 Of the tribe of Simeon, Shaphat the son of Hori."
+  Sample 2: ParaStart=576159  Excerpt: "136 Of the tribe of Judah, Caleb the son of Jephunneh."
+  Sample 3: ParaStart=576214  Excerpt: "137 Of the tribe of Issachar, Igal the son of Joseph."
+

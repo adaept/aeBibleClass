@@ -741,3 +741,125 @@ PROC_ERR:
            ") in procedure GoToPos of Module basVerseStructureAudit"
     Resume PROC_EXIT
 End Sub
+
+' ==========================================================================
+' AuditUnconvertedVerseParagraphs
+' ==========================================================================
+' Read-only diagnostic. Walks the main story to find paragraphs whose
+' first character is "Chapter Verse marker" (verse paragraphs by
+' definition) but whose paragraph style is neither "BodyText" nor
+' "VerseText". These are verses that the Phase 2 conversion did not
+' touch because the paragraph-style filter ("BodyText only") missed
+' them. Most likely candidates are BodyTextIndent (Psalms / prophetic
+' poetry continuations).
+'
+' Output groups results by paragraph style and reports up to 3 samples
+' per group, plus total count. Lets the user decide whether to extend
+' the Phase 2 conversion rule, add a VerseTextIndent variant, or
+' leave the styles alone.
+'
+' Output: rpt\UnconvertedVerseAudit.txt (when bWriteFile = True) plus
+' Immediate window summary.
+'
+' Usage:
+'   AuditUnconvertedVerseParagraphs
+' ==========================================================================
+Public Sub AuditUnconvertedVerseParagraphs(Optional ByVal bWriteFile As Boolean = True)
+    On Error GoTo PROC_ERR
+
+    Dim oDoc As Object
+    Set oDoc = ActiveDocument
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+    sOut = "---- AuditUnconvertedVerseParagraphs: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+    sOut = sOut & "Scope: paragraphs whose first character has 'Chapter Verse marker'" & NL
+    sOut = sOut & "       character style AND whose paragraph style is neither" & NL
+    sOut = sOut & "       'BodyText' nor 'VerseText'." & NL & NL
+
+    Dim styleNames(1 To 50) As String
+    Dim styleCounts(1 To 50) As Long
+    Dim styleSamples(1 To 50, 1 To 3) As String
+    Dim styleCount As Long
+
+    Dim oPara As Object
+    Dim totalUnconverted As Long
+    For Each oPara In oDoc.Paragraphs
+        Dim psName As String
+        psName = oPara.style.NameLocal
+        If psName <> "BodyText" And psName <> "VerseText" Then
+            If oPara.Range.End - oPara.Range.Start > 1 Then
+                On Error Resume Next
+                Dim fcs As String
+                fcs = oPara.Range.Characters(1).style.NameLocal
+                On Error GoTo PROC_ERR
+                If fcs = "Chapter Verse marker" Then
+                    totalUnconverted = totalUnconverted + 1
+
+                    Dim k As Long
+                    Dim found As Long
+                    found = 0
+                    For k = 1 To styleCount
+                        If styleNames(k) = psName Then
+                            found = k
+                            Exit For
+                        End If
+                    Next k
+                    If found = 0 Then
+                        styleCount = styleCount + 1
+                        If styleCount > 50 Then
+                            ' Safety: too many distinct styles
+                            sOut = sOut & "*** Safety: more than 50 distinct paragraph styles found." & NL
+                            Exit For
+                        End If
+                        styleNames(styleCount) = psName
+                        found = styleCount
+                    End If
+                    styleCounts(found) = styleCounts(found) + 1
+
+                    If styleCounts(found) <= 3 Then
+                        Dim excerpt As String
+                        excerpt = Left$(Replace(oPara.Range.Text, vbCr, ""), 80)
+                        styleSamples(found, styleCounts(found)) = _
+                            "ParaStart=" & oPara.Range.Start & "  Excerpt: """ & excerpt & """"
+                    End If
+                End If
+            End If
+        End If
+    Next oPara
+
+    sOut = sOut & "Total unconverted verse paragraphs: " & totalUnconverted & NL & NL
+    Dim i As Long, j As Long
+    For i = 1 To styleCount
+        sOut = sOut & "Paragraph style: " & styleNames(i) & "  (count=" & styleCounts(i) & ")" & NL
+        For j = 1 To 3
+            If j <= styleCounts(i) Then
+                sOut = sOut & "  Sample " & j & ": " & styleSamples(i, j) & NL
+            End If
+        Next j
+        sOut = sOut & NL
+    Next i
+
+    Debug.Print sOut
+    If bWriteFile Then WriteUnconvertedFile sOut
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure AuditUnconvertedVerseParagraphs of Module basVerseStructureAudit"
+    Resume PROC_EXIT
+End Sub
+
+' --------------------------------------------------------------------------
+' WriteUnconvertedFile - write the report to rpt\UnconvertedVerseAudit.txt
+' --------------------------------------------------------------------------
+Private Sub WriteUnconvertedFile(ByVal sContent As String)
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim sPath As String
+    sPath = ActiveDocument.Path & "\rpt\UnconvertedVerseAudit.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
+    oStream.Write sContent
+    oStream.Close
+End Sub
