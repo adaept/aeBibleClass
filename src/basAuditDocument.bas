@@ -3,41 +3,6 @@ Option Explicit
 Option Compare Text
 Option Private Module
 
-Public Sub ReplaceTimesInStyles()
-    On Error GoTo PROC_ERR
-    Dim oDoc   As Document
-    Dim oStyle As Word.Style
-    Dim lCount As Long
-
-    Set oDoc = ActiveDocument
-    lCount = 0
-
-    For Each oStyle In oDoc.Styles
-        On Error Resume Next
-        If Trim(oStyle.Font.Name) = "Times" Then
-            oStyle.Font.Name = "Times New Roman"
-            lCount = lCount + 1
-        End If
-        On Error GoTo 0
-        On Error GoTo PROC_ERR
-    Next oStyle
-
-    Debug.Print "Done. Replaced Times with Times New Roman in " & _
-           lCount & " style definitions."
-
-    MsgBox "Done. Replaced Times with Times New Roman in " & _
-           lCount & " style definitions.", _
-           vbInformation, "ReplaceTimesInStyles"
-
-    Set oDoc = Nothing
-
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReplaceTimesInStyles of Module basAuditDocument"
-    Resume PROC_EXIT
-End Sub
-
 Public Sub FindFontUsage()
     On Error GoTo PROC_ERR
     Dim oDoc     As Document

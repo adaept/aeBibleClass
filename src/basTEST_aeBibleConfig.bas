@@ -607,7 +607,7 @@ End Sub
 '-> Carlito
 'Property    Value
 'License Open (Google / SIL OFL)
-'Metric compatibility    - Designed to match Calibri
+'Metric compatibility - Designed to match Calibri
 'Hyphenation impact  Minimal
 
 '-> Replacement for Times New Roman (Serif)
@@ -619,7 +619,7 @@ End Sub
 '
 '-> Liberation Serif
 'Property    Value
-'Metric compatibility    - Times-compatible
+'Metric compatibility - Times-compatible
 'License Open (SIL)
 'Layout shift    Minimal
 
