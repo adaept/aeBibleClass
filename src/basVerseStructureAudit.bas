@@ -12,10 +12,20 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' aeBibleCitationClass canonical data. Read-only; produces a report file
 ' plus an Immediate-window summary.
 '
-' Invariants verified (core three; advanced 4-6 deferred):
+' Project verse-marker rule (the structural contract):
+'   Every verse paragraph (now styled VerseText, formerly BodyText) leads
+'   with a "Chapter Verse marker" character-style run (chapter number)
+'   IMMEDIATELY FOLLOWED BY a "Verse marker" character-style run (verse
+'   number). One CVM + one VM per verse - no exceptions.
+'
+' Invariants verified (core four; advanced 5-6 deferred):
 '   1. Books present     - every canonical 66-book has a Heading 1.
 '   2. Chapter counts    - per-book Heading 2 Count matches ChaptersInBook.
 '   3. Verse counts      - per-chapter Verse marker Count matches VersesInChapter.
+'   4. CVM coverage      - per-chapter Chapter Verse marker Count equals
+'                          Verse marker Count (one CVM+VM per verse rule).
+'                          Catches verses missing a leading CVM run that
+'                          would otherwise pass the VM count check.
 '
 ' Output: rpt\VerseStructureAudit.txt (when bWriteFile = True) plus
 ' Immediate-window summary.
@@ -191,8 +201,10 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
     Dim chIdx As Long
     Dim chEnd As Long
     Dim foundVerses As Long
+    Dim foundCVMs As Long
     Dim expectedVerses As Long
     Dim status As String
+    Dim cvmStatus As String
 
     For chIdx = 1 To nH2
         If chIdx < nH2 Then
@@ -202,6 +214,7 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
         End If
 
         foundVerses = CountVerseMarkers(oDoc, h2Starts(chIdx), chEnd)
+        foundCVMs = CountChapterVerseMarkers(oDoc, h2Starts(chIdx), chEnd)
         expectedVerses = aeBibleCitationClass.VersesInChapter(bookName, chIdx)
 
         totalExpected = totalExpected + expectedVerses
@@ -216,9 +229,24 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
                               ": expected verses=" & expectedVerses & _
                               "  found=" & foundVerses & NL
         End If
+
+        ' Project rule: one Chapter Verse marker + one Verse marker per
+        ' verse. CVM count must equal VM count in every chapter.
+        If foundCVMs = foundVerses Then
+            cvmStatus = "OK"
+        Else
+            cvmStatus = "CVM-MISMATCH"
+            bookIssues = bookIssues + 1
+            bookIssueDetail = bookIssueDetail & "  " & bookName & " " & chIdx & _
+                              ": CVM count " & foundCVMs & " <> VM count " & _
+                              foundVerses & " (one CVM+VM per verse rule)" & NL
+        End If
+
         chapterReport = chapterReport & _
             "  ch " & PadLeft(CStr(chIdx), 3) & ": expected verses=" & PadLeft(CStr(expectedVerses), 3) & _
-            "  found=" & PadLeft(CStr(foundVerses), 3) & "  " & status & NL
+            "  found VM=" & PadLeft(CStr(foundVerses), 3) & _
+            "  found CVM=" & PadLeft(CStr(foundCVMs), 3) & _
+            "  " & status & "/" & cvmStatus & NL
     Next chIdx
 End Sub
 
@@ -261,6 +289,49 @@ Private Function CountVerseMarkers(ByVal oDoc As Object, _
     End With
 
     CountVerseMarkers = Count
+End Function
+
+' --------------------------------------------------------------------------
+' CountChapterVerseMarkers - Count Chapter-Verse-marker character-style
+' runs in a range. Per project rule, one CVM appears at the start of every
+' verse paragraph (immediately followed by one Verse marker), so this
+' count must equal CountVerseMarkers for the same range.
+' --------------------------------------------------------------------------
+Private Function CountChapterVerseMarkers(ByVal oDoc As Object, _
+                                           ByVal startPos As Long, _
+                                           ByVal endPos As Long) As Long
+    If endPos <= startPos Then
+        CountChapterVerseMarkers = 0
+        Exit Function
+    End If
+
+    Dim oRng As Object
+    Set oRng = oDoc.Range(startPos, endPos)
+
+    Dim Count As Long
+    Dim safety As Long
+    Count = 0
+    safety = 0
+
+    With oRng.Find
+        .ClearFormatting
+        .style = oDoc.Styles("Chapter Verse marker")
+        .Text = ""
+        .Forward = True
+        .Wrap = 0     ' wdFindStop
+        .Format = True
+        .MatchWildcards = False
+        Do While .Execute
+            Count = Count + 1
+            safety = safety + 1
+            If safety > 20000 Then Exit Do
+            oRng.Start = oRng.End
+            If oRng.Start >= endPos Then Exit Do
+            oRng.End = endPos
+        Loop
+    End With
+
+    CountChapterVerseMarkers = Count
 End Function
 
 ' --------------------------------------------------------------------------

@@ -1,1261 +1,1261 @@
----- AuditVerseMarkerStructure: 2026-05-01 14:38:28 ----
+---- AuditVerseMarkerStructure: 2026-05-06 14:51:24 ----
 
 66 Heading 1 paragraphs found in 148 sections.
 
 Genesis               expected chapters= 50  found= 50  OK
-  ch   1: expected verses= 31  found= 31  OK
-  ch   2: expected verses= 25  found= 25  OK
-  ch   3: expected verses= 24  found= 24  OK
-  ch   4: expected verses= 26  found= 26  OK
-  ch   5: expected verses= 32  found= 32  OK
-  ch   6: expected verses= 22  found= 22  OK
-  ch   7: expected verses= 24  found= 24  OK
-  ch   8: expected verses= 22  found= 22  OK
-  ch   9: expected verses= 29  found= 29  OK
-  ch  10: expected verses= 32  found= 32  OK
-  ch  11: expected verses= 32  found= 32  OK
-  ch  12: expected verses= 20  found= 20  OK
-  ch  13: expected verses= 18  found= 18  OK
-  ch  14: expected verses= 24  found= 24  OK
-  ch  15: expected verses= 21  found= 21  OK
-  ch  16: expected verses= 16  found= 16  OK
-  ch  17: expected verses= 27  found= 27  OK
-  ch  18: expected verses= 33  found= 33  OK
-  ch  19: expected verses= 38  found= 38  OK
-  ch  20: expected verses= 18  found= 18  OK
-  ch  21: expected verses= 34  found= 34  OK
-  ch  22: expected verses= 24  found= 24  OK
-  ch  23: expected verses= 20  found= 20  OK
-  ch  24: expected verses= 67  found= 67  OK
-  ch  25: expected verses= 34  found= 34  OK
-  ch  26: expected verses= 35  found= 35  OK
-  ch  27: expected verses= 46  found= 46  OK
-  ch  28: expected verses= 22  found= 22  OK
-  ch  29: expected verses= 35  found= 35  OK
-  ch  30: expected verses= 43  found= 43  OK
-  ch  31: expected verses= 55  found= 55  OK
-  ch  32: expected verses= 32  found= 32  OK
-  ch  33: expected verses= 20  found= 20  OK
-  ch  34: expected verses= 31  found= 31  OK
-  ch  35: expected verses= 29  found= 29  OK
-  ch  36: expected verses= 43  found= 43  OK
-  ch  37: expected verses= 36  found= 36  OK
-  ch  38: expected verses= 30  found= 30  OK
-  ch  39: expected verses= 23  found= 23  OK
-  ch  40: expected verses= 23  found= 23  OK
-  ch  41: expected verses= 57  found= 57  OK
-  ch  42: expected verses= 38  found= 38  OK
-  ch  43: expected verses= 34  found= 34  OK
-  ch  44: expected verses= 34  found= 34  OK
-  ch  45: expected verses= 28  found= 28  OK
-  ch  46: expected verses= 34  found= 34  OK
-  ch  47: expected verses= 31  found= 31  OK
-  ch  48: expected verses= 22  found= 22  OK
-  ch  49: expected verses= 33  found= 33  OK
-  ch  50: expected verses= 26  found= 26  OK
+  ch   1: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   2: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   3: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   4: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   5: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   6: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   7: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   8: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   9: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  10: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  11: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  12: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  13: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  14: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  15: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  16: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  17: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  18: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  19: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  20: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  21: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  22: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  23: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  24: expected verses= 67  found VM= 67  found CVM= 67  OK/OK
+  ch  25: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  26: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  27: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  28: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  29: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  30: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  31: expected verses= 55  found VM= 55  found CVM= 55  OK/OK
+  ch  32: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  33: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  34: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  35: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  36: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  37: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  38: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  39: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  40: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  41: expected verses= 57  found VM= 57  found CVM= 57  OK/OK
+  ch  42: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  43: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  44: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  45: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  46: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  47: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  48: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  49: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  50: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
 Exodus                expected chapters= 40  found= 40  OK
-  ch   1: expected verses= 22  found= 22  OK
-  ch   2: expected verses= 25  found= 25  OK
-  ch   3: expected verses= 22  found= 22  OK
-  ch   4: expected verses= 31  found= 31  OK
-  ch   5: expected verses= 23  found= 23  OK
-  ch   6: expected verses= 30  found= 30  OK
-  ch   7: expected verses= 25  found= 25  OK
-  ch   8: expected verses= 32  found= 32  OK
-  ch   9: expected verses= 35  found= 35  OK
-  ch  10: expected verses= 29  found= 29  OK
-  ch  11: expected verses= 10  found= 10  OK
-  ch  12: expected verses= 51  found= 51  OK
-  ch  13: expected verses= 22  found= 22  OK
-  ch  14: expected verses= 31  found= 31  OK
-  ch  15: expected verses= 27  found= 27  OK
-  ch  16: expected verses= 36  found= 36  OK
-  ch  17: expected verses= 16  found= 16  OK
-  ch  18: expected verses= 27  found= 27  OK
-  ch  19: expected verses= 25  found= 25  OK
-  ch  20: expected verses= 26  found= 26  OK
-  ch  21: expected verses= 36  found= 36  OK
-  ch  22: expected verses= 31  found= 31  OK
-  ch  23: expected verses= 33  found= 33  OK
-  ch  24: expected verses= 18  found= 18  OK
-  ch  25: expected verses= 40  found= 40  OK
-  ch  26: expected verses= 37  found= 37  OK
-  ch  27: expected verses= 21  found= 21  OK
-  ch  28: expected verses= 43  found= 43  OK
-  ch  29: expected verses= 46  found= 46  OK
-  ch  30: expected verses= 38  found= 38  OK
-  ch  31: expected verses= 18  found= 18  OK
-  ch  32: expected verses= 35  found= 35  OK
-  ch  33: expected verses= 23  found= 23  OK
-  ch  34: expected verses= 35  found= 35  OK
-  ch  35: expected verses= 35  found= 35  OK
-  ch  36: expected verses= 38  found= 38  OK
-  ch  37: expected verses= 29  found= 29  OK
-  ch  38: expected verses= 31  found= 31  OK
-  ch  39: expected verses= 43  found= 43  OK
-  ch  40: expected verses= 38  found= 38  OK
+  ch   1: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   2: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   3: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   4: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   5: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   6: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   7: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   8: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   9: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  10: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  11: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  12: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch  13: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  14: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  15: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  16: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  17: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  18: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  19: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  20: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  21: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  22: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  23: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  24: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  25: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  26: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  27: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  28: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  29: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  30: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  31: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  32: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  33: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  34: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  35: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  36: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  37: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  38: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  39: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  40: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
 Leviticus             expected chapters= 27  found= 27  OK
-  ch   1: expected verses= 17  found= 17  OK
-  ch   2: expected verses= 16  found= 16  OK
-  ch   3: expected verses= 17  found= 17  OK
-  ch   4: expected verses= 35  found= 35  OK
-  ch   5: expected verses= 19  found= 19  OK
-  ch   6: expected verses= 30  found= 30  OK
-  ch   7: expected verses= 38  found= 38  OK
-  ch   8: expected verses= 36  found= 36  OK
-  ch   9: expected verses= 24  found= 24  OK
-  ch  10: expected verses= 20  found= 20  OK
-  ch  11: expected verses= 47  found= 47  OK
-  ch  12: expected verses=  8  found=  8  OK
-  ch  13: expected verses= 59  found= 59  OK
-  ch  14: expected verses= 57  found= 57  OK
-  ch  15: expected verses= 33  found= 33  OK
-  ch  16: expected verses= 34  found= 34  OK
-  ch  17: expected verses= 16  found= 16  OK
-  ch  18: expected verses= 30  found= 30  OK
-  ch  19: expected verses= 37  found= 37  OK
-  ch  20: expected verses= 27  found= 27  OK
-  ch  21: expected verses= 24  found= 24  OK
-  ch  22: expected verses= 33  found= 33  OK
-  ch  23: expected verses= 44  found= 44  OK
-  ch  24: expected verses= 23  found= 23  OK
-  ch  25: expected verses= 55  found= 55  OK
-  ch  26: expected verses= 46  found= 46  OK
-  ch  27: expected verses= 34  found= 34  OK
+  ch   1: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   2: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   3: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   4: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch   5: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   6: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   7: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch   8: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch   9: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  10: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  11: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch  12: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  13: expected verses= 59  found VM= 59  found CVM= 59  OK/OK
+  ch  14: expected verses= 57  found VM= 57  found CVM= 57  OK/OK
+  ch  15: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  16: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  17: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  18: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  19: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  20: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  21: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  22: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  23: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch  24: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  25: expected verses= 55  found VM= 55  found CVM= 55  OK/OK
+  ch  26: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  27: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
 Numbers               expected chapters= 36  found= 36  OK
-  ch   1: expected verses= 54  found= 54  OK
-  ch   2: expected verses= 34  found= 34  OK
-  ch   3: expected verses= 51  found= 51  OK
-  ch   4: expected verses= 49  found= 49  OK
-  ch   5: expected verses= 31  found= 31  OK
-  ch   6: expected verses= 27  found= 27  OK
-  ch   7: expected verses= 89  found= 89  OK
-  ch   8: expected verses= 26  found= 26  OK
-  ch   9: expected verses= 23  found= 23  OK
-  ch  10: expected verses= 36  found= 36  OK
-  ch  11: expected verses= 35  found= 35  OK
-  ch  12: expected verses= 16  found= 16  OK
-  ch  13: expected verses= 33  found= 33  OK
-  ch  14: expected verses= 45  found= 45  OK
-  ch  15: expected verses= 41  found= 41  OK
-  ch  16: expected verses= 50  found= 50  OK
-  ch  17: expected verses= 13  found= 13  OK
-  ch  18: expected verses= 32  found= 32  OK
-  ch  19: expected verses= 22  found= 22  OK
-  ch  20: expected verses= 29  found= 29  OK
-  ch  21: expected verses= 35  found= 35  OK
-  ch  22: expected verses= 41  found= 41  OK
-  ch  23: expected verses= 30  found= 30  OK
-  ch  24: expected verses= 25  found= 25  OK
-  ch  25: expected verses= 18  found= 18  OK
-  ch  26: expected verses= 65  found= 65  OK
-  ch  27: expected verses= 23  found= 23  OK
-  ch  28: expected verses= 31  found= 31  OK
-  ch  29: expected verses= 40  found= 40  OK
-  ch  30: expected verses= 16  found= 16  OK
-  ch  31: expected verses= 54  found= 54  OK
-  ch  32: expected verses= 42  found= 42  OK
-  ch  33: expected verses= 56  found= 56  OK
-  ch  34: expected verses= 29  found= 29  OK
-  ch  35: expected verses= 34  found= 34  OK
-  ch  36: expected verses= 13  found= 13  OK
+  ch   1: expected verses= 54  found VM= 54  found CVM= 54  OK/OK
+  ch   2: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch   3: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch   4: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch   5: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   6: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   7: expected verses= 89  found VM= 89  found CVM= 89  OK/OK
+  ch   8: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   9: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  10: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  11: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  12: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  13: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  14: expected verses= 45  found VM= 45  found CVM= 45  OK/OK
+  ch  15: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  16: expected verses= 50  found VM= 50  found CVM= 50  OK/OK
+  ch  17: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  18: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  19: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  20: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  21: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  22: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  23: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  24: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  25: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  26: expected verses= 65  found VM= 65  found CVM= 65  OK/OK
+  ch  27: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  28: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  29: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  30: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  31: expected verses= 54  found VM= 54  found CVM= 54  OK/OK
+  ch  32: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch  33: expected verses= 56  found VM= 56  found CVM= 56  OK/OK
+  ch  34: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  35: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  36: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
 Deuteronomy           expected chapters= 34  found= 34  OK
-  ch   1: expected verses= 46  found= 46  OK
-  ch   2: expected verses= 37  found= 37  OK
-  ch   3: expected verses= 29  found= 29  OK
-  ch   4: expected verses= 49  found= 49  OK
-  ch   5: expected verses= 33  found= 33  OK
-  ch   6: expected verses= 25  found= 25  OK
-  ch   7: expected verses= 26  found= 26  OK
-  ch   8: expected verses= 20  found= 20  OK
-  ch   9: expected verses= 29  found= 29  OK
-  ch  10: expected verses= 22  found= 22  OK
-  ch  11: expected verses= 32  found= 32  OK
-  ch  12: expected verses= 32  found= 32  OK
-  ch  13: expected verses= 18  found= 18  OK
-  ch  14: expected verses= 29  found= 29  OK
-  ch  15: expected verses= 23  found= 23  OK
-  ch  16: expected verses= 22  found= 22  OK
-  ch  17: expected verses= 20  found= 20  OK
-  ch  18: expected verses= 22  found= 22  OK
-  ch  19: expected verses= 21  found= 21  OK
-  ch  20: expected verses= 20  found= 20  OK
-  ch  21: expected verses= 23  found= 23  OK
-  ch  22: expected verses= 30  found= 30  OK
-  ch  23: expected verses= 25  found= 25  OK
-  ch  24: expected verses= 22  found= 22  OK
-  ch  25: expected verses= 19  found= 19  OK
-  ch  26: expected verses= 19  found= 19  OK
-  ch  27: expected verses= 26  found= 26  OK
-  ch  28: expected verses= 68  found= 68  OK
-  ch  29: expected verses= 29  found= 29  OK
-  ch  30: expected verses= 20  found= 20  OK
-  ch  31: expected verses= 30  found= 30  OK
-  ch  32: expected verses= 52  found= 52  OK
-  ch  33: expected verses= 29  found= 29  OK
-  ch  34: expected verses= 12  found= 12  OK
+  ch   1: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch   2: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch   3: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   4: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch   5: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch   6: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   7: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   8: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   9: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  10: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  11: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  12: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  13: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  14: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  15: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  16: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  17: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  18: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  19: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  20: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  21: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  22: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  23: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  24: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  25: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  26: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  27: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  28: expected verses= 68  found VM= 68  found CVM= 68  OK/OK
+  ch  29: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  30: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  31: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  32: expected verses= 52  found VM= 52  found CVM= 52  OK/OK
+  ch  33: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  34: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
 Joshua                expected chapters= 24  found= 24  OK
-  ch   1: expected verses= 18  found= 18  OK
-  ch   2: expected verses= 24  found= 24  OK
-  ch   3: expected verses= 17  found= 17  OK
-  ch   4: expected verses= 24  found= 24  OK
-  ch   5: expected verses= 15  found= 15  OK
-  ch   6: expected verses= 27  found= 27  OK
-  ch   7: expected verses= 26  found= 26  OK
-  ch   8: expected verses= 35  found= 35  OK
-  ch   9: expected verses= 27  found= 27  OK
-  ch  10: expected verses= 43  found= 43  OK
-  ch  11: expected verses= 23  found= 23  OK
-  ch  12: expected verses= 24  found= 24  OK
-  ch  13: expected verses= 33  found= 33  OK
-  ch  14: expected verses= 15  found= 15  OK
-  ch  15: expected verses= 63  found= 63  OK
-  ch  16: expected verses= 10  found= 10  OK
-  ch  17: expected verses= 18  found= 18  OK
-  ch  18: expected verses= 28  found= 28  OK
-  ch  19: expected verses= 51  found= 51  OK
-  ch  20: expected verses=  9  found=  9  OK
-  ch  21: expected verses= 45  found= 45  OK
-  ch  22: expected verses= 34  found= 34  OK
-  ch  23: expected verses= 16  found= 16  OK
-  ch  24: expected verses= 33  found= 33  OK
+  ch   1: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   2: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   3: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   4: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   5: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   6: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   7: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   8: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch   9: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  10: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  11: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  12: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  13: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  14: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  15: expected verses= 63  found VM= 63  found CVM= 63  OK/OK
+  ch  16: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  17: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  18: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  19: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch  20: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  21: expected verses= 45  found VM= 45  found CVM= 45  OK/OK
+  ch  22: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  23: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  24: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
 Judges                expected chapters= 21  found= 21  OK
-  ch   1: expected verses= 36  found= 36  OK
-  ch   2: expected verses= 23  found= 23  OK
-  ch   3: expected verses= 31  found= 31  OK
-  ch   4: expected verses= 24  found= 24  OK
-  ch   5: expected verses= 31  found= 31  OK
-  ch   6: expected verses= 40  found= 40  OK
-  ch   7: expected verses= 25  found= 25  OK
-  ch   8: expected verses= 35  found= 35  OK
-  ch   9: expected verses= 57  found= 57  OK
-  ch  10: expected verses= 18  found= 18  OK
-  ch  11: expected verses= 40  found= 40  OK
-  ch  12: expected verses= 15  found= 15  OK
-  ch  13: expected verses= 25  found= 25  OK
-  ch  14: expected verses= 20  found= 20  OK
-  ch  15: expected verses= 20  found= 20  OK
-  ch  16: expected verses= 31  found= 31  OK
-  ch  17: expected verses= 13  found= 13  OK
-  ch  18: expected verses= 31  found= 31  OK
-  ch  19: expected verses= 30  found= 30  OK
-  ch  20: expected verses= 48  found= 48  OK
-  ch  21: expected verses= 25  found= 25  OK
+  ch   1: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   3: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   4: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   5: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   6: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch   7: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   8: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch   9: expected verses= 57  found VM= 57  found CVM= 57  OK/OK
+  ch  10: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  11: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  12: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  13: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  14: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  15: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  16: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  17: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  18: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  19: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  20: expected verses= 48  found VM= 48  found CVM= 48  OK/OK
+  ch  21: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
 Ruth                  expected chapters=  4  found=  4  OK
-  ch   1: expected verses= 22  found= 22  OK
-  ch   2: expected verses= 23  found= 23  OK
-  ch   3: expected verses= 18  found= 18  OK
-  ch   4: expected verses= 22  found= 22  OK
+  ch   1: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   3: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   4: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
 1 Samuel              expected chapters= 31  found= 31  OK
-  ch   1: expected verses= 28  found= 28  OK
-  ch   2: expected verses= 36  found= 36  OK
-  ch   3: expected verses= 21  found= 21  OK
-  ch   4: expected verses= 22  found= 22  OK
-  ch   5: expected verses= 12  found= 12  OK
-  ch   6: expected verses= 21  found= 21  OK
-  ch   7: expected verses= 17  found= 17  OK
-  ch   8: expected verses= 22  found= 22  OK
-  ch   9: expected verses= 27  found= 27  OK
-  ch  10: expected verses= 27  found= 27  OK
-  ch  11: expected verses= 15  found= 15  OK
-  ch  12: expected verses= 25  found= 25  OK
-  ch  13: expected verses= 23  found= 23  OK
-  ch  14: expected verses= 52  found= 52  OK
-  ch  15: expected verses= 35  found= 35  OK
-  ch  16: expected verses= 23  found= 23  OK
-  ch  17: expected verses= 58  found= 58  OK
-  ch  18: expected verses= 30  found= 30  OK
-  ch  19: expected verses= 24  found= 24  OK
-  ch  20: expected verses= 42  found= 42  OK
-  ch  21: expected verses= 15  found= 15  OK
-  ch  22: expected verses= 23  found= 23  OK
-  ch  23: expected verses= 29  found= 29  OK
-  ch  24: expected verses= 22  found= 22  OK
-  ch  25: expected verses= 44  found= 44  OK
-  ch  26: expected verses= 25  found= 25  OK
-  ch  27: expected verses= 12  found= 12  OK
-  ch  28: expected verses= 25  found= 25  OK
-  ch  29: expected verses= 11  found= 11  OK
-  ch  30: expected verses= 31  found= 31  OK
-  ch  31: expected verses= 13  found= 13  OK
+  ch   1: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   2: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch   3: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   4: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   5: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   6: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   7: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   8: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   9: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  10: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  11: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  12: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  13: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  14: expected verses= 52  found VM= 52  found CVM= 52  OK/OK
+  ch  15: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  16: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  17: expected verses= 58  found VM= 58  found CVM= 58  OK/OK
+  ch  18: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  19: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  20: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch  21: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  22: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  23: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  24: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  25: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch  26: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  27: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  28: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  29: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  30: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  31: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
 2 Samuel              expected chapters= 24  found= 24  OK
-  ch   1: expected verses= 27  found= 27  OK
-  ch   2: expected verses= 32  found= 32  OK
-  ch   3: expected verses= 39  found= 39  OK
-  ch   4: expected verses= 12  found= 12  OK
-  ch   5: expected verses= 25  found= 25  OK
-  ch   6: expected verses= 23  found= 23  OK
-  ch   7: expected verses= 29  found= 29  OK
-  ch   8: expected verses= 18  found= 18  OK
-  ch   9: expected verses= 13  found= 13  OK
-  ch  10: expected verses= 19  found= 19  OK
-  ch  11: expected verses= 27  found= 27  OK
-  ch  12: expected verses= 31  found= 31  OK
-  ch  13: expected verses= 39  found= 39  OK
-  ch  14: expected verses= 33  found= 33  OK
-  ch  15: expected verses= 37  found= 37  OK
-  ch  16: expected verses= 23  found= 23  OK
-  ch  17: expected verses= 29  found= 29  OK
-  ch  18: expected verses= 33  found= 33  OK
-  ch  19: expected verses= 43  found= 43  OK
-  ch  20: expected verses= 26  found= 26  OK
-  ch  21: expected verses= 22  found= 22  OK
-  ch  22: expected verses= 51  found= 51  OK
-  ch  23: expected verses= 39  found= 39  OK
-  ch  24: expected verses= 25  found= 25  OK
+  ch   1: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   2: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   3: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch   4: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   5: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   6: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   7: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   8: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   9: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  10: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  11: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  12: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  13: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  14: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  15: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  16: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  17: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  18: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  19: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  20: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  21: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  22: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch  23: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  24: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
 1 Kings               expected chapters= 22  found= 22  OK
-  ch   1: expected verses= 53  found= 53  OK
-  ch   2: expected verses= 46  found= 46  OK
-  ch   3: expected verses= 28  found= 28  OK
-  ch   4: expected verses= 34  found= 34  OK
-  ch   5: expected verses= 18  found= 18  OK
-  ch   6: expected verses= 38  found= 38  OK
-  ch   7: expected verses= 51  found= 51  OK
-  ch   8: expected verses= 66  found= 66  OK
-  ch   9: expected verses= 28  found= 28  OK
-  ch  10: expected verses= 29  found= 29  OK
-  ch  11: expected verses= 43  found= 43  OK
-  ch  12: expected verses= 33  found= 33  OK
-  ch  13: expected verses= 34  found= 34  OK
-  ch  14: expected verses= 31  found= 31  OK
-  ch  15: expected verses= 34  found= 34  OK
-  ch  16: expected verses= 34  found= 34  OK
-  ch  17: expected verses= 24  found= 24  OK
-  ch  18: expected verses= 46  found= 46  OK
-  ch  19: expected verses= 21  found= 21  OK
-  ch  20: expected verses= 43  found= 43  OK
-  ch  21: expected verses= 29  found= 29  OK
-  ch  22: expected verses= 53  found= 53  OK
+  ch   1: expected verses= 53  found VM= 53  found CVM= 53  OK/OK
+  ch   2: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch   3: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   4: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch   5: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   6: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch   7: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch   8: expected verses= 66  found VM= 66  found CVM= 66  OK/OK
+  ch   9: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  10: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  11: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  12: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  13: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  14: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  15: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  16: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  17: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  18: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  19: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  20: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  21: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  22: expected verses= 53  found VM= 53  found CVM= 53  OK/OK
 2 Kings               expected chapters= 25  found= 25  OK
-  ch   1: expected verses= 18  found= 18  OK
-  ch   2: expected verses= 25  found= 25  OK
-  ch   3: expected verses= 27  found= 27  OK
-  ch   4: expected verses= 44  found= 44  OK
-  ch   5: expected verses= 27  found= 27  OK
-  ch   6: expected verses= 33  found= 33  OK
-  ch   7: expected verses= 20  found= 20  OK
-  ch   8: expected verses= 29  found= 29  OK
-  ch   9: expected verses= 37  found= 37  OK
-  ch  10: expected verses= 36  found= 36  OK
-  ch  11: expected verses= 21  found= 21  OK
-  ch  12: expected verses= 21  found= 21  OK
-  ch  13: expected verses= 25  found= 25  OK
-  ch  14: expected verses= 29  found= 29  OK
-  ch  15: expected verses= 38  found= 38  OK
-  ch  16: expected verses= 20  found= 20  OK
-  ch  17: expected verses= 41  found= 41  OK
-  ch  18: expected verses= 37  found= 37  OK
-  ch  19: expected verses= 37  found= 37  OK
-  ch  20: expected verses= 21  found= 21  OK
-  ch  21: expected verses= 26  found= 26  OK
-  ch  22: expected verses= 20  found= 20  OK
-  ch  23: expected verses= 37  found= 37  OK
-  ch  24: expected verses= 20  found= 20  OK
-  ch  25: expected verses= 30  found= 30  OK
+  ch   1: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   2: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   3: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   4: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch   5: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   6: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch   7: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   8: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   9: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  10: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  11: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  12: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  13: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  14: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  15: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  16: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  17: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  18: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  19: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  20: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  21: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  22: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  23: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  24: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  25: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
 1 Chronicles          expected chapters= 29  found= 29  OK
-  ch   1: expected verses= 54  found= 54  OK
-  ch   2: expected verses= 55  found= 55  OK
-  ch   3: expected verses= 24  found= 24  OK
-  ch   4: expected verses= 43  found= 43  OK
-  ch   5: expected verses= 26  found= 26  OK
-  ch   6: expected verses= 81  found= 81  OK
-  ch   7: expected verses= 40  found= 40  OK
-  ch   8: expected verses= 40  found= 40  OK
-  ch   9: expected verses= 44  found= 44  OK
-  ch  10: expected verses= 14  found= 14  OK
-  ch  11: expected verses= 47  found= 47  OK
-  ch  12: expected verses= 40  found= 40  OK
-  ch  13: expected verses= 14  found= 14  OK
-  ch  14: expected verses= 17  found= 17  OK
-  ch  15: expected verses= 29  found= 29  OK
-  ch  16: expected verses= 43  found= 43  OK
-  ch  17: expected verses= 27  found= 27  OK
-  ch  18: expected verses= 17  found= 17  OK
-  ch  19: expected verses= 19  found= 19  OK
-  ch  20: expected verses=  8  found=  8  OK
-  ch  21: expected verses= 30  found= 30  OK
-  ch  22: expected verses= 19  found= 19  OK
-  ch  23: expected verses= 32  found= 32  OK
-  ch  24: expected verses= 31  found= 31  OK
-  ch  25: expected verses= 31  found= 31  OK
-  ch  26: expected verses= 32  found= 32  OK
-  ch  27: expected verses= 34  found= 34  OK
-  ch  28: expected verses= 21  found= 21  OK
-  ch  29: expected verses= 30  found= 30  OK
+  ch   1: expected verses= 54  found VM= 54  found CVM= 54  OK/OK
+  ch   2: expected verses= 55  found VM= 55  found CVM= 55  OK/OK
+  ch   3: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   4: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch   5: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   6: expected verses= 81  found VM= 81  found CVM= 81  OK/OK
+  ch   7: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch   8: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch   9: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch  10: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  11: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch  12: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  13: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  14: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  15: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  16: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  17: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  18: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  19: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  20: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  21: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  22: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  23: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  24: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  25: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  26: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  27: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  28: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  29: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
 2 Chronicles          expected chapters= 36  found= 36  OK
-  ch   1: expected verses= 17  found= 17  OK
-  ch   2: expected verses= 18  found= 18  OK
-  ch   3: expected verses= 17  found= 17  OK
-  ch   4: expected verses= 22  found= 22  OK
-  ch   5: expected verses= 14  found= 14  OK
-  ch   6: expected verses= 42  found= 42  OK
-  ch   7: expected verses= 22  found= 22  OK
-  ch   8: expected verses= 18  found= 18  OK
-  ch   9: expected verses= 31  found= 31  OK
-  ch  10: expected verses= 19  found= 19  OK
-  ch  11: expected verses= 23  found= 23  OK
-  ch  12: expected verses= 16  found= 16  OK
-  ch  13: expected verses= 22  found= 22  OK
-  ch  14: expected verses= 15  found= 15  OK
-  ch  15: expected verses= 19  found= 19  OK
-  ch  16: expected verses= 14  found= 14  OK
-  ch  17: expected verses= 19  found= 19  OK
-  ch  18: expected verses= 34  found= 34  OK
-  ch  19: expected verses= 11  found= 11  OK
-  ch  20: expected verses= 37  found= 37  OK
-  ch  21: expected verses= 20  found= 20  OK
-  ch  22: expected verses= 12  found= 12  OK
-  ch  23: expected verses= 21  found= 21  OK
-  ch  24: expected verses= 27  found= 27  OK
-  ch  25: expected verses= 28  found= 28  OK
-  ch  26: expected verses= 23  found= 23  OK
-  ch  27: expected verses=  9  found=  9  OK
-  ch  28: expected verses= 27  found= 27  OK
-  ch  29: expected verses= 36  found= 36  OK
-  ch  30: expected verses= 27  found= 27  OK
-  ch  31: expected verses= 21  found= 21  OK
-  ch  32: expected verses= 33  found= 33  OK
-  ch  33: expected verses= 25  found= 25  OK
-  ch  34: expected verses= 33  found= 33  OK
-  ch  35: expected verses= 27  found= 27  OK
-  ch  36: expected verses= 23  found= 23  OK
+  ch   1: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   2: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   3: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   4: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   5: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   6: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch   7: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   8: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   9: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  10: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  11: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  12: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  13: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  14: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  15: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  16: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  17: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  18: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  19: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  20: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  21: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  22: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  23: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  24: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  25: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  26: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  27: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  28: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  29: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  30: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  31: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  32: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  33: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  34: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  35: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  36: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
 Ezra                  expected chapters= 10  found= 10  OK
-  ch   1: expected verses= 11  found= 11  OK
-  ch   2: expected verses= 70  found= 70  OK
-  ch   3: expected verses= 13  found= 13  OK
-  ch   4: expected verses= 24  found= 24  OK
-  ch   5: expected verses= 17  found= 17  OK
-  ch   6: expected verses= 22  found= 22  OK
-  ch   7: expected verses= 28  found= 28  OK
-  ch   8: expected verses= 36  found= 36  OK
-  ch   9: expected verses= 15  found= 15  OK
-  ch  10: expected verses= 44  found= 44  OK
+  ch   1: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   2: expected verses= 70  found VM= 70  found CVM= 70  OK/OK
+  ch   3: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   4: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   5: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   6: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   7: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   8: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch   9: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  10: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
 Nehemiah              expected chapters= 13  found= 13  OK
-  ch   1: expected verses= 11  found= 11  OK
-  ch   2: expected verses= 20  found= 20  OK
-  ch   3: expected verses= 32  found= 32  OK
-  ch   4: expected verses= 23  found= 23  OK
-  ch   5: expected verses= 19  found= 19  OK
-  ch   6: expected verses= 19  found= 19  OK
-  ch   7: expected verses= 73  found= 73  OK
-  ch   8: expected verses= 18  found= 18  OK
-  ch   9: expected verses= 38  found= 38  OK
-  ch  10: expected verses= 39  found= 39  OK
-  ch  11: expected verses= 36  found= 36  OK
-  ch  12: expected verses= 47  found= 47  OK
-  ch  13: expected verses= 31  found= 31  OK
+  ch   1: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   2: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   3: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   4: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   5: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   6: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   7: expected verses= 73  found VM= 73  found CVM= 73  OK/OK
+  ch   8: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   9: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  10: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  11: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  12: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch  13: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
 Esther                expected chapters= 10  found= 10  OK
-  ch   1: expected verses= 22  found= 22  OK
-  ch   2: expected verses= 23  found= 23  OK
-  ch   3: expected verses= 15  found= 15  OK
-  ch   4: expected verses= 17  found= 17  OK
-  ch   5: expected verses= 14  found= 14  OK
-  ch   6: expected verses= 14  found= 14  OK
-  ch   7: expected verses= 10  found= 10  OK
-  ch   8: expected verses= 17  found= 17  OK
-  ch   9: expected verses= 32  found= 32  OK
-  ch  10: expected verses=  3  found=  3  OK
+  ch   1: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   3: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   4: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   5: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   6: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   7: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   8: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   9: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  10: expected verses=  3  found VM=  3  found CVM=  3  OK/OK
 Job                   expected chapters= 42  found= 42  OK
-  ch   1: expected verses= 22  found= 22  OK
-  ch   2: expected verses= 13  found= 13  OK
-  ch   3: expected verses= 26  found= 26  OK
-  ch   4: expected verses= 21  found= 21  OK
-  ch   5: expected verses= 27  found= 27  OK
-  ch   6: expected verses= 30  found= 30  OK
-  ch   7: expected verses= 21  found= 21  OK
-  ch   8: expected verses= 22  found= 22  OK
-  ch   9: expected verses= 35  found= 35  OK
-  ch  10: expected verses= 22  found= 22  OK
-  ch  11: expected verses= 20  found= 20  OK
-  ch  12: expected verses= 25  found= 25  OK
-  ch  13: expected verses= 28  found= 28  OK
-  ch  14: expected verses= 22  found= 22  OK
-  ch  15: expected verses= 35  found= 35  OK
-  ch  16: expected verses= 22  found= 22  OK
-  ch  17: expected verses= 16  found= 16  OK
-  ch  18: expected verses= 21  found= 21  OK
-  ch  19: expected verses= 29  found= 29  OK
-  ch  20: expected verses= 29  found= 29  OK
-  ch  21: expected verses= 34  found= 34  OK
-  ch  22: expected verses= 30  found= 30  OK
-  ch  23: expected verses= 17  found= 17  OK
-  ch  24: expected verses= 25  found= 25  OK
-  ch  25: expected verses=  6  found=  6  OK
-  ch  26: expected verses= 14  found= 14  OK
-  ch  27: expected verses= 23  found= 23  OK
-  ch  28: expected verses= 28  found= 28  OK
-  ch  29: expected verses= 25  found= 25  OK
-  ch  30: expected verses= 31  found= 31  OK
-  ch  31: expected verses= 40  found= 40  OK
-  ch  32: expected verses= 22  found= 22  OK
-  ch  33: expected verses= 33  found= 33  OK
-  ch  34: expected verses= 37  found= 37  OK
-  ch  35: expected verses= 16  found= 16  OK
-  ch  36: expected verses= 33  found= 33  OK
-  ch  37: expected verses= 24  found= 24  OK
-  ch  38: expected verses= 41  found= 41  OK
-  ch  39: expected verses= 30  found= 30  OK
-  ch  40: expected verses= 24  found= 24  OK
-  ch  41: expected verses= 34  found= 34  OK
-  ch  42: expected verses= 17  found= 17  OK
+  ch   1: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   2: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   3: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   4: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   5: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   6: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   7: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   8: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   9: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  10: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  11: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  12: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  13: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  14: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  15: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  16: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  17: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  18: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  19: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  20: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  21: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  22: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  23: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  24: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  25: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch  26: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  27: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  28: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  29: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  30: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  31: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  32: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  33: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  34: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  35: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  36: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  37: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  38: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  39: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  40: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  41: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  42: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
 Psalms                expected chapters=150  found=150  OK
-  ch   1: expected verses=  6  found=  6  OK
-  ch   2: expected verses= 12  found= 12  OK
-  ch   3: expected verses=  8  found=  8  OK
-  ch   4: expected verses=  8  found=  8  OK
-  ch   5: expected verses= 12  found= 12  OK
-  ch   6: expected verses= 10  found= 10  OK
-  ch   7: expected verses= 17  found= 17  OK
-  ch   8: expected verses=  9  found=  9  OK
-  ch   9: expected verses= 20  found= 20  OK
-  ch  10: expected verses= 18  found= 18  OK
-  ch  11: expected verses=  7  found=  7  OK
-  ch  12: expected verses=  8  found=  8  OK
-  ch  13: expected verses=  6  found=  6  OK
-  ch  14: expected verses=  7  found=  7  OK
-  ch  15: expected verses=  5  found=  5  OK
-  ch  16: expected verses= 11  found= 11  OK
-  ch  17: expected verses= 15  found= 15  OK
-  ch  18: expected verses= 50  found= 50  OK
-  ch  19: expected verses= 14  found= 14  OK
-  ch  20: expected verses=  9  found=  9  OK
-  ch  21: expected verses= 13  found= 13  OK
-  ch  22: expected verses= 31  found= 31  OK
-  ch  23: expected verses=  6  found=  6  OK
-  ch  24: expected verses= 10  found= 10  OK
-  ch  25: expected verses= 22  found= 22  OK
-  ch  26: expected verses= 12  found= 12  OK
-  ch  27: expected verses= 14  found= 14  OK
-  ch  28: expected verses=  9  found=  9  OK
-  ch  29: expected verses= 11  found= 11  OK
-  ch  30: expected verses= 12  found= 12  OK
-  ch  31: expected verses= 24  found= 24  OK
-  ch  32: expected verses= 11  found= 11  OK
-  ch  33: expected verses= 22  found= 22  OK
-  ch  34: expected verses= 22  found= 22  OK
-  ch  35: expected verses= 28  found= 28  OK
-  ch  36: expected verses= 12  found= 12  OK
-  ch  37: expected verses= 40  found= 40  OK
-  ch  38: expected verses= 22  found= 22  OK
-  ch  39: expected verses= 13  found= 13  OK
-  ch  40: expected verses= 17  found= 17  OK
-  ch  41: expected verses= 13  found= 13  OK
-  ch  42: expected verses= 11  found= 11  OK
-  ch  43: expected verses=  5  found=  5  OK
-  ch  44: expected verses= 26  found= 26  OK
-  ch  45: expected verses= 17  found= 17  OK
-  ch  46: expected verses= 11  found= 11  OK
-  ch  47: expected verses=  9  found=  9  OK
-  ch  48: expected verses= 14  found= 14  OK
-  ch  49: expected verses= 20  found= 20  OK
-  ch  50: expected verses= 23  found= 23  OK
-  ch  51: expected verses= 19  found= 19  OK
-  ch  52: expected verses=  9  found=  9  OK
-  ch  53: expected verses=  6  found=  6  OK
-  ch  54: expected verses=  7  found=  7  OK
-  ch  55: expected verses= 23  found= 23  OK
-  ch  56: expected verses= 13  found= 13  OK
-  ch  57: expected verses= 11  found= 11  OK
-  ch  58: expected verses= 11  found= 11  OK
-  ch  59: expected verses= 17  found= 17  OK
-  ch  60: expected verses= 12  found= 12  OK
-  ch  61: expected verses=  8  found=  8  OK
-  ch  62: expected verses= 12  found= 12  OK
-  ch  63: expected verses= 11  found= 11  OK
-  ch  64: expected verses= 10  found= 10  OK
-  ch  65: expected verses= 13  found= 13  OK
-  ch  66: expected verses= 20  found= 20  OK
-  ch  67: expected verses=  7  found=  7  OK
-  ch  68: expected verses= 35  found= 35  OK
-  ch  69: expected verses= 36  found= 36  OK
-  ch  70: expected verses=  5  found=  5  OK
-  ch  71: expected verses= 24  found= 24  OK
-  ch  72: expected verses= 20  found= 20  OK
-  ch  73: expected verses= 28  found= 28  OK
-  ch  74: expected verses= 23  found= 23  OK
-  ch  75: expected verses= 10  found= 10  OK
-  ch  76: expected verses= 12  found= 12  OK
-  ch  77: expected verses= 20  found= 20  OK
-  ch  78: expected verses= 72  found= 72  OK
-  ch  79: expected verses= 13  found= 13  OK
-  ch  80: expected verses= 19  found= 19  OK
-  ch  81: expected verses= 16  found= 16  OK
-  ch  82: expected verses=  8  found=  8  OK
-  ch  83: expected verses= 18  found= 18  OK
-  ch  84: expected verses= 12  found= 12  OK
-  ch  85: expected verses= 13  found= 13  OK
-  ch  86: expected verses= 17  found= 17  OK
-  ch  87: expected verses=  7  found=  7  OK
-  ch  88: expected verses= 18  found= 18  OK
-  ch  89: expected verses= 52  found= 52  OK
-  ch  90: expected verses= 17  found= 17  OK
-  ch  91: expected verses= 16  found= 16  OK
-  ch  92: expected verses= 15  found= 15  OK
-  ch  93: expected verses=  5  found=  5  OK
-  ch  94: expected verses= 23  found= 23  OK
-  ch  95: expected verses= 11  found= 11  OK
-  ch  96: expected verses= 13  found= 13  OK
-  ch  97: expected verses= 12  found= 12  OK
-  ch  98: expected verses=  9  found=  9  OK
-  ch  99: expected verses=  9  found=  9  OK
-  ch 100: expected verses=  5  found=  5  OK
-  ch 101: expected verses=  8  found=  8  OK
-  ch 102: expected verses= 28  found= 28  OK
-  ch 103: expected verses= 22  found= 22  OK
-  ch 104: expected verses= 35  found= 35  OK
-  ch 105: expected verses= 45  found= 45  OK
-  ch 106: expected verses= 48  found= 48  OK
-  ch 107: expected verses= 43  found= 43  OK
-  ch 108: expected verses= 13  found= 13  OK
-  ch 109: expected verses= 31  found= 31  OK
-  ch 110: expected verses=  7  found=  7  OK
-  ch 111: expected verses= 10  found= 10  OK
-  ch 112: expected verses= 10  found= 10  OK
-  ch 113: expected verses=  9  found=  9  OK
-  ch 114: expected verses=  8  found=  8  OK
-  ch 115: expected verses= 18  found= 18  OK
-  ch 116: expected verses= 19  found= 19  OK
-  ch 117: expected verses=  2  found=  2  OK
-  ch 118: expected verses= 29  found= 29  OK
-  ch 119: expected verses=176  found=176  OK
-  ch 120: expected verses=  7  found=  7  OK
-  ch 121: expected verses=  8  found=  8  OK
-  ch 122: expected verses=  9  found=  9  OK
-  ch 123: expected verses=  4  found=  4  OK
-  ch 124: expected verses=  8  found=  8  OK
-  ch 125: expected verses=  5  found=  5  OK
-  ch 126: expected verses=  6  found=  6  OK
-  ch 127: expected verses=  5  found=  5  OK
-  ch 128: expected verses=  6  found=  6  OK
-  ch 129: expected verses=  8  found=  8  OK
-  ch 130: expected verses=  8  found=  8  OK
-  ch 131: expected verses=  3  found=  3  OK
-  ch 132: expected verses= 18  found= 18  OK
-  ch 133: expected verses=  3  found=  3  OK
-  ch 134: expected verses=  3  found=  3  OK
-  ch 135: expected verses= 21  found= 21  OK
-  ch 136: expected verses= 26  found= 26  OK
-  ch 137: expected verses=  9  found=  9  OK
-  ch 138: expected verses=  8  found=  8  OK
-  ch 139: expected verses= 24  found= 24  OK
-  ch 140: expected verses= 13  found= 13  OK
-  ch 141: expected verses= 10  found= 10  OK
-  ch 142: expected verses=  7  found=  7  OK
-  ch 143: expected verses= 12  found= 12  OK
-  ch 144: expected verses= 15  found= 15  OK
-  ch 145: expected verses= 21  found= 21  OK
-  ch 146: expected verses= 10  found= 10  OK
-  ch 147: expected verses= 20  found= 20  OK
-  ch 148: expected verses= 14  found= 14  OK
-  ch 149: expected verses=  9  found=  9  OK
-  ch 150: expected verses=  6  found=  6  OK
+  ch   1: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch   2: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   3: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch   4: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch   5: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   6: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   7: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   8: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch   9: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  10: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  11: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  12: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  13: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch  14: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  15: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch  16: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  17: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  18: expected verses= 50  found VM= 50  found CVM= 50  OK/OK
+  ch  19: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  20: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  21: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  22: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  23: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch  24: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  25: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  26: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  27: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  28: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  29: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  30: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  31: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  32: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  33: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  34: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  35: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  36: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  37: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  38: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  39: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  40: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  41: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  42: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  43: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch  44: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  45: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  46: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  47: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  48: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  49: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  50: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  51: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  52: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  53: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch  54: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  55: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  56: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  57: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  58: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  59: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  60: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  61: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  62: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  63: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  64: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  65: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  66: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  67: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  68: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  69: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  70: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch  71: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  72: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  73: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  74: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  75: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  76: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  77: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  78: expected verses= 72  found VM= 72  found CVM= 72  OK/OK
+  ch  79: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  80: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  81: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  82: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  83: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  84: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  85: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  86: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  87: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  88: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  89: expected verses= 52  found VM= 52  found CVM= 52  OK/OK
+  ch  90: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  91: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  92: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  93: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch  94: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  95: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  96: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  97: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  98: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  99: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch 100: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch 101: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 102: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch 103: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch 104: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch 105: expected verses= 45  found VM= 45  found CVM= 45  OK/OK
+  ch 106: expected verses= 48  found VM= 48  found CVM= 48  OK/OK
+  ch 107: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch 108: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch 109: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch 110: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch 111: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch 112: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch 113: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch 114: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 115: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch 116: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch 117: expected verses=  2  found VM=  2  found CVM=  2  OK/OK
+  ch 118: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch 119: expected verses=176  found VM=176  found CVM=176  OK/OK
+  ch 120: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch 121: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 122: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch 123: expected verses=  4  found VM=  4  found CVM=  4  OK/OK
+  ch 124: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 125: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch 126: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch 127: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch 128: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch 129: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 130: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 131: expected verses=  3  found VM=  3  found CVM=  3  OK/OK
+  ch 132: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch 133: expected verses=  3  found VM=  3  found CVM=  3  OK/OK
+  ch 134: expected verses=  3  found VM=  3  found CVM=  3  OK/OK
+  ch 135: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch 136: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch 137: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch 138: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch 139: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch 140: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch 141: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch 142: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch 143: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch 144: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch 145: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch 146: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch 147: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch 148: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch 149: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch 150: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
 Proverbs              expected chapters= 31  found= 31  OK
-  ch   1: expected verses= 33  found= 33  OK
-  ch   2: expected verses= 22  found= 22  OK
-  ch   3: expected verses= 35  found= 35  OK
-  ch   4: expected verses= 27  found= 27  OK
-  ch   5: expected verses= 23  found= 23  OK
-  ch   6: expected verses= 35  found= 35  OK
-  ch   7: expected verses= 27  found= 27  OK
-  ch   8: expected verses= 36  found= 36  OK
-  ch   9: expected verses= 18  found= 18  OK
-  ch  10: expected verses= 32  found= 32  OK
-  ch  11: expected verses= 31  found= 31  OK
-  ch  12: expected verses= 28  found= 28  OK
-  ch  13: expected verses= 25  found= 25  OK
-  ch  14: expected verses= 35  found= 35  OK
-  ch  15: expected verses= 33  found= 33  OK
-  ch  16: expected verses= 33  found= 33  OK
-  ch  17: expected verses= 28  found= 28  OK
-  ch  18: expected verses= 24  found= 24  OK
-  ch  19: expected verses= 29  found= 29  OK
-  ch  20: expected verses= 30  found= 30  OK
-  ch  21: expected verses= 31  found= 31  OK
-  ch  22: expected verses= 29  found= 29  OK
-  ch  23: expected verses= 35  found= 35  OK
-  ch  24: expected verses= 34  found= 34  OK
-  ch  25: expected verses= 28  found= 28  OK
-  ch  26: expected verses= 28  found= 28  OK
-  ch  27: expected verses= 27  found= 27  OK
-  ch  28: expected verses= 28  found= 28  OK
-  ch  29: expected verses= 27  found= 27  OK
-  ch  30: expected verses= 33  found= 33  OK
-  ch  31: expected verses= 31  found= 31  OK
+  ch   1: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch   2: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   3: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch   4: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   5: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   6: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch   7: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   8: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch   9: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  10: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  11: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  12: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  13: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  14: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  15: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  16: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  17: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  18: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  19: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  20: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  21: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  22: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  23: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  24: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  25: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  26: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  27: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  28: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  29: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  30: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  31: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
 Ecclesiastes          expected chapters= 12  found= 12  OK
-  ch   1: expected verses= 18  found= 18  OK
-  ch   2: expected verses= 26  found= 26  OK
-  ch   3: expected verses= 22  found= 22  OK
-  ch   4: expected verses= 16  found= 16  OK
-  ch   5: expected verses= 20  found= 20  OK
-  ch   6: expected verses= 12  found= 12  OK
-  ch   7: expected verses= 29  found= 29  OK
-  ch   8: expected verses= 17  found= 17  OK
-  ch   9: expected verses= 18  found= 18  OK
-  ch  10: expected verses= 20  found= 20  OK
-  ch  11: expected verses= 10  found= 10  OK
-  ch  12: expected verses= 14  found= 14  OK
+  ch   1: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   2: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   3: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   4: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   5: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   6: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   7: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   8: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   9: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  10: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  11: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  12: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
 Song of Songs         expected chapters=  8  found=  8  OK
-  ch   1: expected verses= 17  found= 17  OK
-  ch   2: expected verses= 17  found= 17  OK
-  ch   3: expected verses= 11  found= 11  OK
-  ch   4: expected verses= 16  found= 16  OK
-  ch   5: expected verses= 16  found= 16  OK
-  ch   6: expected verses= 13  found= 13  OK
-  ch   7: expected verses= 13  found= 13  OK
-  ch   8: expected verses= 14  found= 14  OK
+  ch   1: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   2: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   3: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   4: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   5: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   6: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   7: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   8: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
 Isaiah                expected chapters= 66  found= 66  OK
-  ch   1: expected verses= 31  found= 31  OK
-  ch   2: expected verses= 22  found= 22  OK
-  ch   3: expected verses= 26  found= 26  OK
-  ch   4: expected verses=  6  found=  6  OK
-  ch   5: expected verses= 30  found= 30  OK
-  ch   6: expected verses= 13  found= 13  OK
-  ch   7: expected verses= 25  found= 25  OK
-  ch   8: expected verses= 22  found= 22  OK
-  ch   9: expected verses= 21  found= 21  OK
-  ch  10: expected verses= 34  found= 34  OK
-  ch  11: expected verses= 16  found= 16  OK
-  ch  12: expected verses=  6  found=  6  OK
-  ch  13: expected verses= 22  found= 22  OK
-  ch  14: expected verses= 32  found= 32  OK
-  ch  15: expected verses=  9  found=  9  OK
-  ch  16: expected verses= 14  found= 14  OK
-  ch  17: expected verses= 14  found= 14  OK
-  ch  18: expected verses=  7  found=  7  OK
-  ch  19: expected verses= 25  found= 25  OK
-  ch  20: expected verses=  6  found=  6  OK
-  ch  21: expected verses= 17  found= 17  OK
-  ch  22: expected verses= 25  found= 25  OK
-  ch  23: expected verses= 18  found= 18  OK
-  ch  24: expected verses= 23  found= 23  OK
-  ch  25: expected verses= 12  found= 12  OK
-  ch  26: expected verses= 21  found= 21  OK
-  ch  27: expected verses= 13  found= 13  OK
-  ch  28: expected verses= 29  found= 29  OK
-  ch  29: expected verses= 24  found= 24  OK
-  ch  30: expected verses= 33  found= 33  OK
-  ch  31: expected verses=  9  found=  9  OK
-  ch  32: expected verses= 20  found= 20  OK
-  ch  33: expected verses= 24  found= 24  OK
-  ch  34: expected verses= 17  found= 17  OK
-  ch  35: expected verses= 10  found= 10  OK
-  ch  36: expected verses= 22  found= 22  OK
-  ch  37: expected verses= 38  found= 38  OK
-  ch  38: expected verses= 22  found= 22  OK
-  ch  39: expected verses=  8  found=  8  OK
-  ch  40: expected verses= 31  found= 31  OK
-  ch  41: expected verses= 29  found= 29  OK
-  ch  42: expected verses= 25  found= 25  OK
-  ch  43: expected verses= 28  found= 28  OK
-  ch  44: expected verses= 28  found= 28  OK
-  ch  45: expected verses= 25  found= 25  OK
-  ch  46: expected verses= 13  found= 13  OK
-  ch  47: expected verses= 15  found= 15  OK
-  ch  48: expected verses= 22  found= 22  OK
-  ch  49: expected verses= 26  found= 26  OK
-  ch  50: expected verses= 11  found= 11  OK
-  ch  51: expected verses= 23  found= 23  OK
-  ch  52: expected verses= 15  found= 15  OK
-  ch  53: expected verses= 12  found= 12  OK
-  ch  54: expected verses= 17  found= 17  OK
-  ch  55: expected verses= 13  found= 13  OK
-  ch  56: expected verses= 12  found= 12  OK
-  ch  57: expected verses= 21  found= 21  OK
-  ch  58: expected verses= 14  found= 14  OK
-  ch  59: expected verses= 21  found= 21  OK
-  ch  60: expected verses= 22  found= 22  OK
-  ch  61: expected verses= 11  found= 11  OK
-  ch  62: expected verses= 12  found= 12  OK
-  ch  63: expected verses= 19  found= 19  OK
-  ch  64: expected verses= 12  found= 12  OK
-  ch  65: expected verses= 25  found= 25  OK
-  ch  66: expected verses= 24  found= 24  OK
+  ch   1: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   2: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   3: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   4: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch   5: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   6: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   7: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   8: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   9: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  10: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  11: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  12: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch  13: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  14: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  15: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  16: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  17: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  18: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  19: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  20: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
+  ch  21: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  22: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  23: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  24: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  25: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  26: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  27: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  28: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  29: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  30: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  31: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  32: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  33: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  34: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  35: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  36: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  37: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  38: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  39: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  40: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  41: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  42: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  43: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  44: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  45: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  46: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  47: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  48: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  49: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  50: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  51: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  52: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  53: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  54: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  55: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  56: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  57: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  58: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  59: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  60: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  61: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  62: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  63: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  64: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  65: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  66: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
 Jeremiah              expected chapters= 52  found= 52  OK
-  ch   1: expected verses= 19  found= 19  OK
-  ch   2: expected verses= 37  found= 37  OK
-  ch   3: expected verses= 25  found= 25  OK
-  ch   4: expected verses= 31  found= 31  OK
-  ch   5: expected verses= 31  found= 31  OK
-  ch   6: expected verses= 30  found= 30  OK
-  ch   7: expected verses= 34  found= 34  OK
-  ch   8: expected verses= 22  found= 22  OK
-  ch   9: expected verses= 26  found= 26  OK
-  ch  10: expected verses= 25  found= 25  OK
-  ch  11: expected verses= 23  found= 23  OK
-  ch  12: expected verses= 17  found= 17  OK
-  ch  13: expected verses= 27  found= 27  OK
-  ch  14: expected verses= 22  found= 22  OK
-  ch  15: expected verses= 21  found= 21  OK
-  ch  16: expected verses= 21  found= 21  OK
-  ch  17: expected verses= 27  found= 27  OK
-  ch  18: expected verses= 23  found= 23  OK
-  ch  19: expected verses= 15  found= 15  OK
-  ch  20: expected verses= 18  found= 18  OK
-  ch  21: expected verses= 14  found= 14  OK
-  ch  22: expected verses= 30  found= 30  OK
-  ch  23: expected verses= 40  found= 40  OK
-  ch  24: expected verses= 10  found= 10  OK
-  ch  25: expected verses= 38  found= 38  OK
-  ch  26: expected verses= 24  found= 24  OK
-  ch  27: expected verses= 22  found= 22  OK
-  ch  28: expected verses= 17  found= 17  OK
-  ch  29: expected verses= 32  found= 32  OK
-  ch  30: expected verses= 24  found= 24  OK
-  ch  31: expected verses= 40  found= 40  OK
-  ch  32: expected verses= 44  found= 44  OK
-  ch  33: expected verses= 26  found= 26  OK
-  ch  34: expected verses= 22  found= 22  OK
-  ch  35: expected verses= 19  found= 19  OK
-  ch  36: expected verses= 32  found= 32  OK
-  ch  37: expected verses= 21  found= 21  OK
-  ch  38: expected verses= 28  found= 28  OK
-  ch  39: expected verses= 18  found= 18  OK
-  ch  40: expected verses= 16  found= 16  OK
-  ch  41: expected verses= 18  found= 18  OK
-  ch  42: expected verses= 22  found= 22  OK
-  ch  43: expected verses= 13  found= 13  OK
-  ch  44: expected verses= 30  found= 30  OK
-  ch  45: expected verses=  5  found=  5  OK
-  ch  46: expected verses= 28  found= 28  OK
-  ch  47: expected verses=  7  found=  7  OK
-  ch  48: expected verses= 47  found= 47  OK
-  ch  49: expected verses= 39  found= 39  OK
-  ch  50: expected verses= 46  found= 46  OK
-  ch  51: expected verses= 64  found= 64  OK
-  ch  52: expected verses= 34  found= 34  OK
+  ch   1: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   2: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch   3: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   4: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   5: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   6: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   7: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch   8: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   9: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  10: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  11: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  12: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  13: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  14: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  15: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  16: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  17: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  18: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  19: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  20: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  21: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  22: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  23: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  24: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch  25: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  26: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  27: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  28: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  29: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  30: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  31: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  32: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch  33: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  34: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  35: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  36: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  37: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  38: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  39: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  40: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  41: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  42: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  43: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  44: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  45: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch  46: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  47: expected verses=  7  found VM=  7  found CVM=  7  OK/OK
+  ch  48: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch  49: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  50: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  51: expected verses= 64  found VM= 64  found CVM= 64  OK/OK
+  ch  52: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
 Lamentations          expected chapters=  5  found=  5  OK
-  ch   1: expected verses= 22  found= 22  OK
-  ch   2: expected verses= 22  found= 22  OK
-  ch   3: expected verses= 66  found= 66  OK
-  ch   4: expected verses= 22  found= 22  OK
-  ch   5: expected verses= 22  found= 22  OK
+  ch   1: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   2: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   3: expected verses= 66  found VM= 66  found CVM= 66  OK/OK
+  ch   4: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   5: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
 Ezekiel               expected chapters= 48  found= 48  OK
-  ch   1: expected verses= 28  found= 28  OK
-  ch   2: expected verses= 10  found= 10  OK
-  ch   3: expected verses= 27  found= 27  OK
-  ch   4: expected verses= 17  found= 17  OK
-  ch   5: expected verses= 17  found= 17  OK
-  ch   6: expected verses= 14  found= 14  OK
-  ch   7: expected verses= 27  found= 27  OK
-  ch   8: expected verses= 18  found= 18  OK
-  ch   9: expected verses= 11  found= 11  OK
-  ch  10: expected verses= 22  found= 22  OK
-  ch  11: expected verses= 25  found= 25  OK
-  ch  12: expected verses= 28  found= 28  OK
-  ch  13: expected verses= 23  found= 23  OK
-  ch  14: expected verses= 23  found= 23  OK
-  ch  15: expected verses=  8  found=  8  OK
-  ch  16: expected verses= 63  found= 63  OK
-  ch  17: expected verses= 24  found= 24  OK
-  ch  18: expected verses= 32  found= 32  OK
-  ch  19: expected verses= 14  found= 14  OK
-  ch  20: expected verses= 49  found= 49  OK
-  ch  21: expected verses= 32  found= 32  OK
-  ch  22: expected verses= 31  found= 31  OK
-  ch  23: expected verses= 49  found= 49  OK
-  ch  24: expected verses= 27  found= 27  OK
-  ch  25: expected verses= 17  found= 17  OK
-  ch  26: expected verses= 21  found= 21  OK
-  ch  27: expected verses= 36  found= 36  OK
-  ch  28: expected verses= 26  found= 26  OK
-  ch  29: expected verses= 21  found= 21  OK
-  ch  30: expected verses= 26  found= 26  OK
-  ch  31: expected verses= 18  found= 18  OK
-  ch  32: expected verses= 32  found= 32  OK
-  ch  33: expected verses= 33  found= 33  OK
-  ch  34: expected verses= 31  found= 31  OK
-  ch  35: expected verses= 15  found= 15  OK
-  ch  36: expected verses= 38  found= 38  OK
-  ch  37: expected verses= 28  found= 28  OK
-  ch  38: expected verses= 23  found= 23  OK
-  ch  39: expected verses= 29  found= 29  OK
-  ch  40: expected verses= 49  found= 49  OK
-  ch  41: expected verses= 26  found= 26  OK
-  ch  42: expected verses= 20  found= 20  OK
-  ch  43: expected verses= 27  found= 27  OK
-  ch  44: expected verses= 31  found= 31  OK
-  ch  45: expected verses= 25  found= 25  OK
-  ch  46: expected verses= 24  found= 24  OK
-  ch  47: expected verses= 23  found= 23  OK
-  ch  48: expected verses= 35  found= 35  OK
+  ch   1: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   2: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   3: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   4: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   5: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   6: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   7: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   8: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   9: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  10: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch  11: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  12: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  13: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  14: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  15: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  16: expected verses= 63  found VM= 63  found CVM= 63  OK/OK
+  ch  17: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  18: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  19: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  20: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch  21: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  22: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  23: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch  24: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  25: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  26: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  27: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  28: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  29: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  30: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  31: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  32: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  33: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  34: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  35: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  36: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  37: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  38: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  39: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  40: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch  41: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  42: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  43: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  44: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  45: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  46: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  47: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch  48: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
 Daniel                expected chapters= 12  found= 12  OK
-  ch   1: expected verses= 21  found= 21  OK
-  ch   2: expected verses= 49  found= 49  OK
-  ch   3: expected verses= 30  found= 30  OK
-  ch   4: expected verses= 37  found= 37  OK
-  ch   5: expected verses= 31  found= 31  OK
-  ch   6: expected verses= 28  found= 28  OK
-  ch   7: expected verses= 28  found= 28  OK
-  ch   8: expected verses= 27  found= 27  OK
-  ch   9: expected verses= 27  found= 27  OK
-  ch  10: expected verses= 21  found= 21  OK
-  ch  11: expected verses= 45  found= 45  OK
-  ch  12: expected verses= 13  found= 13  OK
+  ch   1: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   2: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch   3: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   4: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch   5: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   6: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   7: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   8: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   9: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  10: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  11: expected verses= 45  found VM= 45  found CVM= 45  OK/OK
+  ch  12: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
 Hosea                 expected chapters= 14  found= 14  OK
-  ch   1: expected verses= 11  found= 11  OK
-  ch   2: expected verses= 23  found= 23  OK
-  ch   3: expected verses=  5  found=  5  OK
-  ch   4: expected verses= 19  found= 19  OK
-  ch   5: expected verses= 15  found= 15  OK
-  ch   6: expected verses= 11  found= 11  OK
-  ch   7: expected verses= 16  found= 16  OK
-  ch   8: expected verses= 14  found= 14  OK
-  ch   9: expected verses= 17  found= 17  OK
-  ch  10: expected verses= 15  found= 15  OK
-  ch  11: expected verses= 12  found= 12  OK
-  ch  12: expected verses= 14  found= 14  OK
-  ch  13: expected verses= 16  found= 16  OK
-  ch  14: expected verses=  9  found=  9  OK
+  ch   1: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   3: expected verses=  5  found VM=  5  found CVM=  5  OK/OK
+  ch   4: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   5: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   6: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   7: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   8: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   9: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  10: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  11: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  12: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  13: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch  14: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
 Joel                  expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 20  found= 20  OK
-  ch   2: expected verses= 32  found= 32  OK
-  ch   3: expected verses= 21  found= 21  OK
+  ch   1: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   2: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   3: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
 Amos                  expected chapters=  9  found=  9  OK
-  ch   1: expected verses= 15  found= 15  OK
-  ch   2: expected verses= 16  found= 16  OK
-  ch   3: expected verses= 15  found= 15  OK
-  ch   4: expected verses= 13  found= 13  OK
-  ch   5: expected verses= 27  found= 27  OK
-  ch   6: expected verses= 14  found= 14  OK
-  ch   7: expected verses= 17  found= 17  OK
-  ch   8: expected verses= 14  found= 14  OK
-  ch   9: expected verses= 15  found= 15  OK
+  ch   1: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   2: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   3: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   4: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   5: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   6: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   7: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   8: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   9: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
 Obadiah               expected chapters=  1  found=  1  OK
-  ch   1: expected verses= 21  found= 21  OK
+  ch   1: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
 Jonah                 expected chapters=  4  found=  4  OK
-  ch   1: expected verses= 17  found= 17  OK
-  ch   2: expected verses= 10  found= 10  OK
-  ch   3: expected verses= 10  found= 10  OK
-  ch   4: expected verses= 11  found= 11  OK
+  ch   1: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   2: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   3: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   4: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
 Micah                 expected chapters=  7  found=  7  OK
-  ch   1: expected verses= 16  found= 16  OK
-  ch   2: expected verses= 13  found= 13  OK
-  ch   3: expected verses= 12  found= 12  OK
-  ch   4: expected verses= 13  found= 13  OK
-  ch   5: expected verses= 15  found= 15  OK
-  ch   6: expected verses= 16  found= 16  OK
-  ch   7: expected verses= 20  found= 20  OK
+  ch   1: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   2: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   3: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   4: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   5: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   6: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   7: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
 Nahum                 expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 15  found= 15  OK
-  ch   2: expected verses= 13  found= 13  OK
-  ch   3: expected verses= 19  found= 19  OK
+  ch   1: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   2: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   3: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
 Habakkuk              expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 17  found= 17  OK
-  ch   2: expected verses= 20  found= 20  OK
-  ch   3: expected verses= 19  found= 19  OK
+  ch   1: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   2: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   3: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
 Zephaniah             expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 18  found= 18  OK
-  ch   2: expected verses= 15  found= 15  OK
-  ch   3: expected verses= 20  found= 20  OK
+  ch   1: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   2: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   3: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
 Haggai                expected chapters=  2  found=  2  OK
-  ch   1: expected verses= 15  found= 15  OK
-  ch   2: expected verses= 23  found= 23  OK
+  ch   1: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
 Zechariah             expected chapters= 14  found= 14  OK
-  ch   1: expected verses= 21  found= 21  OK
-  ch   2: expected verses= 13  found= 13  OK
-  ch   3: expected verses= 10  found= 10  OK
-  ch   4: expected verses= 14  found= 14  OK
-  ch   5: expected verses= 11  found= 11  OK
-  ch   6: expected verses= 15  found= 15  OK
-  ch   7: expected verses= 14  found= 14  OK
-  ch   8: expected verses= 23  found= 23  OK
-  ch   9: expected verses= 17  found= 17  OK
-  ch  10: expected verses= 12  found= 12  OK
-  ch  11: expected verses= 17  found= 17  OK
-  ch  12: expected verses= 14  found= 14  OK
-  ch  13: expected verses=  9  found=  9  OK
-  ch  14: expected verses= 21  found= 21  OK
+  ch   1: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   2: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   3: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   4: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   5: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   6: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   7: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   8: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   9: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  10: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch  11: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  12: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  13: expected verses=  9  found VM=  9  found CVM=  9  OK/OK
+  ch  14: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
 Malachi               expected chapters=  4  found=  4  OK
-  ch   1: expected verses= 14  found= 14  OK
-  ch   2: expected verses= 17  found= 17  OK
-  ch   3: expected verses= 18  found= 18  OK
-  ch   4: expected verses=  6  found=  6  OK
+  ch   1: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   2: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   3: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   4: expected verses=  6  found VM=  6  found CVM=  6  OK/OK
 Matthew               expected chapters= 28  found= 28  OK
-  ch   1: expected verses= 25  found= 25  OK
-  ch   2: expected verses= 23  found= 23  OK
-  ch   3: expected verses= 17  found= 17  OK
-  ch   4: expected verses= 25  found= 25  OK
-  ch   5: expected verses= 48  found= 48  OK
-  ch   6: expected verses= 34  found= 34  OK
-  ch   7: expected verses= 29  found= 29  OK
-  ch   8: expected verses= 34  found= 34  OK
-  ch   9: expected verses= 38  found= 38  OK
-  ch  10: expected verses= 42  found= 42  OK
-  ch  11: expected verses= 30  found= 30  OK
-  ch  12: expected verses= 50  found= 50  OK
-  ch  13: expected verses= 58  found= 58  OK
-  ch  14: expected verses= 36  found= 36  OK
-  ch  15: expected verses= 39  found= 39  OK
-  ch  16: expected verses= 28  found= 28  OK
-  ch  17: expected verses= 27  found= 27  OK
-  ch  18: expected verses= 35  found= 35  OK
-  ch  19: expected verses= 30  found= 30  OK
-  ch  20: expected verses= 34  found= 34  OK
-  ch  21: expected verses= 46  found= 46  OK
-  ch  22: expected verses= 46  found= 46  OK
-  ch  23: expected verses= 39  found= 39  OK
-  ch  24: expected verses= 51  found= 51  OK
-  ch  25: expected verses= 46  found= 46  OK
-  ch  26: expected verses= 75  found= 75  OK
-  ch  27: expected verses= 66  found= 66  OK
-  ch  28: expected verses= 20  found= 20  OK
+  ch   1: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   3: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   4: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   5: expected verses= 48  found VM= 48  found CVM= 48  OK/OK
+  ch   6: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch   7: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   8: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch   9: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  10: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch  11: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  12: expected verses= 50  found VM= 50  found CVM= 50  OK/OK
+  ch  13: expected verses= 58  found VM= 58  found CVM= 58  OK/OK
+  ch  14: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  15: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  16: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  17: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  18: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  19: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  20: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  21: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  22: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  23: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  24: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch  25: expected verses= 46  found VM= 46  found CVM= 46  OK/OK
+  ch  26: expected verses= 75  found VM= 75  found CVM= 75  OK/OK
+  ch  27: expected verses= 66  found VM= 66  found CVM= 66  OK/OK
+  ch  28: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
 Mark                  expected chapters= 16  found= 16  OK
-  ch   1: expected verses= 45  found= 45  OK
-  ch   2: expected verses= 28  found= 28  OK
-  ch   3: expected verses= 35  found= 35  OK
-  ch   4: expected verses= 41  found= 41  OK
-  ch   5: expected verses= 43  found= 43  OK
-  ch   6: expected verses= 56  found= 56  OK
-  ch   7: expected verses= 37  found= 37  OK
-  ch   8: expected verses= 38  found= 38  OK
-  ch   9: expected verses= 50  found= 50  OK
-  ch  10: expected verses= 52  found= 52  OK
-  ch  11: expected verses= 33  found= 33  OK
-  ch  12: expected verses= 44  found= 44  OK
-  ch  13: expected verses= 37  found= 37  OK
-  ch  14: expected verses= 72  found= 72  OK
-  ch  15: expected verses= 47  found= 47  OK
-  ch  16: expected verses= 20  found= 20  OK
+  ch   1: expected verses= 45  found VM= 45  found CVM= 45  OK/OK
+  ch   2: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   3: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch   4: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch   5: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch   6: expected verses= 56  found VM= 56  found CVM= 56  OK/OK
+  ch   7: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch   8: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch   9: expected verses= 50  found VM= 50  found CVM= 50  OK/OK
+  ch  10: expected verses= 52  found VM= 52  found CVM= 52  OK/OK
+  ch  11: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  12: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch  13: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  14: expected verses= 72  found VM= 72  found CVM= 72  OK/OK
+  ch  15: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch  16: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
 Luke                  expected chapters= 24  found= 24  OK
-  ch   1: expected verses= 80  found= 80  OK
-  ch   2: expected verses= 52  found= 52  OK
-  ch   3: expected verses= 38  found= 38  OK
-  ch   4: expected verses= 44  found= 44  OK
-  ch   5: expected verses= 39  found= 39  OK
-  ch   6: expected verses= 49  found= 49  OK
-  ch   7: expected verses= 50  found= 50  OK
-  ch   8: expected verses= 56  found= 56  OK
-  ch   9: expected verses= 62  found= 62  OK
-  ch  10: expected verses= 42  found= 42  OK
-  ch  11: expected verses= 54  found= 54  OK
-  ch  12: expected verses= 59  found= 59  OK
-  ch  13: expected verses= 35  found= 35  OK
-  ch  14: expected verses= 35  found= 35  OK
-  ch  15: expected verses= 32  found= 32  OK
-  ch  16: expected verses= 31  found= 31  OK
-  ch  17: expected verses= 37  found= 37  OK
-  ch  18: expected verses= 43  found= 43  OK
-  ch  19: expected verses= 48  found= 48  OK
-  ch  20: expected verses= 47  found= 47  OK
-  ch  21: expected verses= 38  found= 38  OK
-  ch  22: expected verses= 71  found= 71  OK
-  ch  23: expected verses= 56  found= 56  OK
-  ch  24: expected verses= 53  found= 53  OK
+  ch   1: expected verses= 80  found VM= 80  found CVM= 80  OK/OK
+  ch   2: expected verses= 52  found VM= 52  found CVM= 52  OK/OK
+  ch   3: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch   4: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch   5: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch   6: expected verses= 49  found VM= 49  found CVM= 49  OK/OK
+  ch   7: expected verses= 50  found VM= 50  found CVM= 50  OK/OK
+  ch   8: expected verses= 56  found VM= 56  found CVM= 56  OK/OK
+  ch   9: expected verses= 62  found VM= 62  found CVM= 62  OK/OK
+  ch  10: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch  11: expected verses= 54  found VM= 54  found CVM= 54  OK/OK
+  ch  12: expected verses= 59  found VM= 59  found CVM= 59  OK/OK
+  ch  13: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  14: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  15: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  16: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  17: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch  18: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  19: expected verses= 48  found VM= 48  found CVM= 48  OK/OK
+  ch  20: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch  21: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  22: expected verses= 71  found VM= 71  found CVM= 71  OK/OK
+  ch  23: expected verses= 56  found VM= 56  found CVM= 56  OK/OK
+  ch  24: expected verses= 53  found VM= 53  found CVM= 53  OK/OK
 John                  expected chapters= 21  found= 21  OK
-  ch   1: expected verses= 51  found= 51  OK
-  ch   2: expected verses= 25  found= 25  OK
-  ch   3: expected verses= 36  found= 36  OK
-  ch   4: expected verses= 54  found= 54  OK
-  ch   5: expected verses= 47  found= 47  OK
-  ch   6: expected verses= 71  found= 71  OK
-  ch   7: expected verses= 53  found= 53  OK
-  ch   8: expected verses= 59  found= 59  OK
-  ch   9: expected verses= 41  found= 41  OK
-  ch  10: expected verses= 42  found= 42  OK
-  ch  11: expected verses= 57  found= 57  OK
-  ch  12: expected verses= 50  found= 50  OK
-  ch  13: expected verses= 38  found= 38  OK
-  ch  14: expected verses= 31  found= 31  OK
-  ch  15: expected verses= 27  found= 27  OK
-  ch  16: expected verses= 33  found= 33  OK
-  ch  17: expected verses= 26  found= 26  OK
-  ch  18: expected verses= 40  found= 40  OK
-  ch  19: expected verses= 42  found= 42  OK
-  ch  20: expected verses= 31  found= 31  OK
-  ch  21: expected verses= 25  found= 25  OK
+  ch   1: expected verses= 51  found VM= 51  found CVM= 51  OK/OK
+  ch   2: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   3: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch   4: expected verses= 54  found VM= 54  found CVM= 54  OK/OK
+  ch   5: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch   6: expected verses= 71  found VM= 71  found CVM= 71  OK/OK
+  ch   7: expected verses= 53  found VM= 53  found CVM= 53  OK/OK
+  ch   8: expected verses= 59  found VM= 59  found CVM= 59  OK/OK
+  ch   9: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  10: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch  11: expected verses= 57  found VM= 57  found CVM= 57  OK/OK
+  ch  12: expected verses= 50  found VM= 50  found CVM= 50  OK/OK
+  ch  13: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  14: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  15: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  16: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  17: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  18: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  19: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch  20: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  21: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
 Acts                  expected chapters= 28  found= 28  OK
-  ch   1: expected verses= 26  found= 26  OK
-  ch   2: expected verses= 47  found= 47  OK
-  ch   3: expected verses= 26  found= 26  OK
-  ch   4: expected verses= 37  found= 37  OK
-  ch   5: expected verses= 42  found= 42  OK
-  ch   6: expected verses= 15  found= 15  OK
-  ch   7: expected verses= 60  found= 60  OK
-  ch   8: expected verses= 40  found= 40  OK
-  ch   9: expected verses= 43  found= 43  OK
-  ch  10: expected verses= 48  found= 48  OK
-  ch  11: expected verses= 30  found= 30  OK
-  ch  12: expected verses= 25  found= 25  OK
-  ch  13: expected verses= 52  found= 52  OK
-  ch  14: expected verses= 28  found= 28  OK
-  ch  15: expected verses= 41  found= 41  OK
-  ch  16: expected verses= 40  found= 40  OK
-  ch  17: expected verses= 34  found= 34  OK
-  ch  18: expected verses= 28  found= 28  OK
-  ch  19: expected verses= 41  found= 41  OK
-  ch  20: expected verses= 38  found= 38  OK
-  ch  21: expected verses= 40  found= 40  OK
-  ch  22: expected verses= 30  found= 30  OK
-  ch  23: expected verses= 35  found= 35  OK
-  ch  24: expected verses= 27  found= 27  OK
-  ch  25: expected verses= 27  found= 27  OK
-  ch  26: expected verses= 32  found= 32  OK
-  ch  27: expected verses= 44  found= 44  OK
-  ch  28: expected verses= 31  found= 31  OK
+  ch   1: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   2: expected verses= 47  found VM= 47  found CVM= 47  OK/OK
+  ch   3: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   4: expected verses= 37  found VM= 37  found CVM= 37  OK/OK
+  ch   5: expected verses= 42  found VM= 42  found CVM= 42  OK/OK
+  ch   6: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   7: expected verses= 60  found VM= 60  found CVM= 60  OK/OK
+  ch   8: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch   9: expected verses= 43  found VM= 43  found CVM= 43  OK/OK
+  ch  10: expected verses= 48  found VM= 48  found CVM= 48  OK/OK
+  ch  11: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  12: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch  13: expected verses= 52  found VM= 52  found CVM= 52  OK/OK
+  ch  14: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  15: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  16: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  17: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  18: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  19: expected verses= 41  found VM= 41  found CVM= 41  OK/OK
+  ch  20: expected verses= 38  found VM= 38  found CVM= 38  OK/OK
+  ch  21: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  22: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch  23: expected verses= 35  found VM= 35  found CVM= 35  OK/OK
+  ch  24: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  25: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  26: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch  27: expected verses= 44  found VM= 44  found CVM= 44  OK/OK
+  ch  28: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
 Romans                expected chapters= 16  found= 16  OK
-  ch   1: expected verses= 32  found= 32  OK
-  ch   2: expected verses= 29  found= 29  OK
-  ch   3: expected verses= 31  found= 31  OK
-  ch   4: expected verses= 25  found= 25  OK
-  ch   5: expected verses= 21  found= 21  OK
-  ch   6: expected verses= 23  found= 23  OK
-  ch   7: expected verses= 25  found= 25  OK
-  ch   8: expected verses= 39  found= 39  OK
-  ch   9: expected verses= 33  found= 33  OK
-  ch  10: expected verses= 21  found= 21  OK
-  ch  11: expected verses= 36  found= 36  OK
-  ch  12: expected verses= 21  found= 21  OK
-  ch  13: expected verses= 14  found= 14  OK
-  ch  14: expected verses= 26  found= 26  OK
-  ch  15: expected verses= 33  found= 33  OK
-  ch  16: expected verses= 24  found= 24  OK
+  ch   1: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   2: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   3: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   4: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   5: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   6: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   7: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   8: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch   9: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  10: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  11: expected verses= 36  found VM= 36  found CVM= 36  OK/OK
+  ch  12: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  13: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch  14: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch  15: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  16: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
 1 Corinthians         expected chapters= 16  found= 16  OK
-  ch   1: expected verses= 31  found= 31  OK
-  ch   2: expected verses= 16  found= 16  OK
-  ch   3: expected verses= 23  found= 23  OK
-  ch   4: expected verses= 21  found= 21  OK
-  ch   5: expected verses= 13  found= 13  OK
-  ch   6: expected verses= 20  found= 20  OK
-  ch   7: expected verses= 40  found= 40  OK
-  ch   8: expected verses= 13  found= 13  OK
-  ch   9: expected verses= 27  found= 27  OK
-  ch  10: expected verses= 33  found= 33  OK
-  ch  11: expected verses= 34  found= 34  OK
-  ch  12: expected verses= 31  found= 31  OK
-  ch  13: expected verses= 13  found= 13  OK
-  ch  14: expected verses= 40  found= 40  OK
-  ch  15: expected verses= 58  found= 58  OK
-  ch  16: expected verses= 24  found= 24  OK
+  ch   1: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   2: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   3: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   4: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   5: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   6: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   7: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch   8: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   9: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  10: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  11: expected verses= 34  found VM= 34  found CVM= 34  OK/OK
+  ch  12: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch  13: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch  14: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  15: expected verses= 58  found VM= 58  found CVM= 58  OK/OK
+  ch  16: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
 2 Corinthians         expected chapters= 13  found= 13  OK
-  ch   1: expected verses= 24  found= 24  OK
-  ch   2: expected verses= 17  found= 17  OK
-  ch   3: expected verses= 18  found= 18  OK
-  ch   4: expected verses= 18  found= 18  OK
-  ch   5: expected verses= 21  found= 21  OK
-  ch   6: expected verses= 18  found= 18  OK
-  ch   7: expected verses= 16  found= 16  OK
-  ch   8: expected verses= 24  found= 24  OK
-  ch   9: expected verses= 15  found= 15  OK
-  ch  10: expected verses= 18  found= 18  OK
-  ch  11: expected verses= 33  found= 33  OK
-  ch  12: expected verses= 21  found= 21  OK
-  ch  13: expected verses= 14  found= 14  OK
+  ch   1: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   2: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   3: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   4: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   5: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   6: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   7: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   8: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   9: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  10: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  11: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch  12: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  13: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
 Galatians             expected chapters=  6  found=  6  OK
-  ch   1: expected verses= 24  found= 24  OK
-  ch   2: expected verses= 21  found= 21  OK
-  ch   3: expected verses= 29  found= 29  OK
-  ch   4: expected verses= 31  found= 31  OK
-  ch   5: expected verses= 26  found= 26  OK
-  ch   6: expected verses= 18  found= 18  OK
+  ch   1: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   2: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   3: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   4: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ch   5: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   6: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
 Ephesians             expected chapters=  6  found=  6  OK
-  ch   1: expected verses= 23  found= 23  OK
-  ch   2: expected verses= 22  found= 22  OK
-  ch   3: expected verses= 21  found= 21  OK
-  ch   4: expected verses= 32  found= 32  OK
-  ch   5: expected verses= 33  found= 33  OK
-  ch   6: expected verses= 24  found= 24  OK
+  ch   1: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   2: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   3: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   4: expected verses= 32  found VM= 32  found CVM= 32  OK/OK
+  ch   5: expected verses= 33  found VM= 33  found CVM= 33  OK/OK
+  ch   6: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
 Philippians           expected chapters=  4  found=  4  OK
-  ch   1: expected verses= 30  found= 30  OK
-  ch   2: expected verses= 30  found= 30  OK
-  ch   3: expected verses= 21  found= 21  OK
-  ch   4: expected verses= 23  found= 23  OK
+  ch   1: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   2: expected verses= 30  found VM= 30  found CVM= 30  OK/OK
+  ch   3: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   4: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
 Colossians            expected chapters=  4  found=  4  OK
-  ch   1: expected verses= 29  found= 29  OK
-  ch   2: expected verses= 23  found= 23  OK
-  ch   3: expected verses= 25  found= 25  OK
-  ch   4: expected verses= 18  found= 18  OK
+  ch   1: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   2: expected verses= 23  found VM= 23  found CVM= 23  OK/OK
+  ch   3: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   4: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
 1 Thessalonians       expected chapters=  5  found=  5  OK
-  ch   1: expected verses= 10  found= 10  OK
-  ch   2: expected verses= 20  found= 20  OK
-  ch   3: expected verses= 13  found= 13  OK
-  ch   4: expected verses= 18  found= 18  OK
-  ch   5: expected verses= 28  found= 28  OK
+  ch   1: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   2: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   3: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   4: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   5: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
 2 Thessalonians       expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 12  found= 12  OK
-  ch   2: expected verses= 17  found= 17  OK
-  ch   3: expected verses= 18  found= 18  OK
+  ch   1: expected verses= 12  found VM= 12  found CVM= 12  OK/OK
+  ch   2: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   3: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
 1 Timothy             expected chapters=  6  found=  6  OK
-  ch   1: expected verses= 20  found= 20  OK
-  ch   2: expected verses= 15  found= 15  OK
-  ch   3: expected verses= 16  found= 16  OK
-  ch   4: expected verses= 16  found= 16  OK
-  ch   5: expected verses= 25  found= 25  OK
-  ch   6: expected verses= 21  found= 21  OK
+  ch   1: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   2: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   3: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   4: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   5: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   6: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
 2 Timothy             expected chapters=  4  found=  4  OK
-  ch   1: expected verses= 18  found= 18  OK
-  ch   2: expected verses= 26  found= 26  OK
-  ch   3: expected verses= 17  found= 17  OK
-  ch   4: expected verses= 22  found= 22  OK
+  ch   1: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   2: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   3: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   4: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
 Titus                 expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 16  found= 16  OK
-  ch   2: expected verses= 15  found= 15  OK
-  ch   3: expected verses= 15  found= 15  OK
+  ch   1: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   2: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch   3: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
 Philemon              expected chapters=  1  found=  1  OK
-  ch   1: expected verses= 25  found= 25  OK
+  ch   1: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
 Hebrews               expected chapters= 13  found= 13  OK
-  ch   1: expected verses= 14  found= 14  OK
-  ch   2: expected verses= 18  found= 18  OK
-  ch   3: expected verses= 19  found= 19  OK
-  ch   4: expected verses= 16  found= 16  OK
-  ch   5: expected verses= 14  found= 14  OK
-  ch   6: expected verses= 20  found= 20  OK
-  ch   7: expected verses= 28  found= 28  OK
-  ch   8: expected verses= 13  found= 13  OK
-  ch   9: expected verses= 28  found= 28  OK
-  ch  10: expected verses= 39  found= 39  OK
-  ch  11: expected verses= 40  found= 40  OK
-  ch  12: expected verses= 29  found= 29  OK
-  ch  13: expected verses= 25  found= 25  OK
+  ch   1: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   2: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   3: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   4: expected verses= 16  found VM= 16  found CVM= 16  OK/OK
+  ch   5: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   6: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   7: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch   8: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   9: expected verses= 28  found VM= 28  found CVM= 28  OK/OK
+  ch  10: expected verses= 39  found VM= 39  found CVM= 39  OK/OK
+  ch  11: expected verses= 40  found VM= 40  found CVM= 40  OK/OK
+  ch  12: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch  13: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
 James                 expected chapters=  5  found=  5  OK
-  ch   1: expected verses= 27  found= 27  OK
-  ch   2: expected verses= 26  found= 26  OK
-  ch   3: expected verses= 18  found= 18  OK
-  ch   4: expected verses= 17  found= 17  OK
-  ch   5: expected verses= 20  found= 20  OK
+  ch   1: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch   2: expected verses= 26  found VM= 26  found CVM= 26  OK/OK
+  ch   3: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch   4: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   5: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
 1 Peter               expected chapters=  5  found=  5  OK
-  ch   1: expected verses= 25  found= 25  OK
-  ch   2: expected verses= 25  found= 25  OK
-  ch   3: expected verses= 22  found= 22  OK
-  ch   4: expected verses= 19  found= 19  OK
-  ch   5: expected verses= 14  found= 14  OK
+  ch   1: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   2: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
+  ch   3: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   4: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch   5: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
 2 Peter               expected chapters=  3  found=  3  OK
-  ch   1: expected verses= 21  found= 21  OK
-  ch   2: expected verses= 22  found= 22  OK
-  ch   3: expected verses= 18  found= 18  OK
+  ch   1: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   2: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   3: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
 1 John                expected chapters=  5  found=  5  OK
-  ch   1: expected verses= 10  found= 10  OK
-  ch   2: expected verses= 29  found= 29  OK
-  ch   3: expected verses= 24  found= 24  OK
-  ch   4: expected verses= 21  found= 21  OK
-  ch   5: expected verses= 21  found= 21  OK
+  ch   1: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
+  ch   2: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   3: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch   4: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch   5: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
 2 John                expected chapters=  1  found=  1  OK
-  ch   1: expected verses= 13  found= 13  OK
+  ch   1: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
 3 John                expected chapters=  1  found=  1  OK
-  ch   1: expected verses= 14  found= 14  OK
+  ch   1: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
 Jude                  expected chapters=  1  found=  1  OK
-  ch   1: expected verses= 25  found= 25  OK
+  ch   1: expected verses= 25  found VM= 25  found CVM= 25  OK/OK
 Revelation            expected chapters= 22  found= 22  OK
-  ch   1: expected verses= 20  found= 20  OK
-  ch   2: expected verses= 29  found= 29  OK
-  ch   3: expected verses= 22  found= 22  OK
-  ch   4: expected verses= 11  found= 11  OK
-  ch   5: expected verses= 14  found= 14  OK
-  ch   6: expected verses= 17  found= 17  OK
-  ch   7: expected verses= 17  found= 17  OK
-  ch   8: expected verses= 13  found= 13  OK
-  ch   9: expected verses= 21  found= 21  OK
-  ch  10: expected verses= 11  found= 11  OK
-  ch  11: expected verses= 19  found= 19  OK
-  ch  12: expected verses= 17  found= 17  OK
-  ch  13: expected verses= 18  found= 18  OK
-  ch  14: expected verses= 20  found= 20  OK
-  ch  15: expected verses=  8  found=  8  OK
-  ch  16: expected verses= 21  found= 21  OK
-  ch  17: expected verses= 18  found= 18  OK
-  ch  18: expected verses= 24  found= 24  OK
-  ch  19: expected verses= 21  found= 21  OK
-  ch  20: expected verses= 15  found= 15  OK
-  ch  21: expected verses= 27  found= 27  OK
-  ch  22: expected verses= 21  found= 21  OK
+  ch   1: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch   2: expected verses= 29  found VM= 29  found CVM= 29  OK/OK
+  ch   3: expected verses= 22  found VM= 22  found CVM= 22  OK/OK
+  ch   4: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch   5: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
+  ch   6: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   7: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch   8: expected verses= 13  found VM= 13  found CVM= 13  OK/OK
+  ch   9: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  10: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
+  ch  11: expected verses= 19  found VM= 19  found CVM= 19  OK/OK
+  ch  12: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
+  ch  13: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  14: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
+  ch  15: expected verses=  8  found VM=  8  found CVM=  8  OK/OK
+  ch  16: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  17: expected verses= 18  found VM= 18  found CVM= 18  OK/OK
+  ch  18: expected verses= 24  found VM= 24  found CVM= 24  OK/OK
+  ch  19: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
+  ch  20: expected verses= 15  found VM= 15  found CVM= 15  OK/OK
+  ch  21: expected verses= 27  found VM= 27  found CVM= 27  OK/OK
+  ch  22: expected verses= 21  found VM= 21  found CVM= 21  OK/OK
 
 SUMMARY: 31102 / 31102 verses found, 0 structural issue(s).

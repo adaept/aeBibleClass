@@ -171,7 +171,98 @@ accommodate.
 Full reasoning: `rvw/Code_review 2026-04-30.md` § "8. Body-content
 number prefixes — keep manual, no docvariables (decision 2026-04-30)".
 
-### 7. Session manifest
+### 7. `AuditVerseMarkerStructure` — missing `Chapter Verse marker` coverage (BUG, 2026-05-06)
+
+**Project rule (now stated explicitly in `basVerseStructureAudit.bas` header):** every verse paragraph (now `VerseText`) leads with a `Chapter Verse marker` character-style run (chapter number) **immediately followed by** a `Verse marker` character-style run (verse number). One CVM + one VM per verse — no exceptions.
+
+**Bug:** user found a verse paragraph in the document where the leading `Chapter Verse marker` was missing (only the `Verse marker` was present). `AuditVerseMarkerStructure` reported the chapter as OK.
+
+**Root cause:** the audit never inspects `Chapter Verse marker` at all. `CountVerseMarkers` (`src/basVerseStructureAudit.bas:228`) finds character-style runs whose style is `"Verse marker"` only:
+
+```vba
+.style = oDoc.Styles("Verse marker")
+```
+
+That count is compared against `aeBibleCitationClass.VersesInChapter(bookName, chIdx)` (lines 204-205). Chapter boundaries come from `Heading 2` paragraph starts (line 176). Nothing in the routine ever enumerates, counts, or asserts the presence of `Chapter Verse marker`.
+
+The failure mode is exactly what the design allows:
+
+- The verse paragraph's leading `Chapter Verse marker` run is missing, but the verse-number portion is still styled `Verse marker`.
+- `CountVerseMarkers` still finds the VM run → chapter total matches `VersesInChapter` → reported `OK`.
+- The chapter's `Heading 2` is also still present → chapter count matches → also `OK`.
+
+The audit name oversells what it does. It is really a **verse-count-by-chapter** audit. The `Chapter Verse marker` half of "verse-marker structure" is not audited.
+
+**Fix scope (one per verse, the stated rule):**
+
+1. Add `CountChapterVerseMarkers(oDoc, startPos, endPos)` mirroring `CountVerseMarkers` but with `.style = oDoc.Styles("Chapter Verse marker")`.
+2. In `AuditOneBook`, per chapter, also compute `foundCVMs = CountChapterVerseMarkers(...)` and assert `foundCVMs == foundVerses` (CVM count must equal VM count, since the rule is one CVM + one VM per verse).
+3. Status flips to `MISMATCH` and increments `bookIssues` when CVM ≠ VM. Issue line shows both counts: `expected verses=N  found VM=N  found CVM=M  MISMATCH (CVM gap)`.
+4. Optional stricter check (deferred — costlier, may not be needed once counts match): walk each verse paragraph and verify the **adjacency** rule (CVM run immediately followed by VM run as the paragraph's first two character-style runs). The count-equality check catches the symptom; the adjacency check would catch the structural pathology of a CVM existing somewhere else in the paragraph.
+
+**Header update applied 2026-05-06:** `src/basVerseStructureAudit.bas` header now explicitly states the project verse-marker rule (one CVM + one VM per verse, no exceptions). After the code fix below, the header was updated again to promote CVM coverage from "known gap" to "invariant 4".
+
+#### Fix — `CountChapterVerseMarkers` extension APPLIED 2026-05-06
+
+`src/basVerseStructureAudit.bas`:
+
+- New private function `CountChapterVerseMarkers(oDoc, startPos, endPos)` — parallel to `CountVerseMarkers`, identical body except `.style = oDoc.Styles("Chapter Verse marker")`. Same 20,000 safety cap; same range-walk pattern.
+- `AuditOneBook` per-chapter loop now also computes `foundCVMs` and asserts `foundCVMs = foundVerses` (the "one CVM + one VM per verse" rule). On mismatch, sets `cvmStatus = "CVM-MISMATCH"`, increments `bookIssues`, and appends an issue line of the form:
+
+  ```
+  GENESIS 1: CVM count 1532 <> VM count 1533 (one CVM+VM per verse rule)
+  ```
+
+- `chapterReport` line extended to show both counts and both statuses:
+
+  ```
+  ch   1: expected verses= 31  found VM= 31  found CVM= 31  OK/OK
+  ```
+
+  The `status/cvmStatus` pair makes it obvious which dimension failed when something does fail (`OK/CVM-MISMATCH`, `MISMATCH/OK`, or `MISMATCH/CVM-MISMATCH`).
+
+- Header invariants list updated: gap removed; CVM coverage promoted to invariant 4 ("per-chapter Chapter Verse marker Count equals Verse marker Count").
+
+**Behavior change:** the audit now flags the failure mode the user discovered. A verse paragraph missing its leading CVM run will reduce `foundCVMs` by 1, the chapter's CVM/VM equality breaks, status becomes `OK/CVM-MISMATCH` (or `MISMATCH/CVM-MISMATCH` if VM is also off), and the issue line surfaces in the `ISSUES FOUND` section of the report.
+
+**Adjacency check (deferred):** count-equality catches the symptom (CVM run is missing somewhere). It does **not** catch the structural pathology of a CVM run existing in a verse paragraph but not adjacent to (and immediately preceding) the VM run. If that pathology turns up, a paragraph-walk pass that inspects each verse paragraph's first two character-style runs would close it. Not implemented now — counts-equal is the cheaper invariant and matches the rule the user stated.
+
+**Status:** code applied. Awaiting user-side action: re-import `basVerseStructureAudit.bas` into the test `.docm`, run `AuditVerseMarkerStructure`, paste the SUMMARY line and any new `CVM-MISMATCH` issue lines. Expected initial result: at least one `CVM-MISMATCH` line corresponding to the missing-CVM verse the user found. Once the data defect is repaired and re-audited, expected steady state is 0 issues across all 66 books.
+
+#### Verified 2026-05-06 — fix caught two real defects
+
+First run after re-import:
+
+```
+ISSUES FOUND:
+  Genesis 8: CVM count 21 <> VM count 22 (one CVM+VM per verse rule)
+  Job 37:    CVM count 25 <> VM count 24 (one CVM+VM per verse rule)
+
+SUMMARY: 31102 / 31102 verses found, 2 structural issue(s).
+AuditVerseMarkerStructure - actual 131.72 sec
+```
+
+Two real data defects, opposite signs:
+
+- **Genesis 8** — CVM short by 1 (21 vs 22 VMs). One verse missing its leading `Chapter Verse marker` run. This is the failure mode the user originally found that was passing the old VM-only audit.
+- **Job 37** — CVM long by 1 (25 vs 24 VMs). A `Chapter Verse marker` run exists somewhere in the chapter that isn't paired with a VM — likely a stray CVM left from an editing operation, or a run that should have been a VM but got the CVM character style instead.
+
+User repaired both defects. Re-run:
+
+```
+SUMMARY: 31102 / 31102 verses found, 0 structural issue(s).
+AuditVerseMarkerStructure - actual 131.66 sec
+```
+
+**Audit clean.** All 31,102 verses now satisfy the "one CVM + one VM per verse" rule across all 66 books.
+
+#### Performance note
+
+Run time ~131.7 sec on the production-scale `.docm` (consistent across both runs). The CVM extension roughly doubled the per-chapter find work (CVM scan + VM scan instead of VM only). No optimization needed — the audit is run on demand, not in a hot loop, and the 2-minute cost is acceptable for full structural verification. If runtime becomes a concern, the two scans could be unified by walking each verse paragraph once and inspecting its first two character-style runs (which would also enable the deferred adjacency check in the same pass).
+
+**Item 7 closed.**
+
+### 8. Session manifest
 
 `sync/session_manifest.txt` from the prior arc covered src/ edits
 through 2026-04-30. The 2026-05-01 → 2026-05-06 VerseText, orphan-audit,
