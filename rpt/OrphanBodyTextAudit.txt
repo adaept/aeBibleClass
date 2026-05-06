@@ -1,79 +1,28 @@
----- AuditOrphanBodyTextParagraphs: 2026-05-03 00:06:27 ----
+---- AuditOrphanBodyTextParagraphs: 2026-05-05 18:25:39 ----
 
 Scope: BodyText paragraphs that sit BETWEEN two verse paragraphs in the
        same chapter and do not begin with a 'Chapter Verse marker' run.
        Chapter intros (before first verse) and chapter-end content
        (after last verse) are excluded.
 
-Orphan #1 | Book: GENESIS | ParaStart=221321 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #2 | Book: NUMBERS | ParaStart=683938 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #3 | Book: 2 SAMUEL | ParaStart=1268955 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #4 | Book: 1 CHRONICLES | ParaStart=1623427 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #5 | Book: ESTHER | ParaStart=1888582 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #6 | Book: PROVERBS | ParaStart=2231517 | first-char-style=BodyText | Size: SHORT (1 chars)
+Orphan #1 | Book: PROVERBS | ParaStart=2231693 | first-char-style=BodyText | Size: SHORT (1 chars)
   Excerpt: "."
 
-Orphan #7 | Book: ECCLESIASTES | ParaStart=2328665 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #8 | Book: JEREMIAH | ParaStart=2757923 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #9 | Book: EZEKIEL | ParaStart=2979630 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #10 | Book: JONAH | ParaStart=3113169 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #11 | Book: ZECHARIAH | ParaStart=3191899 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #12 | Book: MARK | ParaStart=3408273 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #13 | Book: LUKE | ParaStart=3542809 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #14 | Book: JOHN | ParaStart=3644439 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #15 | Book: ACTS | ParaStart=3657173 | first-char-style=BodyText | Size: SHORT (1 chars)
+Orphan #2 | Book: ACTS | ParaStart=3657439 | first-char-style=BodyText | Size: SHORT (1 chars)
   Excerpt: "’"
 
-Orphan #16 | Book: ACTS | ParaStart=3669618 | first-char-style=BodyText | Size: SHORT (1 chars)
+Orphan #3 | Book: ACTS | ParaStart=3669884 | first-char-style=BodyText | Size: SHORT (1 chars)
   Excerpt: "’"
 
-Orphan #17 | Book: ROMANS | ParaStart=3796973 | first-char-style=BodyText | Size: SHORT (1 chars)
+Orphan #4 | Book: ROMANS | ParaStart=3797239 | first-char-style=BodyText | Size: SHORT (1 chars)
   Excerpt: "."
-
-Orphan #18 | Book: 2 CORINTHIANS | ParaStart=3912795 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #19 | Book: COLOSSIANS | ParaStart=3972314 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #20 | Book: 2 THESSALONIANS | ParaStart=3989143 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
-
-Orphan #21 | Book: 1 JOHN | ParaStart=4111156 | first-char-style=(empty) | Size: EMPTY
-  Excerpt: ""
 
 ---- Summary ----
-Confirmed orphans (BodyText between two verses in same chapter): 21
-  EMPTY (0 chars): 17
+Confirmed orphans (BodyText between two verses in same chapter): 4
+  EMPTY (0 chars): 0
   SHORT (<30 chars): 4
   LONG (>=30 chars): 0
 
 Excluded as legitimate non-verse content:
-  Chapter intros (before first verse of chapter): 374
-  Chapter-end content (after last verse, before next H2/H1): 142
+  Chapter intros (before first verse of chapter): 343
+  Chapter-end content (after last verse, before next H2/H1): 176
