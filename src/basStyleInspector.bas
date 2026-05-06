@@ -181,7 +181,7 @@ Private Sub WriteStyleDump(ByVal sStyleName As String, ByVal sContent As String)
     oStream.Close
 End Sub
 
-Private Function SafeFileName(ByVal s As String) As String
+Public Function SafeFileName(ByVal s As String) As String
     SafeFileName = Replace(Replace(Replace(s, " ", "_"), "/", "_"), "\", "_")
 End Function
 

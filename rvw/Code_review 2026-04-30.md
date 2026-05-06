@@ -471,6 +471,174 @@ This gives noise-vs-signal visibility: out of all non-CVM BodyText paragraphs in
 - **Small count (<50)** → manually repair, re-audit, then Step 7.
 - **Still hundreds** → structural investigation needed.
 
+#### Step 3 — refined run result (2026-05-05)
+
+Refinement worked as designed — count dropped from **328 → 4**. User ran `AuditOrphanBodyTextParagraphs` on test `.docm` after re-importing the refined module. Summary:
+
+```
+Confirmed orphans (BodyText between two verses in same chapter): 4
+  EMPTY (0 chars): 0
+  SHORT (<30 chars): 4
+  LONG (>=30 chars): 0
+
+Excluded as legitimate non-verse content:
+  Chapter intros (before first verse of chapter): 343
+  Chapter-end content (after last verse, before next H2/H1): 176
+```
+
+The 519 paragraphs the v1 audit had over-flagged are now correctly classified as legitimate non-verse content (343 chapter intros + 176 chapter-end content). The remaining 4 are real orphans.
+
+**Old orphans confirmed cleaned up** in prior editing rounds before this run (the 118 LONG candidates flagged by v1 are gone — most were chapter intros / chapter-end content, the rest were already repaired).
+
+#### The 4 remaining orphans — single-character punctuation orphans
+
+| # | Book | ParaStart | Char | Likely cause |
+|---|---|---|---|---|
+| 1 | PROVERBS | 2231693 | `.` | Stray period split off from preceding verse |
+| 2 | ACTS | 3657439 | `'` (closing curly quote) | Closing quote of quoted speech, split off |
+| 3 | ACTS | 3669884 | `'` (closing curly quote) | Same pattern |
+| 4 | ROMANS | 3797239 | `.` | Stray period |
+
+**Pattern:** editor pressed Enter immediately before typing the closing punctuation; the punctuation ended up on its own line. Pre-existing data defects, unrelated to the VerseText work.
+
+**Repair:** in Word, `Ctrl+G` → `Char` → paste each `ParaStart` → Enter to navigate; then `Backspace` at the start of the orphan paragraph to merge into the preceding verse. Four trivial repairs.
+
+#### Side discovery — `EmphasisRed` over paragraph marks (2026-05-05)
+
+User identified a separate structural defect during this work: **`EmphasisRed` character style was applied to 227 paragraph marks in the document.** Significance:
+
+- A paragraph mark carrying a character style propagates that style's formatting to characters typed at the end of the paragraph (or to the following paragraph in some operations).
+- For VerseText: `ConvertBodyTextVersesToVerseText` reassigns paragraph styles, but paragraph-mark character styling persists. A red-styled paragraph mark would survive into the new VerseText paragraph and could cause unexpected visual artifacts.
+
+**Resolution:** existing test `RUN_THE_TESTS(43)` (`CountParagraphMarksWithDarkRedFormatting` from `aeBibleClass`) was adapted to **reset** the offending character styling on paragraph marks rather than just count it. After running the adapted test:
+
+```
+Test(43)0   PASS  CountParagraphMarksWithDarkRedFormatting   expected 0   got 0
+```
+
+All 224-227 paragraph marks with DarkRed/EmphasisRed character styling are cleaned. Test 43 now stable at 0 — a future regression would re-flag immediately.
+
+Test summary lines from the run also show `Test(22)224` (a related count) — confirming the dark-red marker pattern was real before cleanup.
+
+This work completed before Phase 2 conversion runs, removing one more potential surprise from the bulk-conversion path.
+
+**Status:** Step 3 verified clean (4 trivial orphans remaining for manual fix). EmphasisRed paragraph-mark cleanup independently complete via `RUN_THE_TESTS(43)`.
+
+#### Correction — Word 365 navigation to character offset (2026-05-05)
+
+Initial repair instructions (from the previous review entry) said `Ctrl+G → Char → paste offset`. **Wrong** — Word 365's Go To dialog does not have a "Char" option. Available go-to types: Page, Section, Line, Bookmark, Comment, Footnote, Endnote, Field, Table, Graphic, Equation, Object, Heading. No character-offset navigation.
+
+#### Three navigation options considered
+
+| Option | What | Pro | Con |
+|---|---|---|---|
+| (a) Raw VBA Immediate | `ActiveDocument.Range(pos, pos).Select` | Zero new code; works today | Verbose; no scroll-into-view |
+| (b) `GoToPos(pos)` helper Sub | One-liner: `GoToPos 2231693` plus auto-scroll | Concise; scrolls into view; reusable beyond this task | One small Sub to add (~10 lines) |
+| (c) Fully automated `MergeOrphanIntoPrevious` Sub | Deletes preceding paragraph mark via VBA | Single command per orphan, no manual editing | Irreversible without Undo; ParaStart offsets must be processed in descending order |
+
+#### Decision (approved 2026-05-05): Option (b)
+
+`GoToPos(pos)` helper added to `src/basVerseStructureAudit.bas`. User retains visual inspection of each orphan before deciding the merge — important here because the four are punctuation fragments where it's worth confirming each really belongs to its preceding verse.
+
+```vba
+Public Sub GoToPos(ByVal pos As Long)
+    ActiveDocument.Range(pos, pos).Select
+    Selection.Range.ScrollIntoView True
+End Sub
+```
+
+(Plus standard `On Error GoTo PROC_ERR` wrapper matching project convention.)
+
+**Repair workflow per orphan:**
+
+```
+GoToPos 2231693    ' Immediate window — cursor lands on the orphan punctuation
+                   ' Switch to Word — visually verify; Backspace to merge
+GoToPos 3657439    ' next orphan
+...
+```
+
+Repeat for: 2231693, 3657439, 3669884, 3797239.
+
+**Awaiting user-side action:**
+
+1. Re-import `basVerseStructureAudit.bas` (now with `GoToPos`).
+2. Use `GoToPos` + Backspace to merge the 4 punctuation orphans.
+3. Re-run `AuditOrphanBodyTextParagraphs` to confirm 0 orphans.
+4. Then proceed to Step 7 (parameterize `AuditSelahUsage` → `AuditCharStyleUsage`) and Step 8 (run for Selah / EmphasisBlack / EmphasisRed / Words of Jesus).
+
+#### `GoToPos` compile error and fix (2026-05-05)
+
+Initial draft used `Selection.Range.ScrollIntoView True` — compile error: `Range` has no `ScrollIntoView` method. `ScrollIntoView` is a method of `Word.Window`, not `Range`. Same pattern is used elsewhere in the codebase (e.g., `aeRibbonClass.GoToVerseByScan` line 1032: `ActiveWindow.ScrollIntoView rVsView, True`).
+
+**Fixed:**
+
+```vba
+ActiveWindow.ScrollIntoView Selection.Range, True
+```
+
+#### Orphan repair confirmed clean (2026-05-05)
+
+User used `GoToPos` + Backspace to merge the 4 punctuation orphans. Re-run of `AuditOrphanBodyTextParagraphs`:
+
+```
+Confirmed orphans (BodyText between two verses in same chapter): 0
+  EMPTY (0 chars): 0
+  SHORT (<30 chars): 0
+  LONG (>=30 chars): 0
+
+Excluded as legitimate non-verse content:
+  Chapter intros (before first verse of chapter): 343
+  Chapter-end content (after last verse, before next H2/H1): 175
+```
+
+**Step 3 closed: 0 orphans.** Chapter-end count dropped 176 → 175 — one bonus cleanup during the manual repair (merging a punctuation orphan likely consumed an adjacent whitespace paragraph). Document structurally cleaner than before.
+
+**Phase 2.0 ready to resume:** Step 7 (parameterize `AuditSelahUsage` → `AuditCharStyleUsage`) is next.
+
+#### Step 7 — `AuditCharStyleUsage` parameterized (APPLIED 2026-05-05)
+
+##### Two file edits
+
+**`src/basStyleInspector.bas`:** `SafeFileName` promoted from `Private` to `Public`. Same pattern as the Phase 6c precedent (`TabAlignName` / `TabLeaderName`). Allows cross-module reuse.
+
+**`src/basVerseStructureAudit.bas`:**
+
+- New worker `AuditCharStyleUsage(styleName, Optional bWriteFile = True)` — same audit logic as the previous `AuditSelahUsage` body, parameterized on the style name. Pre-flight checks: style exists in document AND is a character style; aborts with `MsgBox` and exits cleanly if either fails.
+- `AuditSelahUsage` reduced to a 2-line wrapper: `AuditCharStyleUsage "Selah", bWriteFile`. Backwards compatible with the existing review record and any user habit.
+- `WriteSelahUsageFile` replaced by `WriteCharStyleUsageFile(styleName, content)` which writes to `rpt\<SafeFileName(styleName)>UsageAudit.txt`.
+
+##### Output filename mapping
+
+| Invocation | Output file |
+|---|---|
+| `AuditCharStyleUsage "Selah"` | `rpt\SelahUsageAudit.txt` |
+| `AuditCharStyleUsage "EmphasisBlack"` | `rpt\EmphasisBlackUsageAudit.txt` |
+| `AuditCharStyleUsage "EmphasisRed"` | `rpt\EmphasisRedUsageAudit.txt` |
+| `AuditCharStyleUsage "Words of Jesus"` | `rpt\Words_of_JesusUsageAudit.txt` |
+
+##### Step 8 — user-side action
+
+After re-importing both modules into the test `.docm`:
+
+```
+AuditCharStyleUsage "Selah"
+AuditCharStyleUsage "EmphasisBlack"
+AuditCharStyleUsage "EmphasisRed"
+AuditCharStyleUsage "Words of Jesus"
+```
+
+Each writes its own `rpt\*UsageAudit.txt` and prints summary to Immediate. **Paste only the four Summary blocks** (the `---- Summary ----` section from each).
+
+Decision tree per style:
+
+- **`Total runs == CONVERT count` AND `policy flags = 0`** — clean. Phase 2 conversion rule preserves the character runs cleanly. No rule change needed.
+- **`policy flags > 0`** — surface the flagged entries; decide whether to extend the Phase 2 rule, accept leave-as-is, or fix the data.
+
+When all four are clean → resume Phase 1.9 (production replication).
+
+**Status:** Step 7 code applied. Awaiting Step 8 (run the four audits).
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.

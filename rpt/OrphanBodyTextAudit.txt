@@ -1,28 +1,16 @@
----- AuditOrphanBodyTextParagraphs: 2026-05-05 18:25:39 ----
+---- AuditOrphanBodyTextParagraphs: 2026-05-05 19:18:23 ----
 
 Scope: BodyText paragraphs that sit BETWEEN two verse paragraphs in the
        same chapter and do not begin with a 'Chapter Verse marker' run.
        Chapter intros (before first verse) and chapter-end content
        (after last verse) are excluded.
 
-Orphan #1 | Book: PROVERBS | ParaStart=2231693 | first-char-style=BodyText | Size: SHORT (1 chars)
-  Excerpt: "."
-
-Orphan #2 | Book: ACTS | ParaStart=3657439 | first-char-style=BodyText | Size: SHORT (1 chars)
-  Excerpt: "’"
-
-Orphan #3 | Book: ACTS | ParaStart=3669884 | first-char-style=BodyText | Size: SHORT (1 chars)
-  Excerpt: "’"
-
-Orphan #4 | Book: ROMANS | ParaStart=3797239 | first-char-style=BodyText | Size: SHORT (1 chars)
-  Excerpt: "."
-
 ---- Summary ----
-Confirmed orphans (BodyText between two verses in same chapter): 4
+Confirmed orphans (BodyText between two verses in same chapter): 0
   EMPTY (0 chars): 0
-  SHORT (<30 chars): 4
+  SHORT (<30 chars): 0
   LONG (>=30 chars): 0
 
 Excluded as legitimate non-verse content:
   Chapter intros (before first verse of chapter): 343
-  Chapter-end content (after last verse, before next H2/H1): 176
+  Chapter-end content (after last verse, before next H2/H1): 175

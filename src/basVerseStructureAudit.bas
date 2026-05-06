@@ -311,11 +311,11 @@ Private Sub WriteAuditFile(ByVal sContent As String)
 End Sub
 
 ' ==========================================================================
-' AuditSelahUsage
+' AuditCharStyleUsage
 ' ==========================================================================
-' Read-only diagnostic. Walks the main story for every "Selah" character-
-' style run, reports the enclosing paragraph's properties and whether
-' Phase 2 of the VerseText rollout (ConvertBodyTextVersesToVerseText)
+' Read-only diagnostic. Walks the main story for every character-style
+' run of the named style, reports the enclosing paragraph's properties
+' and whether Phase 2 of the VerseText rollout (ConvertBodyTextVersesToVerseText)
 ' would convert it.
 '
 ' The Phase 2 conversion rule converts a paragraph when both:
@@ -323,28 +323,51 @@ End Sub
 '   2. paragraph.Range.Characters(1).Style.NameLocal = "Chapter Verse marker"
 '
 ' This audit surfaces:
-'   - Selah runs inside verse paragraphs (will convert cleanly with Phase 2)
-'   - Selah-only paragraphs or other edge cases (need a policy decision
-'     before Phase 2 locks in the conversion rule)
+'   - Character runs inside verse paragraphs (will convert cleanly with Phase 2)
+'   - Edge cases (need a policy decision before Phase 2 locks in the rule)
 '
-' Output: rpt\SelahUsageAudit.txt (when bWriteFile = True) plus Immediate
-' window summary.
+' Pre-flight: aborts cleanly if StyleName is not present or not a
+' character style.
+'
+' Output: rpt\<SafeFileName(StyleName)>UsageAudit.txt (when bWriteFile = True)
+' plus Immediate window summary.
 '
 ' Usage:
-'   AuditSelahUsage
-'   AuditSelahUsage False        ' Immediate only, no file
+'   AuditCharStyleUsage "Selah"
+'   AuditCharStyleUsage "EmphasisBlack"
+'   AuditCharStyleUsage "Words of Jesus", False    ' Immediate only, no file
 ' ==========================================================================
-Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
+Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
+                                Optional ByVal bWriteFile As Boolean = True)
     On Error GoTo PROC_ERR
     Dim t As Double
-    StartTimer "AuditSelahUsage", t
+    StartTimer "AuditCharStyleUsage(" & StyleName & ")", t
 
     Dim oDoc As Object
     Set oDoc = ActiveDocument
 
+    ' Pre-flight: style exists?
+    Dim oStyle As Object
+    On Error Resume Next
+    Set oStyle = oDoc.Styles(StyleName)
+    On Error GoTo PROC_ERR
+    If oStyle Is Nothing Then
+        MsgBox "AuditCharStyleUsage: style """ & StyleName & """ not found.", _
+               vbExclamation, "AuditCharStyleUsage"
+        Exit Sub
+    End If
+    ' Pre-flight: must be a character style.
+    If oStyle.Type <> wdStyleTypeCharacter Then
+        MsgBox "AuditCharStyleUsage: style """ & StyleName & """ is not a " & _
+               "character style (Type=" & oStyle.Type & "). Aborting.", _
+               vbExclamation, "AuditCharStyleUsage"
+        Exit Sub
+    End If
+
     Dim sOut As String
     Const NL As String = vbCrLf
-    sOut = "---- AuditSelahUsage: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+    sOut = "---- AuditCharStyleUsage(""" & StyleName & """): " & _
+           Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
 
     Dim oRng As Object
     Set oRng = oDoc.Content
@@ -357,7 +380,7 @@ Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
 
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles("Selah")
+        .style = oDoc.Styles(StyleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop
@@ -377,15 +400,15 @@ Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
             Dim qualifies As Boolean
             qualifies = (paraStyle = "BodyText" And firstCharStyle = "Chapter Verse marker")
 
-            ' Position of Selah within paragraph: START / END / MID
-            Dim selahOffset As Long
-            selahOffset = oRng.Start - oPara.Range.Start
+            ' Position of run within paragraph: START / END / MID
+            Dim runOffset As Long
+            runOffset = oRng.Start - oPara.Range.Start
             Dim paraTextLen As Long
             paraTextLen = oPara.Range.End - oPara.Range.Start - 1   ' exclude paragraph mark
             Dim posLabel As String
-            If selahOffset = 0 Then
+            If runOffset = 0 Then
                 posLabel = "START"
-            ElseIf selahOffset >= paraTextLen - 8 Then
+            ElseIf runOffset >= paraTextLen - 8 Then
                 posLabel = "END"
             Else
                 posLabel = "MID"
@@ -408,18 +431,18 @@ Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
             sOut = sOut & "Run #" & totalCount & " | ParaStart=" & oPara.Range.Start & _
                    " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & _
                    " | Phase2: " & phase2 & NL
-            sOut = sOut & "  Selah at " & posLabel & " of paragraph (offset " & _
-                   selahOffset & " of " & paraTextLen & ")" & NL
+            sOut = sOut & "  " & StyleName & " at " & posLabel & " of paragraph (offset " & _
+                   runOffset & " of " & paraTextLen & ")" & NL
             sOut = sOut & "  Excerpt: """ & excerpt & """" & NL
 
-            ' Flag Selah-only or BodyText-with-Selah-as-first-char as policy candidates
+            ' Flag BodyText paragraphs not caught by Phase 2 rule as policy candidates
             If Not qualifies And paraStyle = "BodyText" Then
                 sOut = sOut & "  ** POLICY DECISION: BodyText paragraph not caught by Phase 2 rule." & NL
                 policyFlagCount = policyFlagCount + 1
             End If
             sOut = sOut & NL
 
-            ' Advance past this Selah run
+            ' Advance past this run
             oRng.Start = oRng.End
             safety = safety + 1
             If safety > 5000 Then
@@ -432,31 +455,42 @@ Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
     End With
 
     sOut = sOut & "---- Summary ----" & NL
-    sOut = sOut & "Total Selah character runs: " & totalCount & NL
+    sOut = sOut & "Total " & StyleName & " character runs: " & totalCount & NL
     sOut = sOut & "  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): " & convertCount & NL
     sOut = sOut & "  KEEP-AS-other (paragraph not caught by Phase 2 rule): " & keepCount & NL
     sOut = sOut & "  Policy decision flags (BodyText paragraph not converted): " & policyFlagCount & NL
 
     Debug.Print sOut
-    If bWriteFile Then WriteSelahUsageFile sOut
+    If bWriteFile Then WriteCharStyleUsageFile StyleName, sOut
 
-    EndTimer "AuditSelahUsage", t
+    EndTimer "AuditCharStyleUsage(" & StyleName & ")", t
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
-           ") in procedure AuditSelahUsage of Module basVerseStructureAudit"
+           ") in procedure AuditCharStyleUsage of Module basVerseStructureAudit"
     Resume PROC_EXIT
 End Sub
 
 ' --------------------------------------------------------------------------
-' WriteSelahUsageFile - write the report to rpt\SelahUsageAudit.txt
+' AuditSelahUsage - thin wrapper for backwards compatibility.
 ' --------------------------------------------------------------------------
-Private Sub WriteSelahUsageFile(ByVal sContent As String)
+Public Sub AuditSelahUsage(Optional ByVal bWriteFile As Boolean = True)
+    AuditCharStyleUsage "Selah", bWriteFile
+End Sub
+
+' --------------------------------------------------------------------------
+' WriteCharStyleUsageFile - write the report to
+'   rpt\<SafeFileName(StyleName)>UsageAudit.txt
+' Uses the public SafeFileName helper from basStyleInspector to sanitise
+' the style name (spaces -> underscores, etc.) for path safety.
+' --------------------------------------------------------------------------
+Private Sub WriteCharStyleUsageFile(ByVal StyleName As String, _
+                                    ByVal sContent As String)
     Dim oFSO As Object
     Dim oStream As Object
     Dim sPath As String
-    sPath = ActiveDocument.Path & "\rpt\SelahUsageAudit.txt"
+    sPath = ActiveDocument.Path & "\rpt\" & SafeFileName(StyleName) & "UsageAudit.txt"
     Set oFSO = CreateObject("Scripting.FileSystemObject")
     Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
     oStream.Write sContent
@@ -678,4 +712,32 @@ Private Sub WriteOrphanFile(ByVal sContent As String)
     Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
     oStream.Write sContent
     oStream.Close
+End Sub
+
+' ==========================================================================
+' GoToPos
+' ==========================================================================
+' Navigation helper. Selects the cursor at the given character offset and
+' scrolls the document so the position is visible.
+'
+' Word 365's Ctrl+G (Go To) dialog does NOT support character-offset
+' navigation - only Page / Section / Line / Bookmark / etc. This helper
+' fills the gap so audit reports that emit ParaStart offsets (e.g.,
+' AuditOrphanBodyTextParagraphs) can be navigated quickly from VBA.
+'
+' Usage (from Immediate window):
+'   GoToPos 2231693
+'   ' then Backspace in the document to merge an orphan into the
+'   ' preceding paragraph.
+' ==========================================================================
+Public Sub GoToPos(ByVal pos As Long)
+    On Error GoTo PROC_ERR
+    ActiveDocument.Range(pos, pos).Select
+    ActiveWindow.ScrollIntoView Selection.Range, True
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure GoToPos of Module basVerseStructureAudit"
+    Resume PROC_EXIT
 End Sub
