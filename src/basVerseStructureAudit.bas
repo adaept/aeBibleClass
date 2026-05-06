@@ -754,7 +754,7 @@ End Sub
 ' poetry continuations).
 '
 ' Output groups results by paragraph style and reports up to 3 samples
-' per group, plus total count. Lets the user decide whether to extend
+' per group, plus total Count. Lets the user decide whether to extend
 ' the Phase 2 conversion rule, add a VerseTextIndent variant, or
 ' leave the styles alone.
 '
@@ -831,7 +831,7 @@ Public Sub AuditUnconvertedVerseParagraphs(Optional ByVal bWriteFile As Boolean 
     sOut = sOut & "Total unconverted verse paragraphs: " & totalUnconverted & NL & NL
     Dim i As Long, j As Long
     For i = 1 To styleCount
-        sOut = sOut & "Paragraph style: " & styleNames(i) & "  (count=" & styleCounts(i) & ")" & NL
+        sOut = sOut & "Paragraph style: " & styleNames(i) & "  (Count=" & styleCounts(i) & ")" & NL
         For j = 1 To 3
             If j <= styleCounts(i) Then
                 sOut = sOut & "  Sample " & j & ": " & styleSamples(i, j) & NL

@@ -258,6 +258,94 @@ PROC_ERR:
 End Sub
 
 '====================================================================
+' ConvertParagraphContinuationVersesToVerseText
+' PURPOSE:
+'   Phase 2.4 of the VerseText rollout. Walks the main story and
+'   reassigns every paragraph that is a verse (Paragraph Continuation
+'   style with "Chapter Verse marker" first-character run) to the
+'   VerseText paragraph style.
+'
+'   Discovered during Phase 2.3 verification: 157 verse paragraphs
+'   were in Paragraph Continuation style rather than BodyText, mostly
+'   in tribal census listings (Numbers 1:35-37 etc.). Decision
+'   2026-05-06: convert these to VerseText - the Paragraph Continuation
+'   styling (Left align / Single 12 spacing) was a "fancy typewriter"
+'   leftover with no semantic meaning relative to the surrounding
+'   verses. After conversion they render identically to their
+'   neighbors.
+'
+' Pre-flight (all must pass before any reassignment):
+'   - Style "Paragraph Continuation" exists (silently exits with no-op
+'     if not, so post-conversion re-runs are safe)
+'   - Style "VerseText" exists (run DefineVerseTextStyle first)
+'   - Style "Chapter Verse marker" exists
+'
+' Output: Debug.Print summary line with scanned / converted / kept.
+'
+' Idempotent: second run reports converted = 0.
+'
+' Usage:
+'   ConvertParagraphContinuationVersesToVerseText
+'====================================================================
+Public Sub ConvertParagraphContinuationVersesToVerseText()
+    On Error GoTo PROC_ERR
+
+    ' Pre-flight: required styles
+    If Not StyleExists(ActiveDocument, "Paragraph Continuation") Then
+        Debug.Print "ConvertParagraphContinuationVersesToVerseText: " & _
+                    "Paragraph Continuation style not in document. Nothing to do."
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, "VerseText") Then
+        MsgBox "VerseText style not found. Run DefineVerseTextStyle first.", _
+               vbExclamation, "ConvertParagraphContinuationVersesToVerseText"
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, "Chapter Verse marker") Then
+        MsgBox "Chapter Verse marker character style not found. Aborting.", _
+               vbExclamation, "ConvertParagraphContinuationVersesToVerseText"
+        Exit Sub
+    End If
+
+    Dim screenWas As Boolean
+    screenWas = Application.ScreenUpdating
+    Application.ScreenUpdating = False
+
+    Dim oPara As Word.Paragraph
+    Dim nScanned As Long, nConverted As Long, nKept As Long
+
+    For Each oPara In ActiveDocument.Paragraphs
+        If oPara.style.NameLocal = "Paragraph Continuation" Then
+            nScanned = nScanned + 1
+            If oPara.Range.End - oPara.Range.Start > 1 Then
+                If oPara.Range.Characters(1).style.NameLocal = "Chapter Verse marker" Then
+                    oPara.style = ActiveDocument.Styles("VerseText")
+                    nConverted = nConverted + 1
+                Else
+                    nKept = nKept + 1
+                    Debug.Print "a> oPara = " & oPara.Range.Text
+                End If
+            Else
+                nKept = nKept + 1
+                Debug.Print "b> oPara = " & oPara.Range.Text
+            End If
+        End If
+    Next oPara
+
+    Application.ScreenUpdating = screenWas
+
+    Debug.Print "ConvertParagraphContinuationVersesToVerseText: scanned=" & nScanned & _
+                " converted=" & nConverted & " kept=" & nKept
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure ConvertParagraphContinuationVersesToVerseText of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
 ' DefineBodyTextIndentStyle
 ' PURPOSE:
 '   Creates the BodyTextIndent style in the active document if it does

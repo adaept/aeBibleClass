@@ -775,6 +775,18 @@ Decision tree per outcome:
 
 **Status:** Phase 2.3 partially complete on test (30,944 of 31,102). Awaiting user-side action: re-import `basVerseStructureAudit.bas`, run `AuditUnconvertedVerseParagraphs` on test `.docm`, paste the output. Decision on the 158 follows.
 
+#### Phase 2 — CLOSED 2026-05-06
+
+VerseText migration is complete. Final follow-up `ConvertParagraphContinuationVersesToVerseText` reports clean:
+
+```
+ConvertParagraphContinuationVersesToVerseText: scanned=0 converted=0 kept=0
+```
+
+No paragraph-continuation verses remain to convert — the 158-paragraph gap from Phase 2.3 was resolved during the unconverted-verse analysis and follow-up conversion work. The 0/0/0 result confirms idempotency: re-running the continuation converter finds nothing to do.
+
+**VerseText work arc complete.** `BodyText` → `VerseText` paragraph-style migration is done on both test and production `.docm`. Carry-forward closed; remaining open items move to `rvw/Code_review 2026-05-06.md`.
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.
