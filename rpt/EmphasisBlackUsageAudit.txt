@@ -1,0 +1,2899 @@
+---- AuditCharStyleUsage("EmphasisBlack"): 2026-05-05 19:43:54 ----
+
+Run #1 | ParaStart=27256 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 30 of 115)
+  Excerpt: "16 God said, “Let there be an expanse in the middle of the waters, and let it d"
+
+Run #2 | ParaStart=29718 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 251)
+  Excerpt: "126 God said, “Let us make man in our image, after our likeness. Let them have "
+
+Run #3 | ParaStart=29718 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 22 of 251)
+  Excerpt: "126 God said, “Let us make man in our image, after our likeness. Let them have "
+
+Run #4 | ParaStart=29970 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 104)
+  Excerpt: "127 God created man in his own image. In God’s image he created him; male and f"
+
+Run #5 | ParaStart=30075 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 41 of 216)
+  Excerpt: "128 God blessed them. God said to them, “Be fruitful, multiply, fill the earth, "
+
+Run #6 | ParaStart=30660 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 128)
+  Excerpt: "131 God saw everything that he had made, and, behold, it was very good. There "
+
+Run #7 | ParaStart=30660 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 73 of 128)
+  Excerpt: "131 God saw everything that he had made, and, behold, it was very good. There "
+
+Run #8 | ParaStart=31751 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 30 of 197)
+  Excerpt: "29 Out of the ground God made every tree to grow that is pleasant to the sight, "
+
+Run #9 | ParaStart=32652 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 130)
+  Excerpt: "217 but you shall not eat of the tree of the knowledge of good and evil; for in "
+
+Run #10 | ParaStart=32883 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 107 of 207)
+  Excerpt: "219 Out of the ground God formed every animal of the field, and every bird of th"
+
+Run #11 | ParaStart=33812 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 11 of 176)
+  Excerpt: "31 Now the serpent was more subtle than any animal of the field which God had m"
+
+Run #12 | ParaStart=34404 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 169 of 251)
+  Excerpt: "36 When the woman saw that the tree was good for food, and that it was a delight"
+
+Run #13 | ParaStart=34404 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 176 of 251)
+  Excerpt: "36 When the woman saw that the tree was good for food, and that it was a delight"
+
+Run #14 | ParaStart=34404 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 186 of 251)
+  Excerpt: "36 When the woman saw that the tree was good for food, and that it was a delight"
+
+Run #15 | ParaStart=35020 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 53 of 111)
+  Excerpt: "310 The man said, “I heard your voice in the garden, and I was afraid, because I"
+
+Run #16 | ParaStart=35132 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 117)
+  Excerpt: "311 God said, “Who told you that you were naked? Have you eaten from the tree th"
+
+Run #17 | ParaStart=35250 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 18 of 106)
+  Excerpt: "312 The man said, “The woman whom you gave to be with me, she gave me fruit from"
+
+Run #18 | ParaStart=35357 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 103)
+  Excerpt: "313 God said to the woman, “What have you done?” The woman said, “The serpent de"
+
+Run #19 | ParaStart=35669 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 15 of 152)
+  Excerpt: "315 I will put enmity between you and the woman, and between your offspring and"
+
+Run #20 | ParaStart=36951 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 169)
+  Excerpt: "324 So he drove out the man; and he placed cherubim at the east of the garden of"
+
+Run #21 | ParaStart=37131 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 63 of 118)
+  Excerpt: "41 The man knew Eve his wife. She conceived, and gave birth to Cain, and said, "
+
+Run #22 | ParaStart=37365 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 19 of 80)
+  Excerpt: "43 As time passed, Cain brought an offering to God from the fruit of the ground."
+
+Run #23 | ParaStart=37446 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 108)
+  Excerpt: "44 Abel also brought some of the firstborn of his flock and of its fat. God resp"
+
+Run #24 | ParaStart=37555 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 107)
+  Excerpt: "45 but he did not respect Cain and his offering. Cain was very angry, and the ex"
+
+Run #25 | ParaStart=37895 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 93 of 149)
+  Excerpt: "48 Cain said to Abel, his brother, “Let us go into the field.” While they were i"
+
+Run #26 | ParaStart=38761 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 176)
+  Excerpt: "415 God said to him, “Therefore whoever slays Cain, vengeance will be taken on h"
+
+Run #27 | ParaStart=40240 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 81 of 112)
+  Excerpt: "51 This is the book of the generations of Adam. In the day that God created man,"
+
+Run #28 | ParaStart=43465 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 119)
+  Excerpt: "62 the sons of God saw that men’s daughters were beautiful, and they took any th"
+
+Run #29 | ParaStart=43585 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 87 of 131)
+  Excerpt: "63 God said, “My Spirit will not strive with man forever, because he also is fle"
+
+Run #30 | ParaStart=43717 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 70 of 204)
+  Excerpt: "64 The Nephilim were in the earth in those days, and also after that, when the s"
+
+Run #31 | ParaStart=43717 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 118 of 204)
+  Excerpt: "64 The Nephilim were in the earth in those days, and also after that, when the s"
+
+Run #32 | ParaStart=44069 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 85)
+  Excerpt: "66 God was sorry that he had made man on the earth, and it grieved him in his he"
+
+Run #33 | ParaStart=44520 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 66)
+  Excerpt: "610 Noah became the father of three sons: Shem, Ham, and Japheth."
+
+Run #34 | ParaStart=46773 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 47)
+  Excerpt: "75 Noah did everything that God commanded him."
+
+Run #35 | ParaStart=51821 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 52 of 101)
+  Excerpt: "91 God blessed Noah and his sons, and said to them, “Be fruitful, multiply, and "
+
+Run #36 | ParaStart=52514 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 61 of 96)
+  Excerpt: "96 Whoever sheds man’s blood, his blood will be shed by man, for God made man in"
+
+Run #37 | ParaStart=54424 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 136 of 211)
+  Excerpt: "923 Shem and Japheth took a garment, and laid it on both their shoulders, went i"
+
+Run #38 | ParaStart=56731 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 144)
+  Excerpt: "1019 The border of the Canaanites was from Sidon—as you go toward Gerar —to Gaz"
+
+Run #39 | ParaStart=58002 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 59)
+  Excerpt: "111 The whole earth was of one language and of one speech."
+
+Run #40 | ParaStart=67178 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 98 of 163)
+  Excerpt: "147 They returned, and came to En Mishpat (also called Kadesh), and struck all t"
+
+Run #41 | ParaStart=70598 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 21 of 145)
+  Excerpt: "159 He said to him, “Bring me a heifer three years old, a female goat three year"
+
+Run #42 | ParaStart=70744 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 102 of 134)
+  Excerpt: "1510 He brought him all these, and divided them in the middle, and laid each hal"
+
+Run #43 | ParaStart=71062 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 176)
+  Excerpt: "1513 He said to Abram, “Know for sure that your offspring will live as foreigner"
+
+Run #44 | ParaStart=73425 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 141 of 153)
+  Excerpt: "1611 God’s angel said to her, “Behold, you are with child, and will bear a son. "
+
+Run #45 | ParaStart=73968 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 84 of 93)
+  Excerpt: "1615 Hagar bore a son for Abram. Abram called the name of his son, whom Hagar bo"
+
+Run #46 | ParaStart=80109 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 45 of 106)
+  Excerpt: "1820 God said, “Because the cry of Sodom and Gomorrah is great, and because th"
+
+Run #47 | ParaStart=82000 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 8 of 159)
+  Excerpt: "191 The two angels came to Sodom at evening. Lot sat in the gate of Sodom. Lot s"
+
+Run #48 | ParaStart=82160 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 27 of 215)
+  Excerpt: "192 and he said, “See now, my lords, please come into your servant’s house, sta"
+
+Run #49 | ParaStart=85457 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 46 of 90)
+  Excerpt: "1924 Then God rained on Sodom and on Gomorrah brimstone and fire from God out o"
+
+Run #50 | ParaStart=91342 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 225 of 236)
+  Excerpt: "2114 Abraham rose up early in the morning, and took bread and a container of wat"
+
+Run #51 | ParaStart=93618 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 20 of 152)
+  Excerpt: "2132 So they made a covenant at Beersheba. Abimelech rose up with Phicol, the "
+
+Run #52 | ParaStart=95131 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 113 of 174)
+  Excerpt: "229 They came to the place which God had told him of. Abraham built the altar th"
+
+Run #53 | ParaStart=95478 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 74 of 167)
+  Excerpt: "2212 He said, “Do not lay your hand on the boy or do anything to him. For now I "
+
+Run #54 | ParaStart=96943 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 9 of 87)
+  Excerpt: "2224 His concubine, whose name was Reumah, also bore Tebah, Gaham, Tahash, and "
+
+Run #55 | ParaStart=111017 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 154 of 189)
+  Excerpt: "2523 God said to her, “Two nations are in your womb. Two peoples will be separat"
+
+Run #56 | ParaStart=111379 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 90 of 143)
+  Excerpt: "2526 After that, his brother came out, and his hand had hold on Esau’s heel. He "
+
+Run #57 | ParaStart=111906 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 38 of 51)
+  Excerpt: "2531 Jacob said, “First, sell me your birthright.”"
+
+Run #58 | ParaStart=112038 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 55 of 88)
+  Excerpt: "2533 Jacob said, “Swear to me first.” He swore to him. He sold his birthright to"
+
+Run #59 | ParaStart=117962 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 35 of 127)
+  Excerpt: "2712 What if my father touches me? I will seem to him as a deceiver, and I woul"
+
+Run #60 | ParaStart=127854 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 56 of 102)
+  Excerpt: "2916 Laban had two daughters. The name of the elder was Leah, and the name of t"
+
+Run #61 | ParaStart=129751 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at END of paragraph (offset 170 of 176)
+  Excerpt: "2934 She conceived again, and bore a son. She said, “Now this time my husband wi"
+
+Run #62 | ParaStart=132376 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 76)
+  Excerpt: "3023 She conceived, bore a son, and said, “God has taken away my reproach.”"
+
+Run #63 | ParaStart=137667 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at END of paragraph (offset 113 of 121)
+  Excerpt: "3121 So he fled with all that he had. He rose up, passed over the River, and set"
+
+Run #64 | ParaStart=145369 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at END of paragraph (offset 128 of 136)
+  Excerpt: "3222 He rose up that night, and took his two wives, and his two servants, and hi"
+
+Run #65 | ParaStart=145589 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 88)
+  Excerpt: "3224 Jacob was left alone, and wrestled with a man there until the breaking of t"
+
+Run #66 | ParaStart=147754 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 107 of 198)
+  Excerpt: "3310 Jacob said, “Please, no, if I have now found favor in your sight, then rece"
+
+Run #67 | ParaStart=161922 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 135)
+  Excerpt: "374 His brothers saw that their father loved him more than all his brothers, and"
+
+Run #68 | ParaStart=162219 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 147 of 172)
+  Excerpt: "377 for behold, we were binding sheaves in the field, and behold, my sheaf arose"
+
+Run #69 | ParaStart=162555 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 127 of 186)
+  Excerpt: "379 He dreamed yet another dream, and told it to his brothers, and said, “Behold"
+
+Run #70 | ParaStart=162742 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 136 of 237)
+  Excerpt: "3710 He told it to his father and to his brothers. His father rebuked him, and s"
+
+Run #71 | ParaStart=165914 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 37 of 96)
+  Excerpt: "3734 Jacob tore his clothes, and put sackcloth on his waist, and mourned for hi"
+
+Run #72 | ParaStart=170026 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 155)
+  Excerpt: "3829 As he drew back his hand, behold, his brother came out, and she said, “Why "
+
+Run #73 | ParaStart=170182 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 108)
+  Excerpt: "3830 Afterward his brother came out, who had the scarlet thread on his hand, and"
+
+Run #74 | ParaStart=197548 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 212)
+  Excerpt: "451 Then Joseph could not control himself before all those who stood before him,"
+
+Run #75 | ParaStart=197833 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 33 of 151)
+  Excerpt: "453 Joseph said to his brothers, “I am Joseph! Does my father still live?” His b"
+
+Run #76 | ParaStart=199450 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 91)
+  Excerpt: "4515 He kissed all his brothers, and wept on them. After that his brothers talke"
+
+Run #77 | ParaStart=212028 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 168)
+  Excerpt: "4813 Joseph took them both, Ephraim in his right hand toward Israel’s left hand,"
+
+Run #78 | ParaStart=212197 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 193)
+  Excerpt: "4814 Israel stretched out his right hand, and laid it on Ephraim’s head, who was"
+
+Run #79 | ParaStart=212730 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 183)
+  Excerpt: "4817 When Joseph saw that his father laid his right hand on the head of Ephraim,"
+
+Run #80 | ParaStart=212914 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 112)
+  Excerpt: "4818 Joseph said to his father, “Not so, my father, for this is the firstborn. P"
+
+Run #81 | ParaStart=213027 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 227)
+  Excerpt: "4819 His father refused, and said, “I know, my son, I know. He also will become "
+
+Run #82 | ParaStart=226406 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 168)
+  Excerpt: "214 He said, “Who made you a prince and a judge over us? Do you plan to kill me,"
+
+Run #83 | ParaStart=227328 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 59 of 83)
+  Excerpt: "221 Moses was content to dwell with the man. He gave Moses Zipporah, his daught"
+
+Run #84 | ParaStart=227520 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 111 of 189)
+  Excerpt: "223 In the course of those many days, the king of Egypt died, and the children o"
+
+Run #85 | ParaStart=227710 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 105)
+  Excerpt: "224 God heard their groaning, and God remembered his covenant with Abraham, with"
+
+Run #86 | ParaStart=233435 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 63 of 219)
+  Excerpt: "414 God’s anger burned against Moses, and he said, “What about Aaron, your brot"
+
+Run #87 | ParaStart=239198 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 82 of 115)
+  Excerpt: "63 I appeared to Abraham, to Isaac, and to Jacob, as God Almighty; but by my nam"
+
+Run #88 | ParaStart=240398 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 142 of 164)
+  Excerpt: "612 Moses spoke before God, saying, “Behold, the children of Israel have not lis"
+
+Run #89 | ParaStart=249935 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 76 of 227)
+  Excerpt: "826 Moses said, “It is not appropriate to do so; for we shall sacrifice the abom"
+
+Run #90 | ParaStart=268117 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 92)
+  Excerpt: "1240 Now the time that the children of Israel lived in Egypt was four hundred th"
+
+Run #91 | ParaStart=268210 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 19 of 111)
+  Excerpt: "1241 At the end of four hundred thirty years, to the day, all of God’s armies w"
+
+Run #92 | ParaStart=283494 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 147 of 186)
+  Excerpt: "1615 When the children of Israel saw it, they said to one another, “What is it?”"
+
+Run #93 | ParaStart=296365 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 105 of 223)
+  Excerpt: "205 you shall not bow yourself down to them, nor serve them, for I, the Lord you"
+
+Run #94 | ParaStart=297445 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 27 of 37)
+  Excerpt: "2014 “You shall not commit adultery."
+
+Run #95 | ParaStart=316398 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 101 of 200)
+  Excerpt: "2522 There I will meet with you, and I will tell you from above the mercy seat, "
+
+Run #96 | ParaStart=317373 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 19 of 72)
+  Excerpt: "2530 You shall set bread of the presence on the table before me always."
+
+Run #97 | ParaStart=342583 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 39 of 181)
+  Excerpt: "3023 “Also take fine spices: of liquid myrrh, five hundred shekels; and of fra"
+
+Run #98 | ParaStart=343853 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 112 of 166)
+  Excerpt: "3034 God said to Moses, “Take to yourself sweet spices, gum resin, onycha, and g"
+
+Run #99 | ParaStart=347850 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 24 of 127)
+  Excerpt: "327 God spoke to Moses, “Go, get down; for your people, who you brought up out o"
+
+Run #100 | ParaStart=347978 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 252)
+  Excerpt: "328 They have turned away quickly out of the way which I commanded them. They ha"
+
+Run #101 | ParaStart=348231 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 62 of 93)
+  Excerpt: "329 God said to Moses, “I have seen these people, and behold, they are a stiff-n"
+
+Run #102 | ParaStart=348325 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 145)
+  Excerpt: "3210 Now therefore leave me alone, that my wrath may burn hot against them, and "
+
+Run #103 | ParaStart=349177 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 80)
+  Excerpt: "3214 So God relented from the disaster which he said he would do to his people."
+
+Run #104 | ParaStart=353236 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 110 of 217)
+  Excerpt: "337 Now Moses used to take the tent and pitch it outside the camp, far away fro"
+
+Run #105 | ParaStart=353880 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 182)
+  Excerpt: "3311 God spoke to Moses face to face, as a man speaks to his friend. He turned a"
+
+Run #106 | ParaStart=355236 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 72)
+  Excerpt: "3320 He said, “You cannot see my face, for man may not see me and live.”"
+
+Run #107 | ParaStart=355542 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 94)
+  Excerpt: "3323 then I will take away my hand, and you will see my back; but my face shall "
+
+Run #108 | ParaStart=356487 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 88 of 261)
+  Excerpt: "347 keeping loving kindness for thousands, forgiving iniquity and disobedience a"
+
+Run #109 | ParaStart=376782 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 78 of 182)
+  Excerpt: "3825 The silver of those who were counted of the congregation was one hundred ta"
+
+Run #110 | ParaStart=391803 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 71 of 158)
+  Excerpt: "211 “‘No meal offering which you shall offer to God shall be made with yeast; f"
+
+Run #111 | ParaStart=469181 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 98 of 150)
+  Excerpt: "1918 “‘You shall not take vengeance, nor bear any grudge against the children of"
+
+Run #112 | ParaStart=496007 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 58 of 83)
+  Excerpt: "2524 In all the land of your possession you shall grant a redemption for the la"
+
+Run #113 | ParaStart=501119 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 72)
+  Excerpt: "263 “‘If you walk in my statutes and keep my commandments, and do them,"
+
+Run #114 | ParaStart=502434 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 7 of 80)
+  Excerpt: "2614 “‘But if you will not listen to me, and will not do all these commandments,"
+
+Run #115 | ParaStart=502515 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 148)
+  Excerpt: "2615 and if you shall reject my statutes, and if your soul abhors my ordinances,"
+
+Run #116 | ParaStart=502664 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 216)
+  Excerpt: "2616 I also will do this to you: I will appoint terror over you, even consumptio"
+
+Run #117 | ParaStart=506061 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 7 of 175)
+  Excerpt: "2640 “‘If they confess their iniquity and the iniquity of their fathers, in the"
+
+Run #118 | ParaStart=506237 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 186)
+  Excerpt: "2641 I also walked contrary to them, and brought them into the land of their ene"
+
+Run #119 | ParaStart=506424 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 138)
+  Excerpt: "2642 then I will remember my covenant with Jacob, my covenant with Isaac, and al"
+
+Run #120 | ParaStart=507005 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 180)
+  Excerpt: "2645 But I will for their sake remember the covenant of their ancestors, whom I "
+
+Run #121 | ParaStart=540749 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at END of paragraph (offset 146 of 153)
+  Excerpt: "522 and this water that brings a curse will go into your bowels, and make your b"
+
+Run #122 | ParaStart=578060 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 70)
+  Excerpt: "1325 They returned from spying out the land at the end of forty days."
+
+Run #123 | ParaStart=580895 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 151)
+  Excerpt: "1411 God said to Moses, “How long will this people despise me? How long will the"
+
+Run #124 | ParaStart=581047 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 129)
+  Excerpt: "1412 I will strike them with the pestilence, and disinherit them, and will make "
+
+Run #125 | ParaStart=581905 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 140 of 239)
+  Excerpt: "1418 ‘God is slow to anger, and abundant in loving kindness, forgiving iniquity "
+
+Run #126 | ParaStart=582145 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 170)
+  Excerpt: "1419 Please pardon the iniquity of this people according to the greatness of you"
+
+Run #127 | ParaStart=582316 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 56)
+  Excerpt: "1420 God said, “I have pardoned according to your word;"
+
+Run #128 | ParaStart=583953 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 160)
+  Excerpt: "1433 Your children shall be wanderers in the wilderness forty years, and shall "
+
+Run #129 | ParaStart=584114 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 190)
+  Excerpt: "1434 After the number of the days in which you spied out the land, even forty da"
+
+Run #130 | ParaStart=610542 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 35 of 208)
+  Excerpt: "2012 God said to Moses and Aaron, “Because you did not believe in me, to sanctif"
+
+Run #131 | ParaStart=617821 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 93 of 102)
+  Excerpt: "221 The children of Israel traveled, and encamped in the plains of Moab beyond t"
+
+Run #132 | ParaStart=630524 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 34 of 101)
+  Excerpt: "251 Israel stayed in Shittim; and the people began to play the prostitute with t"
+
+Run #133 | ParaStart=630626 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 108)
+  Excerpt: "252 for they called the people to the sacrifices of their gods. The people ate a"
+
+Run #134 | ParaStart=630735 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 79)
+  Excerpt: "253 Israel joined himself to Baal Peor, and God’s anger burned against Israel."
+
+Run #135 | ParaStart=630735 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 40 of 79)
+  Excerpt: "253 Israel joined himself to Baal Peor, and God’s anger burned against Israel."
+
+Run #136 | ParaStart=630815 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 158)
+  Excerpt: "254 God said to Moses, “Take all the chiefs of the people, and hang them up to "
+
+Run #137 | ParaStart=704697 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 126)
+  Excerpt: "427 God will scatter you among the peoples, and you will be left few in number a"
+
+Run #138 | ParaStart=704824 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 120)
+  Excerpt: "428 There you will serve gods, the work of men’s hands, wood and stone, which ne"
+
+Run #139 | ParaStart=704945 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 131)
+  Excerpt: "429 But if from there you seek the Lord your God, you will find him if you look "
+
+Run #140 | ParaStart=705235 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 147)
+  Excerpt: "431 For the Lord your God is a merciful God. He will not fail you nor destroy yo"
+
+Run #141 | ParaStart=733065 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 22 of 187)
+  Excerpt: "1113 It shall happen, if you shall listen diligently to my commandments which I "
+
+Run #142 | ParaStart=735041 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 59)
+  Excerpt: "1126 Behold, I set before you today a blessing and a curse:"
+
+Run #143 | ParaStart=735101 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 103)
+  Excerpt: "1127 the blessing, if you listen to the commandments of the Lord your God, whic"
+
+Run #144 | ParaStart=735205 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 187)
+  Excerpt: "1128 and the curse, if you do not listen to the commandments of the Lord your Go"
+
+Run #145 | ParaStart=760758 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 122)
+  Excerpt: "1815 The lord your God will raise up to you a prophet from among you, of your br"
+
+Run #146 | ParaStart=771435 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 123 of 148)
+  Excerpt: "2120 They shall tell the elders of his city, “This our son is stubborn and rebel"
+
+Run #147 | ParaStart=778805 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 87 of 119)
+  Excerpt: "2317 There shall be no prostitute of the daughters of Israel, neither shall ther"
+
+Run #148 | ParaStart=793027 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 21 of 228)
+  Excerpt: "281 It shall happen, if you shall listen diligently to the voice of the Lord you"
+
+Run #149 | ParaStart=793256 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 111)
+  Excerpt: "282 All these blessings will come upon you, and overtake you, if you listen to t"
+
+Run #150 | ParaStart=795097 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 32 of 223)
+  Excerpt: "2815 But it shall come to pass, if you will not listen to the voice of the Lord "
+
+Run #151 | ParaStart=810741 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 197)
+  Excerpt: "3019 I call heaven and earth to witness against you today that I have set before"
+
+Run #152 | ParaStart=816591 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 132)
+  Excerpt: "324 He is the Rock: his work is perfect, for all his ways are just. A God of fa"
+
+Run #153 | ParaStart=816861 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 62 of 141)
+  Excerpt: "326 Is this the way you repay God, foolish and unwise people? Is he not your fat"
+
+Run #154 | ParaStart=864193 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 33 of 263)
+  Excerpt: "101 Now when Adoni-Zedek king of Jerusalem heard how Joshua had taken Ai, and h"
+
+Run #155 | ParaStart=924206 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 250)
+  Excerpt: "2415 If it seems evil to you to serve God, choose today whom you will serve; whe"
+
+Run #156 | ParaStart=935248 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 144 of 246)
+  Excerpt: "218 When God raised up judges for them, then God was with the judge, and saved t"
+
+Run #157 | ParaStart=1082068 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 201)
+  Excerpt: "1313 Samuel said to Saul, “You have done foolishly. You have not kept the comman"
+
+Run #158 | ParaStart=1093515 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 187)
+  Excerpt: "1511 “It grieves me that I have set up Saul to be king, for he has turned back "
+
+Run #159 | ParaStart=1095178 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 19 of 184)
+  Excerpt: "1522 Samuel said, “Has God as great delight in burnt offerings and sacrifices, a"
+
+Run #160 | ParaStart=1095363 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 72 of 177)
+  Excerpt: "1523 For rebellion is as the sin of witchcraft, and stubbornness is as idolatry"
+
+Run #161 | ParaStart=1096900 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 94 of 147)
+  Excerpt: "1535 Samuel came no more to see Saul until the day of his death, but Samuel mour"
+
+Run #162 | ParaStart=1181223 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 82)
+  Excerpt: "54 David was thirty years old when he began to reign, and he reigned forty years"
+
+Run #163 | ParaStart=1181656 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 45 of 73)
+  Excerpt: "57 Nevertheless David took the stronghold of Zion. This is David’s city."
+
+Run #164 | ParaStart=1187682 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 35 of 94)
+  Excerpt: "75 “Go and tell my servant David, ‘God says, “Should you build me a house for m"
+
+Run #165 | ParaStart=1188743 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 125 of 180)
+  Excerpt: "711 and as from the day that I commanded judges to be over my people Israel. I w"
+
+Run #166 | ParaStart=1189100 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 95)
+  Excerpt: "713 He will build a house for my name, and I will establish the throne of his ki"
+
+Run #167 | ParaStart=1189459 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 112)
+  Excerpt: "716 Your house and your kingdom will be made sure forever before you. Your thron"
+
+Run #168 | ParaStart=1255188 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 18 of 76)
+  Excerpt: "222 and he said: “God is my rock, my fortress, and my deliverer, even mine;"
+
+Run #169 | ParaStart=1267153 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 75 of 258)
+  Excerpt: "2416 When the angel stretched out his hand toward Jerusalem to destroy it, God r"
+
+Run #170 | ParaStart=1279318 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 144)
+  Excerpt: "211 The days that David reigned over Israel were forty years; he reigned seven y"
+
+Run #171 | ParaStart=1284880 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 120 of 210)
+  Excerpt: "31 Solomon made an alliance with Pharaoh king of Egypt, and took Pharaoh’s daugh"
+
+Run #172 | ParaStart=1287006 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 136)
+  Excerpt: "314 If you will walk in my ways, to keep my statutes and my commandments, as you"
+
+Run #173 | ParaStart=1295761 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 233)
+  Excerpt: "61 In the four hundred and eightieth year after the children of Israel had come "
+
+Run #174 | ParaStart=1296348 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 135 of 187)
+  Excerpt: "65 Against the wall of the house, he built floors all around, against the walls "
+
+Run #175 | ParaStart=1310686 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 136)
+  Excerpt: "818 But God said to David my father, ‘Whereas it was in your heart to build a ho"
+
+Run #176 | ParaStart=1310823 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 134)
+  Excerpt: "819 Nevertheless, you shall not build the house; but your son who shall come out"
+
+Run #177 | ParaStart=1320435 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 213)
+  Excerpt: "97 then I will cut off Israel out of the land which I have given them; and I wil"
+
+Run #178 | ParaStart=1328437 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 107)
+  Excerpt: "113 He had seven hundred wives, princesses, and three hundred concubines. His wi"
+
+Run #179 | ParaStart=1334390 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 82)
+  Excerpt: "1142 The time that Solomon reigned in Jerusalem over all Israel was forty years"
+
+Run #180 | ParaStart=1337501 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 59)
+  Excerpt: "1219 So Israel rebelled against David’s house to this day."
+
+Run #181 | ParaStart=1348332 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 118 of 153)
+  Excerpt: "1419 The rest of the acts of Jeroboam, how he fought, and how he reigned, behold"
+
+Run #182 | ParaStart=1350785 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 191)
+  Excerpt: "155 because David did that which was right in God’s eyes, and did not turn away "
+
+Run #183 | ParaStart=1360416 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 206)
+  Excerpt: "171 Elijah the Tishbite, who was one of the settlers of Gilead, said to Ahab, “"
+
+Run #184 | ParaStart=1372218 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 54 of 185)
+  Excerpt: "1913 When Elijah heard it, he wrapped his face in his mantle, went out, and sto"
+
+Run #185 | ParaStart=1372797 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 70 of 141)
+  Excerpt: "1916 Anoint Jehu the son of Nimshi to be king over Israel; and anoint Elisha th"
+
+Run #186 | ParaStart=1385587 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 85 of 183)
+  Excerpt: "2129 “See how Ahab humbles himself before me? Because he humbles himself before"
+
+Run #187 | ParaStart=1394242 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 151 of 223)
+  Excerpt: "12 Ahaziah fell down through the lattice in his upper room that was in Samaria, "
+
+Run #188 | ParaStart=1395337 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 23 of 127)
+  Excerpt: "18 They answered him, “He was a hairy man, and wearing a leather belt around his"
+
+Run #189 | ParaStart=1470188 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 131)
+  Excerpt: "1718 Therefore God was very angry with Israel, and removed them out of his sight"
+
+Run #190 | ParaStart=1471034 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 42 of 239)
+  Excerpt: "1724 The king of Assyria brought men from Babylon, from Cuthah, from Avva, and"
+
+Run #191 | ParaStart=1478971 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 227 of 236)
+  Excerpt: "1831 Do not listen to Hezekiah.’ For the king of Assyria says, ‘Make your peace "
+
+Run #192 | ParaStart=1485746 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 82 of 91)
+  Excerpt: "1936 So Sennacherib king of Assyria departed, and went and returned, and lived a"
+
+Run #193 | ParaStart=1506004 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 219)
+  Excerpt: "2413 He carried out from there all the treasures of God’s house, and the treasu"
+
+Run #194 | ParaStart=1506224 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 213)
+  Excerpt: "2414 He carried away all Jerusalem, and all the princes, and all the mighty men "
+
+Run #195 | ParaStart=1506438 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 189)
+  Excerpt: "2415 He carried away Jehoiachin to Babylon, with the king’s mother, the king’s w"
+
+Run #196 | ParaStart=1620073 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 99 of 147)
+  Excerpt: "2910 Therefore David blessed God before all the assembly; and David said, “You "
+
+Run #197 | ParaStart=1857544 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 228)
+  Excerpt: "1326 Did not Solomon king of Israel sin by these things? Yet among many nations "
+
+Run #198 | ParaStart=1889010 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 53 of 145)
+  Excerpt: "11 There was a man in the land of Uz, whose name was Job. That man was blameles"
+
+Run #199 | ParaStart=1889912 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 73 of 101)
+  Excerpt: "16 Now on the day when God’s sons came to present themselves before God, Satan "
+
+Run #200 | ParaStart=1935089 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 101)
+  Excerpt: "2118 How often is it that they are as stubble before the wind, as chaff that th"
+
+Run #201 | ParaStart=1956853 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 89)
+  Excerpt: "3133 if like Adam, I have covered my transgressions, by hiding my iniquity in m"
+
+Run #202 | ParaStart=1958444 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 91)
+  Excerpt: "328 But there is a spirit in man, and the Spirit of the Almighty gives them unde"
+
+Run #203 | ParaStart=1993863 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 95)
+  Excerpt: "85 For you have made him a little lower than the angels, and crowned him with gl"
+
+Run #204 | ParaStart=1993959 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 91)
+  Excerpt: "86 You make him ruler over the works of your hands. You have put all things unde"
+
+Run #205 | ParaStart=2004553 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 147)
+  Excerpt: "182 God is my rock, my fortress, and my deliverer; my God, my rock, in whom I t"
+
+Run #206 | ParaStart=2007358 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 38 of 69)
+  Excerpt: "1831 For who is God, except the Lord? Who is a rock, besides our God,"
+
+Run #207 | ParaStart=2009328 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 75)
+  Excerpt: "191 The heavens declare the glory of God. The expanse shows his handiwork."
+
+Run #208 | ParaStart=2009404 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 87)
+  Excerpt: "192 Day after day they pour out speech, and night after night they display know"
+
+Run #209 | ParaStart=2012975 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 117)
+  Excerpt: "221 My God, my God, why have you forsaken me? Why are you so far from helping m"
+
+Run #210 | ParaStart=2013191 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 60)
+  Excerpt: "223 But you are holy, you who inhabit the praises of Israel."
+
+Run #211 | ParaStart=2062447 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 106)
+  Excerpt: "5116 For you do not delight in sacrifice, or else I would give it. You have no p"
+
+Run #212 | ParaStart=2062554 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 105)
+  Excerpt: "5117 The sacrifices of God are a broken spirit. O God, you will not despise a br"
+
+Run #213 | ParaStart=2083451 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 93)
+  Excerpt: "685 A father of the fatherless, and a defender of the widows, is God in his holy"
+
+Run #214 | ParaStart=2099191 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 76 of 98)
+  Excerpt: "7418 Remember this, that the enemy has mocked you, God. Foolish people have blas"
+
+Run #215 | ParaStart=2110092 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 46 of 95)
+  Excerpt: "7869 He built his sanctuary like the heights, like the earth which he has establ"
+
+Run #216 | ParaStart=2115867 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 13 of 65)
+  Excerpt: "826 I said, “You are gods, all of you are sons of the Most High."
+
+Run #217 | ParaStart=2132935 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 91)
+  Excerpt: "9212 The righteous shall flourish like the palm tree. He will grow like a cedar "
+
+Run #218 | ParaStart=2133027 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 78)
+  Excerpt: "9213 They are planted in God’s house. They will flourish in our God’s courts."
+
+Run #219 | ParaStart=2133106 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 83)
+  Excerpt: "9214 They will still produce fruit in old age. They will be full of sap and gree"
+
+Run #220 | ParaStart=2196125 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 116)
+  Excerpt: "13211 God has sworn to David in truth. He will not turn from it: “I will set the"
+
+Run #221 | ParaStart=2196242 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 143)
+  Excerpt: "13212 If your children will keep my covenant, my testimony that I will teach th"
+
+Run #222 | ParaStart=2196921 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 81)
+  Excerpt: "1331 See how good and how pleasant it is for brothers to live together in unity!"
+
+Run #223 | ParaStart=2236560 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 83)
+  Excerpt: "812 “I, wisdom, have made prudence my dwelling. Find out knowledge and discreti"
+
+Run #224 | ParaStart=2237569 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 77)
+  Excerpt: "825 Before the mountains were settled in place, before the hills, I was born;"
+
+Run #225 | ParaStart=2237751 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 98)
+  Excerpt: "827 When he established the heavens, I was there. When he set a circle on the su"
+
+Run #226 | ParaStart=2237936 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 144)
+  Excerpt: "829 when he gave to the sea its boundary, that the waters should not violate his"
+
+Run #227 | ParaStart=2245965 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 78)
+  Excerpt: "1130 The fruit of the righteous is a tree of life. He who is wise wins souls."
+
+Run #228 | ParaStart=2249752 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 93)
+  Excerpt: "312 Hope deferred makes the heart sick, but when longing is fulfilled, it is a t"
+
+Run #229 | ParaStart=2270073 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 78)
+  Excerpt: "213 To do righteousness and justice is more acceptable to God than sacrifice."
+
+Run #230 | ParaStart=2295951 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 113)
+  Excerpt: "3020 “So is the way of an adulterous woman: She eats and wipes her mouth, and sa"
+
+Run #231 | ParaStart=2300416 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 85)
+  Excerpt: "14 One generation goes, and another generation comes; but the earth remains fore"
+
+Run #232 | ParaStart=2327026 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 107)
+  Excerpt: "122 Before the sun, the light, the moon, and the stars are darkened, and the clo"
+
+Run #233 | ParaStart=2327916 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 92)
+  Excerpt: "127 and the dust returns to the earth as it was, and the spirit returns to God w"
+
+Run #234 | ParaStart=2336106 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 101 of 170)
+  Excerpt: "416 Beloved Awake, north wind, and come, you south! Blow on my garden, that its "
+
+Run #235 | ParaStart=2346521 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 70)
+  Excerpt: "119 If you are willing and obedient, you wil eat the good of the land;"
+
+Run #236 | ParaStart=2346592 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 106)
+  Excerpt: "120 but if you refuse and rebel, you will be devoured with the sword; for the Go"
+
+Run #237 | ParaStart=2359569 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 23 of 136)
+  Excerpt: "62 Above him stood the seraphim. Each one had six wings. With two he covered hi"
+
+Run #238 | ParaStart=2362949 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 53 of 139)
+  Excerpt: "714 Therefore the Lord himself will give you a sign. Behold, the virgin will co"
+
+Run #239 | ParaStart=2368454 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 191)
+  Excerpt: "96 For a child is born to us. A son is given to us; and the government will be o"
+
+Run #240 | ParaStart=2368646 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 269)
+  Excerpt: "97 Of the increase of his government and of peace there shall be no end, on Davi"
+
+Run #241 | ParaStart=2371443 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 9 of 83)
+  Excerpt: "105 Alas Assyrian, the rod of my anger, the staff in whose hand is my indignati"
+
+Run #242 | ParaStart=2375699 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 95)
+  Excerpt: "111 A shoot will come out of the stock of Jesse, and a branch out of his roots w"
+
+Run #243 | ParaStart=2375795 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 155)
+  Excerpt: "112 God’s Spirit will rest on him: the spirit of wisdom and understanding, the s"
+
+Run #244 | ParaStart=2375951 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 130)
+  Excerpt: "113 His delight will be in the fear of God. He will not judge by the sight of hi"
+
+Run #245 | ParaStart=2376082 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 211)
+  Excerpt: "114 but he will judge the poor with righteousness, and decide with equity for th"
+
+Run #246 | ParaStart=2376294 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 89)
+  Excerpt: "115 Righteousness will be the belt of his waist, and faithfulness the belt of hi"
+
+Run #247 | ParaStart=2380111 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 171)
+  Excerpt: "1310 For the stars of the sky and its constellations will not give their light. "
+
+Run #248 | ParaStart=2383601 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 128)
+  Excerpt: "1412 How you have fallen from heaven, Oh Lucifer, son of the dawn! How you are c"
+
+Run #249 | ParaStart=2383730 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 161)
+  Excerpt: "1413 You said in your heart, “I will ascend into heaven! I will exalt my throne "
+
+Run #250 | ParaStart=2383892 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 91)
+  Excerpt: "1414 I will ascend above the heights of the clouds! I will make myself like the "
+
+Run #251 | ParaStart=2383984 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 71)
+  Excerpt: "1415 Yet you shall be brought down to Sheol, to the depths of the pit."
+
+Run #252 | ParaStart=2385232 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 137)
+  Excerpt: "1424 The Lord God of Hosts has sworn, saying, “Surely, as I have thought, so sha"
+
+Run #253 | ParaStart=2477624 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 131)
+  Excerpt: "4517 Israel will be saved by God with an everlasting salvation. You will not be"
+
+Run #254 | ParaStart=2478675 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 172)
+  Excerpt: "4523 I have sworn by myself. The word has gone out of my mouth in righteousness,"
+
+Run #255 | ParaStart=2480490 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 90 of 170)
+  Excerpt: "4611 I call a ravenous bird from the east, the man of my counsel from a far coun"
+
+Run #256 | ParaStart=2480734 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 139)
+  Excerpt: "4613 I bring my righteousness near. It is not far off, and my salvation will not"
+
+Run #257 | ParaStart=2504524 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 86)
+  Excerpt: "558 “For my thoughts are not your thoughts, and your ways are not my ways,” says"
+
+Run #258 | ParaStart=2504611 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 124)
+  Excerpt: "559 “For as the heavens are higher than the earth, so are my ways higher than yo"
+
+Run #259 | ParaStart=2504923 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 171)
+  Excerpt: "5511 so is my word that goes out of my mouth: it will not return to me void, but"
+
+Run #260 | ParaStart=2506418 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 161 of 225)
+  Excerpt: "567 I will bring these to my holy mountain, and make them joyful in my house of "
+
+Run #261 | ParaStart=2517420 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 244)
+  Excerpt: "609 Surely the islands will wait for me, and the ships of Tarshish first, to bri"
+
+Run #262 | ParaStart=2517665 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 145)
+  Excerpt: "6010 “Foreigners will build up your walls, and their kings will serve you: for i"
+
+Run #263 | ParaStart=2517811 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 167)
+  Excerpt: "6011 Your gates also shall be open continually; they shall not be shut day nor n"
+
+Run #264 | ParaStart=2518281 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 215)
+  Excerpt: "6014 The sons of those who afflicted you will come bowing to you; and all those "
+
+Run #265 | ParaStart=2518992 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 164)
+  Excerpt: "6018 Violence shall no more be heard in your land, nor desolation or destruction"
+
+Run #266 | ParaStart=2519157 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 175)
+  Excerpt: "6019 The sun will be no more your light by day; nor will the brightness of the m"
+
+Run #267 | ParaStart=2519333 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 156)
+  Excerpt: "6020 Your sun will not go down any more, nor will your moon withdraw itself; for"
+
+Run #268 | ParaStart=2519490 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 155)
+  Excerpt: "6021 Then your people will all be righteous. They will inherit the land forever,"
+
+Run #269 | ParaStart=2521960 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 134)
+  Excerpt: "622 The nations will see your righteous-ness, and all kings your glory. You will"
+
+Run #270 | ParaStart=2522188 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 206)
+  Excerpt: "624 You will not be called Forsaken any more, nor will your land be called Desol"
+
+Run #271 | ParaStart=2522667 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 99)
+  Excerpt: "627 and give him no rest, until he establishes, and until he makes Jerusalem a p"
+
+Run #272 | ParaStart=2523275 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 182)
+  Excerpt: "6211 Behold, God has proclaimed to the end of the earth, “Say to the daughter of"
+
+Run #273 | ParaStart=2525949 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 169)
+  Excerpt: "6316 For you are our Father, though Abraham does not know us, and Israel does no"
+
+Run #274 | ParaStart=2527576 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 13 of 108)
+  Excerpt: "648 But now, God, you are our Father. We are the clay and you our potter. We all"
+
+Run #275 | ParaStart=2529741 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 82 of 247)
+  Excerpt: "6512 I will destine you to the sword, and you will all bow down to the slaughter"
+
+Run #276 | ParaStart=2532660 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 76 of 240)
+  Excerpt: "664 I also will choose their delusions, and will bring their fears on them; beca"
+
+Run #277 | ParaStart=2535688 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 148)
+  Excerpt: "6622 “For as the new heavens and the new earth, which I will make, shall remain "
+
+Run #278 | ParaStart=2535837 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 142)
+  Excerpt: "6623 It shall happen that from one new moon to another, and from one Sabbath to "
+
+Run #279 | ParaStart=2537110 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 138)
+  Excerpt: "15 “Before I formed you in the womb, I knew you. Before you were born, I sanctif"
+
+Run #280 | ParaStart=2605334 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 135)
+  Excerpt: "188 if that nation, concerning which I have spoken, turns from their evil, I wil"
+
+Run #281 | ParaStart=2605570 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 147)
+  Excerpt: "1810 if they do that which is evil in my sight, that they not obey my voice, the"
+
+Run #282 | ParaStart=2621262 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 185)
+  Excerpt: "235 “Behold, the days come,” says God, “that I will raise to David a righteous B"
+
+Run #283 | ParaStart=2621448 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 135)
+  Excerpt: "236 In his days Judah will be saved, and Israel will dwell safely. This is his n"
+
+Run #284 | ParaStart=2625045 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 94)
+  Excerpt: "2329 “Is my word not like fire?” says God; “and like a hammer that breaks the r"
+
+Run #285 | ParaStart=2630413 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 203)
+  Excerpt: "2512 “It will happen, when seventy years are accomplished, that I will punish th"
+
+Run #286 | ParaStart=2658547 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 127)
+  Excerpt: "3131 “Behold, the days come,” says God, “that I will make a new covenant with th"
+
+Run #287 | ParaStart=2658901 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 6 of 230)
+  Excerpt: "3133 “But this is the covenant that I will make with the house of Israel after t"
+
+Run #288 | ParaStart=2659132 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 252)
+  Excerpt: "3134 They will no longer each teach his neighbor, and every man teach his brothe"
+
+Run #289 | ParaStart=2736541 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 79)
+  Excerpt: "5010 Chaldea will be a prey. All who prey on her will be satisfied,” says God."
+
+Run #290 | ParaStart=2840639 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 247)
+  Excerpt: "1820 The soul who sins, he shall die. The son shall not bear the iniquity of the"
+
+Run #291 | ParaStart=2875502 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 39 of 156)
+  Excerpt: "2515 “‘The Lord God says: “Because the Philistines have taken revenge, and have"
+
+Run #292 | ParaStart=2886030 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 258)
+  Excerpt: "2813 You were in Eden, the garden of God. Every precious stone adorned you: ruby"
+
+Run #293 | ParaStart=2886289 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 157)
+  Excerpt: "2814 You were the anointed cherub who covers. Then I set you up on the holy moun"
+
+Run #294 | ParaStart=2886447 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 112)
+  Excerpt: "2815 You were perfect in your ways from the day that you were created, until unr"
+
+Run #295 | ParaStart=2886560 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 101 of 237)
+  Excerpt: "2816 By the abundance of your commerce, your insides were filled with violence, "
+
+Run #296 | ParaStart=2886798 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 196)
+  Excerpt: "2817 Your heart became proud because of your beauty. You have corrupted your wi"
+
+Run #297 | ParaStart=2900140 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 150)
+  Excerpt: "327 When I extinguish you, I will cover the heavens and make its stars dark. I w"
+
+Run #298 | ParaStart=2906252 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 50 of 218)
+  Excerpt: "3311 Tell them, ‘“As I live,” says the Lord God, “I have no pleasure in the deat"
+
+Run #299 | ParaStart=2907590 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 101)
+  Excerpt: "3318 When the righteous turns from his righteousness, and commits iniquity, he w"
+
+Run #300 | ParaStart=2907692 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 108)
+  Excerpt: "3319 When the wicked turns from his wickedness, and does that which is lawful an"
+
+Run #301 | ParaStart=2913717 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 139)
+  Excerpt: "3423 I will set up one shepherd over them, and he will feed them, even my servan"
+
+Run #302 | ParaStart=2923323 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 26 of 136)
+  Excerpt: "371 God’s hand was on me, and he brought me out in God’s Spirit, and set me down"
+
+Run #303 | ParaStart=2935140 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 94)
+  Excerpt: "3922 So the house of Israel will know that I am the Lord their God, from that da"
+
+Run #304 | ParaStart=2936282 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 126)
+  Excerpt: "3929 I will not hide my face from them any more; for I have poured out my Spirit"
+
+Run #305 | ParaStart=2936642 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 167)
+  Excerpt: "402 In the visions of God he brought me into the land of Israel, and set me down"
+
+Run #306 | ParaStart=2990282 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 242)
+  Excerpt: "244 “In the days of those kings the God of heaven will set up a kingdom which wi"
+
+Run #307 | ParaStart=2991130 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 181)
+  Excerpt: "248 Then the king made Daniel great, and gave him many great gifts, and made him"
+
+Run #308 | ParaStart=3015769 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 61 of 213)
+  Excerpt: "79 “I watched until thrones were placed, and one who was the Ancient of Days sa"
+
+Run #309 | ParaStart=3016497 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 184)
+  Excerpt: "713 “I saw in the night visions, and behold, there came with the clouds of heave"
+
+Run #310 | ParaStart=3016682 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 239)
+  Excerpt: "714 Dominion was given him, and glory, and a kingdom, that all the peoples, nat"
+
+Run #311 | ParaStart=3018812 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 232)
+  Excerpt: "727 The kingdom and the dominion, and the greatness of the kingdoms under the wh"
+
+Run #312 | ParaStart=3028046 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 116 of 253)
+  Excerpt: "925 “Know therefore and discern that from the going out of the commandment to re"
+
+Run #313 | ParaStart=3053922 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 95)
+  Excerpt: "66 For I desire mercy, and not sacrifice; and the knowledge of God more than bur"
+
+Run #314 | ParaStart=3064440 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 169)
+  Excerpt: "119 I will not execute the fierceness of my anger. I will not return to destroy "
+
+Run #315 | ParaStart=3065430 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 149)
+  Excerpt: "124 Indeed, he struggled with the angel, and prevailed; he wept, and made supp"
+
+Run #316 | ParaStart=3077335 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 189)
+  Excerpt: "228 “It will happen afterward, that I will pour out my Spirit on all flesh; and "
+
+Run #317 | ParaStart=3078504 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 73 of 192)
+  Excerpt: "34 “Yes, and what are you to me, Tyre, and Sidon, and all the regions of Palesti"
+
+Run #318 | ParaStart=3080003 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 77)
+  Excerpt: "315 The sun and the moon are darkened, and the stars withdraw their shining."
+
+Run #319 | ParaStart=3086510 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 76 of 131)
+  Excerpt: "36 Does the trumpet alarm sound in a city, without the people being afraid? Does"
+
+Run #320 | ParaStart=3102638 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 141)
+  Excerpt: "915 I will plant them on their land, and they will no more be plucked up out of "
+
+Run #321 | ParaStart=3111542 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 149)
+  Excerpt: "310 God saw their works, that they turned from their evil way. God relented of t"
+
+Run #322 | ParaStart=3119966 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 195)
+  Excerpt: "41 But in the latter days, it will happen that the mountain of God’s temple will"
+
+Run #323 | ParaStart=3120162 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 245)
+  Excerpt: "42 Many nations will go and say, “Come! Let us go up to the mountain of God, and"
+
+Run #324 | ParaStart=3121098 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 172)
+  Excerpt: "47 and I will make that which was lame a remnant, and that which was cast far o"
+
+Run #325 | ParaStart=3122515 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 193)
+  Excerpt: "52 But you, Bethlehem Ephrathah, being small among the clans of Judah, out of y"
+
+Run #326 | ParaStart=3122515 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 22 of 193)
+  Excerpt: "52 But you, Bethlehem Ephrathah, being small among the clans of Judah, out of y"
+
+Run #327 | ParaStart=3151558 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 124)
+  Excerpt: "39 For then I will purify the lips of the peoples, that they may all call on God"
+
+Run #328 | ParaStart=3167405 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 22 of 118)
+  Excerpt: "411 Then I asked him, “What are these two olive trees on the right side of the l"
+
+Run #329 | ParaStart=3167756 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 18 of 94)
+  Excerpt: "414 Then he said, “These are the two anointed ones who stand by the Lord of the "
+
+Run #330 | ParaStart=3178241 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 209)
+  Excerpt: "99 Rejoice greatly, daughter of Zion! Shout, daughter of Jerusalem! Behold, your"
+
+Run #331 | ParaStart=3178451 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 115 of 237)
+  Excerpt: "910 I will cut off the chariot from Ephraim, and the horse from Jerusalem; and t"
+
+Run #332 | ParaStart=3191195 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 166)
+  Excerpt: "1417 It will be, that whoever of all the families of the earth does not go up to"
+
+Run #333 | ParaStart=3197945 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 233)
+  Excerpt: "31 “Behold, I send my messenger, and he will prepare the way before me; and the "
+
+Run #334 | ParaStart=3198179 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 143)
+  Excerpt: "32 “But who can endure the day of his coming? And who will stand when he appear"
+
+Run #335 | ParaStart=3198323 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 184)
+  Excerpt: "33 and he will sit as a refiner and purifier of silver, and he will purify the s"
+
+Run #336 | ParaStart=3199865 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 105)
+  Excerpt: "312 “All nations shall call you blessed, for you will be a delightful land,” say"
+
+Run #337 | ParaStart=3200850 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 242)
+  Excerpt: "41 “For, behold, the day comes, it burns as a furnace; and all the proud, and al"
+
+Run #338 | ParaStart=3201504 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 98)
+  Excerpt: "45 Behold, I will send you Elijah the prophet before the great and terrible day "
+
+Run #339 | ParaStart=3201603 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 156)
+  Excerpt: "46 He will turn the hearts of the fathers to the children, and the hearts of the"
+
+Run #340 | ParaStart=3208804 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 40 of 151)
+  Excerpt: "223 and came and lived in a city called Nazareth; that it might be fulfilled wh"
+
+Run #341 | ParaStart=3208804 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 141 of 151)
+  Excerpt: "223 and came and lived in a city called Nazareth; that it might be fulfilled wh"
+
+Run #342 | ParaStart=3209572 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 45 of 171)
+  Excerpt: "37 But when he saw many of the Pharisees and Sadducees coming for his baptism,"
+
+Run #343 | ParaStart=3209572 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 116 of 171)
+  Excerpt: "37 But when he saw many of the Pharisees and Sadducees coming for his baptism,"
+
+Run #344 | ParaStart=3209941 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 44 of 143)
+  Excerpt: "310 Even now the ax lies at the root of the trees. Therefore every tree that do"
+
+Run #345 | ParaStart=3209941 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at END of paragraph (offset 137 of 143)
+  Excerpt: "310 Even now the ax lies at the root of the trees. Therefore every tree that do"
+
+Run #346 | ParaStart=3210529 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 46 of 98)
+  Excerpt: "314 But John would have hindered him, saying, “I need to be baptized by you, and"
+
+Run #347 | ParaStart=3210946 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 45 of 100)
+  Excerpt: "317 Behold, a voice out of the heavens said, “This is my beloved Son, with whom "
+
+Run #348 | ParaStart=3211057 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 86)
+  Excerpt: "41 Then Jesus was led up by the Spirit into the wilderness to be tempted by the "
+
+Run #349 | ParaStart=3211144 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 76)
+  Excerpt: "42 When he had fasted forty days and forty nights, he was hungry afterward."
+
+Run #350 | ParaStart=3213455 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 67 of 169)
+  Excerpt: "423 Jesus went about in all Galilee, teaching in their synagogues, preaching the"
+
+Run #351 | ParaStart=3230803 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 68 of 121)
+  Excerpt: "834 Behold, all the city came out to meet Jesus. When they saw him, they begged "
+
+Run #352 | ParaStart=3231734 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 54 of 157)
+  Excerpt: "99 As Jesus passed by from there, he saw a man called Matthew sitting at the ta"
+
+Run #353 | ParaStart=3234837 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 87 of 190)
+  Excerpt: "935 Jesus went about all the cities and the villages, teaching in their synagogu"
+
+Run #354 | ParaStart=3240263 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 88)
+  Excerpt: "112 Now when John heard in the prison the works of Christ, he sent two of his di"
+
+Run #355 | ParaStart=3240352 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 76)
+  Excerpt: "113 and said to him, “Are you he who comes, or should we look for another?”"
+
+Run #356 | ParaStart=3245133 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 87)
+  Excerpt: "1214 But the Pharisees went out and conspired against him, how they might destro"
+
+Run #357 | ParaStart=3246092 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 9 of 131)
+  Excerpt: "1224 But when the Pharisees heard it, they said, “This man does not cast out dem"
+
+Run #358 | ParaStart=3256743 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 138)
+  Excerpt: "1357 They were offended by him. But Jesus said to them, “A prophet is not witho"
+
+Run #359 | ParaStart=3256882 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 69)
+  Excerpt: "1358 He did not do many mighty works there because of their unbelief."
+
+Run #360 | ParaStart=3257282 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 26 of 66)
+  Excerpt: "144 For John said to him, “It is not lawful for you to have her.”"
+
+Run #361 | ParaStart=3267389 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 200)
+  Excerpt: "1621 From that time, Jesus began to show his disciples that he must go to Jeru"
+
+Run #362 | ParaStart=3267389 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 62 of 200)
+  Excerpt: "1621 From that time, Jesus began to show his disciples that he must go to Jeru"
+
+Run #363 | ParaStart=3268808 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 65)
+  Excerpt: "173 Behold, Moses and Elijah appeared to them talking with him."
+
+Run #364 | ParaStart=3269961 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 78)
+  Excerpt: "1713 Then the disciples understood that he spoke to them of John the Baptist."
+
+Run #365 | ParaStart=3310774 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 151)
+  Excerpt: "263 Then the chief priests, the scribes, and the elders of the people were gathe"
+
+Run #366 | ParaStart=3311008 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 42 of 80)
+  Excerpt: "265 But they said, “Not during the feast, lest a riot occur among the people.”"
+
+Run #367 | ParaStart=3311157 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 34 of 131)
+  Excerpt: "267 a woman came to him having an alabaster jar of very expensive ointment, and"
+
+Run #368 | ParaStart=3312738 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 94)
+  Excerpt: "2622 They were exceedingly sorrowful, and each began to ask him, “It is not me,"
+
+Run #369 | ParaStart=3314347 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 49 of 128)
+  Excerpt: "2636 Then Jesus came with them to a place called Gethsemane, and said to his d"
+
+Run #370 | ParaStart=3319584 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 12 of 117)
+  Excerpt: "274 saying, “I have sinned, for I have betrayed innocent blood.” But they said,"
+
+Run #371 | ParaStart=3319702 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 109)
+  Excerpt: "275 He threw down the pieces of silver in the sanctuary and departed. Then he w"
+
+Run #372 | ParaStart=3321188 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 78 of 190)
+  Excerpt: "2719 While he was sitting on the judgment seat, his wife sent to him, saying, “H"
+
+Run #373 | ParaStart=3323012 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 49 of 98)
+  Excerpt: "2734 they gave him sour wine to drink mixed with gall. When he had tasted it, h"
+
+Run #374 | ParaStart=3324790 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 92)
+  Excerpt: "2752 The tombs were opened, and many bodies of the saints who had fallen asleep "
+
+Run #375 | ParaStart=3324883 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 112)
+  Excerpt: "2753 and coming out of the tombs after his resurrection, they entered into the "
+
+Run #376 | ParaStart=3328394 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 66)
+  Excerpt: "2817 When they saw him, they bowed down to him; but some doubted."
+
+Run #377 | ParaStart=3330642 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 34 of 87)
+  Excerpt: "111 A voice came out of the sky, “You are my beloved Son, in whom I am well ple"
+
+Run #378 | ParaStart=3331994 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 100 of 146)
+  Excerpt: "124 saying, “Ha! What do we have to do with you, Jesus, you Nazarene? Have you "
+
+Run #379 | ParaStart=3335111 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 51 of 88)
+  Excerpt: "27 “Why does this man speak blasphemies like that? Who can forgive sins but God "
+
+Run #380 | ParaStart=3347081 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 92)
+  Excerpt: "59 He asked him, “What is your name?” He said to him, “My name is Legion, for w"
+
+Run #381 | ParaStart=3356448 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 92 of 146)
+  Excerpt: "645 Immediately he made his disciples get into the boat, and go ahead to the oth"
+
+Run #382 | ParaStart=3360258 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 71)
+  Excerpt: "720 He said, “That which proceeds out of the man, that defiles the man."
+
+Run #383 | ParaStart=3365545 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 188)
+  Excerpt: "831 He began to teach them that the Son of Man must suffer many things, and be r"
+
+Run #384 | ParaStart=3369006 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 102)
+  Excerpt: "921 He asked his father, “How long has it been since this has come to him?” He s"
+
+Run #385 | ParaStart=3369006 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 75 of 102)
+  Excerpt: "921 He asked his father, “How long has it been since this has come to him?” He s"
+
+Run #386 | ParaStart=3374430 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 81)
+  Excerpt: "1018 Jesus said to him, “Why do you call me good? No one is good except one—God."
+
+Run #387 | ParaStart=3404988 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 14 of 153)
+  Excerpt: "1539 When the centurion, who stood by opposite him, saw that he cried out like "
+
+Run #388 | ParaStart=3407109 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 62 of 138)
+  Excerpt: "169 Now when he had risen early on the first day of the week, he appeared first "
+
+Run #389 | ParaStart=3407410 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 24 of 120)
+  Excerpt: "1612 After these things he was revealed in another form to two of them, as the"
+
+Run #390 | ParaStart=3407611 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 15 of 215)
+  Excerpt: "1614 Afterward he was revealed to the eleven themselves as they sat at the table"
+
+Run #391 | ParaStart=3408295 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 8 of 119)
+  Excerpt: "1619 So then the Lord, after he had spoken to them, was received up into heaven,"
+
+Run #392 | ParaStart=3410947 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 71)
+  Excerpt: "116 He will turn many of the children of Israel to the Lord their God."
+
+Run #393 | ParaStart=3411019 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 210)
+  Excerpt: "117 He will go before him in the spirit and power of Elijah, ‘to turn the heart"
+
+Run #394 | ParaStart=3411019 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 163 of 210)
+  Excerpt: "117 He will go before him in the spirit and power of Elijah, ‘to turn the heart"
+
+Run #395 | ParaStart=3411353 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 34 of 138)
+  Excerpt: "119 The angel answered him, “I am Gabriel, who stands in the presence of God. I"
+
+Run #396 | ParaStart=3412852 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 124)
+  Excerpt: "132 He will be great and will be called the Son of the Most High. The Lord God w"
+
+Run #397 | ParaStart=3412977 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 93)
+  Excerpt: "133 and he will reign over the house of Jacob forever. There will be no end to h"
+
+Run #398 | ParaStart=3413928 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 81 of 115)
+  Excerpt: "142 She called out with a loud voice and said, “Blessed are you among women, and"
+
+Run #399 | ParaStart=3414044 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 30 of 72)
+  Excerpt: "143 Why am I so favored, that the mother of my Lord should come to me?"
+
+Run #400 | ParaStart=3414117 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 104)
+  Excerpt: "144 For behold, when the voice of your greeting came into my ears, the baby lea"
+
+Run #401 | ParaStart=3416879 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 63 of 127)
+  Excerpt: "176 And you, child, will be called a prophet of the Most High; for you will go b"
+
+Run #402 | ParaStart=3417007 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 82)
+  Excerpt: "177 to give knowledge of salvation to his people by the remission of their sins"
+
+Run #403 | ParaStart=3417666 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 171)
+  Excerpt: "24 Joseph also went up from Galilee, out of the city of Nazareth, into Judea, to"
+
+Run #404 | ParaStart=3417998 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 93 of 148)
+  Excerpt: "27 She gave birth to her firstborn son. She wrapped him in bands of cloth, and l"
+
+Run #405 | ParaStart=3421859 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 123)
+  Excerpt: "240 The child was growing, and was becoming strong in spirit, being filled with "
+
+Run #406 | ParaStart=3423202 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 77)
+  Excerpt: "252 And Jesus increased in wisdom and stature, and in favor with God and men."
+
+Run #407 | ParaStart=3423766 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 112 of 171)
+  Excerpt: "34 As it is written in the book of the words of Isaiah the prophet, “The voice o"
+
+Run #408 | ParaStart=3423938 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 138)
+  Excerpt: "35 Every valley will be filled. Every mountain and hill will be brought low. The"
+
+Run #409 | ParaStart=3424077 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 41)
+  Excerpt: "36 All flesh will see God’s salvation.’”"
+
+Run #410 | ParaStart=3424119 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 93 of 148)
+  Excerpt: "37 He said therefore to the multitudes who went out to be baptized by him, “You "
+
+Run #411 | ParaStart=3424477 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at END of paragraph (offset 142 of 149)
+  Excerpt: "39 Even now the ax also lies at the root of the trees. Every tree therefore that"
+
+Run #412 | ParaStart=3425154 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 93 of 128)
+  Excerpt: "315 As the people were in expectation, and all men reasoned in their hearts conc"
+
+Run #413 | ParaStart=3425283 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 202)
+  Excerpt: "316 John answered them all, “I indeed baptize you with water, but he comes who i"
+
+Run #414 | ParaStart=3425486 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 178)
+  Excerpt: "317 whose fan is in his hand, and he will thoroughly cleanse his threshing floo"
+
+Run #415 | ParaStart=3425939 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 43 of 109)
+  Excerpt: "321 Now when all the people were baptized, Jesus also had been baptized, and was"
+
+Run #416 | ParaStart=3426049 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 163)
+  Excerpt: "322 and the Holy Spirit descended in a bodily form like a dove on him; and a voi"
+
+Run #417 | ParaStart=3427796 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 106)
+  Excerpt: "41 Jesus, full of the Holy Spirit, returned from the Jordan, and was led by the "
+
+Run #418 | ParaStart=3427903 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 129)
+  Excerpt: "42 for forty days, being tempted by the devil. He ate nothing in those days. Aft"
+
+Run #419 | ParaStart=3432892 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 131)
+  Excerpt: "443 But he said to them, “I must preach the good news of God’s Kingdom to the ot"
+
+Run #420 | ParaStart=3433024 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 51)
+  Excerpt: "444 He was preaching in the synagogues of Galilee."
+
+Run #421 | ParaStart=3435671 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 59 of 134)
+  Excerpt: "521 The scribes and the Pharisees began to reason, saying, “Who is this who spea"
+
+Run #422 | ParaStart=3439724 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 76)
+  Excerpt: "616 Judas the son of James; and Judas Iscariot, who also became a traitor."
+
+Run #423 | ParaStart=3446226 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 144)
+  Excerpt: "719 John, calling to himself two of his disciples, sent them to Jesus, saying, “"
+
+Run #424 | ParaStart=3446371 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 92 of 146)
+  Excerpt: "720 When the men had come to him, they said, “John the Baptist has sent us to yo"
+
+Run #425 | ParaStart=3457665 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 66)
+  Excerpt: "92 He sent them out to preach God’s Kingdom and to heal the sick."
+
+Run #426 | ParaStart=3458674 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 71 of 142)
+  Excerpt: "911 But the multitudes, perceiving it, followed him. He welcomed them, spoke to "
+
+Run #427 | ParaStart=3461066 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 69)
+  Excerpt: "930 Behold, two men were talking with him, who were Moses and Elijah,"
+
+Run #428 | ParaStart=3461136 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 102)
+  Excerpt: "931 who appeared in glory, and spoke of his departure, which he was about to acc"
+
+Run #429 | ParaStart=3464424 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 133)
+  Excerpt: "958 Jesus said to him, “The foxes have holes, and the birds of the sky have nest"
+
+Run #430 | ParaStart=3464657 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 107)
+  Excerpt: "960 But Jesus said to him, “Leave the dead to bury their own dead, but you go a"
+
+Run #431 | ParaStart=3503224 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 139)
+  Excerpt: "1722 He said to the disciples, “The days will come when you will desire to see o"
+
+Run #432 | ParaStart=3507081 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 81)
+  Excerpt: "1819 Jesus asked him, “Why do you call me good? No one is good, except one: God."
+
+Run #433 | ParaStart=3508736 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 134)
+  Excerpt: "1834 They understood none of these things. This saying was hidden from them, an"
+
+Run #434 | ParaStart=3513973 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 57)
+  Excerpt: "1941 When he came near, he saw the city and wept over it,"
+
+Run #435 | ParaStart=3514031 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 127)
+  Excerpt: "1942 saying, “If you, even you, had known today the things which belong to your "
+
+Run #436 | ParaStart=3524330 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 94)
+  Excerpt: "223 Satan entered into Judas, who was also called Iscariot, who was counted wit"
+
+Run #437 | ParaStart=3528582 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 116)
+  Excerpt: "2244 Being in agony he prayed more earnestly. His sweat became like great drops "
+
+Run #438 | ParaStart=3535031 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 49 of 149)
+  Excerpt: "2333 When they came to the place that is called “Calvary”, they crucified him t"
+
+Run #439 | ParaStart=3539134 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 52)
+  Excerpt: "2416 But their eyes were kept from recognizing him."
+
+Run #440 | ParaStart=3540822 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 53 of 90)
+  Excerpt: "2431 Their eyes were opened and they recognized him, then he vanished out of the"
+
+Run #441 | ParaStart=3541383 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 100)
+  Excerpt: "2436 As they said these things, Jesus himself stood among them, and said to them"
+
+Run #442 | ParaStart=3542857 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 28 of 83)
+  Excerpt: "2451 While he blessed them, he withdrew from them, and was carried up into heave"
+
+Run #443 | ParaStart=3544092 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 106)
+  Excerpt: "17 The same came as a witness, that he might testify about the light, that all m"
+
+Run #444 | ParaStart=3544346 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 98)
+  Excerpt: "110 He was in the world, and the world was made through him, and the world did n"
+
+Run #445 | ParaStart=3544877 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 52 of 146)
+  Excerpt: "115 John testified about him. He cried out, saying, “This was he of whom I said,"
+
+Run #446 | ParaStart=3545173 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 112)
+  Excerpt: "118 No one has seen God at any time. The one and only Son, who is in the bosom o"
+
+Run #447 | ParaStart=3545397 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 52 of 75)
+  Excerpt: "120 He declared, and did not deny, but he declared, “I am not the Christ.”"
+
+Run #448 | ParaStart=3545473 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 32 of 113)
+  Excerpt: "121 They asked him, “What then? Are you Elijah?” He said, “I am not.” “Are you "
+
+Run #449 | ParaStart=3546102 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 113)
+  Excerpt: "127 He is the one who comes after me, who is preferred before me, whose sandal "
+
+Run #450 | ParaStart=3546299 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 56 of 118)
+  Excerpt: "129 The next day, he saw Jesus coming to him, and said, “Behold, the Lamb of God"
+
+Run #451 | ParaStart=3546418 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 104)
+  Excerpt: "130 This is he of whom I said, ‘After me comes a man who is preferred before me,"
+
+Run #452 | ParaStart=3546523 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 110)
+  Excerpt: "131 I did not know him, but for this reason I came baptizing in water: that he "
+
+Run #453 | ParaStart=3546748 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 188)
+  Excerpt: "133 I did not recognize him, but he who sent me to baptize in water said to me, "
+
+Run #454 | ParaStart=3546937 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 66)
+  Excerpt: "134 I have seen, and have testified that this is the Son of God.”"
+
+Run #455 | ParaStart=3547074 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 51 of 78)
+  Excerpt: "136 and he looked at Jesus as he walked, and said, “Behold, the Lamb of God!”"
+
+Run #456 | ParaStart=3547153 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 64)
+  Excerpt: "137 The two disciples heard him speak, and they followed Jesus."
+
+Run #457 | ParaStart=3554986 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 43)
+  Excerpt: "330 He must increase, but I must decrease."
+
+Run #458 | ParaStart=3566731 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 112 of 122)
+  Excerpt: "61 After these things, Jesus went away to the other side of the sea of Galilee, "
+
+Run #459 | ParaStart=3568334 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 144)
+  Excerpt: "615 Jesus therefore, perceiving that they were about to come and take him by for"
+
+Run #460 | ParaStart=3574672 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 121)
+  Excerpt: "71 After these things, Jesus was walking in Galilee, for he would not walk in Ju"
+
+Run #461 | ParaStart=3574794 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 63)
+  Excerpt: "72 Now the feast of the Jews, the Feast of Booths, was at hand."
+
+Run #462 | ParaStart=3574858 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 133)
+  Excerpt: "73 His brothers therefore said to him, “Depart from here and go into Judea, that"
+
+Run #463 | ParaStart=3574992 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 127)
+  Excerpt: "74 For no one does anything in secret while he seeks to be known openly. If you "
+
+Run #464 | ParaStart=3575120 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 49)
+  Excerpt: "75 For even his brothers did not believe in him."
+
+Run #465 | ParaStart=3579629 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 65)
+  Excerpt: "748 Have any of the rulers believed in him, or of the Pharisees?"
+
+Run #466 | ParaStart=3583544 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 121)
+  Excerpt: "831 Jesus therefore said to those Jews who had believed him, “If you remain in "
+
+Run #467 | ParaStart=3595427 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 32 of 102)
+  Excerpt: "111 Now a certain man was sick, Lazarus from Bethany, of the village of Mary a"
+
+Run #468 | ParaStart=3597786 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 116)
+  Excerpt: "1125 Jesus said to her, “I am the resurrection and the life. He who believes in "
+
+Run #469 | ParaStart=3606580 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 167)
+  Excerpt: "1242 Nevertheless even many of the rulers believed in him, but because of the Ph"
+
+Run #470 | ParaStart=3607807 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 19 of 110)
+  Excerpt: "132 During supper, the devil having already put into the heart of Judas Iscariot"
+
+Run #471 | ParaStart=3609916 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 134)
+  Excerpt: "1321 When Jesus had said this, he was troubled in spirit, and testified, “Most "
+
+Run #472 | ParaStart=3630446 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 200)
+  Excerpt: "1836 Jesus answered, “My Kingdom is not of this world. If my Kingdom were of thi"
+
+Run #473 | ParaStart=3633301 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 44 of 93)
+  Excerpt: "1916 So then he delivered him to them to be crucified. So they took Jesus and "
+
+Run #474 | ParaStart=3638359 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 108)
+  Excerpt: "2014 When she had said this, she turned around and saw Jesus standing, and did "
+
+Run #475 | ParaStart=3638794 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 191)
+  Excerpt: "2017 Jesus said to her, “Do not hold me, for I have not yet ascended to my Fathe"
+
+Run #476 | ParaStart=3639104 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 79 of 237)
+  Excerpt: "2019 When therefore it was evening on that day, the first day of the week, and w"
+
+Run #477 | ParaStart=3640115 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 22 of 169)
+  Excerpt: "2026 After eight days again his disciples were inside and Thomas was with them. "
+
+Run #478 | ParaStart=3640285 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 158)
+  Excerpt: "2027 Then he said to Thomas, “Reach here your finger, and see my hands. Reach he"
+
+Run #479 | ParaStart=3641334 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 35 of 110)
+  Excerpt: "214 But when day had already come, Jesus stood on the beach, yet the disciples d"
+
+Run #480 | ParaStart=3642426 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 51 of 140)
+  Excerpt: "2112 Jesus said to them, “Come and eat breakfast!” None of the disciples dared i"
+
+Run #481 | ParaStart=3642648 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 107)
+  Excerpt: "2114 This is now the third time that Jesus was revealed to his disciples after "
+
+Run #482 | ParaStart=3645833 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 111)
+  Excerpt: "16 Therefore when they had come together, they asked him, “Lord, are you now res"
+
+Run #483 | ParaStart=3646242 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 34 of 118)
+  Excerpt: "19 When he had said these things, as they were looking, he was taken up, and a c"
+
+Run #484 | ParaStart=3646476 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 35 of 194)
+  Excerpt: "111 who said, “You men of Galilee, why do you stand looking into the sky? This J"
+
+Run #485 | ParaStart=3648483 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 50 of 114)
+  Excerpt: "125 to take part in this ministry and apostleship from which Judas fell away, t"
+
+Run #486 | ParaStart=3651158 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 95 of 144)
+  Excerpt: "223 him, being delivered up by the determined counsel and foreknowledge of God, "
+
+Run #487 | ParaStart=3675872 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 125)
+  Excerpt: "751 “You stiff-necked and uncircumcised in heart and ears, you always resist the"
+
+Run #488 | ParaStart=3675998 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 176)
+  Excerpt: "752 Which of the prophets did your fathers not persecute? They killed those who "
+
+Run #489 | ParaStart=3676175 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 76)
+  Excerpt: "753 You received the law as it was ordained by angels, and did not keep it!”"
+
+Run #490 | ParaStart=3678295 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 34 of 154)
+  Excerpt: "812 But when they believed Philip preaching the good news concerning God’s Kingd"
+
+Run #491 | ParaStart=3681964 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 55 of 169)
+  Excerpt: "92 and asked for letters from him to the synagogues of Damascus, that if he fou"
+
+Run #492 | ParaStart=3682497 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 89)
+  Excerpt: "97 The men who traveled with him stood speechless, hearing the sound, but seeing"
+
+Run #493 | ParaStart=3682788 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 64 of 144)
+  Excerpt: "910 Now there was a certain disciple at Damascus named Ananias. The Lord said to"
+
+Run #494 | ParaStart=3684973 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 84 of 213)
+  Excerpt: "927 But Barnabas took him and brought him to the apostles, and declared to them "
+
+Run #495 | ParaStart=3691202 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 25 of 88)
+  Excerpt: "1035 but in every nation he who fears him and works righteousness is acceptable "
+
+Run #496 | ParaStart=3691556 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 162 of 184)
+  Excerpt: "1038 even Jesus of Nazareth, how God anointed him with the Holy Spirit and with "
+
+Run #497 | ParaStart=3691881 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 66)
+  Excerpt: "1040 God raised him up the third day, and gave him to be revealed,"
+
+Run #498 | ParaStart=3703370 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 183)
+  Excerpt: "1327 For those who dwell in Jerusalem, and their rulers, because they did not kn"
+
+Run #499 | ParaStart=3724709 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 45 of 205)
+  Excerpt: "1731 because he has appointed a day in which he will judge the world in righteou"
+
+Run #500 | ParaStart=3725246 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 62 of 71)
+  Excerpt: "181 After these things Paul departed from Athens, and came to Corinth."
+
+Run #501 | ParaStart=3726327 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 102)
+  Excerpt: "189 The Lord said to Paul in the night by a vision, “Do not be afraid, but speak"
+
+Run #502 | ParaStart=3727565 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 16 of 120)
+  Excerpt: "1819 He came to Ephesus, and he left them there; but he himself entered into th"
+
+Run #503 | ParaStart=3745859 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 129)
+  Excerpt: "229 “Those who were with me indeed saw the light and were afraid, but they did n"
+
+Run #504 | ParaStart=3746839 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 74 of 95)
+  Excerpt: "2217 “When I had returned to Jerusalem, and while I prayed in the temple, I fell"
+
+Run #505 | ParaStart=3746935 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 137)
+  Excerpt: "2218 and saw him saying to me, ‘Hurry and get out of Jerusalem quickly, because"
+
+Run #506 | ParaStart=3746935 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 17 of 137)
+  Excerpt: "2218 and saw him saying to me, ‘Hurry and get out of Jerusalem quickly, because"
+
+Run #507 | ParaStart=3750267 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 159)
+  Excerpt: "2311 The following night, the Lord stood by him and said, “Cheer up, Paul, for "
+
+Run #508 | ParaStart=3763641 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 168 of 202)
+  Excerpt: "2620 but declared first to them of Damascus, at Jerusalem, and throughout all t"
+
+Run #509 | ParaStart=3775841 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 52 of 97)
+  Excerpt: "11 Paul, a servant of Jesus Christ, called to be an apostle, set apart for the "
+
+Run #510 | ParaStart=3777958 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 88)
+  Excerpt: "119 because that which is known of God is revealed in them, for God revealed it "
+
+Run #511 | ParaStart=3778047 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 210)
+  Excerpt: "120 For the invisible things of him since the creation of the world are clearly "
+
+Run #512 | ParaStart=3780655 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 66)
+  Excerpt: "26 who “will pay back to everyone according to what he has done:”"
+
+Run #513 | ParaStart=3780946 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 97 of 106)
+  Excerpt: "29 oppression, and anguish on every soul of man who does evil, to the Jew first,"
+
+Run #514 | ParaStart=3789547 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 61 of 119)
+  Excerpt: "424 but for our sake also, to whom it will be accounted, who believe in him who "
+
+Run #515 | ParaStart=3789667 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 68 of 83)
+  Excerpt: "425 who was delivered up for our trespasses, and was raised for our justificatio"
+
+Run #516 | ParaStart=3792034 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 131)
+  Excerpt: "519 For through one man’s disobedience many were made sinners, even so through t"
+
+Run #517 | ParaStart=3792667 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 70 of 185)
+  Excerpt: "64 We were buried therefore with him through baptism into death, that just as Ch"
+
+Run #518 | ParaStart=3797835 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 55)
+  Excerpt: "722 For I delight in God’s law after the inward person,"
+
+Run #519 | ParaStart=3797891 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 157)
+  Excerpt: "723 but I see a different law in my members, warring against the law of my mind,"
+
+Run #520 | ParaStart=3798049 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 80)
+  Excerpt: "724 What a wretched man I am! Who will deliver me out of the body of this death?"
+
+Run #521 | ParaStart=3798130 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 129)
+  Excerpt: "725 I thank God through Jesus Christ, our Lord! So then with the mind, I myself "
+
+Run #522 | ParaStart=3798963 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 85)
+  Excerpt: "86 For the mind of the flesh is death, but the mind of the Spirit is life and pe"
+
+Run #523 | ParaStart=3799491 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 78 of 203)
+  Excerpt: "811 But if the Spirit of him who raised up Jesus from the dead dwells in you, he"
+
+Run #524 | ParaStart=3799491 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 122 of 203)
+  Excerpt: "811 But if the Spirit of him who raised up Jesus from the dead dwells in you, he"
+
+Run #525 | ParaStart=3799980 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 139)
+  Excerpt: "815 For you did not receive the spirit of bondage again to fear, but you receiv"
+
+Run #526 | ParaStart=3800482 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 90)
+  Excerpt: "819 For the creation waits with eager expectation for the children of God to be"
+
+Run #527 | ParaStart=3800573 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 111)
+  Excerpt: "820 For the creation was subjected to vanity, not of its own will, but because o"
+
+Run #528 | ParaStart=3800685 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 134)
+  Excerpt: "821 that the creation itself also will be delivered from the bondage of decay i"
+
+Run #529 | ParaStart=3800820 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 21 of 88)
+  Excerpt: "822 For we know that the whole creation groans and travails in pain together unt"
+
+Run #530 | ParaStart=3800909 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 78 of 171)
+  Excerpt: "823 Not only so, but ourselves also, who have the first fruits of the Spirit, ev"
+
+Run #531 | ParaStart=3801714 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 139)
+  Excerpt: "829 For whom he foreknew, he also predestined to be conformed to the image of h"
+
+Run #532 | ParaStart=3801854 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 133)
+  Excerpt: "830 Whom he predestined, those he also called. Whom he called, those he also ju"
+
+Run #533 | ParaStart=3811184 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 123)
+  Excerpt: "1115 For if the rejection of them is the reconciling of the world, what would th"
+
+Run #534 | ParaStart=3811399 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 187)
+  Excerpt: "1117 But if some of the branches were broken off, and you, being a wild olive, w"
+
+Run #535 | ParaStart=3811976 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 109 of 179)
+  Excerpt: "1122 See then the goodness and severity of God. Toward those who fell, severity"
+
+Run #536 | ParaStart=3812276 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 230)
+  Excerpt: "1124 For if you were cut out of that which is by nature a wild olive tree, and w"
+
+Run #537 | ParaStart=3822063 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 48 of 101)
+  Excerpt: "156 that with one accord you may with one mouth glorify the God and Father of ou"
+
+Run #538 | ParaStart=3832869 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 9 of 125)
+  Excerpt: "28 which none of the rulers of this world has known. For had they known it, they"
+
+Run #539 | ParaStart=3833288 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 158)
+  Excerpt: "211 For who among men knows the things of a man, except the spirit of the man, w"
+
+Run #540 | ParaStart=3835759 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 86)
+  Excerpt: "316 Do you not know that you are a temple of God, and that God’s Spirit lives in"
+
+Run #541 | ParaStart=3835846 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 100)
+  Excerpt: "317 If anyone destroys God’s temple, God will destroy him; for God’s temple is h"
+
+Run #542 | ParaStart=3841160 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 96)
+  Excerpt: "63 Do you not know that we will judge angels? How much more, things that perta"
+
+Run #543 | ParaStart=3842430 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 100 of 188)
+  Excerpt: "613 “Foods for the belly, and the belly for foods,” but God will bring to nothin"
+
+Run #544 | ParaStart=3843165 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 7 of 130)
+  Excerpt: "619 Or do not you know that your body is a temple of the Holy Spirit who is in y"
+
+Run #545 | ParaStart=3843416 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 58 of 102)
+  Excerpt: "71 Now concerning the things about which you wrote to me: it is good for a man n"
+
+Run #546 | ParaStart=3849186 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 13 of 165)
+  Excerpt: "86 yet to us there is one God, the Father, of whom are all things, and we for hi"
+
+Run #547 | ParaStart=3853887 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 103 of 124)
+  Excerpt: "104 and all drank the same spiritual drink. For they drank of a spiritual rock t"
+
+Run #548 | ParaStart=3865379 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 48)
+  Excerpt: "139 For we know in part and we prophesy in part;"
+
+Run #549 | ParaStart=3865428 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 97)
+  Excerpt: "1310 but when that which is complete has come, then that which is partial will b"
+
+Run #550 | ParaStart=3865526 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 148)
+  Excerpt: "1311 When I was a child, I spoke as a child, I felt as a child, I thought as a c"
+
+Run #551 | ParaStart=3865675 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 143)
+  Excerpt: "1312 For now we see in a mirror, dimly, but then face to face. Now I know in par"
+
+Run #552 | ParaStart=3871561 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 85)
+  Excerpt: "158 and last of all, as to the child born at the wrong time, he appeared to me a"
+
+Run #553 | ParaStart=3871561 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 60 of 85)
+  Excerpt: "158 and last of all, as to the child born at the wrong time, he appeared to me a"
+
+Run #554 | ParaStart=3872675 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 67)
+  Excerpt: "1518 Then they also who are fallen asleep in Christ have perished."
+
+Run #555 | ParaStart=3872929 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 80)
+  Excerpt: "1521 For since death came by man, the resurrection of the dead also came by man."
+
+Run #556 | ParaStart=3873010 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 71)
+  Excerpt: "1522 For as in Adam all die, so also in Christ all will be made alive."
+
+Run #557 | ParaStart=3873641 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 162)
+  Excerpt: "1528 When all things have been subjected to him, then the Son will also himself "
+
+Run #558 | ParaStart=3875220 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 101)
+  Excerpt: "1542 So also is the resurrection of the dead. The body is sown perishable; it is"
+
+Run #559 | ParaStart=3875421 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 124)
+  Excerpt: "1544 It is sown a natural body; it is raised a spiritual body. There is a natura"
+
+Run #560 | ParaStart=3875546 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 118)
+  Excerpt: "1545 So also it is written, “The first man, Adam, became a living soul.” The la"
+
+Run #561 | ParaStart=3876099 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 36 of 134)
+  Excerpt: "1550 Now I say this, brothers, that flesh and blood cannot inherit God’s Kingdo"
+
+Run #562 | ParaStart=3876320 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 98 of 161)
+  Excerpt: "1552 in a moment, in the twinkling of an eye, at the last trumpet. For the trump"
+
+Run #563 | ParaStart=3881025 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 142)
+  Excerpt: "19 Yes, we ourselves have had the sentence of death within ourselves, that we s"
+
+Run #564 | ParaStart=3887628 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 11 of 181)
+  Excerpt: "44 in whom the god of this world has blinded the minds of the unbelieving, that"
+
+Run #565 | ParaStart=3889094 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 118)
+  Excerpt: "416 Therefore we do not faint, but though our outward person is decaying, yet ou"
+
+Run #566 | ParaStart=3889213 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 122)
+  Excerpt: "417 For our light affliction, which is for the moment, works for us more and mor"
+
+Run #567 | ParaStart=3889336 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 185)
+  Excerpt: "418 while we do not look at the things which are seen, but at the things which a"
+
+Run #568 | ParaStart=3890280 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 111)
+  Excerpt: "58 We are courageous, I say, and are willing rather to be absent from the body a"
+
+Run #569 | ParaStart=3891333 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 58 of 140)
+  Excerpt: "516 Therefore we know no one after the flesh from now on. Even though we have kn"
+
+Run #570 | ParaStart=3904227 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 53 of 140)
+  Excerpt: "112 For I am jealous over you with a godly jealousy. For I married you to one hu"
+
+Run #571 | ParaStart=3905811 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 24 of 70)
+  Excerpt: "1114 And no wonder, for even Satan masquerades as an angel of light."
+
+Run #572 | ParaStart=3905882 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 143)
+  Excerpt: "1115 It is no great thing therefore if his servants also masquerade as servants"
+
+Run #573 | ParaStart=3907802 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 107)
+  Excerpt: "1131 The God and Father of the Lord Jesus Christ, he who is blessed forever mor"
+
+Run #574 | ParaStart=3913489 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 51 of 127)
+  Excerpt: "11 Paul, an apostle—not from men, nor through man, but through Jesus Christ, and"
+
+Run #575 | ParaStart=3921399 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 145 of 195)
+  Excerpt: "319 Then why is there the law? It was added because of transgressions, until the"
+
+Run #576 | ParaStart=3921595 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 70)
+  Excerpt: "320 Now a mediator does not represent just one party, but God is one."
+
+Run #577 | ParaStart=3921845 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 55 of 134)
+  Excerpt: "322 But the Scripture imprisoned all things under sin, that the promise by faith"
+
+Run #578 | ParaStart=3923056 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 54 of 102)
+  Excerpt: "45 that he might redeem those who were under the law, that we might receive the "
+
+Run #579 | ParaStart=3927134 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 48 of 130)
+  Excerpt: "513 For you, brothers, were called for freedom. Only do not use your freedom for"
+
+Run #580 | ParaStart=3927265 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 102)
+  Excerpt: "514 For the whole law is fulfilled in one word, in this: “You shall love your ne"
+
+Run #581 | ParaStart=3927543 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 164)
+  Excerpt: "517 For the flesh lusts against the Spirit, and the Spirit against the flesh; an"
+
+Run #582 | ParaStart=3931732 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 131)
+  Excerpt: "15 having predestined us for adoption as children through Jesus Christ to himse"
+
+Run #583 | ParaStart=3933597 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 126)
+  Excerpt: "120 which he worked in Christ, when he raised him from the dead and made him to "
+
+Run #584 | ParaStart=3934048 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 63)
+  Excerpt: "21 As for you, you were dead in your transgressions and sins,"
+
+Run #585 | ParaStart=3934530 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 117)
+  Excerpt: "25 even when we were dead through our trespasses, made us alive together with C"
+
+Run #586 | ParaStart=3934648 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 97)
+  Excerpt: "26 and raised us up with him, and made us to sit with him in the heavenly places"
+
+Run #587 | ParaStart=3937456 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 69 of 158)
+  Excerpt: "39 and to make all men see what is the administration of the mystery which for a"
+
+Run #588 | ParaStart=3938030 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 75)
+  Excerpt: "314 For this cause, I bow my knees to the Father of our Lord Jesus Christ,"
+
+Run #589 | ParaStart=3939285 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 78)
+  Excerpt: "46 one God and Father of all, who is over all and through all, and in us all."
+
+Run #590 | ParaStart=3942390 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 17 of 142)
+  Excerpt: "52 Walk in love, even as Christ also loved us and gave himself up for us, an off"
+
+Run #591 | ParaStart=3945233 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 129)
+  Excerpt: "531 “For this cause a man will leave his father and mother, and will be joined t"
+
+Run #592 | ParaStart=3947430 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 42 of 93)
+  Excerpt: "617 And take the helmet of salvation, and the sword of the Spirit, which is the "
+
+Run #593 | ParaStart=3953118 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 94)
+  Excerpt: "29 Therefore God also highly exalted him, and gave to him the name which is abov"
+
+Run #594 | ParaStart=3953213 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 116)
+  Excerpt: "210 that at the name of Jesus every knee should bow, of those in heaven, those "
+
+Run #595 | ParaStart=3953330 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 100)
+  Excerpt: "211 and that every tongue should confess that Jesus Christ is Lord, to the glory"
+
+Run #596 | ParaStart=3953599 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 84)
+  Excerpt: "213 For it is God who works in you both to will and to work, for his good pleasu"
+
+Run #597 | ParaStart=3966382 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 150)
+  Excerpt: "212 having been buried with him in baptism, in which you were also raised with h"
+
+Run #598 | ParaStart=3967889 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 131)
+  Excerpt: "31 Since, then, you have been raised with Christ, seek the things that are above"
+
+Run #599 | ParaStart=3969664 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 79 of 125)
+  Excerpt: "317 Whatever you do, in word or in deed, do all in the name of the Lord Jesus, g"
+
+Run #600 | ParaStart=3973152 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 69 of 184)
+  Excerpt: "11 Paul, Silvanus, and Timothy, to the assembly of the Thessalonians in God the "
+
+Run #601 | ParaStart=3976370 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 129)
+  Excerpt: "215 who killed both the Lord Jesus and their own prophets, and drove us out, and"
+
+Run #602 | ParaStart=3978329 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 90)
+  Excerpt: "311 Now may our God and Father himself, and our Lord Jesus Christ, direct our wa"
+
+Run #603 | ParaStart=3980209 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 125)
+  Excerpt: "414 For if we believe that Jesus died and rose again, even so God will bring wit"
+
+Run #604 | ParaStart=3980504 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 156)
+  Excerpt: "416 For the Lord himself will descend from heaven with a shout, with the voice o"
+
+Run #605 | ParaStart=3980661 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 161)
+  Excerpt: "417 then we who are alive, who are left, will be caught up together with them in"
+
+Run #606 | ParaStart=3980661 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 95 of 161)
+  Excerpt: "417 then we who are alive, who are left, will be caught up together with them in"
+
+Run #607 | ParaStart=3980990 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 37 of 90)
+  Excerpt: "52 For you yourselves know well that the day of the Lord comes like a thief in t"
+
+Run #608 | ParaStart=3992833 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 79)
+  Excerpt: "24 who desires all people to be saved and come to full knowledge of the truth."
+
+Run #609 | ParaStart=3992913 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 85)
+  Excerpt: "25 For there is one God, and one mediator between God and men, the man Christ Je"
+
+Run #610 | ParaStart=3993731 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 41)
+  Excerpt: "213 For Adam was formed first, then Eve."
+
+Run #611 | ParaStart=3993773 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 75)
+  Excerpt: "214 Adam was not deceived, but the woman was deceived and became a sinner;"
+
+Run #612 | ParaStart=3995521 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 214)
+  Excerpt: "316 Without controversy, the mystery of godliness is great: God was revealed in"
+
+Run #613 | ParaStart=3996579 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 39 of 152)
+  Excerpt: "48 For bodily exercise has some value, but godliness has value in all things, ha"
+
+Run #614 | ParaStart=3996789 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 55 of 167)
+  Excerpt: "410 For to this end we both labor and suffer reproach, because we have set our t"
+
+Run #615 | ParaStart=3998118 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 70)
+  Excerpt: "56 But the widow who lives for pleasure is dead even while she lives."
+
+Run #616 | ParaStart=4002468 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 142)
+  Excerpt: "616 He alone has immortality, dwelling in unapproachable light, whom no man has"
+
+Run #617 | ParaStart=4002924 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 97 of 122)
+  Excerpt: "619 laying up in store for themselves a good foundation against the time to com"
+
+Run #618 | ParaStart=4004905 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 164)
+  Excerpt: "110 but has now been revealed by the appearing of our Savior, Christ Jesus, who"
+
+Run #619 | ParaStart=4006664 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 101)
+  Excerpt: "28 Remember Jesus Christ, risen from the dead, of the offspring of David, accord"
+
+Run #620 | ParaStart=4007011 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 33 of 86)
+  Excerpt: "211 This saying is trustworthy: “For if we died with him, we will also live with"
+
+Run #621 | ParaStart=4007706 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 127)
+  Excerpt: "218 men who have erred concerning the truth, saying that the resurrection is alr"
+
+Run #622 | ParaStart=4015553 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 131)
+  Excerpt: "116 They profess that they know God, but by their deeds they deny him, being abo"
+
+Run #623 | ParaStart=4022791 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 173)
+  Excerpt: "15 For to which of the angels did he say at any time, “You are my Son. Today I h"
+
+Run #624 | ParaStart=4023876 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 111)
+  Excerpt: "114 Are not they all serving spirits, sent out to do service for the sake of tho"
+
+Run #625 | ParaStart=4024814 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 146 of 202)
+  Excerpt: "28 You have put all things in subjection under his feet.” For in that he subject"
+
+Run #626 | ParaStart=4025017 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 204)
+  Excerpt: "29 But we see him who has been made a little lower than the angels, Jesus, becau"
+
+Run #627 | ParaStart=4025017 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 109 of 204)
+  Excerpt: "29 But we see him who has been made a little lower than the angels, Jesus, becau"
+
+Run #628 | ParaStart=4025222 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 117 of 183)
+  Excerpt: "210 For it became him, for whom are all things, and through whom are all things,"
+
+Run #629 | ParaStart=4026378 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 97)
+  Excerpt: "218 For in that he himself has suffered being tempted, he is able to help those "
+
+Run #630 | ParaStart=4026611 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 82)
+  Excerpt: "32 who was faithful to him who appointed him, as also Moses was in all his hous"
+
+Run #631 | ParaStart=4030384 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 96 of 169)
+  Excerpt: "415 For we do not have a high priest who cannot be touched with the feeling of o"
+
+Run #632 | ParaStart=4031424 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 197)
+  Excerpt: "57 He, in the days of his flesh, having offered up prayers and petitions with st"
+
+Run #633 | ParaStart=4031622 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 79)
+  Excerpt: "58 though he was a Son, yet learned obedience by the things which he suffered."
+
+Run #634 | ParaStart=4031702 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 102)
+  Excerpt: "59 Having been made perfect, he became to all of those who obey him the author o"
+
+Run #635 | ParaStart=4031805 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 68)
+  Excerpt: "510 designated by God a high priest after the order of Melchizedek."
+
+Run #636 | ParaStart=4035323 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 115)
+  Excerpt: "74 Now consider how great this man was, to whom even Abraham, the patriarch, ga"
+
+Run #637 | ParaStart=4039332 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 101)
+  Excerpt: "87 For if that first covenant had been faultless, then no place would have been"
+
+Run #638 | ParaStart=4039434 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 87 of 168)
+  Excerpt: "88 For finding fault with them, he said, “Behold, the days come”, says the Lord,"
+
+Run #639 | ParaStart=4043426 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 124)
+  Excerpt: "922 According to the law, nearly everything is cleansed with blood, and apart fr"
+
+Run #640 | ParaStart=4044211 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 79)
+  Excerpt: "927 Inasmuch as it is appointed for men to die once, and after this, judgment,"
+
+Run #641 | ParaStart=4049181 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 227)
+  Excerpt: "114 By faith, Abel offered to God a more excellent sacrifice than Cain, throug"
+
+Run #642 | ParaStart=4054050 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 100)
+  Excerpt: "1139 These all, having had testimony given to them through their faith, did not "
+
+Run #643 | ParaStart=4054151 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 113)
+  Excerpt: "1140 God having provided some better thing concerning us, so that apart from us "
+
+Run #644 | ParaStart=4054276 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 217)
+  Excerpt: "121 Therefore let us also, seeing we are surrounded by so great a cloud of witn"
+
+Run #645 | ParaStart=4058249 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 119)
+  Excerpt: "132 Do not forget to show hospitality to strangers, for in doing so, some have "
+
+Run #646 | ParaStart=4063117 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 127)
+  Excerpt: "113 Let no man say when he is tempted, “I am tempted by God,” for God cannot be "
+
+Run #647 | ParaStart=4064061 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 78)
+  Excerpt: "122 But be doers of the word, and not only hearers, deluding your own selves."
+
+Run #648 | ParaStart=4066630 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 75)
+  Excerpt: "217 Even so faith by itself, if it is not accompanied by action, is dead."
+
+Run #649 | ParaStart=4067555 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 91)
+  Excerpt: "226 For as the body apart from the spirit is dead, even so faith apart from work"
+
+Run #650 | ParaStart=4068255 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 184)
+  Excerpt: "36 And the tongue is a fire. The world of iniquity among our members is the ton"
+
+Run #651 | ParaStart=4068632 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 65 of 99)
+  Excerpt: "39 With it we bless our God and Father, and with it we curse men who are made in"
+
+Run #652 | ParaStart=4070536 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 122)
+  Excerpt: "48 Draw near to God, and he will draw near to you. Cleanse your hands, you sinne"
+
+Run #653 | ParaStart=4070751 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 71)
+  Excerpt: "410 Humble yourselves in the sight of the Lord, and he will exalt you."
+
+Run #654 | ParaStart=4073520 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 134)
+  Excerpt: "515 and the prayer of faith will heal him who is sick, and the Lord will raise h"
+
+Run #655 | ParaStart=4075150 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 193)
+  Excerpt: "13 Blessed be the God and Father of our Lord Jesus Christ, who according to his"
+
+Run #656 | ParaStart=4077092 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 26 of 169)
+  Excerpt: "117 If you call on him as Father, who without respect of persons judges accordin"
+
+Run #657 | ParaStart=4078387 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 85)
+  Excerpt: "22 as newborn babies, long for the pure milk of the Word, that with it you may g"
+
+Run #658 | ParaStart=4083495 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 115 of 178)
+  Excerpt: "318 Because Christ also suffered for sins once, the righteous for the unrighteou"
+
+Run #659 | ParaStart=4083674 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 63)
+  Excerpt: "319 in whom he also went and preached to the spirits in prison,"
+
+Run #660 | ParaStart=4090825 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 107)
+  Excerpt: "114 knowing that the putting off of my tent comes swiftly, even as our Lord Jesu"
+
+Run #661 | ParaStart=4092317 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 151)
+  Excerpt: "24 For if God did not spare angels when they sinned, but cast them down to hell,"
+
+Run #662 | ParaStart=4094205 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 35 of 123)
+  Excerpt: "217 These are wells without water, clouds driven by a storm; for whom the black"
+
+Run #663 | ParaStart=4095887 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 87)
+  Excerpt: "36 by which means the world that existed then, being overflowed with water, peri"
+
+Run #664 | ParaStart=4096277 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 99 of 169)
+  Excerpt: "39 The Lord is not slow concerning his promise, as some count slowness; but he i"
+
+Run #665 | ParaStart=4096447 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 72 of 236)
+  Excerpt: "310 But the day of the Lord will come as a thief in the night; in which the heav"
+
+Run #666 | ParaStart=4096816 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 75 of 169)
+  Excerpt: "312 looking for and earnestly desiring the coming of the day of God, which will "
+
+Run #667 | ParaStart=4096986 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 47 of 106)
+  Excerpt: "313 But, according to his promise, we look for new heavens and a new earth, in w"
+
+Run #668 | ParaStart=4099442 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 84)
+  Excerpt: "18 If we say that we have no sin, we deceive ourselves, and the truth is not in "
+
+Run #669 | ParaStart=4099652 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 85)
+  Excerpt: "110 If we say that we have not sinned, we make him a liar, and his word is not i"
+
+Run #670 | ParaStart=4101694 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 102 of 149)
+  Excerpt: "216 For all that is in the world, the lust of the flesh, the lust of the eyes, a"
+
+Run #671 | ParaStart=4102509 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 94 of 125)
+  Excerpt: "222 Who is the liar but he who denies that Jesus is the Christ? This is the Anti"
+
+Run #672 | ParaStart=4102635 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 99)
+  Excerpt: "223 Whoever denies the Son does not have the Father. He who confesses the Son ha"
+
+Run #673 | ParaStart=4102735 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 167 of 197)
+  Excerpt: "224 Therefore, as for you, let that remain in you which you heard from the begin"
+
+Run #674 | ParaStart=4103752 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 97 of 174)
+  Excerpt: "32 Beloved, now we are children of God. It is not yet revealed what we will be; "
+
+Run #675 | ParaStart=4103927 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 79)
+  Excerpt: "33 Everyone who has this hope set on him purifies himself, even as he is pure."
+
+Run #676 | ParaStart=4105131 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 137)
+  Excerpt: "314 We know that we have passed out of death into life, because we love the brot"
+
+Run #677 | ParaStart=4106556 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 39 of 117)
+  Excerpt: "42 By this you know the Spirit of God: every spirit who confesses that Jesus Chr"
+
+Run #678 | ParaStart=4107367 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 47 of 60)
+  Excerpt: "48 He who does not love does not know God, for God is love."
+
+Run #679 | ParaStart=4107755 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 119)
+  Excerpt: "412 No one has seen God at any time. If we love one another, God remains in us,"
+
+Run #680 | ParaStart=4107755 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 37 of 119)
+  Excerpt: "412 No one has seen God at any time. If we love one another, God remains in us,"
+
+Run #681 | ParaStart=4107875 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 95)
+  Excerpt: "413 By this we know that we remain in him and he in us, because he has given us "
+
+Run #682 | ParaStart=4108148 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 61 of 140)
+  Excerpt: "416 We know and have believed the love which God has for us. God is love, and he"
+
+Run #683 | ParaStart=4112214 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 44 of 139)
+  Excerpt: "13 Grace, mercy, and peace will be with us, from God the Father, and from the Lo"
+
+Run #684 | ParaStart=4112784 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 52 of 158)
+  Excerpt: "17 For many deceivers have gone out into the world, who do not acknowledge the c"
+
+Run #685 | ParaStart=4116925 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 244)
+  Excerpt: "14 For there are certain men who crept in secretly, even those who were long ago"
+
+Run #686 | ParaStart=4117341 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 172)
+  Excerpt: "16 The angels who did not keep their first domain, but deserted their own dwelli"
+
+Run #687 | ParaStart=4117514 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 233)
+  Excerpt: "17 Even as Sodom and Gomorrah and the cities around them, having in the same wa"
+
+Run #688 | ParaStart=4118360 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 122 of 235)
+  Excerpt: "112 These are hidden rocky reefs in your love feasts when they feast with you, s"
+
+Run #689 | ParaStart=4118360 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 177 of 235)
+  Excerpt: "112 These are hidden rocky reefs in your love feasts when they feast with you, s"
+
+Run #690 | ParaStart=4118596 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 66 of 135)
+  Excerpt: "113 wild waves of the sea, foaming out their own shame; wandering stars, for wh"
+
+Run #691 | ParaStart=4121525 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 168)
+  Excerpt: "17 Behold, he is coming with the clouds, and every eye will see him, including"
+
+Run #692 | ParaStart=4121525 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 42 of 168)
+  Excerpt: "17 Behold, he is coming with the clouds, and every eye will see him, including"
+
+Run #693 | ParaStart=4121525 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 71 of 168)
+  Excerpt: "17 Behold, he is coming with the clouds, and every eye will see him, including"
+
+Run #694 | ParaStart=4122727 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 42 of 146)
+  Excerpt: "116 He had seven stars in his right hand. Out of his mouth proceeded a sharp two"
+
+Run #695 | ParaStart=4132813 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 3 of 123)
+  Excerpt: "51 I saw, in the right hand of him who sat on the throne, a book written inside "
+
+Run #696 | ParaStart=4139475 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 106 of 172)
+  Excerpt: "714 I told him, “My lord, you know.” He said to me, “These are those who came ou"
+
+Run #697 | ParaStart=4141588 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 247)
+  Excerpt: "812 The fourth angel sounded, and one third of the sun was struck, and one third"
+
+Run #698 | ParaStart=4148799 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 78 of 191)
+  Excerpt: "1115 The seventh angel sounded, and great voices in heaven followed, saying, “Th"
+
+Run #699 | ParaStart=4149714 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 138)
+  Excerpt: "121 A great sign was seen in heaven: a woman clothed with the sun, and the moon "
+
+Run #700 | ParaStart=4150053 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 82 of 200)
+  Excerpt: "124 His tail drew one third of the stars of the sky, and threw them to the earth"
+
+Run #701 | ParaStart=4150254 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 146)
+  Excerpt: "125 She gave birth to a son, a male child, who is to rule all the nations with a"
+
+Run #702 | ParaStart=4150736 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 201)
+  Excerpt: "129 The great dragon was thrown down, the old serpent, he who is called the devi"
+
+Run #703 | ParaStart=4153363 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 59 of 177)
+  Excerpt: "138 All who dwell on the earth will worship him, everyone whose name has not be"
+
+Run #704 | ParaStart=4163835 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 146 of 313)
+  Excerpt: "178 The beast that you saw was, and is not; and is about to come up out of the a"
+
+Run #705 | ParaStart=4164898 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 21 of 123)
+  Excerpt: "1715 He said to me, “The waters which you saw, where the prostitute sits, are pe"
+
+Run #706 | ParaStart=4169453 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 100 of 160)
+  Excerpt: "191 After these things I heard something like a loud voice of a great multitude "
+
+Run #707 | ParaStart=4170351 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 78 of 154)
+  Excerpt: "197 Let us rejoice and be exceedingly glad, and let us give the glory to him. Fo"
+
+Run #708 | ParaStart=4170645 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 28 of 144)
+  Excerpt: "199 He said to me, “Write, ‘Blessed are those who are invited to the wedding sup"
+
+Run #709 | ParaStart=4171036 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 148)
+  Excerpt: "1911 I saw the heaven opened, and behold, a white horse, and he who sat on it is"
+
+Run #710 | ParaStart=4171185 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 143)
+  Excerpt: "1912 His eyes are a flame of fire, and on his head are many crowns. He has names"
+
+Run #711 | ParaStart=4171329 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 90)
+  Excerpt: "113 He is clothed in a garment sprinkled with blood. His name is called “The Wor"
+
+Run #712 | ParaStart=4171420 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 100)
+  Excerpt: "114 The armies which are in heaven followed him on white horses, clothed in whit"
+
+Run #713 | ParaStart=4171521 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 5 of 219)
+  Excerpt: "1915 Out of his mouth proceeds a sharp, double-edged sword, that with it he sho"
+
+Run #714 | ParaStart=4171741 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 95)
+  Excerpt: "116 He has on his garment and on his thigh a name written, “KING OF KINGS, AND "
+
+Run #715 | ParaStart=4171741 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 59 of 95)
+  Excerpt: "116 He has on his garment and on his thigh a name written, “KING OF KINGS, AND "
+
+Run #716 | ParaStart=4172912 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 14 of 149)
+  Excerpt: "202 He seized the dragon, the old serpent, which is the devil and Satan, who de"
+
+Run #717 | ParaStart=4174678 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 149 of 247)
+  Excerpt: "2012 I saw the dead, the great and the small, standing before the throne, and th"
+
+Run #718 | ParaStart=4174926 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 97 of 149)
+  Excerpt: "2013 The sea gave up the dead who were in it. Death and Hades gave up the dead w"
+
+Run #719 | ParaStart=4175280 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 124)
+  Excerpt: "211 I saw a new heaven and a new earth: for the first heaven and the first earth"
+
+Run #720 | ParaStart=4181390 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 36 of 166)
+  Excerpt: "218 I testify to everyone who hears the words of the prophecy of this scroll, if"
+
+Run #721 | ParaStart=4181557 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 4 of 182)
+  Excerpt: "219 If anyone takes away from the words of the scroll of this prophecy, may God "
+
+Run #722 | ParaStart=4181557 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 148 of 182)
+  Excerpt: "219 If anyone takes away from the words of the scroll of this prophecy, may God "
+
+Run #723 | ParaStart=4181740 | Style=BodyText | first-char-style=Chapter Verse marker | Phase2: CONVERT
+  EmphasisBlack at MID of paragraph (offset 64 of 93)
+  Excerpt: "2220 He who testifies these things says, “Yes, I come quickly.” Amen! Yes, come,"
+
+---- Summary ----
+Total EmphasisBlack character runs: 723
+  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): 723
+  KEEP-AS-other (paragraph not caught by Phase 2 rule): 0
+  Policy decision flags (BodyText paragraph not converted): 0
