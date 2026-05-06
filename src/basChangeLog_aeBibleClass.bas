@@ -11,29 +11,24 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #634 -
 ' #633 -
 ' #632 -
-' #631 -
-' #630 -
+' #631 - Test for Count of "Chapter Verse marker" did not catch missing marker [bug] - see #190, #191, #403,
+' #630 - Add styles for author end matter [impr]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
 ' #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
-' #626 - Function FindNotEmphasisBlackRed obsolete (see #623) [obso]
 ' #625 - aeBibleClass Test 44 obsolete, can be re-used (see #623) [obso]
 ' #622 - Add World English Bible Updates_ChangeLog.txt (view-source:https://worldenglish.bible/webupdates.php) and work through the changes [wip]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
-' #618 - Add So as search alias - works for Song and Solomon [impr]
-' #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]
 ' #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]
 ' #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
 '            It's the difference between: Stable, predictable, audit-safe formatting vs.
 '               Hidden inheritance, inconsistent rendering, and style-tree instability [feat]
-' #609 - Soft Hyphens checked to end of Genesis [wip]
+' #609 - Soft Hyphens checked to end of Exodus - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #601 - Build Word configuration module for consistent editing setup [feat][wip]
-' #484 - Store the Verse Map as a Byte Array [impr]
 ' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
 ' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test] [wip]
-' #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
 ' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
 ' #396 - Export - Psalms 110:7 He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
 ' #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
@@ -72,6 +67,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]
+    ' [obso] - #484 - Store the Verse Map as a Byte Array [impr] - Revisit if server demand warrants it
+    ' [obso] - #402 - Export shows "Acts of the Apostles", from Book header instead of H1. Create test "H1 text"="Book Header" [test][bug]
+    ' [obso] - #618 - Add So as search alias - works for Song and Solomon [impr]
+    ' [obso] - #626 - Function FindNotEmphasisBlackRed obsolete (see #623) [obso]
     ' FIXED - #624 - Change all aeBibleClass search for Calibri (now using Carlito so add global const) [bug]
     ' FIXED - #629 - Mark aeBibleClass Test 45, 46 obsolete in code [impr]
     ' FIXED - #623 - Update aeBibleClass with CountParagraphMarksWithDarkRedFormatting, expected 0 [impr]
