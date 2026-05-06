@@ -639,6 +639,101 @@ When all four are clean → resume Phase 1.9 (production replication).
 
 **Status:** Step 7 code applied. Awaiting Step 8 (run the four audits).
 
+#### Step 8 — character-style audits run (2026-05-05)
+
+User ran `AuditCharStyleUsage` for the four character styles. **First-pass result for Selah came back as 0 runs** — anomalous given the prior 76-run baseline and given that `Selection.Find.Style = ActiveDocument.Styles("Selah")` immediately afterward jumped to a Selah run. Recommended a re-run; second invocation returned the expected 76 with normal 0.95 sec timing.
+
+**Diagnosis (transient, not a code defect):** Find object state from the just-completed `RUN_THE_TESTS(43)` cleanup likely hadn't settled when the first `AuditCharStyleUsage "Selah"` was invoked. Subsequent audit calls reset state via the worker's `.ClearFormatting + .Style` sequence and worked correctly. The 0.03 sec timing on the failed run (vs the typical 0.88-0.95 sec for a 76-run scan) signaled `Find.Execute` returning False on the first call — a state issue, not a logic bug.
+
+**Final summary across all four styles:**
+
+| Style | Total runs | CONVERT | KEEP-as-other | Policy flags | Timing |
+|---|---|---|---|---|---|
+| `Selah` | 76 | 76 | 0 | 0 | 0.95 sec |
+| `EmphasisBlack` | 723 | 723 | 0 | 0 | 6.86 sec |
+| `EmphasisRed` | 246 | 246 | 0 | 0 | 2.25 sec |
+| `Words of Jesus` | 2384 | 2384 | 0 | 0 | 16.59 sec |
+| **Total** | **3,429** | **3,429** | **0** | **0** | — |
+
+**Phase 2 conversion rule needs no extension.** All four character styles' runs live inside verse paragraphs that the Phase 2 rule will convert. Paragraph-style reassignment preserves character-style runs by Word's design.
+
+#### Phase 2.0 — CLOSED 2026-05-05
+
+All seven preconditions identified during Phase 1.8 visual inspection are now resolved:
+
+| Concern | Resolution |
+|---|---|
+| Orphan BodyText paragraphs (verse continuations) | Refined audit identified 4 punctuation-orphan defects; user repaired via `GoToPos` + Backspace; re-run reports 0 |
+| `Selah` character runs distribution | 76 runs, all inside Phase-2-eligible verse paragraphs |
+| `EmphasisBlack` character runs distribution | 723 runs, all inside Phase-2-eligible verse paragraphs |
+| `EmphasisRed` character runs distribution | 246 runs, all inside Phase-2-eligible verse paragraphs |
+| `Words of Jesus` character runs distribution | 2,384 runs, all inside Phase-2-eligible verse paragraphs |
+| `EmphasisRed` paragraph-mark formatting (227 cases) | `RUN_THE_TESTS(43)` adapted to reset; verified 0 |
+| Phase 2 conversion-rule design | No changes needed; rule as drafted is correct |
+
+**Phase 1.9 unblocked.** Resume production replication next.
+
+#### Phase 1.9 — production replication confirmed (2026-05-05)
+
+User ran the verification sequence on production `.docm`. Results match test copy to the cent:
+
+| Metric | Test copy | Production |
+|---|---|---|
+| `AuditOrphanBodyTextParagraphs` confirmed orphans | 0 | 0 |
+| Chapter intros (excluded) | 343 | 343 |
+| Chapter-end content (excluded) | 175 | 175 |
+| `RUN_TAXONOMY_STYLES` | 24 PASS / 4 FAIL | 24 PASS / 4 FAIL |
+| `WordEditingConfig` style count | 45 | 45 |
+| `VerseText` priority | 31 | 31 |
+| Full priority cascade | as expected | as expected |
+
+Identical orphan counts (343/175) confirm test and production have been kept in lockstep through every cleanup (List Paragraph migration, Selah/EmphasisRed character work, orphan repairs, Phase 1 style addition). No drift between the two `.docm` files.
+
+`VerseText` confirmed at priority 31 in production's promoted style list. `WordEditingConfig` style count 44 → 45 as planned. Downstream priorities shifted +1 (Footnote Reference 32, Footnote Text 33, ..., Normal 49). Reserved gap shifted from 39-42 to 40-43.
+
+Character-style audits not re-run on production but expected identical given exact match on every other metric. Optional final-sanity step if user wants belt-and-suspenders confirmation; not blocking.
+
+**Phase 1 — COMPLETE on both test and production. Phase 2.1 (backup) is next.**
+
+#### Phase 2.1 — production backup confirmed (2026-05-05)
+
+User confirmed: `v68 Peter-USE REFINED English Bible CONTENTS_2026-05-05_pre-VerseText.docm` saved as the pre-conversion safety backup. Filename includes:
+- Version number (`v68`)
+- Project descriptor (`Peter-USE REFINED English Bible CONTENTS`)
+- Date stamp (`2026-05-05`)
+- Purpose suffix (`pre-VerseText`)
+
+Self-documenting; restorable in a single file copy if anything in Phase 2.3+ goes wrong.
+
+#### Phase 2.2 — `ConvertBodyTextVersesToVerseText` Sub APPLIED 2026-05-05
+
+##### Two source-code edits
+
+**`src/basAuthorStyles.bas`:** `StyleExists(doc, styleName)` promoted from `Private` to `Public`. Same pattern as the prior `SafeFileName` / `TabAlignName` / `TabLeaderName` promotions earlier in the arc. Allows `basFixDocxRoutines.bas` to reuse this canonical existence check rather than duplicating it.
+
+**`src/basFixDocxRoutines.bas`:** new `ConvertBodyTextVersesToVerseText` Sub added immediately after `DefineVerseTextStyle`.
+
+##### Sub design
+
+- **Pre-flight:** verify three required styles exist: `BodyText`, `VerseText`, `Chapter Verse marker`. Abort with `MsgBox` describing what's missing if any check fails. No partial state.
+- **Walk:** `For Each` over `ActiveDocument.Paragraphs` (main story only — same scope as the orphan and character-style audits).
+- **Conversion rule:** if `paragraph.Style.NameLocal = "BodyText"` AND the first character's style is `"Chapter Verse marker"`, reassign `paragraph.Style` to VerseText.
+- **Empty-paragraph guard:** if a BodyText paragraph has no characters (just the paragraph mark), increment `nKept` and skip the first-char check. Avoids errors on `.Characters(1)` for paragraphs with length 1.
+- **Counters:** `nScanned` (BodyText paragraphs walked), `nConverted` (matched the rule), `nKept` (BodyText not a verse).
+- **Performance:** `Application.ScreenUpdating` saved-and-restored. Walk completes once.
+- **Error safety:** `PROC_ERR` handler forces `ScreenUpdating = True` to avoid leaving the UI frozen on mid-run failure.
+- **Idempotent:** second run finds no `BodyText` + CVM-first-char paragraphs; reports `converted = 0`.
+
+##### Output
+
+```
+ConvertBodyTextVersesToVerseText: scanned=N converted=N1 kept=N2
+```
+
+Per the original 2026-04-26 plan: expected `converted ≈ 31,102` (matches the verse count baseline); `kept` should be small (front-matter + chapter-intro + chapter-end paragraphs).
+
+**Status:** Phase 2.2 code applied. Awaiting user-side action: re-import `basAuthorStyles.bas` and `basFixDocxRoutines.bas` into the test `.docm`, then run `ConvertBodyTextVersesToVerseText` per Phase 2.3.
+
 ### 3. `AuditOneStyle` — extend for character-style properties
 
 Currently `AuditOneStyle` only checks paragraph-style properties (font name/size, alignment, indent, line spacing, space before/after). Character styles like `Footnote Reference` are parked in bucket 2 (existence-verified) because the audit cannot meaningfully fully-specify them — Bold, Italic, Color are not in the check list.

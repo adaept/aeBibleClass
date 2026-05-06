@@ -1,4 +1,4 @@
----- AuditOrphanBodyTextParagraphs: 2026-05-05 19:18:23 ----
+---- AuditOrphanBodyTextParagraphs: 2026-05-05 23:40:04 ----
 
 Scope: BodyText paragraphs that sit BETWEEN two verse paragraphs in the
        same chapter and do not begin with a 'Chapter Verse marker' run.

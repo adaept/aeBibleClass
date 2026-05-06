@@ -365,7 +365,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Private Function StyleExists(ByVal doc As Document, ByVal StyleName As String) As Boolean
+Public Function StyleExists(ByVal doc As Document, ByVal StyleName As String) As Boolean
     Dim s As Word.Style
     On Error Resume Next
     Set s = doc.Styles(StyleName)

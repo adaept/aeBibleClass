@@ -176,6 +176,88 @@ PROC_ERR:
 End Sub
 
 '====================================================================
+' ConvertBodyTextVersesToVerseText
+' PURPOSE:
+'   Phase 2 of the VerseText rollout. Walks the main story and
+'   reassigns every paragraph that is a verse (BodyText style with
+'   "Chapter Verse marker" first-character run) to the VerseText
+'   paragraph style. Non-verse BodyText paragraphs (intros,
+'   chapter-end content, front matter, etc.) are left as BodyText.
+'
+' Pre-flight (all must pass before any reassignment):
+'   - Style "BodyText" exists.
+'   - Style "VerseText" exists (run DefineVerseTextStyle first).
+'   - Style "Chapter Verse marker" exists.
+'
+' Output: Debug.Print summary line with scanned / converted / kept.
+'
+' Idempotent: second run reports converted = 0.
+'
+' BACKUP THE .DOCM FIRST. The conversion is logically reversible
+' (inverse Sub could revert), but a file-level backup is the proper
+' safety net for ~31,000 paragraph reassignments.
+'
+' Usage:
+'   ConvertBodyTextVersesToVerseText
+'====================================================================
+Public Sub ConvertBodyTextVersesToVerseText()
+    On Error GoTo PROC_ERR
+
+    ' Pre-flight: required styles
+    If Not StyleExists(ActiveDocument, "BodyText") Then
+        MsgBox "BodyText style not found. Aborting.", _
+               vbExclamation, "ConvertBodyTextVersesToVerseText"
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, "VerseText") Then
+        MsgBox "VerseText style not found. Run DefineVerseTextStyle first.", _
+               vbExclamation, "ConvertBodyTextVersesToVerseText"
+        Exit Sub
+    End If
+    If Not StyleExists(ActiveDocument, "Chapter Verse marker") Then
+        MsgBox "Chapter Verse marker character style not found. Aborting.", _
+               vbExclamation, "ConvertBodyTextVersesToVerseText"
+        Exit Sub
+    End If
+
+    Dim screenWas As Boolean
+    screenWas = Application.ScreenUpdating
+    Application.ScreenUpdating = False
+
+    Dim oPara As Word.Paragraph
+    Dim nScanned As Long, nConverted As Long, nKept As Long
+
+    For Each oPara In ActiveDocument.Paragraphs
+        If oPara.style.NameLocal = "BodyText" Then
+            nScanned = nScanned + 1
+            ' Empty BodyText paragraphs cannot have a CVM first character.
+            If oPara.Range.End - oPara.Range.Start > 1 Then
+                If oPara.Range.Characters(1).style.NameLocal = "Chapter Verse marker" Then
+                    oPara.style = ActiveDocument.Styles("VerseText")
+                    nConverted = nConverted + 1
+                Else
+                    nKept = nKept + 1
+                End If
+            Else
+                nKept = nKept + 1
+            End If
+        End If
+    Next oPara
+
+    Application.ScreenUpdating = screenWas
+
+    Debug.Print "ConvertBodyTextVersesToVerseText: scanned=" & nScanned & _
+                " converted=" & nConverted & " kept=" & nKept
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Application.ScreenUpdating = True
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure ConvertBodyTextVersesToVerseText of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
+
+'====================================================================
 ' DefineBodyTextIndentStyle
 ' PURPOSE:
 '   Creates the BodyTextIndent style in the active document if it does
