@@ -25,7 +25,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '   4. CVM coverage      - per-chapter Chapter Verse marker Count equals
 '                          Verse marker Count (one CVM+VM per verse rule).
 '                          Catches verses missing a leading CVM run that
-'                          would otherwise pass the VM count check.
+'                          would otherwise pass the VM Count check.
 '
 ' Output: rpt\VerseStructureAudit.txt (when bWriteFile = True) plus
 ' Immediate-window summary.
@@ -231,14 +231,14 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
         End If
 
         ' Project rule: one Chapter Verse marker + one Verse marker per
-        ' verse. CVM count must equal VM count in every chapter.
+        ' verse. CVM Count must equal VM Count in every chapter.
         If foundCVMs = foundVerses Then
             cvmStatus = "OK"
         Else
             cvmStatus = "CVM-MISMATCH"
             bookIssues = bookIssues + 1
             bookIssueDetail = bookIssueDetail & "  " & bookName & " " & chIdx & _
-                              ": CVM count " & foundCVMs & " <> VM count " & _
+                              ": CVM Count " & foundCVMs & " <> VM Count " & _
                               foundVerses & " (one CVM+VM per verse rule)" & NL
         End If
 
@@ -295,7 +295,7 @@ End Function
 ' CountChapterVerseMarkers - Count Chapter-Verse-marker character-style
 ' runs in a range. Per project rule, one CVM appears at the start of every
 ' verse paragraph (immediately followed by one Verse marker), so this
-' count must equal CountVerseMarkers for the same range.
+' Count must equal CountVerseMarkers for the same range.
 ' --------------------------------------------------------------------------
 Private Function CountChapterVerseMarkers(ByVal oDoc As Object, _
                                            ByVal startPos As Long, _

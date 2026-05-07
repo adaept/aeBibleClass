@@ -433,6 +433,193 @@ AuditStyleTabs "ContentsRef", _
 FAIL across 43 checks**. Tab-stop coverage: 4 -> 5 styles. Item 12
 closed.
 
+### 13. Character styles must be based on `Default Paragraph Font` - rationale (2026-05-06)
+
+Recorded for future reference (raised during the QA-alignment round
+when character-style base-style decisions came up).
+
+**Rule:** every approved character style in this project should have
+`BaseStyle = "Default Paragraph Font"`. Not `Normal`, not another
+character style, not a paragraph style.
+
+**Why:**
+
+- A character style is meant to be an **overlay** on top of whatever
+  paragraph style is underneath. Properties the character style does
+  not explicitly set must fall through to the paragraph.
+- `Default Paragraph Font` is Word's synthetic "no-base" placeholder
+  for character styles. It imports **no** font name, size, color, or
+  other properties. Only the deltas the character style explicitly
+  sets apply.
+- If a character style is based on `Normal` (or any real paragraph
+  style), it imports that style's font name / size / color. The run
+  then renders with the imported font even when sitting inside a
+  paragraph styled `BodyText` / `VerseText` / `Footnote Text` /
+  intro / index. The overlay is broken; the run no longer adopts the
+  host paragraph's font.
+
+**Why this project specifically cares.** The approved character
+styles - `Chapter Verse marker`, `Verse marker`, `Footnote
+Reference`, `EmphasisBlack`, `EmphasisRed`, `Words of Jesus` - each
+appear inside multiple different paragraph styles. A `Verse marker`
+needs to render in the host paragraph's font (`Carlito` for
+`VerseText`, but potentially another font in front matter or
+appendices). That only works if the character style imports nothing
+from a base.
+
+**Word UI vs raw API note.** The Word UI displays the base as the
+named string `"Default Paragraph Font"`. The raw `Style.BaseStyle`
+property may report this as the literal string `"Default Paragraph
+Font"` (English locale) or as something equivalent in localized
+builds. This is the character-style analogue of the `BaseStyle = ""`
+rule for paragraph styles (item 10), but it is **not** the same
+sentinel - paragraph styles want empty string, character styles want
+the named placeholder.
+
+**Audit-coverage implication.** When `AuditOneStyle` is later
+extended to handle character styles (item 1), the BaseStyle check
+needs to accept either `"Default Paragraph Font"` or whatever the
+localized equivalent is. A simple `sExpBaseStyle = "Default
+Paragraph Font"` literal will work for English; a locale-tolerant
+form may be needed if the project ever ships in other languages.
+
+**Status:** documented; no code change. Action item lives under
+item 1 (extend `AuditOneStyle` for character-style properties).
+
+### 14. `Footnote Reference` is based on `Normal text` (BUG, 2026-05-06)
+
+Per item 13's rule, every approved character style in this project
+must be based on `Default Paragraph Font`. The current dump
+`rpt/Styles/style_Footnote_Reference.txt` shows:
+
+```
+'--- Footnote Reference  (Type=Character, Priority=31) ---
+.BaseStyle = "Normal text"
+.QuickStyle = True
+.Font.Name = "Carlito"
+.Font.Size = 9
+.Font.Bold = -1
+.Font.Italic = 0
+.Font.Color = 16711680
+```
+
+**Problem.** `Normal text` is not the synthetic no-base placeholder.
+It is either a custom style in this document or a renamed / localized
+real style. Either way, basing a character style on it breaks the
+overlay behavior described in item 13: the run will not transparently
+adopt the host paragraph's font - it will carry whatever font /
+size / color `Normal text` defines.
+
+**Visible symptoms** (likely already present somewhere in the doc but
+not yet caught):
+
+- A footnote-reference superscript inside a paragraph whose font is
+  not Carlito will still render in Carlito 9pt (red) instead of the
+  host paragraph's font scaled appropriately.
+- Any future paragraph-style font change (e.g. switching `BodyText`
+  off Carlito for an i18n target) will leave footnote references
+  visually mismatched.
+
+**Fix scope (doc-side, manual):**
+
+1. In Word, open the Styles pane. Locate `Footnote Reference`.
+2. Modify Style -> base on -> change `Normal text` to `Default
+   Paragraph Font`.
+3. Verify the explicit overrides survive the rebase: `Font.Bold = -1`
+   (true), `Font.Color = 16711680` (red, `0x00FF0000` -> RGB(0,0,255)
+   -- note Word stores BGR, so 16711680 = `&H00FF0000` is actually
+   blue; verify which color was intended), `Font.Size = 9`. If any of
+   these were inherited rather than explicitly set, they may need
+   to be re-set after the rebase.
+4. Re-dump `rpt/Styles/style_Footnote_Reference.txt` and confirm
+   `BaseStyle = "Default Paragraph Font"` plus the three explicit
+   overrides remain.
+
+**Audit implications.** Once fixed in the document and re-dumped,
+`Footnote Reference` becomes a candidate for promotion from bucket 2
+to bucket 1 - but that promotion is still blocked on item 1
+(`AuditOneStyle` must learn character-style properties: Bold, Italic,
+Color, character-flavored BaseStyle). When item 1 is implemented,
+`Footnote Reference`'s expected `sExpBaseStyle` is `"Default
+Paragraph Font"` (English-locale literal; locale-tolerant form may
+be needed later).
+
+**Color sanity-check note.** The dump value `Font.Color = 16711680`
+decodes as `&H00FF0000`. In Word's `WdColor` enum this is `wdColorBlue`
+(BGR: blue=FF, green=00, red=00). If footnote reference numbers are
+expected to render in red, this is a separate latent bug - the
+intended value would be `wdColorRed = 255` (`&H000000FF`). User to
+confirm intended color when applying the BaseStyle fix.
+
+**Status:** open; depends on user-side document edit. Re-dump after
+the change to drive items 1 and 14 forward together.
+
+**Update 2026-05-07 — DOC FIX VERIFIED.** Re-dump of
+`rpt/Styles/style_Footnote_Reference.txt` now shows
+`BaseStyle = "Default Paragraph Font"`. The bug is fixed in the
+document. Color remains `16711680` (`wdColorBlue`); see color
+sanity-check note above - still pending user confirmation of intended
+color. The audit cannot yet enforce the new BaseStyle on this
+character style; promotion to bucket 1 still gated on item 1
+(`AuditOneStyle` character-style extension).
+
+### 15. Round-4 BaseStyle = "" enforcement + `CenterSubText` bucket-1 promotion (2026-05-07)
+
+User dumped 14 styles after a further QA-alignment pass:
+`AuthorListItem`, `AuthorListItemBody`, `AuthorListItemTab`,
+`AuthorBookRefHeader`, `AuthorBookRef`, `CenterSubText`, `Heading 1`,
+`CustomParaAfterH1`, `Brief`, `DatAuthRef`, `Heading 2`,
+`Chapter Verse marker`, `Verse marker`, `Footnote Reference`.
+
+**Findings on each:**
+
+- **8 paragraph styles already in bucket 1** with all non-BaseStyle
+  specs matching the dump - just need `, ""` appended:
+  `AuthorListItem`, `AuthorListItemBody`, `AuthorListItemTab`,
+  `AuthorBookRefHeader`, `AuthorBookRef`, `Heading 1`, `DatAuthRef`,
+  `Heading 2`. All confirmed `BaseStyle = ""` in dumps.
+- **2 paragraph styles already had `, ""`** from item 10:
+  `CustomParaAfterH1`, `Brief`. No change needed; dumps confirm
+  unchanged.
+- **`CenterSubText`** - was in `approved` array (priority 23) but had
+  no `AuditOneStyle` entry. Promoted to bucket 1 with full descriptive
+  spec (Liberation Serif 12pt Center Single 12pt SpB/SpA = 12,
+  `BaseStyle = ""`).
+- **3 character styles** - all confirmed `BaseStyle = "Default
+  Paragraph Font"`: `Chapter Verse marker`, `Verse marker`,
+  `Footnote Reference`. Audit coverage still gated on item 1.
+
+**Edits applied to `src/basTEST_aeBibleConfig.bas`:**
+
+```
+AuditOneStyle "Heading 1"           ... add ", """
+AuditOneStyle "Heading 2"           ... add ", """
+AuditOneStyle "AuthorBookRefHeader" ... add ", """
+AuditOneStyle "AuthorBookRef"       ... add ", """
+AuditOneStyle "DatAuthRef"          ... add ", """
+AuditOneStyle "AuthorListItem"      ... add ", """
+AuditOneStyle "AuthorListItemBody"  ... add ", """
+AuditOneStyle "AuthorListItemTab"   ... add ", """
+AuditOneStyle "CenterSubText", "Liberation Serif", 12, 1, 0, 0, 12, 12, 12, 0, 0, ""   (NEW)
+```
+
+**Verification expected:** `RUN_TAXONOMY_STYLES` -> **40 PASS / 4
+FAIL across 44 checks**. Bucket 1: 24 -> 25 (CenterSubText added;
+the eight new BaseStyle = "" enforcements don't change the bucket
+count, only what each existing entry verifies).
+
+**Character-style colors noted (descriptive only, deferred for
+review):** `Chapter Verse marker` Color=`42495` (`wdColor` decoded =
+`&H0000A5FF`, BGR -> R=255 G=165 B=0 ≈ orange);
+`Verse marker` Color=`7915600` (`&H0078C390`, BGR -> R=144 G=195
+B=120 ≈ medium green); `Footnote Reference` Color=`16711680`
+(`&H00FF0000`, BGR -> R=0 G=0 B=255 = blue). When item 1 lands and
+character-style Color enters the audit, these are the descriptive
+baseline values - unless the project intends different colors, in
+which case a separate prescriptive decision per marker is warranted.
+
+**Item 15 closed pending audit re-run confirmation.**
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state

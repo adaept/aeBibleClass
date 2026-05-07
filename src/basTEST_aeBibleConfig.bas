@@ -282,13 +282,13 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
     AuditOneStyle "VerseText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
     AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
-    AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0
-    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 0, 12, 12, 8, -1, 0
+    AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0, ""
+    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 0, 12, 12, 8, -1, 0, ""
     AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0, ""
-    AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0
-    AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
+    AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0, ""
+    AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0, ""
     AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0, ""
-    AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0, -1, 0
+    AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0, -1, 0, ""
     AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 5, 13.9, 0, 8, -1, 0, ""
     AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 0, 0, 12, 10, 8, 0, 0, ""
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0, ""
@@ -309,9 +309,10 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BibleIndex", "Liberation Serif", 22, 1, 0, 0, 12, 0, 0, 0, 0, ""
     AuditOneStyle "Introduction", "Liberation Serif", 22, 1, 0, 0, 12, 0, 12, 0, 0, ""
     AuditOneStyle "TitleOnePage", "Times New Roman", 36, 1, 0, 0, 12, 144, 8, 0, 0, ""
-    AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1
-    AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
-    AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
+    AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1, ""
+    AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0, ""
+    AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0, ""
+    AuditOneStyle "CenterSubText", "Liberation Serif", 12, 1, 0, 0, 12, 12, 12, 0, 0, ""
 
     ' -- Existence verified; full spec pending -------------------------------------------------
     ' Footnote Reference (Character style) parked here until AuditOneStyle is
@@ -488,7 +489,7 @@ Private Sub AuditOneStyle(ByVal sName As String, _
     If sExpBaseStyle <> "<skip>" Then
         Dim sActualBase As String
         On Error Resume Next
-        sActualBase = oStyle.BaseStyle
+        sActualBase = oStyle.baseStyle
         On Error GoTo PROC_ERR
         If sActualBase <> sExpBaseStyle Then
             bPass = False

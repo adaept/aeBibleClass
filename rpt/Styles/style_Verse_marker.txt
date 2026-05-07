@@ -1,5 +1,5 @@
 '--- Verse marker  (Type=Character, Priority=30) ---
-.BaseStyle = ""
+.BaseStyle = "Default Paragraph Font"
 .QuickStyle = False
 .Font.Name = "Noto Sans"
 .Font.Size = 8
