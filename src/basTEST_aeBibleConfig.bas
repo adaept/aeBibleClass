@@ -44,7 +44,7 @@ Private Sub PromoteApprovedStyles()
                      "Footnote Reference", "Footnote Text", "Psalms BOOK", _
                      "PsalmSuperscription", "Selah", "PsalmAcrostic", _
                      "SpeakerLabel", _
-                     "BodyTextIndent", "BodyTextContinuation", _
+                     "BodyTextContinuation", _
                      "BookIntro", _
                      "AppendixTitle", "AppendixBody", _
                      "EmphasisBlack", "EmphasisRed", _
@@ -225,8 +225,8 @@ End Function
 '   Audits 24 styles via AuditOneStyle + 4 tab-stop specs via AuditStyleTabs;
 '   total 28 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
 '   Style audit buckets (24):
-'     16 fully specified (all properties verified) - BodyText, VerseText,
-'                            BodyTextIndent, Heading 1, Heading 2, ContentsRef,
+'     15 fully specified (all properties verified) - BodyText, VerseText,
+'                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
 '                            AuthorListItem, AuthorListItemBody, AuthorListItemTab
@@ -281,7 +281,6 @@ Public Sub RUN_TAXONOMY_STYLES()
     '                                                 0=skip -1=skip -999=skip                          -2=skip
     AuditOneStyle "BodyText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
     AuditOneStyle "VerseText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
-    AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
     AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0, ""
     AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 0, 12, 12, 8, -1, 0, ""
     AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0, ""

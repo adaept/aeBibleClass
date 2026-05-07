@@ -250,3 +250,56 @@ That file includes:
 
 Anything in this 2026-05-07 file should reference back to that arc
 for the *why*; this file holds only the **what is still open**.
+
+## BodyTextIndent removed; bucket-1 promotion candidates
+
+`BodyTextIndent` was deleted from the active document after a usage
+audit (see `ListBodyTextIndentUsage` in `basAuditDocument.bas`)
+returned zero paragraphs carrying the style. Taxonomy updated to
+match:
+
+- `basTEST_aeBibleConfig.bas` `PromoteApprovedStyles` array - removed
+  `"BodyTextIndent"`.
+- `basTEST_aeBibleConfig.bas` `RUN_TAXONOMY_STYLES` - removed the
+  `AuditOneStyle "BodyTextIndent" ...` line; bucket-1 header comment
+  updated from "16 fully specified" to "15 fully specified" and the
+  style name dropped from the inline bucket list.
+- `rpt/StyleTaxonomyAudit.txt` will regenerate on the next
+  `RUN_TAXONOMY_STYLES`; the stale `PASS BodyTextIndent` line
+  disappears at that point.
+
+Left untouched (tooling, no taxonomy effect):
+
+- `basFixDocxRoutines.DefineBodyTextIndentStyle` - still callable if
+  a future document needs the style re-created. Mark for deletion in
+  a follow-up if the decision is permanent.
+- `basVerseStructureAudit.bas` block-comment reference at line 824
+  (notes `BodyTextIndent` as a Phase-2 conversion candidate). The
+  comment is historical and stays as-is per the
+  "review docs are progressive history" rule applied to dated audit
+  notes.
+
+### Styles dumped this session (specs captured, bucket-1 promotion candidates)
+
+Properties for the following styles have been written via
+`DumpStyleProperties` (output under `rpt/Styles/`). They currently
+live in `PromoteApprovedStyles` (priority list) but not in
+`RUN_TAXONOMY_STYLES` bucket 1 (fully-specified). With specs now
+captured they are eligible for bucket-1 promotion in a follow-up
+pass:
+
+- Footnote Text *(already in bucket 1; re-dumped for confirmation)*
+- Psalms BOOK *(already in bucket 1; re-dumped for confirmation)*
+- PsalmSuperscription *(already in bucket 1; re-dumped for confirmation)*
+- Selah
+- PsalmAcrostic *(already in bucket 1; re-dumped for confirmation)*
+- SpeakerLabel
+- EmphasisBlack
+- EmphasisRed
+- Words of Jesus
+- AuthorSectionHead
+- AuthorQuote
+- AuthorBookSections
+
+Promotion is held until each `AuditOneStyle ...` line can be written
+against a known-good descriptive spec and verified PASS.
