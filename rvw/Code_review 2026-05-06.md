@@ -91,6 +91,15 @@ full inventory findings" (2026-04-29).
 decisions, each tracked as its own review item with rationale. Not a
 single batch.
 
+**Status update 2026-05-06:** partial QA-alignment pass applied to the
+document (user-side) on five styles — `Footnote Text`, `Psalms BOOK`,
+`Brief`, `CustomParaAfterH1`, `Heading 2`. Net effect on
+`LineSpacingRule`: `Heading 2` and `Psalms BOOK` moved from `Exactly`
+to `Single` (rule 0); `Brief` moved to `Multiple` (rule 5, 13.9pt);
+`CustomParaAfterH1` and `Footnote Text` retained `Exactly` for now.
+`BaseStyle = "Normal"` drift is **not** yet addressed. See item 9
+below for the taxonomy resync that followed.
+
 ### 3. Taxonomy audit — full-coverage final-state goal
 
 Documented in `EDSG/01-styles.md` callout. Current state at arc close:
@@ -269,6 +278,41 @@ through 2026-04-30. The 2026-05-01 → 2026-05-06 VerseText, orphan-audit,
 and char-style-audit edits should be recorded in a fresh manifest entry
 (or the existing one updated) as the import checklist for any fresh
 `.docm` re-sync.
+
+### 9. Taxonomy resync after QA-alignment partial pass — CLOSED 2026-05-06
+
+After the user adjusted five paragraph styles in the document toward
+QA guidelines (see item 2 status update), `RUN_TAXONOMY_STYLES` was
+re-run and produced three new FAILs (`Heading 2`, `Brief`,
+`Psalms BOOK`) because the audit's expected values still encoded the
+pre-change descriptive specs.
+
+**Inputs:** dumped style snapshots in `rpt/Styles/` —
+`style_Heading_2.txt`, `style_Brief.txt`, `style_Psalms_BOOK.txt`,
+`style_CustomParaAfterH1.txt`, `style_Footnote_Text.txt`. The latter
+two already matched the existing taxonomy and needed no edit.
+
+**Edits applied to `src/basTEST_aeBibleConfig.bas` (lines 282–298 region):**
+
+- `Heading 2` — `LineRule 4 -> 0` (Single), `LineSpacing 10 -> 12pt`.
+- `Brief` — `LineRule 4 -> 5` (Multiple), `LineSpacing 9.5 -> 13.9pt`,
+  `SpaceAfter 0 -> 8pt`.
+- `Psalms BOOK` — `Indent 14.4 -> 0`, `LineRule 4 -> 0` (Single),
+  `LineSpacing 10 -> 12pt`, `SpaceAfter 0 -> 8pt`.
+
+**Verification:** after re-import to the test `.docm`,
+`RUN_TAXONOMY_STYLES` reports **24 PASS / 4 FAIL across 28 checks**.
+The remaining four FAILs are the expected NOT-FOUND placeholders
+(`BookIntro`, `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody`). All five touched-by-QA styles now PASS.
+
+**Note on spec character:** these are still **descriptive** specs
+(captured to match document state). Per item 2, a future prescriptive
+pass would drive the remaining `LineSpacingRule = Exactly` values on
+`CustomParaAfterH1` and `Footnote Text` toward QA preferences, plus
+the `BaseStyle = "Normal"` drift.
+
+**Item 9 closed.**
 
 ## Pointer back to the closed arc
 

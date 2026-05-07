@@ -29,7 +29,14 @@ authority lives in:
 >
 > - **2026-04-29** — promoted 7 styles to bucket 1: `Heading 1`,
 >   `Heading 2`, `CustomParaAfterH1`, `DatAuthRef`, `Brief`,
->   `Psalms BOOK`, `Footnote Text`. Bucket 1 is 2 → 9.
+>   `Psalms BOOK`, `Footnote Text`. Bucket 1 is 2 -> 9.
+> - **2026-05-06** — taxonomy resync after a partial QA-alignment
+>   pass on five paragraph styles (`Heading 2`, `Brief`,
+>   `Psalms BOOK`, `CustomParaAfterH1`, `Footnote Text`). Three
+>   audit lines updated to match new descriptive specs
+>   (`Heading 2`, `Brief`, `Psalms BOOK`). `RUN_TAXONOMY_STYLES`
+>   now reports 24 PASS / 4 FAIL — all four FAILs are NOT-FOUND
+>   placeholders. See `rvw/Code_review 2026-05-06.md` § 9.
 > - `Lamentation` removed from the audit (style deleted).
 > - `Footnote Reference` added to the audit, parked in bucket 2
 >   pending an extension to `AuditOneStyle` to check

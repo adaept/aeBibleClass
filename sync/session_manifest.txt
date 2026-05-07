@@ -130,9 +130,29 @@
           corrections (Tab race -> idle-commit focus leak), and the
           full List Paragraph migration record (Phases 0-6).
 
+# ============================================================
+# Session 2026-05-06 — taxonomy resync after partial QA-alignment pass
+# ============================================================
+# (See rvw/Code_review 2026-05-06.md item 9 for full record.)
+
+[DONE]  src/basTEST_aeBibleConfig.bas
+        - Heading 2: LineRule 4 -> 0 (Single), LineSpacing 10 -> 12pt.
+        - Brief: LineRule 4 -> 5 (Multiple), LineSpacing 9.5 -> 13.9pt,
+          SpaceAfter 0 -> 8pt.
+        - Psalms BOOK: Indent 14.4 -> 0, LineRule 4 -> 0 (Single),
+          LineSpacing 10 -> 12pt, SpaceAfter 0 -> 8pt.
+        - Imported into test .docm; production .docm pending.
+
+# Note: 2026-05-01 .. 2026-05-06 src/ edits prior to this session
+# (VerseText migration, orphan repair, EmphasisRed cleanup,
+# AuditCharStyleUsage, AuditVerseMarkerStructure CVM extension)
+# are recorded in rvw/Code_review 2026-04-30.md and the 2026-05-06
+# review file but are NOT yet itemized as manifest entries above.
+# Open item 8 in rvw/Code_review 2026-05-06.md tracks this gap.
+
 # ------------------------------------------------------------
 # Final-state verification (both .docm files):
-#   RUN_TAXONOMY_STYLES   ->  16 PASS / 5 FAIL across 21 checks
+#   RUN_TAXONOMY_STYLES   ->  24 PASS / 4 FAIL across 28 checks (test .docm, 2026-05-06)
 #   AuditListStyleRisk    ->  0 flagged in section (A)
 #   AuditVerseMarkerStructure -> 31102 / 31102, 0 structural issues
 #
