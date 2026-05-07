@@ -287,11 +287,11 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
     AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0
     AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
-    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0
+    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0, ""
     AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0, -1, 0
-    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 5, 13.9, 0, 8, -1, 0
-    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 0, 0, 12, 10, 8, 0, 0
-    AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0
+    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 5, 13.9, 0, 8, -1, 0, ""
+    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 0, 0, 12, 10, 8, 0, 0, ""
+    AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0, ""
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1
     AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
     AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
@@ -366,7 +366,8 @@ Private Sub AuditOneStyle(ByVal sName As String, _
                           ByVal dExpSpaceBefore As Double, _
                           ByVal dExpSpaceAfter As Double, _
                           Optional ByVal vExpBold As Variant = -2, _
-                          Optional ByVal vExpItalic As Variant = -2)
+                          Optional ByVal vExpItalic As Variant = -2, _
+                          Optional ByVal sExpBaseStyle As String = "<skip>")
     On Error GoTo PROC_ERR
     Dim oStyle  As Word.Style
     Dim bPass   As Boolean
@@ -463,6 +464,18 @@ Private Sub AuditOneStyle(ByVal sName As String, _
             bPass = False
             sDetail = sDetail & "      Italic   : expected " & CLng(vExpItalic) & _
                       " got " & oStyle.Font.Italic & vbCrLf
+        End If
+    End If
+
+    If sExpBaseStyle <> "<skip>" Then
+        Dim sActualBase As String
+        On Error Resume Next
+        sActualBase = oStyle.BaseStyle
+        On Error GoTo PROC_ERR
+        If sActualBase <> sExpBaseStyle Then
+            bPass = False
+            sDetail = sDetail & "      BaseStyle: expected """ & sExpBaseStyle & _
+                      """ got """ & sActualBase & """" & vbCrLf
         End If
     End If
 

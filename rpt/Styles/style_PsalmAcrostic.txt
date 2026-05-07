@@ -1,5 +1,5 @@
 '--- PsalmAcrostic  (Type=Paragraph, Priority=36) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 9
@@ -9,7 +9,7 @@
 .Font.Color = -16777216
 .Font.SmallCaps = -1
 .Font.AllCaps = 0
-.NextParagraphStyle = "BodyText"
+.NextParagraphStyle = "VerseText"
 .AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
