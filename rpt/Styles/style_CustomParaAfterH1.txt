@@ -1,5 +1,5 @@
 '--- CustomParaAfterH1  (Type=Paragraph, Priority=25) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Noto Sans"
 .Font.Size = 10
@@ -9,8 +9,8 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "Normal"
-.AutomaticallyUpdate = True
+.NextParagraphStyle = "BodyText"
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0

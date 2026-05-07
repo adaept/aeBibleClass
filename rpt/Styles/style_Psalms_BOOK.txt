@@ -1,5 +1,5 @@
 '--- Psalms BOOK  (Type=Paragraph, Priority=33) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"
 .Font.Size = 9
@@ -14,11 +14,11 @@
 .ParagraphFormat.Alignment = 0
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
-.ParagraphFormat.FirstLineIndent = 14.4
+.ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 10
-.ParagraphFormat.SpaceAfter = 0
-.ParagraphFormat.LineSpacing = 10
-.ParagraphFormat.LineSpacingRule = 4
+.ParagraphFormat.SpaceAfter = 8
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0

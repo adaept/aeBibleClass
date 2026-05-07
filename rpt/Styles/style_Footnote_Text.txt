@@ -1,5 +1,5 @@
 '--- Footnote Text  (Type=Paragraph, Priority=32) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"
 .Font.Size = 7
@@ -9,8 +9,8 @@
 .Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
-.NextParagraphStyle = "Normal"
-.AutomaticallyUpdate = True
+.NextParagraphStyle = "Footnote Text"
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 3
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0

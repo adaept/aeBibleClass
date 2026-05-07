@@ -1,5 +1,5 @@
 '--- Brief  (Type=Paragraph, Priority=26) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Noto Sans"
 .Font.Size = 10
@@ -10,15 +10,15 @@
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
 .NextParagraphStyle = "Brief"
-.AutomaticallyUpdate = True
+.AutomaticallyUpdate = False
 .ParagraphFormat.Alignment = 1
 .ParagraphFormat.LeftIndent = 0
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 0
-.ParagraphFormat.LineSpacing = 9.5
-.ParagraphFormat.LineSpacingRule = 4
+.ParagraphFormat.SpaceAfter = 8
+.ParagraphFormat.LineSpacing = 13.9
+.ParagraphFormat.LineSpacingRule = 5
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0
