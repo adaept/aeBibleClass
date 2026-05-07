@@ -37,6 +37,14 @@ authority lives in:
 >   (`Heading 2`, `Brief`, `Psalms BOOK`). `RUN_TAXONOMY_STYLES`
 >   now reports 24 PASS / 4 FAIL — all four FAILs are NOT-FOUND
 >   placeholders. See `rvw/Code_review 2026-05-06.md` § 9.
+> - **2026-05-06** — first prescriptive-property pass:
+>   `AuditOneStyle` extended with optional `sExpBaseStyle`;
+>   `BaseStyle = ""` invariant enforced on `CustomParaAfterH1`,
+>   `Brief`, `Footnote Text`, `Psalms BOOK`. `PsalmAcrostic` and
+>   `PsalmSuperscription` promoted from bucket 2 to bucket 1 with
+>   full descriptive specs (also at `BaseStyle = ""`). Bucket 1 is
+>   9 -> 11; total checks 28 -> 30. `RUN_TAXONOMY_STYLES`:
+>   **26 PASS / 4 FAIL**. See `rvw/Code_review 2026-05-06.md` § 10.
 > - `Lamentation` removed from the audit (style deleted).
 > - `Footnote Reference` added to the audit, parked in bucket 2
 >   pending an extension to `AuditOneStyle` to check

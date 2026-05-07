@@ -97,8 +97,20 @@ document (user-side) on five styles — `Footnote Text`, `Psalms BOOK`,
 `LineSpacingRule`: `Heading 2` and `Psalms BOOK` moved from `Exactly`
 to `Single` (rule 0); `Brief` moved to `Multiple` (rule 5, 13.9pt);
 `CustomParaAfterH1` and `Footnote Text` retained `Exactly` for now.
-`BaseStyle = "Normal"` drift is **not** yet addressed. See item 9
-below for the taxonomy resync that followed.
+See item 9 below for the taxonomy resync that followed.
+
+**Status update 2026-05-06 (BaseStyle half — DONE for all six):** the
+six styles listed above (`CustomParaAfterH1`, `Brief`, `Footnote Text`,
+`Psalms BOOK`, `PsalmSuperscription`, `PsalmAcrostic`) are now all at
+`BaseStyle = ""` in the document, and the taxonomy enforces it via a
+new optional `sExpBaseStyle` parameter on `AuditOneStyle` (sentinel
+`"<skip>"`). `PsalmSuperscription` and `PsalmAcrostic` were also
+promoted from bucket 2 to bucket 1 with full descriptive specs. See
+item 10 below.
+
+**Still open (LineSpacingRule = Exactly half):** `CustomParaAfterH1`
+(`Exactly 10`) and `Footnote Text` (`Exactly 8`) remain at `Exactly`
+pending a future prescriptive decision per QA preference.
 
 ### 3. Taxonomy audit — full-coverage final-state goal
 
@@ -313,6 +325,52 @@ pass would drive the remaining `LineSpacingRule = Exactly` values on
 the `BaseStyle = "Normal"` drift.
 
 **Item 9 closed.**
+
+### 10. BaseStyle = "" prescriptive pass + Psalm bucket-1 promotions — CLOSED 2026-05-06
+
+First single-property prescriptive decision from item 2's list,
+applied as three steps:
+
+**Step 1 — `AuditOneStyle` extended.** New optional parameter
+`sExpBaseStyle As String = "<skip>"` and a corresponding check block
+modeled on the existing Bold/Italic pattern. All 17 prior callers
+default to skip, so the extension is a strict superset (zero
+behavior change at point of merge).
+
+**Step 2 — invariant turned on for the four already-bucket-1
+styles** that the QA list flagged: `CustomParaAfterH1`, `Brief`,
+`Psalms BOOK`, `Footnote Text`. Each call site appended `, ""`. Doc
+state already complied (verified via `rpt/Styles/` dumps), so
+`RUN_TAXONOMY_STYLES` stayed at 24 PASS / 4 FAIL.
+
+**Step 3 — `PsalmAcrostic` and `PsalmSuperscription` promoted from
+bucket 2 to bucket 1** with full descriptive specs from
+`rpt/Styles/`:
+
+- `PsalmAcrostic` — Carlito 9pt, Center, Single 12pt, SpB/SpA = 3,
+  `BaseStyle = ""`. (Dump also shows `SmallCaps = -1` and
+  `QuickStyle = False`; neither dimension is checked by
+  `AuditOneStyle` — same as for every other audited style.)
+- `PsalmSuperscription` — Carlito 8pt, Left, Multiple 13.9pt,
+  SpB/SpA = 2, Italic = -1, `BaseStyle = ""`. First dump for this
+  style still showed `BaseStyle = "Normal"`; user re-applied the QA
+  edit, re-dumped, and confirmed `""` before the audit line was
+  added.
+
+**Verification:** `RUN_TAXONOMY_STYLES` reports **26 PASS / 4 FAIL
+across 30 checks**. Four FAILs remain the expected NOT-FOUND
+placeholders (`BookIntro`, `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody`). Bucket 1 grew 9 -> 11.
+
+**Property-coverage gap noted:** `AuditOneStyle` still does not check
+`SmallCaps`, `QuickStyle`, `Underline`, `Color`, `RightIndent`,
+`LeftIndent`, `KeepWithNext`, `OutlineLevel`, `NextParagraphStyle`,
+`AutomaticallyUpdate`, `WidowControl`, `KeepTogether`,
+`PageBreakBefore`. Each is a candidate for a future
+"one-property-at-a-time" extension when the corresponding QA
+preference is decided.
+
+**Item 10 closed.**
 
 ## Pointer back to the closed arc
 

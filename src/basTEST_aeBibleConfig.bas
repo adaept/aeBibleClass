@@ -292,6 +292,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 5, 13.9, 0, 8, -1, 0, ""
     AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 0, 0, 12, 10, 8, 0, 0, ""
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0, ""
+    AuditOneStyle "PsalmAcrostic", "Carlito", 9, 1, 0, 0, 12, 3, 3, 0, 0, ""
+    AuditOneStyle "PsalmSuperscription", "Carlito", 8, 0, 0, 5, 13.9, 2, 2, 0, -1, ""
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1
     AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
     AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0

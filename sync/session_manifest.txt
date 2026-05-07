@@ -143,6 +143,23 @@
           LineSpacing 10 -> 12pt, SpaceAfter 0 -> 8pt.
         - Imported into test .docm; production .docm pending.
 
+# ============================================================
+# Session 2026-05-06 (later) — BaseStyle = "" prescriptive pass
+# ============================================================
+# (See rvw/Code_review 2026-05-06.md item 10 for full record.)
+
+[DONE]  src/basTEST_aeBibleConfig.bas
+        - AuditOneStyle: new optional sExpBaseStyle parameter (sentinel
+          "<skip>"); BaseStyle check block added before pass/fail tally.
+        - BaseStyle = "" invariant enabled on CustomParaAfterH1, Brief,
+          Footnote Text, Psalms BOOK (appended ", """ to each call site).
+        - PsalmAcrostic added to bucket 1 (Carlito 9pt Center Single 12pt
+          SpB/SpA=3 BaseStyle="").
+        - PsalmSuperscription added to bucket 1 (Carlito 8pt Left
+          Multiple 13.9pt SpB/SpA=2 Italic=-1 BaseStyle="").
+        - Final-state: RUN_TAXONOMY_STYLES -> 26 PASS / 4 FAIL across 30
+          checks.
+
 # Note: 2026-05-01 .. 2026-05-06 src/ edits prior to this session
 # (VerseText migration, orphan repair, EmphasisRed cleanup,
 # AuditCharStyleUsage, AuditVerseMarkerStructure CVM extension)
@@ -152,7 +169,7 @@
 
 # ------------------------------------------------------------
 # Final-state verification (both .docm files):
-#   RUN_TAXONOMY_STYLES   ->  24 PASS / 4 FAIL across 28 checks (test .docm, 2026-05-06)
+#   RUN_TAXONOMY_STYLES   ->  26 PASS / 4 FAIL across 30 checks (test .docm, 2026-05-06)
 #   AuditListStyleRisk    ->  0 flagged in section (A)
 #   AuditVerseMarkerStructure -> 31102 / 31102, 0 structural issues
 #

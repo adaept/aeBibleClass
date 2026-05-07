@@ -1,5 +1,5 @@
 '--- PsalmSuperscription  (Type=Paragraph, Priority=34) ---
-.BaseStyle = "Normal"
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"
 .Font.Size = 8
@@ -17,8 +17,8 @@
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 2
 .ParagraphFormat.SpaceAfter = 2
-.ParagraphFormat.LineSpacing = 12
-.ParagraphFormat.LineSpacingRule = 0
+.ParagraphFormat.LineSpacing = 13.9
+.ParagraphFormat.LineSpacingRule = 5
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0
