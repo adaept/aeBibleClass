@@ -283,14 +283,14 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "VerseText", "Carlito", 9, 3, 0, 4, 10, 0, 0, 0, 0
     AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
     AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0
-    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 4, 10, 12, 8, -1, 0
+    AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 0, 12, 12, 8, -1, 0
     AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
     AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0
     AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
     AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0
     AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0, -1, 0
-    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 4, 9.5, 0, 0, -1, 0
-    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 14.4, 4, 10, 10, 0, 0, 0
+    AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 5, 13.9, 0, 8, -1, 0
+    AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 0, 0, 12, 10, 8, 0, 0
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1
     AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
