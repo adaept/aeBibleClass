@@ -372,6 +372,63 @@ preference is decided.
 
 **Item 10 closed.**
 
+### 11. Front-matter & TOC styles bucket-1 promotion — CLOSED 2026-05-06
+
+User dumped 14 front-matter / TOC / index styles to `rpt/Styles/`
+after a QA-alignment pass: `FrontPageTopLine`, `TitleEyebrow`,
+`Title`, `TitleVersion`, `FrontPageBodyText`, `BodyTextTopLineCPBB`,
+`Acknowledgments`, `AuthorBodyText`, `Contents`, `ContentsRef`,
+`BibleIndexEyebrow`, `BibleIndex`, `Introduction`, `TitleOnePage`.
+All 14 dumps show `BaseStyle = ""`.
+
+**Edits applied to `src/basTEST_aeBibleConfig.bas`:**
+
+- 12 new bucket-1 entries added in a "Front matter & TOC styles
+  (priorities 4-17)" group below `PsalmSuperscription`. Each carries
+  full descriptive specs (Font / Size / Align / Indent / LineRule /
+  LineSp / SpB / SpA / Bold / Italic) plus `BaseStyle = ""`.
+- `Title` promoted from bucket 2 (existence-only placeholder) to
+  bucket 1 with full spec (Times New Roman 36pt, Center, Single 12pt,
+  SpB/SpA = 0, `BaseStyle = ""`). Bucket-2 placeholder removed.
+- `ContentsRef` (already in bucket 1) had `, ""` appended to enforce
+  `BaseStyle = ""`. All other properties already matched the dump.
+
+**Spec character notes:**
+
+- `BodyTextTopLineCPBB` dump shows `PageBreakBefore = -1` and
+  `WidowControl = 0` — neither dimension is checked by `AuditOneStyle`,
+  so these aren't enforced; descriptive only.
+- `ContentsRef` dump shows 1 explicit tab stop (`Position=378
+  Align=Right Leader=Dots`). Not yet covered by `AuditStyleTabs` -
+  candidate for a future tab-stop audit addition (see item 12 below).
+- `AuthorBodyText` has `FirstLineIndent = 23.75` (the only first-line
+  indent in the front-matter group) and `Alignment = 3` (Justify);
+  encoded as such.
+
+**Verification expected:** `RUN_TAXONOMY_STYLES` -> **38 PASS / 4 FAIL
+across 42 checks**. Bucket 1: 11 -> 24. Bucket 2: 5 -> 4 (Title
+removed). Four FAILs remain the expected NOT-FOUND placeholders
+(`BookIntro`, `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody`).
+
+**Item 11 closed pending audit re-run confirmation.**
+
+### 12. ContentsRef tab-stop coverage — OPEN
+
+`rpt/Styles/style_ContentsRef.txt` shows one explicit tab stop
+(`Position=378 Align=Right Leader=Dots`). The current
+`AuditStyleTabs` block in `RUN_TAXONOMY_STYLES` covers
+`AuthorListItem`, `AuthorListItemTab`, `AuthorBookRef`, and
+`AuthorBookRefHeader`, but not `ContentsRef`.
+
+**Scope:** add a single `AuditStyleTabs "ContentsRef", Array(378,
+wdAlignTabRight, wdTabLeaderDots)` line in the "Tab stops verified"
+block. One additional check; expected to PASS based on the dump.
+
+**Why deferred to its own item:** keep the front-matter promotion
+(item 11) as a clean diff. Tab-stop coverage is a separate property
+dimension and should be a discrete decision/edit.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state

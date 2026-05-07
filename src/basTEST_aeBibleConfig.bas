@@ -284,7 +284,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BodyTextIndent", "Carlito", 9, 3, 14.4, 4, 10, 0, 0, 0, 0
     AuditOneStyle "Heading 1", "Noto Sans", 24, 1, 0, 0, 12, 144, 0, -1, 0
     AuditOneStyle "Heading 2", "Noto Sans", 8, 1, 0, 0, 12, 12, 8, -1, 0
-    AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
+    AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0, ""
     AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0
     AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0
     AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0, ""
@@ -294,6 +294,21 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0, ""
     AuditOneStyle "PsalmAcrostic", "Carlito", 9, 1, 0, 0, 12, 3, 3, 0, 0, ""
     AuditOneStyle "PsalmSuperscription", "Carlito", 8, 0, 0, 5, 13.9, 2, 2, 0, -1, ""
+
+    ' Front matter & TOC styles (priorities 4-17) - promoted to bucket 1 on 2026-05-06
+    AuditOneStyle "FrontPageTopLine", "Liberation Serif", 16, 1, 0, 0, 12, 0, 0, 0, 0, ""
+    AuditOneStyle "TitleEyebrow", "Liberation Serif", 22, 1, 0, 0, 12, 30, 0, 0, 0, ""
+    AuditOneStyle "Title", "Times New Roman", 36, 1, 0, 0, 12, 0, 0, 0, 0, ""
+    AuditOneStyle "TitleVersion", "Liberation Serif", 22, 1, 0, 0, 12, 30, 30, 0, 0, ""
+    AuditOneStyle "FrontPageBodyText", "Liberation Serif", 11, 1, 0, 0, 12, 0, 11, 0, 0, ""
+    AuditOneStyle "BodyTextTopLineCPBB", "Carlito", 9, 1, 0, 0, 12, 0, 0, 0, 0, ""
+    AuditOneStyle "Acknowledgments", "Liberation Serif", 22, 1, 0, 0, 12, 144, 30, 0, 0, ""
+    AuditOneStyle "AuthorBodyText", "Liberation Serif", 12, 3, 23.75, 0, 12, 0, 12, 0, 0, ""
+    AuditOneStyle "Contents", "Liberation Serif", 22, 1, 0, 0, 12, 72, 72, 0, 0, ""
+    AuditOneStyle "BibleIndexEyebrow", "Liberation Serif", 14, 1, 0, 0, 12, 6, 0, 0, 0, ""
+    AuditOneStyle "BibleIndex", "Liberation Serif", 22, 1, 0, 0, 12, 0, 0, 0, 0, ""
+    AuditOneStyle "Introduction", "Liberation Serif", 22, 1, 0, 0, 12, 0, 12, 0, 0, ""
+    AuditOneStyle "TitleOnePage", "Times New Roman", 36, 1, 0, 0, 12, 144, 8, 0, 0, ""
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1
     AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
     AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0
@@ -306,7 +321,6 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Title", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Footnote Reference", "Carlito", 9, -1, -999, -1, -999, -999, -999
 
     ' -- Not yet created - expected FAIL until each Define* routine is run ----------------------

@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-05-06 21:13:01
+Date    : 2026-05-06 21:47:47
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -19,6 +19,19 @@ PASS  Psalms BOOK
 PASS  Footnote Text
 PASS  PsalmAcrostic
 PASS  PsalmSuperscription
+PASS  FrontPageTopLine
+PASS  TitleEyebrow
+PASS  Title
+PASS  TitleVersion
+PASS  FrontPageBodyText
+PASS  BodyTextTopLineCPBB
+PASS  Acknowledgments
+PASS  AuthorBodyText
+PASS  Contents
+PASS  BibleIndexEyebrow
+PASS  BibleIndex
+PASS  Introduction
+PASS  TitleOnePage
 PASS  AuthorListItem
 PASS  AuthorListItemBody
 PASS  AuthorListItemTab
@@ -28,7 +41,6 @@ FAIL  BookIntro
       NOT FOUND in document
 PASS  TheHeaders
 PASS  TheFooters
-PASS  Title
 PASS  Footnote Reference
 
 -- Not yet created (expected FAIL) --
@@ -46,5 +58,5 @@ PASS  AuthorBookRef (TabStops)
 PASS  AuthorBookRefHeader (TabStops)
 
 ========================================================================
-Summary: 26 PASS   4 FAIL
+Summary: 38 PASS   4 FAIL
 === End Style Taxonomy Audit ===

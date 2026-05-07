@@ -24,3 +24,5 @@
 .ParagraphFormat.KeepWithNext = 0
 .ParagraphFormat.PageBreakBefore = 0
 .ParagraphFormat.OutlineLevel = 10
+.ParagraphFormat.TabStops.Count = 1
+.ParagraphFormat.TabStops(1) = Position=378 Align=Right Leader=Dots
