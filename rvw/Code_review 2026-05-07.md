@@ -303,3 +303,26 @@ pass:
 
 Promotion is held until each `AuditOneStyle ...` line can be written
 against a known-good descriptive spec and verified PASS.
+
+### Post-edit RUN_TAXONOMY_STYLES result
+
+```
+RUN_TAXONOMY_STYLES: 39 PASS  4 FAIL  -> rpt\StyleTaxonomyAudit.txt
+```
+
+Breakdown (43 total checks):
+
+- Bucket 1 (fully specified): 31 PASS / 0 FAIL
+- Bucket 2 (existence verified): 3 PASS / 1 FAIL
+  - FAIL `BookIntro` - NOT FOUND in document (carried over).
+- Bucket 3 (not yet created): 0 PASS / 3 FAIL (expected -
+  `BodyTextContinuation`, `AppendixTitle`, `AppendixBody`).
+- Tab stops: 5 PASS / 0 FAIL.
+
+Delta from prior baseline `38 PASS / 4 FAIL across 42 checks`
+(commit `d513542`): -1 PASS from removing `BodyTextIndent`, then
++2 PASS / +1 check observed from intervening promotions not yet
+reflected in the bucket-1 header comment. Header comment in
+`basTEST_aeBibleConfig.bas` realigned to current reality
+(31 bucket-1 / 4 existence / 3 not-yet-created / 5 tab stops =
+43 checks).

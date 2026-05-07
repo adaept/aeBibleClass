@@ -222,21 +222,30 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 24 styles via AuditOneStyle + 4 tab-stop specs via AuditStyleTabs;
-'   total 28 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (24):
-'     15 fully specified (all properties verified) - BodyText, VerseText,
+'   Audits 38 styles via AuditOneStyle + 5 tab-stop specs via AuditStyleTabs;
+'   total 43 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (38):
+'     31 fully specified (all properties verified) - BodyText, VerseText,
 '                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
-'                            AuthorListItem, AuthorListItemBody, AuthorListItemTab
-'      5 existence-verified (full spec pending)
-'      3 not yet created (expected FAIL until each Define* routine runs)
-'   Tab-stop audits (4):
+'                            PsalmAcrostic, PsalmSuperscription,
+'                            FrontPageTopLine, TitleEyebrow, Title, TitleVersion,
+'                            FrontPageBodyText, BodyTextTopLineCPBB, Acknowledgments,
+'                            AuthorBodyText, Contents, BibleIndexEyebrow, BibleIndex,
+'                            Introduction, TitleOnePage,
+'                            AuthorListItem, AuthorListItemBody, AuthorListItemTab,
+'                            CenterSubText
+'      4 existence-verified (full spec pending) - BookIntro, TheHeaders,
+'                            TheFooters, Footnote Reference
+'      3 not yet created (expected FAIL until each Define* routine runs) -
+'                            BodyTextContinuation, AppendixTitle, AppendixBody
+'   Tab-stop audits (5):
 '      AuthorListItem      (1 stop at 36 pt, Left, Spaces)
 '      AuthorListItemTab   (2 stops at 144 / 252 pt, Left, Spaces)
 '      AuthorBookRef       (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
 '      AuthorBookRefHeader (1 stop at 381.6 pt, Right, Spaces)
+'      ContentsRef         (1 stop at 378 pt, Right, Dots)
 '   AuditOneStyle now also accepts optional Bold / Italic args (sentinel -2
 '   = skip); descriptive specs for those properties on bucket-1 entries.
 '   Specs encoded as descriptive (capture current document state); see
