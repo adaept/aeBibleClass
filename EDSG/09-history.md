@@ -18,7 +18,8 @@ needs justification, the rvw/ files are where the rationale lives.
 
 | File | Span | Topics |
 |---|---|---|
-| [`rvw/Code_review 2026-05-06.md`](../rvw/Code_review%202026-05-06.md) | 2026-05-06 → | Active carry-forward arc; CVM audit fix (item 7), QA-alignment partial pass + taxonomy resync (item 9), open items 1-6 + 8 |
+| [`rvw/Code_review 2026-05-07.md`](../rvw/Code_review%202026-05-07.md) | 2026-05-07 → | Active carry-forward arc; open items only |
+| [`rvw/Code_review 2026-05-06.md`](../rvw/Code_review%202026-05-06.md) | 2026-05-06 → 2026-05-07 | AuditVerseMarkerStructure CVM extension; four taxonomy QA-alignment rounds (BaseStyle = "" + bucket-1 promotions); ContentsRef tab-stop; Footnote Reference base-style rebase; character-style basing rule documented |
 | [`rvw/Code_review 2026-04-30.md`](../rvw/Code_review%202026-04-30.md) | 2026-04-30 → 2026-05-06 | VerseText migration closure; Solomon -> Song of Songs sweep; orphan repair; EmphasisRed cleanup; AuditCharStyleUsage parameterization |
 | [`rvw/Code_review 2026-04-25.md`](../rvw/Code_review%202026-04-25.md) | 2026-04-25 → 2026-04-30 | List Paragraph migration (Phases 0-6); WEB versification; spec promotions; Finding 5 ribbon focus; tab-stop infrastructure |
 | [`rvw/Code_review 2026-04-21.md`](../rvw/Code_review%202026-04-21.md) | 2026-04-21 → 2026-04-24 | Style inspector module; QA workflow; orphan cleanup; WRIST principle; SUPER_TEST_RUNS proposal |
