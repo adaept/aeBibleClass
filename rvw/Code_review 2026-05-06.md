@@ -411,23 +411,27 @@ removed). Four FAILs remain the expected NOT-FOUND placeholders
 (`BookIntro`, `BodyTextContinuation`, `AppendixTitle`,
 `AppendixBody`).
 
-**Item 11 closed pending audit re-run confirmation.**
+**Verified 2026-05-06:** `RUN_TAXONOMY_STYLES` reports **38 PASS / 4
+FAIL across 42 checks** after re-import. Item 11 closed.
 
-### 12. ContentsRef tab-stop coverage — OPEN
+### 12. ContentsRef tab-stop coverage — CLOSED 2026-05-06
 
 `rpt/Styles/style_ContentsRef.txt` shows one explicit tab stop
-(`Position=378 Align=Right Leader=Dots`). The current
-`AuditStyleTabs` block in `RUN_TAXONOMY_STYLES` covers
-`AuthorListItem`, `AuthorListItemTab`, `AuthorBookRef`, and
-`AuthorBookRefHeader`, but not `ContentsRef`.
+(`Position=378 Align=Right Leader=Dots`). The `AuditStyleTabs` block
+covered `AuthorListItem`, `AuthorListItemTab`, `AuthorBookRef`, and
+`AuthorBookRefHeader` but not `ContentsRef`.
 
-**Scope:** add a single `AuditStyleTabs "ContentsRef", Array(378,
-wdAlignTabRight, wdTabLeaderDots)` line in the "Tab stops verified"
-block. One additional check; expected to PASS based on the dump.
+**Edit applied** to `src/basTEST_aeBibleConfig.bas` (Tab stops
+verified section):
 
-**Why deferred to its own item:** keep the front-matter promotion
-(item 11) as a clean diff. Tab-stop coverage is a separate property
-dimension and should be a discrete decision/edit.
+```vba
+AuditStyleTabs "ContentsRef", _
+    Array(378, wdAlignTabRight, wdTabLeaderDots)
+```
+
+**Verified 2026-05-06:** `RUN_TAXONOMY_STYLES` reports **39 PASS / 4
+FAIL across 43 checks**. Tab-stop coverage: 4 -> 5 styles. Item 12
+closed.
 
 ## Pointer back to the closed arc
 

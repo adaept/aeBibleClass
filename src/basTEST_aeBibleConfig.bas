@@ -343,6 +343,8 @@ Public Sub RUN_TAXONOMY_STYLES()
         Array(378, wdAlignTabRight, wdTabLeaderDots)
     AuditStyleTabs "AuthorBookRefHeader", _
         Array(381.6, wdAlignTabRight, wdTabLeaderSpaces)
+    AuditStyleTabs "ContentsRef", _
+        Array(378, wdAlignTabRight, wdTabLeaderDots)
 
     Print #m_TaxFile, ""
     Print #m_TaxFile, String(72, "=")

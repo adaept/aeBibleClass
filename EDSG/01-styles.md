@@ -45,6 +45,16 @@ authority lives in:
 >   full descriptive specs (also at `BaseStyle = ""`). Bucket 1 is
 >   9 -> 11; total checks 28 -> 30. `RUN_TAXONOMY_STYLES`:
 >   **26 PASS / 4 FAIL**. See `rvw/Code_review 2026-05-06.md` § 10.
+> - **2026-05-06** — front-matter & TOC bucket-1 promotion:
+>   12 new bucket-1 entries (`FrontPageTopLine`, `TitleEyebrow`,
+>   `TitleVersion`, `FrontPageBodyText`, `BodyTextTopLineCPBB`,
+>   `Acknowledgments`, `AuthorBodyText`, `Contents`,
+>   `BibleIndexEyebrow`, `BibleIndex`, `Introduction`,
+>   `TitleOnePage`); `Title` promoted from bucket 2; `ContentsRef`
+>   gained `BaseStyle = ""`; `ContentsRef` tab stop added to the
+>   tab-stops block. Bucket 1: 11 -> 24. Tab-stop coverage:
+>   4 -> 5 styles. `RUN_TAXONOMY_STYLES`: **39 PASS / 4 FAIL across
+>   43 checks**. See `rvw/Code_review 2026-05-06.md` §§ 11-12.
 > - `Lamentation` removed from the audit (style deleted).
 > - `Footnote Reference` added to the audit, parked in bucket 2
 >   pending an extension to `AuditOneStyle` to check

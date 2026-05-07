@@ -160,6 +160,26 @@
         - Final-state: RUN_TAXONOMY_STYLES -> 26 PASS / 4 FAIL across 30
           checks.
 
+# ============================================================
+# Session 2026-05-06 (later still) - front-matter & TOC bucket-1 promotion
+# ============================================================
+# (See rvw/Code_review 2026-05-06.md items 11-12 for full record.)
+
+[DONE]  src/basTEST_aeBibleConfig.bas
+        - 12 new bucket-1 AuditOneStyle entries for front-matter / TOC /
+          index styles (priorities 4-17): FrontPageTopLine, TitleEyebrow,
+          TitleVersion, FrontPageBodyText, BodyTextTopLineCPBB,
+          Acknowledgments, AuthorBodyText, Contents, BibleIndexEyebrow,
+          BibleIndex, Introduction, TitleOnePage. All carry BaseStyle = "".
+        - Title promoted from bucket 2 (existence placeholder removed) to
+          bucket 1 with full spec (Times New Roman 36pt Center Single 12pt).
+        - ContentsRef gained BaseStyle = "" enforcement (other props already
+          matched).
+        - ContentsRef tab stop added: AuditStyleTabs "ContentsRef",
+          Array(378, wdAlignTabRight, wdTabLeaderDots).
+        - Final-state: RUN_TAXONOMY_STYLES -> 39 PASS / 4 FAIL across 43
+          checks. Bucket 1: 11 -> 24. Tab-stop coverage: 4 -> 5 styles.
+
 # Note: 2026-05-01 .. 2026-05-06 src/ edits prior to this session
 # (VerseText migration, orphan repair, EmphasisRed cleanup,
 # AuditCharStyleUsage, AuditVerseMarkerStructure CVM extension)
@@ -169,7 +189,7 @@
 
 # ------------------------------------------------------------
 # Final-state verification (both .docm files):
-#   RUN_TAXONOMY_STYLES   ->  26 PASS / 4 FAIL across 30 checks (test .docm, 2026-05-06)
+#   RUN_TAXONOMY_STYLES   ->  39 PASS / 4 FAIL across 43 checks (test .docm, 2026-05-06)
 #   AuditListStyleRisk    ->  0 flagged in section (A)
 #   AuditVerseMarkerStructure -> 31102 / 31102, 0 structural issues
 #
