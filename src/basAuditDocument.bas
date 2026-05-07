@@ -616,3 +616,95 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+'====================================================================
+' ListBodyTextIndentUsage
+' PURPOSE:
+'   Lists every paragraph in the active document whose style is
+'   "BodyTextIndent" and prints a running Count. Output goes to the
+'   Immediate window and (when bWriteFile = True) to
+'   rpt\BodyTextIndent_Usage.txt.
+'
+' Usage:
+'   ListBodyTextIndentUsage              ' Immediate window only
+'   ListBodyTextIndentUsage True         ' also write rpt\ file
+'====================================================================
+Public Sub ListBodyTextIndentUsage(Optional ByVal bWriteFile As Boolean = False)
+    On Error GoTo PROC_ERR
+
+    Const TARGET_STYLE As String = "BodyTextIndent"
+    Const SNIPPET_LEN  As Long = 80
+
+    Dim oDoc      As Document
+    Dim oPara     As Word.Paragraph
+    Dim lIdx      As Long
+    Dim lHits     As Long
+    Dim lPage     As Long
+    Dim sName     As String
+    Dim sText     As String
+    Dim sLine     As String
+    Dim sReport   As String
+    Dim f         As Integer
+    Dim sPath     As String
+    Const NL      As String = vbCrLf
+
+    Set oDoc = ActiveDocument
+    lIdx = 0
+    lHits = 0
+
+    sReport = "BodyTextIndent usage in: " & oDoc.Name & NL & _
+              String(70, "-") & NL & _
+              "  #     Para  Page  Text" & NL & _
+              String(70, "-") & NL
+
+    For Each oPara In oDoc.Paragraphs
+        lIdx = lIdx + 1
+        sName = oPara.style.NameLocal
+        If StrComp(sName, TARGET_STYLE, vbTextCompare) = 0 Then
+            lHits = lHits + 1
+            lPage = oPara.Range.Information(wdActiveEndPageNumber)
+            sText = oPara.Range.Text
+            ' Strip trailing paragraph mark and truncate
+            If Len(sText) > 0 Then
+                If Right(sText, 1) = Chr(13) Then sText = Left(sText, Len(sText) - 1)
+            End If
+            If Len(sText) > SNIPPET_LEN Then sText = Left(sText, SNIPPET_LEN) & "..."
+            sLine = Format(lHits, "0000") & "  " & _
+                    Format(lIdx, "00000") & "  " & _
+                    Format(lPage, "0000") & "  " & sText
+            Debug.Print sLine
+            sReport = sReport & sLine & NL
+        End If
+        If lIdx Mod 200 = 0 Then DoEvents
+    Next oPara
+
+    sReport = sReport & String(70, "-") & NL & _
+              "Total paragraphs scanned:    " & lIdx & NL & _
+              "Paragraphs with " & TARGET_STYLE & ": " & lHits & NL
+
+    Debug.Print String(70, "-")
+    Debug.Print "Total paragraphs scanned:    " & lIdx
+    Debug.Print "Paragraphs with " & TARGET_STYLE & ": " & lHits
+
+    If bWriteFile Then
+        sPath = oDoc.Path & Application.PathSeparator & "rpt"
+        If Len(Dir(sPath, vbDirectory)) = 0 Then MkDir sPath
+        sPath = sPath & Application.PathSeparator & "BodyTextIndent_Usage.txt"
+        f = FreeFile
+        Open sPath For Output As #f
+        Print #f, sReport;
+        Close #f
+        Debug.Print "Wrote: " & sPath
+    End If
+
+    MsgBox "Paragraphs with style '" & TARGET_STYLE & "': " & lHits & NL & _
+           "(of " & lIdx & " total paragraphs)", _
+           vbInformation, "ListBodyTextIndentUsage"
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure ListBodyTextIndentUsage of Module basAuditDocument"
+    Resume PROC_EXIT
+End Sub
+
