@@ -37,7 +37,7 @@ Private Sub PromoteApprovedStyles()
                      "BibleIndexEyebrow", "BibleIndex", "Introduction", _
                      "TitleOnePage", _
                      "AuthorListItem", "AuthorListItemBody", "AuthorListItemTab", _
-                     "AuthorBookRefHeader", "AuthorBookRef", "CenterSubText", _
+                     "AuthorBookRefHeader", "AuthorBookRef", "AuthorBookSections", "CenterSubText", _
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
                      "VerseText", _
@@ -45,7 +45,6 @@ Private Sub PromoteApprovedStyles()
                      "PsalmSuperscription", "Selah", "PsalmAcrostic", _
                      "SpeakerLabel", _
                      "BodyTextContinuation", _
-                     "BookIntro", _
                      "AppendixTitle", "AppendixBody", _
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
@@ -222,10 +221,10 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 38 styles via AuditOneStyle + 5 tab-stop specs via AuditStyleTabs;
-'   total 43 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (38):
-'     31 fully specified (all properties verified) - BodyText, VerseText,
+'   Audits 45 styles via AuditOneStyle + 6 tab-stop specs via AuditStyleTabs;
+'   total 51 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (45):
+'     34 fully specified (all properties verified) - BodyText, VerseText,
 '                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
@@ -235,17 +234,20 @@ End Function
 '                            AuthorBodyText, Contents, BibleIndexEyebrow, BibleIndex,
 '                            Introduction, TitleOnePage,
 '                            AuthorListItem, AuthorListItemBody, AuthorListItemTab,
-'                            CenterSubText
-'      4 existence-verified (full spec pending) - BookIntro, TheHeaders,
-'                            TheFooters, Footnote Reference
+'                            CenterSubText,
+'                            SpeakerLabel, AuthorSectionHead, AuthorBookSections
+'      8 existence-verified (full spec pending) - TheHeaders,
+'                            TheFooters, Footnote Reference, Selah, EmphasisBlack,
+'                            EmphasisRed, Words of Jesus, AuthorQuote
 '      3 not yet created (expected FAIL until each Define* routine runs) -
 '                            BodyTextContinuation, AppendixTitle, AppendixBody
-'   Tab-stop audits (5):
+'   Tab-stop audits (6):
 '      AuthorListItem      (1 stop at 36 pt, Left, Spaces)
 '      AuthorListItemTab   (2 stops at 144 / 252 pt, Left, Spaces)
 '      AuthorBookRef       (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
 '      AuthorBookRefHeader (1 stop at 381.6 pt, Right, Spaces)
 '      ContentsRef         (1 stop at 378 pt, Right, Dots)
+'      AuthorBookSections  (1 stop at 378 pt, Right, Dots)
 '   AuditOneStyle now also accepts optional Bold / Italic args (sentinel -2
 '   = skip); descriptive specs for those properties on bucket-1 entries.
 '   Specs encoded as descriptive (capture current document state); see
@@ -322,15 +324,24 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0, ""
     AuditOneStyle "CenterSubText", "Liberation Serif", 12, 1, 0, 0, 12, 12, 12, 0, 0, ""
 
+    ' Paragraph styles promoted to bucket 1 on 2026-05-07 (specs captured via DumpStyleProperties)
+    AuditOneStyle "SpeakerLabel", "Carlito", 9, 0, 0, 0, 12, 3, 2, 0, 0, ""
+    AuditOneStyle "AuthorSectionHead", "Liberation Serif", 14, 0, 0, 0, 12, 12, 6, 0, -1, ""
+    AuditOneStyle "AuthorBookSections", "Carlito", 11, 0, 0, 0, 12, 0, 0, 0, 0, "Normal"
+
     ' -- Existence verified; full spec pending -------------------------------------------------
-    ' Footnote Reference (Character style) parked here until AuditOneStyle is
-    ' extended to check character-style Bold / Italic / Color (deferred follow-up).
+    ' Character styles parked here until AuditOneStyle is extended to check
+    ' character-style Bold / Italic / Color (deferred follow-up).
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Existence verified (full spec pending) --"
-    AuditOneStyle "BookIntro", "Carlito", 9, 1, 0, 4, 10, 6, 6
     AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
     AuditOneStyle "Footnote Reference", "Carlito", 9, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Selah", "Carlito", 9, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "EmphasisBlack", "Carlito", 9, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "EmphasisRed", "Carlito", 9, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "Words of Jesus", "Carlito", 9, -1, -999, -1, -999, -999, -999
+    AuditOneStyle "AuthorQuote", "Carlito", 9, -1, -999, -1, -999, -999, -999
 
     ' -- Not yet created - expected FAIL until each Define* routine is run ----------------------
     Print #m_TaxFile, ""
@@ -353,6 +364,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditStyleTabs "AuthorBookRefHeader", _
         Array(381.6, wdAlignTabRight, wdTabLeaderSpaces)
     AuditStyleTabs "ContentsRef", _
+        Array(378, wdAlignTabRight, wdTabLeaderDots)
+    AuditStyleTabs "AuthorBookSections", _
         Array(378, wdAlignTabRight, wdTabLeaderDots)
 
     Print #m_TaxFile, ""

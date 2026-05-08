@@ -326,3 +326,96 @@ reflected in the bucket-1 header comment. Header comment in
 `basTEST_aeBibleConfig.bas` realigned to current reality
 (31 bucket-1 / 4 existence / 3 not-yet-created / 5 tab stops =
 43 checks).
+
+## BookIntro removed (obsolete)
+
+`BookIntro` is obsolete - the `Introduction` style is used for that
+role. Taxonomy updated:
+
+- `basTEST_aeBibleConfig.bas` `PromoteApprovedStyles` array - removed
+  `"BookIntro"`.
+- `basTEST_aeBibleConfig.bas` `RUN_TAXONOMY_STYLES` bucket 2 -
+  removed the `AuditOneStyle "BookIntro", ...` line; header comment
+  realigned (37 styles / 5 tab-stop specs / 42 checks; bucket 2 now
+  3 entries: `TheHeaders`, `TheFooters`, `Footnote Reference`).
+
+Outstanding decision: the tooling routines `DefineBookIntroStyle`
+and `ApplyBookIntroAfterDatAuthRef` in `basFixDocxRoutines.bas`
+(approx 180 lines, 1100-1281) are now dead code. Deletion proposed
+but pending explicit confirmation due to blast radius.
+
+## DefineBodyTextIndentStyle removed
+
+The orphaned `DefineBodyTextIndentStyle` Sub in
+`basFixDocxRoutines.bas` (banner + body, 77 lines) was deleted.
+`BodyTextIndent` removal is permanent; the recreate routine is no
+longer needed.
+
+## NEW TASK: Define colors used in the docx
+
+Use of Word Themes / Theme Colors is **not allowed anywhere** in
+this document. Every color reference must be expressed as an
+explicit RGB / `wdColor*` constant captured as part of the
+descriptive style baseline.
+
+Scope:
+
+- Enumerate every style and direct-formatting site that carries a
+  non-default color (paragraph styles, character styles, run-level
+  overrides, table/shading, ribbon-driven highlights).
+- Confirm intended color for each site and capture as a long
+  RGB / BGR literal in the style spec (no `wdColorAutomatic`, no
+  theme-color tints, no `wdColorByPalette`).
+- Lock in the three known character-style colors (open from
+  `2026-05-06.md` § 15 / this file's "Footnote Reference color"
+  section): `Footnote Reference`, `Chapter Verse marker`,
+  `Verse marker`.
+- Add a taxonomy check (extension of `AuditOneStyle` or a sibling
+  routine) that fails any style whose color resolves through a
+  theme rather than an explicit literal.
+
+This subsumes the open "Footnote Reference color" confirmation
+above; resolve there as a sub-step of this task.
+
+## BookIntro tooling deleted
+
+`DefineBookIntroStyle` and `ApplyBookIntroAfterDatAuthRef`
+(approx 185 lines) removed from `basFixDocxRoutines.bas`. Both
+referenced an obsolete style; `Introduction` is the active
+replacement. No callers in the project remain.
+
+## Bucket-1 / bucket-2 promotions (8 styles)
+
+`DumpStyleProperties` outputs under `rpt/Styles/` were used to
+write `AuditOneStyle` lines for the 8 dumped candidates. Split
+by Word style type:
+
+**Bucket 1 (fully specified, paragraph styles - 3 added):**
+
+| Style | Font | Size | Align | LineRule | LineSp | SpB / SpA | Bold / Italic | BaseStyle |
+|---|---|---|---|---|---|---|---|---|
+| SpeakerLabel | Carlito | 9 | Left | Single | 12 | 3 / 2 | 0 / 0 | "" |
+| AuthorSectionHead | Liberation Serif | 14 | Left | Single | 12 | 12 / 6 | 0 / -1 | "" |
+| AuthorBookSections | Carlito | 11 | Left | Single | 12 | 0 / 0 | 0 / 0 | "Normal" |
+
+`AuthorBookSections` carries a single tab stop (378 pt, Right, Dots)
+and was added to the `AuditStyleTabs` block. It was also added to
+`PromoteApprovedStyles` (was Priority=99, now near the
+`AuthorBookRef` cluster).
+
+**Bucket 2 (existence + font/size only, character styles - 5 added):**
+
+`Selah`, `EmphasisBlack`, `EmphasisRed`, `Words of Jesus`,
+`AuthorQuote` - all `Carlito` 9pt. Bold / Italic / Color checks
+deferred until `AuditOneStyle` is extended for character styles
+(same parking pattern as `Footnote Reference`). The color values
+captured in the dumps (`EmphasisRed`, `Words of Jesus`,
+`AuthorQuote`) feed the new "Define colors used in the docx" task.
+
+Header comment in `basTEST_aeBibleConfig.bas` realigned: 45 styles
+(34 bucket-1 / 8 bucket-2 / 3 not-yet-created) + 6 tab-stop specs =
+**51 checks**.
+
+Expected on next `RUN_TAXONOMY_STYLES`: 47 PASS / 4 FAIL across
+51 checks (current 39 PASS + 3 paragraph-style PASS + 5
+character-style PASS + 1 tab-stop PASS).
