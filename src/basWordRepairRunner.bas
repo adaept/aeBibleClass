@@ -458,7 +458,7 @@ End Function
 '==============================================================================
 ' GetColumnBoundsForPage
 ' Resolves the actual column-X boundaries for a given page, reading PageSetup
-' at runtime so the result is correct under mirrored margins (where odd pages
+' at runtime so the Result is correct under mirrored margins (where odd pages
 ' have the binding gutter on the LEFT and even pages on the RIGHT) and under
 ' arbitrary column widths.
 ' Convention: odd pageNum = recto = inside-on-left.
@@ -481,11 +481,11 @@ Private Sub GetColumnBoundsForPage(ByVal pageNum As Long, _
     ' Resolve PageSetup for THIS page's section, not the document default.
     ' Document.PageSetup is ambiguous when sections differ; reading per-page
     ' avoids that and the pagination stalls it can trigger.
-    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, Name:=CStr(pageNum))
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
     Set ps = pgRange.Sections(1).PageSetup
 
-    insideMargin = ps.LeftMargin + ps.Gutter
-    outsideMargin = ps.RightMargin
+    insideMargin = ps.leftMargin + ps.gutter
+    outsideMargin = ps.rightMargin
 
     If ps.MirrorMargins Then
         insideOnLeft = ((pageNum Mod 2) = 1)   ' odd = recto = inside on left
@@ -495,10 +495,10 @@ Private Sub GetColumnBoundsForPage(ByVal pageNum As Long, _
 
     If insideOnLeft Then
         bodyXMin = insideMargin
-        bodyXMax = ps.PageWidth - outsideMargin
+        bodyXMax = ps.pageWidth - outsideMargin
     Else
         bodyXMin = outsideMargin
-        bodyXMax = ps.PageWidth - insideMargin
+        bodyXMax = ps.pageWidth - insideMargin
     End If
 
     If ps.TextColumns.Count >= 2 Then
@@ -603,13 +603,13 @@ Public Sub SoftHyphen_DiagnoseLayout()
         Print #f, ""
         Print #f, "-- Section " & secIdx & " of " & secCount & _
                   "  (starts on page " & startPage & ") --" & anomFlag
-        Print #f, "  PageSize  : " & Format(ps.PageWidth, "0.0") & " x " & _
+        Print #f, "  PageSize  : " & Format(ps.pageWidth, "0.0") & " x " & _
                   Format(ps.PageHeight, "0.0") & " pt"
         Print #f, "  Margins   : T=" & Format(ps.TopMargin, "0.0") & _
                   "  B=" & Format(ps.BottomMargin, "0.0") & _
-                  "  L=" & Format(ps.LeftMargin, "0.0") & _
-                  "  R=" & Format(ps.RightMargin, "0.0")
-        Print #f, "  Gutter    : " & Format(ps.Gutter, "0.0") & _
+                  "  L=" & Format(ps.leftMargin, "0.0") & _
+                  "  R=" & Format(ps.rightMargin, "0.0")
+        Print #f, "  Gutter    : " & Format(ps.gutter, "0.0") & _
                   "  GutterPos=" & ps.GutterPos & _
                   "  Mirror=" & ps.MirrorMargins
         Print #f, "  Columns   : " & tc.Count & _
@@ -732,11 +732,11 @@ Public Sub SoftHyphen_CalibrateColumns(ByVal pageNum As Long)
     ' GoTo(wdGoToPage, pageNum+1) returns end-of-document when pageNum is
     ' the last page, so we can derive pageEnd unconditionally.
     currentStep = "GoTo page " & pageNum
-    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum))
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
     pageStart = pgRange.Start
 
     currentStep = "GoTo page " & (pageNum + 1)
-    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum + 1))
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
     Dim pageNextStart As Long
     pageNextStart = pgRange.Start
 
@@ -1003,11 +1003,11 @@ Public Sub SoftHyphenSweep_ByColumnContext_SinglePage( _
 
     ' Resolve page bounds without Pages.Count (multi-section safe).
     currentStep = "GoTo page " & pageNum
-    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum))
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
     pageStart = pgRange.Start
 
     currentStep = "GoTo page " & (pageNum + 1)
-    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum + 1))
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
     pageNextStart = pgRange.Start
     If pageNextStart > pageStart Then
         pageEnd = pageNextStart - 1
@@ -1216,7 +1216,7 @@ Public Sub SoftHyphenSweep_ByColumnContext_SinglePage( _
             strayCol(i) & ",Stray," & action & ",""" & strayCtx(i) & """"
     Next i
 
-    Print #logF, "Page " & pageNum & " result: " & findIdx & " find(s) - " & _
+    Print #logF, "Page " & pageNum & " Result: " & findIdx & " find(s) - " & _
                  activeCount & " Active(Kept), " & pageStrayCount & " Stray (" & _
                  pageRemovedCount & " Removed, " & pageSkippedCount & " Skipped), " & _
                  outsideCount & " OutsideBody"

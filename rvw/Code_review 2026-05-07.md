@@ -1,5 +1,9 @@
 # Code review - 2026-05-07 carry-forward
 
+> **STATUS: CLOSED 2026-05-08.** This arc is closed for new work.
+> Open carry-forward set continues in
+> [`rvw/Code_review 2026-05-08.md`](Code_review%202026-05-08.md).
+
 This file opens a fresh review arc on 2026-05-07. The previous arc
 [`rvw/Code_review 2026-05-06.md`](Code_review%202026-05-06.md) is now
 **closed for new work**; that file remains the authoritative dated

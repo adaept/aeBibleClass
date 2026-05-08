@@ -1,8 +1,0 @@
-========================================================================
-SoftHyphenSweep page=911  side=Recto  mode=DryRun  run=2026-05-07 21:43:45
-Bounds   : Body=[64.8..473.1]  L=[64.8..261.7]  G=[261.7..276.1]  R=[276.1..473.1]
-Page 911 result: 14 find(s) - 11 Active(Kept), 3 Stray (0 Removed, 3 Skipped), 0 OutsideBody
-========================================================================
-SoftHyphenSweep page=911  side=Recto  mode=PromptEach  run=2026-05-07 21:50:02
-Bounds   : Body=[64.8..473.1]  L=[64.8..261.7]  G=[261.7..276.1]  R=[276.1..473.1]
-Page 911 result: 14 find(s) - 11 Active(Kept), 3 Stray (3 Removed, 0 Skipped), 0 OutsideBody
