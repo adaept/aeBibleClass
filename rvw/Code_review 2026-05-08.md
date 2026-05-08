@@ -134,6 +134,10 @@ hyphenated), so they need a separate diagnostic.
 Plan file: `~/.claude/plans/greedy-napping-yeti.md` (approved
 2026-05-08).
 
+Operating doc: [`md/Row_Pitch_Diagnostic.md`](../md/Row_Pitch_Diagnostic.md)
+- standard procedure, output file table, append-mode pitfalls,
+worked validation from page 522.
+
 #### 4a. Document structure assumption
 
 This Bible is normalized - **one verse per paragraph**:

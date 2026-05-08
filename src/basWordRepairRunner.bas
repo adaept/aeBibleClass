@@ -2030,6 +2030,182 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+'==============================================================================
+' ReviewRowCharCountSuspects
+' PURPOSE:
+'   Phase B navigator. Each invocation jumps to the next suspect row in
+'   rpt\RowCharCountSuspects.csv: selects the row in the document and
+'   scrolls it into view, then dismisses with a status MsgBox that names
+'   the suspect, its pitch, and how to advance.
+'
+'   The MsgBox is modal (Word edits are blocked while it is open), so the
+'   pattern is: dismiss -> the row remains selected -> add a soft hyphen
+'   (Ctrl+Hyphen) where appropriate -> re-invoke this macro for the next
+'   suspect. Bind to a keyboard shortcut for fastest cycling.
+'
+'   No decision logging by design: the survey itself is the ledger -
+'   re-running RunRowCharCountSurvey + BuildRowCharCountHistogram on the
+'   same range shows fewer suspects (rows that received a soft hyphen
+'   are now end-shy and excluded). For an explicit "review later"
+'   marker, just leave the suspect untouched and re-run the histogram.
+'
+'   State persists in module-private variables for the VBA session only.
+'   Use ReviewRowCharCountSuspects_Reset to start over without restarting
+'   Word, or after re-running BuildRowCharCountHistogram.
+'==============================================================================
+Private mRevSuspects()  As String
+Private mRevIdx         As Long
+Private mRevTotal       As Long
+Private mRevLoaded      As Boolean
+
+Public Sub ReviewRowCharCountSuspects()
+    Dim currentStep As String
+    On Error GoTo PROC_ERR
+
+    Dim oDoc      As Word.Document
+    Dim docDir    As String, suspPath As String
+    Dim f         As Integer
+    Dim line      As String
+    Dim isFirst   As Boolean
+    Const NL      As String = vbCrLf
+
+    currentStep = "Set ActiveDocument"
+    Set oDoc = ActiveDocument
+    docDir = oDoc.Path
+    If Len(docDir) = 0 Then docDir = Environ$("TEMP")
+    suspPath = docDir & "\rpt\RowCharCountSuspects.csv"
+
+    If Not mRevLoaded Then
+        currentStep = "Load suspects CSV"
+        If Len(Dir(suspPath)) = 0 Then
+            MsgBox "Suspects CSV not found:" & NL & suspPath & NL & NL & _
+                   "Run BuildRowCharCountHistogram first.", _
+                   vbExclamation, "ReviewRowCharCountSuspects"
+            Exit Sub
+        End If
+
+        ReDim mRevSuspects(0 To 1023)
+        mRevTotal = 0
+        f = FreeFile
+        Open suspPath For Input As #f
+        isFirst = True
+        Do While Not EOF(f)
+            Line Input #f, line
+            If isFirst Then
+                isFirst = False
+            Else
+                If Len(line) > 0 Then
+                    If mRevTotal > UBound(mRevSuspects) Then
+                        ReDim Preserve mRevSuspects(0 To UBound(mRevSuspects) + 1024)
+                    End If
+                    mRevSuspects(mRevTotal) = line
+                    mRevTotal = mRevTotal + 1
+                End If
+            End If
+        Loop
+        Close #f
+
+        If mRevTotal = 0 Then
+            MsgBox "No suspects in:" & NL & suspPath & NL & NL & _
+                   "Build was clean (suspects=0). Lower the threshold" & NL & _
+                   "or expand the survey range to find candidates.", _
+                   vbInformation, "ReviewRowCharCountSuspects"
+            Exit Sub
+        End If
+
+        mRevIdx = 0
+        mRevLoaded = True
+        MsgBox "Loaded " & mRevTotal & " suspect(s) from:" & NL & suspPath & NL & NL & _
+               "Each invocation selects the next suspect's row" & NL & _
+               "and scrolls it into view. Dismiss the prompt and" & NL & _
+               "edit the row directly; re-run for the next suspect.", _
+               vbInformation, "ReviewRowCharCountSuspects"
+    End If
+
+    If mRevIdx >= mRevTotal Then
+        MsgBox "Review complete: " & mRevTotal & " suspect(s) traversed." & NL & NL & _
+               "Run ReviewRowCharCountSuspects_Reset to restart at suspect 1," & NL & _
+               "or re-run RunRowCharCountSurvey + BuildRowCharCountHistogram" & NL & _
+               "to refresh the suspects list against the current document.", _
+               vbInformation, "ReviewRowCharCountSuspects"
+        Exit Sub
+    End If
+
+    ' Parse current suspect line. Columns from BuildRowCharCountHistogram:
+    '   0=PageNum  1=PageSide  2=RowIndex  3=Side  4=Y
+    '   5=LeftX  6=RightX  7=CharCount  8=Pitch
+    '   9=LastCharCode  10=EndsWithSoftHyphen  11=IsParagraphEnd
+    '  12=RangeStart  13=RangeEnd
+    '  14+=FirstChars (may contain embedded commas inside quotes)
+    '  trailing 2 fields = MedianPitchSide, PitchExcess
+    currentStep = "Parse suspect at index " & mRevIdx
+    Dim parts() As String
+    parts = Split(mRevSuspects(mRevIdx), ",")
+    If UBound(parts) < 14 Then
+        mRevIdx = mRevIdx + 1
+        MsgBox "Skipped malformed suspect at line " & mRevIdx & "." & NL & _
+               "Re-run for the next suspect.", _
+               vbExclamation, "ReviewRowCharCountSuspects"
+        Exit Sub
+    End If
+
+    Dim pageNum As Long, pageSideStr As String, sideStr As String
+    Dim charCount As Long, pitch As Single
+    Dim rangeStart As Long, rangeEnd As Long
+    Dim pitchExcess As String, medianPitch As String
+    pageNum = CLng(parts(0))
+    pageSideStr = parts(1)
+    sideStr = parts(3)
+    charCount = CLng(parts(7))
+    pitch = CSng(parts(8))
+    rangeStart = CLng(parts(12))
+    rangeEnd = CLng(parts(13))
+    pitchExcess = parts(UBound(parts))
+    medianPitch = parts(UBound(parts) - 1)
+
+    currentStep = "Select range " & rangeStart & ".." & rangeEnd
+    Selection.SetRange rangeStart, rangeEnd
+    On Error Resume Next
+    ActiveWindow.ScrollIntoView Selection.Range, True
+    On Error GoTo PROC_ERR
+
+    MsgBox "Suspect " & (mRevIdx + 1) & " of " & mRevTotal & NL & _
+           "Page " & pageNum & " (" & pageSideStr & "), " & sideStr & " column" & NL & _
+           "CharCount = " & charCount & "    Pitch = " & Format(pitch, "0.000") & " pt/char" & NL & _
+           "Median(side) = " & medianPitch & "    Excess = +" & pitchExcess & " pt" & NL & NL & _
+           "The row is selected and scrolled into view." & NL & _
+           "Dismiss this dialog, then add a soft hyphen" & NL & _
+           "(Ctrl+Hyphen) where you want the line to break," & NL & _
+           "or leave the row as-is if no break works." & NL & NL & _
+           "Re-run ReviewRowCharCountSuspects for next.", _
+           vbInformation, _
+           "Suspect " & (mRevIdx + 1) & "/" & mRevTotal & "  p" & pageNum
+
+    mRevIdx = mRevIdx + 1
+    Exit Sub
+
+PROC_ERR:
+    MsgBox "Step: [" & currentStep & "]" & vbCrLf & _
+           "Error " & Err.Number & " (" & Err.Description & ")" & vbCrLf & _
+           "in procedure ReviewRowCharCountSuspects of Module basWordRepairRunner"
+End Sub
+
+'------------------------------------------------------------------------------
+' ReviewRowCharCountSuspects_Reset - clear the navigator's session state so the
+' next ReviewRowCharCountSuspects call reloads the suspects CSV from disk and
+' restarts at suspect 1. Use after re-running BuildRowCharCountHistogram.
+'------------------------------------------------------------------------------
+Public Sub ReviewRowCharCountSuspects_Reset()
+    mRevLoaded = False
+    mRevIdx = 0
+    mRevTotal = 0
+    Erase mRevSuspects
+    MsgBox "Review state cleared." & vbCrLf & _
+           "Next ReviewRowCharCountSuspects will reload" & vbCrLf & _
+           "rpt\RowCharCountSuspects.csv from disk.", _
+           vbInformation, "ReviewRowCharCountSuspects_Reset"
+End Sub
+
 '------------------------------------------------------------------------------
 ' MedianOfSingles - return the median of the first n entries of arr. Sorts a
 ' copy in place; returns 0 if n=0. Simple insertion sort (n is at most a few
