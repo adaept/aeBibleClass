@@ -1,0 +1,28 @@
+========================================================================
+SoftHyphen_CalibrateColumns  page=21  run=2026-05-07 21:21:33
+Document : Blank Bible Copy.docm
+Section  : Mirrored=True  Side=Recto  Cols=2
+Bounds   : Body=[64.8..473.1]  L=[64.8..261.7]  G=[261.7..276.1]  R=[276.1..473.1]
+PageRange: [26779..31274]
+Result   : 19 find(s) - 19 Active, 0 Stray, 0 OutsideBody
+========================================================================
+SoftHyphen_CalibrateColumns  page=22  run=2026-05-07 21:21:51
+Document : Blank Bible Copy.docm
+Section  : Mirrored=True  Side=Verso  Cols=2
+Bounds   : Body=[43.2..451.5]  L=[43.2..240.1]  G=[240.1..254.5]  R=[254.5..451.5]
+PageRange: [31275..35024]
+Result   : 5 find(s) - 5 Active, 0 Stray, 0 OutsideBody
+========================================================================
+SoftHyphen_CalibrateColumns  page=913  run=2026-05-07 21:22:18
+Document : Blank Bible Copy.docm
+Section  : Mirrored=True  Side=Recto  Cols=2
+Bounds   : Body=[64.8..473.1]  L=[64.8..261.7]  G=[261.7..276.1]  R=[276.1..473.1]
+PageRange: [4120807..4125317]
+Result   : 7 find(s) - 7 Active, 0 Stray, 0 OutsideBody
+========================================================================
+SoftHyphen_CalibrateColumns  page=911  run=2026-05-07 21:29:21
+Document : Blank Bible Copy.docm
+Section  : Mirrored=True  Side=Recto  Cols=1
+Bounds   : Body=[64.8..473.1]  L=[64.8..261.7]  G=[261.7..276.1]  R=[276.1..473.1]
+PageRange: [4116710..4120331]
+Result   : 14 find(s) - 11 Active, 3 Stray, 0 OutsideBody

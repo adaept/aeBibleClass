@@ -7,23 +7,37 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Private OneVersePerParaRepair As Boolean
 
 '==============================================================================
-' Soft-hyphen sweep - module constants
-' Reference layout: "JUDE - Sample.docm" (JIS B5, w:code=13).
+' Soft-hyphen sweep - module constants (REFERENCE ONLY)
+' Reference layout: "JUDE - Sample.docm" (JIS B5, w:code=13), assuming
+' mirrored pages with the binding gutter on the inside edge of each leaf.
 '   Page size      516.25 pt x 728.65 pt  (twips 10325 x 14573)
-'   Margins        T/B 54.7, L 54.7, R 43.2
-'   Binding gutter 10.1 pt (added to left)
+'   Margins        T/B 54.7, inside 54.7, outside 43.2
+'   Binding gutter 10.1 pt (on inside of each page)
 '   Two columns    14.4 pt gap, each ~196.925 pt wide
-' Run SoftHyphen_CalibrateColumns once before the production sweep to
-' confirm wdHorizontalPositionRelativeToPage matches these boundaries.
+' These constants are NOT consumed by the sweep at runtime - SoftHyphen_*
+' routines read PageSetup at runtime via GetColumnBoundsForPage. The
+' constants are kept as the expected-baseline reference; if the live
+' document drifts from these values SoftHyphen_DiagnoseLayout will surface
+' the difference for review.
+'
+' Per-page geometry (mirrored, JIS B5 reference):
+'   ODD pages (recto): inside on LEFT
+'     Left col   64.8  ..  261.725
+'     Gutter    261.725 ..  276.125
+'     Right col 276.125 ..  473.05
+'   EVEN pages (verso): inside on RIGHT
+'     Left col   43.2  ..  240.125
+'     Gutter    240.125 ..  254.525
+'     Right col 254.525 ..  451.45
 '==============================================================================
-Private Const PAGE_BODY_X_MIN       As Single = 64.8     ' left edge of left column
-Private Const COL_LEFT_X_MAX        As Single = 261.725  ' right edge of left column
-Private Const GUTTER_X_MIN          As Single = 261.725  ' = COL_LEFT_X_MAX
-Private Const GUTTER_X_MAX          As Single = 276.125  ' left edge of right column
-Private Const COL_RIGHT_X_MIN       As Single = 276.125  ' = GUTTER_X_MAX
-Private Const PAGE_BODY_X_MAX       As Single = 473.05   ' right edge of right column
-Private Const PAGE_BODY_Y_MIN       As Single = 54.7     ' top of body band
-Private Const PAGE_BODY_Y_MAX       As Single = 673.95   ' bottom of body band
+Private Const PAGE_BODY_X_MIN       As Single = 64.8     ' odd page only
+Private Const COL_LEFT_X_MAX        As Single = 261.725
+Private Const GUTTER_X_MIN          As Single = 261.725
+Private Const GUTTER_X_MAX          As Single = 276.125
+Private Const COL_RIGHT_X_MIN       As Single = 276.125
+Private Const PAGE_BODY_X_MAX       As Single = 473.05
+Private Const PAGE_BODY_Y_MIN       As Single = 54.7
+Private Const PAGE_BODY_Y_MAX       As Single = 673.95
 
 ' Active vs Stray classification.
 ' Y(charAfter) - Y(softHyphen) > LINE_HEIGHT_TOLERANCE => active (line break,
@@ -416,19 +430,255 @@ PROC_ERR:
 End Function
 
 '==============================================================================
-' ClassifyColumn
-' Returns the column band for a horizontal position (points relative to page).
+' ClassifyColumnAt
+' Returns the column band for a horizontal position, using bounds resolved
+' for the current page (which may differ between odd/even when mirrored).
 ' Bands: "OutsideLeft" | "Left" | "Gutter" | "Right" | "OutsideRight"
 '==============================================================================
-Private Function ClassifyColumn(ByVal xPos As Single) As String
+Private Function ClassifyColumnAt(ByVal xPos As Single, _
+                                  ByVal bodyXMin As Single, _
+                                  ByVal leftColMax As Single, _
+                                  ByVal gutterMax As Single, _
+                                  ByVal bodyXMax As Single) As String
     Select Case True
-        Case xPos < PAGE_BODY_X_MIN:  ClassifyColumn = "OutsideLeft"
-        Case xPos < COL_LEFT_X_MAX:   ClassifyColumn = "Left"
-        Case xPos < GUTTER_X_MAX:     ClassifyColumn = "Gutter"
-        Case xPos < PAGE_BODY_X_MAX:  ClassifyColumn = "Right"
-        Case Else:                    ClassifyColumn = "OutsideRight"
+        Case xPos < bodyXMin:    ClassifyColumnAt = "OutsideLeft"
+        Case xPos < leftColMax:  ClassifyColumnAt = "Left"
+        Case xPos < gutterMax:   ClassifyColumnAt = "Gutter"
+        Case xPos < bodyXMax:    ClassifyColumnAt = "Right"
+        Case Else:               ClassifyColumnAt = "OutsideRight"
     End Select
 End Function
+
+'==============================================================================
+' GetColumnBoundsForPage
+' Resolves the actual column-X boundaries for a given page, reading PageSetup
+' at runtime so the result is correct under mirrored margins (where odd pages
+' have the binding gutter on the LEFT and even pages on the RIGHT) and under
+' arbitrary column widths.
+' Convention: odd pageNum = recto = inside-on-left.
+'==============================================================================
+Private Sub GetColumnBoundsForPage(ByVal pageNum As Long, _
+                                   ByRef bodyXMin As Single, _
+                                   ByRef bodyXMax As Single, _
+                                   ByRef leftColMax As Single, _
+                                   ByRef gutterMin As Single, _
+                                   ByRef gutterMax As Single, _
+                                   ByRef rightColMin As Single)
+    Dim ps             As Word.PageSetup
+    Dim pgRange        As Word.Range
+    Dim insideMargin   As Single
+    Dim outsideMargin  As Single
+    Dim col1Width      As Single
+    Dim colGap         As Single
+    Dim insideOnLeft   As Boolean
+
+    ' Resolve PageSetup for THIS page's section, not the document default.
+    ' Document.PageSetup is ambiguous when sections differ; reading per-page
+    ' avoids that and the pagination stalls it can trigger.
+    Set pgRange = ActiveDocument.GoTo(What:=wdGoToPage, Name:=CStr(pageNum))
+    Set ps = pgRange.Sections(1).PageSetup
+
+    insideMargin = ps.LeftMargin + ps.Gutter
+    outsideMargin = ps.RightMargin
+
+    If ps.MirrorMargins Then
+        insideOnLeft = ((pageNum Mod 2) = 1)   ' odd = recto = inside on left
+    Else
+        insideOnLeft = True
+    End If
+
+    If insideOnLeft Then
+        bodyXMin = insideMargin
+        bodyXMax = ps.PageWidth - outsideMargin
+    Else
+        bodyXMin = outsideMargin
+        bodyXMax = ps.PageWidth - insideMargin
+    End If
+
+    If ps.TextColumns.Count >= 2 Then
+        col1Width = ps.TextColumns(1).Width
+        colGap = ps.TextColumns(1).SpaceAfter
+        leftColMax = bodyXMin + col1Width
+        gutterMin = leftColMax
+        gutterMax = leftColMax + colGap
+        rightColMin = gutterMax
+    Else
+        ' Single-column layout: collapse gutter to nothing.
+        leftColMax = bodyXMax
+        gutterMin = bodyXMax
+        gutterMax = bodyXMax
+        rightColMin = bodyXMax
+    End If
+End Sub
+
+'==============================================================================
+' SoftHyphen_DiagnoseLayout
+' Read-only. Prints PageSetup for the active document plus the computed
+' column-X boundaries for an odd page and an even page. Use this to confirm
+' the mirroring state and column geometry before running the calibration or
+' production sweep. The constants at the top of this module document the
+' expected JUDE / JIS B5 reference values; this routine surfaces any drift.
+'==============================================================================
+Public Sub SoftHyphen_DiagnoseLayout()
+    On Error GoTo PROC_ERR
+    Dim oDoc           As Word.Document
+    Dim sec            As Word.Section
+    Dim ps             As Word.PageSetup
+    Dim tc             As Word.TextColumns
+    Dim i              As Long
+    Dim secIdx         As Long
+    Dim secCount       As Long
+    Dim startPage      As Long
+    Dim oneColCount    As Long
+    Dim twoColCount    As Long
+    Dim otherColCount  As Long
+    Dim mirroredCount  As Long
+    Dim anomalyCount   As Long
+    Dim anomalyList    As String
+    Dim sPath          As String
+    Dim f              As Integer
+    Const NL           As String = vbCrLf
+
+    ' Reference geometry for "standard" 2-column Bible-body sections.
+    Const STD_COL_WIDTH As Single = 196.9
+    Const STD_COL_GAP   As Single = 14.4
+    Const TOL           As Single = 0.5
+
+    Set oDoc = ActiveDocument
+    secCount = oDoc.Sections.Count
+
+    Dim docDir As String
+    docDir = oDoc.Path
+    If Len(docDir) = 0 Then docDir = Environ$("TEMP")
+    sPath = docDir & "\rpt\SoftHyphen_Layout.log"
+    f = FreeFile
+    Open sPath For Output As #f
+
+    Print #f, "=== Sections in " & oDoc.Name & "  (" & secCount & " total) ==="
+    Print #f, "Run: " & Format(Now, "yyyy-mm-dd hh:mm:ss")
+    Print #f, "First and last sections are typically blank-template holders."
+    Print #f, "Bible body sections (VerseText) should report 2 columns + Mirror=True."
+
+    For Each sec In oDoc.Sections
+        secIdx = secIdx + 1
+        Set ps = sec.PageSetup
+        Set tc = ps.TextColumns
+
+        On Error Resume Next
+        startPage = sec.Range.Information(wdActiveEndPageNumber)
+        If Err.Number <> 0 Then startPage = -1
+        Err.Clear
+        On Error GoTo PROC_ERR
+
+        ' Tallies.
+        Select Case tc.Count
+            Case 1: oneColCount = oneColCount + 1
+            Case 2: twoColCount = twoColCount + 1
+            Case Else: otherColCount = otherColCount + 1
+        End Select
+        If ps.MirrorMargins Then mirroredCount = mirroredCount + 1
+
+        ' Anomaly check for 2-column sections only.
+        Dim anomFlag As String
+        anomFlag = ""
+        If tc.Count = 2 Then
+            If Abs(tc(1).Width - STD_COL_WIDTH) > TOL Or _
+               Abs(tc(1).SpaceAfter - STD_COL_GAP) > TOL Or _
+               Abs(tc(2).Width - STD_COL_WIDTH) > TOL Then
+                anomFlag = "  [ANOMALY: non-standard 2-col geometry]"
+                anomalyCount = anomalyCount + 1
+                anomalyList = anomalyList & "  Section " & secIdx & " (page " & _
+                              startPage & "): Col1=" & Format(tc(1).Width, "0.0") & _
+                              "/" & Format(tc(1).SpaceAfter, "0.0") & _
+                              " Col2=" & Format(tc(2).Width, "0.0") & NL
+            End If
+        End If
+
+        Print #f, ""
+        Print #f, "-- Section " & secIdx & " of " & secCount & _
+                  "  (starts on page " & startPage & ") --" & anomFlag
+        Print #f, "  PageSize  : " & Format(ps.PageWidth, "0.0") & " x " & _
+                  Format(ps.PageHeight, "0.0") & " pt"
+        Print #f, "  Margins   : T=" & Format(ps.TopMargin, "0.0") & _
+                  "  B=" & Format(ps.BottomMargin, "0.0") & _
+                  "  L=" & Format(ps.LeftMargin, "0.0") & _
+                  "  R=" & Format(ps.RightMargin, "0.0")
+        Print #f, "  Gutter    : " & Format(ps.Gutter, "0.0") & _
+                  "  GutterPos=" & ps.GutterPos & _
+                  "  Mirror=" & ps.MirrorMargins
+        Print #f, "  Columns   : " & tc.Count & _
+                  "  EvenlySpaced=" & tc.EvenlySpaced & _
+                  "  LineBetween=" & tc.LineBetween
+        For i = 1 To tc.Count
+            If i < tc.Count Then
+                Print #f, "    Col " & i & ": Width=" & Format(tc(i).Width, "0.0") & _
+                          "  SpaceAfter=" & Format(tc(i).SpaceAfter, "0.0")
+            Else
+                Print #f, "    Col " & i & ": Width=" & Format(tc(i).Width, "0.0")
+            End If
+        Next i
+    Next sec
+
+    Print #f, ""
+    Print #f, "-- Summary --"
+    Print #f, "  Total sections : " & secCount
+    Print #f, "  1-column       : " & oneColCount
+    Print #f, "  2-column       : " & twoColCount
+    Print #f, "  Other columns  : " & otherColCount
+    Print #f, "  Mirrored       : " & mirroredCount
+    Print #f, "  Anomalies      : " & anomalyCount & " (2-col sections deviating from std " & _
+              Format(STD_COL_WIDTH, "0.0") & "/" & Format(STD_COL_GAP, "0.0") & "/" & _
+              Format(STD_COL_WIDTH, "0.0") & ")"
+    If anomalyCount > 0 Then
+        Print #f, ""
+        Print #f, "-- Anomalies --"
+        Print #f, anomalyList;
+    End If
+
+    Print #f, ""
+    Print #f, "-- Reference baseline (JUDE / JIS B5, ODD page) --"
+    Print #f, "  Body  " & Format(PAGE_BODY_X_MIN, "0.0") & " .. " & _
+              Format(PAGE_BODY_X_MAX, "0.0")
+    Print #f, "  Left  " & Format(PAGE_BODY_X_MIN, "0.0") & " .. " & _
+              Format(COL_LEFT_X_MAX, "0.0")
+    Print #f, "  Gut   " & Format(GUTTER_X_MIN, "0.0") & " .. " & _
+              Format(GUTTER_X_MAX, "0.0")
+    Print #f, "  Right " & Format(COL_RIGHT_X_MIN, "0.0") & " .. " & _
+              Format(PAGE_BODY_X_MAX, "0.0")
+
+    Close #f
+    f = 0
+
+    Debug.Print "SoftHyphen_DiagnoseLayout: " & secCount & " section(s) - " & _
+                oneColCount & " single-col, " & twoColCount & " two-col, " & _
+                mirroredCount & " mirrored, " & anomalyCount & " anomal(ies) -> " & sPath
+    MsgBox "Layout diagnostic written:" & NL & _
+           "  rpt\SoftHyphen_Layout.log" & NL & NL & _
+           "Total sections : " & secCount & NL & _
+           "  1-column     : " & oneColCount & NL & _
+           "  2-column     : " & twoColCount & NL & _
+           "  Other        : " & otherColCount & NL & _
+           "  Mirrored     : " & mirroredCount & " of " & secCount & NL & _
+           "  Anomalies    : " & anomalyCount, _
+           vbInformation, "SoftHyphen_DiagnoseLayout"
+
+PROC_EXIT:
+    If f > 0 Then
+        On Error Resume Next
+        Close #f
+        On Error GoTo 0
+    End If
+    Exit Sub
+PROC_ERR:
+    If f > 0 Then
+        On Error Resume Next
+        Close #f
+        On Error GoTo 0
+    End If
+    MsgBox "Section " & secIdx & ": Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure SoftHyphen_DiagnoseLayout of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
 
 '==============================================================================
 ' SoftHyphen_CalibrateColumns
@@ -448,8 +698,9 @@ End Function
 '   SoftHyphen_CalibrateColumns 42
 '==============================================================================
 Public Sub SoftHyphen_CalibrateColumns(ByVal pageNum As Long)
+    Dim currentStep   As String
     On Error GoTo PROC_ERR
-    Dim oDoc          As Document
+    Dim oDoc          As Word.Document
     Dim pgRange       As Word.Range
     Dim searchRng     As Word.Range
     Dim nextCh        As Word.Range
@@ -462,60 +713,130 @@ Public Sub SoftHyphen_CalibrateColumns(ByVal pageNum As Long)
     Dim activeCount   As Long
     Dim strayCount    As Long
     Dim outsideCount  As Long
-    Dim sPath         As String
+    Dim csvPath       As String
+    Dim logPath       As String
     Dim f             As Integer
+    Dim logF          As Integer
     Const NL          As String = vbCrLf
 
+    currentStep = "Set ActiveDocument"
     Set oDoc = ActiveDocument
 
-    ' Compute page bounds (same pattern as the verse-marker worker).
-    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    ' Compute page bounds without touching Pages.Count.
+    ' GoTo(wdGoToPage, pageNum+1) returns end-of-document when pageNum is
+    ' the last page, so we can derive pageEnd unconditionally.
+    currentStep = "GoTo page " & pageNum
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum))
     pageStart = pgRange.Start
-    If pageNum >= oDoc.Pages.Count Then
-        pageEnd = oDoc.Content.End
+
+    currentStep = "GoTo page " & (pageNum + 1)
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum + 1))
+    Dim pageNextStart As Long
+    pageNextStart = pgRange.Start
+
+    If pageNextStart > pageStart Then
+        pageEnd = pageNextStart - 1
+        ' Cap at content end in case GoTo returned a position past it.
+        If pageEnd > oDoc.Content.End Then pageEnd = oDoc.Content.End
     Else
-        Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
-        pageEnd = pgRange.Start - 1
+        ' pageNum is the last (or only) page.
+        pageEnd = oDoc.Content.End
     End If
 
-    ' Open report.
-    sPath = oDoc.Path & Application.PathSeparator & "rpt" & _
-            Application.PathSeparator & "SoftHyphenCalibration.csv"
-    f = FreeFile
-    Open sPath For Output As #f
-    Print #f, "PageNum,FindNum,Position,X,Y,YNext,YDelta,Column,Disposition,Context"
+    ' Resolve column bounds for this specific page (handles mirrored layout).
+    currentStep = "Resolve column bounds for page " & pageNum
+    Dim bodyXMin As Single, bodyXMax As Single
+    Dim leftColMax As Single, gutterMin As Single, gutterMax As Single, rightColMin As Single
+    GetColumnBoundsForPage pageNum, bodyXMin, bodyXMax, _
+                           leftColMax, gutterMin, gutterMax, rightColMin
 
-    ' Find each soft hyphen within page bounds.
+    Dim pageSide As String
+    Dim isMirrored As Boolean
+    Dim sectionPS As Word.PageSetup
+    Set sectionPS = pgRange.Sections(1).PageSetup
+    isMirrored = sectionPS.MirrorMargins
+    If isMirrored Then
+        pageSide = IIf(pageNum Mod 2 = 1, "Recto", "Verso")
+    Else
+        pageSide = "Single"
+    End If
+
+    ' Open report files. Both append-mode so successive per-page calls
+    ' accumulate. CSV header is written only on first run (file empty).
+    ' Use literal "\" - Application.PathSeparator avoided for compatibility.
+    currentStep = "Open report files"
+    Dim docDir As String
+    docDir = oDoc.Path
+    If Len(docDir) = 0 Then docDir = Environ$("TEMP")
+    csvPath = docDir & "\rpt\SoftHyphenCalibration.csv"
+    logPath = docDir & "\rpt\SoftHyphenCalibration.log"
+
+    Dim writeCsvHeader As Boolean
+    writeCsvHeader = (Len(Dir(csvPath)) = 0)
+
+    f = FreeFile
+    Open csvPath For Append As #f
+    If writeCsvHeader Then
+        Print #f, "PageNum,Side,FindNum,Position,X,Y,YNext,YDelta,Column,Disposition,Context"
+    End If
+
+    logF = FreeFile
+    Open logPath For Append As #logF
+    Print #logF, String(72, "=")
+    Print #logF, "SoftHyphen_CalibrateColumns  page=" & pageNum & _
+                 "  run=" & Format(Now, "yyyy-mm-dd hh:mm:ss")
+    Print #logF, "Document : " & oDoc.Name
+    Print #logF, "Section  : Mirrored=" & isMirrored & "  Side=" & pageSide & _
+                 "  Cols=" & sectionPS.TextColumns.Count
+    Print #logF, "Bounds   : Body=[" & Format(bodyXMin, "0.0") & ".." & _
+                 Format(bodyXMax, "0.0") & "]  L=[" & _
+                 Format(bodyXMin, "0.0") & ".." & Format(leftColMax, "0.0") & "]  G=[" & _
+                 Format(gutterMin, "0.0") & ".." & Format(gutterMax, "0.0") & "]  R=[" & _
+                 Format(rightColMin, "0.0") & ".." & Format(bodyXMax, "0.0") & "]"
+    Print #logF, "PageRange: [" & pageStart & ".." & pageEnd & "]"
+
+    ' Build search range and configure Find.
+    currentStep = "Build search range"
     Set searchRng = oDoc.Range(pageStart, pageEnd)
+    currentStep = "Configure Find"
     With searchRng.Find
         .ClearFormatting
         .Text = Chr(SOFT_HYPHEN_CODE)
         .Forward = True
         .Wrap = wdFindStop
+        .Format = False
+        .MatchWholeWord = False
         .MatchWildcards = False
-        .MatchCase = False
     End With
 
-    Do While searchRng.Find.Execute
-        ' Bail if Find escaped the page bound.
+    ' Iteration: after each Execute success, searchRng IS the match.
+    ' Collapse to end and re-extend End to pageEnd so the next Execute
+    ' is bounded.
+    Do
+        currentStep = "Find.Execute (find #" & (findCount + 1) & ")"
+        If Not searchRng.Find.Execute Then Exit Do
         If searchRng.Start >= pageEnd Then Exit Do
 
         findCount = findCount + 1
-        xPos = searchRng.Information(wdHorizontalPositionRelativeToPage)
-        yShy = searchRng.Information(wdVerticalPositionRelativeToPage)
 
-        col = ClassifyColumn(xPos)
+        currentStep = "Information(X) at find #" & findCount
+        xPos = CSng(searchRng.Information(wdHorizontalPositionRelativeToPage))
+        currentStep = "Information(Y) at find #" & findCount
+        yShy = CSng(searchRng.Information(wdVerticalPositionRelativeToPage))
 
-        ' Y of the next character (use a 1-char range past the match).
-        If searchRng.End < pageEnd Then
+        col = ClassifyColumnAt(xPos, bodyXMin, leftColMax, gutterMax, bodyXMax)
+
+        ' Y of the next character (1-char range past the match).
+        currentStep = "Information(Y next) at find #" & findCount
+        If searchRng.End < oDoc.Content.End Then
             Set nextCh = oDoc.Range(searchRng.End, searchRng.End + 1)
-            yNext = nextCh.Information(wdVerticalPositionRelativeToPage)
+            yNext = CSng(nextCh.Information(wdVerticalPositionRelativeToPage))
         Else
-            yNext = yShy   ' no next char on page; treat as same line
+            yNext = yShy
         End If
         yDelta = yNext - yShy
 
-        ' Disposition rule.
+        ' Disposition.
         If col <> "Left" And col <> "Right" Then
             disposition = "OutsideBody"
             outsideCount = outsideCount + 1
@@ -527,8 +848,9 @@ Public Sub SoftHyphen_CalibrateColumns(ByVal pageNum As Long)
             strayCount = strayCount + 1
         End If
 
-        ' 30-char context window, with control chars and quotes neutralized
-        ' for CSV safety.
+        ' Context window: 30 chars before, 30 chars after, control chars
+        ' and quotes sanitised for CSV.
+        currentStep = "Context window at find #" & findCount
         ctxStart = searchRng.Start - 30
         If ctxStart < pageStart Then ctxStart = pageStart
         ctxEnd = searchRng.End + 30
@@ -542,33 +864,50 @@ Public Sub SoftHyphen_CalibrateColumns(ByVal pageNum As Long)
         ctx = Replace(ctx, Chr(SOFT_HYPHEN_CODE), "[SHY]")
         ctx = Replace(ctx, """", """""")
 
-        Print #f, pageNum & "," & findCount & "," & searchRng.Start & "," & _
+        currentStep = "Write CSV row at find #" & findCount
+        Print #f, pageNum & "," & pageSide & "," & findCount & "," & _
+                  searchRng.Start & "," & _
                   Format(xPos, "0.0") & "," & Format(yShy, "0.0") & "," & _
                   Format(yNext, "0.0") & "," & Format(yDelta, "0.0") & "," & _
                   col & "," & disposition & ",""" & ctx & """"
 
-        ' Advance past the match.
-        searchRng.Start = searchRng.End
+        ' Advance: collapse to end of match, re-extend to pageEnd so Find
+        ' stays bounded on the next iteration.
+        currentStep = "Advance after find #" & findCount
+        searchRng.Collapse wdCollapseEnd
+        If searchRng.Start >= pageEnd Then Exit Do
         searchRng.End = pageEnd
 
         If findCount Mod 50 = 0 Then DoEvents
     Loop
 
+    Print #logF, "Result   : " & findCount & " find(s) - " & _
+                 activeCount & " Active, " & strayCount & " Stray, " & _
+                 outsideCount & " OutsideBody"
+    Close #logF
+    logF = 0
     Close #f
     f = 0
 
-    Debug.Print "SoftHyphen_CalibrateColumns: page " & pageNum & " - " & _
-                findCount & " find(s) (" & activeCount & " Active, " & _
-                strayCount & " Stray, " & outsideCount & " OutsideBody) -> " & sPath
-    MsgBox "Soft Hyphen Calibration on page " & pageNum & ":" & NL & _
+    ' One-line summary in Immediate so the user sees completion at a glance.
+    Debug.Print "SoftHyphen_CalibrateColumns p" & pageNum & " (" & pageSide & "): " & _
+                findCount & " find(s) - " & activeCount & " Active, " & _
+                strayCount & " Stray, " & outsideCount & " OutsideBody"
+    MsgBox "Soft Hyphen Calibration on page " & pageNum & " (" & pageSide & "):" & NL & _
            findCount & " total find(s)" & NL & _
            activeCount & " Active (line-breaking, would be KEPT)" & NL & _
            strayCount & " Stray (in-line, removal candidate)" & NL & _
            outsideCount & " OutsideBody (Gutter/Margin, skipped)" & NL & NL & _
-           "Report: rpt\SoftHyphenCalibration.csv", _
+           "rpt\SoftHyphenCalibration.csv  (per-find rows, append)" & NL & _
+           "rpt\SoftHyphenCalibration.log  (per-page detail, append)", _
            vbInformation, "SoftHyphen_CalibrateColumns"
 
 PROC_EXIT:
+    If logF > 0 Then
+        On Error Resume Next
+        Close #logF
+        On Error GoTo 0
+    End If
     If f > 0 Then
         On Error Resume Next
         Close #f
@@ -576,8 +915,21 @@ PROC_EXIT:
     End If
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
-           ") in procedure SoftHyphen_CalibrateColumns of Module basWordRepairRunner"
+    If logF > 0 Then
+        On Error Resume Next
+        Print #logF, "ABORTED at step [" & currentStep & "] - Err " & _
+                     Err.Number & ": " & Err.Description
+        Close #logF
+        On Error GoTo 0
+    End If
+    If f > 0 Then
+        On Error Resume Next
+        Close #f
+        On Error GoTo 0
+    End If
+    MsgBox "Step: [" & currentStep & "]" & vbCrLf & _
+           "Error " & Err.Number & " (" & Err.Description & ")" & vbCrLf & _
+           "in procedure SoftHyphen_CalibrateColumns of Module basWordRepairRunner"
     Resume PROC_EXIT
 End Sub
 
