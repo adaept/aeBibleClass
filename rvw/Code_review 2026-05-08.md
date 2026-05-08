@@ -122,6 +122,79 @@ conventions occasionally do), revisit `SHA_ReplaceHard` to replace
 the soft hyphen with a hard hyphen-minus rather than deleting. Until
 then the action set stays binary - delete or preserve.
 
+### 4. Row character-count and pitch diagnostic (new task)
+
+Follow-on to the soft-hyphen sweep. With stray soft hyphens handled,
+the next visible body-text defect is rows that look loosely set -
+rows with too few characters for the column width, which the
+justifier stretches with wide inter-word spaces. These rows have no
+soft hyphen at the end (otherwise they would already have been
+hyphenated), so they need a separate diagnostic.
+
+Plan file: `~/.claude/plans/greedy-napping-yeti.md` (approved
+2026-05-08).
+
+#### 4a. Document structure assumption
+
+This Bible is normalized - **one verse per paragraph**:
+
+- Single-row verses are naturally left-aligned (paragraph ends
+  mid-column, not justified). Ignore.
+- Multi-row verses have a final row that contains the paragraph
+  mark and is also left-aligned. Ignore.
+- Earlier rows of multi-row verses ARE justified across the full
+  column. These are the rows we measure.
+
+Unified rule: **exclude any row that contains a paragraph mark from
+the histogram and the suspects list.**
+
+#### 4b. What "pitch" means
+
+Pitch = `(rightX - leftX) / CharCount`, in points per character.
+The justifier cannot stretch glyphs, so it stretches inter-word
+spaces - a short justified line therefore has a higher average
+pitch than a well-filled line. CharCount is a proxy; pitch is the
+direct signal. Both are recorded; suspects are ranked by pitch.
+
+#### 4c. Sampling strategy
+
+Pick **two non-overlapping 10-page ranges** from sections that are
+**not yet hyphenated**. Mixing already-hyphenated sections into the
+sample skews the histogram peak rightward (hyphenated text packs
+tighter), which would set the suspect threshold too lenient
+elsewhere. Two ranges also confirm the baseline is stable rather
+than range-specific.
+
+#### 4d. Process steps
+
+1. Identify two un-hyphenated 10-page ranges. Record the start pages.
+2. Run survey range 1: `RunRowCharCountSurvey_Across_Pages_From firstStart, 10`.
+3. Run survey range 2: `RunRowCharCountSurvey_Across_Pages_From secondStart, 10`. Both append to the same CSVs.
+4. Build histogram: `BuildRowCharCountHistogram`. Inspect `rpt\RowCharCountHistogram.csv` in Excel; confirm a clean peak per side; sanity-check the pitch threshold.
+5. Tune threshold if the suspect count looks unreasonable (too few = miss real defects; too many = noise).
+6. Run interactive review: `ReviewRowCharCountSuspects`. Cycle through suspects Yes / No / Skip / Cancel; insert soft hyphens manually where Yes (same UX as the soft-hyphen sweep).
+7. Re-run the soft-hyphen sweep over the same ranges to verify newly inserted soft hyphens classify as `Active`.
+8. Optional second pass: re-run survey on the same ranges to confirm the suspect count drops.
+
+#### 4e. Routines to add (in `src\basWordRepairRunner.bas`)
+
+- `RunRowCharCountSurvey_Across_Pages_From(startPage, pageCount)` - driver, mirrors `RunSoftHyphenSweep_Across_Pages_From`.
+- `RowCharCountSurvey_SinglePage(pageNum, ByRef rowsCum, ByRef userCancelled)` - per-page worker; emits to `rpt\RowCharCount.csv` and `.log`.
+- `BuildRowCharCountHistogram()` - reads the rows CSV; writes histogram and suspects CSVs.
+- `ReviewRowCharCountSuspects()` - interactive Yes / No / Skip / Cancel walker over the suspects CSV.
+
+#### 4f. Output files (under `rpt\`)
+
+- `rpt\RowCharCount.csv` - per-row records.
+- `rpt\RowCharCount.log` - per-page summary.
+- `rpt\RowCharCountHistogram.csv` - `Side,CharCount,Frequency` plus pitch buckets.
+- `rpt\RowCharCountSuspects.csv` - rows above the pitch threshold.
+- `rpt\RowCharCountReview.log` - appended by `ReviewRowCharCountSuspects` recording Yes / No / Skip per row.
+
+Survey routines are read-only against the document. Only the review
+phase mutates, and only via user-confirmed manual edits (same model
+as the soft-hyphen sweep).
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state
