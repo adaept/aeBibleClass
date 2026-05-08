@@ -47,6 +47,12 @@ Private Const LINE_HEIGHT_TOLERANCE As Single = 4#
 ' Word "optional hyphen" (Ctrl+Hyphen). Find code "^-".
 Private Const SOFT_HYPHEN_CODE      As Long = 31
 
+' Soft-hyphen sweep mode (Q5: SH_RemoveAll dropped per design).
+Public Enum SoftHyphenMode
+    SH_PromptEach = 0   ' Yes / No / Cancel per Stray find
+    SH_DryRunOnly = 1   ' Log only, no prompt, no removal
+End Enum
+
 '===============================================================
 ' Returns True if the active document filename starts with "v59"
 '===============================================================
@@ -930,6 +936,404 @@ PROC_ERR:
     MsgBox "Step: [" & currentStep & "]" & vbCrLf & _
            "Error " & Err.Number & " (" & Err.Description & ")" & vbCrLf & _
            "in procedure SoftHyphen_CalibrateColumns of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
+
+'==============================================================================
+' SoftHyphenSweep_ByColumnContext_SinglePage
+' PURPOSE:
+'   Production worker: scans one page for soft hyphens (Chr(31)), classifies
+'   each as Active (line-breaking, kept), Stray (in-line, removal candidate),
+'   or OutsideBody (gutter / margin, skipped). For each Stray, when mode is
+'   SH_PromptEach, scrolls the find into view and asks Yes / No / Cancel.
+'   Yes deletes the soft hyphen; No skips; Cancel sets userCancelled=True
+'   and aborts. SH_DryRunOnly classifies and logs but does not prompt or
+'   delete.
+'
+' OUTPUT (both append-mode):
+'   rpt\SoftHyphenSweep.csv  (machine-readable, header on first run)
+'   rpt\SoftHyphenSweep.log  (human-readable, one block per page)
+'
+' BYREF accumulators (driver passes the same vars across pages):
+'   strayCum    - cumulative Stray-classified finds
+'   removedCum  - cumulative removals
+'   userCancelled - True iff user clicked Cancel; driver should stop
+'==============================================================================
+Public Sub SoftHyphenSweep_ByColumnContext_SinglePage( _
+        ByVal pageNum As Long, _
+        ByVal mode As SoftHyphenMode, _
+        ByRef strayCum As Long, _
+        ByRef removedCum As Long, _
+        ByRef userCancelled As Boolean)
+    Dim currentStep   As String
+    On Error GoTo PROC_ERR
+    Dim oDoc          As Word.Document
+    Dim pgRange       As Word.Range
+    Dim searchRng     As Word.Range
+    Dim nextCh        As Word.Range
+    Dim ctxRng        As Word.Range
+    Dim m             As Word.Range
+    Dim sectionPS     As Word.PageSetup
+    Dim pageStart     As Long, pageEnd As Long, pageNextStart As Long
+    Dim ctxStart      As Long, ctxEnd As Long
+    Dim xPos          As Single, yShy As Single, yNext As Single, yDelta As Single
+    Dim col           As String, ctx As String, disp As String, action As String
+    Dim findIdx       As Long
+    Dim activeCount   As Long, outsideCount As Long
+    Dim pageStrayCount As Long, pageRemovedCount As Long, pageSkippedCount As Long
+    Dim isMirrored    As Boolean
+    Dim pageSide      As String
+    Dim csvPath       As String, logPath As String
+    Dim csvF          As Integer, logF As Integer
+    Dim writeCsvHeader As Boolean
+    Const NL          As String = vbCrLf
+
+    ' Per-page Stray collection. Capture full record so pass 2 can write
+    ' the CSV row after the user's action is known.
+    Dim strayPos()    As Long
+    Dim strayX()      As Single, strayY() As Single, strayYDelta() As Single
+    Dim strayCol()    As String, strayCtx() As String
+    ReDim strayPos(0 To 1023)
+    ReDim strayX(0 To 1023), strayY(0 To 1023), strayYDelta(0 To 1023)
+    ReDim strayCol(0 To 1023), strayCtx(0 To 1023)
+    Dim nStray As Long
+
+    currentStep = "Set ActiveDocument"
+    Set oDoc = ActiveDocument
+
+    ' Resolve page bounds without Pages.Count (multi-section safe).
+    currentStep = "GoTo page " & pageNum
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum))
+    pageStart = pgRange.Start
+
+    currentStep = "GoTo page " & (pageNum + 1)
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, Name:=CStr(pageNum + 1))
+    pageNextStart = pgRange.Start
+    If pageNextStart > pageStart Then
+        pageEnd = pageNextStart - 1
+        If pageEnd > oDoc.Content.End Then pageEnd = oDoc.Content.End
+    Else
+        pageEnd = oDoc.Content.End
+    End If
+
+    ' Resolve column bounds for THIS page's section.
+    currentStep = "Resolve column bounds for page " & pageNum
+    Dim bodyXMin As Single, bodyXMax As Single
+    Dim leftColMax As Single, gutterMin As Single, gutterMax As Single, rightColMin As Single
+    GetColumnBoundsForPage pageNum, bodyXMin, bodyXMax, _
+                           leftColMax, gutterMin, gutterMax, rightColMin
+
+    Set sectionPS = pgRange.Sections(1).PageSetup
+    isMirrored = sectionPS.MirrorMargins
+    If isMirrored Then
+        pageSide = IIf(pageNum Mod 2 = 1, "Recto", "Verso")
+    Else
+        pageSide = "Single"
+    End If
+
+    ' Open report files (append).
+    currentStep = "Open report files"
+    Dim docDir As String
+    docDir = oDoc.Path
+    If Len(docDir) = 0 Then docDir = Environ$("TEMP")
+    csvPath = docDir & "\rpt\SoftHyphenSweep.csv"
+    logPath = docDir & "\rpt\SoftHyphenSweep.log"
+
+    writeCsvHeader = (Len(Dir(csvPath)) = 0)
+    csvF = FreeFile
+    Open csvPath For Append As #csvF
+    If writeCsvHeader Then
+        Print #csvF, "PageNum,Side,FindNum,Position,X,Y,YDelta,Column,Disposition,Action,Context"
+    End If
+
+    logF = FreeFile
+    Open logPath For Append As #logF
+    Print #logF, String(72, "=")
+    Print #logF, "SoftHyphenSweep page=" & pageNum & "  side=" & pageSide & _
+                 "  mode=" & IIf(mode = SH_DryRunOnly, "DryRun", "PromptEach") & _
+                 "  run=" & Format(Now, "yyyy-mm-dd hh:mm:ss")
+    Print #logF, "Bounds   : Body=[" & Format(bodyXMin, "0.0") & ".." & _
+                 Format(bodyXMax, "0.0") & "]  L=[" & _
+                 Format(bodyXMin, "0.0") & ".." & Format(leftColMax, "0.0") & "]  G=[" & _
+                 Format(gutterMin, "0.0") & ".." & Format(gutterMax, "0.0") & "]  R=[" & _
+                 Format(rightColMin, "0.0") & ".." & Format(bodyXMax, "0.0") & "]"
+
+    ' ---- Pass 1: scan, classify, write Active/OutsideBody rows, capture Strays.
+    currentStep = "Pass 1 - configure Find"
+    Set searchRng = oDoc.Range(pageStart, pageEnd)
+    With searchRng.Find
+        .ClearFormatting
+        .Text = Chr(SOFT_HYPHEN_CODE)
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWholeWord = False
+        .MatchWildcards = False
+    End With
+
+    Do
+        currentStep = "Pass 1 Find.Execute (find #" & (findIdx + 1) & ")"
+        If Not searchRng.Find.Execute Then Exit Do
+        If searchRng.Start >= pageEnd Then Exit Do
+
+        findIdx = findIdx + 1
+
+        currentStep = "Pass 1 Information at find #" & findIdx
+        xPos = CSng(searchRng.Information(wdHorizontalPositionRelativeToPage))
+        yShy = CSng(searchRng.Information(wdVerticalPositionRelativeToPage))
+        col = ClassifyColumnAt(xPos, bodyXMin, leftColMax, gutterMax, bodyXMax)
+
+        If searchRng.End < oDoc.Content.End Then
+            Set nextCh = oDoc.Range(searchRng.End, searchRng.End + 1)
+            yNext = CSng(nextCh.Information(wdVerticalPositionRelativeToPage))
+        Else
+            yNext = yShy
+        End If
+        yDelta = yNext - yShy
+
+        ' Context window.
+        currentStep = "Pass 1 context at find #" & findIdx
+        ctxStart = searchRng.Start - 30
+        If ctxStart < pageStart Then ctxStart = pageStart
+        ctxEnd = searchRng.End + 30
+        If ctxEnd > pageEnd Then ctxEnd = pageEnd
+        Set ctxRng = oDoc.Range(ctxStart, ctxEnd)
+        ctx = ctxRng.Text
+        ctx = Replace(ctx, Chr(13), " ")
+        ctx = Replace(ctx, Chr(11), " ")
+        ctx = Replace(ctx, Chr(10), " ")
+        ctx = Replace(ctx, Chr(9), " ")
+        ctx = Replace(ctx, Chr(SOFT_HYPHEN_CODE), "[SHY]")
+        ctx = Replace(ctx, """", """""")
+
+        ' Disposition.
+        If col <> "Left" And col <> "Right" Then
+            disp = "OutsideBody"
+            action = "Skipped"
+            outsideCount = outsideCount + 1
+            Print #csvF, pageNum & "," & pageSide & "," & findIdx & "," & _
+                searchRng.Start & "," & Format(xPos, "0.0") & "," & _
+                Format(yShy, "0.0") & "," & Format(yDelta, "0.0") & "," & _
+                col & "," & disp & "," & action & ",""" & ctx & """"
+        ElseIf yDelta > LINE_HEIGHT_TOLERANCE Then
+            disp = "Active"
+            action = "Kept"
+            activeCount = activeCount + 1
+            Print #csvF, pageNum & "," & pageSide & "," & findIdx & "," & _
+                searchRng.Start & "," & Format(xPos, "0.0") & "," & _
+                Format(yShy, "0.0") & "," & Format(yDelta, "0.0") & "," & _
+                col & "," & disp & "," & action & ",""" & ctx & """"
+        Else
+            ' Stray - capture for pass 2; CSV row written after action known.
+            If nStray > UBound(strayPos) Then
+                ReDim Preserve strayPos(0 To UBound(strayPos) + 1024)
+                ReDim Preserve strayX(0 To UBound(strayX) + 1024)
+                ReDim Preserve strayY(0 To UBound(strayY) + 1024)
+                ReDim Preserve strayYDelta(0 To UBound(strayYDelta) + 1024)
+                ReDim Preserve strayCol(0 To UBound(strayCol) + 1024)
+                ReDim Preserve strayCtx(0 To UBound(strayCtx) + 1024)
+            End If
+            strayPos(nStray) = searchRng.Start
+            strayX(nStray) = xPos
+            strayY(nStray) = yShy
+            strayYDelta(nStray) = yDelta
+            strayCol(nStray) = col
+            strayCtx(nStray) = ctx
+            nStray = nStray + 1
+        End If
+
+        searchRng.Collapse wdCollapseEnd
+        If searchRng.Start >= pageEnd Then Exit Do
+        searchRng.End = pageEnd
+
+        If findIdx Mod 50 = 0 Then DoEvents
+    Loop
+
+    pageStrayCount = nStray
+
+    ' ---- Pass 2: prompt + remove for each Stray.
+    ' Cumulative deletion offset keeps captured positions accurate as we
+    ' iterate forward and remove characters.
+    Dim cumDelOffset As Long
+    Dim i As Long, pos As Long, response As Long
+
+    For i = 0 To pageStrayCount - 1
+        If userCancelled Then Exit For
+
+        currentStep = "Pass 2 stray #" & (i + 1) & " of " & pageStrayCount
+        pos = strayPos(i) - cumDelOffset
+
+        ' Defensive: confirm a soft hyphen still sits at the resolved position.
+        Set m = oDoc.Range(pos, pos + 1)
+        If AscW(m.Text) <> SOFT_HYPHEN_CODE Then
+            action = "SkippedDrift"
+            pageSkippedCount = pageSkippedCount + 1
+        ElseIf mode = SH_DryRunOnly Then
+            action = "DryRun"
+            pageSkippedCount = pageSkippedCount + 1
+        Else
+            ' Show the find in the document.
+            currentStep = "Pass 2 stray #" & (i + 1) & " - select+scroll"
+            Selection.SetRange m.Start, m.End
+            On Error Resume Next
+            ActiveWindow.ScrollIntoView Selection.Range, True
+            On Error GoTo PROC_ERR
+
+            currentStep = "Pass 2 stray #" & (i + 1) & " - prompt"
+            response = MsgBox( _
+                "Soft hyphen find " & (i + 1) & " of " & pageStrayCount & _
+                " on page " & pageNum & " (" & pageSide & ", " & strayCol(i) & " col)" & NL & _
+                "X=" & Format(strayX(i), "0.0") & "  Y=" & Format(strayY(i), "0.0") & _
+                "  YDelta=" & Format(strayYDelta(i), "0.0") & NL & NL & _
+                "Context:" & NL & strayCtx(i) & NL & NL & _
+                "Remove this soft hyphen?", _
+                vbYesNoCancel + vbQuestion + vbDefaultButton1, _
+                "SoftHyphenSweep p" & pageNum)
+
+            If response = vbYes Then
+                m.Delete
+                cumDelOffset = cumDelOffset + 1
+                action = "Removed"
+                pageRemovedCount = pageRemovedCount + 1
+            ElseIf response = vbNo Then
+                action = "Skipped"
+                pageSkippedCount = pageSkippedCount + 1
+            Else
+                action = "Cancelled"
+                userCancelled = True
+                Print #csvF, pageNum & "," & pageSide & ",stray" & (i + 1) & "," & _
+                    pos & "," & Format(strayX(i), "0.0") & "," & _
+                    Format(strayY(i), "0.0") & "," & Format(strayYDelta(i), "0.0") & "," & _
+                    strayCol(i) & ",Stray," & action & ",""" & strayCtx(i) & """"
+                Print #logF, "ABORTED at stray #" & (i + 1) & " of " & pageStrayCount
+                Exit For
+            End If
+        End If
+
+        Print #csvF, pageNum & "," & pageSide & ",stray" & (i + 1) & "," & _
+            pos & "," & Format(strayX(i), "0.0") & "," & _
+            Format(strayY(i), "0.0") & "," & Format(strayYDelta(i), "0.0") & "," & _
+            strayCol(i) & ",Stray," & action & ",""" & strayCtx(i) & """"
+    Next i
+
+    Print #logF, "Page " & pageNum & " result: " & findIdx & " find(s) - " & _
+                 activeCount & " Active(Kept), " & pageStrayCount & " Stray (" & _
+                 pageRemovedCount & " Removed, " & pageSkippedCount & " Skipped), " & _
+                 outsideCount & " OutsideBody"
+
+    Close #logF
+    logF = 0
+    Close #csvF
+    csvF = 0
+
+    ' Update driver-side accumulators.
+    strayCum = strayCum + pageStrayCount
+    removedCum = removedCum + pageRemovedCount
+
+    Debug.Print "SoftHyphenSweep p" & pageNum & " (" & pageSide & "): " & _
+                findIdx & " find(s) - " & activeCount & " Active, " & _
+                pageStrayCount & " Stray (" & pageRemovedCount & " Removed, " & _
+                pageSkippedCount & " Skipped), " & outsideCount & " OutsideBody" & _
+                IIf(userCancelled, "  [CANCELLED]", "")
+
+PROC_EXIT:
+    If logF > 0 Then
+        On Error Resume Next
+        Close #logF
+        On Error GoTo 0
+    End If
+    If csvF > 0 Then
+        On Error Resume Next
+        Close #csvF
+        On Error GoTo 0
+    End If
+    Exit Sub
+PROC_ERR:
+    If logF > 0 Then
+        On Error Resume Next
+        Print #logF, "ABORTED at step [" & currentStep & "] - Err " & _
+                     Err.Number & ": " & Err.Description
+        Close #logF
+        On Error GoTo 0
+    End If
+    If csvF > 0 Then
+        On Error Resume Next
+        Close #csvF
+        On Error GoTo 0
+    End If
+    MsgBox "Step: [" & currentStep & "]" & vbCrLf & _
+           "Error " & Err.Number & " (" & Err.Description & ")" & vbCrLf & _
+           "in procedure SoftHyphenSweep_ByColumnContext_SinglePage of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
+
+'==============================================================================
+' RunSoftHyphenSweep_Across_Pages_From
+' PURPOSE:
+'   Driver: invoke SoftHyphenSweep_ByColumnContext_SinglePage across a page
+'   range. All three args required (no Optional - per design Q4, dryRun must
+'   be passed explicitly to force an intentional choice).
+'
+' Usage:
+'   RunSoftHyphenSweep_Across_Pages_From 911, 1, True    ' dry-run page 911
+'   RunSoftHyphenSweep_Across_Pages_From 911, 5, False   ' live, pages 911-915
+'==============================================================================
+Public Sub RunSoftHyphenSweep_Across_Pages_From( _
+        ByVal startPage As Long, _
+        ByVal pageCount As Long, _
+        ByVal dryRun As Boolean)
+    On Error GoTo PROC_ERR
+
+    If pageCount < 1 Then
+        MsgBox "pageCount must be >= 1.", vbExclamation, "RunSoftHyphenSweep"
+        Exit Sub
+    End If
+
+    Dim mode          As SoftHyphenMode
+    Dim totalStray    As Long
+    Dim totalRemoved  As Long
+    Dim cancelled     As Boolean
+    Dim p             As Long
+    Dim endPage       As Long
+    Const NL          As String = vbCrLf
+
+    mode = IIf(dryRun, SH_DryRunOnly, SH_PromptEach)
+    endPage = startPage + pageCount - 1
+
+    Debug.Print "RunSoftHyphenSweep: pages " & startPage & ".." & endPage & _
+                "  mode=" & IIf(dryRun, "DryRun", "PromptEach")
+
+    For p = startPage To endPage
+        If cancelled Then Exit For
+        SoftHyphenSweep_ByColumnContext_SinglePage p, mode, _
+            totalStray, totalRemoved, cancelled
+    Next p
+
+    Dim trailer As String
+    If cancelled Then
+        trailer = "  [CANCELLED at page " & p & "]"
+    Else
+        trailer = ""
+    End If
+
+    Debug.Print "RunSoftHyphenSweep: done - " & totalStray & " stray total, " & _
+                totalRemoved & " removed" & trailer
+
+    MsgBox "Sweep complete." & NL & _
+           "Pages       : " & startPage & " .. " & endPage & NL & _
+           "Mode        : " & IIf(dryRun, "DryRun (no removals)", "PromptEach (live)") & NL & _
+           "Stray total : " & totalStray & NL & _
+           "Removed     : " & totalRemoved & NL & _
+           IIf(cancelled, "Status      : CANCELLED at page " & p, "Status      : Completed") & NL & NL & _
+           "rpt\SoftHyphenSweep.csv  (per-find rows)" & NL & _
+           "rpt\SoftHyphenSweep.log  (per-page summary)", _
+           vbInformation, "RunSoftHyphenSweep"
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure RunSoftHyphenSweep_Across_Pages_From of Module basWordRepairRunner"
     Resume PROC_EXIT
 End Sub
 
