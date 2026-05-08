@@ -419,3 +419,382 @@ Header comment in `basTEST_aeBibleConfig.bas` realigned: 45 styles
 Expected on next `RUN_TAXONOMY_STYLES`: 47 PASS / 4 FAIL across
 51 checks (current 39 PASS + 3 paragraph-style PASS + 5
 character-style PASS + 1 tab-stop PASS).
+
+## DESIGN: Soft-hyphen sweep within two-column body (FOR DISCUSSION)
+
+**Status: design only - no code written. Pending review and
+approval before implementation in `basWordRepairRunner.bas`.**
+
+### Problem
+
+Font changes (Calibri / Times New Roman -> Carlito / Liberation
+Serif) leave stray soft hyphens (Word's "optional hyphen",
+`Chr(31)`, find-code `^-`, Unicode `U+00AD` if exported) inside
+the two-column Bible body. Visually invisible in the new font but
+they re-trigger hyphenation breaks and pollute USFM export.
+
+### Model and naming
+
+Mirroring the existing pair:
+
+- `RunRepairWrappedVerseMarkers_Across_Pages_From` (driver, multi-page,
+  CSV log, sets up session and calls the per-page worker)
+- `RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage`
+  (worker, single page, char-by-char scan, X-coordinate gating)
+
+Proposed pair:
+
+- `RunSoftHyphenSweep_Across_Pages_From(startPage As Long, _
+  Optional pageCount As Long = 0, _
+  Optional dryRun As Boolean = False)` - driver
+- `SoftHyphenSweep_ByColumnContext_SinglePage(pageNum As Long, _
+  ByRef foundCount As Long, _
+  ByRef removedCount As Long, _
+  ByRef skippedCount As Long, _
+  ByVal mode As SoftHyphenMode)` - worker
+
+### Column-position constants (module-level, top of module)
+
+Word stores `wdHorizontalPositionRelativeToPage` in points.
+Letter portrait at the project's current margins (to be **confirmed
+by a one-shot calibration pass**, not hard-coded blind):
+
+```vba
+' Two-column body geometry, in points (1 inch = 72 pt).
+' Confirm against the active document via SoftHyphen_CalibrateColumns
+' before relying on these in production. Expected layout:
+'   Page width        612 pt (8.5 in Letter)
+'   Left margin        72 pt (1 in)
+'   Right margin       72 pt (1 in)
+'   Body width        468 pt
+'   Gutter             18 pt
+'   Each column      ~225 pt
+Private Const PAGE_BODY_X_MIN   As Single = 72#    ' left edge of left column
+Private Const COL_LEFT_X_MAX    As Single = 297#   ' right edge of left column
+Private Const GUTTER_X_MIN      As Single = 297#   ' = COL_LEFT_X_MAX
+Private Const GUTTER_X_MAX      As Single = 315#   ' left edge of right column
+Private Const COL_RIGHT_X_MIN   As Single = 315#   ' = GUTTER_X_MAX
+Private Const PAGE_BODY_X_MAX   As Single = 540#   ' right edge of right column
+
+' Vertical body band (skip headers / footers / page-margin ornaments)
+Private Const PAGE_BODY_Y_MIN   As Single = 72#
+Private Const PAGE_BODY_Y_MAX   As Single = 720#
+
+' Soft hyphen (Word optional hyphen)
+Private Const SOFT_HYPHEN_CHR   As String = vbNullString  ' = Chr(31), set in Sub
+Private Const SOFT_HYPHEN_CODE  As Long = 31
+```
+
+A `SoftHyphen_CalibrateColumns` helper (one-page X-position dump
+of every paragraph start) is recommended as a prerequisite the
+first time this runs against a new document layout.
+
+### Find strategy: Word's Find object, not char scan
+
+The verse-marker routine walks `pageStart..pageEnd` one character
+at a time because it needs to recognize a multi-character marker
+*sequence* with style and color filters. Soft hyphens are
+single-character finds with no preceding sequence to assemble -
+`Selection.Find` with `.Text = Chr(31)` is one to two orders of
+magnitude faster for a full-page sweep (and a full document).
+
+```vba
+With rng.Find
+    .ClearFormatting
+    .Text = Chr(SOFT_HYPHEN_CODE)
+    .Forward = True
+    .Wrap = wdFindStop
+    .MatchWildcards = False
+End With
+```
+
+The X / Y gating then runs *only* on matches, not on every
+character.
+
+### Per-find prompt and modes
+
+`SoftHyphenMode` (module-level Enum):
+
+```vba
+Public Enum SoftHyphenMode
+    SH_PromptEach    = 0   ' Yes / No / YesAll / NoAll / Cancel
+    SH_DryRunOnly    = 1   ' Log only, no removals, no prompt
+    SH_RemoveAll     = 2   ' No prompt - bulk remove
+End Enum
+```
+
+Per-find prompt content:
+
+- Page number, column ("Left" / "Gutter" / "Right" / "Outside body"),
+  X / Y in points
+- Sequence number ("Find 17 of ?")
+- 30-char context window before the soft hyphen and 30 chars after,
+  with the hyphen rendered as a visible token (e.g. `[SHY]`) so it
+  is unmistakable
+- Selection range scrolled into view (`Selection.GoTo` plus
+  `ActiveWindow.ScrollIntoView`) so the user can confirm
+  visually before answering
+
+Buttons: **Yes** (remove, advance), **No** (skip, advance),
+**Yes to All** (switch to `SH_RemoveAll` for the rest of this run),
+**No to All** (switch to `SH_DryRunOnly`), **Cancel** (abort,
+preserving log).
+
+### Decision: remove vs replace vs preserve
+
+Three handling options, controlled by an enum:
+
+```vba
+Public Enum SoftHyphenAction
+    SHA_Delete       = 0   ' remove the character entirely
+    SHA_ReplaceHard  = 1   ' replace with regular hyphen "-"
+    SHA_Preserve     = 2   ' skip
+End Enum
+```
+
+Default proposal: **`SHA_Delete`**. The font change is the trigger;
+the new font handles its own hyphenation, so leftover soft hyphens
+serve no purpose and risk re-triggering breaks. `SHA_ReplaceHard`
+is reserved for the rare case where the soft hyphen sits inside
+an explicitly hyphenated compound word (e.g. "co-author") that
+the original author intended to be hard-hyphenated; the per-find
+prompt should surface this option only when the surrounding word
+shape suggests it (heuristic: alphabetic on both sides, run-length
+> 4 chars).
+
+### Column classification
+
+Per match:
+
+```vba
+Function ClassifyColumn(xPos As Single) As String
+    Select Case True
+        Case xPos < PAGE_BODY_X_MIN:                           ClassifyColumn = "OutsideLeft"
+        Case xPos < COL_LEFT_X_MAX:                            ClassifyColumn = "Left"
+        Case xPos < GUTTER_X_MAX:                              ClassifyColumn = "Gutter"
+        Case xPos < PAGE_BODY_X_MAX:                           ClassifyColumn = "Right"
+        Case Else:                                             ClassifyColumn = "OutsideRight"
+    End Select
+End Function
+```
+
+Matches outside Left / Right (i.e. Gutter / OutsideLeft /
+OutsideRight) are logged with a flag but **skipped from the
+per-find prompt by default** - they are almost certainly artifacts
+in margins, footnotes, or floats and need separate review. Toggle
+via a `processOutsideColumns As Boolean` argument if desired.
+
+### Output: rpt\ folder
+
+Two files, both under `rpt\`:
+
+1. `rpt\SoftHyphenSweep.csv` (machine-readable, append per run):
+
+   ```
+   SessionID,PageNum,Column,X,Y,Context,Action
+   20260507_141951,42,Left,84.3,156.2,"...mer-[SHY]ciful and...",Removed
+   ```
+
+2. `rpt\SoftHyphenSweep.log` (human-readable, overwrite per run,
+   summary plus per-page section in the same shape as the existing
+   `logBuffer` pattern in the verse-marker worker):
+
+   ```
+   === Soft Hyphen Sweep on Page 42 ===
+   Header for page 42: Genesis 18
+   > [Find 1] Left col X=84.3 Y=156.2 ctx="...mer-[SHY]ciful and..." Action=Removed
+   > [Find 2] Right col X=380.1 Y=412.7 ctx="...over-[SHY]throw..." Action=Skipped
+   === 1 removed, 1 skipped, 0 outside on page 42 ===
+   ```
+
+### Additional improvements suggested
+
+1. **Calibration pre-pass.** `SoftHyphen_CalibrateColumns(pageNum)`
+   dumps X / Y of the first character of every paragraph on a
+   reference page. Run once to confirm the column-X constants
+   match the live document before the sweep is trusted.
+
+2. **Match the existing `OneVersePerParaRepair` pattern** for
+   document-shape detection: if a future document variant moves
+   the body grid, branch on `FileNameStartsWithV59` or a new
+   probe. Document this in the worker header.
+
+3. **Cache `ActiveDocument.Pages.Count`.** The verse-marker worker
+   already carries a `FIXME_LATER` for this on 800+ page documents.
+   If the soft-hyphen sweep iterates pages, take the count once in
+   the driver, not per page.
+
+4. **Dry-run summary first.** Default the driver to
+   `dryRun = True` for the very first invocation: count and
+   classify all soft hyphens, write the CSV, exit without
+   prompting. The user reviews the CSV, then re-runs with
+   `dryRun = False` and confidence in the totals.
+
+5. **Selection visibility.** Before each prompt:
+
+   ```vba
+   Selection.SetRange match.Start, match.End
+   ActiveWindow.ScrollIntoView Selection.Range, True
+   ```
+
+   so the user is not flying blind in a 800-page document.
+
+6. **Cancel preserves log.** `On Error GoTo PROC_ERR` already
+   closes the file in `PROC_EXIT`, but the Cancel path needs
+   explicit `Close #logFile` plus a `"Run aborted at find N"`
+   trailer so the partial run is auditable.
+
+7. **Performance ceiling.** With Find-based scanning, expect
+   < 1 second per 50-page batch on a typical machine. No need to
+   call `DoEvents` per match unless prompt round-trip dominates.
+
+8. **Undo grouping.** Wrap each removal in a single Undo record
+   so Ctrl+Z reverts one removal at a time; alternatively wrap
+   the whole sweep in `ActiveDocument.UndoClear` plus a custom
+   restore-from-CSV helper. Default to per-removal Undo records
+   (matches Word's normal Find / Replace UX).
+
+9. **Headers / footers.** Decide explicitly: scan only
+   `ActiveDocument.Content`, or also iterate
+   `Section.Headers / Footers / Footnotes / Endnotes`? Default
+   proposal: body only (matches the verse-marker worker's
+   `pageStart..pageEnd` scope). If headers / footers ever carry
+   soft hyphens after a font change, add a separate sister routine
+   rather than overloading this one.
+
+10. **Style filter.** Optional argument `restrictToStyles As Variant`
+    (paramarray of style names). If supplied, only act on matches
+    whose `style.NameLocal` is in the list. Useful if an early run
+    surfaces a class of false positives concentrated in one style.
+
+### Open questions for review
+
+- **Q1.** Are the column-X constants above close to the actual
+  document layout, or should the calibration pre-pass run first
+  and the constants be revised before code lands?
+- **Q2.** Default action: `SHA_Delete` accepted, or do compound
+  words (co-author, ex-husband) need `SHA_ReplaceHard` as a
+  per-prompt option from day 1?
+- **Q3.** Scope: body only on first cut, with header / footer /
+  footnote sweeps as a follow-up - acceptable?
+- **Q4.** Should `RunSoftHyphenSweep_Across_Pages_From` default to
+  `dryRun = True` on first call, or always require the user to
+  pass it explicitly?
+- **Q5.** Are Yes-to-All / No-to-All worth the extra MsgBox
+  complexity, or keep strict Yes / No / Cancel as the user
+  originally requested?
+- **Q6.** Log location: confirm `rpt\SoftHyphenSweep.csv` and
+  `rpt\SoftHyphenSweep.log` (matches existing `RepairLog.txt`
+  convention).
+
+### Resolutions (2026-05-07) - locked, ready to implement
+
+**Q1 - resolved with new requirement: skip soft hyphens that are
+*actually breaking* a line.** Such hyphens render visibly at the
+line end and are intentional / kept. Detection rule:
+
+```vba
+' "Active" soft hyphen = causes a real line break.
+'   Y(charAfterSoftHyphen) > Y(softHyphen) + LINE_HEIGHT_TOLERANCE
+' Stray soft hyphen = invisible inside a line - eligible for removal.
+Private Const LINE_HEIGHT_TOLERANCE As Single = 4#  ' pt; tune via calibration
+```
+
+For each `Selection.Find` match:
+
+```vba
+Dim yShy As Single, yNext As Single
+yShy = match.Information(wdVerticalPositionRelativeToPage)
+Set nextCh = ActiveDocument.Range(match.End, match.End + 1)
+yNext = nextCh.Information(wdVerticalPositionRelativeToPage)
+If yNext - yShy > LINE_HEIGHT_TOLERANCE Then
+    ' Active / breaking - log as "Kept (breaking)" and skip the prompt
+Else
+    ' Stray - prompt or act per mode
+End If
+```
+
+This adds a fourth log classification: `Kept (breaking)`,
+distinct from `Skipped` (user said No) and `OutsideBody` (gating).
+
+**Calibration helper** is now mandatory before the first real
+sweep, scope expanded:
+
+- `SoftHyphen_CalibrateColumns(pageNum)` -
+  dump every soft hyphen on `pageNum` with X / Y, the Y of the
+  next char, the computed delta, the column classification, and
+  the **rule-derived disposition** (`Active` vs `Stray`). User
+  reviews the output, confirms the X-column constants AND the
+  `LINE_HEIGHT_TOLERANCE` value, then the production sweep runs.
+- Output: `rpt\SoftHyphenCalibration.csv`, one row per find on
+  the chosen page.
+
+**Q2 - resolved.** `SHA_ReplaceHard` is **out of scope** for the
+initial implementation. Compound words in the active document
+already use a literal hyphen-minus (`-`, U+002D), not soft
+hyphens, so there is no replacement case to handle.
+
+  *Future-work note (i18n / multilingual editions).* If a future
+  language edition adopts soft hyphens as semantic compound-break
+  markers (German, Dutch, and some Slavic-language typesetting
+  conventions occasionally do), revisit `SHA_ReplaceHard` then.
+  Until then the action enum is binary - delete or preserve - and
+  the third value is omitted from code rather than left as dead
+  weight.
+
+**Q3 - resolved.** Body only. `ActiveDocument.Content` scope.
+Headers / footers are explicitly out of scope: the project has
+established that they will not contain soft hyphens. **Footnote
+Text** is a possible follow-up scope - flagged here, **not** built
+into the initial routine. If needed it becomes a sister routine
+(`SoftHyphenSweep_FootnotesOnly`) rather than a flag on this one.
+
+**Q4 - resolved.** `dryRun` is a required argument with no default
+- caller must pass it explicitly each invocation. Updated
+signature:
+
+```vba
+Public Sub RunSoftHyphenSweep_Across_Pages_From( _
+    ByVal startPage As Long, _
+    ByVal pageCount As Long, _
+    ByVal dryRun As Boolean)
+```
+
+No `Optional` keyword. Forces an intentional choice and removes
+the "I forgot the flag" foot-gun.
+
+**Q5 - resolved.** Per-find prompt is **Yes / No / Cancel only**.
+`SoftHyphenMode` enum collapses to two values:
+
+```vba
+Public Enum SoftHyphenMode
+    SH_PromptEach    = 0   ' Yes / No / Cancel
+    SH_DryRunOnly    = 1   ' Log only, no removals, no prompt
+End Enum
+```
+
+`SH_RemoveAll` is dropped. Cancel at any prompt aborts the run
+and writes a `"Run aborted at find N of <total>"` trailer to the
+log; CSV rows already written are preserved.
+
+**Q6 - resolved.** Output paths confirmed:
+
+- `rpt\SoftHyphenSweep.csv` - append per run (machine-readable)
+- `rpt\SoftHyphenSweep.log` - overwrite per run (human-readable)
+- `rpt\SoftHyphenCalibration.csv` - overwrite per run (calibration
+  helper output, separate from the sweep output)
+
+### Implementation order
+
+1. Module-level constants block (`PAGE_BODY_X_MIN` ...
+   `COL_RIGHT_X_MIN`, `PAGE_BODY_X_MAX`, `LINE_HEIGHT_TOLERANCE`,
+   `SOFT_HYPHEN_CODE`).
+2. `ClassifyColumn` (Private Function).
+3. `SoftHyphen_CalibrateColumns` - **build and run first**, against
+   one representative page. User reviews
+   `rpt\SoftHyphenCalibration.csv`, confirms constants.
+4. Constants tuned to match calibration output (if needed).
+5. `SoftHyphenSweep_ByColumnContext_SinglePage` (worker).
+6. `RunSoftHyphenSweep_Across_Pages_From` (driver).
+7. First production run on a small page range with `dryRun = True`.
+8. Spot-check the CSV; only then run with `dryRun = False`.
