@@ -6,6 +6,33 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Private OneVersePerParaRepair As Boolean
 
+'==============================================================================
+' Soft-hyphen sweep - module constants
+' Reference layout: "JUDE - Sample.docm" (JIS B5, w:code=13).
+'   Page size      516.25 pt x 728.65 pt  (twips 10325 x 14573)
+'   Margins        T/B 54.7, L 54.7, R 43.2
+'   Binding gutter 10.1 pt (added to left)
+'   Two columns    14.4 pt gap, each ~196.925 pt wide
+' Run SoftHyphen_CalibrateColumns once before the production sweep to
+' confirm wdHorizontalPositionRelativeToPage matches these boundaries.
+'==============================================================================
+Private Const PAGE_BODY_X_MIN       As Single = 64.8     ' left edge of left column
+Private Const COL_LEFT_X_MAX        As Single = 261.725  ' right edge of left column
+Private Const GUTTER_X_MIN          As Single = 261.725  ' = COL_LEFT_X_MAX
+Private Const GUTTER_X_MAX          As Single = 276.125  ' left edge of right column
+Private Const COL_RIGHT_X_MIN       As Single = 276.125  ' = GUTTER_X_MAX
+Private Const PAGE_BODY_X_MAX       As Single = 473.05   ' right edge of right column
+Private Const PAGE_BODY_Y_MIN       As Single = 54.7     ' top of body band
+Private Const PAGE_BODY_Y_MAX       As Single = 673.95   ' bottom of body band
+
+' Active vs Stray classification.
+' Y(charAfter) - Y(softHyphen) > LINE_HEIGHT_TOLERANCE => active (line break,
+' renders visibly, must be preserved). Otherwise => stray, removal candidate.
+Private Const LINE_HEIGHT_TOLERANCE As Single = 4#
+
+' Word "optional hyphen" (Ctrl+Hyphen). Find code "^-".
+Private Const SOFT_HYPHEN_CODE      As Long = 31
+
 '===============================================================
 ' Returns True if the active document filename starts with "v59"
 '===============================================================
@@ -387,4 +414,170 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure GetVerseText of Module basWordRepairRunner"
     Resume PROC_EXIT
 End Function
+
+'==============================================================================
+' ClassifyColumn
+' Returns the column band for a horizontal position (points relative to page).
+' Bands: "OutsideLeft" | "Left" | "Gutter" | "Right" | "OutsideRight"
+'==============================================================================
+Private Function ClassifyColumn(ByVal xPos As Single) As String
+    Select Case True
+        Case xPos < PAGE_BODY_X_MIN:  ClassifyColumn = "OutsideLeft"
+        Case xPos < COL_LEFT_X_MAX:   ClassifyColumn = "Left"
+        Case xPos < GUTTER_X_MAX:     ClassifyColumn = "Gutter"
+        Case xPos < PAGE_BODY_X_MAX:  ClassifyColumn = "Right"
+        Case Else:                    ClassifyColumn = "OutsideRight"
+    End Select
+End Function
+
+'==============================================================================
+' SoftHyphen_CalibrateColumns
+' PURPOSE:
+'   Calibration helper. Walks one page, locates every soft hyphen
+'   (Chr(31), Word "optional hyphen"), records X / Y / next-char-Y, classifies
+'   the column (Left / Gutter / Right / Outside) and the disposition
+'   (Active = at a real line break, Stray = invisible inside a line, OutsideBody
+'   = in gutter or page margin). Writes one row per find to
+'   rpt\SoftHyphenCalibration.csv. No removals - read-only.
+'
+'   Run this once against a representative page in the active document, review
+'   the CSV, and confirm the column-X constants and LINE_HEIGHT_TOLERANCE match
+'   the live layout before running the production sweep.
+'
+' Usage:
+'   SoftHyphen_CalibrateColumns 42
+'==============================================================================
+Public Sub SoftHyphen_CalibrateColumns(ByVal pageNum As Long)
+    On Error GoTo PROC_ERR
+    Dim oDoc          As Document
+    Dim pgRange       As Word.Range
+    Dim searchRng     As Word.Range
+    Dim nextCh        As Word.Range
+    Dim ctxRng        As Word.Range
+    Dim pageStart     As Long, pageEnd As Long
+    Dim ctxStart      As Long, ctxEnd As Long
+    Dim xPos          As Single, yShy As Single, yNext As Single, yDelta As Single
+    Dim col           As String, disposition As String, ctx As String
+    Dim findCount     As Long
+    Dim activeCount   As Long
+    Dim strayCount    As Long
+    Dim outsideCount  As Long
+    Dim sPath         As String
+    Dim f             As Integer
+    Const NL          As String = vbCrLf
+
+    Set oDoc = ActiveDocument
+
+    ' Compute page bounds (same pattern as the verse-marker worker).
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    pageStart = pgRange.Start
+    If pageNum >= oDoc.Pages.Count Then
+        pageEnd = oDoc.Content.End
+    Else
+        Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
+        pageEnd = pgRange.Start - 1
+    End If
+
+    ' Open report.
+    sPath = oDoc.Path & Application.PathSeparator & "rpt" & _
+            Application.PathSeparator & "SoftHyphenCalibration.csv"
+    f = FreeFile
+    Open sPath For Output As #f
+    Print #f, "PageNum,FindNum,Position,X,Y,YNext,YDelta,Column,Disposition,Context"
+
+    ' Find each soft hyphen within page bounds.
+    Set searchRng = oDoc.Range(pageStart, pageEnd)
+    With searchRng.Find
+        .ClearFormatting
+        .Text = Chr(SOFT_HYPHEN_CODE)
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchWildcards = False
+        .MatchCase = False
+    End With
+
+    Do While searchRng.Find.Execute
+        ' Bail if Find escaped the page bound.
+        If searchRng.Start >= pageEnd Then Exit Do
+
+        findCount = findCount + 1
+        xPos = searchRng.Information(wdHorizontalPositionRelativeToPage)
+        yShy = searchRng.Information(wdVerticalPositionRelativeToPage)
+
+        col = ClassifyColumn(xPos)
+
+        ' Y of the next character (use a 1-char range past the match).
+        If searchRng.End < pageEnd Then
+            Set nextCh = oDoc.Range(searchRng.End, searchRng.End + 1)
+            yNext = nextCh.Information(wdVerticalPositionRelativeToPage)
+        Else
+            yNext = yShy   ' no next char on page; treat as same line
+        End If
+        yDelta = yNext - yShy
+
+        ' Disposition rule.
+        If col <> "Left" And col <> "Right" Then
+            disposition = "OutsideBody"
+            outsideCount = outsideCount + 1
+        ElseIf yDelta > LINE_HEIGHT_TOLERANCE Then
+            disposition = "Active"
+            activeCount = activeCount + 1
+        Else
+            disposition = "Stray"
+            strayCount = strayCount + 1
+        End If
+
+        ' 30-char context window, with control chars and quotes neutralized
+        ' for CSV safety.
+        ctxStart = searchRng.Start - 30
+        If ctxStart < pageStart Then ctxStart = pageStart
+        ctxEnd = searchRng.End + 30
+        If ctxEnd > pageEnd Then ctxEnd = pageEnd
+        Set ctxRng = oDoc.Range(ctxStart, ctxEnd)
+        ctx = ctxRng.Text
+        ctx = Replace(ctx, Chr(13), " ")
+        ctx = Replace(ctx, Chr(11), " ")
+        ctx = Replace(ctx, Chr(10), " ")
+        ctx = Replace(ctx, Chr(9), " ")
+        ctx = Replace(ctx, Chr(SOFT_HYPHEN_CODE), "[SHY]")
+        ctx = Replace(ctx, """", """""")
+
+        Print #f, pageNum & "," & findCount & "," & searchRng.Start & "," & _
+                  Format(xPos, "0.0") & "," & Format(yShy, "0.0") & "," & _
+                  Format(yNext, "0.0") & "," & Format(yDelta, "0.0") & "," & _
+                  col & "," & disposition & ",""" & ctx & """"
+
+        ' Advance past the match.
+        searchRng.Start = searchRng.End
+        searchRng.End = pageEnd
+
+        If findCount Mod 50 = 0 Then DoEvents
+    Loop
+
+    Close #f
+    f = 0
+
+    Debug.Print "SoftHyphen_CalibrateColumns: page " & pageNum & " - " & _
+                findCount & " find(s) (" & activeCount & " Active, " & _
+                strayCount & " Stray, " & outsideCount & " OutsideBody) -> " & sPath
+    MsgBox "Soft Hyphen Calibration on page " & pageNum & ":" & NL & _
+           findCount & " total find(s)" & NL & _
+           activeCount & " Active (line-breaking, would be KEPT)" & NL & _
+           strayCount & " Stray (in-line, removal candidate)" & NL & _
+           outsideCount & " OutsideBody (Gutter/Margin, skipped)" & NL & NL & _
+           "Report: rpt\SoftHyphenCalibration.csv", _
+           vbInformation, "SoftHyphen_CalibrateColumns"
+
+PROC_EXIT:
+    If f > 0 Then
+        On Error Resume Next
+        Close #f
+        On Error GoTo 0
+    End If
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure SoftHyphen_CalibrateColumns of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
 

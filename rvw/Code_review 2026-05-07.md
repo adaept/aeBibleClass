@@ -784,6 +784,35 @@ log; CSV rows already written are preserved.
 - `rpt\SoftHyphenCalibration.csv` - overwrite per run (calibration
   helper output, separate from the sweep output)
 
+### Geometry correction (2026-05-07): JIS B5, not Letter
+
+Reference layout is `JUDE - Sample.docm`, **not** Letter portrait.
+Extracted from `word/document.xml` `sectPr`:
+
+| Field | Twips | Points |
+|---|---:|---:|
+| Page width (`w:pgSz w:w`) | 10325 | 516.25 |
+| Page height (`w:pgSz w:h`) | 14573 | 728.65 |
+| `w:code="13"` | | JIS B5 |
+| Top / bottom margin | 1094 | 54.7 |
+| Left margin | 1094 | 54.7 |
+| Right margin | 864 | 43.2 |
+| Binding gutter | 202 | 10.1 |
+| Column gap (`w:cols w:space`) | 288 | 14.4 |
+| Columns (`w:num`) | | 2 |
+
+Computed body grid (X relative to page, points):
+
+- Effective left edge (margin + gutter): `64.8`
+- Left column: `64.8 -> 261.725`
+- Gutter: `261.725 -> 276.125`
+- Right column: `276.125 -> 473.05`
+- Body Y band: `54.7 -> 673.95`
+
+Constants in code use these values directly; calibration on a real
+JUDE page will confirm `wdHorizontalPositionRelativeToPage` reports
+within rounding tolerance of these boundaries.
+
 ### Implementation order
 
 1. Module-level constants block (`PAGE_BODY_X_MIN` ...
