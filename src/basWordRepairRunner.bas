@@ -1337,3 +1337,423 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+'==============================================================================
+' RowCharCountSurvey_SinglePage
+' PURPOSE:
+'   Read-only survey: walk the body of one page paragraph by paragraph,
+'   group characters into visual rows by Y position, and emit one CSV row
+'   per visual row. Companion to SoftHyphenSweep, but for diagnosing
+'   excessive inter-word spacing in justified two-column body text.
+'
+' Document assumption: one verse per paragraph (normalized).
+'   - Single-row verses: their only row contains the paragraph mark, so
+'     IsParagraphEnd=True and the histogram excludes them.
+'   - Multi-row verses: only the final row contains the paragraph mark;
+'     earlier rows are fully justified and ARE measured.
+'
+' OUTPUTS (append-mode):
+'   rpt\RowCharCount.csv (one row per visual line)
+'   rpt\RowCharCount.log (per-page summary)
+'
+' CSV columns:
+'   PageNum,Side,RowIndex,Y,LeftX,RightX,CharCount,Pitch,
+'   LastCharCode,EndsWithSoftHyphen,IsParagraphEnd,
+'   RangeStart,RangeEnd,FirstChars
+'
+' Pitch = (RightX - LeftX) / max(CharCount-1, 1)  pt per char (pen advance)
+' Side  = ClassifyColumnAt(LeftX) restricted to Left/Right; rows whose
+'         LeftX falls outside the body columns are written with Side set
+'         to the band name (OutsideLeft/Gutter/OutsideRight) so the
+'         histogram pass can filter them.
+'
+' ARGS:
+'   pageNum       - page to scan (1-based)
+'   rowsCum       - byref: total rows emitted (incremented)
+'   userCancelled - byref: True if user cancels mid-scan via Esc
+'==============================================================================
+Public Sub RowCharCountSurvey_SinglePage( _
+        ByVal pageNum As Long, _
+        ByRef rowsCum As Long, _
+        ByRef userCancelled As Boolean)
+    Dim currentStep   As String
+    On Error GoTo PROC_ERR
+    Dim oDoc          As Word.Document
+    Dim pgRange       As Word.Range
+    Dim ch            As Word.Range
+    Dim sectionPS     As Word.PageSetup
+    Dim para          As Word.Paragraph
+    Dim paraStart     As Long, paraEnd As Long
+    Dim pageStart     As Long, pageEnd As Long, pageNextStart As Long
+    Dim isMirrored    As Boolean
+    Dim pageSide      As String
+    Dim csvPath       As String, logPath As String
+    Dim csvF          As Integer, logF As Integer
+    Dim writeCsvHeader As Boolean
+    Const NL          As String = vbCrLf
+
+    Dim bodyXMin As Single, bodyXMax As Single
+    Dim leftColMax As Single, gutterMin As Single, gutterMax As Single, rightColMin As Single
+
+    ' Per-row accumulators.
+    Dim rowAnchorY    As Single
+    Dim rowFirstX     As Single, rowLastX As Single
+    Dim rowFirstPos   As Long, rowLastPos As Long
+    Dim rowCharCount  As Long
+    Dim rowFirstChars As String
+    Dim lastCharCode  As Long
+    Dim endsWithShy   As Boolean
+    Dim rowOpen       As Boolean
+    Dim rowIndex      As Long
+    Dim pageRows      As Long, pageRowsBody As Long, pageRowsParaEnd As Long
+    Dim pageRowsShy   As Long, pageRowsOutside As Long
+
+    Dim p             As Long
+    Dim chText        As String
+    Dim asciiCode     As Long
+    Dim curY          As Single, curX As Single
+
+    currentStep = "Set ActiveDocument"
+    Set oDoc = ActiveDocument
+
+    currentStep = "GoTo page " & pageNum
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum))
+    pageStart = pgRange.Start
+
+    currentStep = "GoTo page " & (pageNum + 1)
+    Set pgRange = oDoc.GoTo(What:=wdGoToPage, name:=CStr(pageNum + 1))
+    pageNextStart = pgRange.Start
+    If pageNextStart > pageStart Then
+        pageEnd = pageNextStart - 1
+        If pageEnd > oDoc.Content.End Then pageEnd = oDoc.Content.End
+    Else
+        pageEnd = oDoc.Content.End
+    End If
+
+    currentStep = "Resolve column bounds for page " & pageNum
+    GetColumnBoundsForPage pageNum, bodyXMin, bodyXMax, _
+                           leftColMax, gutterMin, gutterMax, rightColMin
+
+    Set sectionPS = oDoc.Range(pageStart, pageStart + 1).Sections(1).PageSetup
+    isMirrored = sectionPS.MirrorMargins
+    If isMirrored Then
+        pageSide = IIf(pageNum Mod 2 = 1, "Recto", "Verso")
+    Else
+        pageSide = "Single"
+    End If
+
+    currentStep = "Open report files"
+    Dim docDir As String
+    docDir = oDoc.Path
+    If Len(docDir) = 0 Then docDir = Environ$("TEMP")
+    csvPath = docDir & "\rpt\RowCharCount.csv"
+    logPath = docDir & "\rpt\RowCharCount.log"
+
+    writeCsvHeader = (Len(Dir(csvPath)) = 0)
+    csvF = FreeFile
+    Open csvPath For Append As #csvF
+    If writeCsvHeader Then
+        Print #csvF, "PageNum,PageSide,RowIndex,Side,Y,LeftX,RightX,CharCount,Pitch," & _
+                     "LastCharCode,EndsWithSoftHyphen,IsParagraphEnd,RangeStart,RangeEnd,FirstChars"
+    End If
+
+    logF = FreeFile
+    Open logPath For Append As #logF
+    Print #logF, String(72, "=")
+    Print #logF, "RowCharCountSurvey page=" & pageNum & "  side=" & pageSide & _
+                 "  run=" & Format(Now, "yyyy-mm-dd hh:mm:ss")
+    Print #logF, "Bounds   : Body=[" & Format(bodyXMin, "0.0") & ".." & _
+                 Format(bodyXMax, "0.0") & "]  L=[" & _
+                 Format(bodyXMin, "0.0") & ".." & Format(leftColMax, "0.0") & "]  G=[" & _
+                 Format(gutterMin, "0.0") & ".." & Format(gutterMax, "0.0") & "]  R=[" & _
+                 Format(rightColMin, "0.0") & ".." & Format(bodyXMax, "0.0") & "]"
+
+    ' Walk paragraphs that overlap [pageStart, pageEnd]. Limit story to main
+    ' text - this skips headers, footers, footnotes by construction.
+    currentStep = "Locate first paragraph on page"
+    Dim startPara As Word.Range
+    Set startPara = oDoc.Range(pageStart, pageStart)
+    Set startPara = startPara.Paragraphs(1).Range
+
+    rowOpen = False
+    rowIndex = 0
+    Application.StatusBar = "RowCharCountSurvey p" & pageNum & " - scanning..."
+
+    For Each para In oDoc.Range(startPara.Start, pageEnd).Paragraphs
+        If userCancelled Then Exit For
+        paraStart = para.Range.Start
+        paraEnd = para.Range.End
+        If paraStart >= pageEnd Then Exit For
+        If para.Range.StoryType <> wdMainTextStory Then GoTo NextPara
+
+        currentStep = "Walk para " & paraStart & ".." & paraEnd
+        For p = paraStart To paraEnd - 1
+            If p < pageStart Then GoTo NextChar
+            If p >= pageEnd Then Exit For
+
+            Set ch = oDoc.Range(p, p + 1)
+            chText = ch.Text
+            If Len(chText) = 0 Then GoTo NextChar
+            asciiCode = AscW(chText)
+
+            ' Skip vertical-tab line-break characters within row tracking;
+            ' treat them like a forced row break (rare in this doc).
+            curY = CSng(ch.Information(wdVerticalPositionRelativeToPage))
+            curX = CSng(ch.Information(wdHorizontalPositionRelativeToPage))
+
+            If Not rowOpen Then
+                rowAnchorY = curY
+                rowFirstX = curX
+                rowLastX = curX
+                rowFirstPos = p
+                rowLastPos = p
+                rowCharCount = 0
+                rowFirstChars = ""
+                endsWithShy = False
+                lastCharCode = 0
+                rowOpen = True
+            ElseIf Abs(curY - rowAnchorY) > LINE_HEIGHT_TOLERANCE Then
+                ' Y jumped: flush the row that just ended (not a paragraph end).
+                FlushRowCharCountRow csvF, pageNum, pageSide, rowIndex, _
+                    bodyXMin, leftColMax, gutterMax, bodyXMax, _
+                    rowAnchorY, rowFirstX, rowLastX, rowCharCount, _
+                    lastCharCode, endsWithShy, False, _
+                    rowFirstPos, rowLastPos, rowFirstChars, _
+                    pageRowsBody, pageRowsShy, pageRowsOutside
+                pageRows = pageRows + 1
+                rowIndex = rowIndex + 1
+                rowsCum = rowsCum + 1
+
+                rowAnchorY = curY
+                rowFirstX = curX
+                rowLastX = curX
+                rowFirstPos = p
+                rowLastPos = p
+                rowCharCount = 0
+                rowFirstChars = ""
+                endsWithShy = False
+                lastCharCode = 0
+            End If
+
+            rowLastX = curX
+            rowLastPos = p
+            rowCharCount = rowCharCount + 1
+            lastCharCode = asciiCode
+            endsWithShy = (asciiCode = SOFT_HYPHEN_CODE)
+
+            If Len(rowFirstChars) < 30 Then
+                If asciiCode >= 32 And asciiCode < 127 Then
+                    rowFirstChars = rowFirstChars & chText
+                ElseIf asciiCode = SOFT_HYPHEN_CODE Then
+                    rowFirstChars = rowFirstChars & "-"
+                End If
+            End If
+
+            ' Paragraph mark = last row of this paragraph. Flush with IsParagraphEnd=True.
+            If asciiCode = 13 Then
+                FlushRowCharCountRow csvF, pageNum, pageSide, rowIndex, _
+                    bodyXMin, leftColMax, gutterMax, bodyXMax, _
+                    rowAnchorY, rowFirstX, rowLastX, rowCharCount, _
+                    lastCharCode, endsWithShy, True, _
+                    rowFirstPos, rowLastPos, rowFirstChars, _
+                    pageRowsBody, pageRowsShy, pageRowsOutside
+                pageRows = pageRows + 1
+                pageRowsParaEnd = pageRowsParaEnd + 1
+                rowIndex = rowIndex + 1
+                rowsCum = rowsCum + 1
+                rowOpen = False
+            End If
+NextChar:
+            If (p Mod 200) = 0 Then
+                DoEvents
+                If userCancelled Then Exit For
+            End If
+        Next p
+NextPara:
+    Next para
+
+    ' Flush trailing row if the page ended mid-paragraph (no Chr(13) seen).
+    If rowOpen Then
+        FlushRowCharCountRow csvF, pageNum, pageSide, rowIndex, _
+            bodyXMin, leftColMax, gutterMax, bodyXMax, _
+            rowAnchorY, rowFirstX, rowLastX, rowCharCount, _
+            lastCharCode, endsWithShy, False, _
+            rowFirstPos, rowLastPos, rowFirstChars, _
+            pageRowsBody, pageRowsShy, pageRowsOutside
+        pageRows = pageRows + 1
+        rowIndex = rowIndex + 1
+        rowsCum = rowsCum + 1
+        rowOpen = False
+    End If
+
+    Print #logF, "Page " & pageNum & " Result: " & pageRows & " row(s) - " & _
+                 pageRowsBody & " body (Left/Right), " & _
+                 pageRowsOutside & " outside-body, " & _
+                 pageRowsParaEnd & " paragraph-end (excluded), " & _
+                 pageRowsShy & " end-with-soft-hyphen (excluded)"
+
+    Close #logF
+    logF = 0
+    Close #csvF
+    csvF = 0
+
+    Application.StatusBar = False
+    Debug.Print "RowCharCountSurvey p" & pageNum & " (" & pageSide & "): " & _
+                pageRows & " row(s) - body=" & pageRowsBody & _
+                " outside=" & pageRowsOutside & _
+                " paraEnd=" & pageRowsParaEnd & _
+                " endShy=" & pageRowsShy
+
+PROC_EXIT:
+    Application.StatusBar = False
+    If logF > 0 Then
+        On Error Resume Next
+        Close #logF
+        On Error GoTo 0
+    End If
+    If csvF > 0 Then
+        On Error Resume Next
+        Close #csvF
+        On Error GoTo 0
+    End If
+    Exit Sub
+PROC_ERR:
+    If logF > 0 Then
+        On Error Resume Next
+        Print #logF, "ABORTED at step [" & currentStep & "] - Err " & _
+                     Err.Number & ": " & Err.Description
+        Close #logF
+        On Error GoTo 0
+    End If
+    If csvF > 0 Then
+        On Error Resume Next
+        Close #csvF
+        On Error GoTo 0
+    End If
+    MsgBox "Step: [" & currentStep & "]" & vbCrLf & _
+           "Error " & Err.Number & " (" & Err.Description & ")" & vbCrLf & _
+           "in procedure RowCharCountSurvey_SinglePage of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
+
+'------------------------------------------------------------------------------
+' FlushRowCharCountRow - emit one CSV record for a completed row and update
+' per-page counters. Called only by RowCharCountSurvey_SinglePage.
+'------------------------------------------------------------------------------
+Private Sub FlushRowCharCountRow( _
+        ByVal csvF As Integer, _
+        ByVal pageNum As Long, _
+        ByVal pageSide As String, _
+        ByVal rowIndex As Long, _
+        ByVal bodyXMin As Single, _
+        ByVal leftColMax As Single, _
+        ByVal gutterMax As Single, _
+        ByVal bodyXMax As Single, _
+        ByVal anchorY As Single, _
+        ByVal leftX As Single, _
+        ByVal rightX As Single, _
+        ByVal charCount As Long, _
+        ByVal lastCharCode As Long, _
+        ByVal endsWithShy As Boolean, _
+        ByVal isParaEnd As Boolean, _
+        ByVal rangeStart As Long, _
+        ByVal rangeEnd As Long, _
+        ByVal firstChars As String, _
+        ByRef cntBody As Long, _
+        ByRef cntShy As Long, _
+        ByRef cntOutside As Long)
+
+    Dim side As String
+    side = ClassifyColumnAt(leftX, bodyXMin, leftColMax, gutterMax, bodyXMax)
+
+    Dim pitch As Single
+    If charCount > 1 Then
+        pitch = (rightX - leftX) / (charCount - 1)
+    Else
+        pitch = 0
+    End If
+
+    Dim cleanFirst As String
+    cleanFirst = Replace(firstChars, """", """""")
+    cleanFirst = Replace(cleanFirst, Chr(13), " ")
+    cleanFirst = Replace(cleanFirst, Chr(11), " ")
+    cleanFirst = Replace(cleanFirst, Chr(10), " ")
+    cleanFirst = Replace(cleanFirst, Chr(9), " ")
+
+    Print #csvF, pageNum & "," & pageSide & "," & rowIndex & "," & _
+                 side & "," & Format(anchorY, "0.0") & "," & _
+                 Format(leftX, "0.0") & "," & Format(rightX, "0.0") & "," & _
+                 charCount & "," & Format(pitch, "0.000") & "," & _
+                 lastCharCode & "," & IIf(endsWithShy, "True", "False") & "," & _
+                 IIf(isParaEnd, "True", "False") & "," & _
+                 rangeStart & "," & rangeEnd & "," & _
+                 """" & cleanFirst & """"
+
+    If side = "Left" Or side = "Right" Then
+        cntBody = cntBody + 1
+    Else
+        cntOutside = cntOutside + 1
+    End If
+    If endsWithShy Then cntShy = cntShy + 1
+End Sub
+
+'==============================================================================
+' RunRowCharCountSurvey_Across_Pages_From
+' PURPOSE:
+'   Driver: invoke RowCharCountSurvey_SinglePage across a page range. Mirrors
+'   RunSoftHyphenSweep_Across_Pages_From's shape. Read-only - never edits the
+'   document. Output appends to rpt\RowCharCount.csv and rpt\RowCharCount.log.
+'
+' Usage:
+'   RunRowCharCountSurvey_Across_Pages_From 100, 10
+'   RunRowCharCountSurvey_Across_Pages_From 250, 10
+'==============================================================================
+Public Sub RunRowCharCountSurvey_Across_Pages_From( _
+        ByVal startPage As Long, _
+        ByVal pageCount As Long)
+    On Error GoTo PROC_ERR
+
+    If pageCount < 1 Then
+        MsgBox "pageCount must be >= 1.", vbExclamation, "RunRowCharCountSurvey"
+        Exit Sub
+    End If
+
+    Dim totalRows As Long
+    Dim cancelled As Boolean
+    Dim p         As Long
+    Dim endPage   As Long
+    Const NL      As String = vbCrLf
+
+    endPage = startPage + pageCount - 1
+
+    Debug.Print "RunRowCharCountSurvey: pages " & startPage & ".." & endPage
+
+    For p = startPage To endPage
+        If cancelled Then Exit For
+        RowCharCountSurvey_SinglePage p, totalRows, cancelled
+    Next p
+
+    Dim trailer As String
+    If cancelled Then
+        trailer = "  [CANCELLED at page " & p & "]"
+    Else
+        trailer = ""
+    End If
+
+    Debug.Print "RunRowCharCountSurvey: done - " & totalRows & " row(s) total" & trailer
+
+    MsgBox "Survey complete." & NL & _
+           "Pages       : " & startPage & " .. " & endPage & NL & _
+           "Rows total  : " & totalRows & NL & _
+           IIf(cancelled, "Status      : CANCELLED at page " & p, "Status      : Completed") & NL & NL & _
+           "rpt\RowCharCount.csv  (per-row records)" & NL & _
+           "rpt\RowCharCount.log  (per-page summary)", _
+           vbInformation, "RunRowCharCountSurvey"
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure RunRowCharCountSurvey_Across_Pages_From of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
+
