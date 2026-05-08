@@ -1757,3 +1757,307 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+'==============================================================================
+' BuildRowCharCountHistogram
+' PURPOSE:
+'   Phase C of the row-char-count diagnostic. Reads rpt\RowCharCount.csv,
+'   filters out rows that should not be measured (paragraph-end rows,
+'   soft-hyphen-terminated rows, non-body rows), buckets the remainder by
+'   CharCount and Pitch per Side, computes median pitch per side, and writes:
+'
+'     rpt\RowCharCountHistogram.csv  (Side, Metric, Bin, Frequency)
+'     rpt\RowCharCountSuspects.csv   (rows with Pitch > median + threshold)
+'     rpt\RowCharCount.log           (appended summary block)
+'
+' ARGS:
+'   thresholdPt - Optional pitch excess (pt) above per-side median that
+'                 marks a row as a suspect. Default 1.0 pt. Tune from the
+'                 histogram shape.
+'
+' Usage:
+'   BuildRowCharCountHistogram                ' default threshold 1.0 pt
+'   BuildRowCharCountHistogram 0.8            ' tighter
+'   BuildRowCharCountHistogram 1.5            ' looser
+'==============================================================================
+Public Sub BuildRowCharCountHistogram(Optional ByVal thresholdPt As Single = 1#)
+    Dim currentStep As String
+    On Error GoTo PROC_ERR
+
+    Dim oDoc As Word.Document
+    Dim docDir As String
+    Dim inPath As String, histPath As String, suspPath As String, logPath As String
+    Dim inF As Integer, histF As Integer, suspF As Integer, logF As Integer
+    Const NL As String = vbCrLf
+
+    currentStep = "Resolve paths"
+    Set oDoc = ActiveDocument
+    docDir = oDoc.Path
+    If Len(docDir) = 0 Then docDir = Environ$("TEMP")
+    inPath = docDir & "\rpt\RowCharCount.csv"
+    histPath = docDir & "\rpt\RowCharCountHistogram.csv"
+    suspPath = docDir & "\rpt\RowCharCountSuspects.csv"
+    logPath = docDir & "\rpt\RowCharCount.log"
+
+    If Len(Dir(inPath)) = 0 Then
+        MsgBox "Input not found:" & NL & inPath & NL & NL & _
+               "Run RunRowCharCountSurvey_Across_Pages_From first.", _
+               vbExclamation, "BuildRowCharCountHistogram"
+        Exit Sub
+    End If
+
+    ' Per-side accumulators. Bins:
+    '   CharCount   : 0..199 (chars)
+    '   Pitch       : 0..199 (in 0.1 pt buckets => 0.0 to 19.9 pt)
+    Dim histLeftCC(0 To 199)  As Long
+    Dim histRightCC(0 To 199) As Long
+    Dim histLeftPB(0 To 199)  As Long
+    Dim histRightPB(0 To 199) As Long
+
+    ' Pitch values for median, kept per side (resize as needed).
+    Dim pitchLeft()  As Single, nLeft As Long
+    Dim pitchRight() As Single, nRight As Long
+    ReDim pitchLeft(0 To 1023)
+    ReDim pitchRight(0 To 1023)
+
+    ' Parsed eligible rows held for the suspect pass (so we can compare each
+    ' row's pitch against the per-side median once it is known).
+    Dim rowSide()    As String
+    Dim rowPitch()   As Single
+    Dim rowLine()    As String
+    Dim nRows        As Long
+    ReDim rowSide(0 To 4095)
+    ReDim rowPitch(0 To 4095)
+    ReDim rowLine(0 To 4095)
+
+    Dim totalScanned As Long, totalEligible As Long
+    Dim skipParaEnd As Long, skipShy As Long, skipOutside As Long
+
+    currentStep = "Open input " & inPath
+    inF = FreeFile
+    Open inPath For Input As #inF
+
+    Dim line As String, parts() As String
+    Dim sideStr As String, charCount As Long, pitch As Single
+    Dim pitchBin As Long, ccBin As Long
+    Dim isFirst As Boolean: isFirst = True
+
+    Do While Not EOF(inF)
+        Line Input #inF, line
+        If isFirst Then
+            isFirst = False  ' skip header
+        Else
+            If Len(line) = 0 Then GoTo NextLine
+            totalScanned = totalScanned + 1
+
+            ' parts indices (see RowCharCountSurvey_SinglePage CSV header):
+            '  0=PageNum  1=PageSide  2=RowIndex  3=Side  4=Y
+            '  5=LeftX  6=RightX  7=CharCount  8=Pitch
+            '  9=LastCharCode  10=EndsWithSoftHyphen  11=IsParagraphEnd
+            ' 12=RangeStart  13=RangeEnd  14+=FirstChars (may contain commas)
+            parts = Split(line, ",")
+            If UBound(parts) < 13 Then GoTo NextLine
+
+            sideStr = parts(3)
+            If sideStr <> "Left" And sideStr <> "Right" Then
+                skipOutside = skipOutside + 1
+                GoTo NextLine
+            End If
+            If parts(11) = "True" Then
+                skipParaEnd = skipParaEnd + 1
+                GoTo NextLine
+            End If
+            If parts(10) = "True" Then
+                skipShy = skipShy + 1
+                GoTo NextLine
+            End If
+
+            charCount = CLng(parts(7))
+            pitch = CSng(parts(8))
+            ccBin = charCount
+            If ccBin < 0 Then ccBin = 0
+            If ccBin > 199 Then ccBin = 199
+            pitchBin = CLng(Int(pitch * 10#))
+            If pitchBin < 0 Then pitchBin = 0
+            If pitchBin > 199 Then pitchBin = 199
+
+            If sideStr = "Left" Then
+                histLeftCC(ccBin) = histLeftCC(ccBin) + 1
+                histLeftPB(pitchBin) = histLeftPB(pitchBin) + 1
+                If nLeft > UBound(pitchLeft) Then ReDim Preserve pitchLeft(0 To UBound(pitchLeft) + 1024)
+                pitchLeft(nLeft) = pitch: nLeft = nLeft + 1
+            Else
+                histRightCC(ccBin) = histRightCC(ccBin) + 1
+                histRightPB(pitchBin) = histRightPB(pitchBin) + 1
+                If nRight > UBound(pitchRight) Then ReDim Preserve pitchRight(0 To UBound(pitchRight) + 1024)
+                pitchRight(nRight) = pitch: nRight = nRight + 1
+            End If
+
+            If nRows > UBound(rowSide) Then
+                ReDim Preserve rowSide(0 To UBound(rowSide) + 4096)
+                ReDim Preserve rowPitch(0 To UBound(rowPitch) + 4096)
+                ReDim Preserve rowLine(0 To UBound(rowLine) + 4096)
+            End If
+            rowSide(nRows) = sideStr
+            rowPitch(nRows) = pitch
+            rowLine(nRows) = line
+            nRows = nRows + 1
+
+            totalEligible = totalEligible + 1
+        End If
+NextLine:
+    Loop
+    Close #inF
+    inF = 0
+
+    ' --- Medians per side.
+    currentStep = "Compute medians"
+    Dim medianLeft As Single, medianRight As Single
+    medianLeft = MedianOfSingles(pitchLeft, nLeft)
+    medianRight = MedianOfSingles(pitchRight, nRight)
+
+    Dim modeLeftCC As Long, modeRightCC As Long
+    Dim modeLeftCount As Long, modeRightCount As Long
+    Dim i As Long
+    For i = 0 To 199
+        If histLeftCC(i) > modeLeftCount Then modeLeftCount = histLeftCC(i): modeLeftCC = i
+        If histRightCC(i) > modeRightCount Then modeRightCount = histRightCC(i): modeRightCC = i
+    Next i
+
+    ' --- Write histogram CSV (overwrite).
+    currentStep = "Write histogram"
+    histF = FreeFile
+    Open histPath For Output As #histF
+    Print #histF, "Side,Metric,Bin,Frequency"
+    For i = 0 To 199
+        If histLeftCC(i) > 0 Then Print #histF, "Left,CharCount," & i & "," & histLeftCC(i)
+    Next i
+    For i = 0 To 199
+        If histRightCC(i) > 0 Then Print #histF, "Right,CharCount," & i & "," & histRightCC(i)
+    Next i
+    For i = 0 To 199
+        If histLeftPB(i) > 0 Then _
+            Print #histF, "Left,Pitch," & Format(i / 10#, "0.0") & "," & histLeftPB(i)
+    Next i
+    For i = 0 To 199
+        If histRightPB(i) > 0 Then _
+            Print #histF, "Right,Pitch," & Format(i / 10#, "0.0") & "," & histRightPB(i)
+    Next i
+    Close #histF
+    histF = 0
+
+    ' --- Write suspects CSV (overwrite).
+    currentStep = "Write suspects"
+    suspF = FreeFile
+    Open suspPath For Output As #suspF
+    Print #suspF, "PageNum,PageSide,RowIndex,Side,Y,LeftX,RightX,CharCount,Pitch," & _
+                  "LastCharCode,EndsWithSoftHyphen,IsParagraphEnd,RangeStart,RangeEnd," & _
+                  "FirstChars,MedianPitchSide,PitchExcess"
+
+    Dim threshLeft As Single, threshRight As Single
+    threshLeft = medianLeft + thresholdPt
+    threshRight = medianRight + thresholdPt
+
+    Dim suspectCount As Long
+    Dim med As Single, thresh As Single
+    For i = 0 To nRows - 1
+        If rowSide(i) = "Left" Then
+            med = medianLeft: thresh = threshLeft
+        Else
+            med = medianRight: thresh = threshRight
+        End If
+        If rowPitch(i) > thresh Then
+            Print #suspF, rowLine(i) & "," & Format(med, "0.000") & "," & _
+                          Format(rowPitch(i) - med, "0.000")
+            suspectCount = suspectCount + 1
+        End If
+    Next i
+    Close #suspF
+    suspF = 0
+
+    ' --- Append summary to the survey log so the run history stays in one file.
+    currentStep = "Append log summary"
+    logF = FreeFile
+    Open logPath For Append As #logF
+    Print #logF, String(72, "-")
+    Print #logF, "BuildRowCharCountHistogram run=" & Format(Now, "yyyy-mm-dd hh:mm:ss") & _
+                 "  threshold=+" & Format(thresholdPt, "0.0") & " pt over median"
+    Print #logF, "Scanned    : " & totalScanned & " row(s) from " & inPath
+    Print #logF, "Excluded   : paraEnd=" & skipParaEnd & "  endShy=" & skipShy & _
+                 "  outside-body=" & skipOutside
+    Print #logF, "Eligible   : " & totalEligible & "  (Left=" & nLeft & "  Right=" & nRight & ")"
+    Print #logF, "Mode CC    : Left=" & modeLeftCC & " (n=" & modeLeftCount & ")  " & _
+                 "Right=" & modeRightCC & " (n=" & modeRightCount & ")"
+    Print #logF, "Median Pt  : Left=" & Format(medianLeft, "0.000") & _
+                 "  Right=" & Format(medianRight, "0.000")
+    Print #logF, "Threshold  : Left>" & Format(threshLeft, "0.000") & _
+                 "  Right>" & Format(threshRight, "0.000")
+    Print #logF, "Suspects   : " & suspectCount
+    Print #logF, "Outputs    : " & histPath
+    Print #logF, "             " & suspPath
+    Close #logF
+    logF = 0
+
+    Debug.Print "BuildRowCharCountHistogram: scanned=" & totalScanned & _
+                " eligible=" & totalEligible & " suspects=" & suspectCount & _
+                " medianL=" & Format(medianLeft, "0.000") & _
+                " medianR=" & Format(medianRight, "0.000")
+
+    MsgBox "Histogram built." & NL & _
+           "Scanned     : " & totalScanned & NL & _
+           "Excluded    : paraEnd=" & skipParaEnd & "  endShy=" & skipShy & _
+                          "  outside=" & skipOutside & NL & _
+           "Eligible    : " & totalEligible & NL & _
+           "Mode CC     : L=" & modeLeftCC & "  R=" & modeRightCC & NL & _
+           "Median pitch: L=" & Format(medianLeft, "0.000") & _
+                          "  R=" & Format(medianRight, "0.000") & " pt/char" & NL & _
+           "Threshold   : median + " & Format(thresholdPt, "0.0") & " pt" & NL & _
+           "Suspects    : " & suspectCount & NL & NL & _
+           "rpt\RowCharCountHistogram.csv" & NL & _
+           "rpt\RowCharCountSuspects.csv" & NL & _
+           "rpt\RowCharCount.log  (summary appended)", _
+           vbInformation, "BuildRowCharCountHistogram"
+
+PROC_EXIT:
+    If inF > 0 Then On Error Resume Next: Close #inF: On Error GoTo 0
+    If histF > 0 Then On Error Resume Next: Close #histF: On Error GoTo 0
+    If suspF > 0 Then On Error Resume Next: Close #suspF: On Error GoTo 0
+    If logF > 0 Then On Error Resume Next: Close #logF: On Error GoTo 0
+    Exit Sub
+PROC_ERR:
+    MsgBox "Step: [" & currentStep & "]" & vbCrLf & _
+           "Error " & Err.Number & " (" & Err.Description & ")" & vbCrLf & _
+           "in procedure BuildRowCharCountHistogram of Module basWordRepairRunner"
+    Resume PROC_EXIT
+End Sub
+
+'------------------------------------------------------------------------------
+' MedianOfSingles - return the median of the first n entries of arr. Sorts a
+' copy in place; returns 0 if n=0. Simple insertion sort (n is at most a few
+' thousand for this diagnostic).
+'------------------------------------------------------------------------------
+Private Function MedianOfSingles(ByRef arr() As Single, ByVal n As Long) As Single
+    If n <= 0 Then Exit Function
+    Dim copy() As Single
+    ReDim copy(0 To n - 1)
+    Dim i As Long, j As Long
+    Dim key As Single
+    For i = 0 To n - 1
+        copy(i) = arr(i)
+    Next i
+    For i = 1 To n - 1
+        key = copy(i)
+        j = i - 1
+        Do While j >= 0
+            If copy(j) <= key Then Exit Do
+            copy(j + 1) = copy(j)
+            j = j - 1
+        Loop
+        copy(j + 1) = key
+    Next i
+    If (n Mod 2) = 1 Then
+        MedianOfSingles = copy(n \ 2)
+    Else
+        MedianOfSingles = (copy(n \ 2 - 1) + copy(n \ 2)) / 2#
+    End If
+End Function
+

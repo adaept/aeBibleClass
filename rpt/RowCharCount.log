@@ -1,0 +1,26 @@
+========================================================================
+RowCharCountSurvey page=522  side=Verso  run=2026-05-08 12:45:36
+Bounds   : Body=[43.2..451.5]  L=[43.2..240.1]  G=[240.1..254.5]  R=[254.5..451.5]
+Page 522 Result: 119 row(s) - 119 body (Left/Right), 0 outside-body, 35 paragraph-end (excluded), 13 end-with-soft-hyphen (excluded)
+------------------------------------------------------------------------
+BuildRowCharCountHistogram run=2026-05-08 12:46:08  threshold=+1.0 pt over median
+Scanned    : 119 row(s) from C:\adaept\aeBibleClass\rpt\RowCharCount.csv
+Excluded   : paraEnd=35  endShy=13  outside-body=0
+Eligible   : 71  (Left=32  Right=39)
+Mode CC    : Left=56 (n=7)  Right=54 (n=7)
+Median Pt  : Left=3.714  Right=3.714
+Threshold  : Left>4.714  Right>4.714
+Suspects   : 0
+Outputs    : C:\adaept\aeBibleClass\rpt\RowCharCountHistogram.csv
+             C:\adaept\aeBibleClass\rpt\RowCharCountSuspects.csv
+------------------------------------------------------------------------
+BuildRowCharCountHistogram run=2026-05-08 12:46:40  threshold=+0.5 pt over median
+Scanned    : 119 row(s) from C:\adaept\aeBibleClass\rpt\RowCharCount.csv
+Excluded   : paraEnd=35  endShy=13  outside-body=0
+Eligible   : 71  (Left=32  Right=39)
+Mode CC    : Left=56 (n=7)  Right=54 (n=7)
+Median Pt  : Left=3.714  Right=3.714
+Threshold  : Left>4.214  Right>4.214
+Suspects   : 0
+Outputs    : C:\adaept\aeBibleClass\rpt\RowCharCountHistogram.csv
+             C:\adaept\aeBibleClass\rpt\RowCharCountSuspects.csv
