@@ -154,7 +154,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     ' Copy the full body from RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext here
     ' And replace `MsgBox` line with: fixCount = fixCount
     On Error GoTo PROC_ERR
-    Dim pgRange As Word.Range, ch As Word.Range, scanRange As Word.Range, prefixCh As Word.Range
+    Dim pgRange As Word.Range, ch As Word.Range, ScanRange As Word.Range, prefixCh As Word.Range
     Dim pageStart As Long, pageEnd As Long
     Dim chapterMarker As String, verseDigits As String, combinedNumber As String
     Dim markerStart As Long, markerEnd As Long, verseEnd As Long
@@ -201,10 +201,10 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
-                Set scanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
-                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Chapter Verse marker" And scanRange.Font.color = RGB(255, 165, 0) Then
-                        chapterMarker = chapterMarker & scanRange.Text
+                Set ScanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
+                If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
+                    If ScanRange.style.NameLocal = "Chapter Verse marker" And ScanRange.Font.color = RGB(255, 165, 0) Then
+                        chapterMarker = chapterMarker & ScanRange.Text
                         markerEnd = markerEnd + 1
                     Else
                         Exit Do
@@ -221,10 +221,10 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
             verseDigits = ""
             verseEnd = markerEnd
             Do While verseEnd < pageEnd
-                Set scanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
-                If Len(Trim(scanRange.Text)) = 1 And IsNumeric(scanRange.Text) Then
-                    If scanRange.style.NameLocal = "Verse marker" And scanRange.Font.color = RGB(80, 200, 120) Then
-                        verseDigits = verseDigits & scanRange.Text
+                Set ScanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
+                If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
+                    If ScanRange.style.NameLocal = "Verse marker" And ScanRange.Font.color = RGB(80, 200, 120) Then
+                        verseDigits = verseDigits & ScanRange.Text
                         verseEnd = verseEnd + 1
                     Else
                         Exit Do

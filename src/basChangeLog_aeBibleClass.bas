@@ -7,8 +7,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' #640 -
+' #639 -
+' #638 -
+' #637 -
+' #636 -
 ' #635 -
-' #634 -
 ' #631 - Test for Count of "Chapter Verse marker" did not catch missing marker [bug] - see #190, #191, #403,
 ' #630 - Add styles for author end matter [impr]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
@@ -65,6 +69,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #634 - Add AuditFonts_Fast report to list all used fonts and show usage of Arial/Times New Roman [impr]
     ' FIXED - #633 - Delete style BobyTextIndent when not used [impr]
     ' FIXED - #632 - Add ListBodyTextIndentUsage to check if style BobyTextIndent is used [impr]
     ' [obso] - #617 - SBL Canonical is Song of Songs, using Solomon causes variation so keep to standard in all parts [impr]

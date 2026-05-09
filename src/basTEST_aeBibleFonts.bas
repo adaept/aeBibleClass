@@ -683,3 +683,156 @@ Public Sub Check_Aptos_Is_Real_Or_Display()
     Debug.Print "REAL stored Aptos hits: " & realHits
 End Sub
 
+Public Sub AuditFonts_Fast()
+    On Error GoTo PROC_ERR
+
+    Dim oDoc As Document
+    Dim oStory As Word.Range
+    Dim oPara As Word.Paragraph
+    Dim oRng As Word.Range
+    Dim dictFonts As Object
+    Dim dictHits As Object
+    Dim sFont As String
+    Dim sKey As String
+    Dim sText As String
+    Dim sStyle As String
+    Dim sReport As String
+    Dim vKey As Variant
+
+    Set oDoc = ActiveDocument
+
+    Set dictFonts = CreateObject("Scripting.Dictionary")
+    Set dictHits = CreateObject("Scripting.Dictionary")
+
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Scanning fonts..."
+
+    '=========================================================
+    ' SCAN STORIES
+    '=========================================================
+    For Each oStory In oDoc.StoryRanges
+        Set oRng = oStory
+        Do
+            For Each oPara In oRng.Paragraphs
+                sFont = Trim$(oPara.Range.Font.Name)
+
+                If Len(sFont) > 0 Then
+                    sKey = UCase$(sFont)
+
+                    If Not dictFonts.Exists(sKey) Then
+                        dictFonts.Add sKey, sFont
+                    End If
+
+                    '-----------------------------------------
+                    ' Track problem fonts only
+                    '-----------------------------------------
+                    If sKey = "ARIAL" _
+                    Or sKey = "TIMES NEW ROMAN" Then
+
+                        sStyle = ""
+
+                        On Error Resume Next
+                        sStyle = CStr(oPara.Range.style)
+                        On Error GoTo PROC_ERR
+
+                        sText = CleanSnippetShort(oPara.Range.Text)
+                        If Not dictHits.Exists(sKey) Then
+                            dictHits.Add sKey, ""
+                        End If
+
+                        dictHits(sKey) = _
+                            dictHits(sKey) & _
+                            "Page " & _
+                            oPara.Range.Information( _
+                                wdActiveEndAdjustedPageNumber) & _
+                            " | Style: " & sStyle & _
+                            " | " & sText & vbCrLf
+                    End If
+                End If
+            Next oPara
+            Set oRng = oRng.NextStoryRange
+        Loop Until oRng Is Nothing
+    Next oStory
+
+    '=========================================================
+    ' BUILD REPORT
+    '=========================================================
+
+    sReport = ""
+    sReport = sReport & "FONTS USED IN DOCUMENT" & vbCrLf
+    sReport = sReport & String(50, "=") & vbCrLf & vbCrLf
+
+    For Each vKey In SortedKeys(dictFonts)
+        sReport = sReport & dictFonts(vKey) & vbCrLf
+    Next vKey
+
+    sReport = sReport & vbCrLf & vbCrLf
+    sReport = sReport & "ARIAL / TIMES NEW ROMAN USAGE" & vbCrLf
+    sReport = sReport & String(50, "=") & vbCrLf & vbCrLf
+
+    If dictHits.Exists("ARIAL") Then
+        sReport = sReport & _
+            "ARIAL" & vbCrLf & _
+            String(20, "-") & vbCrLf & _
+            dictHits("ARIAL") & vbCrLf
+    End If
+
+    If dictHits.Exists("TIMES NEW ROMAN") Then
+        sReport = sReport & _
+            "TIMES NEW ROMAN" & vbCrLf & _
+            String(20, "-") & vbCrLf & _
+            dictHits("TIMES NEW ROMAN") & vbCrLf
+    End If
+
+    Documents.Add.Range.Text = sReport
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    MsgBox "Font audit complete.", vbInformation
+
+PROC_EXIT:
+    Exit Sub
+
+PROC_ERR:
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+
+    MsgBox Err.Number & " - " & Err.Description
+    Resume PROC_EXIT
+End Sub
+
+Private Function CleanSnippetShort(ByVal s As String) As String
+    s = Replace(s, vbCr, " ")
+    s = Replace(s, vbTab, " ")
+
+    s = Trim$(s)
+    If Len(s) > 80 Then
+        s = Left$(s, 80) & "..."
+    End If
+    CleanSnippetShort = s
+End Function
+
+Private Function SortedKeys(ByVal dict As Object) As Variant
+    Dim arr() As String
+    Dim i As Long
+    Dim j As Long
+    Dim tmp As String
+
+    ReDim arr(0 To dict.Count - 1)
+    For i = 0 To dict.Count - 1
+        arr(i) = dict.Keys()(i)
+    Next i
+
+    For i = LBound(arr) To UBound(arr) - 1
+        For j = i + 1 To UBound(arr)
+            If UCase$(arr(j)) < UCase$(arr(i)) Then
+                tmp = arr(i)
+                arr(i) = arr(j)
+                arr(j) = tmp
+            End If
+        Next j
+    Next i
+
+    SortedKeys = arr
+End Function
+
+
