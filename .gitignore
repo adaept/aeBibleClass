@@ -18,8 +18,9 @@ Ribbon test*.docm
 #################
 
 *.docx
-# allow this one
+# allow these
 !rpt/JUDE - Sample.docx
+!rpt/FONTS USED IN DOCUMENT.docx
 *.docm
 ~TMP*
 
