@@ -6,6 +6,11 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 Private OneVersePerParaRepair As Boolean
 
+Private mRevSuspects()  As String
+Private mRevIdx         As Long
+Private mRevTotal       As Long
+Private mRevLoaded      As Boolean
+
 '==============================================================================
 ' Soft-hyphen sweep - module constants (REFERENCE ONLY)
 ' Reference layout: "JUDE - Sample.docm" (JIS B5, w:code=13), assuming
@@ -1760,7 +1765,7 @@ End Sub
 '==============================================================================
 ' BuildRowCharCountHistogram
 ' PURPOSE:
-'   Phase C of the row-char-count diagnostic. Reads rpt\RowCharCount.csv,
+'   Phase C of the row-char-Count diagnostic. Reads rpt\RowCharCount.csv,
 '   filters out rows that should not be measured (paragraph-end rows,
 '   soft-hyphen-terminated rows, non-body rows), buckets the remainder by
 '   CharCount and Pitch per Side, computes median pitch per side, and writes:
@@ -2053,11 +2058,6 @@ End Sub
 '   Use ReviewRowCharCountSuspects_Reset to start over without restarting
 '   Word, or after re-running BuildRowCharCountHistogram.
 '==============================================================================
-Private mRevSuspects()  As String
-Private mRevIdx         As Long
-Private mRevTotal       As Long
-Private mRevLoaded      As Boolean
-
 Public Sub ReviewRowCharCountSuspects()
     Dim currentStep As String
     On Error GoTo PROC_ERR

@@ -24,7 +24,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     Dim found As Boolean
     Dim firstFound As Boolean
     Dim Count As Integer
-    Dim nextChar As String
+    Dim NextChar As String
 
     searchText = "[0-9]{1,}" ' Pattern to find any number (one or more digits)
     StyleName = "Verse marker" ' Replace with your specific character style name
@@ -52,11 +52,11 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
         ' Move to the next character and print its ASCII value
         Selection.Collapse Direction:=wdCollapseEnd
         Selection.MoveRight Unit:=wdCharacter, Count:=1
-        nextChar = Selection.Text
+        NextChar = Selection.Text
 
-        If Len(nextChar) > 0 Then
-            If Asc(nextChar) = 32 Then
-                Debug.Print "Next character: " & nextChar & " (ASCII: " & Asc(nextChar) & ")"
+        If Len(NextChar) > 0 Then
+            If Asc(NextChar) = 32 Then
+                Debug.Print "Next character: " & NextChar & " (ASCII: " & Asc(NextChar) & ")"
                 Stop
             End If
         Else

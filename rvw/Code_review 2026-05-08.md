@@ -235,6 +235,20 @@ Operational implication: Phase B (interactive walker) is **optional, not require
 
 Append-mode caveat (2026-05-08): `rpt\RowCharCount.csv` is opened with `For Append`. Re-running the survey on the same page without first clearing the CSV duplicates that page's rows in the histogram input. For the per-page edit cycle, clear the CSV between passes; for accumulating two 10-page samples, do not. Possible follow-up: add a `--clear` mode to the survey driver, or detect overlap with already-present pages and refuse.
 
+### 5. Taxonomy correction: TitleOnePage font (DONE 2026-05-08)
+
+`rpt\Styles\style_TitleOnePage.txt` was refreshed and shows
+`Font.Name = "Liberation Serif"`. The taxonomy expectation in
+`src\basTEST_aeBibleConfig.bas:321` had `"Times New Roman"` from
+the original baseline. Updated the `AuditOneStyle` call to
+`"Liberation Serif"`. All other 11 fields (size 36, centered
+alignment, line spacing 12, space-before 144, space-after 8,
+bold 0, italic 0, base style "") already matched the dump.
+
+No taxonomy header recount needed - this was a value correction
+within an existing bucket-1 paragraph-style entry, not an add or
+remove.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state

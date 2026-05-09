@@ -94,6 +94,10 @@ NORMALIZATIONS = [
     (r'(?i)\bSB_ALREADY_LAST_CHAPTER\b',    'SB_ALREADY_LAST_CHAPTER',  'SB_ALREADY_LAST_CHAPTER status bar constant in basUIStrings'),
     (r'(?i)\bSB_ALREADY_FIRST_VERSE\b',     'SB_ALREADY_FIRST_VERSE',   'SB_ALREADY_FIRST_VERSE status bar constant in basUIStrings'),
     (r'(?i)\bSB_ALREADY_LAST_VERSE\b',      'SB_ALREADY_LAST_VERSE',    'SB_ALREADY_LAST_VERSE status bar constant in basUIStrings'),
+    # --- RowCharCountSurvey loop labels (added 2026-05-08) ---
+    (r'(?i)\bNextChar\b',                   'NextChar',            'NextChar loop label in RowCharCountSurvey_SinglePage'),
+    (r'(?i)\bNextPara\b',                   'NextPara',            'NextPara loop label in RowCharCountSurvey_SinglePage'),
+    (r'(?i)\bNextLine\b',                   'NextLine',            'NextLine loop label in BuildRowCharCountHistogram'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

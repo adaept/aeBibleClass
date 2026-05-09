@@ -318,7 +318,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "BibleIndexEyebrow", "Liberation Serif", 14, 1, 0, 0, 12, 6, 0, 0, 0, ""
     AuditOneStyle "BibleIndex", "Liberation Serif", 22, 1, 0, 0, 12, 0, 0, 0, 0, ""
     AuditOneStyle "Introduction", "Liberation Serif", 22, 1, 0, 0, 12, 0, 12, 0, 0, ""
-    AuditOneStyle "TitleOnePage", "Times New Roman", 36, 1, 0, 0, 12, 144, 8, 0, 0, ""
+    AuditOneStyle "TitleOnePage", "Liberation Serif", 36, 1, 0, 0, 12, 144, 8, 0, 0, ""
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1, ""
     AuditOneStyle "AuthorListItemBody", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0, ""
     AuditOneStyle "AuthorListItemTab", "Carlito", 11, 0, 0, 0, 12, 0, 11, 0, 0, ""

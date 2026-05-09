@@ -758,7 +758,7 @@ Sub CountTypesTrulyEmptyParagraph()
     Dim paraText As String
     Dim paraRange As Word.Range
     Dim sectionBreakFound As Boolean
-    Dim nextChar As String
+    Dim NextChar As String
 
     Dim trulyEmptyCount As Long
     Dim sectionFormattedEmptyCount As Long
@@ -795,8 +795,8 @@ Sub CountTypesTrulyEmptyParagraph()
 
             ' Check the next character only if not at end of doc
             If paraRange.End < ActiveDocument.Content.End Then
-                nextChar = paraRange.Next(Unit:=wdCharacter, Count:=1).Text
-                If nextChar = Chr(12) Then
+                NextChar = paraRange.Next(Unit:=wdCharacter, Count:=1).Text
+                If NextChar = Chr(12) Then
                     sectionBreakFound = True
                 End If
             End If
@@ -890,7 +890,7 @@ Sub CreateTemplateWithoutText()
     Set templateDoc = Documents.Add
     
     ' Copy the entire content from the original document (styles and configurations)
-    doc.Range.Copy
+    doc.Range.copy
     
     ' Paste the copied content into the new document (keeping the formatting)
     templateDoc.Range.PasteAndFormat wdFormatOriginalFormatting
