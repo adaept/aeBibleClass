@@ -42,12 +42,6 @@
 2019-01-02: Updated eng-web* (2ES, RUT), engwmb, engwmbb (RUT lie/lay/laid), mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari. Added sanben, sanasm, sanbur, sancol, sanguj, santam, santam, sanhk, sanitr, sankhm, sanmal, sanari, sanpun, sansin, santel, santha, santib, sanias, saniso, sanvel, sandev, and sanurd. (The additions are the Sanskrit New Testament in 22 different writing systems.)
 2019-01-03: Updated eng-web* (2ES), rmyArli, rmyChergash, rmyGurbet, ronBayash, and  ronludari.
 2019-01-07: Updated eng-web*, engwmb, and engwmbb with the final queued up change suggestions. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari. Added thd, piu2006.
-2019-01-08: Updated eng-web* (one typo correction in 2ES).
-2020-01-25: Updated ben2017, kan2017, mar, pan, tam2017, tel2017, urd.
-2020-02-06: Updated asmfb, ben2017, guj2017, hin2017, kan2017, mal, mar, ory, pan, tam2017, tel2017, thaKJV, tel2017, and urd.
-2020-02-10: Updated asmfb, ben2017, guj2017, hin2017, kan2017, mal, mar, ory, pan, tam2017, tel2017, tel2017, and urd.
-2020-03-13: Updated eng-web*, engwmb, and engwmbb (typo in Lam 4:9). Added grcbrent and englxxup. Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
-2020-03-31: Updated gubBl, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, and eng-asv. (The eng-asv update was just an umlaut in Mark 5:22.)
 2020-06-03: Updated eng-web* (Daniel 7:14, typos in 1ES, added some Strong's numbers to OT and NT), engwmb, engwmbb (Daniel 7:14, added some Strong's numbers). Updated mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, and ronludari.
 2020-06-05: Updated spabes (checking in the NT; added some Strong's numbers). Updated eng-web, eng-webbe (markup in 1 Esdras).
 2020-06-26: Added tczchongthu draft.
@@ -63,8 +57,6 @@
 2020-10-14: Added myajvb. Added preface, introduction, and a few more Strong's numbers to englsv. Updated the Parallel Bible documents for the World English Bible.
 2020-10-15: Updated eng-web*, engwmb, and engwmbb (added some Strong's numbers; removed a spurious "The" in Exodus 32:11 in the British editions and WMB).
 2020-11-10: Added hlt2013, wbi.
-
-
 2020-11-11: Added agr, due, duo, esg, arq, aeb, luc, prq, auu, apb, ifb, big2013, car, bbr2013, ino2013, ayz, mgh2016, mim, kud2014. Updated akh, apyNT, ind, geb, sus, susa, swe, zaj.
 2020-11-12: Added gri. Updated eng-kjv and eng-lxx2012 (typo in Baruch 1:8).
 2020-11-14: Added aeu, ifa, cko, any, arz, ayh, avu.
@@ -118,19 +110,15 @@
 2022-06-02: Added cmnfeb. Updated englsv.
 2022-06-28: Updated hatbsa, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, nss, engPEV, tczchongthu. Added engtcent.
 2022-07-01: Added grctcent. Updated engtcent, hatbsa, lit, mkj, rmyArli, rmyChergash, rmyGurbet, ronBayash, ronludari, nss, sbe, lex, mpx. Reprocessed Strong's number insertion on engtcent, engasv, spavbl, eng-rv, engasvbt, englsv, grctcgnt, engPEV, grctr, grcsbl, engt4t, grcbyz, grcf35, grcsbl, hlt, spabes, spablm, sparvg, spavbl.
-
-
-
 2022-07-19: Re-merged Strong's numbers into fraLSG, frasbl, spapddpt, spavbl, sparvg, engasvbt, engasv, engtcent, engPEV, grctcgnt, grcf35, grcsbl, grctr.
 2022-07-25: Added Strong's numbers to fra_fob. Added francl. Updated frasbl (DAG title).
 2022-08-02: Rebuilt with new Strong's merge program and/or updated: frasbl, engPEV engtcent, spablm, hltmcsb, lit, probrbsl, ukr1996, urt, apwNT, arp, far, hatbsa, spabes, engoebcw, fra_fob, fraLSG, nys, tczchongthu, eng-rv, eng-t4t, grcsbl, grctcgnt, grctr, spapddpt, sparvg, spavbl, engasvbt, eng-asv, engerv, engf35, engfbv, eng-kjv, englsv, engoebus, engtcent, grcbyz, grcf35.
-2022-08-04: Updated or rebuilt: frasbl, hatbsa, spablm, englsv, engtcent, grctcgnt, lit, porbrbsl, tczchongthu, gvs.
 2022-08-19: Added tteo, snx, wiv, kiw. Updated klt, hatbsa, engtcent, mkj, spapddpt, tczchongthu.
 2022-10-04: Added John to etr. Updated engoebcw, rmyChergash, spapddpt. Updated PDFs for iqw, kpg.
 2022-11-02: Added grcsr.
-2022-11-03: Updated hatbsa, spapddpt, engDRA, engPEV, mkj, adz, gvs, rmyArli, rmyChergash, rmyGurbet.
-2023-01-18: translations.csv now contains a field called sourceDate that indicates what was updated recently. Since that is automatic, and this file is updated manually, you should check that one, now, to see what is new. (Sort the spreadsheet by that date to make it easy.)
-2023-01-21: Copyright of hwc transferred from WBT to HPBM. See translations.csv for other recent updates.
+
+*** 2023-01-18: translations.csv now contains a field called sourceDate that indicates what was updated recently. Since that is automatic, and this file is updated manually, you should check that one, now, to see what is new. (Sort the spreadsheet by that date to make it easy.)
+
 2023-03-07: Added tdx.
 2023-03-26: Added deu-f35.
 2023-04-03: Added ulk1902.
@@ -141,84 +129,35 @@
 2023-04-13: Added juy, kanokcv, kxv. Updated kan2017. Added quctt, lbm, mni, unx, nag, nlx, nde. Updated mal, mdyeth.
 2023-04-14: Added xnj, norlb, gaz, bfz, peg, pesopcb, rmc. Updated pan.
 2023-04-19: Added tamtcv, tkr, tsn, tvt, twiasante, ukronpu, yao. Updated tam2017, tel2017, urd. Corrected ISO language code norlb -> noblb.
-2023-04-24: Corrected typo in eng-web*, engwmb, and engwmbb: removed extra "s" from John 12:3. Updated gupk. Rebuilt translations with latest Haiola release candidate.
-2023-04-26: Corrected typo in eng-web*, engwmb, and engwmbb in 2CH 3:15 heigh -> high.
-2023-04-28: Added footnote to REV 13:1 in eng-web*, engwmb, and engwmbb. Added some audio files to engPEV and spablm.
 2023-05-05: Added nce.
-2023-06-07: Corrected minor translation issue in ISA 48:20 in eng-web*, engwmb, and engwmbb
-2023-06-17: Updated eng-web*, engwmb, and engwmbb (Corrected typo in 2ES 4:38 and punctuation issues in 2CH 32:11; JER 26:9; Jer 36:29; Job 6:22; JHN 12:34; MAT 23:18)
-2023-06-26: Corrected typo in GEN 11:13 in eng-lxx2012.
-2023-07-04: Corrected numerous missing capital letters after an opening quotation mark in eng-t4t.
 2023-07-28: Added dwuliv, gupmay, lrg. Updated djj.
 2023-11-29: Added turytc.
-2023-12-13: Restored indags. Updated eng-web*, engwmb, and engwmbb (conformed MAT 26:38 to the RP Greek Majority text. NO CHANGE IN MEANING.)
-2024-01-03: Updated eng-web*, engwmb, and engwmbb (corrected whoever -> whomever in EZK 23:7; conformed 1JN 2:23 and LUK 14:24 to RP MT).
-
 2024-01-11: Split engwebu and engwebuk off from eng-web and eng-webbe. With these two, the Tetragrammaton is not avoided in footnotes, but both consistently use LORD or GOD in the main text. Corrected some typos in eng-lxx2012 and eng-uk-2012 (you has -> you have).
-2024-01-15: Updated eng-web*, engwmb, and engwmbb (rolled back the change in 1Jn 2:23 based on better textual criticism information); Removed spurious "The" in PSA 89:8. Updated engwebu and engwebuk: rolled back 1JN 2:23; changed breast->chest when referring to the male chest; removed spurious "The" in PSA 89:8. Footnoted where "Yah" was rendered "LORD". Added several footnotes on LORD or GOD rendered from "Yahweh".
-2024-01-31: Added indayt.
 2024-02-20: Updated all of eng-web*, engwmb, engwmbb, and engwebu except for the original eng-web, correcting "the Lord the LORD" to "the Lord GOD" and "the Lord, the LORD" to "the Lord, GOD".
 2024-02-21: Added uro. Started rebuild with (hopefully) improved Strong's number tagging, at least with respect to the Tetragrammaton.
-
 2024-03-16: Added mkj ACTS.
-2024-04-18: Starting roll-out of Android apps. Updated audio for hatbsa. Minor grammar correction in 1KI 3:23 in eng-web*.
-2024-06-10: Updated arbnav.
-2024-09-10: Took down alsSHQ pending investigation into copyright claims. Did copyright get extended when Albania joined the Berne Convention? If so, to whom?
 2025-03-10: Added stw.
 2025-03-13: Added nkr.
-2025-04-03: Updated dhgduwadha, djr, guf, gupmay, djj, tiwm, dhg. Added gue, gge, ibd, dwu, dhgdol, jay.
-2025-04-04: Added audio to tiw, mph, mwf2018, nck, wlg, wrm (which doesn't have text, yet), gupk, gupmay, dhg, dhgduwadha, dhggolumala (which doesn't yet have text).
 2025-04-23: Removed wolKYG and replaced it with wolmbs. Made another correction in the WEB: see https://worldenglish.bible/webupdates.php for details.
 2025-04-25: Added abc, alw, asj. Updated abp, aca, acd, adj, aeb, aeu, agr, agt, akh, akp, any, apyNT, auu, avu, awx, bcc, zpt, zpi, bdh, bel, benobcv, bex, bfd, bfz, bgc.
-2025-04-26: Updated bhd, bhi, bhu, bib, big2013, bim. Added bkw.
-2025-04-28: Updated blr, blt, blx, bmo, bod, bodn, bov, bqj, brb.
-2025-04-29: Updated bsc, bsp, bwo, bwu, bzi, cam, car, ceslb. Added bswl, bswe, cbuNT, cdz, cebocb. Removed carNT (duplicate of car).
-2025-04-30: Updated cje, ckb, cko, cmnfeb, cmo, cmok, coe, cok, cou, crj, crl, zpg, cwe, des. Added cmncbs, cmncbt, cug.
-2025-05-01: Added dhn, dne, dnv, dwrl, engojb. Updated dig, div, due, duo, dwrNT, dwrENT, dyu, englsv, engfbv, engbsb, esg, ewe.
-2025-05-02: Updated fad, fin, flr, frd, fuh, fuv, gaz, gde, geb, gqr, gri, guc, gvr, gwr, hausa, hincv, hoy, hre, hun. Added frajnd, gax, gaze, gbl, gdf, gel, ghn, glwl, gmve, gmvl, gofe, gofl, goj, gok, gyl, hebwlc, hil, hlb, hne, hru, hrvbib.
-2025-05-03: Updated ibl, ifb, ifu, ify, ind, ino2013, iou, ita1885, ivb, ivv. Added idc, ikz, iyx.
-2025-05-05: Updated izz, jaa, jib, kanokcv, kby, kdc, kdh, key. Added jnje, jnjl, jum, kans, kbo, kdc2014, kde. Renamed kan2017 to kanirv.
-2025-05-06: Updated kfc, kfw, kik, kjl, kkj, kma. Added kfcp, kff, klg.
-2025-05-07: Updated knb, kog, kqa, kqe, kqew, kql, kqp, krj, krx, ksc, ktj, kus, kxv, kxw, kyb, kyuk, kyu, lacNT. Added hebsg, lag.
-2025-05-08: Updated lbj, lcp. Added ldb.
 2025-05-09: Added lga. Updated lhi, lik.
-2025-05-10: Updated lin, hne, kyu, llu, lmd, log, loq, lro, luc, lug, luo, maaNT. Added litb, lth, lyn.
-2025-05-12: Updated mai, mal, mal2015, malc, mamC, mbcNT. Added marc.
-2025-05-13: Updated mbd, hatbsa audio, mbi, mcu, mdm, mfh, mfi, mfy, mgh2016, mgq. Added mdybse, mey, zak, mfm, mfxe, mfxl.
-2025-05-14: Updated mgw, mif, mig, mim, mmn, mnv, moa, moz, mqbNT, mrr, msc, adz, eng-web*, engwmb, engwmbb, eng-kjv (red letters MAT 8:13), eng-kjv2006 (red letters MAT 8:13). Added mgv, mkw, mnh, mpa.
-2025-05-15: Updated msy, msy2020, mta, muh, mur, mwc, mwe, mxv, mza, naw, nca, ncq. Added mzq.
 2025-05-16: Added ncr, nit. Updated ncuNT, nde, ndh, ndv, ndz, iyx, new, nhx.
-2025-05-17: Updated niy, nnw, noblb. npioncb, nsu, ntr, nuj. Added njd, nkn, nldgbv.
-2025-05-19: Updated nwb, nxl, nya, nyf, nyu, nyy, omb, pac, pan, pbb, pcm, pdc, peg, pesopcb, zaj, polsz. Added oyde, oydl, pdo, pll, zajp, polopl, poronbv.
 2025-05-20: Added slk, spaonbv, srponbvc, srponstl, swhonmm. Updated sna, swhonen, tamtcv.
 2025-05-21: Added telotsa. Updated tsn, turobt.
-2025-05-22: Updated twi, twiasante, ukronpu. Added urdoucv.
 2025-06-26: Updated and added several Bibles from the ETEN DBL.
-2025-06-27: Updated rmyChergash, rmGerbet.
-2025-06-28: Updated rmylovari, rmyservi, rmyvlakh, rol, rub, rwo-rawa, sav. Added rup.
-2025-07-01: Updated sbl, set, slm, slu, gdf, glwl, lth. Added sce, shr, six, sle, aqk, asg, cfm, eka, gqa, gyz, hwo, kdl, khj, krh.
 2025-07-02: Added mfo, mgj. Updated mgw.
 2025-07-03: Added pga, plj, sur, tap. Updated sml, snf, snw, sor, stb, suc, susa, sus, swe, syb, syl, syll, syls.
 2025-07-08: Added bou, bwc, nww, tbx, tcn, thr, tsw, tvn, tyx, uth, utr, vaa. Updated taq, taw, tbk, ted, tgj, tkr, asg, tod, tpp, tpu, tpx, trq, tsg, ttqt, ttq, tzoSA, udi, uri, ury.
 2025-07-09: Added vgr, vid, wbq, wja. Updated wib, eng-web*, engwmb, engwmbb.
-2025-07-10: Updated lbm, swe, wob, xrb, xsb, xsm, xsr, xtc, xtn, xuo, yal, yam, yvaNT, zae, ahr, hoy, krx. Added wlo, xsn, yaf, ydd, yer, ymp, yns, zbu, zin, ztp.
 2025-07-11: Added rifa, rifl, rift, buj.
 2025-07-12: Updated dhn. Added mbu.
 2025-07-13: Added hav.
-2025-07-18: Updated hwo, rifa, rifl, rift.
 2025-08-09: Added hrw.
-2025-08-11: Updated ksj.
 2025-08-13: Added ncf.
-2025-08-26: Updated eng-web*, engwmb, and engwmbb. Added more audio files to hatbsa. Added guz.
 2025-09-04: Prepared kwo, but held it back pending the dedication on the 18th of October. Added hch.
 2025-09-05: Added nys Ester audio. Prepared onn but held it back pending its dedication.
 2025-09-12: Added urim.
-2025-09-17: Updated gup and gupk.
-2025-09-18: Updated uiga, uigc, uigl, and uigp. Added swessb. Did more DBL prep work for onn.
-2025-10-27: Updated yml.
-2025-10-29: Updated swessb.
 2025-11-22: Added bwd. Updated nss.
 2026-01-01: Added srp1868. Updated srp1865.
 2026-02-13: Added grclxx.
-2026-02-25: Updated dwuliv, dhg, djj, nck, gupk, gup, wlg, gge, gue, guf, djr, dhjduwadha, rmb, mwf2010, dwy, tiw, tiwm, gupmay.
  
