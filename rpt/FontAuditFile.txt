@@ -12,8 +12,6 @@ ARIAL / TIMES NEW ROMAN USAGE
 
 TIMES NEW ROMAN
 --------------------
-Page 1 | Style: Title | HOLY BIBLE
-Page 19 | Style: Title | The Hebrew Bible
 Page 3 | Style: Normal | Genesis (Gen) page 19
 Page 3 | Style: Normal | Exodus (Exod) 61
 Page 3 | Style: Normal | Leviticus (Lev) 94
