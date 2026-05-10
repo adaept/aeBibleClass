@@ -732,3 +732,91 @@ Public Function AuditCharStyleBases() As Long
                 """); " & nOff & " not based on """ & DEFAULT_BASE & """."
     AuditCharStyleBases = nOff
 End Function
+
+'==============================================================================
+' ScanCharStyleApplications
+' PURPOSE:
+'   Distinguish character styles that are merely present in the styles
+'   palette from those actually carried by at least one run of text.
+'   Word's Style.InUse flag is True for any custom character style from
+'   the moment it is created, regardless of whether any run carries it -
+'   so InUse alone cannot answer "is this style live in the document?".
+'
+'   This function performs a Find with Style filter across all primary
+'   StoryRanges (main body, footnotes, endnotes, headers, footers) for
+'   each in-use character style. It prints one line per style:
+'       <styleName>  ->  Applied
+'       <styleName>  ->  Unapplied
+'   and returns the count of Unapplied styles - the palette-cruft
+'   candidates that should either be added to the approved style list
+'   (if intentional) or deleted (if accidental).
+'
+' EXCLUSION:
+'   "Default Paragraph Font" is the document-wide default and is implicit
+'   on every run that has no explicit character style. Find with
+'   .Style = "Default Paragraph Font" is therefore both expensive and
+'   meaningless, so the loop skips it by name. This matches the
+'   exclusion in AuditCharStyleBases for symmetry.
+'
+'   Find with .Style = oStyle reports a hit only if a run explicitly
+'   carries the style. It does not infer application via inheritance
+'   chains - that is the correct semantics for "live in the text".
+'
+' Usage from Immediate:
+'   ?ScanCharStyleApplications
+'==============================================================================
+Public Function ScanCharStyleApplications() As Long
+    Const DEFAULT_BASE As String = "Default Paragraph Font"
+    Dim oDoc      As Word.Document
+    Dim oStyle    As Word.Style
+    Dim story     As Word.Range
+    Dim probe     As Word.Range
+    Dim nChecked  As Long
+    Dim nApplied  As Long
+    Dim nUnapp    As Long
+    Dim found     As Boolean
+
+    Set oDoc = ActiveDocument
+
+    For Each oStyle In oDoc.Styles
+        If oStyle.Type = wdStyleTypeCharacter Then
+            If oStyle.InUse Then
+                If oStyle.NameLocal = DEFAULT_BASE Then
+                    ' Implicit default; skip - see EXCLUSION in header.
+                Else
+                    nChecked = nChecked + 1
+                    found = False
+                    For Each story In oDoc.StoryRanges
+                        Set probe = story.Duplicate
+                        With probe.Find
+                            .ClearFormatting
+                            .Style = oStyle
+                            .Text = ""
+                            .Forward = True
+                            .Wrap = wdFindStop
+                            .Format = True
+                            .MatchWildcards = False
+                            If .Execute Then
+                                found = True
+                                Exit For
+                            End If
+                        End With
+                    Next story
+
+                    If found Then
+                        Debug.Print oStyle.NameLocal & "  ->  Applied"
+                        nApplied = nApplied + 1
+                    Else
+                        Debug.Print oStyle.NameLocal & "  ->  Unapplied"
+                        nUnapp = nUnapp + 1
+                    End If
+                End If
+            End If
+        End If
+    Next oStyle
+
+    Debug.Print "ScanCharStyleApplications: checked " & nChecked & _
+                " in-use character style(s) (excluding """ & DEFAULT_BASE & _
+                """); " & nApplied & " Applied, " & nUnapp & " Unapplied."
+    ScanCharStyleApplications = nUnapp
+End Function

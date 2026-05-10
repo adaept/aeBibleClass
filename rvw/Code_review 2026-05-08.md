@@ -295,6 +295,58 @@ for the `Footer` paragraph style. Per the rule this is exactly the
 Action: re-base all 13 to `Default Paragraph Font`, then re-run
 `?AuditCharStyleBases` and confirm it returns 0.
 
+#### 6c. ScanCharStyleApplications (NEW 2026-05-10)
+
+Companion function in `src\basStyleInspector.bas`. Distinguishes
+character styles that are merely *present in the styles palette*
+from those *actually carried by at least one run of text*.
+
+Motivation: Word's `Style.InUse` flag is True for any custom
+character style from the moment it is created, regardless of
+whether any run carries it - so InUse alone cannot answer "is
+this style live in the document?". On the first run of
+`?AuditCharStyleBases` (2026-05-10), `Bold`, `Bold italic`, and
+`Italics` appeared in the InUse list, but the user noted they are
+not specifically applied anywhere. This function settles that
+question.
+
+Mechanism: for each in-use character style (excluding
+`Default Paragraph Font` for symmetry with `AuditCharStyleBases`),
+runs Find with `.Style = oStyle` and `.Text = ""` across each
+primary StoryRange (main, footnotes, endnotes, headers, footers).
+First hit short-circuits to `Applied`; no hit yields `Unapplied`.
+
+Output to Immediate window:
+```
+<styleName>  ->  Applied
+<styleName>  ->  Unapplied
+ScanCharStyleApplications: checked N in-use character style(s) (excluding "Default Paragraph Font"); A Applied, U Unapplied.
+```
+
+Returns the count of `Unapplied` styles - the palette-cruft
+candidates.
+
+#### 6d. Decision rule for unapplied character styles
+
+For each style returned `Unapplied`:
+
+| Outcome | Decision | Action |
+|---|---|---|
+| 0 application sites | Palette cruft | Delete the style. Do not add to the approved list. |
+| Few sites, accidental | Cleanup needed | Retag the offending runs to the intended style; then delete. |
+| Few sites, intentional | Genuine but rare | Add to approved list (base = `Default Paragraph Font`); promote per the bucket-2 audit when ready. |
+| Many sites | Genuine palette member | Add to approved list; re-base to `Default Paragraph Font`. |
+
+The rule "promote only what is intentionally used" applies. Adding
+unused styles to the approved list creates audit obligations
+(`AuditOneStyle` calls, taxonomy header recount) for nothing that
+produces visible output. Deletion is the cleanest way to remove
+ambiguity.
+
+Open question for `Bold` / `Bold italic` / `Italics`: pending
+results of `?ScanCharStyleApplications` against the production
+docx.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state
