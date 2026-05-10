@@ -672,3 +672,63 @@ Private Sub WriteHeaderFooterAuditFile(ByVal sContent As String)
     oStream.Write sContent
     oStream.Close
 End Sub
+
+'==============================================================================
+' AuditCharStyleBases
+' PURPOSE:
+'   Scan every character style explicitly used in the document and check
+'   that it is based on "Default Paragraph Font". Any style with a
+'   different base is printed to the Immediate window as
+'       <StyleName>  ->  <baseStyleName>
+'   The function returns the number of offenders. Returns 0 if all
+'   in-use character styles are correctly based on the default.
+'
+'   "Explicitly used" = Style.InUse = True (Word marks a style as InUse
+'   when at least one run carries it OR when it has been edited; for an
+'   in-production docx this is the practical "is referenced anywhere"
+'   signal).
+'
+' EXCLUSION:
+'   "Default Paragraph Font" itself is the root character style. Querying
+'   its BaseStyle returns empty because there is nothing above it to
+'   inherit from, and it cannot be based on itself. Including it would
+'   inflate the offender Count by one and report a non-fixable false
+'   positive, so the loop skips it by name. The reported Count therefore
+'   reflects only styles that can actually be repointed to the default.
+'
+' Usage from Immediate:
+'   ?AuditCharStyleBases
+'==============================================================================
+Public Function AuditCharStyleBases() As Long
+    Const DEFAULT_BASE As String = "Default Paragraph Font"
+    Dim oStyle    As Word.Style
+    Dim sBase     As String
+    Dim nChecked  As Long
+    Dim nOff      As Long
+
+    For Each oStyle In ActiveDocument.Styles
+        If oStyle.Type = wdStyleTypeCharacter Then
+            If oStyle.InUse Then
+                If oStyle.NameLocal = DEFAULT_BASE Then
+                    ' Root character style - cannot be based on itself; skip.
+                Else
+                    nChecked = nChecked + 1
+                    On Error Resume Next
+                    sBase = ""
+                    sBase = CStr(oStyle.baseStyle)
+                    On Error GoTo 0
+                    If sBase <> DEFAULT_BASE Then
+                        Debug.Print oStyle.NameLocal & "  ->  " & _
+                                    IIf(Len(sBase) = 0, "(none)", sBase)
+                        nOff = nOff + 1
+                    End If
+                End If
+            End If
+        End If
+    Next oStyle
+
+    Debug.Print "AuditCharStyleBases: checked " & nChecked & _
+                " in-use character style(s) (excluding """ & DEFAULT_BASE & _
+                """); " & nOff & " not based on """ & DEFAULT_BASE & """."
+    AuditCharStyleBases = nOff
+End Function
