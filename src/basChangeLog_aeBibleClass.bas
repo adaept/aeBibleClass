@@ -12,7 +12,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #638 -
 ' #637 -
 ' #636 -
-' #635 - see #634 - List all fonts used in the docx and track problem fonts Arial/Times New Roman [impr] [audit]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
 ' #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
 ' #625 - aeBibleClass Test 44 obsolete, can be re-used (see #623) [obso]
@@ -38,6 +37,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #635 - see #634 - List all fonts used in the docx and track problem fonts Arial/Times New Roman [impr] [audit]
     ' [obso] - for next version - #037 - Add updated maps in color [feat]
     ' [obso] - for next version - #040 - Add figure headings to maps - use map vs fig? [idea]
     ' [obso] - Export to USFM - #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]

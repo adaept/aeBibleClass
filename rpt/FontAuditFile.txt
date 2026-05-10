@@ -1,0 +1,83 @@
+FONTS USED IN DOCUMENT
+==================================================
+
+Carlito
+Liberation Serif
+Noto Sans
+Times New Roman
+
+
+ARIAL / TIMES NEW ROMAN USAGE
+==================================================
+
+TIMES NEW ROMAN
+--------------------
+Page 1 | Style: Title | HOLY BIBLE
+Page 19 | Style: Title | The Hebrew Bible
+Page 3 | Style: Normal | Genesis (Gen) page 19
+Page 3 | Style: Normal | Exodus (Exod) 61
+Page 3 | Style: Normal | Leviticus (Lev) 94
+Page 3 | Style: Normal | Numbers (Num) 118
+Page 3 | Style: Normal | Deuteronomy (Deut) 152
+Page 3 | Style: Normal | Joshua (Josh) 181
+Page 3 | Style: Normal | Judges (Judg) 201
+Page 3 | Style: Normal | Ruth (Ruth) 220
+Page 3 | Style: Normal | 1 Samuel (1 Sam) 224
+Page 3 | Style: Normal | 2 Samuel (2 Sam) 249
+Page 3 | Style: Normal | 1 Kings (1 Kgs) 270
+Page 3 | Style: Normal | 2 Kings (2 Kgs) 295
+Page 3 | Style: Normal | 1 Chronicles (1 Chr) 318
+Page 3 | Style: Normal | 2 Chronicles (2 Chr) 341
+Page 3 | Style: Normal | Ezra (Ezra) 368
+Page 3 | Style: Normal | Nehemiah (Neh) 377
+Page 3 | Style: Normal | Esther (Esth) 389
+Page 3 | Style: Normal | Job (Job) 396
+Page 3 | Style: Normal | Psalms (Ps) 383
+Page 3 | Style: Normal | Proverbs (Prov) 427
+Page 3 | Style: Normal | Ecclesiastes (Eccl) page 443
+Page 3 | Style: Normal | Solomon (Song) 449
+Page 3 | Style: Normal | Isaiah (Isa) 454
+Page 3 | Style: Normal | Jeremiah (Jer) 491
+Page 3 | Style: Normal | Lamentations (Lam) 531
+Page 3 | Style: Normal | Ezekiel (Ezek) 537
+Page 3 | Style: Normal | Daniel (Dan) 574
+Page 3 | Style: Normal | Hosea (Hos) 586
+Page 3 | Style: Normal | Joel (Joel) 593
+Page 3 | Style: Normal | Amos (Amos) 596
+Page 3 | Style: Normal | Obadiah (Obad) 601
+Page 3 | Style: Normal | Jonah (Jonah) 603
+Page 3 | Style: Normal | Micah (Mic) 624
+Page 3 | Style: Normal | Nahum (Nah) 629
+Page 3 | Style: Normal | Habakkuk (Hab) 632
+Page 3 | Style: Normal | Zephaniah (Zeph) 635
+Page 3 | Style: Normal | Haggai (Hag) 641
+Page 3 | Style: Normal | Zechariah (Zech) 622
+Page 3 | Style: Normal | Malachi (Mal) 649
+Page 3 | Style: Normal | Matthew (Matt) page 634
+Page 3 | Style: Normal | Mark (Mark) 661
+Page 3 | Style: Normal | Luke (Luke) 678
+Page 3 | Style: Normal | John (John) 705
+Page 3 | Style: Normal | Acts (Acts) 727
+Page 3 | Style: Normal | Romans (Rom) 752
+Page 3 | Style: Normal | 1 Corinthians (1 Cor) 763
+Page 3 | Style: Normal | 2 Corinthians (2 Cor) 774
+Page 3 | Style: Normal | Galatians (Gal) 782
+Page 3 | Style: Normal | Ephesians (Eph) 787
+Page 3 | Style: Normal | Philippians (Phil) 792
+Page 3 | Style: Normal | Colossians (Col) 796
+Page 3 | Style: Normal | 1 Thessalonians (1 Thess) 800
+Page 3 | Style: Normal | 2 Thessalonians (2 Thess) 804
+Page 3 | Style: Normal | 1 Timothy (1 Tim) page 806
+Page 3 | Style: Normal | 2 Timothy (2 Tim) 810
+Page 3 | Style: Normal | Titus (Tit) 813
+Page 3 | Style: Normal | Philemon (Phlm) 816
+Page 3 | Style: Normal | Hebrews (Heb) 818
+Page 3 | Style: Normal | James (Jas) 827
+Page 3 | Style: Normal | 1 Peter (1 Pet) 831
+Page 3 | Style: Normal | 2 Peter (2 Pet) 835
+Page 3 | Style: Normal | 1 John (1 John) 838
+Page 3 | Style: Normal | 2 John (2 John) 842
+Page 3 | Style: Normal | 3 John (3 John) 844
+Page 3 | Style: Normal | Jude (Jude) 846
+Page 3 | Style: Normal | Revelation (Rev) 848
+

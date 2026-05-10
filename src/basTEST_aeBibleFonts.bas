@@ -683,7 +683,18 @@ Public Sub Check_Aptos_Is_Real_Or_Display()
     Debug.Print "REAL stored Aptos hits: " & realHits
 End Sub
 
-Public Sub AuditFonts_Fast()
+'==============================================================================
+' AuditFontsUsage
+'==============================================================================
+' List all fonts used in the docx and track problem fonts
+' Arial / Times New Roman
+'
+' Usage:
+'   AuditFontsUsage "ArialTimes"           ' immediate and docx
+'   AuditFontsUsage "ArialTimes", True     ' rpt\ file, docx and immediate
+'==============================================================================
+Public Sub AuditFontsUsage(ByVal sFontsUsage As String, _
+                               Optional ByVal bWriteFile As Boolean = False)
     On Error GoTo PROC_ERR
 
     Dim oDoc As Document
@@ -700,6 +711,8 @@ Public Sub AuditFonts_Fast()
     Dim vKey As Variant
 
     Set oDoc = ActiveDocument
+    Set dictFonts = Nothing
+    Set dictHits = Nothing
 
     Set dictFonts = CreateObject("Scripting.Dictionary")
     Set dictHits = CreateObject("Scripting.Dictionary")
@@ -769,12 +782,14 @@ Public Sub AuditFonts_Fast()
     sReport = sReport & vbCrLf & vbCrLf
     sReport = sReport & "ARIAL / TIMES NEW ROMAN USAGE" & vbCrLf
     sReport = sReport & String(50, "=") & vbCrLf & vbCrLf
+    Debug.Print sReport
 
     If dictHits.Exists("ARIAL") Then
         sReport = sReport & _
             "ARIAL" & vbCrLf & _
             String(20, "-") & vbCrLf & _
             dictHits("ARIAL") & vbCrLf
+        Debug.Print sReport
     End If
 
     If dictHits.Exists("TIMES NEW ROMAN") Then
@@ -782,11 +797,15 @@ Public Sub AuditFonts_Fast()
             "TIMES NEW ROMAN" & vbCrLf & _
             String(20, "-") & vbCrLf & _
             dictHits("TIMES NEW ROMAN") & vbCrLf
+        Debug.Print sReport
     End If
 
+    If bWriteFile Then WriteFontAuditFile sReport
     Documents.Add.Range.Text = sReport
+    
     Application.StatusBar = False
     Application.ScreenUpdating = True
+    
     MsgBox "Font audit complete.", vbInformation
 
 PROC_EXIT:
@@ -834,5 +853,16 @@ Private Function SortedKeys(ByVal dict As Object) As Variant
 
     SortedKeys = arr
 End Function
+
+Private Sub WriteFontAuditFile(ByVal sContent As String)
+    Dim oFSO    As Object
+    Dim oStream As Object
+    Dim sPath   As String
+    sPath = ActiveDocument.Path & "\rpt\FontAuditFile.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)    ' ASCII
+    oStream.Write sContent
+    oStream.Close
+End Sub
 
 
