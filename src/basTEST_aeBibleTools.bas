@@ -2612,3 +2612,69 @@ Public Sub CountPollutedParagraphMarksReport()
         vbInformation
 End Sub
 
+Public Sub LockHyperlinksAlwaysBlue()
+
+    Dim hl As Hyperlink
+    Dim rng As Word.Range
+    Dim doc As Document
+    
+    Set doc = ActiveDocument
+
+    ' --- Force Hyperlink style ---
+    With doc.Styles("Hyperlink").Font
+        .color = wdColorBlue
+        .Underline = wdUnderlineSingle
+    End With
+
+    ' --- Force FollowedHyperlink style (visited links) ---
+    With doc.Styles("FollowedHyperlink").Font
+        .color = wdColorBlue
+        .Underline = wdUnderlineSingle
+    End With
+
+    ' --- Apply to all existing hyperlinks ---
+    For Each hl In doc.Hyperlinks
+        Set rng = hl.Range
+        
+        With rng.Font
+            .color = wdColorBlue
+            .Underline = wdUnderlineSingle
+        End With
+        
+        ' Ensure Word uses the hyperlink style, not manual formatting
+        rng.style = doc.Styles("Hyperlink")
+    Next hl
+
+    MsgBox "Hyperlinks locked to blue (visited state neutralized).", vbInformation
+
+End Sub
+
+Public Sub ConvertHyperlinksToPlainURLs()
+
+    Dim hl As Hyperlink
+    Dim url As String
+    Dim i As Long
+    
+    ' Loop backwards to avoid collection issues when deleting hyperlinks
+    For i = ActiveDocument.Hyperlinks.Count To 1 Step -1
+        
+        Set hl = ActiveDocument.Hyperlinks(i)
+        
+        ' Get the real target URL
+        url = hl.Address
+        
+        ' If there's a sub-address (like bookmarks), append it
+        If hl.SubAddress <> "" Then
+            url = url & "#" & hl.SubAddress
+        End If
+        
+        ' Replace hyperlink with plain text URL
+        hl.Range.Text = url
+        
+    Next i
+
+    MsgBox "All hyperlinks converted to plain URLs for print.", vbInformation
+
+End Sub
+
+
