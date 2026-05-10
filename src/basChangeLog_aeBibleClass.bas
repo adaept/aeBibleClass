@@ -12,63 +12,63 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #638 -
 ' #637 -
 ' #636 -
-' #635 -
-' #631 - Test for Count of "Chapter Verse marker" did not catch missing marker [bug] - see #190, #191, #403,
-' #630 - Add styles for author end matter [impr]
+' #635 - see #634 - List all fonts used in the docx and track problem fonts Arial/Times New Roman [impr] [audit]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
 ' #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
 ' #625 - aeBibleClass Test 44 obsolete, can be re-used (see #623) [obso]
 ' #622 - Add World English Bible Updates_ChangeLog.txt (view-source:https://worldenglish.bible/webupdates.php) and work through the changes [wip]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
-' #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
-' #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]
 ' #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
 '            It's the difference between: Stable, predictable, audit-safe formatting vs.
 '               Hidden inheritance, inconsistent rendering, and style-tree instability [feat]
 ' #609 - Soft Hyphens checked to end of Exodus - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
-' #601 - Build Word configuration module for consistent editing setup [feat][wip]
-' #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat]
-' #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test] [wip]
-' #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
-' #396 - Export - Psalms 110:7 He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
-' #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
 ' #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to - 0, 1st Century ->
 '           CountNumericOrdinals Numeric Ordinal Suffix Counts: st: 7 nd: 12 rd: 4 th: 44 TOTAL: 67
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #365 - Map styles to USFM markers [wip]
-' #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
-' #191 - Add test to verify all correct Verse Marker per book [test] [wip]
-' #190 - Add test to verify all correct Chapter Verse Marker per book [test] [wip]
-' #150 - Add module for free fonts setup and testing [idea]
 ' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
-' #069 - Use WEB.doc to get a proper Count of "'" and make sure RWB is correct
-'        Verify smart quotes
-'        Several Bible versions use smart quotes for opening and closing quotations,
-'        including the triple quote style for verses like Ezekiel 39:7
-'        Additional example versions that follow this style:
-'           New International Version (NIV):
-'               Uses smart quotes for direct speech and often includes nested quotes for emphasis.
-'           English Standard Version (ESV):
-'               Employs smart quotes and follows similar formatting conventions for nested quotations.
-'           New Living Translation (NLT):
-'               Uses smart quotes and maintains clear distinctions between different levels of speech.
-'           New King James Version (NKJV):
-'               Adopts smart quotes and includes nested quotes for clarity.
-'           Christian Standard Bible (CSB):
-'               Utilizes smart quotes and nested quotations for direct speech.
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
 ' #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
-' #040 - Add figure headings to maps - use map vs fig? [idea]
-' #037 - Add updated maps in color [feat]
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - for next version - #037 - Add updated maps in color [feat]
+    ' [obso] - for next version - #040 - Add figure headings to maps - use map vs fig? [idea]
+    ' [obso] - Export to USFM - #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
+    ' [obso] - Export to USFM - #396 - Export - Psalms 110:7 He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
+    ' FIXED - #601 - Build Word configuration module for consistent editing setup [feat][wip]
+    ' [obso] - #069 - Use WEB.doc to get a proper Count of "'" and make sure RWB is correct
+    '        Verify smart quotes
+    '        Several Bible versions use smart quotes for opening and closing quotations,
+    '        including the triple quote style for verses like Ezekiel 39:7
+    '        Additional example versions that follow this style:
+    '           New International Version (NIV):
+    '               Uses smart quotes for direct speech and often includes nested quotes for emphasis.
+    '           English Standard Version (ESV):
+    '               Employs smart quotes and follows similar formatting conventions for nested quotations.
+    '           New Living Translation (NLT):
+    '               Uses smart quotes and maintains clear distinctions between different levels of speech.
+    '           New King James Version (NKJV):
+    '               Adopts smart quotes and includes nested quotes for clarity.
+    '           Christian Standard Bible (CSB):
+    '               Utilizes smart quotes and nested quotations for direct speech.
+    ' FIXED in earlier code - #191 - Add test to verify all correct Verse Marker per book [test] [wip]
+    ' FIXED in earlier code - #190 - Add test to verify all correct Chapter Verse Marker per book [test] [wip]
+    ' [obso] - #150 - Add module for free fonts setup and testing [idea]
+    ' [obso] #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
+    ' [obso] - #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat] - Maybe re-open when i18n is real
+    ' FIXED in earlier code - #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]
+    ' [obso] - #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
+    ' FIXED in RunSoftHyphenSweep_Across_Pages_From - #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
+    ' FIXED - #630 - Add styles for author end matter [impr]
+    ' FIXED in earlier code - #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test] [wip]
+    ' FIXED in earlier code - #631 - Test for Count of "Chapter Verse marker" did not catch missing marker [bug] - see #190, #191, #403
     ' FIXED - #634 - Add AuditFonts_Fast report to list all used fonts and show usage of Arial/Times New Roman [impr]
     ' FIXED - #633 - Delete style BobyTextIndent when not used [impr]
     ' FIXED - #632 - Add ListBodyTextIndentUsage to check if style BobyTextIndent is used [impr]
