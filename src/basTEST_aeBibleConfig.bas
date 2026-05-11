@@ -250,8 +250,10 @@ End Function
 '      AuthorBookSections  (1 stop at 378 pt, Right, Dots)
 '      BibleIndexList      (1 stop at 172.8 pt, Right, Dots)
 '      ParallelText        (6 stops at 7.2 / 57.6 / 108 / 158.4 / 208.8 / 259.2 pt, Left, Spaces)
-'   AuditOneStyle now also accepts optional Bold / Italic args (sentinel -2
-'   = skip); descriptive specs for those properties on bucket-1 entries.
+'   AuditOneStyle now also accepts optional Bold / Italic / Color args
+'   (sentinel -2 = skip); descriptive specs for those properties on
+'   bucket-1 entries. Color check enables character-style promotion
+'   (item 1 of rvw/Code_review 2026-05-11.md).
 '   Specs encoded as descriptive (capture current document state); see
 '   rvw/Code_review 2026-04-25.md "Spec promotion: descriptive vs prescriptive"
 '   for the decision and rationale.
@@ -422,7 +424,8 @@ Private Sub AuditOneStyle(ByVal sName As String, _
                           ByVal dExpSpaceAfter As Double, _
                           Optional ByVal vExpBold As Variant = -2, _
                           Optional ByVal vExpItalic As Variant = -2, _
-                          Optional ByVal sExpBaseStyle As String = "<skip>")
+                          Optional ByVal sExpBaseStyle As String = "<skip>", _
+                          Optional ByVal vExpColor As Variant = -2)
     On Error GoTo PROC_ERR
     Dim oStyle  As Word.Style
     Dim bPass   As Boolean
@@ -519,6 +522,14 @@ Private Sub AuditOneStyle(ByVal sName As String, _
             bPass = False
             sDetail = sDetail & "      Italic   : expected " & CLng(vExpItalic) & _
                       " got " & oStyle.Font.Italic & vbCrLf
+        End If
+    End If
+
+    If CLng(vExpColor) <> -2 Then
+        If oStyle.Font.Color <> CLng(vExpColor) Then
+            bPass = False
+            sDetail = sDetail & "      Color    : expected " & CLng(vExpColor) & _
+                      " got " & oStyle.Font.Color & vbCrLf
         End If
     End If
 

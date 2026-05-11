@@ -161,6 +161,23 @@
           checks.
 
 # ============================================================
+# Session 2026-05-11 - AuditOneStyle Color check (item 1 of 2026-05-11)
+# ============================================================
+# (See rvw/Code_review 2026-05-11.md item 1 for full record.)
+
+[IMPORT] src/basTEST_aeBibleConfig.bas
+        - AuditOneStyle: new optional vExpColor parameter (sentinel -2 =
+          skip) appended after sExpBaseStyle so existing positional
+          callers are unaffected. Color check block mirrors Bold/Italic
+          pattern; compares oStyle.Font.Color against expected long.
+        - RUN_TAXONOMY_STYLES header comment updated: Bold/Italic/Color
+          sentinel doc plus pointer to 2026-05-11 item 1.
+        - No call sites changed; 7 bucket-2 character styles remain
+          existence-only pending Bold/Italic/Color dump for each before
+          bucket-1 promotion (and the two missing entries: Chapter Verse
+          marker, Verse marker).
+
+# ============================================================
 # Session 2026-05-06 (later still) - front-matter & TOC bucket-1 promotion
 # ============================================================
 # (See rvw/Code_review 2026-05-06.md items 11-12 for full record.)
