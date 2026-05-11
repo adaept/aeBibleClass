@@ -436,6 +436,73 @@ total, add a sister function rather than restoring the old return.
    chained-inheritance fix from 6b). Re-base the latter to
    `Default Paragraph Font`.
 
+#### 6h. Second scan after cleanup (2026-05-10)
+
+`?ScanCharStyleApplications` returned a much-cleaner state:
+
+```
+checked   : 36 in-use character style(s) (excluding "Default Paragraph Font")
+Applied   : Builtin=3   Custom=6   (total 9)
+Unapplied : Builtin=25  Custom=2   (total 27)
+Deletable cruft (Unapplied & Custom): 2
+```
+
+**Delta from 6e:** in-use 45 -> 36 (9 styles deleted between
+runs); deletable cruft 8 -> 2. The 9 removed were the category-E
+candidates from 6e: `Bold`, `Bold italic`, `Italics`, `Figure`,
+`Figure Caption`, `Footnote`, `Footnote Label`, `Footnote marker`,
+`Table Cell Head`. Cleanup completed cleanly - no built-in
+collateral damage.
+
+**Real palette now visible (the 9 Applied):**
+
+- Built-in (3): `Footnote Reference`, `Hyperlink`, `Page Number`.
+- Custom (6): `Selah`, `EmphasisBlack`, `EmphasisRed`,
+  `Words of Jesus`, `Chapter Verse marker`, `Verse marker`.
+
+**Two custom Unapplied flagged for decision:**
+
+- **`AuthorQuote`** - listed in section 2's bucket-2 promotion
+  set alongside Selah / EmphasisBlack / EmphasisRed /
+  Words of Jesus, but unlike those four it is **not actually
+  applied to any run**. Either created for a planned feature that
+  has not shipped (keep; base on `Default Paragraph Font`; defer
+  promotion until first use), or residue from earlier drafts whose
+  application sites were rewritten (decide whether to reintroduce
+  or delete). Verify against project intent before acting.
+
+- **`Normal text`** - not in any promotion list; generic name
+  suggests template residue. Strong delete candidate; one final
+  visual sweep, then `ActiveDocument.Styles("Normal text").Delete`.
+
+**Two custom Applied missing from the section 2 promotion list:**
+
+- `Chapter Verse marker` and `Verse marker` are both Applied
+  Custom and clearly intentional (Bible verse numbering, with
+  colour intent already locked in section 1: orange `42495` and
+  medium green `7915600` respectively). Neither appears in
+  section 2's bucket-2 list. **Add both to the bucket-2 promotion
+  set when the `AuditOneStyle` character-style extension lands.**
+
+**Built-in Unapplied (25):** unchanged - Word will recreate any
+that get deleted on next theme switch / paste / comment use.
+Ignore in audit reports; not actionable.
+
+**Updated section 2 promotion list (proposed):**
+
+- `Footnote Reference` (built-in, Applied)
+- `Selah` (custom, Applied) - already listed
+- `EmphasisBlack` (custom, Applied) - already listed
+- `EmphasisRed` (custom, Applied) - already listed
+- `Words of Jesus` (custom, Applied) - already listed
+- `AuthorQuote` (custom, Unapplied) - **deferred** until first
+  application or removed from set
+- `Chapter Verse marker` (custom, Applied) - **add**
+- `Verse marker` (custom, Applied) - **add**
+
+This brings the bucket-2 audit in line with what is actually
+carried by runs in the document.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state
