@@ -38,6 +38,7 @@ Different artifacts answer different questions. Know which to consult.
 | 7 | [07-super-test-runs.md](07-super-test-runs.md) | Architectural QA supervisor | Placeholder — pending implementation |
 | 8 | [08-publishing.md](08-publishing.md) | Producing the docx / PDF | Skeleton |
 | 9 | [09-history.md](09-history.md) | Pointers into `rvw/` | Mature |
+| 11 | [11-ribbon-alias-layering.md](11-ribbon-alias-layering.md) | Ribbon book-combo alias resolution (two-layer contract) | Mature |
 
 ## Operative principles
 

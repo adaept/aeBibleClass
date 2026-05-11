@@ -283,3 +283,30 @@ as their descriptive baseline - `TheHeaders`, `TheFooters`, `Selah`,
 `EmphasisBlack`. Item 2's colour-literal pass converts these to
 explicit RGB / BGR literals. The audit harness is now in place to
 enforce the post-conversion values.
+
+### 2026-05-11 - Ribbon book-combo alias bug FIXED
+
+**Bug:** Aliases registered in `aeBibleCitationClass.aliasMap` (`JB`,
+`PRV`, `SG`, `SOL`, `CAN`, `1 KGS`, `2 KGS`, `NAH`) did not work in
+the ribbon book combo. `NAH` + Tab in particular bound to "Jonah"
+not "Nahum".
+
+**Root cause:** `aeRibbonClass.OnBookChanged` never consulted
+`aliasMap`. It did a substring `Like` scan of the typed text against
+`headingData` (H1 text scanned from the document). The scan walked
+books 1..66 and exited on the first match, so any typed string that
+was a substring of an earlier book's H1 bound to the wrong book
+(NAH -> JoNAH, scanned before NAHum). Aliases that were not
+substrings of the canonical H1 (JB, PRV, SG, etc.) silently failed.
+
+**Fix:** `OnBookChanged` now consults `ResolveAlias` first. If the
+typed text resolves to a canonical book name, that canonical is
+matched against `headingData`. On `Unknown book alias` the legacy
+substring scan still runs as a fallback to preserve the
+partial-typing UX (`Genesi` + Tab still finds Genesis). `aliasMap`
+is now authoritative for the ribbon combo. Order of entries in
+`aliasMap` does not matter (it is a hashed `Scripting.Dictionary`).
+
+**Documentation:** new EDSG page
+[`EDSG/11-ribbon-alias-layering.md`](../EDSG/11-ribbon-alias-layering.md)
+captures the two-layer contract and the canonical-substring caveat.

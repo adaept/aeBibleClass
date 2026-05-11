@@ -574,16 +574,45 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     ' when cache is still valid.
     CaptureHeading1s
 
+    ' Two-layer resolution:
+    '   Layer 1 - alias-authoritative: try aeBibleCitationClass.ResolveAlias
+    '     against the typed text. If it returns a canonical name (e.g. "Nahum"),
+    '     match THAT against headingData. This makes every alias in aliasMap
+    '     work and eliminates the first-substring-wins collisions of the
+    '     legacy single-layer scan (e.g. "NAH" -> Jonah because JONAH is
+    '     scanned before NAHUM and contains "NAH").
+    '   Layer 2 - legacy substring fallback: if the typed text is not a
+    '     known alias, fall back to the substring Like scan against
+    '     headingData. Preserves partial-typing UX (e.g. "Genesi" + Tab).
     Dim i As Long
     Dim matchFound As Boolean
-    For i = 1 To 66
-        If Not IsEmpty(headingData(i, 0)) Then
-            If CStr(headingData(i, 0)) Like "*" & pattern & "*" Then
-                matchFound = True
-                Exit For
+    Dim canonical As String
+
+    On Error Resume Next
+    canonical = aeBibleCitationClass.ResolveAlias(text)
+    On Error GoTo PROC_ERR
+
+    If Len(canonical) > 0 Then
+        For i = 1 To 66
+            If Not IsEmpty(headingData(i, 0)) Then
+                If CStr(headingData(i, 0)) Like "*" & canonical & "*" Then
+                    matchFound = True
+                    Exit For
+                End If
             End If
-        End If
-    Next i
+        Next i
+    End If
+
+    If Not matchFound Then
+        For i = 1 To 66
+            If Not IsEmpty(headingData(i, 0)) Then
+                If CStr(headingData(i, 0)) Like "*" & pattern & "*" Then
+                    matchFound = True
+                    Exit For
+                End If
+            End If
+        Next i
+    End If
 
     If Not matchFound Then
         Application.StatusBar = SB_INVALID_BOOK

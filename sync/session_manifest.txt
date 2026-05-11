@@ -190,6 +190,27 @@
           3 not-yet-created; 9 tab-stop audits; 58 checks total.
         - Verified run: 53 PASS / 3 FAIL after 7-style promotion;
           expected 55 PASS / 3 FAIL after the 2 new entries.
+
+[IMPORT] src/aeRibbonClass.cls
+        - OnBookChanged now consults aeBibleCitationClass.ResolveAlias
+          first (alias-authoritative layer 1); matches the returned
+          canonical name against headingData. Legacy substring Like
+          scan retained as layer 2 fallback for partial-typing UX.
+        - Fixes: NAH + Tab now binds to Nahum (was Jonah - first-
+          substring-wins collision with JoNAH). JB / PRV / SG / SOL /
+          CAN / 1 KGS / 2 KGS now resolve correctly.
+        - No state or ribbon API change; existing bookmarkIndex /
+          m_currentBookIndex / Invalidate sequence preserved.
+
+[DOC]   EDSG/11-ribbon-alias-layering.md (NEW)
+        - Two-layer alias resolution contract documented.
+        - First-substring-wins bug table; fix description; caveat
+          about canonical-substring collisions for future H1 renames.
+        - Cross-references to OnBookChanged, GetBookAliasMap, and
+          rvw/Code_review 2026-05-11.md.
+
+[DOC]   EDSG/README.md
+        - Added row 11 to the Pages table.
         - Note: -16777216 (wdColorAutomatic) on Selah, EmphasisBlack,
           TheHeaders, TheFooters is the descriptive baseline; item 2 of
           2026-05-11 will replace these with explicit RGB/BGR literals.
