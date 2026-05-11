@@ -578,6 +578,10 @@ Re-run `RUN_TAXONOMY_STYLES` to confirm **52 PASS / 3 FAIL**
 (the 3 expected FAILs unchanged: BodyTextContinuation,
 AppendixTitle, AppendixBody).
 
+Confirmed 2026-05-10: re-run returned **52 PASS / 3 FAIL** as
+predicted. Taxonomy is in sync with the live document; section 6j
+closed.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state
