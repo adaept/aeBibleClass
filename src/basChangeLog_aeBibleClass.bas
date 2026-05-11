@@ -10,16 +10,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #640 -
 ' #639 -
 ' #638 -
-' #637 -
+' #637 - Manually update page numbers of Bible Index [impr]
 ' #636 - Error message for src when another docx created and EXPORT_THE_CODE is run after 'AuditFontsUsage "ArialTimes"' True [bug]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
 ' #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
 ' #625 - aeBibleClass Test 44 obsolete, can be re-used (see #623) [obso]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
-' #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
-'            It's the difference between: Stable, predictable, audit-safe formatting vs.
-'               Hidden inheritance, inconsistent rendering, and style-tree instability [feat]
 ' #609 - Soft Hyphens checked to end of Exodus - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
@@ -36,6 +33,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
+    '            It's the difference between: Stable, predictable, audit-safe formatting vs.
+    '               Hidden inheritance, inconsistent rendering, and style-tree instability [feat]
     ' FIXED - #622 - Add World English Bible Updates_ChangeLog.txt (view-source:https://worldenglish.bible/webupdates.php) and work through the changes [wip]
     ' FIXED - #635 - see #634 - List all fonts used in the docx and track problem fonts Arial/Times New Roman [impr] [audit]
     ' [obso] - for next version - #037 - Add updated maps in color [feat]
