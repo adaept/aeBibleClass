@@ -220,10 +220,10 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 47 styles via AuditOneStyle + 9 tab-stop specs via AuditStyleTabs;
-'   total 56 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (47):
-'     44 fully specified (all properties verified) - BodyText, VerseText,
+'   Audits 49 styles via AuditOneStyle + 9 tab-stop specs via AuditStyleTabs;
+'   total 58 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (49):
+'     46 fully specified (all properties verified) - BodyText, VerseText,
 '                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
@@ -238,11 +238,10 @@ End Function
 '                            BibleIndexList, ParallelHeader, ParallelText,
 '                            TheHeaders, TheFooters,
 '                            Footnote Reference, Selah, EmphasisBlack,
-'                            EmphasisRed, Words of Jesus
+'                            EmphasisRed, Words of Jesus,
+'                            Chapter Verse marker, Verse marker
 '      0 existence-verified (bucket currently empty; reserved for future
-'                            styles awaiting DumpStyleProperties capture,
-'                            e.g. Chapter Verse marker / Verse marker pending
-'                            per 2026-05-11 item 1)
+'                            styles awaiting DumpStyleProperties capture)
 '      3 not yet created (expected FAIL until each Define* routine runs) -
 '                            BodyTextContinuation, AppendixTitle, AppendixBody
 '   Tab-stop audits (9):
@@ -357,6 +356,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "EmphasisBlack", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", -16777216
     AuditOneStyle "EmphasisRed", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 128
     AuditOneStyle "Words of Jesus", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "", 128
+    AuditOneStyle "Chapter Verse marker", "Noto Sans", 5, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 42495
+    AuditOneStyle "Verse marker", "Noto Sans", 8, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 7915600
 
     ' -- Existence verified bucket is currently empty; all dumped styles have
     ' been promoted to bucket 1. Reserved here for future styles awaiting

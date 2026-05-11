@@ -180,10 +180,16 @@
             * EmphasisRed (Carlito 9 Bold Color 128 BGR dark-red)
             * Words of Jesus (Carlito 9 Color 128 BaseStyle "")
         - TheFooters tab stop added (1 stop at 7.2 pt Left Spaces).
-        - "Existence verified" bucket now empty; reserved for Chapter
-          Verse marker / Verse marker pending dumps (still owed).
-        - RUN_TAXONOMY_STYLES header recounted: 44 fully spec / 0 exist /
-          3 not-yet-created; 9 tab-stop audits; 56 checks total.
+        - Chapter Verse marker added to bucket 1 (Noto Sans 5pt Bold
+          Color 42495 BGR orange BaseStyle "Default Paragraph Font").
+        - Verse marker added to bucket 1 (Noto Sans 8pt Bold Color
+          7915600 BGR medium-green BaseStyle "Default Paragraph Font").
+        - "Existence verified" bucket now empty; reserved for future
+          styles awaiting DumpStyleProperties capture.
+        - RUN_TAXONOMY_STYLES header recounted: 46 fully spec / 0 exist /
+          3 not-yet-created; 9 tab-stop audits; 58 checks total.
+        - Verified run: 53 PASS / 3 FAIL after 7-style promotion;
+          expected 55 PASS / 3 FAIL after the 2 new entries.
         - Note: -16777216 (wdColorAutomatic) on Selah, EmphasisBlack,
           TheHeaders, TheFooters is the descriptive baseline; item 2 of
           2026-05-11 will replace these with explicit RGB/BGR literals.

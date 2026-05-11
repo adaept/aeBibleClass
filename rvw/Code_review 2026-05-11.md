@@ -238,3 +238,48 @@ That file includes:
 
 Anything in this 2026-05-11 file should reference back to that arc
 for the *why*; this file holds only the **what is still open**.
+
+## Status updates (append-only)
+
+### 2026-05-11 - Item 1 CLOSED
+
+`AuditOneStyle` extended with optional `vExpColor` parameter
+(sentinel `-2` = skip), appended after `sExpBaseStyle` so existing
+positional callers were unaffected. Color check block mirrors the
+Bold / Italic pattern in `src\basTEST_aeBibleConfig.bas`.
+
+All 9 character / paragraph styles from the promotion list have been
+moved from bucket 2 to bucket 1 with descriptive specs captured via
+`DumpStyleProperties`:
+
+- `TheHeaders`, `TheFooters` (paragraph; Noto Sans 9pt; Color
+  `-16777216` = wdColorAutomatic - flagged for item 2)
+- `Footnote Reference` (Carlito 9pt Bold; Color `16711680` BGR blue,
+  intent confirmed)
+- `Selah` (Carlito 9pt; Color `-16777216` - flagged for item 2)
+- `EmphasisBlack` (Carlito 9pt Bold; Color `-16777216` - flagged
+  for item 2)
+- `EmphasisRed` (Carlito 9pt Bold; Color `128` BGR dark-red)
+- `Words of Jesus` (Carlito 9pt; Color `128`; BaseStyle "")
+- `Chapter Verse marker` (Noto Sans 5pt Bold; Color `42495` orange;
+  added per 2026-05-08 6h)
+- `Verse marker` (Noto Sans 8pt Bold; Color `7915600` green; added
+  per 2026-05-08 6h)
+
+`TheFooters` tab stop added to `AuditStyleTabs` (1 stop at 7.2 pt,
+Left, Spaces). Existence-verified bucket is now empty.
+
+Header doc-block recounted: **49 style audits + 9 tab-stop audits =
+58 checks total**; 46 fully specified / 0 existence-verified / 3
+not-yet-created.
+
+Verified post-7-style-promotion run: `RUN_TAXONOMY_STYLES` = 53 PASS
+/ 3 FAIL. Expected after the two `Chapter Verse marker` / `Verse
+marker` additions: 55 PASS / 3 FAIL (the 3 expected not-yet-created
+`Define*` styles).
+
+**Item 2 hand-off:** four styles carry `wdColorAutomatic` (`-16777216`)
+as their descriptive baseline - `TheHeaders`, `TheFooters`, `Selah`,
+`EmphasisBlack`. Item 2's colour-literal pass converts these to
+explicit RGB / BGR literals. The audit harness is now in place to
+enforce the post-conversion values.

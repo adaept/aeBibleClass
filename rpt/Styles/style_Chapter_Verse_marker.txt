@@ -1,4 +1,4 @@
-'--- Chapter Verse marker  (Type=Character, Priority=29) ---
+'--- Chapter Verse marker  (Type=Character, Priority=31) ---
 .BaseStyle = "Default Paragraph Font"
 .QuickStyle = False
 .Font.Name = "Noto Sans"

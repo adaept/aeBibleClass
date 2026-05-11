@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-05-10 20:15:34
+Date    : 2026-05-11 00:43:24
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -41,8 +41,6 @@ PASS  AuthorBookSections
 PASS  BibleIndexList
 PASS  ParallelHeader
 PASS  ParallelText
-
--- Existence verified (full spec pending) --
 PASS  TheHeaders
 PASS  TheFooters
 PASS  Footnote Reference
@@ -50,6 +48,8 @@ PASS  Selah
 PASS  EmphasisBlack
 PASS  EmphasisRed
 PASS  Words of Jesus
+PASS  Chapter Verse marker
+PASS  Verse marker
 
 -- Not yet created (expected FAIL) --
 FAIL  BodyTextContinuation
@@ -60,6 +60,7 @@ FAIL  AppendixBody
       NOT FOUND in document
 
 -- Tab stops verified --
+PASS  TheFooters (TabStops)
 PASS  AuthorListItem (TabStops)
 PASS  AuthorListItemTab (TabStops)
 PASS  AuthorBookRef (TabStops)
@@ -70,5 +71,5 @@ PASS  BibleIndexList (TabStops)
 PASS  ParallelText (TabStops)
 
 ========================================================================
-Summary: 52 PASS   3 FAIL
+Summary: 55 PASS   3 FAIL
 === End Style Taxonomy Audit ===
