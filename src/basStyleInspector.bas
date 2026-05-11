@@ -737,19 +737,27 @@ End Function
 ' ScanCharStyleApplications
 ' PURPOSE:
 '   Distinguish character styles that are merely present in the styles
-'   palette from those actually carried by at least one run of text.
-'   Word's Style.InUse flag is True for any custom character style from
-'   the moment it is created, regardless of whether any run carries it -
-'   so InUse alone cannot answer "is this style live in the document?".
+'   palette from those actually carried by at least one run of text,
+'   AND distinguish Word built-in styles (which cannot be deleted) from
+'   custom styles (which can). Word's Style.InUse flag is True for any
+'   custom character style from the moment it is created, and for any
+'   built-in style that has been applied or modified - so InUse alone
+'   cannot answer either "is this style live in the document?" or "is
+'   this style deletable?".
 '
-'   This function performs a Find with Style filter across all primary
-'   StoryRanges (main body, footnotes, endnotes, headers, footers) for
-'   each in-use character style. It prints one line per style:
-'       <styleName>  ->  Applied
-'       <styleName>  ->  Unapplied
-'   and returns the count of Unapplied styles - the palette-cruft
-'   candidates that should either be added to the approved style list
-'   (if intentional) or deleted (if accidental).
+'   For each in-use character style this function performs a Find with
+'   Style filter across all primary StoryRanges (main body, footnotes,
+'   endnotes, headers, footers). Output:
+'       <styleName>  ->  Applied  [Builtin|Custom]
+'       <styleName>  ->  Unapplied  [Builtin|Custom]
+'
+' RETURN:
+'   Count of Unapplied AND Custom styles - the only deletable cruft.
+'   Built-in Unapplied styles are tallied separately in the summary but
+'   excluded from the return value because Word will recreate them on
+'   demand (theme switches, paste from HTML, comment use, etc.) and they
+'   cannot be removed. The return value is the action list size: how
+'   many palette-cruft styles are candidates for Style.Delete.
 '
 ' EXCLUSION:
 '   "Default Paragraph Font" is the document-wide default and is implicit
@@ -772,9 +780,10 @@ Public Function ScanCharStyleApplications() As Long
     Dim story     As Word.Range
     Dim probe     As Word.Range
     Dim nChecked  As Long
-    Dim nApplied  As Long
-    Dim nUnapp    As Long
+    Dim nAppBI    As Long, nAppCu As Long
+    Dim nUnaBI    As Long, nUnaCu As Long
     Dim found     As Boolean
+    Dim kind      As String
 
     Set oDoc = ActiveDocument
 
@@ -785,6 +794,8 @@ Public Function ScanCharStyleApplications() As Long
                     ' Implicit default; skip - see EXCLUSION in header.
                 Else
                     nChecked = nChecked + 1
+                    kind = IIf(oStyle.BuiltIn, "Builtin", "Custom")
+
                     found = False
                     For Each story In oDoc.StoryRanges
                         Set probe = story.Duplicate
@@ -804,11 +815,11 @@ Public Function ScanCharStyleApplications() As Long
                     Next story
 
                     If found Then
-                        Debug.Print oStyle.NameLocal & "  ->  Applied"
-                        nApplied = nApplied + 1
+                        Debug.Print oStyle.NameLocal & "  ->  Applied  [" & kind & "]"
+                        If oStyle.BuiltIn Then nAppBI = nAppBI + 1 Else nAppCu = nAppCu + 1
                     Else
-                        Debug.Print oStyle.NameLocal & "  ->  Unapplied"
-                        nUnapp = nUnapp + 1
+                        Debug.Print oStyle.NameLocal & "  ->  Unapplied  [" & kind & "]"
+                        If oStyle.BuiltIn Then nUnaBI = nUnaBI + 1 Else nUnaCu = nUnaCu + 1
                     End If
                 End If
             End If
@@ -816,7 +827,11 @@ Public Function ScanCharStyleApplications() As Long
     Next oStyle
 
     Debug.Print "ScanCharStyleApplications: checked " & nChecked & _
-                " in-use character style(s) (excluding """ & DEFAULT_BASE & _
-                """); " & nApplied & " Applied, " & nUnapp & " Unapplied."
-    ScanCharStyleApplications = nUnapp
+                " in-use character style(s) (excluding """ & DEFAULT_BASE & """)."
+    Debug.Print "  Applied   : Builtin=" & nAppBI & "  Custom=" & nAppCu & _
+                "  (total " & (nAppBI + nAppCu) & ")"
+    Debug.Print "  Unapplied : Builtin=" & nUnaBI & "  Custom=" & nUnaCu & _
+                "  (total " & (nUnaBI + nUnaCu) & ")"
+    Debug.Print "  Deletable cruft (Unapplied & Custom): " & nUnaCu
+    ScanCharStyleApplications = nUnaCu
 End Function

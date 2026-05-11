@@ -347,6 +347,95 @@ Open question for `Bold` / `Bold italic` / `Italics`: pending
 results of `?ScanCharStyleApplications` against the production
 docx.
 
+#### 6e. First scan and palette categorisation (2026-05-10)
+
+`?ScanCharStyleApplications` returned **36 Unapplied / 9 Applied**
+on first run. The 36 split into distinct categories explaining
+why most of the unfamiliar names appeared:
+
+**A. HTML legacy styles (Word built-ins)**
+`HTML Acronym`, `HTML Cite`, `HTML Code`, `HTML Definition`,
+`HTML Keyboard`, `HTML Sample`, `HTML Typewriter`, `HTML Variable`.
+Activated the moment Word touches HTML content (paste from a web
+page, import from `.htm`, or content brought from another doc that
+itself once touched HTML). Once `InUse=True` flips, it sticks.
+
+**B. Modern Office collaboration features (built-ins)**
+`Hashtag`, `Mention`, `Unresolved Mention`, `Smart Hyperlink`,
+`SmartLink`, `Placeholder Text`, `Comment Reference`. Activated by
+touching comments, @-mentions, modern hyperlinks, or content
+controls - even briefly during an editing session that was later
+undone.
+
+**C. Built-in semantic emphasis family**
+`Strong`, `Emphasis`, `Subtle Emphasis`, `Intense Emphasis`,
+`Subtle Reference`, `Intense Reference`, `Book Title`. Word's
+built-in style-set / theme-driven emphasis. Switching theme or
+style set flips these to `InUse=True` even without application.
+
+**D. Built-in note / reference machinery**
+`Endnote Reference`, `Footnote Reference` (Applied),
+`Footnote`, `Footnote Label`, `Footnote marker`, `Line Number`,
+`Page Number` (Applied), `Hyperlink` (Applied),
+`FollowedHyperlink`. Some are actively used (Page Number on the
+footer, Hyperlink, Footnote Reference). Others are part of the
+same built-in family that activated alongside them.
+
+**E. Custom styles never applied (the only deletable category)**
+`AuthorQuote`, `Bold`, `Bold italic`, `Italics`, `Figure`,
+`Figure Caption`, `Table Cell Head`, `Normal text`. These are
+project-template leftovers - created during earlier design
+iterations, never wired into a final ribbon / macro path.
+Particularly suspect: `Bold` / `Italics` / `Bold italic` likely
+predate the standardisation on `EmphasisBlack` / `EmphasisRed`.
+
+#### 6f. ScanCharStyleApplications enhancement (2026-05-10)
+
+Critical distinction added: `Style.BuiltIn` is True for categories
+A-D (cannot be deleted - Word recreates them next session) and
+False only for category E. Without surfacing this, the raw "36
+Unapplied" number was misleading because most of those entries
+are not actionable.
+
+Function output enhanced:
+- Per-style line now appends `[Builtin]` or `[Custom]`:
+  ```
+  Bold  ->  Unapplied  [Custom]
+  HTML Sample  ->  Unapplied  [Builtin]
+  Hyperlink  ->  Applied  [Builtin]
+  ```
+- Summary now splits both Applied and Unapplied counts by Builtin
+  vs Custom and prints a final "Deletable cruft" line:
+  ```
+  Applied   : Builtin=N  Custom=N  (total N)
+  Unapplied : Builtin=N  Custom=N  (total N)
+  Deletable cruft (Unapplied & Custom): N
+  ```
+- **Return value changed from total Unapplied to Unapplied & Custom.**
+  This is the action-list size: how many styles are candidates for
+  `Style.Delete`. On this docx the new return value would be 8
+  (category E above), down from the misleading 36.
+
+This is an intentional contract change for a 2-day-old function;
+no callers in production yet. If a future caller needs the raw
+total, add a sister function rather than restoring the old return.
+
+#### 6g. Action plan from 6e + 6f
+
+1. Re-run `?ScanCharStyleApplications` and confirm the new return
+   value is **8** (the category-E count).
+2. For each of the 8 deletable styles, do one final visual
+   confirmation that no run is using the style (Find with Style
+   filter in Word UI, or trust the function which already
+   performed exactly this check). Then delete via
+   `ActiveDocument.Styles("<name>").Delete`.
+3. For categories A-D Unapplied: leave alone. Word will recreate
+   them on demand. Do not add to the approved style list.
+4. Re-run `?AuditCharStyleBases` and confirm any remaining
+   offenders are categories A-D (built-in) or `Page Number` (the
+   chained-inheritance fix from 6b). Re-base the latter to
+   `Default Paragraph Font`.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state
