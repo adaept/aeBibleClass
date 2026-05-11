@@ -748,8 +748,8 @@ End Function
 '   For each in-use character style this function performs a Find with
 '   Style filter across all primary StoryRanges (main body, footnotes,
 '   endnotes, headers, footers). Output:
-'       <styleName>  ->  Applied  [Builtin|Custom]
-'       <styleName>  ->  Unapplied  [Builtin|Custom]
+'       <StyleName>  ->  Applied  [Builtin|Custom]
+'       <StyleName>  ->  Unapplied  [Builtin|Custom]
 '
 ' RETURN:
 '   Count of Unapplied AND Custom styles - the only deletable cruft.
@@ -801,7 +801,7 @@ Public Function ScanCharStyleApplications() As Long
                         Set probe = story.Duplicate
                         With probe.Find
                             .ClearFormatting
-                            .Style = oStyle
+                            .style = oStyle
                             .Text = ""
                             .Forward = True
                             .Wrap = wdFindStop

@@ -503,6 +503,44 @@ Ignore in audit reports; not actionable.
 This brings the bucket-2 audit in line with what is actually
 carried by runs in the document.
 
+#### 6i. Taxonomy update (DONE 2026-05-10)
+
+`PromoteApprovedStyles` was updated to add three new paragraph
+styles. Specs captured via `DumpStyleProperties`:
+
+- **`BibleIndexList`** (Paragraph) - Liberation Serif 11pt,
+  centered, line spacing 12, no space-before/after. 1 tab stop at
+  172.8 pt (Right, Dots).
+- **`ParallelHeader`** (Paragraph) - Carlito 11pt bold, left
+  aligned, line spacing 12, space-after 8. No tab stops.
+- **`ParallelText`** (Paragraph) - Carlito 7pt bold, left aligned,
+  line spacing 12, space-after 8. 6 tab stops at 7.2 / 57.6 / 108
+  / 158.4 / 208.8 / 259.2 pt (Left, Spaces) - parallel-passage
+  column grid.
+
+`AuthorQuote` removed from the bucket-2 existence-verified set per
+the 6h decision (Unapplied + not in any near-term plan).
+
+Taxonomy edits in `src\basTEST_aeBibleConfig.bas`:
+
+1. Added three `AuditOneStyle` calls in the bucket-1
+   fully-specified block, dated `2026-05-10`.
+2. Added two `AuditStyleTabs` blocks: `BibleIndexList` (1 stop)
+   and `ParallelText` (6 stops).
+3. Removed the `AuditOneStyle "AuthorQuote"` call.
+4. Updated the `RUN_TAXONOMY_STYLES` header comment:
+   - 45 styles -> 47 (-1 AuthorQuote, +3 new)
+   - 6 tab-stop specs -> 8 (+BibleIndexList, +ParallelText)
+   - Total checks 51 -> 55
+   - Fully-specified bucket 34 -> 37
+   - Existence-verified bucket 8 -> 7
+
+Predicted result: **52 PASS / 3 FAIL** (the 3 FAILs are the
+not-yet-created `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody`, unchanged from the prior arc). Confirm by running
+`RUN_TAXONOMY_STYLES` and checking
+`rpt\StyleTaxonomyAudit.txt`.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state
