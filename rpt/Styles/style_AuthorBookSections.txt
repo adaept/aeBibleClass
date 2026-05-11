@@ -1,5 +1,5 @@
-'--- AuthorBookSections  (Type=Paragraph, Priority=99) ---
-.BaseStyle = "Normal"
+'--- AuthorBookSections  (Type=Paragraph, Priority=24) ---
+.BaseStyle = ""
 .QuickStyle = True
 .Font.Name = "Carlito"
 .Font.Size = 11
@@ -16,7 +16,7 @@
 .ParagraphFormat.RightIndent = 0
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
-.ParagraphFormat.SpaceAfter = 0
+.ParagraphFormat.SpaceAfter = 8
 .ParagraphFormat.LineSpacing = 12
 .ParagraphFormat.LineSpacingRule = 0
 .ParagraphFormat.WidowControl = -1

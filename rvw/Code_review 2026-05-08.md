@@ -541,6 +541,43 @@ not-yet-created `BodyTextContinuation`, `AppendixTitle`,
 `RUN_TAXONOMY_STYLES` and checking
 `rpt\StyleTaxonomyAudit.txt`.
 
+#### 6j. First taxonomy run after 6i - drift caught (DONE 2026-05-10)
+
+`RUN_TAXONOMY_STYLES` returned **49 PASS / 6 FAIL**, three more
+FAILs than predicted. The three unexpected FAILs were not new
+breakage from the 6i additions; they were pre-existing drift
+between the taxonomy baseline and the live document, surfaced
+because the audit now runs cleanly through the new entries:
+
+| Style | Field | Was (taxonomy) | Now (dump) |
+|---|---|---|---|
+| `Title` | Font | "Times New Roman" | "Liberation Serif" |
+| `BibleIndex` | SpaceAfter | 0 | 12 |
+| `AuthorBookSections` | SpaceAfter | 0 | 8 |
+| `AuthorBookSections` | BaseStyle | "Normal" | "" |
+
+`Title` is the same Liberation-Serif rebranding that already hit
+`TitleOnePage` in section 5; `BibleIndex` and `AuthorBookSections`
+are post-baseline edits to spacing / base-style that were never
+re-baselined.
+
+Resolution: dumped all three with `DumpStyleProperties "<name>", True`
+to refresh `rpt\Styles\style_<name>.txt`, then re-baselined the
+three `AuditOneStyle` calls to match. No document edits - the
+document state is correct; only the taxonomy was stale.
+
+Updated calls (all line numbers in `src\basTEST_aeBibleConfig.bas`):
+
+```
+AuditOneStyle "Title",              "Liberation Serif", 36, 1, 0, 0, 12, 0, 0, 0, 0, ""
+AuditOneStyle "BibleIndex",         "Liberation Serif", 22, 1, 0, 0, 12, 0, 12, 0, 0, ""
+AuditOneStyle "AuthorBookSections", "Carlito",          11, 0, 0, 0, 12, 0, 8, 0, 0, ""
+```
+
+Re-run `RUN_TAXONOMY_STYLES` to confirm **52 PASS / 3 FAIL**
+(the 3 expected FAILs unchanged: BodyTextContinuation,
+AppendixTitle, AppendixBody).
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state

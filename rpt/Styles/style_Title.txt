@@ -1,7 +1,7 @@
 '--- Title  (Type=Paragraph, Priority=6) ---
 .BaseStyle = ""
 .QuickStyle = False
-.Font.Name = "Times New Roman"
+.Font.Name = "Liberation Serif"
 .Font.Size = 36
 .Font.Bold = 0
 .Font.Italic = 0

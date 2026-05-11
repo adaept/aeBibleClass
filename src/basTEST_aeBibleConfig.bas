@@ -310,7 +310,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' Front matter & TOC styles (priorities 4-17) - promoted to bucket 1 on 2026-05-06
     AuditOneStyle "FrontPageTopLine", "Liberation Serif", 16, 1, 0, 0, 12, 0, 0, 0, 0, ""
     AuditOneStyle "TitleEyebrow", "Liberation Serif", 22, 1, 0, 0, 12, 30, 0, 0, 0, ""
-    AuditOneStyle "Title", "Times New Roman", 36, 1, 0, 0, 12, 0, 0, 0, 0, ""
+    AuditOneStyle "Title", "Liberation Serif", 36, 1, 0, 0, 12, 0, 0, 0, 0, ""
     AuditOneStyle "TitleVersion", "Liberation Serif", 22, 1, 0, 0, 12, 30, 30, 0, 0, ""
     AuditOneStyle "FrontPageBodyText", "Liberation Serif", 11, 1, 0, 0, 12, 0, 11, 0, 0, ""
     AuditOneStyle "BodyTextTopLineCPBB", "Carlito", 9, 1, 0, 0, 12, 0, 0, 0, 0, ""
@@ -318,7 +318,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "AuthorBodyText", "Liberation Serif", 12, 3, 23.75, 0, 12, 0, 12, 0, 0, ""
     AuditOneStyle "Contents", "Liberation Serif", 22, 1, 0, 0, 12, 72, 72, 0, 0, ""
     AuditOneStyle "BibleIndexEyebrow", "Liberation Serif", 14, 1, 0, 0, 12, 6, 0, 0, 0, ""
-    AuditOneStyle "BibleIndex", "Liberation Serif", 22, 1, 0, 0, 12, 0, 0, 0, 0, ""
+    AuditOneStyle "BibleIndex", "Liberation Serif", 22, 1, 0, 0, 12, 0, 12, 0, 0, ""
     AuditOneStyle "Introduction", "Liberation Serif", 22, 1, 0, 0, 12, 0, 12, 0, 0, ""
     AuditOneStyle "TitleOnePage", "Liberation Serif", 36, 1, 0, 0, 12, 144, 8, 0, 0, ""
     AuditOneStyle "AuthorListItem", "Carlito", 11, 0, -18, 0, 12, 0, 0, -1, -1, ""
@@ -329,7 +329,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' Paragraph styles promoted to bucket 1 on 2026-05-07 (specs captured via DumpStyleProperties)
     AuditOneStyle "SpeakerLabel", "Carlito", 9, 0, 0, 0, 12, 3, 2, 0, 0, ""
     AuditOneStyle "AuthorSectionHead", "Liberation Serif", 14, 0, 0, 0, 12, 12, 6, 0, -1, ""
-    AuditOneStyle "AuthorBookSections", "Carlito", 11, 0, 0, 0, 12, 0, 0, 0, 0, "Normal"
+    AuditOneStyle "AuthorBookSections", "Carlito", 11, 0, 0, 0, 12, 0, 8, 0, 0, ""
 
     ' Paragraph styles promoted to bucket 1 on 2026-05-10 (specs captured via DumpStyleProperties)
     AuditOneStyle "BibleIndexList", "Liberation Serif", 11, 1, 0, 0, 12, 0, 0, 0, 0, ""
