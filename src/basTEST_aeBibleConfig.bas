@@ -220,10 +220,10 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 47 styles via AuditOneStyle + 8 tab-stop specs via AuditStyleTabs;
-'   total 55 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Audits 47 styles via AuditOneStyle + 9 tab-stop specs via AuditStyleTabs;
+'   total 56 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
 '   Style audit buckets (47):
-'     37 fully specified (all properties verified) - BodyText, VerseText,
+'     44 fully specified (all properties verified) - BodyText, VerseText,
 '                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
@@ -235,13 +235,18 @@ End Function
 '                            AuthorListItem, AuthorListItemBody, AuthorListItemTab,
 '                            CenterSubText,
 '                            SpeakerLabel, AuthorSectionHead, AuthorBookSections,
-'                            BibleIndexList, ParallelHeader, ParallelText
-'      7 existence-verified (full spec pending) - TheHeaders,
-'                            TheFooters, Footnote Reference, Selah, EmphasisBlack,
+'                            BibleIndexList, ParallelHeader, ParallelText,
+'                            TheHeaders, TheFooters,
+'                            Footnote Reference, Selah, EmphasisBlack,
 '                            EmphasisRed, Words of Jesus
+'      0 existence-verified (bucket currently empty; reserved for future
+'                            styles awaiting DumpStyleProperties capture,
+'                            e.g. Chapter Verse marker / Verse marker pending
+'                            per 2026-05-11 item 1)
 '      3 not yet created (expected FAIL until each Define* routine runs) -
 '                            BodyTextContinuation, AppendixTitle, AppendixBody
-'   Tab-stop audits (8):
+'   Tab-stop audits (9):
+'      TheFooters          (1 stop at 7.2 pt, Left, Spaces)
 '      AuthorListItem      (1 stop at 36 pt, Left, Spaces)
 '      AuthorListItemTab   (2 stops at 144 / 252 pt, Left, Spaces)
 '      AuthorBookRef       (2 stops at 36 / 378 pt; Left+Spaces / Right+Dots)
@@ -338,18 +343,25 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "ParallelHeader", "Carlito", 11, 0, 0, 0, 12, 0, 8, -1, 0, ""
     AuditOneStyle "ParallelText", "Carlito", 7, 0, 0, 0, 12, 0, 8, -1, 0, ""
 
-    ' -- Existence verified; full spec pending -------------------------------------------------
-    ' Character styles parked here until AuditOneStyle is extended to check
-    ' character-style Bold / Italic / Color (deferred follow-up).
-    Print #m_TaxFile, ""
-    Print #m_TaxFile, "-- Existence verified (full spec pending) --"
-    AuditOneStyle "TheHeaders", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "TheFooters", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Footnote Reference", "Carlito", 9, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Selah", "Carlito", 9, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "EmphasisBlack", "Carlito", 9, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "EmphasisRed", "Carlito", 9, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "Words of Jesus", "Carlito", 9, -1, -999, -1, -999, -999, -999
+    ' Paragraph styles promoted to bucket 1 on 2026-05-11 (header/footer pair)
+    AuditOneStyle "TheHeaders", "Noto Sans", 9, 1, 0, 0, 12, 0, 0, 0, 0, "", -16777216
+    AuditOneStyle "TheFooters", "Noto Sans", 9, 1, 0, 0, 12, 0, 0, 0, 0, "", -16777216
+
+    ' Character styles promoted to bucket 1 on 2026-05-11 (item 1 of 2026-05-11
+    ' review; uses AuditOneStyle Color extension). Paragraph-property args use
+    ' skip sentinels because character styles do not carry paragraph formatting.
+    ' Note: Selah / EmphasisBlack carry wdColorAutomatic (-16777216); item 2
+    ' of the 2026-05-11 review will replace these with explicit literals.
+    AuditOneStyle "Footnote Reference", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 16711680
+    AuditOneStyle "Selah", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "Default Paragraph Font", -16777216
+    AuditOneStyle "EmphasisBlack", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", -16777216
+    AuditOneStyle "EmphasisRed", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 128
+    AuditOneStyle "Words of Jesus", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "", 128
+
+    ' -- Existence verified bucket is currently empty; all dumped styles have
+    ' been promoted to bucket 1. Reserved here for future styles awaiting
+    ' DumpStyleProperties capture (e.g. Chapter Verse marker, Verse marker
+    ' pending dumps per 2026-05-11 item 1).
 
     ' -- Not yet created - expected FAIL until each Define* routine is run ----------------------
     Print #m_TaxFile, ""
@@ -361,6 +373,8 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' -- Tab stops verified (per-style explicit tab-stop validation) -----------------------------
     Print #m_TaxFile, ""
     Print #m_TaxFile, "-- Tab stops verified --"
+    AuditStyleTabs "TheFooters", _
+        Array(7.2, wdAlignTabLeft, wdTabLeaderSpaces)
     AuditStyleTabs "AuthorListItem", _
         Array(36, wdAlignTabLeft, wdTabLeaderSpaces)
     AuditStyleTabs "AuthorListItemTab", _

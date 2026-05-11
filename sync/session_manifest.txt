@@ -170,12 +170,23 @@
           skip) appended after sExpBaseStyle so existing positional
           callers are unaffected. Color check block mirrors Bold/Italic
           pattern; compares oStyle.Font.Color against expected long.
-        - RUN_TAXONOMY_STYLES header comment updated: Bold/Italic/Color
-          sentinel doc plus pointer to 2026-05-11 item 1.
-        - No call sites changed; 7 bucket-2 character styles remain
-          existence-only pending Bold/Italic/Color dump for each before
-          bucket-1 promotion (and the two missing entries: Chapter Verse
-          marker, Verse marker).
+        - 7 bucket-2 styles promoted to bucket 1 with descriptive specs
+          captured via DumpStyleProperties:
+            * TheHeaders, TheFooters (paragraph; Noto Sans 9pt, Color
+              -16777216 = wdColorAutomatic)
+            * Footnote Reference (Carlito 9 Bold Color 16711680 BGR blue)
+            * Selah (Carlito 9 Color -16777216)
+            * EmphasisBlack (Carlito 9 Bold Color -16777216)
+            * EmphasisRed (Carlito 9 Bold Color 128 BGR dark-red)
+            * Words of Jesus (Carlito 9 Color 128 BaseStyle "")
+        - TheFooters tab stop added (1 stop at 7.2 pt Left Spaces).
+        - "Existence verified" bucket now empty; reserved for Chapter
+          Verse marker / Verse marker pending dumps (still owed).
+        - RUN_TAXONOMY_STYLES header recounted: 44 fully spec / 0 exist /
+          3 not-yet-created; 9 tab-stop audits; 56 checks total.
+        - Note: -16777216 (wdColorAutomatic) on Selah, EmphasisBlack,
+          TheHeaders, TheFooters is the descriptive baseline; item 2 of
+          2026-05-11 will replace these with explicit RGB/BGR literals.
 
 # ============================================================
 # Session 2026-05-06 (later still) - front-matter & TOC bucket-1 promotion
