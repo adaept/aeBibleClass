@@ -22,6 +22,7 @@ Different artifacts answer different questions. Know which to consult.
 | What property values should a style have? | `RUN_TAXONOMY_STYLES` constants in code | [01-styles](01-styles.md), [03-inspection-tools](03-inspection-tools.md) |
 | What are the actual indent measurements? | The Word UI ruler (WRIST principle) | [01-styles](01-styles.md), [02-editing-process](02-editing-process.md) |
 | What order should the approved-style array be in? | `ListApprovedStylesByBookOrder` output | [04-qa-workflow](04-qa-workflow.md) |
+| Which Bible-book abbreviations resolve in the ribbon / parser? | [`md/BibleAbbreviationList.md`](../md/BibleAbbreviationList.md), mirrored in `GetBookAliasMap` | [11-ribbon-alias-layering](11-ribbon-alias-layering.md) |
 | Why was decision X made? | `rvw/Code_review YYYY-MM-DD.md` | [09-history](09-history.md) |
 | What is the current synthesized state? | This guide | — |
 
