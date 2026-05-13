@@ -614,3 +614,54 @@ Verification: `py/ribbon_export_trim.py` re-run; trimmed
 `aeRibbon/src/basBibleRibbonSetup.bas` line 5 reads
 `Public Const RIBBON_VERSION As String = ""`. The build operator
 edits the template's copy of the module post-import, not the source.
+
+### 2026-05-13 - BibleAbbreviationList.md created + GetBookAliasMap expanded
+
+Improvement: new reference doc `md/BibleAbbreviationList.md` captures
+the unified, deduplicated non-SBL abbreviation set drawn from
+traditional English publishing (KJV-lineage), standard
+church/academic abbreviations, and digital shortest-form systems
+(Logos-style, concordances, BibleStudyTools). The doc is formatted
+as proper Markdown (H1/H2/H3/H4 hierarchy, bulleted books with bold
+names, no tables) so it renders cleanly in VS Code and any Markdown
+viewer.
+
+`GetBookAliasMap` in `src/aeBibleCitationClass.cls` was then
+extended to include every form listed in the new reference. The
+single-letter prohibition still holds (comment unchanged); all
+additions are two-or-more characters. Closed-up no-space forms
+(e.g. `1SA`, `2PE`, `1JO`) are added alongside the existing
+spaced forms (`1 SA`, `2 PE`, `1 JN`) so parsers can resolve
+either convention.
+
+Additions by book (UPPERCASE map keys, ASCII only - per the
+in-VBA-ASCII rule):
+
+- **OT.** `NB` (Numbers), `JSH` (Joshua), `JDG`/`JDGS`/`JG`
+  (Judges), `RTH` (Ruth), `1SA`/`2SA` (Samuel), `1KI`/`2KI`
+  (Kings), `1CH`/`2CH` (Chronicles), `PSS`/`PSM` (Psalms),
+  `ECCLES`/`QOH` (Ecclesiastes - `QOH` for Qoheleth),
+  `SOS` (Song of Songs), `JR` (Jeremiah), `EZK` (Ezekiel),
+  `JNH` (Jonah), `MC` (Micah), `ML` (Malachi).
+- **NT.** `MRK`/`MR` (Mark), `JHN` (John), `RM` (Romans),
+  `1CO`/`2CO` (Corinthians), `EPHES` (Ephesians), `PHP`
+  (Philippians), `1 TH`/`1TH`/`2 TH`/`2TH` (Thessalonians),
+  `1TI`/`2TI` (Timothy), `PHM` (Philemon), `JM` (James),
+  `1PE`/`2PE` (Peter), `1 JO`/`1 JHN`/`1JO`/`2 JO`/`2JO`/`3 JO`/`3JO` (Johannine epistles).
+
+No removals. All pre-existing keys (`GEN`, `MATT`, `1 SAM`, etc.)
+remain to preserve dictionary lookups elsewhere in the class
+(`ResolveAlias`, audit routines).
+
+Edit scope: `src/aeBibleCitationClass.cls` only. The aeRibbon
+production copy `aeRibbon/src/aeBibleCitationClass.cls` is a
+trim-generated artifact and will be refreshed by
+`py/ribbon_export_trim.py` on the next ribbon build; no manual
+edit there.
+
+Verification deferred to the next test-harness run
+(`basTEST_aeBibleCitationClass`) - additions are pure
+`aliasMap.Add` calls with unique keys, so the risk is duplicate-key
+runtime errors if any addition collides with an existing entry.
+Spot-checked: no collisions in the additions above against the
+pre-existing key set.
