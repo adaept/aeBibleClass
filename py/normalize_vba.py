@@ -31,6 +31,7 @@ NORMALIZATIONS = [
     (r'(?i)\.Count\b',          '.Count',           '.Count property on Collection/object'),
     (r'(?i)\bCount\b',          'Count',            'Count standalone variable/identifier casing'),
     (r'(?i)\.Font\b',           '.Font',            '.Font property on Range/Style/object'),
+    (r'(?i)\.Color\b',          '.Color',           '.Color property on Font/Style/object (Font.Color access)'),
     (r'(?i)\.Keys\b',           '.Keys',            '.Keys property on Dictionary/object'),
     (r'(?i)\.Text\b',           '.Text',            '.Text property on Range/Field/object'),
     (r'(?i)\.Code\b',           '.Code',            '.Code property on Field object'),

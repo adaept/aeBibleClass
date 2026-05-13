@@ -1054,7 +1054,7 @@ Public Sub DefineAuthorStyles()
                 .Size = 12
                 .Bold = False
                 .Italic = False
-                .color = wdColorAutomatic
+                .Color = wdColorAutomatic
             End With
             With .ParagraphFormat
                 .Alignment = wdAlignParagraphJustify
@@ -1089,7 +1089,7 @@ Public Sub DefineAuthorStyles()
                 .Size = 14
                 .Bold = False
                 .Italic = False
-                .color = wdColorAutomatic
+                .Color = wdColorAutomatic
             End With
             With .ParagraphFormat
                 .Alignment = wdAlignParagraphLeft
@@ -1118,7 +1118,7 @@ Public Sub DefineAuthorStyles()
         Set oStyle = oDoc.Styles.Add(name:="AuthorQuote", Type:=wdStyleTypeCharacter)
         With oStyle.Font
             .Italic = True
-            .color = wdColorRed
+            .Color = wdColorRed
         End With
         Debug.Print "DefineAuthorStyles: AuthorQuote created."
     Else
@@ -1194,7 +1194,7 @@ Public Sub DefineListItemStyle()
             .Size = 11
             .Bold = True
             .Italic = True
-            .color = wdColorAutomatic
+            .Color = wdColorAutomatic
         End With
         With .ParagraphFormat
             .Alignment = wdAlignParagraphLeft
@@ -1275,7 +1275,7 @@ Public Sub DefineListItemBodyStyle()
             .Size = 11
             .Bold = False
             .Italic = False
-            .color = wdColorAutomatic
+            .Color = wdColorAutomatic
         End With
         With .ParagraphFormat
             .Alignment = wdAlignParagraphLeft
@@ -1344,7 +1344,7 @@ Public Sub DefineAuthorBookRefStyle()
             .Size = 11
             .Bold = True
             .Italic = False
-            .color = wdColorAutomatic
+            .Color = wdColorAutomatic
         End With
         With .ParagraphFormat
             .Alignment = wdAlignParagraphLeft

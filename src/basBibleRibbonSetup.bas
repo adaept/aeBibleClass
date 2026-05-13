@@ -2,8 +2,7 @@ Attribute VB_Name = "basBibleRibbonSetup"
 Option Explicit
 Option Private Module
 
-' This module contains only active ribbon callback shims plus explicitly retained
-' test/reference helpers. Removed callbacks and test stubs are grouped at the bottom.
+Public Const RIBBON_VERSION As String = ""
 
 ' -- Singleton Instance --------------------------------------------------------
 Private s_instance As aeRibbonClass
@@ -287,21 +286,4 @@ Public Sub TestGoToH1Direct()
     Set rc = Instance()
     rc.GoToH1Direct
 End Sub
-
-' -- Archived callback history (removed from current ribbon XML) ----------------
-
-' OnGoToVerseSblClick removed from ribbon XML — comboBox design replaces large GoTo Verse button.
-' Implementation preserved in aeRibbonClass.cls.GoToVerseSBL for reference.
-' Public Sub OnGoToVerseSblClick(control As IRibbonControl)
-'     Instance().OnGoToVerseSblClick control
-' End Sub
-
-' OnGoToH1ButtonClick removed from ribbon XML — GoTo Book is now the Book comboBox.
-' GoToH1 implementation preserved in aeRibbonClass.cls for reference.
-' Public Sub OnGoToH1ButtonClick(control As IRibbonControl)
-'     Const EXPECTED_PROJECT As String = "Project"
-'     Dim projName As String
-'     projName = Application.ActiveDocument.VBProject.Name
-'     Application.OnTime Now + TimeValue("00:00:01"), projName & ".basRibbonDeferred.GoToH1Deferred"
-' End Sub
 

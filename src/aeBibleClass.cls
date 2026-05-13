@@ -2229,7 +2229,7 @@ Private Function CountParagraphMarksWithDarkRedFormatting()
     Count = 0
     For Each p In ActiveDocument.Paragraphs
         With p.Range.Characters.Last.Font
-            If .color = wdColorDarkRed Then
+            If .Color = wdColorDarkRed Then
                 Count = Count + 1
             End If
         End With
@@ -2304,7 +2304,7 @@ Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
         .style = ActiveDocument.Styles("Words of Jesus")
         .Font.Name = "Arial Black"
         .Font.Size = 8
-        .Font.color = wdColorDarkRed
+        .Font.Color = wdColorDarkRed
         .Text = ""
         .Forward = True
         .Wrap = wdFindStop
@@ -2358,7 +2358,7 @@ Private Function CountParagraphMarks_ArialBlackDarkRed() As Long
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
         With paraRange.Font
-            fontColor = .color
+            fontColor = .Color
             If .Name = "Arial Black" And _
                .Size = 8 And _
                (fontColor = wdColorDarkRed) Then
@@ -2403,7 +2403,7 @@ Private Function CountParagraphMarks_ArialBlack() As Long
         paraRange.Start = paraRange.End - 1  ' Isolate the paragraph mark
 
         With paraRange.Font
-            fontColor = .color
+            fontColor = .Color
             If .Name = "Arial Black" And _
                .Size = 8 And _
                (fontColor = wdColorAutomatic Or fontColor = wdColorBlack) Then
@@ -2934,7 +2934,7 @@ Private Function CountFootnoteReferenceColors() As Long
     Dim colorHex As String
     
     For Each footnote In doc.Footnotes
-        colorHex = ColorToHex(footnote.Reference.Font.color)
+        colorHex = ColorToHex(footnote.Reference.Font.Color)
         On Error Resume Next
         footnoteColors.Add colorHex, colorHex
         On Error GoTo 0
@@ -3289,7 +3289,7 @@ Private Function CountRedFootnoteReferences() As Long
     
     ' Loop through each footnote in the document
     For Each footnote In ActiveDocument.Footnotes
-        If footnote.Reference.Font.color = redColor Then
+        If footnote.Reference.Font.Color = redColor Then
             redCount = redCount + 1
         End If
     Next footnote
@@ -3373,7 +3373,7 @@ Private Function CountWhiteParagraphMarks() As Long
     ' Use the Find method to locate white paragraph marks
     With rng.Find
         .ClearFormatting
-        .Font.color = RGB(255, 255, 255) ' RGB value for white
+        .Font.Color = RGB(255, 255, 255) ' RGB value for white
         .Text = "^p"
         .Forward = True
         .Wrap = wdFindStop
@@ -3381,7 +3381,7 @@ Private Function CountWhiteParagraphMarks() As Long
         ' Loop through all occurrences
         Do While .Execute
             ' Check if the found paragraph mark has the white color
-            If rng.Font.color = RGB(255, 255, 255) Then
+            If rng.Font.Color = RGB(255, 255, 255) Then
                 Count = Count + 1
                 ' Go to the first white paragraph mark found
                 If Not firstFound Then
@@ -3770,7 +3770,7 @@ Private Function CountWhiteSpaceAndCarriageReturn() As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
-    rng.Find.Font.color = wdColorWhite
+    rng.Find.Font.Color = wdColorWhite
 
     ' Set the Find properties
     With rng.Find

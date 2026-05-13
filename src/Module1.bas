@@ -70,7 +70,7 @@ Sub PrintFontProperties()
         Debug.Print "Bold: " & .Bold
         Debug.Print "Italic: " & .Italic
         Debug.Print "Underline: " & .Underline
-        Debug.Print "Color: " & .color
+        Debug.Print "Color: " & .Color
         Debug.Print "StrikeThrough: " & .StrikeThrough
         Debug.Print "DoubleStrikeThrough: " & .DoubleStrikeThrough
         Debug.Print "Subscript: " & .Subscript
@@ -375,7 +375,7 @@ Sub CountEmptyParagraphsWithAutomaticFont()
     ' Loop through all paragraphs in the document
     For Each para In doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
-        If Len(para.Range.Text) = 1 And para.Range.Font.color = wdColorAutomatic Then
+        If Len(para.Range.Text) = 1 And para.Range.Font.Color = wdColorAutomatic Then
             Count = Count + 1
         End If
     Next para
@@ -436,7 +436,7 @@ Sub DetectFontColors()
         colorUsed = False
         themeColorUsed = False
         
-        If rng.Font.color <> wdColorAutomatic Then
+        If rng.Font.Color <> wdColorAutomatic Then
             colorUsed = True
         End If
         
@@ -475,9 +475,9 @@ Sub UpdateBlackToAutomatic()
             ' Loop through each character in the range
             With rng.Find
                 .ClearFormatting
-                .Font.color = wdColorBlack
+                .Font.Color = wdColorBlack
                 .Replacement.ClearFormatting
-                .Replacement.Font.color = wdColorAutomatic
+                .Replacement.Font.Color = wdColorAutomatic
                 .Text = ""
                 .Replacement.Text = ""
                 .Forward = True
@@ -519,13 +519,13 @@ Sub ChangeFontColorRGB(oldR As Long, oldG As Long, oldB As Long, newR As Long, n
     ' Loop through each word in the document
     For Each rng In ActiveDocument.words
         ' Extract the RGB values of the current font color
-        r = (rng.Font.color And &HFF)
-        g = (rng.Font.color \ &H100 And &HFF)
-        b = (rng.Font.color \ &H10000 And &HFF)
+        r = (rng.Font.Color And &HFF)
+        g = (rng.Font.Color \ &H100 And &HFF)
+        b = (rng.Font.Color \ &H10000 And &HFF)
         
         ' Compare the RGB values directly
         If r = oldR And g = oldG And b = oldB Then
-            rng.Font.color = newColor
+            rng.Font.Color = newColor
         End If
     Next rng
 
@@ -573,9 +573,9 @@ Sub EnsureFootnoteReferenceStyleColor()
             Count = Count + 1
             Set rng = para.Range
             ' Check if the style color is correctly set to the desired color
-            If rng.Font.color <> rgbColor Then
+            If rng.Font.Color <> rgbColor Then
                 ' Set the style color to the desired color
-                rng.Font.color = rgbColor
+                rng.Font.Color = rgbColor
             End If
         End If
     Next para
@@ -936,7 +936,7 @@ Function GetBorderStyle(border As border) As String
     If border.LineStyle = wdLineStyleNone Then
         GetBorderStyle = "None"
     Else
-        GetBorderStyle = border.LineStyle & ", Color: " & border.color
+        GetBorderStyle = border.LineStyle & ", Color: " & border.Color
     End If
 End Function
 
@@ -1117,7 +1117,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
                 Debug.Print "Mismatch details:"
                 Debug.Print " - Font Name: " & ref.Font.Name
                 Debug.Print " - Font Size: " & ref.Font.Size
-                Debug.Print " - Font Color: " & ref.Font.color
+                Debug.Print " - Font Color: " & ref.Font.Color
                 Debug.Print " - Superscript: " & ref.Font.Superscript
                 posReported = True
             End If
@@ -1138,7 +1138,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
                 Debug.Print "Mismatch details:"
                 Debug.Print " - Font Name: " & ref.Font.Name
                 Debug.Print " - Font Size: " & ref.Font.Size
-                Debug.Print " - Font Color: " & ref.Font.color
+                Debug.Print " - Font Color: " & ref.Font.Color
                 Debug.Print " - Superscript: " & ref.Font.Superscript
                 posReported = True
             End If
@@ -1159,7 +1159,7 @@ Function IsFootnoteRefFormattedCorrectly(rng As Word.Range) As Boolean
     With rng.Font
         IsFootnoteRefFormattedCorrectly = (.Name = "Segoe UI" Or .Name = "Segoe UI Bold") _
             And .Size = 8 _
-            And .color = wdColorBlue _
+            And .Color = wdColorBlue _
             And .Superscript = True
     End With
 End Function

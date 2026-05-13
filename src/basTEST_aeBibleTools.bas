@@ -236,9 +236,9 @@ Public Sub ListAndCountFontColors()
     ' Loop through each word in the document
     For Each rng In ActiveDocument.words
         ' Get the RGB values of the font color
-        r = (rng.Font.color And &HFF)
-        g = (rng.Font.color \ &H100 And &HFF)
-        b = (rng.Font.color \ &H10000 And &HFF)
+        r = (rng.Font.Color And &HFF)
+        g = (rng.Font.Color \ &H100 And &HFF)
+        b = (rng.Font.Color \ &H10000 And &HFF)
 
         ' Create a key for the color in hex format
         colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)
@@ -704,7 +704,7 @@ Public Sub FixAndDiagnoseFootnoteReferences()
                 .Name = "Segoe UI"
                 .Size = 8
                 .Bold = True
-                .color = wdColorBlue
+                .Color = wdColorBlue
                 .Superscript = True
             End With
 
@@ -757,8 +757,8 @@ Private Function IsCorrectFootnoteFormat(rng As Word.Range, ByRef mismatch As St
             mismatch = mismatch & " - Bold: " & .Bold & vbCrLf
             IsCorrectFootnoteFormat = False
         End If
-        If .color <> wdColorBlue Then
-            mismatch = mismatch & " - Color: " & .color & vbCrLf
+        If .Color <> wdColorBlue Then
+            mismatch = mismatch & " - Color: " & .Color & vbCrLf
             IsCorrectFootnoteFormat = False
         End If
         If .Superscript <> True Then
@@ -866,8 +866,8 @@ Public Sub ReportDigitAtCursor_Diagnostics()
     Debug.Print "=== Character at Cursor ==="
     Debug.Print "Value: '" & txt & "' | ASCII: " & AscW(txt)
     Debug.Print "Style: " & style
-    Debug.Print "Font Color: " & ch.Font.color & " (RGB: " & _
-                RGBToString(ch.Font.color) & ")"
+    Debug.Print "Font Color: " & ch.Font.Color & " (RGB: " & _
+                RGBToString(ch.Font.Color) & ")"
     Debug.Print "Position: X=" & Format(posX, "0.0") & " pts, Y=" & Format(posY, "0.0") & " pts"
 
     If ch.Start > 0 Then
@@ -914,7 +914,7 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
     Dim fontNameFarEast As String: fontNameFarEast = ch.Font.NameFarEast
     Dim fontNameOther As String: fontNameOther = ch.Font.NameOther
     Dim fontSize As Single: fontSize = ch.Font.Size
-    Dim fontColor As Long: fontColor = ch.Font.color
+    Dim fontColor As Long: fontColor = ch.Font.Color
     Dim StyleName As String: StyleName = ch.style.NameLocal
     Dim baseStyle As String
     On Error Resume Next
@@ -943,8 +943,8 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
         Debug.Print "Value: '" & prefix.Text & "' | ASCII: " & AscW(prefix.Text)
         Debug.Print "Style: " & prefix.style.NameLocal
         Debug.Print "Font Name: " & prefix.Font.Name
-        Debug.Print "Font Color: " & prefix.Font.color & " (RGB: " & _
-            (prefix.Font.color Mod 256) & "," & ((prefix.Font.color \ 256) Mod 256) & "," & (prefix.Font.color \ 65536) & ")"
+        Debug.Print "Font Color: " & prefix.Font.Color & " (RGB: " & _
+            (prefix.Font.Color Mod 256) & "," & ((prefix.Font.Color \ 256) Mod 256) & "," & (prefix.Font.Color \ 65536) & ")"
     Else
         Debug.Print "(No character before this one.)"
     End If
@@ -1044,14 +1044,14 @@ Public Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Lon
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.Color = RGB(255, 165, 0) Then
             chapterMarker = ch.Text
             markerStart = i
             markerEnd = i + 1
             Do While markerEnd < pageEnd
                 Set ScanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
                 If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
-                    If ScanRange.style.NameLocal = "Chapter Verse marker" And ScanRange.Font.color = RGB(255, 165, 0) Then
+                    If ScanRange.style.NameLocal = "Chapter Verse marker" And ScanRange.Font.Color = RGB(255, 165, 0) Then
                         chapterMarker = chapterMarker & ScanRange.Text
                         markerEnd = markerEnd + 1
                     Else
@@ -1070,7 +1070,7 @@ Public Sub AuditVerseMarkers_VerifyMergedNumberPrefix_WithContext(pageNum As Lon
             Do While verseEnd < pageEnd
                 Set ScanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
-                    If ScanRange.style.NameLocal = "Verse marker" And ScanRange.Font.color = RGB(80, 200, 120) Then
+                    If ScanRange.style.NameLocal = "Verse marker" And ScanRange.Font.Color = RGB(80, 200, 120) Then
                         verseDigits = verseDigits & ScanRange.Text
                         verseEnd = verseEnd + 1
                     Else
@@ -1153,14 +1153,14 @@ Public Sub ReportAllMarkers_CondensedDiagnostics(pageNum As Long)
             If StyleName = "Chapter Verse marker" Or StyleName = "Verse marker" Then
                 digitBlock = txt
                 blockStyle = StyleName
-                blockColor = ch.Font.color
+                blockColor = ch.Font.Color
                 blockStart = i
                 blockEnd = i + 1
 
                 Do While blockEnd < pageEnd
                     Set ScanRange = ActiveDocument.Range(blockEnd, blockEnd + 1)
                     If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
-                        If ScanRange.style.NameLocal = blockStyle And ScanRange.Font.color = blockColor Then
+                        If ScanRange.style.NameLocal = blockStyle And ScanRange.Font.Color = blockColor Then
                             digitBlock = digitBlock & ScanRange.Text
                             blockEnd = blockEnd + 1
                         Else
@@ -1228,7 +1228,7 @@ Private Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pa
     i = pageStart
     Do While i < pageEnd
         Set ch = ActiveDocument.Range(i, i + 1)
-        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.color = RGB(255, 165, 0) Then
+        If Len(Trim(ch.Text)) = 1 And IsNumeric(ch.Text) And ch.style.NameLocal = "Chapter Verse marker" And ch.Font.Color = RGB(255, 165, 0) Then
             ' Assemble chapter marker block
             chapterMarker = ch.Text
             markerStart = i
@@ -1236,7 +1236,7 @@ Private Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pa
             Do While markerEnd < pageEnd
                 Set ScanRange = ActiveDocument.Range(markerEnd, markerEnd + 1)
                 If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
-                    If ScanRange.style.NameLocal = "Chapter Verse marker" And ScanRange.Font.color = RGB(255, 165, 0) Then
+                    If ScanRange.style.NameLocal = "Chapter Verse marker" And ScanRange.Font.Color = RGB(255, 165, 0) Then
                         chapterMarker = chapterMarker & ScanRange.Text
                         markerEnd = markerEnd + 1
                     Else
@@ -1256,7 +1256,7 @@ Private Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pa
             Do While verseEnd < pageEnd
                 Set ScanRange = ActiveDocument.Range(verseEnd, verseEnd + 1)
                 If Len(Trim(ScanRange.Text)) = 1 And IsNumeric(ScanRange.Text) Then
-                    If ScanRange.style.NameLocal = "Verse marker" And ScanRange.Font.color = RGB(80, 200, 120) Then
+                    If ScanRange.style.NameLocal = "Verse marker" And ScanRange.Font.Color = RGB(80, 200, 120) Then
                         verseDigits = verseDigits & ScanRange.Text
                         verseEnd = verseEnd + 1
                     Else
@@ -1717,7 +1717,7 @@ Public Sub GetHeadingDefinitionsWithDescriptions()
             Case Else: alignText = "Unknown"
         End Select
 
-        clr = s.Font.color
+        clr = s.Font.Color
         r = clr Mod 256
         g = (clr \ 256) Mod 256
         b = (clr \ 65536) Mod 256
@@ -2550,7 +2550,7 @@ Public Sub CleanDarkRedParagraphMarks()
         Set pm = p.Range.Characters.Last
 
         ' Check ONLY for Dark Red formatting
-        If pm.Font.color = wdColorDarkRed Then
+        If pm.Font.Color = wdColorDarkRed Then
             pm.Font.Reset   ' Remove character formatting pollution
         End If
     Next p
@@ -2574,7 +2574,7 @@ Public Sub CountPollutedParagraphMarksReport()
         test.Font.Reset
 
         ' Compare actual vs. reset formatting
-        If pm.Font.color <> test.Font.color _
+        If pm.Font.Color <> test.Font.Color _
         Or pm.Font.Bold <> test.Font.Bold _
         Or pm.Font.Italic <> test.Font.Italic _
         Or pm.Font.Underline <> test.Font.Underline _
@@ -2622,13 +2622,13 @@ Public Sub LockHyperlinksAlwaysBlue()
 
     ' --- Force Hyperlink style ---
     With doc.Styles("Hyperlink").Font
-        .color = wdColorBlue
+        .Color = wdColorBlue
         .Underline = wdUnderlineSingle
     End With
 
     ' --- Force FollowedHyperlink style (visited links) ---
     With doc.Styles("FollowedHyperlink").Font
-        .color = wdColorBlue
+        .Color = wdColorBlue
         .Underline = wdUnderlineSingle
     End With
 
@@ -2637,7 +2637,7 @@ Public Sub LockHyperlinksAlwaysBlue()
         Set rng = hl.Range
         
         With rng.Font
-            .color = wdColorBlue
+            .Color = wdColorBlue
             .Underline = wdUnderlineSingle
         End With
         

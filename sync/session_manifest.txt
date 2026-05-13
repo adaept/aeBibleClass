@@ -43,6 +43,23 @@
             beside C:\adaept\aeBibleClass\rpt so it never triggered.
           - Re-import into the dev .docm files this session.
 
+[IMPORT]  src/Module1.bas
+[IMPORT]  src/aeBibleClass.cls
+[IMPORT]  src/basAuthorStyles.bas
+[IMPORT]  src/basFixDocxRoutines.bas
+[IMPORT]  src/basStyleInspector.bas
+[IMPORT]  src/basTEST_aeBibleConfig.bas
+[IMPORT]  src/basTEST_aeBibleFonts.bas
+[IMPORT]  src/basTEST_aeBibleTools.bas
+[IMPORT]  src/basWordRepairRunner.bas
+          - .Color casing restored (75 replacements across 9 files).
+          - Bug: VBE auto-case demoted Font.Color -> Font.color when
+            something somewhere was typed lowercase. The normalizer had
+            no rule for .Color so the corruption survived.
+          - Fix: py/normalize_vba.py - added rule
+            (r'(?i)\.Color\b', '.Color', '.Color property on Font/Style/object (Font.Color access)').
+          - Re-import into the dev .docm files this session.
+
 [SCRIPT]  py/ribbon_export_trim.py (NEW)
           - Reads ribbon callbacks from customUI14backupRWB.xml as roots.
           - Adds AutoExec, RibbonOnLoad, Document_Open, Instance as

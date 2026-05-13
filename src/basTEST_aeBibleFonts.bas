@@ -165,7 +165,7 @@ Public Sub RedefineFootnoteStyle_NotoSans()
         .Bold = True
         .Italic = False
         .Underline = wdUnderlineNone
-        .color = wdColorAutomatic
+        .Color = wdColorAutomatic
     End With
 
     MsgBox "->Footnote<- style updated to Noto Sans, 7pt.", vbInformation
@@ -215,7 +215,7 @@ Public Sub RedefineFootnoteNormalStyle_NotoSans()
         .Bold = False
         .Italic = False
         .Underline = wdUnderlineNone
-        .color = wdColorAutomatic
+        .Color = wdColorAutomatic
     End With
 
     MsgBox "'Footnote normal' style updated to Noto Sans, 7pt.", vbInformation
@@ -284,7 +284,7 @@ Public Sub RedefinePictureCaptionStyle_NotoSans()
         .Bold = False
         .Italic = False
         .Underline = wdUnderlineNone
-        .color = wdColorAutomatic
+        .Color = wdColorAutomatic
     End With
 
     Debug.Print "'Picture Caption' style updated to Noto Sans, 9pt."

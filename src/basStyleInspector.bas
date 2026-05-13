@@ -89,7 +89,7 @@ Public Sub DumpStyleProperties(ByVal sStyleName As String, _
     sOut = sOut & ".Font.Bold = " & oFont.Bold & NL
     sOut = sOut & ".Font.Italic = " & oFont.Italic & NL
     sOut = sOut & ".Font.Underline = " & oFont.Underline & NL
-    sOut = sOut & ".Font.Color = " & oFont.color & NL
+    sOut = sOut & ".Font.Color = " & oFont.Color & NL
     sOut = sOut & ".Font.SmallCaps = " & oFont.SmallCaps & NL
     sOut = sOut & ".Font.AllCaps = " & oFont.AllCaps & NL
 

@@ -540,3 +540,40 @@ Doc updates:
 **Status:** dual-tab condition cleared by deleting the STARTUP copy.
 G8 still pending; will run with **single** ribbon tab loaded from the
 canonical (or from STARTUP after editing is complete).
+
+### 2026-05-13 - .Color casing demotion (normalizer gap)
+
+Symptom: `src/basTEST_aeBibleConfig.bas:544` rendered
+`If oStyle.Font.color <> CLng(vExpColor) Then` (lowercase `color`) when
+the canonical form is `Font.Color`. Cause: the VBE auto-case behaviour
+demoted `Color` -> `color` when an identifier with that exact spelling
+was typed lowercase elsewhere in the project; VBE then back-propagated
+the lowercase form across every reference. `py/normalize_vba.py` had no
+rule for `.Color` so the normalize-before-commit pass let the
+corruption through.
+
+Root-cause class: same family as the previously-fixed `Space()`
+(issue #616) and other identifier-casing rules - any identifier the VBE
+auto-corrects must have a normalizer rule, or VBE wins and the
+canonical casing rots.
+
+Fix: `py/normalize_vba.py` - one new rule, inserted immediately after
+`.Font` (the typical access path is `Font.Color`):
+```python
+(r'(?i)\.Color\b',          '.Color',           '.Color property on Font/Style/object (Font.Color access)'),
+```
+
+Normalizer re-run against `src/`: **75 replacements across 9 files**:
+`Module1.bas` (15), `aeBibleClass.cls` (9), `basAuthorStyles.bas` (4),
+`basFixDocxRoutines.bas` (6), `basStyleInspector.bas` (2),
+`basTEST_aeBibleConfig.bas` (2), `basTEST_aeBibleFonts.bas` (3),
+`basTEST_aeBibleTools.bas` (29), `basWordRepairRunner.bas` (5).
+
+Post-fix grep on `src/` for any lowercase `.color`: zero hits.
+
+All 9 files listed `[IMPORT]` in `sync/session_manifest.txt` for
+re-import into the dev `.docm` files this session. Production
+`aeRibbon/src/` is unaffected - none of the trimmed production routines
+reference `.color` (the regenerated `aeRibbon/src/` re-runs would
+include the corrected casing automatically the next time
+`py/ribbon_export_trim.py` runs).

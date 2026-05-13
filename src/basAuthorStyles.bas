@@ -237,7 +237,7 @@ Private Sub DefineAuthorListItem()
     s.Font.Bold = True
     s.Font.Italic = True
     s.Font.Underline = wdUnderlineNone
-    s.Font.color = wdColorAutomatic
+    s.Font.Color = wdColorAutomatic
     With s.ParagraphFormat
         .Alignment = wdAlignParagraphLeft
         .LeftIndent = 18
@@ -274,7 +274,7 @@ Private Sub DefineAuthorBookRefNew()
     s.Font.Bold = True
     s.Font.Italic = False
     s.Font.Underline = wdUnderlineNone
-    s.Font.color = wdColorAutomatic
+    s.Font.Color = wdColorAutomatic
     With s.ParagraphFormat
         .Alignment = wdAlignParagraphLeft
         .LeftIndent = 36
@@ -399,7 +399,7 @@ Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
     dst.Font.Bold = src.Font.Bold
     dst.Font.Italic = src.Font.Italic
     dst.Font.Underline = src.Font.Underline
-    dst.Font.color = src.Font.color
+    dst.Font.Color = src.Font.Color
     dst.Font.SmallCaps = src.Font.SmallCaps
     dst.Font.AllCaps = src.Font.AllCaps
 
