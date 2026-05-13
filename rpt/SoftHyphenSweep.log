@@ -1,0 +1,4 @@
+========================================================================
+SoftHyphenSweep page=886  side=Verso  mode=DryRun  run=2026-05-13 16:58:52
+Bounds   : Body=[43.2..451.5]  L=[43.2..240.1]  G=[240.1..254.5]  R=[254.5..451.5]
+Page 886 Result: 9 find(s) - 9 Active(Kept), 0 Stray (0 Removed, 0 Skipped), 0 OutsideBody

@@ -136,7 +136,7 @@ actually exist; the palette entry was Word's built-in `Normal`
 (undeletable). `AuthorQuote` was the real deletable custom style
 and has been deleted.
 
-### 5. Apply Row Pitch Diagnostic to two un-hyphenated 10-page ranges (MEDIUM)
+### 5. Apply Row Pitch Diagnostic to two un-hyphenated 10-page ranges (MEDIUM) - WONTFIX 2026-05-13
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 5. Tooling
 ready; identify the ranges and run the
@@ -152,7 +152,16 @@ Expected outcome:
 
 Originated `rvw/Code_review 2026-05-08.md` 4d.
 
-### 6. Verify anomalous 2-column sections in production (LOW-MEDIUM)
+Resolution 2026-05-13: **WONTFIX.** In practice the
+survey -> histogram -> review cycle takes longer per page than a
+straight manual read-through with hyphen insertion. The diagnostic
+remains available in
+[`md/Row_Pitch_Diagnostic.md`](../md/Row_Pitch_Diagnostic.md) for
+any future case where a wide unhyphenated region needs an
+objective second opinion, but it is no longer on the active
+worklist.
+
+### 6. Verify anomalous 2-column sections in production (LOW-MEDIUM) - CLOSED 2026-05-13
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 6. Resolves
 naturally as production sweeps progress through the document.
@@ -165,7 +174,7 @@ anomaly during a production sweep.
 
 Originated `rvw/Code_review 2026-05-08.md` 3a.
 
-### 7. Optional --clear helper for RowCharCount survey driver (LOW)
+### 7. Optional --clear helper for RowCharCount survey driver (LOW) - WONTFIX 2026-05-13
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 7. Pure QoL;
 the manual workflow in
@@ -173,6 +182,14 @@ the manual workflow in
 fine. Open as a possible follow-up only.
 
 Originated `rvw/Code_review 2026-05-08.md` 4g.
+
+Resolution 2026-05-13: **WONTFIX.** Parent workflow (item 5, Row
+Pitch Diagnostic) closed WONTFIX the same day - manual hyphen
+insertion is faster than the survey -> histogram -> review cycle.
+With the survey driver no longer on the active worklist, the
+`--clear` QoL helper has no consumer. The driver itself remains
+available for ad-hoc use; deleting the prior report manually before
+re-running is the documented workaround if anyone reaches for it.
 
 ### 8. SoftHyphenSweep_FootnotesOnly sister routine (DEFERRED)
 
@@ -696,3 +713,46 @@ Unapplied = 0.
 Net effect: Item 4 closes with a name correction
 (`Normal text` -> `AuthorQuote`) and the cleanup goal met. No
 remaining deletable character-style cruft.
+
+### 2026-05-13 - Items 5 and 7 WONTFIX (Row Pitch Diagnostic shelved)
+
+Item 5 (Apply Row Pitch Diagnostic to two un-hyphenated 10-page
+ranges) closed **WONTFIX**: in practice the
+survey -> histogram -> review cycle takes longer per page than a
+straight manual read-through with hyphen insertion. The diagnostic
+remains documented at
+[`md/Row_Pitch_Diagnostic.md`](../md/Row_Pitch_Diagnostic.md) as
+an objective second opinion for any future wide-unhyphenated case,
+but is no longer on the active worklist.
+
+Item 7 (Optional `--clear` helper for RowCharCount survey driver)
+closed **WONTFIX** as a downstream consequence: the helper's only
+consumer was the item-5 workflow. With the parent workflow shelved
+there is no demand for the QoL flag. The survey driver itself
+remains available for ad-hoc use; manual deletion of the prior
+report file before re-running is the documented workaround.
+
+### 2026-05-13 - Item 6 CLOSED (second 2-col anomaly validated)
+
+Item 6 (Verify anomalous 2-column sections in production) carried
+two anomalies surfaced by `SoftHyphen_DiagnoseLayout`:
+
+- Section 123 (page 886): Col1=186.1/36.0 Col2=186.1
+- Section 135 (page 913): Col1=186.1/36.0 Col2=186.1
+
+Section 135 was already validated upstream
+(7 finds, all Active, 0 OutsideBody). Today section 123 was
+validated with a single-page dry-run sweep:
+
+```
+RunSoftHyphenSweep_Across_Pages_From 886, 1, True
+SoftHyphenSweep p886 (Verso): 9 find(s) - 9 Active, 0 Stray
+                              (0 Removed, 0 Skipped), 0 OutsideBody
+```
+
+Pass criterion (0 OutsideBody) met; bonus 0 Stray. The
+classifier's column-X constants accommodate the narrower
+186.1/36.0 variant without retuning. Both 2-col anomalies are now
+confirmed harmless geometry variants, not classifier risks.
+
+Item 6 closes.
