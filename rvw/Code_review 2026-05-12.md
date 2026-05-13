@@ -503,3 +503,40 @@ but not the implementation. Actual design (verified against
 inline rationale pointing at the relevant `GetEnabled` callbacks.
 
 **G7 result:** PASS. Ready for G8.
+
+### 2026-05-13 - Gap 8: dual "Radiant Word Bible" tabs after STARTUP staging
+
+Symptom: after copying `aeRibbon.dotm` into
+`%APPDATA%\Microsoft\Word\STARTUP\` (G6 step 3), reopening the canonical
+`aeRibbon\template\aeRibbon.dotm` produced **two** ribbon tabs both
+labelled "Radiant Word Bible".
+
+Root cause: dual-load. Word treats the STARTUP folder as a global
+template directory; everything in it loads in every Word session. When
+the canonical `.dotm` was then opened directly for editing, Word loaded
+**both** copies simultaneously. Each copy declares the same customUI
+tab, so two tabs render. The tabs look identical but each is bound to
+its own `aeRibbonClass` instance - clicking a control on one tab uses
+that template's VBA, the other tab uses the other template's VBA. A
+real testing footgun.
+
+Resolution (no code change - workflow rule):
+
+- The STARTUP-folder copy is a **deployment artefact**, not an editing
+  target. Canonical source-of-truth is always
+  `aeRibbon\template\aeRibbon.dotm`.
+- **Before any further template edit:** close Word, delete the
+  STARTUP-folder copy, then open the canonical.
+- **After saving:** close Word, re-copy the freshly-saved canonical
+  back into STARTUP only if needed for the next docx smoke test.
+- **Never have both copies present at the same time.**
+
+Doc updates:
+
+- `aeRibbon/BUILD.md` G6 step 3 now carries the workflow rule
+  explicitly: "STARTUP copy is a deployment artefact, not an editing
+  target" + the delete-before-edit / re-copy-after-save cycle.
+
+**Status:** dual-tab condition cleared by deleting the STARTUP copy.
+G8 still pending; will run with **single** ribbon tab loaded from the
+canonical (or from STARTUP after editing is complete).

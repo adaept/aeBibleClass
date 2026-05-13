@@ -204,6 +204,18 @@ artefacts still need to land for G6 to close.
      `%APPDATA%\Microsoft\Word\STARTUP\` (open Explorer, paste
      `%APPDATA%\Microsoft\Word\STARTUP\` into the address bar, then
      paste the file). Or use the per-document method described above.
+   - **Critical workflow rule:** the STARTUP-folder copy is a
+     **deployment artefact**, not an editing target. The canonical
+     source-of-truth is always `aeRibbon\template\aeRibbon.dotm`. If
+     both copies are present and you right-click → Open the canonical,
+     Word loads both at once and you will see **two "Radiant Word
+     Bible" tabs**. They look identical, but each is bound to a
+     different VBA instance - a real footgun for testing.
+   - **Before any further template edit:** delete the STARTUP-folder
+     copy, then open the canonical. **After saving:** close Word,
+     re-copy the freshly-saved canonical back into STARTUP if you want
+     it auto-loaded for the next docx smoke test. Never have both
+     copies present at the same time.
 
 G6 closes when steps 1–3 are done and the next Word session loads the
 template without error.
