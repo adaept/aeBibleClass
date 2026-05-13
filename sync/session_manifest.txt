@@ -1,4 +1,4 @@
-# Claude Session Manifest — 2026-04-28 / 2026-04-29 / 2026-04-30
+# Claude Session Manifest -- 2026-05-12
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,250 +13,66 @@
 
 ## Session themes
 
-1. VerseStructureAudit fixes (accumulator reset, DRY refactor against citation class).
-2. WEB versification corrections in verse-counts data (six chapter-pair fixes plus 3 John and Romans doxology placement).
-3. Nahum chapter-count metadata fix in citation class.
-4. Ribbon focus fix (Finding 5 / Bug #600 follow-up): document.Activate after ScrollIntoView in GoToVerseByScan.
-5. normalize_vba.py: Space() casing rule added (issue #616).
-6. Style taxonomy work: Solomon -> Song of Songs, spec promotions, Lamentation removal.
-7. List Paragraph migration end-to-end (Phases 0-6): ListItem -> AuthorListItem, ListItemBody -> AuthorListItemBody, ListItemTab -> AuthorListItemTab, AuthorBookRef refactored to escape Word's list-engine inheritance bug.
-8. Tab-stop infrastructure closure: dump, copy, audit all now handle ParagraphFormat.TabStops.
+1. Establish aeRibbon/ production export gateway:
+   - aeRibbon/src/   - trimmed VBA, call-graph reachable from ribbon XML
+   - aeRibbon/template/customUI14.xml
+   - aeRibbon/docx/  - host docx instructions (Gate G7)
+   - aeRibbon/releases/  - per-version build artefacts
+   - aeRibbon/RoutineLog.md, BUILD.md, QA_CHECKLIST.md, RELEASES.md, VERSION
+2. md/aeProductionRibbonPlan.md authored and approved (decisions 1-6 in
+   plan section 7).
+3. py/ribbon_export_trim.py: call-graph trim of ribbon production sources;
+   idempotent; preserves VBA lifecycle hooks (Class_Initialize,
+   Class_Terminate, AutoExec).
+4. Architectural corrections recorded in the plan:
+   - aeBibleClass.cls is test infrastructure, not the doc model -
+     excluded from aeRibbon/src/.
+   - Production end-user document is .docx (code-free, shareable),
+     produced manually by Editor/Developer per BUILD.md.
 
 ## Files modified
 
-[DONE]  src/basVerseStructureAudit.bas
-        - Per-book accumulator reset bug fixed (chapterReport / bookIssues /
-          bookIssueDetail / foundChapters reset at top of For loop).
-        - DRY refactor: PopulateCanonical and LookupBookID removed; module
-          now uses aeBibleCitationClass.GetCanonicalBookTable and ResolveAlias.
+[SCRIPT]  py/ribbon_export_trim.py (NEW)
+          - Reads ribbon callbacks from customUI14backupRWB.xml as roots.
+          - Adds AutoExec, RibbonOnLoad, Document_Open, Instance as
+            extra roots, plus VBA lifecycle names always preserved.
+          - Parses .bas/.cls files, builds case-insensitive identifier
+            call graph, walks reachability, writes trimmed copies to
+            aeRibbon/src/.
+          - Preserves headers / module-level decls / Type / Enum / Const
+            byte-for-byte; only drops whole routine blocks.
+          - --check stub (not yet wired).
 
-[DONE]  src/aeBibleCitationClass.cls
-        - Nahum chapter count corrected from 7 to 3 in GetCanonicalBookTable
-          (line 925). Latent bug exposed by basVerseStructureAudit DRY refactor.
+[DOC]     md/aeProductionRibbonPlan.md (NEW)
+          - Production plan; sec 7 records the 6 approved decisions.
 
-[DONE]  src/basSBL_VerseCountsGenerator.bas
-        - Romans 14 / Romans 16 swap (TR -> WEB doxology placement).
-        - 2 Samuel 18 / 19 Hebrew->English split corrected (32/44 -> 33/43).
-        - 2 Kings 11 / 12 Hebrew->English split corrected (20/22 -> 21/21).
-        - 2 Chronicles 13 / 14 Hebrew->English split corrected (23/14 -> 22/15).
-        - 3 John total corrected from 15 to 14 (WEB ends at v.14).
-        - Source: ebible.org WEB Protestant Edition.
-        - Final audit: 31102 / 31102, 0 structural issues.
+[DOC]     aeRibbon/BUILD.md (NEW)
+          - Template build steps + manual .docx production procedure.
 
-[DONE]  src/aeRibbonClass.cls
-        - Finding 5 fix (A): ActiveDocument.ActiveWindow.Activate added at the
-          end of GoToVerseByScan (after Selection.SetRange) so the caret
-          renders in the document body when nav fires from a ribbon-owned
-          event handler. Resolves "first nav doesn't put cursor in docx".
-        - Tab-race / idle-commit focus-leak in editBox documented as Word
-          customUI limitation (no fix); KeyTips remain the supported path.
+[DOC]     aeRibbon/QA_CHECKLIST.md (NEW)
+          - Gates G1-G8 with sign-off boxes.
 
-[DONE]  src/basTEST_aeBibleConfig.bas
-        - RUN_TAXONOMY_STYLES PURPOSE block updated multiple times: 17 -> 19
-          -> 20 -> 21 checks; bucket counts adjusted; tab-stop section added.
-        - approved array: ListItem/ListItemBody/ListItemTab renamed to
-          AuthorListItem/AuthorListItemBody/AuthorListItemTab.
-        - Spec promotions: Heading 1, Heading 2, CustomParaAfterH1, DatAuthRef,
-          Brief, Psalms BOOK, Footnote Text moved from existence-verified
-          to fully-specified bucket with descriptive specs.
-        - Lamentation entry removed (style deleted from project).
-        - AuthorListItemTab existence-only audit entry added (Phase 4c).
-        - AuditStyleTabs Sub added (Phase 6c) - ParamArray for variable-length
-          tab specs; tagged "(TabStops)" in output to distinguish from
-          AuditOneStyle results on the same style.
-        - Tab-stop spec entry for AuthorListItemTab added in new
-          "Tab stops verified" bucket (descriptive baseline from Phase 6a
-          dump: 2 stops at 144 / 252 pt, Left, Spaces).
+[DOC]     aeRibbon/RELEASES.md (NEW)
+          - Append-only release ledger; no rows yet.
 
-[DONE]  src/basAuthorStyles.bas (NEW MODULE)
-        - Self-contained migration kit for the List Paragraph numbering-
-          engine bug. See EDSG/10-list-paragraph-bug.md for full context.
-        - Public Subs: AuditListStyleRisk (sorted output, file-write to
-          rpt\ListStyleRiskAudit.txt), CreateAuthorStyles (Phase 1 entry),
-          TransportAuthorStyles (Phase 2 entry), MigrateParagraphs (Phase 3),
-          DecommissionAuthorStyles (Phase 4a entry).
-        - Private helpers: DefineAuthorListItem, DefineAuthorBookRefNew,
-          StyleExists, CopyOneStyle (with tab-stop preservation in 6b),
-          CountParagraphsByStyle, SortByPriorityName, FormatBaseStyleRows,
-          WriteListStyleRiskFile.
-        - Final state on production .docm: AuthorListItem (priority 18),
-          AuthorListItemBody (19), AuthorListItemTab (20), AuthorBookRef (22)
-          - all BaseStyle = "" with no list-engine inheritance.
-          AuditListStyleRisk reports 0 flagged.
+[DOC]     aeRibbon/VERSION (NEW)
+          - 1.0.0+bc71416
 
-[DONE]  src/basStyleInspector.bas
-        - DumpStyleProperties extended to enumerate ParagraphFormat.TabStops:
-          Count line plus per-stop "Position=N Align=<name> Leader=<name>"
-          using symbolic names. Skips block when Count = 0.
-        - TabAlignName / TabLeaderName helper functions added (Public for
-          cross-module use by AuditStyleTabs in basTEST_aeBibleConfig.bas).
+[DOC]     aeRibbon/RoutineLog.md (GENERATED by ribbon_export_trim.py)
+          - 131 KEPT, 67 REMOVED across 5 files.
 
-[SCRIPT] py/normalize_vba.py
-        - Space( normalizer rule added (issue #616). Fixes lowercase
-          space() that VBE corrupts on the Space built-in. Run via
-          wsl python3 py/normalize_vba.py to apply across src/.
+[DOC]     aeRibbon/docx/README_host_docx.md (NEW)
+          - Manual creation steps for aeRibbon-host.docx (Gate G7).
 
-[DOC]   EDSG/01-styles.md
-        - Final-state-goal callout added (full-coverage audit ambition).
-        - Snapshot timestamp / count refreshed; SpeakerLabel inserted at
-          priority 37; reserved-gap shifted from 38-41 to 39-42.
-        - Pending-re-validation table priorities reflect SpeakerLabel push.
-        - QA-checklist BaseStyle row links to 10-list-paragraph-bug.md.
-        - Priority table rows 18/19/20 renamed to AuthorListItem /
-          AuthorListItemBody / AuthorListItemTab post-migration.
+[XML]     aeRibbon/template/customUI14.xml (NEW)
+          - Copy of customUI14backupRWB.xml.
 
-[DOC]   EDSG/02-editing-process.md
-        - Stage 1 step 2 explicitly forbids List Paragraph inheritance
-          and LinkToListTemplate; cross-link to 10-list-paragraph-bug.md.
+[IMPORT]  aeRibbon/src/basBibleRibbonSetup.bas (GENERATED, 54 routines kept)
+[IMPORT]  aeRibbon/src/aeRibbonClass.cls       (GENERATED, 56 kept)
+[IMPORT]  aeRibbon/src/aeBibleCitationClass.cls(GENERATED, 12 kept)
+[IMPORT]  aeRibbon/src/basRibbonDeferred.bas   (GENERATED, as-is copy)
+[IMPORT]  aeRibbon/src/basUIStrings.bas        (GENERATED, as-is copy)
 
-[DOC]   EDSG/04-qa-workflow.md
-        - Two callouts added below the QA checklist: taxonomy-audit
-          final-state goal (cross-link to 01-styles.md callout) and
-          List Paragraph numbering-engine bug summary (cross-link to
-          10-list-paragraph-bug.md).
-
-[DOC]   EDSG/10-list-paragraph-bug.md (NEW)
-        - Symptom, root cause read, Microsoft status (long-known, won't
-          fix), common bad advice (with rebuttals), all-VBA five-step
-          migration recipe with code, lose/don't-lose framing, cost-now
-          vs cost-later table, i18n implications, cross-references.
-        - .docx / .docm / .dotx / .dotm extension table; macro-free vs
-          macro-enabled boundary explained.
-
-[DOC]   rvw/Code_review 2026-04-25.md
-        - Extensive append-only progressive history of 2026-04-28
-          through 2026-04-30 work, including all phase decisions,
-          audits, FAIL breakdowns, design rationale, terminology
-          corrections (Tab race -> idle-commit focus leak), and the
-          full List Paragraph migration record (Phases 0-6).
-
-# ============================================================
-# Session 2026-05-06 — taxonomy resync after partial QA-alignment pass
-# ============================================================
-# (See rvw/Code_review 2026-05-06.md item 9 for full record.)
-
-[DONE]  src/basTEST_aeBibleConfig.bas
-        - Heading 2: LineRule 4 -> 0 (Single), LineSpacing 10 -> 12pt.
-        - Brief: LineRule 4 -> 5 (Multiple), LineSpacing 9.5 -> 13.9pt,
-          SpaceAfter 0 -> 8pt.
-        - Psalms BOOK: Indent 14.4 -> 0, LineRule 4 -> 0 (Single),
-          LineSpacing 10 -> 12pt, SpaceAfter 0 -> 8pt.
-        - Imported into test .docm; production .docm pending.
-
-# ============================================================
-# Session 2026-05-06 (later) — BaseStyle = "" prescriptive pass
-# ============================================================
-# (See rvw/Code_review 2026-05-06.md item 10 for full record.)
-
-[DONE]  src/basTEST_aeBibleConfig.bas
-        - AuditOneStyle: new optional sExpBaseStyle parameter (sentinel
-          "<skip>"); BaseStyle check block added before pass/fail tally.
-        - BaseStyle = "" invariant enabled on CustomParaAfterH1, Brief,
-          Footnote Text, Psalms BOOK (appended ", """ to each call site).
-        - PsalmAcrostic added to bucket 1 (Carlito 9pt Center Single 12pt
-          SpB/SpA=3 BaseStyle="").
-        - PsalmSuperscription added to bucket 1 (Carlito 8pt Left
-          Multiple 13.9pt SpB/SpA=2 Italic=-1 BaseStyle="").
-        - Final-state: RUN_TAXONOMY_STYLES -> 26 PASS / 4 FAIL across 30
-          checks.
-
-# ============================================================
-# Session 2026-05-11 - AuditOneStyle Color check (item 1 of 2026-05-11)
-# ============================================================
-# (See rvw/Code_review 2026-05-11.md item 1 for full record.)
-
-[IMPORT] src/basTEST_aeBibleConfig.bas
-        - AuditOneStyle: new optional vExpColor parameter (sentinel -2 =
-          skip) appended after sExpBaseStyle so existing positional
-          callers are unaffected. Color check block mirrors Bold/Italic
-          pattern; compares oStyle.Font.Color against expected long.
-        - 7 bucket-2 styles promoted to bucket 1 with descriptive specs
-          captured via DumpStyleProperties:
-            * TheHeaders, TheFooters (paragraph; Noto Sans 9pt, Color
-              -16777216 = wdColorAutomatic)
-            * Footnote Reference (Carlito 9 Bold Color 16711680 BGR blue)
-            * Selah (Carlito 9 Color -16777216)
-            * EmphasisBlack (Carlito 9 Bold Color -16777216)
-            * EmphasisRed (Carlito 9 Bold Color 128 BGR dark-red)
-            * Words of Jesus (Carlito 9 Color 128 BaseStyle "")
-        - TheFooters tab stop added (1 stop at 7.2 pt Left Spaces).
-        - Chapter Verse marker added to bucket 1 (Noto Sans 5pt Bold
-          Color 42495 BGR orange BaseStyle "Default Paragraph Font").
-        - Verse marker added to bucket 1 (Noto Sans 8pt Bold Color
-          7915600 BGR medium-green BaseStyle "Default Paragraph Font").
-        - "Existence verified" bucket now empty; reserved for future
-          styles awaiting DumpStyleProperties capture.
-        - RUN_TAXONOMY_STYLES header recounted: 46 fully spec / 0 exist /
-          3 not-yet-created; 9 tab-stop audits; 58 checks total.
-        - Verified run: 53 PASS / 3 FAIL after 7-style promotion;
-          expected 55 PASS / 3 FAIL after the 2 new entries.
-
-[IMPORT] src/aeRibbonClass.cls
-        - OnBookChanged now consults aeBibleCitationClass.ResolveAlias
-          first (alias-authoritative layer 1); matches the returned
-          canonical name against headingData. Legacy substring Like
-          scan retained as layer 2 fallback for partial-typing UX.
-        - Fixes: NAH + Tab now binds to Nahum (was Jonah - first-
-          substring-wins collision with JoNAH). JB / PRV / SG / SOL /
-          CAN / 1 KGS / 2 KGS now resolve correctly.
-        - No state or ribbon API change; existing bookmarkIndex /
-          m_currentBookIndex / Invalidate sequence preserved.
-
-[DOC]   EDSG/11-ribbon-alias-layering.md (NEW)
-        - Two-layer alias resolution contract documented.
-        - First-substring-wins bug table; fix description; caveat
-          about canonical-substring collisions for future H1 renames.
-        - Cross-references to OnBookChanged, GetBookAliasMap, and
-          rvw/Code_review 2026-05-11.md.
-
-[DOC]   EDSG/README.md
-        - Added row 11 to the Pages table.
-        - Note: -16777216 (wdColorAutomatic) on Selah, EmphasisBlack,
-          TheHeaders, TheFooters is the descriptive baseline; item 2 of
-          2026-05-11 will replace these with explicit RGB/BGR literals.
-
-# ============================================================
-# Session 2026-05-06 (later still) - front-matter & TOC bucket-1 promotion
-# ============================================================
-# (See rvw/Code_review 2026-05-06.md items 11-12 for full record.)
-
-[DONE]  src/basTEST_aeBibleConfig.bas
-        - 12 new bucket-1 AuditOneStyle entries for front-matter / TOC /
-          index styles (priorities 4-17): FrontPageTopLine, TitleEyebrow,
-          TitleVersion, FrontPageBodyText, BodyTextTopLineCPBB,
-          Acknowledgments, AuthorBodyText, Contents, BibleIndexEyebrow,
-          BibleIndex, Introduction, TitleOnePage. All carry BaseStyle = "".
-        - Title promoted from bucket 2 (existence placeholder removed) to
-          bucket 1 with full spec (Times New Roman 36pt Center Single 12pt).
-        - ContentsRef gained BaseStyle = "" enforcement (other props already
-          matched).
-        - ContentsRef tab stop added: AuditStyleTabs "ContentsRef",
-          Array(378, wdAlignTabRight, wdTabLeaderDots).
-        - Final-state: RUN_TAXONOMY_STYLES -> 39 PASS / 4 FAIL across 43
-          checks. Bucket 1: 11 -> 24. Tab-stop coverage: 4 -> 5 styles.
-
-# Note: 2026-05-01 .. 2026-05-06 src/ edits prior to this session
-# (VerseText migration, orphan repair, EmphasisRed cleanup,
-# AuditCharStyleUsage, AuditVerseMarkerStructure CVM extension)
-# are recorded in rvw/Code_review 2026-04-30.md and the 2026-05-06
-# review file but are NOT yet itemized as manifest entries above.
-# Open item 8 in rvw/Code_review 2026-05-06.md tracks this gap.
-
-# ------------------------------------------------------------
-# Final-state verification (both .docm files):
-#   RUN_TAXONOMY_STYLES   ->  39 PASS / 4 FAIL across 43 checks (test .docm, 2026-05-06)
-#   AuditListStyleRisk    ->  0 flagged in section (A)
-#   AuditVerseMarkerStructure -> 31102 / 31102, 0 structural issues
-#
-# Import order (recommended) when re-syncing both .docm files:
-#   1. py/normalize_vba.py first (fixes any drifted casing in src/).
-#   2. src/basStyleInspector.bas
-#   3. src/basAuthorStyles.bas
-#   4. src/basTEST_aeBibleConfig.bas
-#   5. src/basVerseStructureAudit.bas
-#   6. src/aeBibleCitationClass.cls
-#   7. src/aeRibbonClass.cls
-#   8. src/basSBL_VerseCountsGenerator.bas
-# Then run WordEditingConfig + RUN_TAXONOMY_STYLES + AuditListStyleRisk
-# to verify clean state.
-# ------------------------------------------------------------
+# Note: nothing under src/ was modified this session. The dev sources
+# remain the source of truth; aeRibbon/src/ is regenerated by
+# py/ribbon_export_trim.py and should not be hand-edited.

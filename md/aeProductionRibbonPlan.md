@@ -23,8 +23,11 @@ Radiant Word Bible navigation ribbon.
    from dev source to a shippable Word template.
 6. Produce a Word 365 `.dotm` template + a `.docx` end-user document that
    pairs with it. Template contains no Bible text.
-7. Bible text stays in the existing `.docm` (e.g. `Peter-USE REFINED English
-   Bible CONTENTS.docm`); the template attaches to it.
+7. The production end-user document is a **`.docx`** (no code, freely
+   shareable, comments-only review). The dev `.docm` stays in development;
+   for each release the Editor/Developer saves it out as `.docx` (File
+   > Save As > Word Document) and drops the result into `aeRibbon/docx/`.
+   The `.dotm` template attaches to that `.docx` and provides the ribbon.
 8. This file — captures the plan.
 9. QA release process built on the existing `basTEST_*` harness.
 10. Versioning + tracking scheme rooted in dev-side identifiers.
@@ -44,11 +47,20 @@ files:
 | `customUI14backupRWB.xml` (at repo root) | Ribbon XML; declares all callbacks | **COPY** as `aeRibbon/template/customUI14.xml` |
 | `basBibleRibbonSetup.bas` | All `onAction` / `getEnabled` / `getLabel` / keytip callbacks; singleton `Instance()`; `AutoExec` | **COPY, TRIM** |
 | `aeRibbonClass.cls` | State machine, navigation, status-bar messages | **COPY, TRIM** |
-| `aeBibleClass.cls` | Document model: chapter/verse scan, ScrollIntoView, focus restore | **COPY, TRIM** |
 | `aeBibleCitationClass.cls` | Canonical book table, alias resolution, verse counts | **COPY, TRIM** |
 | `basRibbonDeferred.bas` | `OnTime`-style deferred chapter nav + status bar | **COPY AS-IS** (tiny) |
 | `basUIStrings.bas` | Centralised user-visible strings (i18n hook) | **COPY AS-IS** (tiny) |
-| `ThisDocument.cls` | Document-open wiring (if it loads the ribbon) | **COPY** (verify first) |
+
+**Correction from the v1 draft:** `aeBibleClass.cls` is **not** the document
+model — it is a 4000-line test-runner class (`TheBibleClassTests`,
+`RunBibleClassTests`, etc.). The first trim pass confirmed 0/85 routines
+were reachable from any ribbon callback. The production document model
+lives in `aeRibbonClass` (navigation / state machine) plus
+`aeBibleCitationClass` (canonical book + verse-count tables). The trim
+script excludes `aeBibleClass.cls` from `aeRibbon/src/`.
+
+`ThisDocument.cls` is **not** copied either (per §7 decision 2) — it is a
+template-side build step documented in `aeRibbon/BUILD.md`.
 
 ### 2.2 Explicitly excluded (development-only)
 
@@ -138,15 +150,22 @@ aeRibbon/
 
 - The `.dotm` is a **macro template** — it carries the VBA project and the
   customUI14 ribbon XML, but no Bible content.
-- Attaching the template to the existing
-  `Peter-USE REFINED English Bible CONTENTS.docm` (Tools → Templates and
-  Add-ins → Document template) makes the **Radiant Word Bible** ribbon tab
-  appear in Word whenever that document is open.
-- The companion `.docx` is an empty host showing the ribbon works against a
-  fresh document — useful for QA and demos. The ribbon will only navigate
-  if the open document contains the canonical Heading-1 book / Heading-2
-  chapter / verse-style structure; the empty docx is for **install/load
-  verification**, not navigation tests.
+- The production Bible document is a **`.docx`** (no code). The
+  Editor/Developer produces it for each release by opening the dev
+  `Peter-USE REFINED English Bible CONTENTS.docm` in Word and using
+  File → Save As → **Word Document (`.docx`)**. Word strips the VBA on
+  save. The result lands in `aeRibbon/docx/` as the production content
+  artefact.
+- Why docx not docm: the production document is shared with the author
+  for **comments-only** review. It must open without macro-security
+  warnings and carry no executable code. Only the `.dotm` (held by the
+  Editor/Developer and trusted) carries code.
+- Attaching the `.dotm` to a Bible `.docx` (Tools → Templates and Add-ins
+  → Document template) makes the **Radiant Word Bible** tab appear in
+  Word whenever that document is open.
+- The companion `aeRibbon-host.docx` is an empty host for install/load
+  smoke (Gate G7) — it verifies the tab appears and `RibbonOnLoad` fires.
+  Real navigation tests (Gate G8) run against the Bible `.docx`.
 
 ### 4.3 Build steps (will be encoded in `aeRibbon/BUILD.md`)
 
@@ -177,8 +196,8 @@ and are run against the dev `.docm`, **not** against `aeRibbon/`.
 | G4 — Tools | `basTEST_aeBibleTools` | Document tool surface |
 | G5 — Export trim | `python3 py/ribbon_export_trim.py --check` | No unreachable routine survived; no reachable routine dropped |
 | G6 — Template build | manual or scripted | `.dotm` builds, ribbon XML injects without error |
-| G7 — Smoke (host docx) | Word 365, open `aeRibbon-host.docx` | Tab appears, controls render, AutoExec/RibbonOnLoad fire, `RibbonOnLoad` errors == 0 |
-| G8 — Smoke (real Bible docm) | Word 365, open `Peter-USE REFINED English Bible CONTENTS.docm` with template attached | Type `Jn`, Tab, `3`, Tab, `16`, Tab, Enter → cursor lands at John 3:16; KeyTip path `Alt, Y2, B/C/V/G` works; Prev/Next at boundaries shows status-bar message |
+| G7 — Smoke (empty host docx) | Word 365, open `aeRibbon-host.docx` with template attached | Tab appears, controls render, AutoExec/RibbonOnLoad fire, `RibbonOnLoad` errors == 0 |
+| G8 — Smoke (Bible docx) | Word 365, open the production Bible `.docx` (saved-as from the dev `.docm` for this release) with template attached | Type `Jn`, Tab, `3`, Tab, `16`, Tab, Enter → cursor lands at John 3:16; KeyTip path `Alt, Y2, B/C/V/G` works; Prev/Next at boundaries shows status-bar message; **no macro-security warning on docx open** |
 
 G1–G5 are automatable / re-runnable; G6–G8 are human-in-the-loop and
 checklisted in `aeRibbon/QA_CHECKLIST.md`.
@@ -255,7 +274,17 @@ via its About-dialog version string.
    your Bible `.docm` to see the Radiant Word Bible tab.").
    No Bible text. Used for G7 install/load smoke only.
 
-5. **AutoExec vs. Document_Open — APPROVED: keep `AutoExec`, no
+5. **Production end-user document — APPROVED: `.docx`, produced manually
+   (Option 1, decided 2026-05-12).**
+
+   Rationale: The Editor/Developer drives the iterative build/test loop;
+   many revisions are expected before the system is handed to the author
+   for comments-only review. A manual File → Save As `.docx` step from
+   the dev `.docm` is reproducible-enough at this stage and avoids adding
+   a Word-COM automation dependency to the export pipeline. Reconsider
+   automating (Option 2) if/when this becomes a release pain point.
+
+6. **AutoExec vs. Document_Open — APPROVED: keep `AutoExec`, no
    `Document_Open` promotion.**
 
    Rationale (full pros/cons in conversation 2026-05-12):
