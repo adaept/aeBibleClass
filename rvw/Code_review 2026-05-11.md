@@ -310,3 +310,38 @@ is now authoritative for the ribbon combo. Order of entries in
 **Documentation:** new EDSG page
 [`EDSG/11-ribbon-alias-layering.md`](../EDSG/11-ribbon-alias-layering.md)
 captures the two-layer contract and the canonical-substring caveat.
+
+### 2026-05-12 - aeRibbon production export gateway established
+
+New top-level directory `aeRibbon/` introduced as the **production export
+gateway** for the ribbon. Nothing under `src/` was modified; the dev
+`.docm` files do not require re-import for this work.
+
+- `py/ribbon_export_trim.py` (NEW): call-graph reachability trim rooted at
+  the customUI14 callbacks declared in `customUI14backupRWB.xml`, plus
+  `AutoExec` / `RibbonOnLoad` / `Document_Open` / `Instance` and VBA
+  lifecycle hooks (`Class_Initialize`, `Class_Terminate`). Idempotent;
+  re-running on the same `src/` produces byte-identical output.
+- `aeRibbon/src/` (GENERATED): trimmed copies of
+  `basBibleRibbonSetup.bas`, `aeRibbonClass.cls`,
+  `aeBibleCitationClass.cls` (call-graph trimmed) plus
+  `basRibbonDeferred.bas` and `basUIStrings.bas` (as-is). **131 KEPT,
+  67 REMOVED** across 5 files. `aeBibleClass.cls` is **excluded** -
+  confirmed test infrastructure (0/85 reachable from any ribbon
+  callback); the document model lives in `aeRibbonClass` +
+  `aeBibleCitationClass`.
+- `aeRibbon/template/customUI14.xml`, `BUILD.md`, `QA_CHECKLIST.md`,
+  `RELEASES.md`, `VERSION` (1.0.0+bc71416), `RoutineLog.md`,
+  `docx/README_host_docx.md`.
+- `md/aeProductionRibbonPlan.md` (NEW): plan doc; section 7 records the
+  six approved decisions including the dotm/docx production split (code
+  in `.dotm`, content in shareable `.docx`, manual save-as by
+  Editor/Developer per Option 1).
+
+Commits: `bc71416` (plan) and `70bcff3` (gateway + tooling). Pushed to
+`origin/main`.
+
+**Hand-off to the next carry-forward:** Gates G1-G8 are the next active
+work item, carried forward to
+[`rvw/Code_review 2026-05-12.md`](Code_review%202026-05-12.md). Items 2-9
+above remain open in the same priority order.
