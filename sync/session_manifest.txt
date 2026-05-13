@@ -32,6 +32,17 @@
 
 ## Files modified
 
+[IMPORT]  src/aeRibbonClass.cls
+          - LogHeadingData: added one-line guard at top -
+            `If Dir(ActiveDocument.Path & "\rpt", vbDirectory) = "" Then Exit Sub`.
+          - Root cause: latent bug. The routine writes a diagnostic CSV
+            to ActiveDocument.Path & "\rpt\HeadingLog.txt". In any host
+            folder without an rpt\ subfolder, the Open #fNum For Output
+            line raised error 76 (Path not found), surfacing as a
+            MsgBox at template/docx load. The dev .docm happens to live
+            beside C:\adaept\aeBibleClass\rpt so it never triggered.
+          - Re-import into the dev .docm files this session.
+
 [SCRIPT]  py/ribbon_export_trim.py (NEW)
           - Reads ribbon callbacks from customUI14backupRWB.xml as roots.
           - Adds AutoExec, RibbonOnLoad, Document_Open, Instance as

@@ -345,6 +345,9 @@ PROC_ERR:
 End Sub
 Public Sub LogHeadingData()
     On Error GoTo PROC_ERR
+    ' Diagnostic CSV; skip silently when no rpt\ folder exists beside the
+    ' active document (production template / docx hosts will not have one).
+    If Dir(ActiveDocument.Path & "\rpt", vbDirectory) = "" Then Exit Sub
     Const ROWS        As Long = 66
     Dim fPath         As String
     Dim sessionStamp  As String

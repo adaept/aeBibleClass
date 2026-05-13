@@ -372,3 +372,86 @@ sub-check is **GREEN**. Remaining for v1.0.0 release:
 - G8: Open production Bible `.docx` (to be produced from current dev
   `.docm` per `BUILD.md` "Producing the production Bible `.docx`") and
   run the navigation smoke checklist.
+
+### 2026-05-12 - Item 1 G6 CLOSED (+ LogHeadingData src/ fix)
+
+Two further gaps closed during the G6 finish; G6 is now done.
+
+**Gap 5 - `LogHeadingData` Path-not-found at template load (src/ fix).**
+
+Symptom: opening `aeRibbon.dotm` as a template raised
+`Error 76 (Path not found) in procedure LogHeadingData of Class
+aeRibbonClass` via a MsgBox at ribbon load. Latent bug, never triggered
+in dev because `C:\adaept\aeBibleClass\` happens to have an `rpt\`
+subfolder.
+
+Call chain: ribbon XML `onLoad="RibbonOnLoad"` ->
+`basBibleRibbonSetup.RibbonOnLoad` -> `aeRibbonClass.OnRibbonLoad` ->
+`EnableButtonsRoutine` -> `CaptureHeading1s` (essential book scan) then
+`LogHeadingData` (diagnostic CSV writer). `LogHeadingData` opened
+`ActiveDocument.Path & "\rpt\HeadingLog.txt"` for output; any host
+folder without an `rpt\` subfolder raised error 76. Would have hit G7
+(`aeRibbon\docx\`), G8 (production Bible docx folder), and every
+end-user's filesystem.
+
+Fix (Option A, approved): one-line guard at the top of `LogHeadingData`
+in `src/aeRibbonClass.cls`:
+```vb
+If Dir(ActiveDocument.Path & "\rpt", vbDirectory) = "" Then Exit Sub
+```
+Routine now exits silently when no `rpt\` exists beside the active
+document; dev behaviour where `rpt\` exists is unchanged.
+
+This is the first **src/** change of the production-export work.
+`sync/session_manifest.txt` updated to flag `src/aeRibbonClass.cls` for
+re-import into the dev `.docm` files. `py/ribbon_export_trim.py`
+re-run; `aeRibbon/src/aeRibbonClass.cls` carries the fix.
+
+**Gap 6 - Editing the template vs. a new doc from the template.**
+
+Symptom: after double-clicking `aeRibbon.dotm` in Explorer, Word's title
+bar reads "Document1" instead of `aeRibbon.dotm`. Double-clicking a
+`.dotm` tells Word to create a *new transient document from the
+template*, not to edit the template itself. VBE saves still route into
+the template (because the VBA project lives in the template that owns
+it), but Word's main File -> Save prompts to save Document1 (the wrong
+file). This is a UX trap rather than a bug.
+
+Fix (documentation):
+- `aeRibbon/BUILD.md` build-step 1 now explicitly warns against
+  double-clicking the `.dotm` for editing; right-click -> Open (or
+  File -> Open in Word) is the correct path; title bar should read
+  `aeRibbon.dotm`.
+- G6 save instruction now says **Ctrl+S in VBE**, not File -> Save in
+  Word, so the save targets the template regardless of which Word
+  document is visible.
+- Note added: on close, if Word prompts "Save changes to Document1?",
+  click **Don't Save**.
+
+**Gap 7 - "Advanced Properties" UI gone in current Word 365.**
+
+Symptom: File -> Info -> Properties -> Advanced Properties (the
+documented path to add custom document properties) does not exist in
+current Word 365 builds.
+
+Fix: `aeRibbon/BUILD.md` G6 step 2 replaced with the VBE Immediate
+window route - version-independent, single command:
+```vb
+ThisDocument.CustomDocumentProperties.Add Name:="aeRibbonVersion", LinkToContent:=False, Type:=msoPropertyTypeString, Value:="1.0.0+bc71416"
+```
+Verification line documented. Runtime error 5 on `?` query interpreted
+as "property doesn't exist yet - re-run Add". Rebuild path
+(`= "1.0.0+..."`) documented for in-place updates.
+
+**G6 result:**
+
+- `RIBBON_VERSION` constant landed in `basBibleRibbonSetup`.
+- Custom property `aeRibbonVersion = 1.0.0+bc71416` confirmed via
+  Immediate-window `?` query.
+- `aeRibbon.dotm` re-opens as a template with **no MsgBox**; ribbon
+  load is clean.
+- Compile remains GREEN.
+
+Next: G7 (open `aeRibbon-host.docx` with template loaded; verify tab
+renders), then G8 (navigation smoke against the production Bible
+`.docx`).
