@@ -43,6 +43,14 @@
             beside C:\adaept\aeBibleClass\rpt so it never triggered.
           - Re-import into the dev .docm files this session.
 
+[IMPORT]  src/basBibleRibbonSetup.bas
+          - Added `Public Const RIBBON_VERSION As String = ""` at the
+            top of the module (line 5, in the module-header region
+            before any routine). The trim script preserves the
+            declaration byte-for-byte; the per-release build step sets
+            the value in the template's copy. Source remains the
+            empty-string sentinel.
+
 [IMPORT]  src/Module1.bas
 [IMPORT]  src/aeBibleClass.cls
 [IMPORT]  src/basAuthorStyles.bas

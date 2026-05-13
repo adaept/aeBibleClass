@@ -577,3 +577,40 @@ re-import into the dev `.docm` files this session. Production
 reference `.color` (the regenerated `aeRibbon/src/` re-runs would
 include the corrected casing automatically the next time
 `py/ribbon_export_trim.py` runs).
+
+### 2026-05-13 - RIBBON_VERSION declaration site moved to dev source
+
+Improvement: `Public Const RIBBON_VERSION As String = ""` added at the
+top of `src/basBibleRibbonSetup.bas` (line 5, module-header region
+before any routine). The trim script preserves the module-header
+region byte-for-byte, so the declaration carries through to
+`aeRibbon/src/basBibleRibbonSetup.bas` automatically on every export.
+
+Before this change: `aeRibbon/BUILD.md` G6 step 1 told the operator to
+**add** the constant line during the build. That worked but had two
+weaknesses:
+- The constant had no home in the dev source. Anyone reading
+  `src/basBibleRibbonSetup.bas` had no signal that production carries
+  a version constant.
+- Every build had to remember the exact line syntax.
+
+After this change: the declaration is permanent in dev source as an
+empty-string sentinel. The per-release build step is now reduced to
+**set the value** (paste the version string from `aeRibbon/VERSION`).
+The sentinel must **not** be committed back to `src/` with a populated
+value - source stays empty, build sets the value per release.
+
+Doc updates:
+- `aeRibbon/BUILD.md` G6 step 1 rewritten: "set the value for this
+  release" instead of "add the line". Inline note that the empty
+  sentinel stays in `src/`; only the template's copy carries the
+  populated value.
+- `sync/session_manifest.txt` marks `src/basBibleRibbonSetup.bas`
+  `[IMPORT]` so the dev `.docm` files pick up the declaration too
+  (dev imports will see `RIBBON_VERSION = ""` - harmless, unused on
+  the dev side until/unless someone wires a callsite).
+
+Verification: `py/ribbon_export_trim.py` re-run; trimmed
+`aeRibbon/src/basBibleRibbonSetup.bas` line 5 reads
+`Public Const RIBBON_VERSION As String = ""`. The build operator
+edits the template's copy of the module post-import, not the source.

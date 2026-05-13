@@ -150,12 +150,26 @@ runtime behaviour.
 The compile sub-check is already green from the build steps. Two
 artefacts still need to land for G6 to close.
 
-1. **`RIBBON_VERSION` constant.** In the VBA editor, open
-   `basBibleRibbonSetup`. Immediately after `Option Explicit`, add:
+1. **`RIBBON_VERSION` constant — set the value for this release.**
+
+   The declaration line is **already present** at the top of
+   `basBibleRibbonSetup` (carried from `src/` through the trim
+   pipeline):
+   ```vb
+   Public Const RIBBON_VERSION As String = ""
+   ```
+   In the VBA editor, open `basBibleRibbonSetup`, find that line, and
+   set the value to match `aeRibbon/VERSION` for this build:
    ```vb
    Public Const RIBBON_VERSION As String = "1.0.0+bc71416"
    ```
    Re-run **Debug → Compile VBAProject** — must stay green.
+
+   Note: this is a per-build edit of the **template's** copy of the
+   module. Do not commit a populated value back into `src/` — that
+   line stays as the empty-string sentinel, ready to be set by the
+   next release's build. `aeRibbon/VERSION` is the source-of-truth
+   for which string to paste.
 
 2. **Custom document property `aeRibbonVersion`.**
 
