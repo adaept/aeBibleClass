@@ -48,10 +48,11 @@ during build.
 
 2. **Inject ribbon XML.** From repo root:
    ```bash
-   wsl python3 py/inject_ribbon.py \
-       --target aeRibbon/template/aeRibbon.dotm \
-       --xml    aeRibbon/template/customUI14.xml
+   wsl python3 py/inject_ribbon.py aeRibbon/template/aeRibbon.dotm
    ```
+   The script always reads `customUI14backupRWB.xml` at the repo root.
+   `aeRibbon/template/customUI14.xml` is a tracked snapshot of that file;
+   keep them in sync (the trim/release pipeline copies one to the other).
    (Per `[[feedback_ribbon_injector]]` — never use RibbonX Editor for this
    project; it has a known load bug.)
 

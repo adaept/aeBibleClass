@@ -204,4 +204,70 @@ for the *why*; this file holds only the **what is still open**.
 
 ## Status updates (append-only)
 
-_(none yet)_
+### 2026-05-12 - Item 1 build sequence (manual + automated split)
+
+For reference during the v1.0.0 build. The dotm build cannot be fully
+automated from a Claude session: Word's UI (Save-As, VBA editor Import,
+Compile, Custom Properties) is interactive. The split below is the
+minimum-handoff sequence.
+
+**Manual steps (Editor/Developer in Word 365):**
+
+1. **Create the empty `.dotm`.**
+   - Word -> File -> New -> Blank document.
+   - File -> Save As -> "Save as type" =
+     **Word Macro-Enabled Template (`*.dotm`)**.
+   - Save to
+     `C:\adaept\aeBibleClass\aeRibbon\template\aeRibbon.dotm`.
+   - **Close Word completely.** The file must not be open during XML
+     injection.
+
+2. **After XML injection** (automated step below): reopen
+   `aeRibbon\template\aeRibbon.dotm`, press **Alt+F11**:
+   - File -> Import File... and import in this order from
+     `aeRibbon\src\`:
+     1. `basUIStrings.bas`
+     2. `basRibbonDeferred.bas`
+     3. `aeBibleCitationClass.cls`
+     4. `aeRibbonClass.cls`
+     5. `basBibleRibbonSetup.bas`
+   - In `basBibleRibbonSetup`, after `Option Explicit`, add:
+     ```vb
+     Public Const RIBBON_VERSION As String = "1.0.0+bc71416"
+     ```
+   - **Debug -> Compile VBAProject.** Must complete with **zero errors**
+     (this is Gate G6's compile sub-check).
+
+3. **Custom property + save.**
+   - File -> Info -> Properties -> Advanced Properties -> Custom tab.
+   - Name `aeRibbonVersion`, Type Text, Value `1.0.0+bc71416`. Add. OK.
+   - Save the `.dotm`. Close Word.
+
+**Automated step (between manual 1 and manual 2):**
+
+```bash
+wsl python3 py/inject_ribbon.py aeRibbon/template/aeRibbon.dotm
+```
+
+Notes:
+- `inject_ribbon.py` takes a positional file path; it always reads the
+  ribbon XML from `customUI14backupRWB.xml` at the repo root.
+  `aeRibbon/template/customUI14.xml` is a tracked snapshot of that
+  file - the two must stay in sync.
+- The script requires the target `.dotm` to be closed in Word.
+
+**Watch points during this build:**
+
+- If VBA compile (manual step 2) fails on a missing-Sub error, the trim
+  script dropped a routine that turned out to be reachable. **Do not**
+  hand-patch `aeRibbon/src/`; instead fix the root in
+  `py/ribbon_export_trim.py` (add the routine name to roots or fix the
+  caller it was reached from), re-run the script, and re-import the
+  affected file in the VBA editor.
+- After the build is green, the production Bible `.docx` is produced
+  per `aeRibbon/BUILD.md` "Producing the production Bible `.docx`"
+  (manual File -> Save As `.docx` from the dev `.docm`) before Gate
+  G8 can run.
+
+Documented in `aeRibbon/BUILD.md` (canonical) and mirrored here for
+review-arc context.
