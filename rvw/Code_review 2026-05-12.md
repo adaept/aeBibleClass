@@ -102,7 +102,7 @@ in the descriptive style baseline.
 Originated `rvw/Code_review 2026-05-07.md`; promoted to active by the
 2026-05-11 Item 1 hand-off.
 
-### 3. Re-base remaining character styles to Default Paragraph Font (MEDIUM)
+### 3. Re-base remaining character styles to Default Paragraph Font (MEDIUM) - CLOSED 2026-05-13
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 3. No change
 in status this arc.
@@ -756,3 +756,45 @@ classifier's column-X constants accommodate the narrower
 confirmed harmless geometry variants, not classifier risks.
 
 Item 6 closes.
+
+### 2026-05-13 - Item 3 CLOSED (four character styles repointed)
+
+`?AuditCharStyleBases` reported four offenders:
+
+```
+Endnote Reference  ->  (none)
+Hyperlink          ->  (none)
+Page Number        ->  Footer Char
+Words of Jesus     ->  (none)
+```
+
+Three were built-in Word styles standing as standalone roots
+(empty `BaseStyle`); one was the chained-inheritance special case
+called out in the carry-forward (`Page Number -> Footer Char`).
+`Footer Char` itself was not an offender and was left untouched.
+
+Repoint block:
+
+```
+ActiveDocument.Styles("Page Number").BaseStyle       = "Default Paragraph Font"
+ActiveDocument.Styles("Endnote Reference").BaseStyle = "Default Paragraph Font"
+ActiveDocument.Styles("Hyperlink").BaseStyle         = "Default Paragraph Font"
+ActiveDocument.Styles("Words of Jesus").BaseStyle    = "Default Paragraph Font"
+```
+
+Post-block `?AuditCharStyleBases` -> **0**. All 34 in-use character
+styles (excluding the root `Default Paragraph Font`) are now
+explicitly rooted in the default.
+
+Caveat for the built-ins (`Hyperlink`, `Endnote Reference`,
+`Page Number`): Word can snap `BaseStyle` back to the original on
+theme switches, template reattach, or paste-from-HTML operations.
+If a future audit run re-surfaces these three, that is Word
+restoring built-in defaults, not a regression in our cleanup. The
+custom `Words of Jesus` repoint is stable.
+
+No visual changes observed - the repoints were taxonomy-only;
+none of the rerouted hops carried meaningful intermediate font
+properties.
+
+Item 3 closes.
