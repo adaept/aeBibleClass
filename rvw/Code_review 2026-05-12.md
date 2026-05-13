@@ -455,3 +455,51 @@ as "property doesn't exist yet - re-run Add". Rebuild path
 Next: G7 (open `aeRibbon-host.docx` with template loaded; verify tab
 renders), then G8 (navigation smoke against the production Bible
 `.docx`).
+
+### 2026-05-12 - Item 1 G7 CLOSED
+
+Opened `aeRibbon/docx/aeRibbon-host.docx` in a fresh Word session with
+`aeRibbon.dotm` loaded from `%APPDATA%\Microsoft\Word\STARTUP\`.
+
+Visible result:
+
+- **Radiant Word Bible** tab appears in the ribbon.
+- `Alt` shows the `Y2` tab keytip; `Alt, Y2` switches to the tab.
+- Selectors and Prev/Next buttons render **enabled** (see note below).
+  Only **Go** and **New Search** render greyed-out (`m_currentBookIndex = 0`).
+- No error dialog at load.
+
+Immediate window trace (confirmed by paste):
+```
+>> RibbonOnLoad at 23:49:45
+RibbonController: Class_Initialize at 23:49:45
+RibbonController: Ribbon ready at 23:49:45
+RibbonController: EnableButtonsRoutine
+CaptureHeading1s: Stored 0 Heading 1 entries (saved=True).
+```
+
+`AutoExec` did not print in this capture - expected: `AutoExec` fires
+when the template loads at Word startup (from the STARTUP folder),
+before VBE is opened to view the Immediate window. Per-docx open does
+not re-fire `AutoExec`. The `LogHeadingData` line is also (correctly)
+absent - the guard added in Gap 5 fires because no `rpt\` exists beside
+`aeRibbon-host.docx`.
+
+**Design clarification recorded in QA_CHECKLIST.md G7:**
+
+The expectation that "all selectors render disabled" was wrong - it
+matched the conceptual state-machine diagram in `md/Ribbon Design.md`
+but not the implementation. Actual design (verified against
+`aeRibbonClass.cls`):
+
+| Control | Enabled state | Rationale |
+|---|---|---|
+| Prev/Next Book, Chapter, Verse | always True | "always-enable (#599)"; click handlers guard bounds |
+| Book/Chapter/Verse selectors | always True | `m_ribbon.Invalidate` from `onChange` is deferred (fires after Tab routing); selectors must be enabled tab stops from initial render or Tab would skip past them |
+| Go | `m_currentBookIndex <> 0` | greys until a book is selected |
+| New Search | `m_currentBookIndex <> 0` | same |
+
+`QA_CHECKLIST.md` G7 row updated to reflect the actual design with
+inline rationale pointing at the relevant `GetEnabled` callbacks.
+
+**G7 result:** PASS. Ready for G8.

@@ -53,8 +53,13 @@ Open `aeRibbon/docx/aeRibbon-host.docx` with template attached:
 - [ ] **Radiant Word Bible** tab appears
 - [ ] No error dialog on document open
 - [ ] Immediate window shows `RibbonOnLoad` debug line
-- [ ] All Book/Chapter/Verse selectors render in disabled state (no Bible
-      content present)
+- [ ] Only **Go** and **New Search** render greyed-out. Prev/Next Book,
+      Chapter, Verse buttons and the three selectors are enabled by
+      design (always-enable per issue #599 + selectors must stay
+      enabled tab stops because `m_ribbon.Invalidate` from `onChange`
+      is deferred). Click handlers guard the bounds. See
+      `aeRibbonClass.GetNextBkEnabled` / `GetChapterEnabled` /
+      `GetVerseEnabled` for the in-code rationale.
 
 ## G8 — Smoke (production Bible docx)
 
