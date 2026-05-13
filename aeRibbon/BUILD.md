@@ -20,16 +20,23 @@ From `aeRibbon/src/`:
 
 | File | Origin | Trim status |
 |---|---|---|
-| `basBibleRibbonSetup.bas` | dev `src/` | trimmed via call-graph (see RoutineLog) |
-| `aeRibbonClass.cls`       | dev `src/` | trimmed |
-| `aeBibleCitationClass.cls`| dev `src/` | trimmed |
-| `basRibbonDeferred.bas`   | dev `src/` | as-is (all-public, all reachable) |
-| `basUIStrings.bas`        | dev `src/` | as-is |
+| `basBibleRibbonSetup.bas`        | dev `src/` | trimmed via call-graph (see RoutineLog) |
+| `basRibbonDeferred.bas`          | dev `src/` | as-is (all-public, all reachable) |
+| `basSBL_VerseCountsGenerator.bas`| dev `src/` | trimmed (keeps `GetVerseCounts` + helper; drops generators) |
+| `basUIStrings.bas`               | dev `src/` | as-is |
+| `aeBibleCitationClass.cls`       | dev `src/` | trimmed |
+| `aeRibbonClass.cls`              | dev `src/` | trimmed |
 
-`aeBibleClass.cls` is intentionally **not** in this list — it is a
-test-runner class with zero routines reachable from any ribbon callback.
-Confirmed by the first trim pass (0/85). The production document model
-lives in `aeRibbonClass` + `aeBibleCitationClass`.
+Files intentionally **not** included:
+- `aeBibleClass.cls` — test-runner class; 0/85 routines reachable from
+  any ribbon callback. Confirmed by call-graph trim.
+- `ThisDocument.cls` — Word manages the template's own `ThisDocument`
+  (decision §7.2 in `md/aeProductionRibbonPlan.md`).
+- All other modules in `src/` — author/maintainer tooling, tests,
+  generators (full list in §2.2 of the plan).
+
+The production document model lives in `aeRibbonClass` +
+`aeBibleCitationClass` (+ `GetVerseCounts` for verse counts data).
 
 From `aeRibbon/template/`:
 
@@ -57,10 +64,18 @@ during build.
    project; it has a known load bug.)
 
 3. **Import VBA modules.** Open `aeRibbon.dotm` in Word, then Alt+F11.
-   For each file in `aeRibbon/src/`:
-   - File → Import File... → select the file.
-   - Confirm it lands in the correct VBA module type (modules for `.bas`,
-     class modules for `.cls`).
+   - In the VBA editor: File → Import File... — multi-select supported.
+     Import order does **not** matter (VBA resolves references at compile
+     time, not import time).
+   - The current `aeRibbon/src/` set is **3 `.bas` + 2 `.cls`** (5 files):
+     `basBibleRibbonSetup.bas`, `basRibbonDeferred.bas`,
+     `basSBL_VerseCountsGenerator.bas`, `aeBibleCitationClass.cls`,
+     `aeRibbonClass.cls`.
+   - After import, verify in Project Explorer that the two `.cls` files
+     appear under **Class Modules** and the three `.bas` files appear
+     under **Modules**. If a `.cls` lands under Modules, the file has
+     LF-only line endings — re-run `py/ribbon_export_trim.py` (it now
+     forces CRLF) and re-import.
    - Do **not** import `ThisDocument.cls` (it isn't present).
 
 4. **Stamp the version.** Open `basBibleRibbonSetup` in the VBA editor and

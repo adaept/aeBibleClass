@@ -44,6 +44,7 @@ TRIM_FILES = [
     "basBibleRibbonSetup.bas",
     "aeRibbonClass.cls",
     "aeBibleCitationClass.cls",
+    "basSBL_VerseCountsGenerator.bas",
 ]
 ASIS_FILES = [
     "basRibbonDeferred.bas",
@@ -287,7 +288,9 @@ def write_trimmed(pf: ParsedFile, keep_names_lc: Set[str], out_path: Path) -> Tu
 
     parts.extend(pf.trailer())
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text("".join(parts), encoding="utf-8", newline="")
+    # VBA editor on Windows requires CRLF to recognize the .cls header
+    # ("VERSION 1.0 CLASS" block). Force CRLF regardless of in-memory state.
+    out_path.write_text("".join(parts), encoding="utf-8", newline="\r\n")
     return kept, dropped
 
 # ----- Main ------------------------------------------------------------------
@@ -355,7 +358,7 @@ def main() -> int:
         src_path = SRC_DIR / fname
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(src_path.read_text(encoding="utf-8"),
-                            encoding="utf-8", newline="")
+                            encoding="utf-8", newline="\r\n")
         for r in pf.routines:
             log_rows.append((fname, r.name, "KEPT", "AS-IS file (no trim applied)"))
 

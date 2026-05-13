@@ -271,3 +271,104 @@ Notes:
 
 Documented in `aeRibbon/BUILD.md` (canonical) and mirrored here for
 review-arc context.
+
+### 2026-05-12 - Item 1 first build attempt: compile GREEN
+
+`aeRibbon.dotm` v1.0.0+bc71416 built. **Debug -> Compile VBAProject:
+zero errors.** Three gaps were uncovered and closed during the build;
+all three are now defended in the toolchain so future builds will not
+re-encounter them.
+
+**Gap 1 - `inject_ribbon.py` could only replace, not bootstrap.**
+
+The existing script assumed `customUI/customUI14.xml` was already
+present in the target zip. A freshly-saved empty `.dotm` has no
+customUI part at all, so the script errored out with
+"use RibbonX Editor to add one first" - which is exactly what the
+project bans (`[[feedback_ribbon_injector]]`).
+
+Fix: `py/inject_ribbon.py` extended with a bootstrap mode (auto-detected
+when `customUI/customUI14.xml` is absent). Bootstrap adds the three
+customUI parts, patches `_rels/.rels` to add the ribbon-extensibility
+relationship, and (always, in both modes) patches `[Content_Types].xml`
+to ensure `Default Extension="png" ContentType="image/png"` is declared.
+The customUI image (`adaept.png`) is staged once at
+`aeRibbon/template/images/adaept.png` so the bootstrap is self-contained.
+
+This means **the v1.0.0 build no longer needs RibbonX Editor for the
+initial template build** - the python pipeline is sufficient.
+
+**Gap 2 - "unreadable content" on first open of the bootstrapped dotm.**
+
+Symptom: Word reported unreadable content when opening the
+post-bootstrap `aeRibbon.dotm`. Root cause: the empty `.dotm` Word
+created had `[Content_Types].xml` without a `Default Extension="png"`
+entry. When the bootstrap added `customUI/images/adaept.png`, the
+package became invalid (every part needs a declared content type).
+
+Fix folded into gap 1 above: `patch_content_types()` runs
+unconditionally (idempotent) in both bootstrap and replace modes, so
+even an inadvertently-stripped `[Content_Types].xml` gets repaired on
+every injection.
+
+**Gap 3 - `.cls` files imported as standard modules (not class modules).**
+
+Symptom: VBA editor's Project Explorer showed all `.cls` files under
+"Modules", not "Class Modules". The trimmed files had a valid
+`VERSION 1.0 CLASS` / `BEGIN` / `END` / `Attribute VB_Name` header, but
+the VBA editor's `.cls` header parser is strict about **CRLF**
+line endings and silently demotes a file to standard-module mode if it
+sees only LF.
+
+Root cause: `py/ribbon_export_trim.py` used `read_text()` (which
+normalises CRLF -> LF in memory) and `write_text(..., newline="")`
+(which writes whatever is in memory). The dev `src/` is CRLF; the
+exported `aeRibbon/src/` was LF-only.
+
+Fix: `write_text` now uses `newline="\r\n"` for both trimmed files
+and as-is copies. The exported `aeRibbon/src/` is now CRLF
+unconditionally, regardless of in-memory state.
+
+**Gap 4 - `basSBL_VerseCountsGenerator.bas` mis-classified.**
+
+Symptom: Compile failed with
+`Sub or Function not defined: GetVerseCounts`. `GetChapterVerseMap` in
+`aeBibleCitationClass.cls` calls `GetVerseCounts()`, which lives in
+`basSBL_VerseCountsGenerator.bas`. The plan §2.2 had excluded that file
+as a "generator" by filename. The file is in fact **mixed-purpose**:
+one runtime accessor (`GetVerseCounts` + helper `ToOneBasedLongArray`)
+plus three dev-time routines (`GeneratePackedVerseStrings_FromDictionary`,
+`VerifyPackedVerseMap`, `ExpectedChapterCounts`).
+
+Fix: `basSBL_VerseCountsGenerator.bas` moved into `TRIM_FILES` in
+`py/ribbon_export_trim.py`. The call-graph trim correctly keeps the
+two runtime routines and drops the three dev-time routines. Result
+recorded in `aeRibbon/RoutineLog.md`: KEPT `GetVerseCounts`,
+`ToOneBasedLongArray`; REMOVED the three generators.
+
+**Lesson:** filename-based exclusion of `src/` files is unreliable for
+mixed-purpose modules. Safer default going forward: feed every
+`.bas`/`.cls` to the trim script and let call-graph reachability decide
+membership. The current `TRIM_FILES`/`ASIS_FILES` lists are now
+empirically validated for v1.0.0 but should be revisited for v1.1.0
+when widening the production surface.
+
+**Documentation updates:**
+
+- `aeRibbon/BUILD.md` - import procedure corrected (order does not
+  matter; multi-select supported; verify Class Modules vs. Modules in
+  Project Explorer); file count corrected to 3 `.bas` + 2 `.cls`;
+  `basSBL_VerseCountsGenerator.bas` added to the parts table with its
+  trim status.
+
+**Where we are:** Gates G1-G5 satisfied (pre-build). Gate G6's compile
+sub-check is **GREEN**. Remaining for v1.0.0 release:
+
+- G6: `RIBBON_VERSION` constant set in `basBibleRibbonSetup`
+  (manual step); custom property `aeRibbonVersion` set on the `.dotm`.
+- G7: Open `aeRibbon-host.docx` (still to be authored - see
+  `aeRibbon/docx/README_host_docx.md`) with template attached; verify
+  tab renders without error.
+- G8: Open production Bible `.docx` (to be produced from current dev
+  `.docm` per `BUILD.md` "Producing the production Bible `.docx`") and
+  run the navigation smoke checklist.
