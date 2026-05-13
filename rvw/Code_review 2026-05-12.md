@@ -119,7 +119,7 @@ inheritance - repoint directly to `Default Paragraph Font`.
 
 Originated `rvw/Code_review 2026-05-08.md` 6b / 6g.
 
-### 4. Delete `Normal text` custom character style (MEDIUM)
+### 4. Delete `Normal text` custom character style (MEDIUM) - CLOSED 2026-05-13
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 4. Last
 remaining custom-and-Unapplied character style after the 9-style
@@ -130,6 +130,11 @@ it.
 `?ScanCharStyleApplications`; expect Custom Unapplied count = 0.
 
 Originated `rvw/Code_review 2026-05-08.md` 6h.
+
+Resolution: see 2026-05-13 entry below. `Normal text` did not
+actually exist; the palette entry was Word's built-in `Normal`
+(undeletable). `AuthorQuote` was the real deletable custom style
+and has been deleted.
 
 ### 5. Apply Row Pitch Diagnostic to two un-hyphenated 10-page ranges (MEDIUM)
 
@@ -665,3 +670,29 @@ Verification deferred to the next test-harness run
 runtime errors if any addition collides with an existing entry.
 Spot-checked: no collisions in the additions above against the
 pre-existing key set.
+
+### 2026-05-13 - Item 4 CLOSED (Normal text was Normal; AuthorQuote deleted)
+
+Diagnosis for item 4 ("Delete `Normal text` custom character
+style") showed `BuiltIn = False`, `Type = 2` (wdStyleTypeCharacter),
+`BaseStyle = "Default Paragraph Font"` and no dependents
+(`WhoReferencesNormalText` returned nothing). The Styles-pane
+**Delete** entry remained greyed regardless, and the style was
+set `Priority = 99` as the hide-not-delete fallback.
+
+Correction on closer look: the palette entry under suspicion was
+the built-in `Normal` style, **not** a custom `Normal text` style.
+There is no `Normal text` style in this document - the name was
+inherited from an earlier review note and never verified against
+the live palette. Built-in `Normal` is non-deletable by design;
+that is the correct end state, not a defect.
+
+The actual remaining custom-and-Unapplied character style was
+`AuthorQuote`. It has now been deleted via
+`ActiveDocument.Styles("AuthorQuote").Delete`. Re-run of
+`?ScanCharStyleApplications` is expected to report Custom
+Unapplied = 0.
+
+Net effect: Item 4 closes with a name correction
+(`Normal text` -> `AuthorQuote`) and the cleanup goal met. No
+remaining deletable character-style cruft.
