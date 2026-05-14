@@ -50,6 +50,7 @@ Option Compare Text
 '   DumpPalette                   -> diagnostic Debug.Print dump
 '   CountRunsWithColor(c)         -> exact total across all stories
 '   ReportRunsWithColor(c)        -> per-story breakdown + total
+'   ListRunsOfColorByStyle(c)     -> per-run-style breakdown + total
 '   DescribeFirstRunOfColor(c)    -> locate first explicit-override run
 '   DescribeStylesCarryingColor(c)-> find styles whose Font.Color = c
 '
@@ -95,6 +96,7 @@ Private Function BuildDefaultPalette() As Object
     AddColor d, "DarkGreen", 0,   100, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "Emerald",   80,  200, 120, "Verse marker character style."
     AddColor d, "Blue",      0,   0,   255, "Footnote Reference character style (confirmed 2026-05-13 by live-doc probe: 296 references at this color)."
+    AddColor d, "DarkBlue",  0,   0,   128, "Hyperlink + FollowedHyperlink character styles (print-locked; matches wdColorDarkBlue). Distinct from Blue so audits separate hyperlinks from Footnote References."
     AddColor d, "Gold",      255, 215, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "Orange",    255, 165, 0,   "Chapter Verse marker character style (semantic role: ChapterVerseOrange)."
     AddColor d, "Purple",    102, 51,  153, "Palette only - not currently applied in the production docx. Rebecca purple."
@@ -206,7 +208,15 @@ End Function
 '   ?CountRunsWithColor(ColorFromName("Blue"))         ' expect ~2000
 '   ?CountRunsWithColor(ColorFromName("Orange"))       ' expect N verses
 '   ?CountRunsWithColor(ColorFromName("Emerald"))      ' expect N verses
-'   ?CountRunsWithColor(&HC00000)                      ' #C00000 cleanup target
+'   ?CountRunsWithColor(RGB(192, 0, 0))                ' #C00000 cleanup target
+'                                                      ' (note: NOT &HC00000 -
+'                                                      ' that literal is a
+'                                                      ' different colour. The
+'                                                      ' histogram's "#C00000"
+'                                                      ' display is RGB notation
+'                                                      ' R=C0, G=00, B=00.
+'                                                      ' Use RGB() or
+'                                                      ' HexToLong("#C00000").)
 ' ==========================================================================
 Public Function CountRunsWithColor(ByVal rgbLong As Long) As Long
     On Error GoTo PROC_ERR
@@ -287,6 +297,81 @@ Public Sub ReportRunsWithColor(ByVal rgbLong As Long)
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportRunsWithColor of Module basBiblePalette"
+End Sub
+
+' ==========================================================================
+' ListRunsOfColorByStyle
+' ==========================================================================
+' Group every run of the given color by the run's character-style name and
+' print the counts. Use this to identify strays: the legitimate styles
+' that carry the color will appear with large counts; an outlier style
+' with a count of 1 (or any small number) is a stray candidate.
+'
+' Walks all primary StoryRanges with Find, just like CountRunsWithColor,
+' but tracks the run's Style.NameLocal at each match.
+'
+' Output shape:
+'   ListRunsOfColorByStyle: (0,0,255) #0000FF
+'     Footnote Reference   2000
+'     Hyperlink              14
+'     AuthorBodyText          1   <- the stray's style
+'     TOTAL                2015
+'
+' Usage from Immediate:
+'   ListRunsOfColorByStyle ColorFromName("Blue")
+' ==========================================================================
+Public Sub ListRunsOfColorByStyle(ByVal rgbLong As Long)
+    On Error GoTo PROC_ERR
+    Dim oDoc      As Word.Document
+    Dim story     As Word.Range
+    Dim probe     As Word.Range
+    Dim styleDict As Object
+    Dim styleName As String
+    Dim total     As Long
+    Dim k         As Variant
+
+    Set oDoc = ActiveDocument
+    Set styleDict = CreateObject("Scripting.Dictionary")
+    styleDict.CompareMode = 1   ' case-insensitive
+
+    Debug.Print "ListRunsOfColorByStyle: " & LongToRgbString(rgbLong) & _
+                " " & LongToHex(rgbLong)
+
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .Font.Color = rgbLong
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            styleName = ""
+            On Error Resume Next
+            styleName = CStr(probe.style.NameLocal)
+            On Error GoTo PROC_ERR
+            If Len(styleName) = 0 Then styleName = "(no style)"
+
+            If styleDict.Exists(styleName) Then
+                styleDict(styleName) = styleDict(styleName) + 1
+            Else
+                styleDict.Add styleName, 1
+            End If
+            total = total + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+
+    For Each k In styleDict.Keys
+        Debug.Print "  " & Left$(CStr(k) & String(28, " "), 28) & styleDict(k)
+    Next k
+    Debug.Print "  " & Left$("TOTAL" & String(28, " "), 28) & total
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ListRunsOfColorByStyle of Module basBiblePalette"
 End Sub
 
 ' ==========================================================================

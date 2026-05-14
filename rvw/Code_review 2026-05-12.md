@@ -1231,6 +1231,395 @@ unexpected styles, or vice versa) is a separate need surfaced by
 this analysis - tracked as a follow-on under item 11 once the
 authoritative counts above are confirmed.
 
+### 2026-05-13 - Item 11 authoritative counts
+
+`CountRunsWithColor` / `ReportRunsWithColor` against the live
+production docx:
+
+| Colour | Actual | Expected | Notes |
+|---|---:|---:|---|
+| Blue (Footnote Reference) | 2,015 | 2,000 | 1000 body + 1000 footnote-start + 15 surplus |
+| Orange (Chapter Verse marker) | 31,102 | 31,102 | clean match - canonical Protestant verse count |
+| Emerald (Verse marker) | 31,102 | 31,102 | clean match |
+| DarkRed (WordsOfJesus + EmphasisRed) | 2,262 | -- | contiguous runs; histogram's 47,874 was Word count |
+| `#C00000` legacy quotes | 7 | ~153 (Words) | 7 contiguous runs, each spanning many words |
+
+Two clean validations (Orange, Emerald) - the
+`Chapter Verse marker` and `Verse marker` styles are applied
+uniformly across all 31,102 verses with no missing or duplicate
+markers.
+
+Blue surplus breakdown via `ReportRunsWithColor`:
+
+```
+ReportRunsWithColor: (0,0,255) #0000FF
+  MainText            1014
+  Footnotes           1001
+  TOTAL               2015
+```
+
+Editorial reading (from the operator at the doc):
+
+- MainText surplus = 14: Word's built-in `Hyperlink` character
+  style is Blue. These are legitimate hyperlinks, not strays.
+- Footnotes surplus = 1: a single genuine stray in the Footnotes
+  story. Needs identification.
+
+#C00000 reduced from "~153 cleanup targets" to "7 hand-coloured
+quotations" - same span of content, just counted at the right
+granularity. Editorial decision (keep `#C00000` vs migrate to
+`#800000` WordsOfJesus) still pending, but the scope is smaller
+than first reported.
+
+Next probe (proposed):
+`ListRunsOfColorByStyle ColorFromName("Blue")` to group the
+2,015 Blue runs by character-style name. The one Footnotes-story
+stray will appear as the row with count 1 in some style that
+isn't `Footnote Reference` or `Hyperlink`.
+
+### 2026-05-14 - Item 11 ListRunsOfColorByStyle results
+
+```
+Blue (#0000FF) - by run style:
+  Footnote Reference   2001   <-- one extra
+  Hyperlink              12
+  AuthorListItemTab       2   <-- new finding
+  TOTAL                2015
+
+#C00000 - by run style:
+  AuthorBodyText          7
+  TOTAL                   7
+
+Orange (#FFA500) - by run style:
+  Chapter Verse marker  31102
+  TOTAL                31102
+
+Emerald (#50C878) - by run style:
+  Verse marker          31102
+  TOTAL                31102
+```
+
+**Clean validations:** Orange and Emerald show single-style
+profiles at the canonical 31,102 verse count - zero strays in
+either family. Chapter Verse marker and Verse marker styling
+is structurally perfect.
+
+**#C00000:** Single-style profile - all 7 runs in
+`AuthorBodyText`. Confirms these are 7 hand-coloured Jesus
+quotations inside commentary text. Cleanup decision pending
+(keep `#C00000` distinct vs. migrate to standard
+`WordsOfJesus` style + `#800000`).
+
+**Blue refinement:** the earlier "14 hyperlinks" was 12
+hyperlinks + 2 `AuthorListItemTab` Blue runs - a new finding.
+And the Footnotes-story surplus is itself styled
+`Footnote Reference` (the style is correct, the *count* is
+wrong: 2001 vs. expected 2000). So the stray is either:
+
+- A duplicated FR marker on one footnote (two markers where
+  one belongs), or
+- An orphan FR-styled character somewhere in the Footnotes
+  story with no associated footnote.
+
+Cannot be located by colour scan alone - the style is normal,
+only the count is anomalous. Next probe (proposed):
+`AuditFootnoteReferenceMarkers` - walks every
+`ActiveDocument.Footnotes(i)`, counts FR-styled characters
+inside each `footnote.Range`, flags the footnote whose count
+!= 1.
+
+The 2 `AuthorListItemTab` Blue runs are solvable without a new
+helper - Word's
+`Find > Format > Style: AuthorListItemTab + Font: Blue` will
+navigate to both directly.
+
+### 2026-05-14 - Item 11 stray located: footnote 218
+
+`AuditFootnoteReferenceMarkers` (added to `basStyleInspector`)
+identified the Blue surplus:
+
+```
+total FR runs in Footnotes story=1001  (inside footnote.Range=1001, orphans=0)
+  ANOMALY footnote(218): FR markers=2 (expected 1)  page=402
+  text=[lit. "adversary". The devil, fallen angel Lucifer who tempte ...]
+per-footnote check - 1 footnote(s) with FR count != 1.
+```
+
+**Footnote 218 on page 402 has 2 Footnote-Reference-styled
+markers inside its body where 1 belongs.** Body text begins
+"lit. 'adversary'. The devil, fallen angel Lucifer who tempte..."
+
+The probe went through three iterations before producing this
+clean result - worth recording the trajectory because the same
+class of false-negative will likely surface again on other
+audits:
+
+1. **Iteration 1 - per-footnote `Find.Style = "Footnote
+   Reference"` against `footnote.Range`** returned FR count = 0
+   for all 1000 footnotes. Either `footnote.Range` excludes the
+   auto-numbered marker or `Find.Style = "<string>"` does not
+   match field-result characters. Wrong methodology.
+2. **Iteration 2 - scan Footnotes story for FR runs, classify
+   each by which `footnote.Range` contains its Start position**
+   reported all 1001 FR runs as orphans. The body markers sit
+   at `footnote.Range.Start - 1` (one char before the body
+   proper), and a strict `>= Start` test rejected every
+   legitimate marker.
+3. **Iteration 3 - same scan with `MARKER_GAP = 5` backward
+   tolerance and a per-footnote tally** classified all 1001
+   correctly, and the per-footnote tally surfaced footnote 218
+   with FR count = 2. This is the stray.
+
+Used `oDoc.Styles(FR_STYLE)` (Style object) rather than the
+string `"Footnote Reference"` on `Find.Style` - the object form
+matches reliably, the string form does not in this context.
+A flood guard (`MAX_PRINT = 20`) was also added so that if
+classification ever breaks again, Immediate is not flooded with
+1000+ lines.
+
+Cleanup: open footnote 218 body, delete the duplicate auto-
+numbered marker. Editorial (manual), not scripted - destructive
+edit on production content. Re-running the audit afterward
+should return 0.
+
+Resolution: the "duplicate marker" turned out to be a
+**paragraph mark inside the footnote body that carried the
+`Footnote Reference` character style**. Deleting the paragraph
+mark itself was not desirable (would merge two paragraphs). The
+fix was to **strip the character style** from the paragraph
+mark while leaving the structural ¶ in place: select the mark,
+apply `Default Paragraph Font` via Ctrl+Shift+S (the Apply
+Styles dialog - Default Paragraph Font does not appear in the
+Styles pane under the default "Recommended" filter).
+
+Post-fix audit:
+
+```
+total FR runs in Footnotes story=1000  (inside footnote.Range=1000, orphans=0)
+per-footnote check - 0 footnote(s) with FR count != 1.
+ 0
+```
+
+Blue total in Footnotes story drops from 1001 to 1000 as
+expected. The 2015 Blue runs across the doc are now
+2000 (FR, 1000+1000) + 12 (Hyperlink) + 2 (AuthorListItemTab) =
+2014 plus whatever the structural-paragraph-mark count is after
+this fix. To reconcile precisely:
+
+```vba
+?CountRunsWithColor(ColorFromName("Blue"))   ' expect 2014
+ListRunsOfColorByStyle ColorFromName("Blue") ' expect FR=2000, Hyp=12, ALI=2
+```
+
+(Pending verification next session.)
+
+### 2026-05-14 - Hyperlinks moved to DarkBlue (palette-driven, locked)
+
+Hyperlinks previously shared pure Blue (`#0000FF`) with Footnote
+Reference - the cause of the 2014-vs-2000 audit ambiguity earlier
+today. Moving Hyperlink + FollowedHyperlink to DarkBlue
+(`#000080`, matches `wdColorDarkBlue`) disambiguates the two
+roles in every colour audit and improves print legibility.
+
+Changes:
+
+- **`basBiblePalette.bas`**: new palette entry `DarkBlue` =
+  `RGB(0,0,128)` = `#000080`. Usage field documents the
+  Hyperlink + FollowedHyperlink role and the audit-separation
+  rationale.
+- **`basTEST_aeBibleTools.bas`**: existing
+  `LockHyperlinksAlwaysBlue` rewritten as
+  `LockHyperlinksToPalette` - same three-step body (Hyperlink
+  style + FollowedHyperlink style + per-Hyperlink range), but
+  the colour is now sourced from `ColorFromName("DarkBlue")`
+  rather than hardcoded `wdColorBlue`. The old name remains as
+  a one-line alias for one cycle to defend against forgotten
+  external callers; the alias will be removed next session.
+- **`basStyleInspector.bas`**: new `AuditHyperlinkStyling`
+  function walks `ActiveDocument.Hyperlinks`, verifies each is
+  styled `Hyperlink` and coloured palette-DarkBlue, reports any
+  anomalies. Expected return is 0 after `LockHyperlinksToPalette`
+  runs; non-zero on subsequent audits means a pasted hyperlink
+  has escaped the convention.
+- **`EDSG/01-styles.md`**: new section *"State-aware styles:
+  print-locking"* documents the design pattern (Hyperlink /
+  FollowedHyperlink as canonical case, lock both states to the
+  same palette colour, audit via the matching `Audit*` function).
+
+Operator sequence to apply:
+
+```
+LockHyperlinksToPalette         ' rewrites all 12 hyperlinks
+?AuditHyperlinkStyling          ' expect 0
+?CountRunsWithColor(ColorFromName("Blue"))      ' expect 2000 (drops by 12)
+?CountRunsWithColor(ColorFromName("DarkBlue"))  ' expect 12
+ListRunsOfColorByStyle ColorFromName("Blue")    ' expect single row: FR=2000
+ListRunsOfColorByStyle ColorFromName("DarkBlue")' expect: Hyperlink=12 (and any
+                                                ' AuthorListItemTab that picked
+                                                ' up the new colour through
+                                                ' style inheritance, TBD)
+```
+
+The 2 `AuthorListItemTab` Blue runs may or may not be related
+to hyperlinks (they appeared in the Blue histogram before this
+change). The post-change DarkBlue grouping will reveal: if
+AuthorListItemTab stays in the Blue bucket, the 2 runs are
+independent of hyperlinks and need their own investigation;
+if they migrate to DarkBlue, they were inheriting from
+Hyperlink and the migration is transparent.
+
+### 2026-05-14 - Hyperlink lock applied; 2-vs-14 collection gap reframed
+
+Post-`LockHyperlinksToPalette` measurements:
+
+```
+AuditHyperlinkStyling: 2 hyperlinks checked, 0 anomalies (initial version)
+CountRunsWithColor(Blue)         = 2000   (drops from 2014, pure FR now)
+CountRunsWithColor(DarkBlue)     = 14     (operator-confirmed correct)
+ListRunsOfColorByStyle(Blue)     = Footnote Reference 2000  (clean)
+ListRunsOfColorByStyle(DarkBlue) = Hyperlink 14             (clean)
+```
+
+The 2 `AuthorListItemTab` Blue runs migrated to DarkBlue
+transparently (they were inheriting from the Hyperlink style;
+the style colour change propagated automatically).
+
+**2-vs-14 collection gap:**
+`ActiveDocument.Hyperlinks.Count = 2` but 14 runs carry the
+Hyperlink character style. Operator-confirmed: all 14 are in
+MainText and are **concordance navigation links** - most likely
+REF / PAGEREF / HYPERLINK field-result runs styled as
+Hyperlink rather than first-class `Hyperlink` collection
+objects. The collection only includes the 2 with an actual
+`.Address` property.
+
+**Implication for the lock and audit routines:** iterating
+`Doc.Hyperlinks` covers only the 2 collection objects; the
+other 12 are reached only through style-level inheritance
+(steps 1 + 2 of LockHyperlinksToPalette which modify the
+Style.Font.Color globally). That worked here, but the per-
+instance step 3 missed 12, and the audit checked only 2 - the
+"0 anomalies / 2 checked" report was misleading about coverage.
+
+**Fix this session:**
+
+- **`LockHyperlinksToPalette`** rewritten to walk every
+  `StoryRange`, Find runs styled `Hyperlink`, and force their
+  `Font.Color` / `Font.Underline`. Covers all 14 (and any
+  future field-result runs). Reports the total locked in the
+  completion MsgBox so coverage is visible.
+- **`AuditHyperlinkStyling`** rewritten on the same model:
+  Find-by-style across all StoryRanges, verify colour +
+  underline. Reports anomaly count over the full styled
+  population, not just collection-Hyperlinks. Anomaly rows
+  now include the StoryType, page, current colour, current
+  underline, and a text snippet.
+- **`ReportHyperlinkStoryDistribution`** added as a one-shot
+  diagnostic: per StoryRange, prints `Hyperlinks.Count` vs
+  Hyperlink-styled-run count. The gap between the two columns
+  shows how much of the style-discipline picture the
+  collection misses. Useful baseline before/after any future
+  hyperlink work.
+
+Post-rewrite verification (pending re-import):
+
+```vba
+?AuditHyperlinkStyling             ' expect 0 anomalies / 14 styled runs checked
+ReportHyperlinkStoryDistribution   ' expect MainText: Hyperlinks.Count=2, styled runs=14
+```
+
+The story-distribution probe confirms the operator's
+"all 14 in MainText" reading and quantifies the field-result
+vs collection-object split (expected 2 collection + 12
+field-result = 14 styled total, all in MainText).
+
+### 2026-05-14 - Hyperlink lock post-rewrite measurements + footnote-link finding
+
+Re-running after the Find-by-style rewrite:
+
+```
+LockHyperlinksToPalette
+  19 Hyperlink-styled runs across all stories; visited state neutralized.
+
+?AuditHyperlinkStyling
+  19 Hyperlink-styled run(s) checked, 0 anomaly/anomalies.
+
+ReportHyperlinkStoryDistribution
+  StoryType=1 (MainText)   Hyperlinks.Count=2  Hyperlink-styled runs=19
+  StoryType=2 (Footnotes)  Hyperlinks.Count=1  Hyperlink-styled runs=0
+  TOTAL across stories: collection=3  styled runs=19
+```
+
+**Why 19 styled runs vs 14 visible/clickable links (operator's
+manual count).** `Find.Font.Color = X` matches **explicit
+run-level overrides only**, not inherited colour from the style
+chain. The earlier `CountRunsWithColor(DarkBlue) = 14` was
+under-counting: 14 Hyperlink-styled runs carried an explicit
+DarkBlue override (from the first lock pass), 5 inherited
+DarkBlue from `Styles("Hyperlink").Font.Color` without an
+explicit override. Visually identical, count divergent. The new
+step-3 walker forced explicit DarkBlue + underline on all 19, so
+all match Find criteria now. (Same class of explicit-vs-inherited
+calibration we hit earlier with `wdUndefined` mixed-color Words
+and footnote markers; recurring sharp edge worth a EDSG note.)
+
+**Operator-confirmed editorial rule: no hyperlinks in footnotes.**
+The Footnote-story collection Hyperlink is therefore a
+**rule-violation finding**, not a coverage gap to patch out. Live
+state:
+
+```
+?ActiveDocument.StoryRanges(wdFootnotesStory).Hyperlinks(1).Address
+  http://archaeology.about.com/od/jterms/qt/jericho.htm
+?...Hyperlinks(1).Range.Style.NameLocal -> "Footnote Text"
+?...Hyperlinks(1).Range.Font.Color      -> -16777216 (wdColorAutomatic)
+```
+
+A real external URL was inserted into a footnote and never
+restyled. It renders as plain Footnote Text - no DarkBlue, no
+underline, no clickable affordance. Per the rule, the cleanup is
+**review and delete the hyperlink object** (or, if the URL is
+worth retaining as a citation, replace with plain text). NOT
+restyle to Hyperlink.
+
+The lock routine was deliberately **not** extended to walk
+collection Hyperlinks across all stories: doing so would have
+"fixed" this finding silently by restyling and recolouring,
+masking future violations of the no-hyperlinks-in-footnotes
+rule. Current behaviour (Find-by-style in step 3 only) preserves
+the finding's visibility.
+
+**Proposed formalisation as a RUN_THE_TESTS entry:** the rule
+"no Hyperlink collection entries in `wdFootnotesStory`" is a
+single-assert audit, trivially codified. Operator will propose
+a test number; implementation will move from `basStyleInspector`
+into `aeBibleClass`'s test surface when the slot is assigned.
+Shape:
+
+```vba
+Public Function AuditFootnoteHyperlinks() As Long
+    Dim story As Word.Range, n As Long
+    For Each story In ActiveDocument.StoryRanges
+        If story.StoryType = wdFootnotesStory Then
+            n = story.Hyperlinks.Count
+            Exit For
+        End If
+    Next story
+    Debug.Print "AuditFootnoteHyperlinks: " & n & " collection Hyperlink(s) in Footnotes story (expected 0)."
+    AuditFootnoteHyperlinks = n
+End Function
+```
+
+**Open follow-on:** the 5 Hyperlink-styled runs in MainText that
+operator did NOT count among the 14 visible/clickable links.
+They carry the style without being collection-Hyperlinks (and
+aren't the 12 concordance field-result navigation either, based
+on the 2 + 12 = 14 expected split). Likely stale style
+application from imports or hand-styled "looks like a link"
+text. Listing them per-run for visual identification is a
+follow-on probe if needed; deferred pending decision on whether
+to chase.
+
 ### 11. Identify unnamed colours in production docx (RESEARCH)
 
 Surfaced 2026-05-13 from item 10 Q3 histogram. The production

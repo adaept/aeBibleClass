@@ -90,6 +90,57 @@
             undercounting single-char colored runs.
           - ReportRunsWithColor(rgbLong): same scan with per-story
             breakdown printed to Immediate.
+          - ListRunsOfColorByStyle(rgbLong): same scan, groups runs
+            by their character-style name. Use this to identify
+            strays - the legitimate styles appear with large counts,
+            an outlier style with count 1 (or small N) is a stray
+            candidate.
+
+[IMPORT]  src/basStyleInspector.bas
+          - AuditFootnoteReferenceMarkers() As Long: walks
+            ActiveDocument.Footnotes, counts FR-styled characters
+            inside each footnote.Range, flags footnotes with count
+            != 1. Surfaced by item 11 (Blue FR count was 2001 vs
+            expected 2000). Returns anomaly count; expected 0 in
+            a clean doc.
+          - AuditHyperlinkStyling() As Long: walks all StoryRanges,
+            Find runs styled "Hyperlink", verifies Font.Color =
+            palette DarkBlue and Underline = single. Covers ALL
+            Hyperlink-styled runs including REF/HYPERLINK field-
+            result runs not in the Hyperlinks collection. Returns 0
+            after LockHyperlinksToPalette; non-zero means a pasted
+            hyperlink-styled run escaped the convention.
+          - ReportHyperlinkStoryDistribution: diagnostic - per
+            StoryRange, prints Hyperlinks.Count vs Hyperlink-styled-
+            run count. The gap shows field-result-style hyperlinks
+            that the collection misses.
+
+[IMPORT]  src/basTEST_aeBibleTools.bas
+          - LockHyperlinksAlwaysBlue rewritten as
+            LockHyperlinksToPalette. Step 3 (per-run formatting) now
+            walks ALL StoryRanges by Find-style rather than just
+            Doc.Hyperlinks, so it covers REF/HYPERLINK field-result
+            runs (e.g. concordance navigation) that carry the
+            Hyperlink character style without being collection-
+            Hyperlink objects. Colour now sourced from
+            ColorFromName("DarkBlue") rather than hardcoded
+            wdColorBlue. Original name remains as a one-cycle alias
+            to defend against forgotten callers.
+          - Motivation: Hyperlinks previously shared pure Blue
+            with Footnote Reference, causing audit ambiguity.
+            DarkBlue (#000080) disambiguates and matches
+            wdColorDarkBlue.
+
+[DOC]     EDSG/01-styles.md
+          - New section "State-aware styles: print-locking"
+            documents the Hyperlink / FollowedHyperlink lock
+            pattern as the canonical example. Pairs with
+            LockHyperlinksToPalette + AuditHyperlinkStyling.
+
+[DOC]     src/basBiblePalette.bas
+          - New palette entry: DarkBlue = RGB(0,0,128) = #000080.
+            Usage documents the Hyperlink + FollowedHyperlink role
+            and the audit-separation rationale vs Blue.
           - Module-header scope note corrected: the histogram
             (ListAndCountFontColors via ActiveDocument.Words)
             reads RESOLVED Range.Font.Color, so style-inherited

@@ -2606,41 +2606,78 @@ Public Sub CountPollutedParagraphMarksReport()
         vbInformation
 End Sub
 
-Public Sub LockHyperlinksAlwaysBlue()
+' LockHyperlinksToPalette
+' ------------------------
+' Three-step lock that holds all Hyperlink-styled runs in the document
+' to a single palette-driven appearance, immune to the followed-link
+' state change:
+'
+'   1. Force Styles("Hyperlink").Font to (palette DarkBlue + underline).
+'   2. Force Styles("FollowedHyperlink").Font to the same (neutralises
+'      the visited-state colour shift entirely - print-target docs need
+'      stable appearance regardless of interactive clicks).
+'   3. Walk every StoryRange, Find runs whose character style is
+'      "Hyperlink", and force their Font.Color + Underline. This
+'      covers Hyperlink-styled runs that are NOT in the
+'      ActiveDocument.Hyperlinks collection - typically REF/HYPERLINK
+'      field-result runs used by concordance navigation, which carry
+'      the style without being collection-Hyperlink objects.
+'
+' Manual only - run when hyperlinks are added or changed; the audit
+' AuditHyperlinkStyling catches drift between runs.
+'
+' See EDSG/01-styles.md "State-aware styles: print-locking" for the
+' design pattern.
+Public Sub LockHyperlinksToPalette()
+    Dim doc   As Document
+    Dim story As Word.Range
+    Dim probe As Word.Range
+    Dim c     As Long
+    Dim total As Long
 
-    Dim hl As Hyperlink
-    Dim rng As Word.Range
-    Dim doc As Document
-    
     Set doc = ActiveDocument
+    c = ColorFromName("DarkBlue")
 
-    ' --- Force Hyperlink style ---
     With doc.Styles("Hyperlink").Font
-        .Color = wdColorBlue
+        .Color = c
         .Underline = wdUnderlineSingle
     End With
-
-    ' --- Force FollowedHyperlink style (visited links) ---
     With doc.Styles("FollowedHyperlink").Font
-        .Color = wdColorBlue
+        .Color = c
         .Underline = wdUnderlineSingle
     End With
 
-    ' --- Apply to all existing hyperlinks ---
-    For Each hl In doc.Hyperlinks
-        Set rng = hl.Range
-        
-        With rng.Font
-            .Color = wdColorBlue
-            .Underline = wdUnderlineSingle
+    For Each story In doc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = doc.Styles("Hyperlink")
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
         End With
-        
-        ' Ensure Word uses the hyperlink style, not manual formatting
-        rng.style = doc.Styles("Hyperlink")
-    Next hl
+        Do While probe.Find.Execute
+            probe.Font.Color = c
+            probe.Font.Underline = wdUnderlineSingle
+            total = total + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
 
-    MsgBox "Hyperlinks locked to blue (visited state neutralized).", vbInformation
+    MsgBox "Hyperlinks locked to palette DarkBlue (" & total & _
+           " Hyperlink-styled runs across all stories; visited state neutralized).", _
+           vbInformation
+End Sub
 
+' LockHyperlinksAlwaysBlue
+' ------------------------
+' Compatibility alias for one cycle. Delegates to LockHyperlinksToPalette.
+' New code should call LockHyperlinksToPalette directly. This shim will
+' be removed in a future session once any external references are gone.
+Public Sub LockHyperlinksAlwaysBlue()
+    LockHyperlinksToPalette
 End Sub
 
 Public Sub ConvertHyperlinksToPlainURLs()

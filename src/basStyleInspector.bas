@@ -835,3 +835,321 @@ Public Function ScanCharStyleApplications() As Long
     Debug.Print "  Deletable cruft (Unapplied & Custom): " & nUnaCu
     ScanCharStyleApplications = nUnaCu
 End Function
+
+'==============================================================================
+' AuditFootnoteReferenceMarkers
+'==============================================================================
+' Scan the Footnotes story for "Footnote Reference"-styled runs. For each
+' run, determine which footnote (if any) contains it by comparing the
+' run's Start position against each footnote.Range start/end. Report runs
+' that fall outside every footnote.Range - those are orphan FR markers
+' (the stray we are hunting).
+'
+' Why this approach: the more obvious "walk each footnote, count its FR
+' markers" loop fails on this document. footnote.Range either excludes
+' the auto-numbered marker or Find with .Style = "Footnote Reference"
+' does not match the field-result character, so the per-footnote
+' walker returns 0 even for legitimate footnotes. Scanning the
+' Footnotes story directly and classifying by position is reliable
+' regardless of whether Range includes the auto-number.
+'
+' Output:
+'   - One line per orphan FR run (if any), with story position and text.
+'   - Summary: total FR runs in Footnotes story, count inside a footnote,
+'     count of orphans.
+'
+' RETURN:
+'   Orphan count. Expected 0 in a clean document.
+'
+' Usage from Immediate:
+'   ?AuditFootnoteReferenceMarkers
+'==============================================================================
+Public Function AuditFootnoteReferenceMarkers() As Long
+    Const FR_STYLE As String = "Footnote Reference"
+    Const MAX_SNIP As Long = 60
+    Dim oDoc       As Word.Document
+    Dim story      As Word.Range
+    Dim s          As Word.Range
+    Dim probe      As Word.Range
+    Dim totalFn    As Long
+    Dim fnStart()  As Long
+    Dim fnEnd()    As Long
+    Dim i          As Long
+    Dim runStart   As Long
+    Dim totalFR    As Long
+    Dim insideCnt  As Long
+    Dim orphans    As Long
+    Dim inFn       As Long
+    Dim snip       As String
+    Dim frPerFn()  As Long
+    Dim anomalies  As Long
+    Dim pageNum    As Long
+
+    Set oDoc = ActiveDocument
+
+    ' Find the Footnotes story.
+    For Each s In oDoc.StoryRanges
+        If s.StoryType = wdFootnotesStory Then
+            Set story = s
+            Exit For
+        End If
+    Next s
+    If story Is Nothing Then
+        Debug.Print "AuditFootnoteReferenceMarkers: no Footnotes story in this document."
+        AuditFootnoteReferenceMarkers = 0
+        Exit Function
+    End If
+
+    ' Snapshot each footnote's range bounds for fast in-range tests.
+    totalFn = oDoc.Footnotes.Count
+    If totalFn = 0 Then
+        Debug.Print "AuditFootnoteReferenceMarkers: no footnotes in this document."
+        AuditFootnoteReferenceMarkers = 0
+        Exit Function
+    End If
+    ReDim fnStart(1 To totalFn)
+    ReDim fnEnd(1 To totalFn)
+    ReDim frPerFn(1 To totalFn)
+    For i = 1 To totalFn
+        fnStart(i) = oDoc.Footnotes(i).Range.Start
+        fnEnd(i) = oDoc.Footnotes(i).Range.End
+    Next i
+
+    Debug.Print "AuditFootnoteReferenceMarkers: " & totalFn & _
+                " footnote(s); scanning Footnotes story for """ & FR_STYLE & """ runs..."
+
+    Set probe = story.Duplicate
+    With probe.Find
+        .ClearFormatting
+        .Text = ""
+        .style = oDoc.Styles(FR_STYLE)
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = True
+        .MatchWildcards = False
+    End With
+
+    ' Word's auto-numbered footnote marker sits at Range.Start - 1 in the
+    ' Footnotes story (one character before the footnote body proper).
+    ' MARKER_GAP covers that boundary so the marker is classified as
+    ' belonging to its footnote rather than counted as an orphan.
+    Const MARKER_GAP As Long = 5
+    ' Avoid flooding Immediate when classification is broken: at most
+    ' MAX_PRINT orphan lines are printed verbatim. Beyond that, the
+    ' summary count still includes all of them.
+    Const MAX_PRINT  As Long = 20
+
+    Do While probe.Find.Execute
+        totalFR = totalFR + 1
+        runStart = probe.Start
+        inFn = -1
+        For i = 1 To totalFn
+            If runStart >= (fnStart(i) - MARKER_GAP) And runStart < fnEnd(i) Then
+                inFn = i
+                Exit For
+            End If
+        Next i
+        If inFn = -1 Then
+            orphans = orphans + 1
+            If orphans <= MAX_PRINT Then
+                snip = probe.Text
+                If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
+                snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
+                Debug.Print "  ORPHAN FR run at Story.Pos=" & runStart & _
+                            "  text=[" & snip & "]"
+            ElseIf orphans = MAX_PRINT + 1 Then
+                Debug.Print "  ... (additional orphans suppressed; see total in summary)"
+            End If
+        Else
+            insideCnt = insideCnt + 1
+            frPerFn(inFn) = frPerFn(inFn) + 1
+        End If
+        probe.Collapse wdCollapseEnd
+    Loop
+
+    Debug.Print "AuditFootnoteReferenceMarkers: total FR runs in Footnotes story=" & _
+                totalFR & "  (inside footnote.Range=" & insideCnt & _
+                ", orphans=" & orphans & ")"
+
+    ' Per-footnote anomaly check: any footnote whose FR-marker count
+    ' inside its bounds is not exactly 1 is anomalous. The single duplicate
+    ' that produced the 2001-vs-2000 surplus surfaces here.
+    For i = 1 To totalFn
+        If frPerFn(i) <> 1 Then
+            anomalies = anomalies + 1
+            On Error Resume Next
+            pageNum = -1
+            pageNum = oDoc.Footnotes(i).Reference.Information(wdActiveEndPageNumber)
+            snip = ""
+            snip = oDoc.Footnotes(i).Range.Text
+            On Error GoTo 0
+            If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
+            snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
+            Debug.Print "  ANOMALY footnote(" & i & "): FR markers=" & frPerFn(i) & _
+                        " (expected 1)  page=" & pageNum & _
+                        "  text=[" & snip & "]"
+        End If
+    Next i
+
+    Debug.Print "AuditFootnoteReferenceMarkers: per-footnote check - " & _
+                anomalies & " footnote(s) with FR count != 1."
+    AuditFootnoteReferenceMarkers = orphans + anomalies
+End Function
+
+'==============================================================================
+' AuditHyperlinkStyling
+'==============================================================================
+' Verify every Hyperlink-styled run in the document is locked to the
+' palette DarkBlue convention. Walks all primary StoryRanges and Finds
+' runs by character style "Hyperlink" - this covers BOTH:
+'
+'   - Real ActiveDocument.Hyperlinks collection entries (clickable
+'     links with an .Address property), and
+'   - Hyperlink-character-styled runs that are NOT in the collection
+'     (typically REF / HYPERLINK / PAGEREF field-result runs used for
+'     concordance navigation, which carry the style without being
+'     Hyperlink objects).
+'
+' For each match, verify:
+'   - Font.Color     = ColorFromName("DarkBlue")
+'   - Font.Underline = wdUnderlineSingle
+'
+' Anomalies are reported; expected 0 after LockHyperlinksToPalette runs.
+'
+' Output:
+'   One line per anomaly (story, page, current colour, current underline,
+'   run text snippet), then a summary count.
+'
+' RETURN:
+'   Anomaly count.
+'
+' Usage from Immediate:
+'   ?AuditHyperlinkStyling
+'==============================================================================
+Public Function AuditHyperlinkStyling() As Long
+    Const EXPECTED_STYLE As String = "Hyperlink"
+    Const MAX_SNIP       As Long = 40
+    Dim oDoc       As Word.Document
+    Dim story      As Word.Range
+    Dim probe      As Word.Range
+    Dim runColor   As Long
+    Dim runUL      As Long
+    Dim expected   As Long
+    Dim pageNum    As Long
+    Dim anomalies  As Long
+    Dim total      As Long
+    Dim snip       As String
+    Dim storyName  As String
+
+    Set oDoc = ActiveDocument
+    expected = ColorFromName("DarkBlue")
+
+    Debug.Print "AuditHyperlinkStyling: scanning all stories for """ & _
+                EXPECTED_STYLE & """-styled runs; expecting color=" & _
+                expected & " " & LongToHex(expected) & " + underline single..."
+
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            total = total + 1
+            runColor = probe.Font.Color
+            runUL = probe.Font.Underline
+            If runColor <> expected Or runUL <> wdUnderlineSingle Then
+                anomalies = anomalies + 1
+                pageNum = -1
+                On Error Resume Next
+                pageNum = probe.Information(wdActiveEndPageNumber)
+                On Error GoTo 0
+                snip = probe.Text
+                If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
+                snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
+                storyName = "StoryType=" & story.StoryType
+                Debug.Print "  ANOMALY " & storyName & _
+                            "  page=" & pageNum & _
+                            "  color=" & runColor & " " & LongToHex(runColor) & _
+                            "  underline=" & runUL & _
+                            "  text=[" & snip & "]"
+            End If
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+
+    Debug.Print "AuditHyperlinkStyling: " & total & " Hyperlink-styled run(s) checked, " & _
+                anomalies & " anomaly/anomalies."
+    AuditHyperlinkStyling = anomalies
+End Function
+
+'==============================================================================
+' ReportHyperlinkStoryDistribution
+'==============================================================================
+' Diagnostic: for each StoryRange, print
+'   (a) the count of Hyperlinks collection entries, and
+'   (b) the count of Hyperlink-character-styled runs (via Find).
+'
+' The two counts can differ - real Hyperlinks objects always carry the
+' Hyperlink style, but Hyperlink-styled REF / HYPERLINK field-result
+' runs (e.g. concordance navigation) carry the style without being in
+' the Hyperlinks collection. The gap tells you how much of the
+' style-discipline picture the Hyperlinks collection misses.
+'
+' Usage from Immediate:
+'   ReportHyperlinkStoryDistribution
+'==============================================================================
+Public Sub ReportHyperlinkStoryDistribution()
+    Const EXPECTED_STYLE As String = "Hyperlink"
+    Dim oDoc        As Word.Document
+    Dim story       As Word.Range
+    Dim probe       As Word.Range
+    Dim collCount   As Long
+    Dim styleCount  As Long
+    Dim totalColl   As Long
+    Dim totalStyle  As Long
+    Dim storyName   As String
+
+    Set oDoc = ActiveDocument
+    Debug.Print "ReportHyperlinkStoryDistribution: per-story counts of Hyperlinks collection vs Hyperlink-styled runs"
+
+    For Each story In oDoc.StoryRanges
+        collCount = 0
+        On Error Resume Next
+        collCount = story.Hyperlinks.Count
+        On Error GoTo 0
+
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        styleCount = 0
+        Do While probe.Find.Execute
+            styleCount = styleCount + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+
+        If collCount > 0 Or styleCount > 0 Then
+            storyName = "StoryType=" & story.StoryType
+            Debug.Print "  " & Left$(storyName & String(24, " "), 24) & _
+                        "Hyperlinks.Count=" & collCount & _
+                        "  Hyperlink-styled runs=" & styleCount
+        End If
+        totalColl = totalColl + collCount
+        totalStyle = totalStyle + styleCount
+    Next story
+
+    Debug.Print "  TOTAL across stories: collection=" & totalColl & _
+                "  styled runs=" & totalStyle
+End Sub

@@ -232,6 +232,43 @@ approved style. Documented exceptions only. See `rvw/Code_review
 — direct formatting on one paragraph silently rewrites the style for
 all others using it. Always `False`.
 
+## State-aware styles: print-locking
+
+Some Word character styles change appearance based on interactive
+state. The canonical case is the **Hyperlink / FollowedHyperlink**
+pair: an unvisited link renders one way, a clicked-once link shifts to
+the FollowedHyperlink colour. That state shift is fine for digital
+reading but breaks print-target consistency — the printed page reflects
+the reader's current click history rather than a stable design.
+
+**Print-locking pattern.** Force the state-aware style to match its
+non-state counterpart, so the visited / followed state has no visible
+effect:
+
+1. Set `Styles("Hyperlink").Font` to the target palette colour +
+   underline.
+2. Set `Styles("FollowedHyperlink").Font` to the **same** colour +
+   underline.
+3. For every existing instance (here, every `Doc.Hyperlinks`), force
+   `Range.Style = Hyperlink` so manual run-level formatting can't
+   override the style.
+
+Reference implementation: `LockHyperlinksToPalette` in
+`basTEST_aeBibleTools` (sources colour from
+[`basBiblePalette`](../src/basBiblePalette.bas) → `"DarkBlue"`,
+`#000080`). Drift audit: `?AuditHyperlinkStyling` in
+`basStyleInspector` — returns 0 when every hyperlink in the doc
+matches the convention.
+
+**Why DarkBlue, not Blue.** `Footnote Reference` style already
+occupies pure Blue (`#0000FF`). Keeping `Hyperlink` on the same colour
+collides in any colour audit and reads similarly in print. Moving
+hyperlinks to `DarkBlue` (`#000080`, matches `wdColorDarkBlue`)
+disambiguates the two roles without sacrificing the "this is a link"
+underline signal. The pattern extends to any future state-aware
+character style — pick a print-stable palette colour, then lock both
+states to it.
+
 ## How to add a new style
 
 See [02-editing-process](02-editing-process.md) § Style design.
