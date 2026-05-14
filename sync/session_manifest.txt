@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-05-12
+# Claude Session Manifest -- 2026-05-13
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,102 +13,84 @@
 
 ## Session themes
 
-1. Establish aeRibbon/ production export gateway:
-   - aeRibbon/src/   - trimmed VBA, call-graph reachable from ribbon XML
-   - aeRibbon/template/customUI14.xml
-   - aeRibbon/docx/  - host docx instructions (Gate G7)
-   - aeRibbon/releases/  - per-version build artefacts
-   - aeRibbon/RoutineLog.md, BUILD.md, QA_CHECKLIST.md, RELEASES.md, VERSION
-2. md/aeProductionRibbonPlan.md authored and approved (decisions 1-6 in
-   plan section 7).
-3. py/ribbon_export_trim.py: call-graph trim of ribbon production sources;
-   idempotent; preserves VBA lifecycle hooks (Class_Initialize,
-   Class_Terminate, AutoExec).
-4. Architectural corrections recorded in the plan:
-   - aeBibleClass.cls is test infrastructure, not the doc model -
-     excluded from aeRibbon/src/.
-   - Production end-user document is .docx (code-free, shareable),
-     produced manually by Editor/Developer per BUILD.md.
+1. Bible book abbreviation reference doc authored and
+   GetBookAliasMap expanded to match it (item closed inline).
+2. EDSG/11 expanded with the search-expansion / two-Like-fallthrough
+   explanation; EDSG/README cross-references the new abbreviation
+   doc as a source-of-truth row.
+3. Carry-forward review arc progressed:
+   - Item 4 CLOSED (Normal text was Word built-in `Normal`;
+     `AuthorQuote` was the real cruft; deleted).
+   - Items 5 + 7 WONTFIX (Row Pitch Diagnostic manual workflow is
+     faster than the survey-histogram-review cycle; --clear helper
+     has no consumer once its parent workflow is shelved).
+   - Item 6 CLOSED (page-886 dry-run sweep: 9 finds, all Active,
+     0 OutsideBody; classifier accommodates 186.1/36.0/186.1
+     anomaly geometry).
+   - Item 3 CLOSED (four character styles repointed to
+     Default Paragraph Font; post-audit = 0).
+4. Item 2 Step A: new basBiblePalette.bas module - single source of
+   truth for named colors used / allowed in the docx. Additive
+   only; no existing call sites rewired (Step B deferred).
+5. New research item 10 surfaced from Step A (legacy red-footnote
+   probe, Footnote Reference colour conflict, possible residual
+   wdColorBlack overrides).
 
 ## Files modified
 
-[IMPORT]  src/aeRibbonClass.cls
-          - LogHeadingData: added one-line guard at top -
-            `If Dir(ActiveDocument.Path & "\rpt", vbDirectory) = "" Then Exit Sub`.
-          - Root cause: latent bug. The routine writes a diagnostic CSV
-            to ActiveDocument.Path & "\rpt\HeadingLog.txt". In any host
-            folder without an rpt\ subfolder, the Open #fNum For Output
-            line raised error 76 (Path not found), surfacing as a
-            MsgBox at template/docx load. The dev .docm happens to live
-            beside C:\adaept\aeBibleClass\rpt so it never triggered.
-          - Re-import into the dev .docm files this session.
+[IMPORT]  src/aeBibleCitationClass.cls
+          - GetBookAliasMap extended with ~45 missing UPPERCASE
+            ASCII abbreviations to mirror md/BibleAbbreviationList.md.
+          - All entries 2+ chars (single-letter prohibition holds).
+          - Closed-up no-space forms (1SA, 2PE, 1JO, ...) added
+            alongside the spaced forms (1 SA, 2 PE, 1 JN, ...).
+          - No removals; no key collisions with the pre-existing set.
 
-[IMPORT]  src/basBibleRibbonSetup.bas
-          - Added `Public Const RIBBON_VERSION As String = ""` at the
-            top of the module (line 5, in the module-header region
-            before any routine). The trim script preserves the
-            declaration byte-for-byte; the per-release build step sets
-            the value in the template's copy. Source remains the
-            empty-string sentinel.
+[IMPORT]  src/basBiblePalette.bas (NEW)
+          - Single source of truth for named colors.
+          - Public Type PaletteColor (Name, R, G, B, RgbLong,
+            HexCode, Usage).
+          - GetPalette(theme) -> Dictionary keyed by Name.
+            Only theme="Default" populated; "Dark"/"Colorblind"
+            raise "not implemented".
+          - Helpers: ColorFromName, NameFromColor, LongToHex,
+            HexToLong, LongToRgbString, DumpPalette.
+          - 12 colors: Black, White, Red, DarkRed, Green,
+            DarkGreen, Emerald, Blue, Gold, Orange, Purple, Gray.
+          - wdColorAutomatic deliberately excluded (sentinel, not
+            a color). Office ObjectThemeColor deliberately excluded.
+          - Late binding (Scripting.Dictionary via CreateObject).
+            No project references added.
+          - Step A is additive only; existing call sites
+            (Module1.HexToRGB, basTEST_aeBibleTools.GetColorNameFromHex,
+            basTEST_aeBibleTools.ListAndCountFontColors,
+            aeBibleClass.ColorToHex) are NOT yet rewired.
 
-[IMPORT]  src/Module1.bas
-[IMPORT]  src/aeBibleClass.cls
-[IMPORT]  src/basAuthorStyles.bas
-[IMPORT]  src/basFixDocxRoutines.bas
-[IMPORT]  src/basStyleInspector.bas
-[IMPORT]  src/basTEST_aeBibleConfig.bas
-[IMPORT]  src/basTEST_aeBibleFonts.bas
-[IMPORT]  src/basTEST_aeBibleTools.bas
-[IMPORT]  src/basWordRepairRunner.bas
-          - .Color casing restored (75 replacements across 9 files).
-          - Bug: VBE auto-case demoted Font.Color -> Font.color when
-            something somewhere was typed lowercase. The normalizer had
-            no rule for .Color so the corruption survived.
-          - Fix: py/normalize_vba.py - added rule
-            (r'(?i)\.Color\b', '.Color', '.Color property on Font/Style/object (Font.Color access)').
-          - Re-import into the dev .docm files this session.
+[DOC]     md/BibleAbbreviationList.md (NEW)
+          - Unified, deduplicated non-SBL abbreviation reference
+            doc. Authoritative inventory mirrored into
+            aeBibleCitationClass.GetBookAliasMap.
 
-[SCRIPT]  py/ribbon_export_trim.py (NEW)
-          - Reads ribbon callbacks from customUI14backupRWB.xml as roots.
-          - Adds AutoExec, RibbonOnLoad, Document_Open, Instance as
-            extra roots, plus VBA lifecycle names always preserved.
-          - Parses .bas/.cls files, builds case-insensitive identifier
-            call graph, walks reachability, writes trimmed copies to
-            aeRibbon/src/.
-          - Preserves headers / module-level decls / Type / Enum / Const
-            byte-for-byte; only drops whole routine blocks.
-          - --check stub (not yet wired).
+[DOC]     EDSG/11-ribbon-alias-layering.md
+          - New "Search expansion - generic ribbon lookup" section
+            documenting the four-step end-to-end resolution
+            (NormalizeBookInput -> ResolveAlias -> layer-1
+            canonical Like scan -> layer-2 typed-pattern Like
+            fallback). Cross-references the abbreviation doc and
+            today's review entries.
 
-[DOC]     md/aeProductionRibbonPlan.md (NEW)
-          - Production plan; sec 7 records the 6 approved decisions.
+[DOC]     EDSG/README.md
+          - Added a source-of-truth row pointing to
+            md/BibleAbbreviationList.md.
 
-[DOC]     aeRibbon/BUILD.md (NEW)
-          - Template build steps + manual .docx production procedure.
+[DOC]     rvw/Code_review 2026-05-12.md
+          - Items 3, 4, 5, 6, 7 status lines updated.
+          - 2026-05-13 dated entries for each closure / WONTFIX.
+          - 2026-05-13 entry for Step A (basBiblePalette.bas).
+          - New item 10 added (RESEARCH: legacy red-color usages
+            and Footnote Reference value conflict).
 
-[DOC]     aeRibbon/QA_CHECKLIST.md (NEW)
-          - Gates G1-G8 with sign-off boxes.
-
-[DOC]     aeRibbon/RELEASES.md (NEW)
-          - Append-only release ledger; no rows yet.
-
-[DOC]     aeRibbon/VERSION (NEW)
-          - 1.0.0+bc71416
-
-[DOC]     aeRibbon/RoutineLog.md (GENERATED by ribbon_export_trim.py)
-          - 131 KEPT, 67 REMOVED across 5 files.
-
-[DOC]     aeRibbon/docx/README_host_docx.md (NEW)
-          - Manual creation steps for aeRibbon-host.docx (Gate G7).
-
-[XML]     aeRibbon/template/customUI14.xml (NEW)
-          - Copy of customUI14backupRWB.xml.
-
-[IMPORT]  aeRibbon/src/basBibleRibbonSetup.bas (GENERATED, 54 routines kept)
-[IMPORT]  aeRibbon/src/aeRibbonClass.cls       (GENERATED, 56 kept)
-[IMPORT]  aeRibbon/src/aeBibleCitationClass.cls(GENERATED, 12 kept)
-[IMPORT]  aeRibbon/src/basRibbonDeferred.bas   (GENERATED, as-is copy)
-[IMPORT]  aeRibbon/src/basUIStrings.bas        (GENERATED, as-is copy)
-
-# Note: nothing under src/ was modified this session. The dev sources
-# remain the source of truth; aeRibbon/src/ is regenerated by
-# py/ribbon_export_trim.py and should not be hand-edited.
+# Note: aeRibbon/src/ is regenerated by py/ribbon_export_trim.py
+# and should not be hand-edited. The abbreviation map change in
+# src/aeBibleCitationClass.cls will propagate to
+# aeRibbon/src/aeBibleCitationClass.cls on the next ribbon build.

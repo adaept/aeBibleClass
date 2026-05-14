@@ -200,6 +200,55 @@ bodies.
 
 Originated `rvw/Code_review 2026-05-08.md` 3b.
 
+### 10. Research: legacy red-color usages and Footnote Reference value conflict (RESEARCH)
+
+Surfaced during item 2 (palette consolidation, 2026-05-13).
+
+**Question 1 - why does `aeBibleClass.CountRedFootnoteReferences`
+probe for `RGB(255,0,0)` runs?** The "Footnote Reference"
+character style is set to Purple `#663399` by
+`Module1.EnsureFootnoteReferenceStyleColor`. A counter that scans
+for explicit bright-red footnote references implies that at some
+point the production docx contained hand-coloured red footnote
+markers - either an older colour scheme, a paste-from-another-doc
+artifact, or a deliberate now-obsolete convention. The probe is
+still wired but its current count is unknown. Action: run
+`?CountRedFootnoteReferences` (or expose it publicly first if it
+is still Private) against the production docx and capture the
+result. If 0, the probe is dead code and can be removed; if >0,
+the surviving runs need to be reviewed and either re-styled or
+documented as intentional.
+
+**Question 2 - the Footnote Reference colour conflict.**
+`basTEST_aeBibleConfig.AuditOneStyle` audits the "Footnote
+Reference" style at `16711680` (= `RGB(0,0,255)`, Blue).
+`Module1.EnsureFootnoteReferenceStyleColor` sets the same style
+to `#663399` (Purple). One of these is stale. Action: read the
+live style colour
+(`?ActiveDocument.Styles("Footnote Reference").Font.Color`) and
+align both code paths to that value. The new palette entry
+already flags both colors (`Blue` and `Purple`) with cross-refs
+in the `Usage` field so the conflict is visible from
+`DumpPalette` output.
+
+**Question 3 - any other "force black" run-level overrides?**
+The earlier discussion conflated `wdColorAutomatic` and explicit
+`wdColorBlack`. `UpdateBlackToAutomatic` relaxes explicit black
+back to Automatic; there is no inverse routine. But the
+production docx may still carry occasional run-level
+`wdColorBlack` (= 0) overrides from legacy paste operations.
+Action: a one-off histogram run via
+`ListAndCountFontColors` (already routed through the new
+palette in Step B) should reveal any `Black #000000` bucket. If
+the count is non-trivial, decide whether to relax those runs to
+Automatic via `UpdateBlackToAutomatic` or leave them as
+deliberate overrides.
+
+No code changes for this item - it is a diagnostics + decisions
+ticket. Open follow-ons (re-style red footnotes, reconcile
+Footnote Reference colour, sweep explicit blacks) become their
+own items once the three answers are in hand.
+
 ### 9. SHA_ReplaceHard i18n consideration (FUTURE)
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 9. Revisit
@@ -798,3 +847,68 @@ none of the rerouted hops carried meaningful intermediate font
 properties.
 
 Item 3 closes.
+
+### 2026-05-13 - Item 2 Step A: basBiblePalette.bas added
+
+Step A of item 2 (Define colors used in the docx): new
+self-contained module `src/basBiblePalette.bas` introduces a
+single source of truth for the named colors used and allowed in
+the production document. Step A is purely additive - no existing
+call sites are rewired. Step B (refactor `Module1.HexToRGB`,
+`basTEST_aeBibleTools.GetColorNameFromHex`,
+`basTEST_aeBibleTools.ListAndCountFontColors` to delegate to the
+new module) is deferred until the palette is validated.
+
+Public API:
+
+- `GetPalette(theme)` - returns a Scripting.Dictionary keyed by
+  Name -> `PaletteColor` record (Name, R, G, B, RgbLong, HexCode,
+  Usage). Only `theme = "Default"` is populated; `"Dark"` and
+  `"Colorblind"` raise "not implemented" so call sites can be
+  wired now and themes added later without an API change.
+- `ColorFromName(name)` -> RgbLong (raises if unknown).
+- `NameFromColor(rgbLong)` -> Name (returns "" if unknown -
+  audit-friendly).
+- `LongToHex(rgbLong)` -> "#RRGGBB" (byte-correct; fixes the
+  BGR-order bug in `aeBibleClass.ColorToHex` which Hex-encodes
+  the raw Long).
+- `HexToLong(hex)` -> RgbLong (replaces `Module1.HexToRGB`).
+- `LongToRgbString(rgbLong)` -> "(R,G,B)" (replaces private
+  `basTEST_aeBibleTools.RGBToString`).
+- `DumpPalette` - diagnostic dump to Immediate window.
+
+Palette content: 12 named colors (Black, White, Red, DarkRed,
+Green, DarkGreen, Emerald, Blue, Gold, Orange, Purple, Gray).
+The earlier "15" estimate over-counted because the in-doc
+semantic colors (FootnotePurple, ChapterVerseOrange,
+VerseMarkerEmerald) deduplicate against the generic names
+(Purple, Orange, Emerald). The `Usage` field on each record
+documents all document roles a color plays so the count stays
+honest while still surfacing semantic intent in `DumpPalette`
+output.
+
+Design decisions captured in the module header:
+
+- `wdColorAutomatic` deliberately excluded - it is a sentinel
+  ("inherit, will be black in default theme"), not a color. Theme
+  work depends on body text staying `wdColorAutomatic` so page-
+  background inversion does the right thing. Pulling it into the
+  palette would tempt callers to swap it out and break that
+  mechanism.
+- Office `ObjectThemeColor` deliberately excluded - too niche,
+  too template-coupled, not portable.
+
+Late binding throughout. No project references added.
+
+Verification (deferred to next VBE session):
+```
+DumpPalette
+?ColorFromName("Purple")        ' expect 10040166
+?LongToHex(10040166)            ' expect "#663399"
+?NameFromColor(RGB(255,165,0))  ' expect "Orange"
+```
+
+Three research questions surfaced during Step A are captured as
+new item 10 below (legacy red-footnote probe, Footnote Reference
+colour conflict between audit and ensure routines, possible
+residual `wdColorBlack` overrides).
