@@ -48,9 +48,12 @@
 
 [IMPORT]  src/basBiblePalette.bas (NEW)
           - Single source of truth for named colors.
-          - Public Type PaletteColor (Name, R, G, B, RgbLong,
-            HexCode, Usage).
-          - GetPalette(theme) -> Dictionary keyed by Name.
+          - Each entry is a nested Scripting.Dictionary with keys
+            Name, R, G, B, RgbLong, HexCode, Usage. (Public Type
+            UDT not used: VBA forbids passing UDTs declared in
+            .bas modules to late-bound functions; nested Dict
+            sidesteps the limit while staying late-bound.)
+          - GetPalette(theme) -> outer Dictionary keyed by Name.
             Only theme="Default" populated; "Dark"/"Colorblind"
             raise "not implemented".
           - Helpers: ColorFromName, NameFromColor, LongToHex,

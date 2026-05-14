@@ -12,11 +12,23 @@ Option Compare Text
 ' Architecture
 ' ------------
 ' GetPalette() returns a Scripting.Dictionary keyed by canonical color
-' Name -> PaletteColor record. The record carries every common
-' representation (R, G, B, RgbLong, HexCode) so callers do not have to
-' convert. A Usage field documents where each color is applied in the
-' production document, so a future palette swap (light / dark /
-' colorblind theme) can audit impact before committing.
+' Name -> nested Scripting.Dictionary carrying the seven fields below.
+' Each entry is self-describing so callers can pick any representation
+' they need without conversion.
+'
+' Per-entry fields (case-insensitive, keys are strings):
+'   "Name"     - String, canonical palette name
+'   "R"        - Long, red component   0..255
+'   "G"        - Long, green component 0..255
+'   "B"        - Long, blue component  0..255
+'   "RgbLong"  - Long, = RGB(R, G, B)  (Word Font.Color value)
+'   "HexCode"  - String, "#RRGGBB"
+'   "Usage"    - String, where this color appears in the production doc
+'
+' Nested-dictionary layout (rather than a Public Type record) is required
+' by VBA's late-binding rule: UDTs declared in .bas modules cannot be
+' stored in a late-bound Scripting.Dictionary - they must live in a class
+' module to cross that boundary. Dictionaries do cross cleanly.
 '
 ' wdColorAutomatic is intentionally NOT in the palette. It is a sentinel
 ' meaning "inherit, will be black in default theme," not a color. Theme
@@ -29,12 +41,13 @@ Option Compare Text
 '
 ' Public helpers
 ' --------------
-'   GetPalette(theme)             -> Dictionary of PaletteColor
+'   GetPalette(theme)             -> Dictionary of color entries
 '   ColorFromName(name)           -> RgbLong   (raises if unknown)
 '   NameFromColor(rgbLong)        -> Name      ("" if unknown)
 '   LongToHex(rgbLong)            -> "#RRGGBB"
 '   HexToLong(hex)                -> RgbLong
 '   LongToRgbString(rgbLong)      -> "(R,G,B)"
+'   DumpPalette                   -> diagnostic Debug.Print dump
 '
 ' Theme arg is "Default" today. "Dark" and "Colorblind" raise
 ' "Not implemented" so call sites can be wired now and the palettes
@@ -43,16 +56,6 @@ Option Compare Text
 ' Late binding throughout (Scripting.Dictionary via CreateObject).
 ' No project references added.
 ' ==========================================================================
-
-Public Type PaletteColor
-    Name     As String
-    R        As Long
-    G        As Long
-    B        As Long
-    RgbLong  As Long     ' = RGB(R, G, B)
-    HexCode  As String   ' = "#RRGGBB"
-    Usage    As String   ' brief note on where this color appears in the doc
-End Type
 
 Private mPaletteCache As Object   ' Scripting.Dictionary, lazy-built
 
@@ -87,7 +90,7 @@ Private Function BuildDefaultPalette() As Object
     AddColor d, "Green",     0,   255, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "DarkGreen", 0,   100, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "Emerald",   80,  200, 120, "Verse marker character style."
-    AddColor d, "Blue",      0,   0,   255, "Palette only. NOTE: basTEST_aeBibleConfig audits 'Footnote Reference' at 16711680 (this value) but Module1.EnsureFootnoteReferenceStyleColor sets it to Purple - see research task."
+    AddColor d, "Blue",      0,   0,   255, "Palette only. NOTE: basTEST_aeBibleConfig audits 'Footnote Reference' at 16711680 (this value) but Module1.EnsureFootnoteReferenceStyleColor sets it to Purple - see research item 10."
     AddColor d, "Gold",      255, 215, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "Orange",    255, 165, 0,   "Chapter Verse marker character style (semantic role: ChapterVerseOrange)."
     AddColor d, "Purple",    102, 51,  153, "Footnote Reference character style (semantic role: FootnotePurple). Rebecca purple."
@@ -99,15 +102,17 @@ End Function
 Private Sub AddColor(ByVal d As Object, ByVal name As String, _
                      ByVal r As Long, ByVal g As Long, ByVal b As Long, _
                      ByVal usage As String)
-    Dim pc As PaletteColor
-    pc.Name = name
-    pc.R = r
-    pc.G = g
-    pc.B = b
-    pc.RgbLong = RGB(r, g, b)
-    pc.HexCode = "#" & PadHex(r) & PadHex(g) & PadHex(b)
-    pc.Usage = usage
-    d.Add name, pc
+    Dim entry As Object
+    Set entry = CreateObject("Scripting.Dictionary")
+    entry.CompareMode = 1
+    entry.Add "Name",    name
+    entry.Add "R",       r
+    entry.Add "G",       g
+    entry.Add "B",       b
+    entry.Add "RgbLong", RGB(r, g, b)
+    entry.Add "HexCode", "#" & PadHex(r) & PadHex(g) & PadHex(b)
+    entry.Add "Usage",   usage
+    d.Add name, entry
 End Sub
 
 Private Function PadHex(ByVal n As Long) As String
@@ -125,11 +130,9 @@ Public Function ColorFromName(ByVal name As String) As Long
     Set d = GetPalette()
     If Not d.Exists(name) Then
         Err.Raise 5, "basBiblePalette.ColorFromName", _
-            "Unknown palette color '" & name & "'. Call GetPalette to inspect available names."
+            "Unknown palette color '" & name & "'. Call DumpPalette to inspect available names."
     End If
-    Dim pc As PaletteColor
-    pc = d(name)
-    ColorFromName = pc.RgbLong
+    ColorFromName = CLng(d(name)("RgbLong"))
 End Function
 
 ' RgbLong -> Name. Returns "" when the value is not in the palette.
@@ -137,12 +140,10 @@ End Function
 ' (existing legacy content) and a missing name is information, not an error.
 Public Function NameFromColor(ByVal rgbLong As Long) As String
     Dim d As Object, k As Variant
-    Dim pc As PaletteColor
     Set d = GetPalette()
     For Each k In d.Keys
-        pc = d(k)
-        If pc.RgbLong = rgbLong Then
-            NameFromColor = pc.Name
+        If CLng(d(k)("RgbLong")) = rgbLong Then
+            NameFromColor = CStr(d(k)("Name"))
             Exit Function
         End If
     Next k
@@ -196,15 +197,14 @@ End Function
 '   DumpPalette
 ' ==========================================================================
 Public Sub DumpPalette()
-    Dim d As Object, k As Variant
-    Dim pc As PaletteColor
+    Dim d As Object, k As Variant, entry As Object
     Set d = GetPalette()
     Debug.Print "basBiblePalette (theme=Default, " & d.Count & " colors):"
     For Each k In d.Keys
-        pc = d(k)
-        Debug.Print "  " & Left$(pc.Name & String(12, " "), 12) & _
-                    pc.HexCode & "  " & _
-                    Left$(LongToRgbString(pc.RgbLong) & String(16, " "), 16) & _
-                    "Long=" & pc.RgbLong & "  " & pc.Usage
+        Set entry = d(k)
+        Debug.Print "  " & Left$(CStr(entry("Name")) & String(12, " "), 12) & _
+                    CStr(entry("HexCode")) & "  " & _
+                    Left$(LongToRgbString(CLng(entry("RgbLong"))) & String(16, " "), 16) & _
+                    "Long=" & entry("RgbLong") & "  " & CStr(entry("Usage"))
     Next k
 End Sub

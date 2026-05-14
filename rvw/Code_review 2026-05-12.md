@@ -861,11 +861,15 @@ new module) is deferred until the palette is validated.
 
 Public API:
 
-- `GetPalette(theme)` - returns a Scripting.Dictionary keyed by
-  Name -> `PaletteColor` record (Name, R, G, B, RgbLong, HexCode,
-  Usage). Only `theme = "Default"` is populated; `"Dark"` and
-  `"Colorblind"` raise "not implemented" so call sites can be
-  wired now and themes added later without an API change.
+- `GetPalette(theme)` - returns a `Scripting.Dictionary` keyed by
+  Name -> nested `Scripting.Dictionary` of seven fields (Name, R,
+  G, B, RgbLong, HexCode, Usage). Only `theme = "Default"` is
+  populated; `"Dark"` and `"Colorblind"` raise "not implemented"
+  so call sites can be wired now and themes added later without
+  an API change. (Nested-dict layout chosen over a `Public Type`
+  record because VBA forbids passing UDTs declared in .bas
+  modules to late-bound functions - a Dictionary stays in a .bas
+  module without that restriction.)
 - `ColorFromName(name)` -> RgbLong (raises if unknown).
 - `NameFromColor(rgbLong)` -> Name (returns "" if unknown -
   audit-friendly).
