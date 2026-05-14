@@ -556,8 +556,10 @@ Sub EnsureFootnoteReferenceStyleColor()
     Dim Count As Integer
 
     ' Target color sourced from basBiblePalette (single source of truth).
-    ' Was: hardcoded "#663399" -> HexToRGB. Now: palette name "Purple".
-    rgbColor = ColorFromName("Purple")
+    ' Was: hardcoded "#663399" Purple. Corrected 2026-05-13 after the live
+    ' style was confirmed Blue (#0000FF, 16711680) - Purple would have
+    ' corrupted 296 existing references. See Code_review 2026-05-12 item 10.
+    rgbColor = ColorFromName("Blue")
 
     ' Initialize variables
     Set doc = ActiveDocument

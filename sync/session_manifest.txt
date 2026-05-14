@@ -32,9 +32,18 @@
 4. Item 2 Step A: new basBiblePalette.bas module - single source of
    truth for named colors used / allowed in the docx. Additive
    only; no existing call sites rewired (Step B deferred).
-5. New research item 10 surfaced from Step A (legacy red-footnote
-   probe, Footnote Reference colour conflict, possible residual
-   wdColorBlack overrides).
+5. Research item 10 surfaced from Step A and partially resolved
+   the same day. Three diagnostic probes run:
+   - Q1: red-footnote count = 0 (probe is dead code).
+   - Q2: Footnote Reference live colour is Blue (#0000FF), not
+     Purple as Module1.EnsureFootnoteReferenceStyleColor assumed.
+     Routine and palette Usage fields corrected to Blue.
+   - Q3: histogram revealed 32K runs at #7F9698, 153 at #C00000,
+     and 1 stray Orange - all unnamed in palette. No black
+     overrides found.
+6. New item 11 (identify unnamed colours #7F9698, #C00000,
+   lone Orange) and item 12 (remove dead
+   CountRedFootnoteReferences probe) surfaced from item 10 Q3.
 
 ## Files modified
 
@@ -73,7 +82,11 @@
 
 [IMPORT]  src/Module1.bas
           - Step B: EnsureFootnoteReferenceStyleColor now reads
-            ColorFromName("Purple") instead of HexToRGB("#663399").
+            ColorFromName("Blue"). Originally rewritten as
+            ColorFromName("Purple") but corrected after the live-doc
+            probe confirmed Footnote Reference is Blue (#0000FF,
+            16711680, 296 references). Purple would have corrupted
+            them. See Code_review 2026-05-12 item 10 Q2.
           - HexToRGB reduced to a 1-line shim around HexToLong.
 
 [IMPORT]  src/basTEST_aeBibleTools.bas

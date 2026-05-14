@@ -90,10 +90,10 @@ Private Function BuildDefaultPalette() As Object
     AddColor d, "Green",     0,   255, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "DarkGreen", 0,   100, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "Emerald",   80,  200, 120, "Verse marker character style."
-    AddColor d, "Blue",      0,   0,   255, "Palette only. NOTE: basTEST_aeBibleConfig audits 'Footnote Reference' at 16711680 (this value) but Module1.EnsureFootnoteReferenceStyleColor sets it to Purple - see research item 10."
+    AddColor d, "Blue",      0,   0,   255, "Footnote Reference character style (confirmed 2026-05-13 by live-doc probe: 296 references at this color)."
     AddColor d, "Gold",      255, 215, 0,   "Palette only - not currently applied in the production docx."
     AddColor d, "Orange",    255, 165, 0,   "Chapter Verse marker character style (semantic role: ChapterVerseOrange)."
-    AddColor d, "Purple",    102, 51,  153, "Footnote Reference character style (semantic role: FootnotePurple). Rebecca purple."
+    AddColor d, "Purple",    102, 51,  153, "Palette only - not currently applied in the production docx. Rebecca purple."
     AddColor d, "Gray",      128, 128, 128, "Palette only - not currently applied in the production docx."
 
     Set BuildDefaultPalette = d

@@ -983,3 +983,96 @@ Verification (deferred to next VBE session):
 - `ListAndCountFontColors` output: should match the prior
   format for non-Automatic colours and add a distinct
   `wdColorAutomatic` row for body text.
+
+### 2026-05-13 - Item 10 research probes + Footnote Reference correction
+
+Three diagnostic probes run against the production docx; results
+folded back into code and palette.
+
+**Q1 - red-footnote probe:** `Red (#FF0000) footnote references:
+0`. The `CountRedFootnoteReferences` function in `aeBibleClass`
+is scanning for content that no longer exists. Confirmed dead
+code; queued for removal in a follow-on item.
+
+**Q2 - Footnote Reference live colour:**
+```
+?ActiveDocument.Styles("Footnote Reference").Font.Color  -> 16711680
+?LongToHex(...)                                          -> #0000FF
+?NameFromColor(...)                                      -> Blue
+```
+
+Live state is **Blue**, not Purple. This flips the conflict
+documented in item 10:
+
+- `basTEST_aeBibleConfig.AuditOneStyle` (audits Blue 16711680)
+  is correct and matches the live doc.
+- `Module1.EnsureFootnoteReferenceStyleColor` (was setting
+  Purple `#663399`) would have corrupted 296 existing Blue
+  references if run. Now corrected to
+  `ColorFromName("Blue")`.
+- The palette `Usage` field on Blue/Purple was likewise wrong
+  in Step A; corrected this session - Blue now documents the
+  Footnote Reference role (296 occurrences), Purple is
+  reclassified as palette-only.
+
+**Q3 - colour histogram:**
+
+| Colour                | Count   | Palette name | Note |
+|-----------------------|---------|--------------|------|
+| `wdColorAutomatic`    | 872,359 | Automatic    | Body text - expected. |
+| `#800000` DarkRed     | 47,874  | DarkRed      | Words of Jesus / EmphasisRed - expected. |
+| `#7F9698`             | 32,001  | Unknown      | Gray-blue. Needs identification. |
+| `#0000FF` Blue        | 296     | Blue         | Footnote References (matches Q2). |
+| `#C00000`             | 153     | Unknown      | Darker red variant. Needs identification. |
+| `#FFA500` Orange      | 1       | Orange       | One stray; investigate. |
+| `#000000` Black       | 0       | -            | No explicit-black overrides. |
+| `#50C878` Emerald     | 0       | -            | None at run level (applied via style). |
+| `#663399` Purple      | 0       | -            | Not present in doc (confirms reclassification). |
+
+Histogram caveat: shows **run-level explicit overrides**, not
+rendered colours. Styled colours (Verse marker Emerald,
+Chapter Verse marker Orange, Footnote Reference Blue when
+applied via style chain) read `wdColorAutomatic` on the run
+and roll into the 872K Automatic count. The colours that show
+up here are direct overrides, not inherited.
+
+**Resolution and follow-ons:**
+
+Item 10 Q1 (red probe) and Q2 (Footnote Reference conflict)
+resolved this session. The remaining open work is identification
+of `#7F9698` and `#C00000` and the lone explicit Orange - these
+become **item 11** below to keep item 10 a clean record of the
+three original questions.
+
+### 11. Identify unnamed colours in production docx (RESEARCH)
+
+Surfaced 2026-05-13 from item 10 Q3 histogram. The production
+docx carries three non-palette colours at run level that need
+semantic identification before they can be added to
+`basBiblePalette` (or relaxed to the appropriate palette entry):
+
+- **`#7F9698` (32,001 occurrences)** - gray-blue. Largest
+  unknown by far. Significant semantic content. Sample a few
+  runs to determine the role (commentary author colour? Note
+  attribution? Header text?).
+- **`#C00000` (153 occurrences)** - darker red than the
+  standard `#800000`. Likely a pre-standardisation Words of
+  Jesus variant, or a section-heading red.
+- **`#FFA500` Orange, 1 occurrence** - a single explicit
+  Chapter-Verse-equivalent Orange override. Either a stray
+  legacy artifact or a deliberate one-off.
+
+No code changes for this item; sample-and-document only.
+Action: navigate to a sample of each colour via `Find > More >
+Format > Font > Colour`, capture the surrounding context and
+character/paragraph style, decide whether to (a) add to palette
+with a semantic name, (b) repoint to an existing palette entry,
+or (c) leave as documented exception.
+
+### 12. Remove dead CountRedFootnoteReferences probe (LOW)
+
+Surfaced 2026-05-13 from item 10 Q1. The probe returned 0
+against the production docx. Either delete the function
+outright (and any callers in `aeBibleClass.cls`), or leave it
+with a comment noting "historical-zero, retained for regression
+catch." Low priority; not blocking anything.
