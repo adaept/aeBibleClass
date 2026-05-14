@@ -269,6 +269,31 @@ underline signal. The pattern extends to any future state-aware
 character style — pick a print-stable palette colour, then lock both
 states to it.
 
+### Companion rule: no hyperlinks in footnotes
+
+Hyperlinks belong in main body text only — **never in footnotes**.
+Footnote text is reference material; live web links in citations
+are inappropriate for a print-target Bible and inappropriate as
+navigation in a study context (a reader holding the printed book
+cannot click them). Inserted-URL citations should be plain text
+("see archaeology.about.com/od/jterms") so the footnote reads the
+same whether on screen or in print.
+
+Enforcement: **RUN_THE_TESTS slot 17 → `CountFootnoteHyperlinks`**
+(`src/aeBibleClass.cls`). Asserts the Footnotes story carries zero
+collection-Hyperlink objects. Expected value 0; any non-zero result
+is a rule violation surfaced in the test run for editorial review
+and deletion / plain-text conversion.
+
+This is the first audit to enforce an editorial-rule companion to a
+style convention. Pattern: when a style discipline implies a content
+rule, codify the content rule as its own test rather than leaning
+on the style audit to catch it indirectly. The style audit
+(`AuditHyperlinkStyling` in `basStyleInspector`) verifies *how* a
+hyperlink is dressed; the content audit
+(`CountFootnoteHyperlinks` in `aeBibleClass`) verifies *whether* a
+hyperlink is allowed in a given location.
+
 ## How to add a new style
 
 See [02-editing-process](02-editing-process.md) § Style design.

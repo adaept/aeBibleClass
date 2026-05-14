@@ -1620,6 +1620,54 @@ text. Listing them per-run for visual identification is a
 follow-on probe if needed; deferred pending decision on whether
 to chase.
 
+### 2026-05-14 - Footnote URL deleted; test 17 repurposed; item 12 CLOSED
+
+Operator confirmed cleanup:
+
+```
+?ActiveDocument.StoryRanges(wdFootnotesStory).Hyperlinks.Count  -> 0
+```
+
+The Jericho archaeology URL has been removed from its footnote.
+No remaining hyperlinks in the Footnotes story; the
+no-hyperlinks-in-footnotes editorial rule is now in force and
+auditable.
+
+**RUN_THE_TESTS slot 17 repurposed.** The previous occupant
+`CountRedFootnoteReferences` was confirmed dead code earlier
+this session (item 10 Q1: 0 red footnote refs in the production
+docx; the probe was a leftover from an older colour scheme).
+Test 17 now runs `CountFootnoteHyperlinks` instead, asserting
+zero hyperlinks in the Footnotes story. Expected value at slot
+17 in `oneBasedExpectedArray` is already 0 - no change to the
+expected-values array required.
+
+Changes in `src/aeBibleClass.cls`:
+
+- Case 17 in the ResultArray dispatch swapped from
+  `CountRedFootnoteReferences` to `CountFootnoteHyperlinks`.
+- Case 17 in the screen-print Debug block: name updated.
+- Case 17 in the file-write BufAppend block: name updated.
+- Old `CountRedFootnoteReferences` function deleted; new
+  `CountFootnoteHyperlinks` function added in its place. The
+  new function walks `StoryRanges` for `wdFootnotesStory` and
+  returns `.Hyperlinks.Count`. Single-assert audit.
+
+**Item 12 (LOW) CLOSED 2026-05-14.** The "remove dead
+`CountRedFootnoteReferences`" follow-on is resolved by this
+swap - the dead function is gone, replaced by an active
+rule-enforcement test rather than deleted outright. Better
+outcome than the original "delete the probe" plan: the test
+slot is reused, the rule is now auditable, and a future
+violation surfaces in the next test run.
+
+**EDSG impact.** The no-hyperlinks-in-footnotes rule extends
+the state-aware-styles theme of `EDSG/01-styles.md` with a
+companion editorial rule: hyperlinks belong only in main body
+text, never in footnote text. The "State-aware styles:
+print-locking" section now points to test 17 as the audit and
+to `CountFootnoteHyperlinks` as the implementation.
+
 ### 11. Identify unnamed colours in production docx (RESEARCH)
 
 Surfaced 2026-05-13 from item 10 Q3 histogram. The production
@@ -1645,7 +1693,7 @@ character/paragraph style, decide whether to (a) add to palette
 with a semantic name, (b) repoint to an existing palette entry,
 or (c) leave as documented exception.
 
-### 12. Remove dead CountRedFootnoteReferences probe (LOW)
+### 12. Remove dead CountRedFootnoteReferences probe (LOW) - CLOSED 2026-05-14
 
 Surfaced 2026-05-13 from item 10 Q1. The probe returned 0
 against the production docx. Either delete the function

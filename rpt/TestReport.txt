@@ -5,7 +5,7 @@ Test(46)0 Test(47)3 Test(48)0 Test(49)15 Test(50)147 Test(51)1189 Test(52)0 Test
 Test(61)0 Test(62)0 Test(63)0 Test(64)0 Test(65)1 Test(66)0 Test(67)0 Test(68)0 Test(69)0 Test(70)0 Test(71)0 Test(72)0 Test(73)0
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
-PASS              Copy ()       Test = 1      0             0             CountDoubleSpaces
+FAIL!!!!          Copy ()       Test = 1      1             0             CountDoubleSpaces
 PASS              Copy ()       Test = 2      0             0             CountDoubleSpacesInShapes
 PASS              Copy ()       Test = 3      0             0             CountSpaceFollowedByCarriageReturn
 PASS              Copy ()       Test = 4      0             0             CountDoubleTabs
@@ -20,33 +20,33 @@ PASS              Copy ()       Test = 12     0             0             CountN
 PASS              Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
-PASS              Copy ()       Test = 16     33783         33783         CountTotalParagraphs
-PASS              Copy ()       Test = 17     0             0             CountRedFootnoteReferences
+FAIL!!!!          Copy ()       Test = 16     33823         33783         CountTotalParagraphs
+PASS              Copy ()       Test = 17     0             0             CountFootnoteHyperlinks
 PASS              Copy ()       Test = 18     66            66            CountHeading1
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
 PASS              Copy ()       Test = 20     0             0             CountFootnotesFollowedByDigit
 PASS              Copy ()       Test = 21     0             0             CountNotSpacesAfterFootnoteReferences
-PASS              Copy ()       Test = 22     224           224           CountEmptyParagraphsWithFormatting
+FAIL!!!!          Copy ()       Test = 22     218           224           CountEmptyParagraphsWithFormatting
 PASS              Copy ()       Test = 23     0             0             CountDeleteEmptyParagraphsBeforeHeading2
 PASS              Copy ()       Test = 24     1000          1000          CountFootnoteReferences
 PASS              Copy ()       Test = 25     1             1             CountFootnoteReferenceColors
 PASS              Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
 PASS              Copy ()       Test = 27     148           148           CheckAllHeaders(NotEmpty)
-FAIL!!!!          Copy ()       Test = 28     73            77            CountTabFollowedByParagraphMarkInHeaders
+FAIL!!!!          Copy ()       Test = 28     82            77            CountTabFollowedByParagraphMarkInHeaders
   >> First hit: Section 1: 	
-FAIL!!!!          Copy ()       Test = 29     75            70            CountParagraphsWithoutTabInHeaders
-  >> First hit: Section 9: GENESIS
+FAIL!!!!          Copy ()       Test = 29     66            70            CountParagraphsWithoutTabInHeaders
+  >> First hit: Section 10: GENESIS
 PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
-FAIL!!!!          Copy ()       Test = 32     137           982           CountLinefeed
+FAIL!!!!          Copy ()       Test = 32     172           982           CountLinefeed
   >> First hit: First match: 
-FAIL!!!!          Copy ()       Test = 33     137           982           CountLinefeed(" ")
+FAIL!!!!          Copy ()       Test = 33     146           982           CountLinefeed(" ")
   >> First hit: First match:  
 FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
 FAIL!!!!          Copy ()       Test = 35     0             117           CountManualLineBreaksAndWithSpace(" ")
 FAIL!!!!          Copy ()       Test = 36     3             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
-PASS              Copy ()       Test = 37     19            19            CountDocTabOnlyParagraphs
-FAIL!!!!          Copy ()       Test = 38     224           153           CountEmptyParagraphs
+FAIL!!!!          Copy ()       Test = 37     32            19            CountDocTabOnlyParagraphs
+FAIL!!!!          Copy ()       Test = 38     218           153           CountEmptyParagraphs
 PASS              Copy ()       Test = 39     0             0             CountParagraphMarks_ArialBlack
 PASS              Copy ()       Test = 40     0             0             CountParagraphMarks_ArialBlackDarkRed
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
@@ -57,8 +57,8 @@ FAIL!!!!          Copy ()       Test = 45     -1            0             CountF
 FAIL!!!!          Copy ()       Test = 46     -1            0             CountFindNotEmphasisRed [obso] TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 47     0             3             CountTabOnlyParagraphs("Footer")
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
-FAIL!!!!          Copy ()       Test = 49     40            15            CountAuditStyles_ToFile
-  >> First hit: 40 styles - see rpt\Style Usage Distribution.txt
+FAIL!!!!          Copy ()       Test = 49     42            15            CountAuditStyles_ToFile
+  >> First hit: 42 styles - see rpt\Style Usage Distribution.txt
 FAIL!!!!          Copy ()       Test = 50     -1            147           SummarizeHeaderFooterAuditToFile
 SKIP!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
 PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction("wouldn’t")
@@ -87,14 +87,14 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 103.78 seconds
-[2026-05-05 17:41:15] Completed
+The Total Runtime: 127.03 seconds
+[2026-05-14 12:55:43] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
 Application Name: Microsoft Word
 Platform Version: 16.0
-Platform Build: 16.0.19929
-Full Version String: Microsoft Word 16.0 (16.0.19929)
+Platform Build: 16.0.20026
+Full Version String: Microsoft Word 16.0 (16.0.20026)
 Marketing Version: 2506 (Build 18925.20158)
 Source: Microsoft 365 Current Channel, July 2025 update

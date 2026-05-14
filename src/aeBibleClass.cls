@@ -934,7 +934,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountTotalParagraphs
         m_HintArray(TestNum) = m_lastHint
     Case 17
-        ResultArray(TestNum) = CountRedFootnoteReferences
+        ResultArray(TestNum) = CountFootnoteHyperlinks
         m_HintArray(TestNum) = m_lastHint
     Case 18
         ResultArray(TestNum) = CountHeading1
@@ -1188,7 +1188,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTotalParagraphs"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 17
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountRedFootnoteReferences"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteHyperlinks"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 18
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading1"
@@ -1391,7 +1391,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 16
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTotalParagraphs"
     Case 17
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountRedFootnoteReferences"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnoteHyperlinks"
     Case 18
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeading1"
     Case 19
@@ -3274,34 +3274,35 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountRedFootnoteReferences() As Long
+' CountFootnoteHyperlinks
+' -----------------------
+' Editorial rule: no hyperlinks are allowed in footnotes. Returns the
+' count of collection-Hyperlink objects in the Footnotes story; expected
+' value is 0. Any non-zero result is a rule violation - operator review
+' and delete (or convert to plain text citation).
+'
+' Replaces the prior slot-17 function CountRedFootnoteReferences, which
+' was confirmed dead code on 2026-05-14 (the production docx has zero
+' footnote references at RGB(255,0,0) - the probe was a leftover from
+' an older colour scheme).
+Private Function CountFootnoteHyperlinks() As Long
     On Error GoTo PROC_ERR
 
-    Dim footnote As footnote
-    Dim redCount As Long
-    Dim redColor As Long
-
-    ' Define the red color using RGB values
-    redColor = RGB(255, 0, 0)
-
-    ' Initialize the Count
-    redCount = 0
-    
-    ' Loop through each footnote in the document
-    For Each footnote In ActiveDocument.Footnotes
-        If footnote.Reference.Font.Color = redColor Then
-            redCount = redCount + 1
+    Dim story As Word.Range
+    Dim n     As Long
+    n = 0
+    For Each story In ActiveDocument.StoryRanges
+        If story.StoryType = wdFootnotesStory Then
+            n = story.Hyperlinks.Count
+            Exit For
         End If
-    Next footnote
-    
-    ' Print the Count to the console
-    'Debug.Print "Number of footnote references with red font: " & redCount
-    CountRedFootnoteReferences = redCount
+    Next story
+    CountFootnoteHyperlinks = n
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountRedFootnoteReferences | Erl: " & Erl _
+    Debug.Print "ERROR in aeBibleClass.CountFootnoteHyperlinks | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

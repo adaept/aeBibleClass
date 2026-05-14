@@ -136,6 +136,24 @@
             documents the Hyperlink / FollowedHyperlink lock
             pattern as the canonical example. Pairs with
             LockHyperlinksToPalette + AuditHyperlinkStyling.
+          - Added "Companion rule: no hyperlinks in footnotes"
+            subsection documenting the editorial rule and pointing
+            at test 17 / CountFootnoteHyperlinks as the
+            enforcement audit.
+
+[IMPORT]  src/aeBibleClass.cls
+          - RUN_THE_TESTS slot 17 repurposed: the dead
+            CountRedFootnoteReferences probe (probed for RGB(255,0,0)
+            footnote references which no longer exist in the doc) is
+            replaced by CountFootnoteHyperlinks - asserts zero
+            collection-Hyperlink objects in the Footnotes story per
+            the no-hyperlinks-in-footnotes editorial rule.
+          - Three Case 17 swap-points updated: ResultArray dispatch,
+            Debug.Print line, BufAppend line.
+          - Old CountRedFootnoteReferences function deleted; new
+            CountFootnoteHyperlinks function added in its place.
+            Expected value in oneBasedExpectedArray slot 17 was
+            already 0, no change to the expected-values array.
 
 [DOC]     src/basBiblePalette.bas
           - New palette entry: DarkBlue = RGB(0,0,128) = #000080.
