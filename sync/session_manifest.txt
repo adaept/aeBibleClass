@@ -154,6 +154,22 @@
             CountFootnoteHyperlinks function added in its place.
             Expected value in oneBasedExpectedArray slot 17 was
             already 0, no change to the expected-values array.
+          - Normalizer pass touched a few hex( / hex$( call sites
+            (HexToUnicodeLabel, ColorToHex) - case-only changes.
+
+[IMPORT]  src/aeLoggerClass.cls
+          - Normalizer pass: hex$ call site in Log_Write Unicode
+            formatting normalised to Hex$.
+
+[SCRIPT]  py/normalize_vba.py
+          - Added rule: Hex( and Hex$( built-in functions must
+            keep uppercase H; optional $ marker is preserved per
+            call site. Pattern:
+            (r'(?i)\bhex(\$?)\(', r'Hex\1(', ...)
+          - Motivation: VBA IDE auto-cased Hex$(n) to hex$(n) in
+            basBiblePalette.bas (same class of bug as the prior
+            .Color regression). Normalizer now catches both Hex
+            and Hex$ forms in a single rule.
 
 [DOC]     src/basBiblePalette.bas
           - New palette entry: DarkBlue = RGB(0,0,128) = #000080.

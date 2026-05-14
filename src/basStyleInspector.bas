@@ -845,21 +845,21 @@ End Function
 ' that fall outside every footnote.Range - those are orphan FR markers
 ' (the stray we are hunting).
 '
-' Why this approach: the more obvious "walk each footnote, count its FR
+' Why this approach: the more obvious "walk each footnote, Count its FR
 ' markers" loop fails on this document. footnote.Range either excludes
 ' the auto-numbered marker or Find with .Style = "Footnote Reference"
-' does not match the field-result character, so the per-footnote
+' does not match the field-Result character, so the per-footnote
 ' walker returns 0 even for legitimate footnotes. Scanning the
 ' Footnotes story directly and classifying by position is reliable
 ' regardless of whether Range includes the auto-number.
 '
 ' Output:
 '   - One line per orphan FR run (if any), with story position and text.
-'   - Summary: total FR runs in Footnotes story, count inside a footnote,
-'     count of orphans.
+'   - Summary: total FR runs in Footnotes story, Count inside a footnote,
+'     Count of orphans.
 '
 ' RETURN:
-'   Orphan count. Expected 0 in a clean document.
+'   Orphan Count. Expected 0 in a clean document.
 '
 ' Usage from Immediate:
 '   ?AuditFootnoteReferenceMarkers
@@ -936,7 +936,7 @@ Public Function AuditFootnoteReferenceMarkers() As Long
     Const MARKER_GAP As Long = 5
     ' Avoid flooding Immediate when classification is broken: at most
     ' MAX_PRINT orphan lines are printed verbatim. Beyond that, the
-    ' summary count still includes all of them.
+    ' summary Count still includes all of them.
     Const MAX_PRINT  As Long = 20
 
     Do While probe.Find.Execute
@@ -971,7 +971,7 @@ Public Function AuditFootnoteReferenceMarkers() As Long
                 totalFR & "  (inside footnote.Range=" & insideCnt & _
                 ", orphans=" & orphans & ")"
 
-    ' Per-footnote anomaly check: any footnote whose FR-marker count
+    ' Per-footnote anomaly check: any footnote whose FR-marker Count
     ' inside its bounds is not exactly 1 is anomalous. The single duplicate
     ' that produced the 2001-vs-2000 surplus surfaces here.
     For i = 1 To totalFn
@@ -992,7 +992,7 @@ Public Function AuditFootnoteReferenceMarkers() As Long
     Next i
 
     Debug.Print "AuditFootnoteReferenceMarkers: per-footnote check - " & _
-                anomalies & " footnote(s) with FR count != 1."
+                anomalies & " footnote(s) with FR Count != 1."
     AuditFootnoteReferenceMarkers = orphans + anomalies
 End Function
 
@@ -1006,7 +1006,7 @@ End Function
 '   - Real ActiveDocument.Hyperlinks collection entries (clickable
 '     links with an .Address property), and
 '   - Hyperlink-character-styled runs that are NOT in the collection
-'     (typically REF / HYPERLINK / PAGEREF field-result runs used for
+'     (typically REF / HYPERLINK / PAGEREF field-Result runs used for
 '     concordance navigation, which carry the style without being
 '     Hyperlink objects).
 '
@@ -1018,10 +1018,10 @@ End Function
 '
 ' Output:
 '   One line per anomaly (story, page, current colour, current underline,
-'   run text snippet), then a summary count.
+'   run text snippet), then a summary Count.
 '
 ' RETURN:
-'   Anomaly count.
+'   Anomaly Count.
 '
 ' Usage from Immediate:
 '   ?AuditHyperlinkStyling
@@ -1092,11 +1092,11 @@ End Function
 ' ReportHyperlinkStoryDistribution
 '==============================================================================
 ' Diagnostic: for each StoryRange, print
-'   (a) the count of Hyperlinks collection entries, and
-'   (b) the count of Hyperlink-character-styled runs (via Find).
+'   (a) the Count of Hyperlinks collection entries, and
+'   (b) the Count of Hyperlink-character-styled runs (via Find).
 '
 ' The two counts can differ - real Hyperlinks objects always carry the
-' Hyperlink style, but Hyperlink-styled REF / HYPERLINK field-result
+' Hyperlink style, but Hyperlink-styled REF / HYPERLINK field-Result
 ' runs (e.g. concordance navigation) carry the style without being in
 ' the Hyperlinks collection. The gap tells you how much of the
 ' style-discipline picture the Hyperlinks collection misses.

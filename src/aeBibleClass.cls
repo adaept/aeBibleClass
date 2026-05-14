@@ -3277,8 +3277,8 @@ End Function
 ' CountFootnoteHyperlinks
 ' -----------------------
 ' Editorial rule: no hyperlinks are allowed in footnotes. Returns the
-' count of collection-Hyperlink objects in the Footnotes story; expected
-' value is 0. Any non-zero result is a rule violation - operator review
+' Count of collection-Hyperlink objects in the Footnotes story; expected
+' value is 0. Any non-zero Result is a rule violation - operator review
 ' and delete (or convert to plain text citation).
 '
 ' Replaces the prior slot-17 function CountRedFootnoteReferences, which

@@ -1668,6 +1668,77 @@ text, never in footnote text. The "State-aware styles:
 print-locking" section now points to test 17 as the audit and
 to `CountFootnoteHyperlinks` as the implementation.
 
+### 2026-05-14 - Item 11: #C00000 quotations migrated to DarkRed
+
+Editorial decision: keep the 7 hand-coloured Jesus quotations
+in their `AuthorBodyText` character style, but migrate their
+explicit `Font.Color` from `#C00000` (192,0,0) to `#800000`
+(128,0,0). Unifies all Jesus-quotation content under the
+standard `WordsOfJesus` DarkRed colour while preserving the
+commentary-text paragraph structure.
+
+One-shot `MigrateCmsRedToDarkRed` added to `basTEST_aeBibleTools`,
+run, and removed from source after a successful run. Result:
+
+```
+MigrateCmsRedToDarkRed: #C00000 -> #800000
+  StoryType=1  migrated=7
+MigrateCmsRedToDarkRed: total runs migrated = 7
+
+?CountRunsWithColor(RGB(192,0,0))             -> 0     (was 7)
+?CountRunsWithColor(ColorFromName("DarkRed")) -> 2269  (was 2262, +7 new contiguous runs)
+```
+
+Each migrated run became its own new DarkRed contiguous run (no
+adjacency with existing DarkRed in surrounding AuthorBodyText),
+so the delta is exactly +7 as expected.
+
+Item 11 status after this:
+
+| Sub-target | Status |
+|---|---|
+| `#7F9698` phantom | CLOSED - was wdUndefined sentinel |
+| Footnote 218 duplicate FR | CLOSED - paragraph mark restyled |
+| Genesis 1:1 Orange override | CLOSED - was histogram artefact, not anomaly |
+| 2 AuthorListItemTab Blue runs | CLOSED - inherited DarkBlue via Hyperlink-style migration |
+| Footnote URL stray | CLOSED via item 12 / test 17 |
+| 7 #C00000 quotations | **CLOSED today** - migrated to DarkRed |
+| 5 Hyperlink-styled-but-not-clickable runs | OPEN - identification pending |
+
+Five sub-targets closed; one open. Item 11 closes when the 5
+non-clickable Hyperlink-styled runs are either identified and
+restyled or accepted as deliberate.
+
+### 2026-05-14 - Normalizer: Hex / Hex$ casing rule added
+
+VBA IDE auto-cases `Hex` and `Hex$` calls inconsistently after
+edits (same class of bug as the prior `.Color` regression). One
+lowercase `hex$(n)` appeared in `basBiblePalette.bas` after a
+linter pass, prompting a normalizer rule.
+
+Rule added to `py/normalize_vba.py`:
+
+```
+(r'(?i)\bhex(\$?)\(',  r'Hex\1(',
+ 'Hex( and Hex$( built-in functions - case-preserve optional $ marker, fix Hex casing'),
+```
+
+Pattern captures the optional `$` marker so call sites that
+chose `Hex$(...)` retain the typed-string form while case-only
+typos (`hex(...)`, `Hex(...)`, `HEX(...)`) all normalise to
+`Hex(...)` or `Hex$(...)` accordingly.
+
+Normalizer run touched:
+
+- `src/basBiblePalette.bas` (1 occurrence in `PadHex`)
+- `src/basTEST_aeBibleTools.bas` (13 replacements - several
+  diagnostic hex-dump helpers)
+- `src/aeBibleClass.cls` (`HexToUnicodeLabel`, `ColorToHex`)
+- `src/aeLoggerClass.cls` (`Log_Write` Unicode formatting)
+
+Idempotent on re-run. All pre-existing `hex(` / `hex$(`
+lowercase forms are now uppercase across the codebase.
+
 ### 11. Identify unnamed colours in production docx (RESEARCH)
 
 Surfaced 2026-05-13 from item 10 Q3 histogram. The production

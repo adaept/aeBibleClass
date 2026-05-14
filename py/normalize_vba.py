@@ -25,6 +25,7 @@ NORMALIZATIONS = [
     (r'(?i)\.PageHeight\b',     '.PageHeight',      '.PageHeight property on PageSetup'),
     (r'(?i)\.Orientation\b',    '.Orientation',     '.Orientation property on PageSetup'),
     (r'(?i)\bmid\$?\(',         'Mid$(',            'Mid$( string function — normalizes Mid( to Mid$( and fixes casing'),
+    (r'(?i)\bhex(\$?)\(',       r'Hex\1(',          'Hex( and Hex$( built-in functions — case-preserve optional $ marker, fix Hex casing'),
     (r'(?i)\.Path\b',           '.Path',            '.Path property on Document/FileSystemObject'),
     (r'(?i)\.Item\b',           '.Item',            '.Item method on Collection'),
     (r'(?i)\bCount(?=:=)',      'Count',            'Count named argument in VBA method calls (e.g. MoveDown Count:=)'),

@@ -8,7 +8,6 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 ' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #640 -
-' #639 -
 ' #637 - Manually update page numbers of Bible Index [impr]
 ' #636 - Error message for src when another docx created and EXPORT_THE_CODE is run after 'AuditFontsUsage "ArialTimes"' True [bug]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
@@ -32,6 +31,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #639 - Remove old ribbon code and delete from src
     ' FIXED - #638 - Add Public Const RIBBON_VERSION As String = "" to basBibleRibbonSetup to track the version of the production ribbon [impr]
     ' FIXED - #612 - **Use "Default Paragraph Font" for ALL character styles. Never use "(no style)".**
     '            It's the difference between: Stable, predictable, audit-safe formatting vs.

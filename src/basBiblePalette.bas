@@ -88,19 +88,19 @@ Private Function BuildDefaultPalette() As Object
     Set d = CreateObject("Scripting.Dictionary")
     d.CompareMode = 1   ' vbTextCompare - name lookups are case-insensitive
 
-    AddColor d, "Black",     0,   0,   0,   "Explicit black. Distinct from wdColorAutomatic (sentinel)."
-    AddColor d, "White",     255, 255, 255, "Empty-paragraph detection (aeBibleClass)."
-    AddColor d, "Red",       255, 0,   0,   "CountRedFootnoteReferences probe color (legacy / research item)."
-    AddColor d, "DarkRed",   128, 0,   0,   "Words of Jesus, EmphasisRed character styles."
-    AddColor d, "Green",     0,   255, 0,   "Palette only - not currently applied in the production docx."
-    AddColor d, "DarkGreen", 0,   100, 0,   "Palette only - not currently applied in the production docx."
-    AddColor d, "Emerald",   80,  200, 120, "Verse marker character style."
-    AddColor d, "Blue",      0,   0,   255, "Footnote Reference character style (confirmed 2026-05-13 by live-doc probe: 296 references at this color)."
-    AddColor d, "DarkBlue",  0,   0,   128, "Hyperlink + FollowedHyperlink character styles (print-locked; matches wdColorDarkBlue). Distinct from Blue so audits separate hyperlinks from Footnote References."
-    AddColor d, "Gold",      255, 215, 0,   "Palette only - not currently applied in the production docx."
-    AddColor d, "Orange",    255, 165, 0,   "Chapter Verse marker character style (semantic role: ChapterVerseOrange)."
-    AddColor d, "Purple",    102, 51,  153, "Palette only - not currently applied in the production docx. Rebecca purple."
-    AddColor d, "Gray",      128, 128, 128, "Palette only - not currently applied in the production docx."
+    AddColor d, "Black", 0, 0, 0, "Explicit black. Distinct from wdColorAutomatic (sentinel)."
+    AddColor d, "White", 255, 255, 255, "Empty-paragraph detection (aeBibleClass)."
+    AddColor d, "Red", 255, 0, 0, "CountRedFootnoteReferences probe color (legacy / research item)."
+    AddColor d, "DarkRed", 128, 0, 0, "Words of Jesus, EmphasisRed character styles."
+    AddColor d, "Green", 0, 255, 0, "Palette only - not currently applied in the production docx."
+    AddColor d, "DarkGreen", 0, 100, 0, "Palette only - not currently applied in the production docx."
+    AddColor d, "Emerald", 80, 200, 120, "Verse marker character style."
+    AddColor d, "Blue", 0, 0, 255, "Footnote Reference character style (confirmed 2026-05-13 by live-doc probe: 296 references at this color)."
+    AddColor d, "DarkBlue", 0, 0, 128, "Hyperlink + FollowedHyperlink character styles (print-locked; matches wdColorDarkBlue). Distinct from Blue so audits separate hyperlinks from Footnote References."
+    AddColor d, "Gold", 255, 215, 0, "Palette only - not currently applied in the production docx."
+    AddColor d, "Orange", 255, 165, 0, "Chapter Verse marker character style (semantic role: ChapterVerseOrange)."
+    AddColor d, "Purple", 102, 51, 153, "Palette only - not currently applied in the production docx. Rebecca purple."
+    AddColor d, "Gray", 128, 128, 128, "Palette only - not currently applied in the production docx."
 
     Set BuildDefaultPalette = d
 End Function
@@ -111,13 +111,13 @@ Private Sub AddColor(ByVal d As Object, ByVal name As String, _
     Dim entry As Object
     Set entry = CreateObject("Scripting.Dictionary")
     entry.CompareMode = 1
-    entry.Add "Name",    name
-    entry.Add "R",       r
-    entry.Add "G",       g
-    entry.Add "B",       b
+    entry.Add "Name", name
+    entry.Add "R", r
+    entry.Add "G", g
+    entry.Add "B", b
     entry.Add "RgbLong", RGB(r, g, b)
     entry.Add "HexCode", "#" & PadHex(r) & PadHex(g) & PadHex(b)
-    entry.Add "Usage",   usage
+    entry.Add "Usage", usage
     d.Add name, entry
 End Sub
 
@@ -195,11 +195,11 @@ End Function
 ' ==========================================================================
 ' CountRunsWithColor
 ' ==========================================================================
-' Authoritative count: how many runs in the document carry the given
+' Authoritative Count: how many runs in the document carry the given
 ' Font.Color? Walks all primary StoryRanges with Find and tallies each
 ' contiguous match. Returns the total.
 '
-' Use this when you need an accurate count and the Word-level histogram
+' Use this when you need an accurate Count and the Word-level histogram
 ' in basTEST_aeBibleTools.ListAndCountFontColors is undercounting because
 ' coloured single-character runs sit inside mixed-color Words. The
 ' histogram is fast but approximate; this is slower but exact.
@@ -209,7 +209,7 @@ End Function
 '   ?CountRunsWithColor(ColorFromName("Orange"))       ' expect N verses
 '   ?CountRunsWithColor(ColorFromName("Emerald"))      ' expect N verses
 '   ?CountRunsWithColor(RGB(192, 0, 0))                ' #C00000 cleanup target
-'                                                      ' (note: NOT &HC00000 -
+'                                                      ' (Note: NOT &HC00000 -
 '                                                      ' that literal is a
 '                                                      ' different colour. The
 '                                                      ' histogram's "#C00000"
@@ -251,7 +251,7 @@ End Function
 ' ==========================================================================
 ' ReportRunsWithColor
 ' ==========================================================================
-' Authoritative count with per-story breakdown. Same Find-based scan as
+' Authoritative Count with per-story breakdown. Same Find-based scan as
 ' CountRunsWithColor but prints one line per story plus a total. Useful
 ' when you want to see WHERE the runs are (MainText vs Footnotes vs
 ' Headers etc.), not just how many.
@@ -305,7 +305,7 @@ End Sub
 ' Group every run of the given color by the run's character-style name and
 ' print the counts. Use this to identify strays: the legitimate styles
 ' that carry the color will appear with large counts; an outlier style
-' with a count of 1 (or any small number) is a stray candidate.
+' with a Count of 1 (or any small number) is a stray candidate.
 '
 ' Walks all primary StoryRanges with Find, just like CountRunsWithColor,
 ' but tracks the run's Style.NameLocal at each match.
@@ -326,7 +326,7 @@ Public Sub ListRunsOfColorByStyle(ByVal rgbLong As Long)
     Dim story     As Word.Range
     Dim probe     As Word.Range
     Dim styleDict As Object
-    Dim styleName As String
+    Dim StyleName As String
     Dim total     As Long
     Dim k         As Variant
 
@@ -349,16 +349,16 @@ Public Sub ListRunsOfColorByStyle(ByVal rgbLong As Long)
             .MatchWildcards = False
         End With
         Do While probe.Find.Execute
-            styleName = ""
+            StyleName = ""
             On Error Resume Next
-            styleName = CStr(probe.style.NameLocal)
+            StyleName = CStr(probe.style.NameLocal)
             On Error GoTo PROC_ERR
-            If Len(styleName) = 0 Then styleName = "(no style)"
+            If Len(StyleName) = 0 Then StyleName = "(no style)"
 
-            If styleDict.Exists(styleName) Then
-                styleDict(styleName) = styleDict(styleName) + 1
+            If styleDict.Exists(StyleName) Then
+                styleDict(StyleName) = styleDict(StyleName) + 1
             Else
-                styleDict.Add styleName, 1
+                styleDict.Add StyleName, 1
             End If
             total = total + 1
             probe.Collapse wdCollapseEnd
@@ -496,7 +496,7 @@ End Sub
 ' ==========================================================================
 Public Sub DescribeStylesCarryingColor(ByVal rgbLong As Long)
     On Error GoTo PROC_ERR
-    Dim s         As Word.style
+    Dim s         As Word.Style
     Dim sColor    As Long
     Dim typeName  As String
     Dim baseName  As String
