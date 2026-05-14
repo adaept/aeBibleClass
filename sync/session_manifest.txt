@@ -73,6 +73,27 @@
             a color). Office ObjectThemeColor deliberately excluded.
           - Late binding (Scripting.Dictionary via CreateObject).
             No project references added.
+          - DescribeFirstRunOfColor(rgbLong) added for item 11
+            diagnostics: finds first explicit-color run in any
+            primary StoryRange and prints page / paragraph style /
+            run style / text / context. Scope: explicit run-level
+            overrides only (Find with .Font.Color matches direct
+            overrides, NOT style-inherited colors).
+          - DescribeStylesCarryingColor(rgbLong) added as the
+            complement: walks ActiveDocument.Styles and reports
+            any style whose Font.Color matches. Use this to find
+            colors that the histogram counts but Find cannot
+            locate (i.e., colors applied via style chain).
+          - CountRunsWithColor(rgbLong) As Long: Find-based scan
+            across all primary StoryRanges. Authoritative
+            per-color total. Use when the Word-level histogram is
+            undercounting single-char colored runs.
+          - ReportRunsWithColor(rgbLong): same scan with per-story
+            breakdown printed to Immediate.
+          - Module-header scope note corrected: the histogram
+            (ListAndCountFontColors via ActiveDocument.Words)
+            reads RESOLVED Range.Font.Color, so style-inherited
+            colors are counted there. Find's scope is narrower.
           - Step A is additive only; Step B (this session) rewires
             Module1.HexToRGB (shim), Module1.EnsureFootnoteReferenceStyleColor
             (uses ColorFromName("Purple")), basTEST_aeBibleTools.GetColorNameFromHex
@@ -96,6 +117,17 @@
             Long, name via NameFromColor, and report wdColorAutomatic
             as a distinct "Automatic (inherit)" row (was silently
             crushed into the (0,0,0) bucket).
+          - Item 11 follow-up: also handle wdUndefined (9999999) -
+            sentinel for mixed-color ranges. Was silently bucketed
+            into the phantom RGB(127,150,152) #7F9698 row that the
+            byte-decompose math produced. Now reported as
+            "wdUndefined (9999999) - Mixed (range spans multiple
+            colors)" - no fake color bucket.
+          - Caveat header added to ListAndCountFontColors output
+            explaining the Word-level granularity limit (single-
+            character coloured runs systematically undercounted)
+            and pointing to CountRunsWithColor /
+            ReportRunsWithColor for accurate per-color counts.
 
 [DOC]     md/BibleAbbreviationList.md (NEW)
           - Unified, deduplicated non-SBL abbreviation reference

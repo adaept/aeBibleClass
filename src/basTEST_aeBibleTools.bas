@@ -209,6 +209,18 @@ Public Sub ListAndCountFontColors()
     ' basBiblePalette.NameFromColor at print time.
     Set colorDict = CreateObject("Scripting.Dictionary")
 
+    Debug.Print "ListAndCountFontColors: Word-level granularity over MainText only."
+    Debug.Print "  Caveat: Range.Font.Color on a Word that spans a color boundary"
+    Debug.Print "  (e.g. a footnote reference superscript glued to its anchor word)"
+    Debug.Print "  returns wdUndefined - those Words bin into the wdUndefined row,"
+    Debug.Print "  NOT the actual color row. Single-character coloured runs"
+    Debug.Print "  (footnote refs, verse markers, chapter markers) are therefore"
+    Debug.Print "  systematically undercounted in their color row. For an accurate"
+    Debug.Print "  per-color count use basBiblePalette.CountRunsWithColor or"
+    Debug.Print "  ReportRunsWithColor. Story scope: this routine sees MainText"
+    Debug.Print "  only; ReportRunsWithColor walks all primary StoryRanges."
+    Debug.Print "---"
+
     For Each rng In ActiveDocument.words
         rgbLong = rng.Font.Color
         If colorDict.Exists(rgbLong) Then
@@ -218,21 +230,29 @@ Public Sub ListAndCountFontColors()
         End If
     Next rng
 
+    ' wdUndefined = 9999999. Word returns it from Range.Font.Color when the
+    ' range spans mixed colors. ActiveDocument.Words frequently produces
+    ' such ranges (a word that straddles a styled / unstyled boundary), so
+    ' wdUndefined-bucket counts can be substantial without representing any
+    ' real color in the doc. Detect and report distinctly.
+    Const WD_UNDEFINED As Long = 9999999
+
     For Each colorKey In colorDict.Keys
         colorCount = colorDict(colorKey)
         rgbLong = CLng(colorKey)
-        If rgbLong = wdColorAutomatic Then
-            ' wdColorAutomatic is a sentinel, not a real color. Report it as such
-            ' so the histogram does not pretend it has an RGB triplet.
-            Debug.Print "Color: wdColorAutomatic (-16777216) - Count: " & colorCount & " - Automatic (inherit)"
-        Else
-            paletteName = NameFromColor(rgbLong)
-            If Len(paletteName) = 0 Then paletteName = "Unknown Color"
-            Debug.Print "Color: " & LongToRgbString(rgbLong) & _
-                        " - Hex: " & LongToHex(rgbLong) & _
-                        " - Count: " & colorCount & _
-                        " - " & paletteName
-        End If
+        Select Case rgbLong
+            Case wdColorAutomatic
+                Debug.Print "Color: wdColorAutomatic (-16777216) - Count: " & colorCount & " - Automatic (inherit)"
+            Case WD_UNDEFINED
+                Debug.Print "Color: wdUndefined (9999999) - Count: " & colorCount & " - Mixed (range spans multiple colors)"
+            Case Else
+                paletteName = NameFromColor(rgbLong)
+                If Len(paletteName) = 0 Then paletteName = "Unknown Color"
+                Debug.Print "Color: " & LongToRgbString(rgbLong) & _
+                            " - Hex: " & LongToHex(rgbLong) & _
+                            " - Count: " & colorCount & _
+                            " - " & paletteName
+        End Select
     Next colorKey
 
 PROC_EXIT:

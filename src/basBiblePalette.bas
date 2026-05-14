@@ -48,6 +48,10 @@ Option Compare Text
 '   HexToLong(hex)                -> RgbLong
 '   LongToRgbString(rgbLong)      -> "(R,G,B)"
 '   DumpPalette                   -> diagnostic Debug.Print dump
+'   CountRunsWithColor(c)         -> exact total across all stories
+'   ReportRunsWithColor(c)        -> per-story breakdown + total
+'   DescribeFirstRunOfColor(c)    -> locate first explicit-override run
+'   DescribeStylesCarryingColor(c)-> find styles whose Font.Color = c
 '
 ' Theme arg is "Default" today. "Dark" and "Colorblind" raise
 ' "Not implemented" so call sites can be wired now and the palettes
@@ -184,6 +188,301 @@ Public Function LongToRgbString(ByVal rgbLong As Long) As String
     g = (rgbLong \ &H100) And &HFF
     b = (rgbLong \ &H10000) And &HFF
     LongToRgbString = "(" & r & "," & g & "," & b & ")"
+End Function
+
+' ==========================================================================
+' CountRunsWithColor
+' ==========================================================================
+' Authoritative count: how many runs in the document carry the given
+' Font.Color? Walks all primary StoryRanges with Find and tallies each
+' contiguous match. Returns the total.
+'
+' Use this when you need an accurate count and the Word-level histogram
+' in basTEST_aeBibleTools.ListAndCountFontColors is undercounting because
+' coloured single-character runs sit inside mixed-color Words. The
+' histogram is fast but approximate; this is slower but exact.
+'
+' Usage from Immediate:
+'   ?CountRunsWithColor(ColorFromName("Blue"))         ' expect ~2000
+'   ?CountRunsWithColor(ColorFromName("Orange"))       ' expect N verses
+'   ?CountRunsWithColor(ColorFromName("Emerald"))      ' expect N verses
+'   ?CountRunsWithColor(&HC00000)                      ' #C00000 cleanup target
+' ==========================================================================
+Public Function CountRunsWithColor(ByVal rgbLong As Long) As Long
+    On Error GoTo PROC_ERR
+    Dim oDoc  As Word.Document
+    Dim story As Word.Range
+    Dim probe As Word.Range
+    Dim n     As Long
+
+    Set oDoc = ActiveDocument
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .Font.Color = rgbLong
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            n = n + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+    CountRunsWithColor = n
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure CountRunsWithColor of Module basBiblePalette"
+End Function
+
+' ==========================================================================
+' ReportRunsWithColor
+' ==========================================================================
+' Authoritative count with per-story breakdown. Same Find-based scan as
+' CountRunsWithColor but prints one line per story plus a total. Useful
+' when you want to see WHERE the runs are (MainText vs Footnotes vs
+' Headers etc.), not just how many.
+'
+' Usage from Immediate:
+'   ReportRunsWithColor ColorFromName("Blue")
+' ==========================================================================
+Public Sub ReportRunsWithColor(ByVal rgbLong As Long)
+    On Error GoTo PROC_ERR
+    Dim oDoc      As Word.Document
+    Dim story     As Word.Range
+    Dim probe     As Word.Range
+    Dim n         As Long, total As Long
+    Dim storyName As String
+
+    Set oDoc = ActiveDocument
+    Debug.Print "ReportRunsWithColor: " & LongToRgbString(rgbLong) & _
+                " " & LongToHex(rgbLong)
+
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .Font.Color = rgbLong
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        n = 0
+        Do While probe.Find.Execute
+            n = n + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+        If n > 0 Then
+            storyName = StoryRangeName(story.StoryType)
+            Debug.Print "  " & Left$(storyName & String(20, " "), 20) & n
+        End If
+        total = total + n
+    Next story
+    Debug.Print "  " & Left$("TOTAL" & String(20, " "), 20) & total
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure ReportRunsWithColor of Module basBiblePalette"
+End Sub
+
+' ==========================================================================
+' DescribeFirstRunOfColor
+' ==========================================================================
+' Diagnostic: locate the first run in the active document whose explicit
+' Font.Color matches the given Long, and print its page number, paragraph
+' style, character style, run text, and surrounding context to the
+' Immediate window. Searches all primary StoryRanges (main body,
+' footnotes, endnotes, headers, footers).
+'
+' Scope: explicit run-level color overrides only. Find with
+' .Font.Color = X matches runs that carry the color as a direct override,
+' not runs that inherit it through a character or paragraph style.
+'
+' Note - this is a DIFFERENT scope from
+' basTEST_aeBibleTools.ListAndCountFontColors. That routine reads
+' Range.Font.Color via ActiveDocument.Words, and Word resolves the style
+' chain when you read Font.Color on a Range - so the histogram counts
+' the RESOLVED color (effective rendered color), including style-
+' inherited values. DescribeFirstRunOfColor will return NOT FOUND for
+' colors that appear in the histogram only because a style carries them.
+' Use DescribeStylesCarryingColor to find those.
+'
+' Usage from Immediate:
+'   DescribeFirstRunOfColor RGB(127,150,152)   ' #7F9698
+'   DescribeFirstRunOfColor RGB(192,0,0)       ' #C00000
+'   DescribeFirstRunOfColor &H42495            ' or pass the Long directly
+' ==========================================================================
+Public Sub DescribeFirstRunOfColor(ByVal rgbLong As Long)
+    On Error GoTo PROC_ERR
+    Dim oDoc      As Word.Document
+    Dim story     As Word.Range
+    Dim probe     As Word.Range
+    Dim ctx       As Word.Range
+    Dim ctxStart  As Long, ctxEnd As Long
+    Dim runText   As String, ctxText As String
+    Dim parStyle  As String, runStyle As String
+    Dim pageNum   As Long
+    Dim storyName As String
+    Const NL      As String = vbCrLf
+    Const MAX_RUN As Long = 80
+    Const CTX_PAD As Long = 40
+
+    Set oDoc = ActiveDocument
+
+    Debug.Print "DescribeFirstRunOfColor: searching for " & _
+                LongToRgbString(rgbLong) & " " & LongToHex(rgbLong)
+
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .Font.Color = rgbLong
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+
+        If probe.Find.Execute Then
+            ' Capture before any further range operations.
+            runText = probe.Text
+            If Len(runText) > MAX_RUN Then runText = Left$(runText, MAX_RUN) & " ..."
+
+            On Error Resume Next
+            parStyle = ""
+            parStyle = CStr(probe.Paragraphs(1).style.NameLocal)
+            runStyle = ""
+            runStyle = CStr(probe.style.NameLocal)
+            pageNum = -1
+            pageNum = probe.Information(wdActiveEndPageNumber)
+            On Error GoTo PROC_ERR
+
+            ' Surrounding context: pad on both sides up to CTX_PAD chars,
+            ' clamped to story bounds.
+            ctxStart = probe.Start - CTX_PAD
+            If ctxStart < story.Start Then ctxStart = story.Start
+            ctxEnd = probe.End + CTX_PAD
+            If ctxEnd > story.End Then ctxEnd = story.End
+            On Error Resume Next
+            ctxText = ""
+            Set ctx = story.Duplicate
+            ctx.SetRange ctxStart, ctxEnd
+            ctxText = ctx.Text
+            On Error GoTo PROC_ERR
+            ctxText = Replace(Replace(ctxText, vbCr, " | "), vbLf, " | ")
+
+            storyName = StoryRangeName(story.StoryType)
+            Debug.Print "  FOUND in story: " & storyName
+            Debug.Print "    Page         : " & pageNum
+            Debug.Print "    Paragraph    : style=" & parStyle
+            Debug.Print "    Run          : style=" & runStyle
+            Debug.Print "    Text         : [" & runText & "]"
+            Debug.Print "    Context      : ..." & ctxText & "..."
+            Exit Sub
+        End If
+    Next story
+
+    Debug.Print "  NOT FOUND - no run in any primary story carries " & _
+                "explicit Font.Color = " & rgbLong & " " & LongToHex(rgbLong)
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DescribeFirstRunOfColor of Module basBiblePalette"
+End Sub
+
+' ==========================================================================
+' DescribeStylesCarryingColor
+' ==========================================================================
+' Diagnostic complement to DescribeFirstRunOfColor: walks
+' ActiveDocument.Styles and prints any style whose Font.Color matches the
+' given Long. Use this to identify a color that the histogram counts but
+' DescribeFirstRunOfColor cannot locate - i.e., a color applied via style
+' chain rather than direct run-level override.
+'
+' Output per matching style: name, type, base style, color long / hex,
+' InUse flag.
+'
+' Usage from Immediate:
+'   DescribeStylesCarryingColor RGB(127,150,152)   ' #7F9698
+' ==========================================================================
+Public Sub DescribeStylesCarryingColor(ByVal rgbLong As Long)
+    On Error GoTo PROC_ERR
+    Dim s         As Word.style
+    Dim sColor    As Long
+    Dim typeName  As String
+    Dim baseName  As String
+    Dim matches   As Long
+
+    Debug.Print "DescribeStylesCarryingColor: searching for " & _
+                LongToRgbString(rgbLong) & " " & LongToHex(rgbLong)
+
+    For Each s In ActiveDocument.Styles
+        On Error Resume Next
+        sColor = 0
+        sColor = s.Font.Color
+        On Error GoTo PROC_ERR
+
+        If sColor = rgbLong Then
+            Select Case s.Type
+                Case wdStyleTypeParagraph:      typeName = "Paragraph"
+                Case wdStyleTypeCharacter:      typeName = "Character"
+                Case wdStyleTypeTable:          typeName = "Table"
+                Case wdStyleTypeList:           typeName = "List"
+                Case wdStyleTypeLinked:         typeName = "Linked"
+                Case Else:                      typeName = "Type=" & s.Type
+            End Select
+
+            baseName = ""
+            On Error Resume Next
+            baseName = CStr(s.baseStyle)
+            On Error GoTo PROC_ERR
+            If Len(baseName) = 0 Then baseName = "(none)"
+
+            Debug.Print "  MATCH: " & s.NameLocal & _
+                        "  [" & typeName & "]" & _
+                        "  base=" & baseName & _
+                        "  Color=" & sColor & " " & LongToHex(sColor) & _
+                        "  InUse=" & s.InUse
+            matches = matches + 1
+        End If
+    Next s
+
+    If matches = 0 Then
+        Debug.Print "  NOT FOUND - no style carries Font.Color = " & _
+                    rgbLong & " " & LongToHex(rgbLong)
+    Else
+        Debug.Print "  " & matches & " matching style(s)."
+    End If
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DescribeStylesCarryingColor of Module basBiblePalette"
+End Sub
+
+Private Function StoryRangeName(ByVal st As WdStoryType) As String
+    Select Case st
+        Case wdMainTextStory:               StoryRangeName = "MainText"
+        Case wdFootnotesStory:              StoryRangeName = "Footnotes"
+        Case wdEndnotesStory:               StoryRangeName = "Endnotes"
+        Case wdCommentsStory:               StoryRangeName = "Comments"
+        Case wdTextFrameStory:              StoryRangeName = "TextFrame"
+        Case wdEvenPagesHeaderStory:        StoryRangeName = "EvenHdr"
+        Case wdPrimaryHeaderStory:          StoryRangeName = "PrimaryHdr"
+        Case wdEvenPagesFooterStory:        StoryRangeName = "EvenFtr"
+        Case wdPrimaryFooterStory:          StoryRangeName = "PrimaryFtr"
+        Case wdFirstPageHeaderStory:        StoryRangeName = "FirstHdr"
+        Case wdFirstPageFooterStory:        StoryRangeName = "FirstFtr"
+        Case wdFootnoteSeparatorStory:      StoryRangeName = "FtnSep"
+        Case wdFootnoteContinuationSeparatorStory: StoryRangeName = "FtnContSep"
+        Case wdFootnoteContinuationNoticeStory:    StoryRangeName = "FtnContNotice"
+        Case wdEndnoteSeparatorStory:       StoryRangeName = "EndSep"
+        Case wdEndnoteContinuationSeparatorStory:  StoryRangeName = "EndContSep"
+        Case wdEndnoteContinuationNoticeStory:     StoryRangeName = "EndContNotice"
+        Case Else:                          StoryRangeName = "StoryType=" & st
+    End Select
 End Function
 
 ' ==========================================================================

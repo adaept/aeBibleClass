@@ -73,7 +73,7 @@ trim script: any false drop will surface in G6 (compile) or G8
 
 Originated 2026-05-12 with the gateway commits `bc71416` + `70bcff3`.
 
-### 2. Define colors used in the docx (HIGH)
+### 2. Define colors used in the docx (HIGH) - CLOSED 2026-05-13
 
 Carried forward from `rvw/Code_review 2026-05-11.md` item 2. Now has
 **concrete inputs** from the 2026-05-11 hand-off: four styles carry
@@ -1044,6 +1044,193 @@ of `#7F9698` and `#C00000` and the lone explicit Orange - these
 become **item 11** below to keep item 10 a clean record of the
 three original questions.
 
+### 2026-05-13 - Item 2 CLOSED (infrastructure); item 13 spawned
+
+Item 2 ("Define colors used in the docx") closes today on the
+strength of:
+
+- New `basBiblePalette.bas` module (Step A) - single source of
+  truth, 12 named colours, late-bound, theme-extensible API.
+- Three legacy call sites rewired (Step B) - `Module1.HexToRGB`
+  shim, `EnsureFootnoteReferenceStyleColor` palette-driven (and
+  corrected to Blue), `basTEST_aeBibleTools.GetColorNameFromHex`
+  shim, `ListAndCountFontColors` palette-driven with distinct
+  `wdColorAutomatic` row.
+- Histogram baseline captured (item 10 Q3) - we now know what
+  colours actually appear in the production docx at run level.
+
+Two scoped sub-tasks from the original item 2 description were
+not completed and are spawned as descendants rather than left as
+silent debt:
+
+- **Item 11** (RESEARCH): identify `#7F9698`, `#C00000`, lone
+  Orange.
+- **Item 13** (MEDIUM): convert the four
+  `wdColorAutomatic`-baselined styles (`TheHeaders`,
+  `TheFooters`, `Selah`, `EmphasisBlack`) to explicit literals,
+  plus add a `wdThemeColorNone` taxonomy check.
+
+Item 13 is sequenced after item 11 because the histogram
+unknowns may belong to the very styles item 13 needs to convert
+- doing 11 first surfaces the literal value that 13 should
+write.
+
+### 2026-05-13 - Correction: histogram scope, plus item 11 first probe
+
+Earlier today's "Item 10 research probes" entry described the
+histogram caveat as: *"shows run-level explicit overrides, not
+rendered colours."* That was wrong. The histogram via
+`ActiveDocument.Words` reads `Range.Font.Color`, and Word resolves
+the style chain when you read `Font.Color` on a Range - so the
+histogram counts the **resolved (effective rendered) colour**,
+including style-inherited values. Find with `.Font.Color = X` is
+the routine that matches only explicit run-level overrides.
+
+The two scopes are distinct:
+
+| Tool | Reads | Scope |
+|---|---|---|
+| `ListAndCountFontColors` (via `ActiveDocument.Words`) | resolved color | run override + style inheritance |
+| `DescribeFirstRunOfColor` (via Find) | explicit override only | run override |
+| `DescribeStylesCarryingColor` (walks styles) | style's Font.Color | style chain |
+
+The mistake came from conflating Find's behavior with the
+histogram's. The two helpers are now complementary by design and
+the module-header notes in `basBiblePalette.bas` were corrected
+to match.
+
+First-pass results for item 11:
+
+- **`#7F9698` (32,001 occurrences) - NOT FOUND by
+  `DescribeFirstRunOfColor`.** None of the 32K runs carry an
+  explicit override; the colour is being applied via style
+  chain. `DescribeStylesCarryingColor` (helper added this
+  session) is the right tool to identify which style. Pending
+  next probe.
+- **`#C00000` (153) - hand-coloured Jesus quotation in
+  AuthorBodyText.** First match: page 959, paragraph and run
+  both `AuthorBodyText`, text `"Blessed is he who takes no
+  offense at me."` (Luke 7:22). This is a Words-of-Jesus
+  quotation that pre-dates the `WordsOfJesus` character-style
+  convention - 153 scattered instances of hand-coloured
+  quotations inside commentary text. Note the colour is
+  `#C00000` (192,0,0), not the standard `#800000` (128,0,0) the
+  `WordsOfJesus` style carries. Cleanup target: repoint to
+  `WordsOfJesus` style and remove the run-level override. The
+  editorial decision is whether the unified colour should be
+  `#800000` or `#C00000`.
+- **`#FFA500` Orange (1) - redundant override on Genesis 1:1
+  Chapter-Verse marker.** Page 27, paragraph `VerseText`, run
+  style `Chapter Verse marker`, text `"1"`. The run's style
+  already supplies Orange; this is a duplicate explicit
+  override (likely an artifact of when the style was first
+  applied to that run). Cleanup: remove run-level Font.Color
+  and let the style provide it.
+
+Next probe (pending re-import of `basBiblePalette.bas`):
+
+```vba
+DescribeStylesCarryingColor RGB(127,150,152)   ' identify the #7F9698 style
+```
+
+### 2026-05-13 - Item 11: #7F9698 was wdUndefined (histogram bug)
+
+`DescribeStylesCarryingColor RGB(127,150,152)` also returned
+**NOT FOUND**. No style carries the colour, and Find can't
+locate any run with it. The histogram nevertheless reports
+32,001 runs at this value.
+
+Diagnosis: `9999999` decimal is the `wdUndefined` sentinel that
+Word returns from `Range.Font.Color` when the range spans
+**mixed colours**. `9999999 = 127 + 150*256 + 152*65536`, which
+byte-decomposes to `RGB(127, 150, 152) #7F9698` - a coincidence,
+not a real colour.
+
+`ActiveDocument.Words` iterates word-by-word; many words straddle
+a colour boundary (a word partly inside a styled run, partly
+outside). Every such mixed word reads `wdUndefined` from
+`Range.Font.Color` and got binned into the phantom #7F9698
+bucket. So the 32,001 count is real (that many mixed-color words
+exist), but it does not represent a colour in the document.
+
+The histogram had the same class of bug for `wdColorAutomatic`
+before Step B - silently lumped into `RGB(0,0,0)` Black via
+byte-decompose math. Today the analogous fix is applied to
+`wdUndefined`:
+
+- `basTEST_aeBibleTools.ListAndCountFontColors` now reports
+  `wdUndefined` as its own row: `"wdUndefined (9999999) -
+  Mixed (range spans multiple colors)"`. No phantom-color bucket.
+
+Item 11 outstanding work after this correction:
+
+- ~~Identify `#7F9698` style.~~ Resolved as wdUndefined sentinel;
+  not a real colour.
+- **`#C00000` (153)**: hand-coloured Jesus quotations in
+  AuthorBodyText runs. Cleanup target. Editorial: keep `#C00000`
+  or migrate to `#800000` WordsOfJesus style.
+- **`#FFA500` Orange (1)**: redundant override on Genesis 1:1
+  Chapter Verse marker. Cleanup: remove run-level override.
+
+Once those two cleanups are decided and applied, item 11 closes.
+Re-running `ListAndCountFontColors` after this session's
+histogram fix should produce a cleaner picture: the
+`wdUndefined` row will appear (informational), and the bogus
+`(127,150,152) #7F9698` row will be gone.
+
+### 2026-05-13 - Histogram caveat + accurate per-color counter
+
+Post-fix histogram showed Blue = 296, but the production docx
+has 1000 footnotes - expected Blue is ~2000 (1000 reference
+markers in the body + 1000 matching markers at the start of each
+footnote in the Footnotes story). The 296 figure is a Word-level
+granularity artifact:
+
+- `ActiveDocument.Words` iterates Word-by-Word.
+- A Word that contains a footnote reference marker glued to its
+  anchor word (`Lord.<ref>`) spans two different colours and
+  `Range.Font.Color` returns `wdUndefined` for the whole Word.
+- Those Words bin into the `wdUndefined` row (32,001 count is
+  consistent with this), not into Blue.
+- Single-character coloured runs - footnote refs, verse number
+  markers, chapter markers - are systematically undercounted in
+  their colour row.
+- Plus `ActiveDocument.Words` walks MainText only; the matching
+  reference markers in the Footnotes story aren't counted at
+  all.
+
+This makes the histogram a fast-but-vague approximation.
+Acceptable as a "what colours are present at all" sanity check,
+not for accurate per-colour counts.
+
+**Two additions this session to give accurate per-colour counts:**
+
+- `basBiblePalette.CountRunsWithColor(rgbLong) As Long` -
+  Find-based scan across all primary StoryRanges. Returns the
+  exact run count for the given colour. Slower than the
+  histogram but authoritative.
+- `basBiblePalette.ReportRunsWithColor(rgbLong)` - same scan,
+  prints per-story breakdown plus total. Useful for seeing
+  WHERE the runs are.
+- `ListAndCountFontColors` now prints a caveat header before
+  its rows explaining the Word-level limit and pointing to the
+  two new helpers.
+
+Expected values for sanity-check probes:
+
+| Colour | Expected | Source |
+|---|---|---|
+| Blue (Footnote Reference) | ~2,000 | 1000 footnotes x 2 (body marker + footnote-start marker) |
+| Orange (Chapter Verse marker) | = N verses | one per Chapter/Verse start |
+| Emerald (Verse marker)        | = N verses | one per verse marker |
+| DarkRed (WordsOfJesus / EmphasisRed) | ~47K | matches histogram order of magnitude |
+| `#C00000` (legacy quotes)     | ~153      | hand-coloured Jesus quotes |
+
+Strays detection (runs of an expected colour appearing in
+unexpected styles, or vice versa) is a separate need surfaced by
+this analysis - tracked as a follow-on under item 11 once the
+authoritative counts above are confirmed.
+
 ### 11. Identify unnamed colours in production docx (RESEARCH)
 
 Surfaced 2026-05-13 from item 10 Q3 histogram. The production
@@ -1076,3 +1263,28 @@ against the production docx. Either delete the function
 outright (and any callers in `aeBibleClass.cls`), or leave it
 with a comment noting "historical-zero, retained for regression
 catch." Low priority; not blocking anything.
+
+### 13. Convert Automatic-baselined styles to explicit literals + taxonomy check (MEDIUM)
+
+Spawned 2026-05-13 when item 2 was closed. The palette
+infrastructure (Step A + Step B) is in place, but the original
+item-2 scope also called for:
+
+- Converting four character/paragraph styles whose
+  `basTEST_aeBibleConfig.AuditOneStyle` baseline is
+  `wdColorAutomatic` (`-16777216`) to explicit RGB / `wdColor*`
+  literals after confirming editorial intent: `TheHeaders`,
+  `TheFooters`, `Selah`, `EmphasisBlack`.
+- A taxonomy check (extension of `AuditOneStyle` or a sibling
+  routine) that fails any style whose colour resolves through a
+  theme rather than an explicit literal. No Office theme colours
+  are allowed anywhere.
+
+Neither of those landed in Step A/B. They depend on per-style
+editorial decisions (what should the explicit literal *be*?)
+which the histogram doesn't answer. Sequence: identify the
+unknown colours from item 11 first, since `TheHeaders` /
+`TheFooters` may already be rendering as one of the unnamed
+colours and the "convert to literal" answer falls out
+automatically. Then run a small extension to `AuditOneStyle` to
+flag any `ObjectThemeColor <> wdThemeColorNone`.
