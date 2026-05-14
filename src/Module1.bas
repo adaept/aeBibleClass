@@ -552,15 +552,12 @@ Sub EnsureFootnoteReferenceStyleColor()
     Dim doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range
-    Dim hexColor As String
     Dim rgbColor As Long
     Dim Count As Integer
 
-    ' Set the desired hex color (e.g., purple: #663399)
-    hexColor = "#663399"
-
-    ' Convert hex color to RGB
-    rgbColor = HexToRGB(hexColor)
+    ' Target color sourced from basBiblePalette (single source of truth).
+    ' Was: hardcoded "#663399" -> HexToRGB. Now: palette name "Purple".
+    rgbColor = ColorFromName("Purple")
 
     ' Initialize variables
     Set doc = ActiveDocument
@@ -591,19 +588,12 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+' HexToRGB: thin shim. Real implementation now lives in
+' basBiblePalette.HexToLong. Kept here so any external caller still
+' resolving this name continues to work; new code should call
+' basBiblePalette.HexToLong directly.
 Function HexToRGB(hexColor As String) As Long
-    Dim r As Long, g As Long, b As Long
-    
-    ' Remove the "#" character if present
-    hexColor = Replace(hexColor, "#", "")
-    
-    ' Convert hex to RGB components
-    r = CLng("&H" & Mid$(hexColor, 1, 2))
-    g = CLng("&H" & Mid$(hexColor, 3, 2))
-    b = CLng("&H" & Mid$(hexColor, 5, 2))
-    
-    ' Combine RGB components into a single Long value
-    HexToRGB = RGB(r, g, b)
+    HexToRGB = HexToLong(hexColor)
 End Function
 
 Function FirstPageFooterNotEmpty() As Boolean

@@ -167,44 +167,18 @@ End Sub
 ' Notes:        - Hex code is normalized to uppercase for consistent comparison.
 '               - Expand CASE block as needed for additional named colors.
 ' ========================================================================================
+' GetColorNameFromHex: delegates to basBiblePalette.NameFromColor.
+' Preserves the historical "Unknown Color" return contract when the
+' value is not in the palette (the palette helper returns "" so call
+' sites can branch; this shim adapts that to the legacy string).
 Private Function GetColorNameFromHex(hexColor As String) As String
-    Dim colorName As String
-    
-    ' Convert hex to uppercase for consistency
-    hexColor = UCase(hexColor)
-    
-    ' Determine the color name based on the hex value
-    Select Case hexColor
-        Case "#FF0000"
-            colorName = "Red"
-        Case "#00FF00"
-            colorName = "Green"
-        Case "#006400"
-            colorName = "Dark Green"
-        Case "#50C878"
-            colorName = "Emerald"
-        Case "#0000FF"
-            colorName = "Blue"
-        Case "#FFD700"
-            colorName = "Gold"
-        Case "#FFA500"
-            colorName = "Orange"
-        Case "#663399"
-            colorName = "Purple"
-        Case "#FFFFFF"
-            colorName = "White"
-        Case "#000000"
-            colorName = "Black"
-        Case "#800000"
-            colorName = "Dark Red"
-        Case "#808080"
-            colorName = "Gray"
-        Case Else
-            colorName = "Unknown Color"
-    End Select
-    
-    ' Return the color name
-    GetColorNameFromHex = colorName
+    Dim name As String
+    name = NameFromColor(HexToLong(hexColor))
+    If Len(name) = 0 Then
+        GetColorNameFromHex = "Unknown Color"
+    Else
+        GetColorNameFromHex = name
+    End If
 End Function
 
 ' =================================================================================================
@@ -228,37 +202,37 @@ Public Sub ListAndCountFontColors()
     Dim colorDict As Object
     Dim colorKey As Variant
     Dim colorCount As Long
-    Dim r As Long, g As Long, b As Long
+    Dim rgbLong As Long
+    Dim paletteName As String
 
-    ' Create a dictionary to store color counts
+    ' Tally by raw Font.Color Long; name resolution comes from
+    ' basBiblePalette.NameFromColor at print time.
     Set colorDict = CreateObject("Scripting.Dictionary")
 
-    ' Loop through each word in the document
     For Each rng In ActiveDocument.words
-        ' Get the RGB values of the font color
-        r = (rng.Font.Color And &HFF)
-        g = (rng.Font.Color \ &H100 And &HFF)
-        b = (rng.Font.Color \ &H10000 And &HFF)
-
-        ' Create a key for the color in hex format
-        colorKey = Right("0" & Hex(r), 2) & Right("0" & Hex(g), 2) & Right("0" & Hex(b), 2)
-
-        ' Count the color occurrences
-        If colorDict.Exists(colorKey) Then
-            colorDict(colorKey) = colorDict(colorKey) + 1
+        rgbLong = rng.Font.Color
+        If colorDict.Exists(rgbLong) Then
+            colorDict(rgbLong) = colorDict(rgbLong) + 1
         Else
-            colorDict.Add colorKey, 1
+            colorDict.Add rgbLong, 1
         End If
     Next rng
 
-    ' Print the results to the console
     For Each colorKey In colorDict.Keys
         colorCount = colorDict(colorKey)
-        r = CLng("&H" & Left(colorKey, 2))
-        g = CLng("&H" & Mid$(colorKey, 3, 2))
-        b = CLng("&H" & Right(colorKey, 2))
-
-        Debug.Print "Color: RGB(" & r & ", " & g & ", " & b & ") - Hex: #" & colorKey & " - Count: " & colorCount & " - " & GetColorNameFromHex("#" & colorKey)
+        rgbLong = CLng(colorKey)
+        If rgbLong = wdColorAutomatic Then
+            ' wdColorAutomatic is a sentinel, not a real color. Report it as such
+            ' so the histogram does not pretend it has an RGB triplet.
+            Debug.Print "Color: wdColorAutomatic (-16777216) - Count: " & colorCount & " - Automatic (inherit)"
+        Else
+            paletteName = NameFromColor(rgbLong)
+            If Len(paletteName) = 0 Then paletteName = "Unknown Color"
+            Debug.Print "Color: " & LongToRgbString(rgbLong) & _
+                        " - Hex: " & LongToHex(rgbLong) & _
+                        " - Count: " & colorCount & _
+                        " - " & paletteName
+        End If
     Next colorKey
 
 PROC_EXIT:

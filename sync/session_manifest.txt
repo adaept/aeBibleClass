@@ -64,10 +64,25 @@
             a color). Office ObjectThemeColor deliberately excluded.
           - Late binding (Scripting.Dictionary via CreateObject).
             No project references added.
-          - Step A is additive only; existing call sites
-            (Module1.HexToRGB, basTEST_aeBibleTools.GetColorNameFromHex,
-            basTEST_aeBibleTools.ListAndCountFontColors,
-            aeBibleClass.ColorToHex) are NOT yet rewired.
+          - Step A is additive only; Step B (this session) rewires
+            Module1.HexToRGB (shim), Module1.EnsureFootnoteReferenceStyleColor
+            (uses ColorFromName("Purple")), basTEST_aeBibleTools.GetColorNameFromHex
+            (shim), basTEST_aeBibleTools.ListAndCountFontColors (palette names +
+            distinct wdColorAutomatic row). aeBibleClass.ColorToHex BGR bug
+            left untouched.
+
+[IMPORT]  src/Module1.bas
+          - Step B: EnsureFootnoteReferenceStyleColor now reads
+            ColorFromName("Purple") instead of HexToRGB("#663399").
+          - HexToRGB reduced to a 1-line shim around HexToLong.
+
+[IMPORT]  src/basTEST_aeBibleTools.bas
+          - Step B: GetColorNameFromHex reduced to a 5-line shim
+            around NameFromColor (preserves "Unknown Color" string).
+          - ListAndCountFontColors rewritten to tally by raw Font.Color
+            Long, name via NameFromColor, and report wdColorAutomatic
+            as a distinct "Automatic (inherit)" row (was silently
+            crushed into the (0,0,0) bucket).
 
 [DOC]     md/BibleAbbreviationList.md (NEW)
           - Unified, deduplicated non-SBL abbreviation reference

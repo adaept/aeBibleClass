@@ -916,3 +916,70 @@ Three research questions surfaced during Step A are captured as
 new item 10 below (legacy red-footnote probe, Footnote Reference
 colour conflict between audit and ensure routines, possible
 residual `wdColorBlack` overrides).
+
+### 2026-05-13 - Item 2 Step A verified + Emerald catch
+
+`DumpPalette` plus three round-trip probes confirm Step A:
+
+```
+?ColorFromName("Purple")        -> 10040166
+?LongToHex(10040166)            -> #663399
+?NameFromColor(RGB(255,165,0))  -> "Orange"
+```
+
+All 12 entries render correctly with their R/G/B/Long/Hex
+fields populated from the `RGB()` and byte-decompose helpers.
+
+**Side catch: Emerald.** Earlier chat math gave `RGB(80,200,120)`
+as `Long = 7849040`; the live `DumpPalette` shows `7915600` (the
+correct value: `80 + 200*256 + 120*65536`). The palette is the
+source of truth from this point on - any hand-computed colour
+literal anywhere else in the codebase must be cross-checked
+against `DumpPalette` rather than trusted on its own. Action
+folded into research item 10 question 3 (residual overrides
+audit will surface any Emerald-equivalent literals).
+
+### 2026-05-13 - Item 2 Step B: legacy call sites rewired
+
+Step B refactors three legacy call sites to delegate to
+`basBiblePalette`. Each change is small, surgical, and behaviour-
+preserving (or behaviour-fixing in one case noted below).
+
+- `Module1.EnsureFootnoteReferenceStyleColor` no longer hardcodes
+  `"#663399"`. It now reads `ColorFromName("Purple")`. The
+  semantic intent ("apply the Footnote Reference colour") is
+  preserved without coupling the routine to a specific hex
+  literal - a future palette swap or audit re-point will not
+  require editing this routine.
+- `Module1.HexToRGB` is now a one-line shim that delegates to
+  `basBiblePalette.HexToLong`. Kept under its original name so
+  any external caller resolving it still works; new code should
+  call `HexToLong` directly.
+- `basTEST_aeBibleTools.GetColorNameFromHex` is now a 5-line
+  shim that delegates to `NameFromColor` (with hex->Long
+  conversion via `HexToLong`). Preserves the historical
+  "Unknown Color" return string when the value is not in the
+  palette.
+- `basTEST_aeBibleTools.ListAndCountFontColors` rewritten to
+  tally by raw `Font.Color` Long (rather than hex string),
+  resolve names via `NameFromColor` at print time, and report
+  `wdColorAutomatic` as a distinct row ("Automatic (inherit)")
+  rather than crushing it into a `(0,0,0)` bucket. This last
+  change is the small behaviour fix: previously the
+  byte-decompose math on the `-16777216` sentinel silently
+  reported `RGB(0,0,0) #000000 - Black`, conflating Automatic
+  runs with explicit-black runs in the histogram. Research
+  item 10 question 3 depends on these two being distinct, so
+  the fix is load-bearing for the next step.
+
+No new public API surface. No project references added. Late
+binding preserved.
+
+Verification (deferred to next VBE session):
+- `EnsureFootnoteReferenceStyleColor` still prints the same
+  `Count of Footnote Reference = N` line.
+- `?HexToRGB("#663399")` returns the same `10040166` it always
+  did (now via shim).
+- `ListAndCountFontColors` output: should match the prior
+  format for non-Automatic colours and add a distinct
+  `wdColorAutomatic` row for body text.
