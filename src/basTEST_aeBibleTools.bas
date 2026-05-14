@@ -2708,4 +2708,55 @@ Public Sub ConvertHyperlinksToPlainURLs()
 
 End Sub
 
+' ============================================================================
+' MigrateCmsRedToDarkRed   (ONE-SHOT 2026-05-14 - REMOVE AFTER RUN)
+' ----------------------------------------------------------------------------
+' Item 11 sub-target: migrate 7 hand-coloured Jesus quotations from legacy
+' #C00000 (RGB 192,0,0) to standard #800000 (RGB 128,0,0, palette "DarkRed").
+' Unifies all Jesus-quotation content under the WordsOfJesus colour.
+' Run style stays AuthorBodyText - only Font.Color changes.
+' Idempotent (re-runs find 0 matches and do nothing) but no recurring use,
+' so delete this Sub after a single successful run.
+' ============================================================================
+Public Sub MigrateCmsRedToDarkRed()
+    Dim doc      As Document
+    Dim story    As Word.Range
+    Dim probe    As Word.Range
+    Dim oldColor As Long
+    Dim newColor As Long
+    Dim n        As Long
+    Dim total    As Long
+
+    Set doc = ActiveDocument
+    oldColor = RGB(192, 0, 0)
+    newColor = ColorFromName("DarkRed")
+
+    Debug.Print "MigrateCmsRedToDarkRed: " & _
+                LongToHex(oldColor) & " -> " & LongToHex(newColor)
+
+    For Each story In doc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .Font.Color = oldColor
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+        End With
+        n = 0
+        Do While probe.Find.Execute
+            probe.Font.Color = newColor
+            n = n + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+        If n > 0 Then
+            Debug.Print "  StoryType=" & story.StoryType & "  migrated=" & n
+        End If
+        total = total + n
+    Next story
+
+    Debug.Print "MigrateCmsRedToDarkRed: total runs migrated = " & total
+End Sub
+
 
