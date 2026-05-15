@@ -200,7 +200,7 @@ bodies.
 
 Originated `rvw/Code_review 2026-05-08.md` 3b.
 
-### 10. Research: legacy red-color usages and Footnote Reference value conflict (RESEARCH)
+### 10. Research: legacy red-color usages and Footnote Reference value conflict (RESEARCH) - CLOSED 2026-05-14
 
 Surfaced during item 2 (palette consolidation, 2026-05-13).
 
