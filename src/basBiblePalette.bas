@@ -547,7 +547,7 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure DescribeStylesCarryingColor of Module basBiblePalette"
 End Sub
 
-Private Function StoryRangeName(ByVal st As WdStoryType) As String
+Public Function StoryRangeName(ByVal st As WdStoryType) As String
     Select Case st
         Case wdMainTextStory:               StoryRangeName = "MainText"
         Case wdFootnotesStory:              StoryRangeName = "Footnotes"

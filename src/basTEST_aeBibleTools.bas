@@ -2628,6 +2628,40 @@ End Sub
 '
 ' See EDSG/01-styles.md "State-aware styles: print-locking" for the
 ' design pattern.
+'
+' Step 0 (added 2026-05-14): call UnlinkActiveHyperlinks to enforce the
+' no-clickable-hyperlinks rule. Print is the primary target; online
+' interactivity is a future-mode concern handled at online-build time,
+' not in this doc.
+
+' UnlinkActiveHyperlinks
+' ----------------------
+' Strip the click target from every Hyperlink object in every StoryRange,
+' preserving the displayed text and its character styling. Word's
+' Hyperlink.Delete removes only the link object; the text remains in
+' place with whatever character style was applied.
+'
+' Manual use: call directly to unlink without re-running the full lock.
+Public Sub UnlinkActiveHyperlinks()
+    Dim doc   As Document
+    Dim story As Word.Range
+    Dim i     As Long
+    Dim total As Long
+
+    Set doc = ActiveDocument
+    For Each story In doc.StoryRanges
+        ' Reverse iteration so .Delete doesn't disturb the index of
+        ' subsequent entries in the collection.
+        For i = story.Hyperlinks.Count To 1 Step -1
+            story.Hyperlinks(i).Delete
+            total = total + 1
+        Next i
+    Next story
+
+    Debug.Print "UnlinkActiveHyperlinks: unlinked " & total & _
+                " active Hyperlink(s); text + character style preserved."
+End Sub
+
 Public Sub LockHyperlinksToPalette()
     Dim doc   As Document
     Dim story As Word.Range
@@ -2637,6 +2671,9 @@ Public Sub LockHyperlinksToPalette()
 
     Set doc = ActiveDocument
     c = ColorFromName("DarkBlue")
+
+    ' Step 0: no-clickable-hyperlinks rule (see EDSG/01-styles.md).
+    UnlinkActiveHyperlinks
 
     With doc.Styles("Hyperlink").Font
         .Color = c

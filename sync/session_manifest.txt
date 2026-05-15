@@ -44,6 +44,16 @@
 6. New item 11 (identify unnamed colours #7F9698, #C00000,
    lone Orange) and item 12 (remove dead
    CountRedFootnoteReferences probe) surfaced from item 10 Q3.
+7. Items 11 and 12 both CLOSED 2026-05-14:
+   - #C00000 quotations migrated to DarkRed.
+   - 5 proper-noun Hyperlink-styled false positives stripped
+     manually by operator.
+   - 2 active web Hyperlinks unlinked via
+     LockHyperlinksToPalette (now step 0 = UnlinkActiveHyperlinks).
+   - Test 17 redefined CountActiveHyperlinks = sum across all
+     StoryRanges; verified PASS at 0/0.
+   - EDSG rule broadened from no-hyperlinks-in-footnotes to
+     no-clickable-hyperlinks-anywhere.
 
 ## Files modified
 
@@ -114,6 +124,14 @@
             StoryRange, prints Hyperlinks.Count vs Hyperlink-styled-
             run count. The gap shows field-result-style hyperlinks
             that the collection misses.
+          - ReportClickableHyperlinks: read-only Pass 1 probe for
+            the no-clickable-hyperlinks rule. Per story counts
+            (active vs styled), per-active-Hyperlink detail
+            (address, subaddress, bookmark target validity for
+            internal links, display text), and unexpected-field
+            surfacing (REF/PAGEREF with Hyperlink-styled result).
+            Output drives the design of Pass 2 (unlink + test 17
+            redefinition).
 
 [IMPORT]  src/basTEST_aeBibleTools.bas
           - LockHyperlinksAlwaysBlue rewritten as
@@ -156,6 +174,39 @@
             already 0, no change to the expected-values array.
           - Normalizer pass touched a few hex( / hex$( call sites
             (HexToUnicodeLabel, ColorToHex) - case-only changes.
+          - Test 17 renamed CountFootnoteHyperlinks ->
+            CountActiveHyperlinks; scope broadened from
+            Footnotes-story only to sum-across-all-StoryRanges.
+            The no-hyperlinks-in-footnotes rule is subsumed by
+            the no-clickable-hyperlinks-anywhere rule.
+
+[IMPORT]  src/basTEST_aeBibleTools.bas
+          - UnlinkActiveHyperlinks added: walks every StoryRange,
+            Hyperlinks(i).Delete in reverse order. Removes link
+            objects; preserves displayed text + character style.
+          - LockHyperlinksToPalette extended with new step 0
+            invoking UnlinkActiveHyperlinks before the existing
+            style / colour passes. Single call now enforces the
+            full no-clickable + uniform-styling rule.
+
+[IMPORT]  src/basStyleInspector.bas
+          - ReportClickableHyperlinks: read-only probe for the
+            no-clickable rule. Per-story active vs styled counts;
+            per-active-Hyperlink Address, SubAddress, page, text,
+            and bookmark-target-exists check for internal links.
+          - ListInertHyperlinkStyledRuns: per-instance dump of
+            Hyperlink-styled runs not backed by a collection
+            Hyperlink (the "styled-but-inert" population).
+          - StoryRangeName promoted Private -> Public in
+            basBiblePalette so basStyleInspector can call it.
+
+[DOC]     EDSG/01-styles.md
+          - "Companion rule: no hyperlinks in footnotes"
+            superseded by "Companion rule: no clickable hyperlinks
+            anywhere". One-form definition stated explicitly;
+            print-vs-online rationale documented; both audits
+            cross-referenced (AuditHyperlinkStyling for styling,
+            CountActiveHyperlinks for clickability).
 
 [IMPORT]  src/aeLoggerClass.cls
           - Normalizer pass: hex$ call site in Log_Write Unicode

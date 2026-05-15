@@ -1739,7 +1739,216 @@ Normalizer run touched:
 Idempotent on re-run. All pre-existing `hex(` / `hex$(`
 lowercase forms are now uppercase across the codebase.
 
-### 11. Identify unnamed colours in production docx (RESEARCH)
+### 2026-05-14 - Item 11: no-clickable-hyperlinks rule + Pass 1 probe
+
+**Rule (clarified by operator 2026-05-14):**
+
+> All hyperlinks in the doc shall not be clickable. The doc is
+> a print-target Bible; online interactivity is a future-mode
+> concern, addressed only when an online edition is built.
+
+**Hyperlink definition for this doc - one form only:**
+
+> A web URL link to an online concordance tool, displayed as
+> `Hyperlink`-character-styled text + DarkBlue + underlined.
+
+That is the **only** kind of hyperlink the doc uses. Word
+supports other clickable mechanisms (`REF` / `PAGEREF` fields,
+internal bookmark Hyperlinks, etc.) but they are out of scope -
+not in use here. The probe will surface any that exist so they
+can be reviewed individually as anomalies.
+
+**Why now and not item 1 (HIGH, aeRibbon gates):**
+
+> The production ribbon should be based on a solid foundation
+> for the document itself. Tests and rules form a strongly
+> opinionated framework so that translators (and i18n forks)
+> can focus on translation and not coding. Up-front rule
+> definition is cheap; downstream rework after the rule is
+> codified is expensive.
+
+**Pass 1 - read-only probe.** New routine
+`ReportClickableHyperlinks` in `basStyleInspector`. Output:
+
+- Per story: count of active Hyperlinks (clickable) and count
+  of Hyperlink-styled runs (visible-as-link). The difference
+  is the "styled-but-inert" population - text that retained
+  the styling after the underlying link object was removed in
+  a prior edit.
+- Per active Hyperlink: page, style, Address (URL),
+  SubAddress (bookmark, if internal), display text (first 60
+  chars), and (for internal links) whether the bookmark target
+  still exists - dangling links surface as cleanup candidates.
+- Probe for "unexpected fields": any field type other than
+  `wdFieldHyperlink` whose result is styled `Hyperlink`. Per
+  the one-form rule this should be 0 - reported individually
+  if any exist.
+
+Output ends with a Summary line documenting the rule's
+post-cleanup target: `ActiveHyperlinks = 0` and
+`StyledButInert = <total styled count>` (the styling stays;
+only the active link objects go).
+
+**Strategy decisions deferred to after probe:** the unlink
+mechanism (`.Delete` vs reassign-text-to-itself), the test
+function name and scope, and the rule's exact assertion
+boundary all depend on what the probe reveals. Specifically:
+
+- If active count = ~14 (matching the operator's manual
+  "clickable" count), all are valid URL Hyperlinks → unlink
+  preserves text + style.
+- If active count is much lower (e.g. 2, as
+  `ActiveDocument.Hyperlinks.Count` previously suggested),
+  then the operator's manual count was conflating active +
+  inert; rule target is unchanged but the cleanup is smaller.
+- Any DANGLING internal-bookmark rows or UNEXPECTED FIELD
+  rows are anomalies - delete or repair editorially before
+  the rule is enforced.
+
+Next operator action: re-import `src/basStyleInspector.bas`
+and run `ReportClickableHyperlinks`. Output drives the design
+of Pass 2 (the lock-and-unlink rewrite + test 17 redefinition).
+
+### 2026-05-14 - Item 11: Pass 1 results + 5 false-positives cleaned
+
+`ReportClickableHyperlinks` revealed the exact picture:
+
+```
+Story MainText  ActiveHyperlinks=2  HyperlinkStyledRuns=19  StyledButInert=17
+  HL page=933  addr=[https://3-bible-concordance.software.informer.com/1.0/]
+  HL page=934  addr=[https://www.olivetree.com/]
+Summary: Total ActiveHyperlinks=2; StyledButInert=17; Dangling=0;
+         Unexpected styled-result fields=0
+```
+
+Only 2 active web Hyperlinks in the whole doc. Zero dangling,
+zero unexpected fields. Doc is well-formed per the one-form
+definition.
+
+`ListInertHyperlinkStyledRuns` enumerated all 17 inert styled
+runs. Classified into two buckets:
+
+- **5 false positives** - proper nouns (`Josiah` x4 on
+  pp.229, 254, 275, 300; `Hezekiah` x1 on p.275) styled
+  `Hyperlink` from old copy-paste with no link target. Should
+  be plain body text. Operator stripped them manually via
+  Ctrl+Shift+S -> Default Paragraph Font.
+- **12 legitimate** - concordance-section URL strings on
+  pp.933-934. Visible as link by intent; never had an active
+  link object. Keep as-is (Hyperlink + DarkBlue + underline).
+
+Post-cleanup re-run of `ListInertHyperlinkStyledRuns`:
+
+```
+total Hyperlink-styled runs=14  inert (no active link)=12
+```
+
+Matches the operator's original manual count of 14
+visible-as-link items exactly. Doc is ready for Pass 2.
+
+### 2026-05-14 - Item 11: Pass 2 - unlink, lock, test rename
+
+Four changes commit the no-clickable-hyperlinks rule:
+
+**1. `UnlinkActiveHyperlinks` added** (`basTEST_aeBibleTools`).
+Walks every StoryRange, calls `Hyperlinks(i).Delete` in reverse
+order on each. Word's documented behaviour: link object
+removed, displayed text + character style preserved. Debug
+prints the unlinked count.
+
+**2. `LockHyperlinksToPalette` extended.** Now calls
+`UnlinkActiveHyperlinks` as a new step 0 before the style /
+colour steps. Single call enforces the full rule: nothing
+clickable + everything styled consistently.
+
+**3. RUN_THE_TESTS slot 17 renamed**
+`CountFootnoteHyperlinks` -> `CountActiveHyperlinks`. Scope
+broadened from "Footnotes story only" to "sum across all
+StoryRanges." Expected value at slot 17 remains 0 (the
+expected-values array already had 0; no change required).
+Three Case 17 sites in `aeBibleClass.cls` updated (dispatch,
+Debug.Print, BufAppend). The footnote-specific rule is
+subsumed: zero across all stories implies zero in footnotes.
+
+**4. EDSG updated.** `EDSG/01-styles.md` "Companion rule"
+section rewritten from "no hyperlinks in footnotes" to "no
+clickable hyperlinks anywhere," with the one-form definition,
+the print-vs-online rationale, and references to both audits
+(`AuditHyperlinkStyling` for styling, `CountActiveHyperlinks`
+for clickability).
+
+**Operator verification sequence** (after re-import of the
+three modified files):
+
+```vba
+?CountActiveHyperlinks           ' baseline (expect 2)
+LockHyperlinksToPalette          ' invokes UnlinkActiveHyperlinks first
+?CountActiveHyperlinks           ' expect 0 (rule satisfied)
+RUN_THE_TESTS 17                 ' expect PASS row at 0/0
+?AuditHyperlinkStyling           ' expect 0 anomalies / 14 styled runs
+```
+
+Item 11 closes when the verification passes.
+
+**Side note on `Hyperlink.Delete` behaviour.** Documented to
+remove only the link object, preserving displayed text. If
+your Word version diverges, Ctrl-Z reverts; recommend not
+saving until the verification confirms the 2 URL strings on
+pp.933-934 still display as text.
+
+### 2026-05-14 - Item 11 CLOSED
+
+Verification run by operator:
+
+```
+LockHyperlinksToPalette
+  UnlinkActiveHyperlinks: unlinked 2 active Hyperlink(s);
+    text + character style preserved.
+  (styling re-locked across all stories)
+
+RUN_THE_TESTS 17
+  PASS  Copy ()  Test = 17  0  0  CountActiveHyperlinks
+  Routine Runtime: 0.01 seconds
+
+?AuditHyperlinkStyling
+  14 Hyperlink-styled run(s) checked, 0 anomaly/anomalies.
+```
+
+Three confirmations:
+
+- **Zero clickable hyperlinks** anywhere in the doc.
+  `CountActiveHyperlinks = 0` against expected `0`; test 17
+  PASSes.
+- **Text preserved** through the unlink. Styled-run count is
+  14 = 12 long-standing inert URL stubs + 2 newly-unlinked. If
+  text had been deleted with the link object, the count would
+  have dropped to 12. The `Hyperlink.Delete` documented
+  behaviour held.
+- **Styling consistent.** All 14 Hyperlink-styled runs verify
+  clean against the palette DarkBlue + single-underline
+  convention via `AuditHyperlinkStyling`.
+
+Item 11 sub-targets recap, all CLOSED:
+
+| Sub-target | Resolution |
+|---|---|
+| `#7F9698` phantom | wdUndefined sentinel; histogram fix |
+| Footnote 218 dup FR | paragraph mark restyled |
+| Genesis 1:1 Orange | histogram artefact, not anomaly |
+| 2 AuthorListItemTab Blue | inherited DarkBlue transparently |
+| Footnote URL stray | deleted; item 12 / test 17 enforces |
+| 7 `#C00000` quotations | migrated to DarkRed |
+| 5 false-positive Hyperlink-styled | operator restyled manually |
+| 2 active web Hyperlinks | unlinked; styling preserved |
+
+The no-clickable-hyperlinks rule is now a permanent feature of
+the doc's test surface: `LockHyperlinksToPalette` enforces it,
+`AuditHyperlinkStyling` verifies the styling half, and
+`CountActiveHyperlinks` (test 17) verifies the clickability
+half. New hyperlinks pasted in the future will be caught at
+the next test run.
+
+### 11. Identify unnamed colours in production docx (RESEARCH) - CLOSED 2026-05-14
 
 Surfaced 2026-05-13 from item 10 Q3 histogram. The production
 docx carries three non-palette colours at run level that need

@@ -1089,6 +1089,293 @@ Public Function AuditHyperlinkStyling() As Long
 End Function
 
 '==============================================================================
+' ListInertHyperlinkStyledRuns
+'==============================================================================
+' Per-instance dump of every Hyperlink-character-styled run that is NOT
+' backed by an active Hyperlink collection object. These are the
+' "styled-but-inert" runs surfaced by ReportClickableHyperlinks - text
+' that looks like a link (DarkBlue + underline + Hyperlink style) but
+' carries no click target.
+'
+' For each story:
+'   - snapshot [Start, End] bounds of every collection Hyperlink.
+'   - Find each Hyperlink-styled run.
+'   - If the run's position is not inside any collection-Hyperlink's
+'     range, it is inert -> print: story, page, run text (snippet),
+'     surrounding context (CTX chars on each side).
+'
+' Use the output to decide for each inert run:
+'   - Restyle: strip the Hyperlink character style (text becomes plain
+'     body text).
+'   - Leave: keep the visible-as-link styling as a deliberate emphasis.
+'   - Repoint: if a link is desired, add a Hyperlink object back.
+'
+' Usage from Immediate:
+'   ListInertHyperlinkStyledRuns
+' ==========================================================================
+Public Sub ListInertHyperlinkStyledRuns()
+    Const EXPECTED_STYLE As String = "Hyperlink"
+    Const MAX_SNIP       As Long = 60
+    Const CTX_PAD        As Long = 40
+    Const MAX_PRINT      As Long = 50
+    Dim oDoc       As Word.Document
+    Dim story      As Word.Range
+    Dim probe      As Word.Range
+    Dim ctx        As Word.Range
+    Dim hl         As Word.Hyperlink
+    Dim hlStarts() As Long
+    Dim hlEnds()   As Long
+    Dim hlCount    As Long
+    Dim runStart   As Long
+    Dim i          As Long
+    Dim inertN     As Long
+    Dim total      As Long
+    Dim isActive   As Boolean
+    Dim pageNum    As Long
+    Dim snip       As String
+    Dim ctxStart   As Long
+    Dim ctxEnd     As Long
+    Dim ctxText    As String
+
+    Set oDoc = ActiveDocument
+    Debug.Print "ListInertHyperlinkStyledRuns: enumerating Hyperlink-styled runs not backed by a collection-Hyperlink..."
+
+    For Each story In oDoc.StoryRanges
+        ' Snapshot active-Hyperlink bounds in this story.
+        hlCount = 0
+        On Error Resume Next
+        hlCount = story.Hyperlinks.Count
+        On Error GoTo 0
+        If hlCount > 0 Then
+            ReDim hlStarts(1 To hlCount)
+            ReDim hlEnds(1 To hlCount)
+            i = 0
+            For Each hl In story.Hyperlinks
+                i = i + 1
+                hlStarts(i) = hl.Range.Start
+                hlEnds(i) = hl.Range.End
+            Next hl
+        End If
+
+        ' Walk Hyperlink-styled runs.
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            total = total + 1
+            runStart = probe.Start
+            isActive = False
+            For i = 1 To hlCount
+                If runStart >= hlStarts(i) And runStart < hlEnds(i) Then
+                    isActive = True
+                    Exit For
+                End If
+            Next i
+            If Not isActive Then
+                inertN = inertN + 1
+                If inertN <= MAX_PRINT Then
+                    On Error Resume Next
+                    pageNum = -1
+                    pageNum = probe.Information(wdActiveEndPageNumber)
+                    On Error GoTo 0
+                    snip = probe.Text
+                    If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
+                    snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
+
+                    ctxStart = probe.Start - CTX_PAD
+                    If ctxStart < story.Start Then ctxStart = story.Start
+                    ctxEnd = probe.End + CTX_PAD
+                    If ctxEnd > story.End Then ctxEnd = story.End
+                    Set ctx = story.Duplicate
+                    ctx.SetRange ctxStart, ctxEnd
+                    ctxText = ctx.Text
+                    ctxText = Replace(Replace(ctxText, vbCr, " | "), vbLf, " | ")
+
+                    Debug.Print "  INERT  story=" & StoryRangeName(story.StoryType) & _
+                                "  page=" & pageNum & _
+                                "  pos=" & runStart & _
+                                "  text=[" & snip & "]" & vbCrLf & _
+                                "         ctx=...[" & ctxText & "]..."
+                ElseIf inertN = MAX_PRINT + 1 Then
+                    Debug.Print "  ... (additional inert runs suppressed; summary count still includes them)"
+                End If
+            End If
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+
+    Debug.Print "---"
+    Debug.Print "ListInertHyperlinkStyledRuns: total Hyperlink-styled runs=" & total & _
+                "  inert (no active link)=" & inertN
+End Sub
+
+'==============================================================================
+' ReportClickableHyperlinks
+'==============================================================================
+' Read-only diagnostic for the no-clickable-hyperlinks rule.
+'
+' Editorial rule: every hyperlink in the doc must be non-clickable. Print
+' is the primary target; online interactivity is a future-mode concern.
+' "Hyperlink" in this doc means exactly one thing: a web URL pointing to
+' an online concordance tool, displayed as Hyperlink-character-styled
+' text + DarkBlue + underline. Some are still backed by active Hyperlink
+' objects (clickable). Most are inert text-with-styling (the link object
+' was removed but the styling stayed).
+'
+' This probe answers:
+'   1. Per story: how many active Hyperlinks (clickable) vs how many
+'      Hyperlink-styled runs (visible-as-link).
+'   2. For each active Hyperlink: Address, SubAddress (bookmark, if
+'      internal), display text, run style, and the page.
+'   3. Are any internal SubAddress bookmarks dangling (target deleted)?
+'      Surface them so they can be reviewed.
+'   4. Any non-Hyperlink fields whose result is styled Hyperlink (would
+'      indicate REF/PAGEREF/etc. that aren't supposed to be in this doc).
+'
+' Use the output to decide:
+'   - Which active Hyperlinks should be unlinked (text + style preserved,
+'     click target removed).
+'   - Whether any active Hyperlinks should be deleted entirely.
+'   - The expected post-cleanup value for the test 17 audit (likely 0
+'     across all stories).
+'
+' Usage from Immediate:
+'   ReportClickableHyperlinks
+'==============================================================================
+Public Sub ReportClickableHyperlinks()
+    Const EXPECTED_STYLE As String = "Hyperlink"
+    Const MAX_SNIP       As Long = 60
+    Dim oDoc        As Word.Document
+    Dim story       As Word.Range
+    Dim probe       As Word.Range
+    Dim hl          As Word.Hyperlink
+    Dim fld         As Word.Field
+    Dim totalHL     As Long
+    Dim totalStyled As Long
+    Dim totalStyledFields As Long
+    Dim totalDangling As Long
+    Dim storyHL     As Long
+    Dim storyStyled As Long
+    Dim styleName   As String
+    Dim subTarget   As String
+    Dim isInternal  As Boolean
+    Dim hasTarget   As Boolean
+    Dim snip        As String
+    Dim pageNum     As Long
+    Dim i           As Long
+
+    Set oDoc = ActiveDocument
+    Debug.Print "ReportClickableHyperlinks: scoping the no-clickable rule..."
+    Debug.Print "Editorial: '" & EXPECTED_STYLE & "'-styled web-URL links only; no REF/PAGEREF expected."
+    Debug.Print "---"
+
+    For Each story In oDoc.StoryRanges
+        storyHL = 0
+        On Error Resume Next
+        storyHL = story.Hyperlinks.Count
+        On Error GoTo 0
+
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        storyStyled = 0
+        Do While probe.Find.Execute
+            storyStyled = storyStyled + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+
+        If storyHL > 0 Or storyStyled > 0 Then
+            Debug.Print "Story " & StoryRangeName(story.StoryType) & _
+                        "  ActiveHyperlinks=" & storyHL & _
+                        "  HyperlinkStyledRuns=" & storyStyled & _
+                        "  StyledButInert=" & (storyStyled - storyHL)
+        End If
+        totalHL = totalHL + storyHL
+        totalStyled = totalStyled + storyStyled
+
+        ' Per-active-Hyperlink detail
+        If storyHL > 0 Then
+            For Each hl In story.Hyperlinks
+                On Error Resume Next
+                pageNum = -1
+                pageNum = hl.Range.Information(wdActiveEndPageNumber)
+                styleName = ""
+                styleName = CStr(hl.Range.style.NameLocal)
+                On Error GoTo 0
+                snip = hl.TextToDisplay
+                If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
+                snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
+
+                subTarget = ""
+                On Error Resume Next
+                subTarget = hl.SubAddress
+                On Error GoTo 0
+                isInternal = (Len(hl.Address) = 0 And Len(subTarget) > 0)
+
+                ' For internal links, check whether the bookmark target exists.
+                hasTarget = True
+                If isInternal Then
+                    hasTarget = False
+                    On Error Resume Next
+                    hasTarget = oDoc.Bookmarks.Exists(subTarget)
+                    On Error GoTo 0
+                    If Not hasTarget Then totalDangling = totalDangling + 1
+                End If
+
+                Debug.Print "  HL page=" & pageNum & _
+                            "  style=[" & styleName & "]" & _
+                            "  addr=[" & hl.Address & "]" & _
+                            "  sub=[" & subTarget & "]" & _
+                            IIf(isInternal, IIf(hasTarget, "  bookmark=OK", "  bookmark=DANGLING"), "") & _
+                            "  text=[" & snip & "]"
+            Next hl
+        End If
+
+        ' Probe for any Hyperlink-styled-result fields (REF/PAGEREF/etc).
+        ' Expected zero per the doc's "URL only" rule; report if any
+        ' exist so they can be reviewed.
+        On Error Resume Next
+        For i = 1 To story.Fields.Count
+            Set fld = story.Fields(i)
+            On Error Resume Next
+            styleName = ""
+            styleName = CStr(fld.Result.style.NameLocal)
+            On Error GoTo 0
+            If styleName = EXPECTED_STYLE And fld.Type <> wdFieldHyperlink Then
+                totalStyledFields = totalStyledFields + 1
+                Debug.Print "  UNEXPECTED FIELD  story=" & StoryRangeName(story.StoryType) & _
+                            "  fieldType=" & fld.Type & _
+                            "  result=[" & Left$(fld.Result.Text, MAX_SNIP) & "]"
+            End If
+        Next i
+        On Error GoTo 0
+    Next story
+
+    Debug.Print "---"
+    Debug.Print "Summary:"
+    Debug.Print "  Total ActiveHyperlinks across all stories : " & totalHL
+    Debug.Print "  Total Hyperlink-styled runs               : " & totalStyled
+    Debug.Print "  StyledButInert (= styled - active)        : " & (totalStyled - totalHL)
+    Debug.Print "  Dangling internal-bookmark Hyperlinks     : " & totalDangling
+    Debug.Print "  Unexpected styled-result fields           : " & totalStyledFields
+    Debug.Print "  Rule target after cleanup: ActiveHyperlinks = 0, StyledButInert = " & totalStyled
+End Sub
+
+'==============================================================================
 ' ReportHyperlinkStoryDistribution
 '==============================================================================
 ' Diagnostic: for each StoryRange, print

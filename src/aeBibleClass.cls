@@ -934,7 +934,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountTotalParagraphs
         m_HintArray(TestNum) = m_lastHint
     Case 17
-        ResultArray(TestNum) = CountFootnoteHyperlinks
+        ResultArray(TestNum) = CountActiveHyperlinks
         m_HintArray(TestNum) = m_lastHint
     Case 18
         ResultArray(TestNum) = CountHeading1
@@ -1188,7 +1188,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTotalParagraphs"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 17
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFootnoteHyperlinks"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountActiveHyperlinks"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 18
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading1"
@@ -1391,7 +1391,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 16
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTotalParagraphs"
     Case 17
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFootnoteHyperlinks"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountActiveHyperlinks"
     Case 18
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeading1"
     Case 19
@@ -3274,35 +3274,39 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-' CountFootnoteHyperlinks
-' -----------------------
-' Editorial rule: no hyperlinks are allowed in footnotes. Returns the
-' Count of collection-Hyperlink objects in the Footnotes story; expected
-' value is 0. Any non-zero Result is a rule violation - operator review
-' and delete (or convert to plain text citation).
+' CountActiveHyperlinks
+' ---------------------
+' Editorial rule: no clickable hyperlinks anywhere in the doc. Returns
+' the sum of collection-Hyperlink objects across all StoryRanges
+' (MainText, Footnotes, headers/footers, etc.). Expected value is 0;
+' any non-zero result is a rule violation - operator runs
+' LockHyperlinksToPalette (which calls UnlinkActiveHyperlinks) to bring
+' it back to 0.
 '
-' Replaces the prior slot-17 function CountRedFootnoteReferences, which
-' was confirmed dead code on 2026-05-14 (the production docx has zero
-' footnote references at RGB(255,0,0) - the probe was a leftover from
-' an older colour scheme).
-Private Function CountFootnoteHyperlinks() As Long
+' Replaces CountFootnoteHyperlinks (footnote-story only, 2026-05-14)
+' which itself replaced CountRedFootnoteReferences (dead, 2026-05-14).
+' The no-hyperlinks-in-footnotes rule is subsumed: zero across all
+' stories implies zero in footnotes.
+'
+' Print is the primary target; clickability is a future-mode concern
+' addressed at online-edition build time, not in this doc. See
+' EDSG/01-styles.md "No clickable hyperlinks anywhere" for the
+' editorial rule.
+Private Function CountActiveHyperlinks() As Long
     On Error GoTo PROC_ERR
 
     Dim story As Word.Range
     Dim n     As Long
     n = 0
     For Each story In ActiveDocument.StoryRanges
-        If story.StoryType = wdFootnotesStory Then
-            n = story.Hyperlinks.Count
-            Exit For
-        End If
+        n = n + story.Hyperlinks.Count
     Next story
-    CountFootnoteHyperlinks = n
+    CountActiveHyperlinks = n
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountFootnoteHyperlinks | Erl: " & Erl _
+    Debug.Print "ERROR in aeBibleClass.CountActiveHyperlinks | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

@@ -269,30 +269,56 @@ underline signal. The pattern extends to any future state-aware
 character style — pick a print-stable palette colour, then lock both
 states to it.
 
-### Companion rule: no hyperlinks in footnotes
+### Companion rule: no clickable hyperlinks anywhere
 
-Hyperlinks belong in main body text only — **never in footnotes**.
-Footnote text is reference material; live web links in citations
-are inappropriate for a print-target Bible and inappropriate as
-navigation in a study context (a reader holding the printed book
-cannot click them). Inserted-URL citations should be plain text
-("see archaeology.about.com/od/jterms") so the footnote reads the
-same whether on screen or in print.
+**Hyperlinks in this document are visual references, not interactive
+controls.** Every run that looks like a link — Hyperlink character
+style + DarkBlue + underline — must be display-only. The underlying
+`Hyperlink` object must be absent.
 
-Enforcement: **RUN_THE_TESTS slot 17 → `CountFootnoteHyperlinks`**
-(`src/aeBibleClass.cls`). Asserts the Footnotes story carries zero
-collection-Hyperlink objects. Expected value 0; any non-zero result
-is a rule violation surfaced in the test run for editorial review
-and deletion / plain-text conversion.
+Rationale:
 
-This is the first audit to enforce an editorial-rule companion to a
-style convention. Pattern: when a style discipline implies a content
-rule, codify the content rule as its own test rather than leaning
-on the style audit to catch it indirectly. The style audit
-(`AuditHyperlinkStyling` in `basStyleInspector`) verifies *how* a
-hyperlink is dressed; the content audit
-(`CountFootnoteHyperlinks` in `aeBibleClass`) verifies *whether* a
-hyperlink is allowed in a given location.
+- The document's primary target is **print**. Reader holding the
+  printed book cannot click anything; live link objects serve no
+  purpose.
+- Clickability is a **future-mode concern** for an eventual online
+  edition. At that build time, online-edition-specific tooling can
+  re-attach link objects to the styled text. The print master stays
+  clean.
+- Single-form discipline simplifies i18n and translator work — a
+  translator never has to think about link mechanics, only display
+  styling.
+
+**One-form definition for this doc:** a hyperlink is a web URL
+pointing to an online tool, rendered as text with the `Hyperlink`
+character style (palette `DarkBlue` `#000080` + single underline).
+Word's other clickable mechanisms — `REF` / `PAGEREF` / internal
+bookmark Hyperlinks — are **not in use here**. Any that appear are
+anomalies to remove.
+
+Enforcement:
+
+- **`LockHyperlinksToPalette`** (`basTEST_aeBibleTools`) — three-step
+  workflow: unlink every active Hyperlink object (`UnlinkActiveHyperlinks`),
+  lock both `Hyperlink` and `FollowedHyperlink` style definitions to
+  palette DarkBlue + underline, then walk every story and force the
+  colour + underline on each Hyperlink-character-styled run.
+- **RUN_THE_TESTS slot 17 → `CountActiveHyperlinks`**
+  (`src/aeBibleClass.cls`). Sums `story.Hyperlinks.Count` across all
+  StoryRanges. Expected value 0; any non-zero result is a rule
+  violation surfaced in the test run for editorial review.
+
+The no-hyperlinks-in-footnotes rule is **subsumed** by this broader
+rule (zero hyperlinks anywhere implies zero in footnotes).
+
+Pattern: when a style discipline implies a content rule, codify the
+content rule as its own test rather than leaning on the style audit
+to catch it indirectly. Two audits cover the two concerns:
+
+- `AuditHyperlinkStyling` (`basStyleInspector`) — *how* a hyperlink
+  is dressed (style + colour + underline must match the convention).
+- `CountActiveHyperlinks` (`aeBibleClass`, test 17) — *whether* an
+  active link object exists at all (expected 0 anywhere).
 
 ## How to add a new style
 
