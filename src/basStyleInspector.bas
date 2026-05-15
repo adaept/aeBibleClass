@@ -1089,6 +1089,156 @@ Public Function AuditHyperlinkStyling() As Long
 End Function
 
 '==============================================================================
+' AuditNonPaletteStyleColors
+'==============================================================================
+' Two-tier colour discipline (see EDSG/01-styles.md):
+'   Tier 1 - default-text intent : Font.Color = wdColorAutomatic
+'   Tier 2 - deliberate colour   : Font.Color = a palette-registered value
+'
+' Five-bucket classification:
+'   1. Tier 1   - Font.Color = wdColorAutomatic
+'   2. Tier 2   - Font.Color in palette (NameFromColor returns non-empty)
+'   3. Theme    - Font.ObjectThemeColor <> wdThemeColorNone. Office theme
+'                 colour reference. Reported separately - banned by the
+'                 rule but not the same as a hand-typed off-palette
+'                 anomaly. Many Word built-ins (Heading 4-9, Caption,
+'                 Quote, etc.) carry theme colours by default.
+'   4. Anomaly  - none of the above. The actual editorial concern: a
+'                 hand-typed off-palette RGB value. Return-value
+'                 contribution.
+'   5. Skipped  - Table or List style (Font.Color not meaningful),
+'                 Font.Color read errored, or built-in style when
+'                 IncludeBuiltIn is False.
+'
+' Return value = Anomaly count only (the editorial-discipline assertion).
+' Theme-colour count is informational and addressed by a separate audit
+' / hide-sweep workflow on built-ins.
+'
+' Color display note: when Font.Color is outside [0, 0xFFFFFF], the value
+' is a sentinel or theme reference, not a real RGB. The output flags this
+' explicitly rather than pretending the low bits are RGB triplet.
+'
+' Optional IncludeBuiltIn (default False): skip Word built-in styles
+' (Heading 4-9, Caption, Quote, Mention, etc.). Most built-ins carry
+' theme colours unmanaged by editorial; their Theme-bucket noise drowns
+' out the custom-style signal. Pass True for a one-off diagnostic that
+' covers everything.
+'
+' Usage from Immediate:
+'   ?AuditNonPaletteStyleColors           ' custom + linked only (typical)
+'   ?AuditNonPaletteStyleColors True      ' include built-ins too
+'==============================================================================
+Public Function AuditNonPaletteStyleColors( _
+        Optional ByVal IncludeBuiltIn As Boolean = False) As Long
+    Const WD_THEME_NONE As Long = -1   ' wdThemeColorNone
+    Dim oDoc        As Word.Document
+    Dim oStyle      As Word.style
+    Dim c           As Long
+    Dim themeIdx    As Long
+    Dim paletteName As String
+    Dim styleType   As Long
+    Dim okColor     As Boolean
+    Dim okTheme     As Boolean
+    Dim isBuiltIn   As Boolean
+    Dim total       As Long
+    Dim autoN       As Long
+    Dim paletteN    As Long
+    Dim themeN      As Long
+    Dim anomalyN    As Long
+    Dim skippedN    As Long
+    Dim biSkippedN  As Long
+
+    Set oDoc = ActiveDocument
+    Debug.Print "AuditNonPaletteStyleColors: classifying Font.Color across all styles" & _
+                IIf(IncludeBuiltIn, " (including built-ins)", " (custom + linked only)") & "..."
+    Debug.Print "Tier 1=Automatic OK; Tier 2=Palette OK; Theme=banned-but-built-in; Anomaly=hand-typed off-palette."
+
+    For Each oStyle In oDoc.Styles
+        styleType = oStyle.Type
+        If styleType = wdStyleTypeTable Or styleType = wdStyleTypeList Then
+            skippedN = skippedN + 1
+        Else
+            On Error Resume Next
+            isBuiltIn = False
+            isBuiltIn = oStyle.BuiltIn
+            On Error GoTo 0
+
+            If isBuiltIn And Not IncludeBuiltIn Then
+                biSkippedN = biSkippedN + 1
+            Else
+                c = 0
+                okColor = False
+                themeIdx = WD_THEME_NONE
+                okTheme = False
+                On Error Resume Next
+                c = oStyle.Font.Color
+                okColor = (Err.Number = 0)
+                Err.Clear
+                ' Theme colour lives on Font.TextColor.ObjectThemeColor in
+                ' Word's modern object model. The direct Font.ObjectThemeColor
+                ' is not a member.
+                themeIdx = oStyle.Font.TextColor.ObjectThemeColor
+                okTheme = (Err.Number = 0)
+                On Error GoTo 0
+
+                If Not okColor Then
+                    skippedN = skippedN + 1
+                Else
+                    total = total + 1
+                    If okTheme And themeIdx <> WD_THEME_NONE Then
+                        ' Theme-coloured. Report and bucket; do NOT count in anomalies.
+                        themeN = themeN + 1
+                        Debug.Print "  THEME    style=[" & oStyle.NameLocal & "]" & _
+                                    "  type=[" & StyleTypeName(styleType) & "]" & _
+                                    "  builtin=" & isBuiltIn & _
+                                    "  ObjectThemeColor=" & themeIdx & _
+                                    "  Font.Color=" & c & _
+                                    "  InUse=" & oStyle.InUse
+                    ElseIf c = wdColorAutomatic Then
+                        autoN = autoN + 1
+                    Else
+                        paletteName = NameFromColor(c)
+                        If Len(paletteName) > 0 Then
+                            paletteN = paletteN + 1
+                        Else
+                            anomalyN = anomalyN + 1
+                            Debug.Print "  ANOMALY  style=[" & oStyle.NameLocal & "]" & _
+                                        "  type=[" & StyleTypeName(styleType) & "]" & _
+                                        "  builtin=" & isBuiltIn & _
+                                        "  Font.Color=" & c & _
+                                        ColorDisplay(c) & _
+                                        "  InUse=" & oStyle.InUse
+                        End If
+                    End If
+                End If
+            End If
+        End If
+    Next oStyle
+
+    Debug.Print "---"
+    Debug.Print "AuditNonPaletteStyleColors summary: " & total & " styles classified."
+    Debug.Print "  Tier 1 - Automatic (default text):    " & autoN
+    Debug.Print "  Tier 2 - Palette (deliberate colour): " & paletteN
+    Debug.Print "  Theme  (Office theme colour, banned): " & themeN
+    Debug.Print "  Anomaly (hand-typed off-palette):     " & anomalyN & " <- return value"
+    Debug.Print "  Skipped (Table/List/error):           " & skippedN
+    Debug.Print "  BuiltIn skipped:                      " & biSkippedN
+    AuditNonPaletteStyleColors = anomalyN
+End Function
+
+' Display helper: format Font.Color for readable output. When value is
+' outside the [0, 0xFFFFFF] RGB range it is a sentinel or theme reference,
+' not a real colour - label it as such rather than byte-decomposing the
+' low bits and pretending they are RGB.
+Private Function ColorDisplay(ByVal c As Long) As String
+    If c >= 0 And c <= &HFFFFFF Then
+        ColorDisplay = " " & LongToHex(c)
+    Else
+        ColorDisplay = " (sentinel/theme-encoded)"
+    End If
+End Function
+
+'==============================================================================
 ' ListInertHyperlinkStyledRuns
 '==============================================================================
 ' Per-instance dump of every Hyperlink-character-styled run that is NOT
@@ -1204,7 +1354,7 @@ Public Sub ListInertHyperlinkStyledRuns()
                                 "  text=[" & snip & "]" & vbCrLf & _
                                 "         ctx=...[" & ctxText & "]..."
                 ElseIf inertN = MAX_PRINT + 1 Then
-                    Debug.Print "  ... (additional inert runs suppressed; summary count still includes them)"
+                    Debug.Print "  ... (additional inert runs suppressed; summary Count still includes them)"
                 End If
             End If
             probe.Collapse wdCollapseEnd
@@ -1236,7 +1386,7 @@ End Sub
 '      internal), display text, run style, and the page.
 '   3. Are any internal SubAddress bookmarks dangling (target deleted)?
 '      Surface them so they can be reviewed.
-'   4. Any non-Hyperlink fields whose result is styled Hyperlink (would
+'   4. Any non-Hyperlink fields whose Result is styled Hyperlink (would
 '      indicate REF/PAGEREF/etc. that aren't supposed to be in this doc).
 '
 ' Use the output to decide:
@@ -1256,14 +1406,14 @@ Public Sub ReportClickableHyperlinks()
     Dim story       As Word.Range
     Dim probe       As Word.Range
     Dim hl          As Word.Hyperlink
-    Dim fld         As Word.Field
+    Dim fld         As Word.field
     Dim totalHL     As Long
     Dim totalStyled As Long
     Dim totalStyledFields As Long
     Dim totalDangling As Long
     Dim storyHL     As Long
     Dim storyStyled As Long
-    Dim styleName   As String
+    Dim StyleName   As String
     Dim subTarget   As String
     Dim isInternal  As Boolean
     Dim hasTarget   As Boolean
@@ -1313,8 +1463,8 @@ Public Sub ReportClickableHyperlinks()
                 On Error Resume Next
                 pageNum = -1
                 pageNum = hl.Range.Information(wdActiveEndPageNumber)
-                styleName = ""
-                styleName = CStr(hl.Range.style.NameLocal)
+                StyleName = ""
+                StyleName = CStr(hl.Range.style.NameLocal)
                 On Error GoTo 0
                 snip = hl.TextToDisplay
                 If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
@@ -1337,7 +1487,7 @@ Public Sub ReportClickableHyperlinks()
                 End If
 
                 Debug.Print "  HL page=" & pageNum & _
-                            "  style=[" & styleName & "]" & _
+                            "  style=[" & StyleName & "]" & _
                             "  addr=[" & hl.Address & "]" & _
                             "  sub=[" & subTarget & "]" & _
                             IIf(isInternal, IIf(hasTarget, "  bookmark=OK", "  bookmark=DANGLING"), "") & _
@@ -1345,21 +1495,21 @@ Public Sub ReportClickableHyperlinks()
             Next hl
         End If
 
-        ' Probe for any Hyperlink-styled-result fields (REF/PAGEREF/etc).
+        ' Probe for any Hyperlink-styled-Result fields (REF/PAGEREF/etc).
         ' Expected zero per the doc's "URL only" rule; report if any
         ' exist so they can be reviewed.
         On Error Resume Next
         For i = 1 To story.Fields.Count
             Set fld = story.Fields(i)
             On Error Resume Next
-            styleName = ""
-            styleName = CStr(fld.Result.style.NameLocal)
+            StyleName = ""
+            StyleName = CStr(fld.Result.style.NameLocal)
             On Error GoTo 0
-            If styleName = EXPECTED_STYLE And fld.Type <> wdFieldHyperlink Then
+            If StyleName = EXPECTED_STYLE And fld.Type <> wdFieldHyperlink Then
                 totalStyledFields = totalStyledFields + 1
                 Debug.Print "  UNEXPECTED FIELD  story=" & StoryRangeName(story.StoryType) & _
                             "  fieldType=" & fld.Type & _
-                            "  result=[" & Left$(fld.Result.Text, MAX_SNIP) & "]"
+                            "  Result=[" & Left$(fld.Result.Text, MAX_SNIP) & "]"
             End If
         Next i
         On Error GoTo 0
@@ -1371,7 +1521,7 @@ Public Sub ReportClickableHyperlinks()
     Debug.Print "  Total Hyperlink-styled runs               : " & totalStyled
     Debug.Print "  StyledButInert (= styled - active)        : " & (totalStyled - totalHL)
     Debug.Print "  Dangling internal-bookmark Hyperlinks     : " & totalDangling
-    Debug.Print "  Unexpected styled-result fields           : " & totalStyledFields
+    Debug.Print "  Unexpected styled-Result fields           : " & totalStyledFields
     Debug.Print "  Rule target after cleanup: ActiveHyperlinks = 0, StyledButInert = " & totalStyled
 End Sub
 

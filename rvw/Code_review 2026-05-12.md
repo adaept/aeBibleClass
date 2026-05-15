@@ -1948,6 +1948,185 @@ the doc's test surface: `LockHyperlinksToPalette` enforces it,
 half. New hyperlinks pasted in the future will be caught at
 the next test run.
 
+### 2026-05-14 - Item 13 reframed: two-tier colour discipline
+
+The original item 13 framing - "convert 4 Automatic-baselined
+styles to explicit literals" - is **rejected on examination**.
+Operator's reframe (2026-05-14):
+
+> The print version will be via PDF. Automatic renders identically
+> to explicit black on paper. Why is Automatic not used on all
+> appropriate locations? Going to print requires the default theme
+> anyway. Better to check if others should be Automatic also.
+> This would take care of Print and Theme (on-line) at the same
+> time.
+
+Reasoning accepted: `wdColorAutomatic` is the **right answer for
+default-text styles** - theme-portable, print-safe, translator-
+friendly. The earlier plan to convert TheHeaders / TheFooters /
+Selah / EmphasisBlack to `wdColorBlack` would have:
+
+- Forfeited theme portability (locked black against any future
+  dark / colourblind theme).
+- Created invisible-text hazards if the doc ever renders on a
+  dark page.
+- Provided zero print benefit (PDF export of Automatic always
+  lands black on paper anyway).
+
+**New two-tier discipline (documented in `EDSG/01-styles.md`):**
+
+| Tier | Value | Intent |
+|---|---|---|
+| 1. Default text | `wdColorAutomatic` (-16777216) | Render as page foreground |
+| 2. Deliberate colour | Palette-registered `RgbLong` | Render in a named palette colour |
+
+Anything else is an anomaly: hand-typed RGB, copy-paste leftover,
+off-palette near-match, or Office `ObjectThemeColor`. Anomalies
+are surfaced for editorial decision: repoint to Automatic,
+repoint to palette name, or add to palette as a new deliberate
+colour.
+
+**Four-style sub-task (TheHeaders, TheFooters, Selah,
+EmphasisBlack): CLOSED with no action.** Their Automatic
+baselines were correct from the start; the audit values at
+`-16777216` in `basTEST_aeBibleConfig.AuditOneStyle` stay.
+
+**Pass 1 (this session) - read-only audit added.**
+`AuditNonPaletteStyleColors` in `basStyleInspector`. Walks
+every Paragraph / Character / Linked style, classifies
+`Font.Color` into Automatic / Palette / Anomaly. Returns
+anomaly count.
+
+Output drives editorial decisions for each anomaly:
+
+- Tier 1 candidate (was meant to be default text) → repoint to
+  `wdColorAutomatic`.
+- Tier 2 candidate (matches a near-palette value or is a real
+  intentional colour) → repoint to existing palette name or
+  add to palette as a new entry.
+
+Operator action: re-import `src/basStyleInspector.bas` and run
+
+```vba
+?AuditNonPaletteStyleColors
+```
+
+Output drives Pass 2 (manual cleanup of anomalies). After Pass
+2 anomaly count = 0, audit becomes a permanent test.
+
+**Pass 3 (planned)** - add `AuditThemeColorUsage`: walk every
+style, report any with `Font.ObjectThemeColor <> wdThemeColorNone`.
+Expected 0. Catches Office theme leaks. Wired into
+`RUN_THE_TESTS` at a slot the operator will assign.
+
+**Pass 4 (planned, dependent on Pass 2 outcome)** -
+`AuditDeliberateColourCompliance`: verify each
+named-deliberate-colour style carries the exact palette value
+expected (Hyperlink → DarkBlue, not some hand-typed near-blue).
+Requires a style → palette-name registry; per operator decision
+this session, the registry lives in `basBiblePalette`. Not
+written yet; deferred until Pass 2 results show whether the
+registry is even needed (it may be that Pass 2 cleanup
+collapses all deliberate-colour styles into palette-perfect
+matches, making compliance a trivial subset of Pass 1's check).
+
+Item 13 closes when:
+
+- Pass 1 anomaly count = 0 (after manual cleanup).
+- `AuditThemeColorUsage` exists, runs clean, and is wired
+  into RUN_THE_TESTS.
+- `AuditDeliberateColourCompliance` is in place if Pass 2 leaves
+  a non-trivial deliberate-colour population.
+
+### 2026-05-14 - Item 13 Pass 1 complete: audit upgraded, Error style deleted
+
+**Path A audit upgrade.** `AuditNonPaletteStyleColors` rewritten
+to a 5-bucket classifier:
+
+1. **Tier 1** - `Font.Color = wdColorAutomatic` (default text).
+2. **Tier 2** - `Font.Color` matches a palette-registered value.
+3. **Theme** - `Font.TextColor.ObjectThemeColor <> wdThemeColorNone`
+   (Office theme colour - banned but mostly Word built-ins).
+4. **Anomaly** - non-Automatic, non-palette, non-theme. The
+   editorial concern: hand-typed off-palette RGB.
+5. **Skipped** - Table/List type, or BuiltIn when
+   `IncludeBuiltIn = False` (default).
+
+Return value = Anomaly count only. Optional `IncludeBuiltIn`
+argument (default False) shows everything for diagnostic runs.
+Color display fixed: values outside `[0, 0xFFFFFF]` are flagged
+"sentinel/theme-encoded" rather than byte-decomposing low bits
+into a misleading RGB.
+
+VBA detail: the theme-colour property is
+`Font.TextColor.ObjectThemeColor`, not `Font.ObjectThemeColor`
+(the latter is not a member - compile error). Modern Word object
+model routes theme metadata through the `TextColor` sub-object.
+
+**Diagnostic findings (`IncludeBuiltIn = True`):**
+
+| Bucket | Count | Notes |
+|---|---:|---|
+| Tier 1 - Automatic | 147 | Most styles, including TheHeaders, TheFooters, Selah, EmphasisBlack |
+| Tier 2 - Palette | 8 | Hyperlink, FollowedHyperlink, Footnote Reference, WordsOfJesus, EmphasisRed, Chapter Verse marker, Verse marker, and one more |
+| Theme | 16 | Word built-ins with `ObjectThemeColor` set: Heading 4-9, Caption, Block Text, Subtitle, Quote, Intense Quote, Subtle Emphasis, Subtle Reference, Intense Emphasis, Intense Reference, TOC Heading |
+| Anomaly (with built-ins) | 5 | 4 built-ins with hand-set RGB defaults (Hashtag, Mention, Placeholder Text, Unresolved Mention) + 1 custom: `Error` style |
+| BuiltIn skipped (default) | 122 | Filtered when `IncludeBuiltIn=False` |
+
+**Pass 2 - manual cleanup.** Custom-style anomaly count was 1:
+
+- `Error` (custom Paragraph style, `Font.Color = #FF6600` orange-
+  red). `VerifyErrorStyleUnused` confirmed 0 runs across all
+  StoryRanges. Style deleted via
+  `ActiveDocument.Styles("Error").Delete`. Post-delete
+  `AuditNonPaletteStyleColors` returns 0 anomalies on customs.
+
+**Custom-style colour discipline now clean.** 53 custom + linked
+styles classified, all in Tier 1 or Tier 2, zero anomalies, zero
+theme colours. The two-tier rule holds on everything under
+editorial control.
+
+**Built-in noise remaining (20 styles):** 16 theme-coloured +
+4 hand-set-RGB-default. All Word built-ins, all unused in this
+doc. Out of editorial control in the sense that we can't make
+their defaults align to the palette - but we *can* hide them
+from the gallery so they don't tempt accidental use. This is
+the next-session hide-sweep task.
+
+**Remaining item 13 work (deferred to next session):**
+
+1. **Hide-sweep for built-in noise.** New routine
+   `HideUnapprovedBuiltInStyles` in `basStyleInspector`. Walks
+   `ActiveDocument.Styles`; for each `BuiltIn = True` style not
+   in the `approved` array, sets `Priority = 99`,
+   `QuickStyle = False`, `UnhideWhenUsed = False`. The three-
+   property pattern (not just Priority) is critical because
+   `UnhideWhenUsed = True` re-surfaces a style in the gallery
+   the moment any run touches it.
+2. **Wire `AuditNonPaletteStyleColors` as a RUN_THE_TESTS slot.**
+   Permanent custom-style colour-discipline test. Operator to
+   assign slot number. Expected return value 0.
+3. **`CountUnapprovedVisibleStyles` test.** Walks styles; counts
+   those that are neither in `approved` nor properly hidden
+   (BuiltIn + Priority=99 + QuickStyle=False + UnhideWhenUsed=False).
+   Combined with the hide-sweep this gives the strong rule:
+   "only approved styles visible to the editor / translator."
+4. **`AuditThemeColorUsage` (planned).** Reports any style with
+   `ObjectThemeColor <> wdThemeColorNone`. After hide-sweep,
+   should be informational only - the theme-coloured built-ins
+   will be Priority=99 hidden, but the property values stay
+   theme-encoded.
+5. **`AuditDeliberateColourCompliance` (planned, lower priority).**
+   For each named deliberate-colour style (Hyperlink, Footnote
+   Reference, etc.), verify `Font.Color` matches the expected
+   palette entry. Requires a style->palette-name registry in
+   `basBiblePalette`. Catches drift (e.g., Hyperlink getting
+   reset to its default colour by a template operation).
+
+Pass 1 closes; the editorial-discipline assertion is met. The
+remaining work is permanence (test wiring) + built-in noise
+suppression (hide-sweep). Both queued for next session.
+
 ### 11. Identify unnamed colours in production docx (RESEARCH) - CLOSED 2026-05-14
 
 Surfaced 2026-05-13 from item 10 Q3 histogram. The production
@@ -1981,7 +2160,7 @@ outright (and any callers in `aeBibleClass.cls`), or leave it
 with a comment noting "historical-zero, retained for regression
 catch." Low priority; not blocking anything.
 
-### 13. Convert Automatic-baselined styles to explicit literals + taxonomy check (MEDIUM)
+### 13. Convert Automatic-baselined styles to explicit literals + taxonomy check (MEDIUM) - REFRAMED 2026-05-14
 
 Spawned 2026-05-13 when item 2 was closed. The palette
 infrastructure (Step A + Step B) is in place, but the original

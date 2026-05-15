@@ -232,6 +232,40 @@ approved style. Documented exceptions only. See `rvw/Code_review
 — direct formatting on one paragraph silently rewrites the style for
 all others using it. Always `False`.
 
+## Colour discipline: two tiers, no third
+
+Every style's `Font.Color` must fall into exactly one of two tiers.
+There is no third option.
+
+| Tier | Value | Intent | Examples |
+|---|---|---|---|
+| **1. Default text** | `wdColorAutomatic` (`-16777216`) | Render as the page's foreground colour. Black on white in default theme; flips with dark mode; lands black on printed PDF. | TheHeaders, TheFooters, Selah, EmphasisBlack, Body Text, most paragraph styles. |
+| **2. Deliberate colour** | A palette-registered `RgbLong` value | Render in a specific named colour regardless of page. Lives in [`basBiblePalette`](../src/basBiblePalette.bas) `GetPalette()`. | Hyperlink → DarkBlue, Footnote Reference → Blue, Verse marker → Emerald, Chapter Verse marker → Orange, Words of Jesus → DarkRed. |
+
+Anything else is an anomaly. Common cases:
+
+- Hand-typed `RGB(0, 0, 0)` masquerading as "default text" — should be `wdColorAutomatic`. Locking explicit black makes the run invisible on a dark background and forfeits theme portability for zero print benefit.
+- An off-palette specific colour like `#C00000` where the palette has `#800000` (`DarkRed`) — should be repointed to the palette entry, or, if the off-palette colour is deliberate, *added* to the palette as a new named entry.
+- `Font.ObjectThemeColor <> wdThemeColorNone` — Office theme colour. **Banned outright**: too niche, too template-coupled, not portable to non-Office renderers.
+
+### Why two tiers and not "explicit literals everywhere"
+
+The earlier-proposed "convert all Automatic to explicit `wdColorBlack`" rule was rejected (2026-05-14) on these grounds:
+
+- **Print target via PDF lands the same.** Automatic → black on paper, explicit `wdColorBlack` → black on paper. No print difference.
+- **Theme portability survives.** Automatic flips correctly with dark mode; locked black does not. For a future online edition, all "default text" needs to invert — that's what Automatic delivers.
+- **Translator workflow stays clean.** A translator inheriting this doc never has to know "normal text is RGB(0,0,0)." They work with style names and never touch colour metadata.
+- **Single discipline, two states.** Style colour is either Automatic *(default-text intent)* or a palette-named value *(deliberate-colour intent)*. No third state to debate; anomalies are obvious.
+
+### Audits
+
+Two checks cover the rule:
+
+- **`AuditNonPaletteStyleColors`** (`basStyleInspector`) — walks every style, classifies `Font.Color` into Automatic / Palette / Anomaly. Returns anomaly count; expected 0 in steady state. Drives manual decisions on each anomaly (repoint Automatic, repoint to palette, or add to palette).
+- **`AuditThemeColorUsage`** *(planned)* — walks every style, reports any with `Font.ObjectThemeColor <> wdThemeColorNone`. Expected 0. Wired into `RUN_THE_TESTS` once stable.
+
+A third audit, **`AuditDeliberateColourCompliance`** *(planned)*, will verify each named-deliberate-colour style carries the exact palette value expected (e.g., Hyperlink → DarkBlue, not some hand-typed near-blue). Needs a style → palette-name registry stored in `basBiblePalette`.
+
 ## State-aware styles: print-locking
 
 Some Word character styles change appearance based on interactive

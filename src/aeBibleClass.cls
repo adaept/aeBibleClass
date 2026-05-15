@@ -3279,7 +3279,7 @@ End Function
 ' Editorial rule: no clickable hyperlinks anywhere in the doc. Returns
 ' the sum of collection-Hyperlink objects across all StoryRanges
 ' (MainText, Footnotes, headers/footers, etc.). Expected value is 0;
-' any non-zero result is a rule violation - operator runs
+' any non-zero Result is a rule violation - operator runs
 ' LockHyperlinksToPalette (which calls UnlinkActiveHyperlinks) to bring
 ' it back to 0.
 '

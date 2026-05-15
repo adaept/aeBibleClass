@@ -199,6 +199,19 @@
             Hyperlink (the "styled-but-inert" population).
           - StoryRangeName promoted Private -> Public in
             basBiblePalette so basStyleInspector can call it.
+          - AuditNonPaletteStyleColors: 5-bucket classifier
+            (Tier 1 Automatic / Tier 2 Palette / Theme / Anomaly
+            / Skipped). Optional IncludeBuiltIn arg (default
+            False) filters Word built-ins. Theme detection via
+            Font.TextColor.ObjectThemeColor (NOT Font.Object-
+            ThemeColor, which doesn't exist). Color display
+            flags sentinel/theme-encoded values explicitly.
+            Return value = Anomaly count.
+          - Pass 1 of item 13 complete this session: 1 custom
+            anomaly found (Error style, #FF6600 orange,
+            unused), operator deleted via
+            ActiveDocument.Styles("Error").Delete. Post-delete
+            custom-style anomaly count = 0.
 
 [DOC]     EDSG/01-styles.md
           - "Companion rule: no hyperlinks in footnotes"
