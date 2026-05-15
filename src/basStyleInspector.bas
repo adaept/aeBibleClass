@@ -1110,11 +1110,11 @@ End Function
 '                 Font.Color read errored, or built-in style when
 '                 IncludeBuiltIn is False.
 '
-' Return value = Anomaly count only (the editorial-discipline assertion).
-' Theme-colour count is informational and addressed by a separate audit
+' Return value = Anomaly Count only (the editorial-discipline assertion).
+' Theme-colour Count is informational and addressed by a separate audit
 ' / hide-sweep workflow on built-ins.
 '
-' Color display note: when Font.Color is outside [0, 0xFFFFFF], the value
+' Color display Note: when Font.Color is outside [0, 0xFFFFFF], the value
 ' is a sentinel or theme reference, not a real RGB. The output flags this
 ' explicitly rather than pretending the low bits are RGB triplet.
 '
@@ -1132,7 +1132,7 @@ Public Function AuditNonPaletteStyleColors( _
         Optional ByVal IncludeBuiltIn As Boolean = False) As Long
     Const WD_THEME_NONE As Long = -1   ' wdThemeColorNone
     Dim oDoc        As Word.Document
-    Dim oStyle      As Word.style
+    Dim oStyle      As Word.Style
     Dim c           As Long
     Dim themeIdx    As Long
     Dim paletteName As String
@@ -1186,7 +1186,7 @@ Public Function AuditNonPaletteStyleColors( _
                 Else
                     total = total + 1
                     If okTheme And themeIdx <> WD_THEME_NONE Then
-                        ' Theme-coloured. Report and bucket; do NOT count in anomalies.
+                        ' Theme-coloured. Report and bucket; do NOT Count in anomalies.
                         themeN = themeN + 1
                         Debug.Print "  THEME    style=[" & oStyle.NameLocal & "]" & _
                                     "  type=[" & StyleTypeName(styleType) & "]" & _
@@ -1406,7 +1406,7 @@ Public Sub ReportClickableHyperlinks()
     Dim story       As Word.Range
     Dim probe       As Word.Range
     Dim hl          As Word.Hyperlink
-    Dim fld         As Word.field
+    Dim fld         As Word.Field
     Dim totalHL     As Long
     Dim totalStyled As Long
     Dim totalStyledFields As Long

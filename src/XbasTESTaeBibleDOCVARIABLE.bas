@@ -214,7 +214,7 @@ Sub FindDocVariableEverywhere()
     Dim doc As Document
     Dim variableName As String
     Dim variableFound As Boolean
-    Dim field As field
+    Dim field As Word.Field
     Dim shape As shape
     Dim section As Word.Section
     Dim Note As footnote
@@ -324,7 +324,7 @@ End Sub
 Function SearchShapeForVariable(shape As shape, variableName As String) As Boolean
     On Error GoTo PROC_ERR
     Dim childShape As shape
-    Dim field As field
+    Dim field As Word.Field
     Dim textFrameRange As Word.Range
 
     ' Initialize return value

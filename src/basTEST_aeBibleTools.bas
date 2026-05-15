@@ -2017,7 +2017,7 @@ Public Sub FlagEarlyBindingRoutines_LateBound()
     baseTypes = Array("As String", "As Integer", "As Long", "As Double", "As Boolean", "As Variant", _
                       "As Byte", "As Currency", "As Date", "As Object", "As Single")
 
-    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Word.Section", "As Word.Style", "As Shape", "As Field", _
+    wordTypes = Array("As Word.Range", "As Word.Paragraph", "As Word.Section", "As Word.Style", "As Shape", "As Word.Field", _
                       "As HeaderFooter", "As Footnote", "As EndNote", "As Table", "As Bookmark", _
                       "As Document", "As Collection", "As New Collection", "As Selection", _
                       "As customXMLPart", "As CustomXMLParts")
