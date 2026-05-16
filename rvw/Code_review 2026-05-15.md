@@ -572,6 +572,39 @@ Originated: 2026-05-16 slot-by-slot description authoring of § 10
 surfaced the slot 3 / slot 5 redundancy; slot 6 caveat surfaced in
 the same review pass.
 
+**Operator-verification follow-up 2026-05-16.**
+
+- *Adjusted page-number fix.* First operator run hinted "Page 689"
+  but the footer at that location read 682-683. Cause:
+  `FormatEmptyRunHint` was using
+  `Range.Information(wdActiveEndPageNumber)`, which returns the
+  sequential internal index ignoring Roman-numeral front matter
+  and numbering restarts. Changed to
+  `wdActiveEndAdjustedPageNumber`, matching the convention already
+  established in `HasLeftAlignedParagraph` (slot 72) which solved
+  the same problem for the same reason. Re-run reported
+  "Page 681" - matches what the editor sees in the footer.
+- *Styled-paragraph mechanics learned.* The actual offending stack
+  on page 681 was `[empty][empty][empty][BodyTextTopLineCPBB
+  without a tab][content]`. A paragraph styled
+  `BodyTextTopLineCPBB` (centered, page-break-before) with no tab
+  is structurally indistinguishable from an empty paragraph by the
+  `Len(p.Range.Text) = 1` test, so it was being counted as part of
+  the empty run. The break-exception predicate
+  (`nextContent.PageBreakBefore = True`) attaches to the
+  *paragraph carrying* the page-break-before, not to the empties
+  preceding it - so this case was correctly identified as a
+  4-empty run terminating at content, no exception triggered.
+  Editorial fix (adding the tab character to the styled paragraph
+  to make it structurally non-empty) restored PASS. The rule held;
+  the document was wrong. Good signal that the path-(b)
+  implementation discriminates the empty-vs-content boundary at
+  the right level.
+- *Slot 6 description authored 2026-05-16.* Description filled in
+  via § 10 `GetTestDescription` case branch; emission confirmed in
+  the post-fix PASS report ("Detects runs of length >= 2 with
+  three exceptions ...").
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward
