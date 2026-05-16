@@ -1,6 +1,6 @@
-'--- EmphasisRed  (Type=Character, Priority=44) ---
-.BaseStyle = "Words of Jesus"
-.QuickStyle = True
+'--- EmphasisRed  (Type=Character, Priority=45) ---
+.BaseStyle = "Default Paragraph Font"
+.QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 9
 .Font.Bold = -1

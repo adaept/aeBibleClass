@@ -327,10 +327,13 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "ContentsRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0, ""
     AuditOneStyle "AuthorBookRefHeader", "Liberation Serif", 11, 0, 0, 0, 12, 0, 11, -1, 0, ""
     AuditOneStyle "AuthorBookRef", "Carlito", 11, 0, -18, 0, 12, 0, 11, -1, 0, ""
-    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 4, 10, 0, 62, 0, 0, ""
+    AuditOneStyle "CustomParaAfterH1", "Noto Sans", 10, 1, 0, 0, 12, 0, 62, 0, 0, ""
     AuditOneStyle "DatAuthRef", "Noto Sans", 8, 1, 0, 0, 12, 11, 0, -1, 0, ""
     AuditOneStyle "Brief", "Noto Sans", 10, 1, 0, 5, 13.9, 0, 8, -1, 0, ""
     AuditOneStyle "Psalms BOOK", "Carlito", 9, 0, 0, 0, 12, 10, 8, 0, 0, ""
+    ' Footnote Text: Exactly 8 is the known exception - Single caused space
+    ' irregularity on the line carrying the Footnote Reference number.
+    ' May require i18n adjustment due to font differences.
     AuditOneStyle "Footnote Text", "Carlito", 7, 3, 0, 4, 8, 0, 0, 0, 0, ""
     AuditOneStyle "PsalmAcrostic", "Carlito", 9, 1, 0, 0, 12, 3, 3, 0, 0, ""
     AuditOneStyle "PsalmSuperscription", "Carlito", 8, 0, 0, 5, 13.9, 2, 2, 0, -1, ""

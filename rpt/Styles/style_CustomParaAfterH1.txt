@@ -1,6 +1,6 @@
-'--- CustomParaAfterH1  (Type=Paragraph, Priority=25) ---
+'--- CustomParaAfterH1  (Type=Paragraph, Priority=27) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Noto Sans"
 .Font.Size = 10
 .Font.Bold = 0
@@ -17,8 +17,8 @@
 .ParagraphFormat.FirstLineIndent = 0
 .ParagraphFormat.SpaceBefore = 0
 .ParagraphFormat.SpaceAfter = 62
-.ParagraphFormat.LineSpacing = 10
-.ParagraphFormat.LineSpacingRule = 4
+.ParagraphFormat.LineSpacing = 12
+.ParagraphFormat.LineSpacingRule = 0
 .ParagraphFormat.WidowControl = -1
 .ParagraphFormat.KeepTogether = 0
 .ParagraphFormat.KeepWithNext = 0

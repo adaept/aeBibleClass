@@ -1,6 +1,6 @@
-'--- PsalmSuperscription  (Type=Paragraph, Priority=34) ---
+'--- PsalmSuperscription  (Type=Paragraph, Priority=37) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 8
 .Font.Bold = 0

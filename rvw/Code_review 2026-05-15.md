@@ -228,13 +228,25 @@ return-value contract.
 Carried from 2026-05-12 item 13 (reframed 2026-05-14, advanced
 again 2026-05-15 with the BookHyperlink addition).
 
-### 3. Prescriptive-spec pass for `LineSpacingRule = Exactly` (MEDIUM) - RECOVERED
+### 3. Prescriptive-spec pass for `LineSpacingRule = Exactly` (MEDIUM) - CLOSED 2026-05-16
 
 Two paragraph styles in bucket 1 still hold `LineSpacingRule =
 Exactly` against the QA-checklist preference of `Single`:
 
 - `CustomParaAfterH1` — `Exactly 10`
 - `Footnote Text` — `Exactly 8`
+
+**Status 2026-05-16:** `DumpStyleProperties` was run on 11 styles
+(see `rpt/Styles/` dated 2026-05-16) confirming the outcome:
+
+- `CustomParaAfterH1` — fixed to Single (`LineSpacingRule = 0`,
+  `LineSpacing = 12`); taxonomy line in
+  `basTEST_aeBibleConfig.bas` updated to match.
+- `Footnote Text` — retained at `Exactly 8`. **Known exception:**
+  promoting to Single caused space irregularity on the line
+  carrying the Footnote Reference number. Flagged as potentially
+  requiring adjustment for i18n due to font differences. Taxonomy
+  entry annotated in-place.
 
 These were intentionally retained when the `BaseStyle = ""` half
 of the prior prescriptive-pass round was completed; the

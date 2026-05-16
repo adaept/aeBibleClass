@@ -1,6 +1,6 @@
 '--- AuthorBookSections  (Type=Paragraph, Priority=24) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 11
 .Font.Bold = 0

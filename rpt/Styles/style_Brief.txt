@@ -1,6 +1,6 @@
-'--- Brief  (Type=Paragraph, Priority=26) ---
+'--- Brief  (Type=Paragraph, Priority=28) ---
 .BaseStyle = ""
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Noto Sans"
 .Font.Size = 10
 .Font.Bold = -1

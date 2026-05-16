@@ -16,94 +16,163 @@ PASS              Copy ()       Test = 4      0             0             CountD
 FAIL!!!!          Copy ()       Test = 5      -1            0             TestSlotAvailable
   >> First hit: (no hint provided by test function)
   TestSlotAvailable
-PASS              Copy ()       Test = 6      0             0             CountQuadrupleParagraphMarks
+PASS              Copy ()       Test = 6      0             0             CountConsecutiveEmptyParagraphsNotPrecedingBreak
+  Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0
 PASS              Copy ()       Test = 7      0             0             CountStyleWithSpaceAndNumber
+  TestSlotAvailable
 PASS              Copy ()       Test = 8      0             0             CountStyleWithNumberAndSpace
+  TestSlotAvailable
 PASS              Copy ()       Test = 9      7             7             CountPeriodSpaceLeftParenthesis
+  TestSlotAvailable
 PASS              Copy ()       Test = 10     1             1             CountNonBreakingSpaces
+  TestSlotAvailable
 PASS              Copy ()       Test = 11     0             0             CountFindNumberDashNumber
+  TestSlotAvailable
 PASS              Copy ()       Test = 12     0             0             CountNumberDashNumberInFootnotes
+  TestSlotAvailable
 PASS              Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
+  TestSlotAvailable
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
+  TestSlotAvailable
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 16     33822         33783         CountTotalParagraphs
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
+  TestSlotAvailable
 PASS              Copy ()       Test = 18     66            66            CountHeading1
+  TestSlotAvailable
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
+  TestSlotAvailable
 PASS              Copy ()       Test = 20     0             0             CountFootnotesFollowedByDigit
+  TestSlotAvailable
 PASS              Copy ()       Test = 21     0             0             CountNotSpacesAfterFootnoteReferences
-FAIL!!!!          Copy ()       Test = 22     217           224           CountEmptyParagraphsWithFormatting
+  TestSlotAvailable
+FAIL!!!!          Copy ()       Test = 22     216           224           CountEmptyParagraphsWithFormatting
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 PASS              Copy ()       Test = 23     0             0             CountDeleteEmptyParagraphsBeforeHeading2
+  TestSlotAvailable
 PASS              Copy ()       Test = 24     1000          1000          CountFootnoteReferences
+  TestSlotAvailable
 PASS              Copy ()       Test = 25     1             1             CountFootnoteReferenceColors
+  TestSlotAvailable
 PASS              Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
+  TestSlotAvailable
 PASS              Copy ()       Test = 27     148           148           CheckAllHeaders(NotEmpty)
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 28     82            77            CountTabFollowedByParagraphMarkInHeaders
   >> First hit: Section 1: 	
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 29     66            70            CountParagraphsWithoutTabInHeaders
   >> First hit: Section 10: GENESIS
+  TestSlotAvailable
 PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
+  TestSlotAvailable
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 32     178           982           CountLinefeed
   >> First hit: First match: 
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 33     178           982           CountLinefeed(" ")
   >> First hit: First match:  
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 35     0             117           CountManualLineBreaksAndWithSpace(" ")
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 36     3             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
   >> First hit: (no hint provided by test function)
-FAIL!!!!          Copy ()       Test = 37     32            19            CountDocTabOnlyParagraphs
+  TestSlotAvailable
+FAIL!!!!          Copy ()       Test = 37     33            19            CountDocTabOnlyParagraphs
   >> First hit: (no hint provided by test function)
-FAIL!!!!          Copy ()       Test = 38     217           153           CountEmptyParagraphs
+  TestSlotAvailable
+FAIL!!!!          Copy ()       Test = 38     216           153           CountEmptyParagraphs
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 PASS              Copy ()       Test = 39     0             0             CountParagraphMarks_ArialBlack
+  TestSlotAvailable
 PASS              Copy ()       Test = 40     0             0             CountParagraphMarks_ArialBlackDarkRed
+  TestSlotAvailable
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+  TestSlotAvailable
 SKIP!!!!          Copy ()       Test = 42     -1            0             CountBoldFootnotesWordLevel
+  TestSlotAvailable
 PASS              Copy ()       Test = 43     0             0             CountParagraphMarksWithDarkRedFormatting
+  TestSlotAvailable
 PASS              Copy ()       Test = 44     0             0             AuditNonPaletteStyleColors
-PASS              Copy ()       Test = 45     0             0             CountUnapprovedVisibleStyles
+  TestSlotAvailable
+FAIL!!!!          Copy ()       Test = 45     1             0             CountUnapprovedVisibleStyles
+  >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 PASS              Copy ()       Test = 46     0             0             AuditBookHyperlinkStyling
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 47     0             3             CountTabOnlyParagraphs("Footer")
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 49     42            15            CountAuditStyles_ToFile
   >> First hit: 42 styles - see rpt\Style Usage Distribution.txt
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 50     -1            147           SummarizeHeaderFooterAuditToFile
   >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 SKIP!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
+  TestSlotAvailable
 PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction("wouldn’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 53     0             0             U+2019 CountContraction("isn’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 54     0             0             U+2019 CountContraction("let’s")
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 55     16            0             U+2019 CountContraction("i’m")
   >> First hit: 3135 She said to her father, “Do not let my lord be angry th
+  TestSlotAvailable
 PASS              Copy ()       Test = 56     0             0             U+2019 CountContraction("hasn’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 57     0             0             U+2019 CountContraction("didn’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 58     0             0             U+2019 CountContraction("don’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 59     0             0             U+2019 CountContraction("haven’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 60     0             0             U+2019 CountContraction("weren’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 61     0             0             U+2019 CountContraction("aren’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 62     0             0             U+2019 CountContraction("can’t")
+  TestSlotAvailable
 PASS              Copy ()       Test = 63     0             0             U+2019 CountContraction("shouldn’t")
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 64     1             0             U+2019 CountContraction("it’s")
   >> First hit: 827 He who searches the hearts knows what is on the Spirit’s
+  TestSlotAvailable
 PASS              Copy ()       Test = 65     1             1             U+2019 CountContraction("spirit’s")
+  TestSlotAvailable
 PASS              Copy ()       Test = 66     0             0             U+0020,U+2019, CountContraction([" ’"])
+  TestSlotAvailable
 PASS              Copy ()       Test = 67     0             0             U+0020,U+201D, CountContraction([" ”"])
+  TestSlotAvailable
 PASS              Copy ()       Test = 68     0             0             U+202F,U+2019, CountContraction([" ’"])
+  TestSlotAvailable
 PASS              Copy ()       Test = 69     0             0             U+202F,U+201D, CountContraction([" ”"])
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 70     73            0             U+201C,U+2018,U+201C CountContraction(["“‘“"])
   >> First hit: 68 “‘“Yet I will leave a remnant, in that you will have some
+  TestSlotAvailable
 FAIL!!!!          Copy ()       Test = 71     15            0             U+201D,U+2019,U+201D CountContraction(["”’”"])
   >> First hit: 1112 You will know that I am God, for you have not walked in
+  TestSlotAvailable
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
+  TestSlotAvailable
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 108.96 seconds
-[2026-05-16 14:58:09] Completed
+  TestSlotAvailable
+The Total Runtime: 122.15 seconds
+[2026-05-16 16:19:18] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==

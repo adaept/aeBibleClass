@@ -1,6 +1,6 @@
-'--- Footnote Reference  (Type=Character, Priority=31) ---
+'--- Footnote Reference  (Type=Character, Priority=34) ---
 .BaseStyle = "Default Paragraph Font"
-.QuickStyle = True
+.QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 9
 .Font.Bold = -1
