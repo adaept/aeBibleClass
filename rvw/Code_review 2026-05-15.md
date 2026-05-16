@@ -485,6 +485,93 @@ choice mitigates this); cannot be auto-derived from code in VBA
 Originated: 2026-05-16 follow-up to the unified First-hit
 emission (this file § "operator-verification snapshot" trail).
 
+### 11. Slot 5 retired + Slot 6 upgraded - empty-paragraph discipline tightened (2026-05-16)
+
+Two related changes this session triggered by the slot-by-slot
+description authoring in § 10.
+
+**Slot 5 retired.** On review of slot 5
+(`CountWhiteSpaceAndCarriageReturn`) it was confirmed to be a strict
+subset of slot 3 (`CountSpaceFollowedByCarriageReturn`): both search
+for `" ^13"`, slot 5 adds a `Font.Color = wdColorWhite` filter.
+Slot 3 catches every occurrence slot 5 could catch; slot 3 also
+populates `m_lastHint` while slot 5 did not. Slot 5 cannot signal
+anything slot 3 misses. Function `CountWhiteSpaceAndCarriageReturn`
+removed; slot 5 reassigned to `TestSlotAvailable` placeholder.
+
+**Slot 6 upgraded.** `CountQuadrupleParagraphMarks` searched
+`^13^13^13^13` (three consecutive empty paragraphs between content)
+as the violation threshold for "author using CRLF as vertical
+spacing." Two issues surfaced on review:
+
+- The threshold was too loose - two consecutive empty paragraphs
+  is already a violation in editorial discipline.
+- The accepted exception (one empty paragraph followed by a page /
+  column / section break, used as legitimate vertical spacing)
+  cannot be expressed as a text-only `Find` pattern. A break can
+  live in three different shapes that pure `^13`-counting cannot
+  see:
+  1. `Chr(12)` (page break) or `Chr(14)` (column break) inserted
+     inline in a paragraph.
+  2. `Paragraph.PageBreakBefore = True` on the following paragraph
+     - no visible character at all.
+  3. A section break, stored as the *type* of the terminating
+     paragraph mark.
+
+  Tightening to `^13^13^13` via Find would flag legitimate
+  "empty + page break" runs as violations - the exact kind of
+  false-positive noise just retired in slot 5.
+
+**Implementation chosen.** Path (b) from the 2026-05-16 review
+discussion: paragraph-walk replacement. New function
+`CountConsecutiveEmptyParagraphsNotPrecedingBreak` walks
+`Document.Paragraphs`, detects runs of length >= 2 where
+`Len(p.Range.Text) = 1`, and at each run boundary checks three
+exception predicates via a helper `HasBreakAtRunBoundary`:
+
+1. Next content paragraph has `PageBreakBefore = True`.
+2. Last empty paragraph in the run contains `Chr(12)` or
+   `Chr(14)` inline.
+3. Last empty paragraph terminates a section
+   (`wdActiveEndSectionNumber` differs from next paragraph's).
+
+If none of the three exceptions holds, the run counts. A run that
+trails the document end is always counted (no following content
+can justify trailing whitespace).
+
+**`m_lastHint` shape.** First-violation hint records
+`"Page <n>, line <m>: <k> consecutive empty paragraphs"` via
+helper `FormatEmptyRunHint`, using
+`Range.Information(wdActiveEndPageNumber)` and
+`wdFirstCharacterLineNumber`. Document-end runs get a
+`" (document end)"` suffix so the FAIL line says where to look
+without re-running with diagnostics. Parallel to the run-of-the
+-mill First-hit shape used elsewhere.
+
+**Class-encapsulation alignment (§ 9).** Function lives inside
+`aeBibleClass.cls` as `Private Function` along with its two
+private helpers (`HasBreakAtRunBoundary`, `FormatEmptyRunHint`).
+No module-side delegate stub needed - this is purely test
+dispatch, not an Immediate-window helper. Slot 6 is the cleanest
+example so far of "stateful slot logic stays in the class" since
+all three exception predicates are paragraph-walk side effects.
+
+**Status:** code changes complete 2026-05-16. Awaiting operator
+verification: `RUN_THE_TESTS 6` should still return 0 on the
+production document. If new violations surface (likely - the
+threshold is now tighter), they are real editorial signal, not
+test bug; address by removing the offending empty paragraphs or
+documenting the run as legitimate spacing.
+
+**Slot availability after this change.** Slot 5 is the sole free
+slot. Slots 42, 51, 72 are skipped (heavy / conditional), not
+available. Slots 44, 45, 46 are populated with custom-style
+audits (Item 13 work). Net pool: 1 slot.
+
+Originated: 2026-05-16 slot-by-slot description authoring of § 10
+surfaced the slot 3 / slot 5 redundancy; slot 6 caveat surfaced in
+the same review pass.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward

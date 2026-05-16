@@ -10,8 +10,12 @@ PASS              Copy ()       Test = 1      0             0             CountD
 PASS              Copy ()       Test = 2      0             0             CountDoubleSpacesInShapes
   Rule: Multiple spaces are not allowed in shapes - CountDoubleSpacesInShapes should return 0
 PASS              Copy ()       Test = 3      0             0             CountSpaceFollowedByCarriageReturn
+  Rule: Spaces are not allowed before the paragraph mark - CountSpaceFollowedByCarriageReturn should return 0
 PASS              Copy ()       Test = 4      0             0             CountDoubleTabs
-PASS              Copy ()       Test = 5      0             0             CountWhiteSpaceAndCarriageReturn
+  Rule: Multiple tabs are not allowed in the document - CountDoubleTabs should return 0
+FAIL!!!!          Copy ()       Test = 5      -1            0             TestSlotAvailable
+  >> First hit: (no hint provided by test function)
+  TestSlotAvailable
 PASS              Copy ()       Test = 6      0             0             CountQuadrupleParagraphMarks
 PASS              Copy ()       Test = 7      0             0             CountStyleWithSpaceAndNumber
 PASS              Copy ()       Test = 8      0             0             CountStyleWithNumberAndSpace
@@ -98,8 +102,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 95.15 seconds
-[2026-05-16 13:44:50] Completed
+The Total Runtime: 108.96 seconds
+[2026-05-16 14:58:09] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==

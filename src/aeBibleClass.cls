@@ -901,8 +901,12 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: Spaces are not allowed before the paragraph mark - CountSpaceFollowedByCarriageReturn should return 0"
     Case 4
         GetTestDescription = "Rule: Multiple tabs are not allowed in the document - CountDoubleTabs should return 0"
-    Case 5 To 73
-        GetTestDescription = ""
+    Case 5
+        GetTestDescription = "TestSlotAvailable"
+    Case 6
+        GetTestDescription = "Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0"
+    Case 7 To 73
+        GetTestDescription = "TestSlotAvailable"
     Case Else
         GetTestDescription = ""
     End Select
@@ -937,7 +941,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = TestSlotAvailable
         m_HintArray(TestNum) = m_lastHint
     Case 6
-        ResultArray(TestNum) = CountQuadrupleParagraphMarks
+        ResultArray(TestNum) = CountConsecutiveEmptyParagraphsNotPrecedingBreak
         m_HintArray(TestNum) = m_lastHint
     Case 7
         ResultArray(TestNum) = CountStyleWithSpaceAndNumber
@@ -1186,7 +1190,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     Case 5
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "TestSlotAvailable"
     Case 6
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountQuadrupleParagraphMarks"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountConsecutiveEmptyParagraphsNotPrecedingBreak"
     Case 7
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleWithSpaceAndNumber"
     Case 8
@@ -1368,7 +1372,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 5
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "TestSlotAvailable"
     Case 6
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountQuadrupleParagraphMarks"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountConsecutiveEmptyParagraphsNotPrecedingBreak"
     Case 7
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleWithSpaceAndNumber"
     Case 8
@@ -4016,47 +4020,110 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountQuadrupleParagraphMarks() As Long
+'====================================================================
+' Function: CountConsecutiveEmptyParagraphsNotPrecedingBreak
+'
+' Rule: An empty paragraph followed by a break (page / column /
+' section) is permitted vertical spacing. Anything else - two or
+' more consecutive empty paragraphs in a row not terminating in a
+' break - is a violation introduced by an author using CRLF as
+' vertical spacing.
+'
+' Detection: walk Document.Paragraphs, find runs of consecutive
+' empty paragraphs (Range.Text length 1, paragraph mark only).
+' For each run of length >= 2 ending at a content paragraph, allow
+' the run iff any of the following exceptions holds:
+'   1. The next content paragraph has PageBreakBefore = True.
+'   2. The last empty paragraph in the run contains Chr(12) (page
+'      break) or Chr(14) (column break) inline.
+'   3. The last empty paragraph terminates a section (its
+'      wdActiveEndSectionNumber differs from the next paragraph's).
+' A run trailing the document end is always counted (no following
+' content to justify it).
+'
+' Returns: Count of offending runs. 0 = clean.
+' On first violation: m_lastHint records page and line of the run
+' start, plus run length, so the FAIL line is actionable.
+'
+' Test: RUN_THE_TESTS(6)
+'====================================================================
+Private Function CountConsecutiveEmptyParagraphsNotPrecedingBreak() As Long
     On Error GoTo PROC_ERR
 
-    Dim rng As Word.Range
+    Dim p As Word.Paragraph
+    Dim runStartPara As Word.Paragraph
+    Dim runLastPara As Word.Paragraph
+    Dim runLen As Long
     Dim Count As Long
 
-    Set rng = ActiveDocument.Content
-    rng.Find.ClearFormatting
-    
-    With rng.Find
-        .Text = "^13^13^13^13"
-        .Replacement.Text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = False
-        .MatchWildcards = False
-    End With
-    
+    runLen = 0
     Count = 0
-    Do While rng.Find.Execute
+
+    ' For Each over Paragraphs is O(n); indexed Paragraphs(i) access
+    ' is O(n) per lookup and would make this loop O(n^2) - never use
+    ' indexed access here on Bible-sized documents.
+    For Each p In ActiveDocument.Paragraphs
+        If Len(p.Range.Text) = 1 Then
+            If runLen = 0 Then Set runStartPara = p
+            Set runLastPara = p
+            runLen = runLen + 1
+        Else
+            If runLen >= 2 Then
+                If Not HasBreakAtRunBoundary(runLastPara, p) Then
+                    Count = Count + 1
+                    If m_lastHint = "" Then m_lastHint = FormatEmptyRunHint(runStartPara, runLen)
+                End If
+            End If
+            runLen = 0
+        End If
+    Next p
+
+    ' Trailing run at document end - no next content to justify it.
+    If runLen >= 2 Then
         Count = Count + 1
-        rng.Collapse wdCollapseEnd
-    Loop
-    
-    'MsgBox "CountQuadrupleParagraphMarks = " & Count
-    'Dim answer As Long
-    'answer = MsgBox("CountQuadrupleParagraphMarks Do you want to continue?", vbQuestion + vbYesNo, "Continue or Stop")
-    'If answer = vbYes Then
-    '    Resume
-    'Else
-    '    Stop
-    'End If
-    CountQuadrupleParagraphMarks = Count
+        If m_lastHint = "" Then m_lastHint = FormatEmptyRunHint(runStartPara, runLen) & " (document end)"
+    End If
+
+    CountConsecutiveEmptyParagraphsNotPrecedingBreak = Count
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountQuadrupleParagraphMarks | Erl: " & Erl _
+    Debug.Print "ERROR in aeBibleClass.CountConsecutiveEmptyParagraphsNotPrecedingBreak | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
+End Function
+
+Private Function HasBreakAtRunBoundary(lastEmpty As Word.Paragraph, nextContent As Word.Paragraph) As Boolean
+    Dim t As String
+
+    If nextContent.PageBreakBefore Then
+        HasBreakAtRunBoundary = True
+        Exit Function
+    End If
+
+    t = lastEmpty.Range.Text
+    If InStr(t, Chr(12)) > 0 Or InStr(t, Chr(14)) > 0 Then
+        HasBreakAtRunBoundary = True
+        Exit Function
+    End If
+
+    If lastEmpty.Range.Information(wdActiveEndSectionNumber) <> _
+       nextContent.Range.Information(wdActiveEndSectionNumber) Then
+        HasBreakAtRunBoundary = True
+        Exit Function
+    End If
+
+    HasBreakAtRunBoundary = False
+End Function
+
+Private Function FormatEmptyRunHint(runStartPara As Word.Paragraph, runLen As Long) As String
+    Dim r As Word.Range
+    Set r = runStartPara.Range
+    FormatEmptyRunHint = "Page " & r.Information(wdActiveEndAdjustedPageNumber) _
+        & ", line " & r.Information(wdFirstCharacterLineNumber) _
+        & ": " & runLen & " consecutive empty paragraphs"
 End Function
 
 Private Function CountDoubleTabs() As Long
