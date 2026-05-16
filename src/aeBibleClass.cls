@@ -1015,7 +1015,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountParagraphMarksWithDarkRedFormatting
         m_HintArray(TestNum) = m_lastHint
     Case 44
-        ResultArray(TestNum) = TestSlotAvailable
+        ResultArray(TestNum) = AuditNonPaletteStyleColors
         m_HintArray(TestNum) = m_lastHint
     Case 45
         ResultArray(TestNum) = CountFindNotEmphasisBlack
@@ -1270,7 +1270,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountParagraphMarksWithDarkRedFormatting"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 44
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "TestSlotAvailable"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditNonPaletteStyleColors"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 45
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack [obso]"
@@ -1445,7 +1445,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 43
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountParagraphMarksWithDarkRedFormatting"
     Case 44
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "TestSlotAvailable"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditNonPaletteStyleColors"
     Case 45
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisBlack [obso] TestSlotAvailable"
     Case 46

@@ -167,3 +167,35 @@
 #   HideUnapprovedBuiltInStyles     ' first run: lists newly-hidden names
 #   HideUnapprovedBuiltInStyles     ' second run: all should be "already hidden"
 #   PromoteApprovedStyles           ' still works; uses GetApprovedStyles SSOT
+
+## Session themes (continued) -- Item 13 / 2.2
+
+8. AuditNonPaletteStyleColors wired into RUN_THE_TESTS at slot 44.
+   Slot 44 was previously the TestSlotAvailable placeholder (which
+   returned -1, a deliberate FAIL marker for an unwired slot).
+   values(44) was already 0, so the new test's expected=0 contract
+   needed no expected-array change. Three sites updated in
+   aeBibleClass.cls: GetPassFail Case 44 dispatch, RunTest
+   Debug.Print Case 44 label, BufAppend Case 44 label. Hint left
+   empty - the function self-reports tier counts to Immediate,
+   matching the AuditBookHyperlinkStyling pattern.
+   TestSlotAvailable Private function retained (slots 45 and 46
+   still reference its name in their "[obso]" labels).
+
+## Files modified (continued)
+
+[IMPORT]  src/aeBibleClass.cls
+          - Case 44 in GetPassFail: TestSlotAvailable replaced
+            with AuditNonPaletteStyleColors.
+          - Case 44 in RunTest: Debug.Print label changed from
+            "TestSlotAvailable" to "AuditNonPaletteStyleColors".
+          - Case 44 BufAppend label changed likewise.
+          - No changes to values() array (position 44 was 0).
+
+[DOC]     rvw/Code_review 2026-05-15.md
+          - Item 2.2 marked DONE 2026-05-15 with slot-44
+            reuse rationale and the three edit sites recorded.
+
+# Operator verification sequence (item 13 / 2.2):
+#   RUN_THE_TESTS 44                ' expect PASS at 0
+#                                   ' (Tier counts also print to Immediate)

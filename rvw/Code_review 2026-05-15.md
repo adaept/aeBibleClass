@@ -127,8 +127,14 @@ and is untouched by this routine - custom-style discipline is
 covered by `AuditNonPaletteStyleColors`.
 
 **2.2 Wire `AuditNonPaletteStyleColors` into RUN_THE_TESTS
-(MEDIUM).** Permanent custom-style colour-discipline test. Return
-value 0 is the assertion. Slot number to be assigned by operator.
+(MEDIUM) - DONE 2026-05-15.** Permanent custom-style
+colour-discipline test. Return value 0 is the assertion.
+Assigned to slot 44 (reused from `TestSlotAvailable` placeholder;
+`values(44)` was already 0). Three sites in `aeBibleClass.cls`
+updated: `GetPassFail` Case 44, `RunTest` `Debug.Print` label,
+`BufAppend` label. Function called with default args
+(`IncludeBuiltIn = False`) - custom + linked styles only, which
+is the typical custom-style discipline signal.
 
 **2.3 `CountUnapprovedVisibleStyles` test (MEDIUM).** Walks styles,
 counts those that are neither in `approved` nor properly hidden
