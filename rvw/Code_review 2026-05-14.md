@@ -418,3 +418,45 @@ Older arcs of historical relevance:
 - [`Code_review 2026-04-30.md`](Code_review%202026-04-30.md) —
   Reference rename (Solomon → Song of Songs), AuditOneStyle
   char-style audit kicker, body-content number-prefix decision.
+
+## 2026-05-15 session summary
+
+State at close:
+
+- 15 BookHyperlink-styled runs in the production doc, all
+  compliant (Carlito 9 + palette DarkBlue + single underline).
+- 0 active hyperlinks anywhere. Test 17 PASS.
+- Hyperlink discipline structurally enforced via custom style,
+  lock routine, audit, and test - built-in `Hyperlink` no longer
+  used.
+
+Code changes this session:
+
+- `src/basFixDocxRoutines.bas` - `DefineBookHyperlinkStyle` added.
+- `src/basTEST_aeBibleConfig.bas` - `BookHyperlink` in `approved`
+  array + `AuditOneStyle` row.
+- `src/basTEST_aeBibleTools.bas` - `LockHyperlinksToPalette` →
+  `LockBookHyperlinks` (three-step migrate / unlink / force-lock);
+  `LockHyperlinksAlwaysBlue` alias removed.
+- `src/basStyleInspector.bas` - `AuditHyperlinkStyling` →
+  `AuditBookHyperlinkStyling` with Font.Name + Font.Size checks.
+- `src/XbasTESTaeBibleDOCVARIABLE.bas` - `Word.Field` casing
+  normalised (2 occurrences).
+- `py/normalize_vba.py` - new `.Field` and `As Word.Field` rules.
+
+Docs this session:
+
+- `EDSG/01-styles.md` "Companion rule: no clickable hyperlinks
+  anywhere" rewritten to describe the BookHyperlink approach;
+  new subsection "Per-installation recommendation: disable URL
+  auto-format" with the exact `File > Options > Proofing >
+  AutoCorrect` path.
+- This file - new dated entry "BookHyperlink custom style replaces
+  built-in Hyperlink" with bug, reframe, implementation,
+  verification.
+- `sync/session_manifest.txt` - rewritten for 2026-05-15; full
+  import checklist.
+
+Closure note (2026-05-15): this review arc is now **closed for
+new work**. Open carry-forward continues in
+[`rvw/Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
