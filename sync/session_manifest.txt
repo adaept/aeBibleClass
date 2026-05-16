@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-05-15
+# Claude Session Manifest -- 2026-05-15  (FINAL, end of session)
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -8,393 +8,272 @@
 #   [XML]      - ribbon XML only; run py/inject_ribbon.py (no VBA import)
 #   [SCRIPT]   - Python/tooling; no VBA import
 #   [DOC]      - documentation only; no import
-#   [DONE]     - already imported into both .docm files this session
+#   [MEMORY]   - Claude auto-memory; no project import
 # ------------------------------------------------------------
 
-## Session themes
+## Session arcs (chronological)
 
-1. Normalizer rule added for Word.Field casing (after VBA IDE
-   demoted "Dim fld As Word.Field" to "Dim fld As Word.field"
-   in basStyleInspector). Run-once across src/ fixed 4 cases
-   across 3 files.
-2. AuditHyperlinkStyling extended to check Font.Name=Carlito and
-   Font.Size=9 in addition to color + underline. Caught a
-   size=11 anomaly on a hyperlink inside an AuthorListItemTab
-   paragraph - paragraph inherits its size, built-in Hyperlink
-   style doesn't pin font/size.
-3. Architectural decision: replace use of Word's built-in
-   Hyperlink character style with a custom "BookHyperlink"
-   style that pins all four font properties explicitly. Built-in
-   Hyperlink cannot enforce font/size (inherits from paragraph);
-   custom style is fully self-contained.
-4. BookHyperlink implementation:
-   - DefineBookHyperlinkStyle in basFixDocxRoutines.
-   - Added to approved array; AuditOneStyle row added.
-   - LockBookHyperlinks replaces LockHyperlinksToPalette
-     (three-step: migrate built-in -> BookHyperlink, unlink
-     active Hyperlinks, force-apply properties on all
-     BookHyperlink runs). Built-in Hyperlink and FollowedHyperlink
-     style definitions deliberately NOT touched.
-   - LockHyperlinksAlwaysBlue alias removed (was due).
-   - AuditHyperlinkStyling renamed AuditBookHyperlinkStyling.
-   - EDSG/01-styles.md "Companion rule" rewritten; per-installation
-     "Disable URL auto-format" recommendation added.
-5. Test 17 (CountActiveHyperlinks) unchanged - still measures
-   total Hyperlinks collection count across stories. Expected 0.
+A. BOOKHYPERLINK REFRAME
+   - AuditHyperlinkStyling extended to also check Font.Name=Carlito,
+     Font.Size=9. Caught a size-11 anomaly on a Hyperlink inside an
+     AuthorListItemTab paragraph - built-in Hyperlink inherits font
+     and size from paragraph and so cannot be enforced uniformly.
+   - Decision: replace use of Word's built-in Hyperlink character
+     style with custom "BookHyperlink" that pins all four font
+     properties explicitly.
+   - Implementation: DefineBookHyperlinkStyle (creator);
+     LockBookHyperlinks (3-step: migrate -> unlink -> force-apply);
+     AuditBookHyperlinkStyling renamed from AuditHyperlinkStyling.
+     Built-in Hyperlink / FollowedHyperlink style definitions NOT
+     touched (just hidden, later, by 2.1).
 
-## Files modified
+B. ITEM 13 / 2.1 - APPROVED-STYLES SSOT + HIDE-SWEEP
+   - GetApprovedStyles() extracted as Public Function in
+     basTEST_aeBibleConfig - canonical approved-styles list.
+     6 built-ins approved (Normal, Title, Heading 1, Heading 2,
+     Footnote Reference, Footnote Text); all others custom.
+   - HideUnapprovedBuiltInStyles Public Sub in basStyleInspector.
+     For every BuiltIn=True style NOT in GetApprovedStyles, sets
+     Priority=99, QuickStyle=False, UnhideWhenUsed=False.
+     Idempotent; locked-style writes counted as skipped, not fatal.
 
-[IMPORT]  src/basFixDocxRoutines.bas
-          - DefineBookHyperlinkStyle added at end of module.
-            Idempotent character style creator: BaseStyle =
-            Default Paragraph Font, Font Carlito 9, Color
-            palette DarkBlue (#000080), Underline single, Bold
-            and Italic False.
+C. ITEM 13 / 2.2 - SLOT 44 WIRING
+   - AuditNonPaletteStyleColors wired into RUN_THE_TESTS slot 44
+     (reused from TestSlotAvailable -1 placeholder; values(44)=0
+     already correct).
 
-[IMPORT]  src/basTEST_aeBibleConfig.bas
-          - "BookHyperlink" inserted into approved array between
-            "Footnote Reference" and "Footnote Text".
-          - AuditOneStyle row added: matches Carlito 9, base
-            Default Paragraph Font, color 8388608 (#000080).
+D. ARCHITECTURE RULE (mid-session)
+   - Rule formalised: class-related code stays in classes; classes
+     call other classes (aeAssertClass, aeLoggerClass, etc.);
+     stateless specs / lookup tables / config SSOTs remain in
+     modules. Module/class file extension doubles as a permission
+     signal for casual contributors (.bas = safe-to-edit;
+     .cls = ask-first).
+   - basBiblePalette explicitly stays a module (stateless lookup
+     table; converting would dissolve the safety signal).
+   - Memory: feedback_class_encapsulation.md replaces the earlier
+     narrower feedback_test_functions_in_class.md.
+   - Review § 9 in rvw/Code_review 2026-05-15.md.
+   - Contributor-facing: NEW EDSG/12-module-vs-class.md.
 
-[IMPORT]  src/basTEST_aeBibleTools.bas
-          - LockHyperlinksToPalette replaced by LockBookHyperlinks.
-            Three-step flow: migrate built-in Hyperlink-styled
-            runs to BookHyperlink, restyle + unlink each
-            Hyperlinks-collection entry, force-apply four font
-            properties on all BookHyperlink-styled runs. Does NOT
-            modify built-in Hyperlink or FollowedHyperlink style
-            definitions.
-          - LockHyperlinksAlwaysBlue alias removed.
-          - UnlinkActiveHyperlinks retained as a standalone
-            unlink-without-relock helper.
-          - Word.Field casing normalised (1 occurrence in
-            ConvertHyperlinksToPlainURLs).
+E. ITEM 13 / 2.3 - SLOT 45 WIRING + STUB CLEANUP
+   - CountUnapprovedVisibleStyles added INSIDE aeBibleClass.cls as
+     Private Function (per the new rule). Walks Styles, counts
+     those neither in GetApprovedStyles nor properly hidden
+     (Priority=99 AND QuickStyle=False AND UnhideWhenUsed=False;
+     applied regardless of BuiltIn). Skips Table / List styles.
+   - Wired at slot 45 (reused from CountFindNotEmphasisBlack -1
+     stub; stub deleted). values(45)=0 already correct.
+
+F. ITEM 13 / 2.4 - SLOT 46 WIRING + FIRST CLASS MIGRATION
+   - AuditBookHyperlinkStyling body MIGRATED from basStyleInspector
+     into aeBibleClass.cls as Public Function (Public so module
+     stub can delegate in). 2-line delegate stub left in
+     basStyleInspector for ?AuditBookHyperlinkStyling Immediate
+     usage. Canonical template for the class-encapsulation rule.
+   - Wired at slot 46 (reused from CountFindNotEmphasisRed -1
+     stub; stub deleted). values(46)=0 already correct.
+
+G. NORMALIZER RULE
+   - py/normalize_vba.py: .Hidden property keeps uppercase H. Same
+     class of bug as .Field / .Color (VBE demotes). Sweep fixed
+     1 occurrence (Module1.bas:83).
+
+H. SLOT 44 RETRO-FIX
+   - AuditNonPaletteStyleColors body migrated from basStyleInspector
+     into aeBibleClass.cls as Public Function (optional IncludeBuiltIn
+     arg preserved). 2-line delegate stub left in basStyleInspector.
+   - StyleTypeName in basStyleInspector promoted Private -> Public
+     so the class can call it (stateless code-to-name lookup; stays
+     in module per the rule).
+   - ColorDisplay (Private helper, used only by migrated function)
+     moved into the class as Private Function.
+   - No slot dispatch edit needed - VBA resolves unqualified call
+     inside the class to the class's own method.
+
+I. ITEM 13 CLOSURE
+   - All four operator checks PASS at 0:
+       RUN_THE_TESTS 17  (CountActiveHyperlinks)
+       RUN_THE_TESTS 44  (AuditNonPaletteStyleColors)
+       RUN_THE_TESTS 45  (CountUnapprovedVisibleStyles)
+       RUN_THE_TESTS 46  (AuditBookHyperlinkStyling)
+   - HideUnapprovedBuiltInStyles first run: 24 newly hidden,
+     92 already hidden, 251 skipped (locked). Newly-hidden set
+     includes the 4 hyperlink-gallery-leak vectors plus
+     Heading 3-9, TOC Heading, Caption, List Paragraph, etc.
+   - ?AuditNonPaletteStyleColors(True) one-off: 176 styles -
+     147 Tier 1, 9 Tier 2, 16 Theme, 4 Anomaly. The 16 themes are
+     Heading 4-9 / Block Text / Caption / Subtitle / Quote /
+     Intense* / Subtle* / TOC Heading (Office theme colours).
+     The 4 anomalies are Microsoft-shipped UI accent RGBs on
+     Hashtag (#2B579A), Mention (#2B579A), Placeholder Text
+     (#666666), Unresolved Mention (#605E5C). All 20 already
+     hidden by 2.1 -> not editorially visible. Default audit
+     (custom + linked only) correctly reports 0.
+   - Sub-items 2.5 (AuditThemeColorUsage) and 2.6
+     (AuditDeliberateColourCompliance) remain DEFERRED graduate
+     items - useful but not blocking.
+
+## Files modified (final state per file - import checklist)
+
+[IMPORT]  src/aeBibleClass.cls
+          - Case 44 (GetPassFail / RunTest / BufAppend) -
+            TestSlotAvailable -> AuditNonPaletteStyleColors.
+          - Case 45 (3 sites) - CountFindNotEmphasisBlack ->
+            CountUnapprovedVisibleStyles.
+          - Case 46 (3 sites) - CountFindNotEmphasisRed ->
+            AuditBookHyperlinkStyling.
+          - CountFindNotEmphasisBlack Private Function deleted
+            (-1 stub; helper FindNotEmphasisBlackRed no longer
+            in source).
+          - CountFindNotEmphasisRed Private Function deleted
+            (same reason).
+          - CountUnapprovedVisibleStyles Private Function added.
+          - AuditBookHyperlinkStyling Public Function added
+            (body migrated from basStyleInspector).
+          - AuditNonPaletteStyleColors Public Function added
+            (body migrated from basStyleInspector; optional
+            IncludeBuiltIn arg preserved).
+          - ColorDisplay Private Function added (helper for
+            AuditNonPaletteStyleColors; moved from
+            basStyleInspector).
 
 [IMPORT]  src/basStyleInspector.bas
-          - AuditHyperlinkStyling extended earlier this session to
-            also check Font.Name = "Carlito" and Font.Size = 9.
-            Per-property mismatch reporting in output.
-          - AuditHyperlinkStyling renamed AuditBookHyperlinkStyling.
-            Targets the new BookHyperlink style. Header docstring
-            updated.
+          - AuditHyperlinkStyling renamed AuditBookHyperlinkStyling
+            then body MOVED to aeBibleClass.cls (2.4). What
+            remains here is a 2-line delegate stub.
+          - AuditNonPaletteStyleColors body MOVED to
+            aeBibleClass.cls (retro fix). What remains here is a
+            2-line delegate stub that passes IncludeBuiltIn
+            through.
+          - StyleTypeName Private -> Public (so class can call it).
+          - ColorDisplay Private Function deleted (moved to class).
+          - HideUnapprovedBuiltInStyles Public Sub added at end.
+            Three-property hide pattern; idempotent;
+            Scripting.Dictionary for O(1) approved lookup
+            (case-insensitive, keyed on Style.NameLocal).
           - Word.Field casing normalised (1 occurrence).
 
+[IMPORT]  src/basTEST_aeBibleConfig.bas
+          - Public Function GetApprovedStyles() added as SSOT.
+            Header lists the 6 built-in approved entries.
+          - PromoteApprovedStyles rewritten to call
+            GetApprovedStyles().
+          - "BookHyperlink" inserted into the approved array
+            (between "Footnote Reference" and "Footnote Text").
+          - AuditOneStyle row added for BookHyperlink
+            (Carlito 9, base Default Paragraph Font, color
+            8388608 #000080).
+
+[IMPORT]  src/basTEST_aeBibleTools.bas
+          - LockHyperlinksToPalette replaced by LockBookHyperlinks
+            (3-step: migrate built-in Hyperlink-styled runs ->
+            BookHyperlink; restyle + unlink each Hyperlinks-
+            collection entry; force-apply 4 font properties on
+            all BookHyperlink-styled runs). Built-in Hyperlink /
+            FollowedHyperlink definitions NOT touched.
+          - LockHyperlinksAlwaysBlue alias removed.
+          - UnlinkActiveHyperlinks retained.
+          - Word.Field casing normalised (1 occurrence).
+
+[IMPORT]  src/basFixDocxRoutines.bas
+          - DefineBookHyperlinkStyle added at end. Idempotent
+            character style creator: BaseStyle = Default
+            Paragraph Font, Font Carlito 9, Color palette
+            DarkBlue (#000080), Underline single, Bold + Italic
+            False.
+
+[IMPORT]  src/Module1.bas
+          - Line 83: ".hidden" -> ".Hidden" (normalizer sweep).
+
 [IMPORT]  src/XbasTESTaeBibleDOCVARIABLE.bas
-          - Word.Field casing normalised (2 occurrences). No
-            other changes; this is a TEST module.
+          - Word.Field casing normalised (2 occurrences). TEST
+            module; no other changes.
 
 [SCRIPT]  py/normalize_vba.py
-          - Added rule: .Field (property/type member) keeps
+          - New rule: .Field property / type member keeps
             uppercase F. Pattern (r'(?i)\.Field\b', '.Field', ...).
-          - Added rule: As Word.Field type declaration keeps
-            uppercase F. Pattern
-            (r'(?i)\bAs\s+(?:Word\.)?Field\b', 'As Word.Field', ...).
-          - Motivation: VBA IDE auto-cased "Dim fld As Word.Field"
-            to "Dim fld As Word.field" - same class of bug as
-            prior .Color and Hex$ regressions.
+          - New rule: As Word.Field type declaration keeps
+            uppercase F.
+          - New rule: .Hidden property keeps uppercase H.
 
-[DOC]     EDSG/01-styles.md
-          - "Companion rule: no clickable hyperlinks anywhere"
-            section rewritten:
-            - One-form definition now points at BookHyperlink
-              (not built-in Hyperlink).
-            - Why-a-custom-style explanation added with reference
-              to the 2026-05-15 size-11 bug as motivation.
-            - Enforcement section updated to reflect
-              DefineBookHyperlinkStyle, LockBookHyperlinks,
-              AuditBookHyperlinkStyling.
-            - New subsection "Per-installation recommendation:
-              disable URL auto-format" with the exact File >
-              Options > Proofing > AutoCorrect path.
+[DOC]     rvw/Code_review 2026-05-15.md
+          - Item 2.1 reworded to refer to GetApprovedStyles SSOT.
+          - Item 2.2 DONE with slot-44 reuse rationale.
+          - Item 2.3 DONE with slot-45 reuse + in-class placement.
+          - Item 2.4 DONE with class-migration note.
+          - Item 13 closing summary line added.
+          - New § 9 "Architecture rule - class encapsulation +
+            module/class as casual-coder safety boundary".
+          - Operator-verification snapshot 2026-05-15 appended
+            (slot 17/44/45/46 PASS at 0; HideUnapprovedBuiltInStyles
+            tallies; built-ins diagnostic explanation).
 
 [DOC]     rvw/Code_review 2026-05-14.md
-          - New dated entry "BookHyperlink custom style replaces
+          - Dated entry "BookHyperlink custom style replaces
             built-in Hyperlink" documenting the bug, the reframe,
             the implementation, and the operator verification
             sequence.
 
-# Operator verification sequence (after re-import):
-#   DefineBookHyperlinkStyle        ' creates style (idempotent)
-#   LockBookHyperlinks              ' migrates + unlinks + force-locks
-#   ?AuditBookHyperlinkStyling      ' expect 0 anomalies
-#   RUN_THE_TESTS 17                ' expect PASS at 0/0
-
-## Session themes (continued) -- Item 13 / 2.1
-
-6. Approved-styles list extracted to SSOT.
-   GetApprovedStyles() in basTEST_aeBibleConfig now returns the
-   approved-styles Variant array. PromoteApprovedStyles rewritten
-   to call it. Header lists the 6 built-in approved entries
-   (Normal, Title, Heading 1, Heading 2, Footnote Reference,
-   Footnote Text) so future readers know what the BuiltIn=True
-   hide-sweep deliberately leaves alone.
-7. HideUnapprovedBuiltInStyles added to basStyleInspector.
-   Walks ActiveDocument.Styles. For every BuiltIn=True style
-   whose name is NOT in GetApprovedStyles, sets the three-property
-   hide pattern (Priority=99, QuickStyle=False, UnhideWhenUsed=
-   False). Idempotent. Per-style write errors counted as skipped,
-   not fatal. Reports newly-hidden / already-hidden / skipped to
-   Immediate, with the newly-hidden name list for first-run
-   verification. Closes item 13 / 2.1.
-
-## Files modified (continued)
-
-[IMPORT]  src/basTEST_aeBibleConfig.bas
-          - New Public Function GetApprovedStyles() returns the
-            approved-styles Variant array (the prior in-line
-            array literal inside PromoteApprovedStyles).
-          - PromoteApprovedStyles rewritten: approved =
-            GetApprovedStyles(). No behaviour change for callers.
-          - Header on GetApprovedStyles names the 6 built-in
-            approved entries explicitly.
-
-[IMPORT]  src/basStyleInspector.bas
-          - New Public Sub HideUnapprovedBuiltInStyles at end of
-            module. Three-property hide pattern; idempotent;
-            uses Scripting.Dictionary for O(1) approved lookup
-            (case-insensitive, keyed on Style.NameLocal - Word.Style
-            has no .Name member). Late binding (CreateObject) per
-            project convention.
-
-[DOC]     rvw/Code_review 2026-05-15.md
-          - Item 2.1 reworded: refers to GetApprovedStyles SSOT
-            instead of the (now removed) in-line array literal.
-            Built-in-approved list reproduced inline for reader
-            clarity.
-
-# Operator verification sequence (item 13 / 2.1):
-#   HideUnapprovedBuiltInStyles     ' first run: lists newly-hidden names
-#   HideUnapprovedBuiltInStyles     ' second run: all should be "already hidden"
-#   PromoteApprovedStyles           ' still works; uses GetApprovedStyles SSOT
-
-## Session themes (continued) -- Item 13 / 2.2
-
-8. AuditNonPaletteStyleColors wired into RUN_THE_TESTS at slot 44.
-   Slot 44 was previously the TestSlotAvailable placeholder (which
-   returned -1, a deliberate FAIL marker for an unwired slot).
-   values(44) was already 0, so the new test's expected=0 contract
-   needed no expected-array change. Three sites updated in
-   aeBibleClass.cls: GetPassFail Case 44 dispatch, RunTest
-   Debug.Print Case 44 label, BufAppend Case 44 label. Hint left
-   empty - the function self-reports tier counts to Immediate,
-   matching the AuditBookHyperlinkStyling pattern.
-   TestSlotAvailable Private function retained (slots 45 and 46
-   still reference its name in their "[obso]" labels).
-
-## Files modified (continued)
-
-[IMPORT]  src/aeBibleClass.cls
-          - Case 44 in GetPassFail: TestSlotAvailable replaced
-            with AuditNonPaletteStyleColors.
-          - Case 44 in RunTest: Debug.Print label changed from
-            "TestSlotAvailable" to "AuditNonPaletteStyleColors".
-          - Case 44 BufAppend label changed likewise.
-          - No changes to values() array (position 44 was 0).
-
-[DOC]     rvw/Code_review 2026-05-15.md
-          - Item 2.2 marked DONE 2026-05-15 with slot-44
-            reuse rationale and the three edit sites recorded.
-
-# Operator verification sequence (item 13 / 2.2):
-#   RUN_THE_TESTS 44                ' expect PASS at 0
-#                                   ' (Tier counts also print to Immediate)
-
-## Session themes (continued) -- Item 13 / 2.3 + new rule
-
-9. NEW RULE established 2026-05-15: all functions wired into a
-   RUN_THE_TESTS slot must live inside aeBibleClass.cls (typically
-   as Private Function). Module-side implementations are a
-   divergence; if a function is also useful from outside the class,
-   keep the canonical body in the class and add a thin stub in the
-   module that delegates in. Config/data SSOTs (e.g.
-   GetApprovedStyles) are not test code and may remain in modules.
-   Saved as memory feedback_test_functions_in_class.md.
-
-   Retroactive fix needed (not done in this session): slot 44
-   currently dispatches AuditNonPaletteStyleColors directly from
-   basStyleInspector. That body needs to move into aeBibleClass.cls
-   with a delegate stub left in basStyleInspector for the standalone
-   Immediate-window call.
-
-10. CountUnapprovedVisibleStyles added inside aeBibleClass.cls as a
-    Private Function (per the new rule). Walks ActiveDocument.Styles
-    (skips wdStyleTypeTable / wdStyleTypeList) and counts styles that
-    are neither in GetApprovedStyles nor "properly hidden"
-    (Priority=99 AND QuickStyle=False AND UnhideWhenUsed=False;
-    applied regardless of BuiltIn). Prints violating NameLocal list
-    to Immediate when count > 0; silent at 0. Returns -1 on error.
-
-    Wired into slot 45, reused from CountFindNotEmphasisBlack stub
-    which was a dead -1 returner (its underlying helper
-    FindNotEmphasisBlackRed had already been removed). Three sites
-    updated in aeBibleClass.cls: GetPassFail Case 45, RunTest
-    Debug.Print Case 45, BufAppend Case 45. Stub function
-    CountFindNotEmphasisBlack deleted. values(45) was already 0.
-    Slot 46 (CountFindNotEmphasisRed, also obsolete stub) left
-    alone; its body will be deleted when that slot is reassigned.
-
-## Files modified (continued)
-
-[IMPORT]  src/aeBibleClass.cls
-          - Case 45 in GetPassFail: CountFindNotEmphasisBlack
-            replaced with CountUnapprovedVisibleStyles.
-          - Case 45 RunTest label: "CountUnapprovedVisibleStyles".
-          - Case 45 BufAppend label: "CountUnapprovedVisibleStyles".
-          - CountFindNotEmphasisBlack Private Function deleted
-            (was a -1 stub; helper FindNotEmphasisBlackRed no
-            longer exists in source).
-          - CountUnapprovedVisibleStyles Private Function added
-            near CountFindNotEmphasisRed.
-
-[DOC]     rvw/Code_review 2026-05-15.md
-          - Item 2.3 marked DONE 2026-05-15. Slot-45 reuse
-            rationale and the in-class placement rule noted.
-
-# Operator verification sequence (item 13 / 2.3):
-#   HideUnapprovedBuiltInStyles     ' run first to hide built-in noise
-#   RUN_THE_TESTS 45                ' expect PASS at 0
-#                                   ' (violation list also prints when > 0)
-
-# Pending retro fix (post-session):
-#   - Migrate AuditNonPaletteStyleColors body into aeBibleClass.cls
-#     with a stub left in basStyleInspector. Slot 44.
-
-## Session themes (continued) -- Item 13 / 2.4 + architecture rule
-
-11. Class-encapsulation rule formalised. The earlier
-    test-functions-in-class rule was broadened: any class-related
-    code stays inside the class, classes may call other classes
-    (aeAssertClass, aeLoggerClass, aeBibleCitationClass, etc.),
-    and stateless specs / lookup tables / config SSOTs remain in
-    modules. Module/class file extension doubles as a permission
-    signal for casual contributors - safe-to-edit vs ask-first.
-    basBiblePalette explicitly stays a module (stateless lookup
-    table; converting would dissolve the safety signal).
-
-    Memory rule renamed feedback_class_encapsulation.md.
-    Rationale appended to rvw/Code_review 2026-05-15.md as new
-    § 9. Contributor-facing version written as
-    EDSG/12-module-vs-class.md and linked from EDSG/README.md.
-
-12. AuditBookHyperlinkStyling wired into RUN_THE_TESTS at slot 46.
-    Slot 46 was previously the CountFindNotEmphasisRed stub
-    (-1 returner, no remaining helper); removed. Function body
-    moved from basStyleInspector.bas into aeBibleClass.cls as a
-    Public Function (Public so the Immediate-window stub can
-    delegate in). Thin two-line stub left in basStyleInspector
-    that creates aeBibleClass and returns the call - preserves
-    ?AuditBookHyperlinkStyling Immediate usage. This body-in-class
-    + stub-in-module pair is the template for the pending slot-44
-    retro fix on AuditNonPaletteStyleColors.
-
-    Three label sites updated in aeBibleClass.cls:
-    GetPassFail Case 46 dispatch, RunTest Debug.Print Case 46,
-    BufAppend Case 46. values(46) was already 0.
-
-## Files modified (continued)
-
-[IMPORT]  src/aeBibleClass.cls
-          - Case 46 in GetPassFail: CountFindNotEmphasisRed
-            replaced with AuditBookHyperlinkStyling.
-          - Case 46 RunTest + BufAppend labels updated.
-          - CountFindNotEmphasisRed Private Function deleted
-            (was a -1 stub; helper FindNotEmphasisBlackRed no
-            longer exists in source).
-          - AuditBookHyperlinkStyling Public Function added with
-            full body moved from basStyleInspector. Header notes
-            it is Public so the module stub can delegate in.
-
-[IMPORT]  src/basStyleInspector.bas
-          - AuditBookHyperlinkStyling reduced to a two-line
-            delegate stub (creates aeBibleClass, returns the
-            class call). Header rewritten to point at the
-            canonical class definition and at
-            EDSG/12-module-vs-class.md.
-
-[DOC]     rvw/Code_review 2026-05-15.md
-          - Item 2.4 marked DONE 2026-05-15. Class-migration
-            note added.
-          - Item 13 closing summary line added.
-          - New § 9 "Architecture rule - class encapsulation +
-            module/class as casual-coder safety boundary"
-            appended after § 8.
+[DOC]     EDSG/01-styles.md
+          - "Companion rule: no clickable hyperlinks anywhere"
+            section rewritten:
+              - One-form definition now points at BookHyperlink.
+              - Why-a-custom-style explanation added.
+              - Enforcement section reflects
+                DefineBookHyperlinkStyle, LockBookHyperlinks,
+                AuditBookHyperlinkStyling.
+              - Per-installation "Disable URL auto-format"
+                subsection added.
 
 [DOC]     EDSG/12-module-vs-class.md  (NEW)
           - Contributor-facing module-vs-class rule.
           - TL;DR table: .bas = edit freely, .cls = ask first.
           - i18n-specific guidance: most locale work touches
             modules; opening a .cls is the signal to stop.
-          - Lists which actors are classes and which are modules.
+          - Lists which actors are classes vs modules.
           - Explains why basBiblePalette stays a module.
 
 [DOC]     EDSG/README.md
           - Row 12 added to the Pages table linking the new file.
 
 [MEMORY]  ~/.claude/.../memory/feedback_class_encapsulation.md
-          - Replaces feedback_test_functions_in_class.md with
-            the broadened rule. MEMORY.md index updated.
+          - NEW. Replaces feedback_test_functions_in_class.md
+            (deleted) with the broadened class-encapsulation rule.
+          - MEMORY.md index entry updated.
 
-# Operator verification sequence (item 13 / 2.4):
-#   RUN_THE_TESTS 46                ' expect PASS at 0
-#   ?AuditBookHyperlinkStyling      ' expect 0 (via the stub)
-#   ' Both should print the same scan-and-anomaly summary.
+# ============================================================
+# Operator verification sequence (consolidated, after re-import)
+# ============================================================
+#
+# 1. Style discipline rebuild
+#    DefineBookHyperlinkStyle            ' idempotent style creator
+#    LockBookHyperlinks                  ' migrate + unlink + force-lock
+#    HideUnapprovedBuiltInStyles         ' first run: lists newly-hidden
+#    HideUnapprovedBuiltInStyles         ' second run: all "already hidden"
+#    PromoteApprovedStyles               ' uses GetApprovedStyles SSOT
+#
+# 2. Audits (Immediate window)
+#    ?AuditBookHyperlinkStyling          ' expect 0 anomalies
+#    ?AuditNonPaletteStyleColors         ' expect 0 (custom + linked)
+#    ?AuditNonPaletteStyleColors(True)   ' informational; built-ins included
+#                                        ' NOTE the parens - bare True is
+#                                        ' parsed as a separate Print item
+#                                        ' by VBA Immediate.
+#
+# 3. RUN_THE_TESTS gating
+#    RUN_THE_TESTS 17                    ' CountActiveHyperlinks      -> 0
+#    RUN_THE_TESTS 44                    ' AuditNonPaletteStyleColors -> 0
+#    RUN_THE_TESTS 45                    ' CountUnapprovedVisibleStyles -> 0
+#    RUN_THE_TESTS 46                    ' AuditBookHyperlinkStyling  -> 0
+#
+# All verified PASS on 2026-05-15 in the live document; commit 96602bb
+# captured the closing summary; pushed to origin/main.
 
-## Session themes (continued) -- normalizer rule
-
-13. Normalizer rule added for .Hidden property. Same class of bug
-    as .Field / .Color: VBE auto-demoted .Hidden to .hidden
-    (operator hit it in basStyleInspector debug output today).
-    Pattern (r'(?i)\.Hidden\b', '.Hidden', ...) inserted in
-    py/normalize_vba.py right after the .Field rule. Sweep across
-    src/ fixed 1 case (Module1.bas:83).
-
-## Files modified (continued)
-
-[SCRIPT]  py/normalize_vba.py
-          - New rule: .Hidden property keeps uppercase H.
-
-[IMPORT]  src/Module1.bas
-          - Line 83: ".hidden" -> ".Hidden" (normalizer sweep).
-
-## Session themes (continued) -- slot 44 retro-fix
-
-14. Retro fix: AuditNonPaletteStyleColors (slot 44) body migrated
-    from basStyleInspector.bas into aeBibleClass.cls as a Public
-    Function. Uses the 2.4 template: full body in class, two-line
-    delegate stub in basStyleInspector preserves
-    ?AuditNonPaletteStyleColors Immediate usage (optional
-    IncludeBuiltIn argument passes through). The pending-retro
-    note from earlier in this session is now cleared.
-
-    Supporting changes:
-    - StyleTypeName in basStyleInspector promoted Private -> Public.
-      Stateless code-to-name lookup (per class-encapsulation rule,
-      stateless specs stay in modules; class calls in).
-    - ColorDisplay (Private helper, used only by the migrated
-      function) moved into the class as Private Function.
-    - No slot dispatch edit needed: slot 44 already reads
-      `AuditNonPaletteStyleColors`; VBA resolves the unqualified
-      call inside the class to the class's own method.
-
-## Files modified (continued)
-
-[IMPORT]  src/aeBibleClass.cls
-          - AuditNonPaletteStyleColors Public Function added
-            with full body migrated from basStyleInspector.
-            Optional IncludeBuiltIn arg preserved.
-          - ColorDisplay Private Function added as helper.
-
-[IMPORT]  src/basStyleInspector.bas
-          - AuditNonPaletteStyleColors reduced to a 2-line
-            delegate stub (creates aeBibleClass, returns the
-            class call; passes IncludeBuiltIn through).
-          - StyleTypeName promoted Private -> Public so the
-            class can call it.
-          - ColorDisplay deleted (moved into the class).
-
-# Operator verification sequence (slot 44 retro):
-#   ?AuditNonPaletteStyleColors        ' via stub; default args
-#   ?AuditNonPaletteStyleColors True   ' include built-ins
-#   RUN_THE_TESTS 44                   ' expect PASS at 0
-#   ' All three should print identical Tier/Anomaly summary blocks.
+# ============================================================
+# Deferred / open
+# ============================================================
+#
+# - Item 13 / 2.5: AuditThemeColorUsage (graduate, LOW)
+# - Item 13 / 2.6: AuditDeliberateColourCompliance (graduate, LOW)
+#   Both useful but not blocking. See rvw/Code_review 2026-05-15.md § 2.
