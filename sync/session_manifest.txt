@@ -119,3 +119,51 @@
 #   LockBookHyperlinks              ' migrates + unlinks + force-locks
 #   ?AuditBookHyperlinkStyling      ' expect 0 anomalies
 #   RUN_THE_TESTS 17                ' expect PASS at 0/0
+
+## Session themes (continued) -- Item 13 / 2.1
+
+6. Approved-styles list extracted to SSOT.
+   GetApprovedStyles() in basTEST_aeBibleConfig now returns the
+   approved-styles Variant array. PromoteApprovedStyles rewritten
+   to call it. Header lists the 6 built-in approved entries
+   (Normal, Title, Heading 1, Heading 2, Footnote Reference,
+   Footnote Text) so future readers know what the BuiltIn=True
+   hide-sweep deliberately leaves alone.
+7. HideUnapprovedBuiltInStyles added to basStyleInspector.
+   Walks ActiveDocument.Styles. For every BuiltIn=True style
+   whose name is NOT in GetApprovedStyles, sets the three-property
+   hide pattern (Priority=99, QuickStyle=False, UnhideWhenUsed=
+   False). Idempotent. Per-style write errors counted as skipped,
+   not fatal. Reports newly-hidden / already-hidden / skipped to
+   Immediate, with the newly-hidden name list for first-run
+   verification. Closes item 13 / 2.1.
+
+## Files modified (continued)
+
+[IMPORT]  src/basTEST_aeBibleConfig.bas
+          - New Public Function GetApprovedStyles() returns the
+            approved-styles Variant array (the prior in-line
+            array literal inside PromoteApprovedStyles).
+          - PromoteApprovedStyles rewritten: approved =
+            GetApprovedStyles(). No behaviour change for callers.
+          - Header on GetApprovedStyles names the 6 built-in
+            approved entries explicitly.
+
+[IMPORT]  src/basStyleInspector.bas
+          - New Public Sub HideUnapprovedBuiltInStyles at end of
+            module. Three-property hide pattern; idempotent;
+            uses Scripting.Dictionary for O(1) approved lookup
+            (case-insensitive, keyed on Style.NameLocal - Word.Style
+            has no .Name member). Late binding (CreateObject) per
+            project convention.
+
+[DOC]     rvw/Code_review 2026-05-15.md
+          - Item 2.1 reworded: refers to GetApprovedStyles SSOT
+            instead of the (now removed) in-line array literal.
+            Built-in-approved list reproduced inline for reader
+            clarity.
+
+# Operator verification sequence (item 13 / 2.1):
+#   HideUnapprovedBuiltInStyles     ' first run: lists newly-hidden names
+#   HideUnapprovedBuiltInStyles     ' second run: all should be "already hidden"
+#   PromoteApprovedStyles           ' still works; uses GetApprovedStyles SSOT

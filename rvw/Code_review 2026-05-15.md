@@ -103,7 +103,11 @@ explicitly hide:
 - `FollowedHyperlink` (built-in, no longer used)
 
 New routine `HideUnapprovedBuiltInStyles` in `basStyleInspector`.
-For every `BuiltIn = True` style NOT in the `approved` array, set:
+The approved-styles list is the SSOT defined in
+`basTEST_aeBibleConfig.GetApprovedStyles()` (extracted 2026-05-15
+from the prior in-line `Array(...)` inside `PromoteApprovedStyles`).
+For every `BuiltIn = True` style whose name is NOT returned by
+`GetApprovedStyles`, set:
 
 ```vba
 .Priority = 99
@@ -114,6 +118,13 @@ For every `BuiltIn = True` style NOT in the `approved` array, set:
 The three-property pattern (not just Priority) matters because
 `UnhideWhenUsed = True` re-surfaces a style in the gallery the
 moment any run touches it - including paste operations.
+
+Built-in styles that ARE in `GetApprovedStyles` (and therefore
+left visible by the sweep): `Normal`, `Title`, `Heading 1`,
+`Heading 2`, `Footnote Reference`, `Footnote Text`. Everything
+else under editorial control is a custom (BuiltIn=False) style
+and is untouched by this routine - custom-style discipline is
+covered by `AuditNonPaletteStyleColors`.
 
 **2.2 Wire `AuditNonPaletteStyleColors` into RUN_THE_TESTS
 (MEDIUM).** Permanent custom-style colour-discipline test. Return

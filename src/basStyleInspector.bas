@@ -1606,3 +1606,105 @@ Public Sub ReportHyperlinkStoryDistribution()
     Debug.Print "  TOTAL across stories: collection=" & totalColl & _
                 "  styled runs=" & totalStyle
 End Sub
+
+'==============================================================================
+' HideUnapprovedBuiltInStyles  (Public)
+' ----------------------------------------------------------------------------
+' Hide-sweep companion to AuditNonPaletteStyleColors. Closes Item 13 / 2.1.
+'
+' Walks ActiveDocument.Styles. For every style where BuiltIn = True AND the
+' name is NOT in the approved-styles SSOT (basTEST_aeBibleConfig.
+' GetApprovedStyles), sets the three-property hide pattern:
+'
+'   .Priority         = 99
+'   .QuickStyle       = False
+'   .UnhideWhenUsed   = False
+'
+' The three-property pattern (not just Priority) matters because
+' UnhideWhenUsed = True re-surfaces a style in the gallery the moment any
+' run touches it - including paste operations.
+'
+' Built-in styles that ARE approved (left alone by this sweep):
+'   "Normal", "Title", "Heading 1", "Heading 2",
+'   "Footnote Reference", "Footnote Text"
+' All other built-ins (Hyperlink, FollowedHyperlink, Caption, TOC 1-9,
+' Body Text, List Paragraph, the 122+ noise styles, etc.) are hidden.
+' Custom (BuiltIn=False) styles are untouched - they are governed by
+' AuditNonPaletteStyleColors and the rest of the editorial discipline.
+'
+' Idempotent: re-running is a no-op for already-hidden built-ins (they
+' move into the "already hidden" tally).
+'
+' Some Word built-ins reject property writes (locked / read-only). Those
+' are caught per-style and counted as skipped; the sweep does not abort.
+'
+' Reports to Immediate:
+'   n hidden (newly), n already hidden, n skipped (locked),
+'   plus a list of newly-hidden names for first-run verification.
+'==============================================================================
+Public Sub HideUnapprovedBuiltInStyles()
+    On Error GoTo PROC_ERR
+    Dim approved As Variant
+    Dim approvedDict As Object
+    Dim i As Long
+    approved = GetApprovedStyles()
+    Set approvedDict = CreateObject("Scripting.Dictionary")
+    approvedDict.CompareMode = 1 ' TextCompare (case-insensitive)
+    For i = LBound(approved) To UBound(approved)
+        If Not approvedDict.Exists(CStr(approved(i))) Then
+            approvedDict.Add CStr(approved(i)), True
+        End If
+    Next i
+
+    Dim s As Word.Style
+    Dim nHidden As Long, nAlready As Long, nSkipped As Long
+    Dim newlyHidden As String
+    Dim wasHidden As Boolean
+    Dim writeErr As Long
+
+    For Each s In ActiveDocument.Styles
+        If s.BuiltIn Then
+            If Not approvedDict.Exists(s.NameLocal) Then
+                wasHidden = (s.Priority = 99) And (s.QuickStyle = False) And (s.UnhideWhenUsed = False)
+                writeErr = 0
+                On Error Resume Next
+                s.Priority = 99
+                writeErr = writeErr Or Err.Number
+                Err.Clear
+                s.QuickStyle = False
+                writeErr = writeErr Or Err.Number
+                Err.Clear
+                s.UnhideWhenUsed = False
+                writeErr = writeErr Or Err.Number
+                Err.Clear
+                On Error GoTo PROC_ERR
+
+                If writeErr <> 0 Then
+                    nSkipped = nSkipped + 1
+                ElseIf wasHidden Then
+                    nAlready = nAlready + 1
+                Else
+                    nHidden = nHidden + 1
+                    newlyHidden = newlyHidden & "  - " & s.NameLocal & vbCrLf
+                End If
+            End If
+        End If
+    Next s
+
+    Debug.Print "HideUnapprovedBuiltInStyles:"
+    Debug.Print "  newly hidden  : " & nHidden
+    Debug.Print "  already hidden: " & nAlready
+    Debug.Print "  skipped (locked): " & nSkipped
+    If nHidden > 0 Then
+        Debug.Print "Newly hidden built-in styles:"
+        Debug.Print newlyHidden;
+    End If
+
+PROC_EXIT:
+    Set approvedDict = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure HideUnapprovedBuiltInStyles of Module basStyleInspector"
+    Resume PROC_EXIT
+End Sub

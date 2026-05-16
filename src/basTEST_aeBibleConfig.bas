@@ -21,15 +21,27 @@ Public Sub WordEditingConfig()
     DumpPrioritiesSorted
 End Sub
 
-Private Sub PromoteApprovedStyles()
-    Dim s As Word.Style
-    Dim approved As Variant
-    Dim i As Long
-    Dim missing As Collection
-    Set missing = New Collection
-
-    'List your approved styles in the order you want them to appear
-    approved = Array( _
+'==============================================================================
+' GetApprovedStyles  (Public, SSOT)
+' ----------------------------------------------------------------------------
+' Single source of truth for the list of styles under editorial control in
+' this document. Returned as a 0-based Variant array in the order styles
+' should appear in the Word Style gallery (Priority assigned by position).
+'
+' Callers (all must use this rather than redeclare the list):
+'   - PromoteApprovedStyles      (this module) - sets Priority by index.
+'   - HideUnapprovedBuiltInStyles (basStyleInspector) - hides every
+'                                  BuiltIn=True style whose name is NOT in
+'                                  this array.
+'
+' Built-in (Word) styles that ARE approved (currently 6):
+'   "Normal", "Title", "Heading 1", "Heading 2",
+'   "Footnote Reference", "Footnote Text"
+' Every other entry below is a project-custom style and is unaffected by
+' the BuiltIn=True hide-sweep.
+'==============================================================================
+Public Function GetApprovedStyles() As Variant
+    GetApprovedStyles = Array( _
                      "TheHeaders", "BodyText", "TheFooters", _
                      "FrontPageTopLine", "TitleEyebrow", "Title", "TitleVersion", "FrontPageBodyText", _
                      "BodyTextTopLineCPBB", "Acknowledgments", "AuthorBodyText", _
@@ -51,6 +63,16 @@ Private Sub PromoteApprovedStyles()
                      "AuthorSectionHead", "ParallelHeader", "ParallelText", _
                      "Normal", _
                      "FargleBlargle")
+End Function
+
+Private Sub PromoteApprovedStyles()
+    Dim s As Word.Style
+    Dim approved As Variant
+    Dim i As Long
+    Dim missing As Collection
+    Set missing = New Collection
+
+    approved = GetApprovedStyles()
 
     'Push everything else down
     For Each s In ActiveDocument.Styles
