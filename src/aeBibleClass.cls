@@ -897,7 +897,11 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: Multiple spaces are not allowed in text - CountDoubleSpaces should return 0"
     Case 2
         GetTestDescription = "Rule: Multiple spaces are not allowed in shapes - CountDoubleSpacesInShapes should return 0"
-    Case 3 To 73
+    Case 3
+        GetTestDescription = "Rule: Spaces are not allowed before the paragraph mark - CountSpaceFollowedByCarriageReturn should return 0"
+    Case 4
+        GetTestDescription = "Rule: Multiple tabs are not allowed in the document - CountDoubleTabs should return 0"
+    Case 5 To 73
         GetTestDescription = ""
     Case Else
         GetTestDescription = ""
@@ -930,7 +934,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountDoubleTabs
         m_HintArray(TestNum) = m_lastHint
     Case 5
-        ResultArray(TestNum) = CountWhiteSpaceAndCarriageReturn
+        ResultArray(TestNum) = TestSlotAvailable
         m_HintArray(TestNum) = m_lastHint
     Case 6
         ResultArray(TestNum) = CountQuadrupleParagraphMarks
@@ -1180,7 +1184,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     Case 4
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleTabs"
     Case 5
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhiteSpaceAndCarriageReturn"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "TestSlotAvailable"
     Case 6
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountQuadrupleParagraphMarks"
     Case 7
@@ -1362,7 +1366,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 4
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDoubleTabs"
     Case 5
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountWhiteSpaceAndCarriageReturn"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "TestSlotAvailable"
     Case 6
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountQuadrupleParagraphMarks"
     Case 7
@@ -4050,43 +4054,6 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountQuadrupleParagraphMarks | Erl: " & Erl _
-        & " | Err: " & Err.Number & " | " & Err.Description
-    m_lastFuncError = True
-    Resume PROC_EXIT
-End Function
-
-Private Function CountWhiteSpaceAndCarriageReturn() As Long
-    On Error GoTo PROC_ERR
-
-    Dim rng As Word.Range
-    Dim Count As Long
-
-    Set rng = ActiveDocument.Content
-    rng.Find.ClearFormatting
-    rng.Find.Font.Color = wdColorWhite
-
-    ' Set the Find properties
-    With rng.Find
-        .Text = " ^13"
-        .Replacement.Text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = True
-        .MatchWildcards = False
-    End With
-
-    Count = 0
-    Do While rng.Find.Execute
-        Count = Count + 1
-        rng.Collapse wdCollapseEnd
-    Loop
-
-    CountWhiteSpaceAndCarriageReturn = Count
-
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountWhiteSpaceAndCarriageReturn | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
