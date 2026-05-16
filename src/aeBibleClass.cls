@@ -872,6 +872,34 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
+'====================================================================
+' Function: GetTestDescription
+'
+' Purpose:
+'   Returns a one-line plain-English description for each test slot,
+'   emitted as a subordinate line under the PASS/FAIL header in
+'   RUN_THE_TESTS output and rpt/TestReport.txt. SSOT for slot
+'   descriptions; consumed by RunTest and OutputTestReport.
+'
+' Contract:
+'   Returns "" for any slot that has not yet been authored. Callers
+'   suppress emission when the return is empty, so an unfilled slot
+'   degrades silently to the current (description-less) output.
+'
+' Authoring:
+'   Break out individual Case branches as each slot is described.
+'   Keep each description to a single short sentence; the report line
+'   wraps but is not widened.
+'====================================================================
+Public Function GetTestDescription(num As Long) As String
+    Select Case num
+    Case 1 To 73
+        GetTestDescription = ""
+    Case Else
+        GetTestDescription = ""
+    End Select
+End Function
+
 Private Function GetPassFail(TestNum As Long) As Boolean
     On Error GoTo PROC_ERR
     
@@ -1267,6 +1295,12 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
             Debug.Print , , , "  >> First hit: (no hint provided by test function)"
         End If
     End If
+
+    ' Per-slot description (SSOT: GetTestDescription). Emitted on every
+    ' run, parallel to First hit, only when the slot has been authored.
+    If GetTestDescription(num) <> "" Then
+        Debug.Print , , , "  " & GetTestDescription(num)
+    End If
     'Debug.Print "!!! OneTest = " & OneTest, "num = " & num
 
     If TestReportFlag And OneTest = 0 And IsMissing(SkipTest) Then
@@ -1441,6 +1475,12 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         Else
             BufAppend "  >> First hit: (no hint provided by test function)"
         End If
+    End If
+
+    ' Per-slot description (SSOT: GetTestDescription). Emitted on every
+    ' run, parallel to First hit, only when the slot has been authored.
+    If GetTestDescription(num) <> "" Then
+        BufAppend "  " & GetTestDescription(num)
     End If
 
 PROC_EXIT:
