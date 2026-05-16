@@ -188,6 +188,43 @@ the rule); `ColorDisplay` (used only by the migrated function)
 moved into the class as `Private Function`. Item 13 fully
 closes when operator-verification of slot 44 + slot 46 passes.
 
+**Operator-verification snapshot 2026-05-15 (closes Item 13):**
+
+- `HideUnapprovedBuiltInStyles` (first run): 24 newly hidden,
+  92 already hidden, 251 skipped (locked). Newly hidden set
+  includes `Hyperlink`, `FollowedHyperlink`, `Smart Hyperlink`,
+  `SmartLink` (the gallery-leak vectors that motivated the
+  BookHyperlink reframe), plus `Heading 3`-`Heading 9`,
+  `TOC Heading`, `Caption`, `No Spacing`, `List Paragraph`,
+  `Bibliography`, `Book Title`, `Subtitle`, `Strong`,
+  `Balloon Text`, `Default Paragraph Font`, `Hashtag`,
+  `Mention`, `Unresolved Mention`, `HTML Preformatted`,
+  `HTML Typewriter`.
+- `RUN_THE_TESTS 17` (`CountActiveHyperlinks`): PASS at 0.
+- `RUN_THE_TESTS 44` (`AuditNonPaletteStyleColors`): PASS at 0.
+- `RUN_THE_TESTS 45` (`CountUnapprovedVisibleStyles`): PASS at 0.
+- `RUN_THE_TESTS 46` (`AuditBookHyperlinkStyling`): PASS at 0,
+  15 BookHyperlink-styled runs checked.
+
+**Built-ins diagnostic (`?AuditNonPaletteStyleColors(True)`):** the
+include-built-ins one-off classified 176 styles total. Tier 1: 147,
+Tier 2: 9, Theme: 16, Anomaly: 4. The 16 theme-coloured built-ins
+are `Block Text`, `Caption`, `Heading 4`-`Heading 9`,
+`Intense Emphasis`, `Intense Quote`, `Intense Reference`, `Quote`,
+`Subtitle`, `Subtle Emphasis`, `Subtle Reference`, `TOC Heading` -
+all carry Word's default Office theme colours. The 4 anomalies are
+Microsoft-defined UI accent RGBs that ship with Word built-ins:
+`Hashtag` (`#2B579A`), `Mention` (`#2B579A`),
+`Placeholder Text` (`#666666`), `Unresolved Mention` (`#605E5C`).
+All 20 of these built-ins are hidden by `HideUnapprovedBuiltInStyles`
+(they appear in the 2.1 newly-hidden list above), so they do not
+appear in the editor's Style gallery and do not affect editorial
+discipline. The default `AuditNonPaletteStyleColors` (custom +
+linked only) correctly reports 0 anomalies. Including built-ins is
+informational only - useful as a one-off audit when investigating
+a paste-from-elsewhere theme leak, not a reason to extend the
+return-value contract.
+
 Carried from 2026-05-12 item 13 (reframed 2026-05-14, advanced
 again 2026-05-15 with the BookHyperlink addition).
 
