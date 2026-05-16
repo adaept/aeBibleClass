@@ -100,6 +100,77 @@ trim script: any false drop will surface in G6 (compile) or G8
 
 Originated 2026-05-12 with the gateway commits `bc71416` + `70bcff3`.
 
+### 2026-05-15 - BookHyperlink custom style replaces built-in Hyperlink
+
+**Bug found 2026-05-15:** `AuditHyperlinkStyling` was lenient. A
+hyperlink pasted into an `AuthorListItemTab` paragraph (size 11)
+caused the run to render at size 11 because the built-in
+`Hyperlink` character style inherits font/size from paragraph
+context. The earlier `LockHyperlinksToPalette` routine could not
+enforce uniformity in this case. Audit upgrade added `Font.Name`
+and `Font.Size` checks (Carlito 9pt expected); rerun confirmed
+the size-11 mismatch.
+
+**Reframe accepted:** the rule is *every hyperlink renders
+identically regardless of paragraph context.* Built-in `Hyperlink`
+can't deliver that because Word's machinery resets it on theme /
+template operations and the style itself pins no font. A custom
+character style under our control closes both gaps.
+
+**Implementation landed 2026-05-15:**
+
+- **New character style `BookHyperlink`** defined via
+  `DefineBookHyperlinkStyle` in `basFixDocxRoutines`. BaseStyle =
+  `Default Paragraph Font`. Explicit properties: Carlito 9, palette
+  DarkBlue (#000080), single underline, Bold/Italic False.
+- **Added to `approved` array** (`basTEST_aeBibleConfig`) between
+  `Footnote Reference` and `Footnote Text`. Added matching
+  `AuditOneStyle` row.
+- **`LockHyperlinksToPalette` replaced by `LockBookHyperlinks`** in
+  `basTEST_aeBibleTools`. New three-step flow:
+  1. Migrate built-in `Hyperlink`-styled runs to `BookHyperlink`.
+  2. Restyle each `Hyperlinks` collection entry's range to
+     `BookHyperlink`; `Hyperlink.Delete` removes the click target.
+  3. Force-apply the four BookHyperlink properties on every
+     `BookHyperlink`-styled run (idempotent override of paste-in
+     drift).
+  Built-in `Hyperlink` / `FollowedHyperlink` style definitions
+  deliberately NOT touched.
+- **Deprecated `LockHyperlinksAlwaysBlue` alias removed.**
+- **`AuditHyperlinkStyling` renamed `AuditBookHyperlinkStyling`** in
+  `basStyleInspector`. Targets the `BookHyperlink` style; verifies
+  all four properties; per-property mismatch reporting.
+- **EDSG `01-styles.md`** "Companion rule" rewritten to describe
+  the BookHyperlink approach plus the per-installation
+  "Disable URL auto-format" recommendation (File > Options >
+  Proofing > AutoCorrect > AutoFormat As You Type > "Internet and
+  network paths with hyperlinks" off).
+
+**Test 17 unchanged.** `CountActiveHyperlinks` still measures
+`Hyperlinks` collection count across all stories. Expected 0.
+
+**Operator sequence (re-import the four modified files first):**
+
+```vba
+DefineBookHyperlinkStyle         ' creates the BookHyperlink style
+LockBookHyperlinks               ' migrates + unlinks + force-locks
+?AuditBookHyperlinkStyling       ' expect 0 anomalies
+RUN_THE_TESTS 17                 ' expect PASS at 0/0
+```
+
+The first run of `LockBookHyperlinks` migrates the existing 16
+Hyperlink-styled runs (incl. the AuthorListItemTab paste-in that
+surfaced the bug). After this, the built-in `Hyperlink` style
+should appear in `AuditNonPaletteStyleColors` only via
+`IncludeBuiltIn=True`, alongside the rest of the hidden built-ins
+in the upcoming hide-sweep.
+
+**Architectural note for item 2 below:** the upcoming hide-sweep
+(`HideUnapprovedBuiltInStyles`) should explicitly hide built-in
+`Hyperlink` and `FollowedHyperlink` so editors can't pick them
+from the Style gallery and accidentally re-introduce the
+non-uniform-rendering problem.
+
 ### 2. Item 13 remaining work — built-in hide-sweep + test wiring (MEDIUM) - PARTIAL
 
 Pass 1 of item 13 closed 2026-05-14 (`AuditNonPaletteStyleColors`

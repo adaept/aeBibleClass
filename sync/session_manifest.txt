@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-05-13
+# Claude Session Manifest -- 2026-05-15
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,296 +13,109 @@
 
 ## Session themes
 
-1. Bible book abbreviation reference doc authored and
-   GetBookAliasMap expanded to match it (item closed inline).
-2. EDSG/11 expanded with the search-expansion / two-Like-fallthrough
-   explanation; EDSG/README cross-references the new abbreviation
-   doc as a source-of-truth row.
-3. Carry-forward review arc progressed:
-   - Item 4 CLOSED (Normal text was Word built-in `Normal`;
-     `AuthorQuote` was the real cruft; deleted).
-   - Items 5 + 7 WONTFIX (Row Pitch Diagnostic manual workflow is
-     faster than the survey-histogram-review cycle; --clear helper
-     has no consumer once its parent workflow is shelved).
-   - Item 6 CLOSED (page-886 dry-run sweep: 9 finds, all Active,
-     0 OutsideBody; classifier accommodates 186.1/36.0/186.1
-     anomaly geometry).
-   - Item 3 CLOSED (four character styles repointed to
-     Default Paragraph Font; post-audit = 0).
-4. Item 2 Step A: new basBiblePalette.bas module - single source of
-   truth for named colors used / allowed in the docx. Additive
-   only; no existing call sites rewired (Step B deferred).
-5. Research item 10 surfaced from Step A and partially resolved
-   the same day. Three diagnostic probes run:
-   - Q1: red-footnote count = 0 (probe is dead code).
-   - Q2: Footnote Reference live colour is Blue (#0000FF), not
-     Purple as Module1.EnsureFootnoteReferenceStyleColor assumed.
-     Routine and palette Usage fields corrected to Blue.
-   - Q3: histogram revealed 32K runs at #7F9698, 153 at #C00000,
-     and 1 stray Orange - all unnamed in palette. No black
-     overrides found.
-6. New item 11 (identify unnamed colours #7F9698, #C00000,
-   lone Orange) and item 12 (remove dead
-   CountRedFootnoteReferences probe) surfaced from item 10 Q3.
-7. Items 11 and 12 both CLOSED 2026-05-14:
-   - #C00000 quotations migrated to DarkRed.
-   - 5 proper-noun Hyperlink-styled false positives stripped
-     manually by operator.
-   - 2 active web Hyperlinks unlinked via
-     LockHyperlinksToPalette (now step 0 = UnlinkActiveHyperlinks).
-   - Test 17 redefined CountActiveHyperlinks = sum across all
-     StoryRanges; verified PASS at 0/0.
-   - EDSG rule broadened from no-hyperlinks-in-footnotes to
-     no-clickable-hyperlinks-anywhere.
+1. Normalizer rule added for Word.Field casing (after VBA IDE
+   demoted "Dim fld As Word.Field" to "Dim fld As Word.field"
+   in basStyleInspector). Run-once across src/ fixed 4 cases
+   across 3 files.
+2. AuditHyperlinkStyling extended to check Font.Name=Carlito and
+   Font.Size=9 in addition to color + underline. Caught a
+   size=11 anomaly on a hyperlink inside an AuthorListItemTab
+   paragraph - paragraph inherits its size, built-in Hyperlink
+   style doesn't pin font/size.
+3. Architectural decision: replace use of Word's built-in
+   Hyperlink character style with a custom "BookHyperlink"
+   style that pins all four font properties explicitly. Built-in
+   Hyperlink cannot enforce font/size (inherits from paragraph);
+   custom style is fully self-contained.
+4. BookHyperlink implementation:
+   - DefineBookHyperlinkStyle in basFixDocxRoutines.
+   - Added to approved array; AuditOneStyle row added.
+   - LockBookHyperlinks replaces LockHyperlinksToPalette
+     (three-step: migrate built-in -> BookHyperlink, unlink
+     active Hyperlinks, force-apply properties on all
+     BookHyperlink runs). Built-in Hyperlink and FollowedHyperlink
+     style definitions deliberately NOT touched.
+   - LockHyperlinksAlwaysBlue alias removed (was due).
+   - AuditHyperlinkStyling renamed AuditBookHyperlinkStyling.
+   - EDSG/01-styles.md "Companion rule" rewritten; per-installation
+     "Disable URL auto-format" recommendation added.
+5. Test 17 (CountActiveHyperlinks) unchanged - still measures
+   total Hyperlinks collection count across stories. Expected 0.
 
 ## Files modified
 
-[IMPORT]  src/aeBibleCitationClass.cls
-          - GetBookAliasMap extended with ~45 missing UPPERCASE
-            ASCII abbreviations to mirror md/BibleAbbreviationList.md.
-          - All entries 2+ chars (single-letter prohibition holds).
-          - Closed-up no-space forms (1SA, 2PE, 1JO, ...) added
-            alongside the spaced forms (1 SA, 2 PE, 1 JN, ...).
-          - No removals; no key collisions with the pre-existing set.
+[IMPORT]  src/basFixDocxRoutines.bas
+          - DefineBookHyperlinkStyle added at end of module.
+            Idempotent character style creator: BaseStyle =
+            Default Paragraph Font, Font Carlito 9, Color
+            palette DarkBlue (#000080), Underline single, Bold
+            and Italic False.
 
-[IMPORT]  src/basBiblePalette.bas (NEW)
-          - Single source of truth for named colors.
-          - Each entry is a nested Scripting.Dictionary with keys
-            Name, R, G, B, RgbLong, HexCode, Usage. (Public Type
-            UDT not used: VBA forbids passing UDTs declared in
-            .bas modules to late-bound functions; nested Dict
-            sidesteps the limit while staying late-bound.)
-          - GetPalette(theme) -> outer Dictionary keyed by Name.
-            Only theme="Default" populated; "Dark"/"Colorblind"
-            raise "not implemented".
-          - Helpers: ColorFromName, NameFromColor, LongToHex,
-            HexToLong, LongToRgbString, DumpPalette.
-          - 12 colors: Black, White, Red, DarkRed, Green,
-            DarkGreen, Emerald, Blue, Gold, Orange, Purple, Gray.
-          - wdColorAutomatic deliberately excluded (sentinel, not
-            a color). Office ObjectThemeColor deliberately excluded.
-          - Late binding (Scripting.Dictionary via CreateObject).
-            No project references added.
-          - DescribeFirstRunOfColor(rgbLong) added for item 11
-            diagnostics: finds first explicit-color run in any
-            primary StoryRange and prints page / paragraph style /
-            run style / text / context. Scope: explicit run-level
-            overrides only (Find with .Font.Color matches direct
-            overrides, NOT style-inherited colors).
-          - DescribeStylesCarryingColor(rgbLong) added as the
-            complement: walks ActiveDocument.Styles and reports
-            any style whose Font.Color matches. Use this to find
-            colors that the histogram counts but Find cannot
-            locate (i.e., colors applied via style chain).
-          - CountRunsWithColor(rgbLong) As Long: Find-based scan
-            across all primary StoryRanges. Authoritative
-            per-color total. Use when the Word-level histogram is
-            undercounting single-char colored runs.
-          - ReportRunsWithColor(rgbLong): same scan with per-story
-            breakdown printed to Immediate.
-          - ListRunsOfColorByStyle(rgbLong): same scan, groups runs
-            by their character-style name. Use this to identify
-            strays - the legitimate styles appear with large counts,
-            an outlier style with count 1 (or small N) is a stray
-            candidate.
-
-[IMPORT]  src/basStyleInspector.bas
-          - AuditFootnoteReferenceMarkers() As Long: walks
-            ActiveDocument.Footnotes, counts FR-styled characters
-            inside each footnote.Range, flags footnotes with count
-            != 1. Surfaced by item 11 (Blue FR count was 2001 vs
-            expected 2000). Returns anomaly count; expected 0 in
-            a clean doc.
-          - AuditHyperlinkStyling() As Long: walks all StoryRanges,
-            Find runs styled "Hyperlink", verifies Font.Color =
-            palette DarkBlue and Underline = single. Covers ALL
-            Hyperlink-styled runs including REF/HYPERLINK field-
-            result runs not in the Hyperlinks collection. Returns 0
-            after LockHyperlinksToPalette; non-zero means a pasted
-            hyperlink-styled run escaped the convention.
-          - ReportHyperlinkStoryDistribution: diagnostic - per
-            StoryRange, prints Hyperlinks.Count vs Hyperlink-styled-
-            run count. The gap shows field-result-style hyperlinks
-            that the collection misses.
-          - ReportClickableHyperlinks: read-only Pass 1 probe for
-            the no-clickable-hyperlinks rule. Per story counts
-            (active vs styled), per-active-Hyperlink detail
-            (address, subaddress, bookmark target validity for
-            internal links, display text), and unexpected-field
-            surfacing (REF/PAGEREF with Hyperlink-styled result).
-            Output drives the design of Pass 2 (unlink + test 17
-            redefinition).
+[IMPORT]  src/basTEST_aeBibleConfig.bas
+          - "BookHyperlink" inserted into approved array between
+            "Footnote Reference" and "Footnote Text".
+          - AuditOneStyle row added: matches Carlito 9, base
+            Default Paragraph Font, color 8388608 (#000080).
 
 [IMPORT]  src/basTEST_aeBibleTools.bas
-          - LockHyperlinksAlwaysBlue rewritten as
-            LockHyperlinksToPalette. Step 3 (per-run formatting) now
-            walks ALL StoryRanges by Find-style rather than just
-            Doc.Hyperlinks, so it covers REF/HYPERLINK field-result
-            runs (e.g. concordance navigation) that carry the
-            Hyperlink character style without being collection-
-            Hyperlink objects. Colour now sourced from
-            ColorFromName("DarkBlue") rather than hardcoded
-            wdColorBlue. Original name remains as a one-cycle alias
-            to defend against forgotten callers.
-          - Motivation: Hyperlinks previously shared pure Blue
-            with Footnote Reference, causing audit ambiguity.
-            DarkBlue (#000080) disambiguates and matches
-            wdColorDarkBlue.
-
-[DOC]     EDSG/01-styles.md
-          - New section "State-aware styles: print-locking"
-            documents the Hyperlink / FollowedHyperlink lock
-            pattern as the canonical example. Pairs with
-            LockHyperlinksToPalette + AuditHyperlinkStyling.
-          - Added "Companion rule: no hyperlinks in footnotes"
-            subsection documenting the editorial rule and pointing
-            at test 17 / CountFootnoteHyperlinks as the
-            enforcement audit.
-
-[IMPORT]  src/aeBibleClass.cls
-          - RUN_THE_TESTS slot 17 repurposed: the dead
-            CountRedFootnoteReferences probe (probed for RGB(255,0,0)
-            footnote references which no longer exist in the doc) is
-            replaced by CountFootnoteHyperlinks - asserts zero
-            collection-Hyperlink objects in the Footnotes story per
-            the no-hyperlinks-in-footnotes editorial rule.
-          - Three Case 17 swap-points updated: ResultArray dispatch,
-            Debug.Print line, BufAppend line.
-          - Old CountRedFootnoteReferences function deleted; new
-            CountFootnoteHyperlinks function added in its place.
-            Expected value in oneBasedExpectedArray slot 17 was
-            already 0, no change to the expected-values array.
-          - Normalizer pass touched a few hex( / hex$( call sites
-            (HexToUnicodeLabel, ColorToHex) - case-only changes.
-          - Test 17 renamed CountFootnoteHyperlinks ->
-            CountActiveHyperlinks; scope broadened from
-            Footnotes-story only to sum-across-all-StoryRanges.
-            The no-hyperlinks-in-footnotes rule is subsumed by
-            the no-clickable-hyperlinks-anywhere rule.
-
-[IMPORT]  src/basTEST_aeBibleTools.bas
-          - UnlinkActiveHyperlinks added: walks every StoryRange,
-            Hyperlinks(i).Delete in reverse order. Removes link
-            objects; preserves displayed text + character style.
-          - LockHyperlinksToPalette extended with new step 0
-            invoking UnlinkActiveHyperlinks before the existing
-            style / colour passes. Single call now enforces the
-            full no-clickable + uniform-styling rule.
+          - LockHyperlinksToPalette replaced by LockBookHyperlinks.
+            Three-step flow: migrate built-in Hyperlink-styled
+            runs to BookHyperlink, restyle + unlink each
+            Hyperlinks-collection entry, force-apply four font
+            properties on all BookHyperlink-styled runs. Does NOT
+            modify built-in Hyperlink or FollowedHyperlink style
+            definitions.
+          - LockHyperlinksAlwaysBlue alias removed.
+          - UnlinkActiveHyperlinks retained as a standalone
+            unlink-without-relock helper.
+          - Word.Field casing normalised (1 occurrence in
+            ConvertHyperlinksToPlainURLs).
 
 [IMPORT]  src/basStyleInspector.bas
-          - ReportClickableHyperlinks: read-only probe for the
-            no-clickable rule. Per-story active vs styled counts;
-            per-active-Hyperlink Address, SubAddress, page, text,
-            and bookmark-target-exists check for internal links.
-          - ListInertHyperlinkStyledRuns: per-instance dump of
-            Hyperlink-styled runs not backed by a collection
-            Hyperlink (the "styled-but-inert" population).
-          - StoryRangeName promoted Private -> Public in
-            basBiblePalette so basStyleInspector can call it.
-          - AuditNonPaletteStyleColors: 5-bucket classifier
-            (Tier 1 Automatic / Tier 2 Palette / Theme / Anomaly
-            / Skipped). Optional IncludeBuiltIn arg (default
-            False) filters Word built-ins. Theme detection via
-            Font.TextColor.ObjectThemeColor (NOT Font.Object-
-            ThemeColor, which doesn't exist). Color display
-            flags sentinel/theme-encoded values explicitly.
-            Return value = Anomaly count.
-          - Pass 1 of item 13 complete this session: 1 custom
-            anomaly found (Error style, #FF6600 orange,
-            unused), operator deleted via
-            ActiveDocument.Styles("Error").Delete. Post-delete
-            custom-style anomaly count = 0.
+          - AuditHyperlinkStyling extended earlier this session to
+            also check Font.Name = "Carlito" and Font.Size = 9.
+            Per-property mismatch reporting in output.
+          - AuditHyperlinkStyling renamed AuditBookHyperlinkStyling.
+            Targets the new BookHyperlink style. Header docstring
+            updated.
+          - Word.Field casing normalised (1 occurrence).
 
-[DOC]     EDSG/01-styles.md
-          - "Companion rule: no hyperlinks in footnotes"
-            superseded by "Companion rule: no clickable hyperlinks
-            anywhere". One-form definition stated explicitly;
-            print-vs-online rationale documented; both audits
-            cross-referenced (AuditHyperlinkStyling for styling,
-            CountActiveHyperlinks for clickability).
-
-[IMPORT]  src/aeLoggerClass.cls
-          - Normalizer pass: hex$ call site in Log_Write Unicode
-            formatting normalised to Hex$.
+[IMPORT]  src/XbasTESTaeBibleDOCVARIABLE.bas
+          - Word.Field casing normalised (2 occurrences). No
+            other changes; this is a TEST module.
 
 [SCRIPT]  py/normalize_vba.py
-          - Added rule: Hex( and Hex$( built-in functions must
-            keep uppercase H; optional $ marker is preserved per
-            call site. Pattern:
-            (r'(?i)\bhex(\$?)\(', r'Hex\1(', ...)
-          - Motivation: VBA IDE auto-cased Hex$(n) to hex$(n) in
-            basBiblePalette.bas (same class of bug as the prior
-            .Color regression). Normalizer now catches both Hex
-            and Hex$ forms in a single rule.
+          - Added rule: .Field (property/type member) keeps
+            uppercase F. Pattern (r'(?i)\.Field\b', '.Field', ...).
+          - Added rule: As Word.Field type declaration keeps
+            uppercase F. Pattern
+            (r'(?i)\bAs\s+(?:Word\.)?Field\b', 'As Word.Field', ...).
+          - Motivation: VBA IDE auto-cased "Dim fld As Word.Field"
+            to "Dim fld As Word.field" - same class of bug as
+            prior .Color and Hex$ regressions.
 
-[DOC]     src/basBiblePalette.bas
-          - New palette entry: DarkBlue = RGB(0,0,128) = #000080.
-            Usage documents the Hyperlink + FollowedHyperlink role
-            and the audit-separation rationale vs Blue.
-          - Module-header scope note corrected: the histogram
-            (ListAndCountFontColors via ActiveDocument.Words)
-            reads RESOLVED Range.Font.Color, so style-inherited
-            colors are counted there. Find's scope is narrower.
-          - Step A is additive only; Step B (this session) rewires
-            Module1.HexToRGB (shim), Module1.EnsureFootnoteReferenceStyleColor
-            (uses ColorFromName("Purple")), basTEST_aeBibleTools.GetColorNameFromHex
-            (shim), basTEST_aeBibleTools.ListAndCountFontColors (palette names +
-            distinct wdColorAutomatic row). aeBibleClass.ColorToHex BGR bug
-            left untouched.
+[DOC]     EDSG/01-styles.md
+          - "Companion rule: no clickable hyperlinks anywhere"
+            section rewritten:
+            - One-form definition now points at BookHyperlink
+              (not built-in Hyperlink).
+            - Why-a-custom-style explanation added with reference
+              to the 2026-05-15 size-11 bug as motivation.
+            - Enforcement section updated to reflect
+              DefineBookHyperlinkStyle, LockBookHyperlinks,
+              AuditBookHyperlinkStyling.
+            - New subsection "Per-installation recommendation:
+              disable URL auto-format" with the exact File >
+              Options > Proofing > AutoCorrect path.
 
-[IMPORT]  src/Module1.bas
-          - Step B: EnsureFootnoteReferenceStyleColor now reads
-            ColorFromName("Blue"). Originally rewritten as
-            ColorFromName("Purple") but corrected after the live-doc
-            probe confirmed Footnote Reference is Blue (#0000FF,
-            16711680, 296 references). Purple would have corrupted
-            them. See Code_review 2026-05-12 item 10 Q2.
-          - HexToRGB reduced to a 1-line shim around HexToLong.
+[DOC]     rvw/Code_review 2026-05-14.md
+          - New dated entry "BookHyperlink custom style replaces
+            built-in Hyperlink" documenting the bug, the reframe,
+            the implementation, and the operator verification
+            sequence.
 
-[IMPORT]  src/basTEST_aeBibleTools.bas
-          - Step B: GetColorNameFromHex reduced to a 5-line shim
-            around NameFromColor (preserves "Unknown Color" string).
-          - ListAndCountFontColors rewritten to tally by raw Font.Color
-            Long, name via NameFromColor, and report wdColorAutomatic
-            as a distinct "Automatic (inherit)" row (was silently
-            crushed into the (0,0,0) bucket).
-          - Item 11 follow-up: also handle wdUndefined (9999999) -
-            sentinel for mixed-color ranges. Was silently bucketed
-            into the phantom RGB(127,150,152) #7F9698 row that the
-            byte-decompose math produced. Now reported as
-            "wdUndefined (9999999) - Mixed (range spans multiple
-            colors)" - no fake color bucket.
-          - Caveat header added to ListAndCountFontColors output
-            explaining the Word-level granularity limit (single-
-            character coloured runs systematically undercounted)
-            and pointing to CountRunsWithColor /
-            ReportRunsWithColor for accurate per-color counts.
-
-[DOC]     md/BibleAbbreviationList.md (NEW)
-          - Unified, deduplicated non-SBL abbreviation reference
-            doc. Authoritative inventory mirrored into
-            aeBibleCitationClass.GetBookAliasMap.
-
-[DOC]     EDSG/11-ribbon-alias-layering.md
-          - New "Search expansion - generic ribbon lookup" section
-            documenting the four-step end-to-end resolution
-            (NormalizeBookInput -> ResolveAlias -> layer-1
-            canonical Like scan -> layer-2 typed-pattern Like
-            fallback). Cross-references the abbreviation doc and
-            today's review entries.
-
-[DOC]     EDSG/README.md
-          - Added a source-of-truth row pointing to
-            md/BibleAbbreviationList.md.
-
-[DOC]     rvw/Code_review 2026-05-12.md
-          - Items 3, 4, 5, 6, 7 status lines updated.
-          - 2026-05-13 dated entries for each closure / WONTFIX.
-          - 2026-05-13 entry for Step A (basBiblePalette.bas).
-          - New item 10 added (RESEARCH: legacy red-color usages
-            and Footnote Reference value conflict).
-
-# Note: aeRibbon/src/ is regenerated by py/ribbon_export_trim.py
-# and should not be hand-edited. The abbreviation map change in
-# src/aeBibleCitationClass.cls will propagate to
-# aeRibbon/src/aeBibleCitationClass.cls on the next ribbon build.
+# Operator verification sequence (after re-import):
+#   DefineBookHyperlinkStyle        ' creates style (idempotent)
+#   LockBookHyperlinks              ' migrates + unlinks + force-locks
+#   ?AuditBookHyperlinkStyling      ' expect 0 anomalies
+#   RUN_THE_TESTS 17                ' expect PASS at 0/0

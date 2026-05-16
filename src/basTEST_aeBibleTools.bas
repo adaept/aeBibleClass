@@ -2606,34 +2606,6 @@ Public Sub CountPollutedParagraphMarksReport()
         vbInformation
 End Sub
 
-' LockHyperlinksToPalette
-' ------------------------
-' Three-step lock that holds all Hyperlink-styled runs in the document
-' to a single palette-driven appearance, immune to the followed-link
-' state change:
-'
-'   1. Force Styles("Hyperlink").Font to (palette DarkBlue + underline).
-'   2. Force Styles("FollowedHyperlink").Font to the same (neutralises
-'      the visited-state colour shift entirely - print-target docs need
-'      stable appearance regardless of interactive clicks).
-'   3. Walk every StoryRange, Find runs whose character style is
-'      "Hyperlink", and force their Font.Color + Underline. This
-'      covers Hyperlink-styled runs that are NOT in the
-'      ActiveDocument.Hyperlinks collection - typically REF/HYPERLINK
-'      field-Result runs used by concordance navigation, which carry
-'      the style without being collection-Hyperlink objects.
-'
-' Manual only - run when hyperlinks are added or changed; the audit
-' AuditHyperlinkStyling catches drift between runs.
-'
-' See EDSG/01-styles.md "State-aware styles: print-locking" for the
-' design pattern.
-'
-' Step 0 (added 2026-05-14): call UnlinkActiveHyperlinks to enforce the
-' no-clickable-hyperlinks rule. Print is the primary target; online
-' interactivity is a future-mode concern handled at online-build time,
-' not in this doc.
-
 ' UnlinkActiveHyperlinks
 ' ----------------------
 ' Strip the click target from every Hyperlink object in every StoryRange,
@@ -2642,6 +2614,8 @@ End Sub
 ' place with whatever character style was applied.
 '
 ' Manual use: call directly to unlink without re-running the full lock.
+' Most code paths should call LockBookHyperlinks instead, which invokes
+' this as part of its workflow.
 Public Sub UnlinkActiveHyperlinks()
     Dim doc   As Document
     Dim story As Word.Range
@@ -2662,59 +2636,129 @@ Public Sub UnlinkActiveHyperlinks()
                 " active Hyperlink(s); text + character style preserved."
 End Sub
 
-Public Sub LockHyperlinksToPalette()
-    Dim doc   As Document
-    Dim story As Word.Range
-    Dim probe As Word.Range
-    Dim c     As Long
-    Dim total As Long
+' LockBookHyperlinks
+' ------------------------
+' Enforce the doc's one-form hyperlink convention: every visible-as-link
+' run must be styled BookHyperlink (custom character style, Carlito 9 +
+' palette DarkBlue + underline), and no link object may remain
+' clickable. Replaces the earlier LockHyperlinksToPalette which used
+' the built-in Hyperlink style and inherited font/size from paragraph
+' context - leaving anomalies when hyperlinks appeared in non-Carlito-9
+' paragraphs.
+'
+' Three steps:
+'   1. Walk every StoryRange and migrate any run styled with the
+'      built-in "Hyperlink" character style to BookHyperlink. Catches
+'      runs typed by users with Word's URL auto-format on, or pasted
+'      from other docs.
+'   2. Walk every StoryRange's Hyperlinks collection. For each, restyle
+'      hl.Range to BookHyperlink, then Hyperlink.Delete to remove the
+'      click target. Text + character style preserved.
+'   3. Walk every StoryRange and force-apply the four BookHyperlink
+'      properties (Font.Name, Font.Size, Font.Color, Font.Underline)
+'      on every run styled BookHyperlink. This is the idempotent
+'      override that strips any paste-in direct formatting.
+'
+' Built-in Hyperlink and FollowedHyperlink style definitions are
+' deliberately NOT touched - they belong to Word, not us, and the
+' hide-sweep handles them separately.
+'
+' Manual only - run when hyperlinks are added or changed; the audit
+' AuditBookHyperlinkStyling catches drift between runs.
+'
+' See EDSG/01-styles.md "Companion rule: no clickable hyperlinks
+' anywhere" for the design pattern.
+Public Sub LockBookHyperlinks()
+    Const TARGET_STYLE As String = "BookHyperlink"
+    Const BUILTIN_STYLE As String = "Hyperlink"
+    Const TARGET_FONT  As String = "Carlito"
+    Const TARGET_SIZE  As Single = 9
+    Dim doc       As Document
+    Dim story     As Word.Range
+    Dim probe     As Word.Range
+    Dim c         As Long
+    Dim migrated  As Long
+    Dim unlinked  As Long
+    Dim forced    As Long
+    Dim i         As Long
 
     Set doc = ActiveDocument
     c = ColorFromName("DarkBlue")
 
-    ' Step 0: no-clickable-hyperlinks rule (see EDSG/01-styles.md).
-    UnlinkActiveHyperlinks
+    ' Confirm BookHyperlink exists; create the lock-target style on
+    ' demand the first time the routine runs.
+    On Error Resume Next
+    Dim oTarget As Word.Style
+    Set oTarget = doc.Styles(TARGET_STYLE)
+    On Error GoTo 0
+    If oTarget Is Nothing Then
+        MsgBox "LockBookHyperlinks: " & TARGET_STYLE & " style not found. " & _
+               "Run DefineBookHyperlinkStyle first.", vbExclamation
+        Exit Sub
+    End If
 
-    With doc.Styles("Hyperlink").Font
-        .Color = c
-        .Underline = wdUnderlineSingle
-    End With
-    With doc.Styles("FollowedHyperlink").Font
-        .Color = c
-        .Underline = wdUnderlineSingle
-    End With
-
+    ' Step 1: migrate runs styled with built-in Hyperlink to BookHyperlink.
     For Each story In doc.StoryRanges
         Set probe = story.Duplicate
         With probe.Find
             .ClearFormatting
             .Text = ""
-            .style = doc.Styles("Hyperlink")
+            .style = doc.Styles(BUILTIN_STYLE)
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
             .MatchWildcards = False
         End With
         Do While probe.Find.Execute
-            probe.Font.Color = c
-            probe.Font.Underline = wdUnderlineSingle
-            total = total + 1
+            probe.style = doc.Styles(TARGET_STYLE)
+            migrated = migrated + 1
             probe.Collapse wdCollapseEnd
         Loop
     Next story
 
-    MsgBox "Hyperlinks locked to palette DarkBlue (" & total & _
-           " Hyperlink-styled runs across all stories; visited state neutralized).", _
-           vbInformation
-End Sub
+    ' Step 2: walk collection Hyperlinks, restyle their ranges to
+    ' BookHyperlink, then unlink. Reverse-iterate the collection.
+    For Each story In doc.StoryRanges
+        For i = story.Hyperlinks.Count To 1 Step -1
+            story.Hyperlinks(i).Range.style = doc.Styles(TARGET_STYLE)
+            story.Hyperlinks(i).Delete
+            unlinked = unlinked + 1
+        Next i
+    Next story
 
-' LockHyperlinksAlwaysBlue
-' ------------------------
-' Compatibility alias for one cycle. Delegates to LockHyperlinksToPalette.
-' New code should call LockHyperlinksToPalette directly. This shim will
-' be removed in a future session once any external references are gone.
-Public Sub LockHyperlinksAlwaysBlue()
-    LockHyperlinksToPalette
+    ' Step 3: force-apply the four BookHyperlink properties on every
+    ' BookHyperlink-styled run. Idempotent override that strips any
+    ' direct-formatting drift on top of the style.
+    For Each story In doc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = doc.Styles(TARGET_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            probe.Font.Name = TARGET_FONT
+            probe.Font.Size = TARGET_SIZE
+            probe.Font.Color = c
+            probe.Font.Underline = wdUnderlineSingle
+            forced = forced + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+
+    Debug.Print "LockBookHyperlinks complete:" & vbCrLf & _
+           "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
+           "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
+           "  BookHyperlink runs force-locked  : " & forced
+    MsgBox "LockBookHyperlinks complete:" & vbCrLf & _
+           "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
+           "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
+           "  BookHyperlink runs force-locked  : " & forced, _
+           vbInformation
 End Sub
 
 Public Sub ConvertHyperlinksToPlainURLs()

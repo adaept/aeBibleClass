@@ -306,9 +306,10 @@ states to it.
 ### Companion rule: no clickable hyperlinks anywhere
 
 **Hyperlinks in this document are visual references, not interactive
-controls.** Every run that looks like a link — Hyperlink character
-style + DarkBlue + underline — must be display-only. The underlying
-`Hyperlink` object must be absent.
+controls.** Every run that looks like a link must be display-only —
+the underlying `Hyperlink` object must be absent — and styled with
+the **`BookHyperlink`** custom character style (not Word's built-in
+`Hyperlink`).
 
 Rationale:
 
@@ -324,23 +325,63 @@ Rationale:
   styling.
 
 **One-form definition for this doc:** a hyperlink is a web URL
-pointing to an online tool, rendered as text with the `Hyperlink`
-character style (palette `DarkBlue` `#000080` + single underline).
+pointing to an online tool, rendered as text with the `BookHyperlink`
+character style. `BookHyperlink` pins all four font properties
+explicitly:
+
+| Property | Value |
+|---|---|
+| `Font.Name` | `Carlito` |
+| `Font.Size` | `9` |
+| `Font.Color` | palette `DarkBlue` (`#000080`) |
+| `Font.Underline` | `wdUnderlineSingle` |
+
+Word's built-in `Hyperlink` and `FollowedHyperlink` styles are **not
+used here**. They inherit font and size from the paragraph context,
+which means a hyperlink inside (for example) an `AuthorListItemTab`
+paragraph at 11pt renders at 11pt — breaking the print uniformity
+the rule demands. The custom `BookHyperlink` style is fully
+self-contained and renders identically regardless of surrounding
+paragraph style.
+
 Word's other clickable mechanisms — `REF` / `PAGEREF` / internal
 bookmark Hyperlinks — are **not in use here**. Any that appear are
 anomalies to remove.
 
-Enforcement:
+### Why a custom style and not the built-in
 
-- **`LockHyperlinksToPalette`** (`basTEST_aeBibleTools`) — three-step
-  workflow: unlink every active Hyperlink object (`UnlinkActiveHyperlinks`),
-  lock both `Hyperlink` and `FollowedHyperlink` style definitions to
-  palette DarkBlue + underline, then walk every story and force the
-  colour + underline on each Hyperlink-character-styled run.
+Earlier work (2026-05-13/14) tried to lock the built-in
+`Hyperlink` style to palette DarkBlue. The audit appeared to pass
+but a test on 2026-05-15 demonstrated the gap: a hyperlink pasted
+into an `AuthorListItemTab` paragraph carried size 11 (inherited
+from the paragraph) while the rule demands size 9. The built-in
+style cannot enforce font/size; the inheritance from paragraph
+context wins. A custom character style with explicit Font.Name and
+Font.Size resolves the structural issue.
+
+### Enforcement
+
+- **`DefineBookHyperlinkStyle`** (`basFixDocxRoutines`) — one-shot,
+  creates the `BookHyperlink` character style with the four pinned
+  properties. Idempotent (skips if already present).
+- **`LockBookHyperlinks`** (`basTEST_aeBibleTools`) — three-step
+  workflow:
+  1. Walk every story; migrate any run styled built-in `Hyperlink`
+     to `BookHyperlink` (catches paste-ins and Word's URL
+     auto-format output).
+  2. Walk every story's `Hyperlinks` collection; restyle each
+     `hl.Range` to `BookHyperlink`, then `Hyperlink.Delete` to
+     remove the click target.
+  3. Walk every story; force-apply the four `BookHyperlink`
+     properties on every `BookHyperlink`-styled run (idempotent
+     override; strips paste-in direct formatting).
+- **`AuditBookHyperlinkStyling`** (`basStyleInspector`) — verifies
+  the four properties on every `BookHyperlink`-styled run. Per-
+  property mismatch reporting. Expected 0 anomalies after the lock.
 - **RUN_THE_TESTS slot 17 → `CountActiveHyperlinks`**
-  (`src/aeBibleClass.cls`). Sums `story.Hyperlinks.Count` across all
-  StoryRanges. Expected value 0; any non-zero result is a rule
-  violation surfaced in the test run for editorial review.
+  (`src/aeBibleClass.cls`). Sums `story.Hyperlinks.Count` across
+  all StoryRanges. Expected value 0; any non-zero result is a rule
+  violation.
 
 The no-hyperlinks-in-footnotes rule is **subsumed** by this broader
 rule (zero hyperlinks anywhere implies zero in footnotes).
@@ -349,10 +390,37 @@ Pattern: when a style discipline implies a content rule, codify the
 content rule as its own test rather than leaning on the style audit
 to catch it indirectly. Two audits cover the two concerns:
 
-- `AuditHyperlinkStyling` (`basStyleInspector`) — *how* a hyperlink
-  is dressed (style + colour + underline must match the convention).
-- `CountActiveHyperlinks` (`aeBibleClass`, test 17) — *whether* an
-  active link object exists at all (expected 0 anywhere).
+- `AuditBookHyperlinkStyling` — *how* a hyperlink is dressed (all
+  four font properties must match the pinned values).
+- `CountActiveHyperlinks` (test 17) — *whether* an active link
+  object exists at all (expected 0 anywhere).
+
+### Per-installation recommendation: disable URL auto-format
+
+Word's "AutoFormat As You Type" feature auto-converts typed URLs
+into active `Hyperlink` objects styled with the built-in `Hyperlink`
+character style. That's incompatible with the rule above — every
+typed URL becomes a rule violation that `LockBookHyperlinks` then
+has to migrate.
+
+**Disable it once, per editor's installation:**
+
+1. File → Options → Proofing → AutoCorrect Options...
+2. AutoFormat As You Type tab.
+3. Under "Replace as you type", uncheck **"Internet and network
+   paths with hyperlinks"**.
+4. (Optional) Also AutoFormat tab → same checkbox, off.
+
+This is a per-installation Word setting, not a per-document setting,
+so it cannot be enforced through the doc itself. Editors and
+translators forking the project should make this change as part of
+their initial setup. With it disabled, typed URLs remain plain text
+until styled deliberately to `BookHyperlink`; pastes from the web
+no longer auto-create link objects.
+
+If a translator misses the step, `LockBookHyperlinks` will catch
+and migrate any built-in `Hyperlink` runs on its next run. The
+setting prevents the work, not the rule.
 
 ## How to add a new style
 

@@ -997,56 +997,64 @@ Public Function AuditFootnoteReferenceMarkers() As Long
 End Function
 
 '==============================================================================
-' AuditHyperlinkStyling
+' AuditBookHyperlinkStyling
 '==============================================================================
-' Verify every Hyperlink-styled run in the document is locked to the
-' palette DarkBlue convention. Walks all primary StoryRanges and Finds
-' runs by character style "Hyperlink" - this covers BOTH:
-'
-'   - Real ActiveDocument.Hyperlinks collection entries (clickable
-'     links with an .Address property), and
-'   - Hyperlink-character-styled runs that are NOT in the collection
-'     (typically REF / HYPERLINK / PAGEREF field-Result runs used for
-'     concordance navigation, which carry the style without being
-'     Hyperlink objects).
+' Verify every BookHyperlink-styled run in the document carries the
+' expected character properties. Walks all primary StoryRanges and Finds
+' runs by character style "BookHyperlink".
 '
 ' For each match, verify:
-'   - Font.Color     = ColorFromName("DarkBlue")
+'   - Font.Name      = "Carlito"
+'   - Font.Size      = 9
+'   - Font.Color     = ColorFromName("DarkBlue")  (= 8388608 = #000080)
 '   - Font.Underline = wdUnderlineSingle
 '
-' Anomalies are reported; expected 0 after LockHyperlinksToPalette runs.
+' Anomalies are reported per-property: each mismatched property shows
+' in the output. Expected 0 after LockBookHyperlinks runs.
+'
+' BookHyperlink replaced the built-in Hyperlink style as the doc's
+' one-form hyperlink target. The built-in inherits font/size from
+' paragraph context and so cannot be enforced uniformly; the custom
+' style pins all four properties explicitly. See EDSG/01-styles.md
+' "Companion rule: no clickable hyperlinks anywhere" for the rule.
 '
 ' Output:
-'   One line per anomaly (story, page, current colour, current underline,
-'   run text snippet), then a summary Count.
+'   One line per anomaly (story, page, mismatch list, run text snippet),
+'   then a summary Count.
 '
 ' RETURN:
 '   Anomaly Count.
 '
 ' Usage from Immediate:
-'   ?AuditHyperlinkStyling
+'   ?AuditBookHyperlinkStyling
 '==============================================================================
-Public Function AuditHyperlinkStyling() As Long
-    Const EXPECTED_STYLE As String = "Hyperlink"
+Public Function AuditBookHyperlinkStyling() As Long
+    Const EXPECTED_STYLE As String = "BookHyperlink"
+    Const EXPECTED_FONT  As String = "Carlito"
+    Const EXPECTED_SIZE  As Single = 9
     Const MAX_SNIP       As Long = 40
     Dim oDoc       As Word.Document
     Dim story      As Word.Range
     Dim probe      As Word.Range
     Dim runColor   As Long
     Dim runUL      As Long
+    Dim runFont    As String
+    Dim runSize    As Single
     Dim expected   As Long
     Dim pageNum    As Long
     Dim anomalies  As Long
     Dim total      As Long
     Dim snip       As String
     Dim storyName  As String
+    Dim mismatch   As String
 
     Set oDoc = ActiveDocument
     expected = ColorFromName("DarkBlue")
 
-    Debug.Print "AuditHyperlinkStyling: scanning all stories for """ & _
-                EXPECTED_STYLE & """-styled runs; expecting color=" & _
-                expected & " " & LongToHex(expected) & " + underline single..."
+    Debug.Print "AuditBookHyperlinkStyling: scanning all stories for """ & _
+                EXPECTED_STYLE & """-styled runs; expecting font=" & EXPECTED_FONT & _
+                " " & EXPECTED_SIZE & "pt + color=" & expected & " " & LongToHex(expected) & _
+                " + underline single..."
 
     For Each story In oDoc.StoryRanges
         Set probe = story.Duplicate
@@ -1063,7 +1071,16 @@ Public Function AuditHyperlinkStyling() As Long
             total = total + 1
             runColor = probe.Font.Color
             runUL = probe.Font.Underline
-            If runColor <> expected Or runUL <> wdUnderlineSingle Then
+            runFont = probe.Font.Name
+            runSize = probe.Font.Size
+
+            mismatch = ""
+            If runFont <> EXPECTED_FONT Then mismatch = mismatch & " font=[" & runFont & "]"
+            If runSize <> EXPECTED_SIZE Then mismatch = mismatch & " size=" & runSize
+            If runColor <> expected Then mismatch = mismatch & " color=" & runColor & " " & LongToHex(runColor)
+            If runUL <> wdUnderlineSingle Then mismatch = mismatch & " underline=" & runUL
+
+            If Len(mismatch) > 0 Then
                 anomalies = anomalies + 1
                 pageNum = -1
                 On Error Resume Next
@@ -1075,17 +1092,16 @@ Public Function AuditHyperlinkStyling() As Long
                 storyName = "StoryType=" & story.StoryType
                 Debug.Print "  ANOMALY " & storyName & _
                             "  page=" & pageNum & _
-                            "  color=" & runColor & " " & LongToHex(runColor) & _
-                            "  underline=" & runUL & _
+                            "  mismatch:" & mismatch & _
                             "  text=[" & snip & "]"
             End If
             probe.Collapse wdCollapseEnd
         Loop
     Next story
 
-    Debug.Print "AuditHyperlinkStyling: " & total & " Hyperlink-styled run(s) checked, " & _
-                anomalies & " anomaly/anomalies."
-    AuditHyperlinkStyling = anomalies
+    Debug.Print "AuditBookHyperlinkStyling: " & total & " " & EXPECTED_STYLE & _
+                "-styled run(s) checked, " & anomalies & " anomaly/anomalies."
+    AuditBookHyperlinkStyling = anomalies
 End Function
 
 '==============================================================================

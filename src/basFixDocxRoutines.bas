@@ -1372,3 +1372,72 @@ PROC_ERR:
            ") in procedure DefineAuthorBookRefStyle of Module basFixDocxRoutines"
     Resume PROC_EXIT
 End Sub
+
+'====================================================================
+' DefineBookHyperlinkStyle
+' PURPOSE:
+'   Creates the BookHyperlink character style.
+'   This is the doc's one-form hyperlink: a web URL pointing to an
+'   online tool, displayed as Carlito 9 palette-DarkBlue underlined
+'   text. Replaces reliance on Word's built-in Hyperlink character
+'   style, which inherits font/size from paragraph context and so
+'   cannot enforce uniform appearance across paragraph styles of
+'   differing size.
+'
+' SPEC:
+'   Type:           Character
+'   BaseStyle:      Default Paragraph Font
+'   Font:           Carlito 9pt
+'   Color:          palette DarkBlue (#000080)
+'   Underline:      Single
+'   Bold:           False
+'   Italic:         False
+'
+' Run once (idempotent: skips if style already exists).
+' Companion routines:
+'   - LockBookHyperlinks (basTEST_aeBibleTools) - migrates built-in
+'     Hyperlink-styled runs to BookHyperlink, unlinks active
+'     Hyperlinks, force-applies BookHyperlink properties.
+'   - AuditBookHyperlinkStyling (basStyleInspector) - verifies all
+'     four properties on every BookHyperlink-styled run.
+'====================================================================
+Public Sub DefineBookHyperlinkStyle()
+    On Error GoTo PROC_ERR
+    Dim oDoc   As Document
+    Dim oStyle As Word.Style
+
+    Set oDoc = ActiveDocument
+
+    On Error Resume Next
+    Set oStyle = oDoc.Styles("BookHyperlink")
+    On Error GoTo PROC_ERR
+
+    If Not oStyle Is Nothing Then
+        Debug.Print "DefineBookHyperlinkStyle: BookHyperlink already exists -- skipped."
+        GoTo PROC_EXIT
+    End If
+
+    Set oStyle = oDoc.Styles.Add(name:="BookHyperlink", Type:=wdStyleTypeCharacter)
+    With oStyle
+        .baseStyle = "Default Paragraph Font"
+        With .Font
+            .Name = "Carlito"
+            .Size = 9
+            .Bold = False
+            .Italic = False
+            .Color = ColorFromName("DarkBlue")
+            .Underline = wdUnderlineSingle
+        End With
+    End With
+
+    Debug.Print "DefineBookHyperlinkStyle: BookHyperlink created."
+
+PROC_EXIT:
+    Set oStyle = Nothing
+    Set oDoc = Nothing
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure DefineBookHyperlinkStyle of Module basFixDocxRoutines"
+    Resume PROC_EXIT
+End Sub
