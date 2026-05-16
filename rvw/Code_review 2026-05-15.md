@@ -151,9 +151,16 @@ internal error (will FAIL against expected 0). Prints violating
 NameLocal list to Immediate on violations > 0.
 
 **2.4 `AuditBookHyperlinkStyling` wired into RUN_THE_TESTS
-(MEDIUM).** Currently callable only from Immediate. Should be a
-permanent test alongside `CountActiveHyperlinks` (slot 17). Slot
-TBD.
+(MEDIUM) - DONE 2026-05-15.** Permanent BookHyperlink discipline
+test alongside `CountActiveHyperlinks` (slot 17). Assigned to
+slot 46 (reused from the obsolete `CountFindNotEmphasisRed` -1
+stub, removed). Per the class-encapsulation rule (§ 9 below /
+`EDSG/12-module-vs-class.md`), the function body was migrated
+from `basStyleInspector.bas` into `aeBibleClass.cls` as a
+`Public Function`; a thin two-line delegate stub remains in
+`basStyleInspector.bas` so `?AuditBookHyperlinkStyling` from the
+Immediate window keeps working. This pair is the canonical
+template for the still-pending slot-44 retro fix.
 
 **2.5 `AuditThemeColorUsage` (LOWER PRIORITY).** Walks every
 style, reports any with
@@ -170,6 +177,11 @@ registry in `basBiblePalette`.
 
 **Item 13 closes** when 2.1-2.4 are done and clean. 2.5 and 2.6
 are graduate items.
+
+**Status 2026-05-15:** 2.1, 2.2, 2.3, 2.4 all DONE this session.
+One pending retro fix carries over (slot 44 `AuditNonPaletteStyleColors`
+body migration into the class), but Item 13's gating sub-items are
+complete; operator-verification of slot 46 closes it.
 
 Carried from 2026-05-12 item 13 (reframed 2026-05-14, advanced
 again 2026-05-15 with the BookHyperlink addition).
@@ -315,6 +327,60 @@ semantic compound-break markers (German, Dutch, some
 Slavic-language typesetting conventions occasionally do).
 
 Originated `rvw/Code_review 2026-05-08.md` § 3c.
+
+### 9. Architecture rule — class encapsulation + module/class as casual-coder safety boundary (RULE, 2026-05-15)
+
+Established 2026-05-15 while wiring item 13 / 2.3 and 2.4.
+
+**Rule.** Class-related code stays inside the class. If a class
+needs behaviour from elsewhere, it calls into another class
+(`aeAssertClass`, `aeLoggerClass`, `aeBibleCitationClass`,
+`aeLongProcessClass`, `aeRibbonClass`, `aeUpdateCharStyleClass`) -
+not into a module. Stateless specs / lookup tables / config SSOTs
+may remain in modules.
+
+**Why - architectural side.** The project already runs a class
+spine. Putting test code and coherent stateful workflow inside
+classes keeps the slot dispatch and its dependencies in one
+readable file; module-side test bodies require hunting and
+diverge from the SSOT principle the class itself embodies.
+
+**Why - social side (the larger benefit).** Most VBA contributors
+edit modules and avoid classes - classes signal "an invariant is
+being maintained here." By concentrating stateful behaviour
+inside classes, the file boundary itself becomes a permission
+gate: a future i18n / editorial contributor who opens only `.bas`
+files cannot break a class invariant they never saw. They edit
+the palette table, the abbreviation list, the approved-styles
+SSOT, the ribbon XML - and never need to know what a class *is*.
+If they find themselves opening a `.cls` file, that's the signal
+to stop and ask. The boundary doubles as a blast-radius limiter.
+
+**Why `basBiblePalette` stays a module (not a class).** It is a
+stateless lookup table. Converting it would dissolve the safety
+signal (every palette-row edit would require opening a class
+file) while buying no behavioural gain. Classes for stateful
+actors and test code; modules for spec / data / lookup. The
+discipline only works if the module/class split *means
+something*, and the right meaning is "stateless data vs stateful
+actor," not "everything important is a class."
+
+**How applied this session.**
+
+- 2.3: `CountUnapprovedVisibleStyles` placed as `Private Function`
+  inside `aeBibleClass.cls` (not in `basStyleInspector`).
+- 2.4: `AuditBookHyperlinkStyling` body moved into
+  `aeBibleClass.cls`; thin delegate stub left in
+  `basStyleInspector.bas` for the existing
+  `?AuditBookHyperlinkStyling` Immediate-window usage.
+- Retro fix pending: `AuditNonPaletteStyleColors` (slot 44) body
+  still lives in `basStyleInspector`. Migrate using the same
+  body-in-class + stub-in-module template established by 2.4.
+
+**EDSG anchor.** [`EDSG/12-module-vs-class.md`](../EDSG/12-module-vs-class.md)
+gives the contributor-facing version of this rule and should be
+read by anyone planning an i18n / editorial code change before
+opening a `.cls` file.
 
 ## Pointer back to the closed arc
 

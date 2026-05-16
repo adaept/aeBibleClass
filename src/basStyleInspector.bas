@@ -997,111 +997,21 @@ Public Function AuditFootnoteReferenceMarkers() As Long
 End Function
 
 '==============================================================================
-' AuditBookHyperlinkStyling
+' AuditBookHyperlinkStyling  (delegate stub)
 '==============================================================================
-' Verify every BookHyperlink-styled run in the document carries the
-' expected character properties. Walks all primary StoryRanges and Finds
-' runs by character style "BookHyperlink".
+' Canonical body lives in aeBibleClass.cls (wired at RUN_THE_TESTS slot 46)
+' per the class-encapsulation rule - see EDSG/12-module-vs-class.md.
 '
-' For each match, verify:
-'   - Font.Name      = "Carlito"
-'   - Font.Size      = 9
-'   - Font.Color     = ColorFromName("DarkBlue")  (= 8388608 = #000080)
-'   - Font.Underline = wdUnderlineSingle
-'
-' Anomalies are reported per-property: each mismatched property shows
-' in the output. Expected 0 after LockBookHyperlinks runs.
-'
-' BookHyperlink replaced the built-in Hyperlink style as the doc's
-' one-form hyperlink target. The built-in inherits font/size from
-' paragraph context and so cannot be enforced uniformly; the custom
-' style pins all four properties explicitly. See EDSG/01-styles.md
-' "Companion rule: no clickable hyperlinks anywhere" for the rule.
-'
-' Output:
-'   One line per anomaly (story, page, mismatch list, run text snippet),
-'   then a summary Count.
-'
-' RETURN:
-'   Anomaly Count.
-'
-' Usage from Immediate:
+' This stub exists only so Immediate-window users can keep typing
 '   ?AuditBookHyperlinkStyling
+' without manually instantiating the class. Returns the class Result
+' verbatim. Do not add logic here - change the class instead.
 '==============================================================================
 Public Function AuditBookHyperlinkStyling() As Long
-    Const EXPECTED_STYLE As String = "BookHyperlink"
-    Const EXPECTED_FONT  As String = "Carlito"
-    Const EXPECTED_SIZE  As Single = 9
-    Const MAX_SNIP       As Long = 40
-    Dim oDoc       As Word.Document
-    Dim story      As Word.Range
-    Dim probe      As Word.Range
-    Dim runColor   As Long
-    Dim runUL      As Long
-    Dim runFont    As String
-    Dim runSize    As Single
-    Dim expected   As Long
-    Dim pageNum    As Long
-    Dim anomalies  As Long
-    Dim total      As Long
-    Dim snip       As String
-    Dim storyName  As String
-    Dim mismatch   As String
-
-    Set oDoc = ActiveDocument
-    expected = ColorFromName("DarkBlue")
-
-    Debug.Print "AuditBookHyperlinkStyling: scanning all stories for """ & _
-                EXPECTED_STYLE & """-styled runs; expecting font=" & EXPECTED_FONT & _
-                " " & EXPECTED_SIZE & "pt + color=" & expected & " " & LongToHex(expected) & _
-                " + underline single..."
-
-    For Each story In oDoc.StoryRanges
-        Set probe = story.Duplicate
-        With probe.Find
-            .ClearFormatting
-            .Text = ""
-            .style = oDoc.Styles(EXPECTED_STYLE)
-            .Forward = True
-            .Wrap = wdFindStop
-            .Format = True
-            .MatchWildcards = False
-        End With
-        Do While probe.Find.Execute
-            total = total + 1
-            runColor = probe.Font.Color
-            runUL = probe.Font.Underline
-            runFont = probe.Font.Name
-            runSize = probe.Font.Size
-
-            mismatch = ""
-            If runFont <> EXPECTED_FONT Then mismatch = mismatch & " font=[" & runFont & "]"
-            If runSize <> EXPECTED_SIZE Then mismatch = mismatch & " size=" & runSize
-            If runColor <> expected Then mismatch = mismatch & " color=" & runColor & " " & LongToHex(runColor)
-            If runUL <> wdUnderlineSingle Then mismatch = mismatch & " underline=" & runUL
-
-            If Len(mismatch) > 0 Then
-                anomalies = anomalies + 1
-                pageNum = -1
-                On Error Resume Next
-                pageNum = probe.Information(wdActiveEndPageNumber)
-                On Error GoTo 0
-                snip = probe.Text
-                If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
-                snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
-                storyName = "StoryType=" & story.StoryType
-                Debug.Print "  ANOMALY " & storyName & _
-                            "  page=" & pageNum & _
-                            "  mismatch:" & mismatch & _
-                            "  text=[" & snip & "]"
-            End If
-            probe.Collapse wdCollapseEnd
-        Loop
-    Next story
-
-    Debug.Print "AuditBookHyperlinkStyling: " & total & " " & EXPECTED_STYLE & _
-                "-styled run(s) checked, " & anomalies & " anomaly/anomalies."
-    AuditBookHyperlinkStyling = anomalies
+    Dim o As aeBibleClass
+    Set o = New aeBibleClass
+    AuditBookHyperlinkStyling = o.AuditBookHyperlinkStyling
+    Set o = Nothing
 End Function
 
 '==============================================================================

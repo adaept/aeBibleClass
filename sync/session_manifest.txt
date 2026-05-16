@@ -259,3 +259,100 @@
 # Pending retro fix (post-session):
 #   - Migrate AuditNonPaletteStyleColors body into aeBibleClass.cls
 #     with a stub left in basStyleInspector. Slot 44.
+
+## Session themes (continued) -- Item 13 / 2.4 + architecture rule
+
+11. Class-encapsulation rule formalised. The earlier
+    test-functions-in-class rule was broadened: any class-related
+    code stays inside the class, classes may call other classes
+    (aeAssertClass, aeLoggerClass, aeBibleCitationClass, etc.),
+    and stateless specs / lookup tables / config SSOTs remain in
+    modules. Module/class file extension doubles as a permission
+    signal for casual contributors - safe-to-edit vs ask-first.
+    basBiblePalette explicitly stays a module (stateless lookup
+    table; converting would dissolve the safety signal).
+
+    Memory rule renamed feedback_class_encapsulation.md.
+    Rationale appended to rvw/Code_review 2026-05-15.md as new
+    § 9. Contributor-facing version written as
+    EDSG/12-module-vs-class.md and linked from EDSG/README.md.
+
+12. AuditBookHyperlinkStyling wired into RUN_THE_TESTS at slot 46.
+    Slot 46 was previously the CountFindNotEmphasisRed stub
+    (-1 returner, no remaining helper); removed. Function body
+    moved from basStyleInspector.bas into aeBibleClass.cls as a
+    Public Function (Public so the Immediate-window stub can
+    delegate in). Thin two-line stub left in basStyleInspector
+    that creates aeBibleClass and returns the call - preserves
+    ?AuditBookHyperlinkStyling Immediate usage. This body-in-class
+    + stub-in-module pair is the template for the pending slot-44
+    retro fix on AuditNonPaletteStyleColors.
+
+    Three label sites updated in aeBibleClass.cls:
+    GetPassFail Case 46 dispatch, RunTest Debug.Print Case 46,
+    BufAppend Case 46. values(46) was already 0.
+
+## Files modified (continued)
+
+[IMPORT]  src/aeBibleClass.cls
+          - Case 46 in GetPassFail: CountFindNotEmphasisRed
+            replaced with AuditBookHyperlinkStyling.
+          - Case 46 RunTest + BufAppend labels updated.
+          - CountFindNotEmphasisRed Private Function deleted
+            (was a -1 stub; helper FindNotEmphasisBlackRed no
+            longer exists in source).
+          - AuditBookHyperlinkStyling Public Function added with
+            full body moved from basStyleInspector. Header notes
+            it is Public so the module stub can delegate in.
+
+[IMPORT]  src/basStyleInspector.bas
+          - AuditBookHyperlinkStyling reduced to a two-line
+            delegate stub (creates aeBibleClass, returns the
+            class call). Header rewritten to point at the
+            canonical class definition and at
+            EDSG/12-module-vs-class.md.
+
+[DOC]     rvw/Code_review 2026-05-15.md
+          - Item 2.4 marked DONE 2026-05-15. Class-migration
+            note added.
+          - Item 13 closing summary line added.
+          - New § 9 "Architecture rule - class encapsulation +
+            module/class as casual-coder safety boundary"
+            appended after § 8.
+
+[DOC]     EDSG/12-module-vs-class.md  (NEW)
+          - Contributor-facing module-vs-class rule.
+          - TL;DR table: .bas = edit freely, .cls = ask first.
+          - i18n-specific guidance: most locale work touches
+            modules; opening a .cls is the signal to stop.
+          - Lists which actors are classes and which are modules.
+          - Explains why basBiblePalette stays a module.
+
+[DOC]     EDSG/README.md
+          - Row 12 added to the Pages table linking the new file.
+
+[MEMORY]  ~/.claude/.../memory/feedback_class_encapsulation.md
+          - Replaces feedback_test_functions_in_class.md with
+            the broadened rule. MEMORY.md index updated.
+
+# Operator verification sequence (item 13 / 2.4):
+#   RUN_THE_TESTS 46                ' expect PASS at 0
+#   ?AuditBookHyperlinkStyling      ' expect 0 (via the stub)
+#   ' Both should print the same scan-and-anomaly summary.
+
+## Session themes (continued) -- normalizer rule
+
+13. Normalizer rule added for .Hidden property. Same class of bug
+    as .Field / .Color: VBE auto-demoted .Hidden to .hidden
+    (operator hit it in basStyleInspector debug output today).
+    Pattern (r'(?i)\.Hidden\b', '.Hidden', ...) inserted in
+    py/normalize_vba.py right after the .Field rule. Sweep across
+    src/ fixed 1 case (Module1.bas:83).
+
+## Files modified (continued)
+
+[SCRIPT]  py/normalize_vba.py
+          - New rule: .Hidden property keeps uppercase H.
+
+[IMPORT]  src/Module1.bas
+          - Line 83: ".hidden" -> ".Hidden" (normalizer sweep).

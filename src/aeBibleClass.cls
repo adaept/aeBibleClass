@@ -1021,7 +1021,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountUnapprovedVisibleStyles
         m_HintArray(TestNum) = m_lastHint
     Case 46
-        ResultArray(TestNum) = CountFindNotEmphasisRed
+        ResultArray(TestNum) = AuditBookHyperlinkStyling
         m_HintArray(TestNum) = m_lastHint
     Case 47
         ResultArray(TestNum) = CountTabOnlyParagraphs("Footer")
@@ -1276,7 +1276,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountUnapprovedVisibleStyles"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 46
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed [obso]"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditBookHyperlinkStyling"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 47
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountTabOnlyParagraphs(" & """Footer""" & ")"
@@ -1449,7 +1449,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 45
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountUnapprovedVisibleStyles"
     Case 46
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisRed [obso] TestSlotAvailable"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditBookHyperlinkStyling"
     Case 47
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountTabOnlyParagraphs(" & """Footer""" & ")"
     Case 48
@@ -2177,19 +2177,106 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountFindNotEmphasisRed()
-    On Error GoTo PROC_ERR
+'=========================================================================
+' AuditBookHyperlinkStyling  (Public; wired at slot 46)
+' Verify every BookHyperlink-styled run in the document carries the
+' expected character properties. Walks all primary StoryRanges and
+' Finds runs by character style "BookHyperlink".
+'
+' For each match, verify:
+'   - Font.Name      = "Carlito"
+'   - Font.Size      = 9
+'   - Font.Color     = ColorFromName("DarkBlue")  (= 8388608 = #000080)
+'   - Font.Underline = wdUnderlineSingle
+'
+' Anomalies are reported per-property: each mismatched property shows
+' in the output. Expected 0 after LockBookHyperlinks runs.
+'
+' BookHyperlink replaced the built-in Hyperlink style as the doc's
+' one-form hyperlink target. The built-in inherits font/size from
+' paragraph context and so cannot be enforced uniformly; the custom
+' style pins all four properties explicitly. See EDSG/01-styles.md
+' "Companion rule: no clickable hyperlinks anywhere" for the rule.
+'
+' Public so the Immediate-window stub in basStyleInspector can
+' delegate in: ?AuditBookHyperlinkStyling resolves via the stub.
+' Canonical body lives here per the class-encapsulation rule
+' (EDSG/12-module-vs-class.md).
+'=========================================================================
+Public Function AuditBookHyperlinkStyling() As Long
+    Const EXPECTED_STYLE As String = "BookHyperlink"
+    Const EXPECTED_FONT  As String = "Carlito"
+    Const EXPECTED_SIZE  As Single = 9
+    Const MAX_SNIP       As Long = 40
+    Dim oDoc       As Word.Document
+    Dim story      As Word.Range
+    Dim probe      As Word.Range
+    Dim runColor   As Long
+    Dim runUL      As Long
+    Dim runFont    As String
+    Dim runSize    As Single
+    Dim expected   As Long
+    Dim pageNum    As Long
+    Dim anomalies  As Long
+    Dim total      As Long
+    Dim snip       As String
+    Dim storyName  As String
+    Dim mismatch   As String
 
-    ' [obso] CountFindNotEmphasisRed = FindNotEmphasisBlackRed("Dark Red")
-    CountFindNotEmphasisRed = -1
+    Set oDoc = ActiveDocument
+    expected = ColorFromName("DarkBlue")
 
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountFindNotEmphasisRed | Erl: " & Erl _
-        & " | Err: " & Err.Number & " | " & Err.Description
-    m_lastFuncError = True
-    Resume PROC_EXIT
+    Debug.Print "AuditBookHyperlinkStyling: scanning all stories for """ & _
+                EXPECTED_STYLE & """-styled runs; expecting font=" & EXPECTED_FONT & _
+                " " & EXPECTED_SIZE & "pt + color=" & expected & " " & LongToHex(expected) & _
+                " + underline single..."
+
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            total = total + 1
+            runColor = probe.Font.Color
+            runUL = probe.Font.Underline
+            runFont = probe.Font.Name
+            runSize = probe.Font.Size
+
+            mismatch = ""
+            If runFont <> EXPECTED_FONT Then mismatch = mismatch & " font=[" & runFont & "]"
+            If runSize <> EXPECTED_SIZE Then mismatch = mismatch & " size=" & runSize
+            If runColor <> expected Then mismatch = mismatch & " color=" & runColor & " " & LongToHex(runColor)
+            If runUL <> wdUnderlineSingle Then mismatch = mismatch & " underline=" & runUL
+
+            If Len(mismatch) > 0 Then
+                anomalies = anomalies + 1
+                pageNum = -1
+                On Error Resume Next
+                pageNum = probe.Information(wdActiveEndPageNumber)
+                On Error GoTo 0
+                snip = probe.Text
+                If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
+                snip = Replace(Replace(snip, vbCr, " | "), vbLf, " | ")
+                storyName = "StoryType=" & story.StoryType
+                Debug.Print "  ANOMALY " & storyName & _
+                            "  page=" & pageNum & _
+                            "  mismatch:" & mismatch & _
+                            "  text=[" & snip & "]"
+            End If
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+
+    Debug.Print "AuditBookHyperlinkStyling: " & total & " " & EXPECTED_STYLE & _
+                "-styled run(s) checked, " & anomalies & " anomaly/anomalies."
+    AuditBookHyperlinkStyling = anomalies
 End Function
 
 '=========================================================================
@@ -2204,7 +2291,7 @@ End Function
 '   - "properly hidden": Priority = 99 AND QuickStyle = False AND
 '     UnhideWhenUsed = False. Applies regardless of BuiltIn.
 '
-' Returns Long count of violations (expected 0 after a clean
+' Returns Long Count of violations (expected 0 after a clean
 ' HideUnapprovedBuiltInStyles run). On violations > 0, prints the
 ' offending NameLocal list to Immediate; silent when 0.
 '=========================================================================

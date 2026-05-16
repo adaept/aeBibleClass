@@ -40,6 +40,7 @@ Different artifacts answer different questions. Know which to consult.
 | 8 | [08-publishing.md](08-publishing.md) | Producing the docx / PDF | Skeleton |
 | 9 | [09-history.md](09-history.md) | Pointers into `rvw/` | Mature |
 | 11 | [11-ribbon-alias-layering.md](11-ribbon-alias-layering.md) | Ribbon book-combo alias resolution (two-layer contract) | Mature |
+| 12 | [12-module-vs-class.md](12-module-vs-class.md) | Module-vs-class rule: which files are safe-to-edit vs ask-first | Mature |
 
 ## Operative principles
 
