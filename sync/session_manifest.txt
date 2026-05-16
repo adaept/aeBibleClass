@@ -356,3 +356,45 @@
 
 [IMPORT]  src/Module1.bas
           - Line 83: ".hidden" -> ".Hidden" (normalizer sweep).
+
+## Session themes (continued) -- slot 44 retro-fix
+
+14. Retro fix: AuditNonPaletteStyleColors (slot 44) body migrated
+    from basStyleInspector.bas into aeBibleClass.cls as a Public
+    Function. Uses the 2.4 template: full body in class, two-line
+    delegate stub in basStyleInspector preserves
+    ?AuditNonPaletteStyleColors Immediate usage (optional
+    IncludeBuiltIn argument passes through). The pending-retro
+    note from earlier in this session is now cleared.
+
+    Supporting changes:
+    - StyleTypeName in basStyleInspector promoted Private -> Public.
+      Stateless code-to-name lookup (per class-encapsulation rule,
+      stateless specs stay in modules; class calls in).
+    - ColorDisplay (Private helper, used only by the migrated
+      function) moved into the class as Private Function.
+    - No slot dispatch edit needed: slot 44 already reads
+      `AuditNonPaletteStyleColors`; VBA resolves the unqualified
+      call inside the class to the class's own method.
+
+## Files modified (continued)
+
+[IMPORT]  src/aeBibleClass.cls
+          - AuditNonPaletteStyleColors Public Function added
+            with full body migrated from basStyleInspector.
+            Optional IncludeBuiltIn arg preserved.
+          - ColorDisplay Private Function added as helper.
+
+[IMPORT]  src/basStyleInspector.bas
+          - AuditNonPaletteStyleColors reduced to a 2-line
+            delegate stub (creates aeBibleClass, returns the
+            class call; passes IncludeBuiltIn through).
+          - StyleTypeName promoted Private -> Public so the
+            class can call it.
+          - ColorDisplay deleted (moved into the class).
+
+# Operator verification sequence (slot 44 retro):
+#   ?AuditNonPaletteStyleColors        ' via stub; default args
+#   ?AuditNonPaletteStyleColors True   ' include built-ins
+#   RUN_THE_TESTS 44                   ' expect PASS at 0
+#   ' All three should print identical Tier/Anomaly summary blocks.

@@ -2178,6 +2178,144 @@ PROC_ERR:
 End Function
 
 '=========================================================================
+' AuditNonPaletteStyleColors  (Public; wired at slot 44)
+' Two-tier colour discipline (see EDSG/01-styles.md):
+'   Tier 1 - default-text intent : Font.Color = wdColorAutomatic
+'   Tier 2 - deliberate colour   : Font.Color = a palette-registered value
+'
+' Five-bucket classification:
+'   1. Tier 1   - Font.Color = wdColorAutomatic
+'   2. Tier 2   - Font.Color in palette (NameFromColor returns non-empty)
+'   3. Theme    - Font.ObjectThemeColor <> wdThemeColorNone. Office theme
+'                 colour reference. Reported separately - banned by the
+'                 rule but not the same as a hand-typed off-palette
+'                 anomaly.
+'   4. Anomaly  - none of the above. The actual editorial concern: a
+'                 hand-typed off-palette RGB value. Return-value
+'                 contribution.
+'   5. Skipped  - Table or List style (Font.Color not meaningful),
+'                 Font.Color read errored, or built-in style when
+'                 IncludeBuiltIn is False.
+'
+' Return value = Anomaly Count only (the editorial-discipline assertion).
+'
+' Optional IncludeBuiltIn (default False): skip Word built-in styles.
+' Pass True for a one-off diagnostic that covers everything.
+'
+' Public so the Immediate-window stub in basStyleInspector can delegate
+' in. Canonical body lives here per the class-encapsulation rule
+' (EDSG/12-module-vs-class.md).
+'=========================================================================
+Public Function AuditNonPaletteStyleColors( _
+        Optional ByVal IncludeBuiltIn As Boolean = False) As Long
+    Const WD_THEME_NONE As Long = -1   ' wdThemeColorNone
+    Dim oDoc        As Word.Document
+    Dim oStyle      As Word.Style
+    Dim c           As Long
+    Dim themeIdx    As Long
+    Dim paletteName As String
+    Dim styleType   As Long
+    Dim okColor     As Boolean
+    Dim okTheme     As Boolean
+    Dim isBuiltIn   As Boolean
+    Dim total       As Long
+    Dim autoN       As Long
+    Dim paletteN    As Long
+    Dim themeN      As Long
+    Dim anomalyN    As Long
+    Dim skippedN    As Long
+    Dim biSkippedN  As Long
+
+    Set oDoc = ActiveDocument
+    Debug.Print "AuditNonPaletteStyleColors: classifying Font.Color across all styles" & _
+                IIf(IncludeBuiltIn, " (including built-ins)", " (custom + linked only)") & "..."
+    Debug.Print "Tier 1=Automatic OK; Tier 2=Palette OK; Theme=banned-but-built-in; Anomaly=hand-typed off-palette."
+
+    For Each oStyle In oDoc.Styles
+        styleType = oStyle.Type
+        If styleType = wdStyleTypeTable Or styleType = wdStyleTypeList Then
+            skippedN = skippedN + 1
+        Else
+            On Error Resume Next
+            isBuiltIn = False
+            isBuiltIn = oStyle.BuiltIn
+            On Error GoTo 0
+
+            If isBuiltIn And Not IncludeBuiltIn Then
+                biSkippedN = biSkippedN + 1
+            Else
+                c = 0
+                okColor = False
+                themeIdx = WD_THEME_NONE
+                okTheme = False
+                On Error Resume Next
+                c = oStyle.Font.Color
+                okColor = (Err.Number = 0)
+                Err.Clear
+                ' Theme colour lives on Font.TextColor.ObjectThemeColor in
+                ' Word's modern object model. The direct Font.ObjectThemeColor
+                ' is not a member.
+                themeIdx = oStyle.Font.TextColor.ObjectThemeColor
+                okTheme = (Err.Number = 0)
+                On Error GoTo 0
+
+                If Not okColor Then
+                    skippedN = skippedN + 1
+                Else
+                    total = total + 1
+                    If okTheme And themeIdx <> WD_THEME_NONE Then
+                        themeN = themeN + 1
+                        Debug.Print "  THEME    style=[" & oStyle.NameLocal & "]" & _
+                                    "  type=[" & StyleTypeName(styleType) & "]" & _
+                                    "  builtin=" & isBuiltIn & _
+                                    "  ObjectThemeColor=" & themeIdx & _
+                                    "  Font.Color=" & c & _
+                                    "  InUse=" & oStyle.InUse
+                    ElseIf c = wdColorAutomatic Then
+                        autoN = autoN + 1
+                    Else
+                        paletteName = NameFromColor(c)
+                        If Len(paletteName) > 0 Then
+                            paletteN = paletteN + 1
+                        Else
+                            anomalyN = anomalyN + 1
+                            Debug.Print "  ANOMALY  style=[" & oStyle.NameLocal & "]" & _
+                                        "  type=[" & StyleTypeName(styleType) & "]" & _
+                                        "  builtin=" & isBuiltIn & _
+                                        "  Font.Color=" & c & _
+                                        ColorDisplay(c) & _
+                                        "  InUse=" & oStyle.InUse
+                        End If
+                    End If
+                End If
+            End If
+        End If
+    Next oStyle
+
+    Debug.Print "---"
+    Debug.Print "AuditNonPaletteStyleColors summary: " & total & " styles classified."
+    Debug.Print "  Tier 1 - Automatic (default text):    " & autoN
+    Debug.Print "  Tier 2 - Palette (deliberate colour): " & paletteN
+    Debug.Print "  Theme  (Office theme colour, banned): " & themeN
+    Debug.Print "  Anomaly (hand-typed off-palette):     " & anomalyN & " <- return value"
+    Debug.Print "  Skipped (Table/List/error):           " & skippedN
+    Debug.Print "  BuiltIn skipped:                      " & biSkippedN
+    AuditNonPaletteStyleColors = anomalyN
+End Function
+
+' Private helper for AuditNonPaletteStyleColors. Format Font.Color
+' for readable output. When value is outside the [0, 0xFFFFFF] RGB
+' range it is a sentinel or theme reference, not a real colour -
+' label it as such rather than byte-decomposing the low bits.
+Private Function ColorDisplay(ByVal c As Long) As String
+    If c >= 0 And c <= &HFFFFFF Then
+        ColorDisplay = " " & LongToHex(c)
+    Else
+        ColorDisplay = " (sentinel/theme-encoded)"
+    End If
+End Function
+
+'=========================================================================
 ' AuditBookHyperlinkStyling  (Public; wired at slot 46)
 ' Verify every BookHyperlink-styled run in the document carries the
 ' expected character properties. Walks all primary StoryRanges and

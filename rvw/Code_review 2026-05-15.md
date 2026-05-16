@@ -179,9 +179,14 @@ registry in `basBiblePalette`.
 are graduate items.
 
 **Status 2026-05-15:** 2.1, 2.2, 2.3, 2.4 all DONE this session.
-One pending retro fix carries over (slot 44 `AuditNonPaletteStyleColors`
-body migration into the class), but Item 13's gating sub-items are
-complete; operator-verification of slot 46 closes it.
+Pending retro fix (slot 44 `AuditNonPaletteStyleColors` body
+migration into the class) ALSO completed 2026-05-15 using the 2.4
+body-in-class + delegate-stub template. `StyleTypeName` promoted
+from `Private` to `Public` in `basStyleInspector` so the class
+can call it (stateless lookup → fine to remain in the module per
+the rule); `ColorDisplay` (used only by the migrated function)
+moved into the class as `Private Function`. Item 13 fully
+closes when operator-verification of slot 44 + slot 46 passes.
 
 Carried from 2026-05-12 item 13 (reframed 2026-05-14, advanced
 again 2026-05-15 with the BookHyperlink addition).
@@ -373,9 +378,12 @@ actor," not "everything important is a class."
   `aeBibleClass.cls`; thin delegate stub left in
   `basStyleInspector.bas` for the existing
   `?AuditBookHyperlinkStyling` Immediate-window usage.
-- Retro fix pending: `AuditNonPaletteStyleColors` (slot 44) body
-  still lives in `basStyleInspector`. Migrate using the same
-  body-in-class + stub-in-module template established by 2.4.
+- Retro fix completed 2026-05-15 (later same session):
+  `AuditNonPaletteStyleColors` (slot 44) body migrated into
+  `aeBibleClass.cls` using the 2.4 template. `StyleTypeName`
+  promoted to `Public` in `basStyleInspector` (stateless lookup,
+  stays in module per the rule). `ColorDisplay` moved into the
+  class as `Private Function`.
 
 **EDSG anchor.** [`EDSG/12-module-vs-class.md`](../EDSG/12-module-vs-class.md)
 gives the contributor-facing version of this rule and should be
