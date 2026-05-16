@@ -136,11 +136,19 @@ updated: `GetPassFail` Case 44, `RunTest` `Debug.Print` label,
 (`IncludeBuiltIn = False`) - custom + linked styles only, which
 is the typical custom-style discipline signal.
 
-**2.3 `CountUnapprovedVisibleStyles` test (MEDIUM).** Walks styles,
-counts those that are neither in `approved` nor properly hidden
-(BuiltIn + Priority=99 + QuickStyle=False + UnhideWhenUsed=False).
-Combined with the hide-sweep this gives the strong rule: "only
-approved styles visible to the editor / translator." Slot TBD.
+**2.3 `CountUnapprovedVisibleStyles` test (MEDIUM) - DONE
+2026-05-15.** Walks styles, counts those that are neither in
+the `GetApprovedStyles` SSOT nor properly hidden (Priority=99 AND
+QuickStyle=False AND UnhideWhenUsed=False; applied to all styles
+regardless of BuiltIn). Combined with the hide-sweep this gives
+the strong rule: "only approved styles visible to the editor /
+translator." Assigned to slot 45 (reused from the obsolete
+`CountFindNotEmphasisBlack` stub, which was removed). Function
+lives inside `aeBibleClass.cls` as a `Private Function` per the
+"test functions live in the class" rule recorded 2026-05-15.
+Skips `wdStyleTypeTable` / `wdStyleTypeList`. Returns -1 on
+internal error (will FAIL against expected 0). Prints violating
+NameLocal list to Immediate on violations > 0.
 
 **2.4 `AuditBookHyperlinkStyling` wired into RUN_THE_TESTS
 (MEDIUM).** Currently callable only from Immediate. Should be a

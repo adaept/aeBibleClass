@@ -1018,7 +1018,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = AuditNonPaletteStyleColors
         m_HintArray(TestNum) = m_lastHint
     Case 45
-        ResultArray(TestNum) = CountFindNotEmphasisBlack
+        ResultArray(TestNum) = CountUnapprovedVisibleStyles
         m_HintArray(TestNum) = m_lastHint
     Case 46
         ResultArray(TestNum) = CountFindNotEmphasisRed
@@ -1273,7 +1273,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditNonPaletteStyleColors"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 45
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisBlack [obso]"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountUnapprovedVisibleStyles"
         If GetPassFailArray(num) = "FAIL!!!!" And m_HintArray(num) <> "" Then Debug.Print , , , "  >> First hit: " & m_HintArray(num)
     Case 46
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFindNotEmphasisRed [obso]"
@@ -1447,7 +1447,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 44
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditNonPaletteStyleColors"
     Case 45
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisBlack [obso] TestSlotAvailable"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountUnapprovedVisibleStyles"
     Case 46
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFindNotEmphasisRed [obso] TestSlotAvailable"
     Case 47
@@ -2177,21 +2177,6 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountFindNotEmphasisBlack()
-    On Error GoTo PROC_ERR
-
-    ' [obso] CountFindNotEmphasisBlack = FindNotEmphasisBlackRed("Automatic")
-    CountFindNotEmphasisBlack = -1
-
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountFindNotEmphasisBlack | Erl: " & Erl _
-        & " | Err: " & Err.Number & " | " & Err.Description
-    m_lastFuncError = True
-    Resume PROC_EXIT
-End Function
-
 Private Function CountFindNotEmphasisRed()
     On Error GoTo PROC_ERR
 
@@ -2204,6 +2189,74 @@ PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountFindNotEmphasisRed | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' CountUnapprovedVisibleStyles  (Private; wired at slot 45)
+' Walks ActiveDocument.Styles (paragraph + character + linked; skips
+' wdStyleTypeTable and wdStyleTypeList) and counts styles that are
+' visible-and-unapproved.
+'
+' Compliant if either:
+'   - NameLocal is in the approved-styles SSOT
+'     (basTEST_aeBibleConfig.GetApprovedStyles), or
+'   - "properly hidden": Priority = 99 AND QuickStyle = False AND
+'     UnhideWhenUsed = False. Applies regardless of BuiltIn.
+'
+' Returns Long count of violations (expected 0 after a clean
+' HideUnapprovedBuiltInStyles run). On violations > 0, prints the
+' offending NameLocal list to Immediate; silent when 0.
+'=========================================================================
+Private Function CountUnapprovedVisibleStyles() As Long
+    On Error GoTo PROC_ERR
+    Dim approved As Variant
+    Dim approvedDict As Object
+    Dim i As Long
+    approved = GetApprovedStyles()
+    Set approvedDict = CreateObject("Scripting.Dictionary")
+    approvedDict.CompareMode = 1 ' TextCompare
+    For i = LBound(approved) To UBound(approved)
+        If Not approvedDict.Exists(CStr(approved(i))) Then
+            approvedDict.Add CStr(approved(i)), True
+        End If
+    Next i
+
+    Dim s As Word.Style
+    Dim styleType As Long
+    Dim violations As Long
+    Dim hidden As Boolean
+    Dim violationList As String
+    violations = 0
+
+    For Each s In ActiveDocument.Styles
+        styleType = s.Type
+        If styleType <> wdStyleTypeTable And styleType <> wdStyleTypeList Then
+            If Not approvedDict.Exists(s.NameLocal) Then
+                hidden = (s.Priority = 99) And (s.QuickStyle = False) And (s.UnhideWhenUsed = False)
+                If Not hidden Then
+                    violations = violations + 1
+                    violationList = violationList & "  - " & s.NameLocal & vbCrLf
+                End If
+            End If
+        End If
+    Next s
+
+    If violations > 0 Then
+        Debug.Print "CountUnapprovedVisibleStyles: " & violations & " violation(s) -"
+        Debug.Print violationList;
+    End If
+
+    CountUnapprovedVisibleStyles = violations
+
+PROC_EXIT:
+    Set approvedDict = Nothing
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountUnapprovedVisibleStyles | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    CountUnapprovedVisibleStyles = -1
     Resume PROC_EXIT
 End Function
 

@@ -199,3 +199,63 @@
 # Operator verification sequence (item 13 / 2.2):
 #   RUN_THE_TESTS 44                ' expect PASS at 0
 #                                   ' (Tier counts also print to Immediate)
+
+## Session themes (continued) -- Item 13 / 2.3 + new rule
+
+9. NEW RULE established 2026-05-15: all functions wired into a
+   RUN_THE_TESTS slot must live inside aeBibleClass.cls (typically
+   as Private Function). Module-side implementations are a
+   divergence; if a function is also useful from outside the class,
+   keep the canonical body in the class and add a thin stub in the
+   module that delegates in. Config/data SSOTs (e.g.
+   GetApprovedStyles) are not test code and may remain in modules.
+   Saved as memory feedback_test_functions_in_class.md.
+
+   Retroactive fix needed (not done in this session): slot 44
+   currently dispatches AuditNonPaletteStyleColors directly from
+   basStyleInspector. That body needs to move into aeBibleClass.cls
+   with a delegate stub left in basStyleInspector for the standalone
+   Immediate-window call.
+
+10. CountUnapprovedVisibleStyles added inside aeBibleClass.cls as a
+    Private Function (per the new rule). Walks ActiveDocument.Styles
+    (skips wdStyleTypeTable / wdStyleTypeList) and counts styles that
+    are neither in GetApprovedStyles nor "properly hidden"
+    (Priority=99 AND QuickStyle=False AND UnhideWhenUsed=False;
+    applied regardless of BuiltIn). Prints violating NameLocal list
+    to Immediate when count > 0; silent at 0. Returns -1 on error.
+
+    Wired into slot 45, reused from CountFindNotEmphasisBlack stub
+    which was a dead -1 returner (its underlying helper
+    FindNotEmphasisBlackRed had already been removed). Three sites
+    updated in aeBibleClass.cls: GetPassFail Case 45, RunTest
+    Debug.Print Case 45, BufAppend Case 45. Stub function
+    CountFindNotEmphasisBlack deleted. values(45) was already 0.
+    Slot 46 (CountFindNotEmphasisRed, also obsolete stub) left
+    alone; its body will be deleted when that slot is reassigned.
+
+## Files modified (continued)
+
+[IMPORT]  src/aeBibleClass.cls
+          - Case 45 in GetPassFail: CountFindNotEmphasisBlack
+            replaced with CountUnapprovedVisibleStyles.
+          - Case 45 RunTest label: "CountUnapprovedVisibleStyles".
+          - Case 45 BufAppend label: "CountUnapprovedVisibleStyles".
+          - CountFindNotEmphasisBlack Private Function deleted
+            (was a -1 stub; helper FindNotEmphasisBlackRed no
+            longer exists in source).
+          - CountUnapprovedVisibleStyles Private Function added
+            near CountFindNotEmphasisRed.
+
+[DOC]     rvw/Code_review 2026-05-15.md
+          - Item 2.3 marked DONE 2026-05-15. Slot-45 reuse
+            rationale and the in-class placement rule noted.
+
+# Operator verification sequence (item 13 / 2.3):
+#   HideUnapprovedBuiltInStyles     ' run first to hide built-in noise
+#   RUN_THE_TESTS 45                ' expect PASS at 0
+#                                   ' (violation list also prints when > 0)
+
+# Pending retro fix (post-session):
+#   - Migrate AuditNonPaletteStyleColors body into aeBibleClass.cls
+#     with a stub left in basStyleInspector. Slot 44.
