@@ -427,6 +427,64 @@ gives the contributor-facing version of this rule and should be
 read by anyone planning an i18n / editorial code change before
 opening a `.cls` file.
 
+### 10. TestReport.txt — per-slot one-line descriptions (MEDIUM, 2026-05-16)
+
+Approved 2026-05-16 as a follow-up to the unified First-hit
+refactor. Goal: make each PASS/FAIL row in `rpt/TestReport.txt`
+self-explanatory without diving into the class. Function names
+like `Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed` and
+`HasLeftAlignedParagraph(18, 931)` are cryptic six months out;
+the description shifts the report from "test surface" to
+"living test plan."
+
+**Shape (chosen 2026-05-16):**
+
+- Storage: new `Public Function GetTestDescription(num As Long)
+  As String` inside `aeBibleClass.cls`, returning the description
+  for each slot via `Select Case`. Single SSOT; no risk of
+  duplicating across the three label sites (`GetPassFail`,
+  `RunTest`, `OutputTestReport`).
+- Emission: add a second indented line per test, only emitted
+  when the description is non-empty. Parallel to the existing
+  `>> First hit:` shape so the report has a consistent
+  "subordinate lines under a PASS/FAIL header" pattern.
+  Example:
+
+  ```
+  PASS              Copy ()       Test = 9      7             7             CountPeriodSpaceLeftParenthesis
+                                                                          Detects ".  (" sequences left over from legacy footnote artifact.
+  ```
+- Width: do not widen the existing column block; keep the
+  description as a wrapped subordinate line.
+- Gradual rollout: scaffold `GetTestDescription` with empty
+  strings; fill in one description per slot as each test gets
+  touched, or in a single dedicated review pass.
+
+**Pros:** report becomes self-documenting; writing 73 one-liners
+forces an audit of each slot (would have surfaced the
+`[obso]` stubs we removed this past session); pairs naturally
+with a future "publish test plan" EDSG appendix.
+
+**Cons / honest cost:** 73 sentences to write; risk of staleness
+unless the description is kept near the slot dispatch (the SSOT
+choice mitigates this); cannot be auto-derived from code in VBA
+(no reflection).
+
+**Plumbing scope:**
+
+1. Add `Public Function GetTestDescription(num As Long) As String`
+   skeleton in `aeBibleClass.cls` with `Select Case 1 To 73`
+   returning `""` for each.
+2. Extend `RunTest` post-Select block: if
+   `GetTestDescription(num)` is non-empty, `Debug.Print , , ,
+   "  " & GetTestDescription(num)`.
+3. Extend `OutputTestReport` post-Select block similarly using
+   `BufAppend`.
+4. Fill in descriptions as a separate authoring pass.
+
+Originated: 2026-05-16 follow-up to the unified First-hit
+emission (this file § "operator-verification snapshot" trail).
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward
