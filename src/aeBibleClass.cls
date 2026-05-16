@@ -893,7 +893,11 @@ End Function
 '====================================================================
 Public Function GetTestDescription(num As Long) As String
     Select Case num
-    Case 1 To 73
+    Case 1
+        GetTestDescription = "Rule: Multiple spaces are not allowed in text - CountDoubleSpaces should return 0"
+    Case 2
+        GetTestDescription = "Rule: Multiple spaces are not allowed in shapes - CountDoubleSpacesInShapes should return 0"
+    Case 3 To 73
         GetTestDescription = ""
     Case Else
         GetTestDescription = ""

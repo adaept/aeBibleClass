@@ -12,7 +12,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #643 -
 ' #642 -
 ' #641 -
-' #640 -
+' #640 - Fill test description slots in GetTestDescription [impr] [wip]
 ' #636 - Error message for src when another docx created and EXPORT_THE_CODE is run after 'AuditFontsUsage "ArialTimes"' True [bug]
 ' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
 ' #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]

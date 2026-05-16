@@ -6,7 +6,9 @@ Test(61)0 Test(62)0 Test(63)0 Test(64)0 Test(65)1 Test(66)0 Test(67)0 Test(68)0 
 1234567890123412345678901234123456789012341234567890123412345678901234
 Pass/Fail     Copy ()       Test Num      Result        Expected      Function
 PASS              Copy ()       Test = 1      0             0             CountDoubleSpaces
+  Rule: Multiple spaces are not allowed in text - CountDoubleSpaces should return 0
 PASS              Copy ()       Test = 2      0             0             CountDoubleSpacesInShapes
+  Rule: Multiple spaces are not allowed in shapes - CountDoubleSpacesInShapes should return 0
 PASS              Copy ()       Test = 3      0             0             CountSpaceFollowedByCarriageReturn
 PASS              Copy ()       Test = 4      0             0             CountDoubleTabs
 PASS              Copy ()       Test = 5      0             0             CountWhiteSpaceAndCarriageReturn
@@ -96,8 +98,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 92.31 seconds
-[2026-05-16 01:09:58] Completed
+The Total Runtime: 95.15 seconds
+[2026-05-16 13:44:50] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
