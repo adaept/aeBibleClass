@@ -166,20 +166,34 @@ adjusting the expected. Over time the per-slot revisits will
 also surface candidates for the same kind of split applied to
 Test 22 (one bundled signal -> two or three disjoint ones).
 
-### 4. Taxonomy audit - full-coverage final-state goal (LOW-MEDIUM, ASPIRATIONAL) - RECOVERED
+### 4. Taxonomy audit - full-coverage final-state goal (LOW-MEDIUM, ASPIRATIONAL) - CLOSED 2026-05-17 (state check)
 
-State at last accounting: **25 fully specified + 4
-existence-verified + 3 not-yet-created + 5 tab-stops verified =
-37 distinct style entries across 44 checks** (+1 from BookHyperlink
-add 2026-05-15).
+State-check pass complete. Recounted directly from
+`RUN_TAXONOMY_STYLES` in `basTEST_aeBibleConfig.bas`:
 
-Recommendation: a 10-minute state check via
-`RUN_TAXONOMY_STYLES` will quantify how much was incidentally
-closed by intervening arcs. Update the count then decide whether
-the umbrella item warrants explicit attention or is well-served
-by being a callout in `EDSG/01-styles.md`.
+| Bucket | Count |
+|---|---:|
+| Fully specified | 47 |
+| Existence-verified | 0 |
+| Not yet created (expected FAIL) | 3 |
+| Tab-stop audits | 9 |
+| **Total distinct AuditOneStyle entries** | **50** |
+| **Total checks (AuditOneStyle + AuditStyleTabs)** | **59** |
 
-Full per-style decisions list: see § 4 in
+50 of 52 `GetApprovedStyles()` entries have a taxonomy entry.
+Gaps: `Normal` (anchor, intentionally unaudited - see § 17) and
+`FargleBlargle` (canary, deliberately missing from document).
+
+**Docstring drift:** the `RUN_TAXONOMY_STYLES` header comment
+says 49 styles / 46 fully specified / 58 checks. Actuals are
+50 / 47 / 59. BookHyperlink (added 2026-05-15) was not
+propagated to the docstring. Tracked as part of § 17.
+
+**Loophole analysis surfaced 4 high/medium-value follow-ups** -
+opened as § 13-16. A fifth bundle (§ 17) collects the
+lower-value items not worth elevating individually.
+
+Original umbrella per-style decisions list: see § 4 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
 
 ### 5. EDSG documentation refresh - VerseText-aware (LOW) - CLOSED 2026-05-17
@@ -285,6 +299,102 @@ properties:
 Originated 2026-05-17 during the § 2.1 hide-sweep close;
 disproved 2026-05-17 by the post-fix run reproducing the same
 totals.
+
+### 13. Audit BaseStyle = "" and LinkToListTemplate on approved styles (HIGH) - OPEN 2026-05-17
+
+Surfaced by the § 4 taxonomy loophole analysis. `BaseStyle = ""`
+is the universal QA-checklist rule and the direct guard against
+the Word List Paragraph numbering-engine hang
+(`EDSG/10-list-paragraph-bug.md`). `LinkToListTemplate` is the
+mechanism behind that bug. **Neither is currently audited by
+`RUN_TAXONOMY_STYLES`.**
+
+If a user modifies an approved style via the Modify Style
+dialog, or paste-from-elsewhere re-attaches a BaseStyle or
+list-template link, no test detects it until the next
+multi-hour hang on a style edit. The taxonomy's font/size/etc
+coverage is solid, but this is exactly the silent-failure mode
+the project most cannot afford.
+
+**Proposed shape:** new `AuditApprovedStylesBaseStyleAndListLink`
+in `aeBibleClass.cls` (or a private helper called from a new
+RUN_THE_TESTS slot). Walks `GetApprovedStyles()`, for each
+existing paragraph style asserts:
+
+- `BaseStyle = ""` (or the empty alias Word may return)
+- `LinkToListTemplate Is Nothing`
+
+Returns total violations; expected 0. Wire into a free test slot
+(slot 5 was consumed 2026-05-16; pick the next available or
+extend MaxTests).
+
+### 14. Audit AutomaticallyUpdate = False on approved styles (MEDIUM) - OPEN 2026-05-17
+
+Surfaced by the § 4 taxonomy loophole analysis. When
+`AutomaticallyUpdate = True`, the paragraph-style definition
+updates whenever a user modifies a paragraph using that style -
+silently breaks editorial discipline. QA-checklist requires
+False; no test enforces.
+
+Same shape as § 13; the two could share a single audit walk if
+preferred (one loop, three property checks per style, one
+violation tally per property reported separately for readable
+hint messages).
+
+### 15. Audit UnhideWhenUsed = False on approved cohort (MEDIUM) - OPEN 2026-05-17
+
+Surfaced by the § 4 taxonomy loophole analysis. Test 45
+(`CountUnapprovedVisibleStyles`) verifies this property only on
+the **non-approved** cohort. The approved cohort is uncovered.
+
+This is exactly the silent re-surface mode that put built-in
+`Hyperlink` back in the gallery before the 2026-05-15
+BookHyperlink work - and the same risk applies to any approved
+paragraph style modified via the dialog (Word can flip
+UnhideWhenUsed back to True on certain operations).
+
+Same shape as § 13/14; trivially folds into the same combined
+audit walk.
+
+### 16. Decide on three persistently-missing placeholders (LOW) - OPEN 2026-05-17
+
+`BodyTextContinuation`, `AppendixTitle`, `AppendixBody` have
+been in the `not yet created (expected FAIL)` bucket since
+2026-05-07 (10+ days). `RUN_TAXONOMY_STYLES` reports three
+FAILs every run as a result.
+
+**Cost:** desensitisation. An operator who sees three FAILs on
+every run learns to skip the FAIL summary, which masks any real
+FAIL that later joins them.
+
+**Decision needed per placeholder:**
+- Define + populate via a `Define*` routine + promote to bucket
+  1, or
+- Remove from `GetApprovedStyles()` and from the not-yet-created
+  taxonomy bucket.
+
+Either way the bucket goes empty and the false-FAIL noise stops.
+
+### 17. Lower-value taxonomy hardening (LOW, bundled) - OPEN 2026-05-17
+
+Four small items surfaced by § 4 that aren't worth individual
+follow-ups but should be tracked together to avoid loss:
+
+- **Normal style** - intentionally unaudited (anchor). Worth at
+  least an existence-verified entry with font/color pinned so
+  drift in the underlying Normal style is detected.
+- **Tab-stop count contract** - `AuditStyleTabs` checks expected
+  stops exist but doesn't flag *extra* stops. A fourth stop
+  added to `AuthorListItemTab` would pass silently. Consider
+  asserting `Style.ParagraphFormat.TabStops.Count = expected`.
+- **Priority drift** - `PromoteApprovedStyles` assigns priorities
+  but nothing verifies they stay assigned. A user-drag in the
+  gallery or `CopyStylesFromTemplate` import could reorder
+  silently.
+- **RUN_TAXONOMY_STYLES docstring count drift** - hand-maintained
+  totals (49 / 46 / 58) already stale by 1 / 1 / 1 within 2 days
+  of BookHyperlink. Either remove the literal counts from the
+  docstring or auto-emit them.
 
 ## Pointer back to the closed arc
 
