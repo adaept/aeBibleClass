@@ -303,20 +303,111 @@ after any structural recomposition (the recent
 trigger). `Application.ScreenUpdating = False` does not help here
 because it suppresses painting, not pagination.
 
-**Fix:** detect empty paragraphs via `Range.End - Range.Start`.
-A paragraph spanning <= 1 character is just the pilcrow. Short
-paragraphs (<= 8 chars) fall back to the original `Trim` check so
-the "whitespace-only counts as empty" semantic is preserved; long
-paragraphs cannot be whitespace-only in practice and skip text
-materialization entirely - the main speed win.
+**Investigation arc (full):** the perf fix went through three
+attempts before the right design surfaced.
 
-**Also removed:** dead `Set rng = ActiveDocument.Content :
-rng.Collapse` lines (`rng` was never read in the loop). The
-`DoEvents` every 500 paragraphs and `ScreenUpdating` toggle are
-retained.
+1. **`span <= 1` shortcut + `span <= 8` trim fallback** -
+   speedup ~6x but counted 368 (+144). Drift from counting
+   single-position non-whitespace paragraphs (`Chr(7)` cell end,
+   `Chr(12)`/`Chr(14)` breaks, `Chr(1)`/`Chr(2)` anchors) the
+   original Trim predicate rejected.
+2. **`span <= 8` trim guard only** - 216 (-8). The 8 missing
+   were category-2 paragraphs (whitespace-padded) with > 7
+   spaces, whose position span exceeded the guard.
+3. **Stepped back to ask: what is this test actually measuring?**
 
-Expected speedup on Bible-sized docs: 10x-50x. Re-run Test 22 to
-confirm result still matches the expected value at slot 22.
+**Key finding from the step-back:** Test 38
+(`CountEmptyParagraphs`, expected 153, pre-existing) uses the
+bare-pilcrow predicate. Test 22's broad predicate was a strict
+*superset* - it bundled bare empty (category 1) with
+whitespace-padded (category 2). Running both showed:
+
+| Metric | Historical | Today |
+|---|---|---|
+| Bare empty (Test 38) | 153 | 216 |
+| Bare + WS-padded (Test 22 broad) | 224 | ~224 |
+| WS-padded only (derived) | 71 | 8 |
+
+The document's total "looks-empty" population is stable. What
+shifted is composition: 63 whitespace-padded paragraphs became
+bare. Fingerprint of a cleanup pass that stripped trailing
+spaces (likely the `f0559ee` empty-paragraph tightening).
+
+**Also clarified:** the "WithFormatting" suffix was a misnomer -
+mechanically the predicate only adds whitespace-padding on top
+of bare. A genuine integrity check (visually-empty paragraphs
+carrying inline structures - orphaned fields, dangling
+bookmarks, tracked-deletion husks) does not exist in the prior
+predicate and requires a new detector.
+
+**Split applied (2026-05-16):**
+
+- **Test 38** - `CountEmptyParagraphs`, bare-only. Expected
+  rebaselined 153 -> 216 against today's document. No code
+  change (the predicate was already correct).
+- **Test 22** - repurposed and renamed
+  `CountWhitespacePaddedEmptyParagraphs`. Predicate:
+  `Len(text) > 1 And Len(text) <= 16 And LenB(Trim$(Replace(
+  text, vbCr, ""))) = 0`. Expected: 8. The `Len(text) <= 16`
+  guard is cheap (Word can return text length without
+  materializing the BSTR) and skips the Replace/Trim chain for
+  the ~30K long paragraphs. Disjoint from Test 38.
+- **Test 74 (new)** -
+  `CountEmptyParagraphsWithInlineContent`. Walks each paragraph
+  and flags visually-empty ones whose Range carries
+  `InlineShapes`, `Fields`, or `Bookmarks`. Integrity check;
+  expected = 0. `MaxTests` bumped 73 -> 74; `values` array
+  appended.
+
+**Category 2 parked discussion:** the renamed Test 22 strips
+only `Chr(32)` spaces. Tabs (`Chr(9)`) are intentionally not
+considered whitespace here - in this document tabs distinguish
+intentional layout from accidental padding. Open question for
+later: should tab-only paragraphs be a separate category or
+folded into the whitespace test?
+
+**Disjointness:** Tests 22, 38, and 74 are mutually disjoint
+over the population formerly bundled as
+`CountEmptyParagraphsWithFormatting`. A FAIL on each now points
+to a specific cause: 38 = spacing-discipline shift; 22 =
+trailing-space hygiene; 74 = content integrity (broken
+fields/anchors).
+
+Re-run all three to confirm: 22 -> 8, 38 -> 216, 74 -> 0.
+
+**Run results 2026-05-16:**
+
+- **Test 38: PASS at 216.** Rebaseline correct.
+- **Test 22: returned 0 (expected updated 8 -> 0).** The
+  derived "WS-padded = 8" number was based on the stale 224
+  baseline; today's broad-predicate total is 216, the same as
+  bare-only. The cleanup pass removed both the trailing spaces
+  *and* the WS-padded paragraphs themselves - not just stripped
+  the spaces leaving bare empties as I initially read it.
+  Expected for slot 22 corrected to 0.
+- **Test 74: hung Word (not responding, memory flat).** Killed
+  and rewritten. Original detector called `rng.InlineShapes.Count`,
+  `rng.Fields.Count`, `rng.Bookmarks.Count` on every paragraph -
+  each scoped-collection access forces Word to walk layout to
+  determine membership; ~30K paragraphs x 3 collection scopes =
+  O(N x layout) and locked Word. Rewritten to iterate the small
+  document-level collections (`Document.Fields`,
+  `Document.Bookmarks`, `Document.InlineShapes`) once, resolve
+  each item to its containing paragraph, dedup via Scripting
+  Dictionary keyed on `Range.Start`, then evaluate the
+  trim-emptiness predicate on the small candidate set. O(F+B+S)
+  instead of O(P x layout).
+
+Re-run Test 74 to confirm: expect 0, runtime under a few seconds.
+
+**Final results 2026-05-16 - all PASS:**
+
+- Test 22 (`CountWhitespacePaddedEmptyParagraphs`): 0 in 2.73s.
+- Test 38 (`CountEmptyParagraphs`): 216 in 4.48s.
+- Test 74 (`CountEmptyParagraphsWithInlineContent`): 0 in 0.43s.
+
+Combined runtime 7.6s vs the prior single-test 390s, with three
+disjoint signals instead of one bundled count. CLOSED.
 
 These were intentionally retained when the `BaseStyle = ""` half
 of the prior prescriptive-pass round was completed; the

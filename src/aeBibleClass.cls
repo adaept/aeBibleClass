@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 73
+Private Const MaxTests = 74
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -271,8 +271,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22   23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33783, 0, 66, 0, 0, 0, 224, 0, 1000, 1, 0, 148, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 153, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33783, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -905,8 +905,14 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No approved styles in the Styles ribbon gallery - CountApprovedStylesInGallery should return 0"
     Case 6
         GetTestDescription = "Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0"
-    Case 7 To 73
-        GetTestDescription = "TestSlotAvailable"
+    Case 22
+        GetTestDescription = "Rule: Whitespace-padded empty paragraphs (spaces around the pilcrow) - CountWhitespacePaddedEmptyParagraphs should match the expected baseline"
+    Case 38
+        GetTestDescription = "Rule: Bare empty paragraphs (pilcrow only) at the accepted baseline - CountEmptyParagraphs should match the expected baseline"
+    Case 74
+        GetTestDescription = "Integrity: No visually-empty paragraphs carrying inline shapes, fields, or bookmarks - CountEmptyParagraphsWithInlineContent should return 0"
+    Case 7 To 74
+        GetTestDescription = ""
     Case Else
         GetTestDescription = ""
     End Select
@@ -990,7 +996,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountNotSpacesAfterFootnoteReferences
         m_HintArray(TestNum) = m_lastHint
     Case 22
-        ResultArray(TestNum) = CountEmptyParagraphsWithFormatting
+        ResultArray(TestNum) = CountWhitespacePaddedEmptyParagraphs
         m_HintArray(TestNum) = m_lastHint
     Case 23
         ResultArray(TestNum) = CountDeleteEmptyParagraphsBeforeHeading2
@@ -1115,6 +1121,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 73
         ResultArray(TestNum) = CountInvisibleCharacters()
         m_HintArray(TestNum) = m_lastHint
+    Case 74
+        ResultArray(TestNum) = CountEmptyParagraphsWithInlineContent
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1223,7 +1232,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     Case 21
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNotSpacesAfterFootnoteReferences"
     Case 22
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithFormatting"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountWhitespacePaddedEmptyParagraphs"
     Case 23
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDeleteEmptyParagraphsBeforeHeading2"
     Case 24
@@ -1293,6 +1302,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         End If
     Case 73
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
+    Case 74
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithInlineContent"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1405,7 +1416,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 21
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNotSpacesAfterFootnoteReferences"
     Case 22
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphsWithFormatting"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountWhitespacePaddedEmptyParagraphs"
     Case 23
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountDeleteEmptyParagraphsBeforeHeading2"
     Case 24
@@ -1474,6 +1485,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         End If
     Case 73
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
+    Case 74
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphsWithInlineContent"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -3400,27 +3413,43 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function CountEmptyParagraphsWithFormatting() As Long
+'=========================================================================
+' Function: CountWhitespacePaddedEmptyParagraphs  (Test 22)
+'
+' Counts paragraphs that are visually empty but carry leading/trailing
+' spaces (Chr(32)) around the pilcrow. Mechanically: Range.Text length
+' > 1 (so not the bare pilcrow case owned by Test 38) and
+' Trim$(Replace(text, vbCr, "")) yields "".
+'
+' Editorial signal: cosmetic noise left by paste or hand-editing. The
+' bare-pilcrow case is owned by Test 38 (CountEmptyParagraphs); the
+' integrity case (visually-empty paragraphs carrying inline shapes,
+' fields, or bookmarks) is owned by Test 74
+' (CountEmptyParagraphsWithInlineContent). Together those three are
+' disjoint over the population formerly bundled here as
+' CountEmptyParagraphsWithFormatting.
+'
+' Speed: guard on Len(Range.Text) <= 16 - cheap (Word can return text
+' length without materializing the BSTR) and skips the Replace/Trim
+' chain for the ~30K long paragraphs that cannot possibly be
+' whitespace-only. Tabs (Chr(9)) are NOT considered whitespace here
+' because Trim only strips Chr(32); tab-only paragraphs are a parked
+' question (could be intentional separators).
+'=========================================================================
+Private Function CountWhitespacePaddedEmptyParagraphs() As Long
     On Error GoTo PROC_ERR
 
-' Fast path: use Range.End - Range.Start to detect empty paragraphs without
-' materializing text. A paragraph spanning <= 1 character is just the pilcrow.
-' For short paragraphs (<= 8 chars) fall back to Trim to catch whitespace-only
-' cases (spaces, tabs). Large paragraphs cannot be whitespace-only in practice
-' and skip text materialization entirely - the main speed win on long docs.
     Dim para As Word.Paragraph
     Dim Count As Long
     Dim paraCount As Long
-    Dim span As Long
+    Dim txtLen As Long
 
     Count = 0
     Application.ScreenUpdating = False
     For Each para In ActiveDocument.Paragraphs
         paraCount = paraCount + 1
-        span = para.Range.End - para.Range.Start
-        If span <= 1 Then
-            Count = Count + 1
-        ElseIf span <= 8 Then
+        txtLen = Len(para.Range.Text)
+        If txtLen > 1 And txtLen <= 16 Then
             If LenB(Trim$(Replace(para.Range.Text, vbCr, ""))) = 0 Then
                 Count = Count + 1
             End If
@@ -3429,17 +3458,95 @@ Private Function CountEmptyParagraphsWithFormatting() As Long
     Next para
     Application.ScreenUpdating = True
 
-    'MsgBox "Accurate empty paragraph Count: " & Count, vbInformation
-    'Debug.Print "Accurate empty paragraph Count: " & Count
-
-    CountEmptyParagraphsWithFormatting = Count
+    CountWhitespacePaddedEmptyParagraphs = Count
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountEmptyParagraphsWithFormatting | Erl: " & Erl _
+    Debug.Print "ERROR in aeBibleClass.CountWhitespacePaddedEmptyParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' Function: CountEmptyParagraphsWithInlineContent  (Test 74)
+'
+' Integrity check: counts paragraphs whose visible text trims to empty
+' but that carry inline objects (InlineShapes), fields (Fields), or
+' bookmarks (Bookmarks). Such paragraphs are often artifacts:
+'   - orphaned SEQ/REF/HYPERLINK fields whose target was deleted
+'   - dangling bookmark anchors left after a content move
+'   - tracked-deletion husks awaiting Accept
+'   - inline shape anchors whose shape was removed
+'
+' Expected: 0. A non-zero count indicates content-integrity drift, not
+' spacing-discipline drift - the visually-empty paragraph is hiding a
+' broken structure that would not be obvious in normal editing view.
+'
+' Disjoint from Test 22 (whitespace-padded) and Test 38 (bare empty):
+' those predicates require text content to be only whitespace + CR,
+' which excludes paragraphs carrying inline structures (those would
+' have non-whitespace chars in Range.Text).
+'=========================================================================
+Private Function CountEmptyParagraphsWithInlineContent() As Long
+    On Error GoTo PROC_ERR
+
+' Performance: iterate the typically-small Fields / Bookmarks /
+' InlineShapes collections once each, rather than asking every paragraph
+' "do you contain any". The per-paragraph approach forces Word to scope
+' each collection by Range, which is O(N x layout) on long docs.
+    Dim doc As Word.Document
+    Dim para As Word.Paragraph
+    Dim candidates As Object  ' dict keyed by paragraph Range.Start to dedup
+    Dim fld As Word.Field
+    Dim bm As Word.Bookmark
+    Dim shp As Word.InlineShape
+    Dim Count As Long
+    Dim key As Variant
+
+    Set doc = ActiveDocument
+    Set candidates = CreateObject("Scripting.Dictionary")
+
+    For Each fld In doc.Fields
+        Set para = fld.Code.Paragraphs(1)
+        If Not candidates.Exists(CStr(para.Range.Start)) Then
+            candidates.Add CStr(para.Range.Start), para
+        End If
+    Next fld
+
+    For Each bm In doc.Bookmarks
+        Set para = bm.Range.Paragraphs(1)
+        If Not candidates.Exists(CStr(para.Range.Start)) Then
+            candidates.Add CStr(para.Range.Start), para
+        End If
+    Next bm
+
+    For Each shp In doc.InlineShapes
+        Set para = shp.Range.Paragraphs(1)
+        If Not candidates.Exists(CStr(para.Range.Start)) Then
+            candidates.Add CStr(para.Range.Start), para
+        End If
+    Next shp
+
+    Count = 0
+    For Each key In candidates.Keys
+        Set para = candidates(key)
+        If LenB(Trim$(Replace(para.Range.Text, vbCr, ""))) = 0 Then
+            Count = Count + 1
+        End If
+    Next key
+
+    CountEmptyParagraphsWithInlineContent = Count
+
+PROC_EXIT:
+    Set candidates = Nothing
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountEmptyParagraphsWithInlineContent | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    CountEmptyParagraphsWithInlineContent = -1
     Resume PROC_EXIT
 End Function
 
