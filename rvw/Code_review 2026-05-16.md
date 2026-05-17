@@ -93,25 +93,78 @@ arithmetic is misleading. Open as § 11.
 Full prior analysis: see § 2 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
 
-### 3. TestReport.txt - per-slot one-line descriptions (MEDIUM)
+### 3. TestReport.txt - per-slot one-line descriptions (MEDIUM) - CLOSED 2026-05-17
 
-Carrying forward from 2026-05-15 § 10. Goal: each PASS/FAIL row
-in `rpt/TestReport.txt` self-explanatory without diving into the
-class.
+All 74 slots populated in `GetTestDescription` across nine
+authoring batches (A-I). Every PASS/FAIL row in
+`rpt/TestReport.txt` now carries an inline rule statement or
+baseline note.
 
-**Progress at carry-forward (2026-05-17):** 14 of 74 slots
-populated in `GetTestDescription` - slots 1, 2, 3, 4, 5, 6, 16,
-17, 18, 19, 22, 28, 38, 74. Remaining ~60 slots fall through
-`Case 7 To 74` to the empty-string default.
+**Authoring conventions adopted during the pass:**
 
-**Authoring strategy:** opportunistic per-touch (slot gets a
-description when its surrounding code is edited) plus optional
-dedicated authoring passes. Per-touch has been working well -
-the 2026-05-16 session added 22, 28, 38, 74 organically while
-splitting Test 22.
+- Rule-style descriptions (expected = 0) phrased as
+  "Rule: <statement> - <Function> should return 0".
+- Baseline-style descriptions (expected > 0) phrased as
+  "<what it counts> - <why the baseline is what it is> -
+  <Function> should match the expected baseline". Hard-coded
+  baseline numbers were intentionally removed from description
+  text after an operator rebaseline (index 16: 33783 -> 33822;
+  index 28: 77 -> 82) made embedded numbers stale within hours.
+  The expected value remains in the test report itself; the
+  description explains intent only.
+- Contraction tests (52-65) and Unicode-sequence tests (66-71)
+  each get a per-slot description naming the specific
+  contraction or codepoint sequence, rather than a shared
+  generic line - the specificity is the signal.
+
+**Side findings logged during authoring:**
+
+- **Test 30 source-comment vs expected mismatch.**
+  `CountHeaderStyleUsage` function comment says "Expected = 0"
+  but the `values` array baseline is 70. Either the rule was
+  relaxed and the comment is stale, or the expected is wrong.
+  Description notes the stale comment; full reconciliation
+  deferred. Tracked as part of § 12.
+- **Test 47 baseline correction.** Earlier batch C mistakenly
+  applied "baseline 147" to slot 47; the actual array value at
+  position 47 is 3 (position 50 holds 147). Corrected during
+  batch E.
 
 Full design rationale and emission shape: see § 10 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
+
+### 12. Revisit failed tests and verify status / code / performance (MEDIUM) - OPEN 2026-05-17
+
+Surfaced repeatedly during the § 3 authoring pass. Several
+slots merit individual revisit beyond what description-writing
+addresses:
+
+- **Status reconciliation.** Where a test's source comment or
+  prior documentation disagrees with the current expected
+  value (e.g. Test 30: comment says expected 0, array says 70),
+  decide whether the rule was relaxed (update comment) or the
+  expected drifted (rebaseline or restore). Same audit should
+  catch any other slot whose intent has quietly diverged from
+  its baseline.
+- **Code review per failing slot.** For any slot that returns
+  FAIL on a current run, walk the function once before
+  rebaselining - the FAIL may be a real regression masked by a
+  habit of "just bump the expected." Especially relevant for
+  count-baseline tests (24, 27, 29, 30, 32-35, 37, 47, 49, 50,
+  51) where drift could be either editorial or accidental.
+- **Performance.** Several slots are slow (Test 22 was 390s
+  before this session's perf work; others may have similar
+  Range.Text materialization patterns or per-paragraph
+  scoped-collection access - see § 11 for the
+  HideUnapprovedBuiltInStyles example). Revisit slow slots
+  with the same lens used on Test 22: cheap length guard,
+  iterate the small collection rather than the large one,
+  avoid Range.Text when Len(Range.Text) will do.
+
+**Trigger:** next time a slot FAILs, do this revisit before
+adjusting the expected. Over time the per-slot revisits will
+also surface candidates for the same kind of split applied to
+Test 22 (one bundled signal -> two or three disjoint ones).
 
 ### 4. Taxonomy audit - full-coverage final-state goal (LOW-MEDIUM, ASPIRATIONAL) - RECOVERED
 

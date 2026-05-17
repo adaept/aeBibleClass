@@ -905,6 +905,24 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No approved styles in the Styles ribbon gallery - CountApprovedStylesInGallery should return 0"
     Case 6
         GetTestDescription = "Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0"
+    Case 7
+        GetTestDescription = "Rule: No space-before-digit inside Chapter Verse marker style (catches '1: 1' typos where the verse number is preceded by an extra space) - CountStyleWithSpaceAndNumber should return 0"
+    Case 8
+        GetTestDescription = "Rule: No digit-followed-by-space inside Verse marker style (catches verse numbers with a trailing space before the verse text) - CountStyleWithNumberAndSpace should return 0"
+    Case 9
+        GetTestDescription = "Detects '. (' sequences - a legacy footnote artifact; the expected count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline"
+    Case 10
+        GetTestDescription = "Rule: Non-breaking spaces (^s) in the document - baseline 1 (intentional usage); growth indicates accidental insertion - CountNonBreakingSpaces should match the expected baseline"
+    Case 11
+        GetTestDescription = "Rule: No digit-dash-digit patterns in body text (verse ranges like '12-34' should use en-dash or be spelled differently) - CountFindNumberDashNumber should return 0"
+    Case 12
+        GetTestDescription = "Rule: No digit-dash-digit patterns in footnote text (same rule as Test 11, applied to footnotes) - CountNumberDashNumberInFootnotes should return 0"
+    Case 13
+        GetTestDescription = "Rule: Empty paragraphs must not carry a theme color (catches paragraph marks formatted with an inherited theme color from prior content) - CountEmptyParasWithNoThemeColor should return 0"
+    Case 14
+        GetTestDescription = "Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0"
+    Case 15
+        GetTestDescription = "Rule: No section has 'Different First Page' set in PageSetup - keeps headers/footers uniform across all sections - CountSectionsWithDifferentFirstPage should return 0"
     Case 16
         GetTestDescription = "Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value"
     Case 17
@@ -913,12 +931,114 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: Heading 1 is only used for each book of the Bible - CountHeading1 should return 66"
     Case 19
         GetTestDescription = "Rule: No empty paragraphs after Heading 2, it is only used for each Book Chapter - CountEmptyParasAfterH2 should return 0"
+    Case 20
+        GetTestDescription = "Rule: No footnote reference is immediately followed by a digit (catches malformed numbering or paste errors where verse numbers run into footnote markers) - CountFootnotesFollowedByDigit should return 0"
+    Case 21
+        GetTestDescription = "Rule: Every footnote reference is followed by a space character (the only allowed non-space exception is end-of-paragraph) - CountNotSpacesAfterFootnoteReferences should return 0"
     Case 22
         GetTestDescription = "Rule: Whitespace-padded empty paras (spaces around the pilcrow) - CountWhitespacePaddedEmptyParagraphs should match the expected baseline"
+    Case 23
+        GetTestDescription = "Rule: No Heading 2 paragraph is preceded by an empty paragraph (H2 supplies its own SpaceBefore; preceding empties are accidental scaffolding) - CountDeleteEmptyParagraphsBeforeHeading2 should return 0"
+    Case 24
+        GetTestDescription = "Total count of footnote references; drift from the expected baseline indicates added/removed footnotes that need review - CountFootnoteReferences should match the expected baseline"
+    Case 25
+        GetTestDescription = "Rule: Footnote reference marks share exactly one color across the document (catches accidental color drift on individual refs) - CountFootnoteReferenceColors should return 1"
+    Case 26
+        GetTestDescription = "Rule: No primary header in any section is empty (every section must carry its expected header content) - CheckAllHeaders(Empty) should return 0"
+    Case 27
+        GetTestDescription = "Count of populated primary headers - matches the expected populated-section count; drift indicates added/removed sections - CheckAllHeaders(NotEmpty) should match the expected baseline"
     Case 28
         GetTestDescription = "Rule: All headers with no text should have a tab - CountTabFollowedByParagraphMarkInHeaders should match the expected baseline"
+    Case 29
+        GetTestDescription = "Count of header paragraphs that lack a tab character - tolerated section/title-only headers without the tab-positioned page number - CountParagraphsWithoutTabInHeaders should match the expected baseline"
+    Case 30
+        GetTestDescription = "Count of primary-header paragraphs whose style is NOT TheHeaders - tolerated exceptions; the source comment claiming expected 0 is stale - CountHeaderStyleUsage should match the expected baseline"
+    Case 31
+        GetTestDescription = "Rule: Every primary header has exactly one paragraph mark (function early-exits via MsgBox on any section with more than 1) - CountParagraphMarksPerHeaderSection should return 1"
+    Case 32
+        GetTestDescription = "Total manual linefeeds (^l) in body text - paired with Test 33 to verify all are space-preceded - CountLinefeed should match the expected baseline"
+    Case 33
+        GetTestDescription = "Subset of body linefeeds preceded by a space - must equal Test 32 to confirm every linefeed has the required leading space - CountLinefeed(space) should match the expected baseline"
+    Case 34
+        GetTestDescription = "Total manual line breaks (Chr(11)) inside footnote text - paired with Test 35 to verify all are space-preceded - CountManualLineBreaksAndWithSpace should match the expected baseline"
+    Case 35
+        GetTestDescription = "Subset of footnote line breaks preceded by a space - must equal Test 34 to confirm every footnote break has the required leading space - CountManualLineBreaksAndWithSpace(space) should match the expected baseline"
+    Case 36
+        GetTestDescription = "Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0"
+    Case 37
+        GetTestDescription = "Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline"
     Case 38
         GetTestDescription = "Rule: Bare empty paragraphs (pilcrow only) at the accepted baseline - CountEmptyParagraphs should match the expected baseline"
+    Case 39
+        GetTestDescription = "Rule: No paragraph mark carries Arial Black 8pt + black/automatic font (paragraph marks must not inherit body-text formatting from surrounding runs) - CountParagraphMarks_ArialBlack should return 0"
+    Case 40
+        GetTestDescription = "Rule: No paragraph mark carries Arial Black 8pt + DarkRed font (catches a specific stray-formatting pattern that escaped the EmphasisRed character style) - CountParagraphMarks_ArialBlackDarkRed should return 0"
+    Case 41
+        GetTestDescription = "Rule: Any run styled Words of Jesus with Arial Black 8pt DarkRed must also use the EmphasisRed character style (catches red-formatted text that bypassed the SSOT character style) - Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed should return 0"
+    Case 42
+        GetTestDescription = "Rule: No word in any Footnote Text paragraph is bold (footnotes use plain formatting; bold belongs in body text only) - CountBoldFootnotesWordLevel should return 0"
+    Case 43
+        GetTestDescription = "Rule: No paragraph mark carries DarkRed color (broader version of Test 40 - catches DarkRed pilcrows at any font/size) - CountParagraphMarksWithDarkRedFormatting should return 0"
+    Case 44
+        GetTestDescription = "Rule: No custom or linked style uses a hand-typed off-palette font color (must be wdColorAutomatic or a defined-palette color; theme-color use is also flagged) - AuditNonPaletteStyleColors should return 0"
+    Case 45
+        GetTestDescription = "Rule: Every visible style is either in the approved-styles SSOT or properly hidden (Priority=99 + QuickStyle=False + UnhideWhenUsed=False) - CountUnapprovedVisibleStyles should return 0"
+    Case 46
+        GetTestDescription = "Rule: Every run styled BookHyperlink has the exact expected font (Carlito 9pt + DarkBlue + single underline); the one-form hyperlink rule integrity check - AuditBookHyperlinkStyling should return 0"
+    Case 47
+        GetTestDescription = "Count of footer paragraphs containing only a tab character - intentional tab-only spacers for footer alignment - CountTabOnlyParagraphs(Footer) should match the expected baseline"
+    Case 48
+        GetTestDescription = "Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0"
+    Case 49
+        GetTestDescription = "Writes rpt/Style Usage Distribution.txt and returns the count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline"
+    Case 50
+        GetTestDescription = "Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section count - SummarizeHeaderFooterAuditToFile should match the expected baseline"
+    Case 51
+        GetTestDescription = "Applies KeepWithNext to the Heading 2 style and per-paragraph WidowControl to every H2 paragraph; returns the count of H2 paragraphs touched - CountAndCreateDefinitionForH2 should match the expected baseline"
+    Case 52
+        GetTestDescription = "Rule: No instances of the contraction 'wouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 53
+        GetTestDescription = "Rule: No instances of the contraction 'isn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 54
+        GetTestDescription = "Rule: No instances of the contraction 'let's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 55
+        GetTestDescription = "Rule: No instances of the contraction 'i'm' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 56
+        GetTestDescription = "Rule: No instances of the contraction 'hasn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 57
+        GetTestDescription = "Rule: No instances of the contraction 'didn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 58
+        GetTestDescription = "Rule: No instances of the contraction 'don't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 59
+        GetTestDescription = "Rule: No instances of the contraction 'haven't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 60
+        GetTestDescription = "Rule: No instances of the contraction 'weren't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 61
+        GetTestDescription = "Rule: No instances of the contraction 'aren't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 62
+        GetTestDescription = "Rule: No instances of the contraction 'can't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 63
+        GetTestDescription = "Rule: No instances of the contraction 'shouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 64
+        GetTestDescription = "Rule: No instances of the contraction 'it's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 65
+        GetTestDescription = "Rule: No instances of the contraction 'spirit's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
+    Case 66
+        GetTestDescription = "Rule: No regular space immediately before a closing single quote U+2019 (space + curly apostrophe) - the expected baseline holds one known tolerated occurrence; growth indicates typographic regression - CountContraction should match the expected baseline"
+    Case 67
+        GetTestDescription = "Rule: No regular space immediately before a closing double quote U+201D (causes a visible gap between text and the quote glyph) - CountContraction should return 0"
+    Case 68
+        GetTestDescription = "Rule: No narrow no-break space U+202F immediately before a closing single quote U+2019 (this NNBSP+quote sequence is a known paste artifact) - CountContraction should return 0"
+    Case 69
+        GetTestDescription = "Rule: No narrow no-break space U+202F immediately before a closing double quote U+201D (mirror of Test 68 for double quotes) - CountContraction should return 0"
+    Case 70
+        GetTestDescription = "Rule: No open-double + open-single + open-double quote triplet U+201C U+2018 U+201C (flags collisions of nested opening quotes that need proper spacing or glyph substitution) - CountContraction should return 0"
+    Case 71
+        GetTestDescription = "Rule: No close-double + close-single + close-double quote triplet U+201D U+2019 U+201D (mirror of Test 70 for the closing side of nested quotes) - CountContraction should return 0"
+    Case 72
+        GetTestDescription = "Sanity: At least one left-aligned paragraph exists between adjusted printed pages 18-931 (the body-content page range) - returns 1 if body content is present, 0 if missing; OneVersePerPara branch only - HasLeftAlignedParagraph should return 1"
+    Case 73
+        GetTestDescription = "Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0"
     Case 74
         GetTestDescription = "Integrity: No visually-empty paragraphs carrying inline shapes, fields, or bookmarks - CountEmptyParagraphsWithInlineContent should return 0"
     Case 7 To 74
