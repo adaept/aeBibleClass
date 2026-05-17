@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 74
+Private Const MaxTests = 75
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -271,8 +271,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1041,7 +1041,9 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0"
     Case 74
         GetTestDescription = "Integrity: No visually-empty paragraphs carrying inline shapes, fields, or bookmarks - CountEmptyParagraphsWithInlineContent should return 0"
-    Case 7 To 74
+    Case 75
+        GetTestDescription = "Rule: No approved paragraph style has a non-empty BaseStyle or is linked from a ListTemplate level - guards against the Word List Paragraph numbering-engine hang (EDSG/10-list-paragraph-bug.md) - CountApprovedStylesWithListParagraphRisk should return 0"
+    Case 7 To 75
         GetTestDescription = ""
     Case Else
         GetTestDescription = ""
@@ -1254,6 +1256,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 74
         ResultArray(TestNum) = CountEmptyParagraphsWithInlineContent
         m_HintArray(TestNum) = m_lastHint
+    Case 75
+        ResultArray(TestNum) = CountApprovedStylesWithListParagraphRisk
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1434,6 +1439,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
     Case 74
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountEmptyParagraphsWithInlineContent"
+    Case 75
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithListParagraphRisk"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1617,6 +1624,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
     Case 74
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountEmptyParagraphsWithInlineContent"
+    Case 75
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithListParagraphRisk"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -2699,6 +2708,115 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     CountApprovedStylesInGallery = -1
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' Function: CountApprovedStylesWithListParagraphRisk  (Test 75)
+'
+' Audits the universal QA-checklist rule that protects the document
+' from Word's List Paragraph numbering-engine hang
+' (EDSG/10-list-paragraph-bug.md). For every paragraph style in the
+' approved-styles SSOT (GetApprovedStyles), asserts:
+'
+'   .BaseStyle = "" (no inheritance from List Paragraph or anything else)
+'   no ListTemplate level links to this style (read via the
+'     ActiveDocument.ListTemplates -> ListLevels -> LinkedStyle graph,
+'     since Style.LinkToListTemplate is write-only and not directly
+'     readable)
+'
+' Both must hold to keep the style outside the list-engine recompute
+' graph that triggers the hang in long documents.
+'
+' Character styles are skipped (they legitimately base on
+' "Default Paragraph Font"; the LP-bug rule applies to paragraph
+' styles only). Approved names not present in the document are
+' skipped silently (existence is Test 45's concern).
+'
+' Returns Long count of property violations (so two failures on the
+' same style count as 2). Expected = 0. On violations > 0, prints the
+' offending style + property list to Immediate; silent when 0.
+' First violation populates m_lastHint for FAIL-report visibility.
+'=========================================================================
+Private Function CountApprovedStylesWithListParagraphRisk() As Long
+    On Error GoTo PROC_ERR
+    Dim approved As Variant
+    Dim i As Long
+    Dim s As Word.Style
+    Dim violations As Long
+    Dim violationList As String
+    Dim baseStr As String
+    Dim lt As Word.ListTemplate
+    Dim lvl As Word.ListLevel
+    Dim linkedStyles As Object
+    Dim lsName As String
+
+    ' Pre-build a dictionary of style names referenced by any list level's
+    ' LinkedStyle, across all of ActiveDocument.ListTemplates. This is the
+    ' read-side equivalent of asking "does any list template attach to this
+    ' style?" - the write-side API Style.LinkToListTemplate cannot be read
+    ' back directly.
+    Set linkedStyles = CreateObject("Scripting.Dictionary")
+    linkedStyles.CompareMode = 1 ' TextCompare
+    For Each lt In ActiveDocument.ListTemplates
+        For Each lvl In lt.ListLevels
+            lsName = ""
+            On Error Resume Next
+            lsName = lvl.LinkedStyle
+            On Error GoTo PROC_ERR
+            If Len(lsName) > 0 Then
+                If Not linkedStyles.Exists(lsName) Then
+                    linkedStyles.Add lsName, True
+                End If
+            End If
+        Next lvl
+    Next lt
+
+    approved = GetApprovedStyles()
+    violations = 0
+
+    For i = LBound(approved) To UBound(approved)
+        Set s = Nothing
+        On Error Resume Next
+        Set s = ActiveDocument.Styles(CStr(approved(i)))
+        On Error GoTo PROC_ERR
+        If Not s Is Nothing Then
+            If s.Type = wdStyleTypeParagraph Then
+                baseStr = ""
+                On Error Resume Next
+                baseStr = s.BaseStyle
+                On Error GoTo PROC_ERR
+                If Len(baseStr) > 0 Then
+                    violations = violations + 1
+                    violationList = violationList & "  - " & s.NameLocal & " : BaseStyle='" & baseStr & "'" & vbCrLf
+                    If m_lastHint = "" Then _
+                        m_lastHint = s.NameLocal & " : BaseStyle='" & baseStr & "'"
+                End If
+                If linkedStyles.Exists(s.NameLocal) Then
+                    violations = violations + 1
+                    violationList = violationList & "  - " & s.NameLocal & " : linked from a ListTemplate level" & vbCrLf
+                    If m_lastHint = "" Then _
+                        m_lastHint = s.NameLocal & " : linked from a ListTemplate level"
+                End If
+            End If
+        End If
+    Next i
+
+    If violations > 0 Then
+        Debug.Print "CountApprovedStylesWithListParagraphRisk: " & violations & " violation(s) -"
+        Debug.Print violationList;
+    End If
+
+    CountApprovedStylesWithListParagraphRisk = violations
+
+PROC_EXIT:
+    Set linkedStyles = Nothing
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountApprovedStylesWithListParagraphRisk | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    CountApprovedStylesWithListParagraphRisk = -1
     Resume PROC_EXIT
 End Function
 

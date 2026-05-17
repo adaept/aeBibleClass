@@ -300,33 +300,43 @@ Originated 2026-05-17 during the § 2.1 hide-sweep close;
 disproved 2026-05-17 by the post-fix run reproducing the same
 totals.
 
-### 13. Audit BaseStyle = "" and LinkToListTemplate on approved styles (HIGH) - OPEN 2026-05-17
+### 13. Audit BaseStyle = "" and LinkToListTemplate on approved styles (HIGH) - CLOSED 2026-05-17
 
-Surfaced by the § 4 taxonomy loophole analysis. `BaseStyle = ""`
-is the universal QA-checklist rule and the direct guard against
-the Word List Paragraph numbering-engine hang
-(`EDSG/10-list-paragraph-bug.md`). `LinkToListTemplate` is the
-mechanism behind that bug. **Neither is currently audited by
-`RUN_TAXONOMY_STYLES`.**
+**Implemented as Test 75:**
+`CountApprovedStylesWithListParagraphRisk` in `aeBibleClass.cls`.
+Walks `GetApprovedStyles()`, and for each existing **paragraph**
+style asserts:
 
-If a user modifies an approved style via the Modify Style
-dialog, or paste-from-elsewhere re-attaches a BaseStyle or
-list-template link, no test detects it until the next
-multi-hour hang on a style edit. The taxonomy's font/size/etc
-coverage is solid, but this is exactly the silent-failure mode
-the project most cannot afford.
+- `BaseStyle = ""` (read directly).
+- No `ListTemplate.ListLevels(n).LinkedStyle` matches the
+  style's `NameLocal`. Pre-builds a dictionary by iterating
+  `ActiveDocument.ListTemplates` once, then checks each approved
+  style's name against it.
 
-**Proposed shape:** new `AuditApprovedStylesBaseStyleAndListLink`
-in `aeBibleClass.cls` (or a private helper called from a new
-RUN_THE_TESTS slot). Walks `GetApprovedStyles()`, for each
-existing paragraph style asserts:
+Character styles are skipped (they legitimately base on
+`Default Paragraph Font`). Each property failure counts
+separately, so a style failing both reports 2. Expected 0.
 
-- `BaseStyle = ""` (or the empty alias Word may return)
-- `LinkToListTemplate Is Nothing`
+**Implementation note - LinkToListTemplate is write-only.**
+First draft used `Not (s.LinkToListTemplate Is Nothing)`
+following the example in `EDSG/10-list-paragraph-bug.md` Step 0.
+That raises *"argument not optional"* at compile time -
+`Style.LinkToListTemplate` is a write-side method that takes a
+`ListTemplate` argument and cannot be read back as a property.
+The correct read-side detection uses the
+`ListTemplates -> ListLevels -> LinkedStyle` graph. The EDSG
+Step 0 snippet is conceptual rather than working code; worth
+fixing on a future EDSG pass.
 
-Returns total violations; expected 0. Wire into a free test slot
-(slot 5 was consumed 2026-05-16; pick the next available or
-extend MaxTests).
+**Verification:** Test 75 PASS at 0 in 0.03s on the live
+document. `MaxTests` bumped 74 -> 75, `values` array extended
+with `0`, all four Case-dispatch sites wired.
+
+**Coverage closed:** the silent-failure mode that put built-in
+`Hyperlink` back in the gallery (before the BookHyperlink work)
+and the multi-hour-hang risk from accidental list-template
+attachment are now both gated by automated tests on every
+`RUN_THE_TESTS` run.
 
 ### 14. Audit AutomaticallyUpdate = False on approved styles (MEDIUM) - OPEN 2026-05-17
 
