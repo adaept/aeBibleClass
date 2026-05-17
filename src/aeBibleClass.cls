@@ -3403,26 +3403,28 @@ End Function
 Private Function CountEmptyParagraphsWithFormatting() As Long
     On Error GoTo PROC_ERR
 
-' To maximize speed and accuracy, stay in the Paragraphs collection (for true Word structure),
-' but avoid anything expensive - no .Range.Text, .Style, etc. unless needed.
+' Fast path: use Range.End - Range.Start to detect empty paragraphs without
+' materializing text. A paragraph spanning <= 1 character is just the pilcrow.
+' For short paragraphs (<= 8 chars) fall back to Trim to catch whitespace-only
+' cases (spaces, tabs). Large paragraphs cannot be whitespace-only in practice
+' and skip text materialization entirely - the main speed win on long docs.
     Dim para As Word.Paragraph
-    Dim rng As Word.Range
     Dim Count As Long
     Dim paraCount As Long
+    Dim span As Long
 
     Count = 0
-    Set rng = ActiveDocument.Content
-    rng.Collapse Direction:=wdCollapseStart
-
     Application.ScreenUpdating = False
-    ' Loop over all paragraphs using the built-in collection
     For Each para In ActiveDocument.Paragraphs
         paraCount = paraCount + 1
-        ' Work directly with Range.Text but trim just once
-        If LenB(Trim$(Replace(para.Range.Text, vbCr, ""))) = 0 Then
+        span = para.Range.End - para.Range.Start
+        If span <= 1 Then
             Count = Count + 1
+        ElseIf span <= 8 Then
+            If LenB(Trim$(Replace(para.Range.Text, vbCr, ""))) = 0 Then
+                Count = Count + 1
+            End If
         End If
-        ' Keep Word responsive every 500 paragraphs
         If paraCount Mod 500 = 0 Then DoEvents
     Next para
     Application.ScreenUpdating = True

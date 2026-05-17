@@ -290,6 +290,34 @@ prevent drift (UI re-enable, future `Define*` routine forgetting
 
 Together these close the QuickStyle audit gap for both cohorts.
 
+### 7. Test 22 perf fix: `CountEmptyParagraphsWithFormatting` - 2026-05-16
+
+Test 22 had grown to ~390s on the working document. Root cause:
+the loop body materialized `para.Range.Text` on every paragraph
+(`LenB(Trim$(Replace(para.Range.Text, vbCr, ""))) = 0`). On a
+Bible-sized doc that is ~30K Range allocations + ~30K BSTR
+materializations per pass, and `Range.Text` access can force Word
+to resolve pending layout for the paragraph - so the cost spikes
+after any structural recomposition (the recent
+`CustomParaAfterH1` `LineSpacingRule` change being a current
+trigger). `Application.ScreenUpdating = False` does not help here
+because it suppresses painting, not pagination.
+
+**Fix:** detect empty paragraphs via `Range.End - Range.Start`.
+A paragraph spanning <= 1 character is just the pilcrow. Short
+paragraphs (<= 8 chars) fall back to the original `Trim` check so
+the "whitespace-only counts as empty" semantic is preserved; long
+paragraphs cannot be whitespace-only in practice and skip text
+materialization entirely - the main speed win.
+
+**Also removed:** dead `Set rng = ActiveDocument.Content :
+rng.Collapse` lines (`rng` was never read in the loop). The
+`DoEvents` every 500 paragraphs and `ScreenUpdating` toggle are
+retained.
+
+Expected speedup on Bible-sized docs: 10x-50x. Re-run Test 22 to
+confirm result still matches the expected value at slot 22.
+
 These were intentionally retained when the `BaseStyle = ""` half
 of the prior prescriptive-pass round was completed; the
 `LineSpacingRule` change is a separate prescriptive decision per

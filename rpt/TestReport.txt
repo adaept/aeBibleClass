@@ -13,9 +13,8 @@ PASS              Copy ()       Test = 3      0             0             CountS
   Rule: Spaces are not allowed before the paragraph mark - CountSpaceFollowedByCarriageReturn should return 0
 PASS              Copy ()       Test = 4      0             0             CountDoubleTabs
   Rule: Multiple tabs are not allowed in the document - CountDoubleTabs should return 0
-FAIL!!!!          Copy ()       Test = 5      -1            0             TestSlotAvailable
-  >> First hit: (no hint provided by test function)
-  TestSlotAvailable
+PASS              Copy ()       Test = 5      0             0             TestSlotAvailable
+  Rule: No approved styles in the Styles ribbon gallery - CountApprovedStylesInGallery should return 0
 PASS              Copy ()       Test = 6      0             0             CountConsecutiveEmptyParagraphsNotPrecedingBreak
   Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0
 PASS              Copy ()       Test = 7      0             0             CountStyleWithSpaceAndNumber
@@ -49,7 +48,7 @@ PASS              Copy ()       Test = 20     0             0             CountF
   TestSlotAvailable
 PASS              Copy ()       Test = 21     0             0             CountNotSpacesAfterFootnoteReferences
   TestSlotAvailable
-FAIL!!!!          Copy ()       Test = 22     216           224           CountEmptyParagraphsWithFormatting
+FAIL!!!!          Copy ()       Test = 22     368           224           CountEmptyParagraphsWithFormatting
   >> First hit: (no hint provided by test function)
   TestSlotAvailable
 PASS              Copy ()       Test = 23     0             0             CountDeleteEmptyParagraphsBeforeHeading2
@@ -171,8 +170,8 @@ SKIP!!!!          Copy ()       Test = 72     -1            0             HasLef
   TestSlotAvailable
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
   TestSlotAvailable
-The Total Runtime: 122.15 seconds
-[2026-05-16 16:19:18] Completed
+The Total Runtime: 363.21 seconds
+[2026-05-16 19:13:21] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
