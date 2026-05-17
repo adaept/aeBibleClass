@@ -43,11 +43,75 @@ Status tag legend (continued):
 
 ## Open carry-forward (priority order)
 
-### 1. Run aeRibbon Gates G1-G8 and ship v1.0.0 (HIGH) - OPEN
+### 1. Run aeRibbon Gates G1-G8 and ship v1.0.0 (HIGH) - PREP DONE 2026-05-17, READY FOR BUILD
 
 The production export gateway is in place; nothing has been built
 or gated yet. **Next active release-track item** and gates the
 hand-off to the author for comments-only review.
+
+**2026-05-17 prep:**
+
+- **`BUILD.md` inconsistency fixed.** Step 3 of "Build steps"
+  said "3 `.bas` + 2 `.cls` (5 files)" and omitted
+  `basUIStrings.bas`, while the "Files going into the template"
+  table at the top of the doc correctly listed all 6 files. An
+  operator following step 3 verbatim would have missed
+  `basUIStrings.bas` and hit a compile error at G6. Corrected
+  to "4 `.bas` + 2 `.cls` (6 files)" with a cross-reference to
+  the table.
+
+- **Trim refreshed.** `aeRibbon/src/` was stale (last trim
+  2026-05-13; dev `src/` modified through 2026-05-17). Re-ran
+  `wsl python3 py/ribbon_export_trim.py`. Clean: 133 routines
+  kept, 70 removed, no warnings.
+
+- **Diff against the 2026-05-13 trim is minimal and low-risk.**
+  Only `aeBibleCitationClass.cls` changed (+47 lines, 0
+  removed): purely additive book-alias expansion in
+  `GetBookAliasMap` (new aliases like `NB`/`JSH`/`JDG`/`JDGS`/
+  `JG`/`RTH`/`1SA`/`2SA`/`1KI`/`2KI`/`1CH`/`2CH`/`PSS`/`PSM`
+  and others). No logic changes, no new public APIs, no
+  removed routines. The other 5 files (`aeRibbonClass`,
+  `basBibleRibbonSetup`, `basRibbonDeferred`,
+  `basSBL_VerseCountsGenerator`, `basUIStrings`) are
+  byte-identical to the 2026-05-13 trim. Classification:
+  **small-refresh release.**
+
+- **G8 spot-check addition.** Worth one extra keyboard-input
+  test on one or two of the new aliases (e.g. `Alt, Y2, B`,
+  type `JSH`, Tab, `3`, Tab, `16`, Tab, Enter -> expect
+  Joshua 3:16). Surfaces any alias-map regression that would
+  otherwise hide behind the canonical names.
+
+**Why high:** every other ribbon-side improvement (signing,
+auto-docx-from-docm, ribbon UX iteration) sits behind a first
+successful gated build. Also the highest-leverage validation of
+the trim script: any false drop will surface in G6 (compile) or
+G8 (navigation smoke).
+
+**Operator action** (Word GUI work; not driveable from here):
+
+1. Build `aeRibbon/template/aeRibbon.dotm` per
+   `aeRibbon/BUILD.md` steps 1-8.
+2. Editor/Developer produces the production Bible `.docx` per
+   `BUILD.md` "Producing the production Bible `.docx`" (manual
+   File -> Save As `.docx` from the dev `.docm` - Option 1).
+3. Run Gates G1-G8 from `aeRibbon/QA_CHECKLIST.md`. Record
+   results in
+   `aeRibbon/releases/1.0.0+bc71416/BUILD_RECORD.txt`.
+4. Append a row to `aeRibbon/RELEASES.md` and
+   `git tag v1.0.0+bc71416`.
+
+**Expected blockers / what to watch for:**
+
+- Trim script's call-graph is conservative-overinclusive; false
+  drops surface as missing-Sub compile errors in G6. Fix by
+  adding an explicit root rather than reverting to manual
+  cherry-pick.
+- VBA lifecycle hooks (`Class_Initialize`, `Class_Terminate`,
+  `AutoExec`) are now always preserved if defined.
+- G8 must show no macro-security warning on docx open - confirms
+  the dotm/docx split is architecturally clean.
 
 Original analysis and gate definitions: see prior arcs via the
 2026-05-15 carry-forward.

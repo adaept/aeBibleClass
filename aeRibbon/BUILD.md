@@ -80,10 +80,11 @@ during build.
    - In the VBA editor: File → Import File... — multi-select supported.
      Import order does **not** matter (VBA resolves references at compile
      time, not import time).
-   - The current `aeRibbon/src/` set is **3 `.bas` + 2 `.cls`** (5 files):
+   - The current `aeRibbon/src/` set is **4 `.bas` + 2 `.cls`** (6 files):
      `basBibleRibbonSetup.bas`, `basRibbonDeferred.bas`,
-     `basSBL_VerseCountsGenerator.bas`, `aeBibleCitationClass.cls`,
-     `aeRibbonClass.cls`.
+     `basSBL_VerseCountsGenerator.bas`, `basUIStrings.bas`,
+     `aeBibleCitationClass.cls`, `aeRibbonClass.cls`. Match against the
+     "Files going into the template" table above.
    - After import, verify in Project Explorer that the two `.cls` files
      appear under **Class Modules** and the three `.bas` files appear
      under **Modules**. If a `.cls` lands under Modules, the file has
