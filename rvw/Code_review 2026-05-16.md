@@ -440,26 +440,53 @@ retired placeholders was masking this single legitimate FAIL -
 exactly the desensitisation cost § 16 set out to eliminate, in
 action.
 
-### 17. Lower-value taxonomy hardening (LOW, bundled) - OPEN 2026-05-17
+### 17. Lower-value taxonomy hardening (LOW, bundled) - CLOSED 2026-05-17 (3 of 4)
 
-Four small items surfaced by § 4 that aren't worth individual
-follow-ups but should be tracked together to avoid loss:
+Three of the four sub-items closed; the fourth deferred as
+genuinely LOW-value.
 
-- **Normal style** - intentionally unaudited (anchor). Worth at
-  least an existence-verified entry with font/color pinned so
-  drift in the underlying Normal style is detected.
-- **Tab-stop count contract** - `AuditStyleTabs` checks expected
-  stops exist but doesn't flag *extra* stops. A fourth stop
-  added to `AuthorListItemTab` would pass silently. Consider
-  asserting `Style.ParagraphFormat.TabStops.Count = expected`.
-- **Priority drift** - `PromoteApprovedStyles` assigns priorities
-  but nothing verifies they stay assigned. A user-drag in the
-  gallery or `CopyStylesFromTemplate` import could reorder
-  silently.
-- **RUN_TAXONOMY_STYLES docstring count drift** - hand-maintained
-  totals (49 / 46 / 58) already stale by 1 / 1 / 1 within 2 days
-  of BookHyperlink. Either remove the literal counts from the
-  docstring or auto-emit them.
+**Tab-stop extras check (#2) - already implemented.**
+Investigation found that `AuditStyleTabs` in
+`basTEST_aeBibleConfig.bas:653-656` already asserts
+`actCount = expCount` and FAILs on mismatch. My § 4 loophole
+list was wrong about this - I missed it on first scan. No
+work needed.
+
+**RUN_TAXONOMY_STYLES docstring drift (#4) - fixed.** Removed
+the literal totals from the header comment; they had drifted
+within hours of every prior change. Docstring now describes the
+bucket *shape* only; the run-time PASS/FAIL summary is the
+authoritative count. Self-maintaining.
+
+**Priority drift (#3) - Test 78 added.**
+`CountApprovedStylesWithWrongPriority` walks
+`GetApprovedStyles()` and asserts each existing style's
+`Priority` equals its 1-based array position. First run
+surfaced 14 real violations: BookHyperlink at Priority=1 (had
+never been promoted into its correct slot post-2026-05-15
+add); slots 35-41 shifted -1, slots 42-47 shifted +2; Normal
+at 99. All resolved by running `WordEditingConfig` once. The
+test had been catching genuine stale state on the live
+document - exactly the silent reorder the § 4 loophole
+predicted. `MaxTests` bumped 77 -> 78. PASS at 0 after the
+heal.
+
+**Bonus benefit:** § 2 wiring of `HideUnapprovedBuiltInStyles`
+into `WordEditingConfig` (2026-05-17) means future operator
+runs heal both the priority assignments and the hide-sweep
+together, so this drift won't recur unless someone calls
+`PromoteApprovedStyles` directly without the bundled
+`WordEditingConfig`.
+
+**Normal style audit (#1) - DEFERRED.** Normal is intentionally
+unaudited as the "pin-everything-else-above" anchor. Adding a
+bucket-1 entry with font/color pinned would need a
+`DumpStyleProperties "Normal", True` capture and a new
+AuditOneStyle line. Genuinely low-value: Word's Normal style
+rarely drifts silently, and when it does the effects cascade
+and become obvious in unrelated styles. Worth doing
+opportunistically next time Normal is touched, not chasing as
+its own work item.
 
 ## Pointer back to the closed arc
 

@@ -241,10 +241,14 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 47 styles via AuditOneStyle + 9 tab-stop specs via AuditStyleTabs;
-'   total 56 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (47):
-'     47 fully specified (all properties verified) - BodyText, VerseText,
+'   Audits every paragraph/character style listed below via AuditOneStyle,
+'   plus the tab-stop specs further down via AuditStyleTabs. The run-time
+'   pass/fail summary printed to Immediate and to rpt\StyleTaxonomyAudit.txt
+'   is the authoritative count; literal totals are not maintained in this
+'   docstring (they went stale within 2 days every time previously - see
+'   Code_review 2026-05-16.md § 17).
+'   Style audit buckets:
+'     Fully specified (all properties verified) - BodyText, VerseText,
 '                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
@@ -261,13 +265,13 @@ End Function
 '                            Footnote Reference, Selah, EmphasisBlack,
 '                            EmphasisRed, Words of Jesus,
 '                            Chapter Verse marker, Verse marker
-'      0 existence-verified (bucket currently empty; reserved for future
-'                            styles awaiting DumpStyleProperties capture)
-'      0 not yet created (bucket retired 2026-05-17; placeholders
-'                            BodyTextContinuation / AppendixTitle / AppendixBody
-'                            removed from GetApprovedStyles per
-'                            Code_review 2026-05-16.md § 16)
-'   Tab-stop audits (9):
+'     Existence-verified - bucket currently empty; reserved for future
+'                           styles awaiting DumpStyleProperties capture.
+'     Not yet created     - bucket retired 2026-05-17; placeholders
+'                           BodyTextContinuation / AppendixTitle / AppendixBody
+'                           removed from GetApprovedStyles per
+'                           Code_review 2026-05-16.md § 16.
+'   Tab-stop audits:
 '      TheFooters          (1 stop at 7.2 pt, Left, Spaces)
 '      AuthorListItem      (1 stop at 36 pt, Left, Spaces)
 '      AuthorListItemTab   (2 stops at 144 / 252 pt, Left, Spaces)

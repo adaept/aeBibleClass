@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 77
+Private Const MaxTests = 78
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -271,8 +271,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1047,7 +1047,9 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No approved paragraph style has AutomaticallyUpdate=True (prevents silent style-definition drift when a user modifies a paragraph using the style) - CountApprovedStylesWithAutoUpdateOn should return 0"
     Case 77
         GetTestDescription = "Rule: No approved style has UnhideWhenUsed=True (closes the symmetric gap to Test 45; prevents silent re-surface of an approved style in the gallery when a run touches it, including via paste) - CountApprovedStylesWithUnhideWhenUsedOn should return 0"
-    Case 7 To 77
+    Case 78
+        GetTestDescription = "Rule: Every approved style has Priority equal to its 1-based position in GetApprovedStyles() (catches gallery-drag, CopyStylesFromTemplate, or paste-from-elsewhere reordering between PromoteApprovedStyles runs) - CountApprovedStylesWithWrongPriority should return 0"
+    Case 7 To 78
         GetTestDescription = ""
     Case Else
         GetTestDescription = ""
@@ -1269,6 +1271,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 77
         ResultArray(TestNum) = CountApprovedStylesWithUnhideWhenUsedOn
         m_HintArray(TestNum) = m_lastHint
+    Case 78
+        ResultArray(TestNum) = CountApprovedStylesWithWrongPriority
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1455,6 +1460,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithAutoUpdateOn"
     Case 77
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithUnhideWhenUsedOn"
+    Case 78
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithWrongPriority"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1644,6 +1651,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithAutoUpdateOn"
     Case 77
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithUnhideWhenUsedOn"
+    Case 78
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithWrongPriority"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -2965,6 +2974,74 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     CountApprovedStylesWithUnhideWhenUsedOn = -1
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' Function: CountApprovedStylesWithWrongPriority  (Test 78)
+'
+' Audits Priority drift on the approved cohort. PromoteApprovedStyles
+' assigns each approved style a Priority equal to its 1-based position
+' in GetApprovedStyles(), and the hide-sweep separately drives all
+' non-approved styles to Priority = 99. Nothing currently verifies
+' that the approved assignments survive between PromoteApprovedStyles
+' runs - a user dragging styles in the gallery, a
+' CopyStylesFromTemplate import, or paste-from-elsewhere can reorder
+' silently.
+'
+' Walks GetApprovedStyles(); for each existing style, asserts
+' s.Priority equals its expected position (i + 1 with 0-based
+' approved array, or LBound-based offset). Approved names not present
+' in the document are skipped silently.
+'
+' Returns Long count of violations. Expected = 0. On violations > 0,
+' prints the offending style + actual/expected priority to Immediate.
+' First violation populates m_lastHint.
+'=========================================================================
+Private Function CountApprovedStylesWithWrongPriority() As Long
+    On Error GoTo PROC_ERR
+    Dim approved As Variant
+    Dim i As Long
+    Dim expectedPriority As Long
+    Dim s As Word.Style
+    Dim violations As Long
+    Dim violationList As String
+
+    approved = GetApprovedStyles()
+    violations = 0
+
+    For i = LBound(approved) To UBound(approved)
+        expectedPriority = i - LBound(approved) + 1
+        Set s = Nothing
+        On Error Resume Next
+        Set s = ActiveDocument.Styles(CStr(approved(i)))
+        On Error GoTo PROC_ERR
+        If Not s Is Nothing Then
+            If s.Priority <> expectedPriority Then
+                violations = violations + 1
+                violationList = violationList & "  - " & s.NameLocal & _
+                    " : expected Priority=" & expectedPriority & _
+                    " got " & s.Priority & vbCrLf
+                If m_lastHint = "" Then _
+                    m_lastHint = s.NameLocal & " : Priority " & s.Priority & " (expected " & expectedPriority & ")"
+            End If
+        End If
+    Next i
+
+    If violations > 0 Then
+        Debug.Print "CountApprovedStylesWithWrongPriority: " & violations & " violation(s) -"
+        Debug.Print violationList;
+    End If
+
+    CountApprovedStylesWithWrongPriority = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountApprovedStylesWithWrongPriority | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    CountApprovedStylesWithWrongPriority = -1
     Resume PROC_EXIT
 End Function
 
