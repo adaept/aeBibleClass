@@ -358,20 +358,41 @@ recovery path). A combined test would muddy the FAIL signal.
 75 -> 76, `values` array extended with `0`, all four
 Case-dispatch sites wired.
 
-### 15. Audit UnhideWhenUsed = False on approved cohort (MEDIUM) - OPEN 2026-05-17
+### 15. Audit UnhideWhenUsed = False on approved cohort (MEDIUM) - CLOSED 2026-05-17
 
-Surfaced by the § 4 taxonomy loophole analysis. Test 45
-(`CountUnapprovedVisibleStyles`) verifies this property only on
-the **non-approved** cohort. The approved cohort is uncovered.
+**Implemented as Test 77:**
+`CountApprovedStylesWithUnhideWhenUsedOn` in `aeBibleClass.cls`.
+Walks `GetApprovedStyles()` and flags any style (paragraph OR
+character - the property applies to both in Word's object model)
+whose `UnhideWhenUsed` is True. Returns total violations;
+expected 0.
 
-This is exactly the silent re-surface mode that put built-in
-`Hyperlink` back in the gallery before the 2026-05-15
-BookHyperlink work - and the same risk applies to any approved
-paragraph style modified via the dialog (Word can flip
-UnhideWhenUsed back to True on certain operations).
+**Coverage closure.** Test 45 (`CountUnapprovedVisibleStyles`)
+already enforces this property on the non-approved cohort via
+the "properly hidden" predicate (`Priority=99 AND
+QuickStyle=False AND UnhideWhenUsed=False`). Test 77 closes the
+symmetric gap on the approved cohort. Together they prevent the
+silent re-surface that put built-in `Hyperlink` back in the
+gallery before the 2026-05-15 BookHyperlink refactor.
 
-Same shape as § 13/14; trivially folds into the same combined
-audit walk.
+**Verification:** Test 77 PASS at 0 in 0.03s. `MaxTests` bumped
+76 -> 77, `values` array extended with `0`, all four
+Case-dispatch sites wired.
+
+**Per-style discipline now gated by automated tests:**
+
+| Property | Approved cohort | Non-approved cohort |
+|---|---|---|
+| `Priority = 99` | (assigned by `PromoteApprovedStyles`; drift covered by § 17) | Test 45 |
+| `QuickStyle = False` | Test 5 | Test 45 |
+| `UnhideWhenUsed = False` | **Test 77** | Test 45 |
+| `BaseStyle = ""` (paragraph) | Test 75 | n/a |
+| `LinkToListTemplate` not set (paragraph) | Test 75 | n/a |
+| `AutomaticallyUpdate = False` (paragraph) | Test 76 | n/a |
+
+The QA-checklist rules from `EDSG/04-qa-workflow.md` are now
+fully enforced by tests for both cohorts. Item 13 / 2.1 closes
+the discipline loop end-to-end.
 
 ### 16. Decide on three persistently-missing placeholders (LOW) - OPEN 2026-05-17
 

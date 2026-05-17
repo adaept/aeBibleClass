@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 76
+Private Const MaxTests = 77
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -271,8 +271,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1045,7 +1045,9 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No approved paragraph style has a non-empty BaseStyle or is linked from a ListTemplate level - guards against the Word List Paragraph numbering-engine hang (EDSG/10-list-paragraph-bug.md) - CountApprovedStylesWithListParagraphRisk should return 0"
     Case 76
         GetTestDescription = "Rule: No approved paragraph style has AutomaticallyUpdate=True (prevents silent style-definition drift when a user modifies a paragraph using the style) - CountApprovedStylesWithAutoUpdateOn should return 0"
-    Case 7 To 76
+    Case 77
+        GetTestDescription = "Rule: No approved style has UnhideWhenUsed=True (closes the symmetric gap to Test 45; prevents silent re-surface of an approved style in the gallery when a run touches it, including via paste) - CountApprovedStylesWithUnhideWhenUsedOn should return 0"
+    Case 7 To 77
         GetTestDescription = ""
     Case Else
         GetTestDescription = ""
@@ -1264,6 +1266,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 76
         ResultArray(TestNum) = CountApprovedStylesWithAutoUpdateOn
         m_HintArray(TestNum) = m_lastHint
+    Case 77
+        ResultArray(TestNum) = CountApprovedStylesWithUnhideWhenUsedOn
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1448,6 +1453,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithListParagraphRisk"
     Case 76
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithAutoUpdateOn"
+    Case 77
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithUnhideWhenUsedOn"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1635,6 +1642,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithListParagraphRisk"
     Case 76
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithAutoUpdateOn"
+    Case 77
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithUnhideWhenUsedOn"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -2891,6 +2900,71 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     CountApprovedStylesWithAutoUpdateOn = -1
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' Function: CountApprovedStylesWithUnhideWhenUsedOn  (Test 77)
+'
+' Audits `UnhideWhenUsed = False` on the approved-styles cohort.
+' Test 45 (CountUnapprovedVisibleStyles) covers the same property for
+' the NON-approved cohort via the "properly hidden" predicate; this
+' test closes the symmetric gap on the approved cohort.
+'
+' Failure mode: when UnhideWhenUsed is True, Word re-surfaces the
+' style in the Styles gallery the moment any run touches it - including
+' paste operations. That's the exact silent re-surface that put
+' built-in `Hyperlink` back in the gallery before the 2026-05-15
+' BookHyperlink refactor.
+'
+' Walks GetApprovedStyles(); checks both paragraph AND character styles
+' (UnhideWhenUsed applies to both in Word's object model). Approved
+' names not present in the document are skipped silently.
+'
+' Returns Long count of violations. Expected = 0. On violations > 0,
+' prints the offending style names to Immediate; silent when 0.
+' First violation populates m_lastHint.
+'=========================================================================
+Private Function CountApprovedStylesWithUnhideWhenUsedOn() As Long
+    On Error GoTo PROC_ERR
+    Dim approved As Variant
+    Dim i As Long
+    Dim s As Word.Style
+    Dim violations As Long
+    Dim violationList As String
+
+    approved = GetApprovedStyles()
+    violations = 0
+
+    For i = LBound(approved) To UBound(approved)
+        Set s = Nothing
+        On Error Resume Next
+        Set s = ActiveDocument.Styles(CStr(approved(i)))
+        On Error GoTo PROC_ERR
+        If Not s Is Nothing Then
+            If s.UnhideWhenUsed Then
+                violations = violations + 1
+                violationList = violationList & "  - " & s.NameLocal & vbCrLf
+                If m_lastHint = "" Then _
+                    m_lastHint = s.NameLocal & " : UnhideWhenUsed=True"
+            End If
+        End If
+    Next i
+
+    If violations > 0 Then
+        Debug.Print "CountApprovedStylesWithUnhideWhenUsedOn: " & violations & " violation(s) -"
+        Debug.Print violationList;
+    End If
+
+    CountApprovedStylesWithUnhideWhenUsedOn = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountApprovedStylesWithUnhideWhenUsedOn | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    CountApprovedStylesWithUnhideWhenUsedOn = -1
     Resume PROC_EXIT
 End Function
 
