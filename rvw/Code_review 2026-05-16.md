@@ -338,18 +338,25 @@ and the multi-hour-hang risk from accidental list-template
 attachment are now both gated by automated tests on every
 `RUN_THE_TESTS` run.
 
-### 14. Audit AutomaticallyUpdate = False on approved styles (MEDIUM) - OPEN 2026-05-17
+### 14. Audit AutomaticallyUpdate = False on approved styles (MEDIUM) - CLOSED 2026-05-17
 
-Surfaced by the § 4 taxonomy loophole analysis. When
-`AutomaticallyUpdate = True`, the paragraph-style definition
-updates whenever a user modifies a paragraph using that style -
-silently breaks editorial discipline. QA-checklist requires
-False; no test enforces.
+**Implemented as Test 76:**
+`CountApprovedStylesWithAutoUpdateOn` in `aeBibleClass.cls`.
+Walks `GetApprovedStyles()` and flags any paragraph style whose
+`AutomaticallyUpdate` is True. Character styles skipped (the
+property is paragraph-scope in Word's object model). Returns
+total violations; expected 0.
 
-Same shape as § 13; the two could share a single audit walk if
-preferred (one loop, three property checks per style, one
-violation tally per property reported separately for readable
-hint messages).
+**Design choice - separate test rather than folding into Test 75.**
+Considered piggybacking on the LP-bug walk for one combined
+property audit, but kept the tests disjoint: Test 75 is the
+LP-hang guard (specific failure mode + specific EDSG page);
+Test 76 is the silent-drift guard (different mechanism, different
+recovery path). A combined test would muddy the FAIL signal.
+
+**Verification:** Test 76 PASS at 0 in 0.02s. `MaxTests` bumped
+75 -> 76, `values` array extended with `0`, all four
+Case-dispatch sites wired.
 
 ### 15. Audit UnhideWhenUsed = False on approved cohort (MEDIUM) - OPEN 2026-05-17
 
