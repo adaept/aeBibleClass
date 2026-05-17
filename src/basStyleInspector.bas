@@ -1470,42 +1470,66 @@ Public Sub HideUnapprovedBuiltInStyles()
         End If
     Next i
 
+    ' Snapshot target style names into a dictionary BEFORE mutating any
+    ' Priority - setting Priority = 99 reorders the Styles collection
+    ' mid-`For Each`, which inflates pass counts via re-visits. With a
+    ' frozen snapshot each style is visited exactly once.
+    Dim targetNames As Object
+    Set targetNames = CreateObject("Scripting.Dictionary")
+    targetNames.CompareMode = 1 ' TextCompare
     Dim s As Word.Style
-    Dim nHidden As Long, nAlready As Long, nSkipped As Long
-    Dim newlyHidden As String
-    Dim wasHidden As Boolean
-    Dim writeErr As Long
-
     For Each s In ActiveDocument.Styles
         If s.BuiltIn Then
             If Not approvedDict.Exists(s.NameLocal) Then
-                wasHidden = (s.Priority = 99) And (s.QuickStyle = False) And (s.UnhideWhenUsed = False)
-                writeErr = 0
-                On Error Resume Next
-                s.Priority = 99
-                writeErr = writeErr Or Err.Number
-                Err.Clear
-                s.QuickStyle = False
-                writeErr = writeErr Or Err.Number
-                Err.Clear
-                s.UnhideWhenUsed = False
-                writeErr = writeErr Or Err.Number
-                Err.Clear
-                On Error GoTo PROC_ERR
-
-                If writeErr <> 0 Then
-                    nSkipped = nSkipped + 1
-                ElseIf wasHidden Then
-                    nAlready = nAlready + 1
-                Else
-                    nHidden = nHidden + 1
-                    newlyHidden = newlyHidden & "  - " & s.NameLocal & vbCrLf
+                If Not targetNames.Exists(s.NameLocal) Then
+                    targetNames.Add s.NameLocal, True
                 End If
             End If
         End If
     Next s
 
+    Dim nHidden As Long, nAlready As Long, nSkipped As Long
+    Dim newlyHidden As String
+    Dim wasHidden As Boolean
+    Dim writeErr As Long
+    Dim nameKey As Variant
+
+    For Each nameKey In targetNames.Keys
+        Set s = Nothing
+        On Error Resume Next
+        Set s = ActiveDocument.Styles(CStr(nameKey))
+        On Error GoTo PROC_ERR
+        If s Is Nothing Then
+            ' Name disappeared between snapshot and apply - count as skipped
+            nSkipped = nSkipped + 1
+        Else
+            wasHidden = (s.Priority = 99) And (s.QuickStyle = False) And (s.UnhideWhenUsed = False)
+            writeErr = 0
+            On Error Resume Next
+            s.Priority = 99
+            writeErr = writeErr Or Err.Number
+            Err.Clear
+            s.QuickStyle = False
+            writeErr = writeErr Or Err.Number
+            Err.Clear
+            s.UnhideWhenUsed = False
+            writeErr = writeErr Or Err.Number
+            Err.Clear
+            On Error GoTo PROC_ERR
+
+            If writeErr <> 0 Then
+                nSkipped = nSkipped + 1
+            ElseIf wasHidden Then
+                nAlready = nAlready + 1
+            Else
+                nHidden = nHidden + 1
+                newlyHidden = newlyHidden & "  - " & s.NameLocal & vbCrLf
+            End If
+        End If
+    Next nameKey
+
     Debug.Print "HideUnapprovedBuiltInStyles:"
+    Debug.Print "  candidates    : " & targetNames.Count
     Debug.Print "  newly hidden  : " & nHidden
     Debug.Print "  already hidden: " & nAlready
     Debug.Print "  skipped (locked): " & nSkipped
@@ -1516,6 +1540,7 @@ Public Sub HideUnapprovedBuiltInStyles()
 
 PROC_EXIT:
     Set approvedDict = Nothing
+    Set targetNames = Nothing
     Exit Sub
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _

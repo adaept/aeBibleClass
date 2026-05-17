@@ -252,22 +252,39 @@ remains visible during slot-by-slot review work.
 Full rule and worked examples: see § 9 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
 
-### 11. HideUnapprovedBuiltInStyles - skipped-count arithmetic (LOW) - OPEN 2026-05-17
+### 11. HideUnapprovedBuiltInStyles - skipped-count arithmetic (LOW) - CLOSED 2026-05-17 (false alarm)
 
-The 2026-05-17 sweep run reported `skipped (locked): 251` on a
-document with ~176 styles. Likely cause: `Priority = 99` reorders
-the `ActiveDocument.Styles` collection mid-`For Each`, so some
-entries are re-visited and counted multiple times. `nHidden` and
-`nAlready` may have similar inflation.
+**Original concern:** `skipped (locked): 251` on a document
+believed to have ~176 styles - hypothesized re-visit inflation
+from `Priority = 99` reordering the Styles collection
+mid-`For Each`.
 
-Doesn't affect correctness (Test 45 verifies end state) but the
-report's count arithmetic is misleading - operator can't trust
-"X newly hidden" as a meaningful delta. Fix candidates:
-snapshot `Styles` names into an array up front and iterate the
-array; or guard against re-visits via a Scripting Dictionary keyed
-on `NameLocal`.
+**Investigation finding:** the arithmetic was always correct.
+Both the original report (1 + 115 + 251) and the post-fix
+report (0 + 116 + 251) sum to **367 = candidates**, with no
+duplication. The "~176 styles" reference came from
+`AuditNonPaletteStyleColors`, which deliberately excludes
+`wdStyleTypeTable` and `wdStyleTypeList`. The hide-sweep
+includes both. Word ships dozens of built-in table styles, list
+styles, and locale variants - 367 distinct built-in
+non-approved names in the collection is genuine, and 251 of
+them are locked against property writes (Word locks
+table/list/system styles by design).
 
-Originated 2026-05-17 during the § 2.1 hide-sweep close.
+**Code change kept anyway.** The function now snapshots target
+names into a dictionary before mutating, then iterates the
+snapshot. Not needed for correctness, but adds two defensive
+properties:
+
+- Proves one-visit-per-name structurally rather than by
+  inspection.
+- Emits a new `candidates: N` line in the report, which makes
+  the sum check (`candidates == newly + already + skipped`)
+  trivially visible.
+
+Originated 2026-05-17 during the § 2.1 hide-sweep close;
+disproved 2026-05-17 by the post-fix run reproducing the same
+totals.
 
 ## Pointer back to the closed arc
 
