@@ -139,12 +139,23 @@ summary said), plus `BibleIndexList`, `AuthorBookSections`,
 Mechanical-dump script (option 2 from the investigation report)
 was not built; reassess if the array starts churning again.
 
-### 6. EDSG/02-editing-process.md - AuthorListItem* as canonical BaseStyle="" example (LOW) - OPEN
+### 6. EDSG/02-editing-process.md - AuthorListItem* as canonical BaseStyle="" example (LOW) - WONTFIX 2026-05-17
 
-Carried independently from the 2026-05-17 EDSG refresh.
-`AuthorListItem` (priority 19) was identified as the cleanest
-worked example of the `BaseStyle = ""` rule. Opportunistic edit
-to Stage 1 of the editing process narrative; not blocking.
+Closed as obsolete after verification. `BaseStyle = ""` is a
+universal QA-checklist rule for every approved paragraph style
+(rationale: the Word List Paragraph numbering-engine hang in
+large documents; bug is alive and Microsoft will almost
+certainly never fix it - see `EDSG/10-list-paragraph-bug.md`).
+A "canonical example" framing would misleadingly suggest the
+rule is *especially* about list-item styles.
+
+`10-list-paragraph-bug.md` already uses `AuthorListItem` as the
+running worked example through its five-step migration recipe
+(Step 0 diagnostic targets, Step 1 template, Steps 2-5
+migration). `02-editing-process.md` correctly defers via
+cross-reference. Adding a duplicate callout would split the
+worked example across two pages and weaken the single source
+of truth.
 
 ### 7. Finding 5 (ribbon nav) - umbrella OPEN (DEFERRED, WORD LIMITATION) - RECOVERED
 
