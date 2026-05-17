@@ -52,25 +52,43 @@ hand-off to the author for comments-only review.
 Original analysis and gate definitions: see prior arcs via the
 2026-05-15 carry-forward.
 
-### 2. Item 13 remaining work - built-in hide-sweep + test wiring (MEDIUM) - PARTIAL
+### 2. Item 13 remaining work - built-in hide-sweep + test wiring (MEDIUM) - CLOSED 2026-05-17
 
 Pass 1 closed 2026-05-14 (`AuditNonPaletteStyleColors` added,
 custom-style anomaly count brought to 0).
 
-Remaining work:
+**2.1 Hide-sweep wired into `WordEditingConfig` 2026-05-17.**
+Investigation found that `HideUnapprovedBuiltInStyles`
+(`basStyleInspector.bas:1459`) was already implemented and
+correct - three-property pattern (`Priority = 99`,
+`QuickStyle = False`, `UnhideWhenUsed = False`), idempotent,
+handles locked styles. The missing piece was operator
+ergonomics: the sweep relied on memory each run.
 
-- **2.1 Hide-sweep for Word built-in noise (MEDIUM).** 122+
-  built-in styles bypass the audit because they're not under
-  editorial control. After the 2026-05-15 BookHyperlink work, the
-  built-in `Hyperlink` and `FollowedHyperlink` styles also belong
-  in the sweep - neither is in use after the refactor and
-  authors must not be able to pick them from the gallery and
-  reintroduce the inheritance bug. Test 5
-  (`CountApprovedStylesInGallery`) added 2026-05-16 protects the
-  approved cohort; Test 45 (`CountUnapprovedVisibleStyles`)
-  protects the non-approved cohort; the missing piece is the
-  maintenance sweep that gets the built-ins into the
-  "properly hidden" state Test 45 enforces.
+**Operator-side verification (2026-05-17):**
+- `HideUnapprovedBuiltInStyles` run: 1 newly hidden
+  (`Default Paragraph Font`), 115 already hidden, 251 skipped
+  (locked).
+- Test 45 (`CountUnapprovedVisibleStyles`): PASS at 0.
+- `Hyperlink` direct check: `99 / False / False` - properly
+  hidden post-BookHyperlink refactor.
+- `Followed Hyperlink`: not instantiated in the document
+  (`Styles("Followed Hyperlink")` raises 5941). Word lazy-
+  instantiates this built-in; if and when it materializes, the
+  next `WordEditingConfig` run will hide it.
+
+**Lock-in change.** `WordEditingConfig` now calls
+`HideUnapprovedBuiltInStyles` between `PromoteApprovedStyles`
+and `DumpPrioritiesSorted`. Placement after `PromoteApprovedStyles`
+means the approved set is well-defined before the sweep runs;
+both are idempotent so re-runs are safe.
+
+**Follow-up (logged, not blocking):** the 251 "skipped (locked)"
+count exceeds the document's ~176-style population. Likely
+cause: `Priority = 99` reorders the Styles collection mid-`For
+Each`, re-visiting some entries. Doesn't affect correctness
+(Test 45 verifies the end state) but the report's count
+arithmetic is misleading. Open as § 11.
 
 Full prior analysis: see § 2 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
@@ -180,6 +198,23 @@ remains visible during slot-by-slot review work.
 
 Full rule and worked examples: see § 9 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
+
+### 11. HideUnapprovedBuiltInStyles - skipped-count arithmetic (LOW) - OPEN 2026-05-17
+
+The 2026-05-17 sweep run reported `skipped (locked): 251` on a
+document with ~176 styles. Likely cause: `Priority = 99` reorders
+the `ActiveDocument.Styles` collection mid-`For Each`, so some
+entries are re-visited and counted multiple times. `nHidden` and
+`nAlready` may have similar inflation.
+
+Doesn't affect correctness (Test 45 verifies end state) but the
+report's count arithmetic is misleading - operator can't trust
+"X newly hidden" as a meaningful delta. Fix candidates:
+snapshot `Styles` names into an array up front and iterate the
+array; or guard against re-visits via a Scripting Dictionary keyed
+on `NameLocal`.
+
+Originated 2026-05-17 during the § 2.1 hide-sweep close.
 
 ## Pointer back to the closed arc
 

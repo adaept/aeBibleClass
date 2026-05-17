@@ -17,6 +17,7 @@ Private m_TaxFail   As Long
 Public Sub WordEditingConfig()
     ' Add other procedure call as required
     PromoteApprovedStyles
+    HideUnapprovedBuiltInStyles
     ' Uncomment this to check priority settings
     DumpPrioritiesSorted
 End Sub
