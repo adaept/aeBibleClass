@@ -57,8 +57,6 @@ Public Function GetApprovedStyles() As Variant
                      "Footnote Reference", "BookHyperlink", "Footnote Text", "Psalms BOOK", _
                      "PsalmSuperscription", "Selah", "PsalmAcrostic", _
                      "SpeakerLabel", _
-                     "BodyTextContinuation", _
-                     "AppendixTitle", "AppendixBody", _
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
                      "AuthorSectionHead", "ParallelHeader", "ParallelText", _
@@ -243,10 +241,10 @@ End Function
 '==============================================================================
 ' RUN_TAXONOMY_STYLES / AuditOneStyle
 ' PURPOSE:
-'   Audits 49 styles via AuditOneStyle + 9 tab-stop specs via AuditStyleTabs;
-'   total 58 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
-'   Style audit buckets (49):
-'     46 fully specified (all properties verified) - BodyText, VerseText,
+'   Audits 47 styles via AuditOneStyle + 9 tab-stop specs via AuditStyleTabs;
+'   total 56 checks. Writes a structured report to rpt\StyleTaxonomyAudit.txt.
+'   Style audit buckets (47):
+'     47 fully specified (all properties verified) - BodyText, VerseText,
 '                            Heading 1, Heading 2, ContentsRef,
 '                            AuthorBookRefHeader, AuthorBookRef, CustomParaAfterH1,
 '                            DatAuthRef, Brief, Psalms BOOK, Footnote Text,
@@ -265,8 +263,10 @@ End Function
 '                            Chapter Verse marker, Verse marker
 '      0 existence-verified (bucket currently empty; reserved for future
 '                            styles awaiting DumpStyleProperties capture)
-'      3 not yet created (expected FAIL until each Define* routine runs) -
-'                            BodyTextContinuation, AppendixTitle, AppendixBody
+'      0 not yet created (bucket retired 2026-05-17; placeholders
+'                            BodyTextContinuation / AppendixTitle / AppendixBody
+'                            removed from GetApprovedStyles per
+'                            Code_review 2026-05-16.md § 16)
 '   Tab-stop audits (9):
 '      TheFooters          (1 stop at 7.2 pt, Left, Spaces)
 '      AuthorListItem      (1 stop at 36 pt, Left, Spaces)
@@ -382,7 +382,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "Selah", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "Default Paragraph Font", -16777216
     AuditOneStyle "EmphasisBlack", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", -16777216
     AuditOneStyle "EmphasisRed", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 128
-    AuditOneStyle "Words of Jesus", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "", 128
+    AuditOneStyle "Words of Jesus", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "Default Paragraph Font", 128
     AuditOneStyle "Chapter Verse marker", "Noto Sans", 5, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 42495
     AuditOneStyle "Verse marker", "Noto Sans", 8, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 7915600
 
@@ -391,12 +391,10 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' DumpStyleProperties capture (e.g. Chapter Verse marker, Verse marker
     ' pending dumps per 2026-05-11 item 1).
 
-    ' -- Not yet created - expected FAIL until each Define* routine is run ----------------------
-    Print #m_TaxFile, ""
-    Print #m_TaxFile, "-- Not yet created (expected FAIL) --"
-    AuditOneStyle "BodyTextContinuation", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "AppendixTitle", "", 0, -1, -999, -1, -999, -999, -999
-    AuditOneStyle "AppendixBody", "", 0, -1, -999, -1, -999, -999, -999
+    ' -- Not yet created bucket retired 2026-05-17 (§ 16 / Code_review 2026-05-16.md).
+    '    BodyTextContinuation / AppendixTitle / AppendixBody removed from the
+    '    approved array; Define routines for Appendix* remain in
+    '    basFixDocxRoutines.bas as dormant code if the work is ever revived.
 
     ' -- Tab stops verified (per-style explicit tab-stop validation) -----------------------------
     Print #m_TaxFile, ""

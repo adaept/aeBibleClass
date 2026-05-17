@@ -78,9 +78,11 @@ page-keyed view, run `ListApprovedStylesByBookOrder` — the live
 document is the authority, this snapshot ages.
 
 Snapshot rebuilt 2026-05-17 from `GetApprovedStyles()` in
-`basTEST_aeBibleConfig.bas`. **52 entries** in the array (48
-present in the document + 4 tracking placeholders). VerseText is
-the live verse-paragraph style since 2026-05-01.
+`basTEST_aeBibleConfig.bas`. **49 entries** in the array (48
+present in the document + 1 deliberate canary). VerseText is the
+live verse-paragraph style since 2026-05-01. The
+`BodyTextContinuation` / `AppendixTitle` / `AppendixBody`
+placeholders were retired from the approved array 2026-05-17.
 
 ### Approved styles (full list)
 
@@ -127,25 +129,20 @@ the live verse-paragraph style since 2026-05-01.
 | 39 | Selah | |
 | 40 | PsalmAcrostic | |
 | 41 | SpeakerLabel | |
-| 42 | BodyTextContinuation | not present in document — tracking placeholder |
-| 43 | AppendixTitle | not present in document — tracking placeholder |
-| 44 | AppendixBody | not present in document — tracking placeholder |
-| 45 | EmphasisBlack | |
-| 46 | EmphasisRed | |
-| 47 | Words of Jesus | |
-| 48 | AuthorSectionHead | |
-| 49 | ParallelHeader | |
-| 50 | ParallelText | |
-| 51 | Normal | last approved entry — anchor for the hide-sweep |
-| 52 | FargleBlargle | deliberate canary — confirms missing-style diagnostic |
+| 42 | EmphasisBlack | |
+| 43 | EmphasisRed | |
+| 44 | Words of Jesus | |
+| 45 | AuthorSectionHead | |
+| 46 | ParallelHeader | |
+| 47 | ParallelText | |
+| 48 | Normal | last approved entry — anchor for the hide-sweep |
+| 49 | FargleBlargle | deliberate canary — confirms missing-style diagnostic |
 
 ### Missing from document
 
-`BodyTextContinuation`, `AppendixTitle`, `AppendixBody`,
-`FargleBlargle` — in the `approved` array but not present in the
-current document; reported by `PromoteApprovedStyles` as a
-diagnostic. Kept as tracking placeholders pending decisions on
-each (create + populate, or remove from array).
+`FargleBlargle` — the deliberate canary; confirms the
+missing-style diagnostic is wired correctly. No other approved
+entries are missing as of 2026-05-17.
 
 ### Removed from the array
 
@@ -157,6 +154,14 @@ each (create + populate, or remove from array).
   migration; no longer in the approved array.
 - `AuthorQuote` — removed; front matter usage was never
   finalized.
+- `BodyTextContinuation` — removed 2026-05-17. Planned 2026-04-21
+  migration from legacy `Paragraph Continuation` (158 paragraphs)
+  was never executed; `Paragraph Continuation` remains as-is.
+- `AppendixTitle` / `AppendixBody` — removed 2026-05-17. Define
+  routines (`DefineAppendixTitleStyle`, `DefineAppendixBodyStyle`)
+  and the appendix-tagging helper remain in
+  `basFixDocxRoutines.bas` as dormant code if appendix work is
+  ever revived.
 
 ### Reserved gaps
 
@@ -214,7 +219,7 @@ from the Bible body to signal commentary.
 
 ### Anchor
 
-`Normal` (priority 51) — deliberately the last approved entry
+`Normal` (priority 48) — deliberately the last approved entry
 before the `FargleBlargle` canary. Replaced operationally by
 `BodyText` (for non-verse paragraphs) and `VerseText` (for
 verses); retained in the array as a "pin-everything-else-above"

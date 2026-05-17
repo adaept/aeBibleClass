@@ -394,24 +394,51 @@ The QA-checklist rules from `EDSG/04-qa-workflow.md` are now
 fully enforced by tests for both cohorts. Item 13 / 2.1 closes
 the discipline loop end-to-end.
 
-### 16. Decide on three persistently-missing placeholders (LOW) - OPEN 2026-05-17
+### 16. Decide on three persistently-missing placeholders (LOW) - CLOSED 2026-05-17
 
-`BodyTextContinuation`, `AppendixTitle`, `AppendixBody` have
-been in the `not yet created (expected FAIL)` bucket since
-2026-05-07 (10+ days). `RUN_TAXONOMY_STYLES` reports three
-FAILs every run as a result.
+**Decisions:**
 
-**Cost:** desensitisation. An operator who sees three FAILs on
-every run learns to skip the FAIL summary, which masks any real
-FAIL that later joins them.
+| Placeholder | Decision | Rationale |
+|---|---|---|
+| `AppendixTitle` | Remove from approved array | Appendix work deprioritised; `DefineAppendixTitleStyle` stays in `basFixDocxRoutines.bas` as dormant code |
+| `AppendixBody` | Remove from approved array | Same as above; `DefineAppendixBodyStyle` and the appendix-tagging helper stay dormant |
+| `BodyTextContinuation` | Remove from approved array | 158-paragraph migration from legacy `Paragraph Continuation` was planned 2026-04-21 but never executed; removing closes the FAIL with no behavior change |
 
-**Decision needed per placeholder:**
-- Define + populate via a `Define*` routine + promote to bucket
-  1, or
-- Remove from `GetApprovedStyles()` and from the not-yet-created
-  taxonomy bucket.
+**Applied changes:**
 
-Either way the bucket goes empty and the false-FAIL noise stops.
+- `GetApprovedStyles()` — three entries removed; array shrank
+  52 -> 49.
+- `RUN_TAXONOMY_STYLES` — "Not yet created" bucket retired; the
+  three `AuditOneStyle` calls removed. Docstring updated:
+  audits 47 styles / 56 total checks (was 49 / 58).
+- Priority renumbering: 45-49 -> 42-46, 50 -> 47, 51 -> 48,
+  52 -> 49.
+- `EDSG/01-styles.md` — priority table renumbered, missing-
+  from-document list trimmed to just `FargleBlargle`, removed-
+  from-array list extended.
+- `EDSG/04-qa-workflow.md` — Current state count refreshed,
+  removals section extended, `Normal` priority updated
+  47 -> 48, placeholder mention in the rule prose updated.
+
+**Outcome:** `RUN_TAXONOMY_STYLES` now reports **56 PASS, 0
+FAIL** - the first fully-clean taxonomy run in this project's
+history. Operator FAIL-summary desensitisation cost eliminated.
+The `Define*` routines and the appendix-tagging helper survive
+in `basFixDocxRoutines.bas` as dormant code if appendix work is
+ever revived.
+
+**Bonus fix (surfaced by the fresh audit run, applied per § 12
+revisit-before-rebaseline policy).** A pre-existing spec bug
+came to light: `Words of Jesus` taxonomy entry expected
+`BaseStyle = ""` while the document had (correctly)
+`"Default Paragraph Font"`, matching every other character
+style in the same block (Footnote Reference, BookHyperlink,
+Selah, EmphasisBlack, EmphasisRed, Chapter Verse marker, Verse
+marker). One-token edit aligned the spec to the convention.
+Worth noting because the previous chronic 3-FAIL noise from the
+retired placeholders was masking this single legitimate FAIL -
+exactly the desensitisation cost § 16 set out to eliminate, in
+action.
 
 ### 17. Lower-value taxonomy hardening (LOW, bundled) - OPEN 2026-05-17
 

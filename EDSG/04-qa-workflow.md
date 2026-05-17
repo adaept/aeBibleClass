@@ -59,9 +59,11 @@ approved style := paragraph or character style with Priority <> 99
 mechanism. It first sets every paragraph/character style to priority
 99, then assigns 1, 2, 3, ... to the names in the `approved` array
 (in array order). Names in the array that are not present in the
-document are reported as missing — preserved as a tracking
-mechanism (e.g., `BodyTextContinuation`, `AppendixTitle`,
-`AppendixBody`) plus the deliberate `FargleBlargle` canary.
+document are reported as missing — only the deliberate
+`FargleBlargle` canary is currently absent. Earlier placeholder
+entries (`BodyTextContinuation`, `AppendixTitle`, `AppendixBody`)
+were retired from the approved array 2026-05-17 to end
+persistent false FAILs in `RUN_TAXONOMY_STYLES`.
 
 After running `WordEditingConfig`:
 
@@ -101,10 +103,11 @@ recorded inline in [01-styles](01-styles.md).
 
 ## Current state — 2026-05-17 (latest)
 
-- **`GetApprovedStyles()` array**: 52 entries. Of those, 48 are
-  present in the document; 4 are tracking placeholders
-  (`BodyTextContinuation`, `AppendixTitle`, `AppendixBody`, and
-  the deliberate `FargleBlargle` canary).
+- **`GetApprovedStyles()` array**: 49 entries. Of those, 48 are
+  present in the document; 1 is the deliberate `FargleBlargle`
+  canary that confirms the missing-style diagnostic is wired.
+  Three earlier placeholders (`BodyTextContinuation`,
+  `AppendixTitle`, `AppendixBody`) were retired 2026-05-17.
 - **`VerseText` is the live verse paragraph style** since
   2026-05-01 (priority 33). `BodyText` is now the residual
   non-verse paragraph style (front matter, chapter intros,
@@ -118,16 +121,22 @@ recorded inline in [01-styles](01-styles.md).
   - `BibleIndexList` (16), `AuthorBookSections` (24),
     `ParallelHeader` (49), `ParallelText` (50) — promoted
     during the same period.
-  - `SpeakerLabel` (41), `BodyTextContinuation` (42),
-    `AppendixTitle` (43), `AppendixBody` (44) — filled the
-    former 38–41 gap.
+  - `SpeakerLabel` (41) — filled the former 38–41 gap. The
+    other placeholders that briefly filled 42–44 were retired
+    2026-05-17 (see § Removals).
 - **Removals since the 2026-04-26 snapshot**:
   - `BodyTextIndent` — removed during the VerseText migration.
   - `AuthorQuote` — removed; front matter usage never
     finalized.
   - `BookIntro` — removed; decision deferred on define-and-
     promote vs close.
-- **`Normal`** — priority 51 (was 47), last approved entry
+  - `BodyTextContinuation` / `AppendixTitle` / `AppendixBody` —
+    retired 2026-05-17 from the approved array. Persistent
+    placeholders that produced false FAILs on every
+    `RUN_TAXONOMY_STYLES` run; the Appendix `Define*` routines
+    remain in `basFixDocxRoutines.bas` as dormant code if the
+    appendix work is ever revived.
+- **`Normal`** — priority 48 (was 47), last approved entry
   before the `FargleBlargle` canary. Operational role replaced
   by `BodyText` and `VerseText`; kept as the
   "pin-everything-else-above" anchor.
