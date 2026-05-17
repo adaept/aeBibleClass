@@ -1,4 +1,13 @@
-# Code review - 2026-05-15 carry-forward
+# Code review - 2026-05-15 carry-forward (CLOSED)
+
+**Closed for new work 2026-05-17.** Open items carried forward to
+[`rvw/Code_review 2026-05-16.md`](Code_review%202026-05-16.md).
+This file remains the authoritative dated history for everything
+between 2026-05-15 and 2026-05-16, including the Test 5 add, the
+LineSpacingRule prescriptive pass closure, the Slot 5 retire /
+Slot 6 upgrade arc, and the Test 22 split into 22 / 38 / 74.
+
+---
 
 This file opens a fresh review arc on 2026-05-15. The previous arc
 [`rvw/Code_review 2026-05-14.md`](Code_review%202026-05-14.md) is now
@@ -657,6 +666,13 @@ choice mitigates this); cannot be auto-derived from code in VBA
 
 Originated: 2026-05-16 follow-up to the unified First-hit
 emission (this file § "operator-verification snapshot" trail).
+
+**Progress snapshot (carried into 2026-05-16 arc):** of 74
+slots, 14 have descriptions populated in
+`GetTestDescription`: 1, 2, 3, 4, 5, 6, 16, 17, 18, 19, 22, 28,
+38, 74. The remaining ~60 slots fall through `Case 7 To 74` to
+the empty-string default. Authoring continues opportunistically
+as each slot is touched.
 
 ### 11. Slot 5 retired + Slot 6 upgraded - empty-paragraph discipline tightened (2026-05-16)
 
