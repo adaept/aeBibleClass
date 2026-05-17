@@ -910,7 +910,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 8
         GetTestDescription = "Rule: No digit-followed-by-space inside Verse marker style (catches verse numbers with a trailing space before the verse text) - CountStyleWithNumberAndSpace should return 0"
     Case 9
-        GetTestDescription = "Detects '. (' sequences - a legacy footnote artifact; the expected count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline"
+        GetTestDescription = "Detects '. (' sequences - a legacy footnote artifact; the expected Count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline"
     Case 10
         GetTestDescription = "Rule: Non-breaking spaces (^s) in the document - baseline 1 (intentional usage); growth indicates accidental insertion - CountNonBreakingSpaces should match the expected baseline"
     Case 11
@@ -940,13 +940,13 @@ Public Function GetTestDescription(num As Long) As String
     Case 23
         GetTestDescription = "Rule: No Heading 2 paragraph is preceded by an empty paragraph (H2 supplies its own SpaceBefore; preceding empties are accidental scaffolding) - CountDeleteEmptyParagraphsBeforeHeading2 should return 0"
     Case 24
-        GetTestDescription = "Total count of footnote references; drift from the expected baseline indicates added/removed footnotes that need review - CountFootnoteReferences should match the expected baseline"
+        GetTestDescription = "Total Count of footnote references; drift from the expected baseline indicates added/removed footnotes that need review - CountFootnoteReferences should match the expected baseline"
     Case 25
         GetTestDescription = "Rule: Footnote reference marks share exactly one color across the document (catches accidental color drift on individual refs) - CountFootnoteReferenceColors should return 1"
     Case 26
         GetTestDescription = "Rule: No primary header in any section is empty (every section must carry its expected header content) - CheckAllHeaders(Empty) should return 0"
     Case 27
-        GetTestDescription = "Count of populated primary headers - matches the expected populated-section count; drift indicates added/removed sections - CheckAllHeaders(NotEmpty) should match the expected baseline"
+        GetTestDescription = "Count of populated primary headers - matches the expected populated-section Count; drift indicates added/removed sections - CheckAllHeaders(NotEmpty) should match the expected baseline"
     Case 28
         GetTestDescription = "Rule: All headers with no text should have a tab - CountTabFollowedByParagraphMarkInHeaders should match the expected baseline"
     Case 29
@@ -990,11 +990,11 @@ Public Function GetTestDescription(num As Long) As String
     Case 48
         GetTestDescription = "Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0"
     Case 49
-        GetTestDescription = "Writes rpt/Style Usage Distribution.txt and returns the count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline"
+        GetTestDescription = "Writes rpt/Style Usage Distribution.txt and returns the Count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline"
     Case 50
-        GetTestDescription = "Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section count - SummarizeHeaderFooterAuditToFile should match the expected baseline"
+        GetTestDescription = "Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section Count - SummarizeHeaderFooterAuditToFile should match the expected baseline"
     Case 51
-        GetTestDescription = "Applies KeepWithNext to the Heading 2 style and per-paragraph WidowControl to every H2 paragraph; returns the count of H2 paragraphs touched - CountAndCreateDefinitionForH2 should match the expected baseline"
+        GetTestDescription = "Applies KeepWithNext to the Heading 2 style and per-paragraph WidowControl to every H2 paragraph; returns the Count of H2 paragraphs touched - CountAndCreateDefinitionForH2 should match the expected baseline"
     Case 52
         GetTestDescription = "Rule: No instances of the contraction 'wouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
     Case 53

@@ -18,14 +18,23 @@ PASS              Copy ()       Test = 5      0             0             TestSl
 PASS              Copy ()       Test = 6      0             0             CountConsecutiveEmptyParagraphsNotPrecedingBreak
   Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0
 PASS              Copy ()       Test = 7      0             0             CountStyleWithSpaceAndNumber
+  Rule: No space-before-digit inside Chapter Verse marker style (catches '1: 1' typos where the verse number is preceded by an extra space) - CountStyleWithSpaceAndNumber should return 0
 PASS              Copy ()       Test = 8      0             0             CountStyleWithNumberAndSpace
+  Rule: No digit-followed-by-space inside Verse marker style (catches verse numbers with a trailing space before the verse text) - CountStyleWithNumberAndSpace should return 0
 PASS              Copy ()       Test = 9      7             7             CountPeriodSpaceLeftParenthesis
+  Detects '. (' sequences - a legacy footnote artifact; the expected count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline
 PASS              Copy ()       Test = 10     1             1             CountNonBreakingSpaces
+  Rule: Non-breaking spaces (^s) in the document - baseline 1 (intentional usage); growth indicates accidental insertion - CountNonBreakingSpaces should match the expected baseline
 PASS              Copy ()       Test = 11     0             0             CountFindNumberDashNumber
+  Rule: No digit-dash-digit patterns in body text (verse ranges like '12-34' should use en-dash or be spelled differently) - CountFindNumberDashNumber should return 0
 PASS              Copy ()       Test = 12     0             0             CountNumberDashNumberInFootnotes
+  Rule: No digit-dash-digit patterns in footnote text (same rule as Test 11, applied to footnotes) - CountNumberDashNumberInFootnotes should return 0
 PASS              Copy ()       Test = 13     0             0             CountEmptyParasWithNoThemeColor
+  Rule: Empty paragraphs must not carry a theme color (catches paragraph marks formatted with an inherited theme color from prior content) - CountEmptyParasWithNoThemeColor should return 0
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
+  Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
+  Rule: No section has 'Different First Page' set in PageSetup - keeps headers/footers uniform across all sections - CountSectionsWithDifferentFirstPage should return 0
 PASS              Copy ()       Test = 16     33822         33822         CountTotalParagraphs
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
@@ -35,79 +44,129 @@ PASS              Copy ()       Test = 18     66            66            CountH
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
   Rule: No empty paragraphs after Heading 2, it is only used for each Book Chapter - CountEmptyParasAfterH2 should return 0
 PASS              Copy ()       Test = 20     0             0             CountFootnotesFollowedByDigit
+  Rule: No footnote reference is immediately followed by a digit (catches malformed numbering or paste errors where verse numbers run into footnote markers) - CountFootnotesFollowedByDigit should return 0
 PASS              Copy ()       Test = 21     0             0             CountNotSpacesAfterFootnoteReferences
+  Rule: Every footnote reference is followed by a space character (the only allowed non-space exception is end-of-paragraph) - CountNotSpacesAfterFootnoteReferences should return 0
 PASS              Copy ()       Test = 22     0             0             CountWhitespacePaddedEmptyParagraphs
   Rule: Whitespace-padded empty paras (spaces around the pilcrow) - CountWhitespacePaddedEmptyParagraphs should match the expected baseline
 PASS              Copy ()       Test = 23     0             0             CountDeleteEmptyParagraphsBeforeHeading2
+  Rule: No Heading 2 paragraph is preceded by an empty paragraph (H2 supplies its own SpaceBefore; preceding empties are accidental scaffolding) - CountDeleteEmptyParagraphsBeforeHeading2 should return 0
 PASS              Copy ()       Test = 24     1000          1000          CountFootnoteReferences
+  Total count of footnote references; drift from the expected baseline indicates added/removed footnotes that need review - CountFootnoteReferences should match the expected baseline
 PASS              Copy ()       Test = 25     1             1             CountFootnoteReferenceColors
+  Rule: Footnote reference marks share exactly one color across the document (catches accidental color drift on individual refs) - CountFootnoteReferenceColors should return 1
 PASS              Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
+  Rule: No primary header in any section is empty (every section must carry its expected header content) - CheckAllHeaders(Empty) should return 0
 PASS              Copy ()       Test = 27     148           148           CheckAllHeaders(NotEmpty)
+  Count of populated primary headers - matches the expected populated-section count; drift indicates added/removed sections - CheckAllHeaders(NotEmpty) should match the expected baseline
 PASS              Copy ()       Test = 28     82            82            CountTabFollowedByParagraphMarkInHeaders
   Rule: All headers with no text should have a tab - CountTabFollowedByParagraphMarkInHeaders should match the expected baseline
 FAIL!!!!          Copy ()       Test = 29     66            70            CountParagraphsWithoutTabInHeaders
   >> First hit: Section 10: GENESIS
+  Count of header paragraphs that lack a tab character - tolerated section/title-only headers without the tab-positioned page number - CountParagraphsWithoutTabInHeaders should match the expected baseline
 PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
+  Count of primary-header paragraphs whose style is NOT TheHeaders - tolerated exceptions; the source comment claiming expected 0 is stale - CountHeaderStyleUsage should match the expected baseline
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
+  Rule: Every primary header has exactly one paragraph mark (function early-exits via MsgBox on any section with more than 1) - CountParagraphMarksPerHeaderSection should return 1
 FAIL!!!!          Copy ()       Test = 32     178           982           CountLinefeed
   >> First hit: First match: 
+  Total manual linefeeds (^l) in body text - paired with Test 33 to verify all are space-preceded - CountLinefeed should match the expected baseline
 FAIL!!!!          Copy ()       Test = 33     178           982           CountLinefeed(" ")
   >> First hit: First match:  
+  Subset of body linefeeds preceded by a space - must equal Test 32 to confirm every linefeed has the required leading space - CountLinefeed(space) should match the expected baseline
 FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
   >> First hit: (no hint provided by test function)
+  Total manual line breaks (Chr(11)) inside footnote text - paired with Test 35 to verify all are space-preceded - CountManualLineBreaksAndWithSpace should match the expected baseline
 FAIL!!!!          Copy ()       Test = 35     0             117           CountManualLineBreaksAndWithSpace(" ")
   >> First hit: (no hint provided by test function)
+  Subset of footnote line breaks preceded by a space - must equal Test 34 to confirm every footnote break has the required leading space - CountManualLineBreaksAndWithSpace(space) should match the expected baseline
 FAIL!!!!          Copy ()       Test = 36     3             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
   >> First hit: (no hint provided by test function)
+  Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0
 FAIL!!!!          Copy ()       Test = 37     33            19            CountDocTabOnlyParagraphs
   >> First hit: (no hint provided by test function)
+  Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline
 PASS              Copy ()       Test = 38     216           216           CountEmptyParagraphs
   Rule: Bare empty paragraphs (pilcrow only) at the accepted baseline - CountEmptyParagraphs should match the expected baseline
 PASS              Copy ()       Test = 39     0             0             CountParagraphMarks_ArialBlack
+  Rule: No paragraph mark carries Arial Black 8pt + black/automatic font (paragraph marks must not inherit body-text formatting from surrounding runs) - CountParagraphMarks_ArialBlack should return 0
 PASS              Copy ()       Test = 40     0             0             CountParagraphMarks_ArialBlackDarkRed
+  Rule: No paragraph mark carries Arial Black 8pt + DarkRed font (catches a specific stray-formatting pattern that escaped the EmphasisRed character style) - CountParagraphMarks_ArialBlackDarkRed should return 0
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
+  Rule: Any run styled Words of Jesus with Arial Black 8pt DarkRed must also use the EmphasisRed character style (catches red-formatted text that bypassed the SSOT character style) - Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed should return 0
 SKIP!!!!          Copy ()       Test = 42     -1            0             CountBoldFootnotesWordLevel
+  Rule: No word in any Footnote Text paragraph is bold (footnotes use plain formatting; bold belongs in body text only) - CountBoldFootnotesWordLevel should return 0
 PASS              Copy ()       Test = 43     0             0             CountParagraphMarksWithDarkRedFormatting
+  Rule: No paragraph mark carries DarkRed color (broader version of Test 40 - catches DarkRed pilcrows at any font/size) - CountParagraphMarksWithDarkRedFormatting should return 0
 PASS              Copy ()       Test = 44     0             0             AuditNonPaletteStyleColors
-FAIL!!!!          Copy ()       Test = 45     1             0             CountUnapprovedVisibleStyles
-  >> First hit: (no hint provided by test function)
+  Rule: No custom or linked style uses a hand-typed off-palette font color (must be wdColorAutomatic or a defined-palette color; theme-color use is also flagged) - AuditNonPaletteStyleColors should return 0
+PASS              Copy ()       Test = 45     0             0             CountUnapprovedVisibleStyles
+  Rule: Every visible style is either in the approved-styles SSOT or properly hidden (Priority=99 + QuickStyle=False + UnhideWhenUsed=False) - CountUnapprovedVisibleStyles should return 0
 PASS              Copy ()       Test = 46     0             0             AuditBookHyperlinkStyling
+  Rule: Every run styled BookHyperlink has the exact expected font (Carlito 9pt + DarkBlue + single underline); the one-form hyperlink rule integrity check - AuditBookHyperlinkStyling should return 0
 FAIL!!!!          Copy ()       Test = 47     0             3             CountTabOnlyParagraphs("Footer")
   >> First hit: (no hint provided by test function)
+  Count of footer paragraphs containing only a tab character - intentional tab-only spacers for footer alignment - CountTabOnlyParagraphs(Footer) should match the expected baseline
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
+  Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0
 FAIL!!!!          Copy ()       Test = 49     42            15            CountAuditStyles_ToFile
   >> First hit: 42 styles - see rpt\Style Usage Distribution.txt
+  Writes rpt/Style Usage Distribution.txt and returns the count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline
 FAIL!!!!          Copy ()       Test = 50     -1            147           SummarizeHeaderFooterAuditToFile
   >> First hit: (no hint provided by test function)
+  Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section count - SummarizeHeaderFooterAuditToFile should match the expected baseline
 SKIP!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
+  Applies KeepWithNext to the Heading 2 style and per-paragraph WidowControl to every H2 paragraph; returns the count of H2 paragraphs touched - CountAndCreateDefinitionForH2 should match the expected baseline
 PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction("wouldn’t")
+  Rule: No instances of the contraction 'wouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 53     0             0             U+2019 CountContraction("isn’t")
+  Rule: No instances of the contraction 'isn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 54     0             0             U+2019 CountContraction("let’s")
+  Rule: No instances of the contraction 'let's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 FAIL!!!!          Copy ()       Test = 55     16            0             U+2019 CountContraction("i’m")
   >> First hit: 3135 She said to her father, “Do not let my lord be angry th
+  Rule: No instances of the contraction 'i'm' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 56     0             0             U+2019 CountContraction("hasn’t")
+  Rule: No instances of the contraction 'hasn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 57     0             0             U+2019 CountContraction("didn’t")
+  Rule: No instances of the contraction 'didn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 58     0             0             U+2019 CountContraction("don’t")
+  Rule: No instances of the contraction 'don't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 59     0             0             U+2019 CountContraction("haven’t")
+  Rule: No instances of the contraction 'haven't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 60     0             0             U+2019 CountContraction("weren’t")
+  Rule: No instances of the contraction 'weren't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 61     0             0             U+2019 CountContraction("aren’t")
+  Rule: No instances of the contraction 'aren't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 62     0             0             U+2019 CountContraction("can’t")
+  Rule: No instances of the contraction 'can't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 63     0             0             U+2019 CountContraction("shouldn’t")
+  Rule: No instances of the contraction 'shouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 FAIL!!!!          Copy ()       Test = 64     1             0             U+2019 CountContraction("it’s")
   >> First hit: 827 He who searches the hearts knows what is on the Spirit’s
+  Rule: No instances of the contraction 'it's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 65     1             1             U+2019 CountContraction("spirit’s")
+  Rule: No instances of the contraction 'spirit's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 66     0             0             U+0020,U+2019, CountContraction([" ’"])
+  Rule: No regular space immediately before a closing single quote U+2019 (space + curly apostrophe) - the expected baseline holds one known tolerated occurrence; growth indicates typographic regression - CountContraction should match the expected baseline
 PASS              Copy ()       Test = 67     0             0             U+0020,U+201D, CountContraction([" ”"])
+  Rule: No regular space immediately before a closing double quote U+201D (causes a visible gap between text and the quote glyph) - CountContraction should return 0
 PASS              Copy ()       Test = 68     0             0             U+202F,U+2019, CountContraction([" ’"])
+  Rule: No narrow no-break space U+202F immediately before a closing single quote U+2019 (this NNBSP+quote sequence is a known paste artifact) - CountContraction should return 0
 PASS              Copy ()       Test = 69     0             0             U+202F,U+201D, CountContraction([" ”"])
+  Rule: No narrow no-break space U+202F immediately before a closing double quote U+201D (mirror of Test 68 for double quotes) - CountContraction should return 0
 FAIL!!!!          Copy ()       Test = 70     73            0             U+201C,U+2018,U+201C CountContraction(["“‘“"])
   >> First hit: 68 “‘“Yet I will leave a remnant, in that you will have some
+  Rule: No open-double + open-single + open-double quote triplet U+201C U+2018 U+201C (flags collisions of nested opening quotes that need proper spacing or glyph substitution) - CountContraction should return 0
 FAIL!!!!          Copy ()       Test = 71     15            0             U+201D,U+2019,U+201D CountContraction(["”’”"])
   >> First hit: 1112 You will know that I am God, for you have not walked in
+  Rule: No close-double + close-single + close-double quote triplet U+201D U+2019 U+201D (mirror of Test 70 for the closing side of nested quotes) - CountContraction should return 0
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
+  Sanity: At least one left-aligned paragraph exists between adjusted printed pages 18-931 (the body-content page range) - returns 1 if body content is present, 0 if missing; OneVersePerPara branch only - HasLeftAlignedParagraph should return 1
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 99.67 seconds
-[2026-05-17 00:52:59] Completed
+  Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0
+The Total Runtime: 92.29 seconds
+[2026-05-17 11:52:12] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
