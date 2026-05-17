@@ -77,89 +77,93 @@ Priority order from `WordEditingConfig` (which runs
 page-keyed view, run `ListApprovedStylesByBookOrder` — the live
 document is the authority, this snapshot ages.
 
-Latest run (2026-04-29): **44 approved styles succeeded**, ~4 sec.
+Snapshot rebuilt 2026-05-17 from `GetApprovedStyles()` in
+`basTEST_aeBibleConfig.bas`. **52 entries** in the array (48
+present in the document + 4 tracking placeholders). VerseText is
+the live verse-paragraph style since 2026-05-01.
 
-### Validated (priorities 1–36)
+### Approved styles (full list)
 
-| Prio | Style |
-|---:|---|
-| 1 | TheHeaders |
-| 2 | BodyText |
-| 3 | TheFooters |
-| 4 | FrontPageTopLine |
-| 5 | TitleEyebrow |
-| 6 | Title |
-| 7 | TitleVersion |
-| 8 | FrontPageBodyText |
-| 9 | BodyTextTopLineCPBB |
-| 10 | Acknowledgments |
-| 11 | AuthorBodyText |
-| 12 | Contents |
-| 13 | ContentsRef |
-| 14 | BibleIndexEyebrow |
-| 15 | BibleIndex |
-| 16 | Introduction |
-| 17 | TitleOnePage |
-| 18 | AuthorListItem |
-| 19 | AuthorListItemBody |
-| 20 | AuthorListItemTab |
-| 21 | AuthorBookRefHeader |
-| 22 | AuthorBookRef |
-| 23 | CenterSubText |
-| 24 | Heading 1 |
-| 25 | CustomParaAfterH1 |
-| 26 | Brief |
-| 27 | DatAuthRef |
-| 28 | Heading 2 |
-| 29 | Chapter Verse marker |
-| 30 | Verse marker |
-| 31 | Footnote Reference |
-| 32 | Footnote Text |
-| 33 | Psalms BOOK |
-| 34 | PsalmSuperscription |
-| 35 | Selah |
-| 36 | PsalmAcrostic |
-
-### Pending re-validation (priorities 37+)
-
-Order inherited from earlier passes; will be re-walked.
-
-| Prio | Style |
-|---:|---|
-| 37 | SpeakerLabel |
-| 38 | BodyTextIndent |
-| 43 | EmphasisBlack |
-| 44 | EmphasisRed |
-| 45 | Words of Jesus |
-| 46 | AuthorSectionHead |
-| 47 | AuthorQuote |
-| 48 | Normal |
-
-### Reserved gaps
-
-Priorities 39–42 are reserved for future insertions without
-wholesale renumbering. (Gap shifted +1 on 2026-04-29 when
-`SpeakerLabel` was added at priority 37.) (Earlier "gap at 17" was not a deliberate
-reservation; it was a `TitleOnePage` duplicate in the array,
-fixed 2026-04-26 — `TitleOnePage` now correctly holds 17.)
+| Prio | Style | Notes |
+|---:|---|---|
+| 1 | TheHeaders | |
+| 2 | BodyText | residual non-verse paragraph (front matter, chapter intros) |
+| 3 | TheFooters | |
+| 4 | FrontPageTopLine | |
+| 5 | TitleEyebrow | |
+| 6 | Title | |
+| 7 | TitleVersion | |
+| 8 | FrontPageBodyText | |
+| 9 | BodyTextTopLineCPBB | |
+| 10 | Acknowledgments | |
+| 11 | AuthorBodyText | |
+| 12 | Contents | |
+| 13 | ContentsRef | |
+| 14 | BibleIndexEyebrow | |
+| 15 | BibleIndex | |
+| 16 | BibleIndexList | |
+| 17 | Introduction | |
+| 18 | TitleOnePage | |
+| 19 | AuthorListItem | canonical `BaseStyle = ""` example |
+| 20 | AuthorListItemBody | |
+| 21 | AuthorListItemTab | |
+| 22 | AuthorBookRefHeader | |
+| 23 | AuthorBookRef | |
+| 24 | AuthorBookSections | |
+| 25 | CenterSubText | |
+| 26 | Heading 1 | |
+| 27 | CustomParaAfterH1 | LineSpacing fixed to Single 2026-05-16 |
+| 28 | Brief | |
+| 29 | DatAuthRef | |
+| 30 | Heading 2 | |
+| 31 | Chapter Verse marker | |
+| 32 | Verse marker | |
+| 33 | **VerseText** | **primary verse paragraph style** |
+| 34 | Footnote Reference | |
+| 35 | BookHyperlink | one-form hyperlink rule (2026-05-15) |
+| 36 | Footnote Text | `LineSpacingRule = Exactly 8` known exception |
+| 37 | Psalms BOOK | |
+| 38 | PsalmSuperscription | |
+| 39 | Selah | |
+| 40 | PsalmAcrostic | |
+| 41 | SpeakerLabel | |
+| 42 | BodyTextContinuation | not present in document — tracking placeholder |
+| 43 | AppendixTitle | not present in document — tracking placeholder |
+| 44 | AppendixBody | not present in document — tracking placeholder |
+| 45 | EmphasisBlack | |
+| 46 | EmphasisRed | |
+| 47 | Words of Jesus | |
+| 48 | AuthorSectionHead | |
+| 49 | ParallelHeader | |
+| 50 | ParallelText | |
+| 51 | Normal | last approved entry — anchor for the hide-sweep |
+| 52 | FargleBlargle | deliberate canary — confirms missing-style diagnostic |
 
 ### Missing from document
 
-The following are in the `approved` array but not present in the
+`BodyTextContinuation`, `AppendixTitle`, `AppendixBody`,
+`FargleBlargle` — in the `approved` array but not present in the
 current document; reported by `PromoteApprovedStyles` as a
-diagnostic. Kept in the array as tracking placeholders:
+diagnostic. Kept as tracking placeholders pending decisions on
+each (create + populate, or remove from array).
 
-- `BodyTextContinuation`
-- `BookIntro`
-- `AppendixTitle`
-- `AppendixBody`
-- `FargleBlargle` (deliberate canary — confirms the missing-style
-  diagnostic is wired correctly)
+### Removed from the array
 
-`Lamentations` was previously listed; **removed from the array**
-on 2026-04-26 (book content standardized on `BodyText` for now).
-The orphan `style_Lamentations.txt` was auto-cleaned by the
-`DumpAllApprovedStyles` orphan prompt.
+- `Lamentations` — removed 2026-04-26 (book content standardized
+  on `BodyText`). Orphan `style_Lamentations.txt` auto-cleaned.
+- `BookIntro` — removed; pending decision on whether to define
+  and promote, or close as not needed.
+- `BodyTextIndent` — removed during the 2026-05-01 VerseText
+  migration; no longer in the approved array.
+- `AuthorQuote` — removed; front matter usage was never
+  finalized.
+
+### Reserved gaps
+
+None as of 2026-05-17. The prior gap at 39–42 was filled by
+`SpeakerLabel`, `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody`. Future insertions follow at the next free
+priority.
 
 ## Style categories
 
@@ -180,12 +184,14 @@ Notable members: `FrontPageTopLine`, `TitleEyebrow`, `Title`,
 `ListItem`, `ListItemBody`, `ListItemTab`,
 `AuthorBookRefHeader`, `AuthorBookRef`, `CenterSubText`.
 
-### Body text (priorities 24+)
+### Body text (priorities 26+)
 
-`Heading 1`, `Heading 2`, `BodyText`, `BodyTextIndent`,
-`CustomParaAfterH1`, `DatAuthRef`, `Brief`. Verse-level styles:
-`Chapter Verse marker`, `Verse marker`, `Words of Jesus`,
-`EmphasisBlack`, `EmphasisRed`.
+`Heading 1`, `Heading 2`, `BodyText` (residual non-verse
+paragraphs), `VerseText` (the verse paragraph style since
+2026-05-01), `CustomParaAfterH1`, `DatAuthRef`, `Brief`.
+Verse-level character styles: `Chapter Verse marker`,
+`Verse marker`, `Words of Jesus`, `EmphasisBlack`, `EmphasisRed`,
+`BookHyperlink`.
 
 ### Special book treatments
 
@@ -195,9 +201,6 @@ Notable members: `FrontPageTopLine`, `TitleEyebrow`, `Title`,
 - `Selah` — the Hebrew musical / liturgical interjection.
 - `PsalmAcrostic` — Hebrew-letter section markers in acrostic
   Psalms (notably Psalm 119).
-- `Lamentation` (singular) is audited via `AuditOneStyle` but
-  not currently in the promoted approved array; revisit when its
-  role is decided.
 
 ### Footnotes
 
@@ -206,14 +209,16 @@ Notable members: `FrontPageTopLine`, `TitleEyebrow`, `Title`,
 ### Author commentary
 
 `AuthorBodyText`, `AuthorBookRefHeader`, `AuthorBookRef`,
-`AuthorSectionHead`, `AuthorQuote`. Distinct font family from the
-Bible body to signal commentary.
+`AuthorBookSections`, `AuthorSectionHead`. Distinct font family
+from the Bible body to signal commentary.
 
 ### Anchor
 
-`Normal` (priority 47) — deliberately the last entry. Replaced
-operationally by `BodyText`; retained in the array as a
-"pin-everything-else-above" anchor.
+`Normal` (priority 51) — deliberately the last approved entry
+before the `FargleBlargle` canary. Replaced operationally by
+`BodyText` (for non-verse paragraphs) and `VerseText` (for
+verses); retained in the array as a "pin-everything-else-above"
+anchor.
 
 ## QA checklist for every approved style
 

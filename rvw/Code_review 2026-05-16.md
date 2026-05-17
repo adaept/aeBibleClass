@@ -111,31 +111,57 @@ by being a callout in `EDSG/01-styles.md`.
 Full per-style decisions list: see § 4 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
 
-### 5. EDSG documentation refresh - VerseText-aware (LOW) - RECOVERED
+### 5. EDSG documentation refresh - VerseText-aware (LOW) - CLOSED 2026-05-17
 
-`VerseText` has been the live verse-paragraph style since
-2026-05-01. EDSG narrative on several pages still references the
-pre-VerseText state. Opportunistic refresh; not blocking.
+Investigation surfaced wider drift than the original carry-forward
+summary suggested: `GetApprovedStyles()` had grown from ~44 to 52
+entries, with VerseText at priority 33 (not 31 as the prior
+summary said), plus `BibleIndexList`, `AuthorBookSections`,
+`BookHyperlink`, `ParallelHeader`, `ParallelText`,
+`SpeakerLabel`, `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody` all added; `BodyTextIndent`, `AuthorQuote`,
+`BookIntro` removed.
 
-Full page-by-page list: see § 5 in
-[`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
+**Refreshed (one-shot rebuild from the SSOT in
+`basTEST_aeBibleConfig.bas`):**
 
-### 6. Finding 5 (ribbon nav) - umbrella OPEN (DEFERRED, WORD LIMITATION) - RECOVERED
+- `EDSG/01-styles.md` — priority table rebuilt as a single
+  unified 52-row table with notes column; "Pending re-validation"
+  / "Reserved gaps" framing retired (gaps were filled); category
+  prose updated (`Body text`, `Author commentary`, `Anchor`,
+  `Special book treatments`).
+- `EDSG/04-qa-workflow.md` — "Current state" rewritten and dated
+  2026-05-17; reflects 52-entry array, lists additions and
+  removals since the 2026-04-26 snapshot.
+- `EDSG/06-i18n.md` — `VerseText` added as the primary
+  translation target; `BodyTextIndent` line removed.
+
+Mechanical-dump script (option 2 from the investigation report)
+was not built; reassess if the array starts churning again.
+
+### 6. EDSG/02-editing-process.md - AuthorListItem* as canonical BaseStyle="" example (LOW) - OPEN
+
+Carried independently from the 2026-05-17 EDSG refresh.
+`AuthorListItem` (priority 19) was identified as the cleanest
+worked example of the `BaseStyle = ""` rule. Opportunistic edit
+to Stage 1 of the editing process narrative; not blocking.
+
+### 7. Finding 5 (ribbon nav) - umbrella OPEN (DEFERRED, WORD LIMITATION) - RECOVERED
 
 Word-side limitation; no action available. Remains in the
 register for awareness.
 
-### 7. SoftHyphenSweep_FootnotesOnly sister routine (DEFERRED)
+### 8. SoftHyphenSweep_FootnotesOnly sister routine (DEFERRED)
 
 Surfaced during the 2026-05-08 SHA build; waiting on a footnote-
 specific trigger before implementation.
 
-### 8. SHA_ReplaceHard i18n consideration (FUTURE)
+### 9. SHA_ReplaceHard i18n consideration (FUTURE)
 
 Speculative; revisit when a non-English target translation
 materialises.
 
-### 9. Architecture rule - class encapsulation + module/class as casual-coder safety boundary (RULE, 2026-05-15)
+### 10. Architecture rule - class encapsulation + module/class as casual-coder safety boundary (RULE, 2026-05-15)
 
 Codified as a feedback memory and documented in the 2026-05-15
 arc. Standing rule, not an action item - listed here so it

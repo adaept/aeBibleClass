@@ -60,9 +60,8 @@ mechanism. It first sets every paragraph/character style to priority
 99, then assigns 1, 2, 3, ... to the names in the `approved` array
 (in array order). Names in the array that are not present in the
 document are reported as missing — preserved as a tracking
-mechanism (e.g., `BodyTextContinuation`, `BookIntro`,
-`AppendixTitle`, `AppendixBody`) plus the deliberate `FargleBlargle`
-canary.
+mechanism (e.g., `BodyTextContinuation`, `AppendixTitle`,
+`AppendixBody`) plus the deliberate `FargleBlargle` canary.
 
 After running `WordEditingConfig`:
 
@@ -100,40 +99,48 @@ recorded inline in [01-styles](01-styles.md).
 > [10-list-paragraph-bug](10-list-paragraph-bug.md) for symptom,
 > cause, common bad advice, and the all-VBA migration recipe.
 
-## Current state — 2026-04-26 (latest)
+## Current state — 2026-05-17 (latest)
 
-- **Latest run**: `DumpAllApprovedStyles` reports **43
-  succeeded, 0 failed** (~4 sec runtime). Down ~50% in runtime
-  from prior; cause likely the array cleanup (no duplicate to
-  re-promote and overwrite).
-- **Validated**: priorities 1–36. Walk extended to cover the
-  Psalms book; three new Psalms-specific styles added.
-- **Recent changes** (2026-04-26):
-  - **Duplicate fixed**: `TitleOnePage` was listed twice in the
-    array; the second occurrence was removed.
-    `TitleOnePage` now correctly holds priority **17** (the
-    previously-stuck "gap at 17" is gone).
-  - **Lamentations removed**: book content standardized on
-    `BodyText` for now; orphan `style_Lamentations.txt` was
-    auto-cleaned by the next `DumpAllApprovedStyles` orphan
-    prompt.
-  - **New styles added**: `PsalmSuperscription` (34), `Selah`
-    (35), `PsalmAcrostic` (36).
-- **Pending re-validation**: priorities 37+ (`BodyTextIndent`,
-  `EmphasisBlack`, `EmphasisRed`, `Words of Jesus`,
-  `AuthorSectionHead`, `AuthorQuote`, `Normal`). Order inherited
-  from earlier passes; will be re-walked as the QA cycle
-  continues.
-- `Normal` — priority 47, last approved entry. Operational role
-  replaced by `BodyText`; kept as anchor.
-- `BodyTextIndent` — priority 37.
-- `AuthorQuote` — still pending front matter usage decision.
+- **`GetApprovedStyles()` array**: 52 entries. Of those, 48 are
+  present in the document; 4 are tracking placeholders
+  (`BodyTextContinuation`, `AppendixTitle`, `AppendixBody`, and
+  the deliberate `FargleBlargle` canary).
+- **`VerseText` is the live verse paragraph style** since
+  2026-05-01 (priority 33). `BodyText` is now the residual
+  non-verse paragraph style (front matter, chapter intros,
+  chapter-end content).
+- **Recent additions since the 2026-04-26 snapshot**:
+  - `VerseText` (33) — verse paragraph style; replaced
+    `BodyText` for verse content on 2026-05-01.
+  - `BookHyperlink` (35) — one-form hyperlink character style
+    added 2026-05-15; replaces direct use of the built-in
+    `Hyperlink` style.
+  - `BibleIndexList` (16), `AuthorBookSections` (24),
+    `ParallelHeader` (49), `ParallelText` (50) — promoted
+    during the same period.
+  - `SpeakerLabel` (41), `BodyTextContinuation` (42),
+    `AppendixTitle` (43), `AppendixBody` (44) — filled the
+    former 38–41 gap.
+- **Removals since the 2026-04-26 snapshot**:
+  - `BodyTextIndent` — removed during the VerseText migration.
+  - `AuthorQuote` — removed; front matter usage never
+    finalized.
+  - `BookIntro` — removed; decision deferred on define-and-
+    promote vs close.
+- **`Normal`** — priority 51 (was 47), last approved entry
+  before the `FargleBlargle` canary. Operational role replaced
+  by `BodyText` and `VerseText`; kept as the
+  "pin-everything-else-above" anchor.
+- **Pending re-validation**: most styles have been touched
+  during the empty-paragraph discipline, hide-sweep, and
+  LineSpacingRule prescriptive passes. Per-style state lives in
+  `RUN_TAXONOMY_STYLES` (`basTEST_aeBibleConfig.bas`); the
+  taxonomy audit umbrella tracks coverage progress.
 
 ### Reserved gaps
 
-Priorities 38–41 are reserved for future insertions without
-wholesale renumbering. (Earlier "gap at 17" was a duplicate
-artifact, now resolved.)
+None as of 2026-05-17. The prior 38–41 gap was filled. Future
+insertions take the next free priority.
 
 ## Headless caveat
 
