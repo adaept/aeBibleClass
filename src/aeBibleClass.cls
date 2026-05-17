@@ -272,7 +272,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33783, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 77, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -905,8 +905,18 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No approved styles in the Styles ribbon gallery - CountApprovedStylesInGallery should return 0"
     Case 6
         GetTestDescription = "Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0"
+    Case 16
+        GetTestDescription = "Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value"
+    Case 17
+        GetTestDescription = "Rule: There should be no active hyperlinks as the current main target is print - CountActiveHyperlinks should return 0"
+    Case 18
+        GetTestDescription = "Rule: Heading 1 is only used for each book of the Bible - CountHeading1 should return 66"
+    Case 19
+        GetTestDescription = "Rule: No empty paragraphs after Heading 2, it is only used for each Book Chapter - CountEmptyParasAfterH2 should return 0"
     Case 22
-        GetTestDescription = "Rule: Whitespace-padded empty paragraphs (spaces around the pilcrow) - CountWhitespacePaddedEmptyParagraphs should match the expected baseline"
+        GetTestDescription = "Rule: Whitespace-padded empty paras (spaces around the pilcrow) - CountWhitespacePaddedEmptyParagraphs should match the expected baseline"
+    Case 28
+        GetTestDescription = "Rule: All headers with no text should have a tab - CountTabFollowedByParagraphMarkInHeaders should match the expected baseline"
     Case 38
         GetTestDescription = "Rule: Bare empty paragraphs (pilcrow only) at the accepted baseline - CountEmptyParagraphs should match the expected baseline"
     Case 74
@@ -3480,7 +3490,7 @@ End Function
 '   - tracked-deletion husks awaiting Accept
 '   - inline shape anchors whose shape was removed
 '
-' Expected: 0. A non-zero count indicates content-integrity drift, not
+' Expected: 0. A non-zero Count indicates content-integrity drift, not
 ' spacing-discipline drift - the visually-empty paragraph is hiding a
 ' broken structure that would not be obvious in normal editing view.
 '
