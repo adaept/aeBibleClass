@@ -29,8 +29,11 @@ PASS              Copy ()       Test = 15     0             0             CountS
 PASS              Copy ()       Test = 16     33822         33822         CountTotalParagraphs
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
+  Rule: There should be no active hyperlinks as the current main target is print - CountActiveHyperlinks should return 0
 PASS              Copy ()       Test = 18     66            66            CountHeading1
+  Rule: Heading 1 is only used for each book of the Bible - CountHeading1 should return 66
 PASS              Copy ()       Test = 19     0             0             CountEmptyParasAfterH2
+  Rule: No empty paragraphs after Heading 2, it is only used for each Book Chapter - CountEmptyParasAfterH2 should return 0
 PASS              Copy ()       Test = 20     0             0             CountFootnotesFollowedByDigit
 PASS              Copy ()       Test = 21     0             0             CountNotSpacesAfterFootnoteReferences
 PASS              Copy ()       Test = 22     0             0             CountWhitespacePaddedEmptyParagraphs
@@ -103,8 +106,8 @@ FAIL!!!!          Copy ()       Test = 71     15            0             U+201D
   >> First hit: 1112 You will know that I am God, for you have not walked in
 SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
-The Total Runtime: 95.89 seconds
-[2026-05-16 22:42:13] Completed
+The Total Runtime: 99.67 seconds
+[2026-05-17 00:52:59] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
