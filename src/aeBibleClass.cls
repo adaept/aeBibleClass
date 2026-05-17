@@ -902,7 +902,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 4
         GetTestDescription = "Rule: Multiple tabs are not allowed in the document - CountDoubleTabs should return 0"
     Case 5
-        GetTestDescription = "TestSlotAvailable"
+        GetTestDescription = "Rule: No approved styles in the Styles ribbon gallery - CountApprovedStylesInGallery should return 0"
     Case 6
         GetTestDescription = "Detects runs of length >= 2 with three exceptions - CountConsecutiveEmptyParagraphsNotPrecedingBreak should return 0"
     Case 7 To 73
@@ -938,7 +938,8 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = CountDoubleTabs
         m_HintArray(TestNum) = m_lastHint
     Case 5
-        ResultArray(TestNum) = TestSlotAvailable
+        ResultArray(TestNum) = CountApprovedStylesInGallery
+        m_HintArray(TestNum) = m_lastHint
         m_HintArray(TestNum) = m_lastHint
     Case 6
         ResultArray(TestNum) = CountConsecutiveEmptyParagraphsNotPrecedingBreak
@@ -1188,7 +1189,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     Case 4
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountDoubleTabs"
     Case 5
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "TestSlotAvailable"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesInGallery"
     Case 6
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountConsecutiveEmptyParagraphsNotPrecedingBreak"
     Case 7
@@ -2500,6 +2501,61 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     CountUnapprovedVisibleStyles = -1
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' Function: CountApprovedStylesInGallery  (Test 5)
+'
+' Walks the approved-styles SSOT (GetApprovedStyles) and counts any
+' style currently exposed in the Styles ribbon gallery
+' (QuickStyle = True). Editorial policy: approved styles are applied
+' deliberately per the style guide, not picked from the gallery, so
+' the gallery should be empty of approved styles. Built-ins are
+' separately governed by HideUnapprovedBuiltInStyles.
+'
+' Returns Long Count of violations (expected 0). On violations > 0,
+' prints the offending NameLocal list to Immediate; silent when 0.
+' Approved names not present in the document are skipped silently.
+'=========================================================================
+Private Function CountApprovedStylesInGallery() As Long
+    On Error GoTo PROC_ERR
+    Dim approved As Variant
+    Dim i As Long
+    Dim s As Word.Style
+    Dim violations As Long
+    Dim violationList As String
+
+    approved = GetApprovedStyles()
+    violations = 0
+
+    For i = LBound(approved) To UBound(approved)
+        Set s = Nothing
+        On Error Resume Next
+        Set s = ActiveDocument.Styles(CStr(approved(i)))
+        On Error GoTo PROC_ERR
+        If Not s Is Nothing Then
+            If s.QuickStyle Then
+                violations = violations + 1
+                violationList = violationList & "  - " & s.NameLocal & vbCrLf
+            End If
+        End If
+    Next i
+
+    If violations > 0 Then
+        Debug.Print "CountApprovedStylesInGallery: " & violations & " violation(s) -"
+        Debug.Print violationList;
+    End If
+
+    CountApprovedStylesInGallery = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountApprovedStylesInGallery | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    CountApprovedStylesInGallery = -1
     Resume PROC_EXIT
 End Function
 

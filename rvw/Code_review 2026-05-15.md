@@ -248,6 +248,48 @@ Exactly` against the QA-checklist preference of `Single`:
   requiring adjustment for i18n due to font differences. Taxonomy
   entry annotated in-place.
 
+**Audit-coverage gap surfaced 2026-05-16:** `RUN_TAXONOMY_STYLES`
+did not flag a QuickStyle change observed in the style dumps.
+Root cause: `AuditOneStyle` inspects only the 7 prescriptive
+paragraph/font properties in its parameter list (font, size,
+alignment, first-line indent, line spacing rule/value,
+space-before/after, plus optional bold/italic/color). `QuickStyle`
+is not in that contract - gallery visibility was governed only by
+`HideUnapprovedBuiltInStyles` (built-ins cohort) and the
+"properly hidden" half of `CountUnapprovedVisibleStyles` (Test
+45), leaving the approved cohort uncovered. Closed by adding
+Test 5 below.
+
+### 6. Test 5: `CountApprovedStylesInGallery` - ADDED 2026-05-16
+
+User has removed all styles from the Styles ribbon gallery as an
+editorial-discipline measure: applying a style should require
+knowing the style guide, not picking from a shortcut menu. To
+prevent drift (UI re-enable, future `Define*` routine forgetting
+`QuickStyle = False`), Test 5 now enforces the policy.
+
+**Wiring:**
+- `aeBibleClass.cls` `CountApprovedStylesInGallery` (new private
+  function); walks `GetApprovedStyles()` SSOT, counts entries with
+  `QuickStyle = True`, prints offending `NameLocal` list to
+  Immediate on violations; silent at 0. Missing approved names are
+  skipped silently (existence is Test 45's concern).
+- `GetPassFail` Case 5 wired; `GetTestDescription` Case 5 updated;
+  Debug.Print Case 5 label updated.
+- Expected value at slot 5 in `oneBasedExpectedArray` was already
+  0 (slot was previously `TestSlotAvailable`); no array edit
+  needed.
+
+**Coverage split (now explicit):**
+- Test 5 (new) - approved cohort: gallery must be empty.
+- Test 45 (`CountUnapprovedVisibleStyles`) - non-approved cohort:
+  must be approved or properly hidden.
+- `HideUnapprovedBuiltInStyles` - built-ins maintenance routine
+  that puts non-approved built-ins into the "properly hidden"
+  state Test 45 audits.
+
+Together these close the QuickStyle audit gap for both cohorts.
+
 These were intentionally retained when the `BaseStyle = ""` half
 of the prior prescriptive-pass round was completed; the
 `LineSpacingRule` change is a separate prescriptive decision per
