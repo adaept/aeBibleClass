@@ -28,6 +28,7 @@ From `aeRibbon/src/`:
 | `aeRibbonClass.cls`              | dev `src/` | trimmed |
 
 Files intentionally **not** included:
+
 - `aeBibleClass.cls` — test-runner class; 0/85 routines reachable from
   any ribbon callback. Confirmed by call-graph trim.
 - `ThisDocument.cls` — Word manages the template's own `ThisDocument`
@@ -49,6 +50,29 @@ during build.
 
 ## Build steps
 
+### Fast path — start from step 3 when preconditions hold
+
+On a rebuild (anything after the very first build), steps 1–2 are usually
+already done. Skip them and start at **step 3 (Import VBA modules)** when
+**all three** of these are true:
+
+- `aeRibbon/src/` contains exactly the **4 `.bas` + 2 `.cls`** files
+  listed in "Files going into the template" above (no more, no less).
+- `aeRibbon/template/aeRibbon.dotm` already exists.
+- `aeRibbon/template/customUI14.xml` is byte-identical to the repo-root
+  `customUI14backupRWB.xml` — i.e. no ribbon-XML change since the last
+  build. Quick check from the repo root:
+
+  ```bash
+  wsl diff -q aeRibbon/template/customUI14.xml customUI14backupRWB.xml
+  ```
+
+  Silent output = identical; skip step 2. Any diff = run step 2.
+
+If any precondition fails, run the full sequence from step 1. In
+particular: if `aeRibbon.dotm` is missing, do step 1; if the ribbon XML
+has changed, do step 2.
+
 1. **Create the template.** In Word 365: File → New → Blank document →
    File → Save As → choose **Word Macro-Enabled Template (`*.dotm`)** →
    save as `aeRibbon/template/aeRibbon.dotm`. Close Word.
@@ -67,9 +91,11 @@ during build.
      result.
 
 2. **Inject ribbon XML.** From repo root:
+
    ```bash
    wsl python3 py/inject_ribbon.py aeRibbon/template/aeRibbon.dotm
    ```
+
    The script always reads `customUI14backupRWB.xml` at the repo root.
    `aeRibbon/template/customUI14.xml` is a tracked snapshot of that file;
    keep them in sync (the trim/release pipeline copies one to the other).
@@ -86,7 +112,7 @@ during build.
      `aeBibleCitationClass.cls`, `aeRibbonClass.cls`. Match against the
      "Files going into the template" table above.
    - After import, verify in Project Explorer that the two `.cls` files
-     appear under **Class Modules** and the three `.bas` files appear
+     appear under **Class Modules** and the four `.bas` files appear
      under **Modules**. If a `.cls` lands under Modules, the file has
      LF-only line endings — re-run `py/ribbon_export_trim.py` (it now
      forces CRLF) and re-import.
@@ -94,9 +120,11 @@ during build.
 
 4. **Stamp the version.** Open `basBibleRibbonSetup` in the VBA editor and
    confirm (or add at the top) a constant matching `aeRibbon/VERSION`:
+
    ```vb
    Public Const RIBBON_VERSION As String = "1.0.0+bc71416"
    ```
+
    Also set the template's custom document property `aeRibbonVersion` to
    the same value (File → Info → Properties → Advanced Properties → Custom).
 
@@ -114,9 +142,11 @@ during build.
 8. **Release record.** Append a row to `aeRibbon/RELEASES.md` with:
    version, build date, dev SHA (from `git rev-parse --short HEAD`),
    QA gate results, and SHA-256 of the `.dotm`:
+
    ```bash
    sha256sum aeRibbon/template/aeRibbon.dotm
    ```
+
    Copy the built `.dotm` and the `RoutineLog.md` snapshot into
    `aeRibbon/releases/<version>/`.
 
@@ -156,14 +186,18 @@ artefacts still need to land for G6 to close.
    The declaration line is **already present** at the top of
    `basBibleRibbonSetup` (carried from `src/` through the trim
    pipeline):
+
    ```vb
    Public Const RIBBON_VERSION As String = ""
    ```
+
    In the VBA editor, open `basBibleRibbonSetup`, find that line, and
    set the value to match `aeRibbon/VERSION` for this build:
+
    ```vb
    Public Const RIBBON_VERSION As String = "1.0.0+bc71416"
    ```
+
    Re-run **Debug → Compile VBAProject** — must stay green.
 
    Note: this is a per-build edit of the **template's** copy of the
@@ -183,13 +217,17 @@ artefacts still need to land for G6 to close.
      window).
    - Paste this single line and press Enter (silent success - the
      Immediate window shows no output on a successful Add):
+
      ```vb
      ThisDocument.CustomDocumentProperties.Add Name:="aeRibbonVersion", LinkToContent:=False, Type:=msoPropertyTypeString, Value:="1.0.0+bc71416"
      ```
+
    - Verify by pasting:
+
      ```vb
      ?ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value
      ```
+
      The Immediate window should print `1.0.0+bc71416`. If it raises
      **runtime error 5** the property was never added - re-run the
      `Add` line above, then re-run the `?` query.
@@ -210,6 +248,7 @@ artefacts still need to land for G6 to close.
    Re-running the `Add` line on the same template raises error 5
    ("property already exists") - that's expected on a rebuild. To
    replace an existing value:
+
    ```vb
    ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value = "1.0.0+bc71416"
    ```
@@ -335,7 +374,8 @@ produced for this release.
    sha256sum aeRibbon/template/aeRibbon.dotm`).
 
 5. **Append the release row** to `aeRibbon/RELEASES.md` and tag:
-   ```
+
+   ```cmd
    git tag v1.0.0+bc71416
    ```
 
