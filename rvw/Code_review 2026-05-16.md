@@ -552,6 +552,86 @@ and become obvious in unrelated styles. Worth doing
 opportunistically next time Normal is touched, not chasing as
 its own work item.
 
+## 2026-05-19 - Date formatting rule + superscript ordinal sweep
+
+**New editorial rule (date descriptions).** Century forms
+("5th century BC", "6th century AD", etc.) are retired in favour
+of explicit year ranges with an en-dash separator:
+
+- `100 BC`, `250 AD` for single-point references.
+- `320-200 BC`, `400-520 AD` for ranges - en-dash (U+2013), not
+  hyphen-minus and not em-dash. This matches the existing
+  separator convention used in line 4 of `Date_Example.txt`
+  before this pass.
+
+`Date_Example.txt` (UTF-8) rewritten end-to-end to follow the
+rule. Conversion convention applied:
+
+- `Nth century BC` -> `(N*100)-((N-1)*100) BC`, e.g. 5th century
+  BC -> `500-400 BC`.
+- Combined ranges fused, e.g. `6th and 5th centuries BC` ->
+  `600-400 BC`; `3rd or 4th century BC` -> `400-200 BC`;
+  `6th to 4th centuries AD` -> `300-600 AD`.
+- Qualifier-bearing forms anchored at the midpoint of the half:
+  `late 5th and early 4th century BC` -> `450-350 BC`;
+  `late 7th century BC` -> `650-600 BC`; `mid-5th century BC`
+  -> `475-425 BC`. `end of the first century or into the early
+  2nd century AD` -> `90-120 AD`.
+
+These mappings are judgement-dependent; revisit if a tighter
+historiographic convention is preferred.
+
+**New test added - `Test_NoSuperscriptOrdinals`.** Module
+`src/basTEST_NoSuperscriptOrdinals.bas`. Asserts the document
+contains **zero** instances of the ordinal suffixes `st`, `nd`,
+`rd`, `th` formatted as superscript. Implementation: four
+`Find` passes with `Font.Superscript = True`, summed. On the
+first hit, the test prints a `HINT:` line carrying token, page
+number (`wdActiveEndPageNumber`), line number
+(`wdFirstCharacterLineNumber`), and a 120-char paragraph
+snippet so the operator can navigate directly to the offender.
+Uses `aeAssertClass.AssertEqual` for the PASS/FAIL line; no
+references added (late binding rule preserved). CRLF
+normalised post-write so VBE imports as a standard module.
+
+**First-run result on the live document.**
+
+```
+Superscript ordinal suffix count = 57
+HINT (first failure): token="st" page=229 line=8
+  para="The books of 1st and 2nd Samuel..."
+FAIL: No superscript ordinal suffixes (st/nd/rd/th)
+  in document (expected=0, actual=57)
+```
+
+**Sweep estimate vs. example rewrite.** Counted the ordinal
+suffixes removed by the `Date_Example.txt` rewrite (assuming
+its passages map 1:1 to body text in the live document): **34**
+of the 57 hits. Estimated residual after applying the same
+century -> year-range rule to those passages: **57 - 34 = 23**.
+
+**Caveat - residual is not all date-class.** The first-failure
+hint surfaces `1st and 2nd Samuel`, which is **book-numbering
+superscript**, not a date suffix. That class is not covered by
+the new date-formatting rule and needs a separate editorial
+decision (likely: strip superscript on book-number ordinals
+outright, since the prevailing convention is `1 Samuel` /
+`2 Samuel` without ordinal suffix). At minimum some fraction
+of the residual 23 belongs to this class; the exact split is
+not yet measured.
+
+**Follow-ups (DEFERRED).**
+
+- Apply the date-formatting rule to the 20 example passages in
+  the live document; rerun `Test_NoSuperscriptOrdinals` and
+  confirm count drops by ~34.
+- Decide book-number ordinal policy (`1st Samuel` -> `1 Samuel`
+  vs. retain). Once decided, either extend
+  `Test_NoSuperscriptOrdinals` to enforce zero, or add a
+  matching pre-pass that strips the suffixes.
+- No `MaxTests` bump applied yet; this test is standalone and
+  not yet registered in the numbered slot taxonomy.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward
