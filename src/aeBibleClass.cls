@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 78
+Private Const MaxTests = 79
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -271,8 +271,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -282,54 +282,55 @@ Private Sub Expected1BasedArray()
     '    Debug.Print "Index " & i & ": " & oneBasedExpectedArray(i)
     'Next i
 
-    ' Access the array elements to write a string output of 15 expected results on one line
-    For i = LBound(oneBasedExpectedArray) To 15
-        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
-        ' Trim the trailing space
-        outputString = Trim(outputString)
-    Next i
-    Debug.Print outputString
-    If TestReportFlag And OneTest = 0 Then BufAppend outputString
-    
-    ' Next 15 results
-    outputString = ""
-    For i = 16 To 30
-        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
-        ' Trim the trailing space
-        outputString = Trim(outputString)
-    Next i
-    Debug.Print outputString
-    If TestReportFlag And OneTest = 0 Then BufAppend outputString
-    
-    ' Next 15 results
-    outputString = ""
-    For i = 31 To 45
-        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
-        ' Trim the trailing space
-        outputString = Trim(outputString)
-    Next i
-    Debug.Print outputString
-    If TestReportFlag And OneTest = 0 Then BufAppend outputString
-
-    ' Next 15 results
-    outputString = ""
-    For i = 46 To 60
-        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
-        ' Trim the trailing space
-        outputString = Trim(outputString)
-    Next i
-    Debug.Print outputString
-    If TestReportFlag And OneTest = 0 Then BufAppend outputString
-
-    ' Next results
-    outputString = ""
-    For i = 61 To UBound(oneBasedExpectedArray)
-        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
-        ' Trim the trailing space
-        outputString = Trim(outputString)
-    Next i
-    Debug.Print outputString
-    If TestReportFlag And OneTest = 0 Then BufAppend outputString
+' COMMENT OUT THE TEST HEADER OUTPUT
+'    ' Access the array elements to write a string output of 15 expected results on one line
+'    For i = LBound(oneBasedExpectedArray) To 15
+'        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+'        ' Trim the trailing space
+'        outputString = Trim(outputString)
+'    Next i
+'    Debug.Print outputString
+'    If TestReportFlag And OneTest = 0 Then BufAppend outputString
+'
+'    ' Next 15 results
+'    outputString = ""
+'    For i = 16 To 30
+'        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+'        ' Trim the trailing space
+'        outputString = Trim(outputString)
+'    Next i
+'    Debug.Print outputString
+'    If TestReportFlag And OneTest = 0 Then BufAppend outputString
+'
+'    ' Next 15 results
+'    outputString = ""
+'    For i = 31 To 45
+'        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+'        ' Trim the trailing space
+'        outputString = Trim(outputString)
+'    Next i
+'    Debug.Print outputString
+'    If TestReportFlag And OneTest = 0 Then BufAppend outputString
+'
+'    ' Next 15 results
+'    outputString = ""
+'    For i = 46 To 60
+'        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+'        ' Trim the trailing space
+'        outputString = Trim(outputString)
+'    Next i
+'    Debug.Print outputString
+'    If TestReportFlag And OneTest = 0 Then BufAppend outputString
+'
+'    ' Next results
+'    outputString = ""
+'    For i = 61 To UBound(oneBasedExpectedArray)
+'        outputString = outputString & " Test(" & i & ")" & oneBasedExpectedArray(i) & " "
+'        ' Trim the trailing space
+'        outputString = Trim(outputString)
+'    Next i
+'    Debug.Print outputString
+'    If TestReportFlag And OneTest = 0 Then BufAppend outputString
 
 PROC_EXIT:
     Exit Sub
@@ -1049,6 +1050,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No approved style has UnhideWhenUsed=True (closes the symmetric gap to Test 45; prevents silent re-surface of an approved style in the gallery when a run touches it, including via paste) - CountApprovedStylesWithUnhideWhenUsedOn should return 0"
     Case 78
         GetTestDescription = "Rule: Every approved style has Priority equal to its 1-based position in GetApprovedStyles() (catches gallery-drag, CopyStylesFromTemplate, or paste-from-elsewhere reordering between PromoteApprovedStyles runs) - CountApprovedStylesWithWrongPriority should return 0"
+    Case 79
+        GetTestDescription = "Rule: No digit-prefixed ordinal suffix (st/nd/rd/th) appears as superscript in body text (e.g. 1st, 2nd, 3rd, 4th) - CountNumericOrdinals should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1274,6 +1277,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 78
         ResultArray(TestNum) = CountApprovedStylesWithWrongPriority
         m_HintArray(TestNum) = m_lastHint
+    Case 79
+        ResultArray(TestNum) = CountNumericOrdinals
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1462,6 +1468,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithUnhideWhenUsedOn"
     Case 78
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithWrongPriority"
+    Case 79
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumericOrdinals"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1653,6 +1661,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithUnhideWhenUsedOn"
     Case 78
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithWrongPriority"
+    Case 79
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNumericOrdinals"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -4924,4 +4934,153 @@ Private Sub ProcessShape(ByVal shp As shape, ByRef doubleSpaceCount As Long)
         End If
     End If
 End Sub
+
+'===============================================================================
+' Procedure : CountNumericOrdinals
+' Author    : Peter Ennis
+'
+' Purpose   :
+'   Counts numeric ordinal abbreviations in the active Word document
+'   (e.g., 1st, 2nd, 3rd, 4th, etc.), where the ordinal suffix is formatted
+'   as superscript.
+'
+'   Only the suffix characters are counted:
+'       st, nd, rd, th
+'
+'   The numeric portion itself is not counted.
+'
+' Design    :
+'   This routine is optimized for very large documents (e.g., Bible or
+'   scholarly texts) containing thousands of numeric references such as
+'   chapter and verse numbers.
+'
+'   To ensure acceptable performance and prevent "Word Not Responding"
+'   behavior, the code:
+'     - Searches ONLY for superscripted ordinal suffixes (rare text)
+'     - Avoids character-by-character scanning
+'     - Avoids wildcard searches combined with formatting
+'     - Uses Word's Find engine in its most efficient configuration
+'
+' Method    :
+'   1. Iterates through the literal suffixes: "st", "nd", "rd", "th"
+'   2. Uses Find with formatting enabled to locate superscripted matches
+'   3. Verifies the immediately preceding character is a digit (0-9)
+'   4. Tallies counts per suffix and maintains a grand total
+'
+' Review Mode:
+'   Controlled by the Boolean variable "showReview" within the procedure.
+'
+'     True  - Each found ordinal is selected and displayed with a Yes/No
+'             confirmation dialog for manual review.
+'     False - Silent, high-performance counting only (recommended for
+'             large documents and required when called from the test
+'             runner via GetPassFail).
+'
+' Output    :
+'   Returns the grand total as a Long for the Test 79 framework slot.
+'   Sets m_lastHint to "page <N> : <digit><suffix>" on the first match
+'   so the standard FAIL hint emission in RunTest points the operator
+'   at the first offender.
+'
+' Notes     :
+'   - Superscript formatting is required for a match.
+'   - Non-superscript ordinals are intentionally ignored.
+'   - Roman numerals and spelled-out ordinals (e.g., "first") are not matched.
+'   - The document is not modified.
+'
+'===============================================================================
+Private Function CountNumericOrdinals() As Long
+    On Error GoTo PROC_ERR
+
+    Dim cntST As Long, cntND As Long, cntRD As Long, cntTH As Long
+    Dim total As Long
+    Dim showReview As Boolean
+
+    ' ===== TOGGLE REVIEW MODE =====
+    showReview = False
+    ' ==============================
+
+    Application.ScreenUpdating = False
+    Application.StatusBar = "Counting numeric ordinals..."
+
+    Dim suffixes As Variant
+    suffixes = Array("st", "nd", "rd", "th")
+
+    Dim doc As Document
+    Set doc = ActiveDocument
+
+    Dim i As Long
+    For i = LBound(suffixes) To UBound(suffixes)
+
+        Application.StatusBar = "Scanning superscript '" & suffixes(i) & "'..."
+        DoEvents
+
+        Dim rng As Word.Range
+        Set rng = doc.Content
+
+        With rng.Find
+            .ClearFormatting
+            .Text = suffixes(i)
+            .MatchWildcards = False
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .Font.Superscript = True   ' REQUIRED
+        End With
+
+        Do While rng.Find.Execute
+
+            ' Check preceding character ONLY
+            If rng.Start > doc.Content.Start Then
+                If doc.Range(rng.Start - 1, rng.Start).Text Like "[0-9]" Then
+
+                    Select Case suffixes(i)
+                        Case "st": cntST = cntST + 1
+                        Case "nd": cntND = cntND + 1
+                        Case "rd": cntRD = cntRD + 1
+                        Case "th": cntTH = cntTH + 1
+                    End Select
+
+                    total = total + 1
+
+                    If m_lastHint = "" Then _
+                        m_lastHint = "page " & rng.Information(wdActiveEndPageNumber) & _
+                                     " : " & doc.Range(rng.Start - 1, rng.End).Text
+
+                    If showReview Then
+                        rng.Select
+                        If MsgBox("Found ordinal: " & _
+                                  doc.Range(rng.Start - 1, rng.End).Text & vbCrLf & _
+                                  "Continue?", _
+                                  vbYesNo + vbQuestion, _
+                                  "Review Ordinal") = vbNo Then GoTo Done
+                    End If
+                End If
+            End If
+
+            rng.Collapse wdCollapseEnd
+            DoEvents   ' keeps Word responsive
+        Loop
+    Next i
+
+Done:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+
+    'Debug.Print _
+        "Numeric Ordinal Suffix Counts:" & vbCrLf & _
+        "st: " & cntST, "nd: " & cntND, "rd: " & cntRD; "th: " & cntTH, "TOTAL: " & total
+
+    CountNumericOrdinals = total
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Application.ScreenUpdating = True
+    Application.StatusBar = False
+    Debug.Print "ERROR in aeBibleClass.CountNumericOrdinals | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
 

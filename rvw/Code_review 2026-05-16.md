@@ -632,6 +632,100 @@ not yet measured.
 - No `MaxTests` bump applied yet; this test is standalone and
   not yet registered in the numbered slot taxonomy.
 
+## 2026-05-20 - Test 79 added + Module1 retirement step + normalizer hardening
+
+**Test 79 added - `CountNumericOrdinals`.** The interactive
+`Sub CountNumericOrdinals` from `Module1.bas` was relocated
+into `aeBibleClass.cls` as a `Private Function` returning `Long`
+and wired into the test framework. The original header
+(Purpose / Design / Method / Review Mode / Output / Notes) was
+preserved; the body was adapted to the framework conventions:
+returns the grand total, sets `m_lastHint` to
+`"page <N> : <digit><suffix>"` on the first match, and routes
+errors through `m_lastFuncError` instead of a MsgBox.
+
+Test-framework wiring touched all four switches in one edit
+pass:
+
+- `MaxTests` bumped 78 -> 79.
+- `Expected1BasedArray` values array extended with `0` for
+  slot 79 and the column-header comment extended to match.
+- `GetTestDescription` - "Rule: No digit-prefixed ordinal
+  suffix (st/nd/rd/th) appears as superscript in body text ...
+  CountNumericOrdinals should return 0".
+- `GetPassFail` Case 79 dispatches to `CountNumericOrdinals`
+  and copies `m_lastHint` into `m_HintArray`.
+- The two display switches (`Debug.Print` row and
+  `BufAppend` row) carry the function name in the right-most
+  column so the test report and the buffered copy stay in lock
+  step.
+
+Source of truth on the original interactive routine
+(`Module1.bas`) is now retired - the header + Sub block was
+deleted in the same commit, leaving Module1 spliced
+`End Sub (CountLeftAligned)` -> blank -> `Sub
+ParseAndValidateString()`. Behavioural fidelity preserved: the
+showReview branch was kept (defaults to False), so a developer
+who wants the per-hit confirmation UI can flip the constant in
+place rather than restoring the Module1 copy.
+
+**Relationship to module-level `Test_NoSuperscriptOrdinals`
+(2026-05-19).** The two coexist on purpose:
+
+- `Test_NoSuperscriptOrdinals` (module, in
+  `basTEST_NoSuperscriptOrdinals.bas`) flags **any**
+  superscripted `st/nd/rd/th`. Broader sweep; first-failure
+  hint located the `1st and 2nd Samuel` class.
+- Test 79 (`CountNumericOrdinals`, class slot) is the
+  stricter date-class metric: requires the suffix to be
+  immediately preceded by an ASCII digit. This is the metric
+  that converges to 0 once the date-rule sweep
+  (`ApplyDateRule_2026_05_19`) and any residual numeric-ordinal
+  scrubbing are complete.
+
+The expected value for slot 79 is **0**; until the sweep is
+applied to the live document the slot will FAIL with a hint
+pointing at the first digit-prefixed ordinal. That FAIL is
+informational and on the same track as the 2026-05-19
+follow-ups - no separate action item.
+
+**Normalizer hardening (`py/normalize_vba.py`).** Added a new
+rule `\.BaseStyle\b -> .BaseStyle` next to the existing
+`.Hidden` rule. The VBE auto-demote class (Style-property
+casing silently collapsed to camel-case on save) had grown a
+new member: a `s.BaseStyle` reference observed as
+`s.baseStyle` after a VBE round-trip. The fix follows the
+`.Hidden` precedent exactly - case-insensitive match, restore
+to canonical PascalCase, dotted anchor so we do not collide
+with any local `baseStyle` variable. Memory entry
+[[feedback_casing]] continues to be the why; the normalizer
+is the where.
+
+**Editorial macro `ApplyDateRule_2026_05_19` shipped
+(2026-05-19) and used (2026-05-20).** Interactive Yes/No/Cancel
+prompt per pair with a status block written back to
+`Date_Example.txt`. As of this entry the status block in
+`Date_Example.txt` shows 22 of 23 pairs `done` and pair 06
+(`example 8`, `between the 6th to the 4th centuries AD ->
+between 300-600 AD`) still `pending`. Decision on pair 06 not
+yet recorded - operator may have hit `No` and intends to revisit
+the AD-side range expansion separately.
+
+**Follow-ups (open).**
+
+- Resolve pair 06 in `Date_Example.txt` (apply or amend the
+  300-600 AD range; rerun
+  `ApplyDateRule_2026_05_19` once it is decided).
+- Rerun Test 79 and `Test_NoSuperscriptOrdinals` after the
+  pair-06 decision and after any book-number ordinal policy
+  is settled. Track the deltas:
+  - Test 79 target: 0 (date-class only).
+  - `Test_NoSuperscriptOrdinals` target: 0 only once the
+    book-number ordinal policy (`1st Samuel` vs `1 Samuel`)
+    is decided and applied.
+- Book-number ordinal policy still DEFERRED (carry from
+  2026-05-19).
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward

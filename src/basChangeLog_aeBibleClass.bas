@@ -12,18 +12,12 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #643 -
 ' #642 -
 ' #641 -
-' #640 - Fill test description slots in GetTestDescription [impr] [wip]
 ' #636 - Error message for src when another docx created and EXPORT_THE_CODE is run after 'AuditFontsUsage "ArialTimes"' True [bug]
-' #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
-' #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
-' #625 - aeBibleClass Test 44 obsolete, can be re-used (see #623) [obso]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
 ' #609 - Soft Hyphens checked to end of Exodus - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
-' #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to - 0, 1st Century ->
-'           CountNumericOrdinals Numeric Ordinal Suffix Counts: st: 7 nd: 12 rd: 4 th: 44 TOTAL: 67
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #365 - Map styles to USFM markers [wip]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
@@ -35,6 +29,11 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 '====================================================================================================================================
 '
 'Sq
+    ' FIXED - #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to 0, ContNumericOrdinals Test 79
+    ' [obso] - #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
+    ' [obso] - #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
+    ' [obso] - #625 - aeBibleClass Test 44 obsolete, can be re-used (see #623) [obso]
+    ' FIXED - #640 - Fill test description slots in GetTestDescription [impr] [wip]
     ' FIXED - #637 - Manually update page numbers of Bible Index [impr]
     ' FIXED - #639 - Remove old ribbon code and delete from src
     ' FIXED - #638 - Add Public Const RIBBON_VERSION As String = "" to basBibleRibbonSetup to track the version of the production ribbon [impr]
