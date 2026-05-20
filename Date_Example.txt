@@ -64,3 +64,29 @@ Some scholars believe this book was written in 475–425 BC.
 
 59:
 If James, the brother of Jesus, wrote this letter, then it would be dated no later than 32 years after the crucifixion of Jesus, when James was martyred (circa 62 AD). However, other scholars date it later, perhaps 90–120 AD.
+
+--- Replacement status (managed by ApplyDateRule_2026_05_19; do not edit by hand) ---
+pair 01 example 2     done
+pair 02 example 2     done
+pair 03 example 2     done
+pair 04 example 5     done
+pair 05 example 6+7   done
+pair 06 example 8     pending
+pair 07 example 16    done
+pair 08 example 17    done
+pair 09 example 18    done
+pair 10 example 21    done
+pair 11 example 24    done
+pair 12 example 24    done
+pair 13 example 28    done
+pair 14 example 29    done
+pair 15 example 32    done
+pair 16 example 33    done
+pair 17 example 33    done
+pair 18 example 34    done
+pair 19 example 35    done
+pair 20 example 36    done
+pair 21 example 38    done
+pair 22 example 39    done
+pair 23 example 59    done
+--- end status ---

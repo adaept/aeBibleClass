@@ -2760,8 +2760,8 @@ End Function
 ' styles only). Approved names not present in the document are
 ' skipped silently (existence is Test 45's concern).
 '
-' Returns Long count of property violations (so two failures on the
-' same style count as 2). Expected = 0. On violations > 0, prints the
+' Returns Long Count of property violations (so two failures on the
+' same style Count as 2). Expected = 0. On violations > 0, prints the
 ' offending style + property list to Immediate; silent when 0.
 ' First violation populates m_lastHint for FAIL-report visibility.
 '=========================================================================
@@ -2863,7 +2863,7 @@ End Function
 ' in the document are skipped silently (existence is Test 45's
 ' concern).
 '
-' Returns Long count of violations. Expected = 0. On violations > 0,
+' Returns Long Count of violations. Expected = 0. On violations > 0,
 ' prints the offending style names to Immediate; silent when 0.
 ' First violation populates m_lastHint.
 '=========================================================================
@@ -2930,7 +2930,7 @@ End Function
 ' (UnhideWhenUsed applies to both in Word's object model). Approved
 ' names not present in the document are skipped silently.
 '
-' Returns Long count of violations. Expected = 0. On violations > 0,
+' Returns Long Count of violations. Expected = 0. On violations > 0,
 ' prints the offending style names to Immediate; silent when 0.
 ' First violation populates m_lastHint.
 '=========================================================================
@@ -2994,7 +2994,7 @@ End Function
 ' approved array, or LBound-based offset). Approved names not present
 ' in the document are skipped silently.
 '
-' Returns Long count of violations. Expected = 0. On violations > 0,
+' Returns Long Count of violations. Expected = 0. On violations > 0,
 ' prints the offending style + actual/expected priority to Immediate.
 ' First violation populates m_lastHint.
 '=========================================================================

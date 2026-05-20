@@ -50,7 +50,7 @@ Public Sub DefineBodyTextStyle()
     Set oStyle = oDoc.Styles.Add(name:="BodyText", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .baseStyle = ""                         ' no cascade from Normal
+        .BaseStyle = ""                         ' no cascade from Normal
         .NextParagraphStyle = oStyle            ' BodyText follows BodyText
 
         With .Font
@@ -138,7 +138,7 @@ Public Sub DefineVerseTextStyle()
     Set oStyle = oDoc.Styles.Add(name:="VerseText", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .baseStyle = ""                         ' no cascade from Normal or list family
+        .BaseStyle = ""                         ' no cascade from Normal or list family
         .NextParagraphStyle = oStyle            ' VerseText follows VerseText
         .AutomaticallyUpdate = False             ' QA-checklist
         .QuickStyle = False                      ' QA-checklist
@@ -817,7 +817,7 @@ Public Sub DefineAppendixTitleStyle()
     Set oStyle = oDoc.Styles.Add(name:="AppendixTitle", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .baseStyle = ""
+        .BaseStyle = ""
         .NextParagraphStyle = oDoc.Styles("AppendixBody")
 
         With .Font
@@ -891,7 +891,7 @@ Public Sub DefineAppendixBodyStyle()
     Set oStyle = oDoc.Styles.Add(name:="AppendixBody", Type:=wdStyleTypeParagraph)
 
     With oStyle
-        .baseStyle = ""
+        .BaseStyle = ""
         .NextParagraphStyle = oStyle
 
         With .Font
@@ -1047,7 +1047,7 @@ Public Sub DefineAuthorStyles()
     If oStyle Is Nothing Then
         Set oStyle = oDoc.Styles.Add(name:="AuthorBodyText", Type:=wdStyleTypeParagraph)
         With oStyle
-            .baseStyle = ""
+            .BaseStyle = ""
             .NextParagraphStyle = oStyle
             With .Font
                 .Name = "Liberation Serif"
@@ -1082,7 +1082,7 @@ Public Sub DefineAuthorStyles()
     If oStyle Is Nothing Then
         Set oStyle = oDoc.Styles.Add(name:="AuthorSectionHead", Type:=wdStyleTypeParagraph)
         With oStyle
-            .baseStyle = ""
+            .BaseStyle = ""
             .NextParagraphStyle = oDoc.Styles("AuthorBodyText")
             With .Font
                 .Name = "Liberation Serif"
@@ -1185,7 +1185,7 @@ Public Sub DefineListItemStyle()
 
     Set oStyle = oDoc.Styles.Add(name:="ListItem", Type:=wdStyleTypeParagraph)
     With oStyle
-        .baseStyle = "List Number"    ' inherits autonumbering list template
+        .BaseStyle = "List Number"    ' inherits autonumbering list template
         If Not oNext Is Nothing Then
             .NextParagraphStyle = oNext
         End If
@@ -1260,7 +1260,7 @@ Public Sub DefineListItemBodyStyle()
 
     Set oStyle = oDoc.Styles.Add(name:="ListItemBody", Type:=wdStyleTypeParagraph)
     With oStyle
-        .baseStyle = ""
+        .BaseStyle = ""
         ' NextParagraphStyle cycles back to ListItem for the next entry.
         ' Wire after DefineListItemStyle runs; here we set it if ListItem exists.
         Dim oNext As Word.Style
@@ -1337,7 +1337,7 @@ Public Sub DefineAuthorBookRefStyle()
 
     Set oStyle = oDoc.Styles.Add(name:="AuthorBookRef", Type:=wdStyleTypeParagraph)
     With oStyle
-        .baseStyle = "List Number"
+        .BaseStyle = "List Number"
         .NextParagraphStyle = oStyle
         With .Font
             .Name = "Carlito"
@@ -1419,7 +1419,7 @@ Public Sub DefineBookHyperlinkStyle()
 
     Set oStyle = oDoc.Styles.Add(name:="BookHyperlink", Type:=wdStyleTypeCharacter)
     With oStyle
-        .baseStyle = "Default Paragraph Font"
+        .BaseStyle = "Default Paragraph Font"
         With .Font
             .Name = "Carlito"
             .Size = 9

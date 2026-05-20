@@ -912,7 +912,7 @@ Public Sub ReportDigitAtCursor_Diagnostics_Expanded()
     Dim StyleName As String: StyleName = ch.style.NameLocal
     Dim baseStyle As String
     On Error Resume Next
-    baseStyle = ch.style.baseStyle
+    baseStyle = ch.style.BaseStyle
     On Error GoTo 0
     On Error GoTo PROC_ERR
 

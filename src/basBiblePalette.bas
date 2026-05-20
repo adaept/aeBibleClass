@@ -523,7 +523,7 @@ Public Sub DescribeStylesCarryingColor(ByVal rgbLong As Long)
 
             baseName = ""
             On Error Resume Next
-            baseName = CStr(s.baseStyle)
+            baseName = CStr(s.BaseStyle)
             On Error GoTo PROC_ERR
             If Len(baseName) = 0 Then baseName = "(none)"
 

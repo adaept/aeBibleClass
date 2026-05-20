@@ -244,7 +244,7 @@ End Function
 '   Audits every paragraph/character style listed below via AuditOneStyle,
 '   plus the tab-stop specs further down via AuditStyleTabs. The run-time
 '   pass/fail summary printed to Immediate and to rpt\StyleTaxonomyAudit.txt
-'   is the authoritative count; literal totals are not maintained in this
+'   is the authoritative Count; literal totals are not maintained in this
 '   docstring (they went stale within 2 days every time previously - see
 '   Code_review 2026-05-16.md § 17).
 '   Style audit buckets:
@@ -580,7 +580,7 @@ Private Sub AuditOneStyle(ByVal sName As String, _
     If sExpBaseStyle <> "<skip>" Then
         Dim sActualBase As String
         On Error Resume Next
-        sActualBase = oStyle.baseStyle
+        sActualBase = oStyle.BaseStyle
         On Error GoTo PROC_ERR
         If sActualBase <> sExpBaseStyle Then
             bPass = False

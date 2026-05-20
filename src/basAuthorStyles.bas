@@ -74,7 +74,7 @@ Public Sub AuditListStyleRisk(Optional ByVal bWriteFile As Boolean = True)
     For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Then
             On Error Resume Next
-            base = s.baseStyle
+            base = s.BaseStyle
             On Error GoTo PROC_ERR
 
             If Len(Trim$(base)) > 0 Then
@@ -226,7 +226,7 @@ Private Sub DefineAuthorListItem()
         Set s = ActiveDocument.Styles.Add("AuthorListItem", wdStyleTypeParagraph)
     End If
 
-    s.baseStyle = ""                           ' MUST come first
+    s.BaseStyle = ""                           ' MUST come first
     s.AutomaticallyUpdate = False               ' QA-checklist fix (was True on ListItem)
     s.QuickStyle = False                        ' QA-checklist fix (was True on ListItem)
     ' NextParagraphStyle deferred to Phase 4 - the holding .docm doesn't
@@ -264,7 +264,7 @@ Private Sub DefineAuthorBookRefNew()
         Set s = ActiveDocument.Styles.Add("AuthorBookRefNew", wdStyleTypeParagraph)
     End If
 
-    s.baseStyle = ""
+    s.BaseStyle = ""
     s.AutomaticallyUpdate = False
     s.QuickStyle = False
     ' NextParagraphStyle deferred to Phase 4 (set to AuthorBookRef after
@@ -387,7 +387,7 @@ Private Sub CopyOneStyle(ByVal srcDoc As Document, ByVal dstDoc As Document, _
     Set dst = dstDoc.Styles.Add(StyleName, wdStyleTypeParagraph)
 
     ' BaseStyle MUST be set first - same isolation rule as Phase 1.
-    dst.baseStyle = ""
+    dst.BaseStyle = ""
 
     ' QA-checklist properties.
     dst.AutomaticallyUpdate = src.AutomaticallyUpdate

@@ -34,7 +34,7 @@ Public Function Test_NoSuperscriptOrdinals() As Long
                    CountSuperscriptToken(CStr(vSuffix(i)), strFirstHint)
     Next i
 
-    Debug.Print "Superscript ordinal suffix count = " & lngTotal
+    Debug.Print "Superscript ordinal suffix Count = " & lngTotal
     If lngTotal > 0 And Len(strFirstHint) > 0 Then
         Debug.Print "HINT (first failure): " & strFirstHint
     End If
@@ -65,7 +65,7 @@ Private Function CountSuperscriptToken( _
 
     On Error GoTo PROC_ERR
 
-    Dim rng As Range
+    Dim rng As Word.Range
     Set rng = ActiveDocument.Content
     rng.Collapse wdCollapseStart
 
@@ -103,7 +103,7 @@ End Function
 ' Build a single-line hint identifying where the offending superscript
 ' was found. Uses Range.Information for page and line numbers.
 '-----------------------------------------------------------------------
-Private Function BuildHint(ByVal rng As Range, _
+Private Function BuildHint(ByVal rng As Word.Range, _
                            ByVal strToken As String) As String
     On Error Resume Next
 

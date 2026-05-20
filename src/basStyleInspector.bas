@@ -80,7 +80,7 @@ Public Sub DumpStyleProperties(ByVal sStyleName As String, _
 
     sOut = "'--- " & sStyleName & "  (Type=" & StyleTypeName(oStyle.Type) & _
            ", Priority=" & oStyle.Priority & ") ---" & NL
-    sOut = sOut & ".BaseStyle = """ & CStr(oStyle.baseStyle) & """" & NL
+    sOut = sOut & ".BaseStyle = """ & CStr(oStyle.BaseStyle) & """" & NL
     sOut = sOut & ".QuickStyle = " & oStyle.QuickStyle & NL
 
     Set oFont = oStyle.Font
@@ -715,7 +715,7 @@ Public Function AuditCharStyleBases() As Long
                     nChecked = nChecked + 1
                     On Error Resume Next
                     sBase = ""
-                    sBase = CStr(oStyle.baseStyle)
+                    sBase = CStr(oStyle.BaseStyle)
                     On Error GoTo 0
                     If sBase <> DEFAULT_BASE Then
                         Debug.Print oStyle.NameLocal & "  ->  " & _
@@ -1500,7 +1500,7 @@ Public Sub HideUnapprovedBuiltInStyles()
         Set s = ActiveDocument.Styles(CStr(nameKey))
         On Error GoTo PROC_ERR
         If s Is Nothing Then
-            ' Name disappeared between snapshot and apply - count as skipped
+            ' Name disappeared between snapshot and apply - Count as skipped
             nSkipped = nSkipped + 1
         Else
             wasHidden = (s.Priority = 99) And (s.QuickStyle = False) And (s.UnhideWhenUsed = False)
