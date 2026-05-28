@@ -1,4 +1,4 @@
-'--- AuthorBookRefHeader  (Type=Paragraph, Priority=21) ---
+'--- AuthorBookRefHeader  (Type=Paragraph, Priority=22) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Liberation Serif"

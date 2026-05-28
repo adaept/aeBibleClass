@@ -1,4 +1,4 @@
-'--- VerseText  (Type=Paragraph, Priority=1) ---
+'--- VerseText  (Type=Paragraph, Priority=33) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

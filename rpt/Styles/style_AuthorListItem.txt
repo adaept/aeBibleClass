@@ -1,4 +1,4 @@
-'--- AuthorListItem  (Type=Paragraph, Priority=18) ---
+'--- AuthorListItem  (Type=Paragraph, Priority=19) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

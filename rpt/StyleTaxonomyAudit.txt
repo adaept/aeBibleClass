@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-05-28 10:18:19
+Date    : 2026-05-28 10:53:23
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -43,6 +43,7 @@ PASS  ParallelHeader
 PASS  ParallelText
 PASS  TheHeaders
 PASS  TheFooters
+PASS  Default Paragraph Font
 PASS  Footnote Reference
 PASS  BookHyperlink
 PASS  Selah
@@ -64,5 +65,5 @@ PASS  BibleIndexList (TabStops)
 PASS  ParallelText (TabStops)
 
 ========================================================================
-Summary: 56 PASS   0 FAIL
+Summary: 57 PASS   0 FAIL
 === End Style Taxonomy Audit ===

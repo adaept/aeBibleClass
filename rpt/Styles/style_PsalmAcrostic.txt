@@ -1,4 +1,4 @@
-'--- PsalmAcrostic  (Type=Paragraph, Priority=36) ---
+'--- PsalmAcrostic  (Type=Paragraph, Priority=41) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

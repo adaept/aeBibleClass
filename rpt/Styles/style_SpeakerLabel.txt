@@ -1,4 +1,4 @@
-'--- SpeakerLabel  (Type=Paragraph, Priority=37) ---
+'--- SpeakerLabel  (Type=Paragraph, Priority=42) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

@@ -1,4 +1,4 @@
-'--- BibleIndexList  (Type=Paragraph, Priority=1) ---
+'--- BibleIndexList  (Type=Paragraph, Priority=16) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Liberation Serif"

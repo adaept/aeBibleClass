@@ -1,4 +1,4 @@
-'--- ParallelHeader  (Type=Paragraph, Priority=1) ---
+'--- ParallelHeader  (Type=Paragraph, Priority=47) ---
 .BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"

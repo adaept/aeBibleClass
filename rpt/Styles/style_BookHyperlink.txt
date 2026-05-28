@@ -1,11 +1,11 @@
-'--- AuthorQuote  (Type=Character, Priority=47) ---
+'--- BookHyperlink  (Type=Character, Priority=36) ---
 .BaseStyle = "Default Paragraph Font"
 .QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 9
 .Font.Bold = 0
-.Font.Italic = -1
-.Font.Underline = 0
-.Font.Color = 255
+.Font.Italic = 0
+.Font.Underline = 1
+.Font.Color = 8388608
 .Font.SmallCaps = 0
 .Font.AllCaps = 0

@@ -1,4 +1,4 @@
-'--- Selah  (Type=Character, Priority=35) ---
+'--- Selah  (Type=Character, Priority=40) ---
 .BaseStyle = "Default Paragraph Font"
 .QuickStyle = False
 .Font.Name = "Carlito"

@@ -726,6 +726,71 @@ the AD-side range expansion separately.
 - Book-number ordinal policy still DEFERRED (carry from
   2026-05-19).
 
+## 2026-05-28 - Introduction SpaceBefore + Default Paragraph Font promoted to approved
+
+**Redundant `CountInvisibleCharacters` removed from
+`basTEST_aeBibleConfig.bas`.** The String-returning prototype
+(`Public Function CountInvisibleCharacters(Optional doc As
+Document) As String`) and its `TestInvisible` MsgBox harness were
+deleted; the class-resident Long-returning port at
+`aeBibleClass.cls:1718` (Test 73, wired since #606) is the
+canonical version. No callers outside the now-removed
+`TestInvisible` remained.
+
+**Introduction taxonomy spec aligned to updated style.** Operator
+updated `Introduction` in the document (commit `24ff5a8`
+"Update Style Introduction" - `SpaceBefore` 0 -> 12).
+`RUN_TAXONOMY_STYLES` surfaced the resulting `FAIL  Introduction /
+SpaceBef : expected 0 got 12`. Spec at
+`basTEST_aeBibleConfig.bas:302` updated `dExpSpaceBefore` 0 -> 12;
+re-run cleared to PASS.
+
+**`Default Paragraph Font` promoted to approved.** The
+`DumpAllApprovedStyles` post-run surfaced an orphan
+`style_Default_Paragraph_Font.txt` (Priority=2 in the live
+document but not in `GetApprovedStyles()`). Operator confirmed
+the priority promotion was deliberate so that the character
+styles based on it (`EmphasisBlack`, `EmphasisRed`, `Words of
+Jesus`, `BookHyperlink`) remain functional when applied inside
+`VerseText` paragraphs.
+
+Applied changes:
+
+- `GetApprovedStyles()` - `"Default Paragraph Font"` inserted at
+  position 34, immediately before `"Footnote Reference"` (the
+  first character style in the array). Array grew 48 -> 49.
+- `AuditOneStyle` spec added at `basTEST_aeBibleConfig.bas:329`:
+  `"Default Paragraph Font", "Carlito", 9, -1, -999, -1, -999,
+  -999, -999, 0, 0, "", -16777216`. Character-style shape with
+  paragraph-property sentinels; `BaseStyle=""` since it is the
+  root of the character-style inheritance chain; Color =
+  wdColorAutomatic.
+
+Operator verification (live document):
+
+- `WordEditingConfig` - PromoteApprovedStyles renumbered
+  `Default Paragraph Font` from Priority=2 to Priority=34;
+  remaining priorities renumbered to match new array positions
+  (Footnote Reference 34 -> 35, BookHyperlink 35 -> 36, ...,
+  Normal 48 -> 49). `FargleBlargle` canary still correctly
+  reports as missing.
+- `RUN_TAXONOMY_STYLES` - 57 PASS / 0 FAIL (was 56; +1 for the
+  new entry).
+- `DumpAllApprovedStyles` - 49 succeeded, 0 failed.
+- Test 78 (`CountApprovedStylesWithWrongPriority`) - PASS at 0;
+  array order and document priorities are in lockstep.
+
+**Doc-side note discovered during analysis - LP-bug page Step 0
+snippet.** `EDSG/10-list-paragraph-bug.md` Step 0 uses
+`Not (s.LinkToListTemplate Is Nothing)` as a read-side check;
+that fails at compile because `Style.LinkToListTemplate` is
+write-only. Correct read path is `ListTemplates -> ListLevels ->
+LinkedStyle` (already used in Test 75). Carry forward to
+2026-05-28 arc for an EDSG correction pass.
+
+This arc is now **closed for new work**; continuing carry-
+forward in [`rvw/Code_review 2026-05-28.md`](Code_review%202026-05-28.md).
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward

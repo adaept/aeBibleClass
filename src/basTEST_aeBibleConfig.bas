@@ -54,6 +54,7 @@ Public Function GetApprovedStyles() As Variant
                      "Heading 1", "CustomParaAfterH1", "Brief", "DatAuthRef", _
                      "Heading 2", "Chapter Verse marker", "Verse marker", _
                      "VerseText", _
+                     "Default Paragraph Font", _
                      "Footnote Reference", "BookHyperlink", "Footnote Text", "Psalms BOOK", _
                      "PsalmSuperscription", "Selah", "PsalmAcrostic", _
                      "SpeakerLabel", _
@@ -325,6 +326,7 @@ Public Sub RUN_TAXONOMY_STYLES()
     ' skip sentinels because character styles do not carry paragraph formatting.
     ' Note: Selah / EmphasisBlack carry wdColorAutomatic (-16777216); item 2
     ' of the 2026-05-11 review will replace these with explicit literals.
+    AuditOneStyle "Default Paragraph Font", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "", -16777216
     AuditOneStyle "Footnote Reference", "Carlito", 9, -1, -999, -1, -999, -999, -999, -1, 0, "Default Paragraph Font", 16711680
     AuditOneStyle "BookHyperlink", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "Default Paragraph Font", 8388608
     AuditOneStyle "Selah", "Carlito", 9, -1, -999, -1, -999, -999, -999, 0, 0, "Default Paragraph Font", -16777216

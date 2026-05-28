@@ -1,11 +1,11 @@
-'--- Words of Jesus  (Type=Character, Priority=45) ---
-.BaseStyle = "Default Paragraph Font"
+'--- Default Paragraph Font  (Type=Character, Priority=34) ---
+.BaseStyle = ""
 .QuickStyle = False
 .Font.Name = "Carlito"
 .Font.Size = 9
 .Font.Bold = 0
 .Font.Italic = 0
 .Font.Underline = 0
-.Font.Color = 128
+.Font.Color = -16777216
 .Font.SmallCaps = 0
 .Font.AllCaps = 0
