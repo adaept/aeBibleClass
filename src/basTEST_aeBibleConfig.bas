@@ -164,62 +164,6 @@ Private Sub DumpPrioritiesSorted()
     Next i
 End Sub
 
-Public Sub TestInvisible()
-    Dim s As String
-    s = CountInvisibleCharacters()
-    Debug.Print "[" & s & "]"
-    MsgBox "[" & s & "]"
-End Sub
-
-Public Function CountInvisibleCharacters(Optional doc As Document) As String
-    Dim r As Word.Range
-    Dim targets As Variant
-    Dim labels As Variant
-    Dim counts() As Long
-    Dim i As Long
-    Dim total As Long
-    Dim report As String
-
-    If doc Is Nothing Then Set doc = ActiveDocument
-
-    ' Default return value
-    CountInvisibleCharacters = "0"
-
-    targets = Array(ChrW(&H200B), ChrW(&H200C), ChrW(&H200D), ChrW(&HFEFF), ChrW(&H2060))
-    labels = Array( _
-        "U+200B ZERO WIDTH SPACE", _
-        "U+200C ZERO WIDTH NON-JOINER", _
-        "U+200D ZERO WIDTH JOINER", _
-        "U+FEFF ZERO WIDTH NO-BREAK SPACE", _
-        "U+2060 WORD JOINER")
-
-    ReDim counts(UBound(targets))
-
-    ' Count per story, per character
-    For Each r In doc.StoryRanges
-        For i = 0 To UBound(targets)
-            counts(i) = counts(i) + UBound(Split(r.Text, targets(i)))
-        Next i
-    Next r
-
-    ' Sum total
-    For i = 0 To UBound(counts)
-        total = total + counts(i)
-    Next i
-
-    ' If nothing found, keep "0"
-    If total = 0 Then Exit Function
-
-    ' Build per-character report
-    For i = 0 To UBound(counts)
-        If counts(i) > 0 Then
-            report = report & labels(i) & ": " & counts(i) & vbCrLf
-        End If
-    Next i
-
-    CountInvisibleCharacters = Trim$(report)
-End Function
-
 Private Function CountOrphanedShapes(doc As Document) As Long
     Dim shp As shape
     Dim Count As Long
