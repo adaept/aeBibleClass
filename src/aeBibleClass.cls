@@ -4467,6 +4467,10 @@ Private Function CountFindNumberDashNumber() As Long
             ' Move the selection to the found text
             rng.Select
             Count = Count + 1
+
+            If m_lastHint = "" Then _
+                m_lastHint = "page " & rng.Information(wdActiveEndPageNumber) & _
+                             " : " & rng.Text
             'userInterrupt = MsgBox("Found: " & rng.Text, vbOKCancel)
 
             ' Check for user interruption
