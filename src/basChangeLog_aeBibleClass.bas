@@ -15,7 +15,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #636 - Error message for src when another docx created and EXPORT_THE_CODE is run after 'AuditFontsUsage "ArialTimes"' True [bug]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
-' #609 - Soft Hyphens checked to end of Exodus - See #389 [wip]
+' #609 - Soft Hyphens checked to start of Numbers - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
