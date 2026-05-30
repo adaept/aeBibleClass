@@ -3282,14 +3282,44 @@ End Function
 Private Function CountEmptyParagraphs() As Long
     On Error GoTo PROC_ERR
 
+    ' "Empty" here = paragraph range text is exactly Chr(13) (the pilcrow),
+    ' length = 1. This is a baseline-style test (expected > 0), so a single
+    ' first-hit hint is not diagnostic. Instead, emit one row per occurrence
+    ' to rpt\EmptyParagraphs.txt (overwrite each run) so the operator can
+    ' git-diff the file to find the new entry when the count drifts.
     Dim para As Word.Paragraph
     Dim Count As Long
+    Dim idx As Long
+    Dim prevText As String
+    Dim folderPath As String
+    Dim finalPath As String
+    Dim fileNum As Long
+
+    folderPath = ActiveDocument.Path & "\rpt"
+    If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
+    finalPath = folderPath & "\EmptyParagraphs.txt"
+    fileNum = FreeFile
+    Open finalPath For Output As fileNum
+    Print #fileNum, "page" & vbTab & "paragraph_idx" & vbTab & "prev_snippet"
+
     Count = 0
+    idx = 0
     For Each para In ActiveDocument.Paragraphs
+        idx = idx + 1
         If Len(para.Range.Text) = 1 And para.Range.Text = vbCr Then
             Count = Count + 1
+            If idx > 1 Then
+                prevText = Left(ActiveDocument.Paragraphs(idx - 1).Range.Text, 60)
+            Else
+                prevText = "(start of document)"
+            End If
+            Print #fileNum, para.Range.Information(wdActiveEndPageNumber) & _
+                            vbTab & idx & vbTab & prevText
         End If
     Next para
+    Close fileNum
+
+    m_lastHint = Count & " empty paragraphs - see rpt\EmptyParagraphs.txt"
     CountEmptyParagraphs = Count
 
 PROC_EXIT:
