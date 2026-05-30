@@ -3473,11 +3473,44 @@ Private Function CountLinefeed(Optional space As Variant) As Long
         ' Loop through all instances and Count them
         Do While .Execute
             Count = Count + 1
-            If m_lastHint = "" Then m_lastHint = "First match: " & Left(rng.Text, 60)
+            If IsMissing(space) Then
+                If m_lastHint = "" Then m_lastHint = "First match: " & Left(rng.Text, 60)
+            End If
             ' Keep Word responsive every 50
             If Count Mod 500 = 0 Then DoEvents
         Loop
     End With
+
+    ' Test 33 hint pass: surface the first linefeed NOT preceded by a space.
+    ' The primary loop above can only ever match space-preceded linefeeds in
+    ' this branch, so its hint is always a passing instance - useless when
+    ' the test FAILs. Scan all ^l matches and record the first violation.
+    If Not IsMissing(space) Then
+        Dim scanRng As Word.Range
+        Dim prevChar As String
+        Set scanRng = doc.Content
+        With scanRng.Find
+            .Text = "^l"
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = False
+            .MatchWildcards = False
+            Do While .Execute
+                If scanRng.Start > 0 Then
+                    prevChar = doc.Range(scanRng.Start - 1, scanRng.Start).Text
+                    If prevChar <> " " Then
+                        m_lastHint = "page " & scanRng.Information(wdActiveEndPageNumber) & _
+                                     " : prev=" & Chr(34) & prevChar & Chr(34) & _
+                                     " ctx=" & Left(doc.Range(scanRng.Start - 20, _
+                                         IIf(scanRng.End + 20 > doc.Content.End, _
+                                             doc.Content.End, scanRng.End + 20)).Text, 60)
+                        Exit Do
+                    End If
+                End If
+                scanRng.Collapse wdCollapseEnd
+            Loop
+        End With
+    End If
     Application.ScreenUpdating = True
     
     ' Display the Count
