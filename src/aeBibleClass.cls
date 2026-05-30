@@ -3298,9 +3298,15 @@ Private Function CountEmptyParagraphs() As Long
     folderPath = ActiveDocument.Path & "\rpt"
     If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
     finalPath = folderPath & "\EmptyParagraphs.txt"
+    ' Binary mode + explicit vbCrLf so the line terminator is exactly two
+    ' bytes regardless of whatever Chr(13) leaks into the snippet payload.
+    ' Print # would otherwise produce \r\r\n on rows whose snippet ends with
+    ' the previous paragraph's pilcrow, which git diffs treat as a per-row
+    ' change.
     fileNum = FreeFile
     Open finalPath For Output As fileNum
-    Print #fileNum, "page" & vbTab & "paragraph_idx" & vbTab & "prev_snippet"
+    Print #fileNum, "page" & vbTab & "paragraph_idx" & vbTab & "prev_snippet";
+    Print #fileNum, vbCrLf;
 
     Count = 0
     idx = 0
@@ -3313,8 +3319,15 @@ Private Function CountEmptyParagraphs() As Long
             Else
                 prevText = "(start of document)"
             End If
+            ' Sanitize snippet: strip embedded CR/LF/TAB so the TSV format
+            ' stays one row per occurrence and lines end cleanly with CRLF.
+            prevText = Replace(prevText, vbCr, " ")
+            prevText = Replace(prevText, vbLf, " ")
+            prevText = Replace(prevText, vbTab, " ")
+            prevText = RTrim$(prevText)
             Print #fileNum, para.Range.Information(wdActiveEndPageNumber) & _
-                            vbTab & idx & vbTab & prevText
+                            vbTab & idx & vbTab & prevText;
+            Print #fileNum, vbCrLf;
         End If
     Next para
     Close fileNum
