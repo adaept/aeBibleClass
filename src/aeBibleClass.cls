@@ -3295,7 +3295,7 @@ Private Function CountEmptyParagraphs() As Long
     ' length = 1. This is a baseline-style test (expected > 0), so a single
     ' first-hit hint is not diagnostic. Instead, emit one row per occurrence
     ' to rpt\EmptyParagraphs.txt (overwrite each run) so the operator can
-    ' git-diff the file to find the new entry when the count drifts.
+    ' git-diff the file to find the new entry when the Count drifts.
     Dim para As Word.Paragraph
     Dim Count As Long
     Dim idx As Long
@@ -3450,7 +3450,7 @@ End Function
 '   - Equivalently: nothing structural attaches to this paragraph.
 '
 ' Returns:
-'   Long - count of bare empty paragraphs. Expected 0.
+'   Long - Count of bare empty paragraphs. Expected 0.
 '
 ' Test: RUN_THE_TESTS(80)
 '====================================================================

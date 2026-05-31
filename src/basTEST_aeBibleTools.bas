@@ -1934,7 +1934,7 @@ Public Sub PrintCompactSectionLayoutInfo()
                     "Right: " & GetBorderStyle(sec.Borders(wdBorderRight)) & vbCrLf
 
         ' Section Break Type
-        Select Case sec.PageSetup.sectionStart
+        Select Case sec.PageSetup.SectionStart
             Case wdSectionNewPage
                 outputText = outputText & "Section Break: New Page" & vbCrLf
                 nNewPageBreak = nNewPageBreak + 1

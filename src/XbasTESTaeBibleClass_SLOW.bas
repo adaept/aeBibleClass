@@ -323,7 +323,7 @@ Sub CountParagraphsTypes()
         
         ' Check for different types of section breaks
         If para.Range.Sections.Count > 0 Then
-            Select Case para.Range.Sections(1).PageSetup.sectionStart
+            Select Case para.Range.Sections(1).PageSetup.SectionStart
                 Case wdSectionNewPage
                     nextPageSectionBreakParagraphs = nextPageSectionBreakParagraphs + 1
                     nextPageSectionBreakIndices = nextPageSectionBreakIndices & paraIndex & ", "

@@ -231,7 +231,7 @@ Function CountNextPageSectionBreakParagraphs() As Long
     Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
-            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionNewPage Then
+            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionNewPage Then
                 Count = Count + 1
             End If
         End If
@@ -252,7 +252,7 @@ Function CountContinuousSectionBreakParagraphs() As Long
     Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
-            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionContinuous Then
+            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionContinuous Then
                 Count = Count + 1
             End If
         End If
@@ -273,7 +273,7 @@ Function CountEvenPageSectionBreakParagraphs() As Long
     Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
-            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionEvenPage Then
+            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionEvenPage Then
                 Count = Count + 1
             End If
         End If
@@ -294,7 +294,7 @@ Function CountOddPageSectionBreakParagraphs() As Long
     Count = 0
     For Each para In ActiveDocument.Paragraphs
         If para.Range.Sections.Count > 0 Then
-            If para.Range.Sections(1).PageSetup.sectionStart = wdSectionOddPage Then
+            If para.Range.Sections(1).PageSetup.SectionStart = wdSectionOddPage Then
                 Count = Count + 1
             End If
         End If
