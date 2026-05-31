@@ -1,146 +1,146 @@
-page	paragraph_idx	prev_snippet
-1	1	(start of document)
-3	15	I.S.B.N. No: 978𢠨92�17571�2
-5	18	
-9	37	
-24	303	Part I, Chapter 7, Section 4 #33 Jesus� spiritual resurrecti
-25	327	The Hebrew Bible
-26	338	
-66	1923	5026燬o Joseph died, being one hundred ten years old, and th
-67	1934	
-99	3189	4038燜or the cloud of God was on the tabernacle by day, and
-100	3200	
-123	4088	2734燭hese are the commandments which God commanded Moses f
-124	4099	
-157	5425	3613燭hese are the commandments and the ordinances which Go
-158	5436	
-185	6431	3412燼nd in all the mighty hand, and in all the awesome deed
-186	6442	
-205	7126	2433燛leazar the son of Aaron died. They buried him in the h
-206	7137	
-224	7778	2125營n those days there was no king in Israel. Everyone did
-225	7789	
-228	7880	422燼nd Obed became the father of Jesse, and Jesse became th
-229	7891	
-253	8734	3113燭hey took their bones and buried them under the tamaris
-254	8745	
-274	9466	2425燚avid built an altar to God there, and offered burnt of
-275	9477	
-299	10317	2253燞e served Baal and worshiped him, and provoked God, the
-300	10328	
-322	11074	2530燼nd for his allowance, there was a continual allowance
-323	11085	
-345	12058	2930爓ith all his reign and his might, and the times that we
-346	12069	
-372	12929	3623爴Cyrus king of Persia says, 慓od, the God of heaven, ha
-373	12940	
-381	13232	1044燗ll these had taken foreign wives; and some of them had
-382	13243	
-393	13664	1331燼nd for the wood offering, at times appointed, and for
-394	13675	
-400	13854	103燜or Mordecai the Jew was next to King Ahasuerus, and gre
-401	13865	
-421	14979	4217燬o Job died, being old and full of days.
-422	14990	
-473	17746	1506燣et everything that has breath praise Yah! Praise Yah!
-474	17757	
-491	18705	3131燝ive her of the fruit of her hands! Let her works prais
-492	18716	
-498	18952	1214燜or God will bring every work into judgment, with every
-499	18963	
-502	19090	814燘eloved Come away, my beloved! Be like a gazelle or a yo
-503	19101	
-540	20461	6624爴They will go out, and look at the dead bodies of the m
-541	20472	
-583	21890	5234燜or his allowance, there was a continual allowance give
-584	21901	
-588	22062	522燘ut you have utterly rejected us. You are very angry ag
-589	22073	
-627	23396	4835爴It shall be eighteen thousand reeds around: and the na
-628	23407	
-640	23778	1213爴But go your way until the end; for you will rest, and
-641	23789	
-647	24002	149燱ho is wise, that he may understand these things? Who is
-648	24013	
-650	24091	321營 will cleanse their blood, that I have not cleansed: fo
-651	24102	
-656	24259	915營 will plant them on their land, and they will no more b
-657	24270	
-658	24294	121燬aviors will go up on Mount Zion to judge the mountains
-659	24305	
-661	24359	411燬hould not I be concerned for Nineveh, that great city,
-662	24370	
-666	24484	720燳ou will give truth to Jacob, and mercy to Abraham, as
-667	24495	
-669	24547	319燭here is no healing your wound, for your injury is fatal
-670	24558	
-672	24619	319燝od, the Lord, is my strength. He makes my feet like dee
-673	24630	
-675	24688	320燗t that time I will bring you in, and at that time I wil
-676	24699	
-678	24741	223營n that day, says the Lord God of Hosts, I will take you
-679	24752	
-686	24979	1421燳es, every pot in Jerusalem and in Judah will be holy t
-687	24990	
-689	25051	46燞e will turn the hearts of the fathers to the children,
-691	25058	The Gospel of Jesus Christ
-692	25069	
-720	26170	2820爐eaching them to observe all things that I commanded yo
-721	26181	
-738	26877	1620燭hey went out, and preached everywhere, the Lord workin
-739	26888	
-767	28065	2453燼nd were continually in the temple, praising and blessi
-768	28076	
-790	28978	2125燭here are also many other things which Jesus did, which
-791	28989	
-817	30026	2831爌reaching God抯 Kingdom, and teaching the things concer
-818	30037	
-829	30488	1624燭he grace of our Lord Jesus Christ be with you all! Ame
-830	30499	
-841	30954	1624燤y love to all of you in Christ Jesus. Amen.
-842	30965	
-849	31237	1314燭he grace of the Lord Jesus Christ, God抯 love, and the
-850	31248	
-854	31405	618燭he grace of our Lord Jesus Christ be with your spirit,
-855	31416	
-859	31579	624燝race be with all those who love our Lord Jesus Christ w
-860	31590	
-863	31700	423燭he grace of the Lord Jesus Christ be with you all. Amen
-864	31711	
-867	31812	418燭he salutation of me, Paul, with my own hand: remember m
-868	31823	
-871	31919	528燭he grace of our Lord Jesus Christ be with you. Amen.
-872	31930	
-874	31982	318燭he grace of our Lord Jesus Christ be with you all. Amen
-875	31993	
-878	32114	621爓hich some profess, and thus have wandered from the fait
-879	32125	
-881	32214	422燭he Lord Jesus Christ be with your spirit. Grace be with
-882	32225	
-884	32276	315燗ll who are with me greet you. Greet those who love us i
-885	32287	
-886	32315	125燭he grace of our Lord Jesus Christ be with your spirit.
-887	32326	
-896	32644	1325燝race be with you all. Amen.
-897	32655	
-900	32770	520爈et him know that he who turns a sinner from the error o
-901	32781	
-904	32893	514燝reet one another with a kiss of love. Peace be to all o
-905	32904	
-907	32970	318燘ut grow in the grace and knowledge of our Lord and Savi
-908	32981	
-911	33093	521燣ittle children, keep yourselves from idols.
-912	33104	
-913	33120	113燭he children of your chosen sister greet you. Amen.
-914	33131	
-915	33148	114燽ut I hope to see you soon. Then we will speak face to f
-916	33159	
-917	33187	125爐o God our Savior, who alone is wise, be glory and majes
-918	33198	
-931	33626	2221燭he grace of the Lord Jesus Christ be with all the sain
-932	33630	Bible Concordance
-934	33646	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
-935	33659	* https://bibleimagelibrary.org/ 桞iblica Open Maps CC BY-SA
-937	33662	
-944	33672	An Introduction
-966	33822	Find out for yourself how profoundly God is speaking to mank
+page	paragraph_idx	kind	prev_snippet
+1	1	SBNP	(start of document)
+3	15	SBNP	I.S.B.N. No: 978𢠨92�17571�2
+5	18	SBNP	
+9	37	SBC	
+24	303	PBB	Part I, Chapter 7, Section 4 #33 Jesus� spiritual resurrecti
+25	327	SBNP	The Hebrew Bible
+26	338	SBNP	
+66	1923	SBNP	5026燬o Joseph died, being one hundred ten years old, and th
+67	1934	SBNP	
+99	3189	SBNP	4038燜or the cloud of God was on the tabernacle by day, and
+100	3200	SBNP	
+123	4088	SBNP	2734燭hese are the commandments which God commanded Moses f
+124	4099	SBNP	
+157	5425	SBNP	3613燭hese are the commandments and the ordinances which Go
+158	5436	SBNP	
+185	6431	SBNP	3412燼nd in all the mighty hand, and in all the awesome deed
+186	6442	SBNP	
+205	7126	SBNP	2433燛leazar the son of Aaron died. They buried him in the h
+206	7137	SBNP	
+224	7778	SBNP	2125營n those days there was no king in Israel. Everyone did
+225	7789	SBNP	
+228	7880	SBNP	422燼nd Obed became the father of Jesse, and Jesse became th
+229	7891	SBNP	
+253	8734	SBNP	3113燭hey took their bones and buried them under the tamaris
+254	8745	SBNP	
+274	9466	SBNP	2425燚avid built an altar to God there, and offered burnt of
+275	9477	SBNP	
+299	10317	SBNP	2253燞e served Baal and worshiped him, and provoked God, the
+300	10328	SBNP	
+322	11074	SBNP	2530燼nd for his allowance, there was a continual allowance
+323	11085	SBNP	
+345	12058	SBNP	2930爓ith all his reign and his might, and the times that we
+346	12069	SBNP	
+372	12929	SBNP	3623爴Cyrus king of Persia says, 慓od, the God of heaven, ha
+373	12940	SBNP	
+381	13232	SBNP	1044燗ll these had taken foreign wives; and some of them had
+382	13243	SBNP	
+393	13664	SBNP	1331燼nd for the wood offering, at times appointed, and for
+394	13675	SBNP	
+400	13854	SBNP	103燜or Mordecai the Jew was next to King Ahasuerus, and gre
+401	13865	SBNP	
+421	14979	SBNP	4217燬o Job died, being old and full of days.
+422	14990	SBNP	
+473	17746	SBNP	1506燣et everything that has breath praise Yah! Praise Yah!
+474	17757	SBNP	
+491	18705	SBNP	3131燝ive her of the fruit of her hands! Let her works prais
+492	18716	SBNP	
+498	18952	SBNP	1214燜or God will bring every work into judgment, with every
+499	18963	SBNP	
+502	19090	SBNP	814燘eloved Come away, my beloved! Be like a gazelle or a yo
+503	19101	SBNP	
+540	20461	SBNP	6624爴They will go out, and look at the dead bodies of the m
+541	20472	SBNP	
+583	21890	SBNP	5234燜or his allowance, there was a continual allowance give
+584	21901	SBNP	
+588	22062	SBNP	522燘ut you have utterly rejected us. You are very angry ag
+589	22073	SBNP	
+627	23396	SBNP	4835爴It shall be eighteen thousand reeds around: and the na
+628	23407	SBNP	
+640	23778	SBNP	1213爴But go your way until the end; for you will rest, and
+641	23789	SBNP	
+647	24002	SBNP	149燱ho is wise, that he may understand these things? Who is
+648	24013	SBNP	
+650	24091	SBNP	321營 will cleanse their blood, that I have not cleansed: fo
+651	24102	SBNP	
+656	24259	SBNP	915營 will plant them on their land, and they will no more b
+657	24270	SBNP	
+658	24294	SBNP	121燬aviors will go up on Mount Zion to judge the mountains
+659	24305	SBNP	
+661	24359	SBNP	411燬hould not I be concerned for Nineveh, that great city,
+662	24370	SBNP	
+666	24484	SBNP	720燳ou will give truth to Jacob, and mercy to Abraham, as
+667	24495	SBNP	
+669	24547	SBNP	319燭here is no healing your wound, for your injury is fatal
+670	24558	SBNP	
+672	24619	SBNP	319燝od, the Lord, is my strength. He makes my feet like dee
+673	24630	SBNP	
+675	24688	SBNP	320燗t that time I will bring you in, and at that time I wil
+676	24699	SBNP	
+678	24741	SBNP	223營n that day, says the Lord God of Hosts, I will take you
+679	24752	SBNP	
+686	24979	SBNP	1421燳es, every pot in Jerusalem and in Judah will be holy t
+687	24990	SBNP	
+689	25051	SBNP	46燞e will turn the hearts of the fathers to the children,
+691	25058	SBNP	The Gospel of Jesus Christ
+692	25069	SBNP	
+720	26170	SBNP	2820爐eaching them to observe all things that I commanded yo
+721	26181	SBNP	
+738	26877	SBNP	1620燭hey went out, and preached everywhere, the Lord workin
+739	26888	SBNP	
+767	28065	SBNP	2453燼nd were continually in the temple, praising and blessi
+768	28076	SBNP	
+790	28978	SBNP	2125燭here are also many other things which Jesus did, which
+791	28989	SBNP	
+817	30026	SBNP	2831爌reaching God抯 Kingdom, and teaching the things concer
+818	30037	SBNP	
+829	30488	SBNP	1624燭he grace of our Lord Jesus Christ be with you all! Ame
+830	30499	SBNP	
+841	30954	SBNP	1624燤y love to all of you in Christ Jesus. Amen.
+842	30965	SBNP	
+849	31237	SBNP	1314燭he grace of the Lord Jesus Christ, God抯 love, and the
+850	31248	SBNP	
+854	31405	SBNP	618燭he grace of our Lord Jesus Christ be with your spirit,
+855	31416	SBNP	
+859	31579	SBNP	624燝race be with all those who love our Lord Jesus Christ w
+860	31590	SBNP	
+863	31700	SBNP	423燭he grace of the Lord Jesus Christ be with you all. Amen
+864	31711	SBNP	
+867	31812	SBNP	418燭he salutation of me, Paul, with my own hand: remember m
+868	31823	SBNP	
+871	31919	SBNP	528燭he grace of our Lord Jesus Christ be with you. Amen.
+872	31930	SBNP	
+874	31982	SBNP	318燭he grace of our Lord Jesus Christ be with you all. Amen
+875	31993	SBNP	
+878	32114	SBNP	621爓hich some profess, and thus have wandered from the fait
+879	32125	SBNP	
+881	32214	SBNP	422燭he Lord Jesus Christ be with your spirit. Grace be with
+882	32225	SBNP	
+884	32276	SBNP	315燗ll who are with me greet you. Greet those who love us i
+885	32287	SBNP	
+886	32315	SBNP	125燭he grace of our Lord Jesus Christ be with your spirit.
+887	32326	SBNP	
+896	32644	SBNP	1325燝race be with you all. Amen.
+897	32655	SBNP	
+900	32770	SBNP	520爈et him know that he who turns a sinner from the error o
+901	32781	SBNP	
+904	32893	SBNP	514燝reet one another with a kiss of love. Peace be to all o
+905	32904	SBNP	
+907	32970	SBNP	318燘ut grow in the grace and knowledge of our Lord and Savi
+908	32981	SBNP	
+911	33093	SBNP	521燣ittle children, keep yourselves from idols.
+912	33104	SBNP	
+913	33120	SBNP	113燭he children of your chosen sister greet you. Amen.
+914	33131	SBNP	
+915	33148	SBNP	114燽ut I hope to see you soon. Then we will speak face to f
+916	33159	SBNP	
+917	33187	SBNP	125爐o God our Savior, who alone is wise, be glory and majes
+918	33198	SBNP	
+931	33626	SBNP	2221燭he grace of the Lord Jesus Christ be with all the sain
+932	33630	SBNP	Bible Concordance
+934	33646	SBNP	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
+935	33659	SBNP	* https://bibleimagelibrary.org/ 桞iblica Open Maps CC BY-SA
+937	33662	PBB	
+944	33672	SBNP	An Introduction
+966	33822	SBNP	Find out for yourself how profoundly God is speaking to mank

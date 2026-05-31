@@ -1,5 +1,5 @@
 === Style Usage Distribution ===
-Normal: 7
+Normal: 9
 BodyText: 496
 FrontPageTopLine: 1
 TitleEyebrow: 2
@@ -37,5 +37,8 @@ AuthorSectionHead: 3
 Footnote Text: 1000
 ParallelText: 12
 ParallelHeader: 24
-TheHeaders: 135
-Total paragraphs (all styles): 35003
+Header: 2
+TheHeaders: 136
+Footer: 3
+TheFooters: 1
+Total paragraphs (all styles): 35012

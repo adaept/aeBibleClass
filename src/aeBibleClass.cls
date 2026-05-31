@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 79
+Private Const MaxTests = 80
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -272,7 +272,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -969,7 +969,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 37
         GetTestDescription = "Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline"
     Case 38
-        GetTestDescription = "Rule: Bare empty paragraphs (pilcrow only) at the accepted baseline - CountEmptyParagraphs should match the expected baseline"
+        GetTestDescription = "Count of empty paragraphs (Range.Text = Chr(13) only); in practice almost all are structural carriers for Section/Page breaks (SBNP/SBC/PBB) classified in rpt\EmptyParagraphs.txt - CountEmptyParagraphs should match the expected baseline. Paired with Test 80 for the truly-bare subset."
     Case 39
         GetTestDescription = "Rule: No paragraph mark carries Arial Black 8pt + black/automatic font (paragraph marks must not inherit body-text formatting from surrounding runs) - CountParagraphMarks_ArialBlack should return 0"
     Case 40
@@ -1052,6 +1052,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: Every approved style has Priority equal to its 1-based position in GetApprovedStyles() (catches gallery-drag, CopyStylesFromTemplate, or paste-from-elsewhere reordering between PromoteApprovedStyles runs) - CountApprovedStylesWithWrongPriority should return 0"
     Case 79
         GetTestDescription = "Rule: No digit-prefixed ordinal suffix (st/nd/rd/th) appears as superscript in body text (e.g. 1st, 2nd, 3rd, 4th) - CountNumericOrdinals should return 0"
+    Case 80
+        GetTestDescription = "Rule: No truly-bare empty paragraphs (pilcrow only, not hosting a Section/Page/Column break - subset of Test 38 filtered to kind=Bare) - CountBareEmptyParagraphs should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1280,6 +1282,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 79
         ResultArray(TestNum) = CountNumericOrdinals
         m_HintArray(TestNum) = m_lastHint
+    Case 80
+        ResultArray(TestNum) = CountBareEmptyParagraphs
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1470,6 +1475,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountApprovedStylesWithWrongPriority"
     Case 79
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumericOrdinals"
+    Case 80
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBareEmptyParagraphs"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1663,6 +1670,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountApprovedStylesWithWrongPriority"
     Case 79
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNumericOrdinals"
+    Case 80
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBareEmptyParagraphs"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -3293,20 +3302,43 @@ Private Function CountEmptyParagraphs() As Long
     Dim prevText As String
     Dim folderPath As String
     Dim finalPath As String
-    Dim fileNum As Long
+    Dim oFSO As Object
+    Dim oStream As Object
 
     folderPath = ActiveDocument.Path & "\rpt"
     If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
     finalPath = folderPath & "\EmptyParagraphs.txt"
-    ' Binary mode + explicit vbCrLf so the line terminator is exactly two
-    ' bytes regardless of whatever Chr(13) leaks into the snippet payload.
-    ' Print # would otherwise produce \r\r\n on rows whose snippet ends with
-    ' the previous paragraph's pilcrow, which git diffs treat as a per-row
-    ' change.
-    fileNum = FreeFile
-    Open finalPath For Output As fileNum
-    Print #fileNum, "page" & vbTab & "paragraph_idx" & vbTab & "prev_snippet";
-    Print #fileNum, vbCrLf;
+    ' Use FSO.CreateTextFile instead of VBA "Open For Output" to avoid
+    ' Err 55 ("File already open") when a previous run leaked a handle
+    ' or another reader (WSL/editor/sync agent) holds an advisory share.
+    ' FSO writes \r\n line terminators on Windows; ASCII (unicode=False)
+    ' matches the byte layout of the prior Open-mode output, so the file
+    ' diffs cleanly across the transition.
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(finalPath, True, False)
+    oStream.WriteLine "page" & vbTab & "paragraph_idx" & vbTab & "kind" & vbTab & "prev_snippet"
+
+    Dim kind As String
+    Dim prevChar As String
+    Dim docEnd As Long
+    docEnd = ActiveDocument.Content.End
+
+    ' Pre-build section start position -> SectionStart enum map. Used to
+    ' resolve the subtype when an empty paragraph is followed by Chr(12)
+    ' (the section/page break character). A Chr(12) whose position+1 hits
+    ' a section's Range.Start is a section break; otherwise a plain page
+    ' break.
+    Dim secCount As Long
+    Dim secStartPos() As Long
+    Dim secStartType() As Long
+    Dim si As Long
+    secCount = ActiveDocument.Sections.Count
+    ReDim secStartPos(1 To secCount)
+    ReDim secStartType(1 To secCount)
+    For si = 1 To secCount
+        secStartPos(si) = ActiveDocument.Sections(si).Range.Start
+        secStartType(si) = ActiveDocument.Sections(si).PageSetup.SectionStart
+    Next si
 
     Count = 0
     idx = 0
@@ -3325,12 +3357,64 @@ Private Function CountEmptyParagraphs() As Long
             prevText = Replace(prevText, vbLf, " ")
             prevText = Replace(prevText, vbTab, " ")
             prevText = RTrim$(prevText)
-            Print #fileNum, para.Range.Information(wdActiveEndPageNumber) & _
-                            vbTab & idx & vbTab & prevText;
-            Print #fileNum, vbCrLf;
+
+            ' Classify - priority: PBB > Chr(12)-after (section vs page) >
+            ' Chr(14)-after (column break) > Bare. Detection driven by the
+            ' character at position para.Range.End (the byte after the
+            ' paragraph's pilcrow), cross-referenced with section start
+            ' positions to distinguish section breaks from plain page
+            ' breaks. Labels match Word's Layout > Breaks menu:
+            '   SBNP = Section Break (Next Page)        wdSectionNewPage
+            '   SBC  = Section Break (Continuous)       wdSectionContinuous
+            '   SBEP = Section Break (Even Page)        wdSectionEvenPage
+            '   SBOP = Section Break (Odd Page)         wdSectionOddPage
+            '   SBNC = Section Break (New Column)       wdSectionNewColumn
+            '   PBB  = ParagraphFormat.PageBreakBefore = True
+            '   PB   = followed by Chr(12) that is NOT a section boundary
+            '   CB   = followed by Chr(14) column break
+            '   Bare = none of the above
+            Dim nxCode As Long
+            Dim secMatch As Long
+            kind = ""
+            If para.Range.ParagraphFormat.PageBreakBefore Then
+                kind = "PBB"
+            ElseIf para.Range.End < docEnd Then
+                nxCode = AscW(ActiveDocument.Range(para.Range.End, _
+                                                   para.Range.End + 1).Text)
+                If nxCode = 12 Then
+                    secMatch = 0
+                    For si = 2 To secCount
+                        If secStartPos(si) = para.Range.End + 1 Then
+                            secMatch = si
+                            Exit For
+                        End If
+                    Next si
+                    If secMatch > 0 Then
+                        Select Case secStartType(secMatch)
+                            Case wdSectionNewPage:    kind = "SBNP"
+                            Case wdSectionContinuous: kind = "SBC"
+                            Case wdSectionEvenPage:   kind = "SBEP"
+                            Case wdSectionOddPage:    kind = "SBOP"
+                            Case wdSectionNewColumn:  kind = "SBNC"
+                            Case Else:                kind = "SB?"
+                        End Select
+                    Else
+                        kind = "PB"
+                    End If
+                ElseIf nxCode = 14 Then
+                    kind = "CB"
+                Else
+                    kind = "Bare"
+                End If
+            Else
+                kind = "Bare"
+            End If
+
+            oStream.WriteLine para.Range.Information(wdActiveEndPageNumber) & _
+                              vbTab & idx & vbTab & kind & vbTab & prevText
         End If
     Next para
-    Close fileNum
+    oStream.Close
 
     m_lastHint = Count & " empty paragraphs - see rpt\EmptyParagraphs.txt"
     CountEmptyParagraphs = Count
@@ -3339,6 +3423,83 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountEmptyParagraphs | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    ' Close the FSO stream defensively. Safe if oStream is Nothing or
+    ' already closed; wrapped in Resume Next to avoid recursive errors.
+    On Error Resume Next
+    If Not oStream Is Nothing Then oStream.Close
+    On Error GoTo 0
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+'====================================================================
+' Function: CountBareEmptyParagraphs
+'
+' Purpose:
+'   Counts the truly-bare subset of Test 38 - empty paragraphs whose
+'   .Range.Text is Chr(13) AND which do NOT host any structural break
+'   (Section break / Page break / Column break / PageBreakBefore).
+'   Test 38 includes structural carriers in its baseline (~145+);
+'   this test isolates the residual that warrants editorial cleanup.
+'
+' Classification predicate (matches the kind column in
+' rpt\EmptyParagraphs.txt, Bare branch only):
+'   - ParagraphFormat.PageBreakBefore = False
+'   - Character at Range.End is neither Chr(12) nor Chr(14)
+'   - Equivalently: nothing structural attaches to this paragraph.
+'
+' Returns:
+'   Long - count of bare empty paragraphs. Expected 0.
+'
+' Test: RUN_THE_TESTS(80)
+'====================================================================
+Private Function CountBareEmptyParagraphs() As Long
+    On Error GoTo PROC_ERR
+
+    Dim para As Word.Paragraph
+    Dim Count As Long
+    Dim idx As Long
+    Dim docEnd As Long
+    Dim nxCode As Long
+    Count = 0
+    idx = 0
+    docEnd = ActiveDocument.Content.End
+
+    For Each para In ActiveDocument.Paragraphs
+        idx = idx + 1
+        If Len(para.Range.Text) = 1 And para.Range.Text = vbCr Then
+            If Not para.Range.ParagraphFormat.PageBreakBefore Then
+                If para.Range.End < docEnd Then
+                    nxCode = AscW(ActiveDocument.Range(para.Range.End, _
+                                                       para.Range.End + 1).Text)
+                    If nxCode <> 12 And nxCode <> 14 Then
+                        Count = Count + 1
+                        If m_lastHint = "" Then
+                            m_lastHint = "page " & _
+                                para.Range.Information(wdActiveEndPageNumber) & _
+                                " : paragraph #" & idx
+                        End If
+                    End If
+                Else
+                    ' At end-of-document, no following char to inspect.
+                    Count = Count + 1
+                    If m_lastHint = "" Then
+                        m_lastHint = "page " & _
+                            para.Range.Information(wdActiveEndPageNumber) & _
+                            " : paragraph #" & idx & " (EOD)"
+                    End If
+                End If
+            End If
+        End If
+    Next para
+
+    CountBareEmptyParagraphs = Count
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountBareEmptyParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

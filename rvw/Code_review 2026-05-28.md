@@ -171,6 +171,177 @@ remains visible during slot-by-slot review work.
 Full rule and worked examples: see § 9 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
 
+## 2026-05-30 - Test 11 / 33 / 38 hint pass + Test 80 added (Bare empty para split)
+
+Three hint-or-diagnostic gaps closed across the existing slot
+taxonomy, plus a Test 22-style split applied to Test 38 once the
+underlying structural reality came to light.
+
+**Test 11 - hint added to `CountFindNumberDashNumber`.**
+Mirrors the Test 79 (`CountNumericOrdinals`) convention. On the
+first `[0-9]+-[0-9]+` match, sets `m_lastHint = "page <N> :
+<match-text>"` via `rng.Information(wdActiveEndPageNumber)`.
+Previously the FAIL row printed `(no hint provided by test
+function)`.
+
+**Test 33 - hint bug fixed in `CountLinefeed`.**
+`CountLinefeed` is shared by Test 32 (no arg, finds `^l`) and
+Test 33 (`" "` arg, finds `" {1}^l"`). The pre-fix hint captured
+the first match of whatever pattern was active, so for Test 33
+it always returned a *passing* (space-preceded) instance.
+
+Fix: gated the primary-loop hint capture to the Test 32 path
+(`IsMissing(space)`), then added a second pass in the Test 33
+branch that iterates `^l` matches, inspects the character at
+`scanRng.Start - 1`, and records the first instance whose
+predecessor is **not** a space. Hint shape:
+`page <N> : prev="<char>" ctx=<±20-char window>`. On a PASS run
+no violation exists and `m_lastHint` stays empty - correct
+signal.
+
+**Test 38 - structural reality surfaced; description corrected;
+Test 80 added as the `Bare`-only split.**
+
+Originated as "Test 38 has no hint" and grew into a multi-step
+investigation:
+
+1. **First hint added** captured the first occurrence with page,
+   paragraph index, and preceding-paragraph snippet. Operator
+   reported the hint pointed at paragraph #1 (an existing
+   baseline empty), not the +1 drift - the dataset was too dense
+   for a single-hit hint to be diagnostic.
+
+2. **Switched to per-occurrence dump** at
+   `rpt\EmptyParagraphs.txt` (TSV, overwrite each run, same
+   convention as `StyleTaxonomyAudit.txt`). Hint became
+   `<N> empty paragraphs - see rpt\EmptyParagraphs.txt`.
+   Operator-side workflow: re-run, `git diff` the file, the
+   drift row stands out.
+
+3. **CRLF / TSV hygiene** - first dump produced `\r\r\n` line
+   endings on rows whose snippet ended with a pilcrow `\r`
+   (VBA's `Print #` appends its own `\r\n` after data). Some
+   snippets also contained embedded tabs that corrupted the
+   TSV. Fixed by trailing-semicolon `Print #` + explicit
+   `vbCrLf`, plus snippet sanitisation
+   (`Replace vbCr/vbLf/vbTab -> " "` then `RTrim$`). Operator
+   verification: a 1-row diff exactly matched a single
+   document edit (tab added to a previously-empty paragraph).
+
+4. **Classification column added** to surface what kinds of
+   "empty" paragraphs exist. First attempt used:
+
+   - `ParagraphFormat.PageBreakBefore` for **PBB**, and
+   - `para.Range.End = Sections(1).Range.End` for **section-end**.
+
+   Result: 143 `Bare` + 2 `PBB`, no section labels at all -
+   wrong. The positional equality is unreliable (off-by-one
+   when the section break char isn't included in the
+   paragraph's range).
+
+5. **Second attempt** compared section indices of this
+   paragraph and the next - also wrong. Diagnostic columns
+   added (`this_sec`, `next_sec`, `nx_ch`, `pbb`) to the
+   report revealed the actual structure: **`this_sec ==
+   next_sec` for every row** (the section transition happens
+   across multiple Word paragraphs, not at the empty-paragraph
+   boundary), and **`nx_ch = 12`** (the page/section break
+   char) on essentially every row. The empty paragraph is
+   *followed by* the break char, not at the section end in
+   the index sense.
+
+6. **Correct predicate** (applied 2026-05-30):
+
+   - `PBB` if `ParagraphFormat.PageBreakBefore = True`.
+   - Else if char at `para.Range.End` is `Chr(12)`:
+     cross-reference a pre-built `secStartPos() ->
+     secStartType()` map; if a section starts at
+     `para.Range.End + 1`, classify by `SectionStart` enum
+     (`SBNP` / `SBC` / `SBEP` / `SBOP` / `SBNC`); otherwise
+     plain page break `PB`.
+   - Else if char = `Chr(14)`: `CB`.
+   - Else: `Bare`.
+
+   Labels match Word's Layout > Breaks menu. Distribution on
+   the live document after the fix: **142 SBNP, 2 PBB, 1 SBC,
+   0 Bare**. Every flagged "empty" paragraph is a structural
+   carrier; the test was measuring section/page-break density,
+   not stray pilcrows.
+
+7. **File-IO hardening surfaced en route.** A mid-run failure
+   left a VBA file handle open, causing Err 55 ("File already
+   open") on the next invocation. PROC_ERR updated to close
+   the file handle defensively. Then a follow-up run hit Err
+   70 ("Permission denied") at the `Open For Output` call -
+   resolved by switching to
+   `Scripting.FileSystemObject.CreateTextFile` (late binding,
+   same pattern as `basStyleInspector.bas:179`). FSO opens
+   the file with more permissive share semantics and writes
+   `\r\n` natively, removing the `Print #` semicolon dance
+   for line termination. The Err 70 itself ultimately
+   required a Word restart to clear the orphan lock;
+   investigation didn't pinpoint the holder (suspected WSL
+   read-side cache).
+
+**Test 38 description corrected.** Was: "Rule: Bare empty
+paragraphs (pilcrow only) at the accepted baseline". Now:
+"Count of empty paragraphs (Range.Text = Chr(13) only); in
+practice almost all are structural carriers for Section/Page
+breaks (SBNP/SBC/PBB) classified in rpt\EmptyParagraphs.txt -
+CountEmptyParagraphs should match the expected baseline.
+Paired with Test 80 for the truly-bare subset." Acknowledges
+the structural reality without changing the baseline.
+
+**Test 80 added - `CountBareEmptyParagraphs`.** Mirrors the
+Test 22 -> 22 / 38 / 74 split pattern from the 2026-05-15 arc:
+Test 38 keeps the structural-inclusive baseline (216), Test 80
+isolates the truly-bare residual. Predicate: `PBB = False` AND
+char at `Range.End` is neither `Chr(12)` nor `Chr(14)` AND
+`Range.Text = Chr(13)`. Expected 0. On a Bare hit, sets
+`m_lastHint = "page <N> : paragraph #<idx>"`. Standalone walk -
+no ordering dependency on Test 38.
+
+Wiring touched all four switches in one pass:
+
+- `MaxTests` 79 -> 80.
+- `Expected1BasedArray` values array extended with `0`.
+- `GetTestDescription` Case 80 - "Rule: No truly-bare empty
+  paragraphs (pilcrow only, not hosting a Section/Page/Column
+  break - subset of Test 38 filtered to kind=Bare) -
+  CountBareEmptyParagraphs should return 0".
+- `GetPassFail` Case 80 dispatch + `m_HintArray` copy.
+- `Debug.Print` and `BufAppend` Case 80 rows.
+
+**Verification (live document):**
+
+- `RUN_THE_TESTS 11` - PASS with hint surfacing the first
+  digit-dash-digit token.
+- `RUN_THE_TESTS 33` - PASS path keeps `m_lastHint` empty
+  (no non-space-preceded linefeed exists); a FAIL would now
+  point at the offender.
+- `RUN_THE_TESTS 38` - PASS at 216; `rpt\EmptyParagraphs.txt`
+  distribution 142 SBNP / 2 PBB / 1 SBC / 0 Bare.
+- `RUN_THE_TESTS 80` - PASS at 0 (consistent with the 0 Bare
+  count from the report).
+
+**Coverage closed:** the FAIL desensitisation that prompted the
+session - "Test 38 says +1 but the hint points at an existing
+baseline entry" - is now structurally addressed. Future drifts
+land in one of two places: Test 38 baseline (a new structural
+carrier appeared) or Test 80 hit (a stray bare paragraph appeared,
+hint provided), making the editorial decision actionable.
+
+**Follow-ups (open).**
+
+- Decide whether `kind`-distribution drift (e.g., SBNP vs SBC
+  ratio changes between runs) should itself be a tested
+  invariant. Currently the report is freeform; only the total
+  count is gated by Test 38.
+- The structural-reality phrasing in Test 38's description may
+  be worth promoting into `EDSG/01-styles.md` or
+  `EDSG/04-qa-workflow.md` if operators reference test
+  descriptions in QA narrative.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward

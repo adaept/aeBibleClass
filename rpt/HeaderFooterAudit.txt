@@ -1,5 +1,5 @@
 === Header/Footer ASCII Audit Summary ===
-Total Sections: 148
+Total Sections: 145
 Style Check: FAIL
 --- Encountered Styles ---
 STYLE=TheHeaders | LOCATION=Header

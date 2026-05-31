@@ -16,13 +16,11 @@ PASS              Copy ()       Test = 7      0             0             CountS
   Rule: No space-before-digit inside Chapter Verse marker style (catches '1: 1' typos where the verse number is preceded by an extra space) - CountStyleWithSpaceAndNumber should return 0
 PASS              Copy ()       Test = 8      0             0             CountStyleWithNumberAndSpace
   Rule: No digit-followed-by-space inside Verse marker style (catches verse numbers with a trailing space before the verse text) - CountStyleWithNumberAndSpace should return 0
-FAIL!!!!          Copy ()       Test = 9      8             7             CountPeriodSpaceLeftParenthesis
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 9      7             7             CountPeriodSpaceLeftParenthesis
   Detects '. (' sequences - a legacy footnote artifact; the expected Count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline
 PASS              Copy ()       Test = 10     1             1             CountNonBreakingSpaces
   Rule: Non-breaking spaces (^s) in the document - baseline 1 (intentional usage); growth indicates accidental insertion - CountNonBreakingSpaces should match the expected baseline
-FAIL!!!!          Copy ()       Test = 11     2             0             CountFindNumberDashNumber
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 11     0             0             CountFindNumberDashNumber
   Rule: No digit-dash-digit patterns in body text (verse ranges like '12-34' should use en-dash or be spelled differently) - CountFindNumberDashNumber should return 0
 PASS              Copy ()       Test = 12     0             0             CountNumberDashNumberInFootnotes
   Rule: No digit-dash-digit patterns in footnote text (same rule as Test 11, applied to footnotes) - CountNumberDashNumberInFootnotes should return 0
@@ -32,7 +30,7 @@ PASS              Copy ()       Test = 14     0             0             CountW
   Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0
 PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
   Rule: No section has 'Different First Page' set in PageSetup - keeps headers/footers uniform across all sections - CountSectionsWithDifferentFirstPage should return 0
-FAIL!!!!          Copy ()       Test = 16     33832         33822         CountTotalParagraphs
+FAIL!!!!          Copy ()       Test = 16     33824         33822         CountTotalParagraphs
   >> First hit: (no hint provided by test function)
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
@@ -55,22 +53,24 @@ PASS              Copy ()       Test = 25     1             1             CountF
   Rule: Footnote reference marks share exactly one color across the document (catches accidental color drift on individual refs) - CountFootnoteReferenceColors should return 1
 PASS              Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
   Rule: No primary header in any section is empty (every section must carry its expected header content) - CheckAllHeaders(Empty) should return 0
-PASS              Copy ()       Test = 27     148           148           CheckAllHeaders(NotEmpty)
+FAIL!!!!          Copy ()       Test = 27     145           148           CheckAllHeaders(NotEmpty)
+  >> First hit: First non-empty header: Section 1
   Count of populated primary headers - matches the expected populated-section Count; drift indicates added/removed sections - CheckAllHeaders(NotEmpty) should match the expected baseline
-PASS              Copy ()       Test = 28     82            82            CountTabFollowedByParagraphMarkInHeaders
+FAIL!!!!          Copy ()       Test = 28     79            82            CountTabFollowedByParagraphMarkInHeaders
+  >> First hit: Section 1: 	
   Rule: All headers with no text should have a tab - CountTabFollowedByParagraphMarkInHeaders should match the expected baseline
 FAIL!!!!          Copy ()       Test = 29     66            70            CountParagraphsWithoutTabInHeaders
-  >> First hit: Section 10: GENESIS
+  >> First hit: Section 7: GENESIS
   Count of header paragraphs that lack a tab character - tolerated section/title-only headers without the tab-positioned page number - CountParagraphsWithoutTabInHeaders should match the expected baseline
 PASS              Copy ()       Test = 30     0             0             CountHeaderStyleUsage
   Count of primary-header paragraphs whose style is NOT TheHeaders - tolerated exceptions; the source comment claiming expected 0 is stale - CountHeaderStyleUsage should match the expected baseline
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
   Rule: Every primary header has exactly one paragraph mark (function early-exits via MsgBox on any section with more than 1) - CountParagraphMarksPerHeaderSection should return 1
-FAIL!!!!          Copy ()       Test = 32     189           982           CountLinefeed
+FAIL!!!!          Copy ()       Test = 32     185           982           CountLinefeed
   >> First hit: First match: 
   Total manual linefeeds (^l) in body text - paired with Test 33 to verify all are space-preceded - CountLinefeed should match the expected baseline
-FAIL!!!!          Copy ()       Test = 33     188           982           CountLinefeed(" ")
-  >> First hit: First match:  
+FAIL!!!!          Copy ()       Test = 33     185           982           CountLinefeed(" ")
+  >> First hit: (no hint provided by test function)
   Subset of body linefeeds preceded by a space - must equal Test 32 to confirm every linefeed has the required leading space - CountLinefeed(space) should match the expected baseline
 FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
   >> First hit: (no hint provided by test function)
@@ -81,12 +81,12 @@ FAIL!!!!          Copy ()       Test = 35     0             117           CountM
 FAIL!!!!          Copy ()       Test = 36     3             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
   >> First hit: (no hint provided by test function)
   Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0
-FAIL!!!!          Copy ()       Test = 37     32            19            CountDocTabOnlyParagraphs
+FAIL!!!!          Copy ()       Test = 37     99            19            CountDocTabOnlyParagraphs
   >> First hit: (no hint provided by test function)
   Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline
-FAIL!!!!          Copy ()       Test = 38     217           216           CountEmptyParagraphs
-  >> First hit: (no hint provided by test function)
-  Rule: Bare empty paragraphs (pilcrow only) at the accepted baseline - CountEmptyParagraphs should match the expected baseline
+FAIL!!!!          Copy ()       Test = 38     145           216           CountEmptyParagraphs
+  >> First hit: 145 empty paragraphs - see rpt\EmptyParagraphs.txt
+  Count of empty paragraphs (Range.Text = Chr(13) only); in practice almost all are structural carriers for Section/Page breaks (SBNP/SBC/PBB) classified in rpt\EmptyParagraphs.txt - CountEmptyParagraphs should match the expected baseline. Paired with Test 80 for the truly-bare subset.
 PASS              Copy ()       Test = 39     0             0             CountParagraphMarks_ArialBlack
   Rule: No paragraph mark carries Arial Black 8pt + black/automatic font (paragraph marks must not inherit body-text formatting from surrounding runs) - CountParagraphMarks_ArialBlack should return 0
 PASS              Copy ()       Test = 40     0             0             CountParagraphMarks_ArialBlackDarkRed
@@ -164,8 +164,8 @@ SKIP!!!!          Copy ()       Test = 72     -1            0             HasLef
   Sanity: At least one left-aligned paragraph exists between adjusted printed pages 18-931 (the body-content page range) - returns 1 if body content is present, 0 if missing; OneVersePerPara branch only - HasLeftAlignedParagraph should return 1
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
   Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0
-The Total Runtime: 126.82 seconds
-[2026-05-30 14:05:22] Completed
+The Total Runtime: 163.64 seconds
+[2026-05-30 20:50:39] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
