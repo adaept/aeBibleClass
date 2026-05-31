@@ -1,12 +1,12 @@
 === Style Usage Distribution ===
-Normal: 9
-BodyText: 505
+Normal: 7
+BodyText: 496
 FrontPageTopLine: 1
 TitleEyebrow: 2
 Title: 3
 TitleVersion: 1
 FrontPageBodyText: 8
-BodyTextTopLineCPBB: 21
+BodyTextTopLineCPBB: 24
 Acknowledgments: 1
 AuthorBodyText: 160
 Contents: 1
@@ -14,7 +14,7 @@ ContentsRef: 11
 BibleIndexEyebrow: 1
 BibleIndex: 2
 BibleIndexList: 66
-Plain Text: 9
+Plain Text: 8
 Introduction: 6
 TitleOnePage: 4
 AuthorListItem: 42
@@ -22,7 +22,7 @@ AuthorListItemBody: 37
 AuthorListItemTab: 14
 AuthorBookRefHeader: 4
 AuthorBookRef: 38
-AuthorBookSections: 61
+AuthorBookSections: 60
 CenterSubText: 3
 Heading 1: 66
 CustomParaAfterH1: 66
@@ -37,8 +37,5 @@ AuthorSectionHead: 3
 Footnote Text: 1000
 ParallelText: 12
 ParallelHeader: 24
-Header: 2
-TheHeaders: 136
-Footer: 3
-TheFooters: 1
-Total paragraphs (all styles): 35020
+TheHeaders: 135
+Total paragraphs (all styles): 35003
