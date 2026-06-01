@@ -65,6 +65,47 @@ Public Function GetApprovedStyles() As Variant
                      "FargleBlargle")
 End Function
 
+'==============================================================================
+' GetApprovedStylesByType  (Public)
+' ----------------------------------------------------------------------------
+' Returns the subset of GetApprovedStyles() whose Word style Type matches
+' wantType (e.g. wdStyleTypeCharacter, wdStyleTypeParagraph). The SSOT stays
+' the flat GetApprovedStyles list; this helper materializes the para/char
+' taxonomy by asking Word - the authoritative source for style type.
+'
+' Missing styles (not present in ActiveDocument.Styles) are skipped silently;
+' PromoteApprovedStyles already reports missing approved styles.
+'==============================================================================
+Public Function GetApprovedStylesByType(ByVal wantType As WdStyleType) As Variant
+    Dim approved As Variant
+    Dim i As Long
+    Dim s As Word.Style
+    Dim hits As Collection
+    Set hits = New Collection
+
+    approved = GetApprovedStyles()
+    For i = LBound(approved) To UBound(approved)
+        Set s = Nothing
+        On Error Resume Next
+        Set s = ActiveDocument.Styles(approved(i))
+        On Error GoTo 0
+        If Not s Is Nothing Then
+            If s.Type = wantType Then hits.Add approved(i)
+        End If
+    Next i
+
+    Dim out() As String
+    If hits.Count = 0 Then
+        GetApprovedStylesByType = Array()
+        Exit Function
+    End If
+    ReDim out(0 To hits.Count - 1)
+    For i = 1 To hits.Count
+        out(i - 1) = hits(i)
+    Next i
+    GetApprovedStylesByType = out
+End Function
+
 Private Sub PromoteApprovedStyles()
     Dim s As Word.Style
     Dim approved As Variant

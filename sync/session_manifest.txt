@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-05-28 / 2026-05-30  (FINAL, end of session)
+# Claude Session Manifest -- 2026-05-31  (FINAL, end of session)
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,123 +13,180 @@
 
 ## Session arcs (chronological)
 
-A. INVISIBLE-CHARACTER REDUNDANT-CODE REMOVAL (2026-05-28)
-   - Removed redundant `CountInvisibleCharacters` (String return)
-     and `TestInvisible` MsgBox harness from
-     basTEST_aeBibleConfig.bas. Canonical version lives in
-     aeBibleClass.cls:1718 as Test 73 (Long return). No callers
-     outside the deleted `TestInvisible` remained.
+A. CHARACTER-STYLE AUDIT TAXONOMY GAP CLOSED (2026-05-31)
+   - `CountAuditStyles_ToFile` (Test 49) walks paragraph styles
+     only and is structurally blind to character styles riding
+     on runs INSIDE paragraphs (e.g. "Chapter Verse marker" and
+     "Verse marker" inside VerseText). Operator surfaced the gap:
+     "VerseText = Chapter Verse marker = Verse marker = 31,102,
+     only VerseText is validated."
+   - SSOT decision: do NOT split GetApprovedStyles into separate
+     para/char lists. Word itself knows each style's `.Type`;
+     materialize the taxonomy at runtime via a new helper that
+     filters by `WdStyleType`. Single source of truth preserved.
+   - basTEST_aeBibleConfig.bas: new
+     `Public Function GetApprovedStylesByType(wantType As WdStyleType)
+     As Variant`. Walks `GetApprovedStyles()`, asks Word for each
+     style's `.Type`, returns matching names. Missing styles skip
+     silently (PromoteApprovedStyles already reports them).
 
-B. INTRODUCTION STYLE SPEC REALIGN (2026-05-28)
-   - Operator updated Introduction style in doc (commit 24ff5a8,
-     SpaceBefore 0 -> 12). RUN_TAXONOMY_STYLES flagged FAIL.
-   - Spec at basTEST_aeBibleConfig.bas:302 updated dExpSpaceBefore
-     0 -> 12. Re-run cleared to PASS.
+B. TEST 81 - CountAuditCharacterStyles_ToFile (PASS at 0)
+   - Presence audit. For each approved character style returned
+     by `GetApprovedStylesByType(wdStyleTypeCharacter)`, runs a
+     single bounded `Find.Execute` against
+     `ActiveDocument.Content` and records Present/ABSENT to
+     `rpt\Character Style Usage.txt`. Returns the count of absent
+     (baseline 0). Runtime ~1 s.
+   - Drift surfaces as `m_lastHint = "first absent: <style>"`.
+   - Replaces an earlier doc-scope Find-loop draft that leaked
+     to 2.7 GB on `wdStyleTypeLinked` (Heading 1/2 etc.) - see
+     arc C iteration history for the full path.
 
-C. DEFAULT PARAGRAPH FONT PROMOTED TO APPROVED (2026-05-28)
-   - DumpAllApprovedStyles surfaced orphan
-     style_Default_Paragraph_Font.txt (Priority=2 but not in
-     GetApprovedStyles). Operator confirmed promotion was
-     deliberate so character styles (EmphasisBlack, EmphasisRed,
-     Words of Jesus, BookHyperlink) remain functional inside
-     VerseText paragraphs.
-   - GetApprovedStyles array grew 48 -> 49 (Default Paragraph
-     Font inserted at position 34, before Footnote Reference).
-   - AuditOneStyle spec added (Carlito 9, Bold=0 Italic=0,
-     BaseStyle="", Color=wdColorAutomatic).
-   - WordEditingConfig renumbered priorities; Test 78 PASS at 0;
-     RUN_TAXONOMY_STYLES 57 PASS / 0 FAIL.
+C. TEST 82 / 83 - CountVerseMarker / CountChapterVerseMarker
+   (BOTH PASS at 31,102)
+   - Slot 82 returns count of "Verse marker"-styled runs found
+     inside VerseText paragraphs. Slot 83 returns the same for
+     "Chapter Verse marker". By design (one CVM + one VM per
+     verse marker run) both must equal the VerseText paragraph
+     count from Test 49 - 31,102.
+   - Both back into a new public helper
+     `basVerseStructureAudit.GetMarkerTotals(vmTotal, cvmTotal)`
+     which walks `ActiveDocument.Paragraphs` once. For every
+     VerseText paragraph it checks `Characters(1).Style.NameLocal
+     == "Chapter Verse marker"` and scans `Characters(1..12)`
+     for `"Verse marker"`.
+   - Module-level cache keyed by `ActiveDocument.FullName` makes
+     slot 83 a 0.02 s read after slot 82 populates it (~222 s
+     first call), even across separate `aeBibleClass` instances
+     (OneTest mode reinstantiates the class per test).
+   - Algorithm-iteration cost recorded for posterity:
+       Step 1 doc-scope Find + Collapse: leak to 2.7 GB.
+       Step 2 wdStyleTypeCharacter only: leak to 600 MB.
+       Step 3 per-paragraph Find on .Duplicate: leak to 1.2 GB.
+       Step 4 doc-scope Find with .Format=True + explicit
+              Start/End re-bound (CountVerseMarkers pattern):
+              completes - 205 s + 2,730 s (45 min). Counts
+              31,103 / 31,103.
+       Step 5 per-chapter scoping via H2 walk + same Find:
+              326 s + 170 s.
+       Step 6 paragraph-walk + Characters(i).Style (current):
+              222 s + 0.02 s. Counts 31,102 / 31,102.
+   - aeBibleClass.cls wiring: MaxTests 80 -> 83; three new
+     module-level state vars (m_verseScanDone, m_verseMarkerCount,
+     m_chapterVerseMarkerCount); GetTestDescription / GetPassFail
+     / Debug.Print / BufAppend Case 81/82/83 added; values array
+     extended with `0, 31102, 31102`; new private routines
+     CountAuditCharacterStyles_ToFile, EnsureVerseMarkerCounts,
+     CountVerseMarker, CountChapterVerseMarker.
 
-D. TEST 11 / 33 HINTS (2026-05-30)
-   - Test 11: CountFindNumberDashNumber - on first match, sets
-     m_lastHint = "page <N> : <match-text>". Was "(no hint
-     provided by test function)".
-   - Test 33: CountLinefeed - shared by Tests 32/33. Primary loop
-     hint capture gated to IsMissing(space) (Test 32 path). New
-     second pass in space-prefix branch (Test 33) scans ^l
-     matches and records the first whose predecessor is NOT a
-     space. Hint shape: page + prev char + +-20-char ctx window.
+D. +1 CVM DRIFT FOUND - ParaStart=3087864 (operator decision open)
+   - Find-based totals (31,103) differed from paragraph-rule
+     counts (31,102) by exactly one. Operator ran
+     `AuditUnconvertedVerseParagraphs True` -> 0 (rules out
+     CVM-led paragraphs sitting outside BodyText / VerseText).
+   - Then ran `AuditCharStyleUsage "Chapter Verse marker", True,
+     True` (new ANOMALIES-ONLY mode, see arc E). Surfaced a
+     single anomaly:
+         Run #22396 | ParaStart=3087864 | Style=VerseText |
+         first-char-style=Chapter Verse marker
+         Chapter Verse marker at END of paragraph (offset 146 of 147)
+   - A stray CVM-styled character at the tail of one VerseText
+     paragraph. Paragraph itself is structurally correct (proper
+     CVM at char 1, VM nearby). VM partner unconfirmed - VM
+     anomaly scan hit the O(N²) curve in arc F and was aborted.
+   - Operator next step: GoToPos 3087864 -> End -> inspect.
+     Decide clean-up or rebaseline.
 
-E. TEST 38 STRUCTURAL CLASSIFICATION + TEST 80 SPLIT (2026-05-30)
-   - CountEmptyParagraphs rewritten to emit per-occurrence rows
-     to rpt/EmptyParagraphs.txt (TSV with kind column, overwrite
-     each run via FSO.CreateTextFile).
-   - Classification predicate (matches Word's Layout > Breaks
-     labels): SBNP / SBC / SBEP / SBOP / SBNC / PBB / PB / CB /
-     Bare. Detection uses AscW(char at para.Range.End) + a
-     pre-built secStartPos() -> secStartType() map.
-   - First two detection attempts wrong (positional equality
-     against Sections(1).Range.End; next-paragraph section index
-     comparison). Diagnostic columns revealed this_sec ==
-     next_sec for every flagged row and nx_ch=12 universally.
-     Correct predicate uses char-after-pilcrow + section start
-     position lookup.
-   - Test 38 description rewritten to acknowledge that
-     essentially all flagged entries are structural carriers,
-     not stray pilcrows. Baseline unchanged (216).
-   - Test 80 added (CountBareEmptyParagraphs). Isolates the
-     truly-bare residual: PBB=False AND next char neither
-     Chr(12) nor Chr(14). Expected 0. Standalone walk - no
-     ordering dependency on Test 38. Mirrors the Test 22 ->
-     22/38/74 split pattern.
-   - Wiring: MaxTests 79 -> 80; values array extended with 0;
-     GetTestDescription Case 80; GetPassFail Case 80;
-     Debug.Print Case 80; BufAppend Case 80.
-   - Live-document verification: Test 38 PASS at 216;
-     distribution 142 SBNP / 2 PBB / 1 SBC / 0 Bare. Test 80
-     PASS at 0.
+E. AuditCharStyleUsage extended with anomalies-only mode + timing
+   (2026-05-31)
+   - basVerseStructureAudit.bas: new optional 3rd parameter
+     `bAnomaliesOnly As Boolean = False`. When True, suppresses
+     per-run dumps for the expected case (paraStyle=VerseText
+     AND posLabel=START). Safety cap auto-bumps 5,000 -> 100,000
+     in anomalies mode.
+   - Summary now reports
+     "Anomalies (paraStyle<>VerseText OR position<>START): N".
+   - Report file now embeds Started / Finished / Duration at the
+     tail (was start time only in header).
+   - Progress heartbeat every 1,000 runs via Debug.Print +
+     DoEvents. Made the O(N²) curve visible (and Ctrl+Break
+     responsive).
 
-F. FILE-IO HARDENING (2026-05-30)
-   - PROC_ERR in CountEmptyParagraphs closes oStream defensively
-     under On Error Resume Next so a mid-run failure does not
-     leak a handle across runs.
-   - Switched from `Open finalPath For Output As fileNum` to
-     FSO.CreateTextFile after hitting Err 55 (file already open,
-     from leaked VBA handle) and then Err 70 (permission denied,
-     suspected WSL/AV-side share lock). Word restart cleared the
-     orphan lock; FSO is now the standing pattern for re-runnable
-     report writers - see [[feedback_fso_file_writes]].
+F. AuditCharStyleUsage QUADRATIC PERFORMANCE - NOT YET FIXED
+   - CVM run completed at 406 s for 31,103 matches. VM run
+     started at 5 s/1k early, climbed to >60 s/1k deeper in,
+     aborted. Heartbeat confirmed it was NOT a loop - just the
+     `oRng.Paragraphs(1)` lookup walking the Paragraphs
+     collection from doc start on every match (O(N²) total).
+   - Logged as carry-forward item 10 in
+     rvw/Code_review 2026-05-28.md (HIGH priority). Fix
+     direction: rewrite to walk `ActiveDocument.Paragraphs` once
+     via For Each and do paragraph-scoped Find per iteration -
+     same shape EnsureVerseMarkerCounts and
+     AuditOrphanBodyTextParagraphs already use.
+
+G. FILE-WRITE AUDIT SWEEP - NEW CARRY-FORWARD (2026-05-31)
+   - Logged as carry-forward item 11 in
+     rvw/Code_review 2026-05-28.md. All re-callable `rpt/`
+     writers must use FSO.CreateTextFile per
+     [[feedback_fso_file_writes]] to avoid Err 55 (leaked
+     handle) and Err 70 (share lock). A full grep across .bas
+     and .cls files for `Open ... For Output As` /
+     `Append As` has not been done.
 
 ## src/ files modified  (require import in this order)
 
-  src/basTEST_aeBibleConfig.bas    [IMPORT]   - Arcs A, B, C
-  src/aeBibleClass.cls             [IMPORT]   - Arcs D, E, F
+  src/basTEST_aeBibleConfig.bas    [IMPORT]   - Arc A
+  src/basVerseStructureAudit.bas   [IMPORT]   - Arcs C, E
+  src/aeBibleClass.cls             [IMPORT]   - Arcs B, C
 
-Both files are committed (70cbb94, 2215706, b42523d, 05e1558,
-b7f36d3, 41ae1cb, 9352216, 847d302, 8bdbef2) and pushed to
-origin/main as of 2026-05-30.
+All three changes are independent at function/sub scope; order
+above matches dependency direction (aeBibleClass calls into
+GetApprovedStylesByType from basTEST_aeBibleConfig and into
+GetMarkerTotals from basVerseStructureAudit).
 
 ## Non-src/ changes (no VBA import needed)
 
-  rvw/Code_review 2026-05-16.md    [DOC]   - closed with 2026-05-28
-                                              session entry
-  rvw/Code_review 2026-05-28.md    [DOC]   - new arc opened; carries
-                                              forward 9 items;
-                                              2026-05-30 dated entry
-                                              added for Arcs D-F
-  rpt/EmptyParagraphs.txt          [DOC]   - new artefact, written
-                                              by Test 38; git-diffable
-  rpt/TestReport.txt               [DOC]   - regenerated by RUN_THE_TESTS
-  rpt/TotalTimeReport.txt          [DOC]   - regenerated
-  rpt/Style Usage Distribution.txt [DOC]   - regenerated
-  rpt/HeaderFooterAudit.txt        [DOC]   - regenerated
-  rpt/HeadingLog.txt               [DOC]   - regenerated
+  rvw/Code_review 2026-05-28.md          [DOC]   - carry-forward items
+                                                    10 and 11 added;
+                                                    2026-05-31 dated
+                                                    entry added with
+                                                    full iteration log
+  rpt/Character Style Usage.txt          [DOC]   - new artefact written
+                                                    by Test 81
+  rpt/Chapter_Verse_markerUsageAudit.txt [DOC]   - first sample run hit
+                                                    the 5,000-cap;
+                                                    anomalies-only re-run
+                                                    overwrote with the
+                                                    single +1 hit
+  rpt/TestReport.txt                     [DOC]   - regenerated by
+                                                    RUN_THE_TESTS
 
 ## Memory updates (personal context, not project-tracked)
 
-  feedback_fso_file_writes.md      [MEMORY] - new entry codifying
-                                              the FSO.CreateTextFile
-                                              rule and its two failure
-                                              modes (Err 55, Err 70)
-  MEMORY.md                        [MEMORY] - index entry added
+  (none this session - existing memories cover the patterns
+  touched: feedback_fso_file_writes, feedback_late_binding,
+  feedback_class_encapsulation, feedback_session_manifest.)
 
 ## Operator next steps
 
-  1. (Already done this session.) Tests verified live - 11 hint,
-     33 hint, 38 PASS at 216, 80 PASS at 0.
-  2. No further import or operator action required for this arc.
-  3. Carry-forward open items live in
-     rvw/Code_review 2026-05-28.md (9 items: ribbon v1.0.0 build,
-     failed-test revisits, date-rule sweep, EDSG Step 0 fix,
-     ribbon nav, SoftHyphenSweep sister, SHA i18n, Normal
-     audit, class encapsulation rule).
+  1. Import the three src/ files in the order listed above.
+  2. Inspect ParaStart=3087864 via:
+        GoToPos 3087864
+     then End key. Find the single character at offset 146 of 147
+     carrying the stray "Chapter Verse marker" style. Decide
+     clean-up (remove the styling) or accept-and-rebaseline (lock
+     the Find-based total at 31,103 in a future diagnostic).
+  3. Open carry-forward register lives in
+     rvw/Code_review 2026-05-28.md - now 11 items:
+         1. aeRibbon v1.0.0 build (HIGH)
+         2. Failed-test revisits (MEDIUM)
+         3. Date-rule sweep follow-ups (MEDIUM)
+         4. EDSG list-paragraph-bug Step 0 fix (LOW)
+         5. Ribbon nav (Word limitation)
+         6. SoftHyphenSweep_FootnotesOnly sister (DEFERRED)
+         7. SHA_ReplaceHard i18n (FUTURE)
+         8. Normal style audit (LOW, DEFERRED)
+         9. Class encapsulation rule (RULE)
+        10. AuditCharStyleUsage quadratic fix (HIGH, NEW)
+        11. File-write FSO sweep (MEDIUM, NEW)

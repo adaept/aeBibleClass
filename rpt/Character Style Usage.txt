@@ -1,0 +1,11 @@
+=== Approved Character Style Presence ===
+Chapter Verse marker: present
+Verse marker: present
+Default Paragraph Font: present
+Footnote Reference: present
+BookHyperlink: present
+Selah: present
+EmphasisBlack: present
+EmphasisRed: present
+Words of Jesus: present
+Total absent: 0

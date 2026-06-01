@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 80
+Private Const MaxTests = 83
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -75,6 +75,9 @@ Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 o
 Private m_ReportBuf As String          ' Accumulates TestReport lines; flushed once at end of run
 Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail
 Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail
+Private m_verseScanDone As Boolean     ' True after EnsureVerseMarkerCounts has walked the doc this run
+Private m_verseMarkerCount As Long     ' Count of "Verse marker"-styled runs found in VerseText paragraphs
+Private m_chapterVerseMarkerCount As Long  ' Count of "Chapter Verse marker"-styled runs found in VerseText paragraphs
 Private m_HintArray(1 To MaxTests) As String  ' Per-test first-hit hint; printed in RunTest on FAIL
 '==================================================================
 
@@ -271,8 +274,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1054,6 +1057,12 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: No digit-prefixed ordinal suffix (st/nd/rd/th) appears as superscript in body text (e.g. 1st, 2nd, 3rd, 4th) - CountNumericOrdinals should return 0"
     Case 80
         GetTestDescription = "Rule: No truly-bare empty paragraphs (pilcrow only, not hosting a Section/Page/Column break - subset of Test 38 filtered to kind=Bare) - CountBareEmptyParagraphs should return 0"
+    Case 81
+        GetTestDescription = "Presence audit: every approved character style (per GetApprovedStylesByType) is present in the document; writes rpt/Character Style Usage.txt - CountAuditCharacterStyles_ToFile should return 0 (no approved character styles missing)"
+    Case 82
+        GetTestDescription = "Count of 'Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountVerseMarker should match the VerseText paragraph baseline (31,102)"
+    Case 83
+        GetTestDescription = "Count of 'Chapter Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountChapterVerseMarker should match the VerseText paragraph baseline (31,102)"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1285,6 +1294,15 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 80
         ResultArray(TestNum) = CountBareEmptyParagraphs
         m_HintArray(TestNum) = m_lastHint
+    Case 81
+        ResultArray(TestNum) = CountAuditCharacterStyles_ToFile
+        m_HintArray(TestNum) = m_lastHint
+    Case 82
+        ResultArray(TestNum) = CountVerseMarker
+        m_HintArray(TestNum) = m_lastHint
+    Case 83
+        ResultArray(TestNum) = CountChapterVerseMarker
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1477,6 +1495,12 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNumericOrdinals"
     Case 80
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBareEmptyParagraphs"
+    Case 81
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAuditCharacterStyles_ToFile"
+    Case 82
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountVerseMarker"
+    Case 83
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountChapterVerseMarker"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1672,6 +1696,12 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNumericOrdinals"
     Case 80
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBareEmptyParagraphs"
+    Case 81
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAuditCharacterStyles_ToFile"
+    Case 82
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountVerseMarker"
+    Case 83
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountChapterVerseMarker"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -2293,6 +2323,144 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
+End Function
+
+'==============================================================
+' CountAuditCharacterStyles_ToFile
+' -------------------------------------------------------------
+' Purpose : Presence audit of approved character styles. For each
+'           name returned by GetApprovedStylesByType(wdStyleTypeCharacter),
+'           probes the document with a single bounded Find.Execute
+'           and records present/ABSENT to rpt\Character Style Usage.txt.
+'
+' Returns : Long - count of approved character styles that are
+'           ABSENT from the document (baseline = 0).
+'
+' Notes   : Earlier draft enumerated every styled run via a Find
+'           loop with .Text = "". That degenerates on Bible-scale
+'           documents (~31K Verse marker runs) into millions of
+'           transient Range allocations and runaway memory. The
+'           presence-only form is bounded at one Find per style.
+'==============================================================
+Private Function CountAuditCharacterStyles_ToFile() As Long
+    On Error GoTo PROC_ERR
+
+    Dim s As Word.Style
+    Dim findRng As Word.Range
+    Dim charStyleNames As Variant
+    Dim i As Long
+    Dim absent As Long
+    Dim line As String
+
+    Dim fso As Object, outFile As Object, outputPath As String
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    outputPath = fso.GetParentFolderName(ActiveDocument.FullName) & "\rpt\Character Style Usage.txt"
+    Set outFile = fso.CreateTextFile(outputPath, True)
+    outFile.WriteLine "=== Approved Character Style Presence ==="
+
+    charStyleNames = GetApprovedStylesByType(wdStyleTypeCharacter)
+    For i = LBound(charStyleNames) To UBound(charStyleNames)
+        Set s = ActiveDocument.Styles(charStyleNames(i))
+        Set findRng = ActiveDocument.Content
+        With findRng.Find
+            .ClearFormatting
+            .style = s
+            .Text = ""
+            .Forward = True
+            .Wrap = wdFindStop
+            .MatchWildcards = False
+            If .Execute Then
+                line = s.NameLocal & ": present"
+            Else
+                line = s.NameLocal & ": ABSENT"
+                absent = absent + 1
+                If m_lastHint = "" Then m_lastHint = "first absent: " & s.NameLocal
+            End If
+        End With
+        outFile.WriteLine line
+    Next i
+
+    outFile.WriteLine "Total absent: " & absent
+    outFile.Close
+    Set outFile = Nothing
+    Set fso = Nothing
+
+    If m_lastHint = "" Then m_lastHint = absent & " absent - see rpt\Character Style Usage.txt"
+    CountAuditCharacterStyles_ToFile = absent
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountAuditCharacterStyles_ToFile | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+'==============================================================
+' EnsureVerseMarkerCounts  (private; cached for slots 82 + 83)
+' -------------------------------------------------------------
+' Walks ActiveDocument.Paragraphs once. For every paragraph whose
+' style is VerseText, walks leading Words until a Word with style
+' "VerseText" (the paragraph default) appears - everything before
+' that point is the marker run. Tallies "Verse marker" and
+' "Chapter Verse marker" occurrences into module-level counters.
+'
+' Idempotent within a single class lifetime via m_verseScanDone.
+' By design each VerseText paragraph carries both styles on its
+' leading marker, so both totals should equal the VerseText
+' paragraph count from test 49 (31,102 in current baseline).
+'==============================================================
+Private Sub EnsureVerseMarkerCounts()
+    On Error GoTo PROC_ERR
+    If m_verseScanDone Then Exit Sub
+
+    GetMarkerTotals m_verseMarkerCount, m_chapterVerseMarkerCount
+
+    m_verseScanDone = True
+    Exit Sub
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.EnsureVerseMarkerCounts | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+End Sub
+
+'==============================================================
+' CountVerseMarker  (test slot 82)
+' Returns count of "Verse marker"-styled runs found inside
+' VerseText paragraphs. Expected to equal the VerseText
+' paragraph count (31,102) - every VerseText paragraph carries
+' a Verse marker by design.
+'==============================================================
+Private Function CountVerseMarker() As Long
+    On Error GoTo PROC_ERR
+    EnsureVerseMarkerCounts
+    If m_lastHint = "" Then m_lastHint = m_verseMarkerCount & " Verse marker runs in document"
+    CountVerseMarker = m_verseMarkerCount
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountVerseMarker | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+End Function
+
+'==============================================================
+' CountChapterVerseMarker  (test slot 83)
+' Returns count of "Chapter Verse marker"-styled runs found
+' inside VerseText paragraphs. Expected to equal the VerseText
+' paragraph count (31,102) - every VerseText paragraph carries
+' a Chapter Verse marker by design.
+'==============================================================
+Private Function CountChapterVerseMarker() As Long
+    On Error GoTo PROC_ERR
+    EnsureVerseMarkerCounts
+    If m_lastHint = "" Then m_lastHint = m_chapterVerseMarkerCount & " Chapter Verse marker runs in document"
+    CountChapterVerseMarker = m_chapterVerseMarkerCount
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountChapterVerseMarker | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
 End Function
 
 Private Function AuditLiberationSansNarrowStyleDetails() As Long

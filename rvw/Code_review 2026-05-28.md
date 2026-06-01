@@ -171,6 +171,208 @@ remains visible during slot-by-slot review work.
 Full rule and worked examples: see § 9 in
 [`Code_review 2026-05-15.md`](Code_review%202026-05-15.md).
 
+### 10. AuditCharStyleUsage quadratic-time fix (HIGH) - OPEN 2026-05-31
+
+`basVerseStructureAudit.AuditCharStyleUsage` walks character-
+style runs via document-scope `Range.Find`, then calls
+`oRng.Paragraphs(1)` after every match to resolve the enclosing
+paragraph. Word resolves that lookup by walking the Paragraphs
+collection from doc start, so cost per match is `O(position-in-
+doc)` and the total scan is `O(N²)` where N = match count.
+
+**Observed on 2026-05-31 live doc:**
+
+- CVM run (31,103 matches): completed in 406 s.
+- VM run (same shape): heartbeat 1k-runs/5s early, climbed to
+  >60 s per 1k-runs batch deeper in; aborted before completion.
+
+The performance is unacceptable now and will degrade further as
+the document grows.
+
+**Fix direction:** rewrite to walk `ActiveDocument.Paragraphs`
+once via `For Each`, and inside each paragraph do a paragraph-
+scoped `Range.Find` (or `Characters(1)` / `Characters(Last)`
+checks for the common START/END cases). Same bounded-per-
+paragraph shape already proven in `EnsureVerseMarkerCounts`
+(slots 82+83) and `AuditOrphanBodyTextParagraphs`. Eliminates
+the `oRng.Paragraphs(1)` lookup entirely.
+
+**Out of scope for this session.** Diagnostic was usable in
+ANOMALIES-ONLY mode for the CVM run; the +1 anomaly was found
+via the CVM scan before the curve became prohibitive.
+
+### 11. File-write code audit against FSO rule (MEDIUM) - OPEN 2026-05-31
+
+Per [[feedback_fso_file_writes]]: `rpt/` writers in re-callable
+routines must use `FSO.CreateTextFile`, not `Open ... For
+Output As`, to avoid Err 55/70 from leaked handles and OS share
+locks. Several writers were converted in earlier sessions; a
+full sweep has not been done.
+
+**Action:** grep all `.bas` and `.cls` files for `Open ` and
+`Output As` / `Append As` patterns. For every writer that
+targets `rpt/` and may be invoked more than once per session,
+convert to the FSO pattern used in
+`CountAuditStyles_ToFile` / `CountAuditCharacterStyles_ToFile` /
+`WriteCharStyleUsageFile`. Leave alone any genuine one-shot
+diagnostic writers that can't be re-entered.
+
+## 2026-05-31 - Tests 81-83 added (character-style audits) + +1 CVM anomaly found
+
+Three new test slots wire character-style coverage into the
+audit pipeline alongside the existing paragraph-style coverage
+(Test 49 baseline 51, etc.). All three required a `MaxTests`
+bump from 80 to 83 and matching extensions of `ResultArray`,
+`m_HintArray`, `GetPassFailArray`, `TestTimingArray`, and the
+1-based `values` baseline array.
+
+**Test 81 - `CountAuditCharacterStyles_ToFile` (PASS at 0).**
+Presence audit. For every approved character style returned by
+the new `basTEST_aeBibleConfig.GetApprovedStylesByType(wd
+StyleTypeCharacter)` helper, runs a single bounded `Find.
+Execute` against `ActiveDocument.Content` and records
+Present/ABSENT to `rpt\Character Style Usage.txt`. Returns the
+count of absent (expected 0). Runtime ~1 s. Drift surfaces as
+"first absent: <style>" hint.
+
+**Test 82 - `CountVerseMarker` (PASS at 31,102).**
+**Test 83 - `CountChapterVerseMarker` (PASS at 31,102).**
+Both back into `basVerseStructureAudit.GetMarkerTotals` (new
+public helper) which walks `ActiveDocument.Paragraphs` once.
+For every `VerseText` paragraph it checks
+`Characters(1).Style.NameLocal == "Chapter Verse marker"` and
+scans `Characters(1..12)` for `"Verse marker"`. Module-level
+cache (keyed by `ActiveDocument.FullName`) makes slot 83 a
+sub-second read after slot 82 populates it, even across
+separate `aeBibleClass` instances (OneTest mode reinstantiates
+the class per test).
+
+**Algorithm-iteration history** (preserved for the next time
+someone reaches for document-scope `Range.Find` on a 31k-
+matches problem):
+
+1. Single document-scope `Range.Find` loop with `.Text=""` +
+   `.Style=s` + `.Collapse wdCollapseEnd`: ran to 2.7 GB
+   memory leak on the linked-styles superset.
+2. Narrowed allowlist to `wdStyleTypeCharacter`: dropped to
+   600 MB still climbing.
+3. Per-paragraph `Range.Find` on `p.Range.Duplicate`: same
+   shape leak (31k transient Range RCWs).
+4. Document-scope `Range.Find` with `.Format=True` and
+   explicit `oRng.Start = oRng.End` / `oRng.End = endPos` re-
+   bound (pattern lifted from
+   `basVerseStructureAudit.CountVerseMarkers`): completed -
+   one style at 205 s, the other at 2730 s (45 min). Counts
+   31,103/31,103.
+5. Per-chapter scoping of the same proven Find pattern via
+   `GetMarkerTotals` walking H2 boundaries: 326 s + 170 s. Both
+   31,103 still.
+6. Paragraph-walk with `Characters(i).Style.NameLocal` check
+   on VerseText paragraphs only (current implementation):
+   222 s first run, 0.02 s cached. Counts 31,102/31,102 -
+   matches the canonical baseline.
+
+The semantic shift between (4-5) and (6) is intentional and
+documented in `GetMarkerTotals`'s header: the slot-82/83 metric
+is "VerseText paragraphs satisfying the design rule" not "total
+CVM/VM runs anywhere in the document." The latter is what
+surfaced the +1 drift below.
+
+**+1 drift found at `ParaStart=3087864` (open editorial item).**
+
+Find-based total counts (31,103) differed from paragraph-rule
+counts (31,102) by exactly one. Running the new ANOMALIES-ONLY
+mode of `AuditCharStyleUsage` (`bAnomaliesOnly:=True`, third
+parameter) on `"Chapter Verse marker"` surfaced the locus:
+
+```
+Run #22396 | ParaStart=3087864 | Style=VerseText | first-char-style=Chapter Verse marker | Phase2: KEEP-AS-VerseText
+  Chapter Verse marker at END of paragraph (offset 146 of 147)
+  Excerpt: "215 neither shall he stand who handles the bow; and he who is swift of foot will"
+```
+
+A single stray CVM-styled character at the tail of one
+VerseText paragraph (offset 146 of 147 - last character before
+the paragraph mark). The paragraph itself is structurally
+correct (CVM at char 1, VM nearby). The pair VM partner was not
+confirmed; the VM ANOMALIES-ONLY scan hit the `O(N²)`
+slowdown described in § 10 and was aborted. Operator can
+navigate via `GoToPos 3087864` and inspect the end-of-
+paragraph character manually.
+
+**`AuditCharStyleUsage` improvements applied 2026-05-31:**
+
+- New optional 3rd parameter `bAnomaliesOnly As Boolean = False`.
+  When True, suppresses per-run dumps for the expected
+  case (`paraStyle=VerseText` AND `posLabel=START`), and only
+  emits detail blocks for anomalies. Auto-bumps the safety cap
+  from 5,000 to 100,000 to cover full-doc scans without
+  exhausting the report buffer.
+- Summary now reports
+  `Anomalies (paraStyle<>VerseText OR position<>START): N`.
+- Report file now embeds start time, finish time, and duration
+  at the tail (was start time only in header).
+- Progress heartbeat every 1,000 runs via `Debug.Print` +
+  `DoEvents` - made the `O(N²)` curve in § 10 visible (and
+  Ctrl+Break responsive).
+
+**Wiring touched in `aeBibleClass.cls`:**
+
+- `MaxTests` 80 -> 83.
+- Three new module-level state vars: `m_verseScanDone`,
+  `m_verseMarkerCount`, `m_chapterVerseMarkerCount` (redundant
+  inner cache on top of `basVerseStructureAudit`'s module-
+  level cache; harmless).
+- `GetTestDescription` Case 81 / 82 / 83 added.
+- `GetPassFail` Case 81 / 82 / 83 dispatch + `m_HintArray`
+  copy.
+- `Debug.Print` and `BufAppend` Case 81 / 82 / 83 rows.
+- `Expected1BasedArray` `values` array extended with
+  `0, 31102, 31102`.
+- New private routines: `CountAuditCharacterStyles_ToFile`,
+  `CountVerseMarker`, `CountChapterVerseMarker`,
+  `EnsureVerseMarkerCounts`.
+
+**Wiring touched in `basTEST_aeBibleConfig.bas`:**
+
+- New `Public Function GetApprovedStylesByType(wantType As
+  WdStyleType) As Variant`. Walks `GetApprovedStyles()` and
+  asks Word for each style's `.Type`. SSOT stays the flat name
+  list; this helper materializes the para/char taxonomy at
+  runtime so neither slot 81 nor any future consumer needs a
+  hand-maintained second list.
+
+**Wiring touched in `basVerseStructureAudit.bas`:**
+
+- New `Public Sub GetMarkerTotals(vmTotal, cvmTotal)` plus
+  module-level cache vars `m_cachedDocName`, `m_cachedVMTotal`,
+  `m_cachedCVMTotal`, `m_cacheValid`. The cache invalidates
+  when `ActiveDocument.FullName` changes.
+- `AuditCharStyleUsage` extended with `bAnomaliesOnly`,
+  progress heartbeat, and timing tail (per § 10 follow-up).
+
+**Verification (live document, 2026-05-31):**
+
+- Test 81 PASS at 0 in ~1 s (presence audit clean).
+- Test 82 PASS at 31,102 in 222 s (first run, populates cache).
+- Test 83 PASS at 31,102 in 0.02 s (cache hit).
+- `AuditUnconvertedVerseParagraphs True` returns 0 - confirms
+  no CVM-led paragraphs sit outside `BodyText` / `VerseText`.
+- `AuditCharStyleUsage "Chapter Verse marker", True, True`
+  surfaced the single anomaly above (406 s, completes despite
+  the quadratic curve).
+
+**Follow-ups (open).**
+
+- § 10 above: rewrite `AuditCharStyleUsage` to walk paragraphs
+  instead of doc-scope Find.
+- Operator to inspect `ParaStart=3087864` and decide whether to
+  clean the stray CVM character or accept and rebaseline a
+  future "total VM/CVM runs in doc" diagnostic to 31,103.
+- VM anomaly partner unconfirmed; will likely surface at the
+  same `ParaStart` once § 10 fix lands and the VM scan can
+  complete.
+
 ## 2026-05-30 - Test 11 / 33 / 38 hint pass + Test 80 added (Bare empty para split)
 
 Three hint-or-diagnostic gaps closed across the existing slot

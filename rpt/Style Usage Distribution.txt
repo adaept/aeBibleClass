@@ -29,7 +29,7 @@ CustomParaAfterH1: 66
 Brief: 66
 DatAuthRef: 198
 Heading 2: 1189
-VerseText: 31101
+VerseText: 31102
 Psalms BOOK: 5
 PsalmSuperscription: 116
 PsalmAcrostic: 22
@@ -41,4 +41,4 @@ Header: 2
 TheHeaders: 136
 Footer: 3
 TheFooters: 1
-Total paragraphs (all styles): 35012
+Total paragraphs (all styles): 35013

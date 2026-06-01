@@ -5,6 +5,14 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+' Module-level cache for GetMarkerTotals - persists across aeBibleClass
+' instances so slot 83 reuses slot 82's walk in single-test (OneTest) mode.
+' Invalidated when ActiveDocument.FullName changes.
+Private m_cachedDocName As String
+Private m_cachedVMTotal As Long
+Private m_cachedCVMTotal As Long
+Private m_cacheValid As Boolean
+
 ' ==========================================================================
 ' AuditVerseMarkerStructure
 ' ==========================================================================
@@ -250,6 +258,75 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
     Next chIdx
 End Sub
 
+' ==========================================================================
+' GetMarkerTotals
+' ==========================================================================
+' Walks ActiveDocument.Paragraphs once. For every VerseText paragraph:
+'   - increments cvmTotal if Characters(1).Style is "Chapter Verse marker"
+'   - increments vmTotal if any of Characters(1..12) is "Verse marker"
+'
+' Semantics: counts VerseText paragraphs satisfying the design rule
+' (CVM at start, VM in the leading marker run). Does NOT see CVM/VM runs
+' applied OUTSIDE VerseText paragraphs - that drift is caught by the
+' presence audit in aeBibleClass.CountAuditCharacterStyles_ToFile (slot 81).
+'
+' Why this shape: the per-chapter Find pattern (CountVerseMarkers et al.)
+' is correct but slow (300-2700 s) because Word's Find degenerates on
+' character-style runs in a large document. Characters(i).Style.NameLocal
+' is unambiguous (Range.Words can fall back to paragraph style on mixed
+' spans) and a single pass through 35k paragraphs completes in seconds.
+'
+' Cache: results memoized at module scope, keyed by ActiveDocument.FullName,
+' so slot 83 reuses slot 82's walk even across separate aeBibleClass
+' instances (OneTest mode reinstantiates the class per test).
+'
+' Consumers: aeBibleClass.EnsureVerseMarkerCounts (test slots 82 + 83).
+' ==========================================================================
+Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
+    Dim currentDoc As String
+    currentDoc = ActiveDocument.FullName
+
+    If m_cacheValid And m_cachedDocName = currentDoc Then
+        vmTotal = m_cachedVMTotal
+        cvmTotal = m_cachedCVMTotal
+        Exit Sub
+    End If
+
+    vmTotal = 0
+    cvmTotal = 0
+
+    Dim oPara As Object
+    Dim numChars As Long
+    Dim maxScan As Long
+    Dim j As Long
+    Dim charStyle As String
+    Dim firstCharStyle As String
+
+    For Each oPara In ActiveDocument.Paragraphs
+        If oPara.style.NameLocal = "VerseText" Then
+            firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+            If firstCharStyle = "Chapter Verse marker" Then
+                cvmTotal = cvmTotal + 1
+            End If
+            numChars = oPara.Range.Characters.Count
+            maxScan = 12
+            If numChars < maxScan Then maxScan = numChars
+            For j = 1 To maxScan
+                charStyle = oPara.Range.Characters(j).style.NameLocal
+                If charStyle = "Verse marker" Then
+                    vmTotal = vmTotal + 1
+                    Exit For
+                End If
+            Next j
+        End If
+    Next oPara
+
+    m_cachedDocName = currentDoc
+    m_cachedVMTotal = vmTotal
+    m_cachedCVMTotal = cvmTotal
+    m_cacheValid = True
+End Sub
+
 ' --------------------------------------------------------------------------
 ' CountVerseMarkers - Count Verse-marker character-style runs in a range
 ' --------------------------------------------------------------------------
@@ -406,10 +483,12 @@ End Sub
 ' Usage:
 '   AuditCharStyleUsage "Selah"
 '   AuditCharStyleUsage "EmphasisBlack"
-'   AuditCharStyleUsage "Words of Jesus", False    ' Immediate only, no file
+'   AuditCharStyleUsage "Words of Jesus", False             ' Immediate only, no file
+'   AuditCharStyleUsage "Chapter Verse marker", True, True  ' anomalies-only mode
 ' ==========================================================================
 Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
-                                Optional ByVal bWriteFile As Boolean = True)
+                                Optional ByVal bWriteFile As Boolean = True, _
+                                Optional ByVal bAnomaliesOnly As Boolean = False)
     On Error GoTo PROC_ERR
     Dim t As Double
     StartTimer "AuditCharStyleUsage(" & StyleName & ")", t
@@ -435,10 +514,19 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
         Exit Sub
     End If
 
+    Dim startTime As Date
+    Dim startTick As Double
+    startTime = Now
+    startTick = Timer
+
     Dim sOut As String
     Const NL As String = vbCrLf
     sOut = "---- AuditCharStyleUsage(""" & StyleName & """): " & _
-           Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+           Format(startTime, "yyyy-mm-dd hh:nn:ss") & " ----" & NL
+    If bAnomaliesOnly Then
+        sOut = sOut & "Mode: ANOMALIES ONLY (suppress runs where paraStyle=VerseText AND position=START)" & NL
+    End If
+    sOut = sOut & NL
 
     Dim oRng As Object
     Set oRng = oDoc.Content
@@ -447,7 +535,14 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
     Dim convertCount As Long
     Dim keepCount As Long
     Dim policyFlagCount As Long
+    Dim anomalyCount As Long
     Dim safety As Long
+    Dim safetyCap As Long
+    If bAnomaliesOnly Then
+        safetyCap = 100000
+    Else
+        safetyCap = 5000
+    End If
 
     With oRng.Find
         .ClearFormatting
@@ -499,25 +594,44 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
                 keepCount = keepCount + 1
             End If
 
-            sOut = sOut & "Run #" & totalCount & " | ParaStart=" & oPara.Range.Start & _
-                   " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & _
-                   " | Phase2: " & phase2 & NL
-            sOut = sOut & "  " & StyleName & " at " & posLabel & " of paragraph (offset " & _
-                   runOffset & " of " & paraTextLen & ")" & NL
-            sOut = sOut & "  Excerpt: """ & excerpt & """" & NL
+            Dim isAnomaly As Boolean
+            isAnomaly = Not (paraStyle = "VerseText" And posLabel = "START")
+            If isAnomaly Then anomalyCount = anomalyCount + 1
 
-            ' Flag BodyText paragraphs not caught by Phase 2 rule as policy candidates
-            If Not qualifies And paraStyle = "BodyText" Then
-                sOut = sOut & "  ** POLICY DECISION: BodyText paragraph not caught by Phase 2 rule." & NL
+            If (Not bAnomaliesOnly) Or isAnomaly Then
+                sOut = sOut & "Run #" & totalCount & " | ParaStart=" & oPara.Range.Start & _
+                       " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & _
+                       " | Phase2: " & phase2 & NL
+                sOut = sOut & "  " & StyleName & " at " & posLabel & " of paragraph (offset " & _
+                       runOffset & " of " & paraTextLen & ")" & NL
+                sOut = sOut & "  Excerpt: """ & excerpt & """" & NL
+
+                ' Flag BodyText paragraphs not caught by Phase 2 rule as policy candidates
+                If Not qualifies And paraStyle = "BodyText" Then
+                    sOut = sOut & "  ** POLICY DECISION: BodyText paragraph not caught by Phase 2 rule." & NL
+                    policyFlagCount = policyFlagCount + 1
+                End If
+                sOut = sOut & NL
+            ElseIf Not qualifies And paraStyle = "BodyText" Then
+                ' Still count policy flags even when suppressed (anomalies-only would emit anyway since paraStyle <> VerseText)
                 policyFlagCount = policyFlagCount + 1
             End If
-            sOut = sOut & NL
 
             ' Advance past this run
             oRng.Start = oRng.End
             safety = safety + 1
-            If safety > 5000 Then
-                sOut = sOut & "*** Safety limit (5000 runs) reached, abort scan ***" & NL
+
+            ' Progress heartbeat every 1000 runs; lets caller see the scan
+            ' is alive and Ctrl+Break cleanly via DoEvents.
+            If safety Mod 1000 = 0 Then
+                Debug.Print "AuditCharStyleUsage(" & StyleName & "): " & safety & _
+                            " runs scanned, " & anomalyCount & " anomalies, " & _
+                            Format(Timer - startTick, "0.0") & " sec elapsed"
+                DoEvents
+            End If
+
+            If safety > safetyCap Then
+                sOut = sOut & "*** Safety limit (" & safetyCap & " runs) reached, abort scan ***" & NL
                 Exit Do
             End If
             If oRng.Start >= oDoc.Content.End Then Exit Do
@@ -527,9 +641,14 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
 
     sOut = sOut & "---- Summary ----" & NL
     sOut = sOut & "Total " & StyleName & " character runs: " & totalCount & NL
+    sOut = sOut & "  Anomalies (paraStyle<>VerseText OR position<>START): " & anomalyCount & NL
     sOut = sOut & "  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): " & convertCount & NL
     sOut = sOut & "  KEEP-AS-other (paragraph not caught by Phase 2 rule): " & keepCount & NL
     sOut = sOut & "  Policy decision flags (BodyText paragraph not converted): " & policyFlagCount & NL
+    sOut = sOut & NL
+    sOut = sOut & "Started:  " & Format(startTime, "yyyy-mm-dd hh:nn:ss") & NL
+    sOut = sOut & "Finished: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & NL
+    sOut = sOut & "Duration: " & Format(Timer - startTick, "0.00") & " sec" & NL
 
     Debug.Print sOut
     If bWriteFile Then WriteCharStyleUsageFile StyleName, sOut
