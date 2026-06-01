@@ -1,0 +1,13 @@
+---- AuditCharStyleUsage("Chapter Verse marker"): 2026-05-31 20:04:01 ----
+Mode: ANOMALIES ONLY (suppress runs where paraStyle=VerseText AND position=START)
+
+Run #22396 | ParaStart=3087864 | Style=VerseText | first-char-style=Chapter Verse marker | Phase2: KEEP-AS-VerseText
+  Chapter Verse marker at END of paragraph (offset 146 of 147)
+  Excerpt: "215 neither shall he stand who handles the bow; and he who is swift of foot will"
+
+---- Summary ----
+Total Chapter Verse marker character runs: 31103
+  Anomalies (paraStyle<>VerseText OR position<>START): 1
+  CONVERT (verse paragraph, Phase 2 will reassign to VerseText): 0
+  KEEP-AS-other (paragraph not caught by Phase 2 rule): 31103
+  Policy decision flags (BodyText paragraph not converted): 0
