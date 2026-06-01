@@ -73,6 +73,38 @@ echo DESTINATION: %DESTINATION%
 echo.
 
 REM ============================================================
+REM  SNAPSHOT CLAUDE PROJECT SETTINGS INTO THE PROJECT FOLDER
+REM  These live OUTSIDE the project tree (under %UserProfile%\.claude),
+REM  so copy them in before rsync runs so the backup captures them.
+REM  Path C:\adaept\<folder> encodes to projects\C--adaept-<folder>.
+REM ============================================================
+set "CLAUDE_HOME=%UserProfile%\.claude"
+set "CLAUDE_PROJ=%CLAUDE_HOME%\projects\C--adaept-%SELECTED%"
+set "CLAUDE_SNAPSHOT=%SOURCE%\_claude_backup"
+
+echo Snapshotting Claude settings to: %CLAUDE_SNAPSHOT%
+if not exist "%CLAUDE_SNAPSHOT%" md "%CLAUDE_SNAPSHOT%"
+
+REM Per-project memory folder (only some projects have one).
+REM Clear the snapshot copy first so it mirrors current memory exactly.
+if exist "%CLAUDE_PROJ%\memory\" (
+    echo   - copying memory folder
+    if exist "%CLAUDE_SNAPSHOT%\memory" rd /s /q "%CLAUDE_SNAPSHOT%\memory"
+    xcopy "%CLAUDE_PROJ%\memory" "%CLAUDE_SNAPSHOT%\memory\" /E /I /Y /Q >nul
+) else (
+    echo   - no memory folder for %SELECTED%, skipping
+)
+
+REM Global user settings.json (model / effort level etc.)
+if exist "%CLAUDE_HOME%\settings.json" (
+    echo   - copying global settings.json
+    copy /Y "%CLAUDE_HOME%\settings.json" "%CLAUDE_SNAPSHOT%\settings.json" >nul
+) else (
+    echo   - no global settings.json found, skipping
+)
+echo.
+
+REM ============================================================
 REM  CREATE DESTINATION IF NEEDED
 REM ============================================================
 if not exist "%DESTINATION%" (

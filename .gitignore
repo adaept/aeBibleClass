@@ -35,6 +35,11 @@ docfx/
 old/
 Export/
 
+# Claude settings snapshot written into the project by
+# synch-to-onedrive.bat (memory + global settings.json) for the
+# OneDrive backup only - never tracked by git.
+_claude_backup/
+
 ###################
 ## Microsoft Excel
 ###################

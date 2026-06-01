@@ -217,6 +217,42 @@ convert to the FSO pattern used in
 `WriteCharStyleUsageFile`. Leave alone any genuine one-shot
 diagnostic writers that can't be re-entered.
 
+## 2026-06-01 - Backup script snapshots Claude project settings
+
+`synch-to-onedrive.bat` now captures the Claude config that lives
+*outside* the project tree so the OneDrive backup is self-
+contained. Not VBA work; logged here for backup-process history.
+
+**Background.** Model / effort level live in the user-global
+`C:\Users\peter\.claude\settings.json`, and this project's memory
+lives in
+`C:\Users\peter\.claude\projects\C--adaept-aeBibleClass\memory\`.
+Neither sits under `C:\adaept\<project>`, so the existing rsync
+never captured them.
+
+**Change.** Before the rsync runs, the script snapshots into
+`%SOURCE%\_claude_backup\`:
+
+- `memory\` - the per-project memory folder. Cleared first
+  (`rd /s /q`) so the snapshot mirrors current state rather than
+  accumulating deleted files; skipped with a message for folders
+  that have no memory dir (Project3-9, etc.).
+- `settings.json` - a copy of the global user settings.
+
+The encoded path is built from the menu selection
+(`C:\adaept\<folder>` -> `projects\C--adaept-<folder>`), so it
+works for any of the 0-9 folder choices, not just aeBibleClass.
+Because `_claude_backup\` sits inside `SOURCE`, the existing rsync
+sweeps it up with no change to the rsync command or its excludes.
+
+**Placement decision.** Writes to a dedicated `_claude_backup\`
+subfolder, *not* the live `.claude\`. A `settings.json` dropped
+into `.claude\` would become active project config and override
+the global effort / model when the project is opened.
+
+**`.gitignore`.** Added `_claude_backup/` so the snapshot rides
+along to OneDrive but is never tracked by git.
+
 ## 2026-05-31 - Tests 81-83 added (character-style audits) + +1 CVM anomaly found
 
 Three new test slots wire character-style coverage into the
