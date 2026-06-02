@@ -1,6 +1,6 @@
 === Style Usage Distribution ===
-Normal: 9
-BodyText: 496
+Normal: 7
+BodyText: 495
 FrontPageTopLine: 1
 TitleEyebrow: 2
 Title: 3
@@ -10,7 +10,7 @@ BodyTextTopLineCPBB: 24
 Acknowledgments: 1
 AuthorBodyText: 160
 Contents: 1
-ContentsRef: 11
+ContentsRef: 13
 BibleIndexEyebrow: 1
 BibleIndex: 2
 BibleIndexList: 66
@@ -29,7 +29,7 @@ CustomParaAfterH1: 66
 Brief: 66
 DatAuthRef: 198
 Heading 2: 1189
-VerseText: 31102
+VerseText: 31103
 Psalms BOOK: 5
 PsalmSuperscription: 116
 PsalmAcrostic: 22
@@ -37,8 +37,6 @@ AuthorSectionHead: 3
 Footnote Text: 1000
 ParallelText: 12
 ParallelHeader: 24
-Header: 2
 TheHeaders: 136
-Footer: 3
-TheFooters: 1
-Total paragraphs (all styles): 35013
+TheFooters: 4
+Total paragraphs (all styles): 35011

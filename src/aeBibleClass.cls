@@ -53,7 +53,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 83
+Private Const MaxTests = 84
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -274,8 +274,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83     84)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1063,6 +1063,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Count of 'Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountVerseMarker should match the VerseText paragraph baseline (31,102)"
     Case 83
         GetTestDescription = "Count of 'Chapter Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountChapterVerseMarker should match the VerseText paragraph baseline (31,102)"
+    Case 84
+        GetTestDescription = "Rule: header paragraphs use 'TheHeaders' and footer paragraphs use 'TheFooters'; no built-in Header/Footer style remains on any header/footer story incl. orphaned first-page/even-page (writes rpt\HeaderFooterStyleAudit.txt) - CountHeaderFooterStyleViolations should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1303,6 +1305,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 83
         ResultArray(TestNum) = CountChapterVerseMarker
         m_HintArray(TestNum) = m_lastHint
+    Case 84
+        ResultArray(TestNum) = CountHeaderFooterStyleViolations
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1501,6 +1506,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountVerseMarker"
     Case 83
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountChapterVerseMarker"
+    Case 84
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeaderFooterStyleViolations"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1702,6 +1709,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountVerseMarker"
     Case 83
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountChapterVerseMarker"
+    Case 84
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeaderFooterStyleViolations"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -2459,6 +2468,34 @@ Private Function CountChapterVerseMarker() As Long
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountChapterVerseMarker | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+End Function
+
+'==============================================================
+' CountHeaderFooterStyleViolations  (test slot 84)
+' Returns the count of header/footer paragraphs NOT on the approved
+' style (header <> "TheHeaders" OR footer <> "TheFooters"), across
+' every header/footer story including orphaned first-page/even-page
+' stories. Backs into basVerseStructureAudit.GetHeaderFooterStyleTotals
+' (StoryRanges/NextStoryRange walk, same basis as the Style Usage
+' Distribution). Expected baseline 0.
+'
+' Activated 2026-06-01 after the front-matter orphans were remediated
+' and the live audit reconciled with the distribution at 0 violations
+' (Headers 136 / Footers 4). See rvw/Code_review 2026-05-28.md.
+'==============================================================
+Private Function CountHeaderFooterStyleViolations() As Long
+    On Error GoTo PROC_ERR
+    Dim hP As Long, hV As Long, fP As Long, fV As Long
+    GetHeaderFooterStyleTotals hP, hV, fP, fV
+    If m_lastHint = "" Then m_lastHint = _
+        "header viol=" & hV & " footer viol=" & fV & _
+        " - see rpt\HeaderFooterStyleAudit.txt"
+    CountHeaderFooterStyleViolations = hV + fV
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountHeaderFooterStyleViolations | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
 End Function

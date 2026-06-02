@@ -1053,3 +1053,255 @@ Private Sub WriteUnconvertedFile(ByVal sContent As String)
     oStream.Write sContent
     oStream.Close
 End Sub
+
+' ==========================================================================
+' AuditHeaderFooterStyles
+' ==========================================================================
+' Report the paragraph style of every header/footer story in the document
+' and flag any not on the approved "TheHeaders" / "TheFooters" styles.
+' Read-only; produces a report file plus an Immediate-window summary.
+'
+' Project rule (the structural contract):
+'   Header paragraphs use the "TheHeaders" paragraph style and nothing
+'   else; footer paragraphs use "TheFooters" and nothing else. Word auto-
+'   applies the built-in "Header"/"Footer" styles to every header/footer
+'   story it creates, so a story whose text was never restyled shows up
+'   here as a violation.
+'
+' Enumeration (changed 2026-06-01):
+'   Walks ActiveDocument.StoryRanges + NextStoryRange filtered to the six
+'   header/footer story types (wd*Header/FooterStory 6-11) - the SAME basis
+'   as CountAuditStyles_ToFile / "Style Usage Distribution.txt". This makes
+'   the audit a superset of the distribution: it now ENUMERATES ORPHANED
+'   first-page / even-page stories (content that persists after the
+'   PageSetup toggle was switched off) that the earlier Sections + .Exists
+'   walk was blind to. NextStoryRange yields each distinct owned story once
+'   (linked sections share and are not re-counted), so the totals reconcile
+'   with the distribution's built-in Header/Footer counts exactly.
+'
+'   Each row is classified:
+'     ACTIVE   - currently rendered (Primary always; FirstPage/EvenPages
+'                when the owning section's PageSetup toggle is on).
+'     ORPHANED - FirstPage/EvenPages content present but toggle off.
+'   Section index and ACTIVE/ORPHANED are best-effort (guarded); the
+'   violation flag is the authoritative signal.
+'
+' Output: rpt\HeaderFooterStyleAudit.txt (when bWriteFile = True) plus
+' Immediate-window summary.
+'
+' Usage:
+'   AuditHeaderFooterStyles            ' default writes file
+'   AuditHeaderFooterStyles False      ' Immediate only, no file
+' ==========================================================================
+Public Sub AuditHeaderFooterStyles(Optional ByVal bWriteFile As Boolean = True)
+    On Error GoTo PROC_ERR
+    Dim t As Double
+    StartTimer "AuditHeaderFooterStyles", t
+
+    Const APPROVED_HEADER As String = "TheHeaders"
+    Const APPROVED_FOOTER As String = "TheFooters"
+
+    Dim oDoc As Object
+    Set oDoc = ActiveDocument
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+    sOut = "---- AuditHeaderFooterStyles: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+    sOut = sOut & "Rule: header paragraphs use '" & APPROVED_HEADER & "', footer paragraphs use '" & APPROVED_FOOTER & "'." & NL
+    sOut = sOut & "Enumerated via StoryRanges/NextStoryRange (same basis as the Style Usage" & NL
+    sOut = sOut & "Distribution report), so ORPHANED first-page/even-page stories are included." & NL
+    sOut = sOut & "Stories shared via Link to Previous appear once, under their owning section." & NL & NL
+
+    Dim hdrParas As Long, hdrViol As Long
+    Dim ftrParas As Long, ftrViol As Long
+
+    Dim rng As Object
+    For Each rng In oDoc.StoryRanges
+        If IsHeaderFooterStory(rng.StoryType) Then
+            WalkHFChain sOut, rng, APPROVED_HEADER, APPROVED_FOOTER, _
+                        hdrParas, hdrViol, ftrParas, ftrViol, True
+        End If
+    Next rng
+
+    sOut = sOut & NL & "---- Summary ----" & NL
+    sOut = sOut & "Header paragraphs: " & hdrParas & "   violations (style <> " & APPROVED_HEADER & "): " & hdrViol & NL
+    sOut = sOut & "Footer paragraphs: " & ftrParas & "   violations (style <> " & APPROVED_FOOTER & "): " & ftrViol & NL
+    sOut = sOut & "TOTAL violations: " & (hdrViol + ftrViol) & NL
+
+    Debug.Print sOut
+    If bWriteFile Then WriteHeaderFooterStyleFile sOut
+
+    EndTimer "AuditHeaderFooterStyles", t
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure AuditHeaderFooterStyles of Module basVerseStructureAudit"
+    Resume PROC_EXIT
+End Sub
+
+' --------------------------------------------------------------------------
+' WalkHFChain - walk one header/footer story chain (the head range from
+' StoryRanges, then NextStoryRange to the end) and fold every paragraph into
+' the header/footer running totals. When bReport is True, also append a
+' classified row per paragraph to sOut. Shared by AuditHeaderFooterStyles
+' (report) and GetHeaderFooterStyleTotals (count-only) so the two can never
+' diverge.
+' --------------------------------------------------------------------------
+Private Sub WalkHFChain(ByRef sOut As String, ByVal headRng As Object, _
+                        ByVal approvedHeader As String, ByVal approvedFooter As String, _
+                        ByRef hdrParas As Long, ByRef hdrViol As Long, _
+                        ByRef ftrParas As Long, ByRef ftrViol As Long, _
+                        ByVal bReport As Boolean)
+    Const NL As String = vbCrLf
+
+    Dim rng As Object
+    Set rng = headRng
+    Do
+        Dim sType As Long
+        sType = rng.StoryType
+        Dim isHeader As Boolean
+        isHeader = HFIsHeader(sType)
+        Dim approvedStyle As String
+        If isHeader Then approvedStyle = approvedHeader Else approvedStyle = approvedFooter
+
+        Dim rowPrefix As String
+        If bReport Then
+            rowPrefix = "Sec " & HFSectionIndex(rng) & " | " & _
+                        IIf(isHeader, "Header", "Footer") & "/" & HFPositionLabel(sType) & _
+                        " [" & HFStateLabel(rng, sType) & "]"
+        End If
+
+        Dim oPara As Object
+        Dim StyleName As String
+        Dim excerpt As String
+        Dim flag As String
+        For Each oPara In rng.Paragraphs
+            StyleName = oPara.style.NameLocal
+            flag = ""
+            If isHeader Then
+                hdrParas = hdrParas + 1
+                If StyleName <> approvedStyle Then
+                    hdrViol = hdrViol + 1
+                    flag = "  *** VIOLATION"
+                End If
+            Else
+                ftrParas = ftrParas + 1
+                If StyleName <> approvedStyle Then
+                    ftrViol = ftrViol + 1
+                    flag = "  *** VIOLATION"
+                End If
+            End If
+
+            If bReport Then
+                sOut = sOut & rowPrefix & " | style=" & StyleName & flag & NL
+                excerpt = Left$(Replace(oPara.Range.Text, vbCr, ""), 60)
+                If Len(excerpt) > 0 Then sOut = sOut & "    text: """ & excerpt & """" & NL
+            End If
+        Next oPara
+
+        Set rng = rng.NextStoryRange
+    Loop Until rng Is Nothing
+End Sub
+
+' --------------------------------------------------------------------------
+' Header/footer story-type helpers (WdStoryType is late-bound here):
+'   6 EvenPagesHeader   7 PrimaryHeader   10 FirstPageHeader
+'   8 EvenPagesFooter   9 PrimaryFooter   11 FirstPageFooter
+' --------------------------------------------------------------------------
+Private Function IsHeaderFooterStory(ByVal sType As Long) As Boolean
+    IsHeaderFooterStory = (sType >= 6 And sType <= 11)
+End Function
+
+Private Function HFIsHeader(ByVal sType As Long) As Boolean
+    HFIsHeader = (sType = 6 Or sType = 7 Or sType = 10)
+End Function
+
+Private Function HFPositionLabel(ByVal sType As Long) As String
+    Select Case sType
+        Case 7, 9:   HFPositionLabel = "Primary"
+        Case 10, 11: HFPositionLabel = "FirstPage"
+        Case 6, 8:   HFPositionLabel = "EvenPages"
+        Case Else:   HFPositionLabel = "Story" & sType
+    End Select
+End Function
+
+Private Function HFSectionIndex(ByVal rng As Object) As String
+    Dim s As String
+    s = "?"
+    On Error Resume Next
+    s = CStr(rng.Sections(1).Index)
+    On Error GoTo 0
+    HFSectionIndex = s
+End Function
+
+' ACTIVE = currently rendered; ORPHANED = content present but PageSetup
+' toggle off. Primary is always rendered; FirstPage/EvenPages depend on the
+' owning section's toggle. Best-effort - returns "?" if the lookup fails.
+Private Function HFStateLabel(ByVal rng As Object, ByVal sType As Long) As String
+    Select Case sType
+        Case 7, 9
+            HFStateLabel = "ACTIVE"
+        Case 10, 11        ' FirstPage
+            Dim onFP As Boolean
+            onFP = False
+            On Error Resume Next
+            onFP = rng.Sections(1).PageSetup.DifferentFirstPageHeaderFooter
+            On Error GoTo 0
+            HFStateLabel = IIf(onFP, "ACTIVE", "ORPHANED")
+        Case 6, 8          ' EvenPages
+            Dim onEv As Boolean
+            onEv = False
+            On Error Resume Next
+            onEv = rng.Sections(1).PageSetup.OddAndEvenPagesHeaderFooter
+            On Error GoTo 0
+            HFStateLabel = IIf(onEv, "ACTIVE", "ORPHANED")
+        Case Else
+            HFStateLabel = "?"
+    End Select
+End Function
+
+' ==========================================================================
+' GetHeaderFooterStyleTotals
+' ==========================================================================
+' Count-only single source of truth for test slot 84. Same StoryRanges
+' enumeration as AuditHeaderFooterStyles (via WalkHFChain, bReport:=False),
+' so the gate number reconciles with both the report and the Style Usage
+' Distribution. Returns paragraph totals and the count NOT on the approved
+' style for headers and footers separately - orphaned stories included.
+' ==========================================================================
+Public Sub GetHeaderFooterStyleTotals(ByRef hdrParas As Long, ByRef hdrViolations As Long, _
+                                      ByRef ftrParas As Long, ByRef ftrViolations As Long)
+    Const APPROVED_HEADER As String = "TheHeaders"
+    Const APPROVED_FOOTER As String = "TheFooters"
+
+    hdrParas = 0: hdrViolations = 0
+    ftrParas = 0: ftrViolations = 0
+
+    Dim oDoc As Object
+    Set oDoc = ActiveDocument
+
+    Dim sink As String      ' unused when bReport:=False
+    Dim rng As Object
+    For Each rng In oDoc.StoryRanges
+        If IsHeaderFooterStory(rng.StoryType) Then
+            WalkHFChain sink, rng, APPROVED_HEADER, APPROVED_FOOTER, _
+                        hdrParas, hdrViolations, ftrParas, ftrViolations, False
+        End If
+    Next rng
+End Sub
+
+' --------------------------------------------------------------------------
+' WriteHeaderFooterStyleFile - write the report to
+' rpt\HeaderFooterStyleAudit.txt
+' --------------------------------------------------------------------------
+Private Sub WriteHeaderFooterStyleFile(ByVal sContent As String)
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim sPath As String
+    sPath = ActiveDocument.Path & "\rpt\HeaderFooterStyleAudit.txt"
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(sPath, True, False)   ' ASCII
+    oStream.Write sContent
+    oStream.Close
+End Sub

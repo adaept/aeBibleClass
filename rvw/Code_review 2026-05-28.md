@@ -1,5 +1,14 @@
 # Code review - 2026-05-28 carry-forward
 
+> **CLOSED FOR NEW WORK 2026-06-01.** Superseded by
+> [`rvw/Code_review 2026-06-01.md`](Code_review%202026-06-01.md), which
+> carries forward all open tasks and follow-ups. This file remains the
+> authoritative dated history for 2026-05-28 -> 2026-06-01 (the
+> Header/Footer audit + slot-84 arc, the StoryRanges rewrite and
+> front-matter orphaned-story remediation, the backup-script change,
+> and Tests 80-83). The "Open carry-forward" list below is frozen as of
+> its close; live status now lives in the 2026-06-01 file.
+
 This file opens a fresh review arc on 2026-05-28. The previous
 arc [`rvw/Code_review 2026-05-16.md`](Code_review%202026-05-16.md)
 is now **closed for new work**; that file remains the
@@ -216,6 +225,375 @@ convert to the FSO pattern used in
 `CountAuditStyles_ToFile` / `CountAuditCharacterStyles_ToFile` /
 `WriteCharStyleUsageFile`. Leave alone any genuine one-shot
 diagnostic writers that can't be re-entered.
+
+## 2026-06-01 - Test slot 84 ACTIVATED (header/footer style compliance)
+
+With remediation verified at 0 violations, slot 84 was activated.
+`MaxTests` 83 -> 84; the reserved comment block in `aeBibleClass.cls`
+was replaced by the live private wrapper
+`CountHeaderFooterStyleViolations`, which backs into
+`basVerseStructureAudit.GetHeaderFooterStyleTotals` (the StoryRanges
+walk) and returns `hV + fV` (expected 0). Six wiring points updated
+(mirroring slots 81-83):
+
+1. `MaxTests` 83 -> 84.
+2. `Expected1BasedArray` `values()` extended with a trailing `0`
+   (verified 84 elements == MaxTests).
+3. `GetTestDescription` Case 84.
+4. `GetPassFail` Case 84 dispatch -> `CountHeaderFooterStyleViolations`.
+5. `Debug.Print` Case 84 row.
+6. `BufAppend` Case 84 row.
+
+Hint on drift: `m_lastHint = "header viol=<h> footer viol=<f> - see
+rpt\HeaderFooterStyleAudit.txt"`. CRLF/ASCII verified on the file.
+
+**CONFIRMED:** operator imported and ran the suite - slot 84 **PASS
+at 0** (Expected 0, runtime 0.04 s). Header/footer style compliance
+is now gated.
+
+## 2026-06-01 - Remediation VERIFIED: HF audit 0 violations, reconciles with distribution
+
+Operator remediated the front-matter orphans and regenerated both
+reports. `AuditHeaderFooterStyles` now reports **TOTAL violations: 0**
+(Header paragraphs 136, Footer paragraphs 4). Full reconciliation with
+`Style Usage Distribution.txt`:
+
+| Style | Distribution | HF audit |
+|-------|--------------|----------|
+| TheHeaders | 136 | 136 |
+| TheFooters | 4 | 4 |
+| built-in Header | absent | 0 |
+| built-in Footer | absent | 0 |
+| Normal | 7 (was 9) | n/a |
+
+Total paragraphs 35013 -> 35011 (-2), matching the two `Normal`-styled
+even-page footer paragraphs removed. The two reports now agree exactly;
+the `Normal` bucket dropped by precisely the 2 it was masking.
+
+How it was remediated (read from the new audit rows):
+- **Even-page stories dropped entirely** - no `EvenPages` rows remain;
+  Word discarded the orphaned stories when "Different Odd & Even" was
+  unchecked. Shape purity achieved on that axis.
+- **First-page stories on Sec 1 are now `[ACTIVE]`** (TheHeaders /
+  TheFooters), i.e. "Different First Page" is now ON for Sec 1 - a
+  deliberate distinct first page for the front matter. Compliant, but
+  now a STRUCTURAL feature of the canonical shape; the shape-lockdown
+  task should treat Sec 1 Different-First-Page as expected/required,
+  not drift.
+- **Roman numeral kept, done properly** - `"i"` now lives in Sec 4's
+  primary footer as `TheFooters`; body numbering `"1"` is Sec 5. The
+  "keep roman numerals" path was taken (not removal).
+
+Status: slot-84 precondition met. The reservation block in
+`aeBibleClass.cls` is flipped to READY TO ACTIVATE at baseline 0.
+
+## 2026-06-01 - Front-matter orphaned-story remediation procedure (operator)
+
+Actionable fix for the 7 violations found in the live re-run below.
+All live in the Sec 1/Sec 2 front matter, in stories Word retained
+after "Different First Page" (Sec 1) and "Different Odd & Even Pages"
+(document-wide) were switched off. The content is unreachable in the
+normal header/footer view until the toggle is re-enabled.
+
+Groups:
+- **A (active):** Sec 1 Footer/Primary = built-in `Footer`.
+- **B (first-page orphans):** Sec 1 Header/FirstPage = `Header`,
+  Footer/FirstPage = `Footer`.
+- **C (even-page orphans):** Sec 1 Header/Even = `Header`,
+  Footer/Even = `Footer`; Sec 2 Footer/Even = `Normal` x2 (the "i"
+  roman-numeral page-number leftover). Sec 2 Header/Even is already
+  `TheHeaders`.
+
+GUI procedure:
+1. Back up first (synch-to-onedrive / WIP copy).
+2. Double-click a front-matter header to enter Header & Footer
+   editing. With the cursor in Section 1, in the Options group check
+   BOTH "Different First Page" and "Different Odd & Even Pages" to
+   expose the orphaned stories.
+3. Walk them with Show Next/Previous. For each: delete stray content;
+   for Section 2+ click "Link to Previous" to drop its own content
+   (it inherits, so it stops counting as a story); for Section 1
+   (cannot link) set the paragraph style explicitly to `TheHeaders`
+   (headers) / `TheFooters` (footers).
+4. Fix the active Sec 1 primary Footer -> `TheFooters`.
+5. Uncheck "Different First Page" and "Different Odd & Even Pages" to
+   restore the strict single shape. Save.
+6. Re-run `AuditHeaderFooterStyles` - expect TOTAL violations: 0.
+
+Decision: the "i" implies the front matter once had roman-numeral
+pagination. As it is orphaned (not rendered), removal matches the
+"no unused" design; if intentional roman numerals are wanted, set
+them up properly with the approved styles instead.
+
+Outcome note: after clearing + toggling off, Word may drop the empty
+inactive first-page/even-page stories entirely (true shape purity) or
+retain them empty-but-compliant; either way the audit reaches 0
+violations. A compliant-but-orphaned story that persists is a
+shape-lockdown concern, not a slot-84 violation.
+
+Automation option (not yet built): a guarded
+`RemediateHeaderFooterOrphans(bDryRun)` could replicate this in VBA
+(toggle on -> clear/restyle the orphaned-story paragraphs -> toggle
+off), dry-run first. Offered, not written - it modifies the live
+document, so GUI-with-backup is the recommended first pass.
+
+## 2026-06-01 - HF audit live re-run: 7 violations (not 5) - distribution masked 2 under Normal
+
+The extended audit was re-run on the live document.
+`rpt\HeaderFooterStyleAudit.txt` now reports **TOTAL violations: 7**
+(Header paragraphs 138, 2 violations; Footer paragraphs 6, 5
+violations) - all in the **Sec 1 / Sec 2 front matter**.
+
+**Why 7, not the predicted 5.** The "5" came from the distribution's
+by-style-name counts (`Header: 2` + `Footer: 3`). The audit flags any
+header paragraph `<> TheHeaders` / footer paragraph `<> TheFooters`,
+and two orphaned even-page **footer** paragraphs in Sec 2 are styled
+**`Normal`**, not built-in `Footer`:
+
+```
+Sec 2 | Footer/EvenPages [ORPHANED] | style=Normal  *** VIOLATION   (text "i")
+Sec 2 | Footer/EvenPages [ORPHANED] | style=Normal  *** VIOLATION
+```
+
+The distribution counted those inside its global `Normal: 9` bucket,
+so they were invisible as footer problems. Footer violations =
+3 built-in `Footer` (Sec 1 Even/Primary/FirstPage) + 2 `Normal`
+(Sec 2 Even) = 5. Header violations = 2 built-in `Header` (Sec 1 Even +
+Sec 1 FirstPage). Total 7.
+
+**Full reconciliation with the distribution:**
+
+- Headers 138 = 136 `TheHeaders` + 2 `Header` -> matches `TheHeaders:
+  136` + `Header: 2`.
+- Footers 6 = 1 `TheFooters` + 3 `Footer` + 2 `Normal` -> matches
+  `TheFooters: 1` + `Footer: 3`, with the 2 `Normal` absorbed in
+  `Normal: 9`.
+
+Confirms the audit is the more accurate instrument: per-story it sees
+footer content the by-style-name distribution masks. The `"i"` plus
+the FirstPage/EvenPages orphans on Sec 1/2 are front-matter pagination
+leftovers (roman-numeral title-page setup switched off, story content
+retained).
+
+**Remediation target (operator).** Clear the orphaned front-matter
+first-page/even-page header & footer stories on Sec 1 and Sec 2, and
+restyle/clear the Sec 1 placeholder footer, until
+`AuditHeaderFooterStyles` reports 0. Then slot 84 activates at
+baseline 0. The `HFSectionIndex` lookup resolved cleanly (real section
+numbers, no `Sec ?`), so the per-story attribution is trustworthy.
+
+## 2026-06-01 - HF audit extended to enumerate orphaned stories (StoryRanges rewrite)
+
+Resolves item 1 of the reconciliation analysis below.
+`AuditHeaderFooterStyles` and `GetHeaderFooterStyleTotals` in
+`basVerseStructureAudit.bas` were rewritten from the per-section
+`Sections(i).Headers/Footers(idx)` + `.Exists` walk onto a
+`StoryRanges` / `NextStoryRange` traversal filtered to the six
+header/footer story types (`wd*Header/FooterStory` 6-11) - the same
+basis as `CountAuditStyles_ToFile` / "Style Usage Distribution.txt".
+
+Why this reconciles by construction:
+
+- `NextStoryRange` yields each distinct **owned** story once; linked
+  sections share and are not re-counted, so the old LinkToPrevious /
+  owned-gate logic is no longer needed (the previous build relied on
+  it and was already correct for Primary, matching at 135).
+- The traversal naturally includes the **orphaned** first-page /
+  even-page stories that the `.Exists` gate skipped - the 5 strays
+  (2 built-in Header + 2 built-in Footer in orphaned stories, plus
+  the Sec 1 active footer) now appear. Expected as-found total
+  violations = **5**, matching the distribution's built-in
+  Header(2) + Footer(3).
+
+Both routines now share one private walker, `WalkHFChain`
+(`bReport` toggles report rows vs count-only), so the report total
+and the slot-84 gate number cannot diverge. Each report row is
+classified `[ACTIVE]` (Primary always; FirstPage/EvenPages when the
+owning section's PageSetup toggle is on) or `[ORPHANED]`
+(FirstPage/EvenPages content present, toggle off); section index and
+state are best-effort/guarded, the VIOLATION flag is authoritative.
+Removed the now-dead `AppendStoryRows` / `CountStoryStyle` helpers;
+added `IsHeaderFooterStory` / `HFIsHeader` / `HFPositionLabel` /
+`HFSectionIndex` / `HFStateLabel`. The slot-84 reservation comment
+in `aeBibleClass.cls` was updated (scope gap closed; expected
+as-found 5; still gated on operator re-run + remediation to 0).
+
+**Not yet re-run on the live document** - the rewrite is by-design
+faithful to the distribution's mechanism, but the operator should
+re-run `AuditHeaderFooterStyles` to confirm it now reports 5
+violations (2 Header + 3 Footer) and that the orphaned rows point at
+real story content to remediate.
+
+## 2026-06-01 - HF audit vs Style Usage Distribution: reconciliation + shape-lockdown task
+
+`AuditHeaderFooterStyles` was run on the live document and its
+output (`rpt\HeaderFooterStyleAudit.txt`) compared against
+`rpt\Style Usage Distribution.txt`. They disagree, and the
+disagreement is informative.
+
+**The two counts.**
+
+| Style          | Distribution (StoryRanges) | HF audit (Sections + .Exists) |
+|----------------|----------------------------|-------------------------------|
+| TheHeaders     | 136                        | 135                           |
+| Header (built-in) | 2                       | 0                             |
+| TheFooters     | 1                          | 1                             |
+| Footer (built-in) | 3                       | 1 (Sec 1 Footer/Primary)      |
+| **HF total**   | **142**                    | **137 owned**                 |
+
+The audit reports **1** violation (the Sec 1 placeholder footer on
+built-in `Footer`). The distribution shows **5** stray built-in
+paragraphs plus one extra `TheHeaders`. Gap = 5 paragraphs the
+audit never sees.
+
+**Root cause (confirmed in code).**
+`CountAuditStyles_ToFile` (Test 49) builds the distribution with
+`For Each rng In ActiveDocument.StoryRanges ... rng.NextStoryRange`
+- it enumerates **every story object in the file**, including the
+first-page and even-page header/footer story chains.
+`AuditHeaderFooterStyles` instead walks
+`Sections(i).Headers/Footers(idx)` gated on `.Exists`, and the live
+run emitted **only** `Primary` rows - so `.Exists = False` for all
+FirstPage/EvenPages indices. That means "Different first page" /
+"Different odd & even" are currently **off** everywhere, yet the
+StoryRanges walk still finds content in those stories. The 5 extra
+paragraphs (2 built-in Header, 2 built-in Footer, +1 TheHeaders)
+live in **orphaned first-page/even-page stories**: content that
+persisted after the PageSetup toggle was switched back off. The
+audit is structurally blind to them; the distribution is not.
+
+So both reports are correct for their scope:
+- HF audit = authoritative for **active, rendered** stories
+  (per-section attribution, LinkToPrevious-aware).
+- Distribution = authoritative for **all story content in the
+  file**, including orphaned stories, but with no per-section view.
+
+**Document shape observed.** 145 sections, one `Primary` header +
+footer story each. 135 owned headers (book-name rows like `GENESIS`
+and tab-only spacer rows alternating) + 10 linked. Footers almost
+all linked; only Sec 1 (built-in `Footer`) and Sec 4 (`TheFooters`,
+text `1`) carry own content. Sec 1 and Sec 141-145 are the
+intended placeholder boundary sections (J5 layout vs Word's default
+"Document 1"); Sec 85 is an internal linked divider.
+
+**Resolution (proposed; not yet applied).**
+
+1. **Reconcile the counters.** Extend `AuditHeaderFooterStyles` /
+   `GetHeaderFooterStyleTotals` to also enumerate orphaned stories -
+   either walk `Headers(2)/(3)` & `Footers(2)/(3)` ignoring
+   `.Exists`, or mirror the distribution's `StoryRanges` /
+   `NextStoryRange` traversal restricted to HF story types - and
+   label each story ACTIVE vs ORPHANED. Then the audit becomes a
+   superset of the distribution and slot 84 can gate the true total
+   (`built-in Header + built-in Footer`, currently 5, not 1).
+   The audit docstring and the slot-84 reservation comment were
+   corrected on 2026-06-01 to record this scope gap.
+2. **Remediate the orphans.** For each section whose first-page /
+   even-page story holds content while the PageSetup toggle is off,
+   clear it (toggle on, delete content, toggle off) so no orphaned
+   built-in-styled paragraphs remain.
+3. **Restyle the active violation.** Decide the placeholder policy
+   for Sec 1's footer (restyle built-in `Footer` -> `TheFooters`,
+   or exempt the boundary placeholders explicitly).
+4. **Target end state.** Distribution shows only `TheHeaders` /
+   `TheFooters` (zero built-in `Header`/`Footer`), and the extended
+   audit's total violations = 0, with both counts reconciled.
+   Slot 84 then activates at baseline 0.
+
+### Future task - Header/Footer + Section SHAPE LOCKDOWN (MEDIUM, OPEN 2026-06-01)
+
+A standing structural-integrity task, distinct from the per-
+paragraph style gate. The document is deliberately **opinionated
+and single-shape**:
+
+- **No unused / invalid sections.** The first and last sections are
+  intentional placeholder boundaries (between the J5 layout and the
+  standard "Document 1" Word creates); everything in between is the
+  66-book body. No stray or orphaned sections.
+- **No orphaned header/footer stories** (the issue found above).
+- **`KeepWithNext` / `KeepTogether` locked down tightly** -
+  pagination discipline is part of the shape contract, not a
+  per-render accident. A future test should assert the intended
+  keep-with-next configuration rather than letting it drift.
+- **i18n must NOT change the document shape.** The layout is
+  purposely rigid. Localization work (alternate BookName lexemes,
+  version tags, etc.) appends content within the existing shape; it
+  does not add sections, headers, footers, or page-break structure.
+- **Known distant-horizon exception.** Bidirectional / RTL (the note
+  said "LTR") localization could plausibly need to bend the strict
+  single-shape rule. This is far out and explicitly out of scope for
+  now; flag it here so that whoever hardens the shape-lockdown tests
+  knows there is one anticipated future relaxation, and does not
+  bake in assumptions that make RTL impossible later.
+
+Candidate gates for this task (once specified): zero orphaned HF
+stories; section count equals the canonical expected (145 today, or
+a derived value); placeholder boundary sections present and correct;
+`KeepWithNext` matches the intended map across body styles.
+
+## 2026-06-01 - Header/footer style audit + reserved test slot 84
+
+New audit surfaces where the stray built-in `Header` / `Footer`
+styles in the Style Usage Distribution report come from, and a test
+slot is reserved (not yet activated) to gate the rule once the
+operating code is validated on the live document.
+
+**The question.** Rule: header paragraphs use `TheHeaders` and
+nothing else; footer paragraphs use `TheFooters`. The distribution
+report nonetheless showed `Header: 2`, `TheHeaders: 136`,
+`Footer: 3`, `TheFooters: 1`. The built-in `Header`/`Footer` styles
+are not applied by hand - Word auto-applies them to every
+header/footer **story** it creates (one per section x
+Primary/FirstPage/EvenPages), including empty-but-enabled stories.
+The 2 + 3 are real paragraphs in those stories that were never
+restyled (footers are mostly non-compliant: only 1 of 4 got
+`TheFooters`). Built-in styles can't be deleted, so compliance can
+only mean zero paragraphs using them.
+
+**Operating code added to `basVerseStructureAudit.bas`** (read-
+only; late-bound; FSO ASCII writer per [[feedback_fso_file_writes]]):
+
+- `AuditHeaderFooterStyles(Optional bWriteFile = True)` - walks
+  every section's `Headers`/`Footers` across the three
+  `WdHeaderFooterIndex` values, emits per-story rows (section #,
+  Header/Footer, Primary/FirstPage/EvenPages, style name, VIOLATION
+  flag, text excerpt) to `rpt\HeaderFooterStyleAudit.txt` plus an
+  Immediate-window summary. **Validate this first.**
+- `GetHeaderFooterStyleTotals(hdrParas, hdrViolations, ftrParas,
+  ftrViolations)` - lean count walk, the single source of truth for
+  the eventual test number.
+- Private helpers `AppendStoryRows`, `CountStoryStyle`,
+  `WriteHeaderFooterStyleFile`.
+
+**Counting model.** A story is counted only when `Exists = True`
+AND it is owned, i.e. section 1 OR `LinkToPrevious = False`.
+Inherited (linked) stories are listed for context but not counted,
+so a shared header is not double-counted. FirstPage/EvenPages
+stories exist only when the matching `PageSetup` option is on.
+(Note: this walks **all** sections, so its number may differ from
+the `StoryRanges`-based distribution report, which sees only the
+active story set - the audit is the more complete view.)
+
+**Test slot 84 reserved, NOT activated.** Per request, the slot is
+prepped but left to fill after the operating code is validated.
+`MaxTests` stays 83; the live suite is unchanged. A fully-commented
+reservation block sits after `CountChapterVerseMarker` in
+`aeBibleClass.cls` documenting the 6 activation edits (MaxTests
+bump, `values()` baseline, `GetTestDescription`, `GetPassFail`
+dispatch, `Debug.Print` + `BufAppend` rows) and carrying the ready-
+to-uncomment `CountHeaderFooterStyleViolations` wrapper
+(`hV + fV`, expected 0).
+
+**Follow-ups (open).**
+
+- Operator: run `AuditHeaderFooterStyles` on the live document,
+  confirm it pinpoints the 2 header + 3 footer strays per section/
+  story, and decide the baseline (target 0 after restyling to
+  `TheHeaders`/`TheFooters`, or disabling empty enabled stories).
+- After validation: activate slot 84 via the reserved block.
+- Consider whether empty-but-enabled FirstPage/EvenPages stories
+  should be fixed by restyling or by turning off the `PageSetup`
+  option that creates them.
 
 ## 2026-06-01 - Backup script snapshots Claude project settings
 

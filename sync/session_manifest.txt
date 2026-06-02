@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-05-31  (FINAL, end of session)
+# Claude Session Manifest -- 2026-06-01  (FINAL, end of session)
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,180 +13,184 @@
 
 ## Session arcs (chronological)
 
-A. CHARACTER-STYLE AUDIT TAXONOMY GAP CLOSED (2026-05-31)
-   - `CountAuditStyles_ToFile` (Test 49) walks paragraph styles
-     only and is structurally blind to character styles riding
-     on runs INSIDE paragraphs (e.g. "Chapter Verse marker" and
-     "Verse marker" inside VerseText). Operator surfaced the gap:
-     "VerseText = Chapter Verse marker = Verse marker = 31,102,
-     only VerseText is validated."
-   - SSOT decision: do NOT split GetApprovedStyles into separate
-     para/char lists. Word itself knows each style's `.Type`;
-     materialize the taxonomy at runtime via a new helper that
-     filters by `WdStyleType`. Single source of truth preserved.
-   - basTEST_aeBibleConfig.bas: new
-     `Public Function GetApprovedStylesByType(wantType As WdStyleType)
-     As Variant`. Walks `GetApprovedStyles()`, asks Word for each
-     style's `.Type`, returns matching names. Missing styles skip
-     silently (PromoteApprovedStyles already reports them).
+A. BACKUP SCRIPT - snapshot Claude project settings (2026-06-01)
+   - synch-to-onedrive.bat now copies the Claude config that lives
+     OUTSIDE the project tree into the selected project folder
+     before rsync, so the OneDrive backup is self-contained.
+   - Snapshots into %SOURCE%\_claude_backup\: the per-project
+     memory\ folder (from %UserProfile%\.claude\projects\
+     C--adaept-<folder>\memory, cleared first so it mirrors
+     current state; skipped for folders with no memory dir) and a
+     copy of the global settings.json (model/effort).
+   - Encoded path built from the menu selection, so it works for
+     any of the 0-9 folder choices. _claude_backup\ sits inside
+     SOURCE, so the existing rsync sweeps it up unchanged.
+   - .gitignore: added _claude_backup/ (snapshot, never tracked).
+   - Not a src/ change; no VBA import.
 
-B. TEST 81 - CountAuditCharacterStyles_ToFile (PASS at 0)
-   - Presence audit. For each approved character style returned
-     by `GetApprovedStylesByType(wdStyleTypeCharacter)`, runs a
-     single bounded `Find.Execute` against
-     `ActiveDocument.Content` and records Present/ABSENT to
-     `rpt\Character Style Usage.txt`. Returns the count of absent
-     (baseline 0). Runtime ~1 s.
-   - Drift surfaces as `m_lastHint = "first absent: <style>"`.
-   - Replaces an earlier doc-scope Find-loop draft that leaked
-     to 2.7 GB on `wdStyleTypeLinked` (Heading 1/2 etc.) - see
-     arc C iteration history for the full path.
+B. HEADER/FOOTER STYLE AUDIT (2026-06-01)
+   - Answers the Style Usage Distribution anomaly: Header: 2 /
+     TheHeaders: 136 / Footer: 3 / TheFooters: 1. The built-in
+     Header/Footer styles are auto-applied by Word to every
+     header/footer story it creates (per section x Primary/
+     FirstPage/EvenPages); the 2 + 3 are paragraphs in those
+     stories never restyled to TheHeaders/TheFooters.
+   - basVerseStructureAudit.bas: new read-only audit
+     `AuditHeaderFooterStyles(Optional bWriteFile = True)` walks
+     every section's Headers/Footers across the 3
+     WdHeaderFooterIndex values and writes per-story rows
+     (section #, Header/Footer, Primary/FirstPage/EvenPages,
+     style, VIOLATION flag, excerpt) to
+     rpt\HeaderFooterStyleAudit.txt plus an Immediate summary.
+   - Lean count helper `GetHeaderFooterStyleTotals(hdrParas,
+     hdrViolations, ftrParas, ftrViolations)` is the SSOT for the
+     future test number. Private helpers AppendStoryRows,
+     CountStoryStyle, WriteHeaderFooterStyleFile (FSO ASCII per
+     [[feedback_fso_file_writes]]).
+   - Counting model: a story is counted only when Exists = True
+     AND owned (section 1 OR LinkToPrevious = False); inherited
+     stories listed but not counted, so shared headers are not
+     double-counted. Walks all sections (more complete than the
+     StoryRanges-based distribution report).
 
-C. TEST 82 / 83 - CountVerseMarker / CountChapterVerseMarker
-   (BOTH PASS at 31,102)
-   - Slot 82 returns count of "Verse marker"-styled runs found
-     inside VerseText paragraphs. Slot 83 returns the same for
-     "Chapter Verse marker". By design (one CVM + one VM per
-     verse marker run) both must equal the VerseText paragraph
-     count from Test 49 - 31,102.
-   - Both back into a new public helper
-     `basVerseStructureAudit.GetMarkerTotals(vmTotal, cvmTotal)`
-     which walks `ActiveDocument.Paragraphs` once. For every
-     VerseText paragraph it checks `Characters(1).Style.NameLocal
-     == "Chapter Verse marker"` and scans `Characters(1..12)`
-     for `"Verse marker"`.
-   - Module-level cache keyed by `ActiveDocument.FullName` makes
-     slot 83 a 0.02 s read after slot 82 populates it (~222 s
-     first call), even across separate `aeBibleClass` instances
-     (OneTest mode reinstantiates the class per test).
-   - Algorithm-iteration cost recorded for posterity:
-       Step 1 doc-scope Find + Collapse: leak to 2.7 GB.
-       Step 2 wdStyleTypeCharacter only: leak to 600 MB.
-       Step 3 per-paragraph Find on .Duplicate: leak to 1.2 GB.
-       Step 4 doc-scope Find with .Format=True + explicit
-              Start/End re-bound (CountVerseMarkers pattern):
-              completes - 205 s + 2,730 s (45 min). Counts
-              31,103 / 31,103.
-       Step 5 per-chapter scoping via H2 walk + same Find:
-              326 s + 170 s.
-       Step 6 paragraph-walk + Characters(i).Style (current):
-              222 s + 0.02 s. Counts 31,102 / 31,102.
-   - aeBibleClass.cls wiring: MaxTests 80 -> 83; three new
-     module-level state vars (m_verseScanDone, m_verseMarkerCount,
-     m_chapterVerseMarkerCount); GetTestDescription / GetPassFail
-     / Debug.Print / BufAppend Case 81/82/83 added; values array
-     extended with `0, 31102, 31102`; new private routines
-     CountAuditCharacterStyles_ToFile, EnsureVerseMarkerCounts,
-     CountVerseMarker, CountChapterVerseMarker.
+C. TEST SLOT 84 RESERVED - NOT ACTIVATED (2026-06-01)
+   - Per request, slot prepped but left to fill after the
+     operating code (arc B) is validated on the live document.
+     MaxTests stays 83; live suite unchanged.
+   - aeBibleClass.cls: fully-commented reservation block added
+     after CountChapterVerseMarker documenting the 6 activation
+     edits (MaxTests 83->84, values() baseline, GetTestDescription
+     Case 84, GetPassFail dispatch, Debug.Print + BufAppend rows)
+     and carrying the ready-to-uncomment
+     CountHeaderFooterStyleViolations wrapper (hV + fV, expected 0).
 
-D. +1 CVM DRIFT FOUND - ParaStart=3087864 (operator decision open)
-   - Find-based totals (31,103) differed from paragraph-rule
-     counts (31,102) by exactly one. Operator ran
-     `AuditUnconvertedVerseParagraphs True` -> 0 (rules out
-     CVM-led paragraphs sitting outside BodyText / VerseText).
-   - Then ran `AuditCharStyleUsage "Chapter Verse marker", True,
-     True` (new ANOMALIES-ONLY mode, see arc E). Surfaced a
-     single anomaly:
-         Run #22396 | ParaStart=3087864 | Style=VerseText |
-         first-char-style=Chapter Verse marker
-         Chapter Verse marker at END of paragraph (offset 146 of 147)
-   - A stray CVM-styled character at the tail of one VerseText
-     paragraph. Paragraph itself is structurally correct (proper
-     CVM at char 1, VM nearby). VM partner unconfirmed - VM
-     anomaly scan hit the O(N²) curve in arc F and was aborted.
-   - Operator next step: GoToPos 3087864 -> End -> inspect.
-     Decide clean-up or rebaseline.
+D. HF AUDIT vs STYLE USAGE DISTRIBUTION - reconciliation (2026-06-01)
+   - Ran AuditHeaderFooterStyles on the live doc; compared
+     rpt\HeaderFooterStyleAudit.txt with
+     rpt\Style Usage Distribution.txt. They disagree:
+     distribution Header:2/Footer:3/TheHeaders:136; audit
+     0 Header / 1 Footer / 135 TheHeaders. Gap = 5 paragraphs.
+   - Root cause (confirmed in code): CountAuditStyles_ToFile walks
+     `For Each StoryRanges ... NextStoryRange` (every story object,
+     incl. first-page/even-page chains). AuditHeaderFooterStyles
+     walks Sections(i).Headers/Footers gated on .Exists and emitted
+     only Primary rows - so DifferentFirstPage/OddAndEven are off
+     everywhere, yet the StoryRanges walk still finds content in
+     those stories. The 5 extras live in ORPHANED first-page/even-
+     page stories the audit is structurally blind to.
+   - Corrected the now-falsified comments I wrote last session:
+     basVerseStructureAudit.bas AuditHeaderFooterStyles docstring
+     (SCOPE LIMIT note) and aeBibleClass.cls slot-84 reservation
+     block (VALIDATED-but-scope-gap note). No logic changed.
+   - Logged full analysis + a new MEDIUM open future task
+     "Header/Footer + Section SHAPE LOCKDOWN" in
+     rvw/Code_review 2026-05-28.md, capturing operator notes:
+     opinionated single-shape doc, first/last sections are
+     placeholder boundaries, KeepWithNext locked tight, i18n must
+     not change shape, RTL the one distant-horizon exception.
 
-E. AuditCharStyleUsage extended with anomalies-only mode + timing
-   (2026-05-31)
-   - basVerseStructureAudit.bas: new optional 3rd parameter
-     `bAnomaliesOnly As Boolean = False`. When True, suppresses
-     per-run dumps for the expected case (paraStyle=VerseText
-     AND posLabel=START). Safety cap auto-bumps 5,000 -> 100,000
-     in anomalies mode.
-   - Summary now reports
-     "Anomalies (paraStyle<>VerseText OR position<>START): N".
-   - Report file now embeds Started / Finished / Duration at the
-     tail (was start time only in header).
-   - Progress heartbeat every 1,000 runs via Debug.Print +
-     DoEvents. Made the O(N²) curve visible (and Ctrl+Break
-     responsive).
+E. HF AUDIT EXTENDED to enumerate orphaned stories (2026-06-01)
+   - Rewrote AuditHeaderFooterStyles + GetHeaderFooterStyleTotals
+     from the Sections + .Exists walk onto a StoryRanges/
+     NextStoryRange traversal filtered to HF story types 6-11 -
+     same basis as the distribution. Now includes orphaned first-
+     page/even-page stories. Live re-run AS-FOUND = 7 violations
+     (2 header + 5 footer), all in Sec 1/Sec 2 front matter - 2 more
+     than the distribution's 5 because two orphaned even-page footer
+     paragraphs are styled "Normal" (roman-numeral "i" page-number
+     leftover) which the by-style-name distribution hid under Normal.
+     Headers/footers otherwise reconcile exactly.
+   - NextStoryRange dedupes linked sections, so the old
+     LinkToPrevious/owned-gate is gone. Both routines share one
+     private walker WalkHFChain (bReport toggles report vs count),
+     so report total and slot-84 gate cannot diverge. Rows
+     classified [ACTIVE]/[ORPHANED]; section index + state best-
+     effort/guarded; VIOLATION flag authoritative.
+   - Removed dead AppendStoryRows/CountStoryStyle; added
+     IsHeaderFooterStory, HFIsHeader, HFPositionLabel,
+     HFSectionIndex, HFStateLabel.
+   - aeBibleClass.cls slot-84 reservation comment updated (scope
+     gap closed; expected as-found 5; still gated on operator
+     re-run + remediation to 0).
+   - NOT yet re-run on the live doc - faithful to the
+     distribution's mechanism by design; operator should re-run
+     AuditHeaderFooterStyles to confirm 5 violations.
 
-F. AuditCharStyleUsage QUADRATIC PERFORMANCE - NOT YET FIXED
-   - CVM run completed at 406 s for 31,103 matches. VM run
-     started at 5 s/1k early, climbed to >60 s/1k deeper in,
-     aborted. Heartbeat confirmed it was NOT a loop - just the
-     `oRng.Paragraphs(1)` lookup walking the Paragraphs
-     collection from doc start on every match (O(N²) total).
-   - Logged as carry-forward item 10 in
-     rvw/Code_review 2026-05-28.md (HIGH priority). Fix
-     direction: rewrite to walk `ActiveDocument.Paragraphs` once
-     via For Each and do paragraph-scoped Find per iteration -
-     same shape EnsureVerseMarkerCounts and
-     AuditOrphanBodyTextParagraphs already use.
-
-G. FILE-WRITE AUDIT SWEEP - NEW CARRY-FORWARD (2026-05-31)
-   - Logged as carry-forward item 11 in
-     rvw/Code_review 2026-05-28.md. All re-callable `rpt/`
-     writers must use FSO.CreateTextFile per
-     [[feedback_fso_file_writes]] to avoid Err 55 (leaked
-     handle) and Err 70 (share lock). A full grep across .bas
-     and .cls files for `Open ... For Output As` /
-     `Append As` has not been done.
+F. TEST SLOT 84 ACTIVATED (2026-06-01)
+   - Remediation verified at 0 violations (arc D/result), so slot 84
+     was wired live. MaxTests 83 -> 84; reserved comment block in
+     aeBibleClass.cls replaced by the live private wrapper
+     CountHeaderFooterStyleViolations (backs into
+     GetHeaderFooterStyleTotals; returns hV+fV, baseline 0).
+   - Six wiring points updated (MaxTests, values() +trailing 0
+     [verified 84 elems], GetTestDescription/GetPassFail/Debug.Print/
+     BufAppend Case 84). CONFIRMED: slot 84 PASS at 0 (Expected 0,
+     0.04 s) after operator import + RUN_THE_TESTS.
 
 ## src/ files modified  (require import in this order)
 
-  src/basTEST_aeBibleConfig.bas    [IMPORT]   - Arc A
-  src/basVerseStructureAudit.bas   [IMPORT]   - Arcs C, E
-  src/aeBibleClass.cls             [IMPORT]   - Arcs B, C
+  src/basVerseStructureAudit.bas   [IMPORT]   - Arcs B, D, E
+                                                (StoryRanges audit +
+                                                count helper)
+  src/aeBibleClass.cls             [IMPORT]   - Arcs C, D, E, F: slot
+                                                84 now LIVE (MaxTests
+                                                84, wrapper + 6 wiring
+                                                points). Import then
+                                                RUN_THE_TESTS.
 
-All three changes are independent at function/sub scope; order
-above matches dependency direction (aeBibleClass calls into
-GetApprovedStylesByType from basTEST_aeBibleConfig and into
-GetMarkerTotals from basVerseStructureAudit).
+## Non-src files modified
 
-## Non-src/ changes (no VBA import needed)
-
-  rvw/Code_review 2026-05-28.md          [DOC]   - carry-forward items
-                                                    10 and 11 added;
-                                                    2026-05-31 dated
-                                                    entry added with
-                                                    full iteration log
-  rpt/Character Style Usage.txt          [DOC]   - new artefact written
-                                                    by Test 81
-  rpt/Chapter_Verse_markerUsageAudit.txt [DOC]   - first sample run hit
-                                                    the 5,000-cap;
-                                                    anomalies-only re-run
-                                                    overwrote with the
-                                                    single +1 hit
-  rpt/TestReport.txt                     [DOC]   - regenerated by
-                                                    RUN_THE_TESTS
+  synch-to-onedrive.bat                  [SCRIPT] - Arc A
+  .gitignore                             [DOC]    - Arc A
+  rvw/Code_review 2026-05-28.md          [DOC]    - 8 dated 2026-06-01
+                                                    sections (backup,
+                                                    HF audit arc, slot
+                                                    84); CLOSED banner
+  rvw/Code_review 2026-06-01.md          [DOC]    - NEW carry-forward
+                                                    arc; all open tasks
+                                                    + follow-ups
 
 ## Memory updates (personal context, not project-tracked)
 
   (none this session - existing memories cover the patterns
   touched: feedback_fso_file_writes, feedback_late_binding,
-  feedback_class_encapsulation, feedback_session_manifest.)
+  feedback_class_encapsulation, feedback_ascii_in_vba,
+  feedback_vba_crlf, feedback_session_manifest.)
 
 ## Operator next steps
 
-  1. Import the three src/ files in the order listed above.
-  2. Inspect ParaStart=3087864 via:
-        GoToPos 3087864
-     then End key. Find the single character at offset 146 of 147
-     carrying the stray "Chapter Verse marker" style. Decide
-     clean-up (remove the styling) or accept-and-rebaseline (lock
-     the Find-based total at 31,103 in a future diagnostic).
-  3. Open carry-forward register lives in
-     rvw/Code_review 2026-05-28.md - now 11 items:
-         1. aeRibbon v1.0.0 build (HIGH)
-         2. Failed-test revisits (MEDIUM)
-         3. Date-rule sweep follow-ups (MEDIUM)
-         4. EDSG list-paragraph-bug Step 0 fix (LOW)
-         5. Ribbon nav (Word limitation)
-         6. SoftHyphenSweep_FootnotesOnly sister (DEFERRED)
-         7. SHA_ReplaceHard i18n (FUTURE)
-         8. Normal style audit (LOW, DEFERRED)
-         9. Class encapsulation rule (RULE)
-        10. AuditCharStyleUsage quadratic fix (HIGH, NEW)
-        11. File-write FSO sweep (MEDIUM, NEW)
+  1. Import the two src/ files above (Remove old, Import new).
+     NOTE: aeBibleClass.cls now has LIVE slot-84 wiring (MaxTests
+     84 + CountHeaderFooterStyleViolations), not just comments -
+     import is required. (Already imported + run this session:
+     slot 84 PASS at 0, see steps 5-6.)
+  2. (DONE this session) Ran AuditHeaderFooterStyles; reconciled
+     against the distribution - see arc D. The audit sees only
+     ACTIVE stories (1 violation: Sec 1 footer); the distribution
+     sees 5 strays incl. orphaned first-page/even-page stories.
+  3. (DONE this session - arc E) Audit extended onto StoryRanges/
+     NextStoryRange; live re-run confirmed 7 violations (2 header +
+     5 footer), all Sec 1/Sec 2 front-matter orphans. The 2 above
+     the distribution's 5 are Normal-styled even-page footer paras
+     (roman "i" page number) the distribution masked under Normal.
+  4. (DONE 2026-06-01) Remediated. Even-page orphan stories dropped;
+     Sec 1 first-page stories now ACTIVE + compliant; Sec 1 footer
+     -> TheFooters; roman "i" kept as a compliant Sec 4 TheFooters
+     footer. AuditHeaderFooterStyles = 0 violations (Headers 136,
+     Footers 4); reconciles with distribution (TheHeaders 136,
+     TheFooters 4, no built-in Header/Footer, Normal 9 -> 7).
+  5. (DONE 2026-06-01) Activated test slot 84 (MaxTests 84, 6 wiring
+     points + live CountHeaderFooterStyleViolations wrapper).
+  6. (CONFIRMED) Operator imported + ran the suite: slot 84 PASS at
+     0 (Expected 0, 0.04 s). Header/footer style compliance gated.
+     Sec 1 Different-First-Page is now intended canonical shape.
+  7. New future task "Header/Footer + Section SHAPE LOCKDOWN"
+     (MEDIUM, OPEN) and all other open items carried forward to
+     rvw/Code_review 2026-06-01.md (this arc's register).
+
+## Session closed 2026-06-01
+
+  All work above is complete and confirmed (slot 84 PASS). Review
+  arc rolled over: rvw/Code_review 2026-05-28.md CLOSED FOR NEW WORK,
+  superseded by rvw/Code_review 2026-06-01.md which holds the live
+  open-task register. No work left mid-flight.

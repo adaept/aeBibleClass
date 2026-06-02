@@ -1,0 +1,292 @@
+---- AuditHeaderFooterStyles: 2026-06-01 18:33:58 ----
+
+Rule: header paragraphs use 'TheHeaders', footer paragraphs use 'TheFooters'.
+Enumerated via StoryRanges/NextStoryRange (same basis as the Style Usage
+Distribution report), so ORPHANED first-page/even-page stories are included.
+Stories shared via Link to Previous appear once, under their owning section.
+
+Sec 1 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 6 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 7 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "GENESIS"
+Sec 8 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 9 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "EXODUS"
+Sec 10 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 11 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "LEVITICUS"
+Sec 12 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 13 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "NUMBERS"
+Sec 14 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 15 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "DEUTERONOMY"
+Sec 16 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 17 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JOSHUA"
+Sec 18 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 19 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JUDGES"
+Sec 20 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 21 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "RUTH"
+Sec 22 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 23 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 SAMUEL"
+Sec 24 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 25 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 SAMUEL"
+Sec 26 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 27 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 KINGS"
+Sec 28 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 29 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 KINGS"
+Sec 30 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 31 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 CHRONICLES"
+Sec 32 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 33 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 CHRONICLES"
+Sec 34 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 35 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "EZRA"
+Sec 36 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 37 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "NEHEMIAH"
+Sec 38 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 39 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ESTHER"
+Sec 40 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 41 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JOB"
+Sec 42 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 43 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "PSALMS"
+Sec 44 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 45 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "PROVERBS"
+Sec 46 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 47 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ECCLESIASTES"
+Sec 48 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 49 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "SONG OF SONGS"
+Sec 50 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 51 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ISAIAH"
+Sec 52 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 53 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JEREMIAH"
+Sec 54 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 55 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "LAMENTATIONS"
+Sec 56 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 57 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "EZEKIEL"
+Sec 58 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 59 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "DANIEL"
+Sec 60 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 61 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "HOSEA"
+Sec 62 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 63 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JOEL"
+Sec 64 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 65 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "AMOS"
+Sec 66 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 67 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "OBADIAH"
+Sec 68 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 69 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JONAH"
+Sec 70 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 71 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "MICAH"
+Sec 72 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 73 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "NAHUM"
+Sec 74 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 75 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "HABAKKUK"
+Sec 76 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 77 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ZEPHANIAH"
+Sec 78 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 79 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "HAGGAI"
+Sec 80 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 81 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ZECHARIAH"
+Sec 82 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 83 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "MALACHI"
+Sec 84 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 86 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 87 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "MATTHEW"
+Sec 88 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 89 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "MARK"
+Sec 90 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 91 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "LUKE"
+Sec 92 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 93 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JOHN"
+Sec 94 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 95 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ACTS"
+Sec 96 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 97 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "ROMANS"
+Sec 98 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 99 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 CORINTHIANS"
+Sec 100 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 101 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 CORINTHIANS"
+Sec 102 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 103 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "GALATIANS"
+Sec 104 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 105 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "EPHESIANS"
+Sec 106 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 107 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "PHILIPPIANS"
+Sec 108 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 109 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "COLOSSIANS"
+Sec 110 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 111 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 THESSALONIANS"
+Sec 112 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 113 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 THESSALONIANS"
+Sec 114 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 115 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 TIMOTHY"
+Sec 116 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 117 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 TIMOTHY"
+Sec 118 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 119 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "TITUS"
+Sec 120 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 121 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "PHILEMON"
+Sec 122 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 123 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "HEBREWS"
+Sec 124 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 125 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JAMES"
+Sec 126 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 127 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 PETER"
+Sec 128 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 129 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 PETER"
+Sec 130 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 131 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "1 JOHN"
+Sec 132 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 133 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "2 JOHN"
+Sec 134 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 135 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "3 JOHN"
+Sec 136 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 137 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "JUDE"
+Sec 138 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 139 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "REVELATION"
+Sec 140 | Header/Primary [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 1 | Footer/Primary [ACTIVE] | style=TheFooters
+    text: "	"
+Sec 4 | Footer/Primary [ACTIVE] | style=TheFooters
+    text: "i"
+Sec 5 | Footer/Primary [ACTIVE] | style=TheFooters
+    text: "1"
+Sec 1 | Header/FirstPage [ACTIVE] | style=TheHeaders
+    text: "	"
+Sec 1 | Footer/FirstPage [ACTIVE] | style=TheFooters
+    text: "	"
+
+---- Summary ----
+Header paragraphs: 136   violations (style <> TheHeaders): 0
+Footer paragraphs: 4   violations (style <> TheFooters): 0
+TOTAL violations: 0
