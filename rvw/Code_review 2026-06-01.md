@@ -205,6 +205,39 @@ action item - listed so it stays visible during slot-by-slot work.
 Full rule + worked examples: § 9 in
 [`Code_review 2026-05-28.md`](Code_review%202026-05-28.md).
 
+### 15. aeRWB source-text repo relationship (RULE/NOTE, 2026-06-16)
+
+Recorded for cross-project awareness; the linkage details are still
+**forthcoming from the operator** so the specifics below are the known
+state, not a closed spec.
+
+- **What aeRWB is.** `C:\adaept\aeRWB` is the upstream **source-text**
+  repository for the Radiant Word Bible (RWB). It holds `web.txt` (the
+  original World English Bible from openbible.com) and `rwb.txt` (the
+  Radiant / refined English text). aeBibleClass is the consumer side:
+  the Word Study-Bible `.docx`/`.docm` + the navigation ribbon
+  (`LBL_TAB = "Radiant Word Bible"`) built *from* that text.
+- **Shared identity.** aeRWB was renamed "Refined" -> "Radiant"
+  (2026-06-16), so both repos now share the **Radiant Word Bible / RWB**
+  naming and trademark (see `md\Ribbon Design.md` § trademark).
+- **Supervisor onboarding (2026-06-16).** aeRWB is now a supervised
+  project under the `adaept5tudio` hub - already option 2
+  (`FOLDER_2=aeRWB`) in this repo's `synch-to-onedrive.bat`, and it now
+  carries a committed `.claude\settings.json` (deny reading session
+  `.jsonl`), a `.gitignore` (excludes `_claude_backup\`), and its own
+  `rvw\Code_review 2026-06-16.md` review lineage.
+- **i18n tie-in (source-text side of items 3 + 13).** aeRWB's text
+  files are **UTF-8 with BOM and must stay UTF-8** for future i18n /
+  translation work. This is the upstream half of the same i18n
+  discipline the document tracks downstream: item 3 keeps localization
+  *within the existing document shape*; the source text must stay
+  lossless so a localized RWB edition can be produced without
+  corrupting non-ASCII content.
+
+**Next:** fold the operator's forthcoming details (how aeRWB text feeds
+the production `.docx`, version/sync direction, translation pipeline)
+into the next arc once supplied.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state is
