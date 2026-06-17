@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-06-01  (FINAL, end of session)
+# Claude Session Manifest -- 2026-06-17  (FINAL, end of session)
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,184 +13,94 @@
 
 ## Session arcs (chronological)
 
-A. BACKUP SCRIPT - snapshot Claude project settings (2026-06-01)
-   - synch-to-onedrive.bat now copies the Claude config that lives
-     OUTSIDE the project tree into the selected project folder
-     before rsync, so the OneDrive backup is self-contained.
-   - Snapshots into %SOURCE%\_claude_backup\: the per-project
-     memory\ folder (from %UserProfile%\.claude\projects\
-     C--adaept-<folder>\memory, cleared first so it mirrors
-     current state; skipped for folders with no memory dir) and a
-     copy of the global settings.json (model/effort).
-   - Encoded path built from the menu selection, so it works for
-     any of the 0-9 folder choices. _claude_backup\ sits inside
-     SOURCE, so the existing rsync sweeps it up unchanged.
-   - .gitignore: added _claude_backup/ (snapshot, never tracked).
-   - Not a src/ change; no VBA import.
+A. DUAL-LICENSE DOC + REVIEW UPDATE (2026-06-17)
+   - Operator had already imported the dual-license SPDX header
+     (LGPL-3.0-or-later OR LicenseRef-adaept-Commercial) into 7
+     class modules and created LICENSING.md + README line, in the
+     prior commit b195f97 "Dual License".
+   - Recorded that work as new carry-forward item 16 in
+     rvw/Code_review 2026-06-01.md (LICENSING, DONE) and added the
+     export header-preservation constraint to
+     md/aeProductionRibbonPlan.md (section 2.3 + section 9 rules):
+     trim is delete-only, so the per-file SPDX block must be
+     preserved verbatim in every aeRibbon/src/ trimmed copy.
+   - Flagged 4 incidental casing flips in basVerseStructureAudit.bas
+     that rode in on b195f97 (count->Count, Index->index) against
+     [[feedback_casing]] - noted for review, not changed.
 
-B. HEADER/FOOTER STYLE AUDIT (2026-06-01)
-   - Answers the Style Usage Distribution anomaly: Header: 2 /
-     TheHeaders: 136 / Footer: 3 / TheFooters: 1. The built-in
-     Header/Footer styles are auto-applied by Word to every
-     header/footer story it creates (per section x Primary/
-     FirstPage/EvenPages); the 2 + 3 are paragraphs in those
-     stories never restyled to TheHeaders/TheFooters.
-   - basVerseStructureAudit.bas: new read-only audit
-     `AuditHeaderFooterStyles(Optional bWriteFile = True)` walks
-     every section's Headers/Footers across the 3
-     WdHeaderFooterIndex values and writes per-story rows
-     (section #, Header/Footer, Primary/FirstPage/EvenPages,
-     style, VIOLATION flag, excerpt) to
-     rpt\HeaderFooterStyleAudit.txt plus an Immediate summary.
-   - Lean count helper `GetHeaderFooterStyleTotals(hdrParas,
-     hdrViolations, ftrParas, ftrViolations)` is the SSOT for the
-     future test number. Private helpers AppendStoryRows,
-     CountStoryStyle, WriteHeaderFooterStyleFile (FSO ASCII per
-     [[feedback_fso_file_writes]]).
-   - Counting model: a story is counted only when Exists = True
-     AND owned (section 1 OR LinkToPrevious = False); inherited
-     stories listed but not counted, so shared headers are not
-     double-counted. Walks all sections (more complete than the
-     StoryRanges-based distribution report).
+B. EXTEND SPDX HEADER TO REMAINING CLASSES (2026-06-17)
+   - The 5 src/ class modules that still lacked the header were
+     given the same dual-license block, so all 12 .cls files
+     (10 src/ + 2 aeRibbon/src/) now carry it and the README's
+     "all Class modules" claim holds.
+   - Inserted via a CRLF-preserving Python pass (newline='' both
+     sides per [[feedback_vba_crlf]]), ASCII-only per
+     [[feedback_ascii_in_vba]], placed after the last
+     Option/Implements declaration line - matching the canonical
+     aeAssertClass.cls layout. For aeUpdateCharStyleClass the block
+     sits after `Implements IaeLongProcessClass`.
+   - Verified: SPDX present in all 12 .cls; CRLF preserved; .cls
+     VERSION/attribute headers intact (no module misimport risk).
+   - No identifier, signature, or logic changes - comment block only.
+   - Review item 16 status updated to "CLASS COVERAGE COMPLETE";
+     production .bas headers (e.g. basBibleRibbonSetup) left as the
+     tracked open item.
 
-C. TEST SLOT 84 RESERVED - NOT ACTIVATED (2026-06-01)
-   - Per request, slot prepped but left to fill after the
-     operating code (arc B) is validated on the live document.
-     MaxTests stays 83; live suite unchanged.
-   - aeBibleClass.cls: fully-commented reservation block added
-     after CountChapterVerseMarker documenting the 6 activation
-     edits (MaxTests 83->84, values() baseline, GetTestDescription
-     Case 84, GetPassFail dispatch, Debug.Print + BufAppend rows)
-     and carrying the ready-to-uncomment
-     CountHeaderFooterStyleViolations wrapper (hV + fV, expected 0).
+## src/ files modified  (require import)
 
-D. HF AUDIT vs STYLE USAGE DISTRIBUTION - reconciliation (2026-06-01)
-   - Ran AuditHeaderFooterStyles on the live doc; compared
-     rpt\HeaderFooterStyleAudit.txt with
-     rpt\Style Usage Distribution.txt. They disagree:
-     distribution Header:2/Footer:3/TheHeaders:136; audit
-     0 Header / 1 Footer / 135 TheHeaders. Gap = 5 paragraphs.
-   - Root cause (confirmed in code): CountAuditStyles_ToFile walks
-     `For Each StoryRanges ... NextStoryRange` (every story object,
-     incl. first-page/even-page chains). AuditHeaderFooterStyles
-     walks Sections(i).Headers/Footers gated on .Exists and emitted
-     only Primary rows - so DifferentFirstPage/OddAndEven are off
-     everywhere, yet the StoryRanges walk still finds content in
-     those stories. The 5 extras live in ORPHANED first-page/even-
-     page stories the audit is structurally blind to.
-   - Corrected the now-falsified comments I wrote last session:
-     basVerseStructureAudit.bas AuditHeaderFooterStyles docstring
-     (SCOPE LIMIT note) and aeBibleClass.cls slot-84 reservation
-     block (VALIDATED-but-scope-gap note). No logic changed.
-   - Logged full analysis + a new MEDIUM open future task
-     "Header/Footer + Section SHAPE LOCKDOWN" in
-     rvw/Code_review 2026-05-28.md, capturing operator notes:
-     opinionated single-shape doc, first/last sections are
-     placeholder boundaries, KeepWithNext locked tight, i18n must
-     not change shape, RTL the one distant-horizon exception.
+  src/aeLoggerClass.cls            [IMPORT]   - Arc B (SPDX header)
+  src/aeLongProcessClass.cls       [IMPORT]   - Arc B (SPDX header)
+  src/aeUpdateCharStyleClass.cls   [IMPORT]   - Arc B (SPDX header)
+  src/IaeLongProcessClass.cls      [IMPORT]   - Arc B (SPDX header)
+  src/ThisDocument.cls             [IMPORT]   - Arc B (SPDX header).
+                                                NOTE: ThisDocument is
+                                                a build-step paste, not
+                                                a free import - see
+                                                aeRibbon/BUILD.md.
 
-E. HF AUDIT EXTENDED to enumerate orphaned stories (2026-06-01)
-   - Rewrote AuditHeaderFooterStyles + GetHeaderFooterStyleTotals
-     from the Sections + .Exists walk onto a StoryRanges/
-     NextStoryRange traversal filtered to HF story types 6-11 -
-     same basis as the distribution. Now includes orphaned first-
-     page/even-page stories. Live re-run AS-FOUND = 7 violations
-     (2 header + 5 footer), all in Sec 1/Sec 2 front matter - 2 more
-     than the distribution's 5 because two orphaned even-page footer
-     paragraphs are styled "Normal" (roman-numeral "i" page-number
-     leftover) which the by-style-name distribution hid under Normal.
-     Headers/footers otherwise reconcile exactly.
-   - NextStoryRange dedupes linked sections, so the old
-     LinkToPrevious/owned-gate is gone. Both routines share one
-     private walker WalkHFChain (bReport toggles report vs count),
-     so report total and slot-84 gate cannot diverge. Rows
-     classified [ACTIVE]/[ORPHANED]; section index + state best-
-     effort/guarded; VIOLATION flag authoritative.
-   - Removed dead AppendStoryRows/CountStoryStyle; added
-     IsHeaderFooterStory, HFIsHeader, HFPositionLabel,
-     HFSectionIndex, HFStateLabel.
-   - aeBibleClass.cls slot-84 reservation comment updated (scope
-     gap closed; expected as-found 5; still gated on operator
-     re-run + remediation to 0).
-   - NOT yet re-run on the live doc - faithful to the
-     distribution's mechanism by design; operator should re-run
-     AuditHeaderFooterStyles to confirm 5 violations.
-
-F. TEST SLOT 84 ACTIVATED (2026-06-01)
-   - Remediation verified at 0 violations (arc D/result), so slot 84
-     was wired live. MaxTests 83 -> 84; reserved comment block in
-     aeBibleClass.cls replaced by the live private wrapper
-     CountHeaderFooterStyleViolations (backs into
-     GetHeaderFooterStyleTotals; returns hV+fV, baseline 0).
-   - Six wiring points updated (MaxTests, values() +trailing 0
-     [verified 84 elems], GetTestDescription/GetPassFail/Debug.Print/
-     BufAppend Case 84). CONFIRMED: slot 84 PASS at 0 (Expected 0,
-     0.04 s) after operator import + RUN_THE_TESTS.
-
-## src/ files modified  (require import in this order)
-
-  src/basVerseStructureAudit.bas   [IMPORT]   - Arcs B, D, E
-                                                (StoryRanges audit +
-                                                count helper)
-  src/aeBibleClass.cls             [IMPORT]   - Arcs C, D, E, F: slot
-                                                84 now LIVE (MaxTests
-                                                84, wrapper + 6 wiring
-                                                points). Import then
-                                                RUN_THE_TESTS.
+  (Comment-only change. Re-import is optional for runtime behaviour
+   but keeps the live VBA project in sync with the licensed source.)
 
 ## Non-src files modified
 
-  synch-to-onedrive.bat                  [SCRIPT] - Arc A
-  .gitignore                             [DOC]    - Arc A
-  rvw/Code_review 2026-05-28.md          [DOC]    - 8 dated 2026-06-01
-                                                    sections (backup,
-                                                    HF audit arc, slot
-                                                    84); CLOSED banner
-  rvw/Code_review 2026-06-01.md          [DOC]    - NEW carry-forward
-                                                    arc; all open tasks
-                                                    + follow-ups
+  rvw/Code_review 2026-06-01.md          [DOC]    - Arcs A, B: new
+                                                    carry-forward item
+                                                    16 (dual license);
+                                                    status rolled to
+                                                    class coverage
+                                                    complete
+  md/aeProductionRibbonPlan.md           [DOC]    - Arc A: license-
+                                                    header preservation
+                                                    constraint (2.3 + 9)
 
 ## Memory updates (personal context, not project-tracked)
 
-  (none this session - existing memories cover the patterns
-  touched: feedback_fso_file_writes, feedback_late_binding,
-  feedback_class_encapsulation, feedback_ascii_in_vba,
-  feedback_vba_crlf, feedback_session_manifest.)
+  (none this session - existing memories cover the patterns touched:
+  feedback_vba_crlf, feedback_ascii_in_vba, feedback_casing,
+  feedback_review_docs_history, feedback_session_manifest.)
+
+## Committed this session
+
+  69d7793 "Extend dual-license SPDX header to remaining class modules"
+  - the 5 src/ .cls files + the 2 docs above (7 files, 123 insertions).
+  Prior operator commit b195f97 "Dual License" carried LICENSING.md,
+  README.md, and the first 7 class-module headers.
 
 ## Operator next steps
 
-  1. Import the two src/ files above (Remove old, Import new).
-     NOTE: aeBibleClass.cls now has LIVE slot-84 wiring (MaxTests
-     84 + CountHeaderFooterStyleViolations), not just comments -
-     import is required. (Already imported + run this session:
-     slot 84 PASS at 0, see steps 5-6.)
-  2. (DONE this session) Ran AuditHeaderFooterStyles; reconciled
-     against the distribution - see arc D. The audit sees only
-     ACTIVE stories (1 violation: Sec 1 footer); the distribution
-     sees 5 strays incl. orphaned first-page/even-page stories.
-  3. (DONE this session - arc E) Audit extended onto StoryRanges/
-     NextStoryRange; live re-run confirmed 7 violations (2 header +
-     5 footer), all Sec 1/Sec 2 front-matter orphans. The 2 above
-     the distribution's 5 are Normal-styled even-page footer paras
-     (roman "i" page number) the distribution masked under Normal.
-  4. (DONE 2026-06-01) Remediated. Even-page orphan stories dropped;
-     Sec 1 first-page stories now ACTIVE + compliant; Sec 1 footer
-     -> TheFooters; roman "i" kept as a compliant Sec 4 TheFooters
-     footer. AuditHeaderFooterStyles = 0 violations (Headers 136,
-     Footers 4); reconciles with distribution (TheHeaders 136,
-     TheFooters 4, no built-in Header/Footer, Normal 9 -> 7).
-  5. (DONE 2026-06-01) Activated test slot 84 (MaxTests 84, 6 wiring
-     points + live CountHeaderFooterStyleViolations wrapper).
-  6. (CONFIRMED) Operator imported + ran the suite: slot 84 PASS at
-     0 (Expected 0, 0.04 s). Header/footer style compliance gated.
-     Sec 1 Different-First-Page is now intended canonical shape.
-  7. New future task "Header/Footer + Section SHAPE LOCKDOWN"
-     (MEDIUM, OPEN) and all other open items carried forward to
-     rvw/Code_review 2026-06-01.md (this arc's register).
+  1. (Optional) Re-import the 5 src/ .cls files above so the live
+     VBA project matches the now-licensed source. Comment-only, so
+     no test rerun is required; RUN_THE_TESTS still green.
+  2. Decide whether to extend the SPDX block to production .bas files
+     (basBibleRibbonSetup, etc.) - tracked as the open half of review
+     item 16. Until then the README "all Class modules" claim is
+     accurate as written (classes only).
+  3. Optional: review the 4 incidental casing flips in
+     basVerseStructureAudit.bas from b195f97 (arc A) against
+     [[feedback_casing]] / the commit normalization routine.
 
-## Session closed 2026-06-01
+## Session closed 2026-06-17
 
-  All work above is complete and confirmed (slot 84 PASS). Review
-  arc rolled over: rvw/Code_review 2026-05-28.md CLOSED FOR NEW WORK,
-  superseded by rvw/Code_review 2026-06-01.md which holds the live
-  open-task register. No work left mid-flight.
+  All work above is complete and committed (69d7793). Class-module
+  SPDX coverage is 12/12; production .bas headers remain the single
+  tracked open item. No work left mid-flight.
