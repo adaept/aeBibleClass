@@ -100,6 +100,18 @@ No identifier casing changes, no signature changes, no semantic edits.
 Trim = delete-only. (Per `[[feedback_casing]]` and the dev-source-is-truth
 principle.)
 
+**License-header constraint (added 2026-06-17).** The dev `ae*Class`
+files now carry a dual-license SPDX header block
+(`LGPL-3.0-or-later OR LicenseRef-adaept-Commercial`; see `LICENSING.md`),
+and the `aeRibbon/src/` copies of `aeBibleCitationClass.cls` and
+`aeRibbonClass.cls` already include it. Because trim is delete-only, the
+export must **preserve** this header block verbatim in every trimmed
+copy - it is the file's license notice, not a removable routine. When
+the export script writes `.bas` production files that do not yet have a
+header (e.g. `basBibleRibbonSetup`), prefer prepending the same block so
+the shippable `.dotm` carries the dual-license notice across all source.
+Full origin: § 16 in `rvw/Code_review 2026-06-01.md`.
+
 ---
 
 ## 3. Routine log — format
@@ -330,3 +342,6 @@ This plan honours the standing project rules:
   `aeRibbon/src/` writes `sync/session_manifest.txt`.
 - `[[feedback_code_review_process]]` — this document is the proposal step;
   no source files are copied or generated until the user says go.
+- Dual-license headers (`LICENSING.md`,
+  `LGPL-3.0-or-later OR LicenseRef-adaept-Commercial`) — the export must
+  preserve the per-file SPDX block in every trimmed copy (see § 2.3).

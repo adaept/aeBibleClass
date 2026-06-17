@@ -238,6 +238,54 @@ state, not a closed spec.
 the production `.docx`, version/sync direction, translation pipeline)
 into the next arc once supplied.
 
+### 16. Dual-license headers imported (LICENSING, 2026-06-17) - DONE; CLASS COVERAGE COMPLETE
+
+The `ae*Class` source is now **dual-licensed** -
+`LGPL-3.0-or-later OR LicenseRef-adaept-Commercial` - resolving the
+copyleft-vs-proprietary conflict raised in the aezdb review. Done in
+commit `b195f97 "Dual License"`:
+
+- **`LICENSING.md`** (new, repo root) - states the two options
+  (LGPL-3.0-or-later open source, or an adaept commercial license),
+  the per-file SPDX expression, and the sole-copyright-holder basis.
+- **SPDX header block imported** into 7 class modules: `src/`
+  `aeAssertClass`, `aeBibleCitationClass`, `aeBibleClass`,
+  `aeRibbonClass`, `aeWordGitClass`; and `aeRibbon/src/`
+  `aeBibleCitationClass`, `aeRibbonClass`. Header is
+  `Copyright (c) 2025-2026 Peter F. Ennis` +
+  `SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-adaept-Commercial`
+  + the dual-option preamble (ASCII-only per [[feedback_ascii_in_vba]],
+  placed after `Option` lines so the `.cls` header attributes stay
+  intact per [[feedback_vba_crlf]]).
+- **`README.md`** licensing line updated from "LGPL 3.0 licensed" to the
+  dual-license statement pointing at `LICENSING.md`.
+
+**Class coverage now COMPLETE (2026-06-17).** The header was extended to
+the five remaining `src/` classes - `aeLoggerClass`,
+`aeLongProcessClass`, `aeUpdateCharStyleClass`, `IaeLongProcessClass`,
+`ThisDocument` - so all 12 `.cls` files (10 in `src/`, 2 in
+`aeRibbon/src/`) now carry the SPDX block and the README's "all Class
+modules" claim holds. Inserted via a CRLF-preserving Python pass
+(`newline=''` per [[feedback_vba_crlf]]) after the last
+`Option`/`Implements` declaration line (for `aeUpdateCharStyleClass`,
+after `Implements IaeLongProcessClass`); `.cls` attribute headers
+verified intact. **Still open:** production `.bas` files (e.g.
+`basBibleRibbonSetup`) carry no header yet - decide whether to extend
+the block there too (see plan doc § 2.3 export note).
+
+**Export tie-in (relates to item 1 / the plan doc).** The two
+`aeRibbon/src/` copies already carry the header, so a live trim run of
+`py/ribbon_export_trim.py` must **preserve** the dual-license block when
+it regenerates the production copies - it is a comment block, but
+"trim = delete-only" must not strip it. Recorded as a constraint in
+`md/aeProductionRibbonPlan.md` § 2.3.
+
+**Note on the same commit:** `b195f97` also carried four incidental
+casing flips in `src/basVerseStructureAudit.bas` (`count`->`Count`,
+`Index`->`index` inside comments and one `rng.Sections(1).index`). These
+ride against [[feedback_casing]]; flag for review if the commit
+normalization routine trips on them.
+
 ## Pointer back to the closed arc
 
 Full dated history of the work that produced this carry-forward state is
