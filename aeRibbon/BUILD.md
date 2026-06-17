@@ -48,6 +48,34 @@ From `aeRibbon/template/`:
 in future versions, paste it into the template's `ThisDocument` manually
 during build.
 
+**Add the SPDX dual-license header to the template's `ThisDocument`.**
+Because Word creates the template's `ThisDocument` fresh, it does **not**
+carry the dual-license header that every other module ships with. To keep
+the built `.dotm` source uniformly licensed, paste this block (from
+`src/ThisDocument.cls`) below the `Option Explicit` line in the template's
+`ThisDocument` during build:
+
+```vb
+'Copyright (c) 2025-2026 Peter F. Ennis
+'SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-adaept-Commercial
+'DUAL-LICENSED. You may use this file under EITHER of:
+'  (1) the GNU Lesser General Public License, version 3.0 or (at your option)
+'      any later version  -  https://www.gnu.org/licenses/lgpl-3.0.txt ; OR
+'  (2) a commercial / proprietary license available from adaept (Peter Ennis),
+'      permitting use in closed-source / proprietary works WITHOUT the LGPL
+'      copyleft obligations. Contact the copyright holder for commercial terms.
+'As the sole copyright holder, adaept may license this file under either option.
+'This library is distributed WITHOUT ANY WARRANTY; without even the implied
+'warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+**Caveat — the header is stripped on re-export.** `ThisDocument` is a
+build-step paste, not a clean import, so exporting it from Word (e.g. to
+refresh `src/ThisDocument.cls`) drops this comment block. After any such
+round-trip, re-add the header to `src/ThisDocument.cls` (and to the
+template's `ThisDocument`) before committing — it is the only `.cls` that
+does not survive a Word export with its header intact.
+
 ## Build steps
 
 ### Fast path — start from step 3 when preconditions hold
@@ -116,7 +144,10 @@ has changed, do step 2.
      under **Modules**. If a `.cls` lands under Modules, the file has
      LF-only line endings — re-run `py/ribbon_export_trim.py` (it now
      forces CRLF) and re-import.
-   - Do **not** import `ThisDocument.cls` (it isn't present).
+   - Do **not** import `ThisDocument.cls` (it isn't present). If you add a
+     `Document_Open` body to the template's `ThisDocument`, also paste the
+     SPDX dual-license header into it — see "Files going into the template"
+     above.
 
 4. **Stamp the version.** Open `basBibleRibbonSetup` in the VBA editor and
    confirm (or add at the top) a constant matching `aeRibbon/VERSION`:

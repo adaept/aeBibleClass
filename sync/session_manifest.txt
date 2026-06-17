@@ -103,6 +103,11 @@ C. EXTEND SPDX HEADER TO PRODUCTION .bas (2026-06-17)
                                                     line broadened to
                                                     classes + production
                                                     .bas modules
+  aeRibbon/BUILD.md                      [DOC]    - Arc C: note + full
+                                                    SPDX block to paste
+                                                    into the template's
+                                                    ThisDocument; re-
+                                                    export-strips caveat
 
 ## Memory updates (personal context, not project-tracked)
 
