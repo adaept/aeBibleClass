@@ -59,6 +59,37 @@ C. EXTEND SPDX HEADER TO PRODUCTION .bas (2026-06-17)
      EXCLUDED from production. Resolve when py/ribbon_export_trim.py runs;
      header harmless either way. Logged in review item 16.
 
+D. THISDOCUMENT SPDX HARDENING + BUILD.md NOTE (2026-06-17)
+   - While staging Arc C, found src/ThisDocument.cls had LOST its header
+     in the working tree (it WAS committed with the header in 69d7793) -
+     diff was header-removal only, no other change. Cause: ThisDocument
+     is a build-step paste, not a clean import, so a Word re-export drops
+     the comment block. Restored from HEAD (git checkout); all 12 .cls
+     have the header again.
+   - aeRibbon/BUILD.md: added the full SPDX block to paste into the
+     template's ThisDocument during build + a caveat that Word strips it
+     on re-export (re-add to src/ThisDocument.cls after any round-trip).
+     Cross-ref at the import step. ThisDocument is the one .cls that does
+     not survive a Word export with its header intact.
+
+E. CROSS-REPO GOVERNANCE in adaept5tudio (2026-06-17)
+   - Work in C:\adaept\adaept5tudio (separate repo) recording this
+     repo's dual-license milestone in the hub's audit trail:
+     * dev plan (docs/adaept5tudio-dev-plan.md): added B5 (dual-license
+       DONE), B6 (finalize LicenseRef-adaept-Commercial text w/ counsel),
+       B7 (record commercial-grant election at first studio reuse);
+       reconciled the stale "LGPL3/MIT" shorthand -> actual
+       "LGPL-3.0-or-later OR LicenseRef-adaept-Commercial".
+     * timeline (tools/plan/tasks.json -> audit/timeline.md): B5/B6/B7.
+     * decision log (tools/audit/generate-decision-log.mjs, deterministic
+       from git): regenerated to 186 then 190 rows; this session's
+       commits captured as type=license.
+     * interim monthly risk review (audit/risk-review-2026-06.md): ad-hoc
+       §10a pass over 2026-06-12..17 (50+ rows the scheduled run missed).
+       New finding N-1 = aeBibleClass dual-license advances prior F-2
+       (LGPL3 quarantine); FU 6/7 = B6/B7. All adaept5tudio commits
+       pushed; next scheduled review 2026-07-03 supersedes.
+
 ## src/ files modified  (require import)
 
   src/aeLoggerClass.cls               [IMPORT]   - Arc B (SPDX header)
@@ -103,11 +134,20 @@ C. EXTEND SPDX HEADER TO PRODUCTION .bas (2026-06-17)
                                                     line broadened to
                                                     classes + production
                                                     .bas modules
-  aeRibbon/BUILD.md                      [DOC]    - Arc C: note + full
+  aeRibbon/BUILD.md                      [DOC]    - Arc D: note + full
                                                     SPDX block to paste
                                                     into the template's
                                                     ThisDocument; re-
                                                     export-strips caveat
+
+## Cross-repo files modified  (adaept5tudio - separate repo, Arc E)
+
+  docs/adaept5tudio-dev-plan.md          [DOC]    - B5/B6/B7 + LGPL3/MIT
+                                                    reconcile
+  tools/plan/tasks.json                  [SCRIPT] - B5/B6/B7 timeline src
+  audit/timeline.md                      [DOC]    - regenerated (gantt)
+  audit/decision-log.jsonl + .md         [SCRIPT] - regenerated (190 rows)
+  audit/risk-review-2026-06.md           [DOC]    - interim §10a review
 
 ## Memory updates (personal context, not project-tracked)
 
@@ -115,34 +155,52 @@ C. EXTEND SPDX HEADER TO PRODUCTION .bas (2026-06-17)
   feedback_vba_crlf, feedback_ascii_in_vba, feedback_casing,
   feedback_review_docs_history, feedback_session_manifest.)
 
-## Committed this session
+## Committed this session  (all pushed)
 
-  69d7793 "Extend dual-license SPDX header to remaining class modules"
-  - the 5 src/ .cls files + 2 docs (7 files). Pushed.
-  df8c7fa "Update session manifest for 2026-06-17 dual-license session".
-  Pushed.
-  Arc C (8 .bas files + README + review/manifest doc updates) is in the
-  working tree, NOT yet committed at time of writing.
-  Prior operator commit b195f97 "Dual License" carried LICENSING.md,
-  README.md, and the first 7 class-module headers.
+  aeBibleClass (main):
+    b195f97  "Dual License" (OPERATOR, pre-session) - LICENSING.md,
+             README, first 7 class-module headers.
+    69d7793  Arc B - SPDX header on remaining 5 .cls + 2 docs.
+    df8c7fa  manifest update (prior revision).
+    4de572a  Arc C - SPDX on 8 production .bas + README/plan/review.
+    37201a3  Arc D - BUILD.md ThisDocument SPDX note.
+    (this manifest update commits next.)
+
+  adaept5tudio (main) - Arc E:
+    d93f0de  dev plan B5 + LGPL3/MIT reconcile.
+    383ffc7  timeline B5.
+    38cf796  decision log regen (186 rows).
+    7d60861  interim risk review 2026-06.
+    55979ff  dev plan B6/B7.
+    21a0970  timeline B6/B7.
+    288cf54  decision log regen (190 rows).
 
 ## Operator next steps
 
   1. (Optional) Re-import the src/ .cls and .bas files above so the live
      VBA project matches the now-licensed source. Comment-only, so
      no test rerun is required; RUN_THE_TESTS still green.
-  2. Resolve the basSBL_VerseCountsGenerator placement (in aeRibbon/src/
+  2. ThisDocument WATCH: it loses its SPDX header on every Word export
+     (build-step paste, not a clean import). After any Word round-trip,
+     re-add the block to src/ThisDocument.cls before committing - see
+     aeRibbon/BUILD.md.
+  3. Resolve the basSBL_VerseCountsGenerator placement (in aeRibbon/src/
      vs plan section 2.2 exclusion) when py/ribbon_export_trim.py runs -
      see review item 16. Header is harmless either way.
-  3. Optional: review the 4 incidental casing flips in
+  4. Optional: review the 4 incidental casing flips in
      basVerseStructureAudit.bas from b195f97 (arc A) against
      [[feedback_casing]] / the commit normalization routine.
+  5. adaept5tudio open items (hub repo): B6 finalize the commercial
+     license text with counsel; B7 record the commercial-grant election
+     at first studio reuse. Tracked in the dev plan + timeline.
 
 ## Session closed 2026-06-17
 
   SPDX coverage complete: 12/12 .cls modules + 8/8 production .bas
-  files (4 each in src/ and aeRibbon/src/). Arcs A/B committed +
-  pushed (69d7793, df8c7fa); Arc C staged in the working tree pending
-  commit. Only open licensing item: the basSBL_VerseCountsGenerator
-  plan-section-2.2 placement question, to settle when the trim script
-  runs. No work left mid-flight.
+  files (4 each in src/ and aeRibbon/src/); ThisDocument header restored
+  after a Word-export regression and documented in BUILD.md. Hub repo
+  (adaept5tudio) updated: dual-license recorded as B5 (+ B6/B7 follow-
+  ups) in dev plan + timeline; decision log regenerated (190 rows);
+  interim §10a risk review filed. All aeBibleClass + adaept5tudio commits
+  pushed. Open: basSBL placement (trim-script gated) + adaept5tudio
+  B6/B7. No work left mid-flight.
