@@ -108,4 +108,4 @@ Commit messages follow: `FIXED - #NNN - Description [category]`
 - Error handling: `On Error GoTo PROC_ERR` with `PROC_EXIT` label pattern
 - ASCII-only output to Immediate Window
 - No content modification may bypass audit review — all repairs must be reversible and logged
-- LGPL 3.0 licensed; all Class modules include copyright headers
+- **Dual-licensed:** `LGPL-3.0-or-later OR LicenseRef-adaept-Commercial` (see `LICENSING.md`); all Class modules carry the SPDX dual-license header

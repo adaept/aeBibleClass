@@ -613,7 +613,7 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
                 End If
                 sOut = sOut & NL
             ElseIf Not qualifies And paraStyle = "BodyText" Then
-                ' Still count policy flags even when suppressed (anomalies-only would emit anyway since paraStyle <> VerseText)
+                ' Still Count policy flags even when suppressed (anomalies-only would emit anyway since paraStyle <> VerseText)
                 policyFlagCount = policyFlagCount + 1
             End If
 
@@ -1145,7 +1145,7 @@ End Sub
 ' StoryRanges, then NextStoryRange to the end) and fold every paragraph into
 ' the header/footer running totals. When bReport is True, also append a
 ' classified row per paragraph to sOut. Shared by AuditHeaderFooterStyles
-' (report) and GetHeaderFooterStyleTotals (count-only) so the two can never
+' (report) and GetHeaderFooterStyleTotals (Count-only) so the two can never
 ' diverge.
 ' --------------------------------------------------------------------------
 Private Sub WalkHFChain(ByRef sOut As String, ByVal headRng As Object, _
@@ -1230,7 +1230,7 @@ Private Function HFSectionIndex(ByVal rng As Object) As String
     Dim s As String
     s = "?"
     On Error Resume Next
-    s = CStr(rng.Sections(1).Index)
+    s = CStr(rng.Sections(1).index)
     On Error GoTo 0
     HFSectionIndex = s
 End Function
@@ -1267,7 +1267,7 @@ End Function
 ' Count-only single source of truth for test slot 84. Same StoryRanges
 ' enumeration as AuditHeaderFooterStyles (via WalkHFChain, bReport:=False),
 ' so the gate number reconciles with both the report and the Style Usage
-' Distribution. Returns paragraph totals and the count NOT on the approved
+' Distribution. Returns paragraph totals and the Count NOT on the approved
 ' style for headers and footers separately - orphaned stories included.
 ' ==========================================================================
 Public Sub GetHeaderFooterStyleTotals(ByRef hdrParas As Long, ByRef hdrViolations As Long, _

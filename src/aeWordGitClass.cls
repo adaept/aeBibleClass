@@ -11,17 +11,16 @@ Option Explicit
 Option Compare Text
 
 'Copyright (c) 2018-2026 Peter F. Ennis
-'This library is free software; you can redistribute it and/or
-'modify it under the terms of the GNU Lesser General Public
-'License as published by the Free Software Foundation;
-'version 3.0, or (at your option) any later version.
-'This library is distributed in the hope that it will be useful,
-'but WITHOUT ANY WARRANTY; without even the implied warranty of
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-'Lesser General Public License for more details.
-'You should have received a copy of the GNU Lesser General Public
-'License along with this library; if not, visit
-'https://www.gnu.org/licenses/lgpl-3.0.txt
+'SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-adaept-Commercial
+'DUAL-LICENSED. You may use this file under EITHER of:
+'  (1) the GNU Lesser General Public License, version 3.0 or (at your option)
+'      any later version  -  https://www.gnu.org/licenses/lgpl-3.0.txt ; OR
+'  (2) a commercial / proprietary license available from adaept (Peter Ennis),
+'      permitting use in closed-source / proprietary works WITHOUT the LGPL
+'      copyleft obligations. Contact the copyright holder for commercial terms.
+'As the sole copyright holder, adaept may license this file under either option.
+'This library is distributed WITHOUT ANY WARRANTY; without even the implied
+'warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 '================================================================================
 ' Author:   Peter F. Ennis

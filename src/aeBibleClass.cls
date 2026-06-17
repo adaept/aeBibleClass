@@ -11,17 +11,16 @@ Option Explicit
 Option Compare Text
 
 'Copyright (c) 2025-2026 Peter F. Ennis
-'This library is free software; you can redistribute it and/or
-'modify it under the terms of the GNU Lesser General Public
-'License as published by the Free Software Foundation;
-'version 3.0, or (at your option) any later version.
-'This library is distributed in the hope that it will be useful,
-'but WITHOUT ANY WARRANTY; without even the implied warranty of
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-'Lesser General Public License for more details.
-'You should have received a copy of the GNU Lesser General Public
-'License along with this library; if not, visit
-'https://www.gnu.org/licenses/lgpl-3.0.txt
+'SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-adaept-Commercial
+'DUAL-LICENSED. You may use this file under EITHER of:
+'  (1) the GNU Lesser General Public License, version 3.0 or (at your option)
+'      any later version  -  https://www.gnu.org/licenses/lgpl-3.0.txt ; OR
+'  (2) a commercial / proprietary license available from adaept (Peter Ennis),
+'      permitting use in closed-source / proprietary works WITHOUT the LGPL
+'      copyleft obligations. Contact the copyright holder for commercial terms.
+'As the sole copyright holder, adaept may license this file under either option.
+'This library is distributed WITHOUT ANY WARRANTY; without even the implied
+'warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 '=================================================================================
 ' Author:   Peter F. Ennis
@@ -2342,7 +2341,7 @@ End Function
 '           probes the document with a single bounded Find.Execute
 '           and records present/ABSENT to rpt\Character Style Usage.txt.
 '
-' Returns : Long - count of approved character styles that are
+' Returns : Long - Count of approved character styles that are
 '           ABSENT from the document (baseline = 0).
 '
 ' Notes   : Earlier draft enumerated every styled run via a Find
@@ -2418,7 +2417,7 @@ End Function
 ' Idempotent within a single class lifetime via m_verseScanDone.
 ' By design each VerseText paragraph carries both styles on its
 ' leading marker, so both totals should equal the VerseText
-' paragraph count from test 49 (31,102 in current baseline).
+' paragraph Count from test 49 (31,102 in current baseline).
 '==============================================================
 Private Sub EnsureVerseMarkerCounts()
     On Error GoTo PROC_ERR
@@ -2436,9 +2435,9 @@ End Sub
 
 '==============================================================
 ' CountVerseMarker  (test slot 82)
-' Returns count of "Verse marker"-styled runs found inside
+' Returns Count of "Verse marker"-styled runs found inside
 ' VerseText paragraphs. Expected to equal the VerseText
-' paragraph count (31,102) - every VerseText paragraph carries
+' paragraph Count (31,102) - every VerseText paragraph carries
 ' a Verse marker by design.
 '==============================================================
 Private Function CountVerseMarker() As Long
@@ -2455,9 +2454,9 @@ End Function
 
 '==============================================================
 ' CountChapterVerseMarker  (test slot 83)
-' Returns count of "Chapter Verse marker"-styled runs found
+' Returns Count of "Chapter Verse marker"-styled runs found
 ' inside VerseText paragraphs. Expected to equal the VerseText
-' paragraph count (31,102) - every VerseText paragraph carries
+' paragraph Count (31,102) - every VerseText paragraph carries
 ' a Chapter Verse marker by design.
 '==============================================================
 Private Function CountChapterVerseMarker() As Long
@@ -2474,7 +2473,7 @@ End Function
 
 '==============================================================
 ' CountHeaderFooterStyleViolations  (test slot 84)
-' Returns the count of header/footer paragraphs NOT on the approved
+' Returns the Count of header/footer paragraphs NOT on the approved
 ' style (header <> "TheHeaders" OR footer <> "TheFooters"), across
 ' every header/footer story including orphaned first-page/even-page
 ' stories. Backs into basVerseStructureAudit.GetHeaderFooterStyleTotals
