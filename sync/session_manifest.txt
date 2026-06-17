@@ -42,36 +42,67 @@ B. EXTEND SPDX HEADER TO REMAINING CLASSES (2026-06-17)
    - Verified: SPDX present in all 12 .cls; CRLF preserved; .cls
      VERSION/attribute headers intact (no module misimport risk).
    - No identifier, signature, or logic changes - comment block only.
-   - Review item 16 status updated to "CLASS COVERAGE COMPLETE";
-     production .bas headers (e.g. basBibleRibbonSetup) left as the
-     tracked open item.
+   - Review item 16 status updated to "CLASS COVERAGE COMPLETE".
+
+C. EXTEND SPDX HEADER TO PRODUCTION .bas (2026-06-17)
+   - The 4 production ribbon .bas modules got the same dual-license
+     block in BOTH src/ and aeRibbon/src/ (8 files): basBibleRibbonSetup,
+     basRibbonDeferred, basUIStrings, basSBL_VerseCountsGenerator.
+     Same CRLF-preserving pass, inserted after the last Option line.
+   - Verified: SPDX present in all 8; CRLF preserved; Attribute VB_Name
+     lines intact. Comment-only; no logic/identifier change.
+   - README licensing line broadened to "all Class modules and the
+     production ribbon .bas modules"; review item 16 rolled to
+     "CLASS + PRODUCTION .bas COVERAGE COMPLETE".
+   - DISCREPANCY surfaced: basSBL_VerseCountsGenerator is in aeRibbon/src/
+     (so headered) but plan section 2.2 lists it as a dev-only generator
+     EXCLUDED from production. Resolve when py/ribbon_export_trim.py runs;
+     header harmless either way. Logged in review item 16.
 
 ## src/ files modified  (require import)
 
-  src/aeLoggerClass.cls            [IMPORT]   - Arc B (SPDX header)
-  src/aeLongProcessClass.cls       [IMPORT]   - Arc B (SPDX header)
-  src/aeUpdateCharStyleClass.cls   [IMPORT]   - Arc B (SPDX header)
-  src/IaeLongProcessClass.cls      [IMPORT]   - Arc B (SPDX header)
-  src/ThisDocument.cls             [IMPORT]   - Arc B (SPDX header).
-                                                NOTE: ThisDocument is
-                                                a build-step paste, not
-                                                a free import - see
-                                                aeRibbon/BUILD.md.
+  src/aeLoggerClass.cls               [IMPORT]   - Arc B (SPDX header)
+  src/aeLongProcessClass.cls          [IMPORT]   - Arc B (SPDX header)
+  src/aeUpdateCharStyleClass.cls      [IMPORT]   - Arc B (SPDX header)
+  src/IaeLongProcessClass.cls         [IMPORT]   - Arc B (SPDX header)
+  src/ThisDocument.cls                [IMPORT]   - Arc B (SPDX header).
+                                                   NOTE: ThisDocument is
+                                                   a build-step paste, not
+                                                   a free import - see
+                                                   aeRibbon/BUILD.md.
+  src/basBibleRibbonSetup.bas         [IMPORT]   - Arc C (SPDX header)
+  src/basRibbonDeferred.bas           [IMPORT]   - Arc C (SPDX header)
+  src/basUIStrings.bas                [IMPORT]   - Arc C (SPDX header)
+  src/basSBL_VerseCountsGenerator.bas [IMPORT]   - Arc C (SPDX header)
 
-  (Comment-only change. Re-import is optional for runtime behaviour
-   but keeps the live VBA project in sync with the licensed source.)
+## aeRibbon/src/ files modified  (production export copies)
+
+  aeRibbon/src/basBibleRibbonSetup.bas         [IMPORT] - Arc C
+  aeRibbon/src/basRibbonDeferred.bas           [IMPORT] - Arc C
+  aeRibbon/src/basUIStrings.bas                [IMPORT] - Arc C
+  aeRibbon/src/basSBL_VerseCountsGenerator.bas [IMPORT] - Arc C
+                                                          (see plan 2.2
+                                                          discrepancy)
+
+  (All Arc B/C changes are comment-only. Re-import is optional for
+   runtime behaviour but keeps the live VBA project in sync with the
+   licensed source.)
 
 ## Non-src files modified
 
-  rvw/Code_review 2026-06-01.md          [DOC]    - Arcs A, B: new
+  rvw/Code_review 2026-06-01.md          [DOC]    - Arcs A, B, C:
                                                     carry-forward item
                                                     16 (dual license);
-                                                    status rolled to
-                                                    class coverage
-                                                    complete
+                                                    rolled to class +
+                                                    production .bas
+                                                    coverage complete
   md/aeProductionRibbonPlan.md           [DOC]    - Arc A: license-
                                                     header preservation
                                                     constraint (2.3 + 9)
+  README.md                              [DOC]    - Arc C: licensing
+                                                    line broadened to
+                                                    classes + production
+                                                    .bas modules
 
 ## Memory updates (personal context, not project-tracked)
 
@@ -82,25 +113,31 @@ B. EXTEND SPDX HEADER TO REMAINING CLASSES (2026-06-17)
 ## Committed this session
 
   69d7793 "Extend dual-license SPDX header to remaining class modules"
-  - the 5 src/ .cls files + the 2 docs above (7 files, 123 insertions).
+  - the 5 src/ .cls files + 2 docs (7 files). Pushed.
+  df8c7fa "Update session manifest for 2026-06-17 dual-license session".
+  Pushed.
+  Arc C (8 .bas files + README + review/manifest doc updates) is in the
+  working tree, NOT yet committed at time of writing.
   Prior operator commit b195f97 "Dual License" carried LICENSING.md,
   README.md, and the first 7 class-module headers.
 
 ## Operator next steps
 
-  1. (Optional) Re-import the 5 src/ .cls files above so the live
+  1. (Optional) Re-import the src/ .cls and .bas files above so the live
      VBA project matches the now-licensed source. Comment-only, so
      no test rerun is required; RUN_THE_TESTS still green.
-  2. Decide whether to extend the SPDX block to production .bas files
-     (basBibleRibbonSetup, etc.) - tracked as the open half of review
-     item 16. Until then the README "all Class modules" claim is
-     accurate as written (classes only).
+  2. Resolve the basSBL_VerseCountsGenerator placement (in aeRibbon/src/
+     vs plan section 2.2 exclusion) when py/ribbon_export_trim.py runs -
+     see review item 16. Header is harmless either way.
   3. Optional: review the 4 incidental casing flips in
      basVerseStructureAudit.bas from b195f97 (arc A) against
      [[feedback_casing]] / the commit normalization routine.
 
 ## Session closed 2026-06-17
 
-  All work above is complete and committed (69d7793). Class-module
-  SPDX coverage is 12/12; production .bas headers remain the single
-  tracked open item. No work left mid-flight.
+  SPDX coverage complete: 12/12 .cls modules + 8/8 production .bas
+  files (4 each in src/ and aeRibbon/src/). Arcs A/B committed +
+  pushed (69d7793, df8c7fa); Arc C staged in the working tree pending
+  commit. Only open licensing item: the basSBL_VerseCountsGenerator
+  plan-section-2.2 placement question, to settle when the trim script
+  runs. No work left mid-flight.

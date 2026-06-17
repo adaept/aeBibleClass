@@ -100,16 +100,23 @@ No identifier casing changes, no signature changes, no semantic edits.
 Trim = delete-only. (Per `[[feedback_casing]]` and the dev-source-is-truth
 principle.)
 
-**License-header constraint (added 2026-06-17).** The dev `ae*Class`
-files now carry a dual-license SPDX header block
-(`LGPL-3.0-or-later OR LicenseRef-adaept-Commercial`; see `LICENSING.md`),
-and the `aeRibbon/src/` copies of `aeBibleCitationClass.cls` and
-`aeRibbonClass.cls` already include it. Because trim is delete-only, the
-export must **preserve** this header block verbatim in every trimmed
-copy - it is the file's license notice, not a removable routine. When
-the export script writes `.bas` production files that do not yet have a
-header (e.g. `basBibleRibbonSetup`), prefer prepending the same block so
-the shippable `.dotm` carries the dual-license notice across all source.
+**License-header constraint (added 2026-06-17).** The dev source now
+carries a dual-license SPDX header block
+(`LGPL-3.0-or-later OR LicenseRef-adaept-Commercial`; see `LICENSING.md`)
+on **all 12 `.cls` modules and all 4 production `.bas` modules**
+(`basBibleRibbonSetup`, `basRibbonDeferred`, `basUIStrings`,
+`basSBL_VerseCountsGenerator`), in both `src/` and the `aeRibbon/src/`
+copies. Because trim is delete-only, the export must **preserve** this
+header block verbatim in every trimmed copy - it is the file's license
+notice, not a removable routine. Any new production file the export
+script introduces should likewise carry the block so the shippable
+`.dotm` keeps the dual-license notice across all source.
+
+**Open: `basSBL_VerseCountsGenerator` placement.** § 2.2 lists this file
+as a dev-only generator excluded from `aeRibbon/src/`, yet it is present
+there today and now carries the header. When `py/ribbon_export_trim.py`
+(§ 7.1) is run it will settle this: either it drops the file (confirming
+§ 2.2) or it keeps it (update § 2.2). The header is correct either way.
 Full origin: § 16 in `rvw/Code_review 2026-06-01.md`.
 
 ---

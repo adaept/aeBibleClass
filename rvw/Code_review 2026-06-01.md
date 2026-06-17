@@ -238,7 +238,7 @@ state, not a closed spec.
 the production `.docx`, version/sync direction, translation pipeline)
 into the next arc once supplied.
 
-### 16. Dual-license headers imported (LICENSING, 2026-06-17) - DONE; CLASS COVERAGE COMPLETE
+### 16. Dual-license headers imported (LICENSING, 2026-06-17) - DONE; CLASS + PRODUCTION .bas COVERAGE COMPLETE
 
 The `ae*Class` source is now **dual-licensed** -
 `LGPL-3.0-or-later OR LicenseRef-adaept-Commercial` - resolving the
@@ -269,9 +269,26 @@ modules" claim holds. Inserted via a CRLF-preserving Python pass
 (`newline=''` per [[feedback_vba_crlf]]) after the last
 `Option`/`Implements` declaration line (for `aeUpdateCharStyleClass`,
 after `Implements IaeLongProcessClass`); `.cls` attribute headers
-verified intact. **Still open:** production `.bas` files (e.g.
-`basBibleRibbonSetup`) carry no header yet - decide whether to extend
-the block there too (see plan doc § 2.3 export note).
+verified intact.
+
+**Production .bas coverage now COMPLETE (2026-06-17).** The header was
+extended (same CRLF-preserving pass, inserted after the last `Option`
+line) to all four production `.bas` modules in **both** `src/` and
+`aeRibbon/src/`: `basBibleRibbonSetup`, `basRibbonDeferred`,
+`basUIStrings`, and `basSBL_VerseCountsGenerator` - 8 files. README's
+licensing line broadened to "all Class modules and the production ribbon
+`.bas` modules." `Attribute VB_Name` lines verified intact on all 8.
+
+**Discrepancy surfaced - `basSBL_VerseCountsGenerator.bas`.** Operator
+chose to header all four `.bas` currently in `aeRibbon/src/`, which
+includes `basSBL_VerseCountsGenerator`. But plan § 2.2 lists that file as
+a **dev-only generator explicitly excluded** from `aeRibbon/src/`. Its
+presence in the production export dir contradicts the plan - either the
+plan's exclusion is stale or the file is an export leftover. Resolve when
+the trim script (`py/ribbon_export_trim.py`, plan § 7.1) is actually
+run: it will either re-confirm exclusion (drop the file, header moot) or
+keep it (header correct, update plan § 2.2). Header is harmless either
+way; no other open `.bas` items remain.
 
 **Export tie-in (relates to item 1 / the plan doc).** The two
 `aeRibbon/src/` copies already carry the header, so a live trim run of
