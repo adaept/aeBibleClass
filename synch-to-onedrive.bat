@@ -14,7 +14,7 @@ set "FOLDER_3=ae-icon5-component"
 set "FOLDER_4=aezdb"
 set "FOLDER_5=adaept5tudio"
 set "FOLDER_6=aetimeline"
-set "FOLDER_7=Project7"
+set "FOLDER_7=aefont5"
 set "FOLDER_8=Project8"
 set "FOLDER_9=Project9"
 
