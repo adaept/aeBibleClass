@@ -427,10 +427,36 @@ Editor/Developer (Option 1).
 3. Save as `aeRibbon/docx/Radiant-Word-Bible.docx` (final filename TBD).
 4. Verify by reopening: no macro-security banner appears; the Bible
    content is intact.
+4a. **Guard (added 2026-09-12, do not skip):** the "no macro-security
+    banner" check above only catches a `.docx` that still carries
+    `vbaProject.bin`. It does **not** catch a `.docx` that has the VBA
+    project correctly stripped but still carries a document-embedded
+    Ribbon customization with no code behind it — a real failure hit in
+    the `aeBibleAddin` JS-port project's own test fixture (a `.docx`
+    derived this same way popped "the macro can't be found" 6 times on
+    every open). Run:
+
+    ```bash
+    unzip -l "aeRibbon/docx/Radiant-Word-Bible.docx" | grep -i customUI
+    ```
+
+    Must return nothing. If it matches, do not ship this `.docx` —
+    check the dev `.docm`'s own Ribbon customization scope (File →
+    Options → Customize Ribbon → "Customizations:" dropdown at the
+    bottom): it must say **"Word Default"**, not
+    **"for [this document]"**. If it has drifted to a per-document
+    scope, reset it to Word Default in the dev `.docm` once — this
+    fixes the root cause so every future Save-As is naturally clean,
+    not just this release's artifact — then redo steps 2–4.
 5. The Editor/Developer attaches `aeRibbon.dotm` once on their machine
    (File → Options → Add-ins → Templates) and runs Gate G8 against this
    `.docx`. The same template can be shipped to the author later for
    their own attach step.
+
+See `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` §10 for
+the fuller version-tracking procedure tying this artifact to a specific
+`aeBibleAddin` (JS taskpane) release and an archived copy of the source
+`.docm` — this section covers only the docx-production step itself.
 
 This is expected to be re-run for every release until the
 build/test loop stabilises. If/when the manual step becomes a release
