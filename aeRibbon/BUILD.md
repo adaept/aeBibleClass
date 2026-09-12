@@ -440,14 +440,24 @@ Editor/Developer (Option 1).
     unzip -l "aeRibbon/docx/Radiant-Word-Bible.docx" | grep -i customUI
     ```
 
-    Must return nothing. If it matches, do not ship this `.docx` —
-    check the dev `.docm`'s own Ribbon customization scope (File →
-    Options → Customize Ribbon → "Customizations:" dropdown at the
-    bottom): it must say **"Word Default"**, not
-    **"for [this document]"**. If it has drifted to a per-document
-    scope, reset it to Word Default in the dev `.docm` once — this
-    fixes the root cause so every future Save-As is naturally clean,
-    not just this release's artifact — then redo steps 2–4.
+    Must return nothing. If it matches, **do not ship this `.docx`.**
+    This is expected on every Save-As, not a one-off mistake to reset:
+    `py/inject_ribbon.py` deliberately embeds `customUI/customUI14.xml`
+    directly into the dev `.docm` (its own docstring: *"this is the
+    dev-side flow used for the existing Bible .docm files"*), as a
+    convenience so the ribbon shows without attaching `aeRibbon.dotm` as
+    a global template during development. There is no Word setting that
+    controls this (the Customize Ribbon dialog only manages Word's own
+    built-in ribbon, not a document's embedded RibbonX part) — Save-As
+    strips `vbaProject.bin` because that's what "remove macros" means,
+    but has no reason to touch an unrelated OOXML part like `customUI/`.
+    **Fix: run `py/strip_ribbon.py`** (the inverse of `inject_ribbon.py`,
+    added 2026-09-12) on the produced `.docx`, then re-run the guard
+    above — it should return nothing on the second pass:
+
+    ```bash
+    wsl python3 py/strip_ribbon.py aeRibbon/docx/Radiant-Word-Bible.docx
+    ```
 5. The Editor/Developer attaches `aeRibbon.dotm` once on their machine
    (File → Options → Add-ins → Templates) and runs Gate G8 against this
    `.docx`. The same template can be shipped to the author later for
