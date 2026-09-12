@@ -13,7 +13,57 @@ Date:               ____________________
 -------------------------------------------------------------------------
 G1 — Unit tests (dev .docm)
 -------------------------------------------------------------------------
-  basTEST_aeBibleClass (RUN_THE_TESTS)          : PASS / FAIL — failures: ____
+  basTEST_aeBibleClass (RUN_THE_TESTS)  : FAIL — run 2026-09-11 19:15:59,
+    53 PASS / 17 FAIL / 3 SKIP of 73 checks. Runtime 404.69s (was 163.64s
+    on the last recorded run, 2026-05-30 -- ~2.5x slower for +3 paragraphs,
+    worth a look but not blocking). Does not meet G1's literal "0 failures"
+    bar yet. Full source: rpt/TestReport.txt (working copy, uncommitted --
+    compared against the last committed run via `git diff`/`git show`).
+
+    Delta vs. the 2026-05-30 committed run:
+    - NEW REGRESSION, Test 15 CountSectionsWithDifferentFirstPage:
+      was PASS (0), now FAIL (1) -- a section newly has "Different First
+      Page" set in PageSetup. Needs tracking down before shipping; this
+      is the one thing that got worse, not just old debt re-surfacing.
+    - FIXED, Tests 36 + 47 (footer style / footer tab-only paragraphs):
+      both failing in May (Test 36 carried a
+      "FIX: ReapplyTheFootersToAllFooters" annotation), both PASS now.
+    - IMPROVED, Test 50 SummarizeHeaderFooterAuditToFile: was returning
+      -1 (the function's own error sentinel for "header/footer style
+      drift" -- the same drift Tests 36/47 also caught), now returns a
+      real count (145) but still short of the 147 baseline -- likely
+      just needs the baseline bumped once the count is confirmed correct.
+    - Test 16 CountTotalParagraphs: already failing in May (33824 vs
+      33822 expected), drifted slightly further (33827) -- ongoing
+      baseline staleness, not new.
+    - The other 14 failures are BYTE-IDENTICAL to the May run (verified
+      via `git diff --unified=0`) -- stable, pre-existing, not
+      introduced or worsened by this run:
+        * Real zero-tolerance content issues (not baseline drift), likely
+          need an editorial pass rather than a number bump: Test 55
+          ("I'm" x16), Test 64 ("it's" x1), Tests 70/71 (nested
+          opening/closing quote-glyph collisions, 73 + 15 instances).
+        * Stale-baseline housekeeping, looks safe to update after
+          eyeballing -- spot-checked the linked detail reports and both
+          look clean/intentional, not defective: Test 49 (42 distinct
+          styles per rpt/Style Usage Distribution.txt -- all
+          purposeful names, e.g. front matter/indices/Psalms formatting,
+          not orphaned duplicates) and Test 38 (145 empty paragraphs per
+          rpt/EmptyParagraphs.txt -- 100% cleanly classified as
+          structural SBNP/SBC/PBB carriers, no unclassified stragglers).
+          Also Tests 27, 28, 29 (header-count drift, small deltas).
+        * Big swings, unchanged for 3+ months but big enough to deserve
+          one deliberate "yes this was intentional" sign-off before
+          just updating the expected number: Tests 32/33 (manual
+          linefeeds 982->185), 34/35 (footnote manual line breaks
+          117->0, i.e. all of them), 37 (tab-only body paragraphs
+          19->99).
+    - 3 SKIPs (return -1): CountBoldFootnotesWordLevel,
+      CountAndCreateDefinitionForH2 (mutates the doc -- KeepWithNext +
+      WidowControl on every H2 -- may be intentionally excluded from a
+      read-only test run), HasLeftAlignedParagraph. Confirm these are
+      skipped by design, not erroring silently.
+
   basTEST_aeBibleCitationClass (all RUN_*)      : PASS / FAIL — failures: ____
 
 -------------------------------------------------------------------------
