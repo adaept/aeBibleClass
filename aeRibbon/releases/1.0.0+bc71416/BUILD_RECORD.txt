@@ -122,24 +122,48 @@ G7 — Smoke (empty host docx: aeRibbon/docx/aeRibbon-host.docx)
 -------------------------------------------------------------------------
 G8 — Smoke (production Bible docx: aeRibbon/docx/Radiant-Word-Bible.docx)
 -------------------------------------------------------------------------
-  NOTE: Radiant-Word-Bible.docx does not exist yet as of 2026-09-11 --
-  produce it first per BUILD.md "Producing the production Bible docx"
-  (manual Save-As from the dev .docm to strip VBA).
+  Run 2026-09-12, produced per BUILD.md + strip_ribbon.py (§10 of
+  adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md), in service
+  of the aeBibleAddin docm/docx/JS-taskpane release-alignment procedure --
+  NOT a full aeRibbon v1.0.0 sign-off run (G1-G6 not re-run here). Real
+  bugs found below do not block the JS-taskpane track (aeBibleAddin's own
+  navigation is a separate implementation) -- they DO block this G8
+  section's own sign-off for the VBA v1.0.0 release track.
 
-  No macro-security warning on open                : ____
-  Tab appears; Book selector enabled                : ____
-  Mouse path (Jn/3/16/Go -> John 3:16)              : ____
-  Keyboard path (Alt,Y2,B / Jn / Tab / 3 / Tab / 16 / Tab / Enter) : ____
-  Next Book (Alt,Y2,])                              : ____
-  Next Chapter (Alt,Y2,.)                           : ____
-  First-verse boundary (Alt,Y2,<)                   : ____
-  First-book boundary, Genesis (Alt,Y2,[)           : ____
-  Last-verse boundary, Revelation 22:21 (Alt,Y2,>)  : ____
-  New Search (Alt,Y2,S) resets to NoSelection       : ____
-  About (Alt,Y2,A) shows RIBBON_VERSION             : ____
+  No macro-security warning on open                : PASS
+  Tab appears; Book selector enabled                : PASS
+  Mouse path (Jn/3/16/Go -> John 3:16)              : PASS
+  Keyboard path (Alt,Y2,B / Jn / Tab / 3 / Tab / 16 / Tab / Enter) : PASS
+  Next Book (Alt,Y2,])                              : PASS (advanced to Acts, Heading 1)
+  Next Chapter (Alt,Y2,.)                           : FLAGGED -- landed on Chapter 2;
+    operator flagged as unexpected (context: immediately after the Next
+    Book step above, now in Acts). Root cause not yet diagnosed -- may be
+    correct behavior misread, or a real state bug (e.g. chapter state not
+    reset to 1 after a book change before "next" is applied). Needs VBA-
+    side review, not diagnosed further here.
+  First-verse boundary (Alt,Y2,<)                   : FAIL -- tested with
+    cursor in Verse 1 of Acts: instead of a boundary message in the status
+    bar, Word's Help ribbon tab was activated. Looks like a KeyTip routing
+    conflict (Alt,Y2,< not reaching PrevVerseButton's handler in this
+    context), not a logic bug in the boundary-message code itself.
+  First-book boundary, Genesis (Alt,Y2,[)           : NOT EXPLICITLY RE-TESTED
+    this run -- operator confirmed all unmentioned G8 items passed, but
+    this specific one wasn't separately named; re-confirm next pass.
+  Last-verse boundary, Revelation 22:21 (Alt,Y2,>)  : FAIL -- no last-verse
+    message shown at all (silent, not misrouted like the first-verse case).
+  New Search (Alt,Y2,S) resets to NoSelection       : PASS
+  About (Alt,Y2,A) shows RIBBON_VERSION             : FAIL -- shows a
+    placeholder/debug message instead ("Hello, adaept World! adaeptMsg =
+    "...the truth shall make you free." John 8:32 (KJV)"), literally
+    including the `adaeptMsg = ` variable-name text inline -- looks like an
+    un-replaced dev stub, not wired to RIBBON_VERSION at all. Screenshot:
+    C:\Users\peter\OneDrive\Pictures\Screenshots\about adaept.png
 
   SHA-256 of aeRibbon.dotm (wsl sha256sum aeRibbon/template/aeRibbon.dotm):
-  ____________________________________________________________
+  ____________________________________________________________ (not captured
+  this run -- this G8 pass used aeRibbon.dotm as currently on disk, not a
+  version-stamped release build; capture this when G8 is re-run for an
+  actual v1.0.0 sign-off attempt)
 
 -------------------------------------------------------------------------
 Sign-off
