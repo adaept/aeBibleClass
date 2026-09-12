@@ -1,0 +1,99 @@
+aeRibbon v1.0.0+bc71416 — Build Record
+=======================================
+
+Per aeRibbon/BUILD.md + aeRibbon/QA_CHECKLIST.md. Fill in as each gate is
+run in Word. Leave a line blank / write "N/A" rather than deleting it, so
+a partial record is still legible if this ships in stages.
+
+Version under test: 1.0.0+bc71416
+Dev SHA:            ____________________  (git rev-parse --short HEAD at build time)
+Operator:           ____________________
+Date:               ____________________
+
+-------------------------------------------------------------------------
+G1 — Unit tests (dev .docm)
+-------------------------------------------------------------------------
+  basTEST_aeBibleClass (RUN_THE_TESTS)          : PASS / FAIL — failures: ____
+  basTEST_aeBibleCitationClass (all RUN_*)      : PASS / FAIL — failures: ____
+
+-------------------------------------------------------------------------
+G2 — Citation block
+-------------------------------------------------------------------------
+  basTEST_aeBibleCitationBlock (all entry pts)  : PASS / FAIL — failures: ____
+
+-------------------------------------------------------------------------
+G3 — Config / styles
+-------------------------------------------------------------------------
+  basTEST_aeBibleConfig.RUN_TAXONOMY_STYLES     : PASS / FAIL — details: ____
+
+-------------------------------------------------------------------------
+G4 — Tools
+-------------------------------------------------------------------------
+  basTEST_aeBibleTools (all RUN_*)              : PASS / FAIL — failures: ____
+  basTEST_aeBibleFonts (all RUN_*)               : PASS / FAIL — failures: ____
+
+-------------------------------------------------------------------------
+G5 — Export trim integrity — CLOSED 2026-09-11 (automated, this session)
+-------------------------------------------------------------------------
+  wsl python3 py/ribbon_export_trim.py runs cleanly : PASS
+    -- ran clean, no warnings; 133 routines kept, 70 removed.
+  git diff aeRibbon/src/ reviewed                    : PASS
+    -- zero diff: the committed aeRibbon/src/ was already the current,
+       correct trim of dev src/ as of commit 91039ef.
+  RoutineLog.md summary matches aeRibbon/src/ content: PASS (spot-checked)
+  No KEPT routine missing a body / no REMOVED routine has dangling
+  callers in the kept set (spot-check on citation class)  : PASS
+    -- checked ResolveAlias, ChaptersInBook, GetMaxChapter, GetMaxVerse,
+       GetChapterVerseMap: each calls only other KEPT routines
+       (GetChapterVerseMap, GetMaxChapter, GetVerseCounts), no calls
+       into any REMOVED parser-internal (LexicalScan, ParseCitationBlock,
+       ComposeList, etc.).
+
+-------------------------------------------------------------------------
+G6 — Template build
+-------------------------------------------------------------------------
+  aeRibbon.dotm builds via BUILD.md, no undocumented manual edits : ____
+  inject_ribbon.py exits 0                                        : ____
+    (fast-path note: customUI14.xml already byte-identical to
+    customUI14backupRWB.xml as of 2026-09-11 -- step 2 may be skippable,
+    see BUILD.md "Fast path". Re-verify at build time.)
+  VBA editor Debug -> Compile VBAProject: 0 errors                : ____
+  RIBBON_VERSION constant matches aeRibbon/VERSION                : ____
+  Custom property aeRibbonVersion matches aeRibbon/VERSION        : ____
+
+-------------------------------------------------------------------------
+G7 — Smoke (empty host docx: aeRibbon/docx/aeRibbon-host.docx)
+-------------------------------------------------------------------------
+  Tab appeared                    : yes / no
+  RibbonOnLoad printed             : yes / no
+  AutoExec printed                 : yes / no
+  Any error dialogs                : ____  (paste verbatim, or "none")
+
+-------------------------------------------------------------------------
+G8 — Smoke (production Bible docx: aeRibbon/docx/Radiant-Word-Bible.docx)
+-------------------------------------------------------------------------
+  NOTE: Radiant-Word-Bible.docx does not exist yet as of 2026-09-11 --
+  produce it first per BUILD.md "Producing the production Bible docx"
+  (manual Save-As from the dev .docm to strip VBA).
+
+  No macro-security warning on open                : ____
+  Tab appears; Book selector enabled                : ____
+  Mouse path (Jn/3/16/Go -> John 3:16)              : ____
+  Keyboard path (Alt,Y2,B / Jn / Tab / 3 / Tab / 16 / Tab / Enter) : ____
+  Next Book (Alt,Y2,])                              : ____
+  Next Chapter (Alt,Y2,.)                           : ____
+  First-verse boundary (Alt,Y2,<)                   : ____
+  First-book boundary, Genesis (Alt,Y2,[)           : ____
+  Last-verse boundary, Revelation 22:21 (Alt,Y2,>)  : ____
+  New Search (Alt,Y2,S) resets to NoSelection       : ____
+  About (Alt,Y2,A) shows RIBBON_VERSION             : ____
+
+  SHA-256 of aeRibbon.dotm (wsl sha256sum aeRibbon/template/aeRibbon.dotm):
+  ____________________________________________________________
+
+-------------------------------------------------------------------------
+Sign-off
+-------------------------------------------------------------------------
+  [ ] All gates passed
+  [ ] aeRibbon/RELEASES.md row appended
+  [ ] Committed + tagged: git tag v1.0.0+bc71416
