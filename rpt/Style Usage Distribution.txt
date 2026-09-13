@@ -37,6 +37,8 @@ AuthorSectionHead: 3
 Footnote Text: 1000
 ParallelText: 12
 ParallelHeader: 24
-TheHeaders: 136
-TheFooters: 4
-Total paragraphs (all styles): 35011
+Header: 1
+TheHeaders: 137
+Footer: 1
+TheFooters: 5
+Total paragraphs (all styles): 35015

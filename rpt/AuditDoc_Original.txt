@@ -1,0 +1,1781 @@
+============================================================
+DOCUMENT AUDIT: ORIGINAL
+File: Peter-USE REFINED English Bible CONTENTS.docm
+Path: C:\adaept\aeBibleClass\Peter-USE REFINED English Bible CONTENTS.docm
+Timestamp: 3/19/2026 4:47:46 PM
+============================================================
+Total Sections: 147
+Total Paragraphs: 33856
+Total Words: 952192
+Total Characters: 4235105
+Total Footnotes: 1000
+Total Endnotes: 0
+----------------------------------------
+Section 1
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 2
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: True
+  Footer LinkToPrevious: False
+------------------------------
+Section 3
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: True
+  Footer LinkToPrevious: False
+------------------------------
+Section 4
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 5
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 6
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 7
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 8
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 9
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 10
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 11
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 12
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 13
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 14
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 15
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 16
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 17
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 18
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 19
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 20
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 21
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 22
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 23
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 24
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 25
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 26
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 27
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 28
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 29
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 30
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 31
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 32
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 33
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 34
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 35
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 36
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 37
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 38
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 39
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 40
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 41
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 42
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 43
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 44
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 45
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 46
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 47
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 48
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 49
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 50
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 51
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 52
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 53
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 54
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 55
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 56
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 57
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 58
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 59
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 60
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 61
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 62
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 63
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 64
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 65
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 66
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 67
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 68
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 69
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 70
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 71
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 72
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 73
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 74
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 75
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 76
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 77
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 78
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 79
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 80
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 81
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 82
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 83
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 84
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 85
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 86
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 87
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 88
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 89
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 90
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 91
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 92
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 93
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 94
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 95
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 96
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 97
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 98
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 99
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 100
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 101
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 102
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 103
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 104
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 105
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 106
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 107
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 108
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 109
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 110
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 111
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 112
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 113
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 114
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 115
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 116
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 117
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 118
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 119
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 120
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 121
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 122
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 186.1
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 123
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 124
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 125
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 126
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 127
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 128
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 129
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 130
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 131
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 132
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 133
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 134
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 186.1
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 135
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 136
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 137
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 138
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 139
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 140
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 2
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 196.9
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 141
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+Section 142
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 143
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 144
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 145
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 146
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: True
+------------------------------
+Section 147
+  Page Size: 516.25 x 728.65
+  Margins (T/B/L/R): 54.7/54.7/54.7/43.2
+  Orientation: Portrait
+  Columns: 1
+  EvenlySpaced: -1
+  LineBetween: -1
+  Width: 408.25
+  Header LinkToPrevious: False
+  Footer LinkToPrevious: False
+------------------------------
+
+SIGNATURE: ORIGINAL
+S1|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S2|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S3|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S4|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S5|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S6|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S7|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S8|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S9|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S10|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S11|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S12|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S13|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S14|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S15|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S16|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S17|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S18|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S19|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S20|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S21|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S22|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S23|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S24|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S25|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S26|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S27|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S28|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S29|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S30|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S31|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S32|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S33|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S34|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S35|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S36|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S37|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S38|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S39|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S40|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S41|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S42|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S43|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S44|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S45|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S46|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S47|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S48|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S49|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S50|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S51|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S52|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S53|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S54|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S55|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S56|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S57|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S58|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S59|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S60|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S61|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S62|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S63|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S64|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S65|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S66|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S67|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S68|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S69|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S70|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S71|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S72|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S73|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S74|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S75|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S76|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S77|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S78|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S79|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S80|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S81|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S82|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S83|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S84|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S85|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S86|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S87|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S88|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S89|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S90|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S91|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S92|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S93|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S94|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S95|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S96|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S97|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S98|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S99|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S100|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S101|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S102|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S103|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S104|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S105|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S106|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S107|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S108|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S109|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S110|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S111|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S112|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S113|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S114|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S115|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S116|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S117|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S118|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S119|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S120|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S121|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S122|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S123|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S124|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S125|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S126|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S127|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S128|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S129|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S130|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S131|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S132|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S133|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S134|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S135|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S136|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S137|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S138|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S139|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S140|516.25x728.65|54.7,54.7,54.7,43.2|Cols=2
+S141|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S142|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S143|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S144|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S145|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S146|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+S147|516.25x728.65|54.7,54.7,54.7,43.2|Cols=1
+END SIGNATURE
+============================================================

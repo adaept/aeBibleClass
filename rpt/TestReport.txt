@@ -28,9 +28,10 @@ PASS              Copy ()       Test = 13     0             0             CountE
   Rule: Empty paragraphs must not carry a theme color (catches paragraph marks formatted with an inherited theme color from prior content) - CountEmptyParasWithNoThemeColor should return 0
 PASS              Copy ()       Test = 14     0             0             CountWhiteParagraphMarks
   Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0
-PASS              Copy ()       Test = 15     0             0             CountSectionsWithDifferentFirstPage
+FAIL!!!!          Copy ()       Test = 15     1             0             CountSectionsWithDifferentFirstPage
+  >> First hit: (no hint provided by test function)
   Rule: No section has 'Different First Page' set in PageSetup - keeps headers/footers uniform across all sections - CountSectionsWithDifferentFirstPage should return 0
-FAIL!!!!          Copy ()       Test = 16     33824         33822         CountTotalParagraphs
+FAIL!!!!          Copy ()       Test = 16     33827         33822         CountTotalParagraphs
   >> First hit: (no hint provided by test function)
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
@@ -78,8 +79,7 @@ FAIL!!!!          Copy ()       Test = 34     0             117           CountM
 FAIL!!!!          Copy ()       Test = 35     0             117           CountManualLineBreaksAndWithSpace(" ")
   >> First hit: (no hint provided by test function)
   Subset of footnote line breaks preceded by a space - must equal Test 34 to confirm every footnote break has the required leading space - CountManualLineBreaksAndWithSpace(space) should match the expected baseline
-FAIL!!!!          Copy ()       Test = 36     3             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
   Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0
 FAIL!!!!          Copy ()       Test = 37     99            19            CountDocTabOnlyParagraphs
   >> First hit: (no hint provided by test function)
@@ -103,15 +103,14 @@ PASS              Copy ()       Test = 45     0             0             CountU
   Rule: Every visible style is either in the approved-styles SSOT or properly hidden (Priority=99 + QuickStyle=False + UnhideWhenUsed=False) - CountUnapprovedVisibleStyles should return 0
 PASS              Copy ()       Test = 46     0             0             AuditBookHyperlinkStyling
   Rule: Every run styled BookHyperlink has the exact expected font (Carlito 9pt + DarkBlue + single underline); the one-form hyperlink rule integrity check - AuditBookHyperlinkStyling should return 0
-FAIL!!!!          Copy ()       Test = 47     0             3             CountTabOnlyParagraphs("Footer")
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 47     3             3             CountTabOnlyParagraphs("Footer")
   Count of footer paragraphs containing only a tab character - intentional tab-only spacers for footer alignment - CountTabOnlyParagraphs(Footer) should match the expected baseline
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
   Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0
 FAIL!!!!          Copy ()       Test = 49     42            15            CountAuditStyles_ToFile
   >> First hit: 42 styles - see rpt\Style Usage Distribution.txt
   Writes rpt/Style Usage Distribution.txt and returns the Count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline
-FAIL!!!!          Copy ()       Test = 50     -1            147           SummarizeHeaderFooterAuditToFile
+FAIL!!!!          Copy ()       Test = 50     145           147           SummarizeHeaderFooterAuditToFile
   >> First hit: (no hint provided by test function)
   Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section Count - SummarizeHeaderFooterAuditToFile should match the expected baseline
 SKIP!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
@@ -164,14 +163,14 @@ SKIP!!!!          Copy ()       Test = 72     -1            0             HasLef
   Sanity: At least one left-aligned paragraph exists between adjusted printed pages 18-931 (the body-content page range) - returns 1 if body content is present, 0 if missing; OneVersePerPara branch only - HasLeftAlignedParagraph should return 1
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
   Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0
-The Total Runtime: 163.64 seconds
-[2026-05-30 20:50:39] Completed
+The Total Runtime: 404.69 seconds
+[2026-09-11 19:15:59] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
 Application Name: Microsoft Word
 Platform Version: 16.0
-Platform Build: 16.0.20026
-Full Version String: Microsoft Word 16.0 (16.0.20026)
+Platform Build: 16.0.20326
+Full Version String: Microsoft Word 16.0 (16.0.20326)
 Marketing Version: 2506 (Build 18925.20158)
 Source: Microsoft 365 Current Channel, July 2025 update
