@@ -20,7 +20,8 @@ PASS              Copy ()       Test = 9      7             7             CountP
   Detects '. (' sequences - a legacy footnote artifact; the expected Count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline
 PASS              Copy ()       Test = 10     1             1             CountNonBreakingSpaces
   Rule: Non-breaking spaces (^s) in the document - baseline 1 (intentional usage); growth indicates accidental insertion - CountNonBreakingSpaces should match the expected baseline
-PASS              Copy ()       Test = 11     0             0             CountFindNumberDashNumber
+FAIL!!!!          Copy ()       Test = 11     1             0             CountFindNumberDashNumber
+  >> First hit: page 935 : 2023-2026
   Rule: No digit-dash-digit patterns in body text (verse ranges like '12-34' should use en-dash or be spelled differently) - CountFindNumberDashNumber should return 0
 PASS              Copy ()       Test = 12     0             0             CountNumberDashNumberInFootnotes
   Rule: No digit-dash-digit patterns in footnote text (same rule as Test 11, applied to footnotes) - CountNumberDashNumberInFootnotes should return 0
@@ -31,8 +32,7 @@ PASS              Copy ()       Test = 14     0             0             CountW
 FAIL!!!!          Copy ()       Test = 15     1             0             CountSectionsWithDifferentFirstPage
   >> First hit: (no hint provided by test function)
   Rule: No section has 'Different First Page' set in PageSetup - keeps headers/footers uniform across all sections - CountSectionsWithDifferentFirstPage should return 0
-FAIL!!!!          Copy ()       Test = 16     33827         33822         CountTotalParagraphs
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 16     33827         33827         CountTotalParagraphs
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
   Rule: There should be no active hyperlinks as the current main target is print - CountActiveHyperlinks should return 0
@@ -67,10 +67,10 @@ PASS              Copy ()       Test = 30     0             0             CountH
   Count of primary-header paragraphs whose style is NOT TheHeaders - tolerated exceptions; the source comment claiming expected 0 is stale - CountHeaderStyleUsage should match the expected baseline
 PASS              Copy ()       Test = 31     1             1             CountParagraphMarksPerHeaderSection
   Rule: Every primary header has exactly one paragraph mark (function early-exits via MsgBox on any section with more than 1) - CountParagraphMarksPerHeaderSection should return 1
-FAIL!!!!          Copy ()       Test = 32     185           982           CountLinefeed
+FAIL!!!!          Copy ()       Test = 32     191           982           CountLinefeed
   >> First hit: First match: 
   Total manual linefeeds (^l) in body text - paired with Test 33 to verify all are space-preceded - CountLinefeed should match the expected baseline
-FAIL!!!!          Copy ()       Test = 33     185           982           CountLinefeed(" ")
+FAIL!!!!          Copy ()       Test = 33     191           982           CountLinefeed(" ")
   >> First hit: (no hint provided by test function)
   Subset of body linefeeds preceded by a space - must equal Test 32 to confirm every linefeed has the required leading space - CountLinefeed(space) should match the expected baseline
 FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
@@ -81,8 +81,7 @@ FAIL!!!!          Copy ()       Test = 35     0             117           CountM
   Subset of footnote line breaks preceded by a space - must equal Test 34 to confirm every footnote break has the required leading space - CountManualLineBreaksAndWithSpace(space) should match the expected baseline
 PASS              Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
   Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0
-FAIL!!!!          Copy ()       Test = 37     99            19            CountDocTabOnlyParagraphs
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 37     99            99            CountDocTabOnlyParagraphs
   Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline
 FAIL!!!!          Copy ()       Test = 38     145           216           CountEmptyParagraphs
   >> First hit: 145 empty paragraphs - see rpt\EmptyParagraphs.txt
@@ -93,7 +92,7 @@ PASS              Copy ()       Test = 40     0             0             CountP
   Rule: No paragraph mark carries Arial Black 8pt + DarkRed font (catches a specific stray-formatting pattern that escaped the EmphasisRed character style) - CountParagraphMarks_ArialBlackDarkRed should return 0
 PASS              Copy ()       Test = 41     0             0             Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed
   Rule: Any run styled Words of Jesus with Arial Black 8pt DarkRed must also use the EmphasisRed character style (catches red-formatted text that bypassed the SSOT character style) - Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed should return 0
-SKIP!!!!          Copy ()       Test = 42     -1            0             CountBoldFootnotesWordLevel
+PASS              Copy ()       Test = 42     0             0             CountBoldFootnotesWordLevel
   Rule: No word in any Footnote Text paragraph is bold (footnotes use plain formatting; bold belongs in body text only) - CountBoldFootnotesWordLevel should return 0
 PASS              Copy ()       Test = 43     0             0             CountParagraphMarksWithDarkRedFormatting
   Rule: No paragraph mark carries DarkRed color (broader version of Test 40 - catches DarkRed pilcrows at any font/size) - CountParagraphMarksWithDarkRedFormatting should return 0
@@ -107,13 +106,11 @@ PASS              Copy ()       Test = 47     3             3             CountT
   Count of footer paragraphs containing only a tab character - intentional tab-only spacers for footer alignment - CountTabOnlyParagraphs(Footer) should match the expected baseline
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
   Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0
-FAIL!!!!          Copy ()       Test = 49     42            15            CountAuditStyles_ToFile
-  >> First hit: 42 styles - see rpt\Style Usage Distribution.txt
+PASS              Copy ()       Test = 49     42            42            CountAuditStyles_ToFile
   Writes rpt/Style Usage Distribution.txt and returns the Count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline
-FAIL!!!!          Copy ()       Test = 50     145           147           SummarizeHeaderFooterAuditToFile
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 50     145           145           SummarizeHeaderFooterAuditToFile
   Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section Count - SummarizeHeaderFooterAuditToFile should match the expected baseline
-SKIP!!!!          Copy ()       Test = 51     -1            1189          CountAndCreateDefinitionForH2
+PASS              Copy ()       Test = 51     1189          1189          CountAndCreateDefinitionForH2
   Applies KeepWithNext to the Heading 2 style and per-paragraph WidowControl to every H2 paragraph; returns the Count of H2 paragraphs touched - CountAndCreateDefinitionForH2 should match the expected baseline
 PASS              Copy ()       Test = 52     0             0             U+2019 CountContraction("wouldn’t")
   Rule: No instances of the contraction 'wouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
@@ -159,12 +156,40 @@ FAIL!!!!          Copy ()       Test = 70     73            0             U+201C
 FAIL!!!!          Copy ()       Test = 71     15            0             U+201D,U+2019,U+201D CountContraction(["”’”"])
   >> First hit: 1112 You will know that I am God, for you have not walked in
   Rule: No close-double + close-single + close-double quote triplet U+201D U+2019 U+201D (mirror of Test 70 for the closing side of nested quotes) - CountContraction should return 0
-SKIP!!!!          Copy ()       Test = 72     -1            0             HasLeftAlignedParagraph(18, 931)
-  Sanity: At least one left-aligned paragraph exists between adjusted printed pages 18-931 (the body-content page range) - returns 1 if body content is present, 0 if missing; OneVersePerPara branch only - HasLeftAlignedParagraph should return 1
+PASS              Copy ()       Test = 72     0             0             CountStyleParagraphsNotAligned(VerseText, Justify)
+  Rule: No 'VerseText' paragraph is left- or right-aligned - all VerseText must be justified; OneVersePerPara branch only - CountStyleParagraphsNotAligned("VerseText", wdAlignParagraphJustify) should return 0
 PASS              Copy ()       Test = 73     0             0             CountInvisibleCharacters
   Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0
-The Total Runtime: 404.69 seconds
-[2026-09-11 19:15:59] Completed
+PASS              Copy ()       Test = 74     0             0             CountEmptyParagraphsWithInlineContent
+  Integrity: No visually-empty paragraphs carrying inline shapes, fields, or bookmarks - CountEmptyParagraphsWithInlineContent should return 0
+PASS              Copy ()       Test = 75     0             0             CountApprovedStylesWithListParagraphRisk
+  Rule: No approved paragraph style has a non-empty BaseStyle or is linked from a ListTemplate level - guards against the Word List Paragraph numbering-engine hang (EDSG/10-list-paragraph-bug.md) - CountApprovedStylesWithListParagraphRisk should return 0
+PASS              Copy ()       Test = 76     0             0             CountApprovedStylesWithAutoUpdateOn
+  Rule: No approved paragraph style has AutomaticallyUpdate=True (prevents silent style-definition drift when a user modifies a paragraph using the style) - CountApprovedStylesWithAutoUpdateOn should return 0
+FAIL!!!!          Copy ()       Test = 77     1             0             CountApprovedStylesWithUnhideWhenUsedOn
+  >> First hit: Default Paragraph Font : UnhideWhenUsed=True
+  Rule: No approved style has UnhideWhenUsed=True (closes the symmetric gap to Test 45; prevents silent re-surface of an approved style in the gallery when a run touches it, including via paste) - CountApprovedStylesWithUnhideWhenUsedOn should return 0
+FAIL!!!!          Copy ()       Test = 78     1             0             CountApprovedStylesWithWrongPriority
+  >> First hit: Default Paragraph Font : Priority 2 (expected 34)
+  Rule: Every approved style has Priority equal to its 1-based position in GetApprovedStyles() (catches gallery-drag, CopyStylesFromTemplate, or paste-from-elsewhere reordering between PromoteApprovedStyles runs) - CountApprovedStylesWithWrongPriority should return 0
+PASS              Copy ()       Test = 79     0             0             CountNumericOrdinals
+  Rule: No digit-prefixed ordinal suffix (st/nd/rd/th) appears as superscript in body text (e.g. 1st, 2nd, 3rd, 4th) - CountNumericOrdinals should return 0
+PASS              Copy ()       Test = 80     0             0             CountBareEmptyParagraphs
+  Rule: No truly-bare empty paragraphs (pilcrow only, not hosting a Section/Page/Column break - subset of Test 38 filtered to kind=Bare) - CountBareEmptyParagraphs should return 0
+PASS              Copy ()       Test = 81     0             0             CountAuditCharacterStyles_ToFile
+  Presence audit: every approved character style (per GetApprovedStylesByType) is present in the document; writes rpt/Character Style Usage.txt - CountAuditCharacterStyles_ToFile should return 0 (no approved character styles missing)
+SKIP!!!!          Copy ()       Test = 82     -1            31102         CountVerseMarker
+  Count of 'Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountVerseMarker should match the VerseText paragraph baseline (31,102)
+SKIP!!!!          Copy ()       Test = 83     -1            31102         CountChapterVerseMarker
+  Count of 'Chapter Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountChapterVerseMarker should match the VerseText paragraph baseline (31,102)
+PASS              Copy ()       Test = 84     0             0             CountHeaderFooterStyleViolations
+  Rule: header paragraphs use 'TheHeaders' and footer paragraphs use 'TheFooters'; no built-in Header/Footer style remains on any header/footer story incl. orphaned first-page/even-page (writes rpt\HeaderFooterStyleAudit.txt) - CountHeaderFooterStyleViolations should return 0
+PASS              Copy ()       Test = 85     0             0             CountStyleParagraphsNotAligned(PsalmSuperscription, Left)
+  Rule: every 'PsalmSuperscription' paragraph is left-aligned by design (e.g. 'A Psalm by David...') - CountStyleParagraphsNotAligned("PsalmSuperscription", wdAlignParagraphLeft) should return 0
+PASS              Copy ()       Test = 86     0             0             CountStyleParagraphsNotAligned(Psalms BOOK, Left)
+  Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned("Psalms BOOK", wdAlignParagraphLeft) should return 0
+The Total Runtime: 605.28 seconds
+[2026-09-13 22:58:13] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==

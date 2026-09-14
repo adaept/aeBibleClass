@@ -29,8 +29,8 @@ CustomParaAfterH1: 66
 Brief: 66
 DatAuthRef: 198
 Heading 2: 1189
-VerseText: 31103
-Psalms BOOK: 5
+VerseText: 31102
+Psalms BOOK: 6
 PsalmSuperscription: 116
 PsalmAcrostic: 22
 AuthorSectionHead: 3

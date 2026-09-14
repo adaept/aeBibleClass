@@ -52,14 +52,13 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 84
+Private Const MaxTests = 86
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
 Private TestSessionID As String
 Private Result As Long
 Private TestReportFileName As String
-Private testFileNum As Long
 Private Const TestReportFlag As Boolean = True
 Private OneTest As Long  ' Stores the value to run a single test
 Private SkipTestArray As Variant       ' Used for heavy tests to skip
@@ -266,15 +265,16 @@ Private Sub Expected1BasedArray()
         ' Do not make new TestReportFileName for single tests
         Set doc = ActiveDocument
         TestReportFileName = doc.Path & "\rpt\TestReport.txt"
-        ' Open the debug file for writing - this will create a new file each time
-        testFileNum = FreeFile
-        Open TestReportFileName For Output As testFileNum
-        Close testFileNum
+        ' Do NOT truncate here. FlushReportBuf (called once at the end of a
+        ' successful run) opens this path For Output and overwrites it in
+        ' one step - truncating up front meant a run that hung or crashed
+        ' before reaching FlushReportBuf left the file empty instead of
+        ' preserving the previous report.
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83     84)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 99, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83     84 85 86)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 99, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -349,7 +349,13 @@ End Sub
 Private Sub MakeSkipTestArray()
     On Error GoTo PROC_ERR
 
-    SkipTestArray = Array()   'Array(42, 51, 72)
+    ' 82, 83 (CountVerseMarker/CountChapterVerseMarker): confirmed correct
+    ' standalone (RUN_THE_TESTS(82): 162.81s, PASS, 31102=31102) but caused
+    ' runaway memory (2GB+, climbing) when run inside a full suite after
+    ' tests 74-81 - see rvw/Code_review 2026-09-13.md item 7. Skipped here
+    ' by the same convention as the old 42/51/72 entries below; remove
+    ' temporarily to run 82/83 (standalone or full-suite) once root-caused.
+    SkipTestArray = Array(82, 83)   'Array(42, 51, 72)
 
 PROC_EXIT:
     Exit Sub
@@ -486,7 +492,7 @@ Private Sub FlushReportBuf()
         finalPath = TestReportFileName  ' already a full path
     End If
     fileNum = FreeFile
-    Open finalPath For Append As fileNum
+    Open finalPath For Output As fileNum
     Print #fileNum, m_ReportBuf;
     Close fileNum
     m_ReportBuf = ""
@@ -792,6 +798,36 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (71)
             RunTest (72)
             RunTest (73)
+            ' Tests 74-86 run together in a full suite for the first time as
+            ' of this fix (they were previously unreachable - see the
+            ' 2026-09-13 review). DoEvents between them lets Word's message
+            ' pump and COM cleanup keep up across this newly-activated,
+            ' COM-heavy tail instead of letting pressure build unchecked.
+            RunTest (74)
+            DoEvents
+            RunTest (75)
+            DoEvents
+            RunTest (76)
+            DoEvents
+            RunTest (77)
+            DoEvents
+            RunTest (78)
+            DoEvents
+            RunTest (79)
+            DoEvents
+            RunTest (80)
+            DoEvents
+            RunTest (81)
+            DoEvents
+            RunTest (82)
+            DoEvents
+            RunTest (83)
+            DoEvents
+            RunTest (84)
+            DoEvents
+            RunTest (85)
+            DoEvents
+            RunTest (86)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1039,7 +1075,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 71
         GetTestDescription = "Rule: No close-double + close-single + close-double quote triplet U+201D U+2019 U+201D (mirror of Test 70 for the closing side of nested quotes) - CountContraction should return 0"
     Case 72
-        GetTestDescription = "Sanity: At least one left-aligned paragraph exists between adjusted printed pages 18-931 (the body-content page range) - returns 1 if body content is present, 0 if missing; OneVersePerPara branch only - HasLeftAlignedParagraph should return 1"
+        GetTestDescription = "Rule: No 'VerseText' paragraph is left- or right-aligned - all VerseText must be justified; OneVersePerPara branch only - CountStyleParagraphsNotAligned(""VerseText"", wdAlignParagraphJustify) should return 0"
     Case 73
         GetTestDescription = "Rule: No invisible Unicode characters in any story range - zero-width space U+200B, zero-width non-joiner U+200C, zero-width joiner U+200D, BOM U+FEFF, word joiner U+2060 (common paste artifacts) - CountInvisibleCharacters should return 0"
     Case 74
@@ -1064,6 +1100,10 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Count of 'Chapter Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountChapterVerseMarker should match the VerseText paragraph baseline (31,102)"
     Case 84
         GetTestDescription = "Rule: header paragraphs use 'TheHeaders' and footer paragraphs use 'TheFooters'; no built-in Header/Footer style remains on any header/footer story incl. orphaned first-page/even-page (writes rpt\HeaderFooterStyleAudit.txt) - CountHeaderFooterStyleViolations should return 0"
+    Case 85
+        GetTestDescription = "Rule: every 'PsalmSuperscription' paragraph is left-aligned by design (e.g. 'A Psalm by David...') - CountStyleParagraphsNotAligned(""PsalmSuperscription"", wdAlignParagraphLeft) should return 0"
+    Case 86
+        GetTestDescription = "Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned(""Psalms BOOK"", wdAlignParagraphLeft) should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1268,7 +1308,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         m_HintArray(TestNum) = m_lastHint
     Case 72
         If OneVersePerPara Then
-            ResultArray(TestNum) = HasLeftAlignedParagraph(19, 925) ' This is the page boundary of the Bible (no front or end matter counted)
+            ResultArray(TestNum) = CountStyleParagraphsNotAligned("VerseText", wdAlignParagraphJustify)
         m_HintArray(TestNum) = m_lastHint
         End If
     Case 73
@@ -1306,6 +1346,12 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         m_HintArray(TestNum) = m_lastHint
     Case 84
         ResultArray(TestNum) = CountHeaderFooterStyleViolations
+        m_HintArray(TestNum) = m_lastHint
+    Case 85
+        ResultArray(TestNum) = CountStyleParagraphsNotAligned("PsalmSuperscription", wdAlignParagraphLeft)
+        m_HintArray(TestNum) = m_lastHint
+    Case 86
+        ResultArray(TestNum) = CountStyleParagraphsNotAligned("Psalms BOOK", wdAlignParagraphLeft)
         m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
@@ -1481,7 +1527,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountContraction(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 72
         If OneVersePerPara Then
-            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(19, 925)"
+            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleParagraphsNotAligned(VerseText, Justify)"
         End If
     Case 73
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
@@ -1507,6 +1553,10 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountChapterVerseMarker"
     Case 84
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeaderFooterStyleViolations"
+    Case 85
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleParagraphsNotAligned(PsalmSuperscription, Left)"
+    Case 86
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleParagraphsNotAligned(Psalms BOOK, Left)"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1684,7 +1734,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountContraction([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 72
         If OneVersePerPara Then
-            BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(19, 925)"
+            BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleParagraphsNotAligned(VerseText, Justify)"
         End If
     Case 73
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
@@ -1710,6 +1760,10 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountChapterVerseMarker"
     Case 84
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeaderFooterStyleViolations"
+    Case 85
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleParagraphsNotAligned(PsalmSuperscription, Left)"
+    Case 86
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleParagraphsNotAligned(Psalms BOOK, Left)"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -1796,124 +1850,61 @@ PROC_ERR:
 End Function
 
 '====================================================================
-' Function: HasLeftAlignedParagraph
+' Function: CountStyleParagraphsNotAligned
 '
 ' Purpose:
-'   Determines whether at least one LEFT-ALIGNED paragraph exists
-'   between two PRINTED page numbers (inclusive) in the main document
-'   body, using Word's native Find engine for speed and accuracy.
+'   Counts paragraphs of a given style whose Alignment does not match
+'   the expected alignment for that style. Backs the per-style
+'   alignment gates: VerseText must always be justified (slot 72);
+'   PsalmSuperscription and Psalms BOOK are left-aligned by design
+'   (slots 85, 86).
 '
 ' Parameters:
-'   startPage (Long) - Printed page number where the search begins.
-'   endPage   (Long) - Printed page number where the search ends.
+'   StyleName    (String)              - Style.NameLocal to match.
+'   wantAlignment (WdParagraphAlignment) - The alignment that style
+'                                          is expected to have.
 '
 ' Returns:
-'   Long
-'     1  > A left-aligned paragraph exists within the page range.
-'     0  > No left-aligned paragraph exists within the page range.
+'   Long - Count of matching-style paragraphs whose Alignment is not
+'          wantAlignment. Expected 0 for all three callers above.
 '
 ' Behavior:
-'   - Uses Selection.Find (same engine as Ctrl+H).
-'   - Searches forward only and DOES NOT wrap.
-'   - Page comparison is based on ADJUSTED page numbering, so it
-'     correctly handles Roman numerals, restarts, and mixed formats.
-'
-' Performance:
-'   Optimized for very large documents.
-'   Typically executes in < 1 second (Ctrl+H equivalent speed).
-'
-' Limitations / Notes:
-'   - Searches only the Main Text Story (no headers, footers, notes).
-'   - Detects actual paragraph alignment, not style definitions.
-'   - Stops immediately after the first match is found.
-'
+'   Single bounded walk of ActiveDocument.Paragraphs - same shape as
+'   GetMarkerTotals (basVerseStructureAudit.bas) - not a Find-based
+'   scan, so it has no page-navigation dependency.
 '====================================================================
-Private Function HasLeftAlignedParagraph( _
-    ByVal startPage As Long, _
-    ByVal endPage As Long) As Long
+Private Function CountStyleParagraphsNotAligned( _
+    ByVal StyleName As String, _
+    ByVal wantAlignment As WdParagraphAlignment) As Long
 
     On Error GoTo PROC_ERR
 
-    Dim sel As Selection
-    Dim foundPage As Long
-    Dim found As Boolean
+    Dim oPara As Word.Paragraph
+    Dim Count As Long
+    Count = 0
 
-    Set sel = Application.Selection
+    For Each oPara In ActiveDocument.Paragraphs
+        If oPara.style.NameLocal = StyleName Then
+            If oPara.Alignment <> wantAlignment Then
+                Count = Count + 1
+                If m_lastHint = "" Then
+                    m_lastHint = "Page " & oPara.Range.Information(wdActiveEndAdjustedPageNumber) _
+                        & ": " & Left(oPara.Range.Text, 60)
+                End If
+            End If
+        End If
+    Next oPara
 
-    ' 1. Go to START page by PRINTED page number
-    GoToAdjustedPage startPage
-
-    ' 2. Setup paragraph-format-only Find (Ctrl+H equivalent)
-    With sel.Find
-        .ClearFormatting
-        .Text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = True
-        .ParagraphFormat.Alignment = wdAlignParagraphLeft
-    End With
-
-    ' 3. Execute Find
-    found = sel.Find.Execute
-
-    If Not found Then
-        HasLeftAlignedParagraph = 0
-        Exit Function
-    End If
-
-    ' 4. Read PRINTED page number
-    foundPage = sel.Information(wdActiveEndAdjustedPageNumber)
-    'Debug.Print "foundPage = " & foundPage
-
-    ' 5. Compare against end page (printed)
-    If foundPage <= endPage Then
-        HasLeftAlignedParagraph = 1
-        m_lastHint = "Page " & foundPage & ": " _
-            & Left(sel.Paragraphs(1).Range.Text, 60)
-    Else
-        HasLeftAlignedParagraph = 0
-    End If
+    CountStyleParagraphsNotAligned = Count
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.HasLeftAlignedParagraph | Erl: " & Erl _
+    Debug.Print "ERROR in aeBibleClass.CountStyleParagraphsNotAligned | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
 End Function
-
-Private Sub GoToAdjustedPage(ByVal targetPage As Long)
-    On Error GoTo PROC_ERR
-
-    Dim sel As Selection
-    Dim totalPages As Long
-    Dim physPage As Long
-
-    Set sel = Application.Selection
-    totalPages = ActiveDocument.ComputeStatistics(wdStatisticPages)
-
-    ' Navigate by absolute physical page rather than Which:=wdGoToNext -
-    ' without a prior absolute GoTo, Word has no established page reference
-    ' point and wdGoToNext never advances, leaving the adjusted page number
-    ' stuck at 1 regardless of the document's actual page Count. Bounding
-    ' the loop by totalPages also guarantees termination.
-    For physPage = 1 To totalPages
-        sel.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=physPage
-        If sel.Information(wdActiveEndAdjustedPageNumber) = targetPage Then Exit Sub
-    Next physPage
-
-    Err.Raise vbObjectError + 1, , "GoToAdjustedPage: target page " _
-        & targetPage & " not reachable in " & totalPages & " physical pages"
-
-PROC_EXIT:
-    Exit Sub
-PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.GoToAdjustedPage | Erl: " & Erl _
-        & " | Err: " & Err.Number & " | " & Err.Description
-    m_lastFuncError = True
-    Resume PROC_EXIT
-End Sub
 
 '==============================================================================
 ' Function: CountContraction
