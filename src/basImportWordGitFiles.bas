@@ -59,8 +59,14 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
                 intSkipped = intSkipped + 1
             End If
         Else
-            colSkipped.Add strFile & " (ThisDocument)"
-            intSkipped = intSkipped + 1
+            ' ThisDocument is a built-in document module - it cannot be removed
+            ' and re-imported like a normal component (VBComponents.Import errors
+            ' on an existing name). Its CodeModule is replaced in place instead,
+            ' so src\ThisDocument.cls (including its license header) actually
+            ' reaches the live project rather than being silently skipped.
+            ImportThisDocumentFile CStr(strFullPath)
+            Debug.Print "ThisDocument", "code replaced in place", "in Sub ImportAllVBAFiles"
+            intImported = intImported + 1
         End If
     Next strFullPath
 
@@ -122,6 +128,61 @@ PROC_ERR:
         Stop
     Else
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Sub ImportVBAFile", vbCritical, "ImportVBAFile"
+        Resume PROC_EXIT
+    End If
+End Sub
+
+Private Sub ImportThisDocumentFile(ByVal myCodeFile As String)
+    On Error GoTo PROC_ERR
+
+    Dim fso As Object
+    Dim ts As Object
+    Dim strLine As String
+    Dim strBody As String
+    Dim blnBodyStarted As Boolean
+    Dim strTrimmed As String
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If Not fso.FileExists(myCodeFile) Then Exit Sub
+
+    ' The exported .cls text starts with a VBE-managed VERSION/BEGIN/END block
+    ' and Attribute lines - those are component metadata, not CodeModule text,
+    ' and cannot be written back through CodeModule.AddFromString. Skip past
+    ' them and keep everything from Option Explicit onward (license header
+    ' included) as the module body.
+    blnBodyStarted = False
+    Set ts = fso.OpenTextFile(myCodeFile, 1)  ' ForReading
+    Do While Not ts.AtEndOfStream
+        strLine = ts.ReadLine
+        If Not blnBodyStarted Then
+            strTrimmed = LTrim$(strLine)
+            If LCase$(Left$(strTrimmed, 9)) <> "attribute" _
+               And strLine <> "VERSION 1.0 CLASS" _
+               And strLine <> "BEGIN" _
+               And strLine <> "END" _
+               And InStr(strTrimmed, "MultiUse") = 0 Then
+                blnBodyStarted = True
+            End If
+        End If
+        If blnBodyStarted Then strBody = strBody & strLine & vbCrLf
+    Loop
+    ts.Close
+
+    With ThisDocument.VBProject.VBComponents("ThisDocument").CodeModule
+        If .CountOfLines > 0 Then .DeleteLines 1, .CountOfLines
+        If Len(strBody) > 0 Then .AddFromString strBody
+    End With
+
+    Debug.Print "ThisDocument", "import SUCCESS!", "in Sub ImportThisDocumentFile"
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    If Err = 6068 Then
+        MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "ImportThisDocumentFile"
+        Stop
+    Else
+        MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Sub ImportThisDocumentFile", vbCritical, "ImportThisDocumentFile"
         Resume PROC_EXIT
     End If
 End Sub

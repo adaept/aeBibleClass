@@ -274,7 +274,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83     84)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33822, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 19, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 15, 147, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 148, 82, 70, 0, 1, 982, 982, 117, 117, 0, 99, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -349,7 +349,7 @@ End Sub
 Private Sub MakeSkipTestArray()
     On Error GoTo PROC_ERR
 
-    SkipTestArray = Array(42, 51, 72)
+    SkipTestArray = Array()   'Array(42, 51, 72)
 
 PROC_EXIT:
     Exit Sub
@@ -1268,7 +1268,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         m_HintArray(TestNum) = m_lastHint
     Case 72
         If OneVersePerPara Then
-            ResultArray(TestNum) = HasLeftAlignedParagraph(18, 931)
+            ResultArray(TestNum) = HasLeftAlignedParagraph(19, 925) ' This is the page boundary of the Bible (no front or end matter counted)
         m_HintArray(TestNum) = m_lastHint
         End If
     Case 73
@@ -1481,7 +1481,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), UnicodeLabelU & " CountContraction(" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 72
         If OneVersePerPara Then
-            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(18, 931)"
+            Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "HasLeftAlignedParagraph(19, 925)"
         End If
     Case 73
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountInvisibleCharacters"
@@ -1684,7 +1684,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & UnicodeLabelU & " CountContraction([" & """" & UnicodeString & """" & "])"    ' Using [] to delineate unicode string in test output
     Case 72
         If OneVersePerPara Then
-            BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(18, 931)"
+            BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "HasLeftAlignedParagraph(19, 925)"
         End If
     Case 73
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountInvisibleCharacters"
@@ -1868,6 +1868,8 @@ Private Function HasLeftAlignedParagraph( _
     ' 5. Compare against end page (printed)
     If foundPage <= endPage Then
         HasLeftAlignedParagraph = 1
+        m_lastHint = "Page " & foundPage & ": " _
+            & Left(sel.Paragraphs(1).Range.Text, 60)
     Else
         HasLeftAlignedParagraph = 0
     End If
@@ -1885,13 +1887,24 @@ Private Sub GoToAdjustedPage(ByVal targetPage As Long)
     On Error GoTo PROC_ERR
 
     Dim sel As Selection
-    Set sel = Application.Selection
+    Dim totalPages As Long
+    Dim physPage As Long
 
-    sel.HomeKey wdStory
-    Do
-        If sel.Information(wdActiveEndAdjustedPageNumber) = targetPage Then Exit Do
-        sel.GoTo What:=wdGoToPage, Which:=wdGoToNext
-    Loop
+    Set sel = Application.Selection
+    totalPages = ActiveDocument.ComputeStatistics(wdStatisticPages)
+
+    ' Navigate by absolute physical page rather than Which:=wdGoToNext -
+    ' without a prior absolute GoTo, Word has no established page reference
+    ' point and wdGoToNext never advances, leaving the adjusted page number
+    ' stuck at 1 regardless of the document's actual page Count. Bounding
+    ' the loop by totalPages also guarantees termination.
+    For physPage = 1 To totalPages
+        sel.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=physPage
+        If sel.Information(wdActiveEndAdjustedPageNumber) = targetPage Then Exit Sub
+    Next physPage
+
+    Err.Raise vbObjectError + 1, , "GoToAdjustedPage: target page " _
+        & targetPage & " not reachable in " & totalPages & " physical pages"
 
 PROC_EXIT:
     Exit Sub
