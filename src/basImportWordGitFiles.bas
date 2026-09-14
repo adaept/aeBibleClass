@@ -168,6 +168,14 @@ Private Sub ImportThisDocumentFile(ByVal myCodeFile As String)
     Loop
     ts.Close
 
+    ' strBody is built with vbCrLf as a line TERMINATOR (appended after every
+    ' line, including the last), so it always ends with a trailing vbCrLf.
+    ' CodeModule.AddFromString treats that trailing terminator as introducing
+    ' one more (empty) line - left as-is, every import/export round trip
+    ' silently grows the module by one blank line. Strip it so vbCrLf acts
+    ' as a separator instead.
+    If Right$(strBody, 2) = vbCrLf Then strBody = Left$(strBody, Len(strBody) - 2)
+
     With ThisDocument.VBProject.VBComponents("ThisDocument").CodeModule
         If .CountOfLines > 0 Then .DeleteLines 1, .CountOfLines
         If Len(strBody) > 0 Then .AddFromString strBody

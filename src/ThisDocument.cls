@@ -29,4 +29,3 @@ Private Sub Document_Open()
     'ActiveDocument.ActiveWindow.Caption = "Loaded at: " & Now()
 End Sub
 
-
