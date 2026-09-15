@@ -496,6 +496,22 @@ for the Test 71 batch pass rather than reopening this pilot):
   that should become the automated depth-balance tool in the architecture
   assessment below, rather than something caught ad hoc like this.
 
+**🔴 Known blind spot (2026-09-15, neither gap above is currently
+tool-detected):** Test 70/71's census is a **presence check per verse**
+(`docm has the 3-char pattern somewhere` / `WEBU has it somewhere`), not a
+**text-equality check**. Jeremiah 27:8 has the pattern in *both* sources (3
+marks in docm, 4 in WEBU), so the Editorial worklist correctly excludes it -
+"worklist empty" only ever meant "pattern present everywhere WEBU has it,"
+never "docm matches WEBU exactly." Nothing today would catch this
+automatically; it's tracked only as the two ⚪ items above until closed.
+**What would close it** (considered and rejected/accepted below - see the
+"4-mark test?" discussion in the architecture assessment's prep list): not a
+new fixed-pattern `aeBibleClass` test (doesn't generalize past this one
+depth, doesn't localize to a verse, wrong layer - content-fidelity vs.
+document-hygiene); instead, extend `aeRWB`'s `census.mjs` with an **exact
+per-verse text-equality mode** for refs where both sources already show a
+pattern hit - see the new prep-checklist item below.
+
 ### ✅ Verification process (the model for every other edit) - all four steps passed 2026-09-15
 
 1. ✅ `RUN_THE_TESTS(70)` → **75** (was 73).
@@ -652,6 +668,27 @@ Node tooling; keep that boundary deliberate as this continues.
   negative or fails to return to baseline) - operationalizes the "code
   catches this, humans don't" finding above, and doubles as a reusable i18n
   QA tool since the depth logic itself is language-agnostic.
+- ⚪ **Extend `census.mjs` with an exact per-verse text-equality mode**
+  (2026-09-15, higher priority than the item above - smaller, and directly
+  closes a known gap): for refs where both WEBU and docm already show a
+  pattern hit, also diff the *full verse text*, not just pattern presence.
+  Closes the Jeremiah 27:8/27:22 blind spot documented above (docm's 3-mark
+  match vs. WEBU's 4-mark original currently looks "done" to the Editorial
+  worklist because both sides merely *contain* the pattern). **Considered
+  and rejected as a `aeBibleClass` fix:** a new fixed 4-mark `Test 87`/`88`
+  in `aeBibleClass.cls` was considered - rejected because (1) a fixed
+  pattern only catches this one specific depth, not arbitrary nesting depth
+  found later, (2) it returns a document-wide count like Test 70/71 already
+  do, not a verse reference, and (3) content-fidelity-against-an-external-
+  corpus is a different concern than Tests 1-86's self-contained document-
+  hygiene checks - the right layer for this is `aeRWB`'s existing verse-keyed
+  census tooling, not a new VBA test. (If a fixed regression guard is ever
+  still wanted alongside this, it must be **appended** as the next unused
+  test number, e.g. `87`/`88` - inserting between 69 and 70 would force
+  renumbering every test through 86 and break every historical "Test 70"/
+  "Test 71" reference in this doc and elsewhere; `aeBibleClass.cls`'s test
+  dispatch has no execution-order dependency between cases, so there's no
+  technical reason to insert mid-sequence either.)
 - ⚪ Research Paratext's project/USFM interchange and its mobile-app-
   generation track's expected input format, to scope the minimal adapter
   surface needed to feed RWB text into that pipeline without redesigning
