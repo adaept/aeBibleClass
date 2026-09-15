@@ -370,6 +370,63 @@ a follow-up pass through `https://worldenglish.bible/webupdates.php` (the
 WEB/WEBU update changelog) - explicitly **after**, not concurrent with, the
 editing work here. Not scoped further in this plan; revisit when reached.
 
+### WEBU parser - DONE, verified (aeRWB repo, file edits only per [[feedback-aerwb-no-autopush]])
+
+`aeRWB/tools/web-diff/lib.mjs` gained `USFM_BOOK_NAMES` (66-book mapping,
+verified against `rwb.txt`'s exact spellings - "Psalm" singular, "Song of
+Solomon"), `parseUsfmBook`, `mergeUsfmBooks`, `censusPattern`, plus
+`census.mjs` (CLI) and 11 new unit tests (21/21 passing). Verified against
+the real corpus - exactly matches every number already confirmed by hand
+earlier this session (Test 70 pattern: 75 in `engwebu_usfm`, 0 in
+`web.txt`/`rwb.txt`; Test 71 pattern: 63 in `engwebu_usfm`, 35 in
+`web.txt`/`rwb.txt`). `npm run web.census -- "<pattern>"` writes a
+per-verse worklist to `census/` (gitignored, regenerable, matching `diff/`'s
+existing treatment) - this is the "method to see changes before approval"
+for the WEBU side (operator point 1). **Not committed/pushed** - ready for
+review in GitHub Desktop.
+
+### Text equality is not automatic - must be explicitly defined (operator, 2026-09-14)
+
+Before the docm/`rwb.txt`/WEBU three-way comparison can mean anything,
+"identical" has to be a defined, deliberate comparison, not naive string
+`===`. Risks specific to this project that would silently produce wrong
+"changed"/"identical" classifications otherwise:
+
+- **Encoding.** `web.txt`/`rwb.txt` are UTF-8 **with a BOM** (confirmed,
+  `aeRWB/rvw/Code_review 2026-06-16.md` §4). VBA's `FileSystemObject.
+  CreateTextFile(path, True, True)` "Unicode" flag writes **UTF-16LE**, not
+  UTF-8 - using it for a docm dump would produce a file that "looks like
+  text" but fails byte-for-byte comparison against `rwb.txt` for every
+  single line. Any VBA-side writer must use `ADODB.Stream` with
+  `Charset = "utf-8"` instead (see the new `ExportDocmVersesToRWBFormat`
+  below).
+- **Embedded control characters vs. the one-verse-per-line format.** A
+  manual line break (`Chr(11)`) inside a verse's Word `Range.Text`, or the
+  trailing paragraph mark (`Chr(13)`) that `Range.Text` includes at a
+  paragraph's end, would corrupt the `Book C:V<TAB>text` line format if
+  written verbatim (a stray embedded newline mid-line breaks every
+  downstream line-based parser, including `parseBible`'s own "no-tab"
+  anomaly detector). These must be explicitly collapsed to a space, not
+  passed through - and this collapsing is itself a content decision worth
+  documenting, since it means the dump is not a 100%-raw character capture.
+- **Quote characters - the one thing that must NOT be normalized.** Unlike
+  the above, curly vs. straight quotes, and the exact nesting-quote
+  codepoints (U+201C/U+2018/U+201D/U+2019) that this whole investigation is
+  about, must be captured **verbatim** - any cleanup routine reused from
+  elsewhere in this codebase (e.g. `CleanTextForUTF8` in
+  `basUSFM_Export.bas`, used for the unrelated USFM-export path) needs to be
+  checked line-by-line for what it strips before being reused here, since a
+  routine that's safe for USFM export could silently destroy the exact
+  signal this comparison needs. (Checked 2026-09-14: `CleanTextForUTF8`
+  only strips soft hyphens/zero-width chars/control characters below
+  `Chr(32)` other than tab/CR/LF - it does not touch quote characters, so
+  it's safe to reuse as a base layer, but this check needs repeating for
+  any *other* cleanup function considered for this pipeline.)
+
+**Working rule going forward:** any function in this pipeline that
+transforms text must state, in a comment, exactly which characters it
+touches and why - "cleaned" is not a sufficient description on its own.
+
 ### Revised summary table
 
 | Action | When |

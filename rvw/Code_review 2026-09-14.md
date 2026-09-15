@@ -316,6 +316,54 @@ Going forward, before reporting any test as "resolved," verify the baseline
 against `git diff`/`git log`, not just a single live PASS - this file's
 first draft did not, and was wrong on three tests as a result.
 
+### 10. Test 71 decision + `engwebu_usfm` WEBU parser built (aeRWB repo) - PARTIAL
+
+**Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
+now authoritative for the Test 70/71 quote patterns, not just a sanity-check
+reference. Docm currently has 73/15 instances; WEBU has 75/63 - the docm
+(and `rwb.txt`) need editing to close that gap (2 + 48 = 50 verses), and
+`rwb.txt` should become a **generated artifact of the docm** going forward
+rather than hand-tracked against the 2013 `web.txt` baseline. Full detail:
+`rvw/Plan_engwebu_baseline_sync_2026-09-14.md`'s "2026-09-14 decision
+update" section.
+
+**New standing rule (operator):** no `git commit`/`push` in
+`C:\adaept\aeRWB` without the operator reviewing in GitHub Desktop first -
+file edits there are fine, git operations are not. Saved as a durable
+memory (`feedback-aerwb-no-autopush`), since it applies beyond this task.
+
+**Built and verified** (`aeRWB/tools/web-diff`, file edits only, not
+committed): a WEBU USFM parser (`parseUsfmBook`, `USFM_BOOK_NAMES` - 66
+canonical books, verified against `rwb.txt`'s exact spellings) and a
+reusable pattern-census CLI (`census.mjs`, `npm run web.census`). 21/21
+unit tests pass; the census output matches every count already confirmed
+by hand this session (75/0/0 and 63/35/35 for the two quote patterns across
+WEBU/`web.txt`/`rwb.txt`).
+
+**Open thread:** the census can currently only compare WEBU against
+`web.txt`/`rwb.txt` - it has no view into the docm's *current* text, so it
+can't yet show which of WEBU's 63 Test-71 locations the docm already has
+vs. still needs. That requires a docm-side verse dump (see item 11).
+
+### 11. Docm verse dump for the RWB-format comparison - IN PROGRESS
+
+Per operator: needed a machine-readable UTF-8 dump of the docm's current
+verse text, in `rwb.txt`'s exact format (`Book Chapter:Verse<TAB>text`), to
+close the gap from item 10. Also per operator: document explicitly that
+**"text != text unless defined"** - see the plan doc's new "Text equality is
+not automatic" section for the specific encoding/format risks (UTF-8 BOM,
+`FileSystemObject`'s "Unicode" flag actually being UTF-16LE, embedded
+control characters corrupting the one-verse-per-line format) and the
+explicit rule that quote characters must NOT be normalized by whatever
+writes this file, since they're the entire subject of the comparison.
+
+Reusing existing infrastructure rather than reimplementing: `basUSFM_Export.
+bas`'s `TryParseChapterVerseFromStyles` (chapter/verse-marker-style
+extraction) made `Public` for cross-module reuse, and
+`aeBibleCitationClass.GetCanonicalBookTable()` for correct book-name
+spelling (by tracking a running Heading-1 counter through canonical book
+order, rather than trying to reformat the docm's ALL-CAPS heading text).
+
 ## Carried forward from 2026-06-01 (not reverified this session)
 
 Unchanged from the 2026-09-13 arc - see
