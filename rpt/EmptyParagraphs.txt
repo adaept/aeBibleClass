@@ -140,7 +140,7 @@ page	paragraph_idx	kind	prev_snippet
 931	33629	SBNP	2221 The grace of the Lord Jesus Christ be with all the sain
 932	33633	SBNP	Bible Concordance
 934	33649	SBNP	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
-935	33662	SBNP	* Biblica Open Bible Maps, © 2023-2026 Biblica, Inc. This w
+935	33662	SBNP	* Biblica Open Bible Maps, © 2023–2026 Biblica, Inc. This w
 937	33665	PBB	
 944	33675	SBNP	An Introduction
 966	33825	SBNP	Find out for yourself how profoundly God is speaking to mank
