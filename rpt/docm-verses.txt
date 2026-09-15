@@ -507,7 +507,7 @@ Genesis 20:9	 Then Abimelech called Abraham, and said to him, “What have you
 Genesis 20:10	 Abimelech said to Abraham, “What did you see, that you have done this thing?”
 Genesis 20:11	 Abraham said, “Because I thought, ‘Surely the fear of God is not in this place. They will kill me for my wife’s sake.’
 Genesis 20:12	 Besides, she is indeed my sister, the daughter of my father, but not the daughter of my mother; and she became my wife.
-Genesis 20:13	 When God caused me to wander from my father’s house, I said to her, ‘This is your kindness which you shall show to me. Everywhere that we go, say of me, “He is my brother.”
+Genesis 20:13	 When God caused me to wander from my father’s house, I said to her, ‘This is your kindness which you shall show to me. Everywhere that we go, say of me, “He is my brother.”’”
 Genesis 20:14	 Abimelech took sheep and cattle, male servants and female servants, and gave them to Abraham, and restored Sarah, his wife, to him.
 Genesis 20:15	 Abimelech said, “Behold, my land is before you. Dwell where it pleases you.”
 Genesis 20:16	 To Sarah he said, “Behold, I have given your brother a thousand pieces of silver. Behold, it is for you a covering of the eyes to all that are with you. In front of all you are vindicated.”
@@ -1702,7 +1702,7 @@ Exodus 7:14	 God said to Moses, “Pharaoh’s heart is stubborn. He refuses t
 Exodus 7:15	 Go to Pharaoh in the morning. Behold, he is going out to the water. You shall stand by the river’s bank to meet him. You shall take the rod which was turned to a serpent in your hand.
 Exodus 7:16	 You shall tell him, ‘God, the God of the Hebrews, has sent me to you, saying, “Let my people go, that they may serve me in the wilderness. Behold, until now you have not listened.”
 Exodus 7:17	 God says, “In this you shall know that I am God. Behold: I will strike with the rod that is in my hand on the waters which are in the river, and they shall be turned to blood.
-Exodus 7:18	 The fish that are in the river will die and the river will become foul. The Egyptians will loathe to drink water from the river.”
+Exodus 7:18	 The fish that are in the river will die and the river will become foul. The Egyptians will loathe to drink water from the river.”’”
 Exodus 7:19	 God said to Moses, “Tell Aaron, ‘Take your rod, and stretch out your hand over the waters of Egypt, over their rivers, over their streams, and over their pools, and over all their ponds of water, that they may become blood. There will be blood throughout all the land of Egypt, both in vessels of wood and in vessels of stone.’”
 Exodus 7:20	 Moses and Aaron did so, as God commanded; and he lifted up the rod, and struck the waters that were in the river, in the sight of Pharaoh, and in the sight of his servants; and all the waters that were in the river were turned to blood.
 Exodus 7:21	 The fish that were in the river died. The river became foul. The Egyptians could not drink water from the river. The blood was throughout all the land of Egypt.
@@ -1713,7 +1713,7 @@ Exodus 7:25	 Seven days were fulfilled, after God had struck the river.
 Exodus 8:1	 God spoke to Moses, “Go in to Pharaoh, and tell him, ‘This is what God says, “Let my people go, that they may serve me.
 Exodus 8:2	 If you refuse to let them go, behold, I will plague all your borders with frogs.
 Exodus 8:3	 The river will swarm with frogs, which will go up and come into your house, and into your bedroom, and on your bed, and into the house of your servants, and on your people, and into your ovens, and into your kneading troughs.
-Exodus 8:4	 The frogs shall come up both on you, and on your people, and on all your servants.”
+Exodus 8:4	 The frogs shall come up both on you, and on your people, and on all your servants.”’”
 Exodus 8:5	 God said to Moses, “Tell Aaron, ‘Stretch out your hand with your rod over the rivers, over the streams, and over the pools, and cause frogs to come up on the land of Egypt.’”
 Exodus 8:6	 Aaron stretched out his hand over the waters of Egypt; and the frogs came up, and covered the land of Egypt.
 Exodus 8:7	 The magicians did the same thing with their enchantments, and brought up frogs on the land of Egypt.
@@ -1732,7 +1732,7 @@ Exodus 8:19	 Then the magicians said to Pharaoh, “This is God’s finger;”
 Exodus 8:20	 God said to Moses, “Rise up early in the morning, and stand before Pharaoh; behold, he comes out to the water; and tell him, ‘This is what God says, “Let my people go, that they may serve me.
 Exodus 8:21	 Else, if you will not let my people go, behold, I will send swarms of flies on you, and on your servants, and on your people, and into your houses. The houses of the Egyptians shall be full of swarms of flies, and also the ground they are on.
 Exodus 8:22	 I will set apart in that day the land of Goshen, in which my people dwell, that no swarms of flies shall be there, to the end you may know that I am God on the earth.
-Exodus 8:23	 I will put a division between my people and your people. This sign shall happen by tomorrow.”
+Exodus 8:23	 I will put a division between my people and your people. This sign shall happen by tomorrow.”’”
 Exodus 8:24	 God did so; and there came grievous swarms of flies into the house of Pharaoh, and into his servants’ houses. In all the land of Egypt the land was corrupted by reason of the swarms of flies.
 Exodus 8:25	 Pharaoh called for Moses and for Aaron, and said, “Go, sacrifice to your God in the land!”
 Exodus 8:26	 Moses said, “It is not appropriate to do so; for we shall sacrifice the abomination of the Egyptians to the Lord our God. Behold, if we sacrifice the abomination of the Egyptians before their eyes, will they not stone us?
@@ -1745,7 +1745,7 @@ Exodus 8:32	 Pharaoh hardened his heart this time also, and he did not let the
 Exodus 9:1	 Then God said to Moses, “Go in to Pharaoh, and tell him, ‘This is what God, the God of the Hebrews, says: “Let my people go, that they may serve me.
 Exodus 9:2	 For if you refuse to let them go, and hold them still,
 Exodus 9:3	 behold, God’s hand is on your livestock which are in the field, on the horses, on the donkeys, on the camels, on the herds, and on the flocks with a very grievous pestilence.
-Exodus 9:4	 God will make a distinction between the livestock of Israel and the livestock of Egypt; and nothing shall die of all that belongs to the children of Israel.”
+Exodus 9:4	 God will make a distinction between the livestock of Israel and the livestock of Egypt; and nothing shall die of all that belongs to the children of Israel.”’”
 Exodus 9:5	 God appointed a set time, saying, “Tomorrow God shall do this thing in the land.”
 Exodus 9:6	 God did that thing on the next day; and all the livestock of Egypt died, but of the livestock of the children of Israel, not one died.
 Exodus 9:7	 Pharaoh sent, and, behold, there was not so much as one of the livestock of the Israelites dead. But the heart of Pharaoh was stubborn, and he did not let the people go.
@@ -1760,7 +1760,7 @@ Exodus 9:15	 For now I would have stretched out my hand, and struck you and yo
 Exodus 9:16	 but indeed for this cause I have made you stand: to show you my power, and that my name may be declared throughout all the earth,
 Exodus 9:17	 because you still exalt yourself against my people, that you will not let them go.
 Exodus 9:18	 Behold, tomorrow about this time I will cause it to rain a very grievous hail, such as has not been in Egypt since the day it was founded even until now.
-Exodus 9:19	 Now therefore command that all of your livestock and all that you have in the field be brought into shelter. The hail will come down on every man and animal that is found in the field, and is not brought home, and they will die.”
+Exodus 9:19	 Now therefore command that all of your livestock and all that you have in the field be brought into shelter. The hail will come down on every man and animal that is found in the field, and is not brought home, and they will die.”’”
 Exodus 9:20	 Those who feared God’s word among the servants of Pharaoh made their servants and their livestock flee into the houses.
 Exodus 9:21	 Whoever did not respect God’s word left his servants and his livestock in the field.
 Exodus 9:22	 God said to Moses, “Stretch out your hand toward the sky, that there may be hail in all the land of Egypt, on man, and on animal, and on every herb of the field, throughout the land of Egypt.”
@@ -4043,7 +4043,7 @@ Numbers 11:16	 God said to Moses, “Gather to me seventy men of the elders of
 Numbers 11:17	 I will come down and talk with you there. I will take of the Spirit which is on you, and will put it on them; and they shall bear the burden of the people with you, that you do not bear it yourself alone.
 Numbers 11:18	 “Say to the people, ‘Sanctify yourselves in preparation for tomorrow, and you will eat meat; for you have wept in the ears of God, saying, “Who will give us meat to eat? For it was well with us in Egypt.” Therefore God will give you meat, and you will eat.
 Numbers 11:19	 You will not eat just one day, or two days, or five days, or ten days, or twenty days,
-Numbers 11:20	 but a whole month, until it comes out at your nostrils, and it is loathsome to you; because you have rejected God who is among you, and have wept before him, saying, “Why did we come out of Egypt?”
+Numbers 11:20	 but a whole month, until it comes out at your nostrils, and it is loathsome to you; because you have rejected God who is among you, and have wept before him, saying, “Why did we come out of Egypt?”’”
 Numbers 11:21	 Moses said, “The people, among whom I am, are six hundred thousand men on foot; and you have said, ‘I will give them meat, that they may eat a whole month.’
 Numbers 11:22	 Shall flocks and herds be slaughtered for them, to be sufficient for them? Shall all the fish of the sea be caught for them, to be sufficient for them?”
 Numbers 11:23	 God said to Moses, “Has God’s hand grown short? Now you will see whether my word will happen to you or not.”
@@ -7275,7 +7275,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Samuel 2:33	 The man of yours whom I do not cut off from my altar will consume your eyes and grieve your heart. All the increase of your house will die in the flower of their age.
 1 Samuel 2:34	 This will be the sign to you that will come on your two sons, on Hophni and Phinehas: in one day they will both die.
 1 Samuel 2:35	 I will raise up a faithful priest for myself who will do according to that which is in my heart and in my mind. I will build him a sure house. He will walk before my anointed forever.
-1 Samuel 2:36	 It will happen that everyone who is left in your house will come and bow down to him for a piece of silver and a loaf of bread, and will say, “Please put me into one of the priests’ offices, that I may eat a morsel of bread.”
+1 Samuel 2:36	 It will happen that everyone who is left in your house will come and bow down to him for a piece of silver and a loaf of bread, and will say, “Please put me into one of the priests’ offices, that I may eat a morsel of bread.”’”
 1 Samuel 3:1	 The child Samuel ministered to God before Eli. God’s word was rare in those days. There were not many visions, then.
 1 Samuel 3:2	 At that time, when Eli was laid down in his place (now his eyes had begun to grow dim, so that he could not see),
 1 Samuel 3:3	 and the lamp of God had not yet gone out, and Samuel had laid down in God’s temple where God’s ark was,
@@ -8195,7 +8195,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 7:13	 He will build a house for my name, and I will establish the throne of his kingdom forever.
 2 Samuel 7:14	 I will be his father, and he will be my son. If he commits iniquity, I will chasten him with the rod of men, and with the stripes of the children of men;
 2 Samuel 7:15	 but my loving kindness will not depart from him, as I took it from Saul, whom I put away before you.
-2 Samuel 7:16	 Your house and your kingdom will be made sure forever before you. Your throne will be established forever.”
+2 Samuel 7:16	 Your house and your kingdom will be made sure forever before you. Your throne will be established forever.”’”
 2 Samuel 7:17	 Nathan spoke to David all these words, and according to all this vision.
 2 Samuel 7:18	 Then David the king went in, and sat before God; and he said, “Who am I, Lord God, and what is my house, that you have brought me this far?
 2 Samuel 7:19	 This was yet a small thing in your eyes, Lord God; but you have spoken also of your servant’s house for a great while to come; and this among men, Lord God!
@@ -8387,7 +8387,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 14:29	 Then Absalom sent for Joab, to send him to the king, but he would not come to him. Then he sent again a second time, but he would not come.
 2 Samuel 14:30	 Therefore he said to his servants, “Behold, Joab’s field is near mine, and he has barley there. Go and set it on fire.” So Absalom’s servants set the field on fire.
 2 Samuel 14:31	 Then Joab arose, and came to Absalom to his house, and said to him, “Why have your servants set my field on fire?”
-2 Samuel 14:32	 Absalom answered Joab, “Behold, I sent to you, saying, ‘Come here, that I may send you to the king, to say, “Why have I come from Geshur? It would be better for me to be there still. Now therefore let me see the king’s face, and if there is iniquity in me, let him kill me.”
+2 Samuel 14:32	 Absalom answered Joab, “Behold, I sent to you, saying, ‘Come here, that I may send you to the king, to say, “Why have I come from Geshur? It would be better for me to be there still. Now therefore let me see the king’s face, and if there is iniquity in me, let him kill me.”’”
 2 Samuel 14:33	 So Joab came to the king, and told him; and when he had called for Absalom, he came to the king, and bowed himself on his face to the ground before the king; and the king kissed Absalom.
 2 Samuel 15:1	 After this, Absalom prepared a chariot and horses for himself, and fifty men to run before him.
 2 Samuel 15:2	 Absalom rose up early, and stood beside the way of the gate. When any man had a suit which should come to the king for judgment, then Absalom called to him, and said, “What city are you from?” He said, “Your servant is of one of the tribes of Israel.”
@@ -8703,7 +8703,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 24:9	 Joab gave up the sum of the counting of the people to the king: and there were in Israel eight hundred thousand valiant men who drew the sword; and the men of Judah were five hundred thousand men.
 2 Samuel 24:10	 David’s heart struck him after he had counted the people. David said to God, “I have sinned greatly in that which I have done. But now, God, put away, I beg you, the iniquity of your servant; for I have done very foolishly.”
 2 Samuel 24:11	 When David rose up in the morning, God’s word came to the prophet Gad, David’s seer, saying,
-2 Samuel 24:12	 “Go and speak to David, ‘God says, “I offer you three things. Choose one of them, that I may do it to you.”
+2 Samuel 24:12	 “Go and speak to David, ‘God says, “I offer you three things. Choose one of them, that I may do it to you.”’”
 2 Samuel 24:13	 So Gad came to David, and told him, and said to him, “Shall seven years of famine come to you in your land? Or will you flee three months before your foes while they pursue you? Or shall there be three days’ pestilence in your land? Now answer, and consider what answer I shall return to him who sent me.”
 2 Samuel 24:14	 David said to Gad, “I am in distress. Let us fall now into God’s hand; for his mercies are great. Let me not fall into man’s hand.”
 2 Samuel 24:15	 So God sent a pestilence on Israel from the morning even to the appointed time; and seventy thousand men died of the people from Dan even to Beersheba.
@@ -19590,7 +19590,7 @@ Jeremiah 27:7	 All the nations will serve him, his son, and his son’s son, u
 Jeremiah 27:8	 “‘“It will happen that I will punish the nation and the kingdom which will not serve the same Nebuchadnezzar king of Babylon, and that will not put their neck under the yoke of the king of Babylon,’ says God, ‘with the sword, with famine, and with pestilence, until I have consumed them by his hand.
 Jeremiah 27:9	 But as for you, do not listen to your prophets, to your diviners, to your dreams, to your soothsayers, or to your sorcerers, who speak to you, saying, “You shall not serve the king of Babylon;”
 Jeremiah 27:10	 for they prophesy a lie to you, to remove you far from your land, so that I would drive you out, and you would perish.
-Jeremiah 27:11	 But the nation that brings their neck under the yoke of the king of Babylon and serves him, that nation I will let remain in their own land,’ says God; ‘and they will till it and dwell in it.’”
+Jeremiah 27:11	 But the nation that brings their neck under the yoke of the king of Babylon and serves him, that nation I will let remain in their own land,’ says God; ‘and they will till it and dwell in it.’”’”
 Jeremiah 27:12	 I spoke to Zedekiah king of Judah according to all these words, saying, “Bring your necks under the yoke of the king of Babylon, and serve him and his people, and live.
 Jeremiah 27:13	 Why will you die, you and your people, by the sword, by the famine, and by the pestilence, as God has spoken concerning the nation that will not serve the king of Babylon?
 Jeremiah 27:14	 Do not listen to the words of the prophets who speak to you, saying, ‘You shall not serve the king of Babylon;’ for they prophesy a lie to you.

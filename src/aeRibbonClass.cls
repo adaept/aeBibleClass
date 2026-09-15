@@ -819,7 +819,10 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     ' Multiple deferreds from rapid typing all read m_pendingVerse at execution time;
     ' only the first fires a navigation, subsequent ones are no-ops (m_pendingVerse = 0).
     On Error GoTo PROC_ERR
-    Debug.Print "OnChapterChanged: text=""" & text & """ at " & TimestampMs()   ' TEMP diagnostic 2026-09-14 - remove once focus-escape bug is resolved
+    ' Confirmed 2026-09-15: fires correctly on each valid chapter commit -
+    ' commented out to stop Immediate-window noise; uncomment to resume the
+    ' focus-escape investigation.
+    'Debug.Print "OnChapterChanged: text=""" & text & """ at " & TimestampMs()
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim projNameCh As String
     projNameCh = Application.ActiveDocument.VBProject.Name
@@ -954,7 +957,10 @@ Public Sub OnVerseChanged(control As IRibbonControl, text As String)
     ' onChange fires on Enter and on each keystroke.
     ' Validates and stores m_currentVerse. Navigation fires from OnGoClick only (#600).
     On Error GoTo PROC_ERR
-    Debug.Print "OnVerseChanged: text=""" & text & """ at " & TimestampMs()   ' TEMP diagnostic 2026-09-14 - remove once focus-escape bug is resolved
+    ' Confirmed 2026-09-15: fires correctly on each valid verse commit -
+    ' commented out to stop Immediate-window noise; uncomment to resume the
+    ' focus-escape investigation.
+    'Debug.Print "OnVerseChanged: text=""" & text & """ at " & TimestampMs()
     Dim projNameVs As String
     projNameVs = Application.ActiveDocument.VBProject.Name
     If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
