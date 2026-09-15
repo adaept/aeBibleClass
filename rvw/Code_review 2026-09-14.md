@@ -1,0 +1,235 @@
+# Code review - 2026-09-14
+
+This file continues the 2026-09-13 arc's open item 8 (the first complete
+`TestReport.txt` FAIL inventory) and adds new findings from this session:
+quick-fixing most of that inventory, a real counting-loop bug discovered and
+fixed along the way, a new reference-corpus investigation for the
+nested-quote tests, and two ribbon navigation bugs (one fixed, one parked
+pending the Office.js task-pane migration). See
+[`Code_review 2026-09-13.md`](Code_review%202026-09-13.md) for the prior
+arc's own items (1-8) and its own carry-forward pointer back to 2026-06-01.
+
+## This session's items
+
+### 1. FAIL inventory follow-up (from 2026-09-13 item 8) - PARTIAL, 11 of 16 resolved
+
+Of the 16 FAILs in the first complete `TestReport.txt` (2026-09-13):
+
+**Resolved and confirmed PASS this session:**
+
+- **Test 11** (`CountFindNumberDashNumber`) - the single digit-dash-digit hit
+  (page 935, "2023-2026") was corrected; now 0.
+- **Tests 27/28/29** (`CheckAllHeaders(NotEmpty)`,
+  `CountTabFollowedByParagraphMarkInHeaders`,
+  `CountParagraphsWithoutTabInHeaders`) - stale baselines (148/82/70).
+  `doc.Sections.Count` is now 145 (down from the baseline's assumed 148) -
+  confirmed via new diagnostic hints (see item 2) that no headers had gone
+  empty; the drift was a real section-count change. Rebaselined to
+  145/79/66 - the numbers are internally consistent (79 + 66 = 145, and 66
+  matches the book count for title-only headers).
+- **Tests 34/35** (`CountManualLineBreaksAndWithSpace`) - found 0 manual
+  line breaks in footnotes against a baseline of 117; confirmed the breaks
+  are legitimately gone (not a detection bug) and rebaselined to 0.
+- **Test 55** (`CountContraction("i'm")`) - 16 real instances, hand-corrected
+  in the document to uncontracted forms; now 0.
+- **Test 64** (`CountContraction("it's")`) - baseline was already correctly
+  at 1 (a legitimate false-positive: "Spirit's" ends in the same 4
+  characters as the contraction "it's"); confirmed still accurate.
+- **Test 70** (`CountContraction` nested open-quote triplet
+  U+201C U+2018 U+201C) - see item 3 (`engwebu_usfm` investigation) and item
+  4 (a real counting bug found and fixed along the way). Rebaselined to 73,
+  matching the WEBU reference corpus (75) closely enough to confirm this is
+  a legitimate content baseline, not a formatting bug.
+- **Tests 77/78** (`CountApprovedStylesWithUnhideWhenUsedOn`,
+  `CountApprovedStylesWithWrongPriority`) - same root cause, `Default
+  Paragraph Font` had `UnhideWhenUsed=True` and `Priority=2` (expected 34).
+  Fixed via `PromoteApprovedStyles` + explicit `UnhideWhenUsed=False`; both
+  now PASS at 0.
+
+**Investigated, decision needed (not simply "fixed"):**
+
+- **Test 71** (`CountContraction` nested close-quote triplet
+  U+201D U+2019 U+201D) - see item 3 below. Baseline is currently still 0
+  (placeholder); the docm's real count is 15, but that number's legitimacy
+  is now in question pending an operator decision.
+
+**Still open, not addressed this session** (flagged in the original
+inventory as needing real investigation, not a quick rebaseline):
+
+- **Test 15** (`CountSectionsWithDifferentFirstPage`) - 1 section has
+  "Different First Page" set; a quick document fix, just not reached this
+  session.
+- **Tests 32/33** (`CountLinefeed` / `CountLinefeed(" ")`) - large gap (191
+  found vs. 982 expected) - needs real investigation, not a rebaseline.
+- **Test 38** (`CountEmptyParagraphs`) - large gap (145 vs. 216) - same,
+  needs investigation.
+
+### 2. Diagnostic hint improvements for the header tests (Tests 27/28/29) - DONE
+
+`CheckAllHeaders`, `CountTabFollowedByParagraphMarkInHeaders`, and
+`CountParagraphsWithoutTabInHeaders` (`src/aeBibleClass.cls`) all printed a
+"first hit" hint that, on investigation, was reporting the *normal/expected*
+case (e.g. "first non-empty header") rather than anything diagnostic of a
+baseline drift. Reworked:
+
+- `CheckAllHeaders`: hint now always reports the first *empty* header
+  (the actual anomaly, regardless of which mode - `Empty` or `NotEmpty` -
+  is running), with a page number (`wdActiveEndAdjustedPageNumber`). When no
+  empty header exists at all, falls back to reporting
+  `doc.Sections.Count` / empty / non-empty totals directly, which is what
+  actually explained the Test 27 drift (item 1).
+- `CountTabFollowedByParagraphMarkInHeaders` /
+  `CountParagraphsWithoutTabInHeaders`: replaced the per-match "first hit"
+  hint (also just the normal case) with a totals summary
+  (`doc.Sections.Count` + match count), consistent with the same "the
+  matched case is normal, the count is the fact that matters" reasoning as
+  `CheckAllHeaders`.
+
+All page-number hints added use `wdActiveEndAdjustedPageNumber` (not
+`wdActiveEndPageNumber`), matching the project's existing convention
+(`CountStyleParagraphsNotAligned`, `FormatEmptyRunHint`) - the document has
+front-matter page renumbering, so the adjusted variant is the one that
+matches what's actually printed on the page.
+
+### 3. `engwebu_usfm` reference corpus + Test 70/71 baseline investigation - PARTIAL
+
+A new WEBU (World English Bible Updated) USFM+Strong's-numbers corpus was
+dropped in at `engwebu_usfm/` (Haiola/eBible.org, 12 Sep 2026) to derive a
+real expected baseline for Tests 70/71 instead of the placeholder `0`.
+Full investigation and phased plan: [`Plan_engwebu_baseline_sync_2026-09-14.md`](Plan_engwebu_baseline_sync_2026-09-14.md).
+`.gitignore` updated to exclude `/engwebu_usfm` (large, third-party,
+periodically-refreshed source drop).
+
+**Key finding (Test 71, decision needed):** spot-checking three of
+`rwb.txt`'s 35 nested-close-quote instances (Genesis 20:13, Exodus 7:18,
+1 Kings 12:24) against the current docm showed all three have been
+deliberately flattened from a triple-nested closing quote down to a single
+closing mark - a real, consistent editorial simplification, not a detection
+bug. This means the docm's current count of 15 might not be "the correct
+baseline" so much as **unflattened backlog** - i.e. the same simplification
+may still need to reach those 15 remaining verses, and the true target
+could be 0, same as the original placeholder assumed, now for a documented
+reason. **Operator decision needed** before touching Test 71's baseline.
+
+### 4. `CountInStory` multi-match counting bug - introduced and fixed this session - DONE
+
+While adding a page-number hint to `CountInStory` (`src/aeBibleClass.cls`,
+shared by the whole `CountContraction` family, Tests 52-71), the hint was
+initially written to call `rng.Information(wdActiveEndAdjustedPageNumber)`
+on the **live search range**, inside the `Do While rng.Find.Execute` loop.
+This forces a full document repagination; doing that mid-loop corrupts
+`Find`'s range state on a 33,800+ paragraph document, silently truncating
+the match loop to 1 hit. Went unnoticed initially because Tests 55/64 only
+had 0-1 real matches by the time of testing (the fixed text had already
+brought Test 55 to 0, and Test 64 was always a single match) - Test 70 (73
+real matches) was the first real exercise of the "keep finding more"
+loop path since the change, and it broke (`Result=1` instead of `73`).
+
+**Fix:** capture the first hit as a detached `.Duplicate()` range during the
+loop (cheap, no repagination), and defer the `Information()` call to a
+single fresh-range query *after* the Find loop completes. Confirmed fixed:
+Test 70 now correctly counts all 73 instances (25.47s runtime, expected for
+a full-document Find scan of this size).
+
+**Lesson for future hint/diagnostic additions:** never call
+`Range.Information(wdActiveEnd(Adjusted)PageNumber)` on a range that's
+actively being used as a `Find` anchor inside a loop on a large document -
+duplicate first, query after.
+
+### 5. `ThisDocument.cls` blank-line growth bug - DONE, committed (`4d603cf`)
+
+`ImportThisDocumentFile` (`src/basImportWordGitFiles.bas`) built its
+reconstructed module body with `vbCrLf` as a line *terminator* (appended
+after every line including the last), which `CodeModule.AddFromString`
+read as one extra empty line on every import - the module silently grew by
+one blank line per import/export round trip (`ThisDocument.cls` had
+accumulated 6 stray trailing blank lines by the time this was caught).
+Fixed by stripping the trailing terminator before `AddFromString`; verified
+stable through a fresh import/export cycle. Full detail already committed
+in `4d603cf`.
+
+### 6. Book-combo abbreviation matching bug (`aeRibbonClass.OnBookChanged`) - DONE
+
+Typing a numbered-book abbreviation without a space (e.g. `"1kgs"`) failed
+to populate the book combo, while `"1 kgs"` (with a space) worked. Root
+cause: `OnBookChanged` (`src/aeRibbonClass.cls`) already normalizes
+digit-prefixed input via `NormalizeBookInput` (turns `"1kgs"` into
+`"1 KGS"`), but was resolving the alias against the raw, un-normalized
+`text` parameter instead of the normalized `pattern` - so it only worked for
+numbered books that happened to have a separately hand-added no-space alias
+(`"1KI"`, `"1SA"`), not generically. Fixed by resolving against `pattern`
+instead of `text` - this fixes every numbered book, not just the ones with
+a lucky pre-existing alias.
+
+### 7. Ribbon focus-escape bug ("Tab after committing chapter lands in the document") - PARKED
+
+**Repro:** open a new document; immediately type `gen` Tab Tab Tab `20` Tab
+(no delay, no window switch). The final Tab, which should move focus from
+`cmbChapter` to `cmbVerse`, instead lands in the document body.
+**Workaround:** switching to the VBE and back before starting avoids it
+entirely; a single extra Tab/click after the fact recovers normally.
+
+**Three hypotheses tested and ruled out** (each via a live repro +
+Immediate-window log, not guesswork):
+
+1. `CaptureHeading1s`'s full-paragraph rescan blocking `OnBookChanged` -
+   ruled out; the log showed `"cache valid (no edits since last scan)"`, no
+   rescan occurred.
+2. `m_ribbon.Invalidate`'s scheduled repaint still pending when typing
+   starts (added a `DoEvents` after it in `OnRibbonLoad`) - ruled out; bug
+   persisted identically.
+3. `OnChapterChanged` missing the `InvalidateControl` call that
+   `OnBookChanged` has for its own downstream control - ruled out; added the
+   equivalent calls for `CTRL_VERSE`/`CTRL_PREV_VERSE`/`CTRL_NEXT_VERSE`,
+   bug persisted identically.
+
+**Decisive finding:** added a temporary `WithEvents Application` +
+`WindowSelectionChange` hook. It **never fires** during the entire repro,
+even after visually confirming focus landed in the document. This means
+Word's `Selection` object never moves - the escaping Tab is not being
+processed as document input (no character insertion, no cursor move); it's
+a pure Win32/OLE keyboard-focus handoff from the ribbon's hosted `comboBox`
+control to the document window. Every relevant `Get*Enabled` callback in
+the chain (`GetChapterEnabled`, `GetPrevChapterEnabled`,
+`GetNextChapterEnabled`, `GetVerseEnabled`, etc.) is already hardcoded to
+always return `True` (from past fixes for this exact bug class), ruling out
+a disabled-control explanation too.
+
+**Decision (operator, 2026-09-14):** stop chasing this in the VBA/RibbonX
+layer. `rvw/officejs-spike-results-2026-09-11.md` (a hands-on spike from
+three days prior this arc) already recommends proceeding with a task-pane
+(Office.js) shell to replace the VBA ribbon. Since the confirmed root cause
+is specific to RibbonX's native `comboBox` hosting (not the document model,
+not the citation/navigation logic that the task-pane will reuse), this bug
+class has no reason to recur in an HTML/DOM-based task-pane, which manages
+its own Tab order via standard browser focus semantics, isolated from
+Word's RibbonUI COM layer entirely.
+
+**Diagnostic instrumentation left in place intentionally** (not orphaned
+debug code): `Private WithEvents m_app As Word.Application`,
+`TimestampMs()`, `m_app_WindowSelectionChange`, and `Debug.Print` lines in
+`OnChapterChanged`/`OnVerseChanged` (`src/aeRibbonClass.cls`), plus the
+(non-harmful, unconfirmed-as-fix) `DoEvents` in `OnRibbonLoad` and the
+`InvalidateControl` calls in `OnChapterChanged`. Safe to remove in a future
+session once/if this bug is fully superseded by the task-pane migration.
+
+### 8. `py/normalize_vba.py` missing `Sel` casing rule - DONE
+
+The new `WithEvents m_app_WindowSelectionChange(ByVal Sel As Selection)`
+diagnostic (item 7) established a new project-wide canonical casing for the
+identifier `Sel`, which VBE's own compile-time identifier unification then
+rippled out to pre-existing `sel`/`Sel` locals in `src/Module1.bas` and
+`src/basTEST_aeBibleTools.bas` on export - expected behavior (same class of
+churn as `Count`, `Result`, etc. earlier in the file's history), but the
+normalizer itself had no rule for `Sel` yet, so a future export that
+reverts to lowercase would go uncaught. Added a `\bSel\b` rule following the
+file's existing dated-section convention; verified as a no-op against the
+current (already-correct) source tree.
+
+## Carried forward from 2026-06-01 (not reverified this session)
+
+Unchanged from the 2026-09-13 arc - see
+[`Code_review 2026-09-13.md`](Code_review%202026-09-13.md) for the full
+16-item list (aeRibbon release gates, `AuditCharStyleUsage` quadratic-time
+fix, Header/Footer SHAPE LOCKDOWN, the CVM anomaly, EDSG doc correction,
+etc.). None of those items were touched this session.

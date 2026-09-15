@@ -954,17 +954,17 @@ End Sub
 
 Public Sub LogExpandedMarkerContext()
     On Error GoTo PROC_ERR
-    Dim sel As Word.Range: Set sel = Selection.Range
+    Dim Sel As Word.Range: Set Sel = Selection.Range
     Dim i As Long, chCount As Long
     Dim contextText As String, contextAscii As String, contextHex As String
 
-    chCount = sel.Characters.Count
+    chCount = Sel.Characters.Count
     Debug.Print "=== Marker Diagnostic ==="
-    Debug.Print "Selection Start=" & sel.Start & " | End=" & sel.End
-    Debug.Print "Selection Text='" & Replace(sel.Text, vbCr, "[CR]") & "'"
+    Debug.Print "Selection Start=" & Sel.Start & " | End=" & Sel.End
+    Debug.Print "Selection Text='" & Replace(Sel.Text, vbCr, "[CR]") & "'"
 
     For i = 1 To chCount
-        Dim ch As String: ch = sel.Characters(i).Text
+        Dim ch As String: ch = Sel.Characters(i).Text
         Dim ascVal As Integer: ascVal = Asc(ch)
         Dim hexVal As String: hexVal = Hex(ascVal)
 
@@ -975,7 +975,7 @@ Public Sub LogExpandedMarkerContext()
         Debug.Print contextText & contextAscii & contextHex
     Next i
 
-    Debug.Print "Style: " & sel.style & " | Font: " & sel.Font.Name
+    Debug.Print "Style: " & Sel.style & " | Font: " & Sel.Font.Name
     Debug.Print "=== End of Diagnostic ===" & vbCrLf
 
 PROC_EXIT:

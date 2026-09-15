@@ -273,8 +273,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82     83     84 85 86)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 982, 982, 117, 117, 0, 99, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34   35   36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71 72 73 74 75 76 77 78 79 80 81 82     83     84 85 86)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 982, 982, 117, 117, 0, 99, 216, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -1962,6 +1962,7 @@ Private Function CountInStory(rng As Word.Range, contraction As String) As Long
     On Error GoTo PROC_ERR
 
     Dim Count As Long
+    Dim firstHitRng As Word.Range
     Count = 0
 
     With rng.Find
@@ -1975,11 +1976,22 @@ Private Function CountInStory(rng As Word.Range, contraction As String) As Long
 
     Do While rng.Find.Execute
         Count = Count + 1
-        If m_lastHint = "" Then _
-            m_lastHint = "page " & rng.Information(wdActiveEndAdjustedPageNumber) & ": " & _
-                Left(rng.Paragraphs(1).Range.Text, 60)
+        ' Duplicate (detach) the first hit's paragraph range instead of
+        ' querying Information() on it here - Information(wdActiveEnd
+        ' AdjustedPageNumber) forces a full repagination, and doing that on
+        ' the live search range mid-loop corrupts Find's range state on a
+        ' large document, silently truncating the match loop to 1 hit
+        ' (discovered on Test 70's 73-instance run, 2026-09-14). The
+        ' Duplicate is unaffected by the Collapse/Execute calls that follow,
+        ' so the page lookup is deferred to after the loop completes.
+        If firstHitRng Is Nothing Then Set firstHitRng = rng.Paragraphs(1).Range.Duplicate
         rng.Collapse wdCollapseEnd
     Loop
+
+    If Not firstHitRng Is Nothing And m_lastHint = "" Then
+        m_lastHint = "page " & firstHitRng.Information(wdActiveEndAdjustedPageNumber) & _
+            ": " & Left(firstHitRng.Text, 60)
+    End If
 
     CountInStory = Count
 

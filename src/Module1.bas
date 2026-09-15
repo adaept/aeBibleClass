@@ -62,9 +62,9 @@ End Sub
 
 Sub PrintFontProperties()
     On Error GoTo PROC_ERR
-    Dim sel As Selection
-    Set sel = Selection
-    With sel.Font
+    Dim Sel As Selection
+    Set Sel = Selection
+    With Sel.Font
         Debug.Print "Name: " & .Name
         Debug.Print "Size: " & .Size
         Debug.Print "Bold: " & .Bold

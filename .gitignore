@@ -4,6 +4,12 @@ ko.*
 /Bibles
 /Bible
 /txt
+# Third-party source-text drop (WEBU USFM + Strong's numbers from eBible.org,
+# Haiola-generated) used as an offline reference corpus for baselining
+# quote/character-pattern tests (see rvw/Plan_engwebu_baseline_sync_2026-09-14.md).
+# Not our content to redistribute a bulk copy of in this repo; re-download
+# from https://eBible.org/engwebu/ (or https://WorldEnglish.Bible) when needed.
+/engwebu_usfm
 Peter-USE REFINED English Bible CONTENTS.pdf
 Keep for alignment - Blank Bible Copy - Copy.pdf
 MyOutfile_unpacked/

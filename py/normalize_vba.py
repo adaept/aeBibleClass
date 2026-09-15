@@ -104,6 +104,8 @@ NORMALIZATIONS = [
     (r'(?i)\bNextChar\b',                   'NextChar',            'NextChar loop label in RowCharCountSurvey_SinglePage'),
     (r'(?i)\bNextPara\b',                   'NextPara',            'NextPara loop label in RowCharCountSurvey_SinglePage'),
     (r'(?i)\bNextLine\b',                   'NextLine',            'NextLine loop label in BuildRowCharCountHistogram'),
+    # --- aeRibbonClass WindowSelectionChange diagnostic (added 2026-09-14) ---
+    (r'(?i)\bSel\b',                        'Sel',                 'Sel variable/parameter casing (Selection-typed locals in Module1, basTEST_aeBibleTools; WindowSelectionChange(ByVal Sel As Selection) in aeRibbonClass)'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

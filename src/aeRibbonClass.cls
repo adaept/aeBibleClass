@@ -31,6 +31,12 @@ Option Compare Text
 ' ================================================================
 
 ' -- Private State -------------------------------------------------------------
+' TEMP diagnostic 2026-09-14 - WithEvents hook to timestamp exactly when focus/
+' keystrokes land in the document, to correlate against the OnChapterChanged/
+' OnVerseChanged Debug.Print timestamps for the "Tab after committing chapter
+' escapes to the document instead of cmbVerse" bug. Remove once resolved.
+Private WithEvents m_app As Word.Application
+Attribute m_app.VB_VarHelpID = -1
 Private m_ribbon         As IRibbonUI
 Private m_ribbonReady    As Boolean
 Private m_bookmarkIndex  As Long
@@ -63,7 +69,8 @@ Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) 
 ' -- Lifecycle -----------------------------------------------------------------
 
 Private Sub Class_Initialize()
-    Debug.Print "RibbonController: Class_Initialize at " & Format(Now, "hh:nn:ss")
+    Debug.Print "RibbonController: Class_Initialize at " & TimestampMs()
+    Set m_app = Application   ' TEMP diagnostic 2026-09-14 - see WithEvents declaration above
     m_ribbonReady = False
     m_bookmarkIndex = 0
     m_savedPos = 0
@@ -86,9 +93,29 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    Debug.Print "RibbonController: Class_Terminate at " & Format(Now, "hh:nn:ss")
+    Debug.Print "RibbonController: Class_Terminate at " & TimestampMs()
+    Set m_app = Nothing   ' TEMP diagnostic 2026-09-14
     Set m_ribbon = Nothing
     m_ribbonReady = False
+End Sub
+
+' TEMP diagnostic 2026-09-14 - millisecond-resolution timestamp (Format(Now,
+' "hh:nn:ss") alone can't distinguish events within the same second, which
+' matters for a sub-second focus-escape race). Remove once resolved.
+Private Function TimestampMs() As String
+    TimestampMs = Format(Now, "hh:nn:ss") & "." & Format((Timer - Int(Timer)) * 1000, "000")
+End Function
+
+' TEMP diagnostic 2026-09-14 - fires whenever the selection changes in ANY
+' open document window, including when a keystroke (e.g. a stray Tab or "20")
+' lands in the document body instead of the ribbon. Correlate this timestamp
+' against OnChapterChanged/OnVerseChanged's timestamps to see whether the
+' escape happens before, during, or after the ribbon callback. Remove once
+' the focus-escape bug is resolved.
+Private Sub m_app_WindowSelectionChange(ByVal Sel As Selection)
+    Debug.Print "WindowSelectionChange: Sel.Start=" & Sel.Start & _
+        ", Sel.Text=""" & Replace(Replace(Left$(Sel.Text, 20), vbCr, "\r"), vbTab, "\t") & _
+        """ at " & TimestampMs()
 End Sub
 
 ' -- Properties ----------------------------------------------------------------
@@ -103,13 +130,22 @@ Public Sub OnRibbonLoad(ribbon As IRibbonUI)
     On Error GoTo PROC_ERR
     Set m_ribbon = ribbon
     m_ribbonReady = True
-    Debug.Print "RibbonController: Ribbon ready at " & Format(Now, "hh:nn:ss")
+    Debug.Print "RibbonController: Ribbon ready at " & TimestampMs()
     Call EnableButtonsRoutine
     ' Full Invalidate after EnableButtonsRoutine so the initial cache reflects the
     ' post-load field values. Without this, the cache is from the very first ribbon
     ' render (before OnRibbonLoad fired), and deferred Invalidate calls from onChange
     ' callbacks may not update it in time for Tab routing on first load.
     m_ribbon.Invalidate
+    ' Invalidate schedules a repaint rather than completing it synchronously -
+    ' typing immediately after document open (before that repaint finishes)
+    ' is suspected to be why the first "Book Tab Tab Tab Chapter Tab" sequence
+    ' occasionally routes Tab to the document instead of the next ribbon
+    ' control. Switching to the VBE and back avoids the bug (gives Word idle
+    ' time to finish the repaint) - DoEvents here is the same fix without
+    ' requiring the workaround. Experimental fix, 2026-09-14 - remove this
+    ' comment once confirmed by repro testing.
+    DoEvents
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -590,8 +626,15 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     Dim matchFound As Boolean
     Dim canonical As String
 
+    ' Use the normalized pattern (NormalizeBookInput already turns "1kgs"
+    ' into "1 KGS"), not the raw text - the alias map only has space-
+    ' delimited keys ("1 KGS"), so resolving against raw "1kgs" fails and
+    ' silently falls through to Layer 2, which also fails since "1 KGS" is
+    ' not a substring of heading text "1 KINGS". This previously only
+    ' worked for numbered books with a hand-added no-space alias (e.g.
+    ' "1KI"), not generically for every numbered book.
     On Error Resume Next
-    canonical = aeBibleCitationClass.ResolveAlias(text)
+    canonical = aeBibleCitationClass.ResolveAlias(pattern)
     On Error GoTo PROC_ERR
 
     If Len(canonical) > 0 Then
@@ -771,6 +814,7 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     ' Multiple deferreds from rapid typing all read m_pendingVerse at execution time;
     ' only the first fires a navigation, subsequent ones are no-ops (m_pendingVerse = 0).
     On Error GoTo PROC_ERR
+    Debug.Print "OnChapterChanged: text=""" & text & """ at " & TimestampMs()   ' TEMP diagnostic 2026-09-14 - remove once focus-escape bug is resolved
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim projNameCh As String
     projNameCh = Application.ActiveDocument.VBProject.Name
@@ -795,6 +839,20 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     m_chapterTextValid = True
     m_currentChapter = chNum
     m_currentChapterPos = 0
+    ' Mirror OnBookChanged's Invalidate (line ~643): that call exists because
+    ' the ribbon must be told to re-query GetChapterEnabled before Tab can
+    ' reach cmbChapter after Book commits. GetVerseEnabled is hardcoded True
+    ' so it doesn't need this for the *enabled* check, but that doesn't rule
+    ' out the ribbon needing an explicit poke to correctly re-evaluate the
+    ' Verse controls' tab-stop eligibility on the same Book->Chapter->Verse
+    ' chain, on a freshly-loaded ribbon - suspected cause of the "Tab after
+    ' committing chapter lands in the document instead of cmbVerse" bug,
+    ' 2026-09-14. Experimental - remove this comment once confirmed.
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl CTRL_VERSE
+        m_ribbon.InvalidateControl CTRL_PREV_VERSE
+        m_ribbon.InvalidateControl CTRL_NEXT_VERSE
+    End If
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -891,6 +949,7 @@ Public Sub OnVerseChanged(control As IRibbonControl, text As String)
     ' onChange fires on Enter and on each keystroke.
     ' Validates and stores m_currentVerse. Navigation fires from OnGoClick only (#600).
     On Error GoTo PROC_ERR
+    Debug.Print "OnVerseChanged: text=""" & text & """ at " & TimestampMs()   ' TEMP diagnostic 2026-09-14 - remove once focus-escape bug is resolved
     Dim projNameVs As String
     projNameVs = Application.ActiveDocument.VBProject.Name
     If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
