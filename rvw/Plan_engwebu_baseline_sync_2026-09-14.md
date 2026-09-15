@@ -382,7 +382,7 @@ a follow-up pass through `https://worldenglish.bible/webupdates.php` (the
 WEB/WEBU update changelog) - explicitly **after**, not concurrent with, the
 editing work here. Not scoped further in this plan; revisit when reached.
 
-### WEBU parser - DONE, verified (aeRWB repo, file edits only per [[feedback-aerwb-no-autopush]])
+### WEBU parser - DONE, verified (aeRWB repo, file edits only - operator commits/pushes)
 
 `aeRWB/tools/web-diff/lib.mjs` gained `USFM_BOOK_NAMES` (66-book mapping,
 verified against `rwb.txt`'s exact spellings - "Psalm" singular, "Song of
@@ -475,15 +475,35 @@ process for every subsequent verse/pattern edit, both patterns.**
       correctly left alone, per RWB's own Yahweh/LORD->God convention.
 - [x] Document saved (VBA code also exported to `src/`).
 
+**🟡 Policy correction (2026-09-15, supersedes the "minimum match" call above):**
+the operator wants WEBU treated as the **exact punctuation baseline** going
+forward - full character-for-character fidelity, not "whatever's minimally
+sufficient to pass the automated pattern test" - so that i18n/web/mobile
+tooling built later never has to special-case a "cosmetic" divergence
+between RWB and its WEBU source. Two concrete, not-yet-applied follow-ups
+this reveals, both **outside this 2-verse pilot's original scope** (queued
+for the Test 71 batch pass rather than reopening this pilot):
+- ⚪ **Jeremiah 27:8 opening** - docm has 3 marks (`"'"`); WEBU has 4
+  (`"'"'`, an extra `'` right before "It"). Needs the missing `'` inserted
+  to match WEBU exactly.
+- ⚪ **Jeremiah 27:22 closing** - found while checking this: docm currently
+  ends `...to this place.'"` (2 closing marks); WEBU ends `...to this
+  place.'"'` (3 closing marks: `'` `"` `'`). This is the actual closing side
+  of the same 27:4-22 embedded-speech span that opens at 27:8, and it's
+  *also* not test-covered yet (Test 71's pattern is `"'"` reversed/closing,
+  not necessarily this exact verse) - a real gap, found by grep, not by a
+  human re-reading 19 verses of nested speech. Exactly the kind of check
+  that should become the automated depth-balance tool in the architecture
+  assessment below, rather than something caught ad hoc like this.
+
 ### ✅ Verification process (the model for every other edit) - all four steps passed 2026-09-15
 
 1. ✅ `RUN_THE_TESTS(70)` → **75** (was 73).
 2. ✅ `ExportDocmVersesToRWBFormat` re-run → same `31053`/`46`/`3` totals as
    before - nothing broke elsewhere.
-3. ✅ `npm run web.census -- "$(printf '“‘“')"` in `aeRWB` (file edits only,
-   not committed by Claude - [[feedback-aerwb-no-autopush]]) → `docm-verses.txt`
-   hits = **75** (was 73), editorial worklist **empty** (0 WEBU verses
-   unmatched).
+3. ✅ `npm run web.census -- "$(printf '“‘“')"` in `aeRWB` (file edits only -
+   operator reviewed/pushed) → `docm-verses.txt` hits = **75** (was 73),
+   editorial worklist **empty** (0 WEBU verses unmatched).
 4. ✅ `Expected1BasedArray` position 70 rebaselined 73 → 75 in
    `aeBibleClass.cls` (already present in the exported code; confirmed
    correct only after steps 1-3 above passed).
@@ -491,10 +511,167 @@ process for every subsequent verse/pattern edit, both patterns.**
 ### Applying this model to the remaining 48 Test 71 verses
 
 Same four-step process, scaled up: edit all 48 verses from
-`census/201D-2019-201D-worklist.md` (deciding fidelity-vs-minimum per verse
-the way 27:8 required above, since WEBU's actual nesting depth may vary
-verse-to-verse), then run the same verification sequence once at the end
-(`RUN_THE_TESTS(71)` = 63, re-export, re-census confirms 63 hits and an
-empty worklist, then rebaseline position 71 to 63) rather than one verse at
-a time - the two-verse Test 70 pass is the proof the pipeline works; the
-48-verse Test 71 pass is the same process at scale, not a new process.
+`census/201D-2019-201D-worklist.md` - **per the 2026-09-15 policy correction
+above, always take full WEBU character-for-character fidelity, not the
+minimum needed to pass the pattern test** (superseding this section's
+original "decide fidelity-vs-minimum per verse" framing) - then run the same
+verification sequence once at the end (`RUN_THE_TESTS(71)` = 63, re-export,
+re-census confirms 63 hits and an empty worklist, then rebaseline position 71
+to 63) rather than one verse at a time - the two-verse Test 70 pass is the
+proof the pipeline works; the 48-verse Test 71 pass is the same process at
+scale, not a new process. Also fold in the two Test-70-adjacent fidelity gaps
+found above (Jeremiah 27:8 opening, 27:22 closing) while in this territory.
+
+## 2026-09-15 architecture assessment - i18n/web/mobile/docx/client-server pathway
+
+**Status: 🔵 forward-looking / non-blocking.** Recorded for historical
+reference per operator request. Nothing here gates the Test 70/71 WIP above -
+this is deliberately a "spike" (see the note on that below), not a commitment.
+
+### Why this came up now
+
+The operator framed Test 70/71's WEBU-fidelity work as more than an English/
+Word exercise: it's a first concrete step toward a longer-term goal of
+keeping a **realistic Windows+Linux Bible-translation development pathway**
+that doesn't have to route through the SIL/Wycliffe/Tyndale/Paratext
+ecosystem for basic text tooling, while still being able to interoperate
+with it (a stated future integration target is Paratext's mobile-app-
+generation track). Context given for this:
+
+- Word/`.docm` is explicitly named a **sunset track** - a pragmatic current
+  editing surface, not the intended long-term home. The forward architecture
+  spans **i18n, web, mobile, docx, and client-server**, not just this repo.
+- A documented cultural friction point in Bible-translation tech: much of
+  that scholarship gravitates to Linux/open-source tooling (Paratext,
+  Haiola, Crossway) and is wary of Windows/Microsoft "lock-in" (traced by
+  the operator to the Ballmer era); some prior open efforts in this space
+  (BLINK, SILAS) are now abandonware - a live cautionary tale about
+  single-maintainer Bible-tech tooling going stale.
+- Licensing philosophy: [copy.church/explain/importance](https://copy.church/explain/importance/)
+  argues (fetched and summarized 2026-09-15) that restrictively-copyrighted
+  Bible translations create real access barriers - "block anyone who would
+  benefit... but isn't able or prepared to pay," turn ordinary sharing into
+  unintentional law-breaking, stunt community improvement/adaptation, and
+  remain vulnerable to being "retracted at any time" if a rights-holder's
+  position changes - and argues nearly-free digital distribution makes that
+  restriction avoidable. The page doesn't mention AI/tech reuse directly,
+  but the same argument extends naturally there. This is the direction the
+  operator is leaning for RWB - consistent with anchoring on WEB/WEBU (both
+  public-domain) as the punctuation/text baseline rather than a
+  restrictively-licensed modern translation.
+
+### Assessment
+
+**Pros**
+- A public-domain-first baseline (WEB/WEBU, and RWB's own transparent diff-
+  register model - R3/R4) is inherently friendlier to reuse than a
+  copyrighted translation would be: no licensing negotiation needed for
+  offline apps, web tooling, or AI-assisted translation work - directly in
+  the spirit of the copy.church argument above.
+- The `aeRWB` tooling built this session (R3 diff register, R6 pattern
+  census, R7 `engwebu.txt` export) is **already format-agnostic in design**:
+  verse-keyed maps, provenance-hashed inputs, deterministic regeneration.
+  None of that logic is Word/VBA-specific - it's a legitimate nucleus for a
+  future web/mobile/server layer, not throwaway scaffolding.
+- Getting WEBU-fidelity punctuation exactly right **once**, at the source,
+  means every future consumer (web render, mobile render, docx export, USFM
+  export) inherits correct Unicode quote-nesting instead of every platform
+  independently rediscovering the same bugs - a real, generalizable payoff
+  from work that looks like a narrow English/Word fix today.
+- An automated **quote-nesting depth-balance checker** (walk a book's text,
+  track open/close depth, flag anywhere it goes negative or fails to return
+  to baseline) is cheap to build, is exactly the kind of thing code catches
+  reliably that a human skimming dense nested speech will not (see the
+  Jeremiah 27:8/27:22 example above - found in seconds by `grep`, invisible
+  on a normal read-through), and is language-agnostic - it generalizes
+  directly to i18n QA, not just English WEBU-matching.
+
+**Cons / Risks**
+- `.docm`/VBA is a dead end for a multi-client (web/mobile/server)
+  architecture. Every hour invested deepening Word-specific automation
+  (ribbon UI, VBA classes) doesn't port - risk of the "generate `rwb.txt`
+  from the docm" model becoming too load-bearing before any real export path
+  exists, which would make leaving Word *harder*, not easier, later.
+- Building outside the Paratext/USFM/SIL ecosystem risks **reinventing
+  infrastructure** that ecosystem has spent decades hardening: USFM edge
+  cases, checks, terminology tools, and - critically for i18n - right-to-left
+  and complex-script rendering, and per-language quotation conventions that
+  differ from English/WEBU's. This plan's own English-only assumptions
+  (hardcoded `USFM_BOOK_NAMES`, literal `“`/`‘` pattern constants) would all
+  need to be revisited for a second language.
+- The Windows-vs-Linux reputational friction is a real adoption/credibility
+  cost *if* this is ever pitched to the wider Bible-tech community for
+  collaboration or funding - independent of whether the underlying tooling
+  (Node.js in `aeRWB`) is actually cross-platform already (it is).
+- BLINK/SILAS abandonware is a direct precedent for the sustainability risk
+  of a single-maintainer Bible-tech tooling effort - worth naming plainly
+  since it applies here too.
+- The stated Paratext mobile-app-generation integration is currently just an
+  intention - no design work yet, so it's a real, undiscovered dependency,
+  not something already de-risked by today's work.
+
+**Benefits (if the longer path is pursued)**
+- A genuinely open, cross-platform, permissively-licensed Bible text +
+  tooling stack that doesn't require going through SIL/Wycliffe/Tyndale/
+  Paratext for basic text-correctness work, while still able to interoperate
+  with Paratext where useful (the stated mobile-app-generation plan).
+- RWB positioned as AI/LLM-friendly reference data by design (public-domain-
+  first), which the operator identifies as an increasingly relevant use case
+  even though copy.church's own page doesn't make that specific argument.
+- The existing R3/R4/R6/R7 tooling in `aeRWB` is a legitimate starting
+  nucleus for a future verse-keyed API/service layer, not a rewrite-from-
+  scratch situation.
+
+**Feasibility verdict:** realistic as a **multi-year, non-blocking side
+architecture goal** - not realistic as a near-term replacement for Paratext/
+USFM tooling, and not something to design head-on right now. The current
+WIP (Test 70/71, R3/R4/R6/R7) is genuinely reusable prep regardless of which
+specific web/mobile/server stack eventually gets chosen, which is exactly
+why it's a "no wasted steps" investment matching the operator's stated risk
+tolerance (don't advance one step now to reverse three later). The main risk
+to actively manage is scope creep into Word/VBA-specific solutions that
+don't generalize - already mitigated today by keeping Word-specific code in
+`aeBibleClass` (test harness) and the portable/reusable logic in `aeRWB`'s
+Node tooling; keep that boundary deliberate as this continues.
+
+### Architecture prep/planning tasks (non-blocking - track with the emoji legend)
+
+- ⚪ Define a canonical, format-agnostic verse-text interchange schema (e.g.
+  `{ book, chapter, verse, text, provenance }` JSON) that `aeRWB`'s
+  `web.txt`/`rwb.txt`/`engwebu.txt` loaders could also emit - a stepping
+  stone toward web/mobile/server consumption without committing to a
+  specific database or API yet.
+- ⚪ Build the quote-nesting depth-balance checker as a new `aeRWB` tool
+  (walks a full book/corpus, tracks nesting depth, flags any point it goes
+  negative or fails to return to baseline) - operationalizes the "code
+  catches this, humans don't" finding above, and doubles as a reusable i18n
+  QA tool since the depth logic itself is language-agnostic.
+- ⚪ Research Paratext's project/USFM interchange and its mobile-app-
+  generation track's expected input format, to scope the minimal adapter
+  surface needed to feed RWB text into that pipeline without redesigning
+  RWB's own workflow around it.
+- ⚪ Explicitly decide and document RWB's target license posture (e.g.
+  CC0/public-domain-style, per the copy.church argument, vs. some other
+  permissive license) and record the rationale - currently only implicit
+  (inherited from WEB's own public-domain status).
+- ⚪ Prototype one non-English round-trip through the existing verse-keyed
+  pipeline (even a toy/test language) to surface the Latin-script/English-
+  only assumptions baked into today's tooling (book-name table, literal
+  quote-character constants) before scaling to real i18n.
+- ⚪ Explicitly evaluate whether the docm/Word ribbon layer stays the primary
+  authoring surface long-term, or becomes just one of several editing
+  front-ends over a shared backend text store - named directly because the
+  operator has called Word a "sunset track."
+- ⚪ Survey Haiola/Paratext-adjacent open tooling for reuse-as-a-library/
+  service opportunities, to actively counter the "reinventing SIL's tooling"
+  risk named above rather than discovering it the hard way.
+
+### Note on methodology - the "spike" pattern
+
+The operator has flagged the **minimum-edit-test / two-verse pilot before
+the 48-verse batch** approach used for Test 70 above as something to keep
+using generally, not just this once: prove a pipeline end-to-end on the
+smallest possible real case before committing to the full-scale version.
+Continue defaulting to this pattern for future batches of similar size/risk
+(e.g. Test 71's 48 verses, and any future architecture work from the list
+above that has a natural minimal-first-case shape).
