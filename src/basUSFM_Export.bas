@@ -341,7 +341,7 @@ Private Function IsEffectivelyEmpty(txt As String) As Boolean
     IsEffectivelyEmpty = (Len(t) = 0)
 End Function
 
-Private Function ParagraphHasCharStyle(p As Word.Paragraph, StyleName As String) As Boolean
+Public Function ParagraphHasCharStyle(p As Word.Paragraph, StyleName As String) As Boolean
     ' FIXME_LATER: Iterates .words not .Characters — would miss character styles applied to only
     ' part of a word. Currently safe because "Chapter Verse marker" (orange) and "Verse marker"
     ' (green) are always applied to complete words (chapter/verse numbers) in this document.
@@ -362,7 +362,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function ExtractCharStyleText(p As Word.Paragraph, StyleName As String) As String
+Public Function ExtractCharStyleText(p As Word.Paragraph, StyleName As String) As String
     On Error GoTo PROC_ERR
     Dim r As Word.Range
     Dim buf As String
@@ -380,7 +380,25 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
-Private Function TryParseChapterVerseFromStyles( _
+' Extends rRun forward one character at a time for as long as the NEXT
+' single character (probed individually, not by re-checking rRun's own
+' aggregate .style after growing it) carries StyleName. Probing ahead avoids
+' the ambiguity a grow-then-check loop has at its exit: growing past the
+' paragraph end and growing past a style change both look identical to
+' "rRun.style is no longer StyleName" after the fact, so the old code's
+' unconditional "step back one character" correction was only right for the
+' second case (FIXME_LATER, fixed 2026-09-14 when this started raising
+' Error 13 on the first full-document run rather than a page range).
+Private Sub ExtendRunWhileStyle(ByVal rRun As Word.Range, ByVal boundEnd As Long, ByVal StyleName As String)
+    Dim probe As Word.Range
+    Do While rRun.End < boundEnd
+        Set probe = rRun.Document.Range(rRun.End, rRun.End + 1)
+        If probe.style <> StyleName Then Exit Do
+        rRun.MoveEnd wdCharacter, 1
+    Loop
+End Sub
+
+Public Function TryParseChapterVerseFromStyles( _
     ByVal p As Word.Paragraph, _
     ByRef chapNum As Long, _
     ByRef verseNum As Long, _
@@ -390,6 +408,8 @@ Private Function TryParseChapterVerseFromStyles( _
     Dim rChap As Word.Range
     Dim rVerse As Word.Range
     Dim rText As Word.Range
+    Dim chapDigits As String
+    Dim verseDigits As String
 
     chapNum = 0
     verseNum = 0
@@ -409,22 +429,18 @@ Private Function TryParseChapterVerseFromStyles( _
         GoTo PROC_EXIT
     End If
 
-    ' Extend rChap to include all contiguous chars with that style
-    Do While rChap.End < p.Range.End And rChap.style = "Chapter Verse marker"
-        rChap.MoveEnd wdCharacter, 1
-    Loop
-    ' FIXME_LATER: MoveEnd -1 assumes the loop exited via style-change overshoot (condition 2).
-    ' If the loop exits via range-boundary (rChap.End >= p.Range.End) with no style change,
-    ' MoveEnd -1 incorrectly drops the last character. In practice this document always has
-    ' a differently-styled character after the chapter marker, so condition 2 always fires first.
-    rChap.MoveEnd wdCharacter, -1 ' step back one char after overshoot
+    ExtendRunWhileStyle rChap, p.Range.End, "Chapter Verse marker"
 
-    ' FIXME_LATER: CLng raises error 13 if CleanTextForUTF8 strips all characters from rChap.Text,
-    ' leaving an empty string. In practice the early-exit guard above ensures rChap contains
-    ' genuine numeric chapter marker digits, so this is unlikely for this document.
-    ' If CleanTextForUTF8 is ever extended to strip digit characters, add an IsNumeric guard here
-    ' and return False from TryParseChapterVerseFromStyles on empty/non-numeric Result.
-    chapNum = CLng(Trim$(CleanTextForUTF8(rChap.Text)))
+    ' Guard against a malformed/empty marker run instead of letting CLng
+    ' raise Error 13 - a marker that isn't clean digits means this paragraph
+    ' can't be parsed as a verse line, same as the style-mismatch guards
+    ' above, not an exceptional error.
+    chapDigits = Trim$(CleanTextForUTF8(rChap.Text))
+    If Not IsNumeric(chapDigits) Then
+        TryParseChapterVerseFromStyles = False
+        GoTo PROC_EXIT
+    End If
+    chapNum = CLng(chapDigits)
 
     '------------------------------------------------------------
     ' 2. Verse number run (character style: "Verse marker")
@@ -439,13 +455,14 @@ Private Function TryParseChapterVerseFromStyles( _
         GoTo PROC_EXIT
     End If
 
-    ' Extend rVerse to include all contiguous chars with that style
-    Do While rVerse.End < p.Range.End And rVerse.style = "Verse marker"
-        rVerse.MoveEnd wdCharacter, 1
-    Loop
-    rVerse.MoveEnd wdCharacter, -1
+    ExtendRunWhileStyle rVerse, p.Range.End, "Verse marker"
 
-    verseNum = CLng(Trim$(CleanTextForUTF8(rVerse.Text)))
+    verseDigits = Trim$(CleanTextForUTF8(rVerse.Text))
+    If Not IsNumeric(verseDigits) Then
+        TryParseChapterVerseFromStyles = False
+        GoTo PROC_EXIT
+    End If
+    verseNum = CLng(verseDigits)
 
     '------------------------------------------------------------
     ' 3. Remaining text = verse content
@@ -463,7 +480,8 @@ Private Function TryParseChapterVerseFromStyles( _
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TryParseChapterVerseFromStyles of Module basUSFM_Export"
+    Debug.Print "ERROR in basUSFM_Export.TryParseChapterVerseFromStyles | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
     Resume PROC_EXIT
 End Function
 
@@ -487,7 +505,7 @@ Private Function ExtractTrailingNumber(ByVal s As String) As Long
     End If
 End Function
 
-Private Function CleanTextForUTF8(ByVal s As String) As String
+Public Function CleanTextForUTF8(ByVal s As String) As String
     ' Remove soft hyphens and other invisible Unicode artifacts
     s = Replace(s, ChrW(&HAD), "")      ' Soft hyphen
     s = Replace(s, ChrW(&H2011), "-")   ' Non-breaking hyphen, normal hyphen

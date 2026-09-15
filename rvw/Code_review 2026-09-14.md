@@ -345,24 +345,67 @@ WEBU/`web.txt`/`rwb.txt`).
 can't yet show which of WEBU's 63 Test-71 locations the docm already has
 vs. still needs. That requires a docm-side verse dump (see item 11).
 
-### 11. Docm verse dump for the RWB-format comparison - IN PROGRESS
+### 11. Docm verse dump for the RWB-format comparison - DONE (after 2 memory-blowup iterations)
 
 Per operator: needed a machine-readable UTF-8 dump of the docm's current
 verse text, in `rwb.txt`'s exact format (`Book Chapter:Verse<TAB>text`), to
 close the gap from item 10. Also per operator: document explicitly that
-**"text != text unless defined"** - see the plan doc's new "Text equality is
+**"text != text unless defined"** - see the plan doc's "Text equality is
 not automatic" section for the specific encoding/format risks (UTF-8 BOM,
 `FileSystemObject`'s "Unicode" flag actually being UTF-16LE, embedded
 control characters corrupting the one-verse-per-line format) and the
 explicit rule that quote characters must NOT be normalized by whatever
 writes this file, since they're the entire subject of the comparison.
 
-Reusing existing infrastructure rather than reimplementing: `basUSFM_Export.
-bas`'s `TryParseChapterVerseFromStyles` (chapter/verse-marker-style
-extraction) made `Public` for cross-module reuse, and
-`aeBibleCitationClass.GetCanonicalBookTable()` for correct book-name
-spelling (by tracking a running Heading-1 counter through canonical book
-order, rather than trying to reformat the docm's ALL-CAPS heading text).
+**Two iterations hit the same class of memory blowup already documented for
+`GetMarkerTotals`/Test 82** (`Code_review 2026-09-13.md` item 7), each
+found live by the operator watching Task Manager (3.2GB, then 1.3GB and
+still climbing) rather than by static review - a reminder that this
+document's COM-heavy-per-character/word-property-access cost class is a
+recurring hazard, not a one-off:
+
+- **v1** used `basUSFM_Export.TryParseChapterVerseFromStyles` (made
+  `Public` for reuse) - extends a `Range` one *character* at a time via
+  fresh `Document.Range(...)` objects. ~31,102 paragraphs x several
+  characters each = tens of thousands of short-lived Range objects.
+- **v2** switched to `basUSFM_Export.ParagraphHasCharStyle`/
+  `ExtractCharStyleText` (also made `Public`) - *word*-level via the
+  paragraph's native `.words` collection, expected to be cheaper. Still
+  blew up, **and** exposed a second bug: the `maxVerses` testing safety net
+  was gated on successful writes (`lineCount`), which silently never
+  incremented because the word-level style match was failing - so the
+  limiter never engaged and the full document ran anyway while iterating
+  every word of every failing verse.
+- **v3 (final):** eliminated character- and word-level style queries
+  entirely. Chapter number is tracked from `Heading 2` paragraph text
+  (cheap, paragraph-level, same mechanism `ConvertParagraphToUSFM` already
+  uses); the verse number is derived by pure string comparison against the
+  already-known chapter number (the leading digit run in the paragraph's
+  own `Range.Text` is the chapter number immediately followed by the verse
+  number with no separator - knowing the chapter number already, no style
+  lookup is needed to find the split). Net COM cost per paragraph: one
+  `.style.NameLocal` check, one `Range.Text` read - matches
+  `CaptureHeading1s`'s proven-safe cost profile. The `maxVerses` limiter
+  was also fixed to count paragraphs *visited*, not successful writes.
+  **Confirmed clean** at a 200-verse test scale and then the full
+  31,102-paragraph run: 31,053 written, 46 skipped, 3 duplicates (sums to
+  exactly 31,102, the known Test 82/83 baseline - full coverage, no
+  regression), no reported memory growth.
+
+**New standing lesson:** for this document, *any* per-character or
+per-word Word-object property access inside a loop over thousands of
+paragraphs is a live memory-blowup risk regardless of how small the
+per-item cost looks - prefer paragraph-level `Range.Text` + pure string
+parsing wherever the data allows it, as `CaptureHeading1s` already does.
+
+**Census integration (aeRWB, file edits only, not committed - per
+[[feedback-aerwb-no-autopush]]):** `census.mjs` extended to read
+`docm-verses.txt` as a fourth source when present, and to compute the
+actual editorial worklist (WEBU verses not yet matched in the docm) rather
+than just per-source totals. Confirmed exactly the plan's predicted gap:
+**2 verses for Test 70, 48 for Test 71** (sums to the 50 predicted in the
+2026-09-14 decision update) - full reference list in
+`census/201C-2018-201C-worklist.md` and `census/201D-2019-201D-worklist.md`.
 
 ## Carried forward from 2026-06-01 (not reverified this session)
 
