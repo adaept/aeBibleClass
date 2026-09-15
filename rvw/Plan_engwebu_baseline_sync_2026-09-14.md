@@ -1,5 +1,16 @@
 # Plan - engwebu_usfm baseline sync (Tests 70/71 and family) - 2026-09-14
 
+**Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
+now the **authoritative target** for quote-pattern instances (Tests 70/71),
+superseding this plan's earlier "reference for sanity-checking, not a source
+to copy from" framing (§1 item 3, §3). The docm and `rwb.txt` both need
+editing to match WEBU's pattern - this is not a rebaseline-only fix. A new,
+bigger goal was also set: **`rwb.txt` should become generated *from* the
+docm** (with a clear diff/update record), replacing the current hand-tracked-
+against-`web.txt` model. See the "2026-09-14 decision update" section below
+for what this changes; §1-§6 below are left as originally written (the
+investigation that led to this decision), not retroactively rewritten.
+
 **Scope:** `C:\adaept\aeBibleClass\engwebu_usfm` was dropped in as a new
 reference corpus. This plan covers (a) confirming what it is, (b) using it to
 derive a real expected baseline for Test 70 (and investigating Test 71) instead
@@ -249,3 +260,126 @@ files dated" line changes):
 | `rwb.txt` verse-by-verse sync (Phase 4) | Follow-up, after Phases 1-2 tooling exists |
 | Strong's numbers in `rwb.usfm` (Phase 5) | Future, after the USFM exporter matures past page-range WIP |
 | Recurring-drop process (Phase 6) | Documented now, executed whenever eBible.org next updates WEBU |
+
+**Superseded by the 2026-09-14 decision update below** - Test 70/71 are no
+longer simple rebaselines; see that section for the revised path.
+
+## 2026-09-14 decision update - WEBU is authoritative for quote patterns
+
+**What changed:** §3's framing ("WEBU is a reference for sanity-checking,
+not a source to blindly copy from") is superseded for quote-pattern
+instances specifically. The operator has decided `engwebu_usfm` is the
+target both the docm and `rwb.txt` should match for Tests 70/71. This
+means the gap is not a baseline-drift question anymore - it's an
+**editorial task**: the docm is missing quote-pattern instances that WEBU
+has, and those need to be added (not just measured).
+
+### Revised targets
+
+| Test | Docm (before edits) | WEBU (target) | Gap to close |
+|---|---:|---:|---:|
+| 70 (open-triple) | 73 | **75** | 2 instances |
+| 71 (close-triple) | 15 | **63** | 48 instances |
+
+Per the operator: "the closing quotes should follow the pattern of
+engwebu_usfm" - i.e. Test 71's much larger gap (48, vs. Test 70's 2) is
+expected and is the harder, main piece of this task, not a sign something
+is wrong with the count.
+
+### Revised Phase 3 - was "rebaseline to current docm count," now "edit the docm to match WEBU, then baseline"
+
+The `Expected1BasedArray` values for Tests 70/71 should **not** be set to
+73/15 (the docm's pre-edit count) - they should be set to **75/63** (WEBU's
+count) once the docm has actually been edited to add the missing instances.
+Setting the baseline first (as originally planned in §5 Phase 3) would just
+make Tests 70/71 FAIL again the moment the WEBU parser (Phase 1) exists and
+the editorial work begins - better to treat 75/63 as the target from the
+outset now that the decision is made, and land the baseline change together
+with the completed edits, not before them.
+
+**Mechanical approach:** build the Phase 1 (WEBU verse-map parser) and
+Phase 2 (pattern census) tooling first - not to re-litigate whether WEBU is
+the target (decided), but because it's the only way to get a **verse-level
+worklist** of exactly which 2 + 48 = 50 verses need editing. Hand-finding 50
+verse locations by re-running `grep` per book (as done for the 3-verse spot
+check earlier today) does not scale to this - the census tooling from §5
+Phase 2 is now a prerequisite for the editorial work, not a nice-to-have.
+
+### Revised Phase 4 - was "docm primary, WEBU fallback," now "WEBU primary for both docm and rwb.txt"
+
+§5 Phase 4's correction order (docm trusted first, WEBU only fills genuine
+gaps) is superseded for these two patterns: WEBU is now the pattern both
+`rwb.txt` **and the docm** should be edited to match. This does not undo
+RWB's own independent wording choices elsewhere (still governed by R3/R4's
+existing diff-and-categorize discipline) - it's scoped specifically to
+where these two quote-triplet patterns should appear, which is now an
+"adopt WEBU's punctuation" decision, not a "preserve RWB's existing choice"
+one.
+
+### New goal - generate `rwb.txt` from the docm, not hand-track it against `web.txt`
+
+This is a bigger structural change than the quote-pattern fix itself: **the
+operator wants `rwb.txt` to become a generated artifact of the docm**, with
+a clear, reviewable record of what changed on each generation - replacing
+the current model where `rwb.txt` is hand-edited verse-by-verse to track
+drift against the 2013 `web.txt` baseline (§1 item 3/4).
+
+**Why this matters for the quote-pattern task specifically:** once the docm
+is edited to match WEBU's quote patterns, that edit needs to reach `rwb.txt`
+somehow. Manually re-typing 50 verses into `rwb.txt` by hand (the current
+sync model) is exactly the error-prone, unscalable process this new goal is
+meant to replace. Sequencing: the quote-pattern editorial work (revised
+Phase 3/4 above) is the **first real test case** for a docm-to-`rwb.txt`
+generator, not a separate, blocking prerequisite - but building at least a
+minimal version of the generator before doing the 50-verse edit makes the
+edit itself land in `rwb.txt` for free, instead of needing a second manual
+pass.
+
+**Shape of the generator (not fully designed yet, flagging the open
+questions):**
+
+- Needs to walk the docm's `VerseText` paragraphs (same bounded `For Each
+  ActiveDocument.Paragraphs` pattern already proven throughout this
+  session - `GetMarkerTotals`, `CountStyleParagraphsNotAligned`, etc., not
+  a `Range.Find` scan) and emit one line per verse in `rwb.txt`'s existing
+  format (`Book Chapter:Verse<TAB>text`, per `aeRWB/tools/web-diff/lib.mjs`'s
+  header comment) - this is a **simpler, plain-text sibling** of the WIP
+  `basUSFM_Export.bas` exporter, not the same thing (no USFM markers, no
+  Strong's numbers - that's still Phase 5, later).
+- "Clear record of updates and differences" (operator's words) - reuses
+  the existing `aeRWB/tools/web-diff` harness's R3 diff-register concept
+  (`web-rwb-register.jsonl`/`.md`), but pointed at **old `rwb.txt` vs.
+  newly-generated `rwb.txt`** instead of `web.txt` vs. `rwb.txt` - same
+  verse-keyed, word-level-diff, deterministic machinery, new pair of
+  inputs.
+- Open question for whoever builds this: does the generator run from
+  VBA (writing `rwb.txt` directly to the `aeRWB` working copy, matching
+  where `ImportThisDocumentFile`-style file I/O already lives in this
+  codebase) or does it export an intermediate file that the existing
+  Node.js `web-diff` tooling then consumes? Recommend VBA-side generation
+  (the docm is the source of truth and already has all the paragraph-walk
+  infrastructure) writing directly into `aeRWB/rwb.txt`'s format, with the
+  Node-side harness doing only the diffing/reporting, matching each side's
+  existing strengths - but this is a design decision for whoever picks up
+  this phase, not settled here.
+
+### Deferred - WEB Updates changelog review
+
+Once the quote-pattern editorial work above is complete, the operator wants
+a follow-up pass through `https://worldenglish.bible/webupdates.php` (the
+WEB/WEBU update changelog) - explicitly **after**, not concurrent with, the
+editing work here. Not scoped further in this plan; revisit when reached.
+
+### Revised summary table
+
+| Action | When |
+|---|---|
+| `.gitignore` entry for `/engwebu_usfm` | **Done 2026-09-14** |
+| This plan document + decision update | **Done 2026-09-14** |
+| `web-diff` WEBU parser + pattern census (Phases 1-2) | **Next - now a prerequisite**, not just DRY infrastructure, since it's the only practical way to find the 50 verses needing edits |
+| Minimal docm -> `rwb.txt` generator + diff register | **Next**, sequenced alongside/before the 50-verse edit so the edit lands in `rwb.txt` automatically |
+| Docm edits: 2 instances (Test 70) + 48 instances (Test 71) to match WEBU | **Next**, using the Phase 1/2 worklist |
+| Rebaseline Tests 70/71 to 75/63 | **After** the docm edits land, not before |
+| Strong's numbers in `rwb.usfm` (Phase 5) | Future, unchanged - after the USFM exporter matures |
+| Recurring-drop process (Phase 6) | Documented, unchanged |
+| WEB Updates changelog review (`webupdates.php`) | Deferred - after the quote-pattern editorial work is complete |
