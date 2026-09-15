@@ -159,14 +159,20 @@ in `lib.mjs`, same shape as `parseBible`) that:
   handles "1 Samuel", "Song of Solomon", etc. per `lib.mjs`'s header comment)
   so keys line up across all three sources without a separate mapping table.
 
-**Open decision (flag for operator, not decided here):** should the derived
-plain-text `engwebu.txt` be committed alongside `web.txt`/`rwb.txt` (small,
-public domain, gives the harness's SHA-256 provenance pinning and
-`npm test` determinism for free - same treatment as `web.txt` today), or
-regenerated on demand from a gitignored local `engwebu_usfm` drop (per Phase 0)
-each time the harness runs? Recommend the former (commit the derived text,
-not the raw USFM/Strong's files) for reproducibility, but this is the
-operator's call.
+**✅ Done (2026-09-15):** commit the derived `engwebu.txt` alongside
+`web.txt`/`rwb.txt` in `aeRWB` only - not duplicated into `aeBibleClass`,
+which stays the raw-USFM-drop side (gitignored per Phase 0). Same
+reproducibility rationale as originally recommended, plus the operator's
+concrete reason for deciding now: a committed `engwebu.txt` shows a normal,
+reviewable diff in GitHub Desktop whenever a new WEBU drop lands - a
+gitignored/regenerate-on-demand file would make that change invisible.
+Implemented in `aeRWB` as `tools/web-diff/export-engwebu.mjs` (R7, `npm run
+web.engwebu`); pointer + tracking story in that repo's root `README.md` and
+`tools/web-diff/README.md`.
+
+- 🟡 **aeRWB commit:** reviewed by operator in GitHub Desktop first; commit
+  `<pending>` (date pending) once the operator explicitly tells Claude to
+  push.
 
 ### Phase 2 - Add a reusable "pattern census" mode
 
@@ -240,11 +246,10 @@ files dated" line changes):
    `https://WorldEnglish.Bible`), extract to `C:\adaept\aeBibleClass\
    engwebu_usfm` (gitignored per Phase 0 - always safe to overwrite/re-extract
    in place).
-2. Re-run the Phase 1 USFM parser to regenerate the derived `engwebu.txt` in
-   `aeRWB` (if Phase 1's "commit the derived text" option was chosen - diff it
-   against the previous committed version first, so the change itself is
-   reviewable, same determinism guarantee R3 already provides for `web.txt`/
-   `rwb.txt` today).
+2. Re-run `npm run web.engwebu` (in `aeRWB`) to regenerate the committed
+   `engwebu.txt` - diff it against the previous committed version first, so
+   the change itself is reviewable, same determinism guarantee R3 already
+   provides for `web.txt`/`rwb.txt` today.
 3. Re-run the Phase 2 pattern census for every test in the "not inherently 0"
    bucket (§4 table - currently just 70/71) and compare against the current
    `aeBibleClass.cls` baselines. A shift signals either a WEBU text update
@@ -260,6 +265,7 @@ files dated" line changes):
 |---|---|
 | `.gitignore` entry for `/engwebu_usfm` | **Done this session** |
 | This plan document | **Done this session** |
+| `engwebu.txt` committed alongside `web.txt`/`rwb.txt` (Phase 1 decision) | ✅ Done (aeBibleClass side, 2026-09-15) / 🟡 aeRWB commit pending operator push |
 | Test 70 rebaseline to 73 | Next: quick, low-risk, data already confirmed |
 | Test 71 spot-check + rebaseline | Next: bounded investigation, ~30 min |
 | `web-diff` WEBU parser + pattern census (Phases 1-2) | Follow-up session, `aeRWB` repo |
