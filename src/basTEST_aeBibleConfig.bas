@@ -61,8 +61,7 @@ Public Function GetApprovedStyles() As Variant
                      "EmphasisBlack", "EmphasisRed", _
                      "Words of Jesus", _
                      "AuthorSectionHead", "ParallelHeader", "ParallelText", _
-                     "Normal", _
-                     "FargleBlargle")
+                     "Normal")
 End Function
 
 '==============================================================================

@@ -69,16 +69,32 @@ Word PASS) - confirmed via a fresh full-suite run:**
   matching the WEBU reference corpus (75) closely enough to confirm this is
   a legitimate content baseline, not a formatting bug.
 
-**Baseline correct in source, but a *document-level* (not code) fix needs
-to be redone - see item 9:**
-
 - **Tests 77/78** (`CountApprovedStylesWithUnhideWhenUsedOn`,
   `CountApprovedStylesWithWrongPriority`) - same root cause, `Default
   Paragraph Font` had `UnhideWhenUsed=True` and `Priority=2` (expected 34).
-  `Expected1BasedArray` is correctly `0` for both and always has been - the
-  fix itself (a Word style property, applied via `PromoteApprovedStyles` +
-  explicit `UnhideWhenUsed=False`) is what needs to be reapplied, this time
-  followed by an actual document Save.
+  `Expected1BasedArray` was correctly `0` for both all along - what had been
+  lost was the document-level style-property fix itself (see item 9).
+  Reapplied via `PromoteApprovedStyles` (run directly via cursor-in-sub +
+  F5, since it's `Private` and the Immediate window can't resolve a bare
+  Private-sub name across modules) + an explicit
+  `ActiveDocument.Styles("Default Paragraph Font").UnhideWhenUsed = False`
+  line, **followed by an actual document Save this time**. Both PASS at 0
+  and held through a subsequent full-suite run.
+
+**Bonus finding while reapplying the Test 77/78 fix:** running
+`PromoteApprovedStyles` surfaced a "style not found" warning for
+`FargleBlargle` - a placeholder/joke entry that had been sitting in
+`GetApprovedStyles()` (`basTEST_aeBibleConfig.bas`), the single-source-of-
+truth list every approved-style function in the project reads from. Not a
+real style, not affecting `Default Paragraph Font`'s Priority=34 (it sat
+after `Normal` at the very end of the list), but data-hygiene noise in a
+SSOT worth cleaning up. Removed; verified no other function hardcodes the
+list's length (`LBound`/`UBound` used everywhere), and Tests 45/78 both
+re-confirmed PASS afterward.
+
+**Final verification:** a full-suite run after the document Save (1190.67s)
+confirms every test from the original 16-item inventory now PASSes except
+Test 71 - the entire inventory is closed except that one pending decision.
 
 **Investigated, decision needed (not simply "fixed"):**
 
@@ -284,10 +300,10 @@ programmatically rather than trusting memory or eyeballing the array):
   (including several open/close cycles for the item 7 ribbon-bug repro
   testing). Exporting VBA modules does not save the document; closing an
   unsaved document discards any in-memory style/content changes made via
-  the Immediate window or a one-off macro call. **Action needed (operator):
-  reapply the `Default Paragraph Font` fix (`PromoteApprovedStyles` +
-  `UnhideWhenUsed=False`) and this time explicitly Save the document**, not
-  just export the code.
+  the Immediate window or a one-off macro call. **Resolved same day:**
+  reapplied the `Default Paragraph Font` fix (`PromoteApprovedStyles` +
+  `UnhideWhenUsed=False`), this time followed by an explicit document Save
+  - confirmed durable via a subsequent full-suite run (see item 1).
 
 **Process lesson for future sessions:** a code-level fix (anything in
 `Expected1BasedArray`, or any `.cls`/`.bas` logic) is only durable once it's

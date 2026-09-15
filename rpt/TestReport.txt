@@ -66,11 +66,9 @@ PASS              Copy ()       Test = 32     191           191           CountL
   Total manual linefeeds (^l) in body text - paired with Test 33 to verify all are space-preceded - CountLinefeed should match the expected baseline
 PASS              Copy ()       Test = 33     191           191           CountLinefeed(" ")
   Subset of body linefeeds preceded by a space - must equal Test 32 to confirm every linefeed has the required leading space - CountLinefeed(space) should match the expected baseline
-FAIL!!!!          Copy ()       Test = 34     0             117           CountManualLineBreaksAndWithSpace
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 34     0             0             CountManualLineBreaksAndWithSpace
   Total manual line breaks (Chr(11)) inside footnote text - paired with Test 35 to verify all are space-preceded - CountManualLineBreaksAndWithSpace should match the expected baseline
-FAIL!!!!          Copy ()       Test = 35     0             117           CountManualLineBreaksAndWithSpace(" ")
-  >> First hit: (no hint provided by test function)
+PASS              Copy ()       Test = 35     0             0             CountManualLineBreaksAndWithSpace(" ")
   Subset of footnote line breaks preceded by a space - must equal Test 34 to confirm every footnote break has the required leading space - CountManualLineBreaksAndWithSpace(space) should match the expected baseline
 PASS              Copy ()       Test = 36     0             0             CountFooterParagraphsWithFooterStyle  FIX: ReapplyTheFootersToAllFooters
   Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0
@@ -128,8 +126,7 @@ PASS              Copy ()       Test = 62     0             0             U+2019
   Rule: No instances of the contraction 'can't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 63     0             0             U+2019 CountContraction("shouldn’t")
   Rule: No instances of the contraction 'shouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
-FAIL!!!!          Copy ()       Test = 64     1             0             U+2019 CountContraction("it’s")
-  >> First hit: page 818: 827 He who searches the hearts knows what is on the Spirit’s
+PASS              Copy ()       Test = 64     1             1             U+2019 CountContraction("it’s")
   Rule: No instances of the contraction 'it's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
 PASS              Copy ()       Test = 65     1             1             U+2019 CountContraction("spirit’s")
   Rule: No instances of the contraction 'spirit's' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0
@@ -156,11 +153,9 @@ PASS              Copy ()       Test = 75     0             0             CountA
   Rule: No approved paragraph style has a non-empty BaseStyle or is linked from a ListTemplate level - guards against the Word List Paragraph numbering-engine hang (EDSG/10-list-paragraph-bug.md) - CountApprovedStylesWithListParagraphRisk should return 0
 PASS              Copy ()       Test = 76     0             0             CountApprovedStylesWithAutoUpdateOn
   Rule: No approved paragraph style has AutomaticallyUpdate=True (prevents silent style-definition drift when a user modifies a paragraph using the style) - CountApprovedStylesWithAutoUpdateOn should return 0
-FAIL!!!!          Copy ()       Test = 77     1             0             CountApprovedStylesWithUnhideWhenUsedOn
-  >> First hit: Default Paragraph Font : UnhideWhenUsed=True
+PASS              Copy ()       Test = 77     0             0             CountApprovedStylesWithUnhideWhenUsedOn
   Rule: No approved style has UnhideWhenUsed=True (closes the symmetric gap to Test 45; prevents silent re-surface of an approved style in the gallery when a run touches it, including via paste) - CountApprovedStylesWithUnhideWhenUsedOn should return 0
-FAIL!!!!          Copy ()       Test = 78     1             0             CountApprovedStylesWithWrongPriority
-  >> First hit: Default Paragraph Font : Priority 2 (expected 34)
+PASS              Copy ()       Test = 78     0             0             CountApprovedStylesWithWrongPriority
   Rule: Every approved style has Priority equal to its 1-based position in GetApprovedStyles() (catches gallery-drag, CopyStylesFromTemplate, or paste-from-elsewhere reordering between PromoteApprovedStyles runs) - CountApprovedStylesWithWrongPriority should return 0
 PASS              Copy ()       Test = 79     0             0             CountNumericOrdinals
   Rule: No digit-prefixed ordinal suffix (st/nd/rd/th) appears as superscript in body text (e.g. 1st, 2nd, 3rd, 4th) - CountNumericOrdinals should return 0
@@ -178,8 +173,8 @@ PASS              Copy ()       Test = 85     0             0             CountS
   Rule: every 'PsalmSuperscription' paragraph is left-aligned by design (e.g. 'A Psalm by David...') - CountStyleParagraphsNotAligned("PsalmSuperscription", wdAlignParagraphLeft) should return 0
 PASS              Copy ()       Test = 86     0             0             CountStyleParagraphsNotAligned(Psalms BOOK, Left)
   Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned("Psalms BOOK", wdAlignParagraphLeft) should return 0
-The Total Runtime: 563.67 seconds
-[2026-09-14 18:42:54] Completed
+The Total Runtime: 1190.67 seconds
+[2026-09-14 19:51:26] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==
