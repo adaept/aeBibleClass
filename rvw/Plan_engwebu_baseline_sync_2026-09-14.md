@@ -1,5 +1,11 @@
 # Plan - engwebu_usfm baseline sync (Tests 70/71 and family) - 2026-09-14
 
+**Next session starts here:** ["Minimum edit test (do this first, 2026-09-14)"](#minimum-edit-test-do-this-first-2026-09-14---the-model-for-every-other-edit)
+near the end of this file - a 2-verse checklist (Jeremiah 19:7, 27:8) with
+the exact before/after text and a 4-step verification process. This is the
+model to repeat for the remaining 48 Test 71 verses once it's confirmed
+working.
+
 **Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
 now the **authoritative target** for quote-pattern instances (Tests 70/71),
 superseding this plan's earlier "reference for sanity-checking, not a source
@@ -435,8 +441,78 @@ touches and why - "cleaned" is not a sufficient description on its own.
 | This plan document + decision update | **Done 2026-09-14** |
 | `web-diff` WEBU parser + pattern census (Phases 1-2) | **Next - now a prerequisite**, not just DRY infrastructure, since it's the only practical way to find the 50 verses needing edits |
 | Minimal docm -> `rwb.txt` generator + diff register | **Next**, sequenced alongside/before the 50-verse edit so the edit lands in `rwb.txt` automatically |
-| Docm edits: 2 instances (Test 70) + 48 instances (Test 71) to match WEBU | **Next**, using the Phase 1/2 worklist |
+| Docm edits: 2 instances (Test 70) + 48 instances (Test 71) to match WEBU | **Next - start with the minimum edit test below**, using the Phase 1/2 worklist |
 | Rebaseline Tests 70/71 to 75/63 | **After** the docm edits land, not before |
 | Strong's numbers in `rwb.usfm` (Phase 5) | Future, unchanged - after the USFM exporter matures |
 | Recurring-drop process (Phase 6) | Documented, unchanged |
 | WEB Updates changelog review (`webupdates.php`) | Deferred - after the quote-pattern editorial work is complete |
+
+## Minimum edit test (do this first, 2026-09-14) - the model for every other edit
+
+Before touching all 50 worklist verses, do the smallest possible one first -
+the 2-verse Test 70 worklist - as an end-to-end proof of the whole
+pipeline (docm edit -> VBA export -> Node census -> worklist) before
+committing to the much larger 48-verse Test 71 pass. **Use this exact
+process for every subsequent verse/pattern edit, both patterns.**
+
+### Task
+
+- [ ] **Jeremiah 19:7** - docm currently has `"I will make the counsel...`
+      (one opening double-quote). WEBU has `"'"I will make the counsel...`
+      (open-double + open-single + open-double). Insert `'"` immediately
+      after the existing `"`, before "I will make" - two more opening
+      marks needed to match WEBU.
+- [ ] **Jeremiah 27:8** - docm currently has `"'It will happen...`
+      (open-double + open-single - 2 marks). WEBU has
+      `"'"'It will happen...` (open-double + open-single + open-double +
+      open-single - 4 marks, one nesting level deeper than 19:7).
+      **Decision needed while editing:** the Test 70 pattern only checks
+      the *leading three* characters (`"'"`), which WEBU's actual 4-mark
+      sequence already starts with - so inserting just **one** more `"`
+      (giving `"'"It will happen...`) is enough to pass the test, but
+      doesn't fully match WEBU's actual nesting depth. Inserting the full
+      4-mark sequence (`"'"'`) matches WEBU exactly, per "closing quotes
+      should follow the pattern of engwebu_usfm." Recommend the full
+      4-mark match for fidelity, but this is a real editorial call, not a
+      mechanical one - make it deliberately, not by default.
+  - **Leave alone:** WEBU says "says the LORD" at 27:8 where the docm has
+    "says God" - that's RWB's own independent Yahweh/LORD->God editorial
+    convention, unrelated to this quote-pattern fix. Don't copy WEBU's
+    wording here, only its quote punctuation.
+- [ ] Save the document (not just export the VBA code - see item 9 of
+      `Code_review 2026-09-14.md` for why this distinction matters).
+
+### Verification process (the model for every other edit)
+
+1. In Word's Immediate window: `RUN_THE_TESTS(70)` - expect **75** (up
+   from 73). If it's not 75, stop and re-check the edit before going
+   further - don't proceed to step 2 on a wrong count.
+2. Re-export the docm dump: `ExportDocmVersesToRWBFormat` (full run, no
+   `maxVerses` limit - the two edited verses could be anywhere in the
+   document). Confirm the Immediate window still reports the same
+   `31053`/`46`/`3` totals as before (or whatever the current baseline is)
+   - a *different* skip/duplicate count would mean something broke
+   elsewhere, not just the two intended verses changing.
+3. In `aeRWB` (file edits only, do not commit/push -
+   [[feedback-aerwb-no-autopush]]): re-run
+   `npm run web.census -- "$(printf '“‘“')"` (or the equivalent for your
+   shell). Confirm:
+   - `docm-verses.txt` hits = **75** (was 73).
+   - The editorial worklist in `census/201C-2018-201C-worklist.md` is now
+     **empty**.
+4. Only once all three checks pass, rebaseline `Expected1BasedArray`
+   position 70 in `aeBibleClass.cls` from 73 to 75 (matches the pattern
+   already used for every other rebaseline this session - edit the code,
+   don't just accept the live PASS, per item 9's "verify against git, not
+   a single live PASS" lesson).
+
+### Applying this model to the remaining 48 Test 71 verses
+
+Same four-step process, scaled up: edit all 48 verses from
+`census/201D-2019-201D-worklist.md` (deciding fidelity-vs-minimum per verse
+the way 27:8 required above, since WEBU's actual nesting depth may vary
+verse-to-verse), then run the same verification sequence once at the end
+(`RUN_THE_TESTS(71)` = 63, re-export, re-census confirms 63 hits and an
+empty worklist, then rebaseline position 71 to 63) rather than one verse at
+a time - the two-verse Test 70 pass is the proof the pipeline works; the
+48-verse Test 71 pass is the same process at scale, not a new process.
