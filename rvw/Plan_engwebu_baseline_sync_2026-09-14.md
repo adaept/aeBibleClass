@@ -453,7 +453,7 @@ touches and why - "cleaned" is not a sufficient description on its own.
 | Recurring-drop process (Phase 6) | Documented, unchanged |
 | WEB Updates changelog review (`webupdates.php`) | Deferred - after the quote-pattern editorial work is complete |
 
-## Minimum edit test (do this first, 2026-09-14) - the model for every other edit
+## ✅ Minimum edit test (do this first, 2026-09-14) - the model for every other edit
 
 Before touching all 50 worklist verses, do the smallest possible one first -
 the 2-verse Test 70 worklist - as an end-to-end proof of the whole
@@ -463,54 +463,30 @@ process for every subsequent verse/pattern edit, both patterns.**
 
 ### Task
 
-- [ ] **Jeremiah 19:7** - docm currently has `"I will make the counsel...`
-      (one opening double-quote). WEBU has `"'"I will make the counsel...`
-      (open-double + open-single + open-double). Insert `'"` immediately
-      after the existing `"`, before "I will make" - two more opening
-      marks needed to match WEBU.
-- [ ] **Jeremiah 27:8** - docm currently has `"'It will happen...`
-      (open-double + open-single - 2 marks). WEBU has
-      `"'"'It will happen...` (open-double + open-single + open-double +
-      open-single - 4 marks, one nesting level deeper than 19:7).
-      **Decision needed while editing:** the Test 70 pattern only checks
-      the *leading three* characters (`"'"`), which WEBU's actual 4-mark
-      sequence already starts with - so inserting just **one** more `"`
-      (giving `"'"It will happen...`) is enough to pass the test, but
-      doesn't fully match WEBU's actual nesting depth. Inserting the full
-      4-mark sequence (`"'"'`) matches WEBU exactly, per "closing quotes
-      should follow the pattern of engwebu_usfm." Recommend the full
-      4-mark match for fidelity, but this is a real editorial call, not a
-      mechanical one - make it deliberately, not by default.
-  - **Leave alone:** WEBU says "says the LORD" at 27:8 where the docm has
-    "says God" - that's RWB's own independent Yahweh/LORD->God editorial
-    convention, unrelated to this quote-pattern fix. Don't copy WEBU's
-    wording here, only its quote punctuation.
-- [ ] Save the document (not just export the VBA code - see item 9 of
-      `Code_review 2026-09-14.md` for why this distinction matters).
+- [x] **Jeremiah 19:7** - docm now reads `"'"I will make the counsel...`
+      (open-double + open-single + open-double), matching WEBU exactly.
+- [x] **Jeremiah 27:8** - docm now reads `"'"It will happen...` (3 marks:
+      open-double + open-single + open-double). **Editorial call made:** the
+      operator chose the **minimum match** (3 marks, satisfies the Test 70
+      pattern check), not the full 4-mark WEBU fidelity match (`"'"'`) this
+      section flagged as the recommended-but-optional alternative. Deliberate
+      choice, not an oversight - noted here per this section's own "make it
+      deliberately" instruction. "says God" (not WEBU's "says the LORD")
+      correctly left alone, per RWB's own Yahweh/LORD->God convention.
+- [x] Document saved (VBA code also exported to `src/`).
 
-### Verification process (the model for every other edit)
+### ✅ Verification process (the model for every other edit) - all four steps passed 2026-09-15
 
-1. In Word's Immediate window: `RUN_THE_TESTS(70)` - expect **75** (up
-   from 73). If it's not 75, stop and re-check the edit before going
-   further - don't proceed to step 2 on a wrong count.
-2. Re-export the docm dump: `ExportDocmVersesToRWBFormat` (full run, no
-   `maxVerses` limit - the two edited verses could be anywhere in the
-   document). Confirm the Immediate window still reports the same
-   `31053`/`46`/`3` totals as before (or whatever the current baseline is)
-   - a *different* skip/duplicate count would mean something broke
-   elsewhere, not just the two intended verses changing.
-3. In `aeRWB` (file edits only, do not commit/push -
-   [[feedback-aerwb-no-autopush]]): re-run
-   `npm run web.census -- "$(printf '“‘“')"` (or the equivalent for your
-   shell). Confirm:
-   - `docm-verses.txt` hits = **75** (was 73).
-   - The editorial worklist in `census/201C-2018-201C-worklist.md` is now
-     **empty**.
-4. Only once all three checks pass, rebaseline `Expected1BasedArray`
-   position 70 in `aeBibleClass.cls` from 73 to 75 (matches the pattern
-   already used for every other rebaseline this session - edit the code,
-   don't just accept the live PASS, per item 9's "verify against git, not
-   a single live PASS" lesson).
+1. ✅ `RUN_THE_TESTS(70)` → **75** (was 73).
+2. ✅ `ExportDocmVersesToRWBFormat` re-run → same `31053`/`46`/`3` totals as
+   before - nothing broke elsewhere.
+3. ✅ `npm run web.census -- "$(printf '“‘“')"` in `aeRWB` (file edits only,
+   not committed by Claude - [[feedback-aerwb-no-autopush]]) → `docm-verses.txt`
+   hits = **75** (was 73), editorial worklist **empty** (0 WEBU verses
+   unmatched).
+4. ✅ `Expected1BasedArray` position 70 rebaselined 73 → 75 in
+   `aeBibleClass.cls` (already present in the exported code; confirmed
+   correct only after steps 1-3 above passed).
 
 ### Applying this model to the remaining 48 Test 71 verses
 

@@ -113,7 +113,12 @@ End Function
 ' escape happens before, during, or after the ribbon callback. Remove once
 ' the focus-escape bug is resolved.
 Private Sub m_app_WindowSelectionChange(ByVal Sel As Selection)
-    Debug.Print "WindowSelectionChange: Sel.Start=" & Sel.Start & _
+    ' Confirmed 2026-09-15: mouse-driven selection changes ARE captured here
+    ' (Sel.Text logged single characters as clicks landed in the document
+    ' body). Commented out to stop Immediate-window noise now that the
+    ' capture path itself is verified - uncomment to resume the focus-escape
+    ' investigation.
+    'Debug.Print "WindowSelectionChange: Sel.Start=" & Sel.Start & _
         ", Sel.Text=""" & Replace(Replace(Left$(Sel.Text, 20), vbCr, "\r"), vbTab, "\t") & _
         """ at " & TimestampMs()
 End Sub
