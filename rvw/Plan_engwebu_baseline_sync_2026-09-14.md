@@ -499,18 +499,19 @@ for the Test 71 batch pass rather than reopening this pilot):
 **🔴 Known blind spot (2026-09-15, neither gap above is currently
 tool-detected):** Test 70/71's census is a **presence check per verse**
 (`docm has the 3-char pattern somewhere` / `WEBU has it somewhere`), not a
-**text-equality check**. Jeremiah 27:8 has the pattern in *both* sources (3
-marks in docm, 4 in WEBU), so the Editorial worklist correctly excludes it -
-"worklist empty" only ever meant "pattern present everywhere WEBU has it,"
-never "docm matches WEBU exactly." Nothing today would catch this
-automatically; it's tracked only as the two ⚪ items above until closed.
-**What would close it** (considered and rejected/accepted below - see the
-"4-mark test?" discussion in the architecture assessment's prep list): not a
-new fixed-pattern `aeBibleClass` test (doesn't generalize past this one
-depth, doesn't localize to a verse, wrong layer - content-fidelity vs.
-document-hygiene); instead, extend `aeRWB`'s `census.mjs` with an **exact
-per-verse text-equality mode** for refs where both sources already show a
-pattern hit - see the new prep-checklist item below.
+**nesting-structure check**. Jeremiah 27:8 has the pattern in *both* sources
+(3 marks in docm, 4 in WEBU), so the Editorial worklist correctly excludes
+it - "worklist empty" only ever meant "pattern present everywhere WEBU has
+it," never "docm's nesting depth matches WEBU's." Nothing today would catch
+this automatically; it's tracked only as the two ⚪ items above until
+closed. **What would close it** (considered and rejected/accepted below -
+see the "4-mark test?" discussion in the architecture assessment's prep
+list): not a new fixed-pattern `aeBibleClass` test (doesn't generalize past
+this one depth or this one language's marks, doesn't localize to a verse,
+wrong layer - content-fidelity vs. document-hygiene); instead, a
+per-language-parameterized nesting-structure checker in `aeRWB` - **not** a
+full text-equality diff (RWB's intentional wording divergence from WEB/WEBU
+is out of scope for this, by design - see the prep-checklist item below).
 
 ### ✅ Verification process (the model for every other edit) - all four steps passed 2026-09-15
 
@@ -663,32 +664,73 @@ Node tooling; keep that boundary deliberate as this continues.
   `web.txt`/`rwb.txt`/`engwebu.txt` loaders could also emit - a stepping
   stone toward web/mobile/server consumption without committing to a
   specific database or API yet.
-- ⚪ Build the quote-nesting depth-balance checker as a new `aeRWB` tool
-  (walks a full book/corpus, tracks nesting depth, flags any point it goes
-  negative or fails to return to baseline) - operationalizes the "code
-  catches this, humans don't" finding above, and doubles as a reusable i18n
-  QA tool since the depth logic itself is language-agnostic.
-- ⚪ **Extend `census.mjs` with an exact per-verse text-equality mode**
-  (2026-09-15, higher priority than the item above - smaller, and directly
-  closes a known gap): for refs where both WEBU and docm already show a
-  pattern hit, also diff the *full verse text*, not just pattern presence.
-  Closes the Jeremiah 27:8/27:22 blind spot documented above (docm's 3-mark
-  match vs. WEBU's 4-mark original currently looks "done" to the Editorial
-  worklist because both sides merely *contain* the pattern). **Considered
-  and rejected as a `aeBibleClass` fix:** a new fixed 4-mark `Test 87`/`88`
-  in `aeBibleClass.cls` was considered - rejected because (1) a fixed
-  pattern only catches this one specific depth, not arbitrary nesting depth
-  found later, (2) it returns a document-wide count like Test 70/71 already
-  do, not a verse reference, and (3) content-fidelity-against-an-external-
-  corpus is a different concern than Tests 1-86's self-contained document-
-  hygiene checks - the right layer for this is `aeRWB`'s existing verse-keyed
-  census tooling, not a new VBA test. (If a fixed regression guard is ever
-  still wanted alongside this, it must be **appended** as the next unused
-  test number, e.g. `87`/`88` - inserting between 69 and 70 would force
-  renumbering every test through 86 and break every historical "Test 70"/
-  "Test 71" reference in this doc and elsewhere; `aeBibleClass.cls`'s test
-  dispatch has no execution-order dependency between cases, so there's no
-  technical reason to insert mid-sequence either.)
+- ⚪ **Build a per-language-parameterized quote-nesting-structure checker**
+  (2026-09-15, corrects/replaces two earlier framings of this item - see
+  below) as a new `aeRWB` tool: walks a verse/book/corpus and validates
+  quotation-mark *nesting structure* (balance, correct open/close
+  alternation, correct depth at known reference points like Jeremiah 27:8),
+  **not full verse-text equality** - RWB's intentionally divergent wording
+  vs. WEB/WEBU is a separate, already-handled concern (R3/R4's diff
+  register, reviewed at commit time), explicitly **not** something this
+  checker should flag. Scope is punctuation-nesting fidelity only.
+  - **Must be parameterized by a per-language quote-mark-set table**
+    (ordered `[open, close]` pairs per nesting level, direction-aware), not
+    hardcoded to `U+201C`/`U+2018`/`U+201D`/`U+2019` the way Test 70/71 (and
+    any fixed-pattern test) necessarily is - see the language survey below
+    for why a hardcoded English/WEBU mark set would be silently meaningless
+    for other languages, not just incomplete.
+  - Closes the immediate Jeremiah 27:8/27:22 blind spot (docm's 3-mark vs.
+    WEBU's 4-mark original currently looks "done" to the Editorial worklist
+    because both sides merely *contain* the pattern) as one concrete,
+    near-term use of the same general mechanism.
+  - **Considered and rejected as a `aeBibleClass` fix:** a new fixed 4-mark
+    `Test 87`/`88` in `aeBibleClass.cls` was considered - rejected because
+    (1) a fixed pattern only catches this one specific depth in this one
+    language's mark set, not arbitrary nesting depth or a different
+    language's marks, (2) it returns a document-wide count like Test 70/71
+    already do, not a verse reference, and (3) nesting-structure validation
+    against a configurable per-language rule set is a different concern
+    than Tests 1-86's self-contained, English-hardcoded document-hygiene
+    checks - the right layer is `aeRWB`'s verse-keyed tooling, not a new VBA
+    test. (If a fixed English-only regression guard is ever still wanted
+    alongside this, it must be **appended** as the next unused test number,
+    e.g. `87`/`88` - inserting between 69 and 70 would force renumbering
+    every test through 86 and break every historical "Test 70"/"Test 71"
+    reference in this doc and elsewhere; `aeBibleClass.cls`'s test dispatch
+    has no execution-order dependency between cases, so there's no
+    technical reason to insert mid-sequence either.)
+
+**2026-09-15 language survey - why this can't be a hardcoded English
+pattern** (answers "in what cases does this punctuation not apply, and how
+is it resolved elsewhere," asked while scoping the item above):
+
+- **Different glyph system entirely:** Japanese/Chinese/Korean traditionally
+  use corner brackets (「...」 primary, 『...』 nested), not curly quotes at
+  all. A translation in these languages would show **zero** hits on Test
+  70/71's exact codepoints forever, regardless of whether its own nesting is
+  correct - a "PASS" there would be meaningless, not reassuring.
+- **Different glyphs, same underlying problem:** French/Russian/Greek and
+  much of continental Europe use guillemets « » (`U+00AB`/`U+00BB`) as the
+  primary mark, often with curly or angle quotes nested inside; German/
+  Polish use low-high style „..." (`U+201E` opening). The adjacent-marks-at-
+  a-nesting-boundary problem still exists, just with different codepoints
+  this test doesn't reference.
+- **Reversed polarity:** British English conventionally nests the *opposite*
+  way from American/WEBU - single quotes outer, double inner. A pattern
+  hardcoded to double-single-double checks for the wrong order if pointed at
+  UK-convention text.
+- **No stacked-mark nesting at all:** some literary and SIL-developed
+  minority-language orthographies use a **quotation dash** (em-dash at the
+  start of a reported-speech line) instead of paired quote marks - zero
+  quotation-mark codepoints is *correct* there, by design.
+- **RTL scripts** (Arabic, Hebrew): direction mirrors visually; convention
+  may use guillemets (borrowed via French influence) or other direction-
+  aware marks, not a drop-in case for a Latin-oriented codepoint sequence.
+- **How Paratext/the USFM ecosystem actually resolves this:** each
+  translation project configures its own quotation-mark table (ordered
+  open/close pairs per nesting level, specific to that language), and
+  validation checks nesting *structure* against that configured table, not
+  a hardcoded mark set. This is the design the checker above should follow.
 - ⚪ Research Paratext's project/USFM interchange and its mobile-app-
   generation track's expected input format, to scope the minimal adapter
   surface needed to feed RWB text into that pipeline without redesigning
