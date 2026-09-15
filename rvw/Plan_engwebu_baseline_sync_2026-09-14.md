@@ -170,9 +170,9 @@ Implemented in `aeRWB` as `tools/web-diff/export-engwebu.mjs` (R7, `npm run
 web.engwebu`); pointer + tracking story in that repo's root `README.md` and
 `tools/web-diff/README.md`.
 
-- 🟡 **aeRWB commit:** reviewed by operator in GitHub Desktop first; commit
-  `<pending>` (date pending) once the operator explicitly tells Claude to
-  push.
+- ✅ **aeRWB commit:** `18440da` (2026-09-15) - "Add WEBU pattern census (R6)
+  and committed engwebu.txt export (R7)", reviewed by operator in GitHub
+  Desktop, pushed on Claude's explicit go-ahead.
 
 ### Phase 2 - Add a reusable "pattern census" mode
 
@@ -265,7 +265,7 @@ files dated" line changes):
 |---|---|
 | `.gitignore` entry for `/engwebu_usfm` | **Done this session** |
 | This plan document | **Done this session** |
-| `engwebu.txt` committed alongside `web.txt`/`rwb.txt` (Phase 1 decision) | ✅ Done (aeBibleClass side, 2026-09-15) / 🟡 aeRWB commit pending operator push |
+| `engwebu.txt` committed alongside `web.txt`/`rwb.txt` (Phase 1 decision) | ✅ Done (aeBibleClass `89959d3`, aeRWB `18440da`, both 2026-09-15) |
 | Test 70 rebaseline to 73 | Next: quick, low-risk, data already confirmed |
 | Test 71 spot-check + rebaseline | Next: bounded investigation, ~30 min |
 | `web-diff` WEBU parser + pattern census (Phases 1-2) | Follow-up session, `aeRWB` repo |
