@@ -508,6 +508,12 @@ for the Test 71 batch pass rather than reopening this pilot):
    `aeBibleClass.cls` (already present in the exported code; confirmed
    correct only after steps 1-3 above passed).
 
+**Provenance (freshness marker for this snapshot):** `rpt/docm-verses.txt` as
+committed in `aeBibleClass` `0b60a35` (2026-09-15). The census counts above
+(75/75, empty worklist) are only guaranteed current as of that commit - if
+`git log -- rpt/docm-verses.txt` shows anything newer, re-run steps 2-3
+before trusting these numbers.
+
 ### Applying this model to the remaining 48 Test 71 verses
 
 Same four-step process, scaled up: edit all 48 verses from
