@@ -155,9 +155,45 @@ happens not to expose, or (c) some mix of both.
    open 13% `Lord`-count gap is a candidate worth re-checking once the real
    picture is known.
 
+## Process bug found alongside this investigation (operator, 2026-09-16): the release process has no way to catch this
+
+**Confirmed real, not hypothetical:** `README.md` documents `RUN_THE_TESTS`
+as *"Run all tests"* - the only testing workflow this repo's public docs
+describe. `AuditVerseMarkerStructure` is not one of the 86 numbered
+`RUN_THE_TESTS` slots and is never mentioned in `README.md` at all. Anyone
+following the documented testing workflow - including a future release
+process - would have no way to know this check exists, let alone that it
+needs to be run separately. This is exactly how a canonical-versification
+regression could ship undetected.
+
+**Placement note (per `feedback_public_vs_internal_docs`, not yet
+decided):** this repo's `README.md` is external-user-facing only -
+maintainer/release-process runbooks belong in adaept5tudio's private docs,
+not here. So "add a prominent note" needs a location decision before it's
+written:
+- Source-code comments (near `RUN_THE_TESTS`'s dispatch in
+  `basTest_aeBibleClass.bas`, and in `AuditVerseMarkerStructure`'s own
+  header) - appropriate regardless of public/private, maintainer-facing by
+  nature either way.
+- A release-process checklist, if a dedicated one is wanted - operator to
+  decide whether that belongs in adaept5tudio's private docs (per the
+  standing rule) or this repo's `rvw/` (internal working notes, arguably
+  not "docs" in the public sense the standing rule was written to keep
+  clean).
+
+### Task - not yet done
+
+- ⚪ Add a prominent, hard-to-miss note (debug/code-comment, documentation,
+  and any other relevant surface) that `AuditVerseMarkerStructure` exists,
+  is not part of `RUN_THE_TESTS`, and must be run explicitly before any
+  release - specific location(s) pending the placement decision above.
+
 ## Status
 
 🟡 Pre-run code review done, two real bugs found and fixed (off-by-one in
 `GetMaxVerse`; wrong class name/`MsgBox` in `VersesInChapter`'s error
-handler). `AuditVerseMarkerStructure` about to be run for the first time.
-No diagnostic logging added to the export yet; no docm changes made.
+handler). A third, process-level bug found and logged (above) - the
+release process has no documented way to know `AuditVerseMarkerStructure`
+needs to run at all - not yet fixed, placement pending. `AuditVerseMarkerStructure`
+about to be run for the first time. No diagnostic logging added to the
+export yet; no docm changes made.
