@@ -188,14 +188,12 @@ in adaept5tudio's private docs, per the standing rule - plus an in-repo
 pointer and a runtime reminder, so the note is visible from every angle
 someone might encounter it.
 
-- ✅ **Release-process guard added**,
+- ✅ **Release-process guard added**, `adaept5tudio` `4446c74` -
   `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` section
   10.5, new step "6a" (non-disruptive - avoids renumbering steps 7-8, which
   have historical progress notes tied to their numbers) - full explanation
   of why `AuditVerseMarkerStructure` isn't equivalent to `RUN_THE_TESTS`
-  82/83, with a pointer back to this doc. **Uncommitted in that repo** -
-  operator to decide on committing there (no established convention for
-  that repo in this session, unlike aeBibleClass/aeRWB).
+  82/83, with a pointer back to this doc.
 - ✅ **In-repo pointer**: this bug doc itself, cross-referenced from the
   release-process doc above (mutual pointer, findable from either side).
 - ✅ **Runtime reminder, aeBibleClass `869f46c`**: `aeBibleClass.cls`
