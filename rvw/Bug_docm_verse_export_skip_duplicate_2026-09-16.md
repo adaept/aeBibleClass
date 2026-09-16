@@ -57,15 +57,30 @@ completely undetected. Tests 82/83 passing does **not** prove:
 5. Writes `rpt/VerseStructureAudit.txt` plus an Immediate-window summary,
    listing every book/chapter with a mismatch by name.
 
-**This has apparently never been run this session** (no `rpt/
-VerseStructureAudit.txt` referenced, and it's absent from every
-`RUN_THE_TESTS` log seen). Given its documented 300-2700 second runtime,
-this is very plausibly why it isn't part of routine testing - the
-operator's instinct ("tests that take a long time... in the skip category")
-was directionally correct: not that a *scheduled* test gets silently
-skipped, but that the *rigorous* version of this check is a separate,
-slow, manually-invoked tool that automatic testing substitutes a fast
-aggregate for.
+**Correction (2026-09-16, after actually running both `AuditVerseMarkerStructure`
+and `RUN_THE_TESTS(82)`):** the framing above was wrong in an important way.
+It's not "a fast aggregate substitute runs instead of the rigorous check" -
+**nothing runs at all.** `RUN_THE_TESTS(82)` returns `SKIP` with `Result =
+-1` (the untouched `InitializeGlobalResultArrayToMinusOne` initialization
+value) - `GetMarkerTotals` never executes, standalone or in a full suite.
+Confirmed via `MakeSkipTestArray`: `SkipTestArray = Array(82, 83)`, checked
+uniformly by `IsSkipTest` regardless of run mode. Full history in
+`rvw/Code_review 2026-09-13.md` item 7: a 2026-09-13 full-suite run hung at
+Test 82 with memory climbing past 2GB (a COM-object accumulation problem
+specific to running it after 8 other heavy tests in one call stack, not a
+correctness bug in the counting logic - standalone it worked, `162.81s`,
+genuine `PASS 31102=31102`, at a time before whatever edit created the 3
+John defect below). The fix added 82/83 to `SkipTestArray`, which - as that
+doc explicitly notes - **also disabled them standalone**, not just in full
+runs. The underlying memory cause was never root-caused; explicitly
+deprioritized once the suite was unblocked.
+
+**The operator's original instinct was exactly right, more literally than
+first credited:** Tests 82/83 are not just "slow so a fast substitute runs
+instead" - they are **in a literal skip list** and have provided **zero
+verification signal since 2026-09-13**. `AuditVerseMarkerStructure`, run
+today, is the first real verse-structure check since that date, and it
+found a genuine defect on its first run (see below).
 
 ## Pre-run code review (operator request, 2026-09-16) - before spending the 5-45 minute runtime
 
@@ -120,51 +135,98 @@ concern raised earlier in this review is ruled out.
   excluded from both counts equally - they don't explain the 46/3
   discrepancy and need no special handling in the export's skip logic.
 
+## `AuditVerseMarkerStructure` result (2026-09-16) - first real run, first real finding
+
+Ran successfully in 205.42s (well inside the documented 300-2700s range,
+no memory issue - this function is not `GetMarkerTotals`, a different
+implementation). Result: **`31103 / 31102` verses found, 1 structural
+issue**:
+
+```
+3 John 1: expected verses=14  found=15
+```
+
+**Root cause, verified directly against WEBU:** WEBU has exactly 14 verses
+in 3 John; its verse 14 is one continuous sentence: *"...but I hope to see
+you soon. Then we will speak face to face. Peace be to you. The friends
+greet you. Greet the friends by name."* The docm has this **split into two
+separate verses/paragraphs** - `3 John 1:14` ("...face to face.") and `3
+John 1:15` ("Peace be to you...by name.") - each independently numbered
+and each carrying its own genuine "Verse marker" styling (confirmed by the
+audit's own count, not just visible digit text). This is a real content/
+formatting defect, not an intentional versification choice - not present
+in WEBU, and `aeBibleCitationClass`'s canonical table correctly expects 14.
+
+**Not among the export's 46 skips/3 duplicates:** both `3 John 1:14` and
+`1:15` parse as clean, distinct, valid references in `docm-verses.txt` - no
+skip or duplicate flagged there. So this defect is real but was invisible
+to the export's own anomaly detection too - it only surfaced via the
+canonical per-chapter cross-reference.
+
+**What this resolves:** the audit found **exactly one** issue across the
+entire Bible - every other book/chapter's marker count matches canonical
+exactly. This makes it far more likely the export's 46 skips/3 duplicates
+are genuinely export-parser-only weaknesses (per the export's own
+documented naive digit-parsing), not a large population of hidden
+numbering defects - 3 John is confirmed real, but appears to be an
+isolated case, not the tip of a larger iceberg. Diagnostic logging on the
+export (originally planned as step 2 below) would still pin down the exact
+46+3 causes precisely, but the canonical-correctness question this whole
+investigation started from is now largely answered: **the docm's B/C/V
+numbering is correct except for this one confirmed defect.**
+
 ## What we actually know vs. don't know
 
 **Known:** the export's 46 skips + 3 duplicates come from its own naive
 digit-parsing of `VerseText` paragraph plain text (chapter-number-prefix
 string matching) - documented in the export routine itself, unrelated to
-character-style presence.
+character-style presence. **Known (new):** the docm has exactly one
+confirmed canonical-numbering defect (3 John, above), and it's not among
+the 46/3.
 
-**Not known (this is the open question):** whether those 46+3 paragraphs
-are (a) structurally fine per the canonical per-chapter table and only
-failing the export's naive parser, (b) genuine docm numbering defects
-(duplicates, gaps, or misnumbered verses) that Tests 82/83's aggregate
-happens not to expose, or (c) some mix of both.
+**Not known:** the exact identity of the 46+3 export-skipped/duplicate
+paragraphs (still needs diagnostic logging, step 2 below, to confirm they
+really are all parser-only and not a second, different-shaped defect the
+per-chapter audit's own methodology happens not to catch).
 
-## Path to resolution (not yet executed)
+## Path to resolution
 
-1. **Run `AuditVerseMarkerStructure`** (accept the 5-45 minute runtime) to
-   get the authoritative per-chapter report against the canonical
-   `VersesInChapter` table - this is the one piece of code in the project
-   that can actually answer "is the docm's B/C/V numbering correct."
+1. ~~Run `AuditVerseMarkerStructure`~~ **✅ Done above.**
 2. **Add targeted diagnostic logging to `ExportDocmVersesToRWBFormat`**
    (Immediate-window `Debug.Print`, per this project's error-handling
    convention) that prints the raw paragraph text for each of the 46
-   skips and 3 duplicates, so the specific verses can be identified.
-3. **Cross-reference the two reports** - do the audit's flagged
-   chapters/books line up with the export's skipped/duplicate paragraphs?
-   If yes, the docm has real numbering defects to fix. If the audit comes
-   back clean (0 issues, 31,102/31,102 per-chapter) while the export still
-   skips 46/3, the defect is confirmed to be in the export's parser only.
-4. **Only after that**, decide whether any of Phase 4's prior work (Pass 1/
+   skips and 3 duplicates, so the specific verses can be identified and
+   confirmed parser-only, not yet done.
+3. **Decide how to fix 3 John** - merge verses 14/15 back into one (matching
+   WEBU and the canonical table), not yet done. Requires a docm edit.
+4. **Separately, decide whether to root-cause the `GetMarkerTotals` memory
+   issue** (`rvw/Code_review 2026-09-13.md` item 7, deprioritized at the
+   time) so Tests 82/83 could be safely restored to `SkipTestArray`-free
+   operation - currently they provide zero signal at all, standalone or in
+   a full suite, and have since 2026-09-13. Independent of `AuditVerseMarkerStructure`
+   continuing to exist as the authoritative slow check either way.
+5. **Only after 2-3**, decide whether any of Phase 4's prior work (Pass 1/
    2 sync, Pass 3 divine-name census) needs re-running against a corrected
    `docm-verses.txt` - unlikely to change Test 70/71 results (neither
-   pattern's verses are known to be among the 46/3), but Pass 3's still-
-   open 13% `Lord`-count gap is a candidate worth re-checking once the real
-   picture is known.
+   pattern's verses are known to be among the 46/3, and 3 John isn't part
+   of either pattern), but Pass 3's still-open 13% `Lord`-count gap is a
+   candidate worth re-checking once 3 John and the 46/3 are resolved.
 
 ## Process bug found alongside this investigation (operator, 2026-09-16): the release process has no way to catch this
 
-**Confirmed real, not hypothetical:** `README.md` documents `RUN_THE_TESTS`
-as *"Run all tests"* - the only testing workflow this repo's public docs
-describe. `AuditVerseMarkerStructure` is not one of the 86 numbered
-`RUN_THE_TESTS` slots and is never mentioned in `README.md` at all. Anyone
+**Confirmed real, not hypothetical - and more severe than first stated:**
+`README.md` documents `RUN_THE_TESTS` as *"Run all tests"* - the only
+testing workflow this repo's public docs describe. `AuditVerseMarkerStructure`
+is not one of the 86 numbered `RUN_THE_TESTS` slots and is never mentioned
+in `README.md` at all. **Worse than "a different, better check exists
+outside RUN_THE_TESTS":** the two tests that were supposed to cover this
+inside `RUN_THE_TESTS` (82/83) are themselves hard-skipped
+(`SkipTestArray`, see above) and have provided zero signal since
+2026-09-13. So there was no automated verse-structure verification of any
+kind - fast or slow - until `AuditVerseMarkerStructure` was run by hand
+today, and it found a real defect (3 John) on its first run. Anyone
 following the documented testing workflow - including a future release
-process - would have no way to know this check exists, let alone that it
-needs to be run separately. This is exactly how a canonical-versification
-regression could ship undetected.
+process - would have had no way to know any of this.
 
 **Placement note (per `feedback_public_vs_internal_docs`, not yet
 decided):** this repo's `README.md` is external-user-facing only -
