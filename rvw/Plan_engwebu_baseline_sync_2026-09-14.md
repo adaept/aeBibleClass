@@ -1,11 +1,11 @@
 # Plan - engwebu_usfm baseline sync (Tests 70/71 and family) - 2026-09-14
 
-**✅ Tests 70 and 71 are both closed and rebaselined (2026-09-15)** - see
-their respective sections near the end of this file for full results.
-**Next session starts here:** the small "Policy correction" note above
-(Jeremiah 27:8 opening only - **27:22 was a false positive, corrected
-2026-09-15, see that note**) - then Phase 4 (`rwb.txt` sync from the docm),
-not yet started.
+**✅ Tests 70 and 71 are both closed and rebaselined (2026-09-15)**, and the
+two loose-end verses found during the Test 70 pilot are resolved (Jeremiah
+27:8 fixed, 27:22 confirmed a false positive, not a real gap) - see their
+respective sections near the end of this file for full results.
+**Next session starts here:** Phase 4 (`rwb.txt` sync from the docm) - not
+yet started, no small loose ends remaining before it.
 
 **Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
 now the **authoritative target** for quote-pattern instances (Tests 70/71),
@@ -484,15 +484,15 @@ tooling built later never has to special-case a "cosmetic" divergence
 between RWB and its WEBU source. Two concrete, not-yet-applied follow-ups
 this reveals, both **outside this 2-verse pilot's original scope** (queued
 for the Test 71 batch pass rather than reopening this pilot):
-- ⚪ **Jeremiah 27:8 opening** - docm has 3 marks (`"'"`); WEBU has 4
-  (`"'"'`, an extra `'` right before "It"). Needs the missing `'` inserted
-  to match WEBU exactly. **Verified 2026-09-15 by tracing the full v2-22
-  nesting** (4 levels: L1 `"` v2, L2 `'` v4, L3 `"` v4, L4 `'` v5, all
-  closing together at the end of v11, already fixed in the Test 71 batch) -
-  v8's 4-mark cluster is WEBU *restating* all 4 already-open levels at a
-  paragraph break, not opening 4 new ones needing separate closes. This is
-  a real, confirmed gap and WEBU's own punctuation here is internally
-  balanced, not a bug.
+- ✅ **Jeremiah 27:8 opening - Done 2026-09-15, aeBibleClass `0410414`.**
+  Docm had 3 marks (`"'"`); WEBU has 4 (`"'"'`, an extra `'` right before
+  "It") - inserted the missing `'`, confirmed byte-for-byte via
+  `docm-verses.txt`. **Verified by tracing the full v2-22 nesting** (4
+  levels: L1 `"` v2, L2 `'` v4, L3 `"` v4, L4 `'` v5, all closing together
+  at the end of v11, already fixed in the Test 71 batch) - v8's 4-mark
+  cluster is WEBU *restating* all 4 already-open levels at a paragraph
+  break, not opening 4 new ones needing separate closes. WEBU's own
+  punctuation here is internally balanced, not a bug.
 - ~~⚪ Jeremiah 27:22 closing~~ **❌ Not a real gap - corrected 2026-09-15.**
   Originally recorded here as docm `...to this place.'"` (2 marks) vs. WEBU
   `...to this place.'"'` (3 marks) - that WEBU transcription was **wrong**,
@@ -576,13 +576,12 @@ commit; `rpt/docm-verses.txt` and the rebaseline both landed there. If
 `git log -- rpt/docm-verses.txt` shows anything newer, re-verify before
 trusting this section.
 
-**Still open, not part of this closed batch** (per the policy-correction
-note above - queue for a future small pass, not blocking): Jeremiah 27:8's
-opening mark, found during the Test 70 pilot but outside its scope, and not
-census-detectable by either Test 70 or 71's exact fixed pattern (see the
-"Known blind spot" note above). Jeremiah 27:22, originally also flagged
-here, turned out to be a false positive on re-verification (2026-09-15) -
-see the policy-correction note above.
+**✅ Loose ends closed 2026-09-15** (found during the Test 70 pilot but
+outside its scope, not census-detectable by either Test 70 or 71's exact
+fixed pattern - see the "Known blind spot" note above): Jeremiah 27:8's
+opening mark fixed (`aeBibleClass` `0410414`); Jeremiah 27:22 confirmed a
+false positive, needed no change - see the policy-correction note above for
+both.
 
 ## 2026-09-15 architecture assessment - i18n/web/mobile/docx/client-server pathway
 
