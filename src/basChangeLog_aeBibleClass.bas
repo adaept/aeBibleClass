@@ -15,20 +15,20 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #636 - Error message for src when another docx created and EXPORT_THE_CODE is run after 'AuditFontsUsage "ArialTimes"' True [bug]
 ' #621 - Add 2012-12-28 World English Bible lang_ChangeLog.txt (https://ebible.org/Scriptures/changelog.txt) and work through the changes [wip]
 ' #619 - Make and implement styles Poetry 1,2,3 - see email notes; no indent for this version but it allows flexibility [feat]
-' #609 - Soft Hyphens checked to start of Numbers - See #389 [wip]
+' #609 - Soft Hyphens checked to start Page 170 - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
 ' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #365 - Map styles to USFM markers [wip]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
 ' #288 - Create md doc file describing use of Tasks labels [doc]
-' #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
-' #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
 '====================================================================================================================================
 '
 'Sq
+    ' [obso] - #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
+    ' [obso] - #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
     ' FIXED - #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to 0, ContNumericOrdinals Test 79
     ' [obso] - #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
     ' [obso] - #627 - aeBibleClass CountFindNotEmphasisRed Test 46 obsolete, can be reused (see #623) [obso]
