@@ -148,6 +148,19 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
             bookIndex = bookIndex + 1
             If canonBooks.Exists(bookIndex) Then
                 bookName = canonBooks.Item(bookIndex)(1)
+                ' RWB-format overrides (2026-09-16, found via Phase 4 Pass 3
+                ' research - rvw/Plan_pass3_divine_names_2026-09-15.md, section 3.7):
+                ' aeBibleCitationClass.GetCanonicalBookTable() is correct for
+                ' its own general-purpose citation use, but web.txt/rwb.txt/
+                ' WEBU (aeRWB) use different spellings for these two books.
+                ' This export's whole purpose is byte-comparable interop with
+                ' that format (see module header), so only these two names
+                ' are special-cased here, not changed in the shared table.
+                If bookName = "Psalms" Then
+                    bookName = "Psalm"
+                ElseIf bookName = "Song of Songs" Then
+                    bookName = "Song of Solomon"
+                End If
             Else
                 bookName = "UNKNOWN_BOOK_" & bookIndex
                 unknownBookCount = unknownBookCount + 1
