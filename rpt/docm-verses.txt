@@ -9174,7 +9174,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 12:21	 When Rehoboam had come to Jerusalem, he assembled all the house of Judah and the tribe of Benjamin, a hundred and eighty thousand chosen men, who were warriors, to fight against the house of Israel, to bring the kingdom again to Rehoboam the son of Solomon.
 1 Kings 12:22	 But the word of God came to Shemaiah the man of God, saying,
 1 Kings 12:23	 “Speak to Rehoboam the son of Solomon, king of Judah, and to all the house of Judah and Benjamin, and to the rest of the people, saying,
-1 Kings 12:24	 ‘God says, “You shall not go up or fight against your brothers, the children of Israel. Everyone return to his house; for this thing is from me.” So they listened to God’s word, and returned and went their way, according to God’s word.
+1 Kings 12:24	 ‘God says, “You shall not go up or fight against your brothers, the children of Israel. Everyone return to his house; for this thing is from me.”’” So they listened to God’s word, and returned and went their way, according to God’s word.
 1 Kings 12:25	 Then Jeroboam built Shechem in the hill country of Ephraim, and lived in it; and he went out from there, and built Penuel.
 1 Kings 12:26	 Jeroboam said in his heart, “Now the kingdom will return to David’s house.
 1 Kings 12:27	 If this people goes up to offer sacrifices in God’s house at Jerusalem, then the heart of this people will turn again to their lord, even to Rehoboam king of Judah; and they will kill me, and return to Rehoboam king of Judah.”
@@ -9413,7 +9413,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 20:3	 ‘Your silver and your gold is mine. Your wives also and your children, even the best, are mine.’”
 1 Kings 20:4	 The king of Israel answered, “It is according to your saying, my lord, O king. I am yours, and all that I have.”
 1 Kings 20:5	 The messengers came again, and said, “Ben Hadad says, ‘I sent indeed to you, saying, “You shall deliver me your silver, and your gold, and your wives, and your children;
-1 Kings 20:6	 but I will send my servants to you tomorrow about this time, and they will search your house, and the houses of your servants; whatever is pleasant in your eyes, they will put it in their hand, and take it away.”
+1 Kings 20:6	 but I will send my servants to you tomorrow about this time, and they will search your house, and the houses of your servants; whatever is pleasant in your eyes, they will put it in their hand, and take it away.”’”
 1 Kings 20:7	 Then the king of Israel called all the elders of the land, and said, “Please notice how this man seeks mischief; for he sent to me for my wives, and for my children, and for my silver, and for my gold; and I did not deny him.”
 1 Kings 20:8	 All the elders and all the people said to him, “Do not listen, and do not consent.”
 1 Kings 20:9	 Therefore he said to the messengers of Ben Hadad, “Tell my lord the king, ‘All that you sent for to your servant at the first I will do; but this thing I cannot do.’” The messengers departed, and brought him back the message.
@@ -9469,7 +9469,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 21:16	 When Ahab heard that Naboth was dead, Ahab rose up to go down to the vineyard of Naboth the Jezreelite, to take possession of it.
 1 Kings 21:17	 God’s word came to Elijah the Tishbite, saying,
 1 Kings 21:18	 “Arise, go down to meet Ahab king of Israel, who dwells in Samaria. Behold, he is in the vineyard of Naboth, where he has gone down to take possession of it.
-1 Kings 21:19	 You shall speak to him, saying, ‘God says, “Have you killed and also taken possession?”’ You shall speak to him, saying, ‘God says, “In the place where dogs licked the blood of Naboth, dogs will lick your blood, even yours.”
+1 Kings 21:19	 You shall speak to him, saying, ‘God says, “Have you killed and also taken possession?”’ You shall speak to him, saying, ‘God says, “In the place where dogs licked the blood of Naboth, dogs will lick your blood, even yours.”’”
 1 Kings 21:20	 Ahab said to Elijah, “Have you found me, my enemy?” He answered, “I have found you, because you have sold yourself to do that which is evil in God’s sight.
 1 Kings 21:21	 Behold, I will bring disaster on you, and will utterly sweep you away and will cut off from Ahab everyone who urinates against a wall, and him who is shut up and him who is left at large in Israel.
 1 Kings 21:22	 I will make your house like the house of Jeroboam the son of Nebat, and like the house of Baasha the son of Ahijah for the provocation with which you have provoked me to anger, and have made Israel to sin.”
@@ -9506,7 +9506,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 22:24	 Then Zedekiah the son of Chenaanah came near, and struck Micaiah on the cheek, and said, “Which way did God’s Spirit go from me to speak to you?”
 1 Kings 22:25	 Micaiah said, “Behold, you will see on that day, when you go into an inner room to hide yourself.”
 1 Kings 22:26	 The king of Israel said, “Take Micaiah, and carry him back to Amon the governor of the city, and to Joash the king’s son.
-1 Kings 22:27	 Say, ‘The king says, “Put this fellow in the prison, and feed him with bread of affliction and with water of affliction, until I come in peace.”
+1 Kings 22:27	 Say, ‘The king says, “Put this fellow in the prison, and feed him with bread of affliction and with water of affliction, until I come in peace.”’”
 1 Kings 22:28	 Micaiah said, “If you return at all in peace, God has not spoken by me.” He said, “Listen, all you people!”
 1 Kings 22:29	 So the king of Israel and Jehoshaphat the king of Judah went up to Ramoth Gilead.
 1 Kings 22:30	 The king of Israel said to Jehoshaphat, “I will disguise myself, and go into the battle; but you put on your robes.” The king of Israel disguised himself, and went into the battle.
@@ -9536,9 +9536,9 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 1:1	 Moab rebelled against Israel after the death of Ahab.
 2 Kings 1:2	 Ahaziah fell down through the lattice in his upper room that was in Samaria, and was sick. So he sent messengers, and said to them, “Go, inquire of Baal Zebub, the god of Ekron, whether I will recover of this sickness.”
 2 Kings 1:3	 But God’s angel said to Elijah the Tishbite, “Arise, go up to meet the messengers of the king of Samaria, and tell them, ‘Is it because there is no God in Israel, that you go to inquire of Baal Zebub, the god of Ekron?
-2 Kings 1:4	 Now therefore God says, “You will not come down from the bed where you have gone up, but you will surely die.” Then Elijah departed.
+2 Kings 1:4	 Now therefore God says, “You will not come down from the bed where you have gone up, but you will surely die.”’” Then Elijah departed.
 2 Kings 1:5	 The messengers returned to him, and he said to them, “Why is it that you have returned?”
-2 Kings 1:6	 They said to him, “A man came up to meet us, and said to us, ‘Go, return to the king who sent you, and tell him, “God says, ‘Is it because there is no God in Israel, that you send to inquire of Baal Zebub, the god of Ekron? Therefore you will not come down from the bed where you have gone up, but you will surely die.’”
+2 Kings 1:6	 They said to him, “A man came up to meet us, and said to us, ‘Go, return to the king who sent you, and tell him, “God says, ‘Is it because there is no God in Israel, that you send to inquire of Baal Zebub, the god of Ekron? Therefore you will not come down from the bed where you have gone up, but you will surely die.’”’”
 2 Kings 1:7	 He said to them, “What kind of man was he who came up to meet you, and told you these words?”
 2 Kings 1:8	 They answered him, “He was a hairy man, and wearing a leather belt around his waist.” He said, “It is Elijah the Tishbite.”
 2 Kings 1:9	 Then the king sent a captain of fifty with his fifty to him. He went up to him; and behold, he was sitting on the top of the hill. He said to him, “Man of God, the king has said, ‘Come down!’”
@@ -9792,7 +9792,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 9:34	 When he had come in, he ate and drank. Then he said, “See now to this cursed woman, and bury her; for she is a king’s daughter.”
 2 Kings 9:35	 They went to bury her, but they found no more of her than the skull, the feet, and the palms of her hands.
 2 Kings 9:36	 Therefore they came back, and told him. He said, “This is God’s word, which he spoke by his servant Elijah the Tishbite, saying, ‘The dogs will eat the flesh of Jezebel on the plot of Jezreel,
-2 Kings 9:37	 and the body of Jezebel will be as dung on the face of the field on Jezreel’s land, so that they will not say, “This is Jezebel.”
+2 Kings 9:37	 and the body of Jezebel will be as dung on the face of the field on Jezreel’s land, so that they will not say, “This is Jezebel.”’”
 2 Kings 10:1	 Now Ahab had seventy sons in Samaria. Jehu wrote letters, and sent to Samaria, to the rulers of Jezreel, even the elders, and to those who brought up Ahab’s sons, saying,
 2 Kings 10:2	 “Now as soon as this letter comes to you, since your master’s sons are with you, and you have chariots and horses, a fortified city also, and armor,
 2 Kings 10:3	 Select the best and fittest of your master’s sons, set him on his father’s throne, and fight for your master’s house.”
@@ -10048,7 +10048,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 18:22	 But if you tell me, ‘We trust in the Lord our God;’ is not that he whose high places and whose altars Hezekiah has taken away, and has said to Judah and to Jerusalem, ‘You shall worship before this altar in Jerusalem?’
 2 Kings 18:23	 Now therefore, please give pledges to my master the king of Assyria, and I will give you two thousand horses, if you are able on your part to set riders on them.
 2 Kings 18:24	 How then can you turn away the face of one captain of the least of my master’s servants, and put your trust on Egypt for chariots and for horsemen?
-2 Kings 18:25	 Have I now come up without God against this place to destroy it? God said to me, ‘Go up against this land, and destroy it.’”
+2 Kings 18:25	 Have I now come up without God against this place to destroy it? God said to me, ‘Go up against this land, and destroy it.’”’”
 2 Kings 18:26	 Then Eliakim the son of Hilkiah, Shebnah, and Joah, said to Rabshakeh, “Please speak to your servants in the Syrian language, for we understand it. Do not speak with us in the Jews’ language, in the hearing of the people who are on the wall.”
 2 Kings 18:27	 But Rabshakeh said to them, “Has my master sent me to your master and to you, to speak these words? Has he not sent me to the men who sit on the wall, to eat their own dung, and to drink their own urine with you?”
 2 Kings 18:28	 Then Rabshakeh stood, and cried with a loud voice in the Jews’ language, and spoke, saying, “Hear the word of the great king, the king of Assyria.
@@ -10067,7 +10067,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 19:4	 It may be the Lord your God will hear all the words of Rabshakeh, whom the king of Assyria his master has sent to defy the living God, and will rebuke the words which the Lord your God has heard. Therefore lift up your prayer for the remnant that is left.’”
 2 Kings 19:5	 So the servants of King Hezekiah came to Isaiah.
 2 Kings 19:6	 Isaiah said to them, “Tell your master this: ‘God says, “Do not be afraid of the words that you have heard, with which the servants of the king of Assyria have blasphemed me.
-2 Kings 19:7	 Behold, I will put a spirit in him, and he will hear news, and will return to his own land. I will cause him to fall by the sword in his own land.”
+2 Kings 19:7	 Behold, I will put a spirit in him, and he will hear news, and will return to his own land. I will cause him to fall by the sword in his own land.”’”
 2 Kings 19:8	 So Rabshakeh returned and found the king of Assyria warring against Libnah; for he had heard that he had departed from Lachish.
 2 Kings 19:9	 When he heard it said of Tirhakah king of Ethiopia, “Behold, he has come out to fight against you, he sent messengers again to Hezekiah, saying,
 2 Kings 19:10	 ‘Tell Hezekiah king of Judah this: “Do not let your God in whom you trust deceive you, saying, Jerusalem will not be given into the hand of the king of Assyria.
@@ -10103,7 +10103,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 20:3	 “Remember now, God, I beg you, how I have walked before you in truth and with a perfect heart, and have done that which is good in your sight.” And Hezekiah wept bitterly.
 2 Kings 20:4	 Before Isaiah had gone out into the middle part of the city, God’s word came to him, saying,
 2 Kings 20:5	 “Turn back, and tell Hezekiah the prince of my people, ‘God, the God of David your father, says, “I have heard your prayer. I have seen your tears. Behold, I will heal you. On the third day, you will go up to God’s house.
-2 Kings 20:6	 I will add to your days fifteen years. I will deliver you and this city out of the hand of the king of Assyria. I will defend this city for my own sake, and for my servant David’s sake.”
+2 Kings 20:6	 I will add to your days fifteen years. I will deliver you and this city out of the hand of the king of Assyria. I will defend this city for my own sake, and for my servant David’s sake.”’”
 2 Kings 20:7	 Isaiah said, “Take a cake of figs.” They took and laid it on the boil, and he recovered.
 2 Kings 20:8	 Hezekiah said to Isaiah, “What will be the sign that God will heal me, and that I will go up to God’s house the third day?”
 2 Kings 20:9	 Isaiah said, “This will be the sign to you from God, that God will do the thing that he has spoken: should the shadow go forward ten steps, or go back ten steps?”
