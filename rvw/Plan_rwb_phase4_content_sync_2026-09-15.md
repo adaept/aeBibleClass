@@ -112,9 +112,26 @@ invisible to Test 71's census on both sides from the start - the pattern
 only matches its exact 3-character sequence, and WEBU's actual text here is
 a different 2-character sequence entirely. Not fixed here; see item 4.
 
-## ⚪ 3. Third pass - Adonai/YHWH/Elohim → Lord/LORD/Lord GOD consistency
+## 🟡 3. Third pass - Adonai/YHWH/Elohim → Lord/LORD/Lord GOD consistency
 
-**Scope, per operator's prior research:** in the Hebrew source, the
+**Detailed sub-plan (primary sources, methodology, gotchas, baseline data,
+proposed style determination) written 2026-09-15:**
+`rvw/Plan_pass3_divine_names_2026-09-15.md`. Research and analysis done;
+tool-building and the actual audit not yet started; style-rule
+ratification pending operator confirmation. Headline findings: WEBU's
+inline Strong's tags are demonstrably unreliable for this pass (`H430`/
+Elohim never appears anywhere in this corpus's tagging; Genesis 1:1's "God"
+is mistagged to an unrelated word) - the capitalization-pattern census
+approach (reusing Test 70/71's existing tooling shape) is the right method,
+not Strong's-tag extraction. Also found: `web.txt` (2013) has 5,792 literal
+"Yahweh" occurrences that WEBU replaced with `LORD`/`GOD` by design, and
+RWB has already near-completely replaced *those* with `God` (one stray
+`LORD` left, at Romans 9:28 - likely missed, not deliberate). See the
+sub-plan for full detail, including two confirmed false-positive
+all-caps-`GOD` cases (quoted inscriptions, not the divine name).
+
+**Original scope note, per operator's prior research (superseded/refined by
+the sub-plan above, kept for history):** in the Hebrew source, the
 Tetragrammaton (YHWH) is conventionally rendered `LORD` (all caps) in most
 English Bibles, `Adonai` as `Lord`, and the combined `Adonai YHWH` as
 `Lord GOD`. This pass checks whether **docm/RWB's actual usage is internally
