@@ -189,6 +189,66 @@ export (originally planned as step 2 below) would still pin down the exact
 investigation started from is now largely answered: **the docm's B/C/V
 numbering is correct except for this one confirmed defect.**
 
+## New finding: post-3-John-fix export undercounts by exactly 1 paragraph
+
+Re-ran the export after the 3 John fix and after `AuditVerseMarkerStructure`
+confirmed `31102/31102, 0 issues`. Result: `wrote 31052 verses ...
+skipped=46 duplicates=3` - **31052+46+3 = 31101, one short of the
+now-confirmed-correct canonical total 31102** (previously masked: before the
+fix it was `31053+46+3=31102`, which looked consistent only because the
+then-actual defective total was `31103`, one high from the 3 John split -
+two independent one-off errors that happened to cancel in the arithmetic
+check, not evidence the export was sound).
+
+Re-read `ExportDocmVersesToRWBFormat`'s full body
+(`src/basRWBTextExport.bas`) to confirm the counters' relationship by
+construction: every `VerseText`-styled paragraph increments `visitedCount`
+by exactly 1, and then exactly one of `lineCount`, `skipCount`, or
+`dupCount` (mutually exclusive branches, no other path). So
+`visitedCount == lineCount + skipCount + dupCount` always, by the code's own
+structure - the gap is not a tallying bug between the four counters. It
+means the export's paragraph walk itself is only visiting **31101**
+`VerseText`-styled paragraphs, one fewer than the 31102 marker-carrying
+verses the canonical audit confirmed exist.
+
+**Working hypothesis, not yet confirmed:** `AuditOneBook`'s per-chapter
+`CountVerseMarkers`/`CountChapterVerseMarkers` (the slow, `Find`-based
+functions backing `AuditVerseMarkerStructure`) search a chapter-bounded
+`Range` for the "Verse marker"/"Chapter Verse marker" **character** styles
+directly - with no paragraph-style filter at all. The export, by contrast,
+only ever visits paragraphs whose **paragraph** style is literally
+`"VerseText"`. If exactly one paragraph somewhere in the docm carries
+genuine Verse-marker/Chapter-Verse-marker character styling but has the
+**wrong paragraph style** (not `"VerseText"` - e.g. accidentally left as
+`"BodyText"` or similar after an edit), the audit would count it correctly
+while the export would skip it entirely - silently, not even as one of the
+46 skips, since the paragraph never enters the `VerseText` branch at all.
+This would exactly explain a clean 1-paragraph gap that produces no export
+warning.
+
+**Candidate tool to test this without touching the export's hot path:**
+`basVerseStructureAudit.AuditCharStyleUsage(StyleName, bWriteFile,
+bAnomaliesOnly)` already exists and, per its own documented `bAnomaliesOnly`
+behavior, suppresses "runs where paraStyle=VerseText AND position=START" -
+i.e. it's designed to surface exactly a marker-styled run in an unexpected
+paragraph-style/position context. Not yet run for this purpose - the plan
+is to call `AuditCharStyleUsage("Verse marker", True, True)` (and the same
+for `"Chapter Verse marker"`) and inspect the anomaly list for the one
+paragraph that would explain this gap, before considering any change to the
+export itself. This deliberately avoids adding character/word-level style
+lookups to `ExportDocmVersesToRWBFormat`'s hot path, which the module's own
+header explicitly warns against (two earlier versions of this kind of
+lookup caused multi-GB memory blowups, the same class of issue as
+`GetMarkerTotals`/Tests 82/83).
+
+**✅ Diagnostic logging added to the export itself** (separate from the
+above, still useful for the 46/3 question): `ExportDocmVersesToRWBFormat`
+now `Debug.Print`s the raw paragraph text (truncated to 60 chars) and
+context for every skip and every duplicate, at the exact point each is
+detected, per this project's error-handling convention (Immediate window,
+not `MsgBox`). Not yet re-run/reviewed against a live export - next export
+run will show the 46+3 explicitly instead of only their counts.
+
 ## What we actually know vs. don't know
 
 **Known:** the export's 46 skips + 3 duplicates come from its own naive
@@ -207,13 +267,14 @@ per-chapter audit's own methodology happens not to catch).
 
 1. ~~Run `AuditVerseMarkerStructure`~~ **✅ Done.**
 2. ~~Decide how to fix 3 John~~ **✅ Done and verified - `31102/31102`, 0 issues.**
-3. **Add targeted diagnostic logging to `ExportDocmVersesToRWBFormat`**
-   (Immediate-window `Debug.Print`, per this project's error-handling
-   convention) that prints the raw paragraph text for each of the 46
-   skips and 3 duplicates, so the specific verses can be identified and
-   confirmed parser-only - **now higher-confidence to be parser-only**,
-   since the canonical audit confirms zero remaining structural defects
-   anywhere in the docm, not yet done.
+3. ~~Add targeted diagnostic logging to `ExportDocmVersesToRWBFormat`~~
+   **✅ Done** - prints the raw paragraph text for each skip/duplicate at
+   detection time. Not yet re-run against a live export. **Superseded in
+   priority by the new finding above**: the export now undercounts total
+   `VerseText` paragraphs visited by exactly 1 relative to the canonical
+   audit (31101 vs 31102), a different question than the 46/3 shape - the
+   diagnostic logging answers the 46/3 question but not the 1-paragraph
+   gap, which needs `AuditCharStyleUsage` (see above) instead.
 4. **Separately, decide whether to root-cause the `GetMarkerTotals` memory
    issue** (`rvw/Code_review 2026-09-13.md` item 7, deprioritized at the
    time) so Tests 82/83 could be safely restored to `SkipTestArray`-free
@@ -283,10 +344,15 @@ someone might encounter it.
 
 ## Status
 
-🟡 Pre-run code review done, two real bugs found and fixed (off-by-one in
-`GetMaxVerse`; wrong class name/`MsgBox` in `VersesInChapter`'s error
-handler). A third, process-level bug found and logged (above) - the
-release process has no documented way to know `AuditVerseMarkerStructure`
-needs to run at all - not yet fixed, placement pending. `AuditVerseMarkerStructure`
-about to be run for the first time. No diagnostic logging added to the
-export yet; no docm changes made.
+🟡 `AuditVerseMarkerStructure` run twice: first found and the operator fixed
+a real 3 John split-verse defect; second confirmed `31102/31102, 0
+structural issues` - the docm's canonical B/C/V numbering is correct.
+Release-process guard added (adaept5tudio doc + in-repo pointer + runtime
+reminder), all ✅. Two real code bugs found and fixed along the way
+(`GetMaxVerse` off-by-one; `VersesInChapter` error-handler class name/
+`MsgBox`). **New, still open:** post-fix export re-run shows a 1-paragraph
+undercount (31101 vs the confirmed-correct 31102) separate from the
+long-known 46 skips/3 duplicates - diagnostic logging for the 46/3 is now
+✅ in place but not yet re-run; the 1-paragraph gap needs
+`AuditCharStyleUsage("Verse marker"/"Chapter Verse marker", True, True)` run
+first, not yet done.

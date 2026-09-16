@@ -1,6 +1,6 @@
----- AuditVerseMarkerStructure: 2026-05-06 14:51:24 ----
+---- AuditVerseMarkerStructure: 2026-09-16 15:06:47 ----
 
-66 Heading 1 paragraphs found in 148 sections.
+66 Heading 1 paragraphs found in 145 sections.
 
 Genesis               expected chapters= 50  found= 50  OK
   ch   1: expected verses= 31  found VM= 31  found CVM= 31  OK/OK

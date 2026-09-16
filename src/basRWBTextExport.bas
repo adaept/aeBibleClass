@@ -186,6 +186,7 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
             ' Range.Text already read.
             If bookName = "" Or chapNum = 0 Then
                 skipCount = skipCount + 1
+                Debug.Print "SKIP (no book/chapter context): bookName=""" & bookName & """ chapNum=" & chapNum & " text=""" & Left$(oPara.Range.Text, 60) & """"
             Else
                 paraTxt = oPara.Range.Text
                 digitRun = LeadingDigits(paraTxt)
@@ -197,6 +198,7 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
                         ref = bookName & " " & chapNum & ":" & verseNum
                         If seen.Exists(ref) Then
                             dupCount = dupCount + 1
+                            Debug.Print "DUPLICATE: ref=""" & ref & """ text=""" & Left$(paraTxt, 60) & """"
                         Else
                             seen.Add ref, True
                             prose = NormalizeForSingleLine(basUSFM_Export.CleanTextForUTF8(Mid$(paraTxt, Len(digitRun) + 1)))
@@ -205,9 +207,11 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
                         End If
                     Else
                         skipCount = skipCount + 1
+                        Debug.Print "SKIP (digit run """ & digitRun & """ starts with chapter """ & chapStr & """ but no valid verse remainder): book=""" & bookName & """ chapNum=" & chapNum & " text=""" & Left$(paraTxt, 60) & """"
                     End If
                 Else
                     skipCount = skipCount + 1
+                    Debug.Print "SKIP (digit run """ & digitRun & """ does not start with chapter """ & chapStr & """): book=""" & bookName & """ chapNum=" & chapNum & " text=""" & Left$(paraTxt, 60) & """"
                 End If
             End If
         End If
