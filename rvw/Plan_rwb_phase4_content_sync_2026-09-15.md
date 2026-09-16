@@ -26,7 +26,7 @@ these unchanged from the 2013 WEB baseline at these exact verses, not
 independently edited. For Test 70, `rwb.txt` has **zero** - the pattern
 doesn't exist there at all yet.
 
-## ⚪ 1. First pass - bring `rwb.txt` up to the docm's (now WEBU-matching) Test 70 punctuation
+## ✅ 1. First pass - bring `rwb.txt` up to the docm's (now WEBU-matching) Test 70 punctuation - Done 2026-09-15, aeRWB `e42be6d`
 
 **Scope:** all 75 Test 70 verses. Since `rwb.txt` currently has 0 hits, this
 is not a small patch - every one of the 75 verses likely needs the docm's
@@ -53,6 +53,33 @@ not the whole Bible, to keep the review reviewable.
 **Suggest a spike first** (per the confirmed-good pattern from Test 70/71):
 1-2 verses through this new diff-and-patch pipeline before scaling to 75,
 same reasoning as before - prove the mechanism, not just the data.
+
+**Result:** the "port only the punctuation" framing above turned out to be
+wrong once actual data was checked - **0 of the 75 verses differed on
+punctuation alone**; every one had real wording drift too (`rwb.txt` reads
+like a stale, never-updated layer against the actively-edited docm - e.g.
+"shall"/"will", un-decontracted phrasing, restructured clauses). Operator
+decision: **full verse-text replacement** from the docm for all 75 refs,
+not a punctuation-only patch - this also matches the plan's own "generate
+`rwb.txt` from the docm" goal more directly than surgical patching would
+have. Built two new `aeRWB` tools instead of one: `docm-rwb-diff.mjs`
+(read-only scoped diff, R8) and `apply-docm-rwb-sync.mjs` (the only tool
+that writes `rwb.txt`). Caught and fixed a real bug before finalizing: the
+docm export's leading character after each tab is `U+202F` (narrow no-break
+space, a VBA-export artifact), not a regular space - an early version of
+the sync script missed this and would have written the stray character
+into all 75 `rwb.txt` lines; caught by spot-checking byte-level output,
+reverted, fixed, redone. Verified: `docm-rwb-diff` 75/75 identical, `aeRWB`
+census 75/75 matching WEBU, 24/24 unit tests pass, file line-count/encoding
+unchanged.
+
+**Confirmed/denied (operator's framing of the benefit, 2026-09-15):**
+confirmed this aligns `rwb.txt` (not docm, which was already aligned) more
+closely with WEBU, and confirmed `web.txt` stops being an active editing
+reference; denied that `web.txt` itself "sunsets" - it remains the
+permanent baseline for R3's diff-register provenance/transparency mechanism
+regardless of how `rwb.txt` is produced. See the conversation record for
+the full reasoning; not duplicated here.
 
 ## ⚪ 2. Second pass - bring `rwb.txt` up to the docm's Test 71 punctuation
 
