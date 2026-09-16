@@ -1,10 +1,11 @@
 # Plan - engwebu_usfm baseline sync (Tests 70/71 and family) - 2026-09-14
 
-**Next session starts here:** ["Minimum edit test (do this first, 2026-09-14)"](#minimum-edit-test-do-this-first-2026-09-14---the-model-for-every-other-edit)
-near the end of this file - a 2-verse checklist (Jeremiah 19:7, 27:8) with
-the exact before/after text and a 4-step verification process. This is the
-model to repeat for the remaining 48 Test 71 verses once it's confirmed
-working.
+**✅ Tests 70 and 71 are both closed and rebaselined (2026-09-15)** - see
+their respective sections near the end of this file for full results.
+**Next session starts here:** the small "Policy correction" note above
+(Jeremiah 27:8 opening + 27:22 closing, both known, both outside either
+test's scope) - then Phase 4 (`rwb.txt` sync from the docm), not yet
+started.
 
 **Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
 now the **authoritative target** for quote-pattern instances (Tests 70/71),
