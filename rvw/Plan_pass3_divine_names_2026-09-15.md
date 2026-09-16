@@ -180,23 +180,93 @@ different underlying words compose this phrase) is not recoverable from
 RWB's text alone. Worth naming explicitly as a considered trade-off, not an
 oversight, when the style rule is ratified (§6).
 
-## 4. Baseline data (verified counts, not estimates)
+## 4. Baseline data - corrected 2026-09-16, with the method-error that produced the first version
 
-| Surface form | `web.txt` (2013) | docm (current) | WEBU (current) |
+**First-pass numbers (2026-09-15, since superseded - kept for the record,
+not deleted, per this project's progressive-history convention):**
+
+| Surface form | docm (current) | WEBU (first pass) |
+|---|---:|---:|
+| `LORD` (all-caps) | 1 | 6,570 |
+| `GOD` (all-caps) | 2 | 314 |
+| `Lord` (title-case) | 1,990 | 1,020 |
+| `God` (title-case) | 7,075 | not cleanly countable |
+
+**What was wrong with it:** two separate errors, found by trying to
+reconcile the numbers instead of presenting them side by side and stopping.
+(1) The WEBU-side counts included **every book in `engwebu_usfm`**, which
+ships WEBU's full ecumenical set - Tobit, Judith, Wisdom, Sirach, Baruch,
+1-4 Maccabees, etc. - none of which exist in the 66-book Protestant canon
+`docm`/`rwb.txt` track. This inflated every WEBU count with divine-name
+references from books that have no docm counterpart at all - an
+apples-to-oranges comparison. (2) The `God` count (7,075) used `grep -c`
+(counts *matching lines*, i.e. verses with at least one hit) while every
+other count used total occurrences - not the same metric, not comparable to
+the others in the same table.
+
+**Corrected method:** reused `aeRWB`'s own `loadEngwebu()` (already
+filters to the 66 canonical books via `USFM_BOOK_NAMES` - the same
+function `census.mjs`/`export-engwebu.mjs` already trust), and counted
+total occurrences consistently on both sides.
+
+| Surface form | WEBU (66 canonical books) | docm (current) |
+|---|---:|---:|
+| `LORD` alone (not in `LORD God`) | 6,528 | 2 (see §3.7/§3.5 - both false/stray, not real hits) |
+| `LORD God` (YHWH+Elohim, apposition) | 42 | 0 |
+| `Lord GOD` (Adonai+YHWH) | 288 | 0 |
+| `Lord God` (title+title - **docm's actual form of the Adonai+YHWH compound**, missed entirely in the first pass) | 0 | **584** |
+| `Lord` alone | 851 | 2,017 |
+| `God` alone | 3,994 | 10,187 |
+| lowercase `lord` (human address, e.g. "my lord the king") | 256 | 275 (comparable - RWB is not collapsing this into the divine-name convention) |
+
+### Reconciling the corrected numbers - a 4th rule found by checking real verses, not just aggregates
+
+Checked 5,507 individual WEBU verses containing plain `LORD` against their
+docm counterparts (not just totals) - surfaced a pattern the first pass
+missed entirely:
+
+| # | WEBU pattern | → docm | Basis |
+|---|---|---|---|
+| 1 | `LORD` alone | `God` | confirmed, e.g. Genesis 6:3 |
+| 2 | `LORD God` (apposition) | `God` (collapsed to one word) | confirmed 6/6 sampled, Genesis 2:4-2:15 |
+| 3 | **`LORD your/our/my God`** (YHWH immediately before a possessive+Elohim) | **`Lord your/our God`** (not `God your God`) | **new finding** - 608 occurrences confirmed in WEBU (Exodus 6:7, 8:10, 8:26-28, Genesis 27:20, etc.) |
+| 4 | `Lord GOD` (Adonai+YHWH) | `Lord God` | confirmed, Genesis 15:2/15:8 |
+| 5 | `Lord` alone (Adonai/vocative address) | `Lord` (unchanged) | confirmed, Exodus 4:10/5:22 (the "O Lord" vocative survives alongside a separate "the LORD" → "God" in the *same* verse) |
+| 6 | `God` alone (Elohim) | `God` (unchanged) | trivial |
+| - | Idiomatic exception, at least once confirmed | e.g. `the day of the LORD` → `the day of the Lord`, Malachi 4:5 | likely more of these exist; not yet enumerated |
+
+**Arithmetic reconciliation** (canonical-book counts, rule 3 netted out of
+both `God` and `Lord`):
+
+| | Predicted | Actual (docm) | Gap |
 |---|---:|---:|---:|
-| `Yahweh` (literal) | 5,792 | 0 | 0 (see §2 - replaced by design) |
-| `LORD` (all-caps) | - | **1** (Romans 9:28, §3.5) | 6,570 |
-| `GOD` (all-caps) | - | **2** (both inscriptions, §3.4 - not real hits) | 314 |
-| `Lord GOD` (compound) | - | **0** | present (subset of the 314/6,570 above) |
-| `Lord` (title-case) | - | 1,990 | 1,020 |
-| `God` (title-case) | - | 7,075 | (not cleanly countable - `H430` untaggable, §3.2) |
+| `God` | 6,528+42+288+3,994−608 = **10,244** | 10,187 | **57 (0.6%)** |
+| `Lord` | 851+288+608 = **1,747** | 2,017 | **270 (13%)** |
 
-RWB has already executed a near-total (not 100% - see §3.5) replacement of
-WEBU's `LORD`/`GOD`/`Lord GOD` convention with `God`, and uses `Lord` more
-broadly than WEBU does (1,990 vs. 1,020) - the gap is presumably ordinary
-human-lordship address ("my lord the king," etc.) plus whatever Adonai
-usage RWB does preserve as `Lord`. **This needs verse-level sampling to
-characterize precisely - not yet done, next step (§5).**
+The `God` column closes to well within noise once rule 3 is included (was
+665/6% before finding it). `Lord`'s gap shrank from 878 (essentially
+unexplained, ~85% of the observed total) to 270 (13%) - real progress, but
+**not closed**, and not to be closed further by guessing at more aggregate
+patterns. The remaining 270 needs the actual verse-level audit tool (§5),
+which is exactly why §5 is a tool-building task and not something to
+finish by hand-counting.
+
+### 3.7 A second, unrelated bug found via this research: Psalms book-name mismatch
+
+`docm-verses.txt` labels every Psalms verse **`"Psalms 1:1"`** (plural).
+`web.txt`, `rwb.txt`, and `aeRWB/tools/web-diff/lib.mjs`'s own
+`USFM_BOOK_NAMES` table (already tested, already used by every tool built
+this session) all use **`"Psalm 1:1"`** (singular). This means **every
+reference-keyed comparison between docm and web.txt/rwb.txt/WEBU silently
+fails for all 2,461 Psalms verses** - `docm-rwb-diff.mjs` and
+`apply-docm-rwb-sync.mjs` would report "not found" or simply never compare
+Psalms at all, with no error raised. Never surfaced before now because
+neither Test 70 nor Test 71's patterns happened to land in Psalms. This is
+a bug in the VBA export routine (`ExportDocmVersesToRWBFormat` /
+wherever its book-name list lives), unrelated to divine names except that
+this is how it was found - **needs its own fix, tracked as Task 1 below,
+before Pass 3's own verse-level tooling (which depends on ref-matching
+working) is built.**
 
 ## 5. Methodology for the actual audit (not yet built/run)
 
@@ -226,31 +296,35 @@ characterize precisely - not yet done, next step (§5).**
    determination in §6 with real, complete counts rather than the partial
    sample here.
 
-## 6. Presentation-style determination - proposed, not unilaterally finalized
+## 6. Presentation-style determination - refined, still not unilaterally finalized
 
-Based on the verified baseline (§4) and RWB's stated editorial philosophy
-(avoids literal WEB/KJV-tradition constructs, avoids colloquialism, aligns
-with KJV tradition otherwise - see `project_rwb_editorial_philosophy`
-memory), the **already-overwhelmingly-in-effect** rule appears to be:
+Superseding the 2026-09-15 two-part draft (kept below for the record) with
+the four-rule model from §4, which reconciles the actual counts far more
+closely (0.6% / 13% gaps vs. the untested first draft):
 
-- **YHWH (`H3068`/`H3069`+`H3068` compound) → `God`** (not `LORD`, not `LORD
-  God`, not `Lord GOD`) - the traditional all-caps convention is dropped
-  entirely, and the "LORD God" compound is collapsed to a single word
-  rather than kept as two.
-- **Adonai (`H136`, standalone) and ordinary human lordship → `Lord`** -
-  not yet verse-level confirmed which of these two categories accounts for
-  more of RWB's 1,990 `Lord` occurrences; needs §5's audit before this half
-  of the rule can be stated with the same confidence as the YHWH half.
+- **YHWH alone or in the `LORD God` apposition → `God`** (rules 1-2).
+- **YHWH immediately before a possessive+Elohim (`LORD your/our/my God`) →
+  `Lord your/our God`**, *not* `God` (rule 3) - avoids the nonsensical
+  "God your God"; this is the piece the first draft missed entirely.
+- **Adonai, alone or in the `Lord GOD` compound → `Lord`** (rules 4-5),
+  with the compound keeping both words (`Lord God`) rather than collapsing.
+- **Elohim alone → `God`** (rule 6, unchanged).
+- **At least one confirmed fixed-idiom exception** (`the day of the LORD` →
+  `the day of the Lord`) - expect more once the audit tool runs.
 
-**This is a proposal grounded in real data, not a final ruling** - given
-its scale (thousands of verses already affected) and its theological
-weight (this is exactly the kind of choice `project_rwb_editorial_philosophy`
-says needs deliberate judgment, not silent inference), **this needs the
-operator's explicit ratification** before being treated as the definitive
-Phase 4 Pass 3 rule, the same way Option A needed sign-off for the more
-structurally-invasive 2 Kings 19:13 fix. Once ratified, this becomes the
-formal, documented style rule this section's title asks for - as clearly
-defined as the docm's approved paragraph/character styles are today.
+**Original two-part draft (2026-09-15, superseded, kept for history):**
+"YHWH → `God`" and "Adonai/human lordship → `Lord`," undifferentiated by
+context. Still directionally correct, but rule 3's discovery shows the real
+rule is context-sensitive (what else is in the same phrase), not a blanket
+per-word substitution - a materially different, more precise claim.
+
+**Still not a final ruling.** The `Lord` column's 13% residual gap means
+real exceptions remain uncharacterized - given the scale (thousands of
+verses) and theological weight of this choice (per
+`project_rwb_editorial_philosophy`), **operator ratification is still
+needed**, and ideally *after* Task 3 below (the real audit) closes the
+remaining gap, not before - the 2026-09-15 conversation already showed that
+aggregate-level confidence here was two rounds away from wrong.
 
 ## 7. Connection to Phase 5 (Strong's numbers) - direct, not incidental
 
@@ -271,6 +345,30 @@ This research changes Phase 5's plan, not just Pass 3's:
 
 ## Status
 
-⚪ Research and this sub-plan done (2026-09-15). Tool-building (§5) and the
-actual audit not yet started. Style-rule ratification (§6) pending operator
-confirmation - needed before or alongside the audit, not strictly after.
+✅ Research done (2026-09-15/16), including a full self-correction cycle
+(§4) - the analysis was checked against real per-verse data, a methodology
+error was found and fixed, and the resulting rule is materially more
+precise than the first draft. Nothing beyond research/documentation has
+been executed - no docm edits, no new tooling built, no style rule
+ratified.
+
+## Next-session tasks, in order
+
+- **⚪ Task 1 - fix the Psalms book-name mismatch (§3.7).** Decide the fix
+  location (most likely `ExportDocmVersesToRWBFormat`'s book-name mapping
+  in `basRWBTextExport.bas`, to emit `"Psalm"` matching `web.txt`/`rwb.txt`/
+  `lib.mjs`'s established convention - confirm this is the intended
+  direction, not that `"Psalms"` should become the new standard instead)
+  and apply it. **Do this before Task 3** - the audit tool depends on
+  ref-matching working correctly across all 66 books, Psalms included.
+- **⚪ Task 2 - build the Pass 3 audit tool (§5),** using the six-rule model
+  from §4/§6 (not the superseded two-part draft) - a new `aeRWB` tool,
+  reusing `parseBible`/`loadEngwebu`, that classifies each verse's WEBU
+  divine-name pattern (including rule 3's `LORD [possessive] God` idiom,
+  the `Lord GOD`/`Lord God` compound, and the known inscription exceptions
+  from §3.4) and cross-references docm's actual rendering, producing a
+  reviewable worklist rather than a bulk pass/fail.
+- **⚪ Task 3 - run the tool, close the remaining `Lord` gap (13%,
+  §4), and only then bring the style rule back to the operator for
+  ratification** - with a real per-verse exception list in hand, not
+  another aggregate estimate.

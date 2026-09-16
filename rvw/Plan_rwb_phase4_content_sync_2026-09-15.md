@@ -115,20 +115,27 @@ a different 2-character sequence entirely. Not fixed here; see item 4.
 ## 🟡 3. Third pass - Adonai/YHWH/Elohim → Lord/LORD/Lord GOD consistency
 
 **Detailed sub-plan (primary sources, methodology, gotchas, baseline data,
-proposed style determination) written 2026-09-15:**
-`rvw/Plan_pass3_divine_names_2026-09-15.md`. Research and analysis done;
-tool-building and the actual audit not yet started; style-rule
-ratification pending operator confirmation. Headline findings: WEBU's
-inline Strong's tags are demonstrably unreliable for this pass (`H430`/
-Elohim never appears anywhere in this corpus's tagging; Genesis 1:1's "God"
-is mistagged to an unrelated word) - the capitalization-pattern census
-approach (reusing Test 70/71's existing tooling shape) is the right method,
-not Strong's-tag extraction. Also found: `web.txt` (2013) has 5,792 literal
-"Yahweh" occurrences that WEBU replaced with `LORD`/`GOD` by design, and
-RWB has already near-completely replaced *those* with `God` (one stray
-`LORD` left, at Romans 9:28 - likely missed, not deliberate). See the
-sub-plan for full detail, including two confirmed false-positive
-all-caps-`GOD` cases (quoted inscriptions, not the divine name).
+a self-corrected style determination) at
+`rvw/Plan_pass3_divine_names_2026-09-15.md`.** Research done as of
+2026-09-16, including a full correction cycle: the first-pass WEBU counts
+wrongly included WEBU's apocryphal/ecumenical books (no docm counterpart)
+and mixed two different counting methods - caught by trying to reconcile
+predicted-vs-actual counts rather than presenting them side by side.
+Corrected analysis found a 4th divine-name rule (`LORD your/our/my God` →
+`Lord your/our God`, not `God`) that closes the `God`-column reconciliation
+to 0.6% and the `Lord`-column to 13% (from 6%/85% unexplained before). Also
+found, as a side effect: a real, unrelated bug - `docm-verses.txt` labels
+Psalms `"Psalms"` while `web.txt`/`rwb.txt`/`lib.mjs` all use `"Psalm"`,
+silently breaking every ref-keyed comparison for all 2,461 Psalms verses.
+**Three ordered next-session tasks recorded in the sub-plan's own Status
+section** - fix the Psalms bug first (blocks the audit tool's ref-matching),
+then build the real verse-level audit tool, then close the remaining 13%
+gap before bringing the style rule back for ratification. Headline
+methodology finding, unchanged from the first pass: WEBU's inline Strong's
+tags are demonstrably unreliable for this pass (`H430`/Elohim never appears
+anywhere in this corpus's tagging; Genesis 1:1's "God" is mistagged to an
+unrelated word) - capitalization-pattern census is the right method, not
+Strong's-tag extraction.
 
 **Original scope note, per operator's prior research (superseded/refined by
 the sub-plan above, kept for history):** in the Hebrew source, the
