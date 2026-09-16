@@ -135,6 +135,20 @@ concern raised earlier in this review is ruled out.
   excluded from both counts equally - they don't explain the 46/3
   discrepancy and need no special handling in the export's skip logic.
 
+## ✅ 3 John fixed and verified (2026-09-16)
+
+The operator merged the two split paragraphs back together in the docm.
+Two intermediate attempts surfaced real sub-issues along the way (a
+partial deletion left `CVM Count 14 <> VM Count 15` - an orphaned `Verse
+marker`-styled run with no paired `Chapter Verse marker`; found via
+`ReportDigitAtCursor_Diagnostics`, `src/basTEST_aeBibleTools.bas` line 845,
+which reports a character's style plus the one immediately before it -
+exactly suited to hunting a style-transition boundary). Final
+`AuditVerseMarkerStructure` re-run: **`31102 / 31102`, 0 structural
+issues** - the docm's B/C/V numbering is now canonically correct across
+the entire Bible, confirmed by the one tool in this project actually
+capable of proving that.
+
 ## `AuditVerseMarkerStructure` result (2026-09-16) - first real run, first real finding
 
 Ran successfully in 205.42s (well inside the documented 300-2700s range,
@@ -191,26 +205,27 @@ per-chapter audit's own methodology happens not to catch).
 
 ## Path to resolution
 
-1. ~~Run `AuditVerseMarkerStructure`~~ **✅ Done above.**
-2. **Add targeted diagnostic logging to `ExportDocmVersesToRWBFormat`**
+1. ~~Run `AuditVerseMarkerStructure`~~ **✅ Done.**
+2. ~~Decide how to fix 3 John~~ **✅ Done and verified - `31102/31102`, 0 issues.**
+3. **Add targeted diagnostic logging to `ExportDocmVersesToRWBFormat`**
    (Immediate-window `Debug.Print`, per this project's error-handling
    convention) that prints the raw paragraph text for each of the 46
    skips and 3 duplicates, so the specific verses can be identified and
-   confirmed parser-only, not yet done.
-3. **Decide how to fix 3 John** - merge verses 14/15 back into one (matching
-   WEBU and the canonical table), not yet done. Requires a docm edit.
+   confirmed parser-only - **now higher-confidence to be parser-only**,
+   since the canonical audit confirms zero remaining structural defects
+   anywhere in the docm, not yet done.
 4. **Separately, decide whether to root-cause the `GetMarkerTotals` memory
    issue** (`rvw/Code_review 2026-09-13.md` item 7, deprioritized at the
    time) so Tests 82/83 could be safely restored to `SkipTestArray`-free
    operation - currently they provide zero signal at all, standalone or in
    a full suite, and have since 2026-09-13. Independent of `AuditVerseMarkerStructure`
    continuing to exist as the authoritative slow check either way.
-5. **Only after 2-3**, decide whether any of Phase 4's prior work (Pass 1/
+5. **Only after 3**, decide whether any of Phase 4's prior work (Pass 1/
    2 sync, Pass 3 divine-name census) needs re-running against a corrected
-   `docm-verses.txt` - unlikely to change Test 70/71 results (neither
-   pattern's verses are known to be among the 46/3, and 3 John isn't part
-   of either pattern), but Pass 3's still-open 13% `Lord`-count gap is a
-   candidate worth re-checking once 3 John and the 46/3 are resolved.
+   `docm-verses.txt` (the 3 John fix changed that book's text - Pass 1/2's
+   scope was Tests 70/71's patterns only, neither known to touch 3 John,
+   but not re-verified) - Pass 3's still-open 13% `Lord`-count gap remains
+   a candidate worth re-checking regardless.
 
 ## Process bug found alongside this investigation (operator, 2026-09-16): the release process has no way to catch this
 
