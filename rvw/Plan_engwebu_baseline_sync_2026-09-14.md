@@ -4,8 +4,9 @@
 two loose-end verses found during the Test 70 pilot are resolved (Jeremiah
 27:8 fixed, 27:22 confirmed a false positive, not a real gap) - see their
 respective sections near the end of this file for full results.
-**Next session starts here:** Phase 4 (`rwb.txt` sync from the docm) - not
-yet started, no small loose ends remaining before it.
+**Next session starts here:** Phase 4 (`rwb.txt` sync from the docm) - see
+`rvw/Plan_rwb_phase4_content_sync_2026-09-15.md` for the full execution
+plan (not yet started, no small loose ends remaining before it).
 
 **Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
 now the **authoritative target** for quote-pattern instances (Tests 70/71),
