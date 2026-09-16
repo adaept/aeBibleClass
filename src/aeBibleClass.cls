@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 86
+Private Const MaxTests = 87
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -273,8 +273,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33827, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -828,6 +828,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (85)
             DoEvents
             RunTest (86)
+            DoEvents
+            RunTest (87)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -862,13 +864,17 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     If TestReportFlag And OneTest = 0 Then BufAppend LogWordBuildInfo
     If TestReportFlag And OneTest = 0 Then FlushReportBuf
 
-    ' Full-suite-only reminder (2026-09-16) - AuditVerseMarkerStructure
-    ' (basVerseStructureAudit.bas) is NOT one of the 86 tests just run: it
-    ' does a canonical per-chapter B/C/V check RUN_THE_TESTS cannot (Tests
-    ' 82/83 only sum whole-document totals - see
+    ' Full-suite-only reminder (2026-09-16, still valid after adding Test 87
+    ' the same day) - AuditVerseMarkerStructure (basVerseStructureAudit.bas)
+    ' is NOT one of the 87 tests just run: it does a canonical per-chapter
+    ' B/C/V check RUN_THE_TESTS cannot. Tests 82/83 only sum whole-document
+    ' totals, and the new Test 87 (CountMarkerStyleOutsideVerseText) only
+    ' catches a marker-styled run parented under the wrong paragraph style -
+    ' neither is a substitute for AuditVerseMarkerStructure's per-chapter
+    ' canonical cross-reference (see
     ' rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md). Release
     ' process: adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
-    ' section 10.5/6a. This block only runs once, after RunTest(86), for a
+    ' section 10.5/6a. This block only runs once, after RunTest(87), for a
     ' full-suite call - not per individual test.
     Debug.Print "REMINDER: AuditVerseMarkerStructure is NOT included above - run it separately before any release (see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md)."
 
@@ -1114,6 +1120,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: every 'PsalmSuperscription' paragraph is left-aligned by design (e.g. 'A Psalm by David...') - CountStyleParagraphsNotAligned(""PsalmSuperscription"", wdAlignParagraphLeft) should return 0"
     Case 86
         GetTestDescription = "Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned(""Psalms BOOK"", wdAlignParagraphLeft) should return 0"
+    Case 87
+        GetTestDescription = "Rule: no 'Chapter Verse marker'/'Verse marker' character-styled run appears inside a paragraph NOT styled 'VerseText' (a marker-carrying paragraph left mis-styled is counted by AuditVerseMarkerStructure but invisible to ExportDocmVersesToRWBFormat - see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md) - CountMarkerStyleOutsideVerseText should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1363,6 +1371,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 86
         ResultArray(TestNum) = CountStyleParagraphsNotAligned("Psalms BOOK", wdAlignParagraphLeft)
         m_HintArray(TestNum) = m_lastHint
+    Case 87
+        ResultArray(TestNum) = CountMarkerStyleOutsideVerseText
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1567,6 +1578,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleParagraphsNotAligned(PsalmSuperscription, Left)"
     Case 86
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleParagraphsNotAligned(Psalms BOOK, Left)"
+    Case 87
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountMarkerStyleOutsideVerseText"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1774,6 +1787,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleParagraphsNotAligned(PsalmSuperscription, Left)"
     Case 86
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleParagraphsNotAligned(Psalms BOOK, Left)"
+    Case 87
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountMarkerStyleOutsideVerseText"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -2495,6 +2510,32 @@ Private Function CountChapterVerseMarker() As Long
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountChapterVerseMarker | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+End Function
+
+'==============================================================
+' CountMarkerStyleOutsideVerseText  (test slot 87)
+' Returns Count of "Chapter Verse marker"/"Verse marker"
+' character-styled runs found inside a paragraph NOT styled
+' "VerseText". GetMarkerTotals (slots 82/83) only inspects
+' VerseText paragraphs, so a marker-styled run mis-parented
+' under another paragraph style is invisible to it and to
+' ExportDocmVersesToRWBFormat, but is still counted by
+' AuditVerseMarkerStructure's character-style-only search -
+' the exact gap that produced a real Psalm 4:2 defect (mis-styled
+' "Psalms BOOK"), found 2026-09-16. Expected baseline 0.
+'==============================================================
+Private Function CountMarkerStyleOutsideVerseText() As Long
+    On Error GoTo PROC_ERR
+    Dim hitCount As Long
+    basVerseStructureAudit.FindMarkerStyleOutsideVerseText hitCount, True
+    If m_lastHint = "" Then m_lastHint = hitCount & _
+        " marker-styled run(s) found outside VerseText paragraphs - see rpt\MarkerStyleOutsideVerseText.txt"
+    CountMarkerStyleOutsideVerseText = hitCount
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountMarkerStyleOutsideVerseText | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
 End Function

@@ -249,6 +249,68 @@ detected, per this project's error-handling convention (Immediate window,
 not `MsgBox`). Not yet re-run/reviewed against a live export - next export
 run will show the 46+3 explicitly instead of only their counts.
 
+**✅ Hypothesis confirmed - real defect found: Psalm 4:2 mis-styled as
+"Psalms BOOK".** First tried `AuditCharStyleUsage("Verse marker", True,
+True)` to test this - aborted partway through (Ctrl+Break) after
+discovering its anomaly filter isn't discriminating for this style: "Verse
+marker" character-styling legitimately sits *after* the "Chapter Verse
+marker" prefix within a verse paragraph (matches how `GetMarkerTotals`
+counts them - CVM checked at char 1, VM checked anywhere in the first 12
+chars), so its position is normally `MID`, not `START` - the position-based
+anomaly test flagged effectively 100% of correct verses (19000+ "anomalies"
+observed with zero narrowing), making it useless for isolating one bad
+paragraph, and the unbounded whole-document `Find` loop was also visibly
+degrading in speed per the same documented Word/`Find`-on-character-styles
+issue (per-1000-run time climbing: 485s at 19000, 622s at 20000, 733s at
+21000, 852s at 22000).
+
+Wrote a new, targeted, much cheaper routine instead:
+`basVerseStructureAudit.FindMarkerStyleOutsideVerseText(ByRef hitCount As
+Long, Optional bWriteFile As Boolean = True)` - complementary to
+`GetMarkerTotals`: paragraph-level iteration (proven fast) restricted to
+the small minority of paragraphs NOT styled `VerseText` (2,725 of ~35k),
+checking each with the exact same first-char/first-12-chars technique
+`GetMarkerTotals` already uses on the `VerseText` set. Ran in 32.82s.
+**Result: exactly 1 hit** - `Psalms BOOK`-styled paragraph, first-char-style
+`Chapter Verse marker`, excerpt "42 You sons of men, how long shall my
+glory be turned into dishonor?..." - this is **Psalm 4:2**, carrying
+genuine marker character-styling but parented under the wrong paragraph
+style (should be `VerseText`). This is the confirmed root cause of the
+31101-vs-31102 export gap: `AuditVerseMarkerStructure`'s character-style-
+only search counts it (hence the confirmed-correct canonical total of
+31102), while `ExportDocmVersesToRWBFormat` (and `GetMarkerTotals`/Tests
+82/83, were they not hard-skipped) only ever visit `VerseText`-styled
+paragraphs, so this verse is invisible to them - not even logged among the
+46 skips, since it never enters the `VerseText` branch at all.
+
+**Fix required:** operator to correct Psalm 4:2's paragraph style to
+`VerseText` in the docm directly (same category of fix as the 3 John
+defect - a document data correction, not a code change).
+
+**✅ Added as a new permanent test, `Test 87`
+(`CountMarkerStyleOutsideVerseText`, expected baseline `0`)** - `MaxTests`
+bumped 86 -> 87, wired into all four parallel dispatch switches
+(`GetTestDescription`, `GetPassFail`'s `ResultArray` case, both Immediate/
+buffer loggers) plus `Expected1BasedArray` (position 87 = 0) and the
+`RunTest(87)` call added after `RunTest(86)` in `RunBibleClassTests`, with
+a `DoEvents` in between matching the existing 74-86 pattern. Backed by a
+new wrapper, `CountMarkerStyleOutsideVerseText()`, which calls
+`FindMarkerStyleOutsideVerseText` with `bWriteFile:=True` (writes
+`rpt\MarkerStyleOutsideVerseText.txt` on every run, matching
+`CountHeaderFooterStyleViolations`'s convention of always leaving an audit
+file behind). Not added to `SkipTestArray` - unlike `GetMarkerTotals`
+(Tests 82/83), this routine only touches ~2,725 non-`VerseText` paragraphs
+(not all ~35k), so its risk of the same full-suite COM-accumulation memory
+blowup is expected to be much lower, but this is **not yet proven** - a
+full-suite `RUN_THE_TESTS` run (not yet performed since adding Test 87)
+should be watched for memory growth the same way the 2026-09-13 incident
+was diagnosed, before treating Test 87 as fully safe long-term. Test 87
+does **not** replace `AuditVerseMarkerStructure`: it only catches "marker
+styling in the wrong paragraph style," not duplicate/missing verse numbers
+within a correctly-styled `VerseText` paragraph - the release-process
+reminder (`RunBibleClassTests`, after `RunTest(87)`) was updated to say so
+explicitly.
+
 ## What we actually know vs. don't know
 
 **Known:** the export's 46 skips + 3 duplicates come from its own naive
@@ -350,9 +412,16 @@ structural issues` - the docm's canonical B/C/V numbering is correct.
 Release-process guard added (adaept5tudio doc + in-repo pointer + runtime
 reminder), all ✅. Two real code bugs found and fixed along the way
 (`GetMaxVerse` off-by-one; `VersesInChapter` error-handler class name/
-`MsgBox`). **New, still open:** post-fix export re-run shows a 1-paragraph
-undercount (31101 vs the confirmed-correct 31102) separate from the
-long-known 46 skips/3 duplicates - diagnostic logging for the 46/3 is now
-✅ in place but not yet re-run; the 1-paragraph gap needs
-`AuditCharStyleUsage("Verse marker"/"Chapter Verse marker", True, True)` run
-first, not yet done.
+`MsgBox`). The 1-paragraph export undercount (31101 vs 31102) is now ✅
+**root-caused**: Psalm 4:2 mis-styled as `Psalms BOOK` instead of
+`VerseText` - found via a new targeted routine
+(`FindMarkerStyleOutsideVerseText`), now also wired in as a permanent
+regression test (`Test 87`, expected `0`). **Still open:**
+1. Operator to fix Psalm 4:2's paragraph style in the docm (`VerseText`).
+2. Re-run `ExportDocmVersesToRWBFormat` after that fix - should show
+   `visitedCount`=31102 and, with the new per-skip/duplicate diagnostic
+   logging (✅ added, not yet re-run), pin down the 46 skips/3 duplicates.
+3. Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
+   doesn't reproduce the Tests-82/83-style full-suite memory blowup -
+   expected lower risk (touches ~2,725 paragraphs, not ~35k) but not yet
+   proven.

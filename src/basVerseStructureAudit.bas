@@ -327,6 +327,100 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
     m_cacheValid = True
 End Sub
 
+' ==========================================================================
+' FindMarkerStyleOutsideVerseText
+' ==========================================================================
+' Read-only diagnostic, complementary to GetMarkerTotals. GetMarkerTotals
+' only inspects paragraphs styled "VerseText" - it has no way to see a
+' "Chapter Verse marker"/"Verse marker" character-style run sitting inside
+' a paragraph styled something else. AuditVerseMarkerStructure's per-chapter
+' Find-based counts (CountVerseMarkers/CountChapterVerseMarkers) search by
+' character style only, with no paragraph-style filter, so such a paragraph
+' would be counted there but invisible to ExportDocmVersesToRWBFormat
+' (which, like GetMarkerTotals, only ever visits "VerseText" paragraphs).
+' This routine tests exactly that gap directly.
+'
+' Deliberately cheap: paragraph-level iteration (proven fast, seconds, by
+' GetMarkerTotals/ExportDocmVersesToRWBFormat) plus the same first-char/
+' first-12-chars character-style checks GetMarkerTotals already uses -
+' but restricted to the small minority of paragraphs NOT styled
+' "VerseText", so no whole-document character-level Find loop is needed.
+'
+' Output: rpt\MarkerStyleOutsideVerseText.txt plus Immediate window summary.
+' hitCount (ByRef, same convention as GetMarkerTotals's vmTotal/cvmTotal)
+' lets aeBibleClass wire this into a test slot expecting 0.
+' ==========================================================================
+Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
+                                            Optional ByVal bWriteFile As Boolean = True)
+    Dim t As Double
+    StartTimer "FindMarkerStyleOutsideVerseText", t
+
+    Dim oPara As Object
+    Dim numChars As Long
+    Dim maxScan As Long
+    Dim j As Long
+    Dim charStyle As String
+    Dim firstCharStyle As String
+    Dim paraStyle As String
+    Dim scannedCount As Long
+    hitCount = 0
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+    sOut = "---- FindMarkerStyleOutsideVerseText: " & _
+           Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+
+    For Each oPara In ActiveDocument.Paragraphs
+        paraStyle = oPara.style.NameLocal
+        If paraStyle <> "VerseText" Then
+            scannedCount = scannedCount + 1
+            Dim isHit As Boolean
+            isHit = False
+
+            firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+            If firstCharStyle = "Chapter Verse marker" Then isHit = True
+
+            If Not isHit Then
+                numChars = oPara.Range.Characters.Count
+                maxScan = 12
+                If numChars < maxScan Then maxScan = numChars
+                For j = 1 To maxScan
+                    charStyle = oPara.Range.Characters(j).style.NameLocal
+                    If charStyle = "Verse marker" Then
+                        isHit = True
+                        Exit For
+                    End If
+                Next j
+            End If
+
+            If isHit Then
+                hitCount = hitCount + 1
+                sOut = sOut & "Hit #" & hitCount & " | ParaStart=" & oPara.Range.Start & _
+                       " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & NL
+                sOut = sOut & "  Excerpt: """ & Left$(Replace(oPara.Range.Text, vbCr, ""), 80) & """" & NL & NL
+            End If
+        End If
+    Next oPara
+
+    sOut = sOut & "---- Summary ----" & NL
+    sOut = sOut & "Non-VerseText paragraphs scanned: " & scannedCount & NL
+    sOut = sOut & "Hits (marker char-style found outside VerseText): " & hitCount & NL
+
+    Debug.Print sOut
+    If bWriteFile Then
+        Dim oFSO As Object
+        Dim oStream As Object
+        Dim sPath As String
+        sPath = ActiveDocument.Path & "\rpt\MarkerStyleOutsideVerseText.txt"
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+        Set oStream = oFSO.CreateTextFile(sPath, True, False)
+        oStream.Write sOut
+        oStream.Close
+    End If
+
+    EndTimer "FindMarkerStyleOutsideVerseText", t
+End Sub
+
 ' --------------------------------------------------------------------------
 ' CountVerseMarkers - Count Verse-marker character-style runs in a range
 ' --------------------------------------------------------------------------
