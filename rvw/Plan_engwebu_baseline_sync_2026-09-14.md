@@ -3,9 +3,9 @@
 **✅ Tests 70 and 71 are both closed and rebaselined (2026-09-15)** - see
 their respective sections near the end of this file for full results.
 **Next session starts here:** the small "Policy correction" note above
-(Jeremiah 27:8 opening + 27:22 closing, both known, both outside either
-test's scope) - then Phase 4 (`rwb.txt` sync from the docm), not yet
-started.
+(Jeremiah 27:8 opening only - **27:22 was a false positive, corrected
+2026-09-15, see that note**) - then Phase 4 (`rwb.txt` sync from the docm),
+not yet started.
 
 **Decision (operator, 2026-09-14, later same day):** `engwebu_usfm` (WEBU) is
 now the **authoritative target** for quote-pattern instances (Tests 70/71),
@@ -486,26 +486,35 @@ this reveals, both **outside this 2-verse pilot's original scope** (queued
 for the Test 71 batch pass rather than reopening this pilot):
 - ⚪ **Jeremiah 27:8 opening** - docm has 3 marks (`"'"`); WEBU has 4
   (`"'"'`, an extra `'` right before "It"). Needs the missing `'` inserted
-  to match WEBU exactly.
-- ⚪ **Jeremiah 27:22 closing** - found while checking this: docm currently
-  ends `...to this place.'"` (2 closing marks); WEBU ends `...to this
-  place.'"'` (3 closing marks: `'` `"` `'`). This is the actual closing side
-  of the same 27:4-22 embedded-speech span that opens at 27:8, and it's
-  *also* not test-covered yet (Test 71's pattern is `"'"` reversed/closing,
-  not necessarily this exact verse) - a real gap, found by grep, not by a
-  human re-reading 19 verses of nested speech. Exactly the kind of check
-  that should become the automated depth-balance tool in the architecture
-  assessment below, rather than something caught ad hoc like this.
+  to match WEBU exactly. **Verified 2026-09-15 by tracing the full v2-22
+  nesting** (4 levels: L1 `"` v2, L2 `'` v4, L3 `"` v4, L4 `'` v5, all
+  closing together at the end of v11, already fixed in the Test 71 batch) -
+  v8's 4-mark cluster is WEBU *restating* all 4 already-open levels at a
+  paragraph break, not opening 4 new ones needing separate closes. This is
+  a real, confirmed gap and WEBU's own punctuation here is internally
+  balanced, not a bug.
+- ~~⚪ Jeremiah 27:22 closing~~ **❌ Not a real gap - corrected 2026-09-15.**
+  Originally recorded here as docm `...to this place.'"` (2 marks) vs. WEBU
+  `...to this place.'"'` (3 marks) - that WEBU transcription was **wrong**,
+  a transcription error made without checking the raw USFM source. Re-
+  verified directly against `engwebu_usfm/25-JERengwebu.usfm`: WEBU actually
+  ends `...to this place.'"` - **2 marks, identical to docm.** No edit
+  needed; the two closes required at that point (the L4-chain's second
+  `'` opened mid-v22, and L1''' opened back at v16) are already both
+  present. Left struck through rather than deleted, per this doc's
+  progressive-history convention - the lesson (verify claims against the
+  raw source before acting on them, not just against an earlier turn's own
+  output) is worth keeping visible.
 
-**🔴 Known blind spot (2026-09-15, neither gap above is currently
+**🔴 Known blind spot (2026-09-15, the real gap above is not currently
 tool-detected):** Test 70/71's census is a **presence check per verse**
 (`docm has the 3-char pattern somewhere` / `WEBU has it somewhere`), not a
 **nesting-structure check**. Jeremiah 27:8 has the pattern in *both* sources
 (3 marks in docm, 4 in WEBU), so the Editorial worklist correctly excludes
 it - "worklist empty" only ever meant "pattern present everywhere WEBU has
 it," never "docm's nesting depth matches WEBU's." Nothing today would catch
-this automatically; it's tracked only as the two ⚪ items above until
-closed. **What would close it** (considered and rejected/accepted below -
+this automatically; it's tracked only as the ⚪ item above until closed.
+**What would close it** (considered and rejected/accepted below -
 see the "4-mark test?" discussion in the architecture assessment's prep
 list): not a new fixed-pattern `aeBibleClass` test (doesn't generalize past
 this one depth or this one language's marks, doesn't localize to a verse,
@@ -569,10 +578,11 @@ trusting this section.
 
 **Still open, not part of this closed batch** (per the policy-correction
 note above - queue for a future small pass, not blocking): Jeremiah 27:8's
-opening mark and 27:22's closing mark, both found during the Test 70 pilot
-but outside its scope, and not census-detectable by either Test 70 or 71's
-exact fixed pattern (27:22 in particular uses a different mark order -
-see the "Known blind spot" note above).
+opening mark, found during the Test 70 pilot but outside its scope, and not
+census-detectable by either Test 70 or 71's exact fixed pattern (see the
+"Known blind spot" note above). Jeremiah 27:22, originally also flagged
+here, turned out to be a false positive on re-verification (2026-09-15) -
+see the policy-correction note above.
 
 ## 2026-09-15 architecture assessment - i18n/web/mobile/docx/client-server pathway
 
@@ -633,10 +643,15 @@ generation track). Context given for this:
 - An automated **quote-nesting depth-balance checker** (walk a book's text,
   track open/close depth, flag anywhere it goes negative or fails to return
   to baseline) is cheap to build, is exactly the kind of thing code catches
-  reliably that a human skimming dense nested speech will not (see the
-  Jeremiah 27:8/27:22 example above - found in seconds by `grep`, invisible
-  on a normal read-through), and is language-agnostic - it generalizes
-  directly to i18n QA, not just English WEBU-matching.
+  reliably that a human (or an unverified AI claim) skimming dense nested
+  speech will not, and is language-agnostic - it generalizes directly to
+  i18n QA, not just English WEBU-matching. **Reinforced 2026-09-15**: the
+  original Jeremiah 27:8 finding was real (found by `grep`, invisible on a
+  normal read-through), but the *paired* 27:22 claim recorded alongside it
+  turned out to be an AI transcription error that went uncaught for several
+  turns - only caught when directly re-tracing the raw source instead of
+  trusting an earlier turn's own output. A mechanical balance-checker
+  wouldn't have made that mistake in the first place.
 
 **Cons / Risks**
 - `.docm`/VBA is a dead end for a multi-client (web/mobile/server)
@@ -708,10 +723,12 @@ Node tooling; keep that boundary deliberate as this continues.
     any fixed-pattern test) necessarily is - see the language survey below
     for why a hardcoded English/WEBU mark set would be silently meaningless
     for other languages, not just incomplete.
-  - Closes the immediate Jeremiah 27:8/27:22 blind spot (docm's 3-mark vs.
-    WEBU's 4-mark original currently looks "done" to the Editorial worklist
-    because both sides merely *contain* the pattern) as one concrete,
-    near-term use of the same general mechanism.
+  - Closes the immediate Jeremiah 27:8 blind spot (docm's 3-mark vs. WEBU's
+    4-mark original currently looks "done" to the Editorial worklist because
+    both sides merely *contain* the pattern) as one concrete, near-term use
+    of the same general mechanism. (27:22 was also flagged here originally
+    but turned out to be a false positive - see the policy-correction note
+    above; not an example of this blind spot after all.)
   - **Considered and rejected as a `aeBibleClass` fix:** a new fixed 4-mark
     `Test 87`/`88` in `aeBibleClass.cls` was considered - rejected because
     (1) a fixed pattern only catches this one specific depth in this one
