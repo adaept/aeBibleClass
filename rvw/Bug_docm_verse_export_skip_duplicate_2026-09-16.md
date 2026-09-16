@@ -69,7 +69,7 @@ aggregate for.
 
 ## Pre-run code review (operator request, 2026-09-16) - before spending the 5-45 minute runtime
 
-**✅ Real bug found and fixed, aeBibleClass `<pending commit>`:** `GetMaxVerse`
+**✅ Real bug found and fixed, aeBibleClass `48307be`:** `GetMaxVerse`
 (the function `VersesInChapter`/`AuditOneBook` ultimately depends on) had an
 off-by-one bounds check: `Chapter > UBound(maps(BookID)) + 1` let
 `Chapter = UBound+1` pass validation, then crash indexing the array.
@@ -198,7 +198,7 @@ someone might encounter it.
   that repo in this session, unlike aeBibleClass/aeRWB).
 - ✅ **In-repo pointer**: this bug doc itself, cross-referenced from the
   release-process doc above (mutual pointer, findable from either side).
-- ✅ **Runtime reminder, aeBibleClass `<pending commit>`**: `aeBibleClass.cls`
+- ✅ **Runtime reminder, aeBibleClass `869f46c`**: `aeBibleClass.cls`
   `RunBibleClassTests` now prints `"REMINDER: AuditVerseMarkerStructure is
   NOT included above - run it separately before any release..."` once,
   after `RunTest(86)`, only on a full-suite run (not per individual test -
