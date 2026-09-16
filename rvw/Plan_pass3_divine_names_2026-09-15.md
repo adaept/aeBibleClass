@@ -348,19 +348,23 @@ This research changes Phase 5's plan, not just Pass 3's:
 ✅ Research done (2026-09-15/16), including a full self-correction cycle
 (§4) - the analysis was checked against real per-verse data, a methodology
 error was found and fixed, and the resulting rule is materially more
-precise than the first draft. Nothing beyond research/documentation has
-been executed - no docm edits, no new tooling built, no style rule
-ratified.
+precise than the first draft. ✅ Task 1 (Psalms/Song of Solomon book-name
+fix) done and verified. Task 2 (audit tool) and Task 3 (run it, ratify the
+style rule) not yet started.
 
 ## Next-session tasks, in order
 
-- **⚪ Task 1 - fix the Psalms book-name mismatch (§3.7).** Decide the fix
-  location (most likely `ExportDocmVersesToRWBFormat`'s book-name mapping
-  in `basRWBTextExport.bas`, to emit `"Psalm"` matching `web.txt`/`rwb.txt`/
-  `lib.mjs`'s established convention - confirm this is the intended
-  direction, not that `"Psalms"` should become the new standard instead)
-  and apply it. **Do this before Task 3** - the audit tool depends on
-  ref-matching working correctly across all 66 books, Psalms included.
+- **✅ Task 1 - Done 2026-09-16, aeBibleClass `663c36e`.** Fixed in
+  `ExportDocmVersesToRWBFormat` (`basRWBTextExport.bas`), not the shared
+  `aeBibleCitationClass.GetCanonicalBookTable()` (correct as-is for its own
+  general-purpose citation use). **A systematic check of all 66 canonical
+  names found a second mismatch beyond Psalms**: `"Song of Songs"`
+  (aeBibleCitationClass) vs. `"Song of Solomon"` (`web.txt`/`rwb.txt`/
+  WEBU) - both fixed with a narrow override in the export routine only.
+  Verified: re-exported docm now emits `Psalm` (2,450 occurrences, 0
+  `Psalms`) and `Song of Solomon` (0 `Song of Songs`); totals unchanged
+  (31053/46/3/0); reference-keyed lookups against `rwb.txt` now succeed for
+  both books (spot-checked Psalm 23:1, Song of Solomon 1:1).
 - **⚪ Task 2 - build the Pass 3 audit tool (§5),** using the six-rule model
   from §4/§6 (not the superseded two-part draft) - a new `aeRWB` tool,
   reusing `parseBible`/`loadEngwebu`, that classifies each verse's WEBU
