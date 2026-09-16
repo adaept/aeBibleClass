@@ -186,19 +186,14 @@ picked up; don't start the comparison itself yet.
 ## 🔴 4. Other comparisons on this baseline
 
 - **🔴 2 Kings 19:13 punctuation gap - fix before further Phase 4 work
-  (2026-09-15, found while verifying Pass 2).** Three different states at
-  one verse: `web.txt`/pre-sync `rwb.txt` had `"'"` (3 marks, inherited
-  from the 2013 baseline); current WEBU has `'"` (2 marks, a different
-  sequence); docm currently has just `"` (1 mark). Docm doesn't even reach
-  WEBU's current ending. Invisible to Test 71's census on both sides (the
-  pattern only matches its exact 3-character sequence, which none of these
-  three endings contain in the same form the *census* checks for - it only
-  surfaced because `rwb.txt`'s post-sync count came out to 64, not 63, and
-  got traced down by hand). **Action needed:** decide docm's correct
-  ending (WEBU's current 2-mark form, presumably, per this project's
-  full-WEBU-fidelity policy - see `Plan_engwebu_baseline_sync_2026-09-14.md`'s
-  2026-09-15 policy correction), fix the docm, then sync `rwb.txt` to match
-  (same tooling as Passes 1/2, this one verse only). Blocks nothing else in Phase 4, but per the operator's
+  (2026-09-15, found while verifying Pass 2).** Full structural analysis,
+  options, and decision (Option A - match WEBU exactly, including a
+  nesting-polarity swap at v10) recorded in
+  `rvw/Log_WEB_to_WEBU_corrections_2026-09-15.md` entry 1 - **this new log
+  doc is the dedicated place for this and future findings of the same
+  kind** (structural WEB→WEBU corrections, as distinct from ordinary
+  wording differences or RWB's own editorial choices), expected to grow
+  given `web.txt`'s age. Blocks nothing else in Phase 4, but per the operator's
   instruction, do this before starting further Phase 4 work.
 - ⚪ No other specific comparisons identified yet beyond items 1-3 and the
   fix above. Add them here as they're identified, each as its own `⚪`
