@@ -445,10 +445,10 @@ touches and why - "cleaned" is not a sufficient description on its own.
 |---|---|
 | `.gitignore` entry for `/engwebu_usfm` | **Done 2026-09-14** |
 | This plan document + decision update | **Done 2026-09-14** |
-| `web-diff` WEBU parser + pattern census (Phases 1-2) | **Next - now a prerequisite**, not just DRY infrastructure, since it's the only practical way to find the 50 verses needing edits |
-| Minimal docm -> `rwb.txt` generator + diff register | **Next**, sequenced alongside/before the 50-verse edit so the edit lands in `rwb.txt` automatically |
-| Docm edits: 2 instances (Test 70) + 48 instances (Test 71) to match WEBU | **Next - start with the minimum edit test below**, using the Phase 1/2 worklist |
-| Rebaseline Tests 70/71 to 75/63 | **After** the docm edits land, not before |
+| `web-diff` WEBU parser + pattern census (Phases 1-2) | ✅ Done - aeRWB `18440da`/`9afdc62` |
+| `engwebu.txt` generator (committed derived text, not `rwb.txt` yet) | ✅ Done - aeRWB `18440da` (see Phase 1 decision above; `rwb.txt` sync itself is still Phase 4, not started) |
+| Docm edits: 2 instances (Test 70) + 48 instances (Test 71) to match WEBU | ✅ Done - aeBibleClass `0b60a35` (Test 70), `7cfc01d`/`97581a4`/`f4eae9e`/`e789957` (Test 71 batches) |
+| Rebaseline Tests 70/71 to 75/63 | ✅ Done - aeBibleClass `0b60a35` (70→75), `e789957` (71→63) |
 | Strong's numbers in `rwb.usfm` (Phase 5) | Future, unchanged - after the USFM exporter matures |
 | Recurring-drop process (Phase 6) | Documented, unchanged |
 | WEB Updates changelog review (`webupdates.php`) | Deferred - after the quote-pattern editorial work is complete |
@@ -531,7 +531,7 @@ committed in `aeBibleClass` `0b60a35` (2026-09-15). The census counts above
 `git log -- rpt/docm-verses.txt` shows anything newer, re-run steps 2-3
 before trusting these numbers.
 
-### Applying this model to the remaining 48 Test 71 verses
+### ✅ Applying this model to the remaining 48 Test 71 verses - Done 2026-09-15
 
 Same four-step process, scaled up: edit all 48 verses from
 `census/201D-2019-201D-worklist.md` - **per the 2026-09-15 policy correction
@@ -542,8 +542,36 @@ verification sequence once at the end (`RUN_THE_TESTS(71)` = 63, re-export,
 re-census confirms 63 hits and an empty worklist, then rebaseline position 71
 to 63) rather than one verse at a time - the two-verse Test 70 pass is the
 proof the pipeline works; the 48-verse Test 71 pass is the same process at
-scale, not a new process. Also fold in the two Test-70-adjacent fidelity gaps
-found above (Jeremiah 27:8 opening, 27:22 closing) while in this territory.
+scale, not a new process.
+
+**Result:** all 48 verses done in four batches (2-verse spike + 10 + 10 + 10
++ 16), each independently verified. Several turned out to need a **mid-verse
+insert** rather than an end-of-verse append (the WEBU close lands before
+trailing narration, not at the verse's literal end) - e.g. 1 Kings 12:24,
+2 Chronicles 11:4/34:28, Isaiah 38:8, Mark 7:11 - confirming the plan's
+original caution that WEBU's actual nesting depth/position varies
+verse-to-verse and must be checked individually, not assumed.
+
+- ✅ `RUN_THE_TESTS(71)` → **63** (exact match with WEBU; was 15).
+- ✅ `ExportDocmVersesToRWBFormat` re-run after every batch → same
+  `31053`/`46`/`3` totals throughout - nothing else broke.
+- ✅ Final `npm run web.census -- "”’”"` in `aeRWB` → 63 hits,
+  editorial worklist **empty**.
+- ✅ `Expected1BasedArray` position 71 rebaselined **0 → 63** in
+  `aeBibleClass.cls` (it had never been baselined past the original
+  placeholder `0`, unlike Test 70's prior real value of 73).
+
+**Provenance:** `aeBibleClass` `e789957` (2026-09-15) - the final batch
+commit; `rpt/docm-verses.txt` and the rebaseline both landed there. If
+`git log -- rpt/docm-verses.txt` shows anything newer, re-verify before
+trusting this section.
+
+**Still open, not part of this closed batch** (per the policy-correction
+note above - queue for a future small pass, not blocking): Jeremiah 27:8's
+opening mark and 27:22's closing mark, both found during the Test 70 pilot
+but outside its scope, and not census-detectable by either Test 70 or 71's
+exact fixed pattern (27:22 in particular uses a different mark order -
+see the "Known blind spot" note above).
 
 ## 2026-09-15 architecture assessment - i18n/web/mobile/docx/client-server pathway
 
