@@ -1094,7 +1094,7 @@ Public Function GetMaxVerse(BookID As Long, Chapter As Long) As Long
         Err.Raise vbObjectError + 42, , "Chapter map missing"
     End If
 
-    If Chapter < 1 Or Chapter > UBound(maps(BookID)) + 1 Then
+    If Chapter < 1 Or Chapter > UBound(maps(BookID)) Then
         Err.Raise vbObjectError + 40, , "Invalid chapter for book"
     End If
 
@@ -2058,7 +2058,8 @@ Public Function VersesInChapter(ByVal bookName As String, ByVal Chapter As Long)
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure VersesInChapter of Class aeSBL_Citation_Class"
+    Debug.Print "ERROR in aeBibleCitationClass.VersesInChapter | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
     Resume PROC_EXIT
 End Function
 

@@ -67,6 +67,48 @@ skipped, but that the *rigorous* version of this check is a separate,
 slow, manually-invoked tool that automatic testing substitutes a fast
 aggregate for.
 
+## Pre-run code review (operator request, 2026-09-16) - before spending the 5-45 minute runtime
+
+**✅ Real bug found and fixed, aeBibleClass `<pending commit>`:** `GetMaxVerse`
+(the function `VersesInChapter`/`AuditOneBook` ultimately depends on) had an
+off-by-one bounds check: `Chapter > UBound(maps(BookID)) + 1` let
+`Chapter = UBound+1` pass validation, then crash indexing the array.
+**Verified this is a genuine off-by-one, not a 0-based-array blind spot**:
+`ToOneBasedLongArray` explicitly converts every book's literal `Array(...)`
+(0-based by VBA default in this module - no `Option Base 1`) into a true
+1-based array via `ReDim temp(1 To Count)`, and `AssertOneBased` checks this
+on every call - confirmed for Genesis, `UBound(maps(1))` is genuinely `50`,
+so `Chapter=51` should never have passed. Fixed: dropped the `+ 1`.
+
+**Correction to an initial overclaim in this same review:** first assessed
+this as a crash risk for `AuditVerseMarkerStructure` specifically. On
+tracing the actual call path, `AuditOneBook` calls `VersesInChapter`, not
+`GetMaxVerse` directly - and `VersesInChapter` has its own separate guard
+(`Chapter > maxCh`, using the canonical `GetMaxChapter` table) that
+intercepts an out-of-range chapter *before* reaching `GetMaxVerse`'s buggy
+line, returning `0` cleanly instead of crashing. **This bug was real but
+was not actually a crash risk for the run about to happen** - worst case
+it would have shown as a normal "MISMATCH" line. Still correct to fix
+(defense in depth; other callers of `GetMaxVerse` may not have the same
+guard - `ValidateSBLReference` calls it more directly and wasn't fully
+traced here, out of scope for this pass). Confirmed via
+`basTEST_aeBibleCitationClass.bas`'s own `Test_GetMaxVerse`: it only tests
+grossly-invalid inputs (chapter `999`), never the exact `UBound+1`
+boundary - exactly why this escaped detection until now.
+
+**✅ Minor, fixed alongside:** `VersesInChapter`'s error handler said
+`"...of Class aeSBL_Citation_Class"` (wrong class name - this code lives in
+`aeBibleCitationClass.cls`) and used `MsgBox` instead of `Debug.Print` (this
+project's convention for error handlers). Fixed. **Not fixed, flagged for a
+future separate pass:** the identical wrong-class-name pattern appears in
+11 other functions throughout `aeBibleCitationClass.cls` - clearly a
+leftover from an earlier rename, out of scope for this bug's fix.
+
+**Confirmed, not a bug:** the operator confirmed all 5 single-chapter books
+(Obadiah, Philemon, 2 John, 3 John, Jude) do have a genuine `Heading 2`
+styled "CHAPTER 1" in the docm - the single-chapter-book false-positive
+concern raised earlier in this review is ruled out.
+
 ## Selah / PsalmSuperscription / Psalms BOOK - confirmed not the cause
 
 - `Selah` is a **character style** applied to a word *inside* an ordinary
@@ -115,5 +157,7 @@ happens not to expose, or (c) some mix of both.
 
 ## Status
 
-⚪ Investigation only. Nothing executed - `AuditVerseMarkerStructure` not
-yet run, no diagnostic logging added, no docm changes made.
+🟡 Pre-run code review done, two real bugs found and fixed (off-by-one in
+`GetMaxVerse`; wrong class name/`MsgBox` in `VersesInChapter`'s error
+handler). `AuditVerseMarkerStructure` about to be run for the first time.
+No diagnostic logging added to the export yet; no docm changes made.
