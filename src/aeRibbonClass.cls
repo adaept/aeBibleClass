@@ -449,7 +449,9 @@ Public Sub CaptureHeading1s(Optional ByVal bForce As Boolean = False)
 
     hasRun = True
     m_lastScanWasSaved = ActiveDocument.Saved
-    Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries (saved=" & ActiveDocument.Saved & ")."
+    ' Commented out 2026-09-15 to reduce Immediate-window noise during batch
+    ' editing; uncomment if heading-cache rebuild behavior needs tracing again.
+    'Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries (saved=" & ActiveDocument.Saved & ")."
 
 PROC_EXIT:
     Exit Sub
