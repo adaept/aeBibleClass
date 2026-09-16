@@ -72,7 +72,7 @@ convention difference.
 **Decision:** Option A.
 
 **Status:** ✅ Done - docm fixed and verified byte-for-byte against WEBU,
-`aeBibleClass` `cfedd99`. `rwb.txt` synced to match (also picked up two
-stale-wording differences at v9/v10, per Phase 4's established full-verse-
-replacement approach) - 🟡 `aeRWB` commit pending operator review/push.
-`aeRWB` census confirms `rwb.txt` back to 63/63 matching WEBU.
+`aeBibleClass` `cfedd99`. `rwb.txt` synced to match, `aeRWB` `1bbd35b`
+(also picked up two stale-wording differences at v9/v10, per Phase 4's
+established full-verse-replacement approach). `aeRWB` census confirms
+`rwb.txt` back to 63/63 matching WEBU.

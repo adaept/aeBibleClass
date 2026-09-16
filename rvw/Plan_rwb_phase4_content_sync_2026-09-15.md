@@ -186,7 +186,7 @@ picked up; don't start the comparison itself yet.
 ## ⚪ 4. Other comparisons on this baseline
 
 - **✅ 2 Kings 19:13 punctuation gap - Done 2026-09-15, aeBibleClass
-  `cfedd99` (docm); aeRWB 🟡 pending operator review/push (`rwb.txt`).**
+  `cfedd99` (docm), aeRWB `1bbd35b` (`rwb.txt`).**
   Full structural analysis, options, and decision (Option A - match WEBU
   exactly, including a nesting-polarity swap at v10) recorded in
   `rvw/Log_WEB_to_WEBU_corrections_2026-09-15.md` entry 1 - **that log
