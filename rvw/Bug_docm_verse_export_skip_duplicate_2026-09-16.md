@@ -181,12 +181,30 @@ written:
   not "docs" in the public sense the standing rule was written to keep
   clean).
 
-### Task - not yet done
+### Task - done 2026-09-16
 
-- ⚪ Add a prominent, hard-to-miss note (debug/code-comment, documentation,
-  and any other relevant surface) that `AuditVerseMarkerStructure` exists,
-  is not part of `RUN_THE_TESTS`, and must be run explicitly before any
-  release - specific location(s) pending the placement decision above.
+**Placement decided (operator):** the actual release-checklist entry goes
+in adaept5tudio's private docs, per the standing rule - plus an in-repo
+pointer and a runtime reminder, so the note is visible from every angle
+someone might encounter it.
+
+- ✅ **Release-process guard added**,
+  `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` section
+  10.5, new step "6a" (non-disruptive - avoids renumbering steps 7-8, which
+  have historical progress notes tied to their numbers) - full explanation
+  of why `AuditVerseMarkerStructure` isn't equivalent to `RUN_THE_TESTS`
+  82/83, with a pointer back to this doc. **Uncommitted in that repo** -
+  operator to decide on committing there (no established convention for
+  that repo in this session, unlike aeBibleClass/aeRWB).
+- ✅ **In-repo pointer**: this bug doc itself, cross-referenced from the
+  release-process doc above (mutual pointer, findable from either side).
+- ✅ **Runtime reminder, aeBibleClass `<pending commit>`**: `aeBibleClass.cls`
+  `RunBibleClassTests` now prints `"REMINDER: AuditVerseMarkerStructure is
+  NOT included above - run it separately before any release..."` once,
+  after `RunTest(86)`, only on a full-suite run (not per individual test -
+  found and corrected a placement mistake first: initially added inside
+  `RunTest` itself, which runs once *per test* and would have spammed the
+  reminder 86 times per full run).
 
 ## Status
 

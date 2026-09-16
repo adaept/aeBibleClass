@@ -862,6 +862,16 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     If TestReportFlag And OneTest = 0 Then BufAppend LogWordBuildInfo
     If TestReportFlag And OneTest = 0 Then FlushReportBuf
 
+    ' Full-suite-only reminder (2026-09-16) - AuditVerseMarkerStructure
+    ' (basVerseStructureAudit.bas) is NOT one of the 86 tests just run: it
+    ' does a canonical per-chapter B/C/V check RUN_THE_TESTS cannot (Tests
+    ' 82/83 only sum whole-document totals - see
+    ' rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md). Release
+    ' process: adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
+    ' section 10.5/6a. This block only runs once, after RunTest(86), for a
+    ' full-suite call - not per individual test.
+    Debug.Print "REMINDER: AuditVerseMarkerStructure is NOT included above - run it separately before any release (see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md)."
+
     RunBibleClassTests = True
 
 PROC_EXIT:
