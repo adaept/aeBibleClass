@@ -1,8 +1,5 @@
----- FindMarkerStyleOutsideVerseText: 2026-09-16 16:19:25 ----
-
-Hit #1 | ParaStart=1991192 | Style=Psalms BOOK | first-char-style=Chapter Verse marker
-  Excerpt: "42 You sons of men, how long shall my glory be turned into dishonor? Will you lo"
+---- FindMarkerStyleOutsideVerseText: 2026-09-16 16:26:11 ----
 
 ---- Summary ----
-Non-VerseText paragraphs scanned: 2725
-Hits (marker char-style found outside VerseText): 1
+Non-VerseText paragraphs scanned: 2724
+Hits (marker char-style found outside VerseText): 0

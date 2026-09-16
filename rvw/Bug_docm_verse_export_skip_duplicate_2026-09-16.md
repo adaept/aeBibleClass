@@ -287,6 +287,11 @@ paragraphs, so this verse is invisible to them - not even logged among the
 `VerseText` in the docm directly (same category of fix as the 3 John
 defect - a document data correction, not a code change).
 
+**✅ Fixed and verified, 2026-09-16.** Re-ran
+`FindMarkerStyleOutsideVerseText`: non-`VerseText` paragraphs scanned
+dropped `2725 -> 2724` (Psalm 4:2 now correctly counted as `VerseText`),
+**hits = 0**. Test 87 would now pass.
+
 **✅ Added as a new permanent test, `Test 87`
 (`CountMarkerStyleOutsideVerseText`, expected baseline `0`)** - `MaxTests`
 bumped 86 -> 87, wired into all four parallel dispatch switches
@@ -412,15 +417,16 @@ structural issues` - the docm's canonical B/C/V numbering is correct.
 Release-process guard added (adaept5tudio doc + in-repo pointer + runtime
 reminder), all ✅. Two real code bugs found and fixed along the way
 (`GetMaxVerse` off-by-one; `VersesInChapter` error-handler class name/
-`MsgBox`). The 1-paragraph export undercount (31101 vs 31102) is now ✅
-**root-caused**: Psalm 4:2 mis-styled as `Psalms BOOK` instead of
-`VerseText` - found via a new targeted routine
+`MsgBox`). The 1-paragraph export undercount (31101 vs 31102) is ✅
+**root-caused and fixed**: Psalm 4:2 was mis-styled as `Psalms BOOK`
+instead of `VerseText` - found via a new targeted routine
 (`FindMarkerStyleOutsideVerseText`), now also wired in as a permanent
-regression test (`Test 87`, expected `0`). **Still open:**
-1. Operator to fix Psalm 4:2's paragraph style in the docm (`VerseText`).
-2. Re-run `ExportDocmVersesToRWBFormat` after that fix - should show
-   `visitedCount`=31102 and, with the new per-skip/duplicate diagnostic
-   logging (✅ added, not yet re-run), pin down the 46 skips/3 duplicates.
+regression test (`Test 87`, expected `0`), and confirmed fixed in the docm
+(re-run shows `0` hits). **Still open:**
+1. ~~Operator to fix Psalm 4:2's paragraph style~~ **✅ Done, verified.**
+2. Re-run `ExportDocmVersesToRWBFormat` - should now show
+   `visitedCount`=31102 and, with the per-skip/duplicate diagnostic logging
+   (✅ added, not yet re-run), pin down the 46 skips/3 duplicates.
 3. Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
    doesn't reproduce the Tests-82/83-style full-suite memory blowup -
    expected lower risk (touches ~2,725 paragraphs, not ~35k) but not yet
