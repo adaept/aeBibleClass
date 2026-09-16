@@ -71,7 +71,8 @@ convention difference.
 
 **Decision:** Option A.
 
-**Status:** ⚪ edit not yet made in the docm - see task in
-`Plan_rwb_phase4_content_sync_2026-09-15.md` item 4. Will be updated to ✅
-with commit hashes (docm/`aeBibleClass` and `rwb.txt`/`aeRWB`) once applied
-and verified.
+**Status:** ✅ Done - docm fixed and verified byte-for-byte against WEBU,
+`aeBibleClass` `cfedd99`. `rwb.txt` synced to match (also picked up two
+stale-wording differences at v9/v10, per Phase 4's established full-verse-
+replacement approach) - 🟡 `aeRWB` commit pending operator review/push.
+`aeRWB` census confirms `rwb.txt` back to 63/63 matching WEBU.

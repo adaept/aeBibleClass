@@ -183,18 +183,17 @@ baseline - see `project_i18n_architecture_vision` memory / the architecture
 assessment in the Test 70/71 plan doc). Record findings here when this is
 picked up; don't start the comparison itself yet.
 
-## 🔴 4. Other comparisons on this baseline
+## ⚪ 4. Other comparisons on this baseline
 
-- **🔴 2 Kings 19:13 punctuation gap - fix before further Phase 4 work
-  (2026-09-15, found while verifying Pass 2).** Full structural analysis,
-  options, and decision (Option A - match WEBU exactly, including a
-  nesting-polarity swap at v10) recorded in
-  `rvw/Log_WEB_to_WEBU_corrections_2026-09-15.md` entry 1 - **this new log
+- **✅ 2 Kings 19:13 punctuation gap - Done 2026-09-15, aeBibleClass
+  `cfedd99` (docm); aeRWB 🟡 pending operator review/push (`rwb.txt`).**
+  Full structural analysis, options, and decision (Option A - match WEBU
+  exactly, including a nesting-polarity swap at v10) recorded in
+  `rvw/Log_WEB_to_WEBU_corrections_2026-09-15.md` entry 1 - **that log
   doc is the dedicated place for this and future findings of the same
   kind** (structural WEB→WEBU corrections, as distinct from ordinary
   wording differences or RWB's own editorial choices), expected to grow
-  given `web.txt`'s age. Blocks nothing else in Phase 4, but per the operator's
-  instruction, do this before starting further Phase 4 work.
+  given `web.txt`'s age.
 - ⚪ No other specific comparisons identified yet beyond items 1-3 and the
   fix above. Add them here as they're identified, each as its own `⚪`
   line with scope, rather than trying to enumerate them speculatively now.
@@ -233,9 +232,8 @@ doesn't have to redesign it:
 
 ## Suggested sequencing
 
-1 → 2 (✅ both done) → **the 2 Kings 19:13 fix in item 4 (🔴 next, per the
-operator's explicit instruction - do this before further Phase 4 work)** →
-3 (needs a definition step before it's even checkable) → remainder of 4/5
+1 → 2 → the 2 Kings 19:13 fix in item 4 (✅ all three done) → **3 next**
+(needs a definition step before it's even checkable) → remainder of 4/5
 (open-ended, filled in as work proceeds) → 6 is a standing design
 constraint across all of the above, not a separate sequential step - check
 new tooling against it as it's built, not after.
