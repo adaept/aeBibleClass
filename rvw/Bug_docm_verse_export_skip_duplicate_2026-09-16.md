@@ -316,6 +316,49 @@ within a correctly-styled `VerseText` paragraph - the release-process
 reminder (`RunBibleClassTests`, after `RunTest(87)`) was updated to say so
 explicitly.
 
+## 46 skips / 3 duplicates - root-caused via the new diagnostic logging, mostly fixed
+
+With the per-skip/duplicate `Debug.Print` logging live, analyzed the raw
+text of each entry (cross-referenced against WEB wording to identify the
+real verse - not yet independently verified against a live source for
+every case, treat identifications below as high-confidence, not certain).
+Confirmed by the operator to be two distinct root causes:
+
+1. **Individual C:V marker digit typos** (majority of the 46) - a digit
+   missing from the front or back of the chapter or verse number in the
+   marker text itself (e.g. Psalm 94:11's marker read `4:11`, missing the
+   leading `9`; Revelation 19:13's read `1:13`, missing the trailing `9`;
+   a few were substitutions/insertions rather than deletions - e.g. Psalm
+   25:17 read `26:17`, a `5`->`6` typo, and Psalm 119:92 had an extra
+   duplicated leading `1`). Genuine content typos, fixed by the operator
+   directly in the docm, one by one.
+2. **1 Peter 4's Heading 2 read "MYCHAPTER 4" instead of "CHAPTER 4"** -
+   explains the 15-entry cluster logged as `book="1 Peter" chapNum=2` with
+   digit runs `41`..`419` (exactly matching all 19 verses of the real
+   1 Peter 4): the chapter heading wasn't recognized/parsed correctly, so
+   `chapNum` never advanced for that chapter's verses. Fixed by the
+   operator correcting the heading text.
+
+**Re-run after these fixes:** `wrote 31095 ... skipped=4 duplicates=3`
+(`31095+4+3=31102`, arithmetic still closes against the canonical total).
+**7 remain, not yet fixed as of this writing** - operator checking
+directly in Word:
+
+| Logged as | Likely real verse (unverified) | Defect type |
+|---|---|---|
+| Psalm 12, digits `23` | Psalm 12:3 | leading chapter digit `1` missing (same pattern as #1 above - simply missed in the first pass) |
+| Psalm 25, digits `2617` | Psalm 25:17 | digit substitution `5`->`6` |
+| Psalm 119, digits `111992` | Psalm 119:92 | extra duplicated leading `1` |
+| Revelation 12, digits `12` | Revelation 12:2 | verse digit truncated off the end entirely |
+| "Duplicate" Matthew 10:5 | Matthew 10:**35** | dropped `3` in the verse number makes `1035` read as `105`, colliding with the real, already-exported Matthew 10:5 - likely NOT a true duplicate paragraph |
+| "Duplicate" Acts 11:6 | Acts 11:**16** | dropped `1` in the verse number makes `1116` read as `116`, colliding with the real Acts 11:6 - likely NOT a true duplicate |
+| "Duplicate" John 16:6 | John 16:6 (as logged) | text matches the real verse content directly - no colliding longer-verse theory fits, so this one may be a genuine duplicated paragraph, lowest confidence of the three |
+
+**Caution for the "duplicate" cases:** two of the three are hypothesized to
+be mis-numbered *different* verses (10:35, 11:16), not true content
+duplicates - treating them as duplicates and deleting one side would
+delete real Bible content. Needs direct confirmation before any fix.
+
 ## What we actually know vs. don't know
 
 **Known:** the export's 46 skips + 3 duplicates come from its own naive
