@@ -112,20 +112,45 @@ features). A better-sourced Strong's dataset is needed.
 
 **Three things to research, none decided or verified yet:**
 
-1. **Strong's numbering itself** - where is the best-maintained, current,
-   clearly-licensed digital Strong's dataset? Candidates to check
-   (recalled from general knowledge, NOT verified against current license
-   terms or maintenance status - this is exactly the research task):
-   - **OpenScriptures Hebrew Bible (OSHB)** - open, git-tracked
-     morphological/Strong's tagging for the Hebrew Bible, based on the
-     Westminster Leningrad Codex.
-   - **STEPBible's TAHOT/TAGNT** (Translators Amalgamated Hebrew OT /
-     Greek NT) - openly licensed (stated CC BY-style terms, verify
-     exactly), purpose-built for Bible translation tooling, Strong's-linked.
-   - Whatever dataset actually backs `engwebu_usfm`'s tags currently (to
-     understand *why* it's broken here specifically - a tooling bug in
-     eBible.org/Haiola's pipeline, vs. a bad source dataset - matters for
-     deciding whether to report the bug upstream too).
+1. **Strong's numbering itself - licensing matrix provided by operator,
+   2026-09-16 (recorded as given, not yet independently re-verified
+   against each source's own current license page):**
+
+   | Source / Dataset | License | Attribution? | Derivative Restrictions? | Safe for Unrestricted Publishing? |
+   |---|---|---|---|---|
+   | Original Strong's Concordance (1890) | Public Domain | No | No | **Yes** |
+   | SWORD Project Strong's modules | Public Domain | No | No | **Yes** |
+   | OpenScriptures Strong's Hebrew & Greek Lexicon | CC BY-SA 4.0 | Yes | Share-Alike required | Conditional |
+   | STEPBible Strong's tagging (Tyndale House) | CC BY 4.0 | Yes | No | Yes, with attribution |
+   | OpenBible.info Strong's datasets | Varies (often CC BY) | Yes | Sometimes | Conditional |
+   | BibleHub Strong's online data | Copyrighted compilation | Yes | Yes | No |
+   | Logos Strong's datasets | Proprietary | Yes | Yes | No |
+   | Accordance Strong's datasets | Proprietary | Yes | Yes | No |
+   | Blue Letter Bible Strong's data | Copyrighted compilation | Yes | Yes | No |
+   | Strong's dictionaries bundled with modern translations | Copyrighted | Yes | Yes | No |
+
+   **Reading this against RWB's own dual LGPL-3.0-or-later/commercial
+   licensing model** (per this repo's own SPDX headers): the **original
+   Strong's Concordance text/numbering and SWORD Project's Strong's
+   modules are the cleanest fit** - fully public domain, no attribution or
+   share-alike obligation, compatible with either license arm. **STEPBible
+   (CC BY 4.0)** is a safe second choice if modernized tagging/definitions
+   are wanted - attribution only, no share-alike. **OpenScriptures'
+   Strong's Hebrew & Greek *lexicon* specifically is CC BY-SA (share-
+   alike)** - flag this as a real compatibility question before adopting
+   it: share-alike terms could force any RWB work incorporating it to
+   also be licensed CC BY-SA, which may not sit cleanly alongside this
+   project's commercial-license arm. **Note this table covers Strong's
+   *number/definition* datasets only** - it does not resolve the separate
+   question of which underlying Hebrew/Greek *source text* to tag (item 2
+   below still needs its own license check; OpenScriptures' *tagged Hebrew
+   Bible text* itself, distinct from its lexicon, may carry different
+   terms than the lexicon row above - verify separately, don't assume the
+   same license applies to both).
+   - Also worth checking: whatever dataset actually backs `engwebu_usfm`'s
+     tags currently, to understand *why* it's broken here specifically (a
+     tooling bug in eBible.org/Haiola's pipeline, vs. a bad source dataset) -
+     matters for deciding whether to report the defect upstream too.
 2. **Hebrew original source text** - the Westminster Leningrad Codex (WLC)
    is the usual free/public-scholarly-use base text behind OSHB and most
    open Hebrew Bible tooling; confirm current availability, exact license,
