@@ -16,7 +16,7 @@
   [IMPORT] src/aeBibleClass.cls  (into Blank Bible Copy.docm - operator
            confirmed done via full ImportAllVBAFiles reimport, 38/39
            files, verified against src/ThisDocument.cls content)
-    <pending>  Added a pre-flight gate to
+    6e17b09    Added a pre-flight gate to
     TheBibleClassTests: a full-suite run takes 15-20+ minutes, but the
     approved-style Priority/UnhideWhenUsed drift that fails Tests 77/78
     (Default Paragraph Font re-surfacing after any run touches it) was
