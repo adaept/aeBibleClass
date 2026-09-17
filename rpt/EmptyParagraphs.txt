@@ -133,14 +133,14 @@ page	paragraph_idx	kind	prev_snippet
 912	33106	SBNP	
 913	33122	SBNP	113 The children of your chosen sister greet you. Amen.
 914	33133	SBNP	
-915	33151	SBNP	115 Peace be to you. The friends greet you. Greet the friend
-916	33162	SBNP	
-917	33190	SBNP	125 to God our Savior, who alone is wise, be glory and majes
-918	33201	SBNP	
-931	33629	SBNP	2221 The grace of the Lord Jesus Christ be with all the sain
-932	33633	SBNP	Bible Concordance
-934	33649	SBNP	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
-935	33662	SBNP	* Biblica Open Bible Maps, © 2023–2026 Biblica, Inc. This w
-937	33665	PBB	
-944	33675	SBNP	An Introduction
-966	33825	SBNP	Find out for yourself how profoundly God is speaking to mank
+915	33150	SBNP	114 but I hope to see you soon. Then we will speak face to f
+916	33161	SBNP	
+917	33189	SBNP	125 to God our Savior, who alone is wise, be glory and majes
+918	33200	SBNP	
+931	33628	SBNP	2221 The grace of the Lord Jesus Christ be with all the sain
+932	33632	SBNP	Bible Concordance
+934	33648	SBNP	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
+935	33661	SBNP	* Biblica Open Bible Maps, © 2023–2026 Biblica, Inc. This w
+937	33664	PBB	
+944	33674	SBNP	An Introduction
+966	33824	SBNP	Find out for yourself how profoundly God is speaking to mank

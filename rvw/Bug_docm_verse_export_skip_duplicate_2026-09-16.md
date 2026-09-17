@@ -473,10 +473,20 @@ reminder), all ✅. Two real code bugs found and fixed along the way
 `MsgBox`).
 
 **Follow-up items, not blocking, tracked separately:**
-1. Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
-   doesn't reproduce the Tests-82/83-style full-suite memory blowup -
-   expected lower risk (touches ~2,725 paragraphs, not ~35k) but not yet
-   proven.
+1. ~~Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
+   doesn't reproduce the Tests-82/83-style full-suite memory blowup~~ **✅
+   Done, 2026-09-16.** Test 87 passed (`0=0`) in a full-suite run - it did
+   **not** hang or fail like Tests 82/83 did. However, total suite runtime
+   rose from `540.64s` (86-test run, before Test 87 existed) to `1683.93s`
+   (87-test run) - a `~1143s` increase, well beyond Test 87's own measured
+   standalone runtime (`68.78s`). Not proven to be caused by Test 87
+   specifically (this session separately observed Word's per-call
+   performance degrading the longer a session runs, e.g. `AuditCharStyleUsage`'s
+   accelerating slowdown per batch) - but it's the same *shape* of concern
+   as the 82/83 precedent (fine standalone, worse embedded in a full-suite
+   COM-heavy call stack), just not severe enough to hang or fail. Worth
+   watching in future full-suite runs, not urgent - Test 87 is correct and
+   passing, just possibly slower than its standalone number suggests.
 2. Decide whether to finally root-cause the `GetMarkerTotals` memory issue
    so Tests 82/83 themselves could be restored - not done, not decided.
 3. `docm-verses.txt` is now clean (31102/0/0) - Phase 4's Pass 1/2 sync and
