@@ -131,6 +131,15 @@ Private Sub PromoteApprovedStyles()
             missing.Add approved(i)
         Else
             s.Priority = i + 1
+            ' UnhideWhenUsed=True silently re-surfaces an approved style in
+            ' the gallery the moment any run touches it (paste, direct
+            ' formatting, etc. - see Test 77/rvw/Code_review 2026-09-14.md,
+            ' recurred 2026-09-16 on "Default Paragraph Font" after this
+            ' session's heavy direct editing). Reset alongside Priority so
+            ' one call fixes both, instead of a remembered ad-hoc line.
+            On Error Resume Next
+            s.UnhideWhenUsed = False
+            On Error GoTo 0
         End If
 
         Set s = Nothing
