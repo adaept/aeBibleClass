@@ -333,39 +333,58 @@ working) is built.**
    determination in §6 with real, complete counts rather than the partial
    sample here.
 
-## 6. Presentation-style determination - refined, still not unilaterally finalized
+## 6. Presentation-style determination - final rule set, ready for ratification
 
-Superseding the 2026-09-15 two-part draft (kept below for the record) with
-the four-rule model from §4, which reconciles the actual counts far more
-closely (0.6% / 13% gaps vs. the untested first draft):
+Superseded twice since the 2026-09-15 two-part draft: once by the
+four-rule model (§4, before real per-verse data existed), and now by the
+**complete, verse-audited seven-rule model**, confirmed against all 9,016
+WEBU divine-name occurrences via Task 3's census tool (99.94% clean match,
+0 unexplained mismatches):
 
-- **YHWH alone or in the `LORD God` apposition → `God`** (rules 1-2).
-- **YHWH immediately before a possessive+Elohim (`LORD your/our/my God`) →
-  `Lord your/our God`**, *not* `God` (rule 3) - avoids the nonsensical
-  "God your God"; this is the piece the first draft missed entirely.
-- **Adonai, alone or in the `Lord GOD` compound → `Lord`** (rules 4-5),
-  with the compound keeping both words (`Lord God`) rather than collapsing.
-- **Elohim alone → `God`** (rule 6, unchanged).
-- ~~At least one confirmed fixed-idiom exception (`the day of the LORD` →
-  `the day of the Lord`)~~ **Retracted 2026-09-16** - Task 2's tool found
-  this doesn't generalize (13 of 14 occurrences use plain rule 1 instead);
-  see Task 2 below. **New rule confirmed instead: `LORD` alone may also
-  render as `Yah`** (the poetic short form, H3050) as well as `God` -
-  WEBU's capitalization convention can't distinguish the two on its own.
+1. **YHWH alone → `God`** (or `Yah` - the poetic short form, H3050, which
+   WEBU's own ALL-CAPS convention can't distinguish from full YHWH on the
+   surface; both are legitimate RWB outcomes for the same WEBU `LORD`).
+2. **YHWH in the `LORD God` apposition → `God`** (collapsed to one word).
+3. **YHWH immediately before a possessive+Elohim (`LORD your/our/my God`)
+   → `Lord your/our/my God`**, *not* `God` - avoids the nonsensical "God
+   your God."
+4. **Adonai in the `Lord GOD` compound → `Lord God`** (both words kept,
+   not collapsed).
+5. **Adonai alone (vocative/human address) → `Lord`** (unchanged).
+6. **Elohim alone → `God`** (unchanged).
+7. **`GOD`/`LORD of Armies` (recurring military-divine title, mostly
+   Isaiah/Jeremiah/Amos) → `Lord God of Hosts`** (translating "Armies" →
+   "Hosts" too) - confirmed across all 19 occurrences.
 
-**Original two-part draft (2026-09-15, superseded, kept for history):**
-"YHWH → `God`" and "Adonai/human lordship → `Lord`," undifferentiated by
-context. Still directionally correct, but rule 3's discovery shows the real
-rule is context-sensitive (what else is in the same phrase), not a blanket
-per-word substitution - a materially different, more precise claim.
+**Known, confirmed exceptions to the above (5 verses, all deliberate, not
+gaps):**
+- Exodus 28:36, Exodus 39:30, Acts 17:23, Zechariah 14:20 - quoted
+  ALL-CAPS *inscriptions*, unrelated to the divine-name convention (§3.4).
+- Revelation 19:16 - "KING OF KINGS AND LORD OF LORDS" is a compound title
+  (Christ), not a substitutable divine name (confirmed against Revelation
+  17:14's parallel, ordinary-title-case phrase).
+- **Malachi 4:5 - operator-ratified, 2026-09-16**: kept as "the day of the
+  Lord," the sole exception to rule 1's "day of the LORD → day of God"
+  outcome (used at the other 13 occurrences). Reasoning: last verse of the
+  OT, one of its most quoted/weighted verses, ~90% of surveyed
+  translations use `LORD` (small caps) - judged to warrant RWB's
+  KJV-tradition-alignment principle over its own internal default here.
 
-**Still not a final ruling.** The `Lord` column's 13% residual gap means
-real exceptions remain uncharacterized - given the scale (thousands of
-verses) and theological weight of this choice (per
+**Evolution for the record:** the 2026-09-15 two-part draft ("YHWH →
+`God`," "Adonai/human lordship → `Lord`," undifferentiated by context) was
+directionally correct but missed rule 3 entirely and had no real per-verse
+evidence. The 2026-09-16 four-rule model (§4) added rule 3 and closed the
+aggregate gaps to 0.6%/13%, but still rested on hand-sampling and included
+one rule (the idiom exception) that turned out wrong when checked against
+all 14 real occurrences. This seven-rule model is the first version
+audited against every single occurrence in the corpus, not a sample -
+0 unexplained verses remain.
+
+**Ratification requested.** Given the scale (thousands of verses) and
+theological weight of this choice (per
 `project_rwb_editorial_philosophy`), **operator ratification is still
-needed**, and ideally *after* Task 3 below (the real audit) closes the
-remaining gap, not before - the 2026-09-15 conversation already showed that
-aggregate-level confidence here was two rounds away from wrong.
+needed** - now *after* Task 3's real audit closed the gap (99.94% verified
+clean, not an aggregate estimate), as this section originally called for.
 
 ## 7. Connection to Phase 5 (Strong's numbers) - direct, not incidental
 
@@ -386,16 +405,14 @@ This research changes Phase 5's plan, not just Pass 3's:
 
 ## Status
 
-✅ Research done (2026-09-15/16), including a full self-correction cycle
-(§4) - the analysis was checked against real per-verse data, a methodology
-error was found and fixed, and the resulting rule is materially more
-precise than the first draft. ✅ Task 1 (Psalms/Song of Solomon book-name
-fix) done and verified. ✅ Task 2 (audit tool) done, aeRWB `ea6b79d` -
-found the real gap is 45 verses (17 mismatch + 28 review), not 878/270
-worth of unexplained aggregate - and retracted the `the day of the LORD`
-idiom rule along the way (didn't survive contact with all 14 real
-occurrences). Task 3 (review the 45, ratify the style rule) not yet
-started.
+✅ Research done (2026-09-15/16). ✅ Task 1 (Psalms/Song of Solomon
+book-name fix) done and verified. ✅ Task 2 (audit tool) done, aeRWB
+`ea6b79d`. ✅ Task 3 (review + fix) done, aeRWB `ea6b79d`+follow-up,
+aeBibleClass `3dedbfc` - **9,011/9,016 WEBU divine-name occurrences match
+cleanly (99.94%), 0 unexplained mismatches, 5 confirmed exceptions.** The
+seven-rule model (§6) is complete and audited against every occurrence,
+not a sample. **Only remaining step: operator ratification of §6's final
+rule set** (requested, not yet given).
 
 ## Next-session tasks, in order
 
@@ -448,8 +465,33 @@ started.
   Full detail: `aeRWB/census/divine-names-worklist.md` (gitignored,
   regenerate with `npm run pass3.census`) and `tools/web-diff/README.md`'s
   R9 section.
-- **⚪ Task 3 - review the 17 mismatches + 28 review cases individually,
-  decide Malachi 4:5 and Revelation 19:16 specifically, and only then
-  bring the style rule back to the operator for ratification** - with a
-  real, nearly-complete per-verse exception list in hand (45 verses total,
-  not 878/270 worth of unexplained aggregate gap).
+- **✅ Task 3 - Done 2026-09-16, aeRWB `ea6b79d`+follow-up, aeBibleClass
+  `3dedbfc`.** Reviewed all 17 mismatches + 28 review cases individually:
+  - **19 of the 24 standalone-`GOD` review cases confirmed as a genuine 7th
+    rule**, not ambiguity: `GOD`/`LORD of Armies` -> `Lord God of Hosts`
+    (translating "Armies"->"Hosts" too), verified across every occurrence.
+    The remaining 5 plain standalone `GOD` cases confirmed as ordinary
+    rule 6 (`God`, unchanged) - both folded into the tool, no longer held
+    as "review."
+  - **Revelation 19:16** confirmed a classifier false positive - "KING OF
+    KINGS AND LORD OF LORDS" is a compound title (Christ), not a
+    substitutable divine name (Revelation 17:14's parallel phrase uses
+    normal title-case and needs no exception). Kept as a single named
+    exception, not generalized from one example.
+  - **Malachi 4:5 - operator-ratified exception**: kept as "the day of the
+    Lord," not the ordinary "day of God" outcome the other 13 "day of the
+    LORD" occurrences use. Reasoning: Malachi 4:5 is the last verse of the
+    OT and one of its most quoted/weighted verses (the Elijah/messenger-
+    of-the-covenant prophecy); a translation survey found ~90% use `LORD`
+    (small caps), only one uses `God` - judged to warrant honoring RWB's
+    KJV-tradition-alignment principle over its own internal idiom default
+    here specifically. Recorded ref-keyed in the tool
+    (`RATIFIED_EXCEPTIONS`) so it won't be re-flagged.
+  - **The 15 real content defects were fixed in the docm**: 13 identical
+    lowercase `lord`->`Lord` casing fixes (Exodus 20:2, 10 Deuteronomy
+    verses, Joshua 1:13, 1 Kings 1:17, Jeremiah 40:2), Acts 7:20 (restored
+    dropped "to God"), Romans 9:28 (leftover all-caps `LORD` -> `Lord`).
+  - **Final verified result**: re-exported docm (still 31102/0/0), re-ran
+    the census tool - **9,011/9,016 match (99.94%), 0 mismatch, 5 confirmed
+    non-actionable exceptions** (4 known inscriptions + the Revelation
+    19:16 title). The remaining §6 style-rule ratification is below.
