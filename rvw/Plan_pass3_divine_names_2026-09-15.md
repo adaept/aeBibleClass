@@ -114,6 +114,43 @@ secondary corroboration signal, and only for `H3068`/`G2962`/`G2316`, which
 verified as reliable - never for `H430`, which isn't taggable in this
 corpus at all.
 
+**Addendum, 2026-09-16 (operator reassessment request): this is a
+tag-metadata defect, not evidence of a deliberate literal-interpretation
+choice - re-verified, not just re-asserted.** Two completely different
+things live under "WEBU" and must not be conflated: (1) the translation
+text itself - the actual English words the WEBU/ASV-lineage translators
+chose over 20+ years, which genuinely does lean literal/formal-equivalence
+(see `project_rwb_editorial_philosophy` for RWB's deliberate departure from
+this, e.g. "evil"->"disaster") - real, human, defensible scholarship,
+untouched by anything below; and (2) the inline `strong="H1234"` word-level
+tags in this specific `engwebu_usfm` build - a separate interlinear-
+alignment metadata layer, typically produced by a different (often
+automated) process layered on top of a finished translation.
+
+Re-checked the raw USFM directly (not just re-citing the earlier finding):
+Genesis 1:1 tags **"In," "beginning-adjacent words," and "God" all with
+`strong="H8064"`** - the Strong's number for "heavens," which appears
+nowhere in "In the beginning, God." Corpus-wide, `H8064` is applied **149
+times within Genesis alone**, while the actual word "heavens" appears only
+about 5 times in that book - a ~30x over-application impossible under any
+real per-word semantic alignment. `H430` (Elohim) still confirmed **0**
+occurrences corpus-wide, versus `H3068` (YHWH) at **13,217** - reliable and
+correctly placed. This pattern (a handful of codes cycling positionally
+across unrelated words, wildly out of proportion to real lexeme frequency)
+is the signature of a broken/naive automated word-to-tag projection, not an
+interpretive decision - a deliberate "more literal reading of God's nature"
+would show up in the **words chosen**, not in mislabeling "heavens" onto
+"In," "and," and "God" in the same sentence, which asserts nothing
+theological and carries no interpretive content at all. **Conclusion
+unchanged, evidence stronger**: this specific corpus's word-level Strong's
+tags remain unusable for identifying Elohim/God occurrences, and this
+finding says nothing about WEBU's translation quality or its genuinely
+literal-leaning wording choices - those live entirely in row one, verified
+separately and already trusted elsewhere in this plan (e.g. §2's `LORD`/
+`GOD` capitalization convention, which WEBU's translators documented
+explicitly in their own footnotes and which this plan already treats as
+reliable).
+
 ### 3.2 `H430` (Elohim) is untaggable in this corpus - a hard limitation, not a design choice
 
 Restated plainly because it matters: there is no reliable, tag-based way in
