@@ -369,6 +369,17 @@ gaps):**
   OT, one of its most quoted/weighted verses, ~90% of surveyed
   translations use `LORD` (small caps) - judged to warrant RWB's
   KJV-tradition-alignment principle over its own internal default here.
+- **Zechariah 14:20 - corrected 2026-09-17** (`Plan_scholarly_grounding_2026-09-16.md`
+  Task 1 re-verification): the docm had rendered this inscription as "HOLY
+  TO THE LORD" (unconverted) while the identical "HOLY TO THE LORD"
+  inscription at Exodus 28:36/39:30 (same Hebrew word, `strong="H3068"`
+  YHWH, in `engwebu_usfm`) was rendered "HOLY TO GOD." Operator-decided:
+  applied rule 1 uniformly - Zechariah 14:20 now also reads "HOLY TO GOD,"
+  matching the Exodus pattern. Fixed directly in `Blank Bible Copy.docm`;
+  `rpt/docm-verses.txt` re-exported and diff-confirmed as the only content
+  change. The bullet above (this section, 2026-09-15/16) is left as
+  originally written per this project's progressive-history convention -
+  this entry is the correction record, not a silent rewrite of it.
 
 **Evolution for the record:** the 2026-09-15 two-part draft ("YHWH →
 `God`," "Adonai/human lordship → `Lord`," undifferentiated by context) was
@@ -413,6 +424,12 @@ cleanly (99.94%), 0 unexplained mismatches, 5 confirmed exceptions.** The
 seven-rule model (§6) is complete and audited against every occurrence,
 not a sample. **Only remaining step: operator ratification of §6's final
 rule set** (requested, not yet given).
+
+✅ **Exceptions re-verified 2026-09-17** (`Plan_scholarly_grounding_2026-09-16.md`
+Task 1) - all 5 confirmed exceptions individually re-read against
+primary sources; one real inconsistency found and fixed (Zechariah
+14:20's inscription now matches Exodus 28:36/39:30's, see §6's dated
+bullet above), commit `<pending>`.
 
 ## Next-session tasks, in order
 

@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-09-16)
+Radiant Word Bible - exported from the live .docm (2026-09-17)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -23088,7 +23088,7 @@ Zechariah 14:16	 It will happen that everyone who is left of all the nations t
 Zechariah 14:17	 It will be, that whoever of all the families of the earth does not go up to Jerusalem to worship the King, the Lord God of Hosts, on them there will be no rain.
 Zechariah 14:18	 If the family of Egypt does not go up, and does not come, neither will it rain on them. This will be the plague with which God will strike the nations that do not go up to keep the feast of booths.
 Zechariah 14:19	 This will be the punishment of Egypt, and the punishment of all the nations that do not go up to keep the feast of booths.
-Zechariah 14:20	 In that day there will be on the bells of the horses, “HOLY TO THE LORD”; and the pots in God’s house will be like the bowls before the altar.
+Zechariah 14:20	 In that day there will be on the bells of the horses, “HOLY TO GOD”; and the pots in God’s house will be like the bowls before the altar.
 Zechariah 14:21	 Yes, every pot in Jerusalem and in Judah will be holy to the Lord God of Hosts; and all those who sacrifice will come and take of them, and cook in them. In that day there will no longer be a Canaanite in the house of the Lord God of Hosts.
 Malachi 1:1	 A revelation, God’s word to Israel by Malachi.
 Malachi 1:2	 “I have loved you,” says God. Yet you say, “How have you loved us?” “Was Esau not Jacob’s brother?” says God, “Yet I loved Jacob;
