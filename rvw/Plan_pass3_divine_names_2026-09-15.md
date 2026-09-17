@@ -270,7 +270,7 @@ missed entirely:
 | 4 | `Lord GOD` (Adonai+YHWH) | `Lord God` | confirmed, Genesis 15:2/15:8 |
 | 5 | `Lord` alone (Adonai/vocative address) | `Lord` (unchanged) | confirmed, Exodus 4:10/5:22 (the "O Lord" vocative survives alongside a separate "the LORD" → "God" in the *same* verse) |
 | 6 | `God` alone (Elohim) | `God` (unchanged) | trivial |
-| - | Idiomatic exception, at least once confirmed | e.g. `the day of the LORD` → `the day of the Lord`, Malachi 4:5 | likely more of these exist; not yet enumerated |
+| - | ~~Idiomatic exception, at least once confirmed~~ **RETRACTED, 2026-09-16** | ~~e.g. `the day of the LORD` → `the day of the Lord`, Malachi 4:5~~ | Task 2's tool checked all 14 `the day of the LORD` occurrences directly: 13 render as plain rule 1 (`God`); Malachi 4:5 is a one-off inconsistency, not a rule - see Task 2 below |
 
 **Arithmetic reconciliation** (canonical-book counts, rule 3 netted out of
 both `God` and `Lord`):
@@ -346,8 +346,12 @@ closely (0.6% / 13% gaps vs. the untested first draft):
 - **Adonai, alone or in the `Lord GOD` compound → `Lord`** (rules 4-5),
   with the compound keeping both words (`Lord God`) rather than collapsing.
 - **Elohim alone → `God`** (rule 6, unchanged).
-- **At least one confirmed fixed-idiom exception** (`the day of the LORD` →
-  `the day of the Lord`) - expect more once the audit tool runs.
+- ~~At least one confirmed fixed-idiom exception (`the day of the LORD` →
+  `the day of the Lord`)~~ **Retracted 2026-09-16** - Task 2's tool found
+  this doesn't generalize (13 of 14 occurrences use plain rule 1 instead);
+  see Task 2 below. **New rule confirmed instead: `LORD` alone may also
+  render as `Yah`** (the poetic short form, H3050) as well as `God` -
+  WEBU's capitalization convention can't distinguish the two on its own.
 
 **Original two-part draft (2026-09-15, superseded, kept for history):**
 "YHWH → `God`" and "Adonai/human lordship → `Lord`," undifferentiated by
@@ -386,8 +390,12 @@ This research changes Phase 5's plan, not just Pass 3's:
 (§4) - the analysis was checked against real per-verse data, a methodology
 error was found and fixed, and the resulting rule is materially more
 precise than the first draft. ✅ Task 1 (Psalms/Song of Solomon book-name
-fix) done and verified. Task 2 (audit tool) and Task 3 (run it, ratify the
-style rule) not yet started.
+fix) done and verified. ✅ Task 2 (audit tool) done, aeRWB `ea6b79d` -
+found the real gap is 45 verses (17 mismatch + 28 review), not 878/270
+worth of unexplained aggregate - and retracted the `the day of the LORD`
+idiom rule along the way (didn't survive contact with all 14 real
+occurrences). Task 3 (review the 45, ratify the style rule) not yet
+started.
 
 ## Next-session tasks, in order
 
@@ -402,14 +410,46 @@ style rule) not yet started.
   `Psalms`) and `Song of Solomon` (0 `Song of Songs`); totals unchanged
   (31053/46/3/0); reference-keyed lookups against `rwb.txt` now succeed for
   both books (spot-checked Psalm 23:1, Song of Solomon 1:1).
-- **⚪ Task 2 - build the Pass 3 audit tool (§5),** using the six-rule model
-  from §4/§6 (not the superseded two-part draft) - a new `aeRWB` tool,
-  reusing `parseBible`/`loadEngwebu`, that classifies each verse's WEBU
-  divine-name pattern (including rule 3's `LORD [possessive] God` idiom,
-  the `Lord GOD`/`Lord God` compound, and the known inscription exceptions
-  from §3.4) and cross-references docm's actual rendering, producing a
-  reviewable worklist rather than a bulk pass/fail.
-- **⚪ Task 3 - run the tool, close the remaining `Lord` gap (13%,
-  §4), and only then bring the style rule back to the operator for
-  ratification** - with a real per-verse exception list in hand, not
-  another aggregate estimate.
+- **✅ Task 2 - Done 2026-09-16, aeRWB `ea6b79d`.** Built
+  `tools/web-diff/divine-names-census.mjs` (R9, `npm run pass3.census`),
+  reusing `parseBible`/`loadEngwebu` per the plan. **First real run: 9,016
+  WEBU verses have a divine-name occurrence; 8,971 match cleanly (99.5%),
+  17 need a content fix, 28 need a human/AI read** - a dramatic
+  improvement over the hand-sampled 13%/6% aggregate estimates above,
+  because those estimates turned out to be measuring the wrong thing in
+  two ways (both found only by running the real tool, not by refining the
+  aggregate math further - exactly why §5 called for a tool, not more
+  hand-counting):
+  - **The `the day of the LORD` idiom (§4/§6) does not generalize.**
+    Checked all 14 occurrences directly: 13 render as the ordinary rule-1
+    `God` (Isaiah 13:9, Lamentations 2:22, Ezekiel 7:19, Joel 1:15/2:1/
+    2:11/3:14, Amos 5:18/5:20, Obadiah 1:15, Zephaniah 1:7/1:8/1:14/1:18/
+    2:2/2:3 - confirmed by direct inspection). Malachi 4:5 (the sole
+    example the idiom was drawn from) is the outlier, not the rule -
+    §4/§6's idiom row below is **retracted**, not merely unconfirmed.
+  - **Rule 1 needed a second acceptable outcome: `Yah`**, the poetic short
+    form of YHWH (H3050). WEBU's own ALL-CAPS convention folds "Yah" into
+    the same `LORD` surface form as full YHWH (H3068) - undetectable from
+    WEBU's text alone. 17 of the first 20 apparent "`God` missing" cases
+    (mostly Psalms, e.g. "Praise the LORD!" -> "Praise Yah!") were this,
+    not gaps.
+  - The remaining **17 real mismatches**: 13 are a newly-discovered
+    genuine defect (lowercase `lord` instead of `Lord` in the "Lord your
+    God" phrase - Exodus 20:2, 10 Deuteronomy verses, Joshua 1:13, 1 Kings
+    1:17, Jeremiah 40:2), 1 is Malachi 4:5's now-unexplained inconsistency
+    (needs an operator decision), 1 is Acts 7:20 dropping "to God"
+    entirely, 1 is the already-known Romans 9:28 leftover (§3.5), and 1
+    (Revelation 19:16) looks like a classifier false-positive on the
+    "LORD OF LORDS" title phrase rather than a real gap.
+  - The **28 review cases**: 24 standalone `GOD` (mostly Isaiah/Jeremiah -
+    likely the `H3069` Adonai+YHWH pointing without an immediately
+    preceding "Lord," not yet individually confirmed) plus the 4 known
+    inscription exceptions (§3.4).
+  Full detail: `aeRWB/census/divine-names-worklist.md` (gitignored,
+  regenerate with `npm run pass3.census`) and `tools/web-diff/README.md`'s
+  R9 section.
+- **⚪ Task 3 - review the 17 mismatches + 28 review cases individually,
+  decide Malachi 4:5 and Revelation 19:16 specifically, and only then
+  bring the style rule back to the operator for ratification** - with a
+  real, nearly-complete per-verse exception list in hand (45 verses total,
+  not 878/270 worth of unexplained aggregate gap).
