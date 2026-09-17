@@ -133,6 +133,28 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Lo
         Stop
     End If
 
+    ' A full-suite run takes 15-20+ minutes, but an approved-style
+    ' Priority/UnhideWhenUsed drift (Tests 77/78, "Default Paragraph
+    ' Font" re-surfacing after any run touches it - see
+    ' CountApprovedStylesWithUnhideWhenUsedOn's header comment) is only
+    ' ever discovered at Test 77, near the end. Check it here instead,
+    ' using the exact same Count functions Tests 77/78 use, so a run
+    ' that would fail those two bails in seconds, not after the full
+    ' suite. Skipped for single-test runs (RUN_THE_TESTS(77) etc.) -
+    ' gating those would make it impossible to debug 77/78 directly.
+    If IsMissing(varDebug) Or (Not IsMissing(varDebug) And VarType(varDebug) <> vbInteger) Then
+        If Not CheckApprovedStylesReady Then
+            Debug.Print "HALT - full suite skipped: approved-style Priority/UnhideWhenUsed drift detected (would fail Tests 77/78):"
+            Debug.Print "  " & m_lastHint
+            MsgBox "Approved-style Priority/UnhideWhenUsed drift detected - " & _
+                   "this would fail Tests 77/78." & vbCrLf & vbCrLf & _
+                   m_lastHint & vbCrLf & vbCrLf & _
+                   "(Full suite skipped)", vbCritical, "HALT - full suite skipped"
+            TheBibleClassTests = -1
+            GoTo PROC_EXIT
+        End If
+    End If
+
     'MsgBox "TheBibleClassTests"
     If IsMissing(varDebug) Then
         Debug.Print "Get TheBibleClassTests"
@@ -164,6 +186,14 @@ End Property
 
 Private Function CheckShowHideStatus() As Boolean
     CheckShowHideStatus = ActiveWindow.View.ShowAll
+End Function
+
+' Pre-flight check for the full-suite gate above - reuses Tests 77/78's own
+' Count functions directly, so this can never drift out of sync with what
+' those tests actually check. True = clean (both counts are 0).
+Private Function CheckApprovedStylesReady() As Boolean
+    CheckApprovedStylesReady = (CountApprovedStylesWithUnhideWhenUsedOn = 0) _
+        And (CountApprovedStylesWithWrongPriority = 0)
 End Function
 
 '===============================================================
@@ -3247,7 +3277,7 @@ Private Function CountApprovedStylesWithUnhideWhenUsedOn() As Long
                 violations = violations + 1
                 violationList = violationList & "  - " & s.NameLocal & vbCrLf
                 If m_lastHint = "" Then _
-                    m_lastHint = s.NameLocal & " : UnhideWhenUsed=True"
+                    m_lastHint = s.NameLocal & " : UnhideWhenUsed=True - run WordEditingConfig, save, re-run"
             End If
         End If
     Next i
@@ -3315,7 +3345,7 @@ Private Function CountApprovedStylesWithWrongPriority() As Long
                     " : expected Priority=" & expectedPriority & _
                     " got " & s.Priority & vbCrLf
                 If m_lastHint = "" Then _
-                    m_lastHint = s.NameLocal & " : Priority " & s.Priority & " (expected " & expectedPriority & ")"
+                    m_lastHint = s.NameLocal & " : Priority " & s.Priority & " (expected " & expectedPriority & ") - run WordEditingConfig, save, re-run"
             End If
         End If
     Next i

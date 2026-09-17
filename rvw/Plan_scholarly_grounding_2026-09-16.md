@@ -300,6 +300,22 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
         are hard-skipped (documented in
         `project_docm_verse_export_bug` memory as a known, separate,
         non-blocking issue).
+      - **Follow-on improvement, not a Task 2 item but found while
+        investigating Tests 77/78's regression:** the fix for that
+        regression (`fcb8172`, folding `UnhideWhenUsed=False` into
+        `PromoteApprovedStyles`) was intact and correct - the failure
+        was Word re-surfacing "Default Paragraph Font" again after this
+        session's editing touched it, same as documented pattern, and
+        `PromoteApprovedStyles`/`WordEditingConfig` is a manual,
+        operator-run step, not automatic. Since the full `RUN_THE_TESTS`
+        suite takes 15-20+ minutes and this drift was previously only
+        discovered at Test 77 near the end, added a pre-flight gate to
+        `TheBibleClassTests` (`aeBibleClass.cls`) that reuses Tests
+        77/78's own Count functions directly (no new detection logic)
+        and halts in seconds instead - skipped for single-test runs so
+        77/78 can still be debugged directly. **Verified 2026-09-17**:
+        operator ran `RUN_THE_TESTS` against the still-drifted docm and
+        got the expected halt message in seconds, not 950 seconds.
       - Main-suite result after both fixes: `Run_All_SBL_Tests` reports
         **361 tests run, 0 failures** (up from a prior baseline that had
         never actually been visible before - both earlier "44" readings

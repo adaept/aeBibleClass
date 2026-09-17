@@ -11,6 +11,29 @@
 #   [MEMORY]   - Claude auto-memory; no project import
 # ------------------------------------------------------------
 
+## Files touched this session (continued - Tests 77/78 fast-fail gate)
+
+  [IMPORT] src/aeBibleClass.cls  (into Blank Bible Copy.docm - operator
+           confirmed done via full ImportAllVBAFiles reimport, 38/39
+           files, verified against src/ThisDocument.cls content)
+    <pending>  Added a pre-flight gate to
+    TheBibleClassTests: a full-suite run takes 15-20+ minutes, but the
+    approved-style Priority/UnhideWhenUsed drift that fails Tests 77/78
+    (Default Paragraph Font re-surfacing after any run touches it) was
+    only ever discovered at Test 77, near the end. New
+    CheckApprovedStylesReady() reuses Tests 77/78's own Count functions
+    directly (no new detection logic) and halts in seconds instead,
+    printing the specific violation + remediation ("run
+    WordEditingConfig, save the document, then re-run") to both the
+    Immediate window and a MsgBox. Deliberately skipped for single-test
+    runs (RUN_THE_TESTS(77) etc.) so Test 77/78 can still be debugged
+    directly. Also appended the same remediation text to Tests 77/78's
+    own m_lastHint, so the message is identical whether you hit it via
+    the fast gate or by letting the full suite run anyway.
+    VERIFIED 2026-09-17: operator ran RUN_THE_TESTS against the live
+    (still-drifted) docm and got the expected halt message, cleanly
+    formatted, in seconds.
+
 ## Files touched this session
 
   [IMPORT] src/aeBibleCitationClass.cls  (into Blank Bible Copy.docm)
