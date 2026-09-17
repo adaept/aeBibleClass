@@ -909,7 +909,7 @@ Public Function GetCanonicalBookTable() As Object
         books.Add 19, Array(19, "Psalms", 150)
         books.Add 20, Array(20, "Proverbs", 31)
         books.Add 21, Array(21, "Ecclesiastes", 12)
-        books.Add 22, Array(22, "Song of Songs", 8)   ' SBL output abbreviation is "Song" (see ToSBLShortForm Case 22).
+        books.Add 22, Array(22, "Song of Solomon", 8)   ' Aligned with WEBU/web.txt/rwb.txt 2026-09-17 (Plan_scholarly_grounding_2026-09-16.md Task 2). SBL output abbreviation is "Song" (see ToSBLShortForm Case 22).
         books.Add 23, Array(23, "Isaiah", 66)
         books.Add 24, Array(24, "Jeremiah", 52)
         books.Add 25, Array(25, "Lamentations", 5)
@@ -986,7 +986,7 @@ Public Function GetSBLCanonicalBookTable() As Object
         sbl.Add 19, "PSALMS"
         sbl.Add 20, "PROVERBS"
         sbl.Add 21, "ECCLESIASTES"
-        sbl.Add 22, "SONG OF SONGS"   ' SBL standard abbreviation is "Song" (output via ToSBLShortForm)
+        sbl.Add 22, "SONG OF SOLOMON"   ' Aligned with WEBU 2026-09-17 (Task 2). SBL standard abbreviation is "Song" (output via ToSBLShortForm)
         sbl.Add 23, "ISAIAH"
         sbl.Add 24, "JEREMIAH"
         sbl.Add 25, "LAMENTATIONS"
@@ -1484,8 +1484,12 @@ Public Function GetBookAliasMap() As Object
         aliasMap.Add "ECC", 21
         aliasMap.Add "EC", 21
         aliasMap.Add "QOH", 21
-        ' Song of Songs, aka Song of Solomon (SBL output abbreviation is "Song")
+        ' Song of Solomon, aka Song of Songs (SBL output abbreviation is "Song")
+        ' Canonical is "Song of Solomon" (aligned with WEBU 2026-09-17, Task 2);
+        ' "Song of Songs" kept as a valid input alias, not removed - only the
+        ' canonical/display form changed, not what resolves as input.
         ' Accepts "Song" and variants as input aliases so SBL-typed citations resolve correctly.
+        aliasMap.Add "SONG OF SOLOMON", 22
         aliasMap.Add "SONG OF SONGS", 22
         aliasMap.Add "SONG", 22
         aliasMap.Add "SOS", 22

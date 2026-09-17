@@ -50,6 +50,7 @@ Public Sub Run_All_SBL_Tests()
     aeBibleCitationClass.ResetBookAliasMap
     Test_Stage1_AliasCoverage
     Test_SongOfSongs_AllAliases
+    Test_CanonicalNamesAndSBLTable
     aeBibleCitationClass.Test_Stage2_LexicalScan
     aeBibleCitationClass.Test_Stage3_ResolveAlias
     aeBibleCitationClass.Test_Stage4_InterpretStructure
@@ -129,10 +130,16 @@ Public Sub Test_Stage1_AliasCoverage()
 End Sub
 
 Public Sub Test_SongOfSongs_AllAliases()
-' Focused coverage for book 22 after the 2026-04-30 rename of project canonical
-' from "Solomon" to "Song of Songs". Verifies every documented alias resolves to
-' BookID 22 with canonical name "Song of Songs"; verifies the WEB-aligned
-' verse-Count data; verifies ToSBLShortForm yields the SBL "Song N:V" output.
+' Focused coverage for book 22. Canonical was "Solomon" (pre-2026-04-30),
+' then "Song of Songs" (2026-04-30 rename), then reverted to "Song of
+' Solomon" on 2026-09-17 to align with WEBU/web.txt/rwb.txt's own naming
+' (Plan_scholarly_grounding_2026-09-16.md Task 2) - "Song of Songs" is kept
+' as a documented input alias, not removed, since only the canonical/
+' display form changed, not what resolves as input. Verifies every
+' documented alias resolves to BookID 22 with canonical name "Song of
+' Solomon"; verifies the WEB-aligned verse-Count data; verifies
+' ToSBLShortForm yields the SBL "Song N:V" output from both the canonical
+' name and the "Song of Songs" alias.
 '
 ' Uses the suite-level aeAssert (initialized by Run_All_SBL_Tests).
 '
@@ -143,6 +150,7 @@ Public Sub Test_SongOfSongs_AllAliases()
     ' All documented aliases resolve to BookID 22 with canonical name.
     Dim aliases As Variant
     aliases = Array( _
+        "Song of Solomon", "song of solomon", "SONG OF SOLOMON", _
         "Song of Songs", "song of songs", "SONG OF SONGS", _
         "Song", "Son", "Sg", _
         "Solomon", "Solo", "Sol", "So", _
@@ -155,24 +163,15 @@ Public Sub Test_SongOfSongs_AllAliases()
         canonName = aeBibleCitationClass.ResolveAlias(CStr(aliases(i)), bID)
         aeAssert.AssertEqual 22, bID, _
             "ResolveAlias(""" & aliases(i) & """) BookID"
-        aeAssert.AssertEqual "Song of Songs", canonName, _
+        aeAssert.AssertEqual "Song of Solomon", canonName, _
             "ResolveAlias(""" & aliases(i) & """) canonical name"
     Next i
 
-    ' Negative: "Song of Solomon" (multi-word) is not in the alias map.
-    On Error Resume Next
-    bID = 0
-    canonName = aeBibleCitationClass.ResolveAlias("Song of Solomon", bID)
-    Dim raised As Boolean
-    raised = (Err.Number <> 0)
-    Err.Clear
-    On Error GoTo 0
-    aeAssert.AssertTrue raised, _
-        "ResolveAlias(""Song of Solomon"") raises (multi-word not in alias map)"
-
     ' ChaptersInBook via canonical and two aliases.
+    aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Song of Solomon"), _
+        "ChaptersInBook(""Song of Solomon"")"
     aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Song of Songs"), _
-        "ChaptersInBook(""Song of Songs"")"
+        "ChaptersInBook(""Song of Songs"") via alias"
     aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Song"), _
         "ChaptersInBook(""Song"") via alias"
     aeAssert.AssertEqual 8, aeBibleCitationClass.ChaptersInBook("Solomon"), _
@@ -184,17 +183,20 @@ Public Sub Test_SongOfSongs_AllAliases()
     Dim ch As Long
     For ch = 1 To 8
         aeAssert.AssertEqual CLng(verseCounts(ch - 1)), _
-            aeBibleCitationClass.VersesInChapter("Song of Songs", ch), _
-            "VersesInChapter(""Song of Songs"", " & ch & ")"
+            aeBibleCitationClass.VersesInChapter("Song of Solomon", ch), _
+            "VersesInChapter(""Song of Solomon"", " & ch & ")"
     Next ch
 
-    ' ToSBLShortForm.
+    ' ToSBLShortForm - from the canonical name and from the "Song of Songs" alias.
+    aeAssert.AssertEqual "Song 2:4", _
+        aeBibleCitationClass.ToSBLShortForm("Song of Solomon 2:4"), _
+        "ToSBLShortForm(""Song of Solomon 2:4"")"
+    aeAssert.AssertEqual "Song 1:1", _
+        aeBibleCitationClass.ToSBLShortForm("Song of Solomon 1:1"), _
+        "ToSBLShortForm(""Song of Solomon 1:1"")"
     aeAssert.AssertEqual "Song 2:4", _
         aeBibleCitationClass.ToSBLShortForm("Song of Songs 2:4"), _
-        "ToSBLShortForm(""Song of Songs 2:4"")"
-    aeAssert.AssertEqual "Song 1:1", _
-        aeBibleCitationClass.ToSBLShortForm("Song of Songs 1:1"), _
-        "ToSBLShortForm(""Song of Songs 1:1"")"
+        "ToSBLShortForm(""Song of Songs 2:4"") via alias"
 
     Debug.Print " Test_SongOfSongs_AllAliases complete."
     Debug.Print "------------------------------------------"
@@ -917,15 +919,12 @@ End Sub
 '   Validates all 66 canonical book names via
 '   ChaptersInBook and all 66 SBL abbreviations via
 '   ToSBLShortForm against known expected values.
-'   Run via Alt+F8 or from Run_All_SBL_Tests.
+'   Wired into Run_All_SBL_Tests 2026-09-17 (was previously standalone-
+'   only, Alt+F8) - uses the suite-level aeAssert like the other tests,
+'   so it only runs correctly as part of the suite, not stand-alone.
 '=====================================================
 Public Sub Test_CanonicalNamesAndSBLTable()
     On Error GoTo PROC_ERR
-
-    Dim assert As New aeAssertClass
-    Dim log As New aeLoggerClass
-    log.Log_Init ActiveDocument.Path & "\rpt\TestReport.txt"
-    assert.SetLogger log
 
     Debug.Print "------------------------------------------"
     Debug.Print " Test_CanonicalNamesAndSBLTable"
@@ -955,7 +954,7 @@ Public Sub Test_CanonicalNamesAndSBLTable()
     canonNames(19) = "Psalms":        canonChapters(19) = 150
     canonNames(20) = "Proverbs":      canonChapters(20) = 31
     canonNames(21) = "Ecclesiastes":  canonChapters(21) = 12
-    canonNames(22) = "Song of Songs": canonChapters(22) = 8   ' Project canonical; SBL output is "Song"
+    canonNames(22) = "Song of Solomon": canonChapters(22) = 8   ' Project canonical (2026-09-17, aligned with WEBU); SBL output is "Song"
     canonNames(23) = "Isaiah":        canonChapters(23) = 66
     canonNames(24) = "Jeremiah":      canonChapters(24) = 52
     canonNames(25) = "Lamentations":  canonChapters(25) = 5
@@ -1031,7 +1030,7 @@ Public Sub Test_CanonicalNamesAndSBLTable()
         ' Validate ChaptersInBook resolves each canonical name to the correct chapter Count
         Dim gotCh As Long
         gotCh = aeBibleCitationClass.ChaptersInBook(canonNames(i))
-        assert.AssertEqual canonChapters(i), gotCh, _
+        aeAssert.AssertEqual canonChapters(i), gotCh, _
             "ChaptersInBook(" & canonNames(i) & ") expected " & canonChapters(i)
 
         ' Validate ToSBLShortForm produces the correct abbreviation for book i chapter 1 verse 1
@@ -1041,15 +1040,25 @@ Public Sub Test_CanonicalNamesAndSBLTable()
         Dim sblResultBook As String
         sblInput = canonNames(i) & " 1:1"
         sblResult = aeBibleCitationClass.ToSBLShortForm(sblInput)
-        ' Extract book abbreviation: everything before the first digit in Result
+        ' Extract book abbreviation: everything before the LAST space, not the
+        ' first - the chapter:verse suffix never contains a space, but several
+        ' SBL abbreviations do (e.g. "1 Sam", "2 Cor", "1 John"), so splitting
+        ' on the first space truncated those to just their leading digit.
+        ' Found 2026-09-17 while verifying Task 2's Song of Solomon rename
+        ' (Plan_scholarly_grounding_2026-09-16.md) - pre-existing, unrelated
+        ' to that change, affects every multi-word SBL abbreviation. Mirrors
+        ' ToSBLShortForm's own last-space scan (this file, same class).
         Dim spacePos As Long
-        spacePos = InStr(sblResult, " ")
+        Dim k As Long
+        For k = Len(sblResult) To 1 Step -1
+            If Mid$(sblResult, k, 1) = " " Then spacePos = k: Exit For
+        Next k
         If spacePos > 0 Then
             sblResultBook = Left$(sblResult, spacePos - 1)
         Else
             sblResultBook = sblResult   ' single-chapter book with verse only (should not occur for 1:1)
         End If
-        assert.AssertEqual sblExpected(i), sblResultBook, _
+        aeAssert.AssertEqual sblExpected(i), sblResultBook, _
             "ToSBLShortForm book abbr for " & canonNames(i) & " expected " & sblExpected(i)
     Next i
 
@@ -1058,6 +1067,6 @@ Public Sub Test_CanonicalNamesAndSBLTable()
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_CanonicalNamesAndSBLTable of Module basTEST_aeBibleCitationClass"
+    Debug.Print "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure Test_CanonicalNamesAndSBLTable of Module basTEST_aeBibleCitationClass"
     Resume PROC_EXIT
 End Sub

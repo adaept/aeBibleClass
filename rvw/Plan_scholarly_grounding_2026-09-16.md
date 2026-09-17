@@ -228,32 +228,90 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
    title) -> "Psalm" (chapter label) remains a real, permanent WEBU
    distinction independent of this decision.
 
-**Implementation checklist (added 2026-09-17 - not started):**
+**Implementation checklist (added 2026-09-17):**
 
-- [ ] 1. `src/aeBibleCitationClass.cls`, `GetCanonicalBookTable()`
-      (~line 912): `"Song of Songs"` -> `"Song of Solomon"`.
-- [ ] 2. `src/aeBibleCitationClass.cls`, `GetSBLCanonicalBookTable()`
-      (~line 987): `"SONG OF SONGS"` -> `"SONG OF SOLOMON"`.
-- [ ] 3. `src/aeBibleCitationClass.cls`, `GetBookAliasMap()`: add
+- [x] 1. `src/aeBibleCitationClass.cls`, `GetCanonicalBookTable()`
+      (~line 912): `"Song of Songs"` -> `"Song of Solomon"`. **Done.**
+- [x] 2. `src/aeBibleCitationClass.cls`, `GetSBLCanonicalBookTable()`
+      (~line 987): `"SONG OF SONGS"` -> `"SONG OF SOLOMON"`. **Done.**
+- [x] 3. `src/aeBibleCitationClass.cls`, `GetBookAliasMap()`: add
       `"SONG OF SOLOMON"` as an alias resolving to BookID 22; **keep**
       `"SONG OF SONGS"` and `"CANTICLES"` as still-valid aliases (do not
       remove - only the canonical/display form changes, not what
-      resolves as input).
-- [ ] 4. Repeat steps 1-3 identically in
+      resolves as input). **Done.**
+- [x] 4. Repeat steps 1-3 identically in
       `aeRibbon/src/aeBibleCitationClass.cls` (confirmed separate,
       currently-identical copy - see `project_ribbon_dotm_docx_model.md`;
-      the two must not be allowed to drift).
-- [ ] 5. `src/basTEST_aeBibleCitationClass.bas`,
-      `Test_SongOfSongs_AllAliases`: update the canonical-name
-      assertions from `"Song of Songs"` to `"Song of Solomon"`; verify
-      every listed alias (including `"Song of Songs"`) still resolves to
-      BookID 22.
-- [ ] 6. Run the full `aeBibleCitationClass` test suite (both copies);
-      confirm no other test depends on the old canonical string.
+      the two must not be allowed to drift). **Done** for
+      `GetCanonicalBookTable()`/`GetBookAliasMap()` - this copy has no
+      `GetSBLCanonicalBookTable()` function, so step 2 doesn't apply
+      here. **Whether this copy has been re-imported into
+      `aeRibbon.dotm`'s live VBA project is unconfirmed** - that project
+      has no test suite of its own, so verification there is manual
+      (type "Song of Solomon"/"Song of Songs"/"Solomon" into the
+      ribbon's reference box and confirm each resolves).
+- [x] 5. `src/basTEST_aeBibleCitationClass.bas`,
+      `Test_SongOfSongs_AllAliases`: updated the canonical-name
+      assertions to `"Song of Solomon"`; added it to the alias list
+      tested; removed the now-stale negative test that had asserted
+      "Song of Solomon" was NOT a valid alias (it now is, deliberately);
+      kept "Song of Songs" alias coverage. `Test_CanonicalNamesAndSBLTable`'s
+      `canonNames(22)` updated to match. **Done.**
+- [x] 6. Run the full `aeBibleCitationClass` test suite; confirm no
+      other test depends on the old canonical string. **Done, with two
+      bonus findings along the way (both pre-existing, unrelated to the
+      naming change itself, found only because this step required
+      actually reading the test output closely):**
+      - **Bug A - `Test_CanonicalNamesAndSBLTable`'s abbreviation
+        extraction split on the first space, not the last.** Since the
+        chapter:verse suffix never contains a space but several SBL
+        abbreviations do ("1 Sam", "2 Cor", "1 John"), every multi-word
+        abbreviation (16 books) was silently truncated to its leading
+        digit and reported as a false `FAIL`. Fixed by scanning for the
+        last space instead, mirroring `ToSBLShortForm`'s own last-space
+        scan in the same class. Also wired this test into
+        `Run_All_SBL_Tests` (it was standalone-only, Alt+F8, before -
+        which is exactly why this had never surfaced as a suite
+        failure) using the shared `aeAssert`, same pattern as the other
+        Stage tests; its `PROC_ERR` handler changed `MsgBox` ->
+        `Debug.Print` per this project's convention.
+      - **Bug B - `Test_CanonicalNamesAndSBLTable`'s original standalone
+        logger clobbered an unrelated file.** Before the fix above, this
+        test created its own `aeLoggerClass` pointed at
+        `rpt\TestReport.txt` - which is actually `aeBibleClass.cls`'s
+        own dedicated report file for the entirely separate
+        `RUN_THE_TESTS` suite (`aeBibleClass.cls:267`). Every standalone
+        run of `Test_CanonicalNamesAndSBLTable` silently overwrote
+        `RUN_THE_TESTS`'s last report with unrelated book-name/SBL
+        content. Confirmed via git: the last *committed* `TestReport.txt`
+        was genuine `RUN_THE_TESTS` output (87-test format, Word
+        build-info footer); the working-tree copy at the time this was
+        found was `Test_CanonicalNamesAndSBLTable`'s clobber instead,
+        still showing the pre-Bug-A `2 John`/`3 John` false failures.
+        Fixed as a side effect of Bug A's refactor - the function no
+        longer creates its own logger at all, so it can never write to
+        `TestReport.txt` again. **Verified fixed 2026-09-17**: operator
+        re-ran the real `RUN_THE_TESTS` suite, `rpt/TestReport.txt`
+        regenerated correctly (87-test format, `[2026-09-17 15:56:07]
+        Completed`, Test 87 passes). Two pre-existing, separately-tracked
+        issues remain in that run and are **not** related to this work:
+        Tests 77/78 (`CountApprovedStylesWithUnhideWhenUsedOn`/
+        `CountApprovedStylesWithWrongPriority`) `FAIL`, and Tests 82/83
+        are hard-skipped (documented in
+        `project_docm_verse_export_bug` memory as a known, separate,
+        non-blocking issue).
+      - Main-suite result after both fixes: `Run_All_SBL_Tests` reports
+        **361 tests run, 0 failures** (up from a prior baseline that had
+        never actually been visible before - both earlier "44" readings
+        operators saw were `Run_Extra_Tests`'s own separate, fixed,
+        always-44 inner suite, unrelated to book naming, printed via its
+        own independent `aeAssert` instance immediately after the main
+        suite's summary).
 - [ ] 7. Draft the editorial front-matter note for the docm's Song of
       Solomon book introduction (Hebrew-title rationale, avoids
       asserting Solomonic authorship) - lands in the docm's
-      book-introduction text, not in code.
+      book-introduction text, not in code. **Draft proposed in
+      conversation 2026-09-17, awaiting operator wording approval.**
 - [ ] 8. Operator review of the front-matter wording before insertion.
 - [ ] 9. Insert the reviewed front-matter text into the docm at Song of
       Solomon's introduction.
@@ -265,8 +323,8 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
       `project_scholarly_grounding_plan` memory to mark Task 2 done,
       with the real commit hash(es).
 
-This checklist is the starting point for the next implementation phase
-on this item.
+Steps 1-6 done and verified 2026-09-17; steps 7-11 remain, blocked on
+operator approval of the front-matter wording (step 8).
 
 ## Task 3 - Source Strong's numbers, Hebrew source text, and Greek NT source text properly
 

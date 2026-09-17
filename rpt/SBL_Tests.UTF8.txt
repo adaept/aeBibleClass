@@ -1,237 +1,376 @@
-﻿﻿00:38:15 | ===============================================================
-00:38:15 | LOG SESSION START: 2026-05-01 00:38:15
-00:38:15 | User: peter
-00:38:15 | Machine: ADAEPT
-00:38:15 | ===============================================================
-00:38:15 | ==========================================
-00:38:15 |  SBL PARSER TEST HARNESS
-00:38:15 | ==========================================
-00:38:15 | PASS: Alias coverage validation
-00:38:15 | PASS: ResolveAlias("Song of Songs") BookID
-00:38:15 | PASS: ResolveAlias("Song of Songs") canonical name
-00:38:15 | PASS: ResolveAlias("song of songs") BookID
-00:38:15 | PASS: ResolveAlias("song of songs") canonical name
-00:38:15 | PASS: ResolveAlias("SONG OF SONGS") BookID
-00:38:15 | PASS: ResolveAlias("SONG OF SONGS") canonical name
-00:38:15 | PASS: ResolveAlias("Song") BookID
-00:38:15 | PASS: ResolveAlias("Song") canonical name
-00:38:15 | PASS: ResolveAlias("Son") BookID
-00:38:15 | PASS: ResolveAlias("Son") canonical name
-00:38:15 | PASS: ResolveAlias("Sg") BookID
-00:38:15 | PASS: ResolveAlias("Sg") canonical name
-00:38:15 | PASS: ResolveAlias("Solomon") BookID
-00:38:15 | PASS: ResolveAlias("Solomon") canonical name
-00:38:15 | PASS: ResolveAlias("Solo") BookID
-00:38:15 | PASS: ResolveAlias("Solo") canonical name
-00:38:15 | PASS: ResolveAlias("Sol") BookID
-00:38:15 | PASS: ResolveAlias("Sol") canonical name
-00:38:15 | PASS: ResolveAlias("So") BookID
-00:38:15 | PASS: ResolveAlias("So") canonical name
-00:38:15 | PASS: ResolveAlias("Canticles") BookID
-00:38:15 | PASS: ResolveAlias("Canticles") canonical name
-00:38:15 | PASS: ResolveAlias("Cant") BookID
-00:38:15 | PASS: ResolveAlias("Cant") canonical name
-00:38:15 | PASS: ResolveAlias("Can") BookID
-00:38:15 | PASS: ResolveAlias("Can") canonical name
-00:38:15 | PASS: ResolveAlias("Song of Solomon") raises (multi-word not in alias map)
-00:38:15 | PASS: ChaptersInBook("Song of Songs")
-00:38:15 | PASS: ChaptersInBook("Song") via alias
-00:38:15 | PASS: ChaptersInBook("Solomon") via alias
-00:38:15 | PASS: VersesInChapter("Song of Songs", 1)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 2)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 3)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 4)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 5)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 6)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 7)
-00:38:15 | PASS: VersesInChapter("Song of Songs", 8)
-00:38:15 | PASS: ToSBLShortForm("Song of Songs 2:4")
-00:38:15 | PASS: ToSBLShortForm("Song of Songs 1:1")
-00:38:15 | PASS: Alias parsed
-00:38:15 | PASS: Chapter parsed
-00:38:15 | PASS: Verse parsed
-00:38:15 | PASS: Colon detected
-00:38:15 | PASS: Alias parsed
-00:38:15 | PASS: Number parsed
-00:38:15 | PASS: No colon detected
-00:38:15 | PASS: Jude BookID
-00:38:15 | PASS: Jude canonical
-00:38:15 | PASS: Genesis BookID
-00:38:15 | PASS: Genesis canonical
-00:38:15 | PASS: Jude 5 chapter interpreted
-00:38:15 | PASS: Jude 5 verse interpreted
-00:38:15 | PASS: Romans chapter interpreted
-00:38:15 | PASS: Romans verse interpreted
-00:38:15 | PASS: Genesis 1 chapter interpreted
-00:38:15 | PASS: Genesis 1 verse interpreted
-00:38:15 | PASS: John chapter interpreted
-00:38:15 | PASS: John verse range interpreted
-00:38:15 | PASS: Psalm chapter interpreted
-00:38:15 | PASS: Psalm verse list interpreted
-00:38:15 | PASS: Matthew chapter interpreted
-00:38:15 | PASS: Matthew mixed verse spec interpreted
-00:38:15 | PASS: Jude 5 valid
-00:38:15 | PASS: Jude 1:0 rejected
-00:38:15 | PASS: Romans 999:1 rejected
-00:38:15 | PASS: Jude single-chapter rewrite
-00:38:15 | PASS: Romans unchanged
-00:38:15 | PASS: Jude single-chapter expansion
-00:38:15 | PASS: Romans chapter reference
-00:38:15 | PASS: 3 John expansion
-00:38:15 | PASS: Genesis unchanged
-00:38:15 | PASS: John book expansion
-00:38:15 | PASS: 1 Jn expansion
-00:38:15 | PASS: Jude book expansion
-00:38:15 | PASS: Romans book expansion
-00:38:15 | PASS: comma list detected
-00:38:15 | PASS: comma list segment Count
-00:38:15 | PASS: semicolon list detected
-00:38:15 | PASS: semicolon list segment Count
-00:38:15 | PASS: single reference not list
-00:38:15 | PASS: range preserved inside list
-00:38:15 | PASS: range list segment Count
-00:38:15 | PASS: range first segment
-00:38:15 | PASS: range second segment
-00:38:15 | PASS: whitespace tolerated
-00:38:15 | PASS: whitespace segment Count
-00:38:15 | PASS: IsRangeSegment verse range
-00:38:15 | PASS: verse range detected
-00:38:15 | PASS: range left token
-00:38:15 | PASS: range right token
-00:38:15 | PASS: chapter range detected
-00:38:15 | PASS: chapter range left
-00:38:15 | PASS: chapter range right
-00:38:15 | PASS: cross chapter range detected
-00:38:15 | PASS: cross chapter left
-00:38:15 | PASS: cross chapter right
-00:38:15 | PASS: en dash range detected
-00:38:15 | PASS: en dash left
-00:38:15 | PASS: en dash right
-00:38:15 | PASS: IsRangeSegment single reference
-00:38:15 | PASS: single reference not range
-00:38:15 | PASS: start chapter
-00:38:15 | PASS: start verse
-00:38:15 | PASS: end chapter
-00:38:15 | PASS: end verse
-00:38:15 | PASS: chapter start
-00:38:15 | PASS: chapter end
-00:38:15 | PASS: cross start chapter
-00:38:16 | PASS: cross start verse
-00:38:16 | PASS: cross end chapter
-00:38:16 | PASS: cross end verse
-00:38:16 | PASS: two references parsed
-00:38:16 | PASS: first reference
-00:38:16 | PASS: second reference
-00:38:16 | PASS: range + reference
-00:38:16 | PASS: range canonical
-00:38:16 | PASS: second reference
-00:38:16 | PASS: semicolon list
-00:38:16 | PASS: single reference
-00:38:16 | PASS: range parsed
-00:38:16 | PASS: list parsed
-00:38:16 | PASS: mixed parsed
-00:38:16 | PASS: Stage13 Test1 Count
-00:38:16 | PASS: Stage13 Test1 item 1
-00:38:16 | PASS: Stage13 Test1 item 2
-00:38:16 | PASS: Stage13 Test1 item 3
-00:38:16 | PASS: Stage13 Test2 Count
-00:38:16 | PASS: Stage13 Test2 item 1
-00:38:16 | PASS: Stage13 Test2 item 2
-00:38:16 | PASS: Stage13 Test3 Count
-00:38:16 | PASS: Stage13 Test3 item 1
-00:38:16 | PASS: Stage13 Test3 item 2
-00:38:16 | PASS: Stage13a: 3 Psalm refs
-00:38:16 | PASS: Stage13a: Ps 19:1
-00:38:16 | PASS: Stage13a: Ps 23:1 inherited
-00:38:16 | PASS: Stage13a: Ps 28:7 inherited
-00:38:16 | PASS: Stage13a: cross-book Count
-00:38:16 | PASS: Stage13a: Ps 103:8
-00:38:16 | PASS: Stage13a: Isa 40:28
-00:38:16 | PASS: Stage13a: Isa 63:16 inherited
-00:38:16 | PASS: Stage13a: Psalm range Count
-00:38:16 | PASS: Stage13a: Ps 19:1-2
-00:38:16 | PASS: Stage13a: Ps 103:8-11 inherited
-00:38:16 | PASS: Stage13a neg: bad alias (Jerimiah) rejected
-00:38:16 | PASS: Stage13a neg: Ps 103:200 rejected
-00:38:16 | PASS: Stage13a neg: Jer 99:1 rejected
-00:38:16 | PASS: Stage13a neg: Jude 99 rejected (max verse 25)
-00:38:16 | PASS: Test 1: two adjacent -> one range
-00:38:16 | PASS: Test 1: range value
-00:38:16 | PASS: Test 2: three adjacent -> one range
-00:38:16 | PASS: Test 2: range value
-00:38:16 | PASS: Test 3: non-adjacent -> two refs
-00:38:16 | PASS: Test 3: first ref
-00:38:16 | PASS: Test 3: second ref
-00:38:16 | PASS: Test 4: run then gap -> range + single
-00:38:16 | PASS: Test 4: range
-00:38:16 | PASS: Test 4: single after gap
-00:38:16 | PASS: Test 5: cross-book -> two refs
-00:38:16 | PASS: Test 5: John ref
-00:38:16 | PASS: Test 5: Romans ref
-00:38:16 | PASS: Test 6: cross-chapter -> two refs
-00:38:16 | PASS: Test 6: end of chapter 3
-00:38:16 | PASS: Test 6: start of chapter 4
-00:38:16 | PASS: Test 7: single ref passthrough Count
-00:38:16 | PASS: Test 7: single ref value
-00:38:16 | PASS: Test 8: multi-book mixed -> two ranges
-00:38:16 | PASS: Test 8: John range
-00:38:16 | PASS: Test 8: Romans range
-00:38:16 | PASS: Test 1: valid single ref Count
-00:38:16 | PASS: Test 1: valid single ref value
-00:38:16 | PASS: Test 2: invalid chapter removed
-00:38:16 | PASS: Test 3: invalid verse removed
-00:38:16 | PASS: Test 4: boundary verse kept Count
-00:38:16 | PASS: Test 4: boundary verse kept value
-00:38:16 | PASS: Test 5: valid range Count
-00:38:16 | PASS: Test 5: valid range value
-00:38:16 | PASS: Test 6: clamped end verse Count
-00:38:16 | PASS: Test 6: clamped end verse value
-00:38:16 | PASS: Test 7: clamped end chapter Count
-00:38:16 | PASS: Test 7: clamped end chapter value
-00:38:16 | PASS: Test 8: invalid start chapter removed
-00:38:16 | PASS: Test 9: collapsed range Count
-00:38:16 | PASS: Test 9: collapsed range value
-00:38:16 | PASS: Test 10: mixed Count
-00:38:16 | PASS: Test 10: first valid ref
-00:38:16 | PASS: Test 10: second valid ref
-00:38:16 | PASS: Test 1: two adjacent -> one range
-00:38:16 | PASS: Test 1: range value
-00:38:16 | PASS: Test 2: three adjacent -> one range
-00:38:16 | PASS: Test 2: range value
-00:38:16 | PASS: Test 3: non-adjacent -> two refs
-00:38:16 | PASS: Test 3: first ref
-00:38:16 | PASS: Test 3: second ref
-00:38:16 | PASS: Test 4: run then gap -> range + single
-00:38:16 | PASS: Test 4: range
-00:38:16 | PASS: Test 4: single after gap
-00:38:16 | PASS: Test 5: cross-chapter -> two refs
-00:38:16 | PASS: Test 5: end of chapter 3
-00:38:16 | PASS: Test 5: start of chapter 4
-00:38:16 | PASS: Test 6: cross-book -> two refs
-00:38:16 | PASS: Test 6: John ref
-00:38:16 | PASS: Test 6: Romans ref
-00:38:16 | PASS: Test 7: single ref Count
-00:38:16 | PASS: Test 7: single ref value
-00:38:16 | PASS: Test 8: empty collection
-00:38:16 | PASS: Test 9: multi-book mixed -> two ranges
-00:38:16 | PASS: Test 9: John range
-00:38:16 | PASS: Test 9: Romans range
-00:38:16 | PASS: Test 10: four adjacent -> one range
-00:38:16 | PASS: Test 10: range value
-00:38:16 | PASS: Test 1: single ref
-00:38:16 | PASS: Test 2: same-chapter range
-00:38:16 | PASS: Test 3: same-chapter comma
-00:38:16 | PASS: Test 4: same-book chapter break
-00:38:16 | PASS: Test 5: book break
-00:38:16 | PASS: Test 6: full pipeline example
-00:38:16 | PASS: Test 7: empty collection
-00:38:16 | PASS: Test 8: two same-chapter ranges
-00:38:16 | PASS: Test 9: range then single same chapter
-00:38:16 | PASS: Test 10: three books
-00:38:16 | ------------------------------------------
-00:38:16 |  TEST SUMMARY
-00:38:16 | ------------------------------------------
-00:38:16 | Tests Run: 222
-00:38:16 | Failures:  0
-00:38:16 | Result: PASS
-00:38:16 | LOG SESSION END
+﻿﻿15:20:20 | ===============================================================
+15:20:20 | LOG SESSION START: 2026-09-17 15:20:20
+15:20:20 | User: peter
+15:20:20 | Machine: ADAEPT
+15:20:20 | ===============================================================
+15:20:20 | ==========================================
+15:20:20 |  SBL PARSER TEST HARNESS
+15:20:20 | ==========================================
+15:20:20 | PASS: Alias coverage validation
+15:20:20 | PASS: ResolveAlias("Song of Solomon") BookID
+15:20:20 | PASS: ResolveAlias("Song of Solomon") canonical name
+15:20:20 | PASS: ResolveAlias("song of solomon") BookID
+15:20:20 | PASS: ResolveAlias("song of solomon") canonical name
+15:20:20 | PASS: ResolveAlias("SONG OF SOLOMON") BookID
+15:20:20 | PASS: ResolveAlias("SONG OF SOLOMON") canonical name
+15:20:20 | PASS: ResolveAlias("Song of Songs") BookID
+15:20:20 | PASS: ResolveAlias("Song of Songs") canonical name
+15:20:20 | PASS: ResolveAlias("song of songs") BookID
+15:20:20 | PASS: ResolveAlias("song of songs") canonical name
+15:20:20 | PASS: ResolveAlias("SONG OF SONGS") BookID
+15:20:20 | PASS: ResolveAlias("SONG OF SONGS") canonical name
+15:20:20 | PASS: ResolveAlias("Song") BookID
+15:20:20 | PASS: ResolveAlias("Song") canonical name
+15:20:20 | PASS: ResolveAlias("Son") BookID
+15:20:20 | PASS: ResolveAlias("Son") canonical name
+15:20:20 | PASS: ResolveAlias("Sg") BookID
+15:20:20 | PASS: ResolveAlias("Sg") canonical name
+15:20:20 | PASS: ResolveAlias("Solomon") BookID
+15:20:20 | PASS: ResolveAlias("Solomon") canonical name
+15:20:20 | PASS: ResolveAlias("Solo") BookID
+15:20:20 | PASS: ResolveAlias("Solo") canonical name
+15:20:20 | PASS: ResolveAlias("Sol") BookID
+15:20:20 | PASS: ResolveAlias("Sol") canonical name
+15:20:20 | PASS: ResolveAlias("So") BookID
+15:20:20 | PASS: ResolveAlias("So") canonical name
+15:20:20 | PASS: ResolveAlias("Canticles") BookID
+15:20:20 | PASS: ResolveAlias("Canticles") canonical name
+15:20:20 | PASS: ResolveAlias("Cant") BookID
+15:20:20 | PASS: ResolveAlias("Cant") canonical name
+15:20:20 | PASS: ResolveAlias("Can") BookID
+15:20:20 | PASS: ResolveAlias("Can") canonical name
+15:20:20 | PASS: ChaptersInBook("Song of Solomon")
+15:20:20 | PASS: ChaptersInBook("Song of Songs") via alias
+15:20:20 | PASS: ChaptersInBook("Song") via alias
+15:20:20 | PASS: ChaptersInBook("Solomon") via alias
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 1)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 2)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 3)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 4)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 5)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 6)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 7)
+15:20:20 | PASS: VersesInChapter("Song of Solomon", 8)
+15:20:20 | PASS: ToSBLShortForm("Song of Solomon 2:4")
+15:20:20 | PASS: ToSBLShortForm("Song of Solomon 1:1")
+15:20:20 | PASS: ToSBLShortForm("Song of Songs 2:4") via alias
+15:20:20 | PASS: ChaptersInBook(Genesis) expected 50
+15:20:20 | PASS: ToSBLShortForm book abbr for Genesis expected Gen
+15:20:20 | PASS: ChaptersInBook(Exodus) expected 40
+15:20:20 | PASS: ToSBLShortForm book abbr for Exodus expected Exod
+15:20:20 | PASS: ChaptersInBook(Leviticus) expected 27
+15:20:20 | PASS: ToSBLShortForm book abbr for Leviticus expected Lev
+15:20:20 | PASS: ChaptersInBook(Numbers) expected 36
+15:20:20 | PASS: ToSBLShortForm book abbr for Numbers expected Num
+15:20:20 | PASS: ChaptersInBook(Deuteronomy) expected 34
+15:20:20 | PASS: ToSBLShortForm book abbr for Deuteronomy expected Deut
+15:20:20 | PASS: ChaptersInBook(Joshua) expected 24
+15:20:20 | PASS: ToSBLShortForm book abbr for Joshua expected Josh
+15:20:20 | PASS: ChaptersInBook(Judges) expected 21
+15:20:20 | PASS: ToSBLShortForm book abbr for Judges expected Judg
+15:20:20 | PASS: ChaptersInBook(Ruth) expected 4
+15:20:20 | PASS: ToSBLShortForm book abbr for Ruth expected Ruth
+15:20:20 | PASS: ChaptersInBook(1 Samuel) expected 31
+15:20:20 | PASS: ToSBLShortForm book abbr for 1 Samuel expected 1 Sam
+15:20:20 | PASS: ChaptersInBook(2 Samuel) expected 24
+15:20:20 | PASS: ToSBLShortForm book abbr for 2 Samuel expected 2 Sam
+15:20:20 | PASS: ChaptersInBook(1 Kings) expected 22
+15:20:20 | PASS: ToSBLShortForm book abbr for 1 Kings expected 1 Kgs
+15:20:20 | PASS: ChaptersInBook(2 Kings) expected 25
+15:20:20 | PASS: ToSBLShortForm book abbr for 2 Kings expected 2 Kgs
+15:20:20 | PASS: ChaptersInBook(1 Chronicles) expected 29
+15:20:20 | PASS: ToSBLShortForm book abbr for 1 Chronicles expected 1 Chr
+15:20:20 | PASS: ChaptersInBook(2 Chronicles) expected 36
+15:20:20 | PASS: ToSBLShortForm book abbr for 2 Chronicles expected 2 Chr
+15:20:20 | PASS: ChaptersInBook(Ezra) expected 10
+15:20:20 | PASS: ToSBLShortForm book abbr for Ezra expected Ezra
+15:20:20 | PASS: ChaptersInBook(Nehemiah) expected 13
+15:20:20 | PASS: ToSBLShortForm book abbr for Nehemiah expected Neh
+15:20:20 | PASS: ChaptersInBook(Esther) expected 10
+15:20:20 | PASS: ToSBLShortForm book abbr for Esther expected Esth
+15:20:20 | PASS: ChaptersInBook(Job) expected 42
+15:20:20 | PASS: ToSBLShortForm book abbr for Job expected Job
+15:20:20 | PASS: ChaptersInBook(Psalms) expected 150
+15:20:20 | PASS: ToSBLShortForm book abbr for Psalms expected Ps
+15:20:20 | PASS: ChaptersInBook(Proverbs) expected 31
+15:20:20 | PASS: ToSBLShortForm book abbr for Proverbs expected Prov
+15:20:20 | PASS: ChaptersInBook(Ecclesiastes) expected 12
+15:20:21 | PASS: ToSBLShortForm book abbr for Ecclesiastes expected Eccl
+15:20:21 | PASS: ChaptersInBook(Song of Solomon) expected 8
+15:20:21 | PASS: ToSBLShortForm book abbr for Song of Solomon expected Song
+15:20:21 | PASS: ChaptersInBook(Isaiah) expected 66
+15:20:21 | PASS: ToSBLShortForm book abbr for Isaiah expected Isa
+15:20:21 | PASS: ChaptersInBook(Jeremiah) expected 52
+15:20:21 | PASS: ToSBLShortForm book abbr for Jeremiah expected Jer
+15:20:21 | PASS: ChaptersInBook(Lamentations) expected 5
+15:20:21 | PASS: ToSBLShortForm book abbr for Lamentations expected Lam
+15:20:21 | PASS: ChaptersInBook(Ezekiel) expected 48
+15:20:21 | PASS: ToSBLShortForm book abbr for Ezekiel expected Ezek
+15:20:21 | PASS: ChaptersInBook(Daniel) expected 12
+15:20:21 | PASS: ToSBLShortForm book abbr for Daniel expected Dan
+15:20:21 | PASS: ChaptersInBook(Hosea) expected 14
+15:20:21 | PASS: ToSBLShortForm book abbr for Hosea expected Hos
+15:20:21 | PASS: ChaptersInBook(Joel) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for Joel expected Joel
+15:20:21 | PASS: ChaptersInBook(Amos) expected 9
+15:20:21 | PASS: ToSBLShortForm book abbr for Amos expected Amos
+15:20:21 | PASS: ChaptersInBook(Obadiah) expected 1
+15:20:21 | PASS: ToSBLShortForm book abbr for Obadiah expected Obad
+15:20:21 | PASS: ChaptersInBook(Jonah) expected 4
+15:20:21 | PASS: ToSBLShortForm book abbr for Jonah expected Jonah
+15:20:21 | PASS: ChaptersInBook(Micah) expected 7
+15:20:21 | PASS: ToSBLShortForm book abbr for Micah expected Mic
+15:20:21 | PASS: ChaptersInBook(Nahum) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for Nahum expected Nah
+15:20:21 | PASS: ChaptersInBook(Habakkuk) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for Habakkuk expected Hab
+15:20:21 | PASS: ChaptersInBook(Zephaniah) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for Zephaniah expected Zeph
+15:20:21 | PASS: ChaptersInBook(Haggai) expected 2
+15:20:21 | PASS: ToSBLShortForm book abbr for Haggai expected Hag
+15:20:21 | PASS: ChaptersInBook(Zechariah) expected 14
+15:20:21 | PASS: ToSBLShortForm book abbr for Zechariah expected Zech
+15:20:21 | PASS: ChaptersInBook(Malachi) expected 4
+15:20:21 | PASS: ToSBLShortForm book abbr for Malachi expected Mal
+15:20:21 | PASS: ChaptersInBook(Matthew) expected 28
+15:20:21 | PASS: ToSBLShortForm book abbr for Matthew expected Matt
+15:20:21 | PASS: ChaptersInBook(Mark) expected 16
+15:20:21 | PASS: ToSBLShortForm book abbr for Mark expected Mark
+15:20:21 | PASS: ChaptersInBook(Luke) expected 24
+15:20:21 | PASS: ToSBLShortForm book abbr for Luke expected Luke
+15:20:21 | PASS: ChaptersInBook(John) expected 21
+15:20:21 | PASS: ToSBLShortForm book abbr for John expected John
+15:20:21 | PASS: ChaptersInBook(Acts) expected 28
+15:20:21 | PASS: ToSBLShortForm book abbr for Acts expected Acts
+15:20:21 | PASS: ChaptersInBook(Romans) expected 16
+15:20:21 | PASS: ToSBLShortForm book abbr for Romans expected Rom
+15:20:21 | PASS: ChaptersInBook(1 Corinthians) expected 16
+15:20:21 | PASS: ToSBLShortForm book abbr for 1 Corinthians expected 1 Cor
+15:20:21 | PASS: ChaptersInBook(2 Corinthians) expected 13
+15:20:21 | PASS: ToSBLShortForm book abbr for 2 Corinthians expected 2 Cor
+15:20:21 | PASS: ChaptersInBook(Galatians) expected 6
+15:20:21 | PASS: ToSBLShortForm book abbr for Galatians expected Gal
+15:20:21 | PASS: ChaptersInBook(Ephesians) expected 6
+15:20:21 | PASS: ToSBLShortForm book abbr for Ephesians expected Eph
+15:20:21 | PASS: ChaptersInBook(Philippians) expected 4
+15:20:21 | PASS: ToSBLShortForm book abbr for Philippians expected Phil
+15:20:21 | PASS: ChaptersInBook(Colossians) expected 4
+15:20:21 | PASS: ToSBLShortForm book abbr for Colossians expected Col
+15:20:21 | PASS: ChaptersInBook(1 Thessalonians) expected 5
+15:20:21 | PASS: ToSBLShortForm book abbr for 1 Thessalonians expected 1 Thess
+15:20:21 | PASS: ChaptersInBook(2 Thessalonians) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for 2 Thessalonians expected 2 Thess
+15:20:21 | PASS: ChaptersInBook(1 Timothy) expected 6
+15:20:21 | PASS: ToSBLShortForm book abbr for 1 Timothy expected 1 Tim
+15:20:21 | PASS: ChaptersInBook(2 Timothy) expected 4
+15:20:21 | PASS: ToSBLShortForm book abbr for 2 Timothy expected 2 Tim
+15:20:21 | PASS: ChaptersInBook(Titus) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for Titus expected Titus
+15:20:21 | PASS: ChaptersInBook(Philemon) expected 1
+15:20:21 | PASS: ToSBLShortForm book abbr for Philemon expected Phlm
+15:20:21 | PASS: ChaptersInBook(Hebrews) expected 13
+15:20:21 | PASS: ToSBLShortForm book abbr for Hebrews expected Heb
+15:20:21 | PASS: ChaptersInBook(James) expected 5
+15:20:21 | PASS: ToSBLShortForm book abbr for James expected Jas
+15:20:21 | PASS: ChaptersInBook(1 Peter) expected 5
+15:20:21 | PASS: ToSBLShortForm book abbr for 1 Peter expected 1 Pet
+15:20:21 | PASS: ChaptersInBook(2 Peter) expected 3
+15:20:21 | PASS: ToSBLShortForm book abbr for 2 Peter expected 2 Pet
+15:20:21 | PASS: ChaptersInBook(1 John) expected 5
+15:20:21 | PASS: ToSBLShortForm book abbr for 1 John expected 1 John
+15:20:21 | PASS: ChaptersInBook(2 John) expected 1
+15:20:21 | PASS: ToSBLShortForm book abbr for 2 John expected 2 John
+15:20:21 | PASS: ChaptersInBook(3 John) expected 1
+15:20:21 | PASS: ToSBLShortForm book abbr for 3 John expected 3 John
+15:20:21 | PASS: ChaptersInBook(Jude) expected 1
+15:20:21 | PASS: ToSBLShortForm book abbr for Jude expected Jude
+15:20:21 | PASS: ChaptersInBook(Revelation) expected 22
+15:20:21 | PASS: ToSBLShortForm book abbr for Revelation expected Rev
+15:20:21 | PASS: Alias parsed
+15:20:21 | PASS: Chapter parsed
+15:20:21 | PASS: Verse parsed
+15:20:21 | PASS: Colon detected
+15:20:21 | PASS: Alias parsed
+15:20:21 | PASS: Number parsed
+15:20:21 | PASS: No colon detected
+15:20:21 | PASS: Jude BookID
+15:20:21 | PASS: Jude canonical
+15:20:21 | PASS: Genesis BookID
+15:20:21 | PASS: Genesis canonical
+15:20:21 | PASS: Jude 5 chapter interpreted
+15:20:21 | PASS: Jude 5 verse interpreted
+15:20:21 | PASS: Romans chapter interpreted
+15:20:21 | PASS: Romans verse interpreted
+15:20:21 | PASS: Genesis 1 chapter interpreted
+15:20:21 | PASS: Genesis 1 verse interpreted
+15:20:21 | PASS: John chapter interpreted
+15:20:21 | PASS: John verse range interpreted
+15:20:21 | PASS: Psalm chapter interpreted
+15:20:21 | PASS: Psalm verse list interpreted
+15:20:21 | PASS: Matthew chapter interpreted
+15:20:21 | PASS: Matthew mixed verse spec interpreted
+15:20:21 | PASS: Jude 5 valid
+15:20:21 | PASS: Jude 1:0 rejected
+15:20:21 | PASS: Romans 999:1 rejected
+15:20:21 | PASS: Jude single-chapter rewrite
+15:20:21 | PASS: Romans unchanged
+15:20:21 | PASS: Jude single-chapter expansion
+15:20:21 | PASS: Romans chapter reference
+15:20:21 | PASS: 3 John expansion
+15:20:21 | PASS: Genesis unchanged
+15:20:21 | PASS: John book expansion
+15:20:21 | PASS: 1 Jn expansion
+15:20:21 | PASS: Jude book expansion
+15:20:21 | PASS: Romans book expansion
+15:20:21 | PASS: comma list detected
+15:20:21 | PASS: comma list segment Count
+15:20:21 | PASS: semicolon list detected
+15:20:21 | PASS: semicolon list segment Count
+15:20:21 | PASS: single reference not list
+15:20:21 | PASS: range preserved inside list
+15:20:21 | PASS: range list segment Count
+15:20:21 | PASS: range first segment
+15:20:21 | PASS: range second segment
+15:20:21 | PASS: whitespace tolerated
+15:20:21 | PASS: whitespace segment Count
+15:20:21 | PASS: IsRangeSegment verse range
+15:20:21 | PASS: verse range detected
+15:20:21 | PASS: range left token
+15:20:21 | PASS: range right token
+15:20:21 | PASS: chapter range detected
+15:20:21 | PASS: chapter range left
+15:20:21 | PASS: chapter range right
+15:20:21 | PASS: cross chapter range detected
+15:20:21 | PASS: cross chapter left
+15:20:21 | PASS: cross chapter right
+15:20:21 | PASS: en dash range detected
+15:20:21 | PASS: en dash left
+15:20:21 | PASS: en dash right
+15:20:21 | PASS: IsRangeSegment single reference
+15:20:21 | PASS: single reference not range
+15:20:21 | PASS: start chapter
+15:20:21 | PASS: start verse
+15:20:21 | PASS: end chapter
+15:20:21 | PASS: end verse
+15:20:21 | PASS: chapter start
+15:20:21 | PASS: chapter end
+15:20:21 | PASS: cross start chapter
+15:20:21 | PASS: cross start verse
+15:20:21 | PASS: cross end chapter
+15:20:21 | PASS: cross end verse
+15:20:21 | PASS: two references parsed
+15:20:21 | PASS: first reference
+15:20:21 | PASS: second reference
+15:20:21 | PASS: range + reference
+15:20:21 | PASS: range canonical
+15:20:21 | PASS: second reference
+15:20:21 | PASS: semicolon list
+15:20:21 | PASS: single reference
+15:20:21 | PASS: range parsed
+15:20:21 | PASS: list parsed
+15:20:21 | PASS: mixed parsed
+15:20:21 | PASS: Stage13 Test1 Count
+15:20:21 | PASS: Stage13 Test1 item 1
+15:20:21 | PASS: Stage13 Test1 item 2
+15:20:21 | PASS: Stage13 Test1 item 3
+15:20:21 | PASS: Stage13 Test2 Count
+15:20:21 | PASS: Stage13 Test2 item 1
+15:20:21 | PASS: Stage13 Test2 item 2
+15:20:21 | PASS: Stage13 Test3 Count
+15:20:21 | PASS: Stage13 Test3 item 1
+15:20:21 | PASS: Stage13 Test3 item 2
+15:20:21 | PASS: Stage13a: 3 Psalm refs
+15:20:21 | PASS: Stage13a: Ps 19:1
+15:20:21 | PASS: Stage13a: Ps 23:1 inherited
+15:20:21 | PASS: Stage13a: Ps 28:7 inherited
+15:20:21 | PASS: Stage13a: cross-book Count
+15:20:21 | PASS: Stage13a: Ps 103:8
+15:20:21 | PASS: Stage13a: Isa 40:28
+15:20:21 | PASS: Stage13a: Isa 63:16 inherited
+15:20:21 | PASS: Stage13a: Psalm range Count
+15:20:21 | PASS: Stage13a: Ps 19:1-2
+15:20:21 | PASS: Stage13a: Ps 103:8-11 inherited
+15:20:21 | PASS: Stage13a neg: bad alias (Jerimiah) rejected
+15:20:21 | PASS: Stage13a neg: Ps 103:200 rejected
+15:20:21 | PASS: Stage13a neg: Jer 99:1 rejected
+15:20:21 | PASS: Stage13a neg: Jude 99 rejected (max verse 25)
+15:20:21 | PASS: Test 1: two adjacent -> one range
+15:20:21 | PASS: Test 1: range value
+15:20:21 | PASS: Test 2: three adjacent -> one range
+15:20:21 | PASS: Test 2: range value
+15:20:21 | PASS: Test 3: non-adjacent -> two refs
+15:20:21 | PASS: Test 3: first ref
+15:20:21 | PASS: Test 3: second ref
+15:20:21 | PASS: Test 4: run then gap -> range + single
+15:20:21 | PASS: Test 4: range
+15:20:21 | PASS: Test 4: single after gap
+15:20:21 | PASS: Test 5: cross-book -> two refs
+15:20:21 | PASS: Test 5: John ref
+15:20:21 | PASS: Test 5: Romans ref
+15:20:21 | PASS: Test 6: cross-chapter -> two refs
+15:20:21 | PASS: Test 6: end of chapter 3
+15:20:21 | PASS: Test 6: start of chapter 4
+15:20:21 | PASS: Test 7: single ref passthrough Count
+15:20:21 | PASS: Test 7: single ref value
+15:20:21 | PASS: Test 8: multi-book mixed -> two ranges
+15:20:21 | PASS: Test 8: John range
+15:20:21 | PASS: Test 8: Romans range
+15:20:21 | PASS: Test 1: valid single ref Count
+15:20:21 | PASS: Test 1: valid single ref value
+15:20:21 | PASS: Test 2: invalid chapter removed
+15:20:21 | PASS: Test 3: invalid verse removed
+15:20:21 | PASS: Test 4: boundary verse kept Count
+15:20:21 | PASS: Test 4: boundary verse kept value
+15:20:21 | PASS: Test 5: valid range Count
+15:20:21 | PASS: Test 5: valid range value
+15:20:21 | PASS: Test 6: clamped end verse Count
+15:20:21 | PASS: Test 6: clamped end verse value
+15:20:21 | PASS: Test 7: clamped end chapter Count
+15:20:21 | PASS: Test 7: clamped end chapter value
+15:20:21 | PASS: Test 8: invalid start chapter removed
+15:20:21 | PASS: Test 9: collapsed range Count
+15:20:21 | PASS: Test 9: collapsed range value
+15:20:21 | PASS: Test 10: mixed Count
+15:20:21 | PASS: Test 10: first valid ref
+15:20:21 | PASS: Test 10: second valid ref
+15:20:21 | PASS: Test 1: two adjacent -> one range
+15:20:21 | PASS: Test 1: range value
+15:20:21 | PASS: Test 2: three adjacent -> one range
+15:20:21 | PASS: Test 2: range value
+15:20:21 | PASS: Test 3: non-adjacent -> two refs
+15:20:21 | PASS: Test 3: first ref
+15:20:21 | PASS: Test 3: second ref
+15:20:21 | PASS: Test 4: run then gap -> range + single
+15:20:21 | PASS: Test 4: range
+15:20:21 | PASS: Test 4: single after gap
+15:20:21 | PASS: Test 5: cross-chapter -> two refs
+15:20:21 | PASS: Test 5: end of chapter 3
+15:20:21 | PASS: Test 5: start of chapter 4
+15:20:21 | PASS: Test 6: cross-book -> two refs
+15:20:21 | PASS: Test 6: John ref
+15:20:21 | PASS: Test 6: Romans ref
+15:20:21 | PASS: Test 7: single ref Count
+15:20:21 | PASS: Test 7: single ref value
+15:20:21 | PASS: Test 8: empty collection
+15:20:21 | PASS: Test 9: multi-book mixed -> two ranges
+15:20:21 | PASS: Test 9: John range
+15:20:21 | PASS: Test 9: Romans range
+15:20:21 | PASS: Test 10: four adjacent -> one range
+15:20:21 | PASS: Test 10: range value
+15:20:21 | PASS: Test 1: single ref
+15:20:21 | PASS: Test 2: same-chapter range
+15:20:21 | PASS: Test 3: same-chapter comma
+15:20:21 | PASS: Test 4: same-book chapter break
+15:20:21 | PASS: Test 5: book break
+15:20:21 | PASS: Test 6: full pipeline example
+15:20:21 | PASS: Test 7: empty collection
+15:20:21 | PASS: Test 8: two same-chapter ranges
+15:20:21 | PASS: Test 9: range then single same chapter
+15:20:21 | PASS: Test 10: three books
+15:20:21 | ------------------------------------------
+15:20:21 |  TEST SUMMARY
+15:20:21 | ------------------------------------------
+15:20:21 | Tests Run: 361
+15:20:21 | Failures:  0
+15:20:21 | Result: PASS
+15:20:21 | LOG SESSION END

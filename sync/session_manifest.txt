@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-09-16  (FINAL, end of session)
+# Claude Session Manifest -- 2026-09-17
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,100 +13,129 @@
 
 ## Files touched this session
 
-  [IMPORT] src/basRWBTextExport.bas
-    663c36e  Fix Psalms/Song-of-Songs book-name mismatch in
-             ExportDocmVersesToRWBFormat (Phase 4 Pass 3 Task 1).
-    498ab0c  Add per-skip/per-duplicate Debug.Print diagnostic logging -
-             this is what let the 46 skips/3 duplicates get identified
-             and fixed by name instead of only by count.
+  [IMPORT] src/aeBibleCitationClass.cls  (into Blank Bible Copy.docm)
+    <pending>  Task 2 (Song of Solomon naming): GetCanonicalBookTable()
+               book 22 "Song of Songs" -> "Song of Solomon";
+               GetSBLCanonicalBookTable() book 22 "SONG OF SONGS" ->
+               "SONG OF SOLOMON"; GetBookAliasMap() adds "SONG OF
+               SOLOMON" as an alias (kept "SONG OF SONGS"/"CANTICLES" -
+               not removed, only the canonical/display form changed).
+               See Plan_scholarly_grounding_2026-09-16.md Task 2.
+               STATUS: operator confirmed imported + re-exported; verified
+               clean via Run_All_SBL_Tests (44/0 fail) and
+               Test_CanonicalNamesAndSBLTable (Song of Solomon rows PASS).
 
-  [IMPORT] src/aeBibleCitationClass.cls
-    48307be  Fix a real off-by-one bounds bug in GetMaxVerse
-             (Chapter > UBound(maps(BookID)) + 1 -> without the +1).
-             Also fixed VersesInChapter's error handler (wrong class
-             name in the message, MsgBox -> Debug.Print).
+  [IMPORT] src/basTEST_aeBibleCitationClass.bas  (into Blank Bible Copy.docm)
+    STATUS: operator confirmed imported (round 2) + re-verified clean -
+    see "Verified this session" below for the 361/0 result.
+    (a) Test_SongOfSongs_AllAliases - canonical-name assertions now
+        expect "Song of Solomon"; added "Song of Solomon" to the alias
+        list tested; removed the now-stale negative test that asserted
+        "Song of Solomon" was NOT a valid alias (it now is, deliberately);
+        kept "Song of Songs" coverage as an alias, not canonical.
+    (b) Test_CanonicalNamesAndSBLTable's canonNames(22) updated to match.
+    (c) Fixed a pre-existing, unrelated bug found while reading that
+        test's output: its book-abbreviation extraction split on the
+        FIRST space in ToSBLShortForm's result, truncating every
+        multi-word SBL abbreviation ("1 Sam", "2 Cor", "1 John", etc. -
+        16 books) to just its leading digit. Now scans for the LAST
+        space instead (chapter:verse never contains a space; several
+        abbreviations do), mirroring ToSBLShortForm's own last-space
+        scan in aeBibleCitationClass.cls.
+    (d) Test_CanonicalNamesAndSBLTable wired into Run_All_SBL_Tests
+        (previously standalone-only, Alt+F8) - refactored to use the
+        suite-level aeAssert instead of its own local aeAssertClass/
+        aeLoggerClass, same pattern as the other Stage tests; its
+        PROC_ERR handler changed MsgBox -> Debug.Print to match this
+        project's error-handling convention. This also fixed Bug B
+        below as a side effect (the local aeLoggerClass it used to
+        create is gone entirely).
 
-  [IMPORT] src/basVerseStructureAudit.bas
-    34cb13c  Add FindMarkerStyleOutsideVerseText - cheap paragraph-level
-             diagnostic (complementary to GetMarkerTotals) that found
-             the Psalm 4:2 mis-styling defect (styled "Psalms BOOK"
-             instead of "VerseText").
+  [IMPORT] aeRibbon/src/aeBibleCitationClass.cls  (into the aeRibbon .dotm -
+           SEPARATE VBA project/file from the docm above, see
+           project_ribbon_dotm_docx_model.md)
+    <pending>  Same GetCanonicalBookTable()/GetBookAliasMap() changes as
+               src/aeBibleCitationClass.cls above. This copy has no
+               GetSBLCanonicalBookTable() function, so that part of the
+               change doesn't apply here. STATUS UNCONFIRMED - operator
+               confirmed the docm side was imported/tested; whether this
+               separate .dotm project was also updated is still open.
+               No test suite exists in aeRibbon/src to verify it either
+               way - manual check needed (type "Song of Solomon"/"Song
+               of Songs"/"Solomon" into the ribbon's reference box).
 
-  [IMPORT] src/aeBibleClass.cls
-    869f46c  Add a one-time, full-suite-only reminder in
-             RunBibleClassTests: AuditVerseMarkerStructure is NOT one of
-             the RUN_THE_TESTS slots and must be run separately before
-             release.
-    34cb13c  Add Test 87 (CountMarkerStyleOutsideVerseText, expected 0) -
-             MaxTests 86->87, wired into all four dispatch switches +
-             Expected1BasedArray + RunTest(87) in RunBibleClassTests.
-    2008d5d  Rebaseline Test 16 (CountTotalParagraphs) 33827->33826 -
-             the 3 John 1:14/15 paragraph merge (docm fix, below)
-             legitimately dropped the total paragraph count by 1.
+  [SCRIPT] src/basSBL_VerseCountsGenerator.bas,
+           aeRibbon/src/basSBL_VerseCountsGenerator.bas
+    <pending>  Cosmetic-only: the "Song of Songs" label passed to
+               ToOneBasedLongArray's `context` param (used only in error
+               messages, never compared against the canonical table) ->
+               "Song of Solomon" for consistency. No behavior change.
 
-  [IMPORT] src/basTEST_aeBibleConfig.bas
-    fcb8172  Fold s.UnhideWhenUsed = False into PromoteApprovedStyles'
-             existing per-style Priority loop - closes a real gap where
-             Tests 77/78's "Default Paragraph Font" fix (first done
-             2026-09-14) had only ever been a one-off manual
-             Immediate-window line, never committed as reusable code,
-             so it had silently regressed and had to be reconstructed
-             from scratch this session.
-
-  [DOC] rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md
-    New this session - the full investigation log, start to close. See
-    its own Status section for the complete narrative; not repeated here.
+  [DOC] rvw/Plan_scholarly_grounding_2026-09-16.md
+    91140ba, 3338a9d  Task 2 resolution recorded: WEBU/engwebu_usfm
+               evidence, the operator decision, and the 11-step
+               implementation checklist (this session is executing it).
+    e76ef8d, 5dbed23  Task 1 closed: Zechariah 14:20 inconsistency found
+               and fixed (see below).
 
   [DOC] rvw/Plan_pass3_divine_names_2026-09-15.md
-    4a120b5, 61d1505 - Task 1 closure note; addendum clarifying the
-    Strong's-tag-vs-translation-text distinction (operator-requested
-    reassessment of the "WEBU Strong's tags are unreliable" finding).
+    e76ef8d  Task 1 re-verification note + dated correction bullet for
+             Zechariah 14:20 (kept the original 2026-09-15/16 bullet
+             as-is per this project's progressive-history convention;
+             the correction is a new dated entry, not a rewrite).
 
   [MEMORY] Claude auto-memory
-    project_docm_verse_export_bug.md, project_rwb_phase4_plan.md,
+    project_scholarly_grounding_plan.md, project_rwb_phase4_plan.md,
     MEMORY.md index - kept in sync throughout; no project action needed.
 
 ## Non-code changes (docm content, not exportable as a src/ diff)
 
-  Operator made these edits directly in Word (not visible as a git diff
-  outside rpt/ output files, but load-bearing for the fixes above):
-    - Merged 3 John 1:14/15 back into one verse (fixed a real split-verse
-      defect found by AuditVerseMarkerStructure).
-    - Restyled Psalm 4:2 from "Psalms BOOK" to "VerseText".
-    - Fixed ~46 individual C:V marker digit typos (missing/extra/
-      substituted digits) across Psalms, Proverbs, Isaiah, Matthew,
-      Luke, 1 Corinthians, 1 Peter, Revelation.
-    - Fixed a "MYCHAPTER 4" typo in 1 Peter's Heading 2 (had broken
-      chapter tracking for all 19 verses of chapter 4 in the export).
-    - Corrected Matthew 10:35 and Acts 11:16's verse-number markers
-      (both had been misread as duplicates of 10:5/11:6).
-    - Merged the one genuine duplicate paragraph at John 16:6.
-    - Ran PromoteApprovedStyles + saved the document (Tests 77/78 fix).
+  Operator made this edit directly in Word, in `Blank Bible Copy.docm`
+  (not visible as a git diff outside rpt/docm-verses.txt, but load-
+  bearing for the fix above):
+    - Zechariah 14:20: "HOLY TO THE LORD" -> "HOLY TO GOD" (inscription
+      rendering made consistent with the identical Exodus 28:36/39:30
+      inscription - same Hebrew word, same construction, previously
+      rendered two different ways with no stated reason).
+
+  Committed as aeBibleClass `e76ef8d` (rpt/docm-verses.txt re-export +
+  plan-doc updates), hash filled in via `5dbed23`.
+
+## Verified this session (2026-09-17)
+
+  - `Run_All_SBL_Tests`: **361 tests run, 0 failures.** Confirms Task 2's
+    canonical-table/alias-map/test changes, plus two bonus fixes found
+    along the way (see basTEST_aeBibleCitationClass.bas entry above):
+    (a) `Test_CanonicalNamesAndSBLTable`'s first-space extraction bug
+    (16 multi-word SBL abbreviations were false-failing), now fixed and
+    wired into the suite; (b) that same test's original standalone
+    logger was clobbering `rpt/TestReport.txt` (aeBibleClass.cls's own
+    unrelated RUN_THE_TESTS report file) - fixed as a side effect of (a).
+  - `RUN_THE_TESTS` (the real, separate aeBibleClass.cls suite):
+    re-run by operator to regenerate a correct `rpt/TestReport.txt`
+    (confirmed - 87-test format restored, Word build-info footer intact,
+    `[2026-09-17 15:56:07] Completed`). Two pre-existing, unrelated
+    issues remain in that run, not caused by anything this session:
+    Tests 77/78 FAIL, Tests 82/83 hard-skipped (both already tracked
+    separately - see `project_docm_verse_export_bug` memory).
 
 ## Operator next steps
 
-  1. All [IMPORT] files above were re-imported and live-verified during
-     this session already (confirmed via a clean full-suite RUN_THE_TESTS:
-     0 fails, only the pre-existing Tests 82/83 skip remains) - no
-     pending import action, this section is a record, not a checklist
-     item.
-  2. Decide whether to root-cause the GetMarkerTotals memory issue so
-     Tests 82/83 could be restored (hard-skipped since 2026-09-13,
-     unrelated to anything fixed this session) - not decided.
-  3. docm-verses.txt is now clean (31102/0/0) - Phase 4 Pass 3 Task 2
-     (build the divine-name audit tool) and Task 3 (run it, ratify the
-     style rule) are the next planned substantive work - see
-     rvw/Plan_pass3_divine_names_2026-09-15.md and
-     rvw/Plan_rwb_phase4_content_sync_2026-09-15.md.
+  1. Confirm whether `aeRibbon.dotm`'s VBA project has also been updated
+     with `aeRibbon/src/aeBibleCitationClass.cls` - still open. If not,
+     import it there too and manually check the ribbon's reference box
+     (no automated test suite exists for that project).
+  2. Draft + operator-review + insert the "Song of Songs" editorial
+     front-matter note into the docm's Song of Solomon book introduction
+     (draft already proposed in-conversation, awaiting operator wording
+     approval), then re-run `ExportDocmVersesToRWBFormat` to confirm the
+     rwb-format output is unaffected, then close out Task 2's status
+     lines (checklist steps 7-11).
+  3. Optional, separate from Task 2: Tests 77/78 are FAILing again in
+     the just-regenerated `RUN_THE_TESTS` report - this is the same
+     recurring regression documented in the 2026-09-16 manifest (fix
+     `fcb8172` folded into `PromoteApprovedStyles`, but apparently not
+     run/saved since). Not blocking Task 2; flagged here so it isn't
+     lost.
 
-## Session closed 2026-09-16
-
-  Investigation start-to-close: the docm verse export went from
-  "31053/46/3, doesn't reconcile" to "31102/0/0, exact canonical match,
-  0 structural issues" via AuditVerseMarkerStructure (3 John defect),
-  FindMarkerStyleOutsideVerseText (Psalm 4:2 defect, new Test 87), and
-  per-skip diagnostic logging (46 typos + 1 heading typo). Side-fix:
-  Tests 77/78's Default-Paragraph-Font recurrence closed properly this
-  time (code fix, not another manual line). Full suite verified clean
-  twice. NOT YET PUSHED - 10 commits ahead of origin/main as of this
-  manifest; operator to review and push when ready.
+## Session in progress - not yet closed 2026-09-17
