@@ -152,11 +152,9 @@ PASS              Copy ()       Test = 75     0             0             CountA
   Rule: No approved paragraph style has a non-empty BaseStyle or is linked from a ListTemplate level - guards against the Word List Paragraph numbering-engine hang (EDSG/10-list-paragraph-bug.md) - CountApprovedStylesWithListParagraphRisk should return 0
 PASS              Copy ()       Test = 76     0             0             CountApprovedStylesWithAutoUpdateOn
   Rule: No approved paragraph style has AutomaticallyUpdate=True (prevents silent style-definition drift when a user modifies a paragraph using the style) - CountApprovedStylesWithAutoUpdateOn should return 0
-FAIL!!!!          Copy ()       Test = 77     1             0             CountApprovedStylesWithUnhideWhenUsedOn
-  >> First hit: Default Paragraph Font : UnhideWhenUsed=True
+PASS              Copy ()       Test = 77     0             0             CountApprovedStylesWithUnhideWhenUsedOn
   Rule: No approved style has UnhideWhenUsed=True (closes the symmetric gap to Test 45; prevents silent re-surface of an approved style in the gallery when a run touches it, including via paste) - CountApprovedStylesWithUnhideWhenUsedOn should return 0
-FAIL!!!!          Copy ()       Test = 78     1             0             CountApprovedStylesWithWrongPriority
-  >> First hit: Default Paragraph Font : Priority 2 (expected 34)
+PASS              Copy ()       Test = 78     0             0             CountApprovedStylesWithWrongPriority
   Rule: Every approved style has Priority equal to its 1-based position in GetApprovedStyles() (catches gallery-drag, CopyStylesFromTemplate, or paste-from-elsewhere reordering between PromoteApprovedStyles runs) - CountApprovedStylesWithWrongPriority should return 0
 PASS              Copy ()       Test = 79     0             0             CountNumericOrdinals
   Rule: No digit-prefixed ordinal suffix (st/nd/rd/th) appears as superscript in body text (e.g. 1st, 2nd, 3rd, 4th) - CountNumericOrdinals should return 0
@@ -176,8 +174,8 @@ PASS              Copy ()       Test = 86     0             0             CountS
   Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned("Psalms BOOK", wdAlignParagraphLeft) should return 0
 PASS              Copy ()       Test = 87     0             0             CountMarkerStyleOutsideVerseText
   Rule: no 'Chapter Verse marker'/'Verse marker' character-styled run appears inside a paragraph NOT styled 'VerseText' (a marker-carrying paragraph left mis-styled is counted by AuditVerseMarkerStructure but invisible to ExportDocmVersesToRWBFormat - see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md) - CountMarkerStyleOutsideVerseText should return 0
-The Total Runtime: 1683.93 seconds
-[2026-09-16 20:36:21] Completed
+The Total Runtime: 1336.95 seconds
+[2026-09-16 21:33:11] Completed
 BibleClass VERSION: 0.1.2
 BibleClass VERSION_DATE: January 31, 2026
 == Word Build Info ==

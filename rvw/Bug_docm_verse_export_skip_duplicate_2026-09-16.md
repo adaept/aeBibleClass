@@ -475,21 +475,38 @@ reminder), all ✅. Two real code bugs found and fixed along the way
 **Follow-up items, not blocking, tracked separately:**
 1. ~~Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
    doesn't reproduce the Tests-82/83-style full-suite memory blowup~~ **✅
-   Done, 2026-09-16.** Test 87 passed (`0=0`) in a full-suite run - it did
-   **not** hang or fail like Tests 82/83 did. However, total suite runtime
-   rose from `540.64s` (86-test run, before Test 87 existed) to `1683.93s`
-   (87-test run) - a `~1143s` increase, well beyond Test 87's own measured
-   standalone runtime (`68.78s`). Not proven to be caused by Test 87
-   specifically (this session separately observed Word's per-call
-   performance degrading the longer a session runs, e.g. `AuditCharStyleUsage`'s
-   accelerating slowdown per batch) - but it's the same *shape* of concern
-   as the 82/83 precedent (fine standalone, worse embedded in a full-suite
-   COM-heavy call stack), just not severe enough to hang or fail. Worth
-   watching in future full-suite runs, not urgent - Test 87 is correct and
-   passing, just possibly slower than its standalone number suggests.
+   Done, 2026-09-16, across two full-suite runs.** Test 87 passed (`0=0`)
+   both times - it did **not** hang or fail like Tests 82/83 did. Runtime
+   varied across three total full-suite runs this session: `540.64s`
+   (86-test, pre-Test-87), `1683.93s` (87-test, first run after adding
+   Test 87 and the Test 16 rebaseline), `1336.95s` (87-test, after also
+   fixing Tests 77/78). The middle run's `~1143s` jump initially looked
+   concerning, but the third run landing in between weakens the case that
+   Test 87 itself causes a stable slowdown - more consistent with ordinary
+   run-to-run variance (Word's per-session performance was separately
+   observed degrading elsewhere in this investigation, e.g.
+   `AuditCharStyleUsage`'s accelerating per-batch slowdown). **Closed as
+   non-issue** - no further action needed unless it recurs.
 2. Decide whether to finally root-cause the `GetMarkerTotals` memory issue
    so Tests 82/83 themselves could be restored - not done, not decided.
 3. `docm-verses.txt` is now clean (31102/0/0) - Phase 4's Pass 1/2 sync and
    Pass 3's divine-name census could be re-run against this corrected
    export if still relevant (see `rvw/Plan_rwb_phase4_content_sync_2026-09-15.md`
    and `rvw/Plan_pass3_divine_names_2026-09-15.md`).
+
+**Unrelated side-finding while full-suite-verifying this bug's fix, ✅
+closed:** Tests 77/78 (`CountApprovedStylesWithUnhideWhenUsedOn`/
+`CountApprovedStylesWithWrongPriority`) failed on `Default Paragraph Font`
+- an exact recurrence of a 2026-09-14 incident (`rvw/Code_review
+2026-09-14.md`), most likely re-triggered by this session's heavy amount of
+direct in-Word editing (any run being touched can make Word silently
+re-surface an approved style - exactly what Test 77 exists to catch). Root
+cause of the *recurrence*: the `UnhideWhenUsed` half of the 2026-09-14 fix
+was only ever a manual Immediate-window line, never committed as reusable
+code - so it had to be reconstructed from scratch instead of rerun. Fixed
+properly this time, aeBibleClass `fcb8172`: folded `s.UnhideWhenUsed =
+False` into `PromoteApprovedStyles`'s existing per-style loop (alongside
+the `Priority` fix it already applied), so one call now fixes both
+properties whenever this recurs. Verified: `PromoteApprovedStyles` run +
+document saved + full-suite re-run - Tests 77/78 both `PASS` at `0`, full
+suite otherwise clean (only Tests 82/83 skip, as already tracked above).
