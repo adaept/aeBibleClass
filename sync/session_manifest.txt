@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-06-17  (FINAL, end of session)
+# Claude Session Manifest -- 2026-09-16  (FINAL, end of session)
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -11,196 +11,102 @@
 #   [MEMORY]   - Claude auto-memory; no project import
 # ------------------------------------------------------------
 
-## Session arcs (chronological)
+## Files touched this session
 
-A. DUAL-LICENSE DOC + REVIEW UPDATE (2026-06-17)
-   - Operator had already imported the dual-license SPDX header
-     (LGPL-3.0-or-later OR LicenseRef-adaept-Commercial) into 7
-     class modules and created LICENSING.md + README line, in the
-     prior commit b195f97 "Dual License".
-   - Recorded that work as new carry-forward item 16 in
-     rvw/Code_review 2026-06-01.md (LICENSING, DONE) and added the
-     export header-preservation constraint to
-     md/aeProductionRibbonPlan.md (section 2.3 + section 9 rules):
-     trim is delete-only, so the per-file SPDX block must be
-     preserved verbatim in every aeRibbon/src/ trimmed copy.
-   - Flagged 4 incidental casing flips in basVerseStructureAudit.bas
-     that rode in on b195f97 (count->Count, Index->index) against
-     [[feedback_casing]] - noted for review, not changed.
+  [IMPORT] src/basRWBTextExport.bas
+    663c36e  Fix Psalms/Song-of-Songs book-name mismatch in
+             ExportDocmVersesToRWBFormat (Phase 4 Pass 3 Task 1).
+    498ab0c  Add per-skip/per-duplicate Debug.Print diagnostic logging -
+             this is what let the 46 skips/3 duplicates get identified
+             and fixed by name instead of only by count.
 
-B. EXTEND SPDX HEADER TO REMAINING CLASSES (2026-06-17)
-   - The 5 src/ class modules that still lacked the header were
-     given the same dual-license block, so all 12 .cls files
-     (10 src/ + 2 aeRibbon/src/) now carry it and the README's
-     "all Class modules" claim holds.
-   - Inserted via a CRLF-preserving Python pass (newline='' both
-     sides per [[feedback_vba_crlf]]), ASCII-only per
-     [[feedback_ascii_in_vba]], placed after the last
-     Option/Implements declaration line - matching the canonical
-     aeAssertClass.cls layout. For aeUpdateCharStyleClass the block
-     sits after `Implements IaeLongProcessClass`.
-   - Verified: SPDX present in all 12 .cls; CRLF preserved; .cls
-     VERSION/attribute headers intact (no module misimport risk).
-   - No identifier, signature, or logic changes - comment block only.
-   - Review item 16 status updated to "CLASS COVERAGE COMPLETE".
+  [IMPORT] src/aeBibleCitationClass.cls
+    48307be  Fix a real off-by-one bounds bug in GetMaxVerse
+             (Chapter > UBound(maps(BookID)) + 1 -> without the +1).
+             Also fixed VersesInChapter's error handler (wrong class
+             name in the message, MsgBox -> Debug.Print).
 
-C. EXTEND SPDX HEADER TO PRODUCTION .bas (2026-06-17)
-   - The 4 production ribbon .bas modules got the same dual-license
-     block in BOTH src/ and aeRibbon/src/ (8 files): basBibleRibbonSetup,
-     basRibbonDeferred, basUIStrings, basSBL_VerseCountsGenerator.
-     Same CRLF-preserving pass, inserted after the last Option line.
-   - Verified: SPDX present in all 8; CRLF preserved; Attribute VB_Name
-     lines intact. Comment-only; no logic/identifier change.
-   - README licensing line broadened to "all Class modules and the
-     production ribbon .bas modules"; review item 16 rolled to
-     "CLASS + PRODUCTION .bas COVERAGE COMPLETE".
-   - DISCREPANCY surfaced: basSBL_VerseCountsGenerator is in aeRibbon/src/
-     (so headered) but plan section 2.2 lists it as a dev-only generator
-     EXCLUDED from production. Resolve when py/ribbon_export_trim.py runs;
-     header harmless either way. Logged in review item 16.
+  [IMPORT] src/basVerseStructureAudit.bas
+    34cb13c  Add FindMarkerStyleOutsideVerseText - cheap paragraph-level
+             diagnostic (complementary to GetMarkerTotals) that found
+             the Psalm 4:2 mis-styling defect (styled "Psalms BOOK"
+             instead of "VerseText").
 
-D. THISDOCUMENT SPDX HARDENING + BUILD.md NOTE (2026-06-17)
-   - While staging Arc C, found src/ThisDocument.cls had LOST its header
-     in the working tree (it WAS committed with the header in 69d7793) -
-     diff was header-removal only, no other change. Cause: ThisDocument
-     is a build-step paste, not a clean import, so a Word re-export drops
-     the comment block. Restored from HEAD (git checkout); all 12 .cls
-     have the header again.
-   - aeRibbon/BUILD.md: added the full SPDX block to paste into the
-     template's ThisDocument during build + a caveat that Word strips it
-     on re-export (re-add to src/ThisDocument.cls after any round-trip).
-     Cross-ref at the import step. ThisDocument is the one .cls that does
-     not survive a Word export with its header intact.
+  [IMPORT] src/aeBibleClass.cls
+    869f46c  Add a one-time, full-suite-only reminder in
+             RunBibleClassTests: AuditVerseMarkerStructure is NOT one of
+             the RUN_THE_TESTS slots and must be run separately before
+             release.
+    34cb13c  Add Test 87 (CountMarkerStyleOutsideVerseText, expected 0) -
+             MaxTests 86->87, wired into all four dispatch switches +
+             Expected1BasedArray + RunTest(87) in RunBibleClassTests.
+    2008d5d  Rebaseline Test 16 (CountTotalParagraphs) 33827->33826 -
+             the 3 John 1:14/15 paragraph merge (docm fix, below)
+             legitimately dropped the total paragraph count by 1.
 
-E. CROSS-REPO GOVERNANCE in adaept5tudio (2026-06-17)
-   - Work in C:\adaept\adaept5tudio (separate repo) recording this
-     repo's dual-license milestone in the hub's audit trail:
-     * dev plan (docs/adaept5tudio-dev-plan.md): added B5 (dual-license
-       DONE), B6 (finalize LicenseRef-adaept-Commercial text w/ counsel),
-       B7 (record commercial-grant election at first studio reuse);
-       reconciled the stale "LGPL3/MIT" shorthand -> actual
-       "LGPL-3.0-or-later OR LicenseRef-adaept-Commercial".
-     * timeline (tools/plan/tasks.json -> audit/timeline.md): B5/B6/B7.
-     * decision log (tools/audit/generate-decision-log.mjs, deterministic
-       from git): regenerated to 186 then 190 rows; this session's
-       commits captured as type=license.
-     * interim monthly risk review (audit/risk-review-2026-06.md): ad-hoc
-       §10a pass over 2026-06-12..17 (50+ rows the scheduled run missed).
-       New finding N-1 = aeBibleClass dual-license advances prior F-2
-       (LGPL3 quarantine); FU 6/7 = B6/B7. All adaept5tudio commits
-       pushed; next scheduled review 2026-07-03 supersedes.
+  [IMPORT] src/basTEST_aeBibleConfig.bas
+    fcb8172  Fold s.UnhideWhenUsed = False into PromoteApprovedStyles'
+             existing per-style Priority loop - closes a real gap where
+             Tests 77/78's "Default Paragraph Font" fix (first done
+             2026-09-14) had only ever been a one-off manual
+             Immediate-window line, never committed as reusable code,
+             so it had silently regressed and had to be reconstructed
+             from scratch this session.
 
-## src/ files modified  (require import)
+  [DOC] rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md
+    New this session - the full investigation log, start to close. See
+    its own Status section for the complete narrative; not repeated here.
 
-  src/aeLoggerClass.cls               [IMPORT]   - Arc B (SPDX header)
-  src/aeLongProcessClass.cls          [IMPORT]   - Arc B (SPDX header)
-  src/aeUpdateCharStyleClass.cls      [IMPORT]   - Arc B (SPDX header)
-  src/IaeLongProcessClass.cls         [IMPORT]   - Arc B (SPDX header)
-  src/ThisDocument.cls                [IMPORT]   - Arc B (SPDX header).
-                                                   NOTE: ThisDocument is
-                                                   a build-step paste, not
-                                                   a free import - see
-                                                   aeRibbon/BUILD.md.
-  src/basBibleRibbonSetup.bas         [IMPORT]   - Arc C (SPDX header)
-  src/basRibbonDeferred.bas           [IMPORT]   - Arc C (SPDX header)
-  src/basUIStrings.bas                [IMPORT]   - Arc C (SPDX header)
-  src/basSBL_VerseCountsGenerator.bas [IMPORT]   - Arc C (SPDX header)
+  [DOC] rvw/Plan_pass3_divine_names_2026-09-15.md
+    4a120b5, 61d1505 - Task 1 closure note; addendum clarifying the
+    Strong's-tag-vs-translation-text distinction (operator-requested
+    reassessment of the "WEBU Strong's tags are unreliable" finding).
 
-## aeRibbon/src/ files modified  (production export copies)
+  [MEMORY] Claude auto-memory
+    project_docm_verse_export_bug.md, project_rwb_phase4_plan.md,
+    MEMORY.md index - kept in sync throughout; no project action needed.
 
-  aeRibbon/src/basBibleRibbonSetup.bas         [IMPORT] - Arc C
-  aeRibbon/src/basRibbonDeferred.bas           [IMPORT] - Arc C
-  aeRibbon/src/basUIStrings.bas                [IMPORT] - Arc C
-  aeRibbon/src/basSBL_VerseCountsGenerator.bas [IMPORT] - Arc C
-                                                          (see plan 2.2
-                                                          discrepancy)
+## Non-code changes (docm content, not exportable as a src/ diff)
 
-  (All Arc B/C changes are comment-only. Re-import is optional for
-   runtime behaviour but keeps the live VBA project in sync with the
-   licensed source.)
-
-## Non-src files modified
-
-  rvw/Code_review 2026-06-01.md          [DOC]    - Arcs A, B, C:
-                                                    carry-forward item
-                                                    16 (dual license);
-                                                    rolled to class +
-                                                    production .bas
-                                                    coverage complete
-  md/aeProductionRibbonPlan.md           [DOC]    - Arc A: license-
-                                                    header preservation
-                                                    constraint (2.3 + 9)
-  README.md                              [DOC]    - Arc C: licensing
-                                                    line broadened to
-                                                    classes + production
-                                                    .bas modules
-  aeRibbon/BUILD.md                      [DOC]    - Arc D: note + full
-                                                    SPDX block to paste
-                                                    into the template's
-                                                    ThisDocument; re-
-                                                    export-strips caveat
-
-## Cross-repo files modified  (adaept5tudio - separate repo, Arc E)
-
-  docs/adaept5tudio-dev-plan.md          [DOC]    - B5/B6/B7 + LGPL3/MIT
-                                                    reconcile
-  tools/plan/tasks.json                  [SCRIPT] - B5/B6/B7 timeline src
-  audit/timeline.md                      [DOC]    - regenerated (gantt)
-  audit/decision-log.jsonl + .md         [SCRIPT] - regenerated (190 rows)
-  audit/risk-review-2026-06.md           [DOC]    - interim §10a review
-
-## Memory updates (personal context, not project-tracked)
-
-  (none this session - existing memories cover the patterns touched:
-  feedback_vba_crlf, feedback_ascii_in_vba, feedback_casing,
-  feedback_review_docs_history, feedback_session_manifest.)
-
-## Committed this session  (all pushed)
-
-  aeBibleClass (main):
-    b195f97  "Dual License" (OPERATOR, pre-session) - LICENSING.md,
-             README, first 7 class-module headers.
-    69d7793  Arc B - SPDX header on remaining 5 .cls + 2 docs.
-    df8c7fa  manifest update (prior revision).
-    4de572a  Arc C - SPDX on 8 production .bas + README/plan/review.
-    37201a3  Arc D - BUILD.md ThisDocument SPDX note.
-    (this manifest update commits next.)
-
-  adaept5tudio (main) - Arc E:
-    d93f0de  dev plan B5 + LGPL3/MIT reconcile.
-    383ffc7  timeline B5.
-    38cf796  decision log regen (186 rows).
-    7d60861  interim risk review 2026-06.
-    55979ff  dev plan B6/B7.
-    21a0970  timeline B6/B7.
-    288cf54  decision log regen (190 rows).
+  Operator made these edits directly in Word (not visible as a git diff
+  outside rpt/ output files, but load-bearing for the fixes above):
+    - Merged 3 John 1:14/15 back into one verse (fixed a real split-verse
+      defect found by AuditVerseMarkerStructure).
+    - Restyled Psalm 4:2 from "Psalms BOOK" to "VerseText".
+    - Fixed ~46 individual C:V marker digit typos (missing/extra/
+      substituted digits) across Psalms, Proverbs, Isaiah, Matthew,
+      Luke, 1 Corinthians, 1 Peter, Revelation.
+    - Fixed a "MYCHAPTER 4" typo in 1 Peter's Heading 2 (had broken
+      chapter tracking for all 19 verses of chapter 4 in the export).
+    - Corrected Matthew 10:35 and Acts 11:16's verse-number markers
+      (both had been misread as duplicates of 10:5/11:6).
+    - Merged the one genuine duplicate paragraph at John 16:6.
+    - Ran PromoteApprovedStyles + saved the document (Tests 77/78 fix).
 
 ## Operator next steps
 
-  1. (Optional) Re-import the src/ .cls and .bas files above so the live
-     VBA project matches the now-licensed source. Comment-only, so
-     no test rerun is required; RUN_THE_TESTS still green.
-  2. ThisDocument WATCH: it loses its SPDX header on every Word export
-     (build-step paste, not a clean import). After any Word round-trip,
-     re-add the block to src/ThisDocument.cls before committing - see
-     aeRibbon/BUILD.md.
-  3. Resolve the basSBL_VerseCountsGenerator placement (in aeRibbon/src/
-     vs plan section 2.2 exclusion) when py/ribbon_export_trim.py runs -
-     see review item 16. Header is harmless either way.
-  4. Optional: review the 4 incidental casing flips in
-     basVerseStructureAudit.bas from b195f97 (arc A) against
-     [[feedback_casing]] / the commit normalization routine.
-  5. adaept5tudio open items (hub repo): B6 finalize the commercial
-     license text with counsel; B7 record the commercial-grant election
-     at first studio reuse. Tracked in the dev plan + timeline.
+  1. All [IMPORT] files above were re-imported and live-verified during
+     this session already (confirmed via a clean full-suite RUN_THE_TESTS:
+     0 fails, only the pre-existing Tests 82/83 skip remains) - no
+     pending import action, this section is a record, not a checklist
+     item.
+  2. Decide whether to root-cause the GetMarkerTotals memory issue so
+     Tests 82/83 could be restored (hard-skipped since 2026-09-13,
+     unrelated to anything fixed this session) - not decided.
+  3. docm-verses.txt is now clean (31102/0/0) - Phase 4 Pass 3 Task 2
+     (build the divine-name audit tool) and Task 3 (run it, ratify the
+     style rule) are the next planned substantive work - see
+     rvw/Plan_pass3_divine_names_2026-09-15.md and
+     rvw/Plan_rwb_phase4_content_sync_2026-09-15.md.
 
-## Session closed 2026-06-17
+## Session closed 2026-09-16
 
-  SPDX coverage complete: 12/12 .cls modules + 8/8 production .bas
-  files (4 each in src/ and aeRibbon/src/); ThisDocument header restored
-  after a Word-export regression and documented in BUILD.md. Hub repo
-  (adaept5tudio) updated: dual-license recorded as B5 (+ B6/B7 follow-
-  ups) in dev plan + timeline; decision log regenerated (190 rows);
-  interim §10a risk review filed. All aeBibleClass + adaept5tudio commits
-  pushed. Open: basSBL placement (trim-script gated) + adaept5tudio
-  B6/B7. No work left mid-flight.
+  Investigation start-to-close: the docm verse export went from
+  "31053/46/3, doesn't reconcile" to "31102/0/0, exact canonical match,
+  0 structural issues" via AuditVerseMarkerStructure (3 John defect),
+  FindMarkerStyleOutsideVerseText (Psalm 4:2 defect, new Test 87), and
+  per-skip diagnostic logging (46 typos + 1 heading typo). Side-fix:
+  Tests 77/78's Default-Paragraph-Font recurrence closed properly this
+  time (code fix, not another manual line). Full suite verified clean
+  twice. NOT YET PUSHED - 10 commits ahead of origin/main as of this
+  manifest; operator to review and push when ready.
