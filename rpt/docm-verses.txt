@@ -221,6 +221,7 @@ Genesis 9:12	 God said, “This is the token of the covenant which I make betw
 Genesis 9:13	 I set my rainbow in the cloud, and it will be a sign of a covenant between me and the earth.
 Genesis 9:14	 When I bring a cloud over the earth, that the rainbow will be seen in the cloud,
 Genesis 9:15	 I will remember my covenant, which is between me and you and every living creature of all flesh, and the waters will no more become a flood to destroy all flesh.
+Genesis 9:16	 The rainbow will be in the cloud. I will look at it, that I may remember the everlasting covenant between God and every living creature of all flesh that is on the earth.”
 Genesis 9:17	 God said to Noah, “This is the token of the covenant which I have established between me and all flesh that is on the earth.”
 Genesis 9:18	 The sons of Noah who went out from the ship were Shem, Ham, and Japheth. Ham is the father of Canaan.
 Genesis 9:19	 These three were the sons of Noah, and from these the whole earth was populated.
@@ -13966,6 +13967,7 @@ Psalm 3:6	 I will not be afraid of tens of thousands of people who have set th
 Psalm 3:7	 Arise, God! Save me, my God! For you have struck all of my enemies on the cheek bone. You have broken the teeth of the wicked.
 Psalm 3:8	 Salvation belongs to God. May your blessing be on your people. Selah.
 Psalm 4:1	 Answer me when I call, God of my righteousness. Give me relief from my distress. Have mercy on me, and hear my prayer.
+Psalm 4:2	 You sons of men, how long shall my glory be turned into dishonor? Will you love vanity and seek after falsehood? Selah.
 Psalm 4:3	 But know that God has set apart for himself him who is godly: God will hear when I call to him.
 Psalm 4:4	 Stand in awe, and do not sin. Search your own heart on your bed, and be still. Selah.
 Psalm 4:5	 Offer the sacrifices of righteousness. Put your trust in God.
@@ -14067,6 +14069,7 @@ Psalm 11:6	 On the wicked he will rain blazing coals; fire, sulfur, and scorch
 Psalm 11:7	 For God is righteous. He loves righteousness. The upright shall see his face.
 Psalm 12:1	 Help, God; for the godly man ceases. For the faithful fail from among the children of men.
 Psalm 12:2	 Everyone lies to his neighbor. They speak with flattering lips, and with a double heart.
+Psalm 12:3	 May God cut off all flattering lips, and the tongue that boasts,
 Psalm 12:4	 who have said, “With our tongue we will prevail. Our lips are our own. Who is lord over us?”
 Psalm 12:5	 “Because of the oppression of the weak and because of the groaning of the needy, I will now arise,” says God; “I will set him in safety from those who malign him.”
 Psalm 12:6	 God’s words are flawless words, as silver refined in a clay furnace, purified seven times.
@@ -14265,6 +14268,7 @@ Psalm 25:13	 His soul will dwell at ease. His offspring will inherit the land.
 Psalm 25:14	 The friendship of God is with those who fear him. He will show them his covenant.
 Psalm 25:15	 My eyes are ever on God, for he will pluck my feet out of the net.
 Psalm 25:16	 Turn to me, and have mercy on me, for I am desolate and afflicted.
+Psalm 25:17	 The troubles of my heart are enlarged. Oh bring me out of my distresses.
 Psalm 25:18	 Consider my affliction and my travail. Forgive all my sins.
 Psalm 25:19	 Consider my enemies, for they are many. They hate me with cruel hatred.
 Psalm 25:20	 Oh keep my soul, and deliver me. Let me not be disappointed, for I take refuge in you.
@@ -14767,6 +14771,7 @@ Psalm 56:12	 Your vows are on me, God. I will give thank offerings to you.
 Psalm 56:13	 For you have delivered my soul from death, and prevented my feet from falling, that I may walk before God in the light of the living.
 Psalm 57:1	 Be merciful to me, God, be merciful to me, for my soul takes refuge in you. Yes, in the shadow of your wings, I will take refuge, until disaster has passed.
 Psalm 57:2	 I cry out to God Most High, to God who accomplishes my requests for me.
+Psalm 57:3	 He will send from heaven, and save me, he rebukes the one who is pursuing me. Selah. God will send out his loving kindness and his truth.
 Psalm 57:4	 My soul is among lions. I lie among those who are set on fire, even the sons of men, whose teeth are spears and arrows, and their tongue a sharp sword.
 Psalm 57:5	 Be exalted, God, above the heavens! Let your glory be above all the earth!
 Psalm 57:6	 They have prepared a net for my steps. My soul is bowed down. They dig a pit before me. They fall into the middle of it themselves. Selah.
@@ -14818,6 +14823,7 @@ Psalm 60:12	 Through God we will do valiantly, for it is he who will tread dow
 Psalm 61:1	 Hear my cry, God. Listen to my prayer.
 Psalm 61:2	 From the end of the earth, I will call to you when my heart is overwhelmed. Lead me to the rock that is higher than I.
 Psalm 61:3	 For you have been a refuge for me, a strong tower from the enemy.
+Psalm 61:4	 I will dwell in your tent forever. I will take refuge in the shelter of your wings. Selah.
 Psalm 61:5	 For you, God, have heard my vows. You have given me the heritage of those who fear your name.
 Psalm 61:6	 You will prolong the king’s life. His years will be for generations.
 Psalm 61:7	 He shall be enthroned in God’s presence forever. Appoint your loving kindness and truth, that they may preserve him.
@@ -15436,6 +15442,8 @@ Psalm 94:7	 They say, “Yah will not see, neither will Jacob’s God consider
 Psalm 94:8	 Consider, you senseless among the people; you fools, when will you be wise?
 Psalm 94:9	 He who implanted the ear, will he not hear? He who formed the eye, will he not see?
 Psalm 94:10	 He who disciplines the nations, will he not punish? He who teaches man knows.
+Psalm 94:11	 God knows the thoughts of man, that they are futile.
+Psalm 94:12	 Blessed is the man whom you discipline, Yah, and teach out of your law,
 Psalm 94:13	 that you may give him rest from the days of adversity, until the pit is dug for the wicked.
 Psalm 94:14	 For God will not reject his people, neither will he forsake his inheritance.
 Psalm 94:15	 For judgment will return to righteousness. All the upright in heart shall follow it.
@@ -15585,6 +15593,7 @@ Psalm 104:18	 The high mountains are for the wild goats. The rocks are a refug
 Psalm 104:19	 He appointed the moon for seasons. The sun knows when to set.
 Psalm 104:20	 You make darkness, and it is night, in which all the animals of the forest prowl.
 Psalm 104:21	 The young lions roar after their prey, and seek their food from God.
+Psalm 104:22	 The sun rises, and they steal away, and lie down in their dens.
 Psalm 104:23	 Man goes out to his work, to his labor until the evening.
 Psalm 104:24	 God, how many are your works! In wisdom, you have made them all. The earth is full of your riches.
 Psalm 104:25	 There is the sea, great and wide, in which are innumerable living things, both small and large animals.
@@ -15901,6 +15910,8 @@ Psalm 119:8	 I will observe your statutes. Do not utterly forsake me.
 Psalm 119:9	 How can a young man keep his way pure? By living according to your word.
 Psalm 119:10	 With my whole heart, I have sought you. Do not let me wander from your commandments.
 Psalm 119:11	 I have hidden your word in my heart, that I might not sin against you.
+Psalm 119:12	 Blessed are you, God. Teach me your statutes.
+Psalm 119:13	 With my lips,I have declared all the ordinances of your mouth.
 Psalm 119:14	 I have rejoiced in the way of your testimonies, as much as in all riches.
 Psalm 119:15	 I will meditate on your precepts, and consider your ways.
 Psalm 119:16	 I will delight myself in your statutes. I will not forget your word.
@@ -15979,6 +15990,7 @@ Psalm 119:88	 Preserve my life according to your loving kindness, so I will ob
 Psalm 119:89	 God, your word is settled in heaven forever.
 Psalm 119:90	 Your faithfulness is to all generations. You have established the earth, and it remains.
 Psalm 119:91	 Your laws remain to this day, for all things serve you.
+Psalm 119:92	 Unless your law had been my delight, I would have perished in my affliction.
 Psalm 119:93	 I will never forget your precepts, for with them, you have revived me.
 Psalm 119:94	 I am yours. Save me, for I have sought your precepts.
 Psalm 119:95	 The wicked have waited for me, to destroy me. I will consider your statutes.
@@ -16717,6 +16729,7 @@ Proverbs 12:6	 The words of the wicked are about lying in wait for blood, but 
 Proverbs 12:7	 The wicked are overthrown, and are no more, but the house of the righteous shall stand.
 Proverbs 12:8	 A man shall be commended according to his wisdom, but he who has a warped mind shall be despised.
 Proverbs 12:9	 Better is he who is little known, and has a servant, than he who honors himself, and lacks bread.
+Proverbs 12:10	 A righteous man respects the life of his animal, but the tender mercies of the wicked are cruel.
 Proverbs 12:11	 He who tills his land shall have plenty of bread, but he who chases fantasies is void of understanding.
 Proverbs 12:12	 The wicked desires the plunder of evil men, but the root of the righteous flourishes.
 Proverbs 12:13	 An evil man is trapped by sinfulness of lips, but the righteous shall come out of trouble.
@@ -16746,6 +16759,7 @@ Proverbs 13:8	 The ransom of a man’s life is his riches, but the poor hear n
 Proverbs 13:9	 The light of the righteous shines brightly, but the lamp of the wicked is snuffed out.
 Proverbs 13:10	 Pride only breeds quarrels, but wisdom is with people who take advice.
 Proverbs 13:11	 Wealth gained dishonestly dwindles away, but he who gathers by hand makes it grow.
+Proverbs 13:12	 Hope deferred makes the heart sick, but when longing is fulfilled, it is a tree of life.
 Proverbs 13:13	 Whoever despises instruction will pay for it, but he who respects a command will be rewarded.
 Proverbs 13:14	 The teaching of the wise is a spring of life, to turn from the snares of death.
 Proverbs 13:15	 Good understanding wins favor, but the way of the unfaithful is hard.
@@ -16886,6 +16900,8 @@ Proverbs 17:23	 A wicked man receives a bribe in secret, to pervert the ways o
 Proverbs 17:24	 Wisdom is before the face of one who has understanding, but the eyes of a fool wander to the ends of the earth.
 Proverbs 17:25	 A foolish son brings grief to his father, and bitterness to her who bore him.
 Proverbs 17:26	 Also to punish the righteous is not good, nor to flog officials for their integrity.
+Proverbs 17:27	 He who spares his words has knowledge. He who is even tempered is a man of understanding.
+Proverbs 17:28	 Even a fool, when he keeps silent, is counted wise. When he shuts his lips, he is thought to be discerning.
 Proverbs 18:1	 A man who isolates himself pursues selfishness, and defies all sound judgment.
 Proverbs 18:2	 A fool has no delight in understanding, but only in revealing his own opinion.
 Proverbs 18:3	 When wickedness comes, contempt also comes, and with shame comes disgrace.
@@ -18396,6 +18412,7 @@ Isaiah 38:18	 For Sheol cannot praise you. Death cannot celebrate you. Those w
 Isaiah 38:19	 The living, the living, he shall praise you, as I do today. The father shall make known your truth to the children.
 Isaiah 38:20	 God will save me. Therefore we will sing my songs with stringed instruments all the days of our life in God’s house.
 Isaiah 38:21	 Now Isaiah had said, “Let them take a cake of figs, and lay it for a poultice on the boil, and he shall recover.”
+Isaiah 38:22	 Hezekiah also had said, “What is the sign that I will go up to God’s house?”
 Isaiah 39:1	 At that time, Merodach Baladan the son of Baladan, king of Babylon, sent letters and a present to Hezekiah; for he heard that he had been sick, and had recovered.
 Isaiah 39:2	 Hezekiah was pleased with them, and showed them the house of his precious things, the silver, the gold, the spices, and the precious oil, and all the house of his armor, and all that was found in his treasures. There was nothing in his house, nor in all his dominion, that Hezekiah did not show them.
 Isaiah 39:3	 Then Isaiah the prophet came to King Hezekiah , and asked him, “What did these men say? From where did they come to you?” Hezekiah said, “They have come from a country far from me, even from Babylon.”
@@ -23435,6 +23452,7 @@ Matthew 10:31	 Therefore do not be afraid. You are of more value than many spa
 Matthew 10:32	 Everyone therefore who confesses me before men, I will also confess him before my Father who is in heaven.
 Matthew 10:33	 But whoever denies me before men, I will also deny him before my Father who is in heaven.
 Matthew 10:34	 “Do not think that I came to send peace on the earth. I did not come to send peace, but a sword.
+Matthew 10:35	 For I came to set a man at odds against his father, and a daughter against her mother, and a daughter-in-law against her mother-in-law.
 Matthew 10:36	 A man’s foes will be those of his own household.
 Matthew 10:37	 He who loves father or mother more than me is not worthy of me; and he who loves son or daughter more than me is not worthy of me.
 Matthew 10:38	 He who does not take his cross and follow after me is not worthy of me.
@@ -23728,6 +23746,7 @@ Matthew 18:15	 “If your brother sins against you, go, show him his fault bet
 Matthew 18:16	 But if he does not listen, take one or two more with you, that at the mouth of two or three witnesses every word may be established.
 Matthew 18:17	 If he refuses to listen to them, tell it to the assembly. If he refuses to hear the assembly also, let him be to you as a Gentile or a tax collector.
 Matthew 18:18	 Most certainly I tell you, whatever things you bind on earth will have been bound in heaven, and whatever things you release on earth will have been released in heaven.
+Matthew 18:19	 Again, assuredly I tell you, that if two of you will agree on earth concerning anything that they will ask, it will be done for them by my Father who is in heaven.
 Matthew 18:20	 For where two or three are gathered together in my name, there I am in the middle of them.”
 Matthew 18:21	 Then Peter came and said to him, “Lord, how often shall my brother sin against me, and I forgive him? Until seven times?”
 Matthew 18:22	 Jesus said to him, “I do not tell you until seven times, but, until seventy times seven.
@@ -25464,6 +25483,7 @@ Luke 12:20	 “But God said to him, ‘You foolish one, tonight your soul is r
 Luke 12:21	 So is he who lays up treasure for himself, and is not rich toward God.”
 Luke 12:22	 He said to his disciples, “Therefore I tell you, do not be anxious for your life, what you will eat, nor yet for your body, what you will wear.
 Luke 12:23	 Life is more than food, and the body is more than clothing.
+Luke 12:24	 Consider the ravens: they do not sow, they do not reap, they have no warehouse or barn, and God feeds them. How much more valuable are you than birds!
 Luke 12:25	 Which of you by being anxious can add a cubit to his height?
 Luke 12:26	 If then you are not able to do even the least things, why are you anxious about the rest?
 Luke 12:27	 Consider the lilies, how they grow. They do not toil, neither do they spin; yet I tell you, even Solomon in all his glory was not arrayed like one of these.
@@ -26711,7 +26731,8 @@ John 16:1	 “I have said these things to you so that you would not be caused 
 John 16:2	 They will put you out of the synagogues. Yes, the time comes that whoever kills you will think that he offers service to God.
 John 16:3	 They will do these things cause they have not known the Father, nor me.
 John 16:4	 But I have told you these things, so that when the time comes, you may remember that I told you about them. I did not tell you these things from the beginning, because I was with you.
-John 16:6	 But now I am going to him who sent me, and none of you asks me, ‘Where are you going?’
+John 16:5	 But now I am going to him who sent me, and none of you asks me, ‘Where are you going?’
+John 16:6	 But because I have told you these things, sorrow has filled your heart.
 John 16:7	 Nevertheless I tell you the truth: It is to your advantage that I go away, for if I do not go away, the Counselor will not come to you. But if I go, I will send him to you.
 John 16:8	 When he has come, he will convict the world about sin, about righteousness, and about judgment;
 John 16:9	 about sin, because they do not believe in me;
@@ -27302,6 +27323,7 @@ Acts 11:12	 The Spirit told me to go with them, without discriminating. These 
 Acts 11:13	 He told us how he had seen the angel standing in his house, and saying to him, ‘Send to Joppa, and get Simon, who is called Peter,
 Acts 11:14	 who will speak to you words by which you will be saved, you and all your house.’
 Acts 11:15	 As I began to speak, the Holy Spirit fell on them, even as on us at the beginning.
+Acts 11:16	 I remembered the word of the Lord, how he said, ‘John indeed baptized in water, but you will be baptized in the Holy Spirit.’
 Acts 11:17	 If then God gave to them the same gift as us, when we believed in the Lord Jesus Christ, who was I, that I could withstand God?”
 Acts 11:18	 When they heard these things, they held their peace, and glorified God, saying, “Then God has also granted to the Gentiles repentance to life!”
 Acts 11:19	 They therefore who were scattered abroad by the oppression that arose about Stephen traveled as far as Phoenicia, Cyprus, and Antioch, speaking the word to no one except to Jews only.
@@ -28719,6 +28741,7 @@ Romans 16:24	 The grace of our Lord Jesus Christ be with you all! Amen.
 1 Corinthians 15:20	 But now Christ has been raised from the dead. He became the first fruit of those who are asleep.
 1 Corinthians 15:21	 For since death came by man, the resurrection of the dead also came by man.
 1 Corinthians 15:22	 For as in Adam all die, so also in Christ all will be made alive.
+1 Corinthians 15:23	 But each in his own order: Christ the first fruits, then those who are Christ’s, at his coming.
 1 Corinthians 15:24	 Then the end comes, when he will deliver up the Kingdom to God, even the Father, when he will have abolished all rule and all authority and power.
 1 Corinthians 15:25	 For he must reign until he has put all his enemies under his feet.
 1 Corinthians 15:26	 The last enemy that will be abolished is death.
@@ -30424,6 +30447,25 @@ James 5:20	 let him know that he who turns a sinner from the error of his way 
 1 Peter 3:20	 who before were disobedient, when God waited patiently in the days of Noah, while the ship was being built. In it, few, that is, eight souls, were saved through water.
 1 Peter 3:21	 This is a symbol of baptism, which now saves you—not the putting away of the filth of the flesh, but the answer of a good conscience toward God, through the resurrection of Jesus Christ,
 1 Peter 3:22	 who is at the right hand of God, having gone into heaven, angels and authorities and powers being made subject to him.
+1 Peter 4:1	 Therefore, since Christ suffered for us in the flesh, arm yourselves also with the same mind; for he who has suffered in the flesh has ceased from sin,
+1 Peter 4:2	 that you no longer should live the rest of your time in the flesh for the lusts of men, but for the will of God.
+1 Peter 4:3	 For we have spent enough of our past time doing the desire of the Gentiles, and having walked in lewdness, lusts, drunken binges, orgies, carousings, and abominable idolatries.
+1 Peter 4:4	 They think it is strange that you do not run with them into the same excess of riot, blaspheming.
+1 Peter 4:5	 They will give account to him who is ready to judge the living and the dead.
+1 Peter 4:6	 For to this end the Good News was preached even to the dead, that they might be judged indeed as men in the flesh, but live as to God in the spirit.
+1 Peter 4:7	 But the end of all things is near. Therefore be of sound mind, self-controlled, and sober in prayer.
+1 Peter 4:8	 And above all things be earnest in your love among yourselves, for love covers a multitude of sins.
+1 Peter 4:9	 Be hospitable to one another without grumbling.
+1 Peter 4:10	 As each has received a gift, employ it in serving one another, as good managers of the grace of God in its various forms.
+1 Peter 4:11	 If anyone speaks, let it be as it were the very words of God. If anyone serves, let it be as of the strength which God supplies, that in all things God may be glorified through Jesus Christ, to whom belong the glory and the dominion forever and ever. Amen.
+1 Peter 4:12	 Beloved, do not be astonished at the fiery trial which has come upon you to test you, as though a strange thing happened to you.
+1 Peter 4:13	 But because you are partakers of Christ’s sufferings, rejoice, that at the revelation of his glory you also may rejoice with exceeding joy.
+1 Peter 4:14	 If you are insulted for the name of Christ, you are blessed; because the Spirit of glory and of God rests on you. On their part he is blasphemed, but on your part he is glorified.
+1 Peter 4:15	 For let none of you suffer as a murderer, or a thief, or an evil doer, or a meddler in other men’s matters.
+1 Peter 4:16	 But if one of you suffers for being a Christian, let him not be ashamed; but let him glorify God in this matter.
+1 Peter 4:17	 For the time has come for judgment to begin with the household of God. If it begins first with us, what will happen to those who do not obey the Good News of God?
+1 Peter 4:18	 “If it is hard for the righteous to be saved, what will happen to the ungodly and the sinner?”
+1 Peter 4:19	 Therefore let them also who suffer according to the will of God in doing good entrust their souls to him, as to a faithful Creator.
 1 Peter 5:1	 Therefore I exhort the elders among you, as a fellow elder, and a witness of the sufferings of Christ, and who will also share in the glory that will be revealed:
 1 Peter 5:2	 Shepherd the flock of God which is among you, exercising the oversight, not under compulsion, but voluntarily, not for dishonest gain, but willingly;
 1 Peter 5:3	 not as lording it over those entrusted to you, but making yourselves examples to the flock.
@@ -30851,6 +30893,7 @@ Revelation 11:17	 saying: “We give you thanks, Lord God, the Almighty, the o
 Revelation 11:18	 The nations were angry, and your wrath came, as did the time for the dead to be judged, and to give your bondservants the prophets, their reward, as well as to the saints, and those who fear your name, to the small and the great, and to destroy those who destroy the earth.”
 Revelation 11:19	 God’s temple that is in heaven was opened, and the ark of the Lord’s covenant was seen in his temple. Lightnings, sounds, thunders, an earthquake, and great hail followed.
 Revelation 12:1	 A great sign was seen in heaven: a woman clothed with the sun, and the moon under her feet, and on her head a crown of twelve stars.
+Revelation 12:2	 She was with child. She cried out in pain, laboring to give birth.
 Revelation 12:3	 Another sign was seen in heaven. Behold, a great red dragon, having seven heads and ten horns, and on his heads seven crowns.
 Revelation 12:4	 His tail drew one third of the stars of the sky, and threw them to the earth. The dragon stood before the woman who was about to give birth, so that when she gave birth he might devour her child.
 Revelation 12:5	 She gave birth to a son, a male child, who is to rule all the nations with a rod of iron. Her child was caught up to God, and to his throne.
@@ -30858,6 +30901,7 @@ Revelation 12:6	 The woman fled into the wilderness, where she has a place pre
 Revelation 12:7	 There was war in the sky. Michael and his angels made war on the dragon. The dragon and his angels made war.
 Revelation 12:8	 They did not prevail. No place was found for them any more in heaven.
 Revelation 12:9	 The great dragon was thrown down, the old serpent, he who is called the devil and Satan, the deceiver of the whole world. He was thrown down to the earth, and his angels were thrown down with him.
+Revelation 12:10	 I heard a loud voice in heaven, saying, “Now the salvation, the power, and the Kingdom of our God, and the authority of his Christ has come; for the accuser of our brothers has been thrown down, who accuses them before our God day and night.
 Revelation 12:11	 They overcame him because of the Lamb’s blood, and because of the word of their testimony. They did not love their life, even to death.
 Revelation 12:12	 Therefore rejoice, heavens, and you who dwell in them. Woe to the earth and to the sea, because the devil has gone down to you, having great wrath, knowing that he has but a short time.”
 Revelation 12:13	 When the dragon saw that he was thrown down to the earth, he persecuted the woman who gave birth to the male child.
@@ -30947,6 +30991,7 @@ Revelation 17:12	 The ten horns that you saw are ten kings who have received n
 Revelation 17:13	 These have one mind, and they give their power and authority to the beast.
 Revelation 17:14	 These will war against the Lamb, and the Lamb will overcome them, for he is Lord of lords, and King of kings, and those who are with him are called chosen and faithful.”
 Revelation 17:15	 He said to me, “The waters which you saw, where the prostitute sits, are peoples, multitudes, nations, and languages.
+Revelation 17:16	 The ten horns which you saw, and the beast, these will hate the prostitute, will make her desolate, will strip her naked, will eat her flesh, and will burn her utterly with fire.
 Revelation 17:17	 For God has put in their hearts to do what he has in mind, to be of one mind, and to give their kingdom to the beast, until the words of God should be accomplished.
 Revelation 17:18	 The woman whom you saw is the great city, which reigns over the kings of the earth.”
 Revelation 18:1	 After these things, I saw another angel coming down out of the sky, having great authority. The earth was illuminated with his glory.
@@ -30985,7 +31030,10 @@ Revelation 19:9	 He said to me, “Write, ‘Blessed are those who are invited
 Revelation 19:10	 I fell down before his feet to worship him. He said to me, “Look! Do not do it! I am a fellow bondservant with you and with your brothers who hold the testimony of Jesus. Worship God, for the testimony of Jesus is the Spirit of Prophecy.”
 Revelation 19:11	 I saw the heaven opened, and behold, a white horse, and he who sat on it is called Faithful and True. In righteousness he judges and makes war.
 Revelation 19:12	 His eyes are a flame of fire, and on his head are many crowns. He has names written and a name written which no one knows but he himself.
+Revelation 19:13	 He is clothed in a garment sprinkled with blood. His name is called “The Word of God.”
+Revelation 19:14	 The armies which are in heaven followed him on white horses, clothed in white, pure, fine linen.
 Revelation 19:15	 Out of his mouth proceeds a sharp, double-edged sword, that with it he should strike the nations. He will rule them with an iron rod. He treads the wine press of the fierceness of the wrath of God, the Almighty.
+Revelation 19:16	 He has on his garment and on his thigh a name written, “KING OF KINGS, AND LORD OF LORDS.”
 Revelation 19:17	 I saw an angel standing in the sun. He cried with a loud voice, saying to all the birds that fly in the sky, “Come! Be gathered together to the great supper of God,
 Revelation 19:18	 that you may eat the flesh of kings, the flesh of captains, the flesh of mighty men, and the flesh of horses and of those who sit on them, and the flesh of all men, both free and slave, small and great.”
 Revelation 19:19	 I saw the beast, and the kings of the earth, and their armies, gathered together to make war against him who sat on the horse, and against his army.
@@ -31050,5 +31098,7 @@ Revelation 22:14	 Blessed are those who do his commandments, that they may hav
 Revelation 22:15	 Outside are the dogs, the sorcerers, the sexually immoral, the murderers, the idolaters, and everyone who loves and practices falsehood.
 Revelation 22:16	 I, Jesus, have sent my angel to testify these things to you for the assemblies. I am the root and the offspring of David, the Bright Morning Star.”
 Revelation 22:17	 The Spirit and the bride say, “Come!” He who hears, let him say, “Come!” He who is thirsty, let him come. He who desires, let him take the water of life freely.
+Revelation 22:18	 I testify to everyone who hears the words of the prophecy of this scroll, if anyone adds to them, may God add to him the plagues which are written in this scroll.
+Revelation 22:19	 If anyone takes away from the words of the scroll of this prophecy, may God take away his part from the tree of life, and out of the holy city, which are written in this scroll.
 Revelation 22:20	 He who testifies these things says, “Yes, I come quickly.” Amen! Yes, come, Lord Jesus.
 Revelation 22:21	 The grace of the Lord Jesus Christ be with all the saints. Amen.

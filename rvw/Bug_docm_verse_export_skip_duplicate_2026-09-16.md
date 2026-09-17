@@ -341,23 +341,24 @@ Confirmed by the operator to be two distinct root causes:
 
 **Re-run after these fixes:** `wrote 31095 ... skipped=4 duplicates=3`
 (`31095+4+3=31102`, arithmetic still closes against the canonical total).
-**7 remain, not yet fixed as of this writing** - operator checking
-directly in Word:
+**✅ All 7 fixed and verified, 2026-09-16.** Operator confirmed all 4 skip
+hypotheses correct (Psalm 12:3, Psalm 25:17 - was showing `6`, Psalm
+119:92 - extra leading `1`, Revelation 12:2). Re-export:
+`skipped=0 duplicates=3` (`31099+0+3=31102`). Of the 3 "duplicates," the
+operator confirmed the hypothesis exactly: **2 were missing-number typos**
+(Matthew 10:35 and Acts 11:16, matching the predicted misidentification -
+not true duplicates, no content was at risk), and **1 was a genuine
+duplicate paragraph** (John 16:6, the lowest-confidence prediction, now
+confirmed correct too). Final re-export:
 
-| Logged as | Likely real verse (unverified) | Defect type |
-|---|---|---|
-| Psalm 12, digits `23` | Psalm 12:3 | leading chapter digit `1` missing (same pattern as #1 above - simply missed in the first pass) |
-| Psalm 25, digits `2617` | Psalm 25:17 | digit substitution `5`->`6` |
-| Psalm 119, digits `111992` | Psalm 119:92 | extra duplicated leading `1` |
-| Revelation 12, digits `12` | Revelation 12:2 | verse digit truncated off the end entirely |
-| "Duplicate" Matthew 10:5 | Matthew 10:**35** | dropped `3` in the verse number makes `1035` read as `105`, colliding with the real, already-exported Matthew 10:5 - likely NOT a true duplicate paragraph |
-| "Duplicate" Acts 11:6 | Acts 11:**16** | dropped `1` in the verse number makes `1116` read as `116`, colliding with the real Acts 11:6 - likely NOT a true duplicate |
-| "Duplicate" John 16:6 | John 16:6 (as logged) | text matches the real verse content directly - no colliding longer-verse theory fits, so this one may be a genuine duplicated paragraph, lowest confidence of the three |
+```
+ExportDocmVersesToRWBFormat: wrote 31102 verses to ...\rpt\docm-verses.txt
+  skipped=0 duplicates=0 unknownBookHeadings=0
+```
 
-**Caution for the "duplicate" cases:** two of the three are hypothesized to
-be mis-numbered *different* verses (10:35, 11:16), not true content
-duplicates - treating them as duplicates and deleting one side would
-delete real Bible content. Needs direct confirmation before any fix.
+**31102 written, 0 skipped, 0 duplicates - exact match to the canonical
+total with zero anomalies of any kind.** This closes the investigation
+that started from the original `31053/46/3` arithmetic-mismatch report.
 
 ## What we actually know vs. don't know
 
@@ -454,23 +455,31 @@ someone might encounter it.
 
 ## Status
 
-🟡 `AuditVerseMarkerStructure` run twice: first found and the operator fixed
-a real 3 John split-verse defect; second confirmed `31102/31102, 0
-structural issues` - the docm's canonical B/C/V numbering is correct.
+✅ **Closed, 2026-09-16.** `ExportDocmVersesToRWBFormat` now reports
+`wrote 31102 verses ... skipped=0 duplicates=0 unknownBookHeadings=0` -
+exact match to the canonical total with zero anomalies. Full resolution
+chain: `AuditVerseMarkerStructure` found and the operator fixed a real 3
+John split-verse defect (confirmed `31102/31102, 0 structural issues`);
+the export's own 1-paragraph undercount was root-caused to Psalm 4:2 being
+mis-styled `Psalms BOOK` instead of `VerseText` (fixed, and now guarded by
+a permanent regression test, `Test 87`); the remaining 46 skips + 3
+duplicates were entirely individual C:V marker digit typos (missing/
+extra/substituted digits) plus one mis-typed Heading 2 ("MYCHAPTER 4")
+that broke chapter tracking for all of 1 Peter 4 - all identified via the
+new diagnostic logging, confirmed and fixed by the operator one at a time.
 Release-process guard added (adaept5tudio doc + in-repo pointer + runtime
 reminder), all ✅. Two real code bugs found and fixed along the way
 (`GetMaxVerse` off-by-one; `VersesInChapter` error-handler class name/
-`MsgBox`). The 1-paragraph export undercount (31101 vs 31102) is ✅
-**root-caused and fixed**: Psalm 4:2 was mis-styled as `Psalms BOOK`
-instead of `VerseText` - found via a new targeted routine
-(`FindMarkerStyleOutsideVerseText`), now also wired in as a permanent
-regression test (`Test 87`, expected `0`), and confirmed fixed in the docm
-(re-run shows `0` hits). **Still open:**
-1. ~~Operator to fix Psalm 4:2's paragraph style~~ **✅ Done, verified.**
-2. Re-run `ExportDocmVersesToRWBFormat` - should now show
-   `visitedCount`=31102 and, with the per-skip/duplicate diagnostic logging
-   (✅ added, not yet re-run), pin down the 46 skips/3 duplicates.
-3. Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
+`MsgBox`).
+
+**Follow-up items, not blocking, tracked separately:**
+1. Run a full-suite `RUN_THE_TESTS` at least once to confirm Test 87
    doesn't reproduce the Tests-82/83-style full-suite memory blowup -
    expected lower risk (touches ~2,725 paragraphs, not ~35k) but not yet
    proven.
+2. Decide whether to finally root-cause the `GetMarkerTotals` memory issue
+   so Tests 82/83 themselves could be restored - not done, not decided.
+3. `docm-verses.txt` is now clean (31102/0/0) - Phase 4's Pass 1/2 sync and
+   Pass 3's divine-name census could be re-run against this corrected
+   export if still relevant (see `rvw/Plan_rwb_phase4_content_sync_2026-09-15.md`
+   and `rvw/Plan_pass3_divine_names_2026-09-15.md`).
