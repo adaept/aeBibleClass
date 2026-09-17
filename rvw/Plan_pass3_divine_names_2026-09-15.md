@@ -407,7 +407,7 @@ This research changes Phase 5's plan, not just Pass 3's:
 
 ✅ Research done (2026-09-15/16). ✅ Task 1 (Psalms/Song of Solomon
 book-name fix) done and verified. ✅ Task 2 (audit tool) done, aeRWB
-`ea6b79d`. ✅ Task 3 (review + fix) done, aeRWB `ea6b79d`+follow-up,
+`ea6b79d`. ✅ Task 3 (review + fix) done, aeRWB `2b70402`,
 aeBibleClass `3dedbfc` - **9,011/9,016 WEBU divine-name occurrences match
 cleanly (99.94%), 0 unexplained mismatches, 5 confirmed exceptions.** The
 seven-rule model (§6) is complete and audited against every occurrence,
@@ -465,7 +465,7 @@ rule set** (requested, not yet given).
   Full detail: `aeRWB/census/divine-names-worklist.md` (gitignored,
   regenerate with `npm run pass3.census`) and `tools/web-diff/README.md`'s
   R9 section.
-- **✅ Task 3 - Done 2026-09-16, aeRWB `ea6b79d`+follow-up, aeBibleClass
+- **✅ Task 3 - Done 2026-09-16, aeRWB `2b70402`, aeBibleClass
   `3dedbfc`.** Reviewed all 17 mismatches + 28 review cases individually:
   - **19 of the 24 standalone-`GOD` review cases confirmed as a genuine 7th
     rule**, not ambiguity: `GOD`/`LORD of Armies` -> `Lord God of Hosts`
