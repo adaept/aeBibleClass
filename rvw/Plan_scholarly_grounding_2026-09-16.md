@@ -151,6 +151,67 @@ features). A better-sourced Strong's dataset is needed.
      tags currently, to understand *why* it's broken here specifically (a
      tooling bug in eBible.org/Haiola's pipeline, vs. a bad source dataset) -
      matters for deciding whether to report the defect upstream too.
+
+   **Operator direction, 2026-09-16: phased adoption - Strong's/SWORD
+   first, STEPBible next** (targeting eventual app/online integration -
+   "Study Tools for Every Person"). Everything below is reasoned from
+   general knowledge, **not yet independently verified against primary
+   sources** - flagged explicitly per this plan's own stated discipline.
+
+   *Are "original Strong's" and "SWORD's Strong's modules" the same
+   thing?* Related, not identical. The **original 1890 Strong's
+   Concordance** is James Strong's own content: the numbering scheme
+   itself (H1-H8674, G1-G5624) plus his own brief glosses per number -
+   the root public-domain source. **SWORD Project Strong's modules** are
+   that same content re-encoded into SWORD's own module file format for
+   its Bible-study engine (used by SWORD-compatible apps like Xiphos/
+   BibleTime/MyBible). SWORD separately distributes Strong's-**tagged
+   Bible texts** too (e.g. a "KJV+Strong's" module, word-by-word aligned) -
+   a distinct artifact from the dictionary/definitions alone, and the one
+   actually needed for click-a-word lookup features. Likely need both.
+
+   *Pros of Strong's/SWORD as the first choice:*
+   - Genuinely public domain - zero attribution/share-alike obligation,
+     compatible with both arms of RWB's dual license, no future risk from
+     a licensor changing terms.
+   - The de facto universal standard across 130+ years of Bible tools/
+     commentaries/cross-references - maximizes interoperability.
+   - SWORD's module ecosystem is mature and widely supported - opens a
+     path to distributing RWB's own data as a SWORD module later, for free.
+   - No single-gatekeeper dependency - being PD, re-obtainable from many
+     mirrors even if CrossWire/SWORD ever changed course.
+
+   *Cons:*
+   - Strong's own definitions are from 1890 - terse by modern standards;
+     130+ years of Hebrew/Greek lexicography has moved on (BDB/HALOT/BDAG
+     are more current but not freely licensed). An academic reviewer may
+     see bare Strong's glosses as thin for peer-review purposes.
+   - Strong's numbering has known scholarly quirks (some numbers conflate
+     distinct roots, or split what's really one lexeme) - a general
+     critique of the system itself, not of any specific digitization.
+   - SWORD's module *format* is built for SWORD's own C++ engine - since
+     RWB isn't SWORD-based, the raw data would need extracting/
+     reformatting rather than depending on SWORD's library directly.
+     Non-trivial but one-time work.
+
+   *On STEPBible* (Tyndale House, Cambridge) - recalled as standing for
+   "**S**cripture **T**ools for **E**very **P**erson," not "Study Tools" -
+   **verify against their own site, don't trust recall.** Its datasets
+   (TAHOT/TAGNT) are CC BY 4.0 (attribution only, no share-alike),
+   modern and actively maintained, and its stated mission is explicitly
+   to enable exactly the kind of downstream app/tool reuse being targeted
+   here - stronger fit for both the app-integration goal and peer-review
+   credibility than bare 1890 Strong's glosses alone.
+
+   *Practically important, also unverified:* I believe STEPBible's tagging
+   is built as an **extension** of Strong's numbering ("disambiguated"/
+   "extended" Strong's), not a replacement scheme - meaning starting with
+   plain Strong's/SWORD now should not be a dead end; STEP would likely
+   extend rather than replace it later. **Confirm this directly against
+   STEPBible's own documentation before relying on it** - this is exactly
+   the kind of plausible-sounding claim this plan's own discipline exists
+   to catch before it's trusted.
+
 2. **Hebrew original source text** - the Westminster Leningrad Codex (WLC)
    is the usual free/public-scholarly-use base text behind OSHB and most
    open Hebrew Bible tooling; confirm current availability, exact license,
