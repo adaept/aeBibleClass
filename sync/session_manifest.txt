@@ -14,7 +14,7 @@
 ## Files touched this session
 
   [IMPORT] src/aeBibleCitationClass.cls  (into Blank Bible Copy.docm)
-    <pending>  Task 2 (Song of Solomon naming): GetCanonicalBookTable()
+    fb321e0    Task 2 (Song of Solomon naming): GetCanonicalBookTable()
                book 22 "Song of Songs" -> "Song of Solomon";
                GetSBLCanonicalBookTable() book 22 "SONG OF SONGS" ->
                "SONG OF SOLOMON"; GetBookAliasMap() adds "SONG OF
@@ -54,7 +54,7 @@
   [IMPORT] aeRibbon/src/aeBibleCitationClass.cls  (into the aeRibbon .dotm -
            SEPARATE VBA project/file from the docm above, see
            project_ribbon_dotm_docx_model.md)
-    <pending>  Same GetCanonicalBookTable()/GetBookAliasMap() changes as
+    fb321e0    Same GetCanonicalBookTable()/GetBookAliasMap() changes as
                src/aeBibleCitationClass.cls above. This copy has no
                GetSBLCanonicalBookTable() function, so that part of the
                change doesn't apply here. STATUS UNCONFIRMED - operator
@@ -66,7 +66,7 @@
 
   [SCRIPT] src/basSBL_VerseCountsGenerator.bas,
            aeRibbon/src/basSBL_VerseCountsGenerator.bas
-    <pending>  Cosmetic-only: the "Song of Songs" label passed to
+    fb321e0    Cosmetic-only: the "Song of Songs" label passed to
                ToOneBasedLongArray's `context` param (used only in error
                messages, never compared against the canonical table) ->
                "Song of Solomon" for consistency. No behavior change.

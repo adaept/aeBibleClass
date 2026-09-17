@@ -505,8 +505,10 @@ inconsistency (Zechariah 14:20's "HOLY TO THE LORD" was left unconverted
 while the identical Exodus 28:36/39:30 inscription was not - now uniform
 "HOLY TO GOD" per rule 1). No 6th outlier found.
 
-🟡 Task 2 - **decided 2026-09-17** (see resolution above), implementation
-not yet started (11-step checklist above, commit `<pending>`).
+🟡 Task 2 - **decided 2026-09-17, steps 1-6 done and verified, commit
+`fb321e0`** (rename applied, two bonus test-harness bugs found and fixed
+along the way). Steps 7-11 (docm front-matter note, re-export, close-out)
+remain, pending operator approval of the front-matter wording.
 
 ⚪ Task 3 - research task, not started, requiring primary-source
 verification before any implementation.
