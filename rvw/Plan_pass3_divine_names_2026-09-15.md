@@ -429,7 +429,7 @@ rule set** (requested, not yet given).
 Task 1) - all 5 confirmed exceptions individually re-read against
 primary sources; one real inconsistency found and fixed (Zechariah
 14:20's inscription now matches Exodus 28:36/39:30's, see §6's dated
-bullet above), commit `<pending>`.
+bullet above), commit `e76ef8d`.
 
 ## Next-session tasks, in order
 

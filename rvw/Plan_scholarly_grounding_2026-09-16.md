@@ -103,7 +103,7 @@ verbatim:
       Zechariah 14:20's line (plus the export's own date-stamp header,
       which re-stamps every run). All 5 rows are now reconfirmed clean
       and, for the three inscription cases, internally consistent with
-      each other. Status lines below updated; commit `<pending>`.
+      each other. Status lines below updated; commit `e76ef8d`.
 - [x] 7. `project_scholarly_grounding_plan` and `project_rwb_phase4_plan`
       memories updated to reflect Task 1 closed (this session).
 
@@ -441,7 +441,7 @@ choices themselves.
 
 ## Status
 
-✅ Task 1 - **closed 2026-09-17, commit `<pending>`.** All 5 known
+✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
 exceptions re-verified against primary sources; found and fixed one real
 inconsistency (Zechariah 14:20's "HOLY TO THE LORD" was left unconverted
 while the identical Exodus 28:36/39:30 inscription was not - now uniform
