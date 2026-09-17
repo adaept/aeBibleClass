@@ -98,6 +98,98 @@ against the actual SBL Handbook of Style's book-abbreviation table (not
 memory), then decide the correct canonical full name vs. citation-only
 abbreviation before touching the export again.
 
+### Task 2 - Resolution, 2026-09-17 (supersedes the SBL-"Song" framing above)
+
+**How this got resolved.** A follow-up session opened with an unrelated
+question - which commit shows the `663c36e` Psalms/Song-of-Solomon export
+fix reflected in `rwb.txt`. Answering it required checking `rwb.txt`'s
+actual git history (in the separate `aeRWB` repo, not this one), which
+showed "Song of Solomon" has been in `rwb.txt` since its very first commit
+(`9f933ae`) - `663c36e` changed the *export code* to match `rwb.txt`, not
+the other way around. That prompted the operator to re-examine this
+task's premise directly, which surfaced the actual primary-source
+evidence this task's original framing (above) was missing:
+
+- **WEBU's own USFM source** (`engwebu_usfm/23-SNGengwebu.usfm`) titles
+  this book "Song of Solomon" in every field that names it - `\h`,
+  `\toc1`, `\toc2`, `\mt1`. It never says "Song of Songs" anywhere.
+  `engwebu_usfm/20-PSAengwebu.usfm` likewise: `\h Psalms` / `\toc1 The
+  Psalms` (full title) but `\cl Psalm` (chapter label - singular - the
+  field that actually generates "Psalm N:V" per-verse references).
+  `web.txt` and `rwb.txt` both already match WEBU's per-verse convention
+  exactly: "Psalm N:V", "Song of Solomon N:V".
+- **The docm's own SBL-citation table**
+  (`aeBibleCitationClass.GetCanonicalBookTable()`) is not a copy of
+  WEBU's book name and never was - it's a separate, deliberately
+  different naming convention for scholarly citation/footnote formatting
+  (full name "Psalms"/short-form abbreviation "Ps"; this book's entry was
+  changed from bare "Solomon" to "Song of Songs" on 2026-04-28, commit
+  `1d11bc4`, for that citation table specifically). Conflating "what the
+  citation table says" with "what the docm/WEBU calls the book" was the
+  error behind this task's original framing above.
+- Given that, **this task's original operator position ("use SBL 'Song'
+  in the export")** is superseded: the export's entire purpose is
+  byte-comparable interop with WEBU/`web.txt`/`rwb.txt`, and WEBU itself
+  says "Song of Solomon" (full)/"Psalm" (chapter label) - not any SBL
+  form. `663c36e`'s override was already correct and stays unchanged.
+
+**Decision, operator-confirmed 2026-09-17:**
+
+a) The docm's own SBL-citation canonical table reverts "Song of Songs"
+   back to **"Song of Solomon"** (undoing 2026-04-28's `1d11bc4`), so the
+   docm's own naming aligns with WEBU instead of diverging from it.
+b) The scholarly case for "Song of Songs" (closer to the Hebrew שיר
+   השירים; sidesteps the Solomonic-authorship question) is real and
+   worth keeping - but as **documented editorial commentary in the
+   docm's own Song of Solomon book-introduction/front-matter text**, the
+   same way other deliberate RWB editorial departures are recorded
+   (`project_rwb_editorial_philosophy.md`), not as a silent canonical-
+   name substitution that looks like a bug to the next auditor.
+c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
+   further change** - it was already correct. "Psalms" (full
+   title) -> "Psalm" (chapter label) remains a real, permanent WEBU
+   distinction independent of this decision.
+
+**Implementation checklist (added 2026-09-17 - not started):**
+
+- [ ] 1. `src/aeBibleCitationClass.cls`, `GetCanonicalBookTable()`
+      (~line 912): `"Song of Songs"` -> `"Song of Solomon"`.
+- [ ] 2. `src/aeBibleCitationClass.cls`, `GetSBLCanonicalBookTable()`
+      (~line 987): `"SONG OF SONGS"` -> `"SONG OF SOLOMON"`.
+- [ ] 3. `src/aeBibleCitationClass.cls`, `GetBookAliasMap()`: add
+      `"SONG OF SOLOMON"` as an alias resolving to BookID 22; **keep**
+      `"SONG OF SONGS"` and `"CANTICLES"` as still-valid aliases (do not
+      remove - only the canonical/display form changes, not what
+      resolves as input).
+- [ ] 4. Repeat steps 1-3 identically in
+      `aeRibbon/src/aeBibleCitationClass.cls` (confirmed separate,
+      currently-identical copy - see `project_ribbon_dotm_docx_model.md`;
+      the two must not be allowed to drift).
+- [ ] 5. `src/basTEST_aeBibleCitationClass.bas`,
+      `Test_SongOfSongs_AllAliases`: update the canonical-name
+      assertions from `"Song of Songs"` to `"Song of Solomon"`; verify
+      every listed alias (including `"Song of Songs"`) still resolves to
+      BookID 22.
+- [ ] 6. Run the full `aeBibleCitationClass` test suite (both copies);
+      confirm no other test depends on the old canonical string.
+- [ ] 7. Draft the editorial front-matter note for the docm's Song of
+      Solomon book introduction (Hebrew-title rationale, avoids
+      asserting Solomonic authorship) - lands in the docm's
+      book-introduction text, not in code.
+- [ ] 8. Operator review of the front-matter wording before insertion.
+- [ ] 9. Insert the reviewed front-matter text into the docm at Song of
+      Solomon's introduction.
+- [ ] 10. Re-run `ExportDocmVersesToRWBFormat`; confirm the rwb-format
+      output for this book still reads "Song of Solomon N:V" (i.e. the
+      `663c36e` override remains consistent, now redundant-but-harmless
+      for this book specifically rather than papering over a mismatch).
+- [ ] 11. Update this doc's Status line and the
+      `project_scholarly_grounding_plan` memory to mark Task 2 done,
+      with the real commit hash(es).
+
+This checklist is the starting point for the next implementation phase
+on this item.
+
 ## Task 3 - Source Strong's numbers, Hebrew source text, and Greek NT source text properly
 
 This session found concrete, reproducible proof that `engwebu_usfm`'s
@@ -271,8 +363,13 @@ choices themselves.
 
 ## Status
 
-⚪ Not started - task list only, recorded per operator request at
-end-of-session 2026-09-16. Task 1's scope needs a clarifying question
-answered first ("5/6" - which exact items). Tasks 2-3 are research tasks
-requiring primary-source verification before any implementation. Task 4
-depends on 1-3 producing real findings.
+⚪ Task 1 not started - needs a clarifying question answered first ("5/6"
+- which exact items).
+
+🟡 Task 2 - **decided 2026-09-17** (see resolution above), implementation
+not yet started (11-step checklist above, commit `<pending>`).
+
+⚪ Task 3 - research task, not started, requiring primary-source
+verification before any implementation.
+
+⚪ Task 4 - depends on Tasks 1-3 producing real findings.
