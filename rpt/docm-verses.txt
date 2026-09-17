@@ -2053,7 +2053,7 @@ Exodus 19:23	 Moses said to God, “The people cannot come up to Mount Sinai, 
 Exodus 19:24	 God said to him, “Go down! You shall bring Aaron up with you, but do not let the priests and the people break through to come up to God, lest he break out against them.”
 Exodus 19:25	 So Moses went down to the people, and told them.
 Exodus 20:1	 God spoke all these words, saying,
-Exodus 20:2	 “I am the lord your God, who brought you out of the land of Egypt, out of the house of bondage.
+Exodus 20:2	 “I am the Lord your God, who brought you out of the land of Egypt, out of the house of bondage.
 Exodus 20:3	 “You shall have no other gods before me.
 Exodus 20:4	 “You shall not make for yourselves an idol, nor any image of anything that is in the heavens above, or that is in the earth beneath, or that is in the water under the earth:
 Exodus 20:5	 you shall not bow yourself down to them, nor serve them, for I, the Lord your God, am a jealous God, visiting the iniquity of the fathers on the children, on the third and on the fourth generation of those who hate me,
@@ -4902,7 +4902,7 @@ Deuteronomy 1:6	 “The Lord our God spoke to us in Horeb, saying, ‘You have
 Deuteronomy 1:7	 Turn, and take your journey, and go to the hill country of the Amorites and to all the places near there: in the Arabah, in the hill country, in the lowland, in the South, by the seashore, in the land of the Canaanites, and in Lebanon as far as the great river, the river Euphrates.
 Deuteronomy 1:8	 Behold, I have set the land before you. Go in and possess the land which God swore to your fathers—to Abraham, to Isaac, and to Jacob—to give to them and to their offspring after them.’”
 Deuteronomy 1:9	 I spoke to you at that time, saying, “I am not able to bear you myself alone.
-Deuteronomy 1:10	 The lord your God has multiplied you, and behold, you are today as the stars of the sky for multitude.
+Deuteronomy 1:10	 The Lord your God has multiplied you, and behold, you are today as the stars of the sky for multitude.
 Deuteronomy 1:11	 God, the God of your fathers, make you a thousand times as many as you are and bless you, as he has promised you!
 Deuteronomy 1:12	 How can I myself alone bear your problems, your burdens, and your strife?
 Deuteronomy 1:13	 Take wise men of understanding who are respected among your tribes, and I will make them heads over you.”
@@ -4945,7 +4945,7 @@ Deuteronomy 2:3	 “You have encircled this mountain long enough. Turn northwa
 Deuteronomy 2:4	 Command the people, saying, ‘You are to pass through the border of your brothers, the children of Esau, who dwell in Seir; and they will be afraid of you. Therefore be careful.
 Deuteronomy 2:5	 Do not contend with them; for I will not give you any of their land, no, not so much as for the sole of the foot to tread on, because I have given Mount Seir to Esau for a possession.
 Deuteronomy 2:6	 You shall purchase food from them for money, that you may eat. You shall also buy water from them for money, that you may drink.’”
-Deuteronomy 2:7	 For the lord your God has blessed you in all the work of your hands. He has known your walking through this great wilderness. These forty years, the lord your God has been with you. You have lacked nothing.
+Deuteronomy 2:7	 For the Lord your God has blessed you in all the work of your hands. He has known your walking through this great wilderness. These forty years, the Lord your God has been with you. You have lacked nothing.
 Deuteronomy 2:8	 So we passed by from our brothers, the children of Esau, who dwell in Seir, from the way of the Arabah from Elath and from Ezion Geber. We turned and passed by the way of the wilderness of Moab.
 Deuteronomy 2:9	 God said to me, “Do not bother Moab, neither contend with them in battle; for I will not give you any of his land for a possession, because I have given Ar to the children of Lot for a possession.”
 Deuteronomy 2:10	 (The Emim lived there before, a great and numerous people, and tall as the Anakim.
@@ -4993,7 +4993,7 @@ Deuteronomy 3:14	 Jair the son of Manasseh took all the region of Argob, to th
 Deuteronomy 3:15	 I gave Gilead to Machir.
 Deuteronomy 3:16	 To the Reubenites and to the Gadites I gave from Gilead even to the valley of the Arnon, the middle of the valley, and its border, even to the river Jabbok, which is the border of the children of Ammon;
 Deuteronomy 3:17	 the Arabah also, and the Jordan and its border, from Chinnereth even to the sea of the Arabah, the Salt Sea, under the slopes of Pisgah eastward.
-Deuteronomy 3:18	 I commanded you at that time, saying, “The lord your God has given you this land to possess it. All of you men of valor shall pass over armed before your brothers, the children of Israel.
+Deuteronomy 3:18	 I commanded you at that time, saying, “The Lord your God has given you this land to possess it. All of you men of valor shall pass over armed before your brothers, the children of Israel.
 Deuteronomy 3:19	 But your wives, and your little ones, and your livestock, (I know that you have much livestock), shall live in your cities which I have given you,
 Deuteronomy 3:20	 until God gives rest to your brothers, as to you, and they also possess the land which the Lord your God gives them beyond the Jordan. Then you shall each return to his own possession, which I have given you.”
 Deuteronomy 3:21	 I commanded Joshua at that time, saying, “Your eyes have seen all that the Lord your God has done to these two kings. So shall God do to all the kingdoms where you go over.
@@ -5157,7 +5157,7 @@ Deuteronomy 8:16	 who fed you in the wilderness with manna, which your fathers
 Deuteronomy 8:17	 and lest you say in your heart, “My power and the might of my hand has gotten me this wealth.”
 Deuteronomy 8:18	 But you shall remember the Lord your God, for it is he who gives you power to get wealth, that he may establish his covenant which he swore to your fathers, as it is today.
 Deuteronomy 8:19	 It shall be, if you shall forget the Lord your God, and walk after other gods, and serve them and worship them, I testify against you today that you shall surely perish.
-Deuteronomy 8:20	 As the nations that God makes to perish before you, so you shall perish, because you would not listen to the voice of the lord your God.
+Deuteronomy 8:20	 As the nations that God makes to perish before you, so you shall perish, because you would not listen to the voice of the Lord your God.
 Deuteronomy 9:1	 Hear, Israel! You are to pass over the Jordan today, to go in to dispossess nations greater and mightier than yourself, cities great and fortified up to the sky,
 Deuteronomy 9:2	 a people great and tall, the sons of the Anakim, whom you know, and of whom you have heard say, “Who can stand before the sons of Anak?”
 Deuteronomy 9:3	 Know therefore today that the Lord your God is he who goes over before you as a devouring fire. He will destroy them and he will bring them down before you. So you shall drive them out and make them perish quickly, as God has spoken to you.
@@ -5399,7 +5399,7 @@ Deuteronomy 18:11	 or a charmer, or someone who consults with a familiar spiri
 Deuteronomy 18:12	 For whoever does these things is an abomination to God. Because of these abominations, the Lord your God drives them out from before you.
 Deuteronomy 18:13	 You shall be blameless with the Lord your God.
 Deuteronomy 18:14	 For these nations that you shall dispossess listen to those who practice sorcery and to diviners; but as for you, the Lord your God has not allowed you so to do.
-Deuteronomy 18:15	 The lord your God will raise up to you a prophet from among you, of your brothers, like me. You shall listen to him.
+Deuteronomy 18:15	 The Lord your God will raise up to you a prophet from among you, of your brothers, like me. You shall listen to him.
 Deuteronomy 18:16	 This is according to all that you desired of the Lord your God in Horeb in the day of the assembly, saying, “Let me not hear again the Lord my God’s voice, neither let me see this great fire any more, that I not die.”
 Deuteronomy 18:17	 God said to me, “They have well said that which they have spoken.
 Deuteronomy 18:18	 I will raise them up a prophet from among their brothers, like you. I will put my words in his mouth, and he shall speak to them all that I shall command him.
@@ -5713,11 +5713,11 @@ Deuteronomy 30:1	 It shall happen, when all these things have come on you, the
 Deuteronomy 30:2	 and return to the Lord your God and obey his voice according to all that I command you today, you and your children, with all your heart and with all your soul,
 Deuteronomy 30:3	 that then the Lord your God will release you from captivity, have compassion on you, and will return and gather you from all the peoples where the Lord your God has scattered you.
 Deuteronomy 30:4	 If your outcasts are in the uttermost parts of the heavens, from there the Lord your God will gather you, and from there he will bring you back.
-Deuteronomy 30:5	 The lord your God will bring you into the land which your fathers possessed, and you will possess it. He will do you good, and increase your numbers more than your fathers.
+Deuteronomy 30:5	 The Lord your God will bring you into the land which your fathers possessed, and you will possess it. He will do you good, and increase your numbers more than your fathers.
 Deuteronomy 30:6	 The lord your God will circumcise your heart, and the heart of your offspring, to love the Lord your God with all your heart and with all your soul, that you may live.
-Deuteronomy 30:7	 The lord your God will put all these curses on your enemies and on those who hate you, who persecuted you.
+Deuteronomy 30:7	 The Lord your God will put all these curses on your enemies and on those who hate you, who persecuted you.
 Deuteronomy 30:8	 You shall return and obey God’s voice, and do all his commandments which I command you today.
-Deuteronomy 30:9	 The lord your God will make you prosperous in all the work of your hand, in the fruit of your body, in the fruit of your livestock, and in the fruit of your ground, for good; for God will again rejoice over you for good, as he rejoiced over your fathers,
+Deuteronomy 30:9	 The Lord your God will make you prosperous in all the work of your hand, in the fruit of your body, in the fruit of your livestock, and in the fruit of your ground, for good; for God will again rejoice over you for good, as he rejoiced over your fathers,
 Deuteronomy 30:10	 if you will obey the voice of the Lord your God, to keep his commandments and his statutes which are written in this book of the law; if you turn to the Lord your God with all your heart and with all your soul.
 Deuteronomy 30:11	 For this commandment which I command you today is not too hard for you or too distant.
 Deuteronomy 30:12	 It is not in heaven, that you should say, “Who will go up for us to heaven, bring it to us, and proclaim it to us, that we may do it?”
@@ -5731,7 +5731,7 @@ Deuteronomy 30:19	 I call heaven and earth to witness against you today that I
 Deuteronomy 30:20	 to love the Lord your God, to obey his voice, and to cling to him; for he is your life, and the length of your days, that you may dwell in the land which God swore to your fathers, to Abraham, to Isaac, and to Jacob, to give them.
 Deuteronomy 31:1	 Moses went and spoke these words to all Israel.
 Deuteronomy 31:2	 He said to them, “I am one hundred twenty years old today. I can no more go out and come in. God has said to me, ‘You shall not go over this Jordan.’
-Deuteronomy 31:3	 The lord your God himself will go over before you. He will destroy these nations from before you, and you shall dispossess them. Joshua will go over before you, as God has spoken.
+Deuteronomy 31:3	 The Lord your God himself will go over before you. He will destroy these nations from before you, and you shall dispossess them. Joshua will go over before you, as God has spoken.
 Deuteronomy 31:4	 God will do to them as he did to Sihon and to Og, the kings of the Amorites, and to their land, when he destroyed them.
 Deuteronomy 31:5	 God will deliver them up before you, and you shall do to them according to all the commandment which I have commanded you.
 Deuteronomy 31:6	 Be strong and courageous. Do not be afraid or scared of them; for the Lord your God himself is who goes with you. He will not fail you nor forsake you.”
@@ -5864,7 +5864,7 @@ Joshua 1:9	 Have I not commanded you? Be strong and courageous. Do not be afra
 Joshua 1:10	 Then Joshua commanded the officers of the people, saying,
 Joshua 1:11	 “Pass through the middle of the camp, and command the people, saying, ‘Prepare food; for within three days you are to pass over this Jordan, to go in to possess the land which the Lord your God gives you to possess.’”
 Joshua 1:12	 Joshua spoke to the Reubenites, and to the Gadites, and to the half-tribe of Manasseh, saying,
-Joshua 1:13	 “Remember the word which Moses the servant of God commanded you, saying, ‘The lord your God gives you rest, and will give you this land.
+Joshua 1:13	 “Remember the word which Moses the servant of God commanded you, saying, ‘The Lord your God gives you rest, and will give you this land.
 Joshua 1:14	 Your wives, your little ones, and your livestock shall live in the land which Moses gave you beyond the Jordan; but you shall pass over before your brothers armed, all the mighty men of valor, and shall help them
 Joshua 1:15	 until God has given your brothers rest, as he has given you, and they have also possessed the land which the Lord your God gives them. Then you shall return to the land of your possession and possess it, which Moses the servant of God gave you beyond the Jordan toward the sunrise.’”
 Joshua 1:16	 They answered Joshua, saying, “All that you have commanded us we will do, and wherever you send us we will go.
@@ -8734,7 +8734,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 1:14	 Behold, while you are still talking there with the king, I will also come in after you and confirm your words.”
 1 Kings 1:15	 Bathsheba went in to the king in his room. The king was very old; and Abishag the Shunammite was serving the king.
 1 Kings 1:16	 Bathsheba bowed, and showed respect to the king. The king said, “What would you like?”
-1 Kings 1:17	 She said to him, “My lord, you swore by the lord your God to your servant, ‘Assuredly Solomon your son shall reign after me, and he shall sit on my throne.’
+1 Kings 1:17	 She said to him, “My lord, you swore by the Lord your God to your servant, ‘Assuredly Solomon your son shall reign after me, and he shall sit on my throne.’
 1 Kings 1:18	 Now, behold, Adonijah reigns; and you, my lord the king, do not know it.
 1 Kings 1:19	 He has slain cattle and fatlings and sheep in abundance, and has called all the sons of the king, Abiathar the priest, and Joab the captain of the army; but he has not called Solomon your servant.
 1 Kings 1:20	 You, my lord the king, the eyes of all Israel are on you, that you should tell them who will sit on the throne of my lord the king after him.
@@ -19943,7 +19943,7 @@ Jeremiah 39:16	 “Go, and speak to Ebedmelech the Ethiopian, saying, ‘The L
 Jeremiah 39:17	 But I will deliver you in that day,” says God; “and you will not be given into the hand of the men of whom you are afraid.
 Jeremiah 39:18	 For I will surely save you, and you will not fall by the sword, but you will escape with your life; because you have put your trust in me,” says God.’”
 Jeremiah 40:1	 The word which came to Jeremiah from God, after Nebuzaradan the captain of the guard had let him go from Ramah, when he had taken him being bound in chains among all the captives of Jerusalem and Judah, who were carried away captive to Babylon.
-Jeremiah 40:2	 The captain of the guard took Jeremiah, and said to him, “The lord your God pronounced this disaster on this place;
+Jeremiah 40:2	 The captain of the guard took Jeremiah, and said to him, “The Lord your God pronounced this disaster on this place;
 Jeremiah 40:3	 and God has brought it, and done according as he spoke. Because you have sinned against God, and have not obeyed his voice, therefore this thing has come on you.
 Jeremiah 40:4	 Now, behold, I release you today from the chains which are on your hand. If it seems good to you to come with me into Babylon, come, and I will take care of you; but if it seems bad to you to come with me into Babylon, do not. Behold, all the land is before you. Where it seems good and right to you to go, there go.”
 Jeremiah 40:5	 Now while he had not yet gone back, “Go back then,” he said, “to Gedaliah the son of Ahikam, the son of Shaphan, whom the king of Babylon has made governor over the cities of Judah, and dwell with him among the people; or go wherever it seems right to you to go.” So the captain of the guard gave him food and a present, and let him go.
@@ -27136,7 +27136,7 @@ Acts 7:16	 and they were brought back to Shechem, and laid in the tomb that Ab
 Acts 7:17	 “But as the time of the promise came close which God had sworn to Abraham, the people grew and multiplied in Egypt,
 Acts 7:18	 until there arose a different king, who did not know Joseph.
 Acts 7:19	 The same took advantage of our race, and mistreated our fathers, and forced them to throw out their babies, so that they would not stay alive.
-Acts 7:20	 At that time Moses was born, and was exceedingly handsome. He was nourished three months in his father’s house.
+Acts 7:20	 At that time Moses was born, and was exceedingly handsome to God. He was nourished three months in his father’s house.
 Acts 7:21	 When he was thrown out, Pharaoh’s daughter took him up and reared him as her own son.
 Acts 7:22	 Moses was instructed in all the wisdom of the Egyptians. He was mighty in his words and works.
 Acts 7:23	 But when he was forty years old, it came into his heart to visit his brothers, the children of Israel.
@@ -28183,7 +28183,7 @@ Romans 9:24	 us, whom he also called, not from the Jews only, but also from th
 Romans 9:25	 As he says also in Hosea, “I will call them ‘my people,’ which were not my people; and her ‘beloved,’ who was not beloved.”
 Romans 9:26	 “It will be that in the place where it was said to them, ‘You are not my people,’ there they will be called ‘children of the living God.’”
 Romans 9:27	 Isaiah cries concerning Israel, “If the number of the children of Israel are as the sand of the sea, it is the remnant who will be saved;
-Romans 9:28	 for He will finish the work and cut it short in righteousness, because the LORD will make a short work upon the earth.”
+Romans 9:28	 for He will finish the work and cut it short in righteousness, because the Lord will make a short work upon the earth.”
 Romans 9:29	 As Isaiah has said before, “Unless the Lord of Hosts had left us a seed, we would have become like Sodom, and would have been made like Gomorrah.”
 Romans 9:30	 What shall we say then? That the Gentiles, who did not follow after righteousness, attained to righteousness, even the righteousness which is of faith;
 Romans 9:31	 but Israel, following after a law of righteousness, did not arrive at the law of righteousness.
