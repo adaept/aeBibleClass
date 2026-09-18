@@ -164,11 +164,11 @@ has changed, do step 2.
 
 6. **Save and close.** File → Save in Word.
 
-7. **Smoke-check load.** Open a fresh Word session, then open
-   `aeRibbon/docx/aeRibbon-host.docx` (or any blank `.docx`) with the
-   template attached (File → Options → Add-ins → Manage: Templates → Go →
-   Add → select `aeRibbon.dotm`). Confirm the **Radiant Word Bible** tab
-   appears and `RibbonOnLoad` fires (visible in Immediate window).
+7. **Smoke-check load.** This is Gate G7 — see "G7 — empty host docx
+   smoke" under "Gate procedures" below for the full, current procedure
+   (Startup-folder attach method, what to do after, and the G8 handoff
+   warning). Not repeated here to avoid the two copies drifting out of
+   sync with each other again.
 
 8. **Release record.** Append a row to `aeRibbon/RELEASES.md` with:
    version, build date, dev SHA (from `git rev-parse --short HEAD`),
