@@ -331,6 +331,19 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
 - [ ] 8. Operator review of the front-matter wording before insertion.
 - [ ] 9. Insert the reviewed front-matter text into the docm at Song of
       Solomon's introduction.
+- [ ] 9a. **New, found 2026-09-17 while verifying doc updates before a
+      commit:** the docm's actual printed H1 book-title heading still
+      reads **"SONG OF SONGS"** (confirmed via `rpt/HeadingLog.txt`,
+      `H1[22]`) - this is document *content*, entirely separate from
+      the citation-class canonical table steps 1-6 changed, and was
+      never in this checklist's original scope. By contrast, `H1[19]`
+      (Psalms) correctly still reads "PSALMS," unaffected, since that
+      was never in question. Per Task 2's decision, this heading should
+      read "SONG OF SOLOMON" (all-caps, matching this document's
+      existing H1 convention for every other book) to match WEBU's own
+      `\h`/`\toc1`/`\mt1` title. **Requires a manual edit in
+      `Blank Bible Copy.docm`** (same as the Zechariah 14:20 fix) -
+      not something code can do.
 - [ ] 10. Re-run `ExportDocmVersesToRWBFormat`; confirm the rwb-format
       output for this book still reads "Song of Solomon N:V" (i.e. the
       `663c36e` override remains consistent, now redundant-but-harmless
@@ -339,8 +352,9 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
       `project_scholarly_grounding_plan` memory to mark Task 2 done,
       with the real commit hash(es).
 
-Steps 1-6 done and verified 2026-09-17; steps 7-11 remain, blocked on
-operator approval of the front-matter wording (step 8).
+Steps 1-6 done and verified 2026-09-17; steps 7-11 (plus new step 9a)
+remain, blocked on operator approval of the front-matter wording (step 8)
+and the H1 heading-text edit (step 9a).
 
 ## Task 3 - Source Strong's numbers, Hebrew source text, and Greek NT source text properly
 
