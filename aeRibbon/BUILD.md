@@ -153,7 +153,7 @@ has changed, do step 2.
    confirm (or add at the top) a constant matching `aeRibbon/VERSION`:
 
    ```vb
-   Public Const RIBBON_VERSION As String = "1.0.0+bc71416"
+   Public Const RIBBON_VERSION As String = "<version>"
    ```
 
    Also set the template's custom document property `aeRibbonVersion` to
@@ -210,7 +210,11 @@ runtime behaviour.
 ### G6 finish — version constants
 
 The compile sub-check is already green from the build steps. Two
-artefacts still need to land for G6 to close.
+artefacts still need to land for G6 to close. Wherever `<version>`
+appears below, substitute the current contents of `aeRibbon/VERSION` —
+deliberately not hardcoded here, since a literal example value goes
+stale the moment `VERSION` next bumps (as happened to this section
+before).
 
 1. **`RIBBON_VERSION` constant — set the value for this release.**
 
@@ -226,7 +230,7 @@ artefacts still need to land for G6 to close.
    set the value to match `aeRibbon/VERSION` for this build:
 
    ```vb
-   Public Const RIBBON_VERSION As String = "1.0.0+bc71416"
+   Public Const RIBBON_VERSION As String = "<version>"
    ```
 
    Re-run **Debug → Compile VBAProject** — must stay green.
@@ -250,7 +254,7 @@ artefacts still need to land for G6 to close.
      Immediate window shows no output on a successful Add):
 
      ```vb
-     ThisDocument.CustomDocumentProperties.Add Name:="aeRibbonVersion", LinkToContent:=False, Type:=msoPropertyTypeString, Value:="1.0.0+bc71416"
+     ThisDocument.CustomDocumentProperties.Add Name:="aeRibbonVersion", LinkToContent:=False, Type:=msoPropertyTypeString, Value:="<version>"
      ```
 
    - Verify by pasting:
@@ -259,7 +263,7 @@ artefacts still need to land for G6 to close.
      ?ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value
      ```
 
-     The Immediate window should print `1.0.0+bc71416`. If it raises
+     The Immediate window should print `<version>`. If it raises
      **runtime error 5** the property was never added - re-run the
      `Add` line above, then re-run the `?` query.
    - **Save from the VBA editor**, not from Word: in the VBE, File →
@@ -281,7 +285,7 @@ artefacts still need to land for G6 to close.
    replace an existing value:
 
    ```vb
-   ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value = "1.0.0+bc71416"
+   ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value = "<version>"
    ```
 
 3. **Stage the template for Word to load.**
@@ -369,7 +373,7 @@ navigation is tested here** — the host docx has no Bible content.
      fixture — another reason not to.)
 
 4. **Record the result** in
-   `aeRibbon/releases/1.0.0+bc71416/BUILD_RECORD.txt`:
+   `aeRibbon/releases/<version>/BUILD_RECORD.txt`:
    - Tab appeared: yes/no
    - RibbonOnLoad printed: yes/no
    - AutoExec printed: yes/no
@@ -428,14 +432,14 @@ produced for this release.
      `RIBBON_VERSION`.
 
 4. **Record results** in
-   `aeRibbon/releases/1.0.0+bc71416/BUILD_RECORD.txt` — one line per
+   `aeRibbon/releases/<version>/BUILD_RECORD.txt` — one line per
    QA_CHECKLIST item, plus the SHA-256 of `aeRibbon.dotm` (`wsl
    sha256sum aeRibbon/template/aeRibbon.dotm`).
 
 5. **Append the release row** to `aeRibbon/RELEASES.md` and tag:
 
    ```cmd
-   git tag v1.0.0+bc71416
+   git tag v<version>
    ```
 
 G8 closes when every navigation item passes and the BUILD_RECORD +
