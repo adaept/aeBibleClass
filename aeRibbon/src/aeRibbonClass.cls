@@ -24,13 +24,19 @@ Option Compare Text
 
 ' ================================================================
 ' Author:   Peter F. Ennis
-' Date:     March 10, 2025
+' Date:     September 17, 2026
 ' Comment:  Bible Ribbon Class for Word 365 VBA
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/aeBibleClass
 ' ================================================================
 
 ' -- Private State -------------------------------------------------------------
+' TEMP diagnostic 2026-09-14 - WithEvents hook to timestamp exactly when focus/
+' keystrokes land in the document, to correlate against the OnChapterChanged/
+' OnVerseChanged Debug.Print timestamps for the "Tab after committing chapter
+' escapes to the document instead of cmbVerse" bug. Remove once resolved.
+Private WithEvents m_app As Word.Application
+Attribute m_app.VB_VarHelpID = -1
 Private m_ribbon         As IRibbonUI
 Private m_ribbonReady    As Boolean
 Private m_bookmarkIndex  As Long
@@ -63,7 +69,8 @@ Private Declare PtrSafe Function SetCursor Lib "user32" (ByVal hCursor As Long) 
 ' -- Lifecycle -----------------------------------------------------------------
 
 Private Sub Class_Initialize()
-    Debug.Print "RibbonController: Class_Initialize at " & Format(Now, "hh:nn:ss")
+    Debug.Print "RibbonController: Class_Initialize at " & TimestampMs()
+    Set m_app = Application   ' TEMP diagnostic 2026-09-14 - see WithEvents declaration above
     m_ribbonReady = False
     m_bookmarkIndex = 0
     m_savedPos = 0
@@ -85,21 +92,34 @@ Private Sub Class_Initialize()
     m_lastScanWasSaved = False
 End Sub
 Private Sub Class_Terminate()
-    Debug.Print "RibbonController: Class_Terminate at " & Format(Now, "hh:nn:ss")
+    Debug.Print "RibbonController: Class_Terminate at " & TimestampMs()
+    Set m_app = Nothing   ' TEMP diagnostic 2026-09-14
     Set m_ribbon = Nothing
     m_ribbonReady = False
 End Sub
+Private Function TimestampMs() As String
+    TimestampMs = Format(Now, "hh:nn:ss") & "." & Format((Timer - Int(Timer)) * 1000, "000")
+End Function
 Public Sub OnRibbonLoad(ribbon As IRibbonUI)
     On Error GoTo PROC_ERR
     Set m_ribbon = ribbon
     m_ribbonReady = True
-    Debug.Print "RibbonController: Ribbon ready at " & Format(Now, "hh:nn:ss")
+    Debug.Print "RibbonController: Ribbon ready at " & TimestampMs()
     Call EnableButtonsRoutine
     ' Full Invalidate after EnableButtonsRoutine so the initial cache reflects the
     ' post-load field values. Without this, the cache is from the very first ribbon
     ' render (before OnRibbonLoad fired), and deferred Invalidate calls from onChange
     ' callbacks may not update it in time for Tab routing on first load.
     m_ribbon.Invalidate
+    ' Invalidate schedules a repaint rather than completing it synchronously -
+    ' typing immediately after document open (before that repaint finishes)
+    ' is suspected to be why the first "Book Tab Tab Tab Chapter Tab" sequence
+    ' occasionally routes Tab to the document instead of the next ribbon
+    ' control. Switching to the VBE and back avoids the bug (gives Word idle
+    ' time to finish the repaint) - DoEvents here is the same fix without
+    ' requiring the workaround. Experimental fix, 2026-09-14 - remove this
+    ' comment once confirmed by repro testing.
+    DoEvents
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -131,8 +151,7 @@ Public Sub OnNextButtonClick(control As IRibbonControl)
     Call NextButton
 End Sub
 Public Sub OnAdaeptAboutClick(control As IRibbonControl)
-    MsgBox "Hello, adaept World!" & vbCrLf & _
-           "adaeptMsg  = " & AdaeptMsg, vbInformation, "About adaept"
+    MsgBox FormatMsg(MSG_ABOUT, RIBBON_VERSION), vbInformation, "About adaept"
 End Sub
 Public Function GetNextBkEnabled(control As IRibbonControl) As Boolean
     GetNextBkEnabled = True   ' always-enable (#599); OnNextBkClick guards m_currentBookIndex = 0 or >= 66
@@ -247,7 +266,7 @@ PROC_ERR:
 End Sub
 Private Sub PrevButton()
     ' Navigate to the previous book using ribbon state (m_currentBookIndex), not Selection.
-    ' See NextButton comment — same root cause (Bug 19).
+    ' See NextButton comment - same root cause (Bug 19).
     On Error GoTo PROC_ERR
     ' Refresh heading cache if document was edited since last scan; cheap no-op otherwise.
     CaptureHeading1s
@@ -333,7 +352,9 @@ Public Sub CaptureHeading1s(Optional ByVal bForce As Boolean = False)
 
     hasRun = True
     m_lastScanWasSaved = ActiveDocument.Saved
-    Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries (saved=" & ActiveDocument.Saved & ")."
+    ' Commented out 2026-09-15 to reduce Immediate-window noise during batch
+    ' editing; uncomment if heading-cache rebuild behavior needs tracing again.
+    'Debug.Print "CaptureHeading1s: Stored " & i - 1 & " Heading 1 entries (saved=" & ActiveDocument.Saved & ")."
 
 PROC_EXIT:
     Exit Sub
@@ -394,9 +415,6 @@ PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure LogHeadingData of Class aeRibbonClass"
     Resume PROC_EXIT
 End Sub
-Private Function AdaeptMsg() As String
-    AdaeptMsg = """...the truth shall make you free.""" & " John 8:32 (KJV)"
-End Function
 Private Function NormalizeBookInput(ByVal raw As String) As String
     Dim s As String
     s = Trim(UCase(raw))
@@ -409,10 +427,10 @@ Public Function GetBookEnabled(control As IRibbonControl) As Boolean
     GetBookEnabled = True
 End Function
 Public Function GetBookCount(control As IRibbonControl) As Long
-    GetBookCount = 0   ' Dropdown population intentionally deferred — not used in current navigation flow
+    GetBookCount = 0   ' Dropdown population intentionally deferred - not used in current navigation flow
 End Function
 Public Function GetBookItemLabel(control As IRibbonControl, index As Long) As String
-    GetBookItemLabel = ""   ' Dropdown population intentionally deferred — not used in current navigation flow
+    GetBookItemLabel = ""   ' Dropdown population intentionally deferred - not used in current navigation flow
 End Function
 Public Function GetBookItemID(control As IRibbonControl, index As Long) As String
     GetBookItemID = CStr(index)   ' Reserved for future dropdown item IDs
@@ -451,8 +469,15 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
     Dim matchFound As Boolean
     Dim canonical As String
 
+    ' Use the normalized pattern (NormalizeBookInput already turns "1kgs"
+    ' into "1 KGS"), not the raw text - the alias map only has space-
+    ' delimited keys ("1 KGS"), so resolving against raw "1kgs" fails and
+    ' silently falls through to Layer 2, which also fails since "1 KGS" is
+    ' not a substring of heading text "1 KINGS". This previously only
+    ' worked for numbered books with a hand-added no-space alias (e.g.
+    ' "1KI"), not generically for every numbered book.
     On Error Resume Next
-    canonical = aeBibleCitationClass.ResolveAlias(text)
+    canonical = aeBibleCitationClass.ResolveAlias(pattern)
     On Error GoTo PROC_ERR
 
     If Len(canonical) > 0 Then
@@ -483,23 +508,23 @@ Public Sub OnBookChanged(control As IRibbonControl, text As String)
         GoTo PROC_EXIT
     End If
     m_bookTextValid = True
-    m_chapterTextValid = True   ' new book resets chapter to 1 — always valid
-    m_verseTextValid = True     ' new book resets verse to 1 — always valid
+    m_chapterTextValid = True   ' new book resets chapter to 1 - always valid
+    m_verseTextValid = True     ' new book resets verse to 1 - always valid
 
     m_currentBookIndex = i
     m_currentBookPos = CLng(headingData(i, 1))
-    m_currentChapter = 1   ' default chapter 1 — enables Prev/Next Chapter buttons (#598)
-    m_currentVerse = 1     ' default verse 1 — enables Prev/Next Verse buttons (#598)
+    m_currentChapter = 1   ' default chapter 1 - enables Prev/Next Chapter buttons (#598)
+    m_currentVerse = 1     ' default verse 1 - enables Prev/Next Verse buttons (#598)
     m_currentChapterPos = 0
 
     ' Invalidate so ribbon re-queries enabled state from current field values.
     ' GetChapterEnabled = (m_currentBookIndex > 0) now returns True.
-    ' No ScrollIntoView here — the view scrolls when GoToVerseByScan executes
+    ' No ScrollIntoView here - the view scrolls when GoToVerseByScan executes
     ' (ScrollIntoView is called there after cursor placement). Removing the call here
     ' eliminates the 4-10s first-load page-layout block from this callback. When
     ' ScrollIntoView was here, Tab key presses during the block were routed through
     ' stale ribbon state, sending Tab to the document instead of cmbVerse (Bug 25a).
-    ' The double-Invalidate workaround (Fix 5a) is therefore also removed — a single
+    ' The double-Invalidate workaround (Fix 5a) is therefore also removed - a single
     ' Invalidate is sufficient now that there is no blocking call to bracket.
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
 
@@ -511,7 +536,7 @@ PROC_ERR:
 End Sub
 Private Function FindChapterPos(ByVal chNum As Long) As Long
     ' Direct lookup from pre-built chapterData index (O(1)).
-    ' chapterData is populated by CaptureHeading1s at load time — same pass as H1 scan.
+    ' chapterData is populated by CaptureHeading1s at load time - same pass as H1 scan.
     ' Old path: chNum consecutive Range.Find.Execute calls (O(n), up to 119 for Psalm 119).
     ' New path: one array read regardless of chapter number or book.
     If m_currentBookIndex < 1 Or m_currentBookIndex > 66 Then
@@ -560,7 +585,7 @@ Private Sub GoToChapter(ByVal chNum As Long)
     Application.ScreenUpdating = True
     m_currentChapter = chNum
     m_currentVerse = 1     ' Rule 2a
-    m_currentChapterPos = chPos   ' cache for GoToVerse — avoids repeat FindChapterPos calls
+    m_currentChapterPos = chPos   ' cache for GoToVerse - avoids repeat FindChapterPos calls
     Dim projNameCt As String
     projNameCt = Application.ActiveDocument.VBProject.Name
     Application.OnTime Now, projNameCt & ".basRibbonDeferred.UpdateStatusBarDeferred"
@@ -581,7 +606,7 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 Public Function GetChapterEnabled(control As IRibbonControl) As Boolean
-    ' Always True — cmbChapter must be an enabled tab stop from initial render.
+    ' Always True - cmbChapter must be an enabled tab stop from initial render.
     ' m_ribbon.Invalidate called from within onChange is deferred (fires after Tab
     ' routing). If GetChapterEnabled depended on m_currentBookIndex, the initial
     ' render cache would show DISABLED and Tab from cmbBook would fall to the document
@@ -616,10 +641,14 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     ' onChange fires on each keystroke and on Tab/Enter commit.
     ' If text is empty or out of range, retain the current value (1 by default from
     ' Rule 2a; never leaves the field in an unknown state).
-    ' Navigation fires on each valid chapter value — same deferred pattern as OnVerseChanged.
+    ' Navigation fires on each valid chapter value - same deferred pattern as OnVerseChanged.
     ' Multiple deferreds from rapid typing all read m_pendingVerse at execution time;
     ' only the first fires a navigation, subsequent ones are no-ops (m_pendingVerse = 0).
     On Error GoTo PROC_ERR
+    ' Confirmed 2026-09-15: fires correctly on each valid chapter commit -
+    ' commented out to stop Immediate-window noise; uncomment to resume the
+    ' focus-escape investigation.
+    'Debug.Print "OnChapterChanged: text=""" & text & """ at " & TimestampMs()
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
     Dim projNameCh As String
     projNameCh = Application.ActiveDocument.VBProject.Name
@@ -644,6 +673,20 @@ Public Sub OnChapterChanged(control As IRibbonControl, text As String)
     m_chapterTextValid = True
     m_currentChapter = chNum
     m_currentChapterPos = 0
+    ' Mirror OnBookChanged's Invalidate (line ~643): that call exists because
+    ' the ribbon must be told to re-query GetChapterEnabled before Tab can
+    ' reach cmbChapter after Book commits. GetVerseEnabled is hardcoded True
+    ' so it doesn't need this for the *enabled* check, but that doesn't rule
+    ' out the ribbon needing an explicit poke to correctly re-evaluate the
+    ' Verse controls' tab-stop eligibility on the same Book->Chapter->Verse
+    ' chain, on a freshly-loaded ribbon - suspected cause of the "Tab after
+    ' committing chapter lands in the document instead of cmbVerse" bug,
+    ' 2026-09-14. Experimental - remove this comment once confirmed.
+    If Not m_ribbon Is Nothing Then
+        m_ribbon.InvalidateControl CTRL_VERSE
+        m_ribbon.InvalidateControl CTRL_PREV_VERSE
+        m_ribbon.InvalidateControl CTRL_NEXT_VERSE
+    End If
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
@@ -695,7 +738,7 @@ Public Function GetNextVerseEnabled(control As IRibbonControl) As Boolean
     GetNextVerseEnabled = True   ' always-enable (#599); OnNextVerseClick guards m_currentVerse = 0 or m_currentChapter = 0 or m_currentBookIndex = 0
 End Function
 Public Function GetVerseEnabled(control As IRibbonControl) As Boolean
-    ' Always True — same reasoning as GetChapterEnabled. cmbVerse must be an enabled
+    ' Always True - same reasoning as GetChapterEnabled. cmbVerse must be an enabled
     ' tab stop from initial render so that Tab from cmbChapter reaches it regardless
     ' of when the deferred Invalidate from OnChapterChanged fires. OnVerseChanged
     ' guards against no-chapter input.
@@ -723,6 +766,10 @@ Public Sub OnVerseChanged(control As IRibbonControl, text As String)
     ' onChange fires on Enter and on each keystroke.
     ' Validates and stores m_currentVerse. Navigation fires from OnGoClick only (#600).
     On Error GoTo PROC_ERR
+    ' Confirmed 2026-09-15: fires correctly on each valid verse commit -
+    ' commented out to stop Immediate-window noise; uncomment to resume the
+    ' focus-escape investigation.
+    'Debug.Print "OnVerseChanged: text=""" & text & """ at " & TimestampMs()
     Dim projNameVs As String
     projNameVs = Application.ActiveDocument.VBProject.Name
     If m_currentChapter = 0 Or m_currentBookIndex = 0 Then GoTo PROC_EXIT
@@ -812,7 +859,7 @@ Private Sub GoToVerse(ByVal vsNum As Long)
 
     ' Both study and print versions mark each verse with inline "Chapter Verse marker"
     ' (chapter number) + "Verse marker" (verse number) character style runs.
-    ' GoToVerseByScan finds the Nth "Verse marker" run — correct for both versions.
+    ' GoToVerseByScan finds the Nth "Verse marker" run - correct for both versions.
     ' GoToVerseByCount (MoveDown paragraph-counting) was study-only and broke on
     ' chapters with section-heading paragraphs (e.g. Psalm 119 has 22 Aleph-Taw
     ' headings → MoveDown(176) landed at verse 155, Bug 25b). IsStudyVersion branch
@@ -889,7 +936,7 @@ Public Function GetGoEnabled(control As IRibbonControl) As Boolean
 End Function
 Public Sub OnGoClick(control As IRibbonControl)
     ' Explicit navigation trigger (GoButton, #600).
-    ' Reads m_currentBookIndex, m_currentChapter, m_currentVerse — all set by
+    ' Reads m_currentBookIndex, m_currentChapter, m_currentVerse - all set by
     ' OnBookChanged / OnChapterChanged / OnVerseChanged before this fires.
     On Error GoTo PROC_ERR
     If m_currentBookIndex = 0 Then GoTo PROC_EXIT
@@ -933,7 +980,7 @@ Public Sub OnNewSearchClick(control As IRibbonControl)
     m_chapterTextValid = True
     m_verseTextValid = True
     If Not m_ribbon Is Nothing Then m_ribbon.Invalidate
-    ' Bug #597 — focusing cmbBook after reset is a known VBA limitation.
+    ' Bug #597 - focusing cmbBook after reset is a known VBA limitation.
     ' See rvw/Code_review 2026-04-20.md § 12 for analysis and VSTO resolution.
 End Sub
 

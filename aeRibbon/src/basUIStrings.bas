@@ -22,7 +22,7 @@ Option Private Module
 ' for UI text.
 '
 ' i18n: to localise the UI, edit only this module. The ribbon XML
-' (customUI14.xml) uses getKeytip callbacks that read from these constants —
+' (customUI14.xml) uses getKeytip callbacks that read from these constants -
 ' it never needs to change for a localisation.
 '
 ' VSTO port: replace this module with a .resx resource file. Constant names
@@ -37,6 +37,11 @@ Option Private Module
 '   in customUI14.xml. The <tab> element does not support a getKeytip callback, so
 '   this value cannot be expressed as a constant in this module.
 ' =============================================================================
+
+' -- Dialog messages -----------------------------------------------------------
+' Dynamic messages: contain {0} placeholder - use FormatMsg(MSG_ABOUT, arg0)
+
+Public Const MSG_ABOUT As String = "Word Bible ribbon" & vbCrLf & "Version: {0}"
 
 ' -- KeyTips -------------------------------------------------------------------
 
@@ -74,8 +79,8 @@ Public Const CTRL_PREV_VERSE   As String = "PrevVerseButton"
 Public Const CTRL_NEXT_VERSE   As String = "NextVerseButton"
 
 ' -- Status bar messages -------------------------------------------------------
-' Static messages: no runtime data — use directly as Application.StatusBar = SB_xxx
-' Dynamic messages: contain {0}, {1} placeholders — use FormatMsg(SB_xxx, arg0, arg1)
+' Static messages: no runtime data - use directly as Application.StatusBar = SB_xxx
+' Dynamic messages: contain {0}, {1} placeholders - use FormatMsg(SB_xxx, arg0, arg1)
 
 Public Const SB_NAVIGATING            As String = "Navigating ..."
 Public Const SB_WARM_CACHE            As String = "Bible: building navigation index..."

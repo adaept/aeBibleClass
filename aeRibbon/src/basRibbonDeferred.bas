@@ -48,7 +48,7 @@ End Sub
 
 ' -- Archived deferred entry points retained for rollback/testing --------------
 
-' WarmLayoutCacheDeferred: WarmLayoutCache is disabled — the OnTime call that
+' WarmLayoutCacheDeferred: WarmLayoutCache is disabled - the OnTime call that
 ' would schedule this sub is commented out in aeRibbonClass.cls. The cache
 ' method itself is preserved there for future use.
 Public Sub WarmLayoutCacheDeferred()
@@ -59,7 +59,7 @@ End Sub
 
 ' GoToH1Deferred: legacy entry point from the old GoTo Book button flow.
 ' That button was removed from ribbon XML; Book selection now uses the Book comboBox.
-' Note: this sub has no parameters and will appear in Alt+F8 — safe to run manually.
+' Note: this sub has no parameters and will appear in Alt+F8 - safe to run manually.
 Public Sub GoToH1Deferred()
     Dim rc As aeRibbonClass
     Set rc = Instance()
@@ -69,12 +69,12 @@ Public Sub GoToH1Deferred()
     rc.InvalidateControl CTRL_PREV_BOOK
 End Sub
 
-' GoToBookDeferred: dead stub — NavigateToCurrentBook removed (Bug 9).
+' GoToBookDeferred: dead stub - NavigateToCurrentBook removed (Bug 9).
 Public Sub GoToBookDeferred()
     ' Instance().NavigateToCurrentBook
 End Sub
 
-' GoToVerseDeferred: dead stub — navigation trigger moved to OnGoClick (GoButton, #600).
+' GoToVerseDeferred: dead stub - navigation trigger moved to OnGoClick (GoButton, #600).
 Public Sub GoToVerseDeferred()
     ' Instance().ExecutePendingVerse
 End Sub

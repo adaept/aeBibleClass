@@ -215,8 +215,7 @@ Public Sub OnNextButtonClick(control As IRibbonControl)
 End Sub
 
 Public Sub OnAdaeptAboutClick(control As IRibbonControl)
-    MsgBox "Hello, adaept World!" & vbCrLf & _
-           "adaeptMsg  = " & AdaeptMsg, vbInformation, "About adaept"
+    MsgBox FormatMsg(MSG_ABOUT, RIBBON_VERSION), vbInformation, "About adaept"
 End Sub
 
 ' -- Enabled State Callback ----------------------------------------------------

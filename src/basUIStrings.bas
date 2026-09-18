@@ -38,6 +38,11 @@ Option Private Module
 '   this value cannot be expressed as a constant in this module.
 ' =============================================================================
 
+' -- Dialog messages -----------------------------------------------------------
+' Dynamic messages: contain {0} placeholder - use FormatMsg(MSG_ABOUT, arg0)
+
+Public Const MSG_ABOUT As String = "Word Bible ribbon" & vbCrLf & "Version: {0}"
+
 ' -- KeyTips -------------------------------------------------------------------
 
 Public Const KT_BOOK         As String = "B"   ' Book comboBox
