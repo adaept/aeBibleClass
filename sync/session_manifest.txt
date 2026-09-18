@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-09-17
+# Claude Session Manifest -- 2026-09-18
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -11,327 +11,169 @@
 #   [MEMORY]   - Claude auto-memory; no project import
 # ------------------------------------------------------------
 
-## Files touched this session (continued - Tests 77/78 fast-fail gate)
-
-  [IMPORT] src/aeBibleClass.cls  (into Blank Bible Copy.docm - operator
-           confirmed done via full ImportAllVBAFiles reimport, 38/39
-           files, verified against src/ThisDocument.cls content)
-    6e17b09    Added a pre-flight gate to
-    TheBibleClassTests: a full-suite run takes 15-20+ minutes, but the
-    approved-style Priority/UnhideWhenUsed drift that fails Tests 77/78
-    (Default Paragraph Font re-surfacing after any run touches it) was
-    only ever discovered at Test 77, near the end. New
-    CheckApprovedStylesReady() reuses Tests 77/78's own Count functions
-    directly (no new detection logic) and halts in seconds instead,
-    printing the specific violation + remediation ("run
-    WordEditingConfig, save the document, then re-run") to both the
-    Immediate window and a MsgBox. Deliberately skipped for single-test
-    runs (RUN_THE_TESTS(77) etc.) so Test 77/78 can still be debugged
-    directly. Also appended the same remediation text to Tests 77/78's
-    own m_lastHint, so the message is identical whether you hit it via
-    the fast gate or by letting the full suite run anyway.
-    VERIFIED 2026-09-17: operator ran RUN_THE_TESTS against the live
-    (still-drifted) docm and got the expected halt message, cleanly
-    formatted, in seconds.
-
 ## Files touched this session
 
-  [IMPORT] src/aeBibleCitationClass.cls  (into Blank Bible Copy.docm)
-    fb321e0    Task 2 (Song of Solomon naming): GetCanonicalBookTable()
-               book 22 "Song of Songs" -> "Song of Solomon";
-               GetSBLCanonicalBookTable() book 22 "SONG OF SONGS" ->
-               "SONG OF SOLOMON"; GetBookAliasMap() adds "SONG OF
-               SOLOMON" as an alias (kept "SONG OF SONGS"/"CANTICLES" -
-               not removed, only the canonical/display form changed).
-               See Plan_scholarly_grounding_2026-09-16.md Task 2.
-               STATUS: operator confirmed imported + re-exported; verified
-               clean via Run_All_SBL_Tests (44/0 fail) and
-               Test_CanonicalNamesAndSBLTable (Song of Solomon rows PASS).
+  [IMPORT] src/aeRibbonClass.cls, src/basUIStrings.bas  (into
+           Blank Bible Copy.docm)
+    9689917    Fixed the About dialog: `OnAdaeptAboutClick` hardcoded
+               "Hello, adaept World!" + a stray Bible-verse dev stub
+               instead of showing `RIBBON_VERSION` at all. New
+               `MSG_ABOUT` constant in `basUIStrings.bas` (per that
+               module's own no-inline-UI-text convention); one-line
+               `OnAdaeptAboutClick` body using
+               `FormatMsg(MSG_ABOUT, RIBBON_VERSION)`.
+    STATUS: operator confirmed imported into the docm and verified live
+    -- About dialog correctly read `RIBBON_VERSION` (printed "" at that
+    point, the expected dev-source sentinel value).
+    Then re-exported and ribbon_export_trim.py re-run (133 kept, 72
+    removed, up from 70 -- also carried through prior unexported
+    dev-src changes: Song of Solomon rename, quote-nesting fixes).
 
-  [IMPORT] src/basTEST_aeBibleCitationClass.bas  (into Blank Bible Copy.docm)
-    STATUS: operator confirmed imported (round 2) + re-verified clean -
-    see "Verified this session" below for the 361/0 result.
-    (a) Test_SongOfSongs_AllAliases - canonical-name assertions now
-        expect "Song of Solomon"; added "Song of Solomon" to the alias
-        list tested; removed the now-stale negative test that asserted
-        "Song of Solomon" was NOT a valid alias (it now is, deliberately);
-        kept "Song of Songs" coverage as an alias, not canonical.
-    (b) Test_CanonicalNamesAndSBLTable's canonNames(22) updated to match.
-    (c) Fixed a pre-existing, unrelated bug found while reading that
-        test's output: its book-abbreviation extraction split on the
-        FIRST space in ToSBLShortForm's result, truncating every
-        multi-word SBL abbreviation ("1 Sam", "2 Cor", "1 John", etc. -
-        16 books) to just its leading digit. Now scans for the LAST
-        space instead (chapter:verse never contains a space; several
-        abbreviations do), mirroring ToSBLShortForm's own last-space
-        scan in aeBibleCitationClass.cls.
-    (d) Test_CanonicalNamesAndSBLTable wired into Run_All_SBL_Tests
-        (previously standalone-only, Alt+F8) - refactored to use the
-        suite-level aeAssert instead of its own local aeAssertClass/
-        aeLoggerClass, same pattern as the other Stage tests; its
-        PROC_ERR handler changed MsgBox -> Debug.Print to match this
-        project's error-handling convention. This also fixed Bug B
-        below as a side effect (the local aeLoggerClass it used to
-        create is gone entirely).
+  [IMPORT] aeRibbon/src/basImportWordRibbonGitFiles.bas  (into
+           aeRibbon.dotm -- SEPARATE VBA project, NOT the dev docm;
+           see project_ribbon_dotm_docx_model.md)
+    New module, hand-authored directly in aeRibbon/src/ (not routed
+    through the dev-src trim pipeline -- not reachable from any ribbon
+    callback, so the trim would drop it anyway). Template
+    build-bootstrap importer mirroring the dev docm's own
+    `basImportWordGitFiles.bas`/`ImportAllVBAFiles` pattern:
+    `ImportAllRibbonVBAFiles` deletes every other module/class in the
+    live template (confirmation prompt), re-imports every
+    `*.bas`/`*.cls`/`*.frm` found in `aeRibbon/src/`, then auto-stamps
+    `RIBBON_VERSION` and the `aeRibbonVersion` custom doc property from
+    `aeRibbon/VERSION` -- closes two previously-manual, easy-to-skip
+    build steps (the same class of gap that let `RIBBON_VERSION` sit
+    unwired long enough to cause the About-dialog bug above).
+    STATUS: imported once (one-time bootstrap) into `aeRibbon.dotm`,
+    then `ImportAllRibbonVBAFiles` run for real -- VERIFIED WORKING on
+    its first live run: deleted the stale `bc71416`-era modules,
+    reimported cleanly, stamped `RIBBON_VERSION`/`aeRibbonVersion`
+    correctly (`1.0.0+9689917`), compiled with 0 errors.
 
-  [IMPORT] aeRibbon/src/aeBibleCitationClass.cls  (into the aeRibbon .dotm -
-           SEPARATE VBA project/file from the docm above, see
-           project_ribbon_dotm_docx_model.md)
-    fb321e0    Same GetCanonicalBookTable()/GetBookAliasMap() changes as
-               src/aeBibleCitationClass.cls above. This copy has no
-               GetSBLCanonicalBookTable() function, so that part of the
-               change doesn't apply here. STATUS UNCONFIRMED - operator
-               confirmed the docm side was imported/tested; whether this
-               separate .dotm project was also updated is still open.
-               No test suite exists in aeRibbon/src to verify it either
-               way - manual check needed (type "Song of Solomon"/"Song
-               of Songs"/"Solomon" into the ribbon's reference box).
+  [DOC] aeRibbon/BUILD.md
+    Multiple fixes found by inspection and by actually running the
+    process this session (not theoretical):
+    - Documented the new build-bootstrap path (step 3 rewritten: one-
+      time manual import of the importer module, then a single
+      `ImportAllRibbonVBAFiles` macro call per rebuild; old multi-select
+      process kept as a documented manual fallback).
+    - G6's version-stamp section similarly rewritten (automated primary
+      path, manual steps demoted to fallback).
+    - Fixed a real live bug: G7's host-docx paragraph described the
+      per-document Templates-dialog attach method, conflicting with
+      BUILD.md's own Startup-folder recommendation elsewhere -- caused
+      operator confusion mid-session (unclear whether to save the host
+      docx, ribbon not loading on the next file). Standardized on
+      Startup-folder method, added explicit "close without saving"
+      instruction, and an explicit warning before G8 that a fresh
+      Save-As docx needs `py/strip_ribbon.py` run on it BEFORE opening
+      (skipping this reliably triggers "the macro can't be found" 6x --
+      hit live this session, root-caused, fixed).
+    - Found and fixed a second copy of the same G7 procedure (step 7 in
+      the original "Build steps 1-8" list) that still had the stale
+      per-document-attach wording after the first fix -- deduped by
+      pointing step 7 at the G7 section instead of re-describing it.
+    - Found and fixed 8 places hardcoding the literal string
+      "1.0.0+bc71416" as if it were a live instruction rather than an
+      illustrative example -- went stale the moment `VERSION` bumped,
+      pointing the operator at the wrong release folder/tag. Replaced
+      with a `<version>` placeholder (resolves to `aeRibbon/VERSION`'s
+      current contents), matching the pattern step 8 already used.
 
-  [SCRIPT] src/basSBL_VerseCountsGenerator.bas,
-           aeRibbon/src/basSBL_VerseCountsGenerator.bas
-    fb321e0    Cosmetic-only: the "Song of Songs" label passed to
-               ToOneBasedLongArray's `context` param (used only in error
-               messages, never compared against the canonical table) ->
-               "Song of Solomon" for consistency. No behavior change.
+  [DOC] aeRibbon/QA_CHECKLIST.md, py/strip_ribbon.py,
+        aeRibbon/docx/README_host_docx.md
+    Updated `Radiant-Word-Bible.docx` filename references to the new
+    generic `Word-Bible.docx` (see rename below). `README_host_docx.md`
+    also got the same Startup-folder-method + "close without saving" +
+    pre-G8-strip-warning clarifications as BUILD.md's G7 section.
 
-  [DOC] rvw/Plan_scholarly_grounding_2026-09-16.md
-    91140ba, 3338a9d  Task 2 resolution recorded: WEBU/engwebu_usfm
-               evidence, the operator decision, and the 11-step
-               implementation checklist (this session is executing it).
-    e76ef8d, 5dbed23  Task 1 closed: Zechariah 14:20 inconsistency found
-               and fixed (see below).
+  [SCRIPT] aeRibbon/docx/Radiant-Word-Bible.docx -> aeRibbon/docx/Word-Bible.docx
+    Renamed (plain filesystem rename -- `*.docx` is gitignored, no git
+    history to carry). The "Radiant Word Bible" name/content belongs to
+    the separate `aeRWB` repo; this repo's ribbon-testing fixture was
+    borrowing that name prematurely. Generic name until the
+    aeBibleClass/aeRWB naming relationship is fully resolved.
+    Also: a fresh Save-As of this file from `Blank Bible Copy.docm`
+    (2026-09-18) still carried an orphaned `customUI14.xml` (expected on
+    every Save-As per BUILD.md step 4a) -- fixed via
+    `wsl python3 py/strip_ribbon.py aeRibbon/docx/Word-Bible.docx`,
+    customUI guard re-run clean afterward.
 
-  [DOC] rvw/Plan_pass3_divine_names_2026-09-15.md
-    e76ef8d  Task 1 re-verification note + dated correction bullet for
-             Zechariah 14:20 (kept the original 2026-09-15/16 bullet
-             as-is per this project's progressive-history convention;
-             the correction is a new dated entry, not a rewrite).
+  [DOC] aeRibbon/VERSION, aeRibbon/RELEASES.md,
+        aeRibbon/releases/1.0.0+9689917/BUILD_RECORD.txt (new)
+    `VERSION` bumped `1.0.0+bc71416` -> `1.0.0+9689917` (dev SHA of the
+    About-dialog fix commit; aeRibbon v1.0.0 has never actually shipped,
+    so this is a SHA-suffix update per aeProductionRibbonPlan.md's own
+    scheme, not a semantic bump). `RELEASES.md` got its **first real row**
+    (previously an empty placeholder table since the doc's creation).
+    New `BUILD_RECORD.txt` records this session's G7 (all pass) and G8
+    (pass with 2 known non-blocking issues) results in full.
+    **Tagged locally: `v1.0.0+9689917`** (not yet pushed as of this
+    manifest -- see below).
 
-  [MEMORY] Claude auto-memory
-    project_scholarly_grounding_plan.md, project_rwb_phase4_plan.md,
-    MEMORY.md index - kept in sync throughout; no project action needed.
+  [DOC] adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
+        (separate repo)
+    Updated §10.6 items 1-5's status (all now dispositioned -- see
+    "Verified this session" below) and the "Estimated coding effort"
+    summary paragraph to close out this round.
 
-## Non-code changes (docm content, not exportable as a src/ diff)
+## Verified this session (2026-09-18)
 
-  Operator made this edit directly in Word, in `Blank Bible Copy.docm`
-  (not visible as a git diff outside rpt/docm-verses.txt, but load-
-  bearing for the fix above):
-    - Zechariah 14:20: "HOLY TO THE LORD" -> "HOLY TO GOD" (inscription
-      rendering made consistent with the identical Exodus 28:36/39:30
-      inscription - same Hebrew word, same construction, previously
-      rendered two different ways with no stated reason).
-
-  Committed as aeBibleClass `e76ef8d` (rpt/docm-verses.txt re-export +
-  plan-doc updates), hash filled in via `5dbed23`.
-
-## Verified this session (2026-09-17)
-
-  - `Run_All_SBL_Tests`: **361 tests run, 0 failures.** Confirms Task 2's
-    canonical-table/alias-map/test changes, plus two bonus fixes found
-    along the way (see basTEST_aeBibleCitationClass.bas entry above):
-    (a) `Test_CanonicalNamesAndSBLTable`'s first-space extraction bug
-    (16 multi-word SBL abbreviations were false-failing), now fixed and
-    wired into the suite; (b) that same test's original standalone
-    logger was clobbering `rpt/TestReport.txt` (aeBibleClass.cls's own
-    unrelated RUN_THE_TESTS report file) - fixed as a side effect of (a).
-  - `RUN_THE_TESTS` (the real, separate aeBibleClass.cls suite):
-    re-run by operator to regenerate a correct `rpt/TestReport.txt`
-    (confirmed - 87-test format restored, Word build-info footer intact,
-    `[2026-09-17 15:56:07] Completed`). Two pre-existing, unrelated
-    issues remain in that run, not caused by anything this session:
-    Tests 77/78 FAIL, Tests 82/83 hard-skipped (both already tracked
-    separately - see `project_docm_verse_export_bug` memory).
+  - About dialog: confirmed live in Word, shows `RIBBON_VERSION`
+    correctly (previously a hardcoded dev stub).
+  - `ImportAllRibbonVBAFiles`: confirmed live in Word, first real run --
+    deleted stale modules, reimported cleanly, stamped both version
+    artifacts correctly, compiled 0 errors.
+  - G7 (empty host docx smoke): **all pass** -- tab appeared,
+    `RibbonOnLoad`/`AutoExec` printed, no error dialogs.
+  - G8 (production docx navigation smoke, against `Word-Bible.docx`):
+    **pass with 2 known non-blocking issues**, both already tracked in
+    the conversion plan and dispositioned this session:
+    - Next-Chapter-after-Next-Book (`Alt,Y2,.` after `Alt,Y2,]`) --
+      **confirmed as a real, reproducible bug** (was previously just
+      "flagged" from a single occurrence). Root cause not diagnosed.
+      Deprioritized -- non-blocking for the aeBibleAddin/JS-taskpane
+      track, which doesn't share this navigation state.
+    - KeyTip focus-escape at first-verse (`Alt,Y2,<`) and first-book
+      (`Alt,Y2,[`) boundaries -- **won't-fix**, a VBA RibbonX
+      punctuation-KeyTip routing limitation, mouse workaround accepted
+      (single-user tool).
+    - Last-verse boundary (`Alt,Y2,>`) -- **pass**; an earlier "shows
+      nothing" report from a prior session was not reproducible in a
+      clean session with the VBA editor closed (suspected editor/
+      mid-edit interaction, not investigated further).
 
 ## Operator next steps
 
-  1. Confirm whether `aeRibbon.dotm`'s VBA project has also been updated
-     with `aeRibbon/src/aeBibleCitationClass.cls` - still open. If not,
-     import it there too and manually check the ribbon's reference box
-     (no automated test suite exists for that project).
-  2. Draft + operator-review + insert the "Song of Songs" editorial
-     front-matter note into the docm's Song of Solomon book introduction
-     (draft already proposed in-conversation, awaiting operator wording
-     approval), then re-run `ExportDocmVersesToRWBFormat` to confirm the
-     rwb-format output is unaffected, then close out Task 2's status
-     lines (checklist steps 7-11).
-  3. Optional, separate from Task 2: Tests 77/78 are FAILing again in
-     the just-regenerated `RUN_THE_TESTS` report - this is the same
-     recurring regression documented in the 2026-09-16 manifest (fix
-     `fcb8172` folded into `PromoteApprovedStyles`, but apparently not
-     run/saved since). Not blocking Task 2; flagged here so it isn't
-     lost.
+  1. **Push this session's work** -- both `aeBibleClass` (commits +
+     the `v1.0.0+9689917` tag) and `adaept5tudio` (conversion-plan doc
+     update) are committed locally as of this manifest but not yet
+     pushed.
+  2. **Cut the matching `aeBibleAddin v0.1.1` tag** -- this session
+     stayed on the `aeRibbon` side only. Per §10.7's recurring workflow:
+     point the JS taskpane's local smoke test at the refreshed
+     `Word-Bible.docx`, re-run the JS taskpane smoke test, append a row
+     to `aeBibleAddin/RELEASES.md`, tag.
+  3. Items 2 (last-verse boundary) and 4 (Next-Chapter-after-Next-Book)
+     remain open but deprioritized -- no action expected unless the JS
+     track surfaces a related issue that makes root-causing them
+     suddenly relevant.
 
-## Tests 77/78 gate - full verification + a real incident along the way (2026-09-17)
+## Session closed 2026-09-18
 
-  - First `RUN_THE_TESTS` after importing the new gate: halted correctly
-    in seconds with the expected message (docm still drifted at that
-    point) - gate confirmed working.
-  - Operator ran `WordEditingConfig`, confirmed `Default Paragraph Font`
-    -> Priority 34 in the Immediate window output, then ran
-    `RUN_THE_TESTS` again - this run **hung for 30+ minutes with no
-    error, no crash dialog, and misleading diagnostics** (no "(Not
-    Responding)" title, ~10% CPU, `Run > Break` appeared disabled). The
-    one reliable tell: the Immediate Window stopped accepting typed
-    input entirely, confirming the main thread was genuinely blocked,
-    not just idle-looking.
-  - **No safe way to interrupt it** (no physical Break key on this
-    keyboard, Break menu unusable, Immediate Window unresponsive) -
-    recovered by force-closing `WINWORD.EXE` via Task Manager and
-    reopening. Nothing outside that session's unsaved state was lost -
-    everything saved/exported earlier in the session (Zechariah 14:20,
-    Task 2 code changes) was unaffected. The unsaved `WordEditingConfig`
-    fix had to be re-run after reopening.
-  - **Working theory for the hang, not independently verified against
-    Microsoft docs:** skipping an explicit Debug -> Compile Project
-    after the earlier full `ImportAllVBAFiles` reimport left the project
-    compiling lazily/incrementally during execution, which can interact
-    badly with long-running native calls (`CountDoubleSpaces`'s `Find`
-    loop, Test 1, was the one observed stuck). Recorded as a new
-    standard workflow step in the
-    `feedback_importallvbafiles_error17` memory: always Compile Project
-    before running tests after a full reimport.
-  - **Second attempt, with Compile Project done first: fully clean.**
-    `rpt/TestReport.txt` ([2026-09-17 18:43:32], 897.31s): **85 PASS, 0
-    FAIL, 2 SKIP** (Tests 82/83, the pre-existing hard-skip). Tests
-    77/78 both PASS. Full suite confirmed working end-to-end with the
-    new gate in place.
-
-## New finding while verifying docs before this commit (2026-09-17)
-
-  `rpt/HeadingLog.txt` (regenerated by this session's `RUN_THE_TESTS`
-  run) shows the docm's actual printed H1 book-title heading for book 22
-  still reads **"SONG OF SONGS"** (`H1[22]`), unchanged - this is
-  document content, never touched by Task 2's citation-class code
-  changes (steps 1-6), and wasn't in the original 11-step checklist's
-  scope at all. By contrast `H1[19]` (Psalms) correctly still reads
-  "PSALMS," unaffected, since that was never in question. Added as new
-  checklist step 9a in `Plan_scholarly_grounding_2026-09-16.md` -
-  requires a manual heading-text edit in `Blank Bible Copy.docm`, same
-  as the Zechariah 14:20 fix, not something code can do.
-
-## Version/header alignment pass + em-dash/CRLF cleanup (2026-09-17, commit da86726)
-
-  Operator-led consistency pass across all VBA classes: BibleClass 0.1.2 ->
-  0.2.0, aeWordGitClass 0.0.9 -> 0.1.0, every class's Author/Date header
-  brought to a common September 17, 2026 baseline (added where missing,
-  bumped where stale). While reviewing that pass, found and fixed:
-  - 3 em-dashes silently dropped (not converted) during the header edits
-    in aeRibbonClass.cls - swept all 65 remaining em-dashes across 11
-    src/ files to ASCII hyphens while fixing it.
-  - That sweep's own `sed -i` silently stripped CRLF to LF on all 11
-    files it touched (never targeted `\r` at all) - reproduced this
-    project's already-documented "misimports as Module" failure mode
-    exactly (compile error, header showed `End` not `END`, Attribute
-    lines invisible). Fixed, verified via hex dump (not the line-count
-    heuristic that gave a false pass first time). Both gotchas recorded
-    in `feedback_vba_crlf` and `feedback_importallvbafiles_error17`
-    memories.
-  Verified end-to-end: `RUN_THE_TESTS` 85 PASS/0 FAIL/2 SKIP (known),
-  Tests 77/78 pass, version/date confirmed correct at runtime.
-  **Tagged `js-port-alignment-2026-09-17+v0.2.0`** (annotated) as the
-  stable alignment point for the JS port - see "Tasks for next JS pane
-  release" below.
-
-## i18n sub-plan (2026-09-17, separate repo `adaept5tudio`, commit 3073bc9)
-
-  New `docs/aeBibleClass-word-addin-i18n-uk-pilot-plan.md`: analysis of
-  whether a US->UK English punctuation/spelling variant should be the
-  first i18n run, to build the per-locale quote-nesting table already
-  flagged 2026-09-15 as a needed redesign (not another hardcoded
-  pattern). Recommendation: yes, scoped narrowly (quote-nesting table +
-  bounded spelling list, no RTL/CJK/UI-translation work), framed as
-  ordinary hardening not the master plan's separately-funded i18n track -
-  with an operator-confirmed caveat that the in-scope pieces must still
-  use real BCP-47 locale keys and symmetric US/UK table entries (not an
-  if-branch), so speed for language 1 doesn't create a retrofit for
-  language 3. Analysis only - nothing implemented. Cross-referenced from
-  the master conversion plan's new §13.
-
-## Least-cost / most-benefit list for next session
-
-  Small, cheap, high-value items surfaced by this session's work,
-  ordered roughly by cost (cheapest first):
-
-  1. **H1 book-title heading is now fixed** - `rpt/HeadingLog.txt`
-     regenerated at 21:04:16 shows `H1[22],SONG OF SOLOMON` (was "SONG OF
-     SONGS" as of the last check this session, 19:18:52) - landed
-     sometime late this session, not explicitly confirmed by the
-     operator in conversation. **Still needs verification: the running
-     page header.** `rpt/HeaderFooterStyleAudit.txt` (the report that
-     would show this) is stale from June 1st - nothing regenerated it
-     today, so its "SONG OF SONGS" reading can't be trusted either way.
-     Cheapest next step: re-run whatever regenerates that report (Test
-     84, `CountHeaderFooterStyleViolations`, per its own header comment)
-     or check the running header directly, to confirm Task 2 step 9a is
-     fully closed, not just half of it.
-  2. **Confirm/complete `aeRibbon.dotm`'s Task 2 import** - re-import
-     `aeRibbon/src/aeBibleCitationClass.cls` into that separate .dotm
-     project if not already done, then manually verify the ribbon's
-     reference box resolves "Song of Solomon"/"Song of Songs"/"Solomon"
-     correctly (no automated test suite exists there). Cheap, closes a
-     known-open item.
-  3. **Re-run `ExportDocmVersesToRWBFormat`** once 1-2 above land, to
-     confirm the rwb-format output is unaffected (Task 2 checklist step
-     10) - a few minutes, high confidence payoff.
-  4. **Close out Task 2 formally** (checklist step 11): update
-     `Plan_scholarly_grounding_2026-09-16.md`'s status line and the
-     `project_scholarly_grounding_plan` memory once 1-3 are done.
-  5. **Consider running `WordEditingConfig` + save at the *start* of each
-     session**, not just when Tests 77/78 fail - "Default Paragraph Font"
-     has now drifted back at least twice this session alone (any edit
-     seems to touch it). Doing it proactively could save a fast-gate halt
-     later, though this is a process suggestion, not a code change.
-  6. **Bigger, not "least cost" but worth flagging:** investigate *why*
-     "Default Paragraph Font" drifts so easily and whether
-     `PromoteApprovedStyles` could run automatically (e.g. on save/open)
-     rather than requiring a remembered manual step - would remove a
-     recurring friction point permanently instead of re-fixing it every
-     session. Worth a real look, not a quick win.
-
-## Tasks moving forward to the next JS pane (aeBibleAddin) release
-
-  1. **Sync the Song of Solomon canonical-name change.** `aeBibleAddin`'s
-     `src/data/canonical-books.ts`/`book-aliases.ts` were validated
-     against the VBA source's data when it still said "Song of Songs" -
-     that source (`aeBibleCitationClass.cls`) now canonically says "Song
-     of Solomon" (this session, commit `fb321e0`). Per `aeBibleAddin`'s
-     README, `aeBibleClass` is "the reference oracle" - this is a real,
-     concrete re-sync task, not optional polish.
-  2. **Use `js-port-alignment-2026-09-17+v0.2.0` as the next pinned
-     reference commit** for the JS port (per the master conversion
-     plan's "aeBibleClass dev SHA" tracking convention, §10.2) - this tag
-     marks the point where all classes are version/header-consistent and
-     the full test suite verified clean, a clean baseline to port/sync
-     against.
-  3. **Not applicable to the JS port, noted so it isn't mistakenly
-     chased:** the Zechariah 14:20 divine-name fix and the H1 heading
-     text fix are docm *content* changes - the JS port doesn't carry a
-     copy of verse text (Phase 1/2 are citation-parser/navigation logic
-     and metadata only), so these don't need any JS-side action.
-  4. **Relevant to Phase 3 (not started, not urgent yet):** the Tests
-     77/78 fast-fail gate and the "Default Paragraph Font" drift are
-     VBA/Word-Style-object concepts - worth keeping in mind whenever
-     Phase 3's style/audit-engine port actually starts, but no action
-     needed until then.
-  5. **The i18n UK pilot sub-plan** (`adaept5tudio/docs/aeBibleClass-word-addin-i18n-uk-pilot-plan.md`)
-     is the identified next i18n-related JS-port work item once
-     scheduled - not "next release," but the next i18n-track candidate
-     when picked up.
-
-## Session closed 2026-09-17
-
-  Long session, multiple threads: closed Phase 4 Pass 3 Task 1
-  (Zechariah 14:20), did most of Task 2 (Song of Solomon naming - steps
-  1-6 done and verified, front-matter inserted, steps 7-9/9a/10/11
-  remain), added and verified the Tests 77/78 fast-fail gate, recovered
-  from a genuine 30-minute VBA hang (root-caused and documented), did a
-  version/header consistency pass across all classes, found and fixed an
-  em-dash/CRLF corruption incident inside that same pass, tagged the
-  result as a JS-port alignment point, and wrote/committed a scoped i18n
-  analysis in the sibling `adaept5tudio` repo. Three memory files
-  updated/created this session (`feedback_importallvbafiles_error17`,
-  `feedback_vba_crlf` additions, project-tracking memories kept in
-  sync throughout). All work committed and pushed in both `aeBibleClass`
-  and `adaept5tudio`. See "Least-cost/most-benefit list" and "Tasks
-  moving forward to the next JS pane release" above for where to pick
-  up tomorrow.
+  Focused entirely on closing out the conversion plan's §10.6 items
+  1-5 (VBA fixes found during the 2026-09-12 baseline session) as the
+  low-hanging-fruit path to the next `aeBibleAddin` release. Fixed and
+  verified the About-dialog bug (item 1); built, live-tested, and
+  documented a new template build-bootstrap automation
+  (`basImportWordRibbonGitFiles.bas`) that closes the exact class of
+  gap that caused item 1 in the first place; found and fixed three
+  real `BUILD.md` instruction-drift bugs while actually running the
+  process end-to-end (per-document vs. Startup-folder attach conflict,
+  a duplicated G7 writeup, hardcoded version strings) -- all three were
+  live blockers hit mid-session, not theoretical review findings;
+  renamed the ribbon-testing docx away from a name that belongs to a
+  different repo; cut `aeRibbon`'s first real `RELEASES.md` row and a
+  local tag. Items 2/3/4/5 all reached a final disposition (verified/
+  won't-fix/confirmed-but-deprioritized) rather than staying open
+  indefinitely. Not yet pushed to remote as of this manifest.
