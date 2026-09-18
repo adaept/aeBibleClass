@@ -106,7 +106,7 @@ End Function
 
 ' =============================================================================
 ' Test_VerifyCitationBlock  (Public)
-' Integration test — 35-token study Bible citation block.
+' Integration test - 35-token study Bible citation block.
 ' Input is deliberately out of canonical order and contains one malformed
 ' verse spec (103:-11). Expected: 34 PASS, 1 FAIL; output in canonical order.
 ' En dashes use ChrW(8211); NormalizeRawInput converts them to ASCII hyphen.
@@ -333,7 +333,7 @@ Public Function VerifyCitationBlockReport(rawBlock As String, _
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    ' Parse errors (non-ASCII token, block too long) signal bad input — let the
+    ' Parse errors (non-ASCII token, block too long) signal bad input - let the
     ' caller display a user-friendly message rather than a raw error box.
     If Err.Number = vbObjectError + 1002 Or Err.Number = vbObjectError + 1003 Then
         failCount = -1
@@ -454,15 +454,15 @@ Public Sub RepairCitationBlockInParagraph()
         Dim seg As String
         Dim sep As String
         If canonBook = prevBook And thisChap = prevChap And thisChap <> "" Then
-            ' Same book, same chapter — comma-separated verse only
+            ' Same book, same chapter - comma-separated verse only
             seg = aeBibleCitationClass.RenderEnDash(versePart)
             sep = ", "
         ElseIf canonBook = prevBook Then
-            ' Same book, different chapter — semicolon, ch:verse
+            ' Same book, different chapter - semicolon, ch:verse
             seg = aeBibleCitationClass.RenderEnDash(numPart)
             sep = "; "
         Else
-            ' New book — full SBL short form
+            ' New book - full SBL short form
             seg = aeBibleCitationClass.RenderEnDash( _
                 aeBibleCitationClass.ToSBLShortForm(canonStr))
             sep = "; "
@@ -534,17 +534,17 @@ Public Sub Test_SingleChapterBooks()
     On Error GoTo PROC_ERR
     Dim Items As Collection
 
-    ' Obadiah — BookID 31
+    ' Obadiah - BookID 31
     Set Items = aeBibleCitationClass.ParseCitationBlock("Obad 3")
     aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Obad item Count"
     aeAssert.AssertEqual "Obadiah 1:3", CStr(Items(1)), "SingleChapter: Obad 3 -> Obadiah 1:3"
 
-    ' Philemon — BookID 57
+    ' Philemon - BookID 57
     Set Items = aeBibleCitationClass.ParseCitationBlock("Phlm 10")
     aeAssert.AssertEqual 1, Items.Count, "SingleChapter: Phlm item Count"
     aeAssert.AssertEqual "Philemon 1:10", CStr(Items(1)), "SingleChapter: Phlm 10 -> Philemon 1:10"
 
-    ' 2 John — BookID 63
+    ' 2 John - BookID 63
     Set Items = aeBibleCitationClass.ParseCitationBlock("2 John 5")
     aeAssert.AssertEqual 1, Items.Count, "SingleChapter: 2 John item Count"
     aeAssert.AssertEqual "2 John 1:5", CStr(Items(1)), "SingleChapter: 2 John 5 -> 2 John 1:5"
@@ -577,7 +577,7 @@ End Sub
 
 Public Sub Test_ctxChapter_Reset()
     On Error GoTo PROC_ERR
-    ' "2 Pet 2:4; Jude 6" — Jude must not inherit chapter 2 from 2 Peter
+    ' "2 Pet 2:4; Jude 6" - Jude must not inherit chapter 2 from 2 Peter
     Dim Items As Collection
     Set Items = aeBibleCitationClass.ParseCitationBlock("2 Pet 2:4; Jude 6")
     aeAssert.AssertEqual 2, Items.Count, "ctxChapter reset: item Count"
@@ -624,7 +624,7 @@ Public Sub Test_ToSBLShortForm()
     aeAssert.AssertEqual "1 Chr 29:10-13", _
         aeBibleCitationClass.ToSBLShortForm("1 Chronicles 29:10-13"), _
         "ToSBLShortForm: 1 Chronicles"
-    ' Single-chapter book — chapter number omitted
+    ' Single-chapter book - chapter number omitted
     aeAssert.AssertEqual "Jude 6", _
         aeBibleCitationClass.ToSBLShortForm("Jude 1:6"), _
         "ToSBLShortForm: Jude single-chapter"
@@ -681,7 +681,7 @@ Public Sub Test_WholeChapterReference()
         "WholeChapter: ToSBLShortForm Ezek 16"
 
     ' Chapter-switch within same book: bare number after semicolon is a chapter, not a verse
-    ' "Isa 45:17; 60" — 60 is chapter 60 of Isaiah, not verse 60 of chapter 45
+    ' "Isa 45:17; 60" - 60 is chapter 60 of Isaiah, not verse 60 of chapter 45
     Set Items = aeBibleCitationClass.ParseCitationBlock("Isa 45:17; 60")
     aeAssert.AssertEqual 2, Items.Count, "WholeChapter: Isa 45:17; 60 item Count"
     aeAssert.AssertEqual "Isaiah 45:17", CStr(Items(1)), "WholeChapter: Isa 45:17"

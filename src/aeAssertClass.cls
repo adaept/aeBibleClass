@@ -24,7 +24,7 @@ Option Compare Text
 
 ' ================================================================
 ' Author:   Peter F. Ennis
-' Date:     March 10, 2025
+' Date:     September 17, 2026
 ' Comment:  Assert Class for Word 365 VBA
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/aeBibleClass

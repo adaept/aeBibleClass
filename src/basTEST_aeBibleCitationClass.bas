@@ -487,7 +487,7 @@ Public Sub Test_Stage13a_BookContextPropagation()
     aeAssert.AssertTrue Not valid, "Stage13a neg: Jer 99:1 rejected"
 
     '------------------------------------------
-    ' Negative: Jude 99 — single-chapter book;
+    ' Negative: Jude 99 - single-chapter book;
     ' Chapter=0 normalized to 1; verse 99 > max (25)
     '------------------------------------------
     valid = aeBibleCitationClass.ValidateSBLReference(65, "Jude", 0, "99", ModeSBL, True)

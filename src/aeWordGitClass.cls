@@ -24,7 +24,7 @@ Option Compare Text
 
 '================================================================================
 ' Author:   Peter F. Ennis
-' Date:     September 3, 2018
+' Date:     September 17, 2026
 ' Comment:  Create class for Revision Control of Word VBA
 ' History:  See comment details, basChangeLog_aeWordGit, commit messages on GitHub
 ' GitHub:   https://github.com/adaept/aeWordGit
@@ -32,8 +32,8 @@ Option Compare Text
 
 Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal lngMilliSeconds As Long)
 
-Private Const aeWordGitVERSION As String = "0.0.9"
-Private Const aeWordGitVERSION_DATE As String = "March 28, 2026"
+Private Const aeWordGitVERSION As String = "0.1.0"
+Private Const aeWordGitVERSION_DATE As String = "September 17, 2026"
 
 Private Type mySetupType
     SourceFolder As String

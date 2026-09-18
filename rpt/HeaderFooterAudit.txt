@@ -2,8 +2,8 @@
 Total Sections: 145
 --- ASCII Value Counts and Descriptions ---
 ASCII=9 | Count=84 | Desc=[Tab]
-ASCII=32 | Count=1 | Desc= 
-ASCII=48 | Count=141 | Desc=0
+ASCII=105 | Count=1 | Desc=i
+ASCII=49 | Count=149 | Desc=1
 ASCII=71 | Count=2 | Desc=G
 ASCII=69 | Count=6 | Desc=E
 ASCII=76 | Count=3 | Desc=L
@@ -11,7 +11,6 @@ ASCII=78 | Count=3 | Desc=N
 ASCII=68 | Count=2 | Desc=D
 ASCII=74 | Count=9 | Desc=J
 ASCII=82 | Count=3 | Desc=R
-ASCII=49 | Count=8 | Desc=1
 ASCII=50 | Count=8 | Desc=2
 ASCII=80 | Count=4 | Desc=P
 ASCII=83 | Count=1 | Desc=S

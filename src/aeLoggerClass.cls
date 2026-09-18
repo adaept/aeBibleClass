@@ -29,6 +29,14 @@ Option Compare Text
 ' other modules that also omit Option Private Module.
 
 ' ================================================================
+' Author:   Peter F. Ennis
+' Date:     September 17, 2026
+' Comment:  Logger Class for Word 365 VBA
+' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
+' GitHub:   https://github.com/adaept/aeBibleClass
+' ================================================================
+
+' ================================================================
 '  LOGGING CLASS - AUDIT-READY, UNICODE-SAFE, SESSION-AWARE
 '  Author: Peter
 '  Purpose:

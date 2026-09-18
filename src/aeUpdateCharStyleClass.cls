@@ -23,6 +23,14 @@ Implements IaeLongProcessClass
 'This library is distributed WITHOUT ANY WARRANTY; without even the implied
 'warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+' ================================================================
+' Author:   Peter F. Ennis
+' Date:     September 17, 2026
+' Comment:  aeUpdateCharStyleClass Class for Word 365 VBA
+' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
+' GitHub:   https://github.com/adaept/aeBibleClass
+' ================================================================
+
 ' =============================================================================
 ' aeUpdateCharStyleClass - IaeLongProcessClass implementation
 ' -----------------------------------------------------------------------------

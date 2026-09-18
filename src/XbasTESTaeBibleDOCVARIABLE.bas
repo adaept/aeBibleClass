@@ -479,7 +479,7 @@ End Sub
 
 Sub TestPageNumbers()
     On Error GoTo PROC_ERR
-    GoTo NewTestament   ' Added manually — checking New Testament only; Old Testament block retained for future use
+    GoTo NewTestament   ' Added manually - checking New Testament only; Old Testament block retained for future use
 
     ' Old Testament
     VerifyBookNameFromDocVariable "Gen", "Genesis"

@@ -174,10 +174,10 @@ PASS              Copy ()       Test = 86     0             0             CountS
   Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned("Psalms BOOK", wdAlignParagraphLeft) should return 0
 PASS              Copy ()       Test = 87     0             0             CountMarkerStyleOutsideVerseText
   Rule: no 'Chapter Verse marker'/'Verse marker' character-styled run appears inside a paragraph NOT styled 'VerseText' (a marker-carrying paragraph left mis-styled is counted by AuditVerseMarkerStructure but invisible to ExportDocmVersesToRWBFormat - see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md) - CountMarkerStyleOutsideVerseText should return 0
-The Total Runtime: 897.31 seconds
-[2026-09-17 18:43:32] Completed
-BibleClass VERSION: 0.1.2
-BibleClass VERSION_DATE: January 31, 2026
+The Total Runtime: 778.68 seconds
+[2026-09-17 20:35:38] Completed
+BibleClass VERSION: 0.2.0
+BibleClass VERSION_DATE: September 17, 2026
 == Word Build Info ==
 Application Name: Microsoft Word
 Platform Version: 16.0

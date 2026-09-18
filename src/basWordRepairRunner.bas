@@ -162,7 +162,7 @@ Public Sub RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage(pag
     Dim prefixY As Single, digitY As Single, digitX As Single
     Dim nextWords As String, lookAhead As Word.Range, token As Word.Range, wCount As Integer
     Dim logBuffer As String
-    Const ASCII_FORMFEED As Long = 12   ' Chr(12) — form feed; appears in malformed verse markers
+    Const ASCII_FORMFEED As Long = 12   ' Chr(12) - form feed; appears in malformed verse markers
     Dim ascii12Count As Long
     Dim ascii160MissingCount As Long
     Dim suffix160Count As Long

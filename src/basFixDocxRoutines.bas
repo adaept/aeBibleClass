@@ -63,7 +63,7 @@ Public Sub DefineBodyTextStyle()
         With .ParagraphFormat
             .Alignment = wdAlignParagraphJustify
             .LineSpacingRule = wdLineSpaceExactly
-            .LineSpacing = 10                   ' Exactly 10pt — matches original docm
+            .LineSpacing = 10                   ' Exactly 10pt - matches original docm
             .FirstLineIndent = 0                ' no first-line indent on Bible body text
             .LeftIndent = 0
             .SpaceBefore = 0
@@ -695,17 +695,17 @@ End Sub
 ' ReplaceNormalWithBodyText
 ' PURPOSE:
 '   Replaces every paragraph whose style is EXACTLY "Normal" with
-'   BodyText.  This is the primary fix for Bible text paragraphs —
+'   BodyText.  This is the primary fix for Bible text paragraphs -
 '   the author used Normal throughout; BodyText is the semantic
 '   replacement (USFM \p).
 '
 ' SCOPE:
 '   doc.Content only (main body story).  Headers, footers, and
-'   footnotes are not affected — they carry their own styles.
+'   footnotes are not affected - they carry their own styles.
 '
-' SAFETY — EXACT MATCH ONLY:
+' SAFETY - EXACT MATCH ONLY:
 '   Uses paragraph iteration with NameLocal = "Normal" exact match.
-'   Find/Replace must NOT be used here — Word's Find/Replace with a
+'   Find/Replace must NOT be used here - Word's Find/Replace with a
 '   style also matches child styles (styles based on Normal such as
 '   Words of Jesus, EmphasisRed, EmphasisBlack) and would destroy
 '   their semantic assignments.
@@ -738,7 +738,7 @@ Public Sub ReplaceNormalWithBodyText()
         GoTo PROC_EXIT
     End If
 
-    ' Count exact Normal paragraphs (NameLocal match — child styles excluded)
+    ' Count exact Normal paragraphs (NameLocal match - child styles excluded)
     lBefore = 0
     For Each oPara In oDoc.Content.Paragraphs
         If oPara.style.NameLocal = "Normal" Then lBefore = lBefore + 1
@@ -756,7 +756,7 @@ Public Sub ReplaceNormalWithBodyText()
                        "ReplaceNormalWithBodyText")
     If lResponse = vbNo Then GoTo PROC_EXIT
 
-    ' Iterate and replace — exact NameLocal match only
+    ' Iterate and replace - exact NameLocal match only
     lReplaced = 0
     For Each oPara In oDoc.Content.Paragraphs
         If oPara.style.NameLocal = "Normal" Then
@@ -904,7 +904,7 @@ Public Sub DefineAppendixBodyStyle()
         With .ParagraphFormat
             .Alignment = wdAlignParagraphJustify
             .LineSpacingRule = wdLineSpaceExactly
-            .LineSpacing = 10                   ' Exactly 10pt — matches BodyText
+            .LineSpacing = 10                   ' Exactly 10pt - matches BodyText
             .FirstLineIndent = 0
             .LeftIndent = 0
             .SpaceBefore = 0
@@ -1125,7 +1125,7 @@ Public Sub DefineAuthorStyles()
         Debug.Print "DefineAuthorStyles: AuthorQuote already exists -- skipped."
     End If
 
-    ' Note: AuthorRef (character style) removed — replaced by AuthorBookRef (paragraph style).
+    ' Note: AuthorRef (character style) removed - replaced by AuthorBookRef (paragraph style).
     '       See DefineAuthorBookRefStyle.
 
     MsgBox "AuthorBodyText, AuthorSectionHead, AuthorQuote - done." & vbCrLf & _
@@ -1222,13 +1222,13 @@ End Sub
 ' DefineListItemBodyStyle
 ' PURPOSE:
 '   Creates the ListItemBody paragraph style.
-'   Continuation paragraph following a ListItem — plain body text
+'   Continuation paragraph following a ListItem - plain body text
 '   at the same indent level.
 '
 ' SPEC:
 '   Font:           Carlito 11pt, not Bold, not Italic
 '   Alignment:      Left (not justified)
-'   LeftIndent:     36pt (0.5 inch — aligns under ListItem)
+'   LeftIndent:     36pt (0.5 inch - aligns under ListItem)
 '   FirstLineIndent:0
 '   LineSpacing:    Single
 '   SpaceAfter:     11pt
@@ -1302,7 +1302,7 @@ End Sub
 ' DefineAuthorBookRefStyle
 ' PURPOSE:
 '   Creates the AuthorBookRef paragraph style.
-'   Cross-reference lookup entries — book name with tab-leader
+'   Cross-reference lookup entries - book name with tab-leader
 '   dot leader to right-aligned page number.
 '   Replaces the former AuthorRef character style.
 '

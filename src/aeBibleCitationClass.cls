@@ -24,7 +24,7 @@ Option Compare Text
 
 ' ================================================================
 ' Author:   Peter F. Ennis
-' Date:     March 10, 2025
+' Date:     September 17, 2026
 ' Comment:  Bible Citation Parser for Word 365 VBA
 '           - This is a Deterministic Structural Parser (DSP)
 ' History:  See comment details, basChangeLog_aeBibleClass, commit messages on GitHub
@@ -155,7 +155,6 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     Resume PROC_EXIT
 End Sub
-
 
 Public Sub ResetBookAliasMap()
     Set aliasMap = Nothing
@@ -1739,7 +1738,7 @@ End Function
 '=====================================================
 ' IsBooklessChapRef  (Stage 13a)
 ' Returns True when seg begins with a numeric chapter
-' and a colon — meaning it is a chapter:verse or
+' and a colon - meaning it is a chapter:verse or
 ' chapter:verse-range segment with no book alias.
 ' Examples: "23:1", "103:8-11"
 '=====================================================
@@ -2555,9 +2554,9 @@ End Function
 '=====================================================
 ' ParseCitationBlock  (Public)
 ' Two-level parser for study Bible citation blocks.
-'   Outer split: ";" — major segments; book context
+'   Outer split: ";" - major segments; book context
 '                      propagates across segments.
-'   Inner split: "," — verse sub-Items within segment.
+'   Inner split: "," - verse sub-Items within segment.
 ' Calls NormalizeRawInput first (strips line breaks,
 ' normalizes en-dash to ASCII hyphen).
 ' Raises on unresolved book alias.
@@ -2647,11 +2646,11 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
         End If
 
         '------------------------------------------
-        ' Case 3: no new book — bare chapter:verse
+        ' Case 3: no new book - bare chapter:verse
         '------------------------------------------
         If Not newBook Then refPart = seg
 
-        ' Non-ASCII token: not a digit, not ASCII alpha — raise descriptive error
+        ' Non-ASCII token: not a digit, not ASCII alpha - raise descriptive error
         ' rather than silently misattributing the reference (Case 3 fall-through).
         If Not newBook And Len(p0) > 0 Then
             If AscW(Left$(p0, 1)) > 127 Then
@@ -2716,7 +2715,7 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
                     eV = CLng(Mid$(vsRaw, dp + 1))
                     isRng = True
                 Else
-                    ' malformed range (e.g. ":-11") — sentinel verse 0 produces FAIL
+                    ' malformed range (e.g. ":-11") - sentinel verse 0 produces FAIL
                     Result.Add ctxCanon & " " & ctxChapter & ":0"
                     GoTo NEXT_VS
                 End If
@@ -2725,7 +2724,7 @@ Public Function ParseCitationBlock(ByVal rawBlock As String) As Collection
                 eV = sV
                 isRng = False
             Else
-                ' malformed verse spec — sentinel verse 0 produces FAIL
+                ' malformed verse spec - sentinel verse 0 produces FAIL
                 Result.Add ctxCanon & " " & ctxChapter & ":0"
                 GoTo NEXT_VS
             End If
@@ -2777,7 +2776,7 @@ End Function
 '=====================================================
 ' SortCitationBlock  (Public)
 ' Stage 13b: sorts a Collection of canonical reference
-' strings by (BookID, Chapter, StartVerse) — canonical
+' strings by (BookID, Chapter, StartVerse) - canonical
 ' book order Gen=1 through Rev=66. Required before
 ' Stage 14 Canonical Compression, which assumes
 ' adjacency ordering.

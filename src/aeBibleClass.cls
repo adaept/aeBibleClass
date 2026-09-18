@@ -87,8 +87,8 @@ Private Sub Class_Initialize()
         Application.Caption = Application.VBE.ActiveVBProject.Name & " " & BibleClassVERSION
     End If
     Debug.Print "Class_Initialize"
-    BibleClassVERSION = "0.1.2"
-    BibleClassVERSION_DATE = "January 31, 2026"
+    BibleClassVERSION = "0.2.0"
+    BibleClassVERSION_DATE = "September 17, 2026"
     ' Reset OneTest for each run
     OneTest = 0
     SkippedTestNum = 0
@@ -1866,7 +1866,7 @@ End Function
 '   U+2060  WORD JOINER
 '
 ' Returns:
-'   Long — total Count across all story ranges.
+'   Long - total Count across all story ranges.
 '   0 = clean (expected pass); > 0 = violations found (fail).
 '
 ' Test: RUN_THE_TESTS(73)
