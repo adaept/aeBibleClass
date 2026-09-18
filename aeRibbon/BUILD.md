@@ -328,15 +328,27 @@ navigation is tested here** — the host docx has no Bible content.
 1. **Create `aeRibbon-host.docx`** (one-time) per
    `aeRibbon/docx/README_host_docx.md`:
    - Word → File → New → Blank document.
-   - Paste this single paragraph as the only content:
-     > Attach `aeRibbon.dotm` via File > Options > Add-ins (Manage:
-     > Templates → Go → Add), then open a Radiant Word Bible `.docx` to
-     > see the **Radiant Word Bible** ribbon tab.
+   - Paste this single paragraph as the only content — deliberately
+     generic, no specific filename (the production docx's name may
+     change; this fixture shouldn't need re-authoring when it does):
+     > Attach `aeRibbon.dotm` (see `aeRibbon/BUILD.md`'s "Attaching the
+     > template"), then open the current production Bible `.docx` to
+     > see the **Radiant Word Bible** ribbon tab in context.
    - File → Save As → Word Document (`*.docx`) →
      `C:\adaept\aeBibleClass\aeRibbon\docx\aeRibbon-host.docx`.
    - Close Word.
 
-2. **Run the smoke check.**
+2. **Attach the template.** Use the **Startup-folder method** (see
+   "Attaching the template" above) — not the per-document
+   Templates-dialog method the paragraph above might otherwise suggest.
+   Reason: Startup-folder attachment is global (applies to every
+   document in the session, including G8's production docx, with no
+   re-attaching), whereas per-document attachment only affects the one
+   `.docx` it was set on and — if saved — permanently embeds a
+   machine-specific template path into that file. Copy `aeRibbon.dotm`
+   to `%APPDATA%\Microsoft\Word\STARTUP\` before continuing.
+
+3. **Run the smoke check.**
    - Start a fresh Word session (so the Startup-folder template
      re-loads cleanly).
    - Open `aeRibbon-host.docx`.
@@ -350,8 +362,13 @@ navigation is tested here** — the host docx has no Bible content.
    - Open the VBA editor (Alt+F11) → Immediate window (Ctrl+G). Confirm
      load messages from `RibbonOnLoad` and `AutoExec` appear (these are
      `Debug.Print` statements in the source).
+   - **Close `aeRibbon-host.docx` without saving.** With the
+     Startup-folder method, nothing document-specific changed — there's
+     nothing worth keeping. (If you used per-document Attach instead,
+     saving would bake a machine-specific template path into this
+     fixture — another reason not to.)
 
-3. **Record the result** in
+4. **Record the result** in
    `aeRibbon/releases/1.0.0+bc71416/BUILD_RECORD.txt`:
    - Tab appeared: yes/no
    - RibbonOnLoad printed: yes/no
@@ -360,6 +377,17 @@ navigation is tested here** — the host docx has no Bible content.
 
 G7 closes when all three "expected" items are met and there are no
 error dialogs.
+
+**Before moving on to G8:** G8 uses a *different* file (the production
+Bible `.docx`), and that file is not safe to open straight after a
+Save-As. Every fresh Save-As from the dev `.docm` carries an orphaned
+`customUI/customUI14.xml` with no macros behind it — opening it directly
+triggers "the macro can't be found" **six times** and the ribbon fails to
+load (a known, expected artifact of Save-As, not a bug — see step 4a
+below). Run the full "Producing the production Bible `.docx`" procedure
+(Save-As → `py/strip_ribbon.py` → guard must return nothing) **before**
+opening it, every time, even if a same-named file already exists from an
+earlier session.
 
 ### G8 — production Bible docx navigation smoke
 
