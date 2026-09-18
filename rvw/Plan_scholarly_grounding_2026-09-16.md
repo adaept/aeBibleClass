@@ -331,19 +331,22 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
 - [ ] 8. Operator review of the front-matter wording before insertion.
 - [ ] 9. Insert the reviewed front-matter text into the docm at Song of
       Solomon's introduction.
-- [ ] 9a. **New, found 2026-09-17 while verifying doc updates before a
-      commit:** the docm's actual printed H1 book-title heading still
-      reads **"SONG OF SONGS"** (confirmed via `rpt/HeadingLog.txt`,
-      `H1[22]`) - this is document *content*, entirely separate from
-      the citation-class canonical table steps 1-6 changed, and was
-      never in this checklist's original scope. By contrast, `H1[19]`
-      (Psalms) correctly still reads "PSALMS," unaffected, since that
-      was never in question. Per Task 2's decision, this heading should
-      read "SONG OF SOLOMON" (all-caps, matching this document's
-      existing H1 convention for every other book) to match WEBU's own
-      `\h`/`\toc1`/`\mt1` title. **Requires a manual edit in
-      `Blank Bible Copy.docm`** (same as the Zechariah 14:20 fix) -
-      not something code can do.
+- [x] 9a. **New, found 2026-09-17 while verifying doc updates before a
+      commit:** the docm's actual printed H1 book-title heading initially
+      still read **"SONG OF SONGS"** (confirmed via `rpt/HeadingLog.txt`,
+      `H1[22]`) - document *content*, entirely separate from the
+      citation-class canonical table steps 1-6 changed, and never in this
+      checklist's original scope. By contrast, `H1[19]` (Psalms) correctly
+      stayed "PSALMS," unaffected, since that was never in question.
+      **H1 heading fixed** - a later `rpt/HeadingLog.txt` regeneration
+      this same session (21:04:16) shows `H1[22],SONG OF SOLOMON`.
+      **Still unverified: the running page header** (Section 49's
+      `TheHeaders`-styled text, per `rpt/HeaderFooterStyleAudit.txt`) -
+      that report is stale (last regenerated June 1st, predates this
+      whole session), so it can't confirm either way whether the running
+      header got the same fix. Re-run whatever regenerates it (Test 84,
+      `CountHeaderFooterStyleViolations`) or check directly before
+      considering step 9a fully closed.
 - [ ] 10. Re-run `ExportDocmVersesToRWBFormat`; confirm the rwb-format
       output for this book still reads "Song of Solomon N:V" (i.e. the
       `663c36e` override remains consistent, now redundant-but-harmless

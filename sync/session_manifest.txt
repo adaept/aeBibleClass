@@ -209,4 +209,129 @@
   requires a manual heading-text edit in `Blank Bible Copy.docm`, same
   as the Zechariah 14:20 fix, not something code can do.
 
-## Session in progress - not yet closed 2026-09-17
+## Version/header alignment pass + em-dash/CRLF cleanup (2026-09-17, commit da86726)
+
+  Operator-led consistency pass across all VBA classes: BibleClass 0.1.2 ->
+  0.2.0, aeWordGitClass 0.0.9 -> 0.1.0, every class's Author/Date header
+  brought to a common September 17, 2026 baseline (added where missing,
+  bumped where stale). While reviewing that pass, found and fixed:
+  - 3 em-dashes silently dropped (not converted) during the header edits
+    in aeRibbonClass.cls - swept all 65 remaining em-dashes across 11
+    src/ files to ASCII hyphens while fixing it.
+  - That sweep's own `sed -i` silently stripped CRLF to LF on all 11
+    files it touched (never targeted `\r` at all) - reproduced this
+    project's already-documented "misimports as Module" failure mode
+    exactly (compile error, header showed `End` not `END`, Attribute
+    lines invisible). Fixed, verified via hex dump (not the line-count
+    heuristic that gave a false pass first time). Both gotchas recorded
+    in `feedback_vba_crlf` and `feedback_importallvbafiles_error17`
+    memories.
+  Verified end-to-end: `RUN_THE_TESTS` 85 PASS/0 FAIL/2 SKIP (known),
+  Tests 77/78 pass, version/date confirmed correct at runtime.
+  **Tagged `js-port-alignment-2026-09-17+v0.2.0`** (annotated) as the
+  stable alignment point for the JS port - see "Tasks for next JS pane
+  release" below.
+
+## i18n sub-plan (2026-09-17, separate repo `adaept5tudio`, commit 3073bc9)
+
+  New `docs/aeBibleClass-word-addin-i18n-uk-pilot-plan.md`: analysis of
+  whether a US->UK English punctuation/spelling variant should be the
+  first i18n run, to build the per-locale quote-nesting table already
+  flagged 2026-09-15 as a needed redesign (not another hardcoded
+  pattern). Recommendation: yes, scoped narrowly (quote-nesting table +
+  bounded spelling list, no RTL/CJK/UI-translation work), framed as
+  ordinary hardening not the master plan's separately-funded i18n track -
+  with an operator-confirmed caveat that the in-scope pieces must still
+  use real BCP-47 locale keys and symmetric US/UK table entries (not an
+  if-branch), so speed for language 1 doesn't create a retrofit for
+  language 3. Analysis only - nothing implemented. Cross-referenced from
+  the master conversion plan's new §13.
+
+## Least-cost / most-benefit list for next session
+
+  Small, cheap, high-value items surfaced by this session's work,
+  ordered roughly by cost (cheapest first):
+
+  1. **H1 book-title heading is now fixed** - `rpt/HeadingLog.txt`
+     regenerated at 21:04:16 shows `H1[22],SONG OF SOLOMON` (was "SONG OF
+     SONGS" as of the last check this session, 19:18:52) - landed
+     sometime late this session, not explicitly confirmed by the
+     operator in conversation. **Still needs verification: the running
+     page header.** `rpt/HeaderFooterStyleAudit.txt` (the report that
+     would show this) is stale from June 1st - nothing regenerated it
+     today, so its "SONG OF SONGS" reading can't be trusted either way.
+     Cheapest next step: re-run whatever regenerates that report (Test
+     84, `CountHeaderFooterStyleViolations`, per its own header comment)
+     or check the running header directly, to confirm Task 2 step 9a is
+     fully closed, not just half of it.
+  2. **Confirm/complete `aeRibbon.dotm`'s Task 2 import** - re-import
+     `aeRibbon/src/aeBibleCitationClass.cls` into that separate .dotm
+     project if not already done, then manually verify the ribbon's
+     reference box resolves "Song of Solomon"/"Song of Songs"/"Solomon"
+     correctly (no automated test suite exists there). Cheap, closes a
+     known-open item.
+  3. **Re-run `ExportDocmVersesToRWBFormat`** once 1-2 above land, to
+     confirm the rwb-format output is unaffected (Task 2 checklist step
+     10) - a few minutes, high confidence payoff.
+  4. **Close out Task 2 formally** (checklist step 11): update
+     `Plan_scholarly_grounding_2026-09-16.md`'s status line and the
+     `project_scholarly_grounding_plan` memory once 1-3 are done.
+  5. **Consider running `WordEditingConfig` + save at the *start* of each
+     session**, not just when Tests 77/78 fail - "Default Paragraph Font"
+     has now drifted back at least twice this session alone (any edit
+     seems to touch it). Doing it proactively could save a fast-gate halt
+     later, though this is a process suggestion, not a code change.
+  6. **Bigger, not "least cost" but worth flagging:** investigate *why*
+     "Default Paragraph Font" drifts so easily and whether
+     `PromoteApprovedStyles` could run automatically (e.g. on save/open)
+     rather than requiring a remembered manual step - would remove a
+     recurring friction point permanently instead of re-fixing it every
+     session. Worth a real look, not a quick win.
+
+## Tasks moving forward to the next JS pane (aeBibleAddin) release
+
+  1. **Sync the Song of Solomon canonical-name change.** `aeBibleAddin`'s
+     `src/data/canonical-books.ts`/`book-aliases.ts` were validated
+     against the VBA source's data when it still said "Song of Songs" -
+     that source (`aeBibleCitationClass.cls`) now canonically says "Song
+     of Solomon" (this session, commit `fb321e0`). Per `aeBibleAddin`'s
+     README, `aeBibleClass` is "the reference oracle" - this is a real,
+     concrete re-sync task, not optional polish.
+  2. **Use `js-port-alignment-2026-09-17+v0.2.0` as the next pinned
+     reference commit** for the JS port (per the master conversion
+     plan's "aeBibleClass dev SHA" tracking convention, §10.2) - this tag
+     marks the point where all classes are version/header-consistent and
+     the full test suite verified clean, a clean baseline to port/sync
+     against.
+  3. **Not applicable to the JS port, noted so it isn't mistakenly
+     chased:** the Zechariah 14:20 divine-name fix and the H1 heading
+     text fix are docm *content* changes - the JS port doesn't carry a
+     copy of verse text (Phase 1/2 are citation-parser/navigation logic
+     and metadata only), so these don't need any JS-side action.
+  4. **Relevant to Phase 3 (not started, not urgent yet):** the Tests
+     77/78 fast-fail gate and the "Default Paragraph Font" drift are
+     VBA/Word-Style-object concepts - worth keeping in mind whenever
+     Phase 3's style/audit-engine port actually starts, but no action
+     needed until then.
+  5. **The i18n UK pilot sub-plan** (`adaept5tudio/docs/aeBibleClass-word-addin-i18n-uk-pilot-plan.md`)
+     is the identified next i18n-related JS-port work item once
+     scheduled - not "next release," but the next i18n-track candidate
+     when picked up.
+
+## Session closed 2026-09-17
+
+  Long session, multiple threads: closed Phase 4 Pass 3 Task 1
+  (Zechariah 14:20), did most of Task 2 (Song of Solomon naming - steps
+  1-6 done and verified, front-matter inserted, steps 7-9/9a/10/11
+  remain), added and verified the Tests 77/78 fast-fail gate, recovered
+  from a genuine 30-minute VBA hang (root-caused and documented), did a
+  version/header consistency pass across all classes, found and fixed an
+  em-dash/CRLF corruption incident inside that same pass, tagged the
+  result as a JS-port alignment point, and wrote/committed a scoped i18n
+  analysis in the sibling `adaept5tudio` repo. Three memory files
+  updated/created this session (`feedback_importallvbafiles_error17`,
+  `feedback_vba_crlf` additions, project-tracking memories kept in
+  sync throughout). All work committed and pushed in both `aeBibleClass`
+  and `adaept5tudio`. See "Least-cost/most-benefit list" and "Tasks
+  moving forward to the next JS pane release" above for where to pick
+  up tomorrow.
