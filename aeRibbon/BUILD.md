@@ -26,6 +26,11 @@ From `aeRibbon/src/`:
 | `basUIStrings.bas`               | dev `src/` | as-is |
 | `aeBibleCitationClass.cls`       | dev `src/` | trimmed |
 | `aeRibbonClass.cls`              | dev `src/` | trimmed |
+| `basImportWordRibbonGitFiles.bas`| hand-authored directly in `aeRibbon/src/` (not routed through the dev-src trim pipeline — it isn't reachable from any ribbon callback, so the trim would drop it anyway) | build tool, ships in the template but is not part of the ribbon's own callback surface |
+
+`basImportWordRibbonGitFiles.bas` is the template's own build-bootstrap module —
+see "Step 3" below. It is imported **once**, manually; every rebuild after that
+is a single macro call, not a file-by-file re-import.
 
 Files intentionally **not** included:
 
@@ -84,7 +89,9 @@ On a rebuild (anything after the very first build), steps 1–2 are usually
 already done. Skip them and start at **step 3 (Import VBA modules)** when
 **all three** of these are true:
 
-- `aeRibbon/src/` contains exactly the **4 `.bas` + 2 `.cls`** files
+- `aeRibbon/src/` contains exactly the **4 `.bas` + 2 `.cls`** files the
+  trim pipeline produces, plus the hand-authored
+  `basImportWordRibbonGitFiles.bas` (5 `.bas` + 2 `.cls`, 7 files total) —
   listed in "Files going into the template" above (no more, no less).
 - `aeRibbon/template/aeRibbon.dotm` already exists.
 - `aeRibbon/template/customUI14.xml` is byte-identical to the repo-root
@@ -130,34 +137,70 @@ has changed, do step 2.
    (Per `[[feedback_ribbon_injector]]` — never use RibbonX Editor for this
    project; it has a known load bug.)
 
-3. **Import VBA modules.** Open `aeRibbon.dotm` in Word, then Alt+F11.
+3. **Import VBA modules.**
+
+   **One-time bootstrap (first build only, or if the importer module is ever
+   missing/deleted).** Open `aeRibbon.dotm` in Word, then Alt+F11. In the VBA
+   editor: File → Import File... → select
+   `aeRibbon/src/basImportWordRibbonGitFiles.bas` only. This is the only file
+   you ever import by hand.
+
+   **Every rebuild after that (including this one, if the bootstrap module is
+   already present):** in the VBA editor's Immediate window (Ctrl+G), run:
+
+   ```vb
+   ImportAllRibbonVBAFiles
+   ```
+
+   **Verified working (2026-09-18), first live run:** stamped
+   `RIBBON_VERSION = "1.0.0+9689917"` correctly, confirmed via
+   `? RIBBON_VERSION` and `? ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value`
+   in the Immediate window — both printed the expected string; compiled clean.
+
+   This single macro call:
+   - **Deletes every other module/class** currently in the template (asks
+     for confirmation first, lists what will be removed) — closes the gap
+     this doc used to leave implicit: previous builds relied on the
+     operator remembering to clear stale modules before re-importing.
+   - **Re-imports every `*.bas`/`*.cls`/`*.frm` found in `aeRibbon/src/`** —
+     whatever `py/ribbon_export_trim.py` most recently produced, no
+     hand-picked file list to keep in sync with the table above. Adding a
+     new file to the trim output later needs no change to this module.
+   - **Auto-stamps `RIBBON_VERSION`** (in `basBibleRibbonSetup`'s live
+     `CodeModule`) **and the `aeRibbonVersion` custom document property**,
+     both read straight from `aeRibbon/VERSION` — replaces the manual
+     find-the-line-and-retype-it step and the manual Immediate-window
+     property-add step below (kept as a documented fallback in case the
+     importer itself needs debugging).
+
+   After it finishes, verify in Project Explorer that the two `.cls` files
+   landed under **Class Modules** and the `.bas` files under **Modules**. If
+   a `.cls` lands under Modules, the file has LF-only line endings — re-run
+   `py/ribbon_export_trim.py` (it forces CRLF) and re-run
+   `ImportAllRibbonVBAFiles`.
+
+   Do **not** import `ThisDocument.cls` (it isn't present, and
+   `ImportAllRibbonVBAFiles` does not touch it either — see the module's own
+   header comment). If you add a `Document_Open` body to the template's
+   `ThisDocument`, paste the SPDX dual-license header into it by hand — see
+   "Files going into the template" above.
+
+   **Manual fallback (only if the importer macro is unavailable or you need
+   to diagnose it), unchanged from the pre-automation process:**
    - In the VBA editor: File → Import File... — multi-select supported.
      Import order does **not** matter (VBA resolves references at compile
      time, not import time).
-   - The current `aeRibbon/src/` set is **4 `.bas` + 2 `.cls`** (6 files):
-     `basBibleRibbonSetup.bas`, `basRibbonDeferred.bas`,
-     `basSBL_VerseCountsGenerator.bas`, `basUIStrings.bas`,
-     `aeBibleCitationClass.cls`, `aeRibbonClass.cls`. Match against the
-     "Files going into the template" table above.
-   - After import, verify in Project Explorer that the two `.cls` files
-     appear under **Class Modules** and the four `.bas` files appear
-     under **Modules**. If a `.cls` lands under Modules, the file has
-     LF-only line endings — re-run `py/ribbon_export_trim.py` (it now
-     forces CRLF) and re-import.
-   - Do **not** import `ThisDocument.cls` (it isn't present). If you add a
-     `Document_Open` body to the template's `ThisDocument`, also paste the
-     SPDX dual-license header into it — see "Files going into the template"
-     above.
+   - The current `aeRibbon/src/` set is **4 `.bas` + 2 `.cls`** (6 files, plus
+     the importer module itself): `basBibleRibbonSetup.bas`,
+     `basRibbonDeferred.bas`, `basSBL_VerseCountsGenerator.bas`,
+     `basUIStrings.bas`, `aeBibleCitationClass.cls`, `aeRibbonClass.cls`.
+     Match against the "Files going into the template" table above.
 
-4. **Stamp the version.** Open `basBibleRibbonSetup` in the VBA editor and
-   confirm (or add at the top) a constant matching `aeRibbon/VERSION`:
-
-   ```vb
-   Public Const RIBBON_VERSION As String = "<version>"
-   ```
-
-   Also set the template's custom document property `aeRibbonVersion` to
-   the same value (File → Info → Properties → Advanced Properties → Custom).
+4. **Stamp the version.** Already done — `ImportAllRibbonVBAFiles` (step 3
+   above) stamps both `RIBBON_VERSION` and the `aeRibbonVersion` custom
+   document property automatically from `aeRibbon/VERSION`. Nothing to do
+   here on the normal path. If you used the manual fallback in step 3
+   instead, do the manual stamp now — see G6's "manual fallback" below.
 
 5. **Compile.** In the VBA editor: Debug → Compile VBAProject. Resolve
    any errors before proceeding. There must be zero compile errors.
@@ -210,13 +253,26 @@ runtime behaviour.
 ### G6 finish — version constants
 
 The compile sub-check is already green from the build steps. Two
-artefacts still need to land for G6 to close. Wherever `<version>`
-appears below, substitute the current contents of `aeRibbon/VERSION` —
-deliberately not hardcoded here, since a literal example value goes
-stale the moment `VERSION` next bumps (as happened to this section
-before).
+artefacts still need to land for G6 to close — **both are now stamped
+automatically by `ImportAllRibbonVBAFiles`** (step 3 above) as part of the
+normal rebuild. Re-run **Debug → Compile VBAProject** after it finishes —
+must stay green — then spot-check via the Immediate window:
 
-1. **`RIBBON_VERSION` constant — set the value for this release.**
+```vb
+? RIBBON_VERSION
+? ThisDocument.CustomDocumentProperties("aeRibbonVersion").Value
+```
+
+Both should print the current `aeRibbon/VERSION` string. The manual steps
+below are the pre-automation process — kept as a documented fallback for
+diagnosing the importer itself, not the normal path anymore. Wherever
+`<version>` appears below, substitute the current contents of
+`aeRibbon/VERSION` — deliberately not hardcoded here, since a literal
+example value goes stale the moment `VERSION` next bumps (as happened to
+this section before).
+
+1. **`RIBBON_VERSION` constant — set the value for this release (manual
+   fallback).**
 
    The declaration line is **already present** at the top of
    `basBibleRibbonSetup` (carried from `src/` through the trim
@@ -241,7 +297,7 @@ before).
    next release's build. `aeRibbon/VERSION` is the source-of-truth
    for which string to paste.
 
-2. **Custom document property `aeRibbonVersion`.**
+2. **Custom document property `aeRibbonVersion` (manual fallback).**
 
    The "Advanced Properties" entry under File → Info → Properties has
    been removed in current Word 365 builds. Use the VBA Immediate
@@ -373,7 +429,10 @@ navigation is tested here** — the host docx has no Bible content.
      fixture — another reason not to.)
 
 4. **Record the result** in
-   `aeRibbon/releases/<version>/BUILD_RECORD.txt`:
+   `aeRibbon/releases/<version>/BUILD_RECORD.txt` (per the current
+   `aeRibbon/VERSION` — create the folder/file if this version hasn't
+   been recorded before; do not append new results into an older
+   version's file):
    - Tab appeared: yes/no
    - RibbonOnLoad printed: yes/no
    - AutoExec printed: yes/no
@@ -432,7 +491,9 @@ produced for this release.
      `RIBBON_VERSION`.
 
 4. **Record results** in
-   `aeRibbon/releases/<version>/BUILD_RECORD.txt` — one line per
+   `aeRibbon/releases/<version>/BUILD_RECORD.txt` (per the current
+   `aeRibbon/VERSION` — same file G7 step 4 wrote to, so G7 and G8
+   results for this build land in one place) — one line per
    QA_CHECKLIST item, plus the SHA-256 of `aeRibbon.dotm` (`wsl
    sha256sum aeRibbon/template/aeRibbon.dotm`).
 

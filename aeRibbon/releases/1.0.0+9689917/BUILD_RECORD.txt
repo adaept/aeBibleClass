@@ -1,0 +1,97 @@
+aeRibbon v1.0.0+9689917 — Build Record
+=======================================
+
+Per aeRibbon/BUILD.md + aeRibbon/QA_CHECKLIST.md. NOT a full v1.0.0
+sign-off run (G1-G6 not run here) -- this build/record exists to verify
+one specific fix (the About-dialog RIBBON_VERSION wiring, see
+basChangeLog/conversion-plan item 1) plus the new
+basImportWordRibbonGitFiles.bas build-bootstrap automation, in service of
+the aeBibleAddin docm/docx/JS-taskpane release-alignment procedure --
+same pattern as the 1.0.0+bc71416 record's own G8 subsection.
+
+Version under test: 1.0.0+9689917
+Dev SHA:            9689917  (git rev-parse --short HEAD at build/stamp time;
+                     aeRibbon/VERSION was not re-bumped for the doc-only
+                     commits that followed -- d39243d, 92e5e9e, 12b982f,
+                     e4ceed7 -- since none touched the ribbon's VBA source)
+Operator:            peterennis
+Date:                2026-09-18
+
+-------------------------------------------------------------------------
+Build-bootstrap automation (basImportWordRibbonGitFiles.bas) -- first
+live run, verified 2026-09-18
+-------------------------------------------------------------------------
+  ImportAllRibbonVBAFiles: deleted stale bc71416-era modules (confirmation
+    prompt shown), re-imported all aeRibbon/src/ files cleanly, compiled
+    with 0 errors.
+  RIBBON_VERSION stamped   : PASS -- `? RIBBON_VERSION` printed
+    "1.0.0+9689917" in the Immediate window.
+  aeRibbonVersion property : PASS -- `? ThisDocument.CustomDocumentProperties
+    ("aeRibbonVersion").Value` printed "1.0.0+9689917".
+
+-------------------------------------------------------------------------
+G7 — empty host docx smoke (aeRibbon/docx/aeRibbon-host.docx)
+-------------------------------------------------------------------------
+  Tab appeared                    : PASS
+  RibbonOnLoad printed             : PASS
+  AutoExec printed                 : PASS
+  Any error dialogs                : none
+
+  Template attached via the Startup-folder method (per BUILD.md's G7
+  step 2, corrected 2026-09-18 from the earlier per-document-Attach
+  wording that caused operator confusion this session -- see
+  aeRibbon/BUILD.md commit 92e5e9e).
+
+-------------------------------------------------------------------------
+G8 — production Bible docx navigation smoke (aeRibbon/docx/Word-Bible.docx)
+-------------------------------------------------------------------------
+  Prerequisite: Word-Bible.docx (Save-As'd from Blank Bible Copy.docm
+  2026-09-18) was found to still carry an orphaned customUI14.xml
+  (expected on every fresh Save-As -- BUILD.md step 4a), causing 6x
+  "macro can't be found" on open. Fixed via
+  `wsl python3 py/strip_ribbon.py aeRibbon/docx/Word-Bible.docx` --
+  customUI guard re-run clean afterward.
+
+  No macro-security warning on open            : PASS
+  Tab appears; Book selector enabled            : PASS
+  Mouse path (Jn/3/16/Go -> John 3:16)          : PASS
+  Keyboard path (Alt,Y2,B/Jn/Tab/3/Tab/16/Tab/Enter) : PASS
+  Next Book (Alt,Y2,])                          : PASS
+  Next Chapter (Alt,Y2,.)                       : CONFIRMED BUG -- lands
+    on Chapter 2 of Acts instead of the expected chapter, immediately
+    after the Next Book step above. Same symptom as the 1.0.0+bc71416
+    record's own "FLAGGED" finding (then unconfirmed) -- now reproduced
+    a second time under a clean build, so this is a real, repeatable bug,
+    not a one-off misread. Root cause still not diagnosed (conversion
+    plan's open-follow-ups item 4). Non-blocking for the aeBibleAddin/JS
+    track (separate implementation, doesn't share this state) -- VBA-side
+    fix deprioritized per the JS-taskpane-is-the-priority decision this
+    session; tracked, not forgotten.
+  First-verse boundary (Alt,Y2,<)                : KNOWN LIMITATION --
+    focus escapes to the document instead of showing a boundary message
+    (VBA RibbonX punctuation-KeyTip routing limitation, won't-fix per
+    2026-09-18 decision -- mouse workaround acceptable, single-user tool).
+  First-book boundary (Alt,Y2,[)                 : KNOWN LIMITATION --
+    same symptom/disposition as First-verse boundary above.
+  Last-verse boundary (Alt,Y2,>)                 : PASS -- status-bar
+    message shown correctly (earlier "shows nothing" report was not
+    reproducible in a clean session with the VBA editor closed; see
+    2026-09-18 session notes in the conversion plan).
+  New Search (Alt,Y2,S) resets to NoSelection    : PASS
+  About (Alt,Y2,A) shows RIBBON_VERSION          : PASS -- shows
+    "1.0.0+9689917", not the old "Hello, adaept World!" dev stub. This
+    is the fix this build/release exists to verify.
+
+  SHA-256 of aeRibbon.dotm (wsl sha256sum aeRibbon/template/aeRibbon.dotm):
+  621d5f2d22200448d189d4afb126db19d7c685382eaa7c7385beff1578564539
+
+-------------------------------------------------------------------------
+Sign-off
+-------------------------------------------------------------------------
+  [x] All gates run passed, except one known non-blocking bug (Next
+      Chapter-after-Next-Book, confirmed, tracked, deprioritized) and two
+      known non-blocking limitations (KeyTip focus-escape, won't-fix) --
+      same "pass with known non-blocking bugs" disposition the
+      1.0.0+bc71416 record used for aeBibleAddin v0.1.0's own G8 gate.
+  [x] aeRibbon/RELEASES.md row appended
+  [x] Committed + tagged: git tag v1.0.0+9689917
