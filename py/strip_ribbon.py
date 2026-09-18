@@ -28,10 +28,10 @@ part in the package (e.g. inline images in the Bible content itself);
 removing it would break those too, not just the ribbon's icon.
 
 Usage:
-    python py/strip_ribbon.py path/to/Radiant-Word-Bible.docx
+    python py/strip_ribbon.py path/to/Word-Bible.docx
 
 Verify first (should print the same three lines this script removes):
-    unzip -l path/to/Radiant-Word-Bible.docx | grep -i customUI
+    unzip -l path/to/Word-Bible.docx | grep -i customUI
 
 The target file must be closed in Word before running. Exits non-zero
 (no changes made) if the target has no customUI part to strip, or if it

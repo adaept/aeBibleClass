@@ -63,7 +63,7 @@ Open `aeRibbon/docx/aeRibbon-host.docx` with template attached:
 
 ## G8 — Smoke (production Bible docx)
 
-Open `aeRibbon/docx/Radiant-Word-Bible.docx` (the **code-free** docx
+Open `aeRibbon/docx/Word-Bible.docx` (the **code-free** docx
 produced per `BUILD.md` "Producing the production Bible `.docx`") with
 the template attached:
 

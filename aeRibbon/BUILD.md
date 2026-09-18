@@ -369,7 +369,7 @@ produced for this release.
 1. **Produce the production Bible `.docx`** (per the next section,
    "Producing the production Bible `.docx`"). This is a manual
    Save-As from the dev `.docm`. Drop the result at
-   `C:\adaept\aeBibleClass\aeRibbon\docx\Radiant-Word-Bible.docx`.
+   `C:\adaept\aeBibleClass\aeRibbon\docx\Word-Bible.docx`.
 
 2. **Open the docx in a fresh Word session.**
    - **Expected: no macro-security warning.** This is the architectural
@@ -424,7 +424,10 @@ Editor/Developer (Option 1).
    Word will warn that VBA will be removed — that is the desired outcome:
    the production document must be code-free so the author can open it
    for comments-only review without macro-security prompts.
-3. Save as `aeRibbon/docx/Radiant-Word-Bible.docx` (final filename TBD).
+3. Save as `aeRibbon/docx/Word-Bible.docx` (deliberately generic — the "Radiant
+   Word Bible" name/content is owned by the separate `aeRWB` repo; this
+   ribbon-testing fixture should not reuse that name until the relationship
+   between the two projects is fully resolved).
 4. Verify by reopening: no macro-security banner appears; the Bible
    content is intact.
 4a. **Guard (added 2026-09-12, do not skip):** the "no macro-security
@@ -437,7 +440,7 @@ Editor/Developer (Option 1).
     every open). Run:
 
     ```bash
-    unzip -l "aeRibbon/docx/Radiant-Word-Bible.docx" | grep -i customUI
+    unzip -l "aeRibbon/docx/Word-Bible.docx" | grep -i customUI
     ```
 
     Must return nothing. If it matches, **do not ship this `.docx`.**
@@ -456,7 +459,7 @@ Editor/Developer (Option 1).
     above — it should return nothing on the second pass:
 
     ```bash
-    wsl python3 py/strip_ribbon.py aeRibbon/docx/Radiant-Word-Bible.docx
+    wsl python3 py/strip_ribbon.py aeRibbon/docx/Word-Bible.docx
     ```
 5. The Editor/Developer attaches `aeRibbon.dotm` once on their machine
    (File → Options → Add-ins → Templates) and runs Gate G8 against this
