@@ -200,13 +200,62 @@
   updated (running total 52 -> 53 of ~87; original six-Case Shape 5
   group -- 82/83/87/7/8/41 -- now fully closed).
 
+  [DOC] aeBibleAddin -- live-checked both of §15.11's remaining
+  pending-live-validation items this session, operator running
+  window.aeAuditSpike hooks against the real Bible file:
+
+  1. getStyles()/StyleCollection shape (Cases 5/44/45/76/77/78):
+  VALIDATED, but only after finding and fixing THREE genuine bugs the
+  mock tests could never catch. (a) A single .load() combining
+  items/font/color + items/font/textColor/objectThemeColor across the
+  WHOLE unfiltered style collection throws RichApi.Error: That
+  property is not available on that object on sync() -- fixed by
+  excluding Table/List styles first. (b) Even after that, loading both
+  properties TOGETHER in one .load() call on the same filtered
+  candidates still threw, though each loaded fine in isolation (proven
+  via ad hoc per-property Word.run tests) -- fixed by loading and
+  syncing each property in its own round trip. (c) items/
+  automaticallyUpdate throws the same error across the whole
+  unfiltered collection -- isolated per-property testing confirmed
+  it's specifically unsupported for at least one non-Paragraph style;
+  fixed by loading it only for the Paragraph-type subset.
+  auditNonPaletteStyleColorsLive (Case 44, shipped batch 11) had been
+  silently broken against real Word this whole time -- this was the
+  first time it was ever run live. Final confirmation: auditApproved
+  Styles/countUnapprovedVisibleStyles/auditNonPaletteStyleColors
+  matched live VBA RUN_THE_TESTS(5,45,76,77,78,44) byte-for-byte,
+  including the one genuine non-zero finding on both sides --
+  "Default Paragraph Font" (UnhideWhenUsed=True, Priority=2 expected
+  34), a known, deliberate exception per aeBibleClass/rvw/Code_review
+  2026-05-16.md, not a port bug.
+    STATUS: pushed to aeBibleAddin's `main` (3378173, 70eda7f,
+    7401a2e, 107e611).
+
+  2. AUTOMATIC_FONT_COLOR = 'Automatic' (Cases 39/44): REFUTED, not
+  validated. Live-check found the opposite of the Word JS API
+  reference's suggestion -- an Automatic-colored paragraph's
+  .font.color read back as a concrete hex value (#000000), not the
+  literal string 'Automatic', and a document-wide count of literal
+  'Automatic' matches returned 0 across all ~33,825 body paragraphs.
+  Unlike VBA (Test 88 confirmed its object model DOES preserve its own
+  -16777216 sentinel on readback), Office.js always resolves Automatic
+  to a concrete color. Kept the constant as a documented dead end
+  rather than deleting it; removed the two now-dead comparisons
+  against it (Cases 39/44) as they changed nothing in practice
+  (Automatic resolved to Black here, already caught by each function's
+  sibling Black/palette check); updated mock tests accordingly.
+    STATUS: pushed to aeBibleAddin's `main` (93dd703).
+
+  [DOC] adaept5tudio -- conversion-plan.md §15.11 updated: both
+  pending-live-validation table rows closed (getStyles validated,
+  AUTOMATIC_FONT_COLOR refuted). No open live-validation questions
+  remain in the Phase 3 port as of this session.
+    STATUS: pushed to adaept5tudio's `main` (d4ad1f1, 99ca1fb).
+
 ## Session status at this checkpoint
 
-  aeBibleClass: prior commits pushed (see above).
-  aeBibleAddin (ooxml-run-styles.ts/.test.ts, word-audit-scanner.ts/
-  .ooxml.test.ts, taskpane.ts, word-audit-scanner.LIVE_CHECK.md) and
-  adaept5tudio (conversion-plan.md) have uncommitted changes for batch
-  13 (Case 41) as of this manifest entry -- commit and push these next.
-  Working trees otherwise clean except
-  aeBibleClass/rpt/HeadingLog.txt (see above, left uncommitted
-  deliberately).
+  All work this session is committed and pushed: aeBibleAddin (860c72a,
+  31c1cdb, 7dfc65d, 3378173, 70eda7f, 7401a2e, 107e611, 93dd703),
+  adaept5tudio (d439f87, 5d80694, d4ad1f1, 99ca1fb). Working trees
+  clean except aeBibleClass/rpt/HeadingLog.txt (see above, left
+  uncommitted deliberately).
