@@ -87,14 +87,31 @@
   deliberate edit. Left as-is, uncommitted -- same posture as the prior
   session's manifest for this same file.
 
-## Next in this session (not yet done as of this manifest)
+  [DOC] aeBibleAddin (separate repo, C:\adaept\aeBibleAddin) -- Phase E
+  batch 10, commit f2932c1: ported Cases 39/40/43 (CountParagraphMarks_
+  ArialBlack/_ArialBlackDarkRed/CountParagraphMarksWithDarkRedFormatting)
+  as countParagraphMarksArialBlackLive/ArialBlackDarkRedLive/
+  WithDarkRedLive in taskpane/src/word-audit-scanner.ts, reusing the
+  already-validated font-color shape extended with .font.name/.font.size.
+  Black/DarkRed hex values hard-coded from Test 88's confirmed results.
+  Case 41 deliberately NOT ported -- closer reading of its VBA source
+  showed it needs per-run character-style attribution within a paragraph,
+  the same gap as Cases 82/83/87/7/8, not a simple font-color-shape
+  reuse. 11 new tests, 132/132 passing, typecheck clean.
+    STATUS: pushed to aeBibleAddin's `main` (f2932c1).
 
-  aeBibleAddin JS-side port of Cases 39/40/41/43, now unblocked by the
-  Test 88 results above. Will be recorded in a follow-up update to this
-  manifest and/or a separate aeBibleAddin-side note once done.
+  [DOC] adaept5tudio (separate repo, C:\adaept\adaept5tudio) --
+  conversion-plan.md updated: §14 Phase E batch 10 entry added, running
+  total 44 -> 47; §15.11's Cases-39/40/41/43 row split (39/40/43 marked
+  DONE, 41 moved into the 82/83/87/7/8 character-style-search family
+  row); §15.11's pending-live-validation table gained a row for
+  AUTOMATIC_FONT_COLOR (asserted from the Word JS API reference, not yet
+  live-checked).
+    STATUS: pushed to adaept5tudio's `main` (bcc1316).
 
 ## Session status at this checkpoint
 
-  aeBibleClass and adaept5tudio changes above are being committed and
-  pushed now, per operator instruction. aeBibleAddin JS port work
-  follows in the same session -- see "Next in this session" above.
+  All work this session is committed and pushed: aeBibleClass (76d9012),
+  adaept5tudio (8b1ca78, bcc1316), aeBibleAddin (f2932c1). Working trees
+  clean except aeBibleClass/rpt/HeadingLog.txt (see above, left
+  uncommitted deliberately).
