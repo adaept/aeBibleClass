@@ -368,3 +368,58 @@
   pre-existing uncommitted file (left as-is, not touched this session).
   Phase E running total: 54 of ~87, zero open live-validation questions
   remaining anywhere in the port.
+
+## Same session, continued: §15.12 "ListTemplates" item research (Case 75)
+
+  Picked up the next item on §15.12's next-steps list: research whether
+  Office.js's Word API supports `ActiveDocument.ListTemplates`
+  traversal, the thing Case 75 /
+  `CountApprovedStylesWithListParagraphRisk` needs (guards against the
+  Word List Paragraph numbering-engine hang, EDSG/10-list-paragraph-
+  bug.md). §15.11 had this flagged as "a collection not yet used
+  anywhere in this port," no confirmation either way.
+
+  [CODE] aeBibleAddin commit `e14ebf5`: another full API match, same
+  outcome as Case 2's `doc.Shapes` research. `context.document.
+  listTemplates` (`Word.ListTemplateCollection`, WordApiDesktop 1.4) ->
+  each template's `.listLevels` (`Word.ListLevelCollection`,
+  WordApiDesktop 1.1) -> each level's `.linkedStyle` (a plain string)
+  is the exact same collection shape as VBA's `ActiveDocument.
+  ListTemplates -> ListLevels -> LinkedStyle`, so the same
+  reverse-lookup-dictionary approach ports directly. `Style.baseStyle`
+  (API set WordApi 1.5 -- notably NOT desktop-only, unlike almost
+  everything else touched in this port) covers the other half. Ported
+  as `countApprovedStylesWithListParagraphRiskLive` in
+  `word-audit-scanner.ts`; a violating style counts as 2, matching
+  VBA's two independent `violations = violations + 1` increments. 8 new
+  tests, typecheck clean, 194/194 (`taskpane`) + 45/45 (root) passing.
+  Flagged as a new top-level collection shape pending its own
+  live-check per this codebase's established discipline -- new "Shape
+  7" section added to `word-audit-scanner.LIVE_CHECK.md`, plus a
+  `dumpListTemplateSample` diagnostic hook in `taskpane.ts` (not yet
+  run; Case 75's own VBA baseline is 0, so no urgency). Unlike Case 2's
+  Shape 6, this runbook can only manufacture a positive test for the
+  `baseStyle` half -- the `linkedStyle` half is confirmed only by the
+  dump, since the Word UI action that links a list level to a style
+  ("Define New List Style" -> "Link level to style") is obscure enough
+  to skip manufacturing for this check.
+    STATUS: pushed to aeBibleAddin's `main` (e14ebf5).
+
+  [DOC] adaept5tudio commit `cd5377b`: conversion-plan.md updated --
+  §14's task table gets a new Batch 15 entry, running total 54 -> 55 of
+  ~87; §15.11's Case 75 row removed from the "open, not investigated"
+  tracker, replaced with a "RESOLVED and PORTED, pending
+  live-validation" writeup, and its pending-live-validation summary
+  line updated to point at the new entry; §15.12's next-steps list
+  renumbered down to 6 remaining open items (was 7).
+    STATUS: pushed to adaept5tudio's `main` (cd5377b).
+
+## Session status at this checkpoint (2026-09-19, Case 75 ported)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (03af4d6, 0533c3d, e14ebf5), adaept5tudio (0c3ca30, 71f74a8,
+  cd5377b). Working tree clean in both. aeBibleClass/rpt/HeadingLog.txt
+  remains the one pre-existing uncommitted file (left as-is, not
+  touched this session). Phase E running total: 55 of ~87, one open
+  pending-live-validation item (Case 75's `ListTemplateCollection`/
+  `baseStyle` shape, "Shape 7" in word-audit-scanner.LIVE_CHECK.md).
