@@ -252,10 +252,34 @@
   remain in the Phase 3 port as of this session.
     STATUS: pushed to adaept5tudio's `main` (d4ad1f1, 99ca1fb).
 
+  [DOC] End-of-session doc-consistency audit (fork-verified, read-only
+  pass first, then fixes applied). Found and fixed three stale spots in
+  adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md, none
+  from this session's actual work but left over from earlier ones: (1)
+  a duplicate hand-maintained running-total paragraph had drifted to
+  "29 of ~87" (stopped being updated after batch 3) directly below the
+  correct "53 of ~87" in §14's task table -- removed rather than kept
+  in sync by hand going forward; (2) Cases 39/40/43's tracker row still
+  said AUTOMATIC_FONT_COLOR's Case 39 branch was "flagged NOT
+  live-verified," contradicting §15.11's own section stating it was
+  refuted and removed; (3) §15.12 "Next steps" was a mid-session
+  snapshot (44/~87, "pause here") superseded by batches 10-13 and both
+  pending-live-validation closures -- rewritten with current state and
+  the actual remaining open API-research items. Also fixed
+  aeBibleAddin/taskpane/src/word-audit-scanner.LIVE_CHECK.md's Shape
+  2/3/4 section headings, which still said "pending" despite their own
+  Result lines already saying "validated" (pre-existing drift from an
+  earlier session, not this one).
+    STATUS: pushed to adaept5tudio's `main` (cd4a020) and aeBibleAddin's
+    `main` (aabb299).
+
 ## Session status at this checkpoint
 
   All work this session is committed and pushed: aeBibleAddin (860c72a,
-  31c1cdb, 7dfc65d, 3378173, 70eda7f, 7401a2e, 107e611, 93dd703),
-  adaept5tudio (d439f87, 5d80694, d4ad1f1, 99ca1fb). Working trees
-  clean except aeBibleClass/rpt/HeadingLog.txt (see above, left
-  uncommitted deliberately).
+  31c1cdb, 7dfc65d, 3378173, 70eda7f, 7401a2e, 107e611, 93dd703,
+  aabb299), adaept5tudio (d439f87, 5d80694, d4ad1f1, 99ca1fb, cd4a020).
+  Working trees clean except aeBibleClass/rpt/HeadingLog.txt (see
+  above, left uncommitted deliberately). All docs verified consistent
+  as of this checkpoint -- running totals, pending-live-validation
+  status, and Shape result logs all agree across conversion-plan.md,
+  LIVE_CHECK.md, and memory.
