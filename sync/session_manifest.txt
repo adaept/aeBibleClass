@@ -125,10 +125,43 @@
   Case 44.
     STATUS: pushed to adaept5tudio's `main` (e48bd10).
 
+  [DOC] aeBibleAddin -- Shape 5 spike, commit db99c0f: character-style
+  search via OOXML parsing (conversion-plan.md §15.13). Re-triaging
+  Cases 82/83/87/7/8/41 before building found §15.10 wrong about which
+  VBA technique 82/83/87 use -- direct per-character style reads
+  (basVerseStructureAudit.bas's Characters(1..12).style.NameLocal), not
+  Range.Find.Style (VBA's own comment: Find degenerates on
+  character-style runs in this large document, 300-2700s vs seconds).
+  New taskpane/src/ooxml-run-styles.ts parses Range.getOoxml() output;
+  built on an unverified "flat OPC" package assumption that degrades
+  gracefully if wrong. Pilot countChapterVerseMarkerInRangeLive (Case
+  83) wired into window.aeAuditSpike, NOT YET LIVE-VALIDATED -- needs
+  a real Bible file (not a blank sideload doc, since the custom
+  VerseText/marker styles don't exist there). Full runbook:
+  word-audit-scanner.LIVE_CHECK.md's new "Shape 5" section. Added jsdom
+  as a taskpane-only devDependency (test-only). 11 new tests, typecheck
+  + lint clean, 154/154 (taskpane) + 45/45 (root) passing. Cases
+  82/87/7/8/41 deliberately not built until the pilot's live check
+  passes.
+    STATUS: pushed to aeBibleAddin's `main` (db99c0f).
+
+  [DOC] adaept5tudio -- conversion-plan.md §15.13 added (Shape 5 spike
+  writeup); §15.11's Cases 82/83/87/7/8/41 row updated to point at it.
+    STATUS: pushed to adaept5tudio's `main` (ea01ee3).
+
+## Next in this session (not yet done as of this manifest)
+
+  Operator to run the Shape 5 live-check runbook
+  (word-audit-scanner.LIVE_CHECK.md, "Shape 5" section) against a real
+  Bible file and report back: the dumpSelectionOoxml output, plus the
+  three countChapterVerseMarker counts from steps 6-8. Either confirms
+  the flat-OPC assumption (unlocks Cases 82/87/7/8/41 as batch work) or
+  reveals the actual OOXML shape so the parser can be corrected.
+
 ## Session status at this checkpoint
 
   All work this session is committed and pushed: aeBibleClass (76d9012,
-  84f612b), adaept5tudio (8b1ca78, bcc1316, e48bd10), aeBibleAddin
-  (f2932c1, c1fabbd). Working trees clean except
+  84f612b, b27e41e), adaept5tudio (8b1ca78, bcc1316, e48bd10, ea01ee3),
+  aeBibleAddin (f2932c1, c1fabbd, db99c0f). Working trees clean except
   aeBibleClass/rpt/HeadingLog.txt (see above, left uncommitted
   deliberately).
