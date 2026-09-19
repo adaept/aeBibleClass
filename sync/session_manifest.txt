@@ -149,19 +149,39 @@
   writeup); §15.11's Cases 82/83/87/7/8/41 row updated to point at it.
     STATUS: pushed to adaept5tudio's `main` (ea01ee3).
 
-## Next in this session (not yet done as of this manifest)
+  [DOC] aeBibleAddin -- Shape 5 live-check PASSED, same session. Operator
+  ran the runbook (word-audit-scanner.LIVE_CHECK.md) against a real
+  Bible file: dumpSelectionOoxml's output matched the flat-OPC-with-
+  inline-styles.xml assumption exactly, including the precise styleId->
+  name mappings (ChapterVersemarker->"Chapter Verse marker", Versemarker
+  ->"Verse marker"); countChapterVerseMarker() returned 1 for a single
+  VerseText paragraph with its Chapter Verse marker, matching
+  expectation with zero drift. LIVE_CHECK.md's Shape 5 result log and
+  "Result: validated." paragraph updated accordingly.
 
-  Operator to run the Shape 5 live-check runbook
-  (word-audit-scanner.LIVE_CHECK.md, "Shape 5" section) against a real
-  Bible file and report back: the dumpSelectionOoxml output, plus the
-  three countChapterVerseMarker counts from steps 6-8. Either confirms
-  the flat-OPC assumption (unlocks Cases 82/87/7/8/41 as batch work) or
-  reveals the actual OOXML shape so the parser can be corrected.
+  [DOC] aeBibleAddin -- Phase E batch 12, same session (not yet
+  committed as of this manifest entry): Cases 82/87/7/8 ported on the
+  now-validated Shape 5, reusing ooxml-run-styles.ts. New
+  hasStyleWithinFirstNChars() helper added there for Cases 82/87
+  (mirrors GetMarkerTotals/FindMarkerStyleOutsideVerseText's
+  Characters(1..12).style scan exactly, confirmed by reading
+  basVerseStructureAudit.bas directly). Cases 7/8 walk every run
+  document-wide for text-pattern matches inside character-styled runs.
+  Found while porting Case 7: VBA's CountStyleWithSpaceAndNumber has a
+  leftover debug early-exit that under-counts (stops after first match)
+  -- this port deliberately does NOT replicate that bug. Case 41 still
+  not ported (needs rPr font-override parsing, separate design task).
+  20 new tests, typecheck + lint clean, 167/167 (taskpane) + 45/45
+  (root) passing. adaept5tudio's conversion-plan.md §15.13/§15.11
+  updated to match (running total 48 -> 52 of ~87).
 
 ## Session status at this checkpoint
 
-  All work this session is committed and pushed: aeBibleClass (76d9012,
-  84f612b, b27e41e), adaept5tudio (8b1ca78, bcc1316, e48bd10, ea01ee3),
-  aeBibleAddin (f2932c1, c1fabbd, db99c0f). Working trees clean except
+  aeBibleClass, adaept5tudio: prior commits already pushed (see above).
+  aeBibleAddin (word-audit-scanner.ts/.test.ts/.ooxml.test.ts,
+  ooxml-run-styles.ts, word-audit-scanner.LIVE_CHECK.md) and
+  adaept5tudio (conversion-plan.md) have uncommitted changes for the
+  Shape 5 validation + batch 12 as of this manifest entry -- commit and
+  push these next. Working trees otherwise clean except
   aeBibleClass/rpt/HeadingLog.txt (see above, left uncommitted
   deliberately).
