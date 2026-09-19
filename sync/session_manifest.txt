@@ -283,3 +283,52 @@
   as of this checkpoint -- running totals, pending-live-validation
   status, and Shape result logs all agree across conversion-plan.md,
   LIVE_CHECK.md, and memory.
+
+## New session (2026-09-19 continued): §15.12 item 1 research (doc.Shapes, Case 2)
+
+  Picked up conversion-plan.md §15.12's next-steps list, item 1:
+  research whether Office.js's Word API supports `doc.Shapes` (floating
+  shapes/text boxes with recursive group traversal), the thing Case 2 /
+  `CountDoubleSpacesInShapes` needs. §15.11 had this flagged as
+  "not confirmed either way."
+
+  [CODE] aeBibleAddin commit `03af4d6`: research resolved better than
+  forecast -- `Word.Shape`/`Word.ShapeCollection`/`Word.ShapeGroup`
+  exist (API set WordApiDesktop 1.2) and are fully sufficient, no OOXML
+  fallback needed. `Shape.type` distinguishes `Group` (recursed via
+  `.shapeGroup.shapes`, VBA's `GroupItems` equivalent) from
+  `TextBox`/`GeometricShape` (text-bearing) from
+  `Picture`/`Canvas`/`Unsupported` (skipped, matching VBA's
+  `TextFrame Is Nothing` fallthrough). One real gap found along the
+  way: `Shape.textFrame` (`Word.TextFrame`) looked like the obvious
+  property to read a shape's text from but only exposes a boolean
+  `hasText`, nothing else -- `Shape.body` (a `Word.Body`, "only applies
+  to text boxes and geometric shapes" per Microsoft's own docs) is the
+  one with `.text`, the same property already validated on
+  `Word.Paragraph` elsewhere in this codebase. Ported as
+  `countDoubleSpacesInShapesLive` in `word-audit-scanner.ts`. 9 new
+  tests (recursion into nested groups included), typecheck clean,
+  186/186 (`taskpane`) + 45/45 (root) passing. Flagged as a new
+  top-level collection shape pending its own live-check per this
+  codebase's established discipline -- new "Shape 6" section added to
+  `word-audit-scanner.LIVE_CHECK.md` with the runbook (not yet run;
+  Case 2's own VBA baseline is 0, so no urgency).
+    STATUS: pushed to aeBibleAddin's `main` (03af4d6).
+
+  [DOC] adaept5tudio commit `0c3ca30`: conversion-plan.md updated --
+  §14's task table gets a new Batch 14 entry, running total 53 -> 54 of
+  ~87; §15.11's Case 2 row removed from the "open, not investigated"
+  tracker and replaced with a "RESOLVED and PORTED, pending
+  live-validation" writeup; §15.12's next-steps list renumbered down to
+  7 remaining open items (was 8) with a note that item 1's own outcome
+  (a full API match, better than the "might be a dead end" forecast)
+  is proof these forecasts are genuinely uncertain until checked, not
+  just pessimism-by-default.
+    STATUS: pushed to adaept5tudio's `main` (0c3ca30).
+
+## Session status at this checkpoint (2026-09-19 continued)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (03af4d6), adaept5tudio (0c3ca30). Working tree clean in both.
+  aeBibleClass/rpt/HeadingLog.txt remains the one pre-existing
+  uncommitted file (left as-is, not touched this session).
