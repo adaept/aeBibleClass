@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 87
+Private Const MaxTests = 88
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -303,8 +303,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -860,6 +860,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (86)
             DoEvents
             RunTest (87)
+            DoEvents
+            RunTest (88)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1152,6 +1154,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: every 'Psalms BOOK' paragraph is left-aligned by design - CountStyleParagraphsNotAligned(""Psalms BOOK"", wdAlignParagraphLeft) should return 0"
     Case 87
         GetTestDescription = "Rule: no 'Chapter Verse marker'/'Verse marker' character-styled run appears inside a paragraph NOT styled 'VerseText' (a marker-carrying paragraph left mis-styled is counted by AuditVerseMarkerStructure but invisible to ExportDocmVersesToRWBFormat - see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md) - CountMarkerStyleOutsideVerseText should return 0"
+    Case 88
+        GetTestDescription = "Diagnostic: dumps Long/Hex/RGB for every built-in WdColor* constant used in this codebase (wdColorAutomatic/Black/Red/DarkRed/Blue/DarkBlue) plus a live check of what Font.Color reads back as after being set to wdColorAutomatic - unlocks the aeBibleAddin JS port's Cases 39/40/41/43 (see rvw/Plan_vba_color_constants_for_js_port_2026-09-19.md) - AuditColorConstants should return 6"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1404,6 +1408,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 87
         ResultArray(TestNum) = CountMarkerStyleOutsideVerseText
         m_HintArray(TestNum) = m_lastHint
+    Case 88
+        ResultArray(TestNum) = AuditColorConstants
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1610,6 +1617,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStyleParagraphsNotAligned(Psalms BOOK, Left)"
     Case 87
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountMarkerStyleOutsideVerseText"
+    Case 88
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditColorConstants"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1819,6 +1828,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStyleParagraphsNotAligned(Psalms BOOK, Left)"
     Case 87
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountMarkerStyleOutsideVerseText"
+    Case 88
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditColorConstants"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -3404,6 +3415,14 @@ PROC_ERR:
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
+End Function
+
+' Test 88. Thin wrapper delegating to basBiblePalette.AuditColorConstants,
+' which already owns the RGB/hex named-color SSOT for this project (see
+' rvw/Plan_vba_color_constants_for_js_port_2026-09-19.md). Kept in the
+' class only so it can be dispatched like every other numbered test.
+Private Function AuditColorConstants() As Long
+    AuditColorConstants = basBiblePalette.AuditColorConstants()
 End Function
 
 Private Function CountBoldFootnotesWordLevel()

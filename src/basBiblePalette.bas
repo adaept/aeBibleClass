@@ -53,6 +53,8 @@ Option Compare Text
 '   ListRunsOfColorByStyle(c)     -> per-run-style breakdown + total
 '   DescribeFirstRunOfColor(c)    -> locate first explicit-override run
 '   DescribeStylesCarryingColor(c)-> find styles whose Font.Color = c
+'   AuditColorConstants()          -> RUN_THE_TESTS(88): dump built-in wdColor*
+'                                      Long/Hex/RGB + live Automatic-readback check
 '
 ' Theme arg is "Default" today. "Dark" and "Colorblind" raise
 ' "Not implemented" so call sites can be wired now and the palettes
@@ -592,3 +594,95 @@ Public Sub DumpPalette()
                     "Long=" & entry("RgbLong") & "  " & CStr(entry("Usage"))
     Next k
 End Sub
+
+' ==========================================================================
+' AuditColorConstants
+' ==========================================================================
+' Diagnostic + RUN_THE_TESTS(88): prints Long/Hex/RGB for every VBA
+' built-in WdColor* constant actually referenced in this codebase's
+' runtime logic (confirmed by grep, not the basBiblePalette named entries -
+' those are already self-documenting custom RGB values). This is the
+' ground truth the aeBibleAddin JS port needs before it can translate
+' aeBibleClass.cls Cases 39/40/41/43 (CountParagraphMarks_ArialBlack,
+' CountParagraphMarks_ArialBlackDarkRed,
+' Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed,
+' CountParagraphMarksWithDarkRedFormatting) - Office.js has no named color
+' constants, so the port needs the actual numeric value to hard-code.
+' See rvw/Plan_vba_color_constants_for_js_port_2026-09-19.md.
+'
+' Also runs a live check via LiveCheckAutomaticColorReadback: sets a
+' throwaway paragraph's Font.Color explicitly to wdColorAutomatic, then
+' reads it back, to answer whether Word preserves the sentinel on readback
+' or resolves it to a concrete color (never confirmed before this test).
+'
+' Note on reading the Hex/RGB columns below: WdColor encodes "special"
+' values (like wdColorAutomatic) with a flag in the high byte; the low
+' three bytes of that encoding are not a real RGB triple. Do not read
+' wdColorAutomatic's Hex/RGB columns as "the color it renders" - only the
+' Long value and the live-check line answer that question.
+'
+' Returns the Count of constants audited (a fixed, content-independent
+' number) so this can run as a normal pass/fail case going forward rather
+' than a one-off diagnostic.
+'
+' Usage from Immediate:
+'   ?AuditColorConstants
+'   RUN_THE_TESTS(88)
+' ==========================================================================
+Public Function AuditColorConstants() As Long
+    On Error GoTo PROC_ERR
+    Dim names() As String
+    Dim vals(5) As Long
+    Dim i As Long
+
+    names = Split("wdColorAutomatic,wdColorBlack,wdColorRed,wdColorDarkRed,wdColorBlue,wdColorDarkBlue", ",")
+    vals(0) = wdColorAutomatic
+    vals(1) = wdColorBlack
+    vals(2) = wdColorRed
+    vals(3) = wdColorDarkRed
+    vals(4) = wdColorBlue
+    vals(5) = wdColorDarkBlue
+
+    Debug.Print "AuditColorConstants: built-in WdColor constants used in this codebase"
+    Debug.Print "  " & Left$("Name" & String(20, " "), 20) & Left$("Long" & String(14, " "), 14) & Left$("Hex" & String(11, " "), 11) & "RGB"
+    For i = 0 To UBound(names)
+        Debug.Print "  " & Left$(names(i) & String(20, " "), 20) & _
+                    Left$(CStr(vals(i)) & String(14, " "), 14) & _
+                    Left$(LongToHex(vals(i)) & String(11, " "), 11) & _
+                    LongToRgbString(vals(i))
+    Next i
+
+    Debug.Print "Live check: paragraph explicitly set to wdColorAutomatic, then read back:"
+    Debug.Print "  " & LiveCheckAutomaticColorReadback()
+
+    AuditColorConstants = UBound(names) + 1
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in basBiblePalette.AuditColorConstants | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+End Function
+
+' Sets a throwaway invisible document's only paragraph to wdColorAutomatic,
+' reads Font.Color back, and reports whether the sentinel survived or was
+' resolved to a concrete color. Runs against a new Documents.Add document,
+' never ActiveDocument, so this diagnostic cannot touch production content.
+Private Function LiveCheckAutomaticColorReadback() As String
+    On Error GoTo PROC_ERR
+    Dim tempDoc As Word.Document
+    Dim readBack As Long
+
+    Set tempDoc = Documents.Add(Visible:=False)
+    tempDoc.Content.Text = "probe"
+    tempDoc.Content.Font.Color = wdColorAutomatic
+    readBack = tempDoc.Paragraphs(1).Range.Font.Color
+
+    LiveCheckAutomaticColorReadback = "Font.Color = " & readBack & " " & LongToHex(readBack) & _
+        IIf(readBack = wdColorAutomatic, "  (sentinel preserved on readback)", "  (resolved to a concrete color on readback)")
+
+    tempDoc.Close SaveChanges:=False
+    Exit Function
+PROC_ERR:
+    LiveCheckAutomaticColorReadback = "ERROR: " & Err.Number & " " & Err.Description
+    On Error Resume Next
+    If Not tempDoc Is Nothing Then tempDoc.Close SaveChanges:=False
+End Function

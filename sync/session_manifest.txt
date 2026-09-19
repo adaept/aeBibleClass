@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-09-19
+# Claude Session Manifest -- 2026-09-19 (afternoon/evening)
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,72 +13,88 @@
 
 ## Files touched this session
 
-  aeBibleClass/src/ -- NO CHANGES THIS SESSION. Nothing to import into the
-  VBA editor. All work this session was in the sibling `aeBibleAddin` repo
-  (JS/TS taskpane, Office.js audit-engine port) and `adaept5tudio` (planning
-  docs). aeBibleClass itself was read-only (source consulted as the VBA
-  audit-engine port reference, never edited).
+  [IMPORT] src/basBiblePalette.bas -- added Public Function
+  AuditColorConstants() (RUN_THE_TESTS Test 88) + private helper
+  LiveCheckAutomaticColorReadback(). Dumps Long/Hex/RGB for the six
+  built-in WdColor* constants this codebase actually uses
+  (wdColorAutomatic/Black/Red/DarkRed/Blue/DarkBlue) and runs a live
+  check of what Font.Color reads back as after being set to
+  wdColorAutomatic, via a throwaway Documents.Add(Visible:=False) doc
+  (never ActiveDocument).
+    STATUS: already imported and run by the operator this session --
+    RUN_THE_TESTS(88) PASS, result 6, expected 6. Live check confirmed
+    Automatic stays the -16777216 sentinel on readback (does not resolve
+    to Black). All six constants exactly match basBiblePalette.bas's
+    existing named-color RGB values -- no drift found. Nothing further
+    to import for this file.
 
-  [DOC] aeBibleAddin (separate repo, C:\adaept\aeBibleAddin) -- Phase 3
-  audit-engine port, conversion-plan.md §14 Phase E + §15. Commits this
-  session, in order:
-    0b8e113 .. e920992  -- §15 Office.js-dependent-routine spike: pilot
-        (footnote count) + 3 more shapes (font-color, paragraph-style,
-        header/footer-story), each with a mock-track Vitest test and one
-        operator-run live-Word validation via a DevTools debug hook
-        (window.aeAuditSpike). All four shapes confirmed against real Word
-        with zero drift; two real bugs found and fixed along the way
-        (Word inherits font color into a new paragraph on Enter; a
-        Word.*Type runtime enum isn't available in plain Vitest).
-    e922c83 .. 08e8133  -- Phase E batches 1-8: 44 of ~87 VBA audit
-        routines ported as JS-native Vitest tests (pure-text batches
-        needing no Office.js integration, plus routines reusing the four
-        validated shapes). Batch 9 (2026-09-19) was triage-only -- no new
-        code shipped; remaining Cases need operator input (VBA color
-        constants) or further API research, tracked in conversion-plan.md
-        §15.11/§15.12.
-    Also: fixed aeBibleAddin/taskpane/README.md's stale
-    Radiant-Word-Bible.docx -> Word-Bible.docx reference; rewrote
-    word-audit-scanner.LIVE_CHECK.md with exact commands/full paths and
-    self-verified ground truth (first version was too vague, per operator
-    feedback).
-    STATUS: all commits pushed to aeBibleAddin's `main`. Working tree clean.
+  [IMPORT] src/aeBibleClass.cls -- wired Test 88 into the four standard
+  dispatch locations (MaxTests 87->88, Expected1BasedArray +1 entry
+  (expected 6), GetTestDescription/GetPassFail/RunTest/OutputTestReport
+  Case 88) plus a thin Private Function AuditColorConstants() wrapper
+  delegating to basBiblePalette.AuditColorConstants(). Per
+  md/Adding_To_Bible_Test_Class.md's checklist.
+    STATUS: already imported and confirmed passing (see above). Nothing
+    further to import.
 
-  [DOC] adaept5tudio (separate repo, C:\adaept\adaept5tudio) -- docs/
-  aeBibleClass-word-addin-conversion-plan.md updated throughout to track
-  the above: §14 Phase E batch table (batches 1-9), §15 (Office.js spike,
-  all 4 shapes closed), §15.10 (character-style-search gap, Cases 82/83/87
-  + 7/8, solution documented not built), §15.11 (consolidated
-  deferred/skipped/pending tracker), §15.12 (session-close next steps).
-  Also fixed a split-sentence bug introduced by an earlier same-session
-  edit to §15.11.
-    STATUS: all commits pushed to adaept5tudio's `main`. Working tree
-    clean.
+  [IMPORT] src/ThisDocument.cls -- Document_Open now calls new Private
+  Sub CheckForConflictingRibbonAddIn, which detects aeRibbon.dotm in
+  Application.StartupPath and offers (MsgBox Yes/No) to unload
+  (AddIn.Installed = False) and Kill it. Fixes the "2 Radiant Word Bible
+  tabs" bug reported this session (root cause: aeRibbon.dotm v1.0.0
+  installed globally in Word's Startup folder, on top of this docm's own
+  embedded ribbon). All new code lives after line 10 (Option Explicit) --
+  verified this does not interfere with
+  basImportWordGitFiles.ImportThisDocumentFile's header-skip parsing,
+  which starts capturing the body at exactly that line.
+    STATUS: already imported and confirmed working live by the operator
+    ("CheckForConflictingRibbonAddIn worked as planned") -- successfully
+    unloaded and deleted the Startup-folder copy in one pass, no Err 70,
+    no Word restart needed. Nothing further to import.
 
-  Also this session (earlier, before the Phase 3 port work): aeRibbon
-  v1.0.0+9689917 and aeBibleAddin v0.1.1 paired release shipped -- see
-  adaept5tudio's conversion-plan.md §10.6/§10.7 for that history; not
-  repeated here since it's a separate, already-closed thread from before
-  this manifest's Phase 3 work began.
+  [DOC] aeRibbon/BUILD.md -- G8 close-out gained step 6: delete the
+  Startup-folder copy of aeRibbon.dotm once G7/G8 pass, since it's a
+  disposable build artefact regenerated by the build procedure itself,
+  not something that should persist between release cycles. Directly
+  addresses the root cause above at the source (the release procedure),
+  with ThisDocument.cls's new guard as a backstop if this step is ever
+  missed.
 
-## Pre-existing, unrelated drift noticed (not from this session)
+  [DOC] rvw/Plan_vba_color_constants_for_js_port_2026-09-19.md (new
+  file) -- full writeup: RGB/hex reference table (now filled with
+  confirmed Test 88 values, all matching basBiblePalette.bas with no
+  drift), codebase examination of all six wdColor* call sites (which are
+  in scope for the JS port vs. VBA-only tooling), the "RGB keyed to named
+  colors" standard (basBiblePalette.bas adopted as SSOT), pros/cons, and
+  i18n/cross-platform notes. Bottom line recorded: Cases 39/40/41/43 in
+  the aeBibleAddin JS port are unblocked -- hard-code 0/#000000 for Black
+  and 128/#800000 for DarkRed; Automatic still needs its own sentinel
+  handling on the Office.js side (untested there specifically).
 
-  aeBibleClass/rpt/HeadingLog.txt shows as modified in `git status`
-  (66 lines changed), last committed at 9689917 (2026-09-18). Not touched
-  by this session -- aeBibleClass/src/ and this repo's working tree were
-  never edited here. Likely regenerated by something run locally (a VBA
-  routine, editor autosave, or similar) between sessions. Left as-is,
-  uncommitted -- flagged to the operator rather than committed or
-  discarded without knowing its origin.
+  [DOC] adaept5tudio (separate repo, C:\adaept\adaept5tudio) --
+  docs/aeBibleClass-word-addin-conversion-plan.md: §15.11's Cases
+  39/40/41/43 row updated from "needs operator input" to unblocked with
+  the confirmed values; §15.12 point 1 marked done, pointing at the new
+  aeBibleClass plan doc.
 
-## Session closed 2026-09-19
+## Pre-existing, unrelated drift noticed (not from this session's edits)
 
-  Focused entirely on the aeBibleAddin Phase 3 audit-engine port (approved
-  2026-09-18, executed 2026-09-19): closed out the §15 Office.js-dependent-
-  routine spike (all 4 shapes validated against real Word), then ran 9
-  ordinary Phase E batches, landing 44 of ~87 VBA audit routines as
-  JS-native Vitest tests with zero known drift from real Word behavior.
-  Batch 9 found the "easy" cluster exhausted -- consolidated every
-  remaining open item into conversion-plan.md §15.11's tracker and recorded
-  three next-step options in §15.12. No aeBibleClass VBA work this session;
-  nothing to import into the VBA editor.
+  aeBibleClass/rpt/HeadingLog.txt shows as modified in `git status` (66
+  lines changed, sessionID timestamp column only -- book names/indices
+  unchanged). Regenerated by aeRibbonClass.LogHeadingData as a side
+  effect of opening/running the dev docm this session (confirmed
+  legitimate test activity: Test 88 run, ribbon-fix verification), not a
+  deliberate edit. Left as-is, uncommitted -- same posture as the prior
+  session's manifest for this same file.
+
+## Next in this session (not yet done as of this manifest)
+
+  aeBibleAddin JS-side port of Cases 39/40/41/43, now unblocked by the
+  Test 88 results above. Will be recorded in a follow-up update to this
+  manifest and/or a separate aeBibleAddin-side note once done.
+
+## Session status at this checkpoint
+
+  aeBibleClass and adaept5tudio changes above are being committed and
+  pushed now, per operator instruction. aeBibleAddin JS port work
+  follows in the same session -- see "Next in this session" above.
