@@ -1,4 +1,4 @@
-# Claude Session Manifest -- 2026-09-18
+# Claude Session Manifest -- 2026-09-19
 # ------------------------------------------------------------
 # Lists all src/ files modified by Claude this session.
 # Use as import checklist after each Claude session.
@@ -13,167 +13,72 @@
 
 ## Files touched this session
 
-  [IMPORT] src/aeRibbonClass.cls, src/basUIStrings.bas  (into
-           Blank Bible Copy.docm)
-    9689917    Fixed the About dialog: `OnAdaeptAboutClick` hardcoded
-               "Hello, adaept World!" + a stray Bible-verse dev stub
-               instead of showing `RIBBON_VERSION` at all. New
-               `MSG_ABOUT` constant in `basUIStrings.bas` (per that
-               module's own no-inline-UI-text convention); one-line
-               `OnAdaeptAboutClick` body using
-               `FormatMsg(MSG_ABOUT, RIBBON_VERSION)`.
-    STATUS: operator confirmed imported into the docm and verified live
-    -- About dialog correctly read `RIBBON_VERSION` (printed "" at that
-    point, the expected dev-source sentinel value).
-    Then re-exported and ribbon_export_trim.py re-run (133 kept, 72
-    removed, up from 70 -- also carried through prior unexported
-    dev-src changes: Song of Solomon rename, quote-nesting fixes).
+  aeBibleClass/src/ -- NO CHANGES THIS SESSION. Nothing to import into the
+  VBA editor. All work this session was in the sibling `aeBibleAddin` repo
+  (JS/TS taskpane, Office.js audit-engine port) and `adaept5tudio` (planning
+  docs). aeBibleClass itself was read-only (source consulted as the VBA
+  audit-engine port reference, never edited).
 
-  [IMPORT] aeRibbon/src/basImportWordRibbonGitFiles.bas  (into
-           aeRibbon.dotm -- SEPARATE VBA project, NOT the dev docm;
-           see project_ribbon_dotm_docx_model.md)
-    New module, hand-authored directly in aeRibbon/src/ (not routed
-    through the dev-src trim pipeline -- not reachable from any ribbon
-    callback, so the trim would drop it anyway). Template
-    build-bootstrap importer mirroring the dev docm's own
-    `basImportWordGitFiles.bas`/`ImportAllVBAFiles` pattern:
-    `ImportAllRibbonVBAFiles` deletes every other module/class in the
-    live template (confirmation prompt), re-imports every
-    `*.bas`/`*.cls`/`*.frm` found in `aeRibbon/src/`, then auto-stamps
-    `RIBBON_VERSION` and the `aeRibbonVersion` custom doc property from
-    `aeRibbon/VERSION` -- closes two previously-manual, easy-to-skip
-    build steps (the same class of gap that let `RIBBON_VERSION` sit
-    unwired long enough to cause the About-dialog bug above).
-    STATUS: imported once (one-time bootstrap) into `aeRibbon.dotm`,
-    then `ImportAllRibbonVBAFiles` run for real -- VERIFIED WORKING on
-    its first live run: deleted the stale `bc71416`-era modules,
-    reimported cleanly, stamped `RIBBON_VERSION`/`aeRibbonVersion`
-    correctly (`1.0.0+9689917`), compiled with 0 errors.
+  [DOC] aeBibleAddin (separate repo, C:\adaept\aeBibleAddin) -- Phase 3
+  audit-engine port, conversion-plan.md §14 Phase E + §15. Commits this
+  session, in order:
+    0b8e113 .. e920992  -- §15 Office.js-dependent-routine spike: pilot
+        (footnote count) + 3 more shapes (font-color, paragraph-style,
+        header/footer-story), each with a mock-track Vitest test and one
+        operator-run live-Word validation via a DevTools debug hook
+        (window.aeAuditSpike). All four shapes confirmed against real Word
+        with zero drift; two real bugs found and fixed along the way
+        (Word inherits font color into a new paragraph on Enter; a
+        Word.*Type runtime enum isn't available in plain Vitest).
+    e922c83 .. 08e8133  -- Phase E batches 1-8: 44 of ~87 VBA audit
+        routines ported as JS-native Vitest tests (pure-text batches
+        needing no Office.js integration, plus routines reusing the four
+        validated shapes). Batch 9 (2026-09-19) was triage-only -- no new
+        code shipped; remaining Cases need operator input (VBA color
+        constants) or further API research, tracked in conversion-plan.md
+        §15.11/§15.12.
+    Also: fixed aeBibleAddin/taskpane/README.md's stale
+    Radiant-Word-Bible.docx -> Word-Bible.docx reference; rewrote
+    word-audit-scanner.LIVE_CHECK.md with exact commands/full paths and
+    self-verified ground truth (first version was too vague, per operator
+    feedback).
+    STATUS: all commits pushed to aeBibleAddin's `main`. Working tree clean.
 
-  [DOC] aeRibbon/BUILD.md
-    Multiple fixes found by inspection and by actually running the
-    process this session (not theoretical):
-    - Documented the new build-bootstrap path (step 3 rewritten: one-
-      time manual import of the importer module, then a single
-      `ImportAllRibbonVBAFiles` macro call per rebuild; old multi-select
-      process kept as a documented manual fallback).
-    - G6's version-stamp section similarly rewritten (automated primary
-      path, manual steps demoted to fallback).
-    - Fixed a real live bug: G7's host-docx paragraph described the
-      per-document Templates-dialog attach method, conflicting with
-      BUILD.md's own Startup-folder recommendation elsewhere -- caused
-      operator confusion mid-session (unclear whether to save the host
-      docx, ribbon not loading on the next file). Standardized on
-      Startup-folder method, added explicit "close without saving"
-      instruction, and an explicit warning before G8 that a fresh
-      Save-As docx needs `py/strip_ribbon.py` run on it BEFORE opening
-      (skipping this reliably triggers "the macro can't be found" 6x --
-      hit live this session, root-caused, fixed).
-    - Found and fixed a second copy of the same G7 procedure (step 7 in
-      the original "Build steps 1-8" list) that still had the stale
-      per-document-attach wording after the first fix -- deduped by
-      pointing step 7 at the G7 section instead of re-describing it.
-    - Found and fixed 8 places hardcoding the literal string
-      "1.0.0+bc71416" as if it were a live instruction rather than an
-      illustrative example -- went stale the moment `VERSION` bumped,
-      pointing the operator at the wrong release folder/tag. Replaced
-      with a `<version>` placeholder (resolves to `aeRibbon/VERSION`'s
-      current contents), matching the pattern step 8 already used.
+  [DOC] adaept5tudio (separate repo, C:\adaept\adaept5tudio) -- docs/
+  aeBibleClass-word-addin-conversion-plan.md updated throughout to track
+  the above: §14 Phase E batch table (batches 1-9), §15 (Office.js spike,
+  all 4 shapes closed), §15.10 (character-style-search gap, Cases 82/83/87
+  + 7/8, solution documented not built), §15.11 (consolidated
+  deferred/skipped/pending tracker), §15.12 (session-close next steps).
+  Also fixed a split-sentence bug introduced by an earlier same-session
+  edit to §15.11.
+    STATUS: all commits pushed to adaept5tudio's `main`. Working tree
+    clean.
 
-  [DOC] aeRibbon/QA_CHECKLIST.md, py/strip_ribbon.py,
-        aeRibbon/docx/README_host_docx.md
-    Updated `Radiant-Word-Bible.docx` filename references to the new
-    generic `Word-Bible.docx` (see rename below). `README_host_docx.md`
-    also got the same Startup-folder-method + "close without saving" +
-    pre-G8-strip-warning clarifications as BUILD.md's G7 section.
+  Also this session (earlier, before the Phase 3 port work): aeRibbon
+  v1.0.0+9689917 and aeBibleAddin v0.1.1 paired release shipped -- see
+  adaept5tudio's conversion-plan.md §10.6/§10.7 for that history; not
+  repeated here since it's a separate, already-closed thread from before
+  this manifest's Phase 3 work began.
 
-  [SCRIPT] aeRibbon/docx/Radiant-Word-Bible.docx -> aeRibbon/docx/Word-Bible.docx
-    Renamed (plain filesystem rename -- `*.docx` is gitignored, no git
-    history to carry). The "Radiant Word Bible" name/content belongs to
-    the separate `aeRWB` repo; this repo's ribbon-testing fixture was
-    borrowing that name prematurely. Generic name until the
-    aeBibleClass/aeRWB naming relationship is fully resolved.
-    Also: a fresh Save-As of this file from `Blank Bible Copy.docm`
-    (2026-09-18) still carried an orphaned `customUI14.xml` (expected on
-    every Save-As per BUILD.md step 4a) -- fixed via
-    `wsl python3 py/strip_ribbon.py aeRibbon/docx/Word-Bible.docx`,
-    customUI guard re-run clean afterward.
+## Pre-existing, unrelated drift noticed (not from this session)
 
-  [DOC] aeRibbon/VERSION, aeRibbon/RELEASES.md,
-        aeRibbon/releases/1.0.0+9689917/BUILD_RECORD.txt (new)
-    `VERSION` bumped `1.0.0+bc71416` -> `1.0.0+9689917` (dev SHA of the
-    About-dialog fix commit; aeRibbon v1.0.0 has never actually shipped,
-    so this is a SHA-suffix update per aeProductionRibbonPlan.md's own
-    scheme, not a semantic bump). `RELEASES.md` got its **first real row**
-    (previously an empty placeholder table since the doc's creation).
-    New `BUILD_RECORD.txt` records this session's G7 (all pass) and G8
-    (pass with 2 known non-blocking issues) results in full.
-    **Tagged locally: `v1.0.0+9689917`** (not yet pushed as of this
-    manifest -- see below).
+  aeBibleClass/rpt/HeadingLog.txt shows as modified in `git status`
+  (66 lines changed), last committed at 9689917 (2026-09-18). Not touched
+  by this session -- aeBibleClass/src/ and this repo's working tree were
+  never edited here. Likely regenerated by something run locally (a VBA
+  routine, editor autosave, or similar) between sessions. Left as-is,
+  uncommitted -- flagged to the operator rather than committed or
+  discarded without knowing its origin.
 
-  [DOC] adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
-        (separate repo)
-    Updated §10.6 items 1-5's status (all now dispositioned -- see
-    "Verified this session" below) and the "Estimated coding effort"
-    summary paragraph to close out this round.
+## Session closed 2026-09-19
 
-## Verified this session (2026-09-18)
-
-  - About dialog: confirmed live in Word, shows `RIBBON_VERSION`
-    correctly (previously a hardcoded dev stub).
-  - `ImportAllRibbonVBAFiles`: confirmed live in Word, first real run --
-    deleted stale modules, reimported cleanly, stamped both version
-    artifacts correctly, compiled 0 errors.
-  - G7 (empty host docx smoke): **all pass** -- tab appeared,
-    `RibbonOnLoad`/`AutoExec` printed, no error dialogs.
-  - G8 (production docx navigation smoke, against `Word-Bible.docx`):
-    **pass with 2 known non-blocking issues**, both already tracked in
-    the conversion plan and dispositioned this session:
-    - Next-Chapter-after-Next-Book (`Alt,Y2,.` after `Alt,Y2,]`) --
-      **confirmed as a real, reproducible bug** (was previously just
-      "flagged" from a single occurrence). Root cause not diagnosed.
-      Deprioritized -- non-blocking for the aeBibleAddin/JS-taskpane
-      track, which doesn't share this navigation state.
-    - KeyTip focus-escape at first-verse (`Alt,Y2,<`) and first-book
-      (`Alt,Y2,[`) boundaries -- **won't-fix**, a VBA RibbonX
-      punctuation-KeyTip routing limitation, mouse workaround accepted
-      (single-user tool).
-    - Last-verse boundary (`Alt,Y2,>`) -- **pass**; an earlier "shows
-      nothing" report from a prior session was not reproducible in a
-      clean session with the VBA editor closed (suspected editor/
-      mid-edit interaction, not investigated further).
-
-## Operator next steps
-
-  1. **Push this session's work** -- both `aeBibleClass` (commits +
-     the `v1.0.0+9689917` tag) and `adaept5tudio` (conversion-plan doc
-     update) are committed locally as of this manifest but not yet
-     pushed.
-  2. **Cut the matching `aeBibleAddin v0.1.1` tag** -- this session
-     stayed on the `aeRibbon` side only. Per §10.7's recurring workflow:
-     point the JS taskpane's local smoke test at the refreshed
-     `Word-Bible.docx`, re-run the JS taskpane smoke test, append a row
-     to `aeBibleAddin/RELEASES.md`, tag.
-  3. Items 2 (last-verse boundary) and 4 (Next-Chapter-after-Next-Book)
-     remain open but deprioritized -- no action expected unless the JS
-     track surfaces a related issue that makes root-causing them
-     suddenly relevant.
-
-## Session closed 2026-09-18
-
-  Focused entirely on closing out the conversion plan's §10.6 items
-  1-5 (VBA fixes found during the 2026-09-12 baseline session) as the
-  low-hanging-fruit path to the next `aeBibleAddin` release. Fixed and
-  verified the About-dialog bug (item 1); built, live-tested, and
-  documented a new template build-bootstrap automation
-  (`basImportWordRibbonGitFiles.bas`) that closes the exact class of
-  gap that caused item 1 in the first place; found and fixed three
-  real `BUILD.md` instruction-drift bugs while actually running the
-  process end-to-end (per-document vs. Startup-folder attach conflict,
-  a duplicated G7 writeup, hardcoded version strings) -- all three were
-  live blockers hit mid-session, not theoretical review findings;
-  renamed the ribbon-testing docx away from a name that belongs to a
-  different repo; cut `aeRibbon`'s first real `RELEASES.md` row and a
-  local tag. Items 2/3/4/5 all reached a final disposition (verified/
-  won't-fix/confirmed-but-deprioritized) rather than staying open
-  indefinitely. Not yet pushed to remote as of this manifest.
+  Focused entirely on the aeBibleAddin Phase 3 audit-engine port (approved
+  2026-09-18, executed 2026-09-19): closed out the §15 Office.js-dependent-
+  routine spike (all 4 shapes validated against real Word), then ran 9
+  ordinary Phase E batches, landing 44 of ~87 VBA audit routines as
+  JS-native Vitest tests with zero known drift from real Word behavior.
+  Batch 9 found the "easy" cluster exhausted -- consolidated every
+  remaining open item into conversion-plan.md §15.11's tracker and recorded
+  three next-step options in §15.12. No aeBibleClass VBA work this session;
+  nothing to import into the VBA editor.
