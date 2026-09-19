@@ -109,9 +109,26 @@
   live-checked).
     STATUS: pushed to adaept5tudio's `main` (bcc1316).
 
+  [DOC] aeBibleAddin -- Phase E batch 11, commit c1fabbd: ported Case 44
+  (CountNonPaletteStyleColors / AuditNonPaletteStyleColors) as
+  auditNonPaletteStyleColorsLive, newly unblocked by Test 88 resolving
+  its color-constant blocker. New src/data/color-palette.ts (13-entry
+  SSOT mirroring basBiblePalette.bas's BuildDefaultPalette). Reuses the
+  already-validated Styles-collection shape and objectThemeColor, no new
+  shape. 11 new tests, typecheck + lint clean, 139/139 + 45/45 passing.
+    STATUS: pushed to aeBibleAddin's `main` (c1fabbd).
+
+  [DOC] adaept5tudio -- conversion-plan.md updated: §14 Phase E batch 11
+  entry added, running total 47 -> 48; Case 44 removed from §15.11's
+  blocked/deferred tracker (done); Styles-collection and
+  AUTOMATIC_FONT_COLOR pending-live-validation rows extended to include
+  Case 44.
+    STATUS: pushed to adaept5tudio's `main` (e48bd10).
+
 ## Session status at this checkpoint
 
-  All work this session is committed and pushed: aeBibleClass (76d9012),
-  adaept5tudio (8b1ca78, bcc1316), aeBibleAddin (f2932c1). Working trees
-  clean except aeBibleClass/rpt/HeadingLog.txt (see above, left
-  uncommitted deliberately).
+  All work this session is committed and pushed: aeBibleClass (76d9012,
+  84f612b), adaept5tudio (8b1ca78, bcc1316, e48bd10), aeBibleAddin
+  (f2932c1, c1fabbd). Working trees clean except
+  aeBibleClass/rpt/HeadingLog.txt (see above, left uncommitted
+  deliberately).
