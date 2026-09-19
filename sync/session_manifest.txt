@@ -174,14 +174,39 @@
   20 new tests, typecheck + lint clean, 167/167 (taskpane) + 45/45
   (root) passing. adaept5tudio's conversion-plan.md §15.13/§15.11
   updated to match (running total 48 -> 52 of ~87).
+    STATUS: pushed to aeBibleAddin's `main` (860c72a) and adaept5tudio's
+    `main` (d439f87).
+
+  [DOC] aeBibleAddin -- Phase E batch 13, same session: Case 41
+  (Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed) ported as
+  countArialBlack8ptDarkRedNotEmphasisRedLive, closing the last open
+  item from the original Shape 5 group. New runFont() in
+  ooxml-run-styles.ts reads a run's DIRECT w:rFonts/w:sz/w:color
+  overrides from its own <w:rPr> (not yet live-validated -- new
+  sub-shape beyond the w:rStyle resolution the original Shape 5 check
+  confirmed; tracked in LIVE_CHECK.md's new "Shape 5, rPr extension"
+  section, low priority since Case 41's VBA baseline is 0). Two
+  interpretive judgment calls made explicit in the code/doc comments
+  rather than silently absorbed: (1) VBA's post-Find
+  `Characters(1).style <> "EmphasisRed"` check is not replicated --
+  tautological in an exact per-run model, since a run's own style can't
+  be both "Words of Jesus" and "EmphasisRed" simultaneously; (2) color
+  is checked with inheritance awareness ("Words of Jesus"'s own style
+  definition is already DarkRed per the SSOT audit in
+  aeBibleClass/rvw/Code_review 2026-05-16.md, so a run with no direct
+  color override still satisfies the DarkRed criterion by inheritance).
+  11 new tests, typecheck + lint clean, 178/178 (taskpane) + 45/45
+  (root) passing. adaept5tudio's conversion-plan.md §15.11/§15.13
+  updated (running total 52 -> 53 of ~87; original six-Case Shape 5
+  group -- 82/83/87/7/8/41 -- now fully closed).
 
 ## Session status at this checkpoint
 
-  aeBibleClass, adaept5tudio: prior commits already pushed (see above).
-  aeBibleAddin (word-audit-scanner.ts/.test.ts/.ooxml.test.ts,
-  ooxml-run-styles.ts, word-audit-scanner.LIVE_CHECK.md) and
-  adaept5tudio (conversion-plan.md) have uncommitted changes for the
-  Shape 5 validation + batch 12 as of this manifest entry -- commit and
-  push these next. Working trees otherwise clean except
+  aeBibleClass: prior commits pushed (see above).
+  aeBibleAddin (ooxml-run-styles.ts/.test.ts, word-audit-scanner.ts/
+  .ooxml.test.ts, taskpane.ts, word-audit-scanner.LIVE_CHECK.md) and
+  adaept5tudio (conversion-plan.md) have uncommitted changes for batch
+  13 (Case 41) as of this manifest entry -- commit and push these next.
+  Working trees otherwise clean except
   aeBibleClass/rpt/HeadingLog.txt (see above, left uncommitted
   deliberately).
