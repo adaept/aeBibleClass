@@ -332,3 +332,39 @@
   (03af4d6), adaept5tudio (0c3ca30). Working tree clean in both.
   aeBibleClass/rpt/HeadingLog.txt remains the one pre-existing
   uncommitted file (left as-is, not touched this session).
+
+## Same session, continued: Shape 6 live-check run and PASSED
+
+  Operator ran the new "Shape 6" runbook (word-audit-scanner.LIVE_CHECK.md)
+  against the already-open sideloaded Word session, step by step:
+  baseline (no shapes) -> `0`; one text box containing "one  two" (two
+  spaces) -> `1`; a second text box ("three  four") added and grouped
+  with the first via Group > Group -> `2`. All three matched exactly,
+  including the group-recursion case -- the first live confirmation
+  anywhere in this port that a self-referential collection shape
+  (`Shape.shapeGroup.shapes` nesting back into another
+  `Word.ShapeCollection`) actually works against real Word, not just
+  the mock.
+
+    [DOC] aeBibleAddin commit `0533c3d`: LIVE_CHECK.md's Shape 6 section
+    heading changed to VALIDATED, result log filled in, closing
+    paragraph rewritten to "Result: validated."
+      STATUS: pushed to aeBibleAddin's `main` (0533c3d).
+
+    [DOC] adaept5tudio commit `71f74a8`: conversion-plan.md's Case 2
+    finding upgraded from "RESOLVED and PORTED, pending live-validation"
+    to "RESOLVED, PORTED, and VALIDATED"; §15.11's pending-live-validation
+    table confirmed empty again; §15.12's next-steps intro updated to
+    say no open live-validation questions remain anywhere in the port;
+    §14's Batch 14 task-table cell updated to record the live-check
+    result inline.
+      STATUS: pushed to adaept5tudio's `main` (71f74a8).
+
+## Session status at this checkpoint (2026-09-19, Shape 6 closed)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (03af4d6, 0533c3d), adaept5tudio (0c3ca30, 71f74a8). Working tree
+  clean in both. aeBibleClass/rpt/HeadingLog.txt remains the one
+  pre-existing uncommitted file (left as-is, not touched this session).
+  Phase E running total: 54 of ~87, zero open live-validation questions
+  remaining anywhere in the port.
