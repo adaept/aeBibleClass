@@ -423,3 +423,84 @@
   touched this session). Phase E running total: 55 of ~87, one open
   pending-live-validation item (Case 75's `ListTemplateCollection`/
   `baseStyle` shape, "Shape 7" in word-audit-scanner.LIVE_CHECK.md).
+
+## Same session, continued: Shape 7 live-check run, SAFETY CATCH by operator
+
+  Operator ran the new "Shape 7" runbook (word-audit-scanner.LIVE_CHECK.md)
+  against the already-open sideloaded Word session (the real Bible
+  file, still open from Shape 6's check):
+
+  1. `dumpListTemplateSample()` -- succeeded, no thrown error. 19 list
+  templates found (10 single-level, 9 nine-level), 40 approved
+  Paragraph-type styles read back. Console initially collapsed the
+  nested arrays; `JSON.stringify(await
+  aeAuditSpike.dumpListTemplateSample())` got the full values. Genuine
+  finding: `baseStyle`/`linkedStyle` both read back as `null` for "no
+  value," not the empty string this port's doc comments had assumed --
+  the code's existing truthy checks (`if (style.baseStyle)`) already
+  handle `null` correctly, so no behavior bug, just a wrong assumption
+  in the comments (now corrected). Also found one list template
+  (levels 3-9) with genuine non-null `linkedStyle` values ("Heading 3"
+  through "Heading 9") -- proves the traversal reads real linked-style
+  data, not just an all-null degenerate case. None of those names are
+  on the approved-styles list, so correctly no effect on the count.
+
+  2. `countApprovedStylesWithListParagraphRisk()` -- returned `0`,
+  matching VBA's own baseline exactly.
+
+  3. **STOPPED before the manufactured `baseStyle`-violation positive
+  case (originally steps 4-6 of the runbook).** The operator caught,
+  before opening Word's Modify Style dialog on "VerseText" as
+  instructed, that this is EXACTLY the action
+  `aeBibleClass/EDSG/10-list-paragraph-bug.md` documents as triggering
+  Word's List Paragraph numbering-engine hang -- reliably reproducible
+  in this ~34,000-paragraph document, recovery only by killing Word
+  from Task Manager, unsaved work lost. This is literally the bug Case
+  75 exists to guard against. **The runbook itself was wrong to ask for
+  this in the production file** -- it should have called for a
+  disposable blank `.docm` per the EDSG doc's own migration recipe.
+  Corrected immediately: did NOT proceed with the style modification;
+  updated the runbook, the `countApprovedStylesWithListParagraphRiskLive`
+  source comment, and the `dumpListTemplateSample`/
+  `countApprovedStylesWithListParagraphRisk` debug-hook comment in
+  `taskpane.ts` to warn against this and record the actual (partial)
+  result honestly instead of leaving it looking like an untested
+  pending item.
+
+    [DOC] aeBibleAddin commit `6251f18`: LIVE_CHECK.md's Shape 7 section
+    heading changed to "PARTIALLY VALIDATED," safety correction added
+    at the top before the steps, steps 4-6 removed from the "to check
+    it" list, result log filled in with the dump + baseline results,
+    closing paragraph rewritten as "Result: partially validated."
+    Source comment in word-audit-scanner.ts and debug-hook comment in
+    taskpane.ts both corrected (null, not empty string; safety warning
+    against the Modify Style dialog on this document).
+      STATUS: pushed to aeBibleAddin's `main` (6251f18).
+
+    [DOC] adaept5tudio commit `e5f15a4`: conversion-plan.md's Case 75
+    finding upgraded from "RESOLVED and PORTED, pending live-validation"
+    to "RESOLVED, PORTED, and PARTIALLY VALIDATED" with the full safety
+    correction recorded inline; §15.12's next-steps intro updated to
+    reflect no fully-open pending-live-validation item remains (Case 75
+    confirmed on the data it has actually seen, genuine positive
+    baseStyle violation deliberately deferred to a disposable document
+    by design, not an oversight); the "pause here" closing paragraph
+    updated to say "partially validated" for Case 75 rather than
+    implying it's untouched.
+      STATUS: pushed to adaept5tudio's `main` (e5f15a4).
+
+## Session status at this checkpoint (2026-09-19, Shape 7 partially validated)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (03af4d6, 0533c3d, e14ebf5, 6251f18), adaept5tudio (0c3ca30, 71f74a8,
+  cd5377b, e5f15a4). Working tree clean in both. aeBibleClass/
+  rpt/HeadingLog.txt remains the one pre-existing uncommitted file
+  (left as-is, not touched this session). Phase E running total: 55 of
+  ~87. No fully-open pending-live-validation item remains -- Case 75's
+  shape is confirmed on real data (dump + zero-violation baseline); the
+  one thing never observed live (a genuine positive `baseStyle`
+  violation) is deliberately deferred to a disposable document, by
+  design, per EDSG/10-list-paragraph-bug.md's own guidance -- not an
+  oversight or a corner cut. Two open text boxes from Shape 6's live
+  check remain in the production Bible document, un-cleaned-up (noted
+  but not addressed this session).
