@@ -589,3 +589,108 @@
   page/section-break detection (6/80), superscript Find criterion (79),
   Fields/Bookmarks/InlineShapes + dedup (74), multi-type header/footer
   stories (84).
+
+## Same session, continued: real-world incident -> "Lock Hyperlinks" feature (operator-directed)
+
+  Operator reported a real editing incident (not a §15.12 research
+  item): a recent session fixing license/map references (which often
+  carry pasted links) applied the BookHyperlink character style by
+  hand, but Test 17 (CountActiveHyperlinks) still found active
+  hyperlinks -- right-click > Remove Hyperlink fixed the one instance
+  found. Operator asked for the root cause examined and a structural
+  solution proposed, with the explicit requirement that any fix work
+  "across all languages" (i.e. also cover the aeBibleAddin/.docx
+  pathway used for translated editions, not just this VBA docm).
+
+  Root cause confirmed by reading src/basTEST_aeBibleTools.bas
+  directly: applying a character style and removing a Word.Hyperlink
+  object are two completely independent operations. The existing
+  LockBookHyperlinks Sub already does both correctly but is
+  manual-only ("run when hyperlinks are added or changed") -- nothing
+  forces it to run.
+
+  [IMPORT] src/basTEST_aeBibleTools.bas -- LockBookHyperlinks gained
+  `Optional silent As Boolean = False`. When True, suppresses both of
+  its MsgBox calls (the "style not found" early-exit and the
+  completion summary), falling back to Debug.Print only. Manual
+  callers unaffected (default False, same MsgBox behavior as before).
+    STATUS: NOT YET IMPORTED into the live VBA project -- needs the
+    standard Remove-old/Import-new dance (or ImportAllVBAFiles) in the
+    VBA editor before Document_BeforeSave below can actually run.
+    Compile Project after importing, per the ImportAllVBAFiles-workflow
+    gotchas memory.
+
+  [IMPORT] src/ThisDocument.cls -- new Private Sub
+  Document_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean).
+  Sums story.Hyperlinks.Count across every StoryRange before every
+  save (same cheap measure CountActiveHyperlinks uses); if nonzero,
+  calls LockBookHyperlinks silent:=True. An active hyperlink can no
+  longer survive into a saved .docm.
+    STATUS: NOT YET IMPORTED -- same dance needed as above. Both files
+    should be imported together in one pass since Document_BeforeSave
+    calls LockBookHyperlinks by its bare (unqualified) name.
+
+  [DOC] EDSG/01-styles.md -- new "Automatic enforcement" subsection
+  under the existing hyperlink-styling section: documents both
+  pathways (this docm's Document_BeforeSave, and aeBibleAddin's
+  taskpane mechanism below) side by side, with the real incident as
+  the motivating example, and explains explicitly why Office.js needed
+  TWO mechanisms instead of VBA's one (no before-save event exists in
+  the Word JavaScript API -- confirmed against Microsoft's docs and an
+  open office-js GitHub issue this session).
+
+  [DOC] adaept5tudio commit `53fedea` -- conversion-plan.md gained new
+  §15.14 documenting both pathways together (not a numbered
+  RUN_THE_TESTS Case port, a new capability).
+    STATUS: pushed to adaept5tudio's `main` (53fedea).
+
+  [CODE] aeBibleAddin commit `2b28d40` -- new
+  taskpane/src/hyperlink-lock.ts, `lockActiveHyperlinksLive`: reads
+  `context.document.hyperlinks` -> `Word.HyperlinkCollection` (API set
+  WordApiDesktop 1.3, document-wide -- a different object from Case
+  17's main-body-scoped read-only `getHyperlinkRanges()`), restyles
+  each hyperlink's range to BookHyperlink, then deletes it. **First
+  WRITE/mutation this entire port has needed** -- everything before
+  this, across 57 ported Cases, was read-only. Deliberately scoped
+  down from VBA's three-step LockBookHyperlinks to just step 2 (unlink)
+  -- steps 1/3 (migrate orphaned built-in-Hyperlink-styled runs,
+  force-reapply font properties) would need a live "find by character
+  style, get a writable Range back" capability Shape 5's OOXML-parsing
+  approach deliberately doesn't provide (Case 46's
+  auditBookHyperlinkStylingLive already covers that drift separately,
+  read-only). Wired into the REAL taskpane UI (index.html/taskpane.ts),
+  not just a console hook: a "Lock Hyperlinks" button, plus a silent
+  auto-run on every Office.onReady (catches drift from a PREVIOUS
+  session only -- cannot catch anything added in the current session
+  before save, since Office.js has no before-save hook to run it from;
+  the button is the real guarantee). Also added an `aeAuditSpike.
+  lockActiveHyperlinks()` console hook for the live-check runbook to
+  drive the function directly. 5 new tests, typecheck clean, 210/210
+  (`taskpane`) + 45/45 (root) passing, production build clean (53.5kB,
+  up from ~50kB for the one new icon + function).
+    STATUS: pushed to aeBibleAddin's `main` (2b28d40). New "Shape 8,
+    write extension" section added to word-audit-scanner.LIVE_CHECK.md
+    with a live-check plan -- NOT YET RUN, flagged higher priority than
+    most other pending items in that file since this mutates content
+    (a bug here could restyle/unlink something unintended, not just
+    misreport a count).
+
+## Session status at this checkpoint (2026-09-19, Lock Hyperlinks built)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (03af4d6, 0533c3d, e14ebf5, 6251f18, 1f0af4f, 2b28d40), aeBibleClass
+  (b95bd60, this manifest commit pending), adaept5tudio (0c3ca30,
+  71f74a8, cd5377b, e5f15a4, 7aeb4bd, 53fedea). Working tree clean in
+  aeBibleAddin/adaept5tudio; aeBibleClass has the two VBA source files
+  committed to git but NOT YET IMPORTED into the live VBA project (see
+  above) -- operator needs to do the Remove-old/Import-new dance (or
+  ImportAllVBAFiles) before Document_BeforeSave's auto-lock actually
+  runs in Word. aeBibleClass/rpt/HeadingLog.txt remains the one
+  pre-existing uncommitted file (left as-is, not touched this session).
+
+  Two live-checks still pending, not yet run: Shape 7 (partially
+  validated, Case 75), Shape 8 read half (Case 17, low-risk/easy), and
+  now also Shape 8's write extension (Lock Hyperlinks itself,
+  higher-priority since it's a mutation). Two open text boxes from
+  Shape 6's live check remain in the production Bible document,
+  un-cleaned-up.
