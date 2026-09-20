@@ -55,7 +55,16 @@ End Sub
 ' auto-run-on-open call for the equivalent JS-side enforcement, and
 ' EDSG/01-styles.md's "Companion rule" section for why the two pathways
 ' need separate mechanisms (Office.js has no before-save event to hook).
+'
+' On Error GoTo PROC_ERR added same session, after the operator caught
+' its absence: unlike a fire-and-forget async call, an unhandled error
+' in a real Document_BeforeSave event can surface as a disruptive
+' runtime-error dialog in the MIDDLE of an actual Save - Debug.Print
+' only (no MsgBox, matching silent:=True's own intent below), and the
+' save itself is never cancelled on error (Cancel is never touched;
+' worst case, the hyperlink auto-lock is simply skipped for that save).
 Private Sub Document_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    On Error GoTo PROC_ERR
     Dim story As Word.Range
     Dim activeCount As Long
 
@@ -68,6 +77,14 @@ Private Sub Document_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
             " active hyperlink(s) found before save -- auto-running LockBookHyperlinks."
         LockBookHyperlinks silent:=True
     End If
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Debug.Print "ERROR in ThisDocument.Document_BeforeSave | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description & _
+        " - hyperlink auto-lock was skipped for this save; the document was saved normally."
+    Resume PROC_EXIT
 End Sub
 
 ' This document carries its own embedded ribbon (customUI/customUI14.xml,
@@ -122,5 +139,6 @@ PROC_ERR:
         " - '" & ADDIN_NAME & "' may still be loaded; delete it manually from " & _
         Application.StartupPath & " (close Word first if it's locked) if this recurs."
 End Sub
+
 
 

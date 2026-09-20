@@ -2676,9 +2676,16 @@ End Sub
 ' summary) - used by the BeforeSave auto-run so saving never pops a modal.
 ' Manual callers get the MsgBox by default, unchanged from before.
 '
+' On Error GoTo PROC_ERR added same session as silent:= (operator caught
+' its absence): previously only the narrow style-existence check had its
+' own On Error bracket, with no top-level handler for the rest of the Sub
+' (the three Find/Hyperlinks loops). PROC_ERR is Debug.Print only, never
+' MsgBox - see that label's own comment for why.
+'
 ' See EDSG/01-styles.md "Companion rule: no clickable hyperlinks
 ' anywhere" for the design pattern.
 Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
+    On Error GoTo PROC_ERR
     Const TARGET_STYLE As String = "BookHyperlink"
     Const BUILTIN_STYLE As String = "Hyperlink"
     Const TARGET_FONT  As String = "Carlito"
@@ -2700,7 +2707,7 @@ Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
     On Error Resume Next
     Dim oTarget As Word.Style
     Set oTarget = doc.Styles(TARGET_STYLE)
-    On Error GoTo 0
+    On Error GoTo PROC_ERR
     If oTarget Is Nothing Then
         Debug.Print "LockBookHyperlinks: " & TARGET_STYLE & " style not found. " & _
                "Run DefineBookHyperlinkStyle first."
@@ -2775,6 +2782,17 @@ Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
                "  BookHyperlink runs force-locked  : " & forced, _
                vbInformation
     End If
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    ' Debug.Print only, never MsgBox - this Sub is called silently from
+    ' ThisDocument.Document_BeforeSave on every save (silent:=True), and
+    ' an error-path MsgBox here would reintroduce exactly the
+    ' interrupt-a-silent-auto-run risk that design exists to avoid.
+    Debug.Print "ERROR in basTEST_aeBibleTools.LockBookHyperlinks | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
 End Sub
 
 Public Sub ConvertHyperlinksToPlainURLs()
