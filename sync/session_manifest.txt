@@ -743,3 +743,79 @@
   clean in aeBibleAddin/adaept5tudio; aeBibleClass/rpt/HeadingLog.txt
   remains the one pre-existing uncommitted file (left as-is, not
   touched this session).
+
+## VBA import/export dance DONE (operator, 2026-09-19/20) -- new session picks up here
+
+  Operator ran the standard Remove-old/Import-new (or ImportAllVBAFiles)
+  dance and recompiled -- `Document_BeforeSave`'s auto-lock is now live
+  in the docm for the first time. Word restarted as part of that process
+  (new WINWORD.EXE PID observed).
+
+  Live-check of the JS "Lock Hyperlinks" feature (Shape 8 write
+  extension) then started, using the already-open blank scratch
+  document from testing. Found a real, reproducible bug on round 1 --
+  see the aeBibleAddin-side commit `6aa9bbc` (already recorded/pushed)
+  for the full fix. Summary: `lockActiveHyperlinksLive` had no guard for
+  a missing `BookHyperlink` style (only exists in the production docm,
+  not a blank scratch doc) and threw an uncaught `RichApi.Error:
+  InvalidArgument`, yet the auto-run-on-open call had no error handling
+  so this would silently fail as an unhandled promise rejection on every
+  task pane open. Fixed with a `getByNameOrNullObject` guard (returns
+  `null`, matching VBA's own early-exit) plus try/catch in
+  `taskpane.ts`'s `lockHyperlinks()`. Runbook corrected too (it wrongly
+  told operators to test in a blank scratch doc).
+
+## VBA-side bug analysis (operator-caught, 2026-09-19/20): missing On Error handlers
+
+  While reviewing the JS-side fix above, operator asked directly:
+  "since the auto-run-on-open call has no error handling" -- is that
+  VBA or JS? Confirmed JS-only (taskpane.ts's lockHyperlinks/
+  Office.onReady). But the operator's follow-up question ("if VBA, I
+  have standard error handling -- confirm") prompted checking the VBA
+  side too, and found a REAL, separate gap:
+
+  - `ThisDocument.Document_BeforeSave` (added this session, b95bd60)
+    has **no `On Error GoTo PROC_ERR` at all** -- unlike
+    `CheckForConflictingRibbonAddIn`, a few lines below it in the SAME
+    file, which has the full PROC_ERR/Debug.Print pattern. Confirmed by
+    reading the current file directly.
+  - `basTEST_aeBibleTools.LockBookHyperlinks` (also touched this
+    session, gained the `silent` parameter) has only a NARROW
+    `On Error Resume Next` / `On Error GoTo 0` bracket around the
+    style-existence check -- no top-level `On Error GoTo PROC_ERR` for
+    the rest of the Sub (the three Find/Hyperlinks loops, the
+    `ColorFromName` call). Confirmed by grepping every `On Error`/
+    `PROC_ERR` occurrence in the file and reading the Sub directly --
+    genuinely missing, not an oversight in reading.
+
+  **Why this is worse in VBA than the JS gap it was found alongside:**
+  an unhandled runtime error inside `Document_BeforeSave` -- a real
+  Word Application event, not an async fire-and-forget call like the
+  JS side -- can surface as a disruptive runtime-error dialog in the
+  MIDDLE of an actual Save operation, not just a silently-logged async
+  failure. This is inconsistent with this codebase's own established
+  convention (`On Error GoTo PROC_ERR` + `Debug.Print`, confirmed
+  present in effectively every other routine checked this session:
+  `CheckForConflictingRibbonAddIn`, `CountActiveHyperlinks`,
+  `AuditBookHyperlinkStyling`, etc.) -- this was a real omission on the
+  same-session VBA additions, not a pre-existing project-wide gap being
+  newly discovered elsewhere.
+
+  **Planned fix (about to be applied, same session):**
+  1. `Document_BeforeSave` gets `On Error GoTo PROC_ERR` at the top and
+     a `PROC_EXIT`/`PROC_ERR` block at the bottom, `Debug.Print` only
+     (no `MsgBox` -- this handler must stay silent, same reasoning as
+     `silent:=True`'s own design intent: never interrupt a Save). On
+     error, the hyperlink auto-lock is simply skipped for that save;
+     the save itself is NOT cancelled (`Cancel` is never touched).
+  2. `LockBookHyperlinks` gets a real `On Error GoTo PROC_ERR` at the
+     top (re-established via `On Error GoTo PROC_ERR` immediately after
+     the existing narrow bracket's `On Error GoTo 0`, matching the
+     exact idiom already used elsewhere in this same file --
+     `OptimizedListFontsInDocument`'s `On Error GoTo 0` / `On Error GoTo
+     PROC_ERR` pair -- confirmed by reading that Sub directly) and a
+     `PROC_EXIT`/`PROC_ERR` block at the bottom, `Debug.Print` only
+     (matching this project's "errors to Immediate window, not MsgBox"
+     convention for touched handlers -- `PROC_ERR` must not itself pop
+     a `MsgBox`, since that would reintroduce the exact
+     interrupt-a-silent-auto-run risk this whole fix exists to close).
