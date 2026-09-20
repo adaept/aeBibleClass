@@ -29,6 +29,47 @@ Private Sub Document_Open()
     CheckForConflictingRibbonAddIn
 End Sub
 
+' Document_BeforeSave (added 2026-09-19): auto-enforces EDSG/01-styles.md's
+' "no clickable hyperlinks anywhere" rule on every save, so hyperlink creep
+' can never survive into a saved file. Real-world trigger: an editing
+' session that fixes license/map references (which often carry pasted
+' links) can leave an active Hyperlink object behind even after applying
+' the BookHyperlink character style by hand - the style and the click
+' target are two independent things in Word's object model, and only
+' removing the latter satisfies RUN_THE_TESTS slot 17
+' (CountActiveHyperlinks, expected 0). "Right-click > Remove Hyperlink"
+' fixes one instance; this hook makes the fix unconditional going forward
+' instead of relying on remembering to run LockBookHyperlinks by hand.
+'
+' Cheap check first (sum story.Hyperlinks.Count across every StoryRange,
+' the same measure CountActiveHyperlinks in aeBibleClass.cls uses) - the
+' heavier three-step LockBookHyperlinks (full-document Find scans) only
+' runs when there's actually something to fix. silent:=True suppresses its
+' completion MsgBox (Debug.Print only) so saving never pops a modal - see
+' basTEST_aeBibleTools.LockBookHyperlinks's own comment for that parameter.
+'
+' This document's docm/VBA pathway is NOT the enforcement point for
+' translated editions, which are edited as .docx via aeBibleAddin's JS
+' taskpane (VBA's own text/encoding handling isn't reliable for non-Latin/
+' UTF-8 scripts) - see that taskpane's "Lock Hyperlinks" button and its
+' auto-run-on-open call for the equivalent JS-side enforcement, and
+' EDSG/01-styles.md's "Companion rule" section for why the two pathways
+' need separate mechanisms (Office.js has no before-save event to hook).
+Private Sub Document_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    Dim story As Word.Range
+    Dim activeCount As Long
+
+    For Each story In ActiveDocument.StoryRanges
+        activeCount = activeCount + story.Hyperlinks.Count
+    Next story
+
+    If activeCount > 0 Then
+        Debug.Print "Document_BeforeSave: " & activeCount & _
+            " active hyperlink(s) found before save -- auto-running LockBookHyperlinks."
+        LockBookHyperlinks silent:=True
+    End If
+End Sub
+
 ' This document carries its own embedded ribbon (customUI/customUI14.xml,
 ' tab id "RWB" - see py/inject_ribbon.py) for VBA dev work. aeRibbon.dotm
 ' is a disposable build artefact used only for aeRibbon/aeBibleAddin

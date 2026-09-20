@@ -2663,12 +2663,22 @@ End Sub
 ' deliberately NOT touched - they belong to Word, not us, and the
 ' hide-sweep handles them separately.
 '
-' Manual only - run when hyperlinks are added or changed; the audit
-' AuditBookHyperlinkStyling catches drift between runs.
+' Runs manually (hyperlinks-changed editing sessions) or automatically via
+' ThisDocument.Document_BeforeSave (added 2026-09-19, silent:=True there) -
+' see that handler's comment for why: applying the BookHyperlink character
+' style and removing the underlying Hyperlink object are two independent
+' operations in Word's object model, so a translator/editor can apply the
+' right style and still leave an active (clickable) link behind. The audit
+' AuditBookHyperlinkStyling separately catches font/size/color/underline
+' drift between BookHyperlink-styled runs.
+'
+' silent:=True suppresses the completion MsgBox (still Debug.Prints the
+' summary) - used by the BeforeSave auto-run so saving never pops a modal.
+' Manual callers get the MsgBox by default, unchanged from before.
 '
 ' See EDSG/01-styles.md "Companion rule: no clickable hyperlinks
 ' anywhere" for the design pattern.
-Public Sub LockBookHyperlinks()
+Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
     Const TARGET_STYLE As String = "BookHyperlink"
     Const BUILTIN_STYLE As String = "Hyperlink"
     Const TARGET_FONT  As String = "Carlito"
@@ -2692,8 +2702,12 @@ Public Sub LockBookHyperlinks()
     Set oTarget = doc.Styles(TARGET_STYLE)
     On Error GoTo 0
     If oTarget Is Nothing Then
-        MsgBox "LockBookHyperlinks: " & TARGET_STYLE & " style not found. " & _
-               "Run DefineBookHyperlinkStyle first.", vbExclamation
+        Debug.Print "LockBookHyperlinks: " & TARGET_STYLE & " style not found. " & _
+               "Run DefineBookHyperlinkStyle first."
+        If Not silent Then
+            MsgBox "LockBookHyperlinks: " & TARGET_STYLE & " style not found. " & _
+                   "Run DefineBookHyperlinkStyle first.", vbExclamation
+        End If
         Exit Sub
     End If
 
@@ -2754,11 +2768,13 @@ Public Sub LockBookHyperlinks()
            "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
            "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
            "  BookHyperlink runs force-locked  : " & forced
-    MsgBox "LockBookHyperlinks complete:" & vbCrLf & _
-           "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
-           "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
-           "  BookHyperlink runs force-locked  : " & forced, _
-           vbInformation
+    If Not silent Then
+        MsgBox "LockBookHyperlinks complete:" & vbCrLf & _
+               "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
+               "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
+               "  BookHyperlink runs force-locked  : " & forced, _
+               vbInformation
+    End If
 End Sub
 
 Public Sub ConvertHyperlinksToPlainURLs()

@@ -375,7 +375,8 @@ Font.Size resolves the structural issue.
   creates the `BookHyperlink` character style with the four pinned
   properties. Idempotent (skips if already present).
 - **`LockBookHyperlinks`** (`basTEST_aeBibleTools`) — three-step
-  workflow:
+  workflow (also runs automatically on save — see "Automatic
+  enforcement" below):
   1. Walk every story; migrate any run styled built-in `Hyperlink`
      to `BookHyperlink` (catches paste-ins and Word's URL
      auto-format output).
@@ -404,6 +405,53 @@ to catch it indirectly. Two audits cover the two concerns:
   four font properties must match the pinned values).
 - `CountActiveHyperlinks` (test 17) — *whether* an active link
   object exists at all (expected 0 anywhere).
+
+### Automatic enforcement — two pathways, added 2026-09-19
+
+**Real incident that motivated this:** an editing session fixing
+license/map references (which often carry pasted links) applied the
+`BookHyperlink` character style by hand but left the underlying
+`Hyperlink` object active — styling and unlinking are two independent
+operations in Word's object model. `CountActiveHyperlinks` (test 17)
+only checks for the latter. Right-click → Remove Hyperlink fixed the
+one instance found, but nothing forced the fix on the next occurrence.
+Both pathways below make the fix unconditional instead of relying on
+remembering `LockBookHyperlinks`.
+
+**docm/VBA pathway (this document).** `ThisDocument.Document_BeforeSave`
+sums `story.Hyperlinks.Count` across every StoryRange before every save
+and, if nonzero, silently calls `LockBookHyperlinks silent:=True`
+(Debug.Print only, no modal — see that Sub's own comment for the
+`silent` parameter). An active hyperlink cannot survive into a saved
+`.docm`.
+
+**`.docx`/JS pathway (translated editions).** This docm/VBA pathway is
+**not** the enforcement point for translated content — VBA's own
+text/encoding handling isn't reliable for non-Latin/UTF-8 scripts, so
+translated editions are edited as `.docx` via `aeBibleAddin`'s JS
+taskpane, which never carries VBA at all. Two mechanisms there,
+because **Office.js has no `Document_BeforeSave` equivalent** — no
+cancelable, hookable "about to save" event exists in the Word
+JavaScript API (confirmed against Microsoft's own docs and the
+office-js GitHub repo, 2026-09-19):
+
+1. A manual **"Lock Hyperlinks"** button in the taskpane — runs the
+   same restyle-then-unlink fix on demand (`lockActiveHyperlinksLive`,
+   `taskpane/src/hyperlink-lock.ts`). This is the real guarantee:
+   click it before finishing an editing session, the same discipline
+   as remembering to hit Save itself.
+2. The same fix also runs automatically once, silently, whenever the
+   taskpane opens (`Office.onReady`) — catches drift left over from a
+   *previous* session, but **cannot** catch a hyperlink added during
+   the *current* session before the file is saved, since there is no
+   save-time hook to run it from. Treat this as a convenience backstop,
+   not a substitute for the button.
+
+**Editors/translators: get in the habit of clicking "Lock Hyperlinks"
+before closing the taskpane or handing off a `.docx`**, the same way
+you'd remember to save. The auto-run-on-open call will quietly clean
+up anything you forget, but only on the *next* session, not the one
+where the link was introduced.
 
 ### Per-installation recommendation: disable URL auto-format
 
