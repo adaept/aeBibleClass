@@ -462,6 +462,46 @@ you'd remember to save. The auto-run-on-open call will quietly clean
 up anything you forget, but only on the *next* session, not the one
 where the link was introduced.
 
+### Future consideration: a formal hyperlink-remnant audit
+
+`CountActiveHyperlinks`/`lockActiveHyperlinksLive` only see what Word's
+own object model reports as a `Hyperlink`. That's the normal case for
+anything pasted or typed through Word's UI, but it does not
+necessarily prove **zero URL-shaped content survives anywhere in the
+underlying file** — a few gaps worth naming, not yet built or checked
+for:
+
+- **`HYPERLINK` field codes.** Older documents, some paste sources, or
+  manual `Ctrl+F9` field insertion can carry a URL as a Word *field*
+  (`{ HYPERLINK "https://..." }`) rather than the modern
+  relationship-based `Hyperlink` object. `ActiveDocument.Fields`
+  filtered to `.Type = wdFieldHyperlink` is the VBA-side check; this
+  port has not looked at whether/how Office.js exposes field-level
+  inspection at all.
+- **Orphaned OOXML relationships.** A `.docx`/`.docm` is a zip of XML
+  parts; a hyperlink's URL lives in a `_rels` relationship file, and a
+  `<w:hyperlink r:id="...">` element in `document.xml` references it
+  by ID. Deleting the `Hyperlink` object through the object model is
+  expected to clean up both sides, but that expectation has not been
+  verified by actually unzipping a locked file and inspecting the XML
+  — a relationship entry could in principle survive even after the
+  visible link is gone.
+- **Other field types that resolve to a URL indirectly** (e.g.
+  `INCLUDEPICTURE`/`INCLUDETEXT` pointing at a web address) — out of
+  scope for the *hyperlink* rule specifically, but the same "is there a
+  live network reference anywhere in this file" question applies.
+
+**What a formal audit would entail, if this is ever prioritized:**
+unzip a locked, "clean" `.docx`/`.docm` (post-`LockBookHyperlinks`/
+`lockActiveHyperlinksLive`) and grep every XML part (`document.xml`,
+headers/footers, footnotes, and every `_rels/*.rels` file) for
+`http://`/`https://`/`mailto:` occurrences, cross-checked against
+`ActiveDocument.Fields` for any `wdFieldHyperlink` survivors. Zero
+matches outside of expected, non-clickable plain-text URLs (e.g. a
+citation rendered as visible text, which is exactly what this rule
+intends) would be the passing bar. Not built now — recorded here so a
+future audit doesn't have to rediscover the gap from scratch.
+
 ### Per-installation recommendation: disable URL auto-format
 
 Word's "AutoFormat As You Type" feature auto-converts typed URLs
