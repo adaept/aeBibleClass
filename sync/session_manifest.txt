@@ -819,3 +819,82 @@
      convention for touched handlers -- `PROC_ERR` must not itself pop
      a `MsgBox`, since that would reintroduce the exact
      interrupt-a-silent-auto-run risk this whole fix exists to close).
+
+  Both fixes applied, committed, and pushed: `aeBibleClass` commit
+  `5bb1597` (`ThisDocument.cls` + `basTEST_aeBibleTools.bas`).
+
+===============================================================================
+CHECKPOINT (2026-09-19/20) -- SOLID BASE TO RESUME FROM AFTER THE NEXT
+IMPORT/EXPORT DANCE. Read this whole block before doing anything else
+in a new session on this thread.
+===============================================================================
+
+WHAT HAPPENED THIS ROUND, IN ORDER:
+1. Operator did the FIRST import/export dance this session (for the
+   original `silent:=` + `Document_BeforeSave` changes, commit
+   `b95bd60`) -- confirmed done, Word restarted as part of it.
+2. Live-check of the JS "Lock Hyperlinks" feature started against a
+   blank scratch doc (per the runbook's own, then-wrong, instructions)
+   and found a real bug: `lockActiveHyperlinksLive` threw uncaught on a
+   missing `BookHyperlink` style. Fixed JS-side (commit `6aa9bbc`,
+   already live via the JS dev server -- no VBA import needed for this
+   part, `aeBibleAddin` is a separate repo/runtime).
+3. Operator asked whether an unrelated risk-framing comment ("no error
+   handling") was VBA or JS -- confirmed JS -- but that question
+   surfaced a SEPARATE, real VBA gap: `Document_BeforeSave` and
+   `LockBookHyperlinks` (both touched in step 1's commit) were missing
+   this codebase's standard `On Error GoTo PROC_ERR` handler. Bug
+   analysis documented (commit `c477970`), then fixed (commit
+   `5bb1597`, both files above).
+
+CURRENT STATE:
+- `aeBibleAddin` (JS/taskpane): fully fixed, pushed, and ALREADY LIVE
+  via the running dev server (`npm start`) -- no further action needed
+  there to pick the fix up, just reload the task pane if it's still
+  open from before the fix landed.
+- `aeBibleClass` (VBA/docm): TWO ROUNDS of source changes now exist in
+  git that are NOT YET IN THE LIVE VBA PROJECT:
+  - Round 1 (commit `b95bd60`, already imported once per step 1 above)
+  - Round 2 (commit `5bb1597`, the `On Error` fix -- NOT YET IMPORTED)
+  Both `src/ThisDocument.cls` and `src/basTEST_aeBibleTools.bas` need
+  ANOTHER Remove-old/Import-new pass (or `ImportAllVBAFiles`) to pick
+  up Round 2's changes, THEN **Compile Project** before testing
+  anything (per the ImportAllVBAFiles-workflow-gotchas memory).
+
+NEXT ACTIONS, IN ORDER, ONCE THIS SESSION RESUMES:
+1. Operator does the Remove-old/Import-new dance for `ThisDocument.cls`
+   + `basTEST_aeBibleTools.bas` (Round 2's `On Error` fix), then
+   Compile Project.
+2. VBA-side validation (new, not yet done at all this session): with
+   the docm open, insert a real hyperlink in the body, then **use
+   Word's actual Save command** (not just RUN_THE_TESTS) -- confirm
+   (a) no error dialog interrupts the save, (b) the Immediate window
+   shows `Document_BeforeSave: 1 active hyperlink(s) found before
+   save -- auto-running LockBookHyperlinks.` followed by
+   `LockBookHyperlinks complete: ...`, (c) the hyperlink is gone
+   (no longer clickable, restyled to BookHyperlink) after the save
+   completes, (d) `RUN_THE_TESTS(17)` (`CountActiveHyperlinks`) reads
+   `0` afterward.
+3. JS-side validation (picks up where round 1 of the Shape 8
+   write-extension live-check left off, per
+   `word-audit-scanner.LIVE_CHECK.md`'s corrected runbook): step 0
+   (blank-doc guard, confirm `null` not a thrown error -- ALREADY
+   PASSED per the operator's last live report before this VBA
+   diversion, but worth a quick re-confirm since the task pane was
+   reloaded) still needs steps 1-7 run against a scratch COPY of a
+   document that actually has `BookHyperlink` defined (the corrected
+   instruction -- NOT a truly blank document).
+4. Once both are confirmed, update `word-audit-scanner.LIVE_CHECK.md`'s
+   result log (round 2) and `conversion-plan.md`'s §15.14 entry from
+   "bug found and fixed, re-validation pending" to "validated," and
+   record the VBA-side Document_BeforeSave live-check result somewhere
+   (this manifest, at minimum -- no dedicated VBA-side LIVE_CHECK.md
+   equivalent exists in this project; RUN_THE_TESTS + this manifest is
+   the VBA-side validation ritual).
+
+Two things still outstanding from EARLIER in this session, unrelated
+to hyperlinks, not blocking the above: Shape 7 (`ListTemplateCollection`/
+`baseStyle`, partially validated) and two leftover test text boxes in
+the production Bible document from the Shape 6 live-check, still
+un-cleaned-up.
+===============================================================================
