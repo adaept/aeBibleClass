@@ -694,3 +694,52 @@
   higher-priority since it's a mutation). Two open text boxes from
   Shape 6's live check remain in the production Bible document,
   un-cleaned-up.
+
+## Same session, continued: risk-framing correction (operator feedback)
+
+  Operator corrected how the Lock Hyperlinks live-check's priority/risk
+  was described: prior comments framed a bug there as merely "could
+  misreport a count" / "restyle something unintended" -- true but
+  understating the actual stakes. This document's target is print
+  publication; an active hyperlink surviving into that output is a
+  defect the whole rule exists to prevent outright, in every language
+  equally (i18n does not relax it), and potentially a security concern
+  (a malicious/spoofed URL surviving unnoticed into printed or
+  PDF-exported output) -- not a style-consistency nit. Web/mobile
+  editions are an explicitly separate future track needing their own,
+  more stringent security review later; this fix does not loosen the
+  print-target rule in the meantime.
+
+  [DOC] aeBibleAddin commit `ee903e1`: reframed the risk/priority
+  language in hyperlink-lock.ts's file header and both spots in
+  word-audit-scanner.LIVE_CHECK.md's "Shape 8, write extension"
+  section (the mid-section paragraph and the "Result: pending"
+  closing line).
+    STATUS: pushed to aeBibleAddin's `main` (ee903e1).
+
+  [DOC] adaept5tudio commit `9ac82b2`: same reframing applied to
+  conversion-plan.md's §15.14 closing paragraph.
+    STATUS: pushed to adaept5tudio's `main` (9ac82b2).
+
+  [DOC] aeBibleClass commit `9fed701`: strengthened
+  EDSG/01-styles.md's "Companion rule" Rationale section itself (the
+  authoritative source doc) with the same print-defect/security
+  framing, plus an explicit note that the future online-edition
+  clickability concern is a separate track that doesn't loosen this
+  rule now.
+    STATUS: pushed to aeBibleClass's `main` (9fed701).
+
+  [MEMORY] Saved feedback_hyperlink_policy_severity.md so this framing
+  is applied by default in future sessions touching this rule, in
+  either the docm/VBA or `.docx`/JS pathway.
+
+## Session status at this checkpoint (2026-09-19, risk framing corrected)
+
+  All work this session is committed and pushed: aeBibleAddin (03af4d6,
+  0533c3d, e14ebf5, 6251f18, 1f0af4f, 2b28d40, ee903e1), aeBibleClass
+  (b95bd60, dc78747, 9fed701 -- VBA source changes still NOT YET
+  IMPORTED into the live VBA project, see above), adaept5tudio (0c3ca30,
+  71f74a8, cd5377b, e5f15a4, 7aeb4bd, 53fedea, 9ac82b2). Working tree
+  clean in aeBibleAddin/adaept5tudio; aeBibleClass/rpt/HeadingLog.txt
+  remains the one pre-existing uncommitted file (left as-is, not
+  touched this session).
