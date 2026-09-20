@@ -504,3 +504,88 @@
   oversight or a corner cut. Two open text boxes from Shape 6's live
   check remain in the production Bible document, un-cleaned-up (noted
   but not addressed this session).
+
+## Same session, continued: §15.12 "Body-level hyperlinks" item research (Cases 17/46)
+
+  Picked up the next item on §15.12's next-steps list: research whether
+  Office.js exposes a Body-level hyperlinks collection, the thing Cases
+  17 (`CountActiveHyperlinks`) and 46 (`AuditBookHyperlinkStyling`)
+  were grouped under in §15.11's tracker ("no obvious Office.js
+  Body-level hyperlinks collection found yet"). Re-triaged both VBA
+  sources before building anything -- same discipline that caught
+  §15.10's original mis-grouping of Cases 82/83/87 -- and found the
+  shared assumption was wrong for Case 46: its VBA source
+  (`AuditBookHyperlinkStyling`) is a pure character-style Find + font
+  check, no hyperlinks collection anywhere in it. Only Case 17 actually
+  needs one.
+
+  [CODE] aeBibleAddin commit `1f0af4f`: third full API match this
+  session (after Cases 2 and 75) -- `Word.Range.getHyperlinkRanges()`
+  -> `Word.RangeCollection` exists, API set WordApi 1.3 (notably NOT
+  desktop-only, one of the few properties this port has needed that
+  isn't). Ported as `countActiveHyperlinksLive`
+  (`context.document.body.getRange().getHyperlinkRanges()`), scoped to
+  the main body only per this port's established Primary-only/
+  main-body-only convention (VBA sums across ALL StoryRanges). New
+  top-level collection shape (Shape 8), flagged pending its own
+  live-check -- but unlike Case 75's Shape 7, this one is LOW-RISK and
+  EASY to manufacture: this document's own editorial rule is zero
+  hyperlinks anywhere, so inserting/removing one via Word's ordinary
+  Insert > Link UI is a safe, reversible action, nothing like the
+  Modify-Style-dialog hang risk from Shape 7.
+
+  Case 46 (`AuditBookHyperlinkStyling`) ported as
+  `auditBookHyperlinkStylingLive`, reusing Shape 5's OOXML parser --
+  no new shape at all. Extended `ooxml-run-styles.ts`'s `runFont()`
+  with a fourth field, `underline` (`w:u/@w:val`), riding on the SAME
+  still-pending "Shape 5, rPr extension" live-check Case 41's
+  name/size/color parsing already waits on (not a new tracked pending
+  item). Inheritance-aware exactly like Case 41: read
+  `aeBibleClass/rpt/Styles/style_BookHyperlink.txt` directly and
+  confirmed the "BookHyperlink" style's OWN definition already is
+  Carlito 9pt DarkBlue (RGB 0,0,128 = `#000080`, cross-checked against
+  `../../src/data/color-palette.ts`'s existing SSOT entry) single-
+  underline -- so a run with no direct override on a given property is
+  treated as satisfying it by inheritance; only an EXPLICIT disagreeing
+  override counts as an anomaly. Per-run anomaly count, not
+  per-property: VBA accumulates all four checks into one `mismatch`
+  string per run and increments `anomalies` ONCE if non-empty, ported
+  faithfully as one OR-of-four-mismatches check per run (unlike Case
+  75's per-property violation count).
+
+  18 new tests (8 for Case 17's mock, 9 for Case 46's OOXML-fixture
+  mock plus one underline-specific `ooxml-run-styles.test.ts` addition,
+  1 negative-case underline test), typecheck clean, 207/207
+  (`taskpane`) + 45/45 (root) passing.
+    STATUS: pushed to aeBibleAddin's `main` (1f0af4f).
+
+  [DOC] adaept5tudio commit `7aeb4bd`: conversion-plan.md updated --
+  §14's task table gets a new Batch 16 entry, running total 55 -> 57 of
+  ~87 (two Cases in one batch); §15.11's Cases-17/46 row removed from
+  the "open, not investigated" tracker; two new finding paragraphs
+  added (Case 17 pending live-validation, Case 46 needing none);
+  §15.12's next-steps list renumbered down to 5 remaining open items
+  (was 6); "three for three this session" noted -- every §15.12 API
+  research item attempted this session (doc.Shapes, ListTemplates,
+  hyperlinks) turned out to be a full or near-full API match, not a
+  dead end.
+    STATUS: pushed to adaept5tudio's `main` (7aeb4bd).
+
+## Session status at this checkpoint (2026-09-19, Cases 17/46 ported)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (03af4d6, 0533c3d, e14ebf5, 6251f18, 1f0af4f), adaept5tudio (0c3ca30,
+  71f74a8, cd5377b, e5f15a4, 7aeb4bd). Working tree clean in both.
+  aeBibleClass/rpt/HeadingLog.txt remains the one pre-existing
+  uncommitted file (left as-is, not touched this session). Phase E
+  running total: 57 of ~87. Two pending-live-validation items remain,
+  neither urgent: Case 75's `ListTemplateCollection`/`baseStyle` shape
+  (partially validated, "Shape 7") and Case 17's
+  `Range.getHyperlinkRanges()` shape (not yet checked at all, "Shape
+  8," but low-risk/easy whenever picked up). Two open text boxes from
+  Shape 6's live check remain in the production Bible document,
+  un-cleaned-up (noted but not addressed this session). Remaining
+  §15.12 research items (5 left): footnote body-text traversal (34/35),
+  page/section-break detection (6/80), superscript Find criterion (79),
+  Fields/Bookmarks/InlineShapes + dedup (74), multi-type header/footer
+  stories (84).
