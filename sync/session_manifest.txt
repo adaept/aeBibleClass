@@ -136,8 +136,9 @@
   built on an unverified "flat OPC" package assumption that degrades
   gracefully if wrong. Pilot countChapterVerseMarkerInRangeLive (Case
   83) wired into window.aeAuditSpike, NOT YET LIVE-VALIDATED -- needs
-  a real Bible file (not a blank sideload doc, since the custom
-  VerseText/marker styles don't exist there). Full runbook:
+  a testing copy of the docm with real Bible content (not a blank
+  sideload doc, since the custom VerseText/marker styles don't exist
+  there). Full runbook:
   word-audit-scanner.LIVE_CHECK.md's new "Shape 5" section. Added jsdom
   as a taskpane-only devDependency (test-only). 11 new tests, typecheck
   + lint clean, 154/154 (taskpane) + 45/45 (root) passing. Cases
@@ -202,7 +203,8 @@
 
   [DOC] aeBibleAddin -- live-checked both of §15.11's remaining
   pending-live-validation items this session, operator running
-  window.aeAuditSpike hooks against the real Bible file:
+  window.aeAuditSpike hooks against a testing copy of the docm with
+  real Bible content:
 
   1. getStyles()/StyleCollection shape (Cases 5/44/45/76/77/78):
   VALIDATED, but only after finding and fixing THREE genuine bugs the
@@ -427,8 +429,8 @@
 ## Same session, continued: Shape 7 live-check run, SAFETY CATCH by operator
 
   Operator ran the new "Shape 7" runbook (word-audit-scanner.LIVE_CHECK.md)
-  against the already-open sideloaded Word session (the real Bible
-  file, still open from Shape 6's check):
+  against the already-open sideloaded Word session (a testing copy of
+  the docm with real Bible content, still open from Shape 6's check):
 
   1. `dumpListTemplateSample()` -- succeeded, no thrown error. 19 list
   templates found (10 single-level, 9 nine-level), 40 approved
@@ -457,8 +459,11 @@
   in this ~34,000-paragraph document, recovery only by killing Word
   from Task Manager, unsaved work lost. This is literally the bug Case
   75 exists to guard against. **The runbook itself was wrong to ask for
-  this in the production file** -- it should have called for a
-  disposable blank `.docm` per the EDSG doc's own migration recipe.
+  this in a document with real content at all** -- it should have
+  called for a disposable blank `.docm` per the EDSG doc's own
+  migration recipe (the hang risk scales with paragraph count, so a
+  testing copy of the ~34,000-paragraph docm is exactly as exposed as
+  the live master would be).
   Corrected immediately: did NOT proceed with the style modification;
   updated the runbook, the `countApprovedStylesWithListParagraphRiskLive`
   source comment, and the `dumpListTemplateSample`/
@@ -502,7 +507,7 @@
   violation) is deliberately deferred to a disposable document, by
   design, per EDSG/10-list-paragraph-bug.md's own guidance -- not an
   oversight or a corner cut. Two open text boxes from Shape 6's live
-  check remain in the production Bible document, un-cleaned-up (noted
+  check remain in the testing-copy docm, un-cleaned-up (noted
   but not addressed this session).
 
 ## Same session, continued: §15.12 "Body-level hyperlinks" item research (Cases 17/46)
@@ -583,7 +588,7 @@
   (partially validated, "Shape 7") and Case 17's
   `Range.getHyperlinkRanges()` shape (not yet checked at all, "Shape
   8," but low-risk/easy whenever picked up). Two open text boxes from
-  Shape 6's live check remain in the production Bible document,
+  Shape 6's live check remain in the testing-copy docm,
   un-cleaned-up (noted but not addressed this session). Remaining
   §15.12 research items (5 left): footnote body-text traversal (34/35),
   page/section-break detection (6/80), superscript Find criterion (79),
@@ -692,7 +697,7 @@
   validated, Case 75), Shape 8 read half (Case 17, low-risk/easy), and
   now also Shape 8's write extension (Lock Hyperlinks itself,
   higher-priority since it's a mutation). Two open text boxes from
-  Shape 6's live check remain in the production Bible document,
+  Shape 6's live check remain in the testing-copy docm,
   un-cleaned-up.
 
 ## Same session, continued: risk-framing correction (operator feedback)
@@ -756,8 +761,9 @@
   document from testing. Found a real, reproducible bug on round 1 --
   see the aeBibleAddin-side commit `6aa9bbc` (already recorded/pushed)
   for the full fix. Summary: `lockActiveHyperlinksLive` had no guard for
-  a missing `BookHyperlink` style (only exists in the production docm,
-  not a blank scratch doc) and threw an uncaught `RichApi.Error:
+  a missing `BookHyperlink` style (only exists in a docm that already
+  has it defined, e.g. a testing copy of the docm -- not a blank
+  scratch doc) and threw an uncaught `RichApi.Error:
   InvalidArgument`, yet the auto-run-on-open call had no error handling
   so this would silently fail as an unhandled promise rejection on every
   task pane open. Fixed with a `getByNameOrNullObject` guard (returns
@@ -895,6 +901,23 @@ NEXT ACTIONS, IN ORDER, ONCE THIS SESSION RESUMES:
 Two things still outstanding from EARLIER in this session, unrelated
 to hyperlinks, not blocking the above: Shape 7 (`ListTemplateCollection`/
 `baseStyle`, partially validated) and two leftover test text boxes in
-the production Bible document from the Shape 6 live-check, still
+the testing-copy docm from the Shape 6 live-check, still
 un-cleaned-up.
 ===============================================================================
+
+## Correction (2026-09-20): every "production Bible file/document/docm" reference above was wrong
+
+  Operator corrected: all of this thread's live-checks (getStyles/
+  AUTOMATIC_FONT_COLOR from an earlier session, and this session's
+  Shape 5 pilot, Shape 6, Shape 7, and the hyperlink-lock work) were
+  run against **a testing copy of the docm**, never the live/master
+  file. Every "the real Bible file"/"production Bible document"/
+  "production docm"/"production file" reference earlier in this
+  manifest has been corrected in place to "a testing copy of the docm"
+  (or equivalent) -- the substantive technical findings in each entry
+  are unaffected (the testing copy carries the same real content/
+  styles/paragraph count, so e.g. Shape 7's List-Paragraph-hang risk
+  applies equally there), only the file-identity label was wrong.
+  Leftover artifacts from testing (two text boxes, per Shape 6) are in
+  that testing copy, not the master docm -- no cleanup of the live file
+  is needed on that account.
