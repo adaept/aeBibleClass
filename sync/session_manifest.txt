@@ -940,3 +940,84 @@ un-cleaned-up.
   Leftover artifacts from testing (two text boxes, per Shape 6) are in
   that testing copy, not the master docm -- no cleanup of the live file
   is needed on that account.
+
+===============================================================================
+# Claude Session Manifest -- 2026-09-20
+# ------------------------------------------------------------
+
+## Files touched this session
+
+  [DONE] aeBibleClass/src/ThisDocument.cls -- trimmed 2 stray trailing
+  blank lines that had accumulated. Confirmed via commit-history
+  comparison this was NOT a recurrence of the 4d603cf per-cycle growth
+  bug (re-exporting produced no further growth -- stable). Separately,
+  a re-import this session found basTEST_aeBibleTools.bas missing from
+  the live VBA project (a prior partial import had skipped it, not a
+  code bug) -- LockBookHyperlinks was unresolvable, "Sub or Function
+  not defined" on compile. Fixed by re-running the full ImportAllVBAFiles
+  dance; module reappeared, compile clean.
+    STATUS: imported, compiled clean, committed (3ee3222), pushed.
+
+  [DOC] aeBibleClass/EDSG/01-styles.md -- new subsection "Word feature
+  to know: character styles bleed into new typing after Enter", found
+  during the aeBibleAddin Shape 8 live-check (typing after a
+  BookHyperlink-styled run inherits that character style -- standard
+  Word behavior, not a bug in LockBookHyperlinks/lockActiveHyperlinks).
+    STATUS: committed (0bbca68), pushed.
+
+  [DOC] aeBibleClass/rpt/HeadingLog.txt -- routine regenerated
+  test-run timestamps from this session's compile/import checks.
+    STATUS: committed (3ee3222), pushed.
+
+  [SCRIPT] aeBibleAddin/taskpane/src/taskpane.ts -- Office.onReady
+  reordered so `lockHyperlinks(false)` runs AFTER `refreshHeadings()`
+  completes (`void refreshHeadings().then(() => lockHyperlinks(false))`).
+  Fixes a status-message race found during Shape 8's live-check step 7:
+  both functions write to the shared #status element, and
+  refreshHeadings's own final setStatus (clearing to '' once its
+  full-document heading scan completes) was clobbering the "Locked
+  N..." message almost as soon as it appeared -- not a timed toast,
+  a genuine unsequenced-write race.
+    STATUS: typecheck clean, 212/212 tests passing, committed (ad5f543),
+    pushed. NOT YET RE-VERIFIED LIVE IN WORD -- do this first next
+    session (see below).
+
+  [DOC] aeBibleAddin/taskpane/src/word-audit-scanner.LIVE_CHECK.md --
+  recorded the full Shape 8 write-extension round-2 result log (steps
+  0, 3-7, all passed against a testing copy with BookHyperlink defined).
+  Fixed the "status bar" wording to clarify it means the taskpane's own
+  #status element, not Word's window status bar. Closed the Shape 8
+  entry as fully validated, no drift.
+    STATUS: committed (ad5f543), pushed.
+
+## NEXT SESSION, IN ORDER
+
+1. **Re-verify the status-message fix live in Word.** Sideload the
+   taskpane against a testing copy with BookHyperlink defined, insert a
+   hyperlink, close/reopen the taskpane (or the document) so
+   Office.onReady fires fresh. Confirm the "Locked N active
+   hyperlink(s)..." message now actually persists in the taskpane's
+   #status area instead of being clobbered within a second or two.
+2. **VBA-side Document_BeforeSave validation -- still not done, carried
+   from 2026-09-19, not touched this session:** open a testing copy of
+   the docm, insert a real hyperlink in the body, use Word's actual
+   Save command (not RUN_THE_TESTS). Confirm (a) no error dialog
+   interrupts the save, (b) the Immediate window shows
+   `Document_BeforeSave: 1 active hyperlink(s) found before save --
+   auto-running LockBookHyperlinks.` followed by `LockBookHyperlinks
+   complete: ...`, (c) the hyperlink is gone/restyled after the save,
+   (d) `RUN_THE_TESTS(17)` reads `0` afterward.
+3. Once both are confirmed, EDSG/01-styles.md's §"Automatic
+   enforcement" and conversion-plan.md's §15.14 entry can move from
+   "JS-side validated, VBA-side pending" to fully closed.
+
+STILL LOWER PRIORITY, CARRIED FORWARD UNCHANGED FROM EARLIER SESSIONS:
+Shape 7 (`ListTemplateCollection`/`baseStyle`, partially validated, no
+further action needed unless the untested `baseStyle`-violation
+positive case becomes relevant -- disposable blank `.docm` only, per
+its own runbook); 5 remaining §15.12 API-research items (footnote
+body-text traversal 34/35, page/section-break detection 6/80,
+superscript Find criterion 79, Fields/Bookmarks/InlineShapes + dedup
+74, multi-type header/footer stories 84); two leftover test text boxes
+in the testing-copy docm from the Shape 6 live-check, still
+un-cleaned-up.
