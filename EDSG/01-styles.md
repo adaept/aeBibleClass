@@ -326,10 +326,19 @@ Rationale:
 - The document's primary target is **print**. Reader holding the
   printed book cannot click anything; live link objects serve no
   purpose.
+- An active hyperlink in a print-destined document is **a defect,
+  not a style inconsistency** — and, in the worst case, a security
+  concern (a live/clickable link, e.g. a malicious or spoofed URL,
+  surviving unnoticed into a printed or PDF-exported page). This is
+  not a preference to be relaxed case by case; it applies to every
+  language equally — a hyperlink is exactly as much a bug in a
+  translated edition as in the English original.
 - Clickability is a **future-mode concern** for an eventual online
-  edition. At that build time, online-edition-specific tooling can
-  re-attach link objects to the styled text. The print master stays
-  clean.
+  edition. That is an explicitly separate, future track requiring its
+  own, more stringent hyperlink/security review at that time — it
+  does not loosen this rule in the meantime. At that build time,
+  online-edition-specific tooling can re-attach link objects to the
+  styled text. The print master stays clean.
 - Single-form discipline simplifies i18n and translator work — a
   translator never has to think about link mechanics, only display
   styling.
