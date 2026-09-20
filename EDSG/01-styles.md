@@ -529,6 +529,34 @@ If a translator misses the step, `LockBookHyperlinks` will catch
 and migrate any built-in `Hyperlink` runs on its next run. The
 setting prevents the work, not the rule.
 
+### Word feature to know: character styles bleed into new typing after Enter
+
+Found during the `lockActiveHyperlinksLive` live-check (2026-09-20):
+after a hyperlink is locked (restyled to `BookHyperlink`, then
+unlinked), pressing Enter right after that text and continuing to
+type carries the `BookHyperlink` character style into the new text.
+**This is standard Word behavior for any character style, not a bug
+in `LockBookHyperlinks`/`lockActiveHyperlinksLive`** — the fix only
+touches the hyperlink's own range; it never presses Enter or types
+anything. Word simply continues the character formatting at the
+cursor's insertion point until something clears it. The same thing
+happens after typing next to `EmphasisRed` or any other character
+style in this document.
+
+There is no style-level fix available: **character styles have no
+"style for following paragraph" setting** — that's a paragraph-style
+concept only (e.g. Heading 1 → Normal), and Word's Modify Style
+dialog doesn't expose it for character styles.
+
+**What to do about it:** before typing new content immediately after
+a `BookHyperlink`-styled reference (or after any character-styled
+run), clear the carried-over formatting first — either click
+elsewhere and back, or press Ctrl+Spacebar to reset to the paragraph's
+default character formatting. Otherwise new Bible text can silently
+pick up `BookHyperlink` (or another character style) that doesn't
+belong to it, which `AuditBookHyperlinkStyling`/Case 46 would then
+flag as drift.
+
 ## How to add a new style
 
 See [02-editing-process](02-editing-process.md) § Style design.
