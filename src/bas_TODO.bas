@@ -781,7 +781,7 @@ Option Explicit
 '
 '### Real failure scenario
 '
-'1. Open doc ? headings captured
+'1. Open Doc ? headings captured
 '2. Edit headings
 '3. Navigation uses **old positions**
 '

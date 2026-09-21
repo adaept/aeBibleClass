@@ -9,6 +9,25 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+' Application-level WithEvents hookup (added 2026-09-21, replaces the
+' Document_BeforeSave dead code below): confirmed via the VBA Object
+' Browser that Word's Document class has NO BeforeSave event of its own -
+' only Word.Application.DocumentBeforeSave exists. A same-named Sub
+' directly in ThisDocument compiles cleanly but is never actually wired to
+' anything (empirically confirmed 2026-09-21: never fired across four
+' separate testing-copy docm files, including a brand-new one imported
+' fresh from master, ruling out file-specific corruption).
+' Application-level events fire for EVERY document saved in this Word
+' session, not just this one - oWordApp_DocumentBeforeSave below guards
+' with `If Not Doc Is Me` so only saves of this specific document trigger
+' the hyperlink auto-lock. Must be a module-level (not local) WithEvents
+' variable, wired up in Document_Open, so it survives past Document_Open
+' returning - a local variable would be garbage collected immediately and
+' stop receiving events. WithEvents doesn't require a separate class
+' module; ThisDocument already is one.
+Public WithEvents oWordApp As Word.Application
+Attribute oWordApp.VB_VarHelpID = -1
+
 'Copyright (c) 2025-2026 Peter F. Ennis
 'SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-adaept-Commercial
 'DUAL-LICENSED. You may use this file under EITHER of:
@@ -21,32 +40,45 @@ Option Explicit
 'This library is distributed WITHOUT ANY WARRANTY; without even the implied
 'warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-' Document_Open: only startup logic is the ribbon-conflict guard below.
-' The commented-out lines were used only for document-open timing tests.
+' Document_Open: startup logic is the ribbon-conflict guard plus wiring up
+' the Application-level WithEvents hookup above (needed so
+' oWordApp_DocumentBeforeSave below actually receives events - see that
+' variable's own header comment for why). The commented-out lines were
+' used only for document-open timing tests.
 Private Sub Document_Open()
     'ActiveWindow.View.Type = wdNormalView
     'ActiveDocument.ActiveWindow.Caption = "Loaded at: " & Now()
+    Set oWordApp = Application
     CheckForConflictingRibbonAddIn
 End Sub
 
-' Document_BeforeSave (added 2026-09-19): auto-enforces EDSG/01-styles.md's
-' "no clickable hyperlinks anywhere" rule on every save, so hyperlink creep
-' can never survive into a saved file. Real-world trigger: an editing
-' session that fixes license/map references (which often carry pasted
-' links) can leave an active Hyperlink object behind even after applying
-' the BookHyperlink character style by hand - the style and the click
-' target are two independent things in Word's object model, and only
-' removing the latter satisfies RUN_THE_TESTS slot 17
+' oWordApp_DocumentBeforeSave (added 2026-09-21, replaces the dead
+' Document_BeforeSave attempt - see oWordApp's own header comment above
+' for the full story): auto-enforces EDSG/01-styles.md's "no clickable
+' hyperlinks anywhere" rule on every save of THIS document, so hyperlink
+' creep can never survive into a saved file. Real-world trigger: an
+' editing session that fixes license/map references (which often carry
+' pasted links) can leave an active Hyperlink object behind even after
+' applying the BookHyperlink character style by hand - the style and the
+' click target are two independent things in Word's object model, and
+' only removing the latter satisfies RUN_THE_TESTS slot 17
 ' (CountActiveHyperlinks, expected 0). "Right-click > Remove Hyperlink"
 ' fixes one instance; this hook makes the fix unconditional going forward
 ' instead of relying on remembering to run LockBookHyperlinks by hand.
 '
-' Cheap check first (sum story.Hyperlinks.Count across every StoryRange,
-' the same measure CountActiveHyperlinks in aeBibleClass.cls uses) - the
-' heavier three-step LockBookHyperlinks (full-document Find scans) only
-' runs when there's actually something to fix. silent:=True suppresses its
-' completion MsgBox (Debug.Print only) so saving never pops a modal - see
-' basTEST_aeBibleTools.LockBookHyperlinks's own comment for that parameter.
+' Guard first: this Application-level event fires for EVERY document
+' saved in this Word session, not just this one - skip immediately if
+' Doc isn't this document.
+'
+' Cheap check next (sum story.Hyperlinks.Count across every StoryRange,
+' the same measure CountActiveHyperlinks in aeBibleClass.cls uses) -
+' LockBookHyperlinks only runs when there's actually something to fix,
+' and runs its fast path by default (fullSweep:=False, the default -
+' unlink only, no full-document Find scans) so a save with an active
+' hyperlink stays fast rather than blocking Word for over a minute - see
+' basTEST_aeBibleTools.LockBookHyperlinks's own comment for the full
+' fullSweep/RUN_THE_TESTS-coverage reasoning. silent:=True suppresses its
+' completion MsgBox (Debug.Print only) so saving never pops a modal.
 '
 ' This document's docm/VBA pathway is NOT the enforcement point for
 ' translated editions, which are edited as .docx via aeBibleAddin's JS
@@ -56,24 +88,29 @@ End Sub
 ' EDSG/01-styles.md's "Companion rule" section for why the two pathways
 ' need separate mechanisms (Office.js has no before-save event to hook).
 '
-' On Error GoTo PROC_ERR added same session, after the operator caught
-' its absence: unlike a fire-and-forget async call, an unhandled error
-' in a real Document_BeforeSave event can surface as a disruptive
-' runtime-error dialog in the MIDDLE of an actual Save - Debug.Print
-' only (no MsgBox, matching silent:=True's own intent below), and the
-' save itself is never cancelled on error (Cancel is never touched;
-' worst case, the hyperlink auto-lock is simply skipped for that save).
-Private Sub Document_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+' On Error GoTo PROC_ERR: unlike a fire-and-forget async call, an
+' unhandled error here can surface as a disruptive runtime-error dialog in
+' the MIDDLE of an actual Save - Debug.Print only (no MsgBox, matching
+' silent:=True's own intent below), and the save itself is never
+' cancelled on error (Cancel is never touched; worst case, the hyperlink
+' auto-lock is simply skipped for that save).
+Private Sub oWordApp_DocumentBeforeSave(ByVal Doc As Document, ByRef SaveAsUI As Boolean, ByRef Cancel As Boolean)
     On Error GoTo PROC_ERR
+    If Not Doc Is Me Then Exit Sub
+
     Dim story As Word.Range
     Dim activeCount As Long
 
-    For Each story In ActiveDocument.StoryRanges
+    Debug.Print "oWordApp_DocumentBeforeSave: fired."
+
+    For Each story In Doc.StoryRanges
         activeCount = activeCount + story.Hyperlinks.Count
     Next story
 
+    Debug.Print "oWordApp_DocumentBeforeSave: activeCount = " & activeCount
+
     If activeCount > 0 Then
-        Debug.Print "Document_BeforeSave: " & activeCount & _
+        Debug.Print "oWordApp_DocumentBeforeSave: " & activeCount & _
             " active hyperlink(s) found before save -- auto-running LockBookHyperlinks."
         LockBookHyperlinks silent:=True
     End If
@@ -81,7 +118,7 @@ Private Sub Document_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    Debug.Print "ERROR in ThisDocument.Document_BeforeSave | Erl: " & Erl _
+    Debug.Print "ERROR in ThisDocument.oWordApp_DocumentBeforeSave | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description & _
         " - hyperlink auto-lock was skipped for this save; the document was saved normally."
     Resume PROC_EXIT
@@ -139,4 +176,7 @@ PROC_ERR:
         " - '" & ADDIN_NAME & "' may still be loaded; delete it manually from " & _
         Application.StartupPath & " (close Word first if it's locked) if this recurs."
 End Sub
+
+
+
 

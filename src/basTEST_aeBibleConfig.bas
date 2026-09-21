@@ -214,19 +214,19 @@ Private Sub DumpPrioritiesSorted()
     Next i
 End Sub
 
-Private Function CountOrphanedShapes(doc As Document) As Long
+Private Function CountOrphanedShapes(Doc As Document) As Long
     Dim shp As shape
     Dim Count As Long
-    For Each shp In doc.Shapes
+    For Each shp In Doc.Shapes
         If shp.Anchor Is Nothing Then Count = Count + 1
     Next shp
     CountOrphanedShapes = Count
 End Function
 
-Private Function CountOrphanedBookmarks(doc As Document) As Long
+Private Function CountOrphanedBookmarks(Doc As Document) As Long
     Dim bm As Bookmark
     Dim Count As Long
-    For Each bm In doc.Bookmarks
+    For Each bm In Doc.Bookmarks
         If bm.Range.Text = "" Then Count = Count + 1
     Next bm
     CountOrphanedBookmarks = Count

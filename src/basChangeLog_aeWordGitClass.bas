@@ -11,7 +11,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #019 -
 ' #018 -
 ' #009 - Add setup info to the docm source file
-' #006 - Can't execute code in break mode - error after doc saved from template and opened. Use error trapping in ThisDocument
+' #006 - Can't execute code in break mode - error after Doc saved from template and opened. Use error trapping in ThisDocument
 '=============================================================================================================================
 '
     ' FIXED - #017 - Add Const E_FAIL As Long = -2147467259    ' Unspecified Error(E_FAIL)
@@ -33,7 +33,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' 20190608 - v003
     ' FIXED - #007 - Compile error for x64, needs PtrSafe
 ' 20180920 - v002
-    ' FIXED - #005 - Zoom full screen and page for dotm and new doc
+    ' FIXED - #005 - Zoom full screen and page for dotm and new Doc
 ' 20180909 - v001 - FIXED - #001 - Implement simple test for dropdown code
     ' FIXED - #002 - Change project name to ambigram and export to .\src
 ' 20180903 - v000 - Use aexlgitClass as starting model for aeWordGitClass

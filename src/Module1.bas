@@ -324,19 +324,19 @@ End Sub
 
 Sub SearchParagraphs()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim Count As Integer
     Dim firstOccurrenceIndex As Integer
     Dim foundFirst As Boolean
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Count = 0
     firstOccurrenceIndex = -1
     foundFirst = False
 
     ' Loop through all paragraphs in the document
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         ' Check if the paragraph contains only a page break or continuous page break
         If para.Range.Text = Chr(12) Or para.Range.Text = Chr(14) Then
             Count = Count + 1
@@ -353,7 +353,7 @@ Sub SearchParagraphs()
     
     ' Go to the first Result in the document
     If firstOccurrenceIndex <> -1 Then
-        doc.Range(firstOccurrenceIndex, firstOccurrenceIndex).Select
+        Doc.Range(firstOccurrenceIndex, firstOccurrenceIndex).Select
     End If
 
 PROC_EXIT:
@@ -365,15 +365,15 @@ End Sub
 
 Sub CountEmptyParagraphsWithAutomaticFont()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim Count As Integer
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Count = 0
 
     ' Loop through all paragraphs in the document
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         ' Check if the paragraph is empty and has the font set to automatic
         If Len(para.Range.Text) = 1 And para.Range.Font.Color = wdColorAutomatic Then
             Count = Count + 1
@@ -392,15 +392,15 @@ End Sub
 
 Sub GoToParagraphByCount(paragraphNumber As Integer)
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim Count As Integer
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Count = 0
 
     ' Loop through all paragraphs in the document
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         Count = Count + 1
         ' Check if the current paragraph is the one we want to go to
         If Count = paragraphNumber Then
@@ -459,17 +459,17 @@ End Sub
 
 Sub UpdateBlackToAutomatic()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim storyRange As Word.Range
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' Turn off screen updating for better performance
     Application.ScreenUpdating = False
     
     ' Loop through each story in the document
-    For Each storyRange In doc.StoryRanges
+    For Each storyRange In Doc.StoryRanges
         Set rng = storyRange
         Do
             ' Loop through each character in the range
@@ -549,7 +549,7 @@ End Sub
 
 Sub EnsureFootnoteReferenceStyleColor()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range
     Dim rgbColor As Long
@@ -562,11 +562,11 @@ Sub EnsureFootnoteReferenceStyleColor()
     rgbColor = ColorFromName("Blue")
 
     ' Initialize variables
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     Count = 0
     ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         ' Check if the paragraph style is Footnote Reference
         If para.style = "Footnote Reference" Then
             Count = Count + 1
@@ -600,14 +600,14 @@ End Function
 
 Function FirstPageFooterNotEmpty() As Boolean
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim footerRange As Word.Range
 
     ' Set the document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' Get the range of the footer on the first page
-    Set footerRange = doc.Sections(1).Footers(wdHeaderFooterPrimary).Range
+    Set footerRange = Doc.Sections(1).Footers(wdHeaderFooterPrimary).Range
 
     ' Check if the footer is not empty
     If Len(Trim(footerRange.Text)) > 0 Then
@@ -632,7 +632,7 @@ End Function
 
 Sub CountTotallyEmptyParagraphs()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim sec As Word.Section
     Dim hdr As HeaderFooter
@@ -647,11 +647,11 @@ Sub CountTotallyEmptyParagraphs()
     Dim grandTotal As Long
     Dim pageNum As Long
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
         
     ' Count empty paragraphs in the main document
     emptyParaCount = 0
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         If IsEmptyParagraph(para) Then
             emptyParaCount = emptyParaCount + 1
         End If
@@ -659,7 +659,7 @@ Sub CountTotallyEmptyParagraphs()
     
     ' Count empty paragraphs in headers
     emptyParaCountHeaders = 0
-    For Each sec In doc.Sections
+    For Each sec In Doc.Sections
         For Each hdr In sec.Headers
             For Each para In hdr.Range.Paragraphs
                 If IsEmptyParagraph(para) Then
@@ -674,7 +674,7 @@ Sub CountTotallyEmptyParagraphs()
     
     ' Count empty paragraphs in footers and print page number to console
     emptyParaCountFooters = 0
-    For Each sec In doc.Sections
+    For Each sec In Doc.Sections
         For Each ftr In sec.Footers
             For Each para In ftr.Range.Paragraphs
                 ' Work around as IsEmptyParagraph does not work on first page with space as footer
@@ -695,7 +695,7 @@ Sub CountTotallyEmptyParagraphs()
     
     ' Count empty paragraphs in footnotes
     emptyParaCountFootnotes = 0
-    For Each footnote In doc.Footnotes
+    For Each footnote In Doc.Footnotes
         For Each para In footnote.Range.Paragraphs
             If IsEmptyParagraph(para) Then
                 emptyParaCountFootnotes = emptyParaCountFootnotes + 1
@@ -705,7 +705,7 @@ Sub CountTotallyEmptyParagraphs()
     
     ' Count empty paragraphs in text boxes and stop at the first one found
     emptyParaCountTextBoxes = 0
-    For Each shp In doc.Shapes
+    For Each shp In Doc.Shapes
         If shp.Type = msoTextBox Then
             For Each para In shp.TextFrame.textRange.Paragraphs
                 If IsEmptyParagraph(para) Then
@@ -785,7 +785,7 @@ Sub CountTypesTrulyEmptyParagraph()
                 sectionBreakFound = True
             End If
 
-            ' Check the next character only if not at end of doc
+            ' Check the next character only if not at end of Doc
             If paraRange.End < ActiveDocument.Content.End Then
                 NextChar = paraRange.Next(Unit:=wdCharacter, Count:=1).Text
                 If NextChar = Chr(12) Then
@@ -871,18 +871,18 @@ End Sub
 
 Sub CreateTemplateWithoutText()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim templateDoc As Document
     Dim templatePath As String
 
     ' Get the current active document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     
     ' Create a new blank document based on styles and configurations from the original document
     Set templateDoc = Documents.Add
     
     ' Copy the entire content from the original document (styles and configurations)
-    doc.Range.copy
+    Doc.Range.copy
     
     ' Paste the copied content into the new document (keeping the formatting)
     templateDoc.Range.PasteAndFormat wdFormatOriginalFormatting
@@ -934,7 +934,7 @@ End Function
 
 Sub CountTabParagraphsFull()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim sec As Word.Section
     Dim hdr As HeaderFooter
     Dim ftr As HeaderFooter
@@ -945,13 +945,13 @@ Sub CountTabParagraphsFull()
     Dim footerCount As Long
     Dim grandTotal As Long
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     bodyCount = 0
     headerCount = 0
     footerCount = 0
 
     ' Count in main document body
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         Set rng = para.Range
         rng.End = rng.End - 1 ' Exclude the final paragraph mark
         If rng.Text = vbTab Then
@@ -960,7 +960,7 @@ Sub CountTabParagraphsFull()
     Next para
 
     ' Count in headers and footers across all sections
-    For Each sec In doc.Sections
+    For Each sec In Doc.Sections
         For Each hdr In sec.Headers
             For Each para In hdr.Range.Paragraphs
                 Set rng = para.Range
@@ -1082,7 +1082,7 @@ End Sub
 
 Sub CountAndDiagnoseFootnoteFormatting()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim i As Long
     Dim ref As Word.Range
     Dim fn As footnote
@@ -1090,16 +1090,16 @@ Sub CountAndDiagnoseFootnoteFormatting()
     Dim totalChecked As Long
     Dim posReported As Boolean
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     errCount = 0
     totalChecked = 0
     posReported = False
 
     Debug.Print "Checking Footnote References..."
 
-    ' Check main doc footnote references
-    For i = 1 To doc.Footnotes.Count
-        Set ref = doc.Footnotes(i).Reference
+    ' Check main Doc footnote references
+    For i = 1 To Doc.Footnotes.Count
+        Set ref = Doc.Footnotes(i).Reference
         totalChecked = totalChecked + 1
 
         If Not IsFootnoteRefFormattedCorrectly(ref) Then
@@ -1119,7 +1119,7 @@ Sub CountAndDiagnoseFootnoteFormatting()
     Next i
 
     ' Check footnote numbers inside footnote text
-    For Each fn In doc.Footnotes
+    For Each fn In Doc.Footnotes
         Set ref = fn.Range.Paragraphs(1).Range.words(1)
         totalChecked = totalChecked + 1
 

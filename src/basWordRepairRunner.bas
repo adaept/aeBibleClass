@@ -361,7 +361,7 @@ Private Function GetPageHeaderText(pgNum As Long) As String
     ' Default to primary header
     Set hdr = sec.Headers(wdHeaderFooterPrimary)
 
-    ' Note: Does not apply in this Bible doc
+    ' Note: Does not apply in this Bible Doc
     ' If primary is empty, check for first-page or even-page headers
     'If Len(hdr.Range.Text) = 0 Then
     '    If sec.Headers(wdHeaderFooterFirstPage).Exists Then
@@ -1501,7 +1501,7 @@ Public Sub RowCharCountSurvey_SinglePage( _
             asciiCode = AscW(chText)
 
             ' Skip vertical-tab line-break characters within row tracking;
-            ' treat them like a forced row break (rare in this doc).
+            ' treat them like a forced row break (rare in this Doc).
             curY = CSng(ch.Information(wdVerticalPositionRelativeToPage))
             curX = CSng(ch.Information(wdHorizontalPositionRelativeToPage))
 

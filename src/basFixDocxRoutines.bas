@@ -700,7 +700,7 @@ End Sub
 '   replacement (USFM \p).
 '
 ' SCOPE:
-'   doc.Content only (main body story).  Headers, footers, and
+'   Doc.Content only (main body story).  Headers, footers, and
 '   footnotes are not affected - they carry their own styles.
 '
 ' SAFETY - EXACT MATCH ONLY:
@@ -1377,7 +1377,7 @@ End Sub
 ' DefineBookHyperlinkStyle
 ' PURPOSE:
 '   Creates the BookHyperlink character style.
-'   This is the doc's one-form hyperlink: a web URL pointing to an
+'   This is the Doc's one-form hyperlink: a web URL pointing to an
 '   online tool, displayed as Carlito 9 palette-DarkBlue underlined
 '   text. Replaces reliance on Word's built-in Hyperlink character
 '   style, which inherits font/size from paragraph context and so

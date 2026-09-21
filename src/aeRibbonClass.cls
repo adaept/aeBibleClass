@@ -323,7 +323,7 @@ Private Sub NextButton()
     m_currentVerse = 1     ' Rule 2a
     m_currentChapterPos = 0
     ' Force H1 to top of viewport with no double-scroll flicker.
-    '   1. ScrollIntoView a non-zero range (H1 .. end-of-doc) with Start:=True so
+    '   1. ScrollIntoView a non-zero range (H1 .. end-of-Doc) with Start:=True so
     '      Word has a real upper-left corner (the H1) to align to the top. A
     '      zero-width (pos, pos) range degenerates and falls back to "ensure
     '      visible" - same as Word's default minimal scroll, leaves Next at

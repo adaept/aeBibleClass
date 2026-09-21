@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 88
+Private Const MaxTests = 89
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -73,7 +73,7 @@ Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 o
 Private m_ReportBuf As String          ' Accumulates TestReport lines; flushed once at end of run
 Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail
 Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail
-Private m_verseScanDone As Boolean     ' True after EnsureVerseMarkerCounts has walked the doc this run
+Private m_verseScanDone As Boolean     ' True after EnsureVerseMarkerCounts has walked the Doc this run
 Private m_verseMarkerCount As Long     ' Count of "Verse marker"-styled runs found in VerseText paragraphs
 Private m_chapterVerseMarkerCount As Long  ' Count of "Chapter Verse marker"-styled runs found in VerseText paragraphs
 Private m_HintArray(1 To MaxTests) As String  ' Per-test first-hit hint; printed in RunTest on FAIL
@@ -277,15 +277,15 @@ PROC_ERR:
 End Function
 
 Private Sub Expected1BasedArray()
-    Dim doc As Document
+    Dim Doc As Document
     Dim values As Variant
     Dim i As Long
     Dim outputString As String
 
     On Error GoTo PROC_ERR
 
-    Set doc = ActiveDocument
-    If Len(doc.Path) = 0 Then
+    Set Doc = ActiveDocument
+    If Len(Doc.Path) = 0 Then
         MsgBox "ActiveDocument has not been saved. Cannot set TestReportFileName.", vbCritical
         Stop
         Exit Sub
@@ -293,8 +293,8 @@ Private Sub Expected1BasedArray()
 
     If OneTest = 0 Then
         ' Do not make new TestReportFileName for single tests
-        Set doc = ActiveDocument
-        TestReportFileName = doc.Path & "\rpt\TestReport.txt"
+        Set Doc = ActiveDocument
+        TestReportFileName = Doc.Path & "\rpt\TestReport.txt"
         ' Do NOT truncate here. FlushReportBuf (called once at the end of a
         ' successful run) opens this path For Output and overwrites it in
         ' one step - truncating up front meant a run that hung or crashed
@@ -303,8 +303,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -862,6 +862,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (87)
             DoEvents
             RunTest (88)
+            RunTest (89)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1009,7 +1010,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 14
         GetTestDescription = "Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0"
     Case 15
-        GetTestDescription = "Rule: No section has 'Different First Page' set in PageSetup, except Section 1 - Section 1 intentionally keeps it set as part of the Ctrl-A paste-into-new-doc recovery mechanism (confirmed by operator 2026-09-14) - CountSectionsWithDifferentFirstPage should return 1"
+        GetTestDescription = "Rule: No section has 'Different First Page' set in PageSetup, except Section 1 - Section 1 intentionally keeps it set as part of the Ctrl-A paste-into-new-Doc recovery mechanism (confirmed by operator 2026-09-14) - CountSectionsWithDifferentFirstPage should return 1"
     Case 16
         GetTestDescription = "Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value"
     Case 17
@@ -1053,7 +1054,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 36
         GetTestDescription = "Rule: No footer paragraph uses the built-in Footer style (footers must use the custom TheFooters style) - CountFooterParagraphsWithFooterStyle should return 0"
     Case 37
-        GetTestDescription = "Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline"
+        GetTestDescription = "Count of body paragraphs containing only tab+CR - intentional tab-only paragraphs in body, plus the unavoidable final-Doc trailing tab - CountDocTabOnlyParagraphs should match the expected baseline"
     Case 38
         GetTestDescription = "Count of empty paragraphs (Range.Text = Chr(13) only); in practice almost all are structural carriers for Section/Page breaks (SBNP/SBC/PBB) classified in rpt\EmptyParagraphs.txt - CountEmptyParagraphs should match the expected baseline. Paired with Test 80 for the truly-bare subset."
     Case 39
@@ -1156,6 +1157,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: no 'Chapter Verse marker'/'Verse marker' character-styled run appears inside a paragraph NOT styled 'VerseText' (a marker-carrying paragraph left mis-styled is counted by AuditVerseMarkerStructure but invisible to ExportDocmVersesToRWBFormat - see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md) - CountMarkerStyleOutsideVerseText should return 0"
     Case 88
         GetTestDescription = "Diagnostic: dumps Long/Hex/RGB for every built-in WdColor* constant used in this codebase (wdColorAutomatic/Black/Red/DarkRed/Blue/DarkBlue) plus a live check of what Font.Color reads back as after being set to wdColorAutomatic - unlocks the aeBibleAddin JS port's Cases 39/40/41/43 (see rvw/Plan_vba_color_constants_for_js_port_2026-09-19.md) - AuditColorConstants should return 6"
+    Case 89
+        GetTestDescription = "Rule: no run anywhere carries the built-in 'Hyperlink' character style - every visible-as-link run must already be BookHyperlink (see EDSG/01-styles.md 'Companion rule'). Closes a gap left when LockBookHyperlinks' step 1 (migrate built-in Hyperlink to BookHyperlink) became fullSweep-only 2026-09-21 for save-time performance - CountBuiltInHyperlinkStyleRuns should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1411,6 +1414,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 88
         ResultArray(TestNum) = AuditColorConstants
         m_HintArray(TestNum) = m_lastHint
+    Case 89
+        ResultArray(TestNum) = CountBuiltInHyperlinkStyleRuns
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1619,6 +1625,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountMarkerStyleOutsideVerseText"
     Case 88
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditColorConstants"
+    Case 89
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBuiltInHyperlinkStyleRuns"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1830,6 +1838,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountMarkerStyleOutsideVerseText"
     Case 88
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditColorConstants"
+    Case 89
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBuiltInHyperlinkStyleRuns"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -1986,7 +1996,7 @@ End Function
 '     (e.g., "it's" inside "Spirit's"), even though Ctrl+H may appear to do so.
 '     This is a known difference between the Word UI search and the VBA Find API.
 '   - Designed for standalone contractions (whole words), not sub-word matches.
-'   - 20260215 Updated to use CountInStory (doc, footnotes, etc.)
+'   - 20260215 Updated to use CountInStory (Doc, footnotes, etc.)
 '
 ' Additional:
 '   - Can also accept up to 3 code points as a string when not calling
@@ -2861,7 +2871,7 @@ End Function
 ' Anomalies are reported per-property: each mismatched property shows
 ' in the output. Expected 0 after LockBookHyperlinks runs.
 '
-' BookHyperlink replaced the built-in Hyperlink style as the doc's
+' BookHyperlink replaced the built-in Hyperlink style as the Doc's
 ' one-form hyperlink target. The built-in inherits font/size from
 ' paragraph context and so cannot be enforced uniformly; the custom
 ' style pins all four properties explicitly. See EDSG/01-styles.md
@@ -2946,6 +2956,65 @@ Public Function AuditBookHyperlinkStyling() As Long
     Debug.Print "AuditBookHyperlinkStyling: " & total & " " & EXPECTED_STYLE & _
                 "-styled run(s) checked, " & anomalies & " anomaly/anomalies."
     AuditBookHyperlinkStyling = anomalies
+End Function
+
+'=========================================================================
+' CountBuiltInHyperlinkStyleRuns  (Public; wired at slot 89)
+' Counts every run anywhere in the document still styled with Word's
+' built-in "Hyperlink" character style, regardless of whether it still
+' carries an active (clickable) Hyperlink object. Walks all StoryRanges
+' and Finds runs by character style "Hyperlink", same technique as
+' LockBookHyperlinks' step 1 (basTEST_aeBibleTools.bas) and this class's
+' own AuditBookHyperlinkStyling above.
+'
+' Added 2026-09-21 alongside LockBookHyperlinks' fullSweep parameter:
+' that Sub's step 1 (migrate built-in Hyperlink-styled runs to
+' BookHyperlink) became fullSweep-only, opt-in, to keep the
+' Document_BeforeSave auto-save path fast (steps 1/3's full-document
+' Find-by-style scans were the confirmed cause of a >1 minute save delay
+' on this ~34,000-paragraph document). Before this test existed, that
+' change would have created a genuine blind spot: neither
+' CountActiveHyperlinks (slot 17, only checks the Hyperlinks collection,
+' not character style) nor CountUnapprovedVisibleStyles (slot 45, only
+' checks style DEFINITION visibility in the Styles gallery, not actual
+' per-run text usage) would ever flag a run still carrying the built-in
+' "Hyperlink" style with no active link object (e.g. one Word's own
+' right-click "Remove Hyperlink" touched without anyone fixing the
+' character style). This test closes that gap - expected 0 keeps
+' RUN_THE_TESTS as the acceptance gate for style drift Step 1 used to
+' silently fix, now that fixing it is manual-only
+' (LockBookHyperlinks fullSweep:=True). See EDSG/01-styles.md's
+' "Automatic enforcement" section for the full research writeup.
+'=========================================================================
+Public Function CountBuiltInHyperlinkStyleRuns() As Long
+    Const BUILTIN_STYLE As String = "Hyperlink"
+    Dim oDoc  As Word.Document
+    Dim story As Word.Range
+    Dim probe As Word.Range
+    Dim total As Long
+
+    Set oDoc = ActiveDocument
+
+    For Each story In oDoc.StoryRanges
+        Set probe = story.Duplicate
+        With probe.Find
+            .ClearFormatting
+            .Text = ""
+            .style = oDoc.Styles(BUILTIN_STYLE)
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = True
+            .MatchWildcards = False
+        End With
+        Do While probe.Find.Execute
+            total = total + 1
+            probe.Collapse wdCollapseEnd
+        Loop
+    Next story
+
+    Debug.Print "CountBuiltInHyperlinkStyleRuns: " & total & " run(s) still styled """ & _
+                BUILTIN_STYLE & """ - run LockBookHyperlinks fullSweep:=True to migrate."
+    CountBuiltInHyperlinkStyleRuns = total
 End Function
 
 '=========================================================================
@@ -3968,8 +4037,8 @@ End Function
 Private Function CountLinefeed(Optional space As Variant) As Long
     On Error GoTo PROC_ERR
 
-' Search in doc
-    Dim doc As Document
+' Search in Doc
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim findText As String
     Dim Count As Long
@@ -3983,10 +4052,10 @@ Private Function CountLinefeed(Optional space As Variant) As Long
     End If
     
     ' Set the document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
        
     ' Search in the main document content
-    Set rng = doc.Content
+    Set rng = Doc.Content
     
     Application.ScreenUpdating = False
     With rng.Find
@@ -4014,7 +4083,7 @@ Private Function CountLinefeed(Optional space As Variant) As Long
     If Not IsMissing(space) Then
         Dim scanRng As Word.Range
         Dim prevChar As String
-        Set scanRng = doc.Content
+        Set scanRng = Doc.Content
         With scanRng.Find
             .Text = "^l"
             .Forward = True
@@ -4023,13 +4092,13 @@ Private Function CountLinefeed(Optional space As Variant) As Long
             .MatchWildcards = False
             Do While .Execute
                 If scanRng.Start > 0 Then
-                    prevChar = doc.Range(scanRng.Start - 1, scanRng.Start).Text
+                    prevChar = Doc.Range(scanRng.Start - 1, scanRng.Start).Text
                     If prevChar <> " " Then
                         m_lastHint = "page " & scanRng.Information(wdActiveEndPageNumber) & _
                                      " : prev=" & Chr(34) & prevChar & Chr(34) & _
-                                     " ctx=" & Left(doc.Range(scanRng.Start - 20, _
-                                         IIf(scanRng.End + 20 > doc.Content.End, _
-                                             doc.Content.End, scanRng.End + 20)).Text, 60)
+                                     " ctx=" & Left(Doc.Range(scanRng.Start - 20, _
+                                         IIf(scanRng.End + 20 > Doc.Content.End, _
+                                             Doc.Content.End, scanRng.End + 20)).Text, 60)
                         Exit Do
                     End If
                 End If
@@ -4056,19 +4125,19 @@ End Function
 Private Function CountParagraphMarksPerHeaderSection() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim paraCount As Long
 
     ' Set the document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     paraCount = 1
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.Count
+    For sectionIndex = 1 To Doc.Sections.Count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = Doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Count the number of paragraphs in the header
         paraCount = headerRange.Paragraphs.Count
@@ -4102,18 +4171,18 @@ Private Function CountHeaderStyleUsage() As Long
 
     ' Counts header paragraphs whose style is NOT "TheHeaders".
     ' Expected = 0: every paragraph in every primary header must use "TheHeaders".
-    ' Searches header stories (not doc.Content, which excludes headers/footers).
+    ' Searches header stories (not Doc.Content, which excludes headers/footers).
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim sec As Word.Section
     Dim hdr As HeaderFooter
     Dim para As Word.Paragraph
     Dim Count As Long
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Count = 0
 
-    For Each sec In doc.Sections
+    For Each sec In Doc.Sections
         Set hdr = sec.Headers(wdHeaderFooterPrimary)
         If hdr.Exists Then
             For Each para In hdr.Range.Paragraphs
@@ -4140,7 +4209,7 @@ End Function
 Private Function CountParagraphsWithoutTabInHeaders() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
@@ -4148,15 +4217,15 @@ Private Function CountParagraphsWithoutTabInHeaders() As Long
     Dim totalCount As Long
 
     ' Set the document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     
     ' Initialize the total Count
     totalCount = 0
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.Count
+    For sectionIndex = 1 To Doc.Sections.Count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = Doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Initialize the Count for the current header
         Count = 0
@@ -4181,9 +4250,9 @@ Private Function CountParagraphsWithoutTabInHeaders() As Long
     ' header without a tab is the expected/normal case (see Tests 27/28's
     ' identical fix), so a drift against baseline is a Count-level fact,
     ' not a single anomalous instance. Report the totals instead, so a
-    ' shortfall is traceable to doc.Sections.Count (sections added/removed -
+    ' shortfall is traceable to Doc.Sections.Count (sections added/removed -
     ' see Test 27) rather than requiring a hunt through individual headers.
-    m_lastHint = "doc.Sections.Count = " & doc.Sections.Count & _
+    m_lastHint = "Doc.Sections.Count = " & Doc.Sections.Count & _
         ", no-tab matches = " & totalCount & _
         " - if this is below the expected baseline, check whether Test 27's " & _
         "section-Count drift accounts for the shortfall"
@@ -4205,7 +4274,7 @@ End Function
 Private Function CountTabFollowedByParagraphMarkInHeaders() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
@@ -4213,15 +4282,15 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Long
     Dim totalCount As Long
 
     ' Set the document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     
     ' Initialize the total Count
     totalCount = 0
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.Count
+    For sectionIndex = 1 To Doc.Sections.Count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = Doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Initialize the Count for the current header
         Count = 0
@@ -4246,9 +4315,9 @@ Private Function CountTabFollowedByParagraphMarkInHeaders() As Long
     ' the expected/normal case (see Test 27's identical fix), so a drift
     ' against baseline is a Count-level fact, not a single anomalous
     ' instance. Report the totals instead, so a shortfall is traceable to
-    ' doc.Sections.Count (sections added/removed - see Test 27) rather than
+    ' Doc.Sections.Count (sections added/removed - see Test 27) rather than
     ' requiring a hunt through individual header paragraphs.
-    m_lastHint = "doc.Sections.Count = " & doc.Sections.Count & _
+    m_lastHint = "Doc.Sections.Count = " & Doc.Sections.Count & _
         ", tab+CR matches = " & totalCount & _
         " - if this is below the expected baseline, check whether Test 27's " & _
         "section-Count drift accounts for the shortfall"
@@ -4277,7 +4346,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Long
 '4. Defines the range of the header in each section.
 '5. Checks if the header is empty by iterating through each paragraph in the header range and ensuring it contains more than just a paragraph mark.
 '6. Updates the counters based on whether the header is empty or not.
-'7. Displays a message box with the total number of headers, the number of empty headers, and the number of not empty headers.    Dim doc As Document
+'7. Displays a message box with the total number of headers, the number of empty headers, and the number of not empty headers.    Dim Doc As Document
     Dim sectionIndex As Long
     Dim headerRange As Word.Range
     Dim para As Word.Paragraph
@@ -4287,8 +4356,8 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Long
     Dim totalHeaders As Long
 
     ' Set the document
-    Dim doc As Document
-    Set doc = ActiveDocument
+    Dim Doc As Document
+    Set Doc = ActiveDocument
     
     ' Initialize counters
     emptyCount = 0
@@ -4296,9 +4365,9 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Long
     totalHeaders = 0
     
     ' Loop through all sections
-    For sectionIndex = 1 To doc.Sections.Count
+    For sectionIndex = 1 To Doc.Sections.Count
         ' Get the range of the header in the current section
-        Set headerRange = doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
+        Set headerRange = Doc.Sections(sectionIndex).Headers(wdHeaderFooterPrimary).Range
         
         ' Check if the header is empty
         IsEmpty = True
@@ -4334,7 +4403,7 @@ Private Function CheckAllHeaders(EmptyOrNotEmpty As String) As Long
     ' changed section Count (sections added/removed) rather than emptied
     ' headers, which the per-section loop above already ruled out.
     If m_lastHint = "" Then _
-        m_lastHint = "No empty headers found - doc.Sections.Count = " & totalHeaders & _
+        m_lastHint = "No empty headers found - Doc.Sections.Count = " & totalHeaders & _
             " (" & notEmptyCount & " non-empty, " & emptyCount & " empty) - " & _
             "if this is below the expected baseline, the drift is from a changed section Count, not newly-empty headers"
 
@@ -4361,8 +4430,8 @@ End Function
 Private Function CountFootnoteReferenceColors() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
-    Set doc = ActiveDocument
+    Dim Doc As Document
+    Set Doc = ActiveDocument
 
     Dim footnoteColors As Collection
     Set footnoteColors = New Collection
@@ -4370,7 +4439,7 @@ Private Function CountFootnoteReferenceColors() As Long
     Dim footnote As footnote
     Dim colorHex As String
     
-    For Each footnote In doc.Footnotes
+    For Each footnote In Doc.Footnotes
         colorHex = ColorToHex(footnote.Reference.Font.Color)
         On Error Resume Next
         footnoteColors.Add colorHex, colorHex
@@ -4418,11 +4487,11 @@ End Function
 Private Function CountFootnoteReferences() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
-    Set doc = ActiveDocument
+    Dim Doc As Document
+    Set Doc = ActiveDocument
 
     Dim footnoteCount As Long
-    footnoteCount = doc.Footnotes.Count
+    footnoteCount = Doc.Footnotes.Count
 
     ' Display the results
     'MsgBox "Number of Footnote References: " & footnoteCount
@@ -4568,7 +4637,7 @@ Private Function CountEmptyParagraphsWithInlineContent() As Long
 ' InlineShapes collections once each, rather than asking every paragraph
 ' "do you contain any". The per-paragraph approach forces Word to scope
 ' each collection by Range, which is O(N x layout) on long docs.
-    Dim doc As Word.Document
+    Dim Doc As Word.Document
     Dim para As Word.Paragraph
     Dim candidates As Object  ' dict keyed by paragraph Range.Start to dedup
     Dim fld As Word.Field
@@ -4577,24 +4646,24 @@ Private Function CountEmptyParagraphsWithInlineContent() As Long
     Dim Count As Long
     Dim key As Variant
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Set candidates = CreateObject("Scripting.Dictionary")
 
-    For Each fld In doc.Fields
+    For Each fld In Doc.Fields
         Set para = fld.Code.Paragraphs(1)
         If Not candidates.Exists(CStr(para.Range.Start)) Then
             candidates.Add CStr(para.Range.Start), para
         End If
     Next fld
 
-    For Each bm In doc.Bookmarks
+    For Each bm In Doc.Bookmarks
         Set para = bm.Range.Paragraphs(1)
         If Not candidates.Exists(CStr(para.Range.Start)) Then
             candidates.Add CStr(para.Range.Start), para
         End If
     Next bm
 
-    For Each shp In doc.InlineShapes
+    For Each shp In Doc.InlineShapes
         Set para = shp.Range.Paragraphs(1)
         If Not candidates.Exists(CStr(para.Range.Start)) Then
             candidates.Add CStr(para.Range.Start), para
@@ -4626,7 +4695,7 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Long
     On Error GoTo PROC_ERR
 
 ' Also shows Footnote References and Following Characters (ASCII Values)
-    Dim doc As Document
+    Dim Doc As Document
     Dim footnote As footnote
     Dim rng As Word.Range
     Dim spaceCount As Long
@@ -4635,13 +4704,13 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Long
     Dim asciiValue As Long
 
     ' Initialize variables
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     spaceCount = 0
     notSpaceCount = 0
     debugInfo = "Footnote References and Following Characters (ASCII Values):" & vbCrLf
     
     ' Loop through each footnote in the document
-    For Each footnote In doc.Footnotes
+    For Each footnote In Doc.Footnotes
         Set rng = footnote.Reference
         rng.Collapse wdCollapseEnd ' Collapse the range to the end of the footnote reference
         rng.MoveEnd wdCharacter, 1 ' Move the range to include the next character
@@ -4687,7 +4756,7 @@ End Function
 Private Function CountFootnotesFollowedByDigit() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim footnote As footnote
     Dim rng As Word.Range
     Dim digitCount As Long
@@ -4695,12 +4764,12 @@ Private Function CountFootnotesFollowedByDigit() As Long
     Dim asciiValue As Long
 
     ' Initialize variables
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     digitCount = 0
     debugInfo = "Footnote References and Following Characters (ASCII Values):" & vbCrLf
     
     ' Loop through each footnote in the document
-    For Each footnote In doc.Footnotes
+    For Each footnote In Doc.Footnotes
         Set rng = footnote.Reference
         rng.Collapse wdCollapseEnd ' Collapse the range to the end of the footnote reference
         rng.MoveEnd wdCharacter, 1 ' Move the range to include the next character
@@ -4809,7 +4878,7 @@ End Function
 
 ' CountActiveHyperlinks
 ' ---------------------
-' Editorial rule: no clickable hyperlinks anywhere in the doc. Returns
+' Editorial rule: no clickable hyperlinks anywhere in the Doc. Returns
 ' the sum of collection-Hyperlink objects across all StoryRanges
 ' (MainText, Footnotes, headers/footers, etc.). Expected value is 0;
 ' any non-zero Result is a rule violation - operator runs
@@ -4822,7 +4891,7 @@ End Function
 ' stories implies zero in footnotes.
 '
 ' Print is the primary target; clickability is a future-mode concern
-' addressed at online-edition build time, not in this doc. See
+' addressed at online-edition build time, not in this Doc. See
 ' EDSG/01-styles.md "No clickable hyperlinks anywhere" for the
 ' editorial rule.
 Private Function CountActiveHyperlinks() As Long
@@ -4862,19 +4931,19 @@ End Function
 Private Function CountSectionsWithDifferentFirstPage() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim sec As Word.Section
     Dim Count As Long
     Dim secIndex As Long
 
     Application.ScreenUpdating = False
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Count = 0
     secIndex = 0
 
     ' Loop through each section in the document
-    For Each sec In doc.Sections
+    For Each sec In Doc.Sections
         secIndex = secIndex + 1
         ' Check if the section does not have "Different First Page" selected
         If sec.PageSetup.DifferentFirstPageHeaderFooter Then
@@ -4903,17 +4972,17 @@ End Function
 Private Function CountWhiteParagraphMarks() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim Count As Long
     Dim firstFound As Boolean
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Count = 0
     firstFound = False
     
     ' Initialize the range to search the entire document
-    Set rng = doc.Content
+    Set rng = Doc.Content
     
     ' Use the Find method to locate white paragraph marks
     With rng.Find
@@ -5377,13 +5446,13 @@ End Function
 Private Function CountDoubleTabs() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim Count As Long
 
     Count = 0
-    Set doc = ActiveDocument
-    Set rng = doc.Content
+    Set Doc = ActiveDocument
+    Set rng = Doc.Content
 
     Do While rng.Find.Execute(findText:="^t^t", Forward:=True, Wrap:=wdFindStop)
         Count = Count + 1
@@ -5404,13 +5473,13 @@ End Function
 Private Function CountSpaceFollowedByCarriageReturn() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim Count As Long
 
     Count = 0
-    Set doc = ActiveDocument
-    Set rng = doc.Content
+    Set Doc = ActiveDocument
+    Set rng = Doc.Content
 
     Do While rng.Find.Execute(findText:=" ^13", Forward:=True, Wrap:=wdFindStop)
         Count = Count + 1
@@ -5432,13 +5501,13 @@ End Function
 Private Function CountDoubleSpaces() As Long
     On Error GoTo PROC_ERR
 
-    Dim doc As Document
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim doubleSpaceCount As Long
 
     doubleSpaceCount = 0
-    Set doc = ActiveDocument
-    Set rng = doc.Content
+    Set Doc = ActiveDocument
+    Set rng = Doc.Content
     
     With rng.Find
         .Text = "  " ' Double space
@@ -5483,16 +5552,16 @@ End Function
 
 ' Count double spaces inside shapes, including those within groups, with error handling
 Private Function CountDoubleSpacesInShapes() As Long
-    Dim doc As Document
+    Dim Doc As Document
     Dim shp As shape
     Dim groupShp As shape
     Dim doubleSpaceCount As Long
 
     doubleSpaceCount = 0
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     
     On Error Resume Next  ' Ignore errors and continue
-    For Each shp In doc.Shapes
+    For Each shp In Doc.Shapes
         Call ProcessShape(shp, doubleSpaceCount)
     Next shp
     On Error GoTo 0  ' Turn off error handling
@@ -5606,8 +5675,8 @@ Private Function CountNumericOrdinals() As Long
     Dim suffixes As Variant
     suffixes = Array("st", "nd", "rd", "th")
 
-    Dim doc As Document
-    Set doc = ActiveDocument
+    Dim Doc As Document
+    Set Doc = ActiveDocument
 
     Dim i As Long
     For i = LBound(suffixes) To UBound(suffixes)
@@ -5616,7 +5685,7 @@ Private Function CountNumericOrdinals() As Long
         DoEvents
 
         Dim rng As Word.Range
-        Set rng = doc.Content
+        Set rng = Doc.Content
 
         With rng.Find
             .ClearFormatting
@@ -5631,8 +5700,8 @@ Private Function CountNumericOrdinals() As Long
         Do While rng.Find.Execute
 
             ' Check preceding character ONLY
-            If rng.Start > doc.Content.Start Then
-                If doc.Range(rng.Start - 1, rng.Start).Text Like "[0-9]" Then
+            If rng.Start > Doc.Content.Start Then
+                If Doc.Range(rng.Start - 1, rng.Start).Text Like "[0-9]" Then
 
                     Select Case suffixes(i)
                         Case "st": cntST = cntST + 1
@@ -5645,12 +5714,12 @@ Private Function CountNumericOrdinals() As Long
 
                     If m_lastHint = "" Then _
                         m_lastHint = "page " & rng.Information(wdActiveEndPageNumber) & _
-                                     " : " & doc.Range(rng.Start - 1, rng.End).Text
+                                     " : " & Doc.Range(rng.Start - 1, rng.End).Text
 
                     If showReview Then
                         rng.Select
                         If MsgBox("Found ordinal: " & _
-                                  doc.Range(rng.Start - 1, rng.End).Text & vbCrLf & _
+                                  Doc.Range(rng.Start - 1, rng.End).Text & vbCrLf & _
                                   "Continue?", _
                                   vbYesNo + vbQuestion, _
                                   "Review Ordinal") = vbNo Then GoTo Done

@@ -1015,6 +1015,24 @@ Public Function AuditBookHyperlinkStyling() As Long
 End Function
 
 '==============================================================================
+' CountBuiltInHyperlinkStyleRuns  (delegate stub)
+'==============================================================================
+' Canonical body lives in aeBibleClass.cls (wired at RUN_THE_TESTS slot 89)
+' per the class-encapsulation rule - see EDSG/12-module-vs-class.md.
+'
+' This stub exists only so Immediate-window users can keep typing
+'   ?CountBuiltInHyperlinkStyleRuns
+' without manually instantiating the class. Returns the class Result
+' verbatim. Do not add logic here - change the class instead.
+'==============================================================================
+Public Function CountBuiltInHyperlinkStyleRuns() As Long
+    Dim o As aeBibleClass
+    Set o = New aeBibleClass
+    CountBuiltInHyperlinkStyleRuns = o.CountBuiltInHyperlinkStyleRuns
+    Set o = Nothing
+End Function
+
+'==============================================================================
 ' AuditNonPaletteStyleColors
 '==============================================================================
 ' Two-tier colour discipline (see EDSG/01-styles.md):
@@ -1201,9 +1219,9 @@ End Sub
 '==============================================================================
 ' Read-only diagnostic for the no-clickable-hyperlinks rule.
 '
-' Editorial rule: every hyperlink in the doc must be non-clickable. Print
+' Editorial rule: every hyperlink in the Doc must be non-clickable. Print
 ' is the primary target; online interactivity is a future-mode concern.
-' "Hyperlink" in this doc means exactly one thing: a web URL pointing to
+' "Hyperlink" in this Doc means exactly one thing: a web URL pointing to
 ' an online concordance tool, displayed as Hyperlink-character-styled
 ' text + DarkBlue + underline. Some are still backed by active Hyperlink
 ' objects (clickable). Most are inert text-with-styling (the link object
@@ -1217,7 +1235,7 @@ End Sub
 '   3. Are any internal SubAddress bookmarks dangling (target deleted)?
 '      Surface them so they can be reviewed.
 '   4. Any non-Hyperlink fields whose Result is styled Hyperlink (would
-'      indicate REF/PAGEREF/etc. that aren't supposed to be in this doc).
+'      indicate REF/PAGEREF/etc. that aren't supposed to be in this Doc).
 '
 ' Use the output to decide:
 '   - Which active Hyperlinks should be unlinked (text + style preserved,
@@ -1326,7 +1344,7 @@ Public Sub ReportClickableHyperlinks()
         End If
 
         ' Probe for any Hyperlink-styled-Result fields (REF/PAGEREF/etc).
-        ' Expected zero per the doc's "URL only" rule; report if any
+        ' Expected zero per the Doc's "URL only" rule; report if any
         ' exist so they can be reviewed.
         On Error Resume Next
         For i = 1 To story.Fields.Count

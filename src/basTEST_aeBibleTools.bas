@@ -234,7 +234,7 @@ Public Sub ListAndCountFontColors()
     ' range spans mixed colors. ActiveDocument.Words frequently produces
     ' such ranges (a word that straddles a styled / unstyled boundary), so
     ' wdUndefined-bucket counts can be substantial without representing any
-    ' real color in the doc. Detect and report distinctly.
+    ' real color in the Doc. Detect and report distinctly.
     Const WD_UNDEFINED As Long = 9999999
 
     For Each colorKey In colorDict.Keys
@@ -265,11 +265,11 @@ End Sub
 Public Sub GetVerticalPositionOfCursorParagraph()
 ' Get the position of the para where the cursor is
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim rng As Word.Range
     Dim paraPos As Single
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     Set rng = Selection.Paragraphs(1).Range
 
     ' Get the vertical position of the paragraph relative to the page
@@ -363,16 +363,16 @@ End Function
 Public Sub OptimizedListFontsInDocument()
     On Error GoTo PROC_ERR
     Dim fontList As New Collection
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim rng As Word.Range
     Dim fontName As String
     Dim i As Integer
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         Set rng = para.Range
         fontName = rng.Font.Name
         On Error Resume Next
@@ -663,7 +663,7 @@ End Sub
 
 Public Sub FixAndDiagnoseFootnoteReferences()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim fn As footnote
     Dim fnRef As Word.Range
     Dim totalChecked As Long
@@ -672,7 +672,7 @@ Public Sub FixAndDiagnoseFootnoteReferences()
     Dim firstFound As Boolean
     Dim mismatchDetail As String
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     totalChecked = 0
     totalIncorrect = 0
     firstFound = False
@@ -680,7 +680,7 @@ Public Sub FixAndDiagnoseFootnoteReferences()
     Debug.Print "FixAndDiagnoseFootnoteReferences"
     Debug.Print "Checking only footnote REFERENCE marks in main text..."
 
-    For Each fn In doc.Footnotes
+    For Each fn In Doc.Footnotes
         Set fnRef = fn.Reference
         totalChecked = totalChecked + 1
 
@@ -693,7 +693,7 @@ Public Sub FixAndDiagnoseFootnoteReferences()
 
             ' Attempt fix
             fnRef.Font.Reset
-            fnRef.style = doc.Styles("Footnote Reference")
+            fnRef.style = Doc.Styles("Footnote Reference")
             With fnRef.Font
                 .Name = "Segoe UI"
                 .Size = 8
@@ -2617,13 +2617,13 @@ End Sub
 ' Most code paths should call LockBookHyperlinks instead, which invokes
 ' this as part of its workflow.
 Public Sub UnlinkActiveHyperlinks()
-    Dim doc   As Document
+    Dim Doc   As Document
     Dim story As Word.Range
     Dim i     As Long
     Dim total As Long
 
-    Set doc = ActiveDocument
-    For Each story In doc.StoryRanges
+    Set Doc = ActiveDocument
+    For Each story In Doc.StoryRanges
         ' Reverse iteration so .Delete doesn't disturb the index of
         ' subsequent entries in the collection.
         For i = story.Hyperlinks.Count To 1 Step -1
@@ -2638,7 +2638,7 @@ End Sub
 
 ' LockBookHyperlinks
 ' ------------------------
-' Enforce the doc's one-form hyperlink convention: every visible-as-link
+' Enforce the Doc's one-form hyperlink convention: every visible-as-link
 ' run must be styled BookHyperlink (custom character style, Carlito 9 +
 ' palette DarkBlue + underline), and no link object may remain
 ' clickable. Replaces the earlier LockHyperlinksToPalette which used
@@ -2646,31 +2646,54 @@ End Sub
 ' context - leaving anomalies when hyperlinks appeared in non-Carlito-9
 ' paragraphs.
 '
-' Three steps:
-'   1. Walk every StoryRange and migrate any run styled with the
-'      built-in "Hyperlink" character style to BookHyperlink. Catches
-'      runs typed by users with Word's URL auto-format on, or pasted
-'      from other docs.
-'   2. Walk every StoryRange's Hyperlinks collection. For each, restyle
-'      hl.Range to BookHyperlink, then Hyperlink.Delete to remove the
-'      click target. Text + character style preserved.
-'   3. Walk every StoryRange and force-apply the four BookHyperlink
-'      properties (Font.Name, Font.Size, Font.Color, Font.Underline)
-'      on every run styled BookHyperlink. This is the idempotent
-'      override that strips any paste-in direct formatting.
+' Three steps, gated by fullSweep (added 2026-09-21 - see below):
+'   1. [fullSweep only] Walk every StoryRange and migrate any run styled
+'      with the built-in "Hyperlink" character style to BookHyperlink.
+'      Catches runs typed by users with Word's URL auto-format on, or
+'      pasted from other docs.
+'   2. [always runs] Walk every StoryRange's Hyperlinks collection. For
+'      each, restyle hl.Range to BookHyperlink, then Hyperlink.Delete to
+'      remove the click target. Text + character style preserved.
+'   3. [fullSweep only] Walk every StoryRange and force-apply the four
+'      BookHyperlink properties (Font.Name, Font.Size, Font.Color,
+'      Font.Underline) on every run styled BookHyperlink. This is the
+'      idempotent override that strips any paste-in direct formatting.
 '
 ' Built-in Hyperlink and FollowedHyperlink style definitions are
 ' deliberately NOT touched - they belong to Word, not us, and the
 ' hide-sweep handles them separately.
 '
+' fullSweep (added 2026-09-21, default False): steps 1 and 3 each run a
+' Find-by-character-style scan across every StoryRange - the same
+' anti-pattern basVerseStructureAudit.bas documents elsewhere as
+' "300-2700s vs seconds" on this ~34,000-paragraph document, confirmed
+' by live-testing this Sub itself taking over a minute. Step 2 (the only
+' step that affects RUN_THE_TESTS slot 17, CountActiveHyperlinks) uses
+' the Hyperlinks collection directly, no text search, and is fast.
+' Defaulting fullSweep to False keeps every Save fast; steps 1/3's
+' broader hygiene only runs when explicitly requested
+' (LockBookHyperlinks fullSweep:=True from the Immediate Window - no
+' ribbon button wraps this yet).
+'
+' This default is safe under RUN_THE_TESTS' own acceptance-gate
+' discipline: skipping step 3 does NOT create a blind spot, because
+' AuditBookHyperlinkStyling (slot 46) independently audits font/size/
+' color/underline drift on BookHyperlink-styled runs and will FAIL if it
+' accumulates. Skipping step 1 previously WOULD have created a blind
+' spot - no existing test checked for a run still carrying the built-in
+' "Hyperlink" style - so CountBuiltInHyperlinkStyleRuns (slot 89) was
+' added alongside this change specifically to close that gap. See
+' EDSG/01-styles.md's "Automatic enforcement" section for the full
+' research writeup.
+'
 ' Runs manually (hyperlinks-changed editing sessions) or automatically via
-' ThisDocument.Document_BeforeSave (added 2026-09-19, silent:=True there) -
-' see that handler's comment for why: applying the BookHyperlink character
-' style and removing the underlying Hyperlink object are two independent
+' ThisDocument.oWordApp_DocumentBeforeSave (added 2026-09-19, corrected
+' 2026-09-21 - see that handler's own comment for why it's an
+' Application-level WithEvents hookup, not a direct Document_BeforeSave
+' Sub) with silent:=True: applying the BookHyperlink character style and
+' removing the underlying Hyperlink object are two independent
 ' operations in Word's object model, so a translator/editor can apply the
-' right style and still leave an active (clickable) link behind. The audit
-' AuditBookHyperlinkStyling separately catches font/size/color/underline
-' drift between BookHyperlink-styled runs.
+' right style and still leave an active (clickable) link behind.
 '
 ' silent:=True suppresses the completion MsgBox (still Debug.Prints the
 ' summary) - used by the BeforeSave auto-run so saving never pops a modal.
@@ -2684,13 +2707,13 @@ End Sub
 '
 ' See EDSG/01-styles.md "Companion rule: no clickable hyperlinks
 ' anywhere" for the design pattern.
-Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
+Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False, Optional ByVal fullSweep As Boolean = False)
     On Error GoTo PROC_ERR
     Const TARGET_STYLE As String = "BookHyperlink"
     Const BUILTIN_STYLE As String = "Hyperlink"
     Const TARGET_FONT  As String = "Carlito"
     Const TARGET_SIZE  As Single = 9
-    Dim doc       As Document
+    Dim Doc       As Document
     Dim story     As Word.Range
     Dim probe     As Word.Range
     Dim c         As Long
@@ -2699,14 +2722,14 @@ Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
     Dim forced    As Long
     Dim i         As Long
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     c = ColorFromName("DarkBlue")
 
     ' Confirm BookHyperlink exists; create the lock-target style on
     ' demand the first time the routine runs.
     On Error Resume Next
     Dim oTarget As Word.Style
-    Set oTarget = doc.Styles(TARGET_STYLE)
+    Set oTarget = Doc.Styles(TARGET_STYLE)
     On Error GoTo PROC_ERR
     If oTarget Is Nothing Then
         Debug.Print "LockBookHyperlinks: " & TARGET_STYLE & " style not found. " & _
@@ -2718,65 +2741,76 @@ Public Sub LockBookHyperlinks(Optional ByVal silent As Boolean = False)
         Exit Sub
     End If
 
-    ' Step 1: migrate runs styled with built-in Hyperlink to BookHyperlink.
-    For Each story In doc.StoryRanges
-        Set probe = story.Duplicate
-        With probe.Find
-            .ClearFormatting
-            .Text = ""
-            .style = doc.Styles(BUILTIN_STYLE)
-            .Forward = True
-            .Wrap = wdFindStop
-            .Format = True
-            .MatchWildcards = False
-        End With
-        Do While probe.Find.Execute
-            probe.style = doc.Styles(TARGET_STYLE)
-            migrated = migrated + 1
-            probe.Collapse wdCollapseEnd
-        Loop
-    Next story
+    ' Step 1 [fullSweep only]: migrate runs styled with built-in
+    ' Hyperlink to BookHyperlink.
+    If fullSweep Then
+        For Each story In Doc.StoryRanges
+            Set probe = story.Duplicate
+            With probe.Find
+                .ClearFormatting
+                .Text = ""
+                .style = Doc.Styles(BUILTIN_STYLE)
+                .Forward = True
+                .Wrap = wdFindStop
+                .Format = True
+                .MatchWildcards = False
+            End With
+            Do While probe.Find.Execute
+                probe.style = Doc.Styles(TARGET_STYLE)
+                migrated = migrated + 1
+                probe.Collapse wdCollapseEnd
+            Loop
+        Next story
+    End If
 
-    ' Step 2: walk collection Hyperlinks, restyle their ranges to
-    ' BookHyperlink, then unlink. Reverse-iterate the collection.
-    For Each story In doc.StoryRanges
+    ' Step 2 [always runs]: walk collection Hyperlinks, restyle their
+    ' ranges to BookHyperlink, then unlink. Reverse-iterate the
+    ' collection. The only step that affects RUN_THE_TESTS slot 17
+    ' (CountActiveHyperlinks) - uses the Hyperlinks collection directly,
+    ' no text search, so it stays fast even on the auto-save path.
+    For Each story In Doc.StoryRanges
         For i = story.Hyperlinks.Count To 1 Step -1
-            story.Hyperlinks(i).Range.style = doc.Styles(TARGET_STYLE)
+            story.Hyperlinks(i).Range.style = Doc.Styles(TARGET_STYLE)
             story.Hyperlinks(i).Delete
             unlinked = unlinked + 1
         Next i
     Next story
 
-    ' Step 3: force-apply the four BookHyperlink properties on every
-    ' BookHyperlink-styled run. Idempotent override that strips any
-    ' direct-formatting drift on top of the style.
-    For Each story In doc.StoryRanges
-        Set probe = story.Duplicate
-        With probe.Find
-            .ClearFormatting
-            .Text = ""
-            .style = doc.Styles(TARGET_STYLE)
-            .Forward = True
-            .Wrap = wdFindStop
-            .Format = True
-            .MatchWildcards = False
-        End With
-        Do While probe.Find.Execute
-            probe.Font.Name = TARGET_FONT
-            probe.Font.Size = TARGET_SIZE
-            probe.Font.Color = c
-            probe.Font.Underline = wdUnderlineSingle
-            forced = forced + 1
-            probe.Collapse wdCollapseEnd
-        Loop
-    Next story
+    ' Step 3 [fullSweep only]: force-apply the four BookHyperlink
+    ' properties on every BookHyperlink-styled run. Idempotent override
+    ' that strips any direct-formatting drift on top of the style.
+    If fullSweep Then
+        For Each story In Doc.StoryRanges
+            Set probe = story.Duplicate
+            With probe.Find
+                .ClearFormatting
+                .Text = ""
+                .style = Doc.Styles(TARGET_STYLE)
+                .Forward = True
+                .Wrap = wdFindStop
+                .Format = True
+                .MatchWildcards = False
+            End With
+            Do While probe.Find.Execute
+                probe.Font.Name = TARGET_FONT
+                probe.Font.Size = TARGET_SIZE
+                probe.Font.Color = c
+                probe.Font.Underline = wdUnderlineSingle
+                forced = forced + 1
+                probe.Collapse wdCollapseEnd
+            Loop
+        Next story
+    End If
 
-    Debug.Print "LockBookHyperlinks complete:" & vbCrLf & _
+    Dim modeNote As String
+    modeNote = IIf(fullSweep, "full sweep (migrate + unlink + force-lock)", _
+                               "fast path (unlink-only; pass fullSweep:=True for the full sweep)")
+    Debug.Print "LockBookHyperlinks complete [" & modeNote & "]:" & vbCrLf & _
            "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
            "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
            "  BookHyperlink runs force-locked  : " & forced
     If Not silent Then
-        MsgBox "LockBookHyperlinks complete:" & vbCrLf & _
+        MsgBox "LockBookHyperlinks complete [" & modeNote & "]:" & vbCrLf & _
                "  Migrated from built-in Hyperlink : " & migrated & vbCrLf & _
                "  Unlinked active Hyperlinks       : " & unlinked & vbCrLf & _
                "  BookHyperlink runs force-locked  : " & forced, _

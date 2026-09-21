@@ -106,6 +106,8 @@ NORMALIZATIONS = [
     (r'(?i)\bNextLine\b',                   'NextLine',            'NextLine loop label in BuildRowCharCountHistogram'),
     # --- aeRibbonClass WindowSelectionChange diagnostic (added 2026-09-14) ---
     (r'(?i)\bSel\b',                        'Sel',                 'Sel variable/parameter casing (Selection-typed locals in Module1, basTEST_aeBibleTools; WindowSelectionChange(ByVal Sel As Selection) in aeRibbonClass)'),
+    # --- ThisDocument oWordApp_DocumentBeforeSave hookup (added 2026-09-21) ---
+    (r'(?i)\bdoc\b',                        'Doc',                 'doc variable/parameter casing (project-wide lowercase "doc" locals recorrected to "Doc" after ThisDocument.oWordApp_DocumentBeforeSave(ByVal Doc As Document, ...) introduced that casing as canonical)'),
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}

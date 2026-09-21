@@ -6,7 +6,7 @@ Option Private Module
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
 '====================================================================================================================================
-' Tasks: [doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
+' Tasks: [Doc] [test] [bug] [perf] [audit] [disc] [feat] [idea] [impr] [flow] [code] [wip] [clean] [obso] [regr] [refac] [opt]
 ' #645 -
 ' #644 -
 ' #643 -
@@ -18,16 +18,16 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 ' #609 - Soft Hyphens checked to start Page 170 - See #389 [wip]
 ' #606 - Add function CountInvisibleCharacters and include in BibleClass test, expected Result = 0 [test]
 ' #393 - Add glossary of terms used in Divine Principle from first reference in the Bible [idea]
-' #389 - Fix doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
+' #389 - Fix Doc formatting using Optional Hyphen Alt+Ctrl+- (manual hyphenation) [wip]
 ' #365 - Map styles to USFM markers [wip]
 ' #314 - Add a routine to extract all the Words of Jesus into the "Jesus Document" [Idea]
-' #288 - Create md doc file describing use of Tasks labels [doc]
+' #288 - Create md Doc file describing use of Tasks labels [Doc]
 ' #095 - Fix GetColorNameFromHex to match the chosen Bible RGB colors
 ' #060 - Add boolean test to check if any theme colors are used - Bible should use standard/defined colors, not themes [test]
 '====================================================================================================================================
 '
 'Sq
-    ' [obso] - #109 - Add test for CountAllEmptyParagraphs in doc, headers, footers, footnotes, and textboxes [test]
+    ' [obso] - #109 - Add test for CountAllEmptyParagraphs in Doc, headers, footers, footnotes, and textboxes [test]
     ' [obso] - #047 - Research diff code that will display like GitHub for comparison with verse versions [idea]
     ' FIXED - #391 - Create a test to Count all 1st 2nd 3rd etc. abbreviations - goal is to 0, ContNumericOrdinals Test 79
     ' [obso] - #628 - aeBibleClass CountFindNotEmphasisBlack Test 45 obsolete, can be reused (see #623) [obso]
@@ -47,7 +47,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' [obso] - Export to USFM - #336 - Gen 41:45 console output shows box for manual line break (Shift+Enter) - needs special consideration for file output [feat]
     ' [obso] - Export to USFM - #396 - Export - Psalms 110:7 He will drink of the brook on the way; therefore he will lift up his head. PSALM 111 [bug]
     ' FIXED - #601 - Build Word configuration module for consistent editing setup [feat][wip]
-    ' [obso] - #069 - Use WEB.doc to get a proper Count of "'" and make sure RWB is correct
+    ' [obso] - #069 - Use WEB.Doc to get a proper Count of "'" and make sure RWB is correct
     '        Verify smart quotes
     '        Several Bible versions use smart quotes for opening and closing quotations,
     '        including the triple quote style for verses like Ezekiel 39:7
@@ -68,7 +68,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' [obso] #394 - Export of Psalms 72:20 to immediate windows shows BOOK 3 PSALM 73 A Psalm by Asaph at the end. [bug]
     ' [obso] - #418 - Extend the parser (SBL, UBS, NRSV, etc.) [impr] [feat] - Maybe re-open when i18n is real
     ' FIXED in earlier code - #615 - Duplication using `PopulateCanonical` - not using the DRY Principle [bug]
-    ' [obso] - #400 - Check #399 & #401 with WEB/WEBU doc/USFM data [idea]
+    ' [obso] - #400 - Check #399 & #401 with WEB/WEBU Doc/USFM data [idea]
     ' FIXED in RunSoftHyphenSweep_Across_Pages_From - #620 - Make test to find stray hyphens in column text, cf. RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage [test]
     ' FIXED - #630 - Add styles for author end matter [impr]
     ' FIXED in earlier code - #403 - See #422 - Bible text paragraph should start with Chapter/Verse styles. Verify numbers [test] [wip]
@@ -85,9 +85,9 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #629 - Mark aeBibleClass Test 45, 46 obsolete in code [impr]
     ' FIXED - #623 - Update aeBibleClass with CountParagraphMarksWithDarkRedFormatting, expected 0 [impr]
     ' FIXED - #616 - Space function is changed to space, need normalizer fix [bug]
-    ' [obso] - #596 - Psalms header not carried over with routine to auto-load from new doc clone [bug]
+    ' [obso] - #596 - Psalms header not carried over with routine to auto-load from new Doc clone [bug]
     ' FIXED - #395 - Add style Selah, where the word is italic (\qs for USFM) [impr]
-    ' FIXED - #247 (as part of Styles config) - see also #279 - Add code to define H1 and H2 exactly and apply to all [code] [doc] [impr]
+    ' FIXED - #247 (as part of Styles config) - see also #279 - Add code to define H1 and H2 exactly and apply to all [code] [Doc] [impr]
     ' [obso] - #214 - Fix contents page to include all bookmarked Heading_01+ numbers
     ' [obso] - #610 - Add Inspect_Aptos_Sources to aeBibleClass tools - expected Result 0 [test]
     ' FIXED - #614 - Use a paragrah style for Aleph, Bet etc., done in earlier commit [impr]
@@ -176,15 +176,15 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #543 - Malformed citation in block is silently skipped [bug]
     ' FIXED - #542 - Implement plan for en-dash in sorted citation block [feat]
     ' FIXED - #541 - Create a plan to ouput en-dash in citation blocks and sorted in canonical order [feat]
-    ' FIXED - #540 - Change dash to en dash for verse ranges in doc aeBibleCitationClass.md [impr]
+    ' FIXED - #540 - Change dash to en dash for verse ranges in Doc aeBibleCitationClass.md [impr]
     ' FIXED - #539 - Error 5 in ParseCitationBlock [bug]
     ' FIXED - #538 - Implement code plan for Stage 13a [impr]
-    ' FIXED - #537 - Update doc as the en-dash form is pre-normalized and never reaches the parser [doc]
+    ' FIXED - #537 - Update Doc as the en-dash form is pre-normalized and never reaches the parser [Doc]
     ' FIXED - #536 - Add a plan for dealing with semicolon use for inherited book name in aeBibleCitationClass [impr]
     ' FIXED - #535 - 1 unexpected FAIL in negative test - [bug]
     ' FIXED - #534 - Fix negative tests of basTEST_aeBibleCitationBlock to use aeAssert framework [impr]
     ' FIXED - #533 - Move python and associated files to py folder and adjust calling scripts [impr]
-    ' FIXED - #532 - Move documentation of DSP for SBL Citation to its own md file [doc][impr]
+    ' FIXED - #532 - Move documentation of DSP for SBL Citation to its own md file [Doc][impr]
     ' FIXED - #531 - Make code routines explicitly Public or Private in codebase [impr]
     ' FIXED - #530 - Update license headers
     ' FIXED - #529 - Error with 2 unqualified references
@@ -199,13 +199,13 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #520 - AddBookNameHeaders adds a second blank line in the header [bug]
     ' FIXED - #509 - AddBookNameHeaders routine
     ' FIXED - #519 - Implement error handler standard in aeBibleClass.cls [impr]
-    ' FIXED - #518 - Update definition for standard error handler to be applied in aeBibleClass.cls [doc]
+    ' FIXED - #518 - Update definition for standard error handler to be applied in aeBibleClass.cls [Doc]
     ' FIXED - #517 - Add test and code for Stage 17 [feat]
-    ' FIXED - #516 - Add doc for Stage 17 [doc]
+    ' FIXED - #516 - Add Doc for Stage 17 [Doc]
     ' FIXED - #515 - Add test and code for Stage 16 [feat]
-    ' FIXED - #514 - Add doc for Stage 16 [doc]
+    ' FIXED - #514 - Add Doc for Stage 16 [Doc]
     ' FIXED - #513 - Add test and code for Stage 15 [feat]
-    ' FIXED - #512 - Add documentation for Stage 15 [doc]
+    ' FIXED - #512 - Add documentation for Stage 15 [Doc]
     ' FIXED - #511 - Add test and code for Stage 14 Canonical Compression [feat]
     ' FIXED - #510 - Fix 3 failures in Test_Harness - corrupted en dash [bug]
     ' FIXED - #509 - AddBookNameHeaders routine
@@ -246,7 +246,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #476 - Update extension architecture and explain invariant Stages 1-7
     ' FIXED - #475 - Add AssertFalse to make test harness cleaner
     ' FIXED - #473 - Introduce IsRangeSegment for further clarity when using hypen and en dash
-    ' FIXED - #472 - Update Stage 9 doc to show clear distinction of hyphen and en dash (immediate window output is not clear enough)
+    ' FIXED - #472 - Update Stage 9 Doc to show clear distinction of hyphen and en dash (immediate window output is not clear enough)
     ' FIXED - #471 - Implement Stage 9 Range Detection
     ' FIXED - #470 - Extend Test 4 slightly to guarantee future code changes cannot alter the segmentation silently
     ' FIXED - #468 - Update DSP documentation for Extension Hooks Stage 8 initial skeleton, test, and code - lexical only
@@ -261,7 +261,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' [obso] - #413 - Enforce SBL punctuation (: vs .) [impr]
     ' [obso] - #221 - Add test that will compare DOCVARIABLEs with Result of PrintHeading1sByLogicalPage for page verification [test]
     ' [obso] - #083 - Update name of Bible to Refined Word Bible (RWB) - Michael [idea]
-    ' [obso] - #042 - Add readme to aeWordGit [doc]
+    ' [obso] - #042 - Add readme to aeWordGit [Doc]
     ' [obso] - #035 - Add test for page numbers of h1 on odd or even pages [test]
     ' FIXED - #431 - Freeze parser stub scope, Strengthen semantic validator with tests, Add negative tests, Swap parser stub for real parser
     ' FIXED - #467 - Update LexicalScan (with multi-word book support)
@@ -277,8 +277,8 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #457 - Update to formally express grammar in EBNF for 7 stage design
     ' FIXED - #455 - Refine contracts for 7 stages and add a 12-line formal "Parser Contract" header at the top of the module
     ' FIXED - #454 - Update documentation pipeline overview of 7 stages
-    ' FIXED - #450 - Update doc and architectural structure for Stage 2: Lexical Tokenization
-    ' FIXED - #449 - Update documentation to reflect status of Stage 1: Input Normalization [doc]
+    ' FIXED - #450 - Update Doc and architectural structure for Stage 2: Lexical Tokenization
+    ' FIXED - #449 - Update documentation to reflect status of Stage 1: Input Normalization [Doc]
     ' FIXED - #447 - Normalize at Data construction boundary - the correct architectural layer
     ' FIXED - #446 - Enforce 1-Based array usage with assert statements and update documentation
     ' FIXED - #445 - Fix GetMaxVerse for 0 based maps array [regr][bug]
@@ -318,19 +318,19 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' [obsp] - #206 - See #247 - Add test for all H1 pages to verify no paragraphs have indent setting [test]
     ' [obso] - #048 - Use https://www.bibleprotector.com/editions.htm for comparison of KJV with Pure Cambridge Edition [idea]
     ' [obso] - #268 - Timings of all TestReports to go in csv log file with session ID for each run [impr]
-    ' [obso] - #291 - See #300 - Add md doc that shows clearly the workflow for GitHub integration [doc] [flow]
+    ' [obso] - #291 - See #300 - Add md Doc that shows clearly the workflow for GitHub integration [Doc] [flow]
     ' [obso] - #151 - Add test for PrintCompactSectionLayoutInfo, number of one and two col sections, and print layout report file
     ' [obso ] #267 - Add code for CompleteAuditPageLayout [code]
-    ' [obso] - #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [doc]
+    ' [obso] - #266 - Create design for new routine CompleteAuditPageLayout in md format - Pre, Scan, Post [Doc]
     ' [obso] - #226 - Update CompareHeading1sWithShowHideToggle to use CheckShowHideStatus [impr]
-    ' FIXED - #287 - Update labels for Tasks and retroactively link to historic issues [doc] [impr]
-    ' [obso] - #292 - Add md doc describing use of Copilot for documentation creation [doc]
-    ' [obso] - #293 - Add md doc 'Bias Guard' to reduce hallucination (h13n) [doc]
-    ' [obso] - #271 - Add routine headers for targeting github.io docs in future [doc] [wip]
-    ' [obso] - #170 - See #389 - Check doc and use line feed instead of paragraph mark throughout where verses are divided
+    ' FIXED - #287 - Update labels for Tasks and retroactively link to historic issues [Doc] [impr]
+    ' [obso] - #292 - Add md Doc describing use of Copilot for documentation creation [Doc]
+    ' [obso] - #293 - Add md Doc 'Bias Guard' to reduce hallucination (h13n) [Doc]
+    ' [obso] - #271 - Add routine headers for targeting github.io docs in future [Doc] [wip]
+    ' [obso] - #170 - See #389 - Check Doc and use line feed instead of paragraph mark throughout where verses are divided
     ' FIXED - #044 [wip] - See # 338, #337, #326, #258 - Add extract to text file routine with book chapter reference -
     '           see web.txt from openbible.com as reference [feat]
-    ' [obso] - #281 - Explain methodology of Test Driven Development [doc]
+    ' [obso] - #281 - Explain methodology of Test Driven Development [Doc]
     ' [obso] - #259 - Remove old code that regressed [clean]
     ' [obso] - #043 - See #365 - Add extract to USFM routine [feat]
     ' [obso] - #031 - Consider SILAS recommendation for adding pictures in text boxes to support USFM output [idea]
@@ -393,7 +393,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #327 - Re-run BuildHeadingIndexToCSV to review changes after fixes up to page 225 [audit]
     ' FIXED - #326 - Update RunRepairWrappedVerseMarkers_Across_Pages_From to have SessionID and log [impr]
     ' FIXED - #323 - See #322 - Create index file for H1 and H2 as csv text for speedy lookup [feat] [perf]
-    ' FIXED - #325 - Add md for Efficient Book-Chapter Navigation with Pre-Indexed Lookup Table [doc]
+    ' FIXED - #325 - Add md for Efficient Book-Chapter Navigation with Pre-Indexed Lookup Table [Doc]
     ' FIXED - #195 - Improve verse find - Ps 119:176 is most verses, search is 14 secs, Psalm has most chapters (150), search is 2 secs
     ' FIXED - #321 - Update GoToVerseSBL to use GetParaIndexSafe and speed up verse search [impr]
     ' [obso] #320 - Add code to FindVerseFromLogicalPage [impr]
@@ -410,42 +410,42 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #312 - Total time of TestReport to go in csv file in rpt with Session ID
     ' FIXED - #295 - See #309 - Verify use of late binding in all code base so there is no need to set references [code]
     ' FIXED - #310 - Add code to locally auto tag a version release and push it to GitHub
-    ' FIXED - #294 - Cut a 0.1.1 release and tag it on GitHub [doc] [cp]
+    ' FIXED - #294 - Cut a 0.1.1 release and tag it on GitHub [Doc] [cp]
     ' FIXED - #309 - Add code to scan modules in .docm to flag early-bound object declarations [code]
     ' FIXED - #303 - Fix single RUN_THE_TESTS(x) so it does not run AppendToFile and kill the full report [bug]
     ' FIXED - #305 - Check header writing standard, vbnet vs. vba, use style ' ============== [cp] [clean]
     ' [obso] #100 - Continue check multipage view from 300 for orphans of H2
     ' FIXED - #308 - Update all use of TestReportFlag to -> If TestReportFlag And OneTest = 0 [bug]
     ' FIXED - #307 - Remove bGoTo16, not needed with use of run single test [obso] [clean]
-    ' FIXED - #306 - Add audit log from squash #274 [doc] [audit]
+    ' FIXED - #306 - Add audit log from squash #274 [Doc] [audit]
     ' FIXED - #279 - Add routine to define H2 style and reapply it in the project, add code header [impr] [code]
-    ' FIXED - #300 - Add md doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
+    ' FIXED - #300 - Add md Doc to outline a Compact Strategy for Squashed Audit Commits and reduce GitHub commit log spam
     ' FIXED - #304 - Add task type [wip] - it will prepend the task commits until replaced by FIXED
-    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add doc header [doc]
+    ' FIXED - #302 - Update PrintCompactSectionLayoutInfo to output in rpt folder, move to basTESTaeBibleTools and add Doc header [Doc]
     ' FIXED - #301 - 999 AppendToFile should be "SKIPPED" [bug]
-    ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [doc]
-    ' FIXED - #299 - Add initial README and Bias Guard md files [doc] [cp]
+    ' FIXED - #274 - Fix output path so 'Style Usage Distribution.txt' goes to rpt folder, add code header [bug] [Doc]
+    ' FIXED - #299 - Add initial README and Bias Guard md files [Doc] [cp]
     ' FIXED - #298 - Use SSOT with Select Case statements for values such as num and verify with RUN_THE_TESTS [impr]
     ' FIXED - #297 - Create file to hold Audits for Commit Log [feat]
     ' FIXED - #296 - Add code for ValidateTaskInChangelogModule [code]
-    ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2 [doc]
-    ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl [doc]
+    ' FIXED - #286 - Update Heading 2 with DisableKeepLinesTogetherForHeading2 [Doc]
+    ' FIXED - #285 - Update Heading 2 with EnforceHeading2WidowOrphanControl [Doc]
     ' FIXED - #284 - Update Heading 2 KeepWithNext [audit]
     ' FIXED - #283 - Add code GetHeadingDefinitionsWithDescriptions to tools [audit]
-    ' FIXED - #282 - Update guide with 'Example of Tags use for Audit Clarity' [doc]
+    ' FIXED - #282 - Update guide with 'Example of Tags use for Audit Clarity' [Doc]
     ' FIXED - #278 - Use Single Source of Truth (SSOT) to fix multiple locations of array definition via MaxTests - see #273 [impr]
-    ' FIXED - #277 - Define standard for types of "Tasks" to use with git commit messages [doc]
+    ' FIXED - #277 - Define standard for types of "Tasks" to use with git commit messages [Doc]
     ' FIXED - #273 - New error: Erl = 0 Error = 9 (Subscript out of range) in procedure RunBibleClassTests of Class BibleClass [bug]
     ' FIXED - #276 - git mv TestReport to rpt/ and delete old version [impr]
-    ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md" [doc]
-    ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System [doc]
+    ' FIXED - #275 - Create md folder for docs - md format, target github.io in future, git mv "Editorial Design and Style Guide.md" [Doc]
+    ' FIXED - #272 - Add section on Architecture Overview: DOCM-Coupled Macro System [Doc]
     ' FIXED - #269 - All reports to be output to rpt folder [feat]
     ' FIXED - #265 - Add SKIP option to RUN_THE_TESTS for slow tests. Return -1 in report log, and GetPassFail return SKIP!!!! [feat]
     ' FIXED - #270 - Add test for SummarizeHeaderFooterAuditToFile [test]
     ' FIXED - #264 - Add test for Style Usage Distribution [test]
     ' FIXED - #263 - Add CountAuditStyles_ToFile [test]
-    ' FIXED - #262 - Update code module names to match EDSG manifest [doc] [impr]
-    ' FIXED - #261 - Add initial Editorial Design and Style Guide [doc]
+    ' FIXED - #262 - Update code module names to match EDSG manifest [Doc] [impr]
+    ' FIXED - #261 - Add initial Editorial Design and Style Guide [Doc]
     ' FIXED - #257 - Update SmartPrefixRepairOnPage to give a Count of Ascii 160 chars and any other e.g. hair space [impr]
     ' FIXED - #260 - Update RepairWrappedVerseMarkers_MergedPrefix_ByColumnContext_SinglePage to give a Count of Ascii 12 chars [impr]
     ' FIXED - #258 - Add RunRepairWrappedVerseMarkers_Across_Pages_From to allow per page testing [impr]
@@ -459,7 +459,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #249 - Add skeleton for StartRepairTimingSession [impr]
     ' FIXED - #248 - Update repair tool for 10 pages [impr]
     ' FIXED - #174 - Add tests for Count tab para in headers and footers [test]
-    ' FIXED - #088 - Add tests for Footnote Reference (in doc and footnote) to Count those that are not bold with correct style [test]
+    ' FIXED - #088 - Add tests for Footnote Reference (in Doc and footnote) to Count those that are not bold with correct style [test]
     ' FIXED - #246 - Add test for styles using Liberation Sans Narrow [test]
     ' FIXED - #245 - Add code Identify_ArialUnicodeMS_Paragraphs [code]
     ' FIXED - #244 - Unlink heading numbering, should not display Article... or Section... for H1 or H2 [bug]
@@ -475,7 +475,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #234 - Add test to Count footers that have only a tab character [test]
     ' FIXED - #212 - Add test for CountFindNotEmphasisBlack = 0 and CountFindNotEmphasisRed = 0 when all have been set [test]
     ' FIXED - #233 - Add test for CountParagraphMarks_CalibriDarkRed [test]
-    ' FIXED - #232 - Add word version into to output and test report [doc]
+    ' FIXED - #232 - Add word version into to output and test report [Doc]
 ' 20250719 - v010
     ' FIXED - #148 - Add version info to TestReport output
     ' FIXED - #231 - Reapply explicit formatting (Segoe UI 8, Bold, Blue, Superscript) for Footnote Reference, Fix for #230
@@ -585,7 +585,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #136 - Add back test for CountEmptyParagraphs [test]
     ' FIXED - #135 - Fix sections where different first page is selected - deselect them
     ' FIXED - #134 - Output debug formatting header to console for comma spacing
-    ' FIXED - #131 - Add DoEvents to number dash number search and stop switch to doc window for ISBN
+    ' FIXED - #131 - Add DoEvents to number dash number search and stop switch to Doc window for ISBN
     ' FIXED - #132 - Add test for tab paragraph mark only [test]
     ' FIXED - #130 - Update CountEmptyParagraphs to CountEmptyParagraphsWithFormatting
     ' FIXED - #129 - Add DoEvents in long loops so console results are processed
@@ -594,7 +594,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #126 - Update test CountDeleteEmptyParagraphsBeforeHeading2 with fast algorithm from ChatGPT [test] [perf]
     ' FIXED - #125 - Add test to Count number of footers with style "Footer" [test]
     ' FIXED - #124 - Add test for Count linefeed and space linefeed in footnotes [test]
-    ' FIXED - #122 - Add test for Count linefeed and space linefeed in doc [test]
+    ' FIXED - #122 - Add test for Count linefeed and space linefeed in Doc [test]
     ' FIXED - #115 - Add style "TheFooters" based on "TheHeaders" and update all footer sections, use Noto Sans font
     ' FIXED - #121 - Update debug output of Expected1BasedArray for Test(x) to be 15 per line
     ' FIXED - #120 - Add test for "TheHeaders" style as there should be only one paragraph mark per section [test]
@@ -637,7 +637,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #073 - Run test to verify Count of red footnote reference is zero [test]
     ' FIXED - #072 - Check red footnote reference from Genesis to end of Study Bible
     ' FIXED - #071 - Finish check of red footnote reference from Ezek 39 to end of Bible
-    ' FIXED - #038 - Add test for no empty para after h2 headings in doc - total Count should be 0 [test]
+    ' FIXED - #038 - Add test for no empty para after h2 headings in Doc - total Count should be 0 [test]
     ' FIXED - #079 - Resolve issue around name of REV Bible - see #083
     ' FIXED - #078 - Add test to Count number of h1 heading, should be 66 for Bible books [test]
     ' FIXED - #074 - Set Heading 1 to 144 points before, follows section break so each book is on a new page with
@@ -701,7 +701,7 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #007 - Add test to Count space followed by carriage return with white font color [test]
     ' FIXED - #006 - Add test to Count number of double tabs [test]
     ' FIXED - #005 - Add test to Count space followed by carriage [test]
-    ' FIXED - #004 - Add tests to Count double spaces in doc, and in shapes including groups [test]
+    ' FIXED - #004 - Add tests to Count double spaces in Doc, and in shapes including groups [test]
     ' FIXED - #003 - Change module name to basTESTaeBibleClass
 ' 20250219 - v002
     ' FIXED - #002 - Update class name to aeBibleClass

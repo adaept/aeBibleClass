@@ -704,12 +704,12 @@ End Function
 ' ============================================================================================
 Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long) As Word.Range
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim rStartPage As Word.Range
     Dim rEndPage As Word.Range
     Dim fullRange As Word.Range
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' -------------------------------------------------------------
     ' Go to the START PAGE using the printed page number
@@ -727,7 +727,7 @@ Private Function GetRangeForPages(ByVal startPage As Long, ByVal endPage As Long
     ' -------------------------------------------------------------
     ' Build a range from the start of startPage to the end of endPage
     ' -------------------------------------------------------------
-    Set fullRange = doc.Range(Start:=rStartPage.Start, End:=rEndPage.End)
+    Set fullRange = Doc.Range(Start:=rStartPage.Start, End:=rEndPage.End)
 
     Set GetRangeForPages = fullRange
 

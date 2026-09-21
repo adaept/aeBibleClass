@@ -97,7 +97,7 @@ End Sub
 ' -----------------------------------------------------------------------------
 Public Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
     On Error GoTo PROC_ERR
-    Dim doc       As Document
+    Dim Doc       As Document
     Dim para      As Word.Paragraph
     Dim rng       As Word.Range
     Dim StyleName As String
@@ -116,14 +116,14 @@ Public Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
         GoTo PROC_EXIT
     End If
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     StyleName = "Chapter Verse marker"
     updateCount = 0
 
     Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=pageNumber
     Debug.Print "Starting at Page " & pageNumber
 
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         If para.Range.Information(wdActiveEndPageNumber) >= pageNumber Then
             For Each rng In para.Range.Characters
                 If rng.style = StyleName Then

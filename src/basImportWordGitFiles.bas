@@ -154,8 +154,8 @@ Private Sub ImportThisDocumentFile(ByVal myCodeFile As String)
     Set ts = fso.OpenTextFile(myCodeFile, 1)  ' ForReading
     Do While Not ts.AtEndOfStream
         strLine = ts.ReadLine
+        strTrimmed = LTrim$(strLine)
         If Not blnBodyStarted Then
-            strTrimmed = LTrim$(strLine)
             If LCase$(Left$(strTrimmed, 9)) <> "attribute" _
                And strLine <> "VERSION 1.0 CLASS" _
                And strLine <> "BEGIN" _
@@ -164,7 +164,19 @@ Private Sub ImportThisDocumentFile(ByVal myCodeFile As String)
                 blnBodyStarted = True
             End If
         End If
-        If blnBodyStarted Then strBody = strBody & strLine & vbCrLf
+        If blnBodyStarted Then
+            ' Attribute lines are VBE-managed metadata wherever they appear,
+            ' not just in the leading header block above - Word's export
+            ' also emits one mid-file for each WithEvents variable (e.g.
+            ' "Attribute oWordApp.VB_VarHelpID = -1", added 2026-09-21 for
+            ' ThisDocument's first-ever WithEvents variable). Injecting that
+            ' literally via AddFromString is a syntax error (confirmed live:
+            ' red/error line in the VBE). Skip any such line here too, not
+            ' just before blnBodyStarted flips True.
+            If LCase$(Left$(strTrimmed, 9)) <> "attribute" Then
+                strBody = strBody & strLine & vbCrLf
+            End If
+        End If
     Loop
     ts.Close
 

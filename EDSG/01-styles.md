@@ -427,12 +427,96 @@ one instance found, but nothing forced the fix on the next occurrence.
 Both pathways below make the fix unconditional instead of relying on
 remembering `LockBookHyperlinks`.
 
-**docm/VBA pathway (this document).** `ThisDocument.Document_BeforeSave`
+**docm/VBA pathway (this document).** `ThisDocument.oWordApp_DocumentBeforeSave`
 sums `story.Hyperlinks.Count` across every StoryRange before every save
-and, if nonzero, silently calls `LockBookHyperlinks silent:=True`
-(Debug.Print only, no modal — see that Sub's own comment for the
-`silent` parameter). An active hyperlink cannot survive into a saved
-`.docm`.
+of this document and, if nonzero, silently calls `LockBookHyperlinks
+silent:=True` (Debug.Print only, no modal — see that Sub's own comment
+for the `silent` parameter). An active hyperlink cannot survive into a
+saved `.docm`.
+
+**Implementation note (corrected 2026-09-21):** the original
+implementation was a directly-named `Document_BeforeSave` Sub in
+`ThisDocument` — the pattern documented all over the web and the one
+that looks obviously correct. It compiled cleanly, was imported,
+confirmed compiled, and reported as "live" — but **never actually
+fired, in any session, on any file.** Root cause, confirmed via the VBA
+Object Browser: Word's `Document` class has no `BeforeSave` event of
+its own; only `Word.Application.DocumentBeforeSave` exists. A same-named
+Sub in `ThisDocument` is syntactically valid, compiles fine, and sits in
+the Object Browser looking exactly like a real handler — but is inert,
+dead code, never wired to anything. This was only caught by an operator
+live-testing an actual Save with a real hyperlink present and getting no
+Immediate-window output at all, across four different testing-copy docm
+files including a freshly-imported one, ruling out file corruption.
+The fix: a module-level `Public WithEvents oWordApp As Word.Application`
+in `ThisDocument`, wired up in `Document_Open`, handling
+`oWordApp_DocumentBeforeSave(ByVal Doc As Document, ByRef SaveAsUI As
+Boolean, ByRef Cancel As Boolean)` guarded by `If Not Doc Is Me Then
+Exit Sub` (Application-level events fire for every document saved in
+the Word session, not just this one). Live-validated 2026-09-21: fired,
+detected the hyperlink, migrated/unlinked/force-locked it, and
+`RUN_THE_TESTS(17)` read `0` afterward. **Lesson for future document
+-level "before" events in this project (BeforeClose, BeforePrint,
+etc.):** don't trust that a same-named Sub in `ThisDocument` is wired up
+just because it compiles — check the Object Browser (F2, search the
+event name) for which class actually sources it before relying on it.
+
+**Performance fix (2026-09-21): fast path by default, full sweep opt-in.**
+The original three-step `LockBookHyperlinks` (migrate built-in
+`Hyperlink`-styled runs → step 1; unlink active `Hyperlink` objects →
+step 2; force-reapply font/color/underline on `BookHyperlink` runs →
+step 3) ran synchronously inside any Save with an active hyperlink and
+was confirmed to take **over a minute**, during which Word was
+unresponsive. Root cause: steps 1 and 3 each run a `Find`-by-character-
+style scan across every StoryRange — the same anti-pattern
+`basVerseStructureAudit.bas` documents elsewhere as "300-2700s vs
+seconds" on this document's size. Step 2 (the only step that actually
+affects `CountActiveHyperlinks`/test 17) uses the `Hyperlinks`
+collection directly, no text search, and is fast on its own.
+
+`LockBookHyperlinks` gained `Optional ByVal fullSweep As Boolean =
+False`. Steps 1 and 3 now only run when `fullSweep:=True` is passed
+explicitly; step 2 always runs. `oWordApp_DocumentBeforeSave`'s
+auto-lock calls it with the default (fast path), so a save with a stray
+hyperlink stays fast. The full sweep is still available on demand
+(`LockBookHyperlinks fullSweep:=True` — no ribbon button wraps this yet,
+Immediate Window only) for periodic hygiene.
+
+**Research finding that shaped this default: is the fast path safe
+under `RUN_THE_TESTS`'s own acceptance-gate discipline?** Checked both
+halves of what steps 1/3 used to silently fix:
+
+- **Step 3's concern (font/size/color/underline drift on existing
+  `BookHyperlink` runs) was already independently covered** by
+  `AuditBookHyperlinkStyling` (test 46) — it audits exactly this drift
+  and will `FAIL` if it accumulates, regardless of whether
+  `LockBookHyperlinks` itself ever fixes it. Making step 3 opt-in only
+  changes who performs the fix (manual, not automatic), not whether the
+  drift is detected.
+- **Step 1's concern (a run still carrying the built-in `Hyperlink`
+  character style, independent of whether it still has a clickable
+  link) had NO existing test coverage** — confirmed by checking the two
+  candidates directly: test 17 (`CountActiveHyperlinks`) only checks the
+  `Hyperlinks` collection (actual clickable objects), not character
+  style, so a run whose link was removed via Word's own right-click
+  "Remove Hyperlink" without fixing the style would read clean; test 45
+  (`CountUnapprovedVisibleStyles`) walks the **style definitions**
+  collection (is "Hyperlink" visible in the gallery), not actual per-run
+  text usage, so it doesn't see this either. Making step 1 opt-in
+  *would* have reopened a genuine blind spot — this is why
+  `CountBuiltInHyperlinkStyleRuns` (new test, slot 89) was added in the
+  same change, expected `0`, closing exactly that gap.
+
+Net result: the fast-path default doesn't weaken `RUN_THE_TESTS` as the
+acceptance gate — everything steps 1/3 used to auto-fix is still
+detected automatically (test 46 pre-existing, test 89 new); only the
+automatic *fixing* of the lower-stakes drift (style/font consistency,
+not an active-link defect) became manual.
+
+**Live-validated 2026-09-21:** real hyperlink inserted, `RUN_THE_TESTS(17)`
+confirmed `FAIL` (`1`) first, then Save triggered the fast path
+(`Migrated: 0, Unlinked: 1, force-locked: 0`), `RUN_THE_TESTS(17)`
+re-run `PASS` (`0`) — no save delay this time.
 
 **`.docx`/JS pathway (translated editions).** This docm/VBA pathway is
 **not** the enforcement point for translated content — VBA's own

@@ -23,7 +23,7 @@ Option Explicit
 ' rvw/Plan_engwebu_baseline_sync_2026-09-14.md ("New goal" / item 11).
 '
 ' "text != text" unless the comparison is explicitly defined (operator,
-' 2026-09-14) - see the plan doc's "Text equality is not automatic" section.
+' 2026-09-14) - see the plan Doc's "Text equality is not automatic" section.
 ' This module's specific contract:
 '
 '   - Encoding: UTF-8 WITH a leading BOM, matching web.txt/rwb.txt's

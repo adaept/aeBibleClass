@@ -990,26 +990,260 @@ un-cleaned-up.
   entry as fully validated, no drift.
     STATUS: committed (ad5f543), pushed.
 
-## NEXT SESSION, IN ORDER
+## 2026-09-21: status-message race fix re-verified live -- CONFIRMED
 
-1. **Re-verify the status-message fix live in Word.** Sideload the
-   taskpane against a testing copy with BookHyperlink defined, insert a
-   hyperlink, close/reopen the taskpane (or the document) so
-   Office.onReady fires fresh. Confirm the "Locked N active
-   hyperlink(s)..." message now actually persists in the taskpane's
-   #status area instead of being clobbered within a second or two.
-2. **VBA-side Document_BeforeSave validation -- still not done, carried
-   from 2026-09-19, not touched this session:** open a testing copy of
-   the docm, insert a real hyperlink in the body, use Word's actual
-   Save command (not RUN_THE_TESTS). Confirm (a) no error dialog
-   interrupts the save, (b) the Immediate window shows
-   `Document_BeforeSave: 1 active hyperlink(s) found before save --
-   auto-running LockBookHyperlinks.` followed by `LockBookHyperlinks
-   complete: ...`, (c) the hyperlink is gone/restyled after the save,
-   (d) `RUN_THE_TESTS(17)` reads `0` afterward.
-3. Once both are confirmed, EDSG/01-styles.md's §"Automatic
-   enforcement" and conversion-plan.md's §15.14 entry can move from
-   "JS-side validated, VBA-side pending" to fully closed.
+  Operator re-ran the JS-side check: sideloaded the taskpane against a
+  testing copy with BookHyperlink defined, inserted a hyperlink,
+  closed/reopened the taskpane so Office.onReady fired fresh. Status
+  message now persists correctly (no longer clobbered by
+  refreshHeadings()'s own status write): "Locked 1 active hyperlink to
+  the BookHyperlink style -- no clickable links allowed in this
+  document." -- matches taskpane.ts:437 exactly, confirming the
+  Office.onReady sequencing fix (commit ad5f543) works live.
+
+    [DOC] aeBibleAddin: word-audit-scanner.LIVE_CHECK.md's Shape 8
+    write-extension result log gained a round-2 step-7 correction (was
+    wrongly marked "Yes" -- actually a partial/race finding) plus a new
+    round-3 re-verification row, closing paragraph updated to
+    "closed 2026-09-21."
+    [DOC] adaept5tudio: conversion-plan.md's §15.14 gained a
+    "Live-check status" closing paragraph -- JS side fully validated
+    and closed; VBA side still pending.
+
+  JS-side "Lock Hyperlinks" work (Shape 8, both read and write) is now
+  FULLY CLOSED, no open items.
+
+## 2026-09-21: VBA-side Document_BeforeSave validation -- found broken, fixed, CONFIRMED PASSING
+
+  Set out to do the routine live-validation of `Document_BeforeSave`
+  (insert a hyperlink, Save, check Immediate window). It never fired --
+  not once, across many retries. Long investigation ruled out, in order:
+  wrong active document, unsaved changes lost on close, AutoSave/OneDrive
+  interference, and file-specific VBA-project corruption (reproduced on
+  a completely fresh testing copy imported straight from master, not
+  just the session's heavily-reused "Copy (5)" file).
+
+  Root cause, confirmed via the VBA Object Browser (F2, searched
+  "BeforeSave"): **Word's `Document` class has no `BeforeSave` event at
+  all.** Only `Word.Application.DocumentBeforeSave` exists. A
+  same-named `Private Sub Document_BeforeSave(...)` directly in
+  `ThisDocument` compiles cleanly, matches the exact signature shown in
+  countless online examples, and even appears to a casual glance in the
+  Object Browser results -- but is completely inert, never wired to
+  anything by Word. **This means the original 2026-09-19/20 "confirmed
+  working live" status for this feature was never actually true** -- it
+  was never genuinely tested end-to-end with a real Save until this
+  session; whatever the operator observed before was not this handler
+  firing.
+
+  [IMPORT] src/ThisDocument.cls -- replaced the dead `Document_BeforeSave`
+  Sub with a working Application-level hookup: module-level
+  `Public WithEvents oWordApp As Word.Application`, wired up in
+  `Document_Open` (`Set oWordApp = Application`), handled by
+  `oWordApp_DocumentBeforeSave(ByVal Doc As Document, ByRef SaveAsUI As
+  Boolean, ByRef Cancel As Boolean)` -- guarded by `If Not Doc Is Me Then
+  Exit Sub` since Application-level events fire for every document saved
+  in the Word session, not just this one. No new class module needed --
+  `ThisDocument` already is one, and `WithEvents` can be declared in any
+  class module. Same diagnostic Debug.Print lines and hyperlink-count/
+  LockBookHyperlinks logic as the original attempt, just correctly
+  wired this time.
+    STATUS: imported, compiled clean, and LIVE-VALIDATED by the operator
+    on a testing copy:
+      oWordApp_DocumentBeforeSave: fired.
+      oWordApp_DocumentBeforeSave: activeCount = 1
+      oWordApp_DocumentBeforeSave: 1 active hyperlink(s) found before
+        save -- auto-running LockBookHyperlinks.
+      LockBookHyperlinks complete:
+        Migrated from built-in Hyperlink : 1
+        Unlinked active Hyperlinks       : 1
+        BookHyperlink runs force-locked  : 25
+    Hyperlink confirmed gone/restyled (no longer clickable on hover).
+    RUN_THE_TESTS(17) confirmed PASS, result 0, expected 0.
+
+  **Known tradeoff, not a bug:** the full three-step `LockBookHyperlinks`
+  Find-scan across this ~34,000-paragraph document took **over a
+  minute** to run synchronously inside the Save. Word is unresponsive
+  for that whole window whenever an active hyperlink is present at save
+  time. Documented in EDSG/01-styles.md so it isn't mistaken for a hang.
+
+  Also encountered and fixed along the way: a full `ImportAllVBAFiles`
+  run reported "Skipped: 4" instead of the expected "Skipped: 1" --
+  `basBiblePalette`, `basTEST_aeBibleTools`, and `Module1` had survived
+  `DeleteAllModulesExceptImporter`'s delete pass (likely a VBIDE
+  `VBComponents` collection staleness/timing issue right after a mass
+  delete) and were then wrongly skipped as "already exists" by
+  `ModuleOrClassExists`, silently leaving the live project without them
+  entirely -- confirmed missing from the Project Explorer, not just a
+  cosmetic miscount. Recovered by manually re-importing the three files
+  individually via VBE File > Import File, then Compile Project. This
+  is the same failure mode noted on 2026-09-20 for `basTEST_aeBibleTools`
+  alone ("a prior partial import had skipped it") -- recurring, not a
+  one-off, and worth remembering as a standing risk of the standard
+  `ImportAllVBAFiles` workflow: **always check the Skipped count is
+  exactly 1 after every full reimport**, not just that the summary
+  MsgBox appeared.
+
+  [DOC] EDSG/01-styles.md's "Automatic enforcement" section updated with
+  the full corrected implementation, the root-cause finding, and the
+  performance tradeoff note.
+  [DOC] adaept5tudio conversion-plan.md's §15.14 updated to match.
+
+  Both hyperlink-lock pathways (docm/VBA and `.docx`/JS) are now FULLY
+  VALIDATED. No open items remain in this thread.
+
+## 2026-09-21, continued: LockBookHyperlinks performance fix + new Test 89
+
+  The just-confirmed >1 minute Save delay (LockBookHyperlinks' full
+  three-step sweep running synchronously) was investigated further at
+  the operator's request rather than left as an accepted tradeoff.
+
+  Root cause: steps 1 (migrate built-in Hyperlink-styled runs to
+  BookHyperlink) and 3 (force-reapply font/color/underline on
+  BookHyperlink runs) each run a Find-by-character-style scan across
+  every StoryRange -- the same anti-pattern basVerseStructureAudit.bas
+  documents elsewhere as "300-2700s vs seconds" on this document's
+  size. Step 2 (unlink -- the only step affecting RUN_THE_TESTS slot 17,
+  CountActiveHyperlinks) uses the Hyperlinks collection directly, no
+  text search, fast on its own.
+
+  Before making steps 1/3 opt-in, checked whether doing so would reopen
+  a RUN_THE_TESTS blind spot (operator's framing: "RUN_THE_TESTS is the
+  gateway for acceptance"):
+    - Step 3's concern (font/size/color/underline drift on existing
+      BookHyperlink runs): ALREADY independently covered by
+      AuditBookHyperlinkStyling, wired at slot 46 -- will FAIL if this
+      drift accumulates, regardless of whether LockBookHyperlinks
+      itself fixes it. No gap.
+    - Step 1's concern (a run still carrying the built-in "Hyperlink"
+      character style, independent of whether it still has a clickable
+      link): confirmed NO existing coverage. Test 17
+      (CountActiveHyperlinks) only checks the Hyperlinks collection
+      (actual clickable objects), not character style. Test 45
+      (CountUnapprovedVisibleStyles) only checks style DEFINITION
+      visibility in the Styles gallery (ActiveDocument.Styles), not
+      actual per-run text usage in the document body. A real gap --
+      confirmed by reading both functions directly, not assumed.
+
+  [IMPORT] src/basTEST_aeBibleTools.bas -- LockBookHyperlinks gained
+  `Optional ByVal fullSweep As Boolean = False`. Steps 1 and 3 now
+  gated `If fullSweep Then`; step 2 always runs. Completion
+  Debug.Print/MsgBox now notes which mode ran ("fast path (unlink-only;
+  pass fullSweep:=True for the full sweep)" vs "full sweep (migrate +
+  unlink + force-lock)").
+
+  [IMPORT] src/ThisDocument.cls -- oWordApp_DocumentBeforeSave's own
+  comment updated to reflect the new default; the actual call
+  (`LockBookHyperlinks silent:=True`) is unchanged, since fullSweep
+  already defaults to False -- the auto-save hook gets the fast path
+  automatically, no code change needed there beyond the comment.
+
+  [IMPORT] src/aeBibleClass.cls -- new Test 89, CountBuiltInHyperlinkStyleRuns
+  (Public Function, same Find-by-style technique as AuditBookHyperlinkStyling
+  immediately above it), wired into all four standard dispatch locations
+  (MaxTests 88->89, Expected1BasedArray +1 entry (expected 0),
+  GetTestDescription/GetPassFail/RunTest/OutputTestReport Case 89,
+  RunTest(89) added to the sequence after RunTest(88)) per
+  md/Adding_To_Bible_Test_Class.md's checklist. Closes the Step-1
+  blind spot found above -- expected 0, FAILs if any run anywhere still
+  carries the built-in "Hyperlink" style.
+
+  [IMPORT] src/basStyleInspector.bas -- CountBuiltInHyperlinkStyleRuns
+  delegate stub added (mirrors AuditBookHyperlinkStyling's stub
+  immediately above it), so `?CountBuiltInHyperlinkStyleRuns` resolves
+  from the Immediate Window without manually instantiating aeBibleClass.
+
+    STATUS: imported and LIVE-VALIDATED. Real hyperlink inserted,
+    RUN_THE_TESTS(17) confirmed FAIL (1) first, then Save triggered:
+      oWordApp_DocumentBeforeSave: fired.
+      oWordApp_DocumentBeforeSave: activeCount = 1
+      oWordApp_DocumentBeforeSave: 1 active hyperlink(s) found before
+        save -- auto-running LockBookHyperlinks.
+      LockBookHyperlinks complete [fast path (unlink-only; pass
+        fullSweep:=True for the full sweep)]:
+        Migrated from built-in Hyperlink : 0
+        Unlinked active Hyperlinks       : 1
+        BookHyperlink runs force-locked  : 0
+    RUN_THE_TESTS(17) re-run: PASS (0). No save delay this time (unlike
+    the original >1 minute) -- fast path confirmed working as designed.
+    RUN_THE_TESTS(89) (CountBuiltInHyperlinkStyleRuns) not yet
+    separately exercised this session but wired and compiling clean.
+
+## Bug found + fixed during this import: ImportThisDocumentFile injected an invalid Attribute line
+
+  While importing the fullSweep/Test-89 change above, operator hit a
+  compile error (red/error line in the VBE) on
+  `Attribute oWordApp.VB_VarHelpID = -1` -- a line Word's own export
+  process auto-generates immediately after any WithEvents variable
+  declaration (this is the first WithEvents variable ThisDocument has
+  ever had, so this case was never hit before this session).
+
+  Root cause: `ImportThisDocumentFile` (basImportWordGitFiles.bas) only
+  stripped Attribute/VERSION/BEGIN/END lines from the LEADING header
+  block before `Option Explicit`, then accumulated every subsequent line
+  verbatim -- including this later, mid-file Attribute line -- into the
+  string fed to `CodeModule.AddFromString`. Attribute lines are always
+  VBE-managed metadata, never valid inline code; injecting one literally
+  is a syntax error, unlike a true `VBComponents.Import` (used for every
+  OTHER module), which parses and applies Attribute lines specially
+  rather than treating them as code text.
+
+  [IMPORT] src/basImportWordGitFiles.bas -- ImportThisDocumentFile's
+  line-filtering loop now skips ANY line starting with "Attribute "
+  (case-insensitive), not just ones before the body starts.
+    STATUS: imported and confirmed working -- this module is the ONE
+    file ImportAllVBAFiles can never refresh itself (DeleteAllModules-
+    ExceptImporter explicitly protects it from its own delete pass,
+    since a running module can't remove itself -- this is also why it's
+    always the expected "Skipped: 1" baseline). Fixing it always
+    requires a manual step: either a direct code-pane edit or a
+    standalone Remove/Import of just this one file via the VBE, done
+    outside the normal ImportAllVBAFiles flow. Confirmed done this
+    session -- ThisDocument.cls then reimported cleanly with the fixed
+    logic, no more red line, compiled clean.
+  src/ThisDocument.cls on disk is unaffected/correct as-is -- the
+  Attribute line belongs there as a legitimate export artifact; the bug
+  was entirely in how the importer consumed it, not in the source file
+  itself.
+
+  [DOC] EDSG/01-styles.md's "Automatic enforcement" section and
+  adaept5tudio conversion-plan.md's §15.14 both updated with the full
+  research writeup (root cause, the two-test-coverage check, the fix).
+
+## Casing drift found mid-session, root cause confirmed, not yet fully resolved
+
+  A live re-export during the missing-modules investigation showed
+  `ImportAllVBAFiles` reporting "Skipped: 4" instead of the expected
+  "Skipped: 1" (see the missing-modules section above) -- separately,
+  re-exporting individual files after this session's ThisDocument.cls
+  edits showed a project-wide `doc` -> `Doc` local-variable casing drift
+  across many files, most likely because `oWordApp_DocumentBeforeSave`'s
+  own `ByVal Doc As Document` parameter introduced "Doc" as VBA's
+  project-wide canonical casing for that identifier, and a full Compile
+  Project then re-cased every other module's local `doc` variables to
+  match. `py/normalize_vba.py` (existing casing-correction tool, run
+  after every export per its own header comment) gained a new rule for
+  this. Confirmed as PURE casing drift (no semantic changes) in the 9
+  files git already showed modified, but applying the new rule also
+  touched 11 MORE files not yet re-exported this session -- unresolved
+  whether the live project's Compile Project genuinely re-cased all 39
+  modules (in which case this is correct and forward-looking) or only
+  the ones actually recompiled/reimported (in which case those 11 files
+  now have speculative, unverified changes).
+
+  RESOLVED same session: operator ran a fresh, deliberate full
+  reimport/compile/export cycle. Result: the EXACT SAME 24-file diff
+  reproduced (same files, same line counts) as before that cycle --
+  confirms this is the live VBA project's genuine, stable state after a
+  full compile, not a stale/partial artifact from earlier exports. Also
+  re-verified the diff content itself with a corrected, properly
+  word-boundary-anchored check (the earlier spot-check's grep pattern
+  had a bug -- `doc\b` without a leading `\b` also matched "Doc" inside
+  "oDoc", silently hiding real diff lines in files using that variable
+  name). With the fix, confirmed clean: every remaining diff across all
+  24 files is either pure `doc`->`Doc` casing or this session's own
+  intentional LockBookHyperlinks/Test-89 additions, nothing else. Safe
+  to commit.
 
 STILL LOWER PRIORITY, CARRIED FORWARD UNCHANGED FROM EARLIER SESSIONS:
 Shape 7 (`ListTemplateCollection`/`baseStyle`, partially validated, no
@@ -1021,3 +1255,58 @@ superscript Find criterion 79, Fields/Bookmarks/InlineShapes + dedup
 74, multi-type header/footer stories 84); two leftover test text boxes
 in the testing-copy docm from the Shape 6 live-check, still
 un-cleaned-up.
+
+===============================================================================
+SESSION CLOSE CHECKPOINT (2026-09-21)
+===============================================================================
+
+ALL WORK THIS SESSION LIVE-VALIDATED AND DOCS VERIFIED CONSISTENT. Three
+repos, all clean and ready to commit/push at time of writing:
+
+  aeBibleClass:      25 files (EDSG/01-styles.md, py/normalize_vba.py,
+                      rpt/HeadingLog.txt, sync/session_manifest.txt, and
+                      21 src/ files -- see `git status` for the exact list)
+  aeBibleAddin:      taskpane/src/word-audit-scanner.LIVE_CHECK.md
+  adaept5tudio:      docs/aeBibleClass-word-addin-conversion-plan.md
+
+WHAT CLOSED THIS SESSION:
+  1. JS-side "Lock Hyperlinks" status-message race -- re-verified live,
+     fix confirmed persisting correctly.
+  2. VBA-side Document_BeforeSave -- found to have NEVER actually worked
+     (Word's Document class has no BeforeSave event; only
+     Word.Application.DocumentBeforeSave does), root-caused via the VBA
+     Object Browser, fixed with an Application-level WithEvents hookup
+     (oWordApp_DocumentBeforeSave), live-validated end-to-end.
+  3. LockBookHyperlinks performance (>1 minute save delay) -- root
+     caused to steps 1/3's Find-by-style scans, fixed with a
+     fullSweep:=False fast-path default, gap-checked against
+     RUN_THE_TESTS coverage (new Test 89 added to close the one real
+     gap found), live-validated end-to-end.
+  4. Two ImportAllVBAFiles bugs found and fixed along the way: silent
+     module-drop on delete (Skipped count gotcha) and an invalid
+     mid-file Attribute-line injection bug in ImportThisDocumentFile.
+  5. Project-wide `doc`->`Doc` casing drift investigated, confirmed
+     genuine (not speculative), normalizer script updated to match.
+
+  Both hyperlink-lock pathways (docm/VBA and .docx/JS), the whole
+  Phase 3 audit-engine port's live-validation work, and this session's
+  own new work are now FULLY CLOSED. No open items remain in any of
+  those threads.
+
+NEXT SESSION, IN ORDER (all lower-priority/optional, nothing blocking):
+  1. Consider wiring a ribbon button to `LockBookHyperlinks
+     fullSweep:=True` -- currently Immediate-Window-only, no
+     discoverable UI entry point for the periodic full-hygiene sweep.
+  2. Clean up the two leftover test text boxes in the testing-copy docm
+     from the Shape 6 live-check (2026-09-19), still un-cleaned-up.
+  3. Shape 7 (`ListTemplateCollection`/`baseStyle`) -- partially
+     validated, only needs further action if the untested
+     `baseStyle`-violation positive case becomes relevant (disposable
+     blank `.docm` only, per its own runbook -- never a document with
+     real content, see EDSG/10-list-paragraph-bug.md).
+  4. 5 remaining aeBibleAddin §15.12 API-research items (footnote
+     body-text traversal 34/35, page/section-break detection 6/80,
+     superscript Find criterion 79, Fields/Bookmarks/InlineShapes +
+     dedup 74, multi-type header/footer stories 84) -- Phase E JS port
+     continuation, running total 57/~87, none blocking.
+===============================================================================

@@ -959,7 +959,7 @@ Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = 
         End Select
     Next oPara
 
-    ' End of doc: discard remaining buffer (post-last-verse of last book)
+    ' End of Doc: discard remaining buffer (post-last-verse of last book)
     chapterEndCount = chapterEndCount + bufCount
 
     sOut = sOut & "---- Summary ----" & NL

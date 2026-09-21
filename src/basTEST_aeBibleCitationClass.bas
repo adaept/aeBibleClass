@@ -864,7 +864,7 @@ Public Sub Test_Stage17_CanonicalStringFormatter()
     Result = aeBibleCitationClass.FormatCanonicalString(Refs)
     aeAssert.AssertEqual "Gen 1:1; Exod 1:1", Result, "Test 5: book break"
     '------------------------------------------
-    ' Test 6 - full pipeline example from doc
+    ' Test 6 - full pipeline example from Doc
     '   John 3:16-3:18, John 4:1-4:2, Romans 8:1-8:2
     '------------------------------------------
     Set Refs = New Collection

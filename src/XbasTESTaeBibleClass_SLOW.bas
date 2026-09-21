@@ -226,7 +226,7 @@ End Sub
 Sub CountParagraphsTypes()
 ' Slow running routine ~10+ minutes
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim totalParagraphs As Long
     Dim emptyParagraphs As Long
@@ -269,10 +269,10 @@ Sub CountParagraphsTypes()
     oddPageSectionBreakIndices = ""
     
     ' Set the document to the active document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     
     ' Set the debug file path to the current document directory
-    debugFile = doc.Path & "\ParagraphsCountDebugTestFile.txt"
+    debugFile = Doc.Path & "\ParagraphsCountDebugTestFile.txt"
     
     ' Delete the old debug file if it exists
     If Dir(debugFile) <> "" Then
@@ -292,7 +292,7 @@ Sub CountParagraphsTypes()
     Close fileNum
     
     ' Loop through each paragraph in the document
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         paraIndex = paraIndex + 1
         totalParagraphs = totalParagraphs + 1
         
@@ -407,7 +407,7 @@ Sub FindNextVerseMarkerSequence()
 ' with space of "Normal" style before and after.
 ' ~200 secs and there should be no matches.
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim searchRange As Word.Range
     Dim chapterRng As Word.Range, nextRng As Word.Range
     Dim found As Boolean
@@ -417,11 +417,11 @@ Sub FindNextVerseMarkerSequence()
     Application.ScreenUpdating = False
     Application.StatusBar = "Starting search..."
 
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
     found = False
     tStart = Timer
 
-    Set searchRange = doc.Range(0, doc.Content.End)
+    Set searchRange = Doc.Range(0, Doc.Content.End)
 
     ' Begin search for Chapter Verse marker
     With searchRange.Find
@@ -438,11 +438,11 @@ Sub FindNextVerseMarkerSequence()
         Set chapterRng = searchRange.Duplicate
 
         ' Attempt to get the next character styled as Verse marker
-        If chapterRng.End + 1 <= doc.Content.End Then
-            Set nextRng = doc.Range(Start:=chapterRng.End, End:=chapterRng.End + 1)
+        If chapterRng.End + 1 <= Doc.Content.End Then
+            Set nextRng = Doc.Range(Start:=chapterRng.End, End:=chapterRng.End + 1)
         Else
             searchRange.Start = chapterRng.End
-            searchRange.End = doc.Content.End
+            searchRange.End = Doc.Content.End
             searchRange.Find.Execute
             GoTo ContinueLoop
         End If
@@ -453,14 +453,14 @@ Sub FindNextVerseMarkerSequence()
 
                 ' Before chapter
                 If chapterRng.Start > 0 Then
-                    Set beforeChar = doc.Range(Start:=chapterRng.Start - 1, End:=chapterRng.Start)
+                    Set beforeChar = Doc.Range(Start:=chapterRng.Start - 1, End:=chapterRng.Start)
                 Else
                     GoTo ContinueLoop
                 End If
 
                 ' After verse
-                If nextRng.End + 1 <= doc.Content.End Then
-                    Set afterChar = doc.Range(Start:=nextRng.End, End:=nextRng.End + 1)
+                If nextRng.End + 1 <= Doc.Content.End Then
+                    Set afterChar = Doc.Range(Start:=nextRng.End, End:=nextRng.End + 1)
                 Else
                     GoTo ContinueLoop
                 End If
@@ -479,7 +479,7 @@ Sub FindNextVerseMarkerSequence()
                         ' Found match
                         chapterRng.Start = beforeChar.Start
                         nextRng.End = afterChar.End
-                        doc.Range(chapterRng.Start, nextRng.End).Select
+                        Doc.Range(chapterRng.Start, nextRng.End).Select
                         MsgBox "Match found at position " & chapterRng.Start, vbInformation
                         found = True
                         Stop
@@ -492,7 +492,7 @@ Sub FindNextVerseMarkerSequence()
 ContinueLoop:
         ' Continue search
         searchRange.Start = chapterRng.End
-        searchRange.End = doc.Content.End
+        searchRange.End = Doc.Content.End
         searchRange.Find.Execute
 
         progressCount = progressCount + 1

@@ -21,7 +21,7 @@ Private Const wdEndnoteStory As Integer = 5
 
 Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Optional ByVal restartVal As Variant) As Boolean
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim para As Word.Paragraph
     Dim paraPageNum As Integer
     Dim textFound As Boolean
@@ -30,17 +30,17 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     Dim counter As Long
 
     ' Set the active document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     If Not IsMissing(restartVal) Then
         ' Set the range to start from the specified location
         Debug.Print "Restarting from location " & restartVal
-        Set startRange = doc.Range(Start:=restartVal, End:=doc.Content.End)
+        Set startRange = Doc.Range(Start:=restartVal, End:=Doc.Content.End)
     ElseIf lastFoundLocation Is Nothing Then
         ' Check if we have a previously found location to continue from
         ' Start at the beginning of the specified page
         Debug.Print ">bookPage = " & bookPage, "textH1 = " & textH1
-        Set startRange = doc.GoTo(What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=bookPage)
+        Set startRange = Doc.GoTo(What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=bookPage)
     Else
         ' Continue searching from the last found location
         Debug.Print ">lastFoundLocation = " & Replace(lastFoundLocation.Text, vbCr, "")
@@ -55,7 +55,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
     counter = 0
 
     ' Iterate through paragraphs starting from the specified range
-    For Each para In doc.Paragraphs
+    For Each para In Doc.Paragraphs
         ' Get the visible page number of the current paragraph
         paraPageNum = para.Range.Information(wdActiveEndAdjustedPageNumber)
 
@@ -111,16 +111,16 @@ End Function
 
 Sub VerifyBookNameFromDocVariable(docVar As String, theTextOfH1 As String)
     On Error GoTo ErrorHandler
-    Dim doc As Document
+    Dim Doc As Document
     Dim bookNum As Integer
     Dim textFoundHere As Boolean
 
     ' Set the active document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' Get the value of the DOCVARIABLE
     On Error Resume Next
-    bookNum = doc.Variables(docVar).value
+    bookNum = Doc.Variables(docVar).value
     On Error GoTo 0
     Debug.Print "BookNum = " & bookNum
 
@@ -129,8 +129,8 @@ Sub VerifyBookNameFromDocVariable(docVar As String, theTextOfH1 As String)
         MsgBox docVar & " DOCVARIABLE is not set or has an invalid value.", vbExclamation, "Error"
         bookNum = InputBox("Enter the correct page number for '" & docVar & "':", "Correct Page Number")
         If bookNum > 0 Then
-            doc.Variables(docVar).value = bookNum
-            doc.Fields.Update
+            Doc.Variables(docVar).value = bookNum
+            Doc.Fields.Update
         Else
             'MsgBox "No valid page number entered. Exiting process.", vbCritical, "Process Canceled"
             Debug.Print "No valid page number entered. Exiting process."
@@ -162,8 +162,8 @@ ErrorHandler:
     MsgBox Err.Description, vbExclamation, "Error"
     bookNum = InputBox("The text '" & UCase(theTextOfH1) & "' was not found. Enter the correct page number:", "Correct Page Number")
     If bookNum > 0 Then
-        doc.Variables(docVar).value = bookNum
-        doc.Fields.Update
+        Doc.Variables(docVar).value = bookNum
+        Doc.Fields.Update
         Resume RetrySearch  ' retry the search with the new page number
     Else
         MsgBox "No valid page number entered. Exiting process.", vbCritical, "Process Canceled"
@@ -172,12 +172,12 @@ End Sub
 
 Sub FindDocVariableByName(docVar As String)
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim variableExists As Boolean
     Dim variableValue As String
 
     ' Set the active document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' Initialize the flag for existence and variable value
     variableExists = False
@@ -185,7 +185,7 @@ Sub FindDocVariableByName(docVar As String)
 
     ' Search for the DOCVARIABLE
     On Error Resume Next
-    variableValue = doc.Variables(docVar).value
+    variableValue = Doc.Variables(docVar).value
     If Err.Number = 0 Then
         variableExists = True
     End If
@@ -211,7 +211,7 @@ End Sub
 
 Sub FindDocVariableEverywhere()
     On Error GoTo PROC_ERR
-    Dim doc As Document
+    Dim Doc As Document
     Dim variableName As String
     Dim variableFound As Boolean
     Dim field As Word.Field
@@ -221,7 +221,7 @@ Sub FindDocVariableEverywhere()
     Dim endNote As endNote
 
     ' Set the active document
-    Set doc = ActiveDocument
+    Set Doc = ActiveDocument
 
     ' Prompt the user to enter the name of the DOCVARIABLE to locate
     variableName = InputBox("Enter the name of the DOCVARIABLE to locate:", "Search DOCVARIABLE")
@@ -236,13 +236,13 @@ Sub FindDocVariableEverywhere()
     variableFound = False
 
     ' First: Search for DOCVARIABLE in shapes (including nested shapes)
-    For Each shape In doc.Shapes
+    For Each shape In Doc.Shapes
         variableFound = SearchShapeForVariable(shape, variableName)
         If variableFound Then GoTo PROC_EXIT ' Exit once found
     Next shape
 
     ' Second: Search for DOCVARIABLE in the main document body
-    For Each field In doc.Fields
+    For Each field In Doc.Fields
         If field.Type = wdFieldDocVariable Then
             If InStr(1, field.Code.Text, variableName, vbTextCompare) > 0 Then
                 ' Select the field and stop at its location
@@ -255,7 +255,7 @@ Sub FindDocVariableEverywhere()
     Next field
 
     ' Third: Search for DOCVARIABLE in headers and footers
-    For Each section In doc.Sections
+    For Each section In Doc.Sections
         ' Check headers
         For Each field In section.Headers(wdHeaderFooterPrimary).Range.Fields
             If field.Type = wdFieldDocVariable Then
@@ -282,7 +282,7 @@ Sub FindDocVariableEverywhere()
     Next section
 
     ' Fourth: Search for DOCVARIABLE in footnotes
-    For Each Note In doc.Footnotes
+    For Each Note In Doc.Footnotes
         For Each field In Note.Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.Code.Text, variableName, vbTextCompare) > 0 Then
@@ -296,7 +296,7 @@ Sub FindDocVariableEverywhere()
     Next Note
 
     ' Fifth: Search for DOCVARIABLE in endnotes
-    For Each endNote In doc.Endnotes
+    For Each endNote In Doc.Endnotes
         For Each field In endNote.Range.Fields
             If field.Type = wdFieldDocVariable Then
                 If InStr(1, field.Code.Text, variableName, vbTextCompare) > 0 Then

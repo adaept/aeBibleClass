@@ -23,7 +23,7 @@ Option Compare Text
 '   "B"        - Long, blue component  0..255
 '   "RgbLong"  - Long, = RGB(R, G, B)  (Word Font.Color value)
 '   "HexCode"  - String, "#RRGGBB"
-'   "Usage"    - String, where this color appears in the production doc
+'   "Usage"    - String, where this color appears in the production Doc
 '
 ' Nested-dictionary layout (rather than a Public Type record) is required
 ' by VBA's late-binding rule: UDTs declared in .bas modules cannot be
@@ -97,7 +97,7 @@ Private Function BuildDefaultPalette() As Object
     AddColor d, "Green", 0, 255, 0, "Palette only - not currently applied in the production docx."
     AddColor d, "DarkGreen", 0, 100, 0, "Palette only - not currently applied in the production docx."
     AddColor d, "Emerald", 80, 200, 120, "Verse marker character style."
-    AddColor d, "Blue", 0, 0, 255, "Footnote Reference character style (confirmed 2026-05-13 by live-doc probe: 296 references at this color)."
+    AddColor d, "Blue", 0, 0, 255, "Footnote Reference character style (confirmed 2026-05-13 by live-Doc probe: 296 references at this color)."
     AddColor d, "DarkBlue", 0, 0, 128, "Hyperlink + FollowedHyperlink character styles (print-locked; matches wdColorDarkBlue). Distinct from Blue so audits separate hyperlinks from Footnote References."
     AddColor d, "Gold", 255, 215, 0, "Palette only - not currently applied in the production docx."
     AddColor d, "Orange", 255, 165, 0, "Chapter Verse marker character style (semantic role: ChapterVerseOrange)."

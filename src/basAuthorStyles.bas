@@ -59,7 +59,7 @@ Public Sub AuditListStyleRisk(Optional ByVal bWriteFile As Boolean = True)
 
     ' Collect into 2D Variant arrays: (NameLocal, BaseStyle, Priority).
     ' 200 row cap matches AuditVerseMarkerStructure's H1 cap; ~106 rows
-    ' observed in the Bible-class doc, so 200 has comfortable headroom.
+    ' observed in the Bible-class Doc, so 200 has comfortable headroom.
     Dim flaggedArr() As Variant
     Dim allBaseArr() As Variant
     Dim flaggedCount As Long
@@ -302,23 +302,23 @@ End Sub
 ' Pre-flight:
 '   * Source holding document is open by name (default: style_holding.docm).
 '   * Source contains both AuthorListItem and AuthorBookRefNew.
-'   * ActiveDocument is not the holding doc itself.
+'   * ActiveDocument is not the holding Doc itself.
 '
 ' Idempotency: if a destination style already exists, the Sub warns and
 ' skips it. To force a re-import, manually delete the destination style
 ' and re-run.
 '
 ' NextParagraphStyle is intentionally not copied here - Phase 4 sets it
-' after the live-doc renames complete.
+' after the live-Doc renames complete.
 '
-' Usage (in the live .docm, with holding doc also open):
+' Usage (in the live .docm, with holding Doc also open):
 '   TransportAuthorStyles                       ' default source name
 '   TransportAuthorStyles "my_holding.docm"     ' custom source name
 ' ==========================================================================
 Public Sub TransportAuthorStyles(Optional ByVal sourceName As String = "style_holding.docm")
     On Error GoTo PROC_ERR
 
-    ' Pre-flight 1: source doc open
+    ' Pre-flight 1: source Doc open
     Dim srcDoc As Document
     On Error Resume Next
     Set srcDoc = Documents(sourceName)
@@ -341,12 +341,12 @@ Public Sub TransportAuthorStyles(Optional ByVal sourceName As String = "style_ho
     ' Pre-flight 3: source contains both expected styles
     If Not StyleExists(srcDoc, "AuthorListItem") Then
         MsgBox "Source missing AuthorListItem. Run CreateAuthorStyles in " & _
-               "the holding doc first.", vbExclamation, "TransportAuthorStyles"
+               "the holding Doc first.", vbExclamation, "TransportAuthorStyles"
         Exit Sub
     End If
     If Not StyleExists(srcDoc, "AuthorBookRefNew") Then
         MsgBox "Source missing AuthorBookRefNew. Run CreateAuthorStyles in " & _
-               "the holding doc first.", vbExclamation, "TransportAuthorStyles"
+               "the holding Doc first.", vbExclamation, "TransportAuthorStyles"
         Exit Sub
     End If
 
@@ -365,10 +365,10 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
-Public Function StyleExists(ByVal doc As Document, ByVal StyleName As String) As Boolean
+Public Function StyleExists(ByVal Doc As Document, ByVal StyleName As String) As Boolean
     Dim s As Word.Style
     On Error Resume Next
-    Set s = doc.Styles(StyleName)
+    Set s = Doc.Styles(StyleName)
     On Error GoTo 0
     StyleExists = Not (s Is Nothing)
 End Function
@@ -447,7 +447,7 @@ End Sub
 '
 ' Pre-flight:
 '   * Both oldName and newName must exist in ActiveDocument.
-'   * Caller is responsible for choosing the correct doc context
+'   * Caller is responsible for choosing the correct Doc context
 '     (run on the test copy first, then on production).
 '
 ' Output: Count of paragraphs migrated.
@@ -507,7 +507,7 @@ End Sub
 ' ==========================================================================
 ' DecommissionAuthorStyles
 ' ==========================================================================
-' Phase 4a of the List Paragraph migration. Performs six ordered live-doc
+' Phase 4a of the List Paragraph migration. Performs six ordered live-Doc
 ' operations to retire the old list-engine-entangled styles and finalise
 ' the new standalone styles' inter-style references.
 '
