@@ -1394,3 +1394,126 @@ NEXT SESSION, IN ORDER:
   4. Shape 5 `rPr` extension (Cases 41/46) still not itself live-validated
      -- low priority, both VBA baselines are 0.
 ===============================================================================
+# Claude Session Manifest -- 2026-09-22
+# ------------------------------------------------------------
+# All work this session was in aeBibleAddin (JS/.docx port) and
+# adaept5tudio (docs/aeBibleClass-word-addin-conversion-plan.md).
+# aeBibleClass/src/ was NOT touched this session -- logged here per
+# this project's convention of keeping one cross-repo session journal.
+
+## Summary
+
+  Continued §15.12's research queue from the prior session, then ran
+  the full backlog of pending live-validation checks accumulated
+  across the whole Phase 3 port. By the end of this session:
+    - §15.12's research tracker (5 items) is fully closed -- every
+      item attempted resolved clean, none a genuine dead end.
+    - Every top-level shape and rPr/pPr extension in the port is now
+      LIVE-VALIDATED against real Word. Zero open pending-live-
+      validation items remain anywhere in the Phase 3 port.
+    - Running total: 63 of ~87 (89 actual dispatcher slots; see
+      "next session" below) VBA routines ported to aeBibleAddin.
+
+## Files touched this session
+
+  [SCRIPT] aeBibleAddin/taskpane/src/ooxml-run-styles.ts -- extended
+  Shape 5's OOXML parser three times: (1) paragraph-level `pPr`
+  reading (`pageBreakBefore`, `hostsSectionBreak`, `isEmpty`,
+  `hasPageOrColumnBreak`, `startsWithPageOrColumnBreak`) for Cases
+  6/80; (2) `OoxmlRunFont.superscript` (`w:vertAlign`) plus
+  `countSuperscriptOrdinalSuffixesInParagraph`, the port's first
+  cross-run adjacency check, for Case 79.
+    STATUS: all live-validated, committed, pushed.
+
+  [SCRIPT] aeBibleAddin/taskpane/src/word-audit-scanner.ts -- added
+  `countBareEmptyParagraphsLive`/`countConsecutiveEmptyParagraphsNotPrecedingBreakLive`
+  (Cases 6/80), `countNumericOrdinalsLive` (Case 79),
+  `countEmptyParagraphsWithInlineContentLive` (Case 74, pure Office.js
+  via `body.fields`/`body.getRange().bookmarks`/`body.inlinePictures`
+  + `uniqueLocalId` dedup), `countHeaderFooterStyleViolationsLive`
+  (Case 84, widens Shape 4's Primary-only pattern to all 3
+  header/footer types).
+    STATUS: all live-validated, committed, pushed. 277/277 (taskpane)
+    + 45/45 (root) passing at session end.
+
+  [SCRIPT] aeBibleAddin/taskpane/src/taskpane.ts -- wired all five new
+  functions into `window.aeAuditSpike` as debug hooks.
+    STATUS: committed, pushed.
+
+  [TEST] aeBibleAddin/taskpane/src/ooxml-run-styles.test.ts,
+  word-audit-scanner.ooxml.test.ts, word-audit-scanner.test.ts --
+  62 new tests across the session's five ported Cases.
+    STATUS: committed, pushed.
+
+  [DOC] aeBibleAddin/taskpane/src/word-audit-scanner.LIVE_CHECK.md --
+  new "Shape 10"/"Shape 11"/"Shape 12"/"Shape 13" runbooks + result
+  logs; Shape 8 and the Shape 5 `rPr` extension's long-pending result
+  logs finally filled in. Two general findings recorded (see below).
+    STATUS: committed, pushed.
+
+  [DOC] adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
+  -- §15.12 tracker fully closed; §15.11's stale "Open, not
+  investigated further" rows (Cases 34/35, 6/80, 79, 74, 84) found out
+  of sync with actual progress and corrected to DONE; all live-check
+  closures recorded.
+    STATUS: committed, pushed.
+
+## Real findings this session (not just routine porting)
+
+  1. `Range.getOoxml()` throws `RichApi.Error: GeneralException` on a
+     COLLAPSED (zero-length) selection -- a blinking cursor isn't
+     enough, every OOXML-based debug hook in this file needs an actual
+     highlighted range. Discovered mid-Shape-10-live-check.
+
+  2. `Range.getOoxml()` emits a phantom EMPTY `<w:p/>` stub for a
+     paragraph a range's end boundary merely TOUCHES without including
+     any of its content (e.g. a selection ending exactly at the next
+     paragraph's start). `isEmpty`-based checks misclassify that stub
+     as bare. Confirmed workaround: extend the range one character
+     past the boundary. Applies to every range-scoped OOXML function
+     in this port, not just Shape 10 -- worth remembering for any
+     future caller scoping to e.g. a chapter boundary.
+
+  3. Case 80's "next paragraph starts with a page/column break"
+     exception is structurally unreachable via ordinary Word editing:
+     "end of the empty paragraph" and "start of the next paragraph"
+     are the same character position, so Ctrl+Enter there always
+     attaches the break to the PRECEDING paragraph, never makes it the
+     following paragraph's leading content. Same class of dead-code
+     finding as Case 6's own already-documented exception. Left
+     honestly unexercised rather than forced.
+
+  4. Shape 13's first live-check reading (`12`, not VBA's usual `0`)
+     was correctly explained, not a bug: VBA's baseline of 0 only
+     holds for the production document's own `TheHeaders`/`TheFooters`
+     styles; a scratch document's stock `Header`/`Footer` styles
+     legitimately violate every slot (2 sections x 6 types = 12,
+     confirmed; re-verified as 6 on a fresh single-section document).
+
+  5. Word's Font dialog "Dark Red" Standard Colors swatch serializes
+     as `#C00000` -- a DIFFERENT color from VBA's `wdColorDarkRed`
+     constant (`#800000`, per aeBibleClass Test 88), despite sharing a
+     display name. Not a parsing bug; worth remembering for anyone
+     manufacturing a Case 41/46 test via the Word UI in future (needs
+     "More Colors" > custom RGB(128,0,0), not the swatch).
+
+NEXT SESSION:
+
+  No blocking or pending live-validation work remains anywhere in the
+  Phase 3 port -- this is a genuine "nothing urgent" state, first time
+  since the port began. If continuing the port:
+
+  1. Fresh triage of the ~24 still-untriaged Cases toward the
+     dispatcher's actual 89 slots (Tests 1-89; this session's running
+     total of 63 covers the ones already resolved one way or another).
+     Cases 49/50/51/81 are believed permanently out of scope
+     (file-report-writing or, for Case 51, document mutation -- not
+     fitting this port's read-only-audit approach); Tests 88/89
+     (`AuditColorConstants`, `CountBuiltInHyperlinkStyleRuns`) are
+     VBA-side infrastructure checks, not the usual kind of port
+     candidate -- worth a deliberate decision on whether they need a
+     JS equivalent at all, not just silent exclusion.
+  2. No specific research question is queued -- this would be fresh
+     triage work, same shape as the original Phase E batches, not a
+     continuation of any open thread.
+===============================================================================
