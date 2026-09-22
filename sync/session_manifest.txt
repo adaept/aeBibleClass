@@ -1310,3 +1310,87 @@ NEXT SESSION, IN ORDER (all lower-priority/optional, nothing blocking):
      dedup 74, multi-type header/footer stories 84) -- Phase E JS port
      continuation, running total 57/~87, none blocking.
 ===============================================================================
+
+===============================================================================
+SESSION CLOSE CHECKPOINT (2026-09-21, continued -- worked the prior checkpoint's
+"NEXT SESSION" punch list)
+===============================================================================
+
+This session did NOT touch aeBibleClass/src/ at all -- no VBA import needed.
+Two repos changed, both clean and ready to commit/push at time of writing:
+
+  aeBibleAddin:      taskpane/src/taskpane.ts, word-audit-scanner.ts,
+                      word-audit-scanner.test.ts, word-audit-scanner.LIVE_CHECK.md
+  adaept5tudio:      docs/aeBibleClass-word-addin-conversion-plan.md
+
+WORKED THROUGH THE PRIOR CHECKPOINT'S 4-ITEM LIST, IN ORDER:
+
+  1. Ribbon button for `LockBookHyperlinks fullSweep:=True` -- CONFIRMED NOT
+     NEEDED, closed with no code change. `EDSG/01-styles.md`'s "Automatic
+     enforcement" section already documents why: both halves of what
+     fullSweep used to auto-fix are independently caught by the normal
+     RUN_THE_TESTS gate (test 46 pre-existing, test 89 added the same
+     session fullSweep shipped) -- fixing a RUN_THE_TESTS failure via the
+     Immediate Window is this codebase's standard remediation pattern
+     everywhere else, so a dedicated button would only wrap something
+     already discoverable.
+
+  2. Leftover Shape 6 test text boxes -- reported already cleaned up (no
+     action taken this session).
+
+  3. Shape 7 (`ListTemplateCollection`/`baseStyle`, Case 75) -- CLOSED.
+     Retired the unsafe original plan (manufacturing a violation via
+     Modify Style on real content -- the List Paragraph hang trigger) for
+     a disposable-blank-document approach instead: `npm run sideload`
+     opened a fresh unsaved .docx; a throwaway VBA module in Normal.dotm's
+     project (not the blank doc's own -- a .docx can't host macros)
+     manufactured both violation types directly via Styles.Add/
+     ListTemplates.Add, safe because the hang is paragraph-count scaled
+     and a blank doc has none of the triggering list-engine state.
+     Two genuine findings surfaced and got corrected live, mid-session:
+     (a) Word's own built-in styles (Heading 1/2, Footnote Text, Title)
+     already carry a non-empty BaseStyle ("Normal") in a stock document --
+     the production docm only reads clean because it was deliberately
+     detached to satisfy EDSG/10's rule; (b) the first VBA comparison
+     script was scoped to just the 2 manufactured names, silently
+     undercounting relative to the JS hook's full 49-name APPROVED_STYLES
+     scope -- widened to match. Final live result: VBA count 6 = JS count
+     6, exact match. Disposable document closed without saving, throwaway
+     module removed, no residue.
+
+  4. Started the 5-item §15.12 research list: Cases 34/35 (footnote
+     body-text traversal) PORTED. `Word.NoteItem.body` (WordApi 1.5, not
+     desktop-only) was a full API match; reused audit-checks.ts's existing
+     `countLinefeeds` (Cases 32/33) completely unchanged -- it already
+     scans any string[] independently per element, so one whole-footnote-
+     body string per footnote reproduces VBA's exact per-footnote reset
+     with zero new pure-logic code. 6 new tests, typecheck + lint clean
+     (a pre-existing, unrelated ~200-error lint failure in a stale
+     taskpane/dist/ build artifact was found and left alone -- not part
+     of this change), 218/218 (taskpane) + 45/45 (root) passing.
+     Running total: 58 of ~87.
+     NOT YET LIVE-VALIDATED -- new "Shape 9" runbook written into
+     word-audit-scanner.LIVE_CHECK.md. This live-check has to confirm two
+     things, not one: the new footnote-body-access shape itself, AND a
+     pre-existing assumption silently inherited from Cases 32/33 (shipped
+     2026-09-19) that was never checked either -- whether Office.js's
+     `.text` represents a manual line break (Shift+Enter) as `\v`
+     (U+000B), matching VBA's Chr(11). If that assumption turns out
+     wrong, Cases 32/33 need the same fix retroactively, not just Shape 9.
+
+NEXT SESSION, IN ORDER:
+  1. Run Shape 9's live-check (word-audit-scanner.LIVE_CHECK.md's "Shape 9"
+     section, steps 1-6) -- confirms Cases 34/35 AND retroactively settles
+     the `\v` question for Cases 32/33. Needs `npm run sideload` again (the
+     dev server and debugging session from this session were both stopped
+     cleanly at close).
+  2. Continue §15.12's remaining 4 research items (page/section-break
+     detection 6/80, superscript Find criterion 79, Fields/Bookmarks/
+     InlineShapes + dedup 74, multi-type header/footer stories 84) --
+     Phase E JS port continuation, running total 58/~87, none blocking.
+  3. Case 17's read-only Shape 8 (`countActiveHyperlinks`) still `pending`
+     -- low-risk, easy to manufacture whenever convenient (VBA baseline 0,
+     document's own editorial rule is zero hyperlinks anywhere).
+  4. Shape 5 `rPr` extension (Cases 41/46) still not itself live-validated
+     -- low priority, both VBA baselines are 0.
+===============================================================================
