@@ -633,6 +633,130 @@ None of this has been implemented - Task 3 remains research-only per its
 own scope. This section records verified findings for Task 4's synthesis
 and for whoever picks up actual dataset sourcing/integration next.
 
+### Task 3 addendum, 2026-09-23 - verse-level Strong's tagging: process, impact, spike, pros/cons
+
+Analysis-only, requested as input for Task 4's synthesis, not a decision
+or implementation. Grounds `Plan_pass3_divine_names_2026-09-15.md` §7's
+existing conclusion ("Phase 5 should treat verse-level-only as a hard
+requirement for this WEBU build") in concrete mechanics.
+
+**1. What the process actually is.** Word-level tagging (what
+`engwebu_usfm`'s `\w ... strong="H####"\w*` markup attempts, and what §3.1
+proved unreliable - H430/Elohim never tagged, H8064 over-applied ~30x)
+claims "this specific English word = this specific Strong's number."
+Verse-level tagging drops that claim entirely: for each verse reference
+("Genesis 1:1"), extract the ordered SET of Strong's numbers present
+anywhere in that verse's underlying-language source text (Hebrew from
+OSHB, Greek from whatever Strong's-tagged NT edition Task 3's phase 2
+adopts), independent of English word alignment. The output is a lookup
+table keyed by reference: `{ "Genesis 1:1": ["H7225","H1254","H430","H8064",...] }`.
+A study-tool UI then answers "what underlying words appear in this verse"
+(defensible, since it only asserts *presence*, not *position*), not "what
+does this specific English word mean" (which needs true word-level
+alignment RWB does not have and, per §3.1, cannot get from this corpus's
+existing tags).
+
+**2. Effect across the three repos/formats:**
+
+- **`rwb.txt` (aeRWB) - unaffected, stays exactly as-is.** Its
+  `Book C:V<TAB>text` format is deliberately plain and byte-comparable to
+  `web.txt`/WEBU (the whole point of the Phase 4 export work) - Strong's
+  data does NOT belong inline in this file. It becomes a separate,
+  verse-keyed companion dataset (e.g. `aeRWB/strongs/strongs-by-verse.json`),
+  joined by the same "Book C:V" reference string already used everywhere
+  in `aeRWB/tools/web-diff/` (`census.mjs`, `docm-rwb-diff.mjs`). No
+  format change, no re-export risk.
+- **docm/VBA (`aeBibleClass`) - does not need to be touched at all.**
+  Strong's data is scholarly apparatus layered ON TOP of the text (the
+  same relationship a study Bible's cross-reference column has to its
+  main text), not part of the docm's own canonical content. The docm
+  stays the source of the *text*; it doesn't need to carry the
+  *apparatus*. This is a clean fit for the operator's stated EOL
+  direction for VBA - the feature can be built with zero VBA involvement,
+  not just "less" VBA involvement.
+- **docx/JS (`aeBibleAddin`) - where the feature would actually live.**
+  The taskpane already tracks "which verse is the user looking at"
+  (`word-navigator.ts`'s verse-navigation state) - a Strong's panel would
+  join that same reference key against the new verse-keyed lookup table
+  and render the result read-only, the same shape as the recently-wired
+  `auditPureTextChecksLive` (read enrichment, not mutation). No new
+  Office.js shape needed.
+
+**3. Spike test process - deliberately entirely outside VBA,** per the
+operator's stated lean against building this there since VBA is the EOL
+target:
+
+1. Scope to one small, well-understood chapter (Genesis 1 is the natural
+   choice - already the worked example throughout the divine-names
+   investigation).
+2. New throwaway script in `aeRWB/tools/web-diff/` (reusing `lib.mjs`'s
+   existing USFM-parsing infra, same pattern as `census.mjs`/
+   `divine-names-census.mjs` - no new parsing concepts): walk that
+   chapter's `\w strong="H####"\w*` tags, group by verse (collect the SET
+   of numbers per verse, discard word position entirely), emit
+   `{ ref, strongs[] }` per verse.
+3. **Key hypothesis to test, not assumed:** is the per-verse SET
+   trustworthy even though per-word alignment (§3.1) is proven not to be?
+   Cross-check the spike output for Genesis 1:1-5 by hand against an
+   independent interlinear source and explicitly check whether H8064's
+   known over-tagging pollutes the verse-level set too (e.g. does H8064
+   spuriously appear in verses that have nothing to do with "heavens"?).
+   If yes, verse-level SETS built from `engwebu_usfm`'s existing cWEB tags
+   are still unsafe, and this becomes hard confirmation that Task 3's
+   recommended source swap (OSHB/STEPBible data, not cWEB) is a
+   prerequisite for Phase 5, not an optional upgrade.
+4. Add one throwaway `window.aeAuditSpike`-style hook in `aeBibleAddin`
+   (matching the established live-check convention throughout the Phase 3
+   port) that, given a verse reference, looks up and logs the spike JSON's
+   Strong's list - proving the JS-only, no-VBA path end-to-end without
+   building any real UI yet.
+5. Decision gate on the hypothesis in step 3: clean per-verse sets ->
+   derisks an interim milestone using existing data; polluted sets ->
+   confirms the OSHB/STEPBible swap must happen before any Strong's
+   feature ships, even a verse-level one.
+
+**4. Pros / cons / risks / benefits:**
+
+*Pros / benefits:*
+- Directly sidesteps the one proven failure mode (§3.1's word-alignment
+  unreliability) rather than working around it partially.
+- Reuses existing, working infrastructure (`aeRWB/tools/web-diff/`) - no
+  new architecture, same reference-key convention already proven across
+  `census.mjs`/`docm-rwb-diff.mjs`.
+- `rwb.txt`'s export contract is untouched - zero risk to the
+  byte-comparable-with-WEBU property Phase 4 depends on.
+- Naturally VBA-free end to end - the docm never needs to know Strong's
+  data exists, cleanly matching the stated EOL direction.
+- A "here are the underlying words in this verse" panel is a genuinely
+  useful, honestly-scoped study feature on its own, not just a stepping
+  stone.
+
+*Cons / risks:*
+- Strictly weaker than the "click a word, see its number" UX many
+  Bible-study users expect from Strong's features - needs to be
+  positioned as a first milestone, not the end state, so it isn't
+  mistaken for more precision than it has.
+- Verse-level does not automatically fix cWEB's tagging bugs - if
+  over/under-tagging pollutes the SET (not just word position), the
+  spike's step 3 hypothesis fails and the OSHB/STEPBible source swap
+  becomes a hard prerequisite, not a later nice-to-have.
+- Two independent source-language editions (OSHB Hebrew, whichever
+  Strong's-tagged Greek edition is adopted) need their own per-verse
+  extraction/tokenization work - real new tooling if cWEB's data can't be
+  reused even at verse level.
+- Introduces a new companion-data dependency needing its own
+  provenance/versioning discipline (mirroring the sha256-provenance
+  pattern already used for `rpt/docm-verses.txt`) - worth designing in
+  from the start, not retrofitting later.
+- Long-term, a good click-a-word UX will eventually need real word-level
+  alignment - verse-level is necessary but not sufficient; Task 4's
+  synthesis should state this honestly as a stepping stone, not present
+  it as the final architecture.
+
+**5. Disposition:** analysis only, captured here explicitly as input to
+Task 4 (per the operator's request) - not started, no code written, no
+decision made on whether/when to run the spike.
+
 ## Task 4 - Synthesis: a plan to strengthen RWB toward peer-review-ready, i18n-ready scholarship
 
 Once Tasks 1-3 have real findings (not before), write a proper plan
