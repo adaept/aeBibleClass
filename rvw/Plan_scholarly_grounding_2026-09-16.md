@@ -500,6 +500,139 @@ copy.church"), any source adopted here needs its license checked and
 recorded explicitly before any tooling depends on it, the same discipline
 already applied to WEBU itself in this plan's §1/§2.
 
+### Task 3 - Primary-source verification findings, 2026-09-23
+
+Re-checked every claim in this task against each source's own current
+documentation (GitHub repos, project sites), not memory. All three
+sub-questions now have a verified answer.
+
+**Root cause of `engwebu_usfm`'s broken Strong's tags, identified (not
+previously known):** confirmed via `02-GENengwebu.usfm` that the tags are
+real USFM `\w ... strong="H####"\w*` markup (1,702 occurrences in Genesis
+alone) - not a rendering artifact. The tagging itself comes from a
+third-party volunteer effort layered onto the WEB/WEBU text, the
+**CrossWord Project (cWEB)**, whose own documentation states plainly:
+"Strong's numbers were added to the WEB as part of the CrossWord Project
+... The original source used as the reference had errors in some Strong's
+numbers. This was noted about halfway through, and corrected to some
+extent." This is a **bad source dataset, not a tooling bug** in
+eBible.org/Haiola's pipeline - eBible.org/Haiola only produces the base
+WEBU text; the Strong's layer is a separate, admittedly-imperfect overlay.
+Not worth reporting upstream as an eBible.org defect; the cWEB project
+itself already discloses the limitation.
+
+**1. Strong's numbering / dataset choice - operator's phased plan
+(Strong's/SWORD first, STEPBible next) confirmed sound, with one
+correction to the license table:**
+
+- **Original 1890 Strong's Concordance**: public domain, confirmed (James
+  Strong's own numbering + glosses; no copyright holder exists).
+- **SWORD Project**: two distinct things, as the plan suspected -
+  CrossWire's *software/engine* is GPL; individual *content modules*
+  (e.g. a Strong's-tagged KJV) are vetted case-by-case and distributed
+  only once confirmed public-domain/GPL/CC - consistent with adopting the
+  numbering scheme itself (PD) while treating any specific SWORD module
+  as needing its own check, not blanket-trusting "SWORD" as one license.
+- **STEPBible (TAHOT/TAGNT)** - "Scripture Tools for Every Person"
+  confirmed (not "Study Tools," the plan's own flagged uncertainty).
+  **License conflict found and resolved**: a secondary source
+  (Confluence wiki) describes CC BY-NC 4.0, but the primary source - the
+  actual `STEPBible/STEPBible-Data` GitHub repo's own README - states
+  plainly "STEPBible Data Repository **CC BY 4.0**," attribution-only,
+  explicitly permitting inclusion "in any software or publications
+  without requesting permission." The GitHub repo is the authoritative,
+  current license (the wiki page likely predates a licensing change) -
+  this matches the operator's original recollection, not the more
+  restrictive NC reading. **STEPBible's tagging is confirmed to be an
+  extension of Strong's, not a replacement** - TAHOT's own documentation
+  states its semantic tags "using the disambiguated Strongs is backwardly
+  compatible with simple Strongs tags," so starting with plain Strong's
+  now is confirmed not to be a dead end.
+- **OpenScriptures' Strong's Hebrew & Greek *Lexicon*** (distinct
+  repo/artifact from OSHB below): confirmed **CC BY-SA** (share-alike) -
+  the operator's flagged compatibility concern against RWB's dual
+  LGPL/commercial license stands and should be treated as a real
+  constraint, not adopted casually.
+
+**2. Hebrew source text - WLC confirmed as the right choice, with a
+licensing nuance not previously on record:**
+
+- The base **Westminster Leningrad Codex text itself is public domain**,
+  confirmed directly from the Groves Center (the text's maintaining body):
+  "not copyrighted nor are permissions needed for its use." The Tanach.us
+  UXLC edition is likewise "provided without licensing restrictions."
+- **Nuance**: derivative scholarly apparatus is NOT uniformly PD - the
+  Groves Center's own Westminster Hebrew Morphology/Syntax databases
+  require a commercial license for for-profit use (otherwise CC
+  BY-NC-ND), and one packaged WLC distribution (Bible.com's "Groves
+  Center Version") is itself CC BY-NC-ND. **The fix: use OSHB
+  (`openscriptures/morphhb`), not a Groves-Center-morphology-bundled
+  edition** - OSHB's own text is the same PD WLC, and its own added
+  lemma/morphology layer is CC BY 4.0 (attribution only, no NC/ND/SA
+  restriction) - fully compatible with RWB's dual license, unlike the
+  Groves morphology alternative. This also directly connects to item 1:
+  STEPBible's TAHOT is itself built "based on the Leningrad codex based
+  on Westminster via OpenScriptures" - so OSHB is the right common
+  ancestor for both the plain-WLC and the STEPBible-extended path,
+  avoiding two different Hebrew base texts down the line.
+- BHS (Biblia Hebraica Stuttgartensia) confirmed still not freely
+  licensed (German Bible Society copyright) - correctly excluded, as the
+  plan assumed.
+
+**3. Greek NT source text - Byzantine Majority Text confirmed as the
+consistent and correctly-licensed choice:**
+
+- Confirmed directly from `engwebu_usfm/00-FRTengwebu.usfm` (primary
+  source, not recollection): WEBU's own front matter states the NT "was
+  updated in places to conform to the Byzantine Majority Text
+  reconstruction of the original Greek manuscripts" and defines its own
+  footnote convention - MT (Byzantine Majority Text, main text), TR
+  (Textus Receptus), NU (Nestle-Aland/UBS critical text) - confirming
+  Byzantine/Majority Text is WEBU's actual primary basis, not a
+  reconstruction from memory.
+- **Robinson-Pierpont Byzantine Textform confirmed as the specific
+  edition to use, with an exceptionally permissive license** - the
+  editors' own release statement: "Anyone is permitted to copy and
+  distribute this text or any portion of this text... All rights to this
+  text are released to everyone and no one can reduce these rights at any
+  time," and its GitHub distribution states "The text and its analysis
+  are in the Public Domain." This is a stronger position than merely
+  "freely licensed" - it is public domain by the editors' own explicit
+  release, same tier as the original Strong's Concordance and the WLC.
+  Confirmed as the same text family WEB/WEBU's translators actually used
+  (Robinson & Pierpont 1991 edition per the WEB's own stated NT textual
+  basis), so adopting RP for tagging keeps the Greek base text consistent
+  with the very translation RWB is derived from.
+- Nestle-Aland/UBS confirmed still copyrighted (German Bible Society) -
+  correctly excluded, as the plan assumed.
+
+**Recommendation, following the operator's 2026-09-16 phased-adoption
+direction, now grounded in verified sources:**
+
+1. Adopt the original Strong's numbering scheme (PD) as the numbering
+   backbone - zero license risk, matches WEBU's own translation lineage
+   for the NT via Robinson-Pierpont.
+2. Adopt OSHB (`openscriptures/morphhb`) as the Hebrew base text +
+   morphology (WLC text PD, OSHB layer CC BY 4.0) - avoids the Groves
+   Center's NC-restricted morphology bundle.
+3. Adopt the Robinson-Pierpont Byzantine Textform (PD, editors' own
+   release) as the Greek NT base text - consistent with WEB/WEBU's own
+   translation basis.
+4. Layer in STEPBible's TAHOT/TAGNT (CC BY 4.0, attribution-only, backward-
+   compatible extended-Strong's) as the "next" phase once phase 1-3 is
+   working, per the operator's original sequencing - attribution
+   requirement ("Credit it to 'STEP Bible' linked to www.STEPBible.org")
+   is a one-line addition to the app's/docm's front matter, not a
+   structural constraint.
+5. Explicitly avoid OpenScriptures' Strong's Hebrew & Greek *Lexicon*
+   (CC BY-SA) and any BibleHub/Logos/Accordance/Blue Letter Bible/bundled
+   proprietary Strong's data, per the original table - unchanged, now
+   confirmed rather than assumed.
+
+None of this has been implemented - Task 3 remains research-only per its
+own scope. This section records verified findings for Task 4's synthesis
+and for whoever picks up actual dataset sourcing/integration next.
+
 ## Task 4 - Synthesis: a plan to strengthen RWB toward peer-review-ready, i18n-ready scholarship
 
 Once Tasks 1-3 have real findings (not before), write a proper plan
@@ -551,7 +684,22 @@ book introduction; H1 heading confirmed "SONG OF SOLOMON" (`HeadingLog.txt`,
 2026-09-21); export consistency confirmed moot (front matter isn't
 verse-keyed content).
 
-⚪ Task 3 - research task, not started, requiring primary-source
-verification before any implementation.
+✅ Task 3 - **research closed 2026-09-23.** All three sub-questions
+(Strong's numbering/dataset, Hebrew source text, Greek NT source text)
+verified against each source's own primary documentation, not
+recollection. Root cause of `engwebu_usfm`'s broken Strong's tags
+identified: the third-party CrossWord Project (cWEB) overlay, which
+self-discloses uncorrected tagging errors - not an eBible.org/Haiola
+pipeline bug. One real license-table correction found (STEPBible is CC BY
+4.0 per its own GitHub repo, not CC BY-NC 4.0 as a secondary wiki source
+suggested). Recommendation: original Strong's numbering (PD) + OSHB
+Hebrew text/morphology (WLC PD, OSHB layer CC BY 4.0) + Robinson-Pierpont
+Byzantine Textform (PD, editors' own release) as the base layer, STEPBible
+TAHOT/TAGNT (CC BY 4.0) layered in next per the operator's original
+phased-adoption direction. **Not yet implemented** - dataset
+sourcing/integration is a separate future task; this closes only the
+licensing/source research.
 
-⚪ Task 4 - depends on Tasks 1-3 producing real findings.
+⚪ Task 4 - depends on Tasks 1-3 producing real findings. Tasks 1-3 are now
+all closed with real findings - Task 4 (synthesis) is unblocked and next
+in line whenever picked up.
