@@ -1517,3 +1517,170 @@ NEXT SESSION:
      triage work, same shape as the original Phase E batches, not a
      continuation of any open thread.
 ===============================================================================
+# Claude Session Manifest -- 2026-09-22/23
+# ------------------------------------------------------------
+# aeBibleClass/src/ was NOT touched this session except one rvw/ doc
+# edit (Task 2 close-out, not VBA source -- no import needed). All
+# other work was in aeBibleAddin (JS/.docx port) and adaept5tudio
+# (docs). Logged here per this project's cross-repo session-journal
+# convention.
+
+## Summary
+
+  Picked up where the prior session ("Phase 3 port fully live-
+  validated") left off. This session: finished the fresh triage's
+  remaining gaps (Cases 25, 20/21, 42, then Test 88/89), ran and
+  closed BOTH pending live-checks (Shapes 14/15 -- Shape 15 found and
+  fixed a real bug), re-triaged and ported Cases 49/50 (correcting a
+  stale "out of scope" call), then investigated an i18n question that
+  led to a new readiness review and Case 81's port. Also closed out
+  aeBibleClass's own Task 2 (Song of Solomon front-matter), left
+  uncommitted from an earlier session.
+
+  Net effect: the aeBibleClass.cls dispatcher's 89 slots now ALL have
+  an explicit, recorded disposition -- ported, deliberately out of
+  scope (only Case 51 remains), or resolved as documentation (Test
+  88). Only Shape 16's live-check (Case 81, brand new this session)
+  remains pending; every other live-check in the whole Phase 3 port is
+  closed.
+
+## Files touched this session
+
+  [DOC] aeBibleClass/rvw/Plan_scholarly_grounding_2026-09-16.md --
+  Task 2 (Song of Solomon naming) closed: steps 7-11 marked done (front-
+  matter note drafted/approved/inserted 2026-09-22; H1 heading and
+  export-consistency steps confirmed). Status line updated to closed.
+    STATUS: committed and pushed, aeBibleClass `fdd4a1a`. (This was
+    actually edited in a PRIOR session but never committed -- caught and
+    closed out at the start of this one.)
+
+  [DOC] adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md --
+  updated repeatedly this session to record: Case 25 port, Cases 20/21
+  port (new "Shape 14" mechanic), Case 42 port (new "Shape 15" mechanic,
+  a real bug found+fixed), Test 88 resolution (data-provenance table,
+  not ported), Test 89 port, Shape 14 live-check PASS, Shape 15 live-
+  check PASS (bug fix), Cases 49/50 port (correcting the "permanently
+  out of scope" call), and Case 81 port (new "Shape 16" mechanic).
+    STATUS: committed and pushed across several commits, adaept5tudio
+    `2a58fd5`..`77f322f` (see aeBibleAddin log below for the matching
+    commit-by-commit detail; each doc update was paired with its own
+    aeBibleAddin commit).
+
+  [DOC] adaept5tudio/docs/aeBibleClass-word-addin-i18n-readiness-review-2026-09-23.md
+  (new file) -- triggered by an operator question ("does the quote-
+  nesting check call into the i18n locale table?"). Answer: no --
+  confirmed by direct grep, not assumption. Generalizes: only
+  countLinefeeds/countNumberDashNumberBounded from audit-checks.ts are
+  ever reused inside a live Office.js function; ~20 pure-text Cases
+  (the whole 52-71 family, plus the original Phase B batch) have real
+  vitest coverage but zero live entry point anywhere in taskpane.ts.
+  Locale-data design itself (quote-nesting.ts) is confirmed correct
+  against every i18n-UK-pilot-plan Section 9 commitment -- the gap is
+  purely "no caller exists yet," not a rework. Grounded Case 81's
+  chunked-scan design in this finding per operator direction.
+    STATUS: committed and pushed, adaept5tudio `77f322f`.
+
+  [CODE] aeBibleAddin -- full batch of Case ports this session, each
+  its own commit, all pushed to `main`:
+    - `a46492f` Case 25 (countFootnoteReferenceColorsLive)
+    - `8350e42` Cases 20/21 (countFootnoteFollowingCharactersLive, new
+      Range.expandTo-based text-index-arithmetic mechanic)
+    - `8166459` Case 42 (countBoldFootnotesWordLevelLive)
+    - `4c353c8` Test 88 resolved (src/data/vba-color-constants.ts,
+      color hex constants now DERIVE from it, not just comment-linked)
+    - `7425920` Test 89 (countBuiltInHyperlinkStyleRunsLive, pure reuse
+      of Shape 5's runStyle field, no new shape)
+    - `a63e39a` Shape 14 live-check PASS (Cases 20/21) -- see below
+    - `2dd4a95` Case 42 style-gate bug fix (case-sensitivity, Option
+      Compare Text) -- found BY Shape 15's live-check
+    - `bc18ce4` Shape 15 live-check PASS (after the fix above)
+    - `43b03ff` Cases 49/50 (auditStyleUsageDistributionLive/
+      countDistinctStyles, summarizeHeaderFooterAuditLive/
+      summarizeHeaderFooterCharacterDistributionLive)
+    - `99d81a2` Case 81 (auditApprovedCharacterStylePresenceLive, new
+      chunked-scan mechanic, CHARACTER_STYLE_SCAN_CHUNK_SIZE=200)
+    STATUS: all pushed. 357/357 (taskpane) + 52/52 (root) passing as
+    of the last commit, typecheck + lint clean throughout.
+
+  [MEMORY] Saved this session: feedback_stale_dev_server_ports.md
+  (npm run stop doesn't reliably kill vite; check netstat before
+  sideloading), feedback_pure_text_checks_unwired.md (the i18n-wiring
+  gap finding above). project_phase3_audit_engine_port_plan.md and
+  project_scholarly_grounding_plan.md both updated to reflect closure.
+  MEMORY.md index lines updated to match.
+
+## Live-checks run this session (operator peterennis, sideloaded Word session)
+
+  Shape 14 (Cases 20/21, Range.expandTo text-index arithmetic): PASS,
+  exact match on all five steps, zero drift. Full result log:
+  aeBibleAddin/taskpane/src/word-audit-scanner.LIVE_CHECK.md's "Shape
+  14" section.
+
+  Shape 15 (Case 42, footnote-body OOXML + bold detection): FIRST
+  attempt found a REAL bug -- a footnote with a genuinely bold word
+  returned 0 instead of 1. Diagnosed via a raw footnote.body.getOoxml()
+  console dump: bold markup was correct, but the style-gate compared
+  case-sensitively against "Footnote Text" (title case) while Word's
+  real built-in style resolves to "footnote text" (lowercase) --
+  aeBibleClass.cls's own Option Compare Text module directive is why
+  VBA's equivalent comparison never had this problem. Fixed (commit
+  `2dd4a95`), task pane reloaded, full runbook re-run clean. Full
+  result log: LIVE_CHECK.md's "Shape 15" section.
+
+  Along the way: cleared three stale leftover node.exe processes
+  squatting on ports 3001-3003 from an earlier, uncleanly-ended
+  session -- `npm run stop` alone did not release them; had to
+  `taskkill` directly before `npm start` would bind to the correct
+  port 3001 the manifest.xml expects. See
+  feedback_stale_dev_server_ports memory.
+
+## NEXT SESSION, IN ORDER:
+
+  1. **Shape 16 live-check (Case 81, new this session, NOT yet run).**
+     Runbook: aeBibleAddin/taskpane/src/word-audit-scanner.LIVE_CHECK.md's
+     "Shape 16" section. Needs a TESTING COPY of the docm with real
+     Bible content (not a blank sideload doc -- the approved character
+     styles aren't defined there). Confirms: (a) getRange().expandTo()
+     chunking behaves correctly at real document scale, (b) a 200-
+     paragraph getOoxml() payload is actually safe/fast in practice,
+     (c) early-exit genuinely stops well before paragraph ~34,000 once
+     all ~14 approved character styles are found. Time the check as
+     indirect evidence of early-exit; a disposable-document positive
+     (genuine absence) case is optional/lower priority, same "don't
+     touch real-content docm styles" caution as Shape 7's closure.
+
+  2. **Not yet started, real follow-on work named in the i18n readiness
+     review:** actually wiring the orphaned locale-aware pure-text
+     checks (countQuoteNestingArtifacts/quote-nesting.ts,
+     applySpellingVariant/spelling-substitution.ts, the 14-entry
+     contractions family) into a live "audit this document" feature --
+     currently tested but unreachable from the running add-in. Case
+     81's chunked-scan shape is explicitly designed to be lifted for
+     this once it's picked up, per docs/aeBibleClass-word-addin-i18n-
+     readiness-review-2026-09-23.md Section 5. Not scheduled, no
+     urgency flagged by the operator yet -- surfaced here so it's
+     found deliberately, not rediscovered from scratch.
+
+  3. **Scholarly grounding plan Task 3** (Strong's/Hebrew/Greek source-
+     text licensing) -- real primary-source research, not started.
+     Task 4 (synthesis) depends on it. See
+     aeBibleClass/rvw/Plan_scholarly_grounding_2026-09-16.md.
+
+  4. **rwb.txt Phase 4 -- awaiting operator ratification**, not an
+     engineering task. See project_rwb_phase4_plan memory.
+
+  5. **Housekeeping:** the aeBibleAddin dev server (npm start) was left
+     running on port 3001 at session close, Word still sideloaded --
+     confirm still needed next session or run `npm run stop`
+     (taskpane/) before starting a fresh one, per the stale-port lesson
+     above.
+
+## Session status at this checkpoint (2026-09-23)
+
+  All work this session is committed and pushed: aeBibleAddin
+  (a46492f..99d81a2, 10 commits), adaept5tudio (multiple commits
+  through 77f322f), aeBibleClass (fdd4a1a). Working trees clean in all
+  three repos -- confirmed via `git status --short` immediately before
+  writing this manifest entry, not assumed. 357/357 (taskpane) + 52/52
+  (root) aeBibleAddin tests passing, typecheck + lint clean.
+===============================================================================
