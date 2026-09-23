@@ -792,6 +792,108 @@ Task 3 is about the *scholarly infrastructure* (source texts, numbering,
 licensing) underneath the translation, not revisiting those editorial
 choices themselves.
 
+### Task 4 - Synthesis, 2026-09-23 (Tasks 1-3 now all closed with real findings)
+
+**What Tasks 1-3 actually established, pulled together:**
+
+- **Task 1** closed the divine-name naming-consistency work at 99.94%
+  verified-clean (9,011/9,016 occurrences), with a complete, per-occurrence-
+  audited seven-rule model (`Plan_pass3_divine_names_2026-09-15.md` §6) and
+  5 confirmed, individually-verified exceptions. **The one item in this
+  entire thread still not closed is operator ratification of that rule
+  set** - not an engineering gap, a decision gate (see
+  [[project_rwb_phase4_plan]]).
+- **Task 2** resolved the Song of Solomon/Song of Songs naming question and,
+  more importantly for peer-review purposes, established the *pattern* for
+  handling a real scholarly tension (Hebrew title vs. WEBU's inherited
+  title): keep the canonical/citation name aligned with the source text,
+  and record the scholarly rationale for the alternative as an explicit,
+  reviewed front-matter note rather than a silent substitution. This
+  pattern - not just the specific book-name decision - is what Task 4
+  should hold up as the model for any future editorial-departure
+  documentation.
+- **Task 3** (plus its verse-level-tagging addendum) found the root cause
+  of `engwebu_usfm`'s broken Strong's data (the third-party cWEB overlay,
+  not an eBible.org pipeline bug), verified a complete, license-clean
+  source stack (PD Strong's numbering + OSHB Hebrew + Robinson-Pierpont
+  Greek, STEPBible CC BY 4.0 layered in next), and produced a concrete,
+  VBA-free spike design to test whether that stack (or even the existing
+  cWEB tags) can support verse-level Strong's attachment before Phase 5
+  commits to building on it.
+
+**Roadmap this unlocks, in dependency order (not all scheduled - this
+records the order, not a commitment to do all of it now):**
+
+1. **rwb.txt Phase 4 ratification** (operator decision) - closes the
+   divine-names thread completely; nothing below depends on this
+   technically, but it's the oldest open item and the natural thing to
+   clear first.
+2. **Adopt Task 3's phase-1 source stack** in `aeRWB` (PD Strong's + OSHB +
+   Robinson-Pierpont) as new, explicitly-licensed data files, with
+   attribution/provenance recorded the same way `rpt/docm-verses.txt`'s
+   sha256-provenance convention already works.
+3. **Run the verse-level Strong's spike** (Genesis 1, entirely in
+   `aeRWB/tools/web-diff/`, no VBA) to settle the addendum's open
+   hypothesis - whether per-verse Strong's sets are trustworthy from
+   existing `engwebu_usfm` tags, or whether a fresh extraction against the
+   new source stack is required from day one.
+4. **Build the real Phase 5 feature** (verse-keyed Strong's lookup) in
+   `aeBibleAddin` only, per the addendum's docx/JS-vs-docm/VBA split -
+   reusing Pass 3's capitalization-based divine-name classification
+   (`Plan_pass3_divine_names_2026-09-15.md` §7) as already-done groundwork,
+   not re-deriving it.
+5. **Layer in STEPBible** (TAHOT/TAGNT, CC BY 4.0) once phase 1-4 is
+   stable, per the operator's original phased-adoption direction - adds a
+   one-line attribution requirement to the app/docm front matter, not a
+   structural change.
+
+**i18n/web/mobile vision connection**
+([[project_i18n_architecture_vision]]): the verse-level design is a direct
+fit, not a coincidence - it lives entirely in `aeRWB`'s portable Node
+tooling and `aeBibleAddin`'s JS taskpane, never touching the docm/VBA
+sunset track, matching the vision's own stated preference for
+format-agnostic, non-Word-specific tooling. Correctly-licensed source data
+(Task 3) is a direct prerequisite for that pathway, not a separate
+concern - an app built on cWEB's undocumented, admittedly-flawed tags
+could never be defensibly redistributed under the vision's public-domain-
+leaning philosophy, independent of the tagging-accuracy problem itself.
+
+**Peer-review readiness - concrete checklist, not an abstract goal:**
+
+1. **State the critical-text basis explicitly** (front matter or an "about
+   this edition" doc): OT from WEBU/ASV lineage; NT "updated ... to
+   conform to the Byzantine Majority Text reconstruction" (WEBU's own
+   front matter, confirmed primary-source 2026-09-23); RWB's own further
+   choice of OSHB (Hebrew) and Robinson-Pierpont (Greek) once adopted, with
+   the reasoning (license clarity + consistency with WEBU's own stated NT
+   basis) stated, not left implicit.
+2. **State Strong's/morphological data provenance explicitly** once any
+   lookup feature ships - which dataset, which license, explicitly NOT
+   `engwebu_usfm`'s own undocumented cWEB tags for anything beyond the
+   verse-level spike's own diagnostic use.
+3. **Document editorial departures with stated reasoning**, per
+   [[project_rwb_editorial_philosophy]] and Task 2's front-matter-note
+   pattern - the decontraction/softened-rendering choices and the Song of
+   Solomon note are the existing examples; any future departure (including
+   whatever the ratified divine-name rule set turns out to require) should
+   follow the same discipline.
+4. **Keep the primary-source-verification discipline itself visible** -
+   `Plan_pass3_divine_names_2026-09-15.md`'s retracted idiom rule and
+   Strong's-tag reassessment, kept in the document rather than deleted, are
+   themselves a peer-review asset: they demonstrate the work was checked
+   against primary sources and self-corrected, not merely asserted.
+
+**Not to be conflated (restated):** none of this revisits RWB's own
+theological/stylistic editorial choices (decontraction, softened
+renderings) - those are settled, documented, and out of scope here. Task 4
+is entirely about the scholarly infrastructure underneath the translation.
+
+**Disposition:** synthesis complete, nothing engineering-scheduled by this
+document alone. The one concrete, actionable next step outside this
+thread is item 1 above (rwb.txt Phase 4 ratification) since it's a pure
+operator decision with no research left to do; items 2-5 are real future
+work, not started, in the recorded dependency order.
+
 ## Status
 
 ✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
@@ -824,6 +926,17 @@ phased-adoption direction. **Not yet implemented** - dataset
 sourcing/integration is a separate future task; this closes only the
 licensing/source research.
 
-⚪ Task 4 - depends on Tasks 1-3 producing real findings. Tasks 1-3 are now
-all closed with real findings - Task 4 (synthesis) is unblocked and next
-in line whenever picked up.
+✅ Task 4 - **synthesis closed 2026-09-23.** Connected Tasks 1-3's findings
+into a dependency-ordered roadmap (rwb.txt ratification -> adopt PD
+Strong's+OSHB+Robinson-Pierpont -> verse-level spike -> real Phase 5
+feature in `aeBibleAddin` only -> STEPBible layer-in), tied to the i18n
+vision (verse-level design is format-agnostic/VBA-free by construction)
+and a concrete peer-review-readiness checklist (state critical-text basis,
+state Strong's provenance, document editorial departures, keep the
+primary-source self-correction discipline visible). **Nothing
+engineering-scheduled by this synthesis alone** - the one purely-actionable
+next step it identifies is rwb.txt Phase 4 ratification (an operator
+decision, not research or code).
+
+**This closes the entire 2026-09-16 scholarly-grounding task list - all
+four tasks done.**
