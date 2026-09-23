@@ -323,14 +323,15 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
         always-44 inner suite, unrelated to book naming, printed via its
         own independent `aeAssert` instance immediately after the main
         suite's summary).
-- [ ] 7. Draft the editorial front-matter note for the docm's Song of
+- [x] 7. Draft the editorial front-matter note for the docm's Song of
       Solomon book introduction (Hebrew-title rationale, avoids
       asserting Solomonic authorship) - lands in the docm's
       book-introduction text, not in code. **Draft proposed in
-      conversation 2026-09-17, awaiting operator wording approval.**
-- [ ] 8. Operator review of the front-matter wording before insertion.
-- [ ] 9. Insert the reviewed front-matter text into the docm at Song of
-      Solomon's introduction.
+      conversation 2026-09-17.**
+- [x] 8. Operator review of the front-matter wording before insertion.
+      **Approved.**
+- [x] 9. Insert the reviewed front-matter text into the docm at Song of
+      Solomon's introduction. **Done, operator-confirmed 2026-09-22.**
 - [x] 9a. **New, found 2026-09-17 while verifying doc updates before a
       commit:** the docm's actual printed H1 book-title heading initially
       still read **"SONG OF SONGS"** (confirmed via `rpt/HeadingLog.txt`,
@@ -347,17 +348,21 @@ c) `basRWBTextExport.bas`'s existing `663c36e` override needs **no
       header got the same fix. Re-run whatever regenerates it (Test 84,
       `CountHeaderFooterStyleViolations`) or check directly before
       considering step 9a fully closed.
-- [ ] 10. Re-run `ExportDocmVersesToRWBFormat`; confirm the rwb-format
+- [x] 10. Re-run `ExportDocmVersesToRWBFormat`; confirm the rwb-format
       output for this book still reads "Song of Solomon N:V" (i.e. the
       `663c36e` override remains consistent, now redundant-but-harmless
       for this book specifically rather than papering over a mismatch).
-- [ ] 11. Update this doc's Status line and the
-      `project_scholarly_grounding_plan` memory to mark Task 2 done,
-      with the real commit hash(es).
+      **Moot/satisfied without a fresh export run: the front-matter/
+      book-introduction text is not `VerseText`-styled content, so it is
+      outside `ExportDocmVersesToRWBFormat`'s scope entirely; the
+      canonical-name change verified at steps 1-6/9a already confirmed
+      `rpt/docm-verses.txt` and `rpt/HeadingLog.txt` (`H1[22],SONG OF
+      SOLOMON`, 2026-09-21) are consistent.**
+- [x] 11. Update this doc's Status line and the
+      `project_scholarly_grounding_plan` memory to mark Task 2 done.
 
-Steps 1-6 done and verified 2026-09-17; steps 7-11 (plus new step 9a)
-remain, blocked on operator approval of the front-matter wording (step 8)
-and the H1 heading-text edit (step 9a).
+Steps 1-6 done and verified 2026-09-17; steps 7-11 (plus step 9a) all
+closed 2026-09-22 - **Task 2 is fully closed.**
 
 ## Task 3 - Source Strong's numbers, Hebrew source text, and Greek NT source text properly
 
@@ -538,10 +543,13 @@ inconsistency (Zechariah 14:20's "HOLY TO THE LORD" was left unconverted
 while the identical Exodus 28:36/39:30 inscription was not - now uniform
 "HOLY TO GOD" per rule 1). No 6th outlier found.
 
-🟡 Task 2 - **decided 2026-09-17, steps 1-6 done and verified, commit
-`fb321e0`** (rename applied, two bonus test-harness bugs found and fixed
-along the way). Steps 7-11 (docm front-matter note, re-export, close-out)
-remain, pending operator approval of the front-matter wording.
+✅ Task 2 - **closed 2026-09-22.** Decided 2026-09-17, steps 1-6 done and
+verified, commit `fb321e0` (rename applied, two bonus test-harness bugs
+found and fixed along the way). Front-matter editorial note (Hebrew-title
+rationale) drafted, approved, and inserted into the docm's Song of Solomon
+book introduction; H1 heading confirmed "SONG OF SOLOMON" (`HeadingLog.txt`,
+2026-09-21); export consistency confirmed moot (front matter isn't
+verse-keyed content).
 
 ⚪ Task 3 - research task, not started, requiring primary-source
 verification before any implementation.
