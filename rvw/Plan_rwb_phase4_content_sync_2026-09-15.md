@@ -101,8 +101,8 @@ just punctuation - same full verse-text replacement applied. Verified:
 `docm-rwb-diff` 63/63 identical, 24/24 unit tests pass, only the 55 expected
 lines changed.
 
-**🔴 New finding surfaced while verifying (2026-09-15) - see item 4 below,
-a fix task, not yet done:** after the sync, `aeRWB`'s Test 71 census showed
+**✅ Found while verifying (2026-09-15), fixed same day - see item 4 below:**
+after the sync, `aeRWB`'s Test 71 census showed
 `rwb.txt` at **64** hits, not 63. Traced to **2 Kings 19:13**, a verse
 outside this pass's scope entirely (docm never had the pattern here, so it
 was never in the 63-ref set) - `rwb.txt` inherited a 3-mark ending from the
@@ -112,7 +112,17 @@ invisible to Test 71's census on both sides from the start - the pattern
 only matches its exact 3-character sequence, and WEBU's actual text here is
 a different 2-character sequence entirely. Not fixed here; see item 4.
 
-## 🟡 3. Third pass - Adonai/YHWH/Elohim → Lord/LORD/Lord GOD consistency
+## ✅ 3. Third pass - Adonai/YHWH/Elohim → Lord/LORD/Lord GOD consistency - CLOSED 2026-09-24
+
+**Closure note, 2026-09-24:** the seven-rule model (§6 of the sub-plan below)
+was operator-ratified, then a full rule-by-rule sweep of `rwb.txt` against
+the ratified docm found `rwb.txt` did NOT actually reflect the rules yet -
+real defects were found and fixed in Rules 2/3/4/7 (~155+ verses, several
+genuinely new docm-level defects the original audit's coarse token-presence
+check couldn't catch, not just `rwb.txt` sync gaps). Full writeup:
+`project_rwb_phase4_plan` memory's "Operator ratification + full
+rule-by-rule sweep, 2026-09-23/24" section. This pass is now fully closed -
+not just ratified in principle, but verified conformant in practice.
 
 **Detailed sub-plan (primary sources, methodology, gotchas, baseline data,
 a self-corrected style determination) at
@@ -262,5 +272,11 @@ doesn't have to redesign it:
 constraint across all of the above, not a separate sequential step - check
 new tooling against it as it's built, not after.
 
-**Status: ⚪ all items not started.** This document is the plan only;
-no execution has begun.
+**Status 2026-09-24: items 1-3 (and the 2 Kings 19:13 fix in item 4) all
+CLOSED.** Item 3 (divine names) fully closed same day as ratification -
+see its closure note above and `project_rwb_phase4_plan` memory. Item 4
+otherwise still ⚪ (no other specific comparisons identified beyond the
+2 Kings 19:13 fix). Item 5 still ⚪ (none added). Item 6 remains a standing
+design constraint, not a sequential step - addressed separately by
+`Plan_scholarly_grounding_2026-09-16.md`'s Task 4 synthesis (closed
+2026-09-23), which connects this pass's findings to Phase 5.

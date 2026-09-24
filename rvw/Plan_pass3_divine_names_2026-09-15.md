@@ -422,14 +422,25 @@ book-name fix) done and verified. ✅ Task 2 (audit tool) done, aeRWB
 aeBibleClass `3dedbfc` - **9,011/9,016 WEBU divine-name occurrences match
 cleanly (99.94%), 0 unexplained mismatches, 5 confirmed exceptions.** The
 seven-rule model (§6) is complete and audited against every occurrence,
-not a sample. **Only remaining step: operator ratification of §6's final
-rule set** (requested, not yet given).
+not a sample.
 
 ✅ **Exceptions re-verified 2026-09-17** (`Plan_scholarly_grounding_2026-09-16.md`
 Task 1) - all 5 confirmed exceptions individually re-read against
 primary sources; one real inconsistency found and fixed (Zechariah
 14:20's inscription now matches Exodus 28:36/39:30's, see §6's dated
 bullet above), commit `e76ef8d`.
+
+✅ **CLOSED 2026-09-23/24: operator ratified §6's rule set, then a full
+rule-by-rule sweep of `rwb.txt` against the ratified docm found `rwb.txt`
+did NOT yet reflect it** - real defects found and fixed in Rules 2/3/4/7
+(~155+ verses, several genuinely new docm-level defects, not just
+`rwb.txt` sync gaps - e.g. a reversed-apposition duplication bug in Rule 2,
+and two distinct Adonai/YHWH-of-Armies duplication families in Rule 7).
+Rules 1/5/6 confirmed already clean. Full writeup:
+`project_rwb_phase4_plan` memory's "Operator ratification + full
+rule-by-rule sweep, 2026-09-23/24" section. **This whole thread is now
+fully closed** - not just ratified in principle, but verified conformant
+in `rwb.txt` in practice.
 
 ## Next-session tasks, in order
 
