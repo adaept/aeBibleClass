@@ -7,9 +7,15 @@ ko.*
 # Third-party source-text drop (WEBU USFM + Strong's numbers from eBible.org,
 # Haiola-generated) used as an offline reference corpus for baselining
 # quote/character-pattern tests (see rvw/Plan_engwebu_baseline_sync_2026-09-14.md).
-# Not our content to redistribute a bulk copy of in this repo; re-download
-# from https://eBible.org/engwebu/ (or https://WorldEnglish.Bible) when needed.
+# Large, periodically-refreshed third-party USFM drops (mirrors /Bibles, /Bible, /txt below) -
+# not something this repo should carry a bulk copy of under version control. Base translation
+# text is public domain either way; re-download when needed.
 /engwebu_usfm
+
+# WEBBE (World English Bible British Edition) - UK-spelling sibling of WEBU, same source/format,
+# used to verify aeBibleAddin's en-GB spelling-substitution/quote-nesting tables against real
+# text (2026-09-25). Re-download from https://eBible.org/Scriptures/eng-webbe_usfm.zip when needed.
+/webbe_usfm
 Peter-USE REFINED English Bible CONTENTS.pdf
 Keep for alignment - Blank Bible Copy - Copy.pdf
 MyOutfile_unpacked/
