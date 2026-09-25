@@ -1919,9 +1919,11 @@ NEXT SESSION:
   this module's own stated purpose ("routines that setup the Word
   environment for editing... run manually from the Immediate Window") so
   the fix isn't an orphaned Sub someone has to remember exists.
-    STATUS: not yet live-verified by the operator (no confirmation that
-    WordEditingConfig was actually run this session) - low risk, mirrors
-    the removed function's own proven-working mutation logic unchanged.
+    STATUS: live-verified same session - operator ran WordEditingConfig;
+    EnforceHeading2WidowControl reported "Done! Count = 1189", matching
+    CountHeading2's Test 51 result exactly. Full chain (PromoteApprovedStyles
+    -> HideUnapprovedBuiltInStyles -> EnforceHeading2WidowControl -> priority
+    dump) completed clean end to end.
 
 ## Task 2: ThisDocument.cls recurring trailing-blank-line growth bug
 
@@ -2053,11 +2055,11 @@ NEXT SESSION:
 
 ## Session status at this checkpoint (2026-09-25)
 
-  All code changes tested live this session (Test 51 PASS 1189=1189;
-  ImportAllVBAFiles retry logic exercised live, including one Skipped=4
-  x3 anomaly and one clean Skipped=1 run with the new diagnostic
-  active). basTEST_aeBibleConfig.bas's EnforceHeading2WidowControl is
-  the one change NOT independently live-verified (no confirmation
-  WordEditingConfig was run this session) - low risk, unchanged mutation
-  logic moved verbatim from the removed function.
+  All code changes tested live this session, including the one item
+  originally flagged as unverified: Test 51 PASS 1189=1189; ImportAllVBAFiles
+  retry logic exercised live (one Skipped=4 x3 anomaly, one clean
+  Skipped=1 run with the new diagnostic active); WordEditingConfig run
+  end to end, EnforceHeading2WidowControl reported Count=1189 matching
+  Test 51 exactly. Every change from this session is now live-confirmed,
+  none outstanding.
 ===============================================================================
