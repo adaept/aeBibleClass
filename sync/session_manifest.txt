@@ -2063,3 +2063,77 @@ NEXT SESSION:
   Test 51 exactly. Every change from this session is now live-confirmed,
   none outstanding.
 ===============================================================================
+
+===============================================================================
+# Claude Session Manifest -- 2026-09-25 (continued session, cross-repo work:
+# Strong's/OSHB/RP source stack, WEBBE i18n verification, applySpellingVariant
+# live wiring)
+# ------------------------------------------------------------
+
+## Work done this session (repos: aeBibleClass, aeRWB, aeBibleAddin, adaept5tudio)
+
+  1. Adopted the PD Strong's-numbering + OSHB (Hebrew) + Robinson-Pierpont
+     (Greek) source stack into aeRWB/sources/ (gitignored raw drops,
+     pinned commit SHAs, PROVENANCE.md) -- scholarly grounding roadmap
+     step 2, closed. See project_scholarly_grounding_plan memory.
+
+  2. Verified aeBibleAddin's i18n-UK pilot tables (already shipped
+     2026-09-18) against real WEBBE text: spelling-variants.ts expanded
+     15->30 entries; quote-nesting.ts's en-GB assumption found not to
+     match WEBBE's actual behavior, but operator decision (print-first
+     governing principle, now feedback_print_first_i18n memory) kept it
+     as-is -- no code change. Along the way, found and fixed a real,
+     pre-existing bug in aeRWB's lib.mjs (USFM_WORD_TAG_RE missed the
+     \+w tag variant, leaking |strong= fragments into 2,069 verses of
+     engwebu.txt). See project_i18n_uk_pilot_verification memory.
+
+  3. Corrected two stale memory entries this session surfaced: Case 51
+     was already closed on both sides (JS: deliberately out of scope;
+     VBA mutation EnforceHeading2WidowControl: live-verified, aeBibleClass
+     commit 4c7f7d8, 2026-09-25) -- not "remaining" work as previously
+     phrased.
+
+  4. Built applySpellingVariant's live wiring in aeBibleAddin (the port's
+     second mutation) -- taskpane/src/spelling-conversion.ts/.test.ts,
+     search-and-replace per word preserving character formatting (not a
+     whole-paragraph replace, which would destroy this document's inline
+     styles). Manual "Convert to UK Spelling" button, no auto-run. 426
+     tests pass, typecheck + lint clean. NOT committed until this session's
+     later commit+push instruction. See project_phase3_audit_engine_port_plan
+     memory's "applySpellingVariant live wiring built 2026-09-25" entry.
+
+## NEXT SESSION, IN ORDER:
+
+  1. **REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+     2026-09-25 -- rationale to be supplied later, do not guess one.**
+     Live-check applySpellingVariant's wiring (item 4 above) against a
+     disposable scratch document, per the runbook in aeBibleAddin's
+     word-audit-scanner.LIVE_CHECK.md ("Shape 8, spelling-conversion
+     write extension" section). Do NOT run this without the operator's
+     explicit go-ahead -- the deferral itself was an explicit instruction,
+     not a scheduling gap.
+
+  2. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+     on Genesis 1 (aeRWB/tools/web-diff/), using the OSHB data fetched
+     this session -- see project_scholarly_grounding_plan memory. The
+     cWEB Strong's overlay is confirmed skipped entirely per operator
+     decision, simplifying this step (no "does cWEB survive at
+     verse-granularity" comparison needed).
+
+  3. If ImportAllVBAFiles reports Skipped<>1 again: check the Immediate
+     window for the "DumpLiveVBComponents [post-delete]" dump from that
+     run (carried forward from the 2026-09-25 morning session, still
+     unresolved as a recurring-anomaly root cause).
+
+  4. Loose end, not formally closed: Cases 49/50 (CountAuditStyles_ToFile,
+     SummarizeHeaderFooterAuditToFile) remain unported to aeBibleAddin and
+     untriaged as won't-fix vs. someday.
+
+## Session status at this checkpoint (2026-09-25, continued)
+
+  All four repos (aeBibleClass, aeRWB, aeBibleAddin, adaept5tudio) have
+  their doc/memory updates in sync with actual code state as of this
+  entry. applySpellingVariant's live wiring is the only built-but-not-
+  live-validated code in flight, and its live-check is explicitly
+  deferred per operator instruction, not an oversight.
+===============================================================================
