@@ -104,6 +104,39 @@ is resolved) propagate to `rwb.txt`.
 
 ### 4. docm vs. WEBU/WEBBE outside documented differences - PARTIAL, plus one major new finding (docm vs. rwb.txt)
 
+**Update, same day: docm-vs-rwb.txt divergence verified and synced (uncommitted, pending review).**
+Verified the comma-placement convention illustrated below is real, not a
+one-off: censused `,”` (old, comma-inside) vs `”,` (new, comma-outside)
+across all five sources. docm's ratio (411:57 = 7.21) closely tracks
+WEBU's own (425:58 = 7.33) - both reflect WEBU's actual per-sentence
+punctuation logic. `web.txt`/`rwb.txt` (260:1 = 260.0 / 274:1 = 274.0) are
+two orders of magnitude off - still the frozen 2013 baseline. **Confirms
+docm is the correct, up-to-date source.** New tool
+`aeRWB/tools/web-diff/apply-docm-rwb-full-sync.mjs` (R12,
+`npm run docm.rwb.full-sync`) built - same full-verse-text-replacement
+discipline as the existing pattern-scoped `apply-docm-rwb-sync.mjs` (R8),
+generalized to every changed verse rather than a pattern-scoped subset.
+Run against the current `rwb.txt`: **14,916 verses synced, 0 remaining
+docm-vs-rwb.txt differences** (confirmed via a fresh diff after the sync).
+4 verses each side untouched (ref mismatches, not text differences - see
+below). All 25 `aeRWB` tests still pass. **Left uncommitted in `aeRWB`'s
+working tree, per operator instruction, for GitHub Desktop review - text
+content review is its own, separate cycle from this mechanical sync.**
+
+Two real findings surfaced while running this:
+- **Romans 14:24-26 vs. 16:25-27**: already-documented versification
+  numbering difference (WEB's own convention vs. others - see
+  `aeRWB/tools/web-diff/README.md`'s "Feeds R4" section, which already
+  names this exact case) - not a bug, correctly left untouched by the sync.
+- **`Jeremiah 37:910`**: a genuine reference-parsing anomaly in
+  `rpt/docm-verses.txt` itself - verse 10's reference is malformed
+  (missing the colon, reads as one number "910" instead of "10"),
+  distinct from `Jeremiah 37:9`. As a result `rwb.txt`'s `Jeremiah 37:10`
+  did not get synced (docm has no matching ref for the sync tool to find).
+  **Not fixed here** - needs its own investigation into why the docm
+  export produced this malformed ref (likely `ExportDocmVersesToRWBFormat`
+  or its verse-number-detection logic), separate from this sync task.
+
 **docm vs. WEBU/WEBBE:** `diffBibles` (existing `aeRWB/tools/web-diff/lib.mjs`)
 against the leading-U+202F-stripped docm export:
 
