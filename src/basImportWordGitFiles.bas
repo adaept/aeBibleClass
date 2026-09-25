@@ -5,28 +5,98 @@ Option Private Module
 
 Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
 
+' ImportAllVBAFiles
+' ------------------
+' Full wipe + reimport of every module from src\ (see
+' DeleteAllModulesExceptImporter/RunOneImportPass below). Skipped should
+' ALWAYS come back as exactly 1 - the importer module itself
+' (basImportWordGitFiles), which DeleteAllModulesExceptImporter
+' deliberately leaves alive and RunOneImportPass's own ModuleOrClassExists
+' check then correctly reports as "already exists". Any OTHER value has
+' been observed twice (see feedback_importallvbafiles_error17 memory) and
+' traced to a partial-deletion race, not a legitimate skip - some modules
+' silently missing from the live project despite a reported "success".
+' Retries the whole pass (including the deletion confirmation, on purpose
+' - it's a destructive step and shouldn't be silently re-run) up to
+' MAX_IMPORT_ATTEMPTS times when that happens, since simply re-running is
+' the known, already-proven fix.
 Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
     On Error GoTo 0
-    Dim strSrcPath As String
-    Dim strFile As String
+    Const MAX_IMPORT_ATTEMPTS As Long = 3
+    Dim attemptNum As Long
     Dim intImported As Integer
     Dim intSkipped As Integer
+    Dim colSkipped As Collection
+    Dim blnCompleted As Boolean
+
+    For attemptNum = 1 To MAX_IMPORT_ATTEMPTS
+        If Not RunOneImportPass(intImported, intSkipped, colSkipped) Then
+            ' Aborted (missing src folder or deletion cancelled) - already reported.
+            Exit Sub
+        End If
+
+        If intSkipped = 1 Then
+            blnCompleted = True
+            Exit For
+        End If
+
+        Debug.Print "ImportAllVBAFiles", _
+                    "Skipped=" & intSkipped & " (expected 1) on attempt " & attemptNum & " of " & MAX_IMPORT_ATTEMPTS, _
+                    "in Sub ImportAllVBAFiles"
+
+        If attemptNum < MAX_IMPORT_ATTEMPTS Then
+            If MsgBox("Import anomaly: Skipped " & intSkipped & " modules, expected exactly 1 (the importer itself)." & vbCrLf & vbCrLf & _
+                      "This is the known partial-deletion race (feedback_importallvbafiles_error17) - re-running the import has always fixed it." & vbCrLf & vbCrLf & _
+                      "Retry now? (attempt " & (attemptNum + 1) & " of " & MAX_IMPORT_ATTEMPTS & ")", _
+                      vbExclamation + vbYesNo, "Import Anomaly - Skipped <> 1") = vbNo Then
+                Exit For
+            End If
+        End If
+    Next attemptNum
+
+    ' A For loop that completes without Exit For leaves its counter one past
+    ' the limit (attemptNum = MAX_IMPORT_ATTEMPTS + 1 here) - clamp so the
+    ' report never claims an attempt that didn't happen.
+    If attemptNum > MAX_IMPORT_ATTEMPTS Then attemptNum = MAX_IMPORT_ATTEMPTS
+
+    ReportImportResult intImported, intSkipped, colSkipped, attemptNum, blnCompleted
+End Sub
+
+' RunOneImportPass
+' -----------------
+' One full delete-then-reimport pass. Returns False (with its own
+' MsgBox already shown) if the src folder is missing or the deletion
+' confirmation was cancelled - either way, ImportAllVBAFiles should stop,
+' not retry. Returns True otherwise, regardless of whether intSkipped
+' came back as the expected 1 - that check is the caller's job.
+Private Function RunOneImportPass(ByRef intImported As Integer, ByRef intSkipped As Integer, ByRef colSkipped As Collection) As Boolean
+    Dim strSrcPath As String
+    Dim strFile As String
     Dim strExt As Variant
     Dim vbCompName As String
 
+    RunOneImportPass = False
     strSrcPath = ThisDocument.Path & "\src\"
 
     ' Verify src folder exists
     If Dir(strSrcPath, vbDirectory) = "" Then
         MsgBox "Source folder not found:" & vbCrLf & strSrcPath, vbCritical, "Import Aborted"
-        Exit Sub
+        Exit Function
     End If
 
     ' Delete all modules except this one - prompts for confirmation
     If Not DeleteAllModulesExceptImporter() Then
         Debug.Print "Import aborted - deletion cancelled.", "in Sub ImportAllVBAFiles"
-        Exit Sub
+        Exit Function
     End If
+
+    ' Diagnostic for the Skipped<>1 investigation (feedback_importallvbafiles_error17):
+    ' dump exactly what the live project thinks it still has, right after deletion
+    ' claims success and before anything is reimported. Tells us whether a repeat
+    ' offender (basBiblePalette/basTEST_aeBibleTools/Module1) is genuinely still
+    ' present (Remove silently failed/skipped it) or genuinely gone (the later
+    ' ModuleOrClassExists check is reading stale state). Remove once root-caused.
+    DumpLiveVBComponents "post-delete"
 
     ' Collect all file paths BEFORE importing - Dir() is not reentrant
     Dim colFiles As Collection
@@ -42,8 +112,6 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
     ' Now import from the collected list
     intImported = 0
     intSkipped = 0
-
-    Dim colSkipped As Collection
     Set colSkipped = New Collection
 
     Dim strFullPath As Variant
@@ -70,11 +138,22 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
         End If
     Next strFullPath
 
-    Debug.Print "Import complete.", _
+    Debug.Print "Import pass complete.", _
                 "Imported: " & intImported, _
                 "Skipped: " & intSkipped, _
                 "in Sub ImportAllVBAFiles"
 
+    RunOneImportPass = True
+End Function
+
+' ReportImportResult
+' -------------------
+' Final summary dialog. attemptsUsed/blnCompleted let the message say
+' plainly whether Skipped=1 was reached (possibly after retries) or
+' whether MAX_IMPORT_ATTEMPTS was exhausted / the operator declined a
+' retry - in the latter case this is the same "go fix it by hand"
+' situation as before this change, just reached faster and more visibly.
+Private Sub ReportImportResult(ByVal intImported As Integer, ByVal intSkipped As Integer, ByRef colSkipped As Collection, ByVal attemptsUsed As Long, ByVal blnCompleted As Boolean)
     Dim strSkippedItem As Variant
     Dim strSkippedList As String
     strSkippedList = ""
@@ -89,10 +168,24 @@ Public Sub ImportAllVBAFiles(Optional ByVal varDebug As Variant)
         strMsgSkipped = vbCrLf & vbCrLf & "Skipped files:" & strSkippedList
     End If
 
-    MsgBox "Import complete." & vbCrLf & vbCrLf & _
-           "Imported: " & intImported & vbCrLf & _
-           "Skipped:  " & intSkipped & strMsgSkipped, _
-           vbInformation, "Import Complete"
+    Dim strHeadline As String
+    If blnCompleted Then
+        If attemptsUsed > 1 Then
+            strHeadline = "Import complete (succeeded on attempt " & attemptsUsed & ")."
+        Else
+            strHeadline = "Import complete."
+        End If
+        MsgBox strHeadline & vbCrLf & vbCrLf & _
+               "Imported: " & intImported & vbCrLf & _
+               "Skipped:  " & intSkipped & strMsgSkipped, _
+               vbInformation, "Import Complete"
+    Else
+        MsgBox "Import STILL anomalous after " & attemptsUsed & " attempt(s) - Skipped=" & intSkipped & ", expected 1." & vbCrLf & vbCrLf & _
+               "Imported: " & intImported & vbCrLf & _
+               "Skipped:  " & intSkipped & strMsgSkipped & vbCrLf & vbCrLf & _
+               "Manual recovery needed - see feedback_importallvbafiles_error17 memory.", _
+               vbExclamation, "Import Incomplete"
+    End If
 End Sub
 
 Private Sub ImportVBAFile(myCodeFile As String)
@@ -280,6 +373,34 @@ PROC_ERR:
         Resume PROC_EXIT
     End If
 End Function
+
+' DumpLiveVBComponents
+' ---------------------
+' One-off diagnostic for the Skipped<>1 investigation - prints
+' VBComponents.Count plus every remaining component's Name/Type to the
+' Immediate window, tagged with a caller-supplied label so multiple calls
+' (e.g. "post-delete") are distinguishable in the log. Not wired into any
+' RUN_THE_TESTS Case; remove the DumpLiveVBComponents call site(s) once
+' the Skipped<>1 root cause is confirmed.
+Private Sub DumpLiveVBComponents(ByVal label As String)
+    Dim vbComp As Object
+    Dim typeName As String
+
+    Debug.Print "DumpLiveVBComponents [" & label & "]", _
+                "Count=" & ThisDocument.VBProject.VBComponents.Count, _
+                "in Sub DumpLiveVBComponents"
+
+    For Each vbComp In ThisDocument.VBProject.VBComponents
+        Select Case vbComp.Type
+            Case 1: typeName = "StdModule"
+            Case 2: typeName = "ClassModule"
+            Case 3: typeName = "MSForm"
+            Case 100: typeName = "Document"
+            Case Else: typeName = "Type=" & vbComp.Type
+        End Select
+        Debug.Print "  " & label, vbComp.Name, typeName, "in Sub DumpLiveVBComponents"
+    Next vbComp
+End Sub
 
 Private Function ModuleOrClassExists(name As String) As Boolean
     On Error GoTo 0

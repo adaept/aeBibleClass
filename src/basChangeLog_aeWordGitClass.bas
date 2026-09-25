@@ -38,4 +38,3 @@ Public Const MODULE_NOT_EMPTY_DUMMY As String = vbNullString
     ' FIXED - #002 - Change project name to ambigram and export to .\src
 ' 20180903 - v000 - Use aexlgitClass as starting model for aeWordGitClass
 
-

@@ -1082,7 +1082,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 50
         GetTestDescription = "Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section Count - SummarizeHeaderFooterAuditToFile should match the expected baseline"
     Case 51
-        GetTestDescription = "Applies KeepWithNext to the Heading 2 style and per-paragraph WidowControl to every H2 paragraph; returns the Count of H2 paragraphs touched - CountAndCreateDefinitionForH2 should match the expected baseline"
+        GetTestDescription = "Count of paragraphs styled Heading 2 - CountHeading2 should match the expected baseline"
     Case 52
         GetTestDescription = "Rule: No instances of the contraction 'wouldn't' (U+2019 apostrophe) - Bible text uses uncontracted forms - CountContraction should return 0"
     Case 53
@@ -1331,7 +1331,7 @@ Private Function GetPassFail(TestNum As Long) As Boolean
         ResultArray(TestNum) = SummarizeHeaderFooterAuditToFile
         m_HintArray(TestNum) = m_lastHint
     Case 51
-        ResultArray(TestNum) = CountAndCreateDefinitionForH2
+        ResultArray(TestNum) = CountHeading2
         m_HintArray(TestNum) = m_lastHint
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         contra = ContractionArrayU(TestNum - CARTS + 1)
@@ -1584,7 +1584,7 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     Case 50
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "SummarizeHeaderFooterAuditToFile"
     Case 51
-        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountAndCreateDefinitionForH2"
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountHeading2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 66, 67, 68, 69, 70, 71
@@ -1797,7 +1797,7 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
     Case 50
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "SummarizeHeaderFooterAuditToFile"
     Case 51
-        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountAndCreateDefinitionForH2"
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountHeading2"
     Case 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "U+2019 CountContraction(" & """" & ContractionArrayU(num - CARTS + 1) & """" & ")"
     Case 66, 67, 68, 69, 70, 71
@@ -2075,69 +2075,6 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountInStory | Erl: " & Erl _
-        & " | Err: " & Err.Number & " | " & Err.Description
-    m_lastFuncError = True
-    Resume PROC_EXIT
-End Function
-
-' ======================================================================
-' Macro Name   : CountAndCreateDefinitionForH2
-' Purpose      : Enforces layout and paragraph rules for Heading 2 style.
-'                - Enables KeepWithNext on Heading 2 paragraph style.
-'                - Applies WidowControl to each Heading 2 paragraph.
-'                - Explicitly disables KeepTogether to prevent override.
-'                - Provides a total Count of H2
-' Audit Notes  : Logs all repair actions to Immediate Window.
-'                Does NOT alter any content, punctuation, or quotes.
-'                Applies paragraph-level enforcement only where style = "Heading 2"
-' Safety Level : Editorial-safe. No deletions or format coercion.
-' Last Updated : 20250805
-' Author       : Peter
-' ======================================================================
-Private Function CountAndCreateDefinitionForH2()
-    On Error GoTo PROC_ERR
-
-    ' Update Heading 2 Keep With Next
-    Dim Count As Long
-    Count = 0
-
-    Application.ScreenUpdating = False
-
-    Dim s As Word.Style
-    Set s = ActiveDocument.Styles("Heading 2")
-    
-    ' Apply KeepWithNext to paragraph formatting
-    s.ParagraphFormat.KeepWithNext = True
-    'Debug.Print "Heading 2 style updated: KeepWithNext = True"
-
-    ' Enforce Heading 2 Paragraph Widow Orphan
-    ' Disable KeepLines Together For Heading 2
-    Dim para As Word.Paragraph
-    For Each para In ActiveDocument.Paragraphs
-        If para.style = ActiveDocument.Styles("Heading 2") Then
-            Count = Count + 1
-            With para
-                .WidowControl = True    ' enforces both widow and orphan control for that paragraph
-                '.OrphanControl = True - Not needed,
-                para.KeepTogether = False
-            End With
-            
-            If Count Mod 50 = 0 Then
-                DoEvents  ' Keep UI responsive every 50 updates
-            End If
-        End If
-    Next para
-    
-    Application.ScreenUpdating = True
-    'Debug.Print "[repair] Widow/Orphan enforced at paragraph level for Heading 2"
-    'Debug.Print "[repair] KeepLinesTogether disabled for Heading 2"
-    'Debug.Print "Count = " & Count
-    CountAndCreateDefinitionForH2 = Count
-
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Debug.Print "ERROR in aeBibleClass.CountAndCreateDefinitionForH2 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
@@ -4871,6 +4808,39 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountHeading1 | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+' CountHeading2
+' -------------
+' Count of paragraphs styled Heading 2, read-only. Formerly bundled
+' inside CountAndCreateDefinitionForH2, which also mutated the Heading 2
+' style's KeepWithNext and every H2 paragraph's WidowControl/KeepTogether
+' as a side effect of the test - split 2026-09-24 so this Case is a pure
+' audit like every other one; the formatting fix moved to
+' basTEST_aeBibleConfig.EnforceHeading2WidowControl, run via
+' WordEditingConfig like the rest of the style-remediation routines.
+Private Function CountHeading2() As Long
+    On Error GoTo PROC_ERR
+
+    Dim para As Word.Paragraph
+    Dim heading2Count As Long
+    heading2Count = 0
+
+    For Each para In ActiveDocument.Paragraphs
+        If para.style Like "*Heading 2*" Then
+            heading2Count = heading2Count + 1
+        End If
+    Next para
+
+    CountHeading2 = heading2Count
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountHeading2 | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

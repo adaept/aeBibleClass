@@ -18,6 +18,7 @@ Public Sub WordEditingConfig()
     ' Add other procedure call as required
     PromoteApprovedStyles
     HideUnapprovedBuiltInStyles
+    EnforceHeading2WidowControl
     ' Uncomment this to check priority settings
     DumpPrioritiesSorted
 End Sub
@@ -159,6 +160,45 @@ Private Sub PromoteApprovedStyles()
     End If
 
     Debug.Print "PromoteApprovedStyles: Done!"
+End Sub
+
+' EnforceHeading2WidowControl
+' ---------------------------
+' Enforces layout rules for Heading 2 paragraphs: KeepWithNext on the
+' Heading 2 style itself, plus WidowControl=True/KeepTogether=False on
+' every Heading 2-styled paragraph, so a heading never gets orphaned at
+' the bottom of a page. Split out 2026-09-24 from CountAndCreateDefinitionForH2
+' (aeBibleClass.cls), which used to apply this formatting as a side effect
+' of RUN_THE_TESTS(51) - that Case is now a pure read-only Count
+' (CountHeading2); this Sub is the explicit repair, run like every other
+' style fix in this module.
+Private Sub EnforceHeading2WidowControl()
+    Dim Count As Long
+    Count = 0
+
+    Application.ScreenUpdating = False
+
+    Dim s As Word.Style
+    Set s = ActiveDocument.Styles("Heading 2")
+    s.ParagraphFormat.KeepWithNext = True
+
+    Dim para As Word.Paragraph
+    For Each para In ActiveDocument.Paragraphs
+        If para.style = ActiveDocument.Styles("Heading 2") Then
+            Count = Count + 1
+            With para
+                .WidowControl = True    ' enforces both widow and orphan control for that paragraph
+                .KeepTogether = False
+            End With
+
+            If Count Mod 50 = 0 Then
+                DoEvents  ' Keep UI responsive every 50 updates
+            End If
+        End If
+    Next para
+
+    Application.ScreenUpdating = True
+    Debug.Print "EnforceHeading2WidowControl: Done! Count = " & Count
 End Sub
 
 Private Sub DumpPrioritiesSorted()

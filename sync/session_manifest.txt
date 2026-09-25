@@ -1867,3 +1867,197 @@ NEXT SESSION:
   Code changes complete, tested, and smoke-tested live; NOT yet
   committed or pushed pending operator confirmation this session.
 ===============================================================================
+
+===============================================================================
+# Claude Session Manifest -- 2026-09-25 (Test 51 split, ThisDocument CRLF-growth fix, import retry+diagnostic)
+# ------------------------------------------------------------
+# Lists all src/ files modified by Claude this session.
+# Use as import checklist after each Claude session.
+#
+# Import status key:
+#   [IMPORT]   - must be imported into VBA editor (Remove old, Import new)
+#   [SCRIPT]   - Python/tooling; no VBA import
+#   [DOC]      - documentation/generated output only; no import
+# ------------------------------------------------------------
+
+## Task 1: Split Case 51 (CountAndCreateDefinitionForH2) into read-only
+## count + separate formatting fix
+
+  Operator direction: Test 51 was mutating the document (KeepWithNext on
+  the Heading 2 style, WidowControl/KeepTogether on every H2 paragraph) as
+  a side effect of a RUN_THE_TESTS check - every other Case in the suite
+  is read-only. Asked for the read-only count to stay in Case 51 and the
+  formatting to move to a separate, explicitly-run routine.
+
+  [IMPORT] src/aeBibleClass.cls -- removed CountAndCreateDefinitionForH2
+  entirely; added CountHeading2() As Long as a pure read-only count,
+  sibling to the existing CountHeading1(). Case 51's dispatch, its
+  GetTestDescription text, and its two debug-log label lines all
+  repointed to CountHeading2 (four cosmetic string-label updates, not a
+  new-test four-location addition - Test 51's number/baseline didn't
+  change).
+    STATUS: initial version copied CountAndCreateDefinitionForH2's old
+    comparison line (para.style = ActiveDocument.Styles("Heading 2")) -
+    this calls the Styles collection by name on every one of ~33,824
+    paragraphs and, without the old function's Application.ScreenUpdating
+    guard, made Test 51 pathologically slow ("hung, no result" per
+    operator report). Root cause found by comparing against CountHeading1
+    right above it, which had already tried and explicitly REJECTED this
+    exact form (left commented out: 'para.style = ActiveDocument.Styles
+    ("Heading 1") Then) in favor of para.style Like "*Heading 1*" - a
+    cheap string comparison, no collection lookup per iteration. Fixed
+    CountHeading2 to match (Like "*Heading 2*"; no other approved style
+    name contains "Heading 2" as a substring, so no false-positive risk).
+    Live-verified after the fix: RUN_THE_TESTS(51) PASS, 1189=1189,
+    1.90s.
+
+  [IMPORT] src/basTEST_aeBibleConfig.bas -- added Private Sub
+  EnforceHeading2WidowControl() (the extracted mutation: style-level
+  KeepWithNext=True plus per-paragraph WidowControl=True/KeepTogether=
+  False), wired into the existing WordEditingConfig() orchestrator
+  alongside PromoteApprovedStyles/HideUnapprovedBuiltInStyles - matches
+  this module's own stated purpose ("routines that setup the Word
+  environment for editing... run manually from the Immediate Window") so
+  the fix isn't an orphaned Sub someone has to remember exists.
+    STATUS: not yet live-verified by the operator (no confirmation that
+    WordEditingConfig was actually run this session) - low risk, mirrors
+    the removed function's own proven-working mutation logic unchanged.
+
+## Task 2: ThisDocument.cls recurring trailing-blank-line growth bug
+
+  Third occurrence of a bug "fixed" twice before (aeBibleClass 4d603cf
+  2026-09-14, 3ee3222 2026-09-20) - each time traced to real stray blank
+  lines already present as content in the file (not the mechanical
+  vbCrLf-as-terminator artifact 4d603cf actually fixed, which is
+  confirmed still intact in ImportThisDocumentFile). Root cause of the
+  recurrence: ordinary editing-session drift (manual VBE edits, or a
+  src/ file that already carried a trailing blank line before an
+  import/export round trip) - objComponent.Export (aeWordGitClass.cls)
+  is a bare VBE API passthrough, confirmed incapable of adding anything
+  itself.
+
+  [SCRIPT] py/normalize_vba.py -- added trim_trailing_blank_lines()
+  (collapses any run of 2+ trailing blank lines at EOF down to exactly
+  1, \n/\r\n-agnostic via regex, preserves the file's own CRLF
+  convention), wired into normalize_file()'s existing pipeline. Header
+  comment updated to reflect the broadened scope (was casing-only).
+  Idempotent (verified: second run on an already-normalized file makes
+  no changes) and CRLF-safe (verified via `file` on every touched file
+  both before and after).
+    STATUS: run against src/ this session, fixed 7 files with latent
+    drift (not just ThisDocument.cls): [IMPORT] src/ThisDocument.cls (5
+    blank lines -> 1), src/Module1.bas (3 -> 1), src/aeAssertClass.cls
+    (2 -> 1), src/basChangeLog_aeWordGitClass.bas (2 -> 1),
+    src/basSBL_VerseCountsGenerator.bas (3 -> 1), src/basTEST_aeBibleClass.bas
+    (2 -> 1), src/basTEST_aeBibleFonts.bas (2 -> 1). All diffs are
+    trailing-whitespace-only deletions, nothing else touched. Running
+    this script before every commit going forward should make this class
+    of bug permanently harmless regardless of how a stray blank line
+    gets introduced.
+
+## Task 3: ImportAllVBAFiles Skipped<>1 anomaly (recurring, feedback_importallvbafiles_error17)
+
+  Operator reported a live occurrence (Skipped: 4 instead of the expected
+  1) and suspected "typing too fast at the prompt"; re-running once fixed
+  it that time.
+
+  [IMPORT] src/basImportWordGitFiles.bas -- restructured
+  ImportAllVBAFiles: extracted the original single-pass logic into
+  Private Function RunOneImportPass(...) (unchanged behavior) and
+  Private Sub ReportImportResult(...) (final dialog), with the Public
+  Sub now retrying up to 3 attempts whenever intSkipped <> 1 (the delete-
+  confirmation dialog still fires on every retry, deliberately not
+  suppressed). Declining a retry or exhausting 3 attempts falls back to
+  today's original behavior - report and let the operator fix it by
+  hand.
+    STATUS: live-tested same session, exposed a real bug in my own first
+    draft (VBA's For loop leaves its counter one past the limit when it
+    completes without Exit For - would have misreported "attempt 4 of
+    3"), fixed before it reached the operator.
+
+  Operator then hit Skipped=4 on all 3 retry attempts, identically -
+  same three modules every time (basBiblePalette, basTEST_aeBibleTools,
+  Module1 - the EXACT trio from the original feedback_importallvbafiles_error17
+  incident). This disproves a pure random-timing-race explanation (would
+  be expected to clear or vary across 3 independent full delete+reimport
+  cycles) but doesn't yet distinguish "Remove() is silently failing for
+  these three" from "ModuleOrClassExists is reading a stale
+  VBComponents collection right after delete."
+
+  [IMPORT] src/basImportWordGitFiles.bas -- added Private Sub
+  DumpLiveVBComponents(label) (dumps VBComponents.Count plus every
+  remaining component's Name/Type to the Immediate window), called once
+  as DumpLiveVBComponents "post-delete" in RunOneImportPass right after
+  DeleteAllModulesExceptImporter returns True, before anything is
+  reimported. Diagnostic-only, not wired into any RUN_THE_TESTS Case -
+  remove the call site once the Skipped<>1 root cause is confirmed.
+    STATUS: operator ran the import again same session with the
+    diagnostic in place - this run succeeded cleanly (Skipped=1, no
+    anomaly), so no new diagnostic data yet. This itself is informative:
+    rules out a PERMANENT structural block on the same three modules
+    (e.g. Word silently protecting "Module1"), consistent with an
+    intermittent race after all, just not one that fires every run.
+    DumpLiveVBComponents is left in place, dormant, for whenever
+    Skipped<>1 recurs - see next-session item 1.
+
+## Files NOT touched this session, confirmed clean
+
+  [DOC] rpt/HeadingLog.txt -- routine regenerated test-run output from
+  RUN_THE_TESTS(51) and related runs this session, not hand-edited.
+
+  adaept5tudio: confirmed clean (git status --short empty) - no changes
+  needed there, this session's work was entirely VBA/docm-side
+  housekeeping, not part of the aeBibleAddin JS port tracked in that
+  repo's conversion-plan.md.
+
+  basChangeLog_aeBibleClass.bas / basChangeLog_aeWordGitClass.bas --
+  deliberately NOT touched. Both use a hand-maintained #NNN ticket-number
+  convention the operator controls; none of this session's fixes map to
+  an existing open ticket in that list, and inventing a ticket number
+  isn't this assistant's call to make.
+
+## NEXT SESSION, IN ORDER:
+
+  1. **If ImportAllVBAFiles reports Skipped<>1 again:** check the
+     Immediate window for the "DumpLiveVBComponents [post-delete]" dump
+     from that run. If basBiblePalette/basTEST_aeBibleTools/Module1
+     appear in that list, Remove() is genuinely failing/skipping them
+     (deletion-side bug). If they're absent from that list but still get
+     reported "already exists" moments later, ModuleOrClassExists is
+     reading a stale VBComponents collection (needs a DoEvents or
+     similar settle-time fix between delete and the existence check).
+     Either way this finally root-causes the recurring anomaly - remove
+     the diagnostic call site once confirmed.
+
+  2. **Scholarly grounding roadmap step 2** (now unblocked - rwb.txt
+     Phase 4 ratification closed 2026-09-24, aeBibleClass ac287e7):
+     adopt the PD Strong's-numbering + OSHB (Hebrew) + Robinson-Pierpont
+     (Greek) source stack in aeRWB. See project_scholarly_grounding_plan
+     memory's roadmap (steps 3-5: verse-level Strong's spike -> Phase 5
+     verse-keyed lookup in aeBibleAddin -> layer in STEPBible).
+
+  3. **Wire orphaned pure-text audit checks into a live aeBibleAddin
+     feature** (countQuoteNestingArtifacts, applySpellingVariant,
+     contractions family - tested but unreachable from the running
+     add-in). Not scheduled, no urgency flagged by the operator yet.
+
+  4. **If ever wanted:** wire applySpellingVariant as a live document-
+     conversion feature specifically (a mutating transform, deliberately
+     deferred, real mutation-scrutiny task).
+
+  5. **Loose end, not formally closed:** Cases 49/50 (CountAuditStyles_ToFile,
+     SummarizeHeaderFooterAuditToFile - both write rpt/*.txt report
+     files) remain unported to aeBibleAddin and untriaged as won't-fix
+     vs. someday - flagged in review but never given a final disposition
+     the way Cases 82/83/87 etc. were.
+
+## Session status at this checkpoint (2026-09-25)
+
+  All code changes tested live this session (Test 51 PASS 1189=1189;
+  ImportAllVBAFiles retry logic exercised live, including one Skipped=4
+  x3 anomaly and one clean Skipped=1 run with the new diagnostic
+  active). basTEST_aeBibleConfig.bas's EnforceHeading2WidowControl is
+  the one change NOT independently live-verified (no confirmation
+  WordEditingConfig was run this session) - low risk, unchanged mutation
+  logic moved verbatim from the removed function.
+===============================================================================

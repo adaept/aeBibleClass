@@ -4,7 +4,13 @@ from pathlib import Path
 
 # =============================================================================
 # VBA Casing Normalizer
-# Fixes identifier casing that Word VBA IDE corrupts due to missing globals.
+# Fixes identifier casing that Word VBA IDE corrupts due to missing globals,
+# and collapses runs of trailing blank lines at EOF (VBE export/import round
+# trips can silently grow a module by one blank line per cycle - see
+# ImportThisDocumentFile's vbCrLf-terminator fix, 2026-09-14 - and manual
+# edits in the VBE can add more; this caps it rather than chasing every
+# source, matching the majority of files in src/ which already end in
+# exactly one trailing blank line).
 # Run after export to src/ before committing.
 # =============================================================================
 
@@ -112,6 +118,20 @@ NORMALIZATIONS = [
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}
 
+def trim_trailing_blank_lines(text: str) -> tuple[str, int]:
+    """Collapse a run of 2+ trailing blank lines at EOF down to exactly one.
+    Works for either \\n or \\r\\n line endings. Returns (new_text, count of
+    blank lines removed); count is 0 if there was nothing to collapse."""
+    match = re.search(r'(\r?\n)((?:[ \t]*\r?\n)+)\Z', text)
+    if not match:
+        return text, 0
+    blank_line_count = match.group(2).count('\n')
+    if blank_line_count <= 1:
+        return text, 0
+    new_text = text[:match.start()] + match.group(1) * 2
+    return new_text, blank_line_count - 1
+
+
 def normalize_file(path: Path) -> tuple[int, list[str]]:
     """Normalize a single file. Returns (change_count, list_of_change_descriptions)."""
     with open(path, 'r', encoding='utf-8', errors='replace', newline='') as f:
@@ -125,6 +145,10 @@ def normalize_file(path: Path) -> tuple[int, list[str]]:
         if normalized != result:
             changes.append(f'  {description}: {count} replacement(s)')
             result = normalized
+
+    result, blank_lines_removed = trim_trailing_blank_lines(result)
+    if blank_lines_removed > 0:
+        changes.append(f'  Trailing blank lines at EOF: collapsed {blank_lines_removed + 1} -> 1')
 
     if result != original:
         with open(path, 'w', encoding='utf-8', errors='replace', newline='') as f:

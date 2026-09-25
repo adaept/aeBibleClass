@@ -177,6 +177,3 @@ PROC_ERR:
         Application.StartupPath & " (close Word first if it's locked) if this recurs."
 End Sub
 
-
-
-

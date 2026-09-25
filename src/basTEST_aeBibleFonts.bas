@@ -865,4 +865,3 @@ Private Sub WriteFontAuditFile(ByVal sContent As String)
     oStream.Close
 End Sub
 
-
