@@ -226,9 +226,16 @@ before Psalm 1:1 that isn't attached to any verse." This is a genuine gap
 in the current export format, not a bug in the parsing logic given the
 format's own design. See item 7 for what closing it would need.
 
-### 6. Selah "showing on the next verse" in web.txt - COULD NOT REPRODUCE, needs a specific reference from the operator
+### 6. Selah "showing on the next verse" in web.txt - CLOSED 2026-09-26, moot
 
-Investigated two ways against the current committed sources:
+**Operator clarification, closing this item:** not a wrong-verse-attribution
+issue after all (matching this session's own investigation below, which
+found none) - the real issue was that Selah had no character/paragraph
+style of its own in the docm. Now moot.
+
+**Original investigation, for the record** (two ways, against the current
+committed sources, correctly found nothing - the "no wrong-verse" reading
+turned out to be right, just not the actual issue):
 
 1. **Verse-level attribution check**: extracted every verse reference
    containing "Selah" from `web.txt` and from `rpt/docm-verses.txt` (75 in
@@ -245,14 +252,8 @@ Investigated two ways against the current committed sources:
    five sources (`web.txt`, `engwebu.txt`, `webbe.txt`, `rwb.txt`, docm) -
    all five agree, Selah ends verse 2 in every one.
 
-**Could not locate the discrepancy the operator described** in any
-currently-committed source. Possibilities, not resolved here: the issue
-was already fixed upstream in `web.txt` since it was last observed; it's
-specific to a particular verse not covered by the spot-check; or it was
-observed in a different source (an older cached copy, a different USFM
-drop, or something not currently in the repo). **Needs the specific verse
-reference(s) from the operator to investigate further** - this item stays
-open, not resolved, pending that.
+Could not locate a wrong-verse discrepancy in any currently-committed
+source - correctly so, per the operator's clarification above. Closed.
 
 ### 7. What the rwb export needs to include superscriptions and BOOK 1-5
 
