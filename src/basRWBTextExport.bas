@@ -22,6 +22,21 @@ Option Explicit
 ' WEBU reference corpus (aeRWB/tools/web-diff). See
 ' rvw/Plan_engwebu_baseline_sync_2026-09-14.md ("New goal" / item 11).
 '
+' Also dumps a SEPARATE front-matter file (default rpt\docm-psalm-front-
+' matter.txt) capturing "Psalms BOOK" (book-division headings, USFM \ms1)
+' and "PsalmSuperscription" (prefatory/authorship lines, USFM \d) paragraphs
+' - content the main verse walk above silently skips, since neither style is
+' VerseText. Added 2026-09-26, rvw/Code_review 2026-09-25.md item 7: these
+' two styles exist only in the Psalms book (confirmed against engwebu_usfm -
+' no other book uses \ms1/\d), so this is a Psalms-specific capability, not
+' a general one. Format: "Book Chapter<TAB>bookDivision|superscription<TAB>text"
+' - three fields, not two, since a single chapter (e.g. Psalm 42) can have
+' BOTH a book-division heading AND its own superscription. Keyed by the
+' CURRENT bookName/chapNum already tracked from the preceding Heading 2 -
+' both styles are placed right after the chapter heading and before the
+' first VerseText paragraph, mirroring the raw USFM's own \c N -> \ms1/\d ->
+' \v 1 ordering.
+'
 ' "text != text" unless the comparison is explicitly defined (operator,
 ' 2026-09-14) - see the plan Doc's "Text equality is not automatic" section.
 ' This module's specific contract:
@@ -103,7 +118,7 @@ Option Explicit
 ' v2's testing safety net silently not fire.
 ' ============================================================================
 
-Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Optional ByVal maxVerses As Long = 0)
+Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Optional ByVal maxVerses As Long = 0, Optional ByVal frontMatterOutputPath As String)
     On Error GoTo PROC_ERR
 
     Dim fso As Object
@@ -113,6 +128,12 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
             fso.CreateFolder ActiveDocument.Path & "\rpt"
         End If
         outputPath = ActiveDocument.Path & "\rpt\docm-verses.txt"
+    End If
+    If frontMatterOutputPath = "" Then
+        If Dir(ActiveDocument.Path & "\rpt", vbDirectory) = "" Then
+            fso.CreateFolder ActiveDocument.Path & "\rpt"
+        End If
+        frontMatterOutputPath = ActiveDocument.Path & "\rpt\docm-psalm-front-matter.txt"
     End If
 
     Dim canonBooks As Object
@@ -131,6 +152,7 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
     Dim ref As String
     Dim lineCount As Long, skipCount As Long, dupCount As Long, unknownBookCount As Long
     Dim visitedCount As Long
+    Dim bookDivisionCount As Long, superscriptionCount As Long
     Dim seen As Object
     Set seen = CreateObject("Scripting.Dictionary")
     Dim StyleName As String
@@ -138,6 +160,10 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
     Dim buf As String
     buf = "RWB-DOCM" & vbLf & _
           "Radiant Word Bible - exported from the live .docm (" & Format(Now, "yyyy-mm-dd") & ")" & vbLf
+
+    Dim fmBuf As String
+    fmBuf = "RWB-PSALM-FRONT-MATTER" & vbLf & _
+            "Psalm superscriptions and BOOK divisions - exported from the live .docm (" & Format(Now, "yyyy-mm-dd") & ")" & vbLf
 
     bookName = ""
     chapNum = 0
@@ -214,6 +240,28 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
                     Debug.Print "SKIP (digit run """ & digitRun & """ does not start with chapter """ & chapStr & """): book=""" & bookName & """ chapNum=" & chapNum & " text=""" & Left$(paraTxt, 60) & """"
                 End If
             End If
+
+        ElseIf StyleName = "Psalms BOOK" Then
+            ' Book-division heading (e.g. "BOOK 1"), USFM \ms1 - not VerseText,
+            ' silently skipped by the loop above. Keyed by the current
+            ' bookName/chapNum (already tracked from the preceding Heading 2),
+            ' matching the "attaches to the next chapter" placement the raw
+            ' USFM itself uses (\ms1 sits right after \c N). See
+            ' rvw/Code_review 2026-09-25.md item 7 for the design.
+            If bookName <> "" And chapNum > 0 Then
+                fmBuf = fmBuf & bookName & " " & chapNum & vbTab & "bookDivision" & vbTab & _
+                        NormalizeForSingleLine(basUSFM_Export.CleanTextForUTF8(oPara.Range.Text)) & vbLf
+                bookDivisionCount = bookDivisionCount + 1
+            End If
+
+        ElseIf StyleName = "PsalmSuperscription" Then
+            ' Prefatory/authorship line (e.g. "A Psalm by David..."), USFM \d -
+            ' same rationale as "Psalms BOOK" above.
+            If bookName <> "" And chapNum > 0 Then
+                fmBuf = fmBuf & bookName & " " & chapNum & vbTab & "superscription" & vbTab & _
+                        NormalizeForSingleLine(basUSFM_Export.CleanTextForUTF8(oPara.Range.Text)) & vbLf
+                superscriptionCount = superscriptionCount + 1
+            End If
         End If
 
         ' Counts paragraphs VISITED, not just successful writes - a limiter
@@ -223,9 +271,11 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
     Next oPara
 
     WriteUtf8WithBom outputPath, buf
+    WriteUtf8WithBom frontMatterOutputPath, fmBuf
 
     Debug.Print "ExportDocmVersesToRWBFormat: wrote " & lineCount & " verses to " & outputPath
     Debug.Print "  skipped=" & skipCount & " duplicates=" & dupCount & " unknownBookHeadings=" & unknownBookCount
+    Debug.Print "  wrote " & (bookDivisionCount + superscriptionCount) & " front-matter entries to " & frontMatterOutputPath & " (bookDivisions=" & bookDivisionCount & " superscriptions=" & superscriptionCount & ")"
 
 PROC_EXIT:
     Exit Sub

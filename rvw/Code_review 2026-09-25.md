@@ -249,9 +249,43 @@ turned out to be right, just not the actual issue):
 Could not locate a wrong-verse discrepancy in any currently-committed
 source - correctly so, per the operator's clarification above. Closed.
 
-### 7. What the rwb export needs to include superscriptions and BOOK 1-5
+### 7. What the rwb export needs to include superscriptions and BOOK 1-5 - BUILT 2026-09-26
 
-Three real pieces of work, in dependency order:
+All three pieces below are now built. **Decision made explicit: option 2b
+(a separate sidecar file) was chosen over 2a (a pseudo-verse key in
+`rwb.txt` itself)** - see `aeRWB/tools/web-diff/README.md`'s "psalm-front-matter.txt
+export (R13)" section for the full reasoning (in short: a `:0` key would
+silently violate every existing `Book C:V` consumer's assumption that V is
+always a real verse number; a sidecar file costs one more file to keep in
+sync but breaks nothing).
+
+- **Piece 1** (`aeRWB/tools/web-diff/lib.mjs`): `parseUsfmBook`/`mergeUsfmBooks`
+  now return a `frontMatter: Map<"Book C", {bookDivision?, superscription?}>`,
+  populated from `\ms1`/`\d` lines. 5 new unit tests
+  (`lib.test.mjs`), plus verified against the real WEBU Psalms USFM
+  directly: exactly 5 book divisions and 117 superscriptions found -
+  correct, expected numbers.
+- **Piece 2**: the sidecar file itself, `aeRWB/psalm-front-matter.txt`
+  (not yet generated with real data - see piece 3 below).
+- **Piece 3**: both sides of the export pipeline built.
+  `basRWBTextExport.bas`'s `ExportDocmVersesToRWBFormat` extended to walk
+  `Psalms BOOK`/`PsalmSuperscription`-styled paragraphs (in the same
+  single pass as its existing VerseText walk - no second document scan)
+  and write them to a new `rpt/docm-psalm-front-matter.txt` report, keyed
+  by the already-tracked `bookName`/`chapNum`. New
+  `aeRWB/tools/web-diff/export-psalm-front-matter.mjs` (R13,
+  `npm run docm.psalm-front-matter`) reads that report and writes the
+  committed sidecar - same golden-rule discipline as R8/R12 (docm read-only,
+  sidecar the only write target).
+
+**Not yet run against real docm data** - the VBA change needs the operator
+to re-run `ExportDocmVersesToRWBFormat` in Word (same as the Spirit's fix
+earlier this session) before `docm-psalm-front-matter.txt` actually
+exists. Verified end-to-end against a synthetic 3-column stand-in file
+instead (not committed, removed after confirming the script works).
+
+**Original design, for the record - three real pieces of work, in
+dependency order:**
 
 1. **Extend `parseUsfmBook`/`parseBible`'s data shape** (`aeRWB/tools/web-diff/lib.mjs`)
    to carry non-verse structural content. Currently `verses: Map<"Book C:V", text>`
