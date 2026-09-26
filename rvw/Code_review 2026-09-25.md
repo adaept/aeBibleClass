@@ -76,7 +76,19 @@ Tests 70/71's own baselines (75/63) hold across every current source, with
 zero drift. Only the frozen 2013 `web.txt` baseline differs, as expected
 (it predates the WEBU punctuation update entirely). No action needed here.
 
-### 3. "Spirit's" in docm - LOCATED, one occurrence, action item for the operator
+### 3. "Spirit's" in docm - CLOSED 2026-09-26
+
+Fixed by the operator directly in Word (Romans 8:27 now reads "the mind
+of the Spirit"), confirmed via `RUN_THE_TESTS(65)` PASS 0/0 (`Expected1BasedArray`
+position 65 rebaselined 1 -> 0, `aeBibleClass` commit pending). Re-exported
+`rpt/docm-verses.txt` (31,102 verses, 0 skipped/duplicates/unknown
+headings), then propagated via `npm run docm.rwb.full-sync` (`aeRWB`) -
+exactly 1 verse changed, the same 4 known ref mismatches (Jeremiah
+37:910, Romans 14/16 versification) untouched as expected. All 25 `aeRWB`
+tests pass. Left uncommitted in `aeRWB`, per that repo's own
+review-before-push practice.
+
+**Original finding, for the record:**
 
 Only one apostrophe-word exists anywhere in the entire docm (31,103
 verses) - **Romans 8:27**: *"He who searches the hearts knows what is on
@@ -94,13 +106,8 @@ occurrence**, not a second location - "Spirit's" contains the literal
 substring "it's" (`Spir-it's`), so both patterns matched the identical
 verse.
 
-**Action item, operator-only** (this assistant does not edit the
-production docm's content directly, per established practice): rephrase
-Romans 8:27 to avoid the possessive-apostrophe construction, e.g. *"...
-knows what is in the mind of the Spirit, because..."* or similar -
-exact wording is an editorial call. After the docm edit: re-export
-`rpt/docm-verses.txt`, and (once item 4's broader rwb-sync question below
-is resolved) propagate to `rwb.txt`.
+**Resolved as above, 2026-09-26** - the operator rephrased it in Word to
+"the mind of the Spirit," matching the suggested direction exactly.
 
 ### 4. docm vs. WEBU/WEBBE outside documented differences - PARTIAL, plus one major new finding (docm vs. rwb.txt)
 
