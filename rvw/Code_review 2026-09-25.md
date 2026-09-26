@@ -33,31 +33,25 @@ operator's new work list below.
 
 ## This session's items (operator work list, 2026-09-25)
 
-### 1. "Running annotated Strong's search" - data source unclear, NEEDS CLARIFICATION
+### 1. "Running annotated Strong's search" - CLOSED 2026-09-26, moot
 
-Searched the whole codebase (`aeBibleClass/src`, `md`, `rvw`; `aeRWB`;
-`aeBibleAddin/src`, `taskpane/src`; `adaept5tudio/docs`) for "annotated
-Strong's search," "Strong's search," "StrongSearch," and "annotated" near
-any Strong's-related text. **Found no existing feature, plan, or code by
-this name anywhere.** The closest adjacent things that do exist:
+**Operator clarification:** this referred to a comment made in the
+assistant's own console/chat output during an earlier session, not to any
+codebase feature, tool, or plan doc - consistent with this session's own
+search finding nothing by that name anywhere in the repos. Considered moot
+unless clarification arises later; not investigated further.
 
-- `adaept5tudio/docs/studybible-mcp-integration-plan.md` (2026-09-10) - a
-  *planning-only* document for integrating the user's `studybible-mcp` MCP
-  server fork, which exposes an `word_study(strongs=...)` tool over Strong's-
-  tagged lexicon data (LSJ/BDB/Abbott-Smith) and a proposed task-pane
-  "Word Study" button (Option B, no LLM). Nothing built yet - `word_study`
-  is upstream's tool name, not "annotated Strong's search."
-- This session's own new Strong's-numbering/OSHB/Robinson-Pierpont source
-  stack in `aeRWB/sources/` (see `project_scholarly_grounding_plan`
-  memory) - raw dictionary/text data, not a search feature.
-- The still-not-started verse-level Strong's spike (carried-forward item 2
-  above) - a planned data-extraction pass, not a search UI.
-
-**Need the operator to clarify** what "running annotated Strong's search"
-refers to - a specific existing tool/site, a feature from a different
-conversation, or a forward-looking description of what `studybible-mcp`'s
-`word_study` or the planned Phase 5 lookup feature would become. Not
-answered further here to avoid guessing.
+**Original investigation, for the record:** searched the whole codebase
+(`aeBibleClass/src`, `md`, `rvw`; `aeRWB`; `aeBibleAddin/src`,
+`taskpane/src`; `adaept5tudio/docs`) for "annotated Strong's search,"
+"Strong's search," "StrongSearch," and "annotated" near any Strong's-
+related text - found no existing feature, plan, or code by this name
+anywhere. Closest adjacent things: `adaept5tudio/docs/studybible-mcp-integration-plan.md`'s
+planned `word_study(strongs=...)` tool (planning-only, different name);
+this session's own new Strong's/OSHB/Robinson-Pierpont source stack in
+`aeRWB/sources/` (raw data, not a search feature); the still-not-started
+verse-level Strong's spike (carried-forward item 2 above, a data-extraction
+pass, not a search UI). None matched.
 
 ### 2. Quotation check across WEBU/WEBBE/RWB/docm - CONFIRMED, all five sources match exactly
 
