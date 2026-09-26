@@ -217,9 +217,11 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     If Err = 6068 Then
+        Debug.Print "ERROR in Sub ImportVBAFile", "Erl=" & Erl & " Err=6068 (VBA Project Not Trusted)", "vbCompName=" & vbCompName
         MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "ImportVBAFile"
         Stop
     Else
+        Debug.Print "ERROR in Sub ImportVBAFile", "Erl=" & Erl & " Err=" & Err.Number & " (" & Err.Description & ")", "vbCompName=" & vbCompName
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Sub ImportVBAFile", vbCritical, "ImportVBAFile"
         Resume PROC_EXIT
     End If
@@ -292,9 +294,11 @@ PROC_EXIT:
     Exit Sub
 PROC_ERR:
     If Err = 6068 Then
+        Debug.Print "ERROR in Sub ImportThisDocumentFile", "Erl=" & Erl & " Err=6068 (VBA Project Not Trusted)", "myCodeFile=" & myCodeFile
         MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "ImportThisDocumentFile"
         Stop
     Else
+        Debug.Print "ERROR in Sub ImportThisDocumentFile", "Erl=" & Erl & " Err=" & Err.Number & " (" & Err.Description & ")", "myCodeFile=" & myCodeFile
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Sub ImportThisDocumentFile", vbCritical, "ImportThisDocumentFile"
         Resume PROC_EXIT
     End If
@@ -366,9 +370,11 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     If Err = 6068 Then
+        Debug.Print "ERROR in Function DeleteAllModulesExceptImporter", "Erl=" & Erl & " Err=6068 (VBA Project Not Trusted)"
         MsgBox "VBA Project Not Trusted" & vbCrLf & "Enable 'Trust access to the VBA project object model' in Word Trust Center.", vbCritical, "DeleteAllModulesExceptImporter"
         Stop
     Else
+        Debug.Print "ERROR in Function DeleteAllModulesExceptImporter", "Erl=" & Erl & " Err=" & Err.Number & " (" & Err.Description & ")", "strName=" & CStr(strName)
         MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in Function DeleteAllModulesExceptImporter", vbCritical, "DeleteAllModulesExceptImporter"
         Resume PROC_EXIT
     End If
