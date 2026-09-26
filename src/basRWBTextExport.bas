@@ -31,11 +31,26 @@ Option Explicit
 ' no other book uses \ms1/\d), so this is a Psalms-specific capability, not
 ' a general one. Format: "Book Chapter<TAB>bookDivision|superscription<TAB>text"
 ' - three fields, not two, since a single chapter (e.g. Psalm 42) can have
-' BOTH a book-division heading AND its own superscription. Keyed by the
-' CURRENT bookName/chapNum already tracked from the preceding Heading 2 -
-' both styles are placed right after the chapter heading and before the
-' first VerseText paragraph, mirroring the raw USFM's own \c N -> \ms1/\d ->
-' \v 1 ordering.
+' BOTH a book-division heading AND its own superscription.
+'
+' The two styles are positioned DIFFERENTLY relative to Heading 2, confirmed
+' by a live export the same day (not assumed from the raw USFM, which has
+' both \ms1 and \d sit right after \c N - the docm's own paragraph order
+' turned out to differ for one of the two):
+'   - "PsalmSuperscription" sits AFTER the chapter's Heading 2 - keyed by
+'     the CURRENT bookName/chapNum, same as the raw USFM's own ordering.
+'   - "Psalms BOOK" sits BEFORE the chapter's Heading 2 (e.g. "BOOK 2"
+'     appears as its own section break ahead of the "Psalm 42" heading, not
+'     squeezed between the heading and the superscription) - stashed in
+'     `pendingBookDivision` when seen, then written out once the NEXT
+'     Heading 2 sets the chapter it actually belongs to. This also
+'     correctly handles "BOOK 1" (seen while chapNum is still 0, right
+'     after the Heading 1 book title, before any chapter has started at
+'     all) - the original chapNum>0 gate on this style silently dropped it
+'     entirely; keying off the chapter that follows fixes that for free.
+'   First live export (before this fix) confirmed the bug concretely:
+'   4 divisions captured instead of 5, each one chapter short (BOOK 2 at
+'   Psalm 41 instead of 42, etc.), BOOK 1 missing outright.
 '
 ' "text != text" unless the comparison is explicitly defined (operator,
 ' 2026-09-14) - see the plan Doc's "Text equality is not automatic" section.
@@ -153,6 +168,7 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
     Dim lineCount As Long, skipCount As Long, dupCount As Long, unknownBookCount As Long
     Dim visitedCount As Long
     Dim bookDivisionCount As Long, superscriptionCount As Long
+    Dim pendingBookDivision As String
     Dim seen As Object
     Set seen = CreateObject("Scripting.Dictionary")
     Dim StyleName As String
@@ -167,6 +183,7 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
 
     bookName = ""
     chapNum = 0
+    pendingBookDivision = ""
     For Each oPara In ActiveDocument.Paragraphs
         StyleName = oPara.style.NameLocal
 
@@ -199,6 +216,19 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
             Dim n As Long
             n = FirstNumberInText(headTxt)
             If n > 0 Then chapNum = n
+            ' A pending "Psalms BOOK" heading (found 2026-09-26 via a live
+            ' export: docm places the BOOK-division paragraph BEFORE the
+            ' chapter's own Heading 2, not after like PsalmSuperscription -
+            ' opposite order from the raw USFM's \c N -> \ms1 sequence).
+            ' Attach it to the chapter THIS Heading 2 just started, not the
+            ' one that was current when the "Psalms BOOK" paragraph itself
+            ' was seen.
+            If pendingBookDivision <> "" And bookName <> "" And chapNum > 0 Then
+                fmBuf = fmBuf & bookName & " " & chapNum & vbTab & "bookDivision" & vbTab & _
+                        pendingBookDivision & vbLf
+                bookDivisionCount = bookDivisionCount + 1
+                pendingBookDivision = ""
+            End If
 
         ElseIf StyleName = "VerseText" Then
             visitedCount = visitedCount + 1
@@ -243,16 +273,17 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
 
         ElseIf StyleName = "Psalms BOOK" Then
             ' Book-division heading (e.g. "BOOK 1"), USFM \ms1 - not VerseText,
-            ' silently skipped by the loop above. Keyed by the current
-            ' bookName/chapNum (already tracked from the preceding Heading 2),
-            ' matching the "attaches to the next chapter" placement the raw
-            ' USFM itself uses (\ms1 sits right after \c N). See
-            ' rvw/Code_review 2026-09-25.md item 7 for the design.
-            If bookName <> "" And chapNum > 0 Then
-                fmBuf = fmBuf & bookName & " " & chapNum & vbTab & "bookDivision" & vbTab & _
-                        NormalizeForSingleLine(basUSFM_Export.CleanTextForUTF8(oPara.Range.Text)) & vbLf
-                bookDivisionCount = bookDivisionCount + 1
-            End If
+            ' silently skipped by the loop above. Stashed, not written
+            ' immediately: confirmed live 2026-09-26 that the docm places
+            ' this paragraph BEFORE the chapter's own Heading 2 (not after,
+            ' unlike PsalmSuperscription and unlike the raw USFM's own
+            ' \c N -> \ms1 order) - the Heading 2 branch above writes this
+            ' out once the NEXT chapter number is actually known, which is
+            ' also what correctly handles "BOOK 1" (seen while chapNum is
+            ' still 0, right after the Heading 1 book title, with no
+            ' chapter started yet at all). See rvw/Code_review 2026-09-25.md
+            ' item 7 for the original design and the 2026-09-26 correction.
+            pendingBookDivision = NormalizeForSingleLine(basUSFM_Export.CleanTextForUTF8(oPara.Range.Text))
 
         ElseIf StyleName = "PsalmSuperscription" Then
             ' Prefatory/authorship line (e.g. "A Psalm by David..."), USFM \d -

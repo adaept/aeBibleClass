@@ -278,11 +278,37 @@ sync but breaks nothing).
   committed sidecar - same golden-rule discipline as R8/R12 (docm read-only,
   sidecar the only write target).
 
-**Not yet run against real docm data** - the VBA change needs the operator
-to re-run `ExportDocmVersesToRWBFormat` in Word (same as the Spirit's fix
-earlier this session) before `docm-psalm-front-matter.txt` actually
-exists. Verified end-to-end against a synthetic 3-column stand-in file
-instead (not committed, removed after confirming the script works).
+**First live run, 2026-09-26 - found and fixed a real bug.** Operator
+re-ran `ExportDocmVersesToRWBFormat`: `wrote 120 front-matter entries
+(bookDivisions=4 superscriptions=116)` - two off from the 5/117 expected
+from the WEBU reference. Both differences investigated, not assumed:
+
+- **Superscriptions (116 vs 117) - NOT a bug, docm is more correct than my
+  WEBU-side reference.** The one "missing" entry, `Psalm 119`, is WEBU's
+  raw USFM using `\d ALEPH` for the acrostic-stanza letter marker (Psalm
+  119 is the acrostic psalm) - not a real authorship superscription at
+  all. The docm correctly gives that its own `PsalmAcrostic` style
+  (explicitly out of this feature's scope, per the original design's
+  Psalms-only-superscription framing) rather than conflating it with
+  `PsalmSuperscription`. My WEBU-side verification naively treated every
+  `\d` line as a superscription - a gap in the *reference check*, not the
+  export. No fix needed.
+- **Book divisions (4 vs 5, and each one chapter short) - a real bug,
+  found and fixed.** `BOOK 2` was captured at `Psalm 41` instead of `42`
+  (same -1 pattern for `BOOK 3`/`72` vs `73`, `BOOK 4`/`89` vs `90`,
+  `BOOK 5`/`106` vs `107`), and `BOOK 1` was missing outright. Root cause:
+  the docm places the `Psalms BOOK` paragraph **before** its chapter's
+  `Heading 2`, not after like `PsalmSuperscription` (opposite of the raw
+  USFM's own `\c N -> \ms1` order - a genuine docm-specific structural
+  difference, not something checkable without a live export). The
+  original code wrote it out using whatever `chapNum` was *already*
+  current (the previous chapter, or 0 for `BOOK 1`, which its own
+  `chapNum > 0` guard then silently dropped). **Fixed**: the `Psalms BOOK`
+  branch now stashes the text in a new `pendingBookDivision` variable
+  instead of writing immediately; the `Heading 2` branch writes it out
+  once the *new* chapter number is known, correctly handling `BOOK 1` for
+  free (no chapter has started yet, so it just waits for the first one).
+  Not yet re-verified against a second live export - next step.
 
 **Original design, for the record - three real pieces of work, in
 dependency order:**
