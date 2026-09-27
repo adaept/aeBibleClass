@@ -23993,7 +23993,7 @@ Matthew 24:32	 “Now from the fig tree learn this parable: When its branch ha
 Matthew 24:33	 Even so you also, when you see all these things, know that he is near, even at the doors.
 Matthew 24:34	 Most certainly I tell you, this generation will not pass away until all these things are accomplished.
 Matthew 24:35	 Heaven and earth will pass away, but my words will not pass away.
-Matthew 24:36	 “But no one knows of that day and hour, not even the angels of heaven, nor the son, but my Father only.
+Matthew 24:36	 “But no one knows of that day and hour, not even the angels of heaven, but my Father only.
 Matthew 24:37	 As the days of Noah were, so will the coming of the Son of Man be.
 Matthew 24:38	 For as in those days which were before the flood they were eating and drinking, marrying and giving in marriage, until the day that Noah entered into the ship,
 Matthew 24:39	 and they did not know until the flood came and took them all away, so will the coming of the Son of Man be.
@@ -25490,7 +25490,7 @@ Luke 12:27	 Consider the lilies, how they grow. They do not toil, neither do t
 Luke 12:28	 But if this is how God clothes the grass in the field, which today exists, and tomorrow is cast into the oven, how much more will he clothe you, O you of little faith?
 Luke 12:29	 Do not seek what you will eat or what you will drink; neither be anxious.
 Luke 12:30	 For the nations of the world seek after all of these things, but your Father knows that you need these things.
-Luke 12:31	 But first seek God’s Kingdom, and all these things will be added to you.
+Luke 12:31	 But seek God’s Kingdom, and all these things will be added to you.
 Luke 12:32	 Do not be afraid, little flock, for it is your Father’s good pleasure to give you the Kingdom.
 Luke 12:33	 Sell that which you have, and give gifts to the needy. Make for yourselves purses which do not grow old, a treasure in the heavens that does not fail, where no thief approaches, neither moth destroys.
 Luke 12:34	 For where your treasure is, there will your heart be also.
