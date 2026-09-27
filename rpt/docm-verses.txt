@@ -1108,7 +1108,7 @@ Genesis 37:21	 Reuben heard it, and delivered him out of their hand, and said,
 Genesis 37:22	 Reuben said to them, “Shed no blood. Throw him into this pit that is in the wilderness, but lay no hand on him”—that he might deliver him out of their hand, to restore him to his father.
 Genesis 37:23	 When Joseph came to his brothers, they stripped Joseph of his tunic, the tunic of many colors that was on him;
 Genesis 37:24	 and they took him, and threw him into the pit. The pit was empty. There was no water in it.
-Genesis 37:25	 They sat down to eat bread, and they lifted up their eyes and looked, and saw a caravan of Ishmaelites was coming from Gilead, with their camels bearing spices and balm and myrrh, going to carry it down to Egypt.
+Genesis 37:25	 They sat down to eat bread, and they lifted up their eyes and looked, and saw a caravan of Ishmaelites coming from Gilead, with their camels bearing spices and balm and myrrh, going to carry it down to Egypt.
 Genesis 37:26	 Judah said to his brothers, “What profit is it if we kill our brother and conceal his blood?
 Genesis 37:27	 Come, and let us sell him to the Ishmaelites, and not let our hand be on him; for he is our brother, our flesh.” His brothers listened to him.
 Genesis 37:28	 Midianites who were merchants passed by, and they drew and lifted up Joseph out of the pit, and sold Joseph to the Ishmaelites for twenty pieces of silver. The merchants brought Joseph into Egypt.
@@ -1509,7 +1509,7 @@ Genesis 49:32	 the field and the cave that is therein, which was purchased fro
 Genesis 49:33	 When Jacob finished charging his sons, he gathered up his feet into the bed, breathed his last breath, and was gathered to his people.
 Genesis 50:1	 Joseph fell on his father’s face, wept on him, and kissed him.
 Genesis 50:2	 Joseph commanded his servants, the physicians, to embalm his father; and the physicians embalmed Israel.
-Genesis 50:3	 Forty days were used for him, for that is how many the days it takes to embalm. The Egyptians wept for Israel for seventy days.
+Genesis 50:3	 Forty days were used for him, for that is how many days it takes to embalm. The Egyptians wept for Israel for seventy days.
 Genesis 50:4	 When the days of weeping for him were past, Joseph spoke to Pharaoh’s staff, saying, “If now I have found favor in your eyes, please speak in the ears of Pharaoh, saying,
 Genesis 50:5	 ‘My father made me swear, saying, “Behold, I am dying. Bury me in my grave which I have dug for myself in the land of Canaan.” Now therefore, please let me go up and bury my father, and I will come again.’”
 Genesis 50:6	 Pharaoh said, “Go up, and bury your father, just like he made you swear.”
@@ -3100,7 +3100,7 @@ Leviticus 13:44	 he is a leprous man. He is unclean. The priest shall surely p
 Leviticus 13:45	 “The leper in whom the plague is shall wear torn clothes, and the hair of his head shall hang loose. He shall cover his upper lip, and shall cry, ‘Unclean! Unclean!’
 Leviticus 13:46	 All the days in which the plague is in him he shall be unclean. He is unclean. He shall dwell alone. His dwelling shall be outside of the camp.
 Leviticus 13:47	 “The garment also that the plague of leprosy is in, whether it is a woolen garment, or a linen garment;
-Leviticus 13:48	 whether it is in warp or woof; of linen or of wool; whether in a leather, or in anything made of leather;
+Leviticus 13:48	 whether it is in warp or woof; of linen or of wool; whether in leather, or in anything made of leather;
 Leviticus 13:49	 if the plague is greenish or reddish in the garment, or in the leather, or in the warp, or in the woof, or in anything made of leather; it is the plague of leprosy, and shall be shown to the priest.
 Leviticus 13:50	 The priest shall examine the plague, and isolate the plague seven days.
 Leviticus 13:51	 He shall examine the plague on the seventh day. If the plague has spread in the garment, either in the warp, or in the woof, or in the skin, whatever use the skin is used for, the plague is a destructive mildew. It is unclean.
@@ -8080,7 +8080,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 2:28	 So Joab blew the trumpet; and all the people stood still, and pursued Israel no more, and they fought no more.
 2 Samuel 2:29	 Abner and his men went all that night through the Arabah; and they passed over the Jordan, and went through all Bithron, and came to Mahanaim.
 2 Samuel 2:30	 Joab returned from following Abner; and when he had gathered all the people together, nineteen men of David’s and Asahel were missing.
-2 Samuel 2:31	 But David’s servants had struck Benjamin and of Abner’s men so that three hundred sixty men died.
+2 Samuel 2:31	 But David’s servants had struck Benjamin and Abner’s men so that three hundred sixty men died.
 2 Samuel 2:32	 They took up Asahel, and buried him in the tomb of his father, which was in Bethlehem. Joab and his men went all night, and the day broke on them at Hebron.
 2 Samuel 3:1	 Now there was long war between Saul’s house and David’s house. David grew stronger and stronger, but Saul’s house grew weaker and weaker.
 2 Samuel 3:2	 Sons were born to David in Hebron. His firstborn was Amnon, of Ahinoam the Jezreelitess;
@@ -10787,7 +10787,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Chronicles 14:10	 David inquired of God, saying, “Shall I go up against the Philistines? Will you deliver them into my hand?” God said to him, “Go up; for I will deliver them into your hand.”
 1 Chronicles 14:11	 So they came up to Baal Perazim, and David defeated them there. David said, God has broken my enemies by my hand, like waters breaking out. Therefore they called the name of that place Baal Perazim.
 1 Chronicles 14:12	 They left their gods there; and David gave a command, and they were burned with fire.
-1 Chronicles 14:13	 The Philistines made a another raid in the valley.
+1 Chronicles 14:13	 The Philistines made another raid in the valley.
 1 Chronicles 14:14	 David inquired again of God; and God said to him, “You shall not go up after them. Turn away from them, and come on them opposite the mulberry trees.
 1 Chronicles 14:15	 When you hear the sound of marching in the tops of the mulberry trees, then go out to battle; for God has gone out before you to strike the army of the Philistines.”
 1 Chronicles 14:16	 David did as God commanded him; and they attacked the army of the Philistines from Gibeon even to Gezer.
@@ -12138,7 +12138,7 @@ Ezra 4:24	 Then work stopped on God’s house which is at Jerusalem. It stoppe
 Ezra 5:1	 Now the prophets, Haggai the prophet and Zechariah the son of Iddo, prophesied to the Jews who were in Judah and Jerusalem. They prophesied to them in the name of the God of Israel.
 Ezra 5:2	 Then Zerubbabel the son of Shealtiel, and Jeshua the son of Jozadak rose up and began to build God’s house which is at Jerusalem; and with them were the prophets of God, helping them.
 Ezra 5:3	 At the same time Tattenai, the governor beyond the River came to them, with Shetharbozenai, and their companions, and asked them, “Who gave you a decree to build this house, and to finish this wall?”
-Ezra 5:4	 They also asked for the names of the men were who were making this building.
+Ezra 5:4	 They also asked for the names of the men who were making this building.
 Ezra 5:5	 But the eye of their God was on the elders of the Jews, and they did not make them cease, until the matter should come to Darius, and an answer should be returned by letter concerning it.
 Ezra 5:6	 The copy of the letter that Tattenai, the governor beyond the River, and Shetharbozenai, and his companions the Apharsachites, who were beyond the River, sent to Darius the king follows.
 Ezra 5:7	 They sent a letter to him, in which was written: To Darius the king, all peace.
@@ -18983,7 +18983,7 @@ Jeremiah 2:14	 Is Israel a slave? Is he born into slavery? Why has he become a
 Jeremiah 2:15	 The young lions have roared at him and yelled. They have made his land waste. His cities are burned up, without inhabitant.
 Jeremiah 2:16	 The children also of Memphis and Tahpanhes have broken the crown of your head.
 Jeremiah 2:17	 “Have you not brought this on yourself, in that you have forsaken the Lord your God, when he led you by the way?
-Jeremiah 2:18	 Now what do you gain by going to Egypt, to drink the waters of the Shihor? Or why do you to go on the way to Assyria, to drink the waters of the River?
+Jeremiah 2:18	 Now what do you gain by going to Egypt, to drink the waters of the Shihor? Or why do you go on the way to Assyria, to drink the waters of the River?
 Jeremiah 2:19	 “Your own wickedness will correct you, and your backsliding will rebuke you. Know therefore and see that it is an evil and bitter thing, that you have forsaken the Lord your God, and that my fear is not in you,” says the Lord, God of Hosts.
 Jeremiah 2:20	 “For long ago I broke off your yoke, and burst your bonds. You said, ‘I will not serve;’ for on every high hill and under every green tree you bowed yourself, playing the prostitute.
 Jeremiah 2:21	 Yet I had planted you a noble vine, a pure and faithful seed. How then have you turned into the degenerate branches of a foreign vine to me?
@@ -21947,7 +21947,7 @@ Daniel 7:10	 A fiery stream issued and came out from before him. Thousands of 
 Daniel 7:11	 “I watched at that time because of the voice of the great words which the horn spoke. I watched even until the animal was slain, and its body destroyed, and it was given to be burned with fire.
 Daniel 7:12	 As for the rest of the animals, their dominion was taken away; yet their lives were prolonged for a season and a time.
 Daniel 7:13	 “I saw in the night visions, and behold, there came with the clouds of heaven one like a son of man, and he came even to the Ancient of Days, and they brought him near before him.
-Daniel 7:14	 Dominion was given him, and glory, and a kingdom, that all the peoples, nations, and languages should serve him. His dominion is an everlasting dominion, which will not pass away, and his kingdom one that which will not be destroyed.
+Daniel 7:14	 Dominion was given him, and glory, and a kingdom, that all the peoples, nations, and languages should serve him. His dominion is an everlasting dominion, which will not pass away, and his kingdom one that will not be destroyed.
 Daniel 7:15	 “As for me, Daniel, my spirit was grieved within my body, and the visions of my head troubled me.
 Daniel 7:16	 I came near to one of those who stood by, and asked him the truth concerning all this. “So he told me, and made me know the interpretation of the things.
 Daniel 7:17	 ‘These great animals, which are four, are four kings, who will arise out of the earth.
@@ -24239,7 +24239,7 @@ Mark 1:20	 Immediately he called them, and they left their father, Zebedee, in
 Mark 1:21	 They went into Capernaum, and immediately on the Sabbath day he entered into the synagogue and taught.
 Mark 1:22	 They were astonished at his teaching, for he taught them as having authority, and not as the scribes.
 Mark 1:23	 Immediately there was in their synagogue a man with an unclean spirit, and he cried out,
-Mark 1:24	 saying, “Ha! What do we have to do with you, Jesus, you Nazarene? Have you come to destroy us? I know you who you are: the Holy One of God!”
+Mark 1:24	 saying, “Ha! What do we have to do with you, Jesus, you Nazarene? Have you come to destroy us? I know who you are: the Holy One of God!”
 Mark 1:25	 Jesus rebuked him, saying, “Be quiet, and come out of him!”
 Mark 1:26	 The unclean spirit, convulsing him and crying with a loud voice, came out of him.
 Mark 1:27	 They were all amazed, so that they questioned among themselves, saying, “What is this? A new teaching? For with authority he commands even the unclean spirits, and they obey him!”
@@ -26088,7 +26088,7 @@ John 1:40	 One of the two who heard John and followed him was Andrew, Simon Pe
 John 1:41	 He first found his own brother, Simon, and said to him, “We have found the Messiah!” (which is, being interpreted, Christ).
 John 1:42	 He brought him to Jesus. Jesus looked at him, and said, “You are Simon the son of Jonah. You shall be called Cephas” (which is by interpretation, Peter).
 John 1:43	 On the next day, he was determined to go out into Galilee, and he found Philip. Jesus said to him, “Follow me.”
-John 1:44	 Now Philip was from Bethsaida, of the city of Andrew and Peter.
+John 1:44	 Now Philip was from Bethsaida, the city of Andrew and Peter.
 John 1:45	 Philip found Nathanael, and said to him, “We have found him, of whom Moses in the law, and the prophets, wrote: Jesus of Nazareth, the son of Joseph.”
 John 1:46	 Nathanael said to him, “Can any good thing come out of Nazareth?” Philip said to him, “Come and see.”
 John 1:47	 Jesus saw Nathanael coming to him, and said about him, “Behold, an Israelite indeed, in whom is no deceit!”
@@ -29568,7 +29568,7 @@ Colossians 4:18	 The salutation of me, Paul, with my own hand: remember my bon
 1 Thessalonians 1:5	 and that our Good News came to you not in word only, but also in power, and in the Holy Spirit, and with much assurance. You know what kind of men we showed ourselves to be among you for your sake.
 1 Thessalonians 1:6	 You became imitators of us and of the Lord, having received the word in much affliction, with joy of the Holy Spirit,
 1 Thessalonians 1:7	 so that you became an example to all who believe in Macedonia and in Achaia.
-1 Thessalonians 1:8	 For from you the word of the Lord has been declared, not only in Macedonia and Achaia, but also in every place your faith toward God has gone out, so that we need not to say anything.
+1 Thessalonians 1:8	 For from you the word of the Lord has been declared, not only in Macedonia and Achaia, but also in every place your faith toward God has gone out, so that we need not say anything.
 1 Thessalonians 1:9	 For they themselves report concerning us what kind of a reception we had from you, and how you turned to God from idols, to serve a living and true God,
 1 Thessalonians 1:10	 and to wait for his Son from heaven, whom he raised from the dead: Jesus, who delivers us from the wrath to come.
 1 Thessalonians 2:1	 For you yourselves know, brothers, our visit to you was not in vain,
