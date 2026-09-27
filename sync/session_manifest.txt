@@ -2102,7 +2102,7 @@ NEXT SESSION:
      later commit+push instruction. See project_phase3_audit_engine_port_plan
      memory's "applySpellingVariant live wiring built 2026-09-25" entry.
 
-## NEXT SESSION, IN ORDER:
+## NEXT SESSION, IN ORDER (superseded by the 2026-09-26 entry below - read that one first):
 
   1. **REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
      2026-09-25 -- rationale to be supplied later, do not guess one.**
@@ -2136,4 +2136,141 @@ NEXT SESSION:
   entry. applySpellingVariant's live wiring is the only built-but-not-
   live-validated code in flight, and its live-check is explicitly
   deferred per operator instruction, not an oversight.
+===============================================================================
+
+===============================================================================
+# Claude Session Manifest -- 2026-09-26 (continued session: Code_review
+# 2026-09-25.md work list, docm/rwb.txt general-divergence fix, Psalm
+# front-matter feature, ImportAllVBAFiles logging fix + root cause found)
+# ------------------------------------------------------------
+
+## Work done this session (repos: aeBibleClass, aeRWB)
+
+  1. Created rvw/Code_review 2026-09-25.md, carrying forward the prior
+     checkpoint's open items and working through an 11-item operator work
+     list. Closed outright: item 1 ("annotated Strong's search" - a
+     console comment, not a feature, moot), item 3 (Spirit's fix, see
+     below), item 6 (Selah issue - a missing style, not a wrong-verse
+     bug, moot), item 7 (Psalm front-matter, see below). Confirmed clean,
+     no action needed: item 2 (quotation check - WEBU/WEBBE/rwb.txt/docm
+     all match exactly, 75/63). Answered/designed, not built: item 5
+     (why web.txt has no Psalm superscriptions - USFM \d/\ms1 silently
+     dropped by the plain-text format, a real gap not a bug), item 8
+     (USFM export from docm - multi-session build, needs its own plan
+     doc), item 9 (Bible introduction - scoped, needs its own writing
+     session), item 10 (hyphenation - confirmed clean, plus the point
+     that left-aligned i18n text needs no hyphenation strategy at all).
+     Recommendation given, not a build: item 11 (live-check gating).
+
+  2. **Major finding, item 4**: rwb.txt had diverged from the docm on 48%
+     of verses (14,916/31,102), OUTSIDE Phase 4's divine-names/quote-
+     pattern scope - stale pre-WEBU wording, not intentional RWB edits.
+     Verified docm is the correct/current source (its comma-placement
+     ratio tracks WEBU's real convention, 7.21 vs 7.33; web.txt/rwb.txt
+     were two orders of magnitude off, still the frozen 2013 baseline).
+     Built apply-docm-rwb-full-sync.mjs (R12, aeRWB) and ran it: 14,916
+     verses synced, 0 remaining differences. Operator reviewed, committed,
+     and pushed (aeRWB a90d703 and follow-ons). Documented the docm-is-
+     SSOT/one-directional-sync guarantee as a named "golden rule" in
+     aeRWB/README.md and tools/web-diff/README.md, enforced by the
+     sync scripts' own code (readFileSync-only on the docm path,
+     verified by inspection, not just comment). See
+     project_docm_rwb_general_divergence memory.
+     Item 4's OTHER half (docm vs. WEBU/WEBBE, not vs. rwb.txt) - only a
+     6-verse sample checked (all fell into known categories: decontraction,
+     divine-names Rule 2). NOT exhaustively confirmed for all ~12,271/
+     14,299 changed verses - still open, see NEXT SESSION below.
+
+  3. **Item 7 built and closed, with a real bug found and fixed along the
+     way.** Extended parseUsfmBook/mergeUsfmBooks (aeRWB lib.mjs) with a
+     frontMatter map for USFM \ms1 (book divisions)/\d (superscriptions),
+     Psalms-only (confirmed via engwebu_usfm). New sidecar file
+     aeRWB/psalm-front-matter.txt (design decision: sidecar over a
+     pseudo-verse key in rwb.txt itself, to avoid breaking every existing
+     Book C:V consumer's V-is-always-a-verse assumption). Extended
+     basRWBTextExport.bas's ExportDocmVersesToRWBFormat to walk the
+     docm's "Psalms BOOK"/"PsalmSuperscription" styles into a new
+     rpt/docm-psalm-front-matter.txt report. First live run found a real
+     bug: book divisions came back 4 instead of 5, each one chapter short,
+     BOOK 1 missing outright - root cause, the docm places "Psalms BOOK"
+     paragraphs BEFORE their chapter's Heading 2 (opposite of
+     PsalmSuperscription and opposite of raw USFM's own ordering). Fixed
+     via a pendingBookDivision stash written out on the NEXT Heading 2.
+     Second live run confirmed the fix: 5/5 divisions, correctly
+     attributed to Psalm 1/42/73/90/107. Superscription count (116 vs
+     117 expected) investigated separately, confirmed NOT a bug - Psalm
+     119's "missing" entry is WEBU's \d ALEPH acrostic-stanza marker, not
+     a real superscription; the docm correctly styles that PsalmAcrostic
+     instead (out of scope). All committed and pushed both repos.
+
+  4. **ImportAllVBAFiles: fixed a real logging bug, then confirmed the
+     actual Skipped<>1 root cause via that fix's own diagnostic.** All
+     three PROC_ERR handlers in basImportWordGitFiles.bas (ImportVBAFile,
+     ImportThisDocumentFile, DeleteAllModulesExceptImporter) showed a
+     MsgBox with the error text but never Debug.Print'd it - an Error 17
+     during a Skipped=4 recurrence was permanently lost as a result.
+     Fixed (all three now log before the MsgBox). Assistant then gave
+     confusing guidance ("no re-import needed" meant "no *special* step,"
+     read as "no import at all") that cost a wasted round-trip - recorded
+     as its own feedback memory entry. On the next real run, the
+     DumpLiveVBComponents [post-delete] diagnostic (armed since
+     2026-09-23, first time it actually caught useful data) proved
+     VBComponents.Remove is genuinely, silently failing for
+     basBiblePalette/basTEST_aeBibleTools/Module1 specifically (they
+     print "deleted" with no error, then show up still present in the
+     very next live-component dump) - settles the mechanism (a real
+     deletion-side bug, not a stale-read issue in ModuleOrClassExists),
+     though WHY those three specific modules resist removal is still
+     unknown. See feedback_importallvbafiles_error17 memory for the full
+     detail and untested candidate theories.
+
+  5. Committed the small residual rwb.txt sync from the Spirit's-fix
+     work (Romans 8:27, 1 verse) that had been left uncommitted pending
+     review - aeRWB ba87d5e. Cleaned up two now-stale "left uncommitted"
+     status lines in the review doc and project_docm_rwb_general_divergence
+     memory that referenced syncs since actually committed.
+
+## NEXT SESSION, IN ORDER:
+
+  1. **REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+     2026-09-25 -- rationale to be supplied later, do not guess one.**
+     Live-check applySpellingVariant's wiring against a disposable scratch
+     document, per aeBibleAddin's word-audit-scanner.LIVE_CHECK.md
+     ("Shape 8, spelling-conversion write extension" section). Do NOT run
+     without the operator's explicit go-ahead.
+
+  2. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+     on Genesis 1 (aeRWB/tools/web-diff/), using the OSHB data fetched
+     2026-09-25 - see project_scholarly_grounding_plan memory. cWEB
+     confirmed skipped entirely per operator decision.
+
+  3. docm-vs-WEBU/WEBBE full categorization (Code_review 2026-09-25.md
+     item 4's other half) - only a 6-verse sample checked so far. Reuse
+     diffBibles's word-level output to tag every changed verse by reason
+     (decontraction/divine-names/other), then hand-review only the
+     unexplained bucket - same method as Phase 4's own rule-by-rule sweep.
+
+  4. Root-cause the `Jeremiah 37:910` malformed reference in
+     rpt/docm-verses.txt (ExportDocmVersesToRWBFormat's verse-number
+     detection) - small, scoped, currently blocks Jeremiah 37:10 from
+     ever being sync-able.
+
+  5. If ImportAllVBAFiles reports Skipped<>1 again: the MECHANISM is now
+     confirmed (VBComponents.Remove genuinely fails for basBiblePalette/
+     basTEST_aeBibleTools/Module1, not a stale-read issue) - if this ever
+     gets prioritized further, the next real step is checking VBE UI
+     state (open code panes, breakpoints, Watches) at the moment of
+     failure, not more Immediate-window logging.
+
+  6. Loose ends, not formally closed: Cases 49/50 (unported/untriaged in
+     aeBibleAddin); item 8 (USFM export from docm - designed, needs its
+     own plan doc before starting, multi-session scope); item 9 (Bible
+     introduction - scoped, needs its own dedicated writing session).
+
+## Session status at this checkpoint (2026-09-26)
+
+  All four repos (aeBibleClass, aeRWB, aeBibleAddin, adaept5tudio)
+  confirmed clean (git status --short empty) as of this entry - nothing
+  uncommitted, nothing unpushed. All docs/memory verified in sync with
+  actual code and file state. Safe to end the session here.
 ===============================================================================
