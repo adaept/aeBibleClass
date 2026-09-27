@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-09-26)
+Radiant Word Bible - exported from the live .docm (2026-09-27)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -6710,7 +6710,7 @@ Judges 7:12	 The Midianites and the Amalekites and all the children of the eas
 Judges 7:13	 When Gideon had come, behold, there was a man telling a dream to his fellow. He said, “Behold, I dreamed a dream; and behold, a cake of barley bread tumbled into the camp of Midian, came to the tent, and struck it so that it fell, and turned it upside down, so that the tent lay flat.”
 Judges 7:14	 His fellow answered, “This is nothing other than the sword of Gideon the son of Joash, a man of Israel. God has delivered Midian into his hand, with all the army.”
 Judges 7:15	 It was so, when Gideon heard the telling of the dream and its interpretation, that he worshiped. Then he returned into the camp of Israel and said, “Arise, for God has delivered the army of Midian into your hand!”
-Judges 7:16	 He divided the three hundred men into three companies, and he put into the hands of all them trumpets and empty pitchers, with torches within the pitchers.
+Judges 7:16	 He divided the three hundred men into three companies, and he put into the hands of all of them trumpets and empty pitchers, with torches within the pitchers.
 Judges 7:17	 He said to them, “Watch me, and do likewise. Behold, when I come to the outermost part of the camp, it shall be that, as I do, so you shall do.
 Judges 7:18	 When I blow the trumpet, I and all who are with me, then blow the trumpets also on every side of all the camp, and shout, ‘For God and for Gideon!’”
 Judges 7:19	 So Gideon and the hundred men who were with him came to the outermost part of the camp in the beginning of the middle watch, when they had but newly set the watch. Then they blew the trumpets and broke in pieces the pitchers that were in their hands.
@@ -10203,7 +10203,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 23:35	 Jehoiakim gave the silver and the gold to Pharaoh; but he taxed the land to give the money according to the commandment of Pharaoh. He exacted the silver and the gold of the people of the land, from everyone according to his assessment, to give it to Pharaoh Necoh.
 2 Kings 23:36	 Jehoiakim was twenty-five years old when he began to reign, and he reigned eleven years in Jerusalem. His mother’s name was Zebidah the daughter of Pedaiah of Rumah.
 2 Kings 23:37	 He did that which was evil in God’s sight, according to all that his fathers had done.
-2 Kings 24:1	 In his days Nebuchadnezzar king of Babylon came up, and Jehoiakim became his servant three years. Then he turned and rebelled against him.
+2 Kings 24:1	 In his days Nebuchadnezzar king of Babylon came up, and Jehoiakim became his servant for three years. Then he turned and rebelled against him.
 2 Kings 24:2	 God sent against him bands of the Chaldeans, and bands of the Syrians, and bands of the Moabites, and bands of the children of Ammon, and sent them against Judah to destroy it, according to God’s word, which he spoke by his servants the prophets.
 2 Kings 24:3	 Surely at the commandment of God this came on Judah, to remove them out of his sight, for the sins of Manasseh, according to all that he did,
 2 Kings 24:4	 and also for the innocent blood that he shed; for he filled Jerusalem with innocent blood, and God would not pardon.
@@ -10628,7 +10628,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Chronicles 9:10	 Of the priests: Jedaiah, Jehoiarib, Jachin,
 1 Chronicles 9:11	 and Azariah the son of Hilkiah, the son of Meshullam, the son of Zadok, the son of Meraioth, the son of Ahitub, the ruler of God’s house;
 1 Chronicles 9:12	 and Adaiah the son of Jeroham, the son of Pashhur, the son of Malchijah, and Maasai the son of Adiel, the son of Jahzerah, the son of Meshullam, the son of Meshillemith, the son of Immer;
-1 Chronicles 9:13	 and their brothers, heads of their fathers’ houses, one thousand seven hundred sixty; very able men for the work of the service of God’s house.
+1 Chronicles 9:13	 and their brothers, heads of their fathers’ houses, one thousand seven hundred sixty; they were very able men for the work of the service of God’s house.
 1 Chronicles 9:14	 Of the Levites: Shemaiah the son of Hasshub, the son of Azrikam, the son of Hashabiah, of the sons of Merari;
 1 Chronicles 9:15	 and Bakbakkar, Heresh, Galal, and Mattaniah the son of Mica, the son of Zichri, the son of Asaph,
 1 Chronicles 9:16	 and Obadiah the son of Shemaiah, the son of Galal, the son of Jeduthun, and Berechiah the son of Asa, the son of Elkanah, who lived in the villages of the Netophathites.
@@ -12159,7 +12159,7 @@ Ezra 6:4	 with three courses of great stones and a course of new timber. Let t
 Ezra 6:5	 Also let the gold and silver vessels of God’s house, which Nebuchadnezzar took out of the temple which is at Jerusalem, and brought to Babylon, be restored and brought again to the temple which is at Jerusalem, everything to its place. You shall put them in God’s house.
 Ezra 6:6	 Now therefore, Tattenai, governor beyond the River, Shetharbozenai, and your companions the Apharsachites, who are beyond the River, you must stay far from there.
 Ezra 6:7	 Leave the work of this house of God alone; let the governor of the Jews and the elders of the Jews build this house of God in its place.
-Ezra 6:8	 Moreover I make a decree what you shall do for these elders of the Jews for the building of this house of God: that of the king’s goods, even of the tribute beyond the River, expenses must be given with all diligence to these men, that they not be hindered.
+Ezra 6:8	 Moreover I make a decree regarding what you shall do for these elders of the Jews for the building of this house of God: that of the king’s goods, even of the tribute beyond the River, expenses must be given with all diligence to these men, that they not be hindered.
 Ezra 6:9	 That which they have need of, including young bulls, rams, and lambs, for burnt offerings to the God of heaven; also wheat, salt, wine, and oil, according to the word of the priests who are at Jerusalem, let it be given them day by day without fail;
 Ezra 6:10	 that they may offer sacrifices of pleasant aroma to the God of heaven, and pray for the life of the king, and of his sons.
 Ezra 6:11	 I have also made a decree that whoever alters this message, let a beam be pulled out from his house, and let him be lifted up and fastened on it; and let his house be made a dunghill for this.
@@ -12312,7 +12312,7 @@ Nehemiah 2:1	 In the month Nisan, in the twentieth year of Artaxerxes the king
 Nehemiah 2:2	 The king said to me, “Why is your face sad, since you are not sick? This is nothing else but sorrow of heart.” Then I was very much afraid.
 Nehemiah 2:3	 I said to the king, “Let the king live forever! Why should my face not be sad, when the city, the place of my fathers’ tombs, lies waste, and its gates have been consumed with fire?”
 Nehemiah 2:4	 Then the king said to me, “What is your request?” So I prayed to the God of heaven.
-Nehemiah 2:5	 I said to the king, “If it pleases the king, and if your servant has found favor in your sight, that you would send me to Judah, to the city of my fathers’ tombs, that I may build it.”
+Nehemiah 2:5	 I said to the king, “If it pleases the king, and if your servant has found favor in your sight, I ask that you would send me to Judah, to the city of my fathers’ tombs, that I may build it.”
 Nehemiah 2:6	 The king said to me (the queen was also sitting by him), “How long will your journey be? When will you return?” So it pleased the king to send me, and I set a time for him.
 Nehemiah 2:7	 Moreover I said to the king, “If it pleases the king, let letters be given me to the governors beyond the River, that they may let me pass through until I come to Judah;
 Nehemiah 2:8	 and a letter to Asaph the keeper of the king’s forest, that he may give me timber to make beams for the gates of the citadel by the temple, for the wall of the city, and for the house that I will occupy.” The king granted my requests, because of the good hand of my God on me.
@@ -12768,7 +12768,7 @@ Esther 4:2	 He came even before the king’s gate, for no one is allowed insid
 Esther 4:3	 In every province, wherever the king’s commandment and his decree came, there was great mourning among the Jews, and fasting, and weeping, and wailing; and many lay in sackcloth and ashes.
 Esther 4:4	 Esther’s maidens and her eunuchs came and told her this, and the queen was exceedingly grieved. She sent clothing to Mordecai, to replace his sackcloth; but he did not receive it.
 Esther 4:5	 Then Esther called for Hathach, one of the king’s eunuchs, whom he had appointed to attend her, and commanded him to go to Mordecai, to find out what this was, and why it was.
-Esther 4:6	 So Hathach went out to Mordecai, to city square which was before the king’s gate.
+Esther 4:6	 So Hathach went out to Mordecai, to the city square which was before the king’s gate.
 Esther 4:7	 Mordecai told him of all that had happened to him, and the exact sum of the money that Haman had promised to pay to the king’s treasuries for the destruction of the Jews.
 Esther 4:8	 He also gave him the copy of the writing of the decree that was given out in Susa to destroy them, to show it to Esther, and to declare it to her, and to urge her to go in to the king, to make supplication to him, and to make request before him, for her people.
 Esther 4:9	 Hathach came and told Esther the words of Mordecai.
@@ -20424,7 +20424,7 @@ Lamentations 3:66	 You will pursue them in anger, and destroy them from under 
 Lamentations 4:1	 How the gold has become dim! The most pure gold has changed! The stones of the sanctuary are poured out at the head of every street.
 Lamentations 4:2	 The precious sons of Zion, comparable to fine gold, how they are esteemed as earthen pitchers, the work of the hands of the potter!
 Lamentations 4:3	 Even the jackals offer their breast. They nurse their young ones. But the daughter of my people has become cruel, like the ostriches in the wilderness.
-Lamentations 4:4	 The tongue of the nursing child clings to the roof of his mouth for thirst. The young children ask bread, and no one breaks it for them.
+Lamentations 4:4	 The tongue of the nursing child clings to the roof of his mouth for thirst. The young children ask for bread, and no one breaks it for them.
 Lamentations 4:5	 Those who ate delicacies are desolate in the streets. Those who were brought up in purple embrace dunghills.
 Lamentations 4:6	 For the iniquity of the daughter of my people is greater than the sin of Sodom, which was overthrown as in a moment. No hands were laid on her.
 Lamentations 4:7	 Her nobles were purer than snow. They were whiter than milk. They were more ruddy in body than rubies. Their polishing was like sapphire.
@@ -20647,7 +20647,7 @@ Ezekiel 10:10	 As for their appearance, the four of them had one likeness, lik
 Ezekiel 10:11	 When they went, they went in their four directions. They did not turn as they went, but to the place where the head looked they followed it. They did not turn as they went.
 Ezekiel 10:12	 Their whole body, including their backs, their hands, their wings, and the wheels, were full of eyes all around, even the wheels that the four of them had.
 Ezekiel 10:13	 As for the wheels, they were called in my hearing, “the whirling wheels”.
-Ezekiel 10:14	 Every one them had four faces. The first face was the face of the cherub. The second face was the face of a man. The third face was the face of a lion. The fourth was the face of an eagle.
+Ezekiel 10:14	 Every one of them had four faces. The first face was the face of the cherub. The second face was the face of a man. The third face was the face of a lion. The fourth was the face of an eagle.
 Ezekiel 10:15	 The cherubim mounted up. This is the living creature that I saw by the river Chebar.
 Ezekiel 10:16	 When the cherubim went, the wheels went beside them; and when the cherubim lifted up their wings to mount up from the earth, the wheels also did not turn from beside them.
 Ezekiel 10:17	 When they stood, these stood. When they mounted up, these mounted up with them; for the spirit of the living creature was in them.
@@ -20692,7 +20692,7 @@ Ezekiel 12:8	 In the morning, God’s word came to me, saying,
 Ezekiel 12:9	 “Son of man, has not the house of Israel, the rebellious house, said to you, ‘What are you doing?’
 Ezekiel 12:10	 “Say to them, ‘The Lord God says: “This burden concerns the prince in Jerusalem, and all the house of Israel among whom they are.”’
 Ezekiel 12:11	 “Say, ‘I am your sign. As I have done, so will it be done to them. They will go into exile, into captivity.
-Ezekiel 12:12	 “‘The prince who is among them will bear on his shoulder in the dark, and will go out. They will dig through the wall to carry things out that way. He will cover his face, because he will not see the land with his eyes.
+Ezekiel 12:12	 “‘The prince who is among them will bear his baggage on his shoulder in the dark, and will go out. They will dig through the wall to carry things out that way. He will cover his face, because he will not see the land with his eyes.
 Ezekiel 12:13	 I will also spread my net on him, and he will be taken in my snare. I will bring him to Babylon to the land of the Chaldeans; yet he will not see it, though he will die there.
 Ezekiel 12:14	 I will scatter toward every wind all who are around him to help him, and all his bands. I will draw out the sword after them.
 Ezekiel 12:15	 “‘They will know that I am God when I disperse them among the nations, and scatter them through the countries.
@@ -28031,7 +28031,7 @@ Romans 4:5	 But to him who does not work, but believes in him who justifies th
 Romans 4:6	 Even as David also pronounces blessing on the man to whom God counts righteousness apart from works,
 Romans 4:7	 “Blessed are they whose iniquities are forgiven, whose sins are covered.
 Romans 4:8	 Blessed is the man whom the Lord will by no means charge with sin.”
-Romans 4:9	 Is this blessing then pronounced on the circumcised, or on the uncircumcised also? For we say that faith was accounted to Abraham for righteousness.
+Romans 4:9	 Is this blessing then pronounced only on the circumcised, or on the uncircumcised also? For we say that faith was accounted to Abraham for righteousness.
 Romans 4:10	 How then was it counted? When he was in circumcision, or in uncircumcision? Not in circumcision, but in uncircumcision.
 Romans 4:11	 He received the sign of circumcision, a seal of the righteousness of the faith which he had while he was in uncircumcision, that he might be the father of all those who believe, though they might be in uncircumcision, that righteousness might also be accounted to them.
 Romans 4:12	 He is the father of circumcision to those who not only are of the circumcision, but who also walk in the steps of that faith of our father Abraham, which he had in uncircumcision.
@@ -28459,7 +28459,7 @@ Romans 16:24	 The grace of our Lord Jesus Christ be with you all! Amen.
 1 Corinthians 5:2	 You are arrogant, and did not mourn instead, that he who had done this deed might be removed from among you.
 1 Corinthians 5:3	 For I most certainly, as being absent in body but present in spirit, have already, as though I were present, judged him who has done this thing.
 1 Corinthians 5:4	 In the name of our Lord Jesus Christ, you being gathered together, and my spirit, with the power of our Lord Jesus Christ,
-1 Corinthians 5:5	 are to deliver such a one to Satan for the destruction of the flesh, that the spirit may be saved in the day of the Lord Jesus.
+1 Corinthians 5:5	 you are to deliver such a one to Satan for the destruction of the flesh, that the spirit may be saved in the day of the Lord Jesus.
 1 Corinthians 5:6	 Your boasting is not good. Do you not know that a little yeast leavens the whole lump?
 1 Corinthians 5:7	 Purge out the old yeast, that you may be a new lump, even as you are unleavened. For indeed Christ, our Passover, has been sacrificed in our place.
 1 Corinthians 5:8	 Therefore let us keep the feast, not with old yeast, neither with the yeast of malice and wickedness, but with the unleavened bread of sincerity and truth.
@@ -30882,7 +30882,7 @@ Revelation 11:6	 They have the power to shut up the sky, that it may not rain 
 Revelation 11:7	 When they have finished their testimony, the beast that comes up out of the abyss will make war with them, and overcome them, and kill them.
 Revelation 11:8	 Their dead bodies will be in the street of the great city, which spiritually is called Sodom and Egypt, where also their Lord was crucified.
 Revelation 11:9	 From among the peoples, tribes, languages, and nations, people will look at their dead bodies for three and a half days, and will not allow their dead bodies to be laid in a tomb.
-Revelation 11:10	 Those who dwell on the earth rejoice over them, and they will be glad. They will give gifts to one another, because these two prophets tormented those who dwell on the earth.
+Revelation 11:10	 Those who dwell on the earth will rejoice over them, and they will be glad. They will give gifts to one another, because these two prophets tormented those who dwell on the earth.
 Revelation 11:11	 After the three and a half days, the breath of life from God entered into them, and they stood on their feet. Great fear fell on those who saw them.
 Revelation 11:12	 I heard a loud voice from heaven saying to them, “Come up here!” They went up into heaven in the cloud, and their enemies saw them.
 Revelation 11:13	 In that day there was a great earthquake, and a tenth of the city fell. Seven thousand people were killed in the earthquake, and the rest were terrified, and gave glory to the God of heaven.
