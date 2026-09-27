@@ -79,8 +79,7 @@ position 65 rebaselined 1 -> 0, `aeBibleClass` commit pending). Re-exported
 headings), then propagated via `npm run docm.rwb.full-sync` (`aeRWB`) -
 exactly 1 verse changed, the same 4 known ref mismatches (Jeremiah
 37:910, Romans 14/16 versification) untouched as expected. All 25 `aeRWB`
-tests pass. Left uncommitted in `aeRWB`, per that repo's own
-review-before-push practice.
+tests pass. Committed and pushed 2026-09-26 (`aeRWB` `ba87d5e`).
 
 **Original finding, for the record:**
 
@@ -120,9 +119,9 @@ generalized to every changed verse rather than a pattern-scoped subset.
 Run against the current `rwb.txt`: **14,916 verses synced, 0 remaining
 docm-vs-rwb.txt differences** (confirmed via a fresh diff after the sync).
 4 verses each side untouched (ref mismatches, not text differences - see
-below). All 25 `aeRWB` tests still pass. **Left uncommitted in `aeRWB`'s
-working tree, per operator instruction, for GitHub Desktop review - text
-content review is its own, separate cycle from this mechanical sync.**
+below). All 25 `aeRWB` tests still pass. **Reviewed, committed, and
+pushed by the operator** (text-content review was its own, separate
+cycle from this mechanical sync, per the original instruction).
 
 Two real findings surfaced while running this:
 - **Romans 14:24-26 vs. 16:25-27**: already-documented versification
