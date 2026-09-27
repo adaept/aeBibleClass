@@ -249,7 +249,14 @@ turned out to be right, just not the actual issue):
 Could not locate a wrong-verse discrepancy in any currently-committed
 source - correctly so, per the operator's clarification above. Closed.
 
-### 7. What the rwb export needs to include superscriptions and BOOK 1-5 - BUILT 2026-09-26
+### 7. What the rwb export needs to include superscriptions and BOOK 1-5 - CLOSED 2026-09-26
+
+**Second live run, after the book-division fix: `wrote 121 front-matter
+entries (bookDivisions=5 superscriptions=116)`.** All 5 divisions now
+correctly attributed - `Psalm 1/42/73/90/107`, exactly matching the
+traditional five-book Psalter structure. `psalm-front-matter.txt`
+committed to `aeRWB` (`5c52a8d`) with real data; `rpt/docm-psalm-front-matter.txt`
+committed here. All 30 `aeRWB` tests pass. Nothing left open in this item.
 
 All three pieces below are now built. **Decision made explicit: option 2b
 (a separate sidecar file) was chosen over 2a (a pseudo-verse key in

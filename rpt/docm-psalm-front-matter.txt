@@ -1,0 +1,123 @@
+﻿RWB-PSALM-FRONT-MATTER
+Psalm superscriptions and BOOK divisions - exported from the live .docm (2026-09-26)
+Psalm 1	bookDivision	BOOK 1
+Psalm 3	superscription	A Psalm by David, when he fled from Absalom his son.
+Psalm 4	superscription	For the Chief Musician; on stringed instruments. A Psalm by David.
+Psalm 5	superscription	For the Chief Musician, with the flutes. A Psalm by David.
+Psalm 6	superscription	For the Chief Musician; on stringed instruments, upon the eight-stringed lyre. A Psalm by David.
+Psalm 7	superscription	A meditation by David, which he sang to God, concerning the words of Cush, the Benjamite.
+Psalm 8	superscription	For the Chief Musician; on an instrument of Gath. A Psalm by David.
+Psalm 9	superscription	For the Chief Musician. Set to “The Death of the Son.” A Psalm by David.
+Psalm 11	superscription	For the Chief Musician. By David.
+Psalm 12	superscription	For the Chief Musician; upon an eight-stringed lyre. A Psalm of David.
+Psalm 13	superscription	For the Chief Musician. A Psalm by David.
+Psalm 14	superscription	For the Chief Musician. By David.
+Psalm 15	superscription	A Psalm by David.
+Psalm 16	superscription	A Poem by David.
+Psalm 17	superscription	A Prayer by David.
+Psalm 18	superscription	For the Chief Musician. By David the servant of God, who spoke to God the words of this song in the day that God delivered him from the hand of all his enemies, and from the hand of Saul. He said,
+Psalm 19	superscription	For the Chief Musician. A Psalm by David.
+Psalm 20	superscription	For the Chief Musician. A Psalm by David.
+Psalm 21	superscription	For the Chief Musician. A Psalm by David.
+Psalm 22	superscription	For the Chief Musician; set to “The Doe of the Morning.” A Psalm by David.
+Psalm 23	superscription	A Psalm by David.
+Psalm 24	superscription	A Psalm by David.
+Psalm 25	superscription	By David.
+Psalm 26	superscription	By David.
+Psalm 27	superscription	By David.
+Psalm 28	superscription	By David.
+Psalm 29	superscription	A Psalm by David.
+Psalm 30	superscription	A Psalm. A Song for the Dedication of the Temple. By David.
+Psalm 31	superscription	For the Chief Musician. A Psalm by David.
+Psalm 32	superscription	By David. A contemplative psalm.
+Psalm 34	superscription	By David; when he pretended to be insane before Abimelech, who drove him away, and he departed.
+Psalm 35	superscription	By David.
+Psalm 36	superscription	For the Chief Musician. By David, the servant of God.
+Psalm 37	superscription	By David.
+Psalm 38	superscription	A Psalm by David, for a memorial.
+Psalm 39	superscription	For the Chief Musician. For Jeduthun. A Psalm by David.
+Psalm 40	superscription	For the Chief Musician. A Psalm by David.
+Psalm 41	superscription	For the Chief Musician. A Psalm by David.
+Psalm 42	bookDivision	BOOK 2
+Psalm 42	superscription	For the Chief Musician. A contemplation by the sons of Korah.
+Psalm 44	superscription	For the Chief Musician. By the sons of Korah. A contemplative psalm.
+Psalm 45	superscription	For the Chief Musician. Set to “The Lilies.” A contemplation by the sons of Korah. A wedding song.
+Psalm 46	superscription	For the Chief Musician. By the sons of Korah. According to Alamoth.
+Psalm 47	superscription	For the Chief Musician. A Psalm by the sons of Korah.
+Psalm 48	superscription	A Song. A Psalm by the sons of Korah.
+Psalm 49	superscription	For the Chief Musician. A Psalm by the sons of Korah.
+Psalm 50	superscription	A Psalm by Asaph.
+Psalm 51	superscription	For the Chief Musician. A Psalm by David, when Nathan the prophet came to him, after he had gone in to Bathsheba.
+Psalm 52	superscription	For the Chief Musician. A contemplation by David, when Doeg the Edomite came and told Saul, “David has come to Ahimelech’s house.”
+Psalm 53	superscription	For the Chief Musician. To the tune of “Mahalath.” A contemplation by David.
+Psalm 54	superscription	For the Chief Musician. On stringed instruments. A contemplation by David, when the Ziphites came and said to Saul, “Is not David hiding himself among us?”
+Psalm 55	superscription	For the Chief Musician. On stringed instruments. A contemplation by David.
+Psalm 56	superscription	For the Chief Musician. To the tune of “Silent Dove in Distant Lands.” A poem by David, when the Philistines seized him in Gath.
+Psalm 57	superscription	For the Chief Musician. To the tune of “Do Not Destroy.” A poem by David, when he fled from Saul, in the cave.
+Psalm 58	superscription	For the Chief Musician. To the tune of “Do Not Destroy.” A poem by David.
+Psalm 59	superscription	For the Chief Musician. To the tune of “Do Not Destroy.” A poem by David, when Saul sent, and they watched the house to kill him.
+Psalm 60	superscription	For the Chief Musician. To the tune of “The Lily of the Covenant.” A teaching poem by David, when he fought with Aram Naharaim and with Aram Zobah, and Joab returned, and killed twelve thousand of Edom in the Valley of Salt.
+Psalm 61	superscription	For the Chief Musician. For a stringed instrument. By David.
+Psalm 62	superscription	For the Chief Musician. To Jeduthun. A Psalm by David.
+Psalm 63	superscription	A Psalm by David, when he was in the desert of Judah.
+Psalm 64	superscription	For the Chief Musician. A Psalm by David.
+Psalm 65	superscription	For the Chief Musician. A Psalm by David. A song.
+Psalm 66	superscription	For the Chief Musician. A song. A Psalm.
+Psalm 67	superscription	For the Chief Musician. With stringed instruments. A Psalm. A song.
+Psalm 68	superscription	For the Chief Musician. A Psalm by David. A song.
+Psalm 69	superscription	For the Chief Musician. To the tune of “Lilies.” By David.
+Psalm 70	superscription	For the Chief Musician. By David. A reminder.
+Psalm 72	superscription	By Solomon.
+Psalm 73	bookDivision	BOOK 3
+Psalm 73	superscription	A Psalm by Asaph.
+Psalm 74	superscription	A contemplation by Asaph.
+Psalm 75	superscription	For the Chief Musician. To the tune of “Do Not Destroy.” A Psalm by Asaph. A song.
+Psalm 76	superscription	For the Chief Musician. On stringed instruments. A Psalm by Asaph. A song.
+Psalm 77	superscription	For the Chief Musician. To Jeduthun. A Psalm by Asaph.
+Psalm 78	superscription	A contemplation by Asaph.
+Psalm 79	superscription	A Psalm by Asaph.
+Psalm 80	superscription	For the Chief Musician. To the tune of “The Lilies of the Covenant.” A Psalm by Asaph.
+Psalm 81	superscription	For the Chief Musician. On an instrument of Gath. By Asaph.
+Psalm 82	superscription	A Psalm by Asaph.
+Psalm 83	superscription	A song. A Psalm by Asaph.
+Psalm 84	superscription	For the Chief Musician. On an instrument of Gath. A Psalm by the sons of Korah.
+Psalm 85	superscription	For the Chief Musician. A Psalm by the sons of Korah.
+Psalm 86	superscription	A Prayer by David.
+Psalm 87	superscription	A Psalm by the sons of Korah; a Song.
+Psalm 88	superscription	A Song. A Psalm by the sons of Korah. For the Chief Musician. To the tune of “The Suffering of Affliction.” A contemplation by Heman, the Ezrahite.
+Psalm 89	superscription	A contemplation by Ethan, the Ezrahite.
+Psalm 90	bookDivision	BOOK 4
+Psalm 90	superscription	A Prayer by Moses, the man of God.
+Psalm 92	superscription	A Psalm. A song for the Sabbath day.
+Psalm 98	superscription	A Psalm.
+Psalm 100	superscription	A Psalm of thanksgiving.
+Psalm 101	superscription	A Psalm by David.
+Psalm 102	superscription	A Prayer of the afflicted, when he is overwhelmed and pours out his complaint before God.
+Psalm 103	superscription	By David.
+Psalm 107	bookDivision	BOOK 5
+Psalm 108	superscription	A Song. A Psalm by David.
+Psalm 109	superscription	For the Chief Musician. A Psalm by David.
+Psalm 110	superscription	A Psalm by David.
+Psalm 120	superscription	A Song of Ascents.
+Psalm 121	superscription	A Song of Ascents.
+Psalm 122	superscription	A Song of Ascents. By David.
+Psalm 123	superscription	A Song of Ascents.
+Psalm 124	superscription	A Song of Ascents. By David.
+Psalm 125	superscription	A Song of Ascents.
+Psalm 126	superscription	A Song of Ascents.
+Psalm 127	superscription	A Song of Ascents. By Solomon.
+Psalm 128	superscription	A Song of Ascents.
+Psalm 129	superscription	A Song of Ascents.
+Psalm 130	superscription	A Song of Ascents.
+Psalm 131	superscription	A Song of Ascents. By David.
+Psalm 132	superscription	A Song of Ascents.
+Psalm 133	superscription	A Song of Ascents. By David.
+Psalm 134	superscription	A Song of Ascents.
+Psalm 138	superscription	By David.
+Psalm 139	superscription	For the Chief Musician. A Psalm by David.
+Psalm 140	superscription	For the Chief Musician. A Psalm by David.
+Psalm 141	superscription	A Psalm by David.
+Psalm 142	superscription	A contemplation by David, when he was in the cave. A Prayer.
+Psalm 143	superscription	A Psalm by David.
+Psalm 144	superscription	By David.
+Psalm 145	superscription	A praise psalm by David.
