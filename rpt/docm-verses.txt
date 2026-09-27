@@ -9226,7 +9226,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 14:5	 God said to Ahijah, “Behold, Jeroboam’s wife is coming to inquire of you concerning her son; for he is sick. This is what you are to say to her; for it will be, when she comes in, that she will pretend to be another woman.”
 1 Kings 14:6	 So when Ahijah heard the sound of her feet as she came in at the door, he said, “Come in, Jeroboam’s wife! Why do you pretend to be another? For I am sent to you with heavy news.
 1 Kings 14:7	 Go, tell Jeroboam, ‘God, the God of Israel, says: “Because I exalted you from among the people, and made you prince over my people Israel,
-1 Kings 14:8	 and tore the kingdom away from David’s house, and gave it you; and yet you have not been as my servant David, who kept my commandments, and who followed me with all his heart, to do that only which was right in my eyes,
+1 Kings 14:8	 and tore the kingdom away from David’s house, and gave it to you; and yet you have not been as my servant David, who kept my commandments, and who followed me with all his heart, to do that only which was right in my eyes,
 1 Kings 14:9	 but have done evil above all who were before you, and have gone and made for yourself other gods, molten images, to provoke me to anger, and have cast me behind your back;
 1 Kings 14:10	 therefore, behold, I will bring disaster on the house of Jeroboam, and will cut off from Jeroboam everyone who urinates on a wall, he who is shut up and he who is left at large in Israel, and will utterly sweep away the house of Jeroboam, as a man sweeps away dung, until it is all gone.
 1 Kings 14:11	 The dogs will eat he who belongs to Jeroboam who dies in the city; and the birds of the sky will eat he who dies in the field: for God has spoken it.”’
@@ -12883,7 +12883,7 @@ Job 1:10	 Have you not made a hedge around him, and around his house, and arou
 Job 1:11	 But stretch out your hand now, and touch all that he has, and he will renounce you to your face.”
 Job 1:12	 God said to Satan, “Behold, all that he has is in your power. Only on himself do not stretch out your hand.” So Satan went out from the presence of God.
 Job 1:13	 It fell on a day when his sons and his daughters were eating and drinking wine in their oldest brother’s house,
-Job 1:14	 a messenger came to Job, and said, “The oxen were plowing, and the donkeys feeding beside them,
+Job 1:14	 that a messenger came to Job, and said, “The oxen were plowing, and the donkeys feeding beside them,
 Job 1:15	 and the Sabeans attacked, and took them away. Yes, they have killed the servants with the edge of the sword, and I alone have escaped to tell you.”
 Job 1:16	 While he was still speaking, another also came and said, “The fire of God has fallen from the sky, and has burned up the sheep and the servants, and consumed them, and I alone have escaped to tell you.”
 Job 1:17	 While he was still speaking, another also came and said, “The Chaldeans made three bands, and swept down on the camels, and have taken them away, yes, and killed the servants with the edge of the sword; and I alone have escaped to tell you.”
@@ -21717,7 +21717,7 @@ Ezekiel 48:11	 It shall be for the priests who are sanctified of the sons of Z
 Ezekiel 48:12	 It shall be to them an offering from the offering of the land, a most holy thing, by the border of the Levites.
 Ezekiel 48:13	 “Answerable to the border of the priests, the Levites shall have twenty-five thousand in length, and ten thousand in width. All the length shall be twenty-five thousand, and the width ten thousand.
 Ezekiel 48:14	 They shall sell none of it, nor exchange it, nor shall the first fruits of the land be alienated; for it is holy to God.
-Ezekiel 48:15	 “The five thousand that are left in the width, in front of the twenty-five thousand, shall be for common use, for the city, for dwelling and for pasture lands; and the city shall be in the middle of it.
+Ezekiel 48:15	 “The five thousand cubits that are left in the width, in front of the twenty-five thousand, shall be for common use, for the city, for dwelling and for pasture lands; and the city shall be in the middle of it.
 Ezekiel 48:16	 These shall be its measurements: the north side four thousand and five hundred, and the south side four thousand and five hundred, and on the east side four thousand and five hundred, and the west side four thousand and five hundred.
 Ezekiel 48:17	 The city shall have pasture lands: toward the north two hundred fifty, and toward the south two hundred fifty, and toward the east two hundred fifty, and toward the west two hundred fifty.
 Ezekiel 48:18	 The remainder in the length, alongside the holy offering, shall be ten thousand eastward, and ten thousand westward; and it shall be alongside the holy offering. Its increase shall be for food to those who labor in the city.
@@ -24846,7 +24846,7 @@ Mark 15:16	 The soldiers led him away within the court, which is the Praetoriu
 Mark 15:17	 They clothed him with purple, and weaving a crown of thorns, they put it on him.
 Mark 15:18	 They began to salute him, “Hail, King of the Jews!”
 Mark 15:19	 They struck his head with a reed, and spat on him, and bowing their knees, did homage to him.
-Mark 15:20	 When they had mocked him, they took the purple off him, and put his own garments on him. They led him out to crucify him.
+Mark 15:20	 When they had mocked him, they took the purple cloak off him, and put his own garments on him. They led him out to crucify him.
 Mark 15:21	 They compelled one passing by, coming from the country, Simon of Cyrene, the father of Alexander and Rufus, to go with them, that he might bear his cross.
 Mark 15:22	 They brought him to the place called Golgotha, which is, being interpreted, “The place of a skull.”
 Mark 15:23	 They offered him wine mixed with myrrh to drink, but he did not take it.
@@ -25985,7 +25985,7 @@ Luke 23:46	 Jesus, crying with a loud voice, said, “Father, into your hands 
 Luke 23:47	 When the centurion saw what was done, he glorified God, saying, “Certainly this was a righteous man.”
 Luke 23:48	 All the multitudes that came together to see this, when they saw the things that were done, returned home beating their breasts.
 Luke 23:49	 All his acquaintances and the women who followed with him from Galilee stood at a distance, watching these things.
-Luke 23:50	 Behold, a man named Joseph, who was a member of the council, a good and righteous man
+Luke 23:50	 Behold, there was a man named Joseph, who was a member of the council, a good and righteous man
 Luke 23:51	 (he had not consented to their counsel and deed), from Arimathaea, a city of the Jews, who was also waiting for God’s Kingdom:
 Luke 23:52	 this man went to Pilate, and asked for Jesus’ body.
 Luke 23:53	 He took it down, and wrapped it in a linen cloth, and laid him in a tomb that was cut in stone, where no one had ever been laid.
@@ -27589,7 +27589,7 @@ Acts 18:28	 for he powerfully refuted the Jews, publicly showing by the Script
 Acts 19:1	 While Apollos was at Corinth, Paul, having passed through the upper country, came to Ephesus and found certain disciples.
 Acts 19:2	 He said to them, “Did you receive the Holy Spirit when you believed?” They said to him, “No, we have not even heard that there is a Holy Spirit.”
 Acts 19:3	 He said, “Into what then were you baptized?” They said, “Into John’s baptism.”
-Acts 19:4	 Paul said, “John indeed baptized with the baptism of repentance, saying to the people that they should believe in the one who would come after him, that is, in Jesus.”
+Acts 19:4	 Paul said, “John indeed baptized with the baptism of repentance, saying to the people that they should believe in the one who would come after him, that is, in Christ Jesus.”
 Acts 19:5	 When they heard this, they were baptized in the name of the Lord Jesus.
 Acts 19:6	 When Paul had laid his hands on them, the Holy Spirit came on them and they spoke with other languages and prophesied.
 Acts 19:7	 They were about twelve men in all.
@@ -28409,7 +28409,7 @@ Romans 16:24	 The grace of our Lord Jesus Christ be with you all! Amen.
 1 Corinthians 2:12	 But we received not the spirit of the world, but the Spirit which is from God, that we might know the things that were freely given to us by God.
 1 Corinthians 2:13	 We also speak these things, not in words which man’s wisdom teaches, but which the Holy Spirit teaches, comparing spiritual things with spiritual things.
 1 Corinthians 2:14	 Now the natural man does not receive the things of God’s Spirit, for they are foolishness to him, and he cannot know them, because they are spiritually discerned.
-1 Corinthians 2:15	 But he who is spiritual discerns all things, and he himself is judged by no one.
+1 Corinthians 2:15	 But he who is spiritual discerns all things, and he himself is to be judged by no one.
 1 Corinthians 2:16	 “For who has known the mind of the Lord, that he should instruct him?” But we have Christ’s mind.
 1 Corinthians 3:1	 Brothers, I could not speak to you as to spiritual, but as to fleshly, as to babies in Christ.
 1 Corinthians 3:2	 I fed you with milk, not with meat; for you were not yet ready. Indeed, you are not ready even now,
@@ -29853,7 +29853,7 @@ Colossians 4:18	 The salutation of me, Paul, with my own hand: remember my bon
 2 Timothy 2:23	 But refuse foolish and ignorant questionings, knowing that they generate strife.
 2 Timothy 2:24	 The Lord’s servant must not quarrel, but be gentle toward all, able to teach, patient,
 2 Timothy 2:25	 in gentleness correcting those who oppose him: perhaps God may give them repentance leading to a full knowledge of the truth,
-2 Timothy 2:26	 and they may recover themselves out of the devil’s snare, having been taken captive by him to his will.
+2 Timothy 2:26	 and they may recover themselves out of the devil’s snare, having been taken captive by him to do his will.
 2 Timothy 3:1	 But know this: that in the last days, grievous times will come.
 2 Timothy 3:2	 For men will be lovers of self, lovers of money, boastful, arrogant, blasphemers, disobedient to parents, unthankful, unholy,
 2 Timothy 3:3	 without natural affection, unforgiving, slanderers, without self-control, fierce, not lovers of good,
@@ -30509,7 +30509,7 @@ James 5:20	 let him know that he who turns a sinner from the error of his way 
 2 Peter 2:6	 and turning the cities of Sodom and Gomorrah into ashes, condemned them to destruction, having made them an example to those who would live in an ungodly way
 2 Peter 2:7	 and delivered righteous Lot, who was very distressed by the lustful life of the wicked
 2 Peter 2:8	 (for that righteous man dwelling among them was tormented in his righteous soul from day to day with seeing and hearing lawless deeds):
-2 Peter 2:9	 the Lord knows how to deliver the godly out of temptation and to keep the unrighteous under punishment for the day of judgment,
+2 Peter 2:9	 then the Lord knows how to deliver the godly out of temptation and to keep the unrighteous under punishment for the day of judgment,
 2 Peter 2:10	 but chiefly those who walk after the flesh in the lust of defilement and despise authority. Daring, self-willed, they are not afraid to speak evil of dignitaries;
 2 Peter 2:11	 whereas angels, though greater in might and power, do not bring a railing judgment against them before the Lord.
 2 Peter 2:12	 But these, as unreasoning creatures, born natural animals to be taken and destroyed, speaking evil in matters about which they are ignorant, will in their destroying surely be destroyed,
@@ -31006,7 +31006,7 @@ Revelation 18:9	 The kings of the earth who committed sexual immorality and li
 Revelation 18:10	 standing far away for the fear of her torment, saying, ‘Woe, woe, the great city, Babylon, the strong city! For your judgment has come in one hour.’
 Revelation 18:11	 The merchants of the earth weep and mourn over her, for no one buys their merchandise any more:
 Revelation 18:12	 merchandise of gold, silver, precious stones, pearls, fine linen, purple, silk, scarlet, all expensive wood, every vessel of ivory, every vessel made of most precious wood, and of brass, and iron, and marble;
-Revelation 18:13	 and cinnamon, incense, perfume, frankincense, wine, olive oil, fine flour, wheat, sheep, horses, chariots, and people’s bodies and souls.
+Revelation 18:13	 and cinnamon, incense, perfume, frankincense, wine, olive oil, fine flour, wheat, cattle, sheep, horses, chariots, and people’s bodies and souls.
 Revelation 18:14	 The fruits which your soul lusted after have been lost to you. All things that were dainty and sumptuous have perished from you, and you will find them no more at all.
 Revelation 18:15	 The merchants of these things, who were made rich by her, will stand far away for the fear of her torment, weeping and mourning,
 Revelation 18:16	 saying, ‘Woe, woe, the great city, she who was dressed in fine linen, purple, and scarlet, and decked with gold and precious stones and pearls!
