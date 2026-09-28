@@ -9,12 +9,14 @@ shapes occur exactly once (checked against `aeRWB` commit `7645e9e1`,
 `aeBibleClass` commit `6c95c71`: WEBU `other` 1,454/12,201 = 11.9%, WEBBE
 `other` 1,952/14,243 = 13.7%). What remains is genuine editorial
 divergence needing individual human judgment, not more pattern-finding.
-**Updated 2026-09-29 (see the two addenda below the Status section)**: two
-rounds of follow-up classifier fixes (`aeRWB` commits `f197665`, `2c8f2c7`,
-`7796fc1`) brought this to WEBU 1,385/12,201 = 11.4%, WEBBE 1,886/14,243 =
-13.2% - the first round moved diagnostic accuracy more than bucket size,
-the second (a much-too-narrow "evil"-softening word whitelist) moved both
-substantially.
+**Updated 2026-09-29 (see the three addenda below the Status section)**:
+three rounds of follow-up classifier fixes (`aeRWB` commits `f197665`,
+`2c8f2c7`, `7796fc1`, `3ec0bf9`, `956a080`) brought this to WEBU
+1,239/12,201 = 10.2%, WEBBE 1,697/14,243 = 11.9% - the first round moved
+diagnostic accuracy more than bucket size, the second (a too-narrow
+"evil"-softening word whitelist) moved both substantially, and the third
+(sourcing a real KJV text and checking word choices against it per-verse)
+was the single largest reduction of the whole effort.
 
 **This is a plan document only - nothing here is built yet.** Per the
 operator's 10-point brief (2026-09-28), captured verbatim as the ten
@@ -145,6 +147,77 @@ one of these three synonyms I happened to sample." Worth checking any
 future two-sided narrow-whitelist rule against this same question before
 trusting its coverage.
 
+## Addendum 3, 2026-09-29: a real KJV text source, and the largest single reduction yet
+
+**The operator's next review of the (now Addendum-2-corrected) `1 Kings
+22:18` example moved on to Genesis 3:15 (`"hostility"` -> `"enmity"`) and
+asked something new: is this a real KJV word match, or another guess?**
+Checking that question honestly required admitting a real gap - this
+project had **no local KJV text**, so any "matches KJV" claim up to this
+point (the on-in/will-shall/even-emphasis idiom categories) was grounded
+in general register recognition, not verse-by-verse ground truth.
+
+**The operator asked directly whether sourcing a real KJV text made
+sense** - it did. Found and verified `https://eBible.org/Scriptures/
+eng-kjv2006_usfm.zip` (Pure Cambridge Edition, 1769 text) - same site,
+same USFM format, same UTF-8 encoding as the already-integrated WEBU/WEBBE
+drops, downloaded by the operator into `aeBibleClass/eng-kjv2006_usfm/`
+(gitignored, matching the other two). `aeRWB` commit `3ec0bf9` adds
+`export-kjv.mjs`/`kjv-loader.mjs` (mirroring `export-webbe.mjs` exactly,
+no new parsing logic) producing `kjv.txt` - 31,102 verses, matching the
+docm's own known-good baseline count exactly.
+
+**Rejected an earlier alternative** (`openbible.com/textfiles/kjv.txt`,
+a plain-text dump from the same site `web.txt` already comes from) -
+same simple format, but unconfirmed encoding and `[bracket]`-notation for
+supplied words that would have needed new cleanup code. The eBible.org
+USFM route needed zero new parsing logic and guaranteed UTF-8.
+
+**Verification methodology** (not a blind "does this word appear
+anywhere in the KJV" check - that was tried first and produced too much
+noise): for every remaining single-word-substitution hunk in the `other`
+bucket, checked whether the docm's word is present in the REAL KJV text
+at that EXACT verse reference and WEBU's word is absent from it -
+per-verse ground truth, not a generic table. An unfiltered first pass
+found 280 "confirmed" hits, but many were common short words (`"the"`,
+`"was"`, `"who"`) that trivially appear in nearly any KJV verse
+regardless of real causation. Restricting to distinctive words (length
+>= 4 letters, excluding a ~50-word stopword list) narrowed this to
+**198 high-confidence hits** - several patterns recurring enough to be
+certain: `"Baptizer"` -> `"Baptist"` (15x), `"give"` -> `"render"` (10x),
+`"chest(s)"` -> `"breast(s)"` (7x), Ezekiel's temple-vision `"nave"`/
+`"temple"` vocabulary (7x), `"tunic(s)"` -> `"coat(s)"` (4x), the rest
+genuine single-occurrence matches (`"sulfur"` -> `"brimstone"`, `"hades"`/
+`"tartarus"` -> `"hell"`, `"hall"` -> `"porch"`, and many more).
+
+**Built as a real classifier category, not a one-time list**: `aeRWB`
+commit `956a080` adds `kjv-word-choice`, checking every remaining
+single-word substitution against `kjv.txt` live at classify time (a
+lazily-loaded, memoized reference bible), not a static word-pair table -
+this means any FUTURE docm edit that happens to match real KJV wording
+at its verse gets picked up automatically, the same way `nt-variant-
+addition`'s ref-keyed check does for the 4 known textual-variant verses.
+
+**Result: WEBU `other` 1,385 -> 1,239 (-146, now 10.2%), WEBBE 1,886 ->
+1,697 (-189, now 11.9%)** - by a wide margin the single largest reduction
+across this entire categorization effort (compare Addendum 1's -68 and
+Addendum 2's -68). Confirms the operator's original observation
+(Genesis 3:15) was correct, and that it was one instance of a much larger,
+now-verifiable pattern.
+
+**A genuine textual-tradition finding surfaced as a side effect, distinct
+from ordinary vocabulary preference**: 2 Samuel 21:8 - WEBU reads
+`"Merab"` (the modern scholarly emendation, since Michal is stated
+childless at 2 Samuel 6:23), the KJV reads `"Michal"` (the Masoretic
+Text's literal, textually disputed reading), and the docm already reads
+`"Michal"` - matching the KJV/traditional side, the Old Testament
+counterpart to the New Testament NU/TR variant policy documented
+elsewhere in the categorizer. Not flagged as an error - flagged for the
+operator's awareness/explicit confirmation, since it's a real textual
+decision riding along inside what otherwise looks like an ordinary
+word-choice hunk, not something this check's stopword/length filter
+would ever catch or exclude on its own.
+
 ## The ten requirements, as given
 
 1. Update the memory/README with current status, but do not consider the
@@ -198,8 +271,8 @@ of one:
 ```
 RWB-REVIEW
 docm-vs-WEBU, generated <date> from aeBibleClass <docm commit> / aeRWB <engwebu.txt commit> - see aeRWB/tools/web-diff/README.md R15
-rwb[ ]	Genesis 3:15	I will put enmity between you and the woman, and between your offspring and her offspring. He will bruise your head, and you will bruise his heel."
-webu	Genesis 3:15	I will put hostility between you and the woman, and between your offspring and her offspring. He will bruise your head, and you will bruise his heel."
+rwb[ ]	Genesis 2:19	Out of the ground God formed every animal of the field, and every bird of the sky, and brought them to Adam to see what he would call them. Whatever the man called every living creature became its name.
+webu	Genesis 2:19	Out of the ground the LORD God formed every animal of the field, and every bird of the sky, and brought them to the man to see what he would call them. Whatever the man called every living creature became its name.
 ```
 
 - Two header lines, matching `rwb.txt`'s own `translation`/`source` header
