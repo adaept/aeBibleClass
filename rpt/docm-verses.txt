@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-09-27)
+Radiant Word Bible - exported from the live .docm (2026-09-28)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -10939,7 +10939,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Chronicles 21:2	 David said to Joab and to the princes of the people, “Go, count Israel from Beersheba even to Dan; and bring me word, that I may know how many there are.”
 1 Chronicles 21:3	 Joab said, “May God make his people a hundred times as many as they are. But, my lord the king, are they not all my lord’s servants? Why does my lord require this thing? Why will he be a cause of guilt to Israel?”
 1 Chronicles 21:4	 Nevertheless the king’s word prevailed against Joab. Therefore Joab departed, and went throughout all Israel, then came to Jerusalem.
-1 Chronicles 21:5	 Joab gave up the sum of the census of the people to David. All those of Israel were one million one hundred thousand men who drew a sword; and in Judah were four hundred seventy thousand men who drew a sword.
+1 Chronicles 21:5	 Joab gave the sum of the census of the people to David. All those of Israel were one million one hundred thousand men who drew a sword; and in Judah were four hundred seventy thousand men who drew a sword.
 1 Chronicles 21:6	 But he did not count Levi and Benjamin among them; for the king’s word was abominable to Joab.
 1 Chronicles 21:7	 God was displeased with this thing; therefore he struck Israel.
 1 Chronicles 21:8	 David said to God, “I have sinned greatly, in that I have done this thing. But now put away, I beg you, the iniquity of your servant; for I have done very foolishly.”
@@ -24243,7 +24243,7 @@ Mark 1:24	 saying, “Ha! What do we have to do with you, Jesus, you Nazarene?
 Mark 1:25	 Jesus rebuked him, saying, “Be quiet, and come out of him!”
 Mark 1:26	 The unclean spirit, convulsing him and crying with a loud voice, came out of him.
 Mark 1:27	 They were all amazed, so that they questioned among themselves, saying, “What is this? A new teaching? For with authority he commands even the unclean spirits, and they obey him!”
-Mark 1:28	 The report of him went out immediately everywhere into all the region of Galilee and its surrounding area.
+Mark 1:28	 The report of him went out immediately into all the region of Galilee and its surrounding area.
 Mark 1:29	 Immediately, when they had come out of the synagogue, they came into the house of Simon and Andrew, with James and John.
 Mark 1:30	 Now Simon’s wife’s mother lay sick with a fever, and immediately they told him about her.
 Mark 1:31	 He came and took her by the hand and raised her up. The fever left her immediately, and she served them.
@@ -28112,7 +28112,7 @@ Romans 7:17	 So now it is no more I that do it, but sin which dwells in me.
 Romans 7:18	 For I know that in me, that is, in my flesh, dwells no good thing. For desire is present with me, but I do not find it doing that which is good.
 Romans 7:19	 For the good which I desire, I do not do; but the evil which I do not desire, that I practice.
 Romans 7:20	 But if what I do not desire, that I do, it is no more I that do it, but sin which dwells in me.
-Romans 7:21	 I find then the law that, to me, while I desire to do good, evil is present.
+Romans 7:21	 I find then the law that, while I desire to do good, evil is present.
 Romans 7:22	 For I delight in God’s law after the inward person,
 Romans 7:23	 but I see a different law in my members, warring against the law of my mind, and bringing me into captivity under the law of sin which is in my members.
 Romans 7:24	 What a wretched man I am! Who will deliver me out of the body of this death?
@@ -29336,7 +29336,7 @@ Ephesians 5:28	 Even so husbands also ought to love their own wives as their o
 Ephesians 5:29	 For no man ever hated his own flesh; but nourishes and cherishes it, even as the Lord also does the assembly;
 Ephesians 5:30	 because we are members of his body, of his flesh and bones.
 Ephesians 5:31	 “For this cause a man will leave his father and mother, and will be joined to his wife. Then the two will become one flesh.”
-Ephesians 5:32	 This mystery is great, but I speak concerning Christ and of the assembly.
+Ephesians 5:32	 This mystery is great, but I speak concerning Christ and the assembly.
 Ephesians 5:33	 Nevertheless each of you must also love his own wife even as himself; and let the wife see that she respects her husband.
 Ephesians 6:1	 Children, obey your parents in the Lord, for this is right.
 Ephesians 6:2	 “Honor your father and mother,” which is the first commandment with a promise:
