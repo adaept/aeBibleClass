@@ -9,10 +9,12 @@ shapes occur exactly once (checked against `aeRWB` commit `7645e9e1`,
 `aeBibleClass` commit `6c95c71`: WEBU `other` 1,454/12,201 = 11.9%, WEBBE
 `other` 1,952/14,243 = 13.7%). What remains is genuine editorial
 divergence needing individual human judgment, not more pattern-finding.
-**Updated 2026-09-28 (see the addendum below the Status section)**: a
-follow-up classifier fix (`aeRWB` commit `f197665`) brought this to WEBU
-1,453/12,201, WEBBE 1,951/14,243 - still 11.9%/13.7% at one decimal place,
-the fix's value being diagnostic accuracy, not bucket-size reduction.
+**Updated 2026-09-29 (see the two addenda below the Status section)**: two
+rounds of follow-up classifier fixes (`aeRWB` commits `f197665`, `2c8f2c7`,
+`7796fc1`) brought this to WEBU 1,385/12,201 = 11.4%, WEBBE 1,886/14,243 =
+13.2% - the first round moved diagnostic accuracy more than bucket size,
+the second (a much-too-narrow "evil"-softening word whitelist) moved both
+substantially.
 
 **This is a plan document only - nothing here is built yet.** Per the
 operator's 10-point brief (2026-09-28), captured verbatim as the ten
@@ -86,6 +88,63 @@ had missed. Reinforces that the checklist's job is to make genuinely
 leftover content *legible*, not to chase the `other` percentage to zero by
 any means.
 
+## Addendum 2, 2026-09-29: the same worked example caught a second, bigger bug
+
+**The operator's very next review of this plan - after the example was
+corrected to `1 Kings 22:18` in the addendum above - immediately caught
+another real bug in that same example**: `"evil?"` -> `"always bad?"`
+wasn't recognized as RWB's documented theological softening pattern
+(`project_rwb_editorial_philosophy`'s "avoids literal renderings like
+'God does evil'"), because `isTheologicalHunk` only matched WEBU-side
+"evil" being replaced by one of exactly three whitelisted words
+(`disaster`/`calamity`/`trouble`) - "bad" wasn't on the list.
+
+**Investigation** (per the operator's explicit ask to check the process,
+not just patch the one instance): searched every hunk in the whole
+docm-vs-WEBU diff (not just the current `other` bucket) for any hunk that
+drops the bare word "evil" from WEBU's side, and grouped by what replaces
+it. Found **49 distinct replacement words/phrases** - not 3:
+`disaster` (58x), `harm` (10x), `bad` (10x), `calamity` (6x), `trouble`
+(5x), then a long tail of context-specific rewordings (`wicked`, `wrong`,
+`terrible`, `misfortune`, `destructive`, `tragedy`, `mischief`, even
+Hebrews 10:22's "evil conscience" -> "guilty conscience"). **Operator
+confirmed this is real and intentional, not overreach**: RWB avoids the
+word "evil" wherever it isn't describing a person's own moral
+culpability, deliberately aligning with the NIV over the general KJV
+reading on this specific point ("God cannot do evil by definition") - a
+genuinely broader application of the editorial-philosophy principle than
+the 2-3 examples it was first documented with.
+
+**Fix** (`aeRWB` commit `2c8f2c7`): dropped the replacement-word
+whitelist entirely - `isTheologicalHunk` now fires on ANY hunk that drops
+bare "evil" from WEBU's side, regardless of what (if anything) replaces
+it. The removal of the word is the signal, not any particular
+replacement. A follow-up fan-out scan (same methodology, checked against
+every other WEBU word in the remaining `other` bucket, not just "evil")
+found one more real instance of the same pattern - the plural **"evils"**
+(-> disasters/calamities/troubles, 3 distinct replacements) had the exact
+same gap for the same reason; fixed in commit `7796fc1`. Nothing else in
+that broader scan showed the same signature - every other high-fan-out
+WEBU word (`for`, `are`, `from`, `the`, `not`, `you`, `let`, `him`, `who`,
+`like`, `then`, `that`, `them`, `their`) was ordinary function-word noise,
+not a hidden systematic pattern.
+
+**Result: WEBU `other` 1,453 -> 1,385 (-68 total across both fixes),
+WEBBE 1,951 -> 1,886 (-65).** Unlike Addendum 1's reordering fix, this one
+*did* move the bucket size substantially - the difference is that "evil"
+avoidance is a genuinely single, well-defined signal (one word being
+removed) rather than a structural detection limitation entangled with
+many different individual pieces of real content.
+
+**Process lesson, worth keeping for any future classifier rule**: a rule
+that requires matching BOTH sides of a hunk against a small, hand-picked
+word list is a warning sign when the underlying editorial principle is a
+*removal*, not a *substitution into a closed vocabulary* - "is this word
+being removed" is a far more robust signal than "is it being replaced by
+one of these three synonyms I happened to sample." Worth checking any
+future two-sided narrow-whitelist rule against this same question before
+trusting its coverage.
+
 ## The ten requirements, as given
 
 1. Update the memory/README with current status, but do not consider the
@@ -139,8 +198,8 @@ of one:
 ```
 RWB-REVIEW
 docm-vs-WEBU, generated <date> from aeBibleClass <docm commit> / aeRWB <engwebu.txt commit> - see aeRWB/tools/web-diff/README.md R15
-rwb[ ]	1 Kings 22:18	The king of Israel said to Jehoshaphat, "Did I not tell you that he would not prophesy good concerning me, but always bad?"
-webu	1 Kings 22:18	The king of Israel said to Jehoshaphat, "Didn't I tell you that he would not prophesy good concerning me, but evil?"
+rwb[ ]	Genesis 3:15	I will put enmity between you and the woman, and between your offspring and her offspring. He will bruise your head, and you will bruise his heel."
+webu	Genesis 3:15	I will put hostility between you and the woman, and between your offspring and her offspring. He will bruise your head, and you will bruise his heel."
 ```
 
 - Two header lines, matching `rwb.txt`'s own `translation`/`source` header
