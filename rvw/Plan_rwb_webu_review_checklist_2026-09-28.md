@@ -9,17 +9,16 @@ shapes occur exactly once (checked against `aeRWB` commit `7645e9e1`,
 `aeBibleClass` commit `6c95c71`: WEBU `other` 1,454/12,201 = 11.9%, WEBBE
 `other` 1,952/14,243 = 13.7%). What remains is genuine editorial
 divergence needing individual human judgment, not more pattern-finding.
-**Updated 2026-09-29 (see the four addenda below the Status section)**:
-four rounds of follow-up classifier fixes (`aeRWB` commits `f197665`,
-`2c8f2c7`, `7796fc1`, `3ec0bf9`, `956a080`, `caccd7a`) brought this to
-WEBU 1,232/12,201 = 10.1%, WEBBE 1,690/14,243 = 11.9% - the first round
-moved diagnostic accuracy more than bucket size, the second (a too-narrow
-"evil"-softening word whitelist) moved both substantially, the third
-(sourcing a real KJV text and checking word choices against it per-verse)
-was the single largest reduction of the whole effort, and the fourth
-(two more KJV phrase idioms plus a co-occurrence gap) came directly from
-the operator asking why an already-partially-explained verse was still
-showing up.
+**Updated 2026-09-29 (see the five addenda below the Status section)**:
+five rounds of follow-up work (`aeRWB` commits `f197665`, `2c8f2c7`,
+`7796fc1`, `3ec0bf9`, `956a080`, `caccd7a`; `aeBibleClass` commit
+`f37ecc9`) brought this to WEBU 1,228/12,200 = 10.1%, WEBBE
+1,686/14,242 = 11.8% - the first four rounds were classifier fixes (the
+third, sourcing a real KJV text, was the single largest reduction of the
+whole effort); the fifth was different in kind - a genuine "WEBU is
+better" defect hunt (not a classifier gap) that found and fixed 6 real
+docm defects (3 dehumanizing pronoun downgrades, 3 outright typos), then
+confirmed the hunt exhausted via a zero-new-defects follow-up pass.
 
 **This is a plan document only - nothing here is built yet.** Per the
 operator's 10-point brief (2026-09-28), captured verbatim as the ten
@@ -268,6 +267,64 @@ specific already-partially-explained verse was still showing up, which
 is exactly the review-checklist's own intended workflow (§6) working
 correctly even before the tool itself is built.
 
+## Addendum 5, 2026-09-29: a genuine "WEBU is better" defect hunt, not a classifier fix
+
+**Different in kind from Addenda 1-4**: reviewing this plan's Exodus 2:9
+example, the operator noticed docm's `"nursed it"` is objectively worse
+than WEBU's `"nursed him"` - Moses's sex is already established, so "it"
+reads as dehumanizing, not a stylistic choice. This isn't a classifier
+gap (nothing to explain away) - it's a real content defect in the docm,
+found the same way as the original 12-verse pure-deletion cluster back
+at the start of this whole effort.
+
+**Targeted heuristic searches, not a blanket scan** (each checked against
+the FULL remaining `other` bucket, not just the one example verse):
+
+1. **Personal pronoun -> "it"/"its" downgrades** (he/him/his referring to
+   a person, replaced by "it"): found 8 hits across 5 verses. 3 were
+   genuine defects, all a known-sex child called "it" - **Exodus 2:9**,
+   **2 Samuel 12:15**, **1 Kings 3:21** (the last one internally
+   inconsistent - the same sentence later calls the same referent
+   "son"). The other 3 (Ephesians 5:25-27, "her" -> "it" for "the
+   assembly"/church) were judged a DIFFERENT, defensible category -
+   de-personifying an institution, not misgendering an individual - and
+   deliberately excluded, not fixed.
+2. **Wrong-sex pronoun swaps** (he/him/his <-> she/her): **zero found**,
+   both before and after the fixes below.
+3. **Numeral/digit changes**: **zero found**.
+4. **Negation drops** (bare "not"/"never" removed with nothing
+   compensating anywhere in the verse - real meaning-reversal risk):
+   34 hits, individually reviewed. 31 were safe (restructured with
+   "neither"/"nor", or matching real KJV phrasing like "spared to take",
+   "let not me", "without sin unto salvation" - verified against
+   `kjv.txt`, not guessed). **3 were genuine typos, not edits**:
+   Luke 16:28's `"wil"` (missing a letter), 2 Corinthians 12:18's
+   `"Didt"` (garbled), Hebrews 11:5's `"wouldnot"` (missing a space) -
+   confirmed by checking all three broken forms appear ZERO times in
+   either `kjv.txt` or `engwebu.txt`, ruling out an archaic-spelling
+   explanation.
+5. **Count-noun mismatches** (son/sons, man/men, etc.): 4 hits, all
+   checked against `kjv.txt` and confirmed SAFE - e.g. Psalm 140:1's
+   singular "the evil man"/"the violent man" is the KJV's own exact
+   wording (WEBU's plural "men" is the outlier, not docm).
+
+**All 6 confirmed defects fixed** (`aeBibleClass` commit `f37ecc9`) via
+the same one-at-a-time Word-edit workflow used throughout. Verified: 4 of
+6 fully resolved by the categorizer; the other 2 (2 Samuel 12:15,
+Luke 16:28) still show `other` for a separate, unrelated, pre-existing,
+low-priority reason (a dropped leading "Then"; an em-dash/comma
+punctuation shape) - not defects, not addressed here.
+
+**Follow-up round found zero new defects** - re-ran all five heuristics
+against the post-fix state: pronoun downgrades, gender swaps, and
+numeral changes all at 0; the 4 count-noun cases and all remaining
+negation-drops re-confirmed safe. This specific defect class appears
+exhausted for now - further "WEBU is better" hunting would need a
+different heuristic angle (offered to the operator, not yet pursued:
+dropped proper names replaced by vague pronouns, location-word swaps).
+
+Result: WEBU `other` 1,232 -> 1,228, WEBBE 1,690 -> 1,686.
+
 ## The ten requirements, as given
 
 1. Update the memory/README with current status, but do not consider the
@@ -321,8 +378,8 @@ of one:
 ```
 RWB-REVIEW
 docm-vs-WEBU, generated <date> from aeBibleClass <docm commit> / aeRWB <engwebu.txt commit> - see aeRWB/tools/web-diff/README.md R15
-rwb[ ]	Exodus 2:9	Pharaoh's daughter said to her, "Take this child away, and nurse him for me, and I will give you your wages." The woman took the child, and nursed it.
-webu	Exodus 2:9	Pharaoh's daughter said to her, "Take this child away, and nurse him for me, and I will give you your wages." The woman took the child, and nursed him.
+rwb[ ]	Ruth 3:4	It shall be, when he lies down, that you shall note the place where he is lying. Then you shall go in, uncover his feet, and lay down. Then he will tell you what to do."
+webu	Ruth 3:4	It shall be, when he lies down, that you shall note the place where he is lying. Then you shall go in, uncover his feet, and lie down. Then he will tell you what to do."
 ```
 
 - Two header lines, matching `rwb.txt`'s own `translation`/`source` header
