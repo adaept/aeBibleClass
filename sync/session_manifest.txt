@@ -2274,3 +2274,190 @@ NEXT SESSION:
   uncommitted, nothing unpushed. All docs/memory verified in sync with
   actual code and file state. Safe to end the session here.
 ===============================================================================
+
+# Claude Session Manifest -- 2026-09-28/29
+# ------------------------------------------------------------
+# This session's work was almost entirely in aeRWB (JS tooling, no VBA)
+# and aeBibleClass's rpt/rvw data files - NO aeBibleClass src/ VBA files
+# were touched, so there is nothing to [IMPORT] into the VBA editor this
+# time. Full detail lives in the two repos' own commit history and in
+# aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md (six
+# dated addenda) - this entry is a summary/continuity pointer, not a
+# duplicate of that detail.
+# ------------------------------------------------------------
+
+## What this session did
+
+  Answers/substantially advances the previous session's NEXT SESSION
+  item 3 ("docm-vs-WEBU/WEBBE full categorization... only a 6-verse
+  sample checked so far") - built the tool, ran it for real, and spent
+  most of the session iterating on it plus hand-fixing real docm
+  defects it surfaced. NOT formally closed (see below), but the
+  6-verse-sample caveat is fully resolved.
+
+  1. **Built aeRWB's docm-vs-WEBU/WEBBE categorization tool** (R14,
+     `tools/web-diff/docm-webu-webbe-categorize.mjs`, `npm run
+     docm.categorize`) - tags every changed verse by reason
+     (decontraction/divine-names/formatting/spelling-variant/
+     conjunction/idioms/kjv-word-choice/nt-variant-addition/reordering/
+     theological), so review only has to look at the unexplained
+     "other" bucket. First real run: WEBU other 50.7%, WEBBE 61.7% -
+     far higher than the 6-verse sample suggested.
+
+  2. **Iterated the classifier itself through ~15 rounds of real bugs
+     and gaps**, most found by the operator reviewing worked examples
+     in a companion plan doc (see item 4) rather than by scanning:
+     leading-punctuation gaps (quotes, then parentheses) in contraction/
+     divine-name/theological regexes; a structural "whole-verse exact
+     bag match" limitation in the reordering fallback, replaced with
+     word-by-word partial cancellation; a theological "evil"-avoidance
+     rule that only recognized 3 of 49 real replacement words, broadened
+     to recognize the removal itself as the signal (largest single
+     bugfix before the KJV work); a co-occurrence gap where an already-
+     explained hunk was blocking recognition of a second hunk in the
+     same verse. Full list of categories and their evidence is in the
+     tool's own source comments and `tools/web-diff/README.md`'s R14
+     section.
+
+  3. **Sourced a real KJV text** (R16, `aeRWB/kjv.txt` +
+     `export-kjv.mjs`/`kjv-loader.mjs`, from eBible.org's
+     `eng-kjv2006_usfm.zip`, downloaded by the operator into
+     `aeBibleClass/eng-kjv2006_usfm/`, gitignored like the WEBU/WEBBE
+     drops) and built `kjv-word-choice`, a classifier category checking
+     every remaining word-choice difference against REAL per-verse KJV
+     text (not a static list, not memory). This was the single largest
+     reduction of the whole session (WEBU other -146 in one commit).
+     Also added curated small allowlists/idioms on top (sky/heaven,
+     according-to/after, lie/lay/laid, even-emphasis, out-from-among,
+     will-shall, on-in, only-born, speaker-label) each individually
+     verified against every occurrence before being coded, never guessed.
+
+  4. **Wrote `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md`**
+     (R15 plan, not yet built) proposing a git-tracked, GitHub-Desktop-
+     reviewable rwb/webu checklist file with idempotent checkbox
+     acceptance. The plan itself was never implemented, but its worked
+     examples became the actual engine of this session: six rounds of
+     "operator reviews the current example, catches something real,
+     Claude fixes it, example goes stale, gets replaced" (six dated
+     addenda in that doc). This pattern is worth knowing about even if
+     the tool never gets built - it found real bugs a scripted scan
+     alone did not.
+
+  5. **Fixed real docm content defects in Word, one at a time, same
+     established workflow throughout** (propose fix with WEBU/docm text
+     side by side + recommendation, operator edits in Word, re-export,
+     re-run categorizer, verify the other-count dropped by exactly the
+     right number): ~36 verses total across this session, including -
+     12 dropped-word grammar-break verses (Judges 7:16, 2 Kings 24:1,
+     1 Chronicles 9:13, Ezra 6:8, Nehemiah 2:5, Esther 4:6, Lamentations
+     4:4, Ezekiel 10:14/12:12, 1 Corinthians 5:5, Romans 4:9, Revelation
+     11:10); Matthew 6:13's Lord's Prayer doxology restored (WEBU's own
+     MAIN text has it, footnote says only the modern critical NU text
+     omits it); Matthew 24:36's "nor the son" removed and Luke 12:31's
+     "first" removed (both unsupported by WEBU's own text/footnotes -
+     the opposite direction from the doxology case); 4 NT textual-
+     variant verses (Luke 17:36, Acts 8:37, Acts 15:34, Acts 24:7)
+     CONFIRMED CORRECT as-is (docm promotes a WEBU-footnoted TR/
+     Majority-Text variant into visible parenthetical text) - a real
+     ratified policy, not a fix; 6 Tier-A/B grammar/word-insertion
+     fixes; Micah 2:7's "Don" -> "Do" typo; 3 dehumanizing pronoun
+     downgrades (Exodus 2:9, 2 Samuel 12:15, 1 Kings 3:21 - the last
+     internally inconsistent, same sentence called the referent both
+     "it" and "son"); 3 more outright typos found via a negation-drop
+     search (Luke 16:28 "wil", 2 Corinthians 12:18 "Didt", Hebrews 11:5
+     "wouldnot" - confirmed genuine typos by checking zero occurrences
+     of any broken form in kjv.txt/engwebu.txt).
+
+  6. **Ratified a new NT textual-variant policy** (documented in
+     `tools/web-diff/README.md`'s R14 section and
+     `project_docm_categorization_and_nt_variant_policy` memory):
+     read WEBU's own USFM footnotes directly (never guessed) - "TR
+     adds"/"some manuscripts add" -> promote into docm, in parentheses;
+     "NU omits" -> docm should already have it, missing = defect;
+     "NU adds" -> docm should NOT have it, present = defect; no
+     footnote + famous-parallel match -> harmonization slip, defect.
+     Consistent with the already-documented
+     project_rwb_editorial_philosophy KJV-alignment principle.
+
+  7. **rwb.txt kept in sync throughout**, via small scoped ad hoc Node
+     scripts (never `apply-docm-rwb-full-sync.mjs`'s whole-corpus sync -
+     that stays a separate, deliberately un-run task) touching ONLY the
+     refs just fixed in the docm - per this repo's docm-is-SSOT golden
+     rule. Left uncommitted for the operator's own review/commit each
+     time, per the no-autopush-in-aeRWB convention, except where the
+     operator explicitly said to commit.
+
+  8. One item flagged but NOT resolved - awaiting the operator's
+     explicit confirmation, not blocking anything: 2 Samuel 21:8 -
+     docm reads "Michal" (the Masoretic Text's literal, disputed
+     reading, matching KJV), WEBU reads "Merab" (the modern scholarly
+     emendation). Consistent with everything else confirmed this
+     session, but never explicitly signed off on the way the 4 NT
+     variant cases were.
+
+## NEXT SESSION, IN ORDER
+
+  1. **Operator decision needed first**: build the R15 review-checklist
+     tool for real (`aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md`,
+     §§1-10 + its own open questions in §7), or keep using the manual
+     "review a worked example, fix what it surfaces" pattern that has
+     been finding real defects without it. Both are legitimate; this is
+     not a default, ask if unclear.
+
+  2. If continuing manually (or once the tool exists): the remaining
+     `other` bucket (WEBU 1,226/12,200 = 10.0%, WEBBE 1,684/14,242 =
+     11.8% as of this session's close) is dominated by single-hunk
+     substitutions needing individual judgment, not more classifier
+     categories - `npm run docm.categorize` then filter
+     `category === "other"`, same technique used throughout this
+     session. Untried defect-hunt angles from Addendum 5: dropped
+     proper names replaced by vague pronouns, location-word swaps.
+
+  3. Get the operator's explicit confirmation on 2 Samuel 21:8
+     (Merab/Michal) - see item 8 above.
+
+  4. **Unchanged from the previous session's list, not touched this
+     session:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator
+        direction 2026-09-25 -- rationale to be supplied later, do not
+        guess one. Live-check applySpellingVariant's wiring against a
+        disposable scratch document, per aeBibleAddin's
+        word-audit-scanner.LIVE_CHECK.md ("Shape 8" section). Do NOT
+        run without the operator's explicit go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's
+        spike on Genesis 1 (aeRWB/tools/web-diff/), using the OSHB data
+        fetched 2026-09-25 - see project_scholarly_grounding_plan
+        memory. cWEB confirmed skipped entirely per operator decision.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        rpt/docm-verses.txt (ExportDocmVersesToRWBFormat's verse-number
+        detection) - small, scoped, currently blocks Jeremiah 37:10
+        from ever being sync-able.
+     d. If ImportAllVBAFiles reports Skipped<>1 again: the MECHANISM is
+        confirmed (VBComponents.Remove genuinely fails for
+        basBiblePalette/basTEST_aeBibleTools/Module1, not a stale-read
+        issue) - next real step is checking VBE UI state (open panes/
+        breakpoints/watches) at failure time, not more Immediate-window
+        logging.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own
+        plan doc first); item 9 (Bible introduction - needs a dedicated
+        writing session).
+
+## Session status at this checkpoint (2026-09-29)
+
+  aeRWB: many commits, all pushed, working tree fully clean including
+  `rwb.txt` - the operator committed each scoped sync themselves during
+  the session (confirmed via `git log`, e.g. "fix impersonal it
+  references and some typos", "type fix Don -> Do").
+
+  aeBibleClass: many commits, all pushed, working tree clean.
+
+  aeBibleAddin, adaept5tudio: not touched this session.
+
+  All docs/memory verified in sync with actual code and file state as
+  of this entry. Safe to end the session here; a fresh session should
+  start by reading this entry plus
+  `project_docm_categorization_and_nt_variant_policy` memory plus
+  `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md`'s
+  Addendum 6 checkpoint before deciding what to do next.
+===============================================================================
