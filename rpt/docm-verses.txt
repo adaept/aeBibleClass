@@ -1563,7 +1563,7 @@ Exodus 2:5	 Pharaoh’s daughter came down to bathe at the river. Her maidens 
 Exodus 2:6	 She opened it, and saw the child, and behold, the baby cried. She had compassion on him, and said, “This is one of the Hebrews’ children.”
 Exodus 2:7	 Then his sister said to Pharaoh’s daughter, “Should I go and call a nurse for you from the Hebrew women, that she may nurse the child for you?”
 Exodus 2:8	 Pharaoh’s daughter said to her, “Go.” The young woman went and called the child’s mother.
-Exodus 2:9	 Pharaoh’s daughter said to her, “Take this child away, and nurse him for me, and I will give you your wages.” The woman took the child, and nursed it.
+Exodus 2:9	 Pharaoh’s daughter said to her, “Take this child away, and nurse him for me, and I will give you your wages.” The woman took the child, and nursed him.
 Exodus 2:10	 The child grew, and she brought him to Pharaoh’s daughter, and he became her son. She named him Moses, and said, “Because I drew him out of the water.”
 Exodus 2:11	 In those days, when Moses had grown up, he went out to his brothers and saw their burdens. He saw an Egyptian striking a Hebrew, one of his brothers.
 Exodus 2:12	 He looked this way and that way, and when he saw that there was no one, he killed the Egyptian, and hid him in the sand.
@@ -8301,7 +8301,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 12:12	 For you did this secretly, but I will do this thing before all Israel, and before the sun.’”
 2 Samuel 12:13	 David said to Nathan, “I have sinned against God.” Nathan said to David, “God also has put away your sin. You will not die.
 2 Samuel 12:14	 However, because by this deed you have given great occasion to God’s enemies to blaspheme, the child also who is born to you will surely die.”
-2 Samuel 12:15	 Nathan departed to his house. God struck the child that Uriah’s wife bore to David, and it was very sick.
+2 Samuel 12:15	 Nathan departed to his house. God struck the child that Uriah’s wife bore to David, and he was very sick.
 2 Samuel 12:16	 David therefore begged God for the child; and David fasted, and went in, and lay all night on the ground.
 2 Samuel 12:17	 The elders of his house arose beside him, to raise him up from the earth: but he would not, and he did not eat bread with them.
 2 Samuel 12:18	 On the seventh day, the child died. David’s servants were afraid to tell him that the child was dead, for they said, “Behold, while the child was yet alive, we spoke to him, and he did not listen to our voice. How will he then harm himself, if we tell him that the child is dead?”
@@ -8837,7 +8837,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 3:18	 The third day after I delivered, this woman delivered also. We were together. There was no stranger with us in the house, just us two in the house.
 1 Kings 3:19	 This woman’s child died in the night, because she lay on it.
 1 Kings 3:20	 She arose at midnight, and took my son from beside me, while your servant slept, and laid it in her bosom, and laid her dead child in my bosom.
-1 Kings 3:21	 When I rose in the morning to nurse my child, behold, it was dead; but when I had looked at it in the morning, behold, it was not my son, whom I bore.”
+1 Kings 3:21	 When I rose in the morning to nurse my child, behold, he was dead; but when I had looked at him in the morning, behold, it was not my son, whom I bore.”
 1 Kings 3:22	 The other woman said, “No; but the living one is my son, and the dead one is your son.” The first one said, “No; but the dead one is your son, and the living one is my son.” They argued like this before the king.
 1 Kings 3:23	 Then the king said, “One says, ‘This is my son who lives, and your son is the dead;’ and the other says, ‘No; but your son is the dead one, and my son is the living one.’”
 1 Kings 3:24	 The king said, “Get me a sword.” So they brought a sword before the king.
@@ -25648,7 +25648,7 @@ Luke 16:24	 He cried and said, ‘Father Abraham, have mercy on me, and send L
 Luke 16:25	 “But Abraham said, ‘Son, remember that you, in your lifetime, received your good things, and Lazarus, in the same way, bad things. But here he is now comforted, and you are in anguish.
 Luke 16:26	 Besides all this, between us and you there is a great gulf fixed, that those who want to pass from here to you are not able, and that no one may cross over from there to us.’
 Luke 16:27	 “He said, ‘I ask you therefore, father, that you would send him to my father’s house;
-Luke 16:28	 for I have five brothers, that he may testify to them, so they wil also not come into this place of torment.’
+Luke 16:28	 for I have five brothers, that he may testify to them, so they will also not come into this place of torment.’
 Luke 16:29	 “But Abraham said to him, ‘They have Moses and the prophets. Let them listen to them.’
 Luke 16:30	 “He said, ‘No, father Abraham, but if one goes to them from the dead, they will repent.’
 Luke 16:31	 “He said to him, ‘If they do not listen to Moses and the prophets, neither will they be persuaded if one rises from the dead.’”
@@ -29040,7 +29040,7 @@ Romans 16:24	 The grace of our Lord Jesus Christ be with you all! Amen.
 2 Corinthians 12:15	 I will most gladly spend and be spent for your souls. If I love you more abundantly, am I loved the less?
 2 Corinthians 12:16	 Even so, I myself did not burden you. “But, being crafty, I caught you with deception.”
 2 Corinthians 12:17	 Did I take advantage of you by anyone of those whom I have sent to you?
-2 Corinthians 12:18	 I exhorted Titus, and I sent the brother with him. Did Titus take any advantage of you? Did we not walk in the same spirit? Didt we not walk in the same steps?
+2 Corinthians 12:18	 I exhorted Titus, and I sent the brother with him. Did Titus take any advantage of you? Did we not walk in the same spirit? Did we not walk in the same steps?
 2 Corinthians 12:19	 Again, do you think that we are excusing ourselves to you? In the sight of God we speak in Christ. But all things, beloved, are for your edifying.
 2 Corinthians 12:20	 For I am afraid that by any means, when I come, I might find you not the way I want to, and that I might be found by you as you do not desire, that by any means there would be strife, jealousy, outbursts of anger, factions, slander, whisperings, proud thoughts, or riots,
 2 Corinthians 12:21	 that again when I come my God would humble me before you, and I would mourn for many of those who have sinned before now, and not repented of the uncleanness, sexual immorality, and lustfulness which they committed.
@@ -30177,7 +30177,7 @@ Hebrews 11:1	 Now faith is assurance of things hoped for, proof of things not 
 Hebrews 11:2	 For by this, the elders obtained testimony.
 Hebrews 11:3	 By faith, we understand that the universe has been framed by the word of God, so that what is seen has not been made out of things which are visible.
 Hebrews 11:4	 By faith, Abel offered to God a more excellent sacrifice than Cain, through which he had testimony given to him that he was righteous, God testifying with respect to his gifts; and through it he, being dead, still speaks.
-Hebrews 11:5	 By faith, Enoch was taken away, so that he wouldnot see death, and he was not found, because God translated him. For he has had testimony given to him that before his translation he had been well pleasing to God.
+Hebrews 11:5	 By faith, Enoch was taken away, so that he would not see death, and he was not found, because God translated him. For he has had testimony given to him that before his translation he had been well pleasing to God.
 Hebrews 11:6	 Without faith it is impossible to be well pleasing to him, for he who comes to God must believe that he exists, and that he is a rewarder of those who seek him.
 Hebrews 11:7	 By faith, Noah, being warned about things not yet seen, moved with godly fear, prepared a ship for the saving of his house, through which he condemned the world, and became heir of the righteousness which is according to faith.
 Hebrews 11:8	 By faith, Abraham, when he was called, obeyed to go out to the place which he was to receive for an inheritance. He went out, not knowing where he went.
