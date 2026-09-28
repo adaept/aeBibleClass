@@ -9,14 +9,17 @@ shapes occur exactly once (checked against `aeRWB` commit `7645e9e1`,
 `aeBibleClass` commit `6c95c71`: WEBU `other` 1,454/12,201 = 11.9%, WEBBE
 `other` 1,952/14,243 = 13.7%). What remains is genuine editorial
 divergence needing individual human judgment, not more pattern-finding.
-**Updated 2026-09-29 (see the three addenda below the Status section)**:
-three rounds of follow-up classifier fixes (`aeRWB` commits `f197665`,
-`2c8f2c7`, `7796fc1`, `3ec0bf9`, `956a080`) brought this to WEBU
-1,239/12,201 = 10.2%, WEBBE 1,697/14,243 = 11.9% - the first round moved
-diagnostic accuracy more than bucket size, the second (a too-narrow
-"evil"-softening word whitelist) moved both substantially, and the third
+**Updated 2026-09-29 (see the four addenda below the Status section)**:
+four rounds of follow-up classifier fixes (`aeRWB` commits `f197665`,
+`2c8f2c7`, `7796fc1`, `3ec0bf9`, `956a080`, `caccd7a`) brought this to
+WEBU 1,232/12,201 = 10.1%, WEBBE 1,690/14,243 = 11.9% - the first round
+moved diagnostic accuracy more than bucket size, the second (a too-narrow
+"evil"-softening word whitelist) moved both substantially, the third
 (sourcing a real KJV text and checking word choices against it per-verse)
-was the single largest reduction of the whole effort.
+was the single largest reduction of the whole effort, and the fourth
+(two more KJV phrase idioms plus a co-occurrence gap) came directly from
+the operator asking why an already-partially-explained verse was still
+showing up.
 
 **This is a plan document only - nothing here is built yet.** Per the
 operator's 10-point brief (2026-09-28), captured verbatim as the ten
@@ -218,6 +221,53 @@ decision riding along inside what otherwise looks like an ordinary
 word-choice hunk, not something this check's stopword/length filter
 would ever catch or exclude on its own.
 
+## Addendum 4, 2026-09-29: co-occurrence blocking, generalized further
+
+**The operator's review of the Genesis 2:19 example asked exactly the
+right diagnostic question**: "we've already dealt with 'the LORD God' in
+divine-names, so why is this verse still here?" Checking `classifyVerse`
+directly confirmed the divine-names hunk WAS already correctly explained
+(`reasons: ["divine-names", "kjv-word-choice"]` after this addendum's fix)
+- the verse stayed in `other` only because of a second hunk,
+`"the man" -> "Adam"`, which `kjv-word-choice` (Addendum 3) didn't catch:
+it only checked 1-word-to-1-word substitutions, and this is 2 words
+(`"the"`, `"man"`) to 1 (`"Adam"`).
+
+**Fix**: extended `isKjvWordChoiceHunk` to also match `"the/a/an NOUN" ->
+"ProperName"`, dropping the contentless article and allowing a shorter
+minimum length for the noun (generic nouns standing in for a name are
+often short - "man", "boy", "son"). Verified against real `kjv.txt` text
+the same way as the 1-word case, not a guess.
+
+**Answering the operator's follow-up ("are there others with the same
+problem")** - searched the remaining `other` bucket for the same
+"already-explained hunk blocked by one leftover hunk" shape more broadly
+(not just article+noun) and found two more clean, strongly recurring KJV
+idioms, each verified against every single occurrence before coding:
+
+- **`"the sky"` -> `"heaven"`** (6x: Daniel 7:13, Matthew 24:30,
+  Acts 1:11 x2, Acts 4:24, Revelation 20:11) - the KJV never uses "the
+  sky" anywhere in the corpus.
+- **`"according to"` -> `"after"`** (4x: Acts 24:14, Romans 8:4,
+  2 Corinthians 5:16 x2) - the KJV's well-known "after the flesh"/"after
+  the Spirit" phrasing.
+
+**A broader raw scan (167 candidate multi-word-del hunks) also surfaced a
+lot of noise** - common short words (`"then"` -> `"and"`, `"who"` ->
+`"that"`, `"could"` -> `"should"`) that pass a bag-of-words KJV-presence
+check almost by coincidence, the same failure mode the stopword filter
+was built to catch for single-word matches. Not coded into any rule -
+these need individual review, not a blanket pattern, same judgment call
+as Addendum 3's stopword list.
+
+**Result: WEBU `other` 1,239 -> 1,232 (-7), WEBBE 1,697 -> 1,690 (-7)**
+(`aeRWB` commit `caccd7a`). Smaller than Addendum 3's KJV-source win, but
+notable for a different reason: this round wasn't found by scanning the
+data directly - it came entirely from the operator asking *why* a
+specific already-partially-explained verse was still showing up, which
+is exactly the review-checklist's own intended workflow (§6) working
+correctly even before the tool itself is built.
+
 ## The ten requirements, as given
 
 1. Update the memory/README with current status, but do not consider the
@@ -271,8 +321,8 @@ of one:
 ```
 RWB-REVIEW
 docm-vs-WEBU, generated <date> from aeBibleClass <docm commit> / aeRWB <engwebu.txt commit> - see aeRWB/tools/web-diff/README.md R15
-rwb[ ]	Genesis 2:19	Out of the ground God formed every animal of the field, and every bird of the sky, and brought them to Adam to see what he would call them. Whatever the man called every living creature became its name.
-webu	Genesis 2:19	Out of the ground the LORD God formed every animal of the field, and every bird of the sky, and brought them to the man to see what he would call them. Whatever the man called every living creature became its name.
+rwb[ ]	Exodus 2:9	Pharaoh's daughter said to her, "Take this child away, and nurse him for me, and I will give you your wages." The woman took the child, and nursed it.
+webu	Exodus 2:9	Pharaoh's daughter said to her, "Take this child away, and nurse him for me, and I will give you your wages." The woman took the child, and nursed him.
 ```
 
 - Two header lines, matching `rwb.txt`'s own `translation`/`source` header
