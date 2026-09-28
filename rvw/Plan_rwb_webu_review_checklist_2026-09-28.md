@@ -9,16 +9,19 @@ shapes occur exactly once (checked against `aeRWB` commit `7645e9e1`,
 `aeBibleClass` commit `6c95c71`: WEBU `other` 1,454/12,201 = 11.9%, WEBBE
 `other` 1,952/14,243 = 13.7%). What remains is genuine editorial
 divergence needing individual human judgment, not more pattern-finding.
-**Updated 2026-09-29 (see the five addenda below the Status section)**:
-five rounds of follow-up work (`aeRWB` commits `f197665`, `2c8f2c7`,
-`7796fc1`, `3ec0bf9`, `956a080`, `caccd7a`; `aeBibleClass` commit
-`f37ecc9`) brought this to WEBU 1,228/12,200 = 10.1%, WEBBE
-1,686/14,242 = 11.8% - the first four rounds were classifier fixes (the
-third, sourcing a real KJV text, was the single largest reduction of the
-whole effort); the fifth was different in kind - a genuine "WEBU is
-better" defect hunt (not a classifier gap) that found and fixed 6 real
-docm defects (3 dehumanizing pronoun downgrades, 3 outright typos), then
-confirmed the hunt exhausted via a zero-new-defects follow-up pass.
+**Updated 2026-09-29 (see the six addenda below the Status section;
+Addendum 6 also has a session-close checkpoint)**: six rounds of
+follow-up work (`aeRWB` commits `f197665` through `b0d844b`;
+`aeBibleClass` commit `f37ecc9`) brought this to **WEBU 1,226/12,200 =
+10.0%, WEBBE 1,684/14,242 = 11.8%** (from the original 50.7%/61.7%) -
+four rounds were classifier fixes (sourcing a real KJV text, Addendum 3,
+was the single largest reduction of the whole effort); Addendum 5 was
+different in kind - a genuine "WEBU is better" defect hunt (not a
+classifier gap) that found and fixed 6 real docm defects (3 dehumanizing
+pronoun downgrades, 3 outright typos); Addendum 6 closed out the
+archaic-verb-form thread (lie/lay/laid). The plan itself (the actual
+review-checklist tool, §§1-10) remains **not built** - see Addendum 6's
+checkpoint for next-session priorities.
 
 **This is a plan document only - nothing here is built yet.** Per the
 operator's 10-point brief (2026-09-28), captured verbatim as the ten
@@ -27,7 +30,10 @@ a status table, and an explicit pros/cons/risks/suggestions section.
 
 ## Status
 
-⚪ Not started - awaiting operator review of this plan before any code is written.
+⚪ Not started (the review-checklist tool itself, §§1-10) - awaiting an
+operator decision on whether to build it or continue the manual
+review-a-worked-example pattern that's been finding real defects without
+it (see Addendum 6's session-close checkpoint, 2026-09-29).
 
 ## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
 
@@ -324,6 +330,65 @@ different heuristic angle (offered to the operator, not yet pursued:
 dropped proper names replaced by vague pronouns, location-word swaps).
 
 Result: WEBU `other` 1,232 -> 1,228, WEBBE 1,690 -> 1,686.
+
+## Addendum 6, 2026-09-29: lie/lay/laid, and a session-close checkpoint
+
+**The operator's review of the Ruth 3:4 example** ("lay" vs "lie") asked
+directly for the KJV-preferred archaic verb form, same instinct as every
+prior addendum. Confirmed against real `kjv.txt`: Ruth 3:4's "lay thee
+down" and Ruth 3:7's "laid her down" are both exact KJV wording -
+`isKjvWordChoiceHunk` had missed them only because `lie`/`lay`/`laid` are
+3-4 letters, under the general length>=4 filter built for common
+FUNCTION words, not distinctive irregular VERB forms.
+
+**Fix, two parts** (`aeRWB` commits `b0d844b`): (1) a small curated
+`KJV_SHORT_WORD_ALLOWLIST` (`lie`/`lay`/`laid`/`lain`) exempted from the
+length filter - checked first whether a broader curated set of ~30
+archaic/modern irregular-verb pairs (drank/drunk, sang/sung, ran/run,
+ate/eat, etc.) found more misses; it found none, confirming those longer
+forms already clear the length filter on their own. (2) Ruth 3:4 needed
+a SECOND fix: the KJV's own text uses BOTH "lie" and "lay" in that verse
+for two different clauses, so the check's usual "old word must be absent
+from KJV" safety rule incorrectly disqualified a real match - relaxed
+that rule specifically for the small pre-vetted allowlist, not generally.
+
+**Result: WEBU `other` 1,228 -> 1,226, WEBBE 1,686 -> 1,684.**
+
+### Session-close checkpoint, 2026-09-29
+
+**This specific investigative thread (lie/lay and the broader "similar
+examples" archaic-verb-form hunt) is closed** - confirmed exhaustive, no
+further action pending on it. **The R15 plan as a whole remains NOT
+closed** - the review-checklist tool described in the requirements below
+still has not been built; everything in Addenda 1-6 happened while
+reviewing this PLAN's own worked examples, which is a strong signal the
+plan's core idea (side-by-side `rwb`/`webu` review surfaces real findings
+even manually) works, but doesn't substitute for building it.
+
+**Cumulative result across this whole document's addenda**: WEBU `other`
+50.7% (original, `rvw/Code_review 2026-09-25.md` item 4) -> **10.0%**
+(1,226/12,200), WEBBE 61.7% -> **11.8%** (1,684/14,242). Real docm content
+defects found and fixed across every addendum combined: ~36 verses (see
+`project_docm_categorization_and_nt_variant_policy` memory for the
+full account). One item flagged but not yet resolved: 2 Samuel 21:8's
+"Michal"/"Merab" textual-tradition question (Addendum 3) - awaiting the
+operator's explicit confirmation, not blocking anything.
+
+**For the next session, in priority order:**
+1. Decide whether to actually build the R15 review-checklist tool now
+   (§§1-10 below), or continue the manual "review a worked example,
+   find + fix what it surfaces" pattern that's been working well without
+   it - both are legitimate; this is the operator's call, not a
+   default.
+2. If continuing manually: the remaining `other` bucket (WEBU 1,226,
+   WEBBE 1,684) is dominated by single-hunk substitutions - `npm run
+   docm.categorize` then filter `category === "other"` for the next
+   batch to review, same technique used throughout this document.
+3. Explicit confirmation still wanted on 2 Samuel 21:8 (Merab/Michal).
+4. Further "WEBU is better" defect-hunt angles not yet tried (offered,
+   not pursued): dropped proper names replaced by vague pronouns,
+   location-word swaps, other semantic-risk shapes beyond the five
+   already checked (Addendum 5).
 
 ## The ten requirements, as given
 
