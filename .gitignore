@@ -16,6 +16,12 @@ ko.*
 # used to verify aeBibleAddin's en-GB spelling-substitution/quote-nesting tables against real
 # text (2026-09-25). Re-download from https://eBible.org/Scriptures/eng-webbe_usfm.zip when needed.
 /webbe_usfm
+
+# KJV (King James Version, Pure Cambridge Edition, 1769 text) - used to verify RWB's individual
+# word-choice preferences against real KJV wording, not memory (2026-09-29, see
+# rvw/Plan_rwb_webu_review_checklist_2026-09-28.md). Re-download from
+# https://eBible.org/Scriptures/eng-kjv2006_usfm.zip when needed.
+/eng-kjv2006_usfm
 Peter-USE REFINED English Bible CONTENTS.pdf
 Keep for alignment - Blank Bible Copy - Copy.pdf
 MyOutfile_unpacked/
