@@ -9,6 +9,10 @@ shapes occur exactly once (checked against `aeRWB` commit `7645e9e1`,
 `aeBibleClass` commit `6c95c71`: WEBU `other` 1,454/12,201 = 11.9%, WEBBE
 `other` 1,952/14,243 = 13.7%). What remains is genuine editorial
 divergence needing individual human judgment, not more pattern-finding.
+**Updated 2026-09-28 (see the addendum below the Status section)**: a
+follow-up classifier fix (`aeRWB` commit `f197665`) brought this to WEBU
+1,453/12,201, WEBBE 1,951/14,243 - still 11.9%/13.7% at one decimal place,
+the fix's value being diagnostic accuracy, not bucket-size reduction.
 
 **This is a plan document only - nothing here is built yet.** Per the
 operator's 10-point brief (2026-09-28), captured verbatim as the ten
@@ -18,6 +22,69 @@ a status table, and an explicit pros/cons/risks/suggestions section.
 ## Status
 
 ⚪ Not started - awaiting operator review of this plan before any code is written.
+
+## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
+
+**The operator's first review of this plan caught a real bug by noticing
+the original §2 example looked wrong** - both illustrative verses used
+(Genesis 2:5, Genesis 4:7) were, on inspection, already fully explained by
+the classifier (not actually in the `other` bucket at all), which meant
+they were misleading as "still needs review" examples. That observation
+turned out to point at a genuine, confirmed classifier gap, not just a bad
+example pick - worth recording here as part of this plan's own
+development, not just fixed silently upstream.
+
+**Investigation.** Searched the WEBU `other` bucket for any verse still
+carrying a leftover bare `"not"` fragment (the signature of a relocated
+contraction, e.g. `won't it be` -> `will it not be`) - found **24**. Root
+causes, both in `aeRWB/tools/web-diff/docm-webu-webbe-categorize.mjs`:
+
+1. **A structural limitation in the `reordering` fallback**: it required
+   the *entire* verse's leftover del/ins word multiset to match exactly
+   before crediting the relocation - so a relocated `not` sharing a verse
+   with any other unrelated change (a real synonym swap, a second typo)
+   blocked recognition entirely, for the whole verse. 23 of the 24 found
+   verses hit this.
+2. **A leading-punctuation gap** in `splitPunct`/`DIVINE_TOKEN_RE`/
+   `EVIL_RE`/`DISASTER_RE` - parentheses weren't in the stripped-punctuation
+   class (only quotes/comma/etc. were), so e.g. `"(isn't"` in
+   Genesis 19:20 wasn't recognized as a contraction at all. 1 of the 24
+   found verses hit this one specifically.
+
+**Fix** (commit `f197665`, `aeRWB`): the reordering fallback now cancels
+matching words one at a time between the leftover multisets instead of
+requiring an exact whole-verse match; whatever remains uncancelled (if
+anything) still correctly leaves the verse `other`, but is now tagged
+`reordering` alongside `other` as a contributing reason, and - critically
+- the verse's `unexplainedHunks` now surface only the genuinely
+unexplained remainder instead of being buried under relocation noise.
+Parentheses added to the punctuation classes.
+
+**Result: only 1 of the 24 verses (Genesis 19:20) became fully explained.**
+The other 23 correctly remain in `other` - they were never false
+positives of "other", they have real additional content the reordering
+noise was obscuring. WEBU `other` moved 1,454 -> 1,453, WEBBE 1,952 ->
+1,951 (essentially flat at one decimal place). **This is expected, not a
+disappointing result** - the fix's value is diagnostic accuracy (the
+`other` bucket's remaining entries now show their TRUE unexplained
+content), which is exactly what this checklist tool needs to be trustworthy,
+not bucket-size reduction for its own sake.
+
+**A genuine, previously-unknown docm defect surfaced as a side effect**:
+Micah 2:7 currently reads *"Don my words not do good to him who walks
+blamelessly?"* - "Don" is not a word; almost certainly should read "Do"
+(WEBU: *"Don't my words do good..."*, a rhetorical question). Not fixed as
+part of this classifier work - flagged here for the operator to confirm
+and fix in Word via the same one-at-a-time workflow used throughout the
+R14 effort, separate from this plan.
+
+**Why this matters for the R15 design above**: it's a concrete, real
+demonstration that the review-checklist's `webu`/`rwb` side-by-side format
+(§2) is doing real work even before any tooling exists - a human glancing
+at two stacked lines caught something a purely mechanical classifier run
+had missed. Reinforces that the checklist's job is to make genuinely
+leftover content *legible*, not to chase the `other` percentage to zero by
+any means.
 
 ## The ten requirements, as given
 
@@ -72,10 +139,8 @@ of one:
 ```
 RWB-REVIEW
 docm-vs-WEBU, generated <date> from aeBibleClass <docm commit> / aeRWB <engwebu.txt commit> - see aeRWB/tools/web-diff/README.md R15
-rwb[ ]	Genesis 2:5	No plant of the field was yet in the earth, and no herb of the field had yet sprung up...
-webu	Genesis 2:5	No plant of the field was yet on the earth, and no herb of the field had yet sprung up...
-rwb[ ]	Genesis 4:7	If you do well, will it not be lifted up?...
-webu	Genesis 4:7	If you do well, won't it be lifted up?...
+rwb[ ]	1 Kings 22:18	The king of Israel said to Jehoshaphat, "Did I not tell you that he would not prophesy good concerning me, but always bad?"
+webu	1 Kings 22:18	The king of Israel said to Jehoshaphat, "Didn't I tell you that he would not prophesy good concerning me, but evil?"
 ```
 
 - Two header lines, matching `rwb.txt`'s own `translation`/`source` header
