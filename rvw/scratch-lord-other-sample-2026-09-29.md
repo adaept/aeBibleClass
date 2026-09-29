@@ -1,7 +1,7 @@
 # Sample: other-bucket verses containing "the LORD" (divine-names already explained)
 
-- **Genesis 9:26** (1 leftover hunk) He **also** said, “Blessed be ~~the LORD,~~ **God,** the God of Shem. Let Canaan be his servant.
-- **Exodus 13:11** (1 leftover hunk) “It shall be, when ~~the LORD~~ **God** brings you into the land of the Canaanite, as he swore to you and to your fathers, and will give it ~~to~~ you,
+> Regenerated 2026-09-29 against the current docm export.
+
 - **Exodus 16:32** (1 leftover hunk) Moses said, “This is the thing which ~~the LORD~~ **God** has commanded, ‘Let an ~~omer-full~~ **omer full** of it be kept throughout your generations, that they may see the bread with which I fed you in the wilderness, when I brought you out of the land of Egypt.’”
 - **Exodus 16:33** (1 leftover hunk) Moses said to Aaron, “Take a pot, and put an ~~omer-full~~ **omer full** of manna in it, and lay it up before ~~the LORD,~~ **God,** to be kept throughout your generations.”
 - **Exodus 30:20** (1 leftover hunk) When they go into the Tent of Meeting, they shall wash with water, that they ~~don’t~~ **not** die; or when they come near to the altar to minister, to burn an offering made by fire to ~~the LORD.~~ **God.**
