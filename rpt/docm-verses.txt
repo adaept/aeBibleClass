@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-09-28)
+Radiant Word Bible - exported from the live .docm (2026-09-29)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -228,10 +228,10 @@ Genesis 9:19	 These three were the sons of Noah, and from these the whole eart
 Genesis 9:20	 Noah began to be a farmer, and planted a vineyard.
 Genesis 9:21	 He drank of the wine and got drunk. He was uncovered within his tent.
 Genesis 9:22	 Ham, the father of Canaan, saw the nakedness of his father, and told his two brothers outside.
-Genesis 9:23	 Shem and Japheth took a garment, and laid it on both their shoulders, went in backwards, and covered the nakedness of their father. Their faces were backwards, and they did not see their father’s nakedness.
+Genesis 9:23	 Shem and Japheth took a garment, and laid it on both their shoulders, went in backwards, and covered the nakedness of their father. Their faces were backwards, and they did not see the nakedness of their father.
 Genesis 9:24	 Noah awoke from his wine, and knew what his youngest son had done to him.
 Genesis 9:25	 He said, “Canaan be cursed. The lowest of slaves will he be to his brothers.”
-Genesis 9:26	 He also said, “Blessed be God, the God of Shem. Let Canaan be his servant.
+Genesis 9:26	 He said, “Blessed be God, the God of Shem. Let Canaan be his servant.
 Genesis 9:27	 May God enlarge Japheth. Let him dwell in the tents of Shem. May Canaan be the slave of Shem. May God extend the territory of Japheth, may Japheth live in the tents of Shem, and may Canaan be his slave.”
 Genesis 9:28	 Noah lived three hundred fifty years after the flood.
 Genesis 9:29	 All the days of Noah were nine hundred fifty years, and then he died.
@@ -433,7 +433,7 @@ Genesis 18:5	 I will get a piece of bread so you can refresh your heart. After
 Genesis 18:6	 Abraham hurried into the tent to Sarah, and said, “Quickly prepare three seahs of fine meal, knead it, and make cakes.”
 Genesis 18:7	 Abraham ran to the herd, and fetched a tender and good calf, and gave it to the servant. He hurried to dress it.
 Genesis 18:8	 He took butter, milk, and the calf which he had dressed, and set it before them. He stood by them under the tree, and they ate.
-Genesis 18:9	 They asked him, “Where is Sarah, your wife?”He said, “There, in the tent.”
+Genesis 18:9	 They asked him, “Where is Sarah, your wife?” He said, “There, in the tent.”
 Genesis 18:10	 He said, “I will certainly return to you at about this time next year; and behold, Sarah your wife will have a son.” Sarah heard in the tent door, which was behind him.
 Genesis 18:11	 Now Abraham and Sarah were old, well advanced in age. Sarah had passed the age of childbearing.
 Genesis 18:12	 Sarah laughed within herself, saying, “After I have grown old will I have pleasure, my lord being old also?”
@@ -965,7 +965,7 @@ Genesis 33:1	 Jacob lifted up his eyes, and looked, and, behold, Esau was comi
 Genesis 33:2	 He put the servants and their children in front, Leah and her children after, and Rachel and Joseph at the rear.
 Genesis 33:3	 He himself passed over in front of them, and bowed himself to the ground seven times, until he came near to his brother.
 Genesis 33:4	 Esau ran to meet him, embraced him, fell on his neck, kissed him, and they wept.
-Genesis 33:5	 He lifted up his eyes, and saw the women and the children; and said, “Who are these with you?”He said, “The children whom God has graciously given your servant.”
+Genesis 33:5	 He lifted up his eyes, and saw the women and the children; and said, “Who are these with you?” He said, “The children whom God has graciously given your servant.”
 Genesis 33:6	 Then the servants came near with their children, and they bowed themselves.
 Genesis 33:7	 Leah also and her children came near, and bowed themselves. After them, Joseph came near with Rachel, and they bowed themselves.
 Genesis 33:8	 Esau said, “What do you mean by all this company which I met?” Jacob said, “To find favor in the sight of my lord.”
@@ -1878,7 +1878,7 @@ Exodus 13:7	 Unleavened bread shall be eaten throughout the seven days; and no
 Exodus 13:8	 You shall tell your son in that day, saying, ‘It is because of that which God did for me when I came out of Egypt.’
 Exodus 13:9	 It shall be for a sign to you on your hand, and for a memorial between your eyes, that God’s law may be in your mouth; for with a strong hand God has brought you out of Egypt.
 Exodus 13:10	 You shall therefore keep this ordinance in its season from year to year.
-Exodus 13:11	 “It shall be, when God brings you into the land of the Canaanite, as he swore to you and to your fathers, and will give it you,
+Exodus 13:11	 “It shall be, when God brings you into the land of the Canaanite, as he swore to you and to your fathers, and will give it to you,
 Exodus 13:12	 that you shall set apart to God all that opens the womb, and every firstborn that comes from an animal which you have. The males shall be God’s.
 Exodus 13:13	 Every firstborn of a donkey you shall redeem with a lamb; and if you will not redeem it, then you shall break its neck; and you shall redeem all the firstborn of man among your sons.
 Exodus 13:14	 It shall be, when your son asks you in time to come, saying, ‘What is this?’ that you shall tell him, ‘By strength of hand God brought us out from Egypt, from the house of bondage.
@@ -5487,7 +5487,7 @@ Deuteronomy 22:13	 If any man takes a wife, and goes in to her, hates her,
 Deuteronomy 22:14	 accuses her of shameful things, gives her a bad name, and says, “I took this woman, and when I came near to her, I did not find in her the tokens of virginity;”
 Deuteronomy 22:15	 then the young lady’s father and mother shall take and bring the tokens of the young lady’s virginity to the elders of the city in the gate.
 Deuteronomy 22:16	 The young lady’s father shall tell the elders, “I gave my daughter to this man as his wife, and he hates her.
-Deuteronomy 22:17	 Behold, he has accused her of shameful things, saying, ‘I did not find in your daughter the tokens of virginity;’ and yet these are the tokens of my daughter’s virginity.”They shall spread the cloth before the elders of the city.
+Deuteronomy 22:17	 Behold, he has accused her of shameful things, saying, ‘I did not find in your daughter the tokens of virginity;’ and yet these are the tokens of my daughter’s virginity.” They shall spread the cloth before the elders of the city.
 Deuteronomy 22:18	 The elders of that city shall take the man and chastise him.
 Deuteronomy 22:19	 They shall fine him one hundred shekels of silver, and give them to the father of the young lady, because he has given a bad name to a virgin of Israel. She shall be his wife. He may not put her away all his days.
 Deuteronomy 22:20	 But if this thing is true, that the tokens of virginity were not found in the young lady,
@@ -10239,7 +10239,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Kings 25:14	 They took away the pots, the shovels, the snuffers, the spoons, and all the vessels of bronze with which they ministered.
 2 Kings 25:15	 The captain of the guard took away the fire pans, the basins, that which was of gold, in gold, and that which was of silver, in silver.
 2 Kings 25:16	 The two pillars, the one sea, and the bases, which Solomon had made for God’s house, the bronze of all these vessels was not weighed.
-2 Kings 25:17	 The height of the one pillar was eighteen cubits, and a capital of bronze was on it.The height of the capital was three cubits, with network and pomegranates on the capital around it, all of bronze; and the second pillar with its network was like these.
+2 Kings 25:17	 The height of the one pillar was eighteen cubits, and a capital of bronze was on it. The height of the capital was three cubits, with network and pomegranates on the capital around it, all of bronze; and the second pillar with its network was like these.
 2 Kings 25:18	 The captain of the guard took Seraiah the chief priest, Zephaniah the second priest, and the three keepers of the threshold;
 2 Kings 25:19	 and out of the city he took an officer who was set over the men of war; and five men of those who saw the king’s face, who were found in the city; and the scribe, the captain of the army, who mustered the people of the land; and sixty men of the people of the land, who were found in the city.
 2 Kings 25:20	 Nebuzaradan the captain of the guard took them, and brought them to the king of Babylon to Riblah.
@@ -11545,7 +11545,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Chronicles 17:19	 These were those who waited on the king, in addition to those whom the king put in the fortified cities throughout all Judah.
 2 Chronicles 18:1	 Now Jehoshaphat had riches and honor in abundance; and he allied himself with Ahab.
 2 Chronicles 18:2	 After some years, he went down to Ahab to Samaria. Ahab killed sheep and cattle for him in abundance, and for the people who were with him, and moved him to go up with him to Ramoth Gilead.
-2 Chronicles 18:3	 Ahab king of Israel said to Jehoshaphat king of Judah, “Will you go with me to Ramoth Gilead?”He answered him, “I am as you are, and my people as your people. We will be with you in the war.”
+2 Chronicles 18:3	 Ahab king of Israel said to Jehoshaphat king of Judah, “Will you go with me to Ramoth Gilead?” He answered him, “I am as you are, and my people as your people. We will be with you in the war.”
 2 Chronicles 18:4	 Jehoshaphat said to the king of Israel, “Please inquire first for God’s word.”
 2 Chronicles 18:5	 Then the king of Israel gathered the prophets together, four hundred men, and said to them, “Shall we go to Ramoth Gilead to battle, or shall I forbear?” They said, “Go up; for God will deliver it into the hand of the king.”
 2 Chronicles 18:6	 But Jehoshaphat said, “Is there not here a prophet of God besides, that we may inquire of him?”
@@ -13884,7 +13884,7 @@ Job 40:16	 Look now, his strength is in his thighs. His force is in the muscle
 Job 40:17	 He moves his tail like a cedar. The sinews of his thighs are knit together.
 Job 40:18	 His bones are like tubes of bronze. His limbs are like bars of iron.
 Job 40:19	 He is the chief of the ways of God. He who made him gives him his sword.
-Job 40:20	 Surely the mountains produce food for him,where all the animals of the field play.
+Job 40:20	 Surely the mountains produce food for him, where all the animals of the field play.
 Job 40:21	 He lies under the lotus trees, in the covert of the reed, and the marsh.
 Job 40:22	 The lotuses cover him with their shade. The willows of the brook surround him.
 Job 40:23	 Behold, if a river overflows, he does not tremble. He is confident, though the Jordan swells even to his mouth.
@@ -14435,7 +14435,7 @@ Psalm 35:21	 Yes, they opened their mouth wide against me. They said, “Aha! 
 Psalm 35:22	 You have seen it, God. Do not keep silent. Lord, do not be far from me.
 Psalm 35:23	 Wake up! Rise up to defend me, my God! My Lord, contend for me!
 Psalm 35:24	 Vindicate me, Lord my God, according to your righteousness. Do not let them gloat over me.
-Psalm 35:25	 Do not let them say in their heart, “Aha! That’s the way we want it!” Do not let them say, “We have swallowed him up!”
+Psalm 35:25	 Do not let them say in their heart, “Aha! That is the way we want it!” Do not let them say, “We have swallowed him up!”
 Psalm 35:26	 Let them be disappointed and confounded together who rejoice at my calamity. Let them be clothed with shame and dishonor who magnify themselves against me.
 Psalm 35:27	 Let those who favor my righteous cause shout for joy and be glad. Yes, let them say continually, “May God be magnified, who has pleasure in the prosperity of his servant!”
 Psalm 35:28	 My tongue shall talk about your righteousness and about your praise all day long.
@@ -14731,7 +14731,7 @@ Psalm 54:2	 Hear my prayer, God. Listen to the words of my mouth.
 Psalm 54:3	 For strangers have risen up against me. Violent men have sought after my soul. They have not set God before them. Selah.
 Psalm 54:4	 Behold, God is my helper. The Lord is the one who sustains my soul.
 Psalm 54:5	 He will repay the evil to my enemies. Destroy them in your truth.
-Psalm 54:6	 With a free will offering, I will sacrifice to you.I will give thanks to your name, God, for it is good.
+Psalm 54:6	 With a free will offering, I will sacrifice to you. I will give thanks to your name, God, for it is good.
 Psalm 54:7	 For he has delivered me out of all trouble. My eye has seen triumph over my enemies.
 Psalm 55:1	 Listen to my prayer, God. Do not hide yourself from my supplication.
 Psalm 55:2	 Attend to me, and answer me. I am restless in my complaint, and moan
@@ -15911,7 +15911,7 @@ Psalm 119:9	 How can a young man keep his way pure? By living according to you
 Psalm 119:10	 With my whole heart, I have sought you. Do not let me wander from your commandments.
 Psalm 119:11	 I have hidden your word in my heart, that I might not sin against you.
 Psalm 119:12	 Blessed are you, God. Teach me your statutes.
-Psalm 119:13	 With my lips,I have declared all the ordinances of your mouth.
+Psalm 119:13	 With my lips, I have declared all the ordinances of your mouth.
 Psalm 119:14	 I have rejoiced in the way of your testimonies, as much as in all riches.
 Psalm 119:15	 I will meditate on your precepts, and consider your ways.
 Psalm 119:16	 I will delight myself in your statutes. I will not forget your word.
@@ -16190,7 +16190,7 @@ Psalm 135:11	 Sihon king of the Amorites, Og king of Bashan, and all the kingd
 Psalm 135:12	 and gave their land for a heritage, a heritage to Israel, his people.
 Psalm 135:13	 Your name, God, endures forever; your renown, God, throughout all generations.
 Psalm 135:14	 For God will judge his people and have compassion on his servants.
-Psalm 135:15	 The idols of the nations are silver and gold,the work of men’s hands.
+Psalm 135:15	 The idols of the nations are silver and gold, the work of men’s hands.
 Psalm 135:16	 They have mouths, but they cannot speak. They have eyes, but they cannot see.
 Psalm 135:17	 They have ears, but they cannot hear, neither is there any breath in their mouths.
 Psalm 135:18	 Those who make them will be like them, yes, everyone who trusts in them.
@@ -16246,7 +16246,7 @@ Psalm 139:3	 You search out my path and my lying down, and are acquainted with
 Psalm 139:4	 For there is not a word on my tongue, but, behold, God, you know it altogether.
 Psalm 139:5	 You hem me in behind and before. You laid your hand on me.
 Psalm 139:6	 This knowledge is beyond me. It is lofty. I cannot attain it.
-Psalm 139:7	 Where could I go from your Spirit?Or where could I flee from your presence?
+Psalm 139:7	 Where could I go from your Spirit? Or where could I flee from your presence?
 Psalm 139:8	 If I ascend up into heaven, you are there. If I make my bed in Sheol, behold, you are there!
 Psalm 139:9	 If I take the wings of the dawn, and settle in the uttermost parts of the sea,
 Psalm 139:10	 even there your hand will lead me, and your right hand will hold me.
@@ -16256,7 +16256,7 @@ Psalm 139:13	 For you formed my inmost being. You knit me together in my mothe
 Psalm 139:14	 I will give thanks to you, for I am fearfully and wonderfully made. Your works are wonderful. My soul knows that very well.
 Psalm 139:15	 My frame was not hidden from you, when I was made in secret, woven together in the depths of the earth.
 Psalm 139:16	 Your eyes saw my body. In your book they were all written, the days that were ordained for me, when as yet there were none of them.
-Psalm 139:17	 How precious to me are your thoughts, God!How vast is their sum!
+Psalm 139:17	 How precious to me are your thoughts, God! How vast is their sum!
 Psalm 139:18	 If I would count them, they are more in number than the sand. When I wake up, I am still with you.
 Psalm 139:19	 If only you, God, would kill the wicked. Get away from me, you bloodthirsty men!
 Psalm 139:20	 For they speak against you wickedly. Your enemies take your name in vain.
@@ -18020,7 +18020,7 @@ Isaiah 19:12	 Where then are your wise men? Let them tell you now; and let the
 Isaiah 19:13	 The princes of Zoan have become fools. The princes of Memphis are deceived. They have caused Egypt to go astray, who are the cornerstone of her tribes.
 Isaiah 19:14	 God has mixed a spirit of perverseness in the middle of her; and they have caused Egypt to go astray in all of its works, like a drunken man staggers in his vomit.
 Isaiah 19:15	 Neither shall there be any work for Egypt, which head or tail, palm branch or rush, may do.
-Isaiah 19:16	 In that day the Egyptians will be like women. They will tremble and fear because of the shaking of the Lord God of Hosts’s hand, which he shakes over them.
+Isaiah 19:16	 In that day the Egyptians will be like women. They will tremble and fear because of the shaking of the Lord God of Hosts’ hand, which he shakes over them.
 Isaiah 19:17	 The land of Judah will become a terror to Egypt. Everyone to whom mention is made of it will be afraid, because of the plans of the Lord God of Hosts, which he determines against it.
 Isaiah 19:18	 In that day, there will be five cities in the land of Egypt that speak the language of Canaan, and swear to the Lord God of Hosts. One will be called “The city of destruction.”
 Isaiah 19:19	 In that day, there will be an altar to God in the middle of the land of Egypt, and a pillar to God at its border.
@@ -18455,7 +18455,7 @@ Isaiah 40:31	 but those who wait for God will renew their strength. They will 
 Isaiah 41:1	 “Keep silent before me, islands, and let the peoples renew their strength. Let them come near, then let them speak. Let us meet together for judgment.
 Isaiah 41:2	 Who has raised up one from the east? Who called him to his foot in righteousness? He hands over nations to him and makes him rule over kings. He gives them like the dust to his sword, like the driven stubble to his bow.
 Isaiah 41:3	 He pursues them and passes by safely, even by a way that he had not gone with his feet.
-Isaiah 41:4	 Who has worked and done it, calling the generations from the beginning?I, God, the first, and with the last, I am he.”
+Isaiah 41:4	 Who has worked and done it, calling the generations from the beginning? I, God, the first, and with the last, I am he.”
 Isaiah 41:5	 The islands have seen, and fear. The ends of the earth tremble. They approach, and come.
 Isaiah 41:6	 Everyone helps his neighbor. They say to their brothers, “Be strong!”
 Isaiah 41:7	 So the carpenter encourages the goldsmith. He who smoothes with the hammer encourages him who strikes the anvil, saying of the soldering, “It is good;” and he fastens it with nails, that it might not totter.
@@ -21900,7 +21900,7 @@ Daniel 5:22	 “You, his son, Belshazzar, have not humbled your heart, though 
 Daniel 5:23	 but have lifted up yourself against the Lord of heaven; and they have brought the vessels of his house before you, and you and your lords, your wives, and your concubines, have drunk wine from them. You have praised the gods of silver and gold, of bronze, iron, wood, and stone, which do not see, or hear, or know; and you have not glorified the God in whose hand your breath is, and whose are all your ways.
 Daniel 5:24	 Then the part of the hand was sent from before him, and this writing was inscribed.
 Daniel 5:25	 “This is the writing that was inscribed: ‘MENE, MENE, TEKEL, UPHARSIN.’
-Daniel 5:26	 “This is the interpretation of the thing:MENE: God has counted your kingdom, and brought it to an end.
+Daniel 5:26	 “This is the interpretation of the thing: MENE: God has counted your kingdom, and brought it to an end.
 Daniel 5:27	 TEKEL: you are weighed in the balances, and are found wanting.
 Daniel 5:28	 PERES: your kingdom is divided, and given to the Medes and Persians.”
 Daniel 5:29	 Then Belshazzar commanded, and they clothed Daniel with purple, and put a chain of gold about his neck, and made proclamation concerning him, that he should be the third ruler in the kingdom.
@@ -22623,7 +22623,7 @@ Micah 3:11	 Her leaders judge for bribes, and her priests teach for a price, a
 Micah 3:12	 Therefore Zion for your sake will be plowed like a field, and Jerusalem will become heaps of rubble, and the mountain of the temple like the high places of a forest.
 Micah 4:1	 But in the latter days, it will happen that the mountain of God’s temple will be established on the top of the mountains, and it will be exalted above the hills; and peoples will stream to it.
 Micah 4:2	 Many nations will go and say, “Come! Let us go up to the mountain of God, and to the house of the God of Jacob; and he will teach us of his ways, and we will walk in his paths.” For the law will go out of Zion, and God’s word from Jerusalem;
-Micah 4:3	 and he will judge between ;many peoples, and will decide concerning strong nations afar off. They will beat their swords into plowshares, and their spears into pruning hooks. Nation will not lift up sword against nation, neither will they learn war any more.
+Micah 4:3	 and he will judge between many peoples, and will decide concerning strong nations afar off. They will beat their swords into plowshares, and their spears into pruning hooks. Nation will not lift up sword against nation, neither will they learn war any more.
 Micah 4:4	 But they will sit every man under his vine and under his fig tree; and no one will make them afraid: For the mouth of the Lord God of Hosts has spoken.
 Micah 4:5	 Indeed all the nations may walk in the name of their gods; but we will walk in the name of the Lord our God forever and ever.
 Micah 4:6	 “In that day,” says God, “I will assemble that which is lame, and I will gather that which is driven away, and that which I have afflicted;
@@ -24378,7 +24378,7 @@ Mark 5:10	 He begged him much that he would not send them away out of the coun
 Mark 5:11	 Now on the mountainside there was a great herd of pigs feeding.
 Mark 5:12	 All the demons begged him, saying, “Send us into the pigs, that we may enter into them.”
 Mark 5:13	 At once Jesus gave them permission. The unclean spirits came out and entered into the pigs. The herd of about two thousand rushed down the steep bank into the sea, and they were drowned in the sea.
-Mark 5:14	 Those who fed the pigs fled, and told it in the city and in the country.The people came to see what it was that had happened.
+Mark 5:14	 Those who fed the pigs fled, and told it in the city and in the country. The people came to see what it was that had happened.
 Mark 5:15	 They came to Jesus, and saw him who had been possessed by demons sitting, clothed, and in his right mind, even him who had the legion; and they were afraid.
 Mark 5:16	 Those who saw it declared to them what happened to him who was possessed by demons, and about the pigs.
 Mark 5:17	 They began to beg him to depart from their region.
@@ -26583,7 +26583,7 @@ John 11:56	 Then they sought for Jesus and spoke with one another as they stoo
 John 11:57	 Now the chief priests and the Pharisees had commanded that if anyone knew where he was, he should report it, that they might seize him.
 John 12:1	 Then six days before the Passover, Jesus came to Bethany, where Lazarus was, who had been dead, whom he raised from the dead.
 John 12:2	 So they made him a supper there. Martha served, but Lazarus was one of those who sat at the table with him.
-John 12:3	 Therefore Mary took a pound of ointment of pure nard, very precious, and anointed Jesus’s feet and wiped his feet with her hair. The house was filled with the fragrance of the ointment.
+John 12:3	 Therefore Mary took a pound of ointment of pure nard, very precious, and anointed Jesus’ feet and wiped his feet with her hair. The house was filled with the fragrance of the ointment.
 John 12:4	 Then Judas Iscariot, Simon’s son, one of his disciples, who would betray him, said,
 John 12:5	 “Why was not this ointment sold for three hundred denarii, and given to the poor?”
 John 12:6	 Now he said this, not because he cared for the poor, but because he was a thief, and having the money box, used to steal what was put into it.
@@ -30684,7 +30684,7 @@ Jude 1:8	 Yet in the same way, these also in their dreaming defile the flesh, 
 Jude 1:9	 But Michael, the archangel, when contending with the devil and arguing about the body of Moses, dared not bring against him an abusive condemnation, but said, “May the Lord rebuke you!”
 Jude 1:10	 But these speak evil of whatever things they do not know. They are destroyed in these things that they understand naturally, like the creatures without reason.
 Jude 1:11	 Woe to them! For they went in the way of Cain, and ran riotously in the error of Balaam for hire, and perished in Korah’s rebellion.
-Jude 1:12	 These are hidden rocky reefs in your love feasts when they feast with you, shepherds who without fear feed themselves;clouds without water, carried along by winds; autumn trees without fruit, twice dead, plucked up by the roots;
+Jude 1:12	 These are hidden rocky reefs in your love feasts when they feast with you, shepherds who without fear feed themselves; clouds without water, carried along by winds; autumn trees without fruit, twice dead, plucked up by the roots;
 Jude 1:13	 wild waves of the sea, foaming out their own shame; wandering stars, for whom the blackness of darkness has been reserved forever.
 Jude 1:14	 About these also Enoch, the seventh from Adam, prophesied, saying, “Behold, the Lord came with ten thousands of his holy ones,
 Jude 1:15	 to execute judgment on all, and to convict all the ungodly of all their works of ungodliness which they have done in an ungodly way, and of all the hard things which ungodly sinners have spoken against him.”
