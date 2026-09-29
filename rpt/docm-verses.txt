@@ -232,7 +232,7 @@ Genesis 9:23	 Shem and Japheth took a garment, and laid it on both their shoul
 Genesis 9:24	 Noah awoke from his wine, and knew what his youngest son had done to him.
 Genesis 9:25	 He said, “Canaan be cursed. The lowest of slaves will he be to his brothers.”
 Genesis 9:26	 He said, “Blessed be God, the God of Shem. Let Canaan be his servant.
-Genesis 9:27	 May God enlarge Japheth. Let him dwell in the tents of Shem. May Canaan be his servant.”
+Genesis 9:27	 May God enlarge Japheth. Let him dwell in the tents of Shem. Let Canaan be his servant.”
 Genesis 9:28	 Noah lived three hundred fifty years after the flood.
 Genesis 9:29	 All the days of Noah were nine hundred fifty years, and then he died.
 Genesis 10:1	 Now this is the history of the generations of the sons of Noah and of Shem, Ham, and Japheth. Sons were born to them after the flood.
@@ -8559,7 +8559,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 20:2	 So all the men of Israel went up from following David, and followed Sheba the son of Bichri; but the men of Judah joined with their king, from the Jordan even to Jerusalem.
 2 Samuel 20:3	 David came to his house at Jerusalem; and the king took the ten women his concubines, whom he had left to keep the house, and put them in custody, and provided them with sustenance, but did not go in to them. So they were shut up to the day of their death, living in widowhood.
 2 Samuel 20:4	 Then the king said to Amasa, “Call me the men of Judah together within three days, and be here present.”
-2 Samuel 20:5	 So Amasa went to call the men of Judah together; but he stayed longer than the set time which he had appointed him.
+2 Samuel 20:5	 So Amasa went to call the men of Judah together; but he stayed longer than the set time which had been appointed to him.
 2 Samuel 20:6	 David said to Abishai, “Now Sheba the son of Bichri will do us more harm than Absalom did. Take your lord’s servants, and pursue after him, lest he get himself fortified cities, and escape out of our sight.”
 2 Samuel 20:7	 Joab’s men went out after him, and the Cherethites and the Pelethites, and all the mighty men; and they went out of Jerusalem, to pursue Sheba the son of Bichri.
 2 Samuel 20:8	 When they were at the great stone which is in Gibeon, Amasa came to meet them. Joab was clothed in his apparel of war that he had put on, and on it was a sash with a sword fastened on his waist in its sheath; and as he went along it fell out.
@@ -8668,7 +8668,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 23:12	 But he stood in the middle of the plot and defended it, and killed the Philistines; and God worked a great victory.
 2 Samuel 23:13	 Three of the thirty chief men went down, and came to David in the harvest time to the cave of Adullam; and the troop of the Philistines was encamped in the valley of Rephaim.
 2 Samuel 23:14	 David was then in the stronghold; and the garrison of the Philistines was then in Bethlehem.
-2 Samuel 23:15	 David longed, and said, “Oh that someone would give me water to drink from the well of Bethlehem, which is by the gate!”
+2 Samuel 23:15	 David said longingly, “Oh that someone would give me water to drink from the well of Bethlehem, which is by the gate!”
 2 Samuel 23:16	 The three mighty men broke through the army of the Philistines, and drew water out of the well of Bethlehem that was by the gate, and took it and brought it to David; but he would not drink of it, but poured it out to God.
 2 Samuel 23:17	 He said, “Be it far from me, God, that I should do this! Is this not the blood of the men who risked their lives to go?” Therefore he would not drink it. The three mighty men did these things.
 2 Samuel 23:18	 Abishai, the brother of Joab, the son of Zeruiah, was chief of the three. He lifted up his spear against three hundred and killed them, and had a name among the three.
@@ -8705,7 +8705,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 24:10	 David’s heart struck him after he had counted the people. David said to God, “I have sinned greatly in that which I have done. But now, God, put away, I beg you, the iniquity of your servant; for I have done very foolishly.”
 2 Samuel 24:11	 When David rose up in the morning, God’s word came to the prophet Gad, David’s seer, saying,
 2 Samuel 24:12	 “Go and speak to David, ‘God says, “I offer you three things. Choose one of them, that I may do it to you.”’”
-2 Samuel 24:13	 So Gad came to David, and told him, and said to him, “Shall seven years of famine come to you in your land? Or will you flee three months before your foes while they pursue you? Or shall there be three days’ pestilence in your land? Now answer, and consider what answer I shall return to him who sent me.”
+2 Samuel 24:13	 So Gad came to David, and told him, saying, “Shall seven years of famine come to you in your land? Or will you flee three months before your foes while they pursue you? Or shall there be three days’ pestilence in your land? Now answer, and consider what answer I shall return to him who sent me.”
 2 Samuel 24:14	 David said to Gad, “I am in distress. Let us fall now into God’s hand; for his mercies are great. Let me not fall into man’s hand.”
 2 Samuel 24:15	 So God sent a pestilence on Israel from the morning even to the appointed time; and seventy thousand men died of the people from Dan even to Beersheba.
 2 Samuel 24:16	 When the angel stretched out his hand toward Jerusalem to destroy it, God relented of the disaster, and said to the angel who destroyed the people, “It is enough. Now withdraw your hand.” God’s angel was by the threshing floor of Araunah the Jebusite.
