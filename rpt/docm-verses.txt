@@ -253,7 +253,7 @@ Genesis 10:15	 Canaan became the father of Sidon (his firstborn), Heth,
 Genesis 10:16	 the Jebusites, the Amorites, the Girgashites,
 Genesis 10:17	 the Hivites, the Arkites, the Sinites,
 Genesis 10:18	 the Arvadites, the Zemarites, and the Hamathites. Afterward the families of the Canaanites were spread abroad.
-Genesis 10:19	 The border of the Canaanites was from Sidon—as you go toward Gerar —to Gaza—as you go toward Sodom, Gomorrah, Admah, and Zeboiim—to Lasha.
+Genesis 10:19	 The border of the Canaanites was from Sidon—as you go toward Gerar—to Gaza—as you go toward Sodom, Gomorrah, Admah, and Zeboiim—to Lasha.
 Genesis 10:20	 These are the sons of Ham, after their families, according to their languages, in their lands and their nations.
 Genesis 10:21	 Children were also born to Shem (the elder brother of Japheth), the father of all the children of Eber.
 Genesis 10:22	 The sons of Shem were: Elam, Asshur, Arpachshad, Lud, and Aram.
@@ -312,7 +312,7 @@ Genesis 12:10	 There was a famine in the land. Abram went down into Egypt to l
 Genesis 12:11	 When he had come near to enter Egypt, he said to Sarai his wife, “See now, I know that you are a beautiful woman to look at.
 Genesis 12:12	 It will happen that when the Egyptians see you, they will say, ‘This is his wife.’ They will kill me, but they will save you alive.
 Genesis 12:13	 Please say that you are my sister, that it may be well with me for your sake, and that my soul may live because of you.”
-Genesis 12:14	 When Abram had come into Egypt, Egyptians saw that the woman was very beautiful.
+Genesis 12:14	 When Abram had come into Egypt, some Egyptians saw that the woman was very beautiful.
 Genesis 12:15	 The princes of Pharaoh saw her, and praised her to Pharaoh; and the woman was taken into Pharaoh’s house.
 Genesis 12:16	 He dealt well with Abram for her sake. He had sheep, cattle, male donkeys, male servants, female servants, female donkeys, and camels.
 Genesis 12:17	 God afflicted Pharaoh and his house with great plagues because of Sarai, Abram’s wife.
@@ -1471,7 +1471,7 @@ Genesis 48:16	 the angel who has redeemed me from all evil, bless the lads, an
 Genesis 48:17	 When Joseph saw that his father laid his right hand on the head of Ephraim, it displeased him. He held up his father’s hand, to remove it from Ephraim’s head to Manasseh’s head.
 Genesis 48:18	 Joseph said to his father, “Not so, my father, for this is the firstborn. Put your right hand on his head.”
 Genesis 48:19	 His father refused, and said, “I know, my son, I know. He also will become a people, and he also will be great. However, his younger brother will be greater than he, and his offspring will become a multitude of nations.”
-Genesis 48:20	 He blessed them that day, saying, “Israel will bless in you, saying, ‘God make you as Ephraim and as Manasseh’” He set Ephraim before Manasseh.
+Genesis 48:20	 He blessed them that day, saying, “Israel will bless in your name, saying, ‘God make you as Ephraim and as Manasseh’” He set Ephraim before Manasseh.
 Genesis 48:21	 Israel said to Joseph, “Behold, I am dying, but God will be with you, and bring you again to the land of your fathers.
 Genesis 48:22	 Moreover I have given to you one portion above your brothers, which I took out of the hand of the Amorite with my sword and with my bow.”
 Genesis 49:1	 Jacob called to his sons, and said: “Gather yourselves together, that I may tell you that which will happen to you in the days to come.
@@ -1499,7 +1499,7 @@ Genesis 49:22	 “Joseph is a fruitful vine, a fruitful vine by a spring. His 
 Genesis 49:23	 The archers have severely grieved him, shot at him, and persecuted him:
 Genesis 49:24	 But his bow remained strong. The arms of his hands were made strong, by the hands of the Mighty One of Jacob, (from there is the shepherd, the stone of Israel),
 Genesis 49:25	 even by the God of your father, who will help you, by the Almighty, who will bless you, with blessings of heaven above, blessings of the deep that lies below, blessings of the breasts, and of the womb.
-Genesis 49:26	 The blessings of your father have prevailed above the blessings of your ancestors, above the boundaries of the ancient hills. They will be on the head of Joseph, on the crown of the head of him who is separated from his brothers.
+Genesis 49:26	 The blessings of your father have prevailed above the blessings of my ancestors, above the boundaries of the ancient hills. They will be on the head of Joseph, on the crown of the head of him who is separated from his brothers.
 Genesis 49:27	 “Benjamin is a ravenous wolf. In the morning he will devour the prey. At evening he will divide the plunder.”
 Genesis 49:28	 All these are the twelve tribes of Israel, and this is what their father spoke to them, and blessed them. He blessed everyone according to his own blessing.
 Genesis 49:29	 He instructed them, and said to them, “I am to be gathered to my people. Bury me with my fathers in the cave that is in the field of Ephron the Hittite,
@@ -1979,8 +1979,8 @@ Exodus 16:28	 God said to Moses, “How long do you refuse to keep my commandm
 Exodus 16:29	 Behold, because God has given you the Sabbath, therefore he gives you on the sixth day the bread of two days. Everyone stay in his place. Let no one go out of his place on the seventh day.”
 Exodus 16:30	 So the people rested on the seventh day.
 Exodus 16:31	 The house of Israel called its name “Manna”, and it was like coriander seed, white; and its taste was like wafers with honey.
-Exodus 16:32	 Moses said, “This is the thing which God has commanded, ‘Let an omer full of it be kept throughout your generations, that they may see the bread with which I fed you in the wilderness, when I brought you out of the land of Egypt.’”
-Exodus 16:33	 Moses said to Aaron, “Take a pot, and put an omer full of manna in it, and lay it up before God, to be kept throughout your generations.”
+Exodus 16:32	 Moses said, “This is the thing which God has commanded, ‘Let an omer-full of it be kept throughout your generations, that they may see the bread with which I fed you in the wilderness, when I brought you out of the land of Egypt.’”
+Exodus 16:33	 Moses said to Aaron, “Take a pot, and put an omer-full of manna in it, and lay it up before God, to be kept throughout your generations.”
 Exodus 16:34	 As God commanded Moses, so Aaron laid it up before the Testimony, to be kept.
 Exodus 16:35	 The children of Israel ate the manna forty years, until they came to an inhabited land. They ate the manna until they came to the borders of the land of Canaan.
 Exodus 16:36	 Now an omer is one tenth of an ephah.
@@ -2584,7 +2584,7 @@ Exodus 36:14	 He made curtains of goats’ hair for a covering over the tabern
 Exodus 36:15	 The length of each curtain was thirty cubits, and four cubits the width of each curtain. The eleven curtains had one measure.
 Exodus 36:16	 He coupled five curtains by themselves, and six curtains by themselves.
 Exodus 36:17	 He made fifty loops on the edge of the curtain that was outermost in the coupling, and he made fifty loops on the edge of the curtain which was outermost in the second coupling.
-Exodus 36:18	 He made fifty clasps of bronze to couple the Tabernacle together, that it might be a unit.
+Exodus 36:18	 He made fifty clasps of bronze to couple the tent together, that it might be a unit.
 Exodus 36:19	 He made a covering for the tent of rams’ skins dyed red, and a covering of sea cow hides above.
 Exodus 36:20	 He made the boards for the tabernacle of acacia wood, standing up.
 Exodus 36:21	 Ten cubits was the length of a board, and a cubit and a half the width of each board.
@@ -2709,7 +2709,7 @@ Exodus 39:41	 the finely worked garments for ministering in the holy place, th
 Exodus 39:42	 According to all that God commanded Moses, so the children of Israel did all the work.
 Exodus 39:43	 Moses saw all the work, and behold, they had done it as God had commanded. They had done so; and Moses blessed them.
 Exodus 40:1	 God spoke to Moses, saying,
-Exodus 40:2	 “On the first day of the first month you shall raise up the Tent of Meeting.
+Exodus 40:2	 “On the first day of the first month you shall raise up the tabernacle of the Tent of Meeting.
 Exodus 40:3	 You shall put the ark of the covenant in it, and you shall screen the ark with the veil.
 Exodus 40:4	 You shall bring in the table, and set in order the things that are on it. You shall bring in the lamp stand, and light its lamps.
 Exodus 40:5	 You shall set the golden altar for incense before the ark of the covenant, and put the screen of the door to the tabernacle.
@@ -3093,7 +3093,7 @@ Leviticus 13:37	 But if in his eyes the itch is arrested and black hair has gr
 Leviticus 13:38	 “When a man or a woman has bright spots in the skin of the body, even white bright spots,
 Leviticus 13:39	 then the priest shall examine them. Behold, if the bright spots on the skin of their body are a dull white, it is a harmless rash. It has broken out in the skin. He is clean.
 Leviticus 13:40	 “If a man’s hair has fallen from his head, he is bald. He is clean.
-Leviticus 13:41	 If his hair has fallen off from the front part of his head, he is forehead bald. He is clean.
+Leviticus 13:41	 If his hair has fallen off from the front part of his head, his forehead is bald. He is clean.
 Leviticus 13:42	 But if a reddish-white plague is in the bald head or the bald forehead, it is leprosy breaking out in his bald head or his bald forehead.
 Leviticus 13:43	 Then the priest shall examine him. Behold, if the swelling of the plague is reddish-white in his bald head, or in his bald forehead, like the appearance of leprosy in the skin of the body,
 Leviticus 13:44	 he is a leprous man. He is unclean. The priest shall surely pronounce him unclean. His plague is on his head
@@ -3852,7 +3852,7 @@ Numbers 6:25	 God make his face to shine on you, and be gracious to you.
 Numbers 6:26	 God lift up his face toward you, and give you peace.’
 Numbers 6:27	 “So they shall put my name on the children of Israel; and I will bless them.”
 Numbers 7:1	 On the day that Moses had finished setting up the tabernacle, and had anointed it and sanctified it with all its furniture, and the altar with all its vessels, and had anointed and sanctified them;
-Numbers 7:2	 the princes of Israel, the heads of their fathers’ houses, offered. These were the princes of the tribes. These are they who were over those who were counted;
+Numbers 7:2	 the princes of Israel, the heads of their fathers’ houses, gave offerings. These were the princes of the tribes. These are they who were over those who were counted;
 Numbers 7:3	 and they brought their offering before God, six covered wagons and twelve oxen; a wagon for every two of the princes, and for each one an ox. They presented them before the tabernacle.
 Numbers 7:4	 God spoke to Moses, saying,
 Numbers 7:5	 “Accept these from them, that they may be used in doing the service of the Tent of Meeting; and you shall give them to the Levites, to every man according to his service.”
@@ -5831,7 +5831,7 @@ Deuteronomy 33:17	 Majesty belongs to the firstborn of his herd. His horns are
 Deuteronomy 33:18	 About Zebulun he said, “Rejoice, Zebulun, in your going out; and Issachar, in your tents.
 Deuteronomy 33:19	 They will call the peoples to the mountain. There they will offer sacrifices of righteousness, for they will draw out the abundance of the seas, the hidden treasures of the sand.”
 Deuteronomy 33:20	 About Gad he said, “He who enlarges Gad is blessed. He dwells as a lioness, and tears the arm and the crown of the head.
-Deuteronomy 33:21	 He provided the first part for himself, for the lawgiver’s portion reserved was reserved for him. He came with the heads of the people. He executed the righteousness of God, His ordinances with Israel.”
+Deuteronomy 33:21	 He provided the first part for himself, for the lawgiver’s portion was reserved for him. He came with the heads of the people. He executed the righteousness of God, His ordinances with Israel.”
 Deuteronomy 33:22	 About Dan he said, “Dan is a lion’s cub that leaps out of Bashan.”
 Deuteronomy 33:23	 About Naphtali he said, “Naphtali, satisfied with favor, full of God’s blessing, Possess the west and the south.”
 Deuteronomy 33:24	 About Asher he said, “Asher is blessed with children. Let him be acceptable to his brothers. Let him dip his foot in oil.
@@ -6041,7 +6041,7 @@ Joshua 8:35	 There was not a word of all that Moses commanded which Joshua did
 Joshua 9:1	 When all the kings who were beyond the Jordan, in the hill country, and in the lowland, and on all the shore of the great sea in front of Lebanon, the Hittite, the Amorite, the Canaanite, the Perizzite, the Hivite, and the Jebusite, heard of it
 Joshua 9:2	 they gathered themselves together to fight with Joshua and with Israel, with one accord.
 Joshua 9:3	 But when the inhabitants of Gibeon heard what Joshua had done to Jericho and to Ai,
-Joshua 9:4	 they also resorted to a ruse, and went and made as if they had been ambassadors, and took old sacks on their donkeys, and old, torn-up and bound up wine skins,
+Joshua 9:4	 they also resorted to a ruse, and went and made as if they had been ambassadors, and took old sacks on their donkeys, and old, torn-up and bound up wineskins,
 Joshua 9:5	 and old and patched sandals on their feet, and wore old garments. All the bread of their food supply was dry and moldy.
 Joshua 9:6	 They went to Joshua at the camp at Gilgal, and said to him and to the men of Israel, “We have come from a far country. Now therefore make a covenant with us.”
 Joshua 9:7	 The men of Israel said to the Hivites, “What if you live among us? How could we make a covenant with you?”
@@ -6050,7 +6050,7 @@ Joshua 9:9	 They said to him, “Your servants have come from a very far count
 Joshua 9:10	 and all that he did to the two kings of the Amorites who were beyond the Jordan, to Sihon king of Heshbon and to Og king of Bashan, who was at Ashtaroth.
 Joshua 9:11	 Our elders and all the inhabitants of our country spoke to us, saying, ‘Take supplies in your hand for the journey, and go to meet them. Tell them, “We are your servants. Now make a covenant with us.”’
 Joshua 9:12	 This our bread we took hot for our supplies out of our houses on the day we went out to go to you; but now, behold, it is dry, and has become moldy.
-Joshua 9:13	 These wine skins, which we filled, were new; and behold, they are torn. These our garments and our sandals have become old because of the very long journey.”
+Joshua 9:13	 These wineskins, which we filled, were new; and behold, they are torn. These our garments and our sandals have become old because of the very long journey.”
 Joshua 9:14	 The men sampled their provisions, and did not ask counsel from God’s mouth.
 Joshua 9:15	 Joshua made peace with them, and made a covenant with them, to let them live. The princes of the congregation swore to them.
 Joshua 9:16	 At the end of three days after they had made a covenant with them, they heard that they were their neighbors, and that they lived among them.
@@ -7747,7 +7747,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Samuel 20:14	 You shall not only show me the loving kindness of God while I still live, that I not die;
 1 Samuel 20:15	 but you shall also not cut off your kindness from my house forever, no, not when God has cut off every one of the enemies of David from the surface of the earth.”
 1 Samuel 20:16	 So Jonathan made a covenant with David’s house, saying, “God will require it at the hand of David’s enemies.”
-1 Samuel 20:17	 Jonathan caused David to swear again, for the love that he had to him; for he loved him as he loved his own soul.
+1 Samuel 20:17	 Jonathan caused David to swear again, for the love that he had for him; for he loved him as he loved his own soul.
 1 Samuel 20:18	 Then Jonathan said to him, “Tomorrow is the new moon, and you will be missed, because your seat will be empty.
 1 Samuel 20:19	 When you have stayed three days, go down quickly and come to the place where you hid yourself when this started, and remain by the stone Ezel.
 1 Samuel 20:20	 I will shoot three arrows on its side, as though I shot at a mark.
@@ -8082,7 +8082,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 2:30	 Joab returned from following Abner; and when he had gathered all the people together, nineteen men of David’s and Asahel were missing.
 2 Samuel 2:31	 But David’s servants had struck Benjamin and Abner’s men so that three hundred sixty men died.
 2 Samuel 2:32	 They took up Asahel, and buried him in the tomb of his father, which was in Bethlehem. Joab and his men went all night, and the day broke on them at Hebron.
-2 Samuel 3:1	 Now there was long war between Saul’s house and David’s house. David grew stronger and stronger, but Saul’s house grew weaker and weaker.
+2 Samuel 3:1	 Now there was a long war between Saul’s house and David’s house. David grew stronger and stronger, but Saul’s house grew weaker and weaker.
 2 Samuel 3:2	 Sons were born to David in Hebron. His firstborn was Amnon, of Ahinoam the Jezreelitess;
 2 Samuel 3:3	 and his second, Chileab, of Abigail the wife of Nabal the Carmelite; and the third, Absalom the son of Maacah the daughter of Talmai king of Geshur;
 2 Samuel 3:4	 and the fourth, Adonijah the son of Haggith; and the fifth, Shephatiah the son of Abital;
@@ -12679,7 +12679,7 @@ Nehemiah 13:4	 Now before this, Eliashib the priest, who was appointed over th
 Nehemiah 13:5	 had prepared for him a great room, where before they laid the meal offerings, the frankincense, the vessels, and the tithes of the grain, the new wine, and the oil, which were given by commandment to the Levites, the singers, and the gatekeepers; and the wave offerings for the priests.
 Nehemiah 13:6	 But in all this, I was not at Jerusalem; for in the thirty-second year of Artaxerxes king of Babylon I went to the king; and after some days I asked leave of the king,
 Nehemiah 13:7	 and I came to Jerusalem, and understood the evil that Eliashib had done for Tobiah, in preparing him a room in the courts of God’s house.
-Nehemiah 13:8	 It grieved me severely. Therefore, I threw all Tobiah’s household possessions out of the room.
+Nehemiah 13:8	 It grieved me severely. Therefore I threw all Tobiah’s household possessions out of the room.
 Nehemiah 13:9	 Then I commanded, and they cleansed the rooms. I brought into them the vessels of God’s house, with the meal offerings and the frankincense again.
 Nehemiah 13:10	 I perceived that the portions of the Levites had not been given them; so that the Levites and the singers, who did the work, had each fled to his field.
 Nehemiah 13:11	 Then I contended with the rulers, and said, “Why is God’s house forsaken?” I gathered them together, and set them in their place.
