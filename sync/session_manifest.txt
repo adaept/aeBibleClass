@@ -2461,3 +2461,138 @@ NEXT SESSION:
   `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md`'s
   Addendum 6 checkpoint before deciding what to do next.
 ===============================================================================
+
+## New session (2026-09-29): R15 review-checklist tool built, revised, and used for real
+
+Picked up the previous entry's item 1 (operator decision needed): built the
+R15 review-checklist tool (`aeBibleClass/rvw/
+Plan_rwb_webu_review_checklist_2026-09-28.md`, §§1-10) rather than
+continuing purely manually. All four §7 open questions confirmed at their
+recommended defaults before building (asked via a clarifying-question tool,
+not assumed).
+
+  [CODE] aeRWB commits `2d7cd42`..`f4c77fa` (many, see `aeRWB`'s own git log
+  for the full list): built `tools/web-diff/generate-review-checklist.mjs`
+  (R15, `npm run docm.review-checklist -- webu`) + shared parsing/
+  idempotency helpers in `lib.mjs` + classifier feedback wired into
+  `docm-webu-webbe-categorize.mjs`. 41 tests passing.
+
+  **Design revision, same day**: first real approval round-trip (13 verses
+  checked, file closed/reopened) showed the original single-file design
+  (checked verses stay in the same file forever, as an in-file audit trail)
+  was "confusing and distracting to work from" - not a bug, confirmed
+  working as designed, but the design itself wasn't what was actually
+  useful. Split into two files: `rwb-webu-review.txt` (pending-only, a
+  checked verse graduates out entirely on next regeneration) +
+  `rwb-webu-accepted.txt` (new, permanent append-only ledger the
+  categorizer's `operator-accepted` feedback now reads instead).
+  `buildChecklistEntries` -> `splitChecklistEntries` in `lib.mjs`
+  (ledger-aware, 3-way instead of 2-way).
+
+  Two classifier bugs found and fixed via real use, both process lessons
+  worth remembering (full account in `project_rwb_review_checklist_tool`
+  memory, not repeated here):
+  1. `isDivineNamesHunk` missed a divine name joined to the next word by an
+     em dash with no space ("LORD—instead") - first fix attempt only
+     covered a TRAILING dash; the working fix splits on "—" before testing.
+     Caught only by re-verifying each individual claimed-resolved verse,
+     not trusting the aggregate count.
+  2. A "how many verses need review for X reason" answer was initially
+     wrong (checked only the `divine-names` reason TAG, missing that some
+     hunks are explained via `formatting` instead) - corrected to check
+     whether the specific hunk itself is in `unexplainedHunks`.
+
+  **~40+ real docm content defects found and fixed this session**
+  (individually verified against WEBU/KJV before each fix, same
+  one-at-a-time Word-edit workflow as every prior session): 12
+  missing-space defects + 1 stray-semicolon typo + ~30 more dropped/added/
+  duplicated/misordered-word defects across Genesis, Exodus, Leviticus,
+  Numbers, Deuteronomy, Joshua, Judges, 1-2 Samuel, 1 Kings, Nehemiah,
+  Isaiah, John. One over-trim caught and fixed before being confirmed done
+  (2 Samuel 19:36, briefly missing "will"). One stale-export false alarm
+  resolved via a live-docm screenshot comparison (Genesis 9:27) - not a
+  tool bug, a re-export fixed it.
+
+  [IMPORT-N/A, DOC] `aeBibleClass/rpt/docm-verses.txt` -- 22 commits total
+  this session (`caed622`..`5b20878`), each individually verified against
+  WEBU before committing. Not a VBA source file, no import step needed --
+  this is the docm's own live-export snapshot, edited directly in Word by
+  the operator each round, then re-exported via
+  `ExportDocmVersesToRWBFormat`.
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md` --
+  new Addendum 7 (full session account) + Status section rewritten with
+  final numbers.
+
+  [DOC] `aeRWB/README.md` + `aeRWB/tools/web-diff/README.md` -- R14/R15
+  sections updated with final session numbers; new work-list notes for a
+  proposed R17 (ASV text, WEB's confirmed ASV lineage, previously
+  undocumented) and a small "stuff"-avoidance candidate (investigated,
+  found to only affect 1 remaining verse, not built).
+
+  [MEMORY] `project_rwb_review_checklist_tool.md` (updated throughout),
+  `project_docm_categorization_and_nt_variant_policy.md` (final-state
+  pointer added), `MEMORY.md` index line updated.
+
+## Session status at this checkpoint (2026-09-29, R15 session close)
+
+  aeRWB: all work committed and pushed, up to `f4c77fa`. Working tree
+  clean.
+
+  aeBibleClass: all work committed and pushed, up to `5b20878`. Working
+  tree clean except this manifest commit itself (pending).
+
+  WEBU `other`: 1,226 (session start) -> **1,084 pending + 88 accepted**
+  (12,163 changed verses, 8.9% pending). WEBBE: untouched, still
+  1,630/14,207 = 11.5% (no ledger started - WEBU-first scope, per R15's
+  original requirement 9).
+
+  aeBibleAddin, adaept5tudio: not touched this session.
+
+## NEXT SESSION, IN ORDER
+
+  1. **Continue the R15 verse-by-verse review** using the two-file
+     workflow: `npm run docm.review-checklist -- webu` in `aeRWB`, review
+     `rwb-webu-review.txt` in GitHub Desktop/VS Code, either fix a real
+     docm defect in Word + re-export + re-run (drops off automatically) or
+     mark `rwb[x]` + re-run (graduates into `rwb-webu-accepted.txt`). 1,084
+     verses remain pending. No further design work needed - the tool is
+     stable as of this session's revision.
+
+  2. **Operator decision, not yet made**: pursue the ASV work-list item
+     (source a public-domain ASV text, same recipe as R16's `kjv.txt`, add
+     an `asv-word-choice` category) - see `aeRWB/tools/web-diff/README.md`'s
+     R15 section for the full proposal. Not urgent, no deadline.
+
+  3. Once WEBU's pending list reaches zero, start the WEBBE checklist the
+     same way (`npm run docm.review-checklist -- webbe`) - the script
+     already supports it, just never run.
+
+  4. **Unchanged from the previous session's list, still not touched:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+        2026-09-25 -- rationale to be supplied later, do not guess one.
+        Live-check `applySpellingVariant`'s wiring against a disposable
+        scratch document, per aeBibleAddin's
+        `word-audit-scanner.LIVE_CHECK.md` ("Shape 8" section). Do NOT run
+        without the operator's explicit go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+        on Genesis 1 (`aeRWB/tools/web-diff/`), using the OSHB data fetched
+        2026-09-25 - see `project_scholarly_grounding_plan` memory. cWEB
+        confirmed skipped entirely per operator decision.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        `rpt/docm-verses.txt` (`ExportDocmVersesToRWBFormat`'s
+        verse-number detection) - small, scoped, currently blocks
+        Jeremiah 37:10 from ever being sync-able.
+     d. 2 Samuel 21:8 (Merab/Michal, OT textual-tradition question,
+        `Plan_rwb_webu_review_checklist_2026-09-28.md` Addendum 3) still
+        awaits the operator's explicit confirmation, not blocking.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own plan
+        doc first); item 9 (Bible introduction - needs a dedicated writing
+        session).
+
+  Read `project_rwb_review_checklist_tool` memory +
+  `Plan_rwb_webu_review_checklist_2026-09-28.md`'s Addendum 7 before
+  deciding what to do next - do not re-derive this session's findings from
+  scratch.
+===============================================================================

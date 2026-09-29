@@ -30,22 +30,28 @@ a status table, and an explicit pros/cons/risks/suggestions section.
 
 ## Status
 
-✅ Built 2026-09-29 (the review-checklist tool itself, §§1-10) - operator
-chose to build now rather than continue purely manually (see Addendum 6's
-session-close checkpoint). All four §7 open questions confirmed as their
-recommended defaults: inline `rwb[ ]`/`rwb[x]` checkbox, permanent
-acceptance semantics, git-tracked output, WEBU-only first pass. Built as
-`aeRWB/tools/web-diff/generate-review-checklist.mjs` (`npm run
-docm.review-checklist -- webu`), with the shared parsing/idempotency
-helpers in `lib.mjs` (`parseChecklistFile`/`buildChecklistEntries`/
-`formatChecklistFile`, covered by `lib.test.mjs`) and the "connected to the
-classifier" feedback wired into `docm-webu-webbe-categorize.mjs` (an
-`operator-accepted` tally, sourced from the checklist file, layered on top
-of - not replacing - the raw `other` bucket). First real run against the
-live corpus: 1,226 verses (0 accepted), matching the R14 baseline exactly.
-Full design in `aeRWB/tools/web-diff/README.md`'s new "Review-checklist
-file (R15)" section. Not yet committed in `aeRWB` - awaiting operator
-review before push (per the "no auto-push in aeRWB" rule).
+✅ Built 2026-09-29, then REVISED same day into a two-file split (pending +
+permanent ledger) after real use - see Addendum 7 for the full session
+account, not repeated here. All four §7 open questions confirmed as their
+recommended defaults before building: inline `rwb[ ]`/`rwb[x]` checkbox
+(later split into pending-file + ledger-file, still inline-checkbox
+*within* each file), permanent acceptance semantics, git-tracked output,
+WEBU-only first pass. Built as `aeRWB/tools/web-diff/
+generate-review-checklist.mjs` (`npm run docm.review-checklist -- webu`),
+with shared parsing/idempotency helpers in `lib.mjs`
+(`parseChecklistFile`/`splitChecklistEntries`/`formatChecklistFile`,
+covered by `lib.test.mjs`) and the "connected to the classifier" feedback
+wired into `docm-webu-webbe-categorize.mjs` (an `operator-accepted` tally,
+sourced from the ledger file, layered on top of - not replacing - the raw
+`other` bucket).
+
+**Session-close state (2026-09-29)**: WEBU `other` 1,226 (session start) →
+**1,084 pending + 88 accepted** (12,163 changed verses, 8.9% pending).
+WEBBE untouched (1,630/14,207 = 11.5%, no ledger started, WEBU-first scope
+unchanged). All work committed and pushed in both `aeRWB` and
+`aeBibleClass` - see Addendum 7 and the `project_rwb_review_checklist_tool`
+memory for the full account, and `sync/session_manifest.txt` for the
+cross-session handoff.
 
 ## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
 
@@ -401,6 +407,89 @@ operator's explicit confirmation, not blocking anything.
    not pursued): dropped proper names replaced by vague pronouns,
    location-word swaps, other semantic-risk shapes beyond the five
    already checked (Addendum 5).
+
+## Addendum 7, 2026-09-29: the tool was actually built, revised, and used - session close
+
+**Answers Addendum 6's item 1**: the operator chose to build the R15 tool
+(§§1-10 below) rather than continue purely manually. Built as
+`aeRWB/tools/web-diff/generate-review-checklist.mjs` (`npm run
+docm.review-checklist -- webu`), with shared parsing/idempotency helpers in
+`lib.mjs` and a classifier-feedback connection in
+`docm-webu-webbe-categorize.mjs`. All four of §7's open questions were
+confirmed at their recommended defaults before building - see that section
+for the options; §3's design is what actually shipped, WITH one revision
+below.
+
+**Design revision, same day, from real use**: the original single-file
+design (§2/§3 as written) kept `rwb[x]`-approved verses sitting in the same
+file forever, as an in-file audit trail. The first real approval
+round-trip (13 verses checked, file closed and reopened) showed this is
+"confusing and distracting to work from" in practice - not a bug, the code
+worked exactly as designed and confirmed, but the confirmed semantics
+weren't what was actually useful day to day. **Fixed by splitting into two
+files**: `rwb-webu-review.txt` is now PENDING-ONLY (a checked verse
+graduates out entirely on the next regeneration), and a new
+`rwb-webu-accepted.txt` is the permanent, append-only ledger
+`docm-webu-webbe-categorize.mjs`'s `operator-accepted` tally now reads.
+Full rationale and mechanics in `generate-review-checklist.mjs`'s own
+header comment and the `project_rwb_review_checklist_tool` memory - not
+re-litigated here. This supersedes §2/§3's single-file design for the
+checkbox-persistence question specifically; everything else in §§1-10
+(file shape, scope, git-tracking decision, idempotency's core
+byte-identical-text rule) still holds.
+
+**A second, unrelated design-confirmation gap found the same way**: when
+first asked "how many of the remaining `other`-bucket verses containing
+'the LORD' need review" (a real question, not hypothetical - the operator
+noticed the pattern), the first answer was wrong - it checked only whether
+`reasons` included the `divine-names` tag, missing that some hunks are
+explained via `formatting` instead (a pure case-only `LORD`→`Lord` change).
+Corrected: the right check is whether the LORD-touching hunk itself appears
+in `unexplainedHunks`. Re-checked properly, ALL 123 such verses (at the
+time) already had that hunk fully explained - the divine-name swap was
+never the reason any of them were still listed; a different, unrelated
+hunk in each verse was the real remaining item. Same process lesson as
+Addendum 4: verify the specific claim against `classifyVerse`'s actual
+output, don't reason from the category tag alone.
+
+**Classifier fix from the same investigation**: `isDivineNamesHunk` missed
+a divine name directly joined to the next word by an em dash with no space
+(`"LORD—instead"`, `"LORD—a"`) - a first fix attempt (adding "—" to the
+punctuation-stripping regex) only covered a TRAILING em dash, not one with
+a real word glued on past it; the working fix splits each word on "—"
+before testing each piece. Caught only by re-verifying every individual
+case the fix claimed to resolve, not trusting the aggregate before/after
+count - 2 of the first 3 target verses were still unresolved after the
+first attempt.
+
+**Real docm defects found and fixed this session** (all individually
+verified against WEBU/KJV before fixing, same one-at-a-time Word-edit
+workflow as every prior session): 12 missing-space defects (punctuation
+glued to the next word/sentence) + 1 stray-semicolon typo (Micah 4:3) +
+~30 more dropped/added/duplicated/misordered-word defects across Genesis,
+Exodus, Leviticus, Numbers, Deuteronomy, Joshua, Judges, 1-2 Samuel,
+1 Kings, Nehemiah, Isaiah, John. One flagged and caught BEFORE committing:
+2 Samuel 19:36 was over-trimmed to a broken sentence ("Your servant just go
+over" - missing "will") in one export, then fixed before being confirmed.
+One flagged via a live-docm screenshot: Genesis 9:27 - the pending-list
+entry showed "May Canaan" not matching WEBU's "Let Canaan", operator
+confirmed the LIVE docm already said "Let Canaan" (screenshot with
+formatting marks on, ruling out any hidden-character theory) - the export
+had simply gone stale; re-exporting fixed it, not a tool bug.
+
+**New work-list item, not built**: WEB confirmed as a modernization of the
+1901 ASV (previously undocumented in this repo) - proposed as a future R17
+(source ASV text same as R16's `kjv.txt`, add an `asv-word-choice`
+category). A second, much smaller candidate ("stuff" avoidance, matching
+the existing no-contractions-style rationale) was investigated and found
+to only affect 1 remaining verse - not built, left as manual approval.
+Both documented in `aeRWB/tools/web-diff/README.md`'s R15 section, not
+duplicated here.
+
+**Session-close numbers**: WEBU `other` 1,226 (session start) → **1,084
+pending + 88 accepted** = 1,172 total still tracked (12,163 changed
+verses, 8.9% pending). WEBBE untouched this session (still 1,630/14,207 =
+11.5%, no ledger started - WEBU-first scope, unchanged from §1).
 
 ## The ten requirements, as given
 
