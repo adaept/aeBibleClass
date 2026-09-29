@@ -30,10 +30,22 @@ a status table, and an explicit pros/cons/risks/suggestions section.
 
 ## Status
 
-⚪ Not started (the review-checklist tool itself, §§1-10) - awaiting an
-operator decision on whether to build it or continue the manual
-review-a-worked-example pattern that's been finding real defects without
-it (see Addendum 6's session-close checkpoint, 2026-09-29).
+✅ Built 2026-09-29 (the review-checklist tool itself, §§1-10) - operator
+chose to build now rather than continue purely manually (see Addendum 6's
+session-close checkpoint). All four §7 open questions confirmed as their
+recommended defaults: inline `rwb[ ]`/`rwb[x]` checkbox, permanent
+acceptance semantics, git-tracked output, WEBU-only first pass. Built as
+`aeRWB/tools/web-diff/generate-review-checklist.mjs` (`npm run
+docm.review-checklist -- webu`), with the shared parsing/idempotency
+helpers in `lib.mjs` (`parseChecklistFile`/`buildChecklistEntries`/
+`formatChecklistFile`, covered by `lib.test.mjs`) and the "connected to the
+classifier" feedback wired into `docm-webu-webbe-categorize.mjs` (an
+`operator-accepted` tally, sourced from the checklist file, layered on top
+of - not replacing - the raw `other` bucket). First real run against the
+live corpus: 1,226 verses (0 accepted), matching the R14 baseline exactly.
+Full design in `aeRWB/tools/web-diff/README.md`'s new "Review-checklist
+file (R15)" section. Not yet committed in `aeRWB` - awaiting operator
+review before push (per the "no auto-push in aeRWB" rule).
 
 ## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
 

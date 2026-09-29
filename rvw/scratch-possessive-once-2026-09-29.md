@@ -1,0 +1,185 @@
+# Possessive-apostrophe words occurring exactly once (181 candidates)
+
+For each: the word, its one verse, and full verse text for context.
+
+- **Edom’s** — 1 Chronicles 13:14 — God’s ark remained with the family of Obed-Edom in his house three months; and God blessed Obed-Edom’s house and all that he had.
+- **Chidon’s** — 1 Chronicles 13:9 — When they came to Chidon’s threshing floor, Uzza put out his hand to hold the ark; for the oxen stumbled.
+- **Hezron’s** — 1 Chronicles 2:24 — After Hezron died in Caleb Ephrathah, Abijah Hezron’s wife bore him Ashhur the father of Tekoa.
+- **Chloe’s** — 1 Corinthians 1:11 — For it has been reported to me concerning you, my brothers, by those who are from Chloe’s household, that there are contentions among you.
+- **idol’s** — 1 Corinthians 8:10 — For if a man sees you who have knowledge sitting in an idol’s temple, will not his conscience, if he is weak, be emboldened to eat things sacrificed to idols?
+- **flock’s** — 1 Corinthians 9:7 — What soldier ever serves at his own expense? Who plants a vineyard, and does not eat of its fruit? Or who feeds a flock, and does not drink from the flock’s milk?
+- **Ahijah’s** — 1 Kings 14:4 — Jeroboam’s wife did so, and arose, and went to Shiloh, and came to Ahijah’s house. Now Ahijah could not see; for his eyes were set by reason of his age.
+- **Baasha’s** — 1 Kings 16:4 — The dogs will eat Baasha’s descendants who die in the city; and he who dies of his in the field, the birds of the sky will eat.”
+- **Jezebel’s** — 1 Kings 18:19 — Now therefore send, and gather to me all Israel to Mount Carmel, and four hundred fifty of the prophets of Baal, and four hundred of the prophets of the Asherah, who eat at Jezebel’s table.”
+- **Baal’s** — 1 Kings 18:22 — Then Elijah said to the people, “I, even I only, am left as a prophet of God; but Baal’s prophets are four hundred fifty men.
+- **Shimei’s** — 1 Kings 2:39 — At the end of three years, two of Shimei’s slaves ran away to Achish, son of Maacah, king of Gath. They told Shimei, saying, “Behold, your slaves are in Gath.”
+- **cherubim’s** — 1 Kings 8:6 — The priests brought in the ark of God’s covenant to its place, into the inner sanctuary of the house, to the most holy place, even under the cherubim’s wings.
+- **furrow’s** — 1 Samuel 14:14 — That first slaughter, which Jonathan and his armor bearer made, was about twenty men, within as it were half a furrow’s length in an acre of land.
+- **Ichabod’s** — 1 Samuel 14:3 — including Ahijah the son of Ahitub, Ichabod’s brother, the son of Phinehas, the son of Eli the priest of God in Shiloh, wearing an ephod. The people did not know that Jonathan was gone.
+- **Eliab’s** — 1 Samuel 17:28 — Eliab his oldest brother heard when he spoke to the men; and Eliab’s anger burned against David, and he said, “Why have you come down? With whom have you left those few sheep in the wilderness? I know your pride and the evil of your heart; for you have come down that you might see the battle.”
+- **spear’s** — 1 Samuel 17:7 — The staff of his spear was like a weaver’s beam; and his spear’s head weighed six hundred shekels of iron. His shield bearer went before him.
+- **Adullam’s** — 1 Samuel 22:1 — David therefore departed from there and escaped to Adullam’s cave. When his brothers and all his father’s house heard it, they went down there to him.
+- **sling’s** — 1 Samuel 25:29 — Though men may rise up to pursue you and to seek your soul, yet the soul of my lord will be bound in the bundle of life with the Lord your God. He will sling out the souls of your enemies as from a sling’s pocket.
+- **Samuel’s** — 1 Samuel 28:20 — Then Saul fell immediately his full length on the earth, and was terrified, because of Samuel’s words. There was no strength in him; for he had eaten no bread all day long or all night long.
+- **Eli’s** — 1 Samuel 3:14 — Therefore I have sworn to the house of Eli that the iniquity of Eli’s house shall not be removed with sacrifice or offering forever.”
+- **Phinehas’** — 1 Samuel 4:19 — His daughter-in-law, Phinehas’ wife, was with child, near to giving birth. When she heard the news that God’s ark was taken and that her father-in-law and her husband were dead, she bowed herself and gave birth; for her pains came on her.
+- **seer’s** — 1 Samuel 9:18 — Then Saul approached Samuel in the gateway, and said, “Please tell me where the seer’s house is.”
+- **work’s** — 1 Thessalonians 5:13 — and to respect and honor them in love for their work’s sake. Be at peace among yourselves.
+- **wives’** — 1 Timothy 4:7 — But refuse profane and old wives’ fables. Exercise yourself toward godliness.
+- **saints’** — 1 Timothy 5:10 — being approved by good works, if she has brought up children, if she has been hospitable to strangers, if she has washed the saints’ feet, if she has relieved the afflicted, and if she has diligently followed every good work.
+- **stomach’s** — 1 Timothy 5:23 — Be no longer a drinker of water only, but use a little wine for your stomach’s sake and your frequent infirmities.
+- **perfumers’** — 2 Chronicles 16:14 — They buried him in his own tomb, which he had dug out for himself in David’s city, and laid him in the bed which was filled with sweet odors and various kinds of spices prepared by the perfumers’ art; and they made a very great fire for him.
+- **Huram’s** — 2 Chronicles 9:21 — For the king had ships that went to Tarshish with Huram’s servants. Once every three years, the ships of Tarshish came bringing gold, silver, ivory, apes, and peacocks.
+- **Damascenes’** — 2 Corinthians 11:32 — In Damascus the governor under King Aretas guarded the Damascenes’ city, desiring to arrest me.
+- **Rabshakeh’s** — 2 Kings 18:37 — Then Eliakim the son of Hilkiah, who was over the household, came with Shebna the scribe, and Joah the son of Asaph the recorder, to Hezekiah with their clothes torn, and told him Rabshakeh’s words.
+- **mules’** — 2 Kings 5:17 — Naaman said, “If not, then, please let two mules’ burden of earth be given to your servant; for your servant will from now on offer neither burnt offering nor sacrifice to other gods, but to God.
+- **Naaman’s** — 2 Kings 5:2 — The Syrians had gone out in bands, and had brought away captive out of the land of Israel a little maiden; and she waited on Naaman’s wife.
+- **Syria’s** — 2 Kings 6:11 — The king of Syria’s heart was very troubled about this. He called his servants, and said to them, “Will you not show me which of us is for the king of Israel?”
+- **dove’s** — 2 Kings 6:25 — There was a great famine in Samaria. Behold, they besieged it, until a donkey’s head was sold for eighty pieces of silver, and the fourth part of a kab of dove’s dung for five pieces of silver.
+- **Jezreelite’s** — 2 Kings 9:21 — Joram said, “Get ready!” They got his chariot ready. Then Joram king of Israel and Ahaziah king of Judah went out, each in his chariot, and they went out to meet Jehu, and found him on Naboth the Jezreelite’s land.
+- **Jezreel’s** — 2 Kings 9:37 — and the body of Jezebel will be as dung on the face of the field on Jezreel’s land, so that they will not say, “This is Jezebel.”’”
+- **Zadok’s** — 2 Samuel 15:36 — Behold, they have there with them their two sons, Ahimaaz, Zadok’s son, and Jonathan, Abiathar’s son. Send to me everything that you shall hear by them.”
+- **Abiathar’s** — 2 Samuel 15:36 — Behold, they have there with them their two sons, Ahimaaz, Zadok’s son, and Jonathan, Abiathar’s son. Send to me everything that you shall hear by them.”
+- **fellow’s** — 2 Samuel 2:16 — They each caught his opponent by the head, and thrust his sword in his fellow’s side; so they fell down together: therefore that place in Gibeon was called Helkath Hazzurim.
+- **hinds’** — 2 Samuel 22:34 — He makes his feet like hinds’ feet, and sets me on my high places.
+- **Ishbosheth’s** — 2 Samuel 3:8 — Then Abner was very angry about Ishbosheth’s words, and said, “Am I a dog’s head that belongs to Judah? Today I show kindness to the house of Saul your father, to his brothers, and to his friends, and have not delivered you into the hand of David; and yet you charge me today with a fault concerning this woman!
+- **word’s** — 2 Samuel 7:21 — For your word’s sake, and according to your own heart, you have worked all this greatness, to make your servant know it.
+- **Ziba’s** — 2 Samuel 9:12 — Mephibosheth had a young son, whose name was Mica. All that lived in Ziba’s house were servants to Mephibosheth.
+- **ones’** — 2 Timothy 2:10 — Therefore I endure all things for the chosen ones’ sake, that they also may obtain the salvation which is in Christ Jesus with eternal glory.
+- **devil’s** — 2 Timothy 2:26 — and they may recover themselves out of the devil’s snare, having been taken captive by him to do his will.
+- **Lydia’s** — Acts 16:40 — They went out of the prison, and entered into Lydia’s house. When they had seen the brothers, they encouraged them, then departed.
+- **Pharisees’** — Acts 23:9 — A great clamor arose, and some of the scribes of the Pharisees’ part stood up, and contended, saying, “We find no evil in this man. But if a spirit or angel has spoken to him, let us not fight against God!”
+- **ship’s** — Acts 27:19 — On the third day, they threw out the ship’s tackle with their own hands.
+- **soldiers’** — Acts 27:42 — The soldiers’ counsel was to kill the prisoners, so that none of them would swim out and escape.
+- **things’** — Colossians 3:6 — For these things’ sake the wrath of God comes on the children of disobedience.
+- **words’** — Daniel 10:12 — Then he said to me, “Do not be afraid, Daniel; for from the first day that you set your heart to understand, and to humble yourself before your God, your words were heard. I have come for your words’ sake.
+- **potters’** — Daniel 2:41 — Whereas you saw the feet and toes, part of potters’ clay, and part of iron, it will be a divided kingdom; but there will be in it of the strength of the iron, because you saw the iron mixed with miry clay.
+- **animal’s** — Daniel 4:16 — Let his heart be changed from man’s, and let an animal’s heart be given to him. Then let seven times pass over him.
+- **birds’** — Daniel 4:33 — This was fulfilled the same hour on Nebuchadnezzar. He was driven from men, and ate grass as oxen, and his body was wet with the dew of the sky, until his hair had grown like eagles’ feathers, and his nails like birds’ claws.
+- **animals’** — Daniel 5:21 — He was driven from the sons of men, and his heart was made like the animals’, and his dwelling was with the wild donkeys. He was fed with grass like oxen, and his body was wet with the dew of the sky; until he knew that the Most High God rules in the kingdom of men, and that he sets up over it whomever he will.
+- **mercies’** — Daniel 9:18 — My God, turn your ear, and hear. Open your eyes, and see our desolations, and the city which is called by your name; for we do not present our petitions before you for our righteousness, but for your great mercies’ sake.
+- **heifer’s** — Deuteronomy 21:4 — The elders of that city shall bring the heifer down to a valley with running water, which is neither plowed nor sown, and shall break the heifer’s neck there in the valley.
+- **bird’s** — Deuteronomy 22:6 — If you come across a bird’s nest on the way, in any tree or on the ground, with young ones or eggs, and the hen sitting on the young, or on the eggs, you shall not take the hen with the young.
+- **Tent’s** — Deuteronomy 31:15 — God appeared in the Tent in a pillar of cloud, and the pillar of cloud stood over the Tent’s door.
+- **lawgiver’s** — Deuteronomy 33:21 — He provided the first part for himself, for the lawgiver’s portion reserved was reserved for him. He came with the heads of the people. He executed the righteousness of God, His ordinances with Israel.”
+- **charmer’s** — Ecclesiastes 10:11 — If the snake bites before it is charmed, then is there no profit for the charmer’s tongue.
+- **queen’s** — Esther 1:18 — Today, the princesses of Persia and Media who have heard of the queen’s deed will tell all the king’s princes. This will cause much contempt and wrath.
+- **Hebrews’** — Exodus 2:6 — She opened it, and saw the child, and behold, the baby cried. She had compassion on him, and said, “This is one of the Hebrews’ children.”
+- **maid’s** — Exodus 21:26 — “If a man strikes his servant’s eye, or his maid’s eye, and destroys it, he shall let him go free for his eye’s sake.
+- **eye’s** — Exodus 21:26 — “If a man strikes his servant’s eye, or his maid’s eye, and destroys it, he shall let him go free for his eye’s sake.
+- **tooth’s** — Exodus 21:27 — If he strikes out his male servant’s tooth, or his female servant’s tooth, he shall let the servant go free for his tooth’s sake.
+- **enemy’s** — Exodus 23:4 — “If you meet your enemy’s ox or his donkey going astray, you shall surely bring it back to him again.
+- **hand’s** — Exodus 37:12 — He made a border of a hand’s width around it, and made a golden molding on its border around it.
+- **calf’s** — Ezekiel 1:7 — Their feet were straight feet. The sole of their feet was like the sole of a calf’s foot; and they sparkled like burnished bronze.
+- **watchman’s** — Ezekiel 33:6 — But if the watchman sees the sword come, and does not blow the trumpet, and the people are not warned, and the sword comes, and takes any person from among them; he is taken away in his iniquity, but his blood I will require at the watchman’s hand.’
+- **cow’s** — Ezekiel 4:15 — Then he said to me, “Behold, I have given you cow’s dung for man’s dung, and you shall prepare your bread on it.”
+- **cubits’** — Ezekiel 42:4 — Before the rooms was a walk of ten cubits’ width inward, a way of one cubit; and their doors were toward the north.
+- **barber’s** — Ezekiel 5:1 — “You, son of man, take a sharp sword. You shall take it as a barber’s razor to yourself, and shall cause it to pass over your head and over your beard. Then take balances to weigh and divide the hair.
+- **Artaxerxes’** — Ezra 4:23 — Then when the copy of king Artaxerxes’ letter was read before Rehum, Shimshai the scribe, and their companions, they went in haste to Jerusalem to the Jews, and made them to cease by force of arms.
+- **Sarai’s** — Genesis 16:8 — He said, “Hagar, Sarai’s servant, where did you come from? Where are you going?” She said, “I am fleeing from the face of my mistress Sarai.”
+- **forty’s** — Genesis 18:29 — He spoke to him yet again, and said, “What if there are forty found there?” He said, “I will not do it for the forty’s sake.”
+- **twenty’s** — Genesis 18:31 — He said, “See now, I have taken it on myself to speak to the Lord. What if there are twenty found there?” He said, “I will not destroy it for the twenty’s sake.”
+- **ten’s** — Genesis 18:32 — He said, “Oh do not let the Lord be angry, and I will speak just once more. What if ten are found there?” He said, “I will not destroy it for the ten’s sake.”
+- **daughters’** — Genesis 19:16 — But he lingered; and the men grabbed his hand, his wife’s hand, and his two daughters’ hands, God being merciful to him; and they took him out, and set him outside of the city.
+- **merchants’** — Genesis 23:16 — Abraham listened to Ephron. Abraham weighed to Ephron the silver which he had named in the hearing of the children of Heth, four hundred shekels of silver, according to the current merchants’ standard.
+- **Hamor’s** — Genesis 34:18 — Their words pleased Hamor and Shechem, Hamor’s son.
+- **Dinah’s** — Genesis 34:25 — On the third day, when they were sore, two of Jacob’s sons, Simeon and Levi, Dinah’s brothers, each took his sword, came upon the unsuspecting city, and killed all the males.
+- **Ishmael’s** — Genesis 36:3 — and Basemath, Ishmael’s daughter, sister of Nebaioth.
+- **boy’s** — Genesis 44:30 — Now therefore when I come to your servant my father, and the boy is not with us; since his life is bound up in the boy’s life;
+- **sacks’** — Genesis 44:8 — Behold, the money, which we found in our sacks’ mouths, we brought again to you out of the land of Canaan. How then should we steal silver or gold out of your lord’s house?
+- **bed’s** — Genesis 47:31 — Israel said, “Swear to me,” and he swore to him. Then Israel bowed himself on the bed’s head.
+- **horse’s** — Genesis 49:17 — Dan will be a serpent on the trail, an adder in the path, that bites the horse’s heels, so that his rider falls backward.
+- **Asher’s** — Genesis 49:20 — “Asher’s food will be rich. He will produce royal dainties.
+- **Methuselah’s** — Genesis 5:22 — After Methuselah’s birth, Enoch walked with God for three hundred years, and became the father of more sons and daughters.
+- **deep’s** — Genesis 8:2 — The deep’s fountains and the sky’s windows were also stopped, and the rain from the sky was restrained.
+- **Ararat’s** — Genesis 8:4 — The ship rested in the seventh month, on the seventeenth day of the month, on Ararat’s mountains.
+- **life’s** — Genesis 9:5 — I will surely require accounting for your life’s blood. At the hand of every animal I will require it. At the hand of man, even at the hand of every man’s brother, I will require the life of man.
+- **princes’** — Hosea 13:10 — Where is your king now, that he may save you in all your cities? And your judges, of whom you said, ‘Give me a king and princes’?
+- **cobra’s** — Isaiah 11:8 — The nursing child will play near a cobra’s hole, and the weaned child will put his hand on the viper’s den.
+- **Chaldeans’** — Isaiah 13:19 — Babylon, the glory of kingdoms, the beauty of the Chaldeans’ pride, will be like when God overthrew Sodom and Gomorrah.
+- **Hosts’s** — Isaiah 19:16 — In that day the Egyptians will be like women. They will tremble and fear because of the shaking of the Lord God of Hosts’s hand, which he shakes over them.
+- **Media’s** — Isaiah 21:2 — A grievous vision is declared to me. The treacherous man deals treacherously, and the destroyer destroys. Go up, Elam; attack! I have stopped all of Media’s sighing.
+- **Canaan’s** — Isaiah 23:11 — He has stretched out his hand over the sea. He has shaken the kingdoms. God has ordered the destruction of Canaan’s strongholds.
+- **whoever’s** — Isaiah 26:3 — You will keep whoever’s mind is steadfast in perfect peace, because he trusts in you.
+- **Lebanon’s** — Isaiah 35:2 — It will blossom abundantly, and rejoice even with joy and singing. Lebanon’s glory will be given to it, the excellence of Carmel and Sharon. They will see God’s glory, the excellence of our God.
+- **offspring’s** — Isaiah 59:21 — “As for me, this is my covenant with them,” says God. “My Spirit who is on you, and my words which I have put in your mouth shall not depart out of your mouth, nor out of the mouth of your offspring, nor out of the mouth of your offspring’s offspring,” says God, “from now on and forever.”
+- **adders’** — Isaiah 59:5 — They hatch adders’ eggs, and weave the spider’s web. He who eats of their eggs dies; and that which is crushed breaks out into a viper.
+- **Zion’s** — Isaiah 62:1 — For Zion’s sake I will not hold my peace, and for Jerusalem’s sake I will not rest, until her righteousness shines out like the dawn, and her salvation like a burning lamp.
+- **Baals’** — Jeremiah 2:23 — “How can you say, ‘I am not defiled. I have not gone after the Baals’? See your way in the valley. Know what you have done. You are a swift dromedary traversing her ways,
+- **neighbors’** — Jeremiah 29:23 — because they have done foolish things in Israel, and have committed adultery with their neighbors’ wives, and have spoken words in my name falsely, which I did not command them. I am he who knows, and am witness,” says God.
+- **scribe’s** — Jeremiah 36:12 — he went down into the king’s house, into the scribe’s room: and behold, all the princes were sitting there, Elishama the scribe, Delaiah the son of Shemaiah, Elnathan the son of Achbor, Gemariah the son of Shaphan, Zedekiah the son of Hananiah, and all the princes.
+- **bakers’** — Jeremiah 37:21 — Then Zedekiah the king commanded, and they committed Jeremiah into the court of the guard. They gave him daily a loaf of bread out of the bakers’ street, until all the bread in the city was gone. Thus Jeremiah remained in the court of the guard.
+- **prostitutes’** — Jeremiah 5:7 — “How can I pardon you? Your children have forsaken me, and sworn by what are no gods. When I had fed them to the full, they committed adultery, and assembled themselves in troops at the prostitutes’ houses.
+- **soul’s** — Job 16:4 — I also could speak as you do. If your soul were in my soul’s place, I could join words together against you, and shake my head at you,
+- **Job’s** — Job 2:11 — Now when Job’s three friends heard of all this trouble that had come on him, they each came from his own place: Eliphaz the Temanite, Bildad the Shuhite, and Zophar the Naamathite; and they made an appointment together to come to sympathize with him and to comfort him.
+- **falcon’s** — Job 28:7 — That path no bird of prey knows, neither has the falcon’s eye seen it.
+- **Jesus’s** — John 12:3 — Therefore Mary took a pound of ointment of pure nard, very precious, and anointed Jesus’s feet and wiped his feet with her hair. The house was filled with the fragrance of the ointment.
+- **disciples’** — John 13:5 — Then he poured water into the basin, and began to wash the disciples’ feet and to wipe them with the towel that was wrapped around him.
+- **works’** — John 14:11 — Believe me that I am in the Father, and the Father in me; or else believe me for the very works’ sake.
+- **bridegroom’s** — John 3:29 — He who has the bride is the bridegroom; but the friend of the bridegroom, who stands and hears him, rejoices greatly because of the bridegroom’s voice. This, my joy, therefore is made full.
+- **fish’s** — Jonah 2:1 — Then Jonah prayed to God, his God, out of the fish’s belly.
+- **Jonah’s** — Jonah 4:8 — When the sun arose, God prepared a sultry east wind; and the sun beat on Jonah’s head, so that he fainted, and requested for himself that he might die, and said, “It is better for me to die than to live.”
+- **cave’s** — Joshua 10:18 — Joshua said, “Roll large stones to cover the cave’s entrance, and set men by it to guard them;
+- **Jordan’s** — Joshua 13:27 — and in the valley, Beth Haram, Beth Nimrah, Succoth, and Zaphon, the rest of the kingdom of Sihon king of Heshbon, the Jordan’s bank, to the uttermost part of the sea of Chinnereth beyond the Jordan eastward.
+- **Jericho’s** — Joshua 2:3 — Jericho’s king sent to Rahab, saying, “Bring out the men who have come to you, who have entered into your house; for they have come to spy out all the land.”
+- **Gilead’s** — Judges 11:2 — Gilead’s wife bore him sons. When his wife’s sons grew up, they drove Jephthah out and said to him, “You will not inherit in our father’s house, for you are the son of another woman.”
+- **Joshua’s** — Judges 2:23 — So God left those nations, without driving them out hastily. He did not deliver them into Joshua’s hand.
+- **Heber’s** — Judges 4:21 — Then Jael, Heber’s wife, took a tent peg, and took a hammer in her hand, and went softly to him, and struck the pin into his temples, and it pierced through into the ground, for he was in a deep sleep; so he fainted and died.
+- **Deborah’s** — Judges 4:5 — She lived under Deborah’s palm tree between Ramah and Bethel in the hill country of Ephraim; and the children of Israel came up to her for judgment.
+- **Jabin’s** — Judges 4:7 — I will draw to you, to the river Kishon, Sisera, the captain of Jabin’s army, with his chariots and his multitude; and I will deliver him into your hand.’”
+- **marshal’s** — Judges 5:14 — Those whose root is in Amalek came out of Ephraim, after you, Benjamin, among your peoples. Governors come down out of Machir. Those who handle the marshal’s staff came out of Zebulun.
+- **workmen’s** — Judges 5:26 — She put her hand to the tent peg, and her right hand to the workmen’s hammer. With the hammer she struck Sisera. She struck through his head. Yes, she pierced and struck through his temples.
+- **Sisera’s** — Judges 5:28 — “Through the window she looked out, and cried: Sisera’s mother looked through the lattice. ‘Why is his chariot so long in coming? Why do the wheels of his chariots wait?’
+- **Midian’s** — Judges 7:1 — Then Jerubbaal, who is Gideon, and all the people who were with him, rose up early and encamped beside the spring of Harod. Midian’s camp was on the north side of them, by the hill of Moreh, in the valley.
+- **Oreb’s** — Judges 7:25 — They took the two princes of Midian, Oreb and Zeeb. They killed Oreb at Oreb’s rock, and Zeeb they killed at Zeeb’s wine press, as they pursued Midian. Then they brought the heads of Oreb and Zeeb to Gideon beyond the Jordan.
+- **Zeeb’s** — Judges 7:25 — They took the two princes of Midian, Oreb and Zeeb. They killed Oreb at Oreb’s rock, and Zeeb they killed at Zeeb’s wine press, as they pursued Midian. Then they brought the heads of Oreb and Zeeb to Gideon beyond the Jordan.
+- **mothers’** — Lamentations 2:12 — They ask their mothers, “Where is grain and wine?” when they swoon as the wounded in the streets of the city, when their soul is poured out into their mothers’ bosom.
+- **house’s** — Leviticus 14:45 — He shall break down the house, its stones, and its timber, and all the house’s mortar. He shall carry them out of the city into an unclean place.
+- **goat’s** — Leviticus 16:18 — “He shall go out to the altar that is before God and make atonement for it, and shall take some of the bull’s blood, and some of the goat’s blood, and put it around on the horns of the altar.
+- **stranger’s** — Leviticus 25:47 — “‘If an alien or temporary resident with you becomes rich, and your brother beside him has grown poor, and sells himself to the stranger or foreigner living among you, or to a member of the stranger’s family,
+- **virgin’s** — Luke 1:27 — to a virgin pledged to be married to a man whose name was Joseph, of David’s house. The virgin’s name was Mary.
+- **Mary’s** — Luke 1:41 — When Elizabeth heard Mary’s greeting, the baby leaped in her womb; and Elizabeth was filled with the Holy Spirit.
+- **Kingdom’s** — Luke 18:29 — He said to them, “Most certainly I tell you, there is no one who has left house, or wife, or brothers, or parents, or children, for God’s Kingdom’s sake,
+- **robbers’** — Luke 19:46 — saying to them, “It is written, ‘My house is a house of prayer,’ but you have made it a ‘den of robbers’!”
+- **stone’s** — Luke 22:41 — He was withdrawn from them about a stone’s throw, and he knelt down and prayed,
+- **Man’s** — Luke 6:22 — Blessed are you when men hate you, and when they exclude and mock you, and throw out your name as evil, for the Son of Man’s sake.
+- **centurion’s** — Luke 7:2 — A certain centurion’s servant, who was dear to him, was sick and at the point of death.
+- **synagogue’s** — Luke 8:49 — While he still spoke, one from the ruler of the synagogue’s house came, saying to him, “Your daughter is dead. Do not trouble the Teacher.”
+- **refiner’s** — Malachi 3:2 — “But who can endure the day of his coming? And who will stand when he appears? For he is like a refiner’s fire, and like launderers’ soap;
+- **launderers’** — Malachi 3:2 — “But who can endure the day of his coming? And who will stand when he appears? For he is like a refiner’s fire, and like launderers’ soap;
+- **carpenter’s** — Matthew 13:55 — Is this not the carpenter’s son? Is his mother not called Mary, and his brothers James, Joses, Simon, and Judas?
+- **masters’** — Matthew 15:27 — But she said, “Yes, Lord, but even the dogs eat the crumbs which fall from their masters’ table.”
+- **Heaven’s** — Matthew 19:12 — For there are eunuchs who were born that way from their mother’s womb, and there are eunuchs who were made eunuchs by men; and there are eunuchs who made themselves eunuchs for the Kingdom of Heaven’s sake. He who is able to receive it, let him receive it.”
+- **jackal’s** — Nehemiah 2:13 — I went out by night by the valley gate, even toward the jackal’s well, then to the dung gate, and inspected the walls of Jerusalem, which were broken down, and its gates were consumed with fire.
+- **Levi’s** — Numbers 17:3 — You shall write Aaron’s name on Levi’s rod. There shall be one rod for each head of their fathers’ houses.
+- **Balak’s** — Numbers 24:10 — Balak’s anger burned against Balaam, and he struck his hands together. Balak said to Balaam, “I called you to curse my enemies, and, behold, you have altogether blessed them these three times.
+- **says’** — Numbers 24:13 — ‘If Balak would give me his house full of silver and gold, I cannot go beyond the word of God, to do either good or bad from my own mind. I will say what God says’?
+- **Amram’s** — Numbers 26:59 — The name of Amram’s wife was Jochebed, the daughter of Levi, who was born to Levi in Egypt. She bore to Amram Aaron and Moses, and Miriam their sister.
+- **congregation’s** — Numbers 31:43 — (now the congregation’s half was three hundred thirty-seven thousand five hundred sheep,
+- **love’s** — Philemon 1:9 — yet for love’s sake I rather beg, being such a one as Paul, the aged, but also a prisoner of Jesus Christ.
+- **understanding’s** — Proverbs 10:23 — It is a fool’s pleasure to do wickedness, but wisdom is a man of understanding’s pleasure.
+- **Truth’s** — Proverbs 12:19 — Truth’s lips will be established forever, but a lying tongue is only momentary.
+- **Children’s** — Proverbs 17:6 — Children’s children are the crown of old men; the glory of children are their parents.
+- **person’s** — Proverbs 18:8 — The words of a gossip are like dainty morsels: they go down into a person’s innermost parts.
+- **friend’s** — Proverbs 27:17 — Iron sharpens iron; so a man sharpens his friend’s countenance.
+- **family’s** — Proverbs 27:27 — There will be plenty of goats’ milk for your food, for your family’s food, and for the nourishment of your servant girls.
+- **wits’** — Psalm 107:27 — They reel back and forth, and stagger like a drunken man, and are at their wits’ end.
+- **companions’** — Psalm 122:8 — For my brothers’ and companions’ sakes, I will now say, “Peace be within you.”
+- **Viper’s** — Psalm 140:3 — They have sharpened their tongues like a serpent. Viper’s poison is under their lips. Selah.
+- **goodness’** — Psalm 25:7 — Do not remember the sins of my youth, nor my transgressions. Remember me according to your loving kindness, for your goodness’ sake, God.
+- **That’s** — Psalm 35:25 — Do not let them say in their heart, “Aha! That’s the way we want it!” Do not let them say, “We have swallowed him up!”
+- **Kings’** — Psalm 45:9 — Kings’ daughters are among your honorable women. At your right hand the queen stands in gold of Ophir.
+- **morning’s** — Psalm 65:8 — They also who dwell in faraway places are afraid at your wonders. You call the morning’s dawn and the evening with songs of joy.
+- **earth’s** — Revelation 14:18 — Another angel came out from the altar, he who has power over fire, and he called with a great voice to him who had the sharp sickle, saying, “Send your sharp sickle, and gather the clusters of the vine of the earth, for the earth’s grapes are fully ripe!”
+- **Satan’s** — Revelation 2:13 — “I know your works and where you dwell, where Satan’s throne is. You hold firmly to my name, and did not deny my faith in the days of Antipas my witness, my faithful one, who was killed among you, where Satan dwells.
+- **city’s** — Revelation 21:19 — The foundations of the city’s wall were adorned with all kinds of precious stones. The first foundation was jasper; the second, sapphire; the third, chalcedony; the fourth, emerald;
+- **food’s** — Romans 14:20 — Do not overthrow God’s work for food’s sake. All things indeed are clean, however it is wrong for that man who creates a stumbling block by eating.
+- **Adam’s** — Romans 5:14 — Nevertheless death reigned from Adam until Moses, even over those whose sins were not like Adam’s disobedience, who is a foreshadowing of him who was to come.
+- **sin’s** — Romans 7:25 — I thank God through Jesus Christ, our Lord! So then with the mind, I myself serve God’s law, but with the flesh, sin’s law.
+- **Naomi’s** — Ruth 1:3 — Elimelech, Naomi’s husband, died; and she was left with her two sons.
+- **kinsman’s** — Ruth 3:13 — Stay this night, and in the morning, if he will perform for you the part of a kinsman, good. Let him do the kinsman’s duty. But if he will not do the duty of a kinsman for you, then I will do the duty of a kinsman for you, as God lives. Lie down until the morning.”
+- **Chilion’s** — Ruth 4:9 — Boaz said to the elders and to all the people, “You are witnesses today, that I have bought all that was Elimelech’s, and all that was Chilion’s and Mahlon’s, from the hand of Naomi.
+- **Mahlon’s** — Ruth 4:9 — Boaz said to the elders and to all the people, “You are witnesses today, that I have bought all that was Elimelech’s, and all that was Chilion’s and Mahlon’s, from the hand of Naomi.
+- **Kedar’s** — Song of Solomon 1:5 — I am dark, but lovely, you daughters of Jerusalem, like Kedar’s tents, like Solomon’s curtains.
+- **shepherds’** — Song of Solomon 1:8 — Lover If you do not know, most beautiful among women, follow the tracks of the sheep. Graze your young goats beside the shepherds’ tents.
+- **gain’s** — Titus 1:11 — whose mouths must be stopped: men who overthrow whole houses, teaching things which they ought not, for dishonest gain’s sake.
