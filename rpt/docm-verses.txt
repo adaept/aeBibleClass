@@ -8839,11 +8839,11 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 3:20	 She arose at midnight, and took my son from beside me, while your servant slept, and laid it in her bosom, and laid her dead child in my bosom.
 1 Kings 3:21	 When I rose in the morning to nurse my child, behold, he was dead; but when I had looked at him in the morning, behold, it was not my son, whom I bore.”
 1 Kings 3:22	 The other woman said, “No; but the living one is my son, and the dead one is your son.” The first one said, “No; but the dead one is your son, and the living one is my son.” They argued like this before the king.
-1 Kings 3:23	 Then the king said, “One says, ‘This is my son who lives, and your son is the dead;’ and the other says, ‘No; but your son is the dead one, and my son is the living one.’”
+1 Kings 3:23	 Then the king said, “One says, ‘This is my son who lives, and your son is the dead one;’ and the other says, ‘No; but your son is the dead one, and my son is the living one.’”
 1 Kings 3:24	 The king said, “Get me a sword.” So they brought a sword before the king.
 1 Kings 3:25	 The king said, “Divide the living child in two, and give half to the one, and half to the other.”
 1 Kings 3:26	 Then the woman whose the living child was spoke to the king, for her heart yearned over her son, and she said, “Oh, my lord, give her the living child, and in no way kill him!” But the other said, “He shall be neither mine nor yours. Divide him.”
-1 Kings 3:27	 Then the king answered, “Give her the living child, and definitely do not kill him. She is his mother.”
+1 Kings 3:27	 Then the king answered, “Give the first woman the living child, and definitely do not kill him. She is his mother.”
 1 Kings 3:28	 All Israel heard of the judgment which the king had judged; and they feared the king; for they saw that the wisdom of God was in him, to do justice.
 1 Kings 4:1	 King Solomon was king over all Israel.
 1 Kings 4:2	 These were the princes whom he had: Azariah the son of Zadok, the priest;
@@ -8868,7 +8868,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 4:21	 Solomon ruled over all the kingdoms from the River to the land of the Philistines, and to the border of Egypt. They brought tribute and served Solomon all the days of his life.
 1 Kings 4:22	 Solomon’s provision for one day was thirty cors of fine flour, sixty measures of meal,
 1 Kings 4:23	 ten head of fat cattle, twenty head of cattle out of the pastures, and one hundred sheep, in addition to deer, and gazelles, and roebucks, and fattened fowl.
-1 Kings 4:24	 For he had dominion over all on this side the River, from Tiphsah even to Gaza, over all the kings on this side the River: and he had peace on all sides around him.
+1 Kings 4:24	 For he had dominion over all on this side of the River, from Tiphsah even to Gaza, over all the kings on this side the River: and he had peace on all sides around him.
 1 Kings 4:25	 Judah and Israel lived safely, every man under his vine and under his fig tree, from Dan even to Beersheba, all the days of Solomon.
 1 Kings 4:26	 Solomon had forty thousand stalls of horses for his chariots, and twelve thousand horsemen.
 1 Kings 4:27	 Those officers provided food for king Solomon, and for all who came to king Solomon’s table, every man in his month. They let nothing be lacking.
@@ -8920,7 +8920,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 6:21	 So Solomon overlaid the house within with pure gold. He drew chains of gold across before the inner sanctuary, and he overlaid it with gold.
 1 Kings 6:22	 He overlaid the whole house with gold, until all the house was finished. He also overlaid the whole altar that belonged to the inner sanctuary with gold.
 1 Kings 6:23	 In the inner sanctuary he made two cherubim of olive wood, each ten cubits high.
-1 Kings 6:24	 Five cubits was the one wing of the cherub, and five cubits the other wing of the cherub. From the tip of one wing to the tip of the other was ten cubits.
+1 Kings 6:24	 Five cubits was the length of one wing of the cherub, and five cubits the length of the other wing of the cherub. From the tip of one wing to the tip of the other was ten cubits.
 1 Kings 6:25	 The other cherub was ten cubits. Both the cherubim were of one measure and one form.
 1 Kings 6:26	 One cherub was ten cubits high, and so was the other cherub.
 1 Kings 6:27	 He set the cherubim within the inner house. The wings of the cherubim were stretched out, so that the wing of the one touched the one wall, and the wing of the other cherub touched the other wall; and their wings touched one another in the middle of the house.
@@ -8929,7 +8929,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 6:30	 He overlaid the floor of the house with gold, inside and outside.
 1 Kings 6:31	 For the entrance of the inner sanctuary, he made doors of olive wood. The lintel and door posts were a fifth part of the wall.
 1 Kings 6:32	 So he made two doors of olive wood; and he carved on them carvings of cherubim, palm trees, and open flowers, and overlaid them with gold. He spread the gold on the cherubim and on the palm trees.
-1 Kings 6:33	 He also did so for the entrance of the temple door posts of olive wood, out of a fourth part of the wall;
+1 Kings 6:33	 He also made for the entrance of the temple door posts of olive wood, out of a fourth part of the wall;
 1 Kings 6:34	 and two doors of cypress wood. The two leaves of the one door were folding, and the two leaves of the other door were folding.
 1 Kings 6:35	 He carved cherubim, palm trees, and open flowers; and he overlaid them with gold fitted on the engraved work.
 1 Kings 6:36	 He built the inner court with three courses of cut stone and a course of cedar beams.
@@ -8942,7 +8942,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 7:5	 All the doors and posts were made square with beams: and window was facing window in three ranks.
 1 Kings 7:6	 He made the porch of pillars. Its length was fifty cubits and its width thirty cubits; with a porch before them, and pillars and a threshold before them.
 1 Kings 7:7	 He made the porch of the throne where he was to judge, even the porch of judgment; and it was covered with cedar from floor to floor.
-1 Kings 7:8	 His house where he was to dwell, the other court within the porch, was of the like work. He made also a house for Pharaoh’s daughter (whom Solomon had taken as wife), like this porch.
+1 Kings 7:8	 His house where he was to dwell, the other court within the porch, was of the same construction. He made also a house for Pharaoh’s daughter (whom Solomon had taken as wife), like this porch.
 1 Kings 7:9	 All these were of costly stones, even of cut stone, according to measure, sawed with saws, inside and outside, even from the foundation to the coping, and so on the outside to the great court.
 1 Kings 7:10	 The foundation was of costly stones, even great stones, stones of ten cubits, and stones of eight cubits.
 1 Kings 7:11	 Above were costly stones, even cut stone, according to measure, and cedar wood.
@@ -8952,12 +8952,12 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 7:15	 For he fashioned the two pillars of bronze, eighteen cubits high apiece; and a line of twelve cubits encircled either of them.
 1 Kings 7:16	 He made two capitals of molten bronze, to set on the tops of the pillars. The height of the one capital was five cubits, and the height of the other capital was five cubits.
 1 Kings 7:17	 There were nets of checker work, and wreaths of chain work, for the capitals which were on the top of the pillars; seven for the one capital, and seven for the other capital.
-1 Kings 7:18	 So he made the pillars; and there were two rows around on the one network, to cover the capitals that were on the top of the pillars: and he did so for the other capital.
+1 Kings 7:18	 So he made the pillars; and there were two rows of pomegranates around on the one network, to cover the capitals that were on the top of the pillars: and he did so for the other capital.
 1 Kings 7:19	 The capitals that were on the top of the pillars in the porch were of lily work, four cubits.
 1 Kings 7:20	 There were capitals above also on the two pillars, close by the belly which was beside the network. There were two hundred pomegranates in rows around the other capital.
 1 Kings 7:21	 He set up the pillars at the porch of the temple. He set up the right pillar, and called its name Jachin; and he set up the left pillar, and called its name Boaz.
-1 Kings 7:22	 On the top of the pillars was lily work: so the work of the pillars was finished.
-1 Kings 7:23	 He made the molten sea of ten cubits from brim to brim, round in shape. Its height was five cubits; and a line of thirty cubits encircled it.
+1 Kings 7:22	 On the tops of the pillars was lily work. So the work of the pillars was finished.
+1 Kings 7:23	 He made the molten sea ten cubits from brim to brim, round in shape. Its height was five cubits; and a line of thirty cubits encircled it.
 1 Kings 7:24	 Under its brim around there were buds which encircled it for ten cubits, encircling the sea. The buds were in two rows, cast when it was cast.
 1 Kings 7:25	 It stood on twelve oxen, three looking toward the north, and three looking toward the west, and three looking toward the south, and three looking toward the east; and the sea was set on them above, and all their hindquarters were inward.
 1 Kings 7:26	 It was a hand width thick. Its brim was worked like the brim of a cup, like the flower of a lily. It held two thousand baths.
@@ -9101,14 +9101,14 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 10:19	 There were six steps to the throne, and the top of the throne was round behind; and there were armrests on either side by the place of the seat, and two lions standing beside the armrests.
 1 Kings 10:20	 Twelve lions stood there on the one side and on the other on the six steps. Nothing like it was made in any kingdom.
 1 Kings 10:21	 All king Solomon’s drinking vessels were of gold, and all the vessels of the House of the Forest of Lebanon were of pure gold. None were of silver, because it was considered of little value in the days of Solomon.
-1 Kings 10:22	 For the king had a fleet of Tarshish at sea with Hiram’s fleet. Once every three years the fleet of Tarshish came, bringing gold, silver, ivory, apes, and peacocks.
+1 Kings 10:22	 For the king had a fleet of ships of Tarshish at sea with Hiram’s fleet. Once every three years the fleet of Tarshish came, bringing gold, silver, ivory, apes, and peacocks.
 1 Kings 10:23	 So king Solomon exceeded all the kings of the earth in riches and in wisdom.
 1 Kings 10:24	 All the earth sought the presence of Solomon, to hear his wisdom, which God had put in his heart.
 1 Kings 10:25	 Year after year, every man brought a gift—vessels of silver and gold, clothing, armor, spices, horses, and mules.
 1 Kings 10:26	 Solomon gathered together chariots and horsemen. He had one thousand four hundred chariots, and twelve thousand horsemen, that he kept in the chariot cities and with the king at Jerusalem.
 1 Kings 10:27	 The king made silver as common as stones in Jerusalem, and cedars as common as the sycamore trees that are in the lowland.
 1 Kings 10:28	 The horses which Solomon had were brought out of Egypt. The king’s merchants received them in droves, each drove at a price.
-1 Kings 10:29	 A chariot came up and went out of Egypt for six hundred shekels of silver, and a horse for one hundred fifty shekels; and so they exported them to all the kings of the Hittites, and to the kings of Syria.
+1 Kings 10:29	 A chariot was imported from Egypt for six hundred shekels of silver, and a horse for one hundred fifty shekels; and so they exported them to all the kings of the Hittites, and to the kings of Syria.
 1 Kings 11:1	 Now king Solomon loved many foreign women, together with the daughter of Pharaoh, women of the Moabites, Ammonites, Edomites, Sidonians, and Hittites;
 1 Kings 11:2	 of the nations concerning which God said to the children of Israel, “You shall not go among them, neither shall they come among you; for surely they will turn away your heart after their gods.” Solomon joined to these in love.
 1 Kings 11:3	 He had seven hundred wives, princesses, and three hundred concubines. His wives turned his heart away.
