@@ -232,7 +232,7 @@ Genesis 9:23	 Shem and Japheth took a garment, and laid it on both their shoul
 Genesis 9:24	 Noah awoke from his wine, and knew what his youngest son had done to him.
 Genesis 9:25	 He said, “Canaan be cursed. The lowest of slaves will he be to his brothers.”
 Genesis 9:26	 He said, “Blessed be God, the God of Shem. Let Canaan be his servant.
-Genesis 9:27	 May God enlarge Japheth. Let him dwell in the tents of Shem. May Canaan be the slave of Shem. May God extend the territory of Japheth, may Japheth live in the tents of Shem, and may Canaan be his slave.”
+Genesis 9:27	 May God enlarge Japheth. Let him dwell in the tents of Shem. May Canaan be his servant.”
 Genesis 9:28	 Noah lived three hundred fifty years after the flood.
 Genesis 9:29	 All the days of Noah were nine hundred fifty years, and then he died.
 Genesis 10:1	 Now this is the history of the generations of the sons of Noah and of Shem, Ham, and Japheth. Sons were born to them after the flood.
@@ -8317,7 +8317,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 12:28	 Now therefore gather the rest of the people together, and encamp against the city, and take it; lest I take the city, and it be called by my name.”
 2 Samuel 12:29	 David gathered all the people together, and went to Rabbah, and fought against it, and took it.
 2 Samuel 12:30	 He took the crown of their king from off his head; and its weight was a talent of gold, and in it were precious stones; and it was set on David’s head. He brought a great quantity of plunder out of the city.
-2 Samuel 12:31	 He brought out the people who were in it, and put them under saws, under iron picks, under axes of iron, and made them pass through the brick kiln; and he did so to all the cities of the children of Ammon. Then David and all the people returned to Jerusalem.
+2 Samuel 12:31	 He brought out the people who were in it, and put them to work under saws, under iron picks, under axes of iron, and made them pass through the brick kiln; and he did so to all the cities of the children of Ammon. Then David and all the people returned to Jerusalem.
 2 Samuel 13:1	 After this, Absalom the son of David had a beautiful sister, whose name was Tamar; and Amnon the son of David loved her.
 2 Samuel 13:2	 Amnon was so troubled that he became sick because of his sister Tamar; for she was a virgin; and it seemed hard to Amnon to do anything to her.
 2 Samuel 13:3	 But Amnon had a friend, whose name was Jonadab, the son of Shimeah, David’s brother; and Jonadab was a very subtle man.
@@ -8466,7 +8466,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 17:14	 Absalom and all the men of Israel said, “The counsel of Hushai the Archite is better than the counsel of Ahithophel.” For God had ordained to defeat the good counsel of Ahithophel, to the intent that God might bring disaster on Absalom.
 2 Samuel 17:15	 Then Hushai said to Zadok and to Abiathar the priests, “Ahithophel counseled Absalom and the elders of Israel that way; and I have counseled this way.
 2 Samuel 17:16	 Now therefore send quickly, and tell David, saying, ‘Do not lodge tonight at the fords of the wilderness, but by all means pass over; lest the king be swallowed up, and all the people who are with him.’”
-2 Samuel 17:17	 Now Jonathan and Ahimaaz were staying by En Rogel; and a female servant used to go and tell them; and they went and told king David. For they might not be seen to come into the city.
+2 Samuel 17:17	 Now Jonathan and Ahimaaz were staying by En Rogel; and a female servant used to go and report to them; and they went and told king David. For they might not be seen to come into the city.
 2 Samuel 17:18	 But a boy saw them, and told Absalom. Then they both went away quickly, and came to the house of a man in Bahurim, who had a well in his court; and they went down there.
 2 Samuel 17:19	 The woman took and spread the covering over the well’s mouth, and spread out crushed grain on it; and nothing was known.
 2 Samuel 17:20	 Absalom’s servants came to the woman to the house; and they said, “Where are Ahimaaz and Jonathan?” The woman said to them, “They have gone over the brook of water.” When they had sought and could not find them, they returned to Jerusalem.
@@ -8483,7 +8483,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 18:2	 David sent the people out, a third part under the hand of Joab, and a third part under the hand of Abishai the son of Zeruiah, Joab’s brother, and a third part under the hand of Ittai the Gittite. The king said to the people, “I will also surely go out with you myself.”
 2 Samuel 18:3	 But the people said, “You shall not go out; for if we flee away, they will not care for us; neither if half of us die, will they care for us. But you are worth ten thousand of us. Therefore now it is better that you are ready to help us out of the city.”
 2 Samuel 18:4	 The king said to them, “I will do what seems best to you.” The king stood beside the gate, and all the people went out by hundreds and by thousands.
-2 Samuel 18:5	 The king commanded Joab and Abishai and Ittai, saying, “Deal gently for my sake with the young man, even with Absalom.” All the people heard when the king commanded all the captains concerning Absalom.
+2 Samuel 18:5	 The king commanded Joab and Abishai and Ittai, saying, “Deal gently for my sake with the young man Absalom.” All the people heard when the king commanded all the captains concerning Absalom.
 2 Samuel 18:6	 So the people went out into the field against Israel; and the battle was in the forest of Ephraim.
 2 Samuel 18:7	 The people of Israel were struck there before David’s servants, and there was a great slaughter there that day of twenty thousand men.
 2 Samuel 18:8	 For the battle was there spread over the surface of all the country, and the forest devoured more people that day than the sword devoured.
@@ -8547,7 +8547,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 19:33	 The king said to Barzillai, “Come over with me, and I will sustain you with me in Jerusalem.”
 2 Samuel 19:34	 Barzillai said to the king, “How many are the days of the years of my life, that I should go up with the king to Jerusalem?
 2 Samuel 19:35	 I am eighty years old, today. Can I discern between good and bad? Can your servant taste what I eat or what I drink? Can I hear the voice of singing men and singing women any more? Why then should your servant be a burden to my lord the king?
-2 Samuel 19:36	 Your servant would but just go over the Jordan with the king. Why should the king repay me with such a reward?
+2 Samuel 19:36	 Your servant will just go over the Jordan with the king. Why should the king repay me with such a reward?
 2 Samuel 19:37	 Please let your servant turn back again, that I may die in my own city, by the grave of my father and my mother. But behold, your servant Chimham; let him go over with my lord the king; and do to him what shall seem good to you.”
 2 Samuel 19:38	 The king answered, “Chimham shall go over with me, and I will do to him that which shall seem good to you. Whatever you request of me, that I will do for you.”
 2 Samuel 19:39	 All the people went over the Jordan, and the king went over. Then the king kissed Barzillai, and blessed him; and he returned to his own place.
