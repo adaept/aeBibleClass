@@ -177,7 +177,12 @@ Private Sub ReportImportResult(ByVal intImported As Integer, ByVal intSkipped As
         End If
         MsgBox strHeadline & vbCrLf & vbCrLf & _
                "Imported: " & intImported & vbCrLf & _
-               "Skipped:  " & intSkipped & strMsgSkipped, _
+               "Skipped:  " & intSkipped & strMsgSkipped & vbCrLf & vbCrLf & _
+               "Reminder: close and reopen this .docm (or run, in the Immediate window, " & _
+               "basBibleRibbonSetup.Instance().CaptureHeading1s bForce:=True) before using " & _
+               "ribbon navigation - the book/chapter heading-" & _
+               "position cache is per-VBA-project-session state and resets to empty on any " & _
+               "reimport, which otherwise makes Go-To navigation silently stick at Chapter 1.", _
                vbInformation, "Import Complete"
     Else
         MsgBox "Import STILL anomalous after " & attemptsUsed & " attempt(s) - Skipped=" & intSkipped & ", expected 1." & vbCrLf & vbCrLf & _
