@@ -131,6 +131,15 @@ Option Explicit
 ' A `maxVerses` testing limiter counts paragraphs VISITED, not successful
 ' writes, so it engages even if every match fails - the exact gap that let
 ' v2's testing safety net silently not fire.
+'
+' ALWAYS WRITES THE FULL OUTPUT FILE (all ~31k verses), NEVER INCREMENTAL
+' (2026-09-30) - the scan above is the expensive part (a full Paragraphs-
+' collection walk, required because book/chapter context is stateful and can
+' only be known by having walked every Heading 1/Heading 2 paragraph up to
+' that point) and dominates the cheap final WriteUtf8WithBom call, so there
+' is nothing to save by diffing against the previous output and writing only
+' changed lines. Incremental writing would only add risk (a stale/partial
+' file from a buggy diff) for no speed gain - deliberate, not an oversight.
 ' ============================================================================
 
 Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Optional ByVal maxVerses As Long = 0, Optional ByVal frontMatterOutputPath As String)
