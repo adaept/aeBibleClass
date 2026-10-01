@@ -18191,7 +18191,7 @@ Isaiah 28:23	 Give ear, and hear my voice! Listen, and hear my speech!
 Isaiah 28:24	 Does he who plows to sow plow continually? Does he keep turning the soil and breaking the clods?
 Isaiah 28:25	 When he has leveled its surface, does he not plant the dill, and scatter the cumin seed, and put in the wheat in rows, the barley in the appointed place, and the spelt in its place?
 Isaiah 28:26	 For his God instructs him in right judgment and teaches him.
-Isaiah 28:27	 For the dill are not threshed with a sharp instrument, neither is a cart wheel turned over the cumin; but the dill is beaten out with a stick, and the cumin with a rod.
+Isaiah 28:27	 For the dill is not threshed with a sharp instrument, neither is a cart wheel turned over the cumin; but the dill is beaten out with a stick, and the cumin with a rod.
 Isaiah 28:28	 Bread flour must be ground; so he will not always be threshing it. Although he drives the wheel of his threshing cart over it, his horses do not grind it.
 Isaiah 28:29	 This also comes out from the Lord God of Hosts, who is wonderful in counsel, and excellent in wisdom.
 Isaiah 29:1	 Woe to Ariel! Ariel, the city where David encamped! Add year to year; let the feasts come around;
@@ -18331,7 +18331,7 @@ Isaiah 35:7	 The burning sand will become a pool, and the thirsty ground sprin
 Isaiah 35:8	 A highway will be there, a road, and it will be called “The Holy Way”. The unclean shall not pass over it, but it will be for those who walk in the Way. Wicked fools shall not go there.
 Isaiah 35:9	 No lion will be there, nor will any ravenous animal go up on it. They will not be found there; but the redeemed will walk there.
 Isaiah 35:10	 Then God’s ransomed ones will return, and come with singing to Zion; and everlasting joy will be on their heads. They will obtain gladness and joy, and sorrow and sighing will flee away.”
-Isaiah 36:1	 Now in the fourteenth year of King Hezekiah , Sennacherib king of Assyria attacked all of the fortified cities of Judah and captured them.
+Isaiah 36:1	 Now in the fourteenth year of King Hezekiah, Sennacherib king of Assyria attacked all of the fortified cities of Judah and captured them.
 Isaiah 36:2	 The king of Assyria sent Rabshakeh from Lachish to Jerusalem to King Hezekiah with a large army. He stood by the aqueduct from the upper pool in the fuller’s field highway.
 Isaiah 36:3	 Then Eliakim the son of Hilkiah, who was over the household, and Shebna the scribe, and Joah, the son of Asaph, the recorder came out to him.
 Isaiah 36:4	 Rabshakeh said to them, “Now tell Hezekiah, ‘The great king, the king of Assyria, says, “What confidence is this in which you trust?
@@ -18413,9 +18413,9 @@ Isaiah 38:19	 The living, the living, he shall praise you, as I do today. The 
 Isaiah 38:20	 God will save me. Therefore we will sing my songs with stringed instruments all the days of our life in God’s house.
 Isaiah 38:21	 Now Isaiah had said, “Let them take a cake of figs, and lay it for a poultice on the boil, and he shall recover.”
 Isaiah 38:22	 Hezekiah also had said, “What is the sign that I will go up to God’s house?”
-Isaiah 39:1	 At that time, Merodach Baladan the son of Baladan, king of Babylon, sent letters and a present to Hezekiah; for he heard that he had been sick, and had recovered.
+Isaiah 39:1	 At that time, Merodach-Baladan the son of Baladan, king of Babylon, sent letters and a present to Hezekiah; for he heard that he had been sick, and had recovered.
 Isaiah 39:2	 Hezekiah was pleased with them, and showed them the house of his precious things, the silver, the gold, the spices, and the precious oil, and all the house of his armor, and all that was found in his treasures. There was nothing in his house, nor in all his dominion, that Hezekiah did not show them.
-Isaiah 39:3	 Then Isaiah the prophet came to King Hezekiah , and asked him, “What did these men say? From where did they come to you?” Hezekiah said, “They have come from a country far from me, even from Babylon.”
+Isaiah 39:3	 Then Isaiah the prophet came to King Hezekiah, and asked him, “What did these men say? From where did they come to you?” Hezekiah said, “They have come from a country far from me, even from Babylon.”
 Isaiah 39:4	 Then he asked, “What have they seen in your house?” Hezekiah answered, “They have seen all that is in my house. There is nothing among my treasures that I have not shown them.”
 Isaiah 39:5	 Then Isaiah said to Hezekiah, “Hear the word of the Lord God of Hosts:
 Isaiah 39:6	 ‘Behold, the days are coming when all that is in your house, and that which your fathers have stored up until today, will be carried to Babylon. Nothing will be left,’ says God.
@@ -18714,7 +18714,7 @@ Isaiah 52:14	 Just as many were astonished at you—his appearance was marred 
 Isaiah 52:15	 so he will cleanse many nations. Kings will shut their mouths at him; for they will see that which had not been told them, and they will understand that which they had not heard.
 Isaiah 53:1	 Who has believed our message? To whom has God’s arm been revealed?
 Isaiah 53:2	 For he grew up before him as a tender plant, and as a root out of dry ground. He has no good looks or majesty. When we see him, there is no beauty that we should desire him.
-Isaiah 53:3	 He was despised and rejected by men, a man of suffering and acquainted with suffering. He was despised as one from whom men hide their face; and we did not respect him.
+Isaiah 53:3	 He was despised and rejected by men, a man of sorrows and acquainted with suffering. He was despised as one from whom men hide their face; and we did not respect him.
 Isaiah 53:4	 Surely he has borne our sickness and carried our suffering; yet we considered him plagued, struck by God, and afflicted.
 Isaiah 53:5	 But he was pierced for our transgressions. He was crushed for our iniquities. The punishment that brought our peace was on him; and by his wounds we are healed.
 Isaiah 53:6	 All we like sheep have gone astray. Everyone has turned to his own way; and God has laid on him the iniquity of us all.
