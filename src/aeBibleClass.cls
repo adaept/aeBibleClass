@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 89
+Private Const MaxTests = 90
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -303,8 +303,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -863,6 +863,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             DoEvents
             RunTest (88)
             RunTest (89)
+            RunTest (90)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1159,6 +1160,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Diagnostic: dumps Long/Hex/RGB for every built-in WdColor* constant used in this codebase (wdColorAutomatic/Black/Red/DarkRed/Blue/DarkBlue) plus a live check of what Font.Color reads back as after being set to wdColorAutomatic - unlocks the aeBibleAddin JS port's Cases 39/40/41/43 (see rvw/Plan_vba_color_constants_for_js_port_2026-09-19.md) - AuditColorConstants should return 6"
     Case 89
         GetTestDescription = "Rule: no run anywhere carries the built-in 'Hyperlink' character style - every visible-as-link run must already be BookHyperlink (see EDSG/01-styles.md 'Companion rule'). Closes a gap left when LockBookHyperlinks' step 1 (migrate built-in Hyperlink to BookHyperlink) became fullSweep-only 2026-09-21 for save-time performance - CountBuiltInHyperlinkStyleRuns should return 0"
+    Case 90
+        GetTestDescription = "Rule: no space immediately before closing punctuation (, . : ; ! ? or closing paren) anywhere in the document - formatting-consistency check, caught first as a recurring typo pattern during R15 WEBU review (Isaiah 36:1, 39:3) - CountSpaceBeforePunctuation should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1417,6 +1420,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 89
         ResultArray(TestNum) = CountBuiltInHyperlinkStyleRuns
         m_HintArray(TestNum) = m_lastHint
+    Case 90
+        ResultArray(TestNum) = CountSpaceBeforePunctuation
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1627,6 +1633,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditColorConstants"
     Case 89
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountBuiltInHyperlinkStyleRuns"
+    Case 90
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSpaceBeforePunctuation"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1840,6 +1848,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditColorConstants"
     Case 89
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountBuiltInHyperlinkStyleRuns"
+    Case 90
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSpaceBeforePunctuation"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -5502,6 +5512,75 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountDoubleSpaces | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' CountSpaceBeforePunctuation  (Test 90)
+'
+' Rule: no space immediately before a closing punctuation mark anywhere
+' in the document - , . : ; ! ? or a closing paren. Caught as a recurring
+' typo pattern during R15 WEBU review (Isaiah 36:1, 39:3 both had
+' "King Hezekiah , Sennacherib"/"King Hezekiah , and asked" - a stray
+' space left behind by an edit). Opening marks ("(", curly open-quotes)
+' and apostrophes are deliberately NOT checked here - a space before
+' those is often legitimate, and apostrophe-spacing is already covered
+' by the separate contractions tests (56-65).
+'
+' Returns Long Count of violations. Expected = 0. First violation
+' populates m_lastHint with the offending mark and page/snippet context,
+' so a FAIL is immediately actionable with Word's own Find (Ctrl+F,
+' paste the snippet) - same convention as every other Count* test here.
+'=========================================================================
+Private Function CountSpaceBeforePunctuation() As Long
+    On Error GoTo PROC_ERR
+
+    Dim Doc As Document
+    Dim rng As Word.Range
+    Dim Count As Long
+    Dim marks As Variant
+    Dim i As Long
+
+    marks = Array(",", ".", ":", ";", "!", "?", ")")
+    Count = 0
+    Set Doc = ActiveDocument
+
+    For i = 0 To UBound(marks)
+        Set rng = Doc.Content
+
+        With rng.Find
+            .Text = " " & marks(i)
+            .Replacement.Text = ""
+            .Forward = True
+            .Wrap = wdFindStop
+            .Format = False
+            .MatchCase = False
+            .MatchWholeWord = False
+            .MatchWildcards = False
+            .MatchSoundsLike = False
+            .MatchAllWordForms = False
+        End With
+
+        Do While rng.Find.Execute
+            Count = Count + 1
+            If m_lastHint = "" Then
+                m_lastHint = "page " & rng.Information(wdActiveEndPageNumber) & _
+                    ": space before '" & marks(i) & "' - " & Left(rng.Paragraphs(1).Range.Text, 60)
+            End If
+            rng.Collapse wdCollapseEnd
+
+            If Count Mod 50 = 0 Then DoEvents  ' Keep UI responsive every 50 updates
+        Loop
+    Next i
+
+    CountSpaceBeforePunctuation = Count
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountSpaceBeforePunctuation | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT
