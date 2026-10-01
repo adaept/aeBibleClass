@@ -2596,3 +2596,219 @@ not assumed).
   deciding what to do next - do not re-derive this session's findings from
   scratch.
 ===============================================================================
+
+## New session (2026-09-30): R15 verse-by-verse review continued in batches; VBA ribbon-nav-cache bug found+documented; multi-editor sync architecture plan drafted
+
+Picked up the previous entry's item 1: continued the R15 verse-by-verse
+review (`aeRWB`, `npm run docm.review-checklist -- webu`) in ~10-30-verse
+batches - present findings, wait for confirmation, mark `rwb[x]` or fix in
+Word, re-export, re-run. Full account in `project_rwb_review_checklist_tool`
+memory and `Plan_rwb_webu_review_checklist_2026-09-28.md`'s new Addendum 8 -
+not repeated in full here.
+
+  [CODE] `aeBibleClass/rpt/docm-verses.txt` -- 10 commits this session
+  (`1dd76d6`..`e78c327`), each individually verified against WEBU (several
+  also cross-checked against KJV via biblegateway.com) before committing.
+  Real defects fixed: dropped/added words, subject-verb and number-
+  agreement errors, a meaning-reversal defect (2 Kings 11:16, "made way for
+  her" -> "seized her" - opposite actions), a theological-clarity gap
+  (2 Chronicles 11:15, "goats...calves" -> "goat and calf idols" so the
+  idol-worship point isn't lost), several title-capitalization defects
+  ("king Jehoash"/"king Josiah"/"king David" -> capitalized), stray-space/
+  preposition/tense fixes. One process hiccup caught and corrected: a
+  requested "of"->"by" fix for 1 Chronicles 24:27 landed on the adjacent,
+  near-identical verse 24:26 instead (both start "The sons of Merari...") -
+  caught by diffing the FULL changed-file output, not just the targeted
+  verse, before treating any fix as confirmed. One fix from this session's
+  own batches is NOT YET APPLIED: 2 Chronicles 11:23, "found wives for
+  them" -> "sought many wives for them" (matches both webu and KJV).
+    STATUS: pushed to aeBibleClass's `main` (up to `e78c327`).
+
+  [CODE] `aeRWB` commits `0e51d50`..(operator's own review/ledger commits,
+  latest `3fdaf0c`) -- fixed `generate-review-checklist.mjs`'s provenance
+  timestamp to include time, not just date (was ambiguous across multiple
+  regenerations in one day). Two new standing-accept patterns confirmed
+  during review (archaic-KJV-retention register/word-choice swaps; trivial
+  connector-word/pronoun-for-clear-name swaps) - see
+  `project_rwb_editorial_philosophy` memory. KJV/ASV cross-checking
+  confirmed useful as a targeted, one-off verification tool for resolving
+  individual "uncertain" holds (not a reversal of the systematic-check
+  deferral from the prior session).
+    STATUS: pushed to aeRWB's `main`.
+
+  [DOC] `aeRWB/tools/web-diff/README.md` -- R14/R15 sections updated with
+  final session numbers and the KJV-cross-check note.
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md` --
+  new Addendum 8 (full session account) + Status section updated.
+
+  [MEMORY] `project_rwb_review_checklist_tool.md`, `project_rwb_editorial_
+  philosophy.md` (two new standing-accept patterns + a precision-language
+  correction about "verbatim" KJV-match claims), `MEMORY.md` index updated.
+
+## Session status at this checkpoint (2026-09-30, R15 batches)
+
+  aeRWB: all work committed and pushed (operator committed the review/
+  ledger file updates themselves during the session, per established
+  practice; this session's own commit was the timestamp fix). Working tree
+  clean.
+
+  aeBibleClass: all work committed and pushed up to `e78c327` at this
+  checkpoint (more commits follow below for the unrelated VBA/architecture
+  work). `rpt/HeadingLog.txt` and `rpt/docm-psalm-front-matter.txt` show as
+  modified in `git status` (session-ID timestamp and export-date only,
+  content otherwise unchanged) - same pre-existing benign drift pattern as
+  prior sessions, left as-is uncommitted.
+
+  WEBU `other`: 1,084 (session start) -> **862 pending + 275 accepted**
+  (12,146 changed verses, 7.1% pending). WEBBE untouched, still
+  1,595/14,191 = 11.2% (no ledger started - WEBU-first scope).
+
+## Same session, continued: real VBA bug (ribbon Go-To navigation stuck after import), found via an unrelated operator report
+
+Operator reported two bugs while doing this session's Word-side import/
+export cycle: (1) `ImportAllVBAFiles` threw Error 17 again (benign, already
+documented, re-import worked - see `feedback_importallvbafiles_error17`
+memory); (2) after import, ribbon Go-To navigation resolved a typed book
+name but stuck at Chapter 1 for chapter/verse, even after re-entering the
+values, and asked whether this needs a docm close/reopen to rebuild an
+index.
+
+Read `src/aeRibbonClass.cls` directly to confirm: `CaptureHeading1s` caches
+book/chapter heading character positions in a `Static hasRun As Boolean`
+local plus a `Private m_lastScanWasSaved` field, valid only within one VBA-
+project session (`ActiveDocument.Saved`-gated). `ImportAllVBAFiles`'s full
+wipe+reimport resets this cache; the next call correctly rescans, but
+nothing told the operator that navigation needed one more step first. Also
+confirmed this was already documented once, in passing, in
+`rvw/Code_review 2026-04-20.md` §6's import procedure (step 4: "Close and
+reopen document... to reinitialise ribbon") - never surfaced anywhere an
+operator would actually see it during a normal import.
+
+  [IMPORT] `src/basImportWordGitFiles.bas` -- `ImportAllVBAFiles`'s "Import
+  Complete" `MsgBox` now states the reminder directly: close and reopen the
+  `.docm`, or run `basBibleRibbonSetup.Instance.CaptureHeading1s
+  bForce:=True` in the Immediate window, before using ribbon navigation.
+    STATUS: committed (`bdbe2ef`), NOT YET IMPORTED into the live VBA
+    project - comment/dialog-text only, no behavior change, low priority
+    whenever the next normal `ImportAllVBAFiles` cycle happens.
+
+  [DOC] `src/basRWBTextExport.bas` -- separate, smaller doc-only change
+  same session: operator asked whether `ExportDocmVersesToRWBFormat`'s
+  31,102-verse write each run could be incremental instead of a full
+  rewrite. Confirmed via reading the code: the Paragraphs-collection scan
+  (required because book/chapter context is stateful) dominates the cheap
+  final write, so there's nothing to save by diffing - deliberate, not an
+  oversight. Recorded that reasoning in the module's PERFORMANCE header
+  section so it doesn't need re-deriving next time.
+    STATUS: committed (`3e05622`), same low-priority import status as above
+    (comment-only).
+
+  [MEMORY] `feedback_importallvbafiles_error17.md` updated with the
+  confirmed mechanism + fix for the ribbon-nav-cache issue.
+
+## Same session, continued: provisional multi-editor sync architecture plan (operator-requested reference doc)
+
+The ribbon-nav-cache bug prompted the operator to ask a broader set of
+questions: is this a known VBA limitation (yes, see above); what's the
+equivalent risk in the JS port; how would future multi-editor i18n
+workflows on the `.docx`/JS pathway actually work; and is per-verse
+real-time sync (e.g. via GitHub) or a batch/daily push-pull model better -
+with a request for a provisional plan document capturing the background.
+
+  [DOC] `aeBibleClass/rvw/Plan_multi_editor_sync_architecture_2026-09-30.md`
+  (new) -- provisional reference only, status Not Started, nothing
+  engineering-scheduled. Records: (1) the JS-port task (not yet
+  investigated) - check `aeBibleAddin`'s taskpane for an analogous stale-
+  cached-index bug (a per-session in-memory index not invalidated across a
+  taskpane reload while the Word document itself persists); (2) two
+  possible future multi-editor shapes (one editor per locale, mirroring
+  today's serial model, vs. genuine concurrent editing - left as an open
+  question, not decided); (3) a provisional recommendation favoring batch/
+  daily git push-pull over per-verse real-time sync, reasoning that the
+  batch/git model is ALREADY validated at real scale by this very session's
+  own workflow (275+ verses reviewed via Word-edit -> export -> WEBU-verify
+  -> git-commit cycles), matches this project's own verify-before-commit
+  discipline, and is offline-friendly; suggests a future hybrid (friendly
+  web review UI writing to git on the backend) if lower latency or a more
+  approachable non-technical-editor UI is ever needed.
+    STATUS: committed (`bdbe2ef`, same commit as the VBA doc fix above),
+    pushed to aeBibleClass's `main`.
+
+  [MEMORY] `project_multi_editor_sync_architecture_plan.md` (new pointer
+  memory), `MEMORY.md` index updated.
+
+## Session status at this checkpoint (2026-09-30, session close)
+
+  aeRWB: all work committed and pushed. Working tree clean.
+
+  aeBibleClass: all work committed and pushed up to `bdbe2ef`. Working tree
+  clean except the two pre-existing benign regenerated files noted above
+  (`rpt/HeadingLog.txt`, `rpt/docm-psalm-front-matter.txt`) and this
+  manifest commit itself (pending).
+
+  WEBU `other`: 862 pending + 275 accepted (12,146 changed verses, 7.1%
+  pending). WEBBE untouched, still 1,595/14,191 = 11.2%.
+
+## NEXT SESSION, IN ORDER
+
+  1. **Apply the one outstanding fix from this session's own batches**:
+     2 Chronicles 11:23, docm "found wives for them" -> webu-matching
+     "sought many wives for them" (also matches KJV's "desired many
+     wives") - flagged but not yet applied in Word as of this manifest
+     entry. Quick, does not require re-deriving anything.
+  2. **Continue the R15 verse-by-verse review** using the two-file
+     workflow: `npm run docm.review-checklist -- webu` in `aeRWB`, review
+     `rwb-webu-review.txt`, either fix a real docm defect in Word +
+     re-export + re-run (drops off automatically) or mark `rwb[x]` +
+     re-run (graduates into `rwb-webu-accepted.txt`). 862 verses remain
+     pending. Apply the now-three standing-accept patterns (divine-names/
+     contractions/evil-disaster from Phase 4; archaic-KJV-retention;
+     trivial connector-word/pronoun-for-name swaps) before flagging
+     anything as "uncertain" - use a targeted KJV lookup (biblegateway.com)
+     to resolve genuine uncertainty quickly, per this session's Addendum 8.
+     No further design work needed - the tool is stable.
+  3. **VBA import needed, low priority, whenever convenient**: the
+     `ImportAllVBAFiles` MsgBox reminder text and the `basRWBTextExport.bas`
+     header comment (both committed `bdbe2ef`/`3e05622`) are comment/dialog-
+     text only changes, not yet imported into the live VBA project. No
+     urgency - doesn't affect behavior either way.
+  4. **JS-port task, not yet investigated** (see
+     `Plan_multi_editor_sync_architecture_2026-09-30.md` §3): check whether
+     `aeBibleAddin`'s taskpane has an analogous stale-cached-index bug to
+     the VBA ribbon one - add as a line item to
+     `word-audit-scanner.LIVE_CHECK.md` next time that file is picked up.
+     Not urgent, no known symptom yet - a preventive check.
+  5. **Operator decision, not yet made**: pursue the ASV work-list item
+     (source a public-domain ASV text, same recipe as R16's `kjv.txt`, add
+     an `asv-word-choice` category) - see `aeRWB/tools/web-diff/README.md`'s
+     R15 section. Not urgent, no deadline.
+  6. Once WEBU's pending list reaches zero, start the WEBBE checklist the
+     same way (`npm run docm.review-checklist -- webbe`).
+  7. **Unchanged from previous sessions' lists, still not touched:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+        2026-09-25 -- rationale to be supplied later, do not guess one.
+        Live-check `applySpellingVariant`'s wiring against a disposable
+        scratch document (aeBibleAddin `word-audit-scanner.LIVE_CHECK.md`
+        "Shape 8" section). Do NOT run without the operator's explicit
+        go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+        on Genesis 1 (`aeRWB/tools/web-diff/`), using the OSHB data fetched
+        2026-09-25 - see `project_scholarly_grounding_plan` memory.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        `rpt/docm-verses.txt` (`ExportDocmVersesToRWBFormat`'s verse-number
+        detection) - small, scoped, currently blocks Jeremiah 37:10 from
+        ever being sync-able.
+     d. 2 Samuel 21:8 (Merab/Michal, OT textual-tradition question,
+        `Plan_rwb_webu_review_checklist_2026-09-28.md` Addendum 3) still
+        awaits the operator's explicit confirmation, not blocking.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own plan
+        doc first); item 9 (Bible introduction - needs a dedicated writing
+        session).
+
+  Read `project_rwb_review_checklist_tool` memory +
+  `Plan_rwb_webu_review_checklist_2026-09-28.md`'s Addendum 8 +
+  `project_multi_editor_sync_architecture_plan` memory before deciding what
+  to do next - do not re-derive this session's findings from scratch.
+===============================================================================

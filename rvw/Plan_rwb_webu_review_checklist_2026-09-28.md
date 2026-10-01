@@ -45,13 +45,13 @@ wired into `docm-webu-webbe-categorize.mjs` (an `operator-accepted` tally,
 sourced from the ledger file, layered on top of - not replacing - the raw
 `other` bucket).
 
-**Session-close state (2026-09-29)**: WEBU `other` 1,226 (session start) →
-**1,084 pending + 88 accepted** (12,163 changed verses, 8.9% pending).
-WEBBE untouched (1,630/14,207 = 11.5%, no ledger started, WEBU-first scope
-unchanged). All work committed and pushed in both `aeRWB` and
-`aeBibleClass` - see Addendum 7 and the `project_rwb_review_checklist_tool`
-memory for the full account, and `sync/session_manifest.txt` for the
-cross-session handoff.
+**Session-close state (2026-09-30)**: WEBU `other` 1,226 (2026-09-29
+session start) → **862 pending + 275 accepted** (12,146 changed verses,
+7.1% pending) as of 2026-09-30's close - see Addendum 8. WEBBE untouched
+(1,595/14,191 = 11.2%, no ledger started, WEBU-first scope unchanged). All
+work committed and pushed in both `aeRWB` and `aeBibleClass` - see
+Addendum 8 and the `project_rwb_review_checklist_tool` memory for the full
+account, and `sync/session_manifest.txt` for the cross-session handoff.
 
 ## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
 
@@ -490,6 +490,78 @@ duplicated here.
 pending + 88 accepted** = 1,172 total still tracked (12,163 changed
 verses, 8.9% pending). WEBBE untouched this session (still 1,630/14,207 =
 11.5%, no ledger started - WEBU-first scope, unchanged from §1).
+
+## Addendum 8, 2026-09-30: verse-by-verse review continued in batches, two new standing-accept patterns, session close
+
+Picked up Addendum 7's next-session item 1 (continue the verse-by-verse
+review using the two-file workflow). Worked through the pending list in
+~10-30-verse batches, presenting each batch's findings (defect vs.
+accept-pattern vs. genuinely uncertain) before touching the file, one
+finding at a time with a recommendation, waiting for confirmation before
+editing - the established review-fix process for this project. KJV/ASV
+systematic cross-checking stayed
+deferred per Addendum 7's own scope decision (the real scholarly grounding
+is Strong's-based, not KJV/ASV - see `project_scholarly_grounding_plan`
+memory), but **targeted KJV lookups (biblegateway.com) turned out to be the
+fast, decisive way to resolve individual "uncertain" holds** - checking the
+actual KJV wording confirmed or refuted almost every archaic-vs-modern
+word-choice question and every ambiguous-pronoun-antecedent question raised
+this session. Not a reversal of the deferral - a narrower, one-off
+verification tool, not a systematic pass.
+
+**Two new standing-accept patterns confirmed** (see
+`project_rwb_editorial_philosophy` memory for the full writeup):
+1. Docm keeping a more literal/archaic KJV-style rendering where WEBU
+   modernized the wording (e.g. "maiden" vs "girl", "cried, and said" vs
+   "cried out and said") - a same-meaning register/word-choice swap, not a
+   defect.
+2. Trivial connector-word/punctuation swaps ("and"/"then", comma/semicolon)
+   and pronoun-for-clear-antecedent-proper-name swaps, when no meaning
+   changes - extended from pattern 1 mid-session, confirmed by the
+   operator.
+
+An ambiguous-pronoun hold (1 Chronicles 4:17, "she bore Miriam" vs webu's
+interpretive "Mered's wife bore Miriam") was resolved by confirming KJV/ASV
+both use the same literal "she" - a genuine textual crux in the Hebrew, not
+a docm error. Documented as a reusable precedent: when a hold is an
+ambiguous pronoun/reference, check whether KJV/ASV use the SAME ambiguity,
+not just any different wording.
+
+**Real docm defects found and fixed this session** (each individually
+verified against WEBU, several also checked against KJV before deciding):
+missing/dropped words, subject-verb and number-agreement errors (e.g. "eat
+he who" → "eat whoever", singular/plural antecedent mismatches), a
+meaning-reversal defect (**2 Chronicles 11:16**: "made way for her" →
+"seized her" - opposite actions), a theological-clarity gap (**2 Chronicles
+11:15**: "male goats...calves" → "male goat and calf idols," since the
+plain wording lost the point that these were idols, not literal
+livestock), a quantifier/verb softening (**2 Chronicles 11:23**: "found
+wives" → "sought many wives," matching both webu and KJV - **fix still
+outstanding, not yet applied as of this addendum**), several title-before-
+name capitalization defects ("king Jehoash"/"king Josiah"/"king David" →
+capitalized), and a handful of stray-space/preposition/tense fixes.
+
+**One process hiccup, caught and corrected**: a requested "of"→"by" fix for
+1 Chronicles 24:27 landed on the adjacent, near-identical verse 24:26
+instead (both start "The sons of Merari..."), introducing a new defect
+there. Caught on the next diff review (comparing the FULL diff, not just
+the requested verses) before committing as intentional; both verses
+corrected in a follow-up export. Worth remembering: when two adjacent
+verses share near-identical leading text, a manual find/replace fix is at
+real risk of landing on the wrong one - diff the full changed-file output,
+not just the targeted verse, before treating a fix as confirmed.
+
+**Tooling fix, same session**: `generate-review-checklist.mjs`'s
+provenance line only recorded a date, not a time - ambiguous across
+multiple regenerations in one day. Fixed to include time (`aeRWB` commit
+`0e51d50`).
+
+**Session-close numbers**: WEBU `other` 1,084 (session start) → **862
+pending + 275 accepted** (12,146 changed verses, 7.1% pending). WEBBE
+untouched this session (still 1,595/14,191 = 11.2%, no ledger started -
+WEBU-first scope, unchanged). One fix from this session's own batches
+(2 Chronicles 11:23) is not yet applied - see next-session tasks in
+`sync/session_manifest.txt`.
 
 ## The ten requirements, as given
 
