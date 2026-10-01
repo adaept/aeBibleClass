@@ -2812,3 +2812,153 @@ with a request for a provisional plan document capturing the background.
   `project_multi_editor_sync_architecture_plan` memory before deciding what
   to do next - do not re-derive this session's findings from scratch.
 ===============================================================================
+
+## New session (2026-10-01): R15 review continued (2 Chronicles 11:23 ->
+## Isaiah 56:10), fourth standing-accept pattern, new Test 90, VBA import finding
+
+Picked up the prior session's next-session item 1 (apply the one
+outstanding fix) then continued item 2 (R15 verse-by-verse review) in
+batches, same workflow as every prior session - present findings, wait for
+confirmation, fix in Word + re-export + re-run for defects, mark `rwb[x]`
++ re-run for accepts. Full account in `project_rwb_review_checklist_tool`
+memory and `Plan_rwb_webu_review_checklist_2026-09-28.md`'s new Addendum 9
+- not repeated in full here.
+
+  [CODE] `aeBibleClass/rpt/docm-verses.txt` -- 7 commits this session
+  (`b3ed622`..`9540706`), each individually verified against WEBU (several
+  also cross-checked against KJV) before committing. 24 real defects fixed:
+  dropped words/subjects (Proverbs 22:5; Psalm 105:35/113:7/122:3),
+  number-agreement errors (Ezra 8:31/8:33; Psalm 72:15; Isaiah 3:11 - needed
+  two separate touches, a "them...his...him" mix within one verse), a
+  homophone typo (Psalm 84:9 "you're"->"your"), a tense defect (Psalm
+  108:10), meaning-altering word-choice (Proverbs 28:17 "life blood"->
+  "blood guilt"; Ecclesiastes 7:27/7:29; Isaiah 53:3's lost word-variety),
+  a broken-grammar fix (Esther 9:1), a stray-space typo recurring twice
+  (Isaiah 36:1/39:3 - prompted the new Test 90 below), a missing
+  proper-name hyphen (Isaiah 39:1), and a title-capitalization defect
+  (Proverbs 31:1, same family as prior king-name fixes).
+    STATUS: pushed to aeBibleClass's `main` (up to `9540706`).
+
+  [CODE] `aeRWB` -- `rwb-webu-review.txt`/`rwb-webu-accepted.txt` updated
+  across 9 regeneration rounds; 125 verses graduated into the permanent
+  ledger this session. Fourth standing-accept pattern confirmed: docm's
+  Song of Solomon formatting inserts inline speaker labels ("Lover"/
+  "Friends"/"Beloved") and groups multiple webu-verses' dialogue under one
+  docm verse number - confirmed intentional by the operator ("shows the
+  speakers clearly, uses a specific style"), not a verse-split bug.
+    STATUS: pushed to aeRWB's `main` (operator's own commits, per
+    established practice - `6877726` and others in this session's range).
+
+  [IMPORT] `src/aeBibleClass.cls` -- new Test 90,
+  `CountSpaceBeforePunctuation`, added per the standard 8-location
+  checklist in `md/Adding_To_Bible_Test_Class.md`. Prompted directly by
+  the Isaiah 36:1/39:3 stray-space-before-comma pattern found above.
+  Checks for a space immediately before `, . : ; ! ?` or a closing `)`
+  anywhere in the document (opening marks and apostrophes deliberately
+  excluded - apostrophes already covered by the contractions tests 56-65).
+  Uses the established `m_lastHint` first-violation-hint convention so a
+  FAIL is immediately actionable.
+    STATUS: imported and confirmed passing by the operator -
+    `RUN_THE_TESTS(90)` PASS, result 0, expected 0. Committed separately
+    from the docm-verses.txt batch commits above (own commit, see git log).
+    Nothing further to import for this file.
+
+  [DOC] `aeRWB/tools/web-diff/README.md` -- R15 section updated with final
+  session numbers (722 pending/400 accepted, 5.9%) and the 4th
+  standing-accept pattern note.
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md` --
+  new Addendum 9 (full session account) + Status section updated.
+
+  [MEMORY] `project_rwb_review_checklist_tool.md`, `project_rwb_editorial_
+  philosophy.md` (4th standing-accept pattern), `feedback_importallvbafiles_
+  error17.md` (new finding below), `MEMORY.md` index updated.
+
+## Same session: ImportAllVBAFiles `Skipped=4` recurrence + a likely root cause
+
+While importing Test 90, hit the already-documented `Skipped=4` anomaly
+(`feedback_importallvbafiles_error17` memory) - same four modules as every
+prior occurrence (`basBiblePalette`, `basImportWordGitFiles`,
+`basTEST_aeBibleTools`, `Module1`). The operator's own troubleshooting this
+time found a likely root cause not previously documented: **the VBA
+project must be compiled BEFORE running `ImportAllVBAFiles`, not just
+after** (prior guidance only covered compiling afterward, for a different,
+separate silent-hang reason). Confirmed sequence: ran uncompiled -> failed,
+3 automatic retries all failed identically (settles "does retrying help"
+as NO); compiled the project, ran again -> clean `Skipped=1`. One paired
+observation so far, not yet proven fully deterministic, but strong enough
+to become the new default recovery step.
+    STATUS: no code change - a workflow/recovery-step finding, recorded in
+    `feedback_importallvbafiles_error17` memory.
+
+## Session status at this checkpoint (2026-10-01, session close)
+
+  aeRWB: all work committed and pushed (operator committed the ledger/
+  review file updates themselves during the session, per established
+  practice). Working tree clean.
+
+  aeBibleClass: all work committed and pushed up to `9540706`, plus this
+  manifest/docs commit. Working tree clean except `rpt/HeadingLog.txt` and
+  `rpt/docm-psalm-front-matter.txt` (session-ID timestamp and export-date
+  only, content otherwise unchanged) - same pre-existing benign drift
+  pattern as every prior session, left as-is uncommitted. One untracked
+  junk file noticed and removed this session: `bash.exe.stackdump` (a
+  Git-Bash crash dump, not a work product).
+
+  WEBU `other`: 722 pending + 400 accepted (12,146 changed verses, 5.9%
+  pending). WEBBE untouched, still 1,595/14,191 = 11.2%.
+
+## NEXT SESSION, IN ORDER
+
+  1. **Continue the R15 verse-by-verse review** using the two-file
+     workflow: `npm run docm.review-checklist -- webu` in `aeRWB`, review
+     `rwb-webu-review.txt`, either fix a real docm defect in Word +
+     re-export + re-run (drops off automatically) or mark `rwb[x]` +
+     re-run (graduates into `rwb-webu-accepted.txt`). 722 verses remain
+     pending (resuming after Isaiah 56:10). Apply the now-FOUR standing-
+     accept patterns (divine-names/contractions/evil-disaster from Phase
+     4; archaic-KJV-retention; trivial connector-word/pronoun-for-name
+     swaps; Song of Solomon inline speaker labels) before flagging
+     anything as "uncertain" - use a targeted KJV lookup (biblegateway.com)
+     to resolve genuine uncertainty quickly. No further design work
+     needed - the tool is stable.
+  2. **Watch for a recurrence of `ImportAllVBAFiles`'s `Skipped=4`
+     anomaly** - if it happens again, compile the project FIRST (Debug ->
+     Compile Project) before running `ImportAllVBAFiles`, not just after -
+     see `feedback_importallvbafiles_error17` memory's 2026-10-01 finding.
+     If `Skipped=4` still occurs despite compiling first, that would be
+     useful new data (would refute the compile-state theory) - worth
+     noting explicitly either way.
+  3. **Operator decision, not yet made**: pursue the ASV work-list item
+     (source a public-domain ASV text, same recipe as R16's `kjv.txt`, add
+     an `asv-word-choice` category) - see `aeRWB/tools/web-diff/README.md`'s
+     R15 section. Not urgent, no deadline.
+  4. Once WEBU's pending list reaches zero, start the WEBBE checklist the
+     same way (`npm run docm.review-checklist -- webbe`).
+  5. **Unchanged from previous sessions' lists, still not touched:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+        2026-09-25 -- rationale to be supplied later, do not guess one.
+        Live-check `applySpellingVariant`'s wiring against a disposable
+        scratch document (aeBibleAddin `word-audit-scanner.LIVE_CHECK.md`
+        "Shape 8" section). Do NOT run without the operator's explicit
+        go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+        on Genesis 1 (`aeRWB/tools/web-diff/`), using the OSHB data fetched
+        2026-09-25 - see `project_scholarly_grounding_plan` memory.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        `rpt/docm-verses.txt` (`ExportDocmVersesToRWBFormat`'s verse-number
+        detection) - small, scoped, currently blocks Jeremiah 37:10 from
+        ever being sync-able.
+     d. 2 Samuel 21:8 (Merab/Michal, OT textual-tradition question,
+        `Plan_rwb_webu_review_checklist_2026-09-28.md` Addendum 3) still
+        awaits the operator's explicit confirmation, not blocking.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own plan
+        doc first); item 9 (Bible introduction - needs a dedicated writing
+        session).
+
+  Read `project_rwb_review_checklist_tool` memory +
+  `Plan_rwb_webu_review_checklist_2026-09-28.md`'s Addendum 9 +
+  `feedback_importallvbafiles_error17` memory before deciding what to do
+  next - do not re-derive this session's findings from scratch.
+===============================================================================

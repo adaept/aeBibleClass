@@ -45,13 +45,14 @@ wired into `docm-webu-webbe-categorize.mjs` (an `operator-accepted` tally,
 sourced from the ledger file, layered on top of - not replacing - the raw
 `other` bucket).
 
-**Session-close state (2026-09-30)**: WEBU `other` 1,226 (2026-09-29
-session start) → **862 pending + 275 accepted** (12,146 changed verses,
-7.1% pending) as of 2026-09-30's close - see Addendum 8. WEBBE untouched
-(1,595/14,191 = 11.2%, no ledger started, WEBU-first scope unchanged). All
-work committed and pushed in both `aeRWB` and `aeBibleClass` - see
-Addendum 8 and the `project_rwb_review_checklist_tool` memory for the full
-account, and `sync/session_manifest.txt` for the cross-session handoff.
+**Session-close state (2026-10-01)**: WEBU `other` 862 pending + 275
+accepted (2026-09-30 session start) → **722 pending + 400 accepted**
+(12,146 changed verses, 5.9% pending) as of 2026-10-01's close - see
+Addendum 9. WEBBE untouched (1,595/14,191 = 11.2%, no ledger started,
+WEBU-first scope unchanged). All work committed and pushed in both
+`aeRWB` and `aeBibleClass` - see Addendum 9 and the
+`project_rwb_review_checklist_tool` memory for the full account, and
+`sync/session_manifest.txt` for the cross-session handoff.
 
 ## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
 
@@ -562,6 +563,77 @@ untouched this session (still 1,595/14,191 = 11.2%, no ledger started -
 WEBU-first scope, unchanged). One fix from this session's own batches
 (2 Chronicles 11:23) is not yet applied - see next-session tasks in
 `sync/session_manifest.txt`.
+
+## Addendum 9, 2026-10-01: review continued (2 Chronicles 11:23 -> Isaiah 56:10), fourth standing-accept pattern, new Test 90, ImportAllVBAFiles finding
+
+Continued Addendum 8's next-session item 1/2 (apply the one outstanding
+fix, then keep working the pending list in batches). Same workflow as
+Addendum 8: present each batch with a recommendation (standing-pattern
+accept / likely defect / genuinely uncertain), wait for confirmation,
+fix in Word + re-export + re-run for defects, mark `rwb[x]` + re-run for
+accepts. 9 batches worked this session, covering 2 Chronicles 11:23
+through Isaiah 56:10.
+
+**Fourth standing-accept pattern confirmed** (see
+`project_rwb_editorial_philosophy` memory for the full writeup): docm
+inserts inline speaker labels ("Lover", "Friends", "Beloved") into Song of
+Solomon's verse text and groups multiple webu-numbered verses' dialogue
+under one docm verse number. Confirmed intentional by the operator -
+"shows the speakers clearly, uses a specific style" - not a verse-split
+bug. Scoped to this one book; any docm-vs-webu diff there with an inline
+speaker label is accepted by default going forward.
+
+**Real docm defects found and fixed this session** (each verified against
+WEBU, most also cross-checked against KJV): dropped words (Proverbs 22:5
+"far"; Psalm 105:35/113:7/122:3 dropped subjects or a dangling relative
+clause, Ecclesiastes 2:8 a garbled trailing phrase), number-agreement
+errors (Ezra 8:31/8:33, Psalm 72:15, Isaiah 3:11 - a "them...his...him"
+mix within one verse, two separate touches needed), a homophone typo
+(Psalm 84:9 "you're" -> "your"), a tense defect (Psalm 108:10 "has led"
+-> "will lead"), meaning-altering word-choice defects (Proverbs 28:17
+"life blood" -> "blood guilt"; Ecclesiastes 7:27/7:29 "scheme(s)" ->
+clearer wording; Isaiah 53:3 restored "sorrows" where docm had
+repeated "suffering" twice, losing the KJV's word variety), a broken-
+grammar fix (Esther 9:1 "was turned out" -> "turned out"), a stray-space
+typo recurring twice (Isaiah 36:1, 39:3 - "King Hezekiah , ..." - this
+specific pattern is what prompted the new Test 90 below), a missing
+proper-name hyphen (Isaiah 39:1 "Merodach Baladan" -> "Merodach-Baladan"),
+and a title-capitalization defect (Proverbs 31:1 "king Lemuel" -> "King
+Lemuel", same family as prior king-name fixes). One quantifier/number
+fix (2 Chronicles 11:23, carried over from Addendum 8 as "outstanding")
+was applied first thing this session.
+
+**New test added, same session, operator-initiated** (unrelated to the
+R15 review itself, but prompted directly by the Isaiah 36:1/39:3 stray-
+space pattern found above): Test 90, `CountSpaceBeforePunctuation`, added
+to `aeBibleClass.cls` per the standard 8-location checklist in
+`md/Adding_To_Bible_Test_Class.md`. Checks for a space immediately before
+`, . : ; ! ?` or a closing `)` anywhere in the document (opening marks
+and apostrophes deliberately excluded - apostrophes already covered by
+the contractions tests 56-65). Uses the established `m_lastHint`
+first-violation-hint convention so a FAIL is immediately actionable.
+`RUN_THE_TESTS(90)` confirmed PASS (0 violations) after import.
+
+**ImportAllVBAFiles investigation, same session**: hit the known
+`Skipped=4` anomaly (`feedback_importallvbafiles_error17` memory) while
+importing Test 90. Operator's own troubleshooting found a likely root
+cause not previously documented: the project must be **compiled BEFORE**
+running `ImportAllVBAFiles`, not just after (the existing guidance only
+covered compiling afterward, to avoid a separate silent-hang issue). One
+paired observation (uncompiled -> fails every retry; compiled first ->
+clean run) - not yet proven fully deterministic, but strong enough to
+become the new default recovery step. Documented in
+`feedback_importallvbafiles_error17` memory with the full sequence.
+
+**Session-close numbers**: WEBU `other` 862 pending + 275 accepted
+(2026-09-30 session start) → **722 pending + 400 accepted** (12,146
+changed verses, 5.9% pending). 125 verses accepted into the ledger this
+session; 24 real defects fixed (across 2 Chronicles, Ezra, Esther, Psalms,
+Proverbs, Ecclesiastes, and Isaiah) via 7 commits. WEBBE untouched this
+session (still 1,595/14,191 = 11.2%, no ledger started, WEBU-first scope
+unchanged). No outstanding fixes carried over this time - next session
+can start straight from the pending list wherever it resumes after
+Isaiah 56:10.
 
 ## The ten requirements, as given
 
