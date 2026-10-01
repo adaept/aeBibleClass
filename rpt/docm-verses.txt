@@ -15015,7 +15015,7 @@ Psalm 72:11	 Yes, all kings shall fall down before him. All nations shall serv
 Psalm 72:12	 For he will deliver the needy when he cries; the poor, who has no helper.
 Psalm 72:13	 He will have pity on the poor and needy. He will save the souls of the needy.
 Psalm 72:14	 He will redeem their soul from oppression and violence. Their blood will be precious in his sight.
-Psalm 72:15	 They shall live, and to him shall be given of the gold of Sheba. Men shall pray for him continually. They shall bless him all day long.
+Psalm 72:15	 He shall live, and to him shall be given of the gold of Sheba. Men shall pray for him continually. They shall bless him all day long.
 Psalm 72:16	 Abundance of grain shall be throughout the land. Its fruit sways like Lebanon. Let it flourish, thriving like the grass of the field.
 Psalm 72:17	 His name endures forever. His name continues as long as the sun. Men shall be blessed by him. All nations will call him blessed.
 Psalm 72:18	 Praise be to God, the God of Israel, who alone does marvelous deeds.
@@ -15268,7 +15268,7 @@ Psalm 84:5	 Blessed are those whose strength is in you, who have set their hea
 Psalm 84:6	 Passing through the valley of Weeping, they make it a place of springs. Yes, the autumn rain covers it with blessings.
 Psalm 84:7	 They go from strength to strength. Every one of them appears before God in Zion.
 Psalm 84:8	 Lord God of Hosts, hear my prayer. Listen, God of Jacob. Selah.
-Psalm 84:9	 Behold, God our shield, look at the face of you’re anointed.
+Psalm 84:9	 Behold, God our shield, look at the face of your anointed.
 Psalm 84:10	 For a day in your courts is better than a thousand. I would rather be a doorkeeper in the house of my God, than to dwell in the tents of wickedness.
 Psalm 84:11	 For God is a sun and a shield. God will give grace and glory. He withholds no good thing from those who walk blamelessly.
 Psalm 84:12	 The Lord God of Hosts, blessed is the man who trusts in you.
@@ -15641,7 +15641,7 @@ Psalm 105:31	 He spoke, and swarms of flies came, and lice in all their border
 Psalm 105:32	 He gave them hail for rain, with lightning in their land.
 Psalm 105:33	 He struck their vines and also their fig trees, and shattered the trees of their country.
 Psalm 105:34	 He spoke, and the locusts came with the grasshoppers, without number,
-Psalm 105:35	 ate up every plant in their land, and ate up the fruit of their ground
+Psalm 105:35	 they ate up every plant in their land, and ate up the fruit of their ground
 Psalm 105:36	 He struck also all the firstborn in their land, the first fruits of all their manhood.
 Psalm 105:37	 He brought them out with silver and gold. There was not one feeble person among his tribes.
 Psalm 105:38	 Egypt was glad when they departed, for the fear of them had fallen on them.
@@ -15752,7 +15752,7 @@ Psalm 108:6	 That your beloved may be delivered, save with your right hand, an
 Psalm 108:7	 God has spoken from his sanctuary: “In triumph, I will divide Shechem, and measure out the valley of Succoth.
 Psalm 108:8	 Gilead is mine. Manasseh is mine. Ephraim also is my helmet. Judah is my scepter.
 Psalm 108:9	 Moab is my wash pot. I will toss my sandal on Edom. I will shout over Philistia.”
-Psalm 108:10	 Who will bring me into the fortified city? Who has led me to Edom?
+Psalm 108:10	 Who will bring me into the fortified city? Who will lead me to Edom?
 Psalm 108:11	 Have you not rejected us, God? You do not go out, God, with our armies.
 Psalm 108:12	 Give us help against the enemy, for the help of man is vain.
 Psalm 108:13	 Through God, we will do valiantly. For it is he who will tread down our enemies.
@@ -15820,7 +15820,7 @@ Psalm 113:3	 From the rising of the sun to its going down, the name of God is 
 Psalm 113:4	 God is high above all nations, his glory above the heavens.
 Psalm 113:5	 Who is like God, our God, who has his seat on high,
 Psalm 113:6	 Who stoops down to see in heaven and in the earth?
-Psalm 113:7	 He raises up the poor out of the dust. Lifts up the needy from the ash heap,
+Psalm 113:7	 He raises up the poor out of the dust and lifts up the needy from the ash heap,
 Psalm 113:8	 that he may set him with princes, even with the princes of his people.
 Psalm 113:9	 He settles the barren woman in her home as a joyful mother of children. Praise Yah!
 Psalm 114:1	 When Israel went out of Egypt, the house of Jacob from a people of foreign language,
@@ -16092,7 +16092,7 @@ Psalm 121:7	 God will keep you from all evil. He will keep your soul.
 Psalm 121:8	 God will keep your going out and your coming in, from this time forward, and forever more.
 Psalm 122:1	 I was glad when they said to me, “Let us go to the house of God!”
 Psalm 122:2	 Our feet are standing within your gates, Jerusalem,
-Psalm 122:3	 Jerusalem, that is built as a city that is compact together,
+Psalm 122:3	 Jerusalem is built like a city that is compacted together,
 Psalm 122:4	 where the tribes go up, even Yah’s tribes, according to an ordinance for Israel, to give thanks to God’s name.
 Psalm 122:5	 For there are set thrones for judgment, the thrones of David’s house.
 Psalm 122:6	 Pray for the peace of Jerusalem. Those who love you will prosper.
