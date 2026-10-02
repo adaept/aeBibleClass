@@ -2962,3 +2962,124 @@ to become the new default recovery step.
   `feedback_importallvbafiles_error17` memory before deciding what to do
   next - do not re-derive this session's findings from scratch.
 ===============================================================================
+
+## New session (2026-10-02): R15 review continued (Isaiah 57:8 -> Amos
+## 4:2), 12 real defects, a stale-ledger-entry tool gap found and documented
+
+Picked up the prior session's next-session item 1 (continue the R15
+verse-by-verse review) where it left off after Isaiah 56:10. Same
+workflow as every prior session - present findings, wait for
+confirmation, fix in Word + re-export + re-run for defects, mark `rwb[x]`
++ re-run for accepts. Full account in `project_rwb_review_checklist_tool`
+memory and `Plan_rwb_webu_review_checklist_2026-09-28.md`'s new Addendum
+10 - not repeated in full here.
+
+  [CODE] `aeBibleClass/rpt/docm-verses.txt` -- 12 real defects fixed this
+  session, each individually verified against WEBU (most also
+  cross-checked against KJV): two typos (Jeremiah 9:5, Jeremiah 24:9's
+  stray period), a wrong-word typo (Lamentations 2:9 "here"->"where"), a
+  meaning-distorting number/word swap (Ezekiel 42:3 "the third floor"->
+  "three stories"), a dangling-participle grammar defect (Ezekiel 45:9),
+  a theologically significant singular/plural slip (Daniel 3:14 "my
+  god"->"my gods"), an awkward stacked-preposition phrase (Daniel 6:20),
+  a wrong body part (Daniel 10:5 "thighs"->"waist"), a dropped clause
+  (Hosea 2:23), a meaning-altering word swap (Hosea 4:10 "giving"->
+  "listening"), a number-agreement error (Hosea 11:3 "his"->"their
+  arms", same family as the earlier Isaiah 3:11 fix), and a garbled
+  idiom clarified (Hosea 14:2).
+    STATUS: committed and pushed to aeBibleClass's `main` this session
+    (see commits following this manifest entry).
+
+  [CODE] `aeRWB` -- `rwb-webu-review.txt`/`rwb-webu-accepted.txt` updated
+  across 9 regeneration rounds; 235 verses graduated into the permanent
+  ledger this session. Several verses that looked like docm defects at
+  first glance turned out, on KJV cross-reference, to be cases where WEBU
+  itself had diverged from KJV (docm was the faithful one) - see Addendum
+  10 for the specific list; worth remembering this asymmetry for future
+  batches.
+    STATUS: committed by the operator during the session per established
+    practice (`a3b7509 review and ledger updates`); README doc-numbers
+    update committed and pushed separately this session.
+
+  [DOC] `aeRWB/tools/web-diff/README.md` -- R15 section updated with
+  final session numbers (478 pending/635 accepted, 3.9%) and this
+  session's defect-count summary. Also corrected a previously-inaccurate
+  claim (that a fully-resolved verse "simply disappears from whichever
+  file it was in") - found live via Ezekiel 23:7 that this does NOT hold
+  for ledger entries: a verse that stops being an `other`-bucket diff
+  entirely is never revisited by the regeneration loop, so stale pre-fix
+  text can sit in `rwb-webu-accepted.txt` indefinitely unless
+  hand-corrected. Documented as a known gap with the symptom to watch for
+  and the manual-fix procedure; no automatic cleanup built (rare, easy to
+  spot/fix by hand).
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md` --
+  new Addendum 10 (full session account, defect list, and the
+  stale-ledger-entry finding).
+
+  [MEMORY] `project_rwb_review_checklist_tool.md` updated with this
+  session's numbers and the stale-ledger-entry finding; `MEMORY.md` index
+  updated.
+
+## Session status at this checkpoint (2026-10-02, session close)
+
+  aeRWB: all work committed and pushed (operator committed the ledger/
+  review file updates during the session per established practice; the
+  README doc-numbers update committed and pushed separately). Working
+  tree clean.
+
+  aeBibleClass: docm-verses.txt (12 defect fixes), the Plan doc Addendum
+  10, and this manifest entry committed and pushed to `main` this
+  session. `rpt/HeadingLog.txt` and `rpt/docm-psalm-front-matter.txt`
+  carry only the usual session-ID timestamp / export-date drift (same
+  pre-existing benign pattern as every prior session) and are committed
+  alongside rather than left uncommitted, since this session explicitly
+  committed all rpt/ output together.
+
+  WEBU `other`: 478 pending + 635 accepted (12,137 changed verses, 3.9%
+  pending). WEBBE untouched by review (still no ledger/review pass
+  started), now 1,570/14,182 = 11.1% (the defect fixes shrank its diff
+  count slightly too, since several fixes also resolved WEBBE
+  divergences).
+
+## NEXT SESSION, IN ORDER
+
+  1. **Continue the R15 verse-by-verse review** using the two-file
+     workflow: `npm run docm.review-checklist -- webu` in `aeRWB`, review
+     `rwb-webu-review.txt`, either fix a real docm defect in Word +
+     re-export + re-run (drops off automatically) or mark `rwb[x]` +
+     re-run (graduates into `rwb-webu-accepted.txt`). 478 verses remain
+     pending (resuming after Amos 4:2). Apply the four standing-accept
+     patterns, cross-check KJV via `aeRWB/kjv.txt` for any wording that
+     looks off - and remember this session's finding that WEBU itself can
+     be the one that diverged from KJV, not just docm. No further design
+     work needed - the tool is stable.
+  2. Once WEBU's pending list reaches zero, start the WEBBE checklist the
+     same way (`npm run docm.review-checklist -- webbe`).
+  3. **Unchanged from previous sessions' lists, still not touched:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+        2026-09-25 -- rationale to be supplied later, do not guess one.
+        Live-check `applySpellingVariant`'s wiring against a disposable
+        scratch document (aeBibleAddin `word-audit-scanner.LIVE_CHECK.md`
+        "Shape 8" section). Do NOT run without the operator's explicit
+        go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+        on Genesis 1 (`aeRWB/tools/web-diff/`), using the OSHB data fetched
+        2026-09-25 - see `project_scholarly_grounding_plan` memory.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        `rpt/docm-verses.txt` (`ExportDocmVersesToRWBFormat`'s verse-number
+        detection) - small, scoped, currently blocks Jeremiah 37:10 from
+        ever being sync-able.
+     d. 2 Samuel 21:8 (Merab/Michal, OT textual-tradition question,
+        `Plan_rwb_webu_review_checklist_2026-09-28.md` Addendum 3) still
+        awaits the operator's explicit confirmation, not blocking.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own plan
+        doc first); item 9 (Bible introduction - needs a dedicated writing
+        session).
+
+  Read `project_rwb_review_checklist_tool` memory +
+  `Plan_rwb_webu_review_checklist_2026-09-28.md`'s Addendum 10 before
+  deciding what to do next - do not re-derive this session's findings
+  from scratch.
+===============================================================================

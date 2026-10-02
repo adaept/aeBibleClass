@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-10-01)
+Radiant Word Bible - exported from the live .docm (2026-10-02)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -19180,7 +19180,7 @@ Jeremiah 9:1	 Oh that my head were waters, and my eyes a spring of tears, that
 Jeremiah 9:2	 Oh that I had in the wilderness a lodging place of wayfaring men; that I might leave my people, and go from them! For they are all adulterers, an assembly of treacherous men.
 Jeremiah 9:3	 “They bend their tongue, as their bow, for falsehood. They have grown strong in the land, but not for truth; for they proceed from evil to evil, and they do not know me,” says God.
 Jeremiah 9:4	 “Everyone beware of his neighbor, and do not trust in any brother; for every brother will utterly supplant, and every neighbor will go around like a slanderer.
-Jeremiah 9:5	 Friends deceive each other, and will not speak the truth. They have taught their tongue to speak lies. They weary themselves commiting iniquity.
+Jeremiah 9:5	 Friends deceive each other, and will not speak the truth. They have taught their tongue to speak lies. They weary themselves committing iniquity.
 Jeremiah 9:6	 Your habitation is in the middle of deceit. Through deceit, they refuse to know me,” says God.
 Jeremiah 9:7	 Therefore the Lord God of Hosts says, “Behold, I will melt them and test them; for how should I deal with the daughter of my people?
 Jeremiah 9:8	 Their tongue is a deadly arrow. It speaks deceit. One speaks peaceably to his neighbor with his mouth, but in his heart, he waits to ambush him.
@@ -19486,7 +19486,7 @@ Jeremiah 22:28	 Is this man Coniah a despised broken vessel? Is he a vessel in
 Jeremiah 22:29	 O earth, earth, earth, hear God’s word!
 Jeremiah 22:30	 God says, “Record this man as childless, a man who will not prosper in his days; for no more will a man of his offspring prosper, sitting on David’s throne, and ruling in Judah.”
 Jeremiah 23:1	 “Woe to the shepherds who destroy and scatter the sheep of my pasture!” says God.
-Jeremiah 23:2	 Therefore God, the God of Israel, says against the shepherds who feed my people: “You have scattered my flock, driven them away, and have not visited them. Behold, I will punish you for the evil of your doings,” says God.
+Jeremiah 23:2	 Therefore God, the God of Israel, says against the shepherds who feed my people: “You have scattered my flock, driven them away, and have not visited them. Behold, I will visit upon you the evil of your doings,” says God.
 Jeremiah 23:3	 “I will gather the remnant of my flock out of all the countries where I have driven them, and will bring them again to their folds; and they will be fruitful and multiply.
 Jeremiah 23:4	 I will set up shepherds over them, who will feed them. They will no longer be afraid or dismayed, neither will any be lacking,” says God.
 Jeremiah 23:5	 “Behold, the days come,” says God, “that I will raise to David a righteous Branch, and he will reign as king and deal wisely, and will execute justice and righteousness in the land.
@@ -19533,7 +19533,7 @@ Jeremiah 24:5	 “God, the God of Israel says: ‘Like these good figs, so I w
 Jeremiah 24:6	 For I will set my eyes on them for good, and I will bring them again to this land. I will build them, and not pull them down. I will plant them, and not pluck them up.
 Jeremiah 24:7	 I will give them a heart to know me, that I am God. They will be my people, and I will be their God; for they will return to me with their whole heart.
 Jeremiah 24:8	 “‘As the bad figs, which cannot be eaten, they are so bad,’ surely God says, ‘So I will give up Zedekiah the king of Judah, and his princes, and the remnant of Jerusalem, who remain in this land, and those who dwell in the land of Egypt.
-Jeremiah 24:9	 I will even give them up to be tossed back and forth among all the kingdoms of the earth to be abhorrent, to be a reproach and a proverb, a taunt and a curse, in all places where I will drive them.
+Jeremiah 24:9	 I will even give them up to be tossed back and forth among all the kingdoms of the earth, to be an object of horror, to be a reproach and a proverb, a taunt and a curse, in all places where I will drive them.
 Jeremiah 24:10	 I will send the sword, the famine, and the pestilence, among them, until they are consumed from off the land that I gave to them and to their fathers.’”
 Jeremiah 25:1	 The word that came to Jeremiah concerning all the people of Judah, in the fourth year of Jehoiakim the son of Josiah, king of Judah (this was the first year of Nebuchadnezzar king of Babylon),
 Jeremiah 25:2	 which Jeremiah the prophet spoke to all the people of Judah, and to all the inhabitants of Jerusalem:
@@ -19997,7 +19997,7 @@ Jeremiah 42:18	 For the Lord God of Hosts, the God of Israel, says: ‘As my a
 Jeremiah 42:19	 “God has spoken concerning you, remnant of Judah, ‘Do not go into Egypt!’ Know certainly that I have testified to you today.
 Jeremiah 42:20	 For you have dealt deceitfully against your own souls; for you sent me to the Lord your God, saying, ‘Pray for us to the Lord our God; and according to all that the Lord our God says, so declare to us, and we will do it.’
 Jeremiah 42:21	 I have declared it to you today; but you have not obeyed the voice of the Lord your God in anything for which he has sent me to you.
-Jeremiah 42:22	 Now therefore know certainly that you will die by the sword, by the famine, and by the pestilence in the place where you desire to go to live there.”
+Jeremiah 42:22	 Now therefore know certainly that you will die by the sword, by the famine, and by the pestilence in the place where you desire to go to live.”
 Jeremiah 43:1	 When Jeremiah had finished speaking to all the people all the words of the Lord their God, with which the Lord their God had sent him to them, even all these words,
 Jeremiah 43:2	 then Azariah the son of Hoshaiah, Johanan the son of Kareah, and all the proud men spoke, saying to Jeremiah, “You speak falsely. the Lord our God has not sent you to say, ‘You shall not go into Egypt to live there;’
 Jeremiah 43:3	 but Baruch the son of Neriah has turned you against us, to deliver us into the hand of the Chaldeans, that they may put us to death, and carry us away captive to Babylon.”
@@ -20341,7 +20341,7 @@ Lamentations 2:5	 The Lord has become as an enemy. He has swallowed up Israel.
 Lamentations 2:6	 He has violently taken away his tabernacle, as if it were a garden. He has destroyed his place of assembly. God has caused solemn assembly and Sabbath to be forgotten in Zion. In the indignation of his anger, he has despised the king and the priest.
 Lamentations 2:7	 The Lord has cast off his altar. He has abhorred his sanctuary. He has given the walls of her palaces into the hand of the enemy. They have made a noise in God’s house, as in the day of a solemn assembly.
 Lamentations 2:8	 God has purposed to destroy the wall of the daughter of Zion. He has stretched out the line. He has not withdrawn his hand from destroying; He has made the rampart and wall lament. They languish together.
-Lamentations 2:9	 Her gates have sunk into the ground. He has destroyed and broken her bars. Her king and her princes are among the nations here the law is not. Yes, her prophets find no vision from God.
+Lamentations 2:9	 Her gates have sunk into the ground. He has destroyed and broken her bars. Her king and her princes are among the nations where the law is not. Yes, her prophets find no vision from God.
 Lamentations 2:10	 The elders of the daughter of Zion sit on the ground. They keep silence. They have cast up dust on their heads. They have clothed themselves with sackcloth. The virgins of Jerusalem hang down their heads to the ground.
 Lamentations 2:11	 My eyes fail with tears. My heart is troubled. My liver is poured on the earth, because of the destruction of the daughter of my people, because the young children and the infants swoon in the streets of the city.
 Lamentations 2:12	 They ask their mothers, “Where is grain and wine?” when they swoon as the wounded in the streets of the city, when their soul is poured out into their mothers’ bosom.
@@ -20582,7 +20582,7 @@ Ezekiel 7:1	 Moreover God’s word came to me, saying,
 Ezekiel 7:2	 “You, son of man, the Lord God says to the land of Israel, ‘An end! The end has come on the four corners of the land.
 Ezekiel 7:3	 Now the end is on you, and I will send my anger on you, and will judge you according to your ways. I will bring on you all your abominations.
 Ezekiel 7:4	 My eye will not spare you, neither will I have pity; but I will bring your ways on you, and your abominations will be among you. Then you will know that I am God.’
-Ezekiel 7:5	 “The Lord God says: ‘Disaster! Disaster! Behold, it comes.
+Ezekiel 7:5	 “The Lord God says: ‘A disaster! A unique disaster! Behold, it comes.
 Ezekiel 7:6	 An end has come. The end has come! It awakes against you. Behold, it comes.
 Ezekiel 7:7	 Your doom has come to you, inhabitant of the land! The time has come! The day is near, a day of tumult, and not of joyful shouting, on the mountains.
 Ezekiel 7:8	 Now I will shortly pour out my wrath on you, and accomplish my anger against you, and will judge you according to your ways. I will bring on you all your abominations.
@@ -21014,7 +21014,7 @@ Ezekiel 23:3	 They played the prostitute in Egypt. They played the prostitute 
 Ezekiel 23:4	 Their names were Oholah the elder, and Oholibah her sister. They became mine, and they bore sons and daughters. As for their names, Samaria is Oholah, and Jerusalem Oholibah.
 Ezekiel 23:5	 “Oholah played the prostitute when she was mine. She doted on her lovers, on the Assyrians her neighbors,
 Ezekiel 23:6	 who were clothed with blue, governors and rulers, all of them desirable young men, horsemen riding on horses.
-Ezekiel 23:7	 She gave herself as a prostitute to them, all of them the choicest men of Assyria. She defiled herself with the idols of whoever she lusted after.
+Ezekiel 23:7	 She gave herself as a prostitute to them, all of them the choicest men of Assyria. She defiled herself with the idols of whomever she lusted after.
 Ezekiel 23:8	 She has not left her prostitution since leaving Egypt; for in her youth they lay with her. They caressed her youthful nipples; and they poured out their prostitution on her.
 Ezekiel 23:9	 “Therefore I delivered her into the hand of her lovers, into the hand of the Assyrians, on whom she doted.
 Ezekiel 23:10	 These uncovered her nakedness. They took her sons and her daughters; and they killed her with the sword. She became a byword among women; for they executed judgments on her.
@@ -21141,7 +21141,7 @@ Ezekiel 27:16	 “‘“Syria was your merchant by reason of the multitude of 
 Ezekiel 27:17	 “‘“Judah and the land of Israel were your traders. They traded wheat of Minnith, confections, honey, oil, and balm for your merchandise.
 Ezekiel 27:18	 “‘“Damascus was your merchant for the multitude of your handiworks, by reason of the multitude of all kinds of riches, with the wine of Helbon, and white wool.
 Ezekiel 27:19	 “‘“Vedan and Javan traded with yarn for your wares: bright iron, cassia, and calamus were among your merchandise.
-Ezekiel 27:20	 “‘“Dedan was your trafficker in precious saddlecloths for riding.
+Ezekiel 27:20	 “‘“Dedan was your merchant in precious saddlecloths for riding.
 Ezekiel 27:21	 “‘“Arabia, and all the princes of Kedar were the merchants of your hand; in lambs, rams, and goats. In these, they were your merchants.
 Ezekiel 27:22	 “‘“The traders of Sheba and Raamah were your traders. They traded for your wares with the chief of all spices, and with all precious stones, and gold.
 Ezekiel 27:23	 “‘“Haran, Canneh, and Eden, the traders of Sheba, Asshur and Chilmad, were your traders.
@@ -21555,7 +21555,7 @@ Ezekiel 41:25	 There were made on them, on the doors of the temple, cherubim a
 Ezekiel 41:26	 There were closed windows and palm trees on the one side and on the other side, on the sides of the porch. This is how the side rooms of the house and the thresholds were arranged.
 Ezekiel 42:1	 Then he brought me out into the outer court, the way toward the north. Then he brought me into the room that was opposite the separate place, and which was opposite the building toward the north.
 Ezekiel 42:2	 Before the length of one hundred cubits was the north door, and the width was fifty cubits.
-Ezekiel 42:3	 Opposite the twenty cubits which belonged to the inner court, and opposite the pavement which belonged to the outer court, was gallery against gallery in the third floor.
+Ezekiel 42:3	 Opposite the twenty cubits which belonged to the inner court, and opposite the pavement which belonged to the outer court, was gallery against gallery in three stories.
 Ezekiel 42:4	 Before the rooms was a walk of ten cubits’ width inward, a way of one cubit; and their doors were toward the north.
 Ezekiel 42:5	 Now the upper rooms were shorter; for the galleries took away from these, more than from the lower and the middle, in the building.
 Ezekiel 42:6	 For they were in three stories, and they did not have pillars as the pillars of the courts. Therefore the uppermost was set back more than the lowest and the middle from the ground.
@@ -21639,7 +21639,7 @@ Ezekiel 45:5	 Twenty-five thousand in length, and ten thousand in width, shall
 Ezekiel 45:6	 “‘“You shall appoint the possession of the city five thousand wide, and twenty-five thousand long, side by side with the offering of the holy portion: it shall be for the whole house of Israel.
 Ezekiel 45:7	 “‘“What is for the prince shall be on the one side and on the other side of the holy offering and of the possession of the city, in front of the holy offering and in front of the possession of the city, on the west side westward, and on the east side eastward; and in length answerable to one of the portions, from the west border to the east border.
 Ezekiel 45:8	 In the land it shall be to him for a possession in Israel. My princes shall no more oppress my people; but they shall give the land to the house of Israel according to their tribes.”
-Ezekiel 45:9	 “‘The Lord God says: “Let it suffice you, princes of Israel: remove violence and plunder, and execute justice and righteousness; dispossessing my people,” says the Lord God.
+Ezekiel 45:9	 “‘The Lord God says: “Let it suffice you, princes of Israel: remove violence and plunder, and execute justice and righteousness. Cease dispossessing my people,” says the Lord God.
 Ezekiel 45:10	 “You shall have just balances, a just ephah, and a just bath.
 Ezekiel 45:11	 The ephah and the bath shall be of one measure, that the bath may contain one tenth of a homer, and the ephah one tenth of a homer. Its measure shall be the same as the homer.
 Ezekiel 45:12	 The shekel shall be twenty gerahs. Twenty shekels plus twenty-five shekels plus fifteen shekels shall be your mina.
@@ -21685,7 +21685,7 @@ Ezekiel 47:2	 Then he brought me out by the way of the gate northward, and led
 Ezekiel 47:3	 When the man went out eastward with the line in his hand, he measured one thousand cubits, and he caused me to pass through the waters, waters that were to the ankles.
 Ezekiel 47:4	 Again he measured one thousand, and caused me to pass through the waters, waters that were to the knees. Again he measured one thousand, and caused me to pass through waters that were to the waist.
 Ezekiel 47:5	 Afterward he measured one thousand; and it was a river that I could not pass through; for the waters had risen, waters to swim in, a river that could not be walked through.
-Ezekiel 47:6	 He said to me, “Son of man, have you seen?” Then he brought me, and caused me to return to the bank of the river.
+Ezekiel 47:6	 He said to me, “Son of man, have you seen this?” Then he brought me, and caused me to return to the bank of the river.
 Ezekiel 47:7	 Now when I had returned, behold, on the bank of the river were very many trees on the one side and on the other.
 Ezekiel 47:8	 Then he said to me, “These waters flow out toward the eastern region, and will go down into the Arabah. Then they will go toward the sea; and flow into the sea which will be made to flow out; and the waters will be healed.
 Ezekiel 47:9	 It will happen, that every living creature which swarms, in every place where the rivers come, will live. Then there will be a very great multitude of fish; for these waters have come there, and the waters of the sea will be healed, and everything will live wherever the river comes.
@@ -21821,7 +21821,7 @@ Daniel 3:10	 You, O king, have made a decree that every man who hears the soun
 Daniel 3:11	 and whoever does not fall down and worship shall be cast into the middle of a burning fiery furnace.
 Daniel 3:12	 There are certain Jews whom you have appointed over the affairs of the province of Babylon: Shadrach, Meshach, and Abednego. These men, O king, have not respected you. They do not serve your gods, and do not worship the golden image which you have set up.”
 Daniel 3:13	 Then Nebuchadnezzar in rage and fury commanded that Shadrach, Meshach, and Abednego be brought. Then these men were brought before the king.
-Daniel 3:14	 Nebuchadnezzar answered them, “Is it on purpose, Shadrach, Meshach, and Abednego, that you do not serve my god, nor worship the golden image which I have set up?
+Daniel 3:14	 Nebuchadnezzar answered them, “Is it on purpose, Shadrach, Meshach, and Abednego, that you do not serve my gods, nor worship the golden image which I have set up?
 Daniel 3:15	 Now if you are ready whenever you hear the sound of the horn, flute, zither, lyre, harp, pipe, and all kinds of music to fall down and worship the image which I have made, good; but if you do not worship, you shall be cast the same hour into the middle of a burning fiery furnace. Who is that god who will deliver you out of my hands?”
 Daniel 3:16	 Shadrach, Meshach, and Abednego answered the king, “Nebuchadnezzar, we have no need to answer you in this matter.
 Daniel 3:17	 If it happens, our God whom we serve is able to deliver us from the burning fiery furnace; and he will deliver us out of your hand, O king.
@@ -21925,7 +21925,7 @@ Daniel 6:16	 Then the king commanded, and they brought Daniel, and cast him in
 Daniel 6:17	 A stone was brought, and laid on the mouth of the den; and the king sealed it with his own signet, and with the signet of his lords; that nothing might be changed concerning Daniel.
 Daniel 6:18	 Then the king went to his palace, and passed the night fasting. No musical instruments were brought before him; and his sleep fled from him.
 Daniel 6:19	 Then the king arose very early in the morning, and went in haste to the den of lions.
-Daniel 6:20	 When he came near to the den to Daniel, he cried with a troubled voice. The king spoke and said to Daniel, “Daniel, servant of the living God, is your God, whom you serve continually, able to deliver you from the lions?”
+Daniel 6:20	 When he came near to the den where Daniel was, he cried with a troubled voice. The king spoke and said to Daniel, “Daniel, servant of the living God, is your God, whom you serve continually, able to deliver you from the lions?”
 Daniel 6:21	 Then Daniel said to the king, “O king, live forever!
 Daniel 6:22	 My God has sent his angel, and has shut the lions’ mouths, and they have not hurt me; because as before him innocence was found in me; and also before you, O king, I have done no harm.”
 Daniel 6:23	 Then the king was exceedingly glad, and commanded that they should take Daniel up out of the den. So Daniel was taken up out of the den, and no kind of harm was found on him, because he had trusted in his God.
@@ -22020,7 +22020,7 @@ Daniel 10:1	 In the third year of Cyrus king of Persia a thing was revealed to
 Daniel 10:2	 In those days I, Daniel, was mourning three whole weeks.
 Daniel 10:3	 I ate no pleasant bread. No meat or wine came into my mouth. I did not anoint myself at all, until three whole weeks were fulfilled.
 Daniel 10:4	 In the twenty-fourth day of the first month, as I was by the side of the great river, which is Hiddekel,
-Daniel 10:5	 I lifted up my eyes, and looked, and behold, there was a man clothed in linen, whose thighs were adorned with pure gold of Uphaz.
+Daniel 10:5	 I lifted up my eyes, and looked, and behold, there was a man clothed in linen, whose waist was adorned with pure gold of Uphaz.
 Daniel 10:6	 His body also was like beryl, and his face as the appearance of lightning, and his eyes as flaming torches. His arms and his feet were like burnished bronze. The voice of his words was like the voice of a multitude.
 Daniel 10:7	 I, Daniel, alone saw the vision; for the men who were with me did not see the vision; but a great quaking fell on them, and they fled to hide themselves.
 Daniel 10:8	 So I was left alone, and saw this great vision. No strength remained in me; for my face grew deathly pale, and I retained no strength.
@@ -22128,7 +22128,7 @@ Hosea 2:19	 I will betroth you to me forever. Yes, I will betroth you to me in
 Hosea 2:20	 I will even betroth you to me in faithfulness; and you shall know God.
 Hosea 2:21	 It will happen in that day, I will respond,” says God, “I will respond to the heavens, and they will respond to the earth;
 Hosea 2:22	 and the earth will respond to the grain, and the new wine, and the oil; and they will respond to Jezreel.
-Hosea 2:23	 I will sow her to me in the earth; and I will have mercy on her who had not obtained mercy; and I will tell those who were not my people, ‘You are my people;’ and they will say, ‘My God!’”
+Hosea 2:23	 I will sow her to me in the earth; and I will have mercy on her who had not obtained mercy; and I will tell those who were not my people, ‘You are my people;’ and they will say, ‘You are my God!’”
 Hosea 3:1	 God said to me, “Go again, love a woman loved by another, and an adulteress, even as God loves the children of Israel, though they turn to other gods, and love cakes of raisins.”
 Hosea 3:2	 So I bought her for myself for fifteen pieces of silver and a homer and a half of barley.
 Hosea 3:3	 I said to her, “You shall stay with me many days. You shall not play the prostitute, and you shall not be with any other man. I will also be so toward you.”
@@ -22143,7 +22143,7 @@ Hosea 4:6	 My people are destroyed for lack of knowledge. Because you have rej
 Hosea 4:7	 As they were multiplied, so they sinned against me. I will change their glory into shame.
 Hosea 4:8	 They feed on the sin of my people, and set their heart on their iniquity.
 Hosea 4:9	 It will be, like people, like priest; and I will punish them for their ways, and will repay them for their deeds.
-Hosea 4:10	 They will eat, and not have enough. They will play the prostitute, and will not increase; because they have abandoned giving to God.
+Hosea 4:10	 They will eat, and not have enough. They will play the prostitute, and will not increase; because they have abandoned listening to God.
 Hosea 4:11	 Prostitution, wine, and new wine take away understanding.
 Hosea 4:12	 My people consult with their wooden idol, and answer to a stick of wood. Indeed the spirit of prostitution has led them astray, and they have been unfaithful to their God.
 Hosea 4:13	 They sacrifice on the tops of the mountains, and burn incense on the hills, under oaks and poplars and terebinths, because its shade is good. Therefore your daughters play the prostitute, and your brides commit adultery.
@@ -22243,7 +22243,7 @@ Hosea 10:14	 Therefore a battle roar will arise among your people, and all you
 Hosea 10:15	 So Bethel will do to you because of your great wickedness. At daybreak the king of Israel will be destroyed.
 Hosea 11:1	 “When Israel was a child, then I loved him, and called my son out of Egypt.
 Hosea 11:2	 They called to them, so they went from them. They sacrificed to the Baals, and burned incense to engraved images.
-Hosea 11:3	 Yet I taught Ephraim to walk. I took them by his arms; but they did not know that I healed them.
+Hosea 11:3	 Yet I taught Ephraim to walk. I took them by their arms; but they did not know that I healed them.
 Hosea 11:4	 I drew them with cords of a man, with ties of love; and I was to them like those who lift up the yoke on their necks; and I bent down to him and I fed him.
 Hosea 11:5	 “They will not return into the land of Egypt; but the Assyrian will be their king, because they refused to repent.
 Hosea 11:6	 The sword will fall on their cities, and will destroy the bars of their gates, and will put an end to their plans.
@@ -22284,7 +22284,7 @@ Hosea 13:14	 I will ransom them from the power of Sheol. I will redeem them fr
 Hosea 13:15	 Though he is fruitful among his brothers, an east wind will come, the breath of God coming up from the wilderness; and his spring will become dry, and his fountain will be dried up. He will plunder the storehouse of treasure.
 Hosea 13:16	 Samaria will bear her guilt; for she has rebelled against her God. They will fall by the sword. Their infants will be dashed in pieces, and their pregnant women will be ripped open.”
 Hosea 14:1	 Israel, return to the Lord your God; for you have fallen because of your sin.
-Hosea 14:2	 Take words with you, and return to God. Tell him, “Forgive all our sins, and accept that which is good: so we offer our lips like bulls.
+Hosea 14:2	 Take words with you, and return to God. Tell him, “Forgive all our sins, and accept the praise of our lips that we offer like bulls for sacrifice.
 Hosea 14:3	 Assyria cannot save us. We will not ride on horses; neither will we say any more to the work of our hands, ‘Our gods!’ for in you the fatherless finds mercy.”
 Hosea 14:4	 “I will heal their waywardness. I will love them freely; for my anger is turned away from him.
 Hosea 14:5	 I will be like the dew to Israel. He will blossom like the lily, and send down his roots like Lebanon.

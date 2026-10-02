@@ -865,3 +865,75 @@ that sit *alongside* the mechanical classifier, not inside it):
   usual convention) rather than gitignored with approvals stored
   elsewhere.
 - Confirm scope (WEBU-only first pass, per §1) before WEBBE work starts.
+
+## Addendum 10, 2026-10-02: review continued (Isaiah 57:8 -> Amos 4:2), 12 real defects, a stale-ledger-entry gap found and documented
+
+Continued Addendum 9's next-session item 1 (keep working the pending list
+in batches). Same workflow as Addenda 8/9: present each batch with a
+recommendation (standing-pattern accept / likely defect / genuinely
+uncertain), wait for confirmation, fix in Word + re-export + re-run for
+defects, mark `rwb[x]` + re-run for accepts. 9 batches worked this
+session, covering Isaiah 57:8 through Amos 4:2 (244 verses).
+
+**Several cases where docm looked wrong but WEBU had actually diverged
+from KJV**, confirmed by direct KJV cross-reference each time rather than
+assumed: Ezekiel 11:19's "within you" mid-verse pronoun shift and Ezekiel
+31:10's "you...he" shift are both genuine KJV quirks, not docm errors;
+Daniel 11:17's "to corrupt her" and Daniel 11:38's "in his place" both
+match KJV word-for-word where WEBU had substituted different wording;
+Hosea 7:6's "their baker sleeps" is the literal KJV reading (WEBU's "their
+anger smolders" is the one that reflects a different scholarly
+interpretation); Hosea 11:9 and 14:4 also had docm matching KJV's
+pronouns/wording exactly against a WEBU variant. Worth remembering for
+future batches: a divergence from WEBU is not evidence of a docm defect
+by itself - check KJV before assuming either direction.
+
+**Real docm defects found and fixed this session** (each verified against
+WEBU, most also cross-checked against KJV): two plain typos (Jeremiah 9:5
+"commiting" -> "committing"; a stray mid-sentence period in Jeremiah
+24:9), a wrong-word typo (Lamentations 2:9 "here" -> "where"), a meaning-
+distorting number/word swap (Ezekiel 42:3 "the third floor" -> "three
+stories", matching KJV/WEBU), a dangling participle with a missing verb
+(Ezekiel 45:9 "...execute justice and righteousness; dispossessing my
+people" -> "...righteousness. Cease dispossessing my people"), a
+theologically significant singular/plural slip (Daniel 3:14 "my god" ->
+"my gods", since Nebuchadnezzar is polytheistic), an awkward stacked-
+preposition phrase (Daniel 6:20 "near to the den to Daniel" -> "near to
+the den where Daniel was"), a wrong body part (Daniel 10:5 "thighs" ->
+"waist", matching WEBU's modernization of KJV's "loins"), a dropped
+clause (Hosea 2:23 "they will say, 'My God!'" -> "...'You are my God!'"),
+a meaning-altering word swap (Hosea 4:10 "abandoned giving to God" ->
+"abandoned listening to God", since the KJV sense is "stopped heeding/
+obeying," not "stopped donating"), a number-agreement error (Hosea 11:3
+"I took them by his arms" -> "...by their arms", same defect family as
+the earlier Isaiah 3:11 fix), and a garbled idiom (Hosea 14:2 "we offer
+our lips like bulls" -> "we offer the praise of our lips...like bulls for
+sacrifice", clarifying KJV's "render the calves of our lips" metaphor).
+
+**A real, previously-undocumented tool gap found and documented** (not
+fixed - no code change, just discovered live and written up): a ledger
+entry (`rwb-webu-accepted.txt`) for a verse that fully resolves - stops
+being an `other`-bucket diff at all, rather than just changing text - is
+never revisited by the regeneration loop, since that loop only walks refs
+still present in the current `other` bucket. The stale pre-fix text is
+left sitting in the ledger forever unless hand-corrected; harmless (the
+verse itself is fine, `docm.categorize` no longer flags it as a diff) but
+inaccurate as an audit trail. Found live via Ezekiel 23:7 (fixed
+"whoever" -> "whomever" in Word, but the ledger still held the old
+"whoever" wording after regeneration) and hand-corrected in the ledger
+file directly. Documented in `aeRWB/tools/web-diff/README.md`'s R15
+section as a known gap, with the symptom to watch for
+(`docm.categorize`'s `operator-accepted` count running below the ledger's
+line count) and the manual-fix procedure. No automatic cleanup built -
+not requested, and the gap is rare and easy to spot/fix by hand when it
+occurs.
+
+**Session-close numbers**: WEBU `other` 722 pending + 400 accepted
+(2026-10-01 session close) → **478 pending + 635 accepted** (12,137
+changed verses, 3.9% pending). 235 verses accepted into the ledger this
+session; 12 real defects fixed (across Jeremiah, Lamentations, Ezekiel,
+Daniel, and Hosea). WEBBE untouched this session (1,570/14,182 = 11.1%,
+down slightly from the defect fixes reducing the shared WEBBE diff too;
+no ledger started, WEBU-first scope unchanged). No outstanding fixes
+carried over - next session can start straight from the pending list
+wherever it resumes after Amos 4:2.
