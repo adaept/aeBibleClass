@@ -974,3 +974,132 @@ defects fixed total (12 in Addendum 10's batches, 3 here). WEBBE untouched
 by review (1,569/14,182 = 11.1%, no ledger started). No outstanding fixes
 carried over - next session starts from the pending list after Zechariah
 3:6.
+
+## Addendum 12, 2026-10-03: review completed to the end of Revelation - WEBU backlog effectively closed, 8 more real defects, 21 judgment calls deferred to the operator, a self-correction lesson recorded
+
+Picked up where Addendum 11 left off (after Zechariah 3:6) and continued
+the same two-file workflow in long batches to the literal end of the
+Bible - Zechariah 3:9 through Revelation 22:20, 395 verses, the entire
+remaining WEBU `other` backlog.
+
+**8 more real docm defects found and fixed**: Matthew 1:6 (dropped "the
+king"), Matthew 7:14 (dropped "few", leaving a broken sentence), Matthew
+20:2 ("se nt" - stray mid-word space, matching the "be lieve" pattern
+found later at John 10:37), John 16:3 ("cause" missing its "be-" prefix),
+Acts 4:28 ("council" where "counsel" was meant - a homophone mix-up
+changing an assembly into advice/will), Romans 4:18 ("Besides hope" where
+KJV/WEBU both have "Against hope" - a different theological point, not a
+synonym), John 10:37 ("be lieve" - the same stray-space pattern as Matthew
+20:2), plus two early-session items the operator fixed directly after a
+brief "uncertain" flag (Zechariah 13:1 "spring"->"fountain" matching KJV,
+and a stray extra space before an em dash at Mark 2:10).
+
+**A self-correction worth recording as a standing caution, not just a
+one-off**: Luke 24:46 was initially flagged as a defect (docm's one-clause
+"Thus it is written: The Christ will suffer and rise..." looked like it
+was missing KJV's "and thus it behoved/was necessary" clause). The
+operator asked what "behoved" actually meant (Greek *dei*, divine
+necessity) - a reasonable question that led to overstating WEB's
+"necessary" wording as the authoritative reading, when it's actually one
+translator's choice among several (ESV/NASB/NIV/NLT/CSB all use
+"would/should suffer" instead, no "necessary" at all). The flag was
+revised to call out docm's *structure* instead - until the operator
+pointed out that NIV's own rendering ("Thus it is written: The Messiah
+will suffer and rise...") uses the exact same one-clause structure as
+docm. Both framings were wrong, for the same underlying reason: treating
+KJV/WEB's phrasing as the normative baseline and docm's divergence from
+it as presumptively a defect, without checking whether other major
+translations independently land on docm's side. **Lesson recorded**:
+before flagging a structural or wording divergence as a defect, check it
+against more than one major translation (not just KJV/WEB) - a divergence
+shared with NIV, ESV, NASB, NLT, or CSB is evidence of a legitimate
+translation choice, not evidence of an error. Luke 24:46 itself was
+retracted and accepted once this was clear.
+
+**21 genuine judgment calls deferred to the operator**, rather than
+resolved unilaterally - each is a real translation/theological question,
+not a simple wording slip, and deserves the operator's own read:
+
+- Zechariah 8:23 - docm's "will take hold... they will take hold"
+  repetition may mirror KJV's own correlative "shall take hold... even
+  shall take hold" idiom, or may be an accidental duplication - never
+  resolved either way.
+- 1 Corinthians 1:20 - docm's "lawyer" vs KJV "disputer"/WEBU "debater";
+  the Greek (*syzētētēs*) means "one who argues/debates," which "lawyer"
+  (a legal profession) doesn't capture well.
+- 2 Corinthians 4:14 - docm's "raise us also **with** Jesus" vs KJV "**by**
+  Jesus"/WEBU "**through** Jesus" - companionship vs agency framing of the
+  resurrection, both defensible elsewhere in Paul.
+- 2 Corinthians 11:2 - docm's "**married**" vs KJV "**espoused**"/WEBU
+  "**promised in marriage**" - completed marriage vs betrothal, a real
+  difference given the church-as-bride-awaiting-the-wedding theme.
+- 2 Corinthians 12:16 - docm puts "being crafty, I caught you with
+  deception" in quotation marks (framing it as a quoted accusation from
+  opponents); KJV has no quotes (Paul's own ironic admission).
+- Ephesians 2:1 - docm's "As for you, you were dead..." drops the
+  anticipatory "you were **made alive**" clause that both KJV ("you hath he
+  quickened, who were dead...") and WEBU include - a known hard sentence
+  to render (the Greek runs on as one long clause from v1 to v5).
+- Ephesians 2:5 - a stray space before an em dash ("Christ **—**by grace"),
+  same cosmetic pattern as the already-fixed Mark 2:10.
+- Colossians 2:8 and 2:20 (same issue, both deferred together) - docm's
+  "**elements** of the world" vs WEBU's "**elemental spirits** of the
+  world"; the Greek *stoicheia* is genuinely disputed in Pauline
+  scholarship (basic/physical principles vs. spiritual/angelic cosmic
+  powers), and KJV takes a third position ("rudiments") entirely.
+- 1 Timothy 2:9 - docm adds "**just**" ("not **just** with braided hair...")
+  not present in KJV or WEBU, softening an absolute prohibition into a
+  "not primarily" framing - a real interpretive shift on a verse with
+  genuine denominational disagreement already.
+- 1 Timothy 2:14 - docm's "became **a sinner**" (general moral state) vs
+  KJV "was **in the transgression**"/WEBU "**fallen into disobedience**"
+  (a specific transgressive act) - different theological weight.
+- 1 Timothy 2:15 - docm's "**sanctification**" vs KJV/WEBU "**holiness**" -
+  related but distinct terms (process vs state).
+- Hebrews 5:7 - docm's "**reverent submission**" vs KJV "he **feared**"/WEBU
+  "**godly fear**" - different emphasis (obedience vs awe).
+- Hebrews 7:22 - docm's "**collateral**" vs KJV "**surety**"/WEBU
+  "**guarantee**" - the Greek (*engyos*) means a person who personally
+  guarantees, not a pledged financial asset; "collateral" changes the
+  category of what's being described.
+- 1 Peter 3:3 - the same "**just**" addition as 1 Timothy 2:9 ("Let your
+  beauty be **not just** the outward adorning...") - same recurring pattern,
+  not a one-off.
+- Jude 1:4 - a genuine, well-known textual/grammatical dispute: docm's
+  "denying Jesus Christ, our only sovereign and Lord" sidesteps the
+  question (present in KJV and WEBU, each resolved differently) of
+  whether the verse asserts Jesus Christ directly as "God" or distinguishes
+  "God" (the Father) and "Jesus Christ" (the Son) as two separate denied
+  figures.
+- Revelation 3:2 - docm's "**keep** the things that remain" vs KJV/WEBU
+  "**strengthen**"; the Greek (*stērison*) specifically means
+  strengthen/reinforce, and the context (Sardis's works are dying) favors
+  the stronger reading - leans real defect, not just a judgment call.
+- Revelation 3:9 - docm's "I **give** some of the synagogue of Satan..."
+  vs KJV/WEBU "I **make**..." - notably, docm's own text uses "make" later
+  in the *same verse* for the parallel clause, so this also reads as an
+  internal inconsistency, not just a KJV divergence.
+- Revelation 16:16 - docm's "**Megiddo**" vs KJV/WEBU "**Harmagedon**"
+  (Armageddon) - these are related but different terms; this is the sole
+  biblical source of the word "Armageddon," and substituting "Megiddo"
+  loses it - leans real, significant defect.
+- Revelation 16:21 - a present/past tense mismatch ("this plague **is**
+  exceedingly severe" vs the past-tense narrative around it, and vs
+  KJV/WEBU's "**was**") - minor, likely just a grammar slip.
+- Revelation 21:9 - docm's "I will show you **the wife, the Lamb's
+  bride**" vs KJV/WEBU "**the bride, the Lamb's wife**" - the terms appear
+  transposed; KJV's order makes sense as an appositive (bride, then
+  clarified as the Lamb's wife), docm's reversed order reads oddly - leans
+  real defect (word-order transposition).
+
+**Session-close numbers**: WEBU `other` 416 pending + 696 accepted
+(2026-10-02 session close) → **21 pending + 1,080 accepted** (12,131
+changed verses, 0.2% pending) - effectively closed; the 21 remaining are
+all deferred judgment calls above, not unreviewed backlog. WEBBE untouched
+by review (1,560/14,177 = 11.0%, no ledger started - full backlog,
+unlike WEBU). 395 verses reviewed and accepted into the ledger this
+session (384 batch-accepted + the Luke 24:46 retraction); 8 real defects
+fixed. Next session: operator reviews the 21 deferred items above at
+their own pace (no urgency, no deadline); once resolved, WEBU R15 is
+fully closed and WEBBE's ledger/review pass (not yet started) becomes the
+next body of work under this same workflow.

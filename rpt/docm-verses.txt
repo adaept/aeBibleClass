@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-10-02)
+Radiant Word Bible - exported from the live .docm (2026-10-03)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -18856,7 +18856,7 @@ Isaiah 61:9	 Their offspring will be known among the nations, and their offspr
 Isaiah 61:10	 I will greatly rejoice in God! My soul will be joyful in my God, for he has clothed me with the garments of salvation. He has covered me with the robe of righteousness, as a bridegroom decks himself with a garland and as a bride adorns herself with her jewels.
 Isaiah 61:11	 For as the earth produces its bud, and as the garden causes the things that are sown in it to spring up, so the Lord God will cause righteousness and praise to spring up before all the nations.
 Isaiah 62:1	 For Zion’s sake I will not hold my peace, and for Jerusalem’s sake I will not rest, until her righteousness shines out like the dawn, and her salvation like a burning lamp.
-Isaiah 62:2	 The nations will see your righteous-ness, and all kings your glory. You will be called by a new name, which God’s mouth will name.
+Isaiah 62:2	 The nations will see your righteousness, and all kings your glory. You will be called by a new name, which God’s mouth will name.
 Isaiah 62:3	 You will also be a crown of beauty in God’s hand, and a royal diadem in your God’s hand.
 Isaiah 62:4	 You will not be called Forsaken any more, nor will your land be called Desolate any more; but you will be called Hephzibah, and your land Beulah; for God delights in you, and your land will be married.
 Isaiah 62:5	 For as a young man marries a virgin, so your sons will marry you. As a bridegroom rejoices over his bride, so your God will rejoice over you.
@@ -23060,7 +23060,7 @@ Zechariah 12:11	 In that day there will be a great mourning in Jerusalem, like
 Zechariah 12:12	 The land will mourn, every family apart; the family of David’s house apart, and their wives apart; the family of the house of Nathan apart, and their wives apart;
 Zechariah 12:13	 the family of the house of Levi apart, and their wives apart; the family of the Shimeites apart, and their wives apart;
 Zechariah 12:14	 all the families who remain, every family apart, and their wives apart.
-Zechariah 13:1	 “In that day there will be a spring opened to David’s house and to the inhabitants of Jerusalem, for sin and for uncleanness.
+Zechariah 13:1	 “In that day there will be a fountain opened to David’s house and to the inhabitants of Jerusalem, for sin and for uncleanness.
 Zechariah 13:2	 It will come to pass in that day, says the Lord God of Hosts, that I will cut off the names of the idols out of the land, and they will be remembered no more. I will also cause the prophets and the spirit of impurity to pass out of the land.
 Zechariah 13:3	 It will happen that, when anyone still prophesies, then his father and his mother who bore him will tell him, ‘You must die, because you speak lies in God’s name;’ and his father and his mother who bore him will stab him when he prophesies.
 Zechariah 13:4	 It will happen in that day, that the prophets will each be ashamed of his vision, when he prophesies; neither will they wear a hairy mantle to deceive:
@@ -23150,7 +23150,7 @@ Matthew 1:2	 Abraham became the father of Isaac. Isaac became the father of Ja
 Matthew 1:3	 Judah became the father of Perez and Zerah by Tamar. Perez became the father of Hezron. Hezron became the father of Ram.
 Matthew 1:4	 Ram became the father of Amminadab. Amminadab became the father of Nahshon. Nahshon became the father of Salmon.
 Matthew 1:5	 Salmon became the father of Boaz by Rahab. Boaz became the father of Obed by Ruth. Obed became the father of Jesse.
-Matthew 1:6	 Jesse became the father of King David. David became the father of Solomon by her who had been Uriah’s wife.
+Matthew 1:6	 Jesse became the father of King David. David the king became the father of Solomon by her who had been Uriah’s wife.
 Matthew 1:7	 Solomon became the father of Rehoboam. Rehoboam became the father of Abijah. Abijah became the father of Asa.
 Matthew 1:8	 Asa became the father of Jehoshaphat. Jehoshaphat became the father of Joram. Joram became the father of Uzziah.
 Matthew 1:9	 Uzziah became the father of Jotham. Jotham became the father of Ahaz. Ahaz became the father of Hezekiah.
@@ -23330,7 +23330,7 @@ Matthew 7:10	 Or if he asks for a fish, who will give him a serpent?
 Matthew 7:11	 If you then, being evil, know how to give good gifts to your children, how much more will your Father who is in heaven give good things to those who ask him!
 Matthew 7:12	 Therefore, whatever you desire for men to do to you, you shall also do to them; for this is the law and the prophets.
 Matthew 7:13	 “Enter in by the narrow gate; for the gate is wide and the way is broad that leads to destruction, and there are many who enter in by it.
-Matthew 7:14	 How the gate is narrow and the way is restricted that leads to life! There are who find it.
+Matthew 7:14	 How the gate is narrow and the way is restricted that leads to life! There are few who find it.
 Matthew 7:15	 “Beware of false prophets, who come to you in sheep’s clothing, but inwardly are ravening wolves.
 Matthew 7:16	 By their fruits you will know them. Do you gather grapes from thorns or figs from thistles?
 Matthew 7:17	 Even so, every good tree produces good fruit, but the bad tree produces bad fruit.
@@ -23794,7 +23794,7 @@ Matthew 19:28	 Jesus said to them, “Most certainly I tell you that you who h
 Matthew 19:29	 Everyone who has left houses, or brothers, or sisters, or father, or mother, or wife, or children, or lands, for my name’s sake, will receive one hundred times, and will inherit eternal life.
 Matthew 19:30	 But many will be last who are first, and first who are last.
 Matthew 20:1	 “For the Kingdom of Heaven is like a man who was the master of a household, who went out early in the morning to hire laborers for his vineyard.
-Matthew 20:2	 When he had agreed with the laborers for a denarius a day, he se nt them into his vineyard.
+Matthew 20:2	 When he had agreed with the laborers for a denarius a day, he sent them into his vineyard.
 Matthew 20:3	 He went out about the third hour, and saw others standing idle in the marketplace.
 Matthew 20:4	 He said to them, ‘You also go into the vineyard, and whatever is right I will give you.’ So they went their way.
 Matthew 20:5	 Again he went out about the sixth and the ninth hour, and did likewise.
@@ -24270,7 +24270,7 @@ Mark 2:6	 But there were some of the scribes sitting there and reasoning in th
 Mark 2:7	 “Why does this man speak blasphemies like that? Who can forgive sins but God alone?”
 Mark 2:8	 Immediately Jesus, perceiving in his spirit that they so reasoned within themselves, said to them, “Why do you reason these things in your hearts?
 Mark 2:9	 Which is easier, to tell the paralytic, ‘Your sins are forgiven;’ or to say, ‘Arise, and take up your bed, and walk?’
-Mark 2:10	 But that you may know that the Son of Man has authority on earth to forgive sins” —he said to the paralytic—
+Mark 2:10	 But that you may know that the Son of Man has authority on earth to forgive sins”—he said to the paralytic—
 Mark 2:11	 “I tell you, arise, take up your mat, and go to your house.”
 Mark 2:12	 He arose, and immediately took up the mat and went out in front of them all, so that they were all amazed and glorified God, saying, “We never saw anything like this!”
 Mark 2:13	 He went out again by the seaside. All the multitude came to him, and he taught them.
@@ -25166,7 +25166,7 @@ Luke 6:16	 Judas the son of James; and Judas Iscariot, who also became a trait
 Luke 6:17	 He came down with them, and stood on a level place, with a crowd of his disciples, and a great number of the people from all Judea and Jerusalem, and the sea coast of Tyre and Sidon, who came to hear him and to be healed of their diseases;
 Luke 6:18	 as well as those who were troubled by unclean spirits, and they were being healed.
 Luke 6:19	 All the multitude sought to touch him, for power came out of him and healed them all.
-Luke 6:20	 He lifted up his eyes to his disciples, and said, “Blessed are you who are poor, God’s Kingdom is yours.
+Luke 6:20	 He lifted up his eyes to his disciples, and said, “Blessed are you who are poor, for God’s Kingdom is yours.
 Luke 6:21	 Blessed are you who hunger now, for you will be filled. Blessed are you who weep now, for you will laugh.
 Luke 6:22	 Blessed are you when men hate you, and when they exclude and mock you, and throw out your name as evil, for the Son of Man’s sake.
 Luke 6:23	 Rejoice in that day, and leap for joy, for behold, your reward is great in heaven, for their fathers did the same thing to the prophets.
@@ -26037,7 +26037,7 @@ Luke 24:42	 They gave him a piece of a broiled fish and some honeycomb.
 Luke 24:43	 He took them, and ate in front of them.
 Luke 24:44	 He said to them, “This is what I told you, while I was still with you, that all things which are written in the law of Moses, the prophets, and the psalms, concerning me must be fulfilled.”
 Luke 24:45	 Then he opened their minds, that they might understand the Scriptures.
-Luke 24:46	 He said to them, “Thus it is written: The Christ will suffer and rise from the dead on the third day,
+Luke 24:46	 He said to them, “Thus it is written: The Messiah will suffer and rise from the dead on the third day,
 Luke 24:47	 and that repentance and remission of sins should be preached in his name to all the nations, beginning at Jerusalem.
 Luke 24:48	 You are witnesses of these things.
 Luke 24:49	 Behold, I send out the promise of my Father on you. But wait in the city of Jerusalem until you are clothed with power from on high.”
@@ -26518,7 +26518,7 @@ John 10:33	 The Jews answered him, “We do not stone you for a good work, but
 John 10:34	 Jesus answered them, “Is it not written in your law, ‘I said, you are gods?’
 John 10:35	 If he called them gods, to whom the word of God came (and the Scripture cannot be broken),
 John 10:36	 do you say of him whom the Father sanctified and sent into the world, ‘You blaspheme,’ because I said, ‘I am the Son of God?’
-John 10:37	 If I do not do the works of my Father, do not be lieve me.
+John 10:37	 If I do not do the works of my Father, do not believe me.
 John 10:38	 But if I do them, though you do not believe me, believe the works, that you may know and believe that the Father is in me, and I in the Father.”
 John 10:39	 They sought again to seize him, and he went out of their hand.
 John 10:40	 He went away again beyond the Jordan into the place where John was baptizing at first, and he stayed there.
@@ -26729,7 +26729,7 @@ John 15:26	 “When the Counselor has come, whom I will send to you from the F
 John 15:27	 You will also testify, because you have been with me from the beginning.
 John 16:1	 “I have said these things to you so that you would not be caused to stumble.
 John 16:2	 They will put you out of the synagogues. Yes, the time comes that whoever kills you will think that he offers service to God.
-John 16:3	 They will do these things cause they have not known the Father, nor me.
+John 16:3	 They will do these things because they have not known the Father, nor me.
 John 16:4	 But I have told you these things, so that when the time comes, you may remember that I told you about them. I did not tell you these things from the beginning, because I was with you.
 John 16:5	 But now I am going to him who sent me, and none of you asks me, ‘Where are you going?’
 John 16:6	 But because I have told you these things, sorrow has filled your heart.
@@ -27050,7 +27050,7 @@ Acts 4:24	 When they heard it, they lifted up their voice to God with one acco
 Acts 4:25	 who by the mouth of your servant, David, said, ‘Why do the nations rage, and the peoples plot a vain thing?
 Acts 4:26	 The kings of the earth take a stand, and the rulers take council together, against the Lord, and against his Christ.’
 Acts 4:27	 “For truly, both Herod and Pontius Pilate, with the Gentiles and the people of Israel, were gathered together against your holy servant, Jesus, whom you anointed,
-Acts 4:28	 to do whatever your hand and your council foreordained to happen.
+Acts 4:28	 to do whatever your hand and your counsel foreordained to happen.
 Acts 4:29	 Now, Lord, look at their threats, and grant to your servants to speak your word with all boldness,
 Acts 4:30	 while you stretch out your hand to heal; and that signs and wonders may be done through the name of your holy Servant Jesus.”
 Acts 4:31	 When they had prayed, the place was shaken where they were gathered together. They were all filled with the Holy Spirit, and they spoke the word of God with boldness.
@@ -28040,7 +28040,7 @@ Romans 4:14	 For if those who are of the law are heirs, faith is made void, an
 Romans 4:15	 For the law produces wrath, for where there is no law, neither is there disobedience.
 Romans 4:16	 For this cause it is of faith, that it may be according to grace, to the end that the promise may be sure to all the offspring, not to that only which is of the law, but to that also which is of the faith of Abraham, who is the father of us all.
 Romans 4:17	 As it is written, “I have made you a father of many nations.” This is in the presence of him whom he believed: God, who gives life to the dead, and calls the things that are not, as though they were.
-Romans 4:18	 Besides hope, Abraham in hope believed, to the end that he might become a father of many nations, according to that which had been spoken, “So will your offspring be.”
+Romans 4:18	 Against hope, Abraham in hope believed, to the end that he might become a father of many nations, according to that which had been spoken, “So will your offspring be.”
 Romans 4:19	 Without being weakened in faith, he did not consider his own body, already having been worn out, (he being about a hundred years old), and the deadness of Sarah’s womb.
 Romans 4:20	 Yet, looking to the promise of God, he did not waver through unbelief, but grew strong through faith, giving glory to God,
 Romans 4:21	 and being fully assured that what he had promised, he was also able to perform.

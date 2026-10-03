@@ -3181,3 +3181,143 @@ repeated in full here.
   deciding what to do next - do not re-derive this session's findings
   from scratch.
 ===============================================================================
+
+## New session (2026-10-03): R15 review completed to the end of
+## Revelation - WEBU backlog effectively closed, 8 more real defects, 21
+## judgment calls deferred to the operator, a self-correction lesson
+
+Picked up the prior session's next-session item 1 (continue the R15
+verse-by-verse review) where it left off after Zechariah 3:6, and kept
+going in long batches all the way to the end of Revelation - the entire
+remaining WEBU `other` backlog, 395 verses. Same workflow as every prior
+session - present findings, wait for confirmation, fix in Word +
+re-export + re-run for defects, mark `rwb[x]` + re-run for accepts. Full
+account in `project_rwb_review_checklist_tool` memory and
+`Plan_rwb_webu_review_checklist_2026-09-28.md`'s new Addendum 12 - not
+repeated in full here.
+
+  [CODE] `aeBibleClass/rpt/docm-verses.txt` -- 8 more real defects fixed
+  this session: Matthew 1:6 (dropped "the king"), Matthew 7:14 (dropped
+  "few", leaving a broken sentence), Matthew 20:2 and John 10:37 (the
+  same stray-mid-word-space typo pattern twice, "se nt"/"be lieve"), John
+  16:3 ("cause" missing its "be-" prefix), Acts 4:28 ("council"->
+  "counsel" homophone mix-up), Romans 4:18 ("Besides hope"->"Against
+  hope" - a different theological point from KJV/WEBU, not a synonym),
+  plus two early fixes from an "uncertain" flag (Zechariah 13:1
+  "spring"->"fountain"; a stray space before an em dash at Mark 2:10).
+    STATUS: committed and pushed to aeBibleClass's `main` this session.
+
+  [PROCESS] A self-correction worth remembering as a standing caution for
+  future sessions: Luke 24:46 was flagged as a defect twice, both times
+  wrongly, for the same root cause - treating KJV/WEB's phrasing as the
+  normative baseline and docm's divergence from it as presumptively an
+  error, without checking other major translations first. The operator's
+  question about what "behoved" means (Greek *dei*, divine necessity) led
+  to overstating WEB's "necessary" wording as authoritative, when most
+  major translations (ESV/NASB/NIV/NLT/CSB) use "would/should suffer"
+  instead, no "necessary" at all. The revised flag then claimed docm's
+  one-clause structure itself was non-standard - until the operator
+  pointed out NIV's own text uses that exact structure. Lesson: before
+  flagging a structural/wording divergence as a defect, check it against
+  more than one major translation, not just KJV/WEB.
+
+  [CODE] `aeRWB` -- `rwb-webu-review.txt`/`rwb-webu-accepted.txt` updated
+  across many regeneration rounds through the session; 395 more verses
+  resolved (384 accepted into the ledger, 8 defects fixed, Luke 24:46
+  retracted/accepted after the correction above). 21 genuine
+  translation/theological judgment calls deferred to the operator rather
+  than resolved unilaterally - full list + reasoning in Addendum 12 and
+  the memory file; spans disputed Greek terms (Hebrews 7:22, Colossians
+  2:8/2:20), a genuine textual-critical question (Jude 1:4), several
+  likely-real defects not yet operator-confirmed (Revelation 3:2, 3:9,
+  16:16, 21:9), and theological-nuance word choices (1 Timothy 2:9/2:14/
+  2:15, 1 Peter 3:3, Hebrews 5:7, 2 Corinthians 4:14/11:2/12:16,
+  1 Corinthians 1:20, Ephesians 2:1/2:5, Zechariah 8:23).
+    STATUS: already committed and pushed via the operator's own workflow
+    mid-session - confirmed clean (0 unpushed commits) at session close,
+    no action needed from this session.
+
+  [DOC] `aeRWB/tools/web-diff/README.md` -- R15 section rewritten: WEBU
+  marked effectively closed (21 pending, all deferred judgment calls, not
+  backlog); WEBBE marked explicitly as the full not-yet-started backlog
+  (previously the doc implied both were mid-review); NIV cross-check
+  lesson recorded as a standing caution for future defect-flagging.
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md` --
+  new Addendum 12 (full session account: 8 defects, the Luke 24:46
+  self-correction, the full 21-item deferred list with reasoning for
+  each).
+
+  [MEMORY] `project_rwb_review_checklist_tool.md` updated with this
+  session's final numbers and full findings; `MEMORY.md` index updated.
+
+## Session status at this checkpoint (2026-10-03, session close)
+
+  aeRWB: all work already committed and pushed via the operator's own
+  mid-session workflow (confirmed 0 unpushed commits, working tree clean
+  at session close - no push action needed from this session).
+
+  aeBibleClass: docm-verses.txt (8 defect fixes), the Plan doc Addendum
+  12, this manifest entry, and the memory updates committed and pushed to
+  `main` this session. `rpt/HeadingLog.txt` and
+  `rpt/docm-psalm-front-matter.txt` carry only the usual session-ID
+  timestamp / export-date drift (same pre-existing benign pattern as
+  every prior session), committed alongside rather than left uncommitted.
+
+  WEBU `other`: 21 pending + 1,080 accepted (12,131 changed verses, 0.2%
+  pending) - **effectively closed**; the 21 remaining are all deferred
+  judgment calls, not unreviewed backlog. WEBBE untouched by review,
+  still the full unstarted backlog (1,560/14,177 = 11.0%).
+
+## NEXT SESSION, IN ORDER
+
+  1. **Walk the operator through the 21 deferred judgment-call items**
+     from this session (full list in `project_rwb_review_checklist_tool`
+     memory and Addendum 12) - one at a time, per the established "present
+     fix, wait for yes/no" process. A few look like likely real defects
+     worth fixing (Revelation 3:2 "keep"->"strengthen"; Revelation 3:9
+     "give"->"make", internally inconsistent with the same verse's own
+     later clause; Revelation 16:16 "Megiddo"->"Harmagedon"/Armageddon;
+     Revelation 21:9's bride/wife transposition) - confirm with the
+     operator before touching Word. Others are genuine theological/
+     textual judgment calls with no single right answer (Jude 1:4,
+     Hebrews 7:22, Colossians 2:8/2:20, 1 Timothy 2:9/2:14/2:15, etc.) -
+     the operator's own read is what's needed, not another AI pass.
+  2. **Once the 21 are resolved, WEBU's R15 ledger/review pass is fully
+     closed.** At that point, start planning the WEBBE ledger/review pass
+     - it has NEVER been started (still the full 1,560/14,177 = 11.0%
+     `other` bucket, no `rwb-webbe-review.txt`/`rwb-webbe-accepted.txt`
+     exist yet). This is a much bigger first pass than finishing WEBU's
+     tail was this session - closer in size/shape to this tool's very
+     first session of real use (see the memory's 2026-09-29 entries) than
+     to a routine continuation. Read `generate-review-checklist.mjs`'s
+     existing WEBBE parameterization (built but never run) before
+     starting - the script already supports `-- webbe`, per the original
+     R15 design.
+  3. **Unchanged from previous sessions' lists, still not touched:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+        2026-09-25 -- rationale to be supplied later, do not guess one.
+        Live-check `applySpellingVariant`'s wiring against a disposable
+        scratch document (aeBibleAddin `word-audit-scanner.LIVE_CHECK.md`
+        "Shape 8" section). Do NOT run without the operator's explicit
+        go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+        on Genesis 1 (`aeRWB/tools/web-diff/`), using the OSHB data fetched
+        2026-09-25 - see `project_scholarly_grounding_plan` memory.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        `rpt/docm-verses.txt` (`ExportDocmVersesToRWBFormat`'s verse-number
+        detection) - small, scoped, currently blocks Jeremiah 37:10 from
+        ever being sync-able.
+     d. 2 Samuel 21:8 (Merab/Michal, OT textual-tradition question,
+        `Plan_rwb_webu_review_checklist_2026-09-28.md` Addendum 3) still
+        awaits the operator's explicit confirmation, not blocking.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own plan
+        doc first); item 9 (Bible introduction - needs a dedicated writing
+        session).
+
+  Read `project_rwb_review_checklist_tool` memory +
+  `Plan_rwb_webu_review_checklist_2026-09-28.md`'s Addendum 12 before
+  deciding what to do next - do not re-derive this session's findings
+  from scratch.
+===============================================================================

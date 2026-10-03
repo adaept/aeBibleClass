@@ -1,5 +1,5 @@
 ﻿RWB-PSALM-FRONT-MATTER
-Psalm superscriptions and BOOK divisions - exported from the live .docm (2026-10-02)
+Psalm superscriptions and BOOK divisions - exported from the live .docm (2026-10-03)
 Psalm 1	bookDivision	BOOK 1
 Psalm 3	superscription	A Psalm by David, when he fled from Absalom his son.
 Psalm 4	superscription	For the Chief Musician; on stringed instruments. A Psalm by David.
