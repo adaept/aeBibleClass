@@ -937,3 +937,40 @@ down slightly from the defect fixes reducing the shared WEBBE diff too;
 no ledger started, WEBU-first scope unchanged). No outstanding fixes
 carried over - next session can start straight from the pending list
 wherever it resumes after Amos 4:2.
+
+## Addendum 11, 2026-10-02 (same day, continued): review continued (Amos 4:10 -> Zechariah 3:6), 3 more real defects, a second stale-ledger-entry instance confirmed
+
+Continued straight on from Addendum 10 in the same session, same workflow.
+2 more batches worked, covering Amos 4:10 through Zechariah 3:6 (62
+verses).
+
+**3 more real docm defects found and fixed**: a sentence-initial
+capitalization typo (Amos 6:2 "...Philistines. are they better" -> "...
+Are they better"), a subject/object inversion (Micah 7:10 "my enemy will
+see me" -> "My eyes will see her", matching KJV's actual "mine eyes shall
+behold her" - docm had the roles reversed), and an internal pronoun
+inconsistency (Habakkuk 1:9 "Their hordes...He gathers" -> "...They
+gather", fixing a plural-to-singular slip within one verse - distinct
+from the sustained singular "he/him" used consistently in docm's 1:10-1:12,
+which reads as a deliberate stylistic choice and was left as-is).
+
+**Stale-ledger-entry gap (documented in Addendum 10) confirmed to recur
+naturally, not just a one-off**: `docm.categorize`'s `operator-accepted`
+count ran 1 below the ledger's line count again this session. Investigated
+with a throwaway verification script (not committed - confirmed the
+one stale entry was the SAME Ezekiel 23:7 fixed last session, now sitting
+harmlessly in the ledger because it's a perfect match with WEBU and so
+never gets visited by the regeneration loop, exactly as documented). No
+new action needed - this is the same already-understood, harmless gap,
+not a new bug. Confirms the gap is a structural property of the tool
+(any verse that reaches a perfect WEBU match this way will do this), not
+a rare fluke worth deeper investigation.
+
+**Session-close numbers (combining Addenda 10 and 11, one continuous
+session)**: WEBU `other` 722 pending + 400 accepted (2026-10-01 session
+close) → **416 pending + 696 accepted** (12,137 changed verses, 3.4%
+pending). 296 verses accepted into the ledger this session; 15 real
+defects fixed total (12 in Addendum 10's batches, 3 here). WEBBE untouched
+by review (1,569/14,182 = 11.1%, no ledger started). No outstanding fixes
+carried over - next session starts from the pending list after Zechariah
+3:6.
