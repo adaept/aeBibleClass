@@ -3533,3 +3533,75 @@ later**. Researched and wrote up as a 7-section plan doc, covering:
   deciding what to do next - do not re-derive this session's findings
   from scratch.
 ===============================================================================
+
+# Session 2026-10-04 -- Jeremiah 37:910 root-caused and fixed; audit-gap
+# analysis; new bug/fix doc
+
+  Picked up carried-over backlog item 2c above (previous session's "NEXT
+  SESSION, IN ORDER" list). Root-caused as a genuine docm content defect
+  (a leftover stray "9" character run, styled identically to the real
+  chapter marker, sitting between the real "37" chapter marker and the
+  real "10" verse marker in Jeremiah 37:10's paragraph) - not a bug in
+  `ExportDocmVersesToRWBFormat`. Full writeup, including proof that the
+  live fix had no effect anywhere else in the 37.8 MB `.docm` package
+  beyond the one stray run plus two expected internal-bookkeeping
+  deltas (a regenerated `w14:textId`, one new `<w:rsid/>` entry, one
+  benign `<w:sdtEndPr/>`), and an analysis of why neither existing
+  marker-integrity check (`GetMarkerTotals`, `AuditVerseMarkerStructure`)
+  could have caught this defect class even if both were running (both
+  are presence/count-based, not content-based - see the doc for the
+  exact mechanism), in:
+
+  [DOC] `aeBibleClass/rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md`
+  (new file) -- symptom, root cause, fix applied, full no-side-effect
+  verification, audit-gap analysis, a proposed fifth audit invariant
+  (per-chapter sequential verse-number content validation, not yet
+  implemented - pending operator go-ahead), pros/cons/risks, and why this
+  matters substantially more for future i18n/bulk-edit pipelines than for
+  this already-reviewed English document.
+    STATUS: committed. The audit-code enhancement itself is NOT written -
+    captured as a proposal only, see "NEXT SESSION" below.
+
+  Fix mechanism note, a deliberate one-time deviation from this project's
+  "docm content changes are made manually" convention: applied via a
+  PowerShell script driving the operator's already-running
+  `Word.Application` COM instance (`Range.Delete` + `Document.Save` -
+  the same calls a manual edit in the Word UI would invoke, not raw
+  `.docm`/XML manipulation), against `Blank Bible Copy.docm` per the
+  operator's explicit confirmation of which file is the current live
+  working copy. Re-ran `ExportDocmVersesToRWBFormat` live afterward to
+  verify.
+
+  rpt/docm-verses.txt regenerated via the live macro - `git diff` shows
+  exactly the two corrected lines (`Jeremiah 37:9`/`Jeremiah 37:10`) plus
+  the export-date header, nothing else, across all ~31,102 verses.
+    STATUS: regenerated, diff reviewed, ready to commit alongside the new
+    bug doc.
+
+## NEXT SESSION
+
+  1. **Fifth audit invariant - test-fixture implementation plan, HELD for
+     a future session per operator direction 2026-10-04** (not started
+     this session beyond a read-only due-diligence check). Full proposed
+     sequence + 10 numbered gotchas now in the "Addendum, 2026-10-04" at
+     the end of `Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md` -
+     read it in full before starting, do not re-derive. Short version:
+     use `Blank Bible Copy - Copy (4).docm` (confirmed still carrying the
+     real Jeremiah 37:10 defect, untouched since the Oct-3 17:57
+     snapshot) as an isolated live test fixture to develop + true-positive
+     -validate the new check, then fix its content defect and import the
+     same code into the live docm (`Blank Bible Copy.docm`) so both reach
+     content/code parity - **"parity" means content+code-equivalent, not
+     byte-identical**: a raw-byte check this session already found
+     `word/vbaProject.bin` 85% different by byte count between the two
+     files despite identical size (7,301,632 bytes), almost certainly OLE
+     compound-file layout drift from differing save histories rather than
+     actual code divergence, but **not yet proven either way** - resolve
+     via exported-module-source diff, not raw bytes (Gotcha 1/2 in the
+     addendum). This needs its own dedicated `Plan_*.md` doc per this
+     project's convention before any of it is executed - the addendum is
+     groundwork/rationale, not yet a formal plan doc.
+  2. Carried-over backlog item 2c above ("Jeremiah 37:910...") is
+     RESOLVED as of this session - remove from future carry-over lists.
+     Items 1 (WEBBE review) and 2a/b/d/e are UNCHANGED, still pending.
+===============================================================================
