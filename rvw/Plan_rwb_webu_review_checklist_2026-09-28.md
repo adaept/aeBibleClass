@@ -54,6 +54,11 @@ WEBU-first scope unchanged). All work committed and pushed in both
 `project_rwb_review_checklist_tool` memory for the full account, and
 `sync/session_manifest.txt` for the cross-session handoff.
 
+**✅ WEBU R15 fully closed, 2026-10-03/04 - see Addendum 13.** WEBU
+`other` 21 pending (all deferred judgment calls, Addendum 12) → **0
+pending, 1,092 accepted**. WEBBE still the full, untouched backlog
+(1,560/14,177 = 11.0%) and is the next body of work.
+
 ## Addendum, 2026-09-28: a real classifier bug found via this plan's own worked example
 
 **The operator's first review of this plan caught a real bug by noticing
@@ -1103,3 +1108,82 @@ fixed. Next session: operator reviews the 21 deferred items above at
 their own pace (no urgency, no deadline); once resolved, WEBU R15 is
 fully closed and WEBBE's ledger/review pass (not yet started) becomes the
 next body of work under this same workflow.
+
+## Addendum 13, 2026-10-03/04: all 21 deferred judgment calls resolved - WEBU R15 fully closed, 0 pending
+
+Walked through Addendum 12's full 21-item deferred list with the operator,
+one at a time, same present-finding/wait-for-decision workflow as every
+other verse this tool has ever reviewed.
+
+**The 4 items flagged as "leans real defect" were all confirmed and fixed**:
+- Revelation 3:2: "keep" -> "strengthen" (now byte-identical to WEBU).
+- Revelation 3:9: "give" -> "make" in the first clause, resolving the
+  verse's own internal inconsistency (now byte-identical to WEBU).
+- Revelation 16:16: "Megiddo" -> "Armageddon" (docm's own spelling choice;
+  WEBU's is "Harmagedon" - same word, different transliteration, not
+  re-matched byte-for-byte but the core defect - losing the word
+  "Armageddon" entirely - is resolved).
+- Revelation 21:9: transposition fixed to "the bride, the wife of the
+  Lamb" (a deliberate of-genitive variant, not WEBU's exact "the Lamb's
+  wife" - accepted as a stylistic choice, not re-matched byte-for-byte).
+
+**A genuine NEW typo found and fixed mid-review, not present in the
+original 21-item list**: fixing 2 Corinthians 11:2 ("married" ->
+"promised in marriage") left a duplicated "you" ("promised you in
+marriage **you** to one husband") on the first attempt - a find-replace
+artifact, not a translation question. Caught before accepting, fixed on
+re-export, now byte-identical to WEBU. Worth remembering: every Word edit
+in this workflow still needs its own round-trip verification, even ones
+that look like simple word swaps.
+
+**Of the 17 pure judgment calls, two were resolved differently than
+either KJV/WEBU's own choice** after the operator supplied outside
+cross-checks (biblegateway.com parallel views), both following the
+precedent already established for exactly this situation (see the
+project memory's "Exception confirmed, 2026-09-30" entry, extended here
+to disputed-wording defect flags, not just ambiguous-pronoun holds):
+- **2 Corinthians 4:14** ("with Jesus" vs KJV "by"/WEBU "through"): the
+  operator pointed at the parallel-translations view directly - "with" is
+  independently attested among major translations, confirming it's a
+  legitimate reading rather than a preposition slip. Accepted as-is.
+- **Jude 1:4** (one-person vs two-figures dispute): checking the parallel
+  view confirmed the one-person reading (Jesus Christ directly called
+  both "Master/Sovereign" and "Lord") is the majority modern-translation
+  position (ESV/NIV/NASB/NLT/CSB) - and that docm's existing text already
+  matches it. The real finding: WEBU's own "God" insertion isn't in the
+  Greek text at all (not even in ASV, WEB's own ancestor) - it's WEBU's
+  own added theological gloss, making WEBU the outlier here, not docm.
+  Accepted docm as-is, no change made.
+
+**The remaining 15 were resolved by direct discussion, no outside
+cross-check needed**: Zechariah 8:23 (kept docm's KJV-echoing emphatic
+repetition), 1 Corinthians 1:20 ("lawyer" -> "debater", matching WEBU;
+the separate "world"/"age" wording difference was left alone as a
+KJV-matching variant), 2 Corinthians 11:2 (see typo note above), 2
+Corinthians 12:16 (quotation marks removed, now reads as Paul's own
+ironic statement, KJV-style), Ephesians 2:1 (added the missing "made
+alive" clause: "And you he made alive, who were dead..."), Ephesians 2:5
+(stray space before the em dash fixed, now byte-identical to WEBU),
+Colossians 2:8 and 2:20 (both "elements" -> "elemental spirits", now
+byte-identical to WEBU), 1 Timothy 2:9 (dropped the added "just", now
+byte-identical to WEBU), 1 Timothy 2:14 ("became a sinner" -> "fell into
+sin" - a deliberate middle-ground phrasing between docm's original state-framing
+and WEBU/KJV's act-framing, prompted by the operator noticing NIV itself
+reads "became a sinner" verbatim), 1 Timothy 2:15 ("sanctification" ->
+"holiness", now byte-identical to WEBU), Hebrews 5:7 (kept "reverent
+submission" as-is, a deliberate emphasis choice), Hebrews 7:22
+("collateral" -> "guarantor" - not WEBU's "guarantee," but a sharper fix:
+the Greek *engyos* names a person who personally guarantees, not a
+pledged asset, and "guarantor" captures that better than either the old
+"collateral" or WEBU's own "guarantee"), 1 Peter 3:3 (dropped "just",
+same pattern as 1 Timothy 2:9), Revelation 16:21 ("is" -> "was", a plain
+tense-agreement fix, now byte-identical to WEBU).
+
+**Final numbers**: WEBU `other` 21 pending + 1,080 accepted (2026-10-03
+session close) → **0 pending, 1,092 accepted** (12,131 changed verses,
+0.0% pending). **WEBU's R15 ledger/review pass is now fully closed.**
+WEBBE remains the full, untouched backlog (1,560/14,177 = 11.0%, no
+`rwb-webbe-review.txt`/`rwb-webbe-accepted.txt` exist yet) and is the next
+body of work under this same workflow - see this plan's own Status
+section and `generate-review-checklist.mjs`'s existing (built, never run)
+`-- webbe` parameterization.
