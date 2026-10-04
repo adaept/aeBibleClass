@@ -3321,3 +3321,215 @@ repeated in full here.
   deciding what to do next - do not re-derive this session's findings
   from scratch.
 ===============================================================================
+
+## New session (2026-10-04): all 21 deferred WEBU judgment calls resolved
+## - WEBU R15 fully closed (0 pending); R16 WEBBE plan written (plan only)
+
+Picked up the prior session's next-session item 1: walked the operator
+through Addendum 12's full 21-item deferred list, one at a time, same
+present-finding/wait-for-decision workflow as every other verse this
+tool has reviewed.
+
+  [CODE] `aeBibleClass/rpt/docm-verses.txt` -- 4 more real defects fixed:
+  Revelation 3:2 ("keep"->"strengthen"), 3:9 ("give"->"make", fixing an
+  internal inconsistency within the verse), 16:16 ("Megiddo"->
+  "Armageddon"), 21:9 (word-order transposition fixed to "the bride, the
+  wife of the Lamb"). Plus 1 new typo caught mid-review, not in the
+  original list: 2 Corinthians 11:2's fix ("married"->"promised in
+  marriage") left a duplicated "you" on the first attempt - caught before
+  accepting, fixed on re-export.
+    STATUS: committed and pushed to aeBibleClass's `main` this session
+    (`eb94588`).
+
+  [PROCESS] 2 items resolved via an outside cross-check
+  (biblegateway.com parallel-translations view), extending the
+  "Exception confirmed, 2026-09-30" precedent (previously only used for
+  ambiguous-pronoun holds) to disputed-wording defect flags generally:
+  2 Corinthians 4:14 ("with Jesus") accepted as-is once "with" was
+  confirmed independently attested among major translations; Jude 1:4
+  (one-person vs. two-figures Christology dispute) resolved by
+  discovering WEBU's own "God" insertion isn't in the Greek text at all
+  (not even in ASV, WEB's own ancestor) - **WEBU was the outlier here,
+  not docm**, the first time in this tool's history a cross-check
+  concluded that direction. Docm accepted as-is, no change made.
+
+  [CODE] 15 further items resolved by direct discussion, no outside
+  cross-check needed - a mix of fixes (1 Corinthians 1:20 "lawyer"->
+  "debater"; Ephesians 2:1 added the missing "made alive" clause;
+  Ephesians 2:5 stray-space cosmetic fix; Colossians 2:8/2:20 both
+  "elements"->"elemental spirits"; 1 Timothy 2:9/1 Peter 3:3 both dropped
+  an added "just"; 1 Timothy 2:14 "became a sinner"->"fell into sin", a
+  deliberate middle-ground phrasing; 1 Timothy 2:15 "sanctification"->
+  "holiness"; Hebrews 7:22 "collateral"->"guarantor"; Revelation 16:21
+  "is"->"was") and deliberate as-is acceptances (Zechariah 8:23's
+  KJV-echoing repetition; 2 Corinthians 12:16's quotation-mark framing;
+  Hebrews 5:7's "reverent submission" emphasis choice).
+    STATUS: committed and pushed to aeBibleClass's `main` this session
+    (`eb94588`, same commit as the defect fixes above).
+
+  [CODE] `aeRWB` -- `rwb-webu-review.txt`/`rwb-webu-accepted.txt`
+  regenerated across many rounds through the session as each item was
+  resolved; 21 verses moved from pending to resolved (some via fix+
+  re-export+re-match, some via direct `rwb[x]` accept).
+    STATUS: already committed by the operator's own workflow mid-session
+    (`aeRWB` commit `64f868d`, confirmed clean/pushed at session close -
+    no action needed from this session, per
+    `feedback_aerwb_no_autopush`).
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webu_review_checklist_2026-09-28.md` --
+  new Addendum 13 (full account: all 4 defects, the new typo, the 2
+  cross-check resolutions, the 15 discussion-resolved items) + Status
+  line updated to "WEBU R15 fully closed, 0 pending, 1,092 accepted."
+
+  [MEMORY] `project_rwb_review_checklist_tool.md` updated with the full
+  session account and final numbers; `MEMORY.md` index updated.
+
+## Session status at this checkpoint (2026-10-04, WEBU R15 fully closed)
+
+  WEBU `other`: 21 pending + 1,080 accepted (2026-10-03 close) -> **0
+  pending, 1,092 accepted** (12,131 changed verses, 0.0% pending). **No
+  backlog, no deferred items remain.** WEBBE untouched by review, still
+  the full unstarted backlog (1,550/14,169 = 10.9%, no
+  `rwb-webbe-review.txt`/`rwb-webbe-accepted.txt` exist yet).
+
+  All work committed and pushed: `aeBibleClass` (`eb94588` - the defect
+  fixes + Addendum 13; see below for a second commit this session),
+  `aeRWB` (already clean via the operator's own workflow, confirmed 0
+  unpushed commits at close).
+
+## Same session, continued: R16 WEBBE review plan written (plan only,
+## no implementation) - operator's 7-point brief
+
+Operator asked for a plan covering the next body of work (WEBBE) plus
+two related but separable concerns, explicitly **plan only, implement
+later**. Researched and wrote up as a 7-section plan doc, covering:
+
+  1. **docm fixes carry over to WEBBE for free** - every WEBU-era fix
+     landed in the shared `docm-verses.txt`, which both WEBU and WEBBE
+     comparisons read; no separate porting work needed.
+  2. **Spelling-substitution timing** - two separate things already
+     exist: a comparison-time classifier rule in
+     `docm-webu-webbe-categorize.mjs` (already live since 2026-09-26,
+     already filters pure US/UK spelling hunks out of WEBBE's `other`
+     bucket - confirmed "amongst"->"among" alone was 937 hunks) vs. the
+     production-time `applySpellingVariant` mutation in aeBibleAddin
+     (built 2026-09-18, deliberately unwired, still the REQUIRED/
+     HIGH-PRIORITY item explicitly deferred by the operator 2026-09-25,
+     rationale still not supplied). Open sequencing question flagged for
+     implementation time (not resolved): should production substitution
+     run before or after WEBBE's content-review pass on a working copy -
+     recommended default is after, not yet operator-confirmed.
+  3. **Hyphenation confirmed out of scope** for the review pass itself -
+     `ExportDocmVersesToRWBFormat` only exports plain verse text, so the
+     docm's substantial baked-in print-layout hyphenation (p170 of ~900
+     pages, literal `Chr(31)` optional-hyphen characters) never reaches
+     the WEBBE diff tooling at all.
+  4. **Not urgent** - operator confirmed RWB's US print edition precedes
+     the UK/WEBBE edition, the first time this ordering has been stated
+     explicitly anywhere in this project.
+  5. **VBA work needed later, separately, for UK print layout**:
+     `VerseText`'s style is currently justified
+     (`rpt/Styles/style_VerseText.txt`, `ParagraphFormat.Alignment = 3`,
+     the reason hyphenation is "substantial" at all) - UK convention
+     needs left-align + hyphenation removed. Key architectural
+     constraint recorded: this must apply to a UK-specific working copy,
+     never the shared master style/docm (same "export, don't mutate"
+     posture as the RWB tooling generally) - the US and UK editions
+     can't share one `VerseText` definition. Not starting from scratch:
+     `basWordRepairRunner.bas` already has page-scoped `Chr(31)`
+     detection/classification/removal machinery
+     (`SoftHyphenSweep_ByColumnContext_SinglePage`, built for a
+     different purpose - repairing misplaced hyphens in the US
+     two-column layout - but directly reusable as the basis for an
+     unconditional UK-targeted removal sweep).
+  6. **Pros/cons/benefits/risks** - full writeup in the plan doc section
+     6; key new risk flagged: WEBBE review will need to distinguish
+     "real docm defect" from "spelling-classifier gap" (a third category
+     WEBU's review never needed), in addition to the existing "check KJV
+     first" lesson from the WEBU review.
+  7. **Development-timeline note** - saved to memory (see below), framing
+     WEBBE content review / spelling-substitution wiring / UK
+     print-layout VBA work as three independent UK-print prerequisites,
+     not one task, none blocking the US edition's own path to print.
+
+  [DOC] `aeBibleClass/rvw/Plan_rwb_webbe_review_2026-10-04.md` (new file)
+  -- full 7-section plan, confirmed baseline (WEBBE `other` 1,550/14,169
+  = 10.9%, no ledger started, tooling already supports `-- webbe`).
+    STATUS: committed and pushed to aeBibleClass's `main` this session
+    (`d690a2d`).
+
+  [MEMORY] New `project_rwb_us_uk_print_timeline.md` -- the three-
+  milestone framing (WEBBE review / spelling wiring / UK print-layout
+  VBA work), each described with current status and what's still open.
+  `MEMORY.md` index updated with both this entry and the WEBU-closure
+  update above.
+
+  [DOC] `aeRWB/tools/web-diff/README.md` -- R14/R15 sections updated to
+  reflect WEBU's full closure (0 pending, 1,092 accepted; the 21
+  deferred-item resolution summarized inline) and WEBBE's current
+  baseline (1,550/14,169), plus a pointer to the new R16 plan doc and a
+  correction to the R15 "Scope" note (WEBU's zero-pending gate has now
+  been reached, WEBBE is unblocked whenever picked up).
+    STATUS: committed and pushed to `aeRWB`'s `main` this session (by
+    explicit operator request this turn - see commit below), a departure
+    from this repo's usual "operator commits via GitHub Desktop" pattern
+    per `feedback_aerwb_no_autopush`, explicitly authorized this time.
+
+## Session status at this checkpoint (2026-10-04, session close)
+
+  All work committed and pushed: `aeBibleClass` (`eb94588`, `d690a2d`),
+  `aeRWB` (README update, commit hash recorded once pushed below this
+  entry). WEBU R15: fully closed, 0 pending, 1,092 accepted - no
+  outstanding work in this specific thread. WEBBE: full unstarted
+  backlog (1,550/14,169 = 10.9%), plan written, not yet begun -
+  `Plan_rwb_webbe_review_2026-10-04.md` is the next-session starting
+  point whenever WEBBE review is picked up, not urgent (US prints before
+  UK). Other carried-over backlog items unchanged from every prior
+  session's list (`applySpellingVariant` live-check - do NOT run without
+  explicit go-ahead; Genesis 1 Strong's spike; `Jeremiah 37:910` malformed
+  reference; 2 Samuel 21:8 confirmation; Cases 49/50 unported; USFM
+  export plan; Bible introduction writing session).
+
+## NEXT SESSION, IN ORDER
+
+  1. **If picking up WEBBE**: read `project_rwb_us_uk_print_timeline`
+     memory + `Plan_rwb_webbe_review_2026-10-04.md` in full before
+     starting - do not re-derive. Run `npm run docm.review-checklist --
+     webbe` to generate the first `rwb-webbe-review.txt`/
+     `rwb-webbe-accepted.txt` pair (script already supports this, never
+     run before). Expect a large first pass (1,550 pending verses,
+     closer to WEBU's very first R15 session than a routine
+     continuation) - multiple sessions, not one. Watch for the new risk
+     class flagged in the plan: a single-word "defect" candidate might be
+     a spelling-variant classifier gap, not a real docm issue or a
+     translation judgment call - check the spelling-variant tables
+     (`EXACT_SPELLING_PAIRS`/`SPELLING_SUFFIX_RULES` in
+     `docm-webu-webbe-categorize.mjs`) before concluding otherwise.
+  2. **Unchanged from previous sessions' lists, still not touched:**
+     a. REQUIRED, HIGH PRIORITY, explicitly deferred by operator direction
+        2026-09-25 -- rationale to be supplied later, do not guess one.
+        Live-check `applySpellingVariant`'s wiring against a disposable
+        scratch document (aeBibleAddin `word-audit-scanner.LIVE_CHECK.md`
+        "Shape 8" section). Do NOT run without the operator's explicit
+        go-ahead.
+     b. Scholarly grounding roadmap step 3: the verse-level Strong's spike
+        on Genesis 1 (`aeRWB/tools/web-diff/`), using the OSHB data fetched
+        2026-09-25 - see `project_scholarly_grounding_plan` memory.
+     c. Root-cause the `Jeremiah 37:910` malformed reference in
+        `rpt/docm-verses.txt` (`ExportDocmVersesToRWBFormat`'s verse-number
+        detection) - small, scoped, currently blocks Jeremiah 37:10 from
+        ever being sync-able.
+     d. 2 Samuel 21:8 (Merab/Michal, OT textual-tradition question,
+        `Plan_rwb_webu_review_checklist_2026-09-28.md` Addendum 3) still
+        awaits the operator's explicit confirmation, not blocking.
+     e. Loose ends, not formally closed: Cases 49/50 (unported in
+        aeBibleAddin); item 8 (USFM export from docm - needs its own plan
+        doc first); item 9 (Bible introduction - needs a dedicated writing
+        session).
+
+  Read `project_rwb_review_checklist_tool` memory + this entry +
+  `project_rwb_us_uk_print_timeline` memory + the two new plan-doc
+  additions (Addendum 13, `Plan_rwb_webbe_review_2026-10-04.md`) before
+  deciding what to do next - do not re-derive this session's findings
+  from scratch.
+===============================================================================
