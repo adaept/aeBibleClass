@@ -3812,3 +3812,109 @@ later**. Researched and wrote up as a 7-section plan doc, covering:
      49/50 unported, USFM export plan, Bible introduction writing
      session.
 ===============================================================================
+
+## NEW SESSION (2026-10-05): JS-port parity script built, closed Tests 90/91 same day
+
+  Picked up the one open thread from the prior session's close: the
+  JS-port parity-script proposal (`project_js_port_case_tracking_gap`,
+  §15.11a of `adaept5tudio/docs/aeBibleClass-word-addin-conversion-
+  plan.md`). No VBA `.bas`/`.cls` files touched this session -- no
+  [IMPORT] items, nothing pending the VBA editor.
+
+  [SCRIPT] `py/js_port_parity.py` (new file) -- enumerates
+  `aeBibleClass.cls`'s actual Case-N set from its four dispatch switches
+  (cross-checked against `MaxTests`), cross-references `aeBibleAddin`
+  for `Case N`/`Test N` comment annotations linked to their nearest
+  function, classifies each as NOT PORTED / MENTIONED / PORTED-NOT-WIRED
+  / TESTED-ONLY / LIVE-WIRED. Report written to `aeBibleAddin/
+  rpt/js_port_parity_report.txt`, tracked in git so re-runs diff cleanly.
+  Found a real bug in itself mid-session: iterating a Python `set` of
+  (file, function) tuples picked up per-process string-hash
+  randomization, reordering identical evidence on every run -- fixed by
+  sorting before iterating; verified with repeated runs producing
+  byte-identical output.
+    STATUS: committed and pushed to aeBibleClass's `main` (3 commits:
+    script, determinism fix; see git log for hashes).
+
+  [DOC] `md/Adding_To_Bible_Test_Class.md` -- added step 9 to the
+  existing 8-step "Adding Test N" checklist: run the parity script,
+  confirm the new Case shows NOT PORTED (or explain why not in the
+  conversion-plan.md ledger if it's VBA-only). Operationalizes
+  §15.11a's own proposal item 2.
+    STATUS: committed and pushed with the script, same commit.
+
+  First run immediately found the ledger's own Case 89 row was stale --
+  it claimed "Not yet researched... Not started" but
+  `countBuiltInHyperlinkStyleRunsLive` had actually been ported, tested,
+  and live-wired into `taskpane.ts` on 2026-09-22, 12 days before that
+  text was written. Exactly the failure mode the gap analysis predicted.
+  Confirmed Tests 90 (`CountSpaceBeforePunctuation`) and 91
+  (`CountSequentialVerseNumberViolations`) were genuinely NOT PORTED --
+  real open work, not ledger drift.
+
+  [DOC - different repo] `adaept5tudio/docs/aeBibleClass-word-addin-
+  conversion-plan.md` -- §15.11's Case 89 row corrected (original text
+  left in place, dated correction appended, per
+  `feedback_review_docs_history`); new §15.11b section added documenting
+  the script, the Case 89 catch, and bumping Cases 90/91 to HIGH
+  PRIORITY.
+    STATUS: committed and pushed to adaept5tudio's `main`.
+
+  Ported both flagged Cases the same session, same day as flagged:
+
+  [CODE - different repo] `aeBibleAddin/taskpane/src/audit-checks.ts` --
+  `countSpaceBeforePunctuation` (Test 90, joins the existing pure-text
+  family) and `countSequentialVerseNumberViolations` (Test 91, reuses
+  the `{style, text}[]` shape from Cases 19/23; returns a
+  `SequentialVerseNumberViolation[]` detail array, matching this port's
+  richer-than-scalar precedent). Both wired into `auditPureTextChecksLive`
+  (`word-audit-scanner.ts`, already called from `taskpane.ts`) -- zero
+  new Office.js surface needed for either. 12 new Vitest cases
+  (including the Jeremiah 37:10 digit-run shape and the VBA source's own
+  Psalms/Song-of-Songs cosmetic book-name remap for Test 91).
+  `npm run typecheck`/`npm test` clean in `taskpane/` (386/386 passing).
+  `py/js_port_parity.py --case 90`/`--case 91` both now report
+  LIVE-WIRED.
+    STATUS: committed and pushed to aeBibleAddin's `main`.
+
+  [DOC - different repo] `adaept5tudio/docs/aeBibleClass-word-addin-
+  conversion-plan.md` -- both rows marked DONE; §15.11b gained a
+  "CLOSED same day" closure paragraph (original HIGH PRIORITY/NOT PORTED
+  bullets left in place as history, per this doc's own progressive-
+  history convention).
+    STATUS: committed and pushed to adaept5tudio's `main`.
+
+  [MEMORY] `project_js_port_case_tracking_gap.md` updated to CLOSED --
+  full mechanism now proven end-to-end (flag -> port -> verify, same
+  day) rather than just "built, one gap caught." `MEMORY.md` index line
+  updated to match. Also saved
+  `project_adaept5tudio_dependabot_alert.md` (alert #28, operator
+  already reviewed, no fix available -- don't re-flag on future pushes).
+
+## SESSION CLOSE, 2026-10-05 (continued)
+
+  All three repos' changes from this arc committed and pushed:
+  `aeBibleClass`, `aeBibleAddin`, `adaept5tudio` (separate commits per
+  each repo's own grant rules -- aeBibleClass committed without asking
+  per its established grant; aeBibleAddin/adaept5tudio committed and
+  pushed after explicit operator confirmation each time, per their
+  no-standing-grant policy). Working trees clean in all three as of this
+  checkpoint. OneDrive backup run for all three changed projects
+  (`aeBibleClass`, `adaept5tudio`, `aeBibleAddin`) per
+  `reference_onedrive_backup_script`.
+
+## NEXT SESSION
+
+  1. No open VBA-import actions. No open JS-port gaps -- 0 candidates
+     remain in `py/js_port_parity.py`'s full report as of this close.
+  2. Checklist step 9 (parity script) is now live in
+     `md/Adding_To_Bible_Test_Class.md` -- the next time a VBA Test is
+     added, confirm it actually gets followed (the thing the whole
+     §15.11a gap analysis was worried wouldn't happen reliably).
+  3. Broader backlog, unchanged: WEBBE review (R16, not urgent),
+     Genesis 1 Strong's spike, `applySpellingVariant` live-check (gated,
+     do NOT run without explicit go-ahead), 2 Samuel 21:8 confirmation,
+     Cases 49/50 unported (believed permanently out of scope, not
+     re-investigated this session), USFM export plan, Bible introduction
+     writing session.
+===============================================================================
