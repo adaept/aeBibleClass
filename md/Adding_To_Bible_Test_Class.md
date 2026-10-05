@@ -44,6 +44,12 @@ Tests store their result in `ResultArray(n)` and compare against
 | 6 | `RunTest` Select Case | Add `Case N: Debug.Print ... "YourFunctionName"` |
 | 7 | `OutputTestReport` Select Case | Add `Case N: AppendToFile ...` with same label |
 | 8 | `aeBibleClass.cls` body | Add `Private Function YourFunction() As Long` |
+| 9 | JS-port parity | Run `python3 py/js_port_parity.py` (from `aeBibleClass/`). Confirms Test N shows NOT PORTED — if it already shows something else, investigate before moving on. Report lands in `aeBibleAddin/rpt/js_port_parity_report.txt`; if the new Case isn't a candidate for the JS port (VBA-only diagnostic, file-report side effect, etc.), say so in `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` §15.11 rather than leaving it silently absent |
+
+Step 9 exists because the JS-port ledger (§15.11 of the conversion plan) has no other forcing
+function tying "a new Test was added" to "the ledger knows about it" — see
+`adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` §15.11a/§15.11b for the gap this
+closes (Tests 89-91 all went untracked for days to weeks before this step existed).
 
 If the function already exists in another module as `Private`, decide whether to:
 - **Copy** the logic into the class as a new `Private Function` returning `Long`
