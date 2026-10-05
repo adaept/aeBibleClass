@@ -83,10 +83,12 @@ reordered here as blocking pre-flight checks rather than a flat list:
    compound-file layout drift from differing save histories, but **not
    proven**. Do not proceed to step 4 below until this is resolved one
    way or the other.
+   **Resolved 2026-10-05: operator confirmed directly - not stale.**
 2. **Confirm a backup of `Copy (4).docm` exists** before importing
    unvalidated code into it (no `.docm` is git-tracked; the only backup
    mechanism is the manual OneDrive script,
    `reference_onedrive_backup_script`).
+   **Resolved 2026-10-05: operator confirmed a backup is made.**
 3. **Check what `Copy (4).docm`'s embedded `Document_Open` actually does**
    before opening it - confirmed real/wired behavior
    (`feedback_word_document_before_events`), not a no-op. If it differs
@@ -267,8 +269,72 @@ on getting the acceptance criteria in step 4 right before this ships.
 
 ## 7. Status
 
-Plan only, written 2026-10-04, revised same day (§2/§4/§6: the new
-invariant is now planned as `RUN_THE_TESTS(91)`, not a standalone-only
-routine, with the JS-port ledger update folded in as step 8/§4c rather
-than left implicit). Awaiting operator review/go-ahead before any
-implementation step begins.
+Plan written 2026-10-04, revised same day (§2/§4/§6: the new invariant is
+now planned as `RUN_THE_TESTS(91)`, not a standalone-only routine, with
+the JS-port ledger update folded in as step 8/§4c rather than left
+implicit).
+
+**§4 steps 1-2 done, 2026-10-05:** `basVerseStructureAudit.bas` has
+`Public Sub FindSequentialVerseNumberViolations(ByRef violationCount As
+Long, ByRef firstViolationHint As String, Optional bWriteFile As Boolean
+= True)` plus two intentionally-duplicated private helpers
+(`FirstNumberInText`/`LeadingDigits`, matching `basRWBTextExport.bas`'s
+proven logic exactly). `aeBibleClass.cls` has the full 8-location Test 91
+wiring (`MaxTests` 91, `Expected1BasedArray` appended `0`, all four
+`Case 91` dispatch blocks, and the thin-wrapper
+`Private Function CountSequentialVerseNumberViolations() As Long`
+delegating to the module). One self-caught bug during writing: a first
+draft referenced `m_lastHint` (an `aeBibleClass.cls`-only variable)
+directly from inside `basVerseStructureAudit.bas`, which would not have
+compiled - fixed by returning the hint via the `firstViolationHint`
+parameter instead, with the class wrapper setting `m_lastHint` from it,
+matching every other test's convention. CRLF verified intact in both
+files after editing (byte-level check, not just line-count).
+
+**§3 pre-flight items 1-2 resolved 2026-10-05 (operator confirmed
+directly: `Copy (4).docm` not stale, backup made).** Items 3
+(`Document_Open` check) and 4 (rename/flag the fixture) not explicitly
+addressed - operator proceeded to import and test directly.
+
+**§4 step 4 done, 2026-10-05 - true positive confirmed, acceptance
+criteria met.** `RUN_THE_TESTS(91)` against `Copy (4).docm`'s still-buggy
+content: `FAIL, 2<>0`, 3.38s runtime. Exactly two violations, both
+explained by the one known defect, no unexplained false positives
+elsewhere in the ~31,102-verse document:
+- Violation #1 (the true positive): Jeremiah 37, expected verse 10,
+  parsed 910.
+- Violation #2 (the designed follow-on, not a second bug): Jeremiah 37,
+  expected verse 911 (resynced to `parsedVerse+1` after violation #1),
+  parsed 11 - exactly the single-paragraph-cascade-avoidance behavior
+  documented in the routine's own header comment, working as designed.
+
+Runtime (3.38s for a full-document walk) shows no sign of the memory
+issue that sidelined Tests 82/83 - reassuring, though this was Test 91
+run alone, not yet inside a full-suite run alongside every other test
+(the actual historical failure mode).
+
+**§4 step 5 done, 2026-10-05.** Content fix applied to `Copy (4).docm`,
+re-ran `RUN_THE_TESTS(91)`: `PASS, 0=0`, 3.45s (vs. 3.38s before - no
+runtime drift from the fix itself). Confirms the check doesn't
+false-positive against correct content, closing the acceptance loop for
+the test-fixture validation.
+
+**§4 step 6 done, 2026-10-05.** Operator imported the same validated
+code into the live docm and ran `RUN_THE_TESTS(91)`: `PASS, 0=0`, 3.57s -
+consistent with both prior runs (3.38s/3.45s), no runtime drift across
+three independent runs on two files.
+
+**§4 step 7 resolved by elimination, 2026-10-05 - operator promoted
+`Copy (4).docm` to become the new `Blank Bible Copy.docm`.** There is no
+longer a separate test-fixture/live-docm pair to verify parity between -
+the fixture that was independently validated (true-positive confirmed in
+step 4, clean after the fix in step 5) is now simply *the* live docm.
+This is a simpler resolution than the plan's original step 7 envisioned
+(diffing two independent files) and makes that diffing moot, not
+something still owed.
+
+**Remaining: §4 step 8** - update the JS-port tracking ledger (§4c) now
+that Test 91 is real and live. Already partly done in advance (the
+proactive Test-91 row added to `adaept5tudio`'s §15.11 table on
+2026-10-04, before the code even existed) - revisit that row now that
+the check is built, imported, and passing, not just planned.

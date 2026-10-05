@@ -1399,3 +1399,200 @@ Private Sub WriteHeaderFooterStyleFile(ByVal sContent As String)
     oStream.Write sContent
     oStream.Close
 End Sub
+
+' ==========================================================================
+' FindSequentialVerseNumberViolations  (backs RUN_THE_TESTS test slot 91)
+' ==========================================================================
+' Fifth CVM/VM integrity invariant - validates marker CONTENT, not just
+' presence/count. GetMarkerTotals (slots 82/83, skip-listed) and
+' CountChapterVerseMarkers/CountVerseMarkers (AuditVerseMarkerStructure,
+' never wired into RUN_THE_TESTS) both only check whether a CVM/VM-styled
+' run EXISTS once per verse paragraph - neither can see a stray character
+' sharing the correct style glued onto a real marker, because a styled
+' Find match swallows adjacent same-styled runs into one hit regardless of
+' length. See rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md for the
+' real defect (Jeremiah 37:10 parsed as verse "910") that exposed this.
+'
+' This check instead tracks, per chapter, an EXPECTED NEXT VERSE NUMBER
+' starting at 1, and asserts every VerseText paragraph's parsed verse
+' number matches it exactly - a strictly stronger, content-aware check.
+' A stray/missing digit breaks the sequence immediately and loudly instead
+' of passing a presence/count check unnoticed.
+'
+' Deliberately i18n-ready (rvw/Plan_cvm_content_validation_2026-10-04.md
+' Addendum.4a): the expected RUN_THE_TESTS result is 0 ("zero violations"),
+' not a hardcoded per-edition verse-count constant like Tests 82/83's
+' 31102 - this runs correctly against any future docm following the same
+' CVM/VM/VerseText convention, no per-language code change needed.
+'
+' PERFORMANCE - same proven-cheap pattern as ExportDocmVersesToRWBFormat
+' (basRWBTextExport.bas): ONE Range.Text read per VerseText paragraph,
+' pure string parsing (FirstNumberInText/LeadingDigits below), ZERO
+' character- or word-level style lookups. That module's own header
+' documents two earlier implementations in this exact area blowing past
+' 2 GB of memory from per-character/word COM calls across ~35k paragraphs
+' - FirstNumberInText/LeadingDigits are intentionally duplicated here
+' (not called cross-module) rather than risk coupling this invariant's
+' correctness to basRWBTextExport.bas's own, differently-scoped contract;
+' same "copy for a self-contained module" choice this project's own
+' Test-73 precedent documents (md/Adding_To_Bible_Test_Class.md).
+'
+' After ANY parse of a VerseText paragraph (match or mismatch), the
+' expected-next-verse counter resyncs to parsedVerseNumber + 1 - so one
+' bad paragraph flags itself (and, usually, exactly one follow-on "jumped
+' back down" flag on the next verse) without cascading a false mismatch
+' through the rest of the chapter.
+' ==========================================================================
+Public Sub FindSequentialVerseNumberViolations(ByRef violationCount As Long, _
+                                                 ByRef firstViolationHint As String, _
+                                                 Optional ByVal bWriteFile As Boolean = True)
+    Dim t As Double
+    StartTimer "FindSequentialVerseNumberViolations", t
+
+    Dim canonBooks As Object
+    Set canonBooks = aeBibleCitationClass.GetCanonicalBookTable()
+
+    Dim oPara As Object
+    Dim bookIndex As Long
+    Dim bookName As String
+    Dim chapNum As Long
+    Dim expectedVerse As Long
+    Dim StyleName As String
+    Dim paraTxt As String
+    Dim digitRun As String
+    Dim chapStr As String
+    Dim verseStr As String
+    Dim verseNum As Long
+    violationCount = 0
+    firstViolationHint = ""
+
+    Dim sOut As String
+    Const NL As String = vbCrLf
+    sOut = "---- FindSequentialVerseNumberViolations: " & _
+           Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
+
+    bookName = ""
+    chapNum = 0
+    expectedVerse = 1
+
+    For Each oPara In ActiveDocument.Paragraphs
+        StyleName = oPara.style.NameLocal
+
+        If StyleName = "Heading 1" Then
+            bookIndex = bookIndex + 1
+            If canonBooks.Exists(bookIndex) Then
+                bookName = canonBooks.Item(bookIndex)(1)
+                If bookName = "Psalms" Then
+                    bookName = "Psalm"
+                ElseIf bookName = "Song of Songs" Then
+                    bookName = "Song of Solomon"
+                End If
+            Else
+                bookName = "UNKNOWN_BOOK_" & bookIndex
+            End If
+            chapNum = 0
+
+        ElseIf StyleName = "Heading 2" Then
+            Dim n As Long
+            n = FirstNumberInText(oPara.Range.Text)
+            If n > 0 Then
+                chapNum = n
+                expectedVerse = 1
+            End If
+
+        ElseIf StyleName = "VerseText" Then
+            If bookName <> "" And chapNum > 0 Then
+                paraTxt = oPara.Range.Text
+                digitRun = LeadingDigits(paraTxt)
+                chapStr = CStr(chapNum)
+
+                If Left$(digitRun, Len(chapStr)) = chapStr Then
+                    verseStr = Mid$(digitRun, Len(chapStr) + 1)
+                    If verseStr <> "" And IsNumeric(verseStr) Then
+                        verseNum = CLng(verseStr)
+                        If verseNum <> expectedVerse Then
+                            violationCount = violationCount + 1
+                            sOut = sOut & "Violation #" & violationCount & " | " & bookName & _
+                                   " " & chapNum & " | expected verse " & expectedVerse & _
+                                   " but parsed " & verseNum & NL
+                            sOut = sOut & "  Excerpt: """ & Left$(paraTxt, 80) & """" & NL & NL
+                            If firstViolationHint = "" Then firstViolationHint = bookName & " " & chapNum & _
+                                ": expected verse " & expectedVerse & " but parsed " & verseNum & _
+                                " - text=""" & Left$(paraTxt, 60) & """"
+                        End If
+                        expectedVerse = verseNum + 1
+                    Else
+                        violationCount = violationCount + 1
+                        sOut = sOut & "Violation #" & violationCount & " | " & bookName & _
+                               " " & chapNum & " | expected verse " & expectedVerse & _
+                               " but verse number unparseable (digit run """ & digitRun & _
+                               """)" & NL
+                        sOut = sOut & "  Excerpt: """ & Left$(paraTxt, 80) & """" & NL & NL
+                        If firstViolationHint = "" Then firstViolationHint = bookName & " " & chapNum & _
+                            ": expected verse " & expectedVerse & _
+                            " but verse number unparseable - text=""" & Left$(paraTxt, 60) & """"
+                    End If
+                Else
+                    violationCount = violationCount + 1
+                    sOut = sOut & "Violation #" & violationCount & " | " & bookName & _
+                           " " & chapNum & " | expected verse " & expectedVerse & _
+                           " but digit run """ & digitRun & """ does not start with chapter """ & _
+                           chapStr & """" & NL
+                    sOut = sOut & "  Excerpt: """ & Left$(paraTxt, 80) & """" & NL & NL
+                    If firstViolationHint = "" Then firstViolationHint = bookName & " " & chapNum & _
+                        ": digit run """ & digitRun & """ does not start with chapter """ & _
+                        chapStr & """ - text=""" & Left$(paraTxt, 60) & """"
+                End If
+            End If
+        End If
+    Next oPara
+
+    sOut = sOut & "---- Summary ----" & NL
+    sOut = sOut & "Sequential verse-number violations: " & violationCount & NL
+
+    Debug.Print sOut
+    If bWriteFile Then
+        Dim oFSO As Object
+        Dim oStream As Object
+        Dim sPath As String
+        sPath = ActiveDocument.Path & "\rpt\SequentialVerseNumberViolations.txt"
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+        Set oStream = oFSO.CreateTextFile(sPath, True, False)
+        oStream.Write sOut
+        oStream.Close
+    End If
+
+    EndTimer "FindSequentialVerseNumberViolations", t
+End Sub
+
+' Pure string scan (no COM) - duplicated intentionally from
+' basRWBTextExport.bas's identically-named/identically-behaved helper (see
+' this routine's own header comment for why) - the first run of digit
+' characters anywhere in s, as a Long. Returns 0 if no digits are found.
+Private Function FirstNumberInText(ByVal s As String) As Long
+    Dim i As Long, ch As String, digits As String
+    Dim started As Boolean
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch >= "0" And ch <= "9" Then
+            digits = digits & ch
+            started = True
+        ElseIf started Then
+            Exit For
+        End If
+    Next i
+    If digits <> "" Then FirstNumberInText = CLng(digits) Else FirstNumberInText = 0
+End Function
+
+' Pure string scan (no COM) - duplicated intentionally from
+' basRWBTextExport.bas's identically-named/identically-behaved helper - the
+' leading run of digit characters in s, or "" if s doesn't start with a
+' digit.
+Private Function LeadingDigits(ByVal s As String) As String
+    Dim i As Long, ch As String
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch < "0" Or ch > "9" Then Exit For
+    Next i
+    LeadingDigits = Left$(s, i - 1)
+End Function

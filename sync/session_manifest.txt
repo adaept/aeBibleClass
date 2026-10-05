@@ -3678,4 +3678,137 @@ later**. Researched and wrote up as a 7-section plan doc, covering:
   3. The parity-script idea in §15.11a / `project_js_port_case_tracking_gap`
      is itself a real, unscoped follow-on task - not started, not part of
      the Test 91 plan's own scope (see that plan's §6).
+
+# Session 2026-10-05 -- Test 91 code written (plan §4 steps 1-2), not
+# imported anywhere yet
+
+  [IMPORT] `src/basVerseStructureAudit.bas` -- new `Public Sub
+  FindSequentialVerseNumberViolations(ByRef violationCount As Long, ByRef
+  firstViolationHint As String, Optional bWriteFile As Boolean = True)`
+  plus two intentionally-duplicated private helpers
+  (`FirstNumberInText`/`LeadingDigits`, matching `basRWBTextExport.bas`'s
+  proven algorithm exactly - not called cross-module, per Test-73's own
+  "copy for a self-contained module" precedent). Per-chapter
+  expected-next-verse-number tracking, same zero-character/word-style-
+  lookup pattern as `ExportDocmVersesToRWBFormat`. Writes
+  `rpt/SequentialVerseNumberViolations.txt`.
+    STATUS: written, NOT imported into any .docm. CRLF verified intact
+    (byte-level check: all lines CRLF, zero stray LF/CR).
+
+  [IMPORT] `src/aeBibleClass.cls` -- full 8-location Test 91 wiring per
+  `md/Adding_To_Bible_Test_Class.md`'s checklist: `MaxTests` 90->91,
+  `Expected1BasedArray` value `0` appended (91 elements confirmed by
+  count, not assumed), `RunTest (91)` added after `RunTest (90)` (no
+  `DoEvents` between them, matching Tests 88-90's own existing pattern,
+  not the older Tests 74-87 DoEvents-throttled tail), all four `Case 91`
+  blocks (`GetTestDescription`/`GetPassFail`/`RunTest`/`OutputTestReport`),
+  and `Private Function CountSequentialVerseNumberViolations() As Long`
+  (thin wrapper, delegates to the module, sets `m_lastHint` from the
+  returned hint string).
+    STATUS: written, NOT imported into any .docm. CRLF verified intact
+    across the whole file (5849/5849 lines CRLF).
+
+  Self-caught bug during writing, before presenting: a first draft of the
+  module routine referenced `m_lastHint` directly - that variable only
+  exists in `aeBibleClass.cls`, a different module, and would not have
+  compiled under `Option Explicit`. Fixed by returning the hint via a
+  `ByRef firstViolationHint As String` parameter instead; the class
+  wrapper sets its own `m_lastHint` from that, matching every other
+  test's convention. Caught by re-reading the diff before calling it
+  done, not by a compile attempt.
+
+  [DOC] `rvw/Plan_cvm_content_validation_2026-10-04.md` -- §7 Status
+  updated: §4 steps 1-2 done, steps 3-8 and the §3 pre-flight checklist
+  explicitly NOT started.
+
+## NEXT SESSION
+
+  1. Nothing has been imported into any `.docm` yet - per
+     `feedback_docm_manual_vba_import_convention`, Test 91 is not live
+     anywhere. Next step is the plan's own §3 pre-flight checklist before
+     touching `Copy (4).docm`, or a simpler direct import into the live
+     docm first just to confirm it compiles/runs cleanly - operator's
+     call, not decided this session.
+  2. Once imported somewhere and run at least once, watch for the two
+     things the plan's acceptance criteria call out: a true-positive
+     flag shape (book/chapter/expected/found, not a bare count) and
+     memory behavior across a full-document run (this module's
+     documented historical landmine).
+
+# Session 2026-10-05 (continued) -- Test 91 validated end-to-end, live,
+# Plan §4 effectively closed
+
+  Operator confirmed §3 pre-flight items 1-2 directly (`Copy (4).docm`
+  not stale, backup made) and ran the rest of §4 live:
+
+  - **Step 4 (true positive):** `RUN_THE_TESTS(91)` against
+    `Copy (4).docm`'s still-buggy content - `FAIL, 2<>0`, 3.38s. Exactly
+    two violations, both explained by the one known Jeremiah 37:10
+    defect (the true-positive flag itself, plus the single designed
+    follow-on "jumped back down" flag on the next verse - the
+    cascade-avoidance behavior documented in the routine's own header
+    comment, working exactly as designed). No unexplained violations
+    anywhere else in the ~31,102-verse document.
+  - **Step 5 (fix + re-verify):** content fix applied to `Copy (4).docm`,
+    re-ran `RUN_THE_TESTS(91)` - `PASS, 0=0`, 3.45s.
+  - **Step 6 (live docm):** same code imported into the live docm, ran
+    `RUN_THE_TESTS(91)` there - `PASS, 0=0`, 3.57s. Three independent
+    runs (3.38s/3.45s/3.57s), no runtime drift, no sign of the memory
+    issue that sidelined Tests 82/83.
+  - **Step 7 (parity):** resolved by elimination, not by diffing -
+    operator promoted `Copy (4).docm` to become the new
+    `Blank Bible Copy.docm` directly, so there is no longer a separate
+    test-fixture/live-docm pair to reconcile. (A parity diff was started
+    before this was said explicitly - stopped mid-command once
+    clarified, no wasted edits, just an aborted read-only check.)
+  - **Step 8 (JS-port ledger):** updated the proactive Test 91 row in
+    `adaept5tudio`'s §15.11 table from "planned, not yet built" to
+    reflect the full VBA-side result above; JS side explicitly marked
+    not started (the first real case the §15.11a parity-script proposal
+    would apply to, once built).
+
+  [DOC] `aeBibleClass/rvw/Plan_cvm_content_validation_2026-10-04.md` --
+  §7 Status updated through all of §4's steps; plan is now effectively
+  closed except step 8's JS-port side (tracked, not scoped into this
+  plan - see its own §6).
+  [DOC] `aeBibleClass/rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md`
+  -- Addendum's own "### Status" section updated with a 2026-10-05
+  closure note (progressive-history style - appended, not rewritten):
+  the bug AND its follow-on audit-invariant work are both fully closed.
+  [DOC - different repo] `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md`
+  §15.11 Test 91 row updated to reflect the live result.
+
+  Housekeeping, regenerated as a side effect of this session's live
+  Word activity (not manually edited): `rpt/HeadingLog.txt` (session
+  timestamp + paragraph-offset shifts from the stray-run deletion -
+  expected, benign) and a new `rpt/SequentialVerseNumberViolations.txt`
+  (Test 91's own report file, currently showing the clean `0` state).
+
+## SESSION CLOSE, 2026-10-05
+
+  Both repos' doc updates above committed and pushed this close
+  (`aeBibleClass` and `adaept5tudio`, separate commits per each repo's
+  own grant rules). Test 91 is live and passing on the production docm -
+  no VBA-side action remains open from this arc. OneDrive backup run for
+  both changed projects (`aeBibleClass`, `adaept5tudio`) per
+  `reference_onedrive_backup_script`.
+
+## NEXT SESSION
+
+  1. The only open thread from this whole Jeremiah-37:10 arc is the
+     JS-port parity-script proposal itself
+     (`project_js_port_case_tracking_gap`) - still unscoped/unbuilt, not
+     blocking anything.
+  2. Watch Test 91's behavior the next time a FULL `RUN_THE_TESTS` suite
+     runs (all tests together, not just test 91 alone) - the documented
+     historical memory issue (Tests 82/83) only ever showed up in that
+     combined scenario, never in a standalone run like the three done
+     this session (3.38s/3.45s/3.57s, all clean).
+  3. Broader backlog, unchanged from every prior session's list: WEBBE
+     review (R16, not urgent), Genesis 1 Strong's spike,
+     `applySpellingVariant` live-check (gated, do NOT run without
+     explicit go-ahead), `Jeremiah 37:910` item now fully resolved
+     (remove from future carry-over), 2 Samuel 21:8 confirmation, Cases
+     49/50 unported, USFM export plan, Bible introduction writing
+     session.
 ===============================================================================

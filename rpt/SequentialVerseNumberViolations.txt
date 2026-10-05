@@ -1,0 +1,4 @@
+---- FindSequentialVerseNumberViolations: 2026-10-05 14:14:50 ----
+
+---- Summary ----
+Sequential verse-number violations: 0

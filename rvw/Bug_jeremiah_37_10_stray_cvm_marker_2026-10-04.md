@@ -371,3 +371,15 @@ due diligence. Needs a clear, reviewed implementation plan (presumably
 its own dedicated `Plan_*.md` doc per this project's convention, given
 the scope - a test-fixture workflow plus a new audit invariant plus a
 two-file VBA import rollout) before any of the above steps are executed.
+
+**CLOSED 2026-10-05.** `Plan_cvm_content_validation_2026-10-04.md` was
+written, then its full implementation sequence executed live the next
+session: Test 91 built, imported into `Copy (4).docm`, true-positive
+-confirmed against this exact defect (`FAIL 2<>0` - the real violation
+plus one designed follow-on flag, nothing unexplained), clean after the
+fix (`PASS 0=0`), confirmed again after import into the live docm
+(`PASS 0=0`). `Copy (4).docm` was then promoted directly to become the
+new `Blank Bible Copy.docm`, resolving the plan's own parity-verification
+step by elimination rather than by diffing two files. Full detail in the
+plan doc's §4/§7 - this bug and its follow-on audit-invariant work are
+both fully closed, not just the original content fix.
