@@ -164,10 +164,13 @@ number** starting at 1, and for every `VerseText` paragraph:
    paragraph text) on any mismatch, continuing rather than aborting so one
    bad paragraph doesn't hide others later in the same chapter.
 
-Not yet implemented - captured here as the next concrete step, pending
-operator go-ahead (see `feedback_importallvbafiles_error17` /
-`feedback_commit_ask_first_default`-style conventions: a shared audit
-module change needs manual VBE import before it's live either way).
+Not yet implemented. Full implementation plan, including a revision
+(2026-10-04) to wire this in as `RUN_THE_TESTS(91)` rather than leave it
+standalone, with an i18n-readiness design note (`expected = 0` is
+edition-agnostic, unlike Tests 82/83's hardcoded `31102`) and the
+discovery of a lapsed JS-port tracking ledger this work must not repeat:
+see `Plan_cvm_content_validation_2026-10-04.md` in full (§4/§4a/§4b/§4c
+especially) - do not re-derive the design from this summary alone.
 
 ### Pros / cons / risks
 
@@ -346,6 +349,12 @@ bytes.
    never wired into any test slot despite being the "real" check. Default
    the new fifth invariant to the same standalone/manual pattern unless
    there's a specific reason to depart from established practice.
+   **Superseded 2026-10-04:** operator direction overrides this default
+   for this specific check - wire it in as `RUN_THE_TESTS(91)` from the
+   start (see `Plan_cvm_content_validation_2026-10-04.md` §4b). The
+   gotcha itself stands as a real pattern worth knowing before departing
+   from it, which is exactly what §4b does explicitly rather than
+   silently.
 10. **The final parity step is easy to skip.** "Should become identical
     to the bug-fix version that also has the same code imported" only
     holds if the new code is *also* imported into the live docm at the

@@ -3604,4 +3604,78 @@ later**. Researched and wrote up as a 7-section plan doc, covering:
   2. Carried-over backlog item 2c above ("Jeremiah 37:910...") is
      RESOLVED as of this session - remove from future carry-over lists.
      Items 1 (WEBBE review) and 2a/b/d/e are UNCHANGED, still pending.
+
+# Session 2026-10-04 (continued) -- plan doc drafted + revised; VBA-test
+# architecture + JS-port tracking gap added; full writeup, no code yet
+
+  Drafted `rvw/Plan_cvm_content_validation_2026-10-04.md` (the dedicated
+  plan doc "NEXT SESSION" item 1 above called for), then revised it same
+  day per operator direction:
+
+  [DOC] `aeBibleClass/rvw/Plan_cvm_content_validation_2026-10-04.md`
+  (new file) -- full plan: problem statement, design constraints, the
+  10-gotcha pre-flight checklist (carried from the bug doc), and an
+  implementation sequence. **Revised same session:** the new invariant
+  will be wired into `RUN_THE_TESTS` as **Test 91** (next free slot after
+  90), not left standalone-only as the first draft proposed - operator
+  overrode this module's own "standalone/manual first" precedent for
+  this specific check. New §4a explains why `expected = 0` makes this
+  test i18n-ready by construction (no hardcoded per-edition verse count,
+  unlike Tests 82/83's `31102`) - the concrete, minimal sense in which
+  this is "i18n-ready architecture," not a larger redesign. §4/step 2 has
+  the full 8-step `RUN_THE_TESTS`-wiring checklist per
+  `md/Adding_To_Bible_Test_Class.md`.
+    STATUS: plan only, not committed yet this sub-session (see below for
+    what else needs committing alongside it). Awaiting operator
+    review/go-ahead before any implementation step begins.
+
+  [DOC] `aeBibleClass/rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md`
+  -- updated in place (progressive-history style: added notes/corrections,
+  did not rewrite prior text) to point at the plan doc's revision and
+  mark gotcha 9 (standalone-first precedent) as superseded 2026-10-04.
+
+  **New finding while planning Test 91, not part of the original bug
+  investigation:** asked whether recent VBA `RUN_THE_TESTS` additions are
+  tracked anywhere for `aeBibleAddin`'s JS port. Answer: no, not
+  reliably. `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md`
+  §15.11 ("Phase E deferred/skipped-Case tracker") is the only existing
+  mechanism, and its own "update it whenever a new Case gets
+  deferred/skipped" instruction has no forcing function - confirmed
+  Test 89 (`aeBibleClass` commit `680779d`, 2026-09-21) and Test 90
+  (commit `1a9922e`, 2026-10-01) never got rows, even though that table
+  was itself edited as late as 2026-09-22 (one day *after* Test 89
+  already existed).
+
+  [DOC - different repo] `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md`
+  -- added new §15.11a ("JS-port tracking-ledger reliability gap — found
+  2026-10-04"): the full finding above, framed as the same class of gap
+  as this doc's own existing §10.2 "Gap 2," plus a proposed fix (a
+  lightweight VBA-Case/JS-Case parity script, folded into
+  `md/Adding_To_Bible_Test_Class.md`'s checklist as a mandatory step,
+  with CI promotion deferred behind the existing security-key gate per
+  §10.9's own framing) - written up, not built. Also added honest
+  not-started rows for Tests 89/90/91 to §15.11's table, and a correction
+  note on the now-stale "no open pending items remain" line just above it.
+    STATUS: edited, **NOT committed** - `adaept5tudio` has no
+    commit-without-asking grant (`feedback_commit_ask_first_default`),
+    unlike `aeBibleClass`/`aeRWB`. Needs explicit operator go-ahead before
+    committing in that repo.
+
+  [MEMORY] New `project_js_port_case_tracking_gap.md` (the ledger-gap
+  finding, standalone since it's broader than just this one bug) and
+  `project_jeremiah_37_10_stray_cvm_marker.md` updated with the Test 91 /
+  i18n-ready revision. `MEMORY.md` index updated for both.
+
+## NEXT SESSION
+
+  1. `rvw/Plan_cvm_content_validation_2026-10-04.md` is ready for
+     operator review - read it in full (especially §4/§4a/§4b/§4c)
+     before implementing anything. Nothing built yet on either the VBA
+     or JS side.
+  2. **`adaept5tudio` conversion-plan.md edit is uncommitted** - needs
+     explicit operator go-ahead to commit in that repo (different grant
+     than `aeBibleClass`). Don't forget it's sitting there uncommitted.
+  3. The parity-script idea in §15.11a / `project_js_port_case_tracking_gap`
+     is itself a real, unscoped follow-on task - not started, not part of
+     the Test 91 plan's own scope (see that plan's §6).
 ===============================================================================
