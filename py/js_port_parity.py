@@ -264,7 +264,10 @@ def load_js_status(js_root):
     result = {}
     all_case_nums = set(case_to_funcs) | set(bare_mentions)
     for n in all_case_nums:
-        funcs = case_to_funcs.get(n, set())
+        # Sort before iterating -- Python randomizes str hash seeds per process, so iterating
+        # a set of (Path, str) tuples directly would reorder this evidence on every run with no
+        # underlying change, turning the tracked report into diff noise.
+        funcs = sorted(case_to_funcs.get(n, set()), key=lambda t: (str(t[0]), t[1]))
         evidence = []
         status = "MENTIONED"
         live = False
@@ -282,7 +285,7 @@ def load_js_status(js_root):
         else:
             status = "MENTIONED"
             evidence = [(str(f.relative_to(js_root)), "(no associated function found)", False, False)
-                        for f in bare_mentions.get(n, set())]
+                        for f in sorted(bare_mentions.get(n, set()), key=str)]
         result[n] = {"status": status, "evidence": evidence}
     return result
 
