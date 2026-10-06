@@ -1404,7 +1404,7 @@ End Sub
 ' FindSequentialVerseNumberViolations  (backs RUN_THE_TESTS test slot 91)
 ' ==========================================================================
 ' Fifth CVM/VM integrity invariant - validates marker CONTENT, not just
-' presence/count. GetMarkerTotals (slots 82/83, skip-listed) and
+' presence/Count. GetMarkerTotals (slots 82/83, skip-listed) and
 ' CountChapterVerseMarkers/CountVerseMarkers (AuditVerseMarkerStructure,
 ' never wired into RUN_THE_TESTS) both only check whether a CVM/VM-styled
 ' run EXISTS once per verse paragraph - neither can see a stray character
@@ -1417,11 +1417,11 @@ End Sub
 ' starting at 1, and asserts every VerseText paragraph's parsed verse
 ' number matches it exactly - a strictly stronger, content-aware check.
 ' A stray/missing digit breaks the sequence immediately and loudly instead
-' of passing a presence/count check unnoticed.
+' of passing a presence/Count check unnoticed.
 '
 ' Deliberately i18n-ready (rvw/Plan_cvm_content_validation_2026-10-04.md
-' Addendum.4a): the expected RUN_THE_TESTS result is 0 ("zero violations"),
-' not a hardcoded per-edition verse-count constant like Tests 82/83's
+' Addendum.4a): the expected RUN_THE_TESTS Result is 0 ("zero violations"),
+' not a hardcoded per-edition verse-Count constant like Tests 82/83's
 ' 31102 - this runs correctly against any future docm following the same
 ' CVM/VM/VerseText convention, no per-language code change needed.
 '

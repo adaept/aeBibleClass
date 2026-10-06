@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 91
+Private Const MaxTests = 92
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -303,8 +303,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -865,6 +865,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (89)
             RunTest (90)
             RunTest (91)
+            RunTest (92)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1165,6 +1166,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: no space immediately before closing punctuation (, . : ; ! ? or closing paren) anywhere in the document - formatting-consistency check, caught first as a recurring typo pattern during R15 WEBU review (Isaiah 36:1, 39:3) - CountSpaceBeforePunctuation should return 0"
     Case 91
         GetTestDescription = "Rule: every VerseText paragraph's parsed verse number matches an expected-next-verse counter that starts at 1 per chapter and increments after every verse (content-aware CVM/VM check, catching a stray/missing digit that Tests 82/83/87's presence-only checks cannot - see rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md) - CountSequentialVerseNumberViolations should return 0"
+    Case 92
+        GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Plain Text' style - found 2026-10-06 during the RadiantWordBible scripture-only export investigation (8 occurrences: 2 deliberate tab+CR vertical-space markers, 3 genuinely-bare Chr(13) paragraphs, 3 bare Chr(12) section-break-carrier paragraphs - none of these three kinds should ever carry 'Plain Text'; confirmed-correct style is 'BodyText' per the unaffected Exodus title-to-body boundary precedent) - CountPlainTextStyleParagraphs should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1429,6 +1432,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 91
         ResultArray(TestNum) = CountSequentialVerseNumberViolations
         m_HintArray(TestNum) = m_lastHint
+    Case 92
+        ResultArray(TestNum) = CountPlainTextStyleParagraphs
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1643,6 +1649,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSpaceBeforePunctuation"
     Case 91
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSequentialVerseNumberViolations"
+    Case 92
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPlainTextStyleParagraphs"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1860,6 +1868,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSpaceBeforePunctuation"
     Case 91
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSequentialVerseNumberViolations"
+    Case 92
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountPlainTextStyleParagraphs"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -3893,6 +3903,98 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
+'=========================================================================
+' Function: CountPlainTextStyleParagraphs  (Test 92)
+'
+' Rule: no paragraph anywhere carries the unapproved built-in "Plain Text"
+' style. Found 2026-10-06 during the RadiantWordBible scripture-only
+' export investigation - 8 occurrences, three kinds (none of which should
+' ever carry "Plain Text"): deliberate tab+CR vertical-space markers,
+' genuinely-bare Chr(13) paragraphs, and bare Chr(12) section-break-carrier
+' paragraphs. Confirmed-correct style is "BodyText", via direct precedent
+' at the unaffected Exodus title-to-body section boundary (same
+' three-paragraph pattern, all BodyText there).
+'
+' Mechanically a single forward Paragraphs walk comparing
+' Style.NameLocal - the fast idiom basVerseStructureAudit.GetMarkerTotals
+' documents as "proven fast, seconds" versus the Range.Find-by-style
+' anti-pattern ("correct but slow, 300-2700s" on this document's size).
+'
+' On any hit, writes one row to rpt\PlainTextStyleParagraphs.txt (page,
+' paragraph_idx, content char codes, prev/next paragraph style) so the
+' operator can navigate directly to each occurrence in Word - manual
+' fix only, per this project's standing docm-content convention; this
+' function never mutates the document.
+'=========================================================================
+Private Function CountPlainTextStyleParagraphs() As Long
+    On Error GoTo PROC_ERR
+
+    Const TARGET_STYLE As String = "Plain Text"
+    Dim para As Word.Paragraph
+    Dim Count As Long
+    Dim idx As Long
+    Dim folderPath As String
+    Dim finalPath As String
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim codesStr As String
+    Dim ch As Long
+    Dim txt As String
+    Dim prevStyle As String
+    Dim nextStyle As String
+
+    folderPath = ActiveDocument.Path & "\rpt"
+    If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
+    finalPath = folderPath & "\PlainTextStyleParagraphs.txt"
+    ' FSO.CreateTextFile, not "Open For Output" - avoids Err 55 ("File
+    ' already open") when a previous run leaked a handle or another
+    ' reader (WSL/editor/sync agent) holds an advisory share.
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(finalPath, True, False)
+    oStream.WriteLine "page" & vbTab & "paragraph_idx" & vbTab & "char_codes" & _
+                      vbTab & "prev_style" & vbTab & "next_style"
+
+    Count = 0
+    idx = 0
+    For Each para In ActiveDocument.Paragraphs
+        idx = idx + 1
+        If para.style.NameLocal = TARGET_STYLE Then
+            Count = Count + 1
+
+            txt = para.Range.Text
+            codesStr = ""
+            For ch = 1 To Len(txt)
+                If codesStr <> "" Then codesStr = codesStr & ","
+                codesStr = codesStr & AscW(Mid$(txt, ch, 1))
+            Next ch
+
+            prevStyle = ""
+            If idx > 1 Then prevStyle = ActiveDocument.Paragraphs(idx - 1).style.NameLocal
+            nextStyle = ""
+            If idx < ActiveDocument.Paragraphs.Count Then
+                nextStyle = ActiveDocument.Paragraphs(idx + 1).style.NameLocal
+            End If
+
+            oStream.WriteLine para.Range.Information(wdActiveEndPageNumber) & _
+                              vbTab & idx & vbTab & codesStr & _
+                              vbTab & prevStyle & vbTab & nextStyle
+        End If
+    Next para
+    oStream.Close
+
+    m_lastHint = Count & " paragraph(s) styled """ & TARGET_STYLE & _
+                 """ - see rpt\PlainTextStyleParagraphs.txt"
+    CountPlainTextStyleParagraphs = Count
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountPlainTextStyleParagraphs | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
 Private Function CountFooterParagraphsWithFooterStyle() As Long
     On Error GoTo PROC_ERR
 
@@ -5603,12 +5705,12 @@ End Function
 ' (feedback_class_encapsulation: stateless specs stay in modules) - the
 ' fifth CVM/VM integrity invariant, validating marker CONTENT (does every
 ' VerseText paragraph's parsed verse number match an expected-next-verse
-' counter, per chapter) rather than just presence/count like Tests
+' counter, per chapter) rather than just presence/Count like Tests
 ' 82/83/87. See rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md and
 ' rvw/Plan_cvm_content_validation_2026-10-04.md for the full design and
 ' why neither existing check could have caught the real defect that
 ' motivated this one. Expected = 0, deliberately not a hardcoded
-' per-edition verse count (see the plan's §4a) - i18n-ready by
+' per-edition verse Count (see the plan's §4a) - i18n-ready by
 ' construction.
 '=========================================================================
 Private Function CountSequentialVerseNumberViolations() As Long
