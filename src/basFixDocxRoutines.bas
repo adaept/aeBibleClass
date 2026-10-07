@@ -738,10 +738,26 @@ Public Sub ReplaceNormalWithBodyText()
         GoTo PROC_EXIT
     End If
 
-    ' Count exact Normal paragraphs (NameLocal match - child styles excluded)
+    ' Count exact Normal paragraphs (NameLocal match - child styles excluded).
+    ' Two-pass by design (collect positions here, read-only; mutate from
+    ' that captured list below) - confirmed 2026-10-07 that mutating
+    ' oPara.style inside the SAME live For Each used to Count/replace in
+    ' one pass can desync Word's Paragraphs enumerator mid-walk and
+    ' silently skip paragraphs (this left 2 of the true total unconverted
+    ' while still reporting a clean "N replaced"). Same mandatory two-pass
+    ' discipline basBibleOnlyExport.Pass3_ParagraphSweep already uses for
+    ' deletions - style changes don't alter text length, so no reverse
+    ' ordering is needed here, just collect-then-mutate separately.
+    Dim starts() As Long
+    Dim cap As Long
+    cap = oDoc.Content.Paragraphs.Count
+    ReDim starts(1 To cap)
     lBefore = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Normal" Then lBefore = lBefore + 1
+        If oPara.style.NameLocal = "Normal" Then
+            lBefore = lBefore + 1
+            starts(lBefore) = oPara.Range.Start
+        End If
     Next oPara
 
     If lBefore = 0 Then
@@ -756,17 +772,45 @@ Public Sub ReplaceNormalWithBodyText()
                        "ReplaceNormalWithBodyText")
     If lResponse = vbNo Then GoTo PROC_EXIT
 
-    ' Iterate and replace - exact NameLocal match only
+    ' Replace from the captured position list, not a live re-walk.
+    ' Range(starts(i), starts(i)) is a COLLAPSED, zero-length range sitting
+    ' exactly at the boundary between the previous paragraph's end and this
+    ' one's start - Word's .Paragraphs(1) on a collapsed boundary range can
+    ' resolve to either side, not reliably "the paragraph that starts here"
+    ' (confirmed 2026-10-07: this is why the two-pass version still left 2
+    ' paragraphs unconverted despite lReplaced incrementing cleanly for
+    ' both). Spanning one real character - starts(i)+1, i.e. the paragraph's
+    ' own terminating mark for a genuinely empty paragraph - makes the range
+    ' unambiguously belong to the target paragraph.
     lReplaced = 0
-    For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Normal" Then
-            oPara.style = oDoc.Styles("BodyText")
-            lReplaced = lReplaced + 1
-        End If
-    Next oPara
+    Dim i As Long
+    Dim oRng As Word.Range
+    For i = 1 To lBefore
+        Set oRng = oDoc.Range(starts(i), starts(i) + 1)
+        oRng.Paragraphs(1).style = oDoc.Styles("BodyText")
+        lReplaced = lReplaced + 1
+    Next i
 
-    Debug.Print "ReplaceNormalWithBodyText: " & lReplaced & " replaced."
-    MsgBox "Done. " & lReplaced & " paragraphs changed from Normal to BodyText.", _
+    ' Verify in place, don't just trust lReplaced - a style assignment that
+    ' silently lands on the wrong paragraph (the exact failure mode this
+    ' function hit twice already, 2026-10-07) still increments the counter
+    ' cleanly, so re-check every originally-captured position directly.
+    Dim lStillNormal As Long
+    lStillNormal = 0
+    For i = 1 To lBefore
+        Set oRng = oDoc.Range(starts(i), starts(i) + 1)
+        If oRng.Paragraphs(1).style.NameLocal = "Normal" Then
+            lStillNormal = lStillNormal + 1
+            Debug.Print "ReplaceNormalWithBodyText: VERIFY FAILED - still ""Normal"" at " & _
+                "Range.Start=" & starts(i)
+        End If
+    Next i
+
+    Debug.Print "ReplaceNormalWithBodyText: " & lReplaced & " replaced; " & _
+        lStillNormal & " still ""Normal"" after verification (expected 0)."
+    MsgBox "Done. " & lReplaced & " paragraphs changed from Normal to BodyText." & vbCrLf & _
+           IIf(lStillNormal = 0, "Verified: 0 remain ""Normal"".", _
+               "VERIFY FAILED: " & lStillNormal & " still ""Normal"" - see Immediate window."), _
            vbInformation, "ReplaceNormalWithBodyText"
 
 PROC_EXIT:

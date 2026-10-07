@@ -225,6 +225,32 @@ before the `FargleBlargle` canary. Replaced operationally by
 verses); retained in the array as a "pin-everything-else-above"
 anchor.
 
+**Known exception, confirmed 2026-10-07 — 2 instances of `Normal` cannot
+be removed.** `RUN_THE_TESTS(93)` (`CountNormalStyleParagraphs`) expects
+exactly **2**, not 0. The document has exactly two Bible Index tables
+(Old Testament, New Testament), sitting directly adjacent to each other.
+Word requires a paragraph between/after adjacent tables to keep them from
+visually merging, and that specific paragraph's style cannot be changed
+away from `Normal` by any means tried: direct VBA (`Paragraph.Style = ...`),
+an isolated single-line Immediate-window repro, or the Word UI's Styles
+pane directly. Confirmed not a coding bug and not document protection
+(`ActiveDocument.ProtectionType = -1`, i.e. no protection active) and not
+a leftover floating-shape anchor (`ActiveDocument.Shapes` enumerated,
+none anchored near either position). Diagnostic signature: for the
+paragraph's 1-character `Range`, `Information(wdWithInTable) = True` but
+`.Cells.Count = 0` and `.Tables(1).Range.End` matches the range's own
+`End` exactly — i.e. this is the paragraph Word appends immediately after
+a table (part of `Table.Range` by convention) rather than real cell
+content, which is why it behaves specially.
+
+**Caveat for future table-layout changes**: the expected value of 2 is
+tied to "exactly 2 Index tables, adjacent" in the current document. If a
+future edit changes the number or adjacency of tables (e.g. a
+RadiantWordBible-style regeneration that rebuilds the Index), this count
+could legitimately change for non-regression reasons — re-diagnose rather
+than assuming drift if `RUN_THE_TESTS(93)` ever reports a different
+nonzero number.
+
 ## QA checklist for every approved style
 
 These four properties should default as below for almost every

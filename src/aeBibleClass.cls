@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 92
+Private Const MaxTests = 93
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -303,8 +303,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 42, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -866,6 +866,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (90)
             RunTest (91)
             RunTest (92)
+            RunTest (93)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1168,6 +1169,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: every VerseText paragraph's parsed verse number matches an expected-next-verse counter that starts at 1 per chapter and increments after every verse (content-aware CVM/VM check, catching a stray/missing digit that Tests 82/83/87's presence-only checks cannot - see rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md) - CountSequentialVerseNumberViolations should return 0"
     Case 92
         GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Plain Text' style - found 2026-10-06 during the RadiantWordBible scripture-only export investigation (8 occurrences: 2 deliberate tab+CR vertical-space markers, 3 genuinely-bare Chr(13) paragraphs, 3 bare Chr(12) section-break-carrier paragraphs - none of these three kinds should ever carry 'Plain Text'). Correct replacement style is context-dependent, not universal: 'BodyText' where the paragraph is literally part of a section-break mechanic (confirmed via the unaffected Exodus title-to-body boundary precedent); 'BodyTextTopLineCPBB' where it's a spacer immediately before a major heading without itself being a section break (confirmed live on 3 of the 8 occurrences) - CountPlainTextStyleParagraphs should return 0"
+    Case 93
+        GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Normal' style, EXCEPT 2 confirmed-structural exceptions - found 2026-10-07 during the RadiantWordBible scripture-only export's Pass 3 (originally 3 occurrences; 1 was a genuine residual, fixed via basFixDocxRoutines.ReplaceNormalWithBodyText; the other 2, at the paragraph Word requires between/after the document's two adjacent Bible Index tables, cannot be restyled away from 'Normal' by any means tried - VBA, Immediate-window repro, or the Word UI directly - see EDSG/01-styles.md 'Known exception, confirmed 2026-10-07'). Expected value is 2, not 0 - re-diagnose rather than assume regression if this Count changes, since it's tied to the current 2-adjacent-tables layout - CountNormalStyleParagraphs should return 2"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1435,6 +1438,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 92
         ResultArray(TestNum) = CountPlainTextStyleParagraphs
         m_HintArray(TestNum) = m_lastHint
+    Case 93
+        ResultArray(TestNum) = CountNormalStyleParagraphs
+        m_HintArray(TestNum) = m_lastHint
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1651,6 +1657,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountSequentialVerseNumberViolations"
     Case 92
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPlainTextStyleParagraphs"
+    Case 93
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNormalStyleParagraphs"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1870,6 +1878,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountSequentialVerseNumberViolations"
     Case 92
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountPlainTextStyleParagraphs"
+    Case 93
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNormalStyleParagraphs"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
@@ -4021,6 +4031,139 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Debug.Print "ERROR in aeBibleClass.CountPlainTextStyleParagraphs | Erl: " & Erl _
+        & " | Err: " & Err.Number & " | " & Err.Description
+    m_lastFuncError = True
+    Resume PROC_EXIT
+End Function
+
+'=========================================================================
+' Function: CountNormalStyleParagraphs  (Test 93)
+'
+' Rule: no paragraph anywhere carries the unapproved built-in "Normal"
+' style, EXCEPT 2 confirmed-structural exceptions - expected value is 2,
+' not 0. Found 2026-10-07 during the RadiantWordBible scripture-only
+' export's Pass 3 - originally 3 occurrences, surfaced one at a time
+' since Pass 3 halts immediately on the first unclassified style it
+' meets. 1 was a genuine residual (fixed via
+' basFixDocxRoutines.ReplaceNormalWithBodyText, migrating it to
+' "BodyText"). The other 2 are the paragraphs Word requires between/after
+' the document's two adjacent Bible Index tables (Old Testament, New
+' Testament) - confirmed, exhaustively, that their style cannot be
+' changed away from "Normal" by direct VBA, an isolated Immediate-window
+' repro, or the Word UI's Styles pane. Not a coding bug: ruled out
+' document protection (ActiveDocument.ProtectionType = -1) and leftover
+' floating-shape anchors (none found near either position). See
+' EDSG/01-styles.md "Known exception, confirmed 2026-10-07" for the full
+' diagnostic trail. This is a regression test, not a new fix mechanism:
+' it exists so a THIRD (or more) occurrence stops being a silent
+' export-blocking surprise and starts being something RUN_THE_TESTS
+' catches on its own, in both the original docm and any derived/forked
+' edition that inherits this same test dispatcher. Re-diagnose rather
+' than assume regression if this Count ever changes - it's tied to the
+' current 2-adjacent-tables layout, which a future table-structure change
+' (e.g. a RadiantWordBible-style Index regeneration) could legitimately
+' alter.
+'
+' Mechanically identical to CountPlainTextStyleParagraphs (Test 92) - a
+' single forward Paragraphs walk comparing Style.NameLocal (the fast
+' idiom basVerseStructureAudit.GetMarkerTotals documents as "proven
+' fast, seconds" versus the Range.Find-by-style anti-pattern). On any
+' hit, writes one row to rpt\NormalStyleParagraphs.txt (page,
+' paragraph_idx, content char codes, prev/next paragraph style and a
+' trimmed text snippet of each neighbor) and selects the FIRST remaining
+' occurrence directly in Word (Range.Select) on every run, matching this
+' class's established "jump to first hit" pattern. Manual fix only
+' (ReplaceNormalWithBodyText, run by the operator against the original
+' docm); this function never mutates the document.
+'=========================================================================
+Private Function CountNormalStyleParagraphs() As Long
+    On Error GoTo PROC_ERR
+
+    Const TARGET_STYLE As String = "Normal"
+    Const SNIPPET_LEN As Long = 40
+    Dim para As Word.Paragraph
+    Dim Count As Long
+    Dim idx As Long
+    Dim folderPath As String
+    Dim finalPath As String
+    Dim oFSO As Object
+    Dim oStream As Object
+    Dim codesStr As String
+    Dim ch As Long
+    Dim txt As String
+    Dim prevStyle As String
+    Dim nextStyle As String
+    Dim prevSnippet As String
+    Dim nextSnippet As String
+    Dim foundFirst As Boolean
+
+    folderPath = ActiveDocument.Path & "\rpt"
+    If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
+    finalPath = folderPath & "\NormalStyleParagraphs.txt"
+    ' FSO.CreateTextFile, not "Open For Output" - avoids Err 55 ("File
+    ' already open") when a previous run leaked a handle or another
+    ' reader (WSL/editor/sync agent) holds an advisory share.
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(finalPath, True, False)
+    oStream.WriteLine "page" & vbTab & "paragraph_idx" & vbTab & "char_codes" & _
+                      vbTab & "prev_style" & vbTab & "prev_snippet" & _
+                      vbTab & "next_style" & vbTab & "next_snippet"
+
+    Count = 0
+    idx = 0
+    foundFirst = False
+    For Each para In ActiveDocument.Paragraphs
+        idx = idx + 1
+        If para.style.NameLocal = TARGET_STYLE Then
+            Count = Count + 1
+
+            txt = para.Range.Text
+            codesStr = ""
+            For ch = 1 To Len(txt)
+                If codesStr <> "" Then codesStr = codesStr & ","
+                codesStr = codesStr & AscW(Mid$(txt, ch, 1))
+            Next ch
+
+            prevStyle = ""
+            prevSnippet = ""
+            If idx > 1 Then
+                prevStyle = ActiveDocument.Paragraphs(idx - 1).style.NameLocal
+                prevSnippet = Left$(ActiveDocument.Paragraphs(idx - 1).Range.Text, SNIPPET_LEN)
+                prevSnippet = Replace(Replace(Replace(prevSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
+                prevSnippet = RTrim$(prevSnippet)
+            End If
+            nextStyle = ""
+            nextSnippet = ""
+            If idx < ActiveDocument.Paragraphs.Count Then
+                nextStyle = ActiveDocument.Paragraphs(idx + 1).style.NameLocal
+                nextSnippet = Left$(ActiveDocument.Paragraphs(idx + 1).Range.Text, SNIPPET_LEN)
+                nextSnippet = Replace(Replace(Replace(nextSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
+                nextSnippet = RTrim$(nextSnippet)
+            End If
+
+            oStream.WriteLine para.Range.Information(wdActiveEndPageNumber) & _
+                              vbTab & idx & vbTab & codesStr & _
+                              vbTab & prevStyle & vbTab & prevSnippet & _
+                              vbTab & nextStyle & vbTab & nextSnippet
+
+            If Not foundFirst Then
+                para.Range.Select
+                foundFirst = True
+            End If
+        End If
+    Next para
+    oStream.Close
+
+    m_lastHint = Count & " paragraph(s) styled """ & TARGET_STYLE & _
+                 """ - first occurrence now selected in Word. Run " & _
+                 "ReplaceNormalWithBodyText (basFixDocxRoutines.bas) to fix, then re-run " & _
+                 "RUN_THE_TESTS(93); see also rpt\NormalStyleParagraphs.txt"
+    CountNormalStyleParagraphs = Count
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in aeBibleClass.CountNormalStyleParagraphs | Erl: " & Erl _
         & " | Err: " & Err.Number & " | " & Err.Description
     m_lastFuncError = True
     Resume PROC_EXIT

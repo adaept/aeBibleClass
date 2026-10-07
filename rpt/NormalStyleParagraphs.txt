@@ -1,0 +1,3 @@
+page	paragraph_idx	char_codes	prev_style	prev_snippet	next_style	next_snippet
+9	85	13,7	BodyText	 	BodyText	
+9	117	13,7	BodyText	 	BodyText	
