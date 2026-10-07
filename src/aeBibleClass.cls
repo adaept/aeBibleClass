@@ -1167,7 +1167,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 91
         GetTestDescription = "Rule: every VerseText paragraph's parsed verse number matches an expected-next-verse counter that starts at 1 per chapter and increments after every verse (content-aware CVM/VM check, catching a stray/missing digit that Tests 82/83/87's presence-only checks cannot - see rvw/Bug_jeremiah_37_10_stray_cvm_marker_2026-10-04.md) - CountSequentialVerseNumberViolations should return 0"
     Case 92
-        GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Plain Text' style - found 2026-10-06 during the RadiantWordBible scripture-only export investigation (8 occurrences: 2 deliberate tab+CR vertical-space markers, 3 genuinely-bare Chr(13) paragraphs, 3 bare Chr(12) section-break-carrier paragraphs - none of these three kinds should ever carry 'Plain Text'; confirmed-correct style is 'BodyText' per the unaffected Exodus title-to-body boundary precedent) - CountPlainTextStyleParagraphs should return 0"
+        GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Plain Text' style - found 2026-10-06 during the RadiantWordBible scripture-only export investigation (8 occurrences: 2 deliberate tab+CR vertical-space markers, 3 genuinely-bare Chr(13) paragraphs, 3 bare Chr(12) section-break-carrier paragraphs - none of these three kinds should ever carry 'Plain Text'). Correct replacement style is context-dependent, not universal: 'BodyText' where the paragraph is literally part of a section-break mechanic (confirmed via the unaffected Exodus title-to-body boundary precedent); 'BodyTextTopLineCPBB' where it's a spacer immediately before a major heading without itself being a section break (confirmed live on 3 of the 8 occurrences) - CountPlainTextStyleParagraphs should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -3921,8 +3921,16 @@ End Function
 ' anti-pattern ("correct but slow, 300-2700s" on this document's size).
 '
 ' On any hit, writes one row to rpt\PlainTextStyleParagraphs.txt (page,
-' paragraph_idx, content char codes, prev/next paragraph style) so the
-' operator can navigate directly to each occurrence in Word - manual
+' paragraph_idx, content char codes, prev/next paragraph style AND a
+' trimmed text snippet of each neighbor) so the operator can Ctrl+F the
+' snippet text and land right next to an otherwise-invisible target -
+' page number alone proved unreliable 2026-10-06 (style fixes upstream
+' shift pagination for everything after them, and these paragraphs have
+' no visible glyph to spot even on the right page). Also selects the
+' FIRST remaining occurrence directly in Word (Range.Select) on every
+' run, matching this class's established "jump to first hit" pattern
+' (see CountParagraphMarks_ArialBlack/_ArialBlackDarkRed) - the most
+' reliable navigation aid, since it needs no searching at all. Manual
 ' fix only, per this project's standing docm-content convention; this
 ' function never mutates the document.
 '=========================================================================
@@ -3930,6 +3938,7 @@ Private Function CountPlainTextStyleParagraphs() As Long
     On Error GoTo PROC_ERR
 
     Const TARGET_STYLE As String = "Plain Text"
+    Const SNIPPET_LEN As Long = 40
     Dim para As Word.Paragraph
     Dim Count As Long
     Dim idx As Long
@@ -3942,6 +3951,9 @@ Private Function CountPlainTextStyleParagraphs() As Long
     Dim txt As String
     Dim prevStyle As String
     Dim nextStyle As String
+    Dim prevSnippet As String
+    Dim nextSnippet As String
+    Dim foundFirst As Boolean
 
     folderPath = ActiveDocument.Path & "\rpt"
     If Dir(folderPath, vbDirectory) = "" Then MkDir folderPath
@@ -3952,10 +3964,12 @@ Private Function CountPlainTextStyleParagraphs() As Long
     Set oFSO = CreateObject("Scripting.FileSystemObject")
     Set oStream = oFSO.CreateTextFile(finalPath, True, False)
     oStream.WriteLine "page" & vbTab & "paragraph_idx" & vbTab & "char_codes" & _
-                      vbTab & "prev_style" & vbTab & "next_style"
+                      vbTab & "prev_style" & vbTab & "prev_snippet" & _
+                      vbTab & "next_style" & vbTab & "next_snippet"
 
     Count = 0
     idx = 0
+    foundFirst = False
     For Each para In ActiveDocument.Paragraphs
         idx = idx + 1
         If para.style.NameLocal = TARGET_STYLE Then
@@ -3969,21 +3983,38 @@ Private Function CountPlainTextStyleParagraphs() As Long
             Next ch
 
             prevStyle = ""
-            If idx > 1 Then prevStyle = ActiveDocument.Paragraphs(idx - 1).style.NameLocal
+            prevSnippet = ""
+            If idx > 1 Then
+                prevStyle = ActiveDocument.Paragraphs(idx - 1).style.NameLocal
+                prevSnippet = Left$(ActiveDocument.Paragraphs(idx - 1).Range.Text, SNIPPET_LEN)
+                prevSnippet = Replace(Replace(Replace(prevSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
+                prevSnippet = RTrim$(prevSnippet)
+            End If
             nextStyle = ""
+            nextSnippet = ""
             If idx < ActiveDocument.Paragraphs.Count Then
                 nextStyle = ActiveDocument.Paragraphs(idx + 1).style.NameLocal
+                nextSnippet = Left$(ActiveDocument.Paragraphs(idx + 1).Range.Text, SNIPPET_LEN)
+                nextSnippet = Replace(Replace(Replace(nextSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
+                nextSnippet = RTrim$(nextSnippet)
             End If
 
             oStream.WriteLine para.Range.Information(wdActiveEndPageNumber) & _
                               vbTab & idx & vbTab & codesStr & _
-                              vbTab & prevStyle & vbTab & nextStyle
+                              vbTab & prevStyle & vbTab & prevSnippet & _
+                              vbTab & nextStyle & vbTab & nextSnippet
+
+            If Not foundFirst Then
+                para.Range.Select
+                foundFirst = True
+            End If
         End If
     Next para
     oStream.Close
 
     m_lastHint = Count & " paragraph(s) styled """ & TARGET_STYLE & _
-                 """ - see rpt\PlainTextStyleParagraphs.txt"
+                 """ - first occurrence now selected in Word; see also " & _
+                 "rpt\PlainTextStyleParagraphs.txt"
     CountPlainTextStyleParagraphs = Count
 
 PROC_EXIT:

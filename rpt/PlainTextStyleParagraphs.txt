@@ -1,9 +1,1 @@
-page	paragraph_idx	char_codes	prev_style	next_style
-10	119	9,13	BodyText	Introduction
-25	325	9,13	AuthorBookSections	TitleOnePage
-25	329	13	Title	Plain Text
-25	330	12	Plain Text	Heading 1
-26	340	13	BodyText	Plain Text
-26	341	12	Plain Text	Heading 2
-934	33648	13	AuthorListItemTab	Plain Text
-934	33649	12	Plain Text	BodyTextTopLineCPBB
+page	paragraph_idx	char_codes	prev_style	prev_snippet	next_style	next_snippet
