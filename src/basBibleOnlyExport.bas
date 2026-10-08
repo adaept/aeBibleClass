@@ -247,6 +247,19 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         GoTo PROC_HALT
     End If
 
+    ' Pass 4b - settings-driven cleanup (v1.0: manual hyphen removal)
+    Dim oSettings As Object
+    Set oSettings = GetExportSettings()
+    If oSettings("StripOptionalHyphens") Then
+        Dim hyphensLeft As Long
+        hyphensLeft = Pass4b_StripOptionalHyphens(oDoc)
+        If hyphensLeft <> 0 Then
+            HaltExport "Pass4b_StripOptionalHyphens", _
+                hyphensLeft & " optional hyphen(s) remain after removal"
+            GoTo PROC_HALT
+        End If
+    End If
+
     ' Pass 5 - section surgery
     Pass5_SectionSurgery oDoc, preDeleteSectionCount
     If m_haltFired Then GoTo PROC_HALT
@@ -404,12 +417,36 @@ Private Sub Pass3_ParagraphSweep(ByVal oDoc As Object)
 
     Dim i As Long
     Dim oRng As Object
+    Dim nCarriers As Long
     For i = nDelete To 1 Step -1
         Set oRng = oDoc.Range(deleteStarts(i), deleteEnds(i))
-        oRng.Delete
+        ' A paragraph that carries a section break ends in Chr(12), not a
+        ' paragraph mark. Deleting it would merge the section into its
+        ' neighbour (v1.0 review: 144 of 145 breaks sit in BodyText
+        ' paragraphs). Delete the text only and keep the break; Pass 5
+        ' removes the 12 STRIP-only sections explicitly.
+        If Right$(oRng.Text, 1) = Chr(12) Then
+            nCarriers = nCarriers + 1
+            oRng.End = oRng.End - 1
+            If oRng.End > oRng.Start Then oRng.Delete
+        Else
+            oRng.Delete
+        End If
     Next i
 
-    Debug.Print "Pass3_ParagraphSweep: deleted " & nDelete & " STRIP-style paragraph(s); " & _
+    ' Word never lets the final paragraph mark be deleted, so an empty STRIP-style
+    ' final paragraph survives the sweep. It is not scripture: give it BodyText,
+    ' the default outside scripture (operator decision, 2026-10-07).
+    Dim oLast As Object
+    Set oLast = oDoc.Paragraphs.Last
+    If oLast.Range.Text = vbCr Then
+        If stripDict.Exists(oLast.style.NameLocal) And oLast.style.NameLocal <> "BodyText" Then
+            oLast.style = oDoc.Styles("BodyText")
+        End If
+    End If
+
+    Debug.Print "Pass3_ParagraphSweep: deleted " & nDelete & " STRIP-style paragraph(s) (" & _
+        nCarriers & " section-break carriers kept as break-only); " & _
         nTbl & " Index table(s) and their contents preserved."
 End Sub
 
@@ -435,6 +472,15 @@ Public Function VerifyScriptureOnlyStrip(ByVal oDoc As Object) As Long
     Dim stripDict As Object
     Set stripDict = BuildStripDict()
 
+    ' Same table-membership exemption as Pass3_ParagraphSweep: the Bible Index
+    ' tables' structural spacer paragraphs may legitimately keep a STRIP style.
+    Dim tblStarts() As Long
+    Dim tblEnds() As Long
+    Dim nTbl As Long
+    Dim k As Long
+    Dim inIndexTable As Boolean
+    BuildIndexTableRanges oDoc, tblStarts, tblEnds, nTbl
+
     Dim violations As Long
     Dim rng As Object
     Dim para As Object
@@ -447,7 +493,26 @@ Public Function VerifyScriptureOnlyStrip(ByVal oDoc As Object) As Long
         Do
             For Each para In rng.Paragraphs
                 StyleName = para.style.NameLocal
-                If stripDict.Exists(StyleName) Then
+                inIndexTable = False
+                If rng.StoryType = wdMainTextStory Then
+                    For k = 1 To nTbl
+                        If para.Range.Start >= tblStarts(k) And para.Range.Start < tblEnds(k) Then
+                            inIndexTable = True
+                            Exit For
+                        End If
+                    Next k
+                End If
+                ' The final empty paragraph mark cannot be deleted; Pass 3 sets it to
+                ' BodyText, so exempt exactly that one paragraph here.
+                If rng.StoryType = wdMainTextStory And StyleName = "BodyText" Then
+                    If para.Range.End = oDoc.Content.End And para.Range.Text = vbCr Then inIndexTable = True
+                End If
+                ' Break-only carrier paragraphs (Pass 3 keeps the section break) are
+                ' exempt; Pass 5 removes the ones in STRIP-only sections.
+                If para.Range.End - para.Range.Start = 1 Then
+                    If Right$(para.Range.Text, 1) = Chr(12) Then inIndexTable = True
+                End If
+                If stripDict.Exists(StyleName) And Not inIndexTable Then
                     violations = violations + 1
                     sOut = sOut & "STRIP-style survivor: """ & StyleName & """ at Range.Start=" & _
                         para.Range.Start & " | Excerpt: """ & _
@@ -494,12 +559,11 @@ End Function
 ' ==========================================================================
 ' Confirmed by code search: nothing in this codebase deletes or merges a
 ' Section today - this is genuinely new, unproven mechanics (see the plan
-' Doc). Rather than performing section deletion directly, this pass
-' RELIES on Pass 3's paragraph deletion having already collapsed the
-' fully-STRIP section blocks as a side effect (deleting every paragraph
-' in a section, including whichever one carries that section's own
-' section-break character, merges it into its neighbour) - and then
-' VERIFIES that happened exactly as expected before trusting it.
+' Doc). REVISED 2026-10-07: the original design relied on Pass 3 collapsing
+' the STRIP-only sections as a side effect. That was wrong - 144 of the 145
+' section breaks sit in BodyText (STRIP) paragraphs, so Pass 3 collapsed
+' 145 sections to 1. Pass 3 now keeps every section break (break-only
+' paragraphs) and this pass deletes the 12 STRIP-only sections explicitly.
 '
 ' Per Task A/B (2026-10-07): the removable blocks are sections 1-4 (front
 ' matter MINUS Section 5, which survives because it also hosts the Bible
@@ -521,27 +585,100 @@ End Function
 ' regardless of the restart scheme in effect.
 ' ==========================================================================
 Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCount As Long)
+    ' Pass 3 now keeps every section break (break-only carrier paragraphs),
+    ' so the Count must be unchanged. The 12 STRIP-only sections are then
+    ' removed explicitly, last block first so earlier indexes stay valid.
+    ' Section numbers come from the Pass 0b map of this docm (145 sections).
+    Const EXPECTED_SECTIONS As Long = 145
     Const EXPECTED_SECTIONS_REMOVED As Long = 12
 
-    Dim postCount As Long
-    postCount = oDoc.Sections.Count
-
-    If preDeleteSectionCount - postCount <> EXPECTED_SECTIONS_REMOVED Then
+    If preDeleteSectionCount <> EXPECTED_SECTIONS Or oDoc.Sections.Count <> EXPECTED_SECTIONS Then
         HaltExport "Pass5_SectionSurgery", _
-            "Section Count changed by " & (preDeleteSectionCount - postCount) & _
-            " during Pass 3's deletion (before=" & preDeleteSectionCount & _
-            ", after=" & postCount & "), expected exactly " & EXPECTED_SECTIONS_REMOVED & _
-            ". Word's section-merge behavior on paragraph deletion is unverified in " & _
-            "this codebase - do not trust it silently. Inspect the duplicate before " & _
-            "proceeding; this is the plan's own flagged highest-risk, no-precedent step."
+            "Section Count is " & preDeleteSectionCount & " before / " & oDoc.Sections.Count & _
+            " after Pass 3, expected " & EXPECTED_SECTIONS & " both times. The section map " & _
+            "(1-4, 84-85, 140-145) no longer applies - re-map before proceeding."
         Exit Sub
     End If
 
-    oDoc.Sections(1).Headers(wdHeaderFooterPrimary).LinkToPrevious = False
-    oDoc.Sections(1).Footers(wdHeaderFooterPrimary).LinkToPrevious = False
+    ' Safety: none of the target sections may hold a KEEP-style paragraph.
+    Dim keepDict As Object
+    Set keepDict = BuildKeepDict()
+    Dim blkFirst As Variant
+    Dim blkLast As Variant
+    blkFirst = Array(1, 84, 140)
+    blkLast = Array(4, 85, 145)
+    Dim b As Long
+    Dim s As Long
+    Dim oPara As Object
+    For b = 0 To 2
+        For s = blkFirst(b) To blkLast(b)
+            For Each oPara In oDoc.Sections(s).Range.Paragraphs
+                If keepDict.Exists(oPara.style.NameLocal) Then
+                    HaltExport "Pass5_SectionSurgery", _
+                        "Section " & s & " (slated for removal) holds a KEEP-style paragraph """ & _
+                        oPara.style.NameLocal & """ at Range.Start=" & oPara.Range.Start
+                    Exit Sub
+                End If
+            Next oPara
+        Next s
+    Next b
 
-    Debug.Print "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections collapsed (" & _
-        preDeleteSectionCount & " -> " & postCount & "); Section(1) link-to-previous cleared."
+    ' Back matter 140-145. The document's last paragraph mark and final
+    ' sectPr cannot be deleted, so delete from the section-139 break
+    ' through the end; 139 then takes the final section's setup, which is
+    ' first overwritten with 139's own page setup.
+    CopySectionPageSetup oDoc.Sections(139), oDoc.Sections(145)
+    Dim oRng As Object
+    Set oRng = oDoc.Range(oDoc.Sections(139).Range.End - 1, oDoc.Content.End - 1)
+    oRng.Delete
+    ' Historical Parallels Chart 84-85
+    Set oRng = oDoc.Range(oDoc.Sections(84).Range.Start, oDoc.Sections(85).Range.End)
+    oRng.Delete
+    ' Front matter 1-4 (Section 5 survives: it hosts the Bible Index tables)
+    Set oRng = oDoc.Range(oDoc.Sections(1).Range.Start, oDoc.Sections(4).Range.End)
+    oRng.Delete
+
+    Dim postCount As Long
+    postCount = oDoc.Sections.Count
+    If preDeleteSectionCount - postCount <> EXPECTED_SECTIONS_REMOVED Then
+        HaltExport "Pass5_SectionSurgery", _
+            "Section Count went " & preDeleteSectionCount & " -> " & postCount & _
+            ", expected exactly " & EXPECTED_SECTIONS_REMOVED & " removed. Inspect the duplicate."
+        Exit Sub
+    End If
+
+    Debug.Print "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections removed (" & _
+        preDeleteSectionCount & " -> " & postCount & ")."
+End Sub
+
+' ==========================================================================
+' CopySectionPageSetup
+' ==========================================================================
+' Copies the page-setup properties that matter here from one Section to
+' another. Headers and footers are NOT copied (plan task 4).
+' ==========================================================================
+Private Sub CopySectionPageSetup(ByVal src As Object, ByVal dst As Object)
+    Dim ps As Object
+    Dim pd As Object
+    Set ps = src.PageSetup
+    Set pd = dst.PageSetup
+    pd.Orientation = ps.Orientation
+    pd.pageWidth = ps.pageWidth
+    pd.PageHeight = ps.PageHeight
+    pd.TopMargin = ps.TopMargin
+    pd.BottomMargin = ps.BottomMargin
+    pd.leftMargin = ps.leftMargin
+    pd.rightMargin = ps.rightMargin
+    pd.gutter = ps.gutter
+    pd.HeaderDistance = ps.HeaderDistance
+    pd.FooterDistance = ps.FooterDistance
+    pd.SectionStart = ps.SectionStart
+    pd.DifferentFirstPageHeaderFooter = ps.DifferentFirstPageHeaderFooter
+    pd.OddAndEvenPagesHeaderFooter = ps.OddAndEvenPagesHeaderFooter
+    pd.TextColumns.SetCount ps.TextColumns.Count
+    pd.TextColumns.EvenlySpaced = ps.TextColumns.EvenlySpaced
+    pd.TextColumns.LineBetween = ps.TextColumns.LineBetween
+    If ps.TextColumns.EvenlySpaced Then pd.TextColumns.Spacing = ps.TextColumns.Spacing
 End Sub
 
 ' ==========================================================================
@@ -919,3 +1056,79 @@ Private Sub HaltExport(ByVal passName As String, ByVal reason As String)
     Debug.Print reason
     m_haltFired = True
 End Sub
+
+' ==========================================================================
+' GetExportSettings
+' ==========================================================================
+' Single parameter table for the export (plan Doc, v1.0 review finding 8).
+' Late-bound Scripting.Dictionary. Defaults reproduce the v1.0 baseline.
+' Only keys that a pass actually reads are defined - add a key in the same
+' change that adds the pass that uses it.
+' ==========================================================================
+Public Function GetExportSettings() As Object
+    Dim d As Object
+    Set d = CreateObject("Scripting.Dictionary")
+    d.CompareMode = 1
+    d("ExportVersion") = "1.0"
+    ' Remove manual (optional) hyphens and turn off automatic hyphenation.
+    d("StripOptionalHyphens") = True
+    Set GetExportSettings = d
+End Function
+
+' ==========================================================================
+' Pass4b_StripOptionalHyphens
+' ==========================================================================
+' Deletes every manual optional hyphen (Word "^-", Chr(31)) from the main
+' story and turns off automatic hyphenation. Real hyphens and non-breaking
+' hyphens are left alone. Returns the number of optional hyphens still
+' present afterwards (expected 0). Must run before any pagination-dependent
+' pass (Pass 6/8): removal changes line breaks.
+' ==========================================================================
+Private Function Pass4b_StripOptionalHyphens(ByVal oDoc As Object) As Long
+    On Error GoTo PROC_ERR
+
+    Dim oRng As Object
+    Dim removed As Long
+
+    Set oRng = oDoc.Content
+    With oRng.Find
+        .ClearFormatting
+        .Replacement.ClearFormatting
+        .Text = "^-"
+        .Replacement.Text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = False
+        .Execute Replace:=wdReplaceAll
+    End With
+
+    oDoc.AutoHyphenation = False
+
+    ' Verify: Count survivors
+    Dim remaining As Long
+    Set oRng = oDoc.Content
+    With oRng.Find
+        .ClearFormatting
+        .Text = "^-"
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchWildcards = False
+        Do While .Execute
+            remaining = remaining + 1
+            oRng.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    Debug.Print "Pass4b_StripOptionalHyphens: remaining=" & remaining & _
+        ", AutoHyphenation=" & oDoc.AutoHyphenation
+    Pass4b_StripOptionalHyphens = remaining
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in basBibleOnlyExport.Pass4b_StripOptionalHyphens | Erl: " & Erl & _
+        " | Err: " & Err.Number & " | " & Err.Description
+    Pass4b_StripOptionalHyphens = -1
+    Resume PROC_EXIT
+End Function

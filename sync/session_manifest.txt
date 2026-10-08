@@ -4118,3 +4118,23 @@ later**. Researched and wrote up as a 7-section plan doc, covering:
      separately -- Pass 4/8 are text-only checks and can't see
      section-surgery visual corruption.
 ===============================================================================
+SESSION 2026-10-07 (RadiantWordBible v1.0 review) -- src/basBibleOnlyExport.bas
+  - Added GetExportSettings (parameter table) and Pass4b_StripOptionalHyphens
+    (live-verified remaining=0, AutoHyphenation=False).
+  - Pass 4: Index-table membership exemption; final empty paragraph and
+    break-only paragraph exemptions.
+  - Pass 3: final paragraph restyled to BodyText; STRIP paragraphs that carry
+    a section break keep the break (root cause: 144/145 breaks in BodyText).
+  - Pass 5 rewritten: explicit deletion of sections 1-4, 84-85, 140-145,
+    CopySectionPageSetup helper. NOT YET RUN.
+  - Plan updated in adaept5tudio rvw/Plan_radiant_word_bible_fork_2026-10-06.md.
+  - Not committed; operator reviews first.
+===============================================================================
+SESSION 2026-10-08 (RadiantWordBible v0.0) -- src/basBibleOnlyExport.bas
+  - First clean end-to-end run: sections 145 -> 133, 66 Index rows, Pass 8 = 0.
+  - Output saved by operator as Bible/v0.0.RadiantWordBible.docx (gitignored).
+  - Operator review: page numbers, headers, 2-column layout work. Open bugs
+    B1 (customUI ribbon part in docx), B2 (EmphasisBlack char style),
+    B3 (EmphasisRed char style), B4 (Revelation header), plus VerseText left
+    alignment. Recorded in the adaept5tudio plan; no code changes this session.
+===============================================================================

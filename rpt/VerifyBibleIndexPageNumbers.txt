@@ -1,0 +1,6 @@
+---- VerifyBibleIndexPageNumbers: 2026-10-08 11:23:49 ----
+
+Checked against: C:\adaept\aeBibleClass\RadiantWordBible.docx
+
+
+TOTAL mismatches: 0
