@@ -286,6 +286,17 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         End If
     End If
 
+    ' Pass 4d - VerseText alignment (v1.0: left; the docm is Justified)
+    If oSettings("VerseTextAlignment") <> "" Then
+        Dim alignViolations As Long
+        alignViolations = Pass4d_SetVerseTextAlignment(oDoc, CStr(oSettings("VerseTextAlignment")))
+        If alignViolations <> 0 Then
+            HaltExport "Pass4d_SetVerseTextAlignment", _
+                alignViolations & " violation(s) - see the report"
+            GoTo PROC_HALT
+        End If
+    End If
+
     ' Pass 5 - section surgery
     Pass5_SectionSurgery oDoc, preDeleteSectionCount
     If m_haltFired Then GoTo PROC_HALT
@@ -335,8 +346,14 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
             ExportLog "Pass9_VerifyCharStyles: SKIPPED - no baseline at " & baselinePath
         Else
             Dim verifyRc As Long
-            verifyRc = RunPythonStep("Pass9_VerifyCharStyles", _
-                SourceFolder & "py\verify_char_style_change.py", Array(baselinePath, destPath))
+            If oSettings("VerseTextAlignment") <> "" Then
+                verifyRc = RunPythonStep("Pass9_VerifyCharStyles", _
+                    SourceFolder & "py\verify_char_style_change.py", _
+                    Array(baselinePath, destPath, "--verse-align", oSettings("VerseTextAlignment")))
+            Else
+                verifyRc = RunPythonStep("Pass9_VerifyCharStyles", _
+                    SourceFolder & "py\verify_char_style_change.py", Array(baselinePath, destPath))
+            End If
             If verifyRc <> 0 Then m_issues = m_issues + 1
         End If
     End If
@@ -1138,6 +1155,9 @@ Public Function GetExportSettings() As Object
     ' EmphasisBlack character style removed (text takes VerseText);
     ' EmphasisRed character style replaced by Words of Jesus.
     d("ReplaceEmphasisStyles") = True
+    ' VerseText paragraph alignment: "left" (v1.0), "justify" (the docm),
+    ' "center", "right"; "" leaves the style as it is.
+    d("VerseTextAlignment") = "left"
     ' Post-save automation (python via WSL, no manual py calls):
     ' strip the orphaned customUI ribbon part from the saved .docx, then
     ' verify against a baseline .docx (path relative to the source folder;
@@ -1393,4 +1413,79 @@ Private Function ToWslPath(ByVal winPath As String) As String
         p = "/mnt/" & LCase$(Left$(p, 1)) & Mid$(p, 3)
     End If
     ToWslPath = p
+End Function
+
+' ==========================================================================
+' Pass4d_SetVerseTextAlignment
+' ==========================================================================
+' v1.0 task (plan Doc, 2026-10-08): the docm's VerseText style is Justified;
+' the export wants it left aligned (setting VerseTextAlignment). Applied to
+' the style definition of the disposable working copy only - never the
+' production docm - through the object model (no Modify Style dialog).
+' Any VerseText paragraph carrying a direct alignment override is also
+' corrected and counted in the log.
+'
+' Checks: full text and paragraph Count unchanged; afterwards no VerseText
+' paragraph has a different alignment. Returns the violation Count
+' (expected 0). The saved .docx is re-checked offline by
+' py\verify_char_style_change.py --verse-align.
+' ==========================================================================
+Private Function Pass4d_SetVerseTextAlignment(ByVal oDoc As Object, _
+                                              ByVal alignName As String) As Long
+    On Error GoTo PROC_ERR
+
+    Dim violations As Long
+    Dim want As Long
+    Select Case LCase$(alignName)
+        Case "left": want = wdAlignParagraphLeft
+        Case "justify": want = wdAlignParagraphJustify
+        Case "center": want = wdAlignParagraphCenter
+        Case "right": want = wdAlignParagraphRight
+        Case Else
+            ExportLog "Pass4d: unknown VerseTextAlignment """ & alignName & """"
+            Pass4d_SetVerseTextAlignment = 1
+            Exit Function
+    End Select
+
+    Dim textBefore As String
+    Dim parasBefore As Long
+    textBefore = oDoc.Content.Text
+    parasBefore = oDoc.Paragraphs.Count
+
+    oDoc.Styles("VerseText").ParagraphFormat.Alignment = want
+
+    Dim oPara As Object
+    Dim nOverride As Long
+    Dim nVerse As Long
+    For Each oPara In oDoc.Paragraphs
+        If oPara.style.NameLocal = "VerseText" Then
+            nVerse = nVerse + 1
+            If oPara.Alignment <> want Then
+                nOverride = nOverride + 1
+                oPara.Alignment = want
+            End If
+        End If
+    Next oPara
+
+    If oDoc.Content.Text <> textBefore Then
+        violations = violations + 1
+        ExportLog "Pass4d: document text changed - alignment must not alter text."
+    End If
+    If oDoc.Paragraphs.Count <> parasBefore Then
+        violations = violations + 1
+        ExportLog "Pass4d: paragraph Count " & parasBefore & " -> " & oDoc.Paragraphs.Count
+    End If
+
+    ExportLog "Pass4d_SetVerseTextAlignment: " & alignName & ", " & nVerse & _
+        " VerseText paragraph(s), " & nOverride & " direct override(s) corrected, violations=" & _
+        violations
+    Pass4d_SetVerseTextAlignment = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    ExportLog "ERROR in basBibleOnlyExport.Pass4d_SetVerseTextAlignment | Erl: " & Erl & _
+        " | Err: " & Err.Number & " | " & Err.Description
+    Pass4d_SetVerseTextAlignment = violations + 1
+    Resume PROC_EXIT
 End Function

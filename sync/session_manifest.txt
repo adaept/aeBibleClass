@@ -4145,3 +4145,9 @@ SESSION 2026-10-08 (RadiantWordBible B1/B2/B3 + report) -- src/basBibleOnlyExpor
   - Live run 13:37-13:44: RESULT CLEAN, 0 issues; verifier PASS (WordsofJesus 189963 -> 208967).
   - Still open: left-align VerseText, B4 (Revelation header), style purge, Index page numbers last.
 ===============================================================================
+SESSION 2026-10-08 (RadiantWordBible left alignment) -- src/basBibleOnlyExport.bas, py/verify_char_style_change.py
+  - Pass 4d: VerseText style left aligned on the working copy (setting VerseTextAlignment); verifier --verse-align.
+  - Live run 15:50-15:54: RESULT CLEAN; 31102 VerseText paragraphs, 0 overrides; style jc=None (left), verifier PASS.
+  - Source was Blank Bible Copy.docm itself (export works on its own working copy).
+  - Open: B4 Revelation header, style purge, Index page numbers last, then v1.0.
+===============================================================================

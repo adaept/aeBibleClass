@@ -17,8 +17,13 @@ new export. Checks:
        WordsofJesus_after == WordsofJesus_before + EmphasisRed_before,
        every other character style unchanged.
 
+  4. Optional (--verse-align left|both|center|right): the VerseText style
+     alignment in styles.xml equals the expected value ("left" also accepts
+     "start" or an absent jc) and no VerseText paragraph carries a direct
+     alignment override that differs (VerseText left-alignment, v1.0 task).
+
 Usage:
-    python3 -I py/verify_char_style_change.py baseline.docx new.docx
+    python3 -I py/verify_char_style_change.py baseline.docx new.docx [--verse-align left]
 
 Exit code 0 = all checks pass, 1 = at least one failure, 2 = usage/error.
 Read-only: never modifies either file.
@@ -70,7 +75,39 @@ def read(path):
     return styles, texts, chars
 
 
+def verse_alignment(path):
+    """Return (style jc or None, Counter of direct jc overrides on VerseText paragraphs)."""
+    with zipfile.ZipFile(path) as z:
+        sroot = ET.fromstring(z.read('word/styles.xml'))
+        droot = ET.fromstring(z.read('word/document.xml'))
+    style_jc = None
+    for st in sroot.iter(W + 'style'):
+        if st.get(W + 'styleId') == 'VerseText':
+            jc = st.find(W + 'pPr/' + W + 'jc')
+            style_jc = jc.get(W + 'val') if jc is not None else None
+    overrides = Counter()
+    for p in droot.iter(W + 'p'):
+        ppr = p.find(W + 'pPr')
+        if ppr is None:
+            continue
+        st = ppr.find(W + 'pStyle')
+        if st is None or st.get(W + 'val') != 'VerseText':
+            continue
+        jc = ppr.find(W + 'jc')
+        if jc is not None:
+            overrides[jc.get(W + 'val')] += 1
+    return style_jc, overrides
+
+
 def main(argv):
+    expect_align = None
+    if '--verse-align' in argv:
+        i = argv.index('--verse-align')
+        if i + 1 >= len(argv):
+            print(__doc__)
+            return 2
+        expect_align = argv[i + 1]
+        argv = argv[:i] + argv[i + 2:]
     if len(argv) != 3:
         print(__doc__)
         return 2
@@ -97,6 +134,16 @@ def main(argv):
         if b_chars.get(sid, 0) != n_chars.get(sid, 0):
             failures.append('%s changed: %d -> %d chars'
                             % (sid, b_chars.get(sid, 0), n_chars.get(sid, 0)))
+
+    if expect_align is not None:
+        norm = {'left': {'left', 'start', None}}.get(expect_align, {expect_align})
+        style_jc, overrides = verse_alignment(argv[2])
+        if style_jc not in norm:
+            failures.append('VerseText style alignment is %r, expected %s' % (style_jc, expect_align))
+        bad = sum(n for v, n in overrides.items() if v not in norm)
+        if bad:
+            failures.append('%d VerseText paragraph(s) override alignment (expected %s)' % (bad, expect_align))
+        print('VerseText style jc=%r, direct overrides=%s' % (style_jc, dict(overrides)))
 
     print('baseline chars by style:', dict(b_chars))
     print('new      chars by style:', dict(n_chars))
