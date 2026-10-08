@@ -4138,3 +4138,10 @@ SESSION 2026-10-08 (RadiantWordBible v0.0) -- src/basBibleOnlyExport.bas
     B3 (EmphasisRed char style), B4 (Revelation header), plus VerseText left
     alignment. Recorded in the adaept5tudio plan; no code changes this session.
 ===============================================================================
+SESSION 2026-10-08 (RadiantWordBible B1/B2/B3 + report) -- src/basBibleOnlyExport.bas, py/verify_char_style_change.py
+  - Pass 4c: EmphasisBlack char style removed (text takes VerseText), EmphasisRed -> Words of Jesus.
+  - Pass 7b/9: strip_ribbon.py and verify_char_style_change.py run automatically via WSL.
+  - ExportLog + rpt/RadiantWordBibleExport.txt (tracked export report, T-REPORT).
+  - Live run 13:37-13:44: RESULT CLEAN, 0 issues; verifier PASS (WordsofJesus 189963 -> 208967).
+  - Still open: left-align VerseText, B4 (Revelation header), style purge, Index page numbers last.
+===============================================================================

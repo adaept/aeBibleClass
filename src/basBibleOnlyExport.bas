@@ -73,6 +73,9 @@ Option Explicit
 ' ============================================================================
 
 Private m_haltFired As Boolean
+Private m_report As String          ' accumulated run log, written to rpt\ at exit
+Private m_issues As Long            ' Count of halts/errors/failed post-save steps
+Private m_reportFolder As String    ' folder whose rpt\ receives the report
 
 ' ==========================================================================
 ' GetScriptureOnlyStyles
@@ -156,16 +159,29 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     On Error GoTo PROC_ERR
 
     m_haltFired = False
+    m_report = ""
+    m_issues = 0
+    m_reportFolder = ""
 
     If sourcePath = "" Then sourcePath = ActiveDocument.FullName
     Dim SourceFolder As String
     SourceFolder = Left$(sourcePath, InStrRev(sourcePath, "\"))
     If workingPath = "" Then workingPath = SourceFolder & "RadiantWordBible_work.docm"
     If destPath = "" Then destPath = SourceFolder & "RadiantWordBible.docx"
+    m_reportFolder = Left$(SourceFolder, Len(SourceFolder) - 1)
 
-    Debug.Print "ExportScriptureOnlyDocx: source=" & sourcePath
-    Debug.Print "  working copy=" & workingPath
-    Debug.Print "  destination=" & destPath
+    Dim oSettings As Object
+    Set oSettings = GetExportSettings()
+    ExportLog "---- RadiantWordBible export " & Format(Now, "yyyy-mm-dd hh:nn:ss") & _
+        " | ExportVersion " & oSettings("ExportVersion") & " ----"
+    Dim sKey As Variant
+    For Each sKey In oSettings.Keys
+        ExportLog "  setting " & sKey & " = " & oSettings(sKey)
+    Next sKey
+
+    ExportLog "ExportScriptureOnlyDocx: source=" & sourcePath
+    ExportLog "  working copy=" & workingPath
+    ExportLog "  destination=" & destPath
 
     ' Pass 1 - duplicate and open. All following passes operate on oDoc
     ' only; sourcePath is never touched.
@@ -174,7 +190,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         Kill workingPath
         On Error GoTo PROC_ERR
         If Dir(workingPath) <> "" Then
-            Debug.Print "ExportScriptureOnlyDocx: could not remove stale working copy at " & _
+            ExportLog "ExportScriptureOnlyDocx: could not remove stale working copy at " & _
                 workingPath & " - likely still open in Word from a previous halted run. " & _
                 "Close it first, inspect/fix per the manual cycle, then re-run."
             GoTo PROC_EXIT
@@ -204,7 +220,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     Err.Clear
     On Error GoTo PROC_ERR
     If diagErrNum <> 0 Then
-        Debug.Print "ExportScriptureOnlyDocx: FileSystemObject.CopyFile failed - Err " & _
+        ExportLog "ExportScriptureOnlyDocx: FileSystemObject.CopyFile failed - Err " & _
             diagErrNum & ": " & diagErrDesc
         GoTo PROC_EXIT
     End If
@@ -217,11 +233,11 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     Err.Clear
     On Error GoTo PROC_ERR
     If diagErrNum <> 0 Or oDoc Is Nothing Then
-        Debug.Print "ExportScriptureOnlyDocx: Documents.Open failed - Err " & diagErrNum & _
+        ExportLog "ExportScriptureOnlyDocx: Documents.Open failed - Err " & diagErrNum & _
             ": " & diagErrDesc
         GoTo PROC_EXIT
     End If
-    Debug.Print "Pass1_DuplicateAndOpen: opened working copy."
+    ExportLog "Pass1_DuplicateAndOpen: opened working copy."
 
     Dim screenWas As Boolean
     screenWas = Application.ScreenUpdating
@@ -248,14 +264,24 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     End If
 
     ' Pass 4b - settings-driven cleanup (v1.0: manual hyphen removal)
-    Dim oSettings As Object
-    Set oSettings = GetExportSettings()
     If oSettings("StripOptionalHyphens") Then
         Dim hyphensLeft As Long
         hyphensLeft = Pass4b_StripOptionalHyphens(oDoc)
         If hyphensLeft <> 0 Then
             HaltExport "Pass4b_StripOptionalHyphens", _
                 hyphensLeft & " optional hyphen(s) remain after removal"
+            GoTo PROC_HALT
+        End If
+    End If
+
+    ' Pass 4c - emphasis character styles (B2/B3): EmphasisBlack removed so
+    ' the text takes VerseText, EmphasisRed -> Words of Jesus
+    If oSettings("ReplaceEmphasisStyles") Then
+        Dim emphViolations As Long
+        emphViolations = Pass4c_ReplaceEmphasisStyles(oDoc)
+        If emphViolations <> 0 Then
+            HaltExport "Pass4c_ReplaceEmphasisStyles", _
+                emphViolations & " violation(s) - see Immediate window"
             GoTo PROC_HALT
         End If
     End If
@@ -271,38 +297,74 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     ' Pass 7 - save
     Application.ScreenUpdating = screenWas
     oDoc.SaveAs2 fileName:=destPath, FileFormat:=wdFormatXMLDocument
-    Debug.Print "Pass7_Save: saved " & destPath
+    ExportLog "Pass7_Save: saved " & destPath
     oDoc.Close SaveChanges:=False
     Set oDoc = Nothing
+
+    ' Pass 7b - strip the orphaned ribbon part (py\strip_ribbon.py via WSL).
+    ' The document is closed in Word at this point, as the script requires.
+    If oSettings("StripRibbonAfterSave") Then
+        Dim ribbonRc As Long
+        ribbonRc = RunPythonStep("Pass7b_StripRibbon", SourceFolder & "py\strip_ribbon.py", _
+            Array(destPath))
+        If ribbonRc <> 0 Then
+            m_issues = m_issues + 1
+            ExportLog "Pass7b_StripRibbon: FAILED (exit code " & ribbonRc & "). " & _
+                "Artefact saved but still carries the ribbon part."
+        End If
+    End If
 
     ' Pass 8 - final verification, fresh open, independent of Pass 6's
     ' in-memory state
     Dim mismatches As Long
     mismatches = VerifyBibleIndexPageNumbers(destPath)
-    If mismatches = 0 Then
-        Debug.Print "ExportScriptureOnlyDocx: COMPLETE. " & destPath & _
-            " passed Pass 8 with 0 mismatches."
+    If mismatches <> 0 Then
+        m_issues = m_issues + 1
+        ExportLog "Pass8: " & mismatches & " mismatch(es) - see rpt\VerifyBibleIndexPageNumbers.txt."
     Else
-        Debug.Print "ExportScriptureOnlyDocx: Pass 8 reported " & mismatches & _
-            " mismatch(es) - see rpt\VerifyBibleIndexPageNumbers.txt. " & _
-            "Artefact saved but NOT clean - do not treat as done."
+        ExportLog "Pass8: Bible Index page numbers verified, 0 mismatches."
+    End If
+
+    ' Pass 9 - character-style change verifier vs. the baseline .docx
+    ' (py\verify_char_style_change.py): nothing but the two emphasis
+    ' styles may have changed.
+    If oSettings("ReplaceEmphasisStyles") Then
+        Dim baselinePath As String
+        baselinePath = SourceFolder & oSettings("BaselineDocxRelPath")
+        If Dir(baselinePath) = "" Then
+            ExportLog "Pass9_VerifyCharStyles: SKIPPED - no baseline at " & baselinePath
+        Else
+            Dim verifyRc As Long
+            verifyRc = RunPythonStep("Pass9_VerifyCharStyles", _
+                SourceFolder & "py\verify_char_style_change.py", Array(baselinePath, destPath))
+            If verifyRc <> 0 Then m_issues = m_issues + 1
+        End If
+    End If
+
+    If m_issues = 0 Then
+        ExportLog "ExportScriptureOnlyDocx: COMPLETE. " & destPath & " - all checks passed."
+    Else
+        ExportLog "ExportScriptureOnlyDocx: FINISHED WITH " & m_issues & " ISSUE(S). " & _
+            "Artefact saved but NOT clean - do not treat as done. See the report."
     End If
 
     GoTo PROC_EXIT
 
 PROC_HALT:
     Application.ScreenUpdating = screenWas
-    Debug.Print "ExportScriptureOnlyDocx: HALTED. Working copy left open and unsaved " & _
+    ExportLog "ExportScriptureOnlyDocx: HALTED. Working copy left open and unsaved " & _
         "for inspection: " & workingPath
     m_haltFired = False
 
 PROC_EXIT:
+    WriteExportReport
     Exit Sub
 PROC_ERR:
     Application.ScreenUpdating = True
-    Debug.Print "ERROR in basBibleOnlyExport.ExportScriptureOnlyDocx | Erl: " & Erl & _
+    m_issues = m_issues + 1
+    ExportLog "ERROR in basBibleOnlyExport.ExportScriptureOnlyDocx | Erl: " & Erl & _
         " | Err: " & Err.Number & " | " & Err.Description
-    Debug.Print "  Working copy (if open) left as-is for inspection: " & workingPath
+    ExportLog "  Working copy (if open) left as-is for inspection: " & workingPath
     Resume PROC_EXIT
 End Sub
 
@@ -328,7 +390,7 @@ Private Sub Pass2_FootnoteSweep(ByVal oDoc As Object)
         Exit Sub
     End If
 
-    Debug.Print "Pass2_FootnoteSweep: all footnotes removed."
+    ExportLog "Pass2_FootnoteSweep: all footnotes removed."
 End Sub
 
 ' ==========================================================================
@@ -445,7 +507,7 @@ Private Sub Pass3_ParagraphSweep(ByVal oDoc As Object)
         End If
     End If
 
-    Debug.Print "Pass3_ParagraphSweep: deleted " & nDelete & " STRIP-style paragraph(s) (" & _
+    ExportLog "Pass3_ParagraphSweep: deleted " & nDelete & " STRIP-style paragraph(s) (" & _
         nCarriers & " section-break carriers kept as break-only); " & _
         nTbl & " Index table(s) and their contents preserved."
 End Sub
@@ -542,14 +604,14 @@ Public Function VerifyScriptureOnlyStrip(ByVal oDoc As Object) As Long
     End If
 
     sOut = sOut & NL & "TOTAL violations: " & violations & NL
-    Debug.Print sOut
+    ExportLog sOut
     WriteReportFileTo oDoc.Path, "VerifyScriptureOnlyStrip.txt", sOut
     VerifyScriptureOnlyStrip = violations
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in basBibleOnlyExport.VerifyScriptureOnlyStrip | Erl: " & Erl & _
+    ExportLog "ERROR in basBibleOnlyExport.VerifyScriptureOnlyStrip | Erl: " & Erl & _
         " | Err: " & Err.Number & " | " & Err.Description
     Resume PROC_EXIT
 End Function
@@ -647,7 +709,7 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
         Exit Sub
     End If
 
-    Debug.Print "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections removed (" & _
+    ExportLog "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections removed (" & _
         preDeleteSectionCount & " -> " & postCount & ")."
 End Sub
 
@@ -785,13 +847,13 @@ Private Sub Pass6_RegenerateBibleIndex(ByVal oDoc As Object)
         Exit Sub
     End If
 
-    Debug.Print "Pass6_RegenerateBibleIndex: " & expectedBooks & _
+    ExportLog "Pass6_RegenerateBibleIndex: " & expectedBooks & _
         " Index row(s) patched, stable after " & iteration & " iteration(s)."
 
 PROC_EXIT:
     Exit Sub
 PROC_ERR:
-    Debug.Print "ERROR in basBibleOnlyExport.Pass6_RegenerateBibleIndex | Erl: " & Erl & _
+    ExportLog "ERROR in basBibleOnlyExport.Pass6_RegenerateBibleIndex | Erl: " & Erl & _
         " | Err: " & Err.Number & " | " & Err.Description
     HaltExport "Pass6_RegenerateBibleIndex", "Unhandled error " & Err.Number & ": " & Err.Description
     Resume PROC_EXIT
@@ -916,7 +978,7 @@ Public Function VerifyBibleIndexPageNumbers(ByVal docPath As String) As Long
     Next i
 
     sOut = sOut & NL & "TOTAL mismatches: " & mismatches & NL
-    Debug.Print sOut
+    ExportLog sOut
     WriteReportFileTo oDoc.Path, "VerifyBibleIndexPageNumbers.txt", sOut
 
     oDoc.Close SaveChanges:=False
@@ -925,7 +987,7 @@ Public Function VerifyBibleIndexPageNumbers(ByVal docPath As String) As Long
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in basBibleOnlyExport.VerifyBibleIndexPageNumbers | Erl: " & Erl & _
+    ExportLog "ERROR in basBibleOnlyExport.VerifyBibleIndexPageNumbers | Erl: " & Erl & _
         " | Err: " & Err.Number & " | " & Err.Description
     If Not oDoc Is Nothing Then
         On Error Resume Next
@@ -1052,9 +1114,10 @@ End Sub
 ' Deliberately Debug.Print, not MsgBox - see [[feedback_vba_errors_to_immediate]].
 ' --------------------------------------------------------------------------
 Private Sub HaltExport(ByVal passName As String, ByVal reason As String)
-    Debug.Print "=== HALT in " & passName & " ==="
-    Debug.Print reason
+    ExportLog "=== HALT in " & passName & " ==="
+    ExportLog reason
     m_haltFired = True
+    m_issues = m_issues + 1
 End Sub
 
 ' ==========================================================================
@@ -1072,6 +1135,15 @@ Public Function GetExportSettings() As Object
     d("ExportVersion") = "1.0"
     ' Remove manual (optional) hyphens and turn off automatic hyphenation.
     d("StripOptionalHyphens") = True
+    ' EmphasisBlack character style removed (text takes VerseText);
+    ' EmphasisRed character style replaced by Words of Jesus.
+    d("ReplaceEmphasisStyles") = True
+    ' Post-save automation (python via WSL, no manual py calls):
+    ' strip the orphaned customUI ribbon part from the saved .docx, then
+    ' verify against a baseline .docx (path relative to the source folder;
+    ' the verify step is skipped, and logged, if the file is absent).
+    d("StripRibbonAfterSave") = True
+    d("BaselineDocxRelPath") = "Bible\v0.0.RadiantWordBible.docx"
     Set GetExportSettings = d
 End Function
 
@@ -1120,15 +1192,205 @@ Private Function Pass4b_StripOptionalHyphens(ByVal oDoc As Object) As Long
         Loop
     End With
 
-    Debug.Print "Pass4b_StripOptionalHyphens: remaining=" & remaining & _
+    ExportLog "Pass4b_StripOptionalHyphens: remaining=" & remaining & _
         ", AutoHyphenation=" & oDoc.AutoHyphenation
     Pass4b_StripOptionalHyphens = remaining
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in basBibleOnlyExport.Pass4b_StripOptionalHyphens | Erl: " & Erl & _
+    ExportLog "ERROR in basBibleOnlyExport.Pass4b_StripOptionalHyphens | Erl: " & Erl & _
         " | Err: " & Err.Number & " | " & Err.Description
     Pass4b_StripOptionalHyphens = -1
     Resume PROC_EXIT
+End Function
+
+' ==========================================================================
+' Pass4c_ReplaceEmphasisStyles
+' ==========================================================================
+' B2/B3 (plan Doc, 2026-10-08). Both styles are CHARACTER styles and every
+' run sits inside a VerseText paragraph (OOXML check of v0.0), so:
+'   EmphasisBlack -> Default Paragraph Font (run takes VerseText formatting)
+'   EmphasisRed   -> Words of Jesus
+' Format-only Find/Replace on the style, no per-run iteration.
+'
+' In-Word checks (cheap): full text identical, paragraph Count identical,
+' zero remaining Find hits for either style. The exact "nothing else
+' changed" check is offline: py\verify_char_style_change.py on the saved
+' .docx against a baseline.
+'
+' Returns the number of violations (expected 0).
+' ==========================================================================
+Private Function Pass4c_ReplaceEmphasisStyles(ByVal oDoc As Object) As Long
+    On Error GoTo PROC_ERR
+
+    Dim violations As Long
+    Dim textBefore As String
+    Dim parasBefore As Long
+    textBefore = oDoc.Content.Text
+    parasBefore = oDoc.Paragraphs.Count
+
+    ReplaceCharStyle oDoc, "EmphasisBlack", oDoc.Styles(wdStyleDefaultParagraphFont)
+    ReplaceCharStyle oDoc, "EmphasisRed", oDoc.Styles("Words of Jesus")
+
+    If oDoc.Content.Text <> textBefore Then
+        violations = violations + 1
+        ExportLog "Pass4c: document text changed - the style swap must not alter text."
+    End If
+    If oDoc.Paragraphs.Count <> parasBefore Then
+        violations = violations + 1
+        ExportLog "Pass4c: paragraph Count " & parasBefore & " -> " & oDoc.Paragraphs.Count
+    End If
+    Dim remBlack As Long
+    Dim remRed As Long
+    remBlack = CountCharStyleHits(oDoc, "EmphasisBlack")
+    remRed = CountCharStyleHits(oDoc, "EmphasisRed")
+    If remBlack <> 0 Or remRed <> 0 Then
+        violations = violations + 1
+        ExportLog "Pass4c: EmphasisBlack hits=" & remBlack & ", EmphasisRed hits=" & remRed & _
+            ", expected 0"
+    End If
+
+    ExportLog "Pass4c_ReplaceEmphasisStyles: violations=" & violations
+    Pass4c_ReplaceEmphasisStyles = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    ExportLog "ERROR in basBibleOnlyExport.Pass4c_ReplaceEmphasisStyles | Erl: " & Erl & _
+        " | Err: " & Err.Number & " | " & Err.Description
+    Pass4c_ReplaceEmphasisStyles = violations + 1
+    Resume PROC_EXIT
+End Function
+
+Private Sub ReplaceCharStyle(ByVal oDoc As Object, ByVal fromName As String, _
+                             ByVal toStyle As Object)
+    Dim oRng As Object
+    Set oRng = oDoc.Content
+    With oRng.Find
+        .ClearFormatting
+        .Replacement.ClearFormatting
+        .Text = ""
+        .style = oDoc.Styles(fromName)
+        .Replacement.Text = ""
+        .Replacement.style = toStyle
+        .Format = True
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchWildcards = False
+        .Execute Replace:=wdReplaceAll
+    End With
+End Sub
+
+Private Function CountCharStyleHits(ByVal oDoc As Object, ByVal StyleName As String) As Long
+    Dim oRng As Object
+    Dim n As Long
+    Set oRng = oDoc.Content
+    With oRng.Find
+        .ClearFormatting
+        .Text = ""
+        .style = oDoc.Styles(StyleName)
+        .Format = True
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchWildcards = False
+        Do While .Execute
+            n = n + 1
+            oRng.Collapse wdCollapseEnd
+        Loop
+    End With
+    CountCharStyleHits = n
+End Function
+
+' ==========================================================================
+' ExportLog / WriteExportReport
+' ==========================================================================
+' ExportLog replaces Debug.Print throughout this module: it still prints to
+' the Immediate window and also accumulates the line, so the whole run can
+' be written to rpt\RadiantWordBibleExport.txt - a permanent, git-tracked
+' record outside VBA (every halt, error, and post-save step Result).
+' ==========================================================================
+Private Sub ExportLog(ByVal sLine As String)
+    Debug.Print sLine
+    m_report = m_report & sLine & vbCrLf
+End Sub
+
+Private Sub WriteExportReport()
+    If m_reportFolder = "" Then Exit Sub
+    Dim sResult As String
+    If m_issues = 0 Then
+        sResult = "Result: CLEAN (0 issues)"
+    Else
+        sResult = "Result: NOT CLEAN (" & m_issues & " issue(s))"
+    End If
+    On Error Resume Next
+    WriteReportFileTo m_reportFolder, "RadiantWordBibleExport.txt", _
+        m_report & vbCrLf & sResult & vbCrLf
+    If Err.Number <> 0 Then Debug.Print "WriteExportReport failed: Err " & Err.Number & _
+        " - " & Err.Description
+    Err.Clear
+End Sub
+
+' ==========================================================================
+' RunPythonStep
+' ==========================================================================
+' Runs a project py\ script inside WSL (python3 -I, per the project's WSL
+' convention) and waits for it. Output is captured to a temp file and
+' logged. Returns the script's exit code (-1 if it could not be launched).
+' wsl.exe --exec passes arguments without a Shell, so spaces are safe.
+' ==========================================================================
+Private Function RunPythonStep(ByVal stepName As String, ByVal scriptWinPath As String, _
+                               ByVal args As Variant) As Long
+    On Error GoTo PROC_ERR
+
+    Dim cmd As String
+    Dim i As Long
+    cmd = "wsl.exe --exec python3 -I " & Chr(34) & ToWslPath(scriptWinPath) & Chr(34)
+    For i = LBound(args) To UBound(args)
+        cmd = cmd & " " & Chr(34) & ToWslPath(CStr(args(i))) & Chr(34)
+    Next i
+
+    Dim outFile As String
+    outFile = Environ$("TEMP") & "\rwb_export_step.txt"
+    If Dir(outFile) <> "" Then Kill outFile
+
+    ExportLog stepName & ": running " & cmd
+    Dim oShell As Object
+    Set oShell = CreateObject("WScript.Shell")
+    Dim rc As Long
+    ' cmd /c wrapper (outer quotes) so the output redirection works
+    rc = oShell.Run("cmd.exe /c " & Chr(34) & cmd & " > " & Chr(34) & outFile & Chr(34) & _
+        " 2>&1" & Chr(34), 0, True)
+
+    If Dir(outFile) <> "" Then
+        Dim oFSO As Object
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+        Dim oTS As Object
+        Set oTS = oFSO.OpenTextFile(outFile, 1)
+        Dim sOut As String
+        If Not oTS.AtEndOfStream Then sOut = oTS.ReadAll
+        oTS.Close
+        If Len(sOut) > 0 Then ExportLog sOut
+    End If
+    ExportLog stepName & ": exit code " & rc
+
+    RunPythonStep = rc
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in basBibleOnlyExport.RunPythonStep | Err: " & Err.Number & " | " & _
+        Err.Description
+    RunPythonStep = -1
+    Resume PROC_EXIT
+End Function
+
+' C:\a\b -> /mnt/c/a/b
+Private Function ToWslPath(ByVal winPath As String) As String
+    Dim p As String
+    p = Replace(winPath, "\", "/")
+    If Len(p) >= 2 And Mid$(p, 2, 1) = ":" Then
+        p = "/mnt/" & LCase$(Left$(p, 1)) & Mid$(p, 3)
+    End If
+    ToWslPath = p
 End Function
