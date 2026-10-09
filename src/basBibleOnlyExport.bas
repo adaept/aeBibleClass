@@ -301,6 +301,18 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     Pass5_SectionSurgery oDoc, preDeleteSectionCount
     If m_haltFired Then GoTo PROC_HALT
 
+    ' Pass 4e - style purge (finding 9). Runs after Pass 5 so the doomed
+    ' sections are gone and "in use" means in use in the final document.
+    If oSettings("PurgeUnusedStyles") Then
+        Dim purgeViolations As Long
+        purgeViolations = Pass4e_PurgeUnusedStyles(oDoc)
+        If purgeViolations <> 0 Then
+            HaltExport "Pass4e_PurgeUnusedStyles", _
+                purgeViolations & " violation(s) - see the report"
+            GoTo PROC_HALT
+        End If
+    End If
+
     ' Pass 6 - Bible Index page-number regeneration
     Pass6_RegenerateBibleIndex oDoc
     If m_haltFired Then GoTo PROC_HALT
@@ -1214,6 +1226,9 @@ Public Function GetExportSettings() As Object
     ' VerseText paragraph alignment: "left" (v1.0), "justify" (the docm),
     ' "center", "right"; "" leaves the style as it is.
     d("VerseTextAlignment") = "left"
+    ' Delete the fixed list in GetPurgeStyles (unused custom styles, per
+    ' rpt\RadiantWordBibleStyleInventory.txt); halts if any is still in use.
+    d("PurgeUnusedStyles") = True
     ' Post-save automation (python via WSL, no manual py calls):
     ' strip the orphaned customUI ribbon part from the saved .docx, then
     ' verify against a baseline .docx (path relative to the source folder;
@@ -1699,4 +1714,125 @@ Private Function StoryHasStyle(ByVal oRng As Object, ByVal oSty As Object) As Bo
         .MatchWildcards = False
         StoryHasStyle = .Execute
     End With
+End Function
+
+' ==========================================================================
+' GetPurgeStyles
+' ==========================================================================
+' The 41 unused custom styles found by InspectStyleUsage on the 2026-10-08
+' clean export (rpt\RadiantWordBibleStyleInventory.txt). SpeakerLabel is
+' deliberately NOT listed: its linked character style SpeakerLabelChar
+' formats the Song of Solomon speaker names (212 chars) and Word deletes a
+' linked pair together (caught by Pass9 on the first run). A fixed list on
+' purpose: "delete everything unused" could silently remove a style a later
+' change starts to need.
+' ==========================================================================
+Public Function GetPurgeStyles() As Variant
+    GetPurgeStyles = Array( _
+        "Acknowledgments", "AuthorBodyText", "AuthorBookRef", "AuthorBookRefHeader", _
+        "AuthorBookSections", "AuthorListItem", "AuthorListItemBody", "AuthorListItemTab", _
+        "AuthorSectionHead", "Blank line", "BodyTextTopLineCPBB", "BookHyperlink", _
+        "Brief", "CenterSubText", "Contents", "ContentsRef", "Cover", _
+        "CustomParaAfterH1", "CustomParaAfterH1-2nd", "DatAuthRef", "EmphasisBlack", _
+        "EmphasisRed", "End Note normal", "Footnote crossreference", "Footnote normal", _
+        "FrontPageBodyText", "FrontPageTopLine", "Glossary", "Horizontal Rule", "Index", _
+        "Introduction", "Paragraph", "Paragraph Continuation", "ParallelHeader", _
+        "ParallelText", "Picture Caption", "TheFooters", "TheHeaders", _
+        "TitleEyebrow", "TitleOnePage", "TitleVersion")
+End Function
+
+' ==========================================================================
+' Pass4e_PurgeUnusedStyles
+' ==========================================================================
+' Deletes each style in GetPurgeStyles. A style that is still applied in any
+' story is NOT deleted and counts as a violation (halts the export). A style
+' already absent is logged and skipped (re-runs stay clean). After the loop
+' every listed style must be gone, and the document text and paragraph Count
+' must be unchanged. Returns the number of violations (expected 0).
+' ==========================================================================
+Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
+    On Error GoTo PROC_ERR
+
+    Dim violations As Long
+    Dim textBefore As String
+    Dim parasBefore As Long
+    textBefore = oDoc.Content.Text
+    parasBefore = oDoc.Paragraphs.Count
+
+    Dim vNames As Variant
+    vNames = GetPurgeStyles()
+    Dim i As Long
+    Dim nDeleted As Long
+    Dim nAbsent As Long
+    Dim oSty As Object
+
+    For i = LBound(vNames) To UBound(vNames)
+        If Not StyleExists(oDoc, CStr(vNames(i))) Then
+            nAbsent = nAbsent + 1
+            ExportLog "Pass4e: already absent: " & vNames(i)
+        Else
+            Set oSty = oDoc.Styles(CStr(vNames(i)))
+            If oSty.BuiltIn Then
+                violations = violations + 1
+                ExportLog "Pass4e: built-in, cannot delete: " & vNames(i)
+            ElseIf StyleInUseAnywhere(oDoc, oSty) Then
+                violations = violations + 1
+                ExportLog "Pass4e: still in use, not deleted: " & vNames(i)
+            Else
+                oSty.Delete
+                nDeleted = nDeleted + 1
+            End If
+        End If
+    Next i
+
+    For i = LBound(vNames) To UBound(vNames)
+        If StyleExists(oDoc, CStr(vNames(i))) Then
+            violations = violations + 1
+            ExportLog "Pass4e: still present after purge: " & vNames(i)
+        End If
+    Next i
+
+    If oDoc.Content.Text <> textBefore Then
+        violations = violations + 1
+        ExportLog "Pass4e: document text changed - the purge must not alter text."
+    End If
+    If oDoc.Paragraphs.Count <> parasBefore Then
+        violations = violations + 1
+        ExportLog "Pass4e: paragraph Count " & parasBefore & " -> " & oDoc.Paragraphs.Count
+    End If
+
+    ExportLog "Pass4e_PurgeUnusedStyles: listed=" & (UBound(vNames) - LBound(vNames) + 1) & _
+        ", deleted=" & nDeleted & ", already absent=" & nAbsent & ", violations=" & violations
+    Pass4e_PurgeUnusedStyles = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    ExportLog "ERROR in basBibleOnlyExport.Pass4e_PurgeUnusedStyles | Erl: " & Erl & _
+        " | Err: " & Err.Number & " | " & Err.Description
+    Pass4e_PurgeUnusedStyles = violations + 1
+    Resume PROC_EXIT
+End Function
+
+Private Function StyleExists(ByVal oDoc As Object, ByVal StyleName As String) As Boolean
+    Dim oSty As Object
+    On Error Resume Next
+    Set oSty = oDoc.Styles(StyleName)
+    StyleExists = (Err.Number = 0 And Not oSty Is Nothing)
+    Err.Clear
+End Function
+
+Private Function StyleInUseAnywhere(ByVal oDoc As Object, ByVal oSty As Object) As Boolean
+    Dim oStory As Object
+    Dim oRng As Object
+    For Each oStory In oDoc.StoryRanges
+        Set oRng = oStory
+        Do While Not oRng Is Nothing
+            If StoryHasStyle(oRng, oSty) Then
+                StyleInUseAnywhere = True
+                Exit Function
+            End If
+            Set oRng = oRng.NextStoryRange
+        Loop
+    Next oStory
 End Function

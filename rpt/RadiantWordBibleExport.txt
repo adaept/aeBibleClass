@@ -1,17 +1,18 @@
----- RadiantWordBible export 2026-10-08 17:27:23 | ExportVersion 1.0 ----
+---- RadiantWordBible export 2026-10-09 09:40:28 | ExportVersion 1.0 ----
   setting ExportVersion = 1.0
   setting StripOptionalHyphens = True
   setting ReplaceEmphasisStyles = True
   setting VerseTextAlignment = left
+  setting PurgeUnusedStyles = True
   setting StripRibbonAfterSave = True
   setting BaselineDocxRelPath = Bible\v0.0.RadiantWordBible.docx
-ExportScriptureOnlyDocx: source=C:\adaept\aeBibleClass\Blank Bible Copy - Copy (6).docm
+ExportScriptureOnlyDocx: source=C:\adaept\aeBibleClass\Blank Bible Copy.docm
   working copy=C:\adaept\aeBibleClass\RadiantWordBible_work.docm
   destination=C:\adaept\aeBibleClass\RadiantWordBible.docx
 Pass1_DuplicateAndOpen: opened working copy.
 Pass2_FootnoteSweep: all footnotes removed.
 Pass3_ParagraphSweep: deleted 1251 STRIP-style paragraph(s) (144 section-break carriers kept as break-only); 2 Index table(s) and their contents preserved.
----- VerifyScriptureOnlyStrip: 2026-10-08 17:27:36 ----
+---- VerifyScriptureOnlyStrip: 2026-10-09 09:40:55 ----
 
 
 TOTAL violations: 0
@@ -21,6 +22,7 @@ Pass4c_ReplaceEmphasisStyles: violations=0
 Pass4d_SetVerseTextAlignment: left, 31102 VerseText paragraph(s), 0 direct override(s) corrected, violations=0
 Pass5 B4: header paragraphs source=1, final=1, trimmed=1, Len(source)=11, Len(final)=11
 Pass5_SectionSurgery: 12 sections removed (145 -> 133); final section header "REVELATION".
+Pass4e_PurgeUnusedStyles: listed=41, deleted=41, already absent=0, violations=0
 Pass6_RegenerateBibleIndex: 66 Index row(s) patched, stable after 2 iteration(s).
 Pass7_Save: saved C:\adaept\aeBibleClass\RadiantWordBible.docx
 Pass7b_StripRibbon: running wsl.exe --exec python3 -I "/mnt/c/adaept/aeBibleClass/py/strip_ribbon.py" "/mnt/c/adaept/aeBibleClass/RadiantWordBible.docx"
@@ -31,7 +33,7 @@ REMOVED   customUI/_rels/customUI14.xml.rels
 Done. RadiantWordBible.docx no longer carries a Ribbon customization.
 
 Pass7b_StripRibbon: exit code 0
----- VerifyBibleIndexPageNumbers: 2026-10-08 17:30:52 ----
+---- VerifyBibleIndexPageNumbers: 2026-10-09 09:58:29 ----
 
 Checked against: C:\adaept\aeBibleClass\RadiantWordBible.docx
 
