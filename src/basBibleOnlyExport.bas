@@ -1551,3 +1551,152 @@ End Function
 Private Function NormHeaderText(ByVal s As String) As String
     NormHeaderText = Trim$(Replace(Replace(Replace(s, vbCr, ""), vbLf, ""), Chr(7), ""))
 End Function
+
+' ==========================================================================
+' InspectStyleUsage
+' ==========================================================================
+' Read-only inventory for the style purge (plan finding 9). Opens docPath
+' read-only (default: RadiantWordBible.docx beside ActiveDocument), classifies
+' every style that is in use or custom as USED (applied somewhere in any
+' story, or to a table), BASE-ONLY (not applied, but a base or linked style
+' of a used style, so deleting it would change a used style) or UNUSED, and
+' writes rpt\RadiantWordBibleStyleInventory.txt. Deletes nothing.
+' Built-in styles that are not InUse are only counted (they cannot be deleted).
+' ==========================================================================
+Public Sub InspectStyleUsage(Optional ByVal docPath As String)
+    On Error GoTo PROC_ERR
+
+    If docPath = "" Then docPath = ActiveDocument.Path & "\RadiantWordBible.docx"
+    Dim sFolder As String
+    sFolder = Left$(docPath, InStrRev(docPath, "\") - 1)
+
+    Dim oDoc As Object
+    Set oDoc = Documents.Open(fileName:=docPath, ReadOnly:=True, _
+        AddToRecentFiles:=False, Visible:=False)
+
+    Dim dUsed As Object, dBase As Object
+    Set dUsed = CreateObject("Scripting.Dictionary")
+    Set dBase = CreateObject("Scripting.Dictionary")
+
+    Dim oSty As Object, oRng As Object, oStory As Object
+    Dim nSkippedBuiltIn As Long
+
+    ' Pass A - applied styles (paragraph + character) via Find, every story.
+    For Each oSty In oDoc.Styles
+        If oSty.Type = wdStyleTypeParagraph Or oSty.Type = wdStyleTypeCharacter Then
+            If oSty.InUse Or Not oSty.BuiltIn Then
+                For Each oStory In oDoc.StoryRanges
+                    Set oRng = oStory
+                    Do While Not oRng Is Nothing
+                        If StoryHasStyle(oRng, oSty) Then
+                            dUsed(oSty.NameLocal) = True
+                            Exit Do
+                        End If
+                        Set oRng = oRng.NextStoryRange
+                    Loop
+                    If dUsed.Exists(oSty.NameLocal) Then Exit For
+                Next oStory
+            Else
+                nSkippedBuiltIn = nSkippedBuiltIn + 1
+            End If
+        End If
+    Next oSty
+
+    ' Table styles applied to a table.
+    Dim oTbl As Object
+    For Each oTbl In oDoc.Tables
+        On Error Resume Next
+        dUsed(oTbl.style.NameLocal) = True
+        Err.Clear
+        On Error GoTo PROC_ERR
+    Next oTbl
+
+    ' Pass B - base and linked styles of used styles.
+    Dim k As Variant, oCur As Object, sNm As String, guard As Long
+    For Each k In dUsed.Keys
+        Set oCur = oDoc.Styles(CStr(k))
+        On Error Resume Next
+        sNm = ""
+        sNm = oCur.LinkStyle.NameLocal
+        If sNm <> "" Then If Not dUsed.Exists(sNm) Then dBase(sNm) = "linked to " & k
+        Err.Clear
+        guard = 0
+        Do
+            sNm = ""
+            sNm = CStr(oCur.BaseStyle)
+            Err.Clear
+            If sNm = "" Then Exit Do
+            If Not dUsed.Exists(sNm) Then dBase(sNm) = "base of " & k
+            Set oCur = oDoc.Styles(sNm)
+            guard = guard + 1
+        Loop While guard < 20
+        On Error GoTo PROC_ERR
+    Next k
+
+    ' Pass C - report.
+    Dim sUsed As String, sBase As String, sUnusedCustom As String, sUnusedBuiltIn As String
+    Dim nUsed As Long, nBase As Long, nUC As Long, nUB As Long, sType As String
+    For Each oSty In oDoc.Styles
+        If oSty.Type = wdStyleTypeParagraph Or oSty.Type = wdStyleTypeCharacter _
+           Or oSty.Type = wdStyleTypeTable Then
+            Select Case oSty.Type
+                Case wdStyleTypeParagraph: sType = "para"
+                Case wdStyleTypeCharacter: sType = "char"
+                Case Else: sType = "table"
+            End Select
+            sNm = oSty.NameLocal
+            If dUsed.Exists(sNm) Then
+                nUsed = nUsed + 1
+                sUsed = sUsed & "  [" & sType & "] " & sNm & vbCrLf
+            ElseIf dBase.Exists(sNm) Then
+                nBase = nBase + 1
+                sBase = sBase & "  [" & sType & "] " & sNm & "  (" & dBase(sNm) & ")" & vbCrLf
+            ElseIf Not oSty.BuiltIn Then
+                nUC = nUC + 1
+                sUnusedCustom = sUnusedCustom & "  [" & sType & "] " & sNm & vbCrLf
+            ElseIf oSty.InUse Then
+                nUB = nUB + 1
+                sUnusedBuiltIn = sUnusedBuiltIn & "  [" & sType & "] " & sNm & vbCrLf
+            End If
+        End If
+    Next oSty
+
+    Dim sOut As String
+    sOut = "---- RadiantWordBible style inventory " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & vbCrLf & _
+        "Document: " & docPath & vbCrLf & _
+        "Styles in document: " & oDoc.Styles.Count & vbCrLf & _
+        "USED: " & nUsed & " | BASE-ONLY: " & nBase & _
+        " | UNUSED custom (purge candidates): " & nUC & _
+        " | UNUSED built-in, InUse flag set (not deletable): " & nUB & _
+        " | latent built-in skipped: " & nSkippedBuiltIn & vbCrLf & vbCrLf & _
+        "== USED (" & nUsed & ") ==" & vbCrLf & sUsed & vbCrLf & _
+        "== BASE-ONLY (" & nBase & ") - keep, used styles depend on them ==" & vbCrLf & sBase & vbCrLf & _
+        "== UNUSED custom (" & nUC & ") - purge candidates ==" & vbCrLf & sUnusedCustom & vbCrLf & _
+        "== UNUSED built-in (" & nUB & ") - cannot be deleted ==" & vbCrLf & sUnusedBuiltIn
+    WriteReportFileTo sFolder, "RadiantWordBibleStyleInventory.txt", sOut
+    Debug.Print "InspectStyleUsage: used=" & nUsed & " base-only=" & nBase & _
+        " unused custom=" & nUC & " -> " & sFolder & "\rpt\RadiantWordBibleStyleInventory.txt"
+
+PROC_EXIT:
+    On Error Resume Next
+    If Not oDoc Is Nothing Then oDoc.Close SaveChanges:=wdDoNotSaveChanges
+    Exit Sub
+PROC_ERR:
+    Debug.Print "InspectStyleUsage: Err " & Err.Number & " - " & Err.Description
+    Resume PROC_EXIT
+End Sub
+
+Private Function StoryHasStyle(ByVal oRng As Object, ByVal oSty As Object) As Boolean
+    Dim oFind As Object
+    Set oFind = oRng.Duplicate
+    With oFind.Find
+        .ClearFormatting
+        .Text = ""
+        .style = oSty
+        .Format = True
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchWildcards = False
+        StoryHasStyle = .Execute
+    End With
+End Function

@@ -1,0 +1,435 @@
+---- RadiantWordBible style inventory 2026-10-08 20:45:42 ----
+Document: C:\adaept\aeBibleClass\RadiantWordBible.docx
+Styles in document: 427
+USED: 17 | BASE-ONLY: 1 | UNUSED custom (purge candidates): 42 | UNUSED built-in, InUse flag set (not deletable): 363 | latent built-in skipped: 0
+
+== USED (17) ==
+  [para] BibleIndex
+  [para] BibleIndexEyebrow
+  [para] BibleIndexList
+  [para] BodyText
+  [char] Chapter Verse marker
+  [char] Default Paragraph Font
+  [para] Heading 1
+  [para] Heading 2
+  [para] Normal
+  [para] PsalmAcrostic
+  [para] Psalms BOOK
+  [para] PsalmSuperscription
+  [char] Selah
+  [table] Table Grid
+  [char] Verse marker
+  [para] VerseText
+  [char] Words of Jesus
+
+== BASE-ONLY (1) - keep, used styles depend on them ==
+  [table] Table Normal  (base of Table Grid)
+
+== UNUSED custom (42) - purge candidates ==
+  [para] Acknowledgments
+  [para] AuthorBodyText
+  [para] AuthorBookRef
+  [para] AuthorBookRefHeader
+  [para] AuthorBookSections
+  [para] AuthorListItem
+  [para] AuthorListItemBody
+  [para] AuthorListItemTab
+  [para] AuthorSectionHead
+  [para] Blank line
+  [para] BodyTextTopLineCPBB
+  [char] BookHyperlink
+  [para] Brief
+  [para] CenterSubText
+  [para] Contents
+  [para] ContentsRef
+  [para] Cover
+  [para] CustomParaAfterH1
+  [para] CustomParaAfterH1-2nd
+  [para] DatAuthRef
+  [char] EmphasisBlack
+  [char] EmphasisRed
+  [para] End note normal
+  [para] Footnote crossreference
+  [para] Footnote normal
+  [para] FrontPageBodyText
+  [para] FrontPageTopLine
+  [para] Glossary
+  [para] Horizontal Rule
+  [para] Index
+  [para] Introduction
+  [para] Paragraph
+  [para] Paragraph Continuation
+  [para] ParallelHeader
+  [para] ParallelText
+  [para] Picture Caption
+  [para] SpeakerLabel
+  [para] TheFooters
+  [para] TheHeaders
+  [para] TitleEyebrow
+  [para] TitleOnePage
+  [para] TitleVersion
+
+== UNUSED built-in (363) - cannot be deleted ==
+  [para] Balloon Text
+  [para] Bibliography
+  [para] Block Text
+  [para] Body Text
+  [para] Body Text 2
+  [para] Body Text 3
+  [para] Body Text First Indent
+  [para] Body Text First Indent 2
+  [para] Body Text Indent
+  [para] Body Text Indent 2
+  [para] Body Text Indent 3
+  [char] Book Title
+  [para] Caption
+  [para] Closing
+  [table] Colorful Grid
+  [table] Colorful Grid - Accent 1
+  [table] Colorful Grid - Accent 2
+  [table] Colorful Grid - Accent 3
+  [table] Colorful Grid - Accent 4
+  [table] Colorful Grid - Accent 5
+  [table] Colorful Grid - Accent 6
+  [table] Colorful List
+  [table] Colorful List - Accent 1
+  [table] Colorful List - Accent 2
+  [table] Colorful List - Accent 3
+  [table] Colorful List - Accent 4
+  [table] Colorful List - Accent 5
+  [table] Colorful List - Accent 6
+  [table] Colorful Shading
+  [table] Colorful Shading - Accent 1
+  [table] Colorful Shading - Accent 2
+  [table] Colorful Shading - Accent 3
+  [table] Colorful Shading - Accent 4
+  [table] Colorful Shading - Accent 5
+  [table] Colorful Shading - Accent 6
+  [char] Comment Reference
+  [para] Comment Subject
+  [para] Comment Text
+  [table] Dark List
+  [table] Dark List - Accent 1
+  [table] Dark List - Accent 2
+  [table] Dark List - Accent 3
+  [table] Dark List - Accent 4
+  [table] Dark List - Accent 5
+  [table] Dark List - Accent 6
+  [para] Date
+  [para] Document Map
+  [para] E-mail Signature
+  [char] Emphasis
+  [char] Endnote Reference
+  [para] Endnote Text
+  [para] Envelope Address
+  [para] Envelope Return
+  [char] FollowedHyperlink
+  [para] Footer
+  [char] Footnote Reference
+  [para] Footnote Text
+  [table] Grid Table 1 Light
+  [table] Grid Table 1 Light - Accent 1
+  [table] Grid Table 1 Light - Accent 2
+  [table] Grid Table 1 Light - Accent 3
+  [table] Grid Table 1 Light - Accent 4
+  [table] Grid Table 1 Light - Accent 5
+  [table] Grid Table 1 Light - Accent 6
+  [table] Grid Table 2
+  [table] Grid Table 2 - Accent 1
+  [table] Grid Table 2 - Accent 2
+  [table] Grid Table 2 - Accent 3
+  [table] Grid Table 2 - Accent 4
+  [table] Grid Table 2 - Accent 5
+  [table] Grid Table 2 - Accent 6
+  [table] Grid Table 3
+  [table] Grid Table 3 - Accent 1
+  [table] Grid Table 3 - Accent 2
+  [table] Grid Table 3 - Accent 3
+  [table] Grid Table 3 - Accent 4
+  [table] Grid Table 3 - Accent 5
+  [table] Grid Table 3 - Accent 6
+  [table] Grid Table 4
+  [table] Grid Table 4 - Accent 1
+  [table] Grid Table 4 - Accent 2
+  [table] Grid Table 4 - Accent 3
+  [table] Grid Table 4 - Accent 4
+  [table] Grid Table 4 - Accent 5
+  [table] Grid Table 4 - Accent 6
+  [table] Grid Table 5 Dark
+  [table] Grid Table 5 Dark - Accent 1
+  [table] Grid Table 5 Dark - Accent 2
+  [table] Grid Table 5 Dark - Accent 3
+  [table] Grid Table 5 Dark - Accent 4
+  [table] Grid Table 5 Dark - Accent 5
+  [table] Grid Table 5 Dark - Accent 6
+  [table] Grid Table 6 Colorful
+  [table] Grid Table 6 Colorful - Accent 1
+  [table] Grid Table 6 Colorful - Accent 2
+  [table] Grid Table 6 Colorful - Accent 3
+  [table] Grid Table 6 Colorful - Accent 4
+  [table] Grid Table 6 Colorful - Accent 5
+  [table] Grid Table 6 Colorful - Accent 6
+  [table] Grid Table 7 Colorful
+  [table] Grid Table 7 Colorful - Accent 1
+  [table] Grid Table 7 Colorful - Accent 2
+  [table] Grid Table 7 Colorful - Accent 3
+  [table] Grid Table 7 Colorful - Accent 4
+  [table] Grid Table 7 Colorful - Accent 5
+  [table] Grid Table 7 Colorful - Accent 6
+  [char] Hashtag
+  [para] Header
+  [para] Heading 3
+  [para] Heading 4
+  [para] Heading 5
+  [para] Heading 6
+  [para] Heading 7
+  [para] Heading 8
+  [para] Heading 9
+  [char] HTML Acronym
+  [para] HTML Address
+  [char] HTML Cite
+  [char] HTML Code
+  [char] HTML Definition
+  [char] HTML Keyboard
+  [para] HTML Preformatted
+  [char] HTML Sample
+  [char] HTML Typewriter
+  [char] HTML Variable
+  [char] Hyperlink
+  [para] Index 1
+  [para] Index 2
+  [para] Index 3
+  [para] Index 4
+  [para] Index 5
+  [para] Index 6
+  [para] Index 7
+  [para] Index 8
+  [para] Index 9
+  [para] Index Heading
+  [char] Intense Emphasis
+  [para] Intense Quote
+  [char] Intense Reference
+  [table] Light Grid
+  [table] Light Grid - Accent 1
+  [table] Light Grid - Accent 2
+  [table] Light Grid - Accent 3
+  [table] Light Grid - Accent 4
+  [table] Light Grid - Accent 5
+  [table] Light Grid - Accent 6
+  [table] Light List
+  [table] Light List - Accent 1
+  [table] Light List - Accent 2
+  [table] Light List - Accent 3
+  [table] Light List - Accent 4
+  [table] Light List - Accent 5
+  [table] Light List - Accent 6
+  [table] Light Shading
+  [table] Light Shading - Accent 1
+  [table] Light Shading - Accent 2
+  [table] Light Shading - Accent 3
+  [table] Light Shading - Accent 4
+  [table] Light Shading - Accent 5
+  [table] Light Shading - Accent 6
+  [char] Line Number
+  [para] List
+  [para] List 2
+  [para] List 3
+  [para] List 4
+  [para] List 5
+  [para] List Bullet
+  [para] List Bullet 2
+  [para] List Bullet 3
+  [para] List Bullet 4
+  [para] List Bullet 5
+  [para] List Continue
+  [para] List Continue 2
+  [para] List Continue 3
+  [para] List Continue 4
+  [para] List Continue 5
+  [para] List Number
+  [para] List Number 2
+  [para] List Number 3
+  [para] List Number 4
+  [para] List Number 5
+  [para] List Paragraph
+  [table] List Table 1 Light
+  [table] List Table 1 Light - Accent 1
+  [table] List Table 1 Light - Accent 2
+  [table] List Table 1 Light - Accent 3
+  [table] List Table 1 Light - Accent 4
+  [table] List Table 1 Light - Accent 5
+  [table] List Table 1 Light - Accent 6
+  [table] List Table 2
+  [table] List Table 2 - Accent 1
+  [table] List Table 2 - Accent 2
+  [table] List Table 2 - Accent 3
+  [table] List Table 2 - Accent 4
+  [table] List Table 2 - Accent 5
+  [table] List Table 2 - Accent 6
+  [table] List Table 3
+  [table] List Table 3 - Accent 1
+  [table] List Table 3 - Accent 2
+  [table] List Table 3 - Accent 3
+  [table] List Table 3 - Accent 4
+  [table] List Table 3 - Accent 5
+  [table] List Table 3 - Accent 6
+  [table] List Table 4
+  [table] List Table 4 - Accent 1
+  [table] List Table 4 - Accent 2
+  [table] List Table 4 - Accent 3
+  [table] List Table 4 - Accent 4
+  [table] List Table 4 - Accent 5
+  [table] List Table 4 - Accent 6
+  [table] List Table 5 Dark
+  [table] List Table 5 Dark - Accent 1
+  [table] List Table 5 Dark - Accent 2
+  [table] List Table 5 Dark - Accent 3
+  [table] List Table 5 Dark - Accent 4
+  [table] List Table 5 Dark - Accent 5
+  [table] List Table 5 Dark - Accent 6
+  [table] List Table 6 Colorful
+  [table] List Table 6 Colorful - Accent 1
+  [table] List Table 6 Colorful - Accent 2
+  [table] List Table 6 Colorful - Accent 3
+  [table] List Table 6 Colorful - Accent 4
+  [table] List Table 6 Colorful - Accent 5
+  [table] List Table 6 Colorful - Accent 6
+  [table] List Table 7 Colorful
+  [table] List Table 7 Colorful - Accent 1
+  [table] List Table 7 Colorful - Accent 2
+  [table] List Table 7 Colorful - Accent 3
+  [table] List Table 7 Colorful - Accent 4
+  [table] List Table 7 Colorful - Accent 5
+  [table] List Table 7 Colorful - Accent 6
+  [para] Macro Text
+  [table] Medium Grid 1
+  [table] Medium Grid 1 - Accent 1
+  [table] Medium Grid 1 - Accent 2
+  [table] Medium Grid 1 - Accent 3
+  [table] Medium Grid 1 - Accent 4
+  [table] Medium Grid 1 - Accent 5
+  [table] Medium Grid 1 - Accent 6
+  [table] Medium Grid 2
+  [table] Medium Grid 2 - Accent 1
+  [table] Medium Grid 2 - Accent 2
+  [table] Medium Grid 2 - Accent 3
+  [table] Medium Grid 2 - Accent 4
+  [table] Medium Grid 2 - Accent 5
+  [table] Medium Grid 2 - Accent 6
+  [table] Medium Grid 3
+  [table] Medium Grid 3 - Accent 1
+  [table] Medium Grid 3 - Accent 2
+  [table] Medium Grid 3 - Accent 3
+  [table] Medium Grid 3 - Accent 4
+  [table] Medium Grid 3 - Accent 5
+  [table] Medium Grid 3 - Accent 6
+  [table] Medium List 1
+  [table] Medium List 1 - Accent 1
+  [table] Medium List 1 - Accent 2
+  [table] Medium List 1 - Accent 3
+  [table] Medium List 1 - Accent 4
+  [table] Medium List 1 - Accent 5
+  [table] Medium List 1 - Accent 6
+  [table] Medium List 2
+  [table] Medium List 2 - Accent 1
+  [table] Medium List 2 - Accent 2
+  [table] Medium List 2 - Accent 3
+  [table] Medium List 2 - Accent 4
+  [table] Medium List 2 - Accent 5
+  [table] Medium List 2 - Accent 6
+  [table] Medium Shading 1
+  [table] Medium Shading 1 - Accent 1
+  [table] Medium Shading 1 - Accent 2
+  [table] Medium Shading 1 - Accent 3
+  [table] Medium Shading 1 - Accent 4
+  [table] Medium Shading 1 - Accent 5
+  [table] Medium Shading 1 - Accent 6
+  [table] Medium Shading 2
+  [table] Medium Shading 2 - Accent 1
+  [table] Medium Shading 2 - Accent 2
+  [table] Medium Shading 2 - Accent 3
+  [table] Medium Shading 2 - Accent 4
+  [table] Medium Shading 2 - Accent 5
+  [table] Medium Shading 2 - Accent 6
+  [char] Mention
+  [para] Message Header
+  [para] No Spacing
+  [para] Normal (Web)
+  [para] Normal Indent
+  [para] Note Heading
+  [char] Page Number
+  [char] Placeholder Text
+  [table] Plain Table 1
+  [table] Plain Table 2
+  [table] Plain Table 3
+  [table] Plain Table 4
+  [table] Plain Table 5
+  [para] Plain Text
+  [para] Quote
+  [para] Salutation
+  [para] Signature
+  [char] Smart Hyperlink
+  [char] SmartLink
+  [char] Strong
+  [para] Subtitle
+  [char] Subtle Emphasis
+  [char] Subtle Reference
+  [table] Table 3D effects 1
+  [table] Table 3D effects 2
+  [table] Table 3D effects 3
+  [table] Table Classic 1
+  [table] Table Classic 2
+  [table] Table Classic 3
+  [table] Table Classic 4
+  [table] Table Colorful 1
+  [table] Table Colorful 2
+  [table] Table Colorful 3
+  [table] Table Columns 1
+  [table] Table Columns 2
+  [table] Table Columns 3
+  [table] Table Columns 4
+  [table] Table Columns 5
+  [table] Table Contemporary
+  [table] Table Elegant
+  [table] Table Grid 1
+  [table] Table Grid 2
+  [table] Table Grid 3
+  [table] Table Grid 4
+  [table] Table Grid 5
+  [table] Table Grid 6
+  [table] Table Grid 7
+  [table] Table Grid 8
+  [table] Table Grid Light
+  [table] Table List 1
+  [table] Table List 2
+  [table] Table List 3
+  [table] Table List 4
+  [table] Table List 5
+  [table] Table List 6
+  [table] Table List 7
+  [table] Table List 8
+  [para] Table of Authorities
+  [para] Table of Figures
+  [table] Table Professional
+  [table] Table Simple 1
+  [table] Table Simple 2
+  [table] Table Simple 3
+  [table] Table Subtle 1
+  [table] Table Subtle 2
+  [table] Table Theme
+  [table] Table Web 1
+  [table] Table Web 2
+  [table] Table Web 3
+  [para] Title
+  [para] TOA Heading
+  [para] TOC 1
+  [para] TOC 2
+  [para] TOC 3
+  [para] TOC 4
+  [para] TOC 5
+  [para] TOC 6
+  [para] TOC 7
+  [para] TOC 8
+  [para] TOC 9
+  [para] TOC Heading
+  [char] Unresolved Mention
