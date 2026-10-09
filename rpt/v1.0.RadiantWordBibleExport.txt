@@ -1,10 +1,10 @@
 RadiantWordBible v1.0 release record
 Export code commit: 73ffd51 (aeBibleClass, src/basBibleOnlyExport.bas)
-Artefact: Bible1.0.RadiantWordBible.docx (gitignored; local copy of RadiantWordBible.docx)
+Artefact: Bible\v1.0.RadiantWordBible.docx (gitignored; local copy of RadiantWordBible.docx)
 Size: 2330105 bytes
 SHA-256: 2f2dab54812fc9754985dcf602a5ae913579bda858f6836cc44a5aff4f457f35
 Operator check: running headers/footers verified good in Word (2026-10-09, on the 13:33 export; this export differs only in Pass 4e speed-up).
-Baseline for Pass 9: Bible0.0.RadiantWordBible.docx
+Baseline for Pass 9: Bible\v0.0.RadiantWordBible.docx
 
 ==== Final clean export report (rpt\RadiantWordBibleExport.txt) ====
   [memory] start: Word ws 2163 MB, peak 2163 MB, private 2020 MB | free 5234 MB | pgIn (baseline)
