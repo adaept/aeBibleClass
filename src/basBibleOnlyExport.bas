@@ -76,6 +76,14 @@ Private m_haltFired As Boolean
 Private m_report As String          ' accumulated run log, written to rpt\ at exit
 Private m_issues As Long            ' Count of halts/errors/failed post-save steps
 Private m_reportFolder As String    ' folder whose rpt\ receives the report
+Private m_runStart As Double        ' Timer at run start (seconds since midnight)
+Private m_lapStart As Double        ' Timer at the end of the previous lap
+Private m_timings As String         ' per-pass timing table, appended to the report
+Private m_lastPagesIn As Double     ' cumulative OS pages-read-from-disk at the previous lap
+Private m_totalPagesIn As Double    ' pages read from disk during this run
+Private m_minFreeMB As Double       ' lowest free physical memory seen at a lap (MB)
+
+Private Declare PtrSafe Function GetCurrentProcessId Lib "kernel32" () As Long
 
 ' ==========================================================================
 ' GetScriptureOnlyStyles
@@ -162,6 +170,13 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     m_report = ""
     m_issues = 0
     m_reportFolder = ""
+    m_timings = ""
+    m_runStart = Timer
+    m_lapStart = m_runStart
+    m_totalPagesIn = 0
+    m_minFreeMB = 0
+    m_lastPagesIn = 0
+    ExportLog "  [memory] start: " & MemSnapshot()
 
     If sourcePath = "" Then sourcePath = ActiveDocument.FullName
     Dim SourceFolder As String
@@ -238,6 +253,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         GoTo PROC_EXIT
     End If
     ExportLog "Pass1_DuplicateAndOpen: opened working copy."
+    LapTimer "Pass1_DuplicateAndOpen"
 
     Dim screenWas As Boolean
     screenWas = Application.ScreenUpdating
@@ -245,6 +261,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
 
     ' Pass 2 - footnote sweep
     Pass2_FootnoteSweep oDoc
+    LapTimer "Pass2_FootnoteSweep"
     If m_haltFired Then GoTo PROC_HALT
 
     ' Pass 3 - paragraph sweep (captures the pre-deletion section Count,
@@ -252,11 +269,13 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     Dim preDeleteSectionCount As Long
     preDeleteSectionCount = oDoc.Sections.Count
     Pass3_ParagraphSweep oDoc
+    LapTimer "Pass3_ParagraphSweep"
     If m_haltFired Then GoTo PROC_HALT
 
     ' Pass 4 - verify strip (intermediate state)
     Dim violations As Long
     violations = VerifyScriptureOnlyStrip(oDoc)
+    LapTimer "Pass4_VerifyScriptureOnlyStrip"
     If violations <> 0 Then
         HaltExport "Pass4_VerifyScriptureOnlyStrip", _
             violations & " violation(s) found - see rpt\VerifyScriptureOnlyStrip.txt"
@@ -267,6 +286,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     If oSettings("StripOptionalHyphens") Then
         Dim hyphensLeft As Long
         hyphensLeft = Pass4b_StripOptionalHyphens(oDoc)
+        LapTimer "Pass4b_StripOptionalHyphens"
         If hyphensLeft <> 0 Then
             HaltExport "Pass4b_StripOptionalHyphens", _
                 hyphensLeft & " optional hyphen(s) remain after removal"
@@ -279,6 +299,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     If oSettings("ReplaceEmphasisStyles") Then
         Dim emphViolations As Long
         emphViolations = Pass4c_ReplaceEmphasisStyles(oDoc)
+        LapTimer "Pass4c_ReplaceEmphasisStyles"
         If emphViolations <> 0 Then
             HaltExport "Pass4c_ReplaceEmphasisStyles", _
                 emphViolations & " violation(s) - see Immediate window"
@@ -290,6 +311,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     If oSettings("VerseTextAlignment") <> "" Then
         Dim alignViolations As Long
         alignViolations = Pass4d_SetVerseTextAlignment(oDoc, CStr(oSettings("VerseTextAlignment")))
+        LapTimer "Pass4d_SetVerseTextAlignment"
         If alignViolations <> 0 Then
             HaltExport "Pass4d_SetVerseTextAlignment", _
                 alignViolations & " violation(s) - see the report"
@@ -299,6 +321,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
 
     ' Pass 5 - section surgery
     Pass5_SectionSurgery oDoc, preDeleteSectionCount
+    LapTimer "Pass5_SectionSurgery"
     If m_haltFired Then GoTo PROC_HALT
 
     ' Pass 4e - style purge (finding 9). Runs after Pass 5 so the doomed
@@ -306,6 +329,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     If oSettings("PurgeUnusedStyles") Then
         Dim purgeViolations As Long
         purgeViolations = Pass4e_PurgeUnusedStyles(oDoc)
+        LapTimer "Pass4e_PurgeUnusedStyles"
         If purgeViolations <> 0 Then
             HaltExport "Pass4e_PurgeUnusedStyles", _
                 purgeViolations & " violation(s) - see the report"
@@ -315,6 +339,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
 
     ' Pass 6 - Bible Index page-number regeneration
     Pass6_RegenerateBibleIndex oDoc
+    LapTimer "Pass6_RegenerateBibleIndex"
     If m_haltFired Then GoTo PROC_HALT
 
     ' Pass 7 - save
@@ -323,6 +348,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     ExportLog "Pass7_Save: saved " & destPath
     oDoc.Close SaveChanges:=False
     Set oDoc = Nothing
+    LapTimer "Pass7_SaveAndClose"
 
     ' Pass 7b - strip the orphaned ribbon part (py\strip_ribbon.py via WSL).
     ' The document is closed in Word at this point, as the script requires.
@@ -335,6 +361,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
             ExportLog "Pass7b_StripRibbon: FAILED (exit code " & ribbonRc & "). " & _
                 "Artefact saved but still carries the ribbon part."
         End If
+        LapTimer "Pass7b_StripRibbon"
     End If
 
     ' Pass 8 - final verification, fresh open, independent of Pass 6's
@@ -347,6 +374,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     Else
         ExportLog "Pass8: Bible Index page numbers verified, 0 mismatches."
     End If
+    LapTimer "Pass8_VerifyBibleIndexPageNumbers"
 
     ' Pass 9 - character-style change verifier vs. the baseline .docx
     ' (py\verify_char_style_change.py): nothing but the two emphasis
@@ -367,6 +395,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
                     SourceFolder & "py\verify_char_style_change.py", Array(baselinePath, destPath))
             End If
             If verifyRc <> 0 Then m_issues = m_issues + 1
+            LapTimer "Pass9_VerifyCharStyles"
         End If
     End If
 
@@ -386,6 +415,7 @@ PROC_HALT:
     m_haltFired = False
 
 PROC_EXIT:
+    LogTimingSummary
     WriteExportReport
     Exit Sub
 PROC_ERR:
@@ -863,8 +893,11 @@ Private Sub Pass6_RegenerateBibleIndex(ByVal oDoc As Object)
     Dim stable As Boolean
     stable = False
 
+    Dim tSub As Double
     For iteration = 1 To 3
+        tSub = Timer
         oDoc.Repaginate
+        SubTimer "Pass6 iter " & iteration & " Repaginate", tSub
 
         Dim h1Paras() As Object
         Dim idxParas() As Object
@@ -886,6 +919,7 @@ Private Sub Pass6_RegenerateBibleIndex(ByVal oDoc As Object)
                     If nIdx <= expectedBooks Then Set idxParas(nIdx) = oPara
             End Select
         Next oPara
+        SubTimer "Pass6 iter " & iteration & " paragraph walk", tSub
 
         If nH1 <> expectedBooks Then
             HaltExport "Pass6_RegenerateBibleIndex", _
@@ -910,11 +944,13 @@ Private Sub Pass6_RegenerateBibleIndex(ByVal oDoc As Object)
                 If h1Pages(i) <> prevH1Pages(i) Then changed = True
             End If
         Next i
+        SubTimer "Pass6 iter " & iteration & " Information(page) x" & expectedBooks, tSub
 
         For i = 1 To expectedBooks
             PatchIndexRowPageNumber idxParas(i), h1Pages(i)
             If m_haltFired Then Exit Sub
         Next i
+        SubTimer "Pass6 iter " & iteration & " patch rows", tSub
 
         If iteration > 1 And Not changed Then
             stable = True
@@ -1836,3 +1872,127 @@ Private Function StyleInUseAnywhere(ByVal oDoc As Object, ByVal oSty As Object) 
         Loop
     Next oStory
 End Function
+
+' ==========================================================================
+' LapTimer / LogTimingSummary
+' ==========================================================================
+' Per-pass performance monitor (2026-10-09: a run took 18 min vs 7 min with
+' near-identical code, and the log had too few timestamps to say which pass).
+' LapTimer logs the seconds since the previous lap and keeps a table;
+' LogTimingSummary prints the table and the total at the end of the report,
+' so rpt\RadiantWordBibleExport.txt shows a per-pass history in git.
+' Timer is seconds since midnight; a negative lap means midnight passed.
+' ==========================================================================
+Private Sub LapTimer(ByVal label As String)
+    Dim t As Double
+    Dim d As Double
+    t = Timer
+    d = t - m_lapStart
+    If d < 0 Then d = d + 86400
+    m_lapStart = t
+    Dim sMem As String
+    sMem = MemSnapshot()
+    ExportLog "  [timing] " & label & ": " & Format$(d, "0.0") & " s | " & sMem
+    m_timings = m_timings & "  " & label & space$(36 - Len(label)) & _
+        Right$(space$(9) & Format$(d, "0.0"), 9) & " s | " & sMem & vbCrLf
+End Sub
+
+' --------------------------------------------------------------------------
+' MemSnapshot - Word's own memory and the machine's paging state, via WMI
+' (late-bound, read-only). GetCurrentProcessId is Word's PID because VBA runs
+' inside the Word process. Returns a one-line summary:
+'   ws/peak/priv = Word working set / peak working set / private bytes (MB)
+'   free         = free physical memory, whole machine (MB)
+'   pgIn         = pages read from disk since the previous snapshot (OS-wide
+'                  hard-fault reads; sustained large values = real paging)
+' Also accumulates m_totalPagesIn and m_minFreeMB for the summary. Any WMI
+' failure yields "n/a" fields rather than an error: this is a monitor only.
+' --------------------------------------------------------------------------
+Private Function MemSnapshot() As String
+    On Error Resume Next
+    Dim oWMI As Object
+    Dim oRow As Object
+    Dim ws As Double, peak As Double, priv As Double
+    Dim freeMB As Double, pagesIn As Double, delta As Double
+    Dim gotProc As Boolean, gotOS As Boolean, gotPg As Boolean
+
+    Set oWMI = GetObject("winmgmts:\\.\root\cimv2")
+    If oWMI Is Nothing Then
+        MemSnapshot = "mem n/a (WMI unavailable)"
+        Exit Function
+    End If
+
+    For Each oRow In oWMI.ExecQuery("SELECT WorkingSetSize, PeakWorkingSetSize, " & _
+        "PrivatePageCount FROM Win32_Process WHERE ProcessId=" & GetCurrentProcessId())
+        ws = CDbl(oRow.WorkingSetSize) / 1048576
+        peak = CDbl(oRow.PeakWorkingSetSize) / 1024     ' this property is in KB, not bytes
+        priv = CDbl(oRow.PrivatePageCount) / 1048576
+        gotProc = (Err.Number = 0)
+        Err.Clear
+    Next oRow
+
+    For Each oRow In oWMI.ExecQuery("SELECT FreePhysicalMemory FROM Win32_OperatingSystem")
+        freeMB = CDbl(oRow.FreePhysicalMemory) / 1024
+        gotOS = (Err.Number = 0)
+        Err.Clear
+    Next oRow
+
+    For Each oRow In oWMI.ExecQuery("SELECT PagesInputPersec FROM Win32_PerfRawData_PerfOS_Memory")
+        pagesIn = CDbl(oRow.PagesInputPersec)
+        gotPg = (Err.Number = 0)
+        Err.Clear
+    Next oRow
+
+    Dim s As String
+    If gotProc Then
+        s = "Word ws " & Format$(ws, "0") & " MB, peak " & Format$(peak, "0") & _
+            " MB, private " & Format$(priv, "0") & " MB"
+    Else
+        s = "Word mem n/a"
+    End If
+    If gotOS Then
+        s = s & " | free " & Format$(freeMB, "0") & " MB"
+        If m_minFreeMB = 0 Or freeMB < m_minFreeMB Then m_minFreeMB = freeMB
+    Else
+        s = s & " | free n/a"
+    End If
+    If gotPg Then
+        If m_lastPagesIn > 0 Then
+            delta = pagesIn - m_lastPagesIn
+            If delta < 0 Then delta = delta + 4294967296#
+            m_totalPagesIn = m_totalPagesIn + delta
+            s = s & " | pgIn " & Format$(delta, "0")
+        Else
+            s = s & " | pgIn (baseline)"
+        End If
+        m_lastPagesIn = pagesIn
+    Else
+        s = s & " | pgIn n/a"
+    End If
+    MemSnapshot = s
+End Function
+
+Private Sub LogTimingSummary()
+    If m_timings = "" Then Exit Sub
+    Dim total As Double
+    total = Timer - m_runStart
+    If total < 0 Then total = total + 86400
+    ExportLog "---- Pass timings (seconds) ----"
+    m_report = m_report & m_timings
+    ExportLog "  TOTAL" & space$(31) & Right$(space$(9) & Format$(total, "0.0"), 9) & " s"
+    ExportLog "  Paging: " & Format$(m_totalPagesIn, "0") & " pages read from disk during the run (" & _
+        Format$(m_totalPagesIn * 4 / 1024, "0") & " MB at 4 KB/page, OS-wide); lowest free " & _
+        "physical memory at a lap " & Format$(m_minFreeMB, "0") & " MB. Large pgIn together " & _
+        "with low free memory = paging; near-zero pgIn = not paging."
+End Sub
+
+' SubTimer - log the seconds since t0 for a sub-step inside a pass, then reset
+' t0. Log line only (not in the per-pass table); used to locate the cost inside
+' a slow pass such as Pass 6.
+Private Sub SubTimer(ByVal label As String, ByRef t0 As Double)
+    Dim d As Double
+    d = Timer - t0
+    If d < 0 Then d = d + 86400
+    t0 = Timer
+    ExportLog "    [sub-timing] " & label & ": " & Format$(d, "0.0") & " s"
+End Sub
