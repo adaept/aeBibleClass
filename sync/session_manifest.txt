@@ -4158,3 +4158,18 @@ SESSION 2026-10-08 (RadiantWordBible B4) -- src/basBibleOnlyExport.bas, py/verif
   - Live run 17:27-17:30: RESULT CLEAN; final header "REVELATION"; empty-header sections [].
   - Open: style purge, Index page numbers last, then v1.0 + release record.
 ===============================================================================
+SESSION 2026-10-09 (RadiantWordBible v1.0 release) -- src/basBibleOnlyExport.bas, py/verify_char_style_change.py, py/normalize_vba.py
+  - Pass 4e (style purge) added, then rewritten: paragraph WALK over all 143 stories + strict
+    linked-style check + main-story Find for char styles; GetPurgeStyles = 39 (SpeakerLabel,
+    TheHeaders, TheFooters deliberately kept). Earlier 4e runs had deleted TheHeaders/TheFooters
+    (missed by per-style Find); caught by the walk. Plan doc has a CORRECTION entry.
+  - Per-pass timers (LapTimer/LogTimingSummary/SubTimer) + Word memory/paging monitor (MemSnapshot, WMI).
+  - InspectStyleUsage (read-only inventory -> rpt/RadiantWordBibleStyleInventory.txt), now uses the walk.
+  - Work copy RadiantWordBible_work.docm auto-deleted after a clean run.
+  - Pass 9 check 6: baseline header/footer styles must survive (tested with a simulated loss).
+  - normalize_vba.py: added .InUse rule (a local named inUse made the VBE rewrite .InUse in 4 untouched files).
+  - Final run 14:01-14:05: RESULT CLEAN, 260.9 s (Pass 4e 31.5 s). v1.0 RELEASED: code 73ffd51,
+    record rpt/v1.0.RadiantWordBibleExport.txt (04cb54f), artefact Bible/v1.0.RadiantWordBible.docx
+    (gitignored; SHA-256 2f2dab54...f457f35). Backed up to OneDrive (aeBibleClass, adaept5tudio).
+  - Open: see "Next-session task list" at the end of the adaept5tudio plan doc.
+===============================================================================
