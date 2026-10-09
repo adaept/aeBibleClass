@@ -4151,3 +4151,10 @@ SESSION 2026-10-08 (RadiantWordBible left alignment) -- src/basBibleOnlyExport.b
   - Source was Blank Bible Copy.docm itself (export works on its own working copy).
   - Open: B4 Revelation header, style purge, Index page numbers last, then v1.0.
 ===============================================================================
+SESSION 2026-10-08 (RadiantWordBible B4) -- src/basBibleOnlyExport.bas, py/verify_char_style_change.py
+  - Pass 5: section 139's header(s) copied onto 145 before the 140-145 deletion; extra trailing
+    paragraph trimmed (fired once live: trimmed=1); header compared via NormHeaderText; style TheHeaders asserted.
+  - Verifier: every two-column section must have a non-empty effective header.
+  - Live run 17:27-17:30: RESULT CLEAN; final header "REVELATION"; empty-header sections [].
+  - Open: style purge, Index page numbers last, then v1.0 + release record.
+===============================================================================

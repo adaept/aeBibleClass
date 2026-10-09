@@ -22,6 +22,10 @@ new export. Checks:
      "start" or an absent jc) and no VerseText paragraph carries a direct
      alignment override that differs (VerseText left-alignment, v1.0 task).
 
+  5. Always: every two-column (book body) section has a non-empty effective
+     default header (its own, else inherited from the previous section) -
+     catches a book losing its running header (B4, Revelation, 2026-10-08).
+
 Usage:
     python3 -I py/verify_char_style_change.py baseline.docx new.docx [--verse-align left]
 
@@ -99,6 +103,33 @@ def verse_alignment(path):
     return style_jc, overrides
 
 
+def body_section_headers(path):
+    """Return a list of (section number, header text) for every two-column
+    section whose effective default header text is empty."""
+    import re
+    with zipfile.ZipFile(path) as z:
+        doc = z.read('word/document.xml').decode('utf-8')
+        rels_xml = z.read('word/_rels/document.xml.rels').decode('utf-8')
+        rels = {}
+        for m in re.finditer(r'<Relationship [^>]*>', rels_xml):
+            rid = re.search(r'Id="([^"]+)"', m.group(0))
+            tgt = re.search(r'Target="([^"]+)"', m.group(0))
+            if rid and tgt:
+                rels[rid.group(1)] = tgt.group(1)
+        empty = []
+        effective = ''
+        for n, m in enumerate(re.finditer(r'<w:sectPr[ >].*?</w:sectPr>', doc, re.S), 1):
+            sp = m.group(0)
+            ref = re.search(r'<w:headerReference w:type="default" r:id="([^"]+)"', sp)
+            if ref:
+                x = z.read('word/' + rels[ref.group(1)]).decode('utf-8')
+                effective = ''.join(re.findall(r'<w:t[ >][^<]*|<w:t>[^<]*', x))
+                effective = re.sub(r'<w:t[^>]*>', '', effective).strip()
+            if re.search(r'<w:cols [^>]*w:num="2"', sp) and not effective:
+                empty.append(n)
+        return empty
+
+
 def main(argv):
     expect_align = None
     if '--verse-align' in argv:
@@ -144,6 +175,11 @@ def main(argv):
         if bad:
             failures.append('%d VerseText paragraph(s) override alignment (expected %s)' % (bad, expect_align))
         print('VerseText style jc=%r, direct overrides=%s' % (style_jc, dict(overrides)))
+
+    empty_hdr = body_section_headers(argv[2])
+    if empty_hdr:
+        failures.append('two-column section(s) with an empty header: %s' % empty_hdr)
+    print('two-column sections with empty header:', empty_hdr)
 
     print('baseline chars by style:', dict(b_chars))
     print('new      chars by style:', dict(n_chars))

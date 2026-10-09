@@ -707,6 +707,23 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' through the end; 139 then takes the final section's setup, which is
     ' first overwritten with 139's own page setup.
     CopySectionPageSetup oDoc.Sections(139), oDoc.Sections(145)
+    ' B4 (2026-10-08): the surviving final section would otherwise keep
+    ' section 145's empty header, leaving Revelation without its running
+    ' header. Headers are static per-book text, so copy 139's header(s)
+    ' onto 145 while both still exist. Footers are inherited from section
+    ' 1 (PAGE field) and need no copy.
+    Dim hdrIdx As Long
+    Dim revHeaderText As String
+    revHeaderText = oDoc.Sections(139).Headers(wdHeaderFooterPrimary).Range.Text
+    Dim revHeaderParas As Long
+    revHeaderParas = oDoc.Sections(139).Headers(wdHeaderFooterPrimary).Range.Paragraphs.Count
+    For hdrIdx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
+        If oDoc.Sections(139).Headers(hdrIdx).Exists Then
+            oDoc.Sections(145).Headers(hdrIdx).LinkToPrevious = False
+            oDoc.Sections(145).Headers(hdrIdx).Range.FormattedText = _
+                oDoc.Sections(139).Headers(hdrIdx).Range.FormattedText
+        End If
+    Next hdrIdx
     Dim oRng As Object
     Set oRng = oDoc.Range(oDoc.Sections(139).Range.End - 1, oDoc.Content.End - 1)
     oRng.Delete
@@ -726,8 +743,47 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
         Exit Sub
     End If
 
+    ' B4 check: the final section (Revelation body) must carry 139's header
+    ' Assigning FormattedText over a header story leaves the target's own
+    ' final paragraph mark behind (an extra empty paragraph, 2026-10-08
+    ' halt: texts matched but not exactly). Remove extras by deleting the
+    ' penultimate paragraph mark; the surviving final mark keeps TheHeaders.
+    Dim oHdrRng As Object
+    Dim oDel As Object
+    Dim trimGuard As Long
+    Set oHdrRng = oDoc.Sections(postCount).Headers(wdHeaderFooterPrimary).Range
+    Do While oHdrRng.Paragraphs.Count > revHeaderParas And trimGuard < 5
+        trimGuard = trimGuard + 1
+        Set oDel = oHdrRng.Duplicate
+        oDel.SetRange oHdrRng.End - 2, oHdrRng.End - 1
+        oDel.Delete
+        Set oHdrRng = oDoc.Sections(postCount).Headers(wdHeaderFooterPrimary).Range
+    Loop
+    Dim gotHeader As String
+    gotHeader = oDoc.Sections(postCount).Headers(wdHeaderFooterPrimary).Range.Text
+    ExportLog "Pass5 B4: header paragraphs source=" & revHeaderParas & ", final=" & _
+        oHdrRng.Paragraphs.Count & ", trimmed=" & trimGuard & ", Len(source)=" & _
+        Len(revHeaderText) & ", Len(final)=" & Len(gotHeader)
+    Dim gotHeaderStyle As String
+    gotHeaderStyle = oDoc.Sections(postCount).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).style.NameLocal
+    If gotHeaderStyle <> "TheHeaders" Then
+        HaltExport "Pass5_SectionSurgery", _
+            "Final section header paragraph style is """ & gotHeaderStyle & """, expected ""TheHeaders"" (B4)."
+        Exit Sub
+    End If
+    ' Word appends extra control characters to a range's Text (Chr(13),
+    ' Chr(7) in tables, and the like), so compare the normalised text.
+    If Len(NormHeaderText(revHeaderText)) = 0 Or _
+       NormHeaderText(gotHeader) <> NormHeaderText(revHeaderText) Then
+        HaltExport "Pass5_SectionSurgery", _
+            "Final section header is """ & Replace(gotHeader, vbCr, "") & """, expected """ & _
+            Replace(revHeaderText, vbCr, "") & """ (B4)."
+        Exit Sub
+    End If
+
     ExportLog "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections removed (" & _
-        preDeleteSectionCount & " -> " & postCount & ")."
+        preDeleteSectionCount & " -> " & postCount & "); final section header """ & _
+        Replace(gotHeader, vbCr, "") & """."
 End Sub
 
 ' ==========================================================================
@@ -1488,4 +1544,10 @@ PROC_ERR:
         " | Err: " & Err.Number & " | " & Err.Description
     Pass4d_SetVerseTextAlignment = violations + 1
     Resume PROC_EXIT
+End Function
+
+' Strips the control characters Word adds to Range.Text (CR, LF, Chr(7))
+' and trims, so header strings compare on their visible text.
+Private Function NormHeaderText(ByVal s As String) As String
+    NormHeaderText = Trim$(Replace(Replace(Replace(s, vbCr, ""), vbLf, ""), Chr(7), ""))
 End Function
