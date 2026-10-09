@@ -1643,21 +1643,38 @@ Public Sub InspectStyleUsage(Optional ByVal docPath As String)
     Dim oSty As Object, oRng As Object, oStory As Object
     Dim nSkippedBuiltIn As Long
 
-    ' Pass A - applied styles (paragraph + character) via Find, every story.
+    ' Pass A - applied styles. Paragraph styles come from one walk of every
+    ' story (a per-style Find missed the header/footer stories, 2026-10-09).
+    ' A paragraph style that is not applied is also checked through its linked
+    ' character style (Find, every story). Custom character styles use Find over
+    ' every story; built-in character styles use the main story only (speed).
+    Dim dParaUsed As Object
+    Dim nStories As Long
+    Dim oLink As Object
+    Dim isUsed As Boolean
+    Set dParaUsed = CollectUsedParagraphStyles(oDoc, nStories)
     For Each oSty In oDoc.Styles
         If oSty.Type = wdStyleTypeParagraph Or oSty.Type = wdStyleTypeCharacter Then
             If oSty.InUse Or Not oSty.BuiltIn Then
-                For Each oStory In oDoc.StoryRanges
-                    Set oRng = oStory
-                    Do While Not oRng Is Nothing
-                        If StoryHasStyle(oRng, oSty) Then
-                            dUsed(oSty.NameLocal) = True
-                            Exit Do
+                isUsed = False
+                If oSty.Type = wdStyleTypeParagraph Then
+                    isUsed = dParaUsed.Exists(oSty.NameLocal)
+                    If Not isUsed Then
+                        Set oLink = GetLinkedStyle(oSty)
+                        If Not oLink Is Nothing Then
+                            If oSty.BuiltIn Then
+                                isUsed = StoryHasStyle(oDoc.Content, oLink)
+                            Else
+                                isUsed = StyleInUseAnywhere(oDoc, oLink)
+                            End If
                         End If
-                        Set oRng = oRng.NextStoryRange
-                    Loop
-                    If dUsed.Exists(oSty.NameLocal) Then Exit For
-                Next oStory
+                    End If
+                ElseIf oSty.BuiltIn Then
+                    isUsed = StoryHasStyle(oDoc.Content, oSty)
+                Else
+                    isUsed = StyleInUseAnywhere(oDoc, oSty)
+                End If
+                If isUsed Then dUsed(oSty.NameLocal) = True
             Else
                 nSkippedBuiltIn = nSkippedBuiltIn + 1
             End If
@@ -1833,6 +1850,11 @@ Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
     ' Find is kept only for character styles and for the linked character style
     ' of a paragraph style (a run can carry the linked "<name> Char" style
     ' without the paragraph style showing up - the SpeakerLabelChar lesson).
+    ' Those Finds cover the MAIN story only (a Find over all 143 stories cost
+    ' ~12 s per style, 154 s for 13 styles on 2026-10-09). Character-style
+    ' use in headers/footers is therefore not checked here; Pass 9 check 6
+    ' (baseline header/footer styles must survive) is the backstop, and the
+    ' baseline header/footer parts contain no character styles at all.
     tSub = Timer
     Set dParaUsed = CollectUsedParagraphStyles(oDoc, nStories)
     SubTimer "Pass4e usage walk (" & nStories & " stories, " & dParaUsed.Count & _
@@ -1854,13 +1876,13 @@ Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
                         Set oLink = GetLinkedStyle(oSty)
                         If Not oLink Is Nothing Then
                             nFinds = nFinds + 1
-                            styleApplied = StyleInUseAnywhere(oDoc, oLink)
+                            styleApplied = StoryHasStyle(oDoc.Content, oLink)
                             If styleApplied Then why = "Find hit on linked style """ & oLink.NameLocal & """"
                         End If
                     End If
                 Else
                     nFinds = nFinds + 1
-                    styleApplied = StyleInUseAnywhere(oDoc, oSty)
+                    styleApplied = StoryHasStyle(oDoc.Content, oSty)
                     If styleApplied Then why = "Find hit on character style"
                 End If
             End If
