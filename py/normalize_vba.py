@@ -45,6 +45,7 @@ NORMALIZATIONS = [
     (r'(?i)\.Field\b',          '.Field',           '.Field property / type member (Word.Field, Range.Field) — preserve uppercase F'),
     (r'(?i)\.Hidden\b',         '.Hidden',          '.Hidden property on Style/Font (VBE auto-demotes to .hidden)'),
     (r'(?i)\.BaseStyle\b',      '.BaseStyle',       '.BaseStyle property on Style (VBE auto-demotes to .baseStyle)'),
+    (r'(?i)\.InUse\b',          '.InUse',           '.InUse property on Style (VBE auto-demotes to .inUse when a same-named local exists or lingers in the name table)'),
     (r'(?i)\.Name\b',           '.Name',            '.Name property on VBProject/Style/Document/object'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Field\b',      'As Word.Field',      'As Word.Field type declaration'),

@@ -26,6 +26,12 @@ new export. Checks:
      default header (its own, else inherited from the previous section) -
      catches a book losing its running header (B4, Revelation, 2026-10-08).
 
+  6. Always: every paragraph/character style used in the baseline's header
+     and footer parts (word/header*.xml, word/footer*.xml) is still used in
+     the new export, and the style counts are reported. document.xml-only
+     checks missed the style purge deleting TheHeaders/TheFooters while 132
+     header + 1 footer paragraphs used them (2026-10-09).
+
 Usage:
     python3 -I py/verify_char_style_change.py baseline.docx new.docx [--verse-align left]
 
@@ -77,6 +83,22 @@ def read(path):
         if ps not in INDEX_STYLES:
             texts.append(''.join(buf))
     return styles, texts, chars
+
+
+def header_footer_styles(path):
+    """Return Counter of ('p'|'r', style id) used in word/header*.xml and
+    word/footer*.xml."""
+    import re
+    c = Counter()
+    with zipfile.ZipFile(path) as z:
+        for name in z.namelist():
+            if re.match(r'word/(header|footer)\d*\.xml$', name):
+                x = z.read(name).decode('utf-8')
+                for m in re.findall(r'<w:pStyle w:val="([^"]+)"', x):
+                    c[('p', m)] += 1
+                for m in re.findall(r'<w:rStyle w:val="([^"]+)"', x):
+                    c[('r', m)] += 1
+    return c
 
 
 def verse_alignment(path):
@@ -180,6 +202,15 @@ def main(argv):
     if empty_hdr:
         failures.append('two-column section(s) with an empty header: %s' % empty_hdr)
     print('two-column sections with empty header:', empty_hdr)
+
+    b_hf = header_footer_styles(argv[1])
+    n_hf = header_footer_styles(argv[2])
+    lost = sorted(k for k in b_hf if n_hf.get(k, 0) == 0)
+    if lost:
+        failures.append('style(s) used in baseline headers/footers but absent from the new '
+                        'headers/footers: %s' % [('%s:%s' % k) for k in lost])
+    print('header/footer styles baseline:', {('%s:%s' % k): v for k, v in b_hf.items()})
+    print('header/footer styles new     :', {('%s:%s' % k): v for k, v in n_hf.items()})
 
     print('baseline chars by style:', dict(b_chars))
     print('new      chars by style:', dict(n_chars))

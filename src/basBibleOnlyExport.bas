@@ -195,7 +195,8 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     Next sKey
 
     ExportLog "ExportScriptureOnlyDocx: source=" & sourcePath
-    ExportLog "  working copy=" & workingPath
+    ExportLog "  working copy=" & workingPath & _
+        " (disposable: deleted after a clean run, kept if a run halts or has issues)"
     ExportLog "  destination=" & destPath
 
     ' Pass 1 - duplicate and open. All following passes operate on oDoc
@@ -401,6 +402,16 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
 
     If m_issues = 0 Then
         ExportLog "ExportScriptureOnlyDocx: COMPLETE. " & destPath & " - all checks passed."
+        ' Clean run: the working copy (already closed in Pass 7) is disposable.
+        On Error Resume Next
+        Kill workingPath
+        If Err.Number = 0 Then
+            ExportLog "  working copy deleted: " & workingPath
+        Else
+            ExportLog "  working copy NOT deleted (Err " & Err.Number & "): " & workingPath
+        End If
+        Err.Clear
+        On Error GoTo PROC_ERR
     Else
         ExportLog "ExportScriptureOnlyDocx: FINISHED WITH " & m_issues & " ISSUE(S). " & _
             "Artefact saved but NOT clean - do not treat as done. See the report."
@@ -1755,7 +1766,12 @@ End Function
 ' ==========================================================================
 ' GetPurgeStyles
 ' ==========================================================================
-' The 41 unused custom styles found by InspectStyleUsage on the 2026-10-08
+' TheHeaders / TheFooters are deliberately NOT listed (2026-10-09): the
+' header and footer paragraphs use them (baseline v0.0: 132 + 1 paragraphs).
+' InspectStyleUsage's per-style Find and the old Pass 4e Find both missed
+' header/footer stories, so earlier exports silently deleted them; the
+' paragraph walk in Pass 4e caught it.
+' The 39 unused custom styles found by InspectStyleUsage on the 2026-10-08
 ' clean export (rpt\RadiantWordBibleStyleInventory.txt). SpeakerLabel is
 ' deliberately NOT listed: its linked character style SpeakerLabelChar
 ' formats the Song of Solomon speaker names (212 chars) and Word deletes a
@@ -1773,7 +1789,7 @@ Public Function GetPurgeStyles() As Variant
         "EmphasisRed", "End Note normal", "Footnote crossreference", "Footnote normal", _
         "FrontPageBodyText", "FrontPageTopLine", "Glossary", "Horizontal Rule", "Index", _
         "Introduction", "Paragraph", "Paragraph Continuation", "ParallelHeader", _
-        "ParallelText", "Picture Caption", "TheFooters", "TheHeaders", _
+        "ParallelText", "Picture Caption", _
         "TitleEyebrow", "TitleOnePage", "TitleVersion")
 End Function
 
@@ -1801,6 +1817,26 @@ Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
     Dim nDeleted As Long
     Dim nAbsent As Long
     Dim oSty As Object
+    Dim oLink As Object
+    Dim styleApplied As Boolean
+    Dim nFinds As Long
+    Dim nStories As Long
+    Dim dParaUsed As Object
+    Dim tSub As Double
+    Dim why As String
+    Dim dFlagged As Object
+    Set dFlagged = CreateObject("Scripting.Dictionary")
+    dFlagged.CompareMode = 1
+
+    ' Usage scan (2026-10-09: one Find per style over every story took 156-295 s
+    ' for 41 styles). Paragraph styles in use come from ONE walk of every story;
+    ' Find is kept only for character styles and for the linked character style
+    ' of a paragraph style (a run can carry the linked "<name> Char" style
+    ' without the paragraph style showing up - the SpeakerLabelChar lesson).
+    tSub = Timer
+    Set dParaUsed = CollectUsedParagraphStyles(oDoc, nStories)
+    SubTimer "Pass4e usage walk (" & nStories & " stories, " & dParaUsed.Count & _
+        " paragraph styles in use)", tSub
 
     For i = LBound(vNames) To UBound(vNames)
         If Not StyleExists(oDoc, CStr(vNames(i))) Then
@@ -1808,21 +1844,44 @@ Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
             ExportLog "Pass4e: already absent: " & vNames(i)
         Else
             Set oSty = oDoc.Styles(CStr(vNames(i)))
+            styleApplied = False
+            why = ""
+            If Not oSty.BuiltIn Then
+                If oSty.Type = wdStyleTypeParagraph Then
+                    styleApplied = dParaUsed.Exists(oSty.NameLocal)
+                    If styleApplied Then why = "applied to a paragraph (walk)"
+                    If Not styleApplied Then
+                        Set oLink = GetLinkedStyle(oSty)
+                        If Not oLink Is Nothing Then
+                            nFinds = nFinds + 1
+                            styleApplied = StyleInUseAnywhere(oDoc, oLink)
+                            If styleApplied Then why = "Find hit on linked style """ & oLink.NameLocal & """"
+                        End If
+                    End If
+                Else
+                    nFinds = nFinds + 1
+                    styleApplied = StyleInUseAnywhere(oDoc, oSty)
+                    If styleApplied Then why = "Find hit on character style"
+                End If
+            End If
             If oSty.BuiltIn Then
                 violations = violations + 1
+                dFlagged(CStr(vNames(i))) = True
                 ExportLog "Pass4e: built-in, cannot delete: " & vNames(i)
-            ElseIf StyleInUseAnywhere(oDoc, oSty) Then
+            ElseIf styleApplied Then
                 violations = violations + 1
-                ExportLog "Pass4e: still in use, not deleted: " & vNames(i)
+                dFlagged(CStr(vNames(i))) = True
+                ExportLog "Pass4e: still in use, not deleted: " & vNames(i) & " - " & why
             Else
                 oSty.Delete
                 nDeleted = nDeleted + 1
             End If
         End If
     Next i
+    SubTimer "Pass4e checks + deletes (" & nFinds & " Find checks)", tSub
 
     For i = LBound(vNames) To UBound(vNames)
-        If StyleExists(oDoc, CStr(vNames(i))) Then
+        If StyleExists(oDoc, CStr(vNames(i))) And Not dFlagged.Exists(CStr(vNames(i))) Then
             violations = violations + 1
             ExportLog "Pass4e: still present after purge: " & vNames(i)
         End If
@@ -1893,8 +1952,8 @@ Private Sub LapTimer(ByVal label As String)
     Dim sMem As String
     sMem = MemSnapshot()
     ExportLog "  [timing] " & label & ": " & Format$(d, "0.0") & " s | " & sMem
-    m_timings = m_timings & "  " & label & space$(36 - Len(label)) & _
-        Right$(space$(9) & Format$(d, "0.0"), 9) & " s | " & sMem & vbCrLf
+    m_timings = m_timings & "  " & label & String$(36 - Len(label), " ") & _
+        Right$(String$(9, " ") & Format$(d, "0.0"), 9) & " s | " & sMem & vbCrLf
 End Sub
 
 ' --------------------------------------------------------------------------
@@ -1979,7 +2038,7 @@ Private Sub LogTimingSummary()
     If total < 0 Then total = total + 86400
     ExportLog "---- Pass timings (seconds) ----"
     m_report = m_report & m_timings
-    ExportLog "  TOTAL" & space$(31) & Right$(space$(9) & Format$(total, "0.0"), 9) & " s"
+    ExportLog "  TOTAL" & String$(31, " ") & Right$(String$(9, " ") & Format$(total, "0.0"), 9) & " s"
     ExportLog "  Paging: " & Format$(m_totalPagesIn, "0") & " pages read from disk during the run (" & _
         Format$(m_totalPagesIn * 4 / 1024, "0") & " MB at 4 KB/page, OS-wide); lowest free " & _
         "physical memory at a lap " & Format$(m_minFreeMB, "0") & " MB. Large pgIn together " & _
@@ -1996,3 +2055,53 @@ Private Sub SubTimer(ByVal label As String, ByRef t0 As Double)
     t0 = Timer
     ExportLog "    [sub-timing] " & label & ": " & Format$(d, "0.0") & " s"
 End Sub
+
+' CollectUsedParagraphStyles - one walk of every story (main text, headers,
+' footers, ...), returning a case-insensitive Dictionary of the paragraph style
+' names applied. nStories receives the number of story ranges visited.
+Private Function CollectUsedParagraphStyles(ByVal oDoc As Object, _
+                                            ByRef nStories As Long) As Object
+    Dim d As Object
+    Set d = CreateObject("Scripting.Dictionary")
+    d.CompareMode = 1
+    Dim oStory As Object
+    Dim oRng As Object
+    Dim oPara As Object
+    nStories = 0
+    For Each oStory In oDoc.StoryRanges
+        Set oRng = oStory
+        Do While Not oRng Is Nothing
+            nStories = nStories + 1
+            For Each oPara In oRng.Paragraphs
+                d(oPara.style.NameLocal) = True
+            Next oPara
+            Set oRng = oRng.NextStoryRange
+        Loop
+    Next oStory
+    Set CollectUsedParagraphStyles = d
+End Function
+
+' GetLinkedStyle - the linked style of a paragraph/character style, or Nothing
+' when it has none.
+Private Function GetLinkedStyle(ByVal oSty As Object) As Object
+    Dim oLink As Object
+    On Error Resume Next
+    Set oLink = oSty.LinkStyle
+    If Err.Number <> 0 Then Set oLink = Nothing
+    Err.Clear
+    ' Accept only a genuine linked pair: a character style whose name starts
+    ' with the paragraph style's name (e.g. "AuthorBodyText Char"). Cause
+    ' NOT confirmed: in the 2026-10-09 12:36 run 28 styles, most of them
+    ' unlinked, were all reported "in use" by this Find path; a LinkStyle
+    ' that hands back an unrelated style (Find then matches everything) is
+    ' the working hypothesis. The "why" text in the Pass4e log lines shows
+    ' which path fired.
+    If Not oLink Is Nothing Then
+        If oLink.Type <> wdStyleTypeCharacter Then
+            Set oLink = Nothing
+        ElseIf InStr(1, oLink.NameLocal, oSty.NameLocal, vbTextCompare) <> 1 Then
+            Set oLink = Nothing
+        End If
+    End If
+    Set GetLinkedStyle = oLink
+End Function
