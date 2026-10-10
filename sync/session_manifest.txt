@@ -4173,3 +4173,11 @@ SESSION 2026-10-09 (RadiantWordBible v1.0 release) -- src/basBibleOnlyExport.bas
     (gitignored; SHA-256 2f2dab54...f457f35). Backed up to OneDrive (aeBibleClass, adaept5tudio).
   - Open: see "Next-session task list" at the end of the adaept5tudio plan doc.
 ===============================================================================
+SESSION 2026-10-09 (JS-port catch-up, driven from aeBibleAddin) -- md/Adding_To_Bible_Test_Class.md only in this repo
+  - Checklist step 9 now states the port-every-Case policy and the gap-register re-read on each parity run.
+  - JS side (aeBibleAddin): Cases 92/93 ported, parity report 0 NOT PORTED / 0 PORTED-NOT-WIRED; book 22 renamed
+    "Song of Solomon" to match this repo's GetCanonicalBookTable; review + next-session list:
+    aeBibleAddin/rvw/Code_review 2026-10-09.md (hub plan sections 10.10, 10.11, 15.11, 15.15 updated).
+  - Open here: baseline tag re-pin is LAST (after JS matches newest VBA); W-2 needs a fresh RadiantWordBible style
+    inventory run (InspectStyleUsage) on the v1.0 export.
+===============================================================================
