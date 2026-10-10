@@ -44,7 +44,7 @@ Tests store their result in `ResultArray(n)` and compare against
 | 6 | `RunTest` Select Case | Add `Case N: Debug.Print ... "YourFunctionName"` |
 | 7 | `OutputTestReport` Select Case | Add `Case N: AppendToFile ...` with same label |
 | 8 | `aeBibleClass.cls` body | Add `Private Function YourFunction() As Long` |
-| 9 | JS-port parity | Run `python3 py/js_port_parity.py` (from `aeBibleClass/`). Confirms Test N shows NOT PORTED — if it already shows something else, investigate before moving on. Report lands in `aeBibleAddin/rpt/js_port_parity_report.txt`; if the new Case isn't a candidate for the JS port (VBA-only diagnostic, file-report side effect, etc.), say so in `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` §15.11 rather than leaving it silently absent |
+| 9 | JS-port parity | Run `python3 py/js_port_parity.py` (from `aeBibleClass/`). Confirms Test N shows NOT PORTED — if it already shows something else, investigate before moving on. Report lands in `aeBibleAddin/rpt/js_port_parity_report.txt`; if the new Case isn't a candidate for the JS port (VBA-only diagnostic, file-report side effect, etc.), say so in `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` §15.11 rather than leaving it silently absent. Policy (2026-10-09): every Case is ported unless there is a documented gap; each gap needs a row in §15.11's gap register with a revisit trigger, and every parity run re-reads that register and re-evaluates rows whose trigger has fired |
 
 Step 9 exists because the JS-port ledger (§15.11 of the conversion plan) has no other forcing
 function tying "a new Test was added" to "the ledger knows about it" — see
