@@ -824,6 +824,14 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
             "Final section header paragraph style is """ & gotHeaderStyle & """, expected ""TheHeaders"" (B4)."
         Exit Sub
     End If
+    ' L-5 finding (2026-10-12): the front-matter deletion above leaves the
+    ' new Section(1) (old section 5, the Bible Index host) with a built-in
+    ' "Header" paragraph in its Primary header - the only active story in
+    ' the export not styled TheHeaders/TheFooters, which makes the Case 50
+    ' audit return -1 on the docx. Restyle it and verify.
+    FixSection1HeaderFooterStyles oDoc
+    If m_haltFired Then Exit Sub
+
     ' Word appends extra control characters to a range's Text (Chr(13),
     ' Chr(7) in tables, and the like), so compare the normalised text.
     If Len(NormHeaderText(revHeaderText)) = 0 Or _
@@ -837,6 +845,46 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ExportLog "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections removed (" & _
         preDeleteSectionCount & " -> " & postCount & "); final section header """ & _
         Replace(gotHeader, vbCr, "") & """."
+End Sub
+
+' ==========================================================================
+' FixSection1HeaderFooterStyles
+' ==========================================================================
+' Restyles every existing header/footer story paragraph of Section(1) to
+' TheHeaders / TheFooters, then halts if the Primary header is still not
+' TheHeaders. Added 2026-10-12 after the JS port's L-5 run on the exported
+' docx found Section(1)'s Primary header in the built-in Header style.
+' ==========================================================================
+Private Sub FixSection1HeaderFooterStyles(ByVal oDoc As Object)
+    Dim idx As Long
+    Dim oPara As Object
+    Dim fixedCount As Long
+    For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
+        If oDoc.Sections(1).Headers(idx).Exists Then
+            For Each oPara In oDoc.Sections(1).Headers(idx).Range.Paragraphs
+                If oPara.style.NameLocal <> "TheHeaders" Then
+                    oPara.style = oDoc.Styles("TheHeaders")
+                    fixedCount = fixedCount + 1
+                End If
+            Next oPara
+        End If
+        If oDoc.Sections(1).Footers(idx).Exists Then
+            For Each oPara In oDoc.Sections(1).Footers(idx).Range.Paragraphs
+                If oPara.style.NameLocal <> "TheFooters" Then
+                    oPara.style = oDoc.Styles("TheFooters")
+                    fixedCount = fixedCount + 1
+                End If
+            Next oPara
+        End If
+    Next idx
+    ExportLog "Pass5: Section(1) header/footer paragraphs restyled=" & fixedCount
+
+    Dim gotStyle As String
+    gotStyle = oDoc.Sections(1).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).style.NameLocal
+    If gotStyle <> "TheHeaders" Then
+        HaltExport "Pass5_SectionSurgery", _
+            "Section(1) Primary header style is """ & gotStyle & """, expected ""TheHeaders""."
+    End If
 End Sub
 
 ' ==========================================================================

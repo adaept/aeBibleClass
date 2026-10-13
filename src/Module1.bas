@@ -1312,3 +1312,29 @@ PROC_ERR:
     Resume PROC_EXIT
 End Sub
 
+Public Sub Probe_StoryRanges()
+    Dim r As Word.Range
+    Dim s As Word.Range
+    Dim p As Word.Paragraph
+    Dim seen As String
+    Dim nm As String
+
+    Debug.Print "Type", "Paras", "Styles"
+    For Each r In ActiveDocument.StoryRanges
+        Set s = r
+        Do
+            seen = "|"
+            For Each p In s.Paragraphs
+                nm = p.style.NameLocal
+                If InStr(seen, "|" & nm & "|") = 0 Then
+                    seen = seen & nm & "|"
+                End If
+            Next p
+            Debug.Print s.StoryType, _
+                s.Paragraphs.Count, seen
+            Set s = s.NextStoryRange
+        Loop Until s Is Nothing
+    Next r
+    Debug.Print "Probe done"
+End Sub
+
