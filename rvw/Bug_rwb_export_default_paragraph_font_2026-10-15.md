@@ -33,7 +33,7 @@ Re-apply the style flags **as the last pass before the save**, on the export's o
 
 ## Draft VBA
 
-### Step 1 - the check only (basBibleOnlyExport.bas) - APPLIED to src/basBibleOnlyExport.bas 2026-10-15 (not yet imported or run)
+### Step 1 - the check only (basBibleOnlyExport.bas)
 
 Add this function (next to `VerifyScriptureOnlyStrip`):
 
