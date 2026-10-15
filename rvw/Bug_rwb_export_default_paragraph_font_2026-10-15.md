@@ -202,3 +202,4 @@ End Sub
   ignores it); (2) the JS audit, which always reads a freshly loaded document, will always report `Default Paragraph Font` 1/1 (unhide + priority);
   `No List` / `Table Normal` are not in the approved list and are Table/List types, so Case 45 skips them. The earlier "earlier open was a stale
   window" hypothesis is superseded. Decision pending (owner): see the review, section 18.
+- **2026-10-15 - Step 1 and Step 2 REVERTED in `src` (owner decision 2), `git revert` commits `e17df4e` and `7973620`** (originals `88c383b`, `29e0d6f` stay in history). `src/basBibleOnlyExport.bas`, `src/basTEST_aeBibleConfig.bas` and `src/basStyleInspector.bas` are back to their pre-fix state. The Draft VBA sections above are kept as the record of what was tried; do not re-apply. USER ACTION: re-import those three modules from `src` into the working docm so the docm matches `src` again (it currently has the Step 2 versions).
