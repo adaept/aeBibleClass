@@ -182,3 +182,13 @@ End Sub
   (as designed for Step 1). Exactly the predicted finding, no other style listed. Test-before-fix satisfied.
 - **2026-10-15 - Step 2 APPLIED to `src/basTEST_aeBibleConfig.bas` (`PromoteApprovedStylesIn`), `src/basStyleInspector.bas`
   (`HideUnapprovedBuiltInStylesIn`) and `src/basBibleOnlyExport.bas` (Pass 6b + halting Pass 6c). Not yet imported, compiled or run.**
+- **2026-10-15 15:15 - Step 2 imported, compiled, `WordEditingConfig` and `ExportScriptureOnlyDocx` run (owner):** export log
+  `ExportScriptureOnlyDocx: COMPLETE ... all checks passed`, working copy deleted, Pass 6c silent (0 violations), Pass 8 0 mismatches,
+  Pass 9 PASS, 133 sections, 66 index rows. Pass 6b printed the expected "styles NOT found" list (the 27 styles the RWB purge removed).
+  Total 328.9 s (Step 1 run 416.2 s; Pass 6b adds about 1.5 s).
+- **Saved-file check (Claude, `word/styles.xml` of the new `RadiantWordBible.docx`):** `DefaultParagraphFont` is now
+  `uiPriority 33` (= Priority 34) with NO `unhideWhenUsed` (before: `uiPriority 1` + `unhideWhenUsed`). Style-by-style diff against the
+  2026-10-13 export (`aeTest\smoke\RadiantWordBible.docx`): same 435 styles; only 3 differ: `DefaultParagraphFont` (the fix), and
+  `NoList` / `TableNormal` (`uiPriority 99` + `unhideWhenUsed` -> `98`, no `unhideWhenUsed`, i.e. now Priority 99 like the 402 other
+  hidden styles). No other style changed, so the Pass 6b side effects are limited to making the two other default system styles
+  consistent. Not yet done: English-Word `auditApprovedStyles` = 0/0/0/0 and the W-4 regression (owner, live).
