@@ -210,3 +210,5 @@ End Sub
   `src\aeBibleClass.cls` (Class Module) into the working docm, compile, run the suite on a FRESHLY OPENED docm (no `WordEditingConfig` first):
   Tests 77 and 78 should now pass at 0. JS mirror: `WORD_RESET_ON_LOAD_STYLES` in `taskpane/src/audit-scanner-styles.ts`.
   This is a VBA move for the P-8 re-pin cycle (re-diff against the pinned tag, port, parity run).
+- **2026-10-15 - VBA RESULT (owner run of the suite after importing `aeBibleClass.cls`):** Test 77 `PASS` (0), Test 78 `PASS` (0). Pending: confirm
+  it was a freshly opened docm without a prior `WordEditingConfig`, and the live JS check (`auditApprovedStyles` 0/0/0/0 on a fresh RWB).
