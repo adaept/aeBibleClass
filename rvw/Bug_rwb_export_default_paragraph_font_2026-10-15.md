@@ -192,3 +192,13 @@ End Sub
   `NoList` / `TableNormal` (`uiPriority 99` + `unhideWhenUsed` -> `98`, no `unhideWhenUsed`, i.e. now Priority 99 like the 402 other
   hidden styles). No other style changed, so the Pass 6b side effects are limited to making the two other default system styles
   consistent. Not yet done: English-Word `auditApprovedStyles` = 0/0/0/0 and the W-4 regression (owner, live).
+- **2026-10-15 ~15:40 - LIVE RESULT, premise falsified (owner run, desktop Word, English, RWB doc confirmed by `VerseText` p33 / `Heading 1` p26):**
+  a freshly opened `RadiantWordBible.docx` (saved file: `DefaultParagraphFont` uiPriority 33, no unhide; `NoList` / `TableNormal` uiPriority 98, no unhide)
+  reads back in Word as `Default Paragraph Font` Priority 2, `No List` 100, `Table Normal` 100, ALL with `UnhideWhenUsed = true`
+  = Word's own defaults for its three default system styles. **Word re-applies these defaults on every load**, so no file content can
+  persist them; the in-session value set by `PromoteApprovedStyles` (34) survives only until the document is closed. This also explains the
+  2026-09-14 / 2026-09-16 "flip" history (it is a load effect, not an edit effect) and why Tests 77/78 pass only in the session in which
+  `WordEditingConfig` ran. Consequences: (1) the export-side Pass 6b/6c fix cannot change what the add-in reads (the file is fixed, Word
+  ignores it); (2) the JS audit, which always reads a freshly loaded document, will always report `Default Paragraph Font` 1/1 (unhide + priority);
+  `No List` / `Table Normal` are not in the approved list and are Table/List types, so Case 45 skips them. The earlier "earlier open was a stale
+  window" hypothesis is superseded. Decision pending (owner): see the review, section 18.
