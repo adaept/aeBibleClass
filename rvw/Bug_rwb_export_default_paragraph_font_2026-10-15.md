@@ -212,3 +212,4 @@ End Sub
   This is a VBA move for the P-8 re-pin cycle (re-diff against the pinned tag, port, parity run).
 - **2026-10-15 - VBA RESULT (owner run of the suite after importing `aeBibleClass.cls`):** Test 77 `PASS` (0), Test 78 `PASS` (0). Pending: confirm
   it was a freshly opened docm without a prior `WordEditingConfig`, and the live JS check (`auditApprovedStyles` 0/0/0/0 on a fresh RWB).
+- **2026-10-15 - VBA FRESH-OPEN PROOF (owner):** docm opened fresh, `WordEditingConfig` NOT run: `Debug.Print ActiveDocument.Styles("Default Paragraph Font").UnhideWhenUsed` = `True`, and Tests 77 and 78 both `PASS` (0). The skip works. (An earlier run with `WordEditingConfig` first proved nothing.) Also: the export on the reverted code is clean (all checks passed, 133 sections, 0 index mismatches) and its 435 styles are identical in flags/priorities to the 2026-10-13 export.
