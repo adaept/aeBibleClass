@@ -343,6 +343,13 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     LapTimer "Pass6_RegenerateBibleIndex"
     If m_haltFired Then GoTo PROC_HALT
 
+    ' Pass 6c - approved style flags (Step 1: log only)
+    Dim flagViolations As Long
+    flagViolations = VerifyApprovedStyleFlags(oDoc)
+    LapTimer "Pass6c_VerifyApprovedStyleFlags"
+    ExportLog "Pass6c_VerifyApprovedStyleFlags: " & flagViolations & " violation(s)"
+    If flagViolations <> 0 Then m_issues = m_issues + 1
+
     ' Pass 7 - save
     Application.ScreenUpdating = screenWas
     oDoc.SaveAs2 fileName:=destPath, FileFormat:=wdFormatXMLDocument
@@ -581,6 +588,61 @@ Private Sub Pass3_ParagraphSweep(ByVal oDoc As Object)
         nCarriers & " section-break carriers kept as break-only); " & _
         nTbl & " Index table(s) and their contents preserved."
 End Sub
+
+' ==========================================================================
+' VerifyApprovedStyleFlags
+' ==========================================================================
+' Read-only. For every style in GetApprovedStyles() that exists in oDoc,
+' counts a violation for each of: UnhideWhenUsed = True, QuickStyle = True,
+' Priority <> its 1-based position in the list - the same three properties as
+' Cases 5 / 77 / 78. Styles absent from oDoc are skipped (the RWB purge removes
+' many approved styles). Logs every violation. Returns the violation count
+' (expected 0).
+' Why: Word silently flips these (Default Paragraph Font) on almost any edit,
+' so the export output must not depend on the source docm's state
+' (rvw/Bug_rwb_export_default_paragraph_font_2026-10-15.md).
+' ==========================================================================
+Public Function VerifyApprovedStyleFlags(ByVal oDoc As Object) As Long
+    On Error GoTo PROC_ERR
+
+    Dim vApproved As Variant
+    vApproved = GetApprovedStyles()
+    Dim i As Long
+    Dim expectedPriority As Long
+    Dim oSty As Object
+    Dim violations As Long
+
+    For i = LBound(vApproved) To UBound(vApproved)
+        If StyleExists(oDoc, CStr(vApproved(i))) Then
+            Set oSty = oDoc.Styles(CStr(vApproved(i)))
+            expectedPriority = (i - LBound(vApproved)) + 1
+            If oSty.UnhideWhenUsed Then
+                violations = violations + 1
+                ExportLog "VerifyApprovedStyleFlags: " & vApproved(i) & " : UnhideWhenUsed=True"
+            End If
+            If oSty.QuickStyle Then
+                violations = violations + 1
+                ExportLog "VerifyApprovedStyleFlags: " & vApproved(i) & " : QuickStyle=True"
+            End If
+            If oSty.Priority <> expectedPriority Then
+                violations = violations + 1
+                ExportLog "VerifyApprovedStyleFlags: " & vApproved(i) & " : Priority " & _
+                    oSty.Priority & " (expected " & expectedPriority & ")"
+            End If
+            Set oSty = Nothing
+        End If
+    Next i
+
+    VerifyApprovedStyleFlags = violations
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & _
+           ") in procedure VerifyApprovedStyleFlags of Module basBibleOnlyExport"
+    VerifyApprovedStyleFlags = -1
+    Resume PROC_EXIT
+End Function
 
 ' ==========================================================================
 ' VerifyScriptureOnlyStrip  (Pass 4)
