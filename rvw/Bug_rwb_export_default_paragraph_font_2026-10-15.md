@@ -174,3 +174,11 @@ End Sub
 2. Owner, English Word: `await aeAuditSpike.auditApprovedStyles()` -> 0/0/0/0; W-4 regression: `countSections` 133,
    `countSectionsWithDifferentFirstPage` 0, `countVerseTextNotAligned` 0.
 3. Owner, German Word: `auditApprovedStyles` still lists the unresolved approved built-ins.
+
+## Status log
+
+- **2026-10-15 14:47 - Step 1 run (export log):** `VerifyApprovedStyleFlags: Default Paragraph Font : UnhideWhenUsed=True` and
+  `Default Paragraph Font : Priority 2 (expected 34)`; `Pass6c_VerifyApprovedStyleFlags: 2 violation(s)`; export finished with 1 issue
+  (as designed for Step 1). Exactly the predicted finding, no other style listed. Test-before-fix satisfied.
+- **2026-10-15 - Step 2 APPLIED to `src/basTEST_aeBibleConfig.bas` (`PromoteApprovedStylesIn`), `src/basStyleInspector.bas`
+  (`HideUnapprovedBuiltInStylesIn`) and `src/basBibleOnlyExport.bas` (Pass 6b + halting Pass 6c). Not yet imported, compiled or run.**

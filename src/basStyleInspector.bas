@@ -1474,7 +1474,13 @@ End Sub
 '   n hidden (newly), n already hidden, n skipped (locked),
 '   plus a list of newly-hidden names for first-run verification.
 '==============================================================================
+' HideUnapprovedBuiltInStyles - ActiveDocument wrapper; the export calls HideUnapprovedBuiltInStylesIn on its
+' own working document (rvw/Bug_rwb_export_default_paragraph_font_2026-10-15.md).
 Public Sub HideUnapprovedBuiltInStyles()
+    HideUnapprovedBuiltInStylesIn ActiveDocument
+End Sub
+
+Public Sub HideUnapprovedBuiltInStylesIn(ByVal oDoc As Object)
     On Error GoTo PROC_ERR
     Dim approved As Variant
     Dim approvedDict As Object
@@ -1495,8 +1501,8 @@ Public Sub HideUnapprovedBuiltInStyles()
     Dim targetNames As Object
     Set targetNames = CreateObject("Scripting.Dictionary")
     targetNames.CompareMode = 1 ' TextCompare
-    Dim s As Word.Style
-    For Each s In ActiveDocument.Styles
+    Dim s As Object
+    For Each s In oDoc.Styles
         If s.BuiltIn Then
             If Not approvedDict.Exists(s.NameLocal) Then
                 If Not targetNames.Exists(s.NameLocal) Then
@@ -1515,7 +1521,7 @@ Public Sub HideUnapprovedBuiltInStyles()
     For Each nameKey In targetNames.Keys
         Set s = Nothing
         On Error Resume Next
-        Set s = ActiveDocument.Styles(CStr(nameKey))
+        Set s = oDoc.Styles(CStr(nameKey))
         On Error GoTo PROC_ERR
         If s Is Nothing Then
             ' Name disappeared between snapshot and apply - Count as skipped
