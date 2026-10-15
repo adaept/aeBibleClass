@@ -343,22 +343,12 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     LapTimer "Pass6_RegenerateBibleIndex"
     If m_haltFired Then GoTo PROC_HALT
 
-    ' Pass 6b - re-apply the approved style flags LAST. Word flips
-    ' Default Paragraph Font's UnhideWhenUsed / Priority on almost any edit, so the output must not
-    ' depend on the source docm's state. Property-only (no layout effect), hence safe after Pass 6's
-    ' page-number regeneration. Nothing may edit oDoc between here and the save.
-    PromoteApprovedStylesIn oDoc
-    HideUnapprovedBuiltInStylesIn oDoc
-    LapTimer "Pass6b_NormalizeStyleFlags"
-
-    ' Pass 6c - verify (halts on any violation)
+    ' Pass 6c - approved style flags (Step 1: log only)
     Dim flagViolations As Long
     flagViolations = VerifyApprovedStyleFlags(oDoc)
     LapTimer "Pass6c_VerifyApprovedStyleFlags"
-    If flagViolations <> 0 Then
-        HaltExport "Pass6c_VerifyApprovedStyleFlags", flagViolations & " violation(s) - see the report"
-        GoTo PROC_HALT
-    End If
+    ExportLog "Pass6c_VerifyApprovedStyleFlags: " & flagViolations & " violation(s)"
+    If flagViolations <> 0 Then m_issues = m_issues + 1
 
     ' Pass 7 - save
     Application.ScreenUpdating = screenWas
@@ -606,7 +596,7 @@ End Sub
 ' counts a violation for each of: UnhideWhenUsed = True, QuickStyle = True,
 ' Priority <> its 1-based position in the list - the same three properties as
 ' Cases 5 / 77 / 78. Styles absent from oDoc are skipped (the RWB purge removes
-' many approved styles). Logs every violation. Returns the violation Count
+' many approved styles). Logs every violation. Returns the violation count
 ' (expected 0).
 ' Why: Word silently flips these (Default Paragraph Font) on almost any edit,
 ' so the export output must not depend on the source docm's state

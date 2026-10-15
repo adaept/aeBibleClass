@@ -106,14 +106,8 @@ Public Function GetApprovedStylesByType(ByVal wantType As WdStyleType) As Varian
     GetApprovedStylesByType = out
 End Function
 
-' PromoteApprovedStyles - ActiveDocument wrapper; the export calls PromoteApprovedStylesIn on its own
-' working document (rvw/Bug_rwb_export_default_paragraph_font_2026-10-15.md).
 Private Sub PromoteApprovedStyles()
-    PromoteApprovedStylesIn ActiveDocument
-End Sub
-
-Public Sub PromoteApprovedStylesIn(ByVal oDoc As Object)
-    Dim s As Object
+    Dim s As Word.Style
     Dim approved As Variant
     Dim i As Long
     Dim missing As Collection
@@ -122,7 +116,7 @@ Public Sub PromoteApprovedStylesIn(ByVal oDoc As Object)
     approved = GetApprovedStyles()
 
     'Push everything else down
-    For Each s In oDoc.Styles
+    For Each s In ActiveDocument.Styles
         If s.Type = wdStyleTypeParagraph Or s.Type = wdStyleTypeCharacter Then
             s.Priority = 99
         End If
@@ -131,7 +125,7 @@ Public Sub PromoteApprovedStylesIn(ByVal oDoc As Object)
     'Promote approved styles + diagnostic guard
     For i = LBound(approved) To UBound(approved)
         On Error Resume Next
-        Set s = oDoc.Styles(approved(i))
+        Set s = ActiveDocument.Styles(approved(i))
         On Error GoTo 0
 
         If s Is Nothing Then
