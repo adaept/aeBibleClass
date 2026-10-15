@@ -203,3 +203,10 @@ End Sub
   `No List` / `Table Normal` are not in the approved list and are Table/List types, so Case 45 skips them. The earlier "earlier open was a stale
   window" hypothesis is superseded. Decision pending (owner): see the review, section 18.
 - **2026-10-15 - Step 1 and Step 2 REVERTED in `src` (owner decision 2), `git revert` commits `e17df4e` and `7973620`** (originals `88c383b`, `29e0d6f` stay in history). `src/basBibleOnlyExport.bas`, `src/basTEST_aeBibleConfig.bas` and `src/basStyleInspector.bas` are back to their pre-fix state. The Draft VBA sections above are kept as the record of what was tried; do not re-apply. USER ACTION: re-import those three modules from `src` into the working docm so the docm matches `src` again (it currently has the Step 2 versions).
+- **2026-10-15 - Decision 1A APPLIED (owner): Tests 77 and 78 skip `Default Paragraph Font`.** `src/aeBibleClass.cls`: new
+  `Private Function IsWordResetOnLoadStyle` (before Test 5's header), used in `CountApprovedStylesWithUnhideWhenUsedOn` and
+  `CountApprovedStylesWithWrongPriority`. Test 5 is unchanged (it checks QuickStyle, which Word does not reset; live `quickStyle: false`).
+  Approved list and priorities unchanged (the style keeps position 34). Not yet imported or run. USER ACTION: import
+  `src\aeBibleClass.cls` (Class Module) into the working docm, compile, run the suite on a FRESHLY OPENED docm (no `WordEditingConfig` first):
+  Tests 77 and 78 should now pass at 0. JS mirror: `WORD_RESET_ON_LOAD_STYLES` in `taskpane/src/audit-scanner-styles.ts`.
+  This is a VBA move for the P-8 re-pin cycle (re-diff against the pinned tag, port, parity run).

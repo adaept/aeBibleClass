@@ -3063,6 +3063,22 @@ PROC_ERR:
 End Function
 
 '=========================================================================
+' Function: IsWordResetOnLoadStyle
+'
+' True for the approved style(s) whose UnhideWhenUsed / Priority Word resets to
+' its own defaults every time a document is loaded, so no document can persist
+' them: "Default Paragraph Font" (Priority 2, UnhideWhenUsed True after any open;
+' proven live 2026-10-15, rvw/Bug_rwb_export_default_paragraph_font_2026-10-15.md).
+' Tests 77 and 78 skip it. Before 2026-10-15 they passed only in the session in
+' which WordEditingConfig had just run. The approved list and its priorities are
+' unchanged (the style keeps its position, 34). Mirrored in the JS port:
+' auditApprovedStylesDetailedLive (aeBibleAddin taskpane/src/audit-scanner-styles.ts).
+'=========================================================================
+Private Function IsWordResetOnLoadStyle(ByVal styleName As String) As Boolean
+    IsWordResetOnLoadStyle = (StrComp(styleName, "Default Paragraph Font", vbTextCompare) = 0)
+End Function
+
+'=========================================================================
 ' Function: CountApprovedStylesInGallery  (Test 5)
 '
 ' Walks the approved-styles SSOT (GetApprovedStyles) and counts any
@@ -3326,9 +3342,12 @@ Private Function CountApprovedStylesWithUnhideWhenUsedOn() As Long
 
     For i = LBound(approved) To UBound(approved)
         Set s = Nothing
-        On Error Resume Next
-        Set s = ActiveDocument.Styles(CStr(approved(i)))
-        On Error GoTo PROC_ERR
+        ' Word re-applies its defaults to this style on every load, so it cannot be checked (see IsWordResetOnLoadStyle).
+        If Not IsWordResetOnLoadStyle(CStr(approved(i))) Then
+            On Error Resume Next
+            Set s = ActiveDocument.Styles(CStr(approved(i)))
+            On Error GoTo PROC_ERR
+        End If
         If Not s Is Nothing Then
             If s.UnhideWhenUsed Then
                 violations = violations + 1
@@ -3392,9 +3411,12 @@ Private Function CountApprovedStylesWithWrongPriority() As Long
     For i = LBound(approved) To UBound(approved)
         expectedPriority = i - LBound(approved) + 1
         Set s = Nothing
-        On Error Resume Next
-        Set s = ActiveDocument.Styles(CStr(approved(i)))
-        On Error GoTo PROC_ERR
+        ' Word re-applies its defaults to this style on every load, so it cannot be checked (see IsWordResetOnLoadStyle).
+        If Not IsWordResetOnLoadStyle(CStr(approved(i))) Then
+            On Error Resume Next
+            Set s = ActiveDocument.Styles(CStr(approved(i)))
+            On Error GoTo PROC_ERR
+        End If
         If Not s Is Nothing Then
             If s.Priority <> expectedPriority Then
                 violations = violations + 1
