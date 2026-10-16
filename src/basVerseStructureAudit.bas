@@ -43,6 +43,19 @@ Private m_cacheValid As Boolean
 '   AuditVerseMarkerStructure False        ' Immediate only, no file
 ' ==========================================================================
 Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True)
+    Dim issueCount As Long
+    issueCount = AuditVerseMarkerStructureIssueCount(bWriteFile)
+End Sub
+
+' ==========================================================================
+' AuditVerseMarkerStructureIssueCount (RUN_THE_TESTS(94))
+' ==========================================================================
+' The audit above as a function returning the number of structural issues
+' (0 = pass), so it runs as an automated test and the release gate can read
+' the Result from rpt\VerseStructureAudit.txt instead of relying on a manual
+' step (2026-10-16).
+' ==========================================================================
+Public Function AuditVerseMarkerStructureIssueCount(Optional ByVal bWriteFile As Boolean = True) As Long
     Dim t As Double
     StartTimer "AuditVerseMarkerStructure", t
 
@@ -166,7 +179,8 @@ Public Sub AuditVerseMarkerStructure(Optional ByVal bWriteFile As Boolean = True
     If bWriteFile Then WriteAuditFile sOut
 
     EndTimer "AuditVerseMarkerStructure", t
-End Sub
+    AuditVerseMarkerStructureIssueCount = issuesCount
+End Function
 
 ' --------------------------------------------------------------------------
 ' AuditOneBook - chapter and verse counts for a single book range

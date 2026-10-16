@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 93
+Private Const MaxTests = 94
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -304,7 +304,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -867,6 +867,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (91)
             RunTest (92)
             RunTest (93)
+            RunTest (94)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -913,7 +914,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     ' process: adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
     ' section 10.5/6a. This block only runs once, after RunTest(87), for a
     ' full-suite call - not per individual test.
-    Debug.Print "REMINDER: AuditVerseMarkerStructure is NOT included above - run it separately before any release (see rvw/Bug_docm_verse_export_skip_duplicate_2026-09-16.md)."
+    Debug.Print "Note: AuditVerseMarkerStructure is Test 94 (automated 2026-10-16); Tests 82/83 are skipped in the full suite - run RUN_THE_TESTS(82) and RUN_THE_TESTS(83) separately before a release."
 
     RunBibleClassTests = True
 
@@ -1171,6 +1172,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Plain Text' style - found 2026-10-06 during the RadiantWordBible scripture-only export investigation (8 occurrences: 2 deliberate tab+CR vertical-space markers, 3 genuinely-bare Chr(13) paragraphs, 3 bare Chr(12) section-break-carrier paragraphs - none of these three kinds should ever carry 'Plain Text'). Correct replacement style is context-dependent, not universal: 'BodyText' where the paragraph is literally part of a section-break mechanic (confirmed via the unaffected Exodus title-to-body boundary precedent); 'BodyTextTopLineCPBB' where it's a spacer immediately before a major heading without itself being a section break (confirmed live on 3 of the 8 occurrences) - CountPlainTextStyleParagraphs should return 0"
     Case 93
         GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Normal' style, EXCEPT 2 confirmed-structural exceptions - found 2026-10-07 during the RadiantWordBible scripture-only export's Pass 3 (originally 3 occurrences; 1 was a genuine residual, fixed via basFixDocxRoutines.ReplaceNormalWithBodyText; the other 2, at the paragraph Word requires between/after the document's two adjacent Bible Index tables, cannot be restyled away from 'Normal' by any means tried - VBA, Immediate-window repro, or the Word UI directly - see EDSG/01-styles.md 'Known exception, confirmed 2026-10-07'). Expected value is 2, not 0 - re-diagnose rather than assume regression if this Count changes, since it's tied to the current 2-adjacent-tables layout - CountNormalStyleParagraphs should return 2"
+    Case 94
+        GetTestDescription = "Rule: the verse-marker structure matches the canonical 66-book data - per book Heading 1/Heading 2 counts, per-chapter Verse marker counts and Chapter Verse marker coverage (was a separate manual step run before release; automated 2026-10-16 so the release gate can read its Result; writes rpt\VerseStructureAudit.txt) - AuditVerseMarkerStructureIssueCount should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1441,6 +1444,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 93
         ResultArray(TestNum) = CountNormalStyleParagraphs
         m_HintArray(TestNum) = m_lastHint
+    Case 94
+        ResultArray(TestNum) = AuditVerseMarkerStructureIssueCount
+        m_HintArray(TestNum) = "see rpt\VerseStructureAudit.txt"
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1659,6 +1665,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountPlainTextStyleParagraphs"
     Case 93
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNormalStyleParagraphs"
+    Case 94
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditVerseMarkerStructureIssueCount"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1880,6 +1888,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountPlainTextStyleParagraphs"
     Case 93
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNormalStyleParagraphs"
+    Case 94
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditVerseMarkerStructureIssueCount"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
