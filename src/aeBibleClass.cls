@@ -3074,8 +3074,8 @@ End Function
 ' unchanged (the style keeps its position, 34). Mirrored in the JS port:
 ' auditApprovedStylesDetailedLive (aeBibleAddin taskpane/src/audit-scanner-styles.ts).
 '=========================================================================
-Private Function IsWordResetOnLoadStyle(ByVal styleName As String) As Boolean
-    IsWordResetOnLoadStyle = (StrComp(styleName, "Default Paragraph Font", vbTextCompare) = 0)
+Private Function IsWordResetOnLoadStyle(ByVal StyleName As String) As Boolean
+    IsWordResetOnLoadStyle = (StrComp(StyleName, "Default Paragraph Font", vbTextCompare) = 0)
 End Function
 
 '=========================================================================
