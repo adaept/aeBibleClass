@@ -1,4 +1,4 @@
----- AuditVerseMarkerStructure: 2026-09-16 15:06:47 ----
+---- AuditVerseMarkerStructure: 2026-10-17 14:08:59 ----
 
 66 Heading 1 paragraphs found in 145 sections.
 
@@ -694,7 +694,7 @@ Ecclesiastes          expected chapters= 12  found= 12  OK
   ch  10: expected verses= 20  found VM= 20  found CVM= 20  OK/OK
   ch  11: expected verses= 10  found VM= 10  found CVM= 10  OK/OK
   ch  12: expected verses= 14  found VM= 14  found CVM= 14  OK/OK
-Song of Songs         expected chapters=  8  found=  8  OK
+Song of Solomon       expected chapters=  8  found=  8  OK
   ch   1: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
   ch   2: expected verses= 17  found VM= 17  found CVM= 17  OK/OK
   ch   3: expected verses= 11  found VM= 11  found CVM= 11  OK/OK
