@@ -126,6 +126,9 @@ End Sub
 
 Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Long
     On Error GoTo PROC_ERR
+
+    ' Keep Windows awake for the whole run (full suite or single test); released at PROC_EXIT.
+    Debug.Print "keep-awake: " & IIf(StartKeepAwake, "ON", "FAILED (the machine may sleep on its idle timer)")
     
     If Not CheckShowHideStatus Then
         ' Make sure all hidden characters are visible
@@ -177,6 +180,7 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Lo
     End If
     
 PROC_EXIT:
+    StopKeepAwake
     Exit Property
 PROC_ERR:
     MsgBox "Erl=" & Erl & " Error " & Err.Number & " (" & Err.Description & ") in procedure TheBibleClassTests of Class BibleClass"

@@ -176,7 +176,11 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     m_totalPagesIn = 0
     m_minFreeMB = 0
     m_lastPagesIn = 0
+    ' Keep Windows awake for the whole export; released at PROC_EXIT (see basKeepAwake).
+    Dim keepAwakeOn As Boolean
+    keepAwakeOn = StartKeepAwake
     ExportLog "  [memory] start: " & MemSnapshot()
+    ExportLog "  keep-awake: " & IIf(keepAwakeOn, "ON", "FAILED (the machine may sleep on its idle timer)")
 
     If sourcePath = "" Then sourcePath = ActiveDocument.FullName
     Dim SourceFolder As String
@@ -426,6 +430,7 @@ PROC_HALT:
     m_haltFired = False
 
 PROC_EXIT:
+    StopKeepAwake
     LogTimingSummary
     WriteExportReport
     Exit Sub
