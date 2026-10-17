@@ -859,23 +859,22 @@ Private Sub FixSection1HeaderFooterStyles(ByVal oDoc As Object)
     Dim idx As Long
     Dim oPara As Object
     Dim fixedCount As Long
+    ' No .Exists test (2026-10-16): the First/Even stories of Section(1) are inactive (Exists = False) but are
+    ' still saved as header*/footer* parts, and were left in the built-in Header/Footer styles. Restyle all
+    ' three story types so no inert story keeps a non-palette style (checked by verify_char_style_change.py).
     For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
-        If oDoc.Sections(1).Headers(idx).Exists Then
-            For Each oPara In oDoc.Sections(1).Headers(idx).Range.Paragraphs
-                If oPara.style.NameLocal <> "TheHeaders" Then
-                    oPara.style = oDoc.Styles("TheHeaders")
-                    fixedCount = fixedCount + 1
-                End If
-            Next oPara
-        End If
-        If oDoc.Sections(1).Footers(idx).Exists Then
-            For Each oPara In oDoc.Sections(1).Footers(idx).Range.Paragraphs
-                If oPara.style.NameLocal <> "TheFooters" Then
-                    oPara.style = oDoc.Styles("TheFooters")
-                    fixedCount = fixedCount + 1
-                End If
-            Next oPara
-        End If
+        For Each oPara In oDoc.Sections(1).Headers(idx).Range.Paragraphs
+            If oPara.style.NameLocal <> "TheHeaders" Then
+                oPara.style = oDoc.Styles("TheHeaders")
+                fixedCount = fixedCount + 1
+            End If
+        Next oPara
+        For Each oPara In oDoc.Sections(1).Footers(idx).Range.Paragraphs
+            If oPara.style.NameLocal <> "TheFooters" Then
+                oPara.style = oDoc.Styles("TheFooters")
+                fixedCount = fixedCount + 1
+            End If
+        Next oPara
     Next idx
     ExportLog "Pass5: Section(1) header/footer paragraphs restyled=" & fixedCount
 
@@ -1903,6 +1902,8 @@ Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
     ' use in headers/footers is therefore not checked here; Pass 9 check 6
     ' (baseline header/footer styles must survive) is the backstop, and the
     ' baseline header/footer parts contain no character styles at all.
+    Dim stylesBefore As Long
+    stylesBefore = oDoc.Styles.Count
     tSub = Timer
     Set dParaUsed = CollectUsedParagraphStyles(oDoc, nStories)
     SubTimer "Pass4e usage walk (" & nStories & " stories, " & dParaUsed.Count & _
@@ -1949,6 +1950,10 @@ Private Function Pass4e_PurgeUnusedStyles(ByVal oDoc As Object) As Long
         End If
     Next i
     SubTimer "Pass4e checks + deletes (" & nFinds & " Find checks)", tSub
+    ' Diagnostic (2026-10-16): a run once reported every Delete as a no-op (39 "still present") although a
+    ' manual Delete in the halted copy worked. Styles.Count before/after shows whether any Delete took effect.
+    ExportLog "Pass4e: Styles.Count before=" & stylesBefore & ", after deletes=" & oDoc.Styles.Count & _
+        " (" & nDeleted & " Delete call(s))"
 
     For i = LBound(vNames) To UBound(vNames)
         If StyleExists(oDoc, CStr(vNames(i))) And Not dFlagged.Exists(CStr(vNames(i))) Then

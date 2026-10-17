@@ -209,6 +209,12 @@ def main(argv):
     if lost:
         failures.append('style(s) used in baseline headers/footers but absent from the new '
                         'headers/footers: %s' % [('%s:%s' % k) for k in lost])
+    # 2026-10-16: every header/footer story, including inert First/Even stories, must use the palette
+    # styles. Built-in Header/Footer left in Section(1)'s First/Even stories were passing unnoticed.
+    stray = sorted(k for k in n_hf if k[0] == 'p' and k[1] not in ('TheHeaders', 'TheFooters'))
+    if stray:
+        failures.append('header/footer paragraph style(s) other than TheHeaders/TheFooters in the new '
+                        'file: %s' % [('%s x%d' % (k[1], n_hf[k])) for k in stray])
     print('header/footer styles baseline:', {('%s:%s' % k): v for k, v in b_hf.items()})
     print('header/footer styles new     :', {('%s:%s' % k): v for k, v in n_hf.items()})
 
