@@ -93,6 +93,8 @@ Public Function AuditVerseMarkerStructureIssueCount(Optional ByVal bWriteFile As
 
     sOut = "---- AuditVerseMarkerStructure: " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
     sOut = sOut & nH1 & " Heading 1 paragraphs found in " & oDoc.Sections.Count & " sections." & NL & NL
+    Dim sHeader As String
+    sHeader = sOut
 
     Dim i As Long
     Dim bookEndPos As Long
@@ -172,11 +174,24 @@ Public Function AuditVerseMarkerStructureIssueCount(Optional ByVal bWriteFile As
         sOut = sOut & "ISSUES FOUND:" & NL & issues & NL
     End If
 
-    sOut = sOut & "SUMMARY: " & totalFound & " / " & totalExpected & _
-           " verses found, " & issuesCount & " structural issue(s)." & NL
+    Dim sSummary As String
+    sSummary = "SUMMARY: " & totalFound & " / " & totalExpected & _
+               " verses found, " & issuesCount & " structural issue(s)." & NL
+    sOut = sOut & sSummary
 
-    Debug.Print sOut
-    If bWriteFile Then WriteAuditFile sOut
+    ' Brief Immediate-window output (2026-10-17): with the file written, the window gets only the header,
+    ' any MISSING BOOKS / ISSUES FOUND lines and the SUMMARY; the per-chapter detail is in the file.
+    ' Without the file (bWriteFile = False) the full detail still goes to the Immediate window.
+    If bWriteFile Then
+        Dim sBrief As String
+        sBrief = sHeader
+        If Len(missing) > 0 Then sBrief = sBrief & "MISSING BOOKS:" & NL & missing & NL
+        If Len(issues) > 0 Then sBrief = sBrief & "ISSUES FOUND:" & NL & issues & NL
+        Debug.Print sBrief & sSummary & "Per-chapter detail: rpt\VerseStructureAudit.txt"
+        WriteAuditFile sOut
+    Else
+        Debug.Print sOut
+    End If
 
     EndTimer "AuditVerseMarkerStructure", t
     AuditVerseMarkerStructureIssueCount = issuesCount
