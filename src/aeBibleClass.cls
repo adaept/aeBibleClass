@@ -71,6 +71,7 @@ Private UnicodeString As String        ' A string of up to 3 code points
 Private UnicodeLabelU As String        ' The UnicodeString label in U+ form
 Private OneVersePerPara As Boolean     ' Main branch has this set True and v59 or other branch set False
 Private m_ReportBuf As String          ' Accumulates TestReport lines; flushed once at end of run
+Private m_lapRunStart As Double        ' Timer at the start of the run (LogTestLap)
 Private m_lastFuncError As Boolean     ' Set True in any Count function PROC_ERR; checked in GetPassFail
 Private m_lastHint As String           ' Set by Count functions on first violation; cleared in GetPassFail
 Private m_verseScanDone As Boolean     ' True after EnsureVerseMarkerCounts has walked the Doc this run
@@ -308,7 +309,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 0, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -389,7 +390,10 @@ Private Sub MakeSkipTestArray()
     ' tests 74-81 - see rvw/Code_review 2026-09-13.md item 7. Skipped here
     ' by the same convention as the old 42/51/72 entries below; remove
     ' temporarily to run 82/83 (standalone or full-suite) once root-caused.
-    SkipTestArray = Array(82, 83)   'Array(42, 51, 72)
+    ' PHASE 1 MEASUREMENT (2026-10-17, review section 28 task 1): 82/83 are
+    ' un-skipped on purpose so the per-test lap file (rpt\TestLaps.txt) shows
+    ' where memory climbs. Restore Array(82, 83) if the run must be aborted.
+    SkipTestArray = Array()   'was Array(82, 83); older: Array(42, 51, 72)
 
 PROC_EXIT:
     Exit Sub
@@ -419,6 +423,62 @@ PROC_ERR:
     m_lastFuncError = True
     Resume PROC_EXIT
 End Function
+
+'==================================================================
+' LogTestLap - Phase 1 measurement for the Tests 82/83 memory failure
+' (review section 28 task 1). One line per test appended to
+' rpt\TestLaps.txt immediately (not buffered), so the data survives a
+' Word crash or a hung run, which is the failure being investigated.
+' Columns: clock time | test | seconds for the test | seconds since run
+' start | MemSnapshot (Word ws/peak/private, free RAM, pages read).
+' A gap in the clock times larger than the test seconds means the
+' machine slept (K-1 should prevent that). Monitor only: any file or
+' WMI error is swallowed so it can never fail a test.
+'==================================================================
+Private Sub LogTestLap(ByVal num As Long, ByVal testSeconds As Double)
+    On Error Resume Next
+    Dim sinceStart As Double
+    Dim sLine As String
+    Dim fileNum As Integer
+
+    sinceStart = Timer - m_lapRunStart
+    If sinceStart < 0 Then sinceStart = sinceStart + 86400
+    sLine = Format$(Now, "hh:nn:ss") & " | Test " & Right$("  " & num, 2) _
+        & " | " & Right$("        " & Format$(testSeconds, "0.0"), 8) & " s" _
+        & " | run " & Right$("        " & Format$(sinceStart, "0.0"), 8) & " s" _
+        & " | " & MemSnapshot() & " | " & StyleReadCanary() & " | " & WindowStateLabel()
+    fileNum = FreeFile
+    Open ActiveDocument.Path & "\rpt\TestLaps.txt" For Append As #fileNum
+    Print #fileNum, sLine
+    Close #fileNum
+End Sub
+
+' Window state after a test, for the "style reads got slow" hunt: the view type
+' (1 = Normal/draft, 3 = Print layout; the in-suite Test 82 ran in 1, standalone in 3)
+' and the story the selection is in (1 = main text; 6-11 = header/footer stories, the
+' state the 2026-10-17 screenshot showed: footer pane open at Section 141). The first
+' test after which these change is the one that leaves Word in the slow state.
+Private Function WindowStateLabel() As String
+    On Error Resume Next
+    WindowStateLabel = "view " & ActiveWindow.View.Type & ", Sel story " & Selection.StoryType
+    If Err.Number <> 0 Then WindowStateLabel = "window state n/a"
+End Function
+
+' Starts a new TestLaps.txt for a full-suite run and records the session
+' state (fresh or used Word): open documents, undo-stack depth is not
+' readable, so the starting memory line is the "fresh vs primed" evidence.
+Private Sub StartTestLaps()
+    On Error Resume Next
+    Dim fileNum As Integer
+
+    m_lapRunStart = Timer
+    fileNum = FreeFile
+    Open ActiveDocument.Path & "\rpt\TestLaps.txt" For Output As #fileNum
+    Print #fileNum, "TestLaps " & Format$(Now, "yyyy-mm-dd hh:nn:ss") & " | " & ActiveDocument.Name _
+        & " | documents open: " & Documents.Count & " | SkipTestArray Items: " & (UBound(SkipTestArray) - LBound(SkipTestArray) + 1)
+    Print #fileNum, "start: " & MemSnapshot() & " | " & StyleReadCanary() & " | " & WindowStateLabel()
+    Close #fileNum
+End Sub
 
 Private Function HexToUnicodeLabel(cp As Long) As String
     On Error GoTo PROC_ERR
@@ -743,11 +803,13 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             
             If OneTest <> 0 Then
                 DebugAndReportHeader
+                m_lapRunStart = Timer   ' single test: lap appended to rpt\TestLaps.txt, file not restarted
                 Call RunTest(OneTest)
                 Exit Function
             End If
             
             DebugAndReportHeader
+            Call StartTestLaps
             If TestReportFlag And OneTest = 0 Then BufAppend "1234567890123412345678901234123456789012341234567890123412345678901234"
             If TestReportFlag And OneTest = 0 Then BufAppend "Pass/Fail" & Space(5) & "Copy ()" & Space(7) & "Test Num" & Space(6) & "Result" & Space(8) & "Expected" & Space(6) & "Function"
             
@@ -1031,7 +1093,7 @@ Public Function GetTestDescription(num As Long) As String
     Case 20
         GetTestDescription = "Rule: No footnote reference is immediately followed by a digit (catches malformed numbering or paste errors where verse numbers run into footnote markers) - CountFootnotesFollowedByDigit should return 0"
     Case 21
-        GetTestDescription = "Rule: Every footnote reference is followed by a space character (the only allowed non-space exception is end-of-paragraph) - CountNotSpacesAfterFootnoteReferences should return 0"
+        GetTestDescription = "Rule: Every footnote reference is followed by a space character (allowed exceptions: end-of-paragraph, and 3 deliberate em dash cases where no space is wanted before the dash - baseline 3, confirmed in the docm XML 2026-10-17) - CountNotSpacesAfterFootnoteReferences should return 3"
     Case 22
         GetTestDescription = "Rule: Whitespace-padded empty paras (spaces around the pilcrow) - CountWhitespacePaddedEmptyParagraphs should match the expected baseline"
     Case 23
@@ -1709,6 +1771,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
     ' Output the runtime in seconds and hundredths of a second
     'MsgBox "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
     If bTimeAllTests Then Debug.Print "Routine Runtime: " & Format(runTime, "0.00") & " seconds"
+    If runTime < 0 Then runTime = runTime + 86400
+    LogTestLap num, runTime
 
 PROC_EXIT:
     Exit Function
@@ -2682,8 +2746,10 @@ Private Function CountTabOnlyParagraphs(areaType As String) As Long
         If hdrFtr.Exists Then
             For Each para In hdrFtr.Range.Paragraphs
 
-                ' Move the cursor to this paragraph in the footer
-                para.Range.Select
+                ' No para.Range.Select here (removed 2026-10-17): the test only reads text, and
+                ' selecting a footer paragraph left Word in Draft view with the selection in the
+                ' last footer (Section 141) for every later test, which made style reads 2.5x slower
+                ' from Test 47 on (see the TestLaps.txt canary, review section 28).
 
                 paraText = Replace(para.Range.Text, vbCr, "")
                 paraText = Replace(paraText, vbLf, "")
@@ -4971,6 +5037,9 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Long
     Dim notSpaceCount As Long
     Dim debugInfo As String
     Dim asciiValue As Long
+    Dim firstHitRng As Word.Range
+    Dim firstHitIndex As Long
+    Dim firstHitAscii As Long
 
     ' Initialize variables
     Set Doc = ActiveDocument
@@ -4994,6 +5063,13 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Long
                 debugInfo = debugInfo & "Fn " & footnote.index & ": '" & rng.Text & "' (ASC " & asciiValue & "), "
                 'Debug.Print debugInfo
                 notSpaceCount = notSpaceCount + 1
+                ' Remember only the first hit; the page lookup forces layout (~20 s in this
+                ' document), so it is done once after the loop, not per hit.
+                If firstHitRng Is Nothing Then
+                    Set firstHitRng = footnote.Reference
+                    firstHitIndex = footnote.index
+                    firstHitAscii = asciiValue
+                End If
                 'Stop
             End If
             
@@ -5011,6 +5087,14 @@ Private Function CountNotSpacesAfterFootnoteReferences() As Long
     ' Print the Result to the console
     'Debug.Print "Number of spaces after footnote references: " & spaceCount
     'Debug.Print debugInfo
+    If Not firstHitRng Is Nothing And m_lastHint = "" Then
+        ' "page" = the status-bar page (Page N of M); "printed" = the adjusted number shown
+        ' on the page, which differs when numbering restarts or front matter is unnumbered.
+        m_lastHint = "page " & firstHitRng.Information(wdActiveEndPageNumber) & _
+            " (printed " & firstHitRng.Information(wdActiveEndAdjustedPageNumber) & _
+            "), footnote " & firstHitIndex & " is followed by ASC " & firstHitAscii & _
+            " instead of a space (" & notSpaceCount & " in total)"
+    End If
     CountNotSpacesAfterFootnoteReferences = notSpaceCount
 
 PROC_EXIT:

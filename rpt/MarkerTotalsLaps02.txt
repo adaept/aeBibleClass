@@ -1,0 +1,65 @@
+MarkerTotalsLaps 2026-10-17 17:09:32 | Blank Bible Copy.docm | Paragraphs.Count 33826 took 0.472 s | view type 3 | ScreenUpdating True | Pagination False | ShowAll True | TrackRevisions False | documents open 1
+start: Word ws 1195 MB, peak 1195 MB, private 1072 MB | free 5701 MB | pgIn (baseline)
+VT   1000 (para   1375, pos   152757) | lap 5.09 s = para 0.11 + first 1.16 + Count 0.72 + scan 3.10 | scan chars/VT 2.8 | Word ws 1232 MB, peak 1232 MB, private 1138 MB | free 5669 MB | pgIn 2714
+      DoEvents took 0.005 s
+VT   2000 (para   2421, pos   289997) | lap 5.27 s = para 0.08 + first 1.16 + Count 0.78 + scan 3.25 | scan chars/VT 2.8 | Word ws 1266 MB, peak 1266 MB, private 1173 MB | free 5630 MB | pgIn 134
+      DoEvents took 0.001 s
+VT   3000 (para   3468, pos   426986) | lap 4.85 s = para 0.08 + first 1.06 + Count 0.74 + scan 2.97 | scan chars/VT 2.8 | Word ws 1300 MB, peak 1300 MB, private 1208 MB | free 5603 MB | pgIn 27
+      DoEvents took 0.000 s
+VT   4000 (para   4507, pos   567343) | lap 4.60 s = para 0.08 + first 1.04 + Count 0.75 + scan 2.73 | scan chars/VT 2.6 | Word ws 1333 MB, peak 1333 MB, private 1241 MB | free 5703 MB | pgIn 7
+      DoEvents took 0.000 s
+VT   5000 (para   5549, pos   701775) | lap 4.87 s = para 0.07 + first 1.04 + Count 0.73 + scan 3.03 | scan chars/VT 2.9 | Word ws 1370 MB, peak 1370 MB, private 1279 MB | free 5667 MB | pgIn 16
+      DoEvents took 0.000 s
+VT   6000 (para   6600, pos   855691) | lap 5.25 s = para 0.09 + first 1.15 + Count 0.87 + scan 3.14 | scan chars/VT 2.7 | Word ws 1403 MB, peak 1403 MB, private 1314 MB | free 5647 MB | pgIn 111
+      DoEvents took 0.000 s
+VT   7000 (para   7648, pos  1004814) | lap 4.72 s = para 0.08 + first 1.06 + Count 0.80 + scan 2.78 | scan chars/VT 2.6 | Word ws 1437 MB, peak 1437 MB, private 1349 MB | free 5621 MB | pgIn 17
+      DoEvents took 0.000 s
+VT   8000 (para   8711, pos  1162420) | lap 4.94 s = para 0.08 + first 1.08 + Count 0.85 + scan 2.93 | scan chars/VT 2.7 | Word ws 1472 MB, peak 1472 MB, private 1385 MB | free 5588 MB | pgIn 16
+      DoEvents took 0.000 s
+VT   9000 (para   9770, pos  1312546) | lap 4.68 s = para 0.08 + first 1.08 + Count 0.81 + scan 2.71 | scan chars/VT 2.5 | Word ws 1507 MB, peak 1507 MB, private 1419 MB | free 5574 MB | pgIn 42
+      DoEvents took 0.000 s
+VT  10000 (para  10814, pos  1472332) | lap 5.68 s = para 0.09 + first 1.24 + Count 0.98 + scan 3.38 | scan chars/VT 2.7 | Word ws 1541 MB, peak 1541 MB, private 1454 MB | free 5346 MB | pgIn 204
+      DoEvents took 0.000 s
+VT  11000 (para  11858, pos  1599733) | lap 4.73 s = para 0.08 + first 1.10 + Count 0.73 + scan 2.82 | scan chars/VT 2.6 | Word ws 1575 MB, peak 1575 MB, private 1488 MB | free 5344 MB | pgIn 0
+      DoEvents took 0.000 s
+VT  12000 (para  12913, pos  1759626) | lap 4.97 s = para 0.08 + first 1.06 + Count 0.86 + scan 2.98 | scan chars/VT 2.8 | Word ws 1611 MB, peak 1611 MB, private 1525 MB | free 5316 MB | pgIn 49
+      DoEvents took 0.000 s
+VT  13000 (para  14004, pos  1905223) | lap 4.36 s = para 0.08 + first 1.08 + Count 0.80 + scan 2.39 | scan chars/VT 2.2 | Word ws 1640 MB, peak 1640 MB, private 1556 MB | free 5280 MB | pgIn 1502
+      DoEvents took 0.011 s
+VT  14000 (para  15066, pos  1994528) | lap 5.22 s = para 0.09 + first 1.19 + Count 0.56 + scan 3.38 | scan chars/VT 2.9 | Word ws 1676 MB, peak 1676 MB, private 1592 MB | free 5219 MB | pgIn 347
+      DoEvents took 0.005 s
+VT  15000 (para  16191, pos  2095578) | lap 4.78 s = para 0.08 + first 1.04 + Count 0.56 + scan 3.09 | scan chars/VT 3.0 | Word ws 1712 MB, peak 1712 MB, private 1628 MB | free 5184 MB | pgIn 32
+      DoEvents took 0.007 s
+VT  16000 (para  17283, pos  2185024) | lap 5.36 s = para 0.08 + first 1.05 + Count 0.53 + scan 3.70 | scan chars/VT 3.5 | Word ws 1753 MB, peak 1753 MB, private 1670 MB | free 5163 MB | pgIn 0
+      DoEvents took 0.005 s
+VT  17000 (para  18380, pos  2273807) | lap 5.18 s = para 0.08 + first 1.09 + Count 0.54 + scan 3.47 | scan chars/VT 3.1 | Word ws 1792 MB, peak 1792 MB, private 1710 MB | free 5195 MB | pgIn 83
+      DoEvents took 0.006 s
+VT  18000 (para  19467, pos  2395326) | lap 4.77 s = para 0.08 + first 1.13 + Count 0.69 + scan 2.87 | scan chars/VT 2.5 | Word ws 1823 MB, peak 1825 MB, private 1743 MB | free 5220 MB | pgIn 197
+      DoEvents took 0.005 s
+VT  19000 (para  20530, pos  2546978) | lap 5.04 s = para 0.07 + first 1.05 + Count 0.82 + scan 3.10 | scan chars/VT 2.9 | Word ws 1860 MB, peak 1860 MB, private 1781 MB | free 5181 MB | pgIn 265
+      DoEvents took 0.005 s
+VT  20000 (para  21571, pos  2710417) | lap 5.04 s = para 0.08 + first 1.06 + Count 0.89 + scan 3.02 | scan chars/VT 2.8 | Word ws 1895 MB, peak 1895 MB, private 1817 MB | free 5164 MB | pgIn 23
+      DoEvents took 0.005 s
+VT  21000 (para  22633, pos  2863670) | lap 5.12 s = para 0.08 + first 1.13 + Count 0.86 + scan 3.06 | scan chars/VT 2.7 | Word ws 1929 MB, peak 1929 MB, private 1851 MB | free 5038 MB | pgIn 117
+      DoEvents took 0.005 s
+VT  22000 (para  23681, pos  3028268) | lap 5.55 s = para 0.08 + first 1.19 + Count 1.01 + scan 3.27 | scan chars/VT 2.7 | Word ws 1963 MB, peak 1963 MB, private 1886 MB | free 4893 MB | pgIn 18
+      DoEvents took 0.005 s
+VT  23000 (para  24884, pos  3179733) | lap 4.32 s = para 0.08 + first 1.08 + Count 0.81 + scan 2.34 | scan chars/VT 2.1 | Word ws 1993 MB, peak 1993 MB, private 1915 MB | free 4884 MB | pgIn 0
+      DoEvents took 0.004 s
+VT  24000 (para  25951, pos  3307158) | lap 4.83 s = para 0.08 + first 1.08 + Count 0.81 + scan 2.86 | scan chars/VT 2.7 | Word ws 2027 MB, peak 2027 MB, private 1950 MB | free 4862 MB | pgIn 334
+      DoEvents took 0.005 s
+VT  25000 (para  26999, pos  3423258) | lap 5.02 s = para 0.09 + first 1.17 + Count 0.77 + scan 2.99 | scan chars/VT 2.5 | Word ws 2059 MB, peak 2059 MB, private 1984 MB | free 4731 MB | pgIn 626
+      DoEvents took 0.007 s
+VT  26000 (para  28021, pos  3541340) | lap 4.92 s = para 0.08 + first 1.11 + Count 0.81 + scan 2.91 | scan chars/VT 2.6 | Word ws 2092 MB, peak 2092 MB, private 2019 MB | free 4801 MB | pgIn 33
+      DoEvents took 0.004 s
+VT  27000 (para  29071, pos  3657508) | lap 4.55 s = para 0.08 + first 1.08 + Count 0.73 + scan 2.66 | scan chars/VT 2.5 | Word ws 2123 MB, peak 2123 MB, private 2052 MB | free 4770 MB | pgIn 37
+      DoEvents took 0.004 s
+VT  28000 (para  30112, pos  3787137) | lap 4.65 s = para 0.07 + first 1.06 + Count 0.71 + scan 2.81 | scan chars/VT 2.7 | Word ws 2156 MB, peak 2156 MB, private 2087 MB | free 4761 MB | pgIn 16
+      DoEvents took 0.004 s
+VT  29000 (para  31178, pos  3908470) | lap 4.65 s = para 0.08 + first 1.12 + Count 0.71 + scan 2.73 | scan chars/VT 2.4 | Word ws 2187 MB, peak 2187 MB, private 2120 MB | free 4794 MB | pgIn 141
+      DoEvents took 0.005 s
+VT  30000 (para  32368, pos  4029905) | lap 4.29 s = para 0.09 + first 1.13 + Count 0.69 + scan 2.37 | scan chars/VT 2.1 | Word ws 2214 MB, peak 2214 MB, private 2149 MB | free 4848 MB | pgIn 33
+      DoEvents took 0.004 s
+VT  31000 (para  33521, pos  4169377) | lap 4.24 s = para 0.08 + first 1.04 + Count 0.74 + scan 2.38 | scan chars/VT 2.3 | Word ws 2243 MB, peak 2243 MB, private 2180 MB | free 4818 MB | pgIn 17
+      DoEvents took 0.005 s
+DONE | paragraphs 33826 (Paragraphs.Count said 33826) | VerseText 31102 | VM 31102 | CVM 31102 | walk 156.9 s = para 2.6 + first 34.2 + Count 23.7 + scan 91.5 (rest = log writes) | scan chars total 82875 | Word ws 2247 MB, peak 2247 MB, private 2184 MB | free 4814 MB | pgIn 0

@@ -2047,7 +2047,7 @@ End Sub
 ' Also accumulates m_totalPagesIn and m_minFreeMB for the summary. Any WMI
 ' failure yields "n/a" fields rather than an error: this is a monitor only.
 ' --------------------------------------------------------------------------
-Private Function MemSnapshot() As String
+Public Function MemSnapshot() As String
     On Error Resume Next
     Dim oWMI As Object
     Dim oRow As Object

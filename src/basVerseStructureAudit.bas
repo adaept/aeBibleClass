@@ -13,6 +13,12 @@ Private m_cachedVMTotal As Long
 Private m_cachedCVMTotal As Long
 Private m_cacheValid As Boolean
 
+' High-resolution timer for the GetMarkerTotals measurement (VBA's Timer is ~10 ms,
+' far too coarse for single COM calls). The Currency type carries the 64-bit counter
+' scaled by 10,000 on both the counter and the frequency, so their ratio is seconds.
+Private Declare PtrSafe Function QueryPerformanceCounter Lib "kernel32" (ByRef lpPerformanceCount As Currency) As Long
+Private Declare PtrSafe Function QueryPerformanceFrequency Lib "kernel32" (ByRef lpFrequency As Currency) As Long
+
 ' ==========================================================================
 ' AuditVerseMarkerStructure
 ' ==========================================================================
@@ -331,29 +337,190 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
     Dim charStyle As String
     Dim firstCharStyle As String
 
+    ' Phase 1 measurement (review section 28 task 1) - the counting logic below is
+    ' UNCHANGED; the Q-stamps only time each COM-call group with the high-resolution
+    ' counter and a lap line goes to rpt\MarkerTotalsLaps.txt every MARKER_LAP_EVERY
+    ' VerseText paragraphs. See MarkerLapLog for how to read it.
+    Const MARKER_LAP_EVERY As Long = 250
+    Dim qpf As Currency, qMark As Currency, qNow As Currency, qWalk As Currency
+    Dim tPara As Double, tFirst As Double, tCount As Double, tScan As Double  ' this lap
+    Dim sPara As Double, sFirst As Double, sCount As Double, sScan As Double  ' whole walk
+    Dim nParas As Long, nVerse As Long, nIter As Long, nIterLap As Long
+    Dim lapSecs As Double, walkSecs As Double
+    Dim nParaTotal As Long
+
+    QueryPerformanceFrequency qpf
+    MarkerLapLog MarkerLapHeader(nParaTotal), True
+    ' Experiment (2026-10-17): in the full suite the style-read canary is ~0.8 ms until Test 74,
+    ' ~4.6 ms after Tests 74 and 80, and back to ~0.8 ms after the Find-based Tests 79 and 88.
+    ' A cheap whole-document Find before the walk tests whether a Find resets the slow state;
+    ' the log shows the canary before and after. Set False to run the walk unprimed.
+    Const MARKER_PRIME_WITH_FIND As Boolean = True
+    If MARKER_PRIME_WITH_FIND Then MarkerPrime
+    QueryPerformanceCounter qWalk
+    qMark = qWalk
+
     For Each oPara In ActiveDocument.Paragraphs
+        nParas = nParas + 1
+        ' bucket "para": enumerator advance + the paragraph-style read
         If oPara.style.NameLocal = "VerseText" Then
+            QueryPerformanceCounter qNow: tPara = tPara + (qNow - qMark) / qpf: qMark = qNow
+            nVerse = nVerse + 1
             firstCharStyle = oPara.Range.Characters(1).style.NameLocal
             If firstCharStyle = "Chapter Verse marker" Then
                 cvmTotal = cvmTotal + 1
             End If
+            QueryPerformanceCounter qNow: tFirst = tFirst + (qNow - qMark) / qpf: qMark = qNow
             numChars = oPara.Range.Characters.Count
+            QueryPerformanceCounter qNow: tCount = tCount + (qNow - qMark) / qpf: qMark = qNow
             maxScan = 12
             If numChars < maxScan Then maxScan = numChars
             For j = 1 To maxScan
+                nIter = nIter + 1
+                nIterLap = nIterLap + 1
                 charStyle = oPara.Range.Characters(j).style.NameLocal
                 If charStyle = "Verse marker" Then
                     vmTotal = vmTotal + 1
                     Exit For
                 End If
             Next j
+            QueryPerformanceCounter qNow: tScan = tScan + (qNow - qMark) / qpf: qMark = qNow
+
+            If nVerse Mod MARKER_LAP_EVERY = 0 Then
+                lapSecs = tPara + tFirst + tCount + tScan
+                MarkerLapLog "VT " & PadLeft(CStr(nVerse), 6) & " (para " & PadLeft(CStr(nParas), 6) & _
+                    ", pos " & PadLeft(CStr(oPara.Range.Start), 8) & ") | lap " & Format$(lapSecs, "0.00") & " s = " & _
+                    "para " & Format$(tPara, "0.00") & " + first " & Format$(tFirst, "0.00") & _
+                    " + Count " & Format$(tCount, "0.00") & " + scan " & Format$(tScan, "0.00") & _
+                    " | scan chars/VT " & Format$(nIterLap / MARKER_LAP_EVERY, "0.0") & _
+                    " | " & MemSnapshot()
+                sPara = sPara + tPara: sFirst = sFirst + tFirst: sCount = sCount + tCount: sScan = sScan + tScan
+                tPara = 0: tFirst = 0: tCount = 0: tScan = 0: nIterLap = 0
+                QueryPerformanceCounter qMark   ' the log write itself is not charged to any bucket
+            ElseIf nVerse = 1 Or nVerse = 10 Or nVerse = 100 Then
+                ' Early checkpoints: if the walk stalls inside the first lap, the last of these
+                ' lines says how far it got and how long it took (an in-suite stall has no lap line).
+                QueryPerformanceCounter qNow
+                MarkerLapLog "      reached VerseText #" & nVerse & " (para " & nParas & ") after " & _
+                    Format$((qNow - qWalk) / qpf, "0.000") & " s"
+                QueryPerformanceCounter qMark
+            End If
         End If
     Next oPara
+
+    sPara = sPara + tPara: sFirst = sFirst + tFirst: sCount = sCount + tCount: sScan = sScan + tScan
+    QueryPerformanceCounter qNow
+    walkSecs = (qNow - qWalk) / qpf
+    MarkerLapLog "DONE | paragraphs " & nParas & " (Paragraphs.Count said " & nParaTotal & ") | VerseText " & nVerse & _
+        " | VM " & vmTotal & " | CVM " & cvmTotal & " | walk " & Format$(walkSecs, "0.0") & " s = para " & _
+        Format$(sPara, "0.0") & " + first " & Format$(sFirst, "0.0") & " + Count " & Format$(sCount, "0.0") & _
+        " + scan " & Format$(sScan, "0.0") & " (rest = log writes) | scan chars total " & nIter & " | " & MemSnapshot()
 
     m_cachedDocName = currentDoc
     m_cachedVMTotal = vmTotal
     m_cachedCVMTotal = cvmTotal
     m_cacheValid = True
+End Sub
+
+' ==========================================================================
+' MarkerLapHeader / MarkerLapLog - measurement for the Tests 82/83 slowness
+' ==========================================================================
+' rpt\MarkerTotalsLaps.txt, one line per MARKER_LAP_EVERY (250) VerseText paragraphs, written and
+' closed at once so it survives a hang or a crash. How to read it:
+'   - Compare the lap seconds down the file. Flat = constant cost per call;
+'     rising with the paragraph/pos columns = the cost grows with position or
+'     with accumulated state inside Word.
+'   - The four buckets say WHICH call is slow: para = enumerator advance plus
+'     the paragraph-style read; first = Characters(1) style (CVM check);
+'     Count = Characters.Count; scan = the up-to-12 Characters(j) style reads.
+'   - scan chars/VT is how far into the paragraph the Verse marker sits; if it is
+'     near 12 the scan is paying for the full 12 iterations on every paragraph.
+'   - The header line shows the Word state (view, ScreenUpdating, pagination)
+'     and the cost of Paragraphs.Count; compare a standalone run with a run
+'     after Tests 1-81 to see which of those differs.
+' Monitor only: file and WMI errors are swallowed.
+' ==========================================================================
+' --------------------------------------------------------------------------
+' StyleReadCanary - fixed micro-benchmark for the "style reads got 8-10x slower
+' after Tests 1-81" finding (in-suite Test 82 walk 1256 s vs 157 s standalone).
+' Called after every test by aeBibleClass.LogTestLap: it times 100 repeats of the
+' exact call GetMarkerTotals makes (Range.Characters(1).Style.NameLocal) on one
+' fixed character in the verse text, and 100 repeats of Characters.Count as a
+' control. The first test after which the style-read figure jumps is the one
+' that leaves Word in the slow state. Read-only, ~0.1-1 s. Returns "canary n/a" on error.
+' --------------------------------------------------------------------------
+Public Function StyleReadCanary() As String
+    On Error GoTo PROC_ERR
+    Const REPEATS As Long = 100
+    Dim qpf As Currency, q0 As Currency, q1 As Currency, q2 As Currency
+    Dim rng As Object
+    Dim i As Long
+    Dim s As String
+
+    Set rng = ActiveDocument.Range(150000, 150001)
+    QueryPerformanceFrequency qpf
+    QueryPerformanceCounter q0
+    For i = 1 To REPEATS
+        s = rng.Characters(1).style.NameLocal
+    Next i
+    QueryPerformanceCounter q1
+    For i = 1 To REPEATS
+        s = rng.Characters.Count
+    Next i
+    QueryPerformanceCounter q2
+    StyleReadCanary = "canary style " & Format$((q1 - q0) / qpf / REPEATS * 1000, "0.00") & " ms/read" & _
+        ", Count " & Format$((q2 - q1) / qpf / REPEATS * 1000, "0.00") & " ms/read"
+    Exit Function
+PROC_ERR:
+    StyleReadCanary = "canary n/a"
+End Function
+
+Private Sub MarkerPrime()
+    On Error Resume Next
+    Dim qpf As Currency, q0 As Currency, q1 As Currency
+    QueryPerformanceFrequency qpf
+    MarkerLapLog "      canary before prime: " & StyleReadCanary()
+    QueryPerformanceCounter q0
+    With ActiveDocument.Content.Find
+        .ClearFormatting
+        .Text = "zzqxjvzz"
+        .Forward = True
+        .Wrap = wdFindStop
+        .MatchCase = True
+        .Execute
+    End With
+    QueryPerformanceCounter q1
+    MarkerLapLog "      prime Find took " & Format$((q1 - q0) / qpf, "0.0") & " s; canary after: " & StyleReadCanary()
+End Sub
+
+Private Function MarkerLapHeader(ByRef paraCount As Long) As String
+    On Error Resume Next
+    Dim qpf As Currency, q0 As Currency, q1 As Currency
+    Dim s As String
+    QueryPerformanceFrequency qpf
+    QueryPerformanceCounter q0
+    paraCount = ActiveDocument.Paragraphs.Count
+    QueryPerformanceCounter q1
+    s = "MarkerTotalsLaps " & Format$(Now, "yyyy-mm-dd hh:nn:ss") & " | " & ActiveDocument.Name & _
+        " | Paragraphs.Count " & paraCount & " took " & Format$((q1 - q0) / qpf, "0.000") & " s" & _
+        " | view type " & ActiveWindow.View.Type & " | ScreenUpdating " & Application.ScreenUpdating & _
+        " | Pagination " & Application.Options.Pagination & " | ShowAll " & ActiveWindow.View.ShowAll & _
+        " | TrackRevisions " & ActiveDocument.TrackRevisions & " | documents open " & Documents.Count & _
+        vbCrLf & "start: " & MemSnapshot()
+    MarkerLapHeader = s
+End Function
+
+Private Sub MarkerLapLog(ByVal sLine As String, Optional ByVal bNewFile As Boolean = False)
+    On Error Resume Next
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    If bNewFile Then
+        Open ActiveDocument.Path & "\rpt\MarkerTotalsLaps.txt" For Output As #fileNum
+    Else
+        Open ActiveDocument.Path & "\rpt\MarkerTotalsLaps.txt" For Append As #fileNum
+    End If
+    Print #fileNum, sLine
+    Close #fileNum
 End Sub
 
 ' ==========================================================================
