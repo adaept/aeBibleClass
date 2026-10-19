@@ -393,15 +393,22 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
             QueryPerformanceCounter qNow: tCount = tCount + (qNow - qMark) / qpf: qMark = qNow
             maxScan = 12
             If numChars < maxScan Then maxScan = numChars
-            For j = 1 To maxScan
-                nIter = nIter + 1
-                nIterLap = nIterLap + 1
-                charStyle = oPara.Range.Characters(j).style.NameLocal
-                If charStyle = "Verse marker" Then
-                    vmTotal = vmTotal + 1
-                    Exit For
-                End If
-            Next j
+            ' 2026-10-19: character 1 was read above (firstCharStyle), so the scan does not re-read it: a first
+            ' character that is itself a Verse marker counts directly, otherwise the scan starts at character 2.
+            ' Same result as scanning from 1, one style read fewer per VerseText paragraph.
+            If firstCharStyle = "Verse marker" Then
+                vmTotal = vmTotal + 1
+            Else
+                For j = 2 To maxScan
+                    nIter = nIter + 1
+                    nIterLap = nIterLap + 1
+                    charStyle = oPara.Range.Characters(j).style.NameLocal
+                    If charStyle = "Verse marker" Then
+                        vmTotal = vmTotal + 1
+                        Exit For
+                    End If
+                Next j
+            End If
             QueryPerformanceCounter qNow: tScan = tScan + (qNow - qMark) / qpf: qMark = qNow
 
             If nVerse Mod MARKER_LAP_EVERY = 0 Then
