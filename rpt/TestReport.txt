@@ -188,8 +188,8 @@ PASS              Copy ()       Test = 93     2             2             CountN
   Rule: no paragraph anywhere carries the unapproved built-in 'Normal' style, EXCEPT 2 confirmed-structural exceptions - found 2026-10-07 during the RadiantWordBible scripture-only export's Pass 3 (originally 3 occurrences; 1 was a genuine residual, fixed via basFixDocxRoutines.ReplaceNormalWithBodyText; the other 2, at the paragraph Word requires between/after the document's two adjacent Bible Index tables, cannot be restyled away from 'Normal' by any means tried - VBA, Immediate-window repro, or the Word UI directly - see EDSG/01-styles.md 'Known exception, confirmed 2026-10-07'). Expected value is 2, not 0 - re-diagnose rather than assume regression if this Count changes, since it's tied to the current 2-adjacent-tables layout - CountNormalStyleParagraphs should return 2
 PASS              Copy ()       Test = 94     0             0             AuditVerseMarkerStructureIssueCount
   Rule: the verse-marker structure matches the canonical 66-book data - per book Heading 1/Heading 2 counts, per-chapter Verse marker counts and Chapter Verse marker coverage (was a separate manual step run before release; automated 2026-10-16 so the release gate can read its Result; writes rpt\VerseStructureAudit.txt) - AuditVerseMarkerStructureIssueCount should return 0
-The Total Runtime: 1712.86 seconds
-[2026-10-19 15:18:45] Completed
+The Total Runtime: 1605.39 seconds
+[2026-10-19 17:16:05] Completed
 BibleClass VERSION: 0.2.0
 BibleClass VERSION_DATE: September 17, 2026
 == Word Build Info ==

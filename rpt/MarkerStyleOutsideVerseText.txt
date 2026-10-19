@@ -1,4 +1,4 @@
----- FindMarkerStyleOutsideVerseText: 2026-10-19 15:48:35 ----
+---- FindMarkerStyleOutsideVerseText: 2026-10-19 17:03:12 ----
 
 ---- Summary ----
 Non-VerseText paragraphs scanned: 2724
