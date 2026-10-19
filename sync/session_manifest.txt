@@ -4188,3 +4188,30 @@ SESSION 2026-10-19 (battery guard for full suite) -- src/aeBibleClass.cls
   - Owner-verified live: battery check works.
   - Not committed here: rpt/ lap/report outputs from the 2026-10-18 battery run.
 ===============================================================================
+BACKFILL 2026-10-19 -- entries for 2026-10-15..18 reconstructed from git history (appended, not inserted, to keep the file append-only)
+===============================================================================
+SESSION 2026-10-15 (Default Paragraph Font / Tests 77-78) -- src/aeBibleClass.cls, src/basBibleOnlyExport.bas, src/basStyleInspector.bas, src/basTEST_aeBibleConfig.bas, py/count_explicit_default_paragraph_font.py
+  - Export-side fix attempts (Pass 6b re-apply of approved style flags, Pass 6c halting check) were tried, then
+    reverted (e17df4e, 7973620): Word re-applies its default system style flags on every load, so an export-side fix cannot persist.
+  - Tests 77/78 now skip Default Paragraph Font (ea19cad); verified pass incl. fresh open.
+  - py/count_explicit_default_paragraph_font.py added as a release-gate guard.
+  - aeBibleClass.cls: VBE re-cased IsWordResetOnLoadStyle parameter (StyleName), no logic change (181ccc3).
+  - Bug note: rvw/Bug_rwb_export_default_paragraph_font_2026-10-15.md.
+===============================================================================
+SESSION 2026-10-16 (Test 94, header/footer restyle) -- src/aeBibleClass.cls, src/basVerseStructureAudit.bas, src/basBibleOnlyExport.bas, py/verify_char_style_change.py
+  - Test 94 added: AuditVerseMarkerStructureIssueCount (verse-marker structure audit as an automated test);
+    validated standalone 31102/31102, 0 issues.
+  - RWB export: restyle all Section(1) header/footer stories (incl. inert First/Even); Pass 9 fails on
+    non-palette header/footer styles; Pass4e Styles.Count diagnostic.
+===============================================================================
+SESSION 2026-10-17 (Test 94 output, K-1 keep-awake, lap instrumentation) -- src/aeBibleClass.cls, src/basKeepAwake.bas, src/basBibleOnlyExport.bas, src/basVerseStructureAudit.bas
+  - Test 94: brief Immediate-window output; full detail stays in rpt\VerseStructureAudit.txt. Verified PASS 31102/31102, 0 issues.
+  - K-1: new basKeepAwake.bas (SetThreadExecutionState) keeps Windows awake during RUN_THE_TESTS and the export;
+    verified with RUN_THE_TESTS 94.
+  - Tests 82/83 un-skipped; per-test lap/canary instrumentation (rpt/TestLaps0N, MarkerTotalsLaps0N);
+    Test 47 Select removed. Suite 7953 s -> 2264 s.
+===============================================================================
+SESSION 2026-10-18 (battery run, power-state logging) -- src/aeBibleClass.cls, src/basVerseStructureAudit.bas
+  - Power-state and clock logging added to the lap files; battery warning for single-test runs.
+  - Battery run showed Modern Standby despite keep-awake (K-1 reopened); led to the 2026-10-19 full-suite battery guard.
+===============================================================================
