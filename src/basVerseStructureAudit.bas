@@ -617,7 +617,7 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
     Dim tPara As Double, tFirst As Double, tCount As Double, tScan As Double, tHit As Double
     Dim lPara As Double, lFirst As Double, lCount As Double, lScan As Double, lHit As Double
     Dim nParas As Long, nChars As Long, nCharsLap As Long, nFast As Long
-    Dim bScan As Boolean, sUniform As String, oCS As Object
+    Dim sUniform As String, oCS As Object
     Dim sLaps As String
     QueryPerformanceFrequency qpf
     QueryPerformanceCounter qStart
@@ -632,33 +632,35 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
             Dim isHit As Boolean
             isHit = False
 
-            firstCharStyle = oPara.Range.Characters(1).style.NameLocal
-            If firstCharStyle = "Chapter Verse marker" Then isHit = True
-            QueryPerformanceCounter qNow: lFirst = lFirst + (qNow - qMark) / qpf: qMark = qNow
+            ' Merged fast path (2026-10-19): ONE style read over the leading up-to-12 characters decides
+            ' most paragraphs. CharacterStyle is the style when that range has a single character style and
+            ' Nothing when it is mixed. Single style "Chapter Verse marker" or "Verse marker" = hit; any other
+            ' single style = no marker among the 12 and the first character is not a CVM = no hit, and both
+            ' the Characters(1) read and the per-character reads are skipped. Mixed (or an error) falls back
+            ' to the exact original logic: Characters(1) is a CVM -> hit, else scan Characters(1..12) for a VM.
+            numChars = oPara.Range.Characters.Count
+            QueryPerformanceCounter qNow: lCount = lCount + (qNow - qMark) / qpf: qMark = qNow
+            maxScan = 12
+            If numChars < maxScan Then maxScan = numChars
+            sUniform = ""
+            On Error Resume Next
+            Set oCS = Nothing
+            Set oCS = ActiveDocument.Range(oPara.Range.Start, oPara.Range.Start + maxScan).CharacterStyle
+            sUniform = oCS.NameLocal
+            On Error GoTo 0
+            QueryPerformanceCounter qNow: lScan = lScan + (qNow - qMark) / qpf: qMark = qNow
 
-            If Not isHit Then
-                numChars = oPara.Range.Characters.Count
-                QueryPerformanceCounter qNow: lCount = lCount + (qNow - qMark) / qpf: qMark = qNow
-                maxScan = 12
-                If numChars < maxScan Then maxScan = numChars
-                ' Fast path (2026-10-19): the up-to-12 leading characters as ONE range. CharacterStyle is the
-                ' style when the whole range has a single character style and Nothing when it is mixed. A single
-                ' non-marker style means no Verse marker among the 12 (skip the per-character reads); a single
-                ' Verse marker style is a hit; anything else (mixed, or an error) falls back to the exact
-                ' per-character scan below, so the Result is the same as before.
-                bScan = True
-                sUniform = ""
-                On Error Resume Next
-                Set oCS = Nothing
-                Set oCS = ActiveDocument.Range(oPara.Range.Start, oPara.Range.Start + maxScan).CharacterStyle
-                sUniform = oCS.NameLocal
-                On Error GoTo 0
-                If Len(sUniform) > 0 Then
-                    bScan = False
-                    nFast = nFast + 1
-                    If sUniform = "Verse marker" Then isHit = True
+            If Len(sUniform) > 0 Then
+                nFast = nFast + 1
+                If sUniform = "Chapter Verse marker" Or sUniform = "Verse marker" Then
+                    isHit = True
+                    firstCharStyle = sUniform
                 End If
-                If bScan Then
+            Else
+                firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+                If firstCharStyle = "Chapter Verse marker" Then isHit = True
+                QueryPerformanceCounter qNow: lFirst = lFirst + (qNow - qMark) / qpf: qMark = qNow
+                If Not isHit Then
                     For j = 1 To maxScan
                         nChars = nChars + 1
                         nCharsLap = nCharsLap + 1
@@ -668,8 +670,8 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
                             Exit For
                         End If
                     Next j
+                    QueryPerformanceCounter qNow: lScan = lScan + (qNow - qMark) / qpf: qMark = qNow
                 End If
-                QueryPerformanceCounter qNow: lScan = lScan + (qNow - qMark) / qpf: qMark = qNow
             End If
 
             If isHit Then
