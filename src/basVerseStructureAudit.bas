@@ -86,21 +86,27 @@ Public Function AuditVerseMarkerStructureIssueCount(Optional ByVal bWriteFile As
     Dim books As Object
     Set books = aeBibleCitationClass.GetCanonicalBookTable
 
-    ' Walk Heading 1 paragraphs in document order
-    Dim h1Names(1 To 200) As String
-    Dim h1Starts(1 To 200) As Long
+    ' Collect Heading 1 / Heading 2 paragraph starts and Verse marker / Chapter Verse marker run starts
+    ' with ONE whole-document Find each (was: a Paragraphs walk per level plus two Finds per chapter,
+    ' about 1189 x 2 Finds; 2026-10-19 speed-up). Per-book / per-chapter counts are then pure arithmetic
+    ' on the sorted start lists (see CountStartsInRange), with the same range rule as the old per-chapter Finds.
+    Dim h1Names() As String
+    Dim h1Starts() As Long
     Dim nH1 As Long
-    nH1 = 0
+    CollectParaStyleStarts oDoc, "Heading 1", h1Starts, h1Names, nH1
 
-    Dim oPara As Object
-    For Each oPara In oDoc.Paragraphs
-        If oPara.style.NameLocal = "Heading 1" Then
-            nH1 = nH1 + 1
-            If nH1 > 200 Then Exit For
-            h1Names(nH1) = Trim(Replace(oPara.Range.Text, vbCr, ""))
-            h1Starts(nH1) = oPara.Range.Start
-        End If
-    Next oPara
+    Dim h2All() As Long
+    Dim h2Names() As String
+    Dim nH2All As Long
+    CollectParaStyleStarts oDoc, "Heading 2", h2All, h2Names, nH2All
+
+    Dim vmAll() As Long
+    Dim nVM As Long
+    CollectCharStyleStarts oDoc, "Verse marker", vmAll, nVM
+
+    Dim cvmAll() As Long
+    Dim nCVM As Long
+    CollectCharStyleStarts oDoc, "Chapter Verse marker", cvmAll, nCVM
 
     ' Build report
     Dim sOut As String
@@ -154,9 +160,10 @@ Public Function AuditVerseMarkerStructureIssueCount(Optional ByVal bWriteFile As
             Dim expectedChapters As Long
             expectedChapters = CLng(books(BookID)(2))
 
-            AuditOneBook oDoc, h1Starts(i), bookEndPos, CStr(books(BookID)(1)), _
+            AuditOneBook h1Starts(i), bookEndPos, CStr(books(BookID)(1)), _
                           expectedChapters, foundChapters, chapterReport, _
-                          bookIssues, bookIssueDetail, totalExpected, totalFound
+                          bookIssues, bookIssueDetail, totalExpected, totalFound, _
+                          h2All, nH2All, vmAll, nVM, cvmAll, nCVM
 
             Dim bookStatus As String
             If foundChapters = expectedChapters And bookIssues = 0 Then
@@ -219,8 +226,7 @@ End Function
 ' --------------------------------------------------------------------------
 ' AuditOneBook - chapter and verse counts for a single book range
 ' --------------------------------------------------------------------------
-Private Sub AuditOneBook(ByVal oDoc As Object, _
-                         ByVal bookStart As Long, ByVal bookEnd As Long, _
+Private Sub AuditOneBook(ByVal bookStart As Long, ByVal bookEnd As Long, _
                          ByVal bookName As String, _
                          ByVal expectedChapters As Long, _
                          ByRef foundChapters As Long, _
@@ -228,23 +234,22 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
                          ByRef bookIssues As Long, _
                          ByRef bookIssueDetail As String, _
                          ByRef totalExpected As Long, _
-                         ByRef totalFound As Long)
+                         ByRef totalFound As Long, _
+                         ByRef h2All() As Long, ByVal nH2All As Long, _
+                         ByRef vmAll() As Long, ByVal nVM As Long, _
+                         ByRef cvmAll() As Long, ByVal nCVM As Long)
     Const NL As String = vbCrLf
 
-    Dim h2Starts(1 To 250) As Long
-    Dim nH2 As Long
-    nH2 = 0
-
-    Dim oRng As Object
-    Set oRng = oDoc.Range(bookStart, bookEnd)
-    Dim oPara As Object
-    For Each oPara In oRng.Paragraphs
-        If oPara.style.NameLocal = "Heading 2" Then
-            nH2 = nH2 + 1
-            If nH2 > 250 Then Exit For
-            h2Starts(nH2) = oPara.Range.Start
-        End If
-    Next oPara
+    ' This book's Heading 2 starts are the slice of the sorted document-wide list inside [bookStart, bookEnd).
+    Dim h2First As Long, nH2 As Long
+    h2First = LowerBound(h2All, nH2All, bookStart)
+    nH2 = LowerBound(h2All, nH2All, bookEnd) - h2First
+    Dim h2Starts() As Long
+    ReDim h2Starts(1 To IIf(nH2 > 0, nH2, 1))
+    Dim hk As Long
+    For hk = 1 To nH2
+        h2Starts(hk) = h2All(h2First + hk - 1)
+    Next hk
 
     foundChapters = nH2
 
@@ -269,8 +274,8 @@ Private Sub AuditOneBook(ByVal oDoc As Object, _
             chEnd = bookEnd
         End If
 
-        foundVerses = CountVerseMarkers(oDoc, h2Starts(chIdx), chEnd)
-        foundCVMs = CountChapterVerseMarkers(oDoc, h2Starts(chIdx), chEnd)
+        foundVerses = CountStartsInRange(vmAll, nVM, h2Starts(chIdx), chEnd)
+        foundCVMs = CountStartsInRange(cvmAll, nCVM, h2Starts(chIdx), chEnd)
         expectedVerses = aeBibleCitationClass.VersesInChapter(bookName, chIdx)
 
         totalExpected = totalExpected + expectedVerses
@@ -318,7 +323,7 @@ End Sub
 ' applied OUTSIDE VerseText paragraphs - that drift is caught by the
 ' presence audit in aeBibleClass.CountAuditCharacterStyles_ToFile (slot 81).
 '
-' Why this shape: the per-chapter Find pattern (CountVerseMarkers et al.)
+' Why this shape: the former per-chapter Find pattern (AuditVerseMarkerStructure, before 2026-10-19)
 ' is correct but slow (300-2700 s) because Word's Find degenerates on
 ' character-style runs in a large document. Characters(i).Style.NameLocal
 ' is unambiguous (Range.Words can fall back to paragraph style on mixed
@@ -564,7 +569,7 @@ End Sub
 ' only inspects paragraphs styled "VerseText" - it has no way to see a
 ' "Chapter Verse marker"/"Verse marker" character-style run sitting inside
 ' a paragraph styled something else. AuditVerseMarkerStructure's per-chapter
-' Find-based counts (CountVerseMarkers/CountChapterVerseMarkers) search by
+' Find-based counts (CollectCharStyleStarts) search by
 ' character style only, with no paragraph-style filter, so such a paragraph
 ' would be counted there but invisible to ExportDocmVersesToRWBFormat
 ' (which, like GetMarkerTotals, only ever visits "VerseText" paragraphs).
@@ -652,87 +657,118 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
 End Sub
 
 ' --------------------------------------------------------------------------
-' CountVerseMarkers - Count Verse-marker character-style runs in a range
+' CollectCharStyleStarts - start positions (ascending) of every run of a
+' character style in the whole document, from one Find. Replaces the old
+' per-chapter CountVerseMarkers / CountChapterVerseMarkers Finds.
 ' --------------------------------------------------------------------------
-Private Function CountVerseMarkers(ByVal oDoc As Object, _
-                                    ByVal startPos As Long, _
-                                    ByVal endPos As Long) As Long
-    If endPos <= startPos Then
-        CountVerseMarkers = 0
-        Exit Function
-    End If
+Private Sub CollectCharStyleStarts(ByVal oDoc As Object, ByVal styleName As String, _
+                                   ByRef starts() As Long, ByRef n As Long)
+    Dim cap As Long
+    cap = 4096
+    ReDim starts(1 To cap)
+    n = 0
 
     Dim oRng As Object
-    Set oRng = oDoc.Range(startPos, endPos)
-
-    Dim Count As Long
-    Dim safety As Long
-    Count = 0
-    safety = 0
-
+    Set oRng = oDoc.Content
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles("Verse marker")
+        .style = oDoc.Styles(styleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop
         .Format = True
         .MatchWildcards = False
         Do While .Execute
-            Count = Count + 1
-            safety = safety + 1
-            If safety > 20000 Then Exit Do
-            ' Advance past the match; oRng has collapsed to the matched run
-            oRng.Start = oRng.End
-            If oRng.Start >= endPos Then Exit Do
-            oRng.End = endPos
+            n = n + 1
+            If n > cap Then
+                cap = cap * 2
+                ReDim Preserve starts(1 To cap)
+            End If
+            starts(n) = oRng.Start
+            If n > 500000 Then Exit Do   ' safety
+            oRng.Collapse 0               ' wdCollapseEnd: continue after the match
         Loop
     End With
+End Sub
 
-    CountVerseMarkers = Count
+' --------------------------------------------------------------------------
+' CollectParaStyleStarts - start position and trimmed text of every paragraph
+' of a paragraph style, in document order, from one Find. A match covering
+' several adjacent paragraphs is split into its paragraphs.
+' --------------------------------------------------------------------------
+Private Sub CollectParaStyleStarts(ByVal oDoc As Object, ByVal styleName As String, _
+                                   ByRef starts() As Long, ByRef texts() As String, _
+                                   ByRef n As Long)
+    Dim cap As Long
+    cap = 256
+    ReDim starts(1 To cap)
+    ReDim texts(1 To cap)
+    n = 0
+
+    Dim oRng As Object
+    Dim oPara As Object
+    Dim pStart As Long
+    Dim bRecord As Boolean
+    Set oRng = oDoc.Content
+    With oRng.Find
+        .ClearFormatting
+        .style = oDoc.Styles(styleName)
+        .Text = ""
+        .Forward = True
+        .Wrap = 0     ' wdFindStop
+        .Format = True
+        .MatchWildcards = False
+        Do While .Execute
+            For Each oPara In oRng.Paragraphs
+                pStart = oPara.Range.Start
+                bRecord = True
+                If n > 0 Then
+                    If pStart <= starts(n) Then bRecord = False   ' already recorded (overlapping match)
+                End If
+                If bRecord Then
+                    n = n + 1
+                    If n > cap Then
+                        cap = cap * 2
+                        ReDim Preserve starts(1 To cap)
+                        ReDim Preserve texts(1 To cap)
+                    End If
+                    starts(n) = pStart
+                    texts(n) = Trim(Replace(oPara.Range.Text, vbCr, ""))
+                End If
+            Next oPara
+            If n > 20000 Then Exit Do   ' safety
+            oRng.Collapse 0               ' wdCollapseEnd
+        Loop
+    End With
+End Sub
+
+' --------------------------------------------------------------------------
+' LowerBound - index of the first element of the ascending list arr(1..n)
+' that is >= x (n + 1 if none).
+' --------------------------------------------------------------------------
+Private Function LowerBound(ByRef arr() As Long, ByVal n As Long, ByVal x As Long) As Long
+    Dim lo As Long, hi As Long, mid As Long
+    lo = 1
+    hi = n + 1
+    Do While lo < hi
+        mid = (lo + hi) \ 2
+        If arr(mid) < x Then
+            lo = mid + 1
+        Else
+            hi = mid
+        End If
+    Loop
+    LowerBound = lo
 End Function
 
 ' --------------------------------------------------------------------------
-' CountChapterVerseMarkers - Count Chapter-Verse-marker character-style
-' runs in a range. Per project rule, one CVM appears at the start of every
-' verse paragraph (immediately followed by one Verse marker), so this
-' Count must equal CountVerseMarkers for the same range.
+' CountStartsInRange - number of run starts in [startPos, endPos). Same range
+' rule as the old per-chapter Find over Range(startPos, endPos).
 ' --------------------------------------------------------------------------
-Private Function CountChapterVerseMarkers(ByVal oDoc As Object, _
-                                           ByVal startPos As Long, _
-                                           ByVal endPos As Long) As Long
-    If endPos <= startPos Then
-        CountChapterVerseMarkers = 0
-        Exit Function
-    End If
-
-    Dim oRng As Object
-    Set oRng = oDoc.Range(startPos, endPos)
-
-    Dim Count As Long
-    Dim safety As Long
-    Count = 0
-    safety = 0
-
-    With oRng.Find
-        .ClearFormatting
-        .style = oDoc.Styles("Chapter Verse marker")
-        .Text = ""
-        .Forward = True
-        .Wrap = 0     ' wdFindStop
-        .Format = True
-        .MatchWildcards = False
-        Do While .Execute
-            Count = Count + 1
-            safety = safety + 1
-            If safety > 20000 Then Exit Do
-            oRng.Start = oRng.End
-            If oRng.Start >= endPos Then Exit Do
-            oRng.End = endPos
-        Loop
-    End With
-
-    CountChapterVerseMarkers = Count
+Private Function CountStartsInRange(ByRef arr() As Long, ByVal n As Long, _
+                                    ByVal startPos As Long, ByVal endPos As Long) As Long
+    If endPos <= startPos Then Exit Function
+    CountStartsInRange = LowerBound(arr, n, endPos) - LowerBound(arr, n, startPos)
 End Function
 
 ' --------------------------------------------------------------------------
@@ -1634,9 +1670,8 @@ End Sub
 ' FindSequentialVerseNumberViolations  (backs RUN_THE_TESTS test slot 91)
 ' ==========================================================================
 ' Fifth CVM/VM integrity invariant - validates marker CONTENT, not just
-' presence/Count. GetMarkerTotals (slots 82/83, skip-listed) and
-' CountChapterVerseMarkers/CountVerseMarkers (AuditVerseMarkerStructure,
-' never wired into RUN_THE_TESTS) both only check whether a CVM/VM-styled
+' presence/Count. GetMarkerTotals (slots 82/83) and
+' CollectCharStyleStarts (AuditVerseMarkerStructure, Test 94) both only check whether a CVM/VM-styled
 ' run EXISTS once per verse paragraph - neither can see a stray character
 ' sharing the correct style glued onto a real marker, because a styled
 ' Find match swallows adjacent same-styled runs into one hit regardless of
