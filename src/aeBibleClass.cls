@@ -150,6 +150,19 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Lo
     ' suite. Skipped for single-test runs (RUN_THE_TESTS(77) etc.) -
     ' gating those would make it impossible to debug 77/78 directly.
     If IsMissing(varDebug) Or (Not IsMissing(varDebug) And VarType(varDebug) <> vbInteger) Then
+        ' Full suite refuses to start on battery (owner decision 2026-10-18): on battery the screen and
+        ' Windows go to Modern Standby despite keep-awake (a 9,140 s stall in one run) and the CPU is
+        ' throttled (about 3x slower), so the run is slow and its timings are meaningless. Single-test
+        ' runs are still allowed (they print the warning above).
+        If InStr(PowerStateLabel, "BATTERY") > 0 Then
+            Debug.Print "HALT - full suite refused: running on BATTERY (" & PowerStateLabel & "). Plug in AC and run again."
+            MsgBox "Running on battery (" & PowerStateLabel & ")." & vbCrLf & vbCrLf & _
+                   "A full run takes up to an hour: on battery Windows enters Modern Standby despite keep-awake " & _
+                   "and the CPU is throttled, so the run stalls or crawls and its timings are meaningless." & vbCrLf & vbCrLf & _
+                   "Plug in AC power and run again.", vbCritical, "HALT - full suite refused (battery)"
+            TheBibleClassTests = -1
+            GoTo PROC_EXIT
+        End If
         If Not CheckApprovedStylesReady Then
             Debug.Print "HALT - full suite skipped: approved-style Priority/UnhideWhenUsed drift detected (would fail Tests 77/78):"
             Debug.Print "  " & m_lastHint

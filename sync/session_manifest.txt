@@ -4181,3 +4181,10 @@ SESSION 2026-10-09 (JS-port catch-up, driven from aeBibleAddin) -- md/Adding_To_
   - Open here: baseline tag re-pin is LAST (after JS matches newest VBA); W-2 needs a fresh RadiantWordBible style
     inventory run (InspectStyleUsage) on the v1.0 export.
 ===============================================================================
+SESSION 2026-10-19 (battery guard for full suite) -- src/aeBibleClass.cls
+  - TheBibleClassTests: a full-suite run now refuses to start on battery (HALT line + MsgBox, returns -1).
+    Reason: on battery Windows enters Modern Standby despite keep-awake (9,140 s stall seen 2026-10-18) and the
+    CPU is throttled (~3x slower), so timings are meaningless. Single-test runs still allowed.
+  - Owner-verified live: battery check works.
+  - Not committed here: rpt/ lap/report outputs from the 2026-10-18 battery run.
+===============================================================================
