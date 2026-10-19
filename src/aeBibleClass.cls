@@ -130,6 +130,9 @@ Public Property Get TheBibleClassTests(Optional ByVal varDebug As Variant) As Lo
 
     ' Keep Windows awake for the whole run (full suite or single test); released at PROC_EXIT.
     Debug.Print "keep-awake: " & IIf(StartKeepAwake, "ON", "FAILED (the machine may sleep on its idle timer)")
+    ' keep-awake does not stop Modern Standby on battery: 2026-10-18 an unattended full run on battery
+    ' entered standby three times (one stall of 9,140 s) and ran about 3x slower. Plug in for long runs.
+    If InStr(PowerStateLabel, "BATTERY") > 0 Then Debug.Print "WARNING: running on BATTERY (" & PowerStateLabel & ") - the screen turns off and Windows enters Modern Standby despite keep-awake, and the CPU is throttled; plug in AC for a full run."
     
     If Not CheckShowHideStatus Then
         ' Make sure all hidden characters are visible
@@ -446,7 +449,7 @@ Private Sub LogTestLap(ByVal num As Long, ByVal testSeconds As Double)
     sLine = Format$(Now, "hh:nn:ss") & " | Test " & Right$("  " & num, 2) _
         & " | " & Right$("        " & Format$(testSeconds, "0.0"), 8) & " s" _
         & " | run " & Right$("        " & Format$(sinceStart, "0.0"), 8) & " s" _
-        & " | " & MemSnapshot() & " | " & StyleReadCanary() & " | " & WindowStateLabel()
+        & " | " & MemSnapshot() & " | " & StyleReadCanary() & " | " & WindowStateLabel() & " | " & PowerStateLabel()
     fileNum = FreeFile
     Open ActiveDocument.Path & "\rpt\TestLaps.txt" For Append As #fileNum
     Print #fileNum, sLine
@@ -476,7 +479,7 @@ Private Sub StartTestLaps()
     Open ActiveDocument.Path & "\rpt\TestLaps.txt" For Output As #fileNum
     Print #fileNum, "TestLaps " & Format$(Now, "yyyy-mm-dd hh:nn:ss") & " | " & ActiveDocument.Name _
         & " | documents open: " & Documents.Count & " | SkipTestArray Items: " & (UBound(SkipTestArray) - LBound(SkipTestArray) + 1)
-    Print #fileNum, "start: " & MemSnapshot() & " | " & StyleReadCanary() & " | " & WindowStateLabel()
+    Print #fileNum, "start: " & MemSnapshot() & " | " & StyleReadCanary() & " | " & WindowStateLabel() & " | " & PowerStateLabel()
     Close #fileNum
 End Sub
 

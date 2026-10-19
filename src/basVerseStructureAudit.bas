@@ -19,6 +19,19 @@ Private m_cacheValid As Boolean
 Private Declare PtrSafe Function QueryPerformanceCounter Lib "kernel32" (ByRef lpPerformanceCount As Currency) As Long
 Private Declare PtrSafe Function QueryPerformanceFrequency Lib "kernel32" (ByRef lpFrequency As Currency) As Long
 
+' Power state for the slowdown hunt (2026-10-18: an unattended full run on BATTERY went into Modern
+' Standby three times, one stall 9,140 s, and ran 3x slower than on AC). SystemStatusFlag = 1 is
+' Windows battery saver. Read-only.
+Private Type SYSTEM_POWER_STATUS
+    ACLineStatus As Byte
+    BatteryFlag As Byte
+    BatteryLifePercent As Byte
+    SystemStatusFlag As Byte
+    BatteryLifeTime As Long
+    BatteryFullLifeTime As Long
+End Type
+Private Declare PtrSafe Function GetSystemPowerStatus Lib "kernel32" (ByRef lpSystemPowerStatus As SYSTEM_POWER_STATUS) As Long
+
 ' ==========================================================================
 ' AuditVerseMarkerStructure
 ' ==========================================================================
@@ -393,7 +406,7 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
                     "para " & Format$(tPara, "0.00") & " + first " & Format$(tFirst, "0.00") & _
                     " + Count " & Format$(tCount, "0.00") & " + scan " & Format$(tScan, "0.00") & _
                     " | scan chars/VT " & Format$(nIterLap / MARKER_LAP_EVERY, "0.0") & _
-                    " | " & MemSnapshot()
+                    " | " & MemSnapshot() & " | " & PowerStateLabel()
                 sPara = sPara + tPara: sFirst = sFirst + tFirst: sCount = sCount + tCount: sScan = sScan + tScan
                 tPara = 0: tFirst = 0: tCount = 0: tScan = 0: nIterLap = 0
                 QueryPerformanceCounter qMark   ' the log write itself is not charged to any bucket
@@ -440,6 +453,26 @@ End Sub
 '     after Tests 1-81 to see which of those differs.
 ' Monitor only: file and WMI errors are swallowed.
 ' ==========================================================================
+' PowerStateLabel - AC or battery, charge, battery saver (see the SYSTEM_POWER_STATUS Note above).
+Public Function PowerStateLabel() As String
+    On Error GoTo PROC_ERR
+    Dim sps As SYSTEM_POWER_STATUS
+    Dim s As String
+    If GetSystemPowerStatus(sps) = 0 Then GoTo PROC_ERR
+    Select Case sps.ACLineStatus
+        Case 1: s = "AC"
+        Case 0: s = "BATTERY"
+        Case Else: s = "AC unknown"
+    End Select
+    If sps.BatteryLifePercent <> 255 Then s = s & " " & sps.BatteryLifePercent & "%"
+    If sps.SystemStatusFlag = 1 Then s = s & " battery-saver ON"
+    PowerStateLabel = "power " & s
+    Exit Function
+PROC_ERR:
+    PowerStateLabel = "power n/a"
+End Function
+
+
 ' --------------------------------------------------------------------------
 ' StyleReadCanary - fixed micro-benchmark for the "style reads got 8-10x slower
 ' after Tests 1-81" finding (in-suite Test 82 walk 1256 s vs 157 s standalone).
@@ -519,7 +552,8 @@ Private Sub MarkerLapLog(ByVal sLine As String, Optional ByVal bNewFile As Boole
     Else
         Open ActiveDocument.Path & "\rpt\MarkerTotalsLaps.txt" For Append As #fileNum
     End If
-    Print #fileNum, sLine
+    ' Clock time on every line so a stall can be matched to the Windows event log (Modern Standby).
+    Print #fileNum, Format$(Now, "hh:nn:ss") & " " & sLine
     Close #fileNum
 End Sub
 
