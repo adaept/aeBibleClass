@@ -605,8 +605,25 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
     sOut = "---- FindMarkerStyleOutsideVerseText: " & _
            Format(Now, "yyyy-mm-dd hh:nn:ss") & " ----" & NL & NL
 
+    ' Bucket timing (2026-10-19, measurement only - the hit logic is unchanged): QueryPerformanceCounter
+    ' stamps split the walk into para (enumerator advance + paragraph-style read, all paragraphs),
+    ' first (Characters(1) style), Count (Characters.Count), scan (Characters(j) style reads) and
+    ' hit (building the hit text). A lap line every MOV_LAP_EVERY paragraphs shows whether the cost
+    ' per paragraph grows down the document. Written to rpt\MarkerOutsideLaps.txt after the walk.
+    Const MOV_LAP_EVERY As Long = 5000
+    Dim qpf As Currency, qMark As Currency, qNow As Currency, qStart As Currency
+    Dim tPara As Double, tFirst As Double, tCount As Double, tScan As Double, tHit As Double
+    Dim lPara As Double, lFirst As Double, lCount As Double, lScan As Double, lHit As Double
+    Dim nParas As Long, nChars As Long, nCharsLap As Long
+    Dim sLaps As String
+    QueryPerformanceFrequency qpf
+    QueryPerformanceCounter qStart
+    qMark = qStart
+
     For Each oPara In ActiveDocument.Paragraphs
+        nParas = nParas + 1
         paraStyle = oPara.style.NameLocal
+        QueryPerformanceCounter qNow: lPara = lPara + (qNow - qMark) / qpf: qMark = qNow
         If paraStyle <> "VerseText" Then
             scannedCount = scannedCount + 1
             Dim isHit As Boolean
@@ -614,18 +631,23 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
 
             firstCharStyle = oPara.Range.Characters(1).style.NameLocal
             If firstCharStyle = "Chapter Verse marker" Then isHit = True
+            QueryPerformanceCounter qNow: lFirst = lFirst + (qNow - qMark) / qpf: qMark = qNow
 
             If Not isHit Then
                 numChars = oPara.Range.Characters.Count
+                QueryPerformanceCounter qNow: lCount = lCount + (qNow - qMark) / qpf: qMark = qNow
                 maxScan = 12
                 If numChars < maxScan Then maxScan = numChars
                 For j = 1 To maxScan
+                    nChars = nChars + 1
+                    nCharsLap = nCharsLap + 1
                     charStyle = oPara.Range.Characters(j).style.NameLocal
                     If charStyle = "Verse marker" Then
                         isHit = True
                         Exit For
                     End If
                 Next j
+                QueryPerformanceCounter qNow: lScan = lScan + (qNow - qMark) / qpf: qMark = qNow
             End If
 
             If isHit Then
@@ -633,9 +655,31 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
                 sOut = sOut & "Hit #" & hitCount & " | ParaStart=" & oPara.Range.Start & _
                        " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & NL
                 sOut = sOut & "  Excerpt: """ & Left$(Replace(oPara.Range.Text, vbCr, ""), 80) & """" & NL & NL
+                QueryPerformanceCounter qNow: lHit = lHit + (qNow - qMark) / qpf: qMark = qNow
             End If
         End If
+
+        If nParas Mod MOV_LAP_EVERY = 0 Then
+            sLaps = sLaps & "para " & PadLeft(CStr(nParas), 6) & " (non-VT scanned " & PadLeft(CStr(scannedCount), 5) & _
+                ") | lap " & Format$(lPara + lFirst + lCount + lScan + lHit, "0.00") & " s = para " & Format$(lPara, "0.00") & _
+                " + first " & Format$(lFirst, "0.00") & " + Count " & Format$(lCount, "0.00") & _
+                " + scan " & Format$(lScan, "0.00") & " + hit " & Format$(lHit, "0.00") & _
+                " | scan chars " & nCharsLap & vbCrLf
+            tPara = tPara + lPara: tFirst = tFirst + lFirst: tCount = tCount + lCount: tScan = tScan + lScan: tHit = tHit + lHit
+            lPara = 0: lFirst = 0: lCount = 0: lScan = 0: lHit = 0: nCharsLap = 0
+            QueryPerformanceCounter qMark
+        End If
     Next oPara
+
+    tPara = tPara + lPara: tFirst = tFirst + lFirst: tCount = tCount + lCount: tScan = tScan + lScan: tHit = tHit + lHit
+    QueryPerformanceCounter qNow
+    MarkerOutsideLapsWrite "FindMarkerStyleOutsideVerseText " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & ActiveDocument.Name & _
+        " | " & PowerStateLabel() & " | " & StyleReadCanary() & vbCrLf & sLaps & _
+        "DONE | paragraphs " & nParas & " | non-VT scanned " & scannedCount & " | hits " & hitCount & _
+        " | walk " & Format$((qNow - qStart) / qpf, "0.0") & " s = para " & Format$(tPara, "0.0") & _
+        " + first " & Format$(tFirst, "0.0") & " + Count " & Format$(tCount, "0.0") & _
+        " + scan " & Format$(tScan, "0.0") & " + hit " & Format$(tHit, "0.0") & _
+        " (rest = lap-line writes) | scan chars total " & nChars & vbCrLf
 
     sOut = sOut & "---- Summary ----" & NL
     sOut = sOut & "Non-VerseText paragraphs scanned: " & scannedCount & NL
@@ -657,11 +701,25 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
 End Sub
 
 ' --------------------------------------------------------------------------
+' MarkerOutsideLapsWrite - overwrite rpt\MarkerOutsideLaps.txt with the bucket
+' timing from FindMarkerStyleOutsideVerseText (Test 87). Monitor only: errors swallowed.
+' --------------------------------------------------------------------------
+Private Sub MarkerOutsideLapsWrite(ByVal sContent As String)
+    On Error Resume Next
+    Dim oFSO As Object
+    Dim oStream As Object
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    Set oStream = oFSO.CreateTextFile(ActiveDocument.Path & "\rpt\MarkerOutsideLaps.txt", True, False)
+    oStream.Write sContent
+    oStream.Close
+End Sub
+
+' --------------------------------------------------------------------------
 ' CollectCharStyleStarts - start positions (ascending) of every run of a
 ' character style in the whole document, from one Find. Replaces the old
 ' per-chapter CountVerseMarkers / CountChapterVerseMarkers Finds.
 ' --------------------------------------------------------------------------
-Private Sub CollectCharStyleStarts(ByVal oDoc As Object, ByVal styleName As String, _
+Private Sub CollectCharStyleStarts(ByVal oDoc As Object, ByVal StyleName As String, _
                                    ByRef starts() As Long, ByRef n As Long)
     Dim cap As Long
     cap = 4096
@@ -672,7 +730,7 @@ Private Sub CollectCharStyleStarts(ByVal oDoc As Object, ByVal styleName As Stri
     Set oRng = oDoc.Content
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles(styleName)
+        .style = oDoc.Styles(StyleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop
@@ -696,7 +754,7 @@ End Sub
 ' of a paragraph style, in document order, from one Find. A match covering
 ' several adjacent paragraphs is split into its paragraphs.
 ' --------------------------------------------------------------------------
-Private Sub CollectParaStyleStarts(ByVal oDoc As Object, ByVal styleName As String, _
+Private Sub CollectParaStyleStarts(ByVal oDoc As Object, ByVal StyleName As String, _
                                    ByRef starts() As Long, ByRef texts() As String, _
                                    ByRef n As Long)
     Dim cap As Long
@@ -712,7 +770,7 @@ Private Sub CollectParaStyleStarts(ByVal oDoc As Object, ByVal styleName As Stri
     Set oRng = oDoc.Content
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles(styleName)
+        .style = oDoc.Styles(StyleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop

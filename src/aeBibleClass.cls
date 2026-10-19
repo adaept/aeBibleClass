@@ -3826,14 +3826,22 @@ Private Function CountEmptyParagraphs() As Long
         secStartType(si) = ActiveDocument.Sections(si).PageSetup.SectionStart
     Next si
 
+    ' Speed-up 2026-10-19: read each paragraph's Range/Text once (was Range.Text twice per paragraph) and carry the
+    ' previous paragraph's text forward instead of ActiveDocument.Paragraphs(idx - 1), an O(idx) lookup per empty
+    ' paragraph. Output (rpt\EmptyParagraphs.txt) is unchanged.
+    Dim paraRng As Object
+    Dim paraText As String
+    Dim lastParaText As String
     Count = 0
     idx = 0
     For Each para In ActiveDocument.Paragraphs
         idx = idx + 1
-        If Len(para.Range.Text) = 1 And para.Range.Text = vbCr Then
+        Set paraRng = para.Range
+        paraText = paraRng.Text
+        If Len(paraText) = 1 And paraText = vbCr Then
             Count = Count + 1
             If idx > 1 Then
-                prevText = Left(ActiveDocument.Paragraphs(idx - 1).Range.Text, 60)
+                prevText = Left(lastParaText, 60)
             Else
                 prevText = "(start of document)"
             End If
@@ -3899,6 +3907,7 @@ Private Function CountEmptyParagraphs() As Long
             oStream.WriteLine para.Range.Information(wdActiveEndPageNumber) & _
                               vbTab & idx & vbTab & kind & vbTab & prevText
         End If
+        lastParaText = paraText
     Next para
     oStream.Close
 
