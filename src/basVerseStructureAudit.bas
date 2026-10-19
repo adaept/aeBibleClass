@@ -586,7 +586,8 @@ End Sub
 ' lets aeBibleClass wire this into a test slot expecting 0.
 ' ==========================================================================
 Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
-                                            Optional ByVal bWriteFile As Boolean = True)
+                                            Optional ByVal bWriteFile As Boolean = True, _
+                                            Optional ByRef sHitStarts As String = "")
     Dim t As Double
     StartTimer "FindMarkerStyleOutsideVerseText", t
 
@@ -599,6 +600,7 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
     Dim paraStyle As String
     Dim scannedCount As Long
     hitCount = 0
+    sHitStarts = ""
 
     Dim sOut As String
     Const NL As String = vbCrLf
@@ -614,7 +616,8 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
     Dim qpf As Currency, qMark As Currency, qNow As Currency, qStart As Currency
     Dim tPara As Double, tFirst As Double, tCount As Double, tScan As Double, tHit As Double
     Dim lPara As Double, lFirst As Double, lCount As Double, lScan As Double, lHit As Double
-    Dim nParas As Long, nChars As Long, nCharsLap As Long
+    Dim nParas As Long, nChars As Long, nCharsLap As Long, nFast As Long
+    Dim bScan As Boolean, sUniform As String, oCS As Object
     Dim sLaps As String
     QueryPerformanceFrequency qpf
     QueryPerformanceCounter qStart
@@ -638,20 +641,40 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
                 QueryPerformanceCounter qNow: lCount = lCount + (qNow - qMark) / qpf: qMark = qNow
                 maxScan = 12
                 If numChars < maxScan Then maxScan = numChars
-                For j = 1 To maxScan
-                    nChars = nChars + 1
-                    nCharsLap = nCharsLap + 1
-                    charStyle = oPara.Range.Characters(j).style.NameLocal
-                    If charStyle = "Verse marker" Then
-                        isHit = True
-                        Exit For
-                    End If
-                Next j
+                ' Fast path (2026-10-19): the up-to-12 leading characters as ONE range. CharacterStyle is the
+                ' style when the whole range has a single character style and Nothing when it is mixed. A single
+                ' non-marker style means no Verse marker among the 12 (skip the per-character reads); a single
+                ' Verse marker style is a hit; anything else (mixed, or an error) falls back to the exact
+                ' per-character scan below, so the Result is the same as before.
+                bScan = True
+                sUniform = ""
+                On Error Resume Next
+                Set oCS = Nothing
+                Set oCS = ActiveDocument.Range(oPara.Range.Start, oPara.Range.Start + maxScan).CharacterStyle
+                sUniform = oCS.NameLocal
+                On Error GoTo 0
+                If Len(sUniform) > 0 Then
+                    bScan = False
+                    nFast = nFast + 1
+                    If sUniform = "Verse marker" Then isHit = True
+                End If
+                If bScan Then
+                    For j = 1 To maxScan
+                        nChars = nChars + 1
+                        nCharsLap = nCharsLap + 1
+                        charStyle = oPara.Range.Characters(j).style.NameLocal
+                        If charStyle = "Verse marker" Then
+                            isHit = True
+                            Exit For
+                        End If
+                    Next j
+                End If
                 QueryPerformanceCounter qNow: lScan = lScan + (qNow - qMark) / qpf: qMark = qNow
             End If
 
             If isHit Then
                 hitCount = hitCount + 1
+                sHitStarts = sHitStarts & oPara.Range.Start & ","
                 sOut = sOut & "Hit #" & hitCount & " | ParaStart=" & oPara.Range.Start & _
                        " | Style=" & paraStyle & " | first-char-style=" & firstCharStyle & NL
                 sOut = sOut & "  Excerpt: """ & Left$(Replace(oPara.Range.Text, vbCr, ""), 80) & """" & NL & NL
@@ -673,13 +696,13 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
 
     tPara = tPara + lPara: tFirst = tFirst + lFirst: tCount = tCount + lCount: tScan = tScan + lScan: tHit = tHit + lHit
     QueryPerformanceCounter qNow
-    MarkerOutsideLapsWrite "FindMarkerStyleOutsideVerseText " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & ActiveDocument.Name & _
+    If bWriteFile Then MarkerOutsideLapsWrite "FindMarkerStyleOutsideVerseText " & Format(Now, "yyyy-mm-dd hh:nn:ss") & " | " & ActiveDocument.Name & _
         " | " & PowerStateLabel() & " | " & StyleReadCanary() & vbCrLf & sLaps & _
         "DONE | paragraphs " & nParas & " | non-VT scanned " & scannedCount & " | hits " & hitCount & _
         " | walk " & Format$((qNow - qStart) / qpf, "0.0") & " s = para " & Format$(tPara, "0.0") & _
         " + first " & Format$(tFirst, "0.0") & " + Count " & Format$(tCount, "0.0") & _
         " + scan " & Format$(tScan, "0.0") & " + hit " & Format$(tHit, "0.0") & _
-        " (rest = lap-line writes) | scan chars total " & nChars & vbCrLf
+        " (rest = lap-line writes) | scan chars total " & nChars & " | fast-path paragraphs " & nFast & vbCrLf
 
     sOut = sOut & "---- Summary ----" & NL
     sOut = sOut & "Non-VerseText paragraphs scanned: " & scannedCount & NL
@@ -699,6 +722,94 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
 
     EndTimer "FindMarkerStyleOutsideVerseText", t
 End Sub
+
+' ==========================================================================
+' ControlMarkerOutsideVerseText - positive control for FindMarkerStyleOutsideVerseText (Test 87)
+' ==========================================================================
+' The real document has 0 hits, so a clean Test 87 run cannot show that the scan still DETECTS a
+' stray marker. This builds a disposable blank document (never saved, closed on exit) with known
+' cases, runs FindMarkerStyleOutsideVerseText on it and compares the hit paragraph starts with the
+' expected list. Run from the Immediate window: ?ControlMarkerOutsideVerseText  (0 = PASS).
+' Cases (all "Normal" unless stated; CVM = Chapter Verse marker, VM = Verse marker):
+'   1 CVM at char 1                  -> hit      2 VM at char 5            -> hit
+'   3 VM at char 12 (boundary)       -> hit      4 VM at char 13           -> no hit
+'   5 plain                          -> no hit   6 VerseText with CVM+VM   -> no hit (inside VerseText)
+'   7 one-char paragraph, all VM     -> hit      8 whole paragraph VM      -> hit
+'   9 CVM at char 3, no VM           -> no hit (CVM is only checked at char 1)
+'  10 14 chars all VM                -> hit (uniform leading range)
+'  11 15 chars all in another char style -> no hit (uniform non-marker style)
+' Expected hits: paragraphs 1, 2, 3, 7, 8, 10.
+' ==========================================================================
+Public Function ControlMarkerOutsideVerseText() As Long
+    Dim prevDoc As Object, d As Object
+    Dim sTexts(1 To 11) As String
+    Dim starts(1 To 11) As Long
+    Dim i As Long, pos As Long
+    Dim hitCount As Long, sHits As String, sExpected As String
+
+    Set prevDoc = ActiveDocument
+    Set d = Documents.Add
+    On Error GoTo PROC_ERR
+
+    d.Styles.Add "VerseText", 1                    ' wdStyleTypeParagraph
+    d.Styles.Add "Verse marker", 2                 ' wdStyleTypeCharacter
+    d.Styles.Add "Chapter Verse marker", 2
+    d.Styles.Add "OtherCharStyle", 2
+
+    sTexts(1) = "12 first"
+    sTexts(2) = "abcd5 tail text"
+    sTexts(3) = "abcdefghijk9"
+    sTexts(4) = "abcdefghijkl9"
+    sTexts(5) = "plain paragraph"
+    sTexts(6) = "11 In the beginning"
+    sTexts(7) = "3"
+    sTexts(8) = "7 8 9"
+    sTexts(9) = "abcdef"
+    sTexts(10) = "VMVMVMVMVMVMVM"
+    sTexts(11) = "OTHEROTHEROTHER"
+
+    Dim sAll As String
+    pos = 0
+    For i = 1 To 11
+        starts(i) = pos
+        sAll = sAll & sTexts(i)
+        If i < 11 Then sAll = sAll & vbCr
+        pos = pos + Len(sTexts(i)) + 1
+    Next i
+    d.Content.Text = sAll
+
+    d.Paragraphs(6).style = "VerseText"
+    d.Range(starts(1), starts(1) + 2).style = "Chapter Verse marker"
+    d.Range(starts(2) + 4, starts(2) + 5).style = "Verse marker"
+    d.Range(starts(3) + 11, starts(3) + 12).style = "Verse marker"
+    d.Range(starts(4) + 12, starts(4) + 13).style = "Verse marker"
+    d.Range(starts(6), starts(6) + 1).style = "Chapter Verse marker"
+    d.Range(starts(6) + 1, starts(6) + 2).style = "Verse marker"
+    d.Range(starts(7), starts(7) + 1).style = "Verse marker"
+    d.Range(starts(8), starts(8) + 5).style = "Verse marker"
+    d.Range(starts(9) + 2, starts(9) + 3).style = "Chapter Verse marker"
+    d.Range(starts(10), starts(10) + 14).style = "Verse marker"
+    d.Range(starts(11), starts(11) + 15).style = "OtherCharStyle"
+
+    sExpected = starts(1) & "," & starts(2) & "," & starts(3) & "," & starts(7) & "," & starts(8) & "," & starts(10) & ","
+
+    FindMarkerStyleOutsideVerseText hitCount, False, sHits
+
+    Dim bad As Long
+    If hitCount <> 6 Or sHits <> sExpected Then bad = 1
+    Debug.Print "ControlMarkerOutsideVerseText: hits " & hitCount & " (expected 6) | starts [" & sHits & "] expected [" & sExpected & "] -> " & IIf(bad = 0, "PASS", "FAIL")
+    ControlMarkerOutsideVerseText = bad
+
+PROC_EXIT:
+    On Error Resume Next
+    d.Close 0                                      ' wdDoNotSaveChanges
+    prevDoc.Activate
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in ControlMarkerOutsideVerseText | Err: " & Err.Number & " | " & Err.Description
+    ControlMarkerOutsideVerseText = -1
+    Resume PROC_EXIT
+End Function
 
 ' --------------------------------------------------------------------------
 ' MarkerOutsideLapsWrite - overwrite rpt\MarkerOutsideLaps.txt with the bucket
