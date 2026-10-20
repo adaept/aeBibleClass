@@ -4215,3 +4215,32 @@ SESSION 2026-10-18 (battery run, power-state logging) -- src/aeBibleClass.cls, s
   - Power-state and clock logging added to the lap files; battery warning for single-test runs.
   - Battery run showed Modern Standby despite keep-awake (K-1 reopened); led to the 2026-10-19 full-suite battery guard.
 ===============================================================================
+SESSION 2026-10-19 (test-suite speed-ups) -- src/basVerseStructureAudit.bas, src/aeBibleClass.cls
+  - Full suite on AC: 3292 s -> 1605 s, 94/94 PASS (rpt/TestLaps06 = start, rpt/TestLaps08 = end; MarkerTotalsLaps06/08).
+  - Test 94 (AuditVerseMarkerStructureIssueCount): one whole-document Find per style (H1, H2, Verse marker, Chapter Verse
+    marker) instead of 2 Finds per chapter + paragraph walks; output identical (31102/31102, 0 issues). In-suite 1901 s ->
+    484-684 s (varies with the style-read canary: 9.5 ms vs 14.2 ms).
+  - Test 38 (CountEmptyParagraphs): one Range/Text read per paragraph, previous text carried forward; EmptyParagraphs.txt
+    byte-identical. 140 s -> 45 s.
+  - Test 87 (FindMarkerStyleOutsideVerseText): one Range.CharacterStyle read over the leading <=12 characters, exact
+    per-character fallback when mixed. 188-251 s -> 28 s in suite (5 s standalone). Bucket timing in rpt\MarkerOutsideLaps.txt.
+    Positive control: ?ControlMarkerOutsideVerseText in the Immediate window (11 cases, expects 6 hits, 0 = PASS) -
+    NOT wired to a test slot.
+  - Tests 82/83 (GetMarkerTotals): scan no longer re-reads character 1. 703 s -> 528 s in suite (131 s standalone).
+  - Find-based rewrite of GetMarkerTotals RULED OUT by a probe (since removed): Content.Text length differs from character
+    positions (4,240,904 vs 4,240,916), 144 paragraph ends are not vbCr, and three Finds extrapolate to ~340 s vs the
+    walk's 157 s fresh.
+  - Owner observations: Defender real-time scan ~12% CPU during some tests; a docm with a few runs and no close/open skips
+    the ~20 s page-index build, but repeated runs in one session raise the style-read canary (0.8 ms fresh, 8-19 ms used).
+NEXT-SESSION TASK LIST (from this session):
+  1. Test ordering experiment: Test 82 (528 s) and Test 94 (684 s) are ~75% of the run and scale with the canary. Earlier
+     notes say Find-based tests (79, 88) reset the slow state; try a Find-heavy test just before 82/94 and compare.
+  2. Defender: add MsMpEng CPU to the lap line, or run New-MpPerformanceRecording / Get-MpPerformanceReport; folder/process
+     exclusion (C:\adaept, WINWORD.EXE) is the owner's decision, not made.
+  3. Canary ideas (not built): per-bucket call counters for slow tests, Find-cost canary, paging-delta flag, "slower than
+     previous runs" column from older TestLaps files.
+  4. For timing comparisons open a fresh copy of the docm and note the start canary; standalone numbers are not comparable
+     to in-suite numbers.
+  5. From 2026-10-09, still open: baseline tag re-pin is LAST (after JS matches newest VBA); W-2 needs a fresh
+     RadiantWordBible InspectStyleUsage run on the v1.0 export.
+===============================================================================
