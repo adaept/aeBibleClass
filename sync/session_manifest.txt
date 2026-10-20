@@ -4242,5 +4242,5 @@ NEXT-SESSION TASK LIST (from this session):
   4. For timing comparisons open a fresh copy of the docm and note the start canary; standalone numbers are not comparable
      to in-suite numbers.
   5. From 2026-10-09, still open: baseline tag re-pin is LAST (after JS matches newest VBA); W-2 needs a fresh
-     RadiantWordBible InspectStyleUsage run on the v1.0 export.
+     RadiantWordBible InspectStyleUsage run on the v1.1 export (v1.1 = next release, after the latest testing concludes; not yet built).
 ===============================================================================
