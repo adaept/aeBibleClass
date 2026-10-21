@@ -92,13 +92,18 @@ Private Declare PtrSafe Function GetCurrentProcessId Lib "kernel32" () As Long
 ' at all. Does not include the Bible Index styles (see
 ' GetIndexRegenStyles) - those are front matter, not scripture, kept for
 ' a different reason (regenerated page numbers, not narrative content).
+' BookHyperlink is deliberately NOT listed (v1.1, 2026-10-21): it is a
+' character style, so it never classifies a paragraph here, and it is purged
+' from the export by design (GetPurgeStyles); the Lock Hyperlinks "style not
+' found" message on the RWB is expected. (EmphasisBlack and EmphasisRed are in
+' both lists on purpose: kept for the sweep, then replaced and purged.)
 ' ==========================================================================
 Public Function GetScriptureOnlyStyles() As Variant
     GetScriptureOnlyStyles = Array( _
         "Heading 1", "Heading 2", "VerseText", _
         "Chapter Verse marker", "Verse marker", _
         "Words of Jesus", "EmphasisBlack", "EmphasisRed", _
-        "BookHyperlink", "Psalms BOOK", "PsalmSuperscription", _
+        "Psalms BOOK", "PsalmSuperscription", _
         "Selah", "PsalmAcrostic", "SpeakerLabel")
 End Function
 
@@ -1316,7 +1321,7 @@ Public Function GetExportSettings() As Object
     Dim d As Object
     Set d = CreateObject("Scripting.Dictionary")
     d.CompareMode = 1
-    d("ExportVersion") = "1.0"
+    d("ExportVersion") = "1.1"
     ' Remove manual (optional) hyphens and turn off automatic hyphenation.
     d("StripOptionalHyphens") = True
     ' EmphasisBlack character style removed (text takes VerseText);
