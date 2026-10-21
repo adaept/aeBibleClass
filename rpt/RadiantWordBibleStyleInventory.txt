@@ -1,9 +1,9 @@
----- RadiantWordBible style inventory 2026-10-08 20:45:42 ----
+---- RadiantWordBible style inventory 2026-10-21 15:08:51 ----
 Document: C:\adaept\aeBibleClass\RadiantWordBible.docx
-Styles in document: 427
-USED: 17 | BASE-ONLY: 1 | UNUSED custom (purge candidates): 42 | UNUSED built-in, InUse flag set (not deletable): 363 | latent built-in skipped: 0
+Styles in document: 388
+USED: 20 | BASE-ONLY: 1 | UNUSED custom (purge candidates): 0 | UNUSED built-in, InUse flag set (not deletable): 363 | latent built-in skipped: 0
 
-== USED (17) ==
+== USED (20) ==
   [para] BibleIndex
   [para] BibleIndexEyebrow
   [para] BibleIndexList
@@ -17,7 +17,10 @@ USED: 17 | BASE-ONLY: 1 | UNUSED custom (purge candidates): 42 | UNUSED built-in
   [para] Psalms BOOK
   [para] PsalmSuperscription
   [char] Selah
+  [para] SpeakerLabel
   [table] Table Grid
+  [para] TheFooters
+  [para] TheHeaders
   [char] Verse marker
   [para] VerseText
   [char] Words of Jesus
@@ -25,49 +28,7 @@ USED: 17 | BASE-ONLY: 1 | UNUSED custom (purge candidates): 42 | UNUSED built-in
 == BASE-ONLY (1) - keep, used styles depend on them ==
   [table] Table Normal  (base of Table Grid)
 
-== UNUSED custom (42) - purge candidates ==
-  [para] Acknowledgments
-  [para] AuthorBodyText
-  [para] AuthorBookRef
-  [para] AuthorBookRefHeader
-  [para] AuthorBookSections
-  [para] AuthorListItem
-  [para] AuthorListItemBody
-  [para] AuthorListItemTab
-  [para] AuthorSectionHead
-  [para] Blank line
-  [para] BodyTextTopLineCPBB
-  [char] BookHyperlink
-  [para] Brief
-  [para] CenterSubText
-  [para] Contents
-  [para] ContentsRef
-  [para] Cover
-  [para] CustomParaAfterH1
-  [para] CustomParaAfterH1-2nd
-  [para] DatAuthRef
-  [char] EmphasisBlack
-  [char] EmphasisRed
-  [para] End note normal
-  [para] Footnote crossreference
-  [para] Footnote normal
-  [para] FrontPageBodyText
-  [para] FrontPageTopLine
-  [para] Glossary
-  [para] Horizontal Rule
-  [para] Index
-  [para] Introduction
-  [para] Paragraph
-  [para] Paragraph Continuation
-  [para] ParallelHeader
-  [para] ParallelText
-  [para] Picture Caption
-  [para] SpeakerLabel
-  [para] TheFooters
-  [para] TheHeaders
-  [para] TitleEyebrow
-  [para] TitleOnePage
-  [para] TitleVersion
+== UNUSED custom (0) - purge candidates ==
 
 == UNUSED built-in (363) - cannot be deleted ==
   [para] Balloon Text
