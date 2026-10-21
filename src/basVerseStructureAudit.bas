@@ -395,7 +395,7 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
             If numChars < maxScan Then maxScan = numChars
             ' 2026-10-19: character 1 was read above (firstCharStyle), so the scan does not re-read it: a first
             ' character that is itself a Verse marker counts directly, otherwise the scan starts at character 2.
-            ' Same result as scanning from 1, one style read fewer per VerseText paragraph.
+            ' Same Result as scanning from 1, one style read fewer per VerseText paragraph.
             If firstCharStyle = "Verse marker" Then
                 vmTotal = vmTotal + 1
             Else
