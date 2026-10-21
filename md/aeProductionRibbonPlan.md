@@ -244,6 +244,11 @@ appended for traceability. Example: `1.0.0+48fd425`.
 - **PATCH** — bug fix in `aeRibbonClass` / `aeBibleClass` /
   `aeBibleCitationClass` that does not change callback surface.
 
+The ribbon version is independent of the `aeBibleAddin` (JS taskpane) version (decision 2026-10-21): the two
+products are not required to match, and the pairing is recorded in the two `RELEASES.md` ledgers. Example: the
+Next-Chapter-after-Next-Book fix (a confirmed bug, no change to the callback surface) is a PATCH, `1.0.1`, even
+while the JS add-in is `1.1.0`.
+
 ### 6.2 Where the version is stored
 
 - `aeRibbon/VERSION` — plain text, single line.
