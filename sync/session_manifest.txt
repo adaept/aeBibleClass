@@ -21,3 +21,49 @@ NEXT-SESSION TASK LIST:
   5. From 2026-10-09, still open: baseline tag re-pin is LAST (after JS matches newest VBA); W-2 needs a fresh
      RadiantWordBible InspectStyleUsage run on the v1.1 export (v1.1 = next release, after the latest testing concludes; not yet built).
 ===============================================================================
+SESSION 2026-10-21 (v1.1.0 release walk-through; RWB exporter 1.1; task list G-2..G-4a) -- src/basBibleOnlyExport.bas, src/basVerseStructureAudit.bas, src/Module1.bas
+  Review file with the full log and SHAs: aeBibleAddin rvw/Code_review 2026-10-20.md (sections 5-13). Release checklist: aeBibleAddin RELEASES.md.
+  src edits (each imported into the dev docm, compiled, exported, then committed; normalizer dry run: 0 of 41 files would change):
+    * basBibleOnlyExport.bas (c36ab31): ExportVersion "1.0" -> "1.1"; "BookHyperlink" removed from GetScriptureOnlyStyles()
+      (14 -> 13 styles; it is a character style, so it never classified a paragraph, and GetPurgeStyles deletes it by design).
+      EmphasisBlack and EmphasisRed stay in BOTH lists on purpose (kept for the sweep, then replaced and purged).
+    * basVerseStructureAudit.bas (97eaecf): one comment word result -> Result in GetMarkerTotals (VBE export churn; matches
+      py/normalize_vba.py rule at line 58, so Result is canonical).
+    * Module1.bas (f621693): scratch probe VerifyG4a (keep list 13, BookHyperlink False, overlap EmphasisBlack; EmphasisRed, ExportVersion 1.1).
+  v1.1.0 release state (aeBibleAddin task G-5):
+    * Export 2026-10-21 14:44:53, ExportVersion 1.1, Result: CLEAN (0 issues), 296.5 s: RadiantWordBible.docx 2,330,747 bytes,
+      SHA-256 a5a116d94460a56564c8b33e410467aa443eeb9c835cb4d37ac9c5f89d6d4387, 133 sections, 18 styles in use.
+    * Docm archived with its mtime preserved (2026-10-21 14:34:59.9739976): Bible\v1.1.0-BlankBibleCopy.docm, SHA-256
+      a5975eecf96234a5da34c330a68a830a8ffed6682227b25488959a4b8a4b74ff; frozen copy in
+      OneDrive\Backups\adaept\aeBibleAddin-releases\v1.1.0-2026-10-21\ (docm + PROVENANCE.md). Re-checked equal after every Word session.
+    * Full RUN_THE_TESTS 15:22-15:51: 94/94 PASS, 0 FAIL, 0 SKIP, 1763.09 s (Test 94 883 s, Test 82 497 s; power AC all laps;
+      canary 1.55 ms at start, 12.86 ms at end). Verse audit 31102 / 31102, 0 issues.
+    * InspectStyleUsage on the export: 388 styles, 0 unused custom; USED = the 18 plus Normal and Default Paragraph Font. Word's styles
+      collection does not enumerate the character half of a linked pair (SpeakerLabel / SpeakerLabel Char), proved with a probe.
+    * JS smoke test pass (profile rwb, 133 sections, 1189 Heading 2, UK spelling 2443 words, About 1.1.0). VBA Gate G8 pass with the
+      known non-blocking Next Chapter bug (same aeRibbon.dotm, SHA-256 621d5f2d...4539, as aeRibbon 1.0.0+9689917).
+    * Release gate PASSED (9 guards, first real end-to-end run), stamp aeBibleAddin releases/gate-v1.1.0.json; ledger row v1.1.0 in RELEASES.md.
+    * Commits: aeBibleClass ff1a0bf (seven release reports), c5228d7 (aeRibbon plan 6.1 note); aeBibleAddin 77c744f (stamp, ledger,
+      checklist), 3c296e6 (W-2b: RWB_STYLES 20 -> 18); hub adaept5tudio 47271f3 (versions independent), dbb0956, 2867437.
+  Findings and decisions this session:
+    * VBA Test 84 DOES see inactive First/Even header/footer stories (probe on the 2026-10-17 backup: FAIL 2); the "blind spot" hypothesis was wrong.
+      The v79 backup docm is a ready positive control (RUN_THE_TESTS 84 -> FAIL 2; current docm PASS 0).
+    * Range.getOoxml() artifacts found live (aeBibleAddin): non-body parts are parsed too, and a range ending on a paragraph boundary loses
+      its last paragraph's properties. Main-story counts now default to body-only; windowed scans use loadOoxmlParagraphWindow.
+    * Word opened the sideload in Reading Layout (ribbon hidden): fixed by deleting HKCU Word\Options PreferredView (was 2); backup .reg in
+      %TEMP%\aescratch\WordOptions_backup_2026-10-21.reg.
+    * aeRibbon and aeBibleAddin are versioned independently (decision 2026-10-21); the Next-Chapter-after-Next-Book fix is aeRibbon 1.0.1.
+    * core.autocrlf=true here: git stores the rpt reports with LF; converting back to CRLF reproduces the gate stamp's SHA-256 values exactly.
+  Still open at the time of writing (release in progress): checklist steps 15 backup, 16 baseline re-pin (new tag, parity run first),
+    17 tag v1.1.0 and publish (CI deploys to Firebase Hosting; asks first), 18 post-deploy 200 check. A closing line is appended below when done.
+  NEXT-SESSION TASK LIST (2026-10-21; supersedes the 2026-10-19 list above, whose item 5 is done: v1.1 built, gate passed, InspectStyleUsage run):
+    1. Finish the v1.1.0 release if steps 15-18 above are not marked done (see the closing line).
+    2. G-6 (post-release only; it changes the docm): aeBibleClass.cls line 999 still prints "Tests 82/83 are skipped in the full suite - run ...
+       separately"; SkipTestArray is empty and both run and PASS. Reword the Debug.Print, import/compile/export, commit.
+    3. V-1: aeRibbon Next Chapter after Next Book lands on Chapter 2 (confirmed bug, undiagnosed); fix = new aeRibbon.dotm, version 1.0.1,
+       full aeRibbon release path. Does not block the JS add-in.
+    4. Timing work from 2026-10-19 (still open): test ordering experiment (Find-heavy test before Tests 82/94), Defender CPU in the lap line
+       (exclusion is the owner's decision), canary ideas, fresh-docm timing comparisons.
+    5. aeBibleAddin open items: W-wire, B-2..B-10, C-1 (parity script SPIKE/ORPHAN tier, this repo's py/js_port_parity.py, owner's call),
+       P-12 i18n pilot, R-9 and F-1 (deferred). See rvw/Code_review 2026-10-20.md section 1.
+===============================================================================
