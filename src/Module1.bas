@@ -1338,3 +1338,37 @@ Public Sub Probe_StoryRanges()
     Debug.Print "Probe done"
 End Sub
 
+' Probe for review 2026-10-20 G-4a. Read-only. Checks the two exporter changes after the import.
+Public Sub VerifyG4a()
+    On Error GoTo PROC_ERR
+    Dim keepList As Variant, purgeList As Variant
+    Dim settings As Object
+    Dim i As Long, j As Long
+    Dim hasBookHyperlink As Boolean
+    Dim overlap As String
+
+    keepList = basBibleOnlyExport.GetScriptureOnlyStyles()
+    purgeList = basBibleOnlyExport.GetPurgeStyles()
+    Set settings = basBibleOnlyExport.GetExportSettings()
+
+    For i = LBound(keepList) To UBound(keepList)
+        If StrComp(CStr(keepList(i)), "BookHyperlink", vbTextCompare) = 0 Then hasBookHyperlink = True
+        For j = LBound(purgeList) To UBound(purgeList)
+            If StrComp(CStr(keepList(i)), CStr(purgeList(j)), vbTextCompare) = 0 Then
+                overlap = overlap & CStr(keepList(i)) & "; "
+            End If
+        Next j
+    Next i
+
+    Debug.Print "Scripture keep list: " & (UBound(keepList) - LBound(keepList) + 1) & " styles (expect 13)"
+    Debug.Print "BookHyperlink in keep list: " & hasBookHyperlink & " (expect False)"
+    Debug.Print "Keep and purge overlap: " & overlap & "(expect: EmphasisBlack; EmphasisRed; only)"
+    Debug.Print "ExportVersion: " & settings("ExportVersion") & " (expect 1.1)"
+
+PROC_EXIT:
+    Exit Sub
+PROC_ERR:
+    Debug.Print "ERROR in VerifyG4a | Erl: " & Erl & " | Err: " & Err.Number & " | " & Err.Description
+    Resume PROC_EXIT
+End Sub
+
