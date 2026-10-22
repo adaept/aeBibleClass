@@ -1,4 +1,4 @@
----- RadiantWordBible style inventory 2026-10-21 15:08:51 ----
+---- RadiantWordBible style inventory 2026-10-22 14:46:30 ----
 Document: C:\adaept\aeBibleClass\RadiantWordBible.docx
 Styles in document: 388
 USED: 20 | BASE-ONLY: 1 | UNUSED custom (purge candidates): 0 | UNUSED built-in, InUse flag set (not deletable): 363 | latent built-in skipped: 0

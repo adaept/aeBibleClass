@@ -1,4 +1,4 @@
----- VerifyBibleIndexPageNumbers: 2026-10-21 14:49:40 ----
+---- VerifyBibleIndexPageNumbers: 2026-10-22 13:03:19 ----
 
 Checked against: C:\adaept\aeBibleClass\RadiantWordBible.docx
 
