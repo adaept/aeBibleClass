@@ -996,7 +996,7 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
     ' process: adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md
     ' section 10.5/6a. This block only runs once, after RunTest(87), for a
     ' full-suite call - not per individual test.
-    Debug.Print "Note: AuditVerseMarkerStructure is Test 94 (automated 2026-10-16); Tests 82/83 are skipped in the full suite - run RUN_THE_TESTS(82) and RUN_THE_TESTS(83) separately before a release."
+    Debug.Print "Note: AuditVerseMarkerStructure is Test 94 (automated 2026-10-16); Tests 82/83 run in the full suite (un-skipped 2026-10-17), so a complete RUN_THE_TESTS covers them."
 
     RunBibleClassTests = True
 
