@@ -67,3 +67,31 @@ SESSION 2026-10-21 (v1.1.0 release walk-through; RWB exporter 1.1; task list G-2
     5. aeBibleAddin open items: W-wire, B-2..B-10, C-1 (parity script SPIKE/ORPHAN tier, this repo's py/js_port_parity.py, owner's call),
        P-12 i18n pilot, R-9 and F-1 (deferred). See rvw/Code_review 2026-10-20.md section 1.
 ===============================================================================
+SESSION 2026-10-22 CLOSING (v1.1.0 release test redone and PUBLISHED) -- src/aeBibleClass.cls (one Debug.Print line)
+  Supersedes the "Still open at the time of writing" and NEXT-SESSION lists of the 2026-10-21 entry above.
+  What changed after the 2026-10-21 entry (details and SHAs: aeBibleAddin rvw/Code_review 2026-10-20.md sections 13-17):
+    * The first v1.1.0 run was superseded: the JS-port parity check after its gate was not clean (an artifact of splitting the OOXML counts
+      into pure cores and wrappers), so py/js_port_parity.py was revised (4913782: reachability, SPIKE-WIRED tier, TESTED-ONLY = orphan,
+      "Clean pass" line, self-test py/test_js_port_parity.py), 28 direct core tests were added in aeBibleAddin, and the stale end-of-run note in
+      RUN_THE_TESTS (aeBibleClass.cls line 999) was reworded (25954ff; the full suite printed the new note). The docm changed, so the whole
+      release test was redone as "run 2".
+    * Run 2: archive Bible\v1.1.0-r2-BlankBibleCopy.docm (SHA-256 211b55444f482d01a46bc14cdff9225dcfc61f5803df3bdd491d8dab7cd6d8ee, mtime
+      2026-10-21 18:47:07.92), export 2026-10-22 12:57 (CLEAN, same document as run 1 apart from regenerated ids and timestamps), full suite
+      94/94 PASS in 2626.48 s (a heavy Word start: 3.3 GB working set; Tests 94 and 82 about 1.6x slower, AC power throughout), InspectStyleUsage
+      identical to run 1, JS smoke test and G8 pass (G8 with the known Next Chapter bug, V-1), gate PASSED, frozen archive
+      OneDrive\Backups\adaept\aeBibleAddin-releases\v1.1.0-r2-2026-10-22\, ledger row "v1.1.0 (run 2)". Reports committed here as b1d8dfe.
+    * Baseline re-pinned: annotated tag js-port-baseline-2026-10-22 at 25954ff (pushed); the old tag js-port-baseline-2026-09-11 is left in place.
+    * Published: aeBibleAddin tag v1.1.0 at 654aaa9, GitHub Release v1.1.0, live site https://aebibleaddin.web.app serves 1.1.0. The first tag push
+      failed at the Firebase deploy (unpinned firebase-tools 15.34.1: HTTP 403 on the Service Usage API); release.yml now pins firebase-tools@15.30.2
+      and the tag was re-created on that commit. Raise the pin deliberately, only after a deploy is checked with the new version.
+  NEXT-SESSION TASK LIST (2026-10-22; supersedes the 2026-10-21 list):
+    1. Run the backup if it has not been run since 2026-10-22 (synch-to-onedrive.bat choices 0 aeBibleClass, 9 aeBibleAddin, 5 adaept5tudio).
+    2. V-1: aeRibbon Next Chapter after Next Book lands on Chapter 2 (confirmed bug, undiagnosed); fix = new aeRibbon.dotm, version 1.0.1,
+       full aeRibbon release path; independent of the aeBibleAddin version. Does not block the JS add-in.
+    3. Timing work (still open): test ordering experiment (Find-heavy test before Tests 82/94), Defender CPU in the lap line (exclusion is the
+       owner's decision), canary ideas, fresh-docm timing comparisons; note that a heavy Word start (3.3 GB working set) made Tests 94 and 82
+       about 1.6x slower on 2026-10-22.
+    4. aeBibleAddin open items: W-wire, B-2..B-10, P-12 i18n pilot, R-9 and F-1 (deferred); see rvw/Code_review 2026-10-20.md section 1.
+    5. Optional hygiene: scripts/__pycache__/*.pyc are tracked in aeBibleAddin; the unrelated spike-officejs sideload registration is still in the registry.
+  (G-6, the stale end-of-run note, is DONE: 25954ff. Do not reword it again.)
+===============================================================================
