@@ -51,6 +51,12 @@ function tying "a new Test was added" to "the ledger knows about it" — see
 `adaept5tudio/docs/aeBibleClass-word-addin-conversion-plan.md` §15.11a/§15.11b for the gap this
 closes (Tests 89-91 all went untracked for days to weeks before this step existed).
 
+How to read the statuses (script revised 2026-10-21, self-test `python3 -I py/test_js_port_parity.py`): `LIVE-WIRED` =
+reachable from `taskpane.ts` (the real UI); `SPIKE-WIRED` = reachable from `audit-spike.ts` (the `aeAuditSpike`
+console hooks) but not the UI; `TESTED-ONLY` = tested but with no UI path and no console hook (an orphan: give it a
+hook or record why not in the gap register); `PORTED-NOT-WIRED` = nothing reaches it, not even a test. A baseline
+re-pin needs 0 NOT PORTED, 0 MENTIONED and 0 PORTED-NOT-WIRED; the report prints this as "Clean pass ... YES/NO".
+
 If the function already exists in another module as `Private`, decide whether to:
 - **Copy** the logic into the class as a new `Private Function` returning `Long`
   (cleanest — self-contained, follows existing pattern)

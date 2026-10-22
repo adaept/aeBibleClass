@@ -12,6 +12,17 @@ comments, which can over- or under-attribute in edge cases. Read the per-case
 evidence (file:line, function name) before trusting a status, especially for
 MENTIONED and NOT PORTED rows.
 
+Wiring statuses (best reach of any function attributed to the Case; revised 2026-10-21):
+  LIVE-WIRED        reachable from taskpane.ts (the real UI), directly or through other functions
+  SPIKE-WIRED       reachable from audit-spike.ts (the aeAuditSpike console hooks) but not from the UI
+  TESTED-ONLY       exercised by tests only: no UI path and no console path (an "orphan")
+  PORTED-NOT-WIRED  not reachable from the UI, the console hooks or any test
+Reachability follows IDENTIFIER references between top-level functions (comments and imports
+stripped), so a core passed as an argument to a wrapper (countOoxmlRange(..., countXInParagraphs))
+counts, and a wrapper that is tested or hooked makes its core tested or hooked. The UI walk does
+not enter audit-spike.ts, so taskpane.ts calling wireUpAuditSpike does not make every hook "LIVE".
+Clean pass for a re-pin of the baseline tag: 0 NOT PORTED, 0 MENTIONED, 0 PORTED-NOT-WIRED.
+
 Usage: python3 py/js_port_parity.py [--case N] [--js-root PATH]
 """
 import argparse
@@ -29,6 +40,13 @@ SWITCH_NAMES = ["GetTestDescription", "GetPassFail", "RunTest", "OutputTestRepor
 HEADER_RE = re.compile(r'^\s*(Public\s+|Private\s+)?(Function|Sub|Property)\s+', re.IGNORECASE)
 CASE_LINE_RE = re.compile(r'^\s*Case\s+(.+?)\s*$', re.IGNORECASE)
 FUNC_DEF_RE = re.compile(r'^(export\s+)?(async\s+)?function\s+(\w+)\s*\(')
+
+# Top-level (column 0) function declarations, and the column-0 declarations that end a function body.
+COL0_FUNC_RE = re.compile(r'^(export\s+)?(default\s+)?(async\s+)?function\s+(\w+)\s*[(<]')
+COL0_DECL_RE = re.compile(r'^(export\s|async\s|const\s|let\s|var\s|interface\s|type\s|function\s|class\s|enum\s|declare\s)')
+IDENT_RE = re.compile(r'[A-Za-z_]\w*')
+IMPORT_RE = re.compile(r'^[ \t]*import\b.*?\bfrom\s+[\'"][^\'"]*[\'"]', re.MULTILINE | re.DOTALL)
+REEXPORT_RE = re.compile(r'^[ \t]*export\b[^;\n]*?\bfrom\s+[\'"][^\'"]*[\'"]', re.MULTILINE | re.DOTALL)
 
 # Matches "Case N", "Cases N", "Test N", "Tests N" followed by a digit/separator run
 # (comma, slash, hyphen/en-dash, or the word "to"/"To" for VBA-style ranges).
@@ -210,38 +228,98 @@ def is_in_ranges(i, ranges):
     return any(a <= i <= b for a, b in ranges)
 
 
-def is_called_in(file_path, func_name):
-    try:
-        lines = file_path.read_text(encoding="utf-8", errors="replace").splitlines()
-    except OSError:
-        return False
-    import_ranges = get_import_line_ranges(lines)
-    call_re = re.compile(rf'\b{re.escape(func_name)}\s*\(')
+def strip_code(text):
+    """Source text with block comments, line comments (not the // of a URL), imports and
+    re-exports removed, so identifier matching only sees real code."""
+    text = re.sub(r'/\*.*?\*/', ' ', text, flags=re.DOTALL)
+    text = re.sub(r'(?<!:)//[^\n]*', ' ', text)
+    text = IMPORT_RE.sub(' ', text)
+    text = REEXPORT_RE.sub(' ', text)
+    return text
+
+
+def split_functions(code):
+    """[(name, segment_text)] for each top-level function: the segment runs from the declaration
+    to the next column-0 declaration. Nested functions stay inside their parent's segment."""
+    lines = code.splitlines()
+    starts = []
     for i, line in enumerate(lines):
-        if is_in_ranges(i, import_ranges):
+        m = COL0_FUNC_RE.match(line)
+        if m:
+            starts.append((i, m.group(4)))
+    segments = []
+    for i, name in starts:
+        end = len(lines)
+        for j in range(i + 1, len(lines)):
+            if COL0_DECL_RE.match(lines[j]):
+                end = j
+                break
+        segments.append((name, "\n".join(lines[i:end])))
+    return segments
+
+
+def build_graph(source_files):
+    """Returns (edges, defined_in): edges[f] = names of known functions referenced inside f;
+    defined_in[f] = the file that defines f."""
+    segments = {}
+    defined_in = {}
+    for p in source_files:
+        try:
+            code = strip_code(p.read_text(encoding="utf-8", errors="replace"))
+        except OSError:
             continue
-        if call_re.search(line):
-            return True
-    return False
+        for name, seg in split_functions(code):
+            segments[name] = segments.get(name, "") + "\n" + seg
+            defined_in.setdefault(name, p)
+    known = set(segments)
+    edges = {name: (set(IDENT_RE.findall(seg)) & known) - {name} for name, seg in segments.items()}
+    return edges, defined_in
 
 
-def count_occurrences(text, func_name):
-    return len(re.findall(rf'\b{re.escape(func_name)}\s*\(', text))
+def file_references(paths, known):
+    """Known function names referenced anywhere in the code of these files."""
+    refs = set()
+    for p in paths:
+        try:
+            code = strip_code(p.read_text(encoding="utf-8", errors="replace"))
+        except OSError:
+            continue
+        refs |= set(IDENT_RE.findall(code)) & known
+    return refs
+
+
+def reach(seeds, edges, blocked=frozenset()):
+    """Every function reachable from the seed names by following references."""
+    seen = set()
+    stack = [s for s in seeds if s not in blocked]
+    while stack:
+        f = stack.pop()
+        if f in seen:
+            continue
+        seen.add(f)
+        for g in edges.get(f, ()):
+            if g not in seen and g not in blocked:
+                stack.append(g)
+    return seen
 
 
 def load_js_status(js_root):
-    """Returns case_number -> dict(status, evidence=[(file, func_name), ...])."""
+    """Returns case_number -> dict(status, evidence=[(file, func_name, live, spike, tested), ...])."""
     all_ts = list(iter_ts_files(js_root))
     source_files = [p for p in all_ts if not p.name.endswith(".test.ts")]
     test_files = [p for p in all_ts if p.name.endswith(".test.ts")]
-    taskpane_candidates = [p for p in source_files if p.name == "taskpane.ts"]
+    ui_files = [p for p in source_files if p.name == "taskpane.ts"]
+    spike_files = [p for p in source_files if p.name == "audit-spike.ts"]
 
-    test_texts = {}
-    for p in test_files:
-        try:
-            test_texts[p] = p.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            pass
+    edges, defined_in = build_graph(source_files)
+    known = set(edges)
+    spike_defined = {name for name, p in defined_in.items() if p.name == "audit-spike.ts"}
+
+    # UI walk never enters audit-spike.ts (taskpane.ts calls wireUpAuditSpike, which would otherwise
+    # make every console hook look "live"); the console and test walks go everywhere.
+    ui_reach = reach(file_references(ui_files, known), edges, blocked=spike_defined)
+    spike_reach = reach(file_references(spike_files, known), edges)
+    tested_reach = reach(file_references(test_files, known), edges)
 
     case_to_funcs = {}  # case_number -> set of (file, func_name)
     for p in source_files:
@@ -269,22 +347,27 @@ def load_js_status(js_root):
         # underlying change, turning the tracked report into diff noise.
         funcs = sorted(case_to_funcs.get(n, set()), key=lambda t: (str(t[0]), t[1]))
         evidence = []
-        status = "MENTIONED"
-        live = False
-        tested = False
+        live = spike = tested = False
         for (file_path, func_name) in funcs:
-            is_live = any(is_called_in(tp, func_name) for tp in taskpane_candidates)
-            is_tested = any(
-                count_occurrences(txt, func_name) >= 2 for txt in test_texts.values()
-            )
+            is_live = func_name in ui_reach
+            is_spike = func_name in spike_reach
+            is_tested = func_name in tested_reach
             live = live or is_live
+            spike = spike or is_spike
             tested = tested or is_tested
-            evidence.append((str(file_path.relative_to(js_root)), func_name, is_live, is_tested))
+            evidence.append((str(file_path.relative_to(js_root)), func_name, is_live, is_spike, is_tested))
         if funcs:
-            status = "LIVE-WIRED" if live else ("TESTED-ONLY" if tested else "PORTED-NOT-WIRED")
+            if live:
+                status = "LIVE-WIRED"
+            elif spike:
+                status = "SPIKE-WIRED"
+            elif tested:
+                status = "TESTED-ONLY"
+            else:
+                status = "PORTED-NOT-WIRED"
         else:
             status = "MENTIONED"
-            evidence = [(str(f.relative_to(js_root)), "(no associated function found)", False, False)
+            evidence = [(str(f.relative_to(js_root)), "(no associated function found)", False, False, False)
                         for f in sorted(bare_mentions.get(n, set()), key=str)]
         result[n] = {"status": status, "evidence": evidence}
     return result
@@ -312,7 +395,7 @@ def build_report(args, max_tests, expected, consistency_issues, js_status):
 
     cases_to_show = [args.case] if args.case else sorted(expected)
 
-    counts = {"NOT PORTED": 0, "MENTIONED": 0, "PORTED-NOT-WIRED": 0, "TESTED-ONLY": 0, "LIVE-WIRED": 0}
+    counts = {"NOT PORTED": 0, "MENTIONED": 0, "PORTED-NOT-WIRED": 0, "TESTED-ONLY": 0, "SPIKE-WIRED": 0, "LIVE-WIRED": 0}
     header = f"{'Case':>4}  {'Status':<17}  Evidence"
     out(header)
     out("-" * len(header))
@@ -325,8 +408,9 @@ def build_report(args, max_tests, expected, consistency_issues, js_status):
             out(f"{n:>4}  {status:<17}  (no mention found anywhere in {args.js_root.name})")
         else:
             first = True
-            for (fpath, fname, is_live, is_tested) in evidence:
-                tag = "LIVE" if is_live else ("TESTED" if is_tested else "-")
+            for (fpath, fname, is_live, is_spike, is_tested) in evidence:
+                tags = [t for t, on in (("LIVE", is_live), ("SPIKE", is_spike), ("TESTED", is_tested)) if on]
+                tag = "+".join(tags) if tags else "-"
                 prefix = f"{n:>4}  {status:<17}" if first else f"{'':>4}  {'':<17}"
                 out(f"{prefix}  {fpath} :: {fname} [{tag}]")
                 first = False
@@ -334,16 +418,22 @@ def build_report(args, max_tests, expected, consistency_issues, js_status):
     if not args.case:
         out("")
         out("Summary:")
-        for status in ["NOT PORTED", "MENTIONED", "PORTED-NOT-WIRED", "TESTED-ONLY", "LIVE-WIRED"]:
+        for status in ["NOT PORTED", "MENTIONED", "PORTED-NOT-WIRED", "TESTED-ONLY", "SPIKE-WIRED", "LIVE-WIRED"]:
             out(f"  {status:<17} {counts[status]}")
         not_ported = [n for n in cases_to_show if (js_status.get(n) or {}).get("status", "NOT PORTED") in ("NOT PORTED", "MENTIONED")]
+        not_wired = [n for n in cases_to_show if (js_status.get(n) or {}).get("status") == "PORTED-NOT-WIRED"]
+        orphans = [n for n in cases_to_show if (js_status.get(n) or {}).get("status") == "TESTED-ONLY"]
         out("")
         out(f"Candidates still needing JS-port work (NOT PORTED or MENTIONED-only): {not_ported}")
+        out(f"Ported but not wired anywhere (PORTED-NOT-WIRED): {not_wired}")
+        out(f"Orphans (TESTED-ONLY: tested, but no UI path and no console hook): {orphans}")
+        clean = not not_ported and not not_wired
+        out(f"Clean pass for a baseline re-pin (0 NOT PORTED, 0 MENTIONED, 0 PORTED-NOT-WIRED): {'YES' if clean else 'NO'}")
         out("")
-        out("Evidence is a best-effort heuristic (comment-proximity matching) -- trust NOT")
-        out("PORTED as unambiguous (nothing was found at all); spot-check LIVE/TESTED tags")
-        out("and function-name attributions before relying on them, especially for older")
-        out("Cases where multiple functions sit close together in the source.")
+        out("Evidence is a best-effort heuristic (comment-proximity attribution plus identifier")
+        out("reachability) -- trust NOT PORTED as unambiguous (nothing was found at all); spot-check")
+        out("LIVE/SPIKE/TESTED tags and function-name attributions before relying on them,")
+        out("especially for older Cases where multiple functions sit close together in the source.")
 
     return "\n".join(lines) + "\n"
 
