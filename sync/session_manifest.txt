@@ -95,3 +95,44 @@ SESSION 2026-10-22 CLOSING (v1.1.0 release test redone and PUBLISHED) -- src/aeB
     5. Optional hygiene: scripts/__pycache__/*.pyc are tracked in aeBibleAddin; the unrelated spike-officejs sideload registration is still in the registry.
   (G-6, the stale end-of-run note, is DONE: 25954ff. Do not reword it again.)
 ===============================================================================
+SESSION 2026-10-23 CLOSING (HelloAO verse lookup spike, aeBibleAddin branch feat/helloao-spike) -- no aeBibleClass src/ files edited
+  Work was in aeBibleAddin only; this manifest is written here because it is the project's session log. Plan with every runbook:
+  aeBibleAddin rvw/HelloAO Bible API Integration Plan 2026-10-22.md ; review: aeBibleAddin rvw/Code_review 2026-10-23.md.
+  What exists (all on branch feat/helloao-spike, 26+ commits from 13821da; NOT merged to main, NOT released, taskpane still 1.1.0,
+  NOT yet tried in real Word):
+    * Feature: pick a translation (1,256 available, public-domain default) in a pane combobox; an Office dialog shows the verse at the
+      cursor in that translation with a - / + stepper (0..3 verses each side) and the licence; the language icon button re-opens it for the
+      current cursor verse; click outside closes it. Source: https://github.com/HelloAOLab/bible-api (service https://bible.helloao.org,
+      no key, CORS open, simplified chapter format .simple.json).
+    * Code: src/helloao/ (pure: client, parse, ids, web-url, verse-window, verse-card-model, dialog-protocol, lookup-view, cursor-locate,
+      translation-catalog, translation-picker-model, usfm-book-ids, fixtures) and taskpane/src/ (cursor-reference, verse-card, verse-popup,
+      translation-picker, popup-dialog, popup-page, popup, click-outside, pane-activity, browser-fetch) + popup.html (second Vite entry).
+    * Checks at the last commit: npm run check root 218 passed + 7 skipped (opt-in live, HELLOAO_LIVE=1), taskpane 563; lint, typecheck, build clean.
+    * Owner decisions: dialog-first design (not a pane card); symmetric +/- stepper only; public-domain default with "show all" toggle;
+      branch feat/helloao-spike, release target 1.2.0 (full gate applies); gsap now, firebase only for the login (deferred, A-series);
+      stay on the XML manifest; Package A of the code review done, Packages B and C after the Word session.
+    * Code review 2026-10-23 found and fixed (Package A, commits a5dbf3a..f6f7292): footnote NaN offset deleted verse text; unvalidated service
+      data (now parse.ts); permissive licence-link filter (now https-only, host shown); formatMsg re-expanded placeholders (single pass now);
+      referrer/credentials policy; dialog origin check; ESLint ban on innerHTML. Live sweep: 1,256 catalog entries parsed, 102 public-domain
+      translations x 3 chapters = 240 readable, 66 absent (404), 0 unreadable.
+  Not verified anywhere yet (mocks only): cursor -> verse with real Word ranges, the Office dialog (open, refresh, X, size, position),
+    click-outside focus behaviour, the pane row. These are the Word runbooks below.
+  Housekeeping: aeBibleClass rpt/ has 5 modified and 2 untracked test-run files (HeadingLog, MarkerOutsideLaps, MarkerStyleOutsideVerseText,
+    SequentialVerseNumberViolations, TotalTimeReport; MarkerTotalsLaps, TestLaps) left from the 2026-10-19..22 runs, not committed on purpose.
+  NEXT-SESSION TASK LIST (2026-10-23; supersedes the 2026-10-22 list for the HelloAO items, the others stay open):
+    1. WORD LIVE SESSION (nothing else should start before this). In C:\adaept\aeBibleAddin: git checkout feat/helloao-spike (if not on it); in
+       taskpane: npm run stop; netstat -ano | findstr ":3001 :3002 :3003" (kill stale node.exe); npm start; second terminal: npm run sideload;
+       open C:\adaept\aeTest\RadiantWordBible.docx (allow-listed name; the feature only reads). Run the runbooks in the plan: section 15 (H-10
+       cursor, 13 steps, aeCursorSpike.compare in the pane console), 15b (H-12 pane row, 11 steps), 15d (H-15/H-16 dialog, 12 steps), 15e
+       (H-16a click-outside measurements M1..M12 incl. timing). Record results in the plan and mark H-10, H-12, H-13, H-15, H-16, H-16a, H-16b.
+    2. Act on the results: if M1 fails (dialog never has focus) build the DocumentSelectionChanged fallback (X-1); then Package B (CR-4, 12, 14,
+       15, 16, 17, 18, 19) and Package C (CR-9b headers/CSP report-only, CR-20 lang + aria, CR-21 popup.html smoke in release.yml); see plan section 16.
+    3. GSAP H-17..H-19: licence for a proprietary add-in and bundle size first (aedh uses gsap 3.15; single motion.ts, reduced-motion guard).
+    4. H-20..H-23: README section, the "no VBA oracle" exception in aeBibleAddin CLAUDE.md (owner sign-off), spike report, decision promote / keep
+       behind a flag / drop. Promotion = merge to main, bump to 1.2.0, full release checklist and gate (RELEASES.md), CI deploy needs the pinned firebase-tools.
+    5. Owner questions still open: dev Hosting site name for the login (aebibleaddin-dev?) - only matters at A-1; the language button shares the
+       language-outline icon with "Convert to UK Spelling" (change the UK icon?).
+    6. Carried over unchanged from 2026-10-22: V-1 (aeRibbon Next Chapter after Next Book, fix = aeRibbon 1.0.1); timing work (test ordering, Defender CPU,
+       canary ideas); aeBibleAddin W-wire, B-2..B-10, P-12 i18n pilot, R-9, F-1; hygiene (tracked scripts/__pycache__/*.pyc, stale spike-officejs sideload
+       registration). The rpt/ leftovers above: decide commit or discard.
+===============================================================================
