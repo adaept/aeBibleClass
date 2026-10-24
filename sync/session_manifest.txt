@@ -176,3 +176,7 @@ SESSION 2026-10-24 ADDENDUM (HelloAO picker bug HB-1; aeBibleAddin branch feat/h
     1. Word live session as before, plus HB-1b: unticked box lists only 66-book PD Bibles; ticked, adt_bsa appears again.
     2. Optional HB-1c (better 404 text for partial translations) and X-5a remaining questions (detection method, pane link vs drop-down).
 ===============================================================================
+  2026-10-24 later: bug HB-2 (typing in the language box appended to the chosen name) fixed by option A (select the chosen name on focus and
+    click; aeBibleAddin commit f7158d8, pushed with ee89fac on feat/helloao-spike). Record in the plan, section 17. Live check HB-2b is added to
+    the Word session (item 1 of the 2026-10-24 list above).
+===============================================================================
