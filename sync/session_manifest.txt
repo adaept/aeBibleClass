@@ -180,3 +180,7 @@ SESSION 2026-10-24 ADDENDUM (HelloAO picker bug HB-1; aeBibleAddin branch feat/h
     click; aeBibleAddin commit f7158d8, pushed with ee89fac on feat/helloao-spike). Record in the plan, section 17. Live check HB-2b is added to
     the Word session (item 1 of the 2026-10-24 list above).
 ===============================================================================
+  2026-10-24 later still: bug HB-3 ("jap" found nothing: the only Japanese text, jpn_loc New Japanese NT, 27 books, is hidden by the complete-Bible
+    default) fixed by option 1: the empty-list message now says hidden matches exist (aeBibleAddin commit 7f4bf31, pushed). Analysis in the plan,
+    section 17. Live check HB-3b joins HB-1b and HB-2b in the Word session. X-5 (section 18) remains the lasting design.
+===============================================================================
