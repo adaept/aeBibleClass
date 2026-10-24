@@ -136,3 +136,25 @@ SESSION 2026-10-23 CLOSING (HelloAO verse lookup spike, aeBibleAddin branch feat
        canary ideas); aeBibleAddin W-wire, B-2..B-10, P-12 i18n pilot, R-9, F-1; hygiene (tracked scripts/__pycache__/*.pyc, stale spike-officejs sideload
        registration). The rpt/ leftovers above: decide commit or discard.
 ===============================================================================
+SESSION 2026-10-23 ADDENDUM (Dependabot review; this addendum supersedes the task list of the 2026-10-23 CLOSING entry above)
+  Added after the closing entry: a review of the 71 open Dependabot alerts on aeBibleAddin, written to aeBibleAddin
+  rvw/Dependabot review 2026-10-23.md (committed on branch feat/helloao-spike). Nothing in any lock file or package.json was changed.
+  Findings: 8 critical, 26 high, 34 medium, 3 low; ALL development scope (shipped add-in has no flagged package: runtime deps are only ionicons).
+    In: root lock 15, taskpane lock 29, spike-officejs lock 27. In a scratch clone `npm audit fix` took root to 0 and taskpane 22 -> 9; one
+    explicit `npm install vitest@4.1.12 --save-dev` in taskpane -> 7 left, all the node-forge / office-addin-* chain (node-forge has no patched
+    version; used only to make a self-signed localhost certificate). npm run check (218+563), lint, typecheck and vite build stayed green.
+    Options DB-1 (lock-file update + vitest 4.1.12), DB-2 (retire spike-officejs, tag spike-officejs-final first), DB-3 (dismiss the 7 unfixable
+    alerts), DB-4/DB-5 (not recommended) are RECOMMENDED, not yet confirmed by the owner. The 11 steps are in section 8 of that review file.
+  NEXT-SESSION TASK LIST (2026-10-23, final; supersedes the list in the 2026-10-23 CLOSING entry; items 1-4 and 6 of that list are unchanged):
+    1. WORD LIVE SESSION first (see the CLOSING entry, item 1: branch feat/helloao-spike; plan runbooks 15, 15b, 15d, 15e). Nothing that changes
+       node_modules or the branch should run before it.
+    2. Then DEPENDABOT, after confirming DB-1..DB-5 with the owner: follow rvw/Dependabot review 2026-10-23.md section 8 (branch chore/dependabot-2026-10
+       off main; deregister spike-officejs from Word BEFORE deleting it; tag spike-officejs-final; npm audit fix + vitest 4.1.12; verify incl. one
+       sideload; clean-clone dry run; optional CI-1 ci.yml; merge to main on the owner's yes; dismiss the node-forge-chain alerts only on the owner's call;
+       then merge main into feat/helloao-spike).
+    3. HelloAO follow-up from the CLOSING entry: act on the Word results (X-1 fallback if click-outside M1 fails), Packages B and C (plan section 16),
+       GSAP H-17..H-19, H-20..H-23 and the promote / flag / drop decision.
+    4. Open owner questions: dev Hosting site name for the login (A-1); language icon shared with "Convert to UK Spelling".
+    5. Carried over unchanged: V-1 (aeRibbon 1.0.1); timing work; aeBibleAddin W-wire, B-2..B-10, P-12, R-9, F-1; hygiene (tracked scripts/__pycache__/*.pyc,
+       stale spike-officejs sideload registration - now handled by step 2 of the Dependabot steps); the 7 uncommitted aeBibleClass rpt/ test-run files.
+===============================================================================
