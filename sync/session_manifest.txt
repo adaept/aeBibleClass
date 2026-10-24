@@ -162,3 +162,17 @@ SESSION 2026-10-24 NOTE (supersedes the "7 uncommitted rpt/ files" remarks in th
   The seven rpt/ test-run files (HeadingLog, MarkerOutsideLaps, MarkerStyleOutsideVerseText, SequentialVerseNumberViolations, TotalTimeReport,
   MarkerTotalsLaps, TestLaps) were committed as e9e4dc0 on main. The working tree is clean; drop that item from the carried-over list.
 ===============================================================================
+SESSION 2026-10-24 ADDENDUM (HelloAO picker bug HB-1; aeBibleAddin branch feat/helloao-spike, commit ee89fac) -- no aeBibleClass src/ files edited
+  Owner found: picking "Adnyamathanha Christmas Story" (adt_bsa, 2 books, not public domain, reached with "Show all" ticked) gave
+  "John 3 is not in ...". The message is correct (service 404); the picker listed booklets. Record: aeBibleAddin rvw/HelloAO Bible API
+  Integration Plan 2026-10-22.md section 17 (bug HB-1) and section 18 (filter-type dialog design, follow-up X-5).
+  Done: default list is now complete 66-book public-domain Bibles; "Show all" lifts both filters (isCompleteBible + CatalogFilter.completeOnly in
+    src/helloao/translation-catalog.ts; label changed). npm run check green. The default list loses 15 PD NT-only entries and HBOMAS (OT-only).
+  Verified fact: the catalog's numberOfBooks counts canonical books only (eng_dra says 66, books.json has 73; eng_kja 66 vs 80; eng_bre 37 vs 53),
+    nothing exceeds 66, so a ">66 books" kind needs a name heuristic or a lazy books.json count.
+  Owner decisions: OT-only (39 books) is its own fifth kind = YES; extended-canon detection (heuristic vs exact) = TBD; filter-type dialog NOT in
+    this version (X-5a..X-5f, after the Word session). Plan 18.1 table, 18.2 and 18.3 still say four kinds; fix when X-5a closes.
+  NEXT-SESSION TASK LIST (2026-10-24; adds to the 2026-10-23 final list, whose items stay open):
+    1. Word live session as before, plus HB-1b: unticked box lists only 66-book PD Bibles; ticked, adt_bsa appears again.
+    2. Optional HB-1c (better 404 text for partial translations) and X-5a remaining questions (detection method, pane link vs drop-down).
+===============================================================================
