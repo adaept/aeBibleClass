@@ -158,3 +158,7 @@ SESSION 2026-10-23 ADDENDUM (Dependabot review; this addendum supersedes the tas
     5. Carried over unchanged: V-1 (aeRibbon 1.0.1); timing work; aeBibleAddin W-wire, B-2..B-10, P-12, R-9, F-1; hygiene (tracked scripts/__pycache__/*.pyc,
        stale spike-officejs sideload registration - now handled by step 2 of the Dependabot steps); the 7 uncommitted aeBibleClass rpt/ test-run files.
 ===============================================================================
+SESSION 2026-10-24 NOTE (supersedes the "7 uncommitted rpt/ files" remarks in the 2026-10-23 CLOSING and ADDENDUM entries above)
+  The seven rpt/ test-run files (HeadingLog, MarkerOutsideLaps, MarkerStyleOutsideVerseText, SequentialVerseNumberViolations, TotalTimeReport,
+  MarkerTotalsLaps, TestLaps) were committed as e9e4dc0 on main. The working tree is clean; drop that item from the carried-over list.
+===============================================================================
