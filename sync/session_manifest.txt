@@ -184,3 +184,32 @@ SESSION 2026-10-24 ADDENDUM (HelloAO picker bug HB-1; aeBibleAddin branch feat/h
     default) fixed by option 1: the empty-list message now says hidden matches exist (aeBibleAddin commit 7f4bf31, pushed). Analysis in the plan,
     section 17. Live check HB-3b joins HB-1b and HB-2b in the Word session. X-5 (section 18) remains the lasting design.
 ===============================================================================
+SESSION 2026-10-29 CLOSING (HelloAO Word live session, runbooks 15 / 15b / 15d; aeBibleAddin branch feat/helloao-spike, pushed through 9076cbe) -- no aeBibleClass src/ files edited
+  Supersedes the 2026-10-24 task list above for the live checks. Record of every item: aeBibleAddin rvw/HelloAO Bible API Integration Plan
+  2026-10-22.md (sections 15, 15b, 17 "Bug record", 18). Branch is NOT merged to main, NOT released, taskpane still 1.1.0.
+  Live results (operator in Word, RadiantWordBible.docx):
+    * 15 / H-10 cursor: 13 of 13 rows PASS (Psalm 119:176 redone), 27 ms at the end of the document. H-10 closed.
+    * 15b / H-12 pane row: PASS. Checks HB-1b..HB-6b PASS (defaults, select-on-click, hidden-match message, restore-on-blur, limit note, load error).
+    * 15d verse window: steps 1-8 and 10-12 PASS (steps 4 and 5 with the HB-10 allowance). Step 9 text part (3 John 14 -> Jude 1:1.. at +/-3) NOT yet run.
+  Bugs found, fixed and pushed (all tests first; npm run check green, last run root 226 + 7 skipped, taskpane 576):
+    HB-1 picker listed booklets (default now complete 66-book PD Bibles); HB-2 typing appended to the chosen name (select on focus/click);
+    HB-3 "no match" for a language whose only text is hidden (message says so); HB-4 box showed text that was not the chosen translation
+    (restores on blur/Escape); HB-5 "first 200 of N" note hidden (now first row, sticky); HB-6 load failure invisible (note inside the dropdown);
+    HB-7 BSB lost its licence record at the service on 2026-10-28 (catalog now 1,503 entries, 25 without a licence block; allowlist {BSB} used
+    only while the record is missing; upstream issue https://github.com/HelloAOLab/bible-api/issues/106, open); HB-8 open dialog now follows Go
+    and verse steps (Next Chapter/Book land on headings and do not move it); HB-9 dialog survives the licence link for 3 s (it then stays until X
+    or a click inside it); HB-10 closed without code: after a click-outside close the caret needs a second click (first click only re-activates Word), X needs one.
+  Findings recorded, no code: Psalm 3 shows different verses at the same number in BSB and fra_lsg (known versification gotcha G-2, matched by number);
+    the Copilot list of Japanese Bibles is copyrighted text, HelloAO has one Japanese entry (jpn_loc New Japanese NT), task HB-3c (thin languages) is an i18n-track owner decision.
+  Owner rule reinforced this session: in aeBibleAddin make the change, run the checks, report, then ASK before every commit and push (a yes to one commit does not carry on).
+  NEXT-SESSION TASK LIST (2026-10-29; supersedes the 2026-10-24 list and the HelloAO items of the 2026-10-23 lists):
+    1. Finish the Word session: 15d step 9; H-13 (Jude 1:1 in spa_r09, fra_lsg, deu_l12 and an RTL translation; radius 3 at a chapter start; offline during a
+       chapter fetch); 15e click-outside measurements M1..M12 (M12 = open-to-text time); then mark H-13, H-15, H-16, H-16a, H-16b in the plan.
+    2. Small open items: HB-7c (read publisher statements for AAB, eng_dra, HBOMAS before allowlisting; leave NET out), HB-7d (refresh the trimmed
+       catalog fixture, it still has BSB's old licence block), one user-docs line for the click-outside behaviour, X-5a questions (OT-only is a fifth kind = YES;
+       extended-canon detection TBD; filter link vs drop-down), HB-3c decision, HB-1c (better 404 text for partial translations, optional).
+    3. Then, in this order: Package B and C of the code review (plan section 16), GSAP H-17..H-19, H-20..H-23 and the promote / flag / drop decision
+       (promotion = merge to main, 1.2.0, full release gate), and the Dependabot work (rvw/Dependabot review 2026-10-23.md section 8; branch
+       chore/dependabot-2026-10 off main, only after the Word session and the owner's confirmation of DB-1..DB-5).
+    4. Carried over unchanged: V-1 (aeRibbon 1.0.1); timing work; aeBibleAddin W-wire, B-2..B-10, P-12, R-9, F-1; hygiene (tracked scripts/__pycache__/*.pyc).
+===============================================================================
