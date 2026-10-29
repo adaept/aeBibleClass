@@ -213,3 +213,16 @@ SESSION 2026-10-29 CLOSING (HelloAO Word live session, runbooks 15 / 15b / 15d; 
        chore/dependabot-2026-10 off main, only after the Word session and the owner's confirmation of DB-1..DB-5).
     4. Carried over unchanged: V-1 (aeRibbon 1.0.1); timing work; aeBibleAddin W-wire, B-2..B-10, P-12, R-9, F-1; hygiene (tracked scripts/__pycache__/*.pyc).
 ===============================================================================
+SESSION 2026-10-29 UPDATE (supersedes item 1 of the NEXT-SESSION TASK LIST in the 2026-10-29 CLOSING entry above; aeBibleAddin pushed through 4a125eb)
+  Done since the closing entry: 15d step 9 PASS; H-13 rows 1-8 PASS (offline test redone with the machine's network off, because the verse window is its own
+  window and the pane's DevTools Offline does not reach it); H-13, H-15, H-16 marked done in the plan (section 15f). Side finding, not our code: both
+  index.html and popup.html load office.js from appsforoffice.microsoft.com, so a pane or dialog (re)loaded while offline shows Word's yellow add-in message with Retry.
+  NEXT-SESSION TASK LIST (2026-10-29, revised):
+    1. 15e click-outside measurements M1..M12 in Word (H-16a, H-16b): send closed-counts for M3..M6 (of 5) and stopwatch times for M12; M1, M2, M6 and M8 were
+       already seen in 15d. Then mark H-16a / H-16b and decide ship / adjust CLICK_OUTSIDE_GRACE_MS per the decision rule in plan section 15e.
+    2. Small open items: HB-7c (publisher statements for AAB, eng_dra, HBOMAS before allowlisting; leave NET out), HB-7d (refresh the trimmed catalog fixture),
+       user-docs lines (click-outside needs a second click for the caret; office.js needs the network), X-5a questions (OT-only is a fifth kind = YES;
+       extended-canon detection TBD; filter link vs drop-down), HB-3c decision, HB-1c (better 404 text for partial translations, optional).
+    3. Unchanged from the closing entry: Package B and C of the code review, GSAP H-17..H-19, H-20..H-23 and the promote / flag / drop decision, Dependabot
+       (after the owner confirms DB-1..DB-5), V-1, timing work, aeBibleAddin W-wire / B-2..B-10 / P-12 / R-9 / F-1, hygiene.
+===============================================================================
