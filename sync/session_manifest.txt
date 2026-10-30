@@ -226,3 +226,25 @@ SESSION 2026-10-29 UPDATE (supersedes item 1 of the NEXT-SESSION TASK LIST in th
     3. Unchanged from the closing entry: Package B and C of the code review, GSAP H-17..H-19, H-20..H-23 and the promote / flag / drop decision, Dependabot
        (after the owner confirms DB-1..DB-5), V-1, timing work, aeBibleAddin W-wire / B-2..B-10 / P-12 / R-9 / F-1, hygiene.
 ===============================================================================
+SESSION 2026-10-29 END-OF-SESSION PREP (supersedes the NEXT-SESSION TASK LIST of the 2026-10-29 UPDATE entry above; aeBibleAddin pushed through 05a2e16)
+  Added since the update entry: 15e M1-M11 recorded (M1 closed + second click for the caret; M3 0/5, M4 0/5, M5 0/10; M6 5/5 stayed and refreshed; M7, M9, M10
+  stayed; M11 opens in front and centred but does NOT remember its position = known limit G-24). Click-outside meets its decision rule; H-16a closes with M12.
+  Owner notes recorded in the plan (sections 19.1-19.4, all description only, nothing built): X-6 remember the window size (feasible: dialog reports its
+  size) and position (not possible with the Office dialog: spike S-1 for a positioned popup); X-7 reader window: a second Word window runs the add-in in a
+  reader mode, may show the add-in, JS not VBA, pages about 5 chapters on request from HelloAO (a chapter is 9-39 KB, the whole BSB json is 8.75 MB, so
+  per-translation documents are dropped), linked to the main window's cursor over a same-origin channel IF spike S-3 shows two Word panes share one.
+  NEXT-SESSION TASK LIST (2026-10-29, final):
+    1. 15e M12: stopwatch from choosing a translation / pressing the language button to the verse text visible: first open after starting Word, then 3 more
+       (seconds). Then mark H-16a and H-16b done in the plan and decide ship / CLICK_OUTSIDE_GRACE_MS (decision rule: plan section 15e).
+    2. Small open items: HB-7c (publisher statements for AAB, eng_dra, HBOMAS before allowlisting; leave NET out), HB-7d (refresh the trimmed catalog fixture,
+       it still has BSB's old licence block), user-docs lines (second click for the caret after a click-outside close; office.js needs the network), X-5a
+       (OT-only fifth kind = YES; extended-canon detection TBD; filter link vs drop-down), HB-3c (thin languages such as Japanese), HB-1c (optional).
+    3. Owner answer wanted: is "reader window" (19.3) understood correctly (second Word window, add-in in reader mode, plain text paged by chapters)?
+    4. The spike gates, in order: code-review Packages B and C (plan section 16), GSAP H-17..H-19, H-20..H-23 and the promote / keep behind a flag / drop
+       decision (promotion = merge to main, 1.2.0, full release gate), then Dependabot (rvw/Dependabot review 2026-10-23.md section 8; branch
+       chore/dependabot-2026-10 off main; only after the owner confirms DB-1..DB-5 and the spike branch state is settled).
+    5. Carried over unchanged: V-1 (aeRibbon 1.0.1); timing work; aeBibleAddin W-wire / B-2..B-10 / P-12 / R-9 / F-1; hygiene (tracked scripts/__pycache__/*.pyc);
+       HelloAO upstream issue 106 (BSB licence record) still open: if the service restores it, the {BSB} allowlist can go.
+  Session housekeeping: all repos clean and pushed at the end (aeBibleClass, aeBibleAddin, adaept5tudio, aeRWB, aei18n); OneDrive backups run for the two repos
+  changed this session (aeBibleClass option 0, aeBibleAddin option 9). Owner rule: in aeBibleAddin ask before every commit and push.
+===============================================================================
