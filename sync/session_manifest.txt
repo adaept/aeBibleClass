@@ -277,3 +277,12 @@ SESSION 2026-10-30 CLOSING (supersedes the NEXT-SESSION TASK LIST (2026-10-29, f
        (tracked scripts/__pycache__/*.pyc); HelloAO upstream issue 106 (if the service restores BSB's licence, the allowlist can go); X-8 only on a performance trigger.
   Housekeeping: aeBibleAddin clean and pushed. OneDrive backup not run this session (ask the owner: aeBibleClass option 0, aeBibleAddin option 9).
 ===============================================================================
+SESSION 2026-10-30 ADDENDUM (supersedes items 1 and 2 of the NEXT-SESSION TASK LIST (2026-10-30, final) above; aeBibleAddin plan pushed)
+  Owner answers: bottom tools row looks good (item 1 closed). X-5a: the filter is a LINK in the pane (extended-canon detection (a) name heuristic vs (b) exact books.json count
+  still open; recommendation (a) first, (b) later as X-5f). HB-3c: owner found free.bible/kougo; it is the 1955 Kougo-yaku, already in HelloAO as jpn_kou (also jpn_meb,
+  jpn_loc), so the Japanese case is RESOLVED upstream.
+  New design (aeBibleAddin plan section 21, task X-9a..X-9f, design only, nothing built): extra and local text sources in the HelloAO API layout, ingest tool with a licence gate,
+  oracle test (free.bible Kougo vs jpn_kou), route into HelloAO by upstream sources / PR to HelloAOLab/bibles / own fork until merged. Open before any build: X-9a owner review,
+  spike S-4 (bundled vs http://localhost vs file picker in real Word).
+  Remaining owner questions: extended-canon (a) or (b); is "reader window" (plan 19.3) understood correctly. Items 3 and 4 of the list above are unchanged.
+===============================================================================
