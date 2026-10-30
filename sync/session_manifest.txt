@@ -288,3 +288,5 @@ SESSION 2026-10-30 ADDENDUM (supersedes items 1 and 2 of the NEXT-SESSION TASK L
 ===============================================================================
   2026-10-30 (later): X-5a CLOSED - extended-canon detection = (a) name heuristic first, (b) exact books.json count later as X-5f. Only open owner question left: "reader window" (plan 19.3).
 ===============================================================================
+  2026-10-30 (later): owner confirmed "reader window" (plan 19.3) is understood correctly (YES). No open owner questions remain; item 2 of the closing list is fully answered.
+===============================================================================
