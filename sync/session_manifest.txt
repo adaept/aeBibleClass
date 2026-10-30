@@ -248,3 +248,10 @@ SESSION 2026-10-29 END-OF-SESSION PREP (supersedes the NEXT-SESSION TASK LIST of
   Session housekeeping: all repos clean and pushed at the end (aeBibleClass, aeBibleAddin, adaept5tudio, aeRWB, aei18n); OneDrive backups run for the two repos
   changed this session (aeBibleClass option 0, aeBibleAddin option 9). Owner rule: in aeBibleAddin ask before every commit and push.
 ===============================================================================
+SESSION 2026-10-30 UPDATE (supersedes item 1 of the NEXT-SESSION TASK LIST (2026-10-29, final) above; aeBibleAddin plan edited, NOT committed)
+  Owner decision: 15e M12 (hand stopwatch) dropped; no performance problem is present and a hand stopwatch is not a real measurement. H-16a closed on M1-M11,
+  H-16b deferred. Instrumented timing recorded as future task X-8 (plan section 20, pros / cons / benefits / risks, not scheduled).
+  Edited: aeBibleAddin rvw/HelloAO Bible API Integration Plan 2026-10-22.md (H-16b row, 15e M12 row + result, update log, 19.4, new section 20). Uncommitted:
+  owner rule in aeBibleAddin is to ask before every commit.
+  Remaining list: items 2-5 of the 2026-10-29 final list are unchanged.
+===============================================================================
