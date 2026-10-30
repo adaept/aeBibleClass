@@ -255,3 +255,25 @@ SESSION 2026-10-30 UPDATE (supersedes item 1 of the NEXT-SESSION TASK LIST (2026
   owner rule in aeBibleAddin is to ask before every commit.
   Remaining list: items 2-5 of the 2026-10-29 final list are unchanged.
 ===============================================================================
+SESSION 2026-10-30 CLOSING (supersedes the NEXT-SESSION TASK LIST (2026-10-29, final) and the 2026-10-30 UPDATE entry above; aeBibleAddin pushed through the commit named last below)
+  Done in aeBibleAddin (branch feat/helloao-spike, each committed and pushed on the owner's yes):
+    * 3f0532c  plan: 15e M12 hand stopwatch dropped (no performance problem; not a real measurement), H-16a closed, H-16b deferred; new plan section 20 = future task X-8
+               (instrumented timing: debug-flag timestamps, cold / warm runs, Node fetch-timing script; pros / cons / benefits / risks; not scheduled).
+    * e15cceb  HB-7c: PUBLIC_DOMAIN_WITHOUT_RECORD = {BSB, eng_dra, HBOMAS} with source lines (eBible.org); AAB left out (its licenseUrl returns 404); eng_net out.
+               Catalog of 2026-10-29 18:30 still has 26 entries with no licence record, so upstream issue 106 is not fixed.
+    * af71462  HB-7d: trimmed catalog fixture refreshed from the live catalog; AAB no longer public domain in the tests; 4 test files adjusted (HB-5 test now uses spa_r09 rows).
+    * c84536c  HB-1c: SB_DIALOG_NOT_IN_TRANSLATION now ends "Some translations cover only part of the Bible." (one string instead of a protocol change).
+    * 0c809e2  README section "Compare verse (HelloAO) - spike, not released" (H-22 user docs: second click after click-outside, office.js needs the network, privacy).
+    * last commit of the session: Lock Hyperlinks and Convert to UK Spelling buttons moved to their own row at the bottom of the pane (taskpane/index.html). NOT yet seen live.
+  Tests at the end: root 227 + 7 skipped, taskpane 576.
+  NEXT-SESSION TASK LIST (2026-10-30, final):
+    1. Live look in Word: spacing above the bottom tools row (status box has no bottom margin); add a small gap if cramped.
+    2. Owner decisions: X-5a (filter as a link in the pane or a drop-down; extended-canon detection (a) or (b)); HB-3c (thin languages such as Japanese: second vetted
+       source or a plain "no free text" wording); is "reader window" (plan 19.3) understood correctly?
+    3. The spike gates, in order: code-review Packages B and C (plan section 16), GSAP H-17..H-19, H-20..H-23 and the promote / keep behind a flag / drop decision
+       (promotion = merge to main, 1.2.0, full release gate), then Dependabot (rvw/Dependabot review 2026-10-23.md section 8; branch chore/dependabot-2026-10 off main;
+       only after the owner confirms DB-1..DB-5 and the spike branch state is settled).
+    4. Carried over unchanged: V-1 (aeRibbon 1.0.1); test-suite timing work (first list in this file); aeBibleAddin W-wire / B-2..B-10 / P-12 / R-9 / F-1; hygiene
+       (tracked scripts/__pycache__/*.pyc); HelloAO upstream issue 106 (if the service restores BSB's licence, the allowlist can go); X-8 only on a performance trigger.
+  Housekeeping: aeBibleAddin clean and pushed. OneDrive backup not run this session (ask the owner: aeBibleClass option 0, aeBibleAddin option 9).
+===============================================================================
