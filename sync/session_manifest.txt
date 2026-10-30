@@ -286,3 +286,5 @@ SESSION 2026-10-30 ADDENDUM (supersedes items 1 and 2 of the NEXT-SESSION TASK L
   spike S-4 (bundled vs http://localhost vs file picker in real Word).
   Remaining owner questions: extended-canon (a) or (b); is "reader window" (plan 19.3) understood correctly. Items 3 and 4 of the list above are unchanged.
 ===============================================================================
+  2026-10-30 (later): X-5a CLOSED - extended-canon detection = (a) name heuristic first, (b) exact books.json count later as X-5f. Only open owner question left: "reader window" (plan 19.3).
+===============================================================================
