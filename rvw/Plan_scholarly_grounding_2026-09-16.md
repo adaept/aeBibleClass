@@ -900,7 +900,8 @@ Prompted by the HelloAO JavaScript SDK example "Read the Strong's numbers
 for a chapter" (<https://bible.helloao.org/docs/sdks/javascript.html#read-the-strong-s-numbers-for-a-chapter>),
 which calls `getChapterWords()` on `engwebp` (WEB). Status: research only,
 nothing built, no plan step changed. Measurements below are from this
-session's scratch script (`C:\adaept\aescratch_cweb\cmp.py`, not committed).
+session's script, now kept at `C:\adaept\aeRWB\tools\strongs-compare\cweb_vs_oshb.py`
+(moved there 2026-10-31; uncommitted in aeRWB pending operator review).
 
 **The lost reference, restored.** The cWEB limitation quoted in "Task 3 -
 Primary-source verification findings, 2026-09-23" above ("The original

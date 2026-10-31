@@ -327,3 +327,5 @@ SESSION 2026-10-31 (HelloAO Strong's review; docs edited, NOT committed - awaiti
   HelloAO v1.16.0 was RELEASED 2026-10-30 21:00 UTC (adds bsb-interlinear, stepbible-lexicon, jpn_kou/jpn_bun, ~100 fetch.bible translations). Issue 106 licence follow-up can now be checked against the live catalog (blocked by TLS interception on library wifi).
   Plan_scholarly_grounding_2026-09-16.md: new 'Task 3 addendum, 2026-10-31' (before ## Status) - restores the lost studybible.info/version/WEB_Strongs reference; which Strong's HelloAO uses; versioning impact; measured cWEB-vs-OSHB quality (precision 97.7%, recall 64.6%, exact-set 3.0%; H0430 absent from WEBU OT); net: no plan change, cWEB stays excluded. Scratch script C:\adaept\aescratch_cweb\cmp.py (uncommitted).
 ===============================================================================
+  2026-10-31 (later): comparison script moved to C:\adaept\aeRWB\tools\strongs-compare\cweb_vs_oshb.py (same numbers re-verified; aeRWB commit pending operator review). Old scratch folder C:\adaept\aescratch_cweb removed. Plan line updated.
+===============================================================================
