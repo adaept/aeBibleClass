@@ -894,6 +894,114 @@ thread is item 1 above (rwb.txt Phase 4 ratification) since it's a pure
 operator decision with no research left to do; items 2-5 are real future
 work, not started, in the recorded dependency order.
 
+### Task 3 addendum, 2026-10-31 - HelloAO v1.16 Strong's data, and the cWEB reference restored
+
+Prompted by the HelloAO JavaScript SDK example "Read the Strong's numbers
+for a chapter" (<https://bible.helloao.org/docs/sdks/javascript.html#read-the-strong-s-numbers-for-a-chapter>),
+which calls `getChapterWords()` on `engwebp` (WEB). Status: research only,
+nothing built, no plan step changed. Measurements below are from this
+session's scratch script (`C:\adaept\aescratch_cweb\cmp.py`, not committed).
+
+**The lost reference, restored.** The cWEB limitation quoted in "Task 3 -
+Primary-source verification findings, 2026-09-23" above ("The original
+source used as the reference had errors in some Strong's numbers...
+corrected to some extent") comes from this page, found in an earlier
+session and then lost from the plan (the quote was kept, the URL was not):
+
+- <https://studybible.info/version/WEB_Strongs> - describes the edition as
+  the Crossword Project (cWEB) version of the WEB, states "The Strong's
+  numbers were added to the WEB as part of the CrossWord Project", that the
+  reference source had Strong's errors "noted about halfway through, and
+  corrected to some extent", that the translation/review is "currently in
+  progress", and asks for error reports to thecrosswordproject@gmail.com.
+  Re-read and confirmed 2026-10-31.
+
+**1. Which Strong's does HelloAO use?** Two different things, do not
+conflate them:
+
+- *Per-translation word annotations* (`{chapter}.words.json`, the SDK's
+  `getChapterWords()`): the `strong="..."` attributes of the translation's
+  own USFM, passed through unchanged (`packages/helloao-tools/parser/words.ts`).
+  For `engwebp` this is the same cWEB overlay as our `engwebu_usfm` (the
+  tag pattern matches; not byte-compared - the live `engwebp` Genesis file
+  was unreachable, see Open items). Numbering is original Strong's
+  (H/G + 4 digits, e.g. `G1722`, `H0430`).
+- *`bsb-interlinear` dataset* (new in v1.16.0, released 2026-10-30): the
+  Berean Standard Bible interlinear tables (bereanbible.com, public
+  domain), word by word: original-language text, transliteration, parsing,
+  Strong's number (zero-padded `H0430`/`G2316` by `normalizeStrongs`), and
+  the BSB English phrase.
+- *`stepbible-lexicon` dataset* (new in v1.16.0): STEPBible "Translators
+  Brief" lexicons TBESH/TBESG, 18,085 entries, CC BY 4.0, one entry per
+  base Strong's number with its senses (extended ids such as `H0001G`).
+  Source files are fetched from STEPBible-Data `master`, unpinned.
+
+**2. Impact on later Strong's additions/versions.** Low risk, by design:
+STEPBible's disambiguated ("extended") Strong's is a backwards-compatible
+extension of base Strong's (see "Task 3 - Primary-source verification
+findings" above), and HelloAO keys lexicon lookups by the base number, so
+a later TAHOT/TAGNT or OSHB layer maps onto the same keys. Cautions:
+(a) numbering differences between sources exist even within base Strong's
+(HelloAO itself documents `G2258` vs `G1510`-style misses between the KJV
+tags and the Berean table); (b) HelloAO pulls STEPBible from an unpinned
+branch, so a pinned local copy (as `aeRWB/sources/PROVENANCE.md` does for
+OSHB) is needed for byte-reproducible results; (c) the API's JSON shape
+is a union (`{verse, references}` or `{verse, words}`) and changed in
+1.16, so any consumer must pin an API version or narrow the type.
+
+**3a. Quality of the WEB Strong's layer - measured, Hebrew only.** Compared
+`engwebu_usfm` OT `strong="H..."` tags against OSHB lemma numbers, per
+verse, as sets (23,011 matching verses; Hebrew/English versification
+mismatches skipped):
+
+| Measure | OT | Genesis |
+|---|---|---|
+| Precision (cWEB numbers also in OSHB's verse) | 97.7% | 97.5% |
+| Recall (OSHB numbers found in cWEB's verse) | 64.6% | 66.7% |
+| Verses whose number sets match exactly | 3.0% | 2.4% |
+| Verses with no tag at all | 0.5% | 0.1% |
+
+Set-level precision is lenient: it cannot see a right number on the wrong
+word. Direct inspection shows that is the real defect. Genesis 1:1 in
+`engwebu_usfm` tags "In" H8064 (heavens), "the" H1254 (create), "God"
+H8064, "and" H8064; the number for God, **H0430 (Elohim), occurs 0 times in
+the whole WEBU OT** (OSHB has it in 190 Genesis verses; cWEB lacks it in
+all 190), while H3068 occurs 48,595 times against roughly 6,800 real
+occurrences of the divine name, i.e. numbers are spread over neighbouring
+words. The HelloAO `engwebp` JHN 1 fixture shows the same habit ("the"
+carries the preceding word's `G1722`). Greek was not measured: no local
+Strong's-tagged Greek comparator exists (Robinson-Pierpont carries parse
+codes only), only a spot check of one fixture.
+
+**Benefit / risk for the planned RWB Strong's work.**
+- Benefit: HelloAO's `getChapterWords()` gives character-offset-anchored
+  annotations out of the box, a ready model for how Phase 5 could anchor
+  Strong's to RWB text; `bsb-interlinear` + `stepbible-lexicon` are a
+  public-domain / CC BY 4.0, maintained, per-word alternative to cWEB, and
+  the lexicon gives definitions without our own TBESH/TBESG ingest.
+- Risk: using `engwebp` Strong's as a data source would import the cWEB
+  defects (word-to-number misalignment, no H0430) into RWB, which is what
+  the 2026-09-23 root-cause finding already ruled out. BSB's interlinear is
+  aligned to BSB wording, not RWB's deliberately non-literal wording
+  (editorial philosophy), so word-level alignment to RWB text is still our
+  own work either way. Verse-level sets (the spike design) are unaffected:
+  they come from OSHB/Berean, not from any English-word tag.
+- Net: **no change to the plan.** cWEB stays excluded as a data source;
+  HelloAO's `bsb-interlinear` and `stepbible-lexicon` become a candidate
+  cross-check and lexicon source for the OSHB-based verse-level spike and
+  Phase 5, subject to the pinning caution above.
+
+**Open items.**
+- Fetch `engwebp` Genesis 1 `words.json` once off the library wifi (TLS
+  interception blocks `bible.helloao.org` from this machine) and confirm
+  H0430 is also absent there; that would upgrade "same overlay" from
+  likely to proven.
+- Extend the measurement to Greek once a tagged NT comparator
+  (`bsb-interlinear` NT, or TAGNT) is in hand.
+- HelloAO side: v1.16.0 shipped 2026-10-30 21:00 UTC; the issue 106
+  licence-record follow-up (memory `helloao-v1-16-followup`) can now be
+  evaluated against the live catalog.
+
 ## Status
 
 ✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
