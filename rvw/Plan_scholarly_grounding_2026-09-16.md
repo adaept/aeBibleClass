@@ -993,15 +993,30 @@ codes only), only a spot check of one fixture.
   Phase 5, subject to the pinning caution above.
 
 **Open items.**
-- Fetch `engwebp` Genesis 1 `words.json` once off the library wifi (TLS
-  interception blocks `bible.helloao.org` from this machine) and confirm
-  H0430 is also absent there; that would upgrade "same overlay" from
-  likely to proven.
+- ✅ DONE 2026-10-31 (later, off the library wifi): fetched
+  `https://bible.helloao.org/api/ENGWEBP/GEN/1.words.json` (the catalog id
+  is uppercase `ENGWEBP`; lowercase `engwebp` 404s). It has 0 occurrences
+  of H0430 and 44 of H8064, the same defect as `engwebu_usfm`: HelloAO's
+  WEB Strong's are the cWEB overlay, now proven, not just likely.
 - Extend the measurement to Greek once a tagged NT comparator
   (`bsb-interlinear` NT, or TAGNT) is in hand.
-- HelloAO side: v1.16.0 shipped 2026-10-30 21:00 UTC; the issue 106
-  licence-record follow-up (memory `helloao-v1-16-followup`) can now be
-  evaluated against the live catalog.
+- HelloAO side: v1.16.0 shipped 2026-10-30 21:00 UTC. ✅ Live catalog
+  checked 2026-10-31: 1,504 entries; 21 still have no `license` object
+  (26 on 2026-10-29: GHT, GHTG, amh_amh, bbr_wbt, big_wbt, cop_shc,
+  dan_det, eng_net, fad_wbt, fra_lsg, ino_wbt, kud_wbt, kxw_wbt, mgw_pbt,
+  nld_nbg, nuq_wbt, ron_btf, spa_rvg, spa_v2p, swe_fol, ukr_1996), but BSB,
+  eng_dra, HBOMAS and AAB now each have `license.publicDomain: true`. (A
+  first pass the same day wrongly looked at `licenseUrl` only and reported
+  0; the add-in keys on the `license` object.) The live catalog also moved
+  the other way for `fra_lsg` (Louis Segond; public domain in the
+  2026-10-29 fixture, no `license` object now) and ARBNAV (now has one,
+  `publicDomain: false`). A trial refresh of the aeBibleAddin trimmed
+  fixture therefore failed 4 tests (fra_lsg drops out of the default
+  public-domain view, AAB appears); the refresh was NOT applied, saved as a
+  patch only, pending the operator's decision. The
+  aeBibleAddin allowlist/fixture change is prepared separately and awaits
+  the operator's approval. `jpn_bun` (announced in the changelog) is not
+  yet in the catalog.
 
 ## Status
 
