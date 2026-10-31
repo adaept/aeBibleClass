@@ -290,3 +290,32 @@ SESSION 2026-10-30 ADDENDUM (supersedes items 1 and 2 of the NEXT-SESSION TASK L
 ===============================================================================
   2026-10-30 (later): owner confirmed "reader window" (plan 19.3) is understood correctly (YES). No open owner questions remain; item 2 of the closing list is fully answered.
 ===============================================================================
+SESSION 2026-10-30 FINAL CLOSING (supersedes the NEXT-SESSION TASK LIST (2026-10-30, final) and the addendum entries above; aeBibleAddin pushed through 49cc594 on feat/helloao-spike; aeBibleClass tag rwb-v1.1.0 pushed)
+  Done after the earlier closing entries (aeBibleAddin, each committed and pushed on the owner's yes):
+    * Package B of the code review COMPLETE: CR-19 1f965ea, CR-18 fbef734, CR-14 7c94936 (tokens.css), CR-15 54543cc (flush helper + agreement test vs Case 91; audit-checks.ts untouched),
+      CR-12 2f3c9e5 (lookup-storage.ts), CR-16 + CR-4 ff071f1 (office-dialog-host.ts split; live check in Word passed), CR-17 95564c7 (renames only; extraction marked No with reasoning).
+    * Package C: CR-21 591b722 (build fails without dist/popup.html; release smoke fetches popup.html), CR-20 parts 1+2 9839775 (lang on verse text + footnotes only; aria-label on the
+      language button; checked live). CR-20 part 3 (group headings) DEFERRED with the CR-17 extraction. CR-9b (headers, CSP report-only first) NOT done.
+    * Pane layout: Lock Hyperlinks / Convert to UK Spelling moved to a bottom row (f599e88); Go row + bottom row compacted (b757c57) after a headless-Edge width survey; scrollbar gone in Word.
+      Word drew its own title bar ("Radiant Word Bible" + Move/Size/Help/Close) above the pane; cause NOT found (not a Word update, manifest unchanged since 2026-09-12). Two sideloads are
+      registered in HKCU WEF Developer (the old spike d3f1b6a0-... and Radiant Word Bible 7a2c9e14-...): explains the two ribbon icons; the spike was NOT unregistered (owner's call).
+    * HB-7c e15cceb, HB-7d af71462, HB-1c c84536c, README section 0c809e2 (earlier today). Japanese: jpn_kou is already in HelloAO (HB-3c resolved upstream). X-5a closed (filter = link; extended
+      canon detection (a) name heuristic first, (b) later as X-5f). Reader window (19.3) confirmed understood. X-8 (instrumented timing) and X-9 (extra/local text sources) are future tasks.
+    * Release decoupling (plan section 22, X-10): scripts/release_gate.py --addin-only (HALTS if the production .docx SHA-256 differs from the latest FULL stamp; 26 gate tests pass) 9511f0b, DRAFT
+      for owner sign-off, not yet used. aeBibleClass tag rwb-v1.1.0 created + pushed at 25954ff (the commit the v1.1.0 gate verified; same as js-port-baseline-2026-10-22).
+    * H-20 done (npm run check green: root 235 + 7 skipped, taskpane 587). H-21 drafted in aeBibleClass-sibling CLAUDE.md (aeBibleAddin) and H-23 spike report drafted as plan section 23 (49cc594);
+      both need the OWNER's decision.
+  NEXT-SESSION TASK LIST (2026-10-30, final):
+    1. Owner decisions: promote / keep behind a flag / drop (recommendation: promote); GSAP (recommendation: drop for now); sign off the CLAUDE.md draft (H-21) and the --addin-only draft (X-10a).
+    2. Merge feat/helloao-spike into main (show the exact command first; ask before pushing). A merge deploys nothing: only a v* tag deploys.
+    3. X-10d: deploy-test branch off main + Firebase Hosting preview-channel workflow + manifest.test.xml (a different Id so it coexists with prod). Then X-10e: test the preview in Word on a
+       second machine or account (no sign-in to our service is needed; testers load the manifest file), set taskpane/package.json to 1.2.0, run the --addin-only gate, tag v1.2.0 (never move
+       a tag; a fix is v1.2.1). A tag push deploys live.
+    4. CR-9b: firebase.json headers (nosniff, referrer policy) now; CSP report-only first and checked in Word. Show the headers before any release.
+    5. X-10b: RELEASES.md columns (JS / RWB / VBA tag + SHA / tested with) and hub plan section 10.5; X-10f at the next release (ported-paths diff + parity record + rwb tags).
+    6. Dependabot (rvw/Dependabot review 2026-10-23.md section 8; branch chore/dependabot-2026-10 off main) after the merge, once the owner confirms DB-1..DB-5.
+    7. Only on a trigger: X-5 filter link (after promotion), X-6 / S-1 position, X-7 reader window (S-1, S-3), X-8 timing, X-9 local/extra text sources, CR-20 part 3 + CR-17 extraction.
+    8. Carried over: V-1 (aeRibbon 1.0.1); test-suite timing work (first list in this file); W-wire / B-2..B-10 / P-12 / R-9 / F-1; hygiene (tracked scripts/__pycache__/*.pyc);
+       HelloAO upstream issue 106; optional: unregister the spike sideload (office-addin-debugging stop on spike-officejs/manifest.xml); find why Word draws its own title bar.
+  Housekeeping: aeBibleAddin and aeBibleClass clean and pushed; OneDrive backups run for both at the end (aeBibleClass option 0, aeBibleAddin option 9). Owner rule: in aeBibleAddin ask before every commit and push.
+===============================================================================
