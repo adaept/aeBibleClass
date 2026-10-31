@@ -319,3 +319,7 @@ SESSION 2026-10-30 FINAL CLOSING (supersedes the NEXT-SESSION TASK LIST (2026-10
        HelloAO upstream issue 106; optional: unregister the spike sideload (office-addin-debugging stop on spike-officejs/manifest.xml); find why Word draws its own title bar.
   Housekeeping: aeBibleAddin and aeBibleClass clean and pushed; OneDrive backups run for both at the end (aeBibleClass option 0, aeBibleAddin option 9). Owner rule: in aeBibleAddin ask before every commit and push.
 ===============================================================================
+  2026-10-31 FOLLOW-UP TASK (HelloAO v1.16): maintainer says issue 106 (BSB licence record) is fixed and v1.16 is about to release (comment 6532784310). Check each session for the release + live catalog, notify the owner, ask approval before touching the HB-7c allowlist / HB-7d fixture (aeBibleAddin; ask before every commit). curl SSL error 60 on bible.helloao.org is unresolved. Memory: helloao-v1-16-followup.
+===============================================================================
+  2026-10-31 (later): curl SSL error 60 is probably the library wifi intercepting HTTPS; retry the catalog check on another network. Owner declined a scheduled routine: the per-session check is sufficient.
+===============================================================================
