@@ -376,3 +376,5 @@ SESSION 2026-11-02 (later) - Dependabot CLOSED
 ===============================================================================
   2026-11-02 (later): owner ran 'npm run certs' - NO renewal (tool said already trusted; certs are 30-day: ca.crt and localhost.crt both NotBefore 2026-10-11, NotAfter 2026-11-10). Renew on or after 2026-11-10 (npm run certs; or uninstall + install to force early; restart vite after). Recurring monthly chore. Bash tip: use forward slashes in ! commands (backslashes are eaten).
 ===============================================================================
+  2026-11-02 (end): aeBibleAddin review-file commit 71d8cbf PUSHED; merged branch chore/dependabot-2026-10 DELETED (local + origin); aeBibleAddin has only main. Still open: dev certs expire 2026-11-10 (renew on/after; restart vite), vite dev server on :3001 + RWB sideload in Word still running (owner asked to leave), HB-7e, CR-9b, X-10f, optional CI-1.
+===============================================================================
