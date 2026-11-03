@@ -1018,6 +1018,25 @@ codes only), only a spot check of one fixture.
   the operator's approval. `jpn_bun` (announced in the changelog) is not
   yet in the catalog.
 
+### Task 3 addendum, 2026-11-02 - verse-level spike run: Genesis 1 from OSHB (roadmap step 3, steps 1-3 of the spike)
+
+Started on the owner's decision of 2026-11-02 ("Strong's: start it"). Built in `aeRWB` (uncommitted until the operator reviews, per the aeRWB rule): `tools/strongs-spike/` (`oshb.mjs` pure functions with 11 unit tests, `extract-gen1.mjs`, `crosscheck-gen1.mjs`, README), outputs in `strongs-spike/` (`gen1-strongs-by-verse.json` with provenance, `gen1-crosscheck.md`, `cache/` with the raw API responses and their SHA-256). `npm run strongs.spike.extract` and `npm run strongs.spike.crosscheck`; aeRWB `npm test` is green (52 tests).
+
+**What was built.** The ordered SET of Strong's numbers per verse of Genesis 1 (31 verses, 96 distinct numbers), taken from the numeric parts of each OSHB `lemma` (prefix letters carry no number, the homonym letter after a number is dropped, ids are `H` + 4 digits as in HelloAO and the Berean tables). Keys are aeRWB's "Genesis 1:1" style. Provenance is in the file: OSHB pinned commit `3d15126f`, SHA-256 of `Gen.xml`, CC BY 4.0 attribution text for the lemma layer.
+
+**Hypothesis test (point 3 of the 2026-09-23 design).**
+
+| Comparison (Genesis 1, 31 verses) | Result |
+|---|---|
+| OSHB vs the Berean interlinear (HelloAO `bsb-interlinear`, public domain, independent tagging) | **31 of 31 verses identical**, 0 numbers on either side only |
+| cWEB overlay (`engwebu_usfm`) vs OSHB | **0 of 31 identical**; cWEB carries 239 of the 345 (verse, number) pairs in the Hebrew (69.3%) and has 5 pairs the Hebrew does not have (all `H3068` where the Hebrew has Elohim) |
+| H0430 (Elohim) | present in the Hebrew of 26 verses, **absent from cWEB in all 26** |
+| H8064 (heavens) over-tagging | **did not occur** in Genesis 1: no verse has H8064 in cWEB without the Hebrew word |
+
+**Decision gate.** OSHB sets are usable. The cWEB sets are not usable for a verse-level "which underlying words are in this verse" panel, but the failure is mostly by omission (under-tagging), not by the H8064 pollution the design worried about. The OSHB source swap is therefore confirmed as a prerequisite for Phase 5, as already decided on 2026-09-25. Caveat: OSHB and the Berean table rest on the same Hebrew text, so their agreement shows that the numbers and the extraction rules are right, not that the lexical analysis is independent. The STEPBible brief lexicon (via HelloAO `stepbible-lexicon`) gave correct lemma and gloss for every number in Genesis 1:1-5 (e.g. H0430 "God", H8064 "heaven", H1254 "to create").
+
+**Not done yet.** Spike step 4: a read-only lookup hook in `aeBibleAddin` over the JSON (an `aeAuditSpike`-style console hook first, no UI; it would ship in every build like the other read-only hooks). Beyond Genesis 1: the rest of the Old Testament is the same extraction (change the book and chapter loop). The Greek NT still needs a Strong's-tagged Greek edition (Robinson-Pierpont carries parse codes only; HelloAO's `bsb-interlinear` NT is a candidate cross-check, TAGNT the later layer). Pin the STEPBible data locally (HelloAO fetches it from an unpinned `master`).
+
 ## Status
 
 ✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
