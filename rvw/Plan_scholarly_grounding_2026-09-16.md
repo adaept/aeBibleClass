@@ -1037,6 +1037,20 @@ Started on the owner's decision of 2026-11-02 ("Strong's: start it"). Built in `
 
 **Not done yet.** Spike step 4: a read-only lookup hook in `aeBibleAddin` over the JSON (an `aeAuditSpike`-style console hook first, no UI; it would ship in every build like the other read-only hooks). Beyond Genesis 1: the rest of the Old Testament is the same extraction (change the book and chapter loop). The Greek NT still needs a Strong's-tagged Greek edition (Robinson-Pierpont carries parse codes only; HelloAO's `bsb-interlinear` NT is a candidate cross-check, TAGNT the later layer). Pin the STEPBible data locally (HelloAO fetches it from an unpinned `master`).
 
+**Why is Elohim (H0430) missing from cWEB? (asked by the owner 2026-11-03; word-level look at Genesis in `engwebu_usfm`).** No justification was found, and the data points to a defect, not to avoidance. Nothing published by the cWEB project says Elohim was left out on purpose; its only statement is the one quoted under "Task 3 - Primary-source verification findings" (the reference source "had errors in some Strong's numbers ... corrected to some extent", https://studybible.info/version/WEB_Strongs). Measured, in Genesis:
+
+| Check | Result |
+|---|---|
+| The English word "God" (103 tokens) | carries 9 different numbers and never H0430: H3068 x41, H5414 x17, H8064 x15, H3808 x11, H7971 x7, H1008 x6, H3027 x3, H4310 x2, H3863 x1 |
+| H0430 anywhere in cWEB Genesis | 0 occurrences |
+| The divine name "Yahweh"/"LORD" (171 tokens) | tagged: H3068 x166, H3069 x2, H1376 x2, H6662 x1 (so divine names are not avoided in general) |
+| The KJV file in this repo (`eng-kjv2006_usfm`) | carries H0430 218 times in Genesis (a correctly tagged source for Elohim exists) |
+| Of the 41 "God" tokens tagged H3068 | only 23 directly follow "Yahweh"/"LORD" |
+| "God" tokens whose tag equals the tag of the word before them | 37 of 103 |
+| Genesis 1:1 as tagged, word=number | In=H8064 the=H1254 beginning=H7225 God=H8064 created=H1254 the=H1254 heavens=H8064 and=H8064 the=H1254 earth=H8064 |
+
+Reading: the right numbers are present in a verse but often sit on the wrong word, and "God" receives the numbers of many unrelated words. That fits a faulty alignment between a tagged source and the WEB wording. It is a reading of the pattern, not a finding about the cause (the cWEB process is not documented), and it does not change the decision to build on OSHB. Reproducible: `npm run strongs.spike.crosscheck` in `aeRWB` writes this section into `strongs-spike/gen1-crosscheck.md` (script change pending the operator's commit, see the manifest).
+
 ## Status
 
 ✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
