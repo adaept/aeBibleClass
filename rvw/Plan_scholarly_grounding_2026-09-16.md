@@ -1051,6 +1051,16 @@ Started on the owner's decision of 2026-11-02 ("Strong's: start it"). Built in `
 
 Reading: the right numbers are present in a verse but often sit on the wrong word, and "God" receives the numbers of many unrelated words. That fits a faulty alignment between a tagged source and the WEB wording. It is a reading of the pattern, not a finding about the cause (the cWEB process is not documented), and it does not change the decision to build on OSHB. Reproducible: `npm run strongs.spike.crosscheck` in `aeRWB` writes this section into `strongs-spike/gen1-crosscheck.md` (script change pending the operator's commit, see the manifest).
 
+### Task 3 addendum, 2026-11-03 - spike step 4 built: the aeBibleAddin lookup hook; runtime source decided
+
+Owner decisions 2026-11-03: build the Genesis 1 hook; **runtime source = C (hybrid)**: HelloAO's Berean interlinear and STEPBible lexicon are the runtime source, the pinned OSHB data is the oracle they are checked against; **Greek NT = Berean** (HelloAO `bsb-interlinear`, public domain), not TAGNT for now.
+
+Built in `aeBibleAddin` (branch `feat/strongs-spike-hook`, commit pending the owner): a read-only console hook `aeStrongsSpike.forVerse()` / `forRef(book, chapter, verse)` (details in `taskpane/README.md`, "Strong's spike hook"). It reads the Word cursor with the existing reader (or takes a reference), asks the service for the verse's original-language words, prints them as a table and compares the SET of numbers with the OSHB oracle. Editor-tools builds only, because the OSHB-derived data carries a CC BY credit the published pane has no place to show yet; the build guard checks it.
+
+Evidence: the live check passes against the real service. All 31 verses of Genesis 1 give the same set from live Berean and from OSHB; chapter 1 of all 66 books parses with the strict parser (Hebrew and Aramaic in books 1 to 39, Greek in 40 to 66); John 1:1 returns Greek words with a lexicon entry. The hook stays a throwaway proof of the path (JS only, no VBA, Word cursor to Strong's set).
+
+Still open for the real feature: a versification table (OSHB follows the Hebrew numbering, the Berean tables the English; about 134 of the 23,145 Old Testament verses do not line up by reference, and translations differ among themselves); extending the oracle to the whole Old Testament (same extraction, a book loop); where the credits (OSHB, STEPBible) are shown in the published pane; the UI itself (an "Original words" block in the verse window); a localised lexicon for non-English readers; and the per-translation quality gate before any word-level click feature (only some translations have `words.json`: `ENGWEBP`, `eng_kjv`, `spa_r09`, `deu_l12` of 12 sampled).
+
 ## Status
 
 ✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
