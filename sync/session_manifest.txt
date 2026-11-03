@@ -423,3 +423,12 @@ SESSION 2026-11-02 CLOSING (supersedes the NEXT-SESSION TASK LIST (2026-11-01, f
   Rules to remember: in aeBibleAddin ask before every commit and push (an explicit 'commit and push' counts); never say 'tested in Word' for a browser check; always give the preview link + manifest + Word steps + checklist together; bash tool: forward slashes in '!' commands, MSYS_NO_PATHCONV=1 with wsl, multi-line Python via the Write tool (not heredocs); Word reads add-in manifests only at startup.
   Housekeeping: aeBibleClass, aeBibleAddin, adaept5tudio clean and pushed (aeRWB and aei18n unchanged since their last backups); OneDrive backups run for aeBibleClass (0), aeBibleAddin (9), adaept5tudio (5).
 ===============================================================================
+OWNER DECISIONS on the NEXT-SESSION TASK LIST (2026-11-02, final) - recorded 2026-11-02 (these supersede the wording of the items above where they differ)
+  1. REMIND on or after 2026-11-10: renew the dev certificates (memory reminders.md, indexed at the top of MEMORY.md, checked at session start).
+  2. CR-9c (report-only CSP): do WITH THE NEXT BATCH OF FIXES (rides in the next release; own Word preview round).
+  3. CR-9d (enforce CSP): CHECK AGAIN AFTER 2 MORE RELEASES (the release carrying CR-9c counts as the first; enforce only after a clean released version).
+  4. X-10f: DO AT THE NEXT RELEASE.
+  5. CI-1 and gating the whole DevTools console (option C): POSTPONED.
+  6. Strong's verse-level spike (Genesis 1, OSHB-only): STARTED 2026-11-02 in aeRWB (uncommitted until the operator reviews; aeRWB rule: never commit/push unprompted).
+  7. Carried-over backlog: POSTPONED, kept as a reminder in reminders.md.
+===============================================================================
