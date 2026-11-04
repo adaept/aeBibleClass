@@ -1061,6 +1061,8 @@ Evidence: the live check passes against the real service. All 31 verses of Genes
 
 Still open for the real feature: a versification table (OSHB follows the Hebrew numbering, the Berean tables the English; about 134 of the 23,145 Old Testament verses do not line up by reference, and translations differ among themselves); extending the oracle to the whole Old Testament (same extraction, a book loop); where the credits (OSHB, STEPBible) are shown in the published pane; the UI itself (an "Original words" block in the verse window); a localised lexicon for non-English readers; and the per-translation quality gate before any word-level click feature (only some translations have `words.json`: `ENGWEBP`, `eng_kjv`, `spa_r09`, `deu_l12` of 12 sampled).
 
+**Credits placement DECIDED (owner, 2026-11-04).** The open question "where are the OSHB and STEPBible credits shown before the data can ship" is answered: an **in-pane About and credits view** in aeBibleAddin (option B; a dialog was analysed and rejected: Office allows one dialog per add-in at a time and the verse window already is one), plus a short credit line in the future "Original words" block of the verse window that opens it. The published About lists only data the published pane actually uses; the OSHB, STEPBible and Berean entries are editor-build entries until the Strong's data ships, and move to the published list in the same change. Analysis, design and tasks AB-1 to AB-4: aeBibleAddin `rvw/HelloAO Bible API Integration Plan 2026-10-22.md`, section 26.
+
 ## Status
 
 ✅ Task 1 - **closed 2026-09-17, commit `e76ef8d`.** All 5 known
