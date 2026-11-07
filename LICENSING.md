@@ -20,3 +20,8 @@ conflict noted in the aezdb review.
 > Trademarks and brand ("adaept", the "ae" mark) are retained regardless of code license.
 > Third-party components, if any, retain their own licenses.
 > *(Not legal advice — commercial license text to be finalized with counsel; cf. adaept5tudio Q4.)*
+
+## Bible text
+
+The Radiant Word Bible text exported under `rpt/` is CC0 1.0, not LGPL.
+See `rpt/NOTICE-RWB-TEXT.md`.
