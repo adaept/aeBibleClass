@@ -1,0 +1,50 @@
+FontRunAudit - Blank Bible Copy.docm - 2026-11-08 15:25:34
+Allowed fonts: Carlito, Noto Sans, Liberation Serif (owner rule 2026-11-07: free fonts only, no print restrictions)
+Fonts considered (14): +Body; +Headings; Times New Roman; Liberation Serif; Carlito; Noto Sans; Aptos Display; Aptos; Cambria Math; Arial; Symbol; Courier New; Wingdings; Calibri; 
+
+Runs found in a font OUTSIDE the allowlist, by font:
+  +Body                     26 run(s)
+  +Headings                 0 run(s)
+  Times New Roman           0 run(s)
+  Aptos Display             0 run(s)
+  Aptos                     0 run(s)
+  Cambria Math              1 run(s)
+  Arial                     2 run(s)
+  Symbol                    0 run(s)
+  Courier New               0 run(s)
+  Wingdings                 0 run(s)
+  Calibri                   0 run(s)
+
+Location | Story | Paragraph style | Character style | Resolved font | Text
+--------------------------------------------------------------------------------
+LEVITICUS 2:11 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "yea?st"
+NUMBERS 20:12 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "God said to Moses and Aaron,"
+1 KINGS 15:6 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "Now"
+2 KINGS 1:8 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "They answered him,"
+ECCLESIASTES 12:2 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | ""
+ISAIAH 14:16 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "Those"
+ISAIAH 14:25 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "that"
+MATTHEW 9:35 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | ""
+MATTHEW 26:28 | story 1 | VerseText | Words of Jesus | Aptos (found as +Body) | "."
+MATTHEW 26:38 | story 1 | VerseText | Words of Jesus | Aptos (found as +Body) | ""
+MATTHEW 26:45 | story 1 | VerseText | Words of Jesus | Aptos (found as +Body) | "."
+JOHN 1:36 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "!?"
+JOHN 5:46 | story 1 | VerseText | Words of Jesus | Aptos (found as +Body) | "."
+ACTS 9:27 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | ""
+ACTS 17:31 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | ""
+ROMANS 8:11 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "."
+pos 3831373 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+1 CORINTHIANS 15:8 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "as to the child born at the wr"
+pos 3882753 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+pos 4025103 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+pos 4064464 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+pos 4101208 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+pos 4114745 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+pos 4118943 | story 1 | DatAuthRef | Default Paragraph Font | Aptos (found as +Body) | ":"
+REVELATION 12:2 | story 1 | VerseText | Default Paragraph Font | Aptos (found as +Body) | "She"
+pos 886 | story 2 | Footnote Text | Default Paragraph Font | Aptos (found as +Body) | ""
+pos 1026212 | story 1 | BodyText | Default Paragraph Font | Cambria Math (found as Cambria Math) | "?"
+pos 2331861 | story 1 | BodyText | Default Paragraph Font | Arial (found as Arial) | "???????????"
+pos 2331873 | story 1 | BodyText | Default Paragraph Font | Arial (found as Arial) | "?????"
+
+TOTAL runs outside the allowlist: 29   (208.3 s)
