@@ -19,54 +19,140 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ## 1. Release train (shared with the hub plan)
 
 <!-- RELEASE-TRAIN:BEGIN -->
-| ID | Task | Where | Linked tasks | Depends on | Status |
-|---|---|---|---|---|---|
-| **Phase 0: the v1.1 PILOT TEST in `C:\adaept\RadiantWordBible` (never a final release; nothing of v1.1 is committed or pushed there until the dry run has passed)** | | | | | |
-| RT-01 | Make a PDF of the v1.1 docx from Word (measured 2026-11-08: 901 pages, 7.6 MB, 82 s) | Word (VBA export later: RT-33) | PB-9, PB-10 | - | ✅ experiment done; the rehearsal copy is made in RT-04 |
-| RT-02 | Manifest and verifier learn a file that cannot be rebuilt byte for byte (PDF): `reproducible: false`, recorded SHA-256, identity checks (page count, fonts embedded, metadata), skipped by `--check` | aeRWB | RX-5, RX-10, PB-10 | - | ✅ 2026-11-08 (aeRWB, uncommitted): `--pdf` and `--allow-font` on `rwb.export`, `fonts.mjs` (the allowlist, equal to the VBA constant by test), `pdf-identity.mjs`, a PDF branch in `rwb.verify`; 208 tests. On the real Word PDF: 901 pages, 7 fonts all embedded, Aptos flagged unless excepted; trial set `C:\adaept\aeTest\rwb-export-pdf-trial` verifies, `--check` passes, `verify-rwb.ps1` OK on 72 files. Still open (PB-10): a text sample compared with the canonical text |
-| RT-03 | Owner decision 2026-11-08: the real `adaept/RadiantWordBible` repository is the target of the pilot; nothing of v1.1 is committed or pushed into it until the dry run (RT-06) has passed; the pilot is marked PILOT in its tag, release title, README, manifest and ledger | owner | S-6 | - | ✅ decided 2026-11-08 |
-| RT-04 | Build what the pilot needs, every outward step with `--dry-run`: edition ledger with a `status` of `pilot` or `release` (RX-24), the docx in `source/` with its SHA test (RX-17, RX-18), `rwb.release` (RX-20), the `gh` release script (RX-23), a publish step that assembles the set in a staging copy of RadiantWordBible, the `status` field in the manifest | aeRWB | RX-17, RX-18, RX-20, RX-23, RX-24 | RT-02, S-10, S-11 | ⚪ |
-| RT-05 | The pilot PDFs from the exact v1.1 docx in Word (print-ready and screen, S-7), taken in with `--allow-font Aptos` (the reviewed exception, pilot only) | owner or me via Word | PB-9 | RT-04 (file names) | ⚪ |
-| RT-06 | **DRY RUN, nothing committed or pushed:** assemble every format in the staging copy `C:\adaept\aeTest\pilot-stage\`; run every check (`rwb.verify --docx`, `--check`, `sha256sum -c`, `verify-rwb.ps1`, the PDF identity, the gate guard `rwbExports` which must report the exception, `rwb.release --dry-run`, `gh release create --dry-run` listing assets and SHA-256); the reader's view on a copy | both | RX-21, PB-10 | RT-04, RT-05 | ⚪ |
-| RT-07 | **Owner go**, then commit and push the v1.1 PILOT into `C:\adaept\RadiantWordBible` (tag `pilot-v1.1`, README banner, binaries as assets of a GitHub pre-release titled PILOT, not committed) | owner + me | RX-26, RX-23 | RT-06 passed | ⚪ |
-| RT-08 | Reader's view on the real pilot: download the assets into an empty folder, `sha256sum -c`, `verify-rwb.ps1` (also on a copy re-saved in Word), PDF checks | owner + me | RX-21, PB-10 | RT-07 | ⚪ |
-| RT-09 | Lessons and fixes; then retire the pilot (delete the pilot release and tag; decide whether to keep or reset the repository history before it is made public) | both | - | RT-08 | ⚪ |
-| **Phase 1: clean the docm, the SSOT (VBA, `aeBibleClass`; every fix gets a test where a test can express it)** | | | | | |
-| RT-10 | Read-only font-run audit `basFontRunAudit.bas` (written, tested in Word on copies: docx 18 runs, docm 29) | aeBibleClass | R111-1 | - | ✅ 2026-11-07 (uncommitted) |
-| RT-11 | **USER ACTION:** import the module into the dev docm (fresh Word), run `FontRunAudit`, send the result (expect 29) | owner | R111-2 | RT-10 | ✅ 2026-11-08: the real docm reports exactly the 29 runs of the copy (+Body 26, Cambria Math 1, Arial 2) in 208 s; report `C:\adaept\aeBibleClass\rpt\FontRunAudit.txt` (not committed: reports wait for the release) |
-| RT-12 | Owner decisions S-1 to S-9 | owner | R111-3 | - | ⚪ |
-| RT-13 | Fix routine for font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | aeBibleClass | R111-4, PB-20, F5 | RT-11, RT-12 | ⚪ |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags (list, fix, test) | aeBibleClass | F1 | RT-12 | ⚪ |
-| RT-15 | Theme fonts Aptos to Carlito and Noto Sans (list, fix, test) | aeBibleClass | F2 | RT-12 | ⚪ |
-| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | aeBibleClass | F3 | RT-12 | ⚪ |
-| RT-17 | Clear the 12 stray direct formats on verse runs (list, fix, test) | aeBibleClass | F4 | RT-12 | ⚪ |
-| RT-18 | New VBA tests (Test 95 fonts; further numbers for RT-14, RT-15, RT-17) with the 9-step checklist of `md/Adding_To_Bible_Test_Class.md`; each must be shown to FAIL on the uncleaned copy | aeBibleClass | R111-5 | RT-13 to RT-17 | ⚪ |
-| RT-19 | Port every new test to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | aeBibleAddin | parity ledger, plan 15.11 | RT-18 | ⚪ |
-| **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | |
-| RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | owner | PB-7, D-13, S-3 | - | ⚪ |
-| RT-21 | Owner writes the Foreword and Introduction | owner | PB-7 | - | ⚪ |
-| RT-22 | Styles in the docm, approved-styles SSOT, the add-in's expected-style set and profile detection (style count, sections 133) with their tests | aeBibleClass + aeBibleAddin | PB-7, W-2 | RT-20 | ⚪ |
-| RT-23 | Export keeps it; Node reads it: USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | aeRWB | RX-3, RX-6, RX-7, PB-8 | RT-22 | ⚪ |
-| RT-24 | Separation test: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | aeBibleClass | PB-7 | RT-22 | ⚪ |
-| **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | |
-| RT-30 | Font facts: embedding permission (fsType), copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used | me | S-5 | - | ⚪ |
-| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-15, RT-16 and RT-13: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | aeBibleClass | F2, F3 | RT-13, RT-15, RT-16 | ⚪ |
-| RT-32 | Guards: embedded fonts in the docx are a subset of the three; the same rule read independently in Node (`rwb.fonts`, cross-check of VBA Test 95); allowlist conformance test between the VBA constant and the Node and add-in lists (Node side done in RT-02); **the gate refuses `status: pilot` and any PDF recorded with `allowedExtraFonts`** | aeRWB + aeBibleAddin | RX-11 | RT-31 | ⚪ |
-| RT-33 | PDF export from the final docx (VBA), print-ready and screen as decided (D-14), fonts embedded, recorded as non-reproducible | aeBibleClass + aeRWB | PB-9, PB-10, RT-02 | RT-31 | ⚪ |
-| RT-34 | NOTICE: fonts are embedded under SIL OFL 1.1 with each font's copyright line (today's text says none is embedded) | RadiantWordBible | PB-6 | RT-30, RT-31 | ⚪ |
-| RT-35 | Fonts-installed preflight on every machine that builds (VBA check of `Application.FontNames`, bootstrap step, drill PB-14) | aeBibleClass + aeRWB | PB-13, PB-14 | - | ⚪ |
-| **Phase 4: export, gate, release of 1.1.1** | | | | | |
-| RT-40 | Export changes: `Options.StoreRSIDOnSave = False` around the save (proven), `ExportVersion` 1.1.1, a halting font pass, optional document properties | aeBibleClass | R111-6, F6, F8 | RT-18 | ⚪ |
-| RT-41 | Full VBA suite, fresh Word, AC power | owner | R111-7 | RT-40 | ⚪ |
-| RT-42 | `rwb.export` (1.1.1), `rwb.verify --docx`, review in `C:\adaept\aeTest\rwb-export\`, promote | aeRWB | RX-26 | RT-41 | ⚪ |
-| RT-43 | Full release gate (guards `rwbExports` and the fonts guard) | aeBibleAddin | RX-11 | RT-42 | ⚪ |
-| RT-44 | Tags `rwb-v1.1.1` and `rwb-text-v1.1.1`, ledger, RELEASES rows, baseline re-pin LAST, delete the NOTICE exception | both | R111-8, RX-24 | RT-43 | ⚪ |
-| **Cross-cutting (during the process)** | | | | | |
-| RT-50 | Security review of both code bases (scope and first-pass notes in the plans) | both | - | before RT-43 | ⚪ |
-| RT-51 | DRY review and conformance tests (book names, verse counts, USFM codes, allowlist, style sets, OOXML readers) | both | - | before RT-43 | ⚪ |
-| RT-52 | Plan-sync check: this table is identical in both repositories (a script compares the marked block) | aeBibleAddin | - | - | ⚪ |
-| RT-53 | After the release: the earlier lists continue (RX-13, RX-25, PB-11, PB-12, PB-14, PB-15, PB-17, PB-19, RX-8, RX-9, RX-15) | both | - | RT-44 | ⚪ |
+| ID | Task | Side | Wt | % | Counterpart | Linked | Depends on | Status |
+|---|---|---|---|---|---|---|---|---|
+| **Phase 0: the v1.1 PILOT TEST in `C:\adaept\RadiantWordBible` (never a final release; nothing of v1.1 is committed or pushed there until the dry run has passed)** | | | | | | | | |
+| RT-01 | Make a PDF of the v1.1 docx from Word (measured 2026-11-08: 901 pages, 7.6 MB, 82 s) | Node | 1 | 100 | RT-05 | PB-9, PB-10 | - | ✅ experiment done 2026-11-08 |
+| RT-02 | Manifest and verifier take in a file that cannot be rebuilt byte for byte (the PDF): `reproducible: false`, recorded SHA-256, identity (pages, embedded fonts, metadata), skipped by `--check`, free-font rule, `--allow-font` reviewed exception (pilot only) | Node | 3 | 100 | RT-33 | RX-5, RX-10, PB-10 | - | ✅ 2026-11-08 (aeRWB `f06cd1b`, 208 tests) |
+| RT-03 | Owner decision: the real `adaept/RadiantWordBible` repository is the pilot target; nothing of v1.1 is committed or pushed until the dry run has passed; marked PILOT everywhere | Owner | 1 | 100 | - | S-6 | - | ✅ decided 2026-11-08 |
+| RT-04a | Edition ledger `rwb-editions.json` with a `status` of `pilot` or `release` | Node | 3 | 0 | RT-44 | RX-24 | RT-03, S-10 | ⚪ |
+| RT-04b | The docx in `source/` with the test that pins its SHA-256 to the manifest | Node | 2 | 0 | - | RX-17, RX-18 | RT-03 | ⚪ |
+| RT-04c | `npm run rwb.release` (copy, export, verify, ledger, RELEASES row text), with `--dry-run` | Node | 3 | 0 | RT-44 | RX-20 | RT-04a | ⚪ |
+| RT-04d | The `gh release create` script as a pre-release, with `--dry-run` listing assets and SHA-256 | Node | 3 | 0 | - | RX-23 | RT-04a | ⚪ |
+| RT-04e | Publish step that assembles the set in a staging copy of RadiantWordBible, and the `status` field in the manifest | Node | 3 | 0 | RT-32b | RX-26 | S-10, S-11 | ⚪ |
+| RT-05 | The pilot PDFs from the exact v1.1 docx in Word (print-ready and screen, S-7), taken in with `--allow-font Aptos` | Owner | 2 | 0 | RT-33 | PB-9 | RT-04e | ⚪ |
+| RT-06 | **DRY RUN, nothing committed or pushed:** every format assembled in `C:\adaept\aeTest\pilot-stage\`; every check (`rwb.verify --docx`, `--check`, `sha256sum -c`, `verify-rwb.ps1`, PDF identity, the gate guard `rwbExports` reporting the exception, `rwb.release --dry-run`, `gh release create --dry-run`); the reader's view on a copy | Node | 3 | 0 | - | RX-21, PB-10 | RT-04a to RT-04e, RT-05 | ⚪ |
+| RT-07 | **Owner go**, then commit and push the v1.1 PILOT into `C:\adaept\RadiantWordBible` (tag `pilot-v1.1`, README banner, binaries as assets of a GitHub pre-release titled PILOT) | Owner | 1 | 0 | - | RX-26, RX-23 | RT-06 | ⚪ |
+| RT-08 | Reader's view on the real pilot: download the assets into an empty folder, `sha256sum -c`, `verify-rwb.ps1` (also on a copy re-saved in Word), PDF checks | Owner | 2 | 0 | - | RX-21, PB-10 | RT-07 | ⚪ |
+| RT-09 | Lessons and fixes; then retire the pilot (delete the pilot release and tag; decide whether to keep or reset the repository history before it is made public) | Node | 2 | 0 | - | - | RT-08 | ⚪ |
+| **Phase 1: clean the docm, the SSOT (VBA, `aeBibleClass`; every fix gets a test where a test can express it, and every test gets an add-in port)** | | | | | | | | |
+| RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the three fonts) | VBA | 3 | 100 | RT-32a | R111-1 | - | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
+| RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
+| RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 9 | - | R111-3 | - | 🟡 1 of 11 decided |
+| RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 0 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ⚪ |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 0 | RT-18b | F1 | RT-12 | ⚪ |
+| RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 0 | RT-18c | F2 | RT-12 | ⚪ |
+| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 0 | RT-18c | F3 | RT-12 | ⚪ |
+| RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 0 | RT-18d | F4 | RT-12 | ⚪ |
+| RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_Class.md` (MaxTests 94 to 99); must FAIL on the uncleaned copy | VBA | 3 | 0 | RT-19, RT-32a | R111-5 | RT-13 | ⚪ |
+| RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 0 | RT-19 | - | RT-14, RT-18 | ⚪ |
+| RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 0 | RT-19 | - | RT-15, RT-16, RT-18 | ⚪ |
+| RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 0 | RT-19 | - | RT-17, RT-18 | ⚪ |
+| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 0 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | ⚪ |
+| **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
+| RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ |
+| RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
+| RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | VBA | 3 | 0 | RT-22b | PB-7 | RT-20 | ⚪ |
+| RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 0 | RT-22a | PB-7, W-2 | RT-22a | ⚪ |
+| RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 0 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ⚪ |
+| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 0 | RT-19 | PB-7 | RT-22a | ⚪ |
+| **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
+| RT-30 | Font facts: embedding permission, copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used (Aptos's licence is already read) | Node | 2 | 0 | - | S-5 | - | ⚪ |
+| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | VBA | 2 | 0 | RT-32a | F2, F3 | RT-13, RT-15, RT-16 | ⚪ |
+| RT-32a | Node: embedded fonts in the docx are a subset of the three; the same rule read independently of VBA (`rwb.fonts`, cross-check of Test 95); the docx has no rsid attributes | Node | 3 | 25 | RT-18, RT-31 | RX-11 | RT-31 | 🟡 allowlist test against the VBA constant and the PDF font rule are done (RT-02) |
+| RT-32b | Gate: refuse `status: pilot`, any PDF recorded with `allowedExtraFonts`, and fonts outside the three | Add-in | 2 | 0 | RT-32a | RX-11 | RT-04e | ⚪ |
+| RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reproducible | VBA | 3 | 0 | RT-02, RT-05 | PB-9, PB-10 | RT-31 | ⚪ |
+| RT-34 | NOTICE: fonts are embedded under SIL OFL 1.1 with each font's copyright line (today's text says none is embedded) | Node | 1 | 0 | - | PB-6 | RT-30, RT-31 | ⚪ |
+| RT-35 | Fonts-installed preflight on every build machine (VBA check of `Application.FontNames`, bootstrap step) | VBA | 1 | 0 | RT-32a | PB-13, PB-14 | - | ⚪ |
+| **Phase 4: export, gate, release of 1.1.1** | | | | | | | | |
+| RT-40 | Export changes: `Options.StoreRSIDOnSave = False` around the save (proven on a copy), `ExportVersion` 1.1.1, a halting font pass, optional document properties | VBA | 4 | 0 | RT-32a | R111-6, F6, F8 | RT-18 | ⚪ |
+| RT-41 | Full VBA suite (99 tests), fresh Word, AC power | Owner | 2 | 0 | - | R111-7 | RT-40 | ⚪ |
+| RT-42 | `rwb.export` (1.1.1), `rwb.verify --docx`, review in `C:\adaept\aeTest\rwb-export\`, promote | Node | 1 | 0 | - | RX-26 | RT-41 | ⚪ |
+| RT-43 | Full release gate (guards `rwbExports` and the fonts guard) | Add-in | 1 | 0 | RT-32b | RX-11 | RT-42 | ⚪ |
+| RT-44 | Tags `rwb-v1.1.1` and `rwb-text-v1.1.1`, edition ledger entry, RELEASES rows, baseline re-pin LAST, delete the NOTICE exception | Add-in | 2 | 0 | RT-04a | R111-8, RX-24 | RT-43 | ⚪ |
+| **Cross-cutting (during the process)** | | | | | | | | |
+| RT-50a | Security review, VBA scope (every `Shell` and file-write call, the export's `cmd.exe` call, macro signing, the public `rpt\` files) | VBA | 3 | 10 | RT-50b | - | before RT-43 | 🟡 first-pass scans done 2026-11-08 |
+| RT-50b | Security review, Node, add-in and release scope (workflows and secrets, `gh` script, hook, `verify-rwb.ps1`, CSP, history scan PB-5) | Node | 3 | 15 | RT-50a | PB-5, CR-9d | before RT-43 | 🟡 first-pass scans and `npm audit` done 2026-11-08 |
+| RT-51a | DRY review, VBA scope (the 66-book table in 8 places, two copies of `aeBibleCitationClass.cls`) | VBA | 3 | 0 | RT-51b | - | before RT-43 | ⚪ |
+| RT-51b | DRY review, Node and add-in scope (book names, USFM codes, verse counts, style sets, the four OOXML readers) | Node | 3 | 0 | RT-51a | - | before RT-43 | ⚪ |
+| RT-52 | Plan-sync check and progress script: the release-train table is identical in both repositories, the progress and view blocks are regenerated from it (`npm run release.progress`) | Add-in | 2 | 100 | - | - | - | ✅ 2026-11-08 |
+| RT-54 | Hygiene: `rpt\HeadingLog.txt` is a tracked report that every Word test run rewrites; decide to untrack it or ignore it (added 2026-11-08) | VBA | 1 | 0 | - | - | - | ⚪ |
+| RT-53 | After the release the earlier lists continue (RX-13, RX-25, PB-11, PB-12, PB-14, PB-15, PB-17, PB-19, RX-8, RX-9, RX-15): not counted in the percentages | Add-in | 0 | 0 | - | - | RT-44 | ⚪ |
 <!-- RELEASE-TRAIN:END -->
+
+### Progress of this side (generated; the same figures are in the hub plan section 2a)
+
+<!-- PROGRESS:BEGIN -->
+**Overall: 11% complete** (6 of 50 tasks finished; 12.77 of 115 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+
+| By side | Tasks | Finished | Points done / total | % |
+|---|---|---|---|---|
+| VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
+| Node (aeRWB, release, RadiantWordBible) | 16 | 2 | 5.20 / 40 | 13% |
+| Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
+| Owner (decisions, Word sessions, writing) | 9 | 2 | 2.27 / 18 | 13% |
+
+| By phase | Tasks | Finished | Points done / total | % |
+|---|---|---|---|---|
+| Phase 0 | 13 | 3 | 5.00 / 29 | 17% |
+| Phase 1 | 13 | 2 | 4.27 / 29 | 15% |
+| Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
+| Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
+| Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
+| Cross-cutting (during the process) | 6 | 1 | 2.75 / 15 | 18% |
+
+Open points that wait on the owner: 15.73 of 18; open points of build work (VBA, Node, add-in): 86.50 of 97.
+Tasks with weight 0 are listed but not counted: RT-53.
+<!-- PROGRESS:END -->
+
+**The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
+
+<!-- VIEW:BEGIN -->
+**VBA (aeBibleClass): 8% complete** (1 of 19 tasks finished; 3.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+
+| ID | Task | Wt | % | Counterpart (other side) | Status |
+|---|---|---|---|---|---|
+| RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the... | 3 | 100 | RT-32a | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
+| RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix,... | 3 | 0 | RT-18, RT-32a | ⚪ |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 0 | RT-18b | ⚪ |
+| RT-15 | Theme fonts Aptos to Carlito and Noto Sans | 2 | 0 | RT-18c | ⚪ |
+| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 0 | RT-18c | ⚪ |
+| RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 0 | RT-18d | ⚪ |
+| RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_C... | 3 | 0 | RT-19, RT-32a | ⚪ |
+| RT-18b | **Test 96** verse runs not in English (expected 0) | 1 | 0 | RT-19 | ⚪ |
+| RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | 1 | 0 | RT-19 | ⚪ |
+| RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | 1 | 0 | RT-19 | ⚪ |
+| RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | 3 | 0 | RT-22b | ⚪ |
+| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 0 | RT-19 | ⚪ |
+| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced f... | 2 | 0 | RT-32a | ⚪ |
+| RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reprod... | 3 | 0 | RT-02, RT-05 | ⚪ |
+| RT-35 | Fonts-installed preflight on every build machine (VBA check of `Application.FontNames`, bootstrap step) | 1 | 0 | RT-32a | ⚪ |
+| RT-40 | Export changes: `Options.StoreRSIDOnSave = False` around the save (proven on a copy), `ExportVersion` 1.1.1... | 4 | 0 | RT-32a | ⚪ |
+| RT-50a | Security review, VBA scope (every `Shell` and file-write call, the export's `cmd.exe` call, macro signing,... | 3 | 10 | RT-50b | 🟡 first-pass scans done 2026-11-08 |
+| RT-51a | DRY review, VBA scope (the 66-book table in 8 places, two copies of `aeBibleCitationClass.cls`) | 3 | 0 | RT-51b | ⚪ |
+| RT-54 | Hygiene: `rpt\HeadingLog.txt` is a tracked report that every Word test run rewrites; decide to untrack it o... | 1 | 0 | - | ⚪ |
+<!-- VIEW:END -->
+
+**Post-v1.1 work for v1.1.1 and how each piece is verified on the other side** (identical to the hub plan section 2c; the VBA suite grows from 94 to 99 tests):
+
+<!-- CROSSWALK:BEGIN -->
+| What | VBA (`aeBibleClass`): fix and test | Add-in (`aeBibleAddin`): port and verification | Node (`aeRWB`): check on the released files | Train ids |
+|---|---|---|---|---|
+| Fonts outside Carlito, Noto Sans, Liberation Serif (the 18 Aptos runs and the 11 others) | RT-13 fix; **Test 95** `CountFontRunsOutsideAllowlist` (`basFontRunAudit.bas`, committed) | audit-engine port: resolve the font of every run from the OOXML (styles, direct fonts, theme), same allowlist | `rwb.fonts` reads the docx XML independently; the PDF font rule and the allowlist test against the VBA constant are done (RT-02) | RT-13, RT-18, RT-19, RT-32a |
+| Language of verse text (`de-DE` on 51 runs and 17 paragraph marks) | RT-14 fix; **Test 96** | port: read `w:lang` on verse runs and paragraph marks | `rwb.verify`: no language other than English on verse runs | RT-14, RT-18b, RT-19 |
+| Theme fonts and the font slots of the styles in use | RT-15 and RT-16 fixes; **Test 97** | port: theme fonts and style slots from the OOXML | `rwb.fonts`: theme and slots; after RT-31 the embedded fonts are a subset of the three | RT-15, RT-16, RT-18c, RT-19, RT-32a |
+| Stray direct formatting on verse runs (12 runs) | RT-17 fix; **Test 98** | port: count direct run properties other than the character style | `rwb.verify` counts the same in the docx | RT-17, RT-18d, RT-19 |
+| Split runs and `rsid` attributes | RT-40: `Options.StoreRSIDOnSave = False` around the export save (proven) | none needed (Office.js does not see runs) | `rwb.verify`: no `w:rsid*` attribute and no adjacent same-format runs; the reader's merge stays as a safety net | RT-40, RT-32a |
+| Fonts embedded in the docx | RT-31: `EmbedTrueTypeFonts` with a subset, after the three fixes above | none | the font table embeds only the three fonts | RT-31, RT-32a |
+| The PDF | RT-33: `ExportScripturePdf` | none | identity, embedded fonts, recorded as not reproducible (done) | RT-33, RT-02 |
+| Foreword and Introduction styles | RT-22a: styles, approved-styles SSOT, purge list, kept-style list; style tests updated | RT-22b: the add-in's expected-style set and profile detection (style count, 133 sections) with their tests | RT-23: front-matter reader, USFM front-matter book, "Front matter" sheet, front-matter fingerprint | RT-22a, RT-22b, RT-23 |
+| Foreword and Study Bible kept apart | RT-24: **Test 99** | port of Test 99 | the front-matter fingerprint | RT-24, RT-19, RT-23 |
+| Version 1.1.1 | RT-40: `ExportVersion` | the add-in's own version is independent; the gate stamp records the RWB version | `--rwb-version 1.1.1`, tags `rwb-v1.1.1` and `rwb-text-v1.1.1` | RT-40, RT-44 |
+| The fonts exist on the build machine | RT-35: preflight on `Application.FontNames` | none | bootstrap check in `BOOTSTRAP.md` | RT-35 |
+| The release gate | the suite (99 of 99) is read by the gate from `TestReport.txt` | RT-32b: refuse `status: pilot`, `allowedExtraFonts` and fonts outside the three; RT-43 the full gate | the `rwbExports` guard (done, RX-11) plus the new checks | RT-32b, RT-41, RT-43 |
+<!-- CROSSWALK:END -->
+
+The list of every export type, required and recommended, is in the hub plan section 2b. VBA makes two of them: the docx (`ExportScriptureOnlyDocx`) and, from RT-33, the PDFs (print-ready and screen); everything else is produced from the docx by `rwb.export` in `C:\adaept\aeRWB`. How the queue is managed (adding tasks, weights, the scope log) is in the hub plan section 2d.
 
 ## 2. The VBA tasks in detail
 
@@ -78,14 +164,14 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-15 | Theme fonts | `basDocmHygiene.bas`: `ListThemeFonts` / `FixThemeFonts` through `ActiveDocument.DocumentTheme.ThemeFontScheme` (minor Latin Carlito, major Latin Noto Sans) | Test 97 `CountThemeFontsOutsideAllowlist` expected 0 | same | test 0; page count and fingerprint unchanged (compare the PDF page count, 901 today) |
 | RT-16 | Style font slots | `basDocmHygiene.bas`: `ListStyleSlotFonts` / `FixStyleSlotFonts` (`NameBi` and `NameFarEast` of the styles in use to Carlito or Noto Sans) | folded into Test 97 | same | no Microsoft font name left in a style in use |
 | RT-17 | Stray direct formatting | `basDocmHygiene.bas`: `ListStrayVerseFormatting` / `FixStrayVerseFormatting` for the listed runs (bold Job 17:16, complex bold Exodus 38:25, size 10 Ecclesiastes 12:2, colour auto Matthew 19:1 and Luke 21:27, complex size 9 on 8 runs); targeted resets only, character styles kept | Test 98 `CountStrayDirectFormattingRuns` expected 0 | same | test 0 |
-| RT-18 | Wire the tests | `src\aeBibleClass.cls`, the nine steps of `md\Adding_To_Bible_Test_Class.md`: `MaxTests` 94 to 98, expected values, `RunTest (95)` to `(98)`, `Case 95` to `Case 98` in the four Select Case blocks, the private wrapper functions, then `python3 py\js_port_parity.py` (new tests show NOT PORTED until RT-19) | Tests 95 to 98 | import the edited `.cls` after the CRLF check | each new test FAILS on the uncleaned copy and PASSES on the cleaned one; the suite is 98/98; `FINAL_TEST = 94` in the gate stays (it names the verse-structure test, the gate reads `MaxTests` itself) |
+| RT-18 | Wire the tests | `src\aeBibleClass.cls`, the nine steps of `md\Adding_To_Bible_Test_Class.md`: `MaxTests` 94 to 99, expected values, `RunTest (95)` to `(99)`, `Case 95` to `Case 99` in the four Select Case blocks, the private wrapper functions, then `python3 py\js_port_parity.py` (new tests show NOT PORTED until RT-19) | Tests 95 to 99 | import the edited `.cls` after the CRLF check | each new test FAILS on the uncleaned copy and PASSES on the cleaned one; the suite is 99/99; `FINAL_TEST = 94` in the gate stays (it names the verse-structure test, the gate reads `MaxTests` itself) |
 | RT-22 | Foreword styles (VBA part) | the approved-styles SSOT (`basBiblePalette`), `GetPurgeStyles` and the kept-style list in `basBibleOnlyExport.bas`, new paragraph styles for the Foreword and Introduction | Test 45 and the style-usage tests updated | author the text (RT-21) | the export keeps exactly the approved set; the add-in's expected set is updated in step with it |
-| RT-24 | Foreword and Study Bible separation | a test that no study-only style or text is in the scripture-only front matter | new test number, as above | - | 0 hits |
+| RT-24 | Foreword and Study Bible separation | a test that no study-only style or text is in the scripture-only front matter | Test 99 | - | 0 hits |
 | RT-31 | Embed the fonts at export | `basBibleOnlyExport.bas`: `ActiveDocument.EmbedTrueTypeFonts = True`, `SaveSubsetFonts = True` (S-5) on the work copy before `SaveAs2`, only after RT-13, RT-15, RT-16 | export log line | - | the docx's `word/fontTable.xml` embeds only Carlito, Noto Sans, Liberation Serif |
 | RT-33 | PDF from the final docx | `basBibleOnlyExport.bas` (or a new `basBibleOnlyPdf.bas`): `ExportScripturePdf` using `SaveAs2` format 17 or `ExportAsFixedFormat` (print-ready and screen, S-7), fonts embedded by Word | export log: pages, fonts | - | PDF opens; embedded fonts are the three; page count recorded |
 | RT-35 | Fonts-installed preflight | `basFontRunAudit.bas`: a cheap check of `Application.FontNames` for the three families, printed at the start of the audit and of the export | part of Test 95's hint | - | a missing font stops the export with a clear message |
 | RT-40 | Export changes | `basBibleOnlyExport.bas`: (a) `Options.StoreRSIDOnSave = False` just before `SaveAs2`, the previous value restored in **every** exit path including HALT (proven on a copy: rsid attributes 236,210 to 0, runs 123,251 to 96,138, adjacent same-format runs 27,017 to 0, fingerprint identical); (b) `d("ExportVersion") = "1.1.1"` (line 1324); (c) a halting pass that calls `CountFontRunsOutsideAllowlist` on the work copy; (d) optional document properties | export log | - | 0 `w:rsid` attributes in the docx; fingerprint unchanged; HALT demonstrated once on a copy with a seeded Aptos run |
-| RT-41 | Full suite | `RUN_THE_TESTS` (98 tests, about 27 minutes plus the new tests, AC power only) | all | fresh Word | 98/98 PASS, no SKIP |
+| RT-41 | Full suite | `RUN_THE_TESTS` (99 tests, about 27 minutes plus the new tests, AC power only) | all | fresh Word | 99/99 PASS, no SKIP |
 
 The intended shape of the RT-40 (a) change, so it can be reviewed before it is written:
 
@@ -111,5 +197,3 @@ A scratch macro-enabled document carried the module; the target was a **copy** o
 ## 5. Where the other side is tracked
 
 Node, release and add-in tasks: the hub plan above and `C:\adaept\aeBibleAddin\rvw\RWB Export Set and Text Identity 2026-11-06.md` (RX tasks) and `C:\adaept\aeBibleAddin\rvw\RWB Publication and Dev Environment 2026-11-06.md` (PB tasks). The session list is `sync\session_manifest.txt` in this repository.
-
-Release-train block SHA-256 (text between the markers, LF line ends): `1d46954135ac4d836969abe264d02d8256b4304bc6bd253c6ce2b77ddea29023`
