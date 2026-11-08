@@ -11,21 +11,26 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 - Nothing from this plan is committed yet. Commit only when the owner asks.
 - The text fingerprint `c44b0feca5d3dd2ec8496ebe831c8be96aab4e60c39d467665a9f00c9fe099b8` (SHA-256 of the canonical verse stream, computed by `npm run rwb.export` in `C:\adaept\aeRWB`) must not change through any clean-up; a formatting fix that moves a letter is a bug.
 
+## 0. The v1.1 pilot and the Aptos exception (summary; full text in the hub plan sections 0 and 3d)
+
+- **The current v1.1 files are a PILOT TEST of the publishing process, never a final release.** The target is the real repository `C:\adaept\RadiantWordBible`, but **nothing of v1.1 is committed or pushed there until the dry run (RT-06) has passed and the owner says go (RT-07)**. The VBA side of the pilot is small: the two PDFs (print-ready and screen) of the exact v1.1 docx made in Word (RT-05); the v1.1 docm and docx are not changed.
+- **Aptos is not needed.** It is in 18 verse runs of the docm (a direct theme-body-font setting; the theme body font is Aptos), 7 `DatAuthRef` runs and 1 footnote run. It is a Microsoft font under a proprietary licence tied to Microsoft 365 (the licence text read from the font file is quoted in the hub plan 3d; on this machine it is a cloud font). The PDF of v1.1 therefore embeds Aptos. `--allow-font Aptos` on `rwb.export` records that as a reviewed exception on that one PDF, **for the pilot only**; the release gate will refuse any manifest with it (RT-32). The fix is VBA: RT-13 (the 18 runs and the others) and RT-15 (the theme fonts), in this repository.
+
 ## 1. Release train (shared with the hub plan)
 
 <!-- RELEASE-TRAIN:BEGIN -->
 | ID | Task | Where | Linked tasks | Depends on | Status |
 |---|---|---|---|---|---|
-| **Phase 0: rehearsal with the current v1.1 files (the "pre-release"; never public, never the First Edition)** | | | | | |
+| **Phase 0: the v1.1 PILOT TEST in `C:\adaept\RadiantWordBible` (never a final release; nothing of v1.1 is committed or pushed there until the dry run has passed)** | | | | | |
 | RT-01 | Make a PDF of the v1.1 docx from Word (measured 2026-11-08: 901 pages, 7.6 MB, 82 s) | Word (VBA export later: RT-33) | PB-9, PB-10 | - | ✅ experiment done; the rehearsal copy is made in RT-04 |
-| RT-02 | Manifest and verifier learn a file that cannot be rebuilt byte for byte (PDF): `reproducible: false`, recorded SHA-256, identity checks (page count, fonts embedded, metadata), skipped by `--check` | aeRWB | RX-5, RX-10, PB-10 | - | ⚪ |
-| RT-03 | Choose the rehearsal venue (scratch private repository, recommended, or the real private `RadiantWordBible`) | owner | S-6 | - | ⚪ |
-| RT-04 | Promote the v1.1 set into the rehearsal repository: export folder, docx to `source/`, the PDF, `verify-rwb.ps1`, README, NOTICE, LICENSE | aeRWB, RadiantWordBible | RX-26, RX-17, RX-18 | RT-02, RT-03 | ⚪ |
-| RT-05 | Edition ledger entry and a rehearsal tag | aeRWB | RX-24 | RT-04 | ⚪ |
-| RT-06 | `npm run rwb.release` (copy, export, verify, ledger, RELEASES row text) | aeRWB | RX-20 | RT-05 | ⚪ |
-| RT-07 | `gh release create` as a **pre-release** with the xlsx, USFM zip, PDF, `SHA256SUMS`, manifest (owner go each time) | aeRWB | RX-23 | RT-06 | ⚪ |
-| RT-08 | Reader's view: download the assets into an empty folder, `sha256sum -c`, `verify-rwb.ps1` (also on a copy re-saved in Word), PDF checks | owner + me | RX-21, PB-10 | RT-07 | ⚪ |
-| RT-09 | Write down what broke, fix it, delete the rehearsal artefacts | both | - | RT-08 | ⚪ |
+| RT-02 | Manifest and verifier learn a file that cannot be rebuilt byte for byte (PDF): `reproducible: false`, recorded SHA-256, identity checks (page count, fonts embedded, metadata), skipped by `--check` | aeRWB | RX-5, RX-10, PB-10 | - | ✅ 2026-11-08 (aeRWB, uncommitted): `--pdf` and `--allow-font` on `rwb.export`, `fonts.mjs` (the allowlist, equal to the VBA constant by test), `pdf-identity.mjs`, a PDF branch in `rwb.verify`; 208 tests. On the real Word PDF: 901 pages, 7 fonts all embedded, Aptos flagged unless excepted; trial set `C:\adaept\aeTest\rwb-export-pdf-trial` verifies, `--check` passes, `verify-rwb.ps1` OK on 72 files. Still open (PB-10): a text sample compared with the canonical text |
+| RT-03 | Owner decision 2026-11-08: the real `adaept/RadiantWordBible` repository is the target of the pilot; nothing of v1.1 is committed or pushed into it until the dry run (RT-06) has passed; the pilot is marked PILOT in its tag, release title, README, manifest and ledger | owner | S-6 | - | ✅ decided 2026-11-08 |
+| RT-04 | Build what the pilot needs, every outward step with `--dry-run`: edition ledger with a `status` of `pilot` or `release` (RX-24), the docx in `source/` with its SHA test (RX-17, RX-18), `rwb.release` (RX-20), the `gh` release script (RX-23), a publish step that assembles the set in a staging copy of RadiantWordBible, the `status` field in the manifest | aeRWB | RX-17, RX-18, RX-20, RX-23, RX-24 | RT-02, S-10, S-11 | ⚪ |
+| RT-05 | The pilot PDFs from the exact v1.1 docx in Word (print-ready and screen, S-7), taken in with `--allow-font Aptos` (the reviewed exception, pilot only) | owner or me via Word | PB-9 | RT-04 (file names) | ⚪ |
+| RT-06 | **DRY RUN, nothing committed or pushed:** assemble every format in the staging copy `C:\adaept\aeTest\pilot-stage\`; run every check (`rwb.verify --docx`, `--check`, `sha256sum -c`, `verify-rwb.ps1`, the PDF identity, the gate guard `rwbExports` which must report the exception, `rwb.release --dry-run`, `gh release create --dry-run` listing assets and SHA-256); the reader's view on a copy | both | RX-21, PB-10 | RT-04, RT-05 | ⚪ |
+| RT-07 | **Owner go**, then commit and push the v1.1 PILOT into `C:\adaept\RadiantWordBible` (tag `pilot-v1.1`, README banner, binaries as assets of a GitHub pre-release titled PILOT, not committed) | owner + me | RX-26, RX-23 | RT-06 passed | ⚪ |
+| RT-08 | Reader's view on the real pilot: download the assets into an empty folder, `sha256sum -c`, `verify-rwb.ps1` (also on a copy re-saved in Word), PDF checks | owner + me | RX-21, PB-10 | RT-07 | ⚪ |
+| RT-09 | Lessons and fixes; then retire the pilot (delete the pilot release and tag; decide whether to keep or reset the repository history before it is made public) | both | - | RT-08 | ⚪ |
 | **Phase 1: clean the docm, the SSOT (VBA, `aeBibleClass`; every fix gets a test where a test can express it)** | | | | | |
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (written, tested in Word on copies: docx 18 runs, docm 29) | aeBibleClass | R111-1 | - | ✅ 2026-11-07 (uncommitted) |
 | RT-11 | **USER ACTION:** import the module into the dev docm (fresh Word), run `FontRunAudit`, send the result (expect 29) | owner | R111-2 | RT-10 | ✅ 2026-11-08: the real docm reports exactly the 29 runs of the copy (+Body 26, Cambria Math 1, Arial 2) in 208 s; report `C:\adaept\aeBibleClass\rpt\FontRunAudit.txt` (not committed: reports wait for the release) |
@@ -46,7 +51,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | |
 | RT-30 | Font facts: embedding permission (fsType), copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used | me | S-5 | - | ⚪ |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-15, RT-16 and RT-13: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | aeBibleClass | F2, F3 | RT-13, RT-15, RT-16 | ⚪ |
-| RT-32 | Guards: embedded fonts in the docx are a subset of the three; the same rule read independently in Node (`rwb.fonts`, cross-check of VBA Test 95); allowlist conformance test between the VBA constant and the Node and add-in lists; gate guard | aeRWB + aeBibleAddin | RX-11 | RT-31 | ⚪ |
+| RT-32 | Guards: embedded fonts in the docx are a subset of the three; the same rule read independently in Node (`rwb.fonts`, cross-check of VBA Test 95); allowlist conformance test between the VBA constant and the Node and add-in lists (Node side done in RT-02); **the gate refuses `status: pilot` and any PDF recorded with `allowedExtraFonts`** | aeRWB + aeBibleAddin | RX-11 | RT-31 | ⚪ |
 | RT-33 | PDF export from the final docx (VBA), print-ready and screen as decided (D-14), fonts embedded, recorded as non-reproducible | aeBibleClass + aeRWB | PB-9, PB-10, RT-02 | RT-31 | ⚪ |
 | RT-34 | NOTICE: fonts are embedded under SIL OFL 1.1 with each font's copyright line (today's text says none is embedded) | RadiantWordBible | PB-6 | RT-30, RT-31 | ⚪ |
 | RT-35 | Fonts-installed preflight on every machine that builds (VBA check of `Application.FontNames`, bootstrap step, drill PB-14) | aeBibleClass + aeRWB | PB-13, PB-14 | - | ⚪ |
@@ -107,4 +112,4 @@ A scratch macro-enabled document carried the module; the target was a **copy** o
 
 Node, release and add-in tasks: the hub plan above and `C:\adaept\aeBibleAddin\rvw\RWB Export Set and Text Identity 2026-11-06.md` (RX tasks) and `C:\adaept\aeBibleAddin\rvw\RWB Publication and Dev Environment 2026-11-06.md` (PB tasks). The session list is `sync\session_manifest.txt` in this repository.
 
-Release-train block SHA-256 (text between the markers, LF line ends): `8de0c43f1d9ad2fd427c9f714a523cbeb632ccbe1e0ac6756289e04eb414267e`
+Release-train block SHA-256 (text between the markers, LF line ends): `1d46954135ac4d836969abe264d02d8256b4304bc6bd253c6ce2b77ddea29023`
