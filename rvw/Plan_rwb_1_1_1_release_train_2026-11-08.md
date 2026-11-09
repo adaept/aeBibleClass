@@ -92,19 +92,19 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-66 | Split `gh-release.mjs` (about 270 lines, five concerns) into the release notes text, the plan builder, the GitHub calls (tree check, publish, read-back) and the command line, each file under about 120 lines (CR-R8) | Node | 2 | 0 | - | CR-R8 | before RT-44 | ⚪ |
 | RT-67 | Readability pass that changes no behaviour: whole-word names instead of `o`, `e`, `f`, `p`; no nested ternary and no `!= null`; `entryProblems` as a list of named rules; small named helpers (`parseLsTree`, `fileStatus`, `sameEdition`, `defaultEditionId`); lines of at most 140 characters (CR-R9) | Node | 2 | 0 | - | CR-R9 | before RT-44 | ⚪ |
 | RT-68 | A permanent lint check with a ratchet: ESLint rules `complexity` 10, `max-lines-per-function` 40, `max-len` 140, `no-magic-numbers`, `no-nested-ternary`, `no-empty`, with a stored count of today's warnings that may only go down; decision on the one devDependency (CR-Q1) | Node | 2 | 0 | - | CR-Q1 | before RT-44 | ⚪ |
-| RT-69 | Silent catches: 15 `catch { }` blocks swallow every error as if the file were simply missing; one `readIfExists` helper that ignores only ENOENT and lets permission and I/O errors surface (CR-S11) | Node | 1 | 0 | - | CR-S11 | before RT-07 | ⚪ |
+| RT-69 | Silent catches: 15 `catch { }` blocks swallow every error as if the file were simply missing; one `readIfExists` helper that ignores only ENOENT and lets permission and I/O errors surface (CR-S11) | Node | 1 | 100 | - | CR-S11 | before RT-07 | ✅ 2026-11-09 (`readIfExists`, `fileHasBytes` in `fsutil.mjs`; 312 tests, dry run 28 of 28) |
 | RT-53 | After the release the earlier lists continue (RX-13, RX-25, PB-11, PB-12, PB-14, PB-15, PB-17, PB-19, RX-8, RX-9, RX-15): not counted in the percentages | Add-in | 0 | 0 | - | - | RT-44 | ⚪ |
 <!-- RELEASE-TRAIN:END -->
 
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 30% complete** (19 of 66 tasks finished; 44.31 of 149 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 30% complete** (20 of 66 tasks finished; 45.31 of 149 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
-| Node (aeRWB, release, RadiantWordBible) | 32 | 14 | 34.20 / 74 | 46% |
+| Node (aeRWB, release, RadiantWordBible) | 32 | 15 | 35.20 / 74 | 48% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 3 | 4.81 / 18 | 27% |
 
@@ -115,9 +115,9 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
-| Cross-cutting (during the process) | 21 | 6 | 11.75 / 46 | 26% |
+| Cross-cutting (during the process) | 21 | 7 | 12.75 / 46 | 28% |
 
-Open points that wait on the owner: 13.19 of 18; open points of build work (VBA, Node, add-in): 91.50 of 131.
+Open points that wait on the owner: 13.19 of 18; open points of build work (VBA, Node, add-in): 90.50 of 131.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
