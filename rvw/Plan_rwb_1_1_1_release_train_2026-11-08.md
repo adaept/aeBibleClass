@@ -25,12 +25,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-01 | Make a PDF of the v1.1 docx from Word (measured 2026-11-08: 901 pages, 7.6 MB, 82 s) | Node | 1 | 100 | RT-05 | PB-9, PB-10 | - | ✅ experiment done 2026-11-08 |
 | RT-02 | Manifest and verifier take in a file that cannot be rebuilt byte for byte (the PDF): `reproducible: false`, recorded SHA-256, identity (pages, embedded fonts, metadata), skipped by `--check`, free-font rule, `--allow-font` reviewed exception (pilot only) | Node | 3 | 100 | RT-33 | RX-5, RX-10, PB-10 | - | ✅ 2026-11-08 (aeRWB `f06cd1b`, 208 tests) |
 | RT-03 | Owner decision: the real `adaept/RadiantWordBible` repository is the pilot target; nothing of v1.1 is committed or pushed until the dry run has passed; marked PILOT everywhere | Owner | 1 | 100 | - | S-6 | - | ✅ decided 2026-11-08 |
-| RT-04a | Edition ledger `rwb-editions.json` with a `status` of `pilot` or `release` | Node | 3 | 0 | RT-44 | RX-24 | RT-03, S-10 | ⚪ |
-| RT-04b | The docx in `source/` with the test that pins its SHA-256 to the manifest | Node | 2 | 0 | - | RX-17, RX-18 | RT-03 | ⚪ |
-| RT-04c | `npm run rwb.release` (copy, export, verify, ledger, RELEASES row text), with `--dry-run` | Node | 3 | 0 | RT-44 | RX-20 | RT-04a | ⚪ |
-| RT-04d | The `gh release create` script as a pre-release, with `--dry-run` listing assets and SHA-256 | Node | 3 | 0 | - | RX-23 | RT-04a | ⚪ |
+| RT-04a | Edition ledger `rwb-editions.json` with a `status` of `pilot` or `release` | Node | 3 | 100 | RT-44 | RX-24 | RT-03, S-10 | ✅ built 2026-11-09, aeRWB uncommitted (ledger.mjs, 7 tests) |
+| RT-04b | The docx in `source/` with the test that pins its SHA-256 to the manifest | Node | 2 | 100 | - | RX-17, RX-18 | RT-03 | ✅ built 2026-11-09, aeRWB uncommitted (source.mjs, 7 tests, `npm run rwb.source`) |
+| RT-04c | `npm run rwb.release` (copy, export, verify, ledger, RELEASES row text), with `--dry-run` | Node | 3 | 100 | RT-44 | RX-20 | RT-04a | ✅ built 2026-11-09, aeRWB uncommitted (release.mjs, 8 tests, dry run on the v1.1 docx passed 7 of 7 steps) |
+| RT-04d | The `gh release create` script as a pre-release, with `--dry-run` listing assets and SHA-256 | Node | 3 | 100 | - | RX-23 | RT-04a | ✅ built 2026-11-09, aeRWB uncommitted (gh-release.mjs, 6 tests, dry run is the default, `--publish` explicit) |
 | RT-04e | Publish step that assembles the set in a staging copy of RadiantWordBible, and the `status` field in the manifest | Node | 3 | 0 | RT-32b | RX-26 | S-10, S-11 | ⚪ |
-| RT-05 | The pilot PDF (screen/web only, owner 2026-11-09) from the exact v1.1 docx in Word, taken in with `--allow-font Aptos` | Owner | 2 | 0 | RT-33 | PB-9 | RT-04e | ⚪ |
+| RT-05 | The pilot PDF (screen/web only, owner 2026-11-09; the print-ready one is 1.1.1) from the exact v1.1 docx in Word, taken in with `--allow-font Aptos` | Owner | 2 | 0 | RT-33 | PB-9 | RT-04e | ⚪ |
 | RT-06 | **DRY RUN, nothing committed or pushed:** every format assembled in `C:\adaept\aeTest\pilot-stage\`; every check (`rwb.verify --docx`, `--check`, `sha256sum -c`, `verify-rwb.ps1`, PDF identity, the gate guard `rwbExports` reporting the exception, `rwb.release --dry-run`, `gh release create --dry-run`); the reader's view on a copy | Node | 3 | 0 | - | RX-21, PB-10 | RT-04a to RT-04e, RT-05 | ⚪ |
 | RT-07 | **Owner go**, then commit and push the v1.1 PILOT into `C:\adaept\RadiantWordBible` (tag `pilot-v1.1`, README banner, binaries as assets of a GitHub pre-release titled PILOT) | Owner | 1 | 0 | - | RX-26, RX-23 | RT-06 | ⚪ |
 | RT-08 | Reader's view on the real pilot: download the assets into an empty folder, `sha256sum -c`, `verify-rwb.ps1` (also on a copy re-saved in Word), PDF checks | Owner | 2 | 0 | - | RX-21, PB-10 | RT-07 | ⚪ |
@@ -38,7 +38,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | **Phase 1: clean the docm, the SSOT (VBA, `aeBibleClass`; every fix gets a test where a test can express it, and every test gets an add-in port)** | | | | | | | | |
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the three fonts) | VBA | 3 | 100 | RT-32a | R111-1 | - | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
 | RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
-| RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 9 | - | R111-3 | - | 🟡 1 of 11 decided |
+| RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 27 | - | R111-3 | - | 🟡 3 of 11 decided (S-6, S-10, S-11) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 0 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ⚪ |
 | RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 0 | RT-18b | F1 | RT-12 | ⚪ |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 0 | RT-18c | F2 | RT-12 | ⚪ |
@@ -83,25 +83,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 11% complete** (6 of 50 tasks finished; 12.77 of 115 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 21% complete** (10 of 50 tasks finished; 24.31 of 115 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
-| Node (aeRWB, release, RadiantWordBible) | 16 | 2 | 5.20 / 40 | 13% |
+| Node (aeRWB, release, RadiantWordBible) | 16 | 6 | 16.20 / 40 | 41% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
-| Owner (decisions, Word sessions, writing) | 9 | 2 | 2.27 / 18 | 13% |
+| Owner (decisions, Word sessions, writing) | 9 | 2 | 2.81 / 18 | 16% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| Phase 0 | 13 | 3 | 5.00 / 29 | 17% |
-| Phase 1 | 13 | 2 | 4.27 / 29 | 15% |
+| Phase 0 | 13 | 7 | 16.00 / 29 | 55% |
+| Phase 1 | 13 | 2 | 4.81 / 29 | 17% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
 | Cross-cutting (during the process) | 6 | 1 | 2.75 / 15 | 18% |
 
-Open points that wait on the owner: 15.73 of 18; open points of build work (VBA, Node, add-in): 86.50 of 97.
+Open points that wait on the owner: 15.19 of 18; open points of build work (VBA, Node, add-in): 75.50 of 97.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
