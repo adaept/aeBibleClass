@@ -78,18 +78,29 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-51b | DRY review, Node and add-in scope (book names, USFM codes, verse counts, style sets, the four OOXML readers) | Node | 3 | 0 | RT-51a | - | before RT-43 | ⚪ |
 | RT-52 | Plan-sync check and progress script: the release-train table is identical in both repositories, the progress and view blocks are regenerated from it (`npm run release.progress`) | Add-in | 2 | 100 | - | - | - | ✅ 2026-11-08 |
 | RT-54 | Hygiene: `rpt\HeadingLog.txt` is a tracked report that every Word test run rewrites; decide to untrack it or ignore it (added 2026-11-08) | VBA | 1 | 0 | - | - | - | ⚪ |
+| RT-55 | Stage copies only the files git tracks in the base repository (`git ls-files`), refuses symlinks, and the same-or-inside path test resolves real paths (CR-S2, CR-S8) | Node | 2 | 0 | - | CR-S2, CR-S8 | before RT-07 | ⚪ |
+| RT-56 | Publish safety: tell "release not found" from any other `gh` error; require `--commit <sha>` that is pushed and equals the staged tree; pass `--target`; after creating, read the release back and compare the assets and SHA-256 (CR-S1) | Node | 2 | 0 | - | CR-S1 | before RT-07 | ⚪ |
+| RT-57 | Strict field validation in one validators module: id, tag (no leading dash, no spaces), repo slug, version, a real calendar date (CR-S4) | Node | 1 | 0 | - | CR-S4 | before RT-07 | ⚪ |
+| RT-58 | Path safety: `SHA256SUMS` and manifest paths with `..`, an absolute path, a backslash or a drive are rejected by the checker and the stage; `verify-rwb.ps1` excuses an absent file by its name, not by the format the manifest claims (CR-S3, CR-S6) | Node | 2 | 0 | - | CR-S3, CR-S6 | before RT-07 | ⚪ |
+| RT-59 | Release guards: `rwb.release` never re-pins `source/` to a different docx without `--allow-repin`, and takes the expected SHA-256 and fingerprint from the existing pin; a release needs both PDFs, a pilot the screen PDF (CR-S5, CR-F1) | Node | 2 | 0 | - | CR-S5, CR-F1 | before RT-07 | ⚪ |
+| RT-60 | One constants and config module: statuses, formats and their committed/attached layout, file and folder names, tag prefixes, PILOT wording, the hex check, machine paths and the repo slug (with the RWB_* overrides printed at the start of a run), exit codes, the hook's buffer size; used by every module (CR-D3 to D6, D8, D10, M1, M2, M4, M5, S9) | Node | 3 | 0 | - | CR-D3 to D6, D8, D10, M1, M2, M4, M5, S9 | before RT-44 | ⚪ |
+| RT-61 | One command-line parser for the five tools (value, switch, repeatable, required; an unknown option always exits 2), and the error-style convention written in `BOOTSTRAP.md` (CR-D1, CR-R6) | Node | 2 | 0 | - | CR-D1, CR-R6 | before RT-44 | ⚪ |
+| RT-62 | A step-pipeline helper; `runRelease` and `stageRelease` split into named step functions; one options typedef; `defaultEditionId` extracted; `inside` renamed; the README and notes text in one templates module (CR-D2, CR-R1 to R3, R5, R7) | Node | 3 | 0 | - | CR-D2, CR-R1 to R3, R5, R7 | before RT-44 | ⚪ |
+| RT-63 | `readManifest` and manifest accessors replace the repeated parse and the literal keys; `verify.mjs` checks each format through a table instead of one long if/else chain (CR-D7, CR-R4, CR-M3) | Node | 3 | 0 | - | CR-D7, CR-R4, CR-M3 | before RT-44 | ⚪ |
+| RT-64 | Shared test helpers (temp folders, the edition world, the docx path) in `testkit.mjs`; expected counts derived from constants; the `todo` marker removed from each code-review test as its task lands (CR-D9, CR-M6) | Node | 2 | 0 | - | CR-D9, CR-M6 | before RT-44 | ⚪ |
+| RT-65 | Bring the dry-run harness (`pilot_dry_run.sh`, the PDF, re-save and gate probes, now in `C:\adaept\aeTest\scripts\`) into aeRWB as reviewed, parameterised scripts, so the 1.1.1 dry run is the same code (CR-D12) | Node | 2 | 0 | - | CR-D12 | before RT-44 | ⚪ |
 | RT-53 | After the release the earlier lists continue (RX-13, RX-25, PB-11, PB-12, PB-14, PB-15, PB-17, PB-19, RX-8, RX-9, RX-15): not counted in the percentages | Add-in | 0 | 0 | - | - | RT-44 | ⚪ |
 <!-- RELEASE-TRAIN:END -->
 
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 30% complete** (14 of 51 tasks finished; 35.31 of 118 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 25% complete** (14 of 62 tasks finished; 35.31 of 142 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
-| Node (aeRWB, release, RadiantWordBible) | 17 | 9 | 25.20 / 43 | 59% |
+| Node (aeRWB, release, RadiantWordBible) | 28 | 9 | 25.20 / 67 | 38% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 3 | 4.81 / 18 | 27% |
 
@@ -100,9 +111,9 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
-| Cross-cutting (during the process) | 6 | 1 | 2.75 / 15 | 18% |
+| Cross-cutting (during the process) | 17 | 1 | 2.75 / 39 | 7% |
 
-Open points that wait on the owner: 13.19 of 18; open points of build work (VBA, Node, add-in): 69.50 of 100.
+Open points that wait on the owner: 13.19 of 18; open points of build work (VBA, Node, add-in): 93.50 of 124.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
