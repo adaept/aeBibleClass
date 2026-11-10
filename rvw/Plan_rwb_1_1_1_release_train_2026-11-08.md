@@ -49,7 +49,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-14, RT-18 | 🟡 2026-11-10 (wired as Test 96; owner run pending, section 5n) |
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-15, RT-16, RT-18 | 🟡 2026-11-10 (wired as Test 97; owner run pending, section 5n) |
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-17, RT-18 | 🟡 2026-11-10 (wired as Test 98; owner run pending, section 5n) |
-| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 0 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | ⚪ |
+| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 70 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested and SPIKE-WIRED, parity 0 NOT PORTED; Test 99 waits for RT-24; live validation pending, section 5o) |
 | **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
@@ -101,25 +101,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 59% complete** (39 of 68 tasks finished; 90.00 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 61% complete** (39 of 68 tasks finished; 93.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 6 | 18.80 / 42 | 45% |
 | Node (aeRWB, release, RadiantWordBible) | 34 | 26 | 59.20 / 78 | 76% |
-| Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
+| Add-in (aeBibleAddin) | 6 | 1 | 5.50 / 15 | 37% |
 | Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 8 | 22.50 / 29 | 78% |
+| Phase 1 | 13 | 8 | 26.00 / 29 | 90% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 55.00 of 135.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 51.50 of 135.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
