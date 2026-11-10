@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 94
+Private Const MaxTests = 98
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -297,6 +297,11 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
+' Test 97: the theme font slots and the style font slots together (both from basDocmHygiene; 0 = clean).
+Private Function CountThemeAndStyleSlotFontsOutsideAllowlist() As Long
+    CountThemeAndStyleSlotFontsOutsideAllowlist = CountThemeFontsOutsideAllowlist + CountStyleSlotFontsOutsideAllowlist
+End Function
+
 Private Sub Expected1BasedArray()
     Dim Doc As Document
     Dim values As Variant
@@ -324,8 +329,8 @@ Private Sub Expected1BasedArray()
     End If
     
     ' Define the Expected RunTest Result values to store in the array
-    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0)
+    '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93 94 95 96 97 98)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -950,6 +955,14 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (92)
             RunTest (93)
             RunTest (94)
+            DoEvents
+            RunTest (95)
+            DoEvents
+            RunTest (96)
+            DoEvents
+            RunTest (97)
+            DoEvents
+            RunTest (98)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1256,6 +1269,14 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: no paragraph anywhere carries the unapproved built-in 'Normal' style, EXCEPT 2 confirmed-structural exceptions - found 2026-10-07 during the RadiantWordBible scripture-only export's Pass 3 (originally 3 occurrences; 1 was a genuine residual, fixed via basFixDocxRoutines.ReplaceNormalWithBodyText; the other 2, at the paragraph Word requires between/after the document's two adjacent Bible Index tables, cannot be restyled away from 'Normal' by any means tried - VBA, Immediate-window repro, or the Word UI directly - see EDSG/01-styles.md 'Known exception, confirmed 2026-10-07'). Expected value is 2, not 0 - re-diagnose rather than assume regression if this Count changes, since it's tied to the current 2-adjacent-tables layout - CountNormalStyleParagraphs should return 2"
     Case 94
         GetTestDescription = "Rule: the verse-marker structure matches the canonical 66-book data - per book Heading 1/Heading 2 counts, per-chapter Verse marker counts and Chapter Verse marker coverage (was a separate manual step run before release; automated 2026-10-16 so the release gate can read its Result; writes rpt\VerseStructureAudit.txt) - AuditVerseMarkerStructureIssueCount should return 0"
+    Case 95
+        GetTestDescription = "Rule: the text is set in free fonts only - every run resolves to Carlito, Noto Sans or Liberation Serif (owner rule 2026-11-07; the fonts that ship with Office and Windows restrict printing and distribution). Reads the font of every run through Word Find in every story and counts the runs outside the allowlist (found 2026-11-07: 18 verse runs, 7 DatAuthRef, 1 footnote, 3 BodyText non-Latin; cleaned by basDocmHygiene.FixDirectFontRuns) - CountFontRunsOutsideAllowlist should return 0"
+    Case 96
+        GetTestDescription = "Rule: no VerseText paragraph carries a language other than English (US), neither on a run nor on a paragraph mark (found 2026-11-10: 17 paragraph marks and 11 text stretches tagged de-DE; cleaned by basDocmHygiene.FixVerseTextLanguage). Characters outside VerseText, for example the German tags in BibleIndexList, are out of scope (follow-up FU-1) - CountVerseRunsNotEnglish should return 0"
+    Case 97
+        GetTestDescription = "Rule: the document theme fonts and the font slots of the paragraph and character styles name only the three free fonts - Latin, complex script and East Asian slots; a theme token such as +Body Asian counts as the font its theme slot resolves to, an empty slot is fine (found 2026-11-10: Aptos theme, 327 slots naming Calibri, Times New Roman, Arial Unicode MS or MS Mincho; cleaned by basDocmHygiene.FixThemeFonts and FixStyleSlotFonts). The per-script fallback names inside the theme file are RT-40b - CountThemeAndStyleSlotFontsOutsideAllowlist should return 0"
+    Case 98
+        GetTestDescription = "Rule: no run in a VerseText paragraph carries direct run formatting other than a character style, a language or fonts - the other tests own language and fonts (found 2026-11-10: bold, complex bold and complex size 9 on spaces, and colour auto overriding the red of Words of Jesus in 2 places; cleaned by basDocmHygiene.FixStrayVerseFormatting). Read from Content.WordOpenXML, about 15 s - CountStrayDirectFormattingRuns should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1529,6 +1550,18 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 94
         ResultArray(TestNum) = AuditVerseMarkerStructureIssueCount
         m_HintArray(TestNum) = "see rpt\VerseStructureAudit.txt"
+    Case 95
+        ResultArray(TestNum) = CountFontRunsOutsideAllowlist
+        m_HintArray(TestNum) = "run FontRunAudit (basFontRunAudit) for the list"
+    Case 96
+        ResultArray(TestNum) = CountVerseRunsNotEnglish
+        m_HintArray(TestNum) = "run ListVerseRunsNotEnglish (basDocmHygiene) for the list"
+    Case 97
+        ResultArray(TestNum) = CountThemeAndStyleSlotFontsOutsideAllowlist
+        m_HintArray(TestNum) = "run ListThemeFonts and ListStyleSlotFonts (basDocmHygiene) for the list"
+    Case 98
+        ResultArray(TestNum) = CountStrayDirectFormattingRuns
+        m_HintArray(TestNum) = "run ListStrayVerseFormatting (basDocmHygiene) for the list"
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1749,6 +1782,14 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountNormalStyleParagraphs"
     Case 94
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "AuditVerseMarkerStructureIssueCount"
+    Case 95
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFontRunsOutsideAllowlist"
+    Case 96
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountVerseRunsNotEnglish"
+    Case 97
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountThemeAndStyleSlotFontsOutsideAllowlist"
+    Case 98
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStrayDirectFormattingRuns"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -1974,6 +2015,14 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountNormalStyleParagraphs"
     Case 94
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "AuditVerseMarkerStructureIssueCount"
+    Case 95
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFontRunsOutsideAllowlist"
+    Case 96
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountVerseRunsNotEnglish"
+    Case 97
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountThemeAndStyleSlotFontsOutsideAllowlist"
+    Case 98
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStrayDirectFormattingRuns"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
