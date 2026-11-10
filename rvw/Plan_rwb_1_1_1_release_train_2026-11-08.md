@@ -39,7 +39,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | **Phase 1: clean the docm, the SSOT (VBA, `aeBibleClass`; every fix gets a test where a test can express it, and every test gets an add-in port)** | | | | | | | | |
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the three fonts) | VBA | 3 | 100 | RT-32a | R111-1 | - | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
 | RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
-| RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 27 | - | R111-3 | - | 🟡 3 of 11 decided (S-6, S-10, S-11) |
+| RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 100 | - | R111-3 | - | ✅ 2026-11-09 (11 of 11 decided; S-3 bundled, the rest recommended) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 0 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ⚪ |
 | RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 0 | RT-18b | F1 | RT-12 | ⚪ |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 0 | RT-18c | F2 | RT-12 | ⚪ |
@@ -100,25 +100,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 48% complete** (33 of 67 tasks finished; 72.31 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 50% complete** (34 of 67 tasks finished; 74.50 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
 | Node (aeRWB, release, RadiantWordBible) | 33 | 26 | 59.20 / 75 | 79% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
-| Owner (decisions, Word sessions, writing) | 9 | 5 | 7.81 / 18 | 43% |
+| Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 2 | 4.81 / 29 | 17% |
+| Phase 1 | 13 | 3 | 7.00 / 29 | 24% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 10.19 of 18; open points of build work (VBA, Node, add-in): 67.50 of 132.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 67.50 of 132.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
