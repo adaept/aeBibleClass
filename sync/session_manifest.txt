@@ -543,3 +543,8 @@ SESSION 2026-11-08 CLOSING (supersedes the first-task items of the 2026-11-07 en
   Rules: aeBibleAddin ask before every commit and push; aeRWB never commit or push unprompted; ask before committing aeBibleClass too; CR count = LF count after every VBA file edit; the verse-stream fingerprint c44b0feca5d3dd2ec8496ebe831c8be96aab4e60c39d467665a9f00c9fe099b8 must not change.
   Housekeeping: rpt\HeadingLog.txt is rewritten by every Word test run (RT-54); the backup menu has no entry for RadiantWordBible; scratch folders under C:\adaept\aeTest (vba-test, resave, rwb-export-pdf-trial) can be deleted.
 ===============================================================================
+===============================================================================
+SESSION 2026-11-09 CLOSING (supersedes the 2026-11-08 closing entry)
+  State: release train 48% complete (72.31 of 150 points), Phase 0 100%. Pilot pre-release published, read back and retired (RT-07 to RT-09); aeRWB RT-60 to RT-70 done, 354 of 354 tests pass; harness in aeRWB tools/release-harness (RT-65), live run stopped at step 11 of 28 by low memory, not restarted.
+  NEXT-SESSION TASK LIST: C:\adaept\aeBibleAddin\rvw\Code_review 2026-10-09.md section 33. Start: npm run release.progress -- --check (PASS, 48%); git status of the four repositories; no hidden WINWORD.
+===============================================================================

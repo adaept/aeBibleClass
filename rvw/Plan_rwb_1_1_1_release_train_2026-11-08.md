@@ -83,29 +83,29 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-57 | Strict field validation in one validators module: id, tag (no leading dash, no spaces), repo slug, version, a real calendar date (CR-S4) | Node | 1 | 100 | - | CR-S4 | before RT-07 | ✅ 2026-11-09 (`validators.mjs`) |
 | RT-58 | Path safety: `SHA256SUMS` and manifest paths with `..`, an absolute path, a backslash or a drive are rejected by the checker and the stage; `verify-rwb.ps1` excuses an absent file by its name, not by the format the manifest claims (CR-S3, CR-S6) | Node | 2 | 100 | - | CR-S3, CR-S6 | before RT-07 | ✅ 2026-11-09 (`manifest.mjs`, `verify.mjs`, `verify-rwb.ps1`) |
 | RT-59 | Release guards: `rwb.release` never re-pins `source/` to a different docx without `--allow-repin`, and takes the expected SHA-256 and fingerprint from the existing pin; a release needs both PDFs, a pilot the screen PDF (CR-S5, CR-F1) | Node | 2 | 100 | - | CR-S5, CR-F1 | before RT-07 | ✅ 2026-11-09 (`release.mjs --allow-repin`, `REQUIRED_PDFS`) |
-| RT-60 | One constants and config module: statuses, formats and their committed/attached layout, file and folder names, tag prefixes, PILOT wording, the hex check, machine paths and the repo slug (with the RWB_* overrides printed at the start of a run), exit codes, the hook's buffer size; used by every module (CR-D3 to D6, D8, D10, M1, M2, M4, M5, M8, S9); the new bare numbers get names: the id and tag length limits (64, 100), the short commit length (7), the byte units of the git buffer | Node | 3 | 0 | - | CR-D3 to D6, D8, D10, M1, M2, M4, M5, M8, S9 | before RT-44 | ⚪ |
-| RT-61 | One command-line parser for the five tools (value, switch, repeatable, required; an unknown option always exits 2), and the error-style convention written in `BOOTSTRAP.md` (CR-D1, CR-R6) | Node | 2 | 0 | - | CR-D1, CR-R6 | before RT-44 | ⚪ |
-| RT-62 | A step-pipeline helper; `runRelease` and `stageRelease` split into named step functions; one options typedef; `defaultEditionId` extracted; `inside` renamed; the README and notes text in one templates module and the four dead or redundant checks the mutation check found are removed (CR-D2, CR-D13, CR-R1 to R3, R5, R7) | Node | 3 | 0 | - | CR-D2, CR-D13, CR-R1 to R3, R5, R7 | before RT-44 | ⚪ |
-| RT-63 | `readManifest` and manifest accessors replace the repeated parse and the literal keys; `verify.mjs` checks each format through a table instead of one long if/else chain (CR-D7, CR-R4, CR-M3) | Node | 3 | 0 | - | CR-D7, CR-R4, CR-M3 | before RT-44 | ⚪ |
-| RT-64 | Shared test helpers (temp folders, the edition world, the docx path) in `testkit.mjs`; expected counts derived from constants; the `todo` marker removed from each code-review test as its task lands (CR-D9, CR-M6) | Node | 2 | 0 | - | CR-D9, CR-M6 | before RT-44 | ⚪ |
-| RT-65 | Bring the dry-run harness (`pilot_dry_run.sh`, the PDF, re-save and gate probes, now in `C:\adaept\aeTest\scripts\`) into aeRWB as reviewed, parameterised scripts, so the 1.1.1 dry run is the same code (CR-D12) | Node | 2 | 0 | - | CR-D12 | before RT-44 | ⚪ |
-| RT-66 | Split `gh-release.mjs` (about 270 lines, five concerns) into the release notes text, the plan builder, the GitHub calls (tree check, publish, read-back) and the command line, each file under about 120 lines (CR-R8) | Node | 2 | 0 | - | CR-R8 | before RT-44 | ⚪ |
-| RT-67 | Readability pass that changes no behaviour: whole-word names instead of `o`, `e`, `f`, `p`; no nested ternary and no `!= null`; `entryProblems` as a list of named rules; small named helpers (`parseLsTree`, `fileStatus`, `sameEdition`, `defaultEditionId`, `comparePaths`); lines of at most 140 characters (CR-R9) | Node | 2 | 0 | - | CR-R9 | before RT-44 | ⚪ |
-| RT-68 | A permanent lint check with a ratchet: ESLint rules `complexity` 10, `max-lines-per-function` 40, `max-len` 140, `no-magic-numbers`, `no-nested-ternary`, `no-empty`, with a stored count of today's warnings that may only go down; decision on the one devDependency (CR-Q1) | Node | 2 | 0 | - | CR-Q1 | before RT-44 | ⚪ |
+| RT-60 | One constants and config module: statuses, formats and their committed/attached layout, file and folder names, tag prefixes, PILOT wording, the hex check, machine paths and the repo slug (with the RWB_* overrides printed at the start of a run), exit codes, the hook's buffer size; used by every module (CR-D3 to D6, D8, D10, M1, M2, M4, M5, M8, S9); the new bare numbers get names: the id and tag length limits (64, 100), the short commit length (7), the byte units of the git buffer | Node | 3 | 100 | - | CR-D3 to D6, D8, D10, M1, M2, M4, M5, M8, S9 | before RT-44 | ✅ 2026-11-09 (config.mjs) |
+| RT-61 | One command-line parser for the five tools (value, switch, repeatable, required; an unknown option always exits 2), and the error-style convention written in `BOOTSTRAP.md` (CR-D1, CR-R6) | Node | 2 | 100 | - | CR-D1, CR-R6 | before RT-44 | ✅ 2026-11-09 (cli.mjs, 7 tools) |
+| RT-62 | A step-pipeline helper; `runRelease` and `stageRelease` split into named step functions; one options typedef; `defaultEditionId` extracted; `inside` renamed; the README and notes text in one templates module and the four dead or redundant checks the mutation check found are removed (CR-D2, CR-D13, CR-R1 to R3, R5, R7) | Node | 3 | 100 | - | CR-D2, CR-D13, CR-R1 to R3, R5, R7 | before RT-44 | ✅ 2026-11-09 (steps.mjs, templates.mjs) |
+| RT-63 | `readManifest` and manifest accessors replace the repeated parse and the literal keys; `verify.mjs` checks each format through a table instead of one long if/else chain (CR-D7, CR-R4, CR-M3) | Node | 3 | 100 | - | CR-D7, CR-R4, CR-M3 | before RT-44 | ✅ 2026-11-09 (manifest accessors, verify table) |
+| RT-64 | Shared test helpers (temp folders, the edition world, the docx path) in `testkit.mjs`; expected counts derived from constants; the `todo` marker removed from each code-review test as its task lands (CR-D9, CR-M6) | Node | 2 | 100 | - | CR-D9, CR-M6 | before RT-44 | ✅ 2026-11-09 (testkit.mjs) |
+| RT-65 | Bring the dry-run harness (`pilot_dry_run.sh`, the PDF, re-save and gate probes, now in `C:\adaept\aeTest\scripts\`) into aeRWB as reviewed, parameterised scripts, so the 1.1.1 dry run is the same code (CR-D12) | Node | 2 | 100 | - | CR-D12 | before RT-44 | ✅ 2026-11-09 (tools/release-harness; live run stopped at step 11 of 28 by low memory, to be re-run) |
+| RT-66 | Split `gh-release.mjs` (about 270 lines, five concerns) into the release notes text, the plan builder, the GitHub calls (tree check, publish, read-back) and the command line, each file under about 120 lines (CR-R8) | Node | 2 | 100 | - | CR-R8 | before RT-44 | ✅ 2026-11-09 (release-plan.mjs, github.mjs) |
+| RT-67 | Readability pass that changes no behaviour: whole-word names instead of `o`, `e`, `f`, `p`; no nested ternary and no `!= null`; `entryProblems` as a list of named rules; small named helpers (`parseLsTree`, `fileStatus`, `sameEdition`, `defaultEditionId`, `comparePaths`); lines of at most 140 characters (CR-R9) | Node | 2 | 100 | - | CR-R9 | before RT-44 | ✅ 2026-11-09 (readability pass) |
+| RT-68 | A permanent lint check with a ratchet: ESLint rules `complexity` 10, `max-lines-per-function` 40, `max-len` 140, `no-magic-numbers`, `no-nested-ternary`, `no-empty`, with a stored count of today's warnings that may only go down; decision on the one devDependency (CR-Q1) | Node | 2 | 100 | - | CR-Q1 | before RT-44 | ✅ 2026-11-09 (ratchet.mjs with acorn, 218 legacy violations capped) |
 | RT-69 | Silent catches: 15 `catch { }` blocks swallow every error as if the file were simply missing; one `readIfExists` helper that ignores only ENOENT and lets permission and I/O errors surface (CR-S11) | Node | 1 | 100 | - | CR-S11 | before RT-07 | ✅ 2026-11-09 (`readIfExists`, `fileHasBytes` in `fsutil.mjs`; 312 tests, dry run 28 of 28) |
-| RT-70 | `gh-release.mjs` read-back also requires what the first live run returned: each asset's `digest` (`sha256:<hex>`) and the release's `targetCommitish` equal to the pushed commit, instead of checking them only when present (CR-S1 follow-up) | Node | 1 | 0 | - | CR-S1 | before RT-44 | ⚪ |
+| RT-70 | `gh-release.mjs` read-back also requires what the first live run returned: each asset's `digest` (`sha256:<hex>`) and the release's `targetCommitish` equal to the pushed commit, instead of checking them only when present (CR-S1 follow-up) | Node | 1 | 100 | - | CR-S1 | before RT-44 | ✅ 2026-11-09 (digest and target read-back) |
 | RT-53 | After the release the earlier lists continue (RX-13, RX-25, PB-11, PB-12, PB-14, PB-15, PB-17, PB-19, RX-8, RX-9, RX-15): not counted in the percentages | Add-in | 0 | 0 | - | - | RT-44 | ⚪ |
 <!-- RELEASE-TRAIN:END -->
 
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 34% complete** (23 of 67 tasks finished; 50.31 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 48% complete** (33 of 67 tasks finished; 72.31 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
-| Node (aeRWB, release, RadiantWordBible) | 33 | 16 | 37.20 / 75 | 50% |
+| Node (aeRWB, release, RadiantWordBible) | 33 | 26 | 59.20 / 75 | 79% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 5 | 7.81 / 18 | 43% |
 
@@ -116,9 +116,9 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
-| Cross-cutting (during the process) | 22 | 7 | 12.75 / 47 | 27% |
+| Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 10.19 of 18; open points of build work (VBA, Node, add-in): 89.50 of 132.
+Open points that wait on the owner: 10.19 of 18; open points of build work (VBA, Node, add-in): 67.50 of 132.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
