@@ -43,7 +43,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 100 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
 | RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 100 | RT-18b | F1 | RT-12 | ✅ 2026-11-10 (docm: 28 units fixed, count 0; section 5i) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 100 | RT-18c | F2 | RT-12 | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
-| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 75 | RT-18c | F3 | RT-12 | 🟡 2026-11-10 (routines tested on a copy: slots 327 to 0, text hash identical; real docm run pending, section 5k) |
+| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 100 | RT-18c | F3 | RT-12 | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
 | RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 0 | RT-18d | F4 | RT-12 | ⚪ |
 | RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_Class.md` (MaxTests 94 to 99); must FAIL on the uncleaned copy | VBA | 3 | 0 | RT-19, RT-32a | R111-5 | RT-13 | ⚪ |
 | RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 0 | RT-19 | - | RT-14, RT-18 | ⚪ |
@@ -101,11 +101,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 54% complete** (37 of 68 tasks finished; 83.00 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 55% complete** (38 of 68 tasks finished; 83.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| VBA (aeBibleClass) | 19 | 4 | 11.80 / 42 | 28% |
+| VBA (aeBibleClass) | 19 | 5 | 12.30 / 42 | 29% |
 | Node (aeRWB, release, RadiantWordBible) | 34 | 26 | 59.20 / 78 | 76% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
@@ -113,20 +113,20 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 6 | 15.50 / 29 | 53% |
+| Phase 1 | 13 | 7 | 16.00 / 29 | 55% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 62.00 of 135.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 61.50 of 135.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
 **The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
 
 <!-- VIEW:BEGIN -->
-**VBA (aeBibleClass): 28% complete** (4 of 19 tasks finished; 11.80 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+**VBA (aeBibleClass): 29% complete** (5 of 19 tasks finished; 12.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
 
 | ID | Task | Wt | % | Counterpart (other side) | Status |
 |---|---|---|---|---|---|
@@ -134,7 +134,7 @@ Tasks with weight 0 are listed but not counted: RT-53.
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix,... | 3 | 100 | RT-18, RT-32a | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
 | RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 100 | RT-18b | ✅ 2026-11-10 (docm: 28 units fixed, count 0; section 5i) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
-| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 75 | RT-18c | 🟡 2026-11-10 (routines tested on a copy: slots 327 to 0, text hash identical; real docm run pending, section 5k) |
+| RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
 | RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 0 | RT-18d | ⚪ |
 | RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_C... | 3 | 0 | RT-19, RT-32a | ⚪ |
 | RT-18b | **Test 96** verse runs not in English (expected 0) | 1 | 0 | RT-19 | ⚪ |
