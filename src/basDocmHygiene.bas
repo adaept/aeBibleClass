@@ -445,6 +445,136 @@ Private Function ThemeSlotLabel(ByVal iSlot As Long) As String
 End Function
 
 '==============================================================================
+' RT-16 - font slots of the styles (F3): no Microsoft name in any slot of a style in use
+'==============================================================================
+' A style names a font for each script: Latin (Ascii, Other), complex script (Bi) and East Asian (FarEast). The Latin slots are
+' already free fonts; the other slots held Calibri, Times New Roman, Arial Unicode MS, MS Mincho or an unresolved theme token
+' (+Body CS, +Body Asian). No character of the text uses them (all Latin), but the names ship in the style definitions.
+' "In use" is Word's Style.InUse, which is true for 176 of the 427 styles of the dev docm (paragraph and character styles; the
+' table styles are RT-40b). The slot is set to the style's own Latin font when that is one of the three, else to Carlito.
+'   ListStyleSlotFonts                      read-only list of the slots outside the allowlist
+'   ? CountStyleSlotFontsOutsideAllowlist   the number of such slots (Test 97 part two: expected 0; an empty name is fine)
+'   ? FixStyleSlotFonts                     sets those slots (East Asian through the theme: see EnsureThemeEastAsianFonts); returns the number set (-1 = failed)
+Public Sub ListStyleSlotFonts(Optional ByVal sDocName As String = "")
+    Dim nSlots As Long
+    Dim sReport As String
+    ScanStyleSlots ResolveDocument(sDocName), False, nSlots, sReport
+    Debug.Print sReport
+End Sub
+
+Public Function CountStyleSlotFontsOutsideAllowlist(Optional ByVal sDocName As String = "") As Long
+    Dim nSlots As Long
+    Dim sReport As String
+    ScanStyleSlots ResolveDocument(sDocName), False, nSlots, sReport
+    CountStyleSlotFontsOutsideAllowlist = nSlots
+End Function
+
+Public Function FixStyleSlotFonts(Optional ByVal sDocName As String = "") As Long
+    On Error GoTo PROC_ERR
+    Dim oDoc As Word.Document
+    Dim nSlots As Long
+    Dim sReport As String
+    Dim nLenBefore As Long
+
+    m_LastError = ""
+    Set oDoc = ResolveDocument(sDocName)
+    nLenBefore = Len(oDoc.Content.Text)
+    ScanStyleSlots oDoc, True, nSlots, sReport
+    If Len(oDoc.Content.Text) <> nLenBefore Then
+        m_LastError = "FixStyleSlotFonts: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
+        Debug.Print "ERROR in basDocmHygiene." & m_LastError
+        FixStyleSlotFonts = -1
+    Else
+        Debug.Print "FixStyleSlotFonts: " & nSlots & " slot(s) set. Text length unchanged (" & nLenBefore & ")."
+        FixStyleSlotFonts = nSlots
+    End If
+    Exit Function
+PROC_ERR:
+    m_LastError = "FixStyleSlotFonts: " & Err.Number & " " & Err.Description
+    Debug.Print "ERROR in basDocmHygiene." & m_LastError
+    FixStyleSlotFonts = -1
+End Function
+
+Private Sub ScanStyleSlots(ByVal oDoc As Word.Document, ByVal bFix As Boolean, ByRef nSlots As Long, ByRef sReport As String)
+    Dim oStyle As Word.Style
+    Dim sTarget As String
+    Dim sEaTarget As String
+    Dim sAscii As String
+    Dim sOther As String
+    Dim sBi As String
+    Dim sEa As String
+    Dim nStyles As Long
+
+    nSlots = 0
+    If bFix Then EnsureThemeEastAsianFonts oDoc
+    sReport = "Style font slots outside the allowlist - " & oDoc.Name & " - " & Format$(Now, "yyyy-mm-dd hh:nn:ss") & vbCrLf & _
+              "Style | Latin | Other | Complex script | East Asian" & vbCrLf & String$(60, "-") & vbCrLf
+    For Each oStyle In oDoc.Styles
+        If oStyle.InUse And (oStyle.Type = wdStyleTypeParagraph Or oStyle.Type = wdStyleTypeCharacter) Then
+            sAscii = "": sOther = "": sBi = "": sEa = ""
+            On Error Resume Next
+            sAscii = oStyle.Font.NameAscii
+            sOther = oStyle.Font.NameOther
+            sBi = oStyle.Font.NameBi
+            sEa = oStyle.Font.NameFarEast
+            On Error GoTo 0
+            sTarget = IIf(IsAllowedRunFont(sAscii), sAscii, THEME_BODY_FONT)
+            sEaTarget = IIf(sAscii = THEME_HEADING_FONT, "+Headings Asian", "+Body Asian")
+            If SlotIsOutside(oDoc, sOther) Or SlotIsOutside(oDoc, sBi) Or SlotIsOutside(oDoc, sEa) Then
+                nStyles = nStyles + 1
+                If nStyles <= MAX_LISTED_UNITS Then sReport = sReport & oStyle.NameLocal & " | " & sAscii & " | " & sOther & " | " & sBi & " | " & sEa & vbCrLf
+            End If
+            If SlotIsOutside(oDoc, sOther) Then nSlots = nSlots + 1: If bFix Then SetSlot oStyle, "Other", sTarget
+            If SlotIsOutside(oDoc, sBi) Then nSlots = nSlots + 1: If bFix Then SetSlot oStyle, "Bi", sTarget
+            If SlotIsOutside(oDoc, sEa) Then nSlots = nSlots + 1: If bFix Then SetSlot oStyle, "FarEast", sEaTarget
+        End If
+    Next oStyle
+    sReport = sReport & "TOTAL slots outside the allowlist: " & nSlots & " in " & nStyles & " style(s)" & vbCrLf
+End Sub
+
+' A slot is outside when it names something that is not one of the three free fonts; an empty slot is fine. A theme token (+Body CS,
+' +Body Asian ...) counts as the font its theme slot resolves to, so it is outside only when that theme slot is empty or not allowed.
+Private Function SlotIsOutside(ByVal oDoc As Word.Document, ByVal sName As String) As Boolean
+    Dim iThemeSlot As Long
+
+    If Len(sName) = 0 Then Exit Function
+    If Left$(sName, 1) = "+" Then
+        Select Case LCase$(sName)
+            Case "+headings": iThemeSlot = 1
+            Case "+body": iThemeSlot = 2
+            Case "+headings cs": iThemeSlot = 3
+            Case "+body cs": iThemeSlot = 4
+            Case "+headings asian": iThemeSlot = 5
+            Case "+body asian": iThemeSlot = 6
+        End Select
+        If iThemeSlot = 0 Then SlotIsOutside = True: Exit Function
+        sName = ThemeSlotName(oDoc, iThemeSlot)
+        If Len(sName) = 0 Then SlotIsOutside = True: Exit Function
+    End If
+    SlotIsOutside = Not IsAllowedRunFont(sName)
+End Function
+
+' Word refuses a Latin-only font (Carlito, Noto Sans, Arial) as the East Asian font of a style (error 5844, measured 2026-11-10) but
+' accepts the theme token +Body Asian / +Headings Asian, so the theme's own East Asian fonts are set first.
+Private Sub EnsureThemeEastAsianFonts(ByVal oDoc As Word.Document)
+    If StrComp(ThemeSlotName(oDoc, 5), THEME_HEADING_FONT, vbBinaryCompare) <> 0 Then _
+        oDoc.DocumentTheme.ThemeFontScheme.MajorFont(THEME_EASTASIAN).Name = THEME_HEADING_FONT
+    If StrComp(ThemeSlotName(oDoc, 6), THEME_BODY_FONT, vbBinaryCompare) <> 0 Then _
+        oDoc.DocumentTheme.ThemeFontScheme.MinorFont(THEME_EASTASIAN).Name = THEME_BODY_FONT
+End Sub
+
+Private Sub SetSlot(ByVal oStyle As Word.Style, ByVal sSlot As String, ByVal sFont As String)
+    On Error Resume Next
+    Select Case sSlot
+        Case "Other": oStyle.Font.NameOther = sFont
+        Case "Bi": oStyle.Font.NameBi = sFont
+        Case "FarEast": oStyle.Font.NameFarEast = sFont
+    End Select
+    If Err.Number <> 0 Then m_LastError = "SetSlot " & oStyle.NameLocal & " " & sSlot & ": " & Err.Number & " " & Err.Description
+    On Error GoTo 0
+End Sub
+
+'==============================================================================
 ' Small helpers
 '==============================================================================
 Private Function ResolveDocument(ByVal sDocName As String) As Word.Document
