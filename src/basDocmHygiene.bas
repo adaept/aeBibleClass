@@ -30,6 +30,11 @@ Private Const HEADINGS_TOKEN As String = "+Headings"
 Private Const LANG_ENGLISH_US As Long = 1033
 Private Const VERSE_STYLE As String = "VerseText"
 Private Const MAX_LISTED_UNITS As Long = 200
+Private Const THEME_LATIN As Long = 1
+Private Const THEME_COMPLEX As Long = 2
+Private Const THEME_EASTASIAN As Long = 3
+Private Const THEME_BODY_FONT As String = "Carlito"
+Private Const THEME_HEADING_FONT As String = "Noto Sans"
 Private m_LastError As String
 
 ' The text of the last error ("" = none), for callers that cannot see the Immediate window.
@@ -355,6 +360,88 @@ Private Function CleanText(ByVal s As String) As String
         If c < 0 Then c = c + 65536
         If c >= 32 And c <= 126 Then CleanText = CleanText & Mid$(s, i, 1) Else CleanText = CleanText & "?"
     Next i
+End Function
+
+'==============================================================================
+' RT-15 - theme fonts (F2): body Carlito, headings Noto Sans
+'==============================================================================
+' The document theme names a body (minor) and a heading (major) font; text that uses the theme token (+Body, +Headings) resolves to
+' them. Here they were Aptos and Aptos Display, which is how 26 runs came to resolve to Aptos. Only the three slots Word exposes are
+' handled (Latin, complex script, East Asian, of both fonts); the per-script fallback names inside theme1.xml (for example Times
+' New Roman for Hebrew) are not reachable through this API and are left alone.
+'   ListThemeFonts                         read-only list to the Immediate window
+'   ? CountThemeFontsOutsideAllowlist      theme font slots with a name outside the allowlist (Test 97: expected 0; an empty name is fine)
+'   ? FixThemeFonts                        major Latin = Noto Sans, minor Latin = Carlito; returns the number of slots changed
+
+Public Sub ListThemeFonts(Optional ByVal sDocName As String = "")
+    Dim oDoc As Word.Document
+    Dim i As Long
+    Dim sName As String
+
+    Set oDoc = ResolveDocument(sDocName)
+    For i = 1 To 6
+        sName = ThemeSlotName(oDoc, i)
+        Debug.Print ThemeSlotLabel(i) & " = [" & sName & "]" & IIf(Len(sName) > 0 And Not IsAllowedRunFont(sName), "   <- outside the allowlist", "")
+    Next i
+End Sub
+
+Public Function CountThemeFontsOutsideAllowlist(Optional ByVal sDocName As String = "") As Long
+    Dim oDoc As Word.Document
+    Dim i As Long
+    Dim sName As String
+
+    Set oDoc = ResolveDocument(sDocName)
+    For i = 1 To 6
+        sName = ThemeSlotName(oDoc, i)
+        If Len(sName) > 0 And Not IsAllowedRunFont(sName) Then CountThemeFontsOutsideAllowlist = CountThemeFontsOutsideAllowlist + 1
+    Next i
+End Function
+
+Public Function FixThemeFonts(Optional ByVal sDocName As String = "") As Long
+    On Error GoTo PROC_ERR
+    Dim oDoc As Word.Document
+    Dim nChanged As Long
+    Dim nLenBefore As Long
+
+    m_LastError = ""
+    Set oDoc = ResolveDocument(sDocName)
+    nLenBefore = Len(oDoc.Content.Text)
+    If StrComp(ThemeSlotName(oDoc, 1), THEME_HEADING_FONT, vbBinaryCompare) <> 0 Then
+        oDoc.DocumentTheme.ThemeFontScheme.MajorFont(THEME_LATIN).Name = THEME_HEADING_FONT: nChanged = nChanged + 1
+    End If
+    If StrComp(ThemeSlotName(oDoc, 2), THEME_BODY_FONT, vbBinaryCompare) <> 0 Then
+        oDoc.DocumentTheme.ThemeFontScheme.MinorFont(THEME_LATIN).Name = THEME_BODY_FONT: nChanged = nChanged + 1
+    End If
+    If Len(oDoc.Content.Text) <> nLenBefore Then
+        m_LastError = "FixThemeFonts: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
+        Debug.Print "ERROR in basDocmHygiene." & m_LastError
+        FixThemeFonts = -1
+    Else
+        Debug.Print "FixThemeFonts: " & nChanged & " slot(s) changed. Major Latin [" & ThemeSlotName(oDoc, 1) & "], minor Latin [" & ThemeSlotName(oDoc, 2) & "]."
+        FixThemeFonts = nChanged
+    End If
+    Exit Function
+PROC_ERR:
+    m_LastError = "FixThemeFonts: " & Err.Number & " " & Err.Description
+    Debug.Print "ERROR in basDocmHygiene." & m_LastError
+    FixThemeFonts = -1
+End Function
+
+' Slots 1..6 = major Latin, minor Latin, major complex script, minor complex script, major East Asian, minor East Asian.
+Private Function ThemeSlotName(ByVal oDoc As Word.Document, ByVal iSlot As Long) As String
+    On Error Resume Next
+    Select Case iSlot
+        Case 1: ThemeSlotName = oDoc.DocumentTheme.ThemeFontScheme.MajorFont(THEME_LATIN).Name
+        Case 2: ThemeSlotName = oDoc.DocumentTheme.ThemeFontScheme.MinorFont(THEME_LATIN).Name
+        Case 3: ThemeSlotName = oDoc.DocumentTheme.ThemeFontScheme.MajorFont(THEME_COMPLEX).Name
+        Case 4: ThemeSlotName = oDoc.DocumentTheme.ThemeFontScheme.MinorFont(THEME_COMPLEX).Name
+        Case 5: ThemeSlotName = oDoc.DocumentTheme.ThemeFontScheme.MajorFont(THEME_EASTASIAN).Name
+        Case 6: ThemeSlotName = oDoc.DocumentTheme.ThemeFontScheme.MinorFont(THEME_EASTASIAN).Name
+    End Select
+End Function
+
+Private Function ThemeSlotLabel(ByVal iSlot As Long) As String
+    ThemeSlotLabel = Choose(iSlot, "major Latin (headings)", "minor Latin (body)", "major complex script", "minor complex script", "major East Asian", "minor East Asian")
 End Function
 
 '==============================================================================
