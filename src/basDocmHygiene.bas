@@ -192,25 +192,25 @@ Private Sub ResetKeepingCharacterStyles(ByVal r As Word.Range, ByVal oDoc As Wor
     Dim nChars As Long
     Dim k As Long
     Dim sDefault As String
-    Dim saved() As String
+    Dim aStyleNames() As String
 
     sDefault = oDoc.Styles(wdStyleDefaultParagraphFont).NameLocal
     nChars = r.End - r.Start
     If nChars < 1 Then Exit Sub
-    ReDim saved(1 To nChars)
+    ReDim aStyleNames(1 To nChars)
     For k = 1 To nChars
-        saved(k) = sDefault
+        aStyleNames(k) = sDefault
         On Error Resume Next
-        saved(k) = oDoc.Range(r.Start + k - 1, r.Start + k).CharacterStyle.NameLocal
+        aStyleNames(k) = oDoc.Range(r.Start + k - 1, r.Start + k).CharacterStyle.NameLocal
         On Error GoTo 0
     Next k
 
     r.Font.Reset
 
     For k = 1 To nChars
-        If StrComp(saved(k), sDefault, vbTextCompare) <> 0 Then
+        If StrComp(aStyleNames(k), sDefault, vbTextCompare) <> 0 Then
             On Error Resume Next
-            oDoc.Range(r.Start + k - 1, r.Start + k).style = saved(k)
+            oDoc.Range(r.Start + k - 1, r.Start + k).style = aStyleNames(k)
             On Error GoTo 0
         End If
     Next k
@@ -573,6 +573,313 @@ Private Sub SetSlot(ByVal oStyle As Word.Style, ByVal sSlot As String, ByVal sFo
     If Err.Number <> 0 Then m_LastError = "SetSlot " & oStyle.NameLocal & " " & sSlot & ": " & Err.Number & " " & Err.Description
     On Error GoTo 0
 End Sub
+
+'==============================================================================
+' RT-17 - stray direct formatting on verse runs (F4): none (Test 98)
+'==============================================================================
+' Definition (read from the document XML, so it is exhaustive): a run in a VerseText paragraph whose run properties name anything
+' other than a character style, a language (RT-14) or fonts (Tests 95 to 97). Examples found 2026-11-10: bold on a space (Job 17:16),
+' complex bold (Exodus 38:25), complex size 9 (Luke 19:42), and colour auto on a Words of Jesus run, which overrides the red of the
+' character style (Matthew 19:1, Luke 21:27). Mostly spaces, so invisible, but the export and Test 98 flag them.
+'   ListStrayVerseFormatting          read-only list: book chapter:verse | direct properties | text (reads Content.WordOpenXML, about 10 s)
+'   ? CountStrayDirectFormattingRuns  the number of such runs (Test 98: expected 0)
+'   ? FixStrayVerseFormatting         resets exactly those runs (character styles put back) and returns the number reset (-1 = failed);
+'                                     it finds them through Word (bold, complex bold, complex size 9, automatic colour in a coloured
+'                                     character style) and then recounts from the XML: anything left is reported, not guessed at
+Public Sub ListStrayVerseFormatting(Optional ByVal sDocName As String = "")
+    Dim nStray As Long
+    Dim sReport As String
+    ScanStrayXml ResolveDocument(sDocName), nStray, sReport
+    Debug.Print sReport
+End Sub
+
+Public Function CountStrayDirectFormattingRuns(Optional ByVal sDocName As String = "") As Long
+    Dim nStray As Long
+    Dim sReport As String
+    ScanStrayXml ResolveDocument(sDocName), nStray, sReport
+    CountStrayDirectFormattingRuns = nStray
+End Function
+
+Public Function FixStrayVerseFormatting(Optional ByVal sDocName As String = "") As Long
+    On Error GoTo PROC_ERR
+    Dim oDoc As Word.Document
+    Dim nReset As Long
+    Dim nLeft As Long
+    Dim sReport As String
+    Dim nLenBefore As Long
+    Dim bScreen As Boolean
+
+    m_LastError = ""
+    Set oDoc = ResolveDocument(sDocName)
+    bScreen = Application.ScreenUpdating
+    Application.ScreenUpdating = False
+    nLenBefore = Len(oDoc.Content.Text)
+    ScanStrayXml oDoc, nLeft, sReport
+    If nLeft = 0 Then
+        Debug.Print "FixStrayVerseFormatting: no stray run found in the XML, nothing to do."
+        FixStrayVerseFormatting = 0
+        GoTo PROC_EXIT
+    End If
+    ResetStrayByProperty oDoc, "bold", nReset
+    ResetStrayByProperty oDoc, "boldbi", nReset
+    ResetStrayByProperty oDoc, "sizebi9", nReset
+    ResetStrayInColouredCharStyles oDoc, nReset
+    ScanStrayXml oDoc, nLeft, sReport
+    If Len(oDoc.Content.Text) <> nLenBefore Then
+        m_LastError = "FixStrayVerseFormatting: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
+        Debug.Print "ERROR in basDocmHygiene." & m_LastError
+        FixStrayVerseFormatting = -1
+    Else
+        Debug.Print "FixStrayVerseFormatting: " & nReset & " run(s) reset; " & nLeft & " stray run(s) left. Text length unchanged (" & nLenBefore & ")."
+        If nLeft > 0 Then Debug.Print sReport
+        FixStrayVerseFormatting = nReset
+    End If
+PROC_EXIT:
+    Application.ScreenUpdating = bScreen
+    Exit Function
+PROC_ERR:
+    m_LastError = "FixStrayVerseFormatting: " & Err.Number & " " & Err.Description
+    Debug.Print "ERROR in basDocmHygiene." & m_LastError
+    FixStrayVerseFormatting = -1
+    Resume PROC_EXIT
+End Function
+
+' Bold, complex bold or complex size 9 on a run in a VerseText paragraph that has no character style of its own: direct by definition.
+' The Find uses the font criterion only (adding the paragraph style made it about 5 times slower); the paragraph and character styles
+' are checked on each hit.
+Private Sub ResetStrayByProperty(ByVal oDoc As Word.Document, ByVal sProp As String, ByRef nReset As Long)
+    Dim r As Word.Range
+    Dim lastStart As Long
+    Dim guard As Long
+    Dim sCharStyle As String
+    Dim sParaStyle As String
+
+    Set r = oDoc.Content
+    lastStart = -1
+    With r.Find
+        .ClearFormatting
+        .Text = ""
+        .Format = True
+        .Forward = True
+        .Wrap = wdFindStop
+        Select Case sProp
+            Case "bold": .Font.Bold = True
+            Case "boldbi": .Font.BoldBi = True
+            Case "sizebi9": .Font.SizeBi = 9
+        End Select
+        Do While .Execute
+            guard = guard + 1
+            If guard > FIND_SAFETY_LIMIT Or r.Start <= lastStart Then Exit Do
+            lastStart = r.Start
+            sCharStyle = "": sParaStyle = ""
+            On Error Resume Next
+            sCharStyle = r.CharacterStyle.NameLocal
+            sParaStyle = r.Paragraphs(1).style.NameLocal
+            On Error GoTo 0
+            If StrComp(sParaStyle, VERSE_STYLE, vbTextCompare) = 0 And _
+               StrComp(sCharStyle, oDoc.Styles(wdStyleDefaultParagraphFont).NameLocal, vbTextCompare) = 0 Then
+                ResetKeepingCharacterStyles r.Duplicate, oDoc
+                nReset = nReset + 1
+            End If
+            r.Collapse wdCollapseEnd
+        Loop
+    End With
+End Sub
+
+' A run whose colour is automatic although its character style has a colour (Words of Jesus is red): the colour was overridden by hand.
+' One Find per coloured character style, with the style AND the automatic colour as criteria: it returns exactly such runs, including a
+' lone space (0.8 s for the whole docm). Searching the style alone and testing the colour afterwards missed a space inside a stretch
+' whose colour then read as "mixed".
+Private Sub ResetStrayInColouredCharStyles(ByVal oDoc As Word.Document, ByRef nReset As Long)
+    Dim oStyle As Word.Style
+    Dim r As Word.Range
+    Dim lastStart As Long
+    Dim guard As Long
+
+    For Each oStyle In oDoc.Styles
+        If oStyle.Type = wdStyleTypeCharacter And oStyle.InUse Then
+            If oStyle.Font.Color <> wdColorAutomatic Then
+                Set r = oDoc.Content
+                lastStart = -1
+                guard = 0
+                With r.Find
+                    .ClearFormatting
+                    .Text = ""
+                    .Format = True
+                    .Forward = True
+                    .Wrap = wdFindStop
+                    .style = oStyle
+                    .Font.Color = wdColorAutomatic
+                    Do While .Execute
+                        guard = guard + 1
+                        If guard > FIND_SAFETY_LIMIT Or r.Start <= lastStart Then Exit Do
+                        lastStart = r.Start
+                        ResetKeepingCharacterStyles r.Duplicate, oDoc
+                        nReset = nReset + 1
+                        r.Collapse wdCollapseEnd
+                    Loop
+                End With
+            End If
+        End If
+    Next oStyle
+End Sub
+
+' The exhaustive scan, from the XML: every run of every VerseText paragraph.
+Private Sub ScanStrayXml(ByVal oDoc As Word.Document, ByRef nStray As Long, ByRef sReport As String)
+    Dim sXml As String
+    Dim pos As Long
+    Dim p1 As Long
+    Dim pEnd As Long
+    Dim sSeg As String
+    Dim sStyle As String
+    Dim sBook As String
+
+    nStray = 0
+    sReport = "Stray direct formatting on verse runs - " & oDoc.Name & " - " & Format$(Now, "yyyy-mm-dd hh:nn:ss") & vbCrLf & _
+              "Book chapter:verse | direct properties | text" & vbCrLf & String$(60, "-") & vbCrLf
+    sXml = oDoc.Content.WordOpenXML
+    pos = 1
+    Do
+        p1 = NextElement(sXml, pos, "<w:p")
+        If p1 = 0 Then Exit Do
+        pEnd = InStr(p1, sXml, "</w:p>", vbBinaryCompare)
+        If pEnd = 0 Then Exit Do
+        sSeg = Mid$(sXml, p1, pEnd - p1)
+        pos = pEnd + 6
+        sStyle = XmlValueAfter(sSeg, "<w:pStyle w:val=""")
+        If sStyle = "Heading1" Then
+            sBook = Left$(XmlRunText(sSeg), 30)
+        ElseIf sStyle = "VerseText" Then
+            ScanVerseParagraphXml sSeg, sBook, nStray, sReport
+        End If
+    Loop
+    sReport = sReport & "TOTAL stray direct formatting runs: " & nStray & vbCrLf
+End Sub
+
+Private Sub ScanVerseParagraphXml(ByVal sSeg As String, ByVal sBook As String, ByRef nStray As Long, ByRef sReport As String)
+    Dim rp As Long
+    Dim r1 As Long
+    Dim rEnd As Long
+    Dim sRun As String
+    Dim sRStyle As String
+    Dim sText As String
+    Dim sCh As String
+    Dim sVs As String
+    Dim a As Long
+    Dim b As Long
+    Dim sDirect As String
+
+    rp = 1
+    Do
+        r1 = NextElement(sSeg, rp, "<w:r")
+        If r1 = 0 Then Exit Do
+        rEnd = InStr(r1, sSeg, "</w:r>", vbBinaryCompare)
+        If rEnd = 0 Then Exit Do
+        sRun = Mid$(sSeg, r1, rEnd - r1)
+        rp = rEnd + 6
+        sRStyle = XmlValueAfter(sRun, "<w:rStyle w:val=""")
+        sText = XmlRunText(sRun)
+        If sRStyle = "ChapterVersemarker" And Len(DigitsOnly(sText)) > 0 Then sCh = DigitsOnly(sText)
+        If sRStyle = "Versemarker" And Len(DigitsOnly(sText)) > 0 Then sVs = DigitsOnly(sText)
+        a = InStr(sRun, "<w:rPr>")
+        If a > 0 Then
+            b = InStr(a, sRun, "</w:rPr>")
+            If b > a Then
+                sDirect = DirectRunProperties(Mid$(sRun, a + 7, b - a - 7))
+                If Len(sDirect) > 0 Then
+                    nStray = nStray + 1
+                    If nStray <= MAX_LISTED_UNITS Then sReport = sReport & Trim$(sBook & " " & sCh & ":" & sVs) & " | " & sDirect & _
+                        IIf(Len(sRStyle) > 0, " (on " & sRStyle & ")", "") & " | """ & Left$(CleanText(sText), 30) & """" & vbCrLf
+                End If
+            End If
+        End If
+    Loop
+End Sub
+
+' The names of the run property elements other than rStyle, lang and rFonts, joined with "+"; "" when there are none.
+Private Function DirectRunProperties(ByVal sRPr As String) As String
+    Dim i As Long
+    Dim j As Long
+    Dim sName As String
+
+    i = 1
+    Do
+        i = InStr(i, sRPr, "<w:", vbBinaryCompare)
+        If i = 0 Then Exit Do
+        j = i + 3
+        Do While j <= Len(sRPr)
+            If InStr(" />", Mid$(sRPr, j, 1)) > 0 Then Exit Do
+            j = j + 1
+        Loop
+        sName = Mid$(sRPr, i + 3, j - i - 3)
+        If sName <> "rStyle" And sName <> "lang" And sName <> "rFonts" Then
+            DirectRunProperties = DirectRunProperties & IIf(Len(DirectRunProperties) > 0, "+", "") & sName
+        End If
+        i = j
+    Loop
+End Function
+
+' The position of the next element that starts with sTag (for example "<w:p") and is exactly that element, not a longer name such as
+' <w:pPr>: the character after the tag must be a space or ">". One forward search per element (a second search for a form that never
+' occurs would scan the whole 31 MB string each time).
+Private Function NextElement(ByRef sText As String, ByVal lFrom As Long, ByVal sTag As String) As Long
+    Dim p As Long
+    Dim sNext As String
+
+    Do
+        p = InStr(lFrom, sText, sTag, vbBinaryCompare)
+        If p = 0 Then Exit Function
+        sNext = Mid$(sText, p + Len(sTag), 1)
+        If sNext = " " Or sNext = ">" Then
+            NextElement = p
+            Exit Function
+        End If
+        lFrom = p + 1
+    Loop
+End Function
+
+' The value that follows a marker such as <w:pStyle w:val=" up to the closing quote; "" when the marker is absent.
+Private Function XmlValueAfter(ByVal sSeg As String, ByVal sMarker As String) As String
+    Dim p As Long
+    Dim q As Long
+    p = InStr(1, sSeg, sMarker, vbBinaryCompare)
+    If p = 0 Then Exit Function
+    p = p + Len(sMarker)
+    q = InStr(p, sSeg, """", vbBinaryCompare)
+    If q > p Then XmlValueAfter = Mid$(sSeg, p, q - p)
+End Function
+
+' The text of every w:t element of a fragment, joined.
+Private Function XmlRunText(ByVal sSeg As String) As String
+    Dim p As Long
+    Dim q As Long
+    Dim e As Long
+
+    p = 1
+    Do
+        p = InStr(p, sSeg, "<w:t", vbBinaryCompare)
+        If p = 0 Then Exit Do
+        q = InStr(p, sSeg, ">", vbBinaryCompare)
+        If q = 0 Then Exit Do
+        If Mid$(sSeg, p + 4, 1) = ">" Or Mid$(sSeg, p + 4, 1) = " " Then
+            e = InStr(q, sSeg, "</w:t>", vbBinaryCompare)
+            If e = 0 Then Exit Do
+            XmlRunText = XmlRunText & Mid$(sSeg, q + 1, e - q - 1)
+            p = e + 6
+        Else
+            p = q
+        End If
+    Loop
+End Function
+
+Private Function DigitsOnly(ByVal s As String) As String
+    Dim i As Long
+    Dim ch As String
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch >= "0" And ch <= "9" Then DigitsOnly = DigitsOnly & ch
+    Next i
+End Function
 
 '==============================================================================
 ' Small helpers

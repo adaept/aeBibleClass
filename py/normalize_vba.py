@@ -46,6 +46,7 @@ NORMALIZATIONS = [
     (r'(?i)\.Hidden\b',         '.Hidden',          '.Hidden property on Style/Font (VBE auto-demotes to .hidden)'),
     (r'(?i)\.BaseStyle\b',      '.BaseStyle',       '.BaseStyle property on Style (VBE auto-demotes to .baseStyle)'),
     (r'(?i)\.InUse\b',          '.InUse',           '.InUse property on Style (VBE auto-demotes to .inUse when a same-named local exists or lingers in the name table)'),
+    (r'(?i)\.Saved\b',          '.Saved',           '.Saved property on Document (VBE auto-demotes to .saved while a local variable named saved exists in any module; basDocmHygiene did this 2026-11-10 and flipped aeRibbonClass.cls)'),
     (r'(?i)\.Name\b',           '.Name',            '.Name property on VBProject/Style/Document/object'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Field\b',      'As Word.Field',      'As Word.Field type declaration'),

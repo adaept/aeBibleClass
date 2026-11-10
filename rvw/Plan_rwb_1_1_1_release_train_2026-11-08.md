@@ -41,10 +41,10 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
 | RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 100 | - | R111-3 | - | ✅ 2026-11-09 (11 of 11 decided; S-3 bundled, the rest recommended) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 100 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 100 | RT-18b | F1 | RT-12 | ✅ 2026-11-10 (docm: 28 units fixed, count 0; section 5i) |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 100 | RT-18b | F1 | RT-12 | ✅ 2026-11-10 (verified on a copy of the saved docm: count 0; FU-15 closed, sections 5i, 5m) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 100 | RT-18c | F2 | RT-12 | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 100 | RT-18c | F3 | RT-12 | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
-| RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 0 | RT-18d | F4 | RT-12 | ⚪ |
+| RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 100 | RT-18d | F4 | RT-12 | ✅ 2026-11-10 (docm: 5 stray runs to 0; verified on a copy of the saved docm, sections 5l, 5m) |
 | RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_Class.md` (MaxTests 94 to 99); must FAIL on the uncleaned copy | VBA | 3 | 0 | RT-19, RT-32a | R111-5 | RT-13 | ⚪ |
 | RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 0 | RT-19 | - | RT-14, RT-18 | ⚪ |
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 0 | RT-19 | - | RT-15, RT-16, RT-18 | ⚪ |
@@ -101,11 +101,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 55% complete** (38 of 68 tasks finished; 83.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 56% complete** (39 of 68 tasks finished; 85.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| VBA (aeBibleClass) | 19 | 5 | 12.30 / 42 | 29% |
+| VBA (aeBibleClass) | 19 | 6 | 14.30 / 42 | 34% |
 | Node (aeRWB, release, RadiantWordBible) | 34 | 26 | 59.20 / 78 | 76% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
@@ -113,29 +113,29 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 7 | 16.00 / 29 | 55% |
+| Phase 1 | 13 | 8 | 18.00 / 29 | 62% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 61.50 of 135.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 59.50 of 135.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
 **The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
 
 <!-- VIEW:BEGIN -->
-**VBA (aeBibleClass): 29% complete** (5 of 19 tasks finished; 12.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+**VBA (aeBibleClass): 34% complete** (6 of 19 tasks finished; 14.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
 
 | ID | Task | Wt | % | Counterpart (other side) | Status |
 |---|---|---|---|---|---|
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the... | 3 | 100 | RT-32a | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix,... | 3 | 100 | RT-18, RT-32a | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 100 | RT-18b | ✅ 2026-11-10 (docm: 28 units fixed, count 0; section 5i) |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 100 | RT-18b | ✅ 2026-11-10 (verified on a copy of the saved docm: count 0; FU-15 closed, sections 5i, 5m) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
-| RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 0 | RT-18d | ⚪ |
+| RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 100 | RT-18d | ✅ 2026-11-10 (docm: 5 stray runs to 0; verified on a copy of the saved docm, sections 5l, 5m) |
 | RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_C... | 3 | 0 | RT-19, RT-32a | ⚪ |
 | RT-18b | **Test 96** verse runs not in English (expected 0) | 1 | 0 | RT-19 | ⚪ |
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | 1 | 0 | RT-19 | ⚪ |
