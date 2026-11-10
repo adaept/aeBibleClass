@@ -41,7 +41,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
 | RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 100 | - | R111-3 | - | ✅ 2026-11-09 (11 of 11 decided; S-3 bundled, the rest recommended) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 100 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 0 | RT-18b | F1 | RT-12 | ⚪ |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 100 | RT-18b | F1 | RT-12 | ✅ 2026-11-10 (docm: 28 units fixed, count 0; section 5i) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 0 | RT-18c | F2 | RT-12 | ⚪ |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 0 | RT-18c | F3 | RT-12 | ⚪ |
 | RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 0 | RT-18d | F4 | RT-12 | ⚪ |
@@ -100,11 +100,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 52% complete** (35 of 67 tasks finished; 77.50 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 53% complete** (36 of 67 tasks finished; 79.50 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| VBA (aeBibleClass) | 19 | 2 | 6.30 / 42 | 15% |
+| VBA (aeBibleClass) | 19 | 3 | 8.30 / 42 | 20% |
 | Node (aeRWB, release, RadiantWordBible) | 33 | 26 | 59.20 / 75 | 79% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
@@ -112,26 +112,26 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 4 | 10.00 / 29 | 34% |
+| Phase 1 | 13 | 5 | 12.00 / 29 | 41% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 64.50 of 132.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 62.50 of 132.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
 **The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
 
 <!-- VIEW:BEGIN -->
-**VBA (aeBibleClass): 15% complete** (2 of 19 tasks finished; 6.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+**VBA (aeBibleClass): 20% complete** (3 of 19 tasks finished; 8.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
 
 | ID | Task | Wt | % | Counterpart (other side) | Status |
 |---|---|---|---|---|---|
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the... | 3 | 100 | RT-32a | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix,... | 3 | 100 | RT-18, RT-32a | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 0 | RT-18b | ⚪ |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 100 | RT-18b | ✅ 2026-11-10 (docm: 28 units fixed, count 0; section 5i) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | 2 | 0 | RT-18c | ⚪ |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 0 | RT-18c | ⚪ |
 | RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 0 | RT-18d | ⚪ |

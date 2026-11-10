@@ -27,6 +27,9 @@ Private Const BODY_STYLE As String = "BodyText"
 Private Const FIND_SAFETY_LIMIT As Long = 100000
 Private Const BODY_TOKEN As String = "+Body"
 Private Const HEADINGS_TOKEN As String = "+Headings"
+Private Const LANG_ENGLISH_US As Long = 1033
+Private Const VERSE_STYLE As String = "VerseText"
+Private Const MAX_LISTED_UNITS As Long = 200
 Private m_LastError As String
 
 ' The text of the last error ("" = none), for callers that cannot see the Immediate window.
@@ -207,6 +210,152 @@ Private Sub ResetKeepingCharacterStyles(ByVal r As Word.Range, ByVal oDoc As Wor
         End If
     Next k
 End Sub
+
+'==============================================================================
+' RT-14 - language of the verse text (F1): English (US), no direct de-DE tags
+'==============================================================================
+' A "unit" is one stretch of verse text (or one paragraph mark) whose language is not English (US). Only paragraphs in the style
+' VerseText are looked at. Entry points (the document name is optional):
+'   ListVerseRunsNotEnglish         read-only list to the Immediate window (position, language, kind, text)
+'   ? CountVerseRunsNotEnglish      the number of units (Test 96: expected 0)
+'   ? FixVerseTextLanguage          sets the VerseText style language to English (US), then sets exactly the listed units to
+'                                   English (US); returns the number of units fixed (-1 = failed, see DocmHygieneLastError)
+
+Public Sub ListVerseRunsNotEnglish(Optional ByVal sDocName As String = "")
+    Dim oDoc As Word.Document
+    Dim nUnits As Long
+    Dim sReport As String
+
+    Set oDoc = ResolveDocument(sDocName)
+    ScanVerseLanguage oDoc, False, nUnits, sReport
+    Debug.Print sReport
+    Debug.Print "ListVerseRunsNotEnglish: " & nUnits & " unit(s) outside English (US); style " & VERSE_STYLE & " language " & oDoc.Styles(VERSE_STYLE).LanguageID & "."
+End Sub
+
+Public Function CountVerseRunsNotEnglish(Optional ByVal sDocName As String = "") As Long
+    Dim nUnits As Long
+    Dim sReport As String
+    ScanVerseLanguage ResolveDocument(sDocName), False, nUnits, sReport
+    CountVerseRunsNotEnglish = nUnits
+End Function
+
+Public Function FixVerseTextLanguage(Optional ByVal sDocName As String = "") As Long
+    On Error GoTo PROC_ERR
+    Dim oDoc As Word.Document
+    Dim nUnits As Long
+    Dim sReport As String
+    Dim nLenBefore As Long
+
+    m_LastError = ""
+    Set oDoc = ResolveDocument(sDocName)
+    nLenBefore = Len(oDoc.Content.Text)
+    oDoc.Styles(VERSE_STYLE).LanguageID = LANG_ENGLISH_US
+    ScanVerseLanguage oDoc, True, nUnits, sReport
+    If Len(oDoc.Content.Text) <> nLenBefore Then
+        m_LastError = "FixVerseTextLanguage: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
+        Debug.Print "ERROR in basDocmHygiene." & m_LastError
+        FixVerseTextLanguage = -1
+    Else
+        Debug.Print "FixVerseTextLanguage: style language set; " & nUnits & " unit(s) set to English (US). Text length unchanged (" & nLenBefore & ")."
+        FixVerseTextLanguage = nUnits
+    End If
+    Exit Function
+PROC_ERR:
+    m_LastError = "FixVerseTextLanguage: " & Err.Number & " " & Err.Description
+    Debug.Print "ERROR in basDocmHygiene." & m_LastError
+    FixVerseTextLanguage = -1
+End Function
+
+' Finds every character whose language is not English (US) by bisection: Range.LanguageID of a range is English (US) only when every
+' character of it is, so uniform stretches are skipped in one call (measured 2026-11-10: 15 s for the whole docm; walking the 33,826
+' paragraphs one by one was still running after 10 minutes). Characters outside VerseText paragraphs (for example the German tags in
+' BibleIndexList) are counted but left alone.
+Private Sub ScanVerseLanguage(ByVal oDoc As Word.Document, ByVal bFix As Boolean, ByRef nUnits As Long, ByRef sReport As String)
+    Dim cFound As Collection
+    Dim v As Variant
+    Dim lPos As Long
+    Dim lLang As Long
+    Dim lParaEnd As Long
+    Dim bVerse As Boolean
+    Dim lUnitStart As Long
+    Dim lUnitEnd As Long
+    Dim lUnitLang As Long
+    Dim bBusy As Boolean
+    Dim nOutside As Long
+    Dim bScreen As Boolean
+    Dim oChar As Word.Range
+
+    bScreen = Application.ScreenUpdating
+    Application.ScreenUpdating = False
+    nUnits = 0
+    Set cFound = New Collection
+    CollectNonEnglishChars oDoc, 0, oDoc.Content.End, cFound
+    sReport = "VerseText language scan - " & oDoc.Name & " - " & Format$(Now, "yyyy-mm-dd hh:nn:ss") & vbCrLf & _
+              "Position | Language id | Kind | Text" & vbCrLf & String$(60, "-") & vbCrLf
+    lParaEnd = -1
+    For Each v In cFound
+        lPos = CLng(Split(CStr(v), ":")(0))
+        lLang = CLng(Split(CStr(v), ":")(1))
+        If lPos >= lParaEnd Then
+            Set oChar = oDoc.Range(lPos, lPos + 1)
+            lParaEnd = oChar.Paragraphs(1).Range.End
+            bVerse = (StrComp(oChar.Paragraphs(1).style.NameLocal, VERSE_STYLE, vbTextCompare) = 0)
+        End If
+        If Not bVerse Then
+            nOutside = nOutside + 1
+        Else
+            Set oChar = oDoc.Range(lPos, lPos + 1)
+            If oChar.Text = vbCr Then
+                If bBusy Then FinishUnit oDoc, lUnitStart, lUnitEnd, lUnitLang, "text", bFix, nUnits, sReport: bBusy = False
+                FinishUnit oDoc, lPos, lPos + 1, lLang, "paragraph mark", bFix, nUnits, sReport
+            ElseIf bBusy And lPos = lUnitEnd And lLang = lUnitLang Then
+                lUnitEnd = lPos + 1
+            Else
+                If bBusy Then FinishUnit oDoc, lUnitStart, lUnitEnd, lUnitLang, "text", bFix, nUnits, sReport
+                lUnitStart = lPos: lUnitEnd = lPos + 1: lUnitLang = lLang: bBusy = True
+            End If
+        End If
+    Next v
+    If bBusy Then FinishUnit oDoc, lUnitStart, lUnitEnd, lUnitLang, "text", bFix, nUnits, sReport
+    Application.ScreenUpdating = bScreen
+    sReport = sReport & "TOTAL units outside English (US) in " & VERSE_STYLE & ": " & nUnits & "   (characters outside " & VERSE_STYLE & ", not touched: " & nOutside & ")" & vbCrLf
+End Sub
+
+' Appends "position:languageId" to cFound, in document order, for every character of [lStart, lEnd) that is not English (US).
+Private Sub CollectNonEnglishChars(ByVal oDoc As Word.Document, ByVal lStart As Long, ByVal lEnd As Long, ByVal cFound As Collection)
+    Dim lLang As Long
+    Dim lMid As Long
+
+    lLang = oDoc.Range(lStart, lEnd).LanguageID
+    If lLang = LANG_ENGLISH_US Then Exit Sub
+    If lEnd - lStart <= 1 Then
+        cFound.Add lStart & ":" & lLang
+        Exit Sub
+    End If
+    lMid = lStart + (lEnd - lStart) \ 2
+    CollectNonEnglishChars oDoc, lStart, lMid, cFound
+    CollectNonEnglishChars oDoc, lMid, lEnd, cFound
+End Sub
+
+Private Sub FinishUnit(ByVal oDoc As Word.Document, ByVal lStart As Long, ByVal lEnd As Long, ByVal lLang As Long, _
+                       ByVal sKind As String, ByVal bFix As Boolean, ByRef nUnits As Long, ByRef sReport As String)
+    nUnits = nUnits + 1
+    If nUnits <= MAX_LISTED_UNITS Then
+        sReport = sReport & lStart & "-" & lEnd & " | " & lLang & " | " & sKind & " | """ & Left$(CleanText(oDoc.Range(lStart, lEnd).Text), 30) & """" & vbCrLf
+    End If
+    If bFix Then oDoc.Range(lStart, lEnd).LanguageID = LANG_ENGLISH_US
+End Sub
+
+' ASCII-only, single line (the report is ASCII like the other rpt\ files).
+Private Function CleanText(ByVal s As String) As String
+    Dim i As Long
+    Dim c As Long
+    For i = 1 To Len(s)
+        c = AscW(Mid$(s, i, 1))
+        If c < 0 Then c = c + 65536
+        If c >= 32 And c <= 126 Then CleanText = CleanText & Mid$(s, i, 1) Else CleanText = CleanText & "?"
+    Next i
+End Function
 
 '==============================================================================
 ' Small helpers
