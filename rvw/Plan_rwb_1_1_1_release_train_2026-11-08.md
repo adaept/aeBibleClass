@@ -51,12 +51,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-17, RT-18 | 🟡 2026-11-10 (wired as Test 98; owner run pending, section 5n) |
 | RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 70 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested and SPIKE-WIRED, parity 0 NOT PORTED; Test 99 waits for RT-24; live validation pending, section 5o) |
 | **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
-| RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ |
+| RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ owner decision; blocks RT-22a to RT-24 (FU-22) |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | VBA | 3 | 0 | RT-22b | PB-7 | RT-20 | ⚪ |
 | RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 0 | RT-22a | PB-7, W-2 | RT-22a | ⚪ |
 | RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 0 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ⚪ |
-| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 0 | RT-19 | PB-7 | RT-22a | ⚪ |
+| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 0 | RT-19 | PB-7 | RT-22a | 🔴 Blocked 2026-11-10: waits for RT-20 (owner: route D-13) then RT-22a; MaxTests stays 98 (FU-22) |
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
 | RT-30 | Font facts: embedding permission, copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used (Aptos's licence is already read) | Node | 2 | 0 | - | S-5 | - | ⚪ |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | VBA | 2 | 0 | RT-32a | F2, F3 | RT-13, RT-15, RT-16 | ⚪ |
@@ -141,7 +141,7 @@ Tasks with weight 0 are listed but not counted: RT-53.
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | 1 | 75 | RT-19 | 🟡 2026-11-10 (wired as Test 97; owner run pending, section 5n) |
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | 1 | 75 | RT-19 | 🟡 2026-11-10 (wired as Test 98; owner run pending, section 5n) |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | 3 | 0 | RT-22b | ⚪ |
-| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 0 | RT-19 | ⚪ |
+| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 0 | RT-19 | 🔴 Blocked 2026-11-10: waits for RT-20 (owner: route D-13) then RT-22a; MaxTests stays 98 (FU-22) |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced f... | 2 | 0 | RT-32a | ⚪ |
 | RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reprod... | 3 | 0 | RT-02, RT-05 | ⚪ |
 | RT-35 | Fonts-installed preflight on every build machine (VBA check of `Application.FontNames`, bootstrap step) | 1 | 0 | RT-32a | ⚪ |
