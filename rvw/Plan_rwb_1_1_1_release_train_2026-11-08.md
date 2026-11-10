@@ -35,7 +35,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-06 | **DRY RUN, nothing committed or pushed:** every format assembled in `C:\adaept\aeTest\pilot-stage\`; every check (`rwb.verify --docx`, `--check`, `sha256sum -c`, `verify-rwb.ps1`, PDF identity, the gate guard `rwbExports` reporting the exception, `rwb.release --dry-run`, `gh release create --dry-run`); the reader's view on a copy | Node | 3 | 100 | - | RX-21, PB-10 | RT-04a to RT-04e, RT-05 | ✅ 2026-11-09 all 28 steps passed (aeBibleAddin 1547391, aeRWB 434d3f5); awaiting the owner's review before RT-07 |
 | RT-07 | **Owner go**, then commit and push the v1.1 PILOT into `C:\adaept\RadiantWordBible` (tag `pilot-v1.1`, README banner, binaries as assets of a GitHub pre-release titled PILOT) | Owner | 1 | 100 | - | RX-26, RX-23 | RT-06 | ✅ 2026-11-10 01:13 UTC (2026-11-09 local): commit `697016e` pushed to `RadiantWordBible` main, pre-release `pilot-v1.1` created at that commit with 4 assets, read back and checked |
 | RT-08 | Reader's view on the real pilot: download the assets into an empty folder, `sha256sum -c`, `verify-rwb.ps1` (also on a copy re-saved in Word), PDF checks | Owner | 2 | 100 | - | RX-21, PB-10 | RT-07 | ✅ 2026-11-09 18:24 to 18:25 local: all 20 steps passed on the real `pilot-v1.1` (section 5f) |
-| RT-09 | Lessons and fixes; then retire the pilot (delete the pilot release and tag; decide whether to keep or reset the repository history before it is made public) | Node | 2 | 0 | - | - | RT-08 | ⚪ |
+| RT-09 | Lessons and fixes; then retire the pilot (delete the pilot release and tag; decide whether to keep or reset the repository history before it is made public) | Node | 2 | 100 | - | - | RT-08 | ✅ 2026-11-09 (owner, option 2): pre-release and tag deleted, the pilot commit kept; the reset-before-public decision stays open (section 5g) |
 | **Phase 1: clean the docm, the SSOT (VBA, `aeBibleClass`; every fix gets a test where a test can express it, and every test gets an add-in port)** | | | | | | | | |
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the three fonts) | VBA | 3 | 100 | RT-32a | R111-1 | - | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
 | RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
@@ -100,25 +100,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 32% complete** (22 of 67 tasks finished; 48.31 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 34% complete** (23 of 67 tasks finished; 50.31 of 150 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 1 | 3.30 / 42 | 8% |
-| Node (aeRWB, release, RadiantWordBible) | 33 | 15 | 35.20 / 75 | 47% |
+| Node (aeRWB, release, RadiantWordBible) | 33 | 16 | 37.20 / 75 | 50% |
 | Add-in (aeBibleAddin) | 6 | 1 | 2.00 / 15 | 13% |
 | Owner (decisions, Word sessions, writing) | 9 | 5 | 7.81 / 18 | 43% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| Phase 0 | 14 | 13 | 30.00 / 32 | 94% |
+| Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 2 | 4.81 / 29 | 17% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 5 | 0 | 0.00 / 10 | 0% |
 | Cross-cutting (during the process) | 22 | 7 | 12.75 / 47 | 27% |
 
-Open points that wait on the owner: 10.19 of 18; open points of build work (VBA, Node, add-in): 91.50 of 132.
+Open points that wait on the owner: 10.19 of 18; open points of build work (VBA, Node, add-in): 89.50 of 132.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
