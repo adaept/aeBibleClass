@@ -49,7 +49,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-14, RT-18 | ✅ 2026-11-10 (Test 96 PASS in the real docm, 1.4 s; section 5n) |
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-15, RT-16, RT-18 | ✅ 2026-11-10 (Test 97 PASS in the real docm, 0.7 s; section 5n) |
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-17, RT-18 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
-| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 80 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested, SPIKE-WIRED, parity 0 NOT PORTED; LIVE run on the cleaned docm 0 / 0 / 0 / 0 at 23:30; the text-box window fix (FU-28) and the uncleaned-copy check still to run live; Test 99 waits for RT-24; section 5o) |
+| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 90 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested, SPIKE-WIRED, parity 0 NOT PORTED; live on the cleaned docm 0 / 0 / 0 / 0, failing side proven offline 29 / 34 / 290 / 13 (optional live failing run skipped by the owner); only Test 99 is left and waits for RT-24; section 5o) |
 | **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ owner decision; blocks RT-22a to RT-24 (FU-22) |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
@@ -101,25 +101,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 62% complete** (43 of 68 tasks finished; 95.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 63% complete** (43 of 68 tasks finished; 96.00 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 10 | 20.30 / 42 | 48% |
 | Node (aeRWB, release, RadiantWordBible) | 34 | 26 | 59.20 / 78 | 76% |
-| Add-in (aeBibleAddin) | 6 | 1 | 6.00 / 15 | 40% |
+| Add-in (aeBibleAddin) | 6 | 1 | 6.50 / 15 | 43% |
 | Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 12 | 28.00 / 29 | 97% |
+| Phase 1 | 13 | 12 | 28.50 / 29 | 98% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 49.50 of 135.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 49.00 of 135.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
