@@ -31,8 +31,10 @@ Public Const STYLE_FRONT_BODY As String = "RWBFrontBody"
 Public Const STYLE_FRONT_SIGNATURE As String = "RWBFrontSignature"
 Public Const STYLE_FRONT_COPYRIGHT As String = "RWBFrontCopyright"
 
+' Which version of this module is loaded (changes with every edit; printed by DescribeFrontMatterStyles).
+Public Const FRONT_MATTER_VERSION As String = "2026-11-11 f (next style set before the size)"
+
 Private Const FRONT_FONT As String = "Liberation Serif"
-Private Const BASE_STYLE As String = "Normal"
 Private Const LANG_ENGLISH_US As Long = 1033
 Private Const ALIGN_CENTER As Long = 1
 Private Const ALIGN_RIGHT As Long = 2
@@ -106,13 +108,16 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
     Set oDoc = ResolveDoc(sDocName)
     nLenBefore = Len(oDoc.Content.Text)
     vNames = GetFrontMatterStyles()
+    ' All six are created before any specification is applied: a style's Next style may be one created later in the list
+    ' (error 5834 on the first live run, 2026-11-11).
     For i = LBound(vNames) To UBound(vNames)
-        Set oStyle = FindStyle(oDoc, CStr(vNames(i)))
-        If oStyle Is Nothing Then
-            Set oStyle = oDoc.Styles.Add(Name:=CStr(vNames(i)), Type:=wdStyleTypeParagraph)
+        If FindStyle(oDoc, CStr(vNames(i))) Is Nothing Then
+            oDoc.Styles.Add name:=CStr(vNames(i)), Type:=wdStyleTypeParagraph
             nCreated = nCreated + 1
         End If
-        ApplySpec oStyle
+    Next i
+    For i = LBound(vNames) To UBound(vNames)
+        ApplySpec oDoc.Styles(CStr(vNames(i)))
     Next i
     If Len(oDoc.Content.Text) <> nLenBefore Then
         m_LastError = "CreateFrontMatterStyles: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
@@ -160,11 +165,50 @@ PROC_ERR:
     CountFrontMatterStylesOutsideSpec = -1
 End Function
 
+' Read-only diagnostic: for each style, every property that MatchesSpec compares, with the wanted value beside it and a mark where it differs.
+' Use it when CountFrontMatterStylesOutsideSpec lists a style: it shows which property is the one that differs.
+Public Sub DescribeFrontMatterStyles(Optional ByVal sDocName As String = "")
+    Dim oDoc As Word.Document
+    Dim vNames As Variant
+    Dim i As Long
+    Dim oStyle As Word.Style
+    Dim vSpec As Variant
+
+    On Error GoTo PROC_ERR
+    Set oDoc = ResolveDoc(sDocName)
+    Debug.Print "basRwbFrontMatter version " & FRONT_MATTER_VERSION & " - " & oDoc.Name
+    vNames = GetFrontMatterStyles()
+    For i = LBound(vNames) To UBound(vNames)
+        Set oStyle = FindStyle(oDoc, CStr(vNames(i)))
+        If oStyle Is Nothing Then
+            Debug.Print vNames(i) & " | MISSING"
+        Else
+            vSpec = SpecFor(CStr(vNames(i)))
+            With oStyle
+                Debug.Print vNames(i) & " | fonts " & .Font.NameAscii & "/" & .Font.NameOther & "/" & .Font.NameBi & _
+                    " | size " & .Font.Size & " (want " & vSpec(0) & ")" & _
+                    " | align " & .ParagraphFormat.Alignment & " (want " & vSpec(1) & ")" & _
+                    " | before " & .ParagraphFormat.SpaceBefore & " (want " & vSpec(2) & ")" & _
+                    " | after " & .ParagraphFormat.SpaceAfter & " (want " & vSpec(3) & ")" & _
+                    " | bold " & .Font.Bold & " | italic " & .Font.Italic & " (want " & vSpec(5) & ")" & _
+                    " | base [" & CStr(.BaseStyle) & "] | rule " & .ParagraphFormat.LineSpacingRule & _
+                    " | first indent " & .ParagraphFormat.FirstLineIndent & " | spec match " & MatchesSpec(oStyle, vSpec)
+            End With
+        End If
+    Next i
+    Exit Sub
+PROC_ERR:
+    Debug.Print "DescribeFrontMatterStyles: " & Err.Number & " " & Err.Description
+End Sub
+
 Private Sub ApplySpec(ByVal oStyle As Word.Style)
     Dim vSpec As Variant
 
     vSpec = SpecFor(oStyle.NameLocal)
-    oStyle.BaseStyle = BASE_STYLE
+    ' No base style, like the other front styles (the taxonomy audit expects "").
+    oStyle.BaseStyle = ""
+    ' Next style BEFORE the size: setting it afterwards resets a size of 12 to Normal's 9 (probe, live run 2026-11-11).
+    oStyle.NextParagraphStyle = vSpec(6)
     With oStyle.Font
         .Name = FRONT_FONT
         .NameAscii = FRONT_FONT
@@ -184,7 +228,6 @@ Private Sub ApplySpec(ByVal oStyle As Word.Style)
     End With
     oStyle.LanguageID = LANG_ENGLISH_US
     oStyle.NoProofing = True
-    oStyle.NextParagraphStyle = vSpec(6)
 End Sub
 
 Private Function MatchesSpec(ByVal oStyle As Word.Style, ByVal vSpec As Variant) As Boolean
@@ -198,6 +241,7 @@ Private Function MatchesSpec(ByVal oStyle As Word.Style, ByVal vSpec As Variant)
             And .ParagraphFormat.SpaceAfter = vSpec(3) _
             And CBool(.Font.Bold) = CBool(vSpec(4)) _
             And CBool(.Font.Italic) = CBool(vSpec(5)) _
+            And Len(CStr(.BaseStyle)) = 0 _
             And .ParagraphFormat.FirstLineIndent = 0 _
             And .ParagraphFormat.LineSpacingRule = wdLineSpaceSingle
     End With
