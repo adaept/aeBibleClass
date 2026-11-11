@@ -224,7 +224,9 @@ End Sub
 '   ListVerseRunsNotEnglish         read-only list to the Immediate window (position, language, kind, text)
 '   ? CountVerseRunsNotEnglish      the number of units (Test 96: expected 0)
 '   ? FixVerseTextLanguage          sets the VerseText style language to English (US), then sets exactly the listed units to
-'                                   English (US); returns the number of units fixed (-1 = failed, see DocmHygieneLastError)
+'                                   English (US) and marks their paragraphs LanguageDetected = False (without that Word's automatic
+'                                   language detection tags the name-list verses German again within hours); returns the number of
+'                                   units fixed (-1 = failed, see DocmHygieneLastError)
 
 Public Sub ListVerseRunsNotEnglish(Optional ByVal sDocName As String = "")
     Dim oDoc As Word.Document
@@ -348,7 +350,15 @@ Private Sub FinishUnit(ByVal oDoc As Word.Document, ByVal lStart As Long, ByVal 
     If nUnits <= MAX_LISTED_UNITS Then
         sReport = sReport & lStart & "-" & lEnd & " | " & lLang & " | " & sKind & " | """ & Left$(CleanText(oDoc.Range(lStart, lEnd).Text), 30) & """" & vbCrLf
     End If
-    If bFix Then oDoc.Range(lStart, lEnd).LanguageID = LANG_ENGLISH_US
+    If bFix Then
+        oDoc.Range(lStart, lEnd).LanguageID = LANG_ENGLISH_US
+        ' Setting LanguageID leaves LanguageDetected True (read back 2026-11-10), and Word's automatic language detection then
+        ' re-analyses the paragraph and tags a list of names ("Zanoah, En Gannim, Tappuah ...") as German again: the 17 de-DE
+        ' paragraphs came back within hours of the fix. LanguageDetected = False marks the language as set by the user, not detected.
+        On Error Resume Next
+        oDoc.Range(lStart, lEnd).Paragraphs(1).Range.LanguageDetected = False
+        On Error GoTo 0
+    End If
 End Sub
 
 ' ASCII-only, single line (the report is ASCII like the other rpt\ files).
@@ -578,7 +588,8 @@ End Sub
 ' RT-17 - stray direct formatting on verse runs (F4): none (Test 98)
 '==============================================================================
 ' Definition (read from the document XML, so it is exhaustive): a run in a VerseText paragraph whose run properties name anything
-' other than a character style, a language (RT-14) or fonts (Tests 95 to 97). Examples found 2026-11-10: bold on a space (Job 17:16),
+' other than a character style, a language (RT-14), fonts (Tests 95 to 97) or the proofing flag noProof (owner decision A, FU-32, 2026-11-10:
+' the whole text is marked "do not check spelling or grammar"). Examples found 2026-11-10: bold on a space (Job 17:16),
 ' complex bold (Exodus 38:25), complex size 9 (Luke 19:42), and colour auto on a Words of Jesus run, which overrides the red of the
 ' character style (Matthew 19:1, Luke 21:27). Mostly spaces, so invisible, but the export and Test 98 flag them.
 '   ListStrayVerseFormatting          read-only list: book chapter:verse | direct properties | text (reads Content.WordOpenXML, about 10 s)
@@ -796,7 +807,7 @@ Private Sub ScanVerseParagraphXml(ByVal sSeg As String, ByVal sBook As String, B
     Loop
 End Sub
 
-' The names of the run property elements other than rStyle, lang and rFonts, joined with "+"; "" when there are none.
+' The names of the run property elements other than rStyle, lang, rFonts and noProof, joined with "+"; "" when there are none.
 Private Function DirectRunProperties(ByVal sRPr As String) As String
     Dim i As Long
     Dim j As Long
@@ -812,7 +823,7 @@ Private Function DirectRunProperties(ByVal sRPr As String) As String
             j = j + 1
         Loop
         sName = Mid$(sRPr, i + 3, j - i - 3)
-        If sName <> "rStyle" And sName <> "lang" And sName <> "rFonts" Then
+        If sName <> "rStyle" And sName <> "lang" And sName <> "rFonts" And sName <> "noProof" Then
             DirectRunProperties = DirectRunProperties & IIf(Len(DirectRunProperties) > 0, "+", "") & sName
         End If
         i = j

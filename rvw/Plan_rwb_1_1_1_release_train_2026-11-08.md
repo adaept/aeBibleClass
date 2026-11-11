@@ -41,7 +41,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-11 | **USER ACTION:** import the module into the dev docm, run `FontRunAudit` | Owner | 1 | 100 | - | R111-2 | RT-10 | ✅ 2026-11-08 (29 runs, 208 s) |
 | RT-12 | Owner decisions S-1 to S-11 (11 questions; S-6 is decided) | Owner | 3 | 100 | - | R111-3 | - | ✅ 2026-11-09 (11 of 11 decided; S-3 bundled, the rest recommended) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix, on a copy first) | VBA | 3 | 100 | RT-18, RT-32a | R111-4, PB-20, F5 | RT-11, RT-12 | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 100 | RT-18b | F1 | RT-12 | ✅ 2026-11-10 (verified on a copy of the saved docm: count 0; FU-15 closed, sections 5i, 5m) |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | VBA | 2 | 100 | RT-18b | F1 | RT-12 | ✅ 2026-11-10 23:02 (German gone everywhere in the saved docm, still 0 after 80 minutes with detection off; fix sets LanguageDetected False; FU-30, sections 5i, 5o) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 100 | RT-18c | F2 | RT-12 | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 100 | RT-18c | F3 | RT-12 | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
 | RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 100 | RT-18d | F4 | RT-12 | ✅ 2026-11-10 (docm: 5 stray runs to 0; verified on a copy of the saved docm, sections 5l, 5m) |
@@ -49,7 +49,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-14, RT-18 | ✅ 2026-11-10 (Test 96 PASS in the real docm, 1.4 s; section 5n) |
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-15, RT-16, RT-18 | ✅ 2026-11-10 (Test 97 PASS in the real docm, 0.7 s; section 5n) |
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-17, RT-18 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
-| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 70 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested and SPIKE-WIRED, parity 0 NOT PORTED; Test 99 waits for RT-24; live validation pending, section 5o) |
+| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 70 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested and SPIKE-WIRED, parity 0 NOT PORTED; first live run not yet a pass: 1 / 34 / 23 / 0, offline after fixes 1 / 6 / 0 / 0, FU-26 to FU-29; Test 99 waits for RT-24; section 5o) |
 | **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ owner decision; blocks RT-22a to RT-24 (FU-22) |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
@@ -132,7 +132,7 @@ Tasks with weight 0 are listed but not counted: RT-53.
 |---|---|---|---|---|---|
 | RT-10 | Read-only font-run audit `basFontRunAudit.bas` (tested on copies and on the real docm: 29 runs outside the... | 3 | 100 | RT-32a | ✅ 2026-11-07 (aeBibleClass `a84eace`, evidence `e3baeb8`) |
 | RT-13 | Fix the font runs: 18 verse runs, 7 `DatAuthRef`, 1 footnote, 3 `BodyText` non-Latin (list first, then fix,... | 3 | 100 | RT-18, RT-32a | ✅ 2026-11-09 (docm: 26 runs reset, count 0; section 5h) |
-| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 100 | RT-18b | ✅ 2026-11-10 (verified on a copy of the saved docm: count 0; FU-15 closed, sections 5i, 5m) |
+| RT-14 | Language: English (US) for VerseText, remove 51 run and 17 paragraph-mark `de-DE` tags | 2 | 100 | RT-18b | ✅ 2026-11-10 23:02 (German gone everywhere in the saved docm, still 0 after 80 minutes with detection off; fix sets LanguageDetected False; FU-30, sections 5i, 5o) |
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
 | RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 100 | RT-18d | ✅ 2026-11-10 (docm: 5 stray runs to 0; verified on a copy of the saved docm, sections 5l, 5m) |
