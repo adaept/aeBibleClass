@@ -45,10 +45,10 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | VBA | 2 | 100 | RT-18c | F2 | RT-12 | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | VBA | 2 | 100 | RT-18c | F3 | RT-12 | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
 | RT-17 | Clear the 12 stray direct formats on verse runs | VBA | 2 | 100 | RT-18d | F4 | RT-12 | ✅ 2026-11-10 (docm: 5 stray runs to 0; verified on a copy of the saved docm, sections 5l, 5m) |
-| RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_Class.md` (MaxTests 94 to 99); must FAIL on the uncleaned copy | VBA | 3 | 75 | RT-19, RT-32a | R111-5 | RT-13 | 🟡 2026-11-10 (Tests 95 to 98 wired in `aeBibleClass.cls`, MaxTests 98, compiled, fail on the uncleaned copy; owner imports and runs `RUN_THE_TESTS`, section 5n) |
-| RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-14, RT-18 | 🟡 2026-11-10 (wired as Test 96; owner run pending, section 5n) |
-| RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-15, RT-16, RT-18 | 🟡 2026-11-10 (wired as Test 97; owner run pending, section 5n) |
-| RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 75 | RT-19 | - | RT-17, RT-18 | 🟡 2026-11-10 (wired as Test 98; owner run pending, section 5n) |
+| RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_Class.md` (MaxTests 94 to 99); must FAIL on the uncleaned copy | VBA | 3 | 100 | RT-19, RT-32a | R111-5 | RT-13 | ✅ 2026-11-10 (Test 95 PASS in the real docm, 96.1 s; wired, MaxTests 98, fails on the uncleaned copy; section 5n) |
+| RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-14, RT-18 | ✅ 2026-11-10 (Test 96 PASS in the real docm, 1.4 s; section 5n) |
+| RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-15, RT-16, RT-18 | ✅ 2026-11-10 (Test 97 PASS in the real docm, 0.7 s; section 5n) |
+| RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-17, RT-18 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
 | RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 70 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-10 (Tests 95 to 98 ported, tested and SPIKE-WIRED, parity 0 NOT PORTED; Test 99 waits for RT-24; live validation pending, section 5o) |
 | **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 0 | RT-22a | PB-7, D-13, S-3 | - | ⚪ owner decision; blocks RT-22a to RT-24 (FU-22) |
@@ -101,11 +101,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 61% complete** (39 of 68 tasks finished; 93.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 62% complete** (43 of 68 tasks finished; 95.00 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| VBA (aeBibleClass) | 19 | 6 | 18.80 / 42 | 45% |
+| VBA (aeBibleClass) | 19 | 10 | 20.30 / 42 | 48% |
 | Node (aeRWB, release, RadiantWordBible) | 34 | 26 | 59.20 / 78 | 76% |
 | Add-in (aeBibleAddin) | 6 | 1 | 5.50 / 15 | 37% |
 | Owner (decisions, Word sessions, writing) | 9 | 6 | 10.00 / 18 | 56% |
@@ -113,20 +113,20 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 8 | 26.00 / 29 | 90% |
+| Phase 1 | 13 | 12 | 27.50 / 29 | 95% |
 | Phase 2 | 6 | 0 | 0.00 / 18 | 0% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 51.50 of 135.
+Open points that wait on the owner: 8.00 of 18; open points of build work (VBA, Node, add-in): 50.00 of 135.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
 **The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
 
 <!-- VIEW:BEGIN -->
-**VBA (aeBibleClass): 45% complete** (6 of 19 tasks finished; 18.80 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+**VBA (aeBibleClass): 48% complete** (10 of 19 tasks finished; 20.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
 
 | ID | Task | Wt | % | Counterpart (other side) | Status |
 |---|---|---|---|---|---|
@@ -136,10 +136,10 @@ Tasks with weight 0 are listed but not counted: RT-53.
 | RT-15 | Theme fonts Aptos to Carlito and Noto Sans | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: slots 2 to 0; page-count check open, section 5j) |
 | RT-16 | Complex-script and East Asian font slots of the styles in use to free fonts | 2 | 100 | RT-18c | ✅ 2026-11-10 (docm: 327 slots outside, 233 set, count 0; page-count check open, FU-2, section 5k) |
 | RT-17 | Clear the 12 stray direct formats on verse runs | 2 | 100 | RT-18d | ✅ 2026-11-10 (docm: 5 stray runs to 0; verified on a copy of the saved docm, sections 5l, 5m) |
-| RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_C... | 3 | 75 | RT-19, RT-32a | 🟡 2026-11-10 (Tests 95 to 98 wired in `aeBibleClass.cls`, MaxTests 98, compiled, fail on the uncleaned copy; owner imports and runs `RUN_THE_TESTS`, section 5n) |
-| RT-18b | **Test 96** verse runs not in English (expected 0) | 1 | 75 | RT-19 | 🟡 2026-11-10 (wired as Test 96; owner run pending, section 5n) |
-| RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | 1 | 75 | RT-19 | 🟡 2026-11-10 (wired as Test 97; owner run pending, section 5n) |
-| RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | 1 | 75 | RT-19 | 🟡 2026-11-10 (wired as Test 98; owner run pending, section 5n) |
+| RT-18 | **Test 95** fonts outside the allowlist (expected 0) and the nine-step wiring of `md\Adding_To_Bible_Test_C... | 3 | 100 | RT-19, RT-32a | ✅ 2026-11-10 (Test 95 PASS in the real docm, 96.1 s; wired, MaxTests 98, fails on the uncleaned copy; section 5n) |
+| RT-18b | **Test 96** verse runs not in English (expected 0) | 1 | 100 | RT-19 | ✅ 2026-11-10 (Test 96 PASS in the real docm, 1.4 s; section 5n) |
+| RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | 1 | 100 | RT-19 | ✅ 2026-11-10 (Test 97 PASS in the real docm, 0.7 s; section 5n) |
+| RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | 1 | 100 | RT-19 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | 3 | 0 | RT-22b | ⚪ |
 | RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 0 | RT-19 | 🔴 Blocked 2026-11-10: waits for RT-20 (owner: route D-13) then RT-22a; MaxTests stays 98 (FU-22) |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced f... | 2 | 0 | RT-32a | ⚪ |
