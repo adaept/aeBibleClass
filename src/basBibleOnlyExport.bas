@@ -104,7 +104,9 @@ Public Function GetScriptureOnlyStyles() As Variant
         "Chapter Verse marker", "Verse marker", _
         "Words of Jesus", "EmphasisBlack", "EmphasisRed", _
         "Psalms BOOK", "PsalmSuperscription", _
-        "Selah", "PsalmAcrostic", "SpeakerLabel")
+        "Selah", "PsalmAcrostic", "SpeakerLabel", _
+        "RWBFrontTitle", "RWBFrontEpigraph", "RWBFrontHeading", "RWBFrontBody", _
+        "RWBFrontSignature", "RWBFrontCopyright")
 End Function
 
 ' ==========================================================================
