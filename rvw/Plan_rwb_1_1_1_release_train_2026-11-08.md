@@ -65,7 +65,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reproducible | VBA | 3 | 0 | RT-02, RT-05 | PB-9, PB-10 | RT-31 | ⚪ |
 | RT-34 | NOTICE: fonts are embedded under SIL OFL 1.1 with each font's copyright line (today's text says none is embedded) | Node | 1 | 0 | - | PB-6 | RT-30, RT-31 | ⚪ |
 | RT-35 | Fonts-installed preflight on every build machine (VBA check of `Application.FontNames`, bootstrap step) | VBA | 1 | 0 | RT-32a | PB-13, PB-14 | - | ⚪ |
-| RT-71 | Editor setup check (owner question 2026-11-11): a read-only PowerShell script, no Word and no macros, lists whether Carlito, Noto Sans and Liberation Serif are installed (Windows font list, per user and machine-wide), with a short "before you edit" note (sources, licences, versions); tested with a fake font list; includes a spike: can the add-in detect a missing font through Office.js? | Node | 2 | 0 | RT-35 | PB-21, PB-14, D-16 | RT-30 | ⚪ |
+| RT-71 | Editor setup check (owner question 2026-11-11): a read-only PowerShell script, no Word and no macros, lists whether Carlito, Noto Sans and Liberation Serif are installed (Windows font list, per user and machine-wide), with a short "before you edit" note (sources, licences, versions); tested with a fake font list; includes a spike: can the add-in detect a missing font through Office.js? | Node | 2 | 90 | RT-35 | PB-21, PB-14, D-16 | RT-30 | 🟡 2026-11-12 built and tested, not committed: aeRWB `tools/rwb-export/check-fonts.ps1` (read-only, registry HKCU and HKLM, `-FontList` for a fake list; four needed faces Carlito Regular and Italic, Liberation Serif Regular, Noto Sans Bold; MISSING gives exit 1 and the "before you edit" install note with sources, licence and checked versions; 7 tests; real run on this machine: all four OK for the user) and the spike in aeBibleAddin `taskpane/src/font-presence.ts` (`aeAuditSpike.fontPresence()`: canvas width against three generic fallbacks, family level only; 6 tests; `npm run check` passes). Finding so far: Office.js has no font list, so detection is by measuring in the pane, per family not per face. Live run in Word 2026-11-12 (owner): `aeAuditSpike.fontPresence()` gave Carlito, Noto Sans and Liberation Serif installed and the never-installed probe false, so the spike works as designed. Left: the owner reads the "before you edit" note. The RT-35 dependency is not needed by the script |
 | RT-72 | Decide the clean-machine rehearsal for the Word steps: second Windows user on this PC after RT-31 (fonts are installed per user here), later a VM or second PC (D-15). Docker cannot run Word. Not counted | Owner | 0 | 0 | - | PB-14, PB-17, D-15, D-16 | RT-31 | ⚪ later |
 | **Phase 4: export, gate, release of 1.1.1** | | | | | | | | |
 | RT-40 | Export changes: `Options.StoreRSIDOnSave = False` around the save (proven on a copy), `ExportVersion` 1.1.1, a halting font pass, optional document properties | VBA | 4 | 0 | RT-32a | R111-6, F6, F8 | RT-18 | ⚪ |
@@ -103,12 +103,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 73% complete** (49 of 69 tasks finished; 113.50 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 74% complete** (49 of 69 tasks finished; 115.30 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 12 | 25.30 / 42 | 60% |
-| Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 67.20 / 80 | 84% |
+| Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 69.00 / 80 | 86% |
 | Add-in (aeBibleAddin) | 6 | 3 | 10.00 / 15 | 67% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
@@ -117,11 +117,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
 | Phase 2 | 6 | 5 | 13.00 / 18 | 72% |
-| Phase 3 | 8 | 0 | 2.35 / 16 | 15% |
+| Phase 3 | 8 | 0 | 4.15 / 16 | 26% |
 | Phase 4 | 6 | 0 | 2.40 / 13 | 18% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 34.50 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 32.70 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
