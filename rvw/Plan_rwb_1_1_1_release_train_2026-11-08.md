@@ -54,7 +54,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 100 | RT-22a | PB-7, D-13, S-3 | - | ✅ 2026-11-11 owner: route A (a Foreword style in the KEEP list of the export), ships in 1.1.1; unblocks RT-22a to RT-24 (FU-22) |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | VBA | 3 | 80 | RT-22b | PB-7 | RT-20 | 🟡 2026-11-11 styles verified live in the docm (version h: spec check 0, taxonomy audit 63 PASS 0 FAIL); Pass 5 remapped (shift 0 and 1) and the export ran CLEAN on copies both ways (145 to 133, 146 to 134). Left: insert the text (RT-21 final), run on the real docm |
-| RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 0 | RT-22a | PB-7, W-2 | RT-22a | ⚪ |
+| RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 70 | RT-22a | PB-7, W-2 | RT-22a | 🟡 2026-11-11 code and tests done, not committed: six RWBFront styles in APPROVED_STYLES (55) and RWB_FRONT_MATTER_STYLES; section expectation 133, or 134 with the front section (`startsWithFrontMatter`, `readHasFrontMatter`); the front-page scan limit 10 to 100 (a Study Bible docm with the front section would otherwise halt as `rwb`); `npm run check` passes (373 + 743 tests), parity clean. Left: live check in Word (countSections, profile detection on a docm with the front section) |
 | RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 0 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ⚪ |
 | RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 0 | RT-19 | PB-7 | RT-22a | 🔴 Blocked 2026-11-10: waits for RT-20 (owner: route D-13) then RT-22a; MaxTests stays 98 (FU-22) |
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
@@ -101,25 +101,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 65% complete** (44 of 68 tasks finished; 99.40 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 66% complete** (44 of 68 tasks finished; 101.50 of 153 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 10 | 22.70 / 42 | 54% |
 | Node (aeRWB, release, RadiantWordBible) | 34 | 26 | 59.20 / 78 | 76% |
-| Add-in (aeBibleAddin) | 6 | 1 | 6.50 / 15 | 43% |
+| Add-in (aeBibleAddin) | 6 | 1 | 8.60 / 15 | 57% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 12 | 28.50 / 29 | 98% |
-| Phase 2 | 6 | 1 | 3.40 / 18 | 19% |
+| Phase 2 | 6 | 1 | 5.50 / 18 | 31% |
 | Phase 3 | 7 | 0 | 0.75 / 14 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 46.60 of 135.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 44.50 of 135.
 Tasks with weight 0 are listed but not counted: RT-53.
 <!-- PROGRESS:END -->
 
