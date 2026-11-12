@@ -388,7 +388,9 @@ Public Function InsertFrontMatter(ByVal sTextFile As String, Optional ByVal sDoc
                 GoTo PROC_FAIL
             End If
             aStyle(nParas) = sStyle
-            aPlain(nParas) = StripItalicMarkers(sText, aStarts, aEnds, nSpans)
+            ' The owner's hand-set optional hyphens are U+00AD in the text file; Word stores an optional hyphen as Chr(31) in a range's text (the docx
+            ' element is w:softHyphen). The export keeps them in the front matter (Pass4b skips the front sections, 2026-11-12).
+            aPlain(nParas) = Replace(StripItalicMarkers(sText, aStarts, aEnds, nSpans), ChrW(173), Chr$(31))
             aSpans(nParas) = ""
             For k = 0 To nSpans - 1
                 aSpans(nParas) = aSpans(nParas) & aStarts(k) & "-" & aEnds(k) & ";"

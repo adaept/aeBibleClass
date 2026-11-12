@@ -32,6 +32,10 @@ new export. Checks:
      checks missed the style purge deleting TheHeaders/TheFooters while 132
      header + 1 footer paragraphs used them (2026-10-09).
 
+  7. RWB front matter (2026-11-12): paragraphs whose style starts with "RWBFront" (the leading front sections the export keeps) are
+     left out of checks 1 to 3 and of the character counts, so a baseline without front matter compares clean; the number skipped is
+     printed, and the baseline must have none.
+
 Usage:
     python3 -I py/verify_char_style_change.py baseline.docx new.docx [--verse-align left]
 
@@ -46,16 +50,18 @@ from collections import Counter
 
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 INDEX_STYLES = {'BibleIndexEyebrow', 'BibleIndex', 'BibleIndexList'}
+FRONT_PREFIX = 'RWBFront'
 
 
 def read(path):
     """Return (paragraph style list, paragraph text list excl. index rows,
-    Counter of chars covered per character style id)."""
+    Counter of chars covered per character style id), all without the RWBFront paragraphs, and the number of those paragraphs."""
     with zipfile.ZipFile(path) as z:
         root = ET.fromstring(z.read('word/document.xml'))
     styles = []
     texts = []
     chars = Counter()
+    front = 0
     for p in root.iter(W + 'p'):
         ppr = p.find(W + 'pPr')
         ps = ''
@@ -63,6 +69,9 @@ def read(path):
             st = ppr.find(W + 'pStyle')
             if st is not None:
                 ps = st.get(W + 'val', '')
+        if ps.startswith(FRONT_PREFIX):
+            front += 1
+            continue
         styles.append(ps)
         buf = []
         for r in p.iter(W + 'r'):
@@ -82,7 +91,7 @@ def read(path):
                     buf.append('\t')
         if ps not in INDEX_STYLES:
             texts.append(''.join(buf))
-    return styles, texts, chars
+    return styles, texts, chars, front
 
 
 def header_footer_styles(path):
@@ -164,9 +173,12 @@ def main(argv):
     if len(argv) != 3:
         print(__doc__)
         return 2
-    b_styles, b_texts, b_chars = read(argv[1])
-    n_styles, n_texts, n_chars = read(argv[2])
+    b_styles, b_texts, b_chars, b_front = read(argv[1])
+    n_styles, n_texts, n_chars, n_front = read(argv[2])
     failures = []
+    if b_front:
+        failures.append('the baseline holds %d RWBFront paragraph(s); it must be a file without front matter' % b_front)
+    print('RWBFront paragraphs skipped: baseline %d, new %d' % (b_front, n_front))
 
     if b_styles != n_styles:
         failures.append('paragraph style sequence differs (%d vs %d paragraphs)'

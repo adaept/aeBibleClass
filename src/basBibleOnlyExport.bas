@@ -1373,11 +1373,28 @@ Public Function GetExportSettings() As Object
 End Function
 
 ' ==========================================================================
+' ScriptureRangeAfterFront
+' ==========================================================================
+' The range from the start of the first section after the leading RWBFront sections to the end of the document (the whole document
+' when there is no front matter). Used by the passes that must leave the front matter exactly as the owner typed it.
+' ==========================================================================
+Private Function ScriptureRangeAfterFront(ByVal oDoc As Object) As Object
+    Dim nFront As Long
+    Dim oRng As Object
+
+    nFront = basRwbFrontMatter.CountLeadingFrontSections(oDoc)
+    Set oRng = oDoc.Content
+    If nFront > 0 And nFront < oDoc.Sections.Count Then oRng.Start = oDoc.Sections(nFront + 1).Range.Start
+    Set ScriptureRangeAfterFront = oRng
+End Function
+
+' ==========================================================================
 ' Pass4b_StripOptionalHyphens
 ' ==========================================================================
 ' Deletes every manual optional hyphen (Word "^-", Chr(31)) from the main
 ' story and turns off automatic hyphenation. Real hyphens and non-breaking
-' hyphens are left alone. Returns the number of optional hyphens still
+' hyphens are left alone. The leading RWB front-matter sections (basRwbFrontMatter) are NOT touched: their optional hyphens are the
+' owner's own line-break choices and must reach the export (2026-11-12; the docm uses <w:softHyphen/>, Range.Text shows Chr(31)). Returns the number of optional hyphens still
 ' present afterwards (expected 0). Must run before any pagination-dependent
 ' pass (Pass 6/8): removal changes line breaks.
 ' ==========================================================================
@@ -1387,7 +1404,7 @@ Private Function Pass4b_StripOptionalHyphens(ByVal oDoc As Object) As Long
     Dim oRng As Object
     Dim removed As Long
 
-    Set oRng = oDoc.Content
+    Set oRng = ScriptureRangeAfterFront(oDoc)
     With oRng.Find
         .ClearFormatting
         .Replacement.ClearFormatting
@@ -1404,7 +1421,7 @@ Private Function Pass4b_StripOptionalHyphens(ByVal oDoc As Object) As Long
 
     ' Verify: Count survivors
     Dim remaining As Long
-    Set oRng = oDoc.Content
+    Set oRng = ScriptureRangeAfterFront(oDoc)
     With oRng.Find
         .ClearFormatting
         .Text = "^-"

@@ -10,6 +10,12 @@ import zipfile
 PARAGRAPHS = 18
 
 
+def run_text(run_xml):
+    """Text of one run in document order; an optional (soft) hyphen element <w:softHyphen/> is returned as U+00AD (2026-11-12, owner's hand hyphenation)."""
+    return "".join(html.unescape(m.group(1)) if m.group(1) is not None else "­"
+                   for m in re.finditer(r"<w:t(?:\s[^>]*)?>([^<]*)</w:t>|<w:softHyphen\s*/>", run_xml))
+
+
 def load(path, count=PARAGRAPHS):
     x = zipfile.ZipFile(path).read("word/document.xml").decode("utf8")
     body = x[x.index("<w:body>"):]
@@ -22,7 +28,7 @@ def load(path, count=PARAGRAPHS):
         jc = re.search(r'<w:jc w:val="([^"]*)"', inner)
         text, italic = "", []
         for r in re.findall(r"<w:r[ >].*?</w:r>", p, re.S):
-            t = html.unescape("".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", r)))
+            t = run_text(r)
             if not t:
                 continue
             if 'w:rStyle w:val="RWBFrontItalic"' in r:

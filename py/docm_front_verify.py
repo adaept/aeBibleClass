@@ -13,6 +13,12 @@ DEFAULT_TEXT = Path(__file__).resolve().parents[1] / "frontmatter" / "rwb-front-
 SECTION_SCAN = 6
 
 
+def run_text(run_xml):
+    """Text of one run in document order; an optional (soft) hyphen element <w:softHyphen/> is returned as U+00AD (2026-11-12, owner's hand hyphenation)."""
+    return "".join(html.unescape(m.group(1)) if m.group(1) is not None else "­"
+                   for m in re.finditer(r"<w:t(?:\s[^>]*)?>([^<]*)</w:t>|<w:softHyphen\s*/>", run_xml))
+
+
 def read_spec(path):
     want, section = [], -1
     for line in Path(path).read_text(encoding="utf8").split("\n"):
@@ -52,7 +58,7 @@ def read_front(docx_path, count):
         style = re.search(r'<w:pStyle w:val="([^"]*)"', p)
         text, italic = "", []
         for r in re.findall(r"<w:r[ >].*?</w:r>", p, re.S):
-            t = html.unescape("".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", r)))
+            t = run_text(r)
             if not t:
                 continue
             if 'w:rStyle w:val="RWBFrontItalic"' in r:
