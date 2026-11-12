@@ -55,8 +55,8 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | VBA | 3 | 100 | RT-22b | PB-7 | RT-20 | ✅ 2026-11-11 done and verified in the owner's Word on the real docm: seven styles, the text inserted as three sections, version k, `CountFrontMatterStylesOutsideSpec` 0, taxonomy audit 64 PASS, Tests 95 to 98 PASS; the docm was promoted by copy (test docm to `Blank Bible Copy.docm`, pre-save SHA-256 `f039dcd6...`, then re-saved by Word, text and styles identical); aeBibleClass `e632869`. Export proven CLEAN on copies (148 to 136 sections); the export from the real docm is part of RT-40 |
 | RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 70 | RT-22a | PB-7, W-2 | RT-22a | 🟡 2026-11-11 code and tests done, not committed: seven RWBFront styles in APPROVED_STYLES (56) and the front-matter style constants; section expectation 133 plus the leading front sections (`readFrontSectionCount`, 3 as designed = 136); the front-page scan limit 10 to 100; `npm run check` passes (375 + 746 tests). Left: live check in Word (countSections, profile detection on a docm with the front sections) |
-| RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 0 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ⚪ |
-| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 0 | RT-19 | PB-7 | RT-22a | 🔴 Blocked 2026-11-10: waits for RT-20 (owner: route D-13) then RT-22a; MaxTests stays 98 (FU-22) |
+| RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 100 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ✅ 2026-11-12 done and verified: the Node export keeps the front matter with its own fingerprint and the owner's hand-set soft hyphens (U+00AD kept; scripture still strips them, D-4): USFM books `A0-FRT` and `B0-INT` (also in the zip, 68 entries), the workbook sheet "Front matter", a `frontMatter` entry in the manifest, checks in `verify` and in the reader-side `verify-rwb.ps1` (files, USFM books, and with `-Docx` the docx paragraphs); the verse fingerprint `c44b0feca5d3...` is unchanged and a docx without front matter exports byte for byte as before; export of the owner's docm (12 soft hyphens) verified, front fingerprint `378e1e306605...`; aeRWB `77988dc` (export), the extended PowerShell verifier is not committed yet, aeBibleClass `ef29131`, `f4e6e1a`; 368 tests, quality ratchet at zero; the review folder `C:\adaept\aeTest\rwb-export` was regenerated from that docx |
+| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 80 | RT-19 | PB-7 | RT-22a | 🟡 2026-11-12 code done, not committed: `basRwbFrontMatter.CountFrontMatterSeparationViolations` (the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment; no RWBFront style after them), `ListFrontMatterSeparation`, `MaxTests` 99 and Test 99 wired in `aeBibleClass.cls`; compiled, 0 on a copy with the front matter and 0 without it, 3 on a copy broken three ways. Left: the owner imports the class and runs `RUN_THE_TESTS(99)` in the real docm; the add-in port of Test 99 is the last 10% of RT-19 (FU-19, FU-22) |
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
 | RT-30 | Font facts: embedding permission, copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used (Aptos's licence is already read) | Node | 2 | 0 | - | S-5 | - | ⚪ |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | VBA | 2 | 0 | RT-32a | F2, F3 | RT-13, RT-15, RT-16 | ⚪ |
@@ -103,12 +103,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 66% complete** (45 of 69 tasks finished; 102.10 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 69% complete** (46 of 69 tasks finished; 107.70 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| VBA (aeBibleClass) | 19 | 11 | 23.30 / 42 | 55% |
-| Node (aeRWB, release, RadiantWordBible) | 35 | 26 | 59.20 / 80 | 74% |
+| VBA (aeBibleClass) | 19 | 11 | 24.90 / 42 | 59% |
+| Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 63.20 / 80 | 79% |
 | Add-in (aeBibleAddin) | 6 | 1 | 8.60 / 15 | 57% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
@@ -116,19 +116,19 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 12 | 28.50 / 29 | 98% |
-| Phase 2 | 6 | 2 | 6.10 / 18 | 34% |
+| Phase 2 | 6 | 3 | 11.70 / 18 | 65% |
 | Phase 3 | 8 | 0 | 0.75 / 16 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 45.90 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 40.30 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
 **The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
 
 <!-- VIEW:BEGIN -->
-**VBA (aeBibleClass): 55% complete** (11 of 19 tasks finished; 23.30 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+**VBA (aeBibleClass): 59% complete** (11 of 19 tasks finished; 24.90 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
 
 | ID | Task | Wt | % | Counterpart (other side) | Status |
 |---|---|---|---|---|---|
@@ -143,7 +143,7 @@ Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | 1 | 100 | RT-19 | ✅ 2026-11-10 (Test 97 PASS in the real docm, 0.7 s; section 5n) |
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | 1 | 100 | RT-19 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | 3 | 100 | RT-22b | ✅ 2026-11-11 done and verified in the owner's Word on the real docm: seven styles, the text inserted as three sections, version k, `CountFrontMatterStylesOutsideSpec` 0, taxonomy audit 64 PASS, Tests 95 to 98 PASS; the docm was promoted by copy (test docm to `Blank Bible Copy.docm`, pre-save SHA-256 `f039dcd6...`, then re-saved by Word, text and styles identical); aeBibleClass `e632869`. Export proven CLEAN on copies (148 to 136 sections); the export from the real docm is part of RT-40 |
-| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 0 | RT-19 | 🔴 Blocked 2026-11-10: waits for RT-20 (owner: route D-13) then RT-22a; MaxTests stays 98 (FU-22) |
+| RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 80 | RT-19 | 🟡 2026-11-12 code done, not committed: `basRwbFrontMatter.CountFrontMatterSeparationViolations` (the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment; no RWBFront style after them), `ListFrontMatterSeparation`, `MaxTests` 99 and Test 99 wired in `aeBibleClass.cls`; compiled, 0 on a copy with the front matter and 0 without it, 3 on a copy broken three ways. Left: the owner imports the class and runs `RUN_THE_TESTS(99)` in the real docm; the add-in port of Test 99 is the last 10% of RT-19 (FU-19, FU-22) |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced f... | 2 | 0 | RT-32a | ⚪ |
 | RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reprod... | 3 | 0 | RT-02, RT-05 | ⚪ |
 | RT-35 | Fonts-installed preflight on every build machine (VBA check of `Application.FontNames`, bootstrap step) | 1 | 0 | RT-32a | ⚪ |

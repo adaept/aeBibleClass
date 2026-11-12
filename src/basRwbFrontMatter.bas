@@ -69,6 +69,7 @@ Private Const VALIGN_TOP_NAME As String = "top"
 Private Const VALIGN_CENTER_NAME As String = "center"
 Private Const MAX_ITALIC_SPANS As Long = 64
 Private Const MAX_FRONT_SECTIONS As Long = 12
+Private Const MAX_FOREIGN_HITS As Long = 1000
 Private m_LastError As String
 
 ' The text of the last error ("" = none), for callers that cannot see the Immediate window.
@@ -648,4 +649,104 @@ Private Function ResolveDoc(ByVal sDocName As String) As Word.Document
     Else
         Set ResolveDoc = Documents(sDocName)
     End If
+End Function
+
+' ==========================================================================
+' Test 99 (RT-24, 2026-11-12): the RWB front matter and the Study Bible are kept apart
+' ==========================================================================
+' Returns the number of violations (expected 0; -1 when the check itself failed). A document without front matter has none. It counts:
+'   - a paragraph in a leading front section that is not in one of the six RWBFront paragraph styles (Study Bible text in the Foreword);
+'   - a footnote, endnote, field, hyperlink, table, inline shape, shape or comment in a leading front section (Study Bible apparatus);
+'   - an RWBFront paragraph style or the RWBFrontItalic character style used after the leading front sections (Foreword in the Study Bible).
+' The export relies on exactly this split: Pass 4b and Pass 5 treat the leading RWBFront sections as the Foreword and everything after them as
+' the Study Bible, and the Node export reads the front matter from the RWBFront styles alone. `ListFrontMatterSeparation` prints each hit.
+Public Function CountFrontMatterSeparationViolations(Optional ByVal sDocName As String = "") As Long
+    On Error GoTo PROC_ERR
+    CountFrontMatterSeparationViolations = SeparationViolations(ResolveDoc(sDocName), False)
+    Exit Function
+PROC_ERR:
+    m_LastError = "CountFrontMatterSeparationViolations: " & Err.Number & " " & Err.Description
+    Debug.Print m_LastError
+    CountFrontMatterSeparationViolations = -1
+End Function
+
+' Read-only: prints every violation CountFrontMatterSeparationViolations counts.
+Public Sub ListFrontMatterSeparation(Optional ByVal sDocName As String = "")
+    Debug.Print "ListFrontMatterSeparation: " & SeparationViolations(ResolveDoc(sDocName), True) & " violation(s)"
+End Sub
+
+Private Function SeparationViolations(ByVal oDoc As Word.Document, ByVal bList As Boolean) As Long
+    Dim nFront As Long
+
+    nFront = CountLeadingFrontSections(oDoc)
+    SeparationViolations = FrontSectionViolations(oDoc, nFront, bList) + ForeignFrontStyleViolations(oDoc, nFront, bList)
+End Function
+
+' Study Bible content inside the leading front sections: a paragraph outside the six styles, or any note, field, link, table, shape or comment.
+Private Function FrontSectionViolations(ByVal oDoc As Word.Document, ByVal nFront As Long, ByVal bList As Boolean) As Long
+    Dim vKinds As Variant
+    Dim oRng As Word.Range
+    Dim oPara As Word.Paragraph
+    Dim i As Long
+    Dim k As Long
+    Dim nFound As Long
+    Dim nHits As Long
+
+    vKinds = Array("Footnotes", "Endnotes", "Fields", "Hyperlinks", "Tables", "InlineShapes", "ShapeRange", "Comments")
+    For i = 1 To nFront
+        Set oRng = oDoc.Sections(i).Range
+        For Each oPara In oRng.Paragraphs
+            If Not IsFrontMatterParagraphStyle(oPara.Style.NameLocal) Then
+                nHits = nHits + 1
+                If bList Then Debug.Print "front section " & i & " | paragraph in style " & oPara.Style.NameLocal & " | " & Left$(oPara.Range.Text, 40)
+            End If
+        Next oPara
+        For k = LBound(vKinds) To UBound(vKinds)
+            nFound = CLng(CallByName(CallByName(oRng, CStr(vKinds(k)), VbGet), "Count", VbGet))
+            If nFound > 0 Then
+                nHits = nHits + nFound
+                If bList Then Debug.Print "front section " & i & " | " & nFound & " x " & vKinds(k)
+            End If
+        Next k
+    Next i
+    FrontSectionViolations = nHits
+End Function
+
+' Foreword styles used after the leading front sections. Find on the style is fast; walking the paragraphs of the whole docm is not.
+Private Function ForeignFrontStyleViolations(ByVal oDoc As Word.Document, ByVal nFront As Long, ByVal bList As Boolean) As Long
+    Dim vNames As Variant
+    Dim oStyle As Word.Style
+    Dim oRng As Word.Range
+    Dim lFrom As Long
+    Dim i As Long
+    Dim nHits As Long
+    Dim nGuard As Long
+
+    If nFront >= oDoc.Sections.Count Then Exit Function
+    lFrom = 0
+    If nFront > 0 Then lFrom = oDoc.Sections(nFront + 1).Range.Start
+    vNames = AllFrontMatterStyleNames()
+    For i = LBound(vNames) To UBound(vNames)
+        Set oStyle = FindStyle(oDoc, CStr(vNames(i)))
+        If Not oStyle Is Nothing Then
+            Set oRng = oDoc.Range(lFrom, oDoc.Content.End)
+            With oRng.Find
+                .ClearFormatting
+                .Text = ""
+                .Style = oStyle
+                .Format = True
+                .Forward = True
+                .Wrap = wdFindStop
+                .MatchWildcards = False
+                nGuard = 0
+                Do While .Execute And nGuard < MAX_FOREIGN_HITS
+                    nHits = nHits + 1
+                    nGuard = nGuard + 1
+                    If bList Then Debug.Print "after the front sections | style " & vNames(i) & " at " & oRng.Start & " | " & Left$(oRng.Text, 40)
+                    oRng.Collapse wdCollapseEnd
+                Loop
+            End With
+        End If
+    Next i
+    ForeignFrontStyleViolations = nHits
 End Function

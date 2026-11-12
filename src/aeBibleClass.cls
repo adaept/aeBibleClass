@@ -52,7 +52,7 @@ Private Const bTimeAllTests As Boolean = True
 ' Used to store Expected results
 Private oneBasedExpectedArray As Variant
 Private SkippedTestNum As Long
-Private Const MaxTests = 98
+Private Const MaxTests = 99
 Private ResultArray(1 To MaxTests) As Long
 Private GetPassFailArray(1 To MaxTests) As String
 Private TestTimingArray(0 To MaxTests) As Variant
@@ -330,7 +330,7 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93 94 95 96 97 98)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0)
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
@@ -963,6 +963,8 @@ Private Function RunBibleClassTests(Optional ByVal varDebug As Variant) As Boole
             RunTest (97)
             DoEvents
             RunTest (98)
+            DoEvents
+            RunTest (99)
         Case vbNo
             'MsgBox "You chose No.", vbInformation, "Response"
             Debug.Print ">>>RunBibleClassTests = NO"
@@ -1277,6 +1279,8 @@ Public Function GetTestDescription(num As Long) As String
         GetTestDescription = "Rule: the document theme fonts and the font slots of the paragraph and character styles name only the three free fonts - Latin, complex script and East Asian slots; a theme token such as +Body Asian counts as the font its theme slot resolves to, an empty slot is fine (found 2026-11-10: Aptos theme, 327 slots naming Calibri, Times New Roman, Arial Unicode MS or MS Mincho; cleaned by basDocmHygiene.FixThemeFonts and FixStyleSlotFonts). The per-script fallback names inside the theme file are RT-40b - CountThemeAndStyleSlotFontsOutsideAllowlist should return 0"
     Case 98
         GetTestDescription = "Rule: no run in a VerseText paragraph carries direct run formatting other than a character style, a language, fonts or the noProof proofing flag (owner decision 2026-11-10: the whole text is marked do-not-check-spelling) - the other tests own language and fonts (found 2026-11-10: bold, complex bold and complex size 9 on spaces, and colour auto overriding the red of Words of Jesus in 2 places; cleaned by basDocmHygiene.FixStrayVerseFormatting). Read from Content.WordOpenXML, about 15 s - CountStrayDirectFormattingRuns should return 0"
+    Case 99
+        GetTestDescription = "Rule: the RWB front matter and the Study Bible are kept apart (RT-24, 2026-11-12) - the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment, and no RWBFront style is used after them - CountFrontMatterSeparationViolations should return 0"
     Case 7 To 78
         GetTestDescription = ""
     Case Else
@@ -1562,6 +1566,9 @@ Private Function GetPassFail(TestNum As Long) As Boolean
     Case 98
         ResultArray(TestNum) = CountStrayDirectFormattingRuns
         m_HintArray(TestNum) = "run ListStrayVerseFormatting (basDocmHygiene) for the list"
+    Case 99
+        ResultArray(TestNum) = CountFrontMatterSeparationViolations
+        m_HintArray(TestNum) = "run ListFrontMatterSeparation (basRwbFrontMatter) for the list"
     Case Else
         Debug.Print "TestNum = " & TestNum & " >The test number is outside the accepted range"
     End Select
@@ -1790,6 +1797,8 @@ Private Function RunTest(num As Long, Optional SkipTest As Variant) As Boolean
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountThemeAndStyleSlotFontsOutsideAllowlist"
     Case 98
         Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountStrayDirectFormattingRuns"
+    Case 99
+        Debug.Print GetPassFailArray(num), "Copy ()", "Test = " & num, ResultArray(num), oneBasedExpectedArray(num), "CountFrontMatterSeparationViolations"
     Case Else
         Debug.Print "num = " & num & " >>The test number is outside the accepted range"
     End Select
@@ -2023,6 +2032,8 @@ Private Function OutputTestReport(num As Long, Optional SkipTest As Variant) As 
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountThemeAndStyleSlotFontsOutsideAllowlist"
     Case 98
         BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountStrayDirectFormattingRuns"
+    Case 99
+        BufAppend GetPassFailArray(num) & Space(10) & "Copy ()" & Space(7) & Fixed14Str("Test = " & num) & Fixed14Str(CStr(ResultArray(num))) & Fixed14Str(CStr(oneBasedExpectedArray(num))) & "CountFrontMatterSeparationViolations"
     Case Else
         Debug.Print "num = " & num & " >>>The test number is outside the accepted range"
     End Select
