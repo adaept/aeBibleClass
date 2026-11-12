@@ -54,7 +54,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 100 | RT-22a | PB-7, D-13, S-3 | - | ✅ 2026-11-11 owner: route A (a Foreword style in the KEEP list of the export), ships in 1.1.1; unblocks RT-22a to RT-24 (FU-22) |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | VBA | 3 | 100 | RT-22b | PB-7 | RT-20 | ✅ 2026-11-11 done and verified in the owner's Word on the real docm: seven styles, the text inserted as three sections, version k, `CountFrontMatterStylesOutsideSpec` 0, taxonomy audit 64 PASS, Tests 95 to 98 PASS; the docm was promoted by copy (test docm to `Blank Bible Copy.docm`, pre-save SHA-256 `f039dcd6...`, then re-saved by Word, text and styles identical); aeBibleClass `e632869`. Export proven CLEAN on copies (148 to 136 sections); the export from the real docm is part of RT-40 |
-| RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 70 | RT-22a | PB-7, W-2 | RT-22a | 🟡 2026-11-11 code and tests done, not committed: seven RWBFront styles in APPROVED_STYLES (56) and the front-matter style constants; section expectation 133 plus the leading front sections (`readFrontSectionCount`, 3 as designed = 136); the front-page scan limit 10 to 100; `npm run check` passes (375 + 746 tests). Left: live check in Word (countSections, profile detection on a docm with the front sections) |
+| RT-22b | Add-in: expected-style set and profile detection (style count, 133 sections) with their tests | Add-in | 3 | 100 | RT-22a | PB-7, W-2 | RT-22a | ✅ 2026-11-12 live check done in Word on `Blank Bible Copy.docm`: `auditHygiene()` gave 0 font runs outside the allowlist, 0 verse units not English, 0 theme/style slots outside the allowlist, 0 stray direct formatting runs, 0 unresolved font runs (33,840 body paragraphs); profile study-bible and `countSections` 148 seen earlier the same day. Earlier 2026-11-11 (code and tests): seven RWBFront styles in APPROVED_STYLES (56) and the front-matter style constants; section expectation 133 plus the leading front sections (`readFrontSectionCount`, 3 as designed = 136); the front-page scan limit 10 to 100; `npm run check` passes (375 + 746 tests). Left: live check in Word (countSections, profile detection on a docm with the front sections) |
 | RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 100 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ✅ 2026-11-12 done and verified: the Node export keeps the front matter with its own fingerprint and the owner's hand-set soft hyphens (U+00AD kept; scripture still strips them, D-4): USFM books `A0-FRT` and `B0-INT` (also in the zip, 68 entries), the workbook sheet "Front matter", a `frontMatter` entry in the manifest, checks in `verify` and in the reader-side `verify-rwb.ps1` (files, USFM books, and with `-Docx` the docx paragraphs); the verse fingerprint `c44b0feca5d3...` is unchanged and a docx without front matter exports byte for byte as before; export of the owner's docm (12 soft hyphens) verified, front fingerprint `378e1e306605...`; aeRWB `77988dc` (export), the extended PowerShell verifier `b35aa48`, aeBibleClass `ef29131`, `f4e6e1a`; 368 tests, quality ratchet at zero; the review folder `C:\adaept\aeTest\rwb-export` was regenerated from that docx |
 | RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 100 | RT-19 | PB-7 | RT-22a | ✅ 2026-11-12 done and verified: `basRwbFrontMatter.CountFrontMatterSeparationViolations` (the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment; no RWBFront style after them), `ListFrontMatterSeparation`, `MaxTests` 99, Test 99 wired in `aeBibleClass.cls`; compiled; 0 on copies with and without the front matter, 3 on a copy broken three ways; owner run in the real docm: `RUN_THE_TESTS(99)` PASS 0 of expected 0 (1.5 s); aeBibleClass `09216f6`. The add-in port of Test 99 is the last 10% of RT-19 (FU-19, FU-22) |
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
@@ -103,25 +103,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 70% complete** (48 of 69 tasks finished; 108.60 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 71% complete** (49 of 69 tasks finished; 109.50 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 12 | 25.30 / 42 | 60% |
 | Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 63.20 / 80 | 79% |
-| Add-in (aeBibleAddin) | 6 | 2 | 9.10 / 15 | 61% |
+| Add-in (aeBibleAddin) | 6 | 3 | 10.00 / 15 | 67% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
-| Phase 2 | 6 | 4 | 12.10 / 18 | 67% |
+| Phase 2 | 6 | 5 | 13.00 / 18 | 72% |
 | Phase 3 | 8 | 0 | 0.75 / 16 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 39.40 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 38.50 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
