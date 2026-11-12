@@ -59,7 +59,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 100 | RT-19 | PB-7 | RT-22a | ✅ 2026-11-12 done and verified: `basRwbFrontMatter.CountFrontMatterSeparationViolations` (the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment; no RWBFront style after them), `ListFrontMatterSeparation`, `MaxTests` 99, Test 99 wired in `aeBibleClass.cls`; compiled; 0 on copies with and without the front matter, 3 on a copy broken three ways; owner run in the real docm: `RUN_THE_TESTS(99)` PASS 0 of expected 0 (1.5 s); aeBibleClass `09216f6`. The add-in port of Test 99 is the last 10% of RT-19 (FU-19, FU-22) |
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
 | RT-30 | Font facts: embedding permission, copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used (Aptos's licence is already read) | Node | 2 | 80 | - | S-5 | - | 🟡 2026-11-12 facts read from the installed font files and the real export, written up in `rvw/RWB Font Facts 2026-11-12.md` (aeBibleAddin): `fsType` 0 in all 10 files, copyright and licence lines of each family, versions, weights used (Carlito Regular and Italic, Liberation Serif Regular, Noto Sans Bold). Left: the full OFL 1.1 text and any Reserved Font Name wording are not on this machine; take them from each upstream release (done with RT-34) |
-| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | VBA | 2 | 10 | RT-32a | F2, F3 | RT-13, RT-15, RT-16 | 🟡 2026-11-12 plan written, nothing built or run: `rvw/RWB Font Embedding Plan RT-31 2026-11-12.md` (aeBibleAddin): what Word embeds (T1, scripted on a copy), the editing questions measured by hand on a second Windows user (T2 to T7, needs the RT-72 decision), the interaction with the RT-40b purge (orphaned `.odttf` parts), the RT-32a reader, and the wording each result allows. Until T2 to T5 have run, embedding is claimed for reading and printing only (S-5) |
+| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | VBA | 2 | 35 | RT-32a | F2, F3 | RT-13, RT-15, RT-16 | 🟡 2026-11-12 plan written; T1 run (scripted, copy): Word embeds exactly the three families, all ten installed faces, as FULL fonts not subsets (4.9 MB docx; `SaveSubsetFonts` read back True but did not subset: S-5 needs an owner decision), no orphans, composes with the RT-40b purge; results in section 9 of the plan. Editing tests T2 to T7 not run yet (owner, second Windows user). Plan: `rvw/RWB Font Embedding Plan RT-31 2026-11-12.md` (aeBibleAddin): what Word embeds (T1, scripted on a copy), the editing questions measured by hand on a second Windows user (T2 to T7, needs the RT-72 decision), the interaction with the RT-40b purge (orphaned `.odttf` parts), the RT-32a reader, and the wording each result allows. Until T2 to T5 have run, embedding is claimed for reading and printing only (S-5) |
 | RT-32a | Node: embedded fonts in the docx are a subset of the three; the same rule read independently of VBA (`rwb.fonts`, cross-check of Test 95); the docx has no rsid attributes | Node | 3 | 25 | RT-18, RT-31 | RX-11 | RT-31 | 🟡 allowlist test against the VBA constant and the PDF font rule are done (RT-02) |
 | RT-32b | Gate: refuse `status: pilot`, any PDF recorded with `allowedExtraFonts`, and fonts outside the three | Add-in | 2 | 0 | RT-32a | RX-11 | RT-04e | ⚪ |
 | RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reproducible | VBA | 3 | 0 | RT-02, RT-05 | PB-9, PB-10 | RT-31 | ⚪ |
@@ -103,11 +103,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 75% complete** (51 of 69 tasks finished; 116.30 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 75% complete** (51 of 69 tasks finished; 116.80 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
-| VBA (aeBibleClass) | 19 | 12 | 25.50 / 42 | 61% |
+| VBA (aeBibleClass) | 19 | 12 | 26.00 / 42 | 62% |
 | Node (aeRWB, release, RadiantWordBible) | 35 | 29 | 69.80 / 80 | 87% |
 | Add-in (aeBibleAddin) | 6 | 3 | 10.00 / 15 | 67% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
@@ -117,18 +117,18 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
 | Phase 2 | 6 | 5 | 13.00 / 18 | 72% |
-| Phase 3 | 8 | 1 | 4.55 / 16 | 28% |
+| Phase 3 | 8 | 1 | 5.05 / 16 | 32% |
 | Phase 4 | 6 | 1 | 3.00 / 13 | 23% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 31.70 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 31.20 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
 **The VBA tasks with their pointer to the add-in or Node counterpart** (generated):
 
 <!-- VIEW:BEGIN -->
-**VBA (aeBibleClass): 61% complete** (12 of 19 tasks finished; 25.50 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
+**VBA (aeBibleClass): 62% complete** (12 of 19 tasks finished; 26.00 of 42 points). Counterpart = the task on the other side that must move with it. Generated; do not edit by hand.
 
 | ID | Task | Wt | % | Counterpart (other side) | Status |
 |---|---|---|---|---|---|
@@ -144,7 +144,7 @@ Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | 1 | 100 | RT-19 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
 | RT-22a | VBA: styles in the docm, approved-styles SSOT, purge list, kept-style list of the export | 3 | 100 | RT-22b | ✅ 2026-11-11 done and verified in the owner's Word on the real docm: seven styles, the text inserted as three sections, version k, `CountFrontMatterStylesOutsideSpec` 0, taxonomy audit 64 PASS, Tests 95 to 98 PASS; the docm was promoted by copy (test docm to `Blank Bible Copy.docm`, pre-save SHA-256 `f039dcd6...`, then re-saved by Word, text and styles identical); aeBibleClass `e632869`. Export proven CLEAN on copies (148 to 136 sections); the export from the real docm is part of RT-40 |
 | RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Forew... | 2 | 100 | RT-19 | ✅ 2026-11-12 done and verified: `basRwbFrontMatter.CountFrontMatterSeparationViolations` (the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment; no RWBFront style after them), `ListFrontMatterSeparation`, `MaxTests` 99, Test 99 wired in `aeBibleClass.cls`; compiled; 0 on copies with and without the front matter, 3 on a copy broken three ways; owner run in the real docm: `RUN_THE_TESTS(99)` PASS 0 of expected 0 (1.5 s); aeBibleClass `09216f6`. The add-in port of Test 99 is the last 10% of RT-19 (FU-19, FU-22) |
-| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced f... | 2 | 10 | RT-32a | 🟡 2026-11-12 plan written, nothing built or run: `rvw/RWB Font Embedding Plan RT-31 2026-11-12.md` (aeBibleAddin): what Word embeds (T1, scripted on a copy), the editing questions measured by hand on a second Windows user (T2 to T7, needs the RT-72 decision), the interaction with the RT-40b purge (orphaned `.odttf` parts), the RT-32a reader, and the wording each result allows. Until T2 to T5 have run, embedding is claimed for reading and printing only (S-5) |
+| RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced f... | 2 | 35 | RT-32a | 🟡 2026-11-12 plan written; T1 run (scripted, copy): Word embeds exactly the three families, all ten installed faces, as FULL fonts not subsets (4.9 MB docx; `SaveSubsetFonts` read back True but did not subset: S-5 needs an owner decision), no orphans, composes with the RT-40b purge; results in section 9 of the plan. Editing tests T2 to T7 not run yet (owner, second Windows user). Plan: `rvw/RWB Font Embedding Plan RT-31 2026-11-12.md` (aeBibleAddin): what Word embeds (T1, scripted on a copy), the editing questions measured by hand on a second Windows user (T2 to T7, needs the RT-72 decision), the interaction with the RT-40b purge (orphaned `.odttf` parts), the RT-32a reader, and the wording each result allows. Until T2 to T5 have run, embedding is claimed for reading and printing only (S-5) |
 | RT-33 | PDF export from the final docx in VBA (print-ready and screen, S-7), fonts embedded, recorded as not reprod... | 3 | 0 | RT-02, RT-05 | ⚪ |
 | RT-35 | Fonts-installed preflight on every build machine (VBA check of `Application.FontNames`, bootstrap step) | 1 | 0 | RT-32a | ⚪ |
 | RT-40 | Export changes: `Options.StoreRSIDOnSave = False` around the save (proven on a copy), `ExportVersion` 1.1.1... | 4 | 0 | RT-32a | ⚪ |
