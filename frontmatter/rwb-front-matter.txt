@@ -17,7 +17,7 @@ RWBFrontBody	Consistency plus accuracy of intent, heart and principle are the go
 RWBFrontBody	Such treatments of the text are made sparingly, carefully, and cautiously, so as not to change the message of the Hebrew Bible scriptures but rather to create a more con­sistent expression of God’s Word and heart, faithful to Jesus’ living model and charac­ter. The RWB seeks to enhance consistency and harmony with Jesus.
 RWBFrontBody	We sincerely hope the {i}Radiant Word Bible{/i} will help you to build a more intimate and deeply heartfelt relationship with God’s Word and with His heart.
 RWBFrontBody	The RWB is a product of the Colorado Family Church Bible study group. We give special recognition to the following participants for their tireless and heartfelt devo­tion to this project: Dr. D. Michael Hentrich, Dr. Lewis Burgess, Peter Ennis, Robert Selle, John Kirkley, Elena Llanto, and Michael Marshall.
-RWBFrontBody	The RWB stems from the lineage of the King James, American Standard, and World English Versions of the Holy Bible, and uses a formal voice. We wish to honor the priceless work of Paul Michael Johnson who responded to the calling of Jesus by making his work, the {i}World English Bible,{/i} available in the Public Domain.
+RWBFrontBody	The RWB stems from the lineage of the King James, American Standard, and World English Versions of the Holy Bible, and uses a formal voice. We wish to honor the priceless work of Michael Paul Johnson who responded to the calling of Jesus by making his work, the {i}World English Bible,{/i} available in the Public Domain.
 RWBFrontBody	{i}“Freely you have received; freely give.”{/i} (Matt 10:8)
 RWBFrontSignature	Dr. D. Michael Hentrich
 @section	center
