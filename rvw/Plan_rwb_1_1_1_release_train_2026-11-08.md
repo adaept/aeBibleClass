@@ -58,7 +58,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-23 | Node: the export keeps it; USFM front-matter book (`FRT`/`INT`), workbook sheet "Front matter", a second fingerprint for the front matter (the verse-stream fingerprint must not change) | Node | 4 | 100 | RT-22a | RX-3, RX-6, RX-7, PB-8 | RT-22a | ✅ 2026-11-12 done and verified: the Node export keeps the front matter with its own fingerprint and the owner's hand-set soft hyphens (U+00AD kept; scripture still strips them, D-4): USFM books `A0-FRT` and `B0-INT` (also in the zip, 68 entries), the workbook sheet "Front matter", a `frontMatter` entry in the manifest, checks in `verify` and in the reader-side `verify-rwb.ps1` (files, USFM books, and with `-Docx` the docx paragraphs); the verse fingerprint `c44b0feca5d3...` is unchanged and a docx without front matter exports byte for byte as before; export of the owner's docm (12 soft hyphens) verified, front fingerprint `378e1e306605...`; aeRWB `77988dc` (export), the extended PowerShell verifier `b35aa48`, aeBibleClass `ef29131`, `f4e6e1a`; 368 tests, quality ratchet at zero; the review folder `C:\adaept\aeTest\rwb-export` was regenerated from that docx |
 | RT-24 | **Test 99** separation: nothing of the Study Bible in the scripture-only front matter, nothing of the Foreword in the Study Bible export | VBA | 2 | 100 | RT-19 | PB-7 | RT-22a | ✅ 2026-11-12 done and verified: `basRwbFrontMatter.CountFrontMatterSeparationViolations` (the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment; no RWBFront style after them), `ListFrontMatterSeparation`, `MaxTests` 99, Test 99 wired in `aeBibleClass.cls`; compiled; 0 on copies with and without the front matter, 3 on a copy broken three ways; owner run in the real docm: `RUN_THE_TESTS(99)` PASS 0 of expected 0 (1.5 s); aeBibleClass `09216f6`. The add-in port of Test 99 is the last 10% of RT-19 (FU-19, FU-22) |
 | **Phase 3: fonts embedded and the PDF (so no release relies on Microsoft fonts as the fallback)** | | | | | | | | |
-| RT-30 | Font facts: embedding permission, copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used (Aptos's licence is already read) | Node | 2 | 0 | - | S-5 | - | ⚪ |
+| RT-30 | Font facts: embedding permission, copyright lines and OFL text of Carlito, Noto Sans, Liberation Serif; which weights are used (Aptos's licence is already read) | Node | 2 | 80 | - | S-5 | - | 🟡 2026-11-12 facts read from the installed font files and the real export, written up in `rvw/RWB Font Facts 2026-11-12.md` (aeBibleAddin): `fsType` 0 in all 10 files, copyright and licence lines of each family, versions, weights used (Carlito Regular and Italic, Liberation Serif Regular, Noto Sans Bold). Left: the full OFL 1.1 text and any Reserved Font Name wording are not on this machine; take them from each upstream release (done with RT-34) |
 | RT-31 | Export embeds the fonts (subset or full, S-5) **after** RT-13, RT-15, RT-16: Word embeds every referenced font, so with the Microsoft names still present it embeds Calibri and Aptos too (measured) | VBA | 2 | 0 | RT-32a | F2, F3 | RT-13, RT-15, RT-16 | ⚪ |
 | RT-32a | Node: embedded fonts in the docx are a subset of the three; the same rule read independently of VBA (`rwb.fonts`, cross-check of Test 95); the docx has no rsid attributes | Node | 3 | 25 | RT-18, RT-31 | RX-11 | RT-31 | 🟡 allowlist test against the VBA constant and the PDF font rule are done (RT-02) |
 | RT-32b | Gate: refuse `status: pilot`, any PDF recorded with `allowedExtraFonts`, and fonts outside the three | Add-in | 2 | 0 | RT-32a | RX-11 | RT-04e | ⚪ |
@@ -103,12 +103,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 72% complete** (49 of 69 tasks finished; 111.90 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 73% complete** (49 of 69 tasks finished; 113.50 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 12 | 25.30 / 42 | 60% |
-| Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 65.60 / 80 | 82% |
+| Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 67.20 / 80 | 84% |
 | Add-in (aeBibleAddin) | 6 | 3 | 10.00 / 15 | 67% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
@@ -117,11 +117,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
 | Phase 2 | 6 | 5 | 13.00 / 18 | 72% |
-| Phase 3 | 8 | 0 | 0.75 / 16 | 5% |
+| Phase 3 | 8 | 0 | 2.35 / 16 | 15% |
 | Phase 4 | 6 | 0 | 2.40 / 13 | 18% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 36.10 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 34.50 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
