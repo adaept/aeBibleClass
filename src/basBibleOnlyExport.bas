@@ -718,6 +718,12 @@ End Function
 ' Halt condition: post-Pass-3 section Count does not equal
 ' preDeleteSectionCount - EXPECTED_SECTIONS_REMOVED.
 '
+' RT-22a (2026-11-11): the docm may carry the RWB front-matter section (the six
+' RWBFront styles, basRwbFrontMatter) as a NEW section 1, before the Study
+' Bible's own front matter. Then the Count is 146 and every section number
+' below moves up by `shift` = 1; that section is kept (its styles are KEEP).
+' Without it (Count 145, shift 0) the pass behaves exactly as before.
+'
 ' Reassertion is deliberately minimal - only clears a LinkToPrevious
 ' reference on the new Section(1) that would otherwise dangle (its
 ' original "previous" section no longer exists). Deeper front-matter
@@ -733,24 +739,44 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' so the Count must be unchanged. The 12 STRIP-only sections are then
     ' removed explicitly, last block first so earlier indexes stay valid.
     ' Section numbers come from the Pass 0b map of this docm (145 sections).
-    Const EXPECTED_SECTIONS As Long = 145
+    Const SECTIONS_WITHOUT_FRONT As Long = 145
     Const EXPECTED_SECTIONS_REMOVED As Long = 12
 
-    If preDeleteSectionCount <> EXPECTED_SECTIONS Or oDoc.Sections.Count <> EXPECTED_SECTIONS Then
+    Dim shift As Long
+    Select Case preDeleteSectionCount
+        Case SECTIONS_WITHOUT_FRONT
+            shift = 0
+        Case SECTIONS_WITHOUT_FRONT + 1
+            shift = 1
+        Case Else
+            HaltExport "Pass5_SectionSurgery", _
+                "Section Count is " & preDeleteSectionCount & " before Pass 5, expected " & SECTIONS_WITHOUT_FRONT & _
+                " (no front-matter section) or " & (SECTIONS_WITHOUT_FRONT + 1) & " (RWB front-matter section 1). The section map " & _
+                "(1-4, 84-85, 140-145, moved up by 1 with a front section) no longer applies - re-map before proceeding."
+            Exit Sub
+    End Select
+    If oDoc.Sections.Count <> preDeleteSectionCount Then
         HaltExport "Pass5_SectionSurgery", _
             "Section Count is " & preDeleteSectionCount & " before / " & oDoc.Sections.Count & _
-            " after Pass 3, expected " & EXPECTED_SECTIONS & " both times. The section map " & _
-            "(1-4, 84-85, 140-145) no longer applies - re-map before proceeding."
+            " after Pass 3, expected the same both times."
         Exit Sub
     End If
+    ' A front section must be exactly section 1; without one, no RWBFront paragraph may exist in section 1.
+    If SectionHoldsFrontStyle(oDoc.Sections(1)) <> (shift = 1) Then
+        HaltExport "Pass5_SectionSurgery", _
+            "Section Count " & preDeleteSectionCount & " says " & IIf(shift = 1, "a front-matter section is present", "no front-matter section") & _
+            ", but section 1 " & IIf(shift = 1, "holds no RWBFront paragraph.", "holds an RWBFront paragraph.")
+        Exit Sub
+    End If
+    ExportLog "Pass5: front-matter section " & IIf(shift = 1, "present (section 1 kept, map shifted by 1)", "absent (map unshifted)")
 
     ' Safety: none of the target sections may hold a KEEP-style paragraph.
     Dim keepDict As Object
     Set keepDict = BuildKeepDict()
     Dim blkFirst As Variant
     Dim blkLast As Variant
-    blkFirst = Array(1, 84, 140)
-    blkLast = Array(4, 85, 145)
+    blkFirst = Array(1 + shift, 84 + shift, 140 + shift)
+    blkLast = Array(4 + shift, 85 + shift, 145 + shift)
     Dim b As Long
     Dim s As Long
     Dim oPara As Object
@@ -771,7 +797,7 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' sectPr cannot be deleted, so delete from the section-139 break
     ' through the end; 139 then takes the final section's setup, which is
     ' first overwritten with 139's own page setup.
-    CopySectionPageSetup oDoc.Sections(139), oDoc.Sections(145)
+    CopySectionPageSetup oDoc.Sections(139 + shift), oDoc.Sections(145 + shift)
     ' B4 (2026-10-08): the surviving final section would otherwise keep
     ' section 145's empty header, leaving Revelation without its running
     ' header. Headers are static per-book text, so copy 139's header(s)
@@ -779,24 +805,24 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' 1 (PAGE field) and need no copy.
     Dim hdrIdx As Long
     Dim revHeaderText As String
-    revHeaderText = oDoc.Sections(139).Headers(wdHeaderFooterPrimary).Range.Text
+    revHeaderText = oDoc.Sections(139 + shift).Headers(wdHeaderFooterPrimary).Range.Text
     Dim revHeaderParas As Long
-    revHeaderParas = oDoc.Sections(139).Headers(wdHeaderFooterPrimary).Range.Paragraphs.Count
+    revHeaderParas = oDoc.Sections(139 + shift).Headers(wdHeaderFooterPrimary).Range.Paragraphs.Count
     For hdrIdx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
-        If oDoc.Sections(139).Headers(hdrIdx).Exists Then
-            oDoc.Sections(145).Headers(hdrIdx).LinkToPrevious = False
-            oDoc.Sections(145).Headers(hdrIdx).Range.FormattedText = _
-                oDoc.Sections(139).Headers(hdrIdx).Range.FormattedText
+        If oDoc.Sections(139 + shift).Headers(hdrIdx).Exists Then
+            oDoc.Sections(145 + shift).Headers(hdrIdx).LinkToPrevious = False
+            oDoc.Sections(145 + shift).Headers(hdrIdx).Range.FormattedText = _
+                oDoc.Sections(139 + shift).Headers(hdrIdx).Range.FormattedText
         End If
     Next hdrIdx
     Dim oRng As Object
-    Set oRng = oDoc.Range(oDoc.Sections(139).Range.End - 1, oDoc.Content.End - 1)
+    Set oRng = oDoc.Range(oDoc.Sections(139 + shift).Range.End - 1, oDoc.Content.End - 1)
     oRng.Delete
     ' Historical Parallels Chart 84-85
-    Set oRng = oDoc.Range(oDoc.Sections(84).Range.Start, oDoc.Sections(85).Range.End)
+    Set oRng = oDoc.Range(oDoc.Sections(84 + shift).Range.Start, oDoc.Sections(85 + shift).Range.End)
     oRng.Delete
     ' Front matter 1-4 (Section 5 survives: it hosts the Bible Index tables)
-    Set oRng = oDoc.Range(oDoc.Sections(1).Range.Start, oDoc.Sections(4).Range.End)
+    Set oRng = oDoc.Range(oDoc.Sections(1 + shift).Range.Start, oDoc.Sections(4 + shift).Range.End)
     oRng.Delete
 
     Dim postCount As Long
@@ -841,7 +867,7 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' "Header" paragraph in its Primary header - the only active story in
     ' the export not styled TheHeaders/TheFooters, which makes the Case 50
     ' audit return -1 on the docx. Restyle it and verify.
-    FixSection1HeaderFooterStyles oDoc
+    FixLeadingSectionsHeaderFooterStyles oDoc, 1 + shift
     If m_haltFired Then Exit Sub
 
     ' Word appends extra control characters to a range's Text (Chr(13),
@@ -860,43 +886,72 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
 End Sub
 
 ' ==========================================================================
-' FixSection1HeaderFooterStyles
+' FixLeadingSectionsHeaderFooterStyles
 ' ==========================================================================
-' Restyles every existing header/footer story paragraph of Section(1) to
-' TheHeaders / TheFooters, then halts if the Primary header is still not
-' TheHeaders. Added 2026-10-12 after the JS port's L-5 run on the exported
+' Restyles every existing header/footer story paragraph of the first
+' nLeading sections (1, or 2 with the RWB front-matter section: the front
+' section and the Bible Index host) to TheHeaders / TheFooters, then halts
+' if a Primary header is still not TheHeaders. Added 2026-10-12 after the JS port's L-5 run on the exported
 ' docx found Section(1)'s Primary header in the built-in Header style.
 ' ==========================================================================
-Private Sub FixSection1HeaderFooterStyles(ByVal oDoc As Object)
+Private Sub FixLeadingSectionsHeaderFooterStyles(ByVal oDoc As Object, ByVal nLeading As Long)
     Dim idx As Long
     Dim oPara As Object
     Dim fixedCount As Long
+    Dim sec As Long
     ' No .Exists test (2026-10-16): the First/Even stories of Section(1) are inactive (Exists = False) but are
     ' still saved as header*/footer* parts, and were left in the built-in Header/Footer styles. Restyle all
     ' three story types so no inert story keeps a non-palette style (checked by verify_char_style_change.py).
+    For sec = 1 To nLeading
     For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
-        For Each oPara In oDoc.Sections(1).Headers(idx).Range.Paragraphs
+        For Each oPara In oDoc.Sections(sec).Headers(idx).Range.Paragraphs
             If oPara.style.NameLocal <> "TheHeaders" Then
                 oPara.style = oDoc.Styles("TheHeaders")
                 fixedCount = fixedCount + 1
             End If
         Next oPara
-        For Each oPara In oDoc.Sections(1).Footers(idx).Range.Paragraphs
+        For Each oPara In oDoc.Sections(sec).Footers(idx).Range.Paragraphs
             If oPara.style.NameLocal <> "TheFooters" Then
                 oPara.style = oDoc.Styles("TheFooters")
                 fixedCount = fixedCount + 1
             End If
         Next oPara
     Next idx
+    Next sec
     ExportLog "Pass5: Section(1) header/footer paragraphs restyled=" & fixedCount
 
     Dim gotStyle As String
-    gotStyle = oDoc.Sections(1).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).style.NameLocal
-    If gotStyle <> "TheHeaders" Then
-        HaltExport "Pass5_SectionSurgery", _
-            "Section(1) Primary header style is """ & gotStyle & """, expected ""TheHeaders""."
-    End If
+    For sec = 1 To nLeading
+        gotStyle = oDoc.Sections(sec).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).style.NameLocal
+        If gotStyle <> "TheHeaders" Then
+            HaltExport "Pass5_SectionSurgery", _
+                "Section(" & sec & ") Primary header style is """ & gotStyle & """, expected ""TheHeaders""."
+        End If
+    Next sec
 End Sub
+
+' ==========================================================================
+' SectionHoldsFrontStyle
+' ==========================================================================
+' True when any paragraph of the section is in one of the six RWBFront
+' styles (basRwbFrontMatter.GetFrontMatterStyles). Used by Pass 5 to tell
+' a docm with the RWB front-matter section from one without.
+' ==========================================================================
+Private Function SectionHoldsFrontStyle(ByVal oSection As Object) As Boolean
+    Dim vNames As Variant
+    Dim oPara As Object
+    Dim i As Long
+
+    vNames = basRwbFrontMatter.GetFrontMatterStyles()
+    For Each oPara In oSection.Range.Paragraphs
+        For i = LBound(vNames) To UBound(vNames)
+            If StrComp(oPara.style.NameLocal, CStr(vNames(i)), vbTextCompare) = 0 Then
+                SectionHoldsFrontStyle = True
+                Exit Function
+            End If
+        Next i
+    Next oPara
+End Function
 
 ' ==========================================================================
 ' CopySectionPageSetup

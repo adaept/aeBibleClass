@@ -9,6 +9,7 @@ Born during the RWB 1.1.1 clean-up of 2026-11-10 (release train RT-13 to RT-19, 
 | `run-counts.vbs <copy.docm> <modules> <Module.Function;...> <result.txt>` | Imports the modules into a scratch document, opens the COPY read-only with macros off, runs each function with the copy's name as argument, writes the results (the five clean-up counts in one run). |
 | `fix-and-verify.vbs <copy.docm> <modules> <Module.Count> <Module.Fix> <result.txt>` | count, fix, count, fix again (expect the second fix to return 0); saves the document text before and after (`<result>.before.txt`, `.after.txt`) so `sha256sum` shows the fix did not change the text. Closes the copy WITHOUT saving. |
 | `compile-check.vbs <src folder> <ClassName> <numbers 94;95> <result.txt>` | Imports every module of `src` into a scratch document, adds a probe that instantiates the class and reads `GetTestDescription(n)`: proves an edited `aeBibleClass.cls` compiles before it is imported into the real docm. |
+| `run-export.vbs <src folder> <source.docm> <result.txt>` | Runs the scripture-only export (`ExportScriptureOnlyDocx`) on a COPY in a hidden Word. The export takes every path from the folder of the source: put the copy in its own new folder under `C:\adaept\aeTest\` with a `py\` folder (`strip_ribbon.py`, `verify_char_style_change.py`) and an empty `rpt\`. About 5 minutes; start it in the background and poll `<result.txt>` and `rpt\RadiantWordBibleExport.txt` (the verdict is the last line, `Result: CLEAN (0 issues)`). Does NOT force macros off: with `AutomationSecurity = 3` the export's own `Documents.Open` fails with error 40040 after 6 s (probe, 2026-11-11). Runtime errors inside the export land in `<result.txt>.err.txt`. |
 | `dump-wordopenxml.vbs <copy.docm> <out.xml>` | Writes `Content.WordOpenXML` (about 31 MB, about 10 s) of the copy, the same package Office.js `getOoxml()` returns. |
 | `examples\hyg_rt13_compare.vbs` | A template, not a tool (paths inside): records the properties of every touched run before a fix and compares them after. It found that `Font.Reset` strips character styles. |
 
@@ -23,6 +24,7 @@ Every script refuses to run (exit 2) while any `WINWORD.EXE` is running: `Create
 5. **Long runs go in the background** (the full docm takes minutes): `( cscript //nologo script.vbs args > run.log 2>&1 & )`, then poll the result file. The Immediate window is not visible to a script.
 6. **Walking `doc.Paragraphs` through COM on the 33,824-paragraph docm is far too slow** (over ten minutes); bisect on `Range.LanguageID` or read `Content.WordOpenXML` once instead.
 7. Git Bash has no `python`, `strings` or `wmic`; run Python in WSL (`wsl.exe --exec python3 -I`, with `MSYS_NO_PATHCONV=1` so Git Bash does not rewrite the paths) and PowerShell from a `.ps1` file.
+8. **A style's Next style is resolved in the ACTIVE document.** Assigning `NextParagraphStyle` while another document is active (the scratch document that holds the modules) fails with 5171; activate the target first. Setting it on a 12 pt style also resets the size to Normal's 9, so set the next style before the size (RT-22a, 2026-11-11).
 
 ## 2. Reading a SAVED docm without Word
 

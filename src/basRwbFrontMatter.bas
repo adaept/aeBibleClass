@@ -32,7 +32,7 @@ Public Const STYLE_FRONT_SIGNATURE As String = "RWBFrontSignature"
 Public Const STYLE_FRONT_COPYRIGHT As String = "RWBFrontCopyright"
 
 ' Which version of this module is loaded (changes with every edit; printed by DescribeFrontMatterStyles).
-Public Const FRONT_MATTER_VERSION As String = "2026-11-11 f (next style set before the size)"
+Public Const FRONT_MATTER_VERSION As String = "2026-11-11 h (target document activated)"
 
 Private Const FRONT_FONT As String = "Liberation Serif"
 Private Const LANG_ENGLISH_US As Long = 1033
@@ -102,10 +102,15 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
     Dim oStyle As Word.Style
     Dim nCreated As Long
     Dim nLenBefore As Long
+    Dim oPrevious As Word.Document
 
     On Error GoTo PROC_ERR
     m_LastError = ""
     Set oDoc = ResolveDoc(sDocName)
+    ' Word resolves a Next style in the ACTIVE document (error 5171 when another document is active, as in the COM harness
+    ' where a scratch document holds the modules), so the target is activated for the run and the previous one restored.
+    Set oPrevious = ActiveDocument
+    If Not oDoc Is oPrevious Then oDoc.Activate
     nLenBefore = Len(oDoc.Content.Text)
     vNames = GetFrontMatterStyles()
     ' All six are created before any specification is applied: a style's Next style may be one created later in the list
@@ -117,8 +122,9 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
         End If
     Next i
     For i = LBound(vNames) To UBound(vNames)
-        ApplySpec oDoc.Styles(CStr(vNames(i)))
+        ApplySpec oDoc, oDoc.Styles(CStr(vNames(i)))
     Next i
+    If Not oDoc Is oPrevious Then oPrevious.Activate
     If Len(oDoc.Content.Text) <> nLenBefore Then
         m_LastError = "CreateFrontMatterStyles: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
         Debug.Print m_LastError
@@ -130,6 +136,9 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
     Exit Function
 PROC_ERR:
     m_LastError = "CreateFrontMatterStyles: " & Err.Number & " " & Err.Description
+    On Error Resume Next
+    If Not oPrevious Is Nothing Then If Not oDoc Is oPrevious Then oPrevious.Activate
+    On Error GoTo 0
     Debug.Print m_LastError
     CreateFrontMatterStyles = -1
 End Function
@@ -201,14 +210,16 @@ PROC_ERR:
     Debug.Print "DescribeFrontMatterStyles: " & Err.Number & " " & Err.Description
 End Sub
 
-Private Sub ApplySpec(ByVal oStyle As Word.Style)
+Private Sub ApplySpec(ByVal oDoc As Word.Document, ByVal oStyle As Word.Style)
     Dim vSpec As Variant
 
     vSpec = SpecFor(oStyle.NameLocal)
     ' No base style, like the other front styles (the taxonomy audit expects "").
     oStyle.BaseStyle = ""
     ' Next style BEFORE the size: setting it afterwards resets a size of 12 to Normal's 9 (probe, live run 2026-11-11).
-    oStyle.NextParagraphStyle = vSpec(6)
+    ' The Style OBJECT of the target document, not its name: a name is resolved in the ACTIVE document (error 5171 when another
+    ' document is active, as in the COM harness).
+    oStyle.NextParagraphStyle = oDoc.Styles(CStr(vSpec(6)))
     With oStyle.Font
         .Name = FRONT_FONT
         .NameAscii = FRONT_FONT
