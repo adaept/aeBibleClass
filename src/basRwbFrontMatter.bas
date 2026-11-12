@@ -682,7 +682,7 @@ Private Function SeparationViolations(ByVal oDoc As Word.Document, ByVal bList A
     SeparationViolations = FrontSectionViolations(oDoc, nFront, bList) + ForeignFrontStyleViolations(oDoc, nFront, bList)
 End Function
 
-' Study Bible content inside the leading front sections: a paragraph outside the six styles, or any note, field, link, table, shape or comment.
+' Study Bible content inside the leading front sections: a paragraph outside the six styles, or any Note, field, link, table, shape or comment.
 Private Function FrontSectionViolations(ByVal oDoc As Word.Document, ByVal nFront As Long, ByVal bList As Boolean) As Long
     Dim vKinds As Variant
     Dim oRng As Word.Range
@@ -696,9 +696,9 @@ Private Function FrontSectionViolations(ByVal oDoc As Word.Document, ByVal nFron
     For i = 1 To nFront
         Set oRng = oDoc.Sections(i).Range
         For Each oPara In oRng.Paragraphs
-            If Not IsFrontMatterParagraphStyle(oPara.Style.NameLocal) Then
+            If Not IsFrontMatterParagraphStyle(oPara.style.NameLocal) Then
                 nHits = nHits + 1
-                If bList Then Debug.Print "front section " & i & " | paragraph in style " & oPara.Style.NameLocal & " | " & Left$(oPara.Range.Text, 40)
+                If bList Then Debug.Print "front section " & i & " | paragraph in style " & oPara.style.NameLocal & " | " & Left$(oPara.Range.Text, 40)
             End If
         Next oPara
         For k = LBound(vKinds) To UBound(vKinds)
@@ -733,7 +733,7 @@ Private Function ForeignFrontStyleViolations(ByVal oDoc As Word.Document, ByVal 
             With oRng.Find
                 .ClearFormatting
                 .Text = ""
-                .Style = oStyle
+                .style = oStyle
                 .Format = True
                 .Forward = True
                 .Wrap = wdFindStop
