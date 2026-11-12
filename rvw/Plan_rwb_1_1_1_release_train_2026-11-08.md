@@ -49,7 +49,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-18b | **Test 96** verse runs not in English (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-14, RT-18 | ✅ 2026-11-10 (Test 96 PASS in the real docm, 1.4 s; section 5n) |
 | RT-18c | **Test 97** theme fonts and style font slots outside the allowlist (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-15, RT-16, RT-18 | ✅ 2026-11-10 (Test 97 PASS in the real docm, 0.7 s; section 5n) |
 | RT-18d | **Test 98** stray direct formatting on verse runs (expected 0) | VBA | 1 | 100 | RT-19 | - | RT-17, RT-18 | ✅ 2026-11-10 (Test 98 PASS in the real docm, 19.6 s; section 5n) |
-| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 95 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | 🟡 2026-11-12 (Test 99 ported: pure core `audit-front-matter.ts`, live loader `audit-scanner-front-matter.ts`, console hook `aeAuditSpike.auditFrontMatterSeparation`, 12 tests, `npm run check` passes; `py/js_port_parity.py`: 0 NOT PORTED, 0 MENTIONED, 0 PORTED-NOT-WIRED, Case 99 SPIKE-WIRED; offline over the real docm 0 violations, 3 leading front sections, failing side 1; only the live run in Word is left: `await aeAuditSpike.auditFrontMatterSeparation()` expecting 0 and 3; section 5o). Earlier: 2026-11-10 (Tests 95 to 98 ported, tested, SPIKE-WIRED, parity 0 NOT PORTED; live on the cleaned docm 0 / 0 / 0 / 0, failing side proven offline 29 / 34 / 290 / 13 (optional live failing run skipped by the owner); only Test 99 is left and waits for RT-24; section 5o) |
+| RT-19 | Port Tests 95 to 99 to the add-in's audit engine (rule "port every Case") or register a documented gap; `py/js_port_parity.py` must show 0 NOT PORTED before the baseline re-pin | Add-in | 5 | 100 | RT-18 to RT-18d, RT-24 | parity ledger, plan 15.11 | RT-18 | ✅ 2026-11-12 done and verified: Tests 95 to 99 are ported to the add-in's audit engine, tested and SPIKE-WIRED (`py/js_port_parity.py`: 0 NOT PORTED, 0 MENTIONED, 0 PORTED-NOT-WIRED); live on the real docm in Word: Tests 95 to 98 gave 0 / 0 / 0 / 0 (2026-11-10), Test 99 `auditFrontMatterSeparation` gave 0 violations and 3 leading front sections (2026-11-12, 33,840 body paragraphs, equal to the VBA Test 99); failing sides proven offline (29 / 34 / 290 / 13 for Tests 95 to 98, 1 for Test 99) and on a copy in the VBA (3); the add-in code is aeBibleAddin `0aca613`; sections 5o and the LIVE_CHECK doc Shapes 18 and 19 |
 | **Phase 2: Foreword and Introduction (scripture-only publication, separate from the Study Bible)** | | | | | | | | |
 | RT-20 | Decide the route D-13 (A: a kept style in the export; B: print profile; C: outside the docx) and whether it ships in 1.1.1 or 1.1.2 | Owner | 1 | 100 | RT-22a | PB-7, D-13, S-3 | - | ✅ 2026-11-11 owner: route A (a Foreword style in the KEEP list of the export), ships in 1.1.1; unblocks RT-22a to RT-24 (FU-22) |
 | RT-21 | Owner writes the Foreword and Introduction | Owner | 5 | 0 | - | PB-7 | - | ⚪ |
@@ -103,25 +103,25 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 70% complete** (47 of 69 tasks finished; 108.35 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 70% complete** (48 of 69 tasks finished; 108.60 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 12 | 25.30 / 42 | 60% |
 | Node (aeRWB, release, RadiantWordBible) | 35 | 27 | 63.20 / 80 | 79% |
-| Add-in (aeBibleAddin) | 6 | 1 | 8.85 / 15 | 59% |
+| Add-in (aeBibleAddin) | 6 | 2 | 9.10 / 15 | 61% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
 | By phase | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
-| Phase 1 | 13 | 12 | 28.75 / 29 | 99% |
+| Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
 | Phase 2 | 6 | 4 | 12.10 / 18 | 67% |
 | Phase 3 | 8 | 0 | 0.75 / 16 | 5% |
 | Phase 4 | 6 | 0 | 0.00 / 13 | 0% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 39.65 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 39.40 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
