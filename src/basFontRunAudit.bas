@@ -274,7 +274,7 @@ Private Sub CollectBookStarts(ByVal oDoc As Word.Document, ByRef nBooks As Long,
     With rng.Find
         .ClearFormatting
         .Text = ""
-        .style = oDoc.Styles(wdStyleHeading1)
+        .Style = oDoc.Styles(wdStyleHeading1)
         .Format = True
         .Forward = True
         .Wrap = wdFindStop
@@ -338,7 +338,7 @@ Private Sub FindRunsInFont(ByVal oDoc As Word.Document, ByVal sFont As String, B
                         nListed = nListed + 1
                         sParaStyle = "": sCharStyle = ""
                         On Error Resume Next
-                        sParaStyle = r.Paragraphs(1).style.NameLocal
+                        sParaStyle = r.Paragraphs(1).Style.NameLocal
                         sCharStyle = r.CharacterStyle.NameLocal
                         On Error GoTo 0
                         sLoc = ""
@@ -370,7 +370,7 @@ Private Function VerseRefOf(ByVal oPara As Word.Paragraph, ByVal nBooks As Long,
     Dim sCs As String
     Dim rc As Word.Range
 
-    If oPara.style.NameLocal <> "VerseText" Then Exit Function
+    If oPara.Style.NameLocal <> "VerseText" Then Exit Function
     ps = oPara.Range.Start
     For i = nBooks To 1 Step -1
         If bookStarts(i) <= ps Then sBook = bookNames(i): Exit For

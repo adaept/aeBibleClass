@@ -118,7 +118,7 @@ Sub PrintBibleBook()
     
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
-        If para.style = "Heading 1" Then
+        If para.Style = "Heading 1" Then
             If InStr(para.Range.Text, heading1Name) > 0 Then
                 Debug.Print "Heading 1: " & para.Range.Text
                 startProcessing = True
@@ -134,7 +134,7 @@ Sub PrintBibleBook()
                 GoTo EmptyPara
             End If
 
-            If para.style = "Heading 2" Then
+            If para.Style = "Heading 2" Then
                 Debug.Print "Heading 2: " & para.Range.Text
                 heading2Found = True
             ElseIf heading2Found Then
@@ -142,7 +142,7 @@ Sub PrintBibleBook()
             End If
         End If
         
-        If heading1Found And para.style = "Heading 1" And InStr(para.Range.Text, heading1Name) = 0 Then
+        If heading1Found And para.Style = "Heading 1" And InStr(para.Range.Text, heading1Name) = 0 Then
             Exit For
         End If
 EmptyPara:
@@ -568,7 +568,7 @@ Sub EnsureFootnoteReferenceStyleColor()
     ' Loop through each paragraph in the document
     For Each para In Doc.Paragraphs
         ' Check if the paragraph style is Footnote Reference
-        If para.style = "Footnote Reference" Then
+        If para.Style = "Footnote Reference" Then
             Count = Count + 1
             Set rng = para.Range
             ' Check if the style color is correctly set to the desired color
@@ -1030,7 +1030,7 @@ Sub CompareHeading1sWithShowHideToggle()
 
         headingText = ""
         For Each para In pageRange.Paragraphs
-            If para.style = "Heading 1" Then
+            If para.Style = "Heading 1" Then
                 headingText = Replace(para.Range.Text, vbCr, "")
                 showList.Add headingText
                 j = j + 1
@@ -1053,7 +1053,7 @@ Sub CompareHeading1sWithShowHideToggle()
 
         headingText = ""
         For Each para In pageRange.Paragraphs
-            If para.style = "Heading 1" Then
+            If para.Style = "Heading 1" Then
                 headingText = Replace(para.Range.Text, vbCr, "")
                 hideList.Add headingText
                 k = k + 1
@@ -1325,7 +1325,7 @@ Public Sub Probe_StoryRanges()
         Do
             seen = "|"
             For Each p In s.Paragraphs
-                nm = p.style.NameLocal
+                nm = p.Style.NameLocal
                 If InStr(seen, "|" & nm & "|") = 0 Then
                     seen = seen & nm & "|"
                 End If

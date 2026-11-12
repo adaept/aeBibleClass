@@ -529,7 +529,7 @@ Private Sub Pass3_ParagraphSweep(ByVal oDoc As Object)
     Dim inIndexTable As Boolean
 
     For Each oPara In oDoc.Paragraphs
-        StyleName = oPara.style.NameLocal
+        StyleName = oPara.Style.NameLocal
 
         If keepDict.Exists(StyleName) Then
             ' KEEP - scripture style, or Bible-Index-regeneration style.
@@ -584,8 +584,8 @@ Private Sub Pass3_ParagraphSweep(ByVal oDoc As Object)
     Dim oLast As Object
     Set oLast = oDoc.Paragraphs.Last
     If oLast.Range.Text = vbCr Then
-        If stripDict.Exists(oLast.style.NameLocal) And oLast.style.NameLocal <> "BodyText" Then
-            oLast.style = oDoc.Styles("BodyText")
+        If stripDict.Exists(oLast.Style.NameLocal) And oLast.Style.NameLocal <> "BodyText" Then
+            oLast.Style = oDoc.Styles("BodyText")
         End If
     End If
 
@@ -636,7 +636,7 @@ Public Function VerifyScriptureOnlyStrip(ByVal oDoc As Object) As Long
     For Each rng In oDoc.StoryRanges
         Do
             For Each para In rng.Paragraphs
-                StyleName = para.style.NameLocal
+                StyleName = para.Style.NameLocal
                 inIndexTable = False
                 If rng.StoryType = wdMainTextStory Then
                     For k = 1 To nTbl
@@ -678,7 +678,7 @@ Public Function VerifyScriptureOnlyStrip(ByVal oDoc As Object) As Long
     idxCount = 0
     Dim oPara As Object
     For Each oPara In oDoc.Paragraphs
-        If oPara.style.NameLocal = "BibleIndexList" Then idxCount = idxCount + 1
+        If oPara.Style.NameLocal = "BibleIndexList" Then idxCount = idxCount + 1
     Next oPara
     If idxCount <> expectedBooks Then
         violations = violations + 1
@@ -775,10 +775,10 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     For b = 0 To 2
         For s = blkFirst(b) To blkLast(b)
             For Each oPara In oDoc.Sections(s).Range.Paragraphs
-                If keepDict.Exists(oPara.style.NameLocal) Then
+                If keepDict.Exists(oPara.Style.NameLocal) Then
                     HaltExport "Pass5_SectionSurgery", _
                         "Section " & s & " (slated for removal) holds a KEEP-style paragraph """ & _
-                        oPara.style.NameLocal & """ at Range.Start=" & oPara.Range.Start
+                        oPara.Style.NameLocal & """ at Range.Start=" & oPara.Range.Start
                     Exit Sub
                 End If
             Next oPara
@@ -848,7 +848,7 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
         oHdrRng.Paragraphs.Count & ", trimmed=" & trimGuard & ", Len(source)=" & _
         Len(revHeaderText) & ", Len(final)=" & Len(gotHeader)
     Dim gotHeaderStyle As String
-    gotHeaderStyle = oDoc.Sections(postCount).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).style.NameLocal
+    gotHeaderStyle = oDoc.Sections(postCount).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).Style.NameLocal
     If gotHeaderStyle <> "TheHeaders" Then
         HaltExport "Pass5_SectionSurgery", _
             "Final section header paragraph style is """ & gotHeaderStyle & """, expected ""TheHeaders"" (B4)."
@@ -931,14 +931,14 @@ Private Sub FixLeadingSectionsHeaderFooterStyles(ByVal oDoc As Object, ByVal nLe
     For sec = 1 To nLeading
     For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
         For Each oPara In oDoc.Sections(sec).Headers(idx).Range.Paragraphs
-            If oPara.style.NameLocal <> "TheHeaders" Then
-                oPara.style = oDoc.Styles("TheHeaders")
+            If oPara.Style.NameLocal <> "TheHeaders" Then
+                oPara.Style = oDoc.Styles("TheHeaders")
                 fixedCount = fixedCount + 1
             End If
         Next oPara
         For Each oPara In oDoc.Sections(sec).Footers(idx).Range.Paragraphs
-            If oPara.style.NameLocal <> "TheFooters" Then
-                oPara.style = oDoc.Styles("TheFooters")
+            If oPara.Style.NameLocal <> "TheFooters" Then
+                oPara.Style = oDoc.Styles("TheFooters")
                 fixedCount = fixedCount + 1
             End If
         Next oPara
@@ -948,7 +948,7 @@ Private Sub FixLeadingSectionsHeaderFooterStyles(ByVal oDoc As Object, ByVal nLe
 
     Dim gotStyle As String
     For sec = 1 To nLeading
-        gotStyle = oDoc.Sections(sec).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).style.NameLocal
+        gotStyle = oDoc.Sections(sec).Headers(wdHeaderFooterPrimary).Range.Paragraphs(1).Style.NameLocal
         If gotStyle <> "TheHeaders" Then
             HaltExport "Pass5_SectionSurgery", _
                 "Section(" & sec & ") Primary header style is """ & gotStyle & """, expected ""TheHeaders""."
@@ -1008,7 +1008,7 @@ Private Sub Pass6_RegenerateBibleIndex(ByVal oDoc As Object)
 
         Dim oPara As Object
         For Each oPara In oDoc.Paragraphs
-            Select Case oPara.style.NameLocal
+            Select Case oPara.Style.NameLocal
                 Case "Heading 1"
                     nH1 = nH1 + 1
                     If nH1 <= expectedBooks Then Set h1Paras(nH1) = oPara
@@ -1139,7 +1139,7 @@ Public Function VerifyBibleIndexPageNumbers(ByVal docPath As String) As Long
 
     Dim oPara As Object
     For Each oPara In oDoc.Paragraphs
-        Select Case oPara.style.NameLocal
+        Select Case oPara.Style.NameLocal
             Case "Heading 1"
                 nH1 = nH1 + 1
                 If nH1 <= expectedBooks Then
@@ -1290,7 +1290,7 @@ Private Sub BuildIndexTableRanges(ByVal oDoc As Object, ByRef tblStarts() As Lon
     For Each oTbl In oDoc.Tables
         isIndexTable = False
         For Each oPara In oTbl.Range.Paragraphs
-            If oPara.style.NameLocal = "BibleIndexList" Then
+            If oPara.Style.NameLocal = "BibleIndexList" Then
                 isIndexTable = True
                 Exit For
             End If
@@ -1513,9 +1513,9 @@ Private Sub ReplaceCharStyle(ByVal oDoc As Object, ByVal fromName As String, _
         .ClearFormatting
         .Replacement.ClearFormatting
         .Text = ""
-        .style = oDoc.Styles(fromName)
+        .Style = oDoc.Styles(fromName)
         .Replacement.Text = ""
-        .Replacement.style = toStyle
+        .Replacement.Style = toStyle
         .Format = True
         .Forward = True
         .Wrap = wdFindStop
@@ -1531,7 +1531,7 @@ Private Function CountCharStyleHits(ByVal oDoc As Object, ByVal StyleName As Str
     With oRng.Find
         .ClearFormatting
         .Text = ""
-        .style = oDoc.Styles(StyleName)
+        .Style = oDoc.Styles(StyleName)
         .Format = True
         .Forward = True
         .Wrap = wdFindStop
@@ -1680,7 +1680,7 @@ Private Function Pass4d_SetVerseTextAlignment(ByVal oDoc As Object, _
     Dim nOverride As Long
     Dim nVerse As Long
     For Each oPara In oDoc.Paragraphs
-        If oPara.style.NameLocal = "VerseText" Then
+        If oPara.Style.NameLocal = "VerseText" Then
             nVerse = nVerse + 1
             If oPara.Alignment <> want Then
                 nOverride = nOverride + 1
@@ -1789,7 +1789,7 @@ Public Sub InspectStyleUsage(Optional ByVal docPath As String)
     Dim oTbl As Object
     For Each oTbl In oDoc.Tables
         On Error Resume Next
-        dUsed(oTbl.style.NameLocal) = True
+        dUsed(oTbl.Style.NameLocal) = True
         Err.Clear
         On Error GoTo PROC_ERR
     Next oTbl
@@ -1875,7 +1875,7 @@ Private Function StoryHasStyle(ByVal oRng As Object, ByVal oSty As Object) As Bo
     With oFind.Find
         .ClearFormatting
         .Text = ""
-        .style = oSty
+        .Style = oSty
         .Format = True
         .Forward = True
         .Wrap = wdFindStop
@@ -2205,7 +2205,7 @@ Private Function CollectUsedParagraphStyles(ByVal oDoc As Object, _
         Do While Not oRng Is Nothing
             nStories = nStories + 1
             For Each oPara In oRng.Paragraphs
-                d(oPara.style.NameLocal) = True
+                d(oPara.Style.NameLocal) = True
             Next oPara
             Set oRng = oRng.NextStoryRange
         Loop

@@ -81,10 +81,10 @@ Private Function IaeLongProcessClass_ExecuteItem(itemIndex As Long) As Boolean
     ' Exit as soon as a non-marker character is found - no need to scan the
     ' entire paragraph. Both styles are refreshed in a single pass.
     For Each rng In para.Range.Characters
-        If rng.style = "Chapter Verse marker" Then
-            rng.style = "Chapter Verse marker"
-        ElseIf rng.style = "Verse marker" Then
-            rng.style = "Verse marker"
+        If rng.Style = "Chapter Verse marker" Then
+            rng.Style = "Chapter Verse marker"
+        ElseIf rng.Style = "Verse marker" Then
+            rng.Style = "Verse marker"
         Else
             Exit For
         End If

@@ -275,7 +275,7 @@ Public Function SectionHoldsFrontStyle(ByVal oSection As Object) As Boolean
     vNames = GetFrontMatterStyles()
     For Each oPara In oSection.Range.Paragraphs
         For i = LBound(vNames) To UBound(vNames)
-            If StrComp(oPara.style.NameLocal, CStr(vNames(i)), vbTextCompare) = 0 Then
+            If StrComp(oPara.Style.NameLocal, CStr(vNames(i)), vbTextCompare) = 0 Then
                 SectionHoldsFrontStyle = True
                 Exit Function
             End If
@@ -422,7 +422,7 @@ Public Function InsertFrontMatter(ByVal sTextFile As String, Optional ByVal sDoc
         End If
         lPos = lPos + Len(aPlain(i)) + 1
         Set oPara = oDoc.Range(lStart, lStart).Paragraphs(1)
-        oPara.style = oDoc.Styles(aStyle(i))
+        oPara.Style = oDoc.Styles(aStyle(i))
         If aJustify(i) Then oPara.Alignment = wdAlignParagraphJustify
         ApplyItalicSpans oDoc, lStart, aSpans(i)
     Next i
@@ -467,7 +467,7 @@ Private Sub ApplyItalicSpans(ByVal oDoc As Word.Document, ByVal lParaStart As Lo
     For Each vSpan In Split(sSpans, ";")
         If Len(vSpan) > 0 Then
             vPair = Split(vSpan, "-")
-            oDoc.Range(lParaStart + CLng(vPair(0)), lParaStart + CLng(vPair(1))).style = oDoc.Styles(STYLE_FRONT_ITALIC)
+            oDoc.Range(lParaStart + CLng(vPair(0)), lParaStart + CLng(vPair(1))).Style = oDoc.Styles(STYLE_FRONT_ITALIC)
         End If
     Next vSpan
 End Sub
@@ -511,7 +511,7 @@ Private Function FindIndexHostSection(ByVal oDoc As Word.Document, ByVal nFront 
     For k = nFront + 1 To oDoc.Sections.Count
         If k > nFront + MAX_FRONT_SECTIONS Then Exit For
         For Each oPara In oDoc.Sections(k).Range.Paragraphs
-            If StrComp(oPara.style.NameLocal, INDEX_HOST_STYLE, vbTextCompare) = 0 Then
+            If StrComp(oPara.Style.NameLocal, INDEX_HOST_STYLE, vbTextCompare) = 0 Then
                 Set FindIndexHostSection = oDoc.Sections(k)
                 Exit Function
             End If
@@ -682,7 +682,7 @@ Private Function SeparationViolations(ByVal oDoc As Word.Document, ByVal bList A
     SeparationViolations = FrontSectionViolations(oDoc, nFront, bList) + ForeignFrontStyleViolations(oDoc, nFront, bList)
 End Function
 
-' Study Bible content inside the leading front sections: a paragraph outside the six styles, or any Note, field, link, table, shape or comment.
+' Study Bible content inside the leading front sections: a paragraph outside the six styles, or any note, field, link, table, shape or comment.
 Private Function FrontSectionViolations(ByVal oDoc As Word.Document, ByVal nFront As Long, ByVal bList As Boolean) As Long
     Dim vKinds As Variant
     Dim oRng As Word.Range
@@ -696,9 +696,9 @@ Private Function FrontSectionViolations(ByVal oDoc As Word.Document, ByVal nFron
     For i = 1 To nFront
         Set oRng = oDoc.Sections(i).Range
         For Each oPara In oRng.Paragraphs
-            If Not IsFrontMatterParagraphStyle(oPara.style.NameLocal) Then
+            If Not IsFrontMatterParagraphStyle(oPara.Style.NameLocal) Then
                 nHits = nHits + 1
-                If bList Then Debug.Print "front section " & i & " | paragraph in style " & oPara.style.NameLocal & " | " & Left$(oPara.Range.Text, 40)
+                If bList Then Debug.Print "front section " & i & " | paragraph in style " & oPara.Style.NameLocal & " | " & Left$(oPara.Range.Text, 40)
             End If
         Next oPara
         For k = LBound(vKinds) To UBound(vKinds)
@@ -733,7 +733,7 @@ Private Function ForeignFrontStyleViolations(ByVal oDoc As Word.Document, ByVal 
             With oRng.Find
                 .ClearFormatting
                 .Text = ""
-                .style = oStyle
+                .Style = oStyle
                 .Format = True
                 .Forward = True
                 .Wrap = wdFindStop

@@ -28,12 +28,12 @@ Public Sub FindFontUsage()
             lBody = lBody + 1
             bFound = False
             For i = 1 To oStyles.Count
-                If oStyles(i) = "(body) " & oPara.style.NameLocal Then
+                If oStyles(i) = "(body) " & oPara.Style.NameLocal Then
                     bFound = True
                     Exit For
                 End If
             Next i
-            If Not bFound Then oStyles.Add "(body) " & oPara.style.NameLocal
+            If Not bFound Then oStyles.Add "(body) " & oPara.Style.NameLocal
         End If
     Next oPara
 
@@ -46,12 +46,12 @@ Public Sub FindFontUsage()
                         lHF = lHF + 1
                         bFound = False
                         For i = 1 To oStyles.Count
-                            If oStyles(i) = "(header) " & oPara.style.NameLocal Then
+                            If oStyles(i) = "(header) " & oPara.Style.NameLocal Then
                                 bFound = True
                                 Exit For
                             End If
                         Next i
-                        If Not bFound Then oStyles.Add "(header) " & oPara.style.NameLocal
+                        If Not bFound Then oStyles.Add "(header) " & oPara.Style.NameLocal
                     End If
                 Next oPara
             End If
@@ -63,12 +63,12 @@ Public Sub FindFontUsage()
                         lHF = lHF + 1
                         bFound = False
                         For i = 1 To oStyles.Count
-                            If oStyles(i) = "(footer) " & oPara.style.NameLocal Then
+                            If oStyles(i) = "(footer) " & oPara.Style.NameLocal Then
                                 bFound = True
                                 Exit For
                             End If
                         Next i
-                        If Not bFound Then oStyles.Add "(footer) " & oPara.style.NameLocal
+                        If Not bFound Then oStyles.Add "(footer) " & oPara.Style.NameLocal
                     End If
                 Next oPara
             End If
@@ -197,7 +197,7 @@ Private Function ResolveFont(ByVal oPara As Word.Paragraph) As String
     sFont = Trim(oPara.Range.Font.Name)
     If Len(sFont) = 0 Or Left(sFont, 1) = "+" Then
         On Error Resume Next
-        sFont = Trim(oPara.style.Font.Name)
+        sFont = Trim(oPara.Style.Font.Name)
         On Error GoTo 0
         On Error GoTo PROC_ERR
     End If
@@ -658,7 +658,7 @@ Public Sub ListBodyTextIndentUsage(Optional ByVal bWriteFile As Boolean = False)
 
     For Each oPara In oDoc.Paragraphs
         lIdx = lIdx + 1
-        sName = oPara.style.NameLocal
+        sName = oPara.Style.NameLocal
         If StrComp(sName, TARGET_STYLE, vbTextCompare) = 0 Then
             lHits = lHits + 1
             lPage = oPara.Range.Information(wdActiveEndPageNumber)

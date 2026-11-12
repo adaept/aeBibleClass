@@ -34,7 +34,7 @@ Public Sub FindAnyNumberWithStyleAndPrintNextCharASCII()
     ' Set the search parameters
     With Selection.Find
         .Text = searchText
-        .style = StyleName
+        .Style = StyleName
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
@@ -102,7 +102,7 @@ Public Sub PrintBibleHeading1Info()
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 1
-        If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
+        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
             Count = Count + 1
             headingText = para.Range.Text
             pageNumber = para.Range.Information(wdActiveEndPageNumber)
@@ -135,7 +135,7 @@ Public Sub PrintBibleBookHeadings()
 
     ' Loop through all paragraphs in the document
     For Each para In ActiveDocument.Paragraphs
-        If para.style = ActiveDocument.Styles(wdStyleHeading1) Then
+        If para.Style = ActiveDocument.Styles(wdStyleHeading1) Then
             ' Check if the Heading 1 matches the input label
             If para.Range.Text = headingLabel & vbCr Then
                 ' Get the text of the Heading 1 without the extra carriage return
@@ -149,7 +149,7 @@ Public Sub PrintBibleBookHeadings()
 
         ' If Heading 1 is found, start processing
         If foundHeading1 Then
-            If para.style = ActiveDocument.Styles(wdStyleHeading2) Then
+            If para.Style = ActiveDocument.Styles(wdStyleHeading2) Then
                 ' Get the text of the Heading 2 without the extra carriage return
                 Debug.Print Replace(para.Range.Text, vbCr, "")
             End If
@@ -430,7 +430,7 @@ Sub FindNextVerseMarkerSequence()
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
-        .style = "Chapter Verse marker"
+        .Style = "Chapter Verse marker"
         .Execute
     End With
 
@@ -448,7 +448,7 @@ Sub FindNextVerseMarkerSequence()
         End If
 
         If nextRng.Characters.Count = 1 Then
-            If nextRng.style = "Verse marker" Then
+            If nextRng.Style = "Verse marker" Then
                 Dim beforeChar As Word.Range, afterChar As Word.Range
 
                 ' Before chapter
@@ -474,8 +474,8 @@ Sub FindNextVerseMarkerSequence()
                 End If
 
                 ' Check styles and spaces
-                If Trim(beforeChar.Text) = "" And beforeChar.style = "Normal" Then
-                    If Trim(afterChar.Text) = "" And afterChar.style = "Normal" Then
+                If Trim(beforeChar.Text) = "" And beforeChar.Style = "Normal" Then
+                    If Trim(afterChar.Text) = "" And afterChar.Style = "Normal" Then
                         ' Found match
                         chapterRng.Start = beforeChar.Start
                         nextRng.End = afterChar.End

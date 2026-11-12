@@ -186,7 +186,7 @@ Private Sub EnforceHeading2WidowControl()
 
     Dim para As Word.Paragraph
     For Each para In ActiveDocument.Paragraphs
-        If para.style = ActiveDocument.Styles("Heading 2") Then
+        If para.Style = ActiveDocument.Styles("Heading 2") Then
             Count = Count + 1
             With para
                 .WidowControl = True    ' enforces both widow and orphan control for that paragraph

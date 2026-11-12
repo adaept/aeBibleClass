@@ -64,7 +64,7 @@ Function FindNextHeading1OnVisiblePage(bookPage As Integer, textH1 As String, Op
             'Debug.Print "paraPageNum = " & paraPageNum
             If paraPageNum >= bookPage Then
                 ' Verify if the paragraph is styled as Heading 1
-                If para.style = "Heading 1" Then
+                If para.Style = "Heading 1" Then
                     textFound = True
                     headingText = Trim(para.Range.Text) ' Get the text of the Heading 1
                     ' Clean up the text by removing all newline, carriage return, and control characters

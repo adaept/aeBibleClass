@@ -381,10 +381,10 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
     For Each oPara In ActiveDocument.Paragraphs
         nParas = nParas + 1
         ' bucket "para": enumerator advance + the paragraph-style read
-        If oPara.style.NameLocal = "VerseText" Then
+        If oPara.Style.NameLocal = "VerseText" Then
             QueryPerformanceCounter qNow: tPara = tPara + (qNow - qMark) / qpf: qMark = qNow
             nVerse = nVerse + 1
-            firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+            firstCharStyle = oPara.Range.Characters(1).Style.NameLocal
             If firstCharStyle = "Chapter Verse marker" Then
                 cvmTotal = cvmTotal + 1
             End If
@@ -402,7 +402,7 @@ Public Sub GetMarkerTotals(ByRef vmTotal As Long, ByRef cvmTotal As Long)
                 For j = 2 To maxScan
                     nIter = nIter + 1
                     nIterLap = nIterLap + 1
-                    charStyle = oPara.Range.Characters(j).style.NameLocal
+                    charStyle = oPara.Range.Characters(j).Style.NameLocal
                     If charStyle = "Verse marker" Then
                         vmTotal = vmTotal + 1
                         Exit For
@@ -506,7 +506,7 @@ Public Function StyleReadCanary() As String
     QueryPerformanceFrequency qpf
     QueryPerformanceCounter q0
     For i = 1 To REPEATS
-        s = rng.Characters(1).style.NameLocal
+        s = rng.Characters(1).Style.NameLocal
     Next i
     QueryPerformanceCounter q1
     For i = 1 To REPEATS
@@ -632,7 +632,7 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
 
     For Each oPara In ActiveDocument.Paragraphs
         nParas = nParas + 1
-        paraStyle = oPara.style.NameLocal
+        paraStyle = oPara.Style.NameLocal
         QueryPerformanceCounter qNow: lPara = lPara + (qNow - qMark) / qpf: qMark = qNow
         If paraStyle <> "VerseText" Then
             scannedCount = scannedCount + 1
@@ -664,14 +664,14 @@ Public Sub FindMarkerStyleOutsideVerseText(ByRef hitCount As Long, _
                     firstCharStyle = sUniform
                 End If
             Else
-                firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+                firstCharStyle = oPara.Range.Characters(1).Style.NameLocal
                 If firstCharStyle = "Chapter Verse marker" Then isHit = True
                 QueryPerformanceCounter qNow: lFirst = lFirst + (qNow - qMark) / qpf: qMark = qNow
                 If Not isHit Then
                     For j = 1 To maxScan
                         nChars = nChars + 1
                         nCharsLap = nCharsLap + 1
-                        charStyle = oPara.Range.Characters(j).style.NameLocal
+                        charStyle = oPara.Range.Characters(j).Style.NameLocal
                         If charStyle = "Verse marker" Then
                             isHit = True
                             Exit For
@@ -787,18 +787,18 @@ Public Function ControlMarkerOutsideVerseText() As Long
     Next i
     d.Content.Text = sAll
 
-    d.Paragraphs(6).style = "VerseText"
-    d.Range(starts(1), starts(1) + 2).style = "Chapter Verse marker"
-    d.Range(starts(2) + 4, starts(2) + 5).style = "Verse marker"
-    d.Range(starts(3) + 11, starts(3) + 12).style = "Verse marker"
-    d.Range(starts(4) + 12, starts(4) + 13).style = "Verse marker"
-    d.Range(starts(6), starts(6) + 1).style = "Chapter Verse marker"
-    d.Range(starts(6) + 1, starts(6) + 2).style = "Verse marker"
-    d.Range(starts(7), starts(7) + 1).style = "Verse marker"
-    d.Range(starts(8), starts(8) + 5).style = "Verse marker"
-    d.Range(starts(9) + 2, starts(9) + 3).style = "Chapter Verse marker"
-    d.Range(starts(10), starts(10) + 14).style = "Verse marker"
-    d.Range(starts(11), starts(11) + 15).style = "OtherCharStyle"
+    d.Paragraphs(6).Style = "VerseText"
+    d.Range(starts(1), starts(1) + 2).Style = "Chapter Verse marker"
+    d.Range(starts(2) + 4, starts(2) + 5).Style = "Verse marker"
+    d.Range(starts(3) + 11, starts(3) + 12).Style = "Verse marker"
+    d.Range(starts(4) + 12, starts(4) + 13).Style = "Verse marker"
+    d.Range(starts(6), starts(6) + 1).Style = "Chapter Verse marker"
+    d.Range(starts(6) + 1, starts(6) + 2).Style = "Verse marker"
+    d.Range(starts(7), starts(7) + 1).Style = "Verse marker"
+    d.Range(starts(8), starts(8) + 5).Style = "Verse marker"
+    d.Range(starts(9) + 2, starts(9) + 3).Style = "Chapter Verse marker"
+    d.Range(starts(10), starts(10) + 14).Style = "Verse marker"
+    d.Range(starts(11), starts(11) + 15).Style = "OtherCharStyle"
 
     sExpected = starts(1) & "," & starts(2) & "," & starts(3) & "," & starts(7) & "," & starts(8) & "," & starts(10) & ","
 
@@ -850,7 +850,7 @@ Private Sub CollectCharStyleStarts(ByVal oDoc As Object, ByVal StyleName As Stri
     Set oRng = oDoc.Content
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles(StyleName)
+        .Style = oDoc.Styles(StyleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop
@@ -890,7 +890,7 @@ Private Sub CollectParaStyleStarts(ByVal oDoc As Object, ByVal StyleName As Stri
     Set oRng = oDoc.Content
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles(StyleName)
+        .Style = oDoc.Styles(StyleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop
@@ -1084,7 +1084,7 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
 
     With oRng.Find
         .ClearFormatting
-        .style = oDoc.Styles(StyleName)
+        .Style = oDoc.Styles(StyleName)
         .Text = ""
         .Forward = True
         .Wrap = 0     ' wdFindStop
@@ -1096,10 +1096,10 @@ Public Sub AuditCharStyleUsage(ByVal StyleName As String, _
             Set oPara = oRng.Paragraphs(1)
 
             Dim paraStyle As String
-            paraStyle = oPara.style.NameLocal
+            paraStyle = oPara.Style.NameLocal
 
             Dim firstCharStyle As String
-            firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+            firstCharStyle = oPara.Range.Characters(1).Style.NameLocal
 
             Dim qualifies As Boolean
             qualifies = (paraStyle = "BodyText" And firstCharStyle = "Chapter Verse marker")
@@ -1312,7 +1312,7 @@ Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = 
 
     For Each oPara In oDoc.Paragraphs
         Dim StyleName As String
-        StyleName = oPara.style.NameLocal
+        StyleName = oPara.Style.NameLocal
 
         Select Case StyleName
             Case "Heading 1"
@@ -1338,7 +1338,7 @@ Public Sub AuditOrphanBodyTextParagraphs(Optional ByVal bWriteFile As Boolean = 
                     firstCharStyle = "(empty)"
                 Else
                     On Error Resume Next
-                    firstCharStyle = oPara.Range.Characters(1).style.NameLocal
+                    firstCharStyle = oPara.Range.Characters(1).Style.NameLocal
                     If Err.Number <> 0 Then firstCharStyle = "(error)"
                     Err.Clear
                     On Error GoTo PROC_ERR
@@ -1514,12 +1514,12 @@ Public Sub AuditUnconvertedVerseParagraphs(Optional ByVal bWriteFile As Boolean 
     Dim totalUnconverted As Long
     For Each oPara In oDoc.Paragraphs
         Dim psName As String
-        psName = oPara.style.NameLocal
+        psName = oPara.Style.NameLocal
         If psName <> "BodyText" And psName <> "VerseText" Then
             If oPara.Range.End - oPara.Range.Start > 1 Then
                 On Error Resume Next
                 Dim fcs As String
-                fcs = oPara.Range.Characters(1).style.NameLocal
+                fcs = oPara.Range.Characters(1).Style.NameLocal
                 On Error GoTo PROC_ERR
                 If fcs = "Chapter Verse marker" Then
                     totalUnconverted = totalUnconverted + 1
@@ -1715,7 +1715,7 @@ Private Sub WalkHFChain(ByRef sOut As String, ByVal headRng As Object, _
         Dim excerpt As String
         Dim flag As String
         For Each oPara In rng.Paragraphs
-            StyleName = oPara.style.NameLocal
+            StyleName = oPara.Style.NameLocal
             flag = ""
             If isHeader Then
                 hdrParas = hdrParas + 1
@@ -1919,7 +1919,7 @@ Public Sub FindSequentialVerseNumberViolations(ByRef violationCount As Long, _
     expectedVerse = 1
 
     For Each oPara In ActiveDocument.Paragraphs
-        StyleName = oPara.style.NameLocal
+        StyleName = oPara.Style.NameLocal
 
         If StyleName = "Heading 1" Then
             bookIndex = bookIndex + 1

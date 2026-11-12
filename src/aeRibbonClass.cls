@@ -428,14 +428,14 @@ Public Sub CaptureHeading1s(Optional ByVal bForce As Boolean = False)
     i = 1
     j = 0
     For Each para In ActiveDocument.Paragraphs
-        If para.style = "Heading 1" Then
+        If para.Style = "Heading 1" Then
             If i > 66 Then Exit For
             j = 0
             paraText = Trim(Replace(para.Range.Text, vbCr, ""))
             headingData(i, 0) = paraText
             headingData(i, 1) = para.Range.Start
             i = i + 1
-        ElseIf para.style = "Heading 2" Then
+        ElseIf para.Style = "Heading 2" Then
             ' i > 1 means at least one H1 has been stored; current book index is i-1
             If i > 1 Then
                 j = j + 1
@@ -1117,7 +1117,7 @@ Private Sub GoToVerseByScan(ByVal chPos As Long, ByVal vsNum As Long)
     Count = 0
     Do
         r.Find.ClearFormatting
-        r.Find.style = ActiveDocument.Styles("Verse marker")
+        r.Find.Style = ActiveDocument.Styles("Verse marker")
         r.Find.Text = ""
         r.Find.Forward = True
         r.Find.Wrap = wdFindStop

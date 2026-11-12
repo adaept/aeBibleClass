@@ -168,7 +168,7 @@ Private Sub ResetRunsInFont(ByVal oDoc As Word.Document, ByVal sFont As String, 
                     sParaStyle = ""
                     On Error Resume Next
                     sResolved = r.Font.Name
-                    sParaStyle = r.Paragraphs(1).style.NameLocal
+                    sParaStyle = r.Paragraphs(1).Style.NameLocal
                     On Error GoTo 0
                     If Not IsAllowedRunFont(sResolved) Then
                         If StrComp(sParaStyle, BODY_STYLE, vbTextCompare) = 0 And Not bIncludeBodyText Then
@@ -210,7 +210,7 @@ Private Sub ResetKeepingCharacterStyles(ByVal r As Word.Range, ByVal oDoc As Wor
     For k = 1 To nChars
         If StrComp(aStyleNames(k), sDefault, vbTextCompare) <> 0 Then
             On Error Resume Next
-            oDoc.Range(r.Start + k - 1, r.Start + k).style = aStyleNames(k)
+            oDoc.Range(r.Start + k - 1, r.Start + k).Style = aStyleNames(k)
             On Error GoTo 0
         End If
     Next k
@@ -306,7 +306,7 @@ Private Sub ScanVerseLanguage(ByVal oDoc As Word.Document, ByVal bFix As Boolean
         If lPos >= lParaEnd Then
             Set oChar = oDoc.Range(lPos, lPos + 1)
             lParaEnd = oChar.Paragraphs(1).Range.End
-            bVerse = (StrComp(oChar.Paragraphs(1).style.NameLocal, VERSE_STYLE, vbTextCompare) = 0)
+            bVerse = (StrComp(oChar.Paragraphs(1).Style.NameLocal, VERSE_STYLE, vbTextCompare) = 0)
         End If
         If Not bVerse Then
             nOutside = nOutside + 1
@@ -685,7 +685,7 @@ Private Sub ResetStrayByProperty(ByVal oDoc As Word.Document, ByVal sProp As Str
             sCharStyle = "": sParaStyle = ""
             On Error Resume Next
             sCharStyle = r.CharacterStyle.NameLocal
-            sParaStyle = r.Paragraphs(1).style.NameLocal
+            sParaStyle = r.Paragraphs(1).Style.NameLocal
             On Error GoTo 0
             If StrComp(sParaStyle, VERSE_STYLE, vbTextCompare) = 0 And _
                StrComp(sCharStyle, oDoc.Styles(wdStyleDefaultParagraphFont).NameLocal, vbTextCompare) = 0 Then
@@ -719,7 +719,7 @@ Private Sub ResetStrayInColouredCharStyles(ByVal oDoc As Word.Document, ByRef nR
                     .Format = True
                     .Forward = True
                     .Wrap = wdFindStop
-                    .style = oStyle
+                    .Style = oStyle
                     .Font.Color = wdColorAutomatic
                     Do While .Execute
                         guard = guard + 1

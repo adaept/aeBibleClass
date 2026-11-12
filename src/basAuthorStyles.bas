@@ -486,8 +486,8 @@ Public Sub MigrateParagraphs(ByVal oldName As String, ByVal newName As String)
                 " in " & ActiveDocument.Name
 
     For Each para In ActiveDocument.Paragraphs
-        If para.style.NameLocal = oldName Then
-            para.style = ActiveDocument.Styles(newName)
+        If para.Style.NameLocal = oldName Then
+            para.Style = ActiveDocument.Styles(newName)
             total = total + 1
         End If
     Next para
@@ -631,7 +631,7 @@ Private Function CountParagraphsByStyle(ByVal StyleName As String) As Long
     Dim para As Word.Paragraph
     Dim n As Long
     For Each para In ActiveDocument.Paragraphs
-        If para.style.NameLocal = StyleName Then
+        If para.Style.NameLocal = StyleName Then
             n = n + 1
         End If
     Next para

@@ -2154,7 +2154,7 @@ Private Function CountStyleParagraphsNotAligned( _
     Count = 0
 
     For Each oPara In ActiveDocument.Paragraphs
-        If oPara.style.NameLocal = StyleName Then
+        If oPara.Style.NameLocal = StyleName Then
             If oPara.Alignment <> wantAlignment Then
                 Count = Count + 1
                 If m_lastHint = "" Then
@@ -2345,7 +2345,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
                 For Each p In hf.Range.Paragraphs
                     paraText = p.Range.Text
                     asciiVal = AscW(Left(paraText, 1))
-                    paraStyle = p.style.NameLocal
+                    paraStyle = p.Style.NameLocal
                     If paraStyle <> "TheHeaders" Then
                         headerOk = False
                         dictBadHeaderStyles("SECTION " & sec.index & " = " & paraStyle) = ""
@@ -2376,7 +2376,7 @@ Private Function SummarizeHeaderFooterAuditToFile()
                 For Each p In hf.Range.Paragraphs
                     paraText = p.Range.Text
                     asciiVal = AscW(Left(paraText, 1))
-                    paraStyle = p.style.NameLocal
+                    paraStyle = p.Style.NameLocal
                     If paraStyle <> "TheFooters" Then
                         footerOk = False
                         dictBadFooterStyles("SECTION " & sec.index & " = " & paraStyle) = ""
@@ -2512,7 +2512,7 @@ Private Function CountAuditStyles_ToFile() As Long
     For Each rng In ActiveDocument.StoryRanges
         Do
             For Each para In rng.Paragraphs
-                paraStyle = para.style.NameLocal
+                paraStyle = para.Style.NameLocal
                 paraCount = paraCount + 1
                 If Not styleDict.Exists(paraStyle) Then
                     styleDict.Add paraStyle, 1
@@ -2597,7 +2597,7 @@ Private Function CountAuditCharacterStyles_ToFile() As Long
         Set findRng = ActiveDocument.Content
         With findRng.Find
             .ClearFormatting
-            .style = s
+            .Style = s
             .Text = ""
             .Forward = True
             .Wrap = wdFindStop
@@ -3048,7 +3048,7 @@ Public Function AuditBookHyperlinkStyling() As Long
         With probe.Find
             .ClearFormatting
             .Text = ""
-            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Style = oDoc.Styles(EXPECTED_STYLE)
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
@@ -3133,7 +3133,7 @@ Public Function CountBuiltInHyperlinkStyleRuns() As Long
         With probe.Find
             .ClearFormatting
             .Text = ""
-            .style = oDoc.Styles(BUILTIN_STYLE)
+            .Style = oDoc.Styles(BUILTIN_STYLE)
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
@@ -3660,7 +3660,7 @@ Private Function CountBoldFootnotesWordLevel()
     For Each ft In ActiveDocument.Footnotes
         hasBold = False
 
-        If ft.Range.style = "Footnote Text" Then
+        If ft.Range.Style = "Footnote Text" Then
             For Each aword In ft.Range.words
                 If aword.Font.Bold = True Then
                     boldCount = boldCount + 1
@@ -3704,7 +3704,7 @@ Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
 
     With rng.Find
         .ClearFormatting
-        .style = ActiveDocument.Styles("Words of Jesus")
+        .Style = ActiveDocument.Styles("Words of Jesus")
         .Font.Name = "Arial Black"
         .Font.Size = 8
         .Font.Color = wdColorDarkRed
@@ -3714,7 +3714,7 @@ Private Function Count_ArialBlack8pt_Normal_DarkRed_NotEmphasisRed()
         .Format = True
 
         Do While .Execute
-            If rng.Characters(1).style <> "EmphasisRed" Then
+            If rng.Characters(1).Style <> "EmphasisRed" Then
                 totalCount = totalCount + 1
 
                 If Not foundFirst Then
@@ -4169,7 +4169,7 @@ Private Function CountPlainTextStyleParagraphs() As Long
     foundFirst = False
     For Each para In ActiveDocument.Paragraphs
         idx = idx + 1
-        If para.style.NameLocal = TARGET_STYLE Then
+        If para.Style.NameLocal = TARGET_STYLE Then
             Count = Count + 1
 
             txt = para.Range.Text
@@ -4182,7 +4182,7 @@ Private Function CountPlainTextStyleParagraphs() As Long
             prevStyle = ""
             prevSnippet = ""
             If idx > 1 Then
-                prevStyle = ActiveDocument.Paragraphs(idx - 1).style.NameLocal
+                prevStyle = ActiveDocument.Paragraphs(idx - 1).Style.NameLocal
                 prevSnippet = Left$(ActiveDocument.Paragraphs(idx - 1).Range.Text, SNIPPET_LEN)
                 prevSnippet = Replace(Replace(Replace(prevSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
                 prevSnippet = RTrim$(prevSnippet)
@@ -4190,7 +4190,7 @@ Private Function CountPlainTextStyleParagraphs() As Long
             nextStyle = ""
             nextSnippet = ""
             If idx < ActiveDocument.Paragraphs.Count Then
-                nextStyle = ActiveDocument.Paragraphs(idx + 1).style.NameLocal
+                nextStyle = ActiveDocument.Paragraphs(idx + 1).Style.NameLocal
                 nextSnippet = Left$(ActiveDocument.Paragraphs(idx + 1).Range.Text, SNIPPET_LEN)
                 nextSnippet = Replace(Replace(Replace(nextSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
                 nextSnippet = RTrim$(nextSnippet)
@@ -4301,7 +4301,7 @@ Private Function CountNormalStyleParagraphs() As Long
     foundFirst = False
     For Each para In ActiveDocument.Paragraphs
         idx = idx + 1
-        If para.style.NameLocal = TARGET_STYLE Then
+        If para.Style.NameLocal = TARGET_STYLE Then
             Count = Count + 1
 
             txt = para.Range.Text
@@ -4314,7 +4314,7 @@ Private Function CountNormalStyleParagraphs() As Long
             prevStyle = ""
             prevSnippet = ""
             If idx > 1 Then
-                prevStyle = ActiveDocument.Paragraphs(idx - 1).style.NameLocal
+                prevStyle = ActiveDocument.Paragraphs(idx - 1).Style.NameLocal
                 prevSnippet = Left$(ActiveDocument.Paragraphs(idx - 1).Range.Text, SNIPPET_LEN)
                 prevSnippet = Replace(Replace(Replace(prevSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
                 prevSnippet = RTrim$(prevSnippet)
@@ -4322,7 +4322,7 @@ Private Function CountNormalStyleParagraphs() As Long
             nextStyle = ""
             nextSnippet = ""
             If idx < ActiveDocument.Paragraphs.Count Then
-                nextStyle = ActiveDocument.Paragraphs(idx + 1).style.NameLocal
+                nextStyle = ActiveDocument.Paragraphs(idx + 1).Style.NameLocal
                 nextSnippet = Left$(ActiveDocument.Paragraphs(idx + 1).Range.Text, SNIPPET_LEN)
                 nextSnippet = Replace(Replace(Replace(nextSnippet, vbCr, " "), vbLf, " "), vbTab, " ")
                 nextSnippet = RTrim$(nextSnippet)
@@ -4372,7 +4372,7 @@ Private Function CountFooterParagraphsWithFooterStyle() As Long
         For Each hdrFtr In sec.Footers
             If hdrFtr.Exists Then
                 For Each para In hdrFtr.Range.Paragraphs
-                    If para.style = "Footer" Then
+                    If para.Style = "Footer" Then
                         Count = Count + 1
                     End If
                 Next para
@@ -4606,10 +4606,10 @@ Private Function CountHeaderStyleUsage() As Long
         Set hdr = sec.Headers(wdHeaderFooterPrimary)
         If hdr.Exists Then
             For Each para In hdr.Range.Paragraphs
-                If para.style.NameLocal <> "TheHeaders" Then
+                If para.Style.NameLocal <> "TheHeaders" Then
                     Count = Count + 1
                     If m_lastHint = "" Then _
-                        m_lastHint = "Section " & sec.index & ": style='" & para.style.NameLocal & "'"
+                        m_lastHint = "Section " & sec.index & ": style='" & para.Style.NameLocal & "'"
                 End If
             Next para
         End If
@@ -4947,7 +4947,7 @@ Private Function CountDeleteEmptyParagraphsBeforeHeading2() As Long
     ' Loop through paragraphs only once
     For Each para In ActiveDocument.Range.Paragraphs
         paraCount = paraCount + 1
-        If para.style = "Heading 2" Then
+        If para.Style = "Heading 2" Then
             If prevIsEmpty Then
                 Count = Count + 1
             End If
@@ -5257,7 +5257,7 @@ Private Function CountEmptyParasAfterH2() As Long
     ' Loop through each paragraph in the document
     For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 2
-        If para.style = ActiveDocument.Styles("Heading 2") Then
+        If para.Style = ActiveDocument.Styles("Heading 2") Then
             ' Check the next paragraph
             Set NextPara = para.Range.Next(Unit:=wdParagraph, Count:=1).Paragraphs(1)
             If Not NextPara Is Nothing Then
@@ -5294,7 +5294,7 @@ Private Function CountHeading1() As Long
     ' Loop through each paragraph in the document
     For Each para In ActiveDocument.Paragraphs
         ' Check if the paragraph style is Heading 1
-        If para.style Like "*Heading 1*" Then   'para.style = ActiveDocument.Styles("Heading 1") Then
+        If para.Style Like "*Heading 1*" Then   'para.style = ActiveDocument.Styles("Heading 1") Then
             heading1Count = heading1Count + 1
             'Debug.Print heading1Count & "[" & Replace(para.Range.Text, vbCr, "") & "]",
         End If
@@ -5331,7 +5331,7 @@ Private Function CountHeading2() As Long
     heading2Count = 0
 
     For Each para In ActiveDocument.Paragraphs
-        If para.style Like "*Heading 2*" Then
+        If para.Style Like "*Heading 2*" Then
             heading2Count = heading2Count + 1
         End If
     Next para
@@ -5725,7 +5725,7 @@ Private Function CountStyleWithNumberAndSpace() As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
-    rng.Find.style = StyleName
+    rng.Find.Style = StyleName
 
     With rng.Find
         .Text = "[0-9] "
@@ -5769,7 +5769,7 @@ Private Function CountStyleWithSpaceAndNumber() As Long
 
     Set rng = ActiveDocument.Content
     rng.Find.ClearFormatting
-    rng.Find.style = StyleName
+    rng.Find.Style = StyleName
     firstFound = False
 
     With rng.Find

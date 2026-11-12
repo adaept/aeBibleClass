@@ -353,7 +353,7 @@ Public Sub ListRunsOfColorByStyle(ByVal rgbLong As Long)
         Do While probe.Find.Execute
             StyleName = ""
             On Error Resume Next
-            StyleName = CStr(probe.style.NameLocal)
+            StyleName = CStr(probe.Style.NameLocal)
             On Error GoTo PROC_ERR
             If Len(StyleName) = 0 Then StyleName = "(no style)"
 
@@ -442,9 +442,9 @@ Public Sub DescribeFirstRunOfColor(ByVal rgbLong As Long)
 
             On Error Resume Next
             parStyle = ""
-            parStyle = CStr(probe.Paragraphs(1).style.NameLocal)
+            parStyle = CStr(probe.Paragraphs(1).Style.NameLocal)
             runStyle = ""
-            runStyle = CStr(probe.style.NameLocal)
+            runStyle = CStr(probe.Style.NameLocal)
             pageNum = -1
             pageNum = probe.Information(wdActiveEndPageNumber)
             On Error GoTo PROC_ERR

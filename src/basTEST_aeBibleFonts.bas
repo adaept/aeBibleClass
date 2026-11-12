@@ -130,7 +130,7 @@ Public Sub AuditStyleUsage_Footnote()
     Set r = ActiveDocument.Content
     With r.Find
         .ClearFormatting
-        .style = ActiveDocument.Styles("Footnote")
+        .Style = ActiveDocument.Styles("Footnote")
         .Text = ""
         .Format = True
         .Forward = True
@@ -186,7 +186,7 @@ Public Sub AuditStyleUsage_FootnoteNormal()
     logBuffer = "=== Audit: Paragraph Style Usage for 'Footnote normal' ===" & vbCrLf
 
     For Each para In ActiveDocument.Paragraphs
-        If para.style = ActiveDocument.Styles("Footnote normal") Then
+        If para.Style = ActiveDocument.Styles("Footnote normal") Then
             hitCount = hitCount + 1
             logBuffer = logBuffer & "* Paragraph at Char " & para.Range.Start & " -> """ & _
             Replace(Left(para.Range.Text, 40), vbCr, "") & "...""" & vbCrLf
@@ -247,7 +247,7 @@ Public Sub AuditStyleUsage_PictureCaption()
     End If
 
     For Each para In ActiveDocument.Paragraphs
-        If para.style = s Then
+        If para.Style = s Then
             hitCount = hitCount + 1
             logBuffer = logBuffer & "* Paragraph at Char " & para.Range.Start & " -> """ & _
                 Replace(Left(para.Range.Text, 40), vbCr, "") & "...""" & vbCrLf
@@ -318,7 +318,7 @@ Public Sub Identify_ArialUnicodeMS_Paragraphs()
         paraIndex = paraIndex + 1
         fontName = para.Range.Characters(1).Font.Name
         If fontName = "Arial Unicode MS" Then
-            logBuffer = logBuffer & "[Body] Para #" & paraIndex & " - Style: " & para.style & vbCrLf
+            logBuffer = logBuffer & "[Body] Para #" & paraIndex & " - Style: " & para.Style & vbCrLf
             logBuffer = logBuffer & "Text: " & Left(para.Range.Text, 120) & vbCrLf & vbCrLf
         End If
     Next para
@@ -339,7 +339,7 @@ Public Sub Identify_ArialUnicodeMS_Paragraphs()
                     fontName = para.Range.Characters(1).Font.Name
                     If fontName = "Arial Unicode MS" Then
                         logBuffer = logBuffer & "[Header] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
-                        logBuffer = logBuffer & "Style: " & para.style & vbCrLf
+                        logBuffer = logBuffer & "Style: " & para.Style & vbCrLf
                         logBuffer = logBuffer & "Text: " & Left(para.Range.Text, 120) & vbCrLf & vbCrLf
                     End If
                 Next
@@ -352,7 +352,7 @@ Public Sub Identify_ArialUnicodeMS_Paragraphs()
                     fontName = para.Range.Characters(1).Font.Name
                     If fontName = "Arial Unicode MS" Then
                         logBuffer = logBuffer & "[Footer] Sec " & secIndex & ", Type " & hfKind & ", Para #" & paraIndex & vbCrLf
-                        logBuffer = logBuffer & "Style: " & para.style & vbCrLf
+                        logBuffer = logBuffer & "Style: " & para.Style & vbCrLf
                         logBuffer = logBuffer & "Text: " & Left(para.Range.Text, 120) & vbCrLf & vbCrLf
                     End If
                 Next
@@ -638,7 +638,7 @@ Public Sub Inspect_Aptos_Sources()
 
         Set r = p.Range
         fontName = r.Font.Name
-        StyleName = p.style
+        StyleName = p.Style
 
         If InStr(1, fontName, "Aptos", vbTextCompare) > 0 _
            Or Left(fontName, 1) = "+" Then
@@ -649,10 +649,10 @@ Public Sub Inspect_Aptos_Sources()
             Debug.Print "Text: " & CleanText(r.Text)
             Debug.Print "Font.Name: " & fontName
             Debug.Print "Style: " & StyleName
-            Debug.Print "Style Font: " & p.style.Font.Name
+            Debug.Print "Style Font: " & p.Style.Font.Name
 
             On Error Resume Next
-            Debug.Print "Style Font Size: " & p.style.Font.Size
+            Debug.Print "Style Font Size: " & p.Style.Font.Size
             On Error GoTo 0
         End If
     Next p
@@ -745,7 +745,7 @@ Public Sub AuditFontsUsage(ByVal sFontsUsage As String, _
                         sStyle = ""
 
                         On Error Resume Next
-                        sStyle = CStr(oPara.Range.style)
+                        sStyle = CStr(oPara.Range.Style)
                         On Error GoTo PROC_ERR
 
                         sText = CleanSnippetShort(oPara.Range.Text)

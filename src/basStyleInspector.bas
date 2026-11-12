@@ -540,7 +540,7 @@ Private Function FindStylePage(ByVal oRng As Object, _
     With oRng.Find
         .ClearFormatting
         .Text = ""
-        .style = oStyle
+        .Style = oStyle
         .Forward = True
         .Wrap = 0           ' wdFindStop
         .Format = True
@@ -579,7 +579,7 @@ Private Function FirstPageInParagraphs(ByVal oRng As Object, _
     sStyleName = oStyle.NameLocal
 
     For Each oPara In oRng.Paragraphs
-        If oPara.style.NameLocal = sStyleName Then
+        If oPara.Style.NameLocal = sStyleName Then
             bFoundAnywhere = True
             Exit For
         End If
@@ -650,7 +650,7 @@ Private Function FormatHFLine(ByVal secNum As Long, _
         sStyle = "(none)"
         sText = ""
     Else
-        sStyle = oRng.Paragraphs(1).style.NameLocal
+        sStyle = oRng.Paragraphs(1).Style.NameLocal
         sText = Replace(oRng.Paragraphs(1).Range.Text, vbCr, "")
         sText = Replace(sText, vbTab, "<tab>")
         If Len(sText) > 50 Then sText = Left(sText, 50) & "..."
@@ -801,7 +801,7 @@ Public Function ScanCharStyleApplications() As Long
                         Set probe = story.Duplicate
                         With probe.Find
                             .ClearFormatting
-                            .style = oStyle
+                            .Style = oStyle
                             .Text = ""
                             .Forward = True
                             .Wrap = wdFindStop
@@ -922,7 +922,7 @@ Public Function AuditFootnoteReferenceMarkers() As Long
     With probe.Find
         .ClearFormatting
         .Text = ""
-        .style = oDoc.Styles(FR_STYLE)
+        .Style = oDoc.Styles(FR_STYLE)
         .Forward = True
         .Wrap = wdFindStop
         .Format = True
@@ -1160,7 +1160,7 @@ Public Sub ListInertHyperlinkStyledRuns()
         With probe.Find
             .ClearFormatting
             .Text = ""
-            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Style = oDoc.Styles(EXPECTED_STYLE)
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
@@ -1284,7 +1284,7 @@ Public Sub ReportClickableHyperlinks()
         With probe.Find
             .ClearFormatting
             .Text = ""
-            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Style = oDoc.Styles(EXPECTED_STYLE)
             .Forward = True
             .Wrap = wdFindStop
             .Format = True
@@ -1312,7 +1312,7 @@ Public Sub ReportClickableHyperlinks()
                 pageNum = -1
                 pageNum = hl.Range.Information(wdActiveEndPageNumber)
                 StyleName = ""
-                StyleName = CStr(hl.Range.style.NameLocal)
+                StyleName = CStr(hl.Range.Style.NameLocal)
                 On Error GoTo 0
                 snip = hl.TextToDisplay
                 If Len(snip) > MAX_SNIP Then snip = Left$(snip, MAX_SNIP) & " ..."
@@ -1351,7 +1351,7 @@ Public Sub ReportClickableHyperlinks()
             Set fld = story.Fields(i)
             On Error Resume Next
             StyleName = ""
-            StyleName = CStr(fld.Result.style.NameLocal)
+            StyleName = CStr(fld.Result.Style.NameLocal)
             On Error GoTo 0
             If StyleName = EXPECTED_STYLE And fld.Type <> wdFieldHyperlink Then
                 totalStyledFields = totalStyledFields + 1
@@ -1413,7 +1413,7 @@ Public Sub ReportHyperlinkStoryDistribution()
         With probe.Find
             .ClearFormatting
             .Text = ""
-            .style = oDoc.Styles(EXPECTED_STYLE)
+            .Style = oDoc.Styles(EXPECTED_STYLE)
             .Forward = True
             .Wrap = wdFindStop
             .Format = True

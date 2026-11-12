@@ -194,7 +194,7 @@ Public Sub ExportDocmVersesToRWBFormat(Optional ByVal outputPath As String, Opti
     chapNum = 0
     pendingBookDivision = ""
     For Each oPara In ActiveDocument.Paragraphs
-        StyleName = oPara.style.NameLocal
+        StyleName = oPara.Style.NameLocal
 
         If StyleName = "Heading 1" Then
             bookIndex = bookIndex + 1

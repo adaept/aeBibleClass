@@ -228,12 +228,12 @@ Public Sub ConvertBodyTextVersesToVerseText()
     Dim nScanned As Long, nConverted As Long, nKept As Long
 
     For Each oPara In ActiveDocument.Paragraphs
-        If oPara.style.NameLocal = "BodyText" Then
+        If oPara.Style.NameLocal = "BodyText" Then
             nScanned = nScanned + 1
             ' Empty BodyText paragraphs cannot have a CVM first character.
             If oPara.Range.End - oPara.Range.Start > 1 Then
-                If oPara.Range.Characters(1).style.NameLocal = "Chapter Verse marker" Then
-                    oPara.style = ActiveDocument.Styles("VerseText")
+                If oPara.Range.Characters(1).Style.NameLocal = "Chapter Verse marker" Then
+                    oPara.Style = ActiveDocument.Styles("VerseText")
                     nConverted = nConverted + 1
                 Else
                     nKept = nKept + 1
@@ -315,11 +315,11 @@ Public Sub ConvertParagraphContinuationVersesToVerseText()
     Dim nScanned As Long, nConverted As Long, nKept As Long
 
     For Each oPara In ActiveDocument.Paragraphs
-        If oPara.style.NameLocal = "Paragraph Continuation" Then
+        If oPara.Style.NameLocal = "Paragraph Continuation" Then
             nScanned = nScanned + 1
             If oPara.Range.End - oPara.Range.Start > 1 Then
-                If oPara.Range.Characters(1).style.NameLocal = "Chapter Verse marker" Then
-                    oPara.style = ActiveDocument.Styles("VerseText")
+                If oPara.Range.Characters(1).Style.NameLocal = "Chapter Verse marker" Then
+                    oPara.Style = ActiveDocument.Styles("VerseText")
                     nConverted = nConverted + 1
                 Else
                     nKept = nKept + 1
@@ -427,10 +427,10 @@ Public Sub AddBookNameHeaders()
         bFoundH1 = False
         bFoundH2 = False
         For Each oClassPara In oSection.Range.Paragraphs
-            If oClassPara.style = oDoc.Styles("Heading 1") Then
+            If oClassPara.Style = oDoc.Styles("Heading 1") Then
                 bFoundH1 = True
                 Exit For
-            ElseIf oClassPara.style = oDoc.Styles("Heading 2") Then
+            ElseIf oClassPara.Style = oDoc.Styles("Heading 2") Then
                 bFoundH2 = True
                 Exit For
             End If
@@ -445,7 +445,7 @@ Public Sub AddBookNameHeaders()
             oHeader.LinkToPrevious = False
             oHeader.Range.Delete
             With oHeader.Range.Paragraphs(1)
-                .style = oDoc.Styles("TheHeaders")
+                .Style = oDoc.Styles("TheHeaders")
                 .Range.InsertBefore vbTab
             End With
             Debug.Print "Title page cleared: " & sBookName
@@ -460,7 +460,7 @@ Public Sub AddBookNameHeaders()
             With oHeader.Range.Paragraphs(1).Range
                 .End = .End - 1
                 .Text = sBookName
-                .style = oDoc.Styles("TheHeaders")
+                .Style = oDoc.Styles("TheHeaders")
             End With
             Debug.Print "Header added: " & sBookName
 
@@ -559,7 +559,7 @@ Private Sub AddConsecutiveFootersFromCursor()
         Set oRange = oFooter.Range
 
         ' Apply the named paragraph style
-        oRange.ParagraphFormat.style = oDoc.Styles("TheFooters")
+        oRange.ParagraphFormat.Style = oDoc.Styles("TheFooters")
 
         ' Insert the PAGE field so Word tracks the absolute page number.
         ' Using wdFieldPage gives the true physical page number, which is
@@ -579,7 +579,7 @@ Private Sub AddConsecutiveFootersFromCursor()
         ' Re-apply the style to the paragraph that now contains the field
         ' (Fields.Add may reset paragraph formatting)
         For Each oPara In oFooter.Range.Paragraphs
-            oPara.style = oDoc.Styles("TheFooters")
+            oPara.Style = oDoc.Styles("TheFooters")
         Next oPara
 
     Next lIdx
@@ -654,8 +654,8 @@ Public Sub FixHeader7()
         Set hdr = sec.Headers(wdHeaderFooterPrimary)
         If hdr.Exists Then
             For Each para In hdr.Range.Paragraphs
-                If para.style.NameLocal <> "TheHeaders" Then
-                    Debug.Print "Section " & sec.index & ": style='" & para.style.NameLocal & "' linked=" & hdr.LinkToPrevious & _
+                If para.Style.NameLocal <> "TheHeaders" Then
+                    Debug.Print "Section " & sec.index & ": style='" & para.Style.NameLocal & "' linked=" & hdr.LinkToPrevious & _
                                     " | " & Left(para.Range.Text, 40)
                 End If
             Next para
@@ -678,7 +678,7 @@ Public Sub FixFrontMatterHeaders()
     oHdr.LinkToPrevious = False
     oHdr.Range.Delete
     With oHdr.Range.Paragraphs(1)
-        .style = oDoc.Styles("TheHeaders")
+        .Style = oDoc.Styles("TheHeaders")
         .Range.InsertBefore vbTab
     End With
     Debug.Print "FixFrontMatterHeaders: Section 1 header reset to TheHeaders."
@@ -754,7 +754,7 @@ Public Sub ReplaceNormalWithBodyText()
     ReDim starts(1 To cap)
     lBefore = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Normal" Then
+        If oPara.Style.NameLocal = "Normal" Then
             lBefore = lBefore + 1
             starts(lBefore) = oPara.Range.Start
         End If
@@ -787,7 +787,7 @@ Public Sub ReplaceNormalWithBodyText()
     Dim oRng As Word.Range
     For i = 1 To lBefore
         Set oRng = oDoc.Range(starts(i), starts(i) + 1)
-        oRng.Paragraphs(1).style = oDoc.Styles("BodyText")
+        oRng.Paragraphs(1).Style = oDoc.Styles("BodyText")
         lReplaced = lReplaced + 1
     Next i
 
@@ -799,7 +799,7 @@ Public Sub ReplaceNormalWithBodyText()
     lStillNormal = 0
     For i = 1 To lBefore
         Set oRng = oDoc.Range(starts(i), starts(i) + 1)
-        If oRng.Paragraphs(1).style.NameLocal = "Normal" Then
+        If oRng.Paragraphs(1).Style.NameLocal = "Normal" Then
             lStillNormal = lStillNormal + 1
             Debug.Print "ReplaceNormalWithBodyText: VERIFY FAILED - still ""Normal"" at " & _
                 "Range.Start=" & starts(i)
@@ -1010,7 +1010,7 @@ Public Sub ReplacePlainTextStyles()
     ' Count Plain Text paragraphs first
     lCount = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Plain Text" Then lCount = lCount + 1
+        If oPara.Style.NameLocal = "Plain Text" Then lCount = lCount + 1
     Next oPara
 
     If lCount = 0 Then
@@ -1029,14 +1029,14 @@ Public Sub ReplacePlainTextStyles()
     lBody = 0
     lAppendix = 0
     For Each oPara In oDoc.Content.Paragraphs
-        If oPara.style.NameLocal = "Plain Text" Then
+        If oPara.Style.NameLocal = "Plain Text" Then
             If oPara.Range.Start < 1000000 Then
-                oPara.style = oDoc.Styles("BodyText")
+                oPara.Style = oDoc.Styles("BodyText")
                 lBody = lBody + 1
                 Debug.Print "BodyText     p" & oPara.Range.Start & " | " & _
                             Left(Trim(oPara.Range.Text), 40)
             Else
-                oPara.style = oDoc.Styles("AppendixBody")
+                oPara.Style = oDoc.Styles("AppendixBody")
                 lAppendix = lAppendix + 1
                 Debug.Print "AppendixBody p" & oPara.Range.Start & " | " & _
                             Left(Trim(oPara.Range.Text), 40)

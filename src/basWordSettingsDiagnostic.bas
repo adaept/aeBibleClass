@@ -290,7 +290,7 @@ Private Function StyleIsAppliedAnywhere(sName As String) As Boolean
     ' Body paragraphs
     On Error Resume Next
     For Each p In ActiveDocument.Paragraphs
-        If p.style = sName Then
+        If p.Style = sName Then
             StyleIsAppliedAnywhere = True
             GoTo PROC_EXIT
         End If
@@ -301,7 +301,7 @@ Private Function StyleIsAppliedAnywhere(sName As String) As Boolean
         Dim hdrFtr As HeaderFooter
         For Each hdrFtr In sec.Headers
             For Each p In hdrFtr.Range.Paragraphs
-                If p.style = sName Then
+                If p.Style = sName Then
                     StyleIsAppliedAnywhere = True
                     GoTo PROC_EXIT
                 End If
@@ -309,7 +309,7 @@ Private Function StyleIsAppliedAnywhere(sName As String) As Boolean
         Next hdrFtr
         For Each hdrFtr In sec.Footers
             For Each p In hdrFtr.Range.Paragraphs
-                If p.style = sName Then
+                If p.Style = sName Then
                     StyleIsAppliedAnywhere = True
                     GoTo PROC_EXIT
                 End If
@@ -331,7 +331,7 @@ Private Function StyleIsApplied(sName As String) As Boolean
     Dim p As Word.Paragraph
     On Error Resume Next
     For Each p In ActiveDocument.Paragraphs
-        If p.style = sName Then
+        If p.Style = sName Then
             StyleIsApplied = True
             GoTo PROC_EXIT
         End If

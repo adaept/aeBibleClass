@@ -161,7 +161,7 @@ Private Function ConvertParagraphToUSFM(ByVal p As Word.Paragraph) As String
     Dim verseNum As Long
     Dim verseText As String
 
-    StyleName = Trim$(p.style.NameLocal)
+    StyleName = Trim$(p.Style.NameLocal)
     txt = CleanTextForUTF8(Trim$(p.Range.Text))
 
     ' Normalize out any embedded CR/LF coming from Word
@@ -349,7 +349,7 @@ Public Function ParagraphHasCharStyle(p As Word.Paragraph, StyleName As String) 
     On Error GoTo PROC_ERR
     Dim r As Word.Range
     For Each r In p.Range.words
-        If r.style = StyleName Then
+        If r.Style = StyleName Then
             ParagraphHasCharStyle = True
             GoTo PROC_EXIT
         End If
@@ -367,7 +367,7 @@ Public Function ExtractCharStyleText(p As Word.Paragraph, StyleName As String) A
     Dim r As Word.Range
     Dim buf As String
     For Each r In p.Range.words
-        If r.style = StyleName Then
+        If r.Style = StyleName Then
             buf = buf & r.Text
         End If
     Next
@@ -393,7 +393,7 @@ Private Sub ExtendRunWhileStyle(ByVal rRun As Word.Range, ByVal boundEnd As Long
     Dim probe As Word.Range
     Do While rRun.End < boundEnd
         Set probe = rRun.Document.Range(rRun.End, rRun.End + 1)
-        If probe.style <> StyleName Then Exit Do
+        If probe.Style <> StyleName Then Exit Do
         rRun.MoveEnd wdCharacter, 1
     Loop
 End Sub
@@ -422,7 +422,7 @@ Public Function TryParseChapterVerseFromStyles( _
     rChap.Collapse wdCollapseStart
     rChap.MoveEnd wdCharacter, 1
 
-    If rChap.style <> "Chapter Verse marker" Then
+    If rChap.Style <> "Chapter Verse marker" Then
         ' If the paragraph doesn't start with the chapter marker style,
         ' we can't parse it as a verse line.
         TryParseChapterVerseFromStyles = False
@@ -450,7 +450,7 @@ Public Function TryParseChapterVerseFromStyles( _
     rVerse.Collapse wdCollapseStart
     rVerse.MoveEnd wdCharacter, 1
 
-    If rVerse.style <> "Verse marker" Then
+    If rVerse.Style <> "Verse marker" Then
         TryParseChapterVerseFromStyles = False
         GoTo PROC_EXIT
     End If

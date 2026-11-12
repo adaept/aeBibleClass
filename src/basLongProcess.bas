@@ -126,8 +126,8 @@ Public Sub UpdateCharacterStyle(Optional ByVal pageNumber As Integer = 0)
     For Each para In Doc.Paragraphs
         If para.Range.Information(wdActiveEndPageNumber) >= pageNumber Then
             For Each rng In para.Range.Characters
-                If rng.style = StyleName Then
-                    rng.style = StyleName
+                If rng.Style = StyleName Then
+                    rng.Style = StyleName
                     updateCount = updateCount + 1
                     If updateCount >= 5000 Then
                         Debug.Print "Done 5000"
