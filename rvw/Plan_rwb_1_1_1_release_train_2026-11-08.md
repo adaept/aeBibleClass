@@ -69,7 +69,7 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-72 | Decide the clean-machine rehearsal for the Word steps: second Windows user on this PC after RT-31 (fonts are installed per user here), later a VM or second PC (D-15). Docker cannot run Word. Not counted | Owner | 0 | 0 | - | PB-14, PB-17, D-15, D-16 | RT-31 | ⚪ later |
 | **Phase 4: export, gate, release of 1.1.1** | | | | | | | | |
 | RT-40 | Export changes: `Options.StoreRSIDOnSave = False` around the save (proven on a copy), `ExportVersion` 1.1.1, a halting font pass, optional document properties | VBA | 4 | 0 | RT-32a | R111-6, F6, F8 | RT-18 | ⚪ |
-| RT-40b | No Microsoft font name anywhere in the docx. Found 2026-11-10 while building RT-15: the theme's per-script fallback names in `word/theme/theme1.xml` (Times New Roman and Arial for Hebrew and Arabic, Segoe UI, Estrangelo Edessa, Ebrima and others) are not reachable through Word's API, and F7 (388 unused style definitions, 229 table styles naming Times New Roman) is open. The owner decides first: "anywhere" required, or the used-fonts rule (Test 95 to 97) is enough. If required: an XML-level step on the exported docx that rewrites those names, proven on a copy (text fingerprint, page count and the three fonts unchanged), then read independently by `rwb.fonts` | Node | 3 | 80 | RT-40 | F2, F7, RT-15 | RT-15, RT-16, RT-40 | 🟡 2026-11-12 built and tested in aeRWB (not committed): `tools/rwb-export/docx-fonts.mjs` rewrites every non-allowlisted font name at the XML level (rFonts, theme major/minor and the 94 per-script fallbacks, fontTable entries removed, math font, w:sym; Symbol/Wingdings bullets become U+2022; Times New Roman and Cambria to Liberation Serif, Calibri to Carlito, the rest to Noto Sans); `npm run rwb.fonts -- --check FILE` and `-- --purge IN OUT`; 7 tests. Proved on the real Word export of 2026-11-12: 1,129 foreign names (56 groups) to 0, only 5 parts changed (styles, theme, numbering, fontTable, settings), part list and order identical, 31,102 verses identical. Left: open the purged docx in Word and compare the page count (owner), then wire it into the export (RT-40). Owner decided 2026-11-11: "anywhere" IS required (FU-3) |
+| RT-40b | No Microsoft font name anywhere in the docx. Found 2026-11-10 while building RT-15: the theme's per-script fallback names in `word/theme/theme1.xml` (Times New Roman and Arial for Hebrew and Arabic, Segoe UI, Estrangelo Edessa, Ebrima and others) are not reachable through Word's API, and F7 (388 unused style definitions, 229 table styles naming Times New Roman) is open. The owner decides first: "anywhere" required, or the used-fonts rule (Test 95 to 97) is enough. If required: an XML-level step on the exported docx that rewrites those names, proven on a copy (text fingerprint, page count and the three fonts unchanged), then read independently by `rwb.fonts` | Node | 3 | 100 | RT-40 | F2, F7, RT-15 | RT-15, RT-16, RT-40 | ✅ 2026-11-12 done (aeRWB `07ca30e`); owner opened the purged copy in Word: opens cleanly, 905 pages in both the original and the purged file. Built and tested in aeRWB: `tools/rwb-export/docx-fonts.mjs` rewrites every non-allowlisted font name at the XML level (rFonts, theme major/minor and the 94 per-script fallbacks, fontTable entries removed, math font, w:sym; Symbol/Wingdings bullets become U+2022; Times New Roman and Cambria to Liberation Serif, Calibri to Carlito, the rest to Noto Sans); `npm run rwb.fonts -- --check FILE` and `-- --purge IN OUT`; 7 tests. Proved on the real Word export of 2026-11-12: 1,129 foreign names (56 groups) to 0, only 5 parts changed (styles, theme, numbering, fontTable, settings), part list and order identical, 31,102 verses identical. Wiring the step into the final export is part of RT-40. Owner decided 2026-11-11: "anywhere" IS required (FU-3) |
 | RT-41 | Full VBA suite (99 tests), fresh Word, AC power | Owner | 2 | 0 | - | R111-7 | RT-40 | ⚪ |
 | RT-42 | `rwb.export` (1.1.1), `rwb.verify --docx`, review in `C:\adaept\aeTest\rwb-export\`, promote | Node | 1 | 0 | - | RX-26 | RT-41 | ⚪ |
 | RT-43 | Full release gate (guards `rwbExports` and the fonts guard) | Add-in | 1 | 0 | RT-32b | RX-11 | RT-42 | ⚪ |
@@ -103,12 +103,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 75% complete** (50 of 69 tasks finished; 115.50 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 75% complete** (51 of 69 tasks finished; 116.10 of 155 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 19 | 12 | 25.30 / 42 | 60% |
-| Node (aeRWB, release, RadiantWordBible) | 35 | 28 | 69.20 / 80 | 87% |
+| Node (aeRWB, release, RadiantWordBible) | 35 | 29 | 69.80 / 80 | 87% |
 | Add-in (aeBibleAddin) | 6 | 3 | 10.00 / 15 | 67% |
 | Owner (decisions, Word sessions, writing) | 9 | 7 | 11.00 / 18 | 61% |
 
@@ -118,10 +118,10 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
 | Phase 2 | 6 | 5 | 13.00 / 18 | 72% |
 | Phase 3 | 8 | 1 | 4.35 / 16 | 27% |
-| Phase 4 | 6 | 0 | 2.40 / 13 | 18% |
+| Phase 4 | 6 | 1 | 3.00 / 13 | 23% |
 | Cross-cutting (during the process) | 22 | 17 | 34.75 / 47 | 74% |
 
-Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 32.50 of 137.
+Open points that wait on the owner: 7.00 of 18; open points of build work (VBA, Node, add-in): 31.90 of 137.
 Tasks with weight 0 are listed but not counted: RT-72, RT-53.
 <!-- PROGRESS:END -->
 
