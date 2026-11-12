@@ -11,6 +11,9 @@ from pathlib import Path
 # edits in the VBE can add more; this caps it rather than chasing every
 # source, matching the majority of files in src/ which already end in
 # exactly one trailing blank line).
+# The casing rules apply to CODE only (2026-11-12): comments and string literals are left alone, because the VBE never
+# changes them, so a word such as "note" in a comment or "result" in a message stays as written. Without that the
+# rules rewrote prose (a comment said "any note" and came back "any Note").
 # Run after export to src/ before committing.
 # =============================================================================
 
@@ -48,6 +51,7 @@ NORMALIZATIONS = [
     (r'(?i)\.InUse\b',          '.InUse',           '.InUse property on Style (VBE auto-demotes to .inUse when a same-named local exists or lingers in the name table)'),
     (r'(?i)\.Saved\b',          '.Saved',           '.Saved property on Document (VBE auto-demotes to .saved while a local variable named saved exists in any module; basDocmHygiene did this 2026-11-10 and flipped aeRibbonClass.cls)'),
     (r'(?i)\.Name\b',           '.Name',            '.Name property on VBProject/Style/Document/object'),
+    (r'(?i)\.Style\b',          '.Style',           '.Style property on Paragraph/Range/Find/object (VBE auto-demotes to .style; added 2026-11-12, RT-24)'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Field\b',      'As Word.Field',      'As Word.Field type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph type declaration'),
@@ -119,6 +123,7 @@ NORMALIZATIONS = [
 ]
 
 EXTENSIONS = {'.bas', '.cls', '.frm'}
+REM_LINE = re.compile(r'\s*Rem\b', re.IGNORECASE)  # a line that starts with Rem is all comment
 
 def trim_trailing_blank_lines(text: str) -> tuple[str, int]:
     """Collapse a run of 2+ trailing blank lines at EOF down to exactly one.
@@ -134,6 +139,61 @@ def trim_trailing_blank_lines(text: str) -> tuple[str, int]:
     return new_text, blank_line_count - 1
 
 
+def code_spans(line: str) -> list[tuple[int, int]]:
+    """The [start, end) spans of one line that are CODE: outside string literals ("" is an escaped quote) and before the
+    first apostrophe that is not inside a string (a comment). A line that starts with Rem is all comment."""
+    if REM_LINE.match(line):
+        return []
+    spans = []
+    start = 0
+    in_string = False
+    i = 0
+    while i < len(line):
+        ch = line[i]
+        if in_string:
+            if ch == '"':
+                if line[i + 1:i + 2] == '"':
+                    i += 1
+                else:
+                    in_string = False
+                    start = i + 1
+        elif ch == '"':
+            if i > start:
+                spans.append((start, i))
+            in_string = True
+        elif ch == "'":
+            if i > start:
+                spans.append((start, i))
+            return spans
+        i += 1
+    if not in_string and len(line) > start:
+        spans.append((start, len(line)))
+    return spans
+
+
+def normalize_code(text: str, pattern: str, replacement: str) -> tuple[str, int]:
+    """Apply one rule to the code parts of every line; returns the new text and the number of replacements."""
+    out = []
+    count = 0
+    for line in text.splitlines(keepends=True):
+        if "'" not in line and '"' not in line and not REM_LINE.match(line):
+            new, n = re.subn(pattern, replacement, line, flags=re.IGNORECASE)
+            out.append(new)
+            count += n
+            continue
+        pieces = []
+        last = 0
+        for start, end in code_spans(line):
+            new, n = re.subn(pattern, replacement, line[start:end], flags=re.IGNORECASE)
+            pieces.append(line[last:start])
+            pieces.append(new)
+            last = end
+            count += n
+        pieces.append(line[last:])
+        out.append("".join(pieces))
+    return "".join(out), count
+
+
 def normalize_file(path: Path) -> tuple[int, list[str]]:
     """Normalize a single file. Returns (change_count, list_of_change_descriptions)."""
     with open(path, 'r', encoding='utf-8', errors='replace', newline='') as f:
@@ -142,8 +202,7 @@ def normalize_file(path: Path) -> tuple[int, list[str]]:
     changes = []
 
     for pattern, replacement, description in NORMALIZATIONS:
-        normalized = re.sub(pattern, replacement, result, flags=re.IGNORECASE)
-        count = len(re.findall(pattern, result, flags=re.IGNORECASE))
+        normalized, count = normalize_code(result, pattern, replacement)
         if normalized != result:
             changes.append(f'  {description}: {count} replacement(s)')
             result = normalized
