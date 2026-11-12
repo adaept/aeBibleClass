@@ -742,33 +742,25 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     Const SECTIONS_WITHOUT_FRONT As Long = 145
     Const EXPECTED_SECTIONS_REMOVED As Long = 12
 
+    ' The RWB front matter is `shift` leading sections (RT-22a: three, title page | Introduction | copyright page); every section
+    ' number below moves up by `shift`. `shift` comes from the CONTENT (the leading sections that hold an RWBFront paragraph) and the
+    ' section Count must agree with it: two independent signals, as in the document profile detection.
     Dim shift As Long
-    Select Case preDeleteSectionCount
-        Case SECTIONS_WITHOUT_FRONT
-            shift = 0
-        Case SECTIONS_WITHOUT_FRONT + 1
-            shift = 1
-        Case Else
-            HaltExport "Pass5_SectionSurgery", _
-                "Section Count is " & preDeleteSectionCount & " before Pass 5, expected " & SECTIONS_WITHOUT_FRONT & _
-                " (no front-matter section) or " & (SECTIONS_WITHOUT_FRONT + 1) & " (RWB front-matter section 1). The section map " & _
-                "(1-4, 84-85, 140-145, moved up by 1 with a front section) no longer applies - re-map before proceeding."
-            Exit Sub
-    End Select
+    shift = basRwbFrontMatter.CountLeadingFrontSections(oDoc)
     If oDoc.Sections.Count <> preDeleteSectionCount Then
         HaltExport "Pass5_SectionSurgery", _
             "Section Count is " & preDeleteSectionCount & " before / " & oDoc.Sections.Count & _
             " after Pass 3, expected the same both times."
         Exit Sub
     End If
-    ' A front section must be exactly section 1; without one, no RWBFront paragraph may exist in section 1.
-    If SectionHoldsFrontStyle(oDoc.Sections(1)) <> (shift = 1) Then
+    If preDeleteSectionCount <> SECTIONS_WITHOUT_FRONT + shift Then
         HaltExport "Pass5_SectionSurgery", _
-            "Section Count " & preDeleteSectionCount & " says " & IIf(shift = 1, "a front-matter section is present", "no front-matter section") & _
-            ", but section 1 " & IIf(shift = 1, "holds no RWBFront paragraph.", "holds an RWBFront paragraph.")
+            "Section Count is " & preDeleteSectionCount & " before Pass 5, expected " & SECTIONS_WITHOUT_FRONT & " plus the " & shift & _
+            " leading front-matter section(s) = " & (SECTIONS_WITHOUT_FRONT + shift) & ". The section map " & _
+            "(1-4, 84-85, 140-145, moved up by the number of front sections) no longer applies - re-map before proceeding."
         Exit Sub
     End If
-    ExportLog "Pass5: front-matter section " & IIf(shift = 1, "present (section 1 kept, map shifted by 1)", "absent (map unshifted)")
+    ExportLog "Pass5: " & shift & " front-matter section(s) " & IIf(shift = 0, "(map unshifted)", "kept (map shifted by " & shift & ")")
 
     ' Safety: none of the target sections may hold a KEEP-style paragraph.
     Dim keepDict As Object
@@ -797,7 +789,7 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' sectPr cannot be deleted, so delete from the section-139 break
     ' through the end; 139 then takes the final section's setup, which is
     ' first overwritten with 139's own page setup.
-    CopySectionPageSetup oDoc.Sections(139 + shift), oDoc.Sections(145 + shift)
+    basSectionPageSetup.CopySectionPageSetup oDoc.Sections(139 + shift), oDoc.Sections(145 + shift)
     ' B4 (2026-10-08): the surviving final section would otherwise keep
     ' section 145's empty header, leaving Revelation without its running
     ' header. Headers are static per-book text, so copy 139's header(s)
@@ -869,6 +861,10 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ' audit return -1 on the docx. Restyle it and verify.
     FixLeadingSectionsHeaderFooterStyles oDoc, 1 + shift
     If m_haltFired Then Exit Sub
+    If shift > 0 Then
+        CheckFrontSectionsAgainstIndexSection oDoc, shift
+        If m_haltFired Then Exit Sub
+    End If
 
     ' Word appends extra control characters to a range's Text (Chr(13),
     ' Chr(7) in tables, and the like), so compare the normalised text.
@@ -883,6 +879,36 @@ Private Sub Pass5_SectionSurgery(ByVal oDoc As Object, ByVal preDeleteSectionCou
     ExportLog "Pass5_SectionSurgery: " & EXPECTED_SECTIONS_REMOVED & " sections removed (" & _
         preDeleteSectionCount & " -> " & postCount & "); final section header """ & _
         Replace(gotHeader, vbCr, "") & """."
+End Sub
+
+' ==========================================================================
+' CheckFrontSectionsAgainstIndexSection
+' ==========================================================================
+' With the RWB front matter present, section nFront + 1 is the Bible Index section (old section 5). In the docm it starts continuous,
+' behind the Study Bible Contents; in the export it follows the copyright page, so it is set to start on a New Page here, on the export
+' copy only (FU-35). Every front section must have the page layout of the index section (FU-34: a section break gives the new section the
+' layout of the Study Bible title page, US Letter) and no PAGE field in its primary footer (the front pages carry no page number).
+' ==========================================================================
+Private Sub CheckFrontSectionsAgainstIndexSection(ByVal oDoc As Object, ByVal nFront As Long)
+    Dim oHost As Object
+    Dim i As Long
+
+    Set oHost = oDoc.Sections(nFront + 1)
+    oHost.PageSetup.SectionStart = wdSectionNewPage
+    For i = 1 To nFront
+        If Not basSectionPageSetup.SamePageLayout(oDoc.Sections(i), oHost) Then
+            HaltExport "Pass5_SectionSurgery", _
+                "Front section " & i & " has a different page layout than the Bible Index section (page size, margins or header/footer distance): " & _
+                oDoc.Sections(i).PageSetup.pageWidth & " x " & oDoc.Sections(i).PageSetup.PageHeight & " pt against " & _
+                oHost.PageSetup.pageWidth & " x " & oHost.PageSetup.PageHeight & " pt (FU-34)."
+            Exit Sub
+        End If
+        If oDoc.Sections(i).Footers(wdHeaderFooterPrimary).Range.Fields.Count <> 0 Then
+            HaltExport "Pass5_SectionSurgery", "Front section " & i & " has a field (a page number) in its primary footer; the front pages carry none."
+            Exit Sub
+        End If
+    Next i
+    ExportLog "Pass5: " & nFront & " front section(s) have the page layout of the Bible Index section, no page number; the index section starts on a New Page."
 End Sub
 
 ' ==========================================================================
@@ -928,59 +954,6 @@ Private Sub FixLeadingSectionsHeaderFooterStyles(ByVal oDoc As Object, ByVal nLe
                 "Section(" & sec & ") Primary header style is """ & gotStyle & """, expected ""TheHeaders""."
         End If
     Next sec
-End Sub
-
-' ==========================================================================
-' SectionHoldsFrontStyle
-' ==========================================================================
-' True when any paragraph of the section is in one of the six RWBFront
-' styles (basRwbFrontMatter.GetFrontMatterStyles). Used by Pass 5 to tell
-' a docm with the RWB front-matter section from one without.
-' ==========================================================================
-Private Function SectionHoldsFrontStyle(ByVal oSection As Object) As Boolean
-    Dim vNames As Variant
-    Dim oPara As Object
-    Dim i As Long
-
-    vNames = basRwbFrontMatter.GetFrontMatterStyles()
-    For Each oPara In oSection.Range.Paragraphs
-        For i = LBound(vNames) To UBound(vNames)
-            If StrComp(oPara.style.NameLocal, CStr(vNames(i)), vbTextCompare) = 0 Then
-                SectionHoldsFrontStyle = True
-                Exit Function
-            End If
-        Next i
-    Next oPara
-End Function
-
-' ==========================================================================
-' CopySectionPageSetup
-' ==========================================================================
-' Copies the page-setup properties that matter here from one Section to
-' another. Headers and footers are NOT copied (plan task 4).
-' ==========================================================================
-Private Sub CopySectionPageSetup(ByVal src As Object, ByVal dst As Object)
-    Dim ps As Object
-    Dim pd As Object
-    Set ps = src.PageSetup
-    Set pd = dst.PageSetup
-    pd.Orientation = ps.Orientation
-    pd.pageWidth = ps.pageWidth
-    pd.PageHeight = ps.PageHeight
-    pd.TopMargin = ps.TopMargin
-    pd.BottomMargin = ps.BottomMargin
-    pd.leftMargin = ps.leftMargin
-    pd.rightMargin = ps.rightMargin
-    pd.gutter = ps.gutter
-    pd.HeaderDistance = ps.HeaderDistance
-    pd.FooterDistance = ps.FooterDistance
-    pd.SectionStart = ps.SectionStart
-    pd.DifferentFirstPageHeaderFooter = ps.DifferentFirstPageHeaderFooter
-    pd.OddAndEvenPagesHeaderFooter = ps.OddAndEvenPagesHeaderFooter
-    pd.TextColumns.SetCount ps.TextColumns.Count
-    pd.TextColumns.EvenlySpaced = ps.TextColumns.EvenlySpaced
-    pd.TextColumns.LineBetween = ps.TextColumns.LineBetween
-    If ps.TextColumns.EvenlySpaced Then pd.TextColumns.Spacing = ps.TextColumns.Spacing
 End Sub
 
 ' ==========================================================================

@@ -63,7 +63,7 @@ Public Function GetApprovedStyles() As Variant
                      "Words of Jesus", _
                      "AuthorSectionHead", "ParallelHeader", "ParallelText", _
                      "RWBFrontTitle", "RWBFrontEpigraph", "RWBFrontHeading", "RWBFrontBody", _
-                     "RWBFrontSignature", "RWBFrontCopyright", _
+                     "RWBFrontSignature", "RWBFrontCopyright", "RWBFrontItalic", _
                      "Normal")
 End Function
 
@@ -399,12 +399,14 @@ Public Sub RUN_TAXONOMY_STYLES()
     AuditOneStyle "CenterSubText", "Liberation Serif", 12, 1, 0, 0, 12, 12, 12, 0, 0, ""
 
     ' RWB front matter (RT-22a, 2026-11-11): specification in basRwbFrontMatter (prescriptive, new styles)
-    AuditOneStyle "RWBFrontTitle", "Liberation Serif", 36, 1, 0, 0, 12, 144, 12, 0, 0, ""
-    AuditOneStyle "RWBFrontEpigraph", "Liberation Serif", 12, 1, 0, 0, 12, 12, 30, 0, -1, ""
-    AuditOneStyle "RWBFrontHeading", "Liberation Serif", 22, 1, 0, 0, 12, 12, 12, 0, 0, ""
+    AuditOneStyle "RWBFrontTitle", "Liberation Serif", 36, 1, 0, 0, 12, 0, 12, 0, 0, ""
+    AuditOneStyle "RWBFrontEpigraph", "Liberation Serif", 12, 1, 0, 0, 12, 12, 30, 0, 0, ""
+    AuditOneStyle "RWBFrontHeading", "Liberation Serif", 22, 1, 0, 0, 12, 72, 12, 0, 0, ""
     AuditOneStyle "RWBFrontBody", "Liberation Serif", 12, 3, 0, 0, 12, 0, 12, 0, 0, ""
     AuditOneStyle "RWBFrontSignature", "Liberation Serif", 12, 2, 0, 0, 12, 12, 0, 0, 0, ""
     AuditOneStyle "RWBFrontCopyright", "Liberation Serif", 10, 1, 0, 0, 12, 0, 6, 0, 0, ""
+    ' Character style: italic only, based on Default Paragraph Font; font, size and colour skipped (it keeps the paragraph's font)
+    AuditOneStyle "RWBFrontItalic", "", 0, -1, -999, -1, -999, -999, -999, -2, -1, "Default Paragraph Font", -2
 
     ' Paragraph styles promoted to bucket 1 on 2026-05-07 (specs captured via DumpStyleProperties)
     AuditOneStyle "SpeakerLabel", "Carlito", 9, 0, 0, 0, 12, 3, 2, 0, 0, ""

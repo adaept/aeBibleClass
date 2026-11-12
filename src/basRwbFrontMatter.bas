@@ -4,23 +4,42 @@ Option Compare Text
 
 ' Classification: docm clean-up and export taxonomy (RT-22a). Not used by runtime ribbon navigation.
 '
-' basRwbFrontMatter - the six styles of the RWB front matter (title page, epigraph, Introduction, acknowledgments, CC0 statement,
-' signature, copyright page) of the scripture-only publication. Owner decision RT-20 (2026-11-11): route A, the styles are KEPT by the
-' scripture-only export (GetScriptureOnlyStyles), the front matter ships in 1.1.1. The draft is "RWB Introduction.docx"; its single style
-' ("BODY") and its direct Times New Roman runs are NOT carried over - the text is inserted paragraph by paragraph into these styles.
+' basRwbFrontMatter - the styles and the text of the RWB front matter (title page, epigraph, Introduction, acknowledgments, signature,
+' copyright page with the CC0 statement) of the scripture-only publication. Owner decisions (2026-11-11): RT-20 route A (the styles are
+' KEPT by the scripture-only export, GetScriptureOnlyStyles; the front matter ships in 1.1.1), a character style for italics, the CC0
+' paragraph on the copyright page, three sections (title page | Introduction to signature | copyright page) so the title and copyright
+' pages can be centred vertically with Word's own Page Setup > Layout > Vertical alignment, no page numbers on these pages.
+' The text comes from "RWB Introduction.docx" (accepted by the owner, no tracked changes), converted to frontmatter\rwb-front-matter.txt:
+'   @section<TAB>center|top       starts a section (a Next Page break between sections) with that vertical alignment
+'   STYLE<TAB>text                one paragraph; {i}...{/i} inside the text = character style RWBFrontItalic;
+'                                 {justify} at the start of the text = direct justified alignment of that paragraph (the CC0 paragraph,
+'                                 as the owner set it in the docm on 2026-11-11)
+'   # ...                         a comment
+' Its single style ("BODY") and its direct Times New Roman runs are NOT carried over: InsertFrontMatter inserts the text paragraph by
+' paragraph into these styles.
 '
-' The names start with RWBFront so that they never clash with the Study Bible styles (Title, Acknowledgments, Introduction ... are all on
-' the STRIP list). Heading 1 is not used on purpose: the export counts 66 Heading 1 books and the Bible Index depends on it.
+' Six paragraph styles and one character style, all starting with RWBFront so that they never clash with the Study Bible styles (Title,
+' Acknowledgments, Introduction ... are all on the STRIP list). Heading 1 is not used on purpose: the export counts 66 Heading 1 books and
+' the Bible Index depends on it.
 '
-' Fonts: Liberation Serif for all six (the free metric twin of Times New Roman, the look of the draft and of the other front styles).
-' Latin, Other and Complex-script slots are set to the same font; the East Asian slot is set by FixStyleSlotFonts of basDocmHygiene
-' (Word refuses a Latin-only font there), so run that after CreateFrontMatterStyles (expected return 0 or the few slots it sets).
+' Fonts: Liberation Serif for the six paragraph styles (the free metric twin of Times New Roman, the look of the draft and of the other
+' front styles). Latin, Other and Complex-script slots are set to the same font; the East Asian slot is set by FixStyleSlotFonts of
+' basDocmHygiene (Word refuses a Latin-only font there), so run that after CreateFrontMatterStyles. The character style RWBFrontItalic
+' sets only Italic: it keeps the font of the paragraph it is used in.
+'
+' Page layout (FU-34): a section break copies the page setup of the section it splits, which here is the Study Bible's own US Letter title
+' page. InsertFrontMatter therefore copies the page setup of the Bible Index section (the first section holding a BibleIndexEyebrow
+' paragraph), the layout of the scripture-only pages, onto every front section.
 '
 ' Entry points (Immediate window, one statement each; the document name is optional, default ActiveDocument):
 '   ? ListFrontMatterStyles            read-only: prints one line per style (present or missing, font, size); returns the number missing
 '   ? CreateFrontMatterStyles          creates the missing styles with their specification; returns the number created (-1 = failed);
 '                                      never touches text (compares the text length before and after)
 '   ? CountFrontMatterStylesOutsideSpec   styles that exist but differ from the specification (expected 0 once created)
+'   ? InsertFrontMatter("C:\...\frontmatter\rwb-front-matter.txt")
+'                                      inserts the text at the very top as new leading sections; refuses when section 1 already holds front
+'                                      matter or a style is missing or differs; returns the number of paragraphs inserted (-1 = failed).
+'                                      Run it on a COPY first.
 ' Reference: basTEST_aeBibleConfig.RUN_TAXONOMY_STYLES carries the same specification as AuditOneStyle rows;
 ' rvw\Plan_rwb_1_1_1_release_train_2026-11-08.md rows RT-20 to RT-24.
 
@@ -30,15 +49,26 @@ Public Const STYLE_FRONT_HEADING As String = "RWBFrontHeading"
 Public Const STYLE_FRONT_BODY As String = "RWBFrontBody"
 Public Const STYLE_FRONT_SIGNATURE As String = "RWBFrontSignature"
 Public Const STYLE_FRONT_COPYRIGHT As String = "RWBFrontCopyright"
+Public Const STYLE_FRONT_ITALIC As String = "RWBFrontItalic"
 
 ' Which version of this module is loaded (changes with every edit; printed by DescribeFrontMatterStyles).
-Public Const FRONT_MATTER_VERSION As String = "2026-11-11 h (target document activated)"
+Public Const FRONT_MATTER_VERSION As String = "2026-11-11 k ({justify} marker)"
 
 Private Const FRONT_FONT As String = "Liberation Serif"
+Private Const BASE_CHARACTER_STYLE As String = "Default Paragraph Font"
+Private Const INDEX_HOST_STYLE As String = "BibleIndexEyebrow"
 Private Const LANG_ENGLISH_US As Long = 1033
 Private Const ALIGN_CENTER As Long = 1
 Private Const ALIGN_RIGHT As Long = 2
 Private Const ALIGN_JUSTIFY As Long = 3
+Private Const MARK_ITALIC_OPEN As String = "{i}"
+Private Const MARK_ITALIC_CLOSE As String = "{/i}"
+Private Const MARK_JUSTIFY As String = "{justify}"
+Private Const DIRECTIVE_SECTION As String = "@section"
+Private Const VALIGN_TOP_NAME As String = "top"
+Private Const VALIGN_CENTER_NAME As String = "center"
+Private Const MAX_ITALIC_SPANS As Long = 64
+Private Const MAX_FRONT_SECTIONS As Long = 12
 Private m_LastError As String
 
 ' The text of the last error ("" = none), for callers that cannot see the Immediate window.
@@ -46,19 +76,27 @@ Public Function FrontMatterLastError() As String
     FrontMatterLastError = m_LastError
 End Function
 
-' The six names, in the order of the Word style gallery (the order used in GetApprovedStyles).
+' The six paragraph styles, in the order of the Word style gallery (the order used in GetApprovedStyles).
 Public Function GetFrontMatterStyles() As Variant
     GetFrontMatterStyles = Array(STYLE_FRONT_TITLE, STYLE_FRONT_EPIGRAPH, STYLE_FRONT_HEADING, _
                                  STYLE_FRONT_BODY, STYLE_FRONT_SIGNATURE, STYLE_FRONT_COPYRIGHT)
 End Function
 
-' One specification per style: Array(size, alignment, space before, space after, bold, italic, Next-style name).
-' Single line spacing and no first-line indent for all six (the same values the taxonomy audit checks).
+' The character styles of the front matter (the one for italics).
+Public Function GetFrontMatterCharacterStyles() As Variant
+    GetFrontMatterCharacterStyles = Array(STYLE_FRONT_ITALIC)
+End Function
+
+' One specification per paragraph style: Array(size, alignment, space before, space after, bold, italic, Next-style name).
+' Single line spacing, no first-line indent and no page break before for all six (the same values the taxonomy audit checks; the page
+' breaks are the section breaks). The title has no space before: its page is centred vertically by the section, so a gap would shift it.
+' The epigraph is not italic itself: only its quotation is, through RWBFrontItalic ("(Prov 4:18)" stays roman). The Introduction heading
+' has a gap of 72 points (one inch) above it: the Introduction runs over several pages, so it is not centred, it just starts lower.
 Private Function SpecFor(ByVal sStyle As String) As Variant
     Select Case sStyle
-        Case STYLE_FRONT_TITLE:     SpecFor = Array(36, ALIGN_CENTER, 144, 12, False, False, STYLE_FRONT_EPIGRAPH)
-        Case STYLE_FRONT_EPIGRAPH:  SpecFor = Array(12, ALIGN_CENTER, 12, 30, False, True, STYLE_FRONT_HEADING)
-        Case STYLE_FRONT_HEADING:   SpecFor = Array(22, ALIGN_CENTER, 12, 12, False, False, STYLE_FRONT_BODY)
+        Case STYLE_FRONT_TITLE:     SpecFor = Array(36, ALIGN_CENTER, 0, 12, False, False, STYLE_FRONT_EPIGRAPH)
+        Case STYLE_FRONT_EPIGRAPH:  SpecFor = Array(12, ALIGN_CENTER, 12, 30, False, False, STYLE_FRONT_HEADING)
+        Case STYLE_FRONT_HEADING:   SpecFor = Array(22, ALIGN_CENTER, 72, 12, False, False, STYLE_FRONT_BODY)
         Case STYLE_FRONT_BODY:      SpecFor = Array(12, ALIGN_JUSTIFY, 0, 12, False, False, STYLE_FRONT_BODY)
         Case STYLE_FRONT_SIGNATURE: SpecFor = Array(12, ALIGN_RIGHT, 12, 0, False, False, STYLE_FRONT_BODY)
         Case STYLE_FRONT_COPYRIGHT: SpecFor = Array(10, ALIGN_CENTER, 0, 6, False, False, STYLE_FRONT_COPYRIGHT)
@@ -76,7 +114,7 @@ Public Function ListFrontMatterStyles(Optional ByVal sDocName As String = "") As
     On Error GoTo PROC_ERR
     m_LastError = ""
     Set oDoc = ResolveDoc(sDocName)
-    vNames = GetFrontMatterStyles()
+    vNames = AllFrontMatterStyleNames()
     For i = LBound(vNames) To UBound(vNames)
         Set oStyle = FindStyle(oDoc, CStr(vNames(i)))
         If oStyle Is Nothing Then
@@ -99,7 +137,6 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
     Dim oDoc As Word.Document
     Dim vNames As Variant
     Dim i As Long
-    Dim oStyle As Word.Style
     Dim nCreated As Long
     Dim nLenBefore As Long
     Dim oPrevious As Word.Document
@@ -113,7 +150,7 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
     If Not oDoc Is oPrevious Then oDoc.Activate
     nLenBefore = Len(oDoc.Content.Text)
     vNames = GetFrontMatterStyles()
-    ' All six are created before any specification is applied: a style's Next style may be one created later in the list
+    ' All styles are created before any specification is applied: a style's Next style may be one created later in the list
     ' (error 5834 on the first live run, 2026-11-11).
     For i = LBound(vNames) To UBound(vNames)
         If FindStyle(oDoc, CStr(vNames(i))) Is Nothing Then
@@ -121,9 +158,14 @@ Public Function CreateFrontMatterStyles(Optional ByVal sDocName As String = "") 
             nCreated = nCreated + 1
         End If
     Next i
+    If FindStyle(oDoc, STYLE_FRONT_ITALIC) Is Nothing Then
+        oDoc.Styles.Add name:=STYLE_FRONT_ITALIC, Type:=wdStyleTypeCharacter
+        nCreated = nCreated + 1
+    End If
     For i = LBound(vNames) To UBound(vNames)
         ApplySpec oDoc, oDoc.Styles(CStr(vNames(i)))
     Next i
+    oDoc.Styles(STYLE_FRONT_ITALIC).Font.Italic = True
     If Not oDoc Is oPrevious Then oPrevious.Activate
     If Len(oDoc.Content.Text) <> nLenBefore Then
         m_LastError = "CreateFrontMatterStyles: the document text length changed (" & nLenBefore & " -> " & Len(oDoc.Content.Text) & ")."
@@ -148,7 +190,6 @@ Public Function CountFrontMatterStylesOutsideSpec(Optional ByVal sDocName As Str
     Dim vNames As Variant
     Dim i As Long
     Dim oStyle As Word.Style
-    Dim vSpec As Variant
     Dim nOutside As Long
 
     On Error GoTo PROC_ERR
@@ -157,14 +198,20 @@ Public Function CountFrontMatterStylesOutsideSpec(Optional ByVal sDocName As Str
     vNames = GetFrontMatterStyles()
     For i = LBound(vNames) To UBound(vNames)
         Set oStyle = FindStyle(oDoc, CStr(vNames(i)))
-        vSpec = SpecFor(CStr(vNames(i)))
         If oStyle Is Nothing Then
             nOutside = nOutside + 1
-        ElseIf Not MatchesSpec(oStyle, vSpec) Then
+        ElseIf Not MatchesSpec(oStyle, SpecFor(CStr(vNames(i)))) Then
             nOutside = nOutside + 1
             Debug.Print vNames(i) & " | differs from the specification"
         End If
     Next i
+    Set oStyle = FindStyle(oDoc, STYLE_FRONT_ITALIC)
+    If oStyle Is Nothing Then
+        nOutside = nOutside + 1
+    ElseIf Not MatchesItalicSpec(oStyle) Then
+        nOutside = nOutside + 1
+        Debug.Print STYLE_FRONT_ITALIC & " | differs from the specification"
+    End If
     Debug.Print "CountFrontMatterStylesOutsideSpec: " & nOutside
     CountFrontMatterStylesOutsideSpec = nOutside
     Exit Function
@@ -174,7 +221,7 @@ PROC_ERR:
     CountFrontMatterStylesOutsideSpec = -1
 End Function
 
-' Read-only diagnostic: for each style, every property that MatchesSpec compares, with the wanted value beside it and a mark where it differs.
+' Read-only diagnostic: for each paragraph style, every property that MatchesSpec compares, with the wanted value beside it.
 ' Use it when CountFrontMatterStylesOutsideSpec lists a style: it shows which property is the one that differs.
 Public Sub DescribeFrontMatterStyles(Optional ByVal sDocName As String = "")
     Dim oDoc As Word.Document
@@ -200,15 +247,337 @@ Public Sub DescribeFrontMatterStyles(Optional ByVal sDocName As String = "")
                     " | before " & .ParagraphFormat.SpaceBefore & " (want " & vSpec(2) & ")" & _
                     " | after " & .ParagraphFormat.SpaceAfter & " (want " & vSpec(3) & ")" & _
                     " | bold " & .Font.Bold & " | italic " & .Font.Italic & " (want " & vSpec(5) & ")" & _
+                    " | page break before " & .ParagraphFormat.PageBreakBefore & " (want False)" & _
                     " | base [" & CStr(.BaseStyle) & "] | rule " & .ParagraphFormat.LineSpacingRule & _
                     " | first indent " & .ParagraphFormat.FirstLineIndent & " | spec match " & MatchesSpec(oStyle, vSpec)
             End With
         End If
     Next i
+    Set oStyle = FindStyle(oDoc, STYLE_FRONT_ITALIC)
+    If oStyle Is Nothing Then
+        Debug.Print STYLE_FRONT_ITALIC & " | MISSING"
+    Else
+        Debug.Print STYLE_FRONT_ITALIC & " | italic " & oStyle.Font.Italic & " | base [" & CStr(oStyle.BaseStyle) & "] | spec match " & MatchesItalicSpec(oStyle)
+    End If
     Exit Sub
 PROC_ERR:
     Debug.Print "DescribeFrontMatterStyles: " & Err.Number & " " & Err.Description
 End Sub
+
+' True when any paragraph of the section is in one of the six RWBFront paragraph styles. Pass 5 of the export uses it to find the front
+' sections; InsertFrontMatter uses it to refuse a second insert.
+Public Function SectionHoldsFrontStyle(ByVal oSection As Object) As Boolean
+    Dim vNames As Variant
+    Dim oPara As Object
+    Dim i As Long
+
+    vNames = GetFrontMatterStyles()
+    For Each oPara In oSection.Range.Paragraphs
+        For i = LBound(vNames) To UBound(vNames)
+            If StrComp(oPara.style.NameLocal, CStr(vNames(i)), vbTextCompare) = 0 Then
+                SectionHoldsFrontStyle = True
+                Exit Function
+            End If
+        Next i
+    Next oPara
+End Function
+
+' The number of leading sections that hold an RWBFront paragraph (0 = the document has no RWB front matter).
+Public Function CountLeadingFrontSections(ByVal oDoc As Object) As Long
+    Dim n As Long
+
+    Do While n < oDoc.Sections.Count And n < MAX_FRONT_SECTIONS
+        If Not SectionHoldsFrontStyle(oDoc.Sections(n + 1)) Then Exit Do
+        n = n + 1
+    Loop
+    CountLeadingFrontSections = n
+End Function
+
+' Inserts the front matter at the very top of the document as new leading sections. Returns the number of paragraphs inserted, -1 on
+' failure (see FrontMatterLastError). Refuses (and changes nothing) when section 1 already holds front matter, when a style is missing or
+' differs from its specification, or when the text file is not as expected. Each section ends with a Next Page section break that REPLACES
+' the paragraph mark of its last paragraph (no empty carrier paragraph). The page setup of the Bible Index section is copied onto the front
+' sections, their vertical alignment comes from the file, they get no page-number footer, and the inserted text gets English (US) and "do
+' not check spelling" (owner decision A, FU-32). The document text must grow by exactly the inserted length, else the routine reports it.
+Public Function InsertFrontMatter(ByVal sTextFile As String, Optional ByVal sDocName As String = "") As Long
+    Dim oDoc As Word.Document
+    Dim oPrevious As Word.Document
+    Dim oPara As Word.Paragraph
+    Dim vLines As Variant
+    Dim aStarts(0 To MAX_ITALIC_SPANS - 1) As Long
+    Dim aEnds(0 To MAX_ITALIC_SPANS - 1) As Long
+    Dim aSectionAlign() As Long
+    Dim aStyle() As String
+    Dim aPlain() As String
+    Dim aSpans() As String
+    Dim aSectionOf() As Long
+    Dim aJustify() As Boolean
+    Dim nParas As Long
+    Dim nSections As Long
+    Dim nSpans As Long
+    Dim i As Long
+    Dim k As Long
+    Dim lPos As Long
+    Dim lStart As Long
+    Dim nLenBefore As Long
+    Dim nGrew As Long
+    Dim bLast As Boolean
+    Dim sStyle As String
+    Dim sText As String
+    Dim sArg As String
+
+    On Error GoTo PROC_ERR
+    m_LastError = ""
+    Set oDoc = ResolveDoc(sDocName)
+    Set oPrevious = ActiveDocument
+    If Not oDoc Is oPrevious Then oDoc.Activate
+
+    If SectionHoldsFrontStyle(oDoc.Sections(1)) Then
+        m_LastError = "InsertFrontMatter: section 1 of " & oDoc.Name & " already holds front matter; nothing inserted."
+        GoTo PROC_FAIL
+    End If
+    If CountFrontMatterStylesOutsideSpec(oDoc.Name) <> 0 Then
+        m_LastError = "InsertFrontMatter: a front-matter style is missing or differs from its specification (run CreateFrontMatterStyles); nothing inserted."
+        GoTo PROC_FAIL
+    End If
+    m_LastError = ""
+
+    ' Phase 1: read and check the whole text file before the document is touched.
+    vLines = Split(Replace(ReadUtf8Text(sTextFile), vbCrLf, vbLf), vbLf)
+    ReDim aSectionAlign(0 To MAX_FRONT_SECTIONS - 1)
+    ReDim aStyle(0 To UBound(vLines))
+    ReDim aPlain(0 To UBound(vLines))
+    ReDim aSpans(0 To UBound(vLines))
+    ReDim aSectionOf(0 To UBound(vLines))
+    ReDim aJustify(0 To UBound(vLines))
+    For i = LBound(vLines) To UBound(vLines)
+        If Len(vLines(i)) = 0 Or Left$(vLines(i), 1) = "#" Then
+            ' blank line or comment
+        ElseIf Left$(vLines(i), Len(DIRECTIVE_SECTION)) = DIRECTIVE_SECTION Then
+            If nSections >= MAX_FRONT_SECTIONS Then
+                m_LastError = "InsertFrontMatter: more than " & MAX_FRONT_SECTIONS & " sections in the text file."
+                GoTo PROC_FAIL
+            End If
+            k = InStr(1, vLines(i), vbTab, vbBinaryCompare)
+            sArg = IIf(k = 0, "", LCase$(Trim$(Mid$(vLines(i), k + 1))))
+            If sArg = VALIGN_CENTER_NAME Then
+                aSectionAlign(nSections) = wdAlignVerticalCenter
+            ElseIf sArg = VALIGN_TOP_NAME Then
+                aSectionAlign(nSections) = wdAlignVerticalTop
+            Else
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": " & DIRECTIVE_SECTION & " needs a tab and " & VALIGN_TOP_NAME & " or " & VALIGN_CENTER_NAME & "."
+                GoTo PROC_FAIL
+            End If
+            nSections = nSections + 1
+        Else
+            If nSections = 0 Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": a paragraph before the first " & DIRECTIVE_SECTION & " line."
+                GoTo PROC_FAIL
+            End If
+            k = InStr(1, vLines(i), vbTab, vbBinaryCompare)
+            If k = 0 Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & " of the text file has no tab after the style name."
+                GoTo PROC_FAIL
+            End If
+            sStyle = Left$(vLines(i), k - 1)
+            sText = Mid$(vLines(i), k + 1)
+            aJustify(nParas) = (Left$(sText, Len(MARK_JUSTIFY)) = MARK_JUSTIFY)
+            If aJustify(nParas) Then sText = Mid$(sText, Len(MARK_JUSTIFY) + 1)
+            If Not IsFrontMatterParagraphStyle(sStyle) Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & " names the style """ & sStyle & """, which is not a front-matter paragraph style."
+                GoTo PROC_FAIL
+            End If
+            aStyle(nParas) = sStyle
+            aPlain(nParas) = StripItalicMarkers(sText, aStarts, aEnds, nSpans)
+            aSpans(nParas) = ""
+            For k = 0 To nSpans - 1
+                aSpans(nParas) = aSpans(nParas) & aStarts(k) & "-" & aEnds(k) & ";"
+            Next k
+            aSectionOf(nParas) = nSections
+            nParas = nParas + 1
+        End If
+    Next i
+    If nParas = 0 Then
+        m_LastError = "InsertFrontMatter: the text file holds no paragraph; nothing inserted."
+        GoTo PROC_FAIL
+    End If
+
+    ' Phase 2: insert. The last paragraph of a section is inserted WITHOUT a paragraph mark and the Next Page section break is put right
+    ' after its text, so the break terminates that paragraph (a break inserted at a paragraph mark leaves the mark behind: an empty
+    ' paragraph at the start of the next section, found on the first run, 2026-11-11).
+    nLenBefore = Len(oDoc.Content.Text)
+    lPos = 0
+    For i = 0 To nParas - 1
+        bLast = (i = nParas - 1)
+        If Not bLast Then bLast = (aSectionOf(i + 1) <> aSectionOf(i))
+        lStart = lPos
+        If bLast Then
+            oDoc.Range(lPos, lPos).InsertAfter aPlain(i)
+            oDoc.Range(lPos + Len(aPlain(i)), lPos + Len(aPlain(i))).InsertBreak wdSectionBreakNextPage
+        Else
+            oDoc.Range(lPos, lPos).InsertAfter aPlain(i) & vbCr
+        End If
+        lPos = lPos + Len(aPlain(i)) + 1
+        Set oPara = oDoc.Range(lStart, lStart).Paragraphs(1)
+        oPara.style = oDoc.Styles(aStyle(i))
+        If aJustify(i) Then oPara.Alignment = wdAlignParagraphJustify
+        ApplyItalicSpans oDoc, lStart, aSpans(i)
+    Next i
+    If oDoc.Sections.Count < nSections + 1 Then
+        m_LastError = "InsertFrontMatter: " & nSections & " section break(s) were expected to give at least " & (nSections + 1) & " sections, the document has " & oDoc.Sections.Count & "."
+        GoTo PROC_FAIL
+    End If
+
+    ApplyFrontSectionLayout oDoc, nSections, aSectionAlign
+    If m_LastError <> "" Then GoTo PROC_FAIL
+
+    With oDoc.Range(0, lPos)
+        .LanguageID = LANG_ENGLISH_US
+        .NoProofing = True
+        .LanguageDetected = False
+    End With
+
+    nGrew = Len(oDoc.Content.Text) - nLenBefore
+    If nGrew <> lPos Then
+        m_LastError = "InsertFrontMatter: the document text grew by " & nGrew & " characters, expected " & lPos & " (the text; each section break terminates its last paragraph)."
+        GoTo PROC_FAIL
+    End If
+    If Not oDoc Is oPrevious Then oPrevious.Activate
+    Debug.Print "InsertFrontMatter: " & nParas & " paragraph(s) in " & nSections & " section(s) inserted, " & lPos & " characters, now " & oDoc.Sections.Count & " section(s) in " & oDoc.Name & "."
+    InsertFrontMatter = nParas
+    Exit Function
+PROC_ERR:
+    m_LastError = "InsertFrontMatter: " & Err.Number & " " & Err.Description
+PROC_FAIL:
+    On Error Resume Next
+    If Not oPrevious Is Nothing Then If Not oDoc Is oPrevious Then oPrevious.Activate
+    On Error GoTo 0
+    Debug.Print m_LastError
+    InsertFrontMatter = -1
+End Function
+
+' Applies RWBFrontItalic to the "start-end;" spans (offsets within the paragraph that starts at lParaStart).
+Private Sub ApplyItalicSpans(ByVal oDoc As Word.Document, ByVal lParaStart As Long, ByVal sSpans As String)
+    Dim vSpan As Variant
+    Dim vPair As Variant
+
+    For Each vSpan In Split(sSpans, ";")
+        If Len(vSpan) > 0 Then
+            vPair = Split(vSpan, "-")
+            oDoc.Range(lParaStart + CLng(vPair(0)), lParaStart + CLng(vPair(1))).style = oDoc.Styles(STYLE_FRONT_ITALIC)
+        End If
+    Next vSpan
+End Sub
+
+' Gives the nFront leading sections the page setup of the Bible Index section, a New Page start, one column, no different first page,
+' the vertical alignment from the text file, and no page-number footer (the footers of the first section are emptied; the later front
+' sections link to it). Sets m_LastError when the Bible Index section cannot be found.
+Private Sub ApplyFrontSectionLayout(ByVal oDoc As Word.Document, ByVal nFront As Long, ByRef aSectionAlign() As Long)
+    Dim oHost As Word.Section
+    Dim i As Long
+    Dim idx As Long
+
+    Set oHost = FindIndexHostSection(oDoc, nFront)
+    If oHost Is Nothing Then
+        m_LastError = "InsertFrontMatter: no section with a " & INDEX_HOST_STYLE & " paragraph after the " & nFront & " front sections; the page setup cannot be copied."
+        Exit Sub
+    End If
+    For i = 1 To nFront
+        basSectionPageSetup.CopySectionPageSetup oHost, oDoc.Sections(i)
+        With oDoc.Sections(i).PageSetup
+            .SectionStart = wdSectionNewPage
+            .DifferentFirstPageHeaderFooter = False
+            .TextColumns.SetCount 1
+            .TextColumns.LineBetween = False
+            .VerticalAlignment = aSectionAlign(i - 1)
+        End With
+    Next i
+    For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
+        oDoc.Sections(1).Footers(idx).Range.Delete
+        For i = 2 To nFront
+            oDoc.Sections(i).Footers(idx).LinkToPrevious = True
+        Next i
+    Next idx
+End Sub
+
+' The first section after the nFront front sections that holds a BibleIndexEyebrow paragraph (found by style, not by number).
+Private Function FindIndexHostSection(ByVal oDoc As Word.Document, ByVal nFront As Long) As Word.Section
+    Dim k As Long
+    Dim oPara As Word.Paragraph
+
+    For k = nFront + 1 To oDoc.Sections.Count
+        If k > nFront + MAX_FRONT_SECTIONS Then Exit For
+        For Each oPara In oDoc.Sections(k).Range.Paragraphs
+            If StrComp(oPara.style.NameLocal, INDEX_HOST_STYLE, vbTextCompare) = 0 Then
+                Set FindIndexHostSection = oDoc.Sections(k)
+                Exit Function
+            End If
+        Next oPara
+    Next k
+End Function
+
+' The paragraph style names and the character style name together (for the list and the read-only checks).
+Private Function AllFrontMatterStyleNames() As Variant
+    Dim vNames As Variant
+    Dim vAll() As String
+    Dim i As Long
+
+    vNames = GetFrontMatterStyles()
+    ReDim vAll(LBound(vNames) To UBound(vNames) + 1)
+    For i = LBound(vNames) To UBound(vNames)
+        vAll(i) = vNames(i)
+    Next i
+    vAll(UBound(vNames) + 1) = STYLE_FRONT_ITALIC
+    AllFrontMatterStyleNames = vAll
+End Function
+
+Private Function IsFrontMatterParagraphStyle(ByVal sName As String) As Boolean
+    Dim vNames As Variant
+    Dim i As Long
+
+    vNames = GetFrontMatterStyles()
+    For i = LBound(vNames) To UBound(vNames)
+        If StrComp(sName, CStr(vNames(i)), vbTextCompare) = 0 Then IsFrontMatterParagraphStyle = True: Exit Function
+    Next i
+End Function
+
+' The text without the {i}...{/i} markers; aStarts/aEnds receive the 0-based [start, end) offsets of each italic span in the plain text.
+Private Function StripItalicMarkers(ByVal sText As String, ByRef aStarts() As Long, ByRef aEnds() As Long, ByRef nSpans As Long) As String
+    Dim sPlain As String
+    Dim lOpen As Long
+    Dim lClose As Long
+
+    nSpans = 0
+    Do
+        lOpen = InStr(1, sText, MARK_ITALIC_OPEN, vbBinaryCompare)
+        If lOpen = 0 Then
+            sPlain = sPlain & sText
+            Exit Do
+        End If
+        lClose = InStr(lOpen + Len(MARK_ITALIC_OPEN), sText, MARK_ITALIC_CLOSE, vbBinaryCompare)
+        If lClose = 0 Then Err.Raise vbObjectError + 1, "StripItalicMarkers", "an " & MARK_ITALIC_OPEN & " has no " & MARK_ITALIC_CLOSE
+        If nSpans >= MAX_ITALIC_SPANS Then Err.Raise vbObjectError + 2, "StripItalicMarkers", "more than " & MAX_ITALIC_SPANS & " italic spans in one paragraph"
+        sPlain = sPlain & Left$(sText, lOpen - 1)
+        aStarts(nSpans) = Len(sPlain)
+        sPlain = sPlain & Mid$(sText, lOpen + Len(MARK_ITALIC_OPEN), lClose - lOpen - Len(MARK_ITALIC_OPEN))
+        aEnds(nSpans) = Len(sPlain)
+        nSpans = nSpans + 1
+        sText = Mid$(sText, lClose + Len(MARK_ITALIC_CLOSE))
+    Loop
+    StripItalicMarkers = sPlain
+End Function
+
+Private Function ReadUtf8Text(ByVal sPath As String) As String
+    Dim oStream As Object
+
+    Set oStream = CreateObject("ADODB.Stream")
+    oStream.Type = 2
+    oStream.Charset = "utf-8"
+    oStream.Open
+    oStream.LoadFromFile sPath
+    ReadUtf8Text = oStream.ReadText
+    oStream.Close
+End Function
 
 Private Sub ApplySpec(ByVal oDoc As Word.Document, ByVal oStyle As Word.Style)
     Dim vSpec As Variant
@@ -236,6 +605,7 @@ Private Sub ApplySpec(ByVal oDoc As Word.Document, ByVal oStyle As Word.Style)
         .LineSpacingRule = wdLineSpaceSingle
         .SpaceBefore = vSpec(2)
         .SpaceAfter = vSpec(3)
+        .PageBreakBefore = False
     End With
     oStyle.LanguageID = LANG_ENGLISH_US
     oStyle.NoProofing = True
@@ -252,10 +622,16 @@ Private Function MatchesSpec(ByVal oStyle As Word.Style, ByVal vSpec As Variant)
             And .ParagraphFormat.SpaceAfter = vSpec(3) _
             And CBool(.Font.Bold) = CBool(vSpec(4)) _
             And CBool(.Font.Italic) = CBool(vSpec(5)) _
+            And Not CBool(.ParagraphFormat.PageBreakBefore) _
             And Len(CStr(.BaseStyle)) = 0 _
             And .ParagraphFormat.FirstLineIndent = 0 _
             And .ParagraphFormat.LineSpacingRule = wdLineSpaceSingle
     End With
+End Function
+
+' The character style: italic, based on Default Paragraph Font, nothing else (it keeps the font of the paragraph it is used in).
+Private Function MatchesItalicSpec(ByVal oStyle As Word.Style) As Boolean
+    MatchesItalicSpec = CBool(oStyle.Font.Italic) And StrComp(CStr(oStyle.BaseStyle), BASE_CHARACTER_STYLE, vbTextCompare) = 0
 End Function
 
 Private Function FindStyle(ByVal oDoc As Word.Document, ByVal sName As String) As Word.Style
