@@ -210,6 +210,18 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         " (disposable: deleted after a clean run, kept if a run halts or has issues)"
     ExportLog "  destination=" & destPath
 
+    ' Pass 0 - RT-35 preflight: the three allowed font families must be installed on this machine. Without them Word
+    ' substitutes silently and cannot embed them (RT-31), so the export would be wrong without any error.
+    Dim fontsNotInstalled As String
+    fontsNotInstalled = MissingAllowedFonts()
+    If Len(fontsNotInstalled) > 0 Then
+        m_issues = m_issues + 1
+        ExportLog "Pass0_FontsInstalled: STOPPED - not installed on this machine: " & fontsNotInstalled & ". Install them (aeRWB " & _
+            "tools\rwb-export\check-fonts.ps1 explains how) and run the export again. Nothing was exported."
+        GoTo PROC_EXIT
+    End If
+    ExportLog "Pass0_FontsInstalled: Carlito, Noto Sans and Liberation Serif are installed."
+
     ' Pass 1 - duplicate and open. All following passes operate on oDoc
     ' only; sourcePath is never touched.
     If Dir(workingPath) <> "" Then
@@ -356,8 +368,23 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
 
     ' Pass 7 - save
     Application.ScreenUpdating = screenWas
+    Dim embedWas As Boolean
+    Dim subsetWas As Boolean
+    embedWas = oDoc.EmbedTrueTypeFonts
+    subsetWas = oDoc.SaveSubsetFonts
+    If oSettings("EmbedFonts") Then
+        ' Order matters: SaveSubsetFonts after EmbedTrueTypeFonts (the other order raises error 9099). Word does NOT subset a
+        ' document of more than about 30 distinct characters (RT-31 plan section 10; the real subsets are made after the export
+        ' by aeRWB rwb.fontsubset, RT-40), but with this flag on it embeds only fonts that have characters in the text; with it
+        ' off it also embedded the Microsoft Calibri named by unused styles (found 2026-11-12, 2.85 MB).
+        oDoc.EmbedTrueTypeFonts = True
+        oDoc.SaveSubsetFonts = True
+    End If
     oDoc.SaveAs2 fileName:=destPath, FileFormat:=wdFormatXMLDocument
-    ExportLog "Pass7_Save: saved " & destPath
+    ExportLog "Pass7_Save: saved " & destPath & " (EmbedTrueTypeFonts=" & oDoc.EmbedTrueTypeFonts & _
+        ", SaveSubsetFonts=" & oDoc.SaveSubsetFonts & ")"
+    oDoc.SaveSubsetFonts = subsetWas
+    oDoc.EmbedTrueTypeFonts = embedWas
     oDoc.Close SaveChanges:=False
     Set oDoc = Nothing
     LapTimer "Pass7_SaveAndClose"
@@ -374,6 +401,21 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
                 "Artefact saved but still carries the ribbon part."
         End If
         LapTimer "Pass7b_StripRibbon"
+    End If
+
+    ' Pass 7c - RT-31 halting check of the embedded fonts (py\check_embedded_fonts.py via WSL): at least one face is
+    ' embedded, every embedded family is allowed (Carlito, Noto Sans, Liberation Serif), no part or entry is orphaned.
+    ' A failure makes the run not CLEAN (the artefact is already saved; the working copy is kept).
+    If oSettings("EmbedFonts") Then
+        Dim fontsRc As Long
+        fontsRc = RunPythonStep("Pass7c_CheckEmbeddedFonts", SourceFolder & "py\check_embedded_fonts.py", _
+            Array(destPath))
+        If fontsRc <> 0 Then
+            m_issues = m_issues + 1
+            ExportLog "Pass7c_CheckEmbeddedFonts: FAILED (exit code " & fontsRc & "). " & _
+                "Artefact saved but its embedded fonts are not the allowed set."
+        End If
+        LapTimer "Pass7c_CheckEmbeddedFonts"
     End If
 
     ' Pass 8 - final verification, fresh open, independent of Pass 6's
@@ -1369,6 +1411,9 @@ Public Function GetExportSettings() As Object
     ' the verify step is skipped, and logged, if the file is absent).
     d("StripRibbonAfterSave") = True
     d("BaselineDocxRelPath") = "Bible\v0.0.RadiantWordBible.docx"
+    ' RT-31: embed the three free fonts in the saved .docx (Word's "Embed fonts in the file") and halt-check the
+    ' embedded set after the save (py\check_embedded_fonts.py). On in the export copy only; the dev docm is untouched.
+    d("EmbedFonts") = True
     Set GetExportSettings = d
 End Function
 

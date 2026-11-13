@@ -51,6 +51,36 @@ Public Function IsAllowedRunFont(ByVal sFontName As String) As Boolean
     IsAllowedRunFont = (InStr(1, ALLOWED_FONTS, "|" & sFontName & "|", vbTextCompare) > 0)
 End Function
 
+' RT-35 (fonts-installed preflight): is a font family known to this Word? Application.FontNames lists the families installed for
+' the user or the machine. Family level only (no face): the face-level check is aeRWB tools\rwb-export\check-fonts.ps1.
+Public Function IsFontInstalled(ByVal sFontName As String) As Boolean
+    Dim oneFontName As Variant
+    For Each oneFontName In Application.FontNames
+        If StrComp(CStr(oneFontName), sFontName, vbTextCompare) = 0 Then
+            IsFontInstalled = True
+            Exit Function
+        End If
+    Next oneFontName
+End Function
+
+' RT-35: the allowed families that are NOT installed on this machine, as "Carlito, Noto Sans" ("" = all three are installed).
+' Without them Word substitutes silently and cannot embed them, so the export checks this before it starts.
+Public Function MissingAllowedFonts() As String
+    Dim familyNames() As String
+    Dim nameIndex As Long
+    Dim missingNames As String
+    familyNames = Split(ALLOWED_FONTS, "|")
+    For nameIndex = LBound(familyNames) To UBound(familyNames)
+        If Len(familyNames(nameIndex)) > 0 Then
+            If Not IsFontInstalled(familyNames(nameIndex)) Then
+                If Len(missingNames) > 0 Then missingNames = missingNames & ", "
+                missingNames = missingNames & familyNames(nameIndex)
+            End If
+        End If
+    Next nameIndex
+    MissingAllowedFonts = missingNames
+End Function
+
 '==============================================================================
 ' Entry points
 '==============================================================================
