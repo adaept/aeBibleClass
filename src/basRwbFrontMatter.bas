@@ -509,6 +509,7 @@ Private Sub ApplyFrontSectionLayout(ByVal oDoc As Word.Document, ByVal nFront As
     Next idx
     ' Emptying a footer leaves an empty paragraph in the built-in Footer style, and Word builds the first section's even header in the
     ' built-in Header style: give every story the section owns the project styles (found 2026-11-12, Tests 36, 47 and 50, FU-46).
+    EnsureFrontEvenHeaderTab oDoc
     nRestyled = ApplyHeaderFooterStyles(oDoc, nFront)
     If nRestyled > 0 Then Debug.Print "InsertFrontMatter: " & nRestyled & " header/footer paragraph(s) of the front sections restyled to " & STYLE_HEADER & " / " & STYLE_FOOTER
 End Sub
@@ -522,23 +523,27 @@ Private Function ApplyHeaderFooterStyles(ByVal oDoc As Word.Document, ByVal nFro
     Dim idx As Long
     Dim nLast As Long
     Dim nChanged As Long
+    Dim bOrphanOwner As Boolean
 
     nLast = nFront + 1
     If nLast > oDoc.Sections.Count Then nLast = oDoc.Sections.Count
     For i = 1 To nLast
         For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
-            nChanged = nChanged + StyleStory(oDoc.Sections(i).Headers(idx), STYLE_HEADER)
-            nChanged = nChanged + StyleStory(oDoc.Sections(i).Footers(idx), STYLE_FOOTER)
+            bOrphanOwner = (i = 1 And idx = wdHeaderFooterEvenPages)
+            nChanged = nChanged + StyleStory(oDoc.Sections(i).Headers(idx), STYLE_HEADER, bOrphanOwner)
+            nChanged = nChanged + StyleStory(oDoc.Sections(i).Footers(idx), STYLE_FOOTER, bOrphanOwner)
         Next idx
     Next i
     ApplyHeaderFooterStyles = nChanged
 End Function
 
-' One header or footer story: every paragraph gets sStyle when the story exists.
-Private Function StyleStory(ByVal oStory As Word.HeaderFooter, ByVal sStyle As String) As Long
+' One header or footer story: every paragraph gets sStyle when the story exists. bEvenIfAbsent also restyles a story that does not exist (Exists
+' False): the first section's even-page header and footer are such orphans (the even/odd toggle is off), yet Test 84 walks StoryRanges and
+' counts them, so they must carry the project styles too (FU-48, probe 2026-11-13: both were in the built-in Header / Footer style).
+Private Function StyleStory(ByVal oStory As Word.HeaderFooter, ByVal sStyle As String, Optional ByVal bEvenIfAbsent As Boolean = False) As Long
     Dim oPara As Word.Paragraph
 
-    If Not oStory.Exists Then Exit Function
+    If Not oStory.Exists And Not bEvenIfAbsent Then Exit Function
     For Each oPara In oStory.Range.Paragraphs
         If oPara.Style <> sStyle Then
             oPara.Style = sStyle
@@ -563,6 +568,19 @@ Private Function EnsureFrontFooterTab(ByVal oDoc As Word.Document) As Long
     Next idx
 End Function
 
+' The first section's even-page header is an orphan story (the even/odd toggle is off) that Test 84 still counts. Like an empty footer, an
+' empty header story is not written by Word and comes back as a default Header paragraph, so it carries one tab as well. Returns 1 when the
+' tab was added, otherwise 0 (FU-48).
+Private Function EnsureFrontEvenHeaderTab(ByVal oDoc As Word.Document) As Long
+    Dim oRange As Word.Range
+
+    Set oRange = oDoc.Sections(1).Headers(wdHeaderFooterEvenPages).Range
+    If Len(Replace(oRange.Text, vbCr, "")) = 0 Then
+        oRange.InsertBefore vbTab
+        EnsureFrontEvenHeaderTab = 1
+    End If
+End Function
+
 ' One-time repair (safe to repeat) for a document whose front sections were inserted before 2026-11-12: the header and footer stories of the
 ' leading front sections get TheHeaders and TheFooters. Returns the number of paragraphs restyled, -1 on an error (FrontMatterLastError).
 Public Function RepairFrontHeaderFooterStyles(Optional ByVal sDocName As String = "") As Long
@@ -577,7 +595,7 @@ Public Function RepairFrontHeaderFooterStyles(Optional ByVal sDocName As String 
         Debug.Print "RepairFrontHeaderFooterStyles: no leading front sections in " & oDoc.Name
         Exit Function
     End If
-    RepairFrontHeaderFooterStyles = EnsureFrontFooterTab(oDoc)
+    RepairFrontHeaderFooterStyles = EnsureFrontFooterTab(oDoc) + EnsureFrontEvenHeaderTab(oDoc)
     RepairFrontHeaderFooterStyles = RepairFrontHeaderFooterStyles + ApplyHeaderFooterStyles(oDoc, nFront)
     Debug.Print "RepairFrontHeaderFooterStyles: " & RepairFrontHeaderFooterStyles & " paragraph(s) restyled in the " & nFront & " front section(s) of " & oDoc.Name
     Exit Function
