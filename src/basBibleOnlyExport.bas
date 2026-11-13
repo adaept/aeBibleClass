@@ -82,6 +82,8 @@ Private m_timings As String         ' per-pass timing table, appended to the rep
 Private m_lastPagesIn As Double     ' cumulative OS pages-read-from-disk at the previous lap
 Private m_totalPagesIn As Double    ' pages read from disk during this run
 Private m_minFreeMB As Double       ' lowest free physical memory seen at a lap (MB)
+Private m_rsidWas As Boolean        ' RT-40: Options.StoreRSIDOnSave before the export changed it
+Private m_rsidChanged As Boolean    ' RT-40: True while the export holds Options.StoreRSIDOnSave off
 
 Private Declare PtrSafe Function GetCurrentProcessId Lib "kernel32" () As Long
 
@@ -149,6 +151,24 @@ Public Function GetScriptureStripStyles() As Variant
         "CenterSubText", "CustomParaAfterH1", "DatAuthRef", "Brief", "BodyText", _
         "Footnote Text", "Footnote Reference")
 End Function
+
+Public Sub ExportPreflight()
+    Dim oShell As Object
+    Dim oExec As Object
+    Dim nodeVersion As String
+
+    Debug.Print "Active document : " & ActiveDocument.FullName
+    Debug.Print "Expected        : C:\adaept\aeBibleClass\Blank Bible Copy.docm"
+    Debug.Print "Open documents  : " & Documents.Count & " (should be 1)"
+
+    Set oShell = CreateObject("WScript.Shell")
+    Set oExec = oShell.Exec("cmd.exe /c node --version")
+    nodeVersion = Trim$(oExec.StdOut.ReadAll)
+    Debug.Print "Node on PATH    : " & IIf(Len(nodeVersion) > 0, nodeVersion, "NOT FOUND - Pass 7d would fail")
+
+    Debug.Print "Missing fonts   : [" & basFontRunAudit.MissingAllowedFonts() & "] (empty is good)"
+    Debug.Print "Options.StoreRSIDOnSave now: " & Options.StoreRSIDOnSave & " (the export restores this)"
+End Sub
 
 ' ==========================================================================
 ' ExportScriptureOnlyDocx
@@ -366,8 +386,27 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     LapTimer "Pass6_RegenerateBibleIndex"
     If m_haltFired Then GoTo PROC_HALT
 
+    ' Pass 6b - RT-40 (F8): the font audit on the work copy; a Microsoft font cannot reach the docx even if Test 95 was skipped.
+    If oSettings("FontAuditHalt") Then
+        Dim fontRuns As Long
+        fontRuns = basFontRunAudit.CountFontRunsOutsideAllowlist(oDoc.Name)
+        LapTimer "Pass6b_FontAudit"
+        If fontRuns <> 0 Then
+            HaltExport "Pass6b_FontAudit", fontRuns & " run(s) in a font outside the allowlist (-1 means the audit itself failed: " & _
+                basFontRunAudit.FontRunAuditLastError & ")"
+            GoTo PROC_HALT
+        End If
+        ExportLog "Pass6b_FontAudit: 0 runs outside Carlito, Noto Sans and Liberation Serif."
+    End If
+
     ' Pass 7 - save
     Application.ScreenUpdating = screenWas
+    If oSettings("SetDocumentProperties") Then SetExportDocumentProperties oDoc, CStr(oSettings("ExportVersion"))
+    m_rsidWas = Options.StoreRSIDOnSave
+    If oSettings("StripRsids") Then
+        Options.StoreRSIDOnSave = False
+        m_rsidChanged = True
+    End If
     Dim embedWas As Boolean
     Dim subsetWas As Boolean
     embedWas = oDoc.EmbedTrueTypeFonts
@@ -385,6 +424,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         ", SaveSubsetFonts=" & oDoc.SaveSubsetFonts & ")"
     oDoc.SaveSubsetFonts = subsetWas
     oDoc.EmbedTrueTypeFonts = embedWas
+    RestoreRsidOption
     oDoc.Close SaveChanges:=False
     Set oDoc = Nothing
     LapTimer "Pass7_SaveAndClose"
@@ -416,6 +456,28 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
                 "Artefact saved but its embedded fonts are not the allowed set."
         End If
         LapTimer "Pass7c_CheckEmbeddedFonts"
+    End If
+
+    ' Pass 7d - RT-40: the font finish (aeRWB docx-finish-cli.mjs): six real subsets, no Microsoft font name, verse text and every text
+    ' part unchanged. It writes a new file and replaces the docx only when every check passed; otherwise the run is NOT CLEAN.
+    If oSettings("FinishFontsInNode") Then
+        Dim finishRc As Long
+        Dim finishedPath As String
+        finishedPath = destPath & ".finished.tmp"
+        If Dir(finishedPath) <> "" Then Kill finishedPath
+        finishRc = RunNodeStep("Pass7d_FinishFonts", oSettings("RwbToolsFolder") & "\tools\rwb-export\docx-finish-cli.mjs", _
+            Array(destPath, finishedPath))
+        If finishRc = 0 And Dir(finishedPath) <> "" Then
+            Kill destPath
+            Name finishedPath As destPath
+            ExportLog "Pass7d_FinishFonts: the finished docx replaced " & destPath
+        Else
+            m_issues = m_issues + 1
+            ExportLog "Pass7d_FinishFonts: FAILED (exit code " & finishRc & "). The docx still has Word's full fonts and the " & _
+                "Microsoft font names: do not use it."
+            If Dir(finishedPath) <> "" Then Kill finishedPath
+        End If
+        LapTimer "Pass7d_FinishFonts"
     End If
 
     ' Pass 8 - final verification, fresh open, independent of Pass 6's
@@ -479,6 +541,7 @@ PROC_HALT:
     m_haltFired = False
 
 PROC_EXIT:
+    RestoreRsidOption
     StopKeepAwake
     LogTimingSummary
     WriteExportReport
@@ -1393,7 +1456,7 @@ Public Function GetExportSettings() As Object
     Dim d As Object
     Set d = CreateObject("Scripting.Dictionary")
     d.CompareMode = 1
-    d("ExportVersion") = "1.1"
+    d("ExportVersion") = "1.1.1"
     ' Remove manual (optional) hyphens and turn off automatic hyphenation.
     d("StripOptionalHyphens") = True
     ' EmphasisBlack character style removed (text takes VerseText);
@@ -1414,6 +1477,18 @@ Public Function GetExportSettings() As Object
     ' RT-31: embed the three free fonts in the saved .docx (Word's "Embed fonts in the file") and halt-check the
     ' embedded set after the save (py\check_embedded_fonts.py). On in the export copy only; the dev docm is untouched.
     d("EmbedFonts") = True
+    ' RT-40 (R111-6 a): Word's Options.StoreRSIDOnSave is switched off for the export save only (the docx then has no w:rsid attributes
+    ' and no split runs; proven on a copy 2026-11-07) and restored right after, and again on every exit path.
+    d("StripRsids") = True
+    ' RT-40 (R111-6 c, F8): a halting audit of the work copy: a run in a font outside Carlito, Noto Sans, Liberation Serif stops the export.
+    d("FontAuditHalt") = True
+    ' RT-40 (R111-6 d, F6): Title and a custom RWB_Version property in the exported docx (optional, owner decision S-2; the title also
+    ' becomes the title of the PDFs, which otherwise show the first heading).
+    d("SetDocumentProperties") = True
+    ' RT-40: after the save and the checks, aeRWB npm run rwb.fontsfinish subsets the embedded fonts to the six faces the Bible uses,
+    ' rewrites every Microsoft font name, checks the result independently and replaces the docx. Needs Node on the PATH of this Word.
+    d("FinishFontsInNode") = True
+    d("RwbToolsFolder") = "C:\adaept\aeRWB"
     Set GetExportSettings = d
 End Function
 
@@ -1637,6 +1712,42 @@ Private Function RunPythonStep(ByVal stepName As String, ByVal scriptWinPath As 
         cmd = cmd & " " & Chr(34) & ToWslPath(CStr(args(i))) & Chr(34)
     Next i
 
+    RunPythonStep = RunCommandStep(stepName, cmd)
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in basBibleOnlyExport.RunPythonStep | Err: " & Err.Number & " | " & _
+        Err.Description
+    RunPythonStep = -1
+    Resume PROC_EXIT
+End Function
+
+' RT-40: a Node step of aeRWB (Windows Node, paths as they are, not WSL). Same logging and exit code as RunPythonStep.
+Private Function RunNodeStep(ByVal stepName As String, ByVal scriptWinPath As String, _
+                             ByVal args As Variant) As Long
+    On Error GoTo PROC_ERR
+
+    Dim cmd As String
+    Dim i As Long
+    cmd = "node " & Chr(34) & scriptWinPath & Chr(34)
+    For i = LBound(args) To UBound(args)
+        cmd = cmd & " " & Chr(34) & CStr(args(i)) & Chr(34)
+    Next i
+    RunNodeStep = RunCommandStep(stepName, cmd)
+
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Debug.Print "ERROR in basBibleOnlyExport.RunNodeStep | Err: " & Err.Number & " | " & Err.Description
+    RunNodeStep = -1
+    Resume PROC_EXIT
+End Function
+
+' The shared part of the post-save steps: run the command line hidden through cmd.exe, log its output and exit code, return the code.
+Private Function RunCommandStep(ByVal stepName As String, ByVal cmd As String) As Long
+    On Error GoTo PROC_ERR
+
     Dim outFile As String
     outFile = Environ$("TEMP") & "\rwb_export_step.txt"
     If Dir(outFile) <> "" Then Kill outFile
@@ -1661,16 +1772,41 @@ Private Function RunPythonStep(ByVal stepName As String, ByVal scriptWinPath As 
     End If
     ExportLog stepName & ": exit code " & rc
 
-    RunPythonStep = rc
+    RunCommandStep = rc
 
 PROC_EXIT:
     Exit Function
 PROC_ERR:
-    Debug.Print "ERROR in basBibleOnlyExport.RunPythonStep | Err: " & Err.Number & " | " & _
-        Err.Description
-    RunPythonStep = -1
+    Debug.Print "ERROR in basBibleOnlyExport.RunCommandStep | Err: " & Err.Number & " | " & Err.Description
+    RunCommandStep = -1
     Resume PROC_EXIT
 End Function
+
+' RT-40 (R111-6 a): put Word's own option back to what it was before the export changed it. Safe to call any number of times, from
+' every exit path; the option belongs to the user's Word, not to the export.
+Private Sub RestoreRsidOption()
+    If Not m_rsidChanged Then Exit Sub
+    On Error Resume Next
+    Options.StoreRSIDOnSave = m_rsidWas
+    If Err.Number = 0 Then ExportLog "Options.StoreRSIDOnSave restored to " & m_rsidWas
+    Err.Clear
+    m_rsidChanged = False
+End Sub
+
+' RT-40 (R111-6 d, F6): the title and the export version in the properties of the exported docx. Late bound, like the rest of the module.
+Private Sub SetExportDocumentProperties(ByVal oDoc As Object, ByVal versionText As String)
+    Const TITLE_TEXT As String = "Radiant Word Bible"
+    Const PROPERTY_TYPE_STRING As Long = 4
+    oDoc.BuiltInDocumentProperties("Title").value = TITLE_TEXT
+    On Error Resume Next
+    oDoc.CustomDocumentProperties("RWB_Version").value = versionText
+    If Err.Number <> 0 Then
+        Err.Clear
+        oDoc.CustomDocumentProperties.Add name:="RWB_Version", LinkToContent:=False, Type:=PROPERTY_TYPE_STRING, value:=versionText
+    End If
+    On Error GoTo 0
+    ExportLog "Pass7_Properties: Title = " & TITLE_TEXT & ", RWB_Version = " & versionText
+End Sub
 
 ' C:\a\b -> /mnt/c/a/b
 Private Function ToWslPath(ByVal winPath As String) As String

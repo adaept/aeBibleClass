@@ -70,6 +70,21 @@ class StyleRule(unittest.TestCase):
         self.assertEqual(run(text), text)
 
 
+class ExecRule(unittest.TestCase):
+    def test_lowercase_exec_method_becomes_exec(self):
+        self.assertEqual(run("Set oExec = wsh.exec(shellCmd)\r\n"), "Set oExec = wsh.Exec(shellCmd)\r\n")
+        self.assertEqual(run("Set e = CreateObject(\"WScript.Shell\").exec(\"cmd\")\r\n"),
+                         "Set e = CreateObject(\"WScript.Shell\").Exec(\"cmd\")\r\n")
+
+    def test_other_members_and_names_that_contain_exec_are_untouched(self):
+        text = "o.ExecuteItem i\r\nx = rs.Execute\r\ny = o.exec2\r\nSet oExec = Nothing\r\nDim exec As Long\r\n"
+        self.assertEqual(run(text), text)
+
+    def test_exec_in_a_comment_or_string_is_untouched(self):
+        text = "' call wsh.exec here\r\nDebug.Print \"wsh.exec\"\r\n"
+        self.assertEqual(run(text), text)
+
+
 class Stability(unittest.TestCase):
     SAMPLE = ("For Each note In r.Footnotes\r\n    x = o.style.NameLocal ' a note\r\nNext note\r\n"
               "s = Space(2) & \"the result\"\r\n\r\n\r\n")

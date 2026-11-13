@@ -52,6 +52,7 @@ NORMALIZATIONS = [
     (r'(?i)\.Saved\b',          '.Saved',           '.Saved property on Document (VBE auto-demotes to .saved while a local variable named saved exists in any module; basDocmHygiene did this 2026-11-10 and flipped aeRibbonClass.cls)'),
     (r'(?i)\.Name\b',           '.Name',            '.Name property on VBProject/Style/Document/object'),
     (r'(?i)\.Style\b',          '.Style',           '.Style property on Paragraph/Range/Find/object (VBE auto-demotes to .style; added 2026-11-12, RT-24)'),
+    (r'(?i)\.Exec\b',           '.Exec',            '.Exec method on WScript.Shell (late bound, so the VBE re-cases it project-wide to the last spelling typed; added 2026-11-12, RT-40 ExportPreflight turned wsh.exec into wsh.Exec in basTEST_aeBibleClass)'),
     (r'(?i)\bAs\s+(?:Word\.)?Range\b',      'As Word.Range',      'As Word.Range type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Field\b',      'As Word.Field',      'As Word.Field type declaration'),
     (r'(?i)\bAs\s+(?:Word\.)?Paragraph\b',  'As Word.Paragraph',  'As Word.Paragraph type declaration'),

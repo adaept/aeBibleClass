@@ -131,7 +131,7 @@ Public Sub ExportScripturePdf(ByVal docxPath As String, Optional ByVal pdfFolder
     PdfLog "keep-awake: " & IIf(keepAwakeOn, "ON", "FAILED (the machine may sleep on its idle timer)")
 
     ' Read-only, not added to the recent files: the finished docx must stay byte for byte as it is.
-    Set oDoc = Documents.Open(FileName:=docxPath, ReadOnly:=True, AddToRecentFiles:=False, Visible:=False, _
+    Set oDoc = Documents.Open(fileName:=docxPath, ReadOnly:=True, AddToRecentFiles:=False, Visible:=False, _
         ConfirmConversions:=False)
     PdfLog "opened read-only: " & oDoc.Name & " (macros: " & IIf(oDoc.HasVBProject, "PRESENT - not a finished docx", "none") & ")"
     If oDoc.HasVBProject Then
