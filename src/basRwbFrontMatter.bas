@@ -70,6 +70,8 @@ Private Const VALIGN_CENTER_NAME As String = "center"
 Private Const MAX_ITALIC_SPANS As Long = 64
 Private Const MAX_FRONT_SECTIONS As Long = 12
 Private Const MAX_FOREIGN_HITS As Long = 1000
+Private Const STYLE_HEADER As String = "TheHeaders"
+Private Const STYLE_FOOTER As String = "TheFooters"
 Private m_LastError As String
 
 ' The text of the last error ("" = none), for callers that cannot see the Immediate window.
@@ -479,6 +481,7 @@ Private Sub ApplyFrontSectionLayout(ByVal oDoc As Word.Document, ByVal nFront As
     Dim oHost As Word.Section
     Dim i As Long
     Dim idx As Long
+    Dim nRestyled As Long
 
     Set oHost = FindIndexHostSection(oDoc, nFront)
     If oHost Is Nothing Then
@@ -497,11 +500,92 @@ Private Sub ApplyFrontSectionLayout(ByVal oDoc As Word.Document, ByVal nFront As
     Next i
     For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
         oDoc.Sections(1).Footers(idx).Range.Delete
+        ' Word does not write a footer that is only an empty paragraph (it comes back as a default Footer paragraph): keep one tab, like the old
+        ' first section's tab-only footer spacers.
+        oDoc.Sections(1).Footers(idx).Range.InsertBefore vbTab
         For i = 2 To nFront
             oDoc.Sections(i).Footers(idx).LinkToPrevious = True
         Next i
     Next idx
+    ' Emptying a footer leaves an empty paragraph in the built-in Footer style, and Word builds the first section's even header in the
+    ' built-in Header style: give every story the section owns the project styles (found 2026-11-12, Tests 36, 47 and 50, FU-46).
+    nRestyled = ApplyHeaderFooterStyles(oDoc, nFront)
+    If nRestyled > 0 Then Debug.Print "InsertFrontMatter: " & nRestyled & " header/footer paragraph(s) of the front sections restyled to " & STYLE_HEADER & " / " & STYLE_FOOTER
 End Sub
+
+' The header and footer stories of the nFront leading sections, and of the section after them, use the project styles TheHeaders and TheFooters,
+' never the built-in Header and Footer. The section after the front sections is the Study Bible title page with a different first page: its
+' first-page footer is inherited from the front sections' chain, so Word only shows that story there. Every story that exists is restyled, linked
+' or not (a linked story is edited in the section that owns it). Returns the number of paragraphs whose style changed.
+Private Function ApplyHeaderFooterStyles(ByVal oDoc As Word.Document, ByVal nFront As Long) As Long
+    Dim i As Long
+    Dim idx As Long
+    Dim nLast As Long
+    Dim nChanged As Long
+
+    nLast = nFront + 1
+    If nLast > oDoc.Sections.Count Then nLast = oDoc.Sections.Count
+    For i = 1 To nLast
+        For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
+            nChanged = nChanged + StyleStory(oDoc.Sections(i).Headers(idx), STYLE_HEADER)
+            nChanged = nChanged + StyleStory(oDoc.Sections(i).Footers(idx), STYLE_FOOTER)
+        Next idx
+    Next i
+    ApplyHeaderFooterStyles = nChanged
+End Function
+
+' One header or footer story: every paragraph gets sStyle when the story exists.
+Private Function StyleStory(ByVal oStory As Word.HeaderFooter, ByVal sStyle As String) As Long
+    Dim oPara As Word.Paragraph
+
+    If Not oStory.Exists Then Exit Function
+    For Each oPara In oStory.Range.Paragraphs
+        If oPara.Style <> sStyle Then
+            oPara.Style = sStyle
+            StyleStory = StyleStory + 1
+        End If
+    Next oPara
+End Function
+
+' A footer story that is only an empty paragraph is not written to the file by Word and comes back on the next open as a default Footer
+' paragraph (Tests 36 and 50 then fail again), so the first front section's three footers carry one tab, like the tab-only footer spacers of the
+' old first section (Test 47). Returns the number of stories that were filled.
+Private Function EnsureFrontFooterTab(ByVal oDoc As Word.Document) As Long
+    Dim idx As Long
+    Dim oRange As Word.Range
+
+    For idx = wdHeaderFooterPrimary To wdHeaderFooterEvenPages
+        Set oRange = oDoc.Sections(1).Footers(idx).Range
+        If Len(Replace(oRange.Text, vbCr, "")) = 0 Then
+            oRange.InsertBefore vbTab
+            EnsureFrontFooterTab = EnsureFrontFooterTab + 1
+        End If
+    Next idx
+End Function
+
+' One-time repair (safe to repeat) for a document whose front sections were inserted before 2026-11-12: the header and footer stories of the
+' leading front sections get TheHeaders and TheFooters. Returns the number of paragraphs restyled, -1 on an error (FrontMatterLastError).
+Public Function RepairFrontHeaderFooterStyles(Optional ByVal sDocName As String = "") As Long
+    On Error GoTo PROC_ERR
+    Dim oDoc As Word.Document
+    Dim nFront As Long
+
+    m_LastError = ""
+    Set oDoc = ResolveDoc(sDocName)
+    nFront = CountLeadingFrontSections(oDoc)
+    If nFront = 0 Then
+        Debug.Print "RepairFrontHeaderFooterStyles: no leading front sections in " & oDoc.Name
+        Exit Function
+    End If
+    RepairFrontHeaderFooterStyles = EnsureFrontFooterTab(oDoc)
+    RepairFrontHeaderFooterStyles = RepairFrontHeaderFooterStyles + ApplyHeaderFooterStyles(oDoc, nFront)
+    Debug.Print "RepairFrontHeaderFooterStyles: " & RepairFrontHeaderFooterStyles & " paragraph(s) restyled in the " & nFront & " front section(s) of " & oDoc.Name
+    Exit Function
+PROC_ERR:
+    m_LastError = "RepairFrontHeaderFooterStyles | Err: " & Err.Number & " | " & Err.Description
+    Debug.Print m_LastError
+    RepairFrontHeaderFooterStyles = -1
+End Function
 
 ' The first section after the nFront front sections that holds a BibleIndexEyebrow paragraph (found by style, not by number).
 Private Function FindIndexHostSection(ByVal oDoc As Word.Document, ByVal nFront As Long) As Word.Section

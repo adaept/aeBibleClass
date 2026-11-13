@@ -330,7 +330,12 @@ Private Sub Expected1BasedArray()
     
     ' Define the Expected RunTest Result values to store in the array
     '      RunTest 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16     17 18  19 20 21 22 23 24    25 26 27   28  29  30 31 32   33   34 35 36 37  38   39 40 41 42 43 44 45 46 47 48 49  50   51    52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70  71  72 73 74 75 76 77 78 79 80 81 82     83     84 85 86 87 88 89 90 91 92 93 94 95 96 97 98)
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 1, 33826, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 145, 79, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 41, 145, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0)
+    ' Baselines moved 2026-11-12 by the RWB front matter (RT-22a, follow-up FU-46): 3 front sections (Test 27 and 50: 145 to 148; Test 28: 79 to 82),
+    ' 16 front paragraphs (Test 16: 33826 to 33842), 6 RWBFront paragraph styles (Test 49: 41 to 47), the ". (" before the licence URL in the
+    ' copyright line (Test 9: 7 to 8) and the tab-only footer: the three tab-only spacers of the old first section are replaced by the first front
+    ' section's own tab-only footer (Word does not keep an empty footer), which Test 47 reads once for each of the 6 sections that link to it
+    ' (Test 47: 3 to 6). Tests 36 and 50 stay at 0 and 148 once the front sections use TheFooters and TheHeaders.
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 8, 1, 0, 0, 0, 0, 1, 33842, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 148, 82, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 47, 148, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
