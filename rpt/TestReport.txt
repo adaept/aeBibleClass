@@ -16,7 +16,7 @@ PASS              Copy ()       Test = 7      0             0             CountS
   Rule: No space-before-digit inside Chapter Verse marker style (catches '1: 1' typos where the verse number is preceded by an extra space) - CountStyleWithSpaceAndNumber should return 0
 PASS              Copy ()       Test = 8      0             0             CountStyleWithNumberAndSpace
   Rule: No digit-followed-by-space inside Verse marker style (catches verse numbers with a trailing space before the verse text) - CountStyleWithNumberAndSpace should return 0
-PASS              Copy ()       Test = 9      7             7             CountPeriodSpaceLeftParenthesis
+PASS              Copy ()       Test = 9      8             8             CountPeriodSpaceLeftParenthesis
   Detects '. (' sequences - a legacy footnote artifact; the expected Count holds tolerated remaining occurrences - CountPeriodSpaceLeftParenthesis should match the expected baseline
 PASS              Copy ()       Test = 10     1             1             CountNonBreakingSpaces
   Rule: Non-breaking spaces (^s) in the document - baseline 1 (intentional usage); growth indicates accidental insertion - CountNonBreakingSpaces should match the expected baseline
@@ -30,7 +30,7 @@ PASS              Copy ()       Test = 14     0             0             CountW
   Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0
 PASS              Copy ()       Test = 15     1             1             CountSectionsWithDifferentFirstPage
   Rule: No section has 'Different First Page' set in PageSetup, except Section 1 - Section 1 intentionally keeps it set as part of the Ctrl-A paste-into-new-Doc recovery mechanism (confirmed by operator 2026-09-14) - CountSectionsWithDifferentFirstPage should return 1
-PASS              Copy ()       Test = 16     33826         33826         CountTotalParagraphs
+PASS              Copy ()       Test = 16     33842         33842         CountTotalParagraphs
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
   Rule: There should be no active hyperlinks as the current main target is print - CountActiveHyperlinks should return 0
@@ -52,9 +52,9 @@ PASS              Copy ()       Test = 25     1             1             CountF
   Rule: Footnote reference marks share exactly one color across the document (catches accidental color drift on individual refs) - CountFootnoteReferenceColors should return 1
 PASS              Copy ()       Test = 26     0             0             CheckAllHeaders(Empty)
   Rule: No primary header in any section is empty (every section must carry its expected header content) - CheckAllHeaders(Empty) should return 0
-PASS              Copy ()       Test = 27     145           145           CheckAllHeaders(NotEmpty)
+PASS              Copy ()       Test = 27     148           148           CheckAllHeaders(NotEmpty)
   Count of populated primary headers - matches the expected populated-section Count; drift indicates added/removed sections - CheckAllHeaders(NotEmpty) should match the expected baseline
-PASS              Copy ()       Test = 28     79            79            CountTabFollowedByParagraphMarkInHeaders
+PASS              Copy ()       Test = 28     82            82            CountTabFollowedByParagraphMarkInHeaders
   Rule: All headers with no text should have a tab - CountTabFollowedByParagraphMarkInHeaders should match the expected baseline
 PASS              Copy ()       Test = 29     66            66            CountParagraphsWithoutTabInHeaders
   Count of header paragraphs that lack a tab character - tolerated section/title-only headers without the tab-positioned page number - CountParagraphsWithoutTabInHeaders should match the expected baseline
@@ -92,13 +92,13 @@ PASS              Copy ()       Test = 45     0             0             CountU
   Rule: Every visible style is either in the approved-styles SSOT or properly hidden (Priority=99 + QuickStyle=False + UnhideWhenUsed=False) - CountUnapprovedVisibleStyles should return 0
 PASS              Copy ()       Test = 46     0             0             AuditBookHyperlinkStyling
   Rule: Every run styled BookHyperlink has the exact expected font (Carlito 9pt + DarkBlue + single underline); the one-form hyperlink rule integrity check - AuditBookHyperlinkStyling should return 0
-PASS              Copy ()       Test = 47     3             3             CountTabOnlyParagraphs("Footer")
+PASS              Copy ()       Test = 47     6             6             CountTabOnlyParagraphs("Footer")
   Count of footer paragraphs containing only a tab character - intentional tab-only spacers for footer alignment - CountTabOnlyParagraphs(Footer) should match the expected baseline
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
   Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0
-PASS              Copy ()       Test = 49     41            41            CountAuditStyles_ToFile
+PASS              Copy ()       Test = 49     47            47            CountAuditStyles_ToFile
   Writes rpt/Style Usage Distribution.txt and returns the Count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline
-PASS              Copy ()       Test = 50     145           145           SummarizeHeaderFooterAuditToFile
+PASS              Copy ()       Test = 50     148           148           SummarizeHeaderFooterAuditToFile
   Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section Count - SummarizeHeaderFooterAuditToFile should match the expected baseline
 PASS              Copy ()       Test = 51     1189          1189          CountHeading2
   Count of paragraphs styled Heading 2 - CountHeading2 should match the expected baseline
@@ -166,7 +166,8 @@ PASS              Copy ()       Test = 82     31102         31102         CountV
   Count of 'Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountVerseMarker should match the VerseText paragraph baseline (31,102)
 PASS              Copy ()       Test = 83     31102         31102         CountChapterVerseMarker
   Count of 'Chapter Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountChapterVerseMarker should match the VerseText paragraph baseline (31,102)
-PASS              Copy ()       Test = 84     0             0             CountHeaderFooterStyleViolations
+FAIL!!!!          Copy ()       Test = 84     1             0             CountHeaderFooterStyleViolations
+  >> First hit: header viol=0 footer viol=1 - see rpt\HeaderFooterStyleAudit.txt
   Rule: header paragraphs use 'TheHeaders' and footer paragraphs use 'TheFooters'; no built-in Header/Footer style remains on any header/footer story incl. orphaned first-page/even-page (writes rpt\HeaderFooterStyleAudit.txt) - CountHeaderFooterStyleViolations should return 0
 PASS              Copy ()       Test = 85     0             0             CountStyleParagraphsNotAligned(PsalmSuperscription, Left)
   Rule: every 'PsalmSuperscription' paragraph is left-aligned by design (e.g. 'A Psalm by David...') - CountStyleParagraphsNotAligned("PsalmSuperscription", wdAlignParagraphLeft) should return 0
@@ -188,14 +189,24 @@ PASS              Copy ()       Test = 93     2             2             CountN
   Rule: no paragraph anywhere carries the unapproved built-in 'Normal' style, EXCEPT 2 confirmed-structural exceptions - found 2026-10-07 during the RadiantWordBible scripture-only export's Pass 3 (originally 3 occurrences; 1 was a genuine residual, fixed via basFixDocxRoutines.ReplaceNormalWithBodyText; the other 2, at the paragraph Word requires between/after the document's two adjacent Bible Index tables, cannot be restyled away from 'Normal' by any means tried - VBA, Immediate-window repro, or the Word UI directly - see EDSG/01-styles.md 'Known exception, confirmed 2026-10-07'). Expected value is 2, not 0 - re-diagnose rather than assume regression if this Count changes, since it's tied to the current 2-adjacent-tables layout - CountNormalStyleParagraphs should return 2
 PASS              Copy ()       Test = 94     0             0             AuditVerseMarkerStructureIssueCount
   Rule: the verse-marker structure matches the canonical 66-book data - per book Heading 1/Heading 2 counts, per-chapter Verse marker counts and Chapter Verse marker coverage (was a separate manual step run before release; automated 2026-10-16 so the release gate can read its Result; writes rpt\VerseStructureAudit.txt) - AuditVerseMarkerStructureIssueCount should return 0
-The Total Runtime: 2626.48 seconds
-[2026-10-22 14:39:20] Completed
+PASS              Copy ()       Test = 95     0             0             CountFontRunsOutsideAllowlist
+  Rule: the text is set in free fonts only - every run resolves to Carlito, Noto Sans or Liberation Serif (owner rule 2026-11-07; the fonts that ship with Office and Windows restrict printing and distribution). Reads the font of every run through Word Find in every story and counts the runs outside the allowlist (found 2026-11-07: 18 verse runs, 7 DatAuthRef, 1 footnote, 3 BodyText non-Latin; cleaned by basDocmHygiene.FixDirectFontRuns) - CountFontRunsOutsideAllowlist should return 0
+PASS              Copy ()       Test = 96     0             0             CountVerseRunsNotEnglish
+  Rule: no VerseText paragraph carries a language other than English (US), neither on a run nor on a paragraph mark (found 2026-11-10: 17 paragraph marks and 11 text stretches tagged de-DE; cleaned by basDocmHygiene.FixVerseTextLanguage). Characters outside VerseText, for example the German tags in BibleIndexList, are out of scope (follow-up FU-1) - CountVerseRunsNotEnglish should return 0
+PASS              Copy ()       Test = 97     0             0             CountThemeAndStyleSlotFontsOutsideAllowlist
+  Rule: the document theme fonts and the font slots of the paragraph and character styles name only the three free fonts - Latin, complex script and East Asian slots; a theme token such as +Body Asian counts as the font its theme slot resolves to, an empty slot is fine (found 2026-11-10: Aptos theme, 327 slots naming Calibri, Times New Roman, Arial Unicode MS or MS Mincho; cleaned by basDocmHygiene.FixThemeFonts and FixStyleSlotFonts). The per-script fallback names inside the theme file are RT-40b - CountThemeAndStyleSlotFontsOutsideAllowlist should return 0
+PASS              Copy ()       Test = 98     0             0             CountStrayDirectFormattingRuns
+  Rule: no run in a VerseText paragraph carries direct run formatting other than a character style, a language, fonts or the noProof proofing flag (owner decision 2026-11-10: the whole text is marked do-not-check-spelling) - the other tests own language and fonts (found 2026-11-10: bold, complex bold and complex size 9 on spaces, and colour auto overriding the red of Words of Jesus in 2 places; cleaned by basDocmHygiene.FixStrayVerseFormatting). Read from Content.WordOpenXML, about 15 s - CountStrayDirectFormattingRuns should return 0
+PASS              Copy ()       Test = 99     0             0             CountFrontMatterSeparationViolations
+  Rule: the RWB front matter and the Study Bible are kept apart (RT-24, 2026-11-12) - the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment, and no RWBFront style is used after them - CountFrontMatterSeparationViolations should return 0
+The Total Runtime: 2216.84 seconds
+[2026-11-13 10:11:37] Completed
 BibleClass VERSION: 0.2.0
 BibleClass VERSION_DATE: September 17, 2026
 == Word Build Info ==
 Application Name: Microsoft Word
 Platform Version: 16.0
-Platform Build: 16.0.20430
-Full Version String: Microsoft Word 16.0 (16.0.20430)
+Platform Build: 16.0.20527
+Full Version String: Microsoft Word 16.0 (16.0.20527)
 Marketing Version: 2506 (Build 18925.20158)
 Source: Microsoft 365 Current Channel, July 2025 update
