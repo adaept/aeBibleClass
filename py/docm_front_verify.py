@@ -1,5 +1,6 @@
 # docm_front_verify.py <docm or docx> [front-matter text file]: checks that the RWB front matter at the top of a SAVED docm or exported docx is exactly
-# the text file's: per paragraph the style, the wording, the italic spans (character style RWBFrontItalic) and the justification ({justify}), the section
+# the text file's: per paragraph the style, the wording, the italic spans (character style RWBFrontItalic), the justification ({justify}), the page break before
+# (the @pagebreak line: direct w:pageBreakBefore on that paragraph and on no other front paragraph), the section
 # each paragraph is in, and that no Times New Roman, direct italic, page break before or empty paragraph is among them; then the page setup, vertical
 # alignment and first footers of the first six sections. Reads the file's XML only (no Word). Part of the RWB docm tools; RT-22a, 2026-11-11.
 # Run: wsl.exe --exec python3 -I py/docm_front_verify.py "<path>" [frontmatter/rwb-front-matter.txt]
@@ -20,9 +21,12 @@ def run_text(run_xml):
 
 
 def read_spec(path):
-    want, section = [], -1
+    want, section, brk = [], -1, False
     for line in Path(path).read_text(encoding="utf8").split("\n"):
         if not line or line.startswith("#"):
+            continue
+        if line.strip() == "@pagebreak":
+            brk = True
             continue
         if line.startswith("@section"):
             section += 1
@@ -43,7 +47,8 @@ def read_spec(path):
             plain += text[opened + 3:closed]
             spans.append((start, len(plain)))
             text = text[closed + 4:]
-        want.append(dict(style=style, text=plain, spans=spans, justify=justify, section=section))
+        want.append(dict(style=style, text=plain, spans=spans, justify=justify, section=section, pagebreak=brk))
+        brk = False
     return want
 
 
@@ -71,7 +76,10 @@ def read_front(docx_path, count):
             else:
                 spans.append((a, b))
         justify = bool(re.search(r'<w:pPr>.*?<w:jc w:val="both"', re.sub(r"<w:sectPr.*?</w:sectPr>", "", p, flags=re.S), re.S))
-        found.append(dict(style=style.group(1) if style else "-", text=text, spans=spans, justify=justify, section=section, xml=p))
+        # direct page break before: <w:pageBreakBefore/> in the paragraph's own pPr (a val of 0 or false is "off")
+        ppr = re.search(r"<w:pPr>.*?</w:pPr>", re.sub(r"<w:sectPr.*?</w:sectPr>", "", p, flags=re.S), re.S)
+        brk_on = bool(ppr and re.search(r"<w:pageBreakBefore(?![^>]*w:val=\"(?:0|false)\")[^>]*/?>", ppr.group(0)))
+        found.append(dict(style=style.group(1) if style else "-", text=text, spans=spans, justify=justify, section=section, pagebreak=brk_on, xml=p))
         if "<w:sectPr" in p:
             section += 1
     return found, x
@@ -84,13 +92,13 @@ def main():
     got, x = read_front(docx, len(want))
     bad = 0
     for n, (w, g) in enumerate(zip(want, got), 1):
-        for key in ("style", "text", "spans", "justify", "section"):
+        for key in ("style", "text", "spans", "justify", "section", "pagebreak"):
             if w[key] != g[key]:
                 bad += 1
                 print("MISMATCH paragraph", n, key, "| want", w[key] if key != "text" else w[key][:40], "| got", g[key] if key != "text" else g[key][:40])
     print("paragraphs checked", len(got), "of", len(want), "| mismatches", bad)
     front = "".join(g["xml"] for g in got)
-    print("Times New Roman:", front.count("Times New Roman"), "| direct w:i:", len(re.findall(r"<w:i[ />]", front)), "| page break before:", front.count("<w:pageBreakBefore"),
+    print("Times New Roman:", front.count("Times New Roman"), "| direct w:i:", len(re.findall(r"<w:i[ />]", front)), "| page break before:", sum(1 for g in got if g["pagebreak"]), "(wanted", sum(1 for w in want if w["pagebreak"]), ")",
           "| empty paragraphs among them:", sum(1 for g in got if not g["text"]))
     sections = [m.group(0) for m in re.finditer(r"<w:sectPr[ >].*?</w:sectPr>", x, re.S)]
     print("sections in the file:", len(sections))

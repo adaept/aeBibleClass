@@ -14,6 +14,9 @@ Option Compare Text
 '   STYLE<TAB>text                one paragraph; {i}...{/i} inside the text = character style RWBFrontItalic;
 '                                 {justify} at the start of the text = direct justified alignment of that paragraph (the CC0 paragraph,
 '                                 as the owner set it in the docm on 2026-11-11)
+'   @pagebreak                    the NEXT paragraph starts a new page: a direct "page break before" on that paragraph only (the styles keep
+'                                 PageBreakBefore False); used on the Introduction heading when the Foreword stands before it in the same
+'                                 section (owner decision 2026-11-13, RT-78: no new section)
 '   # ...                         a comment
 ' Its single style ("BODY") and its direct Times New Roman runs are NOT carried over: InsertFrontMatter inserts the text paragraph by
 ' paragraph into these styles.
@@ -40,6 +43,12 @@ Option Compare Text
 '                                      inserts the text at the very top as new leading sections; refuses when section 1 already holds front
 '                                      matter or a style is missing or differs; returns the number of paragraphs inserted (-1 = failed).
 '                                      Run it on a COPY first.
+'   ? InsertForeword("C:\...\frontmatter\rwb-front-matter.txt")
+'                                      for a docm that ALREADY has the front matter (RT-78): inserts the paragraphs that the text file holds
+'                                      before the Introduction heading, in the Introduction's section, at the start of that section, and
+'                                      applies @pagebreak to the Introduction heading; refuses when something already stands before the
+'                                      heading in its section, when Track Changes is on or a style is missing; returns the number of
+'                                      paragraphs inserted (-1 = failed, see FrontMatterLastError). Run it on a COPY first.
 ' Reference: basTEST_aeBibleConfig.RUN_TAXONOMY_STYLES carries the same specification as AuditOneStyle rows;
 ' rvw\Plan_rwb_1_1_1_release_train_2026-11-08.md rows RT-20 to RT-24.
 
@@ -52,7 +61,7 @@ Public Const STYLE_FRONT_COPYRIGHT As String = "RWBFrontCopyright"
 Public Const STYLE_FRONT_ITALIC As String = "RWBFrontItalic"
 
 ' Which version of this module is loaded (changes with every edit; printed by DescribeFrontMatterStyles).
-Public Const FRONT_MATTER_VERSION As String = "2026-11-11 k ({justify} marker)"
+Public Const FRONT_MATTER_VERSION As String = "2026-11-13 l (@pagebreak marker, InsertForeword)"
 
 Private Const FRONT_FONT As String = "Liberation Serif"
 Private Const BASE_CHARACTER_STYLE As String = "Default Paragraph Font"
@@ -65,6 +74,8 @@ Private Const MARK_ITALIC_OPEN As String = "{i}"
 Private Const MARK_ITALIC_CLOSE As String = "{/i}"
 Private Const MARK_JUSTIFY As String = "{justify}"
 Private Const DIRECTIVE_SECTION As String = "@section"
+Private Const DIRECTIVE_PAGEBREAK As String = "@pagebreak"
+Private Const INTRO_HEADING_TEXT As String = "Introduction"
 Private Const VALIGN_TOP_NAME As String = "top"
 Private Const VALIGN_CENTER_NAME As String = "center"
 Private Const MAX_ITALIC_SPANS As Long = 64
@@ -315,6 +326,7 @@ Public Function InsertFrontMatter(ByVal sTextFile As String, Optional ByVal sDoc
     Dim aSpans() As String
     Dim aSectionOf() As Long
     Dim aJustify() As Boolean
+    Dim aBreak() As Boolean
     Dim nParas As Long
     Dim nSections As Long
     Dim nSpans As Long
@@ -346,66 +358,7 @@ Public Function InsertFrontMatter(ByVal sTextFile As String, Optional ByVal sDoc
     m_LastError = ""
 
     ' Phase 1: read and check the whole text file before the document is touched.
-    vLines = Split(Replace(ReadUtf8Text(sTextFile), vbCrLf, vbLf), vbLf)
-    ReDim aSectionAlign(0 To MAX_FRONT_SECTIONS - 1)
-    ReDim aStyle(0 To UBound(vLines))
-    ReDim aPlain(0 To UBound(vLines))
-    ReDim aSpans(0 To UBound(vLines))
-    ReDim aSectionOf(0 To UBound(vLines))
-    ReDim aJustify(0 To UBound(vLines))
-    For i = LBound(vLines) To UBound(vLines)
-        If Len(vLines(i)) = 0 Or Left$(vLines(i), 1) = "#" Then
-            ' blank line or comment
-        ElseIf Left$(vLines(i), Len(DIRECTIVE_SECTION)) = DIRECTIVE_SECTION Then
-            If nSections >= MAX_FRONT_SECTIONS Then
-                m_LastError = "InsertFrontMatter: more than " & MAX_FRONT_SECTIONS & " sections in the text file."
-                GoTo PROC_FAIL
-            End If
-            k = InStr(1, vLines(i), vbTab, vbBinaryCompare)
-            sArg = IIf(k = 0, "", LCase$(Trim$(Mid$(vLines(i), k + 1))))
-            If sArg = VALIGN_CENTER_NAME Then
-                aSectionAlign(nSections) = wdAlignVerticalCenter
-            ElseIf sArg = VALIGN_TOP_NAME Then
-                aSectionAlign(nSections) = wdAlignVerticalTop
-            Else
-                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": " & DIRECTIVE_SECTION & " needs a tab and " & VALIGN_TOP_NAME & " or " & VALIGN_CENTER_NAME & "."
-                GoTo PROC_FAIL
-            End If
-            nSections = nSections + 1
-        Else
-            If nSections = 0 Then
-                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": a paragraph before the first " & DIRECTIVE_SECTION & " line."
-                GoTo PROC_FAIL
-            End If
-            k = InStr(1, vLines(i), vbTab, vbBinaryCompare)
-            If k = 0 Then
-                m_LastError = "InsertFrontMatter: line " & (i + 1) & " of the text file has no tab after the style name."
-                GoTo PROC_FAIL
-            End If
-            sStyle = Left$(vLines(i), k - 1)
-            sText = Mid$(vLines(i), k + 1)
-            aJustify(nParas) = (Left$(sText, Len(MARK_JUSTIFY)) = MARK_JUSTIFY)
-            If aJustify(nParas) Then sText = Mid$(sText, Len(MARK_JUSTIFY) + 1)
-            If Not IsFrontMatterParagraphStyle(sStyle) Then
-                m_LastError = "InsertFrontMatter: line " & (i + 1) & " names the style """ & sStyle & """, which is not a front-matter paragraph style."
-                GoTo PROC_FAIL
-            End If
-            aStyle(nParas) = sStyle
-            ' The owner's hand-set optional hyphens are U+00AD in the text file; Word stores an optional hyphen as Chr(31) in a range's text (the docx
-            ' element is w:softHyphen). The export keeps them in the front matter (Pass4b skips the front sections, 2026-11-12).
-            aPlain(nParas) = Replace(StripItalicMarkers(sText, aStarts, aEnds, nSpans), ChrW(173), Chr$(31))
-            aSpans(nParas) = ""
-            For k = 0 To nSpans - 1
-                aSpans(nParas) = aSpans(nParas) & aStarts(k) & "-" & aEnds(k) & ";"
-            Next k
-            aSectionOf(nParas) = nSections
-            nParas = nParas + 1
-        End If
-    Next i
-    If nParas = 0 Then
-        m_LastError = "InsertFrontMatter: the text file holds no paragraph; nothing inserted."
-        GoTo PROC_FAIL
-    End If
+    If Not ParseFrontText(sTextFile, aSectionAlign, aStyle, aPlain, aSpans, aSectionOf, aJustify, aBreak, nParas, nSections) Then GoTo PROC_FAIL
 
     ' Phase 2: insert. The last paragraph of a section is inserted WITHOUT a paragraph mark and the Next Page section break is put right
     ' after its text, so the break terminates that paragraph (a break inserted at a paragraph mark leaves the mark behind: an empty
@@ -426,6 +379,7 @@ Public Function InsertFrontMatter(ByVal sTextFile As String, Optional ByVal sDoc
         Set oPara = oDoc.Range(lStart, lStart).Paragraphs(1)
         oPara.Style = oDoc.Styles(aStyle(i))
         If aJustify(i) Then oPara.Alignment = wdAlignParagraphJustify
+        If aBreak(i) Then oPara.PageBreakBefore = True
         ApplyItalicSpans oDoc, lStart, aSpans(i)
     Next i
     If oDoc.Sections.Count < nSections + 1 Then
@@ -459,6 +413,238 @@ PROC_FAIL:
     On Error GoTo 0
     Debug.Print m_LastError
     InsertFrontMatter = -1
+End Function
+
+' Reads and checks the text file (UTF-8, LF): one entry per paragraph in aStyle/aPlain/aSpans/aSectionOf/aJustify/aBreak (0-based, nParas of
+' them), one vertical alignment per section in aSectionAlign (nSections of them). The document is not touched. False = failed (m_LastError).
+Private Function ParseFrontText(ByVal sTextFile As String, ByRef aSectionAlign() As Long, ByRef aStyle() As String, ByRef aPlain() As String, _
+        ByRef aSpans() As String, ByRef aSectionOf() As Long, ByRef aJustify() As Boolean, ByRef aBreak() As Boolean, _
+        ByRef nParas As Long, ByRef nSections As Long) As Boolean
+    Dim vLines As Variant
+    Dim aStarts(0 To MAX_ITALIC_SPANS - 1) As Long
+    Dim aEnds(0 To MAX_ITALIC_SPANS - 1) As Long
+    Dim nSpans As Long
+    Dim i As Long
+    Dim k As Long
+    Dim sStyle As String
+    Dim sText As String
+    Dim sArg As String
+    Dim bBreakNext As Boolean
+
+    On Error GoTo PROC_ERR
+    nParas = 0
+    nSections = 0
+    vLines = Split(Replace(ReadUtf8Text(sTextFile), vbCrLf, vbLf), vbLf)
+    ReDim aSectionAlign(0 To MAX_FRONT_SECTIONS - 1)
+    ReDim aStyle(0 To UBound(vLines))
+    ReDim aPlain(0 To UBound(vLines))
+    ReDim aSpans(0 To UBound(vLines))
+    ReDim aSectionOf(0 To UBound(vLines))
+    ReDim aJustify(0 To UBound(vLines))
+    ReDim aBreak(0 To UBound(vLines))
+    For i = LBound(vLines) To UBound(vLines)
+        If Len(vLines(i)) = 0 Or Left$(vLines(i), 1) = "#" Then
+            ' blank line or comment
+        ElseIf Trim$(vLines(i)) = DIRECTIVE_PAGEBREAK Then
+            If nSections = 0 Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": " & DIRECTIVE_PAGEBREAK & " before the first " & DIRECTIVE_SECTION & " line."
+                Exit Function
+            End If
+            bBreakNext = True
+        ElseIf Left$(vLines(i), Len(DIRECTIVE_SECTION)) = DIRECTIVE_SECTION Then
+            If bBreakNext Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": " & DIRECTIVE_PAGEBREAK & " must be followed by a paragraph, not by " & DIRECTIVE_SECTION & "."
+                Exit Function
+            End If
+            If nSections >= MAX_FRONT_SECTIONS Then
+                m_LastError = "InsertFrontMatter: more than " & MAX_FRONT_SECTIONS & " sections in the text file."
+                Exit Function
+            End If
+            k = InStr(1, vLines(i), vbTab, vbBinaryCompare)
+            sArg = IIf(k = 0, "", LCase$(Trim$(Mid$(vLines(i), k + 1))))
+            If sArg = VALIGN_CENTER_NAME Then
+                aSectionAlign(nSections) = wdAlignVerticalCenter
+            ElseIf sArg = VALIGN_TOP_NAME Then
+                aSectionAlign(nSections) = wdAlignVerticalTop
+            Else
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": " & DIRECTIVE_SECTION & " needs a tab and " & VALIGN_TOP_NAME & " or " & VALIGN_CENTER_NAME & "."
+                Exit Function
+            End If
+            nSections = nSections + 1
+        Else
+            If nSections = 0 Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & ": a paragraph before the first " & DIRECTIVE_SECTION & " line."
+                Exit Function
+            End If
+            k = InStr(1, vLines(i), vbTab, vbBinaryCompare)
+            If k = 0 Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & " of the text file has no tab after the style name."
+                Exit Function
+            End If
+            sStyle = Left$(vLines(i), k - 1)
+            sText = Mid$(vLines(i), k + 1)
+            aJustify(nParas) = (Left$(sText, Len(MARK_JUSTIFY)) = MARK_JUSTIFY)
+            If aJustify(nParas) Then sText = Mid$(sText, Len(MARK_JUSTIFY) + 1)
+            If Not IsFrontMatterParagraphStyle(sStyle) Then
+                m_LastError = "InsertFrontMatter: line " & (i + 1) & " names the style """ & sStyle & """, which is not a front-matter paragraph style."
+                Exit Function
+            End If
+            aStyle(nParas) = sStyle
+            ' The owner's hand-set optional hyphens are U+00AD in the text file; Word stores an optional hyphen as Chr(31) in a range's text (the docx
+            ' element is w:softHyphen). The export keeps them in the front matter (Pass4b skips the front sections, 2026-11-12).
+            aPlain(nParas) = Replace(StripItalicMarkers(sText, aStarts, aEnds, nSpans), ChrW(173), Chr$(31))
+            aSpans(nParas) = ""
+            For k = 0 To nSpans - 1
+                aSpans(nParas) = aSpans(nParas) & aStarts(k) & "-" & aEnds(k) & ";"
+            Next k
+            aSectionOf(nParas) = nSections
+            aBreak(nParas) = bBreakNext
+            bBreakNext = False
+            nParas = nParas + 1
+        End If
+    Next i
+    If bBreakNext Then
+        m_LastError = "InsertFrontMatter: the last " & DIRECTIVE_PAGEBREAK & " line is not followed by a paragraph."
+        Exit Function
+    End If
+    If nParas = 0 Then
+        m_LastError = "InsertFrontMatter: the text file holds no paragraph; nothing inserted."
+        Exit Function
+    End If
+    ParseFrontText = True
+    Exit Function
+PROC_ERR:
+    m_LastError = "InsertFrontMatter: " & Err.Number & " " & Err.Description
+End Function
+
+' RT-78 (owner decision 2026-11-13): puts the Foreword into a docm that already has the front matter. The Foreword is the paragraphs of the text file
+' that stand before the paragraph "RWBFrontHeading<TAB>Introduction" in the same section of the text file; they are inserted at the start of the
+' Introduction's section in the docm, before its heading, and a @pagebreak line before the heading in the text file gives the heading
+' "page break before" so that the Introduction starts on its own page. No new section, no new style. Returns the number of paragraphs inserted,
+' -1 = failed (nothing is changed on a refusal; see FrontMatterLastError).
+Public Function InsertForeword(ByVal sTextFile As String, Optional ByVal sDocName As String = "") As Long
+    Dim oDoc As Word.Document
+    Dim oPrevious As Word.Document
+    Dim oPara As Word.Paragraph
+    Dim oHead As Word.Paragraph
+    Dim aSectionAlign() As Long
+    Dim aStyle() As String
+    Dim aPlain() As String
+    Dim aSpans() As String
+    Dim aSectionOf() As Long
+    Dim aJustify() As Boolean
+    Dim aBreak() As Boolean
+    Dim nParas As Long
+    Dim nSections As Long
+    Dim nFront As Long
+    Dim iHead As Long
+    Dim iFirst As Long
+    Dim iSection As Long
+    Dim i As Long
+    Dim lPos As Long
+    Dim lStart As Long
+    Dim lFirst As Long
+    Dim nLenBefore As Long
+    Dim nGrew As Long
+
+    On Error GoTo PROC_ERR
+    m_LastError = ""
+    Set oDoc = ResolveDoc(sDocName)
+    Set oPrevious = ActiveDocument
+    If Not oDoc Is oPrevious Then oDoc.Activate
+
+    If oDoc.TrackRevisions Then
+        m_LastError = "InsertForeword: Track Changes is on in " & oDoc.Name & "; switch it off first."
+        GoTo PROC_FAIL
+    End If
+    If CountFrontMatterStylesOutsideSpec(oDoc.Name) <> 0 Then
+        m_LastError = "InsertForeword: a front-matter style is missing or differs from its specification; nothing inserted."
+        GoTo PROC_FAIL
+    End If
+    If Not ParseFrontText(sTextFile, aSectionAlign, aStyle, aPlain, aSpans, aSectionOf, aJustify, aBreak, nParas, nSections) Then GoTo PROC_FAIL
+
+    ' the Introduction heading in the text file, and the paragraphs before it in its section
+    iHead = -1
+    For i = 0 To nParas - 1
+        If aStyle(i) = STYLE_FRONT_HEADING And aPlain(i) = INTRO_HEADING_TEXT Then iHead = i: Exit For
+    Next i
+    If iHead < 0 Then
+        m_LastError = "InsertForeword: the text file has no " & STYLE_FRONT_HEADING & " paragraph """ & INTRO_HEADING_TEXT & """; nothing inserted."
+        GoTo PROC_FAIL
+    End If
+    iFirst = iHead
+    Do While iFirst > 0
+        If aSectionOf(iFirst - 1) <> aSectionOf(iHead) Then Exit Do
+        iFirst = iFirst - 1
+    Loop
+    If iFirst = iHead Then
+        m_LastError = "InsertForeword: the text file has no paragraph before the Introduction heading in its section (the Foreword); nothing inserted."
+        GoTo PROC_FAIL
+    End If
+
+    ' the Introduction heading in the docm: it must be the first paragraph of its section
+    nFront = CountLeadingFrontSections(oDoc)
+    For iSection = 1 To nFront
+        For Each oPara In oDoc.Sections(iSection).Range.Paragraphs
+            If oPara.Style = STYLE_FRONT_HEADING Then
+                If Left$(oPara.Range.Text, Len(INTRO_HEADING_TEXT)) = INTRO_HEADING_TEXT Then Set oHead = oPara: Exit For
+            End If
+        Next oPara
+        If Not oHead Is Nothing Then Exit For
+    Next iSection
+    If oHead Is Nothing Then
+        m_LastError = "InsertForeword: no " & STYLE_FRONT_HEADING & " paragraph """ & INTRO_HEADING_TEXT & """ in the leading front sections of " & oDoc.Name & "."
+        GoTo PROC_FAIL
+    End If
+    If oHead.Range.Start <> oDoc.Sections(iSection).Range.Start Then
+        m_LastError = "InsertForeword: something already stands before the Introduction heading in section " & iSection & " (the Foreword is there already?); nothing inserted."
+        GoTo PROC_FAIL
+    End If
+
+    nLenBefore = Len(oDoc.Content.Text)
+    lFirst = oHead.Range.Start
+    lPos = lFirst
+    For i = iFirst To iHead - 1
+        lStart = lPos
+        oDoc.Range(lPos, lPos).InsertAfter aPlain(i) & vbCr
+        lPos = lPos + Len(aPlain(i)) + 1
+        Set oPara = oDoc.Range(lStart, lStart).Paragraphs(1)
+        oPara.Style = oDoc.Styles(aStyle(i))
+        If aJustify(i) Then oPara.Alignment = wdAlignParagraphJustify
+        If aBreak(i) Then oPara.PageBreakBefore = True
+        ApplyItalicSpans oDoc, lStart, aSpans(i)
+    Next i
+    Set oHead = oDoc.Range(lPos, lPos).Paragraphs(1)
+    If oHead.Style <> STYLE_FRONT_HEADING Or Left$(oHead.Range.Text, Len(INTRO_HEADING_TEXT)) <> INTRO_HEADING_TEXT Then
+        m_LastError = "InsertForeword: the Introduction heading is not where it should be after the insert. Do not save this document."
+        GoTo PROC_FAIL
+    End If
+    If aBreak(iHead) Then oHead.PageBreakBefore = True
+
+    With oDoc.Range(lFirst, lPos)
+        .LanguageID = LANG_ENGLISH_US
+        .NoProofing = True
+        .LanguageDetected = False
+    End With
+
+    nGrew = Len(oDoc.Content.Text) - nLenBefore
+    If nGrew <> lPos - lFirst Then
+        m_LastError = "InsertForeword: the document text grew by " & nGrew & " characters, expected " & (lPos - lFirst) & ". Do not save this document."
+        GoTo PROC_FAIL
+    End If
+    If Not oDoc Is oPrevious Then oPrevious.Activate
+    Debug.Print "InsertForeword: " & (iHead - iFirst) & " paragraph(s), " & (lPos - lFirst) & " characters inserted at the start of section " & iSection & " of " & oDoc.Name & _
+        "; the Introduction heading " & IIf(aBreak(iHead), "starts a new page", "does not start a new page") & "."
+    InsertForeword = iHead - iFirst
+    Exit Function
+PROC_ERR:
+    m_LastError = "InsertForeword: " & Err.Number & " " & Err.Description
+PROC_FAIL:
+    On Error Resume Next
+    If Not oPrevious Is Nothing Then If Not oDoc Is oPrevious Then oPrevious.Activate
+    On Error GoTo 0
+    Debug.Print m_LastError
+    InsertForeword = -1
 End Function
 
 ' Applies RWBFrontItalic to the "start-end;" spans (offsets within the paragraph that starts at lParaStart).

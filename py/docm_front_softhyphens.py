@@ -44,11 +44,11 @@ def main():
     docm = args[0]
     spec = Path(args[1]) if len(args) > 1 else v.DEFAULT_TEXT
     lines = spec.read_text(encoding="utf8").split("\n")
-    n_para = sum(1 for ln in lines if ln and not ln.startswith("#") and not ln.startswith("@section"))
+    n_para = sum(1 for ln in lines if ln and not ln.startswith("#") and not ln.startswith("@"))
     got, _ = v.read_front(docm, n_para)
     out, p, total, changed = [], 0, 0, 0
     for ln in lines:
-        if not ln or ln.startswith("#") or ln.startswith("@section"):
+        if not ln or ln.startswith("#") or ln.startswith("@"):
             out.append(ln)
             continue
         style, text = ln.split("\t", 1)
