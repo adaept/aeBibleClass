@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-10-04)
+Radiant Word Bible - exported from the live .docm (2026-11-13)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -1294,12 +1294,12 @@ Genesis 42:38	 He said, “My son shall not go down with you; for his brother 
 Genesis 43:1	 The famine was severe in the land.
 Genesis 43:2	 When they had eaten up the grain which they had brought out of Egypt, their father said to them, “Go again, buy us a little more food.”
 Genesis 43:3	 Judah spoke to him, saying, “The man solemnly warned us, saying, ‘You shall not see my face, unless your brother is with you.’
-Genesis 43:4	 If you’ll send our brother with us, we’ll go down and buy you food;
+Genesis 43:4	 If you will send our brother with us, we will go down and buy you food;
 Genesis 43:5	 but if you do not send him, we will not go down, for the man said to us, ‘You shall not see my face, unless your brother is with you.’”
 Genesis 43:6	 Israel said, “Why did you treat me so badly, telling the man that you had another brother?”
 Genesis 43:7	 They said, “The man asked directly concerning ourselves, and concerning our relatives, saying, ‘Is your father still alive? Have you another brother?’ We just answered his questions. Is there any way we could know that he would say, ‘Bring your brother down?’”
-Genesis 43:8	 Judah said to Israel, his father, “Send the boy with me, and we’ll get up and go, so that we may live, and not die, both we, and you, and also our little ones.
-Genesis 43:9	 I’ll be collateral for him. From my hand will you require him. If I do not bring him to you, and set him before you, then let me bear the blame forever;
+Genesis 43:8	 Judah said to Israel, his father, “Send the boy with me, and we will get up and go, so that we may live, and not die, both we, and you, and also our little ones.
+Genesis 43:9	 I will be collateral for him. From my hand will you require him. If I do not bring him to you, and set him before you, then let me bear the blame forever;
 Genesis 43:10	 for if we had not delayed, surely we would have returned a second time by now.”
 Genesis 43:11	 Their father, Israel, said to them, “If it must be so, then do this: Take from the choice fruits of the land in your bags, and carry down a present for the man, a little balm, a little honey, spices and myrrh, nuts, and almonds;
 Genesis 43:12	 and take double money in your hand, and take back the money that was returned in the mouth of your sacks. Perhaps it was an oversight.
@@ -1308,7 +1308,7 @@ Genesis 43:14	 May God Almighty give you mercy before the man, that he may rel
 Genesis 43:15	 The men took that present, and they took double money in their hand, and Benjamin; and got up, went down to Egypt, and stood before Joseph.
 Genesis 43:16	 When Joseph saw Benjamin with them, he said to the steward of his house, “Bring the men into the house, and butcher an animal, and prepare; for the men will dine with me at noon.”
 Genesis 43:17	 The man did as Joseph commanded, and the man brought the men to Joseph’s house.
-Genesis 43:18	 The men were afraid, because they were brought to Joseph’s house; and they said, “Because of the money that was returned in our sacks the first time, we’re brought in; that he may seek occasion against us, attack us, and seize us as slaves, along with our donkeys.”
+Genesis 43:18	 The men were afraid, because they were brought to Joseph’s house; and they said, “Because of the money that was returned in our sacks the first time, we are brought in; that he may seek occasion against us, attack us, and seize us as slaves, along with our donkeys.”
 Genesis 43:19	 They came near to the steward of Joseph’s house, and they spoke to him at the door of the house,
 Genesis 43:20	 and said, “Oh, my lord, we indeed came down the first time to buy food.
 Genesis 43:21	 When we came to the lodging place, we opened our sacks, and behold, each man’s money was in the mouth of his sack, our money in full weight. We have brought it back in our hand.
@@ -1658,7 +1658,7 @@ Exodus 5:22	 Moses returned to God, and said, “Lord, why have you brought tr
 Exodus 5:23	 For since I came to Pharaoh to speak in your name, he has brought trouble on this people. You have not rescued your people at all!”
 Exodus 6:1	 God said to Moses, “Now you shall see what I will do to Pharaoh, for by a strong hand he shall let them go, and by a strong hand he shall drive them out of his land.”
 Exodus 6:2	 God spoke to Moses, and said to him, “I am God.
-Exodus 6:3	 I appeared to Abraham, to Isaac, and to Jacob, as God Almighty; but by my name Jehovah I was not known to them.
+Exodus 6:3	 I appeared to Abraham, to Isaac, and to Jacob, as God Almighty; but by my name the Lord I was not known to them.
 Exodus 6:4	 I have also established my covenant with them, to give them the land of Canaan, the land of their travels, in which they lived as aliens.
 Exodus 6:5	 Moreover I have heard the groaning of the children of Israel, whom the Egyptians keep in bondage, and I have remembered my covenant.
 Exodus 6:6	 Therefore tell the children of Israel, ‘I am God, and I will bring you out from under the burdens of the Egyptians, and I will rid you out of their bondage, and I will redeem you with an outstretched arm, and with great judgments.
@@ -5886,10 +5886,10 @@ Joshua 2:13	 and that you will save alive my father, my mother, my brothers, a
 Joshua 2:14	 The men said to her, “Our life for yours, if you do not talk about this business of ours; and it shall be, when God gives us the land, that we will deal kindly and truly with you.”
 Joshua 2:15	 Then she let them down by a cord through the window; for her house was on the side of the wall, and she lived on the wall.
 Joshua 2:16	 She said to them, “Go to the mountain, lest the pursuers find you. Hide yourselves there three days, until the pursuers have returned. Afterward, you may go your way.”
-Joshua 2:17	 The men said to her, “We will be guiltless of this your oath which you’ve made us to swear.
+Joshua 2:17	 The men said to her, “We will be guiltless of this your oath which you have made us to swear.
 Joshua 2:18	 Behold, when we come into the land, tie this line of scarlet thread in the window which you used to let us down. Gather to yourself into the house your father, your mother, your brothers, and all your father’s household.
 Joshua 2:19	 It shall be that whoever goes out of the doors of your house into the street, his blood will be on his head, and we will be guiltless. Whoever is with you in the house, his blood shall be on our head, if any hand is on him.
-Joshua 2:20	 But if you talk about this business of ours, then we shall be guiltless of your oath which you’ve made us to swear.”
+Joshua 2:20	 But if you talk about this business of ours, then we shall be guiltless of your oath which you have made us to swear.”
 Joshua 2:21	 She said, “Let it be as you have said.” She sent them away, and they departed. Then she tied the scarlet line in the window.
 Joshua 2:22	 They went and came to the mountain, and stayed there three days, until the pursuers had returned. The pursuers sought them all along the way, but did not find them.
 Joshua 2:23	 Then the two men returned, descended from the mountain, crossed the river, and came to Joshua the son of Nun. They told him all that had happened to them.
@@ -5913,7 +5913,7 @@ Joshua 3:16	 the waters which came down from above stood, and rose up in one h
 Joshua 3:17	 The priests who bore the ark of God’s covenant stood firm on dry ground in the middle of the Jordan; and all Israel crossed over on dry ground, until all the nation had passed completely over the Jordan.
 Joshua 4:1	 When all the nation had completely crossed over the Jordan, God spoke to Joshua, saying,
 Joshua 4:2	 “Take twelve men out of the people, a man out of every tribe,
-Joshua 4:3	 and command them, saying, ‘Take from out of the middle of the Jordan, out of the place where the priests’ feet stood firm, twelve stones, carry them over with you, and lay them down in the place where you’ll camp tonight.’”
+Joshua 4:3	 and command them, saying, ‘Take from out of the middle of the Jordan, out of the place where the priests’ feet stood firm, twelve stones, carry them over with you, and lay them down in the place where you will camp tonight.’”
 Joshua 4:4	 Then Joshua called the twelve men whom he had prepared of the children of Israel, a man out of every tribe.
 Joshua 4:5	 Joshua said to them, “Cross before the ark of the Lord your God into the middle of the Jordan, and each of you pick up a stone and put it on your shoulder, according to the number of the tribes of the children of Israel;
 Joshua 4:6	 that this may be a sign among you, that when your children ask in the future, saying, ‘What do you mean by these stones?’
@@ -6691,7 +6691,7 @@ Judges 6:33	 Then all the Midianites and the Amalekites and the children of th
 Judges 6:34	 But God’s Spirit came on Gideon, and he blew a trumpet; and Abiezer was gathered together to follow him.
 Judges 6:35	 He sent messengers throughout all Manasseh, and they also were gathered together to follow him. He sent messengers to Asher, and to Zebulun, and to Naphtali; and they came up to meet them.
 Judges 6:36	 Gideon said to God, “If you will save Israel by my hand, as you have spoken,
-Judges 6:37	 behold, I will put a fleece of wool on the threshing floor. If there is dew on the fleece only, and it is dry on all the ground, then I’ll know that you will save Israel by my hand, as you have spoken.”
+Judges 6:37	 behold, I will put a fleece of wool on the threshing floor. If there is dew on the fleece only, and it is dry on all the ground, then I will know that you will save Israel by my hand, as you have spoken.”
 Judges 6:38	 It was so; for he rose up early on the next day, and pressed the fleece together, and wrung the dew out of the fleece, a bowl full of water.
 Judges 6:39	 Gideon said to God, “Do not let your anger be kindled against me, and I will speak but this once. Please let me make a trial just this once with the fleece. Let it now be dry only on the fleece, and on all the ground let there be dew.”
 Judges 6:40	 God did so that night; for it was dry on the fleece only, and there was dew on all the ground.
@@ -6925,7 +6925,7 @@ Judges 14:12	 Samson said to them, “Let me tell you a riddle now. If you can
 Judges 14:13	 but if you cannot tell me the answer, then you shall give me thirty linen garments and thirty changes of clothing.” They said to him, “Tell us your riddle, that we may hear it.”
 Judges 14:14	 He said to them, “Out of the eater came forth food. Out of the strong came forth sweetness.” They could not in three days declare the riddle.
 Judges 14:15	 On the seventh day, they said to Samson’s wife, “Entice your husband, that he may declare to us the riddle, lest we burn you and your father’s house with fire. Have you called us to impoverish us? Is that not so?”
-Judges 14:16	 Samson’s wife wept before him, and said, “You just hate me, and do not love me. You’ve told a riddle to the children of my people, and have not told it to me.” He said to her, “Behold, I have not told my father or my mother, so why should I tell you?”
+Judges 14:16	 Samson’s wife wept before him, and said, “You just hate me, and do not love me. You have told a riddle to the children of my people, and have not told it to me.” He said to her, “Behold, I have not told my father or my mother, so why should I tell you?”
 Judges 14:17	 She wept before him the seven days, while their feast lasted; and on the seventh day, he told her, because she pressed him severely; and she told the riddle to the children of her people.
 Judges 14:18	 The men of the city said to him on the seventh day before the sun went down, “What is sweeter than honey? What is stronger than a lion?” He said to them, “If you had not plowed with my heifer, you would not have found out my riddle.”
 Judges 14:19	 God’s Spirit came mightily on him, and he went down to Ashkelon and struck thirty men of them. He took their plunder, then gave the changes of clothing to those who declared the riddle. His anger burned, and he went up to his father’s house.
@@ -14941,7 +14941,7 @@ Psalm 69:2	 I sink in deep mire, where there is no foothold. I have come into 
 Psalm 69:3	 I am weary with my crying. My throat is dry. My eyes fail looking for my God.
 Psalm 69:4	 Those who hate me without a cause are more than the hairs of my head. Those who want to cut me off, being my enemies wrongfully, are mighty. I have to restore what I did not take away.
 Psalm 69:5	 God, you know my foolishness. My sins are not hidden from you.
-Psalm 69:6	 Do not let those who wait for you be shamed through me, Lord the Lord God of Hosts. Do not let those who seek you be brought to dishonor through me, God of Israel.
+Psalm 69:6	 Do not let those who wait for you be shamed through me, O Lord God of Hosts. Do not let those who seek you be brought to dishonor through me, God of Israel.
 Psalm 69:7	 Because for your sake, I have borne reproach. Shame has covered my face.
 Psalm 69:8	 I have become a stranger to my brothers, an alien to my mother’s children.
 Psalm 69:9	 For the zeal of your house consumes me. The reproaches of those who reproach you have fallen on me.
@@ -16413,8 +16413,8 @@ Proverbs 1:9	 for they will be a garland to grace your head, and chains around
 Proverbs 1:10	 My son, if sinners entice you, do not consent.
 Proverbs 1:11	 If they say, “Come with us. Let us lie in wait for blood. Let us lurk secretly for the innocent without cause.
 Proverbs 1:12	 Let us swallow them up alive like Sheol, and whole, like those who go down into the pit.
-Proverbs 1:13	 We’ll find all valuable wealth. We’ll fill our houses with plunder.
-Proverbs 1:14	 You shall cast your lot among us. We’ll all have one purse.”
+Proverbs 1:13	 We will find all valuable wealth. We will fill our houses with plunder.
+Proverbs 1:14	 You shall cast your lot among us. We will all have one purse.”
 Proverbs 1:15	 My son, do not walk on the path with them. Keep your foot from their path,
 Proverbs 1:16	 for their feet run to evil. They hurry to shed blood.
 Proverbs 1:17	 For the net is spread in vain in the sight of any bird;
@@ -17722,7 +17722,7 @@ Isaiah 3:11	 Woe to the wicked! Disaster is upon them; for the deeds of their 
 Isaiah 3:12	 As for my people, children are their oppressors, and women rule over them. My people, those who lead you cause you to err, and destroy the way of your paths.
 Isaiah 3:13	 God stands up to contend, and stands to judge the peoples.
 Isaiah 3:14	 God will enter into judgment with the elders of his people and their leaders: “It is you who have eaten up the vineyard. The plunder of the poor is in your houses.
-Isaiah 3:15	 What do you mean that you crush my people, and grind the face of the poor?” says the Lord, God of Hosts.
+Isaiah 3:15	 What do you mean that you crush my people, and grind the face of the poor?” says the Lord God of Hosts.
 Isaiah 3:16	 Moreover God said, “Because the daughters of Zion are arrogant, and walk with outstretched necks and flirting eyes, walking to trip as they go, jingling ornaments on their feet;
 Isaiah 3:17	 therefore the Lord brings sores on the crown of the head of the women of Zion, and God will make their scalps bald.”
 Isaiah 3:18	 In that day the Lord will take away the beauty of their anklets, the headbands, the crescent necklaces,
@@ -17873,8 +17873,8 @@ Isaiah 10:19	 The remnant of the trees of his forest shall be few, so that a c
 Isaiah 10:20	 It will come to pass in that day that the remnant of Israel, and those who have escaped from the house of Jacob will no more again lean on him who struck them, but shall lean on God, the Holy One of Israel, in truth.
 Isaiah 10:21	 A remnant will return, even the remnant of Jacob, to the mighty God.
 Isaiah 10:22	 For though your people, Israel, are like the sand of the sea, only a remnant of them will return. A destruction is determined, overflowing with righteousness.
-Isaiah 10:23	 For the Lord, God of Hosts, will make a full end, and that determined, throughout all the earth.
-Isaiah 10:24	 Therefore the Lord, God of Hosts, says “My people who dwell in Zion, do not be afraid of the Assyrian, though he strike you with the rod, and lift up his staff against you, as Egypt did.
+Isaiah 10:23	 For the Lord God of Hosts, will make a full end, and that determined, throughout all the earth.
+Isaiah 10:24	 Therefore the Lord God of Hosts, says “My people who dwell in Zion, do not be afraid of the Assyrian, though he strike you with the rod, and lift up his staff against you, as Egypt did.
 Isaiah 10:25	 For yet a very little while, and the indignation against you will be accomplished, and my anger will be directed to his destruction.”
 Isaiah 10:26	 The Lord God of Hosts will stir up a scourge against him, as in the slaughter of Midian at the rock of Oreb. His rod will be over the sea, and he will lift it up like he did against Egypt.
 Isaiah 10:27	 It will happen in that day that his burden will depart from off your shoulder, and his yoke from off your neck, and the yoke shall be destroyed because of the anointing oil.
@@ -18057,17 +18057,17 @@ Isaiah 22:1	 The burden of the valley of vision. What ails you now, that you h
 Isaiah 22:2	 You that are full of shouting, a tumultuous city, a joyous town; your slain are not slain with the sword, neither are they dead in battle.
 Isaiah 22:3	 All your rulers fled away together. They were bound by the archers. All who were found by you were bound together. They fled far away.
 Isaiah 22:4	 Therefore I said, “Look away from me. I will weep bitterly. Do not labor to comfort me for the destruction of the daughter of my people.
-Isaiah 22:5	 For it is a day of confusion, and of treading down, and of perplexity, from the Lord, God of Hosts, in the valley of vision, a breaking down of the walls, and a crying to the mountains.”
+Isaiah 22:5	 For it is a day of confusion, and of treading down, and of perplexity, from the Lord God of Hosts, in the valley of vision, a breaking down of the walls, and a crying to the mountains.”
 Isaiah 22:6	 Elam carried his quiver, with chariots of men and horsemen; and Kir uncovered the shield.
 Isaiah 22:7	 Your choicest valleys were full of chariots, and the horsemen set themselves in array at the gate.
 Isaiah 22:8	 He took away the covering of Judah; and you looked in that day to the armor in the house of the forest.
 Isaiah 22:9	 You saw the breaches of David’s city, that they were many; and you gathered together the waters of the lower pool.
 Isaiah 22:10	 You counted the houses of Jerusalem, and you broke down the houses to fortify the wall.
 Isaiah 22:11	 You also made a reservoir between the two walls for the water of the old pool. But you did not look to him who had done this, neither did you have respect for him who planned it long ago.
-Isaiah 22:12	 In that day, the Lord, God of Hosts, called to weeping, to mourning, to baldness, and to dressing in sackcloth;
+Isaiah 22:12	 In that day, the Lord God of Hosts, called to weeping, to mourning, to baldness, and to dressing in sackcloth;
 Isaiah 22:13	 and behold, joy and gladness, killing cattle and killing sheep, eating meat and drinking wine: “Let us eat and drink, for tomorrow we will die.”
-Isaiah 22:14	 The Lord God of Hosts revealed himself in my ears, “Surely this iniquity will not be forgiven you until you die,” says the Lord, God of Hosts.
-Isaiah 22:15	 The Lord, God of Hosts says, “Go, get yourself to this treasurer, even to Shebna, who is over the house, and say,
+Isaiah 22:14	 The Lord God of Hosts revealed himself in my ears, “Surely this iniquity will not be forgiven you until you die,” says the Lord God of Hosts.
+Isaiah 22:15	 The Lord God of Hosts says, “Go, get yourself to this treasurer, even to Shebna, who is over the house, and say,
 Isaiah 22:16	 ‘What are you doing here? Who has you here, that you have dug out a tomb here?’ Cutting himself out a tomb on high, chiseling a habitation for himself in the rock!”
 Isaiah 22:17	 Behold, God will overcome you and hurl you away violently. Yes, he will grasp you firmly.
 Isaiah 22:18	 He will surely wind you around and around, and throw you like a ball into a large country. There you will die, and there the chariots of your glory will be, you disgrace of your lord’s house.
@@ -18186,7 +18186,7 @@ Isaiah 28:18	 Your covenant with death shall be annulled, and your agreement w
 Isaiah 28:19	 As often as it passes through, it will seize you; for morning by morning it will pass through, by day and by night; and it will be nothing but terror to understand the message.”
 Isaiah 28:20	 For the bed is too short to stretch out on, and the blanket is too narrow to wrap oneself in.
 Isaiah 28:21	 For God will rise up as on Mount Perazim. He will be angry as in the valley of Gibeon; that he may do his work, his unusual work, and bring to pass his act, his extraordinary act.
-Isaiah 28:22	 Now therefore do not be scoffers, lest your bonds be made strong; for I have heard a decree of destruction from the Lord, God of Hosts, on the whole earth.
+Isaiah 28:22	 Now therefore do not be scoffers, lest your bonds be made strong; for I have heard a decree of destruction from the Lord God of Hosts, on the whole earth.
 Isaiah 28:23	 Give ear, and hear my voice! Listen, and hear my speech!
 Isaiah 28:24	 Does he who plows to sow plow continually? Does he keep turning the soil and breaking the clods?
 Isaiah 28:25	 When he has leveled its surface, does he not plant the dill, and scatter the cumin seed, and put in the wheat in rows, the barley in the appointed place, and the spelt in its place?
@@ -18984,7 +18984,7 @@ Jeremiah 2:15	 The young lions have roared at him and yelled. They have made h
 Jeremiah 2:16	 The children also of Memphis and Tahpanhes have broken the crown of your head.
 Jeremiah 2:17	 “Have you not brought this on yourself, in that you have forsaken the Lord your God, when he led you by the way?
 Jeremiah 2:18	 Now what do you gain by going to Egypt, to drink the waters of the Shihor? Or why do you go on the way to Assyria, to drink the waters of the River?
-Jeremiah 2:19	 “Your own wickedness will correct you, and your backsliding will rebuke you. Know therefore and see that it is an evil and bitter thing, that you have forsaken the Lord your God, and that my fear is not in you,” says the Lord, God of Hosts.
+Jeremiah 2:19	 “Your own wickedness will correct you, and your backsliding will rebuke you. Know therefore and see that it is an evil and bitter thing, that you have forsaken the Lord your God, and that my fear is not in you,” says the Lord God of Hosts.
 Jeremiah 2:20	 “For long ago I broke off your yoke, and burst your bonds. You said, ‘I will not serve;’ for on every high hill and under every green tree you bowed yourself, playing the prostitute.
 Jeremiah 2:21	 Yet I had planted you a noble vine, a pure and faithful seed. How then have you turned into the degenerate branches of a foreign vine to me?
 Jeremiah 2:22	 For though you wash yourself with lye, and use much soap, yet your iniquity is marked before me,” says the Lord God.
@@ -20055,7 +20055,7 @@ Jeremiah 46:6	 “Do not let the swift flee away, nor the mighty man escape. I
 Jeremiah 46:7	 “Who is this who rises up like the Nile, whose waters toss themselves like the rivers?
 Jeremiah 46:8	 Egypt rises up like the Nile, and his waters toss themselves like the rivers. He says, ‘I will rise up. I will cover the earth. I will destroy cities and its inhabitants.’
 Jeremiah 46:9	 Go up, you horses! Rage, you chariots! Let the mighty men go out: Cush and Put, who handle the shield; and the Ludim, who handle and bend the bow.
-Jeremiah 46:10	 For that day is of the Lord, God of Hosts, a day of vengeance, that he may avenge himself of his adversaries. The sword will devour and be satiated, and will drink its fill of their blood; for the Lord, God of Hosts, has a sacrifice in the north country by the river Euphrates.
+Jeremiah 46:10	 For that day is of the Lord God of Hosts, a day of vengeance, that he may avenge himself of his adversaries. The sword will devour and be satiated, and will drink its fill of their blood; for the Lord God of Hosts, has a sacrifice in the north country by the river Euphrates.
 Jeremiah 46:11	 Go up into Gilead, and take balm, virgin daughter of Egypt. You use many medicines in vain. There is no healing for you.
 Jeremiah 46:12	 The nations have heard of your shame, and the earth is full of your cry; for the mighty man has stumbled against the mighty, they both fall together.”
 Jeremiah 46:13	 The word that God spoke to Jeremiah the prophet, how that Nebuchadnezzar king of Babylon should come and strike the land of Egypt:
@@ -20132,7 +20132,7 @@ Jeremiah 49:1	 Of the children of Ammon. God says: “Has Israel no sons? Has 
 Jeremiah 49:2	 Therefore behold, the days come,” says God, “that I will cause an alarm of war to be heard against Rabbah of the children of Ammon; and it will become a desolate heap, and her daughters will be burned with fire: then Israel will possess those who possessed him,” says God.
 Jeremiah 49:3	 “Wail, Heshbon, for Ai is laid waste! Cry, you daughters of Rabbah! Clothe yourself in sackcloth. Lament, and run back and forth among the fences; for Malcam will go into captivity, his priests and his princes together.
 Jeremiah 49:4	 Why do you boast in the valleys, your flowing valley, backsliding daughter? You trusted in her treasures, saying, ‘Who will come to me?’
-Jeremiah 49:5	 Behold, I will bring a terror on you,” says the Lord, God of Hosts, “from all who are around you. All of you will be driven completely out, and there will be no one to gather together the fugitives.
+Jeremiah 49:5	 Behold, I will bring a terror on you,” says the Lord God of Hosts, “from all who are around you. All of you will be driven completely out, and there will be no one to gather together the fugitives.
 Jeremiah 49:6	 “But afterward I will reverse the captivity of the children of Ammon,” says God.
 Jeremiah 49:7	 Of Edom, the Lord God of Hosts says: “Is wisdom no more in Teman? Has counsel perished from the prudent? Has their wisdom vanished?
 Jeremiah 49:8	 Flee! Turn back! Dwell in the depths, inhabitants of Dedan; for I will bring the calamity of Esau on him when I visit him.
@@ -20191,13 +20191,13 @@ Jeremiah 50:21	 “Go up against the land of Merathaim, even against it, and a
 Jeremiah 50:22	 A sound of battle is in the land, and of great destruction.
 Jeremiah 50:23	 How the hammer of the whole earth is cut apart and broken! How Babylon has become a desolation among the nations!
 Jeremiah 50:24	 I have laid a snare for you, and you are also taken, Babylon, and you were not aware. You are found, and also caught, because you have fought against God.
-Jeremiah 50:25	 God has opened his armory, and has brought out the weapons of his indignation; for the Lord, God of Hosts, has a work to do in the land of the Chaldeans.
+Jeremiah 50:25	 God has opened his armory, and has brought out the weapons of his indignation; for the Lord God of Hosts, has a work to do in the land of the Chaldeans.
 Jeremiah 50:26	 Come against her from the farthest border. Open her storehouses. Cast her up as heaps. Destroy her utterly. Let nothing of her be left.
 Jeremiah 50:27	 Kill all her bulls. Let them go down to the slaughter. Woe to them! For their day has come, the time of their visitation.
 Jeremiah 50:28	 Listen to those who flee and escape out of the land of Babylon, to declare in Zion the vengeance of the Lord our God, the vengeance of his temple.
 Jeremiah 50:29	 “Call together the archers against Babylon, all those who bend the bow. Encamp against her all around. Let none of it escape. Pay her back according to her work. According to all that she has done, do to her; for she has been proud against God, against the Holy One of Israel.
 Jeremiah 50:30	 Therefore her young men will fall in her streets. All her men of war will be brought to silence in that day,” says God.
-Jeremiah 50:31	 “Behold, I am against you, you proud one,” says the Lord, God of Hosts; “for your day has come, the time that I will visit you.
+Jeremiah 50:31	 “Behold, I am against you, you proud one,” says the Lord God of Hosts; “for your day has come, the time that I will visit you.
 Jeremiah 50:32	 The proud one will stumble and fall, and no one will raise him up. I will kindle a fire in his cities, and it will devour all who are around him.”
 Jeremiah 50:33	 The Lord God of Hosts says: “The children of Israel and the children of Judah are oppressed together. All who took them captive hold them fast. They refuse to let them go.
 Jeremiah 50:34	 Their Redeemer is strong: The Lord God of Hosts is his name. He will thoroughly plead their cause, that he may give rest to the earth, and disquiet the inhabitants of Babylon.
@@ -21188,7 +21188,7 @@ Ezekiel 29:1	 In the tenth year, in the tenth month, on the twelfth day of the
 Ezekiel 29:2	 “Son of man, set your face against Pharaoh king of Egypt, and prophesy against him and against all Egypt.
 Ezekiel 29:3	 Speak and say, ‘The Lord God says: “Behold, I am against you, Pharaoh king of Egypt, the great monster that lies in the middle of his rivers, that has said, ‘My river is my own, and I have made it for myself.’
 Ezekiel 29:4	 I will put hooks in your jaws, and I will make the fish of your rivers stick to your scales. I will bring you up out of the middle of your rivers, with all the fish of your rivers which stick to your scales.
-Ezekiel 29:5	 I’ll cast you out into the wilderness, you and all the fish of your rivers. You’ll fall on the open field. You will not be brought together or gathered. I have given you for food to the animals of the earth and to the birds of the sky.
+Ezekiel 29:5	 I will cast you out into the wilderness, you and all the fish of your rivers. You will fall on the open field. You will not be brought together or gathered. I have given you for food to the animals of the earth and to the birds of the sky.
 Ezekiel 29:6	 “‘“All the inhabitants of Egypt will know that I am God, because they have been a staff of reed to the house of Israel.
 Ezekiel 29:7	 When they took hold of you by your hand, you broke, and tore all their shoulders. When they leaned on you, you broke, and paralyzed all of their thighs.”
 Ezekiel 29:8	 “‘Therefore the Lord God says: “Behold, I will bring a sword on you, and will cut off man and animal from you.
@@ -22500,7 +22500,7 @@ Amos 9:1	 I saw the Lord standing beside the altar, and he said, “Strike the
 Amos 9:2	 Though they dig into Sheol, there my hand will take them; and though they climb up to heaven, there I will bring them down.
 Amos 9:3	 Though they hide themselves in the top of Carmel, I will search and take them out from there; and though they be hidden from my sight in the bottom of the sea, there I will command the serpent, and it will bite them.
 Amos 9:4	 Though they go into captivity before their enemies, there I will command the sword, and it will kill them. I will set my eyes on them for harm, and not for good.
-Amos 9:5	 For the Lord, God of Hosts, is he who touches the land and it melts, and all who dwell in it will mourn; and it will rise up wholly like the River, and will sink again, like the River of Egypt.
+Amos 9:5	 For the Lord God of Hosts, is he who touches the land and it melts, and all who dwell in it will mourn; and it will rise up wholly like the River, and will sink again, like the River of Egypt.
 Amos 9:6	 It is he who builds his rooms in the heavens, and has founded his vault on the earth; he who calls for the waters of the sea, and pours them out on the surface of the earth; God is his name.
 Amos 9:7	 Are you not like the children of the Ethiopians to me, children of Israel?” says God. “Have I not brought up Israel out of the land of Egypt, and the Philistines from Caphtor, and the Syrians from Kir?
 Amos 9:8	 Behold, the eyes of the Lord God are on the sinful kingdom, and I will destroy it from off the surface of the earth; except that I will not utterly destroy the house of Jacob,” says God.
