@@ -22,6 +22,9 @@ ko.*
 # rvw/Plan_rwb_webu_review_checklist_2026-09-28.md). Re-download from
 # https://eBible.org/Scriptures/eng-kjv2006_usfm.zip when needed.
 /eng-kjv2006_usfm
+# ASV (1901, public domain) USFM drop, added 2026-11-13 (RT-82 / FU-52); re-download from
+# https://eBible.org/Scriptures/eng-asv_usfm.zip when needed (aeRWB npm run web.asv).
+/eng-asv_usfm
 Peter-USE REFINED English Bible CONTENTS.pdf
 Keep for alignment - Blank Bible Copy - Copy.pdf
 MyOutfile_unpacked/
