@@ -5,7 +5,7 @@
 ' <edits.txt>: one edit per line, three TAB-separated fields: label, find text, replacement text (ASCII only; lines starting with # are skipped).
 ' For every edit the find text must occur EXACTLY ONCE in the document (whole body, case sensitive, no wildcards); otherwise that edit is skipped
 ' and reported, nothing is guessed. The replacement goes through Find.Execute Replace:=wdReplaceOne, so the formatting of the found text stays.
-' After the replacement the new text must occur once and the old text not at all. Track Changes is switched off. Macros stay off (AutomationSecurity 3).
+' After the replacement the new text must occur exactly ONE time more than before (it may already occur elsewhere) and the old text not at all. Track Changes is switched off. Macros stay off (AutomationSecurity 3).
 ' Rules (see README.md): close every Word first (this script refuses otherwise); make a backup of the docm before you point this at the real file; run
 ' the SAME edits on a copy first and compare (the verification reads the saved XML, for example tools/verify-docm-edits.mjs). Written for FU-50 (2026-11-14).
 Option Explicit
@@ -44,7 +44,7 @@ Function CountOf(text)
 End Function
 
 Sub Main(target, editsFile)
-  Dim ts, line, parts, label, findT, repT, n, ok, skipped, r, paraText
+  Dim ts, line, parts, label, findT, repT, n, nNew, ok, skipped, r, paraText
   On Error Resume Next
   Set gWord = CreateObject("Word.Application")
   If Err.Number <> 0 Then gErrText = "cannot start Word": Exit Sub
@@ -66,6 +66,7 @@ Sub Main(target, editsFile)
       Else
         label = parts(0): findT = parts(1): repT = parts(2)
         n = CountOf(findT)
+        nNew = CountOf(repT)
         If n <> 1 Then
           gOut.WriteLine "SKIPPED " & label & ": the find text occurs " & n & " time(s), expected exactly 1"
           skipped = skipped + 1
@@ -85,11 +86,11 @@ Sub Main(target, editsFile)
           r.Find.Execute , , , , , , , , , , 1
           If Err.Number <> 0 Then
             gOut.WriteLine "FAILED " & label & ": " & Err.Number & " " & Err.Description: Err.Clear: skipped = skipped + 1
-          ElseIf CountOf(repT) = 1 And CountOf(findT) = 0 Then
+          ElseIf CountOf(repT) = nNew + 1 And CountOf(findT) = 0 Then
             gOut.WriteLine "OK      " & label
             ok = ok + 1
           Else
-            gOut.WriteLine "CHECK   " & label & ": after the replace the new text occurs " & CountOf(repT) & " time(s) and the old text " & CountOf(findT)
+            gOut.WriteLine "CHECK   " & label & ": after the replace the new text occurs " & CountOf(repT) & " time(s) (expected " & (nNew + 1) & ") and the old text " & CountOf(findT)
             skipped = skipped + 1
           End If
         End If
