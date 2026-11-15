@@ -1,5 +1,5 @@
 === Style Taxonomy Audit ===
-Date    : 2026-05-28 10:53:23
+Date    : 2026-11-11 23:28:42
 Document: Blank Bible Copy.docm
 ========================================================================
 
@@ -35,6 +35,13 @@ PASS  AuthorListItem
 PASS  AuthorListItemBody
 PASS  AuthorListItemTab
 PASS  CenterSubText
+PASS  RWBFrontTitle
+PASS  RWBFrontEpigraph
+PASS  RWBFrontHeading
+PASS  RWBFrontBody
+PASS  RWBFrontSignature
+PASS  RWBFrontCopyright
+PASS  RWBFrontItalic
 PASS  SpeakerLabel
 PASS  AuthorSectionHead
 PASS  AuthorBookSections
@@ -65,5 +72,5 @@ PASS  BibleIndexList (TabStops)
 PASS  ParallelText (TabStops)
 
 ========================================================================
-Summary: 57 PASS   0 FAIL
+Summary: 64 PASS   0 FAIL
 === End Style Taxonomy Audit ===

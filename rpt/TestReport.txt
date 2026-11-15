@@ -30,7 +30,7 @@ PASS              Copy ()       Test = 14     0             0             CountW
   Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0
 PASS              Copy ()       Test = 15     1             1             CountSectionsWithDifferentFirstPage
   Rule: No section has 'Different First Page' set in PageSetup, except Section 1 - Section 1 intentionally keeps it set as part of the Ctrl-A paste-into-new-Doc recovery mechanism (confirmed by operator 2026-09-14) - CountSectionsWithDifferentFirstPage should return 1
-PASS              Copy ()       Test = 16     33842         33842         CountTotalParagraphs
+PASS              Copy ()       Test = 16     33853         33853         CountTotalParagraphs
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
   Rule: There should be no active hyperlinks as the current main target is print - CountActiveHyperlinks should return 0
@@ -96,7 +96,7 @@ PASS              Copy ()       Test = 47     6             6             CountT
   Count of footer paragraphs containing only a tab character - intentional tab-only spacers for footer alignment - CountTabOnlyParagraphs(Footer) should match the expected baseline
 PASS              Copy ()       Test = 48     0             0             AuditLiberationSansNarrowStyleDetails
   Rule: No style uses the Liberation Sans Narrow font (the font was retired from the project; any style still referencing it is a regression) - AuditLiberationSansNarrowStyleDetails should return 0
-PASS              Copy ()       Test = 49     47            47            CountAuditStyles_ToFile
+PASS              Copy ()       Test = 49     45            45            CountAuditStyles_ToFile
   Writes rpt/Style Usage Distribution.txt and returns the Count of distinct paragraph styles used; drift signals a new style appeared or one fell out of use - CountAuditStyles_ToFile should match the expected baseline
 PASS              Copy ()       Test = 50     148           148           SummarizeHeaderFooterAuditToFile
   Writes rpt/HeaderFooterAudit.txt and returns totalSections on success (-1 on header/footer style drift); the expected baseline matches the document's section Count - SummarizeHeaderFooterAuditToFile should match the expected baseline
@@ -166,8 +166,7 @@ PASS              Copy ()       Test = 82     31102         31102         CountV
   Count of 'Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountVerseMarker should match the VerseText paragraph baseline (31,102)
 PASS              Copy ()       Test = 83     31102         31102         CountChapterVerseMarker
   Count of 'Chapter Verse marker' character-styled runs found inside VerseText paragraphs; by design every VerseText paragraph carries one - CountChapterVerseMarker should match the VerseText paragraph baseline (31,102)
-FAIL!!!!          Copy ()       Test = 84     1             0             CountHeaderFooterStyleViolations
-  >> First hit: header viol=0 footer viol=1 - see rpt\HeaderFooterStyleAudit.txt
+PASS              Copy ()       Test = 84     0             0             CountHeaderFooterStyleViolations
   Rule: header paragraphs use 'TheHeaders' and footer paragraphs use 'TheFooters'; no built-in Header/Footer style remains on any header/footer story incl. orphaned first-page/even-page (writes rpt\HeaderFooterStyleAudit.txt) - CountHeaderFooterStyleViolations should return 0
 PASS              Copy ()       Test = 85     0             0             CountStyleParagraphsNotAligned(PsalmSuperscription, Left)
   Rule: every 'PsalmSuperscription' paragraph is left-aligned by design (e.g. 'A Psalm by David...') - CountStyleParagraphsNotAligned("PsalmSuperscription", wdAlignParagraphLeft) should return 0
@@ -199,8 +198,10 @@ PASS              Copy ()       Test = 98     0             0             CountS
   Rule: no run in a VerseText paragraph carries direct run formatting other than a character style, a language, fonts or the noProof proofing flag (owner decision 2026-11-10: the whole text is marked do-not-check-spelling) - the other tests own language and fonts (found 2026-11-10: bold, complex bold and complex size 9 on spaces, and colour auto overriding the red of Words of Jesus in 2 places; cleaned by basDocmHygiene.FixStrayVerseFormatting). Read from Content.WordOpenXML, about 15 s - CountStrayDirectFormattingRuns should return 0
 PASS              Copy ()       Test = 99     0             0             CountFrontMatterSeparationViolations
   Rule: the RWB front matter and the Study Bible are kept apart (RT-24, 2026-11-12) - the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment, and no RWBFront style is used after them - CountFrontMatterSeparationViolations should return 0
-The Total Runtime: 2216.84 seconds
-[2026-11-13 10:11:37] Completed
+PASS              Copy ()       Test = 100    0             0             CountContractions
+  Rule: formal voice (owner decision 2026-11-13, FU-51, RT-84) - no VerseText paragraph holds a contraction: a word ending in an apostrophe (U+2019) plus ll, re, ve, d, m or n't, or the word let's; the possessive 's is not a contraction - CountContractions (basFormalVoice) should return 0; Tests 60 to 65 still test their named forms
+The Total Runtime: 1838.23 seconds
+[2026-11-15 15:18:56] Completed
 BibleClass VERSION: 0.2.0
 BibleClass VERSION_DATE: September 17, 2026
 == Word Build Info ==

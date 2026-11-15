@@ -1,5 +1,5 @@
 ﻿RWB-DOCM
-Radiant Word Bible - exported from the live .docm (2026-11-13)
+Radiant Word Bible - exported from the live .docm (2026-11-15)
 Genesis 1:1	 In the beginning, God created the heavens and the earth.
 Genesis 1:2	 The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface of the waters.
 Genesis 1:3	 God said, “Let there be light,” and there was light.
@@ -4144,8 +4144,8 @@ Numbers 14:32	 But as for you, your dead bodies shall fall in this wilderness.
 Numbers 14:33	 Your children shall be wanderers in the wilderness forty years, and shall bear your prostitution, until your dead bodies are consumed in the wilderness.
 Numbers 14:34	 After the number of the days in which you spied out the land, even forty days, for every day a year, you will bear your iniquities, even forty years, and you will know my alienation.’
 Numbers 14:35	 I, God, have spoken. I will surely do this to all this evil congregation who are gathered together against me. In this wilderness they shall be consumed, and there they shall die.”
-Numbers 14:36	 The men whom Moses sent to spy out the land, who returned and made all the congregation to murmur against him by bringing up an evil report against the land,
-Numbers 14:37	 even those men who brought up an evil report of the land, died by the plague before God.
+Numbers 14:36	 The men whom Moses sent to spy out the land, who returned and made all the congregation to murmur against him by bringing up a bad report against the land,
+Numbers 14:37	 even those men who brought up a bad report of the land, died by the plague before God.
 Numbers 14:38	 But Joshua the son of Nun and Caleb the son of Jephunneh remained alive of those men who went to spy out the land.
 Numbers 14:39	 Moses told these words to all the children of Israel, and the people mourned greatly.
 Numbers 14:40	 They rose up early in the morning and went up to the top of the mountain, saying, “Behold, we are here, and will go up to the place which God has promised; for we have sinned.”
@@ -5665,9 +5665,9 @@ Deuteronomy 28:50	 a nation of fierce facial expressions, that does not respec
 Deuteronomy 28:51	 They will eat the fruit of your livestock and the fruit of your ground, until you are destroyed. They also will not leave you grain, new wine, oil, the increase of your livestock, or the young of your flock, until they have caused you to perish.
 Deuteronomy 28:52	 They will besiege you in all your gates until your high and fortified walls in which you trusted come down throughout all your land. They will besiege you in all your gates throughout all your land which the Lord your God has given you.
 Deuteronomy 28:53	 You will eat the fruit of your own body, the flesh of your sons and of your daughters, whom the Lord your God has given you, in the siege and in the distress with which your enemies will distress you.
-Deuteronomy 28:54	 The man who is tender among you, and very delicate, shall have no compassion toward his brother, toward the wife whom he loves, and toward the remnant of his children whom he has remaining,
+Deuteronomy 28:54	 The man who is tender among you, and very delicate, his eye shall be evil toward his brother, toward the wife whom he loves, and toward the remnant of his children whom he has remaining,
 Deuteronomy 28:55	 so that he will not give to any of them of the flesh of his children whom he will eat, because he has nothing left to him, in the siege and in the distress with which your enemy will distress you in all your gates.
-Deuteronomy 28:56	 The tender and delicate woman among you, who would not venture to set the sole of her foot on the ground for delicateness and tenderness, shall have no compassion toward the husband that she loves, toward her son, toward her daughter,
+Deuteronomy 28:56	 The tender and delicate woman among you, who would not venture to set the sole of her foot on the ground for delicateness and tenderness, her eye shall be evil toward the husband that she loves, toward her son, toward her daughter,
 Deuteronomy 28:57	 toward her young one who comes out from between her feet, and toward her children whom she bears; for she will eat them secretly for lack of all things in the siege and in the distress with which your enemy will distress you in your gates.
 Deuteronomy 28:58	 If you will not observe to do all the words of this law that are written in this book, that you may fear this glorious and fearful name, the Lord your God,
 Deuteronomy 28:59	 then God will make your plagues and the plagues of your offspring fearful, even great plagues, and of long duration, and severe sicknesses, and of long duration.
@@ -6475,7 +6475,7 @@ Joshua 23:11	 Take good heed therefore to yourselves, that you love the Lord y
 Joshua 23:12	 “But if you do at all go back, and hold fast to the remnant of these nations, even these who remain among you, and make marriages with them, and go in to them, and they to you;
 Joshua 23:13	 know for a certainty that the Lord your God will no longer drive these nations from out of your sight; but they shall be a snare and a trap to you, a scourge in your sides, and thorns in your eyes, until you perish from off this good land which the Lord your God has given you.
 Joshua 23:14	 “Behold, today I am going the way of all the earth. You know in all your hearts and in all your souls that not one thing has failed of all the good things which the Lord your God spoke concerning you. All have happened to you. Not one thing has failed of it.
-Joshua 23:15	 It shall happen that as all the good things have come on you of which the Lord your God spoke to you, so God will bring on you all the disastrous things he has threatened, until he has destroyed you from off this good land which the Lord your God has given you,
+Joshua 23:15	 It shall happen that as all the good things have come on you of which the Lord your God spoke to you, so God will bring on you all the disastrous things, until he has destroyed you from off this good land which the Lord your God has given you,
 Joshua 23:16	 when you disobey the covenant of the Lord your God, which he commanded you, and go and serve other gods, and bow down yourselves to them. Then God’s anger will be kindled against you, and you will perish quickly from off the good land which he has given to you.”
 Joshua 24:1	 Joshua gathered all the tribes of Israel to Shechem, and called for the elders of Israel, for their heads, for their judges, and for their officers; and they presented themselves before God.
 Joshua 24:2	 Joshua said to all the people, “God, the God of Israel, says, ‘Your fathers lived of old time beyond the River, even Terah, the father of Abraham, and the father of Nahor. They served other gods.
@@ -6560,7 +6560,7 @@ Judges 2:11	 The children of Israel did that which was evil in God’s sight, 
 Judges 2:12	 They abandoned God, the God of their fathers, who brought them out of the land of Egypt, and followed other gods, of the gods of the peoples who were around them, and bowed themselves down to them; and they provoked God to anger.
 Judges 2:13	 They abandoned God, and served Baal and the Ashtaroth.
 Judges 2:14	 God’s anger burned against Israel, and he delivered them into the hands of raiders who plundered them. He sold them into the hands of their enemies all around, so that they could no longer stand before their enemies.
-Judges 2:15	 Wherever they went out, God’s hand was against them to defeat them, as God had spoken, and as God had sworn to them; and they were very distressed.
+Judges 2:15	 Wherever they went out, God’s hand was against them for disaster, as God had spoken, and as God had sworn to them; and they were very distressed.
 Judges 2:16	 God raised up judges, who saved them out of the hand of those who plundered them.
 Judges 2:17	 Yet they did not listen to their judges; for they prostituted themselves to other gods, and bowed themselves down to them. They quickly turned away from the way in which their fathers walked, obeying God’s commandments. They did not do so.
 Judges 2:18	 When God raised up judges for them, then God was with the judge, and saved them out of the hand of their enemies all the days of the judge; for it grieved God because of their groaning by reason of those who oppressed them and troubled them.
@@ -12814,7 +12814,7 @@ Esther 7:3	 Then Esther the queen answered, “If I have found favor in your s
 Esther 7:4	 For we are sold, I and my people, to be destroyed, to be slain, and to perish. But if we had been sold for male and female slaves, I would have held my peace, although the adversary could not have compensated for the king’s loss.”
 Esther 7:5	 Then King Ahasuerus said to Esther the queen, “Who is he, and where is he who dared presume in his heart to do so?”
 Esther 7:6	 Esther said, “An adversary and an enemy, even this wicked Haman!” Then Haman was afraid before the king and the queen.
-Esther 7:7	 The king arose in his wrath from the banquet of wine and went into the palace garden. Haman stood up to make request for his life to Esther the queen; for he saw that his fate was determined against him by the king.
+Esther 7:7	 The king arose in his wrath from the banquet of wine and went into the palace garden. Haman stood up to make request for his life to Esther the queen; for he saw that disaster was determined against him by the king.
 Esther 7:8	 Then the king returned out of the palace garden into the place of the banquet of wine; and Haman had fallen on the couch where Esther was. Then the king said, “Will he even assault the queen in front of me in the house?” As the word went out of the king’s mouth, they covered Haman’s face.
 Esther 7:9	 Then Harbonah, one of the eunuchs who were with the king said, “Behold, the gallows fifty cubits high, which Haman has made for Mordecai, who spoke good for the king, is standing at Haman’s house.” The king said, “Hang him on it!”
 Esther 7:10	 So they hanged Haman on the gallows that he had prepared for Mordecai. Then the king’s wrath was pacified.
@@ -14543,7 +14543,7 @@ Psalm 40:14	 Let them be disappointed and confounded together who seek after m
 Psalm 40:15	 Let them be desolate by reason of their shame that tell me, “Aha! Aha!”
 Psalm 40:16	 Let all those who seek you rejoice and be glad in you. Let such as love your salvation say continually, “Let God be exalted!”
 Psalm 40:17	 But I am poor and needy. May the Lord think about me. You are my help and my deliverer. Do not delay, my God.
-Psalm 41:1	 Blessed is he who considers the poor. God will deliver him in the day of evil.
+Psalm 41:1	 Blessed is he who considers the poor. God will deliver him in the day of trouble.
 Psalm 41:2	 God will preserve him, and keep him alive. He shall be blessed on the earth, and he will not surrender him to the will of his enemies.
 Psalm 41:3	 God will sustain him on his sickbed, and restore him from his bed of illness
 Psalm 41:4	 I said, “God, have mercy on me! Heal me, for I have sinned against you.”
@@ -18968,7 +18968,7 @@ Jeremiah 1:18	 For, behold, I have made you today a fortified city, an iron pi
 Jeremiah 1:19	 They will fight against you, but they will not prevail against you; for I am with you”, says God, “to rescue you.”
 Jeremiah 2:1	 God’s word came to me, saying,
 Jeremiah 2:2	 “Go and proclaim in the ears of Jerusalem, saying, ‘God says, “I remember for you the kindness of your youth, the love of your weddings; how you went after me in the wilderness, in a land that was not sown.
-Jeremiah 2:3	 Israel was holiness to God, the first fruits of his increase. All who devour him will be held guilty. Evil will come on them,”’ says God.”
+Jeremiah 2:3	 Israel was holiness to God, the first fruits of his increase. All who devour him will be held guilty. Disaster will come on them,”’ says God.”
 Jeremiah 2:4	 Hear God’s word, O house of Jacob, and all the families of the house of Israel!
 Jeremiah 2:5	 God says, “What unrighteousness have your fathers found in me, that they have gone far from me, and have walked after worthless vanity, and have become worthless?
 Jeremiah 2:6	 They did not say, ‘Where is God who brought us up out of the land of Egypt, who led us through the wilderness, through a land of deserts and of pits, through a land of drought and of the shadow of death, through a land that no one passed through, and where no man lived?’
@@ -19501,7 +19501,7 @@ Jeremiah 23:13	 “I have seen folly in the prophets of Samaria. They prophesi
 Jeremiah 23:14	 In the prophets of Jerusalem I have also seen a horrible thing: they commit adultery and walk in lies. They strengthen the hands of evildoers, so that no one returns from his wickedness. They have all become to me as Sodom, and its inhabitants as Gomorrah.”
 Jeremiah 23:15	 Therefore the Lord God of Hosts says concerning the prophets: “Behold, I will feed them with wormwood, and make them drink poisoned water; for from the prophets of Jerusalem ungodliness has gone out into all the land.”
 Jeremiah 23:16	 The Lord God of Hosts says, “Do not listen to the words of the prophets who prophesy to you. They teach you vanity. They speak a vision of their own heart, and not out of the mouth of God.
-Jeremiah 23:17	 They say continually to those who despise me, ‘God has said, “You will have peace;”’ and to everyone who walks in the stubbornness of his own heart they say, ‘No evil will come on you.’
+Jeremiah 23:17	 They say continually to those who despise me, ‘God has said, “You will have peace;”’ and to everyone who walks in the stubbornness of his own heart they say, ‘No disaster will come on you.’
 Jeremiah 23:18	 For who has stood in the council of God, that he should perceive and hear his word? Who has listened to my word, and heard it?
 Jeremiah 23:19	 Behold, God’s storm, his wrath, has gone out. Yes, a whirling storm: It will burst on the head of the wicked.
 Jeremiah 23:20	 God’s anger will not return until he has executed, and until he has performed the intents of his heart. In the latter days, you will understand it perfectly.
@@ -19533,7 +19533,7 @@ Jeremiah 24:5	 “God, the God of Israel says: ‘Like these good figs, so I w
 Jeremiah 24:6	 For I will set my eyes on them for good, and I will bring them again to this land. I will build them, and not pull them down. I will plant them, and not pluck them up.
 Jeremiah 24:7	 I will give them a heart to know me, that I am God. They will be my people, and I will be their God; for they will return to me with their whole heart.
 Jeremiah 24:8	 “‘As the bad figs, which cannot be eaten, they are so bad,’ surely God says, ‘So I will give up Zedekiah the king of Judah, and his princes, and the remnant of Jerusalem, who remain in this land, and those who dwell in the land of Egypt.
-Jeremiah 24:9	 I will even give them up to be tossed back and forth among all the kingdoms of the earth, to be an object of horror, to be a reproach and a proverb, a taunt and a curse, in all places where I will drive them.
+Jeremiah 24:9	 I will even give them up to be tossed back and forth among all the kingdoms of the earth for harm; to be a reproach and a proverb, a taunt and a curse, in all places where I will drive them.
 Jeremiah 24:10	 I will send the sword, the famine, and the pestilence, among them, until they are consumed from off the land that I gave to them and to their fathers.’”
 Jeremiah 25:1	 The word that came to Jeremiah concerning all the people of Judah, in the fourth year of Jehoiakim the son of Josiah, king of Judah (this was the first year of Nebuchadnezzar king of Babylon),
 Jeremiah 25:2	 which Jeremiah the prophet spoke to all the people of Judah, and to all the inhabitants of Jerusalem:
@@ -19981,7 +19981,7 @@ Jeremiah 42:2	 and said to Jeremiah the prophet, “Please let our supplicatio
 Jeremiah 42:3	 that the Lord your God may show us the way in which we should walk, and the things that we should do.”
 Jeremiah 42:4	 Then Jeremiah the prophet said to them, “I have heard you. Behold, I will pray to the Lord your God according to your words; and it will happen that whatever thing God answers you, I will declare it to you. I will keep nothing back from you.”
 Jeremiah 42:5	 Then they said to Jeremiah, “May God be a true and faithful witness among us, if we do not do according to all the word with which the Lord your God sends you to tell us.
-Jeremiah 42:6	 Whether it is good, or whether it is unfavorable, we will obey the voice of the Lord our God, to whom we send you; that it may be well with us, when we obey the voice of the Lord our God.”
+Jeremiah 42:6	 Whether it is good, or whether it is bad, we will obey the voice of the Lord our God, to whom we send you; that it may be well with us, when we obey the voice of the Lord our God.”
 Jeremiah 42:7	 After ten days, God’s word came to Jeremiah.
 Jeremiah 42:8	 Then he called Johanan the son of Kareah, and all the captains of the forces who were with him, and all the people from the least even to the greatest,
 Jeremiah 42:9	 and said to them, “God, the God of Israel, to whom you sent me to present your supplication before him, says:
@@ -20392,7 +20392,7 @@ Lamentations 3:34	 To crush under foot all the prisoners of the earth,
 Lamentations 3:35	 to turn away the right of a man before the face of the Most High,
 Lamentations 3:36	 to subvert a man in his cause, the Lord does not approve.
 Lamentations 3:37	 Who is he who says, and it comes to pass, when the Lord does not command it?
-Lamentations 3:38	 Does not calamities and good come out of the mouth of the Most High?
+Lamentations 3:38	 Does not calamity and good come out of the mouth of the Most High?
 Lamentations 3:39	 Why does a living man complain, a man for the punishment of his sins?
 Lamentations 3:40	 Let us search and try our ways, and turn again to God.
 Lamentations 3:41	 Let us lift up our heart with our hands to God in the heavens.
@@ -20752,7 +20752,7 @@ Ezekiel 14:17	 “Or if I bring a sword on that land, and say, ‘Sword, go th
 Ezekiel 14:18	 though these three men were in it, as I live,” says the Lord God, “they would deliver neither sons nor daughters, but they only would be delivered themselves.
 Ezekiel 14:19	 “Or if I send a pestilence into that land, and pour out my wrath on it in blood, to cut off from it man and animal;
 Ezekiel 14:20	 though Noah, Daniel, and Job, were in it, as I live,” says the Lord God, “they would deliver neither son nor daughter; they would deliver only their own souls by their righteousness.”
-Ezekiel 14:21	 For the Lord God says: “How much more when I send my four severe judgments on Jerusalem, the sword, the famine, the evil animals, and the pestilence, to cut off from it man and animal!
+Ezekiel 14:21	 For the Lord God says: “How much more when I send my four severe judgments on Jerusalem, the sword, the famine, the wild beasts, and the pestilence, to cut off from it man and animal!
 Ezekiel 14:22	 Yet, behold, there will be left a remnant in it that will be carried out, both sons and daughters. Behold, they will come out to you, and you will see their way and their doings. Then you will be comforted concerning the disaster that I have brought on Jerusalem, even concerning all that I have brought on it.
 Ezekiel 14:23	 They will comfort you, when you see their way and their doings; then you will know that I have not done all that I have done in it without cause,” says the Lord God.
 Ezekiel 15:1	 God’s word came to me, saying,
@@ -23807,7 +23807,7 @@ Matthew 20:11	 When they received it, they murmured against the master of the 
 Matthew 20:12	 saying, ‘These last have spent one hour, and you have made them equal to us who have borne the burden of the day and the scorching heat!’
 Matthew 20:13	 “But he answered one of them, ‘Friend, I am doing you no wrong. Did you not agree with me for a denarius?
 Matthew 20:14	 Take that which is yours, and go your way. It is my desire to give to this last just as much as to you.
-Matthew 20:15	 Is it not lawful for me to do what I want to with what I own? Or are you envious because I am generous?’
+Matthew 20:15	 Is it not lawful for me to do what I want to with what I own? Or is your eye envious because I am good?’
 Matthew 20:16	 So the last will be first, and the first last. For many are called, but few are chosen.”
 Matthew 20:17	 As Jesus was going up to Jerusalem, he took the twelve disciples aside, and on the way he said to them,
 Matthew 20:18	 “Behold, we are going up to Jerusalem, and the Son of Man will be delivered to the chief priests and scribes, and they will condemn him to death,
@@ -28670,7 +28670,7 @@ Romans 16:24	 The grace of our Lord Jesus Christ be with you all! Amen.
 1 Corinthians 13:2	 If I have the gift of prophecy, and know all mysteries and all knowledge; and if I have all faith, so as to remove mountains, but do not have love, I am nothing.
 1 Corinthians 13:3	 If I give away all my goods to feed the poor, and if I give my body to be burned, but do not have love, it profits me nothing.
 1 Corinthians 13:4	 Love is patient and is kind. Love does not envy. Love does not brag, is not proud,
-1 Corinthians 13:5	 does not behave itself inappropriately, does not seek its own way, is not provoked, takes no account of wrongs;
+1 Corinthians 13:5	 does not behave itself inappropriately, does not seek its own way, is not provoked, takes no account of harm;
 1 Corinthians 13:6	 does not rejoice in unrighteousness, but rejoices with the truth;
 1 Corinthians 13:7	 bears all things, believes all things, hopes all things, and endures all things.
 1 Corinthians 13:8	 Love never fails. But where there are prophecies, they will be done away with. Where there are various languages, they will cease. Where there is knowledge, it will be done away with.
@@ -29925,7 +29925,7 @@ Titus 2:13	 looking for the blessed hope and appearing of the glory of our gre
 Titus 2:14	 who gave himself for us, that he might redeem us from all iniquity, and purify for himself a people for his own possession, zealous for good works.
 Titus 2:15	 Say these things and exhort and reprove with all authority. Let no one despise you.
 Titus 3:1	 Remind them to be in subjection to rulers and to authorities, to be obedient, to be ready for every good work,
-Titus 3:2	 to speak bad of no one, not to be contentious, to be gentle, showing all humility toward all men.
+Titus 3:2	 to speak ill of no one, not to be contentious, to be gentle, showing all humility toward all men.
 Titus 3:3	 For we were also once foolish, disobedient, deceived, serving various lusts and pleasures, living in malice and envy, hateful, and hating one another.
 Titus 3:4	 But when the kindness of God our Savior and his love toward mankind appeared,
 Titus 3:5	 not by works of righteousness which we did ourselves, but according to his mercy, he saved us through the washing of regeneration and renewing by the Holy Spirit,
@@ -30510,9 +30510,9 @@ James 5:20	 let him know that he who turns a sinner from the error of his way 
 2 Peter 2:7	 and delivered righteous Lot, who was very distressed by the lustful life of the wicked
 2 Peter 2:8	 (for that righteous man dwelling among them was tormented in his righteous soul from day to day with seeing and hearing lawless deeds):
 2 Peter 2:9	 then the Lord knows how to deliver the godly out of temptation and to keep the unrighteous under punishment for the day of judgment,
-2 Peter 2:10	 but chiefly those who walk after the flesh in the lust of defilement and despise authority. Daring, self-willed, they are not afraid to speak evil of dignitaries;
+2 Peter 2:10	 but chiefly those who walk after the flesh in the lust of defilement and despise authority. Daring, self-willed, they are not afraid to speak ill of dignitaries;
 2 Peter 2:11	 whereas angels, though greater in might and power, do not bring a railing judgment against them before the Lord.
-2 Peter 2:12	 But these, as unreasoning creatures, born natural animals to be taken and destroyed, speaking evil in matters about which they are ignorant, will in their destroying surely be destroyed,
+2 Peter 2:12	 But these, as unreasoning creatures, born natural animals to be taken and destroyed, blaspheming in matters about which they are ignorant, will in their destroying surely be destroyed,
 2 Peter 2:13	 receiving the wages of unrighteousness; people who count it pleasure to revel in the daytime, spots and defects, reveling in their deceit while they feast with you;
 2 Peter 2:14	 having eyes full of adultery, and who cannot cease from sin; enticing unsettled souls; having a heart trained in greed; children of cursing;
 2 Peter 2:15	 forsaking the right way, they went astray, having followed the way of Balaam the son of Beor, who loved the wages of wrongdoing;
@@ -30682,7 +30682,7 @@ Jude 1:6	 The angels who did not keep their first domain, but deserted their o
 Jude 1:7	 Even as Sodom and Gomorrah and the cities around them, having in the same way as these given themselves over to sexual immorality and gone after strange flesh, are shown as an example, suffering the punishment of eternal fire.
 Jude 1:8	 Yet in the same way, these also in their dreaming defile the flesh, despise authority, and slander celestial beings.
 Jude 1:9	 But Michael, the archangel, when contending with the devil and arguing about the body of Moses, dared not bring against him an abusive condemnation, but said, “May the Lord rebuke you!”
-Jude 1:10	 But these speak evil of whatever things they do not know. They are destroyed in these things that they understand naturally, like the creatures without reason.
+Jude 1:10	 But these speak ill of whatever things they do not know. They are destroyed in these things that they understand naturally, like the creatures without reason.
 Jude 1:11	 Woe to them! For they went in the way of Cain, and ran riotously in the error of Balaam for hire, and perished in Korah’s rebellion.
 Jude 1:12	 These are hidden rocky reefs in your love feasts when they feast with you, shepherds who without fear feed themselves; clouds without water, carried along by winds; autumn trees without fruit, twice dead, plucked up by the roots;
 Jude 1:13	 wild waves of the sea, foaming out their own shame; wandering stars, for whom the blackness of darkness has been reserved forever.

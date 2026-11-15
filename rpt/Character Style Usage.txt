@@ -8,4 +8,5 @@ Selah: present
 EmphasisBlack: present
 EmphasisRed: present
 Words of Jesus: present
+RWBFrontItalic: present
 Total absent: 0

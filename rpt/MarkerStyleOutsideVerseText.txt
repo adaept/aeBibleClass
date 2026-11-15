@@ -1,5 +1,5 @@
----- FindMarkerStyleOutsideVerseText: 2026-10-22 14:15:26 ----
+---- FindMarkerStyleOutsideVerseText: 2026-11-15 14:54:44 ----
 
 ---- Summary ----
-Non-VerseText paragraphs scanned: 2724
+Non-VerseText paragraphs scanned: 2751
 Hits (marker char-style found outside VerseText): 0

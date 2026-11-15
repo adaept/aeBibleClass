@@ -1,146 +1,146 @@
 page	paragraph_idx	kind	prev_snippet
-1	1	SBNP	(start of document)
-3	15	SBNP	I.S.B.N. No: 978–0–692–17571–2
-5	18	SBNP	
-9	39	SBC	
-24	305	PBB	Part I, Chapter 7, Section 4 #33 Jesus’ spiritual resurrecti
-25	329	SBNP	The Hebrew Bible
-26	340	SBNP	
-66	1925	SBNP	5026 So Joseph died, being one hundred ten years old, and th
-67	1936	SBNP	
-99	3191	SBNP	4038 For the cloud of God was on the tabernacle by day, and
-100	3202	SBNP	
-123	4090	SBNP	2734 These are the commandments which God commanded Moses f
-124	4101	SBNP	
-157	5427	SBNP	3613 These are the commandments and the ordinances which Go
-158	5438	SBNP	
-185	6433	SBNP	3412 and in all the mighty hand, and in all the awesome deed
-186	6444	SBNP	
-205	7128	SBNP	2433 Eleazar the son of Aaron died. They buried him in the h
-206	7139	SBNP	
-224	7780	SBNP	2125 In those days there was no king in Israel. Everyone did
-225	7791	SBNP	
-228	7882	SBNP	422 and Obed became the father of Jesse, and Jesse became th
-229	7893	SBNP	
-253	8736	SBNP	3113 They took their bones and buried them under the tamaris
-254	8747	SBNP	
-274	9468	SBNP	2425 David built an altar to God there, and offered burnt of
-275	9479	SBNP	
-299	10319	SBNP	2253 He served Baal and worshiped him, and provoked God, the
-300	10330	SBNP	
-322	11076	SBNP	2530 and for his allowance, there was a continual allowance
-323	11087	SBNP	
-345	12060	SBNP	2930 with all his reign and his might, and the times that we
-346	12071	SBNP	
-372	12931	SBNP	3623 “Cyrus king of Persia says, ‘God, the God of heaven, ha
-373	12942	SBNP	
-381	13234	SBNP	1044 All these had taken foreign wives; and some of them had
-382	13245	SBNP	
-393	13666	SBNP	1331 and for the wood offering, at times appointed, and for
-394	13677	SBNP	
-400	13856	SBNP	103 For Mordecai the Jew was next to King Ahasuerus, and gre
-401	13867	SBNP	
-421	14981	SBNP	4217 So Job died, being old and full of days.
-422	14992	SBNP	
-473	17748	SBNP	1506 Let everything that has breath praise Yah! Praise Yah!
-474	17759	SBNP	
-491	18707	SBNP	3131 Give her of the fruit of her hands! Let her works prais
-492	18718	SBNP	
-498	18954	SBNP	1214 For God will bring every work into judgment, with every
-499	18965	SBNP	
-502	19092	SBNP	814 Beloved Come away, my beloved! Be like a gazelle or a yo
-503	19103	SBNP	
-540	20463	SBNP	6624 “They will go out, and look at the dead bodies of the m
-541	20474	SBNP	
-583	21892	SBNP	5234 For his allowance, there was a continual allowance give
-584	21903	SBNP	
-588	22064	SBNP	522 But you have utterly rejected us. You are very angry ag
-589	22075	SBNP	
-627	23398	SBNP	4835 “It shall be eighteen thousand reeds around: and the na
-628	23409	SBNP	
-640	23780	SBNP	1213 “But go your way until the end; for you will rest, and
-641	23791	SBNP	
-647	24004	SBNP	149 Who is wise, that he may understand these things? Who is
-648	24015	SBNP	
-650	24093	SBNP	321 I will cleanse their blood, that I have not cleansed: fo
-651	24104	SBNP	
-656	24261	SBNP	915 I will plant them on their land, and they will no more b
-657	24272	SBNP	
-658	24296	SBNP	121 Saviors will go up on Mount Zion to judge the mountains
-659	24307	SBNP	
-661	24361	SBNP	411 Should not I be concerned for Nineveh, that great city,
-662	24372	SBNP	
-666	24486	SBNP	720 You will give truth to Jacob, and mercy to Abraham, as
-667	24497	SBNP	
-669	24549	SBNP	319 There is no healing your wound, for your injury is fatal
-670	24560	SBNP	
-672	24621	SBNP	319 God, the Lord, is my strength. He makes my feet like dee
-673	24632	SBNP	
-675	24690	SBNP	320 At that time I will bring you in, and at that time I wil
-676	24701	SBNP	
-678	24743	SBNP	223 In that day, says the Lord God of Hosts, I will take you
-679	24754	SBNP	
-686	24981	SBNP	1421 Yes, every pot in Jerusalem and in Judah will be holy t
-687	24992	SBNP	
-689	25053	SBNP	46 He will turn the hearts of the fathers to the children,
-691	25060	SBNP	The Gospel of Jesus Christ
-692	25071	SBNP	
-720	26172	SBNP	2820 teaching them to observe all things that I commanded yo
-721	26183	SBNP	
-738	26879	SBNP	1620 They went out, and preached everywhere, the Lord workin
-739	26890	SBNP	
-767	28067	SBNP	2453 and were continually in the temple, praising and blessi
-768	28078	SBNP	
-790	28980	SBNP	2125 There are also many other things which Jesus did, which
-791	28991	SBNP	
-817	30028	SBNP	2831 preaching God’s Kingdom, and teaching the things concer
-818	30039	SBNP	
-829	30490	SBNP	1624 The grace of our Lord Jesus Christ be with you all! Ame
-830	30501	SBNP	
-841	30956	SBNP	1624 My love to all of you in Christ Jesus. Amen.
-842	30967	SBNP	
-849	31239	SBNP	1314 The grace of the Lord Jesus Christ, God’s love, and the
-850	31250	SBNP	
-854	31407	SBNP	618 The grace of our Lord Jesus Christ be with your spirit,
-855	31418	SBNP	
-859	31581	SBNP	624 Grace be with all those who love our Lord Jesus Christ w
-860	31592	SBNP	
-863	31702	SBNP	423 The grace of the Lord Jesus Christ be with you all. Amen
-864	31713	SBNP	
-867	31814	SBNP	418 The salutation of me, Paul, with my own hand: remember m
-868	31825	SBNP	
-871	31921	SBNP	528 The grace of our Lord Jesus Christ be with you. Amen.
-872	31932	SBNP	
-874	31984	SBNP	318 The grace of our Lord Jesus Christ be with you all. Amen
-875	31995	SBNP	
-878	32116	SBNP	621 which some profess, and thus have wandered from the fait
-879	32127	SBNP	
-881	32216	SBNP	422 The Lord Jesus Christ be with your spirit. Grace be with
-882	32227	SBNP	
-884	32278	SBNP	315 All who are with me greet you. Greet those who love us i
-885	32289	SBNP	
-886	32317	SBNP	125 The grace of our Lord Jesus Christ be with your spirit.
-887	32328	SBNP	
-896	32646	SBNP	1325 Grace be with you all. Amen.
-897	32657	SBNP	
-900	32772	SBNP	520 let him know that he who turns a sinner from the error o
-901	32783	SBNP	
-904	32895	SBNP	514 Greet one another with a kiss of love. Peace be to all o
-905	32906	SBNP	
-907	32972	SBNP	318 But grow in the grace and knowledge of our Lord and Savi
-908	32983	SBNP	
-911	33095	SBNP	521 Little children, keep yourselves from idols.
-912	33106	SBNP	
-913	33122	SBNP	113 The children of your chosen sister greet you. Amen.
-914	33133	SBNP	
-915	33150	SBNP	114 but I hope to see you soon. Then we will speak face to f
-916	33161	SBNP	
-917	33189	SBNP	125 to God our Savior, who alone is wise, be glory and majes
-918	33200	SBNP	
-931	33628	SBNP	2221 The grace of the Lord Jesus Christ be with all the sain
-932	33632	SBNP	Bible Concordance
-934	33648	SBNP	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
-935	33661	SBNP	* Biblica Open Bible Maps, © 2023–2026 Biblica, Inc. This w
-937	33664	PBB	
-944	33674	SBNP	An Introduction
-966	33824	SBNP	Find out for yourself how profoundly God is speaking to mank
+6	28	SBNP	First Edition 2026
+7	42	SBNP	I.S.B.N. No: 978–0–692–17571–2
+9	45	SBNP	
+13	66	SBC	
+28	332	PBB	Part I, Chapter 7, Section 4 #33 Jesus’ spiritual resurrecti
+29	356	SBNP	The Hebrew Bible
+30	367	SBNP	
+70	1952	SBNP	5026 So Joseph died, being one hundred ten years old, and th
+71	1963	SBNP	
+103	3218	SBNP	4038 For the cloud of God was on the tabernacle by day, and
+104	3229	SBNP	
+127	4117	SBNP	2734 These are the commandments which God commanded Moses f
+128	4128	SBNP	
+161	5454	SBNP	3613 These are the commandments and the ordinances which Go
+162	5465	SBNP	
+189	6460	SBNP	3412 and in all the mighty hand, and in all the awesome deed
+190	6471	SBNP	
+209	7155	SBNP	2433 Eleazar the son of Aaron died. They buried him in the h
+210	7166	SBNP	
+228	7807	SBNP	2125 In those days there was no king in Israel. Everyone did
+229	7818	SBNP	
+232	7909	SBNP	422 and Obed became the father of Jesse, and Jesse became th
+233	7920	SBNP	
+257	8763	SBNP	3113 They took their bones and buried them under the tamaris
+258	8774	SBNP	
+278	9495	SBNP	2425 David built an altar to God there, and offered burnt of
+279	9506	SBNP	
+303	10346	SBNP	2253 He served Baal and worshiped him, and provoked God, the
+304	10357	SBNP	
+326	11103	SBNP	2530 and for his allowance, there was a continual allowance
+327	11114	SBNP	
+349	12087	SBNP	2930 with all his reign and his might, and the times that we
+350	12098	SBNP	
+376	12958	SBNP	3623 “Cyrus king of Persia says, ‘God, the God of heaven, ha
+377	12969	SBNP	
+385	13261	SBNP	1044 All these had taken foreign wives; and some of them had
+386	13272	SBNP	
+397	13693	SBNP	1331 and for the wood offering, at times appointed, and for
+398	13704	SBNP	
+404	13883	SBNP	103 For Mordecai the Jew was next to King Ahasuerus, and gre
+405	13894	SBNP	
+425	15008	SBNP	4217 So Job died, being old and full of days.
+426	15019	SBNP	
+477	17775	SBNP	1506 Let everything that has breath praise Yah! Praise Yah!
+478	17786	SBNP	
+495	18734	SBNP	3131 Give her of the fruit of her hands! Let her works prais
+496	18745	SBNP	
+502	18981	SBNP	1214 For God will bring every work into judgment, with every
+503	18992	SBNP	
+506	19119	SBNP	814 Beloved Come away, my beloved! Be like a gazelle or a yo
+507	19130	SBNP	
+544	20490	SBNP	6624 “They will go out, and look at the dead bodies of the m
+545	20501	SBNP	
+587	21919	SBNP	5234 For his allowance, there was a continual allowance give
+588	21930	SBNP	
+592	22091	SBNP	522 But you have utterly rejected us. You are very angry ag
+593	22102	SBNP	
+631	23425	SBNP	4835 “It shall be eighteen thousand reeds around: and the na
+632	23436	SBNP	
+644	23807	SBNP	1213 “But go your way until the end; for you will rest, and
+645	23818	SBNP	
+651	24031	SBNP	149 Who is wise, that he may understand these things? Who is
+652	24042	SBNP	
+654	24120	SBNP	321 I will cleanse their blood, that I have not cleansed: fo
+655	24131	SBNP	
+660	24288	SBNP	915 I will plant them on their land, and they will no more b
+661	24299	SBNP	
+662	24323	SBNP	121 Saviors will go up on Mount Zion to judge the mountains
+663	24334	SBNP	
+665	24388	SBNP	411 Should not I be concerned for Nineveh, that great city,
+666	24399	SBNP	
+670	24513	SBNP	720 You will give truth to Jacob, and mercy to Abraham, as
+671	24524	SBNP	
+673	24576	SBNP	319 There is no healing your wound, for your injury is fatal
+674	24587	SBNP	
+676	24648	SBNP	319 God, the Lord, is my strength. He makes my feet like dee
+677	24659	SBNP	
+679	24717	SBNP	320 At that time I will bring you in, and at that time I wil
+680	24728	SBNP	
+682	24770	SBNP	223 In that day, says the Lord God of Hosts, I will take you
+683	24781	SBNP	
+690	25008	SBNP	1421 Yes, every pot in Jerusalem and in Judah will be holy t
+691	25019	SBNP	
+693	25080	SBNP	46 He will turn the hearts of the fathers to the children,
+695	25087	SBNP	The Gospel of Jesus Christ
+696	25098	SBNP	
+724	26199	SBNP	2820 teaching them to observe all things that I commanded yo
+725	26210	SBNP	
+742	26906	SBNP	1620 They went out, and preached everywhere, the Lord workin
+743	26917	SBNP	
+771	28094	SBNP	2453 and were continually in the temple, praising and blessi
+772	28105	SBNP	
+794	29007	SBNP	2125 There are also many other things which Jesus did, which
+795	29018	SBNP	
+821	30055	SBNP	2831 preaching God’s Kingdom, and teaching the things concer
+822	30066	SBNP	
+833	30517	SBNP	1624 The grace of our Lord Jesus Christ be with you all! Ame
+834	30528	SBNP	
+845	30983	SBNP	1624 My love to all of you in Christ Jesus. Amen.
+846	30994	SBNP	
+853	31266	SBNP	1314 The grace of the Lord Jesus Christ, God’s love, and the
+854	31277	SBNP	
+858	31434	SBNP	618 The grace of our Lord Jesus Christ be with your spirit,
+859	31445	SBNP	
+863	31608	SBNP	624 Grace be with all those who love our Lord Jesus Christ w
+864	31619	SBNP	
+867	31729	SBNP	423 The grace of the Lord Jesus Christ be with you all. Amen
+868	31740	SBNP	
+871	31841	SBNP	418 The salutation of me, Paul, with my own hand: remember m
+872	31852	SBNP	
+875	31948	SBNP	528 The grace of our Lord Jesus Christ be with you. Amen.
+876	31959	SBNP	
+878	32011	SBNP	318 The grace of our Lord Jesus Christ be with you all. Amen
+879	32022	SBNP	
+882	32143	SBNP	621 which some profess, and thus have wandered from the fait
+883	32154	SBNP	
+885	32243	SBNP	422 The Lord Jesus Christ be with your spirit. Grace be with
+886	32254	SBNP	
+888	32305	SBNP	315 All who are with me greet you. Greet those who love us i
+889	32316	SBNP	
+890	32344	SBNP	125 The grace of our Lord Jesus Christ be with your spirit.
+891	32355	SBNP	
+900	32673	SBNP	1325 Grace be with you all. Amen.
+901	32684	SBNP	
+904	32799	SBNP	520 let him know that he who turns a sinner from the error o
+905	32810	SBNP	
+908	32922	SBNP	514 Greet one another with a kiss of love. Peace be to all o
+909	32933	SBNP	
+911	32999	SBNP	318 But grow in the grace and knowledge of our Lord and Savi
+912	33010	SBNP	
+915	33122	SBNP	521 Little children, keep yourselves from idols.
+916	33133	SBNP	
+917	33149	SBNP	113 The children of your chosen sister greet you. Amen.
+918	33160	SBNP	
+919	33177	SBNP	114 but I hope to see you soon. Then we will speak face to f
+920	33188	SBNP	
+921	33216	SBNP	125 to God our Savior, who alone is wise, be glory and majes
+922	33227	SBNP	
+935	33655	SBNP	2221 The grace of the Lord Jesus Christ be with all the sain
+936	33659	SBNP	Bible Concordance
+938	33675	SBNP	E-Sword: Free Bible Study for the PC  http://www.e-sword.ne
+939	33688	SBNP	* Biblica Open Bible Maps, © 2023–2026 Biblica, Inc. This w
+941	33691	PBB	
+948	33701	SBNP	An Introduction
+970	33851	SBNP	Find out for yourself how profoundly God is speaking to mank

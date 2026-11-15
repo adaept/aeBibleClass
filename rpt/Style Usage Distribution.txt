@@ -1,4 +1,10 @@
 === Style Usage Distribution ===
+RWBFrontTitle: 1
+RWBFrontEpigraph: 1
+RWBFrontHeading: 2
+RWBFrontBody: 18
+RWBFrontSignature: 1
+RWBFrontCopyright: 4
 BodyText: 502
 FrontPageTopLine: 1
 TitleEyebrow: 2
@@ -36,8 +42,6 @@ AuthorSectionHead: 3
 Footnote Text: 1000
 ParallelText: 12
 ParallelHeader: 24
-Header: 1
-TheHeaders: 137
-Footer: 1
-TheFooters: 5
-Total paragraphs (all styles): 35024
+TheHeaders: 138
+TheFooters: 6
+Total paragraphs (all styles): 35051
