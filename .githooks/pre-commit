@@ -1,0 +1,6 @@
+#!/bin/sh
+# aeBibleClass pre-commit: the line-ending policy (owner decision 2026-11-14, LINE_ENDINGS.md). Refuses the commit on any violation.
+# Install once per clone: git config core.hooksPath .githooks
+# Deliberate bypass: git commit --no-verify. A bypass is not silent later: node tools/check-eol.mjs and node --test tools/check-eol.test.mjs fail until it is fixed.
+root=$(git rev-parse --show-toplevel)
+exec node "$root/tools/check-eol.mjs"

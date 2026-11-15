@@ -1,5 +1,7 @@
 # README.md
 
+> **LINE ENDINGS ARE A HARD RULE (owner decision 2026-11-14).** Git stores LF; the working copy is **CRLF for VBA source (`.bas`, `.cls`, `.frm`) and `.bat`/`.cmd`, LF for everything else.** The rule lives in `.gitattributes` and is checked by `tools/check-eol.mjs`, the pre-commit hook and the tests: a violation fails them. Read `LINE_ENDINGS.md` before writing or converting any file; after writing a `.bas`, `.cls`, `.bat` or `.cmd` run `node tools/check-eol.mjs --fix`; before ending a task that wrote files run `node tools/check-eol.mjs`.
+
 This file provides guidance when working with code in this repository.
 
 ## Project Overview

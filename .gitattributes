@@ -1,3 +1,30 @@
+# LINE ENDINGS - owner decision 2026-11-14. Read LINE_ENDINGS.md. Enforced by tools/check-eol.mjs (node tools/check-eol.mjs, the pre-commit hook).
+# git STORES LF always; the WORKING copy follows these rules: VBA source and Windows batch files CRLF, everything else LF.
+# A file type that is not listed gets the default (LF). A new kind of file that must differ is added HERE, never fixed by hand.
+* text=auto eol=lf
+*.bas text eol=crlf
+*.cls text eol=crlf
+*.frm text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.docm binary
+*.docx binary
+*.xlsx binary
+*.zip binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pyc binary
+# Reports and exports that VBA (or another tool) writes in its own style: the working copy is not checked (the index still must hold LF).
+rpt/** eol-exempt
+
 ###################
 ## Ref: http://stackoverflow.com/questions/5046032/git-says-binary-files-a-and-b-differ-on-for-reg-files
 ## github was not showing diff on qry file
