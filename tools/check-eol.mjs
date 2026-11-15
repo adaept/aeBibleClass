@@ -12,7 +12,7 @@
 //   node check-eol.mjs --fix      rewrite the WORKING files to the rule (only line endings change; no content is staged: it only refreshes git's
 //                                 size cache for files without real changes, so `git status` does not list them as modified)
 //   node check-eol.mjs --repo <dir>
-// IDENTICAL COPIES of this file live in aeBibleAddin/scripts, aeBibleClass/tools and aeRWB/tools: change all three together.
+// IDENTICAL COPIES of this file live in every repository that follows the policy (the list is in adaept5tudio/CLAUDE.md, "Line endings"): change all of them together.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';

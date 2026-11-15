@@ -1,6 +1,6 @@
 # LINE ENDINGS: the one rule for every repository (owner decision 2026-11-14)
 
-**This file is identical in `aeBibleAddin`, `aeBibleClass` and `aeRWB`.** The rule is enforced, not advisory: a violation fails the check, the pre-commit hook and the tests.
+**This file is identical in every repository that follows the rule** (`aeBibleAddin`, `aeBibleClass`, `aeRWB`, `adaept5tudio`; the studio-wide list with the status of each repository is in `adaept5tudio/CLAUDE.md`, section "Line endings"). The rule is enforced, not advisory: a violation fails the check, the pre-commit hook and the tests.
 
 ## The rule
 
@@ -27,9 +27,9 @@ Three writers with no coordination: git itself (`core.autocrlf=true` on this Win
 ## How it is enforced, and what is not
 
 - **`.gitattributes`** in each repository holds the rule (`* text=auto eol=lf`, then the exceptions). An explicit `eol=` overrides `core.autocrlf`, so a checkout is the same on every machine.
-- **`check-eol.mjs`** (`aeBibleAddin/scripts/`, `aeBibleClass/tools/`, `aeRWB/tools/`: identical copies, change all three together) reads `git ls-files --eol` and exits 1 with the list of violations. `node <folder>/check-eol.mjs --fix` rewrites the working files to the rule (only line endings change; nothing is staged).
-- **Pre-commit hook** `.githooks/pre-commit` runs it on every commit. Install once per clone: `git config core.hooksPath .githooks` (`aeBibleAddin`: `npm run hooks.install`).
-- **Tests:** `scripts/check-eol.test.mjs` / `tools/check-eol.test.mjs` (10 tests: throw-away repositories prove every error path, and the last one checks the real repository). `aeBibleAddin`: `npm run check.eol`, `npm run test.eol`, both inside `npm run check` (`test.eol` is in `test.all`). `aeRWB`: `npm test`. `aeBibleClass`: `node --test tools/check-eol.test.mjs`.
+- **`check-eol.mjs`** (`aeBibleAddin/scripts/`, and `tools/` in `aeBibleClass`, `aeRWB` and `adaept5tudio`: identical copies, change all of them together) reads `git ls-files --eol` and exits 1 with the list of violations. `node <folder>/check-eol.mjs --fix` rewrites the working files to the rule (only line endings change; nothing is staged).
+- **Pre-commit hook** `.githooks/pre-commit` runs it on every commit. Install once per clone: `git config core.hooksPath .githooks` (`npm run hooks.install` where the repository has it).
+- **Tests:** `scripts/check-eol.test.mjs` / `tools/check-eol.test.mjs` (10 tests: throw-away repositories prove every error path, and the last one checks the real repository). `aeBibleAddin`: `npm run check.eol`, `npm run test.eol`, both inside `npm run check` (`test.eol` is in `test.all`). `aeRWB`: `npm test`. `aeBibleClass`: `node --test tools/check-eol.test.mjs`. `adaept5tudio`: `npm run check.eol`, and `npm test` runs the tests.
 - **What is NOT enforced:** `git commit --no-verify` skips the hook (git offers no way to forbid it); the next `check`, test run or hook run then fails until the files are fixed. There is no CI step yet (a workflow edit that cannot be tested here). Untracked files are not seen until they are staged. A tool that rewrites a tracked file in another style after a check is caught only at the next check.
 
 ## What to do

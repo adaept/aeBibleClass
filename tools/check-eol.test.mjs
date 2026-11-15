@@ -1,6 +1,6 @@
 // Tests of check-eol.mjs (the line-ending policy check, LINE_ENDINGS.md). Run: node --test scripts/check-eol.test.mjs  (aeRWB: npm test)
 // Every case builds a throw-away git repository, so the real repositories are never touched.
-// IDENTICAL COPIES of this file live next to check-eol.mjs in aeBibleAddin/scripts, aeBibleClass/tools and aeRWB/tools.
+// IDENTICAL COPIES of this file live next to check-eol.mjs in every repository that follows the policy (list: adaept5tudio/CLAUDE.md, "Line endings").
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
