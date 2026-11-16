@@ -84,6 +84,7 @@ Private m_totalPagesIn As Double    ' pages read from disk during this run
 Private m_minFreeMB As Double       ' lowest free physical memory seen at a lap (MB)
 Private m_rsidWas As Boolean        ' RT-40: Options.StoreRSIDOnSave before the export changed it
 Private m_rsidChanged As Boolean    ' RT-40: True while the export holds Options.StoreRSIDOnSave off
+Private m_snapshotPath As String    ' RT-98 (FU-62): the "before" snapshot Pass 9 compares with; "" when none was made
 
 Private Declare PtrSafe Function GetCurrentProcessId Lib "kernel32" () As Long
 
@@ -194,6 +195,7 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     On Error GoTo PROC_ERR
 
     m_haltFired = False
+    m_snapshotPath = ""
     m_report = ""
     m_issues = 0
     m_reportFolder = ""
@@ -334,6 +336,19 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
         If hyphensLeft <> 0 Then
             HaltExport "Pass4b_StripOptionalHyphens", _
                 hyphensLeft & " optional hyphen(s) remain after removal"
+            GoTo PROC_HALT
+        End If
+    End If
+
+    ' Pass 4b2 - RT-98 (FU-62): snapshot of the working copy as the "before" of Pass 9. It is taken after the strip and the hyphen
+    ' removal (the last passes that change text or paragraphs) and before the emphasis conversion, so it always holds the CURRENT
+    ' verse text: a text edit can no longer make Pass 9 fail, while the emphasis, alignment, style, section and header checks still
+    ' compare a true before with a true after. BaselineDocxRelPath, when set, names a stored docx instead (the old behaviour).
+    If Len(oSettings("BaselineDocxRelPath")) = 0 And oSettings("ReplaceEmphasisStyles") Then
+        m_snapshotPath = Pass4b2_SaveBaselineSnapshot(oDoc, SourceFolder)
+        LapTimer "Pass4b2_SaveBaselineSnapshot"
+        If Len(m_snapshotPath) = 0 Then
+            HaltExport "Pass4b2_SaveBaselineSnapshot", "the baseline snapshot could not be saved - see the Immediate window"
             GoTo PROC_HALT
         End If
     End If
@@ -497,8 +512,14 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
     ' styles may have changed.
     If oSettings("ReplaceEmphasisStyles") Then
         Dim baselinePath As String
-        baselinePath = SourceFolder & oSettings("BaselineDocxRelPath")
-        If Dir(baselinePath) = "" Then
+        If Len(oSettings("BaselineDocxRelPath")) = 0 Then
+            baselinePath = m_snapshotPath
+        Else
+            baselinePath = SourceFolder & oSettings("BaselineDocxRelPath")
+        End If
+        If Len(baselinePath) = 0 Then
+            ExportLog "Pass9_VerifyCharStyles: SKIPPED - no baseline snapshot was made"
+        ElseIf Dir(baselinePath) = "" Then
             ExportLog "Pass9_VerifyCharStyles: SKIPPED - no baseline at " & baselinePath
         Else
             Dim verifyRc As Long
@@ -526,6 +547,15 @@ Public Sub ExportScriptureOnlyDocx(Optional ByVal sourcePath As String, _
             ExportLog "  working copy NOT deleted (Err " & Err.Number & "): " & workingPath
         End If
         Err.Clear
+        If Len(m_snapshotPath) > 0 Then
+            Kill m_snapshotPath
+            If Err.Number = 0 Then
+                ExportLog "  baseline snapshot deleted: " & m_snapshotPath
+            Else
+                ExportLog "  baseline snapshot NOT deleted (Err " & Err.Number & "): " & m_snapshotPath
+            End If
+            Err.Clear
+        End If
         On Error GoTo PROC_ERR
     Else
         ExportLog "ExportScriptureOnlyDocx: FINISHED WITH " & m_issues & " ISSUE(S). " & _
@@ -1473,7 +1503,10 @@ Public Function GetExportSettings() As Object
     ' verify against a baseline .docx (path relative to the source folder;
     ' the verify step is skipped, and logged, if the file is absent).
     d("StripRibbonAfterSave") = True
-    d("BaselineDocxRelPath") = "Bible\v0.0.RadiantWordBible.docx"
+    ' RT-98 (FU-62): "" = Pass 9 compares with a snapshot of the working copy taken after Pass 4b (the current text). A path
+    ' relative to the source folder names a stored docx instead; the old one, Bible\v0.0.RadiantWordBible.docx, holds the v1.1
+    ' text and fails after any verse edit (rvw\RWB Export Pass 9 Baseline Issue 2026-11-15.md in aeBibleAddin).
+    d("BaselineDocxRelPath") = ""
     ' RT-31: embed the three free fonts in the saved .docx (Word's "Embed fonts in the file") and halt-check the
     ' embedded set after the save (py\check_embedded_fonts.py). On in the export copy only; the dev docm is untouched.
     d("EmbedFonts") = True
@@ -1565,6 +1598,28 @@ PROC_ERR:
         " | Err: " & Err.Number & " | " & Err.Description
     Pass4b_StripOptionalHyphens = -1
     Resume PROC_EXIT
+End Function
+
+' ==========================================================================
+' Pass4b2_SaveBaselineSnapshot (RT-98, FU-62)
+' --------------------------------------------------------------------------
+' Saves the working copy, as it is after the strip passes and the hyphen removal, as RadiantWordBible_baseline.docx next to it.
+' Pass 9 compares the final docx with this file. SaveAs2 renames the document in memory; the later SaveAs2 to the destination
+' is unaffected (the export already converts the docm to a docx there). `sourceFolderPath` is the folder of the source (with the
+' trailing backslash); SourceFolder is a local of ExportScriptureOnlyDocx, not visible here. Returns the path, or "" on failure.
+' ==========================================================================
+Private Function Pass4b2_SaveBaselineSnapshot(ByVal oDoc As Object, ByVal sourceFolderPath As String) As String
+    On Error GoTo PROC_ERR
+    Dim snapshotPath As String
+    snapshotPath = sourceFolderPath & "RadiantWordBible_baseline.docx"
+    If Dir(snapshotPath) <> "" Then Kill snapshotPath
+    oDoc.SaveAs2 fileName:=snapshotPath, FileFormat:=wdFormatXMLDocument
+    ExportLog "Pass4b2_SaveBaselineSnapshot: saved " & snapshotPath
+    Pass4b2_SaveBaselineSnapshot = snapshotPath
+    Exit Function
+PROC_ERR:
+    ExportLog "ERROR in basBibleOnlyExport.Pass4b2_SaveBaselineSnapshot | Erl: " & Erl & " | Err " & Err.Number & ": " & Err.Description
+    Pass4b2_SaveBaselineSnapshot = ""
 End Function
 
 ' ==========================================================================

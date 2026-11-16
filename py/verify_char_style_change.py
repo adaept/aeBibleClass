@@ -32,9 +32,13 @@ new export. Checks:
      checks missed the style purge deleting TheHeaders/TheFooters while 132
      header + 1 footer paragraphs used them (2026-10-09).
 
+  8. Section-break carriers (RT-98, 2026-11-16): empty BodyText paragraphs that only carry a section break are left out of checks 1 to 3
+     in both files, because the section surgery removes some of them on purpose; the numbers are printed and the new file may not have more.
+
   7. RWB front matter (2026-11-12): paragraphs whose style starts with "RWBFront" (the leading front sections the export keeps) are
      left out of checks 1 to 3 and of the character counts, so a baseline without front matter compares clean; the number skipped is
-     printed, and the baseline must have none.
+     printed. The baseline has none (a stored file from before the front matter) or the same number as the new file (RT-98, 2026-11-16:
+     a snapshot of the same export taken after the strip passes, which is the "before" the export now uses by default).
 
 Usage:
     python3 -I py/verify_char_style_change.py baseline.docx new.docx [--verse-align left]
@@ -55,22 +59,31 @@ FRONT_PREFIX = 'RWBFront'
 
 def read(path):
     """Return (paragraph style list, paragraph text list excl. index rows,
-    Counter of chars covered per character style id), all without the RWBFront paragraphs, and the number of those paragraphs."""
+    Counter of chars covered per character style id), all without the RWBFront paragraphs and without the empty section-break carriers,
+    the number of RWBFront paragraphs and the number of carriers."""
     with zipfile.ZipFile(path) as z:
         root = ET.fromstring(z.read('word/document.xml'))
     styles = []
     texts = []
     chars = Counter()
     front = 0
+    carriers = 0
     for p in root.iter(W + 'p'):
         ppr = p.find(W + 'pPr')
         ps = ''
+        carries_section = False
         if ppr is not None:
             st = ppr.find(W + 'pStyle')
             if st is not None:
                 ps = st.get(W + 'val', '')
+            carries_section = ppr.find(W + 'sectPr') is not None
         if ps.startswith(FRONT_PREFIX):
             front += 1
+            continue
+        if carries_section and ps == 'BodyText' and not any((t.text or '').strip() for t in p.iter(W + 't')):
+            # RT-98 (FU-62): an empty BodyText paragraph that only carries a section break. The section surgery (Pass 5) removes some of
+            # them on purpose, which shifts every later paragraph, so they are counted and left out of the comparison in both files.
+            carriers += 1
             continue
         styles.append(ps)
         buf = []
@@ -91,7 +104,7 @@ def read(path):
                     buf.append('\t')
         if ps not in INDEX_STYLES:
             texts.append(''.join(buf))
-    return styles, texts, chars, front
+    return styles, texts, chars, front, carriers
 
 
 def header_footer_styles(path):
@@ -173,12 +186,18 @@ def main(argv):
     if len(argv) != 3:
         print(__doc__)
         return 2
-    b_styles, b_texts, b_chars, b_front = read(argv[1])
-    n_styles, n_texts, n_chars, n_front = read(argv[2])
+    b_styles, b_texts, b_chars, b_front, b_carriers = read(argv[1])
+    n_styles, n_texts, n_chars, n_front, n_carriers = read(argv[2])
     failures = []
-    if b_front:
-        failures.append('the baseline holds %d RWBFront paragraph(s); it must be a file without front matter' % b_front)
+    # RT-98 (FU-62): the baseline may be a snapshot of the same export (taken after the strip, with the front matter kept): it then
+    # holds the same number of RWBFront paragraphs as the new file. A stored baseline from before the front matter has none.
+    if b_front and b_front != n_front:
+        failures.append('the baseline holds %d RWBFront paragraph(s) and the new file %d: the front matter must be the same in both '
+                        '(or absent from the baseline)' % (b_front, n_front))
     print('RWBFront paragraphs skipped: baseline %d, new %d' % (b_front, n_front))
+    print('empty section-break carriers skipped: baseline %d, new %d (Pass 5 removes %d)' % (b_carriers, n_carriers, b_carriers - n_carriers))
+    if n_carriers > b_carriers:
+        failures.append('the new file has more section-break carriers (%d) than the baseline (%d)' % (n_carriers, b_carriers))
 
     if b_styles != n_styles:
         failures.append('paragraph style sequence differs (%d vs %d paragraphs)'
