@@ -476,7 +476,7 @@ Genesis 19:15	 When the morning came, then the angels hurried Lot, saying, “
 Genesis 19:16	 But he lingered; and the men grabbed his hand, his wife’s hand, and his two daughters’ hands, God being merciful to him; and they took him out, and set him outside of the city.
 Genesis 19:17	 It came to pass, when they had taken them out, that he said, “Escape for your life! Do not look behind you, and do not stay anywhere in the plain. Escape to the mountains, lest you be consumed!”
 Genesis 19:18	 Lot said to them, “Oh, not so, my lord.
-Genesis 19:19	 See now, your servant has found favor in your sight, and you have magnified your loving kindness, which you have shown to me in saving my life. I cannot escape to the mountain, lest evil overtake me, and I die.
+Genesis 19:19	 See now, your servant has found favor in your sight, and you have magnified your loving kindness, which you have shown to me in saving my life. I cannot escape to the mountain, lest disaster overtake me, and I die.
 Genesis 19:20	 See now, this city is near to flee to, and it is a little one. Oh let me escape there (is it not a little one?), and my soul will live.”
 Genesis 19:21	 He said to him, “Behold, I have granted your request concerning this thing also, that I will not overthrow the city of which you have spoken.
 Genesis 19:22	 Hurry, escape there, for I cannot do anything until you get there.” Therefore the name of the city was called Zoar.
@@ -1467,7 +1467,7 @@ Genesis 48:12	 Joseph brought them out from between his knees, and he bowed hi
 Genesis 48:13	 Joseph took them both, Ephraim in his right hand toward Israel’s left hand, and Manasseh in his left hand toward Israel’s right hand, and brought them near to him.
 Genesis 48:14	 Israel stretched out his right hand, and laid it on Ephraim’s head, who was the younger, and his left hand on Manasseh’s head, guiding his hands knowingly, for Manasseh was the firstborn.
 Genesis 48:15	 He blessed Joseph, and said, “The God before whom my fathers Abraham and Isaac walked, the God who has fed me all my life long to this day,
-Genesis 48:16	 the angel who has redeemed me from all evil, bless the lads, and let my name be named on them, and the name of my fathers Abraham and Isaac. Let them grow into a multitude upon the earth.”
+Genesis 48:16	 the angel who has redeemed me from all harm, bless the lads, and let my name be named on them, and the name of my fathers Abraham and Isaac. Let them grow into a multitude upon the earth.”
 Genesis 48:17	 When Joseph saw that his father laid his right hand on the head of Ephraim, it displeased him. He held up his father’s hand, to remove it from Ephraim’s head to Manasseh’s head.
 Genesis 48:18	 Joseph said to his father, “Not so, my father, for this is the firstborn. Put your right hand on his head.”
 Genesis 48:19	 His father refused, and said, “I know, my son, I know. He also will become a people, and he also will be great. However, his younger brother will be greater than he, and his offspring will become a multitude of nations.”
@@ -7737,9 +7737,9 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Samuel 20:4	 Then Jonathan said to David, “Whatever your soul desires, I will even do it for you.”
 1 Samuel 20:5	 David said to Jonathan, “Behold, tomorrow is the new moon, and I should not fail to dine with the king; but let me go, that I may hide myself in the field to the third day at evening.
 1 Samuel 20:6	 If your father misses me at all, then say, ‘David earnestly asked leave of me that he might run to Bethlehem, his city; for it is the yearly sacrifice there for all the family.’
-1 Samuel 20:7	 If he says, ‘It is well,’ your servant shall have peace; but if he is angry, then know that evil is determined by him.
+1 Samuel 20:7	 If he says, ‘It is well,’ your servant shall have peace; but if he is angry, then know that disaster is determined by him.
 1 Samuel 20:8	 Therefore deal kindly with your servant, for you have brought your servant into a covenant of God with you; but if there is iniquity in me, kill me yourself, for why should you bring me to your father?”
-1 Samuel 20:9	 Jonathan said, “Far be it from you; for if I should at all know that evil were determined by my father to come on you, then would I not tell you that?”
+1 Samuel 20:9	 Jonathan said, “Far be it from you; for if I should at all know that disaster were determined by my father to come on you, then would I not tell you that?”
 1 Samuel 20:10	 Then David said to Jonathan, “Who will tell me if your father answers you roughly?”
 1 Samuel 20:11	 Jonathan said to David, “Come! Let us go out into the field.” They both went out into the field.
 1 Samuel 20:12	 Jonathan said to David, “By God, the God of Israel, when I have sounded out my father about this time tomorrow, or the third day, behold, if there is good toward David, will I not then send to you and disclose it to you?
@@ -7878,7 +7878,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Samuel 25:14	 But one of the young men told Abigail, Nabal’s wife, saying, “Behold, David sent messengers out of the wilderness to greet our master; and he insulted them.
 1 Samuel 25:15	 But the men were very good to us, and we were not harmed, and we did not miss anything as long as we went with them, when we were in the fields.
 1 Samuel 25:16	 They were a wall to us both by night and by day, all the while we were with them keeping the sheep.
-1 Samuel 25:17	 Now therefore know and consider what you will do; for evil is determined against our master and against all his house, for he is such a worthless fellow that one cannot speak to him.”
+1 Samuel 25:17	 Now therefore know and consider what you will do; for disaster is determined against our master and against all his house, for he is such a worthless fellow that one cannot speak to him.”
 1 Samuel 25:18	 Then Abigail hurried and took two hundred loaves of bread, two containers of wine, five sheep ready dressed, five seahs of parched grain, one hundred clusters of raisins, and two hundred cakes of figs, and laid them on donkeys.
 1 Samuel 25:19	 She said to her young men, “Go on before me. Behold, I am coming after you.” But she did not tell her husband, Nabal.
 1 Samuel 25:20	 As she rode on her donkey, and came down hidden by the mountain, behold, David and his men came down toward her, and she met them.
@@ -8403,7 +8403,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 15:11	 Two hundred men went with Absalom out of Jerusalem, who were invited, and went in their simplicity; and they did not know anything.
 2 Samuel 15:12	 Absalom sent for Ahithophel the Gilonite, David’s counselor, from his city, even from Giloh, while he was offering the sacrifices. The conspiracy was strong; for the people increased continually with Absalom.
 2 Samuel 15:13	 A messenger came to David, saying, “The hearts of the men of Israel are after Absalom.”
-2 Samuel 15:14	 David said to all his servants who were with him at Jerusalem, “Arise! Let us flee; or else none of us will escape from Absalom. Hurry to depart, lest he overtake us quickly, and bring down evil on us, and strike the city with the edge of the sword.”
+2 Samuel 15:14	 David said to all his servants who were with him at Jerusalem, “Arise! Let us flee; or else none of us will escape from Absalom. Hurry to depart, lest he overtake us quickly, and bring down disaster on us, and strike the city with the edge of the sword.”
 2 Samuel 15:15	 The king’s servants said to the king, “Behold, your servants are ready to do whatever my lord the king chooses.”
 2 Samuel 15:16	 The king went out, and all his household after him. The king left ten women, who were concubines, to keep the house.
 2 Samuel 15:17	 The king went out, and all the people after him; and they stayed in Beth Merhak.
@@ -8518,7 +8518,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 2 Samuel 19:4	 The king covered his face, and the king cried with a loud voice, “My son Absalom, Absalom, my son, my son!”
 2 Samuel 19:5	 Joab came into the house to the king, and said, “Today you have shamed the faces of all your servants, who today have saved your life, and the lives of your sons and of your daughters, and the lives of your wives, and the lives of your concubines;
 2 Samuel 19:6	 in that you love those who hate you, and hate those who love you. For you have declared today that princes and servants are nothing to you. For today I perceive that if Absalom had lived, and we had all died today, then it would have pleased you well.
-2 Samuel 19:7	 Now therefore arise, go out, and speak to comfort your servants; for I swear by God, if you do not go out, not a man will stay with you this night. That would be worse to you than all the evil that has happened to you from your youth until now.”
+2 Samuel 19:7	 Now therefore arise, go out, and speak to comfort your servants; for I swear by God, if you do not go out, not a man will stay with you this night. That would be worse to you than all the trouble that has happened to you from your youth until now.”
 2 Samuel 19:8	 Then the king arose, and sat in the gate. They told to all the people, saying, “Behold, the king is sitting in the gate.” All the people came before the king. Now Israel had fled every man to his tent.
 2 Samuel 19:9	 All the people were at strife throughout all the tribes of Israel, saying, “The king delivered us out of the hand of our enemies, and he saved us out of the hand of the Philistines; and now he has fled out of the land from Absalom.
 2 Samuel 19:10	 Absalom, whom we anointed over us, is dead in battle. Now therefore why do not you speak a word of bringing the king back?”
@@ -8882,7 +8882,7 @@ Ruth 4:22	 and Obed became the father of Jesse, and Jesse became the father of
 1 Kings 5:1	 Hiram king of Tyre sent his servants to Solomon; for he had heard that they had anointed him king in the place of his father, and Hiram had always loved David.
 1 Kings 5:2	 Solomon sent to Hiram, saying,
 1 Kings 5:3	 “You know that David my father could not build a house for the name of the Lord his God because of the wars which were around him on every side, until God put his enemies under the soles of his feet.
-1 Kings 5:4	 But now the Lord my God has given me rest on every side. There is no enemy and no evil occurrence.
+1 Kings 5:4	 But now the Lord my God has given me rest on every side. There is no enemy and no disaster.
 1 Kings 5:5	 Behold, I intend to build a house for the name of the Lord my God, as God spoke to David my father, saying, ‘Your son, whom I will set on your throne in your place shall build the house for my name.’
 1 Kings 5:6	 Now therefore command that cedar trees be cut for me out of Lebanon. My servants will be with your servants; and I will give you wages for your servants according to all that you say. For you know that there is nobody among us who knows how to cut timber like the Sidonians.”
 1 Kings 5:7	 When Hiram heard the words of Solomon, he rejoiced greatly, and said, “Blessed is God today, who has given to David a wise son to rule over this great people.”
@@ -13583,7 +13583,7 @@ Job 30:22	 You lift me up to the wind, and drive me with it. You dissolve me i
 Job 30:23	 For I know that you will bring me to death, to the house appointed for all living.
 Job 30:24	 “However does one not stretch out a hand in his fall? Or in his calamity therefore cry for help?
 Job 30:25	 Did I not weep for him who was in trouble? Was my soul not grieved for the needy?
-Job 30:26	 When I looked for good, then evil came. When I waited for light, darkness came.
+Job 30:26	 When I looked for good, then disaster came. When I waited for light, darkness came.
 Job 30:27	 My heart is troubled, and does not rest. Days of affliction have come on me.
 Job 30:28	 I go mourning without the sun. I stand up in the assembly, and cry for help.
 Job 30:29	 I am a brother to jackals, and a companion to ostriches.
@@ -13617,7 +13617,7 @@ Job 31:25	 If I have rejoiced because my wealth was great, and because my hand
 Job 31:26	 if I have seen the sun when it shined, or the moon moving in splendor,
 Job 31:27	 and my heart has been secretly enticed, and my hand threw a kiss from my mouth,
 Job 31:28	 this also would be an iniquity to be punished by the judges; for I should have denied the God who is above.
-Job 31:29	 “If I have rejoiced at the destruction of him who hated me, or lifted up myself when evil found him
+Job 31:29	 “If I have rejoiced at the destruction of him who hated me, or lifted up myself when trouble found him
 Job 31:30	 (yes, I have not allowed my mouth to sin by asking his life with a curse);
 Job 31:31	 if the men of my tent have not said, ‘Who can find one who has not been filled with his meat?’
 Job 31:32	 (the foreigner has not camped in the street, but I have opened my doors to the traveler);
@@ -14409,7 +14409,7 @@ Psalm 34:17	 The righteous cry, and God hears, and delivers them out of all th
 Psalm 34:18	 God is near to those who have a broken heart, and saves those who have a crushed spirit.
 Psalm 34:19	 Many are the afflictions of the righteous, but God delivers him out of them all.
 Psalm 34:20	 He protects all of his bones. Not one of them is broken.
-Psalm 34:21	 Evil shall kill the wicked. Those who hate the righteous shall be condemned.
+Psalm 34:21	 Disaster shall kill the wicked. Those who hate the righteous shall be condemned.
 Psalm 34:22	 God redeems the soul of his servants. None of those who take refuge in him shall be condemned.
 Psalm 35:1	 Contend, God, with those who contend with me. Fight against those who fight against me.
 Psalm 35:2	 Take hold of shield and buckler, and stand up for my help.
@@ -14547,7 +14547,7 @@ Psalm 41:1	 Blessed is he who considers the poor. God will deliver him in the 
 Psalm 41:2	 God will preserve him, and keep him alive. He shall be blessed on the earth, and he will not surrender him to the will of his enemies.
 Psalm 41:3	 God will sustain him on his sickbed, and restore him from his bed of illness
 Psalm 41:4	 I said, “God, have mercy on me! Heal me, for I have sinned against you.”
-Psalm 41:5	 My enemies speak evil against me: “When will he die, and his name perish?”
+Psalm 41:5	 My enemies speak ill of me: “When will he die, and his name perish?”
 Psalm 41:6	 If he comes to see me, he speaks falsehood. His heart gathers iniquity to itself. When he goes abroad, he tells it.
 Psalm 41:7	 All who hate me whisper together against me. They imagine the worst for me.
 Psalm 41:8	 “An evil disease”, they say, “has afflicted him. Now that he lies he shall rise up no more.”
@@ -15405,7 +15405,7 @@ Psalm 91:6	 nor of the pestilence that walks in darkness, nor of the destructi
 Psalm 91:7	 A thousand may fall at your side, and ten thousand at your right hand; but it will not come near you.
 Psalm 91:8	 You will only look with your eyes, and see the recompense of the wicked.
 Psalm 91:9	 Because you have made God your refuge, and the Most High your dwelling place,
-Psalm 91:10	 no evil shall happen to you, neither shall any plague come near your dwelling.
+Psalm 91:10	 no harm shall happen to you, neither shall any plague come near your dwelling.
 Psalm 91:11	 For he will put his angels in charge of you, to guard you in all your ways.
 Psalm 91:12	 They will bear you up in their hands, so that you will not dash your foot against a stone.
 Psalm 91:13	 You will tread on the lion and cobra. You will trample the young lion and the serpent underfoot.
@@ -16740,7 +16740,7 @@ Proverbs 12:17	 He who is truthful testifies honestly, but a false witness lie
 Proverbs 12:18	 There is one who speaks rashly like the piercing of a sword, but the tongue of the wise heals.
 Proverbs 12:19	 Truth’s lips will be established forever, but a lying tongue is only momentary.
 Proverbs 12:20	 Deceit is in the heart of those who plot evil, but joy comes to the promoters of peace.
-Proverbs 12:21	 No mischief shall happen to the righteous, but the wicked shall be filled with evil.
+Proverbs 12:21	 No mischief shall happen to the righteous, but the wicked shall be filled with trouble.
 Proverbs 12:22	 Lying lips are an abomination to God, but those who do the truth are his delight.
 Proverbs 12:23	 A prudent man keeps his knowledge, but the hearts of fools proclaim foolishness.
 Proverbs 12:24	 The hands of the diligent ones shall rule, but laziness ends in slave labor.
@@ -16886,7 +16886,7 @@ Proverbs 17:9	 He who covers an offense promotes love; but he who repeats a ma
 Proverbs 17:10	 A rebuke enters deeper into one who has understanding than a hundred lashes into a fool.
 Proverbs 17:11	 An evil man seeks only rebellion; therefore a cruel messenger shall be sent against him.
 Proverbs 17:12	 Let a bear robbed of her cubs meet a man, rather than a fool in his folly.
-Proverbs 17:13	 Whoever rewards evil for good, evil shall not depart from his house.
+Proverbs 17:13	 Whoever rewards evil for good, disaster shall not depart from his house.
 Proverbs 17:14	 The beginning of strife is like breaching a dam, therefore stop contention before quarreling breaks out.
 Proverbs 17:15	 He who justifies the wicked, and he who condemns the righteous, both of them alike are an abomination to God.
 Proverbs 17:16	 Why is there money in the hand of a fool to buy wisdom, since he has no understanding?
@@ -18474,7 +18474,7 @@ Isaiah 41:19	 I will put cedar, acacia, myrtle, and oil trees in the wildernes
 Isaiah 41:20	 that they may see, know, consider, and understand together, that God’s hand has done this, and the Holy One of Israel has created it.
 Isaiah 41:21	 Produce your cause,” says God. “Bring out your strong reasons!” says the King of Jacob.
 Isaiah 41:22	 “Let them announce and declare to us what will happen! Declare the former things, what they are, that we may consider them, and know the latter end of them; or show us things to come.
-Isaiah 41:23	 Declare the things that are to come hereafter, that we may know that you are gods. Yes, do good, or do evil, that we may be dismayed, and see it together.
+Isaiah 41:23	 Declare the things that are to come hereafter, that we may know that you are gods. Yes, do good, or do harm, that we may be dismayed, and see it together.
 Isaiah 41:24	 Behold, you are nothing, and your work is nothing. He who chooses you is an abomination.
 Isaiah 41:25	 “I have raised up one from the north, and he has come, from the rising of the sun, one who calls on my name, and he shall come on rulers as on mortar, and as the potter treads clay.
 Isaiah 41:26	 Who has declared it from the beginning, that we may know? and before, that we may say, ‘He is right?’ Surely, there is no one who declares. Surely, there is no one who shows. Surely, there is no one who hears your words.
@@ -18766,7 +18766,7 @@ Isaiah 56:9	 All you animals of the field, come to devour, all you animals in 
 Isaiah 56:10	 His watchmen are blind. They are all without knowledge. They are all mute dogs. They cannot bark—dreaming, lying down, loving to slumber.
 Isaiah 56:11	 Yes, the dogs are greedy. They can never have enough. They are shepherds who cannot understand. They have all turned to their own way, each one to his gain, from every quarter.
 Isaiah 56:12	 “Come,” they say, “I will get wine, and we will fill ourselves with strong drink; and tomorrow will be as today, great beyond measure.”
-Isaiah 57:1	 The righteous perish, and no one lays it to heart. Merciful men are taken away, and no one considers that the righteous is taken away from the evil.
+Isaiah 57:1	 The righteous perish, and no one lays it to heart. Merciful men are taken away, and no one considers that the righteous is taken away from disaster.
 Isaiah 57:2	 He enters into peace. They rest in their beds, each one who walks in his uprightness.
 Isaiah 57:3	 “But draw near here, you sons of a sorceress, you offspring of adulterers and prostitutes.
 Isaiah 57:4	 Whom do you mock? Against whom do you make a wide mouth and stick out your tongue? Are you not children of disobedience and offspring of falsehood,
@@ -19070,7 +19070,7 @@ Jeremiah 5:8	 They were as fed horses roaming at large. Everyone neighed after
 Jeremiah 5:9	 Should I not punish them for these things?” says God. “Should my soul not be avenged on such a nation as this?
 Jeremiah 5:10	 “Go up on her walls, and destroy; but do not make a full end. Take away her branches, for they are not God’s.
 Jeremiah 5:11	 For the house of Israel and the house of Judah have dealt very treacherously against me,” says God.
-Jeremiah 5:12	 They have denied God, and said, “It is not he. Evil will not come on us. We will not see sword or famine.
+Jeremiah 5:12	 They have denied God, and said, “It is not he. Disaster will not come on us. We will not see sword or famine.
 Jeremiah 5:13	 The prophets will become wind, and the word is not in them. Thus it will be done to them.”
 Jeremiah 5:14	 Therefore the Lord God of Hosts says, “Because you speak this word, behold, I will make my words in your mouth fire, and this people wood, and it will devour them.
 Jeremiah 5:15	 Behold, I will bring a nation on you from far away, house of Israel,” says God. “It is a mighty nation. It is an ancient nation, a nation whose language you do not know and do not understand what they say.
@@ -19090,7 +19090,7 @@ Jeremiah 5:28	 They have grown fat. They shine; yes, they excel in deeds of wi
 Jeremiah 5:29	 “Should I not punish for these things?” says God. “Should not my soul be avenged on such a nation as this?
 Jeremiah 5:30	 “An astonishing and horrible thing has happened in the land.
 Jeremiah 5:31	 The prophets prophesy falsely, and the priests rule by their own authority; and my people love to have it so. What will you do in the end of it?
-Jeremiah 6:1	 “Flee for safety, you children of Benjamin, out of the middle of Jerusalem! Blow the trumpet in Tekoa and raise up a signal on Beth Haccherem, for evil looks out from the north with a great destruction.
+Jeremiah 6:1	 “Flee for safety, you children of Benjamin, out of the middle of Jerusalem! Blow the trumpet in Tekoa and raise up a signal on Beth Haccherem, for disaster looks out from the north with a great destruction.
 Jeremiah 6:2	 I will cut off the beautiful and delicate one, the daughter of Zion.
 Jeremiah 6:3	 Shepherds with their flocks will come to her. They will pitch their tents against her all around. They will feed everyone in his place.”
 Jeremiah 6:4	 “Prepare war against her! Arise! Let us go up at noon. Woe to us! For the day declines, for the shadows of the evening are stretched out.
@@ -20027,7 +20027,7 @@ Jeremiah 44:13	 For I will punish those who dwell in the land of Egypt, as I h
 Jeremiah 44:14	 so that none of the remnant of Judah, who have gone into the land of Egypt to live there, will escape or be left to return into the land of Judah, to which they have a desire to return to dwell there; for no one will return except those who will escape.’”
 Jeremiah 44:15	 Then all the men who knew that their wives burned incense to other gods, and all the women who stood by, a great assembly, even all the people who lived in the land of Egypt, in Pathros, answered Jeremiah, saying,
 Jeremiah 44:16	 “As for the word that you have spoken to us in God’s name, we will not listen to you.
-Jeremiah 44:17	 But we will certainly perform every word that has gone out of our mouth, to burn incense to the queen of the sky, and to pour out drink offerings to her, as we have done, we and our fathers, our kings and our princes, in the cities of Judah, and in the streets of Jerusalem; for then had we plenty of food, and were well, and saw no evil.
+Jeremiah 44:17	 But we will certainly perform every word that has gone out of our mouth, to burn incense to the queen of the sky, and to pour out drink offerings to her, as we have done, we and our fathers, our kings and our princes, in the cities of Judah, and in the streets of Jerusalem; for then had we plenty of food, and were well, and saw no trouble.
 Jeremiah 44:18	 But since we stopped burning incense to the queen of the sky, and pouring out drink offerings to her, we have lacked all things, and have been consumed by the sword and by the famine.”
 Jeremiah 44:19	 The women said, “When we burned incense to the queen of the sky, and poured out drink offerings to her, did we make her cakes to worship her, and pour out drink offerings to her, without our husbands?”
 Jeremiah 44:20	 Then Jeremiah said to all the people, to the men, and to the women, even to all the people who had given him an answer, saying,
@@ -21362,7 +21362,7 @@ Ezekiel 35:14	 The Lord God says: “When the whole earth rejoices, I will mak
 Ezekiel 35:15	 As you rejoiced over the inheritance of the house of Israel because it was desolate, so I will do to you. You will be desolate, Mount Seir, and all Edom, even all of it. Then they will know that I am God.’”
 Ezekiel 36:1	 You, son of man, prophesy to the mountains of Israel, and say, “You mountains of Israel, hear God’s word.
 Ezekiel 36:2	 The Lord God says: ‘Because the enemy has said against you, “Aha!” and, “The ancient high places are ours in possession!”’
-Ezekiel 36:3	 therefore prophesy, and say, ‘The Lord God says: “Because, even because they have made you desolate, and swallowed you up on every side, that you might be a possession to the residue of the nations, and you are taken up in the lips of talkers, and the evil report of the people;”
+Ezekiel 36:3	 therefore prophesy, and say, ‘The Lord God says: “Because, even because they have made you desolate, and swallowed you up on every side, that you might be a possession to the residue of the nations, and you are taken up in the lips of talkers, and the bad report of the people;”
 Ezekiel 36:4	 therefore, you mountains of Israel, hear the word of the Lord God: The Lord God says to the mountains and to the hills, to the watercourses and to the valleys, to the desolate wastes and to the cities that are forsaken, which have become a prey and derision to the residue of the nations that are all around;
 Ezekiel 36:5	 therefore the Lord God says: “Surely in the fire of my jealousy I have spoken against the residue of the nations, and against all Edom, that have appointed my land to themselves for a possession with the joy of all their heart, with despite of soul, to cast it out for a prey.”’
 Ezekiel 36:6	 Therefore prophesy concerning the land of Israel, and tell the mountains, the hills, the watercourses and the valleys, ‘The Lord God says: “Behold, I have spoken in my jealousy and in my wrath, because you have borne the shame of the nations.”
@@ -22505,7 +22505,7 @@ Amos 9:6	 It is he who builds his rooms in the heavens, and has founded his va
 Amos 9:7	 Are you not like the children of the Ethiopians to me, children of Israel?” says God. “Have I not brought up Israel out of the land of Egypt, and the Philistines from Caphtor, and the Syrians from Kir?
 Amos 9:8	 Behold, the eyes of the Lord God are on the sinful kingdom, and I will destroy it from off the surface of the earth; except that I will not utterly destroy the house of Jacob,” says God.
 Amos 9:9	 “For, behold, I will command, and I will sift the house of Israel among all the nations, as grain is sifted in a sieve, yet not the least kernel will fall on the earth.
-Amos 9:10	 All the sinners of my people will die by the sword, who say, ‘Evil will not overtake nor meet us.’
+Amos 9:10	 All the sinners of my people will die by the sword, who say, ‘Disaster will not overtake nor meet us.’
 Amos 9:11	 In that day I will raise up the tent of David who is fallen, and close up its breaches, and I will raise up its ruins, and I will build it as in the days of old;
 Amos 9:12	 that they may possess the remnant of Edom, and all the nations who are called by my name,” says God who does this.
 Amos 9:13	 “Behold, the days come,” says God, “that the plowman shall overtake the reaper, and the one treading grapes him who sows seed; and sweet wine will drip from the mountains, and flow from the hills.
@@ -23316,7 +23316,7 @@ Matthew 6:30	 But if God so clothes the grass of the field, which today exists
 Matthew 6:31	 “Therefore do not be anxious, saying, ‘What will we eat?’, ‘What will we drink?’ or, ‘With what will we be clothed?’
 Matthew 6:32	 For the Gentiles seek after all these things; for your heavenly Father knows that you need all these things.
 Matthew 6:33	 But seek first God’s Kingdom and his righteousness; and all these things will be given to you as well.
-Matthew 6:34	 Therefore do not be anxious for tomorrow, for tomorrow will be anxious for itself. Each day’s own evil is sufficient.
+Matthew 6:34	 Therefore do not be anxious for tomorrow, for tomorrow will be anxious for itself. Each day’s own trouble is sufficient.
 Matthew 7:1	 “Do not judge, so that you will not be judged.
 Matthew 7:2	 For with whatever judgment you judge, you will be judged; and with whatever measure you measure, it will be measured to you.
 Matthew 7:3	 Why do you see the speck that is in your brother’s eye, but do not consider the beam that is in your own eye?
@@ -30956,7 +30956,7 @@ Revelation 15:6	 The seven angels who had the seven plagues came out, clothed 
 Revelation 15:7	 One of the four living creatures gave to the seven angels seven golden bowls full of the wrath of God, who lives forever and ever.
 Revelation 15:8	 The temple was filled with smoke from the glory of God, and from his power. No one was able to enter into the temple until the seven plagues of the seven angels would be finished.
 Revelation 16:1	 I heard a loud voice out of the temple, saying to the seven angels, “Go and pour out the seven bowls of the wrath of God on the earth!”
-Revelation 16:2	 The first went, and poured out his bowl into the earth, and it became a harmful and evil sore on the people who had the mark of the beast, and who worshiped his image.
+Revelation 16:2	 The first went, and poured out his bowl into the earth, and it became a harmful and grievous sore on the people who had the mark of the beast, and who worshiped his image.
 Revelation 16:3	 The second angel poured out his bowl into the sea, and it became blood as of a dead man. Every living thing in the sea died.
 Revelation 16:4	 The third poured out his bowl into the rivers and springs of water, and they became blood.
 Revelation 16:5	 I heard the angel of the waters saying, “You are righteous, who are and who were, O Holy One, because you have judged these things.

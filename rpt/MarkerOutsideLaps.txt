@@ -1,8 +1,8 @@
-FindMarkerStyleOutsideVerseText 2026-11-15 14:54:51 | Blank Bible Copy.docm | power AC 100% | canary style 0.99 ms/read, Count 0.01 ms/read
-para   5000 (non-VT scanned   548) | lap 1.63 s = para 0.37 + first 0.00 + Count 0.38 + scan 0.88 + hit 0.00 | scan chars 0
-para  10000 (non-VT scanned   802) | lap 0.89 s = para 0.36 + first 0.00 + Count 0.09 + scan 0.44 + hit 0.00 | scan chars 12
-para  15000 (non-VT scanned  1067) | lap 0.64 s = para 0.28 + first 0.00 + Count 0.06 + scan 0.31 + hit 0.00 | scan chars 0
-para  20000 (non-VT scanned  1518) | lap 0.84 s = para 0.26 + first 0.00 + Count 0.10 + scan 0.49 + hit 0.00 | scan chars 0
-para  25000 (non-VT scanned  1917) | lap 0.80 s = para 0.26 + first 0.00 + Count 0.07 + scan 0.47 + hit 0.00 | scan chars 0
-para  30000 (non-VT scanned  2122) | lap 0.59 s = para 0.28 + first 0.00 + Count 0.05 + scan 0.26 + hit 0.00 | scan chars 0
-DONE | paragraphs 33853 | non-VT scanned 2751 | hits 0 | walk 6.8 s = para 2.0 + first 0.0 + Count 1.2 + scan 3.6 + hit 0.0 (rest = lap-line writes) | scan chars total 12 | fast-path paragraphs 2750
+FindMarkerStyleOutsideVerseText 2026-11-15 17:09:50 | Blank Bible Copy.docm | power AC 100% | canary style 0.85 ms/read, Count 0.01 ms/read
+para   5000 (non-VT scanned   548) | lap 1.63 s = para 0.35 + first 0.00 + Count 0.38 + scan 0.90 + hit 0.00 | scan chars 0
+para  10000 (non-VT scanned   802) | lap 0.76 s = para 0.32 + first 0.00 + Count 0.08 + scan 0.36 + hit 0.00 | scan chars 12
+para  15000 (non-VT scanned  1067) | lap 0.64 s = para 0.29 + first 0.00 + Count 0.06 + scan 0.30 + hit 0.00 | scan chars 0
+para  20000 (non-VT scanned  1518) | lap 0.92 s = para 0.29 + first 0.00 + Count 0.11 + scan 0.52 + hit 0.00 | scan chars 0
+para  25000 (non-VT scanned  1917) | lap 0.82 s = para 0.29 + first 0.00 + Count 0.08 + scan 0.46 + hit 0.00 | scan chars 0
+para  30000 (non-VT scanned  2122) | lap 0.69 s = para 0.37 + first 0.00 + Count 0.06 + scan 0.27 + hit 0.00 | scan chars 0
+DONE | paragraphs 33853 | non-VT scanned 2751 | hits 0 | walk 7.0 s = para 2.1 + first 0.0 + Count 1.3 + scan 3.6 + hit 0.0 (rest = lap-line writes) | scan chars total 12 | fast-path paragraphs 2750
