@@ -200,8 +200,8 @@ PASS              Copy ()       Test = 99     0             0             CountF
   Rule: the RWB front matter and the Study Bible are kept apart (RT-24, 2026-11-12) - the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment, and no RWBFront style is used after them - CountFrontMatterSeparationViolations should return 0
 PASS              Copy ()       Test = 100    0             0             CountContractions
   Rule: formal voice (owner decision 2026-11-13, FU-51, RT-84) - no VerseText paragraph holds a contraction: a word ending in an apostrophe (U+2019) plus ll, re, ve, d, m or n't, or the word let's; the possessive 's is not a contraction - CountContractions (basFormalVoice) should return 0; Tests 60 to 65 still test their named forms
-The Total Runtime: 1646.14 seconds
-[2026-11-15 17:30:13] Completed
+The Total Runtime: 1528.26 seconds
+[2026-11-16 20:19:11] Completed
 BibleClass VERSION: 0.2.0
 BibleClass VERSION_DATE: September 17, 2026
 == Word Build Info ==
