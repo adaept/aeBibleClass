@@ -102,9 +102,9 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | RT-44 | Tags `rwb-v1.1.1` and `rwb-text-v1.1.1`, edition ledger entry, RELEASES rows, baseline re-pin LAST, delete the NOTICE exception | Add-in | 2 | 0 | RT-04a | R111-8, RX-24 | RT-43, RT-85 | ⚪ |
 | **Cross-cutting (during the process)** | | | | | | | | |
 | RT-50a | Security review, VBA scope (every `Shell` and file-write call, the export's `cmd.exe` call, macro signing, the public `rpt\` files) | VBA | 3 | 70 | RT-50b | - | before RT-43 | 🟡 first-pass scans done 2026-11-08 TESTED: 2026-11-16 first full review written: rvw/RWB Security and DRY Review RT-50 RT-51 2026-11-16.md (S-1 to S-9: no High; S-4 Kill *.* in aeWordGitClass is the one Medium; docm unsigned, docx has no macros). LEFT: owner decisions on S-2/S-3/S-4 |
-| RT-50b | Security review, Node, add-in and release scope (workflows and secrets, `gh` script, hook, `verify-rwb.ps1`, CSP, history scan PB-5) | Node | 3 | 70 | RT-50a | PB-5, CR-9d | before RT-43 | 🟡 first-pass scans and `npm audit` done 2026-11-08 TESTED: 2026-11-16 first full review written: rvw/RWB Security and DRY Review RT-50 RT-51 2026-11-16.md (S-10 to S-15: npm audit 0 for shipped code; S-11 pin Actions to SHAs and S-14 PB-5 scan are the two Medium). LEFT: owner decisions |
+| RT-50b | Security review, Node, add-in and release scope (workflows and secrets, `gh` script, hook, `verify-rwb.ps1`, CSP, history scan PB-5) | Node | 3 | 85 | RT-50a | PB-5, CR-9d | before RT-43 | 🟡 first-pass scans and `npm audit` done 2026-11-08 TESTED: 2026-11-16 first full review written: rvw/RWB Security and DRY Review RT-50 RT-51 2026-11-16.md (S-10 to S-15: npm audit 0 for shipped code; S-11 pin Actions to SHAs and S-14 PB-5 scan are the two Medium). LEFT: owner decisions 2026-11-16 later: S-11 DONE (all six Actions pinned to commit hashes; check.actions, 3 tests, dependabot.yml). LEFT: S-14 PB-5 scan (owner), S-15 .gitignore of the public repository |
 | RT-51a | DRY review, VBA scope (the 66-book table in 8 places, two copies of `aeBibleCitationClass.cls`) | VBA | 3 | 70 | RT-51b | - | before RT-43 | TESTED: 2026-11-16 review written: rvw/RWB Security and DRY Review RT-50 RT-51 2026-11-16.md (D-1, D-2: the VBA duplicates are intentional and guarded by the parity script). LEFT: owner decision on comments marking the canonical copy |
-| RT-51b | DRY review, Node and add-in scope (book names, USFM codes, verse counts, style sets, the four OOXML readers) | Node | 3 | 70 | RT-51a | - | before RT-43 | TESTED: 2026-11-16 review written: rvw/RWB Security and DRY Review RT-50 RT-51 2026-11-16.md (D-3 to D-6: consolidate the aeRWB book tables into canonical.mjs, one shared attribute helper). LEFT: owner decision, optional after 1.1.1 |
+| RT-51b | DRY review, Node and add-in scope (book names, USFM codes, verse counts, style sets, the four OOXML readers) | Node | 3 | 90 | RT-51a | - | before RT-43 | TESTED: 2026-11-16 review written: rvw/RWB Security and DRY Review RT-50 RT-51 2026-11-16.md (D-3 to D-6: consolidate the aeRWB book tables into canonical.mjs, one shared attribute helper). LEFT: owner decision, optional after 1.1.1 2026-11-16 later: D-3 and D-4 DONE (aeRWB books.mjs is the one table; byte-identical lists, 489 of 489 tests). LEFT: D-5 shared attribute helper (after the release), D-6 none |
 | RT-52 | Plan-sync check and progress script: the release-train table is identical in both repositories, the progress and view blocks are regenerated from it (`npm run release.progress`) | Add-in | 2 | 100 | - | - | - | ✅ 2026-11-08 |
 | RT-54 | Hygiene: `rpt\HeadingLog.txt` is a tracked report that every Word test run rewrites; decide to untrack it or ignore it (added 2026-11-08) | VBA | 1 | 0 | - | - | - | ⚪ |
 | RT-55 | Stage copies only the files git tracks in the base repository (`git ls-files`), refuses symlinks, and the same-or-inside path test resolves real paths (CR-S2, CR-S8) | Node | 2 | 100 | - | CR-S2, CR-S8 | before RT-07 | ✅ 2026-11-09 (`stage.mjs` reads tracked files from the base HEAD; `fsutil.mjs`) |
@@ -129,12 +129,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 90% complete** (76 of 93 tasks finished; 176.50 of 196 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 91% complete** (76 of 93 tasks finished; 177.55 of 196 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 25 | 18 | 49.50 / 56 | 88% |
-| Node (aeRWB, release, RadiantWordBible) | 45 | 39 | 92.00 / 96 | 96% |
+| Node (aeRWB, release, RadiantWordBible) | 45 | 39 | 93.05 / 96 | 97% |
 | Add-in (aeBibleAddin) | 8 | 6 | 15.00 / 18 | 83% |
 | Owner (decisions, Word sessions, writing) | 15 | 13 | 20.00 / 26 | 77% |
 
@@ -145,9 +145,9 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 2 | 6 | 5 | 13.00 / 18 | 72% |
 | Phase 3 | 32 | 24 | 51.10 / 57 | 90% |
 | Phase 4 | 6 | 3 | 9.00 / 13 | 69% |
-| Cross-cutting (during the process) | 22 | 17 | 42.40 / 47 | 90% |
+| Cross-cutting (during the process) | 22 | 17 | 43.45 / 47 | 92% |
 
-Open points that wait on the owner: 6.00 of 26; open points of build work (VBA, Node, add-in): 13.50 of 170.
+Open points that wait on the owner: 6.00 of 26; open points of build work (VBA, Node, add-in): 12.45 of 170.
 Tasks with weight 0 are listed but not counted: RT-72, RT-95, RT-97, RT-53.
 <!-- PROGRESS:END -->
 
