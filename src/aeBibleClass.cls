@@ -338,7 +338,8 @@ Private Sub Expected1BasedArray()
     ' (Test 47: 3 to 6). Tests 36 and 50 stay at 0 and 148 once the front sections use TheFooters and TheHeaders.
     ' Test 16 and Test 49 moved 2026-11-15 (owner-approved, the docm decides): Test 16 33842 to 33853 (+11 paragraphs: the Foreword, 10, and the trademark paragraph, 1);
     ' Test 49 47 to 45 (the Header and Footer paragraph styles are no longer used after the RT-84 fix, so 41 + 6 RWBFront - 2 = 45; Test 84 now 0).
-    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 8, 1, 0, 0, 0, 0, 1, 33853, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 148, 82, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 45, 148, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0)
+    ' Test 16 moved again 2026-11-18 (owner-approved, the docm decides): 33853 to 33855 (+2 paragraphs: the Foreword split made by the owner in the docm session of 2026-11-17; proved by the session logs: 33853 after the 14-edit run, 33855 when the question word order run opened).
+    values = Array(0, 0, 0, 0, 0, 0, 0, 0, 8, 1, 0, 0, 0, 0, 1, 33855, 0, 66, 0, 0, 3, 0, 0, 1000, 1, 0, 148, 82, 66, 0, 1, 191, 191, 0, 0, 0, 99, 145, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 45, 148, 1189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31102, 31102, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0)
 
     ' Convert to a 1-based array
     oneBasedExpectedArray = ConvertToOneBasedArray(values)
