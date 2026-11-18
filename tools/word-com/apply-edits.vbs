@@ -3,6 +3,7 @@
 '   cscript //nologo apply-edits.vbs <docm> <edits.txt> <result.txt>
 '
 ' <edits.txt>: one edit per line, three TAB-separated fields: label, find text, replacement text (ASCII only; lines starting with # are skipped).
+' A character outside ASCII is written as {U+2018} (hex code point, 4 digits), for example a curly quote; the script turns it into the character (2026-11-17, E-10).
 ' For every edit the find text must occur EXACTLY ONCE in the document (whole body, case sensitive, no wildcards); otherwise that edit is skipped
 ' and reported, nothing is guessed. The replacement goes through Find.Execute Replace:=wdReplaceOne, so the formatting of the found text stays.
 ' After the replacement the new text must occur exactly ONE time more than before (it may already occur elsewhere) and the old text not at all. Track Changes is switched off. Macros stay off (AutomationSecurity 3).
@@ -20,6 +21,17 @@ Sub RefuseIfWordRunning()
     WScript.Quit 2
   End If
 End Sub
+
+Function Unesc(text)
+  Dim pos, code
+  Unesc = text
+  pos = InStr(Unesc, "{U+")
+  Do While pos > 0
+    code = Mid(Unesc, pos + 3, 4)
+    Unesc = Left(Unesc, pos - 1) & ChrW(CLng("&H" & code)) & Mid(Unesc, pos + 8)
+    pos = InStr(Unesc, "{U+")
+  Loop
+End Function
 
 Function CountOf(text)
   Dim r, n
@@ -64,7 +76,7 @@ Sub Main(target, editsFile)
       If UBound(parts) <> 2 Then
         gOut.WriteLine "SKIPPED bad line (need 3 TAB fields): " & Left(line, 60): skipped = skipped + 1
       Else
-        label = parts(0): findT = parts(1): repT = parts(2)
+        label = parts(0): findT = Unesc(parts(1)): repT = Unesc(parts(2))
         n = CountOf(findT)
         nNew = CountOf(repT)
         If n <> 1 Then
