@@ -6,7 +6,7 @@
 ' A character outside ASCII is written as {U+2018} (hex code point, 4 digits), for example a curly quote; the script turns it into the character (2026-11-17, E-10).
 ' For every edit the find text must occur EXACTLY ONCE in the document (whole body, case sensitive, no wildcards); otherwise that edit is skipped
 ' and reported, nothing is guessed. The replacement goes through Find.Execute Replace:=wdReplaceOne, so the formatting of the found text stays.
-' After the replacement the new text must occur exactly ONE time more than before (it may already occur elsewhere) and the old text not at all. Track Changes is switched off. Macros stay off (AutomationSecurity 3).
+' After the replacement the new text must occur exactly ONE time more than before (it may already occur elsewhere) and the old text not at all (or, when the replacement contains the find text, as often as the replacement contains it: an insertion). Track Changes is switched off. Macros stay off (AutomationSecurity 3).
 ' Rules (see README.md): close every Word first (this script refuses otherwise); make a backup of the docm before you point this at the real file; run
 ' the SAME edits on a copy first and compare (the verification reads the saved XML, for example tools/verify-docm-edits.mjs). Written for FU-50 (2026-11-14).
 Option Explicit
@@ -31,6 +31,12 @@ Function Unesc(text)
     Unesc = Left(Unesc, pos - 1) & ChrW(CLng("&H" & code)) & Mid(Unesc, pos + 8)
     pos = InStr(Unesc, "{U+")
   Loop
+End Function
+
+' How often the find text stands inside the replacement: 0 for a true replacement, 1 when the edit only adds text next to the find text
+' (an insertion), so that after the edit the find text is expected exactly that many times (2026-11-17, E-7).
+Function OccIn(text, part)
+  OccIn = Int((Len(text) - Len(Replace(text, part, ""))) / Len(part))
 End Function
 
 Function CountOf(text)
@@ -98,7 +104,7 @@ Sub Main(target, editsFile)
           r.Find.Execute , , , , , , , , , , 1
           If Err.Number <> 0 Then
             gOut.WriteLine "FAILED " & label & ": " & Err.Number & " " & Err.Description: Err.Clear: skipped = skipped + 1
-          ElseIf CountOf(repT) = nNew + 1 And CountOf(findT) = 0 Then
+          ElseIf CountOf(repT) = nNew + 1 And CountOf(findT) = OccIn(repT, findT) Then
             gOut.WriteLine "OK      " & label
             ok = ok + 1
           Else
