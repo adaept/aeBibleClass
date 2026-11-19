@@ -30,7 +30,7 @@ PASS              Copy ()       Test = 14     0             0             CountW
   Rule: No pilcrows colored white (an old hiding-trick anti-pattern that masks empty paragraphs) - CountWhiteParagraphMarks should return 0
 PASS              Copy ()       Test = 15     1             1             CountSectionsWithDifferentFirstPage
   Rule: No section has 'Different First Page' set in PageSetup, except Section 1 - Section 1 intentionally keeps it set as part of the Ctrl-A paste-into-new-Doc recovery mechanism (confirmed by operator 2026-09-14) - CountSectionsWithDifferentFirstPage should return 1
-PASS              Copy ()       Test = 16     33853         33853         CountTotalParagraphs
+PASS              Copy ()       Test = 16     33855         33855         CountTotalParagraphs
   Count of paragraphs in the document - CountTotalParagraphs should return >33000 adjust expected to final release value
 PASS              Copy ()       Test = 17     0             0             CountActiveHyperlinks
   Rule: There should be no active hyperlinks as the current main target is print - CountActiveHyperlinks should return 0
@@ -200,8 +200,8 @@ PASS              Copy ()       Test = 99     0             0             CountF
   Rule: the RWB front matter and the Study Bible are kept apart (RT-24, 2026-11-12) - the leading RWBFront sections hold only RWBFront paragraph styles and no footnote, endnote, field, hyperlink, table, shape or comment, and no RWBFront style is used after them - CountFrontMatterSeparationViolations should return 0
 PASS              Copy ()       Test = 100    0             0             CountContractions
   Rule: formal voice (owner decision 2026-11-13, FU-51, RT-84) - no VerseText paragraph holds a contraction: a word ending in an apostrophe (U+2019) plus ll, re, ve, d, m or n't, or the word let's; the possessive 's is not a contraction - CountContractions (basFormalVoice) should return 0; Tests 60 to 65 still test their named forms
-The Total Runtime: 1528.26 seconds
-[2026-11-16 20:19:11] Completed
+The Total Runtime: 2073.19 seconds
+[2026-11-18 21:42:32] Completed
 BibleClass VERSION: 0.2.0
 BibleClass VERSION_DATE: September 17, 2026
 == Word Build Info ==

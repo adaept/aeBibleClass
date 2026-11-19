@@ -2,7 +2,7 @@
 RWBFrontTitle: 1
 RWBFrontEpigraph: 1
 RWBFrontHeading: 2
-RWBFrontBody: 18
+RWBFrontBody: 20
 RWBFrontSignature: 1
 RWBFrontCopyright: 4
 BodyText: 502
@@ -44,4 +44,4 @@ ParallelText: 12
 ParallelHeader: 24
 TheHeaders: 138
 TheFooters: 6
-Total paragraphs (all styles): 35051
+Total paragraphs (all styles): 35053

@@ -1,13 +1,13 @@
-  [memory] start: Word ws 522 MB, peak 660 MB, private 402 MB | free 5339 MB | pgIn (baseline)
+  [memory] start: Word ws 543 MB, peak 684 MB, private 410 MB | free 2999 MB | pgIn (baseline)
   keep-awake: ON
----- RadiantWordBible export 2026-11-15 23:46:42 | ExportVersion 1.1.1 ----
+---- RadiantWordBible export 2026-11-16 19:42:44 | ExportVersion 1.1.1 ----
   setting ExportVersion = 1.1.1
   setting StripOptionalHyphens = True
   setting ReplaceEmphasisStyles = True
   setting VerseTextAlignment = left
   setting PurgeUnusedStyles = True
   setting StripRibbonAfterSave = True
-  setting BaselineDocxRelPath = Bible\v0.0.RadiantWordBible.docx
+  setting BaselineDocxRelPath = 
   setting EmbedFonts = True
   setting StripRsids = True
   setting FontAuditHalt = True
@@ -19,50 +19,52 @@ ExportScriptureOnlyDocx: source=C:\adaept\aeBibleClass\Blank Bible Copy.docm
   destination=C:\adaept\aeBibleClass\RadiantWordBible.docx
 Pass0_FontsInstalled: Carlito, Noto Sans and Liberation Serif are installed.
 Pass1_DuplicateAndOpen: opened working copy.
-  [timing] Pass1_DuplicateAndOpen: 7.9 s | Word ws 566 MB, peak 660 MB, private 445 MB | free 5218 MB | pgIn 2997
+  [timing] Pass1_DuplicateAndOpen: 12.3 s | Word ws 593 MB, peak 684 MB, private 453 MB | free 2717 MB | pgIn 21545
 Pass2_FootnoteSweep: all footnotes removed.
-  [timing] Pass2_FootnoteSweep: 2.0 s | Word ws 580 MB, peak 660 MB, private 488 MB | free 5198 MB | pgIn 3450
+  [timing] Pass2_FootnoteSweep: 2.3 s | Word ws 602 MB, peak 684 MB, private 494 MB | free 2695 MB | pgIn 3053
 Pass3_ParagraphSweep: deleted 1251 STRIP-style paragraph(s) (144 section-break carriers kept as break-only); 2 Index table(s) and their contents preserved.
-  [timing] Pass3_ParagraphSweep: 5.3 s | Word ws 598 MB, peak 660 MB, private 505 MB | free 5212 MB | pgIn 94
----- VerifyScriptureOnlyStrip: 2026-11-15 23:46:55 ----
+  [timing] Pass3_ParagraphSweep: 6.3 s | Word ws 619 MB, peak 684 MB, private 511 MB | free 2692 MB | pgIn 469
+---- VerifyScriptureOnlyStrip: 2026-11-16 19:43:03 ----
 
 
 TOTAL violations: 0
 
-  [timing] Pass4_VerifyScriptureOnlyStrip: 13.4 s | Word ws 597 MB, peak 660 MB, private 505 MB | free 5227 MB | pgIn 84
+  [timing] Pass4_VerifyScriptureOnlyStrip: 19.7 s | Word ws 618 MB, peak 684 MB, private 510 MB | free 2573 MB | pgIn 21039
 Pass4b_StripOptionalHyphens: remaining=0, AutoHyphenation=False
-  [timing] Pass4b_StripOptionalHyphens: 4.3 s | Word ws 629 MB, peak 660 MB, private 534 MB | free 5206 MB | pgIn 58
+  [timing] Pass4b_StripOptionalHyphens: 6.4 s | Word ws 652 MB, peak 684 MB, private 539 MB | free 3402 MB | pgIn 3306
+Pass4b2_SaveBaselineSnapshot: saved C:\adaept\aeBibleClass\RadiantWordBible_baseline.docx
+  [timing] Pass4b2_SaveBaselineSnapshot: 3.5 s | Word ws 656 MB, peak 684 MB, private 542 MB | free 3409 MB | pgIn 927
 Pass4c_ReplaceEmphasisStyles: violations=0
-  [timing] Pass4c_ReplaceEmphasisStyles: 25.8 s | Word ws 699 MB, peak 721 MB, private 597 MB | free 4900 MB | pgIn 30
+  [timing] Pass4c_ReplaceEmphasisStyles: 23.8 s | Word ws 725 MB, peak 748 MB, private 607 MB | free 3330 MB | pgIn 828
 Pass4d_SetVerseTextAlignment: left, 31102 VerseText paragraph(s), 0 direct override(s) corrected, violations=0
-  [timing] Pass4d_SetVerseTextAlignment: 54.9 s | Word ws 958 MB, peak 981 MB, private 862 MB | free 4883 MB | pgIn 123
+  [timing] Pass4d_SetVerseTextAlignment: 56.7 s | Word ws 987 MB, peak 1010 MB, private 874 MB | free 3100 MB | pgIn 5080
 Pass5: 3 front-matter section(s) kept (map shifted by 3)
 Pass5 B4: header paragraphs source=1, final=1, trimmed=1, Len(source)=11, Len(final)=11
 Pass5: Section(1) header/footer paragraphs restyled=0
 Pass5: 3 front section(s) have the page layout of the Bible Index section, no page number; the index section starts on a New Page.
 Pass5_SectionSurgery: 12 sections removed (148 -> 136); final section header "REVELATION".
-  [timing] Pass5_SectionSurgery: 1.5 s | Word ws 969 MB, peak 981 MB, private 865 MB | free 4875 MB | pgIn 4351
-    [sub-timing] Pass4e usage walk (144 stories, 19 paragraph styles in use): 2.4 s
-    [sub-timing] Pass4e checks + deletes (13 Find checks): 45.8 s
+  [timing] Pass5_SectionSurgery: 1.3 s | Word ws 996 MB, peak 1010 MB, private 877 MB | free 3092 MB | pgIn 4758
+    [sub-timing] Pass4e usage walk (144 stories, 19 paragraph styles in use): 3.9 s
+    [sub-timing] Pass4e checks + deletes (13 Find checks): 52.7 s
 Pass4e: Styles.Count before=434, after deletes=395 (39 Delete call(s))
 Pass4e_PurgeUnusedStyles: listed=39, deleted=39, already absent=0, violations=0
-  [timing] Pass4e_PurgeUnusedStyles: 72.8 s | Word ws 1436 MB, peak 1556 MB, private 1341 MB | free 4233 MB | pgIn 1522
-    [sub-timing] Pass6 iter 1 Repaginate: 22.0 s
-    [sub-timing] Pass6 iter 1 paragraph walk: 2.1 s
-    [sub-timing] Pass6 iter 1 Information(page) x66: 25.6 s
-    [sub-timing] Pass6 iter 1 patch rows: 0.4 s
+  [timing] Pass4e_PurgeUnusedStyles: 78.5 s | Word ws 1468 MB, peak 1583 MB, private 1353 MB | free 2603 MB | pgIn 80402
+    [sub-timing] Pass6 iter 1 Repaginate: 23.5 s
+    [sub-timing] Pass6 iter 1 paragraph walk: 1.6 s
+    [sub-timing] Pass6 iter 1 Information(page) x66: 30.5 s
+    [sub-timing] Pass6 iter 1 patch rows: 0.5 s
     [sub-timing] Pass6 iter 2 Repaginate: 0.1 s
-    [sub-timing] Pass6 iter 2 paragraph walk: 3.0 s
-    [sub-timing] Pass6 iter 2 Information(page) x66: 2.7 s
+    [sub-timing] Pass6 iter 2 paragraph walk: 2.7 s
+    [sub-timing] Pass6 iter 2 Information(page) x66: 2.0 s
     [sub-timing] Pass6 iter 2 patch rows: 0.5 s
 Pass6_RegenerateBibleIndex: 66 Index row(s) patched, stable after 2 iteration(s).
-  [timing] Pass6_RegenerateBibleIndex: 57.3 s | Word ws 1431 MB, peak 1556 MB, private 1346 MB | free 4405 MB | pgIn 302
-  [timing] Pass6b_FontAudit: 72.6 s | Word ws 1424 MB, peak 1556 MB, private 1322 MB | free 4272 MB | pgIn 1316
+  [timing] Pass6_RegenerateBibleIndex: 62.4 s | Word ws 1470 MB, peak 1584 MB, private 1360 MB | free 2583 MB | pgIn 3992
+  [timing] Pass6b_FontAudit: 78.4 s | Word ws 1462 MB, peak 1584 MB, private 1344 MB | free 2678 MB | pgIn 18122
 Pass6b_FontAudit: 0 runs outside Carlito, Noto Sans and Liberation Serif.
 Pass7_Properties: Title = Radiant Word Bible, RWB_Version = 1.1.1
 Pass7_Save: saved C:\adaept\aeBibleClass\RadiantWordBible.docx (EmbedTrueTypeFonts=True, SaveSubsetFonts=True)
 Options.StoreRSIDOnSave restored to True
-  [timing] Pass7_SaveAndClose: 52.3 s | Word ws 864 MB, peak 1556 MB, private 753 MB | free 4941 MB | pgIn 2357
+  [timing] Pass7_SaveAndClose: 52.2 s | Word ws 903 MB, peak 1584 MB, private 776 MB | free 3149 MB | pgIn 5226
 Pass7b_StripRibbon: running wsl.exe --exec python3 -I "/mnt/c/adaept/aeBibleClass/py/strip_ribbon.py" "/mnt/c/adaept/aeBibleClass/RadiantWordBible.docx"
 PATCHED   _rels/.rels
 REMOVED   customUI/customUI14.xml
@@ -71,12 +73,12 @@ REMOVED   customUI/_rels/customUI14.xml.rels
 Done. RadiantWordBible.docx no longer carries a Ribbon customization.
 
 Pass7b_StripRibbon: exit code 0
-  [timing] Pass7b_StripRibbon: 9.0 s | Word ws 865 MB, peak 1556 MB, private 754 MB | free 2571 MB | pgIn 884
+  [timing] Pass7b_StripRibbon: 9.4 s | Word ws 904 MB, peak 1584 MB, private 777 MB | free 834 MB | pgIn 32775
 Pass7c_CheckEmbeddedFonts: running wsl.exe --exec python3 -I "/mnt/c/adaept/aeBibleClass/py/check_embedded_fonts.py" "/mnt/c/adaept/aeBibleClass/RadiantWordBible.docx"
 OK: embedded fonts are within the allowed families (Carlito, Liberation Serif, Noto Sans)
 
 Pass7c_CheckEmbeddedFonts: exit code 0
-  [timing] Pass7c_CheckEmbeddedFonts: 0.5 s | Word ws 865 MB, peak 1556 MB, private 754 MB | free 2703 MB | pgIn 27
+  [timing] Pass7c_CheckEmbeddedFonts: 0.6 s | Word ws 904 MB, peak 1584 MB, private 777 MB | free 729 MB | pgIn 4345
 Pass7d_FinishFonts: running node "C:\adaept\aeRWB\tools\rwb-export\docx-finish-cli.mjs" "C:\adaept\aeBibleClass\RadiantWordBible.docx" "C:\adaept\aeBibleClass\RadiantWordBible.docx.finished.tmp"
 kept     Carlito Regular: 593908 -> 192228 bytes
 kept     Carlito Italic: 580792 -> 179004 bytes
@@ -90,13 +92,13 @@ dropped  Noto Sans Regular (slot Italic)
 dropped  Liberation Serif Bold (slot Bold)
 purged   1152 font name(s) rewritten
 result   6 embedded font(s), 1090184 bytes
-docx     4784928 -> 2610139 bytes
+docx     4784786 -> 2610015 bytes
 OK: wrote C:\adaept\aeBibleClass\RadiantWordBible.docx.finished.tmp
 
 Pass7d_FinishFonts: exit code 0
 Pass7d_FinishFonts: the finished docx replaced C:\adaept\aeBibleClass\RadiantWordBible.docx
-  [timing] Pass7d_FinishFonts: 2.2 s | Word ws 865 MB, peak 1556 MB, private 754 MB | free 2599 MB | pgIn 42
----- VerifyBibleIndexPageNumbers: 2026-11-15 23:54:00 ----
+  [timing] Pass7d_FinishFonts: 2.3 s | Word ws 904 MB, peak 1584 MB, private 777 MB | free 686 MB | pgIn 472
+---- VerifyBibleIndexPageNumbers: 2026-11-16 19:50:42 ----
 
 Checked against: C:\adaept\aeBibleClass\RadiantWordBible.docx
 
@@ -104,40 +106,43 @@ Checked against: C:\adaept\aeBibleClass\RadiantWordBible.docx
 TOTAL mismatches: 0
 
 Pass8: Bible Index page numbers verified, 0 mismatches.
-  [timing] Pass8_VerifyBibleIndexPageNumbers: 58.8 s | Word ws 875 MB, peak 1556 MB, private 770 MB | free 4115 MB | pgIn 40430
-Pass9_VerifyCharStyles: running wsl.exe --exec python3 -I "/mnt/c/adaept/aeBibleClass/py/verify_char_style_change.py" "/mnt/c/adaept/aeBibleClass/Bible/v0.0.RadiantWordBible.docx" "/mnt/c/adaept/aeBibleClass/RadiantWordBible.docx" "--verse-align" "left"
-RWBFront paragraphs skipped: baseline 0, new 27
+  [timing] Pass8_VerifyBibleIndexPageNumbers: 65.3 s | Word ws 907 MB, peak 1584 MB, private 783 MB | free 2673 MB | pgIn 6603
+Pass9_VerifyCharStyles: running wsl.exe --exec python3 -I "/mnt/c/adaept/aeBibleClass/py/verify_char_style_change.py" "/mnt/c/adaept/aeBibleClass/RadiantWordBible_baseline.docx" "/mnt/c/adaept/aeBibleClass/RadiantWordBible.docx" "--verse-align" "left"
+RWBFront paragraphs skipped: baseline 27, new 27
+empty section-break carriers skipped: baseline 144, new 132 (Pass 5 removes 12)
 VerseText style jc=None, direct overrides={}
 two-column sections with empty header: []
-header/footer styles baseline: {'p:TheHeaders': 132, 'p:TheFooters': 1}
+header/footer styles baseline: {'p:TheHeaders': 138, 'p:TheFooters': 6}
 header/footer styles new     : {'p:TheHeaders': 135, 'p:TheFooters': 4}
-baseline chars by style: {'ChapterVersemarker': 51773, 'Versemarker': 82824, 'EmphasisBlack': 58406, 'Selah': 382, 'SpeakerLabelChar': 212, 'WordsofJesus': 189963, 'EmphasisRed': 19004}
+baseline chars by style: {'ChapterVersemarker': 51773, 'Versemarker': 82824, 'EmphasisBlack': 58407, 'Selah': 382, 'SpeakerLabelChar': 212, 'WordsofJesus': 189966, 'EmphasisRed': 19004}
 new      chars by style: {'ChapterVersemarker': 51773, 'Versemarker': 82824, 'Selah': 382, 'SpeakerLabelChar': 212, 'WordsofJesus': 208970}
-FAIL paragraph text differs in 72 paragraph(s) (index rows excluded)
-FAIL WordsofJesus covers 208970 chars, expected 208967
+PASS: only EmphasisBlack/EmphasisRed changed; all else identical.
 
-Pass9_VerifyCharStyles: exit code 1
-  [timing] Pass9_VerifyCharStyles: 8.6 s | Word ws 875 MB, peak 1556 MB, private 770 MB | free 2562 MB | pgIn 637
-ExportScriptureOnlyDocx: FINISHED WITH 1 ISSUE(S). Artefact saved but NOT clean - do not treat as done. See the report.
+Pass9_VerifyCharStyles: exit code 0
+  [timing] Pass9_VerifyCharStyles: 9.8 s | Word ws 907 MB, peak 1584 MB, private 783 MB | free 1014 MB | pgIn 915
+ExportScriptureOnlyDocx: COMPLETE. C:\adaept\aeBibleClass\RadiantWordBible.docx - all checks passed.
+  working copy deleted: C:\adaept\aeBibleClass\RadiantWordBible_work.docm
+  baseline snapshot deleted: C:\adaept\aeBibleClass\RadiantWordBible_baseline.docx
 ---- Pass timings (seconds) ----
-  Pass1_DuplicateAndOpen                    7.9 s | Word ws 566 MB, peak 660 MB, private 445 MB | free 5218 MB | pgIn 2997
-  Pass2_FootnoteSweep                       2.0 s | Word ws 580 MB, peak 660 MB, private 488 MB | free 5198 MB | pgIn 3450
-  Pass3_ParagraphSweep                      5.3 s | Word ws 598 MB, peak 660 MB, private 505 MB | free 5212 MB | pgIn 94
-  Pass4_VerifyScriptureOnlyStrip           13.4 s | Word ws 597 MB, peak 660 MB, private 505 MB | free 5227 MB | pgIn 84
-  Pass4b_StripOptionalHyphens               4.3 s | Word ws 629 MB, peak 660 MB, private 534 MB | free 5206 MB | pgIn 58
-  Pass4c_ReplaceEmphasisStyles             25.8 s | Word ws 699 MB, peak 721 MB, private 597 MB | free 4900 MB | pgIn 30
-  Pass4d_SetVerseTextAlignment             54.9 s | Word ws 958 MB, peak 981 MB, private 862 MB | free 4883 MB | pgIn 123
-  Pass5_SectionSurgery                      1.5 s | Word ws 969 MB, peak 981 MB, private 865 MB | free 4875 MB | pgIn 4351
-  Pass4e_PurgeUnusedStyles                 72.8 s | Word ws 1436 MB, peak 1556 MB, private 1341 MB | free 4233 MB | pgIn 1522
-  Pass6_RegenerateBibleIndex               57.3 s | Word ws 1431 MB, peak 1556 MB, private 1346 MB | free 4405 MB | pgIn 302
-  Pass6b_FontAudit                         72.6 s | Word ws 1424 MB, peak 1556 MB, private 1322 MB | free 4272 MB | pgIn 1316
-  Pass7_SaveAndClose                       52.3 s | Word ws 864 MB, peak 1556 MB, private 753 MB | free 4941 MB | pgIn 2357
-  Pass7b_StripRibbon                        9.0 s | Word ws 865 MB, peak 1556 MB, private 754 MB | free 2571 MB | pgIn 884
-  Pass7c_CheckEmbeddedFonts                 0.5 s | Word ws 865 MB, peak 1556 MB, private 754 MB | free 2703 MB | pgIn 27
-  Pass7d_FinishFonts                        2.2 s | Word ws 865 MB, peak 1556 MB, private 754 MB | free 2599 MB | pgIn 42
-  Pass8_VerifyBibleIndexPageNumbers        58.8 s | Word ws 875 MB, peak 1556 MB, private 770 MB | free 4115 MB | pgIn 40430
-  Pass9_VerifyCharStyles                    8.6 s | Word ws 875 MB, peak 1556 MB, private 770 MB | free 2562 MB | pgIn 637
-  TOTAL                                   449.4 s
-  Paging: 58704 pages read from disk during the run (229 MB at 4 KB/page, OS-wide); lowest free physical memory at a lap 2562 MB. Large pgIn together with low free memory = paging; near-zero pgIn = not paging.
+  Pass1_DuplicateAndOpen                   12.3 s | Word ws 593 MB, peak 684 MB, private 453 MB | free 2717 MB | pgIn 21545
+  Pass2_FootnoteSweep                       2.3 s | Word ws 602 MB, peak 684 MB, private 494 MB | free 2695 MB | pgIn 3053
+  Pass3_ParagraphSweep                      6.3 s | Word ws 619 MB, peak 684 MB, private 511 MB | free 2692 MB | pgIn 469
+  Pass4_VerifyScriptureOnlyStrip           19.7 s | Word ws 618 MB, peak 684 MB, private 510 MB | free 2573 MB | pgIn 21039
+  Pass4b_StripOptionalHyphens               6.4 s | Word ws 652 MB, peak 684 MB, private 539 MB | free 3402 MB | pgIn 3306
+  Pass4b2_SaveBaselineSnapshot              3.5 s | Word ws 656 MB, peak 684 MB, private 542 MB | free 3409 MB | pgIn 927
+  Pass4c_ReplaceEmphasisStyles             23.8 s | Word ws 725 MB, peak 748 MB, private 607 MB | free 3330 MB | pgIn 828
+  Pass4d_SetVerseTextAlignment             56.7 s | Word ws 987 MB, peak 1010 MB, private 874 MB | free 3100 MB | pgIn 5080
+  Pass5_SectionSurgery                      1.3 s | Word ws 996 MB, peak 1010 MB, private 877 MB | free 3092 MB | pgIn 4758
+  Pass4e_PurgeUnusedStyles                 78.5 s | Word ws 1468 MB, peak 1583 MB, private 1353 MB | free 2603 MB | pgIn 80402
+  Pass6_RegenerateBibleIndex               62.4 s | Word ws 1470 MB, peak 1584 MB, private 1360 MB | free 2583 MB | pgIn 3992
+  Pass6b_FontAudit                         78.4 s | Word ws 1462 MB, peak 1584 MB, private 1344 MB | free 2678 MB | pgIn 18122
+  Pass7_SaveAndClose                       52.2 s | Word ws 903 MB, peak 1584 MB, private 776 MB | free 3149 MB | pgIn 5226
+  Pass7b_StripRibbon                        9.4 s | Word ws 904 MB, peak 1584 MB, private 777 MB | free 834 MB | pgIn 32775
+  Pass7c_CheckEmbeddedFonts                 0.6 s | Word ws 904 MB, peak 1584 MB, private 777 MB | free 729 MB | pgIn 4345
+  Pass7d_FinishFonts                        2.3 s | Word ws 904 MB, peak 1584 MB, private 777 MB | free 686 MB | pgIn 472
+  Pass8_VerifyBibleIndexPageNumbers        65.3 s | Word ws 907 MB, peak 1584 MB, private 783 MB | free 2673 MB | pgIn 6603
+  Pass9_VerifyCharStyles                    9.8 s | Word ws 907 MB, peak 1584 MB, private 783 MB | free 1014 MB | pgIn 915
+  TOTAL                                   491.3 s
+  Paging: 213857 pages read from disk during the run (835 MB at 4 KB/page, OS-wide); lowest free physical memory at a lap 686 MB. Large pgIn together with low free memory = paging; near-zero pgIn = not paging.
 
-Result: NOT CLEAN (1 issue(s))
+Result: CLEAN (0 issues)
