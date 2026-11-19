@@ -8,7 +8,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, readFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { check, findProblems, parseEolEntry, toLineEnding } from './check-eol.mjs';
+import { check, findControlChar, findProblems, parseEolEntry, toLineEnding } from './check-eol.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCRIPT = join(HERE, 'check-eol.mjs');
@@ -109,4 +109,32 @@ test('THE REAL REPOSITORY follows its own policy (this is the test that fails if
   const root = execFileSync('git', ['-C', HERE, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
   const { problems } = check(root);
   assert.deepEqual(problems.map((p) => `${p.kind}:${p.path}: ${p.why}`), [], 'line-ending policy violated: run node ' + SCRIPT + ' --fix, read LINE_ENDINGS.md');
+});
+
+test('Q-T1: a control character in a tracked text file is a problem that names the file, line and character', () => {
+  const r = repo({ 'a.md': 'fine\n', 'dir/b.md': 'one\nC:\x07daept\n', 'c.txt': 'tab\there\r\n', 'd.bin': '\x07\x00', 'keep/e.txt': '\x07', 'out/f.txt': '\x0b' });
+  try {
+    assert.deepEqual(kinds(r.dir).filter((k) => k.startsWith('control:')), ['control:dir/b.md']);
+    const found = check(r.dir).problems.find((p) => p.kind === 'control');
+    assert.match(found.why, /BEL \(code 7\) at line 2, column 3/);
+  } finally { r.done(); }
+});
+
+test('Q-T1: findControlChar knows BEL VT BS NUL ESC DEL, allows TAB LF CR, and ignores UTF-8 bytes above 127', () => {
+  for (const [ch, name] of [['\x07', 'BEL'], ['\x0b', 'VT'], ['\x08', 'BS'], ['\x00', 'NUL'], ['\x1b', 'ESC'], ['\x7f', 'DEL'], ['\x01', 'U+0001']]) {
+    assert.equal(findControlChar(`x${ch}y`).name, name);
+  }
+  assert.equal(findControlChar('a\tb\r\nc\n'), null);
+  assert.equal(findControlChar(Buffer.from('caf\u00e9 \u2014 \u201cquote\u201d \u0085', 'utf8').toString('latin1')), null, 'UTF-8 continuation bytes are not controls');
+});
+
+test('Q-T1: the command exits 1 and says why, and --fix does not pretend to repair it', () => {
+  const r = repo({ 'doc.md': 'path C:\x07daept\n' });
+  try {
+    const res = spawnSync(process.execPath, [SCRIPT, '--repo', r.dir], { encoding: 'utf8' });
+    assert.equal(res.status, 1);
+    assert.match(res.stderr, /control\s+doc\.md: control character BEL/);
+    assert.match(res.stderr, /mangled Windows path/);
+    assert.equal(spawnSync(process.execPath, [SCRIPT, '--repo', r.dir, '--fix'], { encoding: 'utf8' }).status, 1);
+  } finally { r.done(); }
 });

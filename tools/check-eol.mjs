@@ -12,6 +12,8 @@
 //   node check-eol.mjs --fix      rewrite the WORKING files to the rule (only line endings change; no content is staged: it only refreshes git's
 //                                 size cache for files without real changes, so `git status` does not list them as modified)
 //   node check-eol.mjs --repo <dir>
+// Q-T1 (2026-11-19, FU-81): a tracked text file that holds a control character (below space except TAB, LF, CR; and DEL) is an ERROR too: the file, line and
+// character are named (kind 'control'); --fix cannot repair it, the content is wrong.
 // IDENTICAL COPIES of this file live in every repository that follows the policy (the list is in adaept5tudio/CLAUDE.md, "Line endings"): change all of them together.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -60,6 +62,36 @@ export function exemptPaths(root, paths) {
   return set;
 }
 
+/** Names of the control characters that usually arrive by accident (a `\a` or `\v` in a Windows path inside a script string). */
+const CONTROL_NAMES = { 0: 'NUL', 7: 'BEL', 8: 'BS', 11: 'VT', 12: 'FF', 27: 'ESC', 127: 'DEL' };
+/** Q-T1 (2026-11-19, FU-81): everything below space except TAB, LF and CR, and DEL. Bytes above 127 are never matched (UTF-8 text is fine). */
+const CONTROL = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/;
+
+/** The first control character of a text read as latin1: {line, column, code, name}, or null. */
+export function findControlChar(text) {
+  const m = CONTROL.exec(text);
+  if (!m) return null;
+  const before = text.slice(0, m.index);
+  const code = m[0].charCodeAt(0);
+  return { line: before.split('\n').length, column: m.index - before.lastIndexOf('\n'), code, name: CONTROL_NAMES[code] ?? `U+${code.toString(16).toUpperCase().padStart(4, '0')}` };
+}
+
+/** Control characters in tracked text files (not byte-exact, not eol-exempt): one problem per file, naming the first one. */
+export function findControlProblems(root, entries, exempt = () => false) {
+  const out = [];
+  for (const e of entries) {
+    // Only an explicit rule (-text, binary) or a NUL byte makes a file byte-exact here. git's own guess (`i/-text`) is NOT trusted: it calls a
+    // small text file with one BEL "binary", which is exactly how a control character slipped past this check before.
+    if (/(^|\s)-text(\s|$)|(^|\s)binary(\s|$)/.test(e.attr) || exempt(e.path)) continue;
+    let text;
+    try { text = readFileSync(join(root, e.path), 'latin1'); } catch { continue; } // deleted in the working tree: nothing to read
+    if (text.includes('\0')) continue; // a NUL byte: a real binary (image, archive), not a text file
+    const hit = findControlChar(text);
+    if (hit) out.push({ path: e.path, kind: 'control', why: `control character ${hit.name} (code ${hit.code}) at line ${hit.line}, column ${hit.column}` });
+  }
+  return out;
+}
+
 export function toLineEnding(text, want) {
   const lf = text.replace(/\r\n/g, '\n');
   return want === 'crlf' ? lf.replace(/\n/g, '\r\n') : lf;
@@ -68,7 +100,7 @@ export function toLineEnding(text, want) {
 export function check(root) {
   const entries = listEntries(root);
   const ex = exemptPaths(root, entries.map((e) => e.path));
-  return { entries, problems: findProblems(entries, (p) => ex.has(p)) };
+  return { entries, problems: [...findProblems(entries, (p) => ex.has(p)), ...findControlProblems(root, entries, (p) => ex.has(p))] };
 }
 
 function main(argv) {
@@ -102,6 +134,7 @@ function main(argv) {
   for (const p of problems.slice(0, 40)) console.error(`  ${p.kind.padEnd(7)} ${p.path}: ${p.why}`);
   if (problems.length > 40) console.error(`  ... and ${problems.length - 40} more`);
   const onlyWorking = problems.every((p) => p.kind === 'working');
+  if (problems.some((p) => p.kind === 'control')) console.error('A control character is almost always a mangled Windows path (a backslash-a, -v, -r or -b in a Python, sed or heredoc string): open the file at the line shown and rewrite it; --fix cannot repair it. Use the Write tool or a raw string for paths.');
   console.error(onlyWorking ? 'Fix: node check-eol.mjs --fix (rewrites working files only).' : 'A file in the index has CR, or has no rule: fix .gitattributes or re-add the file after fixing it (git add --renormalize <path>). Do not bypass with --no-verify.');
   return 1;
 }
