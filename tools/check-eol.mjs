@@ -65,6 +65,7 @@ export function exemptPaths(root, paths) {
 /** Names of the control characters that usually arrive by accident (a `\a` or `\v` in a Windows path inside a script string). */
 const CONTROL_NAMES = { 0: 'NUL', 7: 'BEL', 8: 'BS', 11: 'VT', 12: 'FF', 27: 'ESC', 127: 'DEL' };
 /** Q-T1 (2026-11-19, FU-81): everything below space except TAB, LF and CR, and DEL. Bytes above 127 are never matched (UTF-8 text is fine). */
+// eslint-disable-next-line no-control-regex -- matching control characters is the whole purpose of this check (FU-84)
 const CONTROL = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/;
 
 /** The first control character of a text read as latin1: {line, column, code, name}, or null. */
