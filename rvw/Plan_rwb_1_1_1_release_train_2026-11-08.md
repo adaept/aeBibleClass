@@ -149,12 +149,12 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 ### Progress of this side (generated; the same figures are in the hub plan section 2a)
 
 <!-- PROGRESS:BEGIN -->
-**Overall: 84% complete** (79 of 112 tasks finished; 201.50 of 240 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
+**Overall: 84% complete** (79 of 112 tasks finished; 202.10 of 240 effort points done). Generated from the table above by `npm run release.progress -- --write`; do not edit by hand.
 
 | By side | Tasks | Finished | Points done / total | % |
 |---|---|---|---|---|
 | VBA (aeBibleClass) | 26 | 18 | 51.90 / 58 | 89% |
-| Node (aeRWB, release, RadiantWordBible) | 51 | 41 | 102.65 / 113 | 91% |
+| Node (aeRWB, release, RadiantWordBible) | 51 | 41 | 103.25 / 113 | 91% |
 | Add-in (aeBibleAddin) | 15 | 6 | 21.75 / 34 | 64% |
 | Owner (decisions, Word sessions, writing) | 20 | 14 | 25.20 / 35 | 72% |
 
@@ -163,11 +163,11 @@ Status legend: ✅ Done | 🟡 In progress | 🔴 Blocked | ⚪ Not started.
 | Phase 0 | 14 | 14 | 32.00 / 32 | 100% |
 | Phase 1 | 13 | 13 | 29.00 / 29 | 100% |
 | Phase 2 | 6 | 6 | 18.00 / 18 | 100% |
-| Phase 3 | 51 | 26 | 69.75 / 101 | 69% |
+| Phase 3 | 51 | 26 | 70.35 / 101 | 70% |
 | Phase 4 | 6 | 3 | 9.00 / 13 | 69% |
 | Cross-cutting (during the process) | 22 | 17 | 43.75 / 47 | 93% |
 
-Open points that wait on the owner: 9.80 of 35; open points of build work (VBA, Node, add-in): 28.70 of 205.
+Open points that wait on the owner: 9.80 of 35; open points of build work (VBA, Node, add-in): 28.10 of 205.
 Tasks with weight 0 are listed but not counted: RT-72, RT-95, RT-106, RT-109, RT-53.
 <!-- PROGRESS:END -->
 
