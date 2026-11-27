@@ -10,6 +10,7 @@
 ' narrowed range one character off and the edit is refused). The edit file is made by rvw/divine-names/gen_docm_edits.py in aeBibleAddin and the saved
 ' file is checked by rvw/divine-names/verify_docm_edits.py. Macros stay off (AutomationSecurity 3); Track Changes is switched off; the document is saved
 ' only when every edit succeeded. Close every Word first (the script refuses otherwise). Back up the docm and rehearse on a copy first.
+' After each replacement the edited range with its context is read back and compared with the expected text (no global counting, which Word's Find cannot do for common words).
 ' It replaces apply-edits-ctx.vbs and apply-edits-ctx-footnotes.vbs. The older apply-edits.vbs (three fields, replaces the whole find text) stays.
 ' Original header of apply-edits.vbs follows.
 ' apply-edits.vbs - make a list of exact text replacements in a docm, in a hidden Word of its own, and SAVE the document.
@@ -58,6 +59,14 @@ End Function
 
 ' How often the find text stands inside the replacement: 0 for a true replacement, 1 when the edit only adds text next to the find text
 ' (an insertion), so that after the edit the find text is expected exactly that many times (2026-11-17, E-7).
+' The text of the edited range with its left and right context, read back from the document (the proof that the edit did what the edit file says).
+Function ChunkText(r, leftT, rightT)
+  Dim c
+  Set c = StoryRange()
+  c.SetRange r.Start - Len(leftT), r.End + Len(rightT)
+  ChunkText = c.Text
+End Function
+
 Function OccIn(text, part)
   OccIn = Int((Len(text) - Len(Replace(text, part, ""))) / Len(part))
 End Function
@@ -109,7 +118,6 @@ Sub Main(target, editsFile)
         findT = leftT & targT & rightT
         newT = leftT & repT & rightT
         n = CountOf(findT)
-        If Len(newT) <= 250 Then nNew = CountOf(newT) Else nNew = -1
         If n <> 1 Then
           gOut.WriteLine "SKIPPED " & label & ": the find text occurs " & n & " time(s), expected exactly 1"
           skipped = skipped + 1
@@ -134,11 +142,11 @@ Sub Main(target, editsFile)
               r.Text = repT
               If Err.Number <> 0 Then
                 gOut.WriteLine "FAILED " & label & ": " & Err.Number & " " & Err.Description: Err.Clear: skipped = skipped + 1
-              ElseIf (nNew < 0 Or CountOf(newT) = nNew + 1) And CountOf(findT) = OccIn(newT, findT) Then
+              ElseIf ChunkText(r, leftT, rightT) = newT Then
                 gOut.WriteLine "OK      " & label
                 ok = ok + 1
               Else
-                gOut.WriteLine "CHECK   " & label & ": after the replace the new text occurs " & CountOf(newT) & " time(s) (expected " & (nNew + 1) & ") and the old text " & CountOf(findT)
+                gOut.WriteLine "CHECK   " & label & ": after the replace the text reads [" & ChunkText(r, leftT, rightT) & "] and not [" & newT & "]"
                 skipped = skipped + 1
               End If
             End If
