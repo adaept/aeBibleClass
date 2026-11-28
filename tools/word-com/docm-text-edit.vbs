@@ -10,6 +10,7 @@
 ' narrowed range one character off and the edit is refused). The edit file is made by rvw/divine-names/gen_docm_edits.py in aeBibleAddin and the saved
 ' file is checked by rvw/divine-names/verify_docm_edits.py. Macros stay off (AutomationSecurity 3); Track Changes is switched off; the document is saved
 ' only when every edit succeeded. Close every Word first (the script refuses otherwise). Back up the docm and rehearse on a copy first.
+' One search per edit finds the first match and stops at a second one (R27-7, 2026-11-27: the edit used to search twice, once counting the whole story).
 ' After each replacement the edited range with its context is read back and compared with the expected text (no global counting, which Word's Find cannot do for common words).
 ' It replaces apply-edits-ctx.vbs and apply-edits-ctx-footnotes.vbs. The older apply-edits.vbs (three fields, replaces the whole find text) stays.
 ' Original header of apply-edits.vbs follows.
@@ -71,7 +72,9 @@ Function OccIn(text, part)
   OccIn = Int((Len(text) - Len(Replace(text, part, ""))) / Len(part))
 End Function
 
-Function CountOf(text)
+' How often the find text occurs in the story: 0, 1, or 2 for "two or more" (the search stops at the second match, R27-7, 2026-11-27).
+' With exactly one match, `first` is left as the range of that match, so the caller does not have to search a second time.
+Function CountOf(text, ByRef first)
   Dim r, n
   n = 0
   Set r = StoryRange()
@@ -87,14 +90,18 @@ Function CountOf(text)
   End With
   Do While r.Find.Execute
     n = n + 1
+    If n = 1 Then
+      Set first = StoryRange()
+      first.SetRange r.Start, r.End
+    End If
+    If n >= 2 Then Exit Do
     r.Collapse 0
-    If n > 200 Then Exit Do
   Loop
   CountOf = n
 End Function
 
 Sub Main(target, editsFile)
-  Dim ts, line, parts, label, leftT, targT, rightT, newT, findT, repT, n, nNew, ok, skipped, r, paraText
+  Dim ts, line, parts, label, leftT, targT, rightT, newT, findT, repT, n, nNew, ok, skipped, r, paraText, firstMatch
   On Error Resume Next
   Set gWord = CreateObject("Word.Application")
   If Err.Number <> 0 Then gErrText = "cannot start Word": Exit Sub
@@ -117,22 +124,17 @@ Sub Main(target, editsFile)
         label = parts(0): leftT = Unesc(parts(1)): targT = Unesc(parts(2)): rightT = Unesc(parts(3)): repT = Unesc(parts(4))
         findT = leftT & targT & rightT
         newT = leftT & repT & rightT
-        n = CountOf(findT)
+        n = CountOf(findT, firstMatch)
         If n <> 1 Then
-          gOut.WriteLine "SKIPPED " & label & ": the find text occurs " & n & " time(s), expected exactly 1"
+          If n = 0 Then
+            gOut.WriteLine "SKIPPED " & label & ": the find text occurs 0 time(s), expected exactly 1"
+          Else
+            gOut.WriteLine "SKIPPED " & label & ": the find text occurs more than once, expected exactly 1"
+          End If
           skipped = skipped + 1
         Else
-          Set r = StoryRange()
-          With r.Find
-            .ClearFormatting
-            .Text = findT
-            .Forward = True
-            .Wrap = 0
-            .MatchCase = True
-            .MatchWildcards = False
-            .Format = False
-          End With
-          If Not r.Find.Execute Then
+          Set r = firstMatch
+          If r Is Nothing Then
             gOut.WriteLine "FAILED " & label & ": find did not run": skipped = skipped + 1
           Else
             r.SetRange r.Start + Len(leftT), r.End - Len(rightT)
