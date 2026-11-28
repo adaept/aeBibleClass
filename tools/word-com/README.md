@@ -39,6 +39,9 @@ Every script refuses to run (exit 2) while any `WINWORD.EXE` is running: `Create
 15. **A soft hyphen can be part of a find text:** write it as `{U+001F}` (Chr(31)); Word's Find matches it and the narrowed range has the right length. It is removed together with the replaced word. After each replacement `docm-text-edit.vbs` reads the edited range with its context back from the document and compares it with the expected text; counting the occurrences of the new text is unreliable for common words (the count is capped) and is not used.
 16. **Verify the RESULT, not only the edit lines (2026-11-27).** A check that re-applies the edit file in memory (`verify_docm_edits.py`) passes even when the edit lines are wrong: edits that deleted a whole word left eight double spaces and it still said PASS. Compare each edited paragraph or footnote with the text the edit plan intends (`rvw/quote-check/end_check.py` in aeBibleAddin: 0 differences expected) and compare the count of double spaces of the whole docm with the original. A deleted word takes one of its two spaces with it.
 
+17. **One search per edit (2026-11-27, R27-7).** `docm-text-edit.vbs` finds the first match, looks for a second one, and reuses the first range; it no longer counts the whole story and then searches again. Proved on copies: 83 body edits 1m52s to 1m11s, the saved docm identical (33,946 records: text, styles, soft hyphens). A find text that occurs twice or not at all is still skipped and nothing is saved.
+18. **Characters outside the BMP (2026-11-27, I18N-5).** `Len` counts UTF-16 units in VBScript and in Word alike, so a find text with a surrogate pair (`{U+D840}{U+DC00}`) narrows correctly. Self test: `selftest-nonbmp.vbs` makes the scratch document, `selftest-nonbmp-edits.txt` is the edit file; expected `OK B3`, `OK B1`, saved, both pairs intact.
+
 ## 2. Reading a SAVED docm without Word
 
 ```
