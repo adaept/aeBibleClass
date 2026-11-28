@@ -1,0 +1,2 @@
+B3	{U+D83D}{U+DE00} one TA	R	GET2 here.	X
+B1	{U+D840}{U+DC00} CJK-B left 	TARGET	 right {U+D83D}{U+DE00} emoji	CHANGED
